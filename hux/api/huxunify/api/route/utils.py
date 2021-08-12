@@ -6,6 +6,7 @@ from functools import wraps
 from typing import Any, Tuple, Union, Dict
 from http import HTTPStatus
 from bson import ObjectId
+from bson.errors import InvalidId
 
 import facebook_business.exceptions
 from healthcheck import HealthCheck
@@ -378,6 +379,16 @@ def api_error_handler(custom_message: dict = None) -> object:
                 )
                 return error_message, HTTPStatus.BAD_REQUEST
 
+            except InvalidId as invalid_id:
+                logger.error(
+                    "%s: %s while executing %s in module %s.",
+                    invalid_id.__class__,
+                    str(invalid_id),
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
+                return {"message": str(invalid_id)}, HTTPStatus.BAD_REQUEST
+
             except facebook_business.exceptions.FacebookRequestError as exc:
                 logger.error(
                     "%s: %s while executing %s in module %s.",
@@ -674,9 +685,6 @@ def validate_destination_id(
         destination_id (ObjectId): Destination id as object id if
             all checks are successful.
     """
-    if not ObjectId.is_valid(destination_id):
-        logger.error("Invalid object ID %s.", destination_id)
-        return {"message": constants.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
     destination_id = ObjectId(destination_id)
 
     if check_if_destination_in_db:
