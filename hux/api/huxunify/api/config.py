@@ -113,8 +113,10 @@ class Config:
     FLDR_EVENT_NAME_CONST = "fldr-event"
     FLDR_EVENT_NAME = config(
         FLDR_EVENT_NAME_CONST,
-        default="campaign-performance-router-scheduler",
+        default="feedback-loop-router-scheduler",
     )
+
+    EVENT_ROUTERS = [CDPR_EVENT_NAME, FLDR_EVENT_NAME]
 
     CDP_SERVICE = config(
         "CDP_SERVICE",
