@@ -14,19 +14,6 @@
           <div class="model-dashboard__card px-6 py-5">
             {{ model.description }}
           </div>
-          <v-card class="mt-6 rounded-lg box-shadow-5" height="662">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
-              <div class="mt-2">
-                <span
-                  v-if="model.feature_importance"
-                  class="neroBlack--text text-h5"
-                >
-                  Top {{ model.feature_importance.length }} feature importance
-                </span>
-              </div>
-            </v-card-title>
-            <feature-chart :feature-data="model.feature_importance || []" />
-          </v-card>
         </v-col>
         <v-col col="6">
           <div class="d-flex">
@@ -71,18 +58,36 @@
               </div>
             </div>
           </div>
-          <v-card
-            class="
-              d-flex
-              justify-center
-              align-center
-              mt-6
-              rounded-lg
-              box-shadow-5
-            "
-            height="662"
-          >
-            <empty-state-chart />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col md="6">
+          <v-card class="mt-6 rounded-lg box-shadow-5" height="662">
+            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+              <div class="mt-2">
+                <span
+                  v-if="model.feature_importance"
+                  class="neroBlack--text text-h5"
+                >
+                  Top {{ model.feature_importance.length }} feature importance
+                </span>
+              </div>
+            </v-card-title>
+            <feature-chart :feature-data="model.feature_importance || []" />
+          </v-card>
+        </v-col>
+        <v-col md="6">
+          <v-card class="rounded-lg px-4 box-shadow-5 mt-6" height="662">
+            <div class="pt-5 pl-2 pb-10 neroBlack--text text-h5">Drift AUC</div>
+            <div ref="drift">
+              <drift-chart
+                v-model="lineChartData"
+                :chart-dimensions="chartDimensions"
+                :x-axis-formating-func="xAxisFormatingFunc"
+                :enable-grid="[false, true]"
+              />
+            </div>
+            <div class="py-5 text-center neroBlack--text text-h6">Date</div>
           </v-card>
         </v-col>
       </v-row>
@@ -103,9 +108,11 @@
 </template>
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb"
-import EmptyStateChart from "@/components/common/EmptyStateChart"
 import FeatureChart from "@/components/common/featureChart/FeatureChart"
 import LiftChart from "@/components/common/LiftChart.vue"
+import DriftChart from "@/components/common/Charts/DriftChart/DriftChart.vue"
+
+import LineChartData from "@/api/mock/factories/lineChartData.json"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import { mapGetters, mapActions } from "vuex"
@@ -114,15 +121,20 @@ export default {
   name: "ModelsDashboard",
   components: {
     Breadcrumb,
-    EmptyStateChart,
     FeatureChart,
     LiftChart,
     Page,
     PageHeader,
+    DriftChart,
   },
   data() {
     return {
       loading: false,
+      chartDimensions: {
+        width: 0,
+        height: 0,
+      },
+      lineChart: LineChartData.data,
     }
   },
 
@@ -130,6 +142,17 @@ export default {
     ...mapGetters({
       model: "models/overview",
     }),
+
+    lineChartData() {
+      let data = this.lineChart.map((each) => {
+        return {
+          xAxisValue: new Date(each.run_date),
+          yAxisValue: each.drift,
+        }
+      })
+
+      return data
+    },
 
     breadcrumbItems() {
       const items = [
@@ -153,6 +176,8 @@ export default {
 
   async mounted() {
     this.loading = true
+    this.chartDimensions.width = this.$refs.drift.clientWidth - 110
+    this.chartDimensions.height = 520
     await this.getOverview(this.$route.params.id)
     this.loading = false
   },
@@ -161,6 +186,9 @@ export default {
     ...mapActions({
       getOverview: "models/getOverview",
     }),
+    xAxisFormatingFunc(date) {
+      return `${date.getMonth() + 1}/${date.getDate()}`
+    },
   },
 }
 </script>
