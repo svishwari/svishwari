@@ -379,15 +379,15 @@ def api_error_handler(custom_message: dict = None) -> object:
                 )
                 return error_message, HTTPStatus.BAD_REQUEST
 
-            except InvalidId as invalidId:
+            except InvalidId as invalid_id:
                 logger.error(
                     "%s: %s while executing %s in module %s.",
-                    invalidId.__class__,
-                    str(invalidId),
+                    invalid_id.__class__,
+                    str(invalid_id),
                     in_function.__qualname__,
                     in_function.__module__,
                 )
-                return {"message": str(invalidId)}, HTTPStatus.BAD_REQUEST
+                return {"message": str(invalid_id)}, HTTPStatus.BAD_REQUEST
 
             except facebook_business.exceptions.FacebookRequestError as exc:
                 logger.error(
