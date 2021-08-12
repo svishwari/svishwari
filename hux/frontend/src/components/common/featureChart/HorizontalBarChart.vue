@@ -28,6 +28,7 @@
 import * as d3Select from "d3-selection"
 import * as d3Axis from "d3-axis"
 import * as d3Scale from "d3-scale"
+import * as d3Array from "d3-array"
 
 export default {
   name: "HorizontalBarChart",
@@ -63,7 +64,7 @@ export default {
         x: 0,
         y: 0,
       },
-      margin: { top: 5, right: 50, bottom: 70, left: 130 },
+      margin: { top: 5, right: 50, bottom: 70, left: 150 },
       chartData: this.value,
     }
   },
@@ -103,10 +104,10 @@ export default {
           "transform",
           "translate(" + this.margin.left + "," + this.margin.top + ")"
         )
-
-      let maxValue = Math.max(...this.chartData.map((data) => data.score))
-
-      let x = d3Scale.scaleLinear().domain([0, maxValue]).range([0, this.width])
+        
+      let xAxisDomain = d3Array.extent(this.chartData, (d) => d.score)
+      
+      let x = d3Scale.scaleLinear().domain(xAxisDomain).range([0, this.width]).nice(5)
 
       let y = d3Scale
         .scaleBand()
@@ -115,7 +116,7 @@ export default {
         .padding(0.1)
 
       let appendElipsis = (text) =>
-        text && text.length > 20 ? text.slice(0, 19) + "..." : text
+        text && text.length > 20 ? text.slice(0, 20) + "..." : text
 
       let featureLabelHover = (srcData) => {
         let currentFeature = this.chartData.find(
@@ -266,7 +267,7 @@ export default {
       z-index: 1;
       border-radius: 0px !important;
       position: absolute;
-      left: 152px;
+      left: 171px;
       top: -6px;
     }
   }

@@ -1,33 +1,10 @@
 <template>
-  <div>
-    <v-card
-      class="rounded-lg card-style"
-      max-width="300px"
-      min-height="150px"
-      flat
-    >
-      <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
-        <div class="mt-2 ml-2">
-          <span
-            class="
-              d-flex
-              align-center
-              income-card-title
-              black--text
-              text-decoration-none
-            "
-          >
-            Top locations &amp; income
-          </span>
-        </div>
-        <div
-          ref="huxChart"
-          class="chart-section"
-          @mouseover="getCordinates($event)"
-        ></div>
-      </v-card-title>
-      <v-card-text class="pl-6 pr-6 pb-6"> </v-card-text>
-    </v-card>
+  <div class="chart-container" :style="{ maxWidth: chartWidth }">
+    <div
+      ref="huxChart"
+      class="chart-section"
+      @mouseover="getCordinates($event)"
+    ></div>
   </div>
 </template>
 
@@ -35,6 +12,8 @@
 import * as d3Select from "d3-selection"
 import * as d3Axis from "d3-axis"
 import * as d3Scale from "d3-scale"
+import * as d3Array from "d3-array"
+
 export default {
   name: "HorizontalBarChart",
   props: {
@@ -46,20 +25,35 @@ export default {
   data() {
     return {
       width: 255,
-      height: 237,
+      height: 200,
       show: false,
+      chartWidth: "",
       tooltip: {
         x: 0,
         y: 0,
       },
-      margin: { top: 20, right: 40, bottom: 20, left: 5 },
+      chartDimensions: {
+        type: Object,
+        required: false,
+        default() {
+          return {
+            width: 0,
+            height: 0,
+          }
+        },
+      },
+      margin: { top: 5, right: 40, bottom: 20, left: 22 },
       chartData: this.value,
     }
   },
   watch: {
-    value: function () {
-      d3Select.select(this.$refs.huxChart).select("svg").remove()
-      this.initiateHorizontalBarChart()
+    chartDimensions: {
+      handler() {
+        d3Select.select(this.$refs.huxChart).selectAll("svg").remove()
+        this.initiateMapChart()
+      },
+      immediate: false,
+      deep: true,
     },
   },
   mounted() {
@@ -68,8 +62,11 @@ export default {
   methods: {
     async initiateHorizontalBarChart() {
       await this.chartData
+      this.chartWidth = this.chartDimensions.width + "px"
+
       this.width = this.width - this.margin.left - this.margin.right
       this.height = this.height - this.margin.top - this.margin.bottom
+      d3Select.select(this.$refs.huxChart).selectAll("svg").remove()
       let svg = d3Select
         .select(this.$refs.huxChart)
         .append("svg")
@@ -80,8 +77,14 @@ export default {
           "transform",
           "translate(" + this.margin.left + "," + this.margin.top + ")"
         )
-      let maxValue = Math.max(...this.chartData.map((data) => data.ltv))
-      let x = d3Scale.scaleLinear().domain([0, maxValue]).range([1, this.width])
+
+      let xAxisDomain = d3Array.extent(this.chartData, (d) => d.ltv)
+
+      let x = d3Scale
+        .scaleLinear()
+        .domain([0, xAxisDomain[1]])
+        .range([1, this.width])
+
       let y = d3Scale
         .scaleBand()
         .range([0, this.height])
@@ -190,9 +193,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.card-style {
+.chart-container {
   margin-bottom: 40px;
   height: 325px;
+  min-height: 150px;
   .chart-section {
     margin-bottom: -20px;
   }

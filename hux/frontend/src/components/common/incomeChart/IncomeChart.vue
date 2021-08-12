@@ -1,12 +1,10 @@
 <template>
-  <div class="container">
-    <div class="d-flex justify-content-start">
+  <div ref="incomeChart" class="container">
       <horizontal-bar-chart
         v-model="incomes"
         @cordinates="getCordinates"
         @tooltipDisplay="toolTipDisplay"
       />
-    </div>
     <bar-chart-tooltip
       :position="{
         x: tooltip.x,
@@ -35,9 +33,23 @@ export default {
         x: 0,
         y: 0,
       },
+      chartDimensions: {
+        width: 0,
+        height: 0,
+      },
       incomes: data.income,
       currentData: {},
     }
+  },
+  created() {
+    window.addEventListener("resize", this.sizeHandler)
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.sizeHandler)
+  },
+  mounted() {
+    this.chartDimensions.width = this.$refs.incomeChart.clientWidth
+    this.chartDimensions.height = this.$refs.incomeChart.clientHeight
   },
   methods: {
     toolTipDisplay(...arg) {
@@ -46,10 +58,13 @@ export default {
         this.currentData = arg[1]
       }
     },
-
     getCordinates(args) {
       this.tooltip.x = args.x
       this.tooltip.y = args.y
+    },
+        sizeHandler() {
+      this.chartDimensions.width = this.$refs.incomeChart.clientWidth
+      this.chartDimensions.height = this.$refs.incomeChart.clientHeight
     },
   },
 }

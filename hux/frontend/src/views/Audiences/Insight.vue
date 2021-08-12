@@ -223,11 +223,6 @@
         </div>
       </v-card>
     </div>
-    <v-row v-if="audienceInsights" class="px-15 mt-2">
-      <v-col cols="3">
-        <income-chart></income-chart>
-      </v-col>
-    </v-row>
     <v-row class="px-15 mt-2">
       <v-col md="7">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
@@ -257,14 +252,14 @@
     <v-row class="px-15 mt-2">
       <v-col md="3">
         <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+          <v-card-title class="chart-style pb-0 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
                 Top location &amp; Income
               </span>
             </div>
           </v-card-title>
-          <empty-state-chart />
+          <income-chart />
         </v-card>
       </v-col>
       <v-col md="6">
