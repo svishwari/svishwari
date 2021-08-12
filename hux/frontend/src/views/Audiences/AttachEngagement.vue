@@ -169,6 +169,7 @@
                       "
                       height="40"
                       width="175"
+                      @click="resetSchedule()"
                     >
                       <v-radio
                         :off-icon="
@@ -240,6 +241,9 @@
                     />
                   </div>
                 </v-row>
+                <v-row class="delivery-schedule ml-0 mt-8" v-if="newEngagement.delivery_schedule == 1">
+                  <hux-schedule-picker v-model="schedule"/>
+                </v-row>
               </v-form>
             </div>
           </v-stepper-content>
@@ -297,6 +301,9 @@ import sortBy from "lodash/sortBy"
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 
+import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
+import DefaultDeliverySchedule from "../Engagements/Configuration/Drawers/DefaultDeliverySchedule.json"
+
 export default {
   name: "AttachEngagement",
 
@@ -309,6 +316,7 @@ export default {
     Icon,
     HuxStartDate,
     HuxEndDate,
+    HuxSchedulePicker,
   },
 
   props: {
@@ -347,6 +355,7 @@ export default {
       sortBy: sortBy,
       selectedStartDate: "Select date",
       selectedEndDate: "Select date",
+      schedule: JSON.parse(JSON.stringify(DefaultDeliverySchedule)),
     }
   },
 
@@ -386,6 +395,9 @@ export default {
       fetchEngagements: "engagements/getAll",
       addEngagementToDB: "engagements/add",
     }),
+     resetSchedule() {
+      this.schedule = JSON.parse(JSON.stringify(DefaultDeliverySchedule))
+    },
     isEngagementSelected: function (engagement) {
       return (
         this.selectedEngagements.filter((eng) => eng.id === engagement.id)
@@ -405,6 +417,7 @@ export default {
     },
     goToStep2: function () {
       this.viewStep = 2
+      this.resetSchedule()
     },
     addEngagement: async function () {
       this.loading = true

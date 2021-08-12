@@ -126,6 +126,10 @@
             />
           </div>
         </v-row>
+
+        <v-row class="delivery-schedule mt-8">
+          <hux-schedule-picker v-model="schedule" v-if="value.delivery_schedule == 1"/>
+        </v-row>
       </form-step>
 
       <form-step :step="3" label="Select audience(s) and destination(s)">
@@ -339,6 +343,8 @@ import DestinationDataExtensionDrawer from "./Drawers/DestinationDataExtensionDr
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 import Icon from "@/components/common/Icon.vue"
+import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
+import DefaultDeliverySchedule from "./Drawers/DefaultDeliverySchedule.json"
 
 export default {
   name: "EngagementsForm",
@@ -358,6 +364,7 @@ export default {
     HuxStartDate,
     HuxEndDate,
     Icon,
+    HuxSchedulePicker,
   },
 
   props: {
@@ -379,6 +386,7 @@ export default {
       selectedEndDate: "Select date",
       disableEndDate: true,
       errorMessages: [],
+      schedule: JSON.parse(JSON.stringify(DefaultDeliverySchedule)),
     }
   },
 
@@ -449,12 +457,17 @@ export default {
       deliverEngagement: "engagements/deliver",
     }),
 
+    resetSchedule() {
+      this.schedule = JSON.parse(JSON.stringify(DefaultDeliverySchedule))
+    },
+
     changeSchedule() {
       if (this.value.delivery_schedule) {
         this.selectedStartDate = "Select date"
         this.selectedEndDate = "Select date"
         this.disableEndDate = true
         this.$set(this.value, "recurring", null)
+        this.resetSchedule()
       }
     },
 
