@@ -39,6 +39,7 @@ HEALTH_CHECK = "healthcheck"
 
 TOTAL_RECORDS = "total_records"
 MATCH_RATE = "match_rate"
+TOTAL = "total"
 TOTAL_UNIQUE_IDS = "total_unique_ids"
 TOTAL_UNKNOWN_IDS = "total_unknown_ids"
 TOTAL_KNOWN_IDS = "total_known_ids"
@@ -46,6 +47,7 @@ TOTAL_INDIVIDUAL_IDS = "total_individual_ids"
 TOTAL_HOUSEHOLD_IDS = "total_household_ids"
 UPDATED = "updated"
 TOTAL_CUSTOMERS = "total_customers"
+NEW_CUSTOMERS_ADDED = "new_customers_added"
 COUNTRIES = "total_countries"
 TOTAL_COUNT = "total_count"
 STATES = "total_us_states"
@@ -167,7 +169,6 @@ STATUS_WEIGHTS = {
     STATUS_NOT_DELIVERED: 9,
     STATUS_DELIVERING: 8,
     STATUS_DELIVERY_PAUSED: 7,
-    STATUS_ACTIVE: 6,
     STATUS_INACTIVE: 5,
     STATUS_DRAFT: 4,
     STATUS_PENDING: 3,
@@ -498,7 +499,6 @@ PARAMETER_STORE_ERROR_MSG = (
     "An error occurred while attempting to"
     " store secrets in the parameter store."
 )
-
 # users
 USER_TAG = "user"
 USER_NAME = "user_name"
@@ -510,6 +510,7 @@ USER_ENDPOINT = "/users"
 MODELS_TAG = "model"
 MODELS_DESCRIPTION = "MODEL API"
 MODELS_ENDPOINT = "/models"
+MODELS_VERSION_HISTORY = "version-history"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
 MODEL_ID = "model_id"
@@ -564,6 +565,7 @@ FEATURES = "features"
 JOIN_KEYS = "joinKeys"
 RESULTS = "results"
 LATEST_VERSION = "latest_version"
+VERSION = "version"
 FULCRUM_DATE = "fulcrum_date"
 LAST_TRAINED = "last_trained"
 LOOKBACK_WINDOW = "lookback_window"

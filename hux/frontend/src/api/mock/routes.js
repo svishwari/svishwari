@@ -350,6 +350,15 @@ export const defineRoutes = (server) => {
 
   server.get("/customers/overview", () => customersOverview)
 
+  server.get("/customers", (schema, request) => {
+    let currentBatch = request.queryParams.batch_number
+    let batchSize = request.queryParams.batch_size
+    let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
+    let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+    const customers = schema.customers.all().slice(initialCount, lastCount)
+    return customers
+  })
+
   server.post("/customers/overview", () => customersOverview)
 
   // identity resolution
@@ -365,8 +374,16 @@ export const defineRoutes = (server) => {
 
   // notifications
   server.get("/notifications", (schema, request) => {
-    const notifications = schema.notifications.all()
-    return notifications.slice(0, request.queryParams.batch_size)
+    let currentBatch = request.queryParams.batch_number
+    let batchSize = request.queryParams.batch_size
+    let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
+    let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+    let allNotifications = schema.notifications.all()
+    const notifications = {
+      notifications: allNotifications.models.slice(initialCount, lastCount),
+      total: allNotifications.length,
+    }
+    return notifications
   })
 
   // audiences

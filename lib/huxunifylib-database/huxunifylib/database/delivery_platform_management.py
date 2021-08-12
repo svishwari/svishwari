@@ -1044,7 +1044,7 @@ def set_delivery_job(
         c.AUDIENCE_ID: audience_id,
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
-        c.JOB_STATUS: c.STATUS_PENDING,
+        c.JOB_STATUS: c.AUDIENCE_STATUS_DELIVERING,
         c.DELIVERY_PLATFORM_ID: delivery_platform_id,
         c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (
             delivery_platform_generic_campaigns
@@ -1842,7 +1842,7 @@ def get_lookalike_audiences_count(database: DatabaseClient) -> int:
 def set_performance_metrics(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
-    delivery_platform_name: str,
+    delivery_platform_type: str,
     delivery_job_id: ObjectId,
     generic_campaigns: list,
     metrics_dict: dict,
@@ -1854,7 +1854,7 @@ def set_performance_metrics(
     Args:
         database (DatabaseClient): A database client.
         delivery_platform_id (ObjectId): delivery platform ID
-        delivery_platform_name (str): delivery platform name
+        delivery_platform_type (str): delivery platform type
         delivery_job_id (ObjectId): The delivery job ID of audience.
         generic_campaigns: (dict): generic campaigns
         metrics_dict (dict): A dict containing performance metrics.
@@ -1877,7 +1877,7 @@ def set_performance_metrics(
 
     doc = {
         c.METRICS_DELIVERY_PLATFORM_ID: delivery_platform_id,
-        c.METRICS_DELIVERY_PLATFORM_NAME: delivery_platform_name,
+        c.METRICS_DELIVERY_PLATFORM_TYPE: delivery_platform_type,
         c.DELIVERY_JOB_ID: delivery_job_id,
         c.CREATE_TIME: curr_time,
         c.METRICS_START_TIME: start_time,

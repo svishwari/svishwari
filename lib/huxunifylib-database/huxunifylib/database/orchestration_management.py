@@ -86,6 +86,61 @@ def create_audience(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def get_audience_by_filter(
+    database: DatabaseClient,
+    filter_dict: dict = None,
+    projection: dict = None,
+    sort_list: list = None,
+    limit: int = None,
+) -> Union[list, None]:
+    """A function to get all delivery platform lookalike audience configurations.
+
+    Args:
+        database (DatabaseClient): A database client.
+        filter_dict (dict): filter dictionary for adding custom filters.
+        projection (dict): Dict that specifies which fields to return or not return.
+        sort_list (list): List of tuples to sort by. Example: [(c.CREATE_TIME, pymongo.DESCENDING)]
+        limit (int): limit for number of audiences returned.
+
+    Returns:
+        Union[list, None]: List of all lookalike audience configurations.
+
+    """
+
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
+
+    # if deleted is not included in the filters, add it.
+    if filter_dict:
+        filter_dict[c.DELETED] = False
+    else:
+        filter_dict = {c.DELETED: False}
+
+    # exclude the deleted field from returning
+    if projection:
+        projection[c.DELETED] = 0
+    else:
+        projection = {c.DELETED: 0}
+
+    if not isinstance(limit, int) and limit is not None:
+        raise de.InvalidValueException(limit)
+
+    try:
+        cursor = collection.find(filter_dict, projection)
+
+        if sort_list:
+            cursor = cursor.sort(sort_list)
+
+        return list(cursor if limit else cursor.limit(limit))
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def get_audience(
     database: DatabaseClient,
     audience_id: ObjectId,

@@ -88,7 +88,7 @@
             <v-spacer></v-spacer>
 
             <span class="action-icon font-weight-light float-right d-none">
-              <v-menu class="menu-wrapper" bottom offset-y>
+              <v-menu v-model="openMenu" class="menu-wrapper" bottom offset-y>
                 <template #activator="{ on, attrs }">
                   <v-icon
                     v-if="!section.lookalike"
@@ -281,9 +281,10 @@ export default {
 
   data() {
     return {
+      openMenu: null,
+      isSubMenuOpen: null,
       showDeliveryAlert: false,
       selection: null,
-      isSubMenuOpen: false,
       lookALikeAllowedEntries: ["Facebook"],
       engagementMenuOptions: [
         { id: 1, title: "View delivery history", active: false },
@@ -331,6 +332,12 @@ export default {
       return this.sectionType === "engagement"
         ? this.destinationMenuOptions
         : []
+    },
+  },
+
+  watch: {
+    isSubMenuOpen(newValue) {
+      this.openMenu = newValue
     },
   },
 
@@ -557,6 +564,7 @@ export default {
     }
   }
 }
+
 ::v-deep.v-menu__content {
   .v-list-item {
     &.theme--light {
