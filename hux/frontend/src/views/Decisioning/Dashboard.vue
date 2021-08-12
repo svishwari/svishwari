@@ -176,10 +176,17 @@ export default {
 
   async mounted() {
     this.loading = true
-    this.chartDimensions.width = this.$refs.drift.clientWidth - 110
+    this.chartDimensions.width = this.$refs.drift.clientWidth
     this.chartDimensions.height = 520
     await this.getOverview(this.$route.params.id)
     this.loading = false
+  },
+
+  created() {
+    window.addEventListener("resize", this.sizeHandler)
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.sizeHandler)
   },
 
   methods: {
@@ -188,6 +195,9 @@ export default {
     }),
     xAxisFormatingFunc(date) {
       return `${date.getMonth() + 1}/${date.getDate()}`
+    },
+    sizeHandler() {
+      this.chartDimensions.width = this.$refs.drift.clientWidth
     },
   },
 }

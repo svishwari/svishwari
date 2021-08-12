@@ -113,16 +113,23 @@ export default {
     }
   },
 
+  watch: {
+    chartDimensions: {
+      handler() {
+        d3Select.select(this.$refs["hux-drift-chart"]).selectAll("svg").remove()
+        this.generateChart()
+      },
+      immediate: false,
+      deep: true,
+    },
+  },
+
   mounted() {
     this.generateChart()
   },
 
   methods: {
     async generateChart() {
-      // TODO list:
-      // margins,
-      // height, width,
-      d3Select.select(this.$refs["hux-drift-chart"]).selectAll("svg").remove()
       let width = this.chartDimensions.width
       let height = this.chartDimensions.height
 
