@@ -5,7 +5,7 @@ RUN echo -e "TAVERN_TEST_HOST=$TAVERN_TEST_HOST_ARG" \
     "\TAVERN_TEST_API_VERSION=$TAVERN_TEST_API_VERSION_ARG" \ > /tmp/env_file
 
 # build the test environment
-FROM python:3.7-slim-buster AS hux-unified
+FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
 
 # set the work dir on the docker image
 WORKDIR /app/hux-unified/integration_tests/api
