@@ -38,4 +38,3 @@ docs/build/*
 .vscode/
 .idea/
 /lib/huxunifylib-database/huxunifylib/database/tests/.hypothesis/
-/hux/api/.eggs/
