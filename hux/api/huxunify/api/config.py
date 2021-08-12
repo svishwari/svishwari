@@ -102,6 +102,20 @@ class Config:
         ),
     )
 
+    # campaign data performance router scheduled event name
+    CDPR_EVENT_NAME_CONST = "cdpr-event"
+    CDPR_EVENT_NAME = config(
+        CDPR_EVENT_NAME_CONST,
+        default="campaign-performance-router-scheduler",
+    )
+
+    # feedback loop data router scheduled event name
+    FLDR_EVENT_NAME_CONST = "fldr-event"
+    FLDR_EVENT_NAME = config(
+        FLDR_EVENT_NAME_CONST,
+        default="campaign-performance-router-scheduler",
+    )
+
     CDP_SERVICE = config(
         "CDP_SERVICE",
         default="https://customer-profile-api.main.use1.hux-unified-dev1.in",
