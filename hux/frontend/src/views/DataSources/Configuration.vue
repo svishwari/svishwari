@@ -50,7 +50,7 @@
             :is-available="dataSource.is_enabled"
             :is-already-added="dataSource.is_added"
             class="my-3"
-            data-e2e="e2edataSourcesAddList"
+            data-e2e="dataSourcesAddList"
             @click="onDataSourceClick(dataSource.id)"
           />
 

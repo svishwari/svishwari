@@ -21,7 +21,7 @@
         :title="dataSource.name"
         :icon="dataSource.type"
         hide-button
-        data-e2e="e2edataSourcesList"
+        data-e2e="dataSourcesList"
         class="mb-3 pr-10 list"
       >
         <status :status="dataSource.status" :icon-size="17" class="status" />
