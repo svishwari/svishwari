@@ -71,7 +71,7 @@ describe("Tests data souces and destinations in connections", () => {
     cy.get("button").contains("Add 1 data source").click();
     cy.location("pathname").should("eq", route.connections);
     
-    //wait for 1 sec for change to happen
+    // TODO: improve waiting for the data source list to load
     cy.wait(1000)
 
     //make sure that number of data sources have increased by 1
