@@ -13,7 +13,7 @@ stages:
 steps:
   prepare_build_details:
     stage: prepare
-    title: Prepare Build Details
+    title: "Preparing build details."
     type: parallel
     steps:
       get_trigger_name:
@@ -27,14 +27,14 @@ steps:
 
   clone_repository:
     stage: git
-    title: Cloning ${{CF_REPO_NAME}} repository...
+    title: "Cloning ${{CF_REPO_NAME}} repository."
     type: git-clone
     repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
     revision: "${{CF_BRANCH}}"
 
   number_tag:
     stage: build_tag
-    description: Set docker tag from build number
+    description: "Set docker tag from build number."
     type: freestyle
     image: huxhub.repo.mgnt.in/alpine
     commands:
@@ -42,7 +42,7 @@ steps:
 
   version_tag:
     stage: build_tag
-    description: Set docker tag based Git tag
+    description: "Set docker tag based Git tag."
     type: freestyle
     image: huxhub.repo.mgnt.in/alpine
     commands:
@@ -54,7 +54,7 @@ steps:
 
   set_env:
     stage: set_env
-    title: Set environment variables
+    title: "Set environment variables."
     type: freestyle
     image: huxhub.repo.mgnt.in/alpine
     working_directory: "${{CF_REPO_NAME}}"
@@ -73,21 +73,23 @@ steps:
     no_cache: false
     no_cf_cache: false
 
-  lint:
+  tests:
     stage: tests
-    title: "Running lint."
-    image: ${{test_image}}
-    working_directory: "/app"
-    commands:
-      - yarn lint
-
-  unit_tests:
-    stage: tests
-    title: "Running unit tests."
-    image: ${{test_image}}
-    working_directory: "/app"
-    commands:
-      - yarn test:unit
+    type: parallel
+    steps:
+      lint:
+        title: "Running lint."
+        image: ${{test_image}}
+        working_directory: /app
+        commands:
+          - yarn lint
+      unit_tests:
+        stage: tests
+        title: "Running unit tests."
+        image: ${{test_image}}
+        working_directory: /app
+        commands:
+          - yarn test:unit
 
   app_image:
     stage: build_app
@@ -107,7 +109,7 @@ steps:
 
   publish_to_artifactory:
     stage: artifactory
-    title: Publish artifact and codefresh build info to Artifactory
+    title: "Publish artifact and codefresh build info to Artifactory."
     type: deloittehux/jfrog-docker-publish
     arguments:
       BUILD_NAME: "${{BUILD_NAME}}"
@@ -122,7 +124,7 @@ steps:
 
   deployment:
     stage: argo_deploy
-    description: "Deploy the application"
+    description: "Deploy the application."
     type: freestyle
     image: huxhub.repo.mgnt.in/codefresh/cli:latest
     commands:
