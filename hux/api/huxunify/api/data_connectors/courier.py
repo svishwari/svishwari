@@ -411,7 +411,6 @@ def get_audience_destination_pairs(audiences: list) -> list:
     ]
 
 
-# pylint: disable=too-many-instance-attributes
 def toggle_event_driven_routers(
     database: DatabaseClient,
     state: CloudWatchState = None,
@@ -422,6 +421,7 @@ def toggle_event_driven_routers(
     Args:
         database (DatabaseClient): Mongo database client.
         state (CloudWatchState): Cloudwatch toggle state enum.
+        routers (list): List of router names to toggle.
 
     Returns:
 
@@ -436,7 +436,6 @@ def toggle_event_driven_routers(
     if state is None:
         # set state based on active engagements
         # if there are active engagements, the router should be enabled.
-        # plylin
         state = (
             CloudWatchState.ENABLE
             if active_engagements
