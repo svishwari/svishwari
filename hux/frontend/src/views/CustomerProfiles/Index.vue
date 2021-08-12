@@ -177,14 +177,14 @@
         </v-col>
         <v-col md="6">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <v-card-title class="chart-style pb-1 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
                   Gender / monthly spending in 2021
                 </span>
               </div>
             </v-card-title>
-            <empty-state-chart />
+            <gender-spend-chart />
           </v-card>
         </v-col>
         <v-col md="3">
@@ -224,6 +224,7 @@ import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
 import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
+import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import MapChart from "@/components/common/MapChart/MapChart"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import mapData from "@/components/common/MapChart/mapData.json"
@@ -243,6 +244,7 @@ export default {
     Icon,
     CustomerDetails,
     IncomeChart,
+    GenderSpendChart,
     MapChart,
     MapStateList,
     mapSlider,
