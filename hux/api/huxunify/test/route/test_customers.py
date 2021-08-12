@@ -28,6 +28,7 @@ from huxunify.api.schema.customers import (
     CustomerIncomeInsightsSchema,
     MatchingTrendsSchema,
     CustomerEventsSchema,
+    TotalCustomersInsightsSchema,
 )
 from huxunify.app import create_app
 
@@ -429,4 +430,28 @@ class TestCustomersOverview(TestCase):
 
         self.assertTrue(
             t_c.validate_schema(CustomerEventsSchema(), response.json, True)
+        )
+
+    def test_total_customer_insights(self):
+        """
+        Test get total customer insights
+
+        Args:
+
+        Returns:
+
+        """
+        self.request_mocker.stop()
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.TOTAL}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(
+                TotalCustomersInsightsSchema(), response.json, True
+            )
         )

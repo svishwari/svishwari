@@ -2,7 +2,6 @@
 Purpose of this file is for holding methods to query and pull data from CDP.
 """
 import datetime
-import logging
 import time
 import asyncio
 import math
@@ -16,6 +15,7 @@ from bson import ObjectId
 from dateutil.parser import parse, ParserError
 
 from huxunifylib.database import constants as db_c
+from huxunifylib.util.general.logging import logger
 
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
@@ -52,6 +52,7 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
+        logger.error("CDM Health Check failed with %s.", repr(exception))
         return False, getattr(exception, "message", repr(exception))
 
 
@@ -70,7 +71,7 @@ def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
 
     # get config
     config = get_config()
-
+    logger.info("Getting Customer Profiles info from CDP API.")
     response = requests.get(
         f"{config.CDP_SERVICE}/customer-profiles?limit={batch_size}&offset={offset}",
         headers={
@@ -79,9 +80,14 @@ def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Unable to get Customer Profiles from CDP API got %s.",
+            response.status_code,
+        )
         return {}
 
     response_data = response.json()[api_c.BODY]
+    logger.info("Successfully retrieved Customer Profiles info from CDP API.")
     return {
         api_c.TOTAL_CUSTOMERS: len(response_data),
         api_c.CUSTOMERS_TAG: response_data,
@@ -102,7 +108,7 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
 
     # get config
     config = get_config()
-
+    logger.info("Getting Customer Profile info for %s from CDP API.", hux_id)
     response = requests.get(
         f"{config.CDP_SERVICE}/customer-profiles/{hux_id}",
         headers={
@@ -111,8 +117,17 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Unable to get Customer Profile info for %s from CDP API got %s.",
+            hux_id,
+            response.status_code,
+        )
         return {}
 
+    logger.info(
+        "Successfully retrieved Customer Profile info for %s from CDP API.",
+        hux_id,
+    )
     return clean_cdm_fields(response.json()[api_c.BODY])
 
 
@@ -134,7 +149,7 @@ def get_customers_overview(
 
     # get config
     config = get_config()
-
+    logger.info("Getting Customer Profile Insights from CDP API.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights",
         json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
@@ -144,8 +159,15 @@ def get_customers_overview(
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Could not get customer profile insights from CDP API got %s %s.",
+            response.status_code,
+            response.text,
+        )
         return {}
-
+    logger.info(
+        "Successfully retrieved Customer Profile Insights from CDP API."
+    )
     return clean_cdm_fields(response.json()[api_c.BODY])
 
 
@@ -193,7 +215,7 @@ def get_customers_count_async(
 
     # log execution time summary
     total_ticks = time.perf_counter() - timer
-    logging.info(
+    logger.info(
         "Executed %s requests to the customer API in %0.4f seconds. ~%0.4f requests per second.",
         len(audiences),
         total_ticks,
@@ -255,8 +277,8 @@ async def get_async_customers(
             try:
                 return await response.json(), str(audience_id)
             except aiohttp.client.ContentTypeError:
-                logging.error(
-                    "CDM post request failed for audience id %s", audience_id
+                logger.error(
+                    "CDM post request failed for audience id %s.", audience_id
                 )
                 return {"code": 500}, str(audience_id)
 

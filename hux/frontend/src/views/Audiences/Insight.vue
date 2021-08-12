@@ -964,4 +964,7 @@ export default {
   line-height: 19px;
   color: var(--v-primary-base) !important;
 }
+::v-deep .v-snack__wrapper {
+  max-width: 1300px !important;
+}
 </style>

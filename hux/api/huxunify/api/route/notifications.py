@@ -9,6 +9,7 @@ import pymongo
 from flask import Blueprint, request
 from flasgger import SwaggerView
 
+from huxunifylib.util.general.logging import logger
 from huxunifylib.database import (
     constants as db_c,
     notification_management,
@@ -115,6 +116,7 @@ class NotificationsSearch(SwaggerView):
                 not in [db_c.PAGINATION_ASCENDING, db_c.PAGINATION_DESCENDING]
             )
         ):
+            logger.error("Invalid or incomplete arguments received.")
             return {
                 "message": "Invalid or incomplete arguments received"
             }, HTTPStatus.BAD_REQUEST
