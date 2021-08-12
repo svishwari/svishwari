@@ -90,6 +90,6 @@ describe("Tests data souces and destinations in connections", () => {
   it("testing data management > connections > destinations", () => {
     cy.location("pathname").should("eq", route.connections);
     cy.get(selector._destinations_).its("length").should('be.gt',0);
-    });
+  });
 
 });
