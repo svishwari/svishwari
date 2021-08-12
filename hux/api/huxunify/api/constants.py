@@ -322,7 +322,7 @@ AUTH401_ERROR_MESSAGE = "Access token is missing or invalid."
 INVALID_OBJECT_ID = "Object ID is not valid."
 BSON_INVALID_ID = (
     lambda invalid_id: f"'{invalid_id}' is not a valid ObjectId, it must be a "
-                       f"12-byte input or a 24-character hex string"
+    f"12-byte input or a 24-character hex string"
 )
 
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
