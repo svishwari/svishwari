@@ -38,7 +38,7 @@
 
 <script>
 export default {
-  name: "AreaChartTooltip",
+  name: "LineAreaChartTooltip",
   props: {
     position: {
       type: Object,

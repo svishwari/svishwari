@@ -276,7 +276,7 @@
               </span>
             </div>
           </v-card-title>
-          <area-chart />
+          <gender-spend-chart />
         </v-card>
       </v-col>
       <v-col md="3">
@@ -397,7 +397,7 @@ import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Draw
 import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations.vue"
 import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
-import AreaChart from "@/components/common/AreaChart/AreaChart"
+import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 
 export default {
   name: "AudienceInsight",
@@ -425,7 +425,7 @@ export default {
     SelectDestinationsDrawer,
     Size,
     Tooltip,
-    AreaChart,
+    GenderSpendChart,
   },
   data() {
     return {

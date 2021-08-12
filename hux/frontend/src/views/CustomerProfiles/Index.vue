@@ -184,7 +184,7 @@
                 </span>
               </div>
             </v-card-title>
-            <area-chart />
+            <gender-spend-chart />
           </v-card>
         </v-col>
         <v-col md="3">
@@ -224,7 +224,7 @@ import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
 import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
-import AreaChart from "@/components/common/AreaChart/AreaChart"
+import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import MapChart from "@/components/common/MapChart/MapChart"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import mapData from "@/components/common/MapChart/mapData.json"
@@ -244,7 +244,7 @@ export default {
     Icon,
     CustomerDetails,
     IncomeChart,
-    AreaChart,
+    GenderSpendChart,
     MapChart,
     MapStateList,
     mapSlider,

@@ -8,7 +8,7 @@
         @tooltipDisplay="toolTipDisplay"
       />
     </div>
-    <area-chart-tooltip
+    <line-area-chart-tooltip
       :position="{
         x: tooltip.x,
         y: tooltip.y,
@@ -16,19 +16,19 @@
       :show-tooltip="show"
       :source-input="currentData"
     >
-    </area-chart-tooltip>
+    </line-area-chart-tooltip>
   </div>
 </template>
 
 <script>
-import AreaChartTooltip from "@/components/common/AreaChart/AreaChartTooltip"
-import LineAreaChart from "@/components/common/AreaChart/LineAreaChart"
+import LineAreaChartTooltip from "@/components/common/GenderSpendChart/LineAreaChartTooltip"
+import LineAreaChart from "@/components/common/GenderSpendChart/LineAreaChart"
 //TODO: API Integration
-import data from "./areaChart.json"
+import data from "./genderSpendChart.json"
 
 export default {
-  name: "AreaChart",
-  components: { LineAreaChart, AreaChartTooltip },
+  name: "GenderSpendChart",
+  components: { LineAreaChart, LineAreaChartTooltip },
   data() {
     return {
       show: false,
