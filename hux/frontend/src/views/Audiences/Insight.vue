@@ -397,7 +397,7 @@ import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Draw
 import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations.vue"
 import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
-import AreaChart from "@/components/common/areaChart/AreaChart"
+import AreaChart from "@/components/common/AreaChart/AreaChart"
 
 export default {
   name: "AudienceInsight",

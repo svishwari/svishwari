@@ -11,25 +11,25 @@
     >
       <div class="bar-hover">
         <div color="naroBlack">
-          {{ sourceInput.date | date("MMM DD [,] YYYY") }}
+          {{ sourceInput.date | date("MMM DD[,] YYYY") }}
         </div>
         <div>
-          <span class="append-circle color-women"></span
-          ><span class="font-size-tooltip">{{
-            sourceInput.women_spend | currency
-          }}</span>
+          <span class="append-circle color-women"></span>
+          <span class="font-size-tooltip">
+            {{ sourceInput.women_spend | currency }}
+          </span>
         </div>
         <div>
-          <span class="append-circle color-men"></span
-          ><span class="font-size-tooltip">{{
-            sourceInput.men_spend | currency
-          }}</span>
+          <span class="append-circle color-men"></span>
+          <span class="font-size-tooltip">
+            {{ sourceInput.men_spend | currency }}
+          </span>
         </div>
         <div>
-          <span class="append-circle color-other"></span
-          ><span class="font-size-tooltip">{{
-            sourceInput.others_spend | currency
-          }}</span>
+          <span class="append-circle color-other"></span>
+          <span class="font-size-tooltip">
+            {{ sourceInput.others_spend | currency }}
+          </span>
         </div>
       </div>
     </v-card>
@@ -97,7 +97,7 @@ export default {
   max-width: 110px;
   height: 110px;
   top: -420px;
-  left: -242px;
+  left: -240px;
   z-index: 1;
 }
 .append-circle {
@@ -125,5 +125,7 @@ export default {
   font-size: 12px;
   line-height: 16px;
   color: var(--v-gray-base);
+  position: absolute;
+  margin-top: 5px;
 }
 </style>

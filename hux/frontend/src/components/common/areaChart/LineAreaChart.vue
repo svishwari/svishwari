@@ -166,7 +166,8 @@ export default {
         stackedData.push(currentStack)
       })
 
-      let appendyAxisFormate = (text) => `$${parseInt(text / 1000) + "k"}`
+      let appendyAxisFormat = (text) =>
+        `$${this.$options.filters.Numeric(text, false, true, false)}`
 
       let yScale = d3Scale
         .scaleLinear()
@@ -200,13 +201,23 @@ export default {
         .append("path")
         .attr("transform", `translate(${margin.left},0)`)
         .style("fill", (d, i) => colorCodes[i])
-        .attr("stroke", (d, i) => colorCodes[i])
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-linecap", "round")
-        .attr("stroke-width", 2)
         .attr("stroke-width", 2)
         .attr("fill-opacity", 0.5)
         .attr("d", (d) => area(d))
+
+      let lineStock = d3Shape
+        .line()
+        .x((dataPoint) => xScale(dataPoint.date))
+        .y((dataPoint) => yScale(dataPoint.values[1]))
+
+      series
+        .append("path")
+        .attr("transform", `translate(${margin.left},0)`)
+        .attr("class", "line")
+        .style("stroke", (d, i) => colorCodes[i])
+        .attr("stroke-width", 2)
+        .style("fill", "none")
+        .attr("d", (d) => lineStock(d))
 
       chart
         .append("g")
@@ -226,7 +237,7 @@ export default {
         .append("g")
         .attr("transform", "translate(0, 0)")
         .attr("fill", "#4f4f4f")
-        .call(d3Axis.axisLeft(yScale).ticks(6).tickFormat(appendyAxisFormate))
+        .call(d3Axis.axisLeft(yScale).ticks(6).tickFormat(appendyAxisFormat))
         .call((g) => g.selectAll(".tick line").attr("stroke", "#ECECEC"))
         .call((g) => g.selectAll("path").attr("stroke", "#ECECEC"))
         .style("font-size", 12)

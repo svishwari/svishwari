@@ -21,8 +21,8 @@
 </template>
 
 <script>
-import AreaChartTooltip from "@/components/common/areaChart/AreaChartTooltip"
-import LineAreaChart from "@/components/common/areaChart/LineAreaChart"
+import AreaChartTooltip from "@/components/common/AreaChart/AreaChartTooltip"
+import LineAreaChart from "@/components/common/AreaChart/LineAreaChart"
 //TODO: API Integration
 import data from "./areaChart.json"
 
