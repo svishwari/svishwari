@@ -815,3 +815,63 @@ def remove_destination_from_engagement_audience(
             },
         },
     )
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def check_active_engagement_deliveries(
+    database: DatabaseClient,
+) -> Union[list, None]:
+    """A function to get all the active engagement deliveries.
+
+    Args:
+        database (DatabaseClient): A database client.
+
+    Returns:
+        Union[list, None]: List of all engagement documents.
+
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
+
+    pipeline = [
+        {"$match": {"status": "Active", "deleted": False}},
+        {
+            "$unwind": {
+                "path": "$audiences",
+                "preserveNullAndEmptyArrays": False,
+            }
+        },
+        {"$unwind": {"path": "$audiences.destinations"}},
+        {
+            "$match": {
+                "audiences.destinations.delivery_job_id": {"$exists": True}
+            }
+        },
+        {
+            "$addFields": {
+                "delivery_job_id": "$audiences.destinations.delivery_job_id"
+            }
+        },
+        {
+            "$lookup": {
+                "from": "delivery_jobs",
+                "localField": "delivery_job_id",
+                "foreignField": "_id",
+                "as": "delivery_job_id",
+            }
+        },
+        {"$unwind": {"path": "$delivery_job_id"}},
+        {"$match": {"delivery_job_id.status": "Delivered"}},
+    ]
+
+    try:
+        return list(collection.aggregate(pipeline))
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
