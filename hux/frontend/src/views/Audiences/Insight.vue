@@ -370,7 +370,6 @@ import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import DeliveryOverview from "@/components/DeliveryOverview.vue"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
-import EmptyStateChart from "@/components/common/EmptyStateChart"
 import genderData from "@/components/common/DoughnutChart/genderData.json"
 import HuxAlert from "@/components/common/HuxAlert.vue"
 import Icon from "@/components/common/Icon.vue"
@@ -406,7 +405,6 @@ export default {
     DestinationDataExtensionDrawer,
     DoughnutChart,
     EditDeliverySchedule,
-    EmptyStateChart,
     HuxAlert,
     Icon,
     IncomeChart,
