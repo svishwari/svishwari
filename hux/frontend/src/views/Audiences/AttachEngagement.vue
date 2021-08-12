@@ -241,8 +241,11 @@
                     />
                   </div>
                 </v-row>
-                <v-row class="delivery-schedule ml-0 mt-8" v-if="newEngagement.delivery_schedule == 1">
-                  <hux-schedule-picker v-model="schedule"/>
+                <v-row
+                  v-if="newEngagement.delivery_schedule == 1"
+                  class="delivery-schedule ml-0 mt-8"
+                >
+                  <hux-schedule-picker v-model="schedule" />
                 </v-row>
               </v-form>
             </div>
@@ -395,7 +398,7 @@ export default {
       fetchEngagements: "engagements/getAll",
       addEngagementToDB: "engagements/add",
     }),
-     resetSchedule() {
+    resetSchedule() {
       this.schedule = JSON.parse(JSON.stringify(DefaultDeliverySchedule))
     },
     isEngagementSelected: function (engagement) {

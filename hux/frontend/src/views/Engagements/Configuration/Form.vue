@@ -128,7 +128,10 @@
         </v-row>
 
         <v-row class="delivery-schedule mt-8">
-          <hux-schedule-picker v-model="schedule" v-if="value.delivery_schedule == 1"/>
+          <hux-schedule-picker
+            v-if="value.delivery_schedule == 1"
+            v-model="schedule"
+          />
         </v-row>
       </form-step>
 
