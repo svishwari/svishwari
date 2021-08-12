@@ -104,10 +104,14 @@ export default {
           "transform",
           "translate(" + this.margin.left + "," + this.margin.top + ")"
         )
-        
+
       let xAxisDomain = d3Array.extent(this.chartData, (d) => d.score)
-      
-      let x = d3Scale.scaleLinear().domain(xAxisDomain).range([0, this.width]).nice(5)
+
+      let x = d3Scale
+        .scaleLinear()
+        .domain(xAxisDomain)
+        .range([0, this.width])
+        .nice(5)
 
       let y = d3Scale
         .scaleBand()

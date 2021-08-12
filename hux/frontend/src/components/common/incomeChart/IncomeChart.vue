@@ -1,10 +1,10 @@
 <template>
   <div ref="incomeChart" class="container">
-      <horizontal-bar-chart
-        v-model="incomes"
-        @cordinates="getCordinates"
-        @tooltipDisplay="toolTipDisplay"
-      />
+    <horizontal-bar-chart
+      v-model="incomes"
+      @cordinates="getCordinates"
+      @tooltipDisplay="toolTipDisplay"
+    />
     <bar-chart-tooltip
       :position="{
         x: tooltip.x,
@@ -62,7 +62,7 @@ export default {
       this.tooltip.x = args.x
       this.tooltip.y = args.y
     },
-        sizeHandler() {
+    sizeHandler() {
       this.chartDimensions.width = this.$refs.incomeChart.clientWidth
       this.chartDimensions.height = this.$refs.incomeChart.clientHeight
     },
