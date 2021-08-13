@@ -95,7 +95,7 @@
               <drift-chart
                 v-model="driftChartData"
                 :chart-dimensions="chartDimensions"
-                :x-axis-formating-func="xAxisFormatingFunc"
+                x-axis-format="%m/%d"
                 :enable-grid="[false, true]"
               />
             </div>
@@ -211,9 +211,6 @@ export default {
     ...mapActions({
       getOverview: "models/getOverview",
     }),
-    xAxisFormatingFunc(date) {
-      return `${date.getMonth() + 1}/${date.getDate()}`
-    },
     sizeHandler() {
       this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     },

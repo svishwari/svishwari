@@ -13,6 +13,7 @@ import * as d3Scale from "d3-scale"
 import * as d3Axis from "d3-axis"
 import * as d3Shape from "d3-shape"
 import * as d3Array from "d3-array"
+import * as d3TimeFormat from "d3-time-format"
 
 import ChartTooltip from "@/components/common/Charts/Tooltip/Tooltip.vue"
 
@@ -43,12 +44,10 @@ export default {
       required: false,
       default: 5,
     },
-    xAxisFormatingFunc: {
-      type: Function,
+    xAxisFormat: {
+      type: String,
       required: false,
-      default: (x) => {
-        return x
-      },
+      default: "%Y",
     },
     yAxisFormatingFunc: {
       type: Function,
@@ -172,7 +171,7 @@ export default {
             .tickSize(this.enableGrid[0] ? -height : 0)
             .tickPadding(this.tickPadding)
             .ticks(this.xAxisMaxTicks)
-            .tickFormat((d) => this.xAxisFormatingFunc(d))
+            .tickFormat(d3TimeFormat.timeFormat(this.xAxisFormat))
         )
 
       // generates y-axis
