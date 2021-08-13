@@ -2,7 +2,6 @@ version: "1.0"
 stages:
   - clone
   - checks
-  - publish
 
 steps:
 
@@ -36,23 +35,3 @@ steps:
         environment:
           - TOXENV=checkCoverage
     fail_fast: false
-
-  publish:
-    stage: publish
-    when:
-      branch:
-        only:
-          - /^script.*/i
-    description: "Publish the package on server tag creation"
-    image: "python:3.7-buster"
-    working_directory: "/codefresh/volume/${{CF_REPO_NAME}}/scripts"
-    commands:
-      - pip install --upgrade pip
-      - pip install build twine
-      - rm -rf ./dist
-      - python -m build -s -w . --outdir ./dist
-      - twine upload ./dist/*
-    environment:
-      - TWINE_USERNAME=${{TWINE_USERNAME}}
-      - TWINE_PASSWORD=${{TWINE_PASSWORD}}
-      - TWINE_REPOSITORY_URL=${{ARTIFACTORY_PYTHON_WRITE}}
