@@ -93,7 +93,7 @@
             </div>
             <div ref="decisioning-drift">
               <drift-chart
-                v-model="lineChartData"
+                v-model="driftChartData"
                 :chart-dimensions="chartDimensions"
                 :x-axis-formating-func="xAxisFormatingFunc"
                 :enable-grid="[false, true]"
@@ -124,7 +124,7 @@ import FeatureChart from "@/components/common/featureChart/FeatureChart"
 import LiftChart from "@/components/common/LiftChart.vue"
 import DriftChart from "@/components/common/Charts/DriftChart/DriftChart.vue"
 
-import LineChartData from "@/api/mock/factories/lineChartData.json"
+import DriftChartData from "@/api/mock/factories/driftChartData.json"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import { mapGetters, mapActions } from "vuex"
@@ -146,7 +146,7 @@ export default {
         width: 0,
         height: 0,
       },
-      lineChart: LineChartData.data,
+      chartData: DriftChartData.data,
     }
   },
 
@@ -155,8 +155,8 @@ export default {
       model: "models/overview",
     }),
 
-    lineChartData() {
-      let data = this.lineChart.map((each) => {
+    driftChartData() {
+      let data = this.chartData.map((each) => {
         return {
           xAxisValue: new Date(each.run_date),
           yAxisValue: each.drift,
