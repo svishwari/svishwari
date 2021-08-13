@@ -13,7 +13,6 @@ from huxunify.api.config import get_config
 from huxunify.api import constants
 from huxunify.api.schema.model import (
     ModelVersionSchema,
-    FeatureImportance,
     FeatureSchema,
     DriftSchema,
     LiftSchema,
@@ -198,20 +197,6 @@ def get_model_lift(name: str) -> List[LiftSchema]:
 
     Returns:
          List[LiftSchema] List of model lift.
-    """
-    # TODO - when available.
-    return []
-
-
-# pylint: disable=unused-argument
-def get_model_feature_importance(name: str) -> List[FeatureImportance]:
-    """Get model feature importance based on name.
-
-    Args:
-        name (str): model name.
-
-    Returns:
-         List[FeatureImportance] List of model feature importance.
     """
     # TODO - when available.
     return []

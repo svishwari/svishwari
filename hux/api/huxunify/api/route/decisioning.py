@@ -2,7 +2,6 @@
 purpose of this script is for housing the decision routes for the API.
 """
 from datetime import datetime
-from random import uniform
 from http import HTTPStatus
 from typing import Tuple, List
 
@@ -190,40 +189,6 @@ class ModelOverview(SwaggerView):
         """
         model_id = int(model_id)
 
-        feature_importance_data = api_c.SUPPORTED_MODELS[model_id].get(
-            api_c.FEATURE_IMPORTANCE, None
-        )
-
-        if feature_importance_data:
-            feature_importance_data = sorted(
-                [
-                    {
-                        api_c.NAME: feature_importance_data[api_c.NAME][x],
-                        api_c.DESCRIPTION: feature_importance_data[
-                            api_c.DESCRIPTION
-                        ][x],
-                        api_c.SCORE: feature_importance_data[api_c.SCORE][x],
-                    }
-                    for x in range(0, 20)
-                ],
-                key=lambda x: x[api_c.SCORE],
-                reverse=True,
-            )
-        else:
-            # stubbing out feature importance data if not present
-            feature_importance_data = sorted(
-                [
-                    {
-                        api_c.NAME: f"feature name {x}",
-                        api_c.DESCRIPTION: f"description of feature name {x}",
-                        api_c.SCORE: round(uniform(0, 0.25), 2),
-                    }
-                    for x in range(1, 21)
-                ],
-                key=lambda x: x[api_c.SCORE],
-                reverse=True,
-            )
-
         output = {
             api_c.MODEL_ID: model_id,
             api_c.MODEL_TYPE: api_c.SUPPORTED_MODELS[model_id][
@@ -244,7 +209,6 @@ class ModelOverview(SwaggerView):
                 ],
                 api_c.RMSE: api_c.SUPPORTED_MODELS[model_id][api_c.RMSE],
             },
-            api_c.FEATURE_IMPORTANCE: feature_importance_data,
             api_c.LIFT_DATA: [
                 {
                     api_c.BUCKET: api_c.SUPPORTED_MODELS[model_id][
@@ -410,12 +374,12 @@ class ModelFeaturesView(SwaggerView):
 
 @add_view_to_blueprint(
     model_bp,
-    f"{api_c.MODELS_ENDPOINT}/<model_id>/top-features",
-    "ModelTopFeaturesView",
+    f"{api_c.MODELS_ENDPOINT}/<model_id>/feature-importance",
+    "ModelImportanceFeaturesView",
 )
-class ModelTopFeaturesView(SwaggerView):
+class ModelImportanceFeaturesView(SwaggerView):
     """
-    Model Top Features Class
+    Model Feature Importance Class
     """
 
     parameters = [
@@ -428,10 +392,18 @@ class ModelTopFeaturesView(SwaggerView):
             "required": False,
             "example": "21.7.31",
         },
+        {
+            "name": api_c.LIMIT,
+            "description": "Limit of features to pull, default is 20.",
+            "type": "int",
+            "in": "path",
+            "required": False,
+            "example": 20,
+        },
     ]
     responses = {
         HTTPStatus.OK.value: {
-            "description": "Model top features.",
+            "description": "Model feature importance.",
             "schema": {"type": "array", "items": ModelVersionSchema},
         },
     }
