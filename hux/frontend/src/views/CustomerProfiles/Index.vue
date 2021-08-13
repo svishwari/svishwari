@@ -165,26 +165,26 @@
       <v-row class="px-15 mt-2">
         <v-col md="3">
           <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <v-card-title class="chart-style pb-0 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
                   Top location & Income
                 </span>
               </div>
             </v-card-title>
-            <empty-state-chart />
+            <income-chart />
           </v-card>
         </v-col>
         <v-col md="6">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <v-card-title class="chart-style pb-1 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
                   Gender / monthly spending in 2021
                 </span>
               </div>
             </v-card-title>
-            <empty-state-chart />
+            <gender-spend-chart />
           </v-card>
         </v-col>
         <v-col md="3">
@@ -203,11 +203,6 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-row v-if="customersInsights" class="px-15 mt-2">
-        <v-col cols="3">
-          <income-chart />
-        </v-col>
-      </v-row>
       <customer-details v-model="customerProfilesDrawer" />
     </div>
   </div>
@@ -219,11 +214,11 @@ import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import Tooltip from "@/components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
-import EmptyStateChart from "@/components/common/EmptyStateChart"
 import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
 import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
+import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import MapChart from "@/components/common/MapChart/MapChart"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import mapData from "@/components/common/MapChart/mapData.json"
@@ -235,7 +230,6 @@ export default {
   name: "CustomerProfiles",
   components: {
     MetricCard,
-    EmptyStateChart,
     PageHeader,
     Breadcrumb,
     Tooltip,
@@ -243,6 +237,7 @@ export default {
     Icon,
     CustomerDetails,
     IncomeChart,
+    GenderSpendChart,
     MapChart,
     MapStateList,
     mapSlider,

@@ -780,6 +780,19 @@ class OrchestrationRouteTest(TestCase):
         Returns:
         """
 
+        # setup facebook connector mock address
+        mock.patch.object(
+            FacebookConnector,
+            "check_connection",
+            return_value=True,
+        ).start()
+
+        mock.patch.object(
+            FacebookConnector,
+            "get_new_lookalike_audience",
+            return_value="LA_ID_12345",
+        ).start()
+
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
@@ -791,7 +804,7 @@ class OrchestrationRouteTest(TestCase):
             },
         )
 
-        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+        valid_response = {"message": api_c.BSON_INVALID_ID("bad_id1")}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -814,7 +827,7 @@ class OrchestrationRouteTest(TestCase):
             },
         )
 
-        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+        valid_response = {"message": api_c.BSON_INVALID_ID("bad_id1")}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
