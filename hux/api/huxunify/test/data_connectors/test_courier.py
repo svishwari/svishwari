@@ -35,11 +35,14 @@ from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
     set_cloud_watch_rule,
     put_rule_targets_aws_batch,
+    toggle_cloud_watch_rule,
+    CloudWatchState,
 )
 from huxunify.api.data_connectors.courier import (
     map_destination_credentials_to_dict,
     get_destination_config,
     get_audience_destination_pairs,
+    toggle_event_driven_routers,
 )
 from huxunify.api.config import get_config
 from huxunify.test import constants as t_c
@@ -776,3 +779,96 @@ class CourierTest(TestCase):
 
         # test mocked client result
         self.assertIsNone(result)
+
+    @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
+    def test_toggle_cloud_watch_rule(self, mock_boto_client: mock.MagicMock):
+        """Test function toggle_cloud_watch_rule
+
+        Args:
+            mock_boto_client (mock.MagicMock): mock boto client.
+
+        Returns:
+        """
+
+        rule_params = {"Name": "fake-rule"}
+        rule_response = {
+            "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value},
+        }
+
+        # simulate the event return rule
+        client = boto3.client(api_c.AWS_EVENTS_NAME, get_config().AWS_REGION)
+
+        stub_client = Stubber(client)
+        stub_client.add_response(
+            CloudWatchState.ENABLE.value, rule_response, rule_params
+        )
+        stub_client.activate()
+        mock_boto_client.return_value = client
+
+        self.assertIsNone(
+            toggle_cloud_watch_rule(
+                rule_params["Name"], CloudWatchState.ENABLE
+            )
+        )
+
+    @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
+    def test_toggle_cloud_watch_rule_disable(
+        self, mock_boto_client: mock.MagicMock
+    ):
+        """Test function toggle_cloud_watch_rule disabled.
+
+        Args:
+            mock_boto_client (mock.MagicMock): mock boto client.
+
+        Returns:
+        """
+
+        rule_params = {"Name": "fake-rule"}
+        rule_response = {
+            "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value},
+        }
+
+        # simulate the event return rule
+        client = boto3.client(api_c.AWS_EVENTS_NAME, get_config().AWS_REGION)
+
+        stub_client = Stubber(client)
+        stub_client.add_response(
+            CloudWatchState.DISABLE.value, rule_response, rule_params
+        )
+        stub_client.activate()
+        mock_boto_client.return_value = client
+
+        self.assertIsNone(
+            toggle_cloud_watch_rule(
+                rule_params["Name"], CloudWatchState.DISABLE
+            )
+        )
+
+    @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
+    def test_toggle_event_driven_routers(
+        self, mock_boto_client: mock.MagicMock
+    ):
+        """Test function toggle_event_driven_routers.
+
+        Args:
+            mock_boto_client (mock.MagicMock): mock boto client.
+
+        Returns:
+        """
+
+        rule_params = {"Name": "fake-rule"}
+        rule_response = {
+            "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value},
+        }
+
+        # simulate the event return rule
+        client = boto3.client(api_c.AWS_EVENTS_NAME, get_config().AWS_REGION)
+
+        stub_client = Stubber(client)
+        stub_client.add_response(
+            CloudWatchState.ENABLE.value, rule_response, rule_params
+        )
+        stub_client.activate()
+        mock_boto_client.return_value = client
+
+        self.assertIsNone(toggle_event_driven_routers(self.database))

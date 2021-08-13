@@ -361,7 +361,7 @@ def toggle_cloud_watch_rule(
     """Enable or Disable Cloud watch rule.
 
     Args:
-        rule_name (str): name of the rule you are creating or updating.
+        rule_name (str): Name of the rule you are creating or updating.
         state (CloudWatchState): Toggle state of the cloud watch rule.
         ignore_existence (bool): Cloud watch fails if the rules does not exist.
             Toggle regardless of checking existence.
