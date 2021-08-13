@@ -91,7 +91,7 @@
               </span>
               <span v-else class="gray--text"> AUC </span>
             </div>
-            <div ref="drift">
+            <div ref="decisioning-drift">
               <drift-chart
                 v-model="lineChartData"
                 :chart-dimensions="chartDimensions"
@@ -188,7 +188,7 @@ export default {
 
   async mounted() {
     this.loading = true
-    this.chartDimensions.width = this.$refs.drift.clientWidth
+    this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     this.chartDimensions.height = 520
     await this.getOverview(this.$route.params.id)
     this.loading = false
@@ -202,8 +202,8 @@ export default {
   },
 
   updated() {
-    if (this.$refs.drift) {
-      this.chartDimensions.width = this.$refs.drift.clientWidth
+    if (this.$refs["decisioning-drift"]) {
+      this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     }
   },
 
@@ -215,7 +215,7 @@ export default {
       return `${date.getMonth() + 1}/${date.getDate()}`
     },
     sizeHandler() {
-      this.chartDimensions.width = this.$refs.drift.clientWidth
+      this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     },
   },
 }
