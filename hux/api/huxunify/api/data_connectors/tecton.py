@@ -1,6 +1,8 @@
 """
 Purpose of this file is for holding methods to query and pull data from Tecton.
 """
+import random
+from math import log10
 from json import dumps
 from typing import List, Tuple
 
@@ -142,12 +144,11 @@ def get_models() -> List[dict]:
     return map_model_response(response)
 
 
-# pylint: disable=unused-argument
 def get_model_version_history(model_id: int) -> List[ModelVersionSchema]:
-    """Get model version history based on name.
+    """Get model version history based on id.
 
     Args:
-        model_id (int): model name.
+        model_id (int): model id.
 
     Returns:
          List[ModelVersionSchema] List of model versions.
@@ -216,18 +217,79 @@ def get_model_feature_importance(name: str) -> List[FeatureImportance]:
     return []
 
 
-# pylint: disable=unused-argument
-def get_model_features(name: str) -> List[FeatureSchema]:
-    """Get model features based on name.
+def get_model_features(
+    model_id: int, model_version: str
+) -> List[FeatureSchema]:
+    """Get model features based on model id.
 
     Args:
-        name (str): model name.
+        model_id (int): model id.
+        model_version (str): model version.
 
     Returns:
          List[FeatureSchema] List of model features.
     """
-    # TODO - when available.
-    return []
+
+    # get config
+    config = get_config()
+
+    # Tecton forces us to get the feature at the version level, so we have to
+    # query the service in succession. We break on the first empty value.
+    result_features = []
+    for i in range(200):
+        payload = {
+            "params": {
+                "feature_service_name": "ui_metadata_model_top_features_service",
+                "join_key_map": {"model_id": f"{model_id}", "rank": str(i)},
+            }
+        }
+
+        response = requests.post(
+            config.TECTON_FEATURE_SERVICE,
+            dumps(payload),
+            headers=config.TECTON_API_HEADERS,
+        )
+
+        if response.status_code != 200:
+            break
+
+        if constants.RESULTS not in response.json():
+            break
+
+        # grab the features and match model version.
+        features = [
+            x[constants.FEATURES]
+            for x in response.json()[constants.RESULTS]
+            if x["joinKeys"][0] == model_version
+        ]
+        for feature in features:
+            # TODO - HUS-910, remove the random string values below once Tecton is returning them.
+            result_features.append(
+                {
+                    constants.ID: model_id,
+                    constants.VERSION: model_version,
+                    constants.NAME: feature[1],
+                    constants.FEATURE_SERVICE: feature[4],
+                    constants.DATA_SOURCE: random.choice(
+                        ["Buyers", "Retail", "Promotion", "Email", "Ecommerce"]
+                    ),
+                    constants.CREATED_BY: random.choice(
+                        ["Susan Miller", "Jack Miller"]
+                    ),
+                    constants.STATUS: random.choice(
+                        [
+                            constants.STATUS_PENDING,
+                            constants.STATUS_ACTIVE,
+                            constants.STATUS_STOPPED,
+                        ]
+                    ),
+                    constants.POPULARITY: random.randint(1, 3),
+                    constants.SCORE: round(log10(float(feature[2])), 4),
+                }
+            )
+
+    # submit the post request to get the models
+    return result_features
 
 
 # pylint: disable=unused-argument

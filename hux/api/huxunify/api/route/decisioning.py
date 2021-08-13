@@ -9,18 +9,24 @@ from typing import Tuple, List
 from flask import Blueprint, jsonify
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
+from huxunifylib.database.cache_management import (
+    create_cache_entry,
+    get_cache_entry,
+)
 
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
     handle_api_exception,
     secured,
     api_error_handler,
+    get_db_client,
 )
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
     DriftSchema,
     ModelDashboardSchema,
+    FeatureSchema,
 )
 from huxunify.api.data_connectors import tecton
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -319,3 +325,172 @@ class ModelDriftView(SwaggerView):
             raise handle_api_exception(
                 exc, "Unable to get model drift."
             ) from exc
+
+
+@add_view_to_blueprint(
+    model_bp,
+    f"{api_c.MODELS_ENDPOINT}/<model_id>/features",
+    "ModelFeaturesView",
+)
+class ModelFeaturesView(SwaggerView):
+    """
+    Model Features Class
+    """
+
+    parameters = [
+        api_c.MODEL_ID_PARAMS[0],
+        {
+            "name": api_c.VERSION,
+            "description": "Model version, if not provided, it will take the latest.",
+            "type": "str",
+            "in": "path",
+            "required": False,
+            "example": "21.7.31",
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Model features.",
+            "schema": {"type": "array", "items": ModelVersionSchema},
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.MODELS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(
+        self,
+        model_id: int,
+        model_version: str = None,
+    ) -> Tuple[List[dict], int]:
+        """Retrieves model features.
+
+        ---
+        security:
+            - Bearer: [Authorization]
+
+        Args:
+            model_id (int): model id
+            model_version (str): model version.
+
+        Returns:
+            Tuple[List[dict], int]: dict of model features and http code
+
+        """
+
+        # only use the latest version if model version is None.
+        if model_version is None:
+            # get latest version first
+            model_version = tecton.get_model_version_history(model_id)
+
+            # check if there is a model version we can grab, if so take the last one (latest).
+            model_version = (
+                model_version[-1].get(api_c.CURRENT_VERSION)
+                if model_version
+                else ""
+            )
+
+        # check cache first
+        database = get_db_client()
+        features = get_cache_entry(database, f"features.{1}.{model_version}")
+
+        # if no cache, grab from Tecton and cache after.
+        if not features:
+            features = tecton.get_model_features(model_id, model_version)
+            create_cache_entry(
+                database, f"features.{1}.{model_version}", features
+            )
+
+        return (
+            jsonify(FeatureSchema(many=True).dump(features)),
+            HTTPStatus.OK.value,
+        )
+
+
+@add_view_to_blueprint(
+    model_bp,
+    f"{api_c.MODELS_ENDPOINT}/<model_id>/top-features",
+    "ModelTopFeaturesView",
+)
+class ModelTopFeaturesView(SwaggerView):
+    """
+    Model Top Features Class
+    """
+
+    parameters = [
+        api_c.MODEL_ID_PARAMS[0],
+        {
+            "name": api_c.VERSION,
+            "description": "Model version, if not provided, it will take the latest.",
+            "type": "str",
+            "in": "path",
+            "required": False,
+            "example": "21.7.31",
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Model top features.",
+            "schema": {"type": "array", "items": ModelVersionSchema},
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.MODELS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(
+        self,
+        model_id: int,
+        model_version: str = None,
+        limit: int = 20,
+    ) -> Tuple[List[dict], int]:
+        """Retrieves top model features sorted by score.
+
+        ---
+        security:
+            - Bearer: [Authorization]
+
+        Args:
+            model_id (int): model id
+            model_version (str): model version.
+            limit (int): Limit of features to return, default is 20.
+
+        Returns:
+            Tuple[List[dict], int]: dict of model features and http code
+
+        """
+
+        # only use the latest version if model version is None.
+        if model_version is None:
+            # get latest version first
+            model_version = tecton.get_model_version_history(model_id)
+
+            # check if there is a model version we can grab, if so take the last one (latest).
+            model_version = (
+                model_version[-1].get(api_c.CURRENT_VERSION)
+                if model_version
+                else ""
+            )
+
+        # check cache first
+        database = get_db_client()
+        features = get_cache_entry(
+            database, f"features.{model_id}.{model_version}"
+        )
+
+        # if no cache, grab from Tecton and cache after.
+        if not features:
+            features = tecton.get_model_features(model_id, model_version)
+            create_cache_entry(
+                database, f"features.{model_id}.{model_version}", features
+            )
+
+        # sort the top features before serving them out
+        features.sort(key=lambda x: x[api_c.SCORE], reverse=True)
+
+        return (
+            jsonify(FeatureSchema(many=True).dump(features[:limit])),
+            HTTPStatus.OK.value,
+        )

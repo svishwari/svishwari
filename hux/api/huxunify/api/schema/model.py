@@ -44,13 +44,15 @@ class ModelVersionSchema(Schema):
 class FeatureSchema(Schema):
     """Feature Schema"""
 
-    # TODO - Update as it becomes available.
-    name = Str(required=True)
+    id = Int()
+    version = Str()
     feature_service = Str()
     data_source = Str()
+    created_by = Str()
+    name = Str(required=True)
     status = Str()
+    score = Float()
     popularity = Int()
-    owner = Str()
 
 
 class LiftSchema(Schema):
