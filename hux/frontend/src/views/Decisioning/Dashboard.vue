@@ -155,8 +155,8 @@ export default {
   async mounted() {
     this.loading = true
     await this.getOverview(this.$route.params.id)
-    // this will be removed from here & 
-    // get called on opening of drawer, 
+    // this will be removed from here &
+    // get called on opening of drawer,
     // once the drawer UI is implemented
     // in part-2 of the same PR.
     await this.getHistory(this.$route.params.id)

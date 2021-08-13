@@ -483,6 +483,6 @@ export default function (server) {
 
   // seed idr datafeeds
   server.createList("idrDataFeed", 10)
-  
+
   server.createList("versionHistory", 5)
 }

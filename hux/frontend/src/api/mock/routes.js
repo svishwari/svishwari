@@ -339,7 +339,7 @@ export const defineRoutes = (server) => {
   })
 
   server.get("/models/:id/version-history", () => versionHistory)
-  
+
   // customers
   server.get("/customers")
 
