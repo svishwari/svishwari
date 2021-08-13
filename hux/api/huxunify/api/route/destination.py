@@ -6,18 +6,23 @@ from http import HTTPStatus
 from typing import Tuple
 from flasgger import SwaggerView
 from flask import Blueprint, request, jsonify
-from flask_apispec import marshal_with
 from marshmallow import ValidationError
 
+from huxunifylib.util.general.logging import logger
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
 import huxunifylib.database.constants as db_c
-from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
+from huxunifylib.util.general.const import (
+    FacebookCredentials,
+    SFMCCredentials,
+    TwilioCredentials,
+)
 from huxunifylib.connectors import (
     FacebookConnector,
     SFMCConnector,
+    TwilioConnector,
     AudienceAlreadyExists,
 )
 from huxunify.api.data_connectors.aws import (
@@ -33,6 +38,7 @@ from huxunify.api.schema.destinations import (
     DestinationDataExtGetSchema,
     SFMCAuthCredsSchema,
     FacebookAuthCredsSchema,
+    TwilioAuthCredsSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.route.utils import (
@@ -245,7 +251,6 @@ class DestinationPutView(SwaggerView):
 
     # pylint: disable=unexpected-keyword-arg
     # pylint: disable=too-many-return-statements
-    @marshal_with(DestinationPutSchema)
     @api_error_handler(
         custom_message={
             ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}
@@ -290,6 +295,7 @@ class DestinationPutView(SwaggerView):
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
             )
             if not performance_de:
+                logger.error("%s", api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED[0])
                 return (
                     {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
                     HTTPStatus.BAD_REQUEST,
@@ -299,6 +305,11 @@ class DestinationPutView(SwaggerView):
             == db_c.DELIVERY_PLATFORM_FACEBOOK
         ):
             FacebookAuthCredsSchema().load(auth_details)
+        elif (
+            destination[db_c.DELIVERY_PLATFORM_TYPE]
+            == db_c.DELIVERY_PLATFORM_TWILIO
+        ):
+            TwilioAuthCredsSchema().load(auth_details)
 
         if auth_details:
             # store the secrets for the updated authentication details
@@ -441,6 +452,7 @@ class DestinationValidatePostView(SwaggerView):
 
         # test the destination connection and update connection status
         if body.get(db_c.TYPE) == db_c.DELIVERY_PLATFORM_FACEBOOK:
+            logger.info("Trying to connect to Facebook.")
             destination_connector = FacebookConnector(
                 auth_details={
                     FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: body.get(
@@ -458,10 +470,13 @@ class DestinationValidatePostView(SwaggerView):
                 },
             )
             if destination_connector.check_connection():
+                logger.info("Facebook destination validated successfully.")
                 return {
                     "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
                 }, HTTPStatus.OK
+            logger.error("Could not validate Facebook successfully.")
         elif body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_SFMC:
+            logger.info("Validating SFMC destination.")
             connector = SFMCConnector(
                 auth_details=set_sfmc_auth_details(
                     body.get(api_c.AUTHENTICATION_DETAILS)
@@ -474,15 +489,33 @@ class DestinationValidatePostView(SwaggerView):
                 ),
                 key=lambda i: i[api_c.NAME].lower(),
             )
+            logger.info("Successfully validated SFMC destination.")
             return {
                 "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS,
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: ext_list,
             }, HTTPStatus.OK
+        elif body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_TWILIO:
+            TwilioConnector(
+                auth_details={
+                    TwilioCredentials.TWILIO_AUTH_TOKEN.value: body.get(
+                        api_c.AUTHENTICATION_DETAILS
+                    ).get(api_c.TWILIO_AUTH_TOKEN),
+                },
+            )
+            return {
+                "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
+            }, HTTPStatus.OK
         else:
+            logger.error(
+                "Destination type %s not supported yet.", body.get(db_c.TYPE)
+            )
             return {
                 "message": api_c.DESTINATION_NOT_SUPPORTED
             }, HTTPStatus.BAD_REQUEST
 
+        logger.error(
+            "Could not validate destination type %s.", body.get(db_c.TYPE)
+        )
         return (
             {"message": api_c.DESTINATION_AUTHENTICATION_FAILED},
             HTTPStatus.BAD_REQUEST,
@@ -548,6 +581,11 @@ class DestinationDataExtView(SwaggerView):
             api_c.AUTHENTICATION_DETAILS not in destination
             or api_c.DELIVERY_PLATFORM_TYPE not in destination
         ):
+            logger.error(
+                "Destination Authentication for %s failed since authentication "
+                "details missing or delivery platform type missing.",
+                destination_id,
+            )
             return {
                 "message": api_c.DESTINATION_AUTHENTICATION_FAILED
             }, HTTPStatus.BAD_REQUEST
@@ -565,7 +603,9 @@ class DestinationDataExtView(SwaggerView):
                 )
             )
             ext_list = connector.get_list_of_data_extensions()
-
+        logger.info(
+            "Found %s data extensions for %s.", len(ext_list), destination_id
+        )
         return (
             jsonify(
                 sorted(
@@ -649,6 +689,11 @@ class DestinationDataExtPostView(SwaggerView):
             api_c.AUTHENTICATION_DETAILS not in destination
             or api_c.DELIVERY_PLATFORM_TYPE not in destination
         ):
+            logger.error(
+                "Destination Authentication for %s not executed since "
+                "Authentication details missing or delivery platform type missing.",
+                destination_id,
+            )
             return {
                 "message": api_c.DESTINATION_AUTHENTICATION_FAILED
             }, HTTPStatus.BAD_REQUEST
@@ -693,7 +738,10 @@ class DestinationDataExtPostView(SwaggerView):
                 for ext in connector.get_list_of_data_extensions():
                     if ext["CustomerKey"] == body.get(api_c.DATA_EXTENSION):
                         extension = ext
-
             return DestinationDataExtGetSchema().dump(extension), status_code
 
+        logger.error(
+            "Could not create data extension for platform type %s.",
+            api_c.DELIVERY_PLATFORM_TYPE,
+        )
         return {"message": api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST

@@ -1,104 +1,104 @@
 {
   "featureList": [
     {
-      "name": "feature1upto20characters1",
-      "description": "Here is the description what feature does",
-      "score": 2.5
+      "description": "1to2y-COGS-sum",
+      "name": "1to2y-COGS-sum",
+      "score": 364.7
     },
     {
-      "name": "feature2upto20characters2",
-      "description": "Here is the description what feature does",
-      "score": 2.3
+      "description": "1to2y-ITEMEXTPRICE-cnt",
+      "name": "1to2y-ITEMEXTPRICE-cnt",
+      "score": 68.22
     },
     {
-      "name": "feature3upto20characters3",
-      "description": "Here is the description what feature does",
-      "score": 2.2
+      "description": "1to2y-ITEMQTY-avg",
+      "name": "1to2y-ITEMQTY-avg",
+      "score": 67.19
     },
     {
-      "name": "feature4upto20characters4",
-      "description": "Here is the description what feature does",
-      "score": 2.1
+      "description": "2m-ORDTDOL-cnt",
+      "name": "2m-ORDTDOL-cnt",
+      "score": 31.04
     },
     {
-      "name": "feature5upto20characters5",
-      "description": "Here is the description what feature does",
-      "score": 1.9
+      "description": "2m-COGS-cnt",
+      "name": "2m-COGS-cnt",
+      "score": 27.21
     },
     {
-      "name": "feature6upto20characters6",
-      "description": "Here is the description what feature does",
-      "score": 1.7
+      "description": "dow-pe_u_dow-pe_count",
+      "name": "dow-pe_u_dow-pe_count",
+      "score": 22.66
     },
     {
-      "name": "feature7upto20characters7",
-      "description": "Here is the description what feature does",
-      "score": 1.5
+      "description": "4m-ORDITEMQTY-cnt",
+      "name": "4m-ORDITEMQTY-cnt",
+      "score": 21.58
     },
     {
-      "name": "feature8upto20characters8",
-      "description": "Here is the description what feature does",
-      "score": 1.4
+      "description": "duration_days-item-min",
+      "name": "duration_days-item-min",
+      "score": 14.36
     },
     {
-      "name": "feature9upto20characters9",
-      "description": "Here is the description what feature does",
-      "score": 1.2
+      "description": "1to2y-ITEMPRICE-min",
+      "name": "1to2y-ITEMPRICE-min",
+      "score": 12.97
     },
     {
-      "name": "feature10upto20characters10",
-      "description": "Here is the description what feature does",
-      "score": 1.1
+      "description": "2w-ORDITEMQTY-cnt",
+      "name": "2w-ORDITEMQTY-cnt",
+      "score": 8
     },
     {
-      "name": "feature11upto20characters11",
-      "description": "Here is the description what feature does",
-      "score": 1.0
+      "description": "2m-ORDITEMQTY-cnt",
+      "name": "2m-ORDITEMQTY-cnt",
+      "score": 7.69
     },
     {
-      "name": "feature12upto20characters12",
-      "description": "Here is the description what feature does",
-      "score": 0.9
+      "description": "4m-ORDTDOL-cnt",
+      "name": "4m-ORDTDOL-cnt",
+      "score": 7.12
     },
     {
-      "name": "feature13upto20characters13",
-      "description": "Here is the description what feature does",
-      "score": 0.8
+      "description": "dow-u_wd-weekday",
+      "name": "dow-u_wd-weekday",
+      "score": 5.91
     },
     {
-      "name": "feature14upto20characters14",
-      "description": "Here is the description what feature does",
-      "score": 0.7
+      "description": "2w-ITEMEXTPRICE-cnt",
+      "name": "2w-ITEMEXTPRICE-cnt",
+      "score": 5.2
     },
     {
-      "name": "feature15upto20characters15",
-      "description": "Here is the description what feature does",
-      "score": 0.6
+      "description": "4m-ITEMNO-30150",
+      "name": "4m-ITEMNO-30150",
+      "score": 5.12
     },
     {
-      "name": "feature16upto20characters16",
-      "description": "Here is the description what feature does",
-      "score": 0.5
+      "description": "3d-ITEMPRICE-avg",
+      "name": "3d-ITEMPRICE-avg",
+      "score": 5.09
     },
     {
-      "name": "feature17upto20characters17",
-      "description": "Here is the description what feature does",
-      "score": 0.3
+      "description": "profile-data_source-buyers",
+      "name": "profile-data_source-buyers",
+      "score": 4.98
     },
     {
-      "name": "feature18upto20characters18",
-      "description": "Here is the description what feature does",
-      "score": 0.2
+      "description": "3d-ITEMEXTPRICE-min",
+      "name": "3d-ITEMEXTPRICE-min",
+      "score": 4.79
     },
     {
-      "name": "feature19upto20characters19",
-      "description": "Here is the description what feature does",
-      "score": 0.1
+      "description": "1to2y-ITEMPRICE-avg",
+      "name": "1to2y-ITEMPRICE-avg",
+      "score": 4.48
     },
     {
-      "name": "feature20upto20characters20",
-      "description": "Here is the description what feature does",
-      "score": 0.1
+      "description": "8to12m-ORDAMT-sum",
+      "name": "8to12m-ORDAMT-sum",
+      "score": 4.37
     }
   ]
 }

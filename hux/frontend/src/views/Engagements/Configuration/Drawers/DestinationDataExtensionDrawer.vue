@@ -86,7 +86,7 @@
               v-model="extension"
               label-text="Data extension name"
               icon="mdi-alert-circle-outline"
-              placeholder-text="What is the name for this new data extension?"
+              placeholder="What is the name for this new data extension?"
               :help-text="tooltipText"
               height="40"
               background-color="white"
@@ -117,7 +117,6 @@
               outlined
               background-color="white"
               append-icon="mdi-chevron-down"
-              :rules="existingExtensionRules"
               required
             />
           </div>
@@ -152,7 +151,7 @@
           width="80"
           height="40"
           class="ma-2"
-          :is-disabled="!isFormValid"
+          :is-disabled="isActive ? !isFormValid : !extension"
           @click="addDestination()"
         >
           Add
@@ -387,14 +386,16 @@ export default {
               color: var(--v-lightGrey-base) !important;
               border-width: 1px !important;
             }
-            input::placeholder {
-              color: var(--v-lightGrey-base) !important;
-            }
           }
           .v-text-field__details {
             display: none;
           }
         }
+      }
+    }
+    .v-input {
+      ::v-deep ::placeholder {
+        color: var(--v-gray-base) !important;
       }
     }
   }

@@ -212,6 +212,26 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertEqual(self.user_name, engagement_doc[c.CREATED_BY])
         self.assertEqual(self.user_name, engagement_doc[c.UPDATED_BY])
 
+    def test_update_engagement_status(self) -> None:
+        """Test update_engagement status
+
+        Returns:
+            Response: None
+
+        """
+
+        engagement_docs = em.get_engagements(database=self.database)
+        engagement_id = engagement_docs[0]["_id"]
+        # pylint: disable=unexpected-keyword-arg
+        engagement_doc = em.update_engagement(
+            self.database,
+            engagement_id,
+            self.user_name,
+            status="Inactive",
+        )
+
+        self.assertEqual(engagement_doc[c.STATUS], "Inactive")
+
     def test_update_engagement_bad_string_id(self) -> None:
         """Test update_engagement routine with a bad string id
 
@@ -657,7 +677,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         # test list
         self.assertTrue(audience_insights, dict)
-        self.assertEqual(len(audience_insights), 2)
+        self.assertEqual(len(audience_insights), 3)
 
         for engagement in audience_insights:
             self.assertIn(c.DELIVERIES, engagement)

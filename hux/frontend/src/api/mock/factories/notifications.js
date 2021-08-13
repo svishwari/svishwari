@@ -5,7 +5,8 @@ import faker from "faker"
  */
 export const notification = {
   created: () => faker.date.recent(),
-  description: () => "Data Source CS005 lost connection.",
+  description: () =>
+    `New engagement named "${faker.address.state()}" created by "${faker.name.findName()}".`,
   notification_type: () => "Success",
   category: () => "Orchestration",
 }

@@ -584,7 +584,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(
             delivery_job[c.AUDIENCE_ID], self.source_audience_doc[c.ID]
         )
-        self.assertEqual(delivery_job[c.JOB_STATUS], c.STATUS_PENDING)
+        self.assertEqual(
+            delivery_job[c.JOB_STATUS], c.AUDIENCE_STATUS_DELIVERING
+        )
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_delivery_job_status(self):
@@ -632,6 +634,49 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertTrue(audience_size is not None)
         self.assertEqual(audience_size, 1000)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_all_delivery_jobs_filters(self):
+        """Test test_get_all_delivery_jobs."""
+
+        delivery_jobs = dpm.get_all_delivery_jobs(
+            self.database,
+            {
+                c.AUDIENCE_ID: self.source_audience_doc[c.ID],
+                c.JOB_STATUS: c.AUDIENCE_STATUS_DELIVERING,
+            },
+        )
+        delivery_job = delivery_jobs[0] if delivery_jobs else {}
+
+        self.assertIsNotNone(delivery_job)
+        self.assertIn(c.AUDIENCE_ID, delivery_job)
+        self.assertIn(c.CREATE_TIME, delivery_job)
+        self.assertIn(c.JOB_STATUS, delivery_job)
+        self.assertIn(c.DELIVERY_PLATFORM_ID, delivery_job)
+        self.assertEqual(
+            delivery_job[c.AUDIENCE_ID], self.source_audience_doc[c.ID]
+        )
+        self.assertEqual(delivery_job[c.STATUS], c.AUDIENCE_STATUS_DELIVERING)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_all_delivery_jobs_sort(self):
+        """Test test_get_all_delivery_job."""
+
+        delivery_jobs = dpm.get_all_delivery_jobs(
+            self.database,
+            {c.JOB_STATUS: c.AUDIENCE_STATUS_DELIVERING},
+            limit=5,
+        )
+
+        # test has data and limit
+        self.assertTrue(delivery_jobs)
+        self.assertLessEqual(len(delivery_jobs), 5)
+
+        # test the sort order is correct. first item should be max value
+        self.assertEqual(
+            delivery_jobs[0][c.CREATE_TIME],
+            max([x[c.CREATE_TIME] for x in delivery_jobs]),
+        )
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_delivery_job_lookalike_audiences(self):
@@ -959,7 +1004,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         doc = dpm.set_performance_metrics(
             database=self.database,
             delivery_platform_id=ObjectId(),
-            delivery_platform_name="Facebook",
+            delivery_platform_type="facebook",
             delivery_job_id=delivery_job_id,
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
@@ -981,7 +1026,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(doc is not None)
         self.assertIn(c.DELIVERY_JOB_ID, doc)
         self.assertIn(c.METRICS_DELIVERY_PLATFORM_ID, doc)
-        self.assertIn(c.METRICS_DELIVERY_PLATFORM_NAME, doc)
+        self.assertIn(c.METRICS_DELIVERY_PLATFORM_TYPE, doc)
         self.assertIn(c.CREATE_TIME, doc)
         self.assertIn(c.PERFORMANCE_METRICS, doc)
         self.assertIn(c.METRICS_START_TIME, doc)
@@ -1018,7 +1063,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         dpm.set_performance_metrics(
             database=self.database,
             delivery_platform_id=delivery_platform_id,
-            delivery_platform_name="Facebook",
+            delivery_platform_type="facebook",
             delivery_job_id=doc[c.ID],
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
@@ -1058,7 +1103,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         metrics_init_doc = dpm.set_performance_metrics(
             database=self.database,
             delivery_platform_id=ObjectId(),
-            delivery_platform_name="Facebook",
+            delivery_platform_type="facebook",
             delivery_job_id=delivery_job_id,
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
@@ -1089,7 +1134,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         metrics_doc_1 = dpm.set_performance_metrics(
             database=self.database,
             delivery_platform_id=ObjectId(),
-            delivery_platform_name="Facebook",
+            delivery_platform_type="facebook",
             delivery_job_id=delivery_job_id,
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
@@ -1100,7 +1145,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         metrics_doc_2 = dpm.set_performance_metrics(
             database=self.database,
             delivery_platform_id=ObjectId(),
-            delivery_platform_name="Facebook",
+            delivery_platform_type="facebook",
             delivery_job_id=delivery_job_id,
             metrics_dict={"Clicks": 11234, "Conversions": 150},
             start_time=start_time,
@@ -1343,7 +1388,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(
             delivery_job[c.AUDIENCE_ID], self.source_audience_doc[c.ID]
         )
-        self.assertEqual(delivery_job[c.JOB_STATUS], c.STATUS_PENDING)
+        self.assertEqual(
+            delivery_job[c.JOB_STATUS], c.AUDIENCE_STATUS_DELIVERING
+        )
         self.assertIn(c.ENGAGEMENT_ID, delivery_job)
         self.assertEqual(engagement_id, delivery_job[c.ENGAGEMENT_ID])
         self.assertFalse(c.DELETED in delivery_job)
@@ -1397,7 +1444,9 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.assertEqual(
                 delivery_job[c.AUDIENCE_ID], self.source_audience_doc[c.ID]
             )
-            self.assertEqual(delivery_job[c.JOB_STATUS], c.STATUS_PENDING)
+            self.assertEqual(
+                delivery_job[c.JOB_STATUS], c.AUDIENCE_STATUS_DELIVERING
+            )
             self.assertIn(c.ENGAGEMENT_ID, delivery_job)
             self.assertEqual(engagement_id, delivery_job[c.ENGAGEMENT_ID])
 
@@ -1870,4 +1919,52 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(
             recent_performance_metrics_doc[c.JOB_END_TIME],
             datetime.datetime(2021, 6, 26, 0, 0),
+        )
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_most_recent_campaign_activity_by_delivery_job(self):
+        """Campaign Activity batch docs are set and
+        latest campaign activity event is retrieved."""
+
+        delivery_job_id = self._set_delivery_job()
+        campaign_activity_docs = [
+            {
+                "event_details": {
+                    "subscriber_key": "1001",
+                    "event_type": "click",
+                    "event_date": datetime.datetime(2021, 6, 28, 0, 0),
+                    "url": "https://google.com",
+                },
+                "name": "My SFMC delivery platform",
+                "delivery_job_id": delivery_job_id,
+            },
+            {
+                "event_details": {
+                    "subscriber_key": "1001",
+                    "event_type": "sent",
+                    "event_date": datetime.datetime(2021, 6, 27, 0, 0),
+                },
+                "name": "My SFMC delivery platform",
+                "delivery_job_id": delivery_job_id,
+            },
+        ]
+
+        status = dpm.set_campaign_activities(
+            database=self.database,
+            campaign_activity_docs=campaign_activity_docs,
+        )
+
+        self.assertTrue(status)
+
+        recent_campaign_activity_doc = (
+            dpm.get_most_recent_campaign_activity_by_delivery_job(
+                self.database, delivery_job_id
+            )
+        )
+
+        self.assertIsNotNone(recent_campaign_activity_doc)
+
+        self.assertEqual(
+            recent_campaign_activity_doc[c.EVENT_DETAILS][c.EVENT_DATE],
+            datetime.datetime(2021, 6, 28, 0, 0),
         )

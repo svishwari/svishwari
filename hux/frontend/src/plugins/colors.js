@@ -9,6 +9,7 @@ export default {
   red: "#da291c",
   white: "#ffffff",
   yellow: "#ffcd00",
+  greyBlue: "#d5dce1",
   lightBlue: "#007cb0",
   backgroundBlue: "#f9fafb",
   pantoneBlue: "#0076A8",
@@ -29,6 +30,8 @@ export default {
   appBodyGrey: "#f8f9fa",
   smoke: "#ECECEC",
   cerulean: "#006699",
+  royalBlue: "0C9DDB",
+  oceanBlue: "42EFFD",
   gradientSliderColors: [
     "#ec5b54",
     "#f76d48",

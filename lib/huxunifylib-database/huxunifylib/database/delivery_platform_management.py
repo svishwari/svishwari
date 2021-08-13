@@ -612,6 +612,7 @@ def update_delivery_platform(
 
     if added is not None:
         update_doc[c.ADDED] = added
+        update_doc[c.DELIVERY_PLATFORM_STATUS] = c.STATUS_SUCCEEDED
 
     if enabled is not None:
         update_doc[c.ENABLED] = enabled
@@ -1043,7 +1044,7 @@ def set_delivery_job(
         c.AUDIENCE_ID: audience_id,
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
-        c.JOB_STATUS: c.STATUS_PENDING,
+        c.JOB_STATUS: c.AUDIENCE_STATUS_DELIVERING,
         c.DELIVERY_PLATFORM_ID: delivery_platform_id,
         c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (
             delivery_platform_generic_campaigns
@@ -1387,6 +1388,68 @@ def get_delivery_jobs(
         raise
 
     return list(cursor)
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_all_delivery_jobs(
+    database: DatabaseClient,
+    filter_dict: dict = None,
+    projection: dict = None,
+    sort_list: list = None,
+    limit: int = None,
+) -> Union[list, None]:
+    """A function to get all delivery jobs based on the args provided.
+
+    Args:
+        database (DatabaseClient): A database client.
+        filter_dict (dict): filter dictionary for adding custom filters.
+        projection (dict): Dict that specifies which fields to return or not return.
+        sort_list (list): Sort list for mongo.
+        limit (int): the number of documents to return in the query.
+
+    Returns:
+        Union[list, None]: List of n delivery jobs.
+
+    """
+
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.DELIVERY_JOBS_COLLECTION
+    ]
+
+    # if deleted is not included in the filters, add it.
+    if filter_dict:
+        filter_dict[c.DELETED] = False
+    else:
+        filter_dict = {c.DELETED: False}
+
+    # exclude the deleted field from returning
+    if projection:
+        projection[c.DELETED] = 0
+    else:
+        projection = {c.DELETED: 0}
+
+    # if sort list is none, set to default, otherwise set to the passed in list.
+    # note, if an empty list is passed in, no sorting will happen.
+    sort_list = (
+        [(c.CREATE_TIME, pymongo.DESCENDING)]
+        if sort_list is None
+        else sort_list
+    )
+
+    try:
+        cursor = collection.find(filter_dict, projection)
+        if sort_list:
+            cursor = cursor.sort(sort_list)
+
+        # apply limit if set.
+        return list(cursor if isinstance(limit, int) else cursor.limit(limit))
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
 
 
 @retry(
@@ -1779,7 +1842,7 @@ def get_lookalike_audiences_count(database: DatabaseClient) -> int:
 def set_performance_metrics(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
-    delivery_platform_name: str,
+    delivery_platform_type: str,
     delivery_job_id: ObjectId,
     generic_campaigns: list,
     metrics_dict: dict,
@@ -1791,7 +1854,7 @@ def set_performance_metrics(
     Args:
         database (DatabaseClient): A database client.
         delivery_platform_id (ObjectId): delivery platform ID
-        delivery_platform_name (str): delivery platform name
+        delivery_platform_type (str): delivery platform type
         delivery_job_id (ObjectId): The delivery job ID of audience.
         generic_campaigns: (dict): generic campaigns
         metrics_dict (dict): A dict containing performance metrics.
@@ -1814,7 +1877,7 @@ def set_performance_metrics(
 
     doc = {
         c.METRICS_DELIVERY_PLATFORM_ID: delivery_platform_id,
-        c.METRICS_DELIVERY_PLATFORM_NAME: delivery_platform_name,
+        c.METRICS_DELIVERY_PLATFORM_TYPE: delivery_platform_type,
         c.DELIVERY_JOB_ID: delivery_job_id,
         c.CREATE_TIME: curr_time,
         c.METRICS_START_TIME: start_time,
@@ -2403,12 +2466,58 @@ def get_most_recent_performance_metric_by_delivery_job(
         raise de.InvalidID(delivery_job_id)
 
     try:
-        cursor = (
+        cursor = list(
             collection.find({c.DELIVERY_JOB_ID: delivery_job_id})
             .sort([(c.JOB_END_TIME, -1)])
             .limit(1)
         )
-        return cursor[0]
+        if len(cursor) > 0:
+            return cursor[0]
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_most_recent_campaign_activity_by_delivery_job(
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+) -> Union[dict, None]:
+    """Retrieve the most recent campaign activity
+    event associated with a given delivery job ID.
+
+    Args:
+        database (DatabaseClient): database client.
+        delivery_job_id (ObjectId): delivery job ID.
+
+    Raises:
+        de.InvalidID: Invalid ID for delivery job.
+
+    Returns:
+        Union[dict, None]: most recent performance metric.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
+
+    # Check validity of delivery job ID
+    doc = get_delivery_job(database, delivery_job_id)
+    if not doc:
+        return None
+
+    try:
+        cursor = list(
+            collection.find({c.DELIVERY_JOB_ID: delivery_job_id})
+            .sort([(f"{c.EVENT_DETAILS}.{c.EVENT_DATE}", -1)])
+            .limit(1)
+        )
+        if len(cursor) > 0:
+            return cursor[0]
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

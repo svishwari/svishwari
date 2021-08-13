@@ -42,10 +42,7 @@
                           percentileColumns.includes(item.field.split('|')[1])
                         "
                       >
-                        {{
-                          item.value.split("|")[1]
-                            | percentageConvert(true, true)
-                        }}
+                        {{ item.value.split("|")[1] | Percentage }}
                       </span>
                       <span
                         v-else-if="
@@ -71,7 +68,7 @@
                         {{ item.value | Numeric(false, false, true) }}
                       </span>
                       <span v-else-if="percentileColumns.includes(item.field)">
-                        {{ item.value | percentageConvert(true, true) }}
+                        {{ item.value | Percentage }}
                       </span>
                       <span v-else-if="currencyColumns.includes(item.field)">
                         {{ item.value | Currency }}
@@ -114,8 +111,11 @@
                   </v-icon>
 
                   <span class="d-flex align-center">
-                    <!-- TODO Route Link to Audience Insight Page -->
-                    <router-link to="#" class="text-decoration-none" append>
+                    <router-link
+                      :to="{ name: 'AudienceInsight', params: { id: item.id } }"
+                      class="text-decoration-none"
+                      append
+                    >
                       <span class="audience-name d-flex align-center">
                         <tooltip>
                           <template #label-content>
@@ -170,7 +170,7 @@
                       <div
                         class="w-100 d-flex align-center"
                         :class="{
-                          'pl-11': !item.is_mapped,
+                          'pl-11': !item.is_mapped && type === 'ads',
                           'pl-3': item.campaigns && item.campaigns.length > 0,
                         }"
                       >
@@ -199,7 +199,7 @@
                               {{ item[expandedHeaders[0].value] | Empty("-") }}
                             </span>
                             <v-btn
-                              v-if="item.is_mapped"
+                              v-if="item.is_mapped && type === 'ads'"
                               icon
                               small
                               class="ml-3"
@@ -221,7 +221,9 @@
                               :size="18"
                               class="mr-3"
                             />
-                            <span class="text--neroblack ellipsis">
+                            <span
+                              class="text--neroblack ellipsis icon-audiences"
+                            >
                               {{ item[expandedHeaders[0].value] | Empty("-") }}
                             </span>
                           </router-link>
@@ -229,7 +231,7 @@
                       </div>
                     </td>
                     <td
-                      v-if="!item.is_mapped"
+                      v-if="!item.is_mapped && type === 'ads'"
                       :colspan="getDestinationHeaders(expandedHeaders).length"
                       :style="{
                         width: totalWidth(
@@ -237,23 +239,21 @@
                         ),
                       }"
                     >
-                      <span class="error--text mr-6">
-                        <v-icon small color="error" class="mr-1">
+                      <span class="error--text mr-2">
+                        <v-icon small color="error" class="icon-info mr-1">
                           mdi-information-outline
                         </v-icon>
                         To view KPIs you need to map to a Facebook campaign.
                       </span>
                       <v-btn
                         tile
-                        class="error--text px-2 pl-2 pr-4"
+                        class="error--text px-2 pl-2 pr-4 icon-info"
                         color="white"
                         height="29"
                         width="99"
                         @click="triggerCampaignMap(parentItem, item)"
                       >
-                        <v-icon size="15" small class="mr-1">
-                          mdi-mapbox
-                        </v-icon>
+                        <icon type="map_now_icon" :size="20" class="mr-1" />
                         Map now
                       </v-btn>
                     </td>
@@ -267,21 +267,18 @@
                     </td>
                   </tr>
                 </template>
-                <template
-                  #expanded-row="{ subExpandedHeaders, expandedParentItem }"
-                >
-                  <td :colspan="subExpandedHeaders.length" class="pa-0 child">
+                <!-- eslint-disable vue/no-template-shadow -->
+                <template #expanded-row="{ expandedHeaders, parentItem }">
+                  <td :colspan="expandedHeaders.length" class="pa-0 child">
                     <hux-data-table
-                      v-if="expandedParentItem"
-                      :columns="subExpandedHeaders"
-                      :data-items="
-                        getFormattedItems(expandedParentItem.campaigns)
-                      "
+                      v-if="parentItem"
+                      :columns="expandedHeaders"
+                      :data-items="getFormattedItems(parentItem.campaigns)"
                       :show-header="false"
                     >
                       <template #row-item="{ item }">
                         <td
-                          v-for="header in subExpandedHeaders"
+                          v-for="header in expandedHeaders"
                           :key="header.value"
                           :style="{ width: header.width }"
                         >
@@ -305,6 +302,7 @@
                     </hux-data-table>
                   </td>
                 </template>
+                <!-- eslint-enable -->
               </hux-data-table>
             </td>
           </template>
@@ -565,36 +563,6 @@ export default {
           reach: "-",
           spend: "-",
         },
-        {
-          campaigns: [],
-          click_through_rate: "-",
-          clicks: "-",
-          conversions: "-",
-          cost_per_action: "-",
-          cost_per_click: "-",
-          cost_per_thousand_impressions: "-",
-          engagement_rate: "-",
-          frequency: "-",
-          impressions: "-",
-          name: "Audience 2",
-          reach: "-",
-          spend: "-",
-        },
-        {
-          campaigns: [],
-          click_through_rate: "-",
-          clicks: "-",
-          conversions: "-",
-          cost_per_action: "-",
-          cost_per_click: "-",
-          cost_per_thousand_impressions: "-",
-          engagement_rate: "-",
-          frequency: "-",
-          impressions: "-",
-          name: "Audience 3",
-          reach: "-",
-          spend: "-",
-        },
       ],
       emptyCampaignEmailData: [
         {
@@ -614,42 +582,6 @@ export default {
           unsubscribe: "-",
           unsubscribe_rate: "-",
           name: "Audience 1",
-        },
-        {
-          campaigns: [],
-          sent: "-",
-          hard_bounces: "-",
-          hard_bounces_rate: "-",
-          delivered: "-",
-          delivered_rate: "-",
-          open: "-",
-          open_rate: "-",
-          clicks: "-",
-          click_through_rate: "-",
-          click_to_open_rate: "-",
-          unique_clicks: "-",
-          unique_opens: "-",
-          unsubscribe: "-",
-          unsubscribe_rate: "-",
-          name: "Audience 2",
-        },
-        {
-          campaigns: [],
-          sent: "-",
-          hard_bounces: "-",
-          hard_bounces_rate: "-",
-          delivered: "-",
-          delivered_rate: "-",
-          open: "-",
-          open_rate: "-",
-          clicks: "-",
-          click_through_rate: "-",
-          click_to_open_rate: "-",
-          unique_clicks: "-",
-          unique_opens: "-",
-          unsubscribe: "-",
-          unsubscribe_rate: "-",
-          name: "Audience 3",
         },
       ],
       audienceId: null,
@@ -704,7 +636,8 @@ export default {
       return (
         (item.destinations &&
           item.destinations.some(
-            (dest) => !dest.is_mapped && dest.name === "Facebook"
+            (dest) =>
+              !dest.is_mapped && this.type === "ads" && dest.name === "Facebook"
           )) ||
         false
       )
@@ -715,9 +648,11 @@ export default {
         if (this.numericColumns.includes(key)) {
           obj[key] = this.$options.filters.Numeric(obj[key], true, false)
         } else if (this.percentileColumns.includes(key)) {
-          obj[key] = this.$options.filters.percentageConvert(
+          obj[key] = this.$options.filters.Numeric(
             obj[key],
             true,
+            false,
+            false,
             true
           )
         } else if (this.currencyColumns.includes(key)) {
@@ -880,6 +815,13 @@ export default {
         }
       }
     }
+  }
+  .icon-info {
+    margin-top: -3px;
+  }
+  .icon-audiences {
+    position: absolute;
+    margin-top: -1px;
   }
 }
 </style>

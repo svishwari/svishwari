@@ -23,27 +23,27 @@
           },
           {
             "identifier": "address",
-            "count": 5871,
+            "count": 5,
             "percentage": 0.05332667241927426
           },
           {
             "identifier": "email",
-            "count": 8916,
+            "count": 8,
             "percentage": 0.08098460420545892
           },
           {
             "identifier": "phone",
-            "count": 2689,
+            "count": 2,
             "percentage": 0.024424360779326946
           },
           {
             "identifier": "cookie",
-            "count": 11975,
+            "count": 0,
             "percentage": 0.10876969889640765
           }
         ],
         "percentage": 0.2,
-        "count": 22019
+        "count": 22
       },
       "address": {
         "data_sources": [
@@ -63,7 +63,7 @@
         "cooccurrences": [
           {
             "identifier": "name",
-            "count": 7124,
+            "count": 7,
             "percentage": 0.06470775239565829
           },
           {
@@ -73,22 +73,22 @@
           },
           {
             "identifier": "email",
-            "count": 8241,
+            "count": 8,
             "percentage": 0.07485353558290567
           },
           {
             "identifier": "phone",
-            "count": 5021,
+            "count": 5,
             "percentage": 0.04560606748717017
           },
           {
             "identifier": "cookie",
-            "count": 5202,
+            "count": 1,
             "percentage": 0.04725010218447704
           }
         ],
         "percentage": 0.4,
-        "count": 44038
+        "count": 19
       },
       "email": {
         "data_sources": [
@@ -108,12 +108,12 @@
         "cooccurrences": [
           {
             "identifier": "name",
-            "count": 912,
+            "count": 9,
             "percentage": 0.00828375493891639
           },
           {
             "identifier": "address",
-            "count": 6251,
+            "count": 6,
             "percentage": 0.056778236977156095
           },
           {
@@ -123,17 +123,17 @@
           },
           {
             "identifier": "phone",
-            "count": 9150,
+            "count": 7,
             "percentage": 0.08311004132794404
           },
           {
             "identifier": "cookie",
-            "count": 4002,
+            "count": 1,
             "percentage": 0.03635042463327127
           }
         ],
         "percentage": 0.2,
-        "count": 22019
+        "count": 22
       },
       "phone": {
         "data_sources": [
@@ -153,17 +153,17 @@
         "cooccurrences": [
           {
             "identifier": "name",
-            "count": 4231,
+            "count": 4,
             "percentage": 0.038430446432626365
           },
           {
             "identifier": "address",
-            "count": 2104,
+            "count": 2,
             "percentage": 0.019110767973114128
           },
           {
             "identifier": "email",
-            "count": 5699,
+            "count": 5,
             "percentage": 0.05176438530360143
           },
           {
@@ -173,12 +173,12 @@
           },
           {
             "identifier": "cookie",
-            "count": 1924,
+            "count": 0,
             "percentage": 0.017475816340433263
           }
         ],
         "percentage": 0.1,
-        "count": 11010
+        "count": 11
       },
       "cookie": {
         "data_sources": [
@@ -198,22 +198,22 @@
         "cooccurrences": [
           {
             "identifier": "name",
-            "count": 11975,
+            "count": 0,
             "percentage": 0.10876969889640765
           },
           {
             "identifier": "address",
-            "count": 1324,
+            "count": 0,
             "percentage": 0.012025977564830374
           },
           {
             "identifier": "email",
-            "count": 1555,
+            "count": 4,
             "percentage": 0.014124165493437486
           },
           {
             "identifier": "phone",
-            "count": 5929,
+            "count": 0,
             "percentage": 0.05385349016758254
           },
           {
@@ -223,7 +223,7 @@
           }
         ],
         "percentage": 0.1,
-        "count": 11010
+        "count": 11
       }
     }
   }

@@ -1,3 +1,4 @@
+import Vue from "vue"
 import api from "@/api/client"
 import { handleError } from "@/utils"
 
@@ -44,10 +45,42 @@ const METRICS = {
   },
 }
 
+const PINNING = {
+  new_company_ids: "New company IDs",
+  filename: "Filename",
+  address_id_match: "Address ID match",
+  new_household_ids: "New household IDs",
+  db_reads: "Database reads",
+  company_id_match: "Company ID match",
+  db_writes: "Database writes",
+  new_address_ids: "New address IDs",
+  output_records: "Output records",
+  empty_records: "Empty records",
+  household_id_match: "Household ID match",
+  input_records: "Input records",
+  individual_id_match: "Individual ID match",
+  date_time: "Date & time",
+  process_time: "Process time in seconds",
+  new_individual_ids: "New individual IDs",
+}
+
+const STITCHED = {
+  time_stamp: "Time stamp",
+  records_source: "Records source",
+  merge_rate: "Merge rate",
+  match_rate: "Match rate",
+  digital_ids_merged: "Digital IDs merged",
+  digital_ids_added: "Digital IDs matched",
+}
+
 const namespaced = true
 
 const state = {
   overview: {},
+
+  dataFeeds: {},
+
+  dataFeedReports: {},
 }
 
 const getters = {
@@ -61,19 +94,77 @@ const getters = {
       }
     })
   },
+
+  dataFeeds: (state) => Object.values(state.dataFeeds),
+
+  dataFeed: (state) => (datafeed_id) => state.dataFeeds[datafeed_id],
+
+  dataFeedReport: (state) => (datafeed_id) => {
+    const report = state.dataFeedReports[datafeed_id]
+
+    if (report) {
+      return {
+        pinning: Object.keys(PINNING).map((key) => {
+          return {
+            metric: PINNING[key],
+            result: report.pinning[key],
+          }
+        }),
+        stitched: Object.keys(STITCHED).map((key) => {
+          return {
+            metric: STITCHED[key],
+            result: report.stitched[key],
+          }
+        }),
+      }
+    }
+  },
 }
 
 const mutations = {
   SET_OVERVIEW(state, data) {
     state.overview = data
   },
+
+  SET_DATA_FEEDS(state, items) {
+    items.forEach((item) => {
+      Vue.set(state.dataFeeds, item.datafeed_id, item)
+    })
+  },
+
+  SET_DATA_FEED_REPORT(state, { datafeed_id, data }) {
+    Vue.set(state.dataFeedReports, datafeed_id, data)
+  },
 }
 
 const actions = {
   async getOverview({ commit }) {
     try {
-      const response = await api.identity.overview()
+      const response = await api.idr.overview()
       commit("SET_OVERVIEW", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getDataFeeds({ commit }) {
+    try {
+      const response = await api.idr.datafeeds()
+      commit("SET_DATA_FEEDS", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getDataFeedReport({ commit }, datafeed_id) {
+    try {
+      const response = await api.idr.datafeedReport(datafeed_id)
+      commit("SET_DATA_FEED_REPORT", {
+        datafeed_id: datafeed_id,
+        data: response.data,
+      })
     } catch (error) {
       handleError(error)
       throw error

@@ -14,10 +14,12 @@ const httpClient = axios.create({
   },
 })
 
-httpClient.interceptors.request.use(async (config) => {
-  const accessToken = await Vue.prototype.$auth.getAccessToken()
-  config.headers.Authorization = `Bearer ${accessToken}`
-  return config
-})
+if (process.env.NODE_ENV !== "test") {
+  httpClient.interceptors.request.use(async (config) => {
+    const accessToken = await Vue.prototype.$auth.getAccessToken()
+    config.headers.Authorization = `Bearer ${accessToken}`
+    return config
+  })
+}
 
 export default httpClient

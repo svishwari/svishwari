@@ -4,12 +4,13 @@
 // Components
 // https://vuetifyjs.com/en/features/sass-variables/#variable-api
 @import "variables/alert.variables.scss";
+@import "variables/badge.variables.scss";
+@import "variables/breadcrumb.variables.scss";
 @import "variables/buttons.variables.scss";
 @import "variables/cards.variables.scss";
 @import "variables/elevations.variables.scss";
-@import "variables/modal.variables.scss";
-@import "variables/badge.variables.scss";
+@import "variables/expansion-panel.variables.scss";
 @import "variables/input.variables.scss";
 @import "variables/menu.variables.scss";
-@import "variables/breadcrumb.variables.scss";
+@import "variables/modal.variables.scss";
 @import "./utils.scss";

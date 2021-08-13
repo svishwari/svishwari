@@ -17,6 +17,7 @@
         :title="destination.name"
         :icon="destination.type"
         hide-button
+        data-e2e="destinationsList"
         class="mb-3 list"
       />
     </template>

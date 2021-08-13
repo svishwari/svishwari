@@ -25,10 +25,12 @@ stages:
       headers:
         content-type: application/json
       json:
-        - id: !anystr
-        - notification_type: !re_fullmatch "(Success|Critical|Informational)"
-        - description: !anystr
-        - created: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        notifications: !anylist
+          - id: !anystr
+            notification_type: !re_fullmatch "(Success|Critical|Informational)"
+            description: !anystr
+            category: !anystr
+            created: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
 
 ---
 test_name: Test notifications API custom query params success
@@ -57,10 +59,12 @@ stages:
       headers:
         content-type: application/json
       json:
-        - id: !anystr
-        - notification_type: !re_fullmatch "(Success|Critical|Informational)"
-        - description: !anystr
-        - created: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        notifications: !anylist
+          - id: !anystr
+            notification_type: !re_fullmatch "(Success|Critical|Informational)"
+            description: !anystr
+            category: !anystr
+            created: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
 
 ---
 test_name: Test notifications API failure

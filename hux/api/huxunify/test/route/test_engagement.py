@@ -1118,6 +1118,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(len(engagements), len(expected_engagements))
         for engagement in engagements:
             self.assertEqual(self.user_name, engagement[db_c.CREATED_BY])
+            self.assertIsNotNone(engagement[db_c.STATUS])
 
     def test_get_engagement_by_id_valid_id(self):
         """
@@ -1138,6 +1139,7 @@ class TestEngagementRoutes(TestCase):
         return_engagement = response.json
         self.assertEqual(engagement_id, return_engagement[db_c.OBJECT_ID])
         self.assertEqual(self.user_name, return_engagement[db_c.CREATED_BY])
+        self.assertEqual(api_c.STATUS_INACTIVE, return_engagement[db_c.STATUS])
 
     def test_get_engagement_by_id_invalid_id(self):
         """
