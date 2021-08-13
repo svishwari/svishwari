@@ -7,13 +7,13 @@ const namespaced = true
 const state = {
   items: {},
   overview: {},
-  history: [],
+  history: {},
 }
 
 const getters = {
   list: (state) => Object.values(state.items),
   overview: (state) => state.overview,
-  history: (state) => Object.values(state.history),
+  history: (state) => (id) => state.items[id],
 }
 
 const mutations = {
@@ -30,7 +30,7 @@ const mutations = {
   },
 
   SET_HISTORY(state, item) {
-    Vue.set(state.history, item.id, item)
+    Vue.set(state.items, item.id, item)
   },
 }
 

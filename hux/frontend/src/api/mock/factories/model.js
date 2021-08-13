@@ -1,5 +1,24 @@
 import faker from "faker"
 
+const versionHistory = () => {
+  return {
+    id: `${faker.datatype.number({ min: 1, max: 10 })}`,
+    lookback_window: 365,
+    prediction_window: 60,
+    description: "Predict the lifetime value of a customer.",
+    version: "21.7.30",
+    owner: () => `${faker.name.firstName()} ${faker.name.lastName()}`,
+    name: "Lifetime Value",
+    status: faker.random.arrayElement(["Active", "Delivering", "Stopped"]),
+    trained_date: faker.date.recent(),
+    fulcrum_date: faker.date.past(),
+  }
+}
+
+const mockVersionHistory = (num = 3) => {
+  return Array.from({ length: num }, versionHistory)
+}
+
 export default {
   description: "Propensity of a customer unsubscribing to emails.",
   fulcrum_date: () => faker.date.past(),
@@ -12,4 +31,5 @@ export default {
   prediction_window: 60,
   status: "Pending",
   type: "unsubscribe",
+  version_history: () => mockVersionHistory(5),
 }
