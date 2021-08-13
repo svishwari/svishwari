@@ -320,6 +320,11 @@ CANNOT_UPDATE_DESTINATIONS = "Error updating destination."
 INVALID_DESTINATION_AUTH = "Invalid authentication details entered."
 AUTH401_ERROR_MESSAGE = "Access token is missing or invalid."
 INVALID_OBJECT_ID = "Object ID is not valid."
+BSON_INVALID_ID = (
+    lambda invalid_id: f"'{invalid_id}' is not a valid ObjectId, it must be a "
+    f"12-byte input or a 24-character hex string"
+)
+
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
 INVALID_DELIVERY_SCHEDULE = "Delivery schedule is not valid."
 DUPLICATE_NAME = "Name already exists."
@@ -1115,7 +1120,6 @@ CUSTOMER_EVENTS_SAMPLE_COUNTS = {
     VIEWED_CHECKOUT_EVENT: [3, 4, 1, 0, 4, 3, 1, 3],
     VIEWED_SALE_ITEM_EVENT: [5, 5, 5, 1, 6, 5, 2, 5],
 }
-
 
 # FILTERING
 REDACTED = "++REDACTED++"

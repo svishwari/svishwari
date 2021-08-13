@@ -923,7 +923,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+        valid_response = {"message": api_c.BSON_INVALID_ID(destination_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -950,7 +950,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+        valid_response = {"message": api_c.BSON_INVALID_ID(destination_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -980,7 +980,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+        valid_response = {"message": api_c.BSON_INVALID_ID(destination_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
