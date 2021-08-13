@@ -14,14 +14,16 @@
       </span>
       <div class="sub-props pt-4">
         <span class="subprop-name">Size</span>
-        <span class="value ml-1">{{ sourceInput.size | Empty }}</span>
+        <span class="value ml-1">
+          {{ sourceInput.size | Numeric(true, false, false) | Empty }}
+        </span>
       </div>
       <div class="sub-props pt-4">
         <span class="subprop-name">W/M/O</span>
         <span class="value ml-1">
-          {{ sourceInput.women | percentageConvert(true, true) | Empty }} |
-          {{ sourceInput.men | percentageConvert(true, true) | Empty }} |
-          {{ sourceInput.other | percentageConvert(true, true) | Empty }}
+          {{ sourceInput.women | Numeric(true, false, false, true) | Empty }} |
+          {{ sourceInput.men | Numeric(true, false, false, true) | Empty }} |
+          {{ sourceInput.other | Numeric(true, false, false, true) | Empty }}
         </span>
       </div>
       <div class="sub-props pt-4">
@@ -80,16 +82,18 @@ export default {
 }
 
 .card-padding {
-  padding: 10px 20px 20px 20px;
+  padding: 10px !important;
 }
 
 .tooltip-style {
   @extend .box-shadow-3;
   border-radius: 0px;
   max-width: 213px;
+  min-width: 210px;
   height: auto;
-  top: -500px;
-  left: -660px;
+  position: absolute;
+  top: -160px;
+  left: -240px;
   z-index: 1;
   .map-hover {
     @extend .card-padding;

@@ -4,7 +4,7 @@ Schemas for the notifications API
 
 from flask_marshmallow import Schema
 from marshmallow import post_dump
-from marshmallow.fields import Str
+from marshmallow.fields import Str, Int, List, Nested
 from marshmallow.validate import OneOf
 
 from huxunifylib.database import constants as db_c
@@ -74,3 +74,24 @@ class NotificationSchema(Schema):
         data[api_c.NOTIFICATION_TYPE] = data[api_c.NOTIFICATION_TYPE].title()
 
         return data
+
+
+class NotificationsSchema(Schema):
+    """Notifications get schema"""
+
+    total = Int(
+        attribute=api_c.TOTAL_RECORDS,
+        example=1,
+    )
+    notifications = List(
+        Nested(NotificationSchema),
+        example=[
+            {
+                api_c.ID: "60e5c7be3b080a75959d6282",
+                api_c.NOTIFICATION_TYPE: db_c.NOTIFICATION_TYPE_CRITICAL.title(),
+                api_c.DESCRIPTION: "Facebook Delivery Stopped",
+                db_c.NOTIFICATION_FIELD_CATEGORY: api_c.DELIVERY_TAG.title(),
+                db_c.NOTIFICATION_FIELD_CREATED: "2021-08-09T12:35:24.915Z",
+            },
+        ],
+    )

@@ -63,16 +63,13 @@
                 :menu-options="actionItems"
                 route-name="EngagementDashboard"
                 :route-param="item['id']"
+                :data="item"
               >
                 <template #expand-icon>
                   <v-icon
                     v-if="item.audiences.length > 0"
                     :class="{ 'normal-icon': isExpanded }"
-                    @click="
-                      expandFunc(!isExpanded)
-                      getAudiencesForEngagement(item)
-                      markCurrentRow(item.id)
-                    "
+                    @click="expandFunc(!isExpanded)"
                   >
                     mdi-chevron-right
                   </v-icon>
@@ -86,7 +83,6 @@
               <status
                 :status="item[header.value]"
                 :show-label="true"
-                collapsed
                 class="d-flex"
                 :icon-size="17"
               />
@@ -120,14 +116,10 @@
           :colspan="expandedHeaders.length"
           class="pa-0 child"
         >
-          <v-progress-linear
-            :active="parentItem.isCurrentRow"
-            :indeterminate="parentItem.isCurrentRow"
-          />
           <hux-data-table
             v-if="parentItem.audiences.length > 0"
             :columns="expandedHeaders"
-            :data-items="parentItem.audienceList"
+            :data-items="parentItem.audiences"
             :show-header="false"
             class="expanded-table"
           >
@@ -142,22 +134,13 @@
                 :style="{ width: header.width }"
               >
                 <div v-if="header.value == 'name'">
-                  <tooltip>
-                    <template #label-content>
-                      <router-link
-                        :to="{
-                          name: 'AudienceInsight',
-                          params: { id: item['id'] },
-                        }"
-                        class="text-decoration-none primary--text ellipsis-21"
-                        append
-                        >{{ item[header.value] }}
-                      </router-link>
-                    </template>
-                    <template #hover-content>
-                      {{ item[header.value] }}
-                    </template>
-                  </tooltip>
+                  <menu-cell
+                    :value="item[header.value]"
+                    :menu-options="audienceActionItems"
+                    route-name="AudienceInsight"
+                    :route-param="item['id']"
+                    :data="item"
+                  />
                 </div>
                 <div v-if="header.value == 'size'">
                   <div>
@@ -224,6 +207,21 @@
         </template>
       </empty-page>
     </v-row>
+
+    <look-alike-audience
+      ref="lookalikeWorkflow"
+      :toggle="showLookAlikeDrawer"
+      :selected-audience="selectedAudience"
+      @onBack="reloadAudienceData()"
+      @onCreate="onCreated()"
+    />
+
+    <hux-alert
+      v-model="flashAlert"
+      :type="alert.type"
+      :title="alert.title"
+      :message="alert.message"
+    />
   </div>
 </template>
 
@@ -238,8 +236,9 @@ import Avatar from "../../components/common/Avatar.vue"
 import Size from "../../components/common/huxTable/Size.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Status from "../../components/common/Status.vue"
-import Tooltip from "../../components/common/Tooltip.vue"
 import MenuCell from "../../components/common/huxTable/MenuCell.vue"
+import HuxAlert from "@/components/common/HuxAlert.vue"
+import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
 export default {
   name: "Engagements",
   components: {
@@ -252,18 +251,46 @@ export default {
     Size,
     TimeStamp,
     Status,
-    Tooltip,
     MenuCell,
+    LookAlikeAudience,
+    HuxAlert,
   },
   data() {
     return {
+      selectedAudience: null,
+      showLookAlikeDrawer: false,
+      flashAlert: false,
+      alert: {
+        type: "success",
+        title: "YAY!",
+        message: "Successfully triggered delivery.",
+      },
       actionItems: [
-        { title: "Favorite" },
-        { title: "Export" },
-        { title: "Edit" },
-        { title: "Duplicate" },
-        { title: "Create a lookalike" },
-        { title: "Delete" },
+        { title: "Favorite", isDisabled: true },
+        { title: "Export", isDisabled: true },
+        { title: "Edit engagement", isDisabled: true },
+        { title: "Duplicate", isDisabled: true },
+        { title: "Make inactive", isDisabled: true },
+        { title: "Delete engagement", isDisabled: true },
+      ],
+      audienceActionItems: [
+        { title: "Favorite", isDisabled: true },
+        { title: "Export", isDisabled: true },
+        { title: "Edit audience", isDisabled: true },
+        { title: "Duplicate", isDisabled: true },
+        {
+          title: "Create a lookalike",
+          isDisabled: false,
+          menu: {
+            icon: "facebook",
+            title: "Facebook",
+            isDisabled: true,
+            onClick: (value) => {
+              this.openLookAlikeDrawer(value)
+            },
+          },
+        },
+        { title: "Remove audience", isDisabled: true },
       ],
       breadcrumbItems: [
         {
@@ -279,8 +306,7 @@ export default {
       columnDefs: [
         { text: "Engagement name", value: "name", width: "300px" },
         { text: "Audiences", value: "audiences", width: "200px" },
-        { text: "Status", value: "status", width: "140px" },
-        { text: "Size", value: "size", width: "200px" },
+        { text: "Status", value: "status", width: "200px" },
         {
           text: "Delivery schedule",
           value: "delivery_schedule",
@@ -320,23 +346,24 @@ export default {
   methods: {
     ...mapActions({
       getAllEngagements: "engagements/getAll",
-      getAudienceById: "audiences/getAudienceById",
       updateAudienceList: "engagements/updateAudienceList",
-      markCurrentRow: "engagements/markCurrentRow",
     }),
     getAudienceHeaders(headers) {
       headers[0].width = "200px"
       return headers
     },
-    // TODO: replace with data from GET /engagements when available
-    async getAudiencesForEngagement(item) {
-      this.audienceList = []
-      let audienceIds = item.audiences.map((key) => key.id)
-      for (let id of audienceIds) {
-        await this.getAudienceById(id)
-        this.audienceList.push(this.audiencesData(id))
-      }
-      await this.updateAudienceList({ id: item.id, data: this.audienceList })
+    openLookAlikeDrawer(value) {
+      this.selectedAudience = value
+      this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
+      this.lookalikeCreated = false
+      this.showLookAlikeDrawer = true
+    },
+    reloadAudienceData() {
+      this.showLookAlikeDrawer = false
+    },
+    async onCreated() {
+      this.alert.message = `Your lookalike audience, ${name}, has been created successfully.`
+      this.flashAlert = true
     },
   },
 }

@@ -8,7 +8,7 @@ import {
   destinationsConstants,
   destinationsDataExtensions,
 } from "./factories/destination"
-import idrOverview from "./factories/identity"
+import { idrOverview, idrDataFeedReport } from "./factories/identity"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData.json"
@@ -218,7 +218,7 @@ export const defineRoutes = (server) => {
   server.get(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/campaign-mappings",
     (schema) => {
-      return schema.campaignOptions.all()
+      return schema.campaignOptions.find(1)
     }
   )
   server.put(
@@ -287,7 +287,7 @@ export const defineRoutes = (server) => {
           type: destination.type,
         },
         size: audience.size,
-        delivered: "2021-07-11T14:39:49.574Z",
+        delivered: moment().toJSON(),
       }
     })
   })
@@ -350,15 +350,40 @@ export const defineRoutes = (server) => {
 
   server.get("/customers/overview", () => customersOverview)
 
+  server.get("/customers", (schema, request) => {
+    let currentBatch = request.queryParams.batch_number
+    let batchSize = request.queryParams.batch_size
+    let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
+    let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+    const customers = schema.customers.all().slice(initialCount, lastCount)
+    return customers
+  })
+
   server.post("/customers/overview", () => customersOverview)
 
   // identity resolution
   server.get("/idr/overview", () => idrOverview)
+  server.get(
+    "/idr/datafeeds",
+    (schema) => {
+      return schema.idrDataFeeds.all()
+    },
+    { timing: 10 }
+  )
+  server.get("/idr/datafeeds/:datafeed_id", () => idrDataFeedReport)
 
   // notifications
   server.get("/notifications", (schema, request) => {
-    const notifications = schema.notifications.all()
-    return notifications.slice(0, request.queryParams.batch_size)
+    let currentBatch = request.queryParams.batch_number
+    let batchSize = request.queryParams.batch_size
+    let initialCount = currentBatch == 1 ? 0 : (currentBatch - 1) * batchSize
+    let lastCount = currentBatch == 1 ? batchSize : currentBatch * batchSize
+    let allNotifications = schema.notifications.all()
+    const notifications = {
+      notifications: allNotifications.models.slice(initialCount, lastCount),
+      total: allNotifications.length,
+    }
+    return notifications
   })
 
   // audiences
@@ -404,6 +429,26 @@ export const defineRoutes = (server) => {
   })
 
   server.get("/audiences/rules", () => attributeRules)
+  server.get("/audiences/:id/delivery-history", (schema, request) => {
+    const id = request.params.id
+    const audience = schema.audiences.find(id)
+    const destination = schema.destinations.find(7)
+    return audience.engagements.map((engagement) => {
+      return {
+        engagement: {
+          id: engagement.id,
+          name: engagement.name,
+        },
+        destination: {
+          id: destination.id,
+          name: destination.name,
+          type: destination.type,
+        },
+        size: audience.size,
+        delivered: moment().toJSON(),
+      }
+    })
+  })
 
   //lookalike audiences
   server.post("/lookalike-audiences", (schema, request) => {

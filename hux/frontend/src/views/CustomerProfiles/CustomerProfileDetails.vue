@@ -116,9 +116,12 @@
             <v-card-title class="py-3 card-heading">
               {{ cardTitles[0].title }}
               <tooltip position-top>
-                <v-icon size="17" color="neroBlack" class="ml-2">
-                  mdi-lock-outline
-                </v-icon>
+                <icon
+                  type="ds_lock_special"
+                  :size="17"
+                  color="neroBlack"
+                  class="ml-2"
+                />
                 <template #tooltip>
                   You do not have access to see individual information.<br />
                   Contact your administrator for access.
@@ -532,6 +535,7 @@ export default {
 .blur-text {
   color: transparent;
   text-shadow: 0 0 8px #000;
+  user-select: none;
 }
 .no-background {
   background: none !important;

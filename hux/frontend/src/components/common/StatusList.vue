@@ -35,6 +35,7 @@
           class="ml-3"
           collapsed
           show-label
+          show-icon-tooltip
           :tooltip-title="`${sectionTypePrefix} status`"
         />
       </span>
@@ -75,7 +76,7 @@
               <template #hover-content>
                 <div class="d-flex flex-column">
                   <div class="d-flex align-center">
-                    <logo :type="item.type" :size="18" />
+                    <logo :type="item.delivery_platform_type" :size="18" />
                     <span class="ml-2">{{ item.name }}</span>
                   </div>
                   <span class="mb-1 mt-2">Last delivered:</span>
@@ -87,7 +88,7 @@
             <v-spacer></v-spacer>
 
             <span class="action-icon font-weight-light float-right d-none">
-              <v-menu class="menu-wrapper" bottom offset-y>
+              <v-menu v-model="openMenu" class="menu-wrapper" bottom offset-y>
                 <template #activator="{ on, attrs }">
                   <v-icon
                     v-if="!section.lookalike"
@@ -163,26 +164,35 @@
             </span>
           </div>
         </v-list-item-content>
-        <v-list-item-content v-if="item.status" class="status-col py-1">
+        <v-list-item-content v-if="item.status" class="status-col py-1 mr-2">
           <status
             :status="item.status"
             :icon-size="statusIcon"
             collapsed
             show-label
+            show-icon-tooltip
             tooltip-title="Destination status"
           />
         </v-list-item-content>
-        <v-list-item-content v-if="item.size" class="size-col py-1">
+        <v-list-item-content v-if="item.size" class="size-col py-1 mr-2">
           <tooltip>
             <template #label-content>
               {{ getSize(item.size) }}
             </template>
             <template #hover-content>
-              {{ item.size | Numeric(true, false) }}
+              <div class="d-flex flex-column text-caption">
+                <span>Audience size</span>
+                <span class="pb-3">{{ item.size | Numeric(true, false) }}</span>
+                <span>Match rate</span>
+                <i v-if="!item.match_rate">
+                  Pending... check back in a few hours
+                </i>
+                <span v-else>{{ item.match_rate | Percentage }}</span>
+              </div>
             </template>
           </tooltip>
         </v-list-item-content>
-        <v-list-item-content v-if="!item.size" class="deliverdOn-col py-1">
+        <v-list-item-content v-if="!item.size" class="size-col py-1">
           <tooltip>
             <template #label-content>
               {{ getSize(item.size) | Empty("-") }}
@@ -242,6 +252,7 @@ export default {
     section: {
       type: Object,
       required: false,
+      default: () => {},
     },
 
     engagementId: {
@@ -270,9 +281,10 @@ export default {
 
   data() {
     return {
+      openMenu: null,
+      isSubMenuOpen: null,
       showDeliveryAlert: false,
       selection: null,
-      isSubMenuOpen: false,
       lookALikeAllowedEntries: ["Facebook"],
       engagementMenuOptions: [
         { id: 1, title: "View delivery history", active: false },
@@ -320,6 +332,12 @@ export default {
       return this.sectionType === "engagement"
         ? this.destinationMenuOptions
         : []
+    },
+  },
+
+  watch: {
+    isSubMenuOpen(newValue) {
+      this.openMenu = newValue
     },
   },
 
@@ -405,10 +423,12 @@ export default {
         this.engagementMenuOptions.forEach((element) => {
           switch (element.title.toLowerCase()) {
             case "view delivery history":
-              element["active"] =
-                section[this.deliveriesKey].filter(
-                  (delivery) => delivery.status === "Delivered"
-                ).length > 0
+              element["active"] = false
+              // TODO
+              // element["active"] =
+              //   section[this.deliveriesKey].filter(
+              //     (delivery) => delivery.status === "Delivered"
+              //   ).length > 0
               break
             case "deliver all":
               element["active"] = section[this.deliveriesKey].length > 0
@@ -513,16 +533,16 @@ export default {
   .v-list {
     .v-list-item {
       .icon-col {
-        min-width: 69px;
-        max-width: 69px;
+        min-width: 55px;
+        max-width: 55px;
       }
       .status-col {
         min-width: 45px;
         max-width: 45px;
       }
       .size-col {
-        min-width: 80px;
-        max-width: 80px;
+        min-width: 50px;
+        max-width: 50px;
         font-size: 12px;
         line-height: 16px;
         color: var(--v--neroBlack-base);
@@ -531,7 +551,7 @@ export default {
         font-size: 12px;
         line-height: 16px;
         color: var(--v-neroBlack-base);
-        min-width: 80px;
+        min-width: 60px;
       }
       &:hover,
       &:focus {
@@ -544,6 +564,7 @@ export default {
     }
   }
 }
+
 ::v-deep.v-menu__content {
   .v-list-item {
     &.theme--light {

@@ -16,6 +16,7 @@
         <data-cards
           v-if="!loading"
           bordered
+          empty="No campaigns available to map to a delivery moment."
           :items="mappings"
           :fields="[
             {
@@ -101,6 +102,7 @@ import Drawer from "@/components/common/Drawer.vue"
 import DataCards from "../../../../components/common/DataCards.vue"
 import HuxDropdown from "../../../../components/common/HuxDropdown.vue"
 import Tooltip from "../../../../components/common/Tooltip.vue"
+
 export default {
   name: "CampaignMapDrawer",
   components: { Drawer, DataCards, HuxDropdown, Tooltip },
@@ -138,21 +140,26 @@ export default {
       return []
     },
     mappings() {
-      return this.campaigns.map((camp) => {
-        return camp["id"]
-          ? {
-              campaign: this.campaignMappingOptions.campaigns.filter(
-                (camOpt) => camOpt.id === camp.id
-              )[0],
-              delivery_job: this.campaignMappingOptions.delivery_jobs.filter(
-                (camOpt) => camOpt.id === camp.delivery_job_id
-              )[0],
-            }
-          : camp
-      })
+      return JSON.stringify(this.campaignMappingOptions) === "{}"
+        ? []
+        : this.campaigns.map((camp) => {
+            return camp["id"]
+              ? {
+                  campaign: this.campaignMappingOptions.campaigns.filter(
+                    (camOpt) => camOpt.id === camp.id
+                  )[0],
+                  delivery_job:
+                    this.campaignMappingOptions.delivery_jobs.filter(
+                      (camOpt) => camOpt.id === camp.delivery_job_id
+                    )[0],
+                }
+              : camp
+          })
     },
     canMapNow() {
-      return this.mappings.every((camp) => camp.campaign && camp.delivery_job)
+      return this.mappings.length > 0
+        ? this.mappings.every((camp) => camp.campaign && camp.delivery_job)
+        : false
     },
     deliveryOptions() {
       return this.campaignMappingOptions.delivery_jobs
@@ -218,15 +225,18 @@ export default {
     async loadCampaignMappings(attrs) {
       this.reset()
       this.identityAttrs = attrs
-      this.loading = true
-      await this.getCampaigns(attrs)
-      await this.getCampaignMappingsOptions(attrs)
-      const campaigns = await this.campaignMapping(attrs.destinationId)
-      this.campaigns =
-        campaigns.length > 0
-          ? campaigns
-          : [JSON.parse(JSON.stringify(this.emptyCampaign))]
-      this.loading = false
+      try {
+        this.loading = true
+        await this.getCampaignMappingsOptions(attrs)
+        await this.getCampaigns(attrs)
+        const campaigns = await this.campaignMapping(attrs.destinationId)
+        this.campaigns =
+          campaigns.length > 0
+            ? campaigns
+            : [JSON.parse(JSON.stringify(this.emptyCampaign))]
+      } finally {
+        this.loading = false
+      }
     },
   },
 }

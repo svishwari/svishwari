@@ -1,35 +1,6 @@
 <template>
-  <div>
-    <v-card
-      class="rounded-lg card-style"
-      max-width="798px"
-      min-height="100px"
-      flat
-    >
-      <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
-        <div class="mt-2">
-          <a
-            href="#"
-            class="d-flex align-center black--text text-decoration-none"
-          >
-            Demographic overview
-          </a>
-        </div>
-        <div
-          ref="huxChart"
-          class="chart-section"
-          @mouseover="getCordinates($event)"
-        ></div>
-        <div class="map-slider">
-          <map-slider
-            v-if="minValue && maxValue"
-            :min="minValue"
-            :max="maxValue"
-          ></map-slider>
-        </div>
-      </v-card-title>
-      <v-card-text class="pl-6 pr-6 pb-6"> </v-card-text>
-    </v-card>
+  <div class="chart-container" :style="{ maxWidth: chartWidth }">
+    <div ref="huxChart" @mouseover="getCordinates($event)"></div>
   </div>
 </template>
 
@@ -40,24 +11,32 @@ import * as d3Geo from "d3-geo"
 import * as topojson from "topojson"
 import * as topoData from "../../../../public/usaTopology.json"
 import * as statesList from "../../../../public/usaStateList.json"
-import mapSlider from "@/components/common/MapChart/mapSlider"
 
 export default {
   name: "GeoChart",
-  components: {
-    mapSlider,
-  },
+  components: {},
   props: {
     value: {
       type: Array,
       required: true,
     },
+    chartDimensions: {
+      type: Object,
+      required: false,
+      default() {
+        return {
+          width: 0,
+          height: 0,
+        }
+      },
+    },
   },
   data() {
     return {
+      chartWidth: "",
       chartData: this.value,
       width: 700,
-      height: 500,
+      height: 300,
       show: false,
       minValue: 0,
       maxValue: 0,
@@ -69,20 +48,30 @@ export default {
   },
 
   watch: {
-    value: function () {
-      d3Select.select(this.$refs.huxChart).select("svg").remove()
-      this.initiateMapChart()
+    chartDimensions: {
+      handler() {
+        d3Select.select(this.$refs.huxChart).selectAll("svg").remove()
+        this.initiateMapChart()
+      },
+      immediate: false,
+      deep: true,
     },
   },
   methods: {
     async initiateMapChart() {
       await this.chartData
 
+      this.chartWidth = this.chartDimensions.width + "px"
+      let currentWidth = this.chartDimensions.width
+      this.width = currentWidth == 0 ? 700 : currentWidth
+
       let svg = d3Select
         .select(this.$refs.huxChart)
         .append("svg")
         .attr("width", this.width)
         .attr("height", this.height)
+        .attr("viewBox", `0 0 ${this.width} ${this.height}`)
+        .attr("preserveAspectRatio", "xMidYMid")
 
       let us = topoData.default
       let usList = statesList.default
@@ -107,9 +96,14 @@ export default {
       this.minValue = Math.min(...total_range)
       this.maxValue = Math.max(...total_range)
 
-      let projection = d3Geo
-        .geoIdentity()
-        .fitSize([600, 500], featureCollection)
+      var projection = d3Geo.geoIdentity().fitExtent(
+        [
+          [20, 20],
+          [this.width - 10, 350 - 50],
+        ],
+        featureCollection
+      )
+
       let path = d3Geo.geoPath().projection(projection)
 
       let colorScale = d3Scale
@@ -177,12 +171,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.card-style {
+.chart-container {
   margin-bottom: 40px;
-  height: 550px;
-  .chart-section {
-    margin-bottom: -20px;
-  }
+  height: 125px;
+  min-height: 100px;
   .map-slider {
     max-height: 30px;
   }

@@ -20,6 +20,8 @@ const state = {
   newAudience: NEW_AUDIENCE,
 
   constants: {},
+
+  deliveries: {},
 }
 
 const getters = {
@@ -32,6 +34,11 @@ const getters = {
   insights: (state) => (id) => state.insights[id],
 
   audiencesRules: (state) => state.constants,
+
+  deliveries: (state) => (id) => {
+    const deliveries = state.deliveries[id]
+    return deliveries ? Object.values(state.deliveries[id]) : []
+  },
 }
 
 const mutations = {
@@ -51,6 +58,10 @@ const mutations = {
   SET_CONSTANTS(state, item) {
     Vue.set(state, "constants", item)
   },
+
+  SET_DELIVERIES(state, { audienceId, deliveries }) {
+    Vue.set(state.deliveries, audienceId, deliveries)
+  },
 }
 
 const actions = {
@@ -68,6 +79,16 @@ const actions = {
     try {
       const response = await api.audiences.find(id)
       const audienceInsights = response.data.audience_insights
+      let min_age = audienceInsights.min_age
+      let max_age = audienceInsights.max_age
+      let age = "-"
+      if (min_age && max_age && min_age === max_age) {
+        age = min_age
+      } else if (min_age && max_age) {
+        age = `${min_age}-${max_age}`
+      } else {
+        age = "-"
+      }
       let insightInfo = [
         {
           title: "Target size",
@@ -90,7 +111,7 @@ const actions = {
         },
         {
           title: "Age",
-          subtitle: audienceInsights.min_age + " - " + audienceInsights.max_age,
+          subtitle: age,
           icon: "mdi-cake-variant",
         },
         {
@@ -185,6 +206,19 @@ const actions = {
     try {
       const response = await api.customers.getOverview(filter)
       return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getDeliveries({ commit }, audienceId) {
+    try {
+      const response = await api.audiences.deliveries(audienceId)
+      commit("SET_DELIVERIES", {
+        audienceId: audienceId,
+        deliveries: response.data,
+      })
     } catch (error) {
       handleError(error)
       throw error

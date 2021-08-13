@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 """This module contains connector defines."""
 
 from huxunifylib.database import constants as db_c
@@ -30,11 +31,15 @@ DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
 HUX_ID = "hux_id"
 
+QUERY_PARAMETER_BATCH_SIZE = "batch_size"
+QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
+
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
 
 TOTAL_RECORDS = "total_records"
 MATCH_RATE = "match_rate"
+TOTAL = "total"
 TOTAL_UNIQUE_IDS = "total_unique_ids"
 TOTAL_UNKNOWN_IDS = "total_unknown_ids"
 TOTAL_KNOWN_IDS = "total_known_ids"
@@ -42,6 +47,7 @@ TOTAL_INDIVIDUAL_IDS = "total_individual_ids"
 TOTAL_HOUSEHOLD_IDS = "total_household_ids"
 UPDATED = "updated"
 TOTAL_CUSTOMERS = "total_customers"
+NEW_CUSTOMERS_ADDED = "new_customers_added"
 COUNTRIES = "total_countries"
 TOTAL_COUNT = "total_count"
 STATES = "total_us_states"
@@ -59,6 +65,7 @@ MAX_LTV_ACTUAL = "max_ltv_actual"
 LTV = "ltv"
 POPULATION_PERCENTAGE = "population_percentage"
 INCOME = "income"
+CDP_SERVICE_URL = "CDP_SERVICE_URL"
 # TODO: Remove State Names once it connected with CDM
 STATE_NAMES = [
     "Alaska",
@@ -162,7 +169,6 @@ STATUS_WEIGHTS = {
     STATUS_NOT_DELIVERED: 9,
     STATUS_DELIVERING: 8,
     STATUS_DELIVERY_PAUSED: 7,
-    STATUS_ACTIVE: 6,
     STATUS_INACTIVE: 5,
     STATUS_DRAFT: 4,
     STATUS_PENDING: 3,
@@ -192,6 +198,9 @@ SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS = "perf_data_extensions"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "perf_data_extension"
 SFMC_DATA_EXTENSION_NAME = "Name"
 SFMC_CUSTOMER_KEY = "CustomerKey"
+
+# Twilio connector defines
+TWILIO_AUTH_TOKEN = "twilio_auth_token"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -261,6 +270,14 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
+    db_c.DELIVERY_PLATFORM_TWILIO: {
+        TWILIO_AUTH_TOKEN: {
+            NAME: "Auth Token",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+    },
 }
 
 # DESTINATION Secret Mapping
@@ -282,6 +299,10 @@ DESTINATION_SECRETS = {
             SFMC_REST_BASE_URI,
         ],
         AWS_SSM_NAME: [SFMC_CLIENT_SECRET],
+    },
+    db_c.DELIVERY_PLATFORM_TWILIO: {
+        MONGO: [],
+        AWS_SSM_NAME: [TWILIO_AUTH_TOKEN],
     },
 }
 
@@ -308,11 +329,13 @@ PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
 INVALID_AUTH_DETAILS = "Invalid authentication details."
 INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."
+INVALID_BATCH_PARAMS = "Invalid Batch Number or Batch Size"
 
 AUDIENCE_NOT_FOUND = "Audience not found."
 DESTINATION_NOT_FOUND = "Destination not found."
 ENGAGEMENT_NOT_FOUND = "Engagement not found."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported."
+SUCCESSFUL_DELIVERY_JOB_NOT_FOUND = "No successful delivery job found"
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -333,6 +356,7 @@ DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
 DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
 INVALID_ID = "Invalid Object ID."
+INVALID_STATUS = "Invalid status value."
 INVALID_COMPONENT_NAME = "Invalid component name."
 DATA_EXTENSIONS = "data-extensions"
 DATA_EXTENSION = "data_extension"
@@ -466,7 +490,6 @@ PARAMETER_STORE_ERROR_MSG = (
     "An error occurred while attempting to"
     " store secrets in the parameter store."
 )
-
 # users
 USER_TAG = "user"
 USER_NAME = "user_name"
@@ -478,6 +501,7 @@ USER_ENDPOINT = "/users"
 MODELS_TAG = "model"
 MODELS_DESCRIPTION = "MODEL API"
 MODELS_ENDPOINT = "/models"
+MODELS_VERSION_HISTORY = "version-history"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
 MODEL_ID = "model_id"
@@ -532,6 +556,7 @@ FEATURES = "features"
 JOIN_KEYS = "joinKeys"
 RESULTS = "results"
 LATEST_VERSION = "latest_version"
+VERSION = "version"
 FULCRUM_DATE = "fulcrum_date"
 LAST_TRAINED = "last_trained"
 LOOKBACK_WINDOW = "lookback_window"
@@ -553,98 +578,176 @@ SUPPORTED_MODELS = {
         MODEL_TYPE: LTV,
         NAME: "Lifetime value",
         DESCRIPTION: "Predicts the lifetime value of a customer based on models",
-        CURRENT_VERSION: "3.1.2",
-        RMSE: 350,
+        CURRENT_VERSION: "21.7.28",
+        RMSE: 233.5,
         AUC: -1,
         PRECISION: -1,
         RECALL: -1,
         LIFT_DATA: {
             BUCKET: list(range(10, 110, 10)),
             PREDICTED_VALUE: [
-                15007.58,
-                28587.99,
-                43044.47,
-                61834.16,
-                78894.74,
-                93745.37,
-                109899.63,
-                122684.49,
-                137940.49,
-                151782.41,
+                5.73300972,
+                5.67696026,
+                5.69953111,
+                5.63453104,
+                5.69388674,
+                5.67843418,
+                5.63625346,
+                5.68890584,
+                5.75596704,
+                5.95587736,
             ],
             ACTUAL_VALUE: [
-                17280.0,
-                31781.0,
-                46494.0,
-                61392.0,
-                76031.0,
-                90735.0,
-                105208.0,
-                120186.0,
-                134787.0,
-                149578.0,
+                5.74311135,
+                5.72586591,
+                5.72513378,
+                5.72552206,
+                5.72536025,
+                5.72511579,
+                5.7255817,
+                5.72530467,
+                5.72535943,
+                5.72534962,
             ],
-            PROFILE_COUNT: [21, 54, 102, 190, 300, 427, 612, 818, 1226, 2067],
+            PROFILE_COUNT: [
+                421,
+                971,
+                1624,
+                2029,
+                3152,
+                3933,
+                4599,
+                6335,
+                9224,
+                66160,
+            ],
             PREDICTED_RATE: [
-                714.65,
-                529.41,
-                422.0,
-                325.44,
-                262.98,
-                219.54,
-                179.57,
-                149.98,
-                112.51,
-                73.43,
+                1284.48,
+                489.49,
+                308.28,
+                212.45,
+                156.78,
+                121.26,
+                94.10,
+                77.12,
+                61.81,
+                13.65,
             ],
             ACTUAL_RATE: [
-                822.86,
-                588.54,
-                455.82,
-                323.12,
-                253.44,
-                212.49,
-                171.91,
-                146.93,
-                109.94,
-                72.36,
+                1314.71,
+                547.83,
+                327.00,
+                261.96,
+                168.57,
+                135.02,
+                115.59,
+                83.86,
+                57.60,
+                8.03,
             ],
             PREDICTED_LIFT: [
-                9.73,
-                7.21,
-                5.75,
-                4.43,
-                3.58,
-                2.99,
-                2.45,
-                2.04,
-                1.53,
-                1,
+                23.80,
+                9.07,
+                5.71,
+                3.94,
+                2.90,
+                2.25,
+                1.74,
+                1.43,
+                1.15,
+                0.25,
             ],
             ACTUAL_LIFT: [
-                11.37,
-                8.31,
-                6.3,
-                4.47,
-                3.5,
-                2.94,
-                2.38,
-                2.03,
-                1.52,
-                1,
+                24.26,
+                10.11,
+                6.03,
+                4.83,
+                3.11,
+                2.49,
+                2.13,
+                1.55,
+                1.06,
+                0.15,
             ],
             PROFILE_SIZE_PERCENT: [
-                1.02,
-                2.61,
-                4.93,
-                4.93,
-                9.19,
-                14.51,
-                20.66,
-                29.61,
-                39.57,
-                59.31,
-                100,
+                0.43,
+                0.99,
+                1.65,
+                2.06,
+                3.20,
+                3.99,
+                4.67,
+                6.43,
+                9.37,
+                67.20,
+            ],
+        },
+        FEATURE_IMPORTANCE: {
+            NAME: [
+                "8to12m-ITEMEXTPRICE-sum",
+                "8to12m-ITEMEXTCOST-sum",
+                "fwbk_2m-STORENAME-Woolen Mill Store",
+                "fwbk_2m-ITEMEXTPRICE-sum",
+                "8to12m-ORDTDOL-sum",
+                "fwbk_1to2y-ORDTDOL-max",
+                "prediction-months-2",
+                "dow-pe_u_dow-pe_count",
+                "fwbk_1to2y-ITEMEXTCOST-sum",
+                "fwbk_2w-STORENAME-Woolen Mill Store",
+                "fwbk_4m-ORDTDOL-sum",
+                "8to12m-COGS-cnt",
+                "8to12m-ITEMEXTPRICE-cnt",
+                "fwbk_1to2y-ORDTDOL-sum",
+                "2w-ITEMEXTCOST-sum",
+                "profile-data_source-buyers",
+                "8to12m-positive-order",
+                "4w-ITEMQTY-sum",
+                "8to12m-COGS-sum",
+                "4m-ORDITEMQTY-sum",
+            ],
+            SCORE: [
+                9.70841497,
+                9.66068916,
+                9.57199053,
+                9.53145841,
+                9.48637579,
+                9.46311966,
+                9.36627344,
+                9.32458652,
+                9.2098757,
+                9.15758058,
+                9.11704129,
+                9.01195403,
+                8.99894605,
+                8.97088769,
+                8.952982,
+                8.91818933,
+                8.90302184,
+                8.89525897,
+                8.88254144,
+                8.8268117,
+            ],
+            DESCRIPTION: [
+                "8to12m-ITEMEXTCOST-sum",
+                "8to12m-ITEMEXTCOST-sum",
+                "fwbk_2m-STORENAME-Woolen Mill Store",
+                "fwbk_2m-ITEMEXTPRICE-sum",
+                "8to12m-ORDTDOL-sum",
+                "fwbk_1to2y-ORDTDOL-max",
+                "prediction-months-2",
+                "dow-pe_u_dow-pe_count",
+                "fwbk_1to2y-ITEMEXTCOST-sum",
+                "fwbk_2w-STORENAME-Woolen Mill Store",
+                "fwbk_4m-ORDTDOL-sum",
+                "8to12m-COGS-cnt",
+                "8to12m-ITEMEXTPRICE-cnt",
+                "fwbk_1to2y-ORDTDOL-sum",
+                "2w-ITEMEXTCOST-sum",
+                "profile-data_source-buyers",
+                "8to12m-positive-order",
+                "4w-ITEMQTY-sum",
+                "8to12m-COGS-sum",
+                "4m-ORDITEMQTY-sum",
             ],
         },
     },
@@ -652,7 +755,7 @@ SUPPORTED_MODELS = {
         MODEL_TYPE: UNSUBSCRIBE,
         NAME: "Propensity to Unsubscribe",
         DESCRIPTION: "Predicts how likely a customer will unsubscribe from an email list",
-        CURRENT_VERSION: "3.1.2",
+        CURRENT_VERSION: "21.7.31",
         RMSE: -1,
         AUC: 0.79,
         PRECISION: 0.82,
@@ -672,66 +775,145 @@ SUPPORTED_MODELS = {
                 654.01,
             ],
             ACTUAL_VALUE: [67, 134, 201, 268, 335, 402, 469, 536, 603, 670],
-            PROFILE_COUNT: [21, 54, 102, 190, 300, 427, 612, 818, 1226, 2067],
+            PROFILE_COUNT: [
+                9537,
+                19074,
+                28611,
+                38148,
+                47685,
+                57221,
+                66758,
+                76295,
+                85832,
+                95369,
+            ],
             PREDICTED_RATE: [
-                0.87,
-                0.85,
-                0.83,
-                0.8,
-                0.78,
-                0.76,
-                0.73,
-                0.69,
-                0.65,
-                0.52,
+                0.13,
+                0.09,
+                0.07,
+                0.06,
+                0.05,
+                0.04,
+                0.04,
+                0.03,
+                0.03,
+                0.03,
             ],
             ACTUAL_RATE: [
-                0.93,
-                0.87,
-                0.82,
-                0.79,
-                0.78,
-                0.76,
-                0.73,
-                0.69,
-                0.66,
-                0.54,
+                0.13,
+                0.09,
+                0.07,
+                0.05,
+                0.05,
+                0.04,
+                0.04,
+                0.03,
+                0.03,
+                0.03,
             ],
             PREDICTED_LIFT: [
-                1.67,
-                1.62,
-                1.75,
-                1.53,
-                1.49,
+                4.68,
+                3.13,
+                2.36,
+                1.93,
+                1.64,
                 1.44,
-                1.39,
-                1.33,
-                1.25,
+                1.29,
+                1.18,
+                1.09,
                 1,
             ],
             ACTUAL_LIFT: [
-                1.37,
-                1.31,
-                1.3,
+                4.63,
+                3.16,
+                2.43,
+                1.97,
+                1.67,
                 1.47,
-                1.5,
-                1.94,
-                1.38,
-                1.03,
-                1.52,
+                1.31,
+                1.19,
+                1.1,
                 1,
             ],
             PROFILE_SIZE_PERCENT: [
-                5.76,
-                12.61,
-                19.93,
-                27.19,
-                34.51,
-                42.66,
-                52.61,
-                61.57,
-                72.31,
+                46.31,
+                63.18,
+                72.75,
+                78.94,
+                83.59,
+                88.01,
+                91.39,
+                95.58,
+                99.31,
                 100,
+            ],
+        },
+        FEATURE_IMPORTANCE: {
+            NAME: [
+                "1to2y-COGS-sum",
+                "1to2y-ITEMEXTPRICE-cnt",
+                "1to2y-ITEMQTY-avg",
+                "2m-ORDTDOL-cnt",
+                "2m-COGS-cnt",
+                "dow-pe_u_dow-pe_count",
+                "4m-ORDITEMQTY-cnt",
+                "duration_days-item-min",
+                "1to2y-ITEMPRICE-min",
+                "2w-ORDITEMQTY-cnt",
+                "2m-ORDITEMQTY-cnt",
+                "4m-ORDTDOL-cnt",
+                "dow-u_wd-weekday",
+                "2w-ITEMEXTPRICE-cnt",
+                "4m-ITEMNO-30150",
+                "3d-ITEMPRICE-avg",
+                "profile-data_source-buyers",
+                "3d-ITEMEXTPRICE-min",
+                "1to2y-ITEMPRICE-avg",
+                "8to12m-ORDAMT-sum",
+            ],
+            SCORE: [
+                364.7,
+                68.22,
+                67.19,
+                31.04,
+                27.21,
+                22.66,
+                21.58,
+                14.36,
+                12.97,
+                8,
+                7.69,
+                7.12,
+                5.91,
+                5.2,
+                5.12,
+                5.09,
+                4.98,
+                4.79,
+                4.48,
+                4.37,
+            ],
+            DESCRIPTION: [
+                "1to2y-COGS-sum",
+                "1to2y-ITEMEXTPRICE-cnt",
+                "1to2y-ITEMQTY-avg",
+                "2m-ORDTDOL-cnt",
+                "2m-COGS-cnt",
+                "dow-pe_u_dow-pe_count",
+                "4m-ORDITEMQTY-cnt",
+                "duration_days-item-min",
+                "1to2y-ITEMPRICE-min",
+                "2w-ORDITEMQTY-cnt",
+                "2m-ORDITEMQTY-cnt",
+                "4m-ORDTDOL-cnt",
+                "dow-u_wd-weekday",
+                "2w-ITEMEXTPRICE-cnt",
+                "4m-ITEMNO-30150",
+                "3d-ITEMPRICE-avg",
+                "profile-data_source-buyers",
+                "3d-ITEMEXTPRICE-min",
+                "1to2y-ITEMPRICE-avg",
+                "8to12m-ORDAMT-sum",
             ],
         },
     },
@@ -837,6 +1019,8 @@ CUSTOMERS_INSIGHTS = "customers-insights"
 GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
 CUSTOMERS_API_HEADER_KEY = "x-api-key"
+CUSTOMERS_DEFAULT_BATCH_SIZE = "1000"
+CUSTOMERS_DEFAULT_BATCH_NUMBER = "1"
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
@@ -887,6 +1071,25 @@ TIME_STAMP = "time_stamp"
 STITCHED = "stitched"
 PINNING = "pinning"
 
+# IDR Matching Trends
+MATCHING_TRENDS = "matching-trends"
+
+KNOWN_IDS = "known_ids"
+UNIQUE_HUX_IDS = "unique_hux_ids"
+ANONYMOUS_IDS = "anonymous_ids"
+
+KNOWN_IDS_MIN_COUNT = 50000
+KNOWN_IDS_MAX_COUNT = 79000
+KNOWN_IDS_LAMBDA = 1.6
+
+UNIQUE_HUX_IDS_MIN_COUNT = 100000
+UNIQUE_HUX_IDS_MAX_COUNT = 156000
+UNIQUE_HUX_IDS_LAMBDA = 1.5
+
+ANONYMOUS_IDS_MIN_COUNT = 79000
+ANONYMOUS_IDS_MAX_COUNT = 120000
+ANONYMOUS_IDS_LAMBDA = 5
+
 # IDR Data feeds
 DATAFEED_ID = "datafeed_id"
 DATAFEED_NAME = "datafeed_name"
@@ -894,6 +1097,25 @@ DATAFEED_DATA_SOURCE = "data_source_type"
 DATAFEED_NEW_IDS_COUNT = "new_ids_generated"
 DATAFEED_RECORDS_PROCESSED_COUNT = "num_records_processed"
 DATAFEED_LAST_RUN_DATE = "last_run"
+
+# customer event fields
+CUSTOMER_TOTAL_DAILY_EVENT_COUNT = "total_event_count"
+CUSTOMER_DAILY_EVENT_WISE_COUNT = "event_type_counts"
+ABANDONED_CART_EVENT = "abandoned_cart"
+CUSTOMER_LOGIN_EVENT = "customer_login"
+VIEWED_CART_EVENT = "viewed_cart"
+VIEWED_CHECKOUT_EVENT = "viewed_checkout"
+VIEWED_SALE_ITEM_EVENT = "viewed_sale_item"
+# TODO remove once we get event counts from CDP.
+CUSTOMER_EVENTS_SAMPLE_COUNTS = {
+    CUSTOMER_TOTAL_DAILY_EVENT_COUNT: [17, 16, 15, 2, 18, 16, 10, 16],
+    ABANDONED_CART_EVENT: [3, 3, 3, 0, 2, 2, 2, 2],
+    CUSTOMER_LOGIN_EVENT: [2, 1, 3, 1, 3, 3, 2, 3],
+    VIEWED_CART_EVENT: [4, 3, 3, 0, 3, 3, 3, 3],
+    VIEWED_CHECKOUT_EVENT: [3, 4, 1, 0, 4, 3, 1, 3],
+    VIEWED_SALE_ITEM_EVENT: [5, 5, 5, 1, 6, 5, 2, 5],
+}
+
 
 # FILTERING
 REDACTED = "++REDACTED++"

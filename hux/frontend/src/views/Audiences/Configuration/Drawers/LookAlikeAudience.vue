@@ -211,15 +211,13 @@ export default {
     selectedAudience(value) {
       this.lookalikeAudience.audience = value
     },
+    async prefetchLookalikeDependencies() {
+      this.loading = true
+      await this.getAllEngagements()
+      await this.getAllAudiences()
+      this.loading = false
+    },
   },
-
-  async mounted() {
-    this.loading = true
-    await this.getAllEngagements()
-    await this.getAllAudiences()
-    this.loading = false
-  },
-
   methods: {
     ...mapActions({
       getAllEngagements: "engagements/getAll",
@@ -257,6 +255,12 @@ export default {
       this.reset()
       this.localToggle = false
       this.$emit("onBack")
+    },
+    async prefetchLookalikeDependencies() {
+      this.loading = true
+      await this.getAllEngagements()
+      await this.getAllAudiences()
+      this.loading = false
     },
   },
 }

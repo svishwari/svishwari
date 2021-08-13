@@ -97,3 +97,9 @@ class InvalidNotificationType(HuxAdvException):
     """Exception for invalid notification type."""
 
     exception_message = "Invalid Notification type <{}>!"
+
+
+class InvalidValueException(HuxAdvException):
+    """Exception for invalid value provided."""
+
+    exception_message = "Invalid value provided: <{}>!"

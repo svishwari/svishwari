@@ -28,6 +28,7 @@
         :grow="0"
         :title="item.title"
         :icon="item.icon"
+        :height="75"
       >
         <template #subtitle-extended>
           <span class="mr-2">
@@ -79,9 +80,10 @@
         v-if="Object.keys(appliedFilters).length > 0"
         class="ma-2 audience-summary"
         :title="'Attributes'"
+        :height="75"
       >
         <template #extra-item>
-          <div class="container pl-0">
+          <div class="container pl-0 pt-2">
             <ul class="filter-list">
               <li
                 v-for="filterKey in Object.keys(appliedFilters)"
@@ -123,16 +125,12 @@
         </template>
       </metric-card>
     </div>
-    <div v-if="relatedEngagements.length > 0" class="px-15 my-1 mb-4 pt-6">
-      <v-row class="pa-3 pb-5">
-        <v-col
-          :md="
-            !is_lookalike && isLookalikable && isLookalikable != 'Inactive'
-              ? 9
-              : 12
-          "
-          class="pa-0"
-        >
+    <div
+      v-if="relatedEngagements.length > 0"
+      class="px-15 my-1 mb-4 pt-6 relationships"
+    >
+      <v-row class="pa-3 pb-5" style="min-height: 200px">
+        <v-col :md="showLookalike ? 9 : 12" class="pa-0">
           <delivery-overview
             :sections="relatedEngagements"
             section-type="engagement"
@@ -155,31 +153,38 @@
                     align-center
                     primary--text
                     text-decoration-none
-                    pr-0
+                    body-2
                   "
                   @click="openAttachEngagementDrawer()"
                 >
+                  <icon
+                    type="engagements"
+                    :size="14"
+                    color="primary"
+                    class="mr-2"
+                  />
                   Add to an engagement
                 </v-btn>
-                <v-btn text color="primary">
-                  <icon type="history" :size="16" class="mr-1" />
+                <v-btn
+                  text
+                  color="primary"
+                  class="body-2 ml-n3"
+                  @click="openDeliveryHistoryDrawer()"
+                >
+                  <icon type="history" :size="14" class="mr-1" />
                   Delivery history
                 </v-btn>
               </div>
             </template>
             <template #empty-deliveries>
-              <div class="mb-16">
+              <div class="mb-2">
                 This engagement has no destinations yet. Add destinations in the
                 submenu located in the right corner above.
               </div>
             </template>
           </delivery-overview>
         </v-col>
-        <v-col
-          v-if="!is_lookalike && isLookalikable && isLookalikable != 'Inactive'"
-          md="3"
-          class="pl-6 pr-0 py-0"
-        >
+        <v-col v-if="showLookalike" md="3" class="pl-6 pr-0 py-0">
           <look-alike-card
             :key="lookalikeAudiences"
             v-model="lookalikeAudiences"
@@ -200,6 +205,7 @@
             :grow="i === 0 ? 2 : 1"
             :title="insightInfoItems[item].title"
             :icon="insightInfoItems[item].icon"
+            :height="80"
           >
             <template #subtitle-extended>
               <tooltip>
@@ -220,6 +226,73 @@
     <v-row v-if="audienceInsights" class="px-15 mt-2">
       <v-col cols="3">
         <income-chart></income-chart>
+      </v-col>
+    </v-row>
+    <v-row class="px-15 mt-2">
+      <v-col md="7">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <div class="mt-2">
+              <span class="neroBlack--text text-h5">
+                Demographic Overview
+              </span>
+            </div>
+          </v-card-title>
+          <map-chart :map-data="mapChartData" />
+          <map-slider :map-data="mapChartData" />
+        </v-card>
+      </v-col>
+      <v-col md="5">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <div class="mt-2">
+              <span class="neroBlack--text text-h5"> United States </span>
+            </div>
+          </v-card-title>
+          <v-divider class="ml-5 mr-8 mt-0 mb-1" />
+          <map-state-list :map-data="mapChartData" />
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row class="px-15 mt-2">
+      <v-col md="3">
+        <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
+          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <div class="mt-2">
+              <span class="neroBlack--text text-h5">
+                Top location &amp; Income
+              </span>
+            </div>
+          </v-card-title>
+          <empty-state-chart />
+        </v-card>
+      </v-col>
+      <v-col md="6">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
+          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <div class="mt-2">
+              <span class="neroBlack--text text-h5">
+                Gender / monthly spending in 2021
+              </span>
+            </div>
+          </v-card-title>
+          <gender-spend-chart />
+        </v-card>
+      </v-col>
+      <v-col md="3">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
+          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <div class="mt-2">
+              <span class="neroBlack--text text-h5"> Gender </span>
+            </div>
+          </v-card-title>
+          <doughnut-chart
+            :width="250"
+            :height="200"
+            :data="genderChartData"
+            label="Gender"
+          />
+        </v-card>
       </v-col>
     </v-row>
     <hux-alert
@@ -243,7 +316,7 @@
 
     <edit-delivery-schedule
       v-model="editDeliveryDrawer"
-      :audience-id="selectedAudienceId"
+      :audience-id="audienceId"
       :destination="scheduleDestination"
       :engagement-id="engagementId"
     />
@@ -276,59 +349,87 @@
       @onAddEngagement="triggerAttachEngagement($event)"
     />
     <look-alike-audience
+      ref="lookalikeWorkflow"
       :toggle="showLookAlikeDrawer"
-      :selected-audience="selectedAudience"
+      :selected-audience="audience"
       @onBack="reloadAudienceData()"
       @onCreate="lookalikeCreated = true"
+    />
+
+    <delivery-history-drawer
+      :audience-id="audienceId"
+      :toggle="showDeliveryHistoryDrawer"
+      @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
     />
   </div>
 </template>
 
 <script>
+// helpers
 import { generateColor } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
-import PageHeader from "@/components/PageHeader"
-import Breadcrumb from "@/components/common/Breadcrumb"
-import Avatar from "@/components/common/Avatar"
-import Tooltip from "../../components/common/Tooltip.vue"
-import MetricCard from "@/components/common/MetricCard"
-import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
-import Icon from "../../components/common/Icon.vue"
-import Size from "../../components/common/huxTable/Size.vue"
-import DeliveryOverview from "../../components/DeliveryOverview.vue"
-import HuxAlert from "../../components/common/HuxAlert.vue"
+
+// common components
+import Avatar from "@/components/common/Avatar.vue"
+import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
-import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
-import AttachEngagement from "@/views/Audiences/AttachEngagement"
-import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations"
-import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension"
+import DeliveryOverview from "@/components/DeliveryOverview.vue"
+import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
+import EmptyStateChart from "@/components/common/EmptyStateChart"
+import genderData from "@/components/common/DoughnutChart/genderData.json"
+import HuxAlert from "@/components/common/HuxAlert.vue"
+import Icon from "@/components/common/Icon.vue"
+import IncomeChart from "@/components/common/incomeChart/IncomeChart.vue"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
-import IncomeChart from "@/components/common/incomeChart/IncomeChart"
+import MapChart from "@/components/common/MapChart/MapChart"
+import mapData from "@/components/common/MapChart/mapData.json"
+import mapSlider from "@/components/common/MapChart/mapSlider"
+import MapStateList from "@/components/common/MapChart/MapStateList"
+import MetricCard from "@/components/common/MetricCard.vue"
+import PageHeader from "@/components/PageHeader.vue"
+import Size from "@/components/common/huxTable/Size.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+
+// views
+import AttachEngagement from "@/views/Audiences/AttachEngagement.vue"
+import DeliveryHistoryDrawer from "@/views/Shared/Drawers/DeliveryHistoryDrawer.vue"
+import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension.vue"
+import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
+import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations.vue"
+import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
+import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 
 export default {
   name: "AudienceInsight",
   components: {
-    MetricCard,
-    PageHeader,
-    Breadcrumb,
-    Avatar,
-    Tooltip,
-    Icon,
-    Size,
-    DeliveryOverview,
     AttachEngagement,
-    SelectDestinationsDrawer,
+    Avatar,
+    Breadcrumb,
+    ConfirmModal,
+    DeliveryHistoryDrawer,
+    DeliveryOverview,
     DestinationDataExtensionDrawer,
+    DoughnutChart,
+    EditDeliverySchedule,
+    EmptyStateChart,
+    HuxAlert,
+    Icon,
+    IncomeChart,
     LookAlikeAudience,
     LookAlikeCard,
-    IncomeChart,
-    HuxAlert,
-    ConfirmModal,
-    EditDeliverySchedule,
+    MapChart,
+    mapSlider,
+    MapStateList,
+    MetricCard,
+    PageHeader,
+    SelectDestinationsDrawer,
+    Size,
+    Tooltip,
+    GenderSpendChart,
   },
   data() {
     return {
-      selectedAudience: null,
+      mapChartData: mapData.demographic_overview,
       showLookAlikeDrawer: false,
       lookalikeCreated: false,
       audienceHistory: [],
@@ -393,15 +494,34 @@ export default {
         { value: "lifetime", icon: "lifetime" },
         { value: "churn", icon: "churn" },
       ],
+      genderChartData: [
+        {
+          label: "Men",
+          population_percentage:
+            genderData.gender.gender_men.population_percentage,
+          size: genderData.gender.gender_men.size,
+        },
+        {
+          label: "Women",
+          population_percentage:
+            genderData.gender.gender_women.population_percentage,
+          size: genderData.gender.gender_women.size,
+        },
+        {
+          label: "Other",
+          population_percentage:
+            genderData.gender.gender_other.population_percentage,
+          size: genderData.gender.gender_other.size,
+        },
+      ],
       selectedEngagements: [],
       selectedDestinations: [],
+      showDeliveryHistoryDrawer: false,
       showSelectDestinationsDrawer: false,
       showSalesforceExtensionDrawer: false,
       salesforceDestination: {},
 
       engagementDrawer: false,
-      // Edit Schedule data props
-      selectedAudienceId: null,
       engagementId: null,
       showConfirmModal: false,
       editDeliveryDrawer: false,
@@ -421,10 +541,17 @@ export default {
       return this.getAudience(this.$route.params.id)
     },
     audienceId() {
-      return this.audience && this.audience.id
+      return this.$route.params.id
     },
     audienceInsights() {
       return this.getAudienceInsights(this.audienceId)
+    },
+    showLookalike() {
+      return !this.is_lookalike &&
+        this.isLookalikable &&
+        this.isLookalikable != "Disabled"
+        ? true
+        : false
     },
     breadcrumbItems() {
       const items = [
@@ -536,11 +663,24 @@ export default {
             subtitle:
               insight !== "age"
                 ? this.audience.audience_insights[insight]
-                : `${this.audience.audience_insights["min_age"]}-${this.audience.audience_insights["max_age"]}`,
+                : this.getAgeString(
+                    this.audience.audience_insights["min_age"],
+                    this.audience.audience_insights["max_age"]
+                  ),
             icon: this.insightInfoItems[insight].icon,
           }
         }
       )
+    },
+
+    getAgeString(min_age, max_age) {
+      if (min_age && max_age && min_age === max_age) {
+        return min_age
+      } else if (min_age && max_age) {
+        return `${min_age}-${max_age}`
+      } else {
+        return "-"
+      }
     },
 
     /**
@@ -561,11 +701,7 @@ export default {
         case "Women":
         case "Men":
         case "Other":
-          return this.$options.filters.percentageConvert(
-            item.subtitle,
-            true,
-            true
-          )
+          return this.$options.filters.Percentage(item.subtitle)
         default:
           return item.subtitle
       }
@@ -574,8 +710,8 @@ export default {
       switch (event.target.title.toLowerCase()) {
         case "add a destination": {
           this.closeAllDrawers()
+          this.engagementId = event.data.id
           this.selectedDestinations = []
-          // this.selectedEngagements = []
           this.selectedEngagements.push(event.data)
           this.selectedDestinations.push(
             ...event.data.deliveries.map((dest) => ({ id: dest.id }))
@@ -589,8 +725,9 @@ export default {
               id: event.data.id,
               audienceId: this.audienceId,
             })
-            this.flashAlert = true
+            this.dataPendingMesssage(event.data.name, "engagement")
           } catch (error) {
+            this.dataErrorMesssage(event.data.name)
             console.error(error)
           }
           break
@@ -619,18 +756,18 @@ export default {
               audienceId: this.audienceId,
               destinationId: event.data.id,
             })
-            this.flashAlert = true
+            this.dataPendingMesssage(event.data.name, "audience")
             break
           case "edit delivery schedule":
+            this.engagementId = event.parent.id
             this.showConfirmModal = true
-            this.selectedAudienceId = event.parent.id
             this.scheduleDestination = event.data
             break
           case "remove destination":
-            this.selectedAudienceId = event.data.id
+            this.engagementId = event.parent.id
             await this.detachAudienceDestination({
               engagementId: this.engagementId,
-              audienceId: this.selectedAudienceId,
+              audienceId: this.audienceId,
               data: { id: event.data.id },
             })
             break
@@ -641,8 +778,28 @@ export default {
             break
         }
       } catch (error) {
+        this.dataErrorMesssage(event.data.name)
         console.error(error)
       }
+    },
+
+    //Alert Message
+    dataPendingMesssage(name, value) {
+      this.alert.type = "Pending"
+      this.alert.title = ""
+      if (value == "engagement") {
+        this.alert.message = `Your audience, '${this.audience.name}', has started delivering as part of the engagement, '${name}'.`
+      } else {
+        this.alert.message = `Your audience, '${name}' , has started delivering.`
+      }
+
+      this.flashAlert = true
+    },
+    dataErrorMesssage(name) {
+      this.alert.type = "error"
+      this.alert.title = "OH NO!"
+      this.alert.message = `Failed to schedule a delivery for ${name}`
+      this.flashAlert = true
     },
 
     // Drawer Section Starts
@@ -662,9 +819,12 @@ export default {
       this.engagementDrawer = true
     },
     openLookAlikeDrawer() {
-      this.selectedAudience = this.audience
+      this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
       this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
+    },
+    openDeliveryHistoryDrawer() {
+      this.showDeliveryHistoryDrawer = true
     },
     async reloadAudienceData() {
       this.showLookAlikeDrawer = false
@@ -695,7 +855,7 @@ export default {
       const payload = event.destination
       await this.attachAudienceDestination({
         engagementId: this.engagementId,
-        audienceId: this.selectedAudienceId,
+        audienceId: this.audienceId,
         data: payload,
       })
       await this.loadAudienceInsights()
@@ -803,5 +963,8 @@ export default {
   font-size: 14px;
   line-height: 19px;
   color: var(--v-primary-base) !important;
+}
+::v-deep .v-snack__wrapper {
+  max-width: 1300px !important;
 }
 </style>

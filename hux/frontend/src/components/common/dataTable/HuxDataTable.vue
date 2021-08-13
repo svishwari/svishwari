@@ -47,6 +47,7 @@
                 :key="h.value"
                 type="info"
                 :size="12"
+                class="ml-1"
               />
             </template>
             <template #hover-content>
@@ -76,6 +77,7 @@
 <script>
 import Tooltip from "../Tooltip.vue"
 import Icon from "@/components/common/Icon"
+
 const ALL = -1
 export default {
   name: "HuxDataTable",

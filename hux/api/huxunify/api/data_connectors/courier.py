@@ -2,7 +2,6 @@
 purpose of this file is to house all delivery related components.
  - delivery of an audience
 """
-import logging
 from http import HTTPStatus
 from bson import ObjectId
 from pymongo import MongoClient
@@ -11,22 +10,19 @@ from huxunifylib.database.delivery_platform_management import (
     set_delivery_job,
     get_delivery_platform,
     set_delivery_job_status,
-    set_delivery_job_audience_size,
 )
 from huxunifylib.database.engagement_management import add_delivery_job
-from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.connectors import AWSBatchConnector
 from huxunifylib.util.general.const import (
     MongoDBCredentials,
     FacebookCredentials,
     SFMCCredentials,
+    TwilioCredentials,
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
+from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_const
 from huxunify.api.config import get_config
-from huxunify.api.data_connectors.cdp import (
-    get_customers_overview,
-)
 from huxunify.api.data_connectors.aws import (
     set_cloud_watch_rule,
     put_rule_targets_aws_batch,
@@ -64,8 +60,6 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
             FacebookCredentials.FACEBOOK_APP_ID.name: auth[
                 api_const.FACEBOOK_APP_ID
             ],
-            # use stub for facebook
-            api_const.AUDIENCE_ROUTER_STUB_TEST: api_const.AUDIENCE_ROUTER_STUB_VALUE,
         }
         secret_dict = {
             FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: auth[
@@ -99,6 +93,16 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         secret_dict = {
             SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[
                 api_const.SFMC_CLIENT_SECRET
+            ]
+        }
+    elif (
+        destination[db_const.DELIVERY_PLATFORM_TYPE]
+        == db_const.DELIVERY_PLATFORM_TWILIO
+    ):
+        env_dict = {}
+        secret_dict = {
+            TwilioCredentials.TWILIO_AUTH_TOKEN.name: auth[
+                api_const.TWILIO_AUTH_TOKEN
             ]
         }
     else:
@@ -163,17 +167,20 @@ class DestinationBatchJob:
 
         """
         # Connect to AWS Batch
+        logger.info("Connecting to AWS Batch.")
         if aws_batch_connector is None:
             aws_batch_connector = AWSBatchConnector(
                 job_head_name,
                 self.audience_delivery_job_id,
             )
         self.aws_batch_connector = aws_batch_connector
+        logger.info("Connected to AWS Batch.")
 
         # get the configuration values
         config = get_config()
 
         # Register AWS batch job
+        logger.info("Registering AWS Batch job.")
         response_batch_register = self.aws_batch_connector.register_job(
             job_role_arn=config.AUDIENCE_ROUTER_JOB_ROLE_ARN,
             exec_role_arn=config.AUDIENCE_ROUTER_EXECUTION_ROLE_ARN,
@@ -187,22 +194,29 @@ class DestinationBatchJob:
             response_batch_register["ResponseMetadata"]["HTTPStatusCode"]
             != HTTPStatus.OK.value
         ):
+            logger.error(
+                "Failed to Register AWS Batch job for delivery job ID %s.",
+                self.audience_delivery_job_id,
+            )
             set_delivery_job_status(
                 self.database,
                 self.audience_delivery_job_id,
-                db_const.STATUS_FAILED,
+                db_const.AUDIENCE_STATUS_ERROR,
             )
-            self.result = db_const.STATUS_FAILED
+            self.result = db_const.AUDIENCE_STATUS_ERROR
             return
-
-        self.result = db_const.STATUS_PENDING
+        logger.info(
+            "Successfully Registered AWS Batch job for %s.",
+            self.audience_delivery_job_id,
+        )
+        self.result = db_const.AUDIENCE_STATUS_DELIVERING
 
         # check if engagement has a delivery flight schedule set
         if not (
             engagement_doc and engagement_doc.get(api_const.DELIVERY_SCHEDULE)
         ):
-            logging.warning(
-                "Delivery schedule is not set for %s",
+            logger.warning(
+                "Delivery schedule is not set for %s.",
                 engagement_doc[db_const.ID],
             )
             return
@@ -216,8 +230,8 @@ class DestinationBatchJob:
             "cron(15 0 * * ? *)",
             config.AUDIENCE_ROUTER_JOB_ROLE_ARN,
         ):
-            logging.error(
-                "Error creating cloud watch rule for engagement with ID %s",
+            logger.error(
+                "Error creating cloud watch rule for engagement with ID %s.",
                 engagement_doc[db_const.ID],
             )
             return
@@ -261,12 +275,16 @@ class DestinationBatchJob:
         # Submit the AWS batch job
         response_batch_submit = self.aws_batch_connector.submit_job()
 
-        status = db_const.STATUS_IN_PROGRESS
+        status = api_const.STATUS_DELIVERING
         if (
             response_batch_submit["ResponseMetadata"]["HTTPStatusCode"]
             != HTTPStatus.OK.value
         ):
-            status = db_const.STATUS_FAILED
+            logger.error(
+                "Failed to Submit AWS Batch job for %s.",
+                self.audience_delivery_job_id,
+            )
+            status = db_const.AUDIENCE_STATUS_ERROR
 
         set_delivery_job_status(
             self.database,
@@ -310,24 +328,6 @@ def get_destination_config(
         destination[db_const.OBJECT_ID],
     )
 
-    # get audience size and update the delivery job
-    audience = get_audience(database, audience_id)
-    try:
-        audience_insights = get_customers_overview(
-            audience[db_const.AUDIENCE_FILTERS]
-        )
-        set_delivery_job_audience_size(
-            database,
-            audience_delivery_job[db_const.ID],
-            audience_insights.get(api_const.TOTAL_RECORDS, 0),
-        )
-    except Exception as exc:  # pylint: disable=broad-except
-        logging.warning(
-            "Failed to set audience size %s: %s.",
-            exc.__class__,
-            exc,
-        )
-
     # get the configuration values
     config = get_config()
 
@@ -349,7 +349,7 @@ def get_destination_config(
         # mongomock does not support array_filters
         # but pymongo 3.6, MongoDB, and DocumentDB do.
         # log error, but keep process going.
-        logging.error(exc)
+        logger.error(exc)
 
     # Setup AWS Batch env dict
     env_dict = {
@@ -361,6 +361,7 @@ def get_destination_config(
         MongoDBCredentials.MONGO_DB_PORT.name: str(config.MONGO_DB_PORT),
         MongoDBCredentials.MONGO_DB_USERNAME.name: config.MONGO_DB_USERNAME,
         MongoDBCredentials.MONGO_SSL_CERT.name: api_const.AUDIENCE_ROUTER_CERT_PATH,
+        api_const.CDP_SERVICE_URL: config.CDP_SERVICE,
         **ds_env_dict,
     }
 

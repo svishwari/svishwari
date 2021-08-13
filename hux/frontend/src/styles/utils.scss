@@ -19,6 +19,14 @@
   transform: rotate(90deg);
 }
 
+.rotate-icon-0 {
+  transform: rotate(0deg);
+}
+
+.rotate-icon-n90 {
+  transform: rotate(-90deg);
+}
+
 .cursor-pointer {
   cursor: pointer;
 }

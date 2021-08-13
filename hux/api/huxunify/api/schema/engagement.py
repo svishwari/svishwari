@@ -2,6 +2,8 @@
 """
 Schemas for the Engagements API
 """
+import logging
+from datetime import datetime
 from bson import ObjectId
 from flask_marshmallow import Schema
 from marshmallow import fields, validate, pre_load, post_dump
@@ -94,8 +96,46 @@ class EngagementPutSchema(Schema):
                 ],
             }
         ],
+        required=False,
     )
     delivery_schedule = fields.Nested(DeliverySchedule, required=False)
+    status = fields.String(
+        attribute=api_c.STATUS,
+        required=False,
+        validate=validate.OneOf(
+            choices=[
+                api_c.STATUS_ACTIVE,
+                api_c.STATUS_INACTIVE,
+                api_c.STATUS_DELIVERING,
+                api_c.STATUS_ERROR,
+            ]
+        ),
+    )
+
+    @pre_load
+    # pylint: disable=unused-argument
+    def pre_process_details(self, data: dict, **kwarg):
+        """process the schema before loading.
+
+        Args:
+            data (dict): The Engagement data source object
+        Returns:
+            Response: Returns a Engagement data source object
+
+        """
+        # handle null delivery schedule
+        delivery_schedule = data.get(api_c.DELIVERY_SCHEDULE)
+        if not delivery_schedule:
+            data.pop(api_c.DELIVERY_SCHEDULE, None)
+
+        if not data.get(api_c.AUDIENCES):
+            data.pop(api_c.AUDIENCES, None)
+        else:
+            for audience in data[api_c.AUDIENCES]:
+                audience[api_c.ID] = ObjectId(audience[api_c.ID])
+                for destination in audience[api_c.DESTINATIONS]:
+                    destination[api_c.ID] = ObjectId(destination[api_c.ID])
+        return data
 
 
 class AudienceEngagementSchema(Schema):
@@ -204,7 +244,8 @@ class DispAdIndividualDestinationSummary(DisplayAdsSummary):
 
     name = fields.String()
     id = fields.String()
-    is_mapped = fields.Boolean()
+    is_mapped = fields.Boolean(default=False)
+    delivery_platform_type = fields.String()
 
 
 class DispAdIndividualAudienceSummary(DisplayAdsSummary):
@@ -278,7 +319,8 @@ class EmailIndividualDestinationSummary(EmailSummary):
 
     name = fields.String()
     id = fields.String()
-    is_mapped = fields.Boolean()
+    is_mapped = fields.Boolean(default=False)
+    delivery_platform_type = fields.String()
 
 
 class EmailIndividualAudienceSummary(EmailSummary):
@@ -406,7 +448,7 @@ class LatestDeliverySchema(Schema):
     id = fields.String()
     status = fields.String()
     update_time = DateTimeWithZ()
-    size = fields.Int(default=1000)
+    size = fields.Int(default=0)
 
 
 class EngagementAudienceDestinationSchema(Schema):
@@ -430,9 +472,14 @@ class EngagementAudienceSchema(Schema):
     name = fields.String()
     id = fields.String()
     status = fields.String()
+    size = fields.Integer(default=0)
     destinations = fields.Nested(
         EngagementAudienceDestinationSchema, many=True
     )
+    create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME)
+    created_by = fields.String(attribute=db_c.CREATED_BY)
+    update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
+    updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
 
 
 class EngagementGetSchema(Schema):
@@ -497,6 +544,7 @@ class EngagementGetSchema(Schema):
         return engagement
 
 
+# pylint: disable=too-many-branches,too-many-statements
 def weighted_engagement_status(engagements: list) -> list:
     """Returns a weighted engagement status by rolling up the individual
     destination status values.
@@ -537,19 +585,47 @@ def weighted_engagement_status(engagements: list) -> list:
                     destination[api_c.LATEST_DELIVERY][
                         api_c.STATUS
                     ] = api_c.STATUS_NOT_DELIVERED
+                    # if status is not set, it is considered as not-delivered
+                    break
 
                 # TODO after ORCH-285 so no status mapping needed.
                 status = destination[api_c.LATEST_DELIVERY][api_c.STATUS]
-                if status == db_c.STATUS_IN_PROGRESS:
+                if status in [
+                    db_c.STATUS_IN_PROGRESS,
+                    db_c.AUDIENCE_STATUS_DELIVERING,
+                ]:
                     # map pending to delivering status
                     status = api_c.STATUS_DELIVERING
 
-                elif status == db_c.STATUS_SUCCEEDED:
+                elif status in [
+                    db_c.STATUS_SUCCEEDED,
+                    db_c.AUDIENCE_STATUS_DELIVERED,
+                ]:
                     # map succeeded to delivered status
                     status = api_c.STATUS_DELIVERED
 
-                elif status == db_c.STATUS_FAILED:
+                elif status in [
+                    db_c.STATUS_FAILED,
+                    db_c.AUDIENCE_STATUS_ERROR,
+                ]:
                     # map failed to delivered status
+                    status = api_c.STATUS_ERROR
+
+                elif status == db_c.AUDIENCE_STATUS_PAUSED:
+                    # map paused to delivered status
+                    status = api_c.STATUS_DELIVERY_PAUSED
+
+                elif status == db_c.AUDIENCE_STATUS_NOT_DELIVERED:
+                    # map paused to delivered status
+                    status = api_c.STATUS_NOT_DELIVERED
+
+                else:
+                    # map failed to delivered status
+                    logging.error(
+                        "Unable to map any status for destination_id: %s, engagement_id: %s",
+                        destination[db_c.OBJECT_ID],
+                        engagement[db_c.ID],
+                    )
                     status = api_c.STATUS_ERROR
 
                 destination[api_c.LATEST_DELIVERY][api_c.STATUS] = status
@@ -573,19 +649,48 @@ def weighted_engagement_status(engagements: list) -> list:
                 if audience_status_rank
                 else api_c.STATUS_NOT_DELIVERED
             )
+
+            # handle if no status ranks, assume audience status
+            if not status_ranks:
+                status_ranks = [
+                    {
+                        api_c.STATUS: audience[api_c.STATUS],
+                        api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(
+                            audience[api_c.STATUS], 0
+                        ),
+                    }
+                ]
+
             audiences.append(audience)
 
         engagement[api_c.AUDIENCES] = audiences
 
-        # sort delivery status list of dict by weight.
-        status_ranks.sort(key=lambda x: x[api_c.WEIGHT])
+        # Set engagement status.
+        # Order in which these checks are made ensures correct engagement status.
+        status = engagement.get(api_c.STATUS)
+        status_values = [x[api_c.STATUS] for x in status_ranks]
 
-        # take the first item in the sorted list, and grab the status
-        engagement[api_c.STATUS] = (
-            status_ranks[0][api_c.STATUS]
-            if status_ranks
-            else api_c.STATUS_NOT_DELIVERED
-        )
+        if status is not None and status == api_c.STATUS_INACTIVE:
+            engagement[api_c.STATUS] = api_c.STATUS_INACTIVE
+        elif api_c.STATUS_DELIVERING in status_values:
+            engagement[api_c.STATUS] = api_c.STATUS_DELIVERING
+        elif engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
+            if (
+                engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                    db_c.JOB_START_TIME
+                ]
+                <= datetime.now()
+                <= engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                    db_c.JOB_END_TIME
+                ]
+            ):
+                engagement[api_c.STATUS] = api_c.STATUS_ACTIVE
+            else:
+                engagement[api_c.STATUS] = api_c.STATUS_INACTIVE
+        elif api_c.STATUS_NOT_DELIVERED in status_values:
+            engagement[api_c.STATUS] = api_c.STATUS_INACTIVE
+        else:
+            engagement[api_c.STATUS] = api_c.STATUS_ERROR
 
     return engagements
 
