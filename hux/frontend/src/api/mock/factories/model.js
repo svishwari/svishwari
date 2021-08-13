@@ -2,11 +2,10 @@ import faker from "faker"
 
 const versionHistory = () => {
   return {
-    id: `${faker.datatype.number({ min: 1, max: 10 })}`,
     lookback_window: 365,
     prediction_window: 60,
     description: "Predict the lifetime value of a customer.",
-    version: "21.7.30",
+    version: faker.system.semver(),
     owner: () => `${faker.name.firstName()} ${faker.name.lastName()}`,
     name: "Lifetime Value",
     status: faker.random.arrayElement(["Active", "Delivering", "Stopped"]),

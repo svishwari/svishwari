@@ -31,7 +31,7 @@ const mutations = {
 
   SET_HISTORY(state, items) {
     items.forEach((item) => {
-      Vue.set(state.history, item.id, item)
+      Vue.set(state.history, item.version, item)
     })
   },
 }
