@@ -14,12 +14,12 @@ pip install tavern
 Run the following commands in a terminal session depending on the OS type as shown below to set up the test hostname and api version the tests need to be run against.
 
 For instance:
-<hostname_of_test_server> can be set to localhost:<port_no> or https://unified-api-dev.main.use1.hux-unified-dev1.in depending on which env the tests neeed to be run against.
+<hostname_of_test_server> can be set to http://localhost:<port_no> or https://unified-api-dev.main.use1.hux-unified-dev1.in for DEV1 depending on which env the tests neeed to be run against.
 <api_version> can be set to api/v1
 
 #### Windows
 ```buildoutcfg
-SET TAVERN_TEST_HOST=<hostname_of_test_server>
+SET TAVERN_TEST_HOST=https://<hostname_of_test_server>
 SET TAVERN_TEST_API_VERSION=<api_version>
 ```
 To validate if the env variables is set as needed after running the above commands.
@@ -29,7 +29,7 @@ echo %TAVERN_TEST_API_VERSION%
 ```
 #### Mac/Linux
 ```buildoutcfg
-TAVERN_TEST_HOST=<hostname_of_test_server>
+TAVERN_TEST_HOST=https://<hostname_of_test_server>
 TAVERN_TEST_API_VERSION=<api_version>
 ```
 To validate if the env variables is set as needed after running the above commands.
