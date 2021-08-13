@@ -7,11 +7,13 @@ const namespaced = true
 const state = {
   items: {},
   overview: {},
+  history: [],
 }
 
 const getters = {
   list: (state) => Object.values(state.items),
   overview: (state) => state.overview,
+  history: (state) => Object.values(state.history),
 }
 
 const mutations = {
@@ -25,6 +27,10 @@ const mutations = {
 
   SET_OVERVIEW(state, data) {
     state.overview = data
+  },
+
+  SET_HISTORY(state, item) {
+    Vue.set(state.history, item.id, item)
   },
 }
 
@@ -43,6 +49,16 @@ const actions = {
     try {
       const response = await api.models.overview(type)
       commit("SET_OVERVIEW", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getHistory({ commit }, modelId) {
+    try {
+      const response = await api.models.versionHistory(modelId)
+      commit("SET_HISTORY", response.data)
     } catch (error) {
       handleError(error)
       throw error

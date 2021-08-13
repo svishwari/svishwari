@@ -129,6 +129,7 @@ export default {
   computed: {
     ...mapGetters({
       model: "models/overview",
+      history: "models/history",
     }),
 
     breadcrumbItems() {
@@ -154,12 +155,18 @@ export default {
   async mounted() {
     this.loading = true
     await this.getOverview(this.$route.params.id)
+    // this will be removed from here & 
+    // get called on opening of drawer, 
+    // once the drawer UI is implemented
+    // in part-2 of the same PR.
+    await this.getHistory(this.$route.params.id)
     this.loading = false
   },
 
   methods: {
     ...mapActions({
       getOverview: "models/getOverview",
+      getHistory: "models/getHistory",
     }),
   },
 }

@@ -24,6 +24,7 @@ import {
   CampaignFactory,
 } from "./factories/campaigns"
 import { notification as notificationFactory } from "./factories/notifications"
+import versionHistoryFactory from "./factories/versionHistory"
 
 export function makeServer({ environment = "development" } = {}) {
   // models
@@ -47,6 +48,7 @@ export function makeServer({ environment = "development" } = {}) {
     campaign: Model,
     campaignOption: Model,
     notification: Model,
+    versionHistory: Model,
   }
 
   const factories = {
@@ -64,6 +66,7 @@ export function makeServer({ environment = "development" } = {}) {
     campaignOption: Factory.extend(CampaignMappingOptionsFactory),
     campaign: Factory.extend(CampaignFactory),
     notification: Factory.extend(notificationFactory),
+    versionHistory: Factory.extend(versionHistoryFactory),
   }
 
   const server = createServer({

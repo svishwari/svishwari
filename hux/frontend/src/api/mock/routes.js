@@ -12,6 +12,7 @@ import { idrOverview, idrDataFeedReport } from "./factories/identity"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData.json"
+import versionHistory from "./factories/versionHistory"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -337,6 +338,8 @@ export const defineRoutes = (server) => {
     return data
   })
 
+  server.get("/models/:id/version-history", () => versionHistory)
+  
   // customers
   server.get("/customers")
 
