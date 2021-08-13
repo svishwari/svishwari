@@ -13,7 +13,7 @@ const state = {
 const getters = {
   list: (state) => Object.values(state.items),
   overview: (state) => state.overview,
-  history: (state) => (id) => state.items[id],
+  history: (state) => Object.values(state.history),
 }
 
 const mutations = {
@@ -29,8 +29,10 @@ const mutations = {
     state.overview = data
   },
 
-  SET_HISTORY(state, item) {
-    Vue.set(state.items, item.id, item)
+  SET_HISTORY(state, items) {
+    items.forEach((item) => {
+      Vue.set(state.history, item.id, item)
+    })
   },
 }
 
