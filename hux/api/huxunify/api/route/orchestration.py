@@ -9,6 +9,7 @@ from flask import Blueprint, request, jsonify
 from marshmallow import INCLUDE
 from pymongo import MongoClient
 
+from huxunifylib.util.general.logging import logger
 from huxunifylib.connectors import FacebookConnector
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
@@ -262,9 +263,6 @@ class AudienceGetView(SwaggerView):
 
         """
 
-        if not ObjectId.is_valid(audience_id):
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
-
         token_response = get_token_from_request(request)
 
         database = get_db_client()
@@ -279,6 +277,7 @@ class AudienceGetView(SwaggerView):
                 database, audience_id
             )
             if not lookalike:
+                logger.error("Audience with id %s not found.", audience_id)
                 return {
                     "message": api_c.AUDIENCE_NOT_FOUND
                 }, HTTPStatus.NOT_FOUND
@@ -301,6 +300,7 @@ class AudienceGetView(SwaggerView):
         )
 
         # process each engagement
+        logger.info("Processing each engagement.")
         engagements = []
         for engagement in engagement_deliveries:
             # workaround because DocumentDB does not allow $replaceRoot
@@ -325,6 +325,7 @@ class AudienceGetView(SwaggerView):
             engagement[api_c.STATUS] = weight_delivery_status(engagement)
             engagements.append(engagement)
 
+        logger.info("Successfully processed each engagement.")
         # set the list of engagements for an audience
         audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
 
@@ -454,12 +455,17 @@ class AudiencePostView(SwaggerView):
             for destination in body[db_c.DESTINATIONS]:
                 # check if dict instance
                 if not isinstance(destination, dict):
+                    logger.error("Destination must be objects.")
                     return {
                         "message": "destinations must be objects"
                     }, HTTPStatus.BAD_REQUEST
 
                 # check if destination id assigned
                 if db_c.OBJECT_ID not in destination:
+                    logger.error(
+                        "Destination object missing the %s field.",
+                        db_c.OBJECT_ID,
+                    )
                     return {
                         "message": f"{destination} missing the "
                         f"{db_c.OBJECT_ID} field."
@@ -476,12 +482,6 @@ class AudiencePostView(SwaggerView):
         if api_c.AUDIENCE_ENGAGEMENTS in body:
             # validate list of dict objects
             for engagement_id in body[api_c.AUDIENCE_ENGAGEMENTS]:
-                # validate object id
-                if not ObjectId.is_valid(engagement_id):
-                    return {
-                        "message": f"{engagement_id} has an invalid "
-                        f"{db_c.OBJECT_ID} field."
-                    }, HTTPStatus.BAD_REQUEST
 
                 # map to an object ID field
                 engagement_id = ObjectId(engagement_id)
@@ -490,6 +490,9 @@ class AudiencePostView(SwaggerView):
                 if not engagement_management.get_engagement(
                     database, engagement_id
                 ):
+                    logger.error(
+                        "Engagement with ID %s does not exist.", engagement_id
+                    )
                     return {
                         "message": f"Engagement with ID {engagement_id} "
                         f"does not exist."
@@ -554,6 +557,9 @@ class AudiencePostView(SwaggerView):
                 )
 
         except db_exceptions.DuplicateName:
+            logger.error(
+                "Duplicate Audience name %s.", body[api_c.AUDIENCE_NAME]
+            )
             return {
                 "message": f"Duplicate name '{body[api_c.AUDIENCE_NAME]}'"
             }, HTTPStatus.BAD_REQUEST
@@ -840,21 +846,13 @@ class SetLookalikeAudience(SwaggerView):
         source_audience_id = body[api_c.AUDIENCE_ID]
         engagement_ids = body[api_c.ENGAGEMENT_IDS]
 
-        for engagement_id in engagement_ids:
-            if not ObjectId.is_valid(engagement_id):
-                return {
-                    "message": api_c.INVALID_OBJECT_ID
-                }, HTTPStatus.BAD_REQUEST
-
-        if not ObjectId.is_valid(body[api_c.AUDIENCE_ID]):
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
-
         database = get_db_client()
         source_audience = orchestration_management.get_audience(
             database, ObjectId(source_audience_id)
         )
 
         if not source_audience:
+            logger.error("Audience %s not found.", body[api_c.AUDIENCE_ID])
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         destination = destination_management.get_delivery_platform_by_type(
@@ -869,6 +867,7 @@ class SetLookalikeAudience(SwaggerView):
         )
 
         if not destination_connector.check_connection():
+            logger.error("Facebook authentication failed.")
             return {
                 "message": api_c.DESTINATION_AUTHENTICATION_FAILED
             }, HTTPStatus.BAD_REQUEST
@@ -894,6 +893,7 @@ class SetLookalikeAudience(SwaggerView):
         # cursor returns a list, lets take the first one if data exist.
         most_recent_job = most_recent_job[0] if most_recent_job else None
         if most_recent_job is None:
+            logger.error("%s.", api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND)
             return {
                 "message": api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
@@ -909,6 +909,7 @@ class SetLookalikeAudience(SwaggerView):
             "US",
         )
 
+        logger.info("Creating delivery platform lookalike audience.")
         lookalike_audience = (
             destination_management.create_delivery_platform_lookalike_audience(
                 database,
@@ -935,7 +936,9 @@ class SetLookalikeAudience(SwaggerView):
                     }
                 ],
             )
-
+        logger.info(
+            "Successfully created delivery platform lookalike audience."
+        )
         return (
             LookalikeAudienceGetSchema().dump(lookalike_audience),
             HTTPStatus.CREATED,

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div id="chart" @mousemove="getCordinates($event)"></div>
-    <div id="legend"></div>
+    <div ref="legend"></div>
     <doughnut-chart-tooltip
       :show-tooltip="showTooltip"
       :tooltip="tooltip"
@@ -123,7 +123,7 @@ export default {
 
       // Creating legends svg element & apply style
       let legendSvg = d3Select
-        .select("#legend")
+        .select(this.$refs.legend)
         .append("svg")
         .attr("viewBox", "0 0 200 25") // for responsive
         .attr("id", "mainSvg")

@@ -223,11 +223,6 @@
         </div>
       </v-card>
     </div>
-    <v-row v-if="audienceInsights" class="px-15 mt-2">
-      <v-col cols="3">
-        <income-chart></income-chart>
-      </v-col>
-    </v-row>
     <v-row class="px-15 mt-2">
       <v-col md="7">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
@@ -257,14 +252,14 @@
     <v-row class="px-15 mt-2">
       <v-col md="3">
         <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+          <v-card-title class="chart-style pb-0 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
                 Top location &amp; Income
               </span>
             </div>
           </v-card-title>
-          <empty-state-chart />
+          <income-chart />
         </v-card>
       </v-col>
       <v-col md="6">
@@ -276,7 +271,7 @@
               </span>
             </div>
           </v-card-title>
-          <empty-state-chart />
+          <gender-spend-chart />
         </v-card>
       </v-col>
       <v-col md="3">
@@ -375,7 +370,6 @@ import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import DeliveryOverview from "@/components/DeliveryOverview.vue"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
-import EmptyStateChart from "@/components/common/EmptyStateChart"
 import genderData from "@/components/common/DoughnutChart/genderData.json"
 import HuxAlert from "@/components/common/HuxAlert.vue"
 import Icon from "@/components/common/Icon.vue"
@@ -397,6 +391,7 @@ import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Draw
 import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations.vue"
 import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
+import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 
 export default {
   name: "AudienceInsight",
@@ -410,7 +405,6 @@ export default {
     DestinationDataExtensionDrawer,
     DoughnutChart,
     EditDeliverySchedule,
-    EmptyStateChart,
     HuxAlert,
     Icon,
     IncomeChart,
@@ -424,6 +418,7 @@ export default {
     SelectDestinationsDrawer,
     Size,
     Tooltip,
+    GenderSpendChart,
   },
   data() {
     return {
@@ -961,5 +956,8 @@ export default {
   font-size: 14px;
   line-height: 19px;
   color: var(--v-primary-base) !important;
+}
+::v-deep .v-snack__wrapper {
+  max-width: 1300px !important;
 }
 </style>
