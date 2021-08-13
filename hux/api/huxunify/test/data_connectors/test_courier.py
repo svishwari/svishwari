@@ -805,7 +805,7 @@ class CourierTest(TestCase):
         stub_client.activate()
         mock_boto_client.return_value = client
 
-        self.assertIsNone(
+        self.assertTrue(
             toggle_cloud_watch_rule(
                 rule_params["Name"], CloudWatchState.ENABLE
             )
@@ -838,7 +838,7 @@ class CourierTest(TestCase):
         stub_client.activate()
         mock_boto_client.return_value = client
 
-        self.assertIsNone(
+        self.assertTrue(
             toggle_cloud_watch_rule(
                 rule_params["Name"], CloudWatchState.DISABLE
             )
