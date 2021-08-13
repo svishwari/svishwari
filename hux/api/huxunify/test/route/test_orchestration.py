@@ -664,6 +664,7 @@ class OrchestrationRouteTest(TestCase):
         for audience in audiences:
             self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
             self.assertFalse(audience[api_c.IS_LOOKALIKE])
+            self.assertTrue(audience[api_c.STATUS])
 
     def test_update_audience(self):
         """Test update an audience.
