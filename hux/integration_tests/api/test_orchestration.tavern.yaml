@@ -28,7 +28,7 @@ stages:
           contains: "Contains"
           does_not_contain: "Does not contain"
           equals: "Equals"
-          does_not_equal: "Does not Equal"
+          does_not_equal: "Does not equal"
         rule_attributes:
           model_scores:
             propensity_to_unsubscribe:
@@ -49,36 +49,36 @@ stages:
               min: !anyfloat
               max: !anyfloat
               steps: !anyfloat
-        general:
-          age:
-            name: !anystr
-            type: !anystr
-            min: !anyint
-            max: !anyint
-          email:
-            name: !anystr
-            type: !anystr
-          gender:
-            name: !anystr
-            type: !anystr
-            options: !anylist
-          location:
-            name: !anystr
-            country:
+          general:
+            age:
+              name: !anystr
+              type: !anystr
+              min: !anyint
+              max: !anyint
+            email:
+              name: !anystr
+              type: !anystr
+            gender:
               name: !anystr
               type: !anystr
               options: !anylist
-            state:
+            location:
               name: !anystr
-              type: !anystr
-              options: !anylist
-            city:
-              name: !anystr
-              type: !anystr
-              options: !anylist
-            zip_code:
-              name: !anystr
-              type: !anystr
+              country:
+                name: !anystr
+                type: !anystr
+                options: !anylist
+              state:
+                name: !anystr
+                type: !anystr
+                options: !anylist
+              city:
+                name: !anystr
+                type: !anystr
+                options: !anylist
+              zip_code:
+                name: !anystr
+                type: !anystr
 
 
 
