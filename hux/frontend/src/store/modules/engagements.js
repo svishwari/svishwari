@@ -296,6 +296,20 @@ const actions = {
     }
   },
 
+  async updateInactiveEngagement(_, { id, data }) {
+    try {
+      await api.engagements.inactiveEngagement(
+        {
+          resourceId: id,
+        },
+        data
+      )
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   updateAudienceList({ commit }, payload) {
     commit("SET_AUDIENCE_LIST", payload)
   },

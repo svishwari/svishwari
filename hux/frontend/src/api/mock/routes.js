@@ -262,6 +262,13 @@ export const defineRoutes = (server) => {
       return { message: "Successfully created mappings" }
     }
   )
+
+  server.put("/engagements/:id", (schema, request) => {
+    const engagementId = request.params.id
+    schema.engagements.find(engagementId).update({ status: "Inactive" })
+    return { message: "Successfully inactivated engagement" }
+  })
+
   server.get(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/campaigns",
     (schema, request) => {
