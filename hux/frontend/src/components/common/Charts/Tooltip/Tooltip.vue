@@ -25,7 +25,7 @@ export default {
 .chart-tooltip {
   padding: 6px 16px;
   position: fixed;
-  background: white;
+  background: var(--v-white-base);
   @extend .box-shadow-25;
 }
 </style>
