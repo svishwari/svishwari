@@ -3,6 +3,7 @@
 Paths for engagement API
 """
 from http import HTTPStatus
+from random import uniform
 from typing import Tuple
 from itertools import groupby
 from operator import itemgetter
@@ -287,6 +288,15 @@ class IndividualEngagementSearch(SwaggerView):
                 "Engagements not found for engagement ID %s.", engagement_id
             )
             return {"message": "Not found"}, HTTPStatus.NOT_FOUND.value
+
+        # TODO: HUS-837 Change once match_rate data can be fetched from CDM
+        for engagement in engagements:
+            for audience in engagement[db_c.AUDIENCES]:
+                for destination in audience[db_c.DESTINATIONS]:
+                    if db_c.LATEST_DELIVERY in destination:
+                        destination[db_c.LATEST_DELIVERY][
+                            api_c.MATCH_RATE
+                        ] = round(uniform(0.2, 0.9), 2)
 
         # weight the engagement status
         engagements = weighted_engagement_status(engagements)[0]
