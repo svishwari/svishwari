@@ -108,8 +108,6 @@ export default {
       tooltipValue: null,
       showTooltip: false,
       coordinates: null,
-      width: 471,
-      height: 512,
     }
   },
 
@@ -251,9 +249,15 @@ export default {
 
       svg
         .append("rect")
-        .attr("width", width - this.margin.right)
+        .attr(
+          "width",
+          width - this.margin.right > 0 ? width - this.margin.right : 0
+        )
         .attr("transform", `translate(${this.margin.left},0)`)
-        .attr("height", height - this.margin.bottom)
+        .attr(
+          "height",
+          height - this.margin.bottom > 0 ? height - this.margin.bottom : 0
+        )
         .style("fill", "transparent")
         .on("mouseover", () => {
           this.showTooltip = false

@@ -78,7 +78,19 @@
         </v-col>
         <v-col md="6">
           <v-card class="rounded-lg px-4 box-shadow-5 mt-6" height="662">
-            <div class="pt-5 pl-2 pb-10 neroBlack--text text-h5">Drift AUC</div>
+            <div class="pt-5 pl-2 pb-10 neroBlack--text text-h5">
+              Drift
+              <span
+                v-if="
+                  model.performance_metric &&
+                  model.performance_metric['rmse'] !== -1
+                "
+                class="gray--text"
+              >
+                RMSE
+              </span>
+              <span v-else class="gray--text"> AUC </span>
+            </div>
             <div ref="drift">
               <drift-chart
                 v-model="lineChartData"
@@ -187,6 +199,12 @@ export default {
   },
   destroyed() {
     window.removeEventListener("resize", this.sizeHandler)
+  },
+
+  updated() {
+    if (this.$refs.drift) {
+      this.chartDimensions.width = this.$refs.drift.clientWidth
+    }
   },
 
   methods: {
