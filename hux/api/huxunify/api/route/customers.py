@@ -38,7 +38,7 @@ from huxunify.api.data_connectors.cdp import (
     get_idr_data_feeds,
     get_idr_matching_trends,
     get_customer_events_data,
-    get_incomes_by_cities,
+    get_spending_by_cities,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -610,7 +610,7 @@ class CustomerDemoVisualView(SwaggerView):
                     [6955119, 5627732, 289655],
                 )
             },
-            api_c.INCOME: get_incomes_by_cities(token_response[0]),
+            api_c.INCOME: get_spending_by_cities(token_response[0]),
             api_c.SPEND: {
                 api_c.GENDER_WOMEN: [
                     {api_c.DATE: date, api_c.LTV: ltv}
