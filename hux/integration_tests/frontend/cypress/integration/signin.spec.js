@@ -2,13 +2,12 @@ import route from "../support/routes.js";
 
 const selector = {
   home: {
-    // TODO: add a better selector for this button in the UI
-    signin: "button",
+    signin: "[data-e2e='signin']",
   },
   login: {
-    email: "input[id=okta-signin-username]",
-    password: "input[id=okta-signin-password]",
-    submit: "input[id=okta-signin-submit]",
+    email: "[id=okta-signin-username]",
+    password: "[id=okta-signin-password]",
+    submit: "[id=okta-signin-submit]",
   }
 }
 
