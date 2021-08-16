@@ -164,7 +164,7 @@ const Percentage = (value, round = true) => {
  *                               if the value is 'Manual' then 'Manual'
  */
 const DeliverySchedule = (value) => {
-  if (!value) return "—"
+  if (!value) return "Manual"
   if (value instanceof Object) {
     return (
       `${Date(value.start_date, "MMM DD")}` +

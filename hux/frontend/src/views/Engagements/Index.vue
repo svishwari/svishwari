@@ -122,18 +122,18 @@
             <div v-if="header.value == 'delivery_schedule'">
               {{ item[header.value] | DeliverySchedule }}
             </div>
-            <div v-if="header.value == 'update_time'">
-              <!-- TODO replace with header value -->
-              <time-stamp :value="item['create_time']" />
-            </div>
-            <div v-if="header.value == 'updated_by'">
-              <!-- TODO replace with header value -->
-              <avatar :name="item['created_by']" />
-            </div>
-            <div v-if="header.value == 'create_time'">
+            <div
+              v-if="
+                header.value == 'update_time' || header.value == 'create_time'
+              "
+            >
               <time-stamp :value="item[header.value]" />
             </div>
-            <div v-if="header.value == 'created_by'">
+            <div
+              v-if="
+                header.value == 'updated_by' || header.value == 'created_by'
+              "
+            >
               <avatar :name="item[header.value]" />
             </div>
           </td>
@@ -193,25 +193,33 @@
                       />
                     </div>
                   </div>
-                  <div v-if="header.value == 'destinations'">
-                    <tooltip
-                      v-for="destination in getOverallDestinations(
-                        item[header.value]
-                      )"
-                      :key="destination.type"
-                    >
-                      <template #label-content>
-                        <logo
-                          :key="destination.id"
-                          class="mr-1"
-                          :type="destination.delivery_platform_type"
-                          :size="18"
-                        />
-                      </template>
-                      <template #hover-content>
-                        <span>{{ destination.name }}</span>
-                      </template>
-                    </tooltip>
+                  <div
+                    v-if="header.value == 'destinations'"
+                    class="d-flex align-center"
+                  >
+                    <div class="d-flex align-center">
+                      <tooltip
+                        v-for="destination in getOverallDestinations(
+                          item[header.value]
+                        )"
+                        :key="destination.delivery_platform_type"
+                      >
+                        <template #label-content>
+                          <logo
+                            :key="destination.id"
+                            class="mr-1"
+                            :type="destination.delivery_platform_type"
+                            :size="18"
+                          />
+                        </template>
+                        <template #hover-content>
+                          <span>{{ destination.name }}</span>
+                        </template>
+                      </tooltip>
+                    </div>
+                    <span v-if="item[header.value].length > 3" class="ml-1">
+                      + {{ item[header.value].length - 2 }}
+                    </span>
                   </div>
                   <div v-if="header.value == 'last_delivered'">
                     <time-stamp :value="item[header.value]" />
@@ -219,25 +227,21 @@
                   <div v-if="header.value == 'delivery_schedule'">
                     {{ item[header.value] | DeliverySchedule }}
                   </div>
-                  <div v-if="header.value == 'update_time'">
-                    <div style="width: max-content">
-                      <time-stamp :value="item['create_time']" />
-                    </div>
+                  <div
+                    v-if="
+                      header.value == 'update_time' ||
+                      header.value == 'create_time'
+                    "
+                  >
+                    <time-stamp :value="item[header.value]" />
                   </div>
-                  <div v-if="header.value == 'updated_by'">
-                    <div>
-                      <avatar :name="item['created_by']" />
-                    </div>
-                  </div>
-                  <div v-if="header.value == 'create_time'">
-                    <div>
-                      <time-stamp :value="item[header.value]" />
-                    </div>
-                  </div>
-                  <div v-if="header.value == 'created_by'">
-                    <div>
-                      <avatar :name="item[header.value]" />
-                    </div>
+                  <div
+                    v-if="
+                      header.value == 'updated_by' ||
+                      header.value == 'created_by'
+                    "
+                  >
+                    <avatar :name="item[header.value]" />
                   </div>
                 </td>
               </tr>
@@ -292,16 +296,20 @@
                       <div v-if="header.value == 'delivery_schedule'">
                         {{ item[header.value] | DeliverySchedule }}
                       </div>
-                      <div v-if="header.value == 'update_time'">
-                        <time-stamp :value="item['create_time']" />
-                      </div>
-                      <div v-if="header.value == 'updated_by'">
-                        <avatar :name="item['created_by']" />
-                      </div>
-                      <div v-if="header.value == 'create_time'">
+                      <div
+                        v-if="
+                          header.value == 'update_time' ||
+                          header.value == 'create_time'
+                        "
+                      >
                         <time-stamp :value="item[header.value]" />
                       </div>
-                      <div v-if="header.value == 'created_by'">
+                      <div
+                        v-if="
+                          header.value == 'updated_by' ||
+                          header.value == 'created_by'
+                        "
+                      >
                         <avatar :name="item[header.value]" />
                       </div>
                     </td>
