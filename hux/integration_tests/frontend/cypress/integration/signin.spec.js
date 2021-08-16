@@ -1,15 +1,5 @@
 import route from "../support/routes.js"
-
-const selector = {
-  home: {
-    signin: "[data-e2e='signin']",
-  },
-  login: {
-    email: "[id=okta-signin-username]",
-    password: "[id=okta-signin-password]",
-    submit: "[id=okta-signin-submit]",
-  },
-}
+import selector from "../support/selectors.js"
 
 describe("Tests user sign in", () => {
   before(() => {

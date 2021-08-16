@@ -1,20 +1,5 @@
 import route from "../../support/routes.js"
-
-const selector = {
-  home: {
-    signin: "[data-e2e='signin']",
-  },
-  login: {
-    email: "input[id=okta-signin-username]",
-    password: "input[id=okta-signin-password]",
-    submit: "input[id=okta-signin-submit]",
-  },
-  datasources: "[data-e2e='dataSourcesList']",
-  destinations: "[data-e2e='destinationsList']",
-  dataSourcesAdd: "[tabindex='0'][data-e2e='dataSourcesAddList']",
-  connections: "a[href='/connections']",
-  addDataSource: "a[href='/datasources/add?select=true']",
-}
+import selector from "../../support/selectors.js"
 
 describe("Tests data souces and destinations in connections", () => {
   before(() => {
