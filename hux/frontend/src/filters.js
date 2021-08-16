@@ -155,13 +155,25 @@ const Currency = (value) => {
 const Percentage = (value, round = true) => {
   return Numeric(value, round, false, false, true)
 }
+/**
+ *
+ * @param {*} value This input eg. ""
+ * @returns output value eg. "—" if no value,
+ *                               if value has schedule for both start and end dates, then "Aug 12 - Sep 10"
+ *                               if value has start date but no end date then "Aug 12 - No End"
+ *                               if the value is 'Manual' then 'Manual'
+ */
 const DeliverySchedule = (value) => {
   if (!value) return "—"
-  return (
-    `${Date(value.start_date, "MMM DD")}` +
-    " - " +
-    (value.end_date ? Date(value.end_date, "MMM DD") : "No End")
-  )
+  if (value instanceof Object) {
+    return (
+      `${Date(value.start_date, "MMM DD")}` +
+      " - " +
+      (value.end_date ? Date(value.end_date, "MMM DD") : "No End")
+    )
+  } else {
+    return value
+  }
 }
 
 export default {
