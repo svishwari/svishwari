@@ -181,6 +181,9 @@ class AudienceView(SwaggerView):
                 database, audience.get(api_c.DESTINATIONS_TAG)
             )
 
+            # set the weighted status for the audience based on deliveries
+            audience[api_c.STATUS] = weight_delivery_status(audience)
+
             audience[api_c.SIZE] = customer_size_dict.get(audience[db_c.ID])
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
