@@ -3,9 +3,6 @@ name: integration test includes
 description: used for sharing anything common in the test scripts
 
 variables:
-  host: https://unified-api-dev.main.use1.hux-unified-dev1.in
-  version: api/v1
+  host: "{tavern.env_vars.TAVERN_TEST_HOST}"
+  version: "{tavern.env_vars.TAVERN_TEST_API_VERSION}"
   token: ""
-  engagement_id: "60c2fd6555eb844f53cdc665"
-  audience_id: "60ef24920f82449e44af16cf"
-  destination_id: "60b9601a6021710aa146df2f"

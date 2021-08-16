@@ -3,6 +3,7 @@
 Paths for engagement API
 """
 from http import HTTPStatus
+from random import uniform
 from typing import Tuple
 from itertools import groupby
 from operator import itemgetter
@@ -62,9 +63,12 @@ from huxunify.api.route.utils import (
     validate_destination,
     validate_destination_id,
 )
+from huxunify.api.data_connectors.courier import toggle_event_driven_routers
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
+from huxunify.api.data_connectors.aws import (
+    get_auth_from_parameter_store,
+)
 
 engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 
@@ -288,6 +292,15 @@ class IndividualEngagementSearch(SwaggerView):
             )
             return {"message": "Not found"}, HTTPStatus.NOT_FOUND.value
 
+        # TODO: HUS-837 Change once match_rate data can be fetched from CDM
+        for engagement in engagements:
+            for audience in engagement[db_c.AUDIENCES]:
+                for destination in audience[db_c.DESTINATIONS]:
+                    if db_c.LATEST_DELIVERY in destination:
+                        destination[db_c.LATEST_DELIVERY][
+                            api_c.MATCH_RATE
+                        ] = round(uniform(0.2, 0.9), 2)
+
         # weight the engagement status
         engagements = weighted_engagement_status(engagements)[0]
 
@@ -499,6 +512,10 @@ class UpdateEngagement(SwaggerView):
         logger.info(
             "Successfully updated engagement with ID %s.", engagement_id
         )
+
+        # toggle routers since the engagement was updated.
+        toggle_event_driven_routers(database)
+
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
@@ -578,6 +595,10 @@ class DeleteEngagement(SwaggerView):
                 api_c.ENGAGEMENT_TAG,
             )
             logger.info("Successfully deleted engagement %s.", engagement_id)
+
+            # toggle routers since the engagement was deleted.
+            toggle_event_driven_routers(database)
+
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
         logger.info("Could not delete engagement %s.", engagement_id)
@@ -716,6 +737,10 @@ class AddAudienceEngagement(SwaggerView):
                 ),
                 api_c.ENGAGEMENT_TAG,
             )
+
+        # toggle routers since the engagement was updated.
+        toggle_event_driven_routers(database)
+
         return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
 
@@ -833,6 +858,10 @@ class DeleteAudienceEngagement(SwaggerView):
                 ),
                 api_c.ENGAGEMENT_TAG,
             )
+
+        # toggle routers since the engagement was updated.
+        toggle_event_driven_routers(database)
+
         return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
 
@@ -955,6 +984,9 @@ class AddDestinationEngagedAudience(SwaggerView):
             ),
             api_c.ENGAGEMENT_TAG,
         )
+
+        # toggle routers since the engagement was updated.
+        toggle_event_driven_routers(database)
 
         return EngagementGetSchema().dump(engagement), HTTPStatus.OK.value
 
@@ -1083,6 +1115,9 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             ),
             api_c.ENGAGEMENT_TAG,
         )
+
+        # toggle routers since the engagement was updated.
+        toggle_event_driven_routers(database)
 
         return EngagementGetSchema().dump(engagement), HTTPStatus.OK.value
 
@@ -1312,6 +1347,10 @@ class UpdateCampaignsForAudience(SwaggerView):
             engagement_id,
             audience_id,
         )
+
+        # toggle routers since the engagement was updated.
+        toggle_event_driven_routers(database)
+
         return (
             jsonify(CampaignSchema().dump(campaigns, many=True)),
             HTTPStatus.OK,

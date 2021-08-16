@@ -3,7 +3,7 @@ Schemas for the Orchestration API
 """
 
 from flask_marshmallow import Schema
-from marshmallow import fields
+from marshmallow import fields, validate
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import (
@@ -66,6 +66,7 @@ class DeliveriesSchema(Schema):
     name = fields.String()
     status = fields.String()
     size = fields.Integer(attribute=db_c.DELIVERY_PLATFORM_AUD_SIZE)
+    match_rate = fields.Float(default=0, example=0.21)
     delivery_platform_type = fields.String()
 
 
@@ -116,6 +117,20 @@ class AudienceGetSchema(Schema):
     engagements = fields.List(fields.Nested(EngagementDeliverySchema))
     audience_insights = fields.Nested(CustomerOverviewSchema)
 
+    status = fields.String(
+        attribute=api_c.STATUS,
+        validate=[
+            validate.OneOf(
+                choices=[
+                    api_c.STATUS_NOT_DELIVERED,
+                    api_c.STATUS_DELIVERING,
+                    api_c.STATUS_DELIVERED,
+                    api_c.STATUS_DELIVERY_PAUSED,
+                    api_c.STATUS_ERROR,
+                ]
+            )
+        ],
+    )
     size = fields.Int(default=0)
     last_delivered = DateTimeWithZ(attribute=api_c.AUDIENCE_LAST_DELIVERED)
 
@@ -124,9 +139,9 @@ class AudienceGetSchema(Schema):
     created_by = fields.String()
     updated_by = fields.String()
     deliveries = fields.Nested(AudienceDeliverySchema, many=True)
+
     lookalike_audiences = fields.Nested(LookalikeAudienceGetSchema, many=True)
     is_lookalike = fields.Boolean(default=False)
-
     # defines if lookalikes can be created from the audience.
     lookalikeable = fields.String(default=api_c.STATUS_INACTIVE)
 
@@ -184,6 +199,7 @@ class EngagementDeliveryHistorySchema(Schema):
         DestinationGetSchema(only=(api_c.NAME, api_c.TYPE, db_c.ID))
     )
     size = fields.Integer()
+    match_rate = fields.Float(default=0, example=0.21)
     delivered = DateTimeWithZ(required=True, allow_none=True)
 
 
@@ -209,6 +225,7 @@ class AudienceDeliveryHistorySchema(Schema):
         DestinationGetSchema(only=(api_c.NAME, api_c.TYPE, db_c.ID))
     )
     size = fields.Integer()
+    match_rate = fields.Float(default=0, example=0.21)
     delivered = DateTimeWithZ(required=True, allow_none=True)
 
 
