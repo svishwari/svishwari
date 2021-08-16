@@ -548,8 +548,8 @@ def clean_cdm_fields(body: dict) -> dict:
     return body
 
 
-def get_incomes_by_cities(token: str, filters: Optional[dict] = None) -> dict:
-    """Get income details of customer by cities
+def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> dict:
+    """Get spending details of customer by cities
 
     Args:
         token (str): OKTA JWT Token.
@@ -564,7 +564,7 @@ def get_incomes_by_cities(token: str, filters: Optional[dict] = None) -> dict:
     city_income_default_filter[api_c.COUNT] = 5
     # get config
     config = get_config()
-    logger.info("Getting customer income details by cities from CDP API.")
+    logger.info("Retrieving customer income details by cities from CDP API.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
         json=filters if filters else city_income_default_filter,
