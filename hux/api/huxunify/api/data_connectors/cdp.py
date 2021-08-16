@@ -565,7 +565,7 @@ def get_demographic_by_state(
     """
     # get config
     config = get_config()
-    logger.info("Getting Demographic Insights by states from CDP API.")
+    logger.info("Retrieving demographic insights by state.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
         json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
@@ -576,14 +576,12 @@ def get_demographic_by_state(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Could not get demographic insights for states from CDP API got %s %s.",
+            "Failed to retrieve state demographic insights %s %s.",
             response.status_code,
             response.text,
         )
         return {}
-    logger.info(
-        "Successfully retrieved demographic insights for states from CDP API."
-    )
+    logger.info("Successfully retrieved state demographic insights.")
     body = clean_cdm_fields(response.json()[api_c.BODY])
 
     total_customers = sum([x[api_c.SIZE] for x in body])
@@ -601,7 +599,7 @@ def get_demographic_by_state(
             api_c.GENDER_OTHER: round(
                 x[api_c.GENDER_OTHER] / x[api_c.SIZE], 4
             ),
-            api_c.LTV: x.get(api_c.LTV, 12345),
+            api_c.LTV: x.get(api_c.LTV, 0),
         }
         for x in body
     ]
