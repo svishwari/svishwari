@@ -2,6 +2,7 @@
 Paths for Orchestration API
 """
 from http import HTTPStatus
+from random import uniform
 from typing import Tuple, Union
 from flasgger import SwaggerView
 from bson import ObjectId
@@ -320,6 +321,13 @@ class AudienceGetView(SwaggerView):
                 engagement[api_c.DELIVERIES].remove(
                     {api_c.STATUS: api_c.STATUS_NOT_DELIVERED}
                 )
+
+            # TODO: HUS-837 Change once match_rate data can be fetched from CDM
+            # validate if engagement contain deliveries since there are checks
+            # above to remove empty and not-delivered deliveries
+            if api_c.DELIVERIES in engagement:
+                for delivery in engagement[api_c.DELIVERIES]:
+                    delivery[api_c.MATCH_RATE] = round(uniform(0.2, 0.9), 2)
 
             # set the weighted status for the engagement based on deliveries
             engagement[api_c.STATUS] = weight_delivery_status(engagement)

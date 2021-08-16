@@ -3,6 +3,7 @@
 Paths for delivery API
 """
 from http import HTTPStatus
+from random import uniform
 from typing import Tuple
 from bson import ObjectId
 from flask import Blueprint, jsonify
@@ -594,6 +595,8 @@ class EngagementDeliverHistoryView(SwaggerView):
                         api_c.SIZE: job.get(
                             db_c.DELIVERY_PLATFORM_AUD_SIZE, 0
                         ),
+                        # TODO: HUS-837 Change once match_rate data can be fetched from CDM
+                        api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
                         api_c.DELIVERED: job.get(db_c.UPDATE_TIME),
                     }
                 )
@@ -717,6 +720,8 @@ class AudienceDeliverHistoryView(SwaggerView):
                         api_c.SIZE: job.get(
                             db_c.DELIVERY_PLATFORM_AUD_SIZE, 0
                         ),
+                        # TODO: HUS-837 Change once match_rate data can be fetched from CDM
+                        api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
                         api_c.DELIVERED: job.get(db_c.UPDATE_TIME),
                     }
                 )

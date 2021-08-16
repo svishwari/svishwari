@@ -4,7 +4,9 @@ Purpose of this file is to test the engagement schemas
 """
 from unittest import TestCase
 from datetime import datetime, timedelta
+from random import uniform
 from bson import ObjectId
+
 from huxunifylib.database import constants as db_c
 from huxunify.api.schema.engagement import (
     EngagementGetSchema,
@@ -440,3 +442,59 @@ class EngagementSchemaTest(TestCase):
 
         # check engagement status per weighting
         self.assertEqual("bad", weight_delivery_status(engagement))
+
+    def test_match_rate_engagement_get_schema(self) -> None:
+        """
+        Test engagement get schema match_rate.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        engagement = {
+            api_c.ID: "5f5f7262997acad4bac4374a",
+            api_c.NAME: "Engagement 1",
+            api_c.STATUS: api_c.STATUS_ACTIVE,
+            api_c.AUDIENCES: [
+                {
+                    api_c.ID: "5f5f7262997acad4bac4373a",
+                    api_c.NAME: "facebook",
+                    api_c.DESTINATIONS: [
+                        {
+                            api_c.ID: "5f5f7262997acad4bac4373b",
+                            api_c.NAME: "Facebook",
+                            api_c.LATEST_DELIVERY: {
+                                api_c.ID: "5f5f7262997acad4bac4373c",
+                                api_c.STATUS: api_c.STATUS_ERROR,
+                                api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
+                            },
+                        },
+                        {
+                            api_c.ID: "5f5f7262997acad4bac4373d",
+                            api_c.NAME: "Facebook",
+                            api_c.LATEST_DELIVERY: {
+                                api_c.ID: "5f5f7262997acad4bac4373e",
+                                api_c.STATUS: api_c.STATUS_DELIVERED,
+                                api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
+                            },
+                        },
+                    ],
+                }
+            ],
+        }
+
+        self.assertFalse(EngagementGetSchema().validate(engagement))
+
+        # deserialize the json document by loading it into the schema and
+        # test the schema to have the match_rate value set
+        schema = EngagementGetSchema().load(engagement)
+
+        destinations = schema[api_c.AUDIENCES][0][api_c.DESTINATIONS]
+        self.assertGreater(
+            destinations[0][api_c.LATEST_DELIVERY][api_c.MATCH_RATE], 0.2
+        )
+        self.assertGreater(
+            destinations[1][api_c.LATEST_DELIVERY][api_c.MATCH_RATE], 0.2
+        )

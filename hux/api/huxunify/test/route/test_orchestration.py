@@ -854,3 +854,41 @@ class OrchestrationRouteTest(TestCase):
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    def test_get_audience_by_id_validate_match_rate(self) -> None:
+        """
+        Test get audience API with valid id and valid match_rate present
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        audience = response.json
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(
+            ObjectId(audience[db_c.OBJECT_ID]), self.audiences[0][db_c.ID]
+        )
+        self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
+
+        # validate that the match_rate in deliveries contained within
+        # engagements are greater than or equal to 0
+        for engagement in audience[api_c.AUDIENCE_ENGAGEMENTS]:
+            self.assertGreaterEqual(
+                all(x[api_c.MATCH_RATE] for x in engagement[api_c.DELIVERIES]),
+                0,
+            )
