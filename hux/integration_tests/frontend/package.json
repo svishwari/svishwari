@@ -6,9 +6,11 @@
   "scripts": {
     "lint:fix": "npm run lint -- --fix",
     "lint": "eslint ./**/**.js",
+    "style:fix": "npx prettier --write .",
+    "style": "npx prettier --check .",
     "postinstall": "npm run precommit:prepare",
     "precommit:prepare": "cd ../../../ && husky install hux/integration_tests/frontend/.husky",
-    "precommit": "npm run lint",
+    "precommit": "npm run lint && npm run style",
     "test:dev": "cypress open",
     "test": "cypress run --headless"
   },
@@ -17,6 +19,7 @@
   "devDependencies": {
     "cypress": "^8.2.0",
     "eslint-plugin-cypress": "^2.11.3",
-    "husky": "^7.0.0"
+    "husky": "^7.0.0",
+    "prettier": "2.3.2"
   }
 }

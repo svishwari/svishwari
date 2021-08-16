@@ -20,4 +20,4 @@ export default {
   identityResolution: "/identity-resolution",
   connections: "/connections",
   addDataSource: "/datasources/add",
-};
+}
