@@ -3,7 +3,7 @@
 Paths for engagement API
 """
 import csv
-import os
+from pathlib import Path
 import zipfile
 from http import HTTPStatus
 from typing import Tuple
@@ -185,35 +185,42 @@ def group_engagement_performance_metrics(
     return audience_metrics_list
 
 
-def get_email_metrics(
-    database: MongoClient, engagement: object, engagement_id: str
+def get_performance_metrics(
+    database: MongoClient,
+    engagement: object,
+    engagement_id: str,
+    ad_type: str,
 ) -> dict:
     """
 
     Args:
-        database(MongoClient): Mongoclient instance
-        engagement(object): Engagement object
-        engagement_id(str): Id of engagement
+        database (MongoClient): Mongoclient instance
+        engagement (object): Engagement object
+        engagement_id (str): Id of engagement
+        ad_type (str): Advertisement type
 
     Returns:
         dict: Email Performance metrics of an engagement
     """
 
+    if ad_type == api_c.DISPLAY_ADS:
+        destination_type = db_c.DELIVERY_PLATFORM_FACEBOOK
+    else:
+        destination_type = db_c.DELIVERY_PLATFORM_SFMC
+
     # Get all destinations that are related to Email metrics
-    email_destination = (
-        delivery_platform_management.get_delivery_platform_by_type(
-            database, db_c.DELIVERY_PLATFORM_SFMC
-        )
+    destination = delivery_platform_management.get_delivery_platform_by_type(
+        database, destination_type
     )
 
     delivery_jobs = []
     performance_metrics = []
-    if email_destination:
+    if destination:
         # Get Performance metrics by engagement and destination
         performance_metrics = get_performance_metrics_by_engagement_details(
             database,
             ObjectId(engagement_id),
-            [email_destination.get(db_c.ID)],
+            [destination.get(db_c.ID)],
         )
 
         if performance_metrics:
@@ -225,86 +232,25 @@ def get_email_metrics(
             delivery_jobs = [
                 x
                 for x in delivery_jobs
-                if x[db_c.DELIVERY_PLATFORM_ID]
-                == email_destination.get(db_c.ID)
+                if x[db_c.DELIVERY_PLATFORM_ID] == destination.get(db_c.ID)
             ]
 
     # Group all the performance metrics for the engagement
     final_metric = {
         api_c.SUMMARY: group_perf_metric(
             [x[db_c.PERFORMANCE_METRICS] for x in performance_metrics],
-            api_c.EMAIL,
+            ad_type,
         )
     }
     audience_metrics_list = group_engagement_performance_metrics(
         engagement,
         delivery_jobs,
         performance_metrics,
-        [email_destination.get(db_c.ID)],
-        api_c.EMAIL,
+        [destination.get(db_c.ID)],
+        ad_type,
     )
     final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
 
-    return final_metric
-
-
-def get_displayads_metrics(
-    database: MongoClient, engagement: object, engagement_id: str
-) -> dict:
-    """
-
-    Args:
-        database(MongoClient): Mongoclient instance
-        engagement(object): Engagement object
-        engagement_id(str): Id of engagement
-
-    Returns:
-        dict: Display Ads Performance metrics of an engagement
-
-    """
-    # Get all destinations that are related to Display Ad metrics
-    ads_destination = (
-        delivery_platform_management.get_delivery_platform_by_type(
-            database, db_c.DELIVERY_PLATFORM_FACEBOOK
-        )
-    )
-
-    delivery_jobs = []
-    performance_metrics = []
-    if ads_destination:
-        # Get Performance metrics by engagement and destination
-        performance_metrics = get_performance_metrics_by_engagement_details(
-            database,
-            ObjectId(engagement_id),
-            [ads_destination.get(db_c.ID)],
-        )
-        if performance_metrics:
-            # Get all the delivery jobs for the given engagement and destination
-            delivery_jobs = get_delivery_jobs_using_metadata(
-                database, engagement_id=ObjectId(engagement_id)
-            )
-
-            delivery_jobs = [
-                x
-                for x in delivery_jobs
-                if x[db_c.DELIVERY_PLATFORM_ID] == ads_destination.get(db_c.ID)
-            ]
-
-    # Group all the performance metrics for the engagement
-    final_metric = {
-        api_c.SUMMARY: group_perf_metric(
-            [x[db_c.PERFORMANCE_METRICS] for x in performance_metrics],
-            api_c.DISPLAY_ADS,
-        )
-    }
-    audience_metrics_list = group_engagement_performance_metrics(
-        engagement,
-        delivery_jobs,
-        performance_metrics,
-        [ads_destination.get(db_c.ID)],
-        api_c.DISPLAY_ADS,
-    )
-    final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
     return final_metric
 
 
@@ -322,7 +268,7 @@ def generate_metrics_file(
     """
     file_path = "performancemetrics"
     file_name = f"{engagement_id}_{metrics_type}_metrics.csv"
-    with open(os.path.join(file_path, file_name), "w", newline="") as csv_file:
+    with open(Path(file_path) / file_name, "w", newline="") as csv_file:
         field_names = [api_c.NAME] + list(final_metric[api_c.SUMMARY].keys())
         dict_writer = csv.DictWriter(csv_file, fieldnames=field_names)
         dict_writer.writeheader()
@@ -1896,8 +1842,8 @@ class EngagementMetricsDisplayAds(SwaggerView):
             )
             return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
 
-        final_metric = get_displayads_metrics(
-            database, engagement, engagement_id
+        final_metric = get_performance_metrics(
+            database, engagement, engagement_id, api_c.DISPLAY_ADS
         )
 
         return (
@@ -1965,7 +1911,9 @@ class EngagementMetricsEmail(SwaggerView):
             )
             return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
 
-        final_metric = get_email_metrics(database, engagement, engagement_id)
+        final_metric = get_performance_metrics(
+            database, engagement, engagement_id, api_c.EMAIL
+        )
         return (
             AudiencePerformanceEmailSchema().dump(final_metric),
             HTTPStatus.OK,
@@ -1996,7 +1944,7 @@ class EngagementPerformanceDownload(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @api_error_handler()
+    # @api_error_handler()
     def get(self, engagement_id: str) -> Tuple[Response, int]:
         """Retrieves email performance metrics.
 
@@ -2023,12 +1971,12 @@ class EngagementPerformanceDownload(SwaggerView):
         if not engagement:
             return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
 
-        final_email_metric = get_email_metrics(
-            database, engagement, engagement_id
+        final_email_metric = get_performance_metrics(
+            database, engagement, engagement_id, api_c.EMAIL
         )
 
-        final_displayads_metric = get_displayads_metrics(
-            database, engagement, engagement_id
+        final_displayads_metric = get_performance_metrics(
+            database, engagement, engagement_id, api_c.DISPLAY_ADS
         )
 
         folder_name = "performancemetrics"
@@ -2042,19 +1990,20 @@ class EngagementPerformanceDownload(SwaggerView):
 
         zipfile_name = f"{engagement_id}_performancemetrics.zip"
 
-        with open(
-            zipfile.ZipFile(zipfile_name, "w", compression=zipfile.ZIP_STORED)
+        # zip all the performancemetrics which are inside in the folder
+        with zipfile.ZipFile(
+            zipfile_name, "w", compression=zipfile.ZIP_STORED
         ) as zipfolder:
-            # zip all the performancemetrics which are inside in the folder
-            for _, _, files in os.walk(folder_name):
-                for file in files:
-                    if file.endswith(".csv"):
-                        zipfolder.write(os.path.join(f"{folder_name}", file))
-                        os.remove(os.path.join(f"{folder_name}", file))
 
-        with open(os.path.join(zipfile_name), "rb") as zip_file:
-            data = zip_file.readlines()
-        os.remove(zipfile_name)
+            folder = Path(folder_name)
+            for file in folder.glob("**/*.csv"):
+                zipfolder.write(file)
+                file.unlink()
+
+        zip_file = Path(zipfile_name)
+        data = zip_file.read_bytes()
+        zip_file.unlink()
+
         return (
             Response(
                 data,
