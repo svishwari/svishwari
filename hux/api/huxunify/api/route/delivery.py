@@ -134,9 +134,11 @@ class EngagementDeliverDestinationView(SwaggerView):
 
         """
         database = get_db_client()
-        engagement = get_engagement(database, engagement_id)
-        target_audience = get_audience(database, audience_id)
-        target_destination = get_delivery_platform(database, destination_id)
+        engagement = get_engagement(database, ObjectId(engagement_id))
+        target_audience = get_audience(database, ObjectId(audience_id))
+        target_destination = get_delivery_platform(
+            database, ObjectId(destination_id)
+        )
 
         # validate that the destination ID is attached to the audience
         valid_destination = False
@@ -169,7 +171,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             ]:
                 continue
             batch_destination = get_destination_config(
-                database, engagement_id, *pair
+                database, ObjectId(engagement_id), *pair
             )
             batch_destination.register(engagement)
             batch_destination.submit()
@@ -261,6 +263,9 @@ class EngagementDeliverAudienceView(SwaggerView):
                 success/failure, HTTP Status.
         """
         database = get_db_client()
+        engagement_id = ObjectId(engagement_id)
+        audience_id = ObjectId(audience_id)
+
         engagement = get_engagement(database, engagement_id)
         audience = get_audience(database, audience_id)
 
@@ -355,7 +360,7 @@ class EngagementDeliverView(SwaggerView):
         """
 
         database = get_db_client()
-        engagement = get_engagement(database, engagement_id)
+        engagement = get_engagement(database, ObjectId(engagement_id))
         # submit jobs for all the audience/destination pairs
         delivery_job_ids = []
 
@@ -363,7 +368,7 @@ class EngagementDeliverView(SwaggerView):
             engagement[api_c.AUDIENCES]
         ):
             batch_destination = get_destination_config(
-                database, engagement_id, *pair
+                database, ObjectId(engagement_id), *pair
             )
             batch_destination.register(engagement)
             batch_destination.submit()
@@ -443,9 +448,11 @@ class AudienceDeliverView(SwaggerView):
 
         database = get_db_client()
         # get audience
-        audience = get_audience(database, audience_id)
+        audience = get_audience(database, ObjectId(audience_id))
         # get engagements
-        engagements = get_engagements_by_audience(database, audience_id)
+        engagements = get_engagements_by_audience(
+            database, ObjectId(audience_id)
+        )
         # submit jobs for the audience/destination pairs
         delivery_job_ids = []
         for engagement in engagements:
@@ -533,11 +540,6 @@ class EngagementDeliverHistoryView(SwaggerView):
         Returns:
             Tuple[dict, int]: Delivery history, HTTP Status.
         """
-
-        # validate object id
-        if not ObjectId.is_valid(engagement_id):
-            logger.error("Invalid Object ID %s.", engagement_id)
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert the engagement ID
         engagement_id = ObjectId(engagement_id)
@@ -665,11 +667,6 @@ class AudienceDeliverHistoryView(SwaggerView):
             Tuple[dict, int]: Delivery history, HTTP Status.
 
         """
-
-        # validate object id
-        if not ObjectId.is_valid(audience_id):
-            logger.error("Invalid Object ID %s.", audience_id)
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert the audience ID
         audience_id = ObjectId(audience_id)

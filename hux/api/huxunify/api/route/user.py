@@ -151,9 +151,6 @@ class AddUserFavorite(SwaggerView):
 
         okta_id = None  # TODO : Fetch okta id from JWT Token (HUS-443)
 
-        if not ObjectId.is_valid(component_id):
-            logger.error("Invalid Object ID %s.", component_id)
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
         if component_name not in db_constants.FAVORITE_COMPONENTS:
             logger.error(
                 "Component name %s not in favorite components.", component_name
@@ -228,10 +225,6 @@ class DeleteUserFavorite(SwaggerView):
 
         """
         okta_id = None  # TODO : Fetch okta id from JWT Token (HUS-443)
-
-        if not ObjectId.is_valid(component_id):
-            logger.error("Invalid Object ID %s.", component_id)
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         if component_name not in db_constants.FAVORITE_COMPONENTS:
             logger.error(

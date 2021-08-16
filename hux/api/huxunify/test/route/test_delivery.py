@@ -189,7 +189,7 @@ class TestDeliveryRoutes(TestCase):
             str(set_engagement(self.database, **x)) for x in engagements
         ]
 
-    def test_deliver_audience_for_an_engagement_valid_ids(self):  # success 2
+    def test_deliver_audience_for_an_engagement_valid_ids(self):
         """
         Test delivery of an audience for an engagement
         with valid ids
@@ -199,16 +199,17 @@ class TestDeliveryRoutes(TestCase):
         Returns:
 
         """
-        audience_id = self.audiences[0][db_c.ID]
+        audience_id = self.audiences[1][db_c.ID]
         engagement_id = self.engagement_ids[0]
 
         response = self.app.post(
             (
                 f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
-                f"{api_c.AUDIENCE}/{audience_id}/deliver"
+                f"{api_c.AUDIENCE}/{audience_id}/{api_c.DELIVER}"
             ),
             headers=t_c.STANDARD_HEADERS,
         )
+        print(response.json)
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
@@ -228,12 +229,12 @@ class TestDeliveryRoutes(TestCase):
         response = self.app.post(
             (
                 f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
-                f"{api_c.AUDIENCE}/{audience_id}/deliver"
+                f"{api_c.AUDIENCE}/{audience_id}/{api_c.DELIVER}"
             ),
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+        valid_response = {"message": api_c.BSON_INVALID_ID(audience_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -259,7 +260,7 @@ class TestDeliveryRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+        valid_response = {"message": api_c.BSON_INVALID_ID(engagement_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -425,7 +426,7 @@ class TestDeliveryRoutes(TestCase):
         audience_id = self.audiences[0][db_c.ID]
 
         response = self.app.post(
-            f"{t_c.BASE_ENDPOINT}/{api_c.AUDIENCES}/{audience_id}/deliver",
+            f"{t_c.BASE_ENDPOINT}/{api_c.AUDIENCES}/{audience_id}/{api_c.DELIVER}",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -449,11 +450,11 @@ class TestDeliveryRoutes(TestCase):
         audience_id = "XYZ123"
 
         response = self.app.post(
-            f"{t_c.BASE_ENDPOINT}/{api_c.AUDIENCES}/{audience_id}/deliver",
+            f"{t_c.BASE_ENDPOINT}/{api_c.AUDIENCES}/{audience_id}/{api_c.DELIVER}",
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+        valid_response = {"message": api_c.BSON_INVALID_ID(audience_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -480,7 +481,7 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
-    def test_deliver_audience_for_engagement_valid_engagement_id(self):
+    def test_deliver_audience_for_engagement(self):
         """
         Test delivery of audience for a valid engagement id
 
@@ -499,7 +500,7 @@ class TestDeliveryRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
-    def test_get_engagement_delivery_history_by_id_valid_id(self):
+    def test_get_engagement_delivery_history(self):
         """
         Test get delivery history API with valid id
 
@@ -529,18 +530,18 @@ class TestDeliveryRoutes(TestCase):
 
         engagement_id = str(ObjectId())
 
-        valid_response = {"message": "Engagement not found."}
-
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
             f"{api_c.DELIVERY_HISTORY}",
             headers=t_c.STANDARD_HEADERS,
         )
 
+        valid_response = {"message": api_c.ENGAGEMENT_NOT_FOUND}
+
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
 
-    def test_get_audience_delivery_history_by_id_valid_id(self):
+    def test_get_audience_delivery_history_invalid_id(self):
         """
         Test get delivery history API with valid id
 
@@ -551,12 +552,17 @@ class TestDeliveryRoutes(TestCase):
         """
 
         audience_id = "random_id"
+
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
             f"{api_c.DELIVERY_HISTORY}",
             headers=t_c.STANDARD_HEADERS,
         )
+
+        valid_response = {"message": api_c.BSON_INVALID_ID(audience_id)}
+
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     def test_get_audience_delivery_history_by_id_non_existent_id(self):
         """
@@ -570,13 +576,13 @@ class TestDeliveryRoutes(TestCase):
 
         engagement_id = str(ObjectId())
 
-        valid_response = {"message": "Engagement not found."}
-
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
             f"{api_c.DELIVERY_HISTORY}",
             headers=t_c.STANDARD_HEADERS,
         )
+
+        valid_response = {"message": api_c.ENGAGEMENT_NOT_FOUND}
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
