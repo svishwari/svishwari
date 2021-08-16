@@ -295,7 +295,6 @@ const actions = {
       throw error
     }
   },
-
   async updateInactiveEngagement(_, { id, data }) {
     try {
       await api.engagements.inactiveEngagement(
