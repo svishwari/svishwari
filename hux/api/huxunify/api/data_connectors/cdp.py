@@ -550,14 +550,17 @@ def clean_cdm_fields(body: dict) -> dict:
 
 def get_demographic_by_state(
     token: str, filters: Optional[dict] = None
-) -> dict:
+) -> list:
     """
+    Get demographic details of customers by state
 
     Args:
-        token(str):
-        filters:
+        token (str): OKTA JWT Token.
+        filters (dict):  filters to pass into
+            count_by_state endpoint, default None
 
     Returns:
+        list of demographic details by state
 
     """
     # get config
@@ -586,7 +589,7 @@ def get_demographic_by_state(
     total_customers = sum([x[api_c.SIZE] for x in body])
     geographic_response = [
         {
-            api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE]),
+            api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
             api_c.POPULATION_PERCENTAGE: round(
                 x[api_c.SIZE] / total_customers, 4
             ),
@@ -598,7 +601,7 @@ def get_demographic_by_state(
             api_c.GENDER_OTHER: round(
                 x[api_c.GENDER_OTHER] / x[api_c.SIZE], 4
             ),
-            api_c.LTV: 12345,
+            api_c.LTV: x.get(api_c.LTV, 12345),
         }
         for x in body
     ]
