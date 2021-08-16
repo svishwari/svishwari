@@ -93,8 +93,8 @@
                 >
                   <template #label-content>
                     <logo
-                      class="mr-1"
                       :key="destination.id"
+                      class="mr-1"
                       :type="destination.delivery_platform_type"
                       :size="18"
                     />
@@ -202,8 +202,8 @@
                     >
                       <template #label-content>
                         <logo
-                          class="mr-1"
                           :key="destination.id"
+                          class="mr-1"
                           :type="destination.delivery_platform_type"
                           :size="18"
                         />
