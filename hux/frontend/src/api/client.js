@@ -139,7 +139,7 @@ client["engagements"].updateCampaignMapping = (
   )
 }
 
-client["engagements"].inactiveEngagement = ({ resourceId }, data) => {
+client["engagements"].updateEngagement = ({ resourceId }, data) => {
   return http.put(`/engagements/${resourceId}`, data)
 }
 

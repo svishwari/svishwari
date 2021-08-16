@@ -295,9 +295,9 @@ const actions = {
       throw error
     }
   },
-  async updateInactiveEngagement(_, { id, data }) {
+  async updateStatus(_, { id, data }) {
     try {
-      await api.engagements.inactiveEngagement(
+      await api.engagements.updateEngagement(
         {
           resourceId: id,
         },
