@@ -549,7 +549,7 @@ def clean_cdm_fields(body: dict) -> dict:
 
 
 def get_incomes_by_cities(token: str, filters: Optional[dict] = None) -> dict:
-    """
+    """Get income details of customer by cities
 
     Args:
         token (str): OKTA JWT Token.
