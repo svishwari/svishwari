@@ -20,7 +20,6 @@ from huxunifylib.util.general.logging import logger
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 
-
 # fields to convert to datetime from the responses
 DEFAULT_DATETIME = datetime.datetime(1, 1, 1, 1, 00)
 DATETIME_FIELDS = [
@@ -547,3 +546,60 @@ def clean_cdm_fields(body: dict) -> dict:
             body[date_field] = None
 
     return body
+
+
+def get_demographic_by_state(
+    token: str, filters: Optional[dict] = None
+) -> dict:
+    """
+
+    Args:
+        token(str):
+        filters:
+
+    Returns:
+
+    """
+    # get config
+    config = get_config()
+    logger.info("Getting Customer Profile Insights from CDP API.")
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+        json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Could not get demographic insights for states from CDP API got %s %s.",
+            response.status_code,
+            response.text,
+        )
+        return {}
+    logger.info(
+        "Successfully retrieved demographic insights for states from CDP API."
+    )
+    body = clean_cdm_fields(response.json()[api_c.BODY])
+
+    total_customers = sum([x[api_c.SIZE] for x in body])
+    geographic_response = [
+        {
+            api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE]),
+            api_c.POPULATION_PERCENTAGE: round(
+                x[api_c.SIZE] / total_customers, 4
+            ),
+            api_c.SIZE: x[api_c.SIZE],
+            api_c.GENDER_WOMEN: round(
+                x[api_c.GENDER_WOMEN] / x[api_c.SIZE], 4
+            ),
+            api_c.GENDER_MEN: round(x[api_c.GENDER_MEN] / x[api_c.SIZE], 4),
+            api_c.GENDER_OTHER: round(
+                x[api_c.GENDER_OTHER] / x[api_c.SIZE], 4
+            ),
+            api_c.LTV: 12345,
+        }
+        for x in body
+    ]
+    return geographic_response

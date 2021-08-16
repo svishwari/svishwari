@@ -3,7 +3,7 @@
 Paths for customer API
 """
 from http import HTTPStatus
-from random import choice, randint
+from random import randint
 from typing import Tuple, List
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -38,6 +38,7 @@ from huxunify.api.data_connectors.cdp import (
     get_idr_data_feeds,
     get_idr_matching_trends,
     get_customer_events_data,
+    get_demographic_by_state,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -520,20 +521,13 @@ class CustomerGeoVisualView(SwaggerView):
         Returns:
             Tuple[dict, int] list of Customer insights on geo overview and http code
         """
-        geo_visuals = [
-            {
-                api_c.NAME: state,
-                api_c.POPULATION_PERCENTAGE: choice([0.3012, 0.1910, 0.2817]),
-                api_c.SIZE: choice([28248560, 39510225, 7615887]),
-                api_c.GENDER_WOMEN: 0.50,
-                api_c.GENDER_MEN: 0.49,
-                api_c.GENDER_OTHER: 0.01,
-                api_c.LTV: choice([3848.50, 3971.50, 3952]),
-            }
-            for state in api_c.STATE_NAMES
-        ]
+        token_response = get_token_from_request(request)
         return (
-            jsonify(CustomerGeoVisualSchema().dump(geo_visuals, many=True)),
+            jsonify(
+                CustomerGeoVisualSchema().dump(
+                    get_demographic_by_state(token_response[0]), many=True
+                )
+            ),
             HTTPStatus.OK,
         )
 
