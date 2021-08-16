@@ -339,6 +339,7 @@ DESTINATION_NOT_FOUND = "Destination not found."
 ENGAGEMENT_NOT_FOUND = "Engagement not found."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported."
 SUCCESSFUL_DELIVERY_JOB_NOT_FOUND = "No successful delivery job found"
+ZERO_AUDIENCE_SIZE = "Sum of Audience(s) is zero"
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"

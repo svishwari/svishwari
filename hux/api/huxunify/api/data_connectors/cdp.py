@@ -581,15 +581,15 @@ def get_demographic_by_state(
             response.text,
         )
         return {}
+
     logger.info("Successfully retrieved state demographic insights.")
     body = clean_cdm_fields(response.json()[api_c.BODY])
 
-    total_customers = sum([x[api_c.SIZE] for x in body])
     geographic_response = [
         {
             api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
             api_c.POPULATION_PERCENTAGE: round(
-                x[api_c.SIZE] / total_customers, 4
+                x[api_c.SIZE] / sum([x[api_c.SIZE] for x in body]), 4
             ),
             api_c.SIZE: x[api_c.SIZE],
             api_c.GENDER_WOMEN: round(

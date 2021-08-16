@@ -510,7 +510,11 @@ class CustomerGeoVisualView(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler(
+        custom_message={
+            ZeroDivisionError: {"message": api_c.ZERO_AUDIENCE_SIZE}
+        }
+    )
     def get(self) -> Tuple[list, int]:
         """Retrieves a Customer profiles geographical insights.
 
