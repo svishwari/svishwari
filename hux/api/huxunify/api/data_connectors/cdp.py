@@ -565,7 +565,7 @@ def get_demographic_by_state(
     """
     # get config
     config = get_config()
-    logger.info("Getting Customer Profile Insights from CDP API.")
+    logger.info("Getting Demographic Insights by states from CDP API.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
         json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
