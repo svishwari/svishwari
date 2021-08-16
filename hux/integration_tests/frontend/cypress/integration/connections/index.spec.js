@@ -68,6 +68,7 @@ describe("Tests data souces and destinations in connections", () => {
     cy.location("pathname").should("eq", route.connections);
     
     // TODO: improve waiting for the data source list to load
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
 
     //make sure that number of data sources have increased by 1
