@@ -189,60 +189,67 @@ class ModelOverview(SwaggerView):
         """
         model_id = int(model_id)
 
-        output = {
-            api_c.MODEL_ID: model_id,
-            api_c.MODEL_TYPE: api_c.SUPPORTED_MODELS[model_id][
-                api_c.MODEL_TYPE
-            ],
-            api_c.MODEL_NAME: api_c.SUPPORTED_MODELS[model_id][api_c.NAME],
-            api_c.DESCRIPTION: api_c.SUPPORTED_MODELS[model_id][
-                api_c.DESCRIPTION
-            ],
-            api_c.PERFORMANCE_METRIC: {
-                api_c.AUC: api_c.SUPPORTED_MODELS[model_id][api_c.AUC],
-                api_c.PRECISION: api_c.SUPPORTED_MODELS[model_id][
-                    api_c.PRECISION
-                ],
-                api_c.RECALL: api_c.SUPPORTED_MODELS[model_id][api_c.RECALL],
-                api_c.CURRENT_VERSION: api_c.SUPPORTED_MODELS[model_id][
-                    api_c.CURRENT_VERSION
-                ],
-                api_c.RMSE: api_c.SUPPORTED_MODELS[model_id][api_c.RMSE],
-            },
-            api_c.LIFT_DATA: [
+        # get model information
+        model_versions = tecton.get_model_version_history(model_id)
+
+        # if model versions not found, return not found.
+        if not model_versions:
+            return {}, HTTPStatus.NOT_FOUND
+
+        # take the latest model
+        latest_model = model_versions[-1]
+
+        # generate the output
+        return (
+            ModelDashboardSchema().dump(
                 {
-                    api_c.BUCKET: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.BUCKET][x],
-                    api_c.PREDICTED_VALUE: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.PREDICTED_VALUE][x],
-                    api_c.ACTUAL_VALUE: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.ACTUAL_VALUE][x],
-                    api_c.PROFILE_COUNT: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.PROFILE_COUNT][x],
-                    api_c.PREDICTED_RATE: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.PREDICTED_RATE][x],
-                    api_c.ACTUAL_RATE: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.ACTUAL_RATE][x],
-                    api_c.PREDICTED_LIFT: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.PREDICTED_LIFT][x],
-                    api_c.ACTUAL_LIFT: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.ACTUAL_LIFT][x],
-                    api_c.PROFILE_SIZE_PERCENT: api_c.SUPPORTED_MODELS[
-                        model_id
-                    ][api_c.LIFT_DATA][api_c.PROFILE_SIZE_PERCENT][x],
+                    api_c.MODEL_ID: latest_model[api_c.ID],
+                    api_c.MODEL_TYPE: latest_model[api_c.TYPE],
+                    api_c.MODEL_NAME: latest_model[api_c.NAME],
+                    api_c.DESCRIPTION: latest_model[api_c.DESCRIPTION],
+                    # get the performance metrics for a given model
+                    api_c.PERFORMANCE_METRIC: tecton.get_model_performance_metrics(
+                        model_id,
+                        latest_model[api_c.TYPE],
+                        latest_model[api_c.CURRENT_VERSION],
+                    ),
+                    # TODO - HUS-894, return Drift/Lift data.
+                    api_c.LIFT_DATA: [
+                        {
+                            api_c.BUCKET: api_c.SUPPORTED_MODELS[model_id][
+                                api_c.LIFT_DATA
+                            ][api_c.BUCKET][x],
+                            api_c.PREDICTED_VALUE: api_c.SUPPORTED_MODELS[
+                                model_id
+                            ][api_c.LIFT_DATA][api_c.PREDICTED_VALUE][x],
+                            api_c.ACTUAL_VALUE: api_c.SUPPORTED_MODELS[
+                                model_id
+                            ][api_c.LIFT_DATA][api_c.ACTUAL_VALUE][x],
+                            api_c.PROFILE_COUNT: api_c.SUPPORTED_MODELS[
+                                model_id
+                            ][api_c.LIFT_DATA][api_c.PROFILE_COUNT][x],
+                            api_c.PREDICTED_RATE: api_c.SUPPORTED_MODELS[
+                                model_id
+                            ][api_c.LIFT_DATA][api_c.PREDICTED_RATE][x],
+                            api_c.ACTUAL_RATE: api_c.SUPPORTED_MODELS[
+                                model_id
+                            ][api_c.LIFT_DATA][api_c.ACTUAL_RATE][x],
+                            api_c.PREDICTED_LIFT: api_c.SUPPORTED_MODELS[
+                                model_id
+                            ][api_c.LIFT_DATA][api_c.PREDICTED_LIFT][x],
+                            api_c.ACTUAL_LIFT: api_c.SUPPORTED_MODELS[
+                                model_id
+                            ][api_c.LIFT_DATA][api_c.ACTUAL_LIFT][x],
+                            api_c.PROFILE_SIZE_PERCENT: api_c.SUPPORTED_MODELS[
+                                model_id
+                            ][api_c.LIFT_DATA][api_c.PROFILE_SIZE_PERCENT][x],
+                        }
+                        for x in range(10)
+                    ],
                 }
-                for x in range(10)
-            ],
-        }
-        return ModelDashboardSchema().dump(output), HTTPStatus.OK
+            ),
+            HTTPStatus.OK,
+        )
 
 
 @add_view_to_blueprint(

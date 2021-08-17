@@ -582,6 +582,10 @@ ACTUAL_RATE = "actual_rate"
 PREDICTED_LIFT = "predicted_lift"
 ACTUAL_LIFT = "actual_lift"
 PROFILE_SIZE_PERCENT = "profile_size_percent"
+MODEL_TYPES = [LTV, UNSUBSCRIBE, PURCHASE]
+REGRESSION_MODELS = [LTV]
+CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
+
 # TODO Remove this data once actual data from tecton flows
 SUPPORTED_MODELS = {
     2: {
