@@ -30,7 +30,11 @@ const mutations = {
   },
 
   SET_HISTORY(state, items) {
-    items.forEach((item) => {
+    let getHistory = items.sort(function (a, b) {
+      return a.version === b.version ? 0 : a.version > b.version ? -1 : 1
+    })
+    getHistory[0]['current'] = true
+    getHistory.forEach((item) => {
       Vue.set(state.history, item.version, item)
     })
   },

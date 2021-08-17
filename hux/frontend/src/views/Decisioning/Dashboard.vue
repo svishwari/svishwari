@@ -5,6 +5,21 @@
         <template #left>
           <breadcrumb :items="breadcrumbItems" />
         </template>
+        <template #right>
+          <hux-button
+            class="mr-4 pa-3"
+            is-custom-icon
+            is-tile
+            icon="history"
+            variant="white"
+            @click="viewVersionHistory()"
+          >
+            Version history
+          </hux-button>
+          <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+            mdi-download
+          </v-icon>
+        </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
@@ -98,6 +113,7 @@
           </v-card>
         </v-col>
       </v-row>
+      <version-history v-model="versionHistoryDrawer" />
     </template>
   </page>
 </template>
@@ -108,6 +124,8 @@ import FeatureChart from "@/components/common/featureChart/FeatureChart"
 import LiftChart from "@/components/common/LiftChart.vue"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
+import huxButton from "@/components/common/huxButton"
+import VersionHistory from "./Drawers/VersionHistoryDrawer.vue"
 import { mapGetters, mapActions } from "vuex"
 
 export default {
@@ -119,17 +137,19 @@ export default {
     LiftChart,
     Page,
     PageHeader,
+    huxButton,
+    VersionHistory,
   },
   data() {
     return {
       loading: false,
+      versionHistoryDrawer: false,
     }
   },
 
   computed: {
     ...mapGetters({
       model: "models/overview",
-      history: "models/history",
     }),
 
     breadcrumbItems() {
@@ -155,19 +175,16 @@ export default {
   async mounted() {
     this.loading = true
     await this.getOverview(this.$route.params.id)
-    // this will be removed from here &
-    // get called on opening of drawer,
-    // once the drawer UI is implemented
-    // in part-2 of the same PR.
-    await this.getHistory(this.$route.params.id)
     this.loading = false
   },
 
   methods: {
     ...mapActions({
       getOverview: "models/getOverview",
-      getHistory: "models/getHistory",
     }),
+    viewVersionHistory() {
+      this.versionHistoryDrawer = !this.versionHistoryDrawer
+    },
   },
 }
 </script>
