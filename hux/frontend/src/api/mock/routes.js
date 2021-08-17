@@ -262,11 +262,17 @@ export const defineRoutes = (server) => {
       return { message: "Successfully created mappings" }
     }
   )
-
+  //update Engagement
   server.put("/engagements/:id", (schema, request) => {
     const engagementId = request.params.id
-    schema.engagements.find(engagementId).update({ status: "Inactive" })
-    return { message: "Successfully inactivated engagement" }
+    const requestData = JSON.parse(request.requestBody)
+    if (requestData.status) {
+      const payload = {
+        status: requestData.status,
+      }
+      schema.engagements.find(engagementId).update(payload)
+      return { message: "Successfully inactivated engagement" }
+    }
   })
 
   server.get(

@@ -353,7 +353,7 @@ export default {
     ...mapActions({
       getAllEngagements: "engagements/getAll",
       updateAudienceList: "engagements/updateAudienceList",
-      updateStatus: "engagements/updateStatus",
+      updateEngagement: "engagements/updateEngagement",
     }),
     getAudienceHeaders(headers) {
       headers[0].width = "200px"
@@ -370,7 +370,7 @@ export default {
         status: "Inactive",
       }
       const payload = { id: value.id, data: inactiveEngagementPayload }
-      await this.updateStatus(payload)
+      await this.updateEngagement(payload)
       this.loading = true
       await this.getAllEngagements()
       this.rowData = this.engagementData.sort((a, b) =>
