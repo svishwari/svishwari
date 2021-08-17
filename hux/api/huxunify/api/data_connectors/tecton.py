@@ -156,13 +156,12 @@ def map_model_performance_response(
         List[dict]: A cleaned model performance dict.
 
     """
-    if response.status_code != 200:
-        return []
 
-    if constants.RESULTS not in response.json():
-        return []
-
-    models = []
+    if (
+        response.status_code != 200
+        and constants.RESULTS not in response.json()
+    ):
+        return {}
 
     for meta_data in response.json()[constants.RESULTS]:
         # get model metadata from tecton
@@ -172,25 +171,23 @@ def map_model_performance_response(
         if feature[4] != model_version:
             continue
 
-        models.append(
-            {
-                constants.ID: model_id,
-                constants.RMSE: float(feature[0])
-                if model_type in constants.REGRESSION_MODELS
-                else 0,
-                constants.AUC: float(feature[0])
-                if model_type in constants.CLASSIFICATION_MODELS
-                else 0,
-                constants.PRECISION: float(feature[5])
-                if model_type in constants.CLASSIFICATION_MODELS
-                else 0,
-                constants.RECALL: float(feature[6])
-                if model_type in constants.CLASSIFICATION_MODELS
-                else 0,
-                constants.CURRENT_VERSION: model_version,
-            }
-        )
-    return models
+        return {
+            constants.ID: model_id,
+            constants.RMSE: float(feature[0])
+            if model_type in constants.REGRESSION_MODELS
+            else 0,
+            constants.AUC: float(feature[0])
+            if model_type in constants.CLASSIFICATION_MODELS
+            else 0,
+            constants.PRECISION: float(feature[5])
+            if model_type in constants.CLASSIFICATION_MODELS
+            else 0,
+            constants.RECALL: float(feature[6])
+            if model_type in constants.CLASSIFICATION_MODELS
+            else 0,
+            constants.CURRENT_VERSION: model_version,
+        }
+    return {}
 
 
 def get_models() -> List[dict]:
