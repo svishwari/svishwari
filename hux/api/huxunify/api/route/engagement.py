@@ -1159,11 +1159,6 @@ class UpdateCampaignsForAudience(SwaggerView):
 
         """
 
-        # validate object id
-        # if not all(ObjectId.is_valid(x) for x in [audience_id, engagement_id]):
-        #     logger.error("Invalid Object ID.")
-        #     return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
-
         # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
         audience_id = ObjectId(audience_id)

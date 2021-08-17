@@ -228,7 +228,7 @@ class EngagementSchemaTest(TestCase):
         """
         doc = {
             api_c.NAME: "Engagement 1",
-            api_c.ID: "campaign_id",
+            api_c.ID: str(ObjectId()),
             db_c.CREATE_TIME: "2021-10-10",
         }
         assert CampaignSchema().validate(doc) != {}
@@ -242,7 +242,7 @@ class EngagementSchemaTest(TestCase):
         """
         doc = {
             api_c.NAME: "Engagement 1",
-            api_c.ID: "campaign_id",
+            api_c.ID: str(ObjectId()),
             db_c.CREATE_TIME: "2021-10-10",
         }
         assert CampaignSchema().validate(doc) != {}

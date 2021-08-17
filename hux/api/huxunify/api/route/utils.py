@@ -580,6 +580,10 @@ def validate_delivery_params(func) -> object:
            object: returns a decorated function object.
         """
 
+        # convert to object id
+        for key, val in kwargs.items():
+            kwargs[key] = ObjectId(val)
+
         database = get_db_client()
         # check if engagement id exists
         engagement_id = kwargs.get(constants.ENGAGEMENT_ID, None)

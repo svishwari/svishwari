@@ -64,7 +64,7 @@ def validate_object_id(data: AnyStr) -> None:
         None
 
     """
-    ObjectId.is_valid(data)
+    ObjectId(data)
 
 
 def validate_dest_constants(data: dict) -> None:
@@ -128,4 +128,7 @@ def redact_fields(data: dict, redacted_fields: list) -> dict:
 
 
 if __name__ == "__main__":
+
+    validate_object_id("some string")
+
     pass

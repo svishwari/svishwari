@@ -134,11 +134,9 @@ class EngagementDeliverDestinationView(SwaggerView):
 
         """
         database = get_db_client()
-        engagement = get_engagement(database, ObjectId(engagement_id))
-        target_audience = get_audience(database, ObjectId(audience_id))
-        target_destination = get_delivery_platform(
-            database, ObjectId(destination_id)
-        )
+        engagement = get_engagement(database, engagement_id)
+        target_audience = get_audience(database, audience_id)
+        target_destination = get_delivery_platform(database, destination_id)
 
         # validate that the destination ID is attached to the audience
         valid_destination = False
@@ -171,7 +169,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             ]:
                 continue
             batch_destination = get_destination_config(
-                database, ObjectId(engagement_id), *pair
+                database, engagement_id, *pair
             )
             batch_destination.register(engagement)
             batch_destination.submit()
