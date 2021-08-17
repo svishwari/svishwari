@@ -185,6 +185,43 @@ MOCKED_MODEL_VERSION_HISTORY = {
     ]
 }
 
+MOCKED_CITY_LTVS_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            "city": "Santa Anna",
+            "state": "TX",
+            "country": "US",
+            "avg_ltv": 668.03003,
+        },
+        {
+            "city": "Solon Springs",
+            "state": "WI",
+            "country": "US",
+            "avg_ltv": 648.8791640000001,
+        },
+        {
+            "city": "Gays Mills",
+            "state": "WI",
+            "country": "US",
+            "avg_ltv": 587.3708300000001,
+        },
+        {
+            "city": "Hodgen",
+            "state": "OK",
+            "country": "US",
+            "avg_ltv": 573.278802,
+        },
+        {
+            "city": "Noonan",
+            "state": "ND",
+            "country": "US",
+            "avg_ltv": 554.679386,
+        },
+    ],
+    "message": "ok",
+}
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False
