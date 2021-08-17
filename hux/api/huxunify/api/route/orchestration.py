@@ -909,9 +909,9 @@ class SetLookalikeAudience(SwaggerView):
                 "message": api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
 
-        timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
-            db_c.AUDIENCE_NAME_DATE_FORMAT
-        )
+        # timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
+        #     db_c.AUDIENCE_NAME_DATE_FORMAT
+        # )
 
         # destination_connector.get_new_lookalike_audience(
         #     f"{source_audience[db_c.NAME]} - {timestamp}",

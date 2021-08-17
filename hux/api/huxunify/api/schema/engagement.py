@@ -692,7 +692,8 @@ def weighted_engagement_status(engagements: list) -> list:
         elif api_c.STATUS_NOT_DELIVERED in status_values:
             engagement[api_c.STATUS] = api_c.STATUS_INACTIVE
         elif all(
-            [status == api_c.STATUS_DELIVERED for status in status_values]
+            status_value == api_c.STATUS_DELIVERED
+            for status_value in status_values
         ):
             engagement[api_c.STATUS] = api_c.STATUS_ACTIVE
         else:
