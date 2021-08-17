@@ -7,7 +7,7 @@
         @mouseover="getCordinates($event)"
       ></div>
     </div>
-    <div class="pt-2">
+    <div class="pt-1">
       <div id="legend"></div>
     </div>
   </div>
@@ -172,7 +172,7 @@ export default {
       let yScale = d3Scale
         .scaleLinear()
         .range([height, 0])
-        .domain([0, Math.max(...this.yValueData) + 500])
+        .domain([0, Math.max(...this.yValueData)])
 
       let xScale = d3Scale
         .scaleLinear()
@@ -227,7 +227,7 @@ export default {
           d3Axis
             .axisBottom(xScale)
             .ticks(this.areaChartData.length)
-            .tickFormat(d3TimeFormat.timeFormat("%b %Y"))
+            .tickFormat(d3TimeFormat.timeFormat("%b '%y"))
         )
         .call((g) => g.selectAll(".tick line").attr("stroke", "#ECECEC"))
         .call((g) => g.selectAll("path").attr("stroke", "#ECECEC"))
@@ -237,7 +237,7 @@ export default {
         .append("g")
         .attr("transform", "translate(0, 0)")
         .attr("fill", "#4f4f4f")
-        .call(d3Axis.axisLeft(yScale).ticks(6).tickFormat(appendyAxisFormat))
+        .call(d3Axis.axisLeft(yScale).ticks(4).tickFormat(appendyAxisFormat))
         .call((g) => g.selectAll(".tick line").attr("stroke", "#ECECEC"))
         .call((g) => g.selectAll("path").attr("stroke", "#ECECEC"))
         .style("font-size", 12)
