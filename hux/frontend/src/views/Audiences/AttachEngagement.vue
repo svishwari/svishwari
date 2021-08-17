@@ -186,7 +186,7 @@
                     <v-btn
                       class="active-delivery-option"
                       :class="
-                        newEngagement.delivery_schedule == 1
+                        isRecurring
                           ? 'btn-radio-active'
                           : 'btn-radio-inactive'
                       "
@@ -195,7 +195,7 @@
                     >
                       <v-radio
                         :off-icon="
-                          newEngagement.delivery_schedule == 1
+                          isRecurring
                             ? '$radioOn'
                             : '$radioOff'
                         "
@@ -208,7 +208,7 @@
                   </v-btn-toggle>
                 </div>
                 <v-row
-                  v-if="newEngagement.delivery_schedule == 1"
+                  v-if="isRecurring"
                   class="delivery-schedule ml-0 mt-6"
                 >
                   <div>
@@ -242,7 +242,7 @@
                   </div>
                 </v-row>
                 <v-row
-                  v-if="newEngagement.delivery_schedule == 1"
+                  v-if="isRecurring"
                   class="delivery-schedule ml-0 mt-8"
                 >
                   <hux-schedule-picker v-model="schedule" />
@@ -305,7 +305,7 @@ import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 
 import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
-import DefaultDeliverySchedule from "../Engagements/Configuration/Drawers/DefaultDeliverySchedule.json"
+import { deliverySchedule } from "@/utils"
 
 export default {
   name: "AttachEngagement",
@@ -358,13 +358,16 @@ export default {
       sortBy: sortBy,
       selectedStartDate: "Select date",
       selectedEndDate: "Select date",
-      schedule: JSON.parse(JSON.stringify(DefaultDeliverySchedule)),
+      schedule: JSON.parse(JSON.stringify(deliverySchedule())),
     }
   },
 
   computed: {
     areEngagementAlreadyCreated() {
       return this.engagements.length > 0
+    },
+    isRecurring(){
+      return this.newEngagement.delivery_schedule == 1
     },
   },
 
@@ -399,7 +402,7 @@ export default {
       addEngagementToDB: "engagements/add",
     }),
     resetSchedule() {
-      this.schedule = JSON.parse(JSON.stringify(DefaultDeliverySchedule))
+      this.schedule = JSON.parse(JSON.stringify(deliverySchedule()))
     },
     isEngagementSelected: function (engagement) {
       return (
