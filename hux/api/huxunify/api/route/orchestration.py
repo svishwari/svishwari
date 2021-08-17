@@ -147,6 +147,10 @@ class AudienceView(SwaggerView):
             for x in orchestration_management.get_all_audiences(database)
         }
 
+        # workaround because DocumentDB does not allow $replaceRoot
+        # do replace root by bringing the nested engagement up a level.
+        _ = [x.update(audience_dict[x[db_c.ID]]) for x in audiences]
+
         # get customer sizes
         token_response = get_token_from_request(request)
         customer_size_dict = get_customers_count_async(
@@ -162,10 +166,6 @@ class AudienceView(SwaggerView):
 
         # process each audience object
         for audience in audiences:
-            # workaround because DocumentDB does not allow $replaceRoot
-            # do replace root by bringing the nested engagement up a level.
-            audience.update(audience_dict[audience[db_c.ID]])
-
             # take the last X number of deliveries
             # remove any empty ones, and only show the delivered/succeeded
             audience[api_c.DELIVERIES] = [
