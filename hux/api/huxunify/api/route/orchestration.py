@@ -148,7 +148,7 @@ class AudienceView(SwaggerView):
         }
 
         # workaround because DocumentDB does not allow $replaceRoot
-        # do replace root by bringing the nested engagement up a level.
+        # do replace root by bringing the nested audience up a level.
         _ = [x.update(audience_dict[x[db_c.ID]]) for x in audiences]
 
         # get customer sizes
