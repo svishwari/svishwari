@@ -193,7 +193,7 @@ def get_customers_count_async(
         (
             token,
             x[db_c.ID],
-            x[api_c.AUDIENCE_FILTERS]
+            {api_c.AUDIENCE_FILTERS: x[api_c.AUDIENCE_FILTERS]}
             if x.get(api_c.AUDIENCE_FILTERS)
             else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
             url,
