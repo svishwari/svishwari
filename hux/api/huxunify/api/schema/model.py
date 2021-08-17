@@ -62,7 +62,7 @@ class ModelLiftSchema(Schema):
     bucket = Int(example=10)
     predicted_value = Float(example=693.69)
     actual_value = Float(example=797.81)
-    profile_count = Str(example="22")
+    profile_count = Int(example=22)
     predicted_rate = Float(example=0.31)
     actual_rate = Float(example=0.29)
     predicted_lift = Float(example=1.03)

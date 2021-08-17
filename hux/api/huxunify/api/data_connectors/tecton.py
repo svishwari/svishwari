@@ -198,7 +198,7 @@ def get_model_lift_async(model_id: int) -> List[ModelLiftSchema]:
     """Get model lift based on id.
 
     Args:
-        model_id (str): model id.
+        model_id (int): model id.
 
     Returns:
          List[ModelLiftSchema]: List of model lift.
@@ -240,22 +240,21 @@ def get_model_lift_async(model_id: int) -> List[ModelLiftSchema]:
             constants.FEATURES
         ]
 
-        # TODO - get better format from Tecton
-        lift_bucket_data = {
-            "bucket": response[1],
-            "actual_value": latest_lift_data[0],
-            "actual_lift": latest_lift_data[2],
-            "predicted_lift": latest_lift_data[3],
-            "predicted_value": latest_lift_data[8],
-            "profile_count": latest_lift_data[9],
-            "actual_rate": latest_lift_data[10],
-            "predicted_rate": latest_lift_data[11],
-            "profile_size_percent": latest_lift_data[13] * 100
-            if latest_lift_data[13]
-            else 0,
-        }
-
-        result_lift.append(lift_bucket_data)
+        result_lift.append(
+            {
+                "bucket": response[1],
+                "actual_value": latest_lift_data[0],
+                "actual_lift": latest_lift_data[2],
+                "predicted_lift": latest_lift_data[3],
+                "predicted_value": latest_lift_data[8],
+                "profile_count": int(latest_lift_data[9]),
+                "actual_rate": latest_lift_data[10],
+                "predicted_rate": latest_lift_data[11],
+                "profile_size_percent": latest_lift_data[13] * 100
+                if latest_lift_data[13]
+                else 0,
+            }
+        )
 
     return result_lift
 
