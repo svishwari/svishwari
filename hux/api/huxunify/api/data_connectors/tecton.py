@@ -13,6 +13,8 @@ import aiohttp
 import async_timeout
 import requests
 
+from huxunifylib.util.general.logging import logger
+
 from huxunify.api.config import get_config
 from huxunify.api import constants
 from huxunify.api.schema.model import (
@@ -22,8 +24,6 @@ from huxunify.api.schema.model import (
     ModelLiftSchema,
     PerformanceMetricSchema,
 )
-
-from huxunifylib.util.general.logging import logger
 
 
 def check_tecton_connection() -> Tuple[bool, str]:
