@@ -337,6 +337,12 @@ export const defineRoutes = (server) => {
     return data
   })
 
+  server.get("/models/:id/version-history", (schema, request) => {
+    const id = request.params.id
+    const model = schema.models.find(id)
+    return model.attrs.version_history
+  })
+
   // customers
   server.get("/customers")
 

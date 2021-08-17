@@ -94,6 +94,7 @@ export default Vue.extend({
     value: {
       type: String,
       required: true,
+      default: () => "",
     },
     menuOptions: {
       type: Array,

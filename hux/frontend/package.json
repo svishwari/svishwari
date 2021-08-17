@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "ci": "yarn install --frozen-lockfile",
+    "ci": "yarn install --frozen-lockfile --silent",
     "serve": "vue-cli-service serve --port 8080",
     "serve:docker": "vue-cli-service serve --port 9090 --https --host host.docker.internal --disable-host-check",
     "build": "vue-cli-service build",
@@ -49,7 +49,8 @@
     "@storybook/addon-viewport": "^5.2",
     "@storybook/addons": "^5.2",
     "@storybook/vue": "^5.2",
-    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/babel-preset-app": "^4.5.13",
+    "@vue/cli-plugin-babel": "^4.5.13",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-unit-jest": "~4.5.0",

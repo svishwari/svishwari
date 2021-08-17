@@ -604,14 +604,26 @@ class TestEngagementRoutes(TestCase):
                     {
                         db_c.OBJECT_ID: self.audiences[0][db_c.ID],
                         api_c.DESTINATIONS: [
-                            {db_c.OBJECT_ID: dest[db_c.ID]}
+                            {
+                                db_c.OBJECT_ID: dest[db_c.ID],
+                                db_c.LATEST_DELIVERY: {
+                                    api_c.SIZE: 1000,
+                                    api_c.STATUS: api_c.STATUS_NOT_DELIVERED,
+                                },
+                            }
                             for dest in self.destinations
                         ],
                     },
                     {
                         db_c.OBJECT_ID: self.audiences[1][db_c.ID],
                         api_c.DESTINATIONS: [
-                            {db_c.OBJECT_ID: dest[db_c.ID]}
+                            {
+                                db_c.OBJECT_ID: dest[db_c.ID],
+                                db_c.LATEST_DELIVERY: {
+                                    api_c.SIZE: 1000,
+                                    api_c.STATUS: api_c.STATUS_NOT_DELIVERED,
+                                },
+                            }
                             for dest in self.destinations
                         ],
                     },
@@ -1668,3 +1680,34 @@ class TestEngagementRoutes(TestCase):
         # now test removal.
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertFalse(response.json[api_c.DELIVERY_SCHEDULE])
+
+    def test_get_engagement_by_id_validate_match_rate(self) -> None:
+        """
+        Test get engagement API with valid id and valid match_rate present
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        engagements = get_engagements(self.database)
+
+        self.assertTrue(engagements)
+
+        engagement_id = str(engagements[0]["_id"])
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        return_engagement = response.json
+
+        self.assertEqual(engagement_id, return_engagement[db_c.OBJECT_ID])
+        # self.assertGreater(
+        #     return_engagement[db_c.AUDIENCES][0][db_c.DESTINATIONS][0][
+        #         db_c.LATEST_DELIVERY
+        #     ][api_c.MATCH_RATE], 0
+        # )
