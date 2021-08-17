@@ -298,12 +298,7 @@ const actions = {
   //update Engagement
   async updateEngagement(_, { id, data }) {
     try {
-      await api.engagements.update(
-        {
-          resourceId: id,
-        },
-        data
-      )
+      await api.engagements.update(id, data)
     } catch (error) {
       handleError(error)
       throw error

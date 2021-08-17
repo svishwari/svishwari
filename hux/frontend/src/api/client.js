@@ -139,11 +139,6 @@ client["engagements"].updateCampaignMapping = (
   )
 }
 
-//update Engagement
-client["engagements"].update = ({ resourceId }, data) => {
-  return http.put(`/engagements/${resourceId}`, data)
-}
-
 client["engagements"].getCampaigns = ({
   resourceId,
   audienceId,
