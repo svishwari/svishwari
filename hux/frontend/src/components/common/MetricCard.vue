@@ -35,7 +35,7 @@
 
         <slot name="extra-item"></slot>
 
-        <div>
+        <div class="subtitle-slot">
           <span class="font-weight-semi-bold">{{ subtitle }}</span>
           <slot name="subtitle-extended"></slot>
         </div>
@@ -133,7 +133,9 @@ export default {
     }
   }
   div.d-flex.align-center.justify-space-between {
-    height: -webkit-fill-available;
+    .subtitle-slot{
+      display: flex;
+    }
   }
 }
 </style>
