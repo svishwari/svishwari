@@ -38,6 +38,7 @@ from huxunify.api.data_connectors.cdp import (
     get_idr_data_feeds,
     get_idr_matching_trends,
     get_customer_events_data,
+    get_spending_by_cities,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -590,6 +591,8 @@ class CustomerDemoVisualView(SwaggerView):
             Tuple[dict, int] list of Customer insights on demo overview and http code
         """
 
+        token_response = get_token_from_request(request)
+
         start_date = datetime(2020, 11, 30)
         dates = [
             (start_date + pd.DateOffset(months=x)).to_pydatetime()
@@ -607,19 +610,7 @@ class CustomerDemoVisualView(SwaggerView):
                     [6955119, 5627732, 289655],
                 )
             },
-            api_c.INCOME: [
-                {api_c.NAME: city, api_c.LTV: ltv}
-                for city, ltv in zip(
-                    [
-                        "Houston",
-                        "San Antonio",
-                        "Dallas",
-                        "Austin",
-                        "Fort Worth",
-                    ],
-                    [4008, 3922, 4231, 4198, 4011],
-                )
-            ],
+            api_c.INCOME: get_spending_by_cities(token_response[0]),
             api_c.SPEND: {
                 api_c.GENDER_WOMEN: [
                     {api_c.DATE: date, api_c.LTV: ltv}

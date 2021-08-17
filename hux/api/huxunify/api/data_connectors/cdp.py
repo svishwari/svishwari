@@ -20,7 +20,6 @@ from huxunifylib.util.general.logging import logger
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 
-
 # fields to convert to datetime from the responses
 DEFAULT_DATETIME = datetime.datetime(1, 1, 1, 1, 00)
 DATETIME_FIELDS = [
@@ -547,3 +546,46 @@ def clean_cdm_fields(body: dict) -> dict:
             body[date_field] = None
 
     return body
+
+
+def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> dict:
+    """Get spending details of customer by cities
+
+    Args:
+        token (str): OKTA JWT Token.
+        filters (Optional[dict]): filters to pass into
+            customers_overview endpoint.
+
+    Returns:
+        dict of income details of customers by cities
+
+    """
+    city_income_default_filter = api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+    city_income_default_filter[api_c.COUNT] = 5
+
+    # get config
+    config = get_config()
+    logger.info("Retrieving customer income details by cities from CDP API.")
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+        json=filters if filters else city_income_default_filter,
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Could not get customer income details by state from CDP API got %s %s.",
+            response.status_code,
+            response.text,
+        )
+        return {}
+    logger.info(
+        "Successfully retrieved customer income details by state from CDP API."
+    )
+
+    return [
+        {api_c.NAME: x[api_c.CITY], api_c.LTV: round(x["avg_ltv"], 4)}
+        for x in clean_cdm_fields(response.json()[api_c.BODY])
+    ]
