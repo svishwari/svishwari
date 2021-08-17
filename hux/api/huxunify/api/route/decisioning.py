@@ -248,7 +248,7 @@ class ModelOverview(SwaggerView):
 
 @add_view_to_blueprint(
     model_bp,
-    f"{api_c.MODELS_ENDPOINT}/<model_id>/drift",
+    f"{api_c.MODELS_ENDPOINT}/<name>/drift",
     "ModelDriftView",
 )
 class ModelDriftView(SwaggerView):
