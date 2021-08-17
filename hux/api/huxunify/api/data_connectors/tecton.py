@@ -3,10 +3,13 @@ Purpose of this file is for holding methods to query and pull data from Tecton.
 """
 import random
 from math import log10
+import asyncio
 from json import dumps
 from typing import List, Tuple
 
 from dateutil import parser
+import aiohttp
+import async_timeout
 import requests
 
 from huxunify.api.config import get_config
@@ -15,7 +18,7 @@ from huxunify.api.schema.model import (
     ModelVersionSchema,
     FeatureSchema,
     DriftSchema,
-    LiftSchema,
+    ModelLiftSchema,
     PerformanceMetricSchema,
 )
 
@@ -188,18 +191,98 @@ def get_model_drift(name: str) -> List[DriftSchema]:
     return []
 
 
-# pylint: disable=unused-argument
-def get_model_lift(name: str) -> List[LiftSchema]:
-    """Get model lift based on name.
+def get_model_lift_async(model_id: int) -> List[ModelLiftSchema]:
+    """Get model lift based on id.
 
     Args:
-        name (str): model name.
+        model_id (str): model id.
 
     Returns:
-         List[LiftSchema] List of model lift.
+         List[ModelLiftSchema] List of model lift.
     """
-    # TODO - when available.
-    return []
+
+    # set the event loop
+    asyncio.set_event_loop(asyncio.SelectorEventLoop())
+
+    # send all responses at once and wait until they are all done.
+    responses = asyncio.get_event_loop().run_until_complete(
+        asyncio.gather(
+            *(
+                get_async_lift_bucket(model_id, bucket)
+                for bucket in range(10, 101, 10)
+            )
+        )
+    )
+
+    result_lift = []
+    # iterate each response.
+    for response in responses:
+        # validate response code
+        if not response[0][constants.RESULTS]:
+            continue
+
+        # process lift data
+        latest_lift_data = response[0][constants.RESULTS][-1][
+            constants.FEATURES
+        ]
+
+        # TODO - get better format from Tecton
+        lift_bucket_data = {
+            "bucket": response[1],
+            "actual_value": latest_lift_data[0],
+            "actual_lift": latest_lift_data[2],
+            "predicted_lift": latest_lift_data[3],
+            "predicted_value": latest_lift_data[8],
+            "profile_count": latest_lift_data[9],
+            "actual_rate": latest_lift_data[10],
+            "predicted_rate": latest_lift_data[11],
+            "profile_size_percent": latest_lift_data[13] * 100
+            if latest_lift_data[13]
+            else 0,
+        }
+
+        result_lift.append(lift_bucket_data)
+
+    return result_lift
+
+
+async def get_async_lift_bucket(model_id: int, bucket: int) -> Tuple[any, int]:
+    """asynchronously gets lift by bucket
+
+    Args:
+        model_id (int): model id.
+        bucket (int): bucket.
+
+    Returns:
+       dict: bucket lift dict.
+    """
+
+    # get config
+    config = get_config()
+
+    payload = {
+        "params": {
+            "feature_service_name": "ui_metadata_model_lift_service",
+            "join_key_map": {
+                "model_id": str(model_id),
+                "bucket": str(bucket),
+            },
+        }
+    }
+
+    # setup the aiohttp session so we can process the calls asynchronously
+    async with aiohttp.ClientSession() as session, async_timeout.timeout(10):
+        # run the async post request
+        async with session.post(
+            config.TECTON_FEATURE_SERVICE,
+            json=payload,
+            headers=config.TECTON_API_HEADERS,
+        ) as response:
+            # await the responses, and return them as they come in.
+            try:
+                return await response.json(), bucket
+            except aiohttp.client.ContentTypeError:
+                return {"code": 500}, bucket
 
 
 def get_model_features(
