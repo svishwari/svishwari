@@ -133,7 +133,7 @@ export default {
     }
   }
   div.d-flex.align-center.justify-space-between {
-    .subtitle-slot{
+    .subtitle-slot {
       display: flex;
     }
   }
