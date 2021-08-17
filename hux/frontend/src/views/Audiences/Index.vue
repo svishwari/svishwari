@@ -51,6 +51,7 @@
               'fixed-column': header.fixed,
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
+              'pl-0': header.value === 'status',
             }"
             :style="{ width: header.width, left: 0 }"
           >
@@ -70,24 +71,64 @@
                 :route-param="item['id']"
               />
             </div>
+            <div v-if="header.value == 'status'" class="text-caption">
+              <status
+                :status="item[header.value]"
+                :show-label="true"
+                class="d-flex"
+                :icon-size="17"
+              />
+            </div>
             <div v-if="header.value == 'size'">
               <size :value="item[header.value]" />
+            </div>
+            <div v-if="header.value == 'destinations'">
+              <div
+                v-if="item[header.value] && item[header.value].length > 0"
+                class="d-flex align-center"
+              >
+                <div class="d-flex align-center">
+                  <tooltip
+                    v-for="destination in item[header.value]"
+                    :key="`${item.id}-${destination.type}`"
+                  >
+                    <template #label-content>
+                      <logo
+                        :key="destination.id"
+                        class="mr-1"
+                        :type="destination.type"
+                        :size="18"
+                      />
+                    </template>
+                    <template #hover-content>
+                      <span>{{ destination.name }}</span>
+                    </template>
+                  </tooltip>
+                </div>
+                <span
+                  v-if="item[header.value] && item[header.value].length > 3"
+                  class="ml-1"
+                >
+                  + {{ item[header.value].length - 2 }}
+                </span>
+              </div>
+              <span v-else>—</span>
             </div>
             <div v-if="header.value == 'last_delivered'">
               <time-stamp :value="item[header.value]" />
             </div>
-            <div v-if="header.value == 'update_time'">
-              <!-- TODO replace with header value -->
-              <time-stamp :value="item['create_time']" />
-            </div>
-            <div v-if="header.value == 'updated_by'">
-              <!-- TODO replace with header value -->
-              <avatar :name="item['created_by']" />
-            </div>
-            <div v-if="header.value == 'create_time'">
+            <div
+              v-if="
+                header.value == 'update_time' || header.value == 'create_time'
+              "
+            >
               <time-stamp :value="item[header.value]" />
             </div>
-            <div v-if="header.value == 'created_by'">
+            <div
+              v-if="
+                header.value == 'updated_by' || header.value == 'created_by'
+              "
+            >
               <avatar :name="item[header.value]" />
             </div>
           </td>
@@ -145,6 +186,9 @@ import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
 import MenuCell from "@/components/common/huxTable/MenuCell.vue"
 import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience"
 import Icon from "@/components/common/Icon.vue"
+import Status from "../../components/common/Status.vue"
+import Tooltip from "../../components/common/Tooltip.vue"
+import Logo from "../../components/common/Logo.vue"
 
 export default {
   name: "Audiences",
@@ -160,6 +204,9 @@ export default {
     MenuCell,
     LookAlikeAudience,
     Icon,
+    Status,
+    Tooltip,
+    Logo,
   },
   data() {
     return {
@@ -180,9 +227,19 @@ export default {
           class: "fixed-header",
         },
         {
+          text: "Status",
+          value: "status",
+          width: "140px",
+        },
+        {
           text: "Size",
           value: "size",
           width: "112px",
+        },
+        {
+          text: "Destinations",
+          value: "destinations",
+          width: "150px",
         },
         {
           text: "Last delivered",
