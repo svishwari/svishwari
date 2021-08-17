@@ -79,11 +79,7 @@
 
             <v-radio
               :value="1"
-              :class="
-                isRecurring
-                  ? 'btn-radio-active'
-                  : 'btn-radio-inactive'
-              "
+              :class="isRecurring ? 'btn-radio-active' : 'btn-radio-inactive'"
             >
               <template #label>
                 <v-icon small color="primary" class="mr-1"
@@ -106,12 +102,7 @@
               @on-date-select="onStartDateSelect"
             />
           </div>
-          <icon
-            v-if="isRecurring"
-            class="ml-2 mr-2"
-            type="arrow"
-            :size="28"
-          />
+          <icon v-if="isRecurring" class="ml-2 mr-2" type="arrow" :size="28" />
           <div v-if="isRecurring">
             <span class="date-picker-label neroBlack--text text-caption">
               End date
@@ -128,10 +119,7 @@
         </v-row>
 
         <v-row class="delivery-schedule mt-8">
-          <hux-schedule-picker
-            v-if="isRecurring"
-            v-model="schedule"
-          />
+          <hux-schedule-picker v-if="isRecurring" v-model="schedule" />
         </v-row>
       </form-step>
 
@@ -453,7 +441,7 @@ export default {
       return Object.values(this.value.audiences).length
     },
 
-    isRecurring(){
+    isRecurring() {
       return this.value.delivery_schedule == 1
     },
   },

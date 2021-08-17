@@ -186,19 +186,13 @@
                     <v-btn
                       class="active-delivery-option"
                       :class="
-                        isRecurring
-                          ? 'btn-radio-active'
-                          : 'btn-radio-inactive'
+                        isRecurring ? 'btn-radio-active' : 'btn-radio-inactive'
                       "
                       height="40"
                       width="175"
                     >
                       <v-radio
-                        :off-icon="
-                          isRecurring
-                            ? '$radioOn'
-                            : '$radioOff'
-                        "
+                        :off-icon="isRecurring ? '$radioOn' : '$radioOff'"
                       />
                       <v-icon class="ico primary--text" size="16">
                         mdi-clock-check-outline
@@ -207,10 +201,7 @@
                     </v-btn>
                   </v-btn-toggle>
                 </div>
-                <v-row
-                  v-if="isRecurring"
-                  class="delivery-schedule ml-0 mt-6"
-                >
+                <v-row v-if="isRecurring" class="delivery-schedule ml-0 mt-6">
                   <div>
                     <span
                       class="date-picker-label neroBlack--text text-caption"
@@ -241,10 +232,7 @@
                     />
                   </div>
                 </v-row>
-                <v-row
-                  v-if="isRecurring"
-                  class="delivery-schedule ml-0 mt-8"
-                >
+                <v-row v-if="isRecurring" class="delivery-schedule ml-0 mt-8">
                   <hux-schedule-picker v-model="schedule" />
                 </v-row>
               </v-form>
@@ -366,7 +354,7 @@ export default {
     areEngagementAlreadyCreated() {
       return this.engagements.length > 0
     },
-    isRecurring(){
+    isRecurring() {
       return this.newEngagement.delivery_schedule == 1
     },
   },
