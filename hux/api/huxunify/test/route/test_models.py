@@ -142,9 +142,9 @@ class TestModelRoutes(TestCase):
         Returns:
 
         """
-        model_name = "model1"
+        model_id = 1
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_name}/drift",
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/drift",
             headers=t_c.STANDARD_HEADERS,
         )
 

@@ -232,7 +232,7 @@ def get_model_lift_async(model_id: int) -> List[ModelLiftSchema]:
     # iterate each response.
     for response in responses:
         # validate response code
-        if not response[0][constants.RESULTS]:
+        if not response[0]:
             continue
 
         # process lift data
