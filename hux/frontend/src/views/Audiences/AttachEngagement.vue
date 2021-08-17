@@ -169,6 +169,7 @@
                       "
                       height="40"
                       width="175"
+                      @click="resetSchedule()"
                     >
                       <v-radio
                         :off-icon="
@@ -185,19 +186,13 @@
                     <v-btn
                       class="active-delivery-option"
                       :class="
-                        newEngagement.delivery_schedule == 1
-                          ? 'btn-radio-active'
-                          : 'btn-radio-inactive'
+                        isRecurring ? 'btn-radio-active' : 'btn-radio-inactive'
                       "
                       height="40"
                       width="175"
                     >
                       <v-radio
-                        :off-icon="
-                          newEngagement.delivery_schedule == 1
-                            ? '$radioOn'
-                            : '$radioOff'
-                        "
+                        :off-icon="isRecurring ? '$radioOn' : '$radioOff'"
                       />
                       <v-icon class="ico primary--text" size="16">
                         mdi-clock-check-outline
@@ -206,10 +201,7 @@
                     </v-btn>
                   </v-btn-toggle>
                 </div>
-                <v-row
-                  v-if="newEngagement.delivery_schedule == 1"
-                  class="delivery-schedule ml-0 mt-6"
-                >
+                <v-row v-if="isRecurring" class="delivery-schedule ml-0 mt-6">
                   <div>
                     <span
                       class="date-picker-label neroBlack--text text-caption"
@@ -239,6 +231,9 @@
                       @on-date-select="(val) => (selectedEndDate = val)"
                     />
                   </div>
+                </v-row>
+                <v-row v-if="isRecurring" class="delivery-schedule ml-0 mt-8">
+                  <hux-schedule-picker v-model="schedule" />
                 </v-row>
               </v-form>
             </div>
@@ -297,6 +292,9 @@ import sortBy from "lodash/sortBy"
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 
+import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
+import { deliverySchedule } from "@/utils"
+
 export default {
   name: "AttachEngagement",
 
@@ -309,6 +307,7 @@ export default {
     Icon,
     HuxStartDate,
     HuxEndDate,
+    HuxSchedulePicker,
   },
 
   props: {
@@ -347,12 +346,16 @@ export default {
       sortBy: sortBy,
       selectedStartDate: "Select date",
       selectedEndDate: "Select date",
+      schedule: JSON.parse(JSON.stringify(deliverySchedule())),
     }
   },
 
   computed: {
     areEngagementAlreadyCreated() {
       return this.engagements.length > 0
+    },
+    isRecurring() {
+      return this.newEngagement.delivery_schedule == 1
     },
   },
 
@@ -386,6 +389,9 @@ export default {
       fetchEngagements: "engagements/getAll",
       addEngagementToDB: "engagements/add",
     }),
+    resetSchedule() {
+      this.schedule = JSON.parse(JSON.stringify(deliverySchedule()))
+    },
     isEngagementSelected: function (engagement) {
       return (
         this.selectedEngagements.filter((eng) => eng.id === engagement.id)
@@ -405,6 +411,7 @@ export default {
     },
     goToStep2: function () {
       this.viewStep = 2
+      this.resetSchedule()
     },
     addEngagement: async function () {
       this.loading = true
