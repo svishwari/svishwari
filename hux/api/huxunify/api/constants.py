@@ -68,6 +68,7 @@ LTV = "ltv"
 POPULATION_PERCENTAGE = "population_percentage"
 INCOME = "income"
 CDP_SERVICE_URL = "CDP_SERVICE_URL"
+COUNT = "count"
 # TODO: Remove State Names once it connected with CDM
 STATE_NAMES = [
     "Alaska",

@@ -71,6 +71,13 @@ const mockLookalikeAudiences = (num = 3) => {
 export const audience = {
   name: (index) => `My audience ${index + 1}`,
   size: () => faker.datatype.number({ min: 10000000, max: 999999999 }),
+  status: () =>
+    faker.random.arrayElement([
+      "Delivered",
+      "Delivering",
+      "Not Delivered",
+      "Error",
+    ]),
   last_delivered: () => faker.date.recent(),
   create_time: () => faker.date.recent(),
   created_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),

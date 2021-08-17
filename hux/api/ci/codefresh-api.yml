@@ -7,6 +7,7 @@ stages:
   - git
   - build_tag
   - set_env
+  - set_env_artifactory_token
   - docker
   - py37_check
   - coverage_check
@@ -69,6 +70,14 @@ steps:
     working_directory: "${{CF_REPO_NAME}}"
     commands:
       - cat ./hux/api/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
+ 
+  jfrog-python-artifactory-read:
+    stage: set_env_artifactory_token
+    title: "Get artifactory token"
+    type: deloittehux/jfrog-python-artifactory-read
+    arguments:
+      JFROG_API_KEY: '${{JFROG_API_KEY}}'
+      JFROG_USERNAME: '${{JFROG_USERNAME}}'
 
   build_image:
     stage: "docker"

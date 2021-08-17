@@ -31,7 +31,7 @@
         :height="75"
       >
         <template #subtitle-extended>
-          <span class="mr-2">
+          <span class="mr-2 mt-1">
             <tooltip>
               <template #label-content>
                 <span class="neroBlack--text font-weight-semi-bold">

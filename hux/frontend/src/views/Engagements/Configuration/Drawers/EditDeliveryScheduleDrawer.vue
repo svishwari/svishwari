@@ -53,7 +53,7 @@ import Drawer from "@/components/common/Drawer.vue"
 import CardHorizontal from "@/components/common/CardHorizontal.vue"
 import HuxButton from "@/components/common/huxButton.vue"
 import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
-import DefaultDeliverySchedule from "./DefaultDeliverySchedule.json"
+import { deliverySchedule } from "@/utils"
 
 export default {
   name: "EditDeliverySchedule",
@@ -91,7 +91,7 @@ export default {
     return {
       loading: false,
       localToggle: false,
-      schedule: JSON.parse(JSON.stringify(DefaultDeliverySchedule)),
+      schedule: JSON.parse(JSON.stringify(deliverySchedule())),
     }
   },
 
@@ -116,7 +116,7 @@ export default {
     },
 
     resetSchedule() {
-      this.schedule = JSON.parse(JSON.stringify(DefaultDeliverySchedule))
+      this.schedule = JSON.parse(JSON.stringify(deliverySchedule()))
     },
   },
 }

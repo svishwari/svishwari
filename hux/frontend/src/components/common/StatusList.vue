@@ -88,7 +88,12 @@
             <v-spacer></v-spacer>
 
             <span class="action-icon font-weight-light float-right d-none">
-              <v-menu v-model="openMenu" class="menu-wrapper" bottom offset-y>
+              <v-menu
+                v-model="openMenu[item.id]"
+                class="menu-wrapper"
+                bottom
+                offset-y
+              >
                 <template #activator="{ on, attrs }">
                   <v-icon
                     v-if="!section.lookalike"
@@ -121,7 +126,7 @@
 
                       <v-menu
                         v-else
-                        v-model="isSubMenuOpen"
+                        v-model="isSubMenuOpen[item.id]"
                         offset-x
                         nudge-right="16"
                         nudge-top="4"
@@ -136,6 +141,8 @@
                           <v-list>
                             <v-list-item
                               @click="
+                                isSubMenuOpen[item.id] = false
+                                openMenu[item.id] = false
                                 $emit('onDestinationAction', {
                                   target: option,
                                   data: item,
@@ -281,8 +288,8 @@ export default {
 
   data() {
     return {
-      openMenu: null,
-      isSubMenuOpen: null,
+      openMenu: {},
+      isSubMenuOpen: {},
       showDeliveryAlert: false,
       selection: null,
       lookALikeAllowedEntries: ["Facebook"],
@@ -336,8 +343,12 @@ export default {
   },
 
   watch: {
+    // To reset the value of the openMenu
+    openMenu(newValue) {
+      if (!newValue) this.openMenu = {}
+    },
     isSubMenuOpen(newValue) {
-      this.openMenu = newValue
+      if (!newValue) this.isSubMenuOpen = {}
     },
   },
 
