@@ -2,7 +2,8 @@
   <drawer
     v-model="localDrawer"
     :content-padding="'pa-0'"
-    :content-header-padding="'px-3'">
+    :content-header-padding="'px-3'"
+  >
     <template #header-left>
       <div class="d-flex align-center">
         <icon type="history" :size="20" color="neroBlack" class="mr-2" />
@@ -15,80 +16,90 @@
         :columns="columnDefs"
         :sort-column="sortColumn"
         :sort-desc="sortDesc"
-        :data-items="versionHistory">
-
+        :data-items="versionHistory"
+      >
         <template #row-item="{ item }">
           <td
             v-for="header in columnDefs"
             :key="header.value"
-            :style="{ width: header.width }">
+            :style="{ width: header.width }"
+          >
+            <tooltip v-if="header.value == 'version'">
+              <span
+                class="cell neroBlack--text"
+                :class="[item.current ? 'font-weight-bold' : '']"
+              >
+                {{ item.version }}
+              </span>
+              <span class="cell neroBlack--text ml-1">
+                {{ item.current && "(Current)" }}
+              </span>
+              <template #tooltip>
+                <div class="my-2 gray--text">
+                  Trained date
+                  <div class="neroBlack--text">
+                    {{ item.trained_date | Date | Empty }}
+                  </div>
+                </div>
+                <div class="my-2 gray--text">
+                  Fulcrum date
+                  <div class="neroBlack--text">
+                    {{ item.fulcrum_date | Date | Empty }}
+                  </div>
+                </div>
+                <div class="my-2 gray--text">
+                  Lookback period (Days)
+                  <div class="neroBlack--text">
+                    {{ item.lookback_window }}
+                  </div>
+                </div>
+                <div class="my-2 gray--text">
+                  Prediction period (Days)
+                  <div class="neroBlack--text">
+                    {{ item.prediction_window }}
+                  </div>
+                </div>
+              </template>
+            </tooltip>
 
-              <tooltip v-if="header.value == 'version' ">
-                <span class="cell neroBlack--text" :class="[item.current ? 'font-weight-bold' : '']" > {{ item.version }} </span>
-                <span class="cell neroBlack--text ml-1"> {{ item.current && '(Current)' }}</span>
-                <template #tooltip>
-                  <div class="my-2 gray--text">
-                    Trained date
-                    <div class="neroBlack--text">
-                      {{item.trained_date | Date | Empty}}
-                    </div>
+            <tooltip v-if="header.value == 'description'">
+              <span class="cell neroBlack--text ellipsis-29">
+                {{ item.description }}
+              </span>
+              <template #tooltip>
+                <div class="my-2 gray--text">
+                  <div class="neroBlack--text">
+                    {{ item.description }}
                   </div>
-                  <div class="my-2 gray--text">
-                    Fulcrum date
-                    <div class="neroBlack--text">
-                      {{item.fulcrum_date | Date | Empty}}
-                    </div>
-                  </div>
-                  <div class="my-2 gray--text">
-                    Lookback period (Days)
-                    <div class="neroBlack--text">
-                      {{item.lookback_window}}
-                    </div>
-                  </div>
-                  <div class="my-2 gray--text">
-                    Prediction period (Days)
-                    <div class="neroBlack--text">
-                      {{item.prediction_window}}
-                    </div>
-                  </div>
-                </template>
-              </tooltip>
+                </div>
+              </template>
+            </tooltip>
 
-              <tooltip v-if="header.value == 'description' ">
-                <span class="cell neroBlack--text ellipsis-29"> {{ item.description }} </span>
-                <template #tooltip>
-                  <div class="my-2 gray--text">
-                    <div class="neroBlack--text">
-                      {{item.description }}
-                    </div>
-                  </div>
-                </template>
-              </tooltip>
-
-              <div v-if="header.value == 'status'" class="neroBlack--text">
-                <status
+            <div v-if="header.value == 'status'" class="neroBlack--text">
+              <status
                 :status="item.status"
                 :show-label="true"
                 class="d-flex"
                 :icon-size="17"
-                />
-              </div>
+              />
+            </div>
 
-              <div v-if="header.value == 'trained_date'" class="cell neroBlack--text">
-                 <time-stamp :value="item.trained_date" />
-              </div>
-              
+            <div
+              v-if="header.value == 'trained_date'"
+              class="cell neroBlack--text"
+            >
+              <time-stamp :value="item.trained_date" />
+            </div>
           </td>
         </template>
-
       </hux-data-table>
     </template>
     <template #footer-left>
       <tooltip>
         <div class="d-flex align-baseline gray--text text-caption">
-          {{versionHistoryList.length}} results
+          {{ versionHistoryList.length }} results
         </div>
-        <template #tooltip> {{versionHistoryList.length}} results </template>
+        <template #tooltip> {{ versionHistoryList.length }} results </template>
       </tooltip>
     </template>
   </drawer>

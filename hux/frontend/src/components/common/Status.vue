@@ -315,7 +315,7 @@
       </div>
     </v-menu>
   </div>
-  
+
   <div v-else-if="Statuses.Stopped.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
       <v-icon color="lightGrey" class="mr-2" :size="iconSize">
