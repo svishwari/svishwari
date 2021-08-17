@@ -4,12 +4,6 @@ from pathlib import Path
 
 from bson import ObjectId
 from pymongo import MongoClient
-from huxunify.api import constants as api_c
-from huxunify.api.route.utils import (
-    group_perf_metric,
-    update_metrics,
-    get_db_client,
-)
 from huxunifylib.database import (
     constants as db_c,
     delivery_platform_management,
@@ -20,7 +14,12 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_jobs_using_metadata,
 )
 from huxunifylib.util.general.logging import logger
-
+from huxunify.api import constants as api_c
+from huxunify.api.route.utils import (
+    group_perf_metric,
+    update_metrics,
+    get_db_client,
+)
 
 # pylint: disable=too-many-locals
 def group_engagement_performance_metrics(
