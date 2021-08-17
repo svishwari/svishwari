@@ -144,13 +144,20 @@ def map_model_version_history_response(
 
 
 def map_model_performance_response(
-    response: dict, model_id: int, model_type: str, model_version: str
+    response: dict,
+    model_id: int,
+    model_type: str,
+    model_version: str,
+    metric_default_value: float = 0,
 ) -> List[dict]:
     """Map model performance response to a usable dict.
 
     Args:
         response (dict): Input Tecton API response.
         model_id (int): Model ID number.
+        model_type (str): Model type.
+        model_version (str): Model version.
+        metric_default_value (str): Default metric value if not found.
 
     Returns:
         List[dict]: A cleaned model performance dict.
@@ -171,22 +178,25 @@ def map_model_performance_response(
         if feature[4] != model_version:
             continue
 
+        # grab the metrics based on model type and return.
         return {
             constants.ID: model_id,
             constants.RMSE: float(feature[0])
             if model_type in constants.REGRESSION_MODELS
-            else 0,
+            else metric_default_value,
             constants.AUC: float(feature[0])
             if model_type in constants.CLASSIFICATION_MODELS
-            else 0,
+            else metric_default_value,
             constants.PRECISION: float(feature[5])
             if model_type in constants.CLASSIFICATION_MODELS
-            else 0,
+            else metric_default_value,
             constants.RECALL: float(feature[6])
             if model_type in constants.CLASSIFICATION_MODELS
-            else 0,
+            else metric_default_value,
             constants.CURRENT_VERSION: model_version,
         }
+
+    # nothing found, return an empty dict.
     return {}
 
 
@@ -347,13 +357,14 @@ def get_model_features(
 
 # pylint: disable=unused-argument
 def get_model_performance_metrics(
-    model_id: id, model_type: str, model_version: str
+    model_id: int, model_type: str, model_version: str
 ) -> List[PerformanceMetricSchema]:
     """Get model performance metrics based on model ID.
 
     Args:
         model_id (int): Model id.
         model_type (str): Model type.
+        model_version (str): Model version.
 
     Returns:
          List[PerformanceMetricSchema] List of model performance metrics.
@@ -371,7 +382,7 @@ def get_model_performance_metrics(
     else:
         raise ValueError(f"Model type not supported {model_type}")
 
-    # payload
+    # set payload and service name.
     payload = {
         "params": {
             "feature_service_name": service_name,
@@ -379,7 +390,7 @@ def get_model_performance_metrics(
         }
     }
 
-    # submit the post request to get the models
+    # submit the post request to get the model metrics.
     return map_model_performance_response(
         requests.post(
             config.TECTON_FEATURE_SERVICE,
