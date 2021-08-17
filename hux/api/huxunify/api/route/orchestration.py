@@ -2,6 +2,7 @@
 Paths for Orchestration API
 """
 from http import HTTPStatus
+from random import uniform
 from typing import Tuple, Union
 from flasgger import SwaggerView
 from bson import ObjectId
@@ -180,6 +181,9 @@ class AudienceView(SwaggerView):
                 database, audience.get(api_c.DESTINATIONS_TAG)
             )
 
+            # set the weighted status for the audience based on deliveries
+            audience[api_c.STATUS] = weight_delivery_status(audience)
+
             audience[api_c.SIZE] = customer_size_dict.get(audience[db_c.ID])
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
@@ -263,10 +267,6 @@ class AudienceGetView(SwaggerView):
 
         """
 
-        if not ObjectId.is_valid(audience_id):
-            logger.error("Invalid Object ID %s.", audience_id)
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
-
         token_response = get_token_from_request(request)
 
         database = get_db_client()
@@ -324,6 +324,13 @@ class AudienceGetView(SwaggerView):
                 engagement[api_c.DELIVERIES].remove(
                     {api_c.STATUS: api_c.STATUS_NOT_DELIVERED}
                 )
+
+            # TODO: HUS-837 Change once match_rate data can be fetched from CDM
+            # validate if engagement contain deliveries since there are checks
+            # above to remove empty and not-delivered deliveries
+            if api_c.DELIVERIES in engagement:
+                for delivery in engagement[api_c.DELIVERIES]:
+                    delivery[api_c.MATCH_RATE] = round(uniform(0.2, 0.9), 2)
 
             # set the weighted status for the engagement based on deliveries
             engagement[api_c.STATUS] = weight_delivery_status(engagement)
@@ -486,13 +493,6 @@ class AudiencePostView(SwaggerView):
         if api_c.AUDIENCE_ENGAGEMENTS in body:
             # validate list of dict objects
             for engagement_id in body[api_c.AUDIENCE_ENGAGEMENTS]:
-                # validate object id
-                if not ObjectId.is_valid(engagement_id):
-                    logger.error("Invalid Object ID %s.", engagement_id)
-                    return {
-                        "message": f"{engagement_id} has an invalid "
-                        f"{db_c.OBJECT_ID} field."
-                    }, HTTPStatus.BAD_REQUEST
 
                 # map to an object ID field
                 engagement_id = ObjectId(engagement_id)
@@ -856,17 +856,6 @@ class SetLookalikeAudience(SwaggerView):
         )
         source_audience_id = body[api_c.AUDIENCE_ID]
         engagement_ids = body[api_c.ENGAGEMENT_IDS]
-
-        for engagement_id in engagement_ids:
-            if not ObjectId.is_valid(engagement_id):
-                logger.error("Invalid Object ID %s.", engagement_id)
-                return {
-                    "message": api_c.INVALID_OBJECT_ID
-                }, HTTPStatus.BAD_REQUEST
-
-        if not ObjectId.is_valid(body[api_c.AUDIENCE_ID]):
-            logger.error("Invalid Object ID %s.", body[api_c.AUDIENCE_ID])
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
         source_audience = orchestration_management.get_audience(

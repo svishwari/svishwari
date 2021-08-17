@@ -449,6 +449,7 @@ class LatestDeliverySchema(Schema):
     status = fields.String()
     update_time = DateTimeWithZ()
     size = fields.Int(default=0)
+    match_rate = fields.Float(default=0, example=0.21)
 
 
 class EngagementAudienceDestinationSchema(Schema):
