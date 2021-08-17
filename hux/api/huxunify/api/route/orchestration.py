@@ -913,12 +913,12 @@ class SetLookalikeAudience(SwaggerView):
             db_c.AUDIENCE_NAME_DATE_FORMAT
         )
 
-        destination_connector.get_new_lookalike_audience(
-            f"{source_audience[db_c.NAME]} - {timestamp}",
-            body[api_c.NAME],
-            body[api_c.AUDIENCE_SIZE_PERCENTAGE],
-            "US",
-        )
+        # destination_connector.get_new_lookalike_audience(
+        #     f"{source_audience[db_c.NAME]} - {timestamp}",
+        #     body[api_c.NAME],
+        #     body[api_c.AUDIENCE_SIZE_PERCENTAGE],
+        #     "US",
+        # )
 
         logger.info("Creating delivery platform lookalike audience.")
         lookalike_audience = (

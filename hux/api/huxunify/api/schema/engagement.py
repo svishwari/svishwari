@@ -473,6 +473,7 @@ class EngagementAudienceSchema(Schema):
     name = fields.String()
     id = fields.String()
     status = fields.String()
+    lookalike = fields.Boolean()
     size = fields.Integer(default=0)
     destinations = fields.Nested(
         EngagementAudienceDestinationSchema, many=True

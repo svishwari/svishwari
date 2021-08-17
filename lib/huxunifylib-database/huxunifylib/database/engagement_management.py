@@ -155,6 +155,76 @@ def get_engagements_summary(
         },
         # remove the unused audience object fields.
         {"$project": {"audience": 0}},
+        # unwind the audiences again to map lookalikes.
+        {
+            "$unwind": {
+                "path": "$audiences",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        # lookup audience objects to the lookalike_audience collection
+        # to get lookalike_audience name.
+        {
+            "$lookup": {
+                "from": "lookalike_audiences",
+                "localField": "audiences.id",
+                "foreignField": "_id",
+                "as": "lookalike_audience",
+            }
+        },
+        # unwind the found lookalike_audiences to an object.
+        {"$unwind": {"path": "$lookalike_audience", "preserveNullAndEmptyArrays": True}},
+        # add the lookalike_audience name field to the nested audience object
+        # if not assigned
+        {
+            "$addFields": {
+                "audiences.name": {
+                    "$ifNull": [
+                        "$audiences.name",
+                        "$lookalike_audience.name"
+                    ]
+                },
+                "audiences.size": {
+                    "$ifNull": [
+                        "$audiences.size",
+                        "$lookalike_audience.size"
+                    ]
+                },
+                "audiences.created_by": {
+                    "$ifNull": [
+                        "$audiences.created_by",
+                        "$lookalike_audience.created_by"
+                    ]
+                },
+                "audiences.updated_by": {
+                    "$ifNull": [
+                        "$audiences.updated_by",
+                        "$lookalike_audience.updated_by"
+                    ]
+                },
+                "audiences.update_time": {
+                    "$ifNull": [
+                        "$audiences.update_time",
+                        "$lookalike_audience.update_time"
+                    ]
+                },
+                "audiences.create_time": {
+                    "$ifNull": [
+                        "$audiences.create_time",
+                        "$lookalike_audience.create_time"
+                    ]
+                },
+                "audiences.lookalike": {
+                     "$cond": [
+                         "$audiences.name",
+                         False,
+                         True
+                     ]
+                },
+            },
+        },
+        # remove the unused lookalike audience object fields.
+        {"$project": {"lookalike_audience": 0}},
         # unwind the destinations
         {
             "$unwind": {
@@ -233,6 +303,7 @@ def get_engagements_summary(
                     "audience_updated_by": "$audiences.updated_by",
                     "audience_update_time": "$audiences.update_time",
                     "audience_create_time": "$audiences.create_time",
+                    "audience_lookalike": "$audiences.lookalike",
                     "delivery_schedule": {
                         "$ifNull": ["$delivery_schedule", ""]
                     },
@@ -284,6 +355,7 @@ def get_engagements_summary(
                         "update_time": "$_id.audience_update_time",
                         "create_time": "$_id.audience_create_time",
                         "destinations": "$destinations",
+                        "lookalike": "$_id.audience_lookalike"
                     }
                 },
                 "size": {"$sum": "$_id.audience_size"},
