@@ -184,6 +184,34 @@ class TectonTest(TestCase):
             },
         )
 
+    @requests_mock.Mocker()
+    def test_map_model_performance_response_empty_response(
+        self, request_mocker: Mocker
+    ):
+        """Test map model performance response for an empty response.
+
+        Args:
+            request_mocker (Mocker): Request mock object.
+
+        Returns:
+
+        """
+        # setup the request mock post
+        request_mocker.post(
+            self.config.TECTON_FEATURE_SERVICE,
+            text=json.dumps(
+                {},
+                default=json_util.default,
+            ),
+            headers=self.config.TECTON_API_HEADERS,
+        )
+
+        self.assertFalse(
+            tecton.get_model_performance_metrics(
+                1, constants.UNSUBSCRIBE, "21.7.31"
+            )
+        )
+
     def test_model_version_history(self):
         """test model version history"""
 

@@ -16,7 +16,6 @@ from huxunify.api.schema.model import (
     FeatureSchema,
     DriftSchema,
     LiftSchema,
-    PerformanceMetricSchema,
 )
 
 
@@ -132,7 +131,7 @@ def map_model_performance_response(
     model_type: str,
     model_version: str,
     metric_default_value: float = 0,
-) -> List[dict]:
+) -> dict:
     """Map model performance response to a usable dict.
 
     Args:
@@ -143,7 +142,7 @@ def map_model_performance_response(
         metric_default_value (float): Default metric value if not found.
 
     Returns:
-        List[dict]: A cleaned model performance dict.
+        dict: A cleaned model performance dict.
 
     """
 
@@ -335,10 +334,9 @@ def get_model_features(
     return result_features
 
 
-# pylint: disable=unused-argument
 def get_model_performance_metrics(
     model_id: int, model_type: str, model_version: str
-) -> List[PerformanceMetricSchema]:
+) -> dict:
     """Get model performance metrics based on model ID.
 
     Args:
@@ -347,7 +345,7 @@ def get_model_performance_metrics(
         model_version (str): Model version.
 
     Returns:
-         List[PerformanceMetricSchema] List of model performance metrics.
+         dict: Model performance metrics.
     """
 
     # get config
