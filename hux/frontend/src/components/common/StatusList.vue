@@ -141,6 +141,8 @@
                           <v-list>
                             <v-list-item
                               @click="
+                                isSubMenuOpen[item.id] = false
+                                openMenu[item.id] = false
                                 $emit('onDestinationAction', {
                                   target: option,
                                   data: item,
