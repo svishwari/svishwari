@@ -221,7 +221,9 @@ class OrchestrationRouteTest(TestCase):
             )
 
             set_delivery_job_status(
-                self.database, delivery_job[db_c.ID], db_c.STATUS_SUCCEEDED
+                self.database,
+                delivery_job[db_c.ID],
+                db_c.AUDIENCE_STATUS_DELIVERED,
             )
 
         # setup the flask test client
@@ -664,6 +666,17 @@ class OrchestrationRouteTest(TestCase):
         for audience in audiences:
             self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
             self.assertFalse(audience[api_c.IS_LOOKALIKE])
+            self.assertTrue(audience[api_c.STATUS])
+            self.assertIn(
+                audience[api_c.STATUS],
+                [
+                    api_c.STATUS_NOT_DELIVERED,
+                    api_c.STATUS_DELIVERING,
+                    api_c.STATUS_DELIVERED,
+                    api_c.STATUS_DELIVERY_PAUSED,
+                    api_c.STATUS_ERROR,
+                ],
+            )
 
     def test_update_audience(self):
         """Test update an audience.
