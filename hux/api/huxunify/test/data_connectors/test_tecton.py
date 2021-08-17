@@ -247,7 +247,8 @@ class TectonTest(TestCase):
             {
                 "id": 1,
                 "last_trained": datetime(2021, 7, 31, 0, 0),
-                "description": "Propensity of a customer unsubscribing after receiving an email.",
+                "description": "Propensity of a customer unsubscribing "
+                "after receiving an email.",
                 "fulcrum_date": datetime(2021, 7, 17, 0, 0),
                 "lookback_window": 90,
                 "name": "Propensity to Unsubscribe",
