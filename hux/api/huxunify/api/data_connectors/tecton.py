@@ -140,7 +140,7 @@ def map_model_performance_response(
         model_id (int): Model ID number.
         model_type (str): Model type.
         model_version (str): Model version.
-        metric_default_value (str): Default metric value if not found.
+        metric_default_value (float): Default metric value if not found.
 
     Returns:
         List[dict]: A cleaned model performance dict.
@@ -154,7 +154,7 @@ def map_model_performance_response(
         # get model metadata from tecton
         feature = meta_data[constants.FEATURES]
 
-        # skip if not the provided version.
+        # get version based on model type and skip if not the provided version.
         if feature[4] != model_version:
             continue
 

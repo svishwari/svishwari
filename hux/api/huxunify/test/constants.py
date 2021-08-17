@@ -185,6 +185,105 @@ MOCKED_MODEL_VERSION_HISTORY = {
     ]
 }
 
+MOCKED_MODEL_PERFORMANCE_LTV = {
+    "results": [
+        {
+            "features": [
+                233.5,
+                "2021-07-28",
+                "Lifetime Value",
+                "ltv",
+                "21.7.28",
+            ],
+            "joinKeys": ["21.7.28"],
+        },
+        {
+            "features": [
+                263.3,
+                "2021-07-29",
+                "Lifetime Value",
+                "ltv",
+                "21.7.29",
+            ],
+            "joinKeys": ["21.7.29"],
+        },
+        {
+            "features": [
+                215.5,
+                "2021-07-30",
+                "Lifetime Value",
+                "ltv",
+                "21.7.30",
+            ],
+            "joinKeys": ["21.7.30"],
+        },
+    ]
+}
+MOCKED_MODEL_LTV_PAYLOAD = {
+    "params": {
+        "feature_service_name": "ui_metadata_model_metrics_regression_service",
+        "join_key_map": {"model_id": "2"},
+    }
+}
+MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
+    "results": [
+        {
+            "features": [
+                0.84,
+                "2021-07-28",
+                "Propensity to Unsubscribe",
+                "unsubscribe",
+                "21.7.28",
+                0.71,
+                0.65,
+            ],
+            "joinKeys": ["21.7.28"],
+        },
+        {
+            "features": [
+                0.86,
+                "2021-07-29",
+                "Propensity to Unsubscribe",
+                "unsubscribe",
+                "21.7.29",
+                0.72,
+                0.6,
+            ],
+            "joinKeys": ["21.7.29"],
+        },
+        {
+            "features": [
+                0.81,
+                "2021-07-30",
+                "Propensity to Unsubscribe",
+                "unsubscribe",
+                "21.7.30",
+                0.68,
+                0.63,
+            ],
+            "joinKeys": ["21.7.30"],
+        },
+        {
+            "features": [
+                0.85,
+                "2021-07-31",
+                "Propensity to Unsubscribe",
+                "unsubscribe",
+                "21.7.31",
+                0.71,
+                0.58,
+            ],
+            "joinKeys": ["21.7.31"],
+        },
+    ]
+}
+MOCKED_MODEL_UNSUBSCRIBE_PAYLOAD = {
+    "params": {
+        "feature_service_name": "ui_metadata_model_metrics_classification_service",
+        "join_key_map": {"model_id": "1"},
+    }
+}
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False
