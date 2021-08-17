@@ -1,6 +1,8 @@
 """
 Purpose of this file is to house the main application code.
 """
+import logging
+
 from flask import Flask
 from flasgger import Swagger
 from flask_cors import CORS
@@ -75,7 +77,7 @@ def create_app() -> Flask:
 
     # register the routes
     for route in ROUTES:
-        print(f"Registering {route.name}.")
+        logging.debug("Registering %s.", route.name)
         flask_app.register_blueprint(route, url_prefix="/api/v1")
 
     # add health check URLs
