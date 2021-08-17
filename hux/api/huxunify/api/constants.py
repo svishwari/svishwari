@@ -584,7 +584,13 @@ ACTUAL_LIFT = "actual_lift"
 PROFILE_SIZE_PERCENT = "profile_size_percent"
 REGRESSION_MODELS = [LTV]
 CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
-MODEL_TYPES = [*REGRESSION_MODELS, *CLASSIFICATION_MODELS]
+
+# used for the icons on front-end.
+MODEL_TYPES_MAPPING = {
+    "lifetime value": LTV,
+    "propensity to purchase": PURCHASE,
+    "propensity to unsubscribe": UNSUBSCRIBE,
+}
 
 # TODO Remove this data once actual data from tecton flows
 SUPPORTED_MODELS = {

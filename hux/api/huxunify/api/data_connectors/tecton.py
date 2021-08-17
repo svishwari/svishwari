@@ -1,7 +1,6 @@
 """
 Purpose of this file is for holding methods to query and pull data from Tecton.
 """
-import difflib
 import random
 from math import log10
 from json import dumps
@@ -19,26 +18,6 @@ from huxunify.api.schema.model import (
     LiftSchema,
     PerformanceMetricSchema,
 )
-
-
-def get_model_type(
-    model_name: str, default_type: str = constants.UNKNOWN
-) -> str:
-    """Get the model type based on keywords.
-
-    Args:
-        model_name (str): Name of the model.
-        default_type (str): Default type of model if no mapping found.
-
-    Returns:
-         str: Model type.
-    """
-
-    # get the closest match, otherwise return the default
-    matches = difflib.get_close_matches(
-        model_name.lower(), constants.MODEL_TYPES
-    )
-    return matches[0] if matches else default_type
 
 
 def check_tecton_connection() -> Tuple[bool, str]:
@@ -91,7 +70,9 @@ def map_model_response(response: dict) -> List[dict]:
             constants.FULCRUM_DATE: parser.parse(feature[2]),
             constants.LOOKBACK_WINDOW: int(feature[3]),
             constants.NAME: feature[4],
-            constants.TYPE: get_model_type(feature[5]),
+            constants.TYPE: constants.MODEL_TYPES_MAPPING.get(
+                str(feature[5]).lower(), constants.UNKNOWN
+            ),
             constants.OWNER: feature[6],
             constants.STATUS: feature[8],
             constants.LATEST_VERSION: feature[9],
@@ -133,7 +114,9 @@ def map_model_version_history_response(
             constants.FULCRUM_DATE: parser.parse(feature[2]),
             constants.LOOKBACK_WINDOW: int(feature[3]),
             constants.NAME: feature[5],
-            constants.TYPE: get_model_type(feature[5]),
+            constants.TYPE: constants.MODEL_TYPES_MAPPING.get(
+                str(feature[5]).lower(), constants.UNKNOWN
+            ),
             constants.OWNER: feature[7],
             constants.STATUS: feature[9],
             constants.CURRENT_VERSION: meta_data[constants.JOIN_KEYS][0],
@@ -164,10 +147,7 @@ def map_model_performance_response(
 
     """
 
-    if (
-        response.status_code != 200
-        and constants.RESULTS not in response.json()
-    ):
+    if response.status_code != 200 or constants.RESULTS not in response.json():
         return {}
 
     for meta_data in response.json()[constants.RESULTS]:
