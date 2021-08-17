@@ -562,6 +562,7 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> dict:
     """
     city_income_default_filter = api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
     city_income_default_filter[api_c.COUNT] = 5
+
     # get config
     config = get_config()
     logger.info("Retrieving customer income details by cities from CDP API.")
@@ -583,9 +584,8 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> dict:
     logger.info(
         "Successfully retrieved customer income details by state from CDP API."
     )
-    body = clean_cdm_fields(response.json()[api_c.BODY])
 
     return [
         {api_c.NAME: x[api_c.CITY], api_c.LTV: round(x["avg_ltv"], 4)}
-        for x in body
+        for x in clean_cdm_fields(response.json()[api_c.BODY])
     ]
