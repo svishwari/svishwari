@@ -1724,7 +1724,7 @@ class EngagementMetricsEmail(SwaggerView):
 )
 class EngagementPerformanceDownload(SwaggerView):
     """
-    Class for downloading engagement performance metricws
+    Class for downloading engagement performance metrics
     """
 
     parameters = api_c.ENGAGEMENT_ID_PARAMS
@@ -1740,7 +1740,7 @@ class EngagementPerformanceDownload(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    # @api_error_handler()
+    @api_error_handler()
     def get(self, engagement_id: str) -> Tuple[Response, int]:
         """Retrieves email performance metrics.
 
