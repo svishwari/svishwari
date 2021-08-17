@@ -5,7 +5,6 @@ Paths for the User API
 from http import HTTPStatus
 from typing import Tuple
 
-from bson import ObjectId
 from connexion.exceptions import ProblemException
 from flask import Blueprint
 from flasgger import SwaggerView

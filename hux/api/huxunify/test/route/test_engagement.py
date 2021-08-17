@@ -1544,7 +1544,8 @@ class TestEngagementRoutes(TestCase):
         }
 
         add_audience_response = self.app.post(
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{good_engagement_id}/{api_c.AUDIENCES}",
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}"
+            f"/{good_engagement_id}/{api_c.AUDIENCES}",
             json=new_audience,
             headers=t_c.STANDARD_HEADERS,
         )
