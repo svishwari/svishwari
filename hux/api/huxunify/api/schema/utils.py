@@ -128,7 +128,4 @@ def redact_fields(data: dict, redacted_fields: list) -> dict:
 
 
 if __name__ == "__main__":
-
-    validate_object_id("some string")
-
     pass
