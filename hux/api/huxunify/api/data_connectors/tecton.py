@@ -2,6 +2,7 @@
 Purpose of this file is for holding methods to query and pull data from Tecton.
 """
 import random
+import time
 from math import log10
 import asyncio
 from json import dumps
@@ -21,6 +22,8 @@ from huxunify.api.schema.model import (
     ModelLiftSchema,
     PerformanceMetricSchema,
 )
+
+from huxunifylib.util.general.logging import logger
 
 
 def check_tecton_connection() -> Tuple[bool, str]:
@@ -198,11 +201,14 @@ def get_model_lift_async(model_id: int) -> List[ModelLiftSchema]:
         model_id (str): model id.
 
     Returns:
-         List[ModelLiftSchema] List of model lift.
+         List[ModelLiftSchema]: List of model lift.
     """
 
     # set the event loop
     asyncio.set_event_loop(asyncio.SelectorEventLoop())
+
+    # start timer
+    timer = time.perf_counter()
 
     # send all responses at once and wait until they are all done.
     responses = asyncio.get_event_loop().run_until_complete(
@@ -212,6 +218,14 @@ def get_model_lift_async(model_id: int) -> List[ModelLiftSchema]:
                 for bucket in range(10, 101, 10)
             )
         )
+    )
+
+    # log execution time summary
+    total_ticks = time.perf_counter() - timer
+    logger.info(
+        "Executed 10 requests to the Tecton API in %0.4f seconds. ~%0.4f requests per second.",
+        total_ticks,
+        10 / total_ticks,
     )
 
     result_lift = []
@@ -282,6 +296,9 @@ async def get_async_lift_bucket(model_id: int, bucket: int) -> Tuple[any, int]:
             try:
                 return await response.json(), bucket
             except aiohttp.client.ContentTypeError:
+                logger.error(
+                    "Tecton post request failed for bucket: %s.", bucket
+                )
                 return {"code": 500}, bucket
 
 
