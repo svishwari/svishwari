@@ -210,8 +210,7 @@
                           </span>
                         </span>
                         <span v-else class="d-flex align-center">
-                          <!-- TODO Route Link to Audience Insight Page -->
-                          <div class="text-decoration-none audience-insight">
+                          <div class="audience-insight">
                             <logo
                               :type="logoType(item[expandedHeaders[0].value])"
                               :size="18"
