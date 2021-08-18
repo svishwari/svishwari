@@ -199,7 +199,7 @@
             </template>
           </tooltip>
         </v-list-item-content>
-        <v-list-item-content v-if="!item.size" class="size-col py-1">
+        <v-list-item-content v-if="!item.size" class="size-col py-1 mr-2">
           <tooltip>
             <template #label-content>
               {{ getSize(item.size) | Empty("-") }}
