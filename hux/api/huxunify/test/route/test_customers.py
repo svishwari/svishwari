@@ -331,6 +331,36 @@ class TestCustomersOverview(TestCase):
 
         """
 
+        expected_response = {
+            "code": 200,
+            "body": [
+                {
+                    api_c.STATE: "CO",
+                    api_c.COUNTRY: "US",
+                    api_c.GENDER_MEN: 0.25,
+                    api_c.GENDER_WOMEN: 0.42,
+                    api_c.GENDER_OTHER: 0.06,
+                    api_c.SIZE: 5012,
+                },
+                {
+                    api_c.STATE: "NY",
+                    api_c.COUNTRY: "US",
+                    api_c.GENDER_MEN: 0.25,
+                    api_c.GENDER_WOMEN: 0.42,
+                    api_c.GENDER_OTHER: 0.06,
+                    api_c.SIZE: 1234,
+                },
+            ],
+            "message": "ok",
+        }
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+            json=expected_response,
+        )
+        self.request_mocker.start()
+
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.GEOGRAPHICAL}",
             headers=t_c.STANDARD_HEADERS,
@@ -356,6 +386,14 @@ class TestCustomersOverview(TestCase):
                 "end_date": "2021-04-30T00:00:00Z",
             }
         }
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+            json=t_c.MOCKED_CITY_LTVS_RESPONSE,
+        )
+        self.request_mocker.start()
+
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.DEMOGRAPHIC}",
             data=json.dumps(filter_attributes),

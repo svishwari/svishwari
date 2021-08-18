@@ -295,6 +295,15 @@ const actions = {
       throw error
     }
   },
+  //update Engagement
+  async updateEngagement(_, { id, data }) {
+    try {
+      await api.engagements.update(id, data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
 
   updateAudienceList({ commit }, payload) {
     commit("SET_AUDIENCE_LIST", payload)

@@ -2,11 +2,11 @@
 hux/frontend/ @Abdullah-Azad @henrikr @mohitbans @rahgoel @sach9993 @svishwari @sameerksingh1236
 
 # api processes
-hux/api/ @seahawks8 @bernieblab @jimcmahon @panch-mukesh @rajkcon1 @henrikr @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236
+hux/api/ @seahawks8 @jimcmahon @panch-mukesh @rajkcon1 @henrikr @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @mohitbans
 
 # CI/CD processes
-*codefresh.yml @pfleetwood1 @JyotiSingh7 @seahawks8 @bernieblab @henrikr
+*codefresh.yml @pfleetwood1 @JyotiSingh7 @seahawks8 @henrikr
 
 # huxunifylib-database
-scripts/ @seahawks8 @anoop0m @bernieblab @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @skondalraj-deloitte
-lib/ @seahawks8 @anoop0m @bernieblab @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @sairajput @mridulregmi @d-ratul @skondalraj-deloitte
+scripts/ @seahawks8 @anoop0m @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @skondalraj-deloitte
+lib/ @seahawks8 @anoop0m @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte @sairajput @mridulregmi @d-ratul @skondalraj-deloitte

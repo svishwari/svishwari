@@ -138,6 +138,7 @@ client["engagements"].updateCampaignMapping = (
     data
   )
 }
+
 client["engagements"].getCampaigns = ({
   resourceId,
   audienceId,

@@ -44,13 +44,16 @@ class ModelVersionSchema(Schema):
 class FeatureSchema(Schema):
     """Feature Schema"""
 
-    # TODO - Update as it becomes available.
-    name = Str(required=True)
+    id = Int()
+    version = Str()
     feature_service = Str()
     data_source = Str()
+    created_by = Str()
+    description = Str(default="")
+    name = Str(required=True)
     status = Str()
+    score = Float()
     popularity = Int()
-    owner = Str()
 
 
 class LiftSchema(Schema):
@@ -66,15 +69,6 @@ class LiftSchema(Schema):
     predicted_lift = Float(example=1.03)
     actual_lift = Float(example=1.53)
     profile_size_percent = Float(example=97.16)
-
-
-class FeatureImportance(Schema):
-    """Feature Importance Schema"""
-
-    # TODO - Update as it becomes available.
-    name = Str(example="Feature Name")
-    description = Str(example="Description of Feature ")
-    score = Float(example=0.20)
 
 
 class DriftSchema(Schema):
@@ -93,7 +87,6 @@ class PerformanceMetricSchema(Schema):
 
         ordered = True
 
-    # TODO - Update as it becomes available.
     rmse = Float(example=350)
     auc = Float(example=0.79)
     precision = Float(example=0.82)
@@ -108,5 +101,4 @@ class ModelDashboardSchema(Schema):
     model_name = Str()
     description = Str()
     performance_metric = Nested(PerformanceMetricSchema)
-    feature_importance = Nested(FeatureImportance, many=True)
     lift_data = Nested(LiftSchema, many=True)

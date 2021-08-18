@@ -665,6 +665,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertListEqual(audience_ids, return_ids)
         for audience in audiences:
             self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
+            self.assertIn(db_c.AUDIENCE_FILTERS, audience)
             self.assertFalse(audience[api_c.IS_LOOKALIKE])
             self.assertTrue(audience[api_c.STATUS])
             self.assertIn(

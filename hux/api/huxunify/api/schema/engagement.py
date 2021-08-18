@@ -677,12 +677,18 @@ def weighted_engagement_status(engagements: list) -> list:
             engagement[api_c.STATUS] = api_c.STATUS_DELIVERING
         elif engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
             if (
-                engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
-                    db_c.JOB_START_TIME
+                engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(
+                    api_c.START_DATE
+                )
+                and engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(
+                    api_c.END_DATE
+                )
+                and engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                    api_c.START_DATE
                 ]
                 <= datetime.now()
                 <= engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
-                    db_c.JOB_END_TIME
+                    api_c.END_DATE
                 ]
             ):
                 engagement[api_c.STATUS] = api_c.STATUS_ACTIVE
