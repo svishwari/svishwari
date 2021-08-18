@@ -782,7 +782,6 @@ export default {
     dataPendingMesssage(event, value) {
       this.alert.type = "Pending"
       this.alert.title = ""
-      console.log("event", event);
       if (value == "engagement") {
         this.alert.message = `Your engagement '${event.data.name}', has started delivering as part of the audience '${this.audience.name}'.`
       } else {
@@ -795,7 +794,7 @@ export default {
       this.alert.type = "error"
       this.alert.title = "OH NO!"
       if (value == "engagement") {
-       this.alert.message = `Failed to schedule a delivery of your engagement '${event.data.name}', from '${this.audience.name}'.`
+        this.alert.message = `Failed to schedule a delivery of your engagement '${event.data.name}', from '${this.audience.name}'.`
       } else {
         this.alert.message = `Failed to schedule delivery of your engagement '${event.parent.name}', to '${event.data.name}'.`
       }
