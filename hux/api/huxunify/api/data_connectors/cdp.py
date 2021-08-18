@@ -508,7 +508,7 @@ def get_customer_events_data(
     """Get events for a customer grouped by date.
 
     Args:
-        token(str): OKTA JWT Token.
+        token (str): OKTA JWT Token.
         hux_id (str): hux id for a customer.
         filters (Optional[dict]): filters to pass into
             customer events endpoint.
