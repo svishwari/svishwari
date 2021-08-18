@@ -115,7 +115,10 @@ class EngagementDeliverDestinationView(SwaggerView):
     @validate_destination()
     @validate_delivery_params
     def post(
-        self, engagement_id: str, audience_id: str, destination_id: str
+        self,
+        engagement_id: ObjectId,
+        audience_id: ObjectId,
+        destination_id: ObjectId,
     ) -> Tuple[dict, int]:
         """Delivers one destination for an engagement audience.
 
@@ -248,7 +251,9 @@ class EngagementDeliverAudienceView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
-    def post(self, engagement_id: str, audience_id: str) -> Tuple[dict, int]:
+    def post(
+        self, engagement_id: ObjectId, audience_id: ObjectId
+    ) -> Tuple[dict, int]:
         """Delivers one audience for an engagement.
         ---
         security:
@@ -261,8 +266,6 @@ class EngagementDeliverAudienceView(SwaggerView):
                 success/failure, HTTP Status.
         """
         database = get_db_client()
-        engagement_id = ObjectId(engagement_id)
-        audience_id = ObjectId(audience_id)
 
         engagement = get_engagement(database, engagement_id)
         audience = get_audience(database, audience_id)
@@ -345,7 +348,7 @@ class EngagementDeliverView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
-    def post(self, engagement_id: str) -> Tuple[dict, int]:
+    def post(self, engagement_id: ObjectId) -> Tuple[dict, int]:
         """Delivers all audiences for an engagement.
         ---
         security:
@@ -358,7 +361,7 @@ class EngagementDeliverView(SwaggerView):
         """
 
         database = get_db_client()
-        engagement = get_engagement(database, ObjectId(engagement_id))
+        engagement = get_engagement(database, engagement_id)
         # submit jobs for all the audience/destination pairs
         delivery_job_ids = []
 
@@ -366,7 +369,7 @@ class EngagementDeliverView(SwaggerView):
             engagement[api_c.AUDIENCES]
         ):
             batch_destination = get_destination_config(
-                database, ObjectId(engagement_id), *pair
+                database, engagement_id, *pair
             )
             batch_destination.register(engagement)
             batch_destination.submit()
@@ -432,7 +435,7 @@ class AudienceDeliverView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
-    def post(self, audience_id: str) -> Tuple[dict, int]:
+    def post(self, audience_id: ObjectId) -> Tuple[dict, int]:
         """Delivers an audience for all of the engagements it is apart of.
         ---
         security:
@@ -446,11 +449,9 @@ class AudienceDeliverView(SwaggerView):
 
         database = get_db_client()
         # get audience
-        audience = get_audience(database, ObjectId(audience_id))
+        audience = get_audience(database, audience_id)
         # get engagements
-        engagements = get_engagements_by_audience(
-            database, ObjectId(audience_id)
-        )
+        engagements = get_engagements_by_audience(database, audience_id)
         # submit jobs for the audience/destination pairs
         delivery_job_ids = []
         for engagement in engagements:

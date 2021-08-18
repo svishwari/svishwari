@@ -223,7 +223,7 @@ class TestDeliveryRoutes(TestCase):
         Returns:
 
         """
-        audience_id = "XYZ123"
+        audience_id = t_c.INVALID_ID
         engagement_id = self.engagement_ids[0]
 
         response = self.app.post(
@@ -250,7 +250,7 @@ class TestDeliveryRoutes(TestCase):
 
         """
         audience_id = self.audiences[0][db_c.ID]
-        engagement_id = "XYZ123"
+        engagement_id = t_c.INVALID_ID
 
         response = self.app.post(
             (
@@ -447,7 +447,7 @@ class TestDeliveryRoutes(TestCase):
         Returns:
 
         """
-        audience_id = "XYZ123"
+        audience_id = t_c.INVALID_ID
 
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}/{api_c.AUDIENCES}/{audience_id}/{api_c.DELIVER}",
@@ -551,7 +551,7 @@ class TestDeliveryRoutes(TestCase):
 
         """
 
-        audience_id = "random_id"
+        audience_id = t_c.INVALID_ID
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"

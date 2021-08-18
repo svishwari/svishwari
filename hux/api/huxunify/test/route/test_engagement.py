@@ -1527,7 +1527,7 @@ class TestEngagementRoutes(TestCase):
     def test_delete_audience_from_engagement_invalid_engagement_id(self):
         """Test delete audience from engagement with an invalid engagement id"""
 
-        bad_engagement_id = "invalid_id"
+        bad_engagement_id = t_c.INVALID_ID
         good_engagement_id = self.engagement_ids[0]
         new_audience_id = self.audiences[0][db_c.ID]
 
@@ -1571,7 +1571,7 @@ class TestEngagementRoutes(TestCase):
 
         engagement_id = self.engagement_ids[0]
         new_audience_id = self.audiences[0][db_c.ID]
-        invalid_audience_id = "invalid_id"
+        invalid_audience_id = t_c.INVALID_ID
 
         new_audience = {
             "audiences": [
