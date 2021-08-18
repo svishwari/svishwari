@@ -213,7 +213,7 @@ def get_engagements_summary(
                         "$lookalike_audience.create_time",
                     ]
                 },
-                "audiences.lookalike": {
+                "audiences.is_lookalike": {
                     "$cond": ["$audiences.name", False, True]
                 },
             },
@@ -298,7 +298,7 @@ def get_engagements_summary(
                     "audience_updated_by": "$audiences.updated_by",
                     "audience_update_time": "$audiences.update_time",
                     "audience_create_time": "$audiences.create_time",
-                    "audience_lookalike": "$audiences.lookalike",
+                    "is_audience_lookalike": "$audiences.is_lookalike",
                     "delivery_schedule": {
                         "$ifNull": ["$delivery_schedule", ""]
                     },
@@ -350,7 +350,7 @@ def get_engagements_summary(
                         "update_time": "$_id.audience_update_time",
                         "create_time": "$_id.audience_create_time",
                         "destinations": "$destinations",
-                        "lookalike": "$_id.audience_lookalike",
+                        "is_lookalike": "$_id.is_audience_lookalike",
                     }
                 },
                 "size": {"$sum": "$_id.audience_size"},
