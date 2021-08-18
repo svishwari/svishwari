@@ -432,6 +432,7 @@ export default {
             destination["status"] = destination.latest_delivery.status
             destination["size"] = destination.latest_delivery.size
             destination["update_time"] = destination.latest_delivery.update_time
+            destination["match_rate"] = destination.latest_delivery.match_rate
           }
           return destination
         })

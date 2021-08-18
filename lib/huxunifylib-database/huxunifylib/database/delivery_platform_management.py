@@ -1050,6 +1050,7 @@ def set_delivery_job(
             delivery_platform_generic_campaigns
         ),
         c.DELETED: False,
+        c.DELIVERY_PLATFORM_AUD_SIZE: 0,
     }
     if engagement_id is not None:
         doc[c.ENGAGEMENT_ID] = engagement_id

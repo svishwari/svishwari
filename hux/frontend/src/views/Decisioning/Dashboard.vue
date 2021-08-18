@@ -5,6 +5,21 @@
         <template #left>
           <breadcrumb :items="breadcrumbItems" />
         </template>
+        <template #right>
+          <hux-button
+            class="mr-4 pa-3"
+            is-custom-icon
+            is-tile
+            icon="history"
+            variant="white"
+            @click="viewVersionHistory()"
+          >
+            Version history
+          </hux-button>
+          <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+            mdi-download
+          </v-icon>
+        </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
@@ -115,6 +130,7 @@
           </v-card>
         </v-col>
       </v-row>
+      <version-history v-model="versionHistoryDrawer" />
     </template>
   </page>
 </template>
@@ -127,6 +143,8 @@ import DriftChart from "@/components/common/Charts/DriftChart/DriftChart.vue"
 import DriftChartData from "@/api/mock/factories/driftChartData.json"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
+import huxButton from "@/components/common/huxButton"
+import VersionHistory from "./Drawers/VersionHistoryDrawer.vue"
 import { mapGetters, mapActions } from "vuex"
 
 export default {
@@ -137,11 +155,14 @@ export default {
     LiftChart,
     Page,
     PageHeader,
+    huxButton,
+    VersionHistory,
     DriftChart,
   },
   data() {
     return {
       loading: false,
+      versionHistoryDrawer: false,
       chartDimensions: {
         width: 0,
         height: 0,
@@ -153,7 +174,6 @@ export default {
   computed: {
     ...mapGetters({
       model: "models/overview",
-      history: "models/history",
     }),
 
     driftChartData() {
@@ -192,11 +212,6 @@ export default {
     this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     this.chartDimensions.height = 520
     await this.getOverview(this.$route.params.id)
-    // this will be removed from here &
-    // get called on opening of drawer,
-    // once the drawer UI is implemented
-    // in part-2 of the same PR.
-    await this.getHistory(this.$route.params.id)
     this.loading = false
   },
 
@@ -216,8 +231,10 @@ export default {
   methods: {
     ...mapActions({
       getOverview: "models/getOverview",
-      getHistory: "models/getHistory",
     }),
+    viewVersionHistory() {
+      this.versionHistoryDrawer = !this.versionHistoryDrawer
+    },
     sizeHandler() {
       this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     },
