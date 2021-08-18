@@ -199,8 +199,9 @@ def generate_metrics_file(
     """
 
     Args:
-        engagement_id(str): Id of engagement
-        final_metric(dict): Performance metrics for an engagement
+        engagement_id (str): Id of engagement
+        final_metric (dict): Performance metrics for an engagement
+        metrics_type (str): Type of performance metrics
 
     Returns:
 

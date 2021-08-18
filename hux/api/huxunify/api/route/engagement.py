@@ -64,7 +64,7 @@ from huxunify.api.route.utils import (
 from huxunify.api.data_connectors.courier import toggle_event_driven_routers
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.performancemetrics import (
+from huxunify.api.data_connectors.performance_metrics import (
     get_performance_metrics,
     generate_metrics_file,
 )
@@ -1810,7 +1810,7 @@ class EngagementPerformanceDownload(SwaggerView):
             database, engagement, engagement_id, api_c.EMAIL
         )
 
-        final_displayads_metric = get_performance_metrics(
+        final_display_ads_metric = get_performance_metrics(
             database, engagement, engagement_id, api_c.DISPLAY_ADS
         )
 
@@ -1820,10 +1820,10 @@ class EngagementPerformanceDownload(SwaggerView):
         generate_metrics_file(engagement_id, final_email_metric, api_c.EMAIL)
 
         generate_metrics_file(
-            engagement_id, final_displayads_metric, api_c.DISPLAY_ADS
+            engagement_id, final_display_ads_metric, api_c.DISPLAY_ADS
         )
 
-        zipfile_name = f"{engagement_id}_performancemetrics.zip"
+        zipfile_name = f"{engagement_id}_performance_metrics.zip"
 
         # zip all the performancemetrics which are inside in the folder
         with zipfile.ZipFile(

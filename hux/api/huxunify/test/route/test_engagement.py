@@ -122,7 +122,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
         ).start()
 
         mock.patch(
-            "huxunify.api.data_connectors.performancemetrics.get_db_client",
+            "huxunify.api.data_connectors.performance_metrics.get_db_client",
             return_value=self.database,
         ).start()
 
@@ -315,7 +315,7 @@ class TestEngagementMetricsEmail(TestCase):
         ).start()
 
         mock.patch(
-            "huxunify.api.data_connectors.performancemetrics.get_db_client",
+            "huxunify.api.data_connectors.performance_metrics.get_db_client",
             return_value=self.database,
         ).start()
 
