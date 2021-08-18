@@ -1,7 +1,8 @@
 version: "1.0"
 stages:
   - clone
-  - checks
+  - safety_test_check
+  - coverage_style_check
   - publish
 
 steps:
@@ -14,9 +15,9 @@ steps:
     revision: "${{CF_BRANCH}}"
     git: "DeloitteHux_github"
 
-  checks:
-    stage: "checks"
-    title: "LIB Checks"
+  safety_test_check:
+    stage: "safety_test_check"
+    title: "Safety and test checks"
     image: huxhub.repo.mgnt.in/tox-ci
     working_directory: '${{CF_REPO_NAME}}/lib/huxunifylib-database'
     description: "run tests using tox"
@@ -24,18 +25,32 @@ steps:
       - tox -e ${TOXENV} -- --skip-model-generate
     scale:
       py37:
+        title: 'tests'
         environment:
           - TOXENV=py37
       safety:
+        title: 'safety'
         environment:
           - TOXENV=safety
-      style:
-        environment:
-          - TOXENV=style
+    fail_fast: false
 
+  coverageStyleCheck:
+    stage: "coverage_style_check"
+    title: "Coverage and Style checks."
+    image: huxhub.repo.mgnt.in/tox-ci
+    working_directory: '${{CF_REPO_NAME}}/lib/huxunifylib-database'
+    description: "run tests using tox"
+    commands:
+      - tox -e ${TOXENV} -- --skip-model-generate
+    scale:
       checkCoverage:
+        title: 'checkCoverage'
         environment:
           - TOXENV=checkCoverage
+      style:
+        title: 'style'
+        environment:
+          - TOXENV=style
     fail_fast: false
 
   publish:
