@@ -3,12 +3,14 @@ purpose of this file is to house all the tecton api tests.
 """
 import json
 from unittest import TestCase
+from datetime import datetime
 import requests_mock
 from requests_mock import Mocker
 from bson import json_util
 from huxunify.api import constants
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors import tecton
+from huxunify.test import constants as t_c
 
 
 MOCK_MODEL_RESPONSE = {
@@ -93,11 +95,170 @@ class TectonTest(TestCase):
         self.assertEqual(models[0][constants.LATEST_VERSION], "0.2.4")
         self.assertEqual(models[0][constants.PAST_VERSION_COUNT], 0)
 
-    def test_model_version_history(self):
-        """test model version history"""
+    @requests_mock.Mocker()
+    def test_map_model_performance_response_ltv(self, request_mocker: Mocker):
+        """Test map model performance response for ltv.
 
-        # TODO - when available.
-        self.assertEqual(2 + 2, 4)
+        Args:
+            request_mocker (Mocker): Request mock object.
+
+        Returns:
+
+        """
+        # setup the request mock post
+        request_mocker.post(
+            self.config.TECTON_FEATURE_SERVICE,
+            text=json.dumps(
+                t_c.MOCKED_MODEL_PERFORMANCE_LTV, default=json_util.default
+            ),
+            headers=self.config.TECTON_API_HEADERS,
+        )
+
+        model = tecton.get_model_performance_metrics(
+            2, constants.LTV, "21.7.30"
+        )
+
+        # test that it was actually called and only once
+        self.assertEqual(request_mocker.call_count, 1)
+        self.assertTrue(request_mocker.called)
+
+        # test correct payload sent
+        self.assertDictEqual(
+            request_mocker.last_request.json(), t_c.MOCKED_MODEL_LTV_PAYLOAD
+        )
+        self.assertDictEqual(
+            model,
+            {
+                constants.ID: 2,
+                constants.RMSE: 215.5,
+                constants.AUC: 0,
+                constants.PRECISION: 0,
+                constants.RECALL: 0,
+                constants.CURRENT_VERSION: "21.7.30",
+            },
+        )
+
+    @requests_mock.Mocker()
+    def test_map_model_performance_response_unsubscribe(
+        self, request_mocker: Mocker
+    ):
+        """Test map model performance response for unsubscribe.
+
+        Args:
+            request_mocker (Mocker): Request mock object.
+
+        Returns:
+
+        """
+        # setup the request mock post
+        request_mocker.post(
+            self.config.TECTON_FEATURE_SERVICE,
+            text=json.dumps(
+                t_c.MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE,
+                default=json_util.default,
+            ),
+            headers=self.config.TECTON_API_HEADERS,
+        )
+
+        model = tecton.get_model_performance_metrics(
+            1, constants.UNSUBSCRIBE, "21.7.31"
+        )
+
+        # test that it was actually called and only once
+        self.assertEqual(request_mocker.call_count, 1)
+        self.assertTrue(request_mocker.called)
+
+        # test correct payload sent
+        self.assertDictEqual(
+            request_mocker.last_request.json(),
+            t_c.MOCKED_MODEL_UNSUBSCRIBE_PAYLOAD,
+        )
+        self.assertDictEqual(
+            model,
+            {
+                constants.ID: 1,
+                constants.RMSE: 0,
+                constants.AUC: 0.85,
+                constants.PRECISION: 0.71,
+                constants.RECALL: 0.58,
+                constants.CURRENT_VERSION: "21.7.31",
+            },
+        )
+
+    @requests_mock.Mocker()
+    def test_map_model_performance_response_empty_response(
+        self, request_mocker: Mocker
+    ):
+        """Test map model performance response for an empty response.
+
+        Args:
+            request_mocker (Mocker): Request mock object.
+
+        Returns:
+
+        """
+        # setup the request mock post
+        request_mocker.post(
+            self.config.TECTON_FEATURE_SERVICE,
+            text=json.dumps(
+                {},
+                default=json_util.default,
+            ),
+            headers=self.config.TECTON_API_HEADERS,
+        )
+
+        self.assertFalse(
+            tecton.get_model_performance_metrics(
+                1, constants.UNSUBSCRIBE, "21.7.31"
+            )
+        )
+
+    @requests_mock.Mocker()
+    def test_model_version_history(self, request_mocker: Mocker):
+        """Test model version history.
+
+        Args:
+            request_mocker (Mocker): Request mock object.
+
+        Returns:
+
+        """
+        # setup the request mock post
+        request_mocker.post(
+            self.config.TECTON_FEATURE_SERVICE,
+            text=json.dumps(
+                t_c.MOCKED_MODEL_VERSION_HISTORY,
+                default=json_util.default,
+            ),
+            headers=self.config.TECTON_API_HEADERS,
+        )
+
+        models = tecton.get_model_version_history(1)
+
+        # test that it was actually called and only once
+        self.assertEqual(request_mocker.call_count, 1)
+        self.assertTrue(request_mocker.called)
+
+        self.assertTrue(models)
+
+        # test the last model
+        self.assertDictEqual(
+            models[-1],
+            {
+                "id": 1,
+                "last_trained": datetime(2021, 7, 31, 0, 0),
+                "description": "Propensity of a customer unsubscribing "
+                "after receiving an email.",
+                "fulcrum_date": datetime(2021, 7, 17, 0, 0),
+                "lookback_window": 90,
+                "name": "Propensity to Unsubscribe",
+                "type": "unsubscribe",
+                "owner": "Susan Miller",
+                "status": "Active",
+                "current_version": "21.7.31",
+                "prediction_window": 90,
+            },
+        )
 
     def test_list_features(self):
         """test list features for a model"""
