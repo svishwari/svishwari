@@ -14,6 +14,7 @@
         :columns="columns"
         :data-items="items"
         sort-column="delivered"
+        class="delivery-list"
       >
         <template #row-item="{ item }">
           <td
@@ -60,6 +61,14 @@
               </template>
               <template #hover-content>
                 {{ item[col.value] | Numeric(true) }}
+              </template>
+            </tooltip>
+            <tooltip v-if="col.value === 'match_rate'">
+              <template #label-content>
+                {{ item[col.value] | Percentage }}
+              </template>
+              <template #hover-content>
+                {{ item[col.value] }}
               </template>
             </tooltip>
             <tooltip v-if="col.value === 'delivered'">
@@ -126,17 +135,22 @@ export default {
         {
           value: "destination",
           text: "Destination",
-          width: "20%",
+          width: "113px",
         },
         {
           value: "size",
           text: "Target size",
-          width: "18%",
+          width: "108px",
+        },
+        {
+          value: "match_rate",
+          text: "Match Rate",
+          width: "111px",
         },
         {
           value: "delivered",
           text: "Delivered",
-          width: "27%",
+          width: "114px",
         },
       ],
     }
@@ -210,7 +224,9 @@ export default {
 <style lang="scss" scoped>
 ::v-deep .v-data-table > .v-data-table__wrapper > table > thead > tr > th {
   background: var(--v-aliceBlue-base) !important;
-  padding-top: 13px;
-  padding-bottom: 13px;
+  padding: 11px 13px;
+}
+::v-deep .v-data-table > .v-data-table__wrapper > table > tbody > tr > td {
+  padding: 0 13px !important;
 }
 </style>
