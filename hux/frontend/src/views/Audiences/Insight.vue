@@ -51,6 +51,7 @@
         class="ma-2 audience-summary original-audience"
         :grow="0"
         :title="'Original Audience'"
+        :height="75"
       >
         <template #subtitle-extended>
           <span class="mr-2 pt-2">
@@ -65,9 +66,10 @@
         class="ma-2 audience-summary"
         :grow="0"
         :title="'Original • Actual size'"
+        :height="75"
       >
         <template #subtitle-extended>
-          <span class="mr-2">
+          <span class="mr-2 pt-2">
             <span class="neroBlack--text font-weight-semi-bold">
               <size :value="audience.size" /> &bull;
               <size :value="audience.size" />
