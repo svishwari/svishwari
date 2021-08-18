@@ -102,18 +102,6 @@ export default {
         ? this.destinationMenuOptions
         : []
     },
-    sectionList() {
-      return this.sectionsforEach((section) => {
-        section.destinations.map((destination) => {
-          const destinationObj = JSON.parse(JSON.stringify(destination))
-          destinationObj["status"] = destination.latest_delivery.status
-          destinationObj["size"] = destination.latest_delivery.size
-          destinationObj["update_time"] =
-            destination.latest_delivery.update_time
-          return destinationObj
-        })
-      })
-    },
   },
 }
 </script>
