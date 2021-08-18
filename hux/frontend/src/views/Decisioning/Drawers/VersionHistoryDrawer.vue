@@ -2,7 +2,7 @@
   <drawer
     v-model="localDrawer"
     :content-padding="'pa-0'"
-    :content-header-padding="'px-3'"
+    :content-header-padding="'px-6'"
   >
     <template #header-left>
       <div class="d-flex align-center">
@@ -26,7 +26,7 @@
           >
             <tooltip v-if="header.value == 'version'">
               <span
-                class="cell neroBlack--text"
+                class="cell neroBlack--text ml-2"
                 :class="[item.current ? 'font-weight-bold' : '']"
               >
                 {{ item.version }}
@@ -204,6 +204,9 @@ export default {
       }
       th {
         background: var(--v-aliceBlue-base);
+      }
+      th:nth-child(1) {
+        padding-left: 24px;
       }
     }
     .cell {
