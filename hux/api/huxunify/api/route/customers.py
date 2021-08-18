@@ -797,3 +797,57 @@ class TotalCustomersGraphView(SwaggerView):
             ),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.CITIES}",
+    "CustomersInsightsCities",
+)
+class CustomersInsightsCities(SwaggerView):
+    """
+    Total customer insights graph view class
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {"type": "array", "items": TotalCustomersInsightsSchema},
+            "description": "Total Customer Insights .",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Total Customer Insights."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(self) -> Tuple[list, int]:
+        """Retrieves total customer insights.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int] list of total customers & new customers added, http code
+        """
+        last_date = datetime.today() - relativedelta(months=6)
+        today = datetime.today()
+        total_customers = []
+        while last_date <= today:
+            total_customers.append(
+                {
+                    api_c.TOTAL_CUSTOMERS: randint(50000, 156000),
+                    api_c.NEW_CUSTOMERS_ADDED: randint(1, 5000),
+                    api_c.DATE: last_date,
+                }
+            )
+            last_date += timedelta(days=1)
+        return (
+            jsonify(
+                TotalCustomersInsightsSchema().dump(total_customers, many=True)
+            ),
+            HTTPStatus.OK,
+        )

@@ -911,18 +911,16 @@ class SetLookalikeAudience(SwaggerView):
 
         # Commented as creating lookalike audience is restricted in facebook
         # as we are using fake customer data
-        '''
-        timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
-            db_c.AUDIENCE_NAME_DATE_FORMAT
-        )
-
-        destination_connector.get_new_lookalike_audience(
-            f"{source_audience[db_c.NAME]} - {timestamp}",
-            body[api_c.NAME],
-            body[api_c.AUDIENCE_SIZE_PERCENTAGE],
-            "US",
-        )
-        '''
+        # timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
+        #     db_c.AUDIENCE_NAME_DATE_FORMAT
+        # )
+        #
+        # destination_connector.get_new_lookalike_audience(
+        #     f"{source_audience[db_c.NAME]} - {timestamp}",
+        #     body[api_c.NAME],
+        #     body[api_c.AUDIENCE_SIZE_PERCENTAGE],
+        #     "US",
+        # )
 
         logger.info("Creating delivery platform lookalike audience.")
         lookalike_audience = (
