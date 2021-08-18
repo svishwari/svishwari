@@ -718,9 +718,10 @@ export default {
               id: event.data.id,
               audienceId: this.audienceId,
             })
+            console.log("event", event)
             this.dataPendingMesssage(event.data.name, "engagement")
           } catch (error) {
-            this.dataErrorMesssage(event.data.name)
+            this.dataErrorMesssage(event, "engagement")
             console.error(error)
           }
           break
@@ -749,7 +750,8 @@ export default {
               audienceId: this.audienceId,
               destinationId: event.data.id,
             })
-            this.dataPendingMesssage(event.data.name, "audience")
+            console.log("event", event);
+            this.dataPendingMesssage(event, "destination")
             break
           case "edit delivery schedule":
             this.engagementId = event.parent.id
@@ -771,26 +773,32 @@ export default {
             break
         }
       } catch (error) {
-        this.dataErrorMesssage(event.data.name)
+        this.dataErrorMesssage(event, "destination")
         console.error(error)
       }
     },
 
     //Alert Message
-    dataPendingMesssage(name, value) {
+    dataPendingMesssage(event, value) {
       this.alert.type = "Pending"
       this.alert.title = ""
       if (value == "engagement") {
-        this.alert.message = `Your audience, '${this.audience.name}', has started delivering as part of the engagement, '${name}'.`
+        this.alert.message = `Your engagement, '${event.data.name}', has started delivering as part of the audience, '${this.audience.name}'.`
       } else {
-        this.alert.message = `Your audience, '${name}' , has started delivering.`
+        this.alert.message = `Your destination, '${event.data.name}' , has started delivering as part of the engagement, '${event.parent.name}'.`
       }
 
       this.flashAlert = true
     },
-    dataErrorMesssage(name) {
+    dataErrorMesssage(event) {
       this.alert.type = "error"
       this.alert.title = "OH NO!"
+          if (value == "engagement") {
+       this.alert.message = `Failed to schedule a delivery of engagement, '${event.data.name}', from audience, '${this.audience.name}'.`
+      } else {
+        this.alert.message = `Failed to schedule a delivery of destination, '${event.data.name}', from engagement, '${event.parent.name}'.`
+      }
+
       this.alert.message = `Failed to schedule a delivery for ${name}`
       this.flashAlert = true
     },
