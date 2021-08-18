@@ -70,7 +70,7 @@ steps:
     commands:
       - cat ./hux/api/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
 
-  jfrog-python-artifactory-read:
+  jfrog_python_artifactory_read:
     stage: set_env_artifactory_token
     title: "Get artifactory token"
     type: deloittehux/jfrog-python-artifactory-read
