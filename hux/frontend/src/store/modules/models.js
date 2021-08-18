@@ -29,6 +29,10 @@ const mutations = {
     state.overview = data
   },
 
+  SET_FEATURES(state, data) {
+    state.overview.feature_importance = data
+  },
+
   SET_HISTORY(state, items) {
     let getHistory = items.sort(function (a, b) {
       return a.version === b.version ? 0 : a.version > b.version ? -1 : 1
@@ -55,6 +59,16 @@ const actions = {
     try {
       const response = await api.models.overview(type)
       commit("SET_OVERVIEW", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getFeatures({ commit }, type) {
+    try {
+      const response = await api.models.features(type)
+      commit("SET_FEATURES", response.data)
     } catch (error) {
       handleError(error)
       throw error

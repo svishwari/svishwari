@@ -350,6 +350,10 @@ export const defineRoutes = (server) => {
     return data
   })
 
+  server.get("/models/:id/features", () => {
+    return featureData.featureList
+  })
+
   server.get("/models/:id/version-history", (schema, request) => {
     const id = request.params.id
     const model = schema.models.find(id)

@@ -80,15 +80,12 @@
           <v-card class="mt-6 rounded-lg box-shadow-5" height="662">
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
               <div class="mt-2">
-                <span
-                  v-if="model.feature_importance"
-                  class="neroBlack--text text-h5"
-                >
-                  Top {{ model.feature_importance.length }} feature importance
+                <span v-if="features" class="neroBlack--text text-h5">
+                  Top {{ features.length }} feature importance
                 </span>
               </div>
             </v-card-title>
-            <feature-chart :feature-data="model.feature_importance || []" />
+            <feature-chart :feature-data="features || []" />
           </v-card>
         </v-col>
         <v-col md="6">
@@ -187,6 +184,13 @@ export default {
       return data
     },
 
+    features() {
+      return (
+        this.model.feature_importance &&
+        this.model.feature_importance.slice(0, 20)
+      )
+    },
+
     breadcrumbItems() {
       const items = [
         {
@@ -212,6 +216,7 @@ export default {
     this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     this.chartDimensions.height = 520
     await this.getOverview(this.$route.params.id)
+    await this.getFeatures(this.$route.params.id)
     this.loading = false
   },
 
@@ -231,6 +236,7 @@ export default {
   methods: {
     ...mapActions({
       getOverview: "models/getOverview",
+      getFeatures: "models/getFeatures",
     }),
     viewVersionHistory() {
       this.versionHistoryDrawer = !this.versionHistoryDrawer
