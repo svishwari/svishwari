@@ -24,8 +24,10 @@
     </span>
     <span v-else>
       <div class="d-flex align-center" :class="typeClass">
-        <v-icon outlined :color="type">{{ icon }}</v-icon>
-        <span class="px-4 font-weight-bold text-h5">{{ title }}</span>
+        <v-icon outlined :color="type" :size="18" class="icon-position">{{
+          icon
+        }}</v-icon>
+        <span class="px-3 font-weight-bold text-h5">{{ title }}</span>
         <span class="text-h5">{{ message }}</span>
       </div>
     </span>
@@ -116,6 +118,6 @@ export default {
   line-height: 22px;
 }
 .icon-position {
-  margin-top: 1.5px;
+  margin-top: 3px;
 }
 </style>
