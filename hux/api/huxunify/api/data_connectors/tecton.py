@@ -8,6 +8,7 @@ from typing import List, Tuple
 
 from dateutil import parser
 import requests
+from huxunifylib.util.general.logging import logger
 
 from huxunify.api.config import get_config
 from huxunify.api import constants
@@ -368,13 +369,17 @@ def get_model_performance_metrics(
         }
     }
 
+    logger.info("Querying Tecton for model performance metrics.")
+    response = requests.post(
+        config.TECTON_FEATURE_SERVICE,
+        dumps(payload),
+        headers=config.TECTON_API_HEADERS,
+    )
+    logger.info("Querying Tecton for model performance metrics complete.")
+
     # submit the post request to get the model metrics.
     return map_model_performance_response(
-        requests.post(
-            config.TECTON_FEATURE_SERVICE,
-            dumps(payload),
-            headers=config.TECTON_API_HEADERS,
-        ),
+        response,
         model_id,
         model_type,
         model_version,
