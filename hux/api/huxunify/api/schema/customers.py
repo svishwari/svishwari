@@ -267,6 +267,8 @@ class CustomerEventCountSchema(Schema):
     customer_login = Integer(required=True, example=1)
     viewed_checkout = Integer(required=True, example=1)
     viewed_sale_item = Integer(required=True, example=1)
+    item_purchased = Integer(required=True, example=1)
+    trait_computed = Integer(required=True, example=1)
 
 
 class CustomerEventsSchema(Schema):

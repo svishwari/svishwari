@@ -474,55 +474,120 @@ def get_idr_matching_trends(token: str) -> list:
     ]
 
 
-def get_customer_events_data(hux_id: str) -> list:
+def fill_empty_customer_events(
+    start_date: datetime.datetime, end_date: datetime.datetime
+) -> list:
+    """Fill empty events for dates between start_date and end_date
+
+    Args:
+        start_date(datetime): start date between which dates, events need to be filled
+        end_date (datetime): end date between which dates, events need to be filled
+    Returns:
+        list: customer events with zero
+    """
+    return [
+        {
+            api_c.DATE: start_date + datetime.timedelta(days=i),
+            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 0,
+            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
+                api_c.ABANDONED_CART_EVENT: 0,
+                api_c.CUSTOMER_LOGIN_EVENT: 0,
+                api_c.VIEWED_CART_EVENT: 0,
+                api_c.VIEWED_CHECKOUT_EVENT: 0,
+                api_c.VIEWED_SALE_ITEM_EVENT: 0,
+                api_c.ITEM_PURCHASED_EVENT: 0,
+                api_c.TRAIT_COMPUTED_EVENT: 0,
+            },
+        }
+        for i in range(1, (end_date - start_date).days)
+    ]
+
+
+def get_customer_events_data(
+    token: str, hux_id: str, filters: Optional[dict] = None
+) -> list:
     """Get events for a customer grouped by date.
 
     Args:
+        token(str): OKTA JWT Token.
         hux_id (str): hux id for a customer.
+        filters (Optional[dict]): filters to pass into
+            customer events endpoint.
     Returns:
         list: customer events with respective counts
     """
 
-    # pylint: disable=unused-argument
-    # TODO: Remove pylint unused-argument and update after CDM API for customer events is available
-    response = [
-        {
-            api_c.DATE: datetime.datetime.utcnow()
-            - datetime.timedelta(days=x),
-            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
-                api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT
-            ][
-                x
-            ],
-            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
-                api_c.ABANDONED_CART_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
-                    api_c.ABANDONED_CART_EVENT
-                ][
-                    x
-                ],
-                api_c.CUSTOMER_LOGIN_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
-                    api_c.CUSTOMER_LOGIN_EVENT
-                ][
-                    x
-                ],
-                api_c.VIEWED_CART_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
-                    api_c.VIEWED_CART_EVENT
-                ][x],
-                api_c.VIEWED_CHECKOUT_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
-                    api_c.VIEWED_CHECKOUT_EVENT
-                ][
-                    x
-                ],
-                api_c.VIEWED_SALE_ITEM_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
-                    api_c.VIEWED_SALE_ITEM_EVENT
-                ][
-                    x
-                ],
-            },
-        }
-        for x in reversed(range(8))
-    ]
-    return response
+    config = get_config()
+
+    filters = filters if filters else api_c.CUSTOMER_EVENTS_DEFAULT_FILTER
+
+    logger.info("Getting customer events info from CDP API.")
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/{hux_id}/events",
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+        json=filters,
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Unable to get Customer Profiles from CDP API got %s.",
+            response.status_code,
+        )
+        return {}
+
+    customer_events = response.json().get(api_c.BODY)
+    customer_events.sort(
+        key=lambda customer_event_: parse(customer_event_.get("date"))
+    )
+
+    customer_events_dates_filled = []
+
+    prev_date = parse(filters.get(api_c.START_DATE))
+    end_date = parse(filters.get(api_c.END_DATE))
+
+    # no customer events found in the date range, fill empty events
+    if not customer_events:
+        return fill_empty_customer_events(
+            prev_date - datetime.timedelta(1), end_date
+        )
+
+    # fill empty events so that no date(day) is missing
+    for idx, customer_event in enumerate(customer_events):
+        curr_date = parse(customer_event.get(api_c.DATE))
+        # fill for 1 day previous
+        if idx == 0:
+            if curr_date > prev_date and (curr_date - prev_date).days >= 1:
+                customer_events_dates_filled = (
+                    customer_events_dates_filled
+                    + fill_empty_customer_events(
+                        prev_date - datetime.timedelta(1),
+                        prev_date + datetime.timedelta(1),
+                    )
+                )
+
+        customer_event[api_c.DATE] = curr_date
+        customer_events_dates_filled.append(customer_event)
+
+        if curr_date > prev_date and (curr_date - prev_date).days > 1:
+            customer_events_dates_filled = (
+                customer_events_dates_filled
+                + fill_empty_customer_events(prev_date, curr_date)
+            )
+        prev_date = curr_date
+
+    if end_date > prev_date and (end_date - prev_date).days > 1:
+        customer_events_dates_filled = (
+            customer_events_dates_filled
+            + fill_empty_customer_events(prev_date, end_date)
+        )
+
+    customer_events_dates_filled.sort(
+        key=lambda customer_event_: customer_event_.get("date")
+    )
+
+    return customer_events_dates_filled
 
 
 def clean_cdm_fields(body: dict) -> dict:

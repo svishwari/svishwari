@@ -1111,14 +1111,12 @@ CUSTOMER_LOGIN_EVENT = "customer_login"
 VIEWED_CART_EVENT = "viewed_cart"
 VIEWED_CHECKOUT_EVENT = "viewed_checkout"
 VIEWED_SALE_ITEM_EVENT = "viewed_sale_item"
-# TODO remove once we get event counts from CDP.
-CUSTOMER_EVENTS_SAMPLE_COUNTS = {
-    CUSTOMER_TOTAL_DAILY_EVENT_COUNT: [17, 16, 15, 2, 18, 16, 10, 16],
-    ABANDONED_CART_EVENT: [3, 3, 3, 0, 2, 2, 2, 2],
-    CUSTOMER_LOGIN_EVENT: [2, 1, 3, 1, 3, 3, 2, 3],
-    VIEWED_CART_EVENT: [4, 3, 3, 0, 3, 3, 3, 3],
-    VIEWED_CHECKOUT_EVENT: [3, 4, 1, 0, 4, 3, 1, 3],
-    VIEWED_SALE_ITEM_EVENT: [5, 5, 5, 1, 6, 5, 2, 5],
+TRAIT_COMPUTED_EVENT = "trait_computed"
+ITEM_PURCHASED_EVENT = "item_purchased"
+
+CUSTOMER_EVENTS_DEFAULT_FILTER = {
+    START_DATE: "2021-01-01T00:00:00Z",
+    END_DATE: "2021-01-09T00:00:00Z",
 }
 
 # FILTERING

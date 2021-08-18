@@ -422,8 +422,21 @@ class TestCustomersOverview(TestCase):
         """
         if not customer_id:
             return
+        filter_attributes = {
+            "start_date": "2021-01-01T00:00:00.000Z",
+            "end_date": "2021-01-02T00:00:00.000Z",
+        }
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{customer_id}/events",
+            json=t_c.CUSTOMER_EVENT_RESPONSE,
+        )
+        self.request_mocker.start()
+
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{customer_id}/events",
+            data=json.dumps(filter_attributes),
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
