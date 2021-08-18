@@ -121,7 +121,7 @@ steps:
         title: 'style'
         environment:
           - TOXENV=style
-      checkCoverage:
+      py37:
         title: 'py37'
         environment:
           - TOXENV=py37
