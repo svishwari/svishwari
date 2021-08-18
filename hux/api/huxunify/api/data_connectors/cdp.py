@@ -537,11 +537,6 @@ def get_customer_events_data(
         return {}
 
     customer_events = response.json().get(api_c.BODY)
-    customer_events.sort(
-        key=lambda customer_event_: parse(customer_event_.get("date"))
-    )
-
-    customer_events_dates_filled = []
 
     prev_date = parse(filters.get(api_c.START_DATE))
     end_date = parse(filters.get(api_c.END_DATE))
@@ -551,6 +546,12 @@ def get_customer_events_data(
         return fill_empty_customer_events(
             prev_date - datetime.timedelta(1), end_date
         )
+
+    customer_events.sort(
+        key=lambda customer_event_: parse(customer_event_.get("date"))
+    )
+
+    customer_events_dates_filled = []
 
     # fill empty events so that no date(day) is missing
     for idx, customer_event in enumerate(customer_events):
