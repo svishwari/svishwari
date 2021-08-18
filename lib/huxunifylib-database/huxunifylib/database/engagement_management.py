@@ -169,57 +169,45 @@ def get_engagements_summary(
                 "from": "lookalike_audiences",
                 "localField": "audiences.id",
                 "foreignField": "_id",
-                "as": "lookalike_audience",
+                "as": "lookalikes",
             }
         },
         # unwind the found lookalike_audiences to an object.
         {
             "$unwind": {
-                "path": "$lookalike_audience",
+                "path": "$lookalikes",
                 "preserveNullAndEmptyArrays": True,
             }
         },
-        # add the lookalike_audience name field to the nested audience object
-        # if not assigned
+        # add the lookalike id field by assigning None directly. this is a workaround because
+        # document DB does not support LET statements in pipelines.
         {
             "$addFields": {
-                "audiences.name": {
-                    "$ifNull": ["$audiences.name", "$lookalike_audience.name"]
-                },
-                "audiences.size": {
-                    "$ifNull": ["$audiences.size", "$lookalike_audience.size"]
-                },
-                "audiences.created_by": {
-                    "$ifNull": [
-                        "$audiences.created_by",
-                        "$lookalike_audience.created_by",
+                "lookalike_id": {"$ifNull": ["$lookalikes._id", None]}
+            }
+        },
+        # coalesce the unwind of an audience with lookalikes
+        {
+            "$addFields": {
+                "audiences": {
+                    "$cond": [
+                        {"$eq": ["$lookalike_id", None]},
+                        "$audiences",
+                        "$lookalikes",
                     ]
-                },
-                "audiences.updated_by": {
-                    "$ifNull": [
-                        "$audiences.updated_by",
-                        "$lookalike_audience.updated_by",
-                    ]
-                },
-                "audiences.update_time": {
-                    "$ifNull": [
-                        "$audiences.update_time",
-                        "$lookalike_audience.update_time",
-                    ]
-                },
-                "audiences.create_time": {
-                    "$ifNull": [
-                        "$audiences.create_time",
-                        "$lookalike_audience.create_time",
-                    ]
-                },
+                }
+            }
+        },
+        # add the lookalike flag
+        {
+            "$addFields": {
                 "audiences.is_lookalike": {
-                    "$cond": ["$audiences.name", False, True]
-                },
-            },
+                    "$cond": [{"$eq": ["$lookalike_id", None]}, False, True]
+                }
+            }
         },
         # remove the unused lookalike audience object fields.
-        {"$project": {"lookalike_audience": 0}},
+        {"$project": {"lookalikes": 0, "lookalike_id": 0}},
         # unwind the destinations
         {
             "$unwind": {
