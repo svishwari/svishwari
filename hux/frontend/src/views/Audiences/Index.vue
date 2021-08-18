@@ -176,7 +176,7 @@
       @onError="onError($event)"
     />
 
-     <hux-alert
+    <hux-alert
       v-model="flashAlert"
       :type="alert.type"
       :title="alert.title"
@@ -353,7 +353,7 @@ export default {
       this.selectedAudience = audience
       this.showLookAlikeDrawer = true
     },
-     onError(message) {
+    onError(message) {
       this.alert.type = "error"
       this.alert.title = "OH NO!"
       this.alert.message = message
