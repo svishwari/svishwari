@@ -35,25 +35,25 @@
                 {{ item.current && "(Current)" }}
               </span>
               <template #tooltip>
-                <div class="my-2 gray--text">
+                <div class="my-2 neroBlack--text">
                   Trained date
                   <div class="neroBlack--text">
                     {{ item.trained_date | Date | Empty }}
                   </div>
                 </div>
-                <div class="my-2 gray--text">
+                <div class="my-2 neroBlack--text">
                   Fulcrum date
                   <div class="neroBlack--text">
                     {{ item.fulcrum_date | Date | Empty }}
                   </div>
                 </div>
-                <div class="my-2 gray--text">
+                <div class="my-2 neroBlack--text">
                   Lookback period (Days)
                   <div class="neroBlack--text">
                     {{ item.lookback_window }}
                   </div>
                 </div>
-                <div class="my-2 gray--text">
+                <div class="my-2 neroBlack--text">
                   Prediction period (Days)
                   <div class="neroBlack--text">
                     {{ item.prediction_window }}
@@ -63,7 +63,7 @@
             </tooltip>
 
             <tooltip v-if="header.value == 'description'">
-              <span class="cell neroBlack--text ellipsis-29">
+              <span class="cell neroBlack--text ellipsis-23">
                 {{ item.description }}
               </span>
               <template #tooltip>
@@ -221,12 +221,12 @@ export default {
       text-decoration: none;
     }
   }
-  .ellipsis-29 {
+  .ellipsis-23 {
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 29ch;
+    max-width: 23ch;
     display: inline-block;
-    width: 29ch;
+    width: 23ch;
     white-space: nowrap;
   }
 }

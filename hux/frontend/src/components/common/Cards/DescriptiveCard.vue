@@ -14,11 +14,12 @@
     <div
       class="text-h4 px-3 pb-2"
       :class="disabled ? 'neroBlack--text' : 'primary--text'"
+      data-e2e="card-title"
     >
       {{ title }}
     </div>
 
-    <div class="text-caption px-3">
+    <div class="text-caption px-3" data-e2e="card-description">
       {{ description }}
     </div>
 

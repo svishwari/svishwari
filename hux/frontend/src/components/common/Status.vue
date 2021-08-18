@@ -99,7 +99,7 @@
   </div>
 
   <div v-else-if="Statuses.Pending.includes(status)">
-    <span v-if="!collapsed">
+    <span v-if="!collapsed" class="d-flex align-center">
       <v-btn
         width="15"
         height="15"
