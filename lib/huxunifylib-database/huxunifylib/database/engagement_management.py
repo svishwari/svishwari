@@ -155,13 +155,6 @@ def get_engagements_summary(
         },
         # remove the unused audience object fields.
         {"$project": {"audience": 0}},
-        # unwind the audiences again to map lookalikes.
-        {
-            "$unwind": {
-                "path": "$audiences",
-                "preserveNullAndEmptyArrays": True,
-            }
-        },
         # lookup audience objects to the lookalike_audience collection
         # to get lookalike_audience name.
         {
