@@ -91,7 +91,7 @@ steps:
 
   Tox_Tests:
     stage: tox_parallel
-    title: "Tox - Style"
+    title: "Tox - Safety and Coverage checks."
     image: huxhub.repo.mgnt.in/tox-ci
     working_directory: '${{CF_REPO_NAME}}/hux/api'
     description: "run tests using tox"
@@ -102,10 +102,6 @@ steps:
         title: 'safety'
         environment:
           - TOXENV=safety
-      style:
-        title: 'style'
-        environment:
-          - TOXENV=style
       checkCoverage:
         title: 'checkCoverage'
         environment:
@@ -114,14 +110,22 @@ steps:
 
   Tox_UnitTests:
     stage: tox_api_unittests
-    title: "Tox - Unittests"
+    title: "Tox - Style and Unittests"
     image: huxhub.repo.mgnt.in/tox-ci
     working_directory: '${{CF_REPO_NAME}}/hux/api'
-    description: "run py37 test using tox"
+    description: "run tests using tox"
     commands:
       - tox -e ${TOXENV} -- --skip-model-generate
-    environment:
-      - TOXENV=py37
+    scale:
+      style:
+        title: 'style'
+        environment:
+          - TOXENV=style
+      checkCoverage:
+        title: 'py37'
+        environment:
+          - TOXENV=py37
+    fail_fast: false
 
   PublishToArtifactory:
     stage: artifactory
