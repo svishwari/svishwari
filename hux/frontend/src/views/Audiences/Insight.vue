@@ -351,6 +351,7 @@
       :selected-audience="audience"
       @onBack="reloadAudienceData()"
       @onCreate="lookalikeCreated = true"
+      @onError="onError($event)"
     />
 
     <delivery-history-drawer
@@ -902,6 +903,12 @@ export default {
       this.mapInsights()
       this.getDestinations()
       this.loading = false
+    },
+    onError(message) {
+      this.alert.type = "error"
+      this.alert.title = "OH NO!"
+      this.alert.message = message
+      this.flashAlert = true
     },
   },
 }

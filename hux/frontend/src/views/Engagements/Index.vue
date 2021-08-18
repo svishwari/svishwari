@@ -360,6 +360,7 @@
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
       @onCreate="onCreated()"
+      @onError="onError($event)"
     />
 
     <hux-alert
@@ -570,6 +571,12 @@ export default {
     },
     async onCreated() {
       this.alert.message = `Your lookalike audience, ${name}, has been created successfully.`
+      this.flashAlert = true
+    },
+    onError(message) {
+      this.alert.type = "error"
+      this.alert.title = "OH NO!"
+      this.alert.message = message
       this.flashAlert = true
     },
   },
