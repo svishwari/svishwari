@@ -215,7 +215,7 @@ class OrchestrationSchemaTest(TestCase):
                 db_c.TYPE: "facebook",
             },
             db_c.SIZE: 1000,
-            api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
+            api_c.MATCH_RATE: round(uniform(0.21, 0.9), 2),
             api_c.DELIVERED: datetime.strftime(
                 datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
             ),
