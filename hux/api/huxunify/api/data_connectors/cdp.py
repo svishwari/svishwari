@@ -547,3 +547,51 @@ def clean_cdm_fields(body: dict) -> dict:
             body[date_field] = None
 
     return body
+
+
+def get_customers_insights_count_by_day(
+    token: str, date_filters: dict
+) -> dict:
+    """Fetch customer insights count by day data.
+
+    Args:
+        token (str): OKTA JWT Token.
+        date_filters (dict): filters to pass into
+            customer insights count by day endpoint.
+
+    Returns:
+        dict: dictionary of customer count data.
+    """
+
+    # get config
+    config = get_config()
+
+    logger.info("Attempting to get customer insights count by day from CDP")
+
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-day",
+        json=date_filters,
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Could not get customer insights count by day data from CDP API - "
+            "status_code: %s, response_text: %s",
+            response.status_code,
+            response.text,
+        )
+        return {}
+
+    logger.info(
+        "Successfully retrieved customer insights count by day data from "
+        "CDP API."
+    )
+
+    response_body = response.json()[api_c.BODY]
+    for record in response_body:
+        record[api_c.RECORDED] = parse(record[api_c.RECORDED])
+
+    return response_body

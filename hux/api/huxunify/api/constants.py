@@ -1192,3 +1192,7 @@ DEFAULT_ALERT_SORT_ORDER = "descending"
 DEFAULT_ALERT_BATCH_NUMBER = "1"
 
 NOTIFICATION_TYPE = "notification_type"
+
+# CDP Fields
+RECORDED = "recorded"
+DIFFERENCE_COUNT = "diff_count"

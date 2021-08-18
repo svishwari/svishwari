@@ -3,9 +3,9 @@
 Paths for customer API
 """
 from http import HTTPStatus
-from random import choice, randint
+from random import choice
 from typing import Tuple, List
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from faker import Faker
 import pandas as pd
@@ -13,6 +13,8 @@ import pandas as pd
 from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
+
+from huxunifylib.util.general.logging import logger
 
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
@@ -38,6 +40,7 @@ from huxunify.api.data_connectors.cdp import (
     get_idr_data_feeds,
     get_idr_matching_trends,
     get_customer_events_data,
+    get_customers_insights_count_by_day,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -786,23 +789,40 @@ class TotalCustomersGraphView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] list of total customers & new customers added, http code
+            Tuple[dict, int] list of total customers & new customers added,
+            http status code
         """
+
+        # get auth token from request
+        token_response = get_token_from_request(request)
+
+        # create a dict for date_filters required by cdp endpoint
         last_date = datetime.today() - relativedelta(months=6)
         today = datetime.today()
-        total_customers = []
-        while last_date <= today:
-            total_customers.append(
-                {
-                    api_c.TOTAL_CUSTOMERS: randint(50000, 156000),
-                    api_c.NEW_CUSTOMERS_ADDED: randint(1, 5000),
-                    api_c.DATE: last_date,
-                }
+        date_filters = {
+            "start_date": datetime.strftime(last_date, "%Y-%m-%d"),
+            "end_date": datetime.strftime(today, "%Y-%m-%d"),
+        }
+
+        customers_insight_total = get_customers_insights_count_by_day(
+            token_response[0], date_filters
+        )
+
+        # if the customers insight total response body is empty from CDP,
+        # then log and return 400
+        if not customers_insight_total:
+            logger.error("Failed to get Total Customer Insights from CDP")
+            return (
+                {"message": "Failed to get Total Customer Insights."},
+                HTTPStatus.BAD_REQUEST,
             )
-            last_date += timedelta(days=1)
+
         return (
             jsonify(
-                TotalCustomersInsightsSchema().dump(total_customers, many=True)
+                TotalCustomersInsightsSchema().dump(
+                    customers_insight_total,
+                    many=True,
+                )
             ),
             HTTPStatus.OK,
         )

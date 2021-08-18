@@ -432,16 +432,21 @@ class TestCustomersOverview(TestCase):
             t_c.validate_schema(CustomerEventsSchema(), response.json, True)
         )
 
-    def test_total_customer_insights(self):
+    def test_total_customer_insights_success(self) -> None:
         """
-        Test get total customer insights
+        Test get total customer insights success response
 
         Args:
 
         Returns:
-
+            None
         """
+
         self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-day",
+            json=t_c.CUSTOMER_INSIGHTS_COUNT_BY_DAY_RESPONSE,
+        )
         self.request_mocker.start()
 
         response = self.test_client.get(
@@ -455,3 +460,25 @@ class TestCustomersOverview(TestCase):
                 TotalCustomersInsightsSchema(), response.json, True
             )
         )
+
+    def test_total_customer_insights_failure(self) -> None:
+        """Test get total customer insights failure response
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-day",
+            json={},
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.TOTAL}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
