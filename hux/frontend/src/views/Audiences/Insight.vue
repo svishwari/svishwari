@@ -783,20 +783,27 @@ export default {
       this.alert.type = "Pending"
       this.alert.title = ""
       if (value == "engagement") {
-        this.alert.message = `Your engagement '${event.data.name}', has started delivering as part of the audience '${this.audience.name}'.`
-      } else {
-        this.alert.message = `Your engagement '${event.parent.name}', has started delivering to '${event.data.name}'.`
+        const engagementName = event.data.name
+        const audienceName = this.audience.name
+        this.alert.message = `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`
+      } else if (value == "destination") {
+        const engagementName = event.parent.name
+        const destinationName = event.data.name
+        this.alert.message = `Your engagement '${engagementName}', has started delivering to '${destinationName}'.`
       }
-
       this.flashAlert = true
     },
     dataErrorMesssage(event, value) {
       this.alert.type = "error"
       this.alert.title = "OH NO!"
       if (value == "engagement") {
-        this.alert.message = `Failed to schedule a delivery of your engagement '${event.data.name}', from '${this.audience.name}'.`
-      } else {
-        this.alert.message = `Failed to schedule delivery of your engagement '${event.parent.name}', to '${event.data.name}'.`
+        const engagementName = event.data.name
+        const audienceName = this.audience.name
+        this.alert.message = `Failed to schedule a delivery of your engagement '${engagementName}', from '${audienceName}'.`
+      } else if (value == "destination") {
+        const engagementName = event.parent.name
+        const destinationName = event.data.name
+        this.alert.message = `Failed to schedule delivery of your engagement '${engagementName}', to '${destinationName}'.`
       }
       this.flashAlert = true
     },
