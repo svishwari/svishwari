@@ -474,7 +474,7 @@ def get_idr_matching_trends(token: str) -> list:
 
 
 def fill_empty_customer_events(
-    start_date: datetime.datetime, end_date: datetime.datetime
+    start_date: datetime, end_date: datetime
 ) -> list:
     """Fill empty events for dates between start_date and end_date
 
@@ -518,7 +518,15 @@ def get_customer_events_data(
 
     config = get_config()
 
-    filters = filters if filters else api_c.CUSTOMER_EVENTS_DEFAULT_FILTER
+    # YTD by default
+    default_filter = {
+        api_c.START_DATE: "%s-01-01T00:00:00Z"
+        % datetime.datetime.utcnow().year,
+        api_c.END_DATE: datetime.datetime.utcnow().strftime("%Y-%m-%d")
+        + "T00:00:00Z",
+    }
+
+    filters = filters if filters else default_filter
 
     logger.info("Getting customer events info from CDP API.")
     response = requests.post(
@@ -541,15 +549,9 @@ def get_customer_events_data(
     prev_date = parse(filters.get(api_c.START_DATE))
     end_date = parse(filters.get(api_c.END_DATE))
 
-    # no customer events found in the date range, fill empty events
+    # no customer events found in the date range, return empty
     if not customer_events:
-        return fill_empty_customer_events(
-            prev_date - datetime.timedelta(1), end_date
-        )
-
-    customer_events.sort(
-        key=lambda customer_event_: parse(customer_event_.get("date"))
-    )
+        return []
 
     customer_events_dates_filled = []
 

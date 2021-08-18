@@ -701,8 +701,10 @@ class CustomerEvents(SwaggerView):
             "type": "object",
             "in": "body",
             "example": {
-                "start_date": "2021-07-25T00:00:00Z",
-                "end_date": "2021-08-02T00:00:00Z",
+                api_c.START_DATE: "%s-01-01T00:00:00Z"
+                % datetime.utcnow().year,
+                api_c.END_DATE: datetime.utcnow().strftime("%Y-%m-%d")
+                + "T00:00:00Z",
             },
         },
     ]
@@ -722,7 +724,7 @@ class CustomerEvents(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     def post(self, hux_id: str) -> Tuple[dict, int]:
         """Retrieves events for a given HUX ID.
 
