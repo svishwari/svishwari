@@ -1038,3 +1038,114 @@ class TestEngagementManagement(unittest.TestCase):
         )
 
         self.assertIsNone(updated_engagement)
+
+    def test_check_active_engagement_deliveries(self) -> None:
+        """Test check_active_engagement_deliveries routine
+
+        Returns:
+            Response: None
+
+        """
+
+        # an audience with two destinations
+        new_engagement = {
+            c.ENGAGEMENT_NAME: "Autumn Check",
+            c.ENGAGEMENT_DESCRIPTION: "Check for Autumn 2024",
+            c.AUDIENCES: [
+                {
+                    c.OBJECT_ID: self.audience[c.ID],
+                    c.SIZE: 5000,
+                    c.DESTINATIONS: [
+                        {
+                            c.OBJECT_ID: self.destinations[1][c.ID],
+                            c.STATUS: c.STATUS_SUCCEEDED,
+                        }
+                    ],
+                },
+            ],
+        }
+
+        engagement_id = em.set_engagement(
+            self.database,
+            new_engagement[c.ENGAGEMENT_NAME],
+            new_engagement[c.ENGAGEMENT_DESCRIPTION],
+            new_engagement[c.AUDIENCES],
+            self.user_name,
+        )
+        self.assertIsNotNone(engagement_id)
+
+        # simulate setting a delivery job directly
+        delivery_job_id = (
+            self.database[c.DATA_MANAGEMENT_DATABASE][
+                c.DELIVERY_JOBS_COLLECTION
+            ]
+            .insert_one(
+                {
+                    c.AUDIENCE_ID: self.audience[c.ID],
+                    c.ENGAGEMENT_ID: engagement_id,
+                    c.JOB_STATUS: c.AUDIENCE_STATUS_DELIVERED,
+                    c.DELIVERY_PLATFORM_ID: self.destinations[1][c.ID],
+                }
+            )
+            .inserted_id
+        )
+
+        # assign the delivery job to the engagement
+        # mongomock does not support double nested push, so we will do it manually.
+        engagement = em.get_engagement(self.database, engagement_id)
+        engagement[c.AUDIENCES][0][c.DESTINATIONS][0][
+            c.DELIVERY_JOB_ID
+        ] = delivery_job_id
+
+        # update the doc
+        self.database[c.DATA_MANAGEMENT_DATABASE][
+            c.ENGAGEMENTS_COLLECTION
+        ].find_one_and_update({c.ID: engagement_id}, {"$set": engagement})
+
+        active_deliveries = em.check_active_engagement_deliveries(
+            self.database
+        )
+
+        self.assertTrue(active_deliveries)
+        self.assertIn(c.DELIVERY_JOB_ID, active_deliveries[0])
+
+    def test_check_active_engagement_deliveries_non_delivered(self) -> None:
+        """Test check_active_engagement_deliveries routine with no deliveries
+
+        Returns:
+            Response: None
+
+        """
+
+        # an audience with two destinations
+        new_engagement = {
+            c.ENGAGEMENT_NAME: "Autumn Check",
+            c.ENGAGEMENT_DESCRIPTION: "Check for Autumn 2024",
+            c.AUDIENCES: [
+                {
+                    c.OBJECT_ID: self.audience[c.ID],
+                    c.SIZE: 5000,
+                    c.DESTINATIONS: [
+                        {
+                            c.OBJECT_ID: self.destinations[1][c.ID],
+                            c.STATUS: c.STATUS_SUCCEEDED,
+                        }
+                    ],
+                },
+            ],
+        }
+
+        engagement_id = em.set_engagement(
+            self.database,
+            new_engagement[c.ENGAGEMENT_NAME],
+            new_engagement[c.ENGAGEMENT_DESCRIPTION],
+            new_engagement[c.AUDIENCES],
+            self.user_name,
+        )
+        self.assertIsNotNone(engagement_id)
+
+        active_deliveries = em.check_active_engagement_deliveries(
+            self.database
+        )
+
+        self.assertFalse(active_deliveries)

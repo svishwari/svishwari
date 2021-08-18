@@ -386,6 +386,14 @@ class TestCustomersOverview(TestCase):
                 "end_date": "2021-04-30T00:00:00Z",
             }
         }
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+            json=t_c.MOCKED_CITY_LTVS_RESPONSE,
+        )
+        self.request_mocker.start()
+
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.DEMOGRAPHIC}",
             data=json.dumps(filter_attributes),

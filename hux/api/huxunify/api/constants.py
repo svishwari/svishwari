@@ -30,6 +30,8 @@ DELIVERIES = "deliveries"
 DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
 HUX_ID = "hux_id"
+TOP_FEATURES = "top_features"
+LIMIT = "limit"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -67,6 +69,7 @@ COUNTRY = "country"
 POPULATION_PERCENTAGE = "population_percentage"
 INCOME = "income"
 CDP_SERVICE_URL = "CDP_SERVICE_URL"
+COUNT = "count"
 # TODO: Remove State Names once it connected with CDM
 STATE_NAMES = {
     "AL": "Alabama",
@@ -567,6 +570,9 @@ LOOKBACK_WINDOW = "lookback_window"
 PREDICTION_WINDOW = "prediction_window"
 PAST_VERSION_COUNT = "past_version_count"
 LIFT_DATA = "lift_data"
+FEATURE_SERVICE = "feature_service"
+DATA_SOURCE = "data_source"
+POPULARITY = "popularity"
 BUCKET = "bucket"
 PREDICTED_VALUE = "predicted_value"
 ACTUAL_VALUE = "actual_value"

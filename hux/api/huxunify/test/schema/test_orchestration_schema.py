@@ -36,6 +36,18 @@ class OrchestrationSchemaTest(TestCase):
             db_c.AUDIENCE_FILTERS: [],
             db_c.DESTINATIONS: [],
             db_c.ENGAGEMENTS_COLLECTION: [],
+            db_c.DELIVERIES: [
+                {
+                    db_c.STATUS: "Delivered",
+                    db_c.METRICS_DELIVERY_PLATFORM_NAME: "Facebook",
+                    db_c.METRICS_DELIVERY_PLATFORM_TYPE: "facebook",
+                    db_c.AUDIENCE_LAST_DELIVERED: datetime.strftime(
+                        datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
+                    ),
+                },
+            ],
+            db_c.SIZE: 1000,
+            db_c.STATUS: "Delivered",
             db_c.LOOKALIKE_AUDIENCE_COLLECTION: [],
             api_c.IS_LOOKALIKE: False,
             api_c.LOOKALIKEABLE: api_c.DISABLED,
