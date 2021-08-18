@@ -293,6 +293,7 @@
     />
 
     <add-audience-drawer
+      ref="addNewAudience"
       v-model="value.audiences"
       :toggle="showAddAudiencesDrawer"
       @onToggle="(val) => (showAddAudiencesDrawer = val)"
@@ -494,6 +495,7 @@ export default {
 
     openAddAudiencesDrawer() {
       this.closeAllDrawers()
+      this.$refs.addNewAudience.fetchDependencies()
       this.showAddAudiencesDrawer = true
     },
 
