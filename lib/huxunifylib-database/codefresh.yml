@@ -16,12 +16,12 @@ steps:
 
   checks:
     stage: "checks"
-    image: 'huxhub.repo.mgnt.in/python:3.7-buster'
-    working_directory: '/codefresh/volume/${{CF_REPO_NAME}}/lib/huxunifylib-database'
-    description: run tests using tox
+    title: "LIB Checks"
+    image: huxhub.repo.mgnt.in/tox-ci
+    working_directory: '${{CF_REPO_NAME}}/lib/huxunifylib-database'
+    description: "run tests using tox"
     commands:
-      - pip install tox
-      - python -m tox -e ${TOXENV}
+      - tox -e ${TOXENV} -- --skip-model-generate
     scale:
       py37:
         environment:
