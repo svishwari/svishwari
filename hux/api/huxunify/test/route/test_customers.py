@@ -448,6 +448,9 @@ class TestCustomersOverview(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(
+            t_c.CUSTOMER_EVENT_RESPONSE.get("body"), response.json
+        )
 
         self.assertTrue(
             t_c.validate_schema(CustomerEventsSchema(), response.json, True)
