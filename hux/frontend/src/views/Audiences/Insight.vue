@@ -718,7 +718,6 @@ export default {
               id: event.data.id,
               audienceId: this.audienceId,
             })
-            console.log("event", event)
             this.dataPendingMesssage(event.data.name, "engagement")
           } catch (error) {
             this.dataErrorMesssage(event, "engagement")
@@ -750,7 +749,6 @@ export default {
               audienceId: this.audienceId,
               destinationId: event.data.id,
             })
-            console.log("event", event);
             this.dataPendingMesssage(event, "destination")
             break
           case "edit delivery schedule":
@@ -790,16 +788,14 @@ export default {
 
       this.flashAlert = true
     },
-    dataErrorMesssage(event) {
+    dataErrorMesssage(event, value) {
       this.alert.type = "error"
       this.alert.title = "OH NO!"
-          if (value == "engagement") {
+      if (value == "engagement") {
        this.alert.message = `Failed to schedule a delivery of engagement, '${event.data.name}', from audience, '${this.audience.name}'.`
       } else {
         this.alert.message = `Failed to schedule a delivery of destination, '${event.data.name}', from engagement, '${event.parent.name}'.`
       }
-
-      this.alert.message = `Failed to schedule a delivery for ${name}`
       this.flashAlert = true
     },
 

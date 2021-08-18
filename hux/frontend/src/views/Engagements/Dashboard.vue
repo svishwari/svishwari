@@ -536,7 +536,7 @@ export default {
       this.alert.type = "error"
       this.alert.title = "OH NO!"
       if (value == "audience") {
-       this.alert.message = `Failed to schedule a delivery of audience , '${event.data.name}', from engagement, '${this.engagementList.name}'.`
+       this.alert.message = `Failed to schedule a delivery of audience, '${event.data.name}', from engagement, '${this.engagementList.name}'.`
       } else {
         this.alert.message = `Failed to schedule a delivery of destination, '${event.data.name}', from audience, '${event.parent.name}'.`
       }
