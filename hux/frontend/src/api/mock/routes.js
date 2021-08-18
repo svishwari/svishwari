@@ -467,6 +467,7 @@ export const defineRoutes = (server) => {
         },
         size: audience.size,
         delivered: moment().toJSON(),
+        match_rate: faker.datatype.number({ min: 0, max: 1, precision: 0.001 }),
       }
     })
   })
