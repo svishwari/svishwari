@@ -2,6 +2,7 @@
 purpose of this file is to house all the cdp tests.
 """
 import datetime
+import re
 import string
 from unittest import TestCase, mock
 from http import HTTPStatus
@@ -231,5 +232,13 @@ class CDPTest(TestCase):
         self.assertTrue(data)
         for record in data:
             self.assertTrue(record[api_c.TOTAL_CUSTOMERS])
+            self.assertGreaterEqual(record[api_c.TOTAL_CUSTOMERS], 0)
             self.assertTrue(record[api_c.NEW_CUSTOMERS_ADDED])
+            self.assertGreaterEqual(record[api_c.NEW_CUSTOMERS_ADDED], 0)
             self.assertTrue(record[api_c.DATE])
+            self.assertTrue(
+                re.fullmatch(
+                    "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z",
+                    record[api_c.DATE],
+                )
+            )

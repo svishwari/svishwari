@@ -789,8 +789,7 @@ class TotalCustomersGraphView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] list of total customers & new customers added,
-            http status code
+            Tuple[dict, int] list of total customers & new customers added, http status code
         """
 
         # get auth token from request
@@ -800,8 +799,8 @@ class TotalCustomersGraphView(SwaggerView):
         last_date = datetime.today() - relativedelta(months=6)
         today = datetime.today()
         date_filters = {
-            "start_date": datetime.strftime(last_date, "%Y-%m-%d"),
-            "end_date": datetime.strftime(today, "%Y-%m-%d"),
+            api_c.START_DATE: datetime.strftime(last_date, "%Y-%m-%d"),
+            api_c.END_DATE: datetime.strftime(today, "%Y-%m-%d"),
         }
 
         customers_insight_total = get_customers_insights_count_by_day(
@@ -811,7 +810,7 @@ class TotalCustomersGraphView(SwaggerView):
         # if the customers insight total response body is empty from CDP,
         # then log and return 400
         if not customers_insight_total:
-            logger.error("Failed to get Total Customer Insights from CDP")
+            logger.error("Failed to get Total Customer Insights from CDP.")
             return (
                 {"message": "Failed to get Total Customer Insights."},
                 HTTPStatus.BAD_REQUEST,

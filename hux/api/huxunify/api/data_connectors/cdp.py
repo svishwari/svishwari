@@ -566,7 +566,7 @@ def get_customers_insights_count_by_day(
     # get config
     config = get_config()
 
-    logger.info("Attempting to get customer insights count by day from CDP")
+    logger.info("Attempting to get customer insights count by day from CDP.")
 
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-day",
@@ -579,7 +579,7 @@ def get_customers_insights_count_by_day(
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
             "Could not get customer insights count by day data from CDP API - "
-            "status_code: %s, response_text: %s",
+            "status_code: %s, response_text: %s.",
             response.status_code,
             response.text,
         )
@@ -591,7 +591,11 @@ def get_customers_insights_count_by_day(
     )
 
     response_body = response.json()[api_c.BODY]
+
     for record in response_body:
-        record[api_c.RECORDED] = parse(record[api_c.RECORDED])
+        try:
+            record[api_c.RECORDED] = parse(record[api_c.RECORDED])
+        except (ParserError, TypeError):
+            record[api_c.RECORDED] = None
 
     return response_body

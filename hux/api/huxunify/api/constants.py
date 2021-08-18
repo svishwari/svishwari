@@ -126,6 +126,8 @@ STATE_NAMES = [
 ]
 DEMOGRAPHIC = "demo"
 DATE = "date"
+RECORDED = "recorded"
+DIFFERENCE_COUNT = "diff_count"
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
@@ -1192,7 +1194,3 @@ DEFAULT_ALERT_SORT_ORDER = "descending"
 DEFAULT_ALERT_BATCH_NUMBER = "1"
 
 NOTIFICATION_TYPE = "notification_type"
-
-# CDP Fields
-RECORDED = "recorded"
-DIFFERENCE_COUNT = "diff_count"
