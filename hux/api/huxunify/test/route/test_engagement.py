@@ -736,7 +736,7 @@ class TestEngagementRoutes(TestCase):
         Returns:
 
         """
-        engagement_id = "random_id"
+        engagement_id = t_c.INVALID_ID
         audience_id = self.audiences[0][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
 
@@ -763,7 +763,7 @@ class TestEngagementRoutes(TestCase):
         Returns:
 
         """
-        engagement_id = "random_id"
+        engagement_id = t_c.INVALID_ID
         audience_id = self.audiences[0][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
 
@@ -844,7 +844,7 @@ class TestEngagementRoutes(TestCase):
         Returns:
 
         """
-        audience_id = "XYZ123"
+        audience_id = t_c.INVALID_ID
         engagement_id = self.engagement_ids[0]
         destination_id = self.destinations[0][db_c.ID]
 
@@ -872,7 +872,7 @@ class TestEngagementRoutes(TestCase):
         Returns:
 
         """
-        audience_id = "XYZ123"
+        audience_id = t_c.INVALID_ID
         engagement_id = self.engagement_ids[0]
         destination_id = self.destinations[0][db_c.ID]
 
@@ -900,7 +900,7 @@ class TestEngagementRoutes(TestCase):
         Returns:
 
         """
-        audience_id = "XYZ123"
+        audience_id = t_c.INVALID_ID
         engagement_id = self.engagement_ids[0]
         destination_id = self.destinations[0][db_c.ID]
 
@@ -930,7 +930,7 @@ class TestEngagementRoutes(TestCase):
         """
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = self.engagement_ids[0]
-        destination_id = "XYZ123"
+        destination_id = t_c.INVALID_ID
 
         response = self.app.get(
             (
@@ -957,7 +957,7 @@ class TestEngagementRoutes(TestCase):
         """
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = self.engagement_ids[0]
-        destination_id = "XYZ123"
+        destination_id = t_c.INVALID_ID
 
         response = self.app.put(
             (
@@ -987,7 +987,7 @@ class TestEngagementRoutes(TestCase):
         """
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = self.engagement_ids[0]
-        destination_id = "XYZ123"
+        destination_id = t_c.INVALID_ID
 
         response = self.app.get(
             (
@@ -1169,7 +1169,7 @@ class TestEngagementRoutes(TestCase):
 
         """
 
-        engagement_id = "XYZ"
+        engagement_id = t_c.INVALID_ID
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
@@ -1234,7 +1234,7 @@ class TestEngagementRoutes(TestCase):
 
         """
 
-        engagement_id = "XYZ123"
+        engagement_id = t_c.INVALID_ID
 
         response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
@@ -1395,7 +1395,7 @@ class TestEngagementRoutes(TestCase):
 
         """
 
-        bad_engagement_id = "asdfg123456"
+        bad_engagement_id = t_c.INVALID_ID
         good_engagement_id = self.engagement_ids[0]
 
         engagement_response = self.app.get(
@@ -1461,7 +1461,7 @@ class TestEngagementRoutes(TestCase):
 
         """
 
-        engagement_id = "asdfg123456"
+        engagement_id = t_c.INVALID_ID
 
         new_audience = {
             "audiences": [
