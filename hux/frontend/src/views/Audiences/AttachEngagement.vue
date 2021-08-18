@@ -400,8 +400,8 @@ export default {
     resetSchedule() {
       this.schedule = JSON.parse(JSON.stringify(deliverySchedule()))
       this.endMinDate = new Date(
-          new Date().getTime() - new Date().getTimezoneOffset() * 60000
-        ).toISOString()
+        new Date().getTime() - new Date().getTimezoneOffset() * 60000
+      ).toISOString()
       this.selectedStartDate = "Select date"
       this.selectedEndDate = "Select date"
     },
