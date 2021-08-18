@@ -479,7 +479,7 @@ def fill_empty_customer_events(
     """Fill empty events for dates between start_date and end_date
 
     Args:
-        start_date(datetime): start date between which dates, events need to be filled
+        start_date (datetime): start date between which dates, events need to be filled
         end_date (datetime): end date between which dates, events need to be filled
     Returns:
         list: customer events with zero
