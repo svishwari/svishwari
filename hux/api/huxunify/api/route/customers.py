@@ -699,10 +699,10 @@ class CustomerEvents(SwaggerView):
             "type": "object",
             "in": "body",
             "example": {
-                "filters": {
-                    "start_date": "2021-07-25T00:00:00Z",
-                    "end_date": "2021-08-02T00:00:00Z",
-                }
+                api_c.START_DATE: "%s-01-01T00:00:00Z"
+                % datetime.utcnow().year,
+                api_c.END_DATE: datetime.utcnow().strftime("%Y-%m-%d")
+                + "T00:00:00Z",
             },
         },
     ]
@@ -722,6 +722,7 @@ class CustomerEvents(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def post(self, hux_id: str) -> Tuple[dict, int]:
         """Retrieves events for a given HUX ID.
 
@@ -733,10 +734,14 @@ class CustomerEvents(SwaggerView):
         Returns:
             Tuple[dict, int] list of Customer events grouped by day and http code
         """
+        token_response = get_token_from_request(request)
         return (
             jsonify(
                 CustomerEventsSchema().dump(
-                    get_customer_events_data(hux_id), many=True
+                    get_customer_events_data(
+                        token_response[0], hux_id, request.json
+                    ),
+                    many=True,
                 )
             ),
             HTTPStatus.OK,
