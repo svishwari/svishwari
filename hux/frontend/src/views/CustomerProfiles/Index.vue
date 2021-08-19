@@ -136,7 +136,7 @@
           </div>
         </v-card>
       </div>
-      <v-row v-if="!loadingGeographics" class="px-15 mt-2">
+      <v-row class="px-15 mt-2">
         <v-col md="7">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
@@ -146,8 +146,13 @@
                 </span>
               </div>
             </v-card-title>
-            <map-chart :map-data="customersGeographics" />
-            <map-slider :map-data="customersGeographics" />
+            <v-progress-linear
+              v-if="loadingGeographics"
+              :active="loadingGeographics"
+              :indeterminate="loadingGeographics"
+            />
+            <map-chart v-if="!loadingGeographics" :map-data="customersGeographics" />
+            <map-slider  v-if="!loadingGeographics" :map-data="customersGeographics" />
           </v-card>
         </v-col>
         <v-col md="5">
@@ -158,7 +163,12 @@
               </div>
             </v-card-title>
             <v-divider class="ml-5 mr-8 mt-0 mb-1" />
-            <map-state-list :map-data="customersGeographics" />
+            <v-progress-linear
+              v-if="loadingGeographics"
+              :active="loadingGeographics"
+              :indeterminate="loadingGeographics"
+            />
+            <map-state-list v-if="!loadingGeographics" :map-data="customersGeographics" />
           </v-card>
         </v-col>
       </v-row>
@@ -379,8 +389,8 @@ export default {
 
   async mounted() {
     this.loading = true
-    this.fetchGeographics()
     await this.getOverview()
+    this.fetchGeographics()
     this.mapOverviewData()
     this.loading = false
   },
