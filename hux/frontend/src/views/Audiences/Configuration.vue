@@ -146,7 +146,8 @@
 
             <v-row class="neroBlack--text text-caption">
               <span class="ml-3 mt-2">
-                First add and deliver an audience to Facebook in order to create a lookalike audience from this audience’s dashboard. 
+                First add and deliver an audience to Facebook in order to create
+                a lookalike audience from this audience’s dashboard.
               </span>
             </v-row>
 

@@ -11,7 +11,10 @@
             {{ icon }}
           </v-icon>
         </template>
-        <template #hover-content class="white neroBlack--text shadow pa-2 text-caption">
+        <template
+          #hover-content
+          class="white neroBlack--text shadow pa-2 text-caption"
+        >
           <v-sheet max-width="240px">
             {{ helpText }}
           </v-sheet>
