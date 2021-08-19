@@ -287,6 +287,10 @@ class TotalCustomersInsightsSchema(Schema):
 
         ordered = True
 
-    date = DateTimeWithZ(required=True)
-    total_customers = Integer(required=True, example=5)
-    new_customers_added = Integer(required=True, example=5)
+    date = DateTimeWithZ(required=True, attribute=api_c.RECORDED)
+    total_customers = Integer(
+        required=True, attribute=api_c.TOTAL_COUNT, example=5
+    )
+    new_customers_added = Integer(
+        required=True, attribute=api_c.DIFFERENCE_COUNT, example=5
+    )

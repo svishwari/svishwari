@@ -4,18 +4,27 @@ from unittest import TestCase
 
 from huxunifylib.database import constants as db_c
 
-from huxunify.api.schema.customers import DataFeedSchema
+from huxunify.api import constants as api_c
+from huxunify.api.schema.customers import (
+    DataFeedSchema,
+    TotalCustomersInsightsSchema,
+)
 
 
-class TestIDRDatafeedSchema(TestCase):
+class CustomerSchemaTest(TestCase):
     """
     Test customer data related schemas
     """
 
-    def test_datafeed_schema(self) -> None:
+    def test_idr_datafeed_schema(self) -> None:
+        """Test idr datafeed schema.
+
+        Args:
+
+        Returns:
+            None
         """
-        Test datafeed schema
-        """
+
         doc = dict(
             datafeed_id="60e879d270815aade4d6c4fb",
             datafeed_name="Really_long_Feed_Name_106",
@@ -31,4 +40,23 @@ class TestIDRDatafeedSchema(TestCase):
         datafeed = DataFeedSchema().load(doc)
 
         self.assertIsInstance(datafeed["last_run"], datetime)
-        assert DataFeedSchema().validate(doc) == {}
+        self.assertFalse(DataFeedSchema().validate(doc))
+
+    def test_total_customer_insights_schema(self) -> None:
+        """Test total customers insights schema.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        customer_count_doc = {
+            api_c.DATE: "2021-04-01T00:00:00.000Z",
+            api_c.TOTAL_CUSTOMERS: 105080,
+            api_c.NEW_CUSTOMERS_ADDED: 4321,
+        }
+
+        self.assertFalse(
+            TotalCustomersInsightsSchema().validate(customer_count_doc)
+        )

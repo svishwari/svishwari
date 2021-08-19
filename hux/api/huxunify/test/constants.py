@@ -354,6 +354,37 @@ MOCKED_MODEL_LIFT_CHART = [
     }
 ]
 
+CUSTOMER_INSIGHTS_COUNT_BY_DAY_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            api_c.RECORDED: "2021-04-01",
+            api_c.TOTAL_COUNT: 105080,
+            api_c.DIFFERENCE_COUNT: 4321,
+        },
+        {
+            api_c.RECORDED: "2021-04-06",
+            api_c.TOTAL_COUNT: 108200,
+            api_c.DIFFERENCE_COUNT: 3120,
+        },
+        {
+            api_c.RECORDED: "2021-04-08",
+            api_c.TOTAL_COUNT: 111100,
+            api_c.DIFFERENCE_COUNT: 2900,
+        },
+        {
+            api_c.RECORDED: "2021-04-11",
+            api_c.TOTAL_COUNT: 112300,
+            api_c.DIFFERENCE_COUNT: 1200,
+        },
+        {
+            api_c.RECORDED: "2021-05-12",
+            api_c.TOTAL_COUNT: 116300,
+            api_c.DIFFERENCE_COUNT: 4000,
+        },
+    ],
+}
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False

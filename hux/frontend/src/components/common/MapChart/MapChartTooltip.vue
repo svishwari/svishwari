@@ -21,9 +21,17 @@
       <div class="sub-props pt-4">
         <span class="subprop-name">W/M/O</span>
         <span class="value ml-1">
-          {{ sourceInput.women | Numeric(true, false, false, true) | Empty }} |
-          {{ sourceInput.men | Numeric(true, false, false, true) | Empty }} |
-          {{ sourceInput.other | Numeric(true, false, false, true) | Empty }}
+          {{
+            sourceInput.gender_women | Numeric(true, false, false, true) | Empty
+          }}
+          |
+          {{
+            sourceInput.gender_men | Numeric(true, false, false, true) | Empty
+          }}
+          |
+          {{
+            sourceInput.gender_other | Numeric(true, false, false, true) | Empty
+          }}
         </span>
       </div>
       <div class="sub-props pt-4">
