@@ -51,18 +51,22 @@
               'fixed-column': header.fixed,
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
-              'pl-0': header.value === 'status',
             }"
             :style="{ width: header.width, left: 0 }"
           >
             <div v-if="header.value == 'name'" class="w-100 d-flex">
               <span v-if="item.is_lookalike == true" class="mr-3">
-                <icon
-                  type="lookalike"
-                  :size="20"
-                  color="neroBlack"
-                  class="mr-2"
-                />
+                <tooltip>
+                  <template #label-content>
+                    <icon
+                      type="lookalike"
+                      :size="20"
+                      color="neroBlack"
+                      class="mr-2"
+                    />
+                  </template>
+                  <template #hover-content>Lookalike audience</template>
+                </tooltip>
               </span>
               <menu-cell
                 :value="item[header.value]"
@@ -229,7 +233,7 @@ export default {
         {
           text: "Status",
           value: "status",
-          width: "140px",
+          width: "160px",
         },
         {
           text: "Size",
@@ -355,6 +359,7 @@ export default {
       margin-right: 10px;
     }
   }
+
   .hux-data-table {
     margin-top: 1px;
     table {

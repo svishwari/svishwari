@@ -1,7 +1,7 @@
 <template>
   <v-menu :top="positionTop" offset-y open-on-hover>
     <template #activator="{ on }">
-      <span class="d-flex align-center" v-on="on">
+      <span v-on="on">
         <slot name="label-content"></slot>
         <slot name="default"></slot>
       </span>

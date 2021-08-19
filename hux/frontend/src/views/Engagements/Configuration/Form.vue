@@ -112,7 +112,7 @@
               :label="selectedEndDate"
               :selected="selectedEndDate"
               :is-sub-menu="true"
-              :min-date="selectedStartDate"
+              :min-date="endMinDate"
               @on-date-select="onEndDateSelect"
             />
           </div>
@@ -293,6 +293,7 @@
     />
 
     <add-audience-drawer
+      ref="addNewAudience"
       v-model="value.audiences"
       :toggle="showAddAudiencesDrawer"
       @onToggle="(val) => (showAddAudiencesDrawer = val)"
@@ -378,6 +379,9 @@ export default {
       disableEndDate: true,
       errorMessages: [],
       schedule: JSON.parse(JSON.stringify(deliverySchedule())),
+      endMinDate: new Date(
+        new Date().getTime() - new Date().getTimezoneOffset() * 60000
+      ).toISOString(),
     }
   },
 
@@ -461,6 +465,9 @@ export default {
         this.selectedStartDate = "Select date"
         this.selectedEndDate = "Select date"
         this.disableEndDate = true
+        this.endMinDate = new Date(
+          new Date().getTime() - new Date().getTimezoneOffset() * 60000
+        ).toISOString()
         this.$set(this.value, "recurring", null)
         this.resetSchedule()
       }
@@ -488,6 +495,7 @@ export default {
 
     openAddAudiencesDrawer() {
       this.closeAllDrawers()
+      this.$refs.addNewAudience.fetchDependencies()
       this.showAddAudiencesDrawer = true
     },
 
@@ -558,6 +566,7 @@ export default {
         start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
         end: null,
       })
+      this.endMinDate = val
     },
 
     onEndDateSelect(val) {

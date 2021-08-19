@@ -12,7 +12,6 @@ from dateutil import parser
 import aiohttp
 import async_timeout
 import requests
-
 from huxunifylib.util.general.logging import logger
 
 from huxunify.api.config import get_config
@@ -22,7 +21,6 @@ from huxunify.api.schema.model import (
     FeatureSchema,
     DriftSchema,
     ModelLiftSchema,
-    PerformanceMetricSchema,
 )
 
 
@@ -76,7 +74,9 @@ def map_model_response(response: dict) -> List[dict]:
             constants.FULCRUM_DATE: parser.parse(feature[2]),
             constants.LOOKBACK_WINDOW: int(feature[3]),
             constants.NAME: feature[4],
-            constants.TYPE: feature[5],
+            constants.TYPE: constants.MODEL_TYPES_MAPPING.get(
+                str(feature[5]).lower(), constants.UNKNOWN
+            ),
             constants.OWNER: feature[6],
             constants.STATUS: feature[8],
             constants.LATEST_VERSION: feature[9],
@@ -118,7 +118,9 @@ def map_model_version_history_response(
             constants.FULCRUM_DATE: parser.parse(feature[2]),
             constants.LOOKBACK_WINDOW: int(feature[3]),
             constants.NAME: feature[5],
-            constants.TYPE: feature[5],
+            constants.TYPE: constants.MODEL_TYPES_MAPPING.get(
+                str(feature[5]).lower(), constants.UNKNOWN
+            ),
             constants.OWNER: feature[7],
             constants.STATUS: feature[9],
             constants.CURRENT_VERSION: meta_data[constants.JOIN_KEYS][0],
@@ -126,6 +128,60 @@ def map_model_version_history_response(
         }
         models.append(model)
     return models
+
+
+def map_model_performance_response(
+    response: dict,
+    model_id: int,
+    model_type: str,
+    model_version: str,
+    metric_default_value: float = 0,
+) -> dict:
+    """Map model performance response to a usable dict.
+
+    Args:
+        response (dict): Input Tecton API response.
+        model_id (int): Model ID number.
+        model_type (str): Model type.
+        model_version (str): Model version.
+        metric_default_value (float): Default metric value if not found.
+
+    Returns:
+        dict: A cleaned model performance dict.
+
+    """
+
+    if response.status_code != 200 or constants.RESULTS not in response.json():
+        return {}
+
+    for meta_data in response.json()[constants.RESULTS]:
+        # get model metadata from tecton
+        feature = meta_data[constants.FEATURES]
+
+        # get version based on model type and skip if not the provided version.
+        if feature[4] != model_version:
+            continue
+
+        # grab the metrics based on model type and return.
+        return {
+            constants.ID: model_id,
+            constants.RMSE: float(feature[0])
+            if model_type in constants.REGRESSION_MODELS
+            else metric_default_value,
+            constants.AUC: float(feature[0])
+            if model_type in constants.CLASSIFICATION_MODELS
+            else metric_default_value,
+            constants.PRECISION: float(feature[5])
+            if model_type in constants.CLASSIFICATION_MODELS
+            else metric_default_value,
+            constants.RECALL: float(feature[6])
+            if model_type in constants.CLASSIFICATION_MODELS
+            else metric_default_value,
+            constants.CURRENT_VERSION: model_version,
+        }
+
+    # nothing found, return an empty dict.
+    return {}
 
 
 def get_models() -> List[dict]:
@@ -376,15 +432,52 @@ def get_model_features(
     return result_features
 
 
-# pylint: disable=unused-argument
-def get_model_performance_metrics(name: str) -> List[PerformanceMetricSchema]:
-    """Get model performance metrics based on name.
+def get_model_performance_metrics(
+    model_id: int, model_type: str, model_version: str
+) -> dict:
+    """Get model performance metrics based on model ID.
 
     Args:
-        name (str): model name.
+        model_id (int): Model id.
+        model_type (str): Model type.
+        model_version (str): Model version.
 
     Returns:
-         List[PerformanceMetricSchema] List of model performance metrics.
+         dict: Model performance metrics.
     """
-    # TODO - when available.
-    return []
+
+    # get config
+    config = get_config()
+
+    # regression models calculate RMSE
+    if model_type in constants.REGRESSION_MODELS:
+        service_name = "ui_metadata_model_metrics_regression_service"
+    # classification models calculate AUC, Precision, Recall
+    elif model_type in constants.CLASSIFICATION_MODELS:
+        service_name = "ui_metadata_model_metrics_classification_service"
+    else:
+        raise ValueError(f"Model type not supported {model_type}")
+
+    # set payload and service name.
+    payload = {
+        "params": {
+            "feature_service_name": service_name,
+            "join_key_map": {"model_id": f"{model_id}"},
+        }
+    }
+
+    logger.info("Querying Tecton for model performance metrics.")
+    response = requests.post(
+        config.TECTON_FEATURE_SERVICE,
+        dumps(payload),
+        headers=config.TECTON_API_HEADERS,
+    )
+    logger.info("Querying Tecton for model performance metrics complete.")
+
+    # submit the post request to get the model metrics.
+    return map_model_performance_response(
+        response,
+        model_id,
+        model_type,
+        model_version,
+    )

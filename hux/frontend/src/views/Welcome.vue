@@ -11,14 +11,16 @@
       </span>
       <h2>All Together, Entirely</h2>
       <v-btn
+        :to="{ name: 'Overview' }"
+        data-e2e="signin"
         elevation="2"
         small
         tile
-        class="mt-8"
+        class="btn-signin mt-8"
         color="primary"
-        @click="login()"
-        >Sign In</v-btn
       >
+        Sign In
+      </v-btn>
     </div>
   </div>
 </template>
@@ -41,9 +43,6 @@ export default {
     this.setup()
   },
   methods: {
-    login() {
-      this.$router.push({ name: "Overview" })
-    },
     async setup() {
       this.isAuthenticated()
       this.claims = await this.$auth.getUser()
@@ -126,7 +125,7 @@ export default {
       color: var(--v-greenLight-base);
       margin-top: 8px;
     }
-    button {
+    .btn-signin {
       min-height: 40px;
       min-width: 95px;
       font-size: 14px;

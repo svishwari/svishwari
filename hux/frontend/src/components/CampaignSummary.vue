@@ -14,6 +14,7 @@
             :max-width="item.width"
             :grow="i === 0 ? 2 : 1"
             :title="item.title"
+            :height="70"
           >
             <template #subtitle-extended>
               <span v-if="item.field.includes('|')">

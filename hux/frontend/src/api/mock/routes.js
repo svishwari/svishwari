@@ -1,5 +1,6 @@
 import { Response } from "miragejs"
 import moment from "moment"
+import faker from "faker"
 
 import { audienceInsights } from "./factories/audiences"
 import { customersOverview } from "./factories/customers"
@@ -262,6 +263,19 @@ export const defineRoutes = (server) => {
       return { message: "Successfully created mappings" }
     }
   )
+  //update Engagement
+  server.put("/engagements/:id", (schema, request) => {
+    const engagementId = request.params.id
+    const requestData = JSON.parse(request.requestBody)
+    if (requestData.status) {
+      const payload = {
+        status: requestData.status,
+      }
+      schema.engagements.find(engagementId).update(payload)
+      return { message: "Successfully inactivated engagement" }
+    }
+  })
+
   server.get(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/campaigns",
     (schema, request) => {
@@ -288,6 +302,7 @@ export const defineRoutes = (server) => {
         },
         size: audience.size,
         delivered: moment().toJSON(),
+        match_rate: faker.datatype.number({ min: 0, max: 1, precision: 0.001 }),
       }
     })
   })
@@ -452,6 +467,7 @@ export const defineRoutes = (server) => {
         },
         size: audience.size,
         delivered: moment().toJSON(),
+        match_rate: faker.datatype.number({ min: 0, max: 1, precision: 0.001 }),
       }
     })
   })
