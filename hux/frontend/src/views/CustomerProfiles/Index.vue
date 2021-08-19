@@ -137,6 +137,20 @@
         </v-card>
       </div>
       <v-row class="px-15 mt-2">
+        <v-col md="12">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="522">
+            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5">
+                  Total Customers (last 6 months)
+                </span>
+              </div>
+            </v-card-title>
+            <total-customer-chart :customerData="totalCustomerData" />
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row class="px-15 mt-2">
         <v-col md="7">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
@@ -225,6 +239,8 @@ import mapData from "@/components/common/MapChart/mapData.json"
 import genderData from "@/components/common/DoughnutChart/genderData.json"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
+import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
+import customerData from "@/components/common/TotalCustomerChart/TotalCustomerData.json"
 
 export default {
   name: "CustomerProfiles",
@@ -242,11 +258,14 @@ export default {
     MapStateList,
     mapSlider,
     DoughnutChart,
+    TotalCustomerChart,
   },
 
   data() {
     return {
       mapChartData: mapData.demographic_overview,
+      totalCustomerData: customerData.featureList,
+      totalCustomersData: customerData.customersData,
       customerProfilesDrawer: false,
       overviewListItems: [
         {
