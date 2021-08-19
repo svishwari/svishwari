@@ -4,12 +4,22 @@
   "description": "End-to-end tests with Cypress",
   "main": "index.js",
   "scripts": {
-    "test": "cypress run --headless",
-    "test:dev": "cypress open"
+    "lint:fix": "npm run lint -- --fix",
+    "lint": "eslint ./**/**.js",
+    "style:fix": "npx prettier --write .",
+    "style": "npx prettier --check .",
+    "postinstall": "npm run precommit:prepare",
+    "precommit:prepare": "cd ../../../ && husky install hux/integration_tests/frontend/.husky",
+    "precommit": "npm run lint && npm run style",
+    "test:dev": "cypress open",
+    "test": "cypress run --headless"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "cypress": "^6.9.1"
+    "cypress": "^8.3.0",
+    "eslint-plugin-cypress": "^2.11.3",
+    "husky": "^7.0.0",
+    "prettier": "2.3.2"
   }
 }

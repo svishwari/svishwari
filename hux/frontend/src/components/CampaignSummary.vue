@@ -14,6 +14,7 @@
             :max-width="item.width"
             :grow="i === 0 ? 2 : 1"
             :title="item.title"
+            :height="70"
           >
             <template #subtitle-extended>
               <span v-if="item.field.includes('|')">
@@ -168,7 +169,7 @@
                   <tr :class="{ 'v-data-table__expanded__row': isExpanded }">
                     <td :style="{ width: expandedHeaders[0].width }">
                       <div
-                        class="w-100 d-flex align-center"
+                        class="w-100 d-flex align-center destination-col"
                         :class="{
                           'pl-11': !item.is_mapped && type === 'ads',
                           'pl-3': item.campaigns && item.campaigns.length > 0,
@@ -210,12 +211,7 @@
                           </span>
                         </span>
                         <span v-else class="d-flex align-center">
-                          <!-- TODO Route Link to Audience Insight Page -->
-                          <router-link
-                            to="#"
-                            class="text-decoration-none"
-                            append
-                          >
+                          <div class="audience-insight">
                             <logo
                               :type="logoType(item[expandedHeaders[0].value])"
                               :size="18"
@@ -226,7 +222,7 @@
                             >
                               {{ item[expandedHeaders[0].value] | Empty("-") }}
                             </span>
-                          </router-link>
+                          </div>
                         </span>
                       </div>
                     </td>
@@ -239,23 +235,25 @@
                         ),
                       }"
                     >
-                      <span class="error--text mr-2">
-                        <v-icon small color="error" class="icon-info mr-1">
-                          mdi-information-outline
-                        </v-icon>
-                        To view KPIs you need to map to a Facebook campaign.
-                      </span>
-                      <v-btn
-                        tile
-                        class="error--text px-2 pl-2 pr-4 icon-info"
-                        color="white"
-                        height="29"
-                        width="99"
-                        @click="triggerCampaignMap(parentItem, item)"
-                      >
-                        <icon type="map_now_icon" :size="20" class="mr-1" />
-                        Map now
-                      </v-btn>
+                      <div class="d-flex">
+                        <div class="error--text mr-2 mt-1">
+                          <v-icon small color="error" class="icon-info mr-1">
+                            mdi-information-outline
+                          </v-icon>
+                          To view KPIs you need to map to a Facebook campaign.
+                        </div>
+                        <v-btn
+                          tile
+                          class="error--text px-2 pl-2 pr-4"
+                          color="white"
+                          height="29"
+                          width="99"
+                          @click="triggerCampaignMap(parentItem, item)"
+                        >
+                          <icon type="map_now_icon" :size="20" class="mr-1" />
+                          Map now
+                        </v-btn>
+                      </div>
                     </td>
                     <td
                       v-for="header in getDestinationHeaders(expandedHeaders)"
@@ -822,6 +820,13 @@ export default {
   .icon-audiences {
     position: absolute;
     margin-top: -1px;
+  }
+  .audience-insight {
+    cursor: default;
+    color: var(--v-naroBlack-base) !important;
+  }
+  .destination-col {
+    margin-top: 5px;
   }
 }
 </style>

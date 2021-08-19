@@ -406,6 +406,12 @@ def api_error_handler(custom_message: dict = None) -> object:
                     if custom_message
                     else "Value Error Encountered"
                 }, HTTPStatus.INTERNAL_SERVER_ERROR
+            except ZeroDivisionError:
+                return {
+                    "message": custom_message
+                    if custom_message
+                    else "Division by zero Error Encountered"
+                }, HTTPStatus.INTERNAL_SERVER_ERROR
 
             except de.DuplicateName as exc:
                 logger.error(

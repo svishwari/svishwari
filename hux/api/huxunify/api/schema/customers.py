@@ -267,6 +267,8 @@ class CustomerEventCountSchema(Schema):
     customer_login = Integer(required=True, example=1)
     viewed_checkout = Integer(required=True, example=1)
     viewed_sale_item = Integer(required=True, example=1)
+    item_purchased = Integer(required=True, example=1)
+    trait_computed = Integer(required=True, example=1)
 
 
 class CustomerEventsSchema(Schema):
@@ -285,6 +287,10 @@ class TotalCustomersInsightsSchema(Schema):
 
         ordered = True
 
-    date = DateTimeWithZ(required=True)
-    total_customers = Integer(required=True, example=5)
-    new_customers_added = Integer(required=True, example=5)
+    date = DateTimeWithZ(required=True, attribute=api_c.RECORDED)
+    total_customers = Integer(
+        required=True, attribute=api_c.TOTAL_COUNT, example=5
+    )
+    new_customers_added = Integer(
+        required=True, attribute=api_c.DIFFERENCE_COUNT, example=5
+    )

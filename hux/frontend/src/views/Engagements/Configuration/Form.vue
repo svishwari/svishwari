@@ -79,11 +79,7 @@
 
             <v-radio
               :value="1"
-              :class="
-                value.delivery_schedule == 1
-                  ? 'btn-radio-active'
-                  : 'btn-radio-inactive'
-              "
+              :class="isRecurring ? 'btn-radio-active' : 'btn-radio-inactive'"
             >
               <template #label>
                 <v-icon small color="primary" class="mr-1"
@@ -95,7 +91,7 @@
           </v-radio-group>
         </v-row>
         <v-row class="delivery-schedule mt-10 ml-n2">
-          <div v-if="value.delivery_schedule == 1">
+          <div v-if="isRecurring">
             <span class="date-picker-label neroBlack--text text-caption">
               Start date
             </span>
@@ -106,13 +102,8 @@
               @on-date-select="onStartDateSelect"
             />
           </div>
-          <icon
-            v-if="value.delivery_schedule == 1"
-            class="ml-2 mr-2"
-            type="arrow"
-            :size="28"
-          />
-          <div v-if="value.delivery_schedule == 1">
+          <icon v-if="isRecurring" class="ml-2 mr-2" type="arrow" :size="28" />
+          <div v-if="isRecurring">
             <span class="date-picker-label neroBlack--text text-caption">
               End date
             </span>
@@ -121,10 +112,14 @@
               :label="selectedEndDate"
               :selected="selectedEndDate"
               :is-sub-menu="true"
-              :min-date="selectedStartDate"
+              :min-date="endMinDate"
               @on-date-select="onEndDateSelect"
             />
           </div>
+        </v-row>
+
+        <v-row class="delivery-schedule mt-8">
+          <hux-schedule-picker v-if="isRecurring" v-model="schedule" />
         </v-row>
       </form-step>
 
@@ -298,6 +293,7 @@
     />
 
     <add-audience-drawer
+      ref="addNewAudience"
       v-model="value.audiences"
       :toggle="showAddAudiencesDrawer"
       @onToggle="(val) => (showAddAudiencesDrawer = val)"
@@ -339,6 +335,8 @@ import DestinationDataExtensionDrawer from "./Drawers/DestinationDataExtensionDr
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 import Icon from "@/components/common/Icon.vue"
+import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
+import { deliverySchedule } from "@/utils"
 
 export default {
   name: "EngagementsForm",
@@ -358,6 +356,7 @@ export default {
     HuxStartDate,
     HuxEndDate,
     Icon,
+    HuxSchedulePicker,
   },
 
   props: {
@@ -379,6 +378,10 @@ export default {
       selectedEndDate: "Select date",
       disableEndDate: true,
       errorMessages: [],
+      schedule: JSON.parse(JSON.stringify(deliverySchedule())),
+      endMinDate: new Date(
+        new Date().getTime() - new Date().getTimezoneOffset() * 60000
+      ).toISOString(),
     }
   },
 
@@ -441,6 +444,10 @@ export default {
     totalSelectedAudiences() {
       return Object.values(this.value.audiences).length
     },
+
+    isRecurring() {
+      return this.value.delivery_schedule == 1
+    },
   },
 
   methods: {
@@ -449,12 +456,20 @@ export default {
       deliverEngagement: "engagements/deliver",
     }),
 
+    resetSchedule() {
+      this.schedule = JSON.parse(JSON.stringify(deliverySchedule()))
+    },
+
     changeSchedule() {
       if (this.value.delivery_schedule) {
         this.selectedStartDate = "Select date"
         this.selectedEndDate = "Select date"
         this.disableEndDate = true
+        this.endMinDate = new Date(
+          new Date().getTime() - new Date().getTimezoneOffset() * 60000
+        ).toISOString()
         this.$set(this.value, "recurring", null)
+        this.resetSchedule()
       }
     },
 
@@ -480,6 +495,7 @@ export default {
 
     openAddAudiencesDrawer() {
       this.closeAllDrawers()
+      this.$refs.addNewAudience.fetchDependencies()
       this.showAddAudiencesDrawer = true
     },
 
@@ -550,6 +566,7 @@ export default {
         start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
         end: null,
       })
+      this.endMinDate = val
     },
 
     onEndDateSelect(val) {

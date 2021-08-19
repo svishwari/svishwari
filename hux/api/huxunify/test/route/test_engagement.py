@@ -125,6 +125,10 @@ class TestEngagementMetricsDisplayAds(TestCase):
         self.ad_set_id = "8134731897438943"
         self.campaign_name = "Test campaing"
         self.ad_set_name = "Test ad set name"
+        mock.patch(
+            "huxunify.api.data_connectors.performance_metrics.get_db_client",
+            return_value=self.database,
+        ).start()
 
         self.audience_id = create_audience(self.database, "Test Audience", [])[
             db_c.ID
@@ -324,6 +328,11 @@ class TestEngagementMetricsEmail(TestCase):
         # mock get_db_client() for the engagement.
         mock.patch(
             "huxunify.api.route.engagement.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        mock.patch(
+            "huxunify.api.data_connectors.performance_metrics.get_db_client",
             return_value=self.database,
         ).start()
 
