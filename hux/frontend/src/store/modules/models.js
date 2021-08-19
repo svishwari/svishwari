@@ -8,12 +8,14 @@ const state = {
   items: {},
   overview: {},
   history: {},
+  lift: [],
 }
 
 const getters = {
   list: (state) => Object.values(state.items),
   overview: (state) => state.overview,
   history: (state) => Object.values(state.history),
+  lift: (state) => state.lift,
 }
 
 const mutations = {
@@ -37,6 +39,10 @@ const mutations = {
     getHistory.forEach((item) => {
       Vue.set(state.history, item.version, item)
     })
+  },
+
+  SET_LIFT(state, data) {
+    state.lift = data
   },
 }
 
@@ -65,6 +71,16 @@ const actions = {
     try {
       const response = await api.models.versionHistory(modelId)
       commit("SET_HISTORY", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getLift({ commit }, modelId) {
+    try {
+      const response = await api.models.lift(modelId)
+      commit("SET_LIFT", response.data)
     } catch (error) {
       handleError(error)
       throw error

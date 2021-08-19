@@ -122,9 +122,14 @@
         <v-col col="12">
           <v-card class="rounded-lg box-shadow-5 px-6 py-5">
             <div class="neroBlack--text text-h5 pb-4">Lift chart</div>
+            <v-progress-linear
+              v-if="loadingLift"
+              :active="loadingLift"
+              :indeterminate="loadingLift"
+            />
             <lift-chart
-              v-if="model.performance_metric"
-              :data="model.lift_data || []"
+              v-else
+              :data="lift"
               :rmse="model.performance_metric['rmse']"
             />
           </v-card>
@@ -162,6 +167,7 @@ export default {
   data() {
     return {
       loading: false,
+      loadingLift: true,
       versionHistoryDrawer: false,
       chartDimensions: {
         width: 0,
@@ -174,6 +180,7 @@ export default {
   computed: {
     ...mapGetters({
       model: "models/overview",
+      lift: "models/lift",
     }),
 
     driftChartData() {
@@ -212,6 +219,7 @@ export default {
     this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     this.chartDimensions.height = 520
     await this.getOverview(this.$route.params.id)
+    this.fetchLift()
     this.loading = false
   },
 
@@ -231,7 +239,13 @@ export default {
   methods: {
     ...mapActions({
       getOverview: "models/getOverview",
+      getLift: "models/getLift",
     }),
+    async fetchLift() {
+      this.loadingLift = true
+      await this.getLift(this.$route.params.id)
+      this.loadingLift = false
+    },
     viewVersionHistory() {
       this.versionHistoryDrawer = !this.versionHistoryDrawer
     },

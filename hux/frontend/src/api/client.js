@@ -186,4 +186,8 @@ client["models"].versionHistory = (id) => {
   return http.get(`/models/${id}/version-history`)
 }
 
+client["models"].lift = (id) => {
+  return http.get(`/models/${id}/lift`)
+}
+
 export default client
