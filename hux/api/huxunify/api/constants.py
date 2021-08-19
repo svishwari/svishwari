@@ -421,7 +421,16 @@ IS_MAPPED = "is_mapped"
 DELIVERED = "delivered"
 UNSUBSCRIBE = "unsubscribe"
 SPEND = "spend"
-
+ENGAGEMENT_ID_PARAMS = [
+    {
+        "name": ENGAGEMENT_ID,
+        "description": "Engagement ID.",
+        "type": "string",
+        "in": "path",
+        "required": True,
+        "example": "60b8d6d7d3cf80b4edcd890b",
+    }
+]
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"
 CDP_DATA_SOURCE_CATEGORY = "category"
