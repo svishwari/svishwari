@@ -47,7 +47,6 @@ export default {
   },
   computed: {
     features() {
-      console.log(this.featureData)
       return this.featureData
     },
   },
