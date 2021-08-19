@@ -70,9 +70,7 @@ def map_model_response(response: dict) -> List[dict]:
             constants.FULCRUM_DATE: parser.parse(feature[2]),
             constants.LOOKBACK_WINDOW: int(feature[3]),
             constants.NAME: feature[4],
-            constants.TYPE: constants.MODEL_TYPES_MAPPING.get(
-                str(feature[5]).lower(), constants.UNKNOWN
-            ),
+            constants.TYPE: str(feature[5]).lower(),
             constants.OWNER: feature[6],
             constants.STATUS: feature[8],
             constants.LATEST_VERSION: feature[9],
@@ -127,11 +125,7 @@ def map_model_version_history_response(
 
 
 def map_model_performance_response(
-    response: dict,
-    model_id: int,
-    model_type: str,
-    model_version: str,
-    metric_default_value: float = 0,
+    response: dict, model_id: int, model_type: str, model_version: str
 ) -> dict:
     """Map model performance response to a usable dict.
 
@@ -140,7 +134,6 @@ def map_model_performance_response(
         model_id (int): Model ID number.
         model_type (str): Model type.
         model_version (str): Model version.
-        metric_default_value (float): Default metric value if not found.
 
     Returns:
         dict: A cleaned model performance dict.
@@ -159,22 +152,24 @@ def map_model_performance_response(
             continue
 
         # grab the metrics based on model type and return.
-        return {
+        metrics = {
             constants.ID: model_id,
-            constants.RMSE: float(feature[0])
-            if model_type in constants.REGRESSION_MODELS
-            else metric_default_value,
-            constants.AUC: float(feature[0])
-            if model_type in constants.CLASSIFICATION_MODELS
-            else metric_default_value,
-            constants.PRECISION: float(feature[5])
-            if model_type in constants.CLASSIFICATION_MODELS
-            else metric_default_value,
-            constants.RECALL: float(feature[6])
-            if model_type in constants.CLASSIFICATION_MODELS
-            else metric_default_value,
             constants.CURRENT_VERSION: model_version,
         }
+
+        # set metrics specific to model type, otherwise dont include
+        if model_type in constants.REGRESSION_MODELS:
+            metrics[constants.RMSE] = float(feature[0])
+
+        if model_type in constants.CLASSIFICATION_MODELS:
+            metrics.update(
+                {
+                    constants.AUC: float(feature[0]),
+                    constants.PRECISION: float(feature[5]),
+                    constants.RECALL: float(feature[6]),
+                }
+            )
+        return metrics
 
     # nothing found, return an empty dict.
     return {}
