@@ -315,7 +315,9 @@ def get_model_lift_async(model_id: int) -> List[ModelLiftSchema]:
     return result_lift
 
 
-async def get_async_lift_bucket(model_id: int, bucket: int) -> dict:
+async def get_async_lift_bucket(
+    model_id: int, bucket: int
+) -> Tuple[dict, int]:
     """asynchronously gets lift by bucket
 
     Args:
@@ -323,7 +325,7 @@ async def get_async_lift_bucket(model_id: int, bucket: int) -> dict:
         bucket (int): bucket.
 
     Returns:
-       dict: bucket lift dict.
+       Tuple[dict,int]: bucket lift dict.
     """
 
     # get config
