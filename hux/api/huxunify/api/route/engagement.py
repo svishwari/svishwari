@@ -1624,13 +1624,14 @@ class AudienceCampaignMappingsGetView(SwaggerView):
                 campaign.get(api_c.ID)
             )
             for ad_set in ad_sets:
-                campaign_mapping = {
-                    api_c.ID: campaign.get(api_c.ID),
-                    api_c.AD_SET_ID: ad_set.get(api_c.ID),
-                    api_c.NAME: campaign.get(api_c.NAME),
-                    api_c.AD_SET_NAME: ad_set.get(api_c.NAME),
-                }
-                campaign_mappings.append(campaign_mapping)
+                campaign_mappings.append(
+                    {
+                        api_c.ID: campaign.get(api_c.ID),
+                        api_c.AD_SET_ID: ad_set.get(api_c.ID),
+                        api_c.NAME: campaign.get(api_c.NAME),
+                        api_c.AD_SET_NAME: ad_set.get(api_c.NAME),
+                    }
+                )
 
         # Build response object
         campaign_schema = {

@@ -21,6 +21,50 @@ from huxunify.api.route.utils import (
     get_db_client,
 )
 
+
+def get_display_ads_campaign_metrics(
+    delivery_jobs: list,
+    performance_metrics: list,
+    metrics_type: str,
+) -> list:
+    """Group performance metrics for campaigns
+
+    Args:
+        delivery_jobs (list) : Delivery jobs.
+        performance_metrics (list): List of performance metrics.
+        metrics_type (str): Type of performance metrics.
+
+    Returns:
+        list: Grouped performance metrics.
+    """
+    campaign_metrics_list = []
+    delivery_campaigns = []
+    for job in delivery_jobs:
+        if job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]:
+            delivery_campaigns.extend(
+                job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]
+            )
+
+    for campaign in delivery_campaigns:
+        job_list = []
+        for job in delivery_jobs:
+            if (
+                job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]
+                and campaign in job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]
+            ):
+                job_list.append(job)
+        campaign_metrics_list.append(
+            update_metrics(
+                campaign[api_c.ID],
+                campaign[api_c.NAME],
+                job_list,
+                performance_metrics,
+                metrics_type,
+            )
+        )
+    return campaign_metrics_list
+
+
 # pylint: disable=too-many-locals, too-many-nested-blocks
 def group_engagement_performance_metrics(
     engagement: object,
@@ -116,34 +160,13 @@ def group_engagement_performance_metrics(
             ] = delivery_platform[db_c.DELIVERY_PLATFORM_TYPE]
 
             if metrics_type == api_c.DISPLAY_ADS:
-                campaign_metrics_list = []
-                delivery_campaigns = []
-                for job in audience_destination_jobs:
-                    if job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]:
-                        delivery_campaigns.extend(
-                            job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]
-                        )
-
-                for campaign in delivery_campaigns:
-                    job_list = []
-                    for job in audience_destination_jobs:
-                        if (
-                            job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]
-                            and campaign
-                            in job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]
-                        ):
-                            job_list.append(job)
-                    campaign_metrics_list.append(
-                        update_metrics(
-                            campaign[api_c.ID],
-                            campaign[api_c.NAME],
-                            job_list,
-                            performance_metrics,
-                            metrics_type,
-                        )
-                    )
-
-                destination_metrics[api_c.CAMPAIGNS] = campaign_metrics_list
+                destination_metrics[
+                    api_c.CAMPAIGNS
+                ] = get_display_ads_campaign_metrics(
+                    audience_destination_jobs,
+                    performance_metrics,
+                    metrics_type,
+                )
             audience_destination_metrics_list.append(destination_metrics)
         audience_metrics[
             api_c.DESTINATIONS
