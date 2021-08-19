@@ -29,6 +29,10 @@ client["customers"].overview = () => {
   return http.get("/customers/overview")
 }
 
+client["customers"].geographics = () => {
+  return http.get("/customers-insights/geo")
+}
+
 client["customers"].getOverview = (data) => {
   return http.post("/customers/overview", data)
 }

@@ -13,6 +13,7 @@ import { idrOverview, idrDataFeedReport } from "./factories/identity"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData.json"
+import mapData from "@/components/common/MapChart/mapData.js"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -370,6 +371,8 @@ export const defineRoutes = (server) => {
   })
 
   server.get("/customers/overview", () => customersOverview)
+
+  server.get("/customers-insights/geo", () => mapData)
 
   server.get("/customers", (schema, request) => {
     let currentBatch = request.queryParams.batch_number

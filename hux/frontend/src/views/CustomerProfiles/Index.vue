@@ -136,7 +136,7 @@
           </div>
         </v-card>
       </div>
-      <v-row class="px-15 mt-2">
+      <v-row v-if="!loadingGeographics" class="px-15 mt-2">
         <v-col md="7">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
@@ -146,8 +146,8 @@
                 </span>
               </div>
             </v-card-title>
-            <map-chart :map-data="mapChartData" />
-            <map-slider :map-data="mapChartData" />
+            <map-chart :map-data="customersGeographics" />
+            <map-slider :map-data="customersGeographics" />
           </v-card>
         </v-col>
         <v-col md="5">
@@ -158,7 +158,7 @@
               </div>
             </v-card-title>
             <v-divider class="ml-5 mr-8 mt-0 mb-1" />
-            <map-state-list :map-data="mapChartData" />
+            <map-state-list :map-data="customersGeographics" />
           </v-card>
         </v-col>
       </v-row>
@@ -221,7 +221,6 @@ import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import MapChart from "@/components/common/MapChart/MapChart"
 import MapStateList from "@/components/common/MapChart/MapStateList"
-import mapData from "@/components/common/MapChart/mapData.json"
 import genderData from "@/components/common/DoughnutChart/genderData.json"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
@@ -246,8 +245,8 @@ export default {
 
   data() {
     return {
-      mapChartData: mapData.demographic_overview,
       customerProfilesDrawer: false,
+      loadingGeographics: false,
       overviewListItems: [
         {
           title: "No. of customers",
@@ -371,6 +370,7 @@ export default {
     ...mapGetters({
       overview: "customers/overview",
       customersInsights: "customers/insights",
+      customersGeographics: "customers/geographics",
     }),
     updatedTimeStamp() {
       return this.updatedTime[0] + "<span> &bull; </span>" + this.updatedTime[1]
@@ -379,6 +379,7 @@ export default {
 
   async mounted() {
     this.loading = true
+    this.fetchGeographics()
     await this.getOverview()
     this.mapOverviewData()
     this.loading = false
@@ -387,7 +388,14 @@ export default {
   methods: {
     ...mapActions({
       getOverview: "customers/getOverview",
+      getGeographics: "customers/getGeographics",
     }),
+
+    async fetchGeographics() {
+      this.loadingGeographics = true
+      await this.getGeographics()
+      this.loadingGeographics = false
+    },
     // TODO: refactor this and move this logic to a getter in the store
     mapOverviewData() {
       if (this.overview) {

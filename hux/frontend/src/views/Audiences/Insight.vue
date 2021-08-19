@@ -378,7 +378,7 @@ import Icon from "@/components/common/Icon.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart.vue"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
 import MapChart from "@/components/common/MapChart/MapChart"
-import mapData from "@/components/common/MapChart/mapData.json"
+import mapData from "@/components/common/MapChart/mapData.js"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import MetricCard from "@/components/common/MetricCard.vue"
@@ -424,7 +424,7 @@ export default {
   },
   data() {
     return {
-      mapChartData: mapData.demographic_overview,
+      mapChartData: mapData,
       showLookAlikeDrawer: false,
       lookalikeCreated: false,
       audienceHistory: [],
