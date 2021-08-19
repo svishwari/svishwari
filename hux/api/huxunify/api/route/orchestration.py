@@ -32,10 +32,7 @@ from huxunify.api.schema.orchestration import (
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
 )
-from huxunify.api.data_connectors.cdp import (
-    get_customers_overview,
-    get_customers_count_async,
-)
+from huxunify.api.data_connectors.cdp import get_customers_overview
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as api_c
@@ -151,11 +148,13 @@ class AudienceView(SwaggerView):
         # do replace root by bringing the nested audience up a level.
         _ = [x.update(audience_dict[x[db_c.ID]]) for x in audiences]
 
-        # get customer sizes
-        token_response = get_token_from_request(request)
-        customer_size_dict = get_customers_count_async(
-            token_response[0], audiences
-        )
+        # # get customer sizes
+        # token_response = get_token_from_request(request)
+
+        # TODO - ENABLE AFTER WE HAVE A CACHING STRATEGY IN PLACE
+        # customer_size_dict = get_customers_count_async(
+        #     token_response[0], audiences
+        # )
 
         # get the x number of last deliveries to provide per audience
         delivery_limit = int(
@@ -183,8 +182,6 @@ class AudienceView(SwaggerView):
 
             # set the weighted status for the audience based on deliveries
             audience[api_c.STATUS] = weight_delivery_status(audience)
-
-            audience[api_c.SIZE] = customer_size_dict.get(audience[db_c.ID])
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
         # get all lookalikes and append to the audience list
@@ -909,16 +906,18 @@ class SetLookalikeAudience(SwaggerView):
                 "message": api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
 
-        timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
-            db_c.AUDIENCE_NAME_DATE_FORMAT
-        )
-
-        destination_connector.get_new_lookalike_audience(
-            f"{source_audience[db_c.NAME]} - {timestamp}",
-            body[api_c.NAME],
-            body[api_c.AUDIENCE_SIZE_PERCENTAGE],
-            "US",
-        )
+        # Commented as creating lookalike audience is restricted in facebook
+        # as we are using fake customer data
+        # timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
+        #     db_c.AUDIENCE_NAME_DATE_FORMAT
+        # )
+        #
+        # destination_connector.get_new_lookalike_audience(
+        #     f"{source_audience[db_c.NAME]} - {timestamp}",
+        #     body[api_c.NAME],
+        #     body[api_c.AUDIENCE_SIZE_PERCENTAGE],
+        #     "US",
+        # )
 
         logger.info("Creating delivery platform lookalike audience.")
         lookalike_audience = (

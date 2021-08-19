@@ -87,7 +87,6 @@ class PerformanceMetricSchema(Schema):
 
         ordered = True
 
-    # TODO - Update as it becomes available.
     rmse = Float(example=350)
     auc = Float(example=0.79)
     precision = Float(example=0.82)

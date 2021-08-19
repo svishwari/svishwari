@@ -589,3 +589,65 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> dict:
         {api_c.NAME: x[api_c.CITY], api_c.LTV: round(x["avg_ltv"], 4)}
         for x in clean_cdm_fields(response.json()[api_c.BODY])
     ]
+
+
+def get_demographic_by_state(
+    token: str, filters: Optional[dict] = None
+) -> list:
+    """
+    Get demographic details of customers by state
+
+    Args:
+        token (str): OKTA JWT Token.
+        filters (dict):  filters to pass into
+            count_by_state endpoint, default None
+
+    Returns:
+        list of demographic details by state
+
+    """
+    # get config
+    config = get_config()
+    logger.info("Retrieving demographic insights by state.")
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+        json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve state demographic insights %s %s.",
+            response.status_code,
+            response.text,
+        )
+        return {}
+
+    logger.info("Successfully retrieved state demographic insights.")
+    body = clean_cdm_fields(response.json()[api_c.BODY])
+
+    geographic_response = [
+        {
+            api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
+            api_c.POPULATION_PERCENTAGE: round(
+                x[api_c.SIZE] / sum([x[api_c.SIZE] for x in body]), 4
+            )
+            if sum([x[api_c.SIZE] for x in body]) != 0
+            else 0,
+            api_c.SIZE: x[api_c.SIZE],
+            api_c.GENDER_WOMEN: round(x[api_c.GENDER_WOMEN] / x[api_c.SIZE], 4)
+            if x[api_c.SIZE] != 0
+            else 0,
+            api_c.GENDER_MEN: round(x[api_c.GENDER_MEN] / x[api_c.SIZE], 4)
+            if x[api_c.SIZE] != 0
+            else 0,
+            api_c.GENDER_OTHER: round(x[api_c.GENDER_OTHER] / x[api_c.SIZE], 4)
+            if x[api_c.SIZE] != 0
+            else 0,
+            api_c.LTV: round(x.get(api_c.AVG_LTV, 0), 4),
+        }
+        for x in body
+    ]
+    return geographic_response

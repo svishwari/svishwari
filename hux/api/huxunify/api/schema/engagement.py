@@ -473,6 +473,7 @@ class EngagementAudienceSchema(Schema):
     name = fields.String()
     id = fields.String()
     status = fields.String()
+    is_lookalike = fields.Boolean(default=False)
     size = fields.Integer(default=0)
     destinations = fields.Nested(
         EngagementAudienceDestinationSchema, many=True
@@ -696,6 +697,11 @@ def weighted_engagement_status(engagements: list) -> list:
                 engagement[api_c.STATUS] = api_c.STATUS_INACTIVE
         elif api_c.STATUS_NOT_DELIVERED in status_values:
             engagement[api_c.STATUS] = api_c.STATUS_INACTIVE
+        elif all(
+            status_value == api_c.STATUS_DELIVERED
+            for status_value in status_values
+        ):
+            engagement[api_c.STATUS] = api_c.STATUS_ACTIVE
         else:
             engagement[api_c.STATUS] = api_c.STATUS_ERROR
 

@@ -646,11 +646,6 @@ class OrchestrationRouteTest(TestCase):
         Returns:
         """
 
-        mock.patch(
-            "huxunify.api.route.orchestration.get_customers_count_async",
-            return_value={},
-        ).start()
-
         response = self.test_client.get(
             f"{self.audience_api_endpoint}",
             headers=t_c.STANDARD_HEADERS,
