@@ -191,7 +191,7 @@ def get_engagements_summary(
                 }
             }
         },
-        # add the lookalike flag
+        # add the lookalike flag, lookalike audience id and destination id
         {
             "$addFields": {
                 "audiences.is_lookalike": {
