@@ -196,7 +196,7 @@ export default {
         .data(this.chartData)
         .enter()
         .append("rect")
-        .attr("x", x(0))
+        .attr("x", 0)
         .attr("y", (d) => y(d.name))
         .attr("width", (d) => x(d.score))
         .attr("height", y.bandwidth())
