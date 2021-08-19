@@ -278,7 +278,6 @@ class TectonTest(TestCase):
         # TODO - when available.
         self.assertEqual(2 + 2, 4)
 
-    @requests_mock.Mocker()
     def test_lift_chart(self):
         """Test getting lift charts for a model.
 
