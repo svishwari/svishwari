@@ -20,7 +20,6 @@ from huxunifylib.util.general.logging import logger
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 
-
 # fields to convert to datetime from the responses
 DEFAULT_DATETIME = datetime.datetime(1, 1, 1, 1, 00)
 DATETIME_FIELDS = [
@@ -194,7 +193,7 @@ def get_customers_count_async(
         (
             token,
             x[db_c.ID],
-            x[api_c.AUDIENCE_FILTERS]
+            {api_c.AUDIENCE_FILTERS: x[api_c.AUDIENCE_FILTERS]}
             if x.get(api_c.AUDIENCE_FILTERS)
             else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
             url,
@@ -474,55 +473,148 @@ def get_idr_matching_trends(token: str) -> list:
     ]
 
 
-def get_customer_events_data(hux_id: str) -> list:
+def fill_empty_customer_events(
+    start_date: datetime, end_date: datetime
+) -> list:
+    """Fill empty events for dates between start_date and end_date.
+
+    Args:
+        start_date (datetime): Start date between which dates, events need to be filled.
+        end_date (datetime): End date between which dates, events need to be filled.
+    Returns:
+        list: Customer events with zero.
+    """
+    return [
+        {
+            api_c.DATE: start_date + datetime.timedelta(days=i),
+            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 0,
+            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
+                api_c.ABANDONED_CART_EVENT: 0,
+                api_c.CUSTOMER_LOGIN_EVENT: 0,
+                api_c.VIEWED_CART_EVENT: 0,
+                api_c.VIEWED_CHECKOUT_EVENT: 0,
+                api_c.VIEWED_SALE_ITEM_EVENT: 0,
+                api_c.ITEM_PURCHASED_EVENT: 0,
+                api_c.TRAIT_COMPUTED_EVENT: 0,
+            },
+        }
+        for i in range(1, (end_date - start_date).days)
+    ]
+
+
+def fill_customer_events_missing_dates(
+    customer_events: list, start_date: datetime, end_date: datetime
+) -> list:
     """Get events for a customer grouped by date.
 
     Args:
-        hux_id (str): hux id for a customer.
+        customer_events (list): Customer events in CDM API body.
+        start_date (datetime): Start date in filter.
+        end_date (datetime): End date in filter.
     Returns:
-        list: customer events with respective counts
+        list: Customer events including zeros for missing dates.
+    """
+    prev_date = start_date
+    customer_events_dates_filled = []
+    # fill empty events so that no date(day) is missing
+    for idx, customer_event in enumerate(customer_events):
+        curr_date = parse(customer_event.get(api_c.DATE))
+        # fill for 1 day previous
+        if idx == 0:
+            if curr_date > prev_date and (curr_date - prev_date).days >= 1:
+                customer_events_dates_filled = (
+                    customer_events_dates_filled
+                    + fill_empty_customer_events(
+                        prev_date - datetime.timedelta(1),
+                        prev_date + datetime.timedelta(1),
+                    )
+                )
+
+        customer_event[api_c.DATE] = curr_date
+        customer_events_dates_filled.append(customer_event)
+
+        if curr_date > prev_date and (curr_date - prev_date).days > 1:
+            customer_events_dates_filled = (
+                customer_events_dates_filled
+                + fill_empty_customer_events(prev_date, curr_date)
+            )
+        prev_date = curr_date
+
+    if end_date > prev_date and (end_date - prev_date).days > 1:
+        customer_events_dates_filled = (
+            customer_events_dates_filled
+            + fill_empty_customer_events(prev_date, end_date)
+        )
+
+    customer_events_dates_filled.sort(
+        key=lambda customer_event_: customer_event_.get("date")
+    )
+    return customer_events_dates_filled
+
+
+def get_customer_events_data(
+    token: str, hux_id: str, filters: Optional[dict] = None
+) -> list:
+    """Get events for a customer grouped by date.
+
+    Args:
+        token (str): OKTA JWT Token.
+        hux_id (str): hux id for a customer.
+        filters (Optional[dict]): filters to pass into
+            customer events endpoint.
+    Returns:
+        list: Customer events with respective counts
     """
 
-    # pylint: disable=unused-argument
-    # TODO: Remove pylint unused-argument and update after CDM API for customer events is available
-    response = [
-        {
-            api_c.DATE: datetime.datetime.utcnow()
-            - datetime.timedelta(days=x),
-            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
-                api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT
-            ][
-                x
-            ],
-            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
-                api_c.ABANDONED_CART_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
-                    api_c.ABANDONED_CART_EVENT
-                ][
-                    x
-                ],
-                api_c.CUSTOMER_LOGIN_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
-                    api_c.CUSTOMER_LOGIN_EVENT
-                ][
-                    x
-                ],
-                api_c.VIEWED_CART_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
-                    api_c.VIEWED_CART_EVENT
-                ][x],
-                api_c.VIEWED_CHECKOUT_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
-                    api_c.VIEWED_CHECKOUT_EVENT
-                ][
-                    x
-                ],
-                api_c.VIEWED_SALE_ITEM_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
-                    api_c.VIEWED_SALE_ITEM_EVENT
-                ][
-                    x
-                ],
-            },
-        }
-        for x in reversed(range(8))
-    ]
-    return response
+    config = get_config()
+
+    # YTD by default
+    default_filter = {
+        api_c.START_DATE: "%s-01-01T00:00:00Z"
+        % datetime.datetime.utcnow().year,
+        api_c.END_DATE: datetime.datetime.utcnow().strftime("%Y-%m-%d")
+        + "T00:00:00Z",
+    }
+
+    filters = filters if filters else default_filter
+
+    # set missing start or end date
+    filters[api_c.START_DATE] = filters.get(
+        api_c.START_DATE,
+        "%s-01-01T00:00:00Z" % datetime.datetime.utcnow().year,
+    )
+    filters[api_c.END_DATE] = filters.get(
+        api_c.END_DATE,
+        datetime.datetime.utcnow().strftime("%Y-%m-%d") + "T00:00:00Z",
+    )
+
+    logger.info("Getting customer events info from CDP API.")
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/{hux_id}/events",
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+        json=filters,
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Unable to get Customer Profiles from CDP API got %s.",
+            response.status_code,
+        )
+        return {}
+
+    customer_events = response.json().get(api_c.BODY)
+
+    # no customer events found in the date range, return empty
+    if not customer_events:
+        return []
+
+    return fill_customer_events_missing_dates(
+        customer_events,
+        parse(filters.get(api_c.START_DATE)),
+        parse(filters.get(api_c.END_DATE)),
+    )
 
 
 def clean_cdm_fields(body: dict) -> dict:
@@ -547,3 +639,108 @@ def clean_cdm_fields(body: dict) -> dict:
             body[date_field] = None
 
     return body
+
+
+def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> dict:
+    """Get spending details of customer by cities
+
+    Args:
+        token (str): OKTA JWT Token.
+        filters (Optional[dict]): filters to pass into
+            customers_overview endpoint.
+
+    Returns:
+        dict of income details of customers by cities
+
+    """
+    city_income_default_filter = api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+    city_income_default_filter[api_c.COUNT] = 5
+
+    # get config
+    config = get_config()
+    logger.info("Retrieving customer income details by cities from CDP API.")
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+        json=filters if filters else city_income_default_filter,
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Could not get customer income details by state from CDP API got %s %s.",
+            response.status_code,
+            response.text,
+        )
+        return {}
+    logger.info(
+        "Successfully retrieved customer income details by state from CDP API."
+    )
+
+    return [
+        {api_c.NAME: x[api_c.CITY], api_c.LTV: round(x["avg_ltv"], 4)}
+        for x in clean_cdm_fields(response.json()[api_c.BODY])
+    ]
+
+
+def get_demographic_by_state(
+    token: str, filters: Optional[dict] = None
+) -> list:
+    """
+    Get demographic details of customers by state
+
+    Args:
+        token (str): OKTA JWT Token.
+        filters (dict):  filters to pass into
+            count_by_state endpoint, default None
+
+    Returns:
+        list of demographic details by state
+
+    """
+    # get config
+    config = get_config()
+    logger.info("Retrieving demographic insights by state.")
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+        json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve state demographic insights %s %s.",
+            response.status_code,
+            response.text,
+        )
+        return {}
+
+    logger.info("Successfully retrieved state demographic insights.")
+    body = clean_cdm_fields(response.json()[api_c.BODY])
+
+    geographic_response = [
+        {
+            api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
+            api_c.POPULATION_PERCENTAGE: round(
+                x[api_c.SIZE] / sum([x[api_c.SIZE] for x in body]), 4
+            )
+            if sum([x[api_c.SIZE] for x in body]) != 0
+            else 0,
+            api_c.SIZE: x[api_c.SIZE],
+            api_c.GENDER_WOMEN: round(x[api_c.GENDER_WOMEN] / x[api_c.SIZE], 4)
+            if x[api_c.SIZE] != 0
+            else 0,
+            api_c.GENDER_MEN: round(x[api_c.GENDER_MEN] / x[api_c.SIZE], 4)
+            if x[api_c.SIZE] != 0
+            else 0,
+            api_c.GENDER_OTHER: round(x[api_c.GENDER_OTHER] / x[api_c.SIZE], 4)
+            if x[api_c.SIZE] != 0
+            else 0,
+            api_c.LTV: round(x.get(api_c.AVG_LTV, 0), 4),
+        }
+        for x in body
+    ]
+    return geographic_response

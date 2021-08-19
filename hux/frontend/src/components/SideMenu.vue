@@ -49,7 +49,12 @@
         </span>
       </div>
 
-      <v-list-item v-if="!item.menu" class="my-2" :to="item.link">
+      <v-list-item
+        v-if="!item.menu"
+        class="my-2"
+        :to="item.link"
+        :data-e2e="`nav-${item.icon}`"
+      >
         <v-list-item-icon v-if="item.icon" class="my-3">
           <tooltip
             v-if="item.title"
@@ -75,6 +80,7 @@
           v-for="menu in item.menu"
           :key="menu.title"
           :to="menu.link"
+          :data-e2e="`nav-${menu.icon}`"
         >
           <v-list-item-icon v-if="menu.icon" class="my-3">
             <tooltip

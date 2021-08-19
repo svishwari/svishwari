@@ -449,6 +449,7 @@ class LatestDeliverySchema(Schema):
     status = fields.String()
     update_time = DateTimeWithZ()
     size = fields.Int(default=0)
+    match_rate = fields.Float(default=0, example=0.21)
 
 
 class EngagementAudienceDestinationSchema(Schema):
@@ -472,6 +473,7 @@ class EngagementAudienceSchema(Schema):
     name = fields.String()
     id = fields.String()
     status = fields.String()
+    is_lookalike = fields.Boolean(default=False)
     size = fields.Integer(default=0)
     destinations = fields.Nested(
         EngagementAudienceDestinationSchema, many=True
@@ -676,12 +678,18 @@ def weighted_engagement_status(engagements: list) -> list:
             engagement[api_c.STATUS] = api_c.STATUS_DELIVERING
         elif engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
             if (
-                engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
-                    db_c.JOB_START_TIME
+                engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(
+                    api_c.START_DATE
+                )
+                and engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(
+                    api_c.END_DATE
+                )
+                and engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                    api_c.START_DATE
                 ]
                 <= datetime.now()
                 <= engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
-                    db_c.JOB_END_TIME
+                    api_c.END_DATE
                 ]
             ):
                 engagement[api_c.STATUS] = api_c.STATUS_ACTIVE
@@ -689,6 +697,11 @@ def weighted_engagement_status(engagements: list) -> list:
                 engagement[api_c.STATUS] = api_c.STATUS_INACTIVE
         elif api_c.STATUS_NOT_DELIVERED in status_values:
             engagement[api_c.STATUS] = api_c.STATUS_INACTIVE
+        elif all(
+            status_value == api_c.STATUS_DELIVERED
+            for status_value in status_values
+        ):
+            engagement[api_c.STATUS] = api_c.STATUS_ACTIVE
         else:
             engagement[api_c.STATUS] = api_c.STATUS_ERROR
 

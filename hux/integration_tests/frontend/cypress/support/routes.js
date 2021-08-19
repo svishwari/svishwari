@@ -1,23 +1,27 @@
+/**
+ * URL routes in the application.
+ */
+
 export default {
-  // Auth
+  // auth
   oktaSignInRedirectURI: "/login/callback",
   oktaSignOutRedirectURI: "/login",
 
-  // App
+  // app
   home: "/",
   login: "/login",
   overview: "/overview",
 
-  // Orchestration
+  // orchestration
   engagements: "/engagements",
   audiences: "/audiences",
 
-  // Decisioning
+  // decisioning
   models: "/models",
 
-  // Data Management
+  // data Management
   customerProfiles: "/customers",
   identityResolution: "/identity-resolution",
   connections: "/connections",
   addDataSource: "/datasources/add",
-};
+}

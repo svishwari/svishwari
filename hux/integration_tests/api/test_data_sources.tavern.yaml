@@ -25,6 +25,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - id: !anystr
           type: !anystr
           name: !anystr
@@ -61,6 +62,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - id: !anystr
           type: !anystr
           name: !anystr
@@ -244,6 +246,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - id: !anystr
           type: !anystr
           name: !anystr
@@ -279,6 +282,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - id: !anystr
           type: !anystr
           name: !anystr

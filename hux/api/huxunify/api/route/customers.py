@@ -3,7 +3,7 @@
 Paths for customer API
 """
 from http import HTTPStatus
-from random import choice, randint
+from random import randint
 from typing import Tuple, List
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -38,6 +38,8 @@ from huxunify.api.data_connectors.cdp import (
     get_idr_data_feeds,
     get_idr_matching_trends,
     get_customer_events_data,
+    get_demographic_by_state,
+    get_spending_by_cities,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -509,7 +511,11 @@ class CustomerGeoVisualView(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
+    @api_error_handler(
+        custom_message={
+            ZeroDivisionError: {"message": api_c.ZERO_AUDIENCE_SIZE}
+        }
+    )
     def get(self) -> Tuple[list, int]:
         """Retrieves a Customer profiles geographical insights.
 
@@ -520,20 +526,13 @@ class CustomerGeoVisualView(SwaggerView):
         Returns:
             Tuple[dict, int] list of Customer insights on geo overview and http code
         """
-        geo_visuals = [
-            {
-                api_c.NAME: state,
-                api_c.POPULATION_PERCENTAGE: choice([0.3012, 0.1910, 0.2817]),
-                api_c.SIZE: choice([28248560, 39510225, 7615887]),
-                api_c.GENDER_WOMEN: 0.50,
-                api_c.GENDER_MEN: 0.49,
-                api_c.GENDER_OTHER: 0.01,
-                api_c.LTV: choice([3848.50, 3971.50, 3952]),
-            }
-            for state in api_c.STATE_NAMES
-        ]
+        token_response = get_token_from_request(request)
         return (
-            jsonify(CustomerGeoVisualSchema().dump(geo_visuals, many=True)),
+            jsonify(
+                CustomerGeoVisualSchema().dump(
+                    get_demographic_by_state(token_response[0]), many=True
+                )
+            ),
             HTTPStatus.OK,
         )
 
@@ -590,6 +589,8 @@ class CustomerDemoVisualView(SwaggerView):
             Tuple[dict, int] list of Customer insights on demo overview and http code
         """
 
+        token_response = get_token_from_request(request)
+
         start_date = datetime(2020, 11, 30)
         dates = [
             (start_date + pd.DateOffset(months=x)).to_pydatetime()
@@ -607,19 +608,7 @@ class CustomerDemoVisualView(SwaggerView):
                     [6955119, 5627732, 289655],
                 )
             },
-            api_c.INCOME: [
-                {api_c.NAME: city, api_c.LTV: ltv}
-                for city, ltv in zip(
-                    [
-                        "Houston",
-                        "San Antonio",
-                        "Dallas",
-                        "Austin",
-                        "Fort Worth",
-                    ],
-                    [4008, 3922, 4231, 4198, 4011],
-                )
-            ],
+            api_c.INCOME: get_spending_by_cities(token_response[0]),
             api_c.SPEND: {
                 api_c.GENDER_WOMEN: [
                     {api_c.DATE: date, api_c.LTV: ltv}
@@ -710,10 +699,10 @@ class CustomerEvents(SwaggerView):
             "type": "object",
             "in": "body",
             "example": {
-                "filters": {
-                    "start_date": "2021-07-25T00:00:00Z",
-                    "end_date": "2021-08-02T00:00:00Z",
-                }
+                api_c.START_DATE: "%s-01-01T00:00:00Z"
+                % datetime.utcnow().year,
+                api_c.END_DATE: datetime.utcnow().strftime("%Y-%m-%d")
+                + "T00:00:00Z",
             },
         },
     ]
@@ -733,6 +722,7 @@ class CustomerEvents(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def post(self, hux_id: str) -> Tuple[dict, int]:
         """Retrieves events for a given HUX ID.
 
@@ -744,10 +734,14 @@ class CustomerEvents(SwaggerView):
         Returns:
             Tuple[dict, int] list of Customer events grouped by day and http code
         """
+        token_response = get_token_from_request(request)
         return (
             jsonify(
                 CustomerEventsSchema().dump(
-                    get_customer_events_data(hux_id), many=True
+                    get_customer_events_data(
+                        token_response[0], hux_id, request.json
+                    ),
+                    many=True,
                 )
             ),
             HTTPStatus.OK,

@@ -88,7 +88,12 @@
             <v-spacer></v-spacer>
 
             <span class="action-icon font-weight-light float-right d-none">
-              <v-menu v-model="openMenu" class="menu-wrapper" bottom offset-y>
+              <v-menu
+                v-model="openMenu[item.id]"
+                class="menu-wrapper"
+                bottom
+                offset-y
+              >
                 <template #activator="{ on, attrs }">
                   <v-icon
                     v-if="!section.lookalike"
@@ -121,7 +126,7 @@
 
                       <v-menu
                         v-else
-                        v-model="isSubMenuOpen"
+                        v-model="isSubMenuOpen[item.id]"
                         offset-x
                         nudge-right="16"
                         nudge-top="4"
@@ -136,6 +141,8 @@
                           <v-list>
                             <v-list-item
                               @click="
+                                isSubMenuOpen[item.id] = false
+                                openMenu[item.id] = false
                                 $emit('onDestinationAction', {
                                   target: option,
                                   data: item,
@@ -192,13 +199,21 @@
             </template>
           </tooltip>
         </v-list-item-content>
-        <v-list-item-content v-if="!item.size" class="size-col py-1">
+        <v-list-item-content v-if="!item.size" class="size-col py-1 mr-2">
           <tooltip>
             <template #label-content>
               {{ getSize(item.size) | Empty("-") }}
             </template>
             <template #hover-content>
-              {{ item.size | Numeric(true, false) | Empty("-") }}
+              <div class="d-flex flex-column text-caption">
+                <span>Audience size</span>
+                <span class="pb-3">{{ item.size | Numeric(true, false) }}</span>
+                <span>Match rate</span>
+                <i v-if="!item.match_rate">
+                  Pending... check back in a few hours
+                </i>
+                <span v-else>{{ item.match_rate | Percentage }}</span>
+              </div>
             </template>
           </tooltip>
         </v-list-item-content>
@@ -281,8 +296,8 @@ export default {
 
   data() {
     return {
-      openMenu: null,
-      isSubMenuOpen: null,
+      openMenu: {},
+      isSubMenuOpen: {},
       showDeliveryAlert: false,
       selection: null,
       lookALikeAllowedEntries: ["Facebook"],
@@ -336,8 +351,12 @@ export default {
   },
 
   watch: {
+    // To reset the value of the openMenu
+    openMenu(newValue) {
+      if (!newValue) this.openMenu = {}
+    },
     isSubMenuOpen(newValue) {
-      this.openMenu = newValue
+      if (!newValue) this.isSubMenuOpen = {}
     },
   },
 

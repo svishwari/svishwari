@@ -2,6 +2,7 @@
 Paths for Orchestration API
 """
 from http import HTTPStatus
+from random import uniform
 from typing import Tuple, Union
 from flasgger import SwaggerView
 from bson import ObjectId
@@ -31,10 +32,7 @@ from huxunify.api.schema.orchestration import (
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
 )
-from huxunify.api.data_connectors.cdp import (
-    get_customers_overview,
-    get_customers_count_async,
-)
+from huxunify.api.data_connectors.cdp import get_customers_overview
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as api_c
@@ -146,11 +144,17 @@ class AudienceView(SwaggerView):
             for x in orchestration_management.get_all_audiences(database)
         }
 
-        # get customer sizes
-        token_response = get_token_from_request(request)
-        customer_size_dict = get_customers_count_async(
-            token_response[0], audiences
-        )
+        # workaround because DocumentDB does not allow $replaceRoot
+        # do replace root by bringing the nested audience up a level.
+        _ = [x.update(audience_dict[x[db_c.ID]]) for x in audiences]
+
+        # # get customer sizes
+        # token_response = get_token_from_request(request)
+
+        # TODO - ENABLE AFTER WE HAVE A CACHING STRATEGY IN PLACE
+        # customer_size_dict = get_customers_count_async(
+        #     token_response[0], audiences
+        # )
 
         # get the x number of last deliveries to provide per audience
         delivery_limit = int(
@@ -161,10 +165,6 @@ class AudienceView(SwaggerView):
 
         # process each audience object
         for audience in audiences:
-            # workaround because DocumentDB does not allow $replaceRoot
-            # do replace root by bringing the nested engagement up a level.
-            audience.update(audience_dict[audience[db_c.ID]])
-
             # take the last X number of deliveries
             # remove any empty ones, and only show the delivered/succeeded
             audience[api_c.DELIVERIES] = [
@@ -180,7 +180,8 @@ class AudienceView(SwaggerView):
                 database, audience.get(api_c.DESTINATIONS_TAG)
             )
 
-            audience[api_c.SIZE] = customer_size_dict.get(audience[db_c.ID])
+            # set the weighted status for the audience based on deliveries
+            audience[api_c.STATUS] = weight_delivery_status(audience)
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
         # get all lookalikes and append to the audience list
@@ -263,10 +264,6 @@ class AudienceGetView(SwaggerView):
 
         """
 
-        if not ObjectId.is_valid(audience_id):
-            logger.error("Invalid Object ID %s.", audience_id)
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
-
         token_response = get_token_from_request(request)
 
         database = get_db_client()
@@ -324,6 +321,13 @@ class AudienceGetView(SwaggerView):
                 engagement[api_c.DELIVERIES].remove(
                     {api_c.STATUS: api_c.STATUS_NOT_DELIVERED}
                 )
+
+            # TODO: HUS-837 Change once match_rate data can be fetched from CDM
+            # validate if engagement contain deliveries since there are checks
+            # above to remove empty and not-delivered deliveries
+            if api_c.DELIVERIES in engagement:
+                for delivery in engagement[api_c.DELIVERIES]:
+                    delivery[api_c.MATCH_RATE] = round(uniform(0.2, 0.9), 2)
 
             # set the weighted status for the engagement based on deliveries
             engagement[api_c.STATUS] = weight_delivery_status(engagement)
@@ -486,13 +490,6 @@ class AudiencePostView(SwaggerView):
         if api_c.AUDIENCE_ENGAGEMENTS in body:
             # validate list of dict objects
             for engagement_id in body[api_c.AUDIENCE_ENGAGEMENTS]:
-                # validate object id
-                if not ObjectId.is_valid(engagement_id):
-                    logger.error("Invalid Object ID %s.", engagement_id)
-                    return {
-                        "message": f"{engagement_id} has an invalid "
-                        f"{db_c.OBJECT_ID} field."
-                    }, HTTPStatus.BAD_REQUEST
 
                 # map to an object ID field
                 engagement_id = ObjectId(engagement_id)
@@ -857,17 +854,6 @@ class SetLookalikeAudience(SwaggerView):
         source_audience_id = body[api_c.AUDIENCE_ID]
         engagement_ids = body[api_c.ENGAGEMENT_IDS]
 
-        for engagement_id in engagement_ids:
-            if not ObjectId.is_valid(engagement_id):
-                logger.error("Invalid Object ID %s.", engagement_id)
-                return {
-                    "message": api_c.INVALID_OBJECT_ID
-                }, HTTPStatus.BAD_REQUEST
-
-        if not ObjectId.is_valid(body[api_c.AUDIENCE_ID]):
-            logger.error("Invalid Object ID %s.", body[api_c.AUDIENCE_ID])
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
-
         database = get_db_client()
         source_audience = orchestration_management.get_audience(
             database, ObjectId(source_audience_id)
@@ -920,16 +906,18 @@ class SetLookalikeAudience(SwaggerView):
                 "message": api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
 
-        timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
-            db_c.AUDIENCE_NAME_DATE_FORMAT
-        )
-
-        destination_connector.get_new_lookalike_audience(
-            f"{source_audience[db_c.NAME]} - {timestamp}",
-            body[api_c.NAME],
-            body[api_c.AUDIENCE_SIZE_PERCENTAGE],
-            "US",
-        )
+        # Commented as creating lookalike audience is restricted in facebook
+        # as we are using fake customer data
+        # timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
+        #     db_c.AUDIENCE_NAME_DATE_FORMAT
+        # )
+        #
+        # destination_connector.get_new_lookalike_audience(
+        #     f"{source_audience[db_c.NAME]} - {timestamp}",
+        #     body[api_c.NAME],
+        #     body[api_c.AUDIENCE_SIZE_PERCENTAGE],
+        #     "US",
+        # )
 
         logger.info("Creating delivery platform lookalike audience.")
         lookalike_audience = (

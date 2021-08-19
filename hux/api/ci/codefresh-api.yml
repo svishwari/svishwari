@@ -7,10 +7,10 @@ stages:
   - git
   - build_tag
   - set_env
+  - set_env_artifactory_token
   - docker
-  - py37_check
-  - coverage_check
-  - safety_style_check
+  - tox_parallel
+  - tox_api_unittests
   - artifactory
   - argo-deploy
 
@@ -70,6 +70,14 @@ steps:
     commands:
       - cat ./hux/api/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
 
+  jfrog_python_artifactory_read:
+    stage: set_env_artifactory_token
+    title: "Get artifactory token"
+    type: deloittehux/jfrog-python-artifactory-read
+    arguments:
+      JFROG_API_KEY: '${{JFROG_API_KEY}}'
+      JFROG_USERNAME: '${{JFROG_USERNAME}}'
+
   build_image:
     stage: "docker"
     title: "Building Docker Image for Unified API"
@@ -81,56 +89,42 @@ steps:
     build_arguments:
       - ARTIFACTORY_PYTHON_READ=${{ARTIFACTORY_PYTHON_READ}}
 
-  py37_check:
-    stage: "py37_check"
-    title: "Tox - py37"
-    image: "${{build_image}}"
-    working_directory: '/app/hux-unified/api'
+  Tox_Tests:
+    stage: tox_parallel
+    title: "Tox - Safety and Coverage checks."
+    image: huxhub.repo.mgnt.in/tox-ci
+    working_directory: '${{CF_REPO_NAME}}/hux/api'
     description: "run tests using tox"
     commands:
-      - pip install tox
-      - tox -e ${TOXENV} -- --skip-model-generate
-    scale:
-      py37:
-        title: 'py37'
-        environment:
-          - TOXENV=py37
-    fail_fast: false
-
-  coverage_check:
-    stage: "coverage_check"
-    title: "Tox - coverage"
-    image: "${{build_image}}"
-    working_directory: '/app/hux-unified/api'
-    description: "run coverage checks using tox"
-    commands:
-      - pip install tox
-      - tox -e ${TOXENV} -- --skip-model-generate
-    scale:
-      checkCoverage:
-        title: 'checkCoverage'
-        environment:
-          - TOXENV=checkCoverage
-    fail_fast: false
-
-  safety_style_check:
-    stage: "safety_style_check"
-    title: "Tox - safety and style"
-    image: "${{build_image}}"
-    working_directory: '/app/hux-unified/api'
-    description: "run safety and style checks using tox"
-    commands:
-      - pip install tox
       - tox -e ${TOXENV} -- --skip-model-generate
     scale:
       safety:
         title: 'safety'
         environment:
           - TOXENV=safety
+      checkCoverage:
+        title: 'checkCoverage'
+        environment:
+          - TOXENV=checkCoverage
+    fail_fast: false
+
+  Tox_UnitTests:
+    stage: tox_api_unittests
+    title: "Tox - Style and Unittests"
+    image: huxhub.repo.mgnt.in/tox-ci
+    working_directory: '${{CF_REPO_NAME}}/hux/api'
+    description: "run tests using tox"
+    commands:
+      - tox -e ${TOXENV} -- --skip-model-generate
+    scale:
       style:
         title: 'style'
         environment:
           - TOXENV=style
+      py37:
+        title: 'py37'
+        environment:
+          - TOXENV=py37
     fail_fast: false
 
   PublishToArtifactory:

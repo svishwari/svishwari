@@ -31,7 +31,7 @@
         :height="75"
       >
         <template #subtitle-extended>
-          <span class="mr-2">
+          <span class="mr-2 mt-1">
             <tooltip>
               <template #label-content>
                 <span class="neroBlack--text font-weight-semi-bold">
@@ -51,6 +51,7 @@
         class="ma-2 audience-summary original-audience"
         :grow="0"
         :title="'Original Audience'"
+        :height="75"
       >
         <template #subtitle-extended>
           <span class="mr-2 pt-2">
@@ -65,9 +66,10 @@
         class="ma-2 audience-summary"
         :grow="0"
         :title="'Original • Actual size'"
+        :height="75"
       >
         <template #subtitle-extended>
-          <span class="mr-2">
+          <span class="mr-2 pt-2">
             <span class="neroBlack--text font-weight-semi-bold">
               <size :value="audience.size" /> &bull;
               <size :value="audience.size" />
@@ -223,11 +225,6 @@
         </div>
       </v-card>
     </div>
-    <v-row v-if="audienceInsights" class="px-15 mt-2">
-      <v-col cols="3">
-        <income-chart></income-chart>
-      </v-col>
-    </v-row>
     <v-row class="px-15 mt-2">
       <v-col md="7">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
@@ -257,14 +254,14 @@
     <v-row class="px-15 mt-2">
       <v-col md="3">
         <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+          <v-card-title class="chart-style pb-0 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
                 Top location &amp; Income
               </span>
             </div>
           </v-card-title>
-          <empty-state-chart />
+          <income-chart />
         </v-card>
       </v-col>
       <v-col md="6">
@@ -276,7 +273,7 @@
               </span>
             </div>
           </v-card-title>
-          <empty-state-chart />
+          <gender-spend-chart />
         </v-card>
       </v-col>
       <v-col md="3">
@@ -375,7 +372,6 @@ import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import DeliveryOverview from "@/components/DeliveryOverview.vue"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
-import EmptyStateChart from "@/components/common/EmptyStateChart"
 import genderData from "@/components/common/DoughnutChart/genderData.json"
 import HuxAlert from "@/components/common/HuxAlert.vue"
 import Icon from "@/components/common/Icon.vue"
@@ -397,6 +393,7 @@ import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Draw
 import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations.vue"
 import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
+import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 
 export default {
   name: "AudienceInsight",
@@ -410,7 +407,6 @@ export default {
     DestinationDataExtensionDrawer,
     DoughnutChart,
     EditDeliverySchedule,
-    EmptyStateChart,
     HuxAlert,
     Icon,
     IncomeChart,
@@ -424,6 +420,7 @@ export default {
     SelectDestinationsDrawer,
     Size,
     Tooltip,
+    GenderSpendChart,
   },
   data() {
     return {
@@ -725,7 +722,7 @@ export default {
             })
             this.dataPendingMesssage(event.data.name, "engagement")
           } catch (error) {
-            this.dataErrorMesssage(event.data.name)
+            this.dataErrorMesssage(event, "engagement")
             console.error(error)
           }
           break
@@ -749,12 +746,17 @@ export default {
       try {
         switch (event.target.title.toLowerCase()) {
           case "deliver now":
-            await this.deliverAudienceDestination({
-              id: event.parent.id,
-              audienceId: this.audienceId,
-              destinationId: event.data.id,
-            })
-            this.dataPendingMesssage(event.data.name, "audience")
+            try {
+              await this.deliverAudienceDestination({
+                id: event.parent.id,
+                audienceId: this.audienceId,
+                destinationId: event.data.id,
+              })
+              this.dataPendingMesssage(event, "destination")
+            } catch (error) {
+              this.dataErrorMesssage(event, "destination")
+              console.error(error)
+            }
             break
           case "edit delivery schedule":
             this.engagementId = event.parent.id
@@ -776,27 +778,37 @@ export default {
             break
         }
       } catch (error) {
-        this.dataErrorMesssage(event.data.name)
         console.error(error)
       }
     },
 
     //Alert Message
-    dataPendingMesssage(name, value) {
+    dataPendingMesssage(event, value) {
       this.alert.type = "Pending"
       this.alert.title = ""
       if (value == "engagement") {
-        this.alert.message = `Your audience, '${this.audience.name}', has started delivering as part of the engagement, '${name}'.`
-      } else {
-        this.alert.message = `Your audience, '${name}' , has started delivering.`
+        const engagementName = event.data.name
+        const audienceName = this.audience.name
+        this.alert.message = `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`
+      } else if (value == "destination") {
+        const engagementName = event.parent.name
+        const destinationName = event.data.name
+        this.alert.message = `Your engagement '${engagementName}', has started delivering to '${destinationName}'.`
       }
-
       this.flashAlert = true
     },
-    dataErrorMesssage(name) {
+    dataErrorMesssage(event, value) {
       this.alert.type = "error"
       this.alert.title = "OH NO!"
-      this.alert.message = `Failed to schedule a delivery for ${name}`
+      if (value == "engagement") {
+        const engagementName = event.data.name
+        const audienceName = this.audience.name
+        this.alert.message = `Failed to schedule a delivery of your engagement '${engagementName}', from '${audienceName}'.`
+      } else if (value == "destination") {
+        const engagementName = event.parent.name
+        const destinationName = event.data.name
+        this.alert.message = `Failed to schedule delivery of your engagement '${engagementName}', to '${destinationName}'.`
+      }
       this.flashAlert = true
     },
 

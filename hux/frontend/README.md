@@ -53,10 +53,18 @@ yarn serve:storybook
 
 ## Docker
 
+Test.
+
+```sh
+docker build --target test -t hux-ui-dev .
+docker run -it hux-ui-dev yarn lint
+docker run -it hux-ui-dev yarn test:unit
+```
+
 Build.
 
 ```sh
-docker build --build-arg API_URL="http://unified-api-dev.main.use1.hux-unified-dev1.in" --build-arg OKTA_ISSUER="https://dev-631073.okta.com" --build-arg OKTA_CLIENT_ID="0oa2wbure49NQsL7a4x7" -t hux-ui .
+docker build --target serve --build-arg API_URL="http://unified-api-dev.main.use1.hux-unified-dev1.in" --build-arg OKTA_ISSUER="https://dev-631073.okta.com" --build-arg OKTA_CLIENT_ID="0oa2wbure49NQsL7a4x7" -t hux-ui .
 ```
 
 Run.

@@ -221,7 +221,9 @@ class OrchestrationRouteTest(TestCase):
             )
 
             set_delivery_job_status(
-                self.database, delivery_job[db_c.ID], db_c.STATUS_SUCCEEDED
+                self.database,
+                delivery_job[db_c.ID],
+                db_c.AUDIENCE_STATUS_DELIVERED,
             )
 
         # setup the flask test client
@@ -644,11 +646,6 @@ class OrchestrationRouteTest(TestCase):
         Returns:
         """
 
-        mock.patch(
-            "huxunify.api.route.orchestration.get_customers_count_async",
-            return_value={},
-        ).start()
-
         response = self.test_client.get(
             f"{self.audience_api_endpoint}",
             headers=t_c.STANDARD_HEADERS,
@@ -663,7 +660,19 @@ class OrchestrationRouteTest(TestCase):
         self.assertListEqual(audience_ids, return_ids)
         for audience in audiences:
             self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
+            self.assertIn(db_c.AUDIENCE_FILTERS, audience)
             self.assertFalse(audience[api_c.IS_LOOKALIKE])
+            self.assertTrue(audience[api_c.STATUS])
+            self.assertIn(
+                audience[api_c.STATUS],
+                [
+                    api_c.STATUS_NOT_DELIVERED,
+                    api_c.STATUS_DELIVERING,
+                    api_c.STATUS_DELIVERED,
+                    api_c.STATUS_DELIVERY_PAUSED,
+                    api_c.STATUS_ERROR,
+                ],
+            )
 
     def test_update_audience(self):
         """Test update an audience.
@@ -780,6 +789,19 @@ class OrchestrationRouteTest(TestCase):
         Returns:
         """
 
+        # setup facebook connector mock address
+        mock.patch.object(
+            FacebookConnector,
+            "check_connection",
+            return_value=True,
+        ).start()
+
+        mock.patch.object(
+            FacebookConnector,
+            "get_new_lookalike_audience",
+            return_value="LA_ID_12345",
+        ).start()
+
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
@@ -791,7 +813,7 @@ class OrchestrationRouteTest(TestCase):
             },
         )
 
-        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+        valid_response = {"message": api_c.BSON_INVALID_ID("bad_id1")}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -814,7 +836,7 @@ class OrchestrationRouteTest(TestCase):
             },
         )
 
-        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+        valid_response = {"message": api_c.BSON_INVALID_ID("bad_id1")}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -841,3 +863,41 @@ class OrchestrationRouteTest(TestCase):
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    def test_get_audience_by_id_validate_match_rate(self) -> None:
+        """
+        Test get audience API with valid id and valid match_rate present
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        audience = response.json
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(
+            ObjectId(audience[db_c.OBJECT_ID]), self.audiences[0][db_c.ID]
+        )
+        self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
+
+        # validate that the match_rate in deliveries contained within
+        # engagements are greater than or equal to 0
+        for engagement in audience[api_c.AUDIENCE_ENGAGEMENTS]:
+            self.assertGreaterEqual(
+                all(x[api_c.MATCH_RATE] for x in engagement[api_c.DELIVERIES]),
+                0,
+            )

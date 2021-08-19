@@ -1,7 +1,5 @@
 import faker from "faker"
 
-const deliveriesSchema = () => faker.datatype.number({ min: 1, max: 10 })
-
 const destinationSchema = () => {
   return {
     id: faker.datatype.number({ min: 1, max: 10 }),
@@ -13,24 +11,37 @@ const destinationSchema = () => {
     name: "Facebook",
     latest_delivery: {
       update_time: "2021-07-30T13:28:51.450Z",
-      status: "Delivered",
-      size: 1000,
+      status: faker.random.arrayElement([
+        "Delivered",
+        "Delivering",
+        "Not Delivered",
+        "Error",
+      ]),
+      size: faker.datatype.number({ min: 0, max: 10000 }),
+      match_rate: faker.datatype.number({ min: 0, max: 1, precision: 0.001 }),
     },
+    create_time: () => faker.date.recent(),
+    created_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
+    update_time: () => faker.date.recent(),
+    updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
   }
 }
 
 const audienceData = () => {
   return {
-    id: faker.datatype.number({ min: 1, max: 10 }),
-    name: "My audience 1",
-    status: "Delivered",
+    id: `${faker.datatype.number({ min: 1, max: 10 })}`,
+    name: `Audience for ${faker.company.companyName()}`,
+    status: faker.random.arrayElement([
+      "Delivered",
+      "Delivering",
+      "Not Delivered",
+      "Error",
+    ]),
     create_time: () => faker.date.recent(),
     created_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
     update_time: () => faker.date.recent(),
     updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
     destinations: mockDestinations(3),
-    // TODO: this may need to be updated based on HUS-579...
-    deliveries: mockDeliveries(2),
   }
 }
 
@@ -42,10 +53,6 @@ const mockDestinations = (numDestinations = 3) => {
   return Array.from({ length: numDestinations }, destinationSchema)
 }
 
-const mockDeliveries = (numDeliveries = 3) => {
-  return Array.from({ length: numDeliveries }, deliveriesSchema)
-}
-
 /**
  * Engagement schema
  */
@@ -53,7 +60,7 @@ export const engagement = {
   name: () => faker.address.state(),
   description: () => "",
   delivery_schedule: () => ({
-    start_date: faker.date.recent(),
+    start_date: faker.date.past(),
     end_date: faker.date.soon(),
   }),
   audiences: () => mockAudiences(faker.datatype.number({ min: 2, max: 5 })),
