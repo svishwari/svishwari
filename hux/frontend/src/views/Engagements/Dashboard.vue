@@ -490,12 +490,17 @@ export default {
         this.selectedAudienceId = event.parent.id
         switch (event.target.title.toLowerCase()) {
           case "deliver now":
-            await this.deliverAudienceDestination({
-              id: engagementId,
-              audienceId: this.selectedAudienceId,
-              destinationId: event.data.id,
-            })
-            this.dataPendingMesssage(event, "destination")
+            try {
+              await this.deliverAudienceDestination({
+                id: engagementId,
+                audienceId: this.selectedAudienceId,
+                destinationId: event.data.id,
+              })
+              this.dataPendingMesssage(event, "destination")
+            } catch (error) {
+              this.dataErrorMesssage(event, "destination")
+              console.error(error)
+            }
             break
           case "edit delivery schedule":
             this.showConfirmModal = true
@@ -516,7 +521,6 @@ export default {
             break
         }
       } catch (error) {
-        this.dataErrorMesssage(event, "destination")
         handleError(error)
         throw error
       }

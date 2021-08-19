@@ -746,12 +746,17 @@ export default {
       try {
         switch (event.target.title.toLowerCase()) {
           case "deliver now":
-            await this.deliverAudienceDestination({
-              id: event.parent.id,
-              audienceId: this.audienceId,
-              destinationId: event.data.id,
-            })
-            this.dataPendingMesssage(event, "destination")
+            try {
+              await this.deliverAudienceDestination({
+                id: event.parent.id,
+                audienceId: this.audienceId,
+                destinationId: event.data.id,
+              })
+              this.dataPendingMesssage(event, "destination")
+            } catch (error) {
+              this.dataErrorMesssage(event, "destination")
+              console.error(error)
+            }
             break
           case "edit delivery schedule":
             this.engagementId = event.parent.id
@@ -773,7 +778,6 @@ export default {
             break
         }
       } catch (error) {
-        this.dataErrorMesssage(event, "destination")
         console.error(error)
       }
     },
