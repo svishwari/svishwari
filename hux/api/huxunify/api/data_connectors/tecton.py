@@ -281,7 +281,7 @@ def get_model_lift_async(model_id: int) -> List[ModelLiftSchema]:
     logger.info(
         "Executed 10 requests to the Tecton API in %0.4f seconds. ~%0.4f requests per second.",
         total_ticks,
-        10 / total_ticks,
+        total_ticks / 10,
     )
 
     result_lift = []
@@ -298,15 +298,15 @@ def get_model_lift_async(model_id: int) -> List[ModelLiftSchema]:
 
         result_lift.append(
             {
-                "bucket": response[1],
-                "actual_value": latest_lift_data[0],
-                "actual_lift": latest_lift_data[2],
-                "predicted_lift": latest_lift_data[3],
-                "predicted_value": latest_lift_data[8],
-                "profile_count": int(latest_lift_data[9]),
-                "actual_rate": latest_lift_data[10],
-                "predicted_rate": latest_lift_data[11],
-                "profile_size_percent": latest_lift_data[13] * 100
+                constants.BUCKET: response[1],
+                constants.ACTUAL_VALUE: latest_lift_data[0],
+                constants.ACTUAL_LIFT: latest_lift_data[2],
+                constants.PREDICTED_LIFT: latest_lift_data[3],
+                constants.PREDICTED_VALUE: latest_lift_data[8],
+                constants.PROFILE_COUNT: int(latest_lift_data[9]),
+                constants.ACTUAL_RATE: latest_lift_data[10],
+                constants.PREDICTED_RATE: latest_lift_data[11],
+                constants.PROFILE_SIZE_PERCENT: latest_lift_data[13] * 100
                 if latest_lift_data[13]
                 else 0,
             }

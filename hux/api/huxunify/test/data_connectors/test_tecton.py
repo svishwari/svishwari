@@ -278,11 +278,43 @@ class TectonTest(TestCase):
         # TODO - when available.
         self.assertEqual(2 + 2, 4)
 
-    def test_lift_chart(self):
-        """test getting lift charts for a model"""
+    @requests_mock.Mocker()
+    def test_lift_chart(self, request_mocker: Mocker):
+        """Test getting lift charts for a model.
 
-        # TODO - when available.
-        self.assertEqual(2 + 2, 4)
+        Args:
+            request_mocker (Mocker): Request mock object.
+
+        Returns:
+
+        """
+
+        # setup the request mock post
+        request_mocker.post(
+            self.config.TECTON_FEATURE_SERVICE,
+            json=t_c.MOCKED_MODEL_LIFT_CHART,
+            headers=self.config.TECTON_API_HEADERS,
+        )
+
+        lift_data = tecton.get_model_lift_async(1)
+
+        self.assertTrue(lift_data)
+
+        # test the last lift chart data
+        self.assertDictEqual(
+            lift_data[-1],
+            {
+                constants.BUCKET: 100,
+                constants.ACTUAL_VALUE: 2602,
+                constants.ACTUAL_LIFT: 1,
+                constants.PREDICTED_LIFT: 1.0000000895,
+                constants.PREDICTED_VALUE: 2726.7827,
+                constants.PROFILE_COUNT: 95369,
+                constants.ACTUAL_RATE: 0.0272834988,
+                constants.PREDICTED_RATE: 0.0285919189,
+                constants.PROFILE_SIZE_PERCENT: 0,
+            },
+        )
 
     def test_drift(self):
         """test getting drif for a model"""
