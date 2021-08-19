@@ -131,9 +131,6 @@ class TectonTest(TestCase):
             {
                 constants.ID: 2,
                 constants.RMSE: 215.5,
-                constants.AUC: 0,
-                constants.PRECISION: 0,
-                constants.RECALL: 0,
                 constants.CURRENT_VERSION: "21.7.30",
             },
         )
@@ -177,7 +174,6 @@ class TectonTest(TestCase):
             model,
             {
                 constants.ID: 1,
-                constants.RMSE: 0,
                 constants.AUC: 0.85,
                 constants.PRECISION: 0.71,
                 constants.RECALL: 0.58,
