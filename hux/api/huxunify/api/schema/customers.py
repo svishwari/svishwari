@@ -5,7 +5,6 @@ Schemas for the Customers API
 from datetime import datetime
 
 from flask_marshmallow import Schema
-from marshmallow import pre_dump
 from marshmallow.fields import (
     Str,
     Float,
