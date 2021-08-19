@@ -151,8 +151,14 @@
               :active="loadingGeographics"
               :indeterminate="loadingGeographics"
             />
-            <map-chart v-if="!loadingGeographics" :map-data="customersGeographics" />
-            <map-slider  v-if="!loadingGeographics" :map-data="customersGeographics" />
+            <map-chart
+              v-if="!loadingGeographics"
+              :map-data="customersGeographics"
+            />
+            <map-slider
+              v-if="!loadingGeographics"
+              :map-data="customersGeographics"
+            />
           </v-card>
         </v-col>
         <v-col md="5">
@@ -168,7 +174,10 @@
               :active="loadingGeographics"
               :indeterminate="loadingGeographics"
             />
-            <map-state-list v-if="!loadingGeographics" :map-data="customersGeographics" />
+            <map-state-list
+              v-if="!loadingGeographics"
+              :map-data="customersGeographics"
+            />
           </v-card>
         </v-col>
       </v-row>

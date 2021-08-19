@@ -12,7 +12,7 @@ import {
 import { idrOverview, idrDataFeedReport } from "./factories/identity"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
-import liftData from "./factories/liftChartData.json"
+import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
 
 export const defineRoutes = (server) => {
@@ -345,7 +345,6 @@ export const defineRoutes = (server) => {
       auc: 0.79,
       precision: 0.82,
     }
-    data.attrs.lift_data = liftData.lift_data
     data.attrs.model_name = data.attrs.name
     data.attrs.model_type = data.attrs.type
 
@@ -361,6 +360,8 @@ export const defineRoutes = (server) => {
     const model = schema.models.find(id)
     return model.attrs.version_history
   })
+
+  server.get("/models/:id/lift", () => liftData)
 
   // customers
   server.get("/customers")
