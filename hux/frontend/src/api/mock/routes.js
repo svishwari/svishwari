@@ -342,7 +342,6 @@ export const defineRoutes = (server) => {
       auc: 0.79,
       precision: 0.82,
     }
-    data.attrs.feature_importance = featureData.featureList
     data.attrs.lift_data = liftData.lift_data
     data.attrs.model_name = data.attrs.name
     data.attrs.model_type = data.attrs.type

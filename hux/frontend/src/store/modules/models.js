@@ -8,12 +8,14 @@ const state = {
   items: {},
   overview: {},
   history: {},
+  features: [],
 }
 
 const getters = {
   list: (state) => Object.values(state.items),
   overview: (state) => state.overview,
   history: (state) => Object.values(state.history),
+  features: (state) => state.features,
 }
 
 const mutations = {
@@ -30,7 +32,7 @@ const mutations = {
   },
 
   SET_FEATURES(state, data) {
-    state.overview.feature_importance = data
+    state.features = data
   },
 
   SET_HISTORY(state, items) {
