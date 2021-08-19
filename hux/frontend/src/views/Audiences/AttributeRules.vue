@@ -20,7 +20,7 @@
           <span @click="addNewSection()">
             <icon class="add-icon cursor-pointer" type="add" :size="30" />
           </span>
-          <span class="mt-1 ml-4">
+          <span class="ml-4 no-attribute">
             You have not added any attributes, yet.
           </span>
         </div>
@@ -429,6 +429,9 @@ export default {
     padding: 14px 16px;
     .new-attribute {
       display: flex;
+      .no-attribute {
+        margin-top: 2px;
+      }
     }
   }
   ::v-deep .seperator {
@@ -544,6 +547,7 @@ export default {
     .value {
       line-height: 19px;
     }
+    width: 130px;
   }
 }
 </style>

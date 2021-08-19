@@ -66,6 +66,8 @@
                     input-placeholder
                   "
                   :rules="audienceNamesRules"
+                  help-text="This audience will appear in the delivered destinations as the provided Audience name. In Facebook it will appear as the provided Audience name with the timestamp of delivery."
+                  icon="mdi-information-outline"
                 />
               </v-col>
               <v-col cols="8">
@@ -107,7 +109,7 @@
             optional="- Optional"
             class="neroBlack--text step-2"
           >
-            <v-col class="pt-1 pa-0">
+            <v-col class="pa-0">
               <attribute-rules
                 :rules="attributeRules"
                 @updateOverview="(data) => mapCDMOverview(data)"
@@ -133,23 +135,27 @@
                   </template>
                   <template #hover-content>
                     <v-sheet max-width="240px">
-                      <h6 class="text-caption mb-2">Destination</h6>
                       <p class="gray--text">
-                        Locations where Audiences are planned to be run.
+                        The location(s) where Audiences are planned to be run.
                       </p>
                     </v-sheet>
                   </template>
                 </tooltip>
-                - Optional
               </h5>
             </template>
 
-            <v-row class="pt-1">
+            <v-row class="neroBlack--text text-caption">
+              <span class="ml-3 mt-2">
+                First add and deliver an audience to Facebook in order to create a lookalike audience from this audience’s dashboard. 
+              </span>
+            </v-row>
+
+            <v-row>
               <v-col cols="12">
                 <div class="d-flex align-center">
                   <span @click="openSelectDestinationsDrawer()">
                     <icon
-                      class="add-icon cursor-pointer mt-1"
+                      class="add-icon cursor-pointer"
                       type="add"
                       :size="30"
                     />
