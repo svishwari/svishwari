@@ -74,22 +74,11 @@ export default {
   data() {
     return {
       isOpen: false,
+      icon: "",
     }
   },
 
   computed: {
-    icon() {
-      if (this.type == "success") {
-        this.title = "YAY!"
-        return "mdi-check-circle"
-      } else if (this.type == "error") {
-        this.title = "OH NO!"
-        return "mdi-alert-circle"
-      } else if (this.type == "secondary") {
-        return "mdi-message-alert"
-      }
-      return "mdi-information"
-    },
     typeClass() {
       return `${this.type}--text`
     },
@@ -105,6 +94,22 @@ export default {
     isOpen: function () {
       this.$emit("input", this.isOpen)
     },
+  },
+
+  updated() {
+    this.$nextTick(function () {
+      if (this.type == "success") {
+        this.title = "YAY!"
+        this.icon = "mdi-check-circle"
+      } else if (this.type == "error") {
+        this.title = "OH NO!"
+        this.icon = "mdi-alert-circle"
+      } else if (this.type == "secondary") {
+        this.icon = "mdi-message-alert"
+      } else {
+        this.icon = "mdi-information"
+      }
+    })
   },
 }
 </script>
