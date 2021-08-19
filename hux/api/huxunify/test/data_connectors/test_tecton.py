@@ -218,6 +218,7 @@ class TectonTest(TestCase):
         """Test model version history.
 
         Args:
+            request_mocker (Mocker): Request mock object.
 
         Returns:
 
@@ -282,7 +283,6 @@ class TectonTest(TestCase):
         """Test getting lift charts for a model.
 
         Args:
-            request_mocker (Mocker): Request mock object.
 
         Returns:
 
