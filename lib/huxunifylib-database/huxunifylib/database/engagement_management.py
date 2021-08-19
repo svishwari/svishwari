@@ -198,7 +198,7 @@ def get_engagements_summary(
                     "$cond": [{"$eq": ["$lookalike_id", None]}, False, True]
                 },
                 "audiences.id": {
-                    "$ifNull": ["$audiences.id", "audiences._id"]
+                    "$ifNull": ["$audiences.id", "$audiences._id"]
                 },
                 "audiences.destinations": {
                     "$cond": [
