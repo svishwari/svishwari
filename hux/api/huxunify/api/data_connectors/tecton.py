@@ -70,9 +70,7 @@ def map_model_response(response: dict) -> List[dict]:
             constants.FULCRUM_DATE: parser.parse(feature[2]),
             constants.LOOKBACK_WINDOW: int(feature[3]),
             constants.NAME: feature[4],
-            constants.TYPE: constants.MODEL_TYPES_MAPPING.get(
-                str(feature[5]).lower(), constants.UNKNOWN
-            ),
+            constants.TYPE: str(feature[5]).lower(),
             constants.OWNER: feature[6],
             constants.STATUS: feature[8],
             constants.LATEST_VERSION: feature[9],
@@ -131,7 +129,7 @@ def map_model_performance_response(
     model_id: int,
     model_type: str,
     model_version: str,
-    metric_default_value: float = 0,
+    metric_default_value: float = -1,
 ) -> dict:
     """Map model performance response to a usable dict.
 
@@ -140,7 +138,6 @@ def map_model_performance_response(
         model_id (int): Model ID number.
         model_type (str): Model type.
         model_version (str): Model version.
-        metric_default_value (float): Default metric value if not found.
 
     Returns:
         dict: A cleaned model performance dict.
