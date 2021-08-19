@@ -1,0 +1,137 @@
+---
+test_name: Test Audience Rules API
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: Test Retrieving Audience Rules
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/audiences/rules"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        text_operators:
+          contains: "Contains"
+          does_not_contain: "Does not contain"
+          equals: "Equals"
+          does_not_equal: "Does not equal"
+        rule_attributes:
+          model_scores:
+            propensity_to_unsubscribe:
+              name: !anystr
+              type: !anystr
+              min: !anyfloat
+              max: !anyfloat
+              steps: !anyfloat
+            ltv_predicted:
+              name: !anystr
+              type: !anystr
+              min: !anyint
+              max: !anyint
+              steps: !anyint
+            propensity_to_purchase:
+              name: !anystr
+              type: !anystr
+              min: !anyfloat
+              max: !anyfloat
+              steps: !anyfloat
+          general:
+            age:
+              name: !anystr
+              type: !anystr
+              min: !anyint
+              max: !anyint
+            email:
+              name: !anystr
+              type: !anystr
+            gender:
+              name: !anystr
+              type: !anystr
+              options: !anylist
+            location:
+              name: !anystr
+              country:
+                name: !anystr
+                type: !anystr
+                options: !anylist
+              state:
+                name: !anystr
+                type: !anystr
+                options: !anylist
+              city:
+                name: !anystr
+                type: !anystr
+                options: !anylist
+              zip_code:
+                name: !anystr
+                type: !anystr
+
+
+
+---
+test_name: Test Retrieve all audiences API
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: Test Retrieving all audiences
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/audiences"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        lookalikeable: "false"
+        deliveries: "2"
+
+    response:
+      status_code: 200
+      headers:
+        content-type: application/json
+
+
+---
+test_name: Test retrieve non existant audience
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: Test Retrieving an audience that does not exist
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/audiences/61135de24af31a0f33029092"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      status_code: 404
+      headers:
+        content-type: application/json
