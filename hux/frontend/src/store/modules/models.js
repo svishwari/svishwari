@@ -9,6 +9,7 @@ const state = {
   overview: {},
   history: {},
   lift: [],
+  features: [],
 }
 
 const getters = {
@@ -16,6 +17,7 @@ const getters = {
   overview: (state) => state.overview,
   history: (state) => Object.values(state.history),
   lift: (state) => state.lift,
+  features: (state) => state.features,
 }
 
 const mutations = {
@@ -29,6 +31,10 @@ const mutations = {
 
   SET_OVERVIEW(state, data) {
     state.overview = data
+  },
+
+  SET_FEATURES(state, data) {
+    state.features = data
   },
 
   SET_HISTORY(state, items) {
@@ -61,6 +67,16 @@ const actions = {
     try {
       const response = await api.models.overview(type)
       commit("SET_OVERVIEW", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getFeatures({ commit }, type) {
+    try {
+      const response = await api.models.features(type)
+      commit("SET_FEATURES", response.data)
     } catch (error) {
       handleError(error)
       throw error

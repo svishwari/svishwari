@@ -64,9 +64,14 @@ export default {
         x: 0,
         y: 0,
       },
-      margin: { top: 5, right: 50, bottom: 70, left: 150 },
-      chartData: this.value,
+      margin: { top: 5, right: 50, bottom: 75, left: 150 },
     }
+  },
+
+  computed: {
+    chartData() {
+      return this.value
+    },
   },
 
   watch: {
@@ -196,7 +201,7 @@ export default {
         .data(this.chartData)
         .enter()
         .append("rect")
-        .attr("x", x(0))
+        .attr("x", 0)
         .attr("y", (d) => y(d.name))
         .attr("width", (d) => x(d.score))
         .attr("height", y.bandwidth())
