@@ -11,6 +11,8 @@ const state = {
 
   // TODO: to be integrated with HUS-226
   insights: null,
+
+  geographics: [],
 }
 
 const getters = {
@@ -21,6 +23,8 @@ const getters = {
   overview: (state) => state.overview,
 
   insights: (state) => state.insights,
+
+  geographics: (state) => state.geographics,
 }
 
 const mutations = {
@@ -40,6 +44,10 @@ const mutations = {
 
   RESET_LIST(state) {
     Vue.set(state, "items", {})
+  },
+
+  SET_GEOGRAPHICS(state, data) {
+    state.geographics = data
   },
 }
 
@@ -74,6 +82,16 @@ const actions = {
     try {
       const response = await api.customers.overview()
       commit("SET_OVERVIEW", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getGeographics({ commit }) {
+    try {
+      const response = await api.customers.geographics()
+      commit("SET_GEOGRAPHICS", response.data)
     } catch (error) {
       handleError(error)
       throw error
