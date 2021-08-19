@@ -94,7 +94,7 @@ class TestNotificationRoutes(TestCase):
         params = {
             db_c.NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE: api_c.DEFAULT_ALERT_BATCH_SIZE,
             db_c.NOTIFICATION_QUERY_PARAMETER_SORT_ORDER: db_c.PAGINATION_DESCENDING,
-            db_c.NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER: api_c.DEFAULT_ALERT_BATCH_NUMBER,
+            db_c.NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER: api_c.DEFAULT_BATCH_NUMBER,
         }
 
         response = self.app.get(
