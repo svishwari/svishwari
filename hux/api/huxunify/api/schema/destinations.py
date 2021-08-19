@@ -314,6 +314,90 @@ class TwilioAuthConstants(Schema):
     )
 
 
+class QualtricsAuthCredsSchema(Schema):
+    """
+    Qualtrics Auth Credentials schema class
+    """
+
+    qualtrics_api_token = fields.String(
+        required=True,
+        validate=must_not_be_blank,
+        example="wue812x2813eyqshjsdbw",
+    )
+    qualtrics_data_center = fields.String(
+        required=True,
+        validate=must_not_be_blank,
+        example="feiwygfewyfg  iuqef",
+    )
+    qualtrics_owner_id = fields.String(
+        required=True,
+        validate=must_not_be_blank,
+        example="kjeahfhb81322132qef",
+    )
+    qualtrics_directory_id = fields.String(
+        required=True,
+        validate=must_not_be_blank,
+        example="qwjdqwu73176432nfkd",
+    )
+
+
+class QualtricsAuthConstants(Schema):
+    """
+    Qualtrics Auth constants schema class
+    """
+
+    class Meta:
+        """
+        set the ordering of qualtrics auth constants
+        """
+
+        ordered = True
+
+    qualtrics_api_token = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "API Token",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+
+    qualtrics_data_center = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Data Center",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+
+    qualtrics_owner_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Owner ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+
+    qualtrics_directory_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Directory ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+
+
 class DestinationConstantsSchema(Schema):
     """
     Destination constants schema class
@@ -329,6 +413,7 @@ class DestinationConstantsSchema(Schema):
     facebook = fields.Nested(FacebookAuthConstants)
     sfmc = fields.Nested(SFMCAuthConstants)
     twilio = fields.Nested(TwilioAuthConstants)
+    qualtrics = fields.Nested(QualtricsAuthConstants)
 
 
 class DestinationDataExtPostSchema(Schema):

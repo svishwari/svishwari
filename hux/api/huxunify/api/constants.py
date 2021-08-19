@@ -205,6 +205,12 @@ SFMC_CUSTOMER_KEY = "CustomerKey"
 # Twilio connector defines
 TWILIO_AUTH_TOKEN = "twilio_auth_token"
 
+# Qualtrics connector defines
+QUALTRICS_API_TOKEN = "qualtrics_api_token"
+QUALTRICS_DATA_CENTER = "qualtrics_data_center"
+QUALTRICS_OWNER_ID = "qualtrics_owner_id"
+QUALTRICS_DIRECTORY_ID = "qualtrics_directory_id"
+
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
 
@@ -281,6 +287,32 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
+    db_c.DELIVERY_PLATFORM_QUALTRICS: {
+        QUALTRICS_API_TOKEN: {
+            NAME: "Auth Token",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        QUALTRICS_DATA_CENTER: {
+            NAME: "Data Center",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        QUALTRICS_OWNER_ID: {
+            NAME: "Owner ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        QUALTRICS_DIRECTORY_ID: {
+            NAME: "Directory ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+    },
 }
 
 # DESTINATION Secret Mapping
@@ -306,6 +338,10 @@ DESTINATION_SECRETS = {
     db_c.DELIVERY_PLATFORM_TWILIO: {
         MONGO: [],
         AWS_SSM_NAME: [TWILIO_AUTH_TOKEN],
+    },
+    db_c.DELIVERY_PLATFORM_QUALTRICS: {
+        MONGO: [],
+        AWS_SSM_NAME: [QUALTRICS_API_TOKEN],
     },
 }
 

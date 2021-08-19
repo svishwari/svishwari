@@ -433,6 +433,87 @@ class TestDestinationRoutes(TestCase):
 
     # pylint: disable=unused-argument
     @patch(
+        "huxunify.api.route.destination.QualtricsConnector",
+        **{"return_value.raiseError.side_effect": Exception()},
+    )
+    def test_validate_qualtrics_credentials(self, mock_connector: MagicMock):
+        """
+        Test successful authentication with qualtrics
+
+        Args:
+            mock_connector (MagicMock): MagicMock of the Qualtrics Connector
+
+        Returns:
+        """
+
+        validation_details = {
+            api_c.TYPE: db_c.DELIVERY_PLATFORM_QUALTRICS,
+            api_c.AUTHENTICATION_DETAILS: {
+                api_c.QUALTRICS_API_TOKEN: "123456wqjhdq",
+                api_c.QUALTRICS_DIRECTORY_ID: "eqjfd13289412",
+                api_c.QUALTRICS_OWNER_ID: "fjndnqer812e821ue",
+                api_c.QUALTRICS_DATA_CENTER: "data-center ",
+            },
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/validate",
+            json=validation_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        validation_succeeded = {
+            "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS,
+        }
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(validation_succeeded, response.json)
+
+    @patch(
+        "huxunify.api.route.destination.QualtricsConnector",
+        **{"return_value.raiseError.side_effect": Exception()},
+    )
+    def test_validate_qualtrics_credentials_failure_bad_credentials(
+        self, mock_connector: MagicMock
+    ):
+        """
+        Test failure to authenticate with qualtrics due to bad credentials
+
+        Args:
+            mock_connector (MagicMock): MagicMock of the Qualtrics Connector
+
+        Returns:
+
+        """
+
+        # mocks the return value of the TwilioConnector Constructor
+        mock_connector.side_effect = Exception("Test Exception")
+
+        validation_details = {
+            api_c.TYPE: db_c.DELIVERY_PLATFORM_QUALTRICS,
+            api_c.AUTHENTICATION_DETAILS: {
+                api_c.QUALTRICS_API_TOKEN: "123456wqjhdq",
+                api_c.QUALTRICS_DIRECTORY_ID: "eqjfd13289412",
+                api_c.QUALTRICS_OWNER_ID: "fjndnqer812e821ue",
+                api_c.QUALTRICS_DATA_CENTER: "data-center ",
+            },
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/validate",
+            json=validation_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        validation_failed = {
+            "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+        }
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(validation_failed, response.json)
+
+    # pylint: disable=unused-argument
+    @patch(
         "huxunify.api.route.destination.SFMCConnector",
         **{"return_value.raiseError.side_effect": Exception()},
     )
