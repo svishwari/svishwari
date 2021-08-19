@@ -24,6 +24,7 @@ from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
     DriftSchema,
+    ModelLiftSchema,
     ModelDashboardSchema,
     FeatureSchema,
 )
@@ -472,5 +473,60 @@ class ModelImportanceFeaturesView(SwaggerView):
 
         return (
             jsonify(FeatureSchema(many=True).dump(features[:limit])),
+            HTTPStatus.OK.value,
+        )
+
+
+@add_view_to_blueprint(
+    model_bp,
+    f"{api_c.MODELS_ENDPOINT}/<model_id>/lift",
+    "ModelLiftView",
+)
+class ModelLiftView(SwaggerView):
+    """
+    Model Lift Class
+    """
+
+    parameters = [
+        api_c.MODEL_ID_PARAMS[0],
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Model lift chart.",
+            "schema": {"type": "array", "items": ModelLiftSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve model lift data"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.MODELS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(
+        self,
+        model_id: int,
+    ) -> Tuple[List[dict], int]:
+        """Retrieves bucket data asynchronously.
+
+        ---
+        security:
+            - Bearer: [Authorization]
+
+        Args:
+            model_id (int): model id
+
+        Returns:
+            Tuple[List[dict], int]: dict of model lift data
+
+        """
+
+        # retrieves lift data
+        lift_data = tecton.get_model_lift_async(model_id)
+        lift_data.sort(key=lambda x: x[api_c.BUCKET])
+
+        return (
+            jsonify(ModelLiftSchema(many=True).dump(lift_data)),
             HTTPStatus.OK.value,
         )

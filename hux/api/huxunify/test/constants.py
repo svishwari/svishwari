@@ -340,6 +340,19 @@ MOCKED_MODEL_UNSUBSCRIBE_PAYLOAD = {
         "join_key_map": {"model_id": "1"},
     }
 }
+MOCKED_MODEL_LIFT_CHART = [
+    {
+        api_c.BUCKET: 100,
+        api_c.ACTUAL_VALUE: 2602,
+        api_c.ACTUAL_LIFT: 1,
+        api_c.PREDICTED_LIFT: 1.0000000895,
+        api_c.PREDICTED_VALUE: 2726.7827,
+        api_c.PROFILE_COUNT: 95369,
+        api_c.ACTUAL_RATE: 0.0272834988,
+        api_c.PREDICTED_RATE: 0.0285919189,
+        api_c.PROFILE_SIZE_PERCENT: 0,
+    }
+]
 
 
 def validate_schema(

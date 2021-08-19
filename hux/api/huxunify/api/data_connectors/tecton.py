@@ -2,11 +2,15 @@
 Purpose of this file is for holding methods to query and pull data from Tecton.
 """
 import random
+import time
 from math import log10
+import asyncio
 from json import dumps
 from typing import List, Tuple
 
 from dateutil import parser
+import aiohttp
+import async_timeout
 import requests
 from huxunifylib.util.general.logging import logger
 
@@ -16,7 +20,7 @@ from huxunify.api.schema.model import (
     ModelVersionSchema,
     FeatureSchema,
     DriftSchema,
-    LiftSchema,
+    ModelLiftSchema,
 )
 
 
@@ -243,18 +247,113 @@ def get_model_drift(name: str) -> List[DriftSchema]:
     return []
 
 
-# pylint: disable=unused-argument
-def get_model_lift(name: str) -> List[LiftSchema]:
-    """Get model lift based on name.
+def get_model_lift_async(model_id: int) -> List[ModelLiftSchema]:
+    """Get model lift based on id.
 
     Args:
-        name (str): model name.
+        model_id (int): model id.
 
     Returns:
-         List[LiftSchema] List of model lift.
+         List[ModelLiftSchema]: List of model lift.
     """
-    # TODO - when available.
-    return []
+
+    # set the event loop
+    asyncio.set_event_loop(asyncio.SelectorEventLoop())
+
+    # start timer
+    timer = time.perf_counter()
+
+    # send all responses at once and wait until they are all done.
+    responses = asyncio.get_event_loop().run_until_complete(
+        asyncio.gather(
+            *(
+                get_async_lift_bucket(model_id, bucket)
+                for bucket in range(10, 101, 10)
+            )
+        )
+    )
+
+    # log execution time summary
+    total_ticks = time.perf_counter() - timer
+    logger.info(
+        "Executed 10 requests to the Tecton API in %0.4f seconds. ~%0.4f requests per second.",
+        total_ticks,
+        total_ticks / 10,
+    )
+
+    result_lift = []
+    # iterate each response.
+    for response in responses:
+        # validate response code
+        if not response[0]:
+            continue
+
+        # process lift data
+        latest_lift_data = response[0][constants.RESULTS][-1][
+            constants.FEATURES
+        ]
+
+        result_lift.append(
+            {
+                constants.BUCKET: response[1],
+                constants.ACTUAL_VALUE: latest_lift_data[0],
+                constants.ACTUAL_LIFT: latest_lift_data[2],
+                constants.PREDICTED_LIFT: latest_lift_data[3],
+                constants.PREDICTED_VALUE: latest_lift_data[8],
+                constants.PROFILE_COUNT: int(latest_lift_data[9]),
+                constants.ACTUAL_RATE: latest_lift_data[10],
+                constants.PREDICTED_RATE: latest_lift_data[11],
+                constants.PROFILE_SIZE_PERCENT: latest_lift_data[13] * 100
+                if latest_lift_data[13]
+                else 0,
+            }
+        )
+
+    return result_lift
+
+
+async def get_async_lift_bucket(
+    model_id: int, bucket: int
+) -> Tuple[dict, int]:
+    """asynchronously gets lift by bucket
+
+    Args:
+        model_id (int): model id.
+        bucket (int): bucket.
+
+    Returns:
+       Tuple[dict,int]: bucket lift dict.
+    """
+
+    # get config
+    config = get_config()
+
+    payload = {
+        "params": {
+            "feature_service_name": constants.FEATURE_LIFT_MODEL_SERVICE,
+            "join_key_map": {
+                constants.MODEL_ID: str(model_id),
+                constants.BUCKET: str(bucket),
+            },
+        }
+    }
+
+    # setup the aiohttp session so we can process the calls asynchronously
+    async with aiohttp.ClientSession() as session, async_timeout.timeout(10):
+        # run the async post request
+        async with session.post(
+            config.TECTON_FEATURE_SERVICE,
+            json=payload,
+            headers=config.TECTON_API_HEADERS,
+        ) as response:
+            # await the responses, and return them as they come in.
+            try:
+                return await response.json(), bucket
+            except aiohttp.client.ContentTypeError:
+                logger.error(
+                    "Tecton post request failed for bucket: %s.", bucket
+                )
+                return {"code": 500}, bucket
 
 
 def get_model_features(
