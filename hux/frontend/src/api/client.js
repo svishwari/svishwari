@@ -183,7 +183,7 @@ client["models"].overview = (id) => {
 }
 
 client["models"].features = (id) => {
-  return http.get(`/models/${id}/features`)
+  return http.get(`/models/${id}/feature-importance`)
 }
 
 client["models"].versionHistory = (id) => {

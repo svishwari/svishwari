@@ -349,7 +349,7 @@ export const defineRoutes = (server) => {
     return data
   })
 
-  server.get("/models/:id/features", () => {
+  server.get("/models/:id/feature-importance", () => {
     return featureData.featureList
   })
 
