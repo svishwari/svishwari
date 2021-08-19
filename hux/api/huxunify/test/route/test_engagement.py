@@ -121,6 +121,11 @@ class TestEngagementMetricsDisplayAds(TestCase):
             return_value=self.database,
         ).start()
 
+        self.campaign_id = "67345634618463874"
+        self.ad_set_id = "8134731897438943"
+        self.campaign_name = "Test campaing"
+        self.ad_set_name = "Test ad set name"
+
         self.audience_id = create_audience(self.database, "Test Audience", [])[
             db_c.ID
         ]
@@ -156,8 +161,10 @@ class TestEngagementMetricsDisplayAds(TestCase):
             self.delivery_platform[db_c.ID],
             [
                 {
-                    db_c.ENGAGEMENT_ID: self.engagement_id,
-                    db_c.AUDIENCE_ID: self.audience_id,
+                    api_c.ID: self.campaign_id,
+                    api_c.AD_SET_ID: self.ad_set_id,
+                    api_c.NAME: self.campaign_name,
+                    api_c.AD_SET_NAME: self.ad_set_name,
                 }
             ],
             self.engagement_id,
@@ -218,6 +225,17 @@ class TestEngagementMetricsDisplayAds(TestCase):
             response.json["audience_performance"][0]["destinations"][0][
                 "impressions"
             ],
+            70487,
+        )
+        self.assertTrue(
+            response.json["audience_performance"][0]["destinations"][0][
+                "campaigns"
+            ]
+        )
+        self.assertTrue(
+            response.json["audience_performance"][0]["destinations"][0][
+                "campaigns"
+            ][0]["impressions"],
             70487,
         )
 

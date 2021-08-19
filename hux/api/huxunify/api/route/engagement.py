@@ -105,6 +105,7 @@ def group_engagement_performance_metrics(
     database = get_db_client()
     audience_metrics_list = []
     # For each audience in engagement.audience
+    # pylint: disable=too-many-nested-blocks
     for eng_audience in engagement.get(api_c.AUDIENCES):
         audience = orchestration_management.get_audience(
             database, eng_audience.get(api_c.ID)
@@ -174,8 +175,37 @@ def group_engagement_performance_metrics(
             destination_metrics[
                 api_c.DELIVERY_PLATFORM_TYPE
             ] = delivery_platform[db_c.DELIVERY_PLATFORM_TYPE]
+
+            if metrics_type == api_c.DISPLAY_ADS:
+                campaign_metrics_list = []
+                delivery_campaigns = []
+                for job in audience_destination_jobs:
+                    if job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]:
+                        delivery_campaigns.extend(
+                            job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]
+                        )
+
+                for campaign in delivery_campaigns:
+                    job_list = []
+                    for job in audience_destination_jobs:
+                        if (
+                            job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]
+                            and campaign
+                            in job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]
+                        ):
+                            job_list.append(job)
+                    campaign_metrics_list.append(
+                        update_metrics(
+                            campaign[api_c.ID],
+                            campaign[api_c.NAME],
+                            job_list,
+                            performance_metrics,
+                            metrics_type,
+                        )
+                    )
+
+                destination_metrics[api_c.CAMPAIGNS] = campaign_metrics_list
             audience_destination_metrics_list.append(destination_metrics)
-            # TODO : HUS-796 - Group performance metrics by campaigns
         audience_metrics[
             api_c.DESTINATIONS
         ] = audience_destination_metrics_list
@@ -1168,6 +1198,7 @@ class UpdateCampaignsForAudience(SwaggerView):
                     {
                         api_c.NAME: "Test Campaign",
                         api_c.ID: "campaign_id",
+                        api_c.AD_SET_ID: "ad_set_id",
                         api_c.DELIVERY_JOB_ID: "delivery_job_id",
                     },
                 ]
@@ -1319,7 +1350,17 @@ class UpdateCampaignsForAudience(SwaggerView):
                 }, HTTPStatus.BAD_REQUEST
 
             updated_campaigns = [
-                {k: v for k, v in d.items() if k in [api_c.NAME, api_c.ID]}
+                {
+                    k: v
+                    for k, v in d.items()
+                    if k
+                    in [
+                        api_c.NAME,
+                        api_c.ID,
+                        api_c.AD_SET_ID,
+                        api_c.AD_SET_NAME,
+                    ]
+                }
                 for d in value
             ]
             delivery_jobs.append(
@@ -1518,6 +1559,9 @@ class AudienceCampaignsGetView(SwaggerView):
                 ]
                 for campaign in delivery_campaigns:
                     campaign[api_c.ID] = campaign[api_c.ID]
+                    campaign[api_c.NAME] = campaign[api_c.NAME]
+                    campaign[api_c.AD_SET_ID] = campaign[api_c.AD_SET_ID]
+                    campaign[api_c.AD_SET_NAME] = campaign[api_c.AD_SET_NAME]
                     campaign[api_c.DELIVERY_JOB_ID] = delivery_job[db_c.ID]
                     campaign[db_c.CREATE_TIME] = delivery_job[db_c.CREATE_TIME]
                 campaigns.extend(delivery_campaigns)
@@ -1705,9 +1749,23 @@ class AudienceCampaignMappingsGetView(SwaggerView):
 
         logger.info("Got existing campaigns from Facebook.")
 
+        campaign_mappings = []
+        for campaign in campaigns:
+            ad_sets = facebook_connector.get_campaign_ad_sets(
+                campaign.get(api_c.ID)
+            )
+            for ad_set in ad_sets:
+                campaign_mapping = {
+                    api_c.ID: campaign.get(api_c.ID),
+                    api_c.AD_SET_ID: ad_set.get(api_c.ID),
+                    api_c.NAME: campaign.get(api_c.NAME),
+                    api_c.AD_SET_NAME: ad_set.get(api_c.NAME),
+                }
+                campaign_mappings.append(campaign_mapping)
+
         # Build response object
         campaign_schema = {
-            "campaigns": list(campaigns),
+            "campaigns": list(campaign_mappings),
             "delivery_jobs": delivery_jobs,
         }
 
@@ -1796,6 +1854,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
 
         delivery_jobs = []
         performance_metrics = []
+
         if ads_destination:
             # Get Performance metrics by engagement and destination
             performance_metrics = (

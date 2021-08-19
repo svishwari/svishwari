@@ -232,6 +232,21 @@ class DisplayAdsSummary(Schema):
     engagement_rate = fields.Float()
 
 
+class DispAdIndividualCampaignSummary(DisplayAdsSummary):
+    """
+    Schema for Individual Campaign Summary
+    """
+
+    class Meta:
+        """Set Order for the Audience Response"""
+
+        ordered = True
+
+    name = fields.String()
+    id = fields.String()
+    is_mapped = fields.Boolean(default=False)
+
+
 class DispAdIndividualDestinationSummary(DisplayAdsSummary):
     """
     Schema for Individual Campaign Summary
@@ -246,6 +261,7 @@ class DispAdIndividualDestinationSummary(DisplayAdsSummary):
     id = fields.String()
     is_mapped = fields.Boolean(default=False)
     delivery_platform_type = fields.String()
+    campaigns = fields.List(fields.Nested(DispAdIndividualCampaignSummary))
 
 
 class DispAdIndividualAudienceSummary(DisplayAdsSummary):
@@ -356,6 +372,28 @@ class AudiencePerformanceEmailSchema(Schema):
     )
 
 
+class FacebookCampaignSchema(Schema):
+    """
+    Schema for Campaigns
+    """
+
+    class Meta:
+        """Set Order for the Campaign Response"""
+
+        ordered = True
+
+    id = fields.String(
+        example="5f5f7262997acad4bac4373b",
+        validate=validate_object_id,
+    )
+    ad_set_id = fields.String(
+        example="5f5f7262997acad4bac4373b",
+        validate=validate_object_id,
+    )
+    name = fields.String()
+    ad_set_name = fields.String()
+
+
 class CampaignSchema(Schema):
     """
     Schema for Campaigns
@@ -371,6 +409,8 @@ class CampaignSchema(Schema):
         validate=validate_object_id,
     )
     name = fields.String()
+    ad_set_name = fields.String()
+    ad_set_id = fields.String()
     delivery_job_id = fields.String(
         example="5f5f7262997acad4bac4373b",
         validate=validate_object_id,
@@ -394,6 +434,8 @@ class CampaignPutSchema(Schema):
             {
                 api_c.NAME: "Test Campaign",
                 api_c.ID: "campaign_id",
+                api_c.AD_SET_ID: "ad_set_id",
+                api_c.AD_SET_NAME: "Test Adset",
                 api_c.DELIVERY_JOB_ID: "delivery_job_id",
             }
         ],
@@ -428,7 +470,7 @@ class CampaignMappingSchema(Schema):
 
         ordered = True
 
-    campaigns = fields.List(fields.Nested(CampaignSchema))
+    campaigns = fields.List(fields.Nested(FacebookCampaignSchema))
     delivery_jobs = fields.List(fields.Nested(DeliveryJobSchema))
 
 
