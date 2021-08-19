@@ -2,7 +2,7 @@
 purpose of this file is to house all the tecton api tests.
 """
 import json
-from unittest import TestCase
+from unittest import TestCase, mock
 from datetime import datetime
 import requests_mock
 from requests_mock import Mocker
@@ -218,7 +218,6 @@ class TectonTest(TestCase):
         """Test model version history.
 
         Args:
-            request_mocker (Mocker): Request mock object.
 
         Returns:
 
@@ -279,7 +278,7 @@ class TectonTest(TestCase):
         self.assertEqual(2 + 2, 4)
 
     @requests_mock.Mocker()
-    def test_lift_chart(self, request_mocker: Mocker):
+    def test_lift_chart(self):
         """Test getting lift charts for a model.
 
         Args:
@@ -289,12 +288,11 @@ class TectonTest(TestCase):
 
         """
 
-        # setup the request mock post
-        request_mocker.post(
-            self.config.TECTON_FEATURE_SERVICE,
-            json=t_c.MOCKED_MODEL_LIFT_CHART,
-            headers=self.config.TECTON_API_HEADERS,
-        )
+        # TODO- find async post mocker
+        mock.patch(
+            "huxunify.api.data_connectors.tecton.get_model_lift_async",
+            return_value=t_c.MOCKED_MODEL_LIFT_CHART,
+        ).start()
 
         lift_data = tecton.get_model_lift_async(1)
 
