@@ -6,7 +6,7 @@ jest.useFakeTimers()
 describe("Hux Alert", () => {
   test("Hux alert displays custom properties", () => {
     const customProps = {
-      title: "YAY!",
+      type: "success",
       message: "This is a success message!",
       value: true,
     }
@@ -15,7 +15,7 @@ describe("Hux Alert", () => {
       propsData: customProps,
     })
 
-    expect(wrapper.text()).toContain(customProps.title)
+    expect(wrapper.text()).toContain(customProps.type)
     expect(wrapper.text()).toContain(customProps.message)
     expect(wrapper).toMatchSnapshot()
   })

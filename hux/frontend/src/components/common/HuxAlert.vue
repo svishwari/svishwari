@@ -61,7 +61,7 @@ export default {
     title: {
       type: String,
       required: false,
-      default: null,
+      default: "YAY!",
     },
 
     autoHide: {
@@ -74,7 +74,7 @@ export default {
   data() {
     return {
       isOpen: false,
-      icon: "",
+      icon: "mdi-check-circle",
     }
   },
 
