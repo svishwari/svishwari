@@ -331,10 +331,10 @@ async def get_async_lift_bucket(model_id: int, bucket: int) -> Tuple[any, int]:
 
     payload = {
         "params": {
-            "feature_service_name": "ui_metadata_model_lift_service",
+            "feature_service_name": constants.FEATURE_LIFT_MODEL_SERVICE,
             "join_key_map": {
-                "model_id": str(model_id),
-                "bucket": str(bucket),
+                constants.MODEL_ID: str(model_id),
+                constants.BUCKET: str(bucket),
             },
         }
     }

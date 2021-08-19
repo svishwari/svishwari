@@ -552,6 +552,7 @@ PRECISION = "precision"
 PERFORMANCE_METRIC = "performance_metric"
 FEATURE_IMPORTANCE = "feature_importance"
 SCORE = "score"
+FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service"
 
 MODEL_LIST_PAYLOAD = {
     "params": {
