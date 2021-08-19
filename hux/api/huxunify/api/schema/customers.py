@@ -5,6 +5,7 @@ Schemas for the Customers API
 from datetime import datetime
 
 from flask_marshmallow import Schema
+from marshmallow import pre_dump
 from marshmallow.fields import (
     Str,
     Float,
@@ -293,4 +294,25 @@ class TotalCustomersInsightsSchema(Schema):
     )
     new_customers_added = Integer(
         required=True, attribute=api_c.DIFFERENCE_COUNT, example=5
+    )
+
+
+class CustomersInsightsCitiesSchema(Schema):
+    """City-wise customer insights schema"""
+
+    city = Str(required=True, example="New York City")
+    state = Str(required=True, example="NY")
+    size = Integer(required=True, default=0, example=1234)
+    spending = Float(
+        attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.231
+    )
+
+
+class CustomersInsightsStatesSchema(Schema):
+    """State-wise customer insights schema"""
+
+    state = Str(attribute=api_c.NAME, required=True, example="New York")
+    size = Integer(required=True, default=0, example=1234)
+    spending = Float(
+        attribute=api_c.LTV, required=True, default=0.0, example=123.2345
     )

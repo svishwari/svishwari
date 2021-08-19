@@ -24,6 +24,8 @@ from huxunify.api.schema.customers import (
     MatchingTrendsSchema,
     CustomerEventsSchema,
     TotalCustomersInsightsSchema,
+    CustomersInsightsStatesSchema,
+    CustomersInsightsCitiesSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -42,6 +44,7 @@ from huxunify.api.data_connectors.cdp import (
     get_demographic_by_state,
     get_spending_by_cities,
     get_customers_insights_count_by_day,
+    get_demographic_by_city,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -813,6 +816,136 @@ class TotalCustomersGraphView(SwaggerView):
             jsonify(
                 TotalCustomersInsightsSchema().dump(
                     customers_insight_total,
+                    many=True,
+                )
+            ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.STATES}",
+    "CustomersInsightsStates",
+)
+class CustomersInsightsStates(SwaggerView):
+    """
+    Total customer insights graph view class
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "array",
+                "items": CustomersInsightsStatesSchema,
+            },
+            "description": "Customer Insights by states.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Customer Insights by states."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(self) -> Tuple[list, int]:
+        """Retrieves city-wise customer insights.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int] list of total customers & new customers added, http code
+        """
+        # get auth token from request
+        token_response = get_token_from_request(request)
+
+        return (
+            jsonify(
+                CustomersInsightsStatesSchema().dump(
+                    get_demographic_by_state(token_response[0]), many=True
+                )
+            ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.CITIES}",
+    "CustomersInsightsCities",
+)
+class CustomersInsightsCities(SwaggerView):
+    """
+    Total customer insights graph view class
+    """
+
+    params = parameters = [
+        {
+            "name": api_c.QUERY_PARAMETER_BATCH_SIZE,
+            "in": "query",
+            "type": "integer",
+            "description": "Max number of cities to be returned.",
+            "example": "5",
+            "required": False,
+            "default": api_c.CITIES_DEFAULT_BATCH_SIZE,
+        },
+        {
+            "name": api_c.QUERY_PARAMETER_BATCH_NUMBER,
+            "in": "query",
+            "type": "string",
+            "description": "Number of which batch of notifications should be returned.",
+            "example": "10",
+            "required": False,
+            "default": api_c.DEFAULT_BATCH_NUMBER,
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "array",
+                "items": CustomersInsightsCitiesSchema,
+            },
+            "description": "Customer Insights by cities.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Customer Insights by cities."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(self) -> Tuple[list, int]:
+        """Retrieves city-wise customer insights.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int] list of total customers & new customers added, http code
+        """
+        # get auth token from request
+        token_response = get_token_from_request(request)
+
+        batch_size = request.args.get(
+            api_c.QUERY_PARAMETER_BATCH_SIZE, api_c.CITIES_DEFAULT_BATCH_SIZE
+        )
+        batch_number = request.args.get(
+            api_c.QUERY_PARAMETER_BATCH_NUMBER, api_c.DEFAULT_BATCH_NUMBER
+        )
+
+        filters = api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+        filters[api_c.COUNT] = int(batch_size) * int(batch_number)
+        return (
+            jsonify(
+                CustomersInsightsCitiesSchema().dump(
+                    get_demographic_by_city(token_response[0], filters),
                     many=True,
                 )
             ),

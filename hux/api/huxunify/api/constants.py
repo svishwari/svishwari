@@ -52,8 +52,10 @@ TOTAL_CUSTOMERS = "total_customers"
 NEW_CUSTOMERS_ADDED = "new_customers_added"
 COUNTRIES = "total_countries"
 TOTAL_COUNT = "total_count"
-STATES = "total_us_states"
-CITIES = "total_cities"
+TOTAL_STATES = "total_us_states"
+TOTAL_CITIES = "total_cities"
+STATES = "states"
+CITIES = "cities"
 MIN_AGE = "min_age"
 MAX_AGE = "max_age"
 GENDER_WOMEN = "gender_women"
@@ -494,8 +496,8 @@ IS_LOOKALIKE = "is_lookalike"
 STUB_INSIGHTS_RESPONSE = {
     TOTAL_CUSTOMERS: 121321321,
     COUNTRIES: 2,
-    STATES: 28,
-    CITIES: 246,
+    TOTAL_STATES: 28,
+    TOTAL_CITIES: 246,
     MIN_AGE: 34,
     MAX_AGE: 100,
     GENDER_WOMEN: 0.4651031,
@@ -1054,6 +1056,9 @@ CUSTOMERS_API_HEADER_KEY = "x-api-key"
 CUSTOMERS_DEFAULT_BATCH_SIZE = "1000"
 CUSTOMERS_DEFAULT_BATCH_NUMBER = "1"
 
+# Demographic
+CITIES_DEFAULT_BATCH_SIZE = "100"
+
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
 NOTIFICATIONS_DESCRIPTION = "Notifications API"
@@ -1209,6 +1214,6 @@ MOCK_CUSTOMER_PROFILE_RESPONSE = {
 # Alerts Fields
 DEFAULT_ALERT_BATCH_SIZE = 5
 DEFAULT_ALERT_SORT_ORDER = "descending"
-DEFAULT_ALERT_BATCH_NUMBER = "1"
+DEFAULT_BATCH_NUMBER = "1"
 
 NOTIFICATION_TYPE = "notification_type"

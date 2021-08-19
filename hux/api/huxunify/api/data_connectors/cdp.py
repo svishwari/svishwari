@@ -678,6 +678,7 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> dict:
         "Successfully retrieved customer income details by state from CDP API."
     )
 
+    data = clean_cdm_fields(response.json()[api_c.BODY])
     return [
         {api_c.NAME: x[api_c.CITY], api_c.LTV: round(x["avg_ltv"], 4)}
         for x in clean_cdm_fields(response.json()[api_c.BODY])
@@ -796,3 +797,41 @@ def get_customers_insights_count_by_day(
             record[api_c.RECORDED] = None
 
     return response_body
+
+
+def get_demographic_by_city(token: str, filters: Optional[dict]) -> list:
+    """
+    Get demographic details of customers by city
+
+    Args:
+        token (str): OKTA JWT Token.
+        filters (dict):  filters to pass into
+            count_by_state endpoint
+
+    Returns:
+        list of demographic details by city
+
+    """
+    # get config
+    config = get_config()
+    logger.info("Retrieving demographic insights by city.")
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+        json=filters,
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve city-wise demographic insights %s %s.",
+            response.status_code,
+            response.text,
+        )
+        return {}
+
+    logger.info("Successfully retrieved city-wise demographic insights.")
+    data = clean_cdm_fields(response.json()[api_c.BODY])
+
+    return data

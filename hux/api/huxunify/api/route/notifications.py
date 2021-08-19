@@ -71,7 +71,7 @@ class NotificationsSearch(SwaggerView):
             "description": "Number of which batch of notifications should be returned.",
             "example": "10",
             "required": False,
-            "default": api_c.DEFAULT_ALERT_BATCH_NUMBER,
+            "default": api_c.DEFAULT_BATCH_NUMBER,
         },
     ]
     responses = {
@@ -104,8 +104,7 @@ class NotificationsSearch(SwaggerView):
             request.args.get("sort_order") or db_c.PAGINATION_DESCENDING
         )
         batch_number = (
-            request.args.get("batch_number")
-            or api_c.DEFAULT_ALERT_BATCH_NUMBER
+            request.args.get("batch_number") or api_c.DEFAULT_BATCH_NUMBER
         )
 
         if (
