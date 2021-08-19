@@ -986,9 +986,7 @@ export default {
         {
           icon: "mdi-home-outline",
           name: "Menu Item 1",
-          action: () => {
-            console.log("menu-item-1")
-          },
+          action: () => {},
         },
         { isDivider: true },
         { icon: "mdi-bullhorn-outline", name: "Menu Item 2" },
@@ -1016,16 +1014,12 @@ export default {
         {
           icon: "mdi-tune-vertical-variant",
           name: "Menu Item 4",
-          action: () => {
-            console.log("menu-item-4")
-          },
+          action: () => {},
         },
         {
           icon: "mdi-account-details-outline",
           name: "Menu Item 5",
-          action: () => {
-            console.log("menu-item-5")
-          },
+          action: () => {},
         },
       ],
 
@@ -1291,7 +1285,6 @@ export default {
       this.labelText = newValue
     },
     onSelectMenuItem(item) {
-      console.log(item.name)
       if (this.selectedMenuItem == item.name) {
         this.selectedMenuItem = "Select a value..."
       } else {

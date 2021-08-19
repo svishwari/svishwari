@@ -186,6 +186,10 @@ client["models"].overview = (id) => {
   return http.get(`/models/${id}/overview`)
 }
 
+client["models"].features = (id) => {
+  return http.get(`/models/${id}/feature-importance`)
+}
+
 client["models"].versionHistory = (id) => {
   return http.get(`/models/${id}/version-history`)
 }

@@ -78,17 +78,23 @@
       <v-row>
         <v-col md="6">
           <v-card class="mt-6 rounded-lg box-shadow-5" height="662">
+            <v-progress-linear
+              :active="featuresLoading"
+              :indeterminate="featuresLoading"
+            />
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
               <div class="mt-2">
-                <span
-                  v-if="model.feature_importance"
-                  class="neroBlack--text text-h5"
-                >
-                  Top {{ model.feature_importance.length }} feature importance
+                <span v-if="modelFeatures" class="neroBlack--text text-h5">
+                  Top
+                  {{ modelFeatures.length }}
+                  feature importance
                 </span>
               </div>
             </v-card-title>
-            <feature-chart :feature-data="model.feature_importance || []" />
+            <feature-chart
+              v-if="!featuresLoading"
+              :feature-data="modelFeatures"
+            />
           </v-card>
         </v-col>
         <v-col md="6">
@@ -162,6 +168,7 @@ export default {
   data() {
     return {
       loading: false,
+      featuresLoading: false,
       versionHistoryDrawer: false,
       chartDimensions: {
         width: 0,
@@ -174,6 +181,7 @@ export default {
   computed: {
     ...mapGetters({
       model: "models/overview",
+      features: "models/features",
     }),
 
     driftChartData() {
@@ -185,6 +193,9 @@ export default {
       })
 
       return data
+    },
+    modelFeatures() {
+      return this.features ? this.features.slice(0, 20) : []
     },
 
     breadcrumbItems() {
@@ -213,6 +224,7 @@ export default {
     this.chartDimensions.height = 520
     await this.getOverview(this.$route.params.id)
     this.loading = false
+    this.fetchFeatures()
   },
 
   created() {
@@ -231,9 +243,15 @@ export default {
   methods: {
     ...mapActions({
       getOverview: "models/getOverview",
+      getFeatures: "models/getFeatures",
     }),
     viewVersionHistory() {
       this.versionHistoryDrawer = !this.versionHistoryDrawer
+    },
+    async fetchFeatures() {
+      this.featuresLoading = true
+      await this.getFeatures(this.$route.params.id)
+      this.featuresLoading = false
     },
     sizeHandler() {
       this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
