@@ -80,8 +80,14 @@ export default {
   computed: {
     icon() {
       if (this.type == "success") {
+        if (!this.title) {
+          this.title = "YAY!"
+        }
         return "mdi-check-circle"
       } else if (this.type == "error") {
+        if (!this.title) {
+          this.title = "OH NO!"
+        }
         return "mdi-alert-circle"
       } else if (this.type == "secondary") {
         return "mdi-message-alert"

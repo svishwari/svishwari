@@ -239,7 +239,6 @@ export default {
         await this.createLookalikeAudience(payload)
         this.$emit("onCreate")
       } catch (error) {
-        console.log(error.response.data)
         this.$emit("onError", error.response.data.message)
       }
       this.onBack()

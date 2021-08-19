@@ -366,7 +366,6 @@
     <hux-alert
       v-model="flashAlert"
       :type="alert.type"
-      :title="alert.title"
       :message="alert.message"
     />
   </div>
@@ -411,8 +410,7 @@ export default {
       flashAlert: false,
       alert: {
         type: "success",
-        title: "YAY!",
-        message: "Successfully triggered delivery.",
+        message: "",
       },
       actionItems: [
         { title: "Favorite", isDisabled: true },
@@ -575,7 +573,6 @@ export default {
     },
     onError(message) {
       this.alert.type = "error"
-      this.alert.title = "OH NO!"
       this.alert.message = message
       this.flashAlert = true
     },
