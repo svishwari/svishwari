@@ -196,7 +196,17 @@ def get_engagements_summary(
             "$addFields": {
                 "audiences.is_lookalike": {
                     "$cond": [{"$eq": ["$lookalike_id", None]}, False, True]
-                }
+                },
+                "audiences.id": {
+                    "$ifNull": ["$audiences.id", "$lookalikes._id"]
+                },
+                "audiences.destinations": {
+                    "$cond": [
+                        {"$eq": ["$lookalike_id", None]},
+                        "$audiences.destinations",
+                        [{"id": "$lookalikes.delivery_platform_id"}],
+                    ]
+                },
             }
         },
         # remove the unused lookalike audience object fields.
