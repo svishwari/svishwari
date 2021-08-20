@@ -564,6 +564,12 @@ PERFORMANCE_METRIC = "performance_metric"
 FEATURE_IMPORTANCE = "feature_importance"
 SCORE = "score"
 FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service"
+FEATURE_DRIFT_REGRESSION_MODEL_SERVICE = (
+    "ui_metadata_model_metrics_regression_service"
+)
+FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE = (
+    "ui_metadata_model_metrics_classification_service"
+)
 
 MODEL_LIST_PAYLOAD = {
     "params": {
@@ -594,6 +600,8 @@ ACTUAL_RATE = "actual_rate"
 PREDICTED_LIFT = "predicted_lift"
 ACTUAL_LIFT = "actual_lift"
 PROFILE_SIZE_PERCENT = "profile_size_percent"
+RUN_DATE = "run_date"
+DRIFT = "drift"
 REGRESSION_MODELS = [LTV]
 CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
 

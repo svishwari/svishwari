@@ -363,6 +363,12 @@ export const defineRoutes = (server) => {
 
   server.get("/models/:id/lift", () => liftData)
 
+  server.get("/models/:id/features", (schema, request) => {
+    const id = request.params.id
+    const model = schema.models.find(id)
+    return model.attrs.model_feature
+  })
+
   // customers
   server.get("/customers")
 

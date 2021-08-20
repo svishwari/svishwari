@@ -313,8 +313,39 @@ class TectonTest(TestCase):
             },
         )
 
-    def test_drift(self):
-        """test getting drif for a model"""
+    @requests_mock.Mocker()
+    def test_drift(self, request_mocker: Mocker):
+        """Test getting drift charts for a model.
 
-        # TODO - when available.
-        self.assertEqual(2 + 2, 4)
+        Args:
+
+        Returns:
+
+        """
+
+        # setup the request mock post
+        request_mocker.post(
+            self.config.TECTON_FEATURE_SERVICE,
+            text=json.dumps(
+                t_c.MOCKED_MODEL_DRIFT,
+                default=json_util.default,
+            ),
+            headers=self.config.TECTON_API_HEADERS,
+        )
+
+        drift_data = tecton.get_model_drift(2, constants.LTV)
+
+        # test that it was actually called and only once
+        self.assertEqual(request_mocker.call_count, 1)
+        self.assertTrue(request_mocker.called)
+
+        self.assertTrue(drift_data)
+
+        # test the last model
+        self.assertDictEqual(
+            drift_data[-1],
+            {
+                constants.DRIFT: 215.5,
+                constants.RUN_DATE: datetime(2021, 7, 30, 0, 0),
+            },
+        )

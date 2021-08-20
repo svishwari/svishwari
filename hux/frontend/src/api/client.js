@@ -200,5 +200,8 @@ client["models"].versionHistory = (id) => {
 client["models"].lift = (id) => {
   return http.get(`/models/${id}/lift`)
 }
+client["models"].modelFeatures = (id) => {
+  return http.get(`/models/${id}/features`)
+}
 
 export default client
