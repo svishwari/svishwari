@@ -14,7 +14,7 @@ import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
-
+import idrMatchingTrendData from "@/components/common/IDRMatchingTrendChart/idrMatchingTrendData"
 export const defineRoutes = (server) => {
   // data sources
   server.get("/data-sources")
@@ -377,6 +377,8 @@ export const defineRoutes = (server) => {
   server.get("/customers/overview", () => customersOverview)
 
   server.get("/customers-insights/geo", () => mapData)
+
+  server.get("/idr/matching-trends", () => idrMatchingTrendData)
 
   server.get("/customers", (schema, request) => {
     let currentBatch = request.queryParams.batch_number

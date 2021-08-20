@@ -158,6 +158,9 @@ client["engagements"].getCampaigns = ({
 client["idr"].overview = () => http.get("/idr/overview")
 client["idr"].datafeeds = () => http.get("/idr/datafeeds")
 client["idr"].datafeedReport = (id) => http.get(`/idr/datafeeds/${id}`)
+client["idr"].matchingTrend = () => {
+  return http.get("/idr/matching-trends")
+}
 //#endregion
 
 //#region audiences endpoints
