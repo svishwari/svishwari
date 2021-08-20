@@ -164,10 +164,20 @@ def get_customers_overview(
             response.text,
         )
         return {}
+
     logger.info(
         "Successfully retrieved Customer Profile Insights from CDP API."
     )
-    return clean_cdm_fields(response.json()[api_c.BODY])
+
+    response_body = response.json()[api_c.BODY]
+
+    # clean up cdm date fields in the response
+    response_body = clean_cdm_fields(response_body)
+
+    # clean up cdm gender fields in the response
+    response_body = clean_cdm_gender_fields(response_body)
+
+    return response_body
 
 
 def get_customers_count_async(
@@ -794,5 +804,46 @@ def get_customers_insights_count_by_day(
             record[api_c.RECORDED] = parse(record[api_c.RECORDED])
         except (ParserError, TypeError):
             record[api_c.RECORDED] = None
+
+    return response_body
+
+
+def clean_cdm_gender_fields(response_body: dict) -> dict:
+    """Clean and map CDM gender count and average fields appropriately.
+
+    Args:
+        response_body (dict): cdm response body dict.
+
+    Returns:
+        dict: dictionary of cleaned cdm response body.
+
+    """
+
+    # set the count values for each gender from the response body
+    gender_men_count = response_body[api_c.GENDER_MEN]
+    gender_women_count = response_body[api_c.GENDER_WOMEN]
+    gender_other_count = response_body[api_c.GENDER_OTHER]
+
+    # set the obtained individual gender count values against appropriate
+    # fields back in the response body
+    response_body[api_c.GENDER_MEN_COUNT] = gender_men_count
+    response_body[api_c.GENDER_WOMEN_COUNT] = gender_women_count
+    response_body[api_c.GENDER_OTHER_COUNT] = gender_other_count
+
+    total_gender_count = (
+        gender_men_count + gender_women_count + gender_other_count
+    )
+
+    # calculate and set the individual gender average from the corresponding
+    # count values from the response body
+    response_body[api_c.GENDER_MEN] = round(
+        gender_men_count / total_gender_count, 4
+    )
+    response_body[api_c.GENDER_WOMEN] = round(
+        gender_women_count / total_gender_count, 4
+    )
+    response_body[api_c.GENDER_OTHER] = round(
+        gender_other_count / total_gender_count, 4
+    )
 
     return response_body

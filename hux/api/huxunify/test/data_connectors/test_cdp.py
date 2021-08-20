@@ -242,3 +242,42 @@ class CDPTest(TestCase):
                     "2021-04-06",
                 ],
             )
+
+    def test_get_customers_overview(self) -> None:
+        """Test get customers overview
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{api_c.OVERVIEW}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+        data = response.json
+        self.assertTrue(data)
+        self.assertTrue(data[api_c.TOTAL_RECORDS])
+        self.assertTrue(data[api_c.GENDER_MEN])
+        self.assertGreaterEqual(data[api_c.GENDER_MEN], 0)
+        self.assertTrue(data[api_c.GENDER_WOMEN])
+        self.assertGreaterEqual(data[api_c.GENDER_WOMEN], 0)
+        self.assertTrue(data[api_c.GENDER_OTHER])
+        self.assertGreaterEqual(data[api_c.GENDER_OTHER], 0)
+        self.assertTrue(data[api_c.GENDER_MEN_COUNT])
+        self.assertGreaterEqual(data[api_c.GENDER_MEN_COUNT], 0)
+        self.assertTrue(data[api_c.GENDER_WOMEN_COUNT])
+        self.assertGreaterEqual(data[api_c.GENDER_WOMEN_COUNT], 0)
+        self.assertTrue(data[api_c.GENDER_OTHER_COUNT])
+        self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)

@@ -66,9 +66,9 @@ CUSTOMER_INSIGHT_RESPONSE = {
         "total_cities": 2513,
         "min_age": 18,
         "max_age": 66,
-        "gender_women": 0.42,
-        "gender_men": 0.52,
-        "gender_other": 0.06,
+        "gender_women": 42345,
+        "gender_men": 52567,
+        "gender_other": 6953,
     },
     "message": "ok",
 }
