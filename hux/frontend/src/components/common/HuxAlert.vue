@@ -129,6 +129,6 @@ export default {
   line-height: 22px;
 }
 .icon-position {
-  margin-top: 1.5px;
+  margin-top: 3px;
 }
 </style>

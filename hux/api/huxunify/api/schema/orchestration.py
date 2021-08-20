@@ -65,7 +65,7 @@ class DeliveriesSchema(Schema):
     updated_by = fields.String()
     name = fields.String()
     status = fields.String()
-    size = fields.Integer(attribute=db_c.DELIVERY_PLATFORM_AUD_SIZE)
+    size = fields.Integer(attribute=db_c.DELIVERY_PLATFORM_AUD_SIZE, default=0)
     match_rate = fields.Float(default=0, example=0.21)
     delivery_platform_type = fields.String()
 

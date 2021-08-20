@@ -84,7 +84,7 @@
               v-if="header.value == 'destinations'"
               class="d-flex align-center"
             >
-              <div class="d-flex align-center">
+              <div class="d-flex align-center destination-ico">
                 <tooltip
                   v-for="destination in getOverallDestinations(
                     item[header.value]
@@ -590,6 +590,13 @@ export default {
     .mdi-chevron-right,
     .mdi-dots-vertical {
       background: transparent !important;
+    }
+  }
+  // This CSS is to avoid conflict with Tooltip component.
+  ::v-deep .destination-ico {
+    span {
+      display: flex;
+      align-items: center;
     }
   }
   .ellipsis-21 {

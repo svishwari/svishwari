@@ -51,7 +51,6 @@
               'fixed-column': header.fixed,
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
-              'pl-0': header.value === 'status',
             }"
             :style="{ width: header.width, left: 0 }"
           >
@@ -379,6 +378,7 @@ export default {
       margin-right: 10px;
     }
   }
+
   .hux-data-table {
     margin-top: 1px;
     table {

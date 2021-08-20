@@ -29,6 +29,10 @@ client["customers"].overview = () => {
   return http.get("/customers/overview")
 }
 
+client["customers"].geographics = () => {
+  return http.get("/customers-insights/geo")
+}
+
 client["customers"].getOverview = (data) => {
   return http.post("/customers/overview", data)
 }
@@ -182,8 +186,16 @@ client["models"].overview = (id) => {
   return http.get(`/models/${id}/overview`)
 }
 
+client["models"].features = (id) => {
+  return http.get(`/models/${id}/feature-importance`)
+}
+
 client["models"].versionHistory = (id) => {
   return http.get(`/models/${id}/version-history`)
+}
+
+client["models"].lift = (id) => {
+  return http.get(`/models/${id}/lift`)
 }
 
 export default client

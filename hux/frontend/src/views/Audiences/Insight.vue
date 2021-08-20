@@ -379,7 +379,7 @@ import Icon from "@/components/common/Icon.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart.vue"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
 import MapChart from "@/components/common/MapChart/MapChart"
-import mapData from "@/components/common/MapChart/mapData.json"
+import mapData from "@/components/common/MapChart/mapData.js"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import MetricCard from "@/components/common/MetricCard.vue"
@@ -425,7 +425,7 @@ export default {
   },
   data() {
     return {
-      mapChartData: mapData.demographic_overview,
+      mapChartData: mapData,
       showLookAlikeDrawer: false,
       lookalikeCreated: false,
       audienceHistory: [],
@@ -747,12 +747,17 @@ export default {
       try {
         switch (event.target.title.toLowerCase()) {
           case "deliver now":
-            await this.deliverAudienceDestination({
-              id: event.parent.id,
-              audienceId: this.audienceId,
-              destinationId: event.data.id,
-            })
-            this.dataPendingMesssage(event, "destination")
+            try {
+              await this.deliverAudienceDestination({
+                id: event.parent.id,
+                audienceId: this.audienceId,
+                destinationId: event.data.id,
+              })
+              this.dataPendingMesssage(event, "destination")
+            } catch (error) {
+              this.dataErrorMesssage(event, "destination")
+              console.error(error)
+            }
             break
           case "edit delivery schedule":
             this.engagementId = event.parent.id
@@ -774,7 +779,6 @@ export default {
             break
         }
       } catch (error) {
-        this.dataErrorMesssage(event, "destination")
         console.error(error)
       }
     },
