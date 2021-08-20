@@ -2,6 +2,7 @@
   <div ref="incomeChart" class="container">
     <horizontal-bar-chart
       v-model="incomes"
+      :chart-dimensions="chartDimensions"
       @cordinates="getCordinates"
       @tooltipDisplay="toolTipDisplay"
     />
@@ -48,8 +49,7 @@ export default {
     window.removeEventListener("resize", this.sizeHandler)
   },
   mounted() {
-    this.chartDimensions.width = this.$refs.incomeChart.clientWidth
-    this.chartDimensions.height = this.$refs.incomeChart.clientHeight
+    this.sizeHandler()
   },
   methods: {
     toolTipDisplay(...arg) {
@@ -63,8 +63,10 @@ export default {
       this.tooltip.y = args.y
     },
     sizeHandler() {
-      this.chartDimensions.width = this.$refs.incomeChart.clientWidth
-      this.chartDimensions.height = this.$refs.incomeChart.clientHeight
+      if (this.$refs.incomeChart) {
+        this.chartDimensions.width = this.$refs.incomeChart.clientWidth
+        this.chartDimensions.height = 220
+      }
     },
   },
 }

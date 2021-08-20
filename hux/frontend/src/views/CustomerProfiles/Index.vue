@@ -139,7 +139,7 @@
       <v-row class="px-15 mt-2">
         <v-col md="7">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <v-card-title class="pb-2 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
                   Demographic Overview
@@ -163,7 +163,7 @@
         </v-col>
         <v-col md="5">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <v-card-title class="pb-2 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5"> United States </span>
               </div>
@@ -183,8 +183,8 @@
       </v-row>
       <v-row class="px-15 mt-2">
         <v-col md="3">
-          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
-            <v-card-title class="chart-style pb-0 pl-5 pt-5">
+          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
+            <v-card-title class="pb-0 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
                   Top location & Income
@@ -195,8 +195,8 @@
           </v-card>
         </v-col>
         <v-col md="6">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
-            <v-card-title class="chart-style pb-1 pl-5 pt-5">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="290">
+            <v-card-title class="pb-1 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
                   Gender / monthly spending in 2021
@@ -207,18 +207,19 @@
           </v-card>
         </v-col>
         <v-col md="3">
-          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
+            <v-card-title class="pb-0 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5"> Gender </span>
               </div>
             </v-card-title>
-            <doughnut-chart
-              :width="250"
-              :height="240"
-              :data="genderChartData"
-              label="Gender"
-            />
+            <div ref="genderChart">
+              <doughnut-chart
+                :chartDimensions="genderChartDimensions"
+                :data="genderChartData"
+                label="Gender"
+              />
+            </div>
           </v-card>
         </v-col>
       </v-row>
@@ -382,9 +383,18 @@ export default {
       ],
       loading: false,
       updatedTime: [],
+      genderChartDimensions: {
+        width: 269,
+        height: 200,
+      },
     }
   },
-
+  created() {
+    window.addEventListener("resize", this.sizeHandler)
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.sizeHandler)
+  },
   computed: {
     ...mapGetters({
       overview: "customers/overview",
@@ -398,9 +408,11 @@ export default {
 
   async mounted() {
     this.loading = true
+    this.sizeHandler()
     await this.getOverview()
     this.fetchGeographics()
     this.mapOverviewData()
+
     this.loading = false
   },
 
@@ -470,6 +482,12 @@ export default {
     },
     viewCustomerList() {
       this.customerProfilesDrawer = !this.customerProfilesDrawer
+    },
+    sizeHandler() {
+      if (this.$refs.genderChart) {
+        this.genderChartDimensions.width = this.$refs.genderChart.clientWidth
+        this.genderChartDimensions.height = 200
+      }
     },
   },
 }

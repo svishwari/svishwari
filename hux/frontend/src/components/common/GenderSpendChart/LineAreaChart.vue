@@ -1,12 +1,10 @@
 <template>
-  <div class="main-container" :style="{ maxWidth: chartWidth }">
-    <div class="">
-      <div
-        ref="huxChart"
-        class="chart-section"
-        @mouseover="getCordinates($event)"
-      ></div>
-    </div>
+  <div class="main-container">
+    <div
+      ref="huxChart"
+      class="chart-section"
+      @mouseover="getCordinates($event)"
+    ></div>
     <div class="pt-2">
       <div id="legend"></div>
     </div>
@@ -25,9 +23,14 @@ export default {
   name: "LineAreaChart",
   props: {
     value: {
-      type: Object,
+      type: Array,
       required: false,
     },
+    yValueData: {
+      type: Array,
+      required: false,
+    },
+
     chartDimensions: {
       type: Object,
       required: false,
@@ -49,13 +52,8 @@ export default {
         x: 0,
         y: 0,
       },
-      gender_men: [],
-      gender_other: [],
-      gender_women: [],
-      yValueData: [],
-      areaChart: [],
-      areaChartData: [],
-      chartData: this.value,
+
+      areaChartData: this.value,
     }
   },
   watch: {
@@ -70,44 +68,13 @@ export default {
   },
   methods: {
     async initiateAreaChart() {
-      await this.chartData
+      await this.areaChartData
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
+      this.height = this.chartDimensions.height
       let line = 0
       let col = 0
       let genders = [{ label: "Women" }, { label: "Men" }, { label: "Other" }]
-      this.gender_men.push(...this.chartData.gender_men)
-      this.gender_women.push(...this.chartData.gender_women)
-      this.gender_other.push(...this.chartData.gender_other)
-      this.gender_men.forEach((element) => {
-        this.gender_women.forEach((value) => {
-          if (element.date === value.date) {
-            this.areaChart.push({
-              date: element.date,
-              men_spend: element.ltv,
-              women_spend: value.ltv,
-            })
-          }
-        })
-      })
-
-      this.areaChart.forEach((element) => {
-        this.gender_other.forEach((value) => {
-          if (element.date === value.date) {
-            this.yValueData.push(
-              element.men_spend,
-              element.women_spend,
-              value.ltv
-            )
-            this.areaChartData.push({
-              date: element.date,
-              men_spend: element.men_spend,
-              women_spend: element.women_spend,
-              others_spend: value.ltv,
-            })
-          }
-        })
-      })
 
       let colorCodes = [
         "rgba(0, 85, 135, 1)",
@@ -226,7 +193,7 @@ export default {
         .call(
           d3Axis
             .axisBottom(xScale)
-            .ticks(this.areaChartData.length)
+            .ticks(6)
             .tickFormat(d3TimeFormat.timeFormat("%b %Y"))
         )
         .call((g) => g.selectAll(".tick line").attr("stroke", "#ECECEC"))
@@ -303,6 +270,7 @@ export default {
         .attr("class", "svgBox")
         .style("margin-left", "20px")
         .style("margin-right", "20px")
+        .style("margin-top", "10px")
 
       let legend = legendSvg
         .selectAll(".legend")
