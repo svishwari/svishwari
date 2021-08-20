@@ -1,0 +1,161 @@
+#This tests the following endpoints:
+#GET   /models                                  Retrieves all models 
+#GET   /models/{model_id}/feature_importance    Retrieves feature_importance of a model
+#GET   /models/{model_id}/version-history       Retrieves version-history of a model
+#GET   /models/{model_id}/overview              Retrieves overview of a model
+#GET   /models/{model_id}/features              Retrieves features of a model
+
+---
+test_name: Test decisioning APIS
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: Get a model_id
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/models"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - last_trained: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          lookback_window: !anyint
+          type: !anystr
+          past_version_count: !anyint
+          status: !anystr
+          id: !anyint
+          owner: !anystr
+          prediction_window: !anyint
+          latest_version: !re_fullmatch "(\\d{2})\\.(\\d{1})\\.(\\d{2})"
+          description: !anystr
+          fulcrum_date: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          name: !anystr
+      save:
+        json:
+          model_id: "[0].id"
+          model_name: "[0].name"
+
+  - name: Test feature-importance API
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/models/{model_id}/feature-importance"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - data_source: !anything
+          score: !anyfloat
+          status: !anystr
+          feature_service: !anystr
+          id: !anyint
+          version: !re_fullmatch "(\\d{2})\\.(\\d{1})\\.(\\d{2})"
+          created_by: !anystr
+          description: !anystr
+          name: !anystr
+          popularity: !anyint
+
+  - name: Test version-history API
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/models/{model_id}/version-history"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - trained_date: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          lookback_window: !anyint
+          status: !anystr
+          id: !anyint
+          version: !re_fullmatch "(\\d{2})\\.(\\d{1})\\.(\\d{2})"
+          owner: !anystr
+          prediction_window: !anyint
+          description: !anystr
+          fulcrum_date: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          name: "{model_name}"
+
+  - name: Test overview API
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/models/{model_id}/overview"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        model_type: !anystr
+        description: !anystr
+        performance_metric:
+          rmse: !anyfloat
+          auc: !anyfloat
+          precision: !anyfloat
+          recall: !anyfloat
+          current_version: !anystr
+        model_name: "{model_name}"
+
+  - name: Test features API
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/models/{model_id}/features"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - data_source: !anystr
+          score: !anyfloat
+          status: !anystr
+          feature_service: !anystr
+          id: !anyint
+          version: !re_fullmatch "(\\d{2})\\.(\\d{1})\\.(\\d{2})"
+          created_by: !anystr
+          description: !anystr
+          name: !anystr
+          popularity: !anyint
