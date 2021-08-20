@@ -269,7 +269,7 @@
           <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
-                Gender / monthly spending in 2021
+                Gender &sol; monthly spending in 2021
               </span>
             </div>
           </v-card-title>
