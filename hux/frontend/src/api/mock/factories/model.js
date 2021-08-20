@@ -1,5 +1,24 @@
 import faker from "faker"
 
+const modelFeatures = () => {
+  return {
+    name: "8to12m-ITEMEXTCOST-sum",
+    created_by: faker.fake("{{name.firstName}} {{name.lastName}}"),
+    score: faker.datatype.float({ min: 0, max: 1, precision: 0.001 }),
+    description: `Model feature for ${faker.address.state()}`,
+    popularity: faker.datatype.number({ min: 1, max: 10 }),
+    feature_service: "ltv",
+    version: faker.system.semver(),
+    data_source: "Ecommerce",
+    status: faker.random.arrayElement(["Active", "Delivering", "Stopped"]),
+    id: `${faker.datatype.number({ min: 1, max: 10 })}`,
+  }
+}
+
+const mockModelFeature = (num = 3) => {
+  return Array.from({ length: num }, modelFeatures)
+}
+
 const versionHistory = () => {
   return {
     lookback_window: 365,
@@ -31,4 +50,5 @@ export default {
   status: "Pending",
   type: "unsubscribe",
   version_history: () => mockVersionHistory(5),
+  model_feature: () => mockModelFeature(5),
 }
