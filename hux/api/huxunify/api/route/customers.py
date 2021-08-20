@@ -863,12 +863,15 @@ class CustomersInsightsStates(SwaggerView):
         # get auth token from request
         token_response = get_token_from_request(request)
 
+        customers_insights_by_states = CustomersInsightsStatesSchema().dump(
+            get_demographic_by_state(token_response[0]), many=True
+        )
+
         return (
-            jsonify(
-                CustomersInsightsStatesSchema().dump(
-                    get_demographic_by_state(token_response[0]), many=True
-                )
-            ),
+            {
+                api_c.STATES: customers_insights_by_states,
+                api_c.TOTAL: len(customers_insights_by_states),
+            },
             HTTPStatus.OK,
         )
 
@@ -942,12 +945,15 @@ class CustomersInsightsCities(SwaggerView):
 
         filters = api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
         filters[api_c.COUNT] = int(batch_size) * int(batch_number)
+
+        customers_insights_by_cities = CustomersInsightsCitiesSchema().dump(
+            get_demographic_by_city(token_response[0], filters),
+            many=True,
+        )
         return (
-            jsonify(
-                CustomersInsightsCitiesSchema().dump(
-                    get_demographic_by_city(token_response[0], filters),
-                    many=True,
-                )
-            ),
+            {
+                api_c.CITIES: customers_insights_by_cities,
+                api_c.TOTAL: len(customers_insights_by_cities),
+            },
             HTTPStatus.OK,
         )
