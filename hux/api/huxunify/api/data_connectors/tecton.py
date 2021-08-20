@@ -19,7 +19,7 @@ from huxunify.api import constants
 from huxunify.api.schema.model import (
     ModelVersionSchema,
     FeatureSchema,
-    DriftSchema,
+    ModelDriftSchema,
     ModelLiftSchema,
 )
 
@@ -234,17 +234,63 @@ def get_model_version_history(model_id: int) -> List[ModelVersionSchema]:
 
 
 # pylint: disable=unused-argument
-def get_model_drift(name: str) -> List[DriftSchema]:
-    """Get model drift based on name.
+def get_model_drift(model_id: int, model_type: str) -> List[ModelDriftSchema]:
+    """Get model drift based on model_id and model_type.
 
     Args:
-        name (str): model name.
+        model_id (int): model id.
+        model_type (int): model type.
 
     Returns:
          List[DriftSchema] List of model drift.
     """
-    # TODO - when available.
-    return []
+    # get config
+    config = get_config()
+
+    if model_type in constants.CLASSIFICATION_MODELS:
+        service_name = constants.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE
+    else:
+        service_name = constants.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE
+
+    # payload
+    payload = {
+        "params": {
+            "feature_service_name": service_name,
+            "join_key_map": {constants.MODEL_ID: f"{model_id}"},
+        }
+    }
+
+    # start timer
+    timer = time.perf_counter()
+
+    response = requests.post(
+        config.TECTON_FEATURE_SERVICE,
+        dumps(payload),
+        headers=config.TECTON_API_HEADERS,
+    )
+
+    # log execution time summary
+    total_ticks = time.perf_counter() - timer
+    logger.info(
+        "Executed drift chart data request to the Tecton API in %0.4f seconds.",
+        total_ticks,
+    )
+
+    result_drift = []
+    for result in response.json()[constants.RESULTS]:
+        if not result:
+            continue
+
+        result_drift.append(
+            {
+                constants.RUN_DATE: parser.parse(
+                    result[constants.FEATURES][1]
+                ),
+                constants.DRIFT: result[constants.FEATURES][0],
+            }
+        )
+
+    return result_drift
 
 
 def get_model_lift_async(model_id: int) -> List[ModelLiftSchema]:
