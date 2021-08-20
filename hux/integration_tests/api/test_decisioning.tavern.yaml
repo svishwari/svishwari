@@ -1,6 +1,6 @@
 #This tests the following endpoints:
 #GET   /models                                  Retrieves all models 
-#GET   /models/{model_id}/feature_importance    Retrieves feature_importance of a model
+#GET   /models/{model_id}/feature-importance    Retrieves feature-importance of a model
 #GET   /models/{model_id}/version-history       Retrieves version-history of a model
 #GET   /models/{model_id}/overview              Retrieves overview of a model
 #GET   /models/{model_id}/features              Retrieves features of a model
