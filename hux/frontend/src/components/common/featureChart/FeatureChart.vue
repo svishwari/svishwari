@@ -38,13 +38,17 @@ export default {
         x: 0,
         y: 0,
       },
-      features: this.featureData,
       currentData: {},
       chartDimensions: {
         width: 0,
         height: 0,
       },
     }
+  },
+  computed: {
+    features() {
+      return this.featureData
+    },
   },
   mounted() {
     this.chartDimensions.width = this.$refs.chartBox.clientWidth

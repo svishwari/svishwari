@@ -127,6 +127,8 @@ STATE_NAMES = {
 }
 DEMOGRAPHIC = "demo"
 DATE = "date"
+RECORDED = "recorded"
+DIFFERENCE_COUNT = "diff_count"
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
