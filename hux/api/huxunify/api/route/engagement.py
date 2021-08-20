@@ -1427,10 +1427,6 @@ class AudienceCampaignsGetView(SwaggerView):
                     db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS
                 ]
                 for campaign in delivery_campaigns:
-                    campaign[api_c.ID] = campaign[api_c.ID]
-                    campaign[api_c.NAME] = campaign[api_c.NAME]
-                    campaign[api_c.AD_SET_ID] = campaign[api_c.AD_SET_ID]
-                    campaign[api_c.AD_SET_NAME] = campaign[api_c.AD_SET_NAME]
                     campaign[api_c.DELIVERY_JOB_ID] = delivery_job[db_c.ID]
                     campaign[db_c.CREATE_TIME] = delivery_job[db_c.CREATE_TIME]
                 campaigns.extend(delivery_campaigns)

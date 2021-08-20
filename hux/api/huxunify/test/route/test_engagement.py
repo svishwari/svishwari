@@ -219,13 +219,13 @@ class TestEngagementMetricsDisplayAds(TestCase):
         self.assertEqual(response.json["summary"]["spend"], 14507)
         self.assertTrue(response.json["audience_performance"])
         self.assertTrue(response.json["audience_performance"][0]["id"])
-        self.assertTrue(
+        self.assertEqual(
             response.json["audience_performance"][0]["impressions"], 70487
         )
         self.assertTrue(
             response.json["audience_performance"][0]["destinations"]
         )
-        self.assertTrue(
+        self.assertEqual(
             response.json["audience_performance"][0]["destinations"][0][
                 "impressions"
             ],
@@ -236,7 +236,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
                 "campaigns"
             ]
         )
-        self.assertTrue(
+        self.assertEqual(
             response.json["audience_performance"][0]["destinations"][0][
                 "campaigns"
             ][0]["impressions"],
