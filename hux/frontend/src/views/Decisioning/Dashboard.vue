@@ -99,6 +99,11 @@
         </v-col>
         <v-col md="6">
           <v-card class="rounded-lg px-4 box-shadow-5 mt-6" height="662">
+            <v-progress-linear
+              v-if="loadingDrift"
+              :active="loadingDrift"
+              :indeterminate="loadingDrift"
+            />
             <div class="pt-5 pl-2 pb-10 neroBlack--text text-h5">
               Drift
               <span
@@ -114,10 +119,11 @@
             </div>
             <div ref="decisioning-drift">
               <drift-chart
+                v-if="!loadingDrift"
                 v-model="driftChartData"
                 :chart-dimensions="chartDimensions"
                 x-axis-format="%m/%d"
-                :enable-grid="[false, true]"
+                :enable-grid="[true, true]"
               />
             </div>
             <div class="py-5 text-center neroBlack--text text-h6">Date</div>
@@ -151,7 +157,6 @@ import FeatureChart from "@/components/common/featureChart/FeatureChart"
 import LiftChart from "@/components/common/LiftChart.vue"
 import DriftChart from "@/components/common/Charts/DriftChart/DriftChart.vue"
 
-import DriftChartData from "@/api/mock/factories/driftChartData.json"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import huxButton from "@/components/common/huxButton"
@@ -174,13 +179,13 @@ export default {
     return {
       loading: false,
       loadingLift: true,
+      loadingDrift: true,
       featuresLoading: false,
       versionHistoryDrawer: false,
       chartDimensions: {
         width: 0,
         height: 0,
       },
-      chartData: DriftChartData.data,
     }
   },
 
@@ -189,10 +194,11 @@ export default {
       model: "models/overview",
       lift: "models/lift",
       features: "models/features",
+      drift: "models/drift",
     }),
 
     driftChartData() {
-      let data = this.chartData.map((each) => {
+      let data = this.drift.map((each) => {
         return {
           xAxisValue: new Date(each.run_date),
           yAxisValue: each.drift,
@@ -231,6 +237,7 @@ export default {
     this.chartDimensions.height = 520
     await this.getOverview(this.$route.params.id)
     this.fetchLift()
+    this.fetchDrift()
     this.loading = false
     this.fetchFeatures()
   },
@@ -252,12 +259,23 @@ export default {
     ...mapActions({
       getOverview: "models/getOverview",
       getLift: "models/getLift",
+      getDrift: "models/getDrift",
       getFeatures: "models/getFeatures",
     }),
     async fetchLift() {
       this.loadingLift = true
       await this.getLift(this.$route.params.id)
       this.loadingLift = false
+    },
+    async fetchDrift() {
+      this.loadingDrift = true
+      await this.getDrift({
+        model_id: this.$route.params.id,
+        payload: {
+          model_type: this.model.type,
+        },
+      })
+      this.loadingDrift = false
     },
     viewVersionHistory() {
       this.versionHistoryDrawer = !this.versionHistoryDrawer
