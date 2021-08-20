@@ -1,6 +1,6 @@
 <template>
   <div class="container" :style="{ maxWidth: chartWidth }">
-    <div ref="chart" id="chart" @mousemove="getCordinates($event)"></div>
+    <div id="chart" ref="chart" @mousemove="getCordinates($event)"></div>
     <div ref="legend"></div>
     <doughnut-chart-tooltip
       :show-tooltip="showTooltip"
@@ -50,9 +50,6 @@ export default {
       },
     }
   },
-  mounted() {
-    this.initiateChart()
-  },
   watch: {
     chartDimensions: {
       handler() {
@@ -62,6 +59,9 @@ export default {
       immediate: false,
       deep: true,
     },
+  },
+  mounted() {
+    this.initiateChart()
   },
   methods: {
     initiateChart() {

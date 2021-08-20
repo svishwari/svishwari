@@ -283,13 +283,13 @@
               <span class="neroBlack--text text-h5"> Gender </span>
             </div>
           </v-card-title>
-            <div ref="genderChart">
-              <doughnut-chart
-                :chartDimensions="genderChartDimensions"
-                :data="genderChartData"
-                label="Gender"
-              />
-            </div>
+          <div ref="genderChart">
+            <doughnut-chart
+              :chart-dimensions="genderChartDimensions"
+              :data="genderChartData"
+              label="Gender"
+            />
+          </div>
         </v-card>
       </v-col>
     </v-row>
@@ -532,12 +532,6 @@ export default {
       },
     }
   },
-  created() {
-    window.addEventListener("resize", this.sizeHandler)
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.sizeHandler)
-  },
   computed: {
     ...mapGetters({
       getAudience: "audiences/audience",
@@ -636,6 +630,12 @@ export default {
         return []
       }
     },
+  },
+  created() {
+    window.addEventListener("resize", this.sizeHandler)
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.sizeHandler)
   },
   async mounted() {
     this.sizeHandler()

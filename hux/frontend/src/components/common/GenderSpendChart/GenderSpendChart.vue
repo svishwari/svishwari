@@ -3,9 +3,9 @@
     <line-area-chart
       v-model="modificationData"
       :chart-dimensions="chartDimensions"
+      :y-value-data="yAxisData"
       @cordinates="getCordinates"
       @tooltipDisplay="toolTipDisplay"
-      :yValueData="yAxisData"
     />
     <line-area-chart-tooltip
       :position="{

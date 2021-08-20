@@ -215,7 +215,7 @@
             </v-card-title>
             <div ref="genderChart">
               <doughnut-chart
-                :chartDimensions="genderChartDimensions"
+                :chart-dimensions="genderChartDimensions"
                 :data="genderChartData"
                 label="Gender"
               />
@@ -389,12 +389,6 @@ export default {
       },
     }
   },
-  created() {
-    window.addEventListener("resize", this.sizeHandler)
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.sizeHandler)
-  },
   computed: {
     ...mapGetters({
       overview: "customers/overview",
@@ -404,6 +398,12 @@ export default {
     updatedTimeStamp() {
       return this.updatedTime[0] + "<span> &bull; </span>" + this.updatedTime[1]
     },
+  },
+  created() {
+    window.addEventListener("resize", this.sizeHandler)
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.sizeHandler)
   },
 
   async mounted() {
