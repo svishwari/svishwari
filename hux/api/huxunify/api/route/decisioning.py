@@ -5,7 +5,7 @@ from datetime import datetime
 from http import HTTPStatus
 from typing import Tuple, List
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from huxunifylib.database.cache_management import (
@@ -23,7 +23,8 @@ from huxunify.api.route.utils import (
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
-    DriftSchema,
+    ModelDriftSchema,
+    ModelDriftPostSchema,
     ModelLiftSchema,
     ModelDashboardSchema,
     FeatureSchema,
@@ -256,7 +257,7 @@ class ModelOverview(SwaggerView):
 
 @add_view_to_blueprint(
     model_bp,
-    f"{api_c.MODELS_ENDPOINT}/<name>/drift",
+    f"{api_c.MODELS_ENDPOINT}/<model_id>/drift",
     "ModelDriftView",
 )
 class ModelDriftView(SwaggerView):
@@ -264,20 +265,32 @@ class ModelDriftView(SwaggerView):
     Model Drift Class
     """
 
-    parameters = api_c.MODEL_NAME_PARAMS
+    parameters = [
+        api_c.MODEL_ID_PARAMS[0],
+        {
+            "name": "body",
+            "description": "Model type",
+            "type": "object",
+            "in": "body",
+            "example": {api_c.MODEL_TYPE: "ltv"},
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model drift.",
-            "schema": {"type": "array", "items": DriftSchema},
+            "schema": {"type": "array", "items": ModelDriftSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to fetch drift data",
         },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    @marshal_with(DriftSchema(many=True))
+    @marshal_with(ModelDriftSchema(many=True))
     @api_error_handler()
-    def get(self, name: str) -> Tuple[List[dict], int]:
+    def post(self, model_id: int) -> Tuple[List[dict], int]:
         """Retrieves model drift details.
 
         ---
@@ -285,14 +298,18 @@ class ModelDriftView(SwaggerView):
             - Bearer: [Authorization]
 
         Args:
-            name (str): model name
+            model_id (int): model id.
 
         Returns:
             Tuple[List[dict], int]: dict of model drift and http code
 
         """
+        body = ModelDriftPostSchema().load(request.get_json())
         try:
-            return tecton.get_model_drift(name), HTTPStatus.OK.value
+            return (
+                tecton.get_model_drift(model_id, body[api_c.MODEL_TYPE]),
+                HTTPStatus.OK.value,
+            )
 
         except Exception as exc:
             raise handle_api_exception(
