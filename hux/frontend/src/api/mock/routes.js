@@ -378,6 +378,20 @@ export const defineRoutes = (server) => {
 
   server.get("/customers-insights/geo", () => mapData)
 
+  server.get("/customers-insights/cities", (schema, request) => {
+    let batchNumber = request.queryParams["batch_number"] || 1
+    let batchSize = request.queryParams["batch_size"] || 10
+    let start = batchNumber === 1 ? 0 : (batchNumber - 1) * batchSize
+    let end = batchNumber === 1 ? batchSize : batchNumber * batchSize
+    return schema.geoCities.all().slice(start, end)
+  })
+
+  server.get("/customers-insights/states", (schema) => schema.geoStates.all())
+
+  server.get("/customers-insights/countries", (schema) => {
+    return schema.geoCountries.all()
+  })
+
   server.get("/customers", (schema, request) => {
     let currentBatch = request.queryParams.batch_number
     let batchSize = request.queryParams.batch_size
