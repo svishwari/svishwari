@@ -235,7 +235,7 @@ def get_model_version_history(model_id: int) -> List[ModelVersionSchema]:
 
 # pylint: disable=unused-argument
 def get_model_drift(model_id: int, model_type: str) -> List[ModelDriftSchema]:
-    """Get model drift based on model_id.
+    """Get model drift based on model_id and model_type.
 
     Args:
         model_id (int): model id.
@@ -247,7 +247,7 @@ def get_model_drift(model_id: int, model_type: str) -> List[ModelDriftSchema]:
     # get config
     config = get_config()
 
-    if model_type == constants.CLASSIFICATION_MODELS:
+    if model_type in constants.CLASSIFICATION_MODELS:
         service_name = constants.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE
     else:
         service_name = constants.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE
