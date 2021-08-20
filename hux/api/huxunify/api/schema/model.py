@@ -75,8 +75,8 @@ class ModelLiftSchema(Schema):
 class ModelDriftSchema(Schema):
     """Drift Schema"""
 
-    drift = Float()
-    run_date = DateTimeWithZ()
+    drift = Float(required=True)
+    run_date = DateTimeWithZ(required=True)
 
 
 class ModelDriftPostSchema(Schema):

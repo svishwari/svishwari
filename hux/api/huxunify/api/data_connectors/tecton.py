@@ -247,7 +247,7 @@ def get_model_drift(model_id: int, model_type: str) -> List[ModelDriftSchema]:
     # get config
     config = get_config()
 
-    if model_type == constants.UNSUBSCRIBE:
+    if model_type == constants.CLASSIFICATION_MODELS:
         service_name = constants.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE
     else:
         service_name = constants.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE
@@ -256,14 +256,24 @@ def get_model_drift(model_id: int, model_type: str) -> List[ModelDriftSchema]:
     payload = {
         "params": {
             "feature_service_name": service_name,
-            "join_key_map": {"model_id": f"{model_id}"},
+            "join_key_map": {constants.MODEL_ID: f"{model_id}"},
         }
     }
+
+    # start timer
+    timer = time.perf_counter()
 
     response = requests.post(
         config.TECTON_FEATURE_SERVICE,
         dumps(payload),
         headers=config.TECTON_API_HEADERS,
+    )
+
+    # log execution time summary
+    total_ticks = time.perf_counter() - timer
+    logger.info(
+        "Executed drift chart data request to the Tecton API in %0.4f seconds.",
+        total_ticks,
     )
 
     result_drift = []

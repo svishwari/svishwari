@@ -6,7 +6,6 @@ from http import HTTPStatus
 from typing import Tuple, List
 
 from flask import Blueprint, request, jsonify
-from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from huxunifylib.database.cache_management import (
     create_cache_entry,
@@ -15,7 +14,6 @@ from huxunifylib.database.cache_management import (
 
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
-    handle_api_exception,
     secured,
     api_error_handler,
     get_db_client,
@@ -288,7 +286,6 @@ class ModelDriftView(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    @marshal_with(ModelDriftSchema(many=True))
     @api_error_handler()
     def post(self, model_id: int) -> Tuple[List[dict], int]:
         """Retrieves model drift details.
@@ -305,16 +302,12 @@ class ModelDriftView(SwaggerView):
 
         """
         body = ModelDriftPostSchema().load(request.get_json())
-        try:
-            return (
-                tecton.get_model_drift(model_id, body[api_c.MODEL_TYPE]),
-                HTTPStatus.OK.value,
-            )
+        drift_data = tecton.get_model_drift(model_id, body[api_c.MODEL_TYPE])
 
-        except Exception as exc:
-            raise handle_api_exception(
-                exc, "Unable to get model drift."
-            ) from exc
+        return (
+            jsonify(ModelDriftSchema(many=True).dump(drift_data)),
+            HTTPStatus.OK.value,
+        )
 
 
 @add_view_to_blueprint(
