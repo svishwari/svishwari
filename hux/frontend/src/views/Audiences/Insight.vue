@@ -31,7 +31,7 @@
         :height="75"
       >
         <template #subtitle-extended>
-          <span class="mr-2">
+          <span class="mr-2 mt-1">
             <tooltip>
               <template #label-content>
                 <span class="neroBlack--text font-weight-semi-bold">
@@ -51,6 +51,7 @@
         class="ma-2 audience-summary original-audience"
         :grow="0"
         :title="'Original Audience'"
+        :height="75"
       >
         <template #subtitle-extended>
           <span class="mr-2 pt-2">
@@ -65,9 +66,10 @@
         class="ma-2 audience-summary"
         :grow="0"
         :title="'Original • Actual size'"
+        :height="75"
       >
         <template #subtitle-extended>
-          <span class="mr-2">
+          <span class="mr-2 pt-2">
             <span class="neroBlack--text font-weight-semi-bold">
               <size :value="audience.size" /> &bull;
               <size :value="audience.size" />
@@ -376,7 +378,7 @@ import Icon from "@/components/common/Icon.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart.vue"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
 import MapChart from "@/components/common/MapChart/MapChart"
-import mapData from "@/components/common/MapChart/mapData.json"
+import mapData from "@/components/common/MapChart/mapData.js"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import MetricCard from "@/components/common/MetricCard.vue"
@@ -422,7 +424,7 @@ export default {
   },
   data() {
     return {
-      mapChartData: mapData.demographic_overview,
+      mapChartData: mapData,
       showLookAlikeDrawer: false,
       lookalikeCreated: false,
       audienceHistory: [],
@@ -720,7 +722,7 @@ export default {
             })
             this.dataPendingMesssage(event.data.name, "engagement")
           } catch (error) {
-            this.dataErrorMesssage(event.data.name)
+            this.dataErrorMesssage(event, "engagement")
             console.error(error)
           }
           break
@@ -744,12 +746,17 @@ export default {
       try {
         switch (event.target.title.toLowerCase()) {
           case "deliver now":
-            await this.deliverAudienceDestination({
-              id: event.parent.id,
-              audienceId: this.audienceId,
-              destinationId: event.data.id,
-            })
-            this.dataPendingMesssage(event.data.name, "audience")
+            try {
+              await this.deliverAudienceDestination({
+                id: event.parent.id,
+                audienceId: this.audienceId,
+                destinationId: event.data.id,
+              })
+              this.dataPendingMesssage(event, "destination")
+            } catch (error) {
+              this.dataErrorMesssage(event, "destination")
+              console.error(error)
+            }
             break
           case "edit delivery schedule":
             this.engagementId = event.parent.id
@@ -771,27 +778,37 @@ export default {
             break
         }
       } catch (error) {
-        this.dataErrorMesssage(event.data.name)
         console.error(error)
       }
     },
 
     //Alert Message
-    dataPendingMesssage(name, value) {
+    dataPendingMesssage(event, value) {
       this.alert.type = "Pending"
       this.alert.title = ""
       if (value == "engagement") {
-        this.alert.message = `Your audience, '${this.audience.name}', has started delivering as part of the engagement, '${name}'.`
-      } else {
-        this.alert.message = `Your audience, '${name}' , has started delivering.`
+        const engagementName = event.data.name
+        const audienceName = this.audience.name
+        this.alert.message = `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`
+      } else if (value == "destination") {
+        const engagementName = event.parent.name
+        const destinationName = event.data.name
+        this.alert.message = `Your engagement '${engagementName}', has started delivering to '${destinationName}'.`
       }
-
       this.flashAlert = true
     },
-    dataErrorMesssage(name) {
+    dataErrorMesssage(event, value) {
       this.alert.type = "error"
       this.alert.title = "OH NO!"
-      this.alert.message = `Failed to schedule a delivery for ${name}`
+      if (value == "engagement") {
+        const engagementName = event.data.name
+        const audienceName = this.audience.name
+        this.alert.message = `Failed to schedule a delivery of your engagement '${engagementName}', from '${audienceName}'.`
+      } else if (value == "destination") {
+        const engagementName = event.parent.name
+        const destinationName = event.data.name
+        this.alert.message = `Failed to schedule delivery of your engagement '${engagementName}', to '${destinationName}'.`
+      }
       this.flashAlert = true
     },
 

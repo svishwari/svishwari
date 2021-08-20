@@ -42,8 +42,10 @@ PERFORMANCE_METRICS_COLLECTION = "performance_metrics"
 CAMPAIGN_ACTIVITY_COLLECTION = "campaign_activity"
 USER_COLLECTION = "users"
 NOTIFICATIONS_COLLECTION = "notifications"
+CACHE_COLLECTION = "cache"
 
 CONSTANT_NAME = "constant"
+CONSTANT_KEY = "key"
 CONSTANT_VALUE = "value"
 
 STATE_ALPHA_CODE_MAPPING = "state_alpha_code_mapping"

@@ -1,5 +1,5 @@
 ---
-test_name: Test delivery history with engagement id
+test_name: Test delivery history for an engagement_id
 
 strict:
   - json:list_any_order
@@ -8,10 +8,10 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: test engagements/{engagement_id}/delivery-history
+  - name: get engagements to save engagement_id
 
     request:
-      url: "{host}/{version}/engagements/{engagement_id}/delivery-history"
+      url: "{host}/{version}/engagements"
       method: GET
       headers:
         content-type: application/json
@@ -24,18 +24,46 @@ stages:
         content-type: application/json
       json:
         !anylist
-        - "audience": !anydict
-          - "id": !anystr
-          - "name": !anystr
-        - "destination": !anydict
-          - "id": !anystr
-          - "name": !anystr
-          - "type": !anystr
-        - "size": !anyint
-        - "delivered": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
----
+        - id: !anystr
+          name: !anystr
+          description: !anything
+          created_by: !anystr
+          updated_by: !anystr
+          create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          audiences: !anylist
+      save:
+        json:
+          first_engagement: "[0]"
 
-test_name: Test Delivering one destination for an engagement audience.
+  - name: test engagements/{engagement_id}/delivery-history
+
+    request:
+      url: "{host}/{version}/engagements/{first_engagement.id}/delivery-history"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        !anylist
+        - audience: !anydict
+            id: !anystr
+            name: !anystr
+          destination: !anydict
+            id: !anystr
+            name: !anystr
+            type: !anystr
+          size: !anyint
+          delivered: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+
+---
+test_name: Test delivery of one destination for an engagement audience
 
 strict:
   - json:list_any_order
@@ -44,9 +72,39 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: test engagements/{engagement_id}/audience/{audience_id}/destination/{destination_id}/deliver
+  - name: get engagements to save engagement_id and corresponding audience_id, destination_id
+
     request:
-      url: "{host}/{version}/engagements/{engagement_id}/audience/{audience_id}/destination/{destination_id}/deliver"
+      url: "{host}/{version}/engagements"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        !anylist
+        - id: !anystr
+          name: !anystr
+          description: !anything
+          created_by: !anystr
+          updated_by: !anystr
+          create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          audiences: !anylist
+            - id: !anystr
+      save:
+        $ext:
+          function: tavern_test_utils:get_engagement_audience_destination_id
+
+  - name: test engagements/{engagement_id}/audience/{audience_id}/destination/{destination_id}/deliver
+
+    request:
+      url: "{host}/{version}/engagements/{engagement_id}/audience/{engagement_audience_id}/destination/{engagement_destination_id}/deliver"
       method: POST
       headers:
         content-type: application/json
@@ -58,9 +116,9 @@ stages:
       headers:
         content-type: application/json
       json:
-        "message": !re_match "Successfully created delivery job.*"
----
+        message: !re_search "Success"
 
+---
 test_name: Test Delivering all audiences for an engagement
 
 strict:
@@ -70,9 +128,38 @@ includes:
   - !include common.yaml
 
 stages:
+  - name: get engagements to save engagement_id
+
+    request:
+      url: "{host}/{version}/engagements"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        !anylist
+        - id: !anystr
+          name: !anystr
+          description: !anything
+          created_by: !anystr
+          updated_by: !anystr
+          create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          audiences: !anylist
+      save:
+        json:
+          first_engagement: "[0]"
+
   - name: test engagements/{engagement_id}/deliver
+
     request:
-      url: "{host}/{version}/engagements/{engagement_id}/deliver"
+      url: "{host}/{version}/engagements/{first_engagement.id}/deliver"
       method: POST
       headers:
         content-type: application/json
@@ -84,10 +171,10 @@ stages:
       headers:
         content-type: application/json
       json:
-        "message": !re_match "Successfully created delivery job.*"
----
+        message: !re_search "Success"
 
-test_name: Test Delivering an audience for all of the engagements it is apart of
+---
+test_name: Test delivery of an audience for all of the engagements it is part of
 
 strict:
   - json:list_any_order
@@ -96,9 +183,33 @@ includes:
   - !include common.yaml
 
 stages:
+  - name: get audiences to save audience_id
+
+    request:
+      url: "{host}/{version}/audiences?deliveries=1"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        !anylist
+        - id: !anystr
+          destinations: !anylist
+            - id: !anystr
+      save:
+        json:
+          first_audience: "[0]"
+
   - name: test audiences/{audience_id}/deliver
+
     request:
-      url: "{host}/{version}/audiences/{audience_id}/deliver"
+      url: "{host}/{version}/audiences/{first_audience.id}/deliver"
       method: POST
       headers:
         content-type: application/json
@@ -110,10 +221,10 @@ stages:
       headers:
         content-type: application/json
       json:
-        "message": !re_match "Successfully created delivery job.*"
----
+        message: !re_search "Success"
 
-test_name: Test Delivering one audience for an engagement.
+---
+test_name: Test delivery of one audience for an engagement
 
 strict:
   - json:list_any_order
@@ -122,9 +233,38 @@ includes:
   - !include common.yaml
 
 stages:
+  - name: get engagements to save engagement_id and corresponding audience_id, destination_id
+
+    request:
+      url: "{host}/{version}/engagements"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        !anylist
+        - id: !anystr
+          name: !anystr
+          description: !anything
+          created_by: !anystr
+          updated_by: !anystr
+          create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          audiences: !anylist
+            - id: !anystr
+      save:
+        $ext:
+          function: tavern_test_utils:get_engagement_audience_destination_id
+
   - name: test engagements/{engagement_id}/audience/{audience_id}/deliver
     request:
-      url: "{host}/{version}/engagements/{engagement_id}/audience/{audience_id}/deliver"
+      url: "{host}/{version}/engagements/{engagement_id}/audience/{engagement_audience_id}/deliver"
       method: POST
       headers:
         content-type: application/json
@@ -136,4 +276,64 @@ stages:
       headers:
         content-type: application/json
       json:
-        "message": !re_match "Successfully created delivery job.*"
+        message: !re_search "Success"
+
+---
+test_name: Test delivery history for an audience_id
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: get audiences to save audience_id
+
+    request:
+      url: "{host}/{version}/audiences?deliveries=1"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        !anylist
+        - id: !anystr
+          destinations: !anylist
+            - id: !anystr
+      save:
+        json:
+          first_audience: "[0]"
+
+  - name: test audiences/{audience_id}/delivery-history
+
+    request:
+      url: "{host}/{version}/audiences/{first_audience.id}/delivery-history"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        !anylist
+        - engagement: !anydict
+            id: !anystr
+            name: !anystr
+            delivery_schedule: !anything
+          destination: !anydict
+            id: !anystr
+            name: !anystr
+            type: !anystr
+          size: !anyint
+          delivered: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"

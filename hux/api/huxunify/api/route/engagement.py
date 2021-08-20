@@ -2,6 +2,8 @@
 """
 Paths for engagement API
 """
+from pathlib import Path
+import zipfile
 from http import HTTPStatus
 from random import uniform
 from typing import Tuple
@@ -9,7 +11,7 @@ from itertools import groupby
 from operator import itemgetter
 
 from bson import ObjectId
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
@@ -29,14 +31,12 @@ from huxunifylib.database.engagement_management import (
 )
 from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.database import (
-    orchestration_management,
     delivery_platform_management,
 )
 from huxunifylib.database.delivery_platform_management import (
-    get_performance_metrics_by_engagement_details,
-    get_delivery_jobs_using_metadata,
     get_delivery_platform,
 )
+
 from huxunify.api.schema.engagement import (
     EngagementPostSchema,
     EngagementGetSchema,
@@ -58,14 +58,19 @@ from huxunify.api.route.utils import (
     secured,
     api_error_handler,
     get_user_name,
-    group_perf_metric,
-    update_metrics,
     validate_destination,
     validate_destination_id,
 )
+from huxunify.api.data_connectors.courier import toggle_event_driven_routers
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
+from huxunify.api.data_connectors.performance_metrics import (
+    get_performance_metrics,
+    generate_metrics_file,
+)
+from huxunify.api.data_connectors.aws import (
+    get_auth_from_parameter_store,
+)
 
 engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 
@@ -76,109 +81,6 @@ engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 def before_request():
     """Protect all of the engagement endpoints."""
     pass  # pylint: disable=unnecessary-pass
-
-
-# pylint: disable=too-many-locals
-def group_engagement_performance_metrics(
-    engagement: object,
-    delivery_jobs: list,
-    performance_metrics: list,
-    target_destinations: list,
-    metrics_type: str,
-) -> dict:
-    """Group performance metrics for engagement
-
-    Args:
-        engagement (object) : Engagement object.
-        delivery_jobs (list): List of delivery jobs.
-        performance_metrics (list): List of performance metrics.
-        target_destinations (list): List of target destinations.
-        metrics_type (str): Type of performance metrics.
-
-    Returns:
-        dict: Grouped performance metrics.
-    """
-
-    database = get_db_client()
-    audience_metrics_list = []
-    # For each audience in engagement.audience
-    for eng_audience in engagement.get(api_c.AUDIENCES):
-        audience = orchestration_management.get_audience(
-            database, eng_audience.get(api_c.ID)
-        )
-        if audience is None:
-            logger.warning(
-                "Audience not found, ignoring performance metrics for it. "
-                "audience_id=%s, engagement_id=%s",
-                eng_audience.get(api_c.ID),
-                engagement.get(db_c.ID),
-            )
-            continue
-
-        # Group all delivery jobs by audience id
-        audience_delivery_jobs = [
-            x
-            for x in delivery_jobs
-            if x[db_c.AUDIENCE_ID] == audience.get(db_c.ID)
-        ]
-        #  Group performance metrics for the audience
-        audience_metrics = update_metrics(
-            audience.get(db_c.ID),
-            audience[api_c.NAME],
-            audience_delivery_jobs,
-            performance_metrics,
-            metrics_type,
-        )
-
-        # Get metrics grouped by audience.destination
-        audience_destination_metrics_list = []
-        for audience_destination in eng_audience.get(api_c.DESTINATIONS):
-            destination_id = audience_destination.get(api_c.ID)
-            if (
-                destination_id is None
-                or destination_id not in target_destinations
-            ):
-                logger.warning(
-                    "Invalid destination encountered, ignoring performance metrics for it. "
-                    "destination_id=%s, audience_id=%s, engagement_id=%s",
-                    destination_id,
-                    eng_audience.get(api_c.ID),
-                    engagement.get(db_c.ID),
-                )
-                continue
-            # Group all delivery jobs by audience.destination
-            audience_destination_jobs = [
-                x
-                for x in audience_delivery_jobs
-                if x[db_c.DELIVERY_PLATFORM_ID] == destination_id
-            ]
-
-            # get delivery platform
-            delivery_platform = (
-                delivery_platform_management.get_delivery_platform(
-                    database, destination_id
-                )
-            )
-
-            #  Group performance metrics for the destination
-            destination_metrics = update_metrics(
-                destination_id,
-                delivery_platform[api_c.NAME],
-                audience_destination_jobs,
-                performance_metrics,
-                metrics_type,
-            )
-            destination_metrics[
-                api_c.DELIVERY_PLATFORM_TYPE
-            ] = delivery_platform[db_c.DELIVERY_PLATFORM_TYPE]
-            audience_destination_metrics_list.append(destination_metrics)
-            # TODO : HUS-796 - Group performance metrics by campaigns
-        audience_metrics[
-            api_c.DESTINATIONS
-        ] = audience_destination_metrics_list
-        audience_metrics_list.append(audience_metrics)
-
-    return audience_metrics_list
 
 
 @add_view_to_blueprint(
@@ -509,6 +411,10 @@ class UpdateEngagement(SwaggerView):
         logger.info(
             "Successfully updated engagement with ID %s.", engagement_id
         )
+
+        # toggle routers since the engagement was updated.
+        toggle_event_driven_routers(database)
+
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
@@ -588,6 +494,10 @@ class DeleteEngagement(SwaggerView):
                 api_c.ENGAGEMENT_TAG,
             )
             logger.info("Successfully deleted engagement %s.", engagement_id)
+
+            # toggle routers since the engagement was deleted.
+            toggle_event_driven_routers(database)
+
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
         logger.info("Could not delete engagement %s.", engagement_id)
@@ -726,6 +636,10 @@ class AddAudienceEngagement(SwaggerView):
                 ),
                 api_c.ENGAGEMENT_TAG,
             )
+
+        # toggle routers since the engagement was updated.
+        toggle_event_driven_routers(database)
+
         return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
 
@@ -843,6 +757,10 @@ class DeleteAudienceEngagement(SwaggerView):
                 ),
                 api_c.ENGAGEMENT_TAG,
             )
+
+        # toggle routers since the engagement was updated.
+        toggle_event_driven_routers(database)
+
         return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
 
@@ -965,6 +883,9 @@ class AddDestinationEngagedAudience(SwaggerView):
             ),
             api_c.ENGAGEMENT_TAG,
         )
+
+        # toggle routers since the engagement was updated.
+        toggle_event_driven_routers(database)
 
         return EngagementGetSchema().dump(engagement), HTTPStatus.OK.value
 
@@ -1093,6 +1014,9 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             ),
             api_c.ENGAGEMENT_TAG,
         )
+
+        # toggle routers since the engagement was updated.
+        toggle_event_driven_routers(database)
 
         return EngagementGetSchema().dump(engagement), HTTPStatus.OK.value
 
@@ -1322,6 +1246,10 @@ class UpdateCampaignsForAudience(SwaggerView):
             engagement_id,
             audience_id,
         )
+
+        # toggle routers since the engagement was updated.
+        toggle_event_driven_routers(database)
+
         return (
             jsonify(CampaignSchema().dump(campaigns, many=True)),
             HTTPStatus.OK,
@@ -1697,16 +1625,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
     Display Ads Engagement Metrics
     """
 
-    parameters = [
-        {
-            "name": api_c.ENGAGEMENT_ID,
-            "description": "Engagement ID.",
-            "type": "string",
-            "in": "path",
-            "required": True,
-            "example": "60b8d6d7d3cf80b4edcd890b",
-        }
-    ]
+    parameters = api_c.ENGAGEMENT_ID_PARAMS
 
     responses = {
         HTTPStatus.OK.value: {
@@ -1758,52 +1677,9 @@ class EngagementMetricsDisplayAds(SwaggerView):
             )
             return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
 
-        # Get all destinations that are related to Display Ad metrics
-        ads_destination = (
-            delivery_platform_management.get_delivery_platform_by_type(
-                database, db_c.DELIVERY_PLATFORM_FACEBOOK
-            )
+        final_metric = get_performance_metrics(
+            database, engagement, engagement_id, api_c.DISPLAY_ADS
         )
-
-        delivery_jobs = []
-        performance_metrics = []
-        if ads_destination:
-            # Get Performance metrics by engagement and destination
-            performance_metrics = (
-                get_performance_metrics_by_engagement_details(
-                    database,
-                    ObjectId(engagement_id),
-                    [ads_destination.get(db_c.ID)],
-                )
-            )
-            if performance_metrics:
-                # Get all the delivery jobs for the given engagement and destination
-                delivery_jobs = get_delivery_jobs_using_metadata(
-                    database, engagement_id=ObjectId(engagement_id)
-                )
-
-                delivery_jobs = [
-                    x
-                    for x in delivery_jobs
-                    if x[db_c.DELIVERY_PLATFORM_ID]
-                    == ads_destination.get(db_c.ID)
-                ]
-
-        # Group all the performance metrics for the engagement
-        final_metric = {
-            api_c.SUMMARY: group_perf_metric(
-                [x[db_c.PERFORMANCE_METRICS] for x in performance_metrics],
-                api_c.DISPLAY_ADS,
-            )
-        }
-        audience_metrics_list = group_engagement_performance_metrics(
-            engagement,
-            delivery_jobs,
-            performance_metrics,
-            [ads_destination.get(db_c.ID)],
-            api_c.DISPLAY_ADS,
-        )
-        final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
 
         return (
             AudiencePerformanceDisplayAdsSchema().dump(final_metric),
@@ -1823,16 +1699,7 @@ class EngagementMetricsEmail(SwaggerView):
     Email Engagement Metrics
     """
 
-    parameters = [
-        {
-            "name": api_c.ENGAGEMENT_ID,
-            "description": "Engagement ID.",
-            "type": "string",
-            "in": "path",
-            "required": True,
-            "example": "60b8d6d7d3cf80b4edcd890b",
-        }
-    ]
+    parameters = api_c.ENGAGEMENT_ID_PARAMS
 
     responses = {
         HTTPStatus.OK.value: {
@@ -1879,54 +1746,107 @@ class EngagementMetricsEmail(SwaggerView):
             )
             return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
 
-        # Get all destinations that are related to Email metrics
-        email_destination = (
-            delivery_platform_management.get_delivery_platform_by_type(
-                database, db_c.DELIVERY_PLATFORM_SFMC
-            )
+        final_metric = get_performance_metrics(
+            database, engagement, engagement_id, api_c.EMAIL
         )
-
-        delivery_jobs = []
-        performance_metrics = []
-        if email_destination:
-            # Get Performance metrics by engagement and destination
-            performance_metrics = (
-                get_performance_metrics_by_engagement_details(
-                    database,
-                    ObjectId(engagement_id),
-                    [email_destination.get(db_c.ID)],
-                )
-            )
-
-            if performance_metrics:
-                # Get all the delivery jobs for the given engagement and destination
-                delivery_jobs = get_delivery_jobs_using_metadata(
-                    database, engagement_id=ObjectId(engagement_id)
-                )
-
-                delivery_jobs = [
-                    x
-                    for x in delivery_jobs
-                    if x[db_c.DELIVERY_PLATFORM_ID]
-                    == email_destination.get(db_c.ID)
-                ]
-
-        # Group all the performance metrics for the engagement
-        final_metric = {
-            api_c.SUMMARY: group_perf_metric(
-                [x[db_c.PERFORMANCE_METRICS] for x in performance_metrics],
-                api_c.EMAIL,
-            )
-        }
-        audience_metrics_list = group_engagement_performance_metrics(
-            engagement,
-            delivery_jobs,
-            performance_metrics,
-            [email_destination.get(db_c.ID)],
-            api_c.EMAIL,
-        )
-        final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
         return (
             AudiencePerformanceEmailSchema().dump(final_metric),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/"
+    f"{api_c.AUDIENCE_PERFORMANCE}/download",
+    "EngagementPerformanceDownloadView",
+)
+class EngagementPerformanceDownload(SwaggerView):
+    """
+    Class for downloading engagement performance metrics
+    """
+
+    parameters = api_c.ENGAGEMENT_ID_PARAMS
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Download Performance Metrics",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to download engagement metrics.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ENGAGEMENT_TAG]
+
+    @api_error_handler()
+    def get(self, engagement_id: str) -> Tuple[Response, int]:
+        """Retrieves email performance metrics.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (str): ID of an engagement
+
+        Returns:
+            Tuple[Response, int]: Response of Performance Metrics
+                HTTP Status Code
+
+        """
+
+        if not ObjectId.is_valid(engagement_id):
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
+
+        # setup the database
+        database = get_db_client()
+
+        engagement = get_engagement(database, ObjectId(engagement_id))
+        if not engagement:
+            return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
+
+        final_email_metric = get_performance_metrics(
+            database, engagement, engagement_id, api_c.EMAIL
+        )
+
+        final_display_ads_metric = get_performance_metrics(
+            database, engagement, engagement_id, api_c.DISPLAY_ADS
+        )
+
+        folder_name = "performancemetrics"
+
+        # generate performance metrics csv performancemetrics
+        generate_metrics_file(engagement_id, final_email_metric, api_c.EMAIL)
+
+        generate_metrics_file(
+            engagement_id, final_display_ads_metric, api_c.DISPLAY_ADS
+        )
+
+        zipfile_name = f"{engagement_id}_performance_metrics.zip"
+
+        # zip all the performancemetrics which are inside in the folder
+        with zipfile.ZipFile(
+            zipfile_name, "w", compression=zipfile.ZIP_STORED
+        ) as zipfolder:
+
+            folder = Path(folder_name)
+            for file in folder.glob("**/*.csv"):
+                zipfolder.write(file)
+                file.unlink()
+
+        zip_file = Path(zipfile_name)
+        data = zip_file.read_bytes()
+        zip_file.unlink()
+
+        return (
+            Response(
+                data,
+                headers={
+                    "Content-Type": "application/zip",
+                    "Content-Disposition": "attachment; filename=%s;"
+                    % zipfile_name,
+                },
+            ),
             HTTPStatus.OK,
         )

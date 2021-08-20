@@ -82,3 +82,22 @@ export function filterAudiencesByDestinations(audiences, destinations = []) {
 
   return filteredAudiences
 }
+
+/**
+ * Uses to initialize or reset while using hux-schedule-picker component
+ *
+ * @returns {Object}
+ */
+export function deliverySchedule() {
+  return {
+    periodicity: "Daily",
+    every: 1,
+    hour: 12,
+    minute: 15,
+    period: "AM",
+    monthlyPeriod: "Day",
+    monthlyDay: "Day",
+    monthlyDayDate: 1,
+    days: ["Sunday"],
+  }
+}

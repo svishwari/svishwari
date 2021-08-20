@@ -2,25 +2,31 @@
 purpose of this script is for housing the decision routes for the API.
 """
 from datetime import datetime
-from random import uniform
 from http import HTTPStatus
 from typing import Tuple, List
 
 from flask import Blueprint, jsonify
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
+from huxunifylib.database.cache_management import (
+    create_cache_entry,
+    get_cache_entry,
+)
 
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
     handle_api_exception,
     secured,
     api_error_handler,
+    get_db_client,
 )
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
     DriftSchema,
+    ModelLiftSchema,
     ModelDashboardSchema,
+    FeatureSchema,
 )
 from huxunify.api.data_connectors import tecton
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -184,61 +190,29 @@ class ModelOverview(SwaggerView):
         """
         model_id = int(model_id)
 
-        feature_importance_data = api_c.SUPPORTED_MODELS[model_id].get(
-            api_c.FEATURE_IMPORTANCE, None
-        )
+        # get model information
+        model_versions = tecton.get_model_version_history(model_id)
 
-        if feature_importance_data:
-            feature_importance_data = sorted(
-                [
-                    {
-                        api_c.NAME: feature_importance_data[api_c.NAME][x],
-                        api_c.DESCRIPTION: feature_importance_data[
-                            api_c.DESCRIPTION
-                        ][x],
-                        api_c.SCORE: feature_importance_data[api_c.SCORE][x],
-                    }
-                    for x in range(0, 20)
-                ],
-                key=lambda x: x[api_c.SCORE],
-                reverse=True,
-            )
-        else:
-            # stubbing out feature importance data if not present
-            feature_importance_data = sorted(
-                [
-                    {
-                        api_c.NAME: f"feature name {x}",
-                        api_c.DESCRIPTION: f"description of feature name {x}",
-                        api_c.SCORE: round(uniform(0, 0.25), 2),
-                    }
-                    for x in range(1, 21)
-                ],
-                key=lambda x: x[api_c.SCORE],
-                reverse=True,
-            )
+        # if model versions not found, return not found.
+        if not model_versions:
+            return {}, HTTPStatus.NOT_FOUND
 
-        output = {
-            api_c.MODEL_ID: model_id,
-            api_c.MODEL_TYPE: api_c.SUPPORTED_MODELS[model_id][
-                api_c.MODEL_TYPE
-            ],
-            api_c.MODEL_NAME: api_c.SUPPORTED_MODELS[model_id][api_c.NAME],
-            api_c.DESCRIPTION: api_c.SUPPORTED_MODELS[model_id][
-                api_c.DESCRIPTION
-            ],
-            api_c.PERFORMANCE_METRIC: {
-                api_c.AUC: api_c.SUPPORTED_MODELS[model_id][api_c.AUC],
-                api_c.PRECISION: api_c.SUPPORTED_MODELS[model_id][
-                    api_c.PRECISION
-                ],
-                api_c.RECALL: api_c.SUPPORTED_MODELS[model_id][api_c.RECALL],
-                api_c.CURRENT_VERSION: api_c.SUPPORTED_MODELS[model_id][
-                    api_c.CURRENT_VERSION
-                ],
-                api_c.RMSE: api_c.SUPPORTED_MODELS[model_id][api_c.RMSE],
-            },
-            api_c.FEATURE_IMPORTANCE: feature_importance_data,
+        # take the latest model
+        latest_model = model_versions[-1]
+
+        # generate the output
+        overview_data = {
+            api_c.MODEL_ID: latest_model[api_c.ID],
+            api_c.MODEL_TYPE: latest_model[api_c.TYPE],
+            api_c.MODEL_NAME: latest_model[api_c.NAME],
+            api_c.DESCRIPTION: latest_model[api_c.DESCRIPTION],
+            # get the performance metrics for a given model
+            api_c.PERFORMANCE_METRIC: tecton.get_model_performance_metrics(
+                model_id,
+                latest_model[api_c.TYPE],
+                latest_model[api_c.CURRENT_VERSION],
+            ),
+            # TODO - HUS-894, return Drift/Lift data.
             api_c.LIFT_DATA: [
                 {
                     api_c.BUCKET: api_c.SUPPORTED_MODELS[model_id][
@@ -272,7 +246,12 @@ class ModelOverview(SwaggerView):
                 for x in range(10)
             ],
         }
-        return ModelDashboardSchema().dump(output), HTTPStatus.OK
+
+        # dump schema and return to client.
+        return (
+            ModelDashboardSchema().dump(overview_data),
+            HTTPStatus.OK,
+        )
 
 
 @add_view_to_blueprint(
@@ -319,3 +298,235 @@ class ModelDriftView(SwaggerView):
             raise handle_api_exception(
                 exc, "Unable to get model drift."
             ) from exc
+
+
+@add_view_to_blueprint(
+    model_bp,
+    f"{api_c.MODELS_ENDPOINT}/<model_id>/features",
+    "ModelFeaturesView",
+)
+class ModelFeaturesView(SwaggerView):
+    """
+    Model Features Class
+    """
+
+    parameters = [
+        api_c.MODEL_ID_PARAMS[0],
+        {
+            "name": api_c.VERSION,
+            "description": "Model version, if not provided, it will take the latest.",
+            "type": "str",
+            "in": "path",
+            "required": False,
+            "example": "21.7.31",
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Model features.",
+            "schema": {"type": "array", "items": ModelVersionSchema},
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.MODELS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(
+        self,
+        model_id: int,
+        model_version: str = None,
+    ) -> Tuple[List[dict], int]:
+        """Retrieves model features.
+
+        ---
+        security:
+            - Bearer: [Authorization]
+
+        Args:
+            model_id (int): model id
+            model_version (str): model version.
+
+        Returns:
+            Tuple[List[dict], int]: dict of model features and http code
+
+        """
+
+        # only use the latest version if model version is None.
+        if model_version is None:
+            # get latest version first
+            model_version = tecton.get_model_version_history(model_id)
+
+            # check if there is a model version we can grab, if so take the last one (latest).
+            model_version = (
+                model_version[-1].get(api_c.CURRENT_VERSION)
+                if model_version
+                else ""
+            )
+
+        # check cache first
+        database = get_db_client()
+        features = get_cache_entry(database, f"features.{1}.{model_version}")
+
+        # if no cache, grab from Tecton and cache after.
+        if not features:
+            features = tecton.get_model_features(model_id, model_version)
+            create_cache_entry(
+                database, f"features.{1}.{model_version}", features
+            )
+
+        return (
+            jsonify(FeatureSchema(many=True).dump(features)),
+            HTTPStatus.OK.value,
+        )
+
+
+@add_view_to_blueprint(
+    model_bp,
+    f"{api_c.MODELS_ENDPOINT}/<model_id>/feature-importance",
+    "ModelImportanceFeaturesView",
+)
+class ModelImportanceFeaturesView(SwaggerView):
+    """
+    Model Feature Importance Class
+    """
+
+    parameters = [
+        api_c.MODEL_ID_PARAMS[0],
+        {
+            "name": api_c.VERSION,
+            "description": "Model version, if not provided, it will take the latest.",
+            "type": "str",
+            "in": "path",
+            "required": False,
+            "example": "21.7.31",
+        },
+        {
+            "name": api_c.LIMIT,
+            "description": "Limit of features to pull, default is 20.",
+            "type": "int",
+            "in": "path",
+            "required": False,
+            "example": 20,
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Model feature importance.",
+            "schema": {"type": "array", "items": ModelVersionSchema},
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.MODELS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(
+        self,
+        model_id: int,
+        model_version: str = None,
+        limit: int = 20,
+    ) -> Tuple[List[dict], int]:
+        """Retrieves top model features sorted by score.
+
+        ---
+        security:
+            - Bearer: [Authorization]
+
+        Args:
+            model_id (int): model id
+            model_version (str): model version.
+            limit (int): Limit of features to return, default is 20.
+
+        Returns:
+            Tuple[List[dict], int]: dict of model features and http code
+
+        """
+
+        # only use the latest version if model version is None.
+        if model_version is None:
+            # get latest version first
+            model_version = tecton.get_model_version_history(model_id)
+
+            # check if there is a model version we can grab, if so take the last one (latest).
+            model_version = (
+                model_version[-1].get(api_c.CURRENT_VERSION)
+                if model_version
+                else ""
+            )
+
+        # check cache first
+        database = get_db_client()
+        features = get_cache_entry(
+            database, f"features.{model_id}.{model_version}"
+        )
+
+        # if no cache, grab from Tecton and cache after.
+        if not features:
+            features = tecton.get_model_features(model_id, model_version)
+            create_cache_entry(
+                database, f"features.{model_id}.{model_version}", features
+            )
+
+        # sort the top features before serving them out
+        features.sort(key=lambda x: x[api_c.SCORE], reverse=True)
+
+        return (
+            jsonify(FeatureSchema(many=True).dump(features[:limit])),
+            HTTPStatus.OK.value,
+        )
+
+
+@add_view_to_blueprint(
+    model_bp,
+    f"{api_c.MODELS_ENDPOINT}/<model_id>/lift",
+    "ModelLiftView",
+)
+class ModelLiftView(SwaggerView):
+    """
+    Model Lift Class
+    """
+
+    parameters = [
+        api_c.MODEL_ID_PARAMS[0],
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Model lift chart.",
+            "schema": {"type": "array", "items": ModelLiftSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve model lift data"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.MODELS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(
+        self,
+        model_id: int,
+    ) -> Tuple[List[dict], int]:
+        """Retrieves bucket data asynchronously.
+
+        ---
+        security:
+            - Bearer: [Authorization]
+
+        Args:
+            model_id (int): model id
+
+        Returns:
+            Tuple[List[dict], int]: dict of model lift data
+
+        """
+
+        # retrieves lift data
+        lift_data = tecton.get_model_lift_async(model_id)
+        lift_data.sort(key=lambda x: x[api_c.BUCKET])
+
+        return (
+            jsonify(ModelLiftSchema(many=True).dump(lift_data)),
+            HTTPStatus.OK.value,
+        )

@@ -6,7 +6,7 @@
       :height="75"
     >
       <template #subtitle-extended>
-        <div class="font-weight-semi-bold neroBlack--text my-2">
+        <div class="font-weight-semi-bold neroBlack--text mb-2">
           {{ deliverySchedule }}
         </div>
       </template>
@@ -29,7 +29,9 @@
             </template>
           </tooltip>
         </span>
-        <avatar :name="summaryCards[1].subLabel" />
+        <span class="avatar">
+          <avatar :name="summaryCards[1].subLabel" />
+        </span>
       </template>
     </metric-card>
     <metric-card
@@ -50,7 +52,9 @@
             </template>
           </tooltip>
         </span>
-        <avatar :name="summaryCards[2].subLabel" />
+        <span class="avatar">
+          <avatar :name="summaryCards[2].subLabel" />
+        </span>
       </template>
     </metric-card>
     <metric-card
@@ -185,4 +189,14 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.summary-wrap {
+  ::v-deep .metric-card-wrapper {
+    .subtitle-slot {
+      .avatar {
+        margin-top: -6px !important;
+      }
+    }
+  }
+}
+</style>

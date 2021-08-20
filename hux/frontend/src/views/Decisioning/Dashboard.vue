@@ -5,6 +5,21 @@
         <template #left>
           <breadcrumb :items="breadcrumbItems" />
         </template>
+        <template #right>
+          <hux-button
+            class="mr-4 pa-3"
+            is-custom-icon
+            is-tile
+            icon="history"
+            variant="white"
+            @click="viewVersionHistory()"
+          >
+            Version history
+          </hux-button>
+          <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+            mdi-download
+          </v-icon>
+        </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
@@ -63,17 +78,23 @@
       <v-row>
         <v-col md="6">
           <v-card class="mt-6 rounded-lg box-shadow-5" height="662">
+            <v-progress-linear
+              :active="featuresLoading"
+              :indeterminate="featuresLoading"
+            />
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
               <div class="mt-2">
-                <span
-                  v-if="model.feature_importance"
-                  class="neroBlack--text text-h5"
-                >
-                  Top {{ model.feature_importance.length }} feature importance
+                <span v-if="modelFeatures" class="neroBlack--text text-h5">
+                  Top
+                  {{ modelFeatures.length }}
+                  feature importance
                 </span>
               </div>
             </v-card-title>
-            <feature-chart :feature-data="model.feature_importance || []" />
+            <feature-chart
+              v-if="!featuresLoading"
+              :feature-data="modelFeatures"
+            />
           </v-card>
         </v-col>
         <v-col md="6">
@@ -107,14 +128,20 @@
         <v-col col="12">
           <v-card class="rounded-lg box-shadow-5 px-6 py-5">
             <div class="neroBlack--text text-h5 pb-4">Lift chart</div>
+            <v-progress-linear
+              v-if="loadingLift"
+              :active="loadingLift"
+              :indeterminate="loadingLift"
+            />
             <lift-chart
-              v-if="model.performance_metric"
-              :data="model.lift_data || []"
+              v-else
+              :data="lift"
               :rmse="model.performance_metric['rmse']"
             />
           </v-card>
         </v-col>
       </v-row>
+      <version-history v-model="versionHistoryDrawer" />
     </template>
   </page>
 </template>
@@ -127,6 +154,8 @@ import DriftChart from "@/components/common/Charts/DriftChart/DriftChart.vue"
 import DriftChartData from "@/api/mock/factories/driftChartData.json"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
+import huxButton from "@/components/common/huxButton"
+import VersionHistory from "./Drawers/VersionHistoryDrawer.vue"
 import { mapGetters, mapActions } from "vuex"
 
 export default {
@@ -137,11 +166,16 @@ export default {
     LiftChart,
     Page,
     PageHeader,
+    huxButton,
+    VersionHistory,
     DriftChart,
   },
   data() {
     return {
       loading: false,
+      loadingLift: true,
+      featuresLoading: false,
+      versionHistoryDrawer: false,
       chartDimensions: {
         width: 0,
         height: 0,
@@ -153,7 +187,8 @@ export default {
   computed: {
     ...mapGetters({
       model: "models/overview",
-      history: "models/history",
+      lift: "models/lift",
+      features: "models/features",
     }),
 
     driftChartData() {
@@ -165,6 +200,9 @@ export default {
       })
 
       return data
+    },
+    modelFeatures() {
+      return this.features ? this.features.slice(0, 20) : []
     },
 
     breadcrumbItems() {
@@ -192,12 +230,9 @@ export default {
     this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     this.chartDimensions.height = 520
     await this.getOverview(this.$route.params.id)
-    // this will be removed from here &
-    // get called on opening of drawer,
-    // once the drawer UI is implemented
-    // in part-2 of the same PR.
-    await this.getHistory(this.$route.params.id)
+    this.fetchLift()
     this.loading = false
+    this.fetchFeatures()
   },
 
   created() {
@@ -216,8 +251,22 @@ export default {
   methods: {
     ...mapActions({
       getOverview: "models/getOverview",
-      getHistory: "models/getHistory",
+      getLift: "models/getLift",
+      getFeatures: "models/getFeatures",
     }),
+    async fetchLift() {
+      this.loadingLift = true
+      await this.getLift(this.$route.params.id)
+      this.loadingLift = false
+    },
+    viewVersionHistory() {
+      this.versionHistoryDrawer = !this.versionHistoryDrawer
+    },
+    async fetchFeatures() {
+      this.featuresLoading = true
+      await this.getFeatures(this.$route.params.id)
+      this.featuresLoading = false
+    },
     sizeHandler() {
       this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     },
