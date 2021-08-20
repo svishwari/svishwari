@@ -142,7 +142,6 @@ const mutations = {
   SET_MATCHINGTREND(state, data) {
     state.matchingTrend = data
   },
-
 }
 
 const actions = {
@@ -188,7 +187,6 @@ const actions = {
       throw error
     }
   },
-
 }
 
 export default {

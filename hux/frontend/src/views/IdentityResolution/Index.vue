@@ -102,7 +102,7 @@ export default {
     return {
       loadingOverview: false,
       loadingDataFeeds: false,
-      loadingMatchingTrend: false
+      loadingMatchingTrend: false,
     }
   },
 
@@ -131,7 +131,7 @@ export default {
       getMatchingTrend: "identity/getMatchingTrend",
     }),
 
-     async fetchMatchingTrend() {
+    async fetchMatchingTrend() {
       this.loadingMatchingTrend = true
       await this.getMatchingTrend()
       this.loadingMatchingTrend = false
