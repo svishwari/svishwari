@@ -12,7 +12,8 @@ import {
 import { idrOverview, idrDataFeedReport } from "./factories/identity"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
-import liftData from "./factories/liftChartData.json"
+import liftData from "./factories/liftChartData"
+import mapData from "@/components/common/MapChart/mapData.js"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -344,12 +345,14 @@ export const defineRoutes = (server) => {
       auc: 0.79,
       precision: 0.82,
     }
-    data.attrs.feature_importance = featureData.featureList
-    data.attrs.lift_data = liftData.lift_data
     data.attrs.model_name = data.attrs.name
     data.attrs.model_type = data.attrs.type
 
     return data
+  })
+
+  server.get("/models/:id/feature-importance", () => {
+    return featureData.featureList
   })
 
   server.get("/models/:id/version-history", (schema, request) => {
@@ -357,6 +360,8 @@ export const defineRoutes = (server) => {
     const model = schema.models.find(id)
     return model.attrs.version_history
   })
+
+  server.get("/models/:id/lift", () => liftData)
 
   // customers
   server.get("/customers")
@@ -370,6 +375,8 @@ export const defineRoutes = (server) => {
   })
 
   server.get("/customers/overview", () => customersOverview)
+
+  server.get("/customers-insights/geo", () => mapData)
 
   server.get("/customers", (schema, request) => {
     let currentBatch = request.queryParams.batch_number

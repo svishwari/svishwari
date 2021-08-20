@@ -16,7 +16,7 @@
         <span
           v-if="optional"
           class="text-caption pl-1"
-          :class="disabled ? 'lightGrey--text' : 'grey--text'"
+          :class="disabled ? 'lightGrey--text' : 'neroBlack--text'"
         >
           <em>{{ optional }}</em>
         </span>
