@@ -127,7 +127,7 @@ const actions = {
 
   async getDrift({ commit }, data) {
     try {
-      const response = await api.models.drift(data.modelId, data.payload)
+      const response = await api.models.drift(data.model_id, data.payload)
       commit("SET_DRIFT", response.data)
     } catch (error) {
       handleError(error)
