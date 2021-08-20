@@ -18,7 +18,9 @@
         class="icon-position"
       />
       <span class="success--text">
-        <span class="px-1 font-weight-bold text-h5">{{ title || defaultTitle }}</span>
+        <span class="px-1 font-weight-bold text-h5">
+          {{ title || defaultTitle }}
+        </span>
         <span class="text-h5">{{ message }}</span>
       </span>
     </span>
@@ -27,7 +29,9 @@
         <v-icon outlined :color="type" :size="18" class="icon-position">
           {{ icon }}
         </v-icon>
-        <span class="px-3 font-weight-bold text-h5">{{ title || defaultTitle }}</span>
+        <span class="px-3 font-weight-bold text-h5">
+          {{ title || defaultTitle }}
+        </span>
         <span class="text-h5">{{ message }}</span>
       </div>
     </span>
@@ -91,11 +95,11 @@ export default {
       return "mdi-information"
     },
     defaultTitle() {
-       const defaultTitles = {
-           success: "YAY!",
-           error: "OH NO!",
-       }
-       return defaultTitles[this.type]   
+      const defaultTitles = {
+        success: "YAY!",
+        error: "OH NO!",
+      }
+      return defaultTitles[this.type]
     },
     typeClass() {
       return `${this.type}--text`
