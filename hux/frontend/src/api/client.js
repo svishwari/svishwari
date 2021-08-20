@@ -198,8 +198,4 @@ client["models"].lift = (id) => {
   return http.get(`/models/${id}/lift`)
 }
 
-client["models"].drift = (id, data) => {
-  return http.post(`/models/${id}/drift`, data)
-}
-
 export default client

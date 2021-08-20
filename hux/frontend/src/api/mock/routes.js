@@ -14,7 +14,6 @@ import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
-import driftData from "@/api/mock/factories/driftData.js"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -363,8 +362,6 @@ export const defineRoutes = (server) => {
   })
 
   server.get("/models/:id/lift", () => liftData)
-
-  server.post("/models/:id/drift", () => driftData)
 
   // customers
   server.get("/customers")
