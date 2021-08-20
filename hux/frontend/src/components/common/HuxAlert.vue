@@ -18,14 +18,16 @@
         class="icon-position"
       />
       <span class="success--text">
-        <span class="px-1 font-weight-bold text-h5">{{ title }}</span>
+        <span class="px-1 font-weight-bold text-h5">{{ title || defaultTitle }}</span>
         <span class="text-h5">{{ message }}</span>
       </span>
     </span>
     <span v-else>
       <div class="d-flex align-center" :class="typeClass">
-        <v-icon outlined :color="type">{{ icon }}</v-icon>
-        <span class="px-4 font-weight-bold text-h5">{{ title }}</span>
+        <v-icon outlined :color="type" :size="18" class="icon-position">
+          {{ icon }}
+        </v-icon>
+        <span class="px-3 font-weight-bold text-h5">{{ title || defaultTitle }}</span>
         <span class="text-h5">{{ message }}</span>
       </div>
     </span>
@@ -61,7 +63,7 @@ export default {
     title: {
       type: String,
       required: false,
-      default: "YAY!",
+      default: null,
     },
 
     autoHide: {
@@ -74,11 +76,27 @@ export default {
   data() {
     return {
       isOpen: false,
-      icon: "mdi-check-circle",
     }
   },
 
   computed: {
+    icon() {
+      if (this.type == "success") {
+        return "mdi-check-circle"
+      } else if (this.type == "error") {
+        return "mdi-alert-circle"
+      } else if (this.type == "secondary") {
+        return "mdi-message-alert"
+      }
+      return "mdi-information"
+    },
+    defaultTitle() {
+       const defaultTitles = {
+           success: "YAY!",
+           error: "OH NO!",
+       }
+       return defaultTitles[this.type]   
+    },
     typeClass() {
       return `${this.type}--text`
     },
@@ -94,22 +112,6 @@ export default {
     isOpen: function () {
       this.$emit("input", this.isOpen)
     },
-  },
-
-  updated() {
-    this.$nextTick(function () {
-      if (this.type == "success") {
-        this.title = "YAY!"
-        this.icon = "mdi-check-circle"
-      } else if (this.type == "error") {
-        this.title = "OH NO!"
-        this.icon = "mdi-alert-circle"
-      } else if (this.type == "secondary") {
-        this.icon = "mdi-message-alert"
-      } else {
-        this.icon = "mdi-information"
-      }
-    })
   },
 }
 </script>
