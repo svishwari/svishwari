@@ -187,7 +187,7 @@
             <v-card-title class="pb-0 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
-                  Top location & Income
+                  Top location &amp; Income
                 </span>
               </div>
             </v-card-title>
@@ -199,7 +199,7 @@
             <v-card-title class="pb-1 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
-                  Gender / monthly spending in 2021
+                  Gender &sol; monthly spending in 2021
                 </span>
               </div>
             </v-card-title>
