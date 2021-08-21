@@ -44,7 +44,7 @@ from huxunify.api.data_connectors.cdp import (
     get_demographic_by_state,
     get_spending_by_cities,
     get_customers_insights_count_by_day,
-    get_demographic_by_city,
+    get_city_ltvs,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -947,7 +947,7 @@ class CustomersInsightsCities(SwaggerView):
         filters[api_c.COUNT] = int(batch_size) * int(batch_number)
 
         customers_insights_by_cities = CustomersInsightsCitiesSchema().dump(
-            get_demographic_by_city(token_response[0], filters),
+            get_city_ltvs(token_response[0], filters),
             many=True,
         )
         return (

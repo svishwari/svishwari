@@ -432,21 +432,30 @@ CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE = {
         {
             api_c.STATE: "CO",
             api_c.COUNTRY: "US",
-            api_c.GENDER_MEN: 0.25,
-            api_c.GENDER_WOMEN: 0.42,
-            api_c.GENDER_OTHER: 0.06,
+            api_c.GENDER_MEN: 2656,
+            api_c.GENDER_WOMEN: 2344,
+            api_c.GENDER_OTHER: 12,
             api_c.SIZE: 5012,
+            api_c.AVG_LTV: 123.43,
         },
         {
             api_c.STATE: "NY",
             api_c.COUNTRY: "US",
-            api_c.GENDER_MEN: 0.25,
-            api_c.GENDER_WOMEN: 0.42,
-            api_c.GENDER_OTHER: 0.06,
+            api_c.GENDER_MEN: 605,
+            api_c.GENDER_WOMEN: 589,
+            api_c.GENDER_OTHER: 40,
             api_c.SIZE: 1234,
+            api_c.AVG_LTV: 132.34,
         },
     ],
     "message": "ok",
+}
+
+CUSTOMERS_INSIGHTS_BY_CITIES_RESPONSE = {
+    "code": 200,
+    "body": [
+        {"city": "New York", "state": "NY", "country": "US", "avg_ltv": 4.0066}
+    ],
 }
 
 
