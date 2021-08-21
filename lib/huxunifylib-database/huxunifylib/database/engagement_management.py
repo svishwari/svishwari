@@ -191,12 +191,22 @@ def get_engagements_summary(
                 }
             }
         },
-        # add the lookalike flag
+        # add the lookalike flag, lookalike audience id and destination id
         {
             "$addFields": {
                 "audiences.is_lookalike": {
                     "$cond": [{"$eq": ["$lookalike_id", None]}, False, True]
-                }
+                },
+                "audiences.id": {
+                    "$ifNull": ["$audiences.id", "$audiences._id"]
+                },
+                "audiences.destinations": {
+                    "$cond": [
+                        {"$eq": ["$lookalike_id", None]},
+                        "$audiences.destinations",
+                        [{"id": "$lookalikes.delivery_platform_id"}],
+                    ]
+                },
             }
         },
         # remove the unused lookalike audience object fields.

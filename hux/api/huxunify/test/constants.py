@@ -205,6 +205,41 @@ MOCKED_MODEL_VERSION_HISTORY = {
     ]
 }
 
+MOCKED_MODEL_DRIFT = {
+    "results": [
+        {
+            "features": [
+                233.5,
+                "2021-07-28",
+                "Lifetime Value",
+                "ltv",
+                "21.7.28",
+            ],
+            "joinKeys": ["21.7.28"],
+        },
+        {
+            "features": [
+                263.3,
+                "2021-07-29",
+                "Lifetime Value",
+                "ltv",
+                "21.7.29",
+            ],
+            "joinKeys": ["21.7.29"],
+        },
+        {
+            "features": [
+                215.5,
+                "2021-07-30",
+                "Lifetime Value",
+                "ltv",
+                "21.7.30",
+            ],
+            "joinKeys": ["21.7.30"],
+        },
+    ]
+}
+
 MOCKED_CITY_LTVS_RESPONSE = {
     "code": 200,
     "body": [

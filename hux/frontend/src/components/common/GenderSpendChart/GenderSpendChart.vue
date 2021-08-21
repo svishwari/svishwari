@@ -1,13 +1,12 @@
 <template>
-  <div ref="chartBox" class="container">
-    <div class="d-flex justify-content-start">
-      <line-area-chart
-        v-model="spendData"
-        :chart-dimensions="chartDimensions"
-        @cordinates="getCordinates"
-        @tooltipDisplay="toolTipDisplay"
-      />
-    </div>
+  <div ref="genderSpendChart" class="container">
+    <line-area-chart
+      v-model="modificationData"
+      :chart-dimensions="chartDimensions"
+      :y-value-data="yAxisData"
+      @cordinates="getCordinates"
+      @tooltipDisplay="toolTipDisplay"
+    />
     <line-area-chart-tooltip
       :position="{
         x: tooltip.x,
@@ -40,13 +39,61 @@ export default {
         width: 0,
         height: 0,
       },
-      spendData: data.spend,
+      spendData: [],
+      yAxisData: [],
       currentData: {},
     }
   },
+  computed: {
+    modificationData() {
+      let dataValue = data.spend
+      let areaChart = []
+      let areaChartData = []
+
+      dataValue.gender_men.forEach((element) => {
+        dataValue.gender_women.forEach((value) => {
+          if (element.date === value.date) {
+            areaChart.push({
+              date: element.date,
+              men_spend: element.ltv,
+              women_spend: value.ltv,
+            })
+          }
+        })
+      })
+
+      areaChart.forEach((element) => {
+        dataValue.gender_other.forEach((value) => {
+          if (element.date === value.date) {
+            this.yAxisData.push(
+              element.men_spend,
+              element.women_spend,
+              value.ltv
+            )
+            areaChartData.push({
+              date: element.date,
+              men_spend: element.men_spend,
+              women_spend: element.women_spend,
+              others_spend: value.ltv,
+            })
+          }
+        })
+      })
+
+      return areaChartData
+    },
+  },
+
+  created() {
+    this.modificationData
+    window.addEventListener("resize", this.sizeHandler)
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.sizeHandler)
+  },
   mounted() {
-    this.chartDimensions.width = this.$refs.chartBox.clientWidth
-    this.chartDimensions.height = this.$refs.chartBox.clientHeight
+    this.sizeHandler()
+    this.modificationData
   },
 
   methods: {
@@ -60,6 +107,12 @@ export default {
     getCordinates(args) {
       this.tooltip.x = args.x
       this.tooltip.y = args.y
+    },
+    sizeHandler() {
+      if (this.$refs.genderSpendChart) {
+        this.chartDimensions.width = this.$refs.genderSpendChart.clientWidth
+        this.chartDimensions.height = 180
+      }
     },
   },
 }

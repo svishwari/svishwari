@@ -1067,6 +1067,7 @@ class UpdateCampaignsForAudience(SwaggerView):
                     {
                         api_c.NAME: "Test Campaign",
                         api_c.ID: "campaign_id",
+                        api_c.AD_SET_ID: "ad_set_id",
                         api_c.DELIVERY_JOB_ID: "delivery_job_id",
                     },
                 ]
@@ -1218,7 +1219,17 @@ class UpdateCampaignsForAudience(SwaggerView):
                 }, HTTPStatus.BAD_REQUEST
 
             updated_campaigns = [
-                {k: v for k, v in d.items() if k in [api_c.NAME, api_c.ID]}
+                {
+                    k: v
+                    for k, v in d.items()
+                    if k
+                    in [
+                        api_c.NAME,
+                        api_c.ID,
+                        api_c.AD_SET_ID,
+                        api_c.AD_SET_NAME,
+                    ]
+                }
                 for d in value
             ]
             delivery_jobs.append(
@@ -1416,7 +1427,6 @@ class AudienceCampaignsGetView(SwaggerView):
                     db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS
                 ]
                 for campaign in delivery_campaigns:
-                    campaign[api_c.ID] = campaign[api_c.ID]
                     campaign[api_c.DELIVERY_JOB_ID] = delivery_job[db_c.ID]
                     campaign[db_c.CREATE_TIME] = delivery_job[db_c.CREATE_TIME]
                 campaigns.extend(delivery_campaigns)
@@ -1482,7 +1492,7 @@ class AudienceCampaignMappingsGetView(SwaggerView):
     tags = [api_c.CAMPAIGNS]
 
     # pylint: disable=no-self-use
-    # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-return-statements, too-many-locals
     @api_error_handler()
     @validate_destination()
     def get(
@@ -1604,9 +1614,24 @@ class AudienceCampaignMappingsGetView(SwaggerView):
 
         logger.info("Got existing campaigns from Facebook.")
 
+        campaign_mappings = []
+        for campaign in campaigns:
+            ad_sets = facebook_connector.get_campaign_ad_sets(
+                campaign.get(api_c.ID)
+            )
+            for ad_set in ad_sets:
+                campaign_mappings.append(
+                    {
+                        api_c.ID: campaign.get(api_c.ID),
+                        api_c.AD_SET_ID: ad_set.get(api_c.ID),
+                        api_c.NAME: campaign.get(api_c.NAME),
+                        api_c.AD_SET_NAME: ad_set.get(api_c.NAME),
+                    }
+                )
+
         # Build response object
         campaign_schema = {
-            "campaigns": list(campaigns),
+            "campaigns": list(campaign_mappings),
             "delivery_jobs": delivery_jobs,
         }
 
