@@ -73,6 +73,26 @@ CUSTOMER_INSIGHT_RESPONSE = {
     "message": "ok",
 }
 
+CUSTOMER_EVENT_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_cart": 0,
+                "customer_login": 0,
+                "item_purchased": 0,
+                "trait_computed": 1,
+                "viewed_cart": 0,
+                "viewed_checkout": 0,
+                "viewed_sale_item": 0,
+            },
+            "date": "2021-01-01T00:00:00.000Z",
+        }
+    ],
+    "message": "ok",
+}
+
 CUSTOMER_GEO_RESPONSE = [
     {
         "name": "Alabama",
@@ -185,6 +205,41 @@ MOCKED_MODEL_VERSION_HISTORY = {
     ]
 }
 
+MOCKED_MODEL_DRIFT = {
+    "results": [
+        {
+            "features": [
+                233.5,
+                "2021-07-28",
+                "Lifetime Value",
+                "ltv",
+                "21.7.28",
+            ],
+            "joinKeys": ["21.7.28"],
+        },
+        {
+            "features": [
+                263.3,
+                "2021-07-29",
+                "Lifetime Value",
+                "ltv",
+                "21.7.29",
+            ],
+            "joinKeys": ["21.7.29"],
+        },
+        {
+            "features": [
+                215.5,
+                "2021-07-30",
+                "Lifetime Value",
+                "ltv",
+                "21.7.30",
+            ],
+            "joinKeys": ["21.7.30"],
+        },
+    ]
+}
+
 MOCKED_CITY_LTVS_RESPONSE = {
     "code": 200,
     "body": [
@@ -220,6 +275,149 @@ MOCKED_CITY_LTVS_RESPONSE = {
         },
     ],
     "message": "ok",
+}
+
+MOCKED_MODEL_PERFORMANCE_LTV = {
+    "results": [
+        {
+            "features": [
+                233.5,
+                "2021-07-28",
+                "Lifetime Value",
+                "ltv",
+                "21.7.28",
+            ],
+            "joinKeys": ["21.7.28"],
+        },
+        {
+            "features": [
+                263.3,
+                "2021-07-29",
+                "Lifetime Value",
+                "ltv",
+                "21.7.29",
+            ],
+            "joinKeys": ["21.7.29"],
+        },
+        {
+            "features": [
+                215.5,
+                "2021-07-30",
+                "Lifetime Value",
+                "ltv",
+                "21.7.30",
+            ],
+            "joinKeys": ["21.7.30"],
+        },
+    ]
+}
+MOCKED_MODEL_LTV_PAYLOAD = {
+    "params": {
+        "feature_service_name": "ui_metadata_model_metrics_regression_service",
+        "join_key_map": {"model_id": "2"},
+    }
+}
+MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
+    "results": [
+        {
+            "features": [
+                0.84,
+                "2021-07-28",
+                "Propensity to Unsubscribe",
+                "unsubscribe",
+                "21.7.28",
+                0.71,
+                0.65,
+            ],
+            "joinKeys": ["21.7.28"],
+        },
+        {
+            "features": [
+                0.86,
+                "2021-07-29",
+                "Propensity to Unsubscribe",
+                "unsubscribe",
+                "21.7.29",
+                0.72,
+                0.6,
+            ],
+            "joinKeys": ["21.7.29"],
+        },
+        {
+            "features": [
+                0.81,
+                "2021-07-30",
+                "Propensity to Unsubscribe",
+                "unsubscribe",
+                "21.7.30",
+                0.68,
+                0.63,
+            ],
+            "joinKeys": ["21.7.30"],
+        },
+        {
+            "features": [
+                0.85,
+                "2021-07-31",
+                "Propensity to Unsubscribe",
+                "unsubscribe",
+                "21.7.31",
+                0.71,
+                0.58,
+            ],
+            "joinKeys": ["21.7.31"],
+        },
+    ]
+}
+MOCKED_MODEL_UNSUBSCRIBE_PAYLOAD = {
+    "params": {
+        "feature_service_name": "ui_metadata_model_metrics_classification_service",
+        "join_key_map": {"model_id": "1"},
+    }
+}
+MOCKED_MODEL_LIFT_CHART = [
+    {
+        api_c.BUCKET: 100,
+        api_c.ACTUAL_VALUE: 2602,
+        api_c.ACTUAL_LIFT: 1,
+        api_c.PREDICTED_LIFT: 1.0000000895,
+        api_c.PREDICTED_VALUE: 2726.7827,
+        api_c.PROFILE_COUNT: 95369,
+        api_c.ACTUAL_RATE: 0.0272834988,
+        api_c.PREDICTED_RATE: 0.0285919189,
+        api_c.PROFILE_SIZE_PERCENT: 0,
+    }
+]
+
+CUSTOMER_INSIGHTS_COUNT_BY_DAY_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            api_c.RECORDED: "2021-04-01",
+            api_c.TOTAL_COUNT: 105080,
+            api_c.DIFFERENCE_COUNT: 4321,
+        },
+        {
+            api_c.RECORDED: "2021-04-06",
+            api_c.TOTAL_COUNT: 108200,
+            api_c.DIFFERENCE_COUNT: 3120,
+        },
+        {
+            api_c.RECORDED: "2021-04-08",
+            api_c.TOTAL_COUNT: 111100,
+            api_c.DIFFERENCE_COUNT: 2900,
+        },
+        {
+            api_c.RECORDED: "2021-04-11",
+            api_c.TOTAL_COUNT: 112300,
+            api_c.DIFFERENCE_COUNT: 1200,
+        },
+        {
+            api_c.RECORDED: "2021-05-12",
+            api_c.TOTAL_COUNT: 116300,
+            api_c.DIFFERENCE_COUNT: 4000,
+        },
+    ],
 }
 
 

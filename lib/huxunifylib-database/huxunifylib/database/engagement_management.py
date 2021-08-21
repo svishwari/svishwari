@@ -155,6 +155,62 @@ def get_engagements_summary(
         },
         # remove the unused audience object fields.
         {"$project": {"audience": 0}},
+        # lookup audience objects to the lookalike_audience collection
+        # to get lookalike_audience name.
+        {
+            "$lookup": {
+                "from": "lookalike_audiences",
+                "localField": "audiences.id",
+                "foreignField": "_id",
+                "as": "lookalikes",
+            }
+        },
+        # unwind the found lookalike_audiences to an object.
+        {
+            "$unwind": {
+                "path": "$lookalikes",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        # add the lookalike id field by assigning None directly. this is a workaround because
+        # document DB does not support LET statements in pipelines.
+        {
+            "$addFields": {
+                "lookalike_id": {"$ifNull": ["$lookalikes._id", None]}
+            }
+        },
+        # coalesce the unwind of an audience with lookalikes
+        {
+            "$addFields": {
+                "audiences": {
+                    "$cond": [
+                        {"$eq": ["$lookalike_id", None]},
+                        "$audiences",
+                        "$lookalikes",
+                    ]
+                }
+            }
+        },
+        # add the lookalike flag, lookalike audience id and destination id
+        {
+            "$addFields": {
+                "audiences.is_lookalike": {
+                    "$cond": [{"$eq": ["$lookalike_id", None]}, False, True]
+                },
+                "audiences.id": {
+                    "$ifNull": ["$audiences.id", "$audiences._id"]
+                },
+                "audiences.destinations": {
+                    "$cond": [
+                        {"$eq": ["$lookalike_id", None]},
+                        "$audiences.destinations",
+                        [{"id": "$lookalikes.delivery_platform_id"}],
+                    ]
+                },
+            }
+        },
+        # remove the unused lookalike audience object fields.
+        {"$project": {"lookalikes": 0, "lookalike_id": 0}},
         # unwind the destinations
         {
             "$unwind": {
@@ -233,6 +289,7 @@ def get_engagements_summary(
                     "audience_updated_by": "$audiences.updated_by",
                     "audience_update_time": "$audiences.update_time",
                     "audience_create_time": "$audiences.create_time",
+                    "is_audience_lookalike": "$audiences.is_lookalike",
                     "delivery_schedule": {
                         "$ifNull": ["$delivery_schedule", ""]
                     },
@@ -284,6 +341,7 @@ def get_engagements_summary(
                         "update_time": "$_id.audience_update_time",
                         "create_time": "$_id.audience_create_time",
                         "destinations": "$destinations",
+                        "is_lookalike": "$_id.is_audience_lookalike",
                     }
                 },
                 "size": {"$sum": "$_id.audience_size"},

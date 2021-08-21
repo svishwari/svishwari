@@ -5,8 +5,7 @@ from datetime import datetime
 from http import HTTPStatus
 from typing import Tuple, List
 
-from flask import Blueprint, jsonify
-from flask_apispec import marshal_with
+from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 from huxunifylib.database.cache_management import (
     create_cache_entry,
@@ -15,7 +14,6 @@ from huxunifylib.database.cache_management import (
 
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
-    handle_api_exception,
     secured,
     api_error_handler,
     get_db_client,
@@ -23,7 +21,9 @@ from huxunify.api.route.utils import (
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
-    DriftSchema,
+    ModelDriftSchema,
+    ModelDriftPostSchema,
+    ModelLiftSchema,
     ModelDashboardSchema,
     FeatureSchema,
 )
@@ -189,26 +189,29 @@ class ModelOverview(SwaggerView):
         """
         model_id = int(model_id)
 
-        output = {
-            api_c.MODEL_ID: model_id,
-            api_c.MODEL_TYPE: api_c.SUPPORTED_MODELS[model_id][
-                api_c.MODEL_TYPE
-            ],
-            api_c.MODEL_NAME: api_c.SUPPORTED_MODELS[model_id][api_c.NAME],
-            api_c.DESCRIPTION: api_c.SUPPORTED_MODELS[model_id][
-                api_c.DESCRIPTION
-            ],
-            api_c.PERFORMANCE_METRIC: {
-                api_c.AUC: api_c.SUPPORTED_MODELS[model_id][api_c.AUC],
-                api_c.PRECISION: api_c.SUPPORTED_MODELS[model_id][
-                    api_c.PRECISION
-                ],
-                api_c.RECALL: api_c.SUPPORTED_MODELS[model_id][api_c.RECALL],
-                api_c.CURRENT_VERSION: api_c.SUPPORTED_MODELS[model_id][
-                    api_c.CURRENT_VERSION
-                ],
-                api_c.RMSE: api_c.SUPPORTED_MODELS[model_id][api_c.RMSE],
-            },
+        # get model information
+        model_versions = tecton.get_model_version_history(model_id)
+
+        # if model versions not found, return not found.
+        if not model_versions:
+            return {}, HTTPStatus.NOT_FOUND
+
+        # take the latest model
+        latest_model = model_versions[-1]
+
+        # generate the output
+        overview_data = {
+            api_c.MODEL_ID: latest_model[api_c.ID],
+            api_c.MODEL_TYPE: latest_model[api_c.TYPE],
+            api_c.MODEL_NAME: latest_model[api_c.NAME],
+            api_c.DESCRIPTION: latest_model[api_c.DESCRIPTION],
+            # get the performance metrics for a given model
+            api_c.PERFORMANCE_METRIC: tecton.get_model_performance_metrics(
+                model_id,
+                latest_model[api_c.TYPE],
+                latest_model[api_c.CURRENT_VERSION],
+            ),
+            # TODO - HUS-894, return Drift/Lift data.
             api_c.LIFT_DATA: [
                 {
                     api_c.BUCKET: api_c.SUPPORTED_MODELS[model_id][
@@ -242,12 +245,17 @@ class ModelOverview(SwaggerView):
                 for x in range(10)
             ],
         }
-        return ModelDashboardSchema().dump(output), HTTPStatus.OK
+
+        # dump schema and return to client.
+        return (
+            ModelDashboardSchema().dump(overview_data),
+            HTTPStatus.OK,
+        )
 
 
 @add_view_to_blueprint(
     model_bp,
-    f"{api_c.MODELS_ENDPOINT}/<name>/drift",
+    f"{api_c.MODELS_ENDPOINT}/<model_id>/drift",
     "ModelDriftView",
 )
 class ModelDriftView(SwaggerView):
@@ -255,20 +263,31 @@ class ModelDriftView(SwaggerView):
     Model Drift Class
     """
 
-    parameters = api_c.MODEL_NAME_PARAMS
+    parameters = [
+        api_c.MODEL_ID_PARAMS[0],
+        {
+            "name": "body",
+            "description": "Model type",
+            "type": "object",
+            "in": "body",
+            "example": {api_c.MODEL_TYPE: "ltv"},
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model drift.",
-            "schema": {"type": "array", "items": DriftSchema},
+            "schema": {"type": "array", "items": ModelDriftSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to fetch drift data",
         },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    @marshal_with(DriftSchema(many=True))
     @api_error_handler()
-    def get(self, name: str) -> Tuple[List[dict], int]:
+    def post(self, model_id: int) -> Tuple[List[dict], int]:
         """Retrieves model drift details.
 
         ---
@@ -276,19 +295,19 @@ class ModelDriftView(SwaggerView):
             - Bearer: [Authorization]
 
         Args:
-            name (str): model name
+            model_id (int): model id.
 
         Returns:
             Tuple[List[dict], int]: dict of model drift and http code
 
         """
-        try:
-            return tecton.get_model_drift(name), HTTPStatus.OK.value
+        body = ModelDriftPostSchema().load(request.get_json())
+        drift_data = tecton.get_model_drift(model_id, body[api_c.MODEL_TYPE])
 
-        except Exception as exc:
-            raise handle_api_exception(
-                exc, "Unable to get model drift."
-            ) from exc
+        return (
+            jsonify(ModelDriftSchema(many=True).dump(drift_data)),
+            HTTPStatus.OK.value,
+        )
 
 
 @add_view_to_blueprint(
@@ -464,5 +483,60 @@ class ModelImportanceFeaturesView(SwaggerView):
 
         return (
             jsonify(FeatureSchema(many=True).dump(features[:limit])),
+            HTTPStatus.OK.value,
+        )
+
+
+@add_view_to_blueprint(
+    model_bp,
+    f"{api_c.MODELS_ENDPOINT}/<model_id>/lift",
+    "ModelLiftView",
+)
+class ModelLiftView(SwaggerView):
+    """
+    Model Lift Class
+    """
+
+    parameters = [
+        api_c.MODEL_ID_PARAMS[0],
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Model lift chart.",
+            "schema": {"type": "array", "items": ModelLiftSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve model lift data"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.MODELS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(
+        self,
+        model_id: int,
+    ) -> Tuple[List[dict], int]:
+        """Retrieves bucket data asynchronously.
+
+        ---
+        security:
+            - Bearer: [Authorization]
+
+        Args:
+            model_id (int): model id
+
+        Returns:
+            Tuple[List[dict], int]: dict of model lift data
+
+        """
+
+        # retrieves lift data
+        lift_data = tecton.get_model_lift_async(model_id)
+        lift_data.sort(key=lambda x: x[api_c.BUCKET])
+
+        return (
+            jsonify(ModelLiftSchema(many=True).dump(lift_data)),
             HTTPStatus.OK.value,
         )

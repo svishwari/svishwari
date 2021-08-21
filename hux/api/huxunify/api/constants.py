@@ -64,71 +64,71 @@ MIN_LTV_PREDICTED = "min_ltv_predicted"
 MAX_LTV_PREDICTED = "max_ltv_predicted"
 MIN_LTV_ACTUAL = "min_ltv_actual"
 MAX_LTV_ACTUAL = "max_ltv_actual"
-LTV = "ltv"
+AVG_LTV = "avg_ltv"
+COUNTRY = "country"
 POPULATION_PERCENTAGE = "population_percentage"
 INCOME = "income"
 CDP_SERVICE_URL = "CDP_SERVICE_URL"
 COUNT = "count"
 # TODO: Remove State Names once it connected with CDM
-STATE_NAMES = [
-    "Alaska",
-    "Alabama",
-    "Arkansas",
-    "American Samoa",
-    "Arizona",
-    "California",
-    "Colorado",
-    "Connecticut",
-    "District of Columbia",
-    "Delaware",
-    "Florida",
-    "Georgia",
-    "Guam",
-    "Hawaii",
-    "Iowa",
-    "Idaho",
-    "Illinois",
-    "Indiana",
-    "Kansas",
-    "Kentucky",
-    "Louisiana",
-    "Massachusetts",
-    "Maryland",
-    "Maine",
-    "Michigan",
-    "Minnesota",
-    "Missouri",
-    "Mississippi",
-    "Montana",
-    "North Carolina",
-    "North Dakota",
-    "Nebraska",
-    "New Hampshire",
-    "New Jersey",
-    "New Mexico",
-    "Nevada",
-    "New York",
-    "Ohio",
-    "Oklahoma",
-    "Oregon",
-    "Pennsylvania",
-    "Puerto Rico",
-    "Rhode Island",
-    "South Carolina",
-    "South Dakota",
-    "Tennessee",
-    "Texas",
-    "Utah",
-    "Virginia",
-    "Virgin Islands",
-    "Vermont",
-    "Washington",
-    "Wisconsin",
-    "West Virginia",
-    "Wyoming",
-]
+STATE_NAMES = {
+    "AL": "Alabama",
+    "AK": "Alaska",
+    "AZ": "Arizona",
+    "AR": "Arkansas",
+    "CA": "California",
+    "CO": "Colorado",
+    "CT": "Connecticut",
+    "DE": "Delaware",
+    "DC": "District of Columbia",
+    "FL": "Florida",
+    "GA": "Georgia",
+    "HI": "Hawaii",
+    "ID": "Idaho",
+    "IL": "Illinois",
+    "IN": "Indiana",
+    "IA": "Iowa",
+    "KS": "Kansas",
+    "KY": "Kentucky",
+    "LA": "Louisiana",
+    "ME": "Maine",
+    "MD": "Maryland",
+    "MA": "Massachusetts",
+    "MI": "Michigan",
+    "MN": "Minnesota",
+    "MS": "Mississippi",
+    "MO": "Missouri",
+    "MT": "Montana",
+    "NE": "Nebraska",
+    "NV": "Nevada",
+    "NH": "New Hampshire",
+    "NJ": "New Jersey",
+    "NM": "New Mexico",
+    "NY": "New York",
+    "NC": "North Carolina",
+    "ND": "North Dakota",
+    "OH": "Ohio",
+    "OK": "Oklahoma",
+    "OR": "Oregon",
+    "PA": "Pennsylvania",
+    "RI": "Rhode Island",
+    "SC": "South Carolina",
+    "SD": "South Dakota",
+    "TN": "Tennessee",
+    "TX": "Texas",
+    "UT": "Utah",
+    "VT": "Vermont",
+    "VA": "Virginia",
+    "WA": "Washington",
+    "WV": "West Virginia",
+    "WI": "Wisconsin",
+    "WY": "Wyoming",
+    "PR": "Puerto Rico",
+}
 DEMOGRAPHIC = "demo"
 DATE = "date"
+RECORDED = "recorded"
+DIFFERENCE_COUNT = "diff_count"
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
@@ -344,6 +344,7 @@ DESTINATION_NOT_FOUND = "Destination not found."
 ENGAGEMENT_NOT_FOUND = "Engagement not found."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported."
 SUCCESSFUL_DELIVERY_JOB_NOT_FOUND = "No successful delivery job found"
+ZERO_AUDIENCE_SIZE = "Sum of Audience(s) is zero"
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -383,6 +384,8 @@ DELIVER = "deliver"
 DELIVERY_HISTORY = "delivery-history"
 CAMPAIGNS = "campaigns"
 CAMPAIGN_ID = "campaign_id"
+AD_SET_ID = "ad_set_id"
+AD_SET_NAME = "ad_set_name"
 DELIVERY_MOMENT = "delivery_moment"
 DELIVERY_JOB_ID = "delivery_job_id"
 AUDIENCE_PERFORMANCE = "audience-performance"
@@ -422,7 +425,16 @@ IS_MAPPED = "is_mapped"
 DELIVERED = "delivered"
 UNSUBSCRIBE = "unsubscribe"
 SPEND = "spend"
-
+ENGAGEMENT_ID_PARAMS = [
+    {
+        "name": ENGAGEMENT_ID,
+        "description": "Engagement ID.",
+        "type": "string",
+        "in": "path",
+        "required": True,
+        "example": "60b8d6d7d3cf80b4edcd890b",
+    }
+]
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"
 CDP_DATA_SOURCE_CATEGORY = "category"
@@ -553,6 +565,13 @@ PRECISION = "precision"
 PERFORMANCE_METRIC = "performance_metric"
 FEATURE_IMPORTANCE = "feature_importance"
 SCORE = "score"
+FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service"
+FEATURE_DRIFT_REGRESSION_MODEL_SERVICE = (
+    "ui_metadata_model_metrics_regression_service"
+)
+FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE = (
+    "ui_metadata_model_metrics_classification_service"
+)
 
 MODEL_LIST_PAYLOAD = {
     "params": {
@@ -583,6 +602,18 @@ ACTUAL_RATE = "actual_rate"
 PREDICTED_LIFT = "predicted_lift"
 ACTUAL_LIFT = "actual_lift"
 PROFILE_SIZE_PERCENT = "profile_size_percent"
+RUN_DATE = "run_date"
+DRIFT = "drift"
+REGRESSION_MODELS = [LTV]
+CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
+
+# used for the icons on front-end.
+MODEL_TYPES_MAPPING = {
+    "lifetime value": LTV,
+    "propensity to purchase": PURCHASE,
+    "propensity to unsubscribe": UNSUBSCRIBE,
+}
+
 # TODO Remove this data once actual data from tecton flows
 SUPPORTED_MODELS = {
     2: {
@@ -1117,15 +1148,8 @@ CUSTOMER_LOGIN_EVENT = "customer_login"
 VIEWED_CART_EVENT = "viewed_cart"
 VIEWED_CHECKOUT_EVENT = "viewed_checkout"
 VIEWED_SALE_ITEM_EVENT = "viewed_sale_item"
-# TODO remove once we get event counts from CDP.
-CUSTOMER_EVENTS_SAMPLE_COUNTS = {
-    CUSTOMER_TOTAL_DAILY_EVENT_COUNT: [17, 16, 15, 2, 18, 16, 10, 16],
-    ABANDONED_CART_EVENT: [3, 3, 3, 0, 2, 2, 2, 2],
-    CUSTOMER_LOGIN_EVENT: [2, 1, 3, 1, 3, 3, 2, 3],
-    VIEWED_CART_EVENT: [4, 3, 3, 0, 3, 3, 3, 3],
-    VIEWED_CHECKOUT_EVENT: [3, 4, 1, 0, 4, 3, 1, 3],
-    VIEWED_SALE_ITEM_EVENT: [5, 5, 5, 1, 6, 5, 2, 5],
-}
+TRAIT_COMPUTED_EVENT = "trait_computed"
+ITEM_PURCHASED_EVENT = "item_purchased"
 
 # FILTERING
 REDACTED = "++REDACTED++"

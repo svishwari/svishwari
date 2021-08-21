@@ -84,7 +84,7 @@
               v-if="header.value == 'destinations'"
               class="d-flex align-center"
             >
-              <div class="d-flex align-center">
+              <div class="d-flex align-center destination-ico">
                 <tooltip
                   v-for="destination in getOverallDestinations(
                     item[header.value]
@@ -418,7 +418,13 @@ export default {
         { title: "Export", isDisabled: true },
         { title: "Edit engagement", isDisabled: true },
         { title: "Duplicate", isDisabled: true },
-        { title: "Make inactive", isDisabled: true },
+        {
+          title: "Make inactive",
+          isDisabled: false,
+          onClick: (value) => {
+            this.makeInactiveEngagement(value)
+          },
+        },
         { title: "Delete engagement", isDisabled: true },
       ],
       audienceActionItems: [
@@ -508,6 +514,7 @@ export default {
     ...mapActions({
       getAllEngagements: "engagements/getAll",
       updateAudienceList: "engagements/updateAudienceList",
+      updateEngagement: "engagements/updateEngagement",
     }),
     getAudienceHeaders(headers) {
       headers[0].width = "180px"
@@ -544,6 +551,20 @@ export default {
       this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
     },
+    async makeInactiveEngagement(value) {
+      const inactiveEngagementPayload = {
+        status: "Inactive",
+      }
+      const payload = { id: value.id, data: inactiveEngagementPayload }
+      await this.updateEngagement(payload)
+      this.loading = true
+      await this.getAllEngagements()
+      this.rowData = this.engagementData.sort((a, b) =>
+        a.name > b.name ? 1 : -1
+      )
+      this.loading = false
+    },
+
     reloadAudienceData() {
       this.showLookAlikeDrawer = false
     },
@@ -565,6 +586,13 @@ export default {
     .mdi-chevron-right,
     .mdi-dots-vertical {
       background: transparent !important;
+    }
+  }
+  // This CSS is to avoid conflict with Tooltip component.
+  ::v-deep .destination-ico {
+    span {
+      display: flex;
+      align-items: center;
     }
   }
   .ellipsis-21 {

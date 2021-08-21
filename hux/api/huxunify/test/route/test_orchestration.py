@@ -646,11 +646,6 @@ class OrchestrationRouteTest(TestCase):
         Returns:
         """
 
-        mock.patch(
-            "huxunify.api.route.orchestration.get_customers_count_async",
-            return_value={},
-        ).start()
-
         response = self.test_client.get(
             f"{self.audience_api_endpoint}",
             headers=t_c.STANDARD_HEADERS,
@@ -665,6 +660,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertListEqual(audience_ids, return_ids)
         for audience in audiences:
             self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
+            self.assertIn(db_c.AUDIENCE_FILTERS, audience)
             self.assertFalse(audience[api_c.IS_LOOKALIKE])
             self.assertTrue(audience[api_c.STATUS])
             self.assertIn(

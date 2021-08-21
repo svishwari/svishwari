@@ -9,6 +9,7 @@ import requests_mock
 from hypothesis import given, strategies as st
 
 from huxunifylib.database import constants as db_c
+
 from huxunify.api import constants as api_c
 from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.cdp import (
@@ -186,3 +187,58 @@ class CDPTest(TestCase):
         }
 
         self.assertEqual(HTTPStatus.OK, expected_response["code"])
+
+    def test_get_customers_insights_count_by_day(self) -> None:
+        """Test get customers insights count by day
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        expected_response = {
+            "code": 200,
+            "body": [
+                {
+                    api_c.RECORDED: "2021-04-01",
+                    api_c.TOTAL_COUNT: 105080,
+                    api_c.DIFFERENCE_COUNT: 4321,
+                },
+                {
+                    api_c.RECORDED: "2021-04-06",
+                    api_c.TOTAL_COUNT: 108200,
+                    api_c.DIFFERENCE_COUNT: 3120,
+                },
+            ],
+            "message": "ok",
+        }
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-day",
+            json=expected_response,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.TOTAL}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        data = response.json
+        self.assertTrue(data)
+        for record in data:
+            self.assertTrue(record[api_c.TOTAL_CUSTOMERS])
+            self.assertIn(record[api_c.TOTAL_CUSTOMERS], [105080, 108200])
+            self.assertTrue(record[api_c.NEW_CUSTOMERS_ADDED])
+            self.assertIn(record[api_c.NEW_CUSTOMERS_ADDED], [4321, 3120])
+            self.assertTrue(record[api_c.DATE])
+            self.assertIn(
+                record[api_c.DATE][0:10],
+                [
+                    "2021-04-01",
+                    "2021-04-06",
+                ],
+            )

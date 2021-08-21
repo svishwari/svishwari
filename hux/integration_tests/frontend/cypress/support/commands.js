@@ -7,19 +7,38 @@
 // commands please read more here:
 // https://on.cypress.io/custom-commands
 // ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+import route from "./routes.js"
+import selector from "./selectors.js"
+
+Cypress.Commands.add("signin", ({ email, password }) => {
+  // opens the app
+  cy.visit(route.home)
+
+  // clicks the signin button
+  cy.get(selector.home.signin).click()
+
+  // we should now be on the login page
+  cy.location("pathname").should("eq", route.login)
+
+  // fill in the form
+  cy.get(selector.login.email).type(email, { log: false })
+
+  cy.get(selector.login.password).type(password, {
+    log: false,
+  })
+
+  // submit the form
+  cy.get(selector.login.submit).click()
+
+  // TODO: add MFA related authentication if needed
+
+  // we should no longer be on the login page
+  cy.location("pathname", { timeout: 10000 })
+    .should("not.eq", route.login)
+    .then(() => {
+      // okta does its authentication...
+      // once its done, we should be redirected back to the app
+      cy.location("pathname").should("eq", route.oktaSignInRedirectURI)
+    })
+})

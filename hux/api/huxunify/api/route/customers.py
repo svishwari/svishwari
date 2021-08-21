@@ -3,9 +3,8 @@
 Paths for customer API
 """
 from http import HTTPStatus
-from random import choice, randint
 from typing import Tuple, List
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from faker import Faker
 import pandas as pd
@@ -13,6 +12,8 @@ import pandas as pd
 from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
+
+from huxunifylib.util.general.logging import logger
 
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
@@ -38,7 +39,9 @@ from huxunify.api.data_connectors.cdp import (
     get_idr_data_feeds,
     get_idr_matching_trends,
     get_customer_events_data,
+    get_demographic_by_state,
     get_spending_by_cities,
+    get_customers_insights_count_by_day,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -510,7 +513,11 @@ class CustomerGeoVisualView(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
+    @api_error_handler(
+        custom_message={
+            ZeroDivisionError: {"message": api_c.ZERO_AUDIENCE_SIZE}
+        }
+    )
     def get(self) -> Tuple[list, int]:
         """Retrieves a Customer profiles geographical insights.
 
@@ -521,20 +528,13 @@ class CustomerGeoVisualView(SwaggerView):
         Returns:
             Tuple[dict, int] list of Customer insights on geo overview and http code
         """
-        geo_visuals = [
-            {
-                api_c.NAME: state,
-                api_c.POPULATION_PERCENTAGE: choice([0.3012, 0.1910, 0.2817]),
-                api_c.SIZE: choice([28248560, 39510225, 7615887]),
-                api_c.GENDER_WOMEN: 0.50,
-                api_c.GENDER_MEN: 0.49,
-                api_c.GENDER_OTHER: 0.01,
-                api_c.LTV: choice([3848.50, 3971.50, 3952]),
-            }
-            for state in api_c.STATE_NAMES
-        ]
+        token_response = get_token_from_request(request)
         return (
-            jsonify(CustomerGeoVisualSchema().dump(geo_visuals, many=True)),
+            jsonify(
+                CustomerGeoVisualSchema().dump(
+                    get_demographic_by_state(token_response[0]), many=True
+                )
+            ),
             HTTPStatus.OK,
         )
 
@@ -701,10 +701,10 @@ class CustomerEvents(SwaggerView):
             "type": "object",
             "in": "body",
             "example": {
-                "filters": {
-                    "start_date": "2021-07-25T00:00:00Z",
-                    "end_date": "2021-08-02T00:00:00Z",
-                }
+                api_c.START_DATE: "%s-01-01T00:00:00Z"
+                % datetime.utcnow().year,
+                api_c.END_DATE: datetime.utcnow().strftime("%Y-%m-%d")
+                + "T00:00:00Z",
             },
         },
     ]
@@ -724,6 +724,7 @@ class CustomerEvents(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def post(self, hux_id: str) -> Tuple[dict, int]:
         """Retrieves events for a given HUX ID.
 
@@ -735,10 +736,14 @@ class CustomerEvents(SwaggerView):
         Returns:
             Tuple[dict, int] list of Customer events grouped by day and http code
         """
+        token_response = get_token_from_request(request)
         return (
             jsonify(
                 CustomerEventsSchema().dump(
-                    get_customer_events_data(hux_id), many=True
+                    get_customer_events_data(
+                        token_response[0], hux_id, request.json
+                    ),
+                    many=True,
                 )
             ),
             HTTPStatus.OK,
@@ -777,23 +782,39 @@ class TotalCustomersGraphView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] list of total customers & new customers added, http code
+            Tuple[dict, int] list of total customers & new customers added, http status code
         """
+
+        # get auth token from request
+        token_response = get_token_from_request(request)
+
+        # create a dict for date_filters required by cdp endpoint
         last_date = datetime.today() - relativedelta(months=6)
         today = datetime.today()
-        total_customers = []
-        while last_date <= today:
-            total_customers.append(
-                {
-                    api_c.TOTAL_CUSTOMERS: randint(50000, 156000),
-                    api_c.NEW_CUSTOMERS_ADDED: randint(1, 5000),
-                    api_c.DATE: last_date,
-                }
+        date_filters = {
+            api_c.START_DATE: datetime.strftime(last_date, "%Y-%m-%d"),
+            api_c.END_DATE: datetime.strftime(today, "%Y-%m-%d"),
+        }
+
+        customers_insight_total = get_customers_insights_count_by_day(
+            token_response[0], date_filters
+        )
+
+        # if the customers insight total response body is empty from CDP,
+        # then log and return 400
+        if not customers_insight_total:
+            logger.error("Failed to get Total Customer Insights from CDP.")
+            return (
+                {"message": "Failed to get Total Customer Insights."},
+                HTTPStatus.BAD_REQUEST,
             )
-            last_date += timedelta(days=1)
+
         return (
             jsonify(
-                TotalCustomersInsightsSchema().dump(total_customers, many=True)
+                TotalCustomersInsightsSchema().dump(
+                    customers_insight_total,
+                    many=True,
+                )
             ),
             HTTPStatus.OK,
         )

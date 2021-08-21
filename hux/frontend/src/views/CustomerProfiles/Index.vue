@@ -153,36 +153,55 @@
       <v-row class="px-15 mt-2">
         <v-col md="7">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <v-card-title class="pb-2 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
                   Demographic Overview
                 </span>
               </div>
             </v-card-title>
-            <map-chart :map-data="mapChartData" />
-            <map-slider :map-data="mapChartData" />
+            <v-progress-linear
+              v-if="loadingGeographics"
+              :active="loadingGeographics"
+              :indeterminate="loadingGeographics"
+            />
+            <map-chart
+              v-if="!loadingGeographics"
+              :map-data="customersGeographics"
+            />
+            <map-slider
+              v-if="!loadingGeographics"
+              :map-data="customersGeographics"
+            />
           </v-card>
         </v-col>
         <v-col md="5">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <v-card-title class="pb-2 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5"> United States </span>
               </div>
             </v-card-title>
             <v-divider class="ml-5 mr-8 mt-0 mb-1" />
-            <map-state-list :map-data="mapChartData" />
+            <v-progress-linear
+              v-if="loadingGeographics"
+              :active="loadingGeographics"
+              :indeterminate="loadingGeographics"
+            />
+            <map-state-list
+              v-if="!loadingGeographics"
+              :map-data="customersGeographics"
+            />
           </v-card>
         </v-col>
       </v-row>
       <v-row class="px-15 mt-2">
         <v-col md="3">
-          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
-            <v-card-title class="chart-style pb-0 pl-5 pt-5">
+          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
+            <v-card-title class="pb-0 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
-                  Top location & Income
+                  Top location &amp; Income
                 </span>
               </div>
             </v-card-title>
@@ -190,11 +209,11 @@
           </v-card>
         </v-col>
         <v-col md="6">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
-            <v-card-title class="chart-style pb-1 pl-5 pt-5">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="290">
+            <v-card-title class="pb-1 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
-                  Gender / monthly spending in 2021
+                  Gender &sol; monthly spending in 2021
                 </span>
               </div>
             </v-card-title>
@@ -202,18 +221,19 @@
           </v-card>
         </v-col>
         <v-col md="3">
-          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
+            <v-card-title class="pb-0 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5"> Gender </span>
               </div>
             </v-card-title>
-            <doughnut-chart
-              :width="250"
-              :height="240"
-              :data="genderChartData"
-              label="Gender"
-            />
+            <div ref="genderChart">
+              <doughnut-chart
+                :chart-dimensions="genderChartDimensions"
+                :data="genderChartData"
+                label="Gender"
+              />
+            </div>
           </v-card>
         </v-col>
       </v-row>
@@ -235,7 +255,6 @@ import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import MapChart from "@/components/common/MapChart/MapChart"
 import MapStateList from "@/components/common/MapChart/MapStateList"
-import mapData from "@/components/common/MapChart/mapData.json"
 import genderData from "@/components/common/DoughnutChart/genderData.json"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
@@ -267,6 +286,7 @@ export default {
       totalCustomerData: customerData.featureList,
       totalCustomersData: customerData.customersData,
       customerProfilesDrawer: false,
+      loadingGeographics: false,
       overviewListItems: [
         {
           title: "No. of customers",
@@ -383,30 +403,50 @@ export default {
       ],
       loading: false,
       updatedTime: [],
+      genderChartDimensions: {
+        width: 269,
+        height: 200,
+      },
     }
   },
-
   computed: {
     ...mapGetters({
       overview: "customers/overview",
       customersInsights: "customers/insights",
+      customersGeographics: "customers/geographics",
     }),
     updatedTimeStamp() {
       return this.updatedTime[0] + "<span> &bull; </span>" + this.updatedTime[1]
     },
   },
+  created() {
+    window.addEventListener("resize", this.sizeHandler)
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.sizeHandler)
+  },
 
   async mounted() {
     this.loading = true
+    this.sizeHandler()
     await this.getOverview()
+    this.fetchGeographics()
     this.mapOverviewData()
+
     this.loading = false
   },
 
   methods: {
     ...mapActions({
       getOverview: "customers/getOverview",
+      getGeographics: "customers/getGeographics",
     }),
+
+    async fetchGeographics() {
+      this.loadingGeographics = true
+      await this.getGeographics()
+      this.loadingGeographics = false
+    },
     // TODO: refactor this and move this logic to a getter in the store
     mapOverviewData() {
       if (this.overview) {
@@ -462,6 +502,12 @@ export default {
     },
     viewCustomerList() {
       this.customerProfilesDrawer = !this.customerProfilesDrawer
+    },
+    sizeHandler() {
+      if (this.$refs.genderChart) {
+        this.genderChartDimensions.width = this.$refs.genderChart.clientWidth
+        this.genderChartDimensions.height = 200
+      }
     },
   },
 }
