@@ -543,14 +543,9 @@ class TestCustomersOverview(TestCase):
         self.assertTrue(
             t_c.validate_schema(
                 CustomersInsightsCitiesSchema(),
-                response.json[api_c.CITIES],
+                response.json,
                 True,
             )
-        )
-
-        self.assertEqual(
-            response.json[api_c.TOTAL],
-            len(t_c.CUSTOMERS_INSIGHTS_BY_CITY_RESPONSE["body"]),
         )
 
     def test_customers_insights_states_success(self) -> None:
@@ -580,12 +575,7 @@ class TestCustomersOverview(TestCase):
         self.assertTrue(
             t_c.validate_schema(
                 CustomersInsightsStatesSchema(),
-                response.json[api_c.STATES],
+                response.json,
                 True,
             )
-        )
-
-        self.assertEqual(
-            response.json[api_c.TOTAL],
-            len(t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE["body"]),
         )
