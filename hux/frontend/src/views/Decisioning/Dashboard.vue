@@ -189,6 +189,7 @@ export default {
       model: "models/overview",
       lift: "models/lift",
       features: "models/features",
+      modelDashboardFeatures: "models/modelFeatures",
     }),
 
     driftChartData() {
@@ -204,7 +205,10 @@ export default {
     modelFeatures() {
       return this.features ? this.features.slice(0, 20) : []
     },
-
+    // This will be used while integration of Model feature table.
+    dashboardFeature() {
+      return this.modelDashboardFeatures
+    },
     breadcrumbItems() {
       const items = [
         {
@@ -233,6 +237,7 @@ export default {
     this.fetchLift()
     this.loading = false
     this.fetchFeatures()
+    this.fetchModelFeatures() // Fetch data for Model feature table.
   },
 
   created() {
@@ -253,6 +258,7 @@ export default {
       getOverview: "models/getOverview",
       getLift: "models/getLift",
       getFeatures: "models/getFeatures",
+      getModelFeatures: "models/getModelFeatures", // used for Model feature table.
     }),
     async fetchLift() {
       this.loadingLift = true
@@ -269,6 +275,9 @@ export default {
     },
     sizeHandler() {
       this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
+    },
+    async fetchModelFeatures() {
+      await this.getModelFeatures(this.$route.params.id)
     },
   },
 }
