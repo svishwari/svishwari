@@ -10,6 +10,7 @@ const state = {
   history: {},
   lift: [],
   features: [],
+  modelFeatures: {},
 }
 
 const getters = {
@@ -18,6 +19,7 @@ const getters = {
   history: (state) => Object.values(state.history),
   lift: (state) => state.lift,
   features: (state) => state.features,
+  modelFeatures: (state) => Object.values(state.modelFeatures),
 }
 
 const mutations = {
@@ -46,7 +48,11 @@ const mutations = {
       Vue.set(state.history, item.version, item)
     })
   },
-
+  SET_MODAL_FEATURE(state, items) {
+    items.forEach((item) => {
+      Vue.set(state.modelFeatures, item.id, item)
+    })
+  },
   SET_LIFT(state, data) {
     state.lift = data
   },
@@ -87,6 +93,16 @@ const actions = {
     try {
       const response = await api.models.versionHistory(modelId)
       commit("SET_HISTORY", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getModelFeatures({ commit }, modelId) {
+    try {
+      const response = await api.models.modelFeatures(modelId)
+      commit("SET_MODAL_FEATURE", response.data)
     } catch (error) {
       handleError(error)
       throw error

@@ -4,7 +4,7 @@
       v-if="showTooltip"
       tile
       :style="{
-        transform: `translate(${position.x}px, ${position.y}px)`,
+        transform: `translate(${sourceInput.xPosition}px, ${sourceInput.yPosition}px)`,
         'border-radius': '0px !important',
       }"
       class="mx-auto tooltip-style"
@@ -96,7 +96,7 @@ export default {
   @extend .income-tooltip-style;
   max-width: 110px;
   height: 110px;
-  top: -420px;
+  top: -444px;
   left: -240px;
   z-index: 1;
 }
