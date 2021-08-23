@@ -178,7 +178,11 @@ export default {
 
       let xScale = d3Scale
         .scaleTime()
-        .domain(d3Array.extent(this.dateData, function(d) { return d; }))
+        .domain(
+          d3Array.extent(this.dateData, function (d) {
+            return d
+          })
+        )
         .range([0, width])
 
       let area = d3Shape
@@ -224,7 +228,13 @@ export default {
           d3Axis
             .axisBottom(xScale)
             .ticks(this.areaChartData.length)
-            .tickFormat(d3TimeFormat.timeFormat("%b '%y")).tickValues(this.dateData.map(function(d) { return d}) ))
+            .tickFormat(d3TimeFormat.timeFormat("%b '%y"))
+            .tickValues(
+              this.dateData.map(function (d) {
+                return d
+              })
+            )
+        )
         .call((g) => g.selectAll(".tick line").attr("stroke", "#ECECEC"))
         .call((g) => g.selectAll("path").attr("stroke", "#ECECEC"))
         .style("font-size", 12)
@@ -278,7 +288,7 @@ export default {
           .attr("cy", d.offsetY)
           .style("fill", "transparent")
           .attr("stroke", "transparent")
-          .on("mouseover", () => dotHoverIn(pointX,d.offsetY, data))
+          .on("mouseover", () => dotHoverIn(pointX, data))
           .on("mouseout", () => dotHoverOut())
       }
 
@@ -364,4 +374,3 @@ export default {
   }
 }
 </style>
-

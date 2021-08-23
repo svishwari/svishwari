@@ -133,6 +133,6 @@ export default {
 }
 .date-font {
   @extend .hover-font;
-  color: var(--v-naroBlack-base);              
+  color: var(--v-naroBlack-base);
 }
 </style>
