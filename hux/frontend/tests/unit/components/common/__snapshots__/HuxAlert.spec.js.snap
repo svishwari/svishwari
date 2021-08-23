@@ -1,6 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Hux Alert Hux alert displays custom properties 1`] = `
+exports[`Hux Alert Hux alert displays custom message for error type 1`] = `
+<v-snackbar-stub color="white rounded-0" elevation="3" height="56" tag="div" top="true" app="true" contentclass="" timeout="5000" transition="v-snack-transition" type="error"><span><div class="d-flex align-center error--text"><v-icon-stub outlined="" color="error" size="18" class="icon-position">
+        mdi-alert-circle
+      </v-icon-stub> <span class="px-3 font-weight-bold text-h5">
+        OH NO!
+      </span> <span class="text-h5">This is a error message!</span></div></span></v-snackbar-stub>
+`;
+
+exports[`Hux Alert Hux alert displays custom message for success type 1`] = `
 <v-snackbar-stub color="white rounded-0" elevation="3" height="56" tag="div" top="true" app="true" contentclass="" timeout="5000" transition="v-snack-transition" type="success"><span><div class="d-flex align-center success--text"><v-icon-stub outlined="" color="success" size="18" class="icon-position">
         mdi-check-circle
       </v-icon-stub> <span class="px-3 font-weight-bold text-h5">
