@@ -102,6 +102,7 @@ export default {
     return {
       loadingOverview: false,
       loadingDataFeeds: false,
+      loadingMatchingTrend: false,
     }
   },
 
@@ -109,6 +110,7 @@ export default {
     ...mapGetters({
       overview: "identity/overview",
       dataFeeds: "identity/dataFeeds",
+      identityMatchingTrend: "identity/matchingTrend",
     }),
 
     loading() {
@@ -119,13 +121,21 @@ export default {
   async mounted() {
     this.loadOverview()
     this.loadDataFeeds()
+    this.fetchMatchingTrend()
   },
 
   methods: {
     ...mapActions({
       getOverview: "identity/getOverview",
       getDataFeeds: "identity/getDataFeeds",
+      getMatchingTrend: "identity/getMatchingTrend",
     }),
+
+    async fetchMatchingTrend() {
+      this.loadingMatchingTrend = true
+      await this.getMatchingTrend()
+      this.loadingMatchingTrend = false
+    },
 
     async loadOverview() {
       this.loadingOverview = true

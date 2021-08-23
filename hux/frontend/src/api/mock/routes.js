@@ -15,6 +15,8 @@ import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
 import totalCustomersData from "./factories/totalCustomersData.js"
+import { driftData } from "@/api/mock/factories/driftData.js"
+import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -364,6 +366,8 @@ export const defineRoutes = (server) => {
 
   server.get("/models/:id/lift", () => liftData)
 
+  server.post("/models/:id/drift", () => driftData())
+
   server.get("/models/:id/features", (schema, request) => {
     const id = request.params.id
     const model = schema.models.find(id)
@@ -386,6 +390,8 @@ export const defineRoutes = (server) => {
   server.get("/customers-insights/geo", () => mapData)
 
   server.get("/customers-insights/total", () => totalCustomersData)
+  
+  server.get("/idr/matching-trends", () => genderSpendData())
 
   server.get("/customers", (schema, request) => {
     let currentBatch = request.queryParams.batch_number

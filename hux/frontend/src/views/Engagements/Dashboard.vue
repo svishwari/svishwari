@@ -163,6 +163,7 @@
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
       @onCreate="onCreated()"
+      @onError="onError($event)"
     />
   </div>
 </template>
@@ -572,6 +573,12 @@ export default {
     onCreated() {
       this.lookalikeCreated = true
       this.alert.message = "Lookalike created successfully"
+      this.flashAlert = true
+    },
+    onError(message) {
+      this.alert.type = "error"
+      this.alert.title = "OH NO!"
+      this.alert.message = message
       this.flashAlert = true
     },
   },

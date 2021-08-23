@@ -4,6 +4,7 @@
       v-model="modificationData"
       :chart-dimensions="chartDimensions"
       :y-value-data="yAxisData"
+      :date-data="dateData"
       @cordinates="getCordinates"
       @tooltipDisplay="toolTipDisplay"
     />
@@ -42,6 +43,7 @@ export default {
       spendData: [],
       yAxisData: [],
       currentData: {},
+      dateData: [],
     }
   },
   computed: {
@@ -78,6 +80,10 @@ export default {
             })
           }
         })
+      })
+
+      areaChartData.forEach((element) => {
+        this.dateData.push(new Date(element.date))
       })
 
       return areaChartData

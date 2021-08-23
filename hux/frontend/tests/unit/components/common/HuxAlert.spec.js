@@ -4,9 +4,9 @@ import { shallowMount } from "@vue/test-utils"
 jest.useFakeTimers()
 
 describe("Hux Alert", () => {
-  test("Hux alert displays custom properties", () => {
+  test("Hux alert displays custom message for success type", () => {
     const customProps = {
-      title: "YAY!",
+      type: "success",
       message: "This is a success message!",
       value: true,
     }
@@ -15,7 +15,23 @@ describe("Hux Alert", () => {
       propsData: customProps,
     })
 
-    expect(wrapper.text()).toContain(customProps.title)
+    expect(wrapper.text()).toContain(customProps.type)
+    expect(wrapper.text()).toContain(customProps.message)
+    expect(wrapper).toMatchSnapshot()
+  })
+
+  test("Hux alert displays custom message for error type", () => {
+    const customProps = {
+      type: "error",
+      message: "This is a error message!",
+      value: true,
+    }
+
+    const wrapper = shallowMount(HuxAlert, {
+      propsData: customProps,
+    })
+
+    expect(wrapper.text()).toContain(customProps.type)
     expect(wrapper.text()).toContain(customProps.message)
     expect(wrapper).toMatchSnapshot()
   })
