@@ -152,10 +152,7 @@
               :active="loadingModelFeatures"
               :indeterminate="loadingModelFeatures"
             />
-            <features-table
-              v-else
-              :data="dashboardFeature"
-            />
+            <features-table v-else :data="dashboardFeature" />
           </v-card>
         </v-col>
       </v-row>

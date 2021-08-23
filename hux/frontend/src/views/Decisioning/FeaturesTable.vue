@@ -3,13 +3,14 @@
     :columns="columns"
     :data-items="data"
     :sort-column="sortColumn"
-    :sort-desc="sortDesc">
+    :sort-desc="sortDesc"
+  >
     <template #row-item="{ item }">
       <td
         v-for="col in columns"
         :key="col.value"
-        class="neroBlack--text text-h6">
-
+        class="neroBlack--text text-h6"
+      >
         <template v-if="col.value === 'name'">
           <tooltip>
             <template slot="label-content">
@@ -30,7 +31,7 @@
         <template v-if="col.value === 'data_source'">
           {{ item[col.value] }}
         </template>
-        
+
         <template v-if="col.value === 'status'">
           <status
             :status="item[col.value]"
@@ -47,7 +48,6 @@
         <template v-if="col.value === 'created_by'">
           <avatar :name="item[col.value]" />
         </template>
-        
       </td>
     </template>
   </hux-data-table>
@@ -56,7 +56,6 @@
 <script>
 import Avatar from "@/components/common/Avatar.vue"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
-import Logo from "@/components/common/Logo.vue"
 import Status from "@/components/common/Status.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 
@@ -66,7 +65,6 @@ export default {
   components: {
     Avatar,
     HuxDataTable,
-    Logo,
     Status,
     Tooltip,
   },
@@ -120,14 +118,6 @@ export default {
       sortDesc: true,
     }
   },
-
-  computed: {
-    hasData() {
-      return this.data && this.data.length
-    },
-  },
-
-  methods: {},
 }
 </script>
 <style lang="scss" scoped>
