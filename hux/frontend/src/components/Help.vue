@@ -14,14 +14,14 @@
         </v-list-item-title>
       </v-list-item>
       <v-list-item class="v-list-item--link">
-        <router-link
+        <v-list-item-title
           :to="{
             name: 'Overview',
           }"
           class="text-h6 view-all text-decoration-none"
         >
           Contact Us
-        </router-link>
+        </v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
@@ -30,7 +30,7 @@
 <script>
 
 export default {
-  name: "Help"
+  name: "Help",
 }
 
 </script>
