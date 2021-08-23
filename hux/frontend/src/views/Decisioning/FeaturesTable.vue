@@ -37,7 +37,11 @@
           <avatar :name="item[col.value]" />
         </template>
 
-        <template v-else-if="col.value === 'feature_service' || 'data_source' || 'popularity' ">
+        <template
+          v-else-if="
+            col.value === 'feature_service' || 'data_source' || 'popularity'
+          "
+        >
           {{ item[col.value] }}
         </template>
       </td>
