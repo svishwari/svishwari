@@ -280,14 +280,19 @@ def is_audience_lookalikeable(audience: dict) -> str:
             status = api_c.STATUS_INACTIVE
 
             # TODO - HUS-815
-            if delivery.get(db_c.STATUS) in [
-                db_c.STATUS_SUCCEEDED,
-                db_c.AUDIENCE_STATUS_DELIVERED,
-            ]:
+            # add 30 min wait time before making it lookalikable
+            if (
+                delivery.get(db_c.STATUS)
+                in [
+                    db_c.STATUS_SUCCEEDED,
+                    db_c.AUDIENCE_STATUS_DELIVERED,
+                ]
+                and (
+                    datetime.datetime.utcnow() - delivery.get(db_c.UPDATE_TIME)
+                ).total_seconds()
+                / 60
+                > 30
+            ):
                 # success, break the loop and return active.
-                # add 30 min wait time before making it lookalikable
-                if (
-                    delivery.get("update_time") - datetime.datetime.utcnow()
-                ).seconds / 60 > 30:
-                    return api_c.STATUS_ACTIVE
+                return api_c.STATUS_ACTIVE
     return status
