@@ -690,14 +690,11 @@ export default {
       display: inline-flex;
       .logo-wrapper {
         position: relative;
-        .added-logo {
-          margin-top: 8px;
-        }
         .delete-icon {
           z-index: 1;
           position: absolute;
           left: 8px;
-          top: 8px;
+          top: 0px;
           background: var(--v-white-base);
           display: none;
         }
