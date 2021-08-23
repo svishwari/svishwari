@@ -169,7 +169,6 @@
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb"
 import DriftChart from "@/components/common/Charts/DriftChart/DriftChart.vue"
-import DriftChartData from "@/api/mock/factories/driftChartData.json"
 import FeaturesTable from "./FeaturesTable.vue"
 import FeatureChart from "@/components/common/featureChart/FeatureChart"
 import huxButton from "@/components/common/huxButton"
