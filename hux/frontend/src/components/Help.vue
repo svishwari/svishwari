@@ -30,17 +30,7 @@
 <script>
 
 export default {
-  name: "Help",
-  data() {
-    return {
-      path: "Overview"
-    }
-  },
-  methods: {
-    routerRedirect(path) {
-      this.$router.push({ name: path, query: { select: true } })
-    },
-  },
+  name: "Help"
 }
 
 </script>
