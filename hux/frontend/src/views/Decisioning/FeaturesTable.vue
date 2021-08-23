@@ -100,7 +100,7 @@ export default {
           value: "popularity",
           width: "150px",
           hoverTooltip:
-            "Popularity of input records that are consolidated model features.",
+            "The number of times this feature is used across all active models.",
         },
         {
           text: "Created by",
