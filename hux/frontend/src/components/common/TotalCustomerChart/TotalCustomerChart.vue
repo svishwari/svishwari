@@ -2,13 +2,13 @@
   <div ref="totalCustomerChart" class="container-chart">
     <stack-bar-chart
       v-model="sourceData"
-      :colorCodes="colorCodes"
-      :chartDimensions="chartDimensions"
+      :color-codes="colorCodes"
+      :chart-dimensions="chartDimensions"
       @tooltipDisplay="toolTipDisplay"
     />
     <stack-bar-chart-tooltip
-      :showToolTip="show"
-      :colorCodes="colorCodes"
+      :show-tool-tip="show"
+      :color-codes="colorCodes"
       :source-input="currentData"
     />
   </div>
@@ -18,7 +18,7 @@
 import StackBarChartTooltip from "@/components/common/TotalCustomerChart/StackBarChartTooltip"
 import StackBarChart from "@/components/common/TotalCustomerChart/StackBarChart"
 export default {
-  name: "total-customer-chart",
+  name: "TotalCustomerChart",
   components: { StackBarChart, StackBarChartTooltip },
   props: {
     customersData: {

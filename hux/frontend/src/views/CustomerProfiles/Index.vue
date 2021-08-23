@@ -151,7 +151,10 @@
               :active="loadingCustomerChart"
               :indeterminate="loadingCustomerChart"
             />
-            <total-customer-chart v-if="!loadingCustomerChart" :customersData="totalCustomers" />
+            <total-customer-chart
+              v-if="!loadingCustomerChart"
+              :customers-data="totalCustomers"
+            />
           </v-card>
         </v-col>
       </v-row>

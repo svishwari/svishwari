@@ -76,7 +76,7 @@
           />
           <total-customer-chart
             v-if="!loadingCustomerChart"
-            :customersData="totalCustomers"
+            :customers-data="totalCustomers"
           />
         </v-card>
       </v-col>

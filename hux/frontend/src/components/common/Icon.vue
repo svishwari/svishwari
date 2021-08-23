@@ -4,7 +4,7 @@
     :width="size"
     :height="size"
     :color="theme[color]"
-    :fillOpacity="fillOpacity"
+    :fill-opacity="fillOpacity"
   />
 </template>
 

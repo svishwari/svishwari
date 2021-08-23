@@ -1,6 +1,6 @@
 <template>
   <div class="chart-container" :style="{ maxWidth: chartWidth }">
-    <div class="chart-section" ref="stackBarChart"></div>
+    <div ref="stackBarChart" class="chart-section"></div>
   </div>
 </template>
 
@@ -15,7 +15,7 @@ import * as d3Collection from "d3-collection"
 import colors from "../../../plugins/theme"
 
 export default {
-  name: "stack-bar-chart",
+  name: "StackBarChart",
   props: {
     value: {
       type: Array,
@@ -49,6 +49,17 @@ export default {
         addedCustomers: 0,
       },
     }
+  },
+
+  watch: {
+    chartDimensions: {
+      handler() {
+        d3Select.select(this.$refs.stackBarChart).selectAll("svg").remove()
+        this.initiateStackBarChart()
+      },
+      immediate: false,
+      deep: true,
+    },
   },
   methods: {
     async initiateStackBarChart() {
@@ -128,7 +139,7 @@ export default {
       let stackedValues = stack(formattedData)
 
       stackedValues.forEach((layer) => {
-        layer.forEach((d, i) => {
+        layer.forEach((d) => {
           d[1] = d[1] - d[0]
           d[0] = 0
         })
@@ -291,7 +302,7 @@ export default {
           .attr("fill-opacity", (d) => barHoverIn(d, width))
       }
 
-      let removeHoverEffects = (d, i) => {
+      let removeHoverEffects = () => {
         d3Select.selectAll(".foreGroundBars").style("fill-opacity", "1")
         d3Select
           .select(this.$refs.stackBarChart)
@@ -323,17 +334,6 @@ export default {
     },
     tooltipDisplay(showTip, customersData) {
       this.$emit("tooltipDisplay", showTip, customersData)
-    },
-  },
-
-  watch: {
-    chartDimensions: {
-      handler() {
-        d3Select.select(this.$refs.stackBarChart).selectAll("svg").remove()
-        this.initiateStackBarChart()
-      },
-      immediate: false,
-      deep: true,
     },
   },
 }

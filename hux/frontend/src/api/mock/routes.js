@@ -390,7 +390,7 @@ export const defineRoutes = (server) => {
   server.get("/customers-insights/geo", () => mapData)
 
   server.get("/customers-insights/total", () => totalCustomersData)
-  
+
   server.get("/idr/matching-trends", () => genderSpendData())
 
   server.get("/customers", (schema, request) => {

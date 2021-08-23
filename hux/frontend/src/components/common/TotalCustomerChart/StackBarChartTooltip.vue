@@ -1,42 +1,44 @@
 <template>
-    <v-card
-      v-if="showToolTip"
-      tile
-      :style="{
-        transform: `translate(${sourceInput.xPosition}px, ${sourceInput.yPosition}px)`,
-      }"
-      class="mx-auto tooltip-style"
-    >
-      <div class="neroBlack--text caption">
-        <div class="value-section">{{ sourceInput.date | Date("MM/DD/YYYY") }}</div>
-        <div class="value-container">
-          <icon
-            type="name"
-            :size="12"
-            :fillOpacity="0.5"
-            :color="colorCodes[sourceInput.index]"
-          />
-          <span class="text-label">Total customers</span>
-        </div>
+  <v-card
+    v-if="showToolTip"
+    tile
+    :style="{
+      transform: `translate(${sourceInput.xPosition}px, ${sourceInput.yPosition}px)`,
+    }"
+    class="mx-auto tooltip-style"
+  >
+    <div class="neroBlack--text caption">
+      <div class="value-section">
+        {{ sourceInput.date | Date("MM/DD/YYYY") }}
+      </div>
+      <div class="value-container">
+        <icon
+          type="name"
+          :size="12"
+          :fill-opacity="0.5"
+          :color="colorCodes[sourceInput.index]"
+        />
+        <span class="text-label">Total customers</span>
+      </div>
+      <div class="value-section">
+        {{ sourceInput.totalCustomers | Numeric(true, false, false) }}
+      </div>
+      <div class="value-container">
+        <icon type="name" :size="12" :color="colorCodes[sourceInput.index]" />
+        <span class="text-label">New customers added</span>
         <div class="value-section">
-          {{ sourceInput.totalCustomers | Numeric(true, false, false) }}
-        </div>
-        <div class="value-container">
-          <icon type="name" :size="12" :color="colorCodes[sourceInput.index]" />
-          <span class="text-label">New customers added</span>
-          <div class="value-section">
-            {{ sourceInput.addedCustomers | Numeric(true, false, false) }}
-          </div>
+          {{ sourceInput.addedCustomers | Numeric(true, false, false) }}
         </div>
       </div>
-    </v-card>
+    </div>
+  </v-card>
 </template>
 
 <script>
 import Icon from "@/components/common/Icon"
 
 export default {
-  name: "stack-bar-chart-tooltip",
+  name: "StackBarChartTooltip",
   components: { Icon },
   props: {
     showToolTip: {
@@ -67,28 +69,28 @@ export default {
   line-height: 19px;
 }
 
-  .tooltip-style {
-    @extend .box-shadow-3;
-    border-radius: 0px;
-    padding: 7px 14px 12px 14px;
-    max-width: 200px;
-    height: 112px;
-    z-index: 1;
-    border-radius: 0px !important;
-    position: absolute;
-    left: 47px;
-    top: -38px;
-    .value-container {
-      margin-top: 2px;
-      @extend .global-heading;
-      .text-label {
-        margin-left: 8px !important;
-      }
-    }
-
-    .value-section {
-      @extend .global-heading;
-      margin-left: 21px;
+.tooltip-style {
+  @extend .box-shadow-3;
+  border-radius: 0px;
+  padding: 7px 14px 12px 14px;
+  max-width: 200px;
+  height: 112px;
+  z-index: 1;
+  border-radius: 0px !important;
+  position: absolute;
+  left: 47px;
+  top: -38px;
+  .value-container {
+    margin-top: 2px;
+    @extend .global-heading;
+    .text-label {
+      margin-left: 8px !important;
     }
   }
+
+  .value-section {
+    @extend .global-heading;
+    margin-left: 21px;
+  }
+}
 </style>
