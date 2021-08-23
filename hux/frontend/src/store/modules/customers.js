@@ -13,6 +13,8 @@ const state = {
   insights: null,
 
   geographics: [],
+
+  total_customers: [],
 }
 
 const getters = {
@@ -25,6 +27,8 @@ const getters = {
   insights: (state) => state.insights,
 
   geographics: (state) => state.geographics,
+
+  total_customers: (state) => state.total_customers,
 }
 
 const mutations = {
@@ -48,6 +52,10 @@ const mutations = {
 
   SET_GEOGRAPHICS(state, data) {
     state.geographics = data
+  },
+
+  SET_TOTALCUSTOMERS(state, data) {
+    state.total_customers = data
   },
 }
 
@@ -92,6 +100,16 @@ const actions = {
     try {
       const response = await api.customers.geographics()
       commit("SET_GEOGRAPHICS", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getTotalCustomers({ commit }) {
+    try {
+      const response = await api.customers.totalCustomers()
+      commit("SET_TOTALCUSTOMERS", response.data)
     } catch (error) {
       handleError(error)
       throw error

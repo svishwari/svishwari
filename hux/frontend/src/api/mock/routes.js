@@ -14,6 +14,7 @@ import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
+import totalCustomersData from "./factories/totalCustomersData.js"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -383,6 +384,8 @@ export const defineRoutes = (server) => {
   server.get("/customers/overview", () => customersOverview)
 
   server.get("/customers-insights/geo", () => mapData)
+
+  server.get("/customers-insights/total", () => totalCustomersData)
 
   server.get("/customers", (schema, request) => {
     let currentBatch = request.queryParams.batch_number

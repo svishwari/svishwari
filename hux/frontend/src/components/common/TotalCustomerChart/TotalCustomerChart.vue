@@ -1,19 +1,16 @@
 <template>
-  <div ref="chartBox" class="container">
+  <div ref="totalCustomerChart" class="container-chart">
     <stack-bar-chart
-      v-model="features"
-      @cordinates="getCordinates"
+      v-model="sourceData"
+      :colorCodes="colorCodes"
+      :chartDimensions="chartDimensions"
       @tooltipDisplay="toolTipDisplay"
     />
     <stack-bar-chart-tooltip
-      :position="{
-        x: tooltip.x,
-        y: tooltip.y,
-      }"
-      :show-tooltip="show"
+      :showToolTip="show"
+      :colorCodes="colorCodes"
       :source-input="currentData"
-    >
-    </stack-bar-chart-tooltip>
+    />
   </div>
 </template>
 
@@ -24,7 +21,7 @@ export default {
   name: "total-customer-chart",
   components: { StackBarChart, StackBarChartTooltip },
   props: {
-    customerData: {
+    customersData: {
       type: Array,
       required: true,
     },
@@ -33,11 +30,8 @@ export default {
     return {
       show: false,
       isArcHover: false,
-      tooltip: {
-        x: 0,
-        y: 0,
-      },
-      features: this.customerData,
+      colorCodes: ["columbiaBlue", "info", "pantoneBlue", "success"],
+      sourceData: this.customersData,
       currentData: {},
       chartDimensions: {
         width: 0,
@@ -46,8 +40,13 @@ export default {
     }
   },
   mounted() {
-    this.chartDimensions.width = this.$refs.chartBox.clientWidth
-    this.chartDimensions.height = this.$refs.chartBox.clientHeight
+    this.sizeHandler()
+  },
+  created() {
+    window.addEventListener("resize", this.sizeHandler)
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.sizeHandler)
   },
   methods: {
     toolTipDisplay(...arg) {
@@ -56,10 +55,11 @@ export default {
         this.currentData = arg[1]
       }
     },
-
-    getCordinates(args) {
-      this.tooltip.x = args.x
-      this.tooltip.y = args.y
+    sizeHandler() {
+      if (this.$refs.totalCustomerChart) {
+        this.chartDimensions.width = this.$refs.totalCustomerChart.clientWidth
+        this.chartDimensions.height = 500
+      }
     },
   },
 }
@@ -72,7 +72,8 @@ export default {
   font-size: $font-size-root;
   line-height: 19px;
 }
-.container {
+.container-chart {
+  position: relative;
   height: 650px;
   padding: 0px !important;
 }

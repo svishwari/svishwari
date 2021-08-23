@@ -1,41 +1,45 @@
 <template>
-  <div>
     <v-card
-      v-if="showTooltip"
+      v-if="showToolTip"
       tile
       :style="{
-        transform: `translate(${position.x}px, ${position.y}px)`,
-        'border-radius': '0px !important',
+        transform: `translate(${sourceInput.xPosition}px, ${sourceInput.yPosition}px)`,
       }"
-      class="mx-auto description-tooltip-style"
+      class="mx-auto tooltip-style"
     >
-      <div class="bar-hover neroBlack--text">
-        <span class="feature-name">
-          {{ sourceInput.name }}
-        </span>
-        <span class="feature-description">
-          {{ sourceInput.description }}
-        </span>
+      <div class="neroBlack--text caption">
+        <div class="value-section">{{ sourceInput.date | Date("MM/DD/YYYY") }}</div>
+        <div class="value-container">
+          <icon
+            type="name"
+            :size="12"
+            :fillOpacity="0.5"
+            :color="colorCodes[sourceInput.index]"
+          />
+          <span class="text-label">Total customers</span>
+        </div>
+        <div class="value-section">
+          {{ sourceInput.totalCustomers | Numeric(true, false, false) }}
+        </div>
+        <div class="value-container">
+          <icon type="name" :size="12" :color="colorCodes[sourceInput.index]" />
+          <span class="text-label">New customers added</span>
+          <div class="value-section">
+            {{ sourceInput.addedCustomers | Numeric(true, false, false) }}
+          </div>
+        </div>
       </div>
     </v-card>
-  </div>
 </template>
 
 <script>
+import Icon from "@/components/common/Icon"
+
 export default {
   name: "stack-bar-chart-tooltip",
+  components: { Icon },
   props: {
-    position: {
-      type: Object,
-      required: false,
-      default() {
-        return {
-          x: 0,
-          y: 0,
-        }
-      },
-    },
-    showTooltip: {
+    showToolTip: {
       type: Boolean,
       required: false,
       default: false,
@@ -43,6 +47,10 @@ export default {
     sourceInput: {
       type: Object,
       required: false,
+    },
+    colorCodes: {
+      type: Array,
+      required: true,
     },
   },
 }
@@ -53,36 +61,34 @@ export default {
   border-radius: 0px !important;
 }
 
-.global-text-line {
-  display: inline-block;
-  font-weight: normal;
+.global-heading {
   font-style: normal;
   font-size: 12px;
-  line-height: 16px;
-  color: var(--v-darkGreyHeading-base) !important;
+  line-height: 19px;
 }
 
-.card-padding {
-  padding: 7px 20px 20px 20px;
-}
-
-.description-tooltip-style {
-  @extend .box-shadow-3;
-  border-radius: 0px;
-  max-width: 230px;
-  height: auto;
-  top: -620px;
-  left: -230px;
-  z-index: 1;
-  .bar-hover {
-    @extend .card-padding;
-    .feature-name {
-      @extend .global-text-line;
+  .tooltip-style {
+    @extend .box-shadow-3;
+    border-radius: 0px;
+    padding: 7px 14px 12px 14px;
+    max-width: 200px;
+    height: 112px;
+    z-index: 1;
+    border-radius: 0px !important;
+    position: absolute;
+    left: 47px;
+    top: -38px;
+    .value-container {
+      margin-top: 2px;
+      @extend .global-heading;
+      .text-label {
+        margin-left: 8px !important;
+      }
     }
-    .feature-description {
-      @extend .global-text-line;
-      margin-top: 8px;
+
+    .value-section {
+      @extend .global-heading;
+      margin-left: 21px;
     }
   }
-}
 </style>

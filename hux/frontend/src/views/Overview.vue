@@ -59,28 +59,47 @@
         ></card-info>
       </div>
     </div>
-    <empty-state-chart>
-      <template #chart-image>
-        <img src="@/assets/images/empty-state-chart-1.png" alt="Empty state" />
-      </template>
-    </empty-state-chart>
+    <v-row class="px-15 mt-2">
+      <v-col md="12">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="522">
+          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <div class="mt-2">
+              <span class="neroBlack--text text-h5">
+                Total Customers (last 6 months)
+              </span>
+            </div>
+          </v-card-title>
+          <v-progress-linear
+            v-if="loadingCustomerChart"
+            :active="loadingCustomerChart"
+            :indeterminate="loadingCustomerChart"
+          />
+          <total-customer-chart
+            v-if="!loadingCustomerChart"
+            :customersData="totalCustomers"
+          />
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import CardInfo from "@/components/common/CardInfo"
-import EmptyStateChart from "@/components/common/EmptyStateChart"
+import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
 
 export default {
   name: "Overview",
   components: {
     PageHeader,
     CardInfo,
-    EmptyStateChart,
+    TotalCustomerChart,
   },
   data() {
     return {
+      loadingCustomerChart: false,
       configureOptions: {
         configureHux: true,
         activeCustomers: true,
@@ -127,6 +146,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      totalCustomers: "customers/total_customers",
+    }),
     firstName() {
       return this.$store.getters.getFirstname
     },
@@ -135,6 +157,19 @@ export default {
     },
     fullName() {
       return `${this.firstName} ${this.lastName}`
+    },
+  },
+  mounted() {
+    this.fetchTotalCustomers()
+  },
+  methods: {
+    ...mapActions({
+      getTotalCustomers: "customers/getTotalCustomers",
+    }),
+    async fetchTotalCustomers() {
+      this.loadingCustomerChart = true
+      await this.getTotalCustomers()
+      this.loadingCustomerChart = false
     },
   },
 }

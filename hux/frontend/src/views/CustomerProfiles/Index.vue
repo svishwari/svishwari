@@ -146,7 +146,12 @@
                 </span>
               </div>
             </v-card-title>
-            <total-customer-chart :customerData="totalCustomerData" />
+            <v-progress-linear
+              v-if="loadingCustomerChart"
+              :active="loadingCustomerChart"
+              :indeterminate="loadingCustomerChart"
+            />
+            <total-customer-chart v-if="!loadingCustomerChart" :customersData="totalCustomers" />
           </v-card>
         </v-col>
       </v-row>
@@ -259,7 +264,6 @@ import genderData from "@/components/common/DoughnutChart/genderData.json"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
-import customerData from "@/components/common/TotalCustomerChart/TotalCustomerData.json"
 
 export default {
   name: "CustomerProfiles",
@@ -282,10 +286,8 @@ export default {
 
   data() {
     return {
-      mapChartData: mapData.demographic_overview,
-      totalCustomerData: customerData.featureList,
-      totalCustomersData: customerData.customersData,
       customerProfilesDrawer: false,
+      loadingCustomerChart: false,
       loadingGeographics: false,
       overviewListItems: [
         {
@@ -414,6 +416,7 @@ export default {
       overview: "customers/overview",
       customersInsights: "customers/insights",
       customersGeographics: "customers/geographics",
+      totalCustomers: "customers/total_customers",
     }),
     updatedTimeStamp() {
       return this.updatedTime[0] + "<span> &bull; </span>" + this.updatedTime[1]
@@ -432,7 +435,7 @@ export default {
     await this.getOverview()
     this.fetchGeographics()
     this.mapOverviewData()
-
+    this.fetchTotalCustomers()
     this.loading = false
   },
 
@@ -440,12 +443,18 @@ export default {
     ...mapActions({
       getOverview: "customers/getOverview",
       getGeographics: "customers/getGeographics",
+      getTotalCustomers: "customers/getTotalCustomers",
     }),
 
     async fetchGeographics() {
       this.loadingGeographics = true
       await this.getGeographics()
       this.loadingGeographics = false
+    },
+    async fetchTotalCustomers() {
+      this.loadingCustomerChart = true
+      await this.getTotalCustomers()
+      this.loadingCustomerChart = false
     },
     // TODO: refactor this and move this logic to a getter in the store
     mapOverviewData() {
