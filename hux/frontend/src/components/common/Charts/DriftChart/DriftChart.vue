@@ -1,8 +1,13 @@
 <template>
   <div ref="hux-drift-chart-container">
     <div ref="hux-drift-chart"></div>
-    <chart-tooltip v-if="showTooltip" :coordinates="coordinates">
-      {{ tooltipValue }}
+    <chart-tooltip
+      v-if="showTooltip"
+      :coordinates="coordinates"
+      class="neroBlack--text"
+    >
+      <div>{{ tooltipValue }}</div>
+      <div>{{ tooltipValueDate | Date | Empty }}</div>
     </chart-tooltip>
   </div>
 </template>
@@ -105,6 +110,7 @@ export default {
   data() {
     return {
       tooltipValue: null,
+      tooltipValueDate: null,
       showTooltip: false,
       coordinates: null,
     }
@@ -264,6 +270,7 @@ export default {
           this.showTooltip = false
           this.coordinates = null
           this.tooltipValue = null
+          this.tooltipValueDate = null
           tooltip.style("display", null)
           svg.selectAll(".hover-line-x").style("display", null)
           svg.selectAll(".hover-line-y").style("display", null)
@@ -272,6 +279,7 @@ export default {
           this.showTooltip = false
           this.coordinates = null
           this.tooltipValue = null
+          this.tooltipValueDate = null
           tooltip.style("display", "none")
           svg.selectAll(".hover-line-x").style("display", "none")
           svg.selectAll(".hover-line-y").style("display", "none")
@@ -315,6 +323,7 @@ export default {
           `${finalXCoordinate + parentPosition.x - this.margin.left + 15}px`,
         ]
         this.tooltipValue = d.yAxisValue
+        this.tooltipValueDate = d.xAxisValue
       }
     },
   },
