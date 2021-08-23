@@ -199,7 +199,12 @@
     <div class="px-15 my-1">
       <v-card class="rounded pa-5 box-shadow-5">
         <div class="overview">Audience overview</div>
-        <div class="row overview-list mb-0 ml-0 mt-1">
+        <div class="row overview-list mb-0 ml-0 mt-5">
+           <metric-card  :height="60">
+             <template #subtitle-extended> <span>This is a lookalike audience. Go to the original audience, <a>Audience 1</a>, to see insights</span></template>
+           </metric-card>
+        </div>
+        <div v-if="!this.audience.is_lookalike" class="row overview-list mb-0 ml-0 mt-1">
           <metric-card
             v-for="(item, i) in Object.keys(insightInfoItems)"
             :key="i"
@@ -223,9 +228,10 @@
             </template>
           </metric-card>
         </div>
+
       </v-card>
     </div>
-    <v-row class="px-15 mt-2">
+    <v-row  v-if="!this.audience.is_lookalike" class="px-15 mt-2">
       <v-col md="7">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
           <v-card-title class="pb-2 pl-5 pt-5">
@@ -251,7 +257,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row class="px-15 mt-2">
+    <v-row  v-if="!this.audience.is_lookalike" class="px-15 mt-2">
       <v-col md="3">
         <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
           <v-card-title class="pb-0 pl-5 pt-5">
@@ -555,6 +561,7 @@ export default {
         : false
     },
     breadcrumbItems() {
+      console.log("this.audience.is_lookalike",this.audience.is_lookalike)
       const items = [
         {
           text: "Audiences",
