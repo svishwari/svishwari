@@ -15,7 +15,7 @@ const state = {
   geographics: [],
 
   total_customers: [],
-  
+
   geoOverview: [],
 
   geoCities: [],
@@ -37,7 +37,7 @@ const getters = {
   geographics: (state) => state.geographics,
 
   total_customers: (state) => state.total_customers,
-  
+
   geoOverview: (state) => state.geoOverview,
 
   geoCities: (state) => state.geoCities,
