@@ -24,15 +24,7 @@
           </tooltip>
         </template>
 
-        <template v-if="col.value === 'feature_service'">
-          {{ item[col.value] }}
-        </template>
-
-        <template v-if="col.value === 'data_source'">
-          {{ item[col.value] }}
-        </template>
-
-        <template v-if="col.value === 'status'">
+        <template v-else-if="col.value === 'status'">
           <status
             :status="item[col.value]"
             :show-label="true"
@@ -41,12 +33,12 @@
           />
         </template>
 
-        <template v-if="col.value === 'popularity'">
-          {{ item[col.value] }}
+        <template v-else-if="col.value === 'created_by'">
+          <avatar :name="item[col.value]" />
         </template>
 
-        <template v-if="col.value === 'created_by'">
-          <avatar :name="item[col.value]" />
+        <template v-else-if="col.value === 'feature_service' || 'data_source' || 'popularity' ">
+          {{ item[col.value] }}
         </template>
       </td>
     </template>
@@ -139,11 +131,6 @@ export default {
       display: inline-block;
       width: 28ch;
       white-space: nowrap;
-    }
-    :hover {
-      .action-icon {
-        display: block;
-      }
     }
   }
 }
