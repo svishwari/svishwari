@@ -543,7 +543,9 @@ def fill_customer_events_missing_dates(
     if end_date > prev_date and (end_date - prev_date).days >= 1:
         customer_events_dates_filled = (
             customer_events_dates_filled
-            + fill_empty_customer_events(prev_date, end_date+datetime.timedelta(1))
+            + fill_empty_customer_events(
+                prev_date, end_date + datetime.timedelta(1)
+            )
         )
 
     customer_events_dates_filled.sort(
@@ -570,8 +572,7 @@ def get_customer_events_data(
 
     # YTD by default
     default_filter = {
-        api_c.START_DATE: "%s-01-01"
-        % datetime.datetime.utcnow().year,
+        api_c.START_DATE: "%s-01-01" % datetime.datetime.utcnow().year,
         api_c.END_DATE: datetime.datetime.utcnow().strftime("%Y-%m-%d"),
     }
 
@@ -611,8 +612,8 @@ def get_customer_events_data(
 
     return fill_customer_events_missing_dates(
         customer_events,
-        parse(filters.get(api_c.START_DATE)+"T00:00:00Z"),
-        parse(filters.get(api_c.END_DATE)+"T00:00:00Z"),
+        parse(filters.get(api_c.START_DATE) + "T00:00:00Z"),
+        parse(filters.get(api_c.END_DATE) + "T00:00:00Z"),
     )
 
 
