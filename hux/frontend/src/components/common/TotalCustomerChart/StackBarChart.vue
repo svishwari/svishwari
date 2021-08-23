@@ -88,47 +88,44 @@ export default {
       this.colorCodes.forEach((color) => barColorCodes.push(colors[color]))
 
       let week = d3TimeFormat.timeFormat("%U")
-      let nest = d3Collection
+      let weeklyAggData = d3Collection
         .nest()
         .key((d) => week(new Date(d.date)))
         .entries(this.totalCustomerData)
 
-      let InitialWeek = nest[0].values
+      let InitialWeek = weeklyAggData[0].values
       let InitialWeekEndingDate = InitialWeek[InitialWeek.length - 1].date
 
       monthChangeIndexs.push({ index: 0, date: InitialWeekEndingDate })
 
       let initialMonth = new Date(InitialWeekEndingDate).getMonth()
 
-      nest.forEach((element, index) => {
-        if (
-          new Date(element.values[element.values.length - 1].date).getMonth() !=
-          initialMonth
-        ) {
-          initialMonth = new Date(
-            element.values[element.values.length - 1].date
-          ).getMonth()
+      weeklyAggData.forEach((element, index) => {
+        let weekData = element.values
+        let weekLastDate = weekData[weekData.length - 1].date
+        if (new Date(weekLastDate).getMonth() != initialMonth) {
+          initialMonth = new Date(weekLastDate).getMonth()
           if (initialIndex == 2) {
             initialIndex = 0
           } else initialIndex++
 
           monthChangeIndexs.push({
             index: index,
-            date: element.values[element.values.length - 1].date,
+            date: weekLastDate,
           })
         }
 
         formattedData.push({
-          date: element.values[element.values.length - 1].date,
-          total_customers: element.values.reduce(
+          date: weekLastDate,
+          total_customers: weekData.reduce(
             (sum, d) => sum + d.total_customers,
             0
           ),
-          new_customers_added: element.values.reduce(
+          new_customers_added: weekData.reduce(
             (sum, d) => sum + d.new_customers_added,
             0
           ),
-          index: index == nest.length - 1 ? 3 : initialIndex,
+          index: index == weeklyAggData.length - 1 ? 3 : initialIndex,
           barIndex: index,
         })
       })
@@ -299,7 +296,7 @@ export default {
       let applyHoverEffects = (d, width) => {
         d3Select
           .select(d.srcElement)
-          .attr("fill-opacity", (d) => barHoverIn(d, width))
+          .attr("fill-opacity", (d) => barHoverIn(d.data, width))
       }
 
       let removeHoverEffects = () => {
@@ -315,20 +312,20 @@ export default {
         svg
           .append("circle")
           .classed("removeableCircle", true)
-          .attr("cx", xScale(data.data.barIndex) + width / 2)
-          .attr("cy", yScale(data.data.total_customers))
+          .attr("cx", xScale(data.barIndex) + width / 2)
+          .attr("cy", yScale(data.total_customers))
           .attr("r", 4)
-          .style("stroke", barColorCodes[data.data.index])
+          .style("stroke", barColorCodes[data.index])
           .style("stroke-opacity", "2")
           .style("stroke-width", "2")
           .style("fill", "white")
           .style("pointer-events", "none")
-        this.toolTip.xPosition = xScale(data.data.barIndex) + 40
-        this.toolTip.yPosition = yScale(data.data.total_customers)
-        this.toolTip.date = data.data.date
-        this.toolTip.totalCustomers = data.data.total_customers
-        this.toolTip.addedCustomers = data.data.new_customers_added
-        this.toolTip.index = data.data.index
+        this.toolTip.xPosition = xScale(data.barIndex) + 40
+        this.toolTip.yPosition = yScale(data.total_customers)
+        this.toolTip.date = data.date
+        this.toolTip.totalCustomers = data.total_customers
+        this.toolTip.addedCustomers = data.new_customers_added
+        this.toolTip.index = data.index
         this.tooltipDisplay(true, this.toolTip)
       }
     },
