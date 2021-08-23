@@ -16,7 +16,7 @@
           v-else
           class="text-h5"
           :class="disabled ? 'lightGrey--text' : 'neroBlack--text'"
-          >
+        >
           {{ label || `Step ${step}` }}
         </span>
         <span
