@@ -174,10 +174,7 @@ def get_customers_overview(
     # clean up cdm date fields in the response
     response_body = clean_cdm_fields(response_body)
 
-    # clean up cdm gender fields in the response
-    response_body = clean_cdm_gender_fields(response_body)
-
-    return response_body
+    return clean_cdm_gender_fields(response_body)
 
 
 def get_customers_count_async(
