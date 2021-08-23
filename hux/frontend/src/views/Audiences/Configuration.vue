@@ -79,7 +79,7 @@
                       <icon
                         class="add-icon cursor-pointer"
                         type="add"
-                        :size="30"
+                        :size="41"
                       />
                     </span>
                     <div>
@@ -133,32 +133,23 @@
                       mdi-information-outline
                     </v-icon>
                   </template>
-                  <template #hover-content>
+                  <template #hover-content class="white neroBlack--text shadow pa-2 text-caption">
                     <v-sheet max-width="240px">
-                      <p class="gray--text">
                         The location(s) where Audiences are planned to be run.
-                      </p>
                     </v-sheet>
                   </template>
                 </tooltip>
               </h5>
             </template>
 
-            <v-row class="neroBlack--text text-caption">
-              <span class="ml-3 mt-2">
-                First add and deliver an audience to Facebook in order to create
-                a lookalike audience from this audience’s dashboard.
-              </span>
-            </v-row>
-
             <v-row>
-              <v-col cols="12">
+              <v-col cols="12" class="pt-2">
                 <div class="d-flex align-center">
                   <span @click="openSelectDestinationsDrawer()">
                     <icon
                       class="add-icon cursor-pointer"
                       type="add"
-                      :size="30"
+                      :size="41"
                     />
                   </span>
                   <tooltip

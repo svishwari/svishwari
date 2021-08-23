@@ -14,11 +14,11 @@
         v-if="rules.length == 0"
         tile
         elevation="0"
-        class="mt-2 blank-section"
+        class="blank-section"
       >
         <div class="gray--text font-weight-normal new-attribute">
           <span @click="addNewSection()">
-            <icon class="add-icon cursor-pointer" type="add" :size="30" />
+            <icon class="add-icon cursor-pointer" type="add" :size="41" />
           </span>
           <span class="ml-4 no-attribute">
             You have not added any attributes, yet.
@@ -429,8 +429,9 @@ export default {
     padding: 14px 16px;
     .new-attribute {
       display: flex;
+      height: 39px;
       .no-attribute {
-        margin-top: 2px;
+        margin-top: 8px;
       }
     }
   }
