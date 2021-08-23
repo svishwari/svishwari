@@ -25,7 +25,9 @@
       </template>
     </v-toolbar>
 
-    <v-progress-linear :active="loading" :indeterminate="loading" />
+    <slot name="loading">
+      <v-progress-linear :active="loading" :indeterminate="loading" />
+    </slot>
 
     <div
       class="drawer-content"
