@@ -141,20 +141,38 @@
           </v-card>
         </v-col>
       </v-row>
+      <v-row v-if="dashboardFeatureSize">
+        <v-col col="12">
+          <v-card class="rounded-lg box-shadow-5 px-6 py-5">
+            <div class="neroBlack--text text-h5 pb-4">
+              Features ({{ dashboardFeatureSize }})
+            </div>
+            <v-progress-linear
+              v-if="loadingModelFeatures"
+              :active="loadingModelFeatures"
+              :indeterminate="loadingModelFeatures"
+            />
+            <features-table
+              v-else
+              :data="dashboardFeature"
+            />
+          </v-card>
+        </v-col>
+      </v-row>
       <version-history v-model="versionHistoryDrawer" />
     </template>
   </page>
 </template>
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb"
-import FeatureChart from "@/components/common/featureChart/FeatureChart"
-import LiftChart from "@/components/common/LiftChart.vue"
 import DriftChart from "@/components/common/Charts/DriftChart/DriftChart.vue"
-
 import DriftChartData from "@/api/mock/factories/driftChartData.json"
+import FeaturesTable from "./FeaturesTable.vue"
+import FeatureChart from "@/components/common/featureChart/FeatureChart"
+import huxButton from "@/components/common/huxButton"
+import LiftChart from "@/components/common/LiftChart.vue"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
-import huxButton from "@/components/common/huxButton"
 import VersionHistory from "./Drawers/VersionHistoryDrawer.vue"
 import { mapGetters, mapActions } from "vuex"
 
@@ -169,11 +187,13 @@ export default {
     huxButton,
     VersionHistory,
     DriftChart,
+    FeaturesTable,
   },
   data() {
     return {
       loading: false,
       loadingLift: true,
+      loadingModelFeatures: true,
       featuresLoading: false,
       versionHistoryDrawer: false,
       chartDimensions: {
@@ -208,6 +228,9 @@ export default {
     // This will be used while integration of Model feature table.
     dashboardFeature() {
       return this.modelDashboardFeatures
+    },
+    dashboardFeatureSize() {
+      return this.modelDashboardFeatures && this.modelDashboardFeatures.length
     },
     breadcrumbItems() {
       const items = [
@@ -277,7 +300,9 @@ export default {
       this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     },
     async fetchModelFeatures() {
+      this.loadingModelFeatures = true
       await this.getModelFeatures(this.$route.params.id)
+      this.loadingModelFeatures = false
     },
   },
 }
