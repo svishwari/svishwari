@@ -15,6 +15,7 @@ import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
+import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -386,6 +387,8 @@ export const defineRoutes = (server) => {
   server.get("/customers/overview", () => customersOverview)
 
   server.get("/customers-insights/geo", () => mapData)
+
+  server.get("/idr/matching-trends", () => genderSpendData())
 
   server.get("/customers", (schema, request) => {
     let currentBatch = request.queryParams.batch_number
