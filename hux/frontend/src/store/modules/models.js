@@ -10,6 +10,7 @@ const state = {
   history: {},
   lift: [],
   features: [],
+  drift: [],
   modelFeatures: {},
 }
 
@@ -19,6 +20,7 @@ const getters = {
   history: (state) => Object.values(state.history),
   lift: (state) => state.lift,
   features: (state) => state.features,
+  drift: (state) => state.drift,
   modelFeatures: (state) => Object.values(state.modelFeatures),
 }
 
@@ -37,6 +39,10 @@ const mutations = {
 
   SET_FEATURES(state, data) {
     state.features = data
+  },
+
+  SET_DRIFT(state, data) {
+    state.drift = data
   },
 
   SET_HISTORY(state, items) {
@@ -113,6 +119,16 @@ const actions = {
     try {
       const response = await api.models.lift(modelId)
       commit("SET_LIFT", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getDrift({ commit }, data) {
+    try {
+      const response = await api.models.drift(data.model_id, data.payload)
+      commit("SET_DRIFT", response.data)
     } catch (error) {
       handleError(error)
       throw error
