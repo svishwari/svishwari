@@ -1217,13 +1217,6 @@ NOTIFICATION_TYPE = "notification_type"
 DOWNLOAD_TYPE = "download_type"
 GOOGLE_ADS = "google_ads"
 AMAZON_ADS = "amazon_ads"
-EMAIL_ADDRESS_HASHED = "email_address_hashed"
-FIRST_NAME_HASHED = "first_name_hashed"
-FIRST_NAME_INITIAL_HASHED = "first_name_initial_hashed"
-LAST_NAME_HASHED = "last_name_hashed"
-MOBILE_DEVICE_ID = "mobile_device_id"
-PHONE_NUMBER_HASHED = "phone_number_digits_only_hashed"
-POSTAL_CODE_HASHED = "postal_code_hashed"
 
 DOWNLOAD_TYPES = {
     GOOGLE_ADS: {
