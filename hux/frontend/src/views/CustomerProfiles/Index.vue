@@ -11,7 +11,7 @@
           is-tile
           icon="customer-profiles"
           variant="white"
-          @click="viewCustomerList()"
+          @click="openProfilesDrawer()"
         >
           View all customers
         </hux-button>
@@ -76,17 +76,17 @@
       </div>
       <div v-if="overviewListItems" class="px-15 my-1">
         <v-card class="rounded pa-5 box-shadow-5">
-          <div class="overview">Customer overview</div>
-          <div class="row overview-list mb-0 ml-0 mt-1">
+          <h5 class="text-h5 mb-1">Customer overview</h5>
+          <div class="row row-margin no-gutters">
             <metric-card
               v-for="item in overviewListItems"
               :key="item.title"
-              class="mr-3"
+              class="card-margin"
               :grow="item.toolTipText ? 2 : 1"
               :title="item.title"
               :icon="item.icon"
-              :interactable="item.toolTipText ? true : false"
-              @click="item.toolTipText ? viewCustomerList() : ''"
+              :interactable="item.action ? true : false"
+              @click="item.action ? onClick(item.action) : ''"
             >
               <template #subtitle-extended>
                 <tooltip>
@@ -169,17 +169,17 @@
               </div>
             </v-card-title>
             <v-progress-linear
-              v-if="loadingGeographics"
-              :active="loadingGeographics"
-              :indeterminate="loadingGeographics"
+              v-if="loadingGeoOverview"
+              :active="loadingGeoOverview"
+              :indeterminate="loadingGeoOverview"
             />
             <map-chart
-              v-if="!loadingGeographics"
-              :map-data="customersGeographics"
+              v-if="!loadingGeoOverview"
+              :map-data="customersGeoOverview"
             />
             <map-slider
-              v-if="!loadingGeographics"
-              :map-data="customersGeographics"
+              v-if="!loadingGeoOverview"
+              :map-data="customersGeoOverview"
             />
           </v-card>
         </v-col>
@@ -192,13 +192,13 @@
             </v-card-title>
             <v-divider class="ml-5 mr-8 mt-0 mb-1" />
             <v-progress-linear
-              v-if="loadingGeographics"
-              :active="loadingGeographics"
-              :indeterminate="loadingGeographics"
+              v-if="loadingGeoOverview"
+              :active="loadingGeoOverview"
+              :indeterminate="loadingGeoOverview"
             />
             <map-state-list
-              v-if="!loadingGeographics"
-              :map-data="customersGeographics"
+              v-if="!loadingGeoOverview"
+              :map-data="customersGeoOverview"
             />
           </v-card>
         </v-col>
@@ -246,6 +246,11 @@
         </v-col>
       </v-row>
       <customer-details v-model="customerProfilesDrawer" />
+      <geo-drawer
+        :toggle="geoDrawer"
+        :geo-level="geoLevel"
+        :results="geoResults"
+      />
     </div>
   </div>
 </template>
@@ -259,6 +264,7 @@ import MetricCard from "@/components/common/MetricCard"
 import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
 import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
+import GeoDrawer from "./Drawers/GeoDrawer.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import MapChart from "@/components/common/MapChart/MapChart"
@@ -278,6 +284,7 @@ export default {
     huxButton,
     Icon,
     CustomerDetails,
+    GeoDrawer,
     IncomeChart,
     GenderSpendChart,
     MapChart,
@@ -292,6 +299,10 @@ export default {
       customerProfilesDrawer: false,
       loadingCustomerChart: false,
       loadingGeographics: false,
+      geoDrawer: false,
+      geoLevel: null,
+      geoResults: 0,
+      loadingGeoOverview: false,
       overviewListItems: [
         {
           title: "No. of customers",
@@ -299,14 +310,28 @@ export default {
           toolTipText:
             "Total no. of unique hux ids generated to represent a customer.",
           value: "",
+          action: "openProfilesDrawer",
         },
-        { title: "Countries", subtitle: "", icon: "mdi-earth", value: "" },
-        { title: "US States", subtitle: "", icon: "mdi-map", value: "" },
+        {
+          title: "Countries",
+          subtitle: "",
+          icon: "mdi-earth",
+          value: "",
+          action: "openCountriesDrawer",
+        },
+        {
+          title: "US States",
+          subtitle: "",
+          icon: "mdi-map",
+          value: "",
+          action: "openStatesDrawer",
+        },
         {
           title: "Cities",
           subtitle: "",
           icon: "mdi-map-marker-radius",
           value: "",
+          action: "openCitiesDrawer",
         },
         { title: "Age", subtitle: "", icon: "mdi-cake-variant", value: "" },
         { title: "Women", subtitle: "", icon: "mdi-gender-female", value: "" },
@@ -420,6 +445,7 @@ export default {
       customersInsights: "customers/insights",
       customersGeographics: "customers/geographics",
       totalCustomers: "customers/total_customers",
+      customersGeoOverview: "customers/geoOverview",
     }),
     updatedTimeStamp() {
       return this.updatedTime[0] + "<span> &bull; </span>" + this.updatedTime[1]
@@ -436,10 +462,13 @@ export default {
     this.loading = true
     this.sizeHandler()
     await this.getOverview()
-    this.fetchGeographics()
     this.mapOverviewData()
     this.fetchTotalCustomers()
     this.loading = false
+
+    this.loadingGeoOverview = true
+    await this.getGeoOverview()
+    this.loadingGeoOverview = false
   },
 
   methods: {
@@ -447,6 +476,7 @@ export default {
       getOverview: "customers/getOverview",
       getGeographics: "customers/getGeographics",
       getTotalCustomers: "customers/getTotalCustomers",
+      getGeoOverview: "customers/getGeoOverview",
     }),
 
     async fetchGeographics() {
@@ -512,8 +542,26 @@ export default {
         return updatedValue
       }
     },
-    viewCustomerList() {
+    openProfilesDrawer() {
       this.customerProfilesDrawer = !this.customerProfilesDrawer
+    },
+    openGeoDrawer(geoLevel = "states") {
+      this.geoLevel = geoLevel
+
+      if (geoLevel === "cities") this.geoResults = this.overview.total_cities
+
+      if (geoLevel === "countries")
+        this.geoResults = this.overview.total_countries
+
+      if (geoLevel === "states") this.geoResults = this.overview.total_us_states
+
+      this.geoDrawer = !this.geoDrawer
+    },
+    onClick(action) {
+      if (action === "openProfilesDrawer") this.openProfilesDrawer()
+      if (action === "openCitiesDrawer") this.openGeoDrawer("cities")
+      if (action === "openCountriesDrawer") this.openGeoDrawer("countries")
+      if (action === "openStatesDrawer") this.openGeoDrawer("states")
     },
     sizeHandler() {
       if (this.$refs.genderChart) {
