@@ -836,14 +836,20 @@ def clean_cdm_gender_fields(response_body: dict) -> dict:
 
     # calculate and set the individual gender average from the corresponding
     # count values from the response body
-    response_body[api_c.GENDER_MEN] = round(
-        gender_men_count / total_gender_count, 4
+    response_body[api_c.GENDER_MEN] = (
+        round(gender_men_count / total_gender_count, 4)
+        if total_gender_count != 0
+        else 0
     )
-    response_body[api_c.GENDER_WOMEN] = round(
-        gender_women_count / total_gender_count, 4
+    response_body[api_c.GENDER_WOMEN] = (
+        round(gender_women_count / total_gender_count, 4)
+        if total_gender_count != 0
+        else 0
     )
-    response_body[api_c.GENDER_OTHER] = round(
-        gender_other_count / total_gender_count, 4
+    response_body[api_c.GENDER_OTHER] = (
+        round(gender_other_count / total_gender_count, 4)
+        if total_gender_count != 0
+        else 0
     )
 
     return response_body
