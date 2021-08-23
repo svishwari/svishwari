@@ -164,6 +164,7 @@ export default {
 <style lang="scss" scoped>
 $drawer-header-height: 64px;
 $drawer-footer-height: 80px;
+$drawer-data-table-padding: 9px 25px;
 
 ::v-deep .v-navigation-drawer__content {
   overflow-y: hidden;
@@ -185,5 +186,26 @@ $drawer-footer-height: 80px;
 }
 ::v-deep .v-icon.v-icon::after {
   content: none;
+}
+
+::v-deep .hux-data-table {
+  .v-data-table {
+    > .v-data-table__wrapper {
+      > table {
+        > thead {
+          > tr {
+            > th {
+              background: var(--v-aliceBlue-base) !important;
+            }
+          }
+        }
+
+        > thead > tr > th,
+        > tbody > tr > td {
+          padding: $drawer-data-table-padding;
+        }
+      }
+    }
+  }
 }
 </style>

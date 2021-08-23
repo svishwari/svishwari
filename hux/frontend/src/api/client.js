@@ -29,9 +29,14 @@ client["customers"].overview = () => {
   return http.get("/customers/overview")
 }
 
-client["customers"].geographics = () => {
-  return http.get("/customers-insights/geo")
-}
+client["customers"].geoOverview = () => http.get("/customers-insights/geo")
+
+client["customers"].geoCities = () => http.get("/customers-insights/cities")
+
+client["customers"].geoCountries = () =>
+  http.get("/customers-insights/countries")
+
+client["customers"].geoStates = () => http.get("/customers-insights/states")
 
 client["customers"].getOverview = (data) => {
   return http.post("/customers/overview", data)

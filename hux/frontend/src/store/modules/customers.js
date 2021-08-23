@@ -12,7 +12,13 @@ const state = {
   // TODO: to be integrated with HUS-226
   insights: null,
 
-  geographics: [],
+  geoOverview: [],
+
+  geoCities: [],
+
+  geoCountries: [],
+
+  geoStates: [],
 }
 
 const getters = {
@@ -24,7 +30,13 @@ const getters = {
 
   insights: (state) => state.insights,
 
-  geographics: (state) => state.geographics,
+  geoOverview: (state) => state.geoOverview,
+
+  geoCities: (state) => state.geoCities,
+
+  geoCountries: (state) => state.geoCountries,
+
+  geoStates: (state) => state.geoStates,
 }
 
 const mutations = {
@@ -32,6 +44,10 @@ const mutations = {
     items.forEach((item) => {
       Vue.set(state.items, item.hux_id, item)
     })
+  },
+
+  RESET_ALL(state) {
+    Vue.set(state, "items", {})
   },
 
   SET_ONE(state, item) {
@@ -42,12 +58,20 @@ const mutations = {
     state.overview = data
   },
 
-  RESET_LIST(state) {
-    Vue.set(state, "items", {})
+  SET_GEO_OVERVIEW(state, data) {
+    state.geoOverview = data
   },
 
-  SET_GEOGRAPHICS(state, data) {
-    state.geographics = data
+  SET_GEO_COUNTRIES(state, data) {
+    state.geoCountries = data
+  },
+
+  SET_GEO_CITIES(state, data) {
+    state.geoCities = data
+  },
+
+  SET_GEO_STATES(state, data) {
+    state.geoStates = data
   },
 }
 
@@ -55,7 +79,7 @@ const actions = {
   async getAll({ commit }, batchDetails) {
     try {
       if (!batchDetails.isLazyLoad) {
-        commit("RESET_LIST")
+        commit("RESET_ALL")
       }
       const response = await api.customers.getCustomers(
         batchDetails.batchSize,
@@ -88,10 +112,40 @@ const actions = {
     }
   },
 
-  async getGeographics({ commit }) {
+  async getGeoOverview({ commit }) {
     try {
-      const response = await api.customers.geographics()
-      commit("SET_GEOGRAPHICS", response.data)
+      const response = await api.customers.geoOverview()
+      commit("SET_GEO_OVERVIEW", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getGeoCities({ commit }) {
+    try {
+      const response = await api.customers.geoCities()
+      commit("SET_GEO_CITIES", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getGeoCountries({ commit }) {
+    try {
+      const response = await api.customers.geoCountries()
+      commit("SET_GEO_COUNTRIES", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getGeoStates({ commit }) {
+    try {
+      const response = await api.customers.geoStates()
+      commit("SET_GEO_STATES", response.data)
     } catch (error) {
       handleError(error)
       throw error
