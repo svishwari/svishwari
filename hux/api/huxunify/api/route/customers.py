@@ -722,6 +722,7 @@ class CustomerEvents(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def post(self, hux_id: str) -> Tuple[dict, int]:
         """Retrieves events for a given HUX ID.
 
