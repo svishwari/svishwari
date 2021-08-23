@@ -133,9 +133,12 @@
                       mdi-information-outline
                     </v-icon>
                   </template>
-                  <template #hover-content class="white neroBlack--text shadow pa-2 text-caption">
+                  <template
+                    #hover-content
+                    class="white neroBlack--text shadow pa-2 text-caption"
+                  >
                     <v-sheet max-width="240px">
-                        The location(s) where Audiences are planned to be run.
+                      The location(s) where Audiences are planned to be run.
                     </v-sheet>
                   </template>
                 </tooltip>

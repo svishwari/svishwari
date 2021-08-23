@@ -10,12 +10,7 @@
       >
         Select attribute(s) - <i class="text-caption gray--text">Optional</i>
       </strong>
-      <v-card
-        v-if="rules.length == 0"
-        tile
-        elevation="0"
-        class="blank-section"
-      >
+      <v-card v-if="rules.length == 0" tile elevation="0" class="blank-section">
         <div class="gray--text font-weight-normal new-attribute">
           <span @click="addNewSection()">
             <icon class="add-icon cursor-pointer" type="add" :size="41" />
