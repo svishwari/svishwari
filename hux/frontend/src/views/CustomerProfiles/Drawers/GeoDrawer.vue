@@ -214,7 +214,7 @@ export default {
     }),
 
     async onLazyLoad() {
-      if (this.batchNumber <= this.lastBatch) {
+      if (this.lastBatch > 1 && this.batchNumber <= this.lastBatch) {
         this.batchNumber++
         await this.refreshData()
       }
@@ -233,7 +233,7 @@ export default {
         case "countries":
           await this.getGeoCountries()
           break
-        case  "states":
+        case "states":
           await this.getGeoStates()
           break
       }
