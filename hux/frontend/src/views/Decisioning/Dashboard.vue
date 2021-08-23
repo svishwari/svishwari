@@ -278,7 +278,7 @@ export default {
       await this.getDrift({
         model_id: this.$route.params.id,
         payload: {
-          model_type: this.model.type,
+          model_type: this.model.model_type,
         },
       })
       this.loadingDrift = false
