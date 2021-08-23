@@ -3,7 +3,7 @@
     <template #activator="{ on }">
       <span class="d-flex cursor-pointer" v-on="on">
         <v-btn class="mx-2 box-shadow-25" color="white" fab x-small>
-          <v-icon color="secondary"> mdi-help </v-icon>
+          <v-icon color="primary"> mdi-help </v-icon>
         </v-btn>
       </span>
     </template>
@@ -13,10 +13,15 @@
           Help
         </v-list-item-title>
       </v-list-item>
-      <v-list-item @click="routerRedirect(path)">
-        <v-list-item-title class="text-h6 neroBlack--text">
+      <v-list-item class="v-list-item--link">
+        <router-link
+          :to="{
+            name: 'Overview',
+          }"
+          class="text-h6 view-all text-decoration-none"
+        >
           Contact Us
-        </v-list-item-title>
+        </router-link>
       </v-list-item>
     </v-list>
   </v-menu>
@@ -48,5 +53,14 @@ export default {
       min-height: 40px !important;
     }
   }
+}
+.view-all {
+  font-family: Open Sans;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--v-neroblack-base) !important;
+  cursor: pointer;
 }
 </style>
