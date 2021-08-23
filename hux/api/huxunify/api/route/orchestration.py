@@ -1006,7 +1006,7 @@ class AudienceDownload(SwaggerView):
     def get(
         self, audience_id: str, download_type: str, user_name: str
     ) -> Tuple[Response, int]:
-        """Updates an audience.
+        """Downloads an audience.
 
         ---
         security:
