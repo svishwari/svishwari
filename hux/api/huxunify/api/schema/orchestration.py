@@ -1,6 +1,7 @@
 """
 Schemas for the Orchestration API
 """
+import datetime
 
 from flask_marshmallow import Schema
 from marshmallow import fields, validate
@@ -284,5 +285,9 @@ def is_audience_lookalikeable(audience: dict) -> str:
                 db_c.AUDIENCE_STATUS_DELIVERED,
             ]:
                 # success, break the loop and return active.
-                return api_c.STATUS_ACTIVE
+                # add 30 min wait time before making it lookalikable
+                if (
+                    delivery.get("update_time") - datetime.datetime.utcnow()
+                ).seconds / 60 > 30:
+                    return api_c.STATUS_ACTIVE
     return status
