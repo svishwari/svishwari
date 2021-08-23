@@ -250,7 +250,9 @@ export default {
         .append("rect")
         .attr(
           "width",
-          width - this.margin.right > 0 ? width - this.margin.right : 0
+          width - this.margin.right > 0
+            ? width - this.margin.right - this.margin.left
+            : 0
         )
         .attr("transform", `translate(${this.margin.left},0)`)
         .attr(
