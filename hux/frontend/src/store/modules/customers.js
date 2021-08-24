@@ -12,8 +12,6 @@ const state = {
   // TODO: to be integrated with HUS-226
   insights: null,
 
-  geographics: [],
-
   total_customers: [],
 
   geoOverview: [],
@@ -33,8 +31,6 @@ const getters = {
   overview: (state) => state.overview,
 
   insights: (state) => state.insights,
-
-  geographics: (state) => state.geographics,
 
   total_customers: (state) => state.total_customers,
 

@@ -391,8 +391,6 @@ export const defineRoutes = (server) => {
 
   server.get("/customers-insights/total", () => totalCustomersData)
 
-  server.get("/idr/matching-trends", () => genderSpendData())
-
   server.get("/customers-insights/cities", (schema, request) => {
     let batchNumber = request.queryParams["batch_number"] || 1
     let batchSize = request.queryParams["batch_size"] || 100

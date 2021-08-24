@@ -298,7 +298,6 @@ export default {
     return {
       customerProfilesDrawer: false,
       loadingCustomerChart: false,
-      loadingGeographics: false,
       geoDrawer: false,
       geoLevel: null,
       geoResults: 0,
@@ -443,7 +442,6 @@ export default {
     ...mapGetters({
       overview: "customers/overview",
       customersInsights: "customers/insights",
-      customersGeographics: "customers/geographics",
       totalCustomers: "customers/total_customers",
       customersGeoOverview: "customers/geoOverview",
     }),
@@ -474,16 +472,10 @@ export default {
   methods: {
     ...mapActions({
       getOverview: "customers/getOverview",
-      getGeographics: "customers/getGeographics",
       getTotalCustomers: "customers/getTotalCustomers",
       getGeoOverview: "customers/getGeoOverview",
     }),
 
-    async fetchGeographics() {
-      this.loadingGeographics = true
-      await this.getGeographics()
-      this.loadingGeographics = false
-    },
     async fetchTotalCustomers() {
       this.loadingCustomerChart = true
       await this.getTotalCustomers()
