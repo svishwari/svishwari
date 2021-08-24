@@ -858,7 +858,9 @@ class CustomersInsightsStates(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] list of total customers & new customers added, http code
+            - Tuple[dict, int]
+                list of total customers & new customers added,
+                http code
         """
         # get auth token from request
         token_response = get_token_from_request(request)
@@ -948,9 +950,9 @@ class CustomersInsightsCities(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[list, int]
-            list of total customers & new customers added,
-            http code
+            - Tuple[list, int]
+                list of total customers & new customers added,
+                http code
         """
         # get auth token from request
         token_response = get_token_from_request(request)
