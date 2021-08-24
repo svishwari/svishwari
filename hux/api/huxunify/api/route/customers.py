@@ -902,6 +902,26 @@ class CustomersInsightsCities(SwaggerView):
             "required": False,
             "default": api_c.DEFAULT_BATCH_NUMBER,
         },
+        {
+            "name": "body",
+            "description": "Customer Overview Filters",
+            "type": "object",
+            "in": "body",
+            "example": {
+                "filters": [
+                    {
+                        "section_aggregator": "ALL",
+                        "section_filters": [
+                            {
+                                "field": "country",
+                                "type": "equals",
+                                "value": "US",
+                            }
+                        ],
+                    }
+                ]
+            },
+        },
     ]
     responses = {
         HTTPStatus.OK.value: {
@@ -920,7 +940,7 @@ class CustomersInsightsCities(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self) -> Tuple[list, int]:
+    def post(self) -> Tuple[list, int]:
         """Retrieves city-wise customer insights.
 
         ---
@@ -940,13 +960,20 @@ class CustomersInsightsCities(SwaggerView):
             api_c.QUERY_PARAMETER_BATCH_NUMBER, api_c.DEFAULT_BATCH_NUMBER
         )
 
-        filters = api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
-        filters[api_c.COUNT] = int(batch_size) * int(batch_number)
+        filters = request.json
+
+        offset = int(batch_size) * (int(batch_number) - 1)
+        limit = int(batch_size)
 
         return (
             jsonify(
                 CustomersInsightsCitiesSchema().dump(
-                    get_city_ltvs(token_response[0], filters),
+                    get_city_ltvs(
+                        token_response[0],
+                        filters=filters,
+                        offset=offset,
+                        limit=limit,
+                    ),
                     many=True,
                 )
             ),

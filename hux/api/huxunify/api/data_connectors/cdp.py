@@ -641,7 +641,7 @@ def clean_cdm_fields(body: dict) -> dict:
     return body
 
 
-def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> dict:
+def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> list:
     """Get spending details of customer by cities
 
     Args:
@@ -650,19 +650,12 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> dict:
             customers_overview endpoint.
 
     Returns:
-        dict of income details of customers by cities
+        list of dict of income details of customers by cities
 
     """
-    city_income_default_filter = (
-        filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
-    )
-    city_income_default_filter[api_c.COUNT] = 5
-
-    data = get_city_ltvs(token, city_income_default_filter)
-
     return [
         {api_c.NAME: x[api_c.CITY], api_c.LTV: round(x["avg_ltv"], 4)}
-        for x in data
+        for x in get_city_ltvs(token, filters=filters)
     ]
 
 
@@ -780,17 +773,24 @@ def get_customers_insights_count_by_day(
     return response_body
 
 
-def get_city_ltvs(token: str, filters: Optional[dict]) -> list:
+def get_city_ltvs(
+    token: str,
+    filters: Optional[dict] = None,
+    offset: int = 0,
+    limit: int = api_c.DEFAULT_BATCH_SIZE,
+) -> list:
     """
     Get demographic details of customers by city
 
     Args:
         token (str): OKTA JWT Token.
+        offset(int): offset
+        limit(int): limit
         filters (dict):  filters to pass into
-            count_by_state endpoint
+            city_ltvs endpoint
 
     Returns:
-        list of demographic details by city
+        list of demographic details by cities
 
     """
     # get config
@@ -799,6 +799,7 @@ def get_city_ltvs(token: str, filters: Optional[dict]) -> list:
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
         json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        params=dict(offset=offset, limit=limit),
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
@@ -810,8 +811,8 @@ def get_city_ltvs(token: str, filters: Optional[dict]) -> list:
             response.status_code,
             response.text,
         )
-        return {}
+        return []
 
     logger.info("Successfully retrieved city-wise demographic insights.")
 
-    return clean_cdm_fields(response.json()[api_c.BODY])
+    return [clean_cdm_fields(data) for data in response.json()[api_c.BODY]]

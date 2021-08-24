@@ -301,7 +301,9 @@ class CustomersInsightsCitiesSchema(Schema):
 
     city = Str(required=True, example="New York City")
     state = Str(required=True, example="NY")
-    size = Integer(required=True, default=0, example=1234)
+    size = Integer(
+        attribute=api_c.CUSTOMER_COUNT, required=True, default=0, example=1234
+    )
     spending = Float(
         attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.231
     )
