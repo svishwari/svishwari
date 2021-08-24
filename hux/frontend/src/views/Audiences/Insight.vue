@@ -198,10 +198,20 @@
     </div>
     <div class="px-15 my-1">
       <v-card class="rounded pa-5 box-shadow-5">
-        <div class="overview">Audience overview</div>
-        <div class="row overview-list mb-0 ml-0 mt-5">
-           <metric-card  :height="60">
-             <template #subtitle-extended> <span>This is a lookalike audience. Go to the original audience, <a>Audience 1</a>, to see insights</span></template>
+        <div class="overview headingOverviewCard">Audience overview</div>
+        <div  v-if="this.audience.is_lookalike" class="row overview-list lookalike-aud mb-0 ml-0 mr-1 mt-4">
+           <metric-card  :height="60"  :title="''" class="lookalikeMessageCard">
+             <template #subtitle-extended> <span>This is a lookalike audience. Go to the original audience, </span> 
+
+             <router-link
+                :to="{
+                  name: '',
+                  
+                }"
+          class="text-decoration-none"
+          append
+        >{{audience.name}} </router-link>
+                <span>, to see insights</span></template>
            </metric-card>
         </div>
         <div v-if="!this.audience.is_lookalike" class="row overview-list mb-0 ml-0 mt-1">
@@ -561,7 +571,6 @@ export default {
         : false
     },
     breadcrumbItems() {
-      console.log("this.audience.is_lookalike",this.audience.is_lookalike)
       const items = [
         {
           text: "Audiences",
@@ -1008,5 +1017,22 @@ export default {
 }
 ::v-deep .v-snack__wrapper {
   max-width: 1300px !important;
+}
+.font-lookalike {
+font-family: Open Sans;
+font-style: normal;
+font-weight: normal;
+}
+
+.lookalikeMessageCard {
+@extend .font-lookalike;
+border-radius: 5px !important;
+background-color: var(--v-aliceBlue-base) !important;
+font-size: 14px;
+color: var(--v-grey-base) !important;
+}
+.headingOverviewCard {
+  @extend .font-lookalike;
+  font-size: 15px !important;
 }
 </style>
