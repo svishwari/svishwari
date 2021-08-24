@@ -115,7 +115,10 @@ class EngagementDeliverDestinationView(SwaggerView):
     @validate_destination()
     @validate_delivery_params
     def post(
-        self, engagement_id: str, audience_id: str, destination_id: str
+        self,
+        engagement_id: ObjectId,
+        audience_id: ObjectId,
+        destination_id: ObjectId,
     ) -> Tuple[dict, int]:
         """Delivers one destination for an engagement audience.
 
@@ -124,9 +127,9 @@ class EngagementDeliverDestinationView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            engagement_id (str): Engagement ID.
-            audience_id (str): Audience ID.
-            destination_id (str): Destination ID.
+            engagement_id (ObjectId): Engagement ID.
+            audience_id (ObjectId): Audience ID.
+            destination_id (ObjectId): Destination ID.
 
         Returns:
             Tuple[dict, int]: Message indicating connection
@@ -248,19 +251,22 @@ class EngagementDeliverAudienceView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
-    def post(self, engagement_id: str, audience_id: str) -> Tuple[dict, int]:
+    def post(
+        self, engagement_id: ObjectId, audience_id: ObjectId
+    ) -> Tuple[dict, int]:
         """Delivers one audience for an engagement.
         ---
         security:
             - Bearer: ["Authorization"]
         Args:
-            engagement_id (str): Engagement ID.
-            audience_id (str): Audience ID.
+            engagement_id (ObjectId): Engagement ID.
+            audience_id (ObjectId): Audience ID.
         Returns:
             Tuple[dict, int]: Message indicating connection
                 success/failure, HTTP Status.
         """
         database = get_db_client()
+
         engagement = get_engagement(database, engagement_id)
         audience = get_audience(database, audience_id)
 
@@ -342,13 +348,13 @@ class EngagementDeliverView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
-    def post(self, engagement_id: str) -> Tuple[dict, int]:
+    def post(self, engagement_id: ObjectId) -> Tuple[dict, int]:
         """Delivers all audiences for an engagement.
         ---
         security:
             - Bearer: ["Authorization"]
         Args:
-            engagement_id (str): Engagement ID.
+            engagement_id (ObjectId): Engagement ID.
         Returns:
             Tuple[dict, int]: Message indicating connection
                 success/failure, HTTP Status.
@@ -429,13 +435,13 @@ class AudienceDeliverView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
-    def post(self, audience_id: str) -> Tuple[dict, int]:
+    def post(self, audience_id: ObjectId) -> Tuple[dict, int]:
         """Delivers an audience for all of the engagements it is apart of.
         ---
         security:
             - Bearer: ["Authorization"]
         Args:
-            audience_id (str): Audience ID.
+            audience_id (ObjectId): Audience ID.
         Returns:
             Tuple[dict, int]: Message indicating connection
                 success/failure, HTTP Status.
@@ -533,11 +539,6 @@ class EngagementDeliverHistoryView(SwaggerView):
         Returns:
             Tuple[dict, int]: Delivery history, HTTP Status.
         """
-
-        # validate object id
-        if not ObjectId.is_valid(engagement_id):
-            logger.error("Invalid Object ID %s.", engagement_id)
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert the engagement ID
         engagement_id = ObjectId(engagement_id)
@@ -665,11 +666,6 @@ class AudienceDeliverHistoryView(SwaggerView):
             Tuple[dict, int]: Delivery history, HTTP Status.
 
         """
-
-        # validate object id
-        if not ObjectId.is_valid(audience_id):
-            logger.error("Invalid Object ID %s.", audience_id)
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert the audience ID
         audience_id = ObjectId(audience_id)
