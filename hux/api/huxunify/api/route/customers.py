@@ -259,9 +259,9 @@ class Customersview(SwaggerView):
             "in": "query",
             "type": "string",
             "description": "Number of which batch of customers should be returned.",
-            "example": api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER,
+            "example": api_c.DEFAULT_BATCH_NUMBER,
             "required": False,
-            "default": api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER,
+            "default": api_c.DEFAULT_BATCH_NUMBER,
         },
     ]
     responses = {
@@ -299,7 +299,7 @@ class Customersview(SwaggerView):
         )
         batch_number = request.args.get(
             api_c.QUERY_PARAMETER_BATCH_NUMBER,
-            default=api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER,
+            default=api_c.DEFAULT_BATCH_NUMBER,
         )
         offset = (int(batch_number) - 1) * int(batch_size)
         return (
