@@ -14,14 +14,12 @@
         </v-list-item-title>
       </v-list-item>
       <v-list-item class="v-list-item--link">
-        <v-list-item-title
-          :to="{
-            name: 'Overview',
-          }"
+        <a 
+          href="mailto:ushuxproductsupport@deloitte.com"
           class="text-h6 view-all text-decoration-none"
         >
           Contact Us
-        </v-list-item-title>
+        </a>
       </v-list-item>
     </v-list>
   </v-menu>
