@@ -60,7 +60,7 @@ marks:
         - 1
         - 2
 
-#TO DO: Dynamically get model_ids which are active.
+# TODO: Dynamically get model_ids which are active.
 
 stages:
   - name: Test feature-importance API
