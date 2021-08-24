@@ -1,7 +1,7 @@
 <template>
   <page max-width="100%">
     <template #header>
-      <page-header>
+      <page-header header-height="70">
         <template #left>
           <breadcrumb
             :items="[
@@ -14,9 +14,68 @@
             ]"
           />
         </template>
+        <template #right>
+          <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+            mdi-download
+          </v-icon>
+        </template>
+      </page-header>
+
+      <page-header header-height="70">
+        <template #left>
+          <v-btn
+            icon
+            :color="isFilterToggled ? 'secondary' : 'black'"
+            class="mr-6"
+            @click.native="isFilterToggled = !isFilterToggled"
+          >
+            <v-icon medium>mdi-filter-variant</v-icon>
+          </v-btn>
+          <v-btn disabled icon color="black" class="mr-6">
+            <v-icon medium>mdi-magnify</v-icon>
+          </v-btn>
+        </template>
       </page-header>
 
       <v-progress-linear :active="loading" :indeterminate="loading" />
+
+      <hux-filters-bar :is-toggled="isFilterToggled">
+        <label class="neroBlack--text mr-2"> Select timeframe: </label>
+
+        <hux-select
+          v-model="filters.startMonth"
+          :items="options.months"
+          label="Start month"
+          class="mx-1"
+          width="141"
+        />
+
+        <hux-select
+          v-model="filters.startYear"
+          :items="options.years"
+          label="Start year"
+          class="mx-1"
+          width="126"
+        />
+
+        <icon class="mx-1" type="arrow" color="primary" :size="19" />
+
+        <hux-select
+          v-model="filters.endMonth"
+          :items="options.months"
+          label="End month"
+          class="mx-1"
+          width="141"
+        />
+
+        <hux-select
+          v-model="filters.endYear"
+          label="End year"
+          :items="options.years"
+          class="mx-1"
+          width="126"
+        />
+      </hux-filters-bar>
     </template>
     <template>
       <v-row v-if="!loadingOverview" no-gutters>
@@ -69,7 +128,7 @@
         v-if="!loadingDataFeeds"
         :data="dataFeeds"
         class="mt-6 mx-2"
-      ></data-feeds>
+      />
     </template>
   </page>
 </template>
@@ -78,10 +137,12 @@
 import { mapActions, mapGetters } from "vuex"
 
 import Page from "@/components/Page.vue"
+import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
+import HuxFiltersBar from "@/components/common/FiltersBar"
+import HuxSelect from "@/components/common/Select.vue"
 import Icon from "@/components/common/Icon"
 import MetricCard from "@/components/common/MetricCard"
-import PageHeader from "@/components/PageHeader"
 import Tooltip from "@/components/common/Tooltip.vue"
 import DataFeeds from "./DataFeeds.vue"
 
@@ -92,6 +153,8 @@ export default {
     Page,
     Breadcrumb,
     Icon,
+    HuxFiltersBar,
+    HuxSelect,
     MetricCard,
     PageHeader,
     Tooltip,
@@ -103,6 +166,30 @@ export default {
       loadingOverview: false,
       loadingDataFeeds: false,
       loadingMatchingTrend: false,
+      isFilterToggled: false,
+      options: {
+        months: [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ],
+        years: ["2021", "2020", "2019", "2018", "2017", "2016", "2015"],
+      },
+      filters: {
+        startMonth: null,
+        startYear: null,
+        endMonth: null,
+        endYear: null,
+      },
     }
   },
 
