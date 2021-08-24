@@ -167,17 +167,12 @@ export default {
       let applyNumericFilter = (value) =>
         this.$options.filters.Numeric(value, true, false, true)
 
-            svg
+      svg
         .append("g")
         .classed("xAxis-alternate", true)
         .attr("transform", "translate(0," + 408 + ")")
-        .call(
-          d3Axis
-            .axisBottom(xScale)
-            .tickSize(0)
-            .tickFormat("")
-        ).style("stroke-width", 16)
-
+        .call(d3Axis.axisBottom(xScale).tickSize(0).tickFormat(""))
+        .style("stroke-width", 16)
 
       svg
         .append("g")
@@ -220,8 +215,6 @@ export default {
       d3Select.selectAll(".xAxis .tick text").attr("x", 10)
       d3Select.selectAll(".xAxis-alternate .domain").style("stroke", "white")
 
-      
-
       let topRoundedRect = (x, y, width, height) =>
         `M${x},${y + ry}
         a${rx},${ry} 0 0 1 ${rx},${-ry}
@@ -235,7 +228,14 @@ export default {
         .data((d) => d)
         .enter()
         .append("path")
-        .attr("d", (d, i) => topRoundedRect( xScale(i),yScale(d[1]),xScale.bandwidth(),yScale(d[0]) - yScale(d[1])))
+        .attr("d", (d, i) =>
+          topRoundedRect(
+            xScale(i),
+            yScale(d[1]),
+            xScale.bandwidth(),
+            yScale(d[0]) - yScale(d[1])
+          )
+        )
         .style("margin-right", "10px")
         .style("fill", (d) => barColorCodes[d.data.index])
         .on("mouseover", (d) => applyHoverEffects(d, xScale.bandwidth()))
