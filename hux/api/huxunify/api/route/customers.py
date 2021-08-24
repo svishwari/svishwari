@@ -832,6 +832,7 @@ class CustomersInsightsStates(SwaggerView):
     """
     Customer insights by state
     """
+
     params = parameters = [
         {
             "name": "body",
@@ -891,7 +892,10 @@ class CustomersInsightsStates(SwaggerView):
         return (
             jsonify(
                 CustomersInsightsStatesSchema().dump(
-                    get_demographic_by_state(token_response[0], filters=filters), many=True
+                    get_demographic_by_state(
+                        token_response[0], filters=filters
+                    ),
+                    many=True,
                 )
             ),
             HTTPStatus.OK,
