@@ -832,7 +832,28 @@ class CustomersInsightsStates(SwaggerView):
     """
     Customer insights by state
     """
-
+    params = parameters = [
+        {
+            "name": "body",
+            "description": "Customer Overview Filters",
+            "type": "object",
+            "in": "body",
+            "example": {
+                "filters": [
+                    {
+                        "section_aggregator": "ALL",
+                        "section_filters": [
+                            {
+                                "field": "country",
+                                "type": "equals",
+                                "value": "US",
+                            }
+                        ],
+                    }
+                ]
+            },
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "schema": {
@@ -850,7 +871,7 @@ class CustomersInsightsStates(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self) -> Tuple[list, int]:
+    def post(self) -> Tuple[list, int]:
         """Retrieves state-level geographic customer insights.
 
         ---
@@ -865,10 +886,12 @@ class CustomersInsightsStates(SwaggerView):
         # get auth token from request
         token_response = get_token_from_request(request)
 
+        filters = request.json
+
         return (
             jsonify(
                 CustomersInsightsStatesSchema().dump(
-                    get_demographic_by_state(token_response[0]), many=True
+                    get_demographic_by_state(token_response[0], filters=filters), many=True
                 )
             ),
             HTTPStatus.OK,
