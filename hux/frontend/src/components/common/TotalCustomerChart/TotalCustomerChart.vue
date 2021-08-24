@@ -16,7 +16,7 @@
 
 <script>
 import StackBarChartTooltip from "@/components/common/TotalCustomerChart/StackBarChartTooltip"
-import StackBarChart from "@/components/common/TotalCustomerChart/StackBarChart"
+import StackBarChart from "@/components/common/Charts/StackBarChart/StackBarChart.vue"
 export default {
   name: "TotalCustomerChart",
   components: { StackBarChart, StackBarChartTooltip },

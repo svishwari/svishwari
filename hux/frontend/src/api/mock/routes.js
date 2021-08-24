@@ -14,7 +14,7 @@ import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
-import totalCustomersData from "./factories/totalCustomersData.js"
+import totalCustomersData from "./fixtures/totalCustomersData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
 

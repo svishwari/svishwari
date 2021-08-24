@@ -12,7 +12,7 @@ import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
 import * as d3TimeFormat from "d3-time-format"
 import * as d3Collection from "d3-collection"
-import colors from "../../../plugins/theme"
+import colors from "../../../../plugins/theme"
 
 export default {
   name: "StackBarChart",
@@ -83,7 +83,7 @@ export default {
         .attr("width", this.width + margin.left + margin.right)
         .attr("height", this.height + margin.top + margin.bottom)
         .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .attr("transform", `translate(${margin.left},${margin.top})`)
 
       this.colorCodes.forEach((color) => barColorCodes.push(colors[color]))
 
@@ -170,14 +170,14 @@ export default {
       svg
         .append("g")
         .classed("xAxis-alternate", true)
-        .attr("transform", "translate(0," + 408 + ")")
+        .attr("transform", "translate(0," + 378 + ")")
         .call(d3Axis.axisBottom(xScale).tickSize(0).tickFormat(""))
         .style("stroke-width", 16)
 
       svg
         .append("g")
         .classed("xAxis", true)
-        .attr("transform", "translate(0," + h + ")")
+        .attr("transform", `translate(0,${h})`)
         .call(
           d3Axis
             .axisBottom(xScale)

@@ -30,6 +30,7 @@ export default {
     fillOpacity: {
       type: Number,
       required: false,
+      default: 1,
     },
   },
 
