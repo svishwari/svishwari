@@ -99,6 +99,11 @@
         </v-col>
         <v-col md="6">
           <v-card class="rounded-lg px-4 box-shadow-5 mt-6" height="662">
+            <v-progress-linear
+              v-if="loadingDrift"
+              :active="loadingDrift"
+              :indeterminate="loadingDrift"
+            />
             <div class="pt-5 pl-2 pb-10 neroBlack--text text-h5">
               Drift
               <span
@@ -114,10 +119,11 @@
             </div>
             <div ref="decisioning-drift">
               <drift-chart
+                v-if="!loadingDrift"
                 v-model="driftChartData"
                 :chart-dimensions="chartDimensions"
                 x-axis-format="%m/%d"
-                :enable-grid="[false, true]"
+                :enable-grid="[true, true]"
               />
             </div>
             <div class="py-5 text-center neroBlack--text text-h6">Date</div>
@@ -141,20 +147,34 @@
           </v-card>
         </v-col>
       </v-row>
+      <v-row v-if="dashboardFeatureSize">
+        <v-col col="12">
+          <v-card class="rounded-lg box-shadow-5 px-6 py-5">
+            <div class="neroBlack--text text-h5 pb-4">
+              Features ({{ dashboardFeatureSize }})
+            </div>
+            <v-progress-linear
+              v-if="loadingModelFeatures"
+              :active="loadingModelFeatures"
+              :indeterminate="loadingModelFeatures"
+            />
+            <features-table v-else :data="dashboardFeature" />
+          </v-card>
+        </v-col>
+      </v-row>
       <version-history v-model="versionHistoryDrawer" />
     </template>
   </page>
 </template>
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb"
-import FeatureChart from "@/components/common/featureChart/FeatureChart"
-import LiftChart from "@/components/common/LiftChart.vue"
 import DriftChart from "@/components/common/Charts/DriftChart/DriftChart.vue"
-
-import DriftChartData from "@/api/mock/factories/driftChartData.json"
+import FeaturesTable from "./FeaturesTable.vue"
+import FeatureChart from "@/components/common/featureChart/FeatureChart"
+import huxButton from "@/components/common/huxButton"
+import LiftChart from "@/components/common/LiftChart.vue"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
-import huxButton from "@/components/common/huxButton"
 import VersionHistory from "./Drawers/VersionHistoryDrawer.vue"
 import { mapGetters, mapActions } from "vuex"
 
@@ -169,18 +189,20 @@ export default {
     huxButton,
     VersionHistory,
     DriftChart,
+    FeaturesTable,
   },
   data() {
     return {
       loading: false,
       loadingLift: true,
+      loadingModelFeatures: true,
+      loadingDrift: true,
       featuresLoading: false,
       versionHistoryDrawer: false,
       chartDimensions: {
         width: 0,
         height: 0,
       },
-      chartData: DriftChartData.data,
     }
   },
 
@@ -189,10 +211,12 @@ export default {
       model: "models/overview",
       lift: "models/lift",
       features: "models/features",
+      modelDashboardFeatures: "models/modelFeatures",
+      drift: "models/drift",
     }),
 
     driftChartData() {
-      let data = this.chartData.map((each) => {
+      let data = this.drift.map((each) => {
         return {
           xAxisValue: new Date(each.run_date),
           yAxisValue: each.drift,
@@ -204,7 +228,13 @@ export default {
     modelFeatures() {
       return this.features ? this.features.slice(0, 20) : []
     },
-
+    // This will be used while integration of Model feature table.
+    dashboardFeature() {
+      return this.modelDashboardFeatures
+    },
+    dashboardFeatureSize() {
+      return this.modelDashboardFeatures && this.modelDashboardFeatures.length
+    },
     breadcrumbItems() {
       const items = [
         {
@@ -231,8 +261,10 @@ export default {
     this.chartDimensions.height = 520
     await this.getOverview(this.$route.params.id)
     this.fetchLift()
+    this.fetchDrift()
     this.loading = false
     this.fetchFeatures()
+    this.fetchModelFeatures() // Fetch data for Model feature table.
   },
 
   created() {
@@ -253,11 +285,23 @@ export default {
       getOverview: "models/getOverview",
       getLift: "models/getLift",
       getFeatures: "models/getFeatures",
+      getModelFeatures: "models/getModelFeatures", // used for Model feature table.
+      getDrift: "models/getDrift",
     }),
     async fetchLift() {
       this.loadingLift = true
       await this.getLift(this.$route.params.id)
       this.loadingLift = false
+    },
+    async fetchDrift() {
+      this.loadingDrift = true
+      await this.getDrift({
+        model_id: this.$route.params.id,
+        payload: {
+          model_type: this.model.model_type,
+        },
+      })
+      this.loadingDrift = false
     },
     viewVersionHistory() {
       this.versionHistoryDrawer = !this.versionHistoryDrawer
@@ -269,6 +313,11 @@ export default {
     },
     sizeHandler() {
       this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
+    },
+    async fetchModelFeatures() {
+      this.loadingModelFeatures = true
+      await this.getModelFeatures(this.$route.params.id)
+      this.loadingModelFeatures = false
     },
   },
 }

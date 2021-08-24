@@ -10,7 +10,13 @@ import seeds from "./seeds"
 
 // factories
 import { audience as audienceFactory } from "./factories/audiences"
-import { customer, customerProfile } from "./factories/customers"
+import {
+  customer,
+  customerProfile,
+  geoCity,
+  geoCountry,
+  geoState,
+} from "./factories/customers"
 import dataSourceFactory from "./factories/dataSource"
 import { destination as destinationFactory } from "./factories/destination"
 import { engagement as engagementFactory } from "./factories/engagement"
@@ -32,37 +38,43 @@ export function makeServer({ environment = "development" } = {}) {
       destinations: hasMany("destination"),
       // engagements: hasMany("engagement"),
     }),
+    audiencePerformance: Model,
     customer: Model,
     customerProfile: Model,
     dataSource: Model,
     destination: Model.extend({
       destinationable: belongsTo({ polymorphic: true }),
     }),
-    idrDataFeed: Model,
-    engagement: Model.extend(),
-    model: Model,
-    audiencePerformance: Model,
-    dataExtension: Model,
-    deliveryFactory: Model,
     campaign: Model,
     campaignOption: Model,
+    dataExtension: Model,
+    deliveryFactory: Model,
+    engagement: Model.extend(),
+    geoCity: Model,
+    geoCountry: Model,
+    geoState: Model,
+    idrDataFeed: Model,
+    model: Model,
     notification: Model,
   }
 
   const factories = {
     audience: Factory.extend(audienceFactory),
+    audiencePerformance: Factory.extend(audiencePerformanceFactory),
+    campaign: Factory.extend(CampaignFactory),
+    campaignOption: Factory.extend(CampaignMappingOptionsFactory),
     customer: Factory.extend(customer),
     customerProfile: Factory.extend(customerProfile),
+    dataExtension: Factory.extend(dataExtensionFactory),
     dataSource: Factory.extend(dataSourceFactory),
+    delivery: Factory.extend(deliveryFactory),
     destination: Factory.extend(destinationFactory),
     engagement: Factory.extend(engagementFactory),
+    geoCity: Factory.extend(geoCity),
+    geoCountry: Factory.extend(geoCountry),
+    geoState: Factory.extend(geoState),
     idrDataFeed: Factory.extend(idrDataFeedFactory),
     model: Factory.extend(modelFactory),
-    audiencePerformance: Factory.extend(audiencePerformanceFactory),
-    dataExtension: Factory.extend(dataExtensionFactory),
-    delivery: Factory.extend(deliveryFactory),
-    campaignOption: Factory.extend(CampaignMappingOptionsFactory),
-    campaign: Factory.extend(CampaignFactory),
     notification: Factory.extend(notificationFactory),
   }
 

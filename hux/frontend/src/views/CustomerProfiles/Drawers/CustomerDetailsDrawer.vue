@@ -221,14 +221,22 @@ export default {
 ::v-deep .theme--light.v-sheet {
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
 }
-.hux-data-table {
-  ::v-deep table {
+::v-deep .hux-data-table {
+  .v-data-table {
     .v-data-table-header {
       tr {
         height: 40px !important;
       }
       th {
         background: var(--v-aliceBlue-base);
+      }
+    }
+    > .v-data-table__wrapper {
+      > table {
+        > tbody > tr > td {
+          padding-top: 0;
+          padding-bottom: 0;
+        }
       }
     }
     .match-confidence {

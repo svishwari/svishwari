@@ -21,6 +21,16 @@ export default {
       type: Array,
       required: true,
     },
+    chartDimensions: {
+      type: Object,
+      required: false,
+      default() {
+        return {
+          width: 0,
+          height: 0,
+        }
+      },
+    },
   },
   data() {
     return {
@@ -32,16 +42,6 @@ export default {
         x: 0,
         y: 0,
       },
-      chartDimensions: {
-        type: Object,
-        required: false,
-        default() {
-          return {
-            width: 0,
-            height: 0,
-          }
-        },
-      },
       margin: { top: 5, right: 40, bottom: 20, left: 22 },
       chartData: this.value,
     }
@@ -50,7 +50,7 @@ export default {
     chartDimensions: {
       handler() {
         d3Select.select(this.$refs.huxChart).selectAll("svg").remove()
-        this.initiateMapChart()
+        this.initiateHorizontalBarChart()
       },
       immediate: false,
       deep: true,
@@ -62,6 +62,8 @@ export default {
   methods: {
     async initiateHorizontalBarChart() {
       await this.chartData
+      this.width = this.chartDimensions.width
+      this.height = this.chartDimensions.height
       this.chartWidth = this.chartDimensions.width + "px"
 
       this.width = this.width - this.margin.left - this.margin.right
