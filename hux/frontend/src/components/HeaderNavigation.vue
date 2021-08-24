@@ -24,15 +24,18 @@
       </v-list>
     </v-menu>
     <notification />
+    <help />
   </div>
 </template>
 
 <script>
 import Notification from "../components/Notification.vue"
+import Help from "../components/Help.vue"
 export default {
   name: "HeaderNavigation",
   components: {
     Notification,
+    Help,
   },
   data() {
     return {
