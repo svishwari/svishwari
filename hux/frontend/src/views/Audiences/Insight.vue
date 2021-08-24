@@ -199,19 +199,18 @@
     <div class="px-15 my-1">
       <v-card class="rounded pa-5 box-shadow-5">
         <div class="overview headingOverviewCard">Audience overview</div>
-        <div  v-if="this.audience.is_lookalike" class="row overview-list lookalike-aud mb-0 ml-0 mr-1 mt-4">
+        <div v-if="this.audience.is_lookalike" class="row overview-list lookalike-aud mb-0 ml-0 mr-1 mt-4">
            <metric-card  :height="60"  :title="''" class="lookalikeMessageCard">
-             <template #subtitle-extended> <span>This is a lookalike audience. Go to the original audience, </span> 
-
+             <template #subtitle-extended> 
+               <span>This is a lookalike audience. Go to the original audience, </span> 
              <router-link
                 :to="{
                   name: '',
-                  
                 }"
           class="text-decoration-none"
           append
         >{{audience.name}} </router-link>
-                <span>, to see insights</span></template>
+              <span>, to see insights</span></template>
            </metric-card>
         </div>
         <div v-if="!this.audience.is_lookalike" class="row overview-list mb-0 ml-0 mt-1">
