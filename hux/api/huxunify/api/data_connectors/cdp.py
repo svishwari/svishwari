@@ -807,12 +807,12 @@ def get_city_ltvs(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Failed to retrieve city-wise demographic insights %s %s.",
+            "Failed to retrieve city-level demographic insights %s %s.",
             response.status_code,
             response.text,
         )
         return []
 
-    logger.info("Successfully retrieved city-wise demographic insights.")
+    logger.info("Successfully retrieved city-level demographic insights.")
 
     return [clean_cdm_fields(data) for data in response.json()[api_c.BODY]]

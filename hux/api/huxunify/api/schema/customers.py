@@ -297,7 +297,7 @@ class TotalCustomersInsightsSchema(Schema):
 
 
 class CustomersInsightsCitiesSchema(Schema):
-    """City-wise customer insights schema"""
+    """City-level customer insights schema"""
 
     city = Str(required=True, example="New York City")
     state = Str(required=True, example="NY")
@@ -310,7 +310,7 @@ class CustomersInsightsCitiesSchema(Schema):
 
 
 class CustomersInsightsStatesSchema(Schema):
-    """State-wise customer insights schema"""
+    """State-level customer insights schema"""
 
     state = Str(attribute=api_c.NAME, required=True, example="New York")
     size = Integer(required=True, default=0, example=1234)

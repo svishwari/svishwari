@@ -851,7 +851,7 @@ class CustomersInsightsStates(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     def get(self) -> Tuple[list, int]:
-        """Retrieves city-wise customer insights.
+        """Retrieves city-level customer insights.
 
         ---
         security:
@@ -941,7 +941,7 @@ class CustomersInsightsCities(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     def post(self) -> Tuple[list, int]:
-        """Retrieves city-wise customer insights.
+        """Retrieves city-level customer insights.
 
         ---
         security:
