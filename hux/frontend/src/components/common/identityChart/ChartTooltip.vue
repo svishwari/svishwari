@@ -26,6 +26,7 @@
         v-if="sourceInput.sourceIcon"
         :type="sourceInput.sourceIcon"
         :size="12"
+        :color="primary"
       />
       <span class="prop-name">{{ sourceInput.sourceName }}</span>
       <span class="pipe"></span>
@@ -33,6 +34,7 @@
         v-if="sourceInput.targetIcon"
         :type="sourceInput.targetIcon"
         :size="12"
+        :color="primary"
       />
       <span class="prop-name">{{ sourceInput.targetName }}</span>
       <span class="text-line">

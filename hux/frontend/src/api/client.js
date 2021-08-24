@@ -42,6 +42,10 @@ client["customers"].geoCountries = () =>
 
 client["customers"].geoStates = () => http.get("/customers-insights/states")
 
+client["customers"].totalCustomers = () => {
+  return http.get("/customers-insights/total")
+}
+
 client["customers"].getOverview = (data) => {
   return http.post("/customers/overview", data)
 }
