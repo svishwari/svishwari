@@ -573,7 +573,7 @@ def get_customer_events_data(
 
     # YTD by default
     default_filter = {
-        api_c.START_DATE: f"{current_time.year}-01-01",
+        api_c.START_DATE: current_time.strftime("%Y-01-01"),
         api_c.END_DATE: current_time.strftime("%Y-%m-%d"),
     }
 
@@ -582,7 +582,7 @@ def get_customer_events_data(
     # set missing start or end date
     filters[api_c.START_DATE] = filters.get(
         api_c.START_DATE,
-        f"{current_time.year}-01-01",
+        current_time.strftime("%Y-01-01"),
     )
     filters[api_c.END_DATE] = filters.get(
         api_c.END_DATE,
