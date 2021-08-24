@@ -56,7 +56,7 @@ includes:
 marks:
   - parametrize:
       key: model_id
-      vals: #"{model_ids}"
+      vals: 
         - 1
         - 2
 
