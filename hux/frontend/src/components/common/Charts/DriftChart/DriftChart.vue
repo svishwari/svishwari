@@ -298,7 +298,9 @@ export default {
         .attr("transform", `translate(${this.margin.left},${this.margin.top})`)
         .attr(
           "height",
-          height - this.margin.bottom > 0 ? height - this.margin.bottom - this.margin.top : 0
+          height - this.margin.bottom > 0
+            ? height - this.margin.bottom - this.margin.top
+            : 0
         )
         .style("stroke", this.tickColor)
         .style("fill", "transparent")
