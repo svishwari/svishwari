@@ -67,7 +67,7 @@ export default {
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
-      let margin = { top: 20, right: 50, bottom: 80, left: 60 }
+      let margin = { top: 30, right: 30, bottom: 100, left: 65 }
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
       let formattedData = []
