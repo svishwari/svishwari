@@ -100,7 +100,7 @@ class TestCustomersOverview(TestCase):
             f"{self.customers}?{api_c.QUERY_PARAMETER_BATCH_SIZE}="
             f"{api_c.CUSTOMERS_DEFAULT_BATCH_SIZE}&"
             f"{api_c.QUERY_PARAMETER_BATCH_NUMBER}="
-            f"{api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER}",
+            f"{api_c.DEFAULT_BATCH_NUMBER}",
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
