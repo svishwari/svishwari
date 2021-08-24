@@ -35,7 +35,7 @@ export default {
   name: "HeaderNavigation",
   components: {
     Notification,
-    Help
+    Help,
   },
   data() {
     return {

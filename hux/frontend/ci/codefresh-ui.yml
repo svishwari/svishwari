@@ -58,7 +58,7 @@ steps:
     type: freestyle
     image: huxhub.repo.mgnt.in/alpine
     working_directory: "${{CF_REPO_NAME}}"
-    commands: 
+    commands:
       - cat ./hux/frontend/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
 
   test_image:
@@ -82,7 +82,7 @@ steps:
         image: ${{test_image}}
         working_directory: /app
         commands:
-          - yarn lint
+          - yarn lint --no-fix
       unit_tests:
         stage: tests
         title: "Running unit tests."

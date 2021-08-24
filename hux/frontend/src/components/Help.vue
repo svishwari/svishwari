@@ -9,12 +9,10 @@
     </template>
     <v-list>
       <v-list-item>
-        <v-list-item-title class="font-weight-bold">
-          Help
-        </v-list-item-title>
+        <v-list-item-title class="font-weight-bold"> Help </v-list-item-title>
       </v-list-item>
       <v-list-item class="v-list-item--link">
-        <a 
+        <a
           href="mailto:ushuxproductsupport@deloitte.com"
           class="text-h6 view-all text-decoration-none"
         >
@@ -26,11 +24,9 @@
 </template>
 
 <script>
-
 export default {
   name: "Help",
 }
-
 </script>
 
 <style lang="scss" scoped>
