@@ -650,7 +650,7 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> list:
             customers_overview endpoint.
 
     Returns:
-        list of income details of customers by cities
+        list: list of income details of customers by cities
 
     """
     return [
