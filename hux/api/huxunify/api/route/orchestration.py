@@ -1028,7 +1028,9 @@ class AudienceDownload(SwaggerView):
         )
 
         if not audience:
-            return {"message": "Audience not found"}, HTTPStatus.BAD_REQUEST
+            return {
+                "message": api_c.AUDIENCE_NOT_FOUND
+            }, HTTPStatus.BAD_REQUEST
 
         if not api_c.DOWNLOAD_TYPES.get(download_type):
             return {"message": "Invalid download type"}, HTTPStatus.BAD_REQUEST
@@ -1067,8 +1069,8 @@ class AudienceDownload(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            f'Audience "{audience[db_c.NAME]}" of {download_type} '
-            f"format downloaded by {user_name}.",
+            f"{user_name} downloaded the audience, {audience[db_c.NAME]}"
+            f" with format {download_type}.",
             api_c.ORCHESTRATION_TAG,
         )
 
