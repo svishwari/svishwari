@@ -67,7 +67,7 @@ export default {
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
-      let margin = { top: 20, right: 30, bottom: 80, left: 60 }
+      let margin = { top: 20, right: 50, bottom: 80, left: 60 }
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
       let formattedData = []
@@ -167,6 +167,18 @@ export default {
       let applyNumericFilter = (value) =>
         this.$options.filters.Numeric(value, true, false, true)
 
+            svg
+        .append("g")
+        .classed("xAxis-alternate", true)
+        .attr("transform", "translate(0," + 408 + ")")
+        .call(
+          d3Axis
+            .axisBottom(xScale)
+            .tickSize(0)
+            .tickFormat("")
+        ).style("stroke-width", 16)
+
+
       svg
         .append("g")
         .classed("xAxis", true)
@@ -206,6 +218,9 @@ export default {
       d3Select.selectAll(".domain").style("stroke", "rgba(208, 208, 206, 1)")
       d3Select.selectAll(".tick line").style("stroke", "rgba(208, 208, 206, 1)")
       d3Select.selectAll(".xAxis .tick text").attr("x", 10)
+      d3Select.selectAll(".xAxis-alternate .domain").style("stroke", "white")
+
+      
 
       let topRoundedRect = (x, y, width, height) =>
         `M${x},${y + ry}
@@ -220,14 +235,7 @@ export default {
         .data((d) => d)
         .enter()
         .append("path")
-        .attr("d", (d, i) =>
-          topRoundedRect(
-            xScale(i),
-            yScale(d[1]),
-            xScale.bandwidth(),
-            yScale(d[0]) - yScale(d[1])
-          )
-        )
+        .attr("d", (d, i) => topRoundedRect( xScale(i),yScale(d[1]),xScale.bandwidth(),yScale(d[0]) - yScale(d[1])))
         .style("margin-right", "10px")
         .style("fill", (d) => barColorCodes[d.data.index])
         .on("mouseover", (d) => applyHoverEffects(d, xScale.bandwidth()))
