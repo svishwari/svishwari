@@ -127,9 +127,9 @@ class EngagementDeliverDestinationView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            engagement_id (str): Engagement ID.
-            audience_id (str): Audience ID.
-            destination_id (str): Destination ID.
+            engagement_id (ObjectId): Engagement ID.
+            audience_id (ObjectId): Audience ID.
+            destination_id (ObjectId): Destination ID.
 
         Returns:
             Tuple[dict, int]: Message indicating connection
@@ -259,8 +259,8 @@ class EngagementDeliverAudienceView(SwaggerView):
         security:
             - Bearer: ["Authorization"]
         Args:
-            engagement_id (str): Engagement ID.
-            audience_id (str): Audience ID.
+            engagement_id (ObjectId): Engagement ID.
+            audience_id (ObjectId): Audience ID.
         Returns:
             Tuple[dict, int]: Message indicating connection
                 success/failure, HTTP Status.
@@ -354,7 +354,7 @@ class EngagementDeliverView(SwaggerView):
         security:
             - Bearer: ["Authorization"]
         Args:
-            engagement_id (str): Engagement ID.
+            engagement_id (ObjectId): Engagement ID.
         Returns:
             Tuple[dict, int]: Message indicating connection
                 success/failure, HTTP Status.
@@ -441,7 +441,7 @@ class AudienceDeliverView(SwaggerView):
         security:
             - Bearer: ["Authorization"]
         Args:
-            audience_id (str): Audience ID.
+            audience_id (ObjectId): Audience ID.
         Returns:
             Tuple[dict, int]: Message indicating connection
                 success/failure, HTTP Status.
