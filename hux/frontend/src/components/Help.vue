@@ -43,12 +43,8 @@ export default {
   }
 }
 .view-all {
-  font-family: Open Sans;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 14px;
   line-height: 22px;
   color: var(--v-neroblack-base) !important;
-  cursor: pointer;
+  @extend .cursor-pointer;
 }
 </style>
