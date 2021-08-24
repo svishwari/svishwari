@@ -11,7 +11,7 @@
           is-tile
           icon="customer-profiles"
           variant="white"
-          @click="openProfilesDrawer()"
+          @click="toggleProfilesDrawer()"
         >
           View all customers
         </hux-button>
@@ -247,9 +247,22 @@
       </v-row>
       <customer-details v-model="customerProfilesDrawer" />
       <geo-drawer
-        :toggle="geoDrawer"
-        :geo-level="geoLevel"
-        :results="geoResults"
+        geo-level="cities"
+        :results="overview.total_cities"
+        :toggle="geoDrawer.cities"
+        @onToggle="(isToggled) => (geoDrawer.cities = isToggled)"
+      />
+      <geo-drawer
+        geo-level="countries"
+        :results="overview.total_countries"
+        :toggle="geoDrawer.countries"
+        @onToggle="(isToggled) => (geoDrawer.countries = isToggled)"
+      />
+      <geo-drawer
+        geo-level="states"
+        :results="overview.total_us_states"
+        :toggle="geoDrawer.states"
+        @onToggle="(isToggled) => (geoDrawer.states = isToggled)"
       />
     </div>
   </div>
@@ -298,9 +311,11 @@ export default {
     return {
       customerProfilesDrawer: false,
       loadingCustomerChart: false,
-      geoDrawer: false,
-      geoLevel: null,
-      geoResults: 0,
+      geoDrawer: {
+        cities: false,
+        countries: false,
+        states: false,
+      },
       loadingGeoOverview: false,
       timeFrameLabel: "last 6 months",
       overviewListItems: [
@@ -310,28 +325,28 @@ export default {
           toolTipText:
             "Total no. of unique hux ids generated to represent a customer.",
           value: "",
-          action: "openProfilesDrawer",
+          action: "toggleProfilesDrawer",
         },
         {
           title: "Countries",
           subtitle: "",
           icon: "mdi-earth",
           value: "",
-          action: "openCountriesDrawer",
+          action: "toggleCountriesDrawer",
         },
         {
           title: "US States",
           subtitle: "",
           icon: "mdi-map",
           value: "",
-          action: "openStatesDrawer",
+          action: "toggleStatesDrawer",
         },
         {
           title: "Cities",
           subtitle: "",
           icon: "mdi-map-marker-radius",
           value: "",
-          action: "openCitiesDrawer",
+          action: "toggleCitiesDrawer",
         },
         { title: "Age", subtitle: "", icon: "mdi-cake-variant", value: "" },
         { title: "Women", subtitle: "", icon: "mdi-gender-female", value: "" },
@@ -535,26 +550,27 @@ export default {
         return updatedValue
       }
     },
-    openProfilesDrawer() {
+    toggleProfilesDrawer() {
       this.customerProfilesDrawer = !this.customerProfilesDrawer
     },
-    openGeoDrawer(geoLevel = "states") {
-      this.geoLevel = geoLevel
-
-      if (geoLevel === "cities") this.geoResults = this.overview.total_cities
-
-      if (geoLevel === "countries")
-        this.geoResults = this.overview.total_countries
-
-      if (geoLevel === "states") this.geoResults = this.overview.total_us_states
-
-      this.geoDrawer = !this.geoDrawer
+    toggleGeoDrawer(geoLevel = "states") {
+      this.geoDrawer[geoLevel] = !this.geoDrawer[geoLevel]
     },
     onClick(action) {
-      if (action === "openProfilesDrawer") this.openProfilesDrawer()
-      if (action === "openCitiesDrawer") this.openGeoDrawer("cities")
-      if (action === "openCountriesDrawer") this.openGeoDrawer("countries")
-      if (action === "openStatesDrawer") this.openGeoDrawer("states")
+      switch (action) {
+        case "toggleProfilesDrawer":
+          this.toggleProfilesDrawer()
+          break
+        case "toggleCitiesDrawer":
+          this.toggleGeoDrawer("cities")
+          break
+        case "toggleCountriesDrawer":
+          this.toggleGeoDrawer("countries")
+          break
+        case "toggleStatesDrawer":
+          this.toggleGeoDrawer("states")
+          break
+      }
     },
     sizeHandler() {
       if (this.$refs.genderChart) {

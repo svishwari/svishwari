@@ -74,6 +74,10 @@ const mutations = {
     state.geoCities = data
   },
 
+  ADD_GEO_CITIES(state, data) {
+    state.geoCities.push(...data)
+  },
+
   SET_GEO_STATES(state, data) {
     state.geoStates = data
   },
@@ -130,10 +134,11 @@ const actions = {
     }
   },
 
-  async getGeoCities({ commit }) {
+  async getGeoCities({ commit }, { batchNumber, batchSize }) {
     try {
-      const response = await api.customers.geoCities()
-      commit("SET_GEO_CITIES", response.data)
+      if (batchNumber === 1) commit("SET_GEO_CITIES", [])
+      const response = await api.customers.geoCities(batchNumber, batchSize)
+      commit("ADD_GEO_CITIES", response.data)
     } catch (error) {
       handleError(error)
       throw error

@@ -6,12 +6,14 @@
       </div>
     </template>
 
-    <template #default>
+    <template #loading>
       <v-progress-linear :active="loading" :indeterminate="loading" />
+    </template>
 
+    <template #default>
       <hux-data-table
         :columns="columns"
-        :data-items="!loading ? items : []"
+        :data-items="items"
         :sort-column="sortColumn"
       >
         <template #row-item="{ item }">
@@ -37,9 +39,14 @@
                 {{ item[col.value] | Currency }}
               </template>
             </tooltip>
+            <span v-if="col.value === 'id'">
+              {{ item[col.value] }}
+            </span>
           </td>
         </template>
       </hux-data-table>
+
+      <observer v-if="items.length" @intersect="onLazyLoad" />
     </template>
 
     <template #footer-left>
@@ -54,6 +61,7 @@
 import { mapActions, mapGetters } from "vuex"
 import Drawer from "@/components/common/Drawer.vue"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
+import Observer from "@/components/common/Observer.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
@@ -62,6 +70,7 @@ export default {
   components: {
     Drawer,
     HuxDataTable,
+    Observer,
     Tooltip,
   },
 
@@ -87,6 +96,8 @@ export default {
     return {
       localToggle: false,
       loading: false,
+      batchSize: 100,
+      batchNumber: 1,
       columns: [],
       defaultColumns: [
         {
@@ -112,10 +123,20 @@ export default {
     }),
 
     items() {
-      if (this.geoLevel === "cities") return this.geoCities
-      if (this.geoLevel === "states") return this.geoStates
-      if (this.geoLevel === "countries") return this.geoCountries
-      return this.geoStates
+      switch (this.geoLevel) {
+        case "cities":
+          return this.geoCities
+        case "states":
+          return this.geoStates
+        case "countries":
+          return this.geoCountries
+        default:
+          return this.geoStates
+      }
+    },
+
+    lastBatch() {
+      return Math.ceil(this.results / this.batchSize) || 1
     },
 
     title() {
@@ -139,47 +160,48 @@ export default {
 
   async updated() {
     if (this.toggle) {
-      if (this.geoLevel === "cities") {
-        this.columns = [
-          {
-            value: "city",
-            text: "City",
-            width: "30%",
-          },
-          {
-            value: "state",
-            text: "State",
-            width: "20%",
-          },
-          ...this.defaultColumns,
-        ]
-        this.sortColumn = "city"
+      switch (this.geoLevel) {
+        case "cities":
+          this.columns = [
+            {
+              value: "city",
+              text: "City",
+              width: "30%",
+            },
+            {
+              value: "state",
+              text: "State",
+              width: "20%",
+            },
+            ...this.defaultColumns,
+          ]
+          this.sortColumn = "city"
+          break
+        case "countries":
+          this.columns = [
+            {
+              value: "country",
+              text: "Country",
+              width: "50%",
+            },
+            ...this.defaultColumns,
+          ]
+          this.sortColumn = "country"
+          break
+        case "states":
+          this.columns = [
+            {
+              value: "state",
+              text: "State",
+              width: "50%",
+            },
+            ...this.defaultColumns,
+          ]
+          this.sortColumn = "state"
+          break
       }
 
-      if (this.geoLevel === "countries") {
-        this.columns = [
-          {
-            value: "country",
-            text: "Country",
-            width: "50%",
-          },
-          ...this.defaultColumns,
-        ]
-        this.sortColumn = "country"
-      }
-
-      if (this.geoLevel === "states") {
-        this.columns = [
-          {
-            value: "state",
-            text: "State",
-            width: "50%",
-          },
-          ...this.defaultColumns,
-        ]
-        this.sortColumn = "state"
-      }
-
+      this.batchNumber = 1
       await this.refreshData()
     }
   },
@@ -191,11 +213,31 @@ export default {
       getGeoStates: "customers/getGeoStates",
     }),
 
+    async onLazyLoad() {
+      if (this.lastBatch > 1 && this.batchNumber <= this.lastBatch) {
+        this.batchNumber++
+        await this.refreshData()
+      }
+    },
+
     async refreshData() {
       this.loading = true
-      if (this.geoLevel === "cities") await this.getGeoCities()
-      if (this.geoLevel === "countries") await this.getGeoCountries()
-      if (this.geoLevel === "states") await this.getGeoStates()
+
+      switch (this.geoLevel) {
+        case "cities":
+          await this.getGeoCities({
+            batchNumber: this.batchNumber,
+            batchSize: this.batchSize,
+          })
+          break
+        case "countries":
+          await this.getGeoCountries()
+          break
+        case "states":
+          await this.getGeoStates()
+          break
+      }
+
       this.loading = false
     },
   },

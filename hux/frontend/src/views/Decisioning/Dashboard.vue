@@ -217,10 +217,23 @@ export default {
 
     driftChartData() {
       let data = this.drift.map((each) => {
+        let oldRunDate = new Date(each.run_date)
+        let newRunDate = `${
+          oldRunDate.getMonth() + 1
+        }/${oldRunDate.getDate()}/${oldRunDate.getFullYear()}`
         return {
-          xAxisValue: new Date(each.run_date),
+          xAxisValue: new Date(newRunDate),
           yAxisValue: each.drift,
         }
+      })
+
+      data.sort((a, b) => {
+        let keyA = new Date(a.xAxisValue)
+        let keyB = new Date(b.xAxisValue)
+
+        if (keyA < keyB) return -1
+        if (keyA > keyB) return 1
+        return 0
       })
 
       return data
