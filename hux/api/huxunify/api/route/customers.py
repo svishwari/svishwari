@@ -830,7 +830,7 @@ class TotalCustomersGraphView(SwaggerView):
 )
 class CustomersInsightsStates(SwaggerView):
     """
-    Total customer insights graph view class
+    Customer insights by state
     """
 
     responses = {
@@ -851,15 +851,15 @@ class CustomersInsightsStates(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     def get(self) -> Tuple[list, int]:
-        """Retrieves city-level customer insights.
+        """Retrieves state-level geographic customer insights.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
         Returns:
-            - Tuple[dict, int]
-                list of total customers & new customers added,
+            - Tuple[list, int]
+                list of spend and size data by state,
                 http code
         """
         # get auth token from request
@@ -882,7 +882,7 @@ class CustomersInsightsStates(SwaggerView):
 )
 class CustomersInsightsCities(SwaggerView):
     """
-    Total customer insights graph view class
+    Customer insights by city
     """
 
     params = parameters = [
@@ -943,7 +943,7 @@ class CustomersInsightsCities(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     def post(self) -> Tuple[list, int]:
-        """Retrieves city-level customer insights.
+        """Retrieves city-level geographic customer insights.
 
         ---
         security:
@@ -951,7 +951,7 @@ class CustomersInsightsCities(SwaggerView):
 
         Returns:
             - Tuple[list, int]
-                list of total customers & new customers added,
+                list of spend and size by city,
                 http code
         """
         # get auth token from request
