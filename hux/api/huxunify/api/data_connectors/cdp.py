@@ -650,7 +650,7 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> list:
             customers_overview endpoint.
 
     Returns:
-        list of dict of income details of customers by cities
+        list of income details of customers by cities
 
     """
     return [
@@ -784,10 +784,10 @@ def get_city_ltvs(
 
     Args:
         token (str): OKTA JWT Token.
-        offset(int): offset
-        limit(int): limit
         filters (dict):  filters to pass into
             city_ltvs endpoint
+        offset (int): offset
+        limit (int): limit
 
     Returns:
         list of demographic details by cities

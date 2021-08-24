@@ -887,13 +887,11 @@ class CustomersInsightsStates(SwaggerView):
         # get auth token from request
         token_response = get_token_from_request(request)
 
-        filters = request.json
-
         return (
             jsonify(
                 CustomersInsightsStatesSchema().dump(
                     get_demographic_by_state(
-                        token_response[0], filters=filters
+                        token_response[0], filters=request.json
                     ),
                     many=True,
                 )
@@ -936,20 +934,7 @@ class CustomersInsightsCities(SwaggerView):
             "description": "Customer Overview Filters",
             "type": "object",
             "in": "body",
-            "example": {
-                "filters": [
-                    {
-                        "section_aggregator": "ALL",
-                        "section_filters": [
-                            {
-                                "field": "country",
-                                "type": "equals",
-                                "value": "US",
-                            }
-                        ],
-                    }
-                ]
-            },
+            "example": api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
         },
     ]
     responses = {
@@ -991,19 +976,14 @@ class CustomersInsightsCities(SwaggerView):
             api_c.QUERY_PARAMETER_BATCH_NUMBER, api_c.DEFAULT_BATCH_NUMBER
         )
 
-        filters = request.json
-
-        offset = int(batch_size) * (int(batch_number) - 1)
-        limit = int(batch_size)
-
         return (
             jsonify(
                 CustomersInsightsCitiesSchema().dump(
                     get_city_ltvs(
                         token_response[0],
-                        filters=filters,
-                        offset=offset,
-                        limit=limit,
+                        filters=request.json,
+                        offset=int(batch_size) * (int(batch_number) - 1),
+                        limit=int(batch_size),
                     ),
                     many=True,
                 )
