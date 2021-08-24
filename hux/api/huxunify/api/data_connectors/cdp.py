@@ -671,7 +671,7 @@ def get_demographic_by_state(
             count_by_state endpoint, default None
 
     Returns:
-        list of demographic details by state
+        list: list of demographic details by state
 
     """
     # get config
@@ -691,7 +691,7 @@ def get_demographic_by_state(
             response.status_code,
             response.text,
         )
-        return {}
+        return []
 
     logger.info("Successfully retrieved state demographic insights.")
     body = clean_cdm_fields(response.json()[api_c.BODY])
@@ -790,7 +790,7 @@ def get_city_ltvs(
         limit (int): limit
 
     Returns:
-        list of demographic details by cities
+        list: list of demographic details by cities
 
     """
     # get config
