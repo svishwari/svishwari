@@ -5,7 +5,9 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <v-icon size="22" color="lightGrey" class="mr-2"> mdi-refresh </v-icon>
+        <v-icon size="22" color="primary" class="mr-2" @click="refreshEntity()">
+          mdi-refresh
+        </v-icon>
 
         <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-plus-circle-multiple-outline
@@ -658,6 +660,11 @@ export default {
     },
     getColorCode(name) {
       return generateColor(name, 30, 60) + " !important"
+    },
+
+    async refreshEntity() {
+      this.$root.$emit("refresh-notifications")
+      await this.loadAudienceInsights()
     },
 
     /**
