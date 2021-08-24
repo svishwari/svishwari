@@ -5,19 +5,16 @@ from datetime import datetime
 from functools import wraps
 from typing import Any, Tuple, Union, Dict
 from http import HTTPStatus
+import time
 from bson import ObjectId
 from bson.errors import InvalidId
-import time
 
 import facebook_business.exceptions
 from healthcheck import HealthCheck
 from decouple import config
 from flask import request, Response, Flask
 import prometheus_client
-from prometheus_client import (
-    CollectorRegistry,
-    Histogram
-)
+from prometheus_client import CollectorRegistry, Histogram
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
 from marshmallow import ValidationError
@@ -300,8 +297,8 @@ def get_user_name() -> object:
             # checking if required keys are present in user_info
             if not required_keys.issubset(user_info.keys()):
                 return {
-                           "message": constants.AUTH401_ERROR_MESSAGE
-                       }, HTTPStatus.UNAUTHORIZED
+                    "message": constants.AUTH401_ERROR_MESSAGE
+                }, HTTPStatus.UNAUTHORIZED
 
             logger.info("Successfully got user info from OKTA.")
             # check if the user is in the database
@@ -404,14 +401,14 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {
-                           "message": "Error connecting to Facebook"
-                       }, HTTPStatus.BAD_REQUEST
+                    "message": "Error connecting to Facebook"
+                }, HTTPStatus.BAD_REQUEST
             except ValueError:
                 return {
-                           "message": custom_message
-                           if custom_message
-                           else "Value Error Encountered"
-                       }, HTTPStatus.INTERNAL_SERVER_ERROR
+                    "message": custom_message
+                    if custom_message
+                    else "Value Error Encountered"
+                }, HTTPStatus.INTERNAL_SERVER_ERROR
 
             except de.DuplicateName as exc:
                 logger.error(
@@ -422,8 +419,8 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {
-                           "message": constants.DUPLICATE_NAME
-                       }, HTTPStatus.BAD_REQUEST.value
+                    "message": constants.DUPLICATE_NAME
+                }, HTTPStatus.BAD_REQUEST.value
 
             except CustomAudienceDeliveryStatusError as exc:
                 logger.error(
@@ -434,8 +431,8 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {
-                           "message": "Delivered custom audience is inactive or unusable."
-                       }, HTTPStatus.NOT_FOUND
+                    "message": "Delivered custom audience is inactive or unusable."
+                }, HTTPStatus.NOT_FOUND
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.
@@ -450,8 +447,8 @@ def api_error_handler(custom_message: dict = None) -> object:
                     return custom_message, HTTPStatus.BAD_REQUEST
 
                 return {
-                           "message": "Internal Server Error"
-                       }, HTTPStatus.INTERNAL_SERVER_ERROR
+                    "message": "Internal Server Error"
+                }, HTTPStatus.INTERNAL_SERVER_ERROR
 
         # set tag so we can assert if a function is secured via this decorator
         decorator.__wrapped__ = in_function
@@ -523,11 +520,11 @@ def get_friendly_delivered_time(delivered_time: datetime) -> str:
 
 
 def update_metrics(
-        target_id: ObjectId,
-        name: str,
-        jobs: list,
-        perf_metrics: list,
-        metric_type: str,
+    target_id: ObjectId,
+    name: str,
+    jobs: list,
+    perf_metrics: list,
+    metric_type: str,
 ) -> dict:
     """Update performance metrics
 
@@ -598,8 +595,8 @@ def validate_delivery_params(func) -> object:
                     func.__module__,
                 )
                 return {
-                           "message": constants.INVALID_OBJECT_ID
-                       }, HTTPStatus.BAD_REQUEST
+                    "message": constants.INVALID_OBJECT_ID
+                }, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
 
@@ -615,8 +612,8 @@ def validate_delivery_params(func) -> object:
                         func.__module__,
                     )
                     return {
-                               "message": "Engagement has no audiences."
-                           }, HTTPStatus.BAD_REQUEST
+                        "message": "Engagement has no audiences."
+                    }, HTTPStatus.BAD_REQUEST
             else:
                 # validate that the engagement has audiences
                 logger.error(
@@ -625,8 +622,8 @@ def validate_delivery_params(func) -> object:
                     func.__module__,
                 )
                 return {
-                           "message": constants.ENGAGEMENT_NOT_FOUND
-                       }, HTTPStatus.NOT_FOUND
+                    "message": constants.ENGAGEMENT_NOT_FOUND
+                }, HTTPStatus.NOT_FOUND
 
         # check if audience id exists
         audience_id = kwargs.get("audience_id", None)
@@ -648,8 +645,8 @@ def validate_delivery_params(func) -> object:
                     func.__module__,
                 )
                 return {
-                           "message": "Audience does not exist."
-                       }, HTTPStatus.BAD_REQUEST
+                    "message": "Audience does not exist."
+                }, HTTPStatus.BAD_REQUEST
 
             if audience_id and engagement_id:
                 # validate that the audience is attached
@@ -665,8 +662,8 @@ def validate_delivery_params(func) -> object:
                         func.__module__,
                     )
                     return {
-                               "message": "Audience is not attached to the engagement."
-                           }, HTTPStatus.BAD_REQUEST
+                        "message": "Audience is not attached to the engagement."
+                    }, HTTPStatus.BAD_REQUEST
 
         return func(*args, **kwargs)
 
@@ -674,7 +671,7 @@ def validate_delivery_params(func) -> object:
 
 
 def validate_destination_id(
-        destination_id: str, check_if_destination_in_db: bool = True
+    destination_id: str, check_if_destination_in_db: bool = True
 ) -> Union[ObjectId, Tuple[Dict[str, str], int]]:
     """Checks on destination_id
 
@@ -695,20 +692,20 @@ def validate_destination_id(
 
     if check_if_destination_in_db:
         if not destination_management.get_delivery_platform(
-                get_db_client(), destination_id
+            get_db_client(), destination_id
         ):
             logger.error(
                 "Could not find destination with id %s.", destination_id
             )
             return {
-                       "message": constants.DESTINATION_NOT_FOUND
-                   }, HTTPStatus.NOT_FOUND
+                "message": constants.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
     return destination_id
 
 
 def validate_destination(
-        check_if_destination_in_db: bool = True,
+    check_if_destination_in_db: bool = True,
 ) -> object:
     """
     This decorator handles validation of destination objects.
@@ -766,7 +763,7 @@ def validate_destination(
 
     return wrapper
 
-
+# pylint: disable=attribute-defined-outside-init
 class Singleton:
     """
     A non-thread-safe helper class to ease implementing singletons.
@@ -800,16 +797,17 @@ class Singleton:
             return self._instance
 
     def __call__(self):
-        raise TypeError('Singletons must be accessed through `instance()`.')
+        raise TypeError("Singletons must be accessed through `instance()`.")
 
     def __instancecheck__(self, inst):
         return isinstance(inst, self._decorated)
 
-
+# pylint: disable=no-self-use
 @Singleton
 class PrometheusHelper:
     """
-    Prometheus Helper class to manage the recorded metrics and generate metric reports for consumption
+    Prometheus Helper class to manage the recorded metrics
+    and generate metric reports for consumption
     """
 
     def __init__(self):
@@ -834,7 +832,7 @@ class PrometheusHelper:
         self.latency = Histogram(
             name="hux_api_request_duration",
             documentation="Elapsed time for API request execution.",
-            registry=self.prometheus_registry
+            registry=self.prometheus_registry,
         )
 
         self.metrics["latency"] = self.latency
@@ -867,6 +865,6 @@ class PrometheusHelper:
             list: List of prometheus metrics
         """
         metrics = []
-        for k, v in self.metrics.items():
-            metrics.append(prometheus_client.generate_latest(v))
+        for value in self.metrics.values():
+            metrics.append(prometheus_client.generate_latest(value))
         return metrics
