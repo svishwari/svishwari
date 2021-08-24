@@ -618,7 +618,7 @@ class CustomerDemoVisualView(SwaggerView):
             api_c.GENDER: {
                 gender: {
                     api_c.POPULATION_PERCENTAGE: customers.get(gender, 0),
-                    api_c.SIZE: customers.get(gender + "_" + api_c.COUNT, 0),
+                    api_c.SIZE: customers.get(f"{gender}_{api_c.COUNT}", 0),
                 }
                 for gender in api_c.GENDERS
             },

@@ -150,19 +150,11 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         data = response.json
-        self.assertTrue(data[api_c.TOTAL_RECORDS])
-        self.assertTrue(data[api_c.MATCH_RATE])
-        self.assertTrue(data[api_c.GENDER_MEN])
         self.assertGreaterEqual(data[api_c.GENDER_MEN], 0)
-        self.assertTrue(data[api_c.GENDER_WOMEN])
         self.assertGreaterEqual(data[api_c.GENDER_WOMEN], 0)
-        self.assertTrue(data[api_c.GENDER_OTHER])
         self.assertGreaterEqual(data[api_c.GENDER_OTHER], 0)
-        self.assertTrue(data[api_c.GENDER_MEN_COUNT])
         self.assertGreaterEqual(data[api_c.GENDER_MEN_COUNT], 0)
-        self.assertTrue(data[api_c.GENDER_WOMEN_COUNT])
         self.assertGreaterEqual(data[api_c.GENDER_WOMEN_COUNT], 0)
-        self.assertTrue(data[api_c.GENDER_OTHER_COUNT])
         self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)
 
     def test_get_idr_overview(self):
@@ -281,19 +273,11 @@ class TestCustomersOverview(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         data = response.json
-        self.assertTrue(data[api_c.TOTAL_RECORDS])
-        self.assertTrue(data[api_c.MATCH_RATE])
-        self.assertTrue(data[api_c.GENDER_MEN])
         self.assertGreaterEqual(data[api_c.GENDER_MEN], 0)
-        self.assertTrue(data[api_c.GENDER_WOMEN])
         self.assertGreaterEqual(data[api_c.GENDER_WOMEN], 0)
-        self.assertTrue(data[api_c.GENDER_OTHER])
         self.assertGreaterEqual(data[api_c.GENDER_OTHER], 0)
-        self.assertTrue(data[api_c.GENDER_MEN_COUNT])
         self.assertGreaterEqual(data[api_c.GENDER_MEN_COUNT], 0)
-        self.assertTrue(data[api_c.GENDER_WOMEN_COUNT])
         self.assertGreaterEqual(data[api_c.GENDER_WOMEN_COUNT], 0)
-        self.assertTrue(data[api_c.GENDER_OTHER_COUNT])
         self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)
 
     def test_get_idr_data_feeds(self):

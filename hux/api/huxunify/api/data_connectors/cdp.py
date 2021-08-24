@@ -169,11 +169,10 @@ def get_customers_overview(
         "Successfully retrieved Customer Profile Insights from CDP API."
     )
 
-    response_body = response.json()[api_c.BODY]
-
     # clean up cdm date fields in the response
-    response_body = clean_cdm_fields(response_body)
+    response_body = clean_cdm_fields(response.json()[api_c.BODY])
 
+    # clean up the cdm gender fields in the response
     return clean_cdm_gender_fields(response_body)
 
 
@@ -816,37 +815,23 @@ def clean_cdm_gender_fields(response_body: dict) -> dict:
 
     """
 
-    # set the count values for each gender from the response body
-    gender_men_count = response_body[api_c.GENDER_MEN]
-    gender_women_count = response_body[api_c.GENDER_WOMEN]
-    gender_other_count = response_body[api_c.GENDER_OTHER]
+    gender_fields = [
+        (api_c.GENDER_MEN, api_c.GENDER_MEN_COUNT),
+        (api_c.GENDER_WOMEN, api_c.GENDER_WOMEN_COUNT),
+        (api_c.GENDER_OTHER, api_c.GENDER_OTHER_COUNT),
+    ]
 
-    # set the obtained individual gender count values against appropriate
-    # fields back in the response body
-    response_body[api_c.GENDER_MEN_COUNT] = gender_men_count
-    response_body[api_c.GENDER_WOMEN_COUNT] = gender_women_count
-    response_body[api_c.GENDER_OTHER_COUNT] = gender_other_count
+    # add each individual gender count from the response body into total_count
+    total_count = sum([response_body[gender[0]] for gender in gender_fields])
 
-    total_gender_count = (
-        gender_men_count + gender_women_count + gender_other_count
-    )
-
-    # calculate and set the individual gender average from the corresponding
-    # count values from the response body
-    response_body[api_c.GENDER_MEN] = (
-        round(gender_men_count / total_gender_count, 4)
-        if total_gender_count != 0
-        else 0
-    )
-    response_body[api_c.GENDER_WOMEN] = (
-        round(gender_women_count / total_gender_count, 4)
-        if total_gender_count != 0
-        else 0
-    )
-    response_body[api_c.GENDER_OTHER] = (
-        round(gender_other_count / total_gender_count, 4)
-        if total_gender_count != 0
-        else 0
-    )
+    # set the count values and the calculated individual gender average against
+    # appropriate fields in the response body for each individual gender
+    for gender_type, gender_type_count in gender_fields:
+        response_body[gender_type_count] = response_body[gender_type]
+        response_body[gender_type] = (
+            round(response_body[gender_type_count] / total_count, 4)
+            if total_count > 0
+            else 0
+        )
 
     return response_body

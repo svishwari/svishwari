@@ -267,17 +267,9 @@ class CDPTest(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
         data = response.json
-        self.assertTrue(data)
-        self.assertTrue(data[api_c.TOTAL_RECORDS])
-        self.assertTrue(data[api_c.GENDER_MEN])
         self.assertGreaterEqual(data[api_c.GENDER_MEN], 0)
-        self.assertTrue(data[api_c.GENDER_WOMEN])
         self.assertGreaterEqual(data[api_c.GENDER_WOMEN], 0)
-        self.assertTrue(data[api_c.GENDER_OTHER])
         self.assertGreaterEqual(data[api_c.GENDER_OTHER], 0)
-        self.assertTrue(data[api_c.GENDER_MEN_COUNT])
         self.assertGreaterEqual(data[api_c.GENDER_MEN_COUNT], 0)
-        self.assertTrue(data[api_c.GENDER_WOMEN_COUNT])
         self.assertGreaterEqual(data[api_c.GENDER_WOMEN_COUNT], 0)
-        self.assertTrue(data[api_c.GENDER_OTHER_COUNT])
         self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)
