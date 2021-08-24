@@ -90,6 +90,9 @@ export default {
     },
   },
   async mounted() {
+    this.$root.$on("refresh-notifications", async () => {
+      await this.getAllNotifications(this.batchDetails)
+    })
     await this.getAllNotifications(this.batchDetails)
   },
   methods: {
