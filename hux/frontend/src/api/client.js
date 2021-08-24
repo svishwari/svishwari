@@ -29,9 +29,14 @@ client["customers"].overview = () => {
   return http.get("/customers/overview")
 }
 
-client["customers"].geographics = () => {
-  return http.get("/customers-insights/geo")
-}
+client["customers"].geoOverview = () => http.get("/customers-insights/geo")
+
+client["customers"].geoCities = () => http.get("/customers-insights/cities")
+
+client["customers"].geoCountries = () =>
+  http.get("/customers-insights/countries")
+
+client["customers"].geoStates = () => http.get("/customers-insights/states")
 
 client["customers"].getOverview = (data) => {
   return http.post("/customers/overview", data)
@@ -158,6 +163,9 @@ client["engagements"].getCampaigns = ({
 client["idr"].overview = () => http.get("/idr/overview")
 client["idr"].datafeeds = () => http.get("/idr/datafeeds")
 client["idr"].datafeedReport = (id) => http.get(`/idr/datafeeds/${id}`)
+client["idr"].matchingTrend = () => {
+  return http.get("/idr/matching-trends")
+}
 //#endregion
 
 //#region audiences endpoints
@@ -197,6 +205,11 @@ client["models"].versionHistory = (id) => {
 client["models"].lift = (id) => {
   return http.get(`/models/${id}/lift`)
 }
+
+client["models"].drift = (id, data) => {
+  return http.post(`/models/${id}/drift`, data)
+}
+
 client["models"].modelFeatures = (id) => {
   return http.get(`/models/${id}/features`)
 }

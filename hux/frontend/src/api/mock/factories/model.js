@@ -15,7 +15,7 @@ const modelFeatures = () => {
   }
 }
 
-const mockModelFeature = (num = 3) => {
+const mockModelFeature = (num = 5) => {
   return Array.from({ length: num }, modelFeatures)
 }
 
@@ -50,5 +50,5 @@ export default {
   status: "Pending",
   type: "unsubscribe",
   version_history: () => mockVersionHistory(5),
-  model_feature: () => mockModelFeature(5),
+  model_feature: () => mockModelFeature(10),
 }

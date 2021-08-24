@@ -14,6 +14,8 @@ import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
+import { driftData } from "@/api/mock/factories/driftData.js"
+import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -363,6 +365,8 @@ export const defineRoutes = (server) => {
 
   server.get("/models/:id/lift", () => liftData)
 
+  server.post("/models/:id/drift", () => driftData())
+
   server.get("/models/:id/features", (schema, request) => {
     const id = request.params.id
     const model = schema.models.find(id)
@@ -383,6 +387,20 @@ export const defineRoutes = (server) => {
   server.get("/customers/overview", () => customersOverview)
 
   server.get("/customers-insights/geo", () => mapData)
+
+  server.get("/customers-insights/cities", (schema, request) => {
+    let batchNumber = request.queryParams["batch_number"] || 1
+    let batchSize = request.queryParams["batch_size"] || 100
+    let start = batchNumber === 1 ? 0 : (batchNumber - 1) * batchSize
+    let end = batchNumber === 1 ? batchSize : batchNumber * batchSize
+    return schema.geoCities.all().slice(start, end)
+  })
+
+  server.get("/customers-insights/states", (schema) => schema.geoStates.all())
+
+  server.get("/customers-insights/countries", (schema) => {
+    return schema.geoCountries.all()
+  })
 
   server.get("/customers", (schema, request) => {
     let currentBatch = request.queryParams.batch_number
@@ -405,6 +423,7 @@ export const defineRoutes = (server) => {
     { timing: 10 }
   )
   server.get("/idr/datafeeds/:datafeed_id", () => idrDataFeedReport)
+  server.get("/idr/matching-trends", () => genderSpendData())
 
   // notifications
   server.get("/notifications", (schema, request) => {
