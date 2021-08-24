@@ -11,7 +11,7 @@
           is-tile
           icon="customer-profiles"
           variant="white"
-          @click="viewCustomerList()"
+          @click="openProfilesDrawer()"
         >
           View all customers
         </hux-button>
@@ -76,17 +76,17 @@
       </div>
       <div v-if="overviewListItems" class="px-15 my-1">
         <v-card class="rounded pa-5 box-shadow-5">
-          <div class="overview">Customer overview</div>
-          <div class="row overview-list mb-0 ml-0 mt-1">
+          <h5 class="text-h5 mb-1">Customer overview</h5>
+          <div class="row row-margin no-gutters">
             <metric-card
               v-for="item in overviewListItems"
               :key="item.title"
-              class="mr-3"
+              class="card-margin"
               :grow="item.toolTipText ? 2 : 1"
               :title="item.title"
               :icon="item.icon"
-              :interactable="item.toolTipText ? true : false"
-              @click="item.toolTipText ? viewCustomerList() : ''"
+              :interactable="item.action ? true : false"
+              @click="item.action ? onClick(item.action) : ''"
             >
               <template #subtitle-extended>
                 <tooltip>
@@ -139,7 +139,7 @@
       <v-row class="px-15 mt-2">
         <v-col md="7">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <v-card-title class="pb-2 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
                   Demographic Overview
@@ -147,47 +147,47 @@
               </div>
             </v-card-title>
             <v-progress-linear
-              v-if="loadingGeographics"
-              :active="loadingGeographics"
-              :indeterminate="loadingGeographics"
+              v-if="loadingGeoOverview"
+              :active="loadingGeoOverview"
+              :indeterminate="loadingGeoOverview"
             />
             <map-chart
-              v-if="!loadingGeographics"
-              :map-data="customersGeographics"
+              v-if="!loadingGeoOverview"
+              :map-data="customersGeoOverview"
             />
             <map-slider
-              v-if="!loadingGeographics"
-              :map-data="customersGeographics"
+              v-if="!loadingGeoOverview"
+              :map-data="customersGeoOverview"
             />
           </v-card>
         </v-col>
         <v-col md="5">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <v-card-title class="pb-2 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5"> United States </span>
               </div>
             </v-card-title>
             <v-divider class="ml-5 mr-8 mt-0 mb-1" />
             <v-progress-linear
-              v-if="loadingGeographics"
-              :active="loadingGeographics"
-              :indeterminate="loadingGeographics"
+              v-if="loadingGeoOverview"
+              :active="loadingGeoOverview"
+              :indeterminate="loadingGeoOverview"
             />
             <map-state-list
-              v-if="!loadingGeographics"
-              :map-data="customersGeographics"
+              v-if="!loadingGeoOverview"
+              :map-data="customersGeoOverview"
             />
           </v-card>
         </v-col>
       </v-row>
       <v-row class="px-15 mt-2">
         <v-col md="3">
-          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
-            <v-card-title class="chart-style pb-0 pl-5 pt-5">
+          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
+            <v-card-title class="pb-0 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
-                  Top location & Income
+                  Top location &amp; Income
                 </span>
               </div>
             </v-card-title>
@@ -195,11 +195,11 @@
           </v-card>
         </v-col>
         <v-col md="6">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
-            <v-card-title class="chart-style pb-1 pl-5 pt-5">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="290">
+            <v-card-title class="pb-1 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
-                  Gender / monthly spending in 2021
+                  Gender &sol; monthly spending in 2021
                 </span>
               </div>
             </v-card-title>
@@ -207,22 +207,28 @@
           </v-card>
         </v-col>
         <v-col md="3">
-          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
+            <v-card-title class="pb-0 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5"> Gender </span>
               </div>
             </v-card-title>
-            <doughnut-chart
-              :width="250"
-              :height="240"
-              :data="genderChartData"
-              label="Gender"
-            />
+            <div ref="genderChart">
+              <doughnut-chart
+                :chart-dimensions="genderChartDimensions"
+                :data="genderChartData"
+                label="Gender"
+              />
+            </div>
           </v-card>
         </v-col>
       </v-row>
       <customer-details v-model="customerProfilesDrawer" />
+      <geo-drawer
+        :toggle="geoDrawer"
+        :geo-level="geoLevel"
+        :results="geoResults"
+      />
     </div>
   </div>
 </template>
@@ -236,6 +242,7 @@ import MetricCard from "@/components/common/MetricCard"
 import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
 import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
+import GeoDrawer from "./Drawers/GeoDrawer.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import MapChart from "@/components/common/MapChart/MapChart"
@@ -254,6 +261,7 @@ export default {
     huxButton,
     Icon,
     CustomerDetails,
+    GeoDrawer,
     IncomeChart,
     GenderSpendChart,
     MapChart,
@@ -265,7 +273,10 @@ export default {
   data() {
     return {
       customerProfilesDrawer: false,
-      loadingGeographics: false,
+      geoDrawer: false,
+      geoLevel: null,
+      geoResults: 0,
+      loadingGeoOverview: false,
       overviewListItems: [
         {
           title: "No. of customers",
@@ -273,14 +284,28 @@ export default {
           toolTipText:
             "Total no. of unique hux ids generated to represent a customer.",
           value: "",
+          action: "openProfilesDrawer",
         },
-        { title: "Countries", subtitle: "", icon: "mdi-earth", value: "" },
-        { title: "US States", subtitle: "", icon: "mdi-map", value: "" },
+        {
+          title: "Countries",
+          subtitle: "",
+          icon: "mdi-earth",
+          value: "",
+          action: "openCountriesDrawer",
+        },
+        {
+          title: "US States",
+          subtitle: "",
+          icon: "mdi-map",
+          value: "",
+          action: "openStatesDrawer",
+        },
         {
           title: "Cities",
           subtitle: "",
           icon: "mdi-map-marker-radius",
           value: "",
+          action: "openCitiesDrawer",
         },
         { title: "Age", subtitle: "", icon: "mdi-cake-variant", value: "" },
         { title: "Women", subtitle: "", icon: "mdi-gender-female", value: "" },
@@ -382,39 +407,48 @@ export default {
       ],
       loading: false,
       updatedTime: [],
+      genderChartDimensions: {
+        width: 269,
+        height: 200,
+      },
     }
   },
-
   computed: {
     ...mapGetters({
       overview: "customers/overview",
       customersInsights: "customers/insights",
-      customersGeographics: "customers/geographics",
+      customersGeoOverview: "customers/geoOverview",
     }),
     updatedTimeStamp() {
       return this.updatedTime[0] + "<span> &bull; </span>" + this.updatedTime[1]
     },
   },
+  created() {
+    window.addEventListener("resize", this.sizeHandler)
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.sizeHandler)
+  },
 
   async mounted() {
     this.loading = true
+    this.sizeHandler()
     await this.getOverview()
-    this.fetchGeographics()
     this.mapOverviewData()
+
     this.loading = false
+
+    this.loadingGeoOverview = true
+    await this.getGeoOverview()
+    this.loadingGeoOverview = false
   },
 
   methods: {
     ...mapActions({
       getOverview: "customers/getOverview",
-      getGeographics: "customers/getGeographics",
+      getGeoOverview: "customers/getGeoOverview",
     }),
 
-    async fetchGeographics() {
-      this.loadingGeographics = true
-      await this.getGeographics()
-      this.loadingGeographics = false
-    },
     // TODO: refactor this and move this logic to a getter in the store
     mapOverviewData() {
       if (this.overview) {
@@ -468,8 +502,32 @@ export default {
         return updatedValue
       }
     },
-    viewCustomerList() {
+    openProfilesDrawer() {
       this.customerProfilesDrawer = !this.customerProfilesDrawer
+    },
+    openGeoDrawer(geoLevel = "states") {
+      this.geoLevel = geoLevel
+
+      if (geoLevel === "cities") this.geoResults = this.overview.total_cities
+
+      if (geoLevel === "countries")
+        this.geoResults = this.overview.total_countries
+
+      if (geoLevel === "states") this.geoResults = this.overview.total_us_states
+
+      this.geoDrawer = !this.geoDrawer
+    },
+    onClick(action) {
+      if (action === "openProfilesDrawer") this.openProfilesDrawer()
+      if (action === "openCitiesDrawer") this.openGeoDrawer("cities")
+      if (action === "openCountriesDrawer") this.openGeoDrawer("countries")
+      if (action === "openStatesDrawer") this.openGeoDrawer("states")
+    },
+    sizeHandler() {
+      if (this.$refs.genderChart) {
+        this.genderChartDimensions.width = this.$refs.genderChart.clientWidth
+        this.genderChartDimensions.height = 200
+      }
     },
   },
 }

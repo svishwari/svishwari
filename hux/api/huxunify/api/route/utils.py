@@ -586,27 +586,15 @@ def validate_delivery_params(func) -> object:
            object: returns a decorated function object.
         """
 
-        # check for valid object id and convert to object id
+        # convert to object id
         for key, val in kwargs.items():
-            if ObjectId.is_valid(val):
-                kwargs[key] = ObjectId(val)
-            else:
-                # error appropriate
-                logger.error(
-                    "Encountered an invalid ID while executing %s in %s.",
-                    func.__qualname__,
-                    func.__module__,
-                )
-                return {
-                    "message": constants.INVALID_OBJECT_ID
-                }, HTTPStatus.BAD_REQUEST
+            kwargs[key] = ObjectId(val)
 
         database = get_db_client()
-
         # check if engagement id exists
-        engagement_id = kwargs.get("engagement_id", None)
+        engagement_id = kwargs.get(constants.ENGAGEMENT_ID, None)
         if engagement_id:
-            engagement = get_engagement(database, engagement_id)
+            engagement = get_engagement(database, ObjectId(engagement_id))
             if engagement:
                 if db_c.AUDIENCES not in engagement:
                     logger.error(
@@ -629,18 +617,12 @@ def validate_delivery_params(func) -> object:
                 }, HTTPStatus.NOT_FOUND
 
         # check if audience id exists
-        audience_id = kwargs.get("audience_id", None)
+        audience_id = kwargs.get(constants.AUDIENCE_ID, None)
         if audience_id:
             # check if audience id exists
-            audience = None
-            try:
-                audience = orchestration_management.get_audience(
-                    database, audience_id
-                )
-            except de.InvalidID:
-                # get audience returns invalid if the audience does not exist.
-                # pass and catch in the next step.
-                pass
+            audience = orchestration_management.get_audience(
+                database, ObjectId(audience_id)
+            )
             if not audience:
                 logger.error(
                     "Audience does not exist while executing  %s in %s.",
@@ -656,7 +638,7 @@ def validate_delivery_params(func) -> object:
                 audience_ids = [
                     x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]
                 ]
-                if audience_id not in audience_ids:
+                if ObjectId(audience_id) not in audience_ids:
                     logger.error(
                         "Audience %s is not attached to engagement %s while executing %s in %s.",
                         audience_id,

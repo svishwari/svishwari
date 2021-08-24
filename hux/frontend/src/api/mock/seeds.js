@@ -483,4 +483,9 @@ export default function (server) {
 
   // seed idr datafeeds
   server.createList("idrDataFeed", 10)
+
+  // seed geo states, countries, cities
+  server.createList("geoCity", 14659)
+  server.create("geoCountry", { country: "United States" })
+  server.createList("geoState", 52)
 }

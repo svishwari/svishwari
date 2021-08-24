@@ -10,6 +10,8 @@ const state = {
   history: {},
   lift: [],
   features: [],
+  drift: [],
+  modelFeatures: {},
 }
 
 const getters = {
@@ -18,6 +20,8 @@ const getters = {
   history: (state) => Object.values(state.history),
   lift: (state) => state.lift,
   features: (state) => state.features,
+  drift: (state) => state.drift,
+  modelFeatures: (state) => Object.values(state.modelFeatures),
 }
 
 const mutations = {
@@ -37,6 +41,10 @@ const mutations = {
     state.features = data
   },
 
+  SET_DRIFT(state, data) {
+    state.drift = data
+  },
+
   SET_HISTORY(state, items) {
     let getHistory = items.sort(function (a, b) {
       return a.version === b.version ? 0 : a.version > b.version ? -1 : 1
@@ -46,7 +54,11 @@ const mutations = {
       Vue.set(state.history, item.version, item)
     })
   },
-
+  SET_MODAL_FEATURE(state, items) {
+    items.forEach((item) => {
+      Vue.set(state.modelFeatures, item.id, item)
+    })
+  },
   SET_LIFT(state, data) {
     state.lift = data
   },
@@ -93,10 +105,30 @@ const actions = {
     }
   },
 
+  async getModelFeatures({ commit }, modelId) {
+    try {
+      const response = await api.models.modelFeatures(modelId)
+      commit("SET_MODAL_FEATURE", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async getLift({ commit }, modelId) {
     try {
       const response = await api.models.lift(modelId)
       commit("SET_LIFT", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getDrift({ commit }, data) {
+    try {
+      const response = await api.models.drift(data.model_id, data.payload)
+      commit("SET_DRIFT", response.data)
     } catch (error) {
       handleError(error)
       throw error

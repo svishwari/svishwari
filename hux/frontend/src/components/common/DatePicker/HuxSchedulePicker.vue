@@ -27,7 +27,7 @@
           append-icon="mdi-chevron-down"
         />
       </span>
-      <span class="neroBlack--text text-h6 pt-3 pr-4">
+      <span class="neroBlack--text text-h6 pt-3 pr-3">
         {{ timeFrame }}(s) at
       </span>
       <span class="pr-2">
