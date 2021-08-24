@@ -85,7 +85,7 @@ stages:
           status: !anystr
           feature_service: !anystr
           id: !anyint
-          version: !re_fullmatch "(\\d{2})\\.(\\d{1})\\.(\\d{2})"
+          version: !anystr
           created_by: !anystr
           description: !anystr
           name: !anystr
@@ -112,7 +112,7 @@ stages:
           lookback_window: !anyint
           status: !anystr
           id: !anyint
-          version: !re_fullmatch "(\\d{2})\\.(\\d{1})\\.(\\d{2})"
+          version: !anystr
           owner: !anystr
           prediction_window: !anyint
           description: !anystr
