@@ -299,7 +299,7 @@ class TotalCustomersInsightsSchema(Schema):
 class CustomersInsightsCitiesSchema(Schema):
     """City-level geographic customer insights schema"""
 
-    city = Str(required=True, example="New York City")
+    city = Str(required=True, example="New York")
     state = Str(required=True, example="NY")
     size = Integer(
         attribute=api_c.CUSTOMER_COUNT, required=True, default=0, example=1234
