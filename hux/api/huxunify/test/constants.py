@@ -42,6 +42,7 @@ VALID_USER_RESPONSE = {
 INVALID_USER_RESPONSE = {
     api_c.EMAIL: "davesmith@fake.com",
 }
+INVALID_ID = "invalid_id"
 BATCH_RESPONSE = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
 TEST_CONFIG = get_config("TEST")
 INTROSPECT_CALL = "{}/oauth2/v1/introspect?client_id={}".format(
