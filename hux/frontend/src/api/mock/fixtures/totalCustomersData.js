@@ -907,4 +907,3 @@ export default [
     new_customers_added: faker.datatype.number({ min: 0, max: 10000 }),
   },
 ]
-
