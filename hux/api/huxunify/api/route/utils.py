@@ -7,11 +7,17 @@ from typing import Any, Tuple, Union, Dict
 from http import HTTPStatus
 from bson import ObjectId
 from bson.errors import InvalidId
+import time
 
 import facebook_business.exceptions
 from healthcheck import HealthCheck
 from decouple import config
-from flask import request
+from flask import request, Response, Flask
+import prometheus_client
+from prometheus_client import (
+    CollectorRegistry,
+    Histogram
+)
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
 from marshmallow import ValidationError
@@ -233,7 +239,7 @@ def secured() -> object:
 
 def get_user_name() -> object:
     """
-    This decorator takes an API request and extracts the user namr.
+    This decorator takes an API request and extracts the user name.
 
     Example: @get_user_name()
 
@@ -294,8 +300,8 @@ def get_user_name() -> object:
             # checking if required keys are present in user_info
             if not required_keys.issubset(user_info.keys()):
                 return {
-                    "message": constants.AUTH401_ERROR_MESSAGE
-                }, HTTPStatus.UNAUTHORIZED
+                           "message": constants.AUTH401_ERROR_MESSAGE
+                       }, HTTPStatus.UNAUTHORIZED
 
             logger.info("Successfully got user info from OKTA.")
             # check if the user is in the database
@@ -398,14 +404,14 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {
-                    "message": "Error connecting to Facebook"
-                }, HTTPStatus.BAD_REQUEST
+                           "message": "Error connecting to Facebook"
+                       }, HTTPStatus.BAD_REQUEST
             except ValueError:
                 return {
-                    "message": custom_message
-                    if custom_message
-                    else "Value Error Encountered"
-                }, HTTPStatus.INTERNAL_SERVER_ERROR
+                           "message": custom_message
+                           if custom_message
+                           else "Value Error Encountered"
+                       }, HTTPStatus.INTERNAL_SERVER_ERROR
 
             except de.DuplicateName as exc:
                 logger.error(
@@ -416,8 +422,8 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {
-                    "message": constants.DUPLICATE_NAME
-                }, HTTPStatus.BAD_REQUEST.value
+                           "message": constants.DUPLICATE_NAME
+                       }, HTTPStatus.BAD_REQUEST.value
 
             except CustomAudienceDeliveryStatusError as exc:
                 logger.error(
@@ -428,8 +434,8 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {
-                    "message": "Delivered custom audience is inactive or unusable."
-                }, HTTPStatus.NOT_FOUND
+                           "message": "Delivered custom audience is inactive or unusable."
+                       }, HTTPStatus.NOT_FOUND
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.
@@ -444,8 +450,8 @@ def api_error_handler(custom_message: dict = None) -> object:
                     return custom_message, HTTPStatus.BAD_REQUEST
 
                 return {
-                    "message": "Internal Server Error"
-                }, HTTPStatus.INTERNAL_SERVER_ERROR
+                           "message": "Internal Server Error"
+                       }, HTTPStatus.INTERNAL_SERVER_ERROR
 
         # set tag so we can assert if a function is secured via this decorator
         decorator.__wrapped__ = in_function
@@ -517,11 +523,11 @@ def get_friendly_delivered_time(delivered_time: datetime) -> str:
 
 
 def update_metrics(
-    target_id: ObjectId,
-    name: str,
-    jobs: list,
-    perf_metrics: list,
-    metric_type: str,
+        target_id: ObjectId,
+        name: str,
+        jobs: list,
+        perf_metrics: list,
+        metric_type: str,
 ) -> dict:
     """Update performance metrics
 
@@ -592,8 +598,8 @@ def validate_delivery_params(func) -> object:
                     func.__module__,
                 )
                 return {
-                    "message": constants.INVALID_OBJECT_ID
-                }, HTTPStatus.BAD_REQUEST
+                           "message": constants.INVALID_OBJECT_ID
+                       }, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
 
@@ -609,8 +615,8 @@ def validate_delivery_params(func) -> object:
                         func.__module__,
                     )
                     return {
-                        "message": "Engagement has no audiences."
-                    }, HTTPStatus.BAD_REQUEST
+                               "message": "Engagement has no audiences."
+                           }, HTTPStatus.BAD_REQUEST
             else:
                 # validate that the engagement has audiences
                 logger.error(
@@ -619,8 +625,8 @@ def validate_delivery_params(func) -> object:
                     func.__module__,
                 )
                 return {
-                    "message": constants.ENGAGEMENT_NOT_FOUND
-                }, HTTPStatus.NOT_FOUND
+                           "message": constants.ENGAGEMENT_NOT_FOUND
+                       }, HTTPStatus.NOT_FOUND
 
         # check if audience id exists
         audience_id = kwargs.get("audience_id", None)
@@ -642,8 +648,8 @@ def validate_delivery_params(func) -> object:
                     func.__module__,
                 )
                 return {
-                    "message": "Audience does not exist."
-                }, HTTPStatus.BAD_REQUEST
+                           "message": "Audience does not exist."
+                       }, HTTPStatus.BAD_REQUEST
 
             if audience_id and engagement_id:
                 # validate that the audience is attached
@@ -659,8 +665,8 @@ def validate_delivery_params(func) -> object:
                         func.__module__,
                     )
                     return {
-                        "message": "Audience is not attached to the engagement."
-                    }, HTTPStatus.BAD_REQUEST
+                               "message": "Audience is not attached to the engagement."
+                           }, HTTPStatus.BAD_REQUEST
 
         return func(*args, **kwargs)
 
@@ -668,7 +674,7 @@ def validate_delivery_params(func) -> object:
 
 
 def validate_destination_id(
-    destination_id: str, check_if_destination_in_db: bool = True
+        destination_id: str, check_if_destination_in_db: bool = True
 ) -> Union[ObjectId, Tuple[Dict[str, str], int]]:
     """Checks on destination_id
 
@@ -689,20 +695,20 @@ def validate_destination_id(
 
     if check_if_destination_in_db:
         if not destination_management.get_delivery_platform(
-            get_db_client(), destination_id
+                get_db_client(), destination_id
         ):
             logger.error(
                 "Could not find destination with id %s.", destination_id
             )
             return {
-                "message": constants.DESTINATION_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+                       "message": constants.DESTINATION_NOT_FOUND
+                   }, HTTPStatus.NOT_FOUND
 
     return destination_id
 
 
 def validate_destination(
-    check_if_destination_in_db: bool = True,
+        check_if_destination_in_db: bool = True,
 ) -> object:
     """
     This decorator handles validation of destination objects.
@@ -761,76 +767,106 @@ def validate_destination(
     return wrapper
 
 
-from flask import request, g, Response, current_app, Flask
-import requests
-import urllib
-from urllib import error
-from prometheus_client import (
-    CollectorRegistry,
-    Histogram,
-    Counter,
-    push_to_gateway
-)
-import time
+class Singleton:
+    """
+    A non-thread-safe helper class to ease implementing singletons.
+    This should be used as a decorator -- not a metaclass -- to the
+    class that should be a singleton.
+
+    The decorated class can define one `__init__` function that
+    takes only the `self` argument. Also, the decorated class cannot be
+    inherited from. Other than that, there are no restrictions that apply
+    to the decorated class.
+
+    To get the singleton instance, use the `instance` method. Trying
+    to use `__call__` will result in a `TypeError` being raised.
+
+    """
+
+    def __init__(self, decorated):
+        self._decorated = decorated
+
+    def instance(self):
+        """
+        Returns the singleton instance. Upon its first call, it creates a
+        new instance of the decorated class and calls its `__init__` method.
+        On all subsequent calls, the already created instance is returned.
+
+        """
+        try:
+            return self._instance
+        except AttributeError:
+            self._instance = self._decorated()
+            return self._instance
+
+    def __call__(self):
+        raise TypeError('Singletons must be accessed through `instance()`.')
+
+    def __instancecheck__(self, inst):
+        return isinstance(inst, self._decorated)
 
 
+@Singleton
 class PrometheusHelper:
+    """
+    Prometheus Helper class to manage the recorded metrics and generate metric reports for consumption
+    """
 
-    def __init__(self, app: Flask):
+    def __init__(self):
+        """Initialize Prometheus Helper variables"""
+
+        self.app = None
+        self.prometheus_registry = None
+
+        # instantiate metrics
+        self.metrics = {}
+        self.latency = None
+
+    def set_app(self, app: Flask) -> None:
+        """Populate Prometheus Helper variables"""
+
+        self.app = app
         self.setup_metrics(app)
 
         self.prometheus_registry = CollectorRegistry()
 
         # create metrics
-        self.endpoint_durations = Histogram(
+        self.latency = Histogram(
             name="hux_api_request_duration",
             documentation="Elapsed time for API request execution.",
-            labelnames=["method", "path", "status"],
             registry=self.prometheus_registry
         )
 
-        self.test_metric = Counter(
-            name="hux_api_jim_test_metric",
-            documentation="Metric used to test connection to Prometheus Server",
-            registry=self.prometheus_registry
-        )
+        self.metrics["latency"] = self.latency
 
-        self.test_metric.inc(77)
+    def setup_metrics(self, app: Flask) -> None:
+        """Setup methods that should run before and after requests"""
 
-    def setup_metrics(self, app: Flask):
-        app.before_request(self._before_request)
-        app.after_request(self.record_request_data)
-        app.after_request(self._after_request)
+        app.before_request(self._start_timer)
+        app.after_request(self._stop_timer)
 
-    def push_to_gateway(self):
-        try:
-            print("sending metrics!!!")
-            push_to_gateway(
-                "https://pushgateway.hux-unified-dev1.in",
-                job="hux_api_monitoring",
-                registry=self.prometheus_registry
-            )
-            print("successfully pushed to metrics to gateway!")
-        except urllib.error.HTTPError as err:
-            print("RESPONSE HERE")
-            print("Response code: " + str(err.code))
-            print(err.headers)
+    def _start_timer(self) -> None:
+        """Start a timer to record latency for requests"""
+        request.start_time = time.time()
 
-        except Exception as exc:
-            print(type(exc))
-            print("I caught the exception here")
+    def _stop_timer(self, response: Response) -> Response:
+        """Stop a timer to record latency for requests
 
-    def _before_request(self):
-        g.start = time.time()
-
-    def _after_request(self, response: Response) -> Response:
-
-        try:
-            elapsed_time = time.time() - g.start
-        except Exception as error:
-            pass
-
+        Returns:
+            Response: Flask Response object
+        """
+        response_time = time.time() - request.start_time
+        # may want to exclude a time recording for metrics requests. Could throw off average times.
+        self.latency.observe(response_time)
         return response
 
-    def record_request_data(self, response):
-        return response
+    def generate_metrics(self) -> list:
+        """Generates prometheus metrics for consumption
+
+        Returns:
+            list: List of prometheus metrics
+        """
+        metrics = []
+        for k, v in self.metrics.items():
+            metrics.append(prometheus_client.generate_latest(v))
+        return metrics

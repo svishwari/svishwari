@@ -111,11 +111,8 @@ if __name__ == "__main__":
     # create the API
     app = create_app()
 
-    print("App created!")
-    ph = PrometheusHelper(app)
-    print("helper created!")
-    ph.push_to_gateway()
+    prometheus_helper = PrometheusHelper.instance()
+    prometheus_helper.set_app(app)
 
     # run the API
     app.run(host="0.0.0.0", port=port, debug=True)
-    print("App running!")
