@@ -142,7 +142,7 @@
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
-                  Total Customers (last 6 months)
+                  Total Customers ({{ timeFrameLabel }})
                 </span>
               </div>
             </v-card-title>
@@ -302,6 +302,7 @@ export default {
       geoLevel: null,
       geoResults: 0,
       loadingGeoOverview: false,
+      timeFrameLabel: "last 6 months",
       overviewListItems: [
         {
           title: "No. of customers",
@@ -442,7 +443,7 @@ export default {
     ...mapGetters({
       overview: "customers/overview",
       customersInsights: "customers/insights",
-      totalCustomers: "customers/total_customers",
+      totalCustomers: "customers/totalCustomers",
       customersGeoOverview: "customers/geoOverview",
     }),
     updatedTimeStamp() {

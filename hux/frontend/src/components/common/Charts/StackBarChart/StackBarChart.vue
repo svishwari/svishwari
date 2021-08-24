@@ -93,12 +93,12 @@ export default {
         .key((d) => week(new Date(d.date)))
         .entries(this.totalCustomerData)
 
-      let InitialWeek = weeklyAggData[0].values
-      let InitialWeekEndingDate = InitialWeek[InitialWeek.length - 1].date
+      let initialWeek = weeklyAggData[0].values
+      let initialWeekEndingDate = initialWeek[initialWeek.length - 1].date
 
-      monthChangeIndexs.push({ index: 0, date: InitialWeekEndingDate })
+      monthChangeIndexs.push({ index: 0, date: initialWeekEndingDate })
 
-      let initialMonth = new Date(InitialWeekEndingDate).getMonth()
+      let initialMonth = new Date(initialWeekEndingDate).getMonth()
 
       weeklyAggData.forEach((element, index) => {
         let weekData = element.values

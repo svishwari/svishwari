@@ -65,7 +65,7 @@
           <v-card-title class="chart-style pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
-                Total Customers (last 6 months)
+                Total Customers ({{ timeFrameLabel }})
               </span>
             </div>
           </v-card-title>
@@ -76,7 +76,7 @@
           />
           <total-customer-chart
             v-if="!loadingCustomerChart"
-            :customers-data="totalCustomers"
+            :customers-data="mockCustomersData"
           />
         </v-card>
       </v-col>
@@ -89,6 +89,7 @@ import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import CardInfo from "@/components/common/CardInfo"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
+import totalCustomersData from "@/api/mock/fixtures/totalCustomersData.js"
 
 export default {
   name: "Overview",
@@ -100,6 +101,9 @@ export default {
   data() {
     return {
       loadingCustomerChart: false,
+      timeFrameLabel: "last 6 months",
+      // TODO remove it once total customer endpoint returns correct data
+      mockCustomersData: [],
       configureOptions: {
         configureHux: true,
         activeCustomers: true,
@@ -147,7 +151,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      totalCustomers: "customers/total_customers",
+      totalCustomers: "customers/totalCustomers",
     }),
     firstName() {
       return this.$store.getters.getFirstname
@@ -160,7 +164,8 @@ export default {
     },
   },
   mounted() {
-    this.fetchTotalCustomers()
+    // TODO replace it with this.fetchTotalCustomers() once total customer endpoint returns correct data
+    this.getTotalCustomersData()
   },
   methods: {
     ...mapActions({
@@ -170,6 +175,14 @@ export default {
       this.loadingCustomerChart = true
       await this.getTotalCustomers()
       this.loadingCustomerChart = false
+    },
+    // TODO remove it once total customer endpoint returns correct data
+    getTotalCustomersData() {
+      this.loadingCustomerChart = true
+      this.mockCustomersData = totalCustomersData
+      setTimeout(() => {
+        this.loadingCustomerChart = false
+      }, 1000)
     },
   },
 }

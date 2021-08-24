@@ -3,13 +3,13 @@ import faker from "faker"
 export default [
   {
     date: "2021-01-01T17:56:07.290Z",
-    total_customers: faker.datatype.number({ min: 1000, max: 7000 }),
-    new_customers_added: faker.datatype.number({ min: 0, max: 1000 }),
+    total_customers: faker.datatype.number({ min: 20000, max: 70000 }),
+    new_customers_added: faker.datatype.number({ min: 10000, max: 20000 }),
   },
   {
     date: "2021-01-02T17:56:07.290Z",
-    total_customers: faker.datatype.number({ min: 1000, max: 7000 }),
-    new_customers_added: faker.datatype.number({ min: 0, max: 1000 }),
+    total_customers: faker.datatype.number({ min: 20000, max: 70000 }),
+    new_customers_added: faker.datatype.number({ min: 10000, max: 20000 }),
   },
   {
     date: "2021-01-03T17:56:07.290Z",

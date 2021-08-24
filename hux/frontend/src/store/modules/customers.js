@@ -12,7 +12,7 @@ const state = {
   // TODO: to be integrated with HUS-226
   insights: null,
 
-  total_customers: [],
+  totalCustomers: [],
 
   geoOverview: [],
 
@@ -32,7 +32,7 @@ const getters = {
 
   insights: (state) => state.insights,
 
-  total_customers: (state) => state.total_customers,
+  totalCustomers: (state) => state.totalCustomers,
 
   geoOverview: (state) => state.geoOverview,
 
@@ -78,8 +78,8 @@ const mutations = {
     state.geoStates = data
   },
 
-  SET_TOTALCUSTOMERS(state, data) {
-    state.total_customers = data
+  SET_TOTAL_CUSTOMERS(state, data) {
+    state.totalCustomers = data
   },
 }
 
@@ -163,7 +163,7 @@ const actions = {
   async getTotalCustomers({ commit }) {
     try {
       const response = await api.customers.totalCustomers()
-      commit("SET_TOTALCUSTOMERS", response.data)
+      commit("SET_TOTAL_CUSTOMERS", response.data)
     } catch (error) {
       handleError(error)
       throw error
