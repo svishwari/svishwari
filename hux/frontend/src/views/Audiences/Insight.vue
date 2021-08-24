@@ -5,7 +5,9 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <v-icon size="22" color="lightGrey" class="mr-2"> mdi-refresh </v-icon>
+        <v-icon size="22" color="primary" class="mr-2" @click="refreshEntity()">
+          mdi-refresh
+        </v-icon>
 
         <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-plus-circle-multiple-outline
@@ -228,7 +230,7 @@
     <v-row class="px-15 mt-2">
       <v-col md="7">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+          <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
                 Demographic Overview
@@ -241,7 +243,7 @@
       </v-col>
       <v-col md="5">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+          <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5"> United States </span>
             </div>
@@ -253,8 +255,8 @@
     </v-row>
     <v-row class="px-15 mt-2">
       <v-col md="3">
-        <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
-          <v-card-title class="chart-style pb-0 pl-5 pt-5">
+        <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
+          <v-card-title class="pb-0 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
                 Top location &amp; Income
@@ -265,11 +267,11 @@
         </v-card>
       </v-col>
       <v-col md="6">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="290">
+          <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
-                Gender / monthly spending in 2021
+                Gender &sol; monthly spending in 2021
               </span>
             </div>
           </v-card-title>
@@ -277,18 +279,19 @@
         </v-card>
       </v-col>
       <v-col md="3">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="290">
+          <v-card-title class="pb-0 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5"> Gender </span>
             </div>
           </v-card-title>
-          <doughnut-chart
-            :width="250"
-            :height="200"
-            :data="genderChartData"
-            label="Gender"
-          />
+          <div ref="genderChart">
+            <doughnut-chart
+              :chart-dimensions="genderChartDimensions"
+              :data="genderChartData"
+              label="Gender"
+            />
+          </div>
         </v-card>
       </v-col>
     </v-row>
@@ -351,6 +354,7 @@
       :selected-audience="audience"
       @onBack="reloadAudienceData()"
       @onCreate="lookalikeCreated = true"
+      @onError="onError($event)"
     />
 
     <delivery-history-drawer
@@ -525,6 +529,10 @@ export default {
         delivery_platform_type: null,
         id: null,
       },
+      genderChartDimensions: {
+        width: 269,
+        height: 200,
+      },
     }
   },
   computed: {
@@ -626,7 +634,14 @@ export default {
       }
     },
   },
+  created() {
+    window.addEventListener("resize", this.sizeHandler)
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.sizeHandler)
+  },
   async mounted() {
+    this.sizeHandler()
     await this.loadAudienceInsights()
   },
   methods: {
@@ -645,6 +660,11 @@ export default {
     },
     getColorCode(name) {
       return generateColor(name, 30, 60) + " !important"
+    },
+
+    async refreshEntity() {
+      this.$root.$emit("refresh-notifications")
+      await this.loadAudienceInsights()
     },
 
     /**
@@ -906,6 +926,18 @@ export default {
       this.mapInsights()
       this.getDestinations()
       this.loading = false
+    },
+    onError(message) {
+      this.alert.type = "error"
+      this.alert.title = "OH NO!"
+      this.alert.message = message
+      this.flashAlert = true
+    },
+    sizeHandler() {
+      if (this.$refs.genderChart) {
+        this.genderChartDimensions.width = this.$refs.genderChart.clientWidth
+        this.genderChartDimensions.height = 200
+      }
     },
   },
 }

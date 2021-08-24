@@ -145,8 +145,8 @@ export const customersOverview = {
   min_age: 7,
   min_ltv_actual: 77.9244,
   min_ltv_predicted: 52.0197,
-  total_cities: 14354,
-  total_countries: 3,
+  total_cities: 14659,
+  total_countries: 1,
   total_customers: 23905153,
   total_household_ids: 33311636,
   total_individual_ids: 54080052,
@@ -154,6 +154,34 @@ export const customersOverview = {
   total_records: 20372628,
   total_unique_ids: 73374722,
   total_unknown_ids: 30637984,
-  total_us_states: 16,
+  total_us_states: 52,
   updated: faker.date.recent(7),
+}
+
+/**
+ * City-level geographic insights schema
+ */
+export const geoCity = {
+  city: () => faker.address.city(),
+  state: () => faker.address.stateAbbr(),
+  size: () => faker.datatype.number(1000),
+  spending: () => faker.datatype.number(10000),
+}
+
+/**
+ * Country-level geographic insights schema
+ */
+export const geoCountry = {
+  country: () => faker.address.country(),
+  size: () => faker.datatype.number(100000),
+  spending: () => faker.datatype.number(1000000),
+}
+
+/**
+ * State-level geographic insights schema
+ */
+export const geoState = {
+  state: () => faker.address.state(),
+  size: () => faker.datatype.number(10000),
+  spending: () => faker.datatype.number(100000),
 }

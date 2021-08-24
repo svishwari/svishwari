@@ -42,6 +42,7 @@ VALID_USER_RESPONSE = {
 INVALID_USER_RESPONSE = {
     api_c.EMAIL: "davesmith@fake.com",
 }
+INVALID_ID = "invalid_id"
 BATCH_RESPONSE = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
 TEST_CONFIG = get_config("TEST")
 INTROSPECT_CALL = "{}/oauth2/v1/introspect?client_id={}".format(
@@ -201,6 +202,41 @@ MOCKED_MODEL_VERSION_HISTORY = {
                 "Active",
             ],
             "joinKeys": ["21.7.31"],
+        },
+    ]
+}
+
+MOCKED_MODEL_DRIFT = {
+    "results": [
+        {
+            "features": [
+                233.5,
+                "2021-07-28",
+                "Lifetime Value",
+                "ltv",
+                "21.7.28",
+            ],
+            "joinKeys": ["21.7.28"],
+        },
+        {
+            "features": [
+                263.3,
+                "2021-07-29",
+                "Lifetime Value",
+                "ltv",
+                "21.7.29",
+            ],
+            "joinKeys": ["21.7.29"],
+        },
+        {
+            "features": [
+                215.5,
+                "2021-07-30",
+                "Lifetime Value",
+                "ltv",
+                "21.7.30",
+            ],
+            "joinKeys": ["21.7.30"],
         },
     ]
 }

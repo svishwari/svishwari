@@ -81,6 +81,7 @@ const state = {
   dataFeeds: {},
 
   dataFeedReports: {},
+  matchingTrend: [],
 }
 
 const getters = {
@@ -98,6 +99,8 @@ const getters = {
   dataFeeds: (state) => Object.values(state.dataFeeds),
 
   dataFeed: (state) => (datafeed_id) => state.dataFeeds[datafeed_id],
+
+  matchingTrend: (state) => state.matchingTrend,
 
   dataFeedReport: (state) => (datafeed_id) => {
     const report = state.dataFeedReports[datafeed_id]
@@ -135,6 +138,10 @@ const mutations = {
   SET_DATA_FEED_REPORT(state, { datafeed_id, data }) {
     Vue.set(state.dataFeedReports, datafeed_id, data)
   },
+
+  SET_MATCHINGTREND(state, data) {
+    state.matchingTrend = data
+  },
 }
 
 const actions = {
@@ -165,6 +172,16 @@ const actions = {
         datafeed_id: datafeed_id,
         data: response.data,
       })
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getMatchingTrend({ commit }) {
+    try {
+      const response = await api.idr.matchingTrend()
+      commit("SET_MATCHINGTREND", response.data)
     } catch (error) {
       handleError(error)
       throw error
