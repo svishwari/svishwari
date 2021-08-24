@@ -146,7 +146,7 @@ stages:
           current_version: !anystr
         model_name: !anystr
 
-  - name: Test features API
+  - name: Test model features API
 
     # Define the request to be made...
     request:
