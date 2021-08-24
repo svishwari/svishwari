@@ -569,11 +569,12 @@ def get_customer_events_data(
     """
 
     config = get_config()
+    current_time = datetime.datetime.utcnow()
 
     # YTD by default
     default_filter = {
-        api_c.START_DATE: "%s-01-01" % datetime.datetime.utcnow().year,
-        api_c.END_DATE: datetime.datetime.utcnow().strftime("%Y-%m-%d"),
+        api_c.START_DATE: f"{current_time.year}-01-01",
+        api_c.END_DATE: current_time.strftime("%Y-%m-%d"),
     }
 
     filters = filters if filters else default_filter
@@ -581,11 +582,11 @@ def get_customer_events_data(
     # set missing start or end date
     filters[api_c.START_DATE] = filters.get(
         api_c.START_DATE,
-        "%s-01-01" % datetime.datetime.utcnow().year,
+        f"{current_time.year}-01-01",
     )
     filters[api_c.END_DATE] = filters.get(
         api_c.END_DATE,
-        datetime.datetime.utcnow().strftime("%Y-%m-%d"),
+        current_time.strftime("%Y-%m-%d"),
     )
 
     logger.info("Getting customer events info from CDP API.")
