@@ -1272,6 +1272,26 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
+    def test_delete_engagement_non_existent_id(self) -> None:
+        """Test delete engagement API with non-existent id
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        non_existent_engagement_id = str(ObjectId())
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{non_existent_engagement_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(
+            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+        )
+
     def test_set_engagement(self):
         """
         Test set engagement API with valid params
@@ -1511,6 +1531,41 @@ class TestEngagementRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    def test_add_audience_to_engagement_non_existent_audience_id(self):
+        """
+        Test add audience to engagement invalid id
+
+        Returns:
+
+        """
+
+        engagement_id = self.engagement_ids[0]
+        audience_id = str(ObjectId())
+
+        new_audience = {
+            "audiences": [
+                {
+                    db_c.OBJECT_ID: audience_id,
+                    "destinations": [
+                        {db_c.OBJECT_ID: str(ObjectId())},
+                        {db_c.OBJECT_ID: str(ObjectId())},
+                    ],
+                }
+            ]
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/{api_c.AUDIENCES}",
+            json=new_audience,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(
+            {"message": f"Audience does not exist: {audience_id}"},
+            response.json,
+        )
 
     def test_delete_audience_from_engagement(self):
         """

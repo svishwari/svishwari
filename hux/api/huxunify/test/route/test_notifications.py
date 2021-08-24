@@ -87,8 +87,10 @@ class TestNotificationRoutes(TestCase):
         """
         Test get notifications
 
-        Returns:
+        Args:
 
+        Returns:
+            None
         """
 
         params = {
@@ -104,7 +106,29 @@ class TestNotificationRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(len(self.notifications), response.json["total"])
+        self.assertEqual(len(self.notifications), response.json[api_c.TOTAL])
+        self.assertCountEqual(
+            self.notifications, response.json[api_c.NOTIFICATIONS_TAG]
+        )
+
+    def test_get_notifications_default_params(self):
+        """
+        Test get notifications failure
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}",
+            data={},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(len(self.notifications), response.json[api_c.TOTAL])
         self.assertCountEqual(
             self.notifications, response.json[api_c.NOTIFICATIONS_TAG]
         )
