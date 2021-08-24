@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use, too-many-lines
+# pylint: disable=no-self-use
 """
 Paths for customer API
 """
