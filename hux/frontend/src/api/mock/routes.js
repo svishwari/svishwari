@@ -1,5 +1,5 @@
 import { Response } from "miragejs"
-import moment from "moment"
+import dayjs from "dayjs"
 import faker from "faker"
 
 import { audienceInsights } from "./factories/audiences"
@@ -107,7 +107,7 @@ export const defineRoutes = (server) => {
       return new Response(errorCode, errorHeaders, errorResponse)
     }
 
-    const now = moment().toJSON()
+    const now = dayjs().toJSON()
 
     const attrs = {
       ...requestData,
@@ -197,7 +197,7 @@ export const defineRoutes = (server) => {
           if (audience.id === audienceId) {
             audience.destinations = audience.destinations.map((destination) => {
               destination.latest_delivery = {
-                update_time: moment().toJSON(),
+                update_time: dayjs().toJSON(),
                 status: "Delivering",
               }
               return destination
@@ -304,7 +304,7 @@ export const defineRoutes = (server) => {
           type: destination.type,
         },
         size: audience.size,
-        delivered: moment().toJSON(),
+        delivered: dayjs().toJSON(),
         match_rate: faker.datatype.number({ min: 0, max: 1, precision: 0.001 }),
       }
     })
@@ -464,7 +464,7 @@ export const defineRoutes = (server) => {
       })
     }
 
-    const now = moment().toJSON()
+    const now = dayjs().toJSON()
 
     const attrs = {
       ...requestData,
@@ -498,7 +498,7 @@ export const defineRoutes = (server) => {
           type: destination.type,
         },
         size: audience.size,
-        delivered: moment().toJSON(),
+        delivered: dayjs().toJSON(),
         match_rate: faker.datatype.number({ min: 0, max: 1, precision: 0.001 }),
       }
     })
@@ -511,7 +511,7 @@ export const defineRoutes = (server) => {
       return schema.engagements.find(id)
     })
     requestData.is_lookalike = true
-    const now = moment().toJSON()
+    const now = dayjs().toJSON()
     const attrs = {
       ...requestData,
       create_time: now,

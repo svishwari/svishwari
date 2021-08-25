@@ -1,8 +1,11 @@
 /**
  * Globally registerd Vue filters
  */
-import moment from "moment"
-
+import dayjs from "dayjs"
+var relativeTime = require('dayjs/plugin/relativeTime')
+dayjs.extend(relativeTime)
+var calendar = require('dayjs/plugin/calendar')
+dayjs.extend(calendar)
 /**
  * Formats a datetime field to human friendly date.
  *
@@ -13,17 +16,17 @@ import moment from "moment"
 const Date = (value, format = "M/D/YYYY [at] h:mm A", noSuffix = false) => {
   if (!value) return ""
 
-  let date = moment(value)
+  let date = dayjs(value)
 
   if (format === "relative") {
     if (date.isBefore()) {
       return date.fromNow(noSuffix)
     }
-    return moment().fromNow(noSuffix)
+    return dayjs().fromNow(noSuffix)
   }
 
   if (format === "calendar") return date.calendar()
-
+  
   return date.format(format)
 }
 /**
@@ -32,7 +35,7 @@ const Date = (value, format = "M/D/YYYY [at] h:mm A", noSuffix = false) => {
  * else convert it into relative date like a month ago, a year ago
  */
 const DateRelative = (value) => {
-  let dateTime = moment(value)
+  let dateTime = dayjs(value)
   let otherDates = dateTime.fromNow()
   let week = dateTime.calendar()
   let calback = () => "[" + otherDates + "]"

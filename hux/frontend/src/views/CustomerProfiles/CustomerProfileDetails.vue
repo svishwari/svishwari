@@ -213,7 +213,7 @@
 </template>
 
 <script>
-import moment from "moment"
+import dayjs from "dayjs"
 import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
@@ -386,7 +386,7 @@ export default {
           // then display this date as relative time (x days, months, years, etc)
           id: 4,
           title: "Conversion time",
-          value: moment().subtract(
+          value: dayjs().subtract(
             this.singleCustomer.conversion_time,
             "month"
           ),
