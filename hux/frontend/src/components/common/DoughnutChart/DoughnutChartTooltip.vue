@@ -68,7 +68,7 @@ export default {
   border-radius: 9px;
   width: 9px;
   float: left;
-  margin-top: 3px;
+  margin-top: 7px;
   margin-right: 3px;
 }
 .tooltip {

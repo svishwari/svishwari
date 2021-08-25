@@ -12,11 +12,17 @@
       </span>
       <div class="form-step__label d-flex align-center">
         <slot v-if="$slots.label" name="label"></slot>
-        <span v-else class="text-h5">{{ label || `Step ${step}` }}</span>
+        <span
+          v-else
+          class="text-h5"
+          :class="disabled ? 'lightGrey--text' : 'neroBlack--text'"
+        >
+          {{ label || `Step ${step}` }}
+        </span>
         <span
           v-if="optional"
           class="text-caption pl-1"
-          :class="disabled ? 'lightGrey--text' : 'grey--text'"
+          :class="disabled ? 'lightGrey--text' : 'neroBlack--text'"
         >
           <em>{{ optional }}</em>
         </span>

@@ -804,6 +804,51 @@ def get_customers_insights_count_by_day(
     return response_body
 
 
+def get_city_ltvs(
+    token: str,
+    filters: Optional[dict] = None,
+    offset: int = 0,
+    limit: int = api_c.DEFAULT_BATCH_SIZE,
+) -> list:
+    """
+    Get demographic details of customers by city
+
+    Args:
+        token (str): OKTA JWT Token.
+        filters (dict):  filters to pass into
+            city_ltvs endpoint
+        offset (int): offset
+        limit (int): limit
+
+    Returns:
+        list: list of demographic details by cities
+
+    """
+    # get config
+    config = get_config()
+    logger.info("Retrieving demographic insights by city.")
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+        json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        params=dict(offset=offset, limit=limit),
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve city-level demographic insights %s %s.",
+            response.status_code,
+            response.text,
+        )
+        return []
+
+    logger.info("Successfully retrieved city-level demographic insights.")
+
+    return [clean_cdm_fields(data) for data in response.json()[api_c.BODY]]
+
+
 def clean_cdm_gender_fields(response_body: dict) -> dict:
     """Clean and map CDM gender count and average fields appropriately.
 

@@ -11,7 +11,9 @@
         </div>
       </template>
       <template #right>
-        <v-icon size="22" color="lightGrey" class="mr-2">mdi-refresh</v-icon>
+        <v-icon size="22" color="primary" class="mr-2" @click="refreshEntity()">
+          mdi-refresh
+        </v-icon>
         <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-pencil
         </v-icon>
@@ -163,6 +165,7 @@
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
       @onCreate="onCreated()"
+      @onError="onError($event)"
     />
   </div>
 </template>
@@ -292,7 +295,12 @@ export default {
       getAudiencePerformanceById: "engagements/getAudiencePerformance",
       getEngagementById: "engagements/get",
     }),
-
+    async refreshEntity() {
+      this.loading = true
+      this.$root.$emit("refresh-notifications")
+      await this.loadEngagement(this.engagementId)
+      this.loading = false
+    },
     // Drawer Section Starts
     closeDrawers() {
       this.showSelectAudiencesDrawer = false
@@ -572,6 +580,12 @@ export default {
     onCreated() {
       this.lookalikeCreated = true
       this.alert.message = "Lookalike created successfully"
+      this.flashAlert = true
+    },
+    onError(message) {
+      this.alert.type = "error"
+      this.alert.title = "OH NO!"
+      this.alert.message = message
       this.flashAlert = true
     },
   },
