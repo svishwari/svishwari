@@ -540,10 +540,12 @@ def fill_customer_events_missing_dates(
             )
         prev_date = curr_date
 
-    if end_date > prev_date and (end_date - prev_date).days > 1:
+    if end_date > prev_date and (end_date - prev_date).days >= 1:
         customer_events_dates_filled = (
             customer_events_dates_filled
-            + fill_empty_customer_events(prev_date, end_date)
+            + fill_empty_customer_events(
+                prev_date, end_date + datetime.timedelta(1)
+            )
         )
 
     customer_events_dates_filled.sort(
@@ -567,13 +569,12 @@ def get_customer_events_data(
     """
 
     config = get_config()
+    current_time = datetime.datetime.utcnow()
 
     # YTD by default
     default_filter = {
-        api_c.START_DATE: "%s-01-01T00:00:00Z"
-        % datetime.datetime.utcnow().year,
-        api_c.END_DATE: datetime.datetime.utcnow().strftime("%Y-%m-%d")
-        + "T00:00:00Z",
+        api_c.START_DATE: current_time.strftime("%Y-01-01"),
+        api_c.END_DATE: current_time.strftime("%Y-%m-%d"),
     }
 
     filters = filters if filters else default_filter
@@ -581,11 +582,11 @@ def get_customer_events_data(
     # set missing start or end date
     filters[api_c.START_DATE] = filters.get(
         api_c.START_DATE,
-        "%s-01-01T00:00:00Z" % datetime.datetime.utcnow().year,
+        current_time.strftime("%Y-01-01"),
     )
     filters[api_c.END_DATE] = filters.get(
         api_c.END_DATE,
-        datetime.datetime.utcnow().strftime("%Y-%m-%d") + "T00:00:00Z",
+        current_time.strftime("%Y-%m-%d"),
     )
 
     logger.info("Getting customer events info from CDP API.")
@@ -612,8 +613,8 @@ def get_customer_events_data(
 
     return fill_customer_events_missing_dates(
         customer_events,
-        parse(filters.get(api_c.START_DATE)),
-        parse(filters.get(api_c.END_DATE)),
+        parse(filters.get(api_c.START_DATE) + "T00:00:00Z"),
+        parse(filters.get(api_c.END_DATE) + "T00:00:00Z"),
     )
 
 

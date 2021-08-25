@@ -701,10 +701,8 @@ class CustomerEvents(SwaggerView):
             "type": "object",
             "in": "body",
             "example": {
-                api_c.START_DATE: "%s-01-01T00:00:00Z"
-                % datetime.utcnow().year,
-                api_c.END_DATE: datetime.utcnow().strftime("%Y-%m-%d")
-                + "T00:00:00Z",
+                api_c.START_DATE: datetime.utcnow().strftime("%Y-01-01"),
+                api_c.END_DATE: datetime.utcnow().strftime("%Y-%m-%d"),
             },
         },
     ]

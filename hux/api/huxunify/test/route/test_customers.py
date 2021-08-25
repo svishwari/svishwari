@@ -461,8 +461,8 @@ class TestCustomersOverview(TestCase):
         if not customer_id:
             return
         filter_attributes = {
-            "start_date": "2021-01-01T00:00:00.000Z",
-            "end_date": "2021-01-02T00:00:00.000Z",
+            "start_date": "2021-01-01",
+            "end_date": "2021-01-02",
         }
 
         self.request_mocker.stop()
