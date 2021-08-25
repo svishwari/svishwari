@@ -76,7 +76,7 @@ export default {
       this.height = this.chartDimensions.height
       let line = 0
       let col = 0
-      let genders = [{ label: "Women" }, { label: "Men" }, { label: "Other" }]
+      let genders = [{ label: "Women", xValue: 0 }, { label: "Men", xValue: 35 }, { label: "Other", xValue: 60 }]
 
       let colorCodes = [
         "rgba(0, 85, 135, 1)",
@@ -97,39 +97,6 @@ export default {
         .append("svg")
         .attr("width", this.width)
         .attr("height", this.height)
-
-      let dotHoverIn = (pointX, value) => {
-        let areaData = value
-        let xPosition = pointX
-        let yPosition = 0
-        svg
-          .append("line")
-          .attr("class", "hover-line")
-          .style("stroke", "black")
-          .attr("x1", xPosition)
-          .attr("y1", 0)
-          .attr("x2", xPosition)
-          .attr("y2", height)
-
-        svg.selectAll(".dot").each(function () {
-          if (this.getAttribute("cx") == xPosition) {
-            yPosition = this.getAttribute("cy")
-            svg
-              .append("circle")
-              .classed("hover-circle", true)
-              .attr("cx", xPosition)
-              .attr("cy", this.getAttribute("cy"))
-              .attr("r", 6)
-              .style("stroke", this.getAttribute("stroke"))
-              .style("stroke-opacity", "1")
-              .style("fill", "white")
-              .style("pointer-events", "none")
-          }
-        })
-        areaData.xPosition = xPosition
-        areaData.yPosition = yPosition + 30
-        this.tooltipDisplay(true, areaData)
-      }
 
       let strokeWidth = 1.5
       let margin = { top: 0, bottom: 20, left: 40, right: 20 }
@@ -255,7 +222,7 @@ export default {
         .attr("height", height)
         .style("stroke", "transparent")
         .style("fill", "transparent")
-        .on("mousemove", (mouseEvent) => mousemove(mouseEvent),dotHoverIn())
+        .on("mousemove", (mouseEvent) => mousemove(mouseEvent))
         .on("mouseout", () => mouseout())
 
       let bisectDate = d3Array.bisector((d) => d).left
@@ -269,10 +236,12 @@ export default {
       let mouseout = () => {
         svg.selectAll(".hover-line-y").style("display", "none")
         svg.selectAll(".hover-circle").remove()
+        this.tooltipDisplay(false)
       }
 
       let mousemove = (mouseEvent) => {
         svg.selectAll(".hover-circle").remove()
+        this.tooltipDisplay(false)
         let data = this.dateData
         let x0 = xScale.invert(d3Select.pointer(mouseEvent)[0])
        
@@ -280,8 +249,10 @@ export default {
         let d0 = data[i - 1]
         let d1 = data[i] || {}
         let d = x0 - d0 > d1 - x0 ? d1 : d0
-
         let finalXCoordinate = xScale(d) + 40
+        let dateD = this.$options.filters.Date(d, "DD/MM/YY")
+        let yData;
+        let dataToolTip = this.areaChartData.find(element => this.$options.filters.Date(new Date(element.date), "DD/MM/YY") == dateD );
 
         svg
           .selectAll(".hover-line-y")
@@ -294,6 +265,7 @@ export default {
           svg.selectAll(".dot").each(function () {
           if (this.getAttribute("cx") == finalXCoordinate) {
             let yPosition = this.getAttribute("cy")
+            yData = yPosition
             svg
               .append("circle")
               .classed("hover-circle", true)
@@ -306,8 +278,9 @@ export default {
               .style("pointer-events", "none")
           }
         })
-        console.log("data",data)
-        // this.tooltipDisplay(true, areaData)
+        dataToolTip.xPosition = finalXCoordinate;
+dataToolTip.yPosition = yData;
+this.tooltipDisplay(true, dataToolTip)
       }
 
       stackedValues.forEach(function (layer, index) {
@@ -321,16 +294,11 @@ export default {
             .attr("data", () => points.data)
             .style("fill", colorCodes[index])
             .attr("stroke", colorCodes[index])
-            
         })
       })
-      
-      // let tool = (data) => {
-      //   consol.log("data+++++++++++++++++++++++++++", dara)
-      // }
 
       d3Select.select("#legend").selectAll("svg").remove()
-
+let x = 35;
       let legendSvg = d3Select
         .select("#legend")
         .append("svg")
@@ -347,11 +315,11 @@ export default {
         .enter()
         .append("g")
         .attr("class", "legend")
-        .attr("transform", function () {
+        .attr("transform", function (d) {
           let y = line * 25
           let x = col
           col += 35
-          return "translate(" + x + "," + y + ")"
+          return `translate(${d.xValue}, 0)`
         })
 
       legend
