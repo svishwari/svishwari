@@ -434,6 +434,93 @@ CUSTOMER_INSIGHTS_COUNT_BY_DAY_RESPONSE = {
     ],
 }
 
+CUSTOMERS_INSIGHTS_BY_CITY_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            "city": "New York",
+            "state": "NY",
+            "country": "US",
+            "customer_count": 4321,
+            "avg_ltv": 4.0066,
+        },
+        {
+            "city": "Santa Anna",
+            "state": "TX",
+            "country": "US",
+            "customer_count": 4312,
+            "avg_ltv": 668.03003,
+        },
+        {
+            "city": "Solon Springs",
+            "state": "WI",
+            "country": "US",
+            "customer_count": 4231,
+            "avg_ltv": 648.8791640000001,
+        },
+        {
+            "city": "Gays Mills",
+            "state": "WI",
+            "country": "US",
+            "customer_count": 4213,
+            "avg_ltv": 587.3708300000001,
+        },
+        {
+            "city": "Hodgen",
+            "state": "OK",
+            "country": "US",
+            "customer_count": 4132,
+            "avg_ltv": 573.278802,
+        },
+    ],
+}
+
+CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            api_c.STATE: "CO",
+            api_c.COUNTRY: "US",
+            api_c.GENDER_MEN: 2656,
+            api_c.GENDER_WOMEN: 2344,
+            api_c.GENDER_OTHER: 12,
+            api_c.SIZE: 5012,
+            api_c.AVG_LTV: 123.43,
+        },
+        {
+            api_c.STATE: "NY",
+            api_c.COUNTRY: "US",
+            api_c.GENDER_MEN: 605,
+            api_c.GENDER_WOMEN: 589,
+            api_c.GENDER_OTHER: 40,
+            api_c.SIZE: 1234,
+            api_c.AVG_LTV: 132.34,
+        },
+    ],
+    "message": "ok",
+}
+
+CUSTOMERS_INSIGHTS_BY_CITIES_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            api_c.CITY: "Bakersfield",
+            api_c.STATE: "MD",
+            api_c.COUNTRY: "US",
+            api_c.CUSTOMER_COUNT: 731098,
+            api_c.AVG_LTV: 731000,
+        },
+        {
+            api_c.CITY: "Berkeley",
+            api_c.STATE: "CA",
+            api_c.COUNTRY: "US",
+            api_c.CUSTOMER_COUNT: 4614342,
+            api_c.AVG_LTV: 4632145,
+        },
+    ],
+    "message": "ok",
+}
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False
