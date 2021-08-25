@@ -33,9 +33,7 @@ from huxunify.api.route.decorators import (
     secured,
     api_error_handler,
 )
-from huxunify.api.route.utils import (
-    get_token_from_request,
-)
+from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunify.api.data_connectors.cdp import (
     get_customer_profiles,
     get_customer_profile,
