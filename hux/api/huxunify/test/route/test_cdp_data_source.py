@@ -8,6 +8,7 @@ from unittest import TestCase, mock
 
 import mongomock
 import requests_mock
+from bson import ObjectId
 from flask_marshmallow import Schema
 from marshmallow import ValidationError
 
@@ -250,6 +251,28 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
+    def test_delete_data_source_by_id_non_existent_id(self) -> None:
+        """
+        Test delete data source with an non-existent id
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        non_existent_data_source_id = str(ObjectId())
+
+        response = self.test_client.delete(
+            f"{self.data_sources_api_endpoint}/{non_existent_data_source_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(
+            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+        )
+        self.assertEqual({"message": api_c.OPERATION_FAILED}, response.json)
+
     def test_create_data_source_w_empty_name_string(self):
         """
         Test creating a data source with name set as empty string
@@ -331,3 +354,57 @@ class CdpDataSourcesTest(TestCase):
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    def test_patch_data_source_valid_params(self) -> None:
+        """
+        Test patching/updating an existing data source with valid params
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        valid_data_source = self.data_sources[0]
+
+        response = self.test_client.patch(
+            self.data_sources_api_endpoint,
+            data=json.dumps(
+                {
+                    api_c.CDP_DATA_SOURCE_IDS: [valid_data_source[api_c.ID]],
+                    api_c.BODY: {
+                        api_c.IS_ADDED: valid_data_source[api_c.IS_ADDED],
+                        api_c.STATUS: valid_data_source[api_c.STATUS],
+                    },
+                }
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        for record in response.json:
+            self.assertTrue(validate_schema(CdpDataSourceSchema(), record))
+
+    def test_patch_data_source_invalid_params(self) -> None:
+        """
+        Test patching/updating an existing data source with invalid params
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        valid_data_source = self.data_sources[0]
+
+        response = self.test_client.patch(
+            self.data_sources_api_endpoint,
+            data=json.dumps(
+                {
+                    api_c.CDP_DATA_SOURCE_IDS: [valid_data_source[api_c.ID]],
+                }
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)

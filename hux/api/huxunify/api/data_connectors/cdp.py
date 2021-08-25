@@ -1,12 +1,13 @@
 """
 Purpose of this file is for holding methods to query and pull data from CDP.
 """
-import datetime
+import random
 import time
 import asyncio
 import math
 from typing import Tuple, Optional
 from random import randint
+from datetime import datetime, timedelta
 
 import requests
 import aiohttp
@@ -21,7 +22,7 @@ from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 
 # fields to convert to datetime from the responses
-DEFAULT_DATETIME = datetime.datetime(1, 1, 1, 1, 00)
+DEFAULT_DATETIME = datetime(1, 1, 1, 1, 00)
 DATETIME_FIELDS = [
     "since",
     "last_click",
@@ -128,6 +129,55 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
         hux_id,
     )
     return clean_cdm_fields(response.json()[api_c.BODY])
+
+
+# pylint: disable=unused-argument
+def get_idr_overview(
+    token: str, start_date: str = None, end_date: str = None
+) -> dict:
+    """Fetch IDR overview data.
+
+    Args:
+        token (str): OKTA JWT Token.
+        start_date (str): Start date.
+        end_date (str): End date.
+
+    Returns:
+        dict: dictionary of overview data
+
+    """
+
+    # TODO : Update to use idr insights api, with start/end date as query params.
+    # get config
+    config = get_config()
+    logger.info("Getting IDR Insights from CDP API.")
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights",
+        json=api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Could not get customer profile insights from CDP API got %s %s.",
+            response.status_code,
+            response.text,
+        )
+        return {}
+    logger.info(
+        "Successfully retrieved Customer Profile Insights from CDP API."
+    )
+    # TODO : Get date range from CDP
+    return {
+        "overview": clean_cdm_fields(response.json()[api_c.BODY]),
+        "date_range": {
+            api_c.START_DATE: datetime.now()
+            - timedelta(days=random.randint(1000, 5000)),
+            api_c.END_DATE: datetime.now(),
+        },
+    }
 
 
 def get_customers_overview(
@@ -288,11 +338,19 @@ async def get_async_customers(
                 return {"code": 500}, str(audience_id)
 
 
-def get_idr_data_feeds() -> list:
+# pylint: disable=unused-argument
+def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
     """
     Fetch IDR data feeds
+
+    Args:
+        token (str): OKTA JWT Token.
+        start_date (str): Start date.
+        end_date (str): End date.
+    Returns:
+       list: count of known, anonymous, unique ids on a day.
     """
-    # TODO: Update after CDM API for IDR data feeds is available
+    # TODO: Update after CDM API for IDR data feeds is available. Use date range tp filter.
     response = [
         {
             api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fc",
@@ -301,7 +359,7 @@ def get_idr_data_feeds() -> list:
             api_c.DATAFEED_NEW_IDS_COUNT: 21,
             api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2023532,
             api_c.MATCH_RATE: 0.98,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow(),
+            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow(),
         },
         {
             api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fd",
@@ -310,8 +368,8 @@ def get_idr_data_feeds() -> list:
             api_c.DATAFEED_NEW_IDS_COUNT: 54,
             api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3232,
             api_c.MATCH_RATE: 0.97,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow()
-            - datetime.timedelta(days=1),
+            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
+            - timedelta(days=1),
         },
         {
             api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fe",
@@ -320,8 +378,8 @@ def get_idr_data_feeds() -> list:
             api_c.DATAFEED_NEW_IDS_COUNT: 300,
             api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3012,
             api_c.MATCH_RATE: 0.98,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow()
-            - datetime.timedelta(days=7),
+            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
+            - timedelta(days=7),
         },
         {
             api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4ff",
@@ -330,8 +388,8 @@ def get_idr_data_feeds() -> list:
             api_c.DATAFEED_NEW_IDS_COUNT: 612,
             api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2045,
             api_c.MATCH_RATE: 0.98,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow()
-            - datetime.timedelta(days=30),
+            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
+            - timedelta(days=30),
         },
     ]
 
@@ -414,21 +472,18 @@ def add_randomness(values: list, variation_percentage: float = 0.005):
     ]
 
 
-def get_idr_matching_trends(token: str) -> list:
+def get_idr_matching_trends(
+    token: str, start_date: str, end_date: str
+) -> list:
     """Retrieves IDR matching trends data YTD
     Args:
         token (str): OKTA JWT Token.
+        start_date (str): Start date.
+        end_date (str): End date.
     Returns:
        list: count of known, anonymous, unique ids on a day.
     """
-    # TODO: Update after CDM API for IDR matching trends is available
-    year_for_date = datetime.datetime.now().year
-    start_date = datetime.datetime.fromisoformat(f"{year_for_date}-01-01")
-    end_date = datetime.datetime.utcnow()
-    diff_date = end_date - start_date
-    num_points = diff_date.days
-
-    days = [start_date + datetime.timedelta(days=i) for i in range(num_points)]
+    # TODO: Update after CDM API for IDR matching trends is available. Fetch date range from CDM.
 
     # call customer-profile insights to get id counts
     customer_profile_info = get_customers_overview(token)
@@ -444,22 +499,38 @@ def get_idr_matching_trends(token: str) -> list:
         api_c.TOTAL_UNKNOWN_IDS, api_c.ANONYMOUS_IDS_MIN_COUNT
     )
 
+    # TODO : Fetch date range from CDP
+    start_date = (
+        datetime.strptime(start_date, "%m-%d-%Y")
+        if start_date
+        else datetime.today() - timedelta(days=random.randint(100, 1000))
+    )
+    end_date = (
+        datetime.strptime(end_date, "%m-%d-%Y")
+        if end_date
+        else datetime.today()
+    )
+    weeks = []
+    while start_date < end_date:
+        weeks.append(start_date)
+        start_date += timedelta(days=7)
+
     known_ids = generate_idr_matching_trends_distribution(
-        num_points,
+        len(weeks),
         min_point=known_ids_count - (0.35 * known_ids_count),
         max_point=known_ids_count,
         lambda_=api_c.KNOWN_IDS_LAMBDA,
     )
 
     unique_hux_ids = generate_idr_matching_trends_distribution(
-        num_points,
+        len(weeks),
         min_point=unique_ids_count - (0.35 * known_ids_count),
         max_point=unique_ids_count,
         lambda_=api_c.UNIQUE_HUX_IDS_LAMBDA,
     )
     # setting multiplier to -1 to get exponentially decreasing values
     anonymous_ids = generate_idr_matching_trends_distribution(
-        num_points,
+        len(weeks),
         min_point=unknown_ids_count,
         max_point=unknown_ids_count + (0.35 * unknown_ids_count),
         lambda_=api_c.ANONYMOUS_IDS_LAMBDA,
@@ -468,13 +539,13 @@ def get_idr_matching_trends(token: str) -> list:
 
     return [
         {
-            api_c.DATE: day,
+            api_c.DATE: week,
             api_c.KNOWN_IDS: known_ids_count,
             api_c.UNIQUE_HUX_IDS: unique_hux_ids_count,
             api_c.ANONYMOUS_IDS: anonymous_ids_count,
         }
-        for day, known_ids_count, unique_hux_ids_count, anonymous_ids_count in zip(
-            days, known_ids, unique_hux_ids, anonymous_ids
+        for week, known_ids_count, unique_hux_ids_count, anonymous_ids_count in zip(
+            weeks, known_ids, unique_hux_ids, anonymous_ids
         )
     ]
 
@@ -575,7 +646,7 @@ def get_customer_events_data(
     """
 
     config = get_config()
-    current_time = datetime.datetime.utcnow()
+    current_time = datetime.utcnow()
 
     # YTD by default
     default_filter = {
@@ -637,7 +708,7 @@ def clean_cdm_fields(body: dict) -> dict:
     for date_field in DATETIME_FIELDS:
         if date_field not in body:
             continue
-        if isinstance(body[date_field], datetime.datetime):
+        if isinstance(body[date_field], datetime):
             continue
         try:
             # ignoretz this to make it naive format for uniformity

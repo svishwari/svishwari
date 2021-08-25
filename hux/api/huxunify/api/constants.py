@@ -29,6 +29,7 @@ MATCH_CONFIDENCE = "match_confidence"
 DELIVERIES = "deliveries"
 DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
+DATE_RANGE = "date_range"
 HUX_ID = "hux_id"
 TOP_FEATURES = "top_features"
 LIMIT = "limit"
@@ -1218,3 +1219,31 @@ DEFAULT_ALERT_SORT_ORDER = "descending"
 DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
+
+# Download Audience Fields
+DOWNLOAD_TYPE = "download_type"
+GOOGLE_ADS = "google_ads"
+AMAZON_ADS = "amazon_ads"
+
+DOWNLOAD_TYPES = {
+    GOOGLE_ADS: {
+        db_c.S_TYPE_EMAIL_HASHED: "Email",
+        db_c.S_TYPE_FIRST_NAME_HASHED: "First Name",
+        db_c.S_TYPE_FIRST_NAME_INITIAL_HASHED: "First Name Initial",
+        db_c.S_TYPE_LAST_NAME_HASHED: "Last Name",
+        db_c.S_TYPE_MOBILE_DEVICE_ID: "Mobile Device ID",
+        db_c.S_TYPE_PHONE_NUMBER_HASHED: "Phone",
+        db_c.S_TYPE_POSTAL_CODE_HASHED: "Zip",
+    },
+    AMAZON_ADS: {
+        db_c.S_TYPE_CITY_HASHED: "city",
+        db_c.S_TYPE_EMAIL_HASHED: "email",
+        db_c.S_TYPE_FIRST_NAME_HASHED: "first_name",
+        db_c.S_TYPE_LAST_NAME_HASHED: "last_name",
+        db_c.S_TYPE_PHONE_NUMBER_HASHED: "phone",
+        db_c.S_TYPE_POSTAL_CODE_HASHED: "zip",
+        db_c.S_TYPE_STATE_OR_PROVINCE_HASHED: "state",
+        # TODO Add address once CDP returns it
+        # db_c.S_TYPE_ADDRESS: "address"
+    },
+}
