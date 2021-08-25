@@ -5,7 +5,6 @@ from datetime import datetime
 from functools import wraps
 from typing import Any, Tuple, Union, Dict
 from http import HTTPStatus
-import time
 from bson import ObjectId
 from bson.errors import InvalidId
 
@@ -13,8 +12,7 @@ import facebook_business.exceptions
 from healthcheck import HealthCheck
 from decouple import config
 from flask import request, Response, Flask
-import prometheus_client
-from prometheus_client import CollectorRegistry, Histogram
+
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
 from marshmallow import ValidationError

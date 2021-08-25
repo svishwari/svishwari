@@ -11,7 +11,7 @@ from huxunify.api.route.utils import (
     add_view_to_blueprint
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
-from huxunify.api.data_connectors.prometheus import PrometheusHelper
+from huxunify.api.data_connectors.prometheus import PrometheusClient
 
 metrics_bp = Blueprint("/metrics", import_name=__name__)
 
@@ -54,7 +54,7 @@ class MetricsView(SwaggerView):
 
         """
 
-        prometheus_helper = PrometheusHelper.instance()
+        prometheus_helper = PrometheusClient.instance()
         metrics = prometheus_helper.generate_metrics()
 
         return Response(metrics, mimetype="text/plain")

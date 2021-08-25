@@ -11,7 +11,7 @@ from huxunify.api.config import load_env_vars
 from huxunify.api.route import ROUTES
 from huxunify.api import constants
 from huxunify.api.route.utils import get_health_check
-from huxunify.api.route.utils import PrometheusHelper
+from huxunify.api.data_connectors.prometheus import PrometheusClient
 
 
 # set config variables
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     # create the API
     app = create_app()
 
-    prometheus_helper = PrometheusHelper.instance()
+    prometheus_helper = PrometheusClient.instance()
     prometheus_helper.set_app(app)
 
     # run the API
