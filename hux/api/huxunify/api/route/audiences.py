@@ -2,6 +2,7 @@
 Paths for Orchestration API
 """
 import csv
+from datetime import datetime
 from http import HTTPStatus
 from pathlib import Path
 from typing import Tuple
@@ -76,7 +77,7 @@ class AudienceDownload(SwaggerView):
     }
 
     responses.update(AUTH401_RESPONSE)
-    tags = ["mukesh"]
+    tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
     @api_error_handler()
@@ -124,7 +125,11 @@ class AudienceDownload(SwaggerView):
             column_set=column_set,
         )
 
-        audience_file_name = f"{audience_id}_{download_type}.csv"
+        audience_file_name = (
+            f"{datetime.now().strftime('%Y%m%d%H%M%S')}"
+            f"_{audience_id}_{download_type}.csv"
+        )
+
         with open(audience_file_name, "w", newline="") as csvfile:
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow(api_c.DOWNLOAD_TYPES[download_type].values())

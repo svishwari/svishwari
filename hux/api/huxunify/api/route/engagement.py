@@ -1764,9 +1764,6 @@ class EngagementPerformanceDownload(SwaggerView):
 
         """
 
-        if not ObjectId.is_valid(engagement_id):
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
-
         # setup the database
         database = get_db_client()
 
