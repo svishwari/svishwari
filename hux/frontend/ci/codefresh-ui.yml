@@ -82,14 +82,20 @@ steps:
         image: ${{test_image}}
         working_directory: /app
         commands:
-          - yarn lint --no-fix
+          - yarn lint
+      style:
+        title: "Running style."
+        image: ${{test_image}}
+        working_directory: /app
+        commands:
+          - yarn style
       unit_tests:
         stage: tests
         title: "Running unit tests."
         image: ${{test_image}}
         working_directory: /app
         commands:
-          - yarn test:unit
+          - yarn test
 
   app_image:
     stage: build_app
