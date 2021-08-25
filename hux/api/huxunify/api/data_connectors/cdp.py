@@ -540,10 +540,12 @@ def fill_customer_events_missing_dates(
             )
         prev_date = curr_date
 
-    if end_date > prev_date and (end_date - prev_date).days > 1:
+    if end_date > prev_date and (end_date - prev_date).days >= 1:
         customer_events_dates_filled = (
             customer_events_dates_filled
-            + fill_empty_customer_events(prev_date, end_date)
+            + fill_empty_customer_events(
+                prev_date, end_date + datetime.timedelta(1)
+            )
         )
 
     customer_events_dates_filled.sort(
@@ -567,13 +569,12 @@ def get_customer_events_data(
     """
 
     config = get_config()
+    current_time = datetime.datetime.utcnow()
 
     # YTD by default
     default_filter = {
-        api_c.START_DATE: "%s-01-01T00:00:00Z"
-        % datetime.datetime.utcnow().year,
-        api_c.END_DATE: datetime.datetime.utcnow().strftime("%Y-%m-%d")
-        + "T00:00:00Z",
+        api_c.START_DATE: current_time.strftime("%Y-01-01"),
+        api_c.END_DATE: current_time.strftime("%Y-%m-%d"),
     }
 
     filters = filters if filters else default_filter
@@ -581,11 +582,11 @@ def get_customer_events_data(
     # set missing start or end date
     filters[api_c.START_DATE] = filters.get(
         api_c.START_DATE,
-        "%s-01-01T00:00:00Z" % datetime.datetime.utcnow().year,
+        current_time.strftime("%Y-01-01"),
     )
     filters[api_c.END_DATE] = filters.get(
         api_c.END_DATE,
-        datetime.datetime.utcnow().strftime("%Y-%m-%d") + "T00:00:00Z",
+        current_time.strftime("%Y-%m-%d"),
     )
 
     logger.info("Getting customer events info from CDP API.")
@@ -612,8 +613,8 @@ def get_customer_events_data(
 
     return fill_customer_events_missing_dates(
         customer_events,
-        parse(filters.get(api_c.START_DATE)),
-        parse(filters.get(api_c.END_DATE)),
+        parse(filters.get(api_c.START_DATE) + "T00:00:00Z"),
+        parse(filters.get(api_c.END_DATE) + "T00:00:00Z"),
     )
 
 
@@ -641,7 +642,7 @@ def clean_cdm_fields(body: dict) -> dict:
     return body
 
 
-def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> dict:
+def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> list:
     """Get spending details of customer by cities
 
     Args:
@@ -650,37 +651,12 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> dict:
             customers_overview endpoint.
 
     Returns:
-        dict of income details of customers by cities
+        list: list of income details of customers by cities
 
     """
-    city_income_default_filter = api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
-    city_income_default_filter[api_c.COUNT] = 5
-
-    # get config
-    config = get_config()
-    logger.info("Retrieving customer income details by cities from CDP API.")
-    response = requests.post(
-        f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
-        json=filters if filters else city_income_default_filter,
-        headers={
-            api_c.CUSTOMERS_API_HEADER_KEY: token,
-        },
-    )
-
-    if response.status_code != 200 or api_c.BODY not in response.json():
-        logger.error(
-            "Could not get customer income details by state from CDP API got %s %s.",
-            response.status_code,
-            response.text,
-        )
-        return {}
-    logger.info(
-        "Successfully retrieved customer income details by state from CDP API."
-    )
-
     return [
         {api_c.NAME: x[api_c.CITY], api_c.LTV: round(x["avg_ltv"], 4)}
-        for x in clean_cdm_fields(response.json()[api_c.BODY])
+        for x in get_city_ltvs(token, filters=filters)
     ]
 
 
@@ -696,7 +672,7 @@ def get_demographic_by_state(
             count_by_state endpoint, default None
 
     Returns:
-        list of demographic details by state
+        list: list of demographic details by state
 
     """
     # get config
@@ -716,7 +692,7 @@ def get_demographic_by_state(
             response.status_code,
             response.text,
         )
-        return {}
+        return []
 
     logger.info("Successfully retrieved state demographic insights.")
     body = clean_cdm_fields(response.json()[api_c.BODY])
@@ -796,3 +772,48 @@ def get_customers_insights_count_by_day(
             record[api_c.RECORDED] = None
 
     return response_body
+
+
+def get_city_ltvs(
+    token: str,
+    filters: Optional[dict] = None,
+    offset: int = 0,
+    limit: int = api_c.DEFAULT_BATCH_SIZE,
+) -> list:
+    """
+    Get demographic details of customers by city
+
+    Args:
+        token (str): OKTA JWT Token.
+        filters (dict):  filters to pass into
+            city_ltvs endpoint
+        offset (int): offset
+        limit (int): limit
+
+    Returns:
+        list: list of demographic details by cities
+
+    """
+    # get config
+    config = get_config()
+    logger.info("Retrieving demographic insights by city.")
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+        json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        params=dict(offset=offset, limit=limit),
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve city-level demographic insights %s %s.",
+            response.status_code,
+            response.text,
+        )
+        return []
+
+    logger.info("Successfully retrieved city-level demographic insights.")
+
+    return [clean_cdm_fields(data) for data in response.json()[api_c.BODY]]

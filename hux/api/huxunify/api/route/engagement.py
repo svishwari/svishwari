@@ -1763,7 +1763,6 @@ class EngagementPerformanceDownload(SwaggerView):
                 HTTP Status Code
 
         """
-
         # setup the database
         database = get_db_client()
 

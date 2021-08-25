@@ -14,7 +14,7 @@
         <template v-if="col.value === 'name'">
           <tooltip>
             <template slot="label-content">
-              <span class="ellipsis">
+              <span class="ellipsis mt-1">
                 {{ item[col.value] }}
               </span>
             </template>
@@ -24,14 +24,14 @@
           </tooltip>
         </template>
 
-        <template v-else-if="col.value === 'status'">
+        <div v-else-if="col.value === 'status'" class="text-caption">
           <status
             :status="item[col.value]"
             :show-label="true"
             class="d-flex"
             :icon-size="17"
           />
-        </template>
+        </div>
 
         <template v-else-if="col.value === 'created_by'">
           <avatar :name="item[col.value]" />
@@ -126,6 +126,11 @@ export default {
           background: var(--v-aliceBlue-base);
           height: 40px !important;
         }
+      }
+    }
+    tr {
+      td {
+        height: 60px !important;
       }
     }
     .ellipsis {
