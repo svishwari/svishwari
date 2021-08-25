@@ -640,7 +640,7 @@ def get_customer_events_data(
     """
 
     config = get_config()
-    current_time = datetime.datetime.utcnow()
+    current_time = datetime.utcnow()
 
     # YTD by default
     default_filter = {
