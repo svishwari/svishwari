@@ -1,38 +1,36 @@
 # Hux UI
 
 ## Setup
-
 ```sh
 yarn install
 ```
 
-Pre-commit hooks should have been installed, but if not or you need to re-install
-them, then run:
+Pre-commit hooks will also be installed.
+If not or you need to re-install them, then run:
 
 ```sh
 yarn prepare
 ```
 
-### Compiles and hot-reloads for development
+This will set you up with git pre-commit hooks and pre-push hooks that will run
+your code changes against lint, style and tests before opening a pull request.
 
+### Compiles and hot-reloads for development
 ```sh
 yarn serve
 ```
 
 ### Compiles and minifies for production
-
 ```sh
 yarn build
 ```
 
 ### Run your unit tests
-
 ```sh
 yarn test:unit
 ```
 
 #### Snapshots
-
 If you have updated a reusable component's template, be sure to update the
 snaphots for them and commit them with your changes using:
 
@@ -40,26 +38,30 @@ snaphots for them and commit them with your changes using:
 yarn test:unit -u
 ```
 
-### Lints and fixes files
-
+### Lint
 ```sh
 yarn lint
 ```
 
 > **💡 PRO TIPS**
->
 > 1. If your branch's CI is failing but locally your lint and/or
->    unit tests are passing (or vice versa), try a fresh install locally:
->
+> unit tests are passing (or vice versa), try a fresh install locally:
 >    ```sh
 >    rm -rf node_modules
->    yarn install # or yarn ci
+>    yarn install
 >    ```
->
 >    This should clear up most issues.
 >
 > 2. Use **`yarn <command>`** — <ins>do not</ins> use **`npm <command>`** and
->    remove `package-lock.json` if somehow you ended up with one locally.
+> remove `package-lock.json` if somehow you ended up with one locally.
+
+### Style
+
+```sh
+yarn style
+```
+
+If there are style issues, run `yarn style:fix` to fix them.
 
 ### Run storybook
 
@@ -89,6 +91,7 @@ Run.
 docker run -p 8080:80 hux-ui
 ```
 
+
 Preview.
 
 ```sh
@@ -117,19 +120,19 @@ From the guide, you will need to
 
 3. Configure the Okta app for our frontend app:
 
-   | Sign-in redirect URIs                            | Sign-out redirect URIs                  | Initiate login URI          |
-   | ------------------------------------------------ | --------------------------------------- | --------------------------- |
-   | http://localhost:8080/login/callback             | http://localhost:8080/login             | http://localhost:8080/login |
-   | https://host.docker.internal:9090/login/callback | https://host.docker.internal:9090/login | -                           |
+    |Sign-in redirect URIs|Sign-out redirect URIs|Initiate login URI|
+    |-|-|-|
+    |http://localhost:8080/login/callback|http://localhost:8080/login|http://localhost:8080/login|
+    |https://host.docker.internal:9090/login/callback|https://host.docker.internal:9090/login|-|
 
 4. Configure the Trusted Origins (`Security > API > Trusted Origins tab`) with the base URI of our frontend app:
 
-   | Origin URL                        | Type |
-   | --------------------------------- | ---- |
-   | http://localhost:8080             | CORS |
-   | https://host.docker.internal:9090 | CORS |
+    |Origin URL|Type|
+    |-|-|
+    |http://localhost:8080|CORS|
+    |https://host.docker.internal:9090|CORS|
 
-> NOTE: We have included redirect URIs and base URIs specifically to run end-to-end integration tests with Docker locally using the special DNS name `host.docker.internal`
+  > NOTE: We have included redirect URIs and base URIs specifically to run end-to-end integration tests with Docker locally using the special DNS name `host.docker.internal`
 
 5. Assign your user(s) to the app.
 
