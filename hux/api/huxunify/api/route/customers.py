@@ -28,10 +28,12 @@ from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import (
-    secured,
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
+    secured,
     api_error_handler,
+)
+from huxunify.api.route.utils import (
     get_token_from_request,
 )
 from huxunify.api.data_connectors.cdp import (
