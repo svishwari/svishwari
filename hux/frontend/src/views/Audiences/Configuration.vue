@@ -66,6 +66,8 @@
                     input-placeholder
                   "
                   :rules="audienceNamesRules"
+                  help-text="This audience will appear in the delivered destinations as the provided Audience name. In Facebook it will appear as the provided Audience name with the timestamp of delivery."
+                  icon="mdi-information-outline"
                 />
               </v-col>
               <v-col cols="8">
@@ -77,7 +79,7 @@
                       <icon
                         class="add-icon cursor-pointer"
                         type="add"
-                        :size="30"
+                        :size="41"
                       />
                     </span>
                     <div>
@@ -107,7 +109,7 @@
             optional="- Optional"
             class="neroBlack--text step-2"
           >
-            <v-col class="pt-1 pa-0">
+            <v-col class="pa-0">
               <attribute-rules
                 :rules="attributeRules"
                 @updateOverview="(data) => mapCDMOverview(data)"
@@ -131,27 +133,26 @@
                       mdi-information-outline
                     </v-icon>
                   </template>
-                  <template #hover-content>
+                  <template
+                    #hover-content
+                    class="white neroBlack--text shadow pa-2 text-caption"
+                  >
                     <v-sheet max-width="240px">
-                      <h6 class="text-caption mb-2">Destination</h6>
-                      <p class="gray--text">
-                        Locations where Audiences are planned to be run.
-                      </p>
+                      The location(s) where Audiences are planned to be run.
                     </v-sheet>
                   </template>
                 </tooltip>
-                - Optional
               </h5>
             </template>
 
-            <v-row class="pt-1">
-              <v-col cols="12">
+            <v-row>
+              <v-col cols="12" class="pt-2">
                 <div class="d-flex align-center">
                   <span @click="openSelectDestinationsDrawer()">
                     <icon
-                      class="add-icon cursor-pointer mt-1"
+                      class="add-icon cursor-pointer"
                       type="add"
-                      :size="30"
+                      :size="41"
                     />
                   </span>
                   <tooltip
@@ -689,14 +690,11 @@ export default {
       display: inline-flex;
       .logo-wrapper {
         position: relative;
-        .added-logo {
-          margin-top: 8px;
-        }
         .delete-icon {
           z-index: 1;
           position: absolute;
           left: 8px;
-          top: 8px;
+          top: 0px;
           background: var(--v-white-base);
           display: none;
         }

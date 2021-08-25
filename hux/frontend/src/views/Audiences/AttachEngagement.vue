@@ -503,7 +503,7 @@ export default {
   box-shadow: none !important;
 }
 .new-engament-wrap {
-  height: 620px;
+  height: 650px;
   .delivery-options {
     ::v-deep button {
       background: var(--v-white-base);
@@ -563,6 +563,7 @@ export default {
     }
   }
   .delivery-schedule {
+    margin: 0;
     .hux-date-picker {
       ::v-deep .main-button {
         margin-left: 0px !important;

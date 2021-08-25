@@ -9,6 +9,7 @@ import mongomock
 from huxunifylib.database.client import DatabaseClient
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
+from huxunify.api.schema.model import ModelDriftSchema
 from huxunify.app import create_app
 
 MOCK_MODEL_RESPONSE = {
@@ -142,11 +143,26 @@ class TestModelRoutes(TestCase):
         Returns:
 
         """
-        model_name = "model1"
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_name}/drift",
+
+        # mock the drift data.
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
+            json=t_c.MOCKED_MODEL_DRIFT,
+        )
+        self.request_mocker.start()
+
+        model_id = 2
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/drift",
+            json={
+                api_c.MODEL_TYPE: api_c.LTV,
+            },
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual([], response.json)
+        self.assertTrue(response.json)
+        self.assertTrue(
+            t_c.validate_schema(ModelDriftSchema(), response.json, True)
+        )

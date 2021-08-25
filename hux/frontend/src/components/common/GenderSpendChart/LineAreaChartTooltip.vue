@@ -4,13 +4,13 @@
       v-if="showTooltip"
       tile
       :style="{
-        transform: `translate(${position.x}px, ${position.y}px)`,
+        transform: `translate(${sourceInput.xPosition}px, ${sourceInput.yPosition}px)`,
         'border-radius': '0px !important',
       }"
       class="mx-auto tooltip-style"
     >
       <div class="bar-hover">
-        <div color="naroBlack">
+        <div class="date-font">
           {{ sourceInput.date | date("MMM DD[,] YYYY") }}
         </div>
         <div>
@@ -96,7 +96,7 @@ export default {
   @extend .income-tooltip-style;
   max-width: 110px;
   height: 110px;
-  top: -420px;
+  top: -444px;
   left: -240px;
   z-index: 1;
 }
@@ -118,14 +118,21 @@ export default {
 .color-other {
   border: 1px solid var(--v-oceanBlue-base);
 }
-.font-size-tooltip {
+.hover-font {
   font-family: Open Sans;
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
   line-height: 16px;
+}
+.font-size-tooltip {
+  @extend .hover-font;
   color: var(--v-gray-base);
   position: absolute;
   margin-top: 5px;
+}
+.date-font {
+  @extend .hover-font;
+  color: var(--v-naroBlack-base);
 }
 </style>

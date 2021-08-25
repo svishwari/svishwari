@@ -4,7 +4,7 @@
       <template #activator="{ on }">
         <span class="d-flex cursor-pointer" v-on="on">
           <v-btn class="mx-2 box-shadow-25" color="white" fab x-small>
-            <v-icon color="secondary"> mdi-plus </v-icon>
+            <v-icon color="primary"> mdi-plus </v-icon>
           </v-btn>
         </span>
       </template>
@@ -24,15 +24,18 @@
       </v-list>
     </v-menu>
     <notification />
+    <help />
   </div>
 </template>
 
 <script>
 import Notification from "../components/Notification.vue"
+import Help from "../components/Help.vue"
 export default {
   name: "HeaderNavigation",
   components: {
     Notification,
+    Help,
   },
   data() {
     return {
