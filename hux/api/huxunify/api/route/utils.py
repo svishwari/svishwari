@@ -2,36 +2,24 @@
 purpose of this file is to house route utilities
 """
 from datetime import datetime
-from functools import wraps
-from typing import Any, Tuple, Union, Dict
+from typing import Tuple, Union, Dict
 from http import HTTPStatus
 from bson import ObjectId
-from bson.errors import InvalidId
 
-import facebook_business.exceptions
 from healthcheck import HealthCheck
 from decouple import config
-from flask import request
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
-from marshmallow import ValidationError
 
 from huxunifylib.util.general.logging import logger
 from huxunifylib.connectors.util.client import db_client_factory
-from huxunifylib.connectors import (
-    CustomAudienceDeliveryStatusError,
-)
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
-from huxunifylib.database.user_management import get_user, set_user
-from huxunifylib.database.engagement_management import get_engagement
 from huxunifylib.database import (
-    orchestration_management,
     delivery_platform_management as destination_management,
     constants as db_c,
 )
-import huxunifylib.database.db_exceptions as de
 
 from huxunify.api.config import get_config
 from huxunify.api import constants
@@ -42,9 +30,6 @@ from huxunify.api.data_connectors.aws import (
 )
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
-    introspect_token,
-    get_token_from_request,
-    get_user_info,
 )
 from huxunify.api.data_connectors.cdp import check_cdm_api_connection
 
@@ -220,6 +205,7 @@ def update_metrics(
     )
     return metric
 
+
 def validate_destination_id(
     destination_id: str, check_if_destination_in_db: bool = True
 ) -> Union[ObjectId, Tuple[Dict[str, str], int]]:
@@ -252,4 +238,3 @@ def validate_destination_id(
             }, HTTPStatus.NOT_FOUND
 
     return destination_id
-
