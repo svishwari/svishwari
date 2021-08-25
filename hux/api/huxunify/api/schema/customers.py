@@ -286,7 +286,7 @@ class IDROverviewWithDateRangeSchema(Schema):
         ordered = True
 
     date_range = Nested(DateRangeSchema)
-    overview = List(Nested(IDROverviewSchema))
+    overview = Nested(IDROverviewSchema)
 
 
 class CustomerEventCountSchema(Schema):

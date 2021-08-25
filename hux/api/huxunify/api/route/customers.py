@@ -195,9 +195,9 @@ class CustomerPostOverview(SwaggerView):
 @add_view_to_blueprint(
     customers_bp,
     f"/{api_c.IDR_ENDPOINT}/{api_c.OVERVIEW}",
-    "CustomerDashboardOverview",
+    "IDROverview",
 )
-class CustomerDashboardOverview(SwaggerView):
+class IDROverview(SwaggerView):
     """
     Customers Dashboard Overview class
     """

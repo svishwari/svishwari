@@ -641,10 +641,8 @@ def get_customer_events_data(
 
     # YTD by default
     default_filter = {
-        api_c.START_DATE: "%s-01-01T00:00:00Z"
-        % datetime.datetime.utcnow().year,
-        api_c.END_DATE: datetime.datetime.utcnow().strftime("%Y-%m-%d")
-        + "T00:00:00Z",
+        api_c.START_DATE: "%s-01-01T00:00:00Z" % datetime.utcnow().year,
+        api_c.END_DATE: datetime.utcnow().strftime("%Y-%m-%d") + "T00:00:00Z",
     }
 
     filters = filters if filters else default_filter
@@ -652,11 +650,11 @@ def get_customer_events_data(
     # set missing start or end date
     filters[api_c.START_DATE] = filters.get(
         api_c.START_DATE,
-        "%s-01-01T00:00:00Z" % datetime.datetime.utcnow().year,
+        "%s-01-01T00:00:00Z" % datetime.utcnow().year,
     )
     filters[api_c.END_DATE] = filters.get(
         api_c.END_DATE,
-        datetime.datetime.utcnow().strftime("%Y-%m-%d") + "T00:00:00Z",
+        datetime.utcnow().strftime("%Y-%m-%d") + "T00:00:00Z",
     )
 
     logger.info("Getting customer events info from CDP API.")
@@ -701,7 +699,7 @@ def clean_cdm_fields(body: dict) -> dict:
     for date_field in DATETIME_FIELDS:
         if date_field not in body:
             continue
-        if isinstance(body[date_field], datetime.datetime):
+        if isinstance(body[date_field], datetime):
             continue
         try:
             # ignoretz this to make it naive format for uniformity
