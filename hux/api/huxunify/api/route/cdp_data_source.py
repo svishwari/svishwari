@@ -411,7 +411,7 @@ class BatchUpdateDataSources(SwaggerView):
                 ]
                 logger.info(
                     "Successfully update data sources with data source IDs %s.",
-                    ",".join(str(data_source_ids)),
+                    ",".join([str(x) for x in data_source_ids]),
                 )
                 return (
                     jsonify(

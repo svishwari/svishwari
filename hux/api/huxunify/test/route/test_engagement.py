@@ -1533,11 +1533,12 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_add_audience_to_engagement_non_existent_audience_id(self):
-        """
-        Test add audience to engagement invalid id
+        """Test add audience to engagement API with non-existent audience id
+
+        Args:
 
         Returns:
-
+            None
         """
 
         engagement_id = self.engagement_ids[0]
