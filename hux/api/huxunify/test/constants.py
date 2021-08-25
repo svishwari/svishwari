@@ -42,6 +42,7 @@ VALID_USER_RESPONSE = {
 INVALID_USER_RESPONSE = {
     api_c.EMAIL: "davesmith@fake.com",
 }
+INVALID_ID = "invalid_id"
 BATCH_RESPONSE = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
 TEST_CONFIG = get_config("TEST")
 INTROSPECT_CALL = "{}/oauth2/v1/introspect?client_id={}".format(
@@ -88,7 +89,20 @@ CUSTOMER_EVENT_RESPONSE = {
                 "viewed_sale_item": 0,
             },
             "date": "2021-01-01T00:00:00.000Z",
-        }
+        },
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_cart": 0,
+                "customer_login": 0,
+                "item_purchased": 0,
+                "trait_computed": 1,
+                "viewed_cart": 0,
+                "viewed_checkout": 0,
+                "viewed_sale_item": 0,
+            },
+            "date": "2021-01-02T00:00:00.000Z",
+        },
     ],
     "message": "ok",
 }
@@ -418,6 +432,93 @@ CUSTOMER_INSIGHTS_COUNT_BY_DAY_RESPONSE = {
             api_c.DIFFERENCE_COUNT: 4000,
         },
     ],
+}
+
+CUSTOMERS_INSIGHTS_BY_CITY_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            "city": "New York",
+            "state": "NY",
+            "country": "US",
+            "customer_count": 4321,
+            "avg_ltv": 4.0066,
+        },
+        {
+            "city": "Santa Anna",
+            "state": "TX",
+            "country": "US",
+            "customer_count": 4312,
+            "avg_ltv": 668.03003,
+        },
+        {
+            "city": "Solon Springs",
+            "state": "WI",
+            "country": "US",
+            "customer_count": 4231,
+            "avg_ltv": 648.8791640000001,
+        },
+        {
+            "city": "Gays Mills",
+            "state": "WI",
+            "country": "US",
+            "customer_count": 4213,
+            "avg_ltv": 587.3708300000001,
+        },
+        {
+            "city": "Hodgen",
+            "state": "OK",
+            "country": "US",
+            "customer_count": 4132,
+            "avg_ltv": 573.278802,
+        },
+    ],
+}
+
+CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            api_c.STATE: "CO",
+            api_c.COUNTRY: "US",
+            api_c.GENDER_MEN: 2656,
+            api_c.GENDER_WOMEN: 2344,
+            api_c.GENDER_OTHER: 12,
+            api_c.SIZE: 5012,
+            api_c.AVG_LTV: 123.43,
+        },
+        {
+            api_c.STATE: "NY",
+            api_c.COUNTRY: "US",
+            api_c.GENDER_MEN: 605,
+            api_c.GENDER_WOMEN: 589,
+            api_c.GENDER_OTHER: 40,
+            api_c.SIZE: 1234,
+            api_c.AVG_LTV: 132.34,
+        },
+    ],
+    "message": "ok",
+}
+
+CUSTOMERS_INSIGHTS_BY_CITIES_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            api_c.CITY: "Bakersfield",
+            api_c.STATE: "MD",
+            api_c.COUNTRY: "US",
+            api_c.CUSTOMER_COUNT: 731098,
+            api_c.AVG_LTV: 731000,
+        },
+        {
+            api_c.CITY: "Berkeley",
+            api_c.STATE: "CA",
+            api_c.COUNTRY: "US",
+            api_c.CUSTOMER_COUNT: 4614342,
+            api_c.AVG_LTV: 4632145,
+        },
+    ],
+    "message": "ok",
 }
 
 

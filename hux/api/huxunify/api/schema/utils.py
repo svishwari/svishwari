@@ -64,8 +64,7 @@ def validate_object_id(data: AnyStr) -> None:
         None
 
     """
-    if not ObjectId.is_valid(data):
-        raise ValidationError(api_c.INVALID_OBJECT_ID)
+    ObjectId(data)
 
 
 def validate_dest_constants(data: dict) -> None:

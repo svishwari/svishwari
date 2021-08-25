@@ -32,9 +32,11 @@ OVERVIEW = "overview"
 HUX_ID = "hux_id"
 TOP_FEATURES = "top_features"
 LIMIT = "limit"
+OFFSET = "offset"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
+QUERY_PARAMETER_SORT_ORDER = "sort_order"
 
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
@@ -52,8 +54,10 @@ TOTAL_CUSTOMERS = "total_customers"
 NEW_CUSTOMERS_ADDED = "new_customers_added"
 COUNTRIES = "total_countries"
 TOTAL_COUNT = "total_count"
-STATES = "total_us_states"
-CITIES = "total_cities"
+TOTAL_STATES = "total_us_states"
+TOTAL_CITIES = "total_cities"
+STATES = "states"
+CITIES = "cities"
 MIN_AGE = "min_age"
 MAX_AGE = "max_age"
 GENDER_WOMEN = "gender_women"
@@ -322,7 +326,6 @@ CANNOT_DELETE_DESTINATIONS = "Error deleting destination(s)."
 CANNOT_UPDATE_DESTINATIONS = "Error updating destination."
 INVALID_DESTINATION_AUTH = "Invalid authentication details entered."
 AUTH401_ERROR_MESSAGE = "Access token is missing or invalid."
-INVALID_OBJECT_ID = "Object ID is not valid."
 BSON_INVALID_ID = (
     lambda invalid_id: f"'{invalid_id}' is not a valid ObjectId, it must be a "
     f"12-byte input or a 24-character hex string"
@@ -363,8 +366,6 @@ CONNECTION_STATUS = "connection_status"
 AUTHENTICATION_DETAILS = "authentication_details"
 DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
 DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
-DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
-INVALID_ID = "Invalid Object ID."
 INVALID_STATUS = "Invalid status value."
 INVALID_COMPONENT_NAME = "Invalid component name."
 DATA_EXTENSIONS = "data-extensions"
@@ -492,18 +493,6 @@ LOOKALIKE_AUDIENCES = "lookalike_audiences"
 LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 LOOKALIKEABLE = "lookalikeable"
 IS_LOOKALIKE = "is_lookalike"
-
-STUB_INSIGHTS_RESPONSE = {
-    TOTAL_CUSTOMERS: 121321321,
-    COUNTRIES: 2,
-    STATES: 28,
-    CITIES: 246,
-    MIN_AGE: 34,
-    MAX_AGE: 100,
-    GENDER_WOMEN: 0.4651031,
-    GENDER_MEN: 0.481924,
-    GENDER_OTHER: 0.25219,
-}
 
 PARAM_STORE_PREFIX = "unified"
 PARAMETER_STORE_ERROR_MSG = (
@@ -1061,8 +1050,11 @@ CUSTOMERS_INSIGHTS = "customers-insights"
 GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
 CUSTOMERS_API_HEADER_KEY = "x-api-key"
-CUSTOMERS_DEFAULT_BATCH_SIZE = "1000"
-CUSTOMERS_DEFAULT_BATCH_NUMBER = "1"
+CUSTOMERS_DEFAULT_BATCH_SIZE = 1000
+CUSTOMER_COUNT = "customer_count"
+
+# Demographic
+CITIES_DEFAULT_BATCH_SIZE = 100
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
@@ -1217,8 +1209,8 @@ MOCK_CUSTOMER_PROFILE_RESPONSE = {
 }
 
 # Alerts Fields
-DEFAULT_ALERT_BATCH_SIZE = 5
+DEFAULT_BATCH_SIZE = 5
 DEFAULT_ALERT_SORT_ORDER = "descending"
-DEFAULT_ALERT_BATCH_NUMBER = "1"
+DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"

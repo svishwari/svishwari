@@ -29,8 +29,21 @@ client["customers"].overview = () => {
   return http.get("/customers/overview")
 }
 
-client["customers"].geographics = () => {
-  return http.get("/customers-insights/geo")
+client["customers"].geoOverview = () => http.get("/customers-insights/geo")
+
+client["customers"].geoCities = (batchNumber, batchSize) => {
+  return http.get(
+    `/customers-insights/cities?batch_number=${batchNumber}&batch_size=${batchSize}`
+  )
+}
+
+client["customers"].geoCountries = () =>
+  http.get("/customers-insights/countries")
+
+client["customers"].geoStates = () => http.get("/customers-insights/states")
+
+client["customers"].totalCustomers = () => {
+  return http.get("/customers-insights/total")
 }
 
 client["customers"].getOverview = (data) => {
