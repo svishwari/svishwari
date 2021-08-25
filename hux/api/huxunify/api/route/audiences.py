@@ -126,7 +126,7 @@ class AudienceDownload(SwaggerView):
         )
 
         audience_file_name = (
-            f"{datetime.now().strftime('%Y%m%d%H%M%S')}"
+            f"{datetime.now().strftime('%m%d%Y%H%M%S')}"
             f"_{audience_id}_{download_type}.csv"
         )
 
