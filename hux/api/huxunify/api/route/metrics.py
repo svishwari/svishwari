@@ -8,10 +8,10 @@ from flask import Blueprint, Response
 
 from huxunify.api.route.utils import (
     secured,
-    add_view_to_blueprint,
-    PrometheusHelper,
+    add_view_to_blueprint
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
+from huxunify.api.data_connectors.prometheus import PrometheusHelper
 
 metrics_bp = Blueprint("/metrics", import_name=__name__)
 
