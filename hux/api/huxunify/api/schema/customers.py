@@ -108,6 +108,17 @@ class CustomerOverviewSchema(Schema):
     max_ltv_actual = Float(required=True)
 
 
+class IDROverviewSchema(Schema):
+    """IDR Overview Schema"""
+
+    total_unique_ids = Integer(required=True)
+    total_unknown_ids = Integer(required=True)
+    total_known_ids = Integer(required=True)
+    total_individual_ids = Integer(required=True)
+    total_household_ids = Integer(required=True)
+    total_customers = Integer(required=True)
+
+
 class CustomersSchema(Schema):
     """Customers Schema"""
 
@@ -252,6 +263,30 @@ class MatchingTrendsSchema(Schema):
     known_ids = Integer(required=True, example=100000)
     unique_hux_ids = Integer(required=True, example=100000)
     anonymous_ids = Integer(required=True, example=100000)
+
+
+class DateRangeSchema(Schema):
+    """IDR Date Range Schema"""
+
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
+    start_date = DateTimeWithZ()
+    end_date = DateTimeWithZ()
+
+
+class IDROverviewWithDateRangeSchema(Schema):
+    """IDR Overview with Date range Schema"""
+
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
+    date_range = Nested(DateRangeSchema)
+    overview = Nested(IDROverviewSchema)
 
 
 class CustomerEventCountSchema(Schema):
