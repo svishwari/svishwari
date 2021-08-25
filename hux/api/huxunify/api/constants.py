@@ -29,6 +29,7 @@ MATCH_CONFIDENCE = "match_confidence"
 DELIVERIES = "deliveries"
 DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
+DATE_RANGE = "date_range"
 HUX_ID = "hux_id"
 TOP_FEATURES = "top_features"
 LIMIT = "limit"

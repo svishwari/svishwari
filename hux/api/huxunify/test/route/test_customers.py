@@ -181,8 +181,10 @@ class TestCustomersOverview(TestCase):
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
         data = response.json
-        self.assertTrue(data[api_c.TOTAL_RECORDS])
-        self.assertTrue(data[api_c.MATCH_RATE])
+        self.assertTrue(data[api_c.OVERVIEW])
+        self.assertTrue(data[api_c.DATE_RANGE])
+        self.assertTrue(data[api_c.OVERVIEW][api_c.TOTAL_RECORDS])
+        self.assertTrue(data[api_c.OVERVIEW][api_c.MATCH_RATE])
 
     @given(customer_id=st.text(alphabet=string.ascii_letters))
     def test_get_customer_by_id(self, customer_id: str):
