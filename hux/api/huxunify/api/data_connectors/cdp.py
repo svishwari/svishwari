@@ -214,10 +214,16 @@ def get_customers_overview(
             response.text,
         )
         return {}
+
     logger.info(
         "Successfully retrieved Customer Profile Insights from CDP API."
     )
-    return clean_cdm_fields(response.json()[api_c.BODY])
+
+    # clean up cdm date fields in the response
+    response_body = clean_cdm_fields(response.json()[api_c.BODY])
+
+    # clean up the cdm gender fields in the response
+    return clean_cdm_gender_fields(response_body)
 
 
 def get_customers_count_async(
@@ -888,3 +894,36 @@ def get_city_ltvs(
     logger.info("Successfully retrieved city-level demographic insights.")
 
     return [clean_cdm_fields(data) for data in response.json()[api_c.BODY]]
+
+
+def clean_cdm_gender_fields(response_body: dict) -> dict:
+    """Clean and map CDM gender count and average fields appropriately.
+
+    Args:
+        response_body (dict): cdm response body dict.
+
+    Returns:
+        dict: dictionary of cleaned cdm response body.
+
+    """
+
+    gender_fields = [
+        (api_c.GENDER_MEN, api_c.GENDER_MEN_COUNT),
+        (api_c.GENDER_WOMEN, api_c.GENDER_WOMEN_COUNT),
+        (api_c.GENDER_OTHER, api_c.GENDER_OTHER_COUNT),
+    ]
+
+    # add each individual gender count from the response body into total_count
+    total_count = sum([response_body[gender[0]] for gender in gender_fields])
+
+    # set the count values and the calculated individual gender average against
+    # appropriate fields in the response body for each individual gender
+    for gender_type, gender_type_count in gender_fields:
+        response_body[gender_type_count] = response_body[gender_type]
+        response_body[gender_type] = (
+            round(response_body[gender_type_count] / total_count, 4)
+            if total_count > 0
+            else 0
+        )
+
+    return response_body

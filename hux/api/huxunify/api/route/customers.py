@@ -653,17 +653,29 @@ class CustomerDemoVisualView(SwaggerView):
             (start_date + pd.DateOffset(months=x)).to_pydatetime()
             for x in range(0, 5)
         ]
+
+        # get customers overview data from CDP to set gender specific
+        # population details
+        customers = get_customers_overview(token_response[0])
+
+        # if the customers overview response body is empty from CDP, then log
+        # error and return 400
+        if not customers:
+            logger.error("Failed to get Customer Profile Insights from CDP.")
+            return (
+                {
+                    "message": "Failed to get customers Demographical Visual Insights."
+                },
+                HTTPStatus.BAD_REQUEST,
+            )
+
         output = {
             api_c.GENDER: {
                 gender: {
-                    api_c.POPULATION_PERCENTAGE: population_percent,
-                    api_c.SIZE: size,
+                    api_c.POPULATION_PERCENTAGE: customers.get(gender, 0),
+                    api_c.SIZE: customers.get(f"{gender}_{api_c.COUNT}", 0),
                 }
-                for gender, population_percent, size in zip(
-                    api_c.GENDERS,
-                    [0.5201, 0.4601, 0.0211],
-                    [6955119, 5627732, 289655],
-                )
+                for gender in api_c.GENDERS
             },
             api_c.INCOME: get_spending_by_cities(token_response[0]),
             api_c.SPEND: {
