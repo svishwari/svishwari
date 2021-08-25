@@ -74,9 +74,11 @@ export default {
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
-      let line = 0
-      let col = 0
-      let genders = [{ label: "Women", xValue: 0 }, { label: "Men", xValue: 35 }, { label: "Other", xValue: 60 }]
+      let genders = [
+        { label: "Women", xValue: 0 },
+        { label: "Men", xValue: 35 },
+        { label: "Other", xValue: 60 },
+      ]
 
       let colorCodes = [
         "rgba(0, 85, 135, 1)",
@@ -244,15 +246,19 @@ export default {
         this.tooltipDisplay(false)
         let data = this.dateData
         let x0 = xScale.invert(d3Select.pointer(mouseEvent)[0])
-       
+
         let i = bisectDate(data, x0, 1)
         let d0 = data[i - 1]
         let d1 = data[i] || {}
         let d = x0 - d0 > d1 - x0 ? d1 : d0
         let finalXCoordinate = xScale(d) + 40
         let dateD = this.$options.filters.Date(d, "DD/MM/YY")
-        let yData;
-        let dataToolTip = this.areaChartData.find(element => this.$options.filters.Date(new Date(element.date), "DD/MM/YY") == dateD );
+        let yData
+        let dataToolTip = this.areaChartData.find(
+          (element) =>
+            this.$options.filters.Date(new Date(element.date), "DD/MM/YY") ==
+            dateD
+        )
 
         svg
           .selectAll(".hover-line-y")
@@ -262,7 +268,7 @@ export default {
           .attr("y2", height)
           .style("display", "block")
 
-          svg.selectAll(".dot").each(function () {
+        svg.selectAll(".dot").each(function () {
           if (this.getAttribute("cx") == finalXCoordinate) {
             let yPosition = this.getAttribute("cy")
             yData = yPosition
@@ -278,9 +284,9 @@ export default {
               .style("pointer-events", "none")
           }
         })
-        dataToolTip.xPosition = finalXCoordinate;
-dataToolTip.yPosition = yData;
-this.tooltipDisplay(true, dataToolTip)
+        dataToolTip.xPosition = finalXCoordinate
+        dataToolTip.yPosition = yData
+        this.tooltipDisplay(true, dataToolTip)
       }
 
       stackedValues.forEach(function (layer, index) {
@@ -298,7 +304,6 @@ this.tooltipDisplay(true, dataToolTip)
       })
 
       d3Select.select("#legend").selectAll("svg").remove()
-let x = 35;
       let legendSvg = d3Select
         .select("#legend")
         .append("svg")
@@ -316,9 +321,6 @@ let x = 35;
         .append("g")
         .attr("class", "legend")
         .attr("transform", function (d) {
-          let y = line * 25
-          let x = col
-          col += 35
           return `translate(${d.xValue}, 0)`
         })
 
