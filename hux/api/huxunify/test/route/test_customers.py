@@ -360,21 +360,18 @@ class TestCustomersOverview(TestCase):
             t_c.validate_schema(CustomerGeoVisualSchema(), response.json, True)
         )
 
-    def test_post_customers_demo(self):
+    def test_get_customers_demo(self):
         """
-        Test post customers demographical insights
+        Test get customers demographical insights
 
         Args:
 
         Returns:
 
         """
-        filter_attributes = {
-            "filters": {
-                "start_date": "2020-11-30T00:00:00Z",
-                "end_date": "2021-04-30T00:00:00Z",
-            }
-        }
+
+        start_date = "2021-04-01"
+        end_date = "2021-08-01"
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -385,11 +382,15 @@ class TestCustomersOverview(TestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
             json=t_c.MOCKED_CITY_LTVS_RESPONSE,
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+            json=t_c.MOCKED_GENDER_SPENDING,
+        )
         self.request_mocker.start()
 
-        response = self.test_client.post(
-            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.DEMOGRAPHIC}",
-            data=json.dumps(filter_attributes),
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/"
+            f"{api_c.DEMOGRAPHIC}/{start_date}/{end_date}",
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -417,32 +418,37 @@ class TestCustomersOverview(TestCase):
             )
         )
 
-    def test_post_customers_demo_customer_insights_failure(self):
+    def test_get_customers_demo_customer_insights_failure(self):
         """
-        Test post customers demographical insights
+        Test get customers demographical insights
 
         Args:
 
         Returns:
 
         """
-        filter_attributes = {
-            "filters": {
-                "start_date": "2020-11-30T00:00:00Z",
-                "end_date": "2021-04-30T00:00:00Z",
-            }
-        }
+        start_date = "2021-04-01"
+        end_date = "2021-08-01"
 
         self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+            json=t_c.MOCKED_GENDER_SPENDING,
+        )
+
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json={},
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+            json=t_c.MOCKED_CITY_LTVS_RESPONSE,
+        )
         self.request_mocker.start()
 
-        response = self.test_client.post(
-            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.DEMOGRAPHIC}",
-            data=json.dumps(filter_attributes),
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/"
+            f"{api_c.DEMOGRAPHIC}/{start_date}/{end_date}",
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)

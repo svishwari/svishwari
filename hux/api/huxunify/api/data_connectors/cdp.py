@@ -927,3 +927,51 @@ def clean_cdm_gender_fields(response_body: dict) -> dict:
         )
 
     return response_body
+
+
+def get_spending_by_gender(
+    token: str,
+    start_date: str,
+    end_date: str,
+    filters: Optional[dict] = None,
+):
+    """
+
+    Args:
+        start_date (str): String value of start date
+        end_date (str): String value of end date
+        token (str): OKTA JWT Token.
+        filters (dict):  filters to pass into
+            spending-by-month endpoint
+
+    Returns:
+        list: list of spending details by gender
+    """
+
+    request_payload = (
+        filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+    )
+    request_payload[api_c.START_DATE] = start_date
+    request_payload[api_c.END_DATE] = end_date
+
+    # get config
+    config = get_config()
+    logger.info("Retrieving spending insights by gender.")
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+        json=request_payload,
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve state demographic insights %s %s.",
+            response.status_code,
+            response.text,
+        )
+        return []
+
+    logger.info("Successfully retrieved state demographic insights.")
+    return clean_cdm_fields(response.json()[api_c.BODY])
