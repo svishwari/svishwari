@@ -75,6 +75,7 @@ steps:
 
   tests:
     stage: tests
+    title: "Running test steps."
     type: parallel
     steps:
       lint:
