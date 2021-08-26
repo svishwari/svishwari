@@ -543,6 +543,11 @@ class TestEngagementRoutes(TestCase):
             return_value=self.database,
         ).start()
 
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
         # mock FacebookConnector
         mock.patch.object(
             FacebookConnector, "get_campaigns", return_value=t_c.BATCH_RESPONSE

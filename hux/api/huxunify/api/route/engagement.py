@@ -571,7 +571,7 @@ class AddAudienceEngagement(SwaggerView):
             Tuple[dict, int]: Audience Engagement added, HTTP status.
 
         """
-
+        print("Got to here")
         database = get_db_client()
 
         engagement = get_engagement(database, ObjectId(engagement_id))

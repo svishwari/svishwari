@@ -59,6 +59,12 @@ class TestDeliveryRoutes(TestCase):
             return_value=self.database,
         ).start()
 
+        # mock get db client from decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
         # mock get db client from delivery
         mock.patch(
             "huxunify.api.route.delivery.get_db_client",
@@ -209,7 +215,6 @@ class TestDeliveryRoutes(TestCase):
             ),
             headers=t_c.STANDARD_HEADERS,
         )
-        print(response.json)
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
@@ -475,6 +480,7 @@ class TestDeliveryRoutes(TestCase):
             f"{t_c.BASE_ENDPOINT}/{api_c.AUDIENCES}/{audience_id}/deliver",
             headers=t_c.STANDARD_HEADERS,
         )
+        print(f"Response: {response.json}")
 
         valid_response = {"message": "Audience does not exist."}
 

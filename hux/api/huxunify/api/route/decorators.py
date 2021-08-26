@@ -10,12 +10,17 @@ from decouple import config
 from flask import request
 from marshmallow import ValidationError
 
+from huxunify.api.route.utils import get_db_client, validate_destination_id
+from huxunify.api import constants
+from huxunify.api.data_connectors.okta import (
+    introspect_token,
+    get_token_from_request,
+    get_user_info,
+)
 from huxunifylib.util.general.logging import logger
 from huxunifylib.connectors import (
     CustomAudienceDeliveryStatusError,
 )
-
-from huxunify.api.route.utils import get_db_client, validate_destination_id
 from huxunifylib.database.user_management import get_user, set_user
 from huxunifylib.database.engagement_management import get_engagement
 from huxunifylib.database import (
@@ -23,13 +28,6 @@ from huxunifylib.database import (
     constants as db_c,
 )
 import huxunifylib.database.db_exceptions as de
-
-from huxunify.api import constants
-from huxunify.api.data_connectors.okta import (
-    introspect_token,
-    get_token_from_request,
-    get_user_info,
-)
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
@@ -426,7 +424,6 @@ def validate_delivery_params(func) -> object:
                 return {
                     "message": constants.ENGAGEMENT_NOT_FOUND
                 }, HTTPStatus.NOT_FOUND
-
         # check if audience id exists
         audience_id = kwargs.get(constants.AUDIENCE_ID, None)
         if audience_id:
