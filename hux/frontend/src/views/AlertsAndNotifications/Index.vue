@@ -69,6 +69,7 @@
       </hux-data-table>
     </v-row>
     <v-divider class="hr-devider"></v-divider>
+    <v-progress-linear v-if="enableLazyLoad" active indeterminate />
     <observer v-if="notifications.length" @intersect="intersected"></observer>
   </div>
 </template>
@@ -136,6 +137,8 @@ export default {
       sortColumn: "created",
       sortDesc: true,
       loading: false,
+      enableLazyLoad: false,
+      lazyLoading: true,
       lastBatch: 0,
       batchDetails: {
         batchSize: 25,
@@ -156,6 +159,7 @@ export default {
     await this.fetchNotificationsByBatch()
     this.calculateLastBatch()
     this.loading = false
+    this.enableLazyLoad = true
   },
   methods: {
     ...mapActions({
@@ -168,6 +172,8 @@ export default {
       if (this.batchDetails.batchNumber <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
         this.fetchNotificationsByBatch()
+      } else {
+        this.enableLazyLoad = false
       }
     },
     async fetchNotificationsByBatch() {
