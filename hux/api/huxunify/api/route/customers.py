@@ -672,42 +672,27 @@ class CustomerDemoVisualView(SwaggerView):
             },
             api_c.INCOME: get_spending_by_cities(token_response[0]),
             api_c.SPEND: {
-                api_c.GENDER_WOMEN: sorted(
-                    [
-                        {
-                            api_c.DATE: date_parser(
-                                x[api_c.MONTH], x[api_c.YEAR]
-                            ),
-                            api_c.LTV: round(x[api_c.AVG_SPENT_WOMEN], 4),
-                        }
-                        for x in gender_spending
-                    ],
-                    key=lambda x: x[api_c.DATE],
-                ),
-                api_c.GENDER_MEN: sorted(
-                    [
-                        {
-                            api_c.DATE: date_parser(
-                                x[api_c.MONTH], x[api_c.YEAR]
-                            ),
-                            api_c.LTV: round(x[api_c.AVG_SPENT_MEN], 4),
-                        }
-                        for x in gender_spending
-                    ],
-                    key=lambda x: x[api_c.DATE],
-                ),
-                api_c.GENDER_OTHER: sorted(
-                    [
-                        {
-                            api_c.DATE: date_parser(
-                                x[api_c.MONTH], x[api_c.YEAR]
-                            ),
-                            api_c.LTV: round(x[api_c.AVG_SPENT_OTHER], 4),
-                        }
-                        for x in gender_spending
-                    ],
-                    key=lambda x: x[api_c.DATE],
-                ),
+                api_c.GENDER_WOMEN: [
+                    {
+                        api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
+                        api_c.LTV: round(x[api_c.AVG_SPENT_WOMEN], 4),
+                    }
+                    for x in gender_spending
+                ],
+                api_c.GENDER_MEN: [
+                    {
+                        api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
+                        api_c.LTV: round(x[api_c.AVG_SPENT_MEN], 4),
+                    }
+                    for x in gender_spending
+                ],
+                api_c.GENDER_OTHER: [
+                    {
+                        api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
+                        api_c.LTV: round(x[api_c.AVG_SPENT_OTHER], 4),
+                    }
+                    for x in gender_spending
+                ],
             },
         }
 

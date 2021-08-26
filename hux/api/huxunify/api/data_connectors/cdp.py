@@ -974,4 +974,7 @@ def get_spending_by_gender(
         return []
 
     logger.info("Successfully retrieved state demographic insights.")
-    return clean_cdm_fields(response.json()[api_c.BODY])
+    return sorted(
+        clean_cdm_fields(response.json()[api_c.BODY]),
+        key=lambda x: (x[api_c.YEAR], x[api_c.MONTH]),
+    )
