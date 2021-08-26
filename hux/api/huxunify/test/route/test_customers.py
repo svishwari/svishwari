@@ -19,6 +19,8 @@ from huxunify.api.schema.customers import (
     DataFeedDetailsSchema,
     DataFeedStitched,
     DataFeedSchema,
+    CustomersInsightsCitiesSchema,
+    CustomersInsightsStatesSchema,
 )
 from huxunify.api.schema.customers import (
     CustomerGeoVisualSchema,
@@ -98,7 +100,7 @@ class TestCustomersOverview(TestCase):
             f"{self.customers}?{api_c.QUERY_PARAMETER_BATCH_SIZE}="
             f"{api_c.CUSTOMERS_DEFAULT_BATCH_SIZE}&"
             f"{api_c.QUERY_PARAMETER_BATCH_NUMBER}="
-            f"{api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER}",
+            f"{api_c.DEFAULT_BATCH_NUMBER}",
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -141,10 +143,6 @@ class TestCustomersOverview(TestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
-        self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
-            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
-        )
         self.request_mocker.start()
 
         response = self.test_client.get(
@@ -154,8 +152,12 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         data = response.json
-        self.assertTrue(data[api_c.TOTAL_RECORDS])
-        self.assertTrue(data[api_c.MATCH_RATE])
+        self.assertGreaterEqual(data[api_c.GENDER_MEN], 0)
+        self.assertGreaterEqual(data[api_c.GENDER_WOMEN], 0)
+        self.assertGreaterEqual(data[api_c.GENDER_OTHER], 0)
+        self.assertGreaterEqual(data[api_c.GENDER_MEN_COUNT], 0)
+        self.assertGreaterEqual(data[api_c.GENDER_WOMEN_COUNT], 0)
+        self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)
 
     def test_get_idr_overview(self):
         """
@@ -181,8 +183,10 @@ class TestCustomersOverview(TestCase):
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
         data = response.json
-        self.assertTrue(data[api_c.TOTAL_RECORDS])
-        self.assertTrue(data[api_c.MATCH_RATE])
+        self.assertTrue(data[api_c.OVERVIEW])
+        self.assertTrue(data[api_c.DATE_RANGE])
+        self.assertTrue(data[api_c.OVERVIEW][api_c.TOTAL_CUSTOMERS])
+        self.assertTrue(data[api_c.OVERVIEW][api_c.TOTAL_KNOWN_IDS])
 
     @given(customer_id=st.text(alphabet=string.ascii_letters))
     def test_get_customer_by_id(self, customer_id: str):
@@ -273,8 +277,12 @@ class TestCustomersOverview(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         data = response.json
-        self.assertTrue(data[api_c.TOTAL_RECORDS])
-        self.assertTrue(data[api_c.MATCH_RATE])
+        self.assertGreaterEqual(data[api_c.GENDER_MEN], 0)
+        self.assertGreaterEqual(data[api_c.GENDER_WOMEN], 0)
+        self.assertGreaterEqual(data[api_c.GENDER_OTHER], 0)
+        self.assertGreaterEqual(data[api_c.GENDER_MEN_COUNT], 0)
+        self.assertGreaterEqual(data[api_c.GENDER_WOMEN_COUNT], 0)
+        self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)
 
     def test_get_idr_data_feeds(self):
         """
@@ -315,10 +323,14 @@ class TestCustomersOverview(TestCase):
             t_c.validate_schema(DataFeedDetailsSchema(), response.json)
         )
         self.assertTrue(
-            t_c.validate_schema(DataFeedPinning(), response.json["pinning"])
+            t_c.validate_schema(
+                DataFeedPinning(), response.json[api_c.PINNING]
+            )
         )
         self.assertTrue(
-            t_c.validate_schema(DataFeedStitched(), response.json["stitched"])
+            t_c.validate_schema(
+                DataFeedStitched(), response.json[api_c.STITCHED]
+            )
         )
 
     def test_get_customers_geo(self):
@@ -331,33 +343,10 @@ class TestCustomersOverview(TestCase):
 
         """
 
-        expected_response = {
-            "code": 200,
-            "body": [
-                {
-                    api_c.STATE: "CO",
-                    api_c.COUNTRY: "US",
-                    api_c.GENDER_MEN: 0.25,
-                    api_c.GENDER_WOMEN: 0.42,
-                    api_c.GENDER_OTHER: 0.06,
-                    api_c.SIZE: 5012,
-                },
-                {
-                    api_c.STATE: "NY",
-                    api_c.COUNTRY: "US",
-                    api_c.GENDER_MEN: 0.25,
-                    api_c.GENDER_WOMEN: 0.42,
-                    api_c.GENDER_OTHER: 0.06,
-                    api_c.SIZE: 1234,
-                },
-            ],
-            "message": "ok",
-        }
-
         self.request_mocker.stop()
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
-            json=expected_response,
+            json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
         )
         self.request_mocker.start()
 
@@ -389,6 +378,10 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
             json=t_c.MOCKED_CITY_LTVS_RESPONSE,
         )
@@ -408,18 +401,54 @@ class TestCustomersOverview(TestCase):
         )
         self.assertTrue(
             t_c.validate_schema(
-                CustomerSpendingInsightsSchema(), response.json["spend"]
+                CustomerSpendingInsightsSchema(), response.json[api_c.SPEND]
             )
         )
         self.assertTrue(
             t_c.validate_schema(
-                CustomerGenderInsightsSchema(), response.json["gender"]
+                CustomerGenderInsightsSchema(), response.json[api_c.GENDER]
             )
         )
         self.assertTrue(
             t_c.validate_schema(
-                CustomerIncomeInsightsSchema(), response.json["income"], True
+                CustomerIncomeInsightsSchema(),
+                response.json[api_c.INCOME],
+                True,
             )
+        )
+
+    def test_post_customers_demo_customer_insights_failure(self):
+        """
+        Test post customers demographical insights
+
+        Args:
+
+        Returns:
+
+        """
+        filter_attributes = {
+            "filters": {
+                "start_date": "2020-11-30T00:00:00Z",
+                "end_date": "2021-04-30T00:00:00Z",
+            }
+        }
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json={},
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.DEMOGRAPHIC}",
+            data=json.dumps(filter_attributes),
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(
+            "Failed to get customers Demographical Visual Insights.",
+            response.json["message"],
         )
 
     def test_get_idr_trends_ytd(self):
@@ -536,3 +565,69 @@ class TestCustomersOverview(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_customers_insights_cities_success(self) -> None:
+        """Test get customers insights by cities
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_CITY_RESPONSE,
+        )
+
+        self.request_mocker.start()
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.CITIES}",
+            json={"filters": {}},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(
+                CustomersInsightsCitiesSchema(),
+                response.json,
+                True,
+            )
+        )
+
+    def test_customers_insights_states_success(self) -> None:
+        """Test get customers insights by states
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
+        )
+
+        self.request_mocker.start()
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.STATES}",
+            json={"filters": {}},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(
+                CustomersInsightsStatesSchema(),
+                response.json,
+                True,
+            )
+        )
