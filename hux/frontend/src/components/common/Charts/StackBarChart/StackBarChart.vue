@@ -127,7 +127,7 @@ export default {
           ),
           index: index == weeklyAggData.length - 1 ? 3 : initialIndex,
           barIndex: index,
-          isEndingBar: index > weeklyAggData.length - 3
+          isEndingBar: index > weeklyAggData.length - 3,
         })
       })
 
@@ -213,7 +213,10 @@ export default {
 
       d3Select.selectAll(".domain").style("stroke", "rgba(208, 208, 206, 1)")
       d3Select.selectAll(".tick line").style("stroke", "rgba(208, 208, 206, 1)")
-      d3Select.selectAll(".xAxis .tick text").attr("x", 10).style("color", "#4F4F4F")
+      d3Select
+        .selectAll(".xAxis .tick text")
+        .attr("x", 10)
+        .style("color", "#4F4F4F")
       d3Select.selectAll(".yAxis .tick text").style("color", "#4F4F4F")
       d3Select.selectAll(".xAxis-alternate .domain").style("stroke", "white")
 

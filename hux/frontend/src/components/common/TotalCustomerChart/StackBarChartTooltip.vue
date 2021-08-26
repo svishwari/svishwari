@@ -4,7 +4,7 @@
     tile
     :style="{
       transform: `translate(${sourceInput.xPosition}px, ${sourceInput.yPosition}px)`,
-      left: sourceInput.isEndingBar ? '-136px' : '49px'
+      left: sourceInput.isEndingBar ? '-136px' : '49px',
     }"
     class="mx-auto tooltip-style"
   >
