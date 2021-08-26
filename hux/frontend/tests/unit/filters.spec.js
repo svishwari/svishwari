@@ -1,6 +1,15 @@
 import filters from "@/filters"
 
 describe("Filters", () => {
+  describe("Date filter", () => {
+    it("should display date in format as specified", () => {
+      expect(filters.Date("2019-01-25","DD/MM/YYYY")).toEqual("25/01/2019")
+      expect(filters.Date("2019-01-25","[YYYYescape] YYYY-MM-DDTHH:mm:ss[Z]")).toEqual("YYYYescape 2019-01-25T00:00:00Z")
+      expect(filters.Date("2019-01-25","M/D/YYYY [at] h:mm A")).toEqual("1/25/2019 at 12:00 AM")
+      expect(filters.Date("2019-01-25")).toEqual("1/25/2019 at 12:00 AM")
+    })
+  })
+
   describe("Numeric filter", () => {
     it("should display numbers up to two decimal places, by default", () => {
       expect(filters.Numeric(0)).toEqual("0")
