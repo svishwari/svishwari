@@ -2,9 +2,9 @@
  * Globally registerd Vue filters
  */
 import dayjs from "dayjs"
-var relativeTime = require('dayjs/plugin/relativeTime')
+var relativeTime = require("dayjs/plugin/relativeTime")
 dayjs.extend(relativeTime)
-var calendar = require('dayjs/plugin/calendar')
+var calendar = require("dayjs/plugin/calendar")
 dayjs.extend(calendar)
 /**
  * Formats a datetime field to human friendly date.
@@ -26,7 +26,7 @@ const Date = (value, format = "M/D/YYYY [at] h:mm A", noSuffix = false) => {
   }
 
   if (format === "calendar") return date.calendar()
-  
+
   return date.format(format)
 }
 /**

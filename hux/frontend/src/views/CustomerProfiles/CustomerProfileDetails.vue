@@ -386,10 +386,7 @@ export default {
           // then display this date as relative time (x days, months, years, etc)
           id: 4,
           title: "Conversion time",
-          value: dayjs().subtract(
-            this.singleCustomer.conversion_time,
-            "month"
-          ),
+          value: dayjs().subtract(this.singleCustomer.conversion_time, "month"),
           format: "date-relative",
           colValue: 2.5,
           hoverTooltip:
