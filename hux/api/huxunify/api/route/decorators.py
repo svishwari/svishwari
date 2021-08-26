@@ -10,13 +10,6 @@ from decouple import config
 from flask import request
 from marshmallow import ValidationError
 
-from huxunify.api.route.utils import get_db_client, validate_destination_id
-from huxunify.api import constants
-from huxunify.api.data_connectors.okta import (
-    introspect_token,
-    get_token_from_request,
-    get_user_info,
-)
 from huxunifylib.util.general.logging import logger
 from huxunifylib.connectors import (
     CustomAudienceDeliveryStatusError,
@@ -28,6 +21,14 @@ from huxunifylib.database import (
     constants as db_c,
 )
 import huxunifylib.database.db_exceptions as de
+
+from huxunify.api.route.utils import get_db_client, validate_destination_id
+from huxunify.api import constants
+from huxunify.api.data_connectors.okta import (
+    introspect_token,
+    get_token_from_request,
+    get_user_info,
+)
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
