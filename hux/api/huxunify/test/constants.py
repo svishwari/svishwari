@@ -150,6 +150,39 @@ MOCKED_MODEL_RESPONSE = [
     },
 ]
 
+SUPPORTED_MODELS = {
+    2: {
+        api_c.MODEL_TYPE: api_c.LTV,
+        api_c.NAME: "Lifetime value",
+        api_c.DESCRIPTION: "Predicts the lifetime value of a customer based on models",
+        api_c.CURRENT_VERSION: "21.7.28",
+        api_c.RMSE: 233.5,
+        api_c.AUC: -1,
+        api_c.PRECISION: -1,
+        api_c.RECALL: -1,
+    },
+    1: {
+        api_c.MODEL_TYPE: api_c.UNSUBSCRIBE,
+        api_c.NAME: "Propensity to Unsubscribe",
+        api_c.DESCRIPTION: "Predicts how likely a customer will unsubscribe from an email list",
+        api_c.CURRENT_VERSION: "21.7.31",
+        api_c.RMSE: -1,
+        api_c.AUC: 0.79,
+        api_c.PRECISION: 0.82,
+        api_c.RECALL: 0.65,
+    },
+    3: {
+        api_c.MODEL_TYPE: api_c.PURCHASE,
+        api_c.NAME: "Propensity to Purchase",
+        api_c.DESCRIPTION: "Propensity of a customer making purchase after receiving an email ",
+        api_c.CURRENT_VERSION: "3.1.2",
+        api_c.RMSE: -1,
+        api_c.AUC: 0.79,
+        api_c.PRECISION: 0.82,
+        api_c.RECALL: 0.65,
+    },
+}
+
 MOCKED_MODEL_VERSION_HISTORY = {
     "results": [
         {
