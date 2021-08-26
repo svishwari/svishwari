@@ -204,15 +204,15 @@
         <div v-if="this.audience.is_lookalike" class="row overview-list lookalike-aud mb-0 ml-0 mr-1 mt-4">
            <metric-card  :height="60"  :title="''" class="lookalikeMessageCard">
              <template #subtitle-extended> 
-               <span>This is a lookalike audience. Go to the original audience, </span> 
+               <span>This is a lookalike audience. Go to the original audience,&nbsp;</span>  
              <router-link
                 :to="{
                   name: '',
                 }"
           class="text-decoration-none"
           append
-        >{{audience.name}} </router-link>
-              <span>, to see insights</span></template>
+        >{{audience.name}} </router-link> 
+              <span>,&nbsp;to see insights.</span></template>
            </metric-card>
         </div>
         <div v-if="!this.audience.is_lookalike" class="row overview-list mb-0 ml-0 mt-1">
