@@ -11,7 +11,7 @@
           is-tile
           icon="customer-profiles"
           variant="white"
-          @click="viewCustomerList()"
+          @click="toggleProfilesDrawer()"
         >
           View all customers
         </hux-button>
@@ -76,17 +76,17 @@
       </div>
       <div v-if="overviewListItems" class="px-15 my-1">
         <v-card class="rounded pa-5 box-shadow-5">
-          <div class="overview">Customer overview</div>
-          <div class="row overview-list mb-0 ml-0 mt-1">
+          <h5 class="text-h5 mb-1">Customer overview</h5>
+          <div class="row row-margin no-gutters">
             <metric-card
               v-for="item in overviewListItems"
               :key="item.title"
-              class="mr-3"
+              class="card-margin"
               :grow="item.toolTipText ? 2 : 1"
               :title="item.title"
               :icon="item.icon"
-              :interactable="item.toolTipText ? true : false"
-              @click="item.toolTipText ? viewCustomerList() : ''"
+              :interactable="item.action ? true : false"
+              @click="item.action ? onClick(item.action) : ''"
             >
               <template #subtitle-extended>
                 <tooltip>
@@ -137,6 +137,28 @@
         </v-card>
       </div>
       <v-row class="px-15 mt-2">
+        <v-col md="12">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="522">
+            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5">
+                  Total Customers ({{ timeFrameLabel }})
+                </span>
+              </div>
+            </v-card-title>
+            <v-progress-linear
+              v-if="loadingCustomerChart"
+              :active="loadingCustomerChart"
+              :indeterminate="loadingCustomerChart"
+            />
+            <total-customer-chart
+              v-if="!loadingCustomerChart"
+              :customers-data="totalCustomers"
+            />
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row class="px-15 mt-2">
         <v-col md="7">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
             <v-card-title class="pb-2 pl-5 pt-5">
@@ -147,17 +169,17 @@
               </div>
             </v-card-title>
             <v-progress-linear
-              v-if="loadingGeographics"
-              :active="loadingGeographics"
-              :indeterminate="loadingGeographics"
+              v-if="loadingGeoOverview"
+              :active="loadingGeoOverview"
+              :indeterminate="loadingGeoOverview"
             />
             <map-chart
-              v-if="!loadingGeographics"
-              :map-data="customersGeographics"
+              v-if="!loadingGeoOverview"
+              :map-data="customersGeoOverview"
             />
             <map-slider
-              v-if="!loadingGeographics"
-              :map-data="customersGeographics"
+              v-if="!loadingGeoOverview"
+              :map-data="customersGeoOverview"
             />
           </v-card>
         </v-col>
@@ -170,13 +192,13 @@
             </v-card-title>
             <v-divider class="ml-5 mr-8 mt-0 mb-1" />
             <v-progress-linear
-              v-if="loadingGeographics"
-              :active="loadingGeographics"
-              :indeterminate="loadingGeographics"
+              v-if="loadingGeoOverview"
+              :active="loadingGeoOverview"
+              :indeterminate="loadingGeoOverview"
             />
             <map-state-list
-              v-if="!loadingGeographics"
-              :map-data="customersGeographics"
+              v-if="!loadingGeoOverview"
+              :map-data="customersGeoOverview"
             />
           </v-card>
         </v-col>
@@ -195,9 +217,9 @@
           </v-card>
         </v-col>
         <v-col md="6">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="290">
-            <v-card-title class="pb-1 pl-5 pt-5">
-              <div class="mt-2">
+          <v-card class="mt-3 genderSpend rounded-lg box-shadow-5" height="290">
+            <v-card-title class="pb-1 pl-5 pt-4">
+              <div class="mt-1">
                 <span class="neroBlack--text text-h5">
                   Gender &sol; monthly spending in 2021
                 </span>
@@ -224,6 +246,24 @@
         </v-col>
       </v-row>
       <customer-details v-model="customerProfilesDrawer" />
+      <geo-drawer
+        geo-level="cities"
+        :results="overview.total_cities"
+        :toggle="geoDrawer.cities"
+        @onToggle="(isToggled) => (geoDrawer.cities = isToggled)"
+      />
+      <geo-drawer
+        geo-level="countries"
+        :results="overview.total_countries"
+        :toggle="geoDrawer.countries"
+        @onToggle="(isToggled) => (geoDrawer.countries = isToggled)"
+      />
+      <geo-drawer
+        geo-level="states"
+        :results="overview.total_us_states"
+        :toggle="geoDrawer.states"
+        @onToggle="(isToggled) => (geoDrawer.states = isToggled)"
+      />
     </div>
   </div>
 </template>
@@ -237,6 +277,7 @@ import MetricCard from "@/components/common/MetricCard"
 import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
 import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
+import GeoDrawer from "./Drawers/GeoDrawer.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import MapChart from "@/components/common/MapChart/MapChart"
@@ -244,6 +285,7 @@ import MapStateList from "@/components/common/MapChart/MapStateList"
 import genderData from "@/components/common/DoughnutChart/genderData.json"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
+import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
 
 export default {
   name: "CustomerProfiles",
@@ -255,18 +297,27 @@ export default {
     huxButton,
     Icon,
     CustomerDetails,
+    GeoDrawer,
     IncomeChart,
     GenderSpendChart,
     MapChart,
     MapStateList,
     mapSlider,
     DoughnutChart,
+    TotalCustomerChart,
   },
 
   data() {
     return {
       customerProfilesDrawer: false,
-      loadingGeographics: false,
+      loadingCustomerChart: false,
+      geoDrawer: {
+        cities: false,
+        countries: false,
+        states: false,
+      },
+      loadingGeoOverview: false,
+      timeFrameLabel: "last 6 months",
       overviewListItems: [
         {
           title: "No. of customers",
@@ -274,14 +325,28 @@ export default {
           toolTipText:
             "Total no. of unique hux ids generated to represent a customer.",
           value: "",
+          action: "toggleProfilesDrawer",
         },
-        { title: "Countries", subtitle: "", icon: "mdi-earth", value: "" },
-        { title: "US States", subtitle: "", icon: "mdi-map", value: "" },
+        {
+          title: "Countries",
+          subtitle: "",
+          icon: "mdi-earth",
+          value: "",
+          action: "toggleCountriesDrawer",
+        },
+        {
+          title: "US States",
+          subtitle: "",
+          icon: "mdi-map",
+          value: "",
+          action: "toggleStatesDrawer",
+        },
         {
           title: "Cities",
           subtitle: "",
           icon: "mdi-map-marker-radius",
           value: "",
+          action: "toggleCitiesDrawer",
         },
         { title: "Age", subtitle: "", icon: "mdi-cake-variant", value: "" },
         { title: "Women", subtitle: "", icon: "mdi-gender-female", value: "" },
@@ -393,7 +458,8 @@ export default {
     ...mapGetters({
       overview: "customers/overview",
       customersInsights: "customers/insights",
-      customersGeographics: "customers/geographics",
+      totalCustomers: "customers/totalCustomers",
+      customersGeoOverview: "customers/geoOverview",
     }),
     updatedTimeStamp() {
       return this.updatedTime[0] + "<span> &bull; </span>" + this.updatedTime[1]
@@ -410,22 +476,26 @@ export default {
     this.loading = true
     this.sizeHandler()
     await this.getOverview()
-    this.fetchGeographics()
     this.mapOverviewData()
-
+    this.fetchTotalCustomers()
     this.loading = false
+
+    this.loadingGeoOverview = true
+    await this.getGeoOverview()
+    this.loadingGeoOverview = false
   },
 
   methods: {
     ...mapActions({
       getOverview: "customers/getOverview",
-      getGeographics: "customers/getGeographics",
+      getTotalCustomers: "customers/getTotalCustomers",
+      getGeoOverview: "customers/getGeoOverview",
     }),
 
-    async fetchGeographics() {
-      this.loadingGeographics = true
-      await this.getGeographics()
-      this.loadingGeographics = false
+    async fetchTotalCustomers() {
+      this.loadingCustomerChart = true
+      await this.getTotalCustomers()
+      this.loadingCustomerChart = false
     },
     // TODO: refactor this and move this logic to a getter in the store
     mapOverviewData() {
@@ -480,8 +550,27 @@ export default {
         return updatedValue
       }
     },
-    viewCustomerList() {
+    toggleProfilesDrawer() {
       this.customerProfilesDrawer = !this.customerProfilesDrawer
+    },
+    toggleGeoDrawer(geoLevel = "states") {
+      this.geoDrawer[geoLevel] = !this.geoDrawer[geoLevel]
+    },
+    onClick(action) {
+      switch (action) {
+        case "toggleProfilesDrawer":
+          this.toggleProfilesDrawer()
+          break
+        case "toggleCitiesDrawer":
+          this.toggleGeoDrawer("cities")
+          break
+        case "toggleCountriesDrawer":
+          this.toggleGeoDrawer("countries")
+          break
+        case "toggleStatesDrawer":
+          this.toggleGeoDrawer("states")
+          break
+      }
     },
     sizeHandler() {
       if (this.$refs.genderChart) {
@@ -520,5 +609,8 @@ export default {
 }
 .icon-border {
   cursor: default !important;
+}
+::v-deep .genderSpend .container {
+  margin-top: 14px !important;
 }
 </style>

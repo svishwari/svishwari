@@ -2,6 +2,7 @@
 Purpose of this file is to test the audience schemas
 """
 from unittest import TestCase
+from datetime import datetime, timedelta
 
 from huxunifylib.database import constants as db_c
 from huxunify.api.schema.orchestration import is_audience_lookalikeable
@@ -23,6 +24,8 @@ class EngagementSchemaTest(TestCase):
             api_c.DELIVERIES: [
                 {
                     db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_FACEBOOK,
+                    db_c.UPDATE_TIME: datetime.utcnow()
+                    - timedelta(minutes=31),
                     db_c.STATUS: db_c.STATUS_SUCCEEDED,
                 }
             ]
