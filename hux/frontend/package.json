@@ -3,12 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "ci": "yarn install --frozen-lockfile --silent",
+    "ci": "yarn install --frozen-lockfile --silent --ignore-scripts",
     "serve": "vue-cli-service serve --port 8080",
     "serve:docker": "vue-cli-service serve --port 9090 --https --host host.docker.internal --disable-host-check",
     "build": "vue-cli-service build",
+    "test": "yarn test:unit",
     "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint",
+    "lint": "vue-cli-service lint --no-fix",
+    "lint:fix": "vue-cli-service lint --fix",
+    "style": "yarn prettier --check src/",
+    "style:fix": "yarn prettier --write src/",
+    "prepare": "cd ../../ && husky install hux/frontend/.husky",
     "build:storybook": "build-storybook",
     "serve:storybook": "start-storybook -p 6006"
   },
@@ -23,6 +28,7 @@
     "d3-array": "^3.0.1",
     "d3-axis": "^3.0.0",
     "d3-chord": "^3.0.1",
+    "d3-collection": "^1.0.7",
     "d3-geo": "^3.0.1",
     "d3-scale": "^4.0.0",
     "d3-selection": "^3.0.0",
@@ -66,8 +72,9 @@
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^6.2.2",
     "faker": "^5.5.3",
+    "husky": "^7.0.0",
     "js-beautify": "^1.14.0",
-    "lint-staged": "^9.5.0",
+    "lint-staged": "^11.1.2",
     "miragejs": "^0.1.41",
     "node-sass": "^4.12.0",
     "null-loader": "^4.0.1",
@@ -82,13 +89,10 @@
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.7.0"
   },
-  "gitHooks": {
-    "pre-commit": "lint-staged"
-  },
   "lint-staged": {
-    "*.{js,jsx,vue}": [
-      "vue-cli-service lint",
-      "git add"
+    "src/*.{js,jsx,vue}": [
+      "yarn lint",
+      "yarn style"
     ]
   }
 }

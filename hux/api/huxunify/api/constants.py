@@ -29,12 +29,15 @@ MATCH_CONFIDENCE = "match_confidence"
 DELIVERIES = "deliveries"
 DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
+DATE_RANGE = "date_range"
 HUX_ID = "hux_id"
 TOP_FEATURES = "top_features"
 LIMIT = "limit"
+OFFSET = "offset"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
+QUERY_PARAMETER_SORT_ORDER = "sort_order"
 
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
@@ -52,13 +55,19 @@ TOTAL_CUSTOMERS = "total_customers"
 NEW_CUSTOMERS_ADDED = "new_customers_added"
 COUNTRIES = "total_countries"
 TOTAL_COUNT = "total_count"
-STATES = "total_us_states"
-CITIES = "total_cities"
+TOTAL_STATES = "total_us_states"
+TOTAL_CITIES = "total_cities"
+STATES = "states"
+CITIES = "cities"
 MIN_AGE = "min_age"
 MAX_AGE = "max_age"
+AVERAGE_AGE = "avg_age"
 GENDER_WOMEN = "gender_women"
 GENDER_MEN = "gender_men"
 GENDER_OTHER = "gender_other"
+GENDER_WOMEN_COUNT = "gender_women_count"
+GENDER_MEN_COUNT = "gender_men_count"
+GENDER_OTHER_COUNT = "gender_other_count"
 GENDERS = [GENDER_WOMEN, GENDER_MEN, GENDER_OTHER]
 MIN_LTV_PREDICTED = "min_ltv_predicted"
 MAX_LTV_PREDICTED = "max_ltv_predicted"
@@ -489,18 +498,6 @@ LOOKALIKE_AUDIENCES = "lookalike_audiences"
 LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 LOOKALIKEABLE = "lookalikeable"
 IS_LOOKALIKE = "is_lookalike"
-
-STUB_INSIGHTS_RESPONSE = {
-    TOTAL_CUSTOMERS: 121321321,
-    COUNTRIES: 2,
-    STATES: 28,
-    CITIES: 246,
-    MIN_AGE: 34,
-    MAX_AGE: 100,
-    GENDER_WOMEN: 0.4651031,
-    GENDER_MEN: 0.481924,
-    GENDER_OTHER: 0.25219,
-}
 
 PARAM_STORE_PREFIX = "unified"
 PARAMETER_STORE_ERROR_MSG = (
@@ -1058,8 +1055,11 @@ CUSTOMERS_INSIGHTS = "customers-insights"
 GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
 CUSTOMERS_API_HEADER_KEY = "x-api-key"
-CUSTOMERS_DEFAULT_BATCH_SIZE = "1000"
-CUSTOMERS_DEFAULT_BATCH_NUMBER = "1"
+CUSTOMERS_DEFAULT_BATCH_SIZE = 1000
+CUSTOMER_COUNT = "customer_count"
+
+# Demographic
+CITIES_DEFAULT_BATCH_SIZE = 100
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
@@ -1214,8 +1214,36 @@ MOCK_CUSTOMER_PROFILE_RESPONSE = {
 }
 
 # Alerts Fields
-DEFAULT_ALERT_BATCH_SIZE = 5
+DEFAULT_BATCH_SIZE = 5
 DEFAULT_ALERT_SORT_ORDER = "descending"
-DEFAULT_ALERT_BATCH_NUMBER = "1"
+DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
+
+# Download Audience Fields
+DOWNLOAD_TYPE = "download_type"
+GOOGLE_ADS = "google_ads"
+AMAZON_ADS = "amazon_ads"
+
+DOWNLOAD_TYPES = {
+    GOOGLE_ADS: {
+        db_c.S_TYPE_EMAIL_HASHED: "Email",
+        db_c.S_TYPE_FIRST_NAME_HASHED: "First Name",
+        db_c.S_TYPE_FIRST_NAME_INITIAL_HASHED: "First Name Initial",
+        db_c.S_TYPE_LAST_NAME_HASHED: "Last Name",
+        db_c.S_TYPE_MOBILE_DEVICE_ID: "Mobile Device ID",
+        db_c.S_TYPE_PHONE_NUMBER_HASHED: "Phone",
+        db_c.S_TYPE_POSTAL_CODE_HASHED: "Zip",
+    },
+    AMAZON_ADS: {
+        db_c.S_TYPE_CITY_HASHED: "city",
+        db_c.S_TYPE_EMAIL_HASHED: "email",
+        db_c.S_TYPE_FIRST_NAME_HASHED: "first_name",
+        db_c.S_TYPE_LAST_NAME_HASHED: "last_name",
+        db_c.S_TYPE_PHONE_NUMBER_HASHED: "phone",
+        db_c.S_TYPE_POSTAL_CODE_HASHED: "zip",
+        db_c.S_TYPE_STATE_OR_PROVINCE_HASHED: "state",
+        # TODO Add address once CDP returns it
+        # db_c.S_TYPE_ADDRESS: "address"
+    },
+}

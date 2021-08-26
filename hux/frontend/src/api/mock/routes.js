@@ -14,6 +14,7 @@ import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
+import totalCustomersData from "./fixtures/totalCustomersData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
 
@@ -388,7 +389,9 @@ export const defineRoutes = (server) => {
 
   server.get("/customers-insights/geo", () => mapData)
 
-  server.get("/customers-insights/cities", (schema, request) => {
+  server.get("/customers-insights/total", () => totalCustomersData)
+
+  server.post("/customers-insights/cities", (schema, request) => {
     let batchNumber = request.queryParams["batch_number"] || 1
     let batchSize = request.queryParams["batch_size"] || 100
     let start = batchNumber === 1 ? 0 : (batchNumber - 1) * batchSize
@@ -396,9 +399,11 @@ export const defineRoutes = (server) => {
     return schema.geoCities.all().slice(start, end)
   })
 
-  server.get("/customers-insights/states", (schema) => schema.geoStates.all())
+  server.post("/customers-insights/states", (schema) => {
+    return schema.geoStates.all()
+  })
 
-  server.get("/customers-insights/countries", (schema) => {
+  server.post("/customers-insights/countries", (schema) => {
     return schema.geoCountries.all()
   })
 
