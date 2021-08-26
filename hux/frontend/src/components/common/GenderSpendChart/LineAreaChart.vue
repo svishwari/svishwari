@@ -74,9 +74,11 @@ export default {
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
-      let line = 0
-      let col = 0
-      let genders = [{ label: "Women" }, { label: "Men" }, { label: "Other" }]
+      let genders = [
+        { label: "Women", xValue: 0 },
+        { label: "Men", xValue: 35 },
+        { label: "Other", xValue: 60 },
+      ]
 
       let colorCodes = [
         "rgba(0, 85, 135, 1)",
@@ -97,39 +99,6 @@ export default {
         .append("svg")
         .attr("width", this.width)
         .attr("height", this.height)
-
-      let dotHoverIn = (pointX, value) => {
-        let areaData = value
-        let xPosition = pointX
-        let yPosition = 0
-        svg
-          .append("line")
-          .attr("class", "hover-line")
-          .style("stroke", "black")
-          .attr("x1", xPosition)
-          .attr("y1", 0)
-          .attr("x2", xPosition)
-          .attr("y2", height)
-
-        svg.selectAll(".dot").each(function () {
-          if (this.getAttribute("cx") == xPosition) {
-            yPosition = this.getAttribute("cy")
-            svg
-              .append("circle")
-              .classed("hover-circle", true)
-              .attr("cx", xPosition)
-              .attr("cy", this.getAttribute("cy"))
-              .attr("r", 6)
-              .style("stroke", this.getAttribute("stroke"))
-              .style("stroke-opacity", "1")
-              .style("fill", "white")
-              .style("pointer-events", "none")
-          }
-        })
-        areaData.xPosition = xPosition
-        areaData.yPosition = yPosition + 30
-        this.tooltipDisplay(true, areaData)
-      }
 
       let strokeWidth = 1.5
       let margin = { top: 0, bottom: 20, left: 40, right: 20 }
@@ -248,6 +217,78 @@ export default {
         .call((g) => g.selectAll("path").attr("stroke", "#ECECEC"))
         .style("font-size", 12)
 
+      svg
+        .append("rect")
+        .attr("width", width)
+        .attr("transform", `translate(${margin.left},${margin.top})`)
+        .attr("height", height)
+        .style("stroke", "transparent")
+        .style("fill", "transparent")
+        .on("mousemove", (mouseEvent) => mousemove(mouseEvent))
+        .on("mouseout", () => mouseout())
+
+      let bisectDate = d3Array.bisector((d) => d).left
+
+      svg
+        .append("line")
+        .attr("class", "hover-line-y")
+        .style("stroke", "#1E1E1E")
+        .style("stroke-width", 1)
+
+      let mouseout = () => {
+        svg.selectAll(".hover-line-y").style("display", "none")
+        svg.selectAll(".hover-circle").remove()
+        this.tooltipDisplay(false)
+      }
+
+      let mousemove = (mouseEvent) => {
+        svg.selectAll(".hover-circle").remove()
+        this.tooltipDisplay(false)
+        let data = this.dateData
+        let x0 = xScale.invert(d3Select.pointer(mouseEvent)[0])
+
+        let i = bisectDate(data, x0, 1)
+        let d0 = data[i - 1]
+        let d1 = data[i] || {}
+        let d = x0 - d0 > d1 - x0 ? d1 : d0
+        let finalXCoordinate = xScale(d) + 40
+        let dateD = this.$options.filters.Date(d, "DD/MM/YY")
+        let yData
+        let dataToolTip = this.areaChartData.find(
+          (element) =>
+            this.$options.filters.Date(new Date(element.date), "DD/MM/YY") ==
+            dateD
+        )
+
+        svg
+          .selectAll(".hover-line-y")
+          .attr("x1", finalXCoordinate)
+          .attr("x2", finalXCoordinate)
+          .attr("y1", 0)
+          .attr("y2", height)
+          .style("display", "block")
+
+        svg.selectAll(".dot").each(function () {
+          if (this.getAttribute("cx") == finalXCoordinate) {
+            let yPosition = this.getAttribute("cy")
+            yData = yPosition
+            svg
+              .append("circle")
+              .classed("hover-circle", true)
+              .attr("cx", finalXCoordinate)
+              .attr("cy", yPosition)
+              .attr("r", 6)
+              .style("stroke", this.getAttribute("stroke"))
+              .style("stroke-opacity", "1")
+              .style("fill", "white")
+              .style("pointer-events", "none")
+          }
+        })
+        dataToolTip.xPosition = finalXCoordinate
+        dataToolTip.yPosition = yData
+        this.tooltipDisplay(true, dataToolTip)
+      }
+
       stackedValues.forEach(function (layer, index) {
         layer.forEach((points) => {
           svg
@@ -259,47 +300,10 @@ export default {
             .attr("data", () => points.data)
             .style("fill", colorCodes[index])
             .attr("stroke", colorCodes[index])
-
-          svg
-            .append("line")
-            .attr("class", "tranparent-line")
-            .style("stroke", "transparent")
-            .style("stroke-width", 4)
-            .attr("x1", xScale(new Date(points.data.date)) + 40)
-            .attr("y1", 0)
-            .attr("x2", xScale(new Date(points.data.date)) + 40)
-            .attr("y2", height)
-            .on("mouseover", (d) =>
-              circleAppend(
-                d,
-                xScale(new Date(points.data.date)) + 40,
-                points.data
-              )
-            )
         })
       })
 
-      function circleAppend(d, pointX, data) {
-        svg
-          .append("circle")
-          .attr("class", "dots")
-          .attr("r", 4)
-          .attr("cx", pointX)
-          .attr("cy", d.offsetY)
-          .style("fill", "transparent")
-          .attr("stroke", "transparent")
-          .on("mouseover", () => dotHoverIn(pointX, data))
-          .on("mouseout", () => dotHoverOut())
-      }
-
-      let dotHoverOut = () => {
-        d3Select.selectAll(".hover-line").remove()
-        d3Select.selectAll(".hover-circle").remove()
-        this.tooltipDisplay(false)
-      }
-
       d3Select.select("#legend").selectAll("svg").remove()
-
       let legendSvg = d3Select
         .select("#legend")
         .append("svg")
@@ -316,11 +320,8 @@ export default {
         .enter()
         .append("g")
         .attr("class", "legend")
-        .attr("transform", function () {
-          let y = line * 25
-          let x = col
-          col += 35
-          return "translate(" + x + "," + y + ")"
+        .attr("transform", function (d) {
+          return `translate(${d.xValue}, 0)`
         })
 
       legend

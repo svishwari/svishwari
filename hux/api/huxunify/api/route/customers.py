@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, too-many-lines
 """
 Paths for customer API
 """
@@ -22,6 +22,7 @@ from huxunify.api.schema.customers import (
     CustomerGeoVisualSchema,
     CustomerDemographicInsightsSchema,
     MatchingTrendsSchema,
+    IDROverviewWithDateRangeSchema,
     CustomerEventsSchema,
     TotalCustomersInsightsSchema,
     CustomersInsightsStatesSchema,
@@ -39,6 +40,7 @@ from huxunify.api.data_connectors.cdp import (
     get_customer_profile,
     get_customers_overview,
     get_idr_data_feeds,
+    get_idr_overview,
     get_idr_matching_trends,
     get_customer_events_data,
     get_demographic_by_state,
@@ -196,16 +198,34 @@ class CustomerPostOverview(SwaggerView):
 @add_view_to_blueprint(
     customers_bp,
     f"/{api_c.IDR_ENDPOINT}/{api_c.OVERVIEW}",
-    "CustomerDashboardOverview",
+    "IDROverview",
 )
-class CustomerDashboardOverview(SwaggerView):
+class IDROverview(SwaggerView):
     """
     Customers Dashboard Overview class
     """
 
+    parameters = [
+        {
+            "name": api_c.START_DATE,
+            "description": "Start date.",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "05-01-2016",
+        },
+        {
+            "name": api_c.END_DATE,
+            "description": "End date.",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "09-01-2019",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
-            "schema": CustomerOverviewSchema,
+            "schema": IDROverviewWithDateRangeSchema,
             "description": "Customer Identity Resolution Dashboard overview.",
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -229,8 +249,12 @@ class CustomerDashboardOverview(SwaggerView):
         """
         token_response = get_token_from_request(request)
         return (
-            CustomerOverviewSchema().dump(
-                get_customers_overview(token_response[0])
+            IDROverviewWithDateRangeSchema().dump(
+                get_idr_overview(
+                    token_response[0],
+                    request.args.get(api_c.START_DATE),
+                    request.args.get(api_c.END_DATE),
+                )
             ),
             HTTPStatus.OK,
         )
@@ -379,6 +403,24 @@ class CustomerProfileSearch(SwaggerView):
 class IDRDataFeeds(SwaggerView):
     """IDR Data Feeds Report"""
 
+    parameters = [
+        {
+            "name": api_c.START_DATE,
+            "description": "Start date.",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "05-01-2016",
+        },
+        {
+            "name": api_c.END_DATE,
+            "description": "End date.",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "09-01-2019",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "schema": {"type": "array", "items": DataFeedSchema},
@@ -404,10 +446,20 @@ class IDRDataFeeds(SwaggerView):
         Returns:
             Tuple[List[dict], int] list of IDR data feeds object dicts
         """
+        token_response = get_token_from_request(request)
 
         return (
-            jsonify(DataFeedSchema().dump(get_idr_data_feeds(), many=True)),
-            HTTPStatus.OK.value,
+            jsonify(
+                DataFeedSchema().dump(
+                    get_idr_data_feeds(
+                        token_response[0],
+                        request.args.get(api_c.START_DATE),
+                        request.args.get(api_c.END_DATE),
+                    ),
+                    many=True,
+                )
+            ),
+            HTTPStatus.OK,
         )
 
 
@@ -601,17 +653,29 @@ class CustomerDemoVisualView(SwaggerView):
             (start_date + pd.DateOffset(months=x)).to_pydatetime()
             for x in range(0, 5)
         ]
+
+        # get customers overview data from CDP to set gender specific
+        # population details
+        customers = get_customers_overview(token_response[0])
+
+        # if the customers overview response body is empty from CDP, then log
+        # error and return 400
+        if not customers:
+            logger.error("Failed to get Customer Profile Insights from CDP.")
+            return (
+                {
+                    "message": "Failed to get customers Demographical Visual Insights."
+                },
+                HTTPStatus.BAD_REQUEST,
+            )
+
         output = {
             api_c.GENDER: {
                 gender: {
-                    api_c.POPULATION_PERCENTAGE: population_percent,
-                    api_c.SIZE: size,
+                    api_c.POPULATION_PERCENTAGE: customers.get(gender, 0),
+                    api_c.SIZE: customers.get(f"{gender}_{api_c.COUNT}", 0),
                 }
-                for gender, population_percent, size in zip(
-                    api_c.GENDERS,
-                    [0.5201, 0.4601, 0.0211],
-                    [6955119, 5627732, 289655],
-                )
+                for gender in api_c.GENDERS
             },
             api_c.INCOME: get_spending_by_cities(token_response[0]),
             api_c.SPEND: {
@@ -644,6 +708,24 @@ class CustomerDemoVisualView(SwaggerView):
 class IDRMatchingTrends(SwaggerView):
     """IDR Matching Trends YTD"""
 
+    parameters = [
+        {
+            "name": api_c.START_DATE,
+            "description": "Start date.",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "05-01-2016",
+        },
+        {
+            "name": api_c.END_DATE,
+            "description": "End date.",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "09-01-2019",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "schema": {"type": "array", "items": MatchingTrendsSchema},
@@ -672,7 +754,12 @@ class IDRMatchingTrends(SwaggerView):
         return (
             jsonify(
                 MatchingTrendsSchema().dump(
-                    get_idr_matching_trends(token_response[0]), many=True
+                    get_idr_matching_trends(
+                        token_response[0],
+                        request.args.get(api_c.START_DATE),
+                        request.args.get(api_c.END_DATE),
+                    ),
+                    many=True,
                 )
             ),
             HTTPStatus.OK,
