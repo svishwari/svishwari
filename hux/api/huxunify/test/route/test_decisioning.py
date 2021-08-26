@@ -72,7 +72,7 @@ class DecisioningTests(TestCase):
             sorted([x[api_c.NAME] for x in t_c.MOCKED_MODEL_RESPONSE]),
         )
 
-    @given(model_id=st.sampled_from(list(api_c.SUPPORTED_MODELS.keys())))
+    @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     def test_get_model_version_history(self, model_id: int):
         """
         Test get model version history
