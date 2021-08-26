@@ -8,7 +8,7 @@
     >
       <div class="text-caption">{{ tooltipValue }}</div>
       <div class="text-caption">
-        {{ tooltipValueDate | Date("YYYY/MM/DD") | Empty }}
+        {{ tooltipValueDate | Date("MM/DD/YYYY") | Empty }}
       </div>
     </chart-tooltip>
   </div>
