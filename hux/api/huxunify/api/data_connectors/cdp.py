@@ -563,7 +563,7 @@ def fill_empty_customer_events(
     """
     return [
         {
-            api_c.DATE: start_date + datetime.timedelta(days=i),
+            api_c.DATE: start_date + timedelta(days=i),
             api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 0,
             api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
                 api_c.ABANDONED_CART_EVENT: 0,
@@ -602,8 +602,8 @@ def fill_customer_events_missing_dates(
                 customer_events_dates_filled = (
                     customer_events_dates_filled
                     + fill_empty_customer_events(
-                        prev_date - datetime.timedelta(1),
-                        prev_date + datetime.timedelta(1),
+                        prev_date - timedelta(1),
+                        prev_date + timedelta(1),
                     )
                 )
 
@@ -620,9 +620,7 @@ def fill_customer_events_missing_dates(
     if end_date > prev_date and (end_date - prev_date).days >= 1:
         customer_events_dates_filled = (
             customer_events_dates_filled
-            + fill_empty_customer_events(
-                prev_date, end_date + datetime.timedelta(1)
-            )
+            + fill_empty_customer_events(prev_date, end_date + timedelta(1))
         )
 
     customer_events_dates_filled.sort(
