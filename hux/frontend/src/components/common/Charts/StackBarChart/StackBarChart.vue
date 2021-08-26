@@ -67,7 +67,7 @@ export default {
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
-      let margin = { top: 30, right: 30, bottom: 100, left: 65 }
+      let margin = { top: 15, right: 45, bottom: 100, left: 68 }
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
       let formattedData = []
@@ -75,7 +75,7 @@ export default {
       let barColorCodes = []
       let monthChangeIndexs = []
       let rx = 15
-      let ry = 12
+      let ry = 15
 
       let svg = d3Select
         .select(this.$refs.stackBarChart)
@@ -127,6 +127,7 @@ export default {
           ),
           index: index == weeklyAggData.length - 1 ? 3 : initialIndex,
           barIndex: index,
+          isEndingBar: index > weeklyAggData.length - 3,
         })
       })
 
@@ -170,7 +171,7 @@ export default {
       svg
         .append("g")
         .classed("xAxis-alternate", true)
-        .attr("transform", "translate(0," + 378 + ")")
+        .attr("transform", "translate(0," + 243 + ")")
         .call(d3Axis.axisBottom(xScale).tickSize(0).tickFormat(""))
         .style("stroke-width", 16)
 
@@ -212,7 +213,11 @@ export default {
 
       d3Select.selectAll(".domain").style("stroke", "rgba(208, 208, 206, 1)")
       d3Select.selectAll(".tick line").style("stroke", "rgba(208, 208, 206, 1)")
-      d3Select.selectAll(".xAxis .tick text").attr("x", 10)
+      d3Select
+        .selectAll(".xAxis .tick text")
+        .attr("x", 10)
+        .style("color", "#4F4F4F")
+      d3Select.selectAll(".yAxis .tick text").style("color", "#4F4F4F")
       d3Select.selectAll(".xAxis-alternate .domain").style("stroke", "white")
 
       let topRoundedRect = (x, y, width, height) =>
@@ -232,11 +237,10 @@ export default {
           topRoundedRect(
             xScale(i),
             yScale(d[1]),
-            xScale.bandwidth(),
+            xScale.bandwidth() < 30 ? xScale.bandwidth() : 30,
             yScale(d[0]) - yScale(d[1])
           )
         )
-        .style("margin-right", "10px")
         .style("fill", (d) => barColorCodes[d.data.index])
         .on("mouseover", (d) => applyHoverEffects(d, xScale.bandwidth()))
         .on("mouseout", () => removeHoverEffects())
@@ -334,6 +338,7 @@ export default {
         this.toolTip.totalCustomers = data.total_customers
         this.toolTip.addedCustomers = data.new_customers_added
         this.toolTip.index = data.index
+        this.toolTip.isEndingBar = data.isEndingBar
         this.tooltipDisplay(true, this.toolTip)
       }
     },
