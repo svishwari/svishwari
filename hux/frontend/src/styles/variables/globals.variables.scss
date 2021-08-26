@@ -52,12 +52,12 @@ $headings: (
     "size": 12px,
     "line-height": 16px,
     "weight": 400,
-  )
+  ),
 );
 
 // App
 $material-light: (
-  "background": #FAFCFD,
+  "background": #fafcfd,
 );
 
 $border-radius-root: 4px;
@@ -65,12 +65,12 @@ $border-radius-root: 4px;
 $rounded: (
   0: 0,
   null: $border-radius-root,
-  'sm': $border-radius-root * 0.5,
-  'md': $border-radius-root * 1,
-  'lg': $border-radius-root * 3,
-  'xl': $border-radius-root * 6,
-  'pill': 9999px,
-  'circle': 50%,
+  "sm": $border-radius-root * 0.5,
+  "md": $border-radius-root * 1,
+  "lg": $border-radius-root * 3,
+  "xl": $border-radius-root * 6,
+  "pill": 9999px,
+  "circle": 50%,
 );
 
 .background-white {
