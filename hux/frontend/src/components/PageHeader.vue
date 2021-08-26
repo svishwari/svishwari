@@ -5,7 +5,7 @@
     elevation="1"
     tile
     :color="bgColor"
-    :height="headerHeight"
+    :height="72"
   >
     <div>
       <div class="d-flex">

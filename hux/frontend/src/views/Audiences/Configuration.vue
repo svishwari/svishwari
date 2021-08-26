@@ -719,11 +719,17 @@ export default {
     }
     .form-steps {
       .step-1 {
+        .form-step__label {
+          padding-bottom: 14px;
+        }
         .form-step__content {
           padding-bottom: 25px !important;
         }
       }
       .step-2 {
+        .form-step__label {
+          padding-bottom: 7px;
+        }
         .form-step__content {
           padding-top: 0px !important;
           margin-top: 0px;
@@ -731,6 +737,9 @@ export default {
         }
       }
       .step-3 {
+        .form-step__label {
+          padding-bottom: 6px;
+        }
         .form-step__content {
           padding-top: 0px !important;
           margin-top: 0px;

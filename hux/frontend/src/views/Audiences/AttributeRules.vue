@@ -53,7 +53,7 @@
                   <hux-dropdown
                     v-if="isText(condition)"
                     label="Select operator"
-                    :items="operatorOptions"
+                    :items="operatorOptions(condition)"
                     :selected="condition.operator"
                     @on-select="onSelect('operator', condition, $event)"
                   />
@@ -261,12 +261,7 @@ export default {
         })
       } else return []
     },
-    operatorOptions() {
-      return Object.keys(this.ruleAttributes.text_operators).map((key) => ({
-        key: key,
-        name: this.ruleAttributes.text_operators[key],
-      }))
-    },
+
     lastIndex() {
       return this.rules.length - 1
     },
@@ -281,6 +276,26 @@ export default {
     }),
     isText(condition) {
       return condition.attribute ? condition.attribute.type === "text" : false
+    },
+    operatorOptions(condition) {
+      // Filter out only two options (equals and does_not_equals) for attribute type 'gender'
+      if (condition.attribute.key === "gender") {
+        return Object.keys(this.ruleAttributes.text_operators)
+          .map((key) => {
+            if (key.includes("equal")) {
+              return {
+                key: key,
+                name: this.ruleAttributes.text_operators[key],
+              }
+            }
+          })
+          .filter(Boolean)
+      } else {
+        return Object.keys(this.ruleAttributes.text_operators).map((key) => ({
+          key: key,
+          name: this.ruleAttributes.text_operators[key],
+        }))
+      }
     },
     async triggerSizing(condition, triggerOverallSize = true) {
       condition.awaitingSize = true

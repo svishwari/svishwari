@@ -53,7 +53,7 @@
           </h5>
         </template>
 
-        <v-row class="delivery-schedule mt-4">
+        <v-row class="delivery-schedule mt-2">
           <v-radio-group
             v-model="value.delivery_schedule"
             row
@@ -90,8 +90,8 @@
             </v-radio>
           </v-radio-group>
         </v-row>
-        <v-row class="delivery-schedule mt-10 ml-n2">
-          <div v-if="isRecurring">
+        <v-row v-if="isRecurring" class="delivery-schedule mt-10 ml-n2">
+          <div>
             <span class="date-picker-label neroBlack--text text-caption">
               Start date
             </span>
@@ -200,7 +200,7 @@
                       <v-btn
                         x-small
                         fab
-                        class="primary ml-2"
+                        class="primary ml-2 box-shadow-25"
                         @click="openSelectDestinationsDrawer(row.item.id)"
                       >
                         <v-icon size="16">mdi-plus</v-icon>
@@ -220,7 +220,7 @@
                   <v-btn
                     x-small
                     fab
-                    class="primary mr-2"
+                    class="primary mr-2 box-shadow-25"
                     @click="openSelectAudiencesDrawer()"
                   >
                     <v-icon>mdi-plus</v-icon>
@@ -236,18 +236,20 @@
           </template>
 
           <template slot="empty">
-            <v-col class="grow">You have not added any audiences, yet.</v-col>
-            <v-col class="shrink">
+            <v-col class="shrink pl-5">
               <v-btn
                 x-small
                 fab
-                color="primary"
+                color="primary box-shadow-25"
                 elevation="0"
                 @click="openSelectAudiencesDrawer()"
               >
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
             </v-col>
+            <v-col class="grow pl-2"
+              >You have not added any audiences, yet.</v-col
+            >
           </template>
         </data-cards>
       </form-step>
@@ -646,5 +648,13 @@ export default {
   position: absolute;
   margin-top: -30px;
   margin-left: 8px;
+}
+.form-steps {
+  ::v-deep .form-step__header {
+    padding-bottom: 14px;
+  }
+  ::v-deep .form-step__content {
+    padding-top: 0px !important;
+  }
 }
 </style>

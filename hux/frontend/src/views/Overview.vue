@@ -3,7 +3,7 @@
     <page-header :title="`Welcome back, ${fullName}!`" class="py-7">
       <template slot="description">
         Hux is here to help you make better, faster decisions to improve your
-        Customer Experiences.
+        customer experiences.
         <a
           class="text-decoration-none"
           href="https://consulting.deloitteresources.com/offerings/customer-marketing/advertising-marketing-commerce/Pages/hux_marketing.aspx"
@@ -115,7 +115,7 @@ export default {
         {
           title: "Connect data source",
           description:
-            "Choose your data source from various customer touchpoint systems.",
+            "Connect your data sources to enable data unification in a single location.",
           route: {
             name: "DataSourceConfiguration",
             query: { select: true },
@@ -125,7 +125,7 @@ export default {
         {
           title: "Add a destination",
           description:
-            "Choose a destination where your actionable intelligence will be consumed.",
+            "Select the destinations you wish to deliver your audiences and/or engagements to.",
           route: {
             name: "DestinationConfiguration",
             query: { select: true },
@@ -135,14 +135,14 @@ export default {
         {
           title: "Create an audience",
           description:
-            "Create an audience based on customized orchestrated choices.",
+            "Create audiences by segmenting your customer list based on who you wish to target.",
           route: { name: "AudienceConfiguration" },
           active: true,
         },
         {
           title: "Create an engagement",
           description:
-            "Put all this great data and information to good use by creating an engagement.",
+            "Select your audiences and destinations where you wish to run campaigns on.",
           route: { name: "EngagementConfiguration" },
           active: true,
         },
@@ -190,11 +190,15 @@ export default {
 
 <style lang="scss" scoped>
 .overview-wrap {
+  .page-header--wrap {
+    box-shadow: 0px 1px 0px #d0d0ce !important;
+  }
   .quickAccessMenu {
     background: var(--v-aliceBlue-base);
     min-height: 265px;
     padding: 16px 30px 40px 30px;
     overflow-x: auto;
+    border: 1px solid var(--v-zircon-base);
     h5 {
       line-height: 19px;
       letter-spacing: 0.5px;
