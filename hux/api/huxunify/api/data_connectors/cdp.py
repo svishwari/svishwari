@@ -5,7 +5,7 @@ import random
 import time
 import asyncio
 import math
-from typing import Tuple, Optional
+from typing import Tuple, Optional, List
 from random import randint
 from datetime import datetime, timedelta
 
@@ -934,13 +934,13 @@ def get_spending_by_gender(
     start_date: str,
     end_date: str,
     filters: Optional[dict] = None,
-):
+) -> List[Optional[dict]]:
     """
 
     Args:
+        token (str): OKTA JWT Token.
         start_date (str): String value of start date
         end_date (str): String value of end date
-        token (str): OKTA JWT Token.
         filters (dict):  filters to pass into
             spending-by-month endpoint
 

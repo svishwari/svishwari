@@ -1092,7 +1092,7 @@ START_DATE_PARAMS = {
     "type": "string",
     "in": "query",
     "required": True,
-    "example": "05-01-2016",
+    "example": "2021-04-01",
 }
 
 END_DATE_PARAMS = {
@@ -1101,7 +1101,7 @@ END_DATE_PARAMS = {
     "type": "string",
     "in": "query",
     "required": True,
-    "example": "09-01-2019",
+    "example": "2021-08-01",
 }
 
 # IDR Fields
