@@ -61,11 +61,11 @@
     </div>
     <v-row class="px-8 mt-2">
       <v-col md="12">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="522">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
           <v-card-title class="chart-style pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
-                Total Customers ({{ timeFrameLabel }})
+                Total customers ({{ timeFrameLabel }})
               </span>
             </div>
           </v-card-title>
