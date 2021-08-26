@@ -11,7 +11,7 @@ const state = {
   lift: [],
   features: [],
   drift: [],
-  modelFeatures: {},
+  modelFeatures: [],
 }
 
 const getters = {
@@ -21,7 +21,18 @@ const getters = {
   lift: (state) => state.lift,
   features: (state) => state.features,
   drift: (state) => state.drift,
-  modelFeatures: (state) => Object.values(state.modelFeatures),
+  modelFeatures: (state) => {
+    return state.modelFeatures.map((feature) => {
+      return {
+        name: feature.name,
+        feature_service: feature.feature_service,
+        data_source: feature.data_source,
+        status: feature.status,
+        popularity: feature.popularity,
+        created_by: feature.created_by,
+      }
+    })
+  },
 }
 
 const mutations = {
@@ -54,10 +65,8 @@ const mutations = {
       Vue.set(state.history, item.version, item)
     })
   },
-  SET_MODAL_FEATURE(state, items) {
-    items.forEach((item) => {
-      Vue.set(state.modelFeatures, item.id, item)
-    })
+  SET_MODAL_FEATURE(state, data) {
+    state.modelFeatures = data
   },
   SET_LIFT(state, data) {
     state.lift = data
