@@ -22,6 +22,10 @@ export const defineRoutes = (server) => {
   // data sources
   server.get("/data-sources")
 
+  server.get("/data-sources/:id", (schema) => {
+    return schema.dataFeeds.all()
+  })
+
   server.patch("/data-sources", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
 

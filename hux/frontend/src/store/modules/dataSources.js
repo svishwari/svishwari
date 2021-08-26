@@ -6,10 +6,16 @@ const namespaced = true
 
 const state = {
   items: {},
+
+  data_feeds: [],
 }
 
 const getters = {
   list: (state) => Object.values(state.items),
+
+  single: (state) => (id) => state.items[id],
+
+  data_feeds: (state) => state.data_feeds,
 }
 
 const mutations = {
@@ -21,6 +27,10 @@ const mutations = {
 
   SET_ONE(state, item) {
     Vue.set(state.items, item.id, item)
+  },
+
+  SET_DATA_FEEDS(state, items) {
+    state.data_feeds = items
   },
 }
 
@@ -41,6 +51,16 @@ const actions = {
       response.data.forEach((each) => {
         commit("SET_ONE", each)
       })
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getDataFeeds({ commit }, id) {
+    try {
+      const response = await api.dataSources.find(id)
+      commit("SET_DATA_FEEDS", response.data)
     } catch (error) {
       handleError(error)
       throw error

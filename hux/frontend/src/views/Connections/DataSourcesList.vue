@@ -23,6 +23,12 @@
         hide-button
         data-e2e="dataSourcesList"
         class="mb-3 pr-10 list"
+        @click="
+          $router.push({
+            name: 'DataSourceListing',
+            params: { id: dataSource.id },
+          })
+        "
       >
         <status :status="dataSource.status" :icon-size="17" class="status" />
       </card-horizontal>
@@ -76,11 +82,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .list-wrapper {
-  .list {
-    &:hover {
-      cursor: auto;
-    }
-  }
   .v-card {
     .status {
       min-width: 80px;
