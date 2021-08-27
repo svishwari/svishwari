@@ -97,6 +97,8 @@ const getters = {
     })
   },
 
+  dateRange: (state) => state.overview["date_range"],
+
   dataFeeds: (state) => Object.values(state.dataFeeds),
 
   dataFeed: (state) => (datafeed_id) => state.dataFeeds[datafeed_id],

@@ -1,6 +1,6 @@
 <template>
   <v-select
-    v-model="selected"
+    v-model="localValue"
     :items="items"
     :label="label"
     :menu-props="{
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch } from "@vue/composition-api"
+import { defineComponent, computed } from "@vue/composition-api"
 
 export default defineComponent({
   props: {
@@ -47,13 +47,19 @@ export default defineComponent({
     },
   },
 
-  setup(props, { emit }) {
-    const selected = ref(props.value)
+  emits: ["input", "change"],
 
-    watch(selected, (newSelection) => emit("input", newSelection))
+  setup(props, { emit }) {
+    const localValue = computed({
+      get: () => props.value,
+      set: (value) => {
+        emit("input", value)
+        emit("change", value)
+      },
+    })
 
     return {
-      selected,
+      localValue,
     }
   },
 })

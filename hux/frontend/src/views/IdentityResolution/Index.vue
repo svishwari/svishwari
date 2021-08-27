@@ -48,6 +48,7 @@
           label="Start month"
           class="mx-1"
           width="141"
+          @change="refreshData"
         />
 
         <hux-select
@@ -56,6 +57,7 @@
           label="Start year"
           class="mx-1"
           width="126"
+          @change="refreshData"
         />
 
         <icon class="mx-1" type="arrow" color="primary" :size="19" />
@@ -66,6 +68,7 @@
           label="End month"
           class="mx-1"
           width="141"
+          @change="refreshData"
         />
 
         <hux-select
@@ -74,6 +77,7 @@
           :items="options.years"
           class="mx-1"
           width="126"
+          @change="refreshData"
         />
       </hux-filters-bar>
     </template>
@@ -169,7 +173,7 @@ export default {
     return {
       loadingOverview: false,
       loadingDataFeeds: false,
-      loadingMatchingTrend: false,
+      loadingMatchingTrends: false,
       isFilterToggled: false,
       options: {
         months: [
@@ -200,44 +204,68 @@ export default {
   computed: {
     ...mapGetters({
       overview: "identity/overview",
+      dateRange: "identity/dateRange",
       dataFeeds: "identity/dataFeeds",
       identityMatchingTrend: "identity/matchingTrend",
     }),
 
     loading() {
-      return this.loadingOverview || this.loadingDataFeeds
+      return (
+        this.loadingOverview ||
+        this.loadingDataFeeds ||
+        this.loadingMatchingTrends
+      )
     },
   },
 
   async mounted() {
-    this.loadOverview()
-    this.loadDataFeeds()
-    this.fetchMatchingTrend()
+    await this.refreshData()
+    this.setFilters({
+      startDate: this.dateRange["start_date"],
+      endDate: this.dateRange["end_date"],
+    })
   },
 
   methods: {
     ...mapActions({
       getOverview: "identity/getOverview",
       getDataFeeds: "identity/getDataFeeds",
-      getMatchingTrend: "identity/getMatchingTrend",
+      getMatchingTrends: "identity/getMatchingTrend",
     }),
 
-    async fetchMatchingTrend() {
-      this.loadingMatchingTrend = true
-      await this.getMatchingTrend()
-      this.loadingMatchingTrend = false
+    async refreshData() {
+      await this.loadOverview()
+      this.loadDataFeeds()
+      this.loadMatchingTrends()
     },
 
-    async loadOverview() {
-      this.loadingOverview = true
-      await this.getOverview()
-      this.loadingOverview = false
+    setFilters({ startDate, endDate }) {
+      if (startDate && endDate) {
+        const month = "MMMM"
+        const year = "YYYY"
+        this.filters.startMonth = this.$options.filters.Date(startDate, month)
+        this.filters.startYear = this.$options.filters.Date(startDate, year)
+        this.filters.endMonth = this.$options.filters.Date(endDate, month)
+        this.filters.endYear = this.$options.filters.Date(endDate, year)
+      }
+    },
+
+    async loadMatchingTrends() {
+      this.loadingMatchingTrends = true
+      await this.getMatchingTrends()
+      this.loadingMatchingTrends = false
     },
 
     async loadDataFeeds() {
       this.loadingDataFeeds = true
       await this.getDataFeeds()
       this.loadingDataFeeds = false
+    },
+
+    async loadOverview() {
+      this.loadingOverview = true
+      await this.getOverview()
+      this.loadingOverview = false
     },
   },
 }
