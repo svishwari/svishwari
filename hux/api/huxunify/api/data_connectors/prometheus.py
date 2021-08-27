@@ -1,3 +1,4 @@
+"""Module for managing prometheus metrics"""
 import time
 import prometheus_client
 from prometheus_client import CollectorRegistry, Histogram
