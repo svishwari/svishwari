@@ -9,8 +9,6 @@ from unittest import TestCase, mock
 import mongomock
 import requests_mock
 from bson import ObjectId
-from flask_marshmallow import Schema
-from marshmallow import ValidationError
 
 from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.client import DatabaseClient
@@ -19,28 +17,6 @@ import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.cdp_data_source import CdpDataSourceSchema
 from huxunify.app import create_app
-
-
-def validate_schema(
-    schema: Schema, response_json: dict, is_multiple: bool = False
-) -> bool:
-    """
-    Validate if the response confirms with the given schema
-
-    Args:
-        schema (Schema): Instance of the Schema to validate against
-        response_json (dict): Response json as dict
-        is_multiple (bool): If response is a collection of objects
-
-    Returns:
-        (bool): True/False
-    """
-
-    try:
-        schema.load(response_json, many=is_multiple)
-        return True
-    except ValidationError:
-        return False
 
 
 class CdpDataSourcesTest(TestCase):
@@ -118,7 +94,9 @@ class CdpDataSourcesTest(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(validate_schema(CdpDataSourceSchema(), response.json))
+        self.assertTrue(
+            t_c.validate_schema(CdpDataSourceSchema(), response.json)
+        )
         self.assertEqual(valid_response, response.json)
 
     def test_get_all_data_sources_success(self):
@@ -142,7 +120,9 @@ class CdpDataSourcesTest(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
-            validate_schema(CdpDataSourceSchema(), response.json, is_multiple)
+            t_c.validate_schema(
+                CdpDataSourceSchema(), response.json, is_multiple=True
+            )
         )
         self.assertEqual(valid_response, response.json)
 
