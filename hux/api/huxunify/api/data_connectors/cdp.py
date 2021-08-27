@@ -338,7 +338,6 @@ async def get_async_customers(
                 return {"code": 500}, str(audience_id)
 
 
-# pylint: disable=unused-argument
 def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
     """
     Fetch IDR data feeds
@@ -348,52 +347,63 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
         start_date (str): Start date.
         end_date (str): End date.
     Returns:
-       list: count of known, anonymous, unique ids on a day.
+       list: datafeeds for the data source with given type
     """
-    # TODO: Update after CDM API for IDR data feeds is available. Use date range tp filter.
-    response = [
-        {
-            api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fc",
-            api_c.DATAFEED_NAME: "Really_long_Feed_Name_106",
-            api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-            api_c.DATAFEED_NEW_IDS_COUNT: 21,
-            api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2023532,
-            api_c.MATCH_RATE: 0.98,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow(),
-        },
-        {
-            api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fd",
-            api_c.DATAFEED_NAME: "Really_long_Feed_Name_105",
-            api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-            api_c.DATAFEED_NEW_IDS_COUNT: 54,
-            api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3232,
-            api_c.MATCH_RATE: 0.97,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
-            - timedelta(days=1),
-        },
-        {
-            api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fe",
-            api_c.DATAFEED_NAME: "Really_long_Feed_Name_102",
-            api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-            api_c.DATAFEED_NEW_IDS_COUNT: 300,
-            api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3012,
-            api_c.MATCH_RATE: 0.98,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
-            - timedelta(days=7),
-        },
-        {
-            api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4ff",
-            api_c.DATAFEED_NAME: "Really_long_Feed_Name_100",
-            api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-            api_c.DATAFEED_NEW_IDS_COUNT: 612,
-            api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2045,
-            api_c.MATCH_RATE: 0.98,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
-            - timedelta(days=30),
-        },
-    ]
+    # get config
+    config = get_config()
+    logger.info("Retrieving data-feeds for data sources")
 
-    return response
+    response = requests.post(
+        f"{config.CDP_CONNECTION_SERVICE}{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.CDM_DATAFEEDS}",
+        json={api_c.START_DATE: start_date, api_c.END_DATE: end_date},
+        headers={api_c.CUSTOMERS_API_HEADER_KEY: token},
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve identity data feeds %s %s.",
+            response.status_code,
+            response.text,
+        )
+        return []
+
+    logger.info("Successfully retrieved identity data feeds.")
+
+    return response.json()[api_c.BODY]
+
+
+def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
+    """
+    Fetch details of IDR datafeed by ID
+
+    Args:
+        token (str): OKTA JWT Token
+        datafeed_id (int): Data feed ID
+
+    Returns:
+        dict: Datafeed details object
+    """
+    # get config
+    config = get_config()
+    logger.info("Retrieving identity data-feed details")
+
+    response = requests.get(
+        f"{config.CDP_CONNECTION_SERVICE}{api_c.CDM_IDENTITY_ENDPOINT}/"
+        f"{api_c.CDM_DATAFEEDS}/{datafeed_id}",
+        headers={api_c.CUSTOMERS_API_HEADER_KEY: token},
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve identity data feed details %s %s.",
+            response.status_code,
+            response.text,
+        )
+        return []
+
+    logger.info("Successfully retrieved identity data feed details.")
+
+    return response.json()[api_c.BODY]
 
 
 def generate_idr_matching_trends_distribution(

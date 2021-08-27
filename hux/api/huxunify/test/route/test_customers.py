@@ -15,9 +15,7 @@ import huxunifylib.database.constants as db_c
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.customers import (
-    DataFeedPinning,
     DataFeedDetailsSchema,
-    DataFeedStitched,
     DataFeedSchema,
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
@@ -164,7 +162,6 @@ class TestCustomersOverview(TestCase):
         Test get customers idr overview
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
@@ -289,7 +286,14 @@ class TestCustomersOverview(TestCase):
         Test get IDR Datafeeds
         """
 
-        # TODO: Update after integration of CDM APIs
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.CDM_DATAFEEDS}",
+            json=t_c.IDR_DATAFEEDS_RESPONSE,
+        )
+        self.request_mocker.start()
+
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}",
             headers=t_c.STANDARD_HEADERS,
@@ -300,38 +304,33 @@ class TestCustomersOverview(TestCase):
             {}, DataFeedSchema().validate(response.json, many=True)
         )
 
-    @given(datafeed=st.text(alphabet=string.ascii_letters))
-    def test_get_idr_datafeed_report(self, datafeed: str):
+    def test_get_idr_data_feed_details(self) -> None:
         """
-        Test get idr datafeed report
+        Test get idr datafeed details
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
         """
-        if not datafeed:
-            return
+        datafeed_id = 1
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.CDM_DATAFEEDS}/"
+            f"{datafeed_id}",
+            json=t_c.IDR_DATAFEED_DETAILS_RESPONSE,
+        )
+        self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/{datafeed}",
+            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/"
+            f"{datafeed_id}",
             headers=t_c.STANDARD_HEADERS,
         )
+
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(
-            t_c.validate_schema(DataFeedDetailsSchema(), response.json)
-        )
-        self.assertTrue(
-            t_c.validate_schema(
-                DataFeedPinning(), response.json[api_c.PINNING]
-            )
-        )
-        self.assertTrue(
-            t_c.validate_schema(
-                DataFeedStitched(), response.json[api_c.STITCHED]
-            )
-        )
+        self.assertEqual({}, DataFeedDetailsSchema().validate(response.json))
 
     def test_get_customers_geo(self):
         """

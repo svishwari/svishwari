@@ -673,7 +673,7 @@ DIGITAL_IDS_ADDED = "digital_ids_added"
 DIGITAL_IDS_MERGED = "digital_ids_merged"
 MERGE_RATE = "merge_rate"
 RECORDS_SOURCE = "records_source"
-TIME_STAMP = "time_stamp"
+TIMESTAMP = "timestamp"
 STITCHED = "stitched"
 PINNING = "pinning"
 
@@ -697,12 +697,12 @@ ANONYMOUS_IDS_MAX_COUNT = 120000
 ANONYMOUS_IDS_LAMBDA = 5
 
 # IDR Data feeds
-DATAFEED_ID = "datafeed_id"
-DATAFEED_NAME = "datafeed_name"
-DATAFEED_DATA_SOURCE = "data_source_type"
+DATAFEED_ID = "data_feed_id"
+DATAFEED_DATA_SOURCE_TYPE = "datasource_name"
+DATAFEED_DATA_SOURCE_NAME = "datasource_label"
 DATAFEED_NEW_IDS_COUNT = "new_ids_generated"
-DATAFEED_RECORDS_PROCESSED_COUNT = "num_records_processed"
-DATAFEED_LAST_RUN_DATE = "last_run"
+DATAFEED_RECORDS_PROCESSED_COUNT = "total_rec_processed"
+DATAFEED_LAST_RUN_DATE = "timestamp"
 
 # customer event fields
 CUSTOMER_TOTAL_DAILY_EVENT_COUNT = "total_event_count"
@@ -814,3 +814,8 @@ DOWNLOAD_TYPES = {
         # db_c.S_TYPE_ADDRESS: "address"
     },
 }
+
+# CDM API constants
+CDM_CONNECTIONS_ENDPOINT = "connections"
+CDM_IDENTITY_ENDPOINT = "identity"
+CDM_DATAFEEDS = "datafeeds"

@@ -8,8 +8,6 @@ from http import HTTPStatus
 import requests_mock
 from hypothesis import given, strategies as st
 
-from huxunifylib.database import constants as db_c
-
 from huxunify.api import constants as api_c
 from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.cdp import (
@@ -17,6 +15,8 @@ from huxunify.api.data_connectors.cdp import (
     DATETIME_FIELDS,
     get_demographic_by_state,
     get_city_ltvs,
+    get_idr_data_feed_details,
+    get_idr_data_feeds,
 )
 from huxunify.app import create_app
 
@@ -141,54 +141,55 @@ class CDPTest(TestCase):
 
         """
 
-        # TODO: Add logic when CDM API is available
-        expected_response = {
-            "code": 200,
-            "body": [
-                {
-                    api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fc",
-                    api_c.DATAFEED_NAME: "Really_long_Feed_Name_106",
-                    api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-                    api_c.DATAFEED_NEW_IDS_COUNT: 21,
-                    api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2023532,
-                    api_c.MATCH_RATE: 0.98,
-                    api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow(),
-                },
-                {
-                    api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fd",
-                    api_c.DATAFEED_NAME: "Really_long_Feed_Name_105",
-                    api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-                    api_c.DATAFEED_NEW_IDS_COUNT: 54,
-                    api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3232,
-                    api_c.MATCH_RATE: 0.97,
-                    api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow()
-                    - datetime.timedelta(days=1),
-                },
-                {
-                    api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fe",
-                    api_c.DATAFEED_NAME: "Really_long_Feed_Name_102",
-                    api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-                    api_c.DATAFEED_NEW_IDS_COUNT: 300,
-                    api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3012,
-                    api_c.MATCH_RATE: 0.98,
-                    api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow()
-                    - datetime.timedelta(days=7),
-                },
-                {
-                    api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4ff",
-                    api_c.DATAFEED_NAME: "Really_long_Feed_Name_100",
-                    api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-                    api_c.DATAFEED_NEW_IDS_COUNT: 612,
-                    api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2045,
-                    api_c.MATCH_RATE: 0.98,
-                    api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow()
-                    - datetime.timedelta(days=30),
-                },
-            ],
-            "message": "ok",
-        }
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.CDM_DATAFEEDS}",
+            json=t_c.IDR_DATAFEEDS_RESPONSE,
+        )
+        self.request_mocker.start()
 
-        self.assertEqual(HTTPStatus.OK, expected_response["code"])
+        data_feeds = get_idr_data_feeds(
+            token="", start_date="2021-08-02", end_date="2021-08-26"
+        )
+
+        for data_feed in data_feeds:
+            self.assertIn(api_c.DATAFEED_DATA_SOURCE_TYPE, data_feed)
+            self.assertIn(api_c.DATAFEED_DATA_SOURCE_NAME, data_feed)
+            self.assertIn(api_c.DATAFEED_RECORDS_PROCESSED_COUNT, data_feed)
+            self.assertIn(api_c.DATAFEED_NEW_IDS_COUNT, data_feed)
+
+    def test_get_idr_data_feed_details(self):
+        """
+        Test fetch IDR data feed details
+
+        Args:
+
+        Returns:
+
+        """
+        datafeed_id = 1
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
+            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.CDM_DATAFEEDS}/"
+            f"{datafeed_id}",
+            json=t_c.IDR_DATAFEED_DETAILS_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        data_feed = get_idr_data_feed_details(
+            token="", datafeed_id=datafeed_id
+        )
+
+        self.assertDictEqual(
+            t_c.IDR_DATAFEED_DETAILS_RESPONSE[api_c.BODY][api_c.PINNING],
+            data_feed[api_c.PINNING],
+        )
+        self.assertDictEqual(
+            t_c.IDR_DATAFEED_DETAILS_RESPONSE[api_c.BODY][api_c.STITCHED],
+            data_feed[api_c.STITCHED],
+        )
 
     def test_get_customers_insights_count_by_day(self) -> None:
         """Test get customers insights count by day
