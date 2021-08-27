@@ -18,7 +18,6 @@ import {
   geoState,
 } from "./factories/customers"
 import dataSourceFactory from "./factories/dataSource"
-import dataFeedFactory from "./factories/dataFeed"
 import { destination as destinationFactory } from "./factories/destination"
 import { engagement as engagementFactory } from "./factories/engagement"
 import { idrDataFeed as idrDataFeedFactory } from "./factories/identity"
@@ -43,7 +42,6 @@ export function makeServer({ environment = "development" } = {}) {
     customer: Model,
     customerProfile: Model,
     dataSource: Model,
-    dataFeeds: Model,
     destination: Model.extend({
       destinationable: belongsTo({ polymorphic: true }),
     }),
@@ -69,7 +67,6 @@ export function makeServer({ environment = "development" } = {}) {
     customerProfile: Factory.extend(customerProfile),
     dataExtension: Factory.extend(dataExtensionFactory),
     dataSource: Factory.extend(dataSourceFactory),
-    dataFeed: Factory.extend(dataFeedFactory),
     delivery: Factory.extend(deliveryFactory),
     destination: Factory.extend(destinationFactory),
     engagement: Factory.extend(engagementFactory),

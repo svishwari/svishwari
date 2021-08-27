@@ -23,12 +23,10 @@
         hide-button
         data-e2e="dataSourcesList"
         class="mb-3 pr-10 list"
-        @click="
-          $router.push({
-            name: 'DataSourceListing',
-            params: { id: dataSource.id },
-          })
-        "
+        :to="{
+          name: 'DataSourceListing',
+          params: { id: dataSource.id },
+        }"
       >
         <status :status="dataSource.status" :icon-size="17" class="status" />
       </card-horizontal>

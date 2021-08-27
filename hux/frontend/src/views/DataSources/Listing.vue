@@ -7,7 +7,11 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <v-row v-if="!loading" class="datasource-datafeeds-table">
-      <hux-data-table sort-desc :columns="columns" :data-items="data_feeds">
+      <hux-data-table
+        sort-desc
+        :columns="columns"
+        :data-items="dataSourceDataFeeds"
+      >
         <template #row-item="{ item }">
           <td v-for="column in columns" :key="column.value">
             <div
@@ -24,7 +28,7 @@
             <div
               v-else-if="
                 column.value === 'records_processed_percentage' ||
-                column.value === 'day_avg_30'
+                column.value === 'thirty_days_avg'
               "
               class="neroBlack--text text-h6"
             >
@@ -96,7 +100,7 @@ export default {
         },
         {
           text: "30 day avg",
-          value: "day_avg_30",
+          value: "thirty_days_avg",
           width: "100",
         },
         {
@@ -112,11 +116,15 @@ export default {
   computed: {
     ...mapGetters({
       dataSource: "dataSources/single",
-      data_feeds: "dataSources/data_feeds",
+      dataFeeds: "dataSources/dataFeeds",
     }),
 
     selectedDataSource() {
       return this.dataSource(this.$route.params.id)
+    },
+
+    dataSourceDataFeeds() {
+      return this.dataFeeds(this.$route.params.id)
     },
 
     breadcrumbItems() {
