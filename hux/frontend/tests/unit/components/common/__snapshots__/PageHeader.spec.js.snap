@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Page Header Page header displays both slots and props content 1`] = `
-<v-card-stub loaderheight="4" tag="div" color="red" elevation="1" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-5">
+<v-card-stub loaderheight="4" tag="div" color="red" elevation="1" height="72" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-5">
   <div>
     <div class="d-flex">
       <icon-stub type="mdi-plus" size="20" color="neroBlack" fillopacity="1" class="pr-1"></icon-stub>
@@ -21,7 +21,7 @@ exports[`Page Header Page header displays both slots and props content 1`] = `
 `;
 
 exports[`Page Header Page header displays props content 1`] = `
-<v-card-stub loaderheight="4" tag="div" color="red" elevation="1" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-5">
+<v-card-stub loaderheight="4" tag="div" color="red" elevation="1" height="72" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-5">
   <div>
     <div class="d-flex">
       <icon-stub type="mdi-plus" size="20" color="neroBlack" fillopacity="1" class="pr-1"></icon-stub>
@@ -36,7 +36,7 @@ exports[`Page Header Page header displays props content 1`] = `
 `;
 
 exports[`Page Header Page header displays slots content 1`] = `
-<v-card-stub loaderheight="4" tag="div" color="white" elevation="1" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-5">
+<v-card-stub loaderheight="4" tag="div" color="white" elevation="1" height="72" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-5">
   <div>
     <div class="d-flex">
       <!---->
