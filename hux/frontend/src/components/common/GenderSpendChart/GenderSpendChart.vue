@@ -132,7 +132,7 @@ export default {
   line-height: 19px;
 }
 .container {
-  height: 350px;
+  height: 500px;
   padding: 0px !important;
 }
 </style>

@@ -339,7 +339,7 @@ export default {
         .attr("y", 9)
         .attr("dy", ".55em")
         .attr("class", "neroBlack--text")
-        .style("font-size", 6)
+        .style("font-size", "6px")
         .style("text-anchor", "start")
         .text(function (d) {
           return d.label
