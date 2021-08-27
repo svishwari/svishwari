@@ -286,6 +286,7 @@
     </hux-footer>
 
     <select-audiences-drawer
+      ref="selectAudiences"
       v-model="value.audiences"
       :toggle="showSelectAudiencesDrawer"
       @onToggle="(val) => (showSelectAudiencesDrawer = val)"
@@ -301,6 +302,7 @@
     />
 
     <select-destinations-drawer
+      ref="selectDestinations"
       v-model="value.audiences"
       :selected-audience-id="selectedAudienceId"
       :toggle="showSelectDestinationsDrawer"
@@ -490,6 +492,7 @@ export default {
 
     openSelectAudiencesDrawer() {
       this.closeAllDrawers()
+      this.$refs.selectAudiences.fetchAudiences()
       this.showSelectAudiencesDrawer = true
     },
 
@@ -502,6 +505,7 @@ export default {
     openSelectDestinationsDrawer(audienceId) {
       // set the selected audience on which we want to manage its destinations
       this.selectedAudienceId = audienceId
+      this.$refs.selectDestinations.fetchDependencies()
       this.closeAllDrawers()
       this.showSelectDestinationsDrawer = true
     },
