@@ -711,6 +711,18 @@ class OrchestrationRouteTest(TestCase):
                 ],
             )
 
+            # get unique count of delivery destination IDs
+            unique_destinations_ids = set(
+                x.get(db_c.DELIVERY_PLATFORM_ID)
+                for x in audience[api_c.DELIVERIES]
+            )
+            # test that the unique count of delivery destinations
+            # is the same as the response.
+            self.assertEqual(
+                len(unique_destinations_ids),
+                len(audience[api_c.DESTINATIONS_TAG]),
+            )
+
     def test_update_audience(self):
         """Test update an audience.
         Args:
