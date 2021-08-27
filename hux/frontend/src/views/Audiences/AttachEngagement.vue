@@ -331,7 +331,7 @@ export default {
   data() {
     return {
       localDrawer: this.value,
-      toggleSortIcon: false,
+      toggleSortIcon: true,
       engagements: [],
       loading: false,
       viewStep: 1,
