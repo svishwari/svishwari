@@ -42,7 +42,7 @@
         >
           <v-col md="10" class="pa-0">
             <div class="condition-card">
-              <div class="condition-container">
+              <div class="condition-container pl-2">
                 <div class="condition-items col-10 pa-0">
                   <hux-dropdown
                     :selected="condition.attribute"
@@ -479,6 +479,10 @@ export default {
           .hux-dropdown {
             .v-btn__content {
               color: var(--v-gray-base);
+            }
+            button {
+              margin: 0 8px 0 0 !important;
+              min-width: 100px !important;
             }
           }
           .avatar-menu {
