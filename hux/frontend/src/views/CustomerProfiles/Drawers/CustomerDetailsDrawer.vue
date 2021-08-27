@@ -79,7 +79,7 @@
           </td>
         </template>
       </hux-data-table>
-      <v-progress-linear v-if="lazyLoading" :active="lazyLoading" :indeterminate="lazyLoading" />
+      <v-progress-linear v-if="enableLazyLoad" active indeterminate />
       <observer v-if="customers.length" @intersect="intersected"></observer>
     </template>
     <template #footer-left>
@@ -199,7 +199,6 @@ export default {
     async fetchCustomerByBatch() {
       await this.getCustomers(this.batchDetails)
       this.batchDetails.batchNumber++
-      this.lazyLoading = false
     },
     intersected() {
       if (this.batchDetails.batchNumber <= this.lastBatch) {

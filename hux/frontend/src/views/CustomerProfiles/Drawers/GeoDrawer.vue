@@ -45,7 +45,7 @@
           </td>
         </template>
       </hux-data-table>
-
+<v-progress-linear v-if="enableLazyLoad" active indeterminate />
       <observer v-if="items.length" @intersect="onLazyLoad" />
     </template>
 
@@ -96,6 +96,7 @@ export default {
     return {
       localToggle: false,
       loading: false,
+      enableLazyLoad: false,
       batchSize: 100,
       batchNumber: 1,
       columns: [],
@@ -200,9 +201,13 @@ export default {
           this.sortColumn = "state"
           break
       }
-
+      this.loading = true
       this.batchNumber = 1
       await this.refreshData()
+       this.loading = false
+      this.enableLazyLoad = true
+    } else {
+      this.enableLazyLoad = false
     }
   },
 
@@ -217,12 +222,12 @@ export default {
       if (this.lastBatch > 1 && this.batchNumber <= this.lastBatch) {
         this.batchNumber++
         await this.refreshData()
+      } else {
+        this.enableLazyLoad = false
       }
     },
 
     async refreshData() {
-      this.loading = true
-
       switch (this.geoLevel) {
         case "cities":
           await this.getGeoCities({
@@ -237,8 +242,6 @@ export default {
           await this.getGeoStates()
           break
       }
-
-      this.loading = false
     },
   },
 }

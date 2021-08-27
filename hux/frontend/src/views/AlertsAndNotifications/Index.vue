@@ -138,7 +138,6 @@ export default {
       sortDesc: true,
       loading: false,
       enableLazyLoad: false,
-      lazyLoading: true,
       lastBatch: 0,
       batchDetails: {
         batchSize: 25,
