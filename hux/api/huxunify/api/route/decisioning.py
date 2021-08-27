@@ -329,28 +329,40 @@ class ModelFeaturesView(SwaggerView):
 
         """
 
-        # only use the latest version if model version is None.
-        if model_version is None:
-            # get latest version first
-            model_version = tecton.get_model_version_history(model_id)
+        # TODO: Remove once this model data becomes available and can be fetched from Tecton
+        # intercept to check if the model_id is for propensity_to_purchase
+        # to set features with stub data
+        if model_id == "3":
+            features = api_c.PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB
+        else:
+            # only use the latest version if model version is None.
+            if model_version is None:
+                # get latest version first
+                model_version = tecton.get_model_version_history(model_id)
 
-            # check if there is a model version we can grab, if so take the last one (latest).
-            model_version = (
-                model_version[-1].get(api_c.CURRENT_VERSION)
-                if model_version
-                else ""
+                # check if there is a model version we can grab, if so take the last one (latest).
+                model_version = (
+                    model_version[-1].get(api_c.CURRENT_VERSION)
+                    if model_version
+                    else ""
+                )
+
+            # check cache first
+            database = get_db_client()
+            features = get_cache_entry(
+                database, f"features.{model_id}.{model_version}"
             )
 
-        # check cache first
-        database = get_db_client()
-        features = get_cache_entry(database, f"features.{1}.{model_version}")
-
-        # if no cache, grab from Tecton and cache after.
-        if not features:
-            features = tecton.get_model_features(model_id, model_version)
-            create_cache_entry(
-                database, f"features.{1}.{model_version}", features
-            )
+            # if no cache, grab from Tecton and cache after.
+            if not features:
+                features = tecton.get_model_features(model_id, model_version)
+                # create cache entry in db only if features fetched from Tecton is not empty
+                if features:
+                    create_cache_entry(
+                        database,
+                        f"features.{model_id}.{model_version}",
+                        features,
+                    )
 
         return (
             jsonify(FeatureSchema(many=True).dump(features)),
