@@ -166,6 +166,17 @@ class AudienceView(SwaggerView):
 
         # process each audience object
         for audience in audiences:
+            # set the destinations based on audience deliveries
+            unique_destinations_ids = list(
+                set(
+                    x.get(db_c.DELIVERY_PLATFORM_ID)
+                    for x in audience[api_c.DELIVERIES]
+                )
+            )
+            audience[api_c.DESTINATIONS_TAG] = add_destinations(
+                database, [{api_c.ID: x} for x in unique_destinations_ids]
+            )
+
             # take the last X number of deliveries
             # remove any empty ones, and only show the delivered/succeeded
             audience[api_c.DELIVERIES] = [
@@ -175,11 +186,6 @@ class AudienceView(SwaggerView):
                 and x.get(db_c.STATUS)
                 in [db_c.AUDIENCE_STATUS_DELIVERED, db_c.STATUS_SUCCEEDED]
             ][:delivery_limit]
-
-            # set the destinations
-            audience[api_c.DESTINATIONS_TAG] = add_destinations(
-                database, audience.get(api_c.DESTINATIONS_TAG)
-            )
 
             # set the weighted status for the audience based on deliveries
             audience[api_c.STATUS] = weight_delivery_status(audience)
