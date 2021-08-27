@@ -23,6 +23,9 @@ from huxunifylib.database.orchestration_management import (
     create_audience,
     get_audience,
 )
+from huxunifylib.database.engagement_audience_management import (
+    get_all_engagement_audience_destinations,
+)
 from huxunifylib.database.client import DatabaseClient
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api import constants as api_c
@@ -694,6 +697,10 @@ class OrchestrationRouteTest(TestCase):
         audience_ids = [ObjectId(x[db_c.ID]) for x in self.audiences]
         return_ids = [ObjectId(x[db_c.OBJECT_ID]) for x in audiences]
 
+        expected_audience_destinations = (
+            get_all_engagement_audience_destinations(self.database)
+        )
+
         self.assertListEqual(audience_ids, return_ids)
         for audience in audiences:
             self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
@@ -711,16 +718,18 @@ class OrchestrationRouteTest(TestCase):
                 ],
             )
 
-            # get unique count of delivery destination IDs
-            unique_destinations_ids = set(
-                x.get(db_c.DELIVERY_PLATFORM_ID)
-                for x in audience[api_c.DELIVERIES]
-            )
+            # find the matched audience destinations, should be the same.
+            matched_audience = [
+                x
+                for x in expected_audience_destinations
+                if x[db_c.ID] == ObjectId(audience[api_c.ID])
+            ]
+
             # test that the unique count of delivery destinations
             # is the same as the response.
             self.assertEqual(
-                len(unique_destinations_ids),
-                len(audience[api_c.DESTINATIONS_TAG]),
+                len(audience[db_c.DESTINATIONS]),
+                len(matched_audience[0][db_c.DESTINATIONS]),
             )
 
     def test_update_audience(self):

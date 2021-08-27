@@ -19,6 +19,7 @@ from huxunifylib.database import (
     db_exceptions,
     engagement_management,
     data_management,
+    engagement_audience_management as eam,
 )
 import huxunifylib.database.constants as db_c
 
@@ -164,15 +165,24 @@ class AudienceView(SwaggerView):
             )
         )
 
+        # get unique destinations per audience across engagements
+        audience_destinations = eam.get_all_engagement_audience_destinations(
+            database
+        )
+
         # process each audience object
         for audience in audiences:
-            # set the destinations based on audience deliveries
-            unique_destinations_ids = set(
-                x.get(db_c.DELIVERY_PLATFORM_ID)
-                for x in audience[api_c.DELIVERIES]
-            )
-            audience[api_c.DESTINATIONS_TAG] = add_destinations(
-                database, [{api_c.ID: x} for x in unique_destinations_ids]
+            # find the matched audience destinations
+            matched_destinations = [
+                x
+                for x in audience_destinations
+                if x[db_c.ID] == audience[db_c.ID]
+            ]
+            # set the unique destinations
+            audience[db_c.DESTINATIONS] = (
+                matched_destinations[0].get(db_c.DESTINATIONS, [])
+                if matched_destinations
+                else []
             )
 
             # take the last X number of deliveries
