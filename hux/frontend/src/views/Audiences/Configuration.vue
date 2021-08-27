@@ -75,7 +75,7 @@
                   Add to an engagement -
                   <i style="tilt">you must have at least one</i>
                   <div class="mt-2 d-flex align-center">
-                    <span @click="engagementDrawer = !engagementDrawer">
+                    <span @click="openAttachEngagementsDrawer()">
                       <icon
                         class="add-icon cursor-pointer"
                         type="add"
@@ -284,6 +284,7 @@
 
     <!-- Add destination workflow -->
     <select-destinations-drawer
+      ref="selectDestinations"
       v-model="selectedDestinations"
       :toggle="showSelectDestinationsDrawer"
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
@@ -301,6 +302,7 @@
 
     <!-- Engagement workflow -->
     <attach-engagement
+      ref="selectEngagements"
       v-model="engagementDrawer"
       :final-engagements="selectedEngagements"
       @onEngagementChange="setSelectedEngagements"
@@ -427,7 +429,6 @@ export default {
     this.loading = true
     await this.getOverview()
     if (this.$route.params.id) await this.getAudienceById(this.$route.params.id)
-    await this.getAudiencesRules()
     this.mapCDMOverview(this.overview)
     this.loading = false
   },
@@ -436,7 +437,6 @@ export default {
     ...mapActions({
       fetchEngagements: "engagements/getAll",
       saveAudience: "audiences/add",
-      getAudiencesRules: "audiences/fetchConstants",
       getAudienceById: "audiences/getAudienceById",
       getOverview: "customers/getOverview",
     }),
@@ -449,7 +449,14 @@ export default {
 
     openSelectDestinationsDrawer() {
       this.closeAllDrawers()
+      this.$refs.selectDestinations.fetchDependencies()
       this.showSelectDestinationsDrawer = true
+    },
+
+    openAttachEngagementsDrawer() {
+      this.closeAllDrawers()
+      this.$refs.selectEngagements.fetchDependencies()
+      this.engagementDrawer = true
     },
 
     openSalesforceExtensionDrawer(destination) {
