@@ -14,14 +14,12 @@ from pathlib import Path
 from decouple import config
 from huxunify.api import constants as api_c
 
-
 # MONGO CONFIG VARS
 HOST = "host"
 PORT = "port"
 USER_NAME = "username"
 PASSWORD = "password"
 SSL_CERT_PATH = "ssl_cert_path"
-
 
 LOAD_VAR_DICT = {
     "TECTON_API_KEY": "TECTON_API_KEY",
@@ -122,7 +120,10 @@ class Config:
         "CDP_SERVICE",
         default="https://customer-profile-api.main.use1.hux-unified-dev1.in",
     )
-
+    CDP_CONNECTION_SERVICE = config(
+        "CDP_CONNECTION_SERVICE",
+        default="https://connections-api.main.use1.hux-unified-dev1.in/",
+    )
     # Preserve ordering in json
     JSON_SORT_KEYS = False
 
