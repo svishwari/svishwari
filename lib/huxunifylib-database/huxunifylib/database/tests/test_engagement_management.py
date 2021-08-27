@@ -1216,32 +1216,3 @@ class TestEngagementManagement(unittest.TestCase):
             ]
             self.assertTrue(matched_destinations)
             self.assertEqual(destination, matched_destinations[0])
-
-        # test list
-        # self.assertTrue(audience_insights, dict)
-        # self.assertEqual(len(audience_insights), 3)
-        #
-        # for engagement in audience_insights:
-        #     self.assertIn(c.DELIVERIES, engagement)
-        #     self.assertIn(c.AUDIENCE_LAST_DELIVERED, engagement)
-        #     self.assertIn(c.ID, engagement)
-        #     self.assertIn(c.ENGAGEMENT, engagement)
-        #
-        #     matched_engagements = [
-        #         x
-        #         for x in engagements
-        #         if x[c.ID] == engagement[c.ENGAGEMENT][c.ID]
-        #     ]
-        #     if not matched_engagements:
-        #         continue
-        #
-        #     self.assertTrue(matched_engagements)
-        #     self.assertEqual(len(matched_engagements), 1)
-        #
-        #     # now test the engagement to ensure lookup done properly
-        #     for matched_engagement in matched_engagements:
-        #         for key, value in matched_engagement.items():
-        #             # test all the engagement params to the looked up ones.
-        #             if key == c.AUDIENCES:
-        #                 continue
-        #             self.assertEqual(engagement[c.ENGAGEMENT][key], value)
