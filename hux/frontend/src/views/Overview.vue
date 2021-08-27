@@ -195,7 +195,7 @@ export default {
 <style lang="scss" scoped>
 .overview-wrap {
   .page-header--wrap {
-    box-shadow: 0px 1px 0px #d0d0ce !important;
+    @extend .box-shadow-plain;
   }
   .quickAccessMenu {
     background: var(--v-aliceBlue-base);

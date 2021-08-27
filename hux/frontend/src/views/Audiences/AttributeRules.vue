@@ -482,7 +482,7 @@ export default {
             }
             button {
               margin: 0 8px 0 0 !important;
-              min-width: 100px !important;
+              min-width: 170px !important;
             }
           }
           .avatar-menu {

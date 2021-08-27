@@ -247,9 +247,9 @@
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
             </v-col>
-            <v-col class="grow pl-2"
-              >You have not added any audiences, yet.</v-col
-            >
+            <v-col class="grow pl-2">
+              You have not added any audiences, yet.
+            </v-col>
           </template>
         </data-cards>
       </form-step>
