@@ -390,7 +390,8 @@ class TestCustomersOverview(TestCase):
 
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/"
-            f"{api_c.DEMOGRAPHIC}/{start_date}/{end_date}",
+            f"{api_c.DEMOGRAPHIC}",
+            data={api_c.START_DATE: start_date, api_c.END_DATE: end_date},
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -448,7 +449,8 @@ class TestCustomersOverview(TestCase):
 
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/"
-            f"{api_c.DEMOGRAPHIC}/{start_date}/{end_date}",
+            f"{api_c.DEMOGRAPHIC}",
+            data={api_c.START_DATE: start_date, api_c.END_DATE: end_date},
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)

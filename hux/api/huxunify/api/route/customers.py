@@ -623,7 +623,7 @@ class CustomerDemoVisualView(SwaggerView):
 
     # pylint: disable=no-self-use,unused-argument
     @api_error_handler()
-    def get(self, start_date: str, end_date: str) -> Tuple[dict, int]:
+    def get(self) -> Tuple[dict, int]:
         """Retrieves a Demographical customer insights.
 
         ---
