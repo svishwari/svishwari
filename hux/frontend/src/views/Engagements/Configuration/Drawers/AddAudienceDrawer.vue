@@ -119,7 +119,7 @@ export default {
     return {
       loading: false,
       localToggle: false,
-      drawerWidth: "640",
+      drawerWidth: 640,
       newAudienceRules: [(v) => !!v || "Audience name is required"],
       newAudienceValidity: false,
       // TODO: need to make API call and update the cards/sizes of metric cards
