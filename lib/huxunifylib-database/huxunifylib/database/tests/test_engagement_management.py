@@ -12,6 +12,7 @@ from huxunifylib.database import (
     data_management as dm,
     delivery_platform_management as dpm,
     orchestration_management as om,
+    engagement_audience_management as eam,
 )
 
 # pylint: disable=R0904
@@ -1194,7 +1195,9 @@ class TestEngagementManagement(unittest.TestCase):
             engagements.append(engagement)
 
         # find all three.
-        audience_destinations = om.get_all_audience_destinations(self.database)
+        audience_destinations = eam.get_all_engagement_audience_destinations(
+            self.database
+        )
 
         # test the response
         self.assertTrue(audience_destinations)
