@@ -58,7 +58,7 @@ export default {
     sizeHandler() {
       if (this.$refs.totalCustomerChart) {
         this.chartDimensions.width = this.$refs.totalCustomerChart.clientWidth
-        this.chartDimensions.height = 500
+        this.chartDimensions.height = 350
       }
     },
   },

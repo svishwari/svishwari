@@ -29,12 +29,15 @@ MATCH_CONFIDENCE = "match_confidence"
 DELIVERIES = "deliveries"
 DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
+DATE_RANGE = "date_range"
 HUX_ID = "hux_id"
 TOP_FEATURES = "top_features"
 LIMIT = "limit"
+OFFSET = "offset"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
+QUERY_PARAMETER_SORT_ORDER = "sort_order"
 
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
@@ -52,13 +55,19 @@ TOTAL_CUSTOMERS = "total_customers"
 NEW_CUSTOMERS_ADDED = "new_customers_added"
 COUNTRIES = "total_countries"
 TOTAL_COUNT = "total_count"
-STATES = "total_us_states"
-CITIES = "total_cities"
+TOTAL_STATES = "total_us_states"
+TOTAL_CITIES = "total_cities"
+STATES = "states"
+CITIES = "cities"
 MIN_AGE = "min_age"
 MAX_AGE = "max_age"
+AVERAGE_AGE = "avg_age"
 GENDER_WOMEN = "gender_women"
 GENDER_MEN = "gender_men"
 GENDER_OTHER = "gender_other"
+GENDER_WOMEN_COUNT = "gender_women_count"
+GENDER_MEN_COUNT = "gender_men_count"
+GENDER_OTHER_COUNT = "gender_other_count"
 GENDERS = [GENDER_WOMEN, GENDER_MEN, GENDER_OTHER]
 MIN_LTV_PREDICTED = "min_ltv_predicted"
 MAX_LTV_PREDICTED = "max_ltv_predicted"
@@ -490,18 +499,6 @@ LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 LOOKALIKEABLE = "lookalikeable"
 IS_LOOKALIKE = "is_lookalike"
 
-STUB_INSIGHTS_RESPONSE = {
-    TOTAL_CUSTOMERS: 121321321,
-    COUNTRIES: 2,
-    STATES: 28,
-    CITIES: 246,
-    MIN_AGE: 34,
-    MAX_AGE: 100,
-    GENDER_WOMEN: 0.4651031,
-    GENDER_MEN: 0.481924,
-    GENDER_OTHER: 0.25219,
-}
-
 PARAM_STORE_PREFIX = "unified"
 PARAMETER_STORE_ERROR_MSG = (
     "An error occurred while attempting to"
@@ -611,439 +608,6 @@ MODEL_TYPES_MAPPING = {
     "propensity to unsubscribe": UNSUBSCRIBE,
 }
 
-# TODO Remove this data once actual data from tecton flows
-SUPPORTED_MODELS = {
-    2: {
-        MODEL_TYPE: LTV,
-        NAME: "Lifetime value",
-        DESCRIPTION: "Predicts the lifetime value of a customer based on models",
-        CURRENT_VERSION: "21.7.28",
-        RMSE: 233.5,
-        AUC: -1,
-        PRECISION: -1,
-        RECALL: -1,
-        LIFT_DATA: {
-            BUCKET: list(range(10, 110, 10)),
-            PREDICTED_VALUE: [
-                5.73300972,
-                5.67696026,
-                5.69953111,
-                5.63453104,
-                5.69388674,
-                5.67843418,
-                5.63625346,
-                5.68890584,
-                5.75596704,
-                5.95587736,
-            ],
-            ACTUAL_VALUE: [
-                5.74311135,
-                5.72586591,
-                5.72513378,
-                5.72552206,
-                5.72536025,
-                5.72511579,
-                5.7255817,
-                5.72530467,
-                5.72535943,
-                5.72534962,
-            ],
-            PROFILE_COUNT: [
-                421,
-                971,
-                1624,
-                2029,
-                3152,
-                3933,
-                4599,
-                6335,
-                9224,
-                66160,
-            ],
-            PREDICTED_RATE: [
-                1284.48,
-                489.49,
-                308.28,
-                212.45,
-                156.78,
-                121.26,
-                94.10,
-                77.12,
-                61.81,
-                13.65,
-            ],
-            ACTUAL_RATE: [
-                1314.71,
-                547.83,
-                327.00,
-                261.96,
-                168.57,
-                135.02,
-                115.59,
-                83.86,
-                57.60,
-                8.03,
-            ],
-            PREDICTED_LIFT: [
-                23.80,
-                9.07,
-                5.71,
-                3.94,
-                2.90,
-                2.25,
-                1.74,
-                1.43,
-                1.15,
-                0.25,
-            ],
-            ACTUAL_LIFT: [
-                24.26,
-                10.11,
-                6.03,
-                4.83,
-                3.11,
-                2.49,
-                2.13,
-                1.55,
-                1.06,
-                0.15,
-            ],
-            PROFILE_SIZE_PERCENT: [
-                0.43,
-                0.99,
-                1.65,
-                2.06,
-                3.20,
-                3.99,
-                4.67,
-                6.43,
-                9.37,
-                67.20,
-            ],
-        },
-        FEATURE_IMPORTANCE: {
-            NAME: [
-                "8to12m-ITEMEXTPRICE-sum",
-                "8to12m-ITEMEXTCOST-sum",
-                "fwbk_2m-STORENAME-Woolen Mill Store",
-                "fwbk_2m-ITEMEXTPRICE-sum",
-                "8to12m-ORDTDOL-sum",
-                "fwbk_1to2y-ORDTDOL-max",
-                "prediction-months-2",
-                "dow-pe_u_dow-pe_count",
-                "fwbk_1to2y-ITEMEXTCOST-sum",
-                "fwbk_2w-STORENAME-Woolen Mill Store",
-                "fwbk_4m-ORDTDOL-sum",
-                "8to12m-COGS-cnt",
-                "8to12m-ITEMEXTPRICE-cnt",
-                "fwbk_1to2y-ORDTDOL-sum",
-                "2w-ITEMEXTCOST-sum",
-                "profile-data_source-buyers",
-                "8to12m-positive-order",
-                "4w-ITEMQTY-sum",
-                "8to12m-COGS-sum",
-                "4m-ORDITEMQTY-sum",
-            ],
-            SCORE: [
-                9.70841497,
-                9.66068916,
-                9.57199053,
-                9.53145841,
-                9.48637579,
-                9.46311966,
-                9.36627344,
-                9.32458652,
-                9.2098757,
-                9.15758058,
-                9.11704129,
-                9.01195403,
-                8.99894605,
-                8.97088769,
-                8.952982,
-                8.91818933,
-                8.90302184,
-                8.89525897,
-                8.88254144,
-                8.8268117,
-            ],
-            DESCRIPTION: [
-                "8to12m-ITEMEXTCOST-sum",
-                "8to12m-ITEMEXTCOST-sum",
-                "fwbk_2m-STORENAME-Woolen Mill Store",
-                "fwbk_2m-ITEMEXTPRICE-sum",
-                "8to12m-ORDTDOL-sum",
-                "fwbk_1to2y-ORDTDOL-max",
-                "prediction-months-2",
-                "dow-pe_u_dow-pe_count",
-                "fwbk_1to2y-ITEMEXTCOST-sum",
-                "fwbk_2w-STORENAME-Woolen Mill Store",
-                "fwbk_4m-ORDTDOL-sum",
-                "8to12m-COGS-cnt",
-                "8to12m-ITEMEXTPRICE-cnt",
-                "fwbk_1to2y-ORDTDOL-sum",
-                "2w-ITEMEXTCOST-sum",
-                "profile-data_source-buyers",
-                "8to12m-positive-order",
-                "4w-ITEMQTY-sum",
-                "8to12m-COGS-sum",
-                "4m-ORDITEMQTY-sum",
-            ],
-        },
-    },
-    1: {
-        MODEL_TYPE: UNSUBSCRIBE,
-        NAME: "Propensity to Unsubscribe",
-        DESCRIPTION: "Predicts how likely a customer will unsubscribe from an email list",
-        CURRENT_VERSION: "21.7.31",
-        RMSE: -1,
-        AUC: 0.79,
-        PRECISION: 0.82,
-        RECALL: 0.65,
-        LIFT_DATA: {
-            BUCKET: list(range(10, 110, 10)),
-            PREDICTED_VALUE: [
-                201,
-                201.6,
-                201.6,
-                272.34,
-                333.74,
-                398.44,
-                474.67,
-                536.2,
-                593.91,
-                654.01,
-            ],
-            ACTUAL_VALUE: [67, 134, 201, 268, 335, 402, 469, 536, 603, 670],
-            PROFILE_COUNT: [
-                9537,
-                19074,
-                28611,
-                38148,
-                47685,
-                57221,
-                66758,
-                76295,
-                85832,
-                95369,
-            ],
-            PREDICTED_RATE: [
-                0.13,
-                0.09,
-                0.07,
-                0.06,
-                0.05,
-                0.04,
-                0.04,
-                0.03,
-                0.03,
-                0.03,
-            ],
-            ACTUAL_RATE: [
-                0.13,
-                0.09,
-                0.07,
-                0.05,
-                0.05,
-                0.04,
-                0.04,
-                0.03,
-                0.03,
-                0.03,
-            ],
-            PREDICTED_LIFT: [
-                4.68,
-                3.13,
-                2.36,
-                1.93,
-                1.64,
-                1.44,
-                1.29,
-                1.18,
-                1.09,
-                1,
-            ],
-            ACTUAL_LIFT: [
-                4.63,
-                3.16,
-                2.43,
-                1.97,
-                1.67,
-                1.47,
-                1.31,
-                1.19,
-                1.1,
-                1,
-            ],
-            PROFILE_SIZE_PERCENT: [
-                46.31,
-                63.18,
-                72.75,
-                78.94,
-                83.59,
-                88.01,
-                91.39,
-                95.58,
-                99.31,
-                100,
-            ],
-        },
-        FEATURE_IMPORTANCE: {
-            NAME: [
-                "1to2y-COGS-sum",
-                "1to2y-ITEMEXTPRICE-cnt",
-                "1to2y-ITEMQTY-avg",
-                "2m-ORDTDOL-cnt",
-                "2m-COGS-cnt",
-                "dow-pe_u_dow-pe_count",
-                "4m-ORDITEMQTY-cnt",
-                "duration_days-item-min",
-                "1to2y-ITEMPRICE-min",
-                "2w-ORDITEMQTY-cnt",
-                "2m-ORDITEMQTY-cnt",
-                "4m-ORDTDOL-cnt",
-                "dow-u_wd-weekday",
-                "2w-ITEMEXTPRICE-cnt",
-                "4m-ITEMNO-30150",
-                "3d-ITEMPRICE-avg",
-                "profile-data_source-buyers",
-                "3d-ITEMEXTPRICE-min",
-                "1to2y-ITEMPRICE-avg",
-                "8to12m-ORDAMT-sum",
-            ],
-            SCORE: [
-                364.7,
-                68.22,
-                67.19,
-                31.04,
-                27.21,
-                22.66,
-                21.58,
-                14.36,
-                12.97,
-                8,
-                7.69,
-                7.12,
-                5.91,
-                5.2,
-                5.12,
-                5.09,
-                4.98,
-                4.79,
-                4.48,
-                4.37,
-            ],
-            DESCRIPTION: [
-                "1to2y-COGS-sum",
-                "1to2y-ITEMEXTPRICE-cnt",
-                "1to2y-ITEMQTY-avg",
-                "2m-ORDTDOL-cnt",
-                "2m-COGS-cnt",
-                "dow-pe_u_dow-pe_count",
-                "4m-ORDITEMQTY-cnt",
-                "duration_days-item-min",
-                "1to2y-ITEMPRICE-min",
-                "2w-ORDITEMQTY-cnt",
-                "2m-ORDITEMQTY-cnt",
-                "4m-ORDTDOL-cnt",
-                "dow-u_wd-weekday",
-                "2w-ITEMEXTPRICE-cnt",
-                "4m-ITEMNO-30150",
-                "3d-ITEMPRICE-avg",
-                "profile-data_source-buyers",
-                "3d-ITEMEXTPRICE-min",
-                "1to2y-ITEMPRICE-avg",
-                "8to12m-ORDAMT-sum",
-            ],
-        },
-    },
-    3: {
-        MODEL_TYPE: PURCHASE,
-        NAME: "Propensity to Purchase",
-        DESCRIPTION: "Propensity of a customer making purchase after receiving an email ",
-        CURRENT_VERSION: "3.1.2",
-        RMSE: -1,
-        AUC: 0.79,
-        PRECISION: 0.82,
-        RECALL: 0.65,
-        LIFT_DATA: {
-            BUCKET: list(range(10, 110)),
-            PREDICTED_VALUE: [
-                201,
-                201.6,
-                201.6,
-                272.34,
-                333.74,
-                398.44,
-                474.67,
-                536.2,
-                593.91,
-                654.01,
-            ],
-            ACTUAL_VALUE: [67, 134, 201, 268, 335, 402, 469, 536, 603, 670],
-            PROFILE_COUNT: [21, 54, 102, 190, 300, 427, 612, 818, 1226, 2067],
-            PREDICTED_RATE: [
-                0.87,
-                0.85,
-                0.83,
-                0.8,
-                0.78,
-                0.76,
-                0.73,
-                0.69,
-                0.65,
-                0.52,
-            ],
-            ACTUAL_RATE: [
-                0.93,
-                0.87,
-                0.82,
-                0.79,
-                0.78,
-                0.76,
-                0.73,
-                0.69,
-                0.66,
-                0.54,
-            ],
-            PREDICTED_LIFT: [
-                1.67,
-                1.62,
-                1.75,
-                1.53,
-                1.49,
-                1.44,
-                1.39,
-                1.33,
-                1.25,
-                1,
-            ],
-            ACTUAL_LIFT: [
-                1.37,
-                1.31,
-                1.3,
-                1.47,
-                1.5,
-                1.94,
-                1.38,
-                1.03,
-                1.52,
-                1,
-            ],
-            PROFILE_SIZE_PERCENT: [
-                5.76,
-                12.61,
-                19.93,
-                27.19,
-                34.51,
-                42.66,
-                52.61,
-                61.57,
-                72.31,
-                100,
-            ],
-        },
-    },
-}
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
@@ -1058,8 +622,11 @@ CUSTOMERS_INSIGHTS = "customers-insights"
 GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
 CUSTOMERS_API_HEADER_KEY = "x-api-key"
-CUSTOMERS_DEFAULT_BATCH_SIZE = "1000"
-CUSTOMERS_DEFAULT_BATCH_NUMBER = "1"
+CUSTOMERS_DEFAULT_BATCH_SIZE = 1000
+CUSTOMER_COUNT = "customer_count"
+
+# Demographic
+CITIES_DEFAULT_BATCH_SIZE = 100
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
@@ -1214,8 +781,36 @@ MOCK_CUSTOMER_PROFILE_RESPONSE = {
 }
 
 # Alerts Fields
-DEFAULT_ALERT_BATCH_SIZE = 5
+DEFAULT_BATCH_SIZE = 5
 DEFAULT_ALERT_SORT_ORDER = "descending"
-DEFAULT_ALERT_BATCH_NUMBER = "1"
+DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
+
+# Download Audience Fields
+DOWNLOAD_TYPE = "download_type"
+GOOGLE_ADS = "google_ads"
+AMAZON_ADS = "amazon_ads"
+
+DOWNLOAD_TYPES = {
+    GOOGLE_ADS: {
+        db_c.S_TYPE_EMAIL_HASHED: "Email",
+        db_c.S_TYPE_FIRST_NAME_HASHED: "First Name",
+        db_c.S_TYPE_FIRST_NAME_INITIAL_HASHED: "First Name Initial",
+        db_c.S_TYPE_LAST_NAME_HASHED: "Last Name",
+        db_c.S_TYPE_MOBILE_DEVICE_ID: "Mobile Device ID",
+        db_c.S_TYPE_PHONE_NUMBER_HASHED: "Phone",
+        db_c.S_TYPE_POSTAL_CODE_HASHED: "Zip",
+    },
+    AMAZON_ADS: {
+        db_c.S_TYPE_CITY_HASHED: "city",
+        db_c.S_TYPE_EMAIL_HASHED: "email",
+        db_c.S_TYPE_FIRST_NAME_HASHED: "first_name",
+        db_c.S_TYPE_LAST_NAME_HASHED: "last_name",
+        db_c.S_TYPE_PHONE_NUMBER_HASHED: "phone",
+        db_c.S_TYPE_POSTAL_CODE_HASHED: "zip",
+        db_c.S_TYPE_STATE_OR_PROVINCE_HASHED: "state",
+        # TODO Add address once CDP returns it
+        # db_c.S_TYPE_ADDRESS: "address"
+    },
+}

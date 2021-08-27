@@ -57,7 +57,7 @@ export default {
     headerHeight: {
       type: [Number, String],
       required: false,
-      default: undefined,
+      default: 72,
     },
 
     headerPadding: {

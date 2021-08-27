@@ -250,11 +250,7 @@ export default {
           id: audience.id,
           name: audience.name,
           size: audience.size,
-          destinations: audience.destinations.map((destination) => {
-            return {
-              id: destination.id,
-            }
-          }),
+          destinations: [],
         }
       )
     },

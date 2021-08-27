@@ -138,11 +138,11 @@
       </div>
       <v-row class="px-15 mt-2">
         <v-col md="12">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="522">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
-                  Total Customers ({{ timeFrameLabel }})
+                  Total customers ({{ timeFrameLabel }})
                 </span>
               </div>
             </v-card-title>
@@ -217,9 +217,9 @@
           </v-card>
         </v-col>
         <v-col md="6">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="290">
-            <v-card-title class="pb-1 pl-5 pt-5">
-              <div class="mt-2">
+          <v-card class="mt-3 genderSpend rounded-lg box-shadow-5" height="290">
+            <v-card-title class="pb-1 pl-5 pt-4">
+              <div class="mt-1">
                 <span class="neroBlack--text text-h5">
                   Gender &sol; monthly spending in 2021
                 </span>
@@ -609,5 +609,8 @@ export default {
 }
 .icon-border {
   cursor: default !important;
+}
+::v-deep .genderSpend .container {
+  margin-top: 14px !important;
 }
 </style>
