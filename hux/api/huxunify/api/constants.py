@@ -1022,6 +1022,10 @@ CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 CDP_DATA_SOURCE_IDS = "data_source_ids"
 
+# Monitoring
+METRICS = "metrics"
+METRICS_ENDPOINT = "/metrics"
+
 # Customers
 CUSTOMER_ID = "customer_id"
 CUSTOMERS_ENDPOINT = "/customers"

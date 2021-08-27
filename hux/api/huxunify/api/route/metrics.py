@@ -12,8 +12,9 @@ from huxunify.api.route.utils import (
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.data_connectors.prometheus import PrometheusClient
+import huxunify.api.constants as api_c
 
-metrics_bp = Blueprint("/metrics", import_name=__name__)
+metrics_bp = Blueprint(api_c.METRICS_ENDPOINT, import_name=__name__)
 
 
 @metrics_bp.before_request
@@ -23,7 +24,7 @@ def before_request():
     pass  # pylint: disable=unnecessary-pass
 
 
-@add_view_to_blueprint(metrics_bp, "metrics", "MetricsView")
+@add_view_to_blueprint(metrics_bp, api_c.METRICS_ENDPOINT, "MetricsView")
 class MetricsView(SwaggerView):
     """
     Metrics View Class
@@ -40,7 +41,7 @@ class MetricsView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = ["metrics"]
+    tags = [api_c.METRICS]
 
     def get(self) -> Response:
         """Retrieves plain text metrics for prometheus consumption
