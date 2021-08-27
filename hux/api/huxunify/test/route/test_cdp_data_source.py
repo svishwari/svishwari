@@ -182,7 +182,7 @@ class CdpDataSourcesTest(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(validate_schema(CdpDataSourceSchema(), response.json))
+        self.assertTrue(t_c.validate_schema(CdpDataSourceSchema(), response.json))
         self.assertDictContainsSubset(valid_response, response.json)
 
     def test_get_data_source_by_id_invalid_id(self):
@@ -363,7 +363,7 @@ class CdpDataSourcesTest(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         for record in response.json:
-            self.assertTrue(validate_schema(CdpDataSourceSchema(), record))
+            self.assertTrue(t_c.validate_schema(CdpDataSourceSchema(), record))
 
     def test_patch_data_source_invalid_params(self) -> None:
         """
