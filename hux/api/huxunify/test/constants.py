@@ -2,6 +2,7 @@
 """
 purpose of this file is housing shared components for tests
 """
+import time
 from http import HTTPStatus
 from typing import Generator
 
@@ -52,6 +53,139 @@ INTROSPECT_CALL = "{}/oauth2/v1/introspect?client_id={}".format(
     TEST_CONFIG.OKTA_ISSUER, TEST_CONFIG.OKTA_CLIENT_ID
 )
 USER_INFO_CALL = f"{TEST_CONFIG.OKTA_ISSUER}/oauth2/v1/userinfo"
+CDM_HEALTHCHECK_CALL = f"{TEST_CONFIG.CDP_SERVICE}/healthcheck"
+CUSTOMER_PROFILE_API = f"{TEST_CONFIG.CDP_SERVICE}"
+
+CDM_HEALTHCHECK_RESPONSE = {
+  "code": 200,
+  "status": "success",
+  "message": "ok",
+  "hostname": "localhost",
+  "timestamp": time.time(),
+  "environment": "Development",
+  "body": [
+    {
+      "checker": "check_snowflake_connection",
+      "output": "Snowflake up and running.",
+      "passed": True,
+      "timestamp": time.time(),
+      "expires": time.time()+3600,
+      "response_time": 0.012
+    }
+  ]
+}
+
+CUSTOMER_PROFILE_AUDIENCES_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            "hux_id": "HUX000000000000001",
+            "city_hashed": "0f5d983d203189bbffc5f686d01f6680bc6a83718a515fe42639347efc92478e",
+            "country_code_hashed": "c59dc4e44ff99288156d4dff2168f6ac7ddee6b1fc7ccc0754656ffaa6d351ea",
+            "date_of_birth_day_hashed": "624b60c58c9d8bfb6ff1886c2fd605d2adeb6ea4da576068201b6c6958ce93f4",
+            "date_of_birth_month_hashed": "7902699be42c8a8e46fbbb4501726517e86b22c56a189f7625a6da49081b2451",
+            "date_of_birth_year_hashed": "483029d526219f816e8e8f6a9de07b422633dba180ffc26faac22862a017519f",
+            "email_address": "Jesse_Werner@fake.com",
+            "email_address_hashed": "96037ced8eee4e0b3517e749e2fd35db6f7dbd6ecda9f20ecda176ffb84c3aab",
+            "email_preference": None,
+            "first_name": "Jesse",
+            "first_name_hashed": "1ecb9e6bdf6cc8088693c11e366415fe5c73662ecdf08f3df337924d8ea26adc",
+            "first_name_initial_hashed": "1a24b7688c199c24d87b5984d152b37d1d528911ec852d9cdf98c3ef29b916ea",
+            "gender_hashed": "08f271887ce94707da822d5263bae19d5519cb3614e0daedc4c7ce5dab7473f1",
+            "last_name": "Werner",
+            "last_name_hashed": "31185f00de3ac3ba045fda08bdd47880c3c0820ceebf078c82f05f5b92b0538e",
+            "mobile_device_id": "2.64E+12",
+            "phone_number_digits_only_hashed": "f068d0cae1fed87a68f1c63e2df680c451de9a124665bbdf8b9054ec2fa92910",
+            "postal_code_hashed": "b08fada07188a0a600c2995c16d995e523643b459e3593a44a5f1d7936e1d617",
+            "state_or_province_hashed": "9b90fa7f6a8a28309589fcc3dfa530a8dc6b8c2ca9e9cbea3df02f21cd1ca331",
+        },
+        {
+            "hux_id": "HUX000000000000002",
+            "city_hashed": "f38ed02476dea1c92ad2dac4aecbc24d2dbc8189fc180e01c97b3096b87daf36",
+            "country_code_hashed": "c59dc4e44ff99288156d4dff2168f6ac7ddee6b1fc7ccc0754656ffaa6d351ea",
+            "date_of_birth_day_hashed": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+            "date_of_birth_month_hashed": "6b51d431df5d7f141cbececcf79edf3dd861c3b4069f0b11661a3eefacbba918",
+            "date_of_birth_year_hashed": "4dea5c7cb70f50322ec9d734aa4aa078be9227c05251e18991c596f387552370",
+            "email_address": "Eddie_Pruitt@fake.com",
+            "email_address_hashed": "935267d72fd10951be54a353a3e098d2e9ca9a3e856dbf26ecc79bc08ac88652",
+            "email_preference": None,
+            "first_name": "Eddie",
+            "first_name_hashed": "72f1935f451506ea984df8b6026f1f91136db9d3854bcb98e289e52ee392e0cd",
+            "first_name_initial_hashed": "1a24b7688c199c24d87b5984d152b37d1d528911ec852d9cdf98c3ef29b916ea",
+            "gender_hashed": "08f271887ce94707da822d5263bae19d5519cb3614e0daedc4c7ce5dab7473f1",
+            "last_name": "Pruitt",
+            "last_name_hashed": "6136ce1b6ce6fd788927800c45bb9cbad2aaf6046f8726da66d235fd9c385769",
+            "mobile_device_id": "1.51E+12",
+            "phone_number_digits_only_hashed": "71be5464bd0448379dca466293cde3106ebefd6384135e4ee528edd02d9c1af1",
+            "postal_code_hashed": "e7c27dc6621e908242f41e8ba9da13916c24167bb901319acc26ba5952dcf711",
+            "state_or_province_hashed": "536939ed0e78c5b5d2ee7e26767bbad66290547f9fa1fc6602a1aa95cc61b959",
+        },
+        {
+            "hux_id": "HUX000000000000003",
+            "city_hashed": "753cdb88284c6a957ebc2028fa7bc3031a992bd7522db1c400aaacc4180b98ba",
+            "country_code_hashed": "c59dc4e44ff99288156d4dff2168f6ac7ddee6b1fc7ccc0754656ffaa6d351ea",
+            "date_of_birth_day_hashed": "f5ca38f748a1d6eaf726b8a42fb575c3c71f1864a8143301782de13da2d9202b",
+            "date_of_birth_month_hashed": "6b51d431df5d7f141cbececcf79edf3dd861c3b4069f0b11661a3eefacbba918",
+            "date_of_birth_year_hashed": "ed823ec32c5d4e9ca9dd968bb0fe9366b7d904ce0cae615308ddd5b89f0e6a3a",
+            "email_address": "Rebekah_Walton@fake.com",
+            "email_address_hashed": "09adb5f4c9fefd1c750b4bd13b2f0b5947f2bdd0846a1ecc78bc6a4888ea601f",
+            "email_preference": None,
+            "first_name": "Rebekah",
+            "first_name_hashed": "7dd266f4eed4ced1a38c5f2d881711a806136d4790201f22fd624c0fe3296c5e",
+            "first_name_initial_hashed": "1a24b7688c199c24d87b5984d152b37d1d528911ec852d9cdf98c3ef29b916ea",
+            "gender_hashed": "08f271887ce94707da822d5263bae19d5519cb3614e0daedc4c7ce5dab7473f1",
+            "last_name": "Walton",
+            "last_name_hashed": "78e7f4c3ed00275487ee8256603813c389495cf825a92335c94046c0a4a99b26",
+            "mobile_device_id": "2.32E+12",
+            "phone_number_digits_only_hashed": "7982164dd044894ca71a03537e7eca85a9262baee13f4a0ed2281c9b8615148d",
+            "postal_code_hashed": "1a72b1e6fb7a12b166b9b25179c8fbaa305c3bd2873786d4611748fadf964bad",
+            "state_or_province_hashed": "124e0b7201b0388d7c07f43194b9645d162b77005b66fef7283c689a69ff7c56",
+        },
+        {
+            "hux_id": "HUX000000000000004",
+            "city_hashed": "f35b9639a8c001bba5a4d0d2c416e37c3bf5b1b33ca40362e3c858baf12ce0cb",
+            "country_code_hashed": "c59dc4e44ff99288156d4dff2168f6ac7ddee6b1fc7ccc0754656ffaa6d351ea",
+            "date_of_birth_day_hashed": "ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d",
+            "date_of_birth_month_hashed": "19581e27de7ced00ff1ce50b2047e7a567c76b1cbaebabe5ef03f7c3017bb5b7",
+            "date_of_birth_year_hashed": "d7c7673ba8ca7b0f04b1af4df026cbea7fed5b8acf59b27d33ef988c60eff054",
+            "email_address": "Adam_Rojas@fake.com",
+            "email_address_hashed": "2a8cb9f430146c69d7b0838f196fde06c2bd805b5ae0a161787e8546d850c582",
+            "email_preference": None,
+            "first_name": "Adam",
+            "first_name_hashed": "3f0c9b03e8e39b03773c7ea7621035cb6fc947cd41ca7c44056d7e7bbaebb3d4",
+            "first_name_initial_hashed": "4da30add745f4fed2dd00bb903b6b092515cce53527ae4b55553db25494f7d9b",
+            "gender_hashed": "08f271887ce94707da822d5263bae19d5519cb3614e0daedc4c7ce5dab7473f1",
+            "last_name": "Rojas",
+            "last_name_hashed": "69eabae5f70de3feb719eb6a56830e8f5813d0aedc70662cdff573d40972adf1",
+            "mobile_device_id": "8.05E+12",
+            "phone_number_digits_only_hashed": "41b619382e951a396ad2780611b86e52bd6d5a0bf46429281c87d06f71448b0f",
+            "postal_code_hashed": "22e4d594b4eca022db5d3098d1762ed191ea8ccabacaa61389928247a6f34e99",
+            "state_or_province_hashed": "4b650e5c4785025dee7bd65e3c5c527356717d7a1c0bfef5b4ada8ca1e9cbe17",
+        },
+        {
+            "hux_id": "HUX000000000000005",
+            "city_hashed": "8b6e04947230473368190a71c95399a7e9a0c12faa28b04a2dd5a1cc4350a9a9",
+            "country_code_hashed": "c59dc4e44ff99288156d4dff2168f6ac7ddee6b1fc7ccc0754656ffaa6d351ea",
+            "date_of_birth_day_hashed": "7902699be42c8a8e46fbbb4501726517e86b22c56a189f7625a6da49081b2451",
+            "date_of_birth_month_hashed": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+            "date_of_birth_year_hashed": "e78f27ab3ef177a9926e6b90e572b9853ce6cf4d87512836e9ae85807ec9d7fe",
+            "email_address": "Robert_Miller@fake.com",
+            "email_address_hashed": "8ee0f1c048c2cd72c234600c7384174e3051b4f65fad562811b18a00308fd1c5",
+            "email_preference": None,
+            "first_name": "Robert",
+            "first_name_hashed": "2238dd61a1bf83816b40ad894518814b8edf7221d84d897ffd2c0466ace07c41",
+            "first_name_initial_hashed": "1a24b7688c199c24d87b5984d152b37d1d528911ec852d9cdf98c3ef29b916ea",
+            "gender_hashed": "08f271887ce94707da822d5263bae19d5519cb3614e0daedc4c7ce5dab7473f1",
+            "last_name": "Miller",
+            "last_name_hashed": "716545ea5827317b597b9f531b753bb931989bbe63df4307ef312fdb7374a154",
+            "mobile_device_id": "7.86E+12",
+            "phone_number_digits_only_hashed": "1ff0c029a038e144e194539378b7d9f6d4d5f3ed2093f4a042683ad0bd7c83f1",
+            "postal_code_hashed": "6ad677efeef896f3f5b0953333ceea96daad1d68db16431eff436161ef7c4fcb",
+            "state_or_province_hashed": "4b650e5c4785025dee7bd65e3c5c527356717d7a1c0bfef5b4ada8ca1e9cbe17",
+        },
+    ],
+    "message": "ok",
+}
 
 CUSTOMER_INSIGHT_RESPONSE = {
     "code": 200,

@@ -7,7 +7,9 @@ from http import HTTPStatus
 from unittest import TestCase, mock
 
 import mongomock
+import pandas as pd
 import requests_mock
+from huxunifylib.connectors.connector_cdp import ConnectorCDP
 
 from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.client import DatabaseClient
@@ -46,6 +48,11 @@ class AudienceDownloadsTest(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
         # mock get_db_client() in cdp_data_source
         mock.patch(
             "huxunify.api.route.audiences.get_db_client",
@@ -56,6 +63,11 @@ class AudienceDownloadsTest(TestCase):
         request_mocker = requests_mock.Mocker()
         request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
         request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
+        request_mocker.get(t_c.CDM_HEALTHCHECK_CALL, json=t_c.CDM_HEALTHCHECK_RESPONSE)
+        request_mocker.post(
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/audience",
+            json=t_c.CUSTOMER_PROFILE_AUDIENCES_RESPONSE
+        )
         request_mocker.start()
 
         # stop all mocks in cleanup
@@ -95,9 +107,9 @@ class AudienceDownloadsTest(TestCase):
         Returns:
 
         """
-        # mock cdp.read_batches() to a return a test generator
-        mock.patch(
-            "huxunify.api.route.audiences.connector_cdp",
+        # mock read_batches() in ConnectorCDP class to a return a test generator
+        mock.patch.object(
+            ConnectorCDP, "read_batches",
             return_value=t_c.dataframe_generator(
                 api_c.GOOGLE_ADS,
                 list(api_c.DOWNLOAD_TYPES[api_c.GOOGLE_ADS].keys()),
@@ -119,9 +131,9 @@ class AudienceDownloadsTest(TestCase):
         Returns:
 
         """
-        # mock cdp.read_batches() to a return a test generator
-        mock.patch(
-            "huxunify.api.route.audiences.connector_cdp",
+        # mock read_batches() in ConnectorCDP class to a return a test generator
+        mock.patch.object(
+            ConnectorCDP, "read_batches",
             return_value=t_c.dataframe_generator(
                 api_c.AMAZON_ADS,
                 list(api_c.DOWNLOAD_TYPES[api_c.AMAZON_ADS].keys()),
