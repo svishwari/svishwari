@@ -145,6 +145,10 @@ class AudienceGetSchema(Schema):
     is_lookalike = fields.Boolean(default=False)
     # defines if lookalikes can be created from the audience.
     lookalikeable = fields.String(default=api_c.STATUS_INACTIVE)
+    source_name = fields.String()
+    source_size = fields.Int()
+    source_id = fields.String()
+    reach = fields.Float()
 
 
 class AudiencePutSchema(Schema):
