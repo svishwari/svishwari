@@ -25,7 +25,7 @@
           :disabled="model.status !== 'Active'"
           data-e2e="model-item"
           class="mr-10 cursor-pointer"
-          @click.native="goToDashboard(model.id)"
+          @click.native="goToDashboard(model)"
         >
           <template slot="top">
             <status
@@ -140,11 +140,13 @@ export default {
       getModels: "models/getAll",
     }),
 
-    goToDashboard(id) {
-      this.$router.push({
-        name: "ModelDashboard",
-        params: { id: id },
-      })
+    goToDashboard(model) {
+      if (model.status === "Active") {
+        this.$router.push({
+          name: "ModelDashboard",
+          params: { id: model.id },
+        })
+      }
     },
   },
 }

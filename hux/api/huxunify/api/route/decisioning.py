@@ -211,39 +211,6 @@ class ModelOverview(SwaggerView):
                 latest_model[api_c.TYPE],
                 latest_model[api_c.CURRENT_VERSION],
             ),
-            # TODO - HUS-894, return Drift/Lift data.
-            api_c.LIFT_DATA: [
-                {
-                    api_c.BUCKET: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.BUCKET][x],
-                    api_c.PREDICTED_VALUE: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.PREDICTED_VALUE][x],
-                    api_c.ACTUAL_VALUE: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.ACTUAL_VALUE][x],
-                    api_c.PROFILE_COUNT: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.PROFILE_COUNT][x],
-                    api_c.PREDICTED_RATE: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.PREDICTED_RATE][x],
-                    api_c.ACTUAL_RATE: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.ACTUAL_RATE][x],
-                    api_c.PREDICTED_LIFT: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.PREDICTED_LIFT][x],
-                    api_c.ACTUAL_LIFT: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.ACTUAL_LIFT][x],
-                    api_c.PROFILE_SIZE_PERCENT: api_c.SUPPORTED_MODELS[
-                        model_id
-                    ][api_c.LIFT_DATA][api_c.PROFILE_SIZE_PERCENT][x],
-                }
-                for x in range(10)
-            ],
         }
 
         # dump schema and return to client.

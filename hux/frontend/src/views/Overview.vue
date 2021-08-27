@@ -1,9 +1,13 @@
 <template>
   <div class="overview-wrap">
-    <page-header :title="`Welcome back, ${fullName}!`" class="py-7">
+    <page-header
+      :title="`Welcome back, ${fullName}!`"
+      class="py-7"
+      header-height="auto"
+    >
       <template slot="description">
         Hux is here to help you make better, faster decisions to improve your
-        Customer Experiences.
+        customer experiences.
         <a
           class="text-decoration-none"
           href="https://consulting.deloitteresources.com/offerings/customer-marketing/advertising-marketing-commerce/Pages/hux_marketing.aspx"
@@ -76,7 +80,7 @@
           />
           <total-customer-chart
             v-if="!loadingCustomerChart"
-            :customers-data="mockCustomersData"
+            :customers-data="totalCustomers"
           />
         </v-card>
       </v-col>
@@ -89,7 +93,6 @@ import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import CardInfo from "@/components/common/CardInfo"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
-import totalCustomersData from "@/api/mock/fixtures/totalCustomersData.js"
 
 export default {
   name: "Overview",
@@ -102,8 +105,6 @@ export default {
     return {
       loadingCustomerChart: false,
       timeFrameLabel: "last 6 months",
-      // TODO remove it once total customer endpoint returns correct data
-      mockCustomersData: [],
       configureOptions: {
         configureHux: true,
         activeCustomers: true,
@@ -115,7 +116,7 @@ export default {
         {
           title: "Connect data source",
           description:
-            "Choose your data source from various customer touchpoint systems.",
+            "Connect your data sources to enable data unification in a single location.",
           route: {
             name: "DataSourceConfiguration",
             query: { select: true },
@@ -125,7 +126,7 @@ export default {
         {
           title: "Add a destination",
           description:
-            "Choose a destination where your actionable intelligence will be consumed.",
+            "Select the destinations you wish to deliver your audiences and/or engagements to.",
           route: {
             name: "DestinationConfiguration",
             query: { select: true },
@@ -135,14 +136,14 @@ export default {
         {
           title: "Create an audience",
           description:
-            "Create an audience based on customized orchestrated choices.",
+            "Create audiences by segmenting your customer list based on who you wish to target.",
           route: { name: "AudienceConfiguration" },
           active: true,
         },
         {
           title: "Create an engagement",
           description:
-            "Put all this great data and information to good use by creating an engagement.",
+            "Select your audiences and destinations where you wish to run campaigns on.",
           route: { name: "EngagementConfiguration" },
           active: true,
         },
@@ -164,8 +165,7 @@ export default {
     },
   },
   mounted() {
-    // TODO replace it with this.fetchTotalCustomers() once total customer endpoint returns correct data
-    this.getTotalCustomersData()
+    this.fetchTotalCustomers()
   },
   methods: {
     ...mapActions({
@@ -176,25 +176,21 @@ export default {
       await this.getTotalCustomers()
       this.loadingCustomerChart = false
     },
-    // TODO remove it once total customer endpoint returns correct data
-    getTotalCustomersData() {
-      this.loadingCustomerChart = true
-      this.mockCustomersData = totalCustomersData
-      setTimeout(() => {
-        this.loadingCustomerChart = false
-      }, 1000)
-    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
 .overview-wrap {
+  .page-header--wrap {
+    @extend .box-shadow-plain;
+  }
   .quickAccessMenu {
     background: var(--v-aliceBlue-base);
     min-height: 265px;
     padding: 16px 30px 40px 30px;
     overflow-x: auto;
+    border: 1px solid var(--v-zircon-base);
     h5 {
       line-height: 19px;
       letter-spacing: 0.5px;

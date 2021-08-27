@@ -46,6 +46,7 @@
           :class="{
             'bordered-card': bordered,
             'data-card-selected': isAdded(item),
+            'mt-0': index == 0,
           }"
           class="data-card my-3"
         >
