@@ -298,7 +298,6 @@ class AudienceGetView(SwaggerView):
             lookalike[api_c.SOURCE_ID] = lookalike[
                 db_c.LOOKALIKE_SOURCE_AUD_ID
             ]
-            lookalike[api_c.REACH] = lookalike[api_c.AUDIENCE_SIZE_PERCENTAGE]
 
             # TODO: HUS-837 change once we can generate real lookalikes from FB.
             lookalike[api_c.MATCH_RATE] = round(uniform(0.2, 0.9), 2)

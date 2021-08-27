@@ -809,7 +809,6 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(
             lookalike_audience[api_c.ID], str(lookalike_audience_id)
         )
-        self.assertEqual(lookalike_audience[api_c.REACH], 1.5)
         self.assertEqual(lookalike_audience[api_c.SIZE], 3329)
         self.assertEqual(
             lookalike_audience[api_c.SOURCE_SIZE], self.audiences[0][db_c.SIZE]

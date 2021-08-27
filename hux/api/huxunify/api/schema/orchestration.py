@@ -148,7 +148,6 @@ class AudienceGetSchema(Schema):
     source_name = fields.String()
     source_size = fields.Int()
     source_id = fields.String()
-    reach = fields.Float()
 
 
 class AudiencePutSchema(Schema):
