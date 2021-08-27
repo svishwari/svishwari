@@ -3,7 +3,7 @@
     <page-header
       :title="`Welcome back, ${fullName}!`"
       class="py-7"
-      headerHeight="auto"
+      header-height="auto"
     >
       <template slot="description">
         Hux is here to help you make better, faster decisions to improve your
