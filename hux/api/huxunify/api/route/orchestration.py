@@ -167,11 +167,9 @@ class AudienceView(SwaggerView):
         # process each audience object
         for audience in audiences:
             # set the destinations based on audience deliveries
-            unique_destinations_ids = list(
-                set(
-                    x.get(db_c.DELIVERY_PLATFORM_ID)
-                    for x in audience[api_c.DELIVERIES]
-                )
+            unique_destinations_ids = set(
+                x.get(db_c.DELIVERY_PLATFORM_ID)
+                for x in audience[api_c.DELIVERIES]
             )
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
                 database, [{api_c.ID: x} for x in unique_destinations_ids]
