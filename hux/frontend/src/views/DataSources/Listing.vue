@@ -6,11 +6,14 @@
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row v-if="!loading" class="datasource-datafeeds-table">
+    <v-row
+      v-if="!loading && dataSourceDataFeeds"
+      class="datasource-datafeeds-table"
+    >
       <hux-data-table
         sort-desc
         :columns="columns"
-        :data-items="dataSourceDataFeeds"
+        :data-items="dataSourceDataFeeds.data_feeds"
       >
         <template #row-item="{ item }">
           <td v-for="column in columns" :key="column.value">
@@ -110,6 +113,7 @@ export default {
         },
       ],
       loading: true,
+      dataSourceId: null,
     }
   },
 
@@ -119,12 +123,15 @@ export default {
       dataFeeds: "dataSources/dataFeeds",
     }),
 
-    selectedDataSource() {
-      return this.dataSource(this.$route.params.id)
+    selectedDataSourceExists() {
+      return !!this.dataSource(this.dataSourceId)
     },
 
     dataSourceDataFeeds() {
-      return this.dataFeeds(this.$route.params.id)
+      if (this.selectedDataSourceExists) {
+        return this.dataFeeds(this.dataSourceId)
+      }
+      return {}
     },
 
     breadcrumbItems() {
@@ -136,11 +143,11 @@ export default {
           icon: "connections",
         },
       ]
-      if (this.selectedDataSource) {
+      if (this.dataSourceDataFeeds) {
         items.push({
-          text: this.selectedDataSource.name,
+          text: this.dataSourceDataFeeds.name,
           disabled: true,
-          logo: this.selectedDataSource.type,
+          logo: this.dataSourceDataFeeds.type,
         })
       }
       return items
@@ -149,17 +156,18 @@ export default {
 
   async mounted() {
     this.loading = true
-    if (!this.dataSource(this.$route.params.id)) {
-      this.getAllDataSources()
+    this.dataSourceId = this.$route.params.id
+    if (!this.selectedDataSourceExists) {
+      await this.getDataSource(this.dataSourceId)
     }
-    await this.getDataFeeds(this.$route.params.id)
+    await this.getDataFeeds(this.$route.params)
     this.loading = false
   },
 
   methods: {
     ...mapActions({
       getDataFeeds: "dataSources/getDataFeeds",
-      getAllDataSources: "dataSources/getAll",
+      getDataSource: "dataSources/getDataSource",
     }),
   },
 }

@@ -23,7 +23,9 @@ export const defineRoutes = (server) => {
   // data sources
   server.get("/data-sources")
 
-  server.get("/data-sources/:id", () => {
+  server.get("/data-sources/:id")
+
+  server.get("/data-sources/:type/data-feeds", () => {
     return mockDataFeeds(5)
   })
 

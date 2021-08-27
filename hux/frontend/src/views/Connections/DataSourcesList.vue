@@ -25,7 +25,7 @@
         class="mb-3 pr-10 list"
         :to="{
           name: 'DataSourceListing',
-          params: { id: dataSource.id },
+          params: { id: dataSource.id, type: dataSource.type },
         }"
       >
         <status :status="dataSource.status" :icon-size="17" class="status" />

@@ -28,7 +28,7 @@ const mutations = {
   },
 
   SET_DATA_FEEDS(state, data) {
-    state.items[data.id].dataFeeds = data.items
+    Vue.set(state.items[data.id], "dataFeeds", data.items)
   },
 }
 
@@ -37,6 +37,16 @@ const actions = {
     try {
       const response = await api.dataSources.all()
       commit("SET_ALL", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getDataSource({ commit }, id) {
+    try {
+      const response = await api.dataSources.find(id)
+      commit("SET_ONE", response.data)
     } catch (error) {
       handleError(error)
       throw error
@@ -55,10 +65,10 @@ const actions = {
     }
   },
 
-  async getDataFeeds({ commit }, id) {
+  async getDataFeeds({ commit }, data) {
     try {
-      const response = await api.dataSources.find(id)
-      commit("SET_DATA_FEEDS", { items: response.data, id: id })
+      const response = await api.dataSources.dataFeeds(data.type)
+      commit("SET_DATA_FEEDS", { items: response.data, id: data.id })
     } catch (error) {
       handleError(error)
       throw error
