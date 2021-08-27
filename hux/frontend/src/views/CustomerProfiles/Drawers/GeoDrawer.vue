@@ -45,7 +45,7 @@
           </td>
         </template>
       </hux-data-table>
-<v-progress-linear v-if="enableLazyLoad" active indeterminate />
+      <v-progress-linear v-if="enableLazyLoad" active indeterminate />
       <observer v-if="items.length" @intersect="onLazyLoad" />
     </template>
 
@@ -204,7 +204,7 @@ export default {
       this.loading = true
       this.batchNumber = 1
       await this.refreshData()
-       this.loading = false
+      this.loading = false
       this.enableLazyLoad = true
     } else {
       this.enableLazyLoad = false
