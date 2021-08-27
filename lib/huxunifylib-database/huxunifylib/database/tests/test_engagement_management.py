@@ -61,7 +61,10 @@ class TestEngagementManagement(unittest.TestCase):
                 destination[c.ID],
                 c.STATUS_SUCCEEDED,
             )
-            self.destinations.append(destination)
+
+            self.destinations.append(
+                dpm.get_delivery_platform(self.database, destination[c.ID])
+            )
 
         self.destination = dpm.set_delivery_platform(
             self.database,
@@ -1149,3 +1152,93 @@ class TestEngagementManagement(unittest.TestCase):
         )
 
         self.assertFalse(active_deliveries)
+
+    def test_get_all_audience_destinations(self) -> None:
+        """Test getting all audiences and their unique assigned
+        destinations across engagements.
+
+        Returns:
+            Response: None
+
+        """
+
+        engagements = []
+        for item in range(2):
+
+            # set destination for audience
+            audience = self.audience
+            audience[c.DESTINATIONS] = [
+                {c.OBJECT_ID: x[c.ID]} for x in self.destinations
+            ]
+
+            # create engagement normally
+            engagement_id = em.set_engagement(
+                self.database,
+                f"Engagement Aud {item}",
+                f"Engagement {item} Description",
+                [audience],
+                self.user_name,
+            )
+
+            engagement = em.get_engagement(self.database, engagement_id)
+
+            # check engagement
+            self.assertIn(c.AUDIENCES, engagement)
+            self.assertEqual(len(engagement[c.AUDIENCES]), 1)
+            self.assertEqual(
+                engagement[c.AUDIENCES][0][c.OBJECT_ID],
+                self.audience[c.ID],
+            )
+            self.assertIsInstance(engagement_id, ObjectId)
+
+            engagements.append(engagement)
+
+        # find all three.
+        audience_destinations = om.get_all_audience_destinations(self.database)
+
+        # test the response
+        self.assertTrue(audience_destinations)
+        self.assertIsInstance(audience_destinations, list)
+
+        # grab the first audience
+        audience_destination = audience_destinations[0]
+
+        # test each destination
+        self.assertIn(c.DESTINATIONS, audience_destination)
+        self.assertEqual(len(audience_destination[c.DESTINATIONS]), 2)
+        for destination in audience_destination[c.DESTINATIONS]:
+            # find the matching destination and ensure it is identical.
+            matched_destinations = [
+                x for x in self.destinations if x[c.ID] == destination[c.ID]
+            ]
+            self.assertTrue(matched_destinations)
+            self.assertEqual(destination, matched_destinations[0])
+
+        # test list
+        # self.assertTrue(audience_insights, dict)
+        # self.assertEqual(len(audience_insights), 3)
+        #
+        # for engagement in audience_insights:
+        #     self.assertIn(c.DELIVERIES, engagement)
+        #     self.assertIn(c.AUDIENCE_LAST_DELIVERED, engagement)
+        #     self.assertIn(c.ID, engagement)
+        #     self.assertIn(c.ENGAGEMENT, engagement)
+        #
+        #     matched_engagements = [
+        #         x
+        #         for x in engagements
+        #         if x[c.ID] == engagement[c.ENGAGEMENT][c.ID]
+        #     ]
+        #     if not matched_engagements:
+        #         continue
+        #
+        #     self.assertTrue(matched_engagements)
+        #     self.assertEqual(len(matched_engagements), 1)
+        #
+        #     # now test the engagement to ensure lookup done properly
+        #     for matched_engagement in matched_engagements:
+        #         for key, value in matched_engagement.items():
+        #             # test all the engagement params to the looked up ones.
+        #             if key == c.AUDIENCES:
+        #                 continue
+        #             self.assertEqual(engagement[c.ENGAGEMENT][key], value)

@@ -479,7 +479,7 @@ def get_all_audience_destinations(
     try:
         return list(
             database[c.DATA_MANAGEMENT_DATABASE][
-                c.AUDIENCES_COLLECTION
+                c.ENGAGEMENTS_COLLECTION
             ].aggregate(
                 [
                     {"$match": match_statement},
@@ -505,10 +505,11 @@ def get_all_audience_destinations(
                     {"$unwind": {"path": "$delivery_platform"}},
                     {
                         "$group": {
-                            "_id": "id",
+                            "_id": "$_id",
                             "destinations": {"$push": "$delivery_platform"},
                         }
                     },
+                    {"$project": {"destinations.deleted": 0}},
                 ]
             )
         )
