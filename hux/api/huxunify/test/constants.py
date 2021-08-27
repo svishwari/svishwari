@@ -67,9 +67,9 @@ CUSTOMER_INSIGHT_RESPONSE = {
         "total_cities": 2513,
         "min_age": 18,
         "max_age": 66,
-        "gender_women": 0.42,
-        "gender_men": 0.52,
-        "gender_other": 0.06,
+        "gender_women": 42345,
+        "gender_men": 52567,
+        "gender_other": 6953,
     },
     "message": "ok",
 }
@@ -149,6 +149,39 @@ MOCKED_MODEL_RESPONSE = [
         api_c.TYPE: "test",
     },
 ]
+
+SUPPORTED_MODELS = {
+    2: {
+        api_c.MODEL_TYPE: api_c.LTV,
+        api_c.NAME: "Lifetime value",
+        api_c.DESCRIPTION: "Predicts the lifetime value of a customer based on models",
+        api_c.CURRENT_VERSION: "21.7.28",
+        api_c.RMSE: 233.5,
+        api_c.AUC: -1,
+        api_c.PRECISION: -1,
+        api_c.RECALL: -1,
+    },
+    1: {
+        api_c.MODEL_TYPE: api_c.UNSUBSCRIBE,
+        api_c.NAME: "Propensity to Unsubscribe",
+        api_c.DESCRIPTION: "Predicts how likely a customer will unsubscribe from an email list",
+        api_c.CURRENT_VERSION: "21.7.31",
+        api_c.RMSE: -1,
+        api_c.AUC: 0.79,
+        api_c.PRECISION: 0.82,
+        api_c.RECALL: 0.65,
+    },
+    3: {
+        api_c.MODEL_TYPE: api_c.PURCHASE,
+        api_c.NAME: "Propensity to Purchase",
+        api_c.DESCRIPTION: "Propensity of a customer making purchase after receiving an email ",
+        api_c.CURRENT_VERSION: "3.1.2",
+        api_c.RMSE: -1,
+        api_c.AUC: 0.79,
+        api_c.PRECISION: 0.82,
+        api_c.RECALL: 0.65,
+    },
+}
 
 MOCKED_MODEL_VERSION_HISTORY = {
     "results": [

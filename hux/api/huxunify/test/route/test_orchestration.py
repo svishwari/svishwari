@@ -353,6 +353,43 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(valid_response, response.json)
         self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
 
+    def test_create_audience_no_destination_id(self) -> None:
+        """Test create audience with destination given no id in destination object.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        audience_post = {
+            db_c.AUDIENCE_NAME: "Test Audience Create",
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                            api_c.AUDIENCE_FILTER_TYPE: "type",
+                            api_c.AUDIENCE_FILTER_VALUE: "value",
+                        }
+                    ],
+                }
+            ],
+            api_c.DESTINATIONS: [
+                {api_c.DATA_EXTENSION_ID: str(d[db_c.ID])}
+                for d in self.destinations
+            ],
+        }
+
+        response = self.test_client.post(
+            self.audience_api_endpoint,
+            json=audience_post,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
     def test_create_audience_invalid_user_info(self):
         """Test create audience with destination given invalid user info.
 
