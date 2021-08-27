@@ -621,7 +621,7 @@ class CustomerDemoVisualView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
-    # pylint: disable=no-self-use,unused-argument
+    # pylint: disable=no-self-use
     @api_error_handler()
     def get(self) -> Tuple[dict, int]:
         """Retrieves a Demographical customer insights.
@@ -631,8 +631,7 @@ class CustomerDemoVisualView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            start_date (str): String value of start date
-            end_date (str): String value of end date
+
         Returns:
             Tuple[dict, int] list of Customer insights on demo overview and http code
         """

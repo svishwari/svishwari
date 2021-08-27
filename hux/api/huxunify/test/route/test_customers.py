@@ -360,7 +360,7 @@ class TestCustomersOverview(TestCase):
             t_c.validate_schema(CustomerGeoVisualSchema(), response.json, True)
         )
 
-    def test_get_customers_demo(self):
+    def test_get_customers_demographics(self):
         """
         Test get customers demographical insights
 
@@ -419,7 +419,7 @@ class TestCustomersOverview(TestCase):
             )
         )
 
-    def test_get_customers_demo_customer_insights_failure(self):
+    def test_get_customers_demographic_customer_insights_failure(self):
         """
         Test get customers demographical insights
 
