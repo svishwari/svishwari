@@ -76,7 +76,7 @@
           />
           <total-customer-chart
             v-if="!loadingCustomerChart"
-            :customers-data="mockCustomersData"
+            :customers-data="totalCustomers"
           />
         </v-card>
       </v-col>
@@ -89,7 +89,6 @@ import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import CardInfo from "@/components/common/CardInfo"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
-import totalCustomersData from "@/api/mock/fixtures/totalCustomersData.js"
 
 export default {
   name: "Overview",
@@ -102,8 +101,6 @@ export default {
     return {
       loadingCustomerChart: false,
       timeFrameLabel: "last 6 months",
-      // TODO remove it once total customer endpoint returns correct data
-      mockCustomersData: [],
       configureOptions: {
         configureHux: true,
         activeCustomers: true,
@@ -164,8 +161,7 @@ export default {
     },
   },
   mounted() {
-    // TODO replace it with this.fetchTotalCustomers() once total customer endpoint returns correct data
-    this.getTotalCustomersData()
+    this.fetchTotalCustomers()
   },
   methods: {
     ...mapActions({
@@ -175,14 +171,6 @@ export default {
       this.loadingCustomerChart = true
       await this.getTotalCustomers()
       this.loadingCustomerChart = false
-    },
-    // TODO remove it once total customer endpoint returns correct data
-    getTotalCustomersData() {
-      this.loadingCustomerChart = true
-      this.mockCustomersData = totalCustomersData
-      setTimeout(() => {
-        this.loadingCustomerChart = false
-      }, 1000)
     },
   },
 }
