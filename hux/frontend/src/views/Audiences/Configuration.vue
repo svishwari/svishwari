@@ -75,7 +75,7 @@
                   Add to an engagement -
                   <i style="tilt">you must have at least one</i>
                   <div class="mt-2 d-flex align-center">
-                    <span @click="openAttachEngagementsDrawer">
+                    <span @click="openAttachEngagementsDrawer()">
                       <icon
                         class="add-icon cursor-pointer"
                         type="add"
