@@ -14,6 +14,7 @@ import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
+import demographicsData from "@/api/mock/fixtures/demographicData.js"
 import totalCustomersData from "./fixtures/totalCustomersData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
@@ -388,6 +389,8 @@ export const defineRoutes = (server) => {
   server.get("/customers/overview", () => customersOverview)
 
   server.get("/customers-insights/geo", () => mapData)
+
+  server.post("/customers-insights/demo", () => demographicsData)
 
   server.get("/customers-insights/total", () => totalCustomersData)
 
