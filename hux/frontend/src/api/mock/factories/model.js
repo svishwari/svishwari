@@ -1,6 +1,6 @@
 import faker from "faker"
 
-const modelFeatures = () => {
+const modelFeatures = (modelId = 1) => {
   return {
     name: "8to12m-ITEMEXTCOST-sum",
     created_by: faker.fake("{{name.firstName}} {{name.lastName}}"),
@@ -11,12 +11,12 @@ const modelFeatures = () => {
     version: faker.system.semver(),
     data_source: "Ecommerce",
     status: faker.random.arrayElement(["Active", "Delivering", "Stopped"]),
-    id: `${faker.datatype.number({ min: 1, max: 10 })}`,
+    id: modelId,
   }
 }
 
-const mockModelFeature = (num = 5) => {
-  return Array.from({ length: num }, modelFeatures)
+const mockModelFeature = (modelId = 1, num = 43) => {
+  return Array.from({ length: num }, () => modelFeatures(modelId))
 }
 
 const versionHistory = () => {
@@ -50,5 +50,5 @@ export default {
   status: "Pending",
   type: "unsubscribe",
   version_history: () => mockVersionHistory(5),
-  model_feature: () => mockModelFeature(10),
+  model_feature: (index) => mockModelFeature(index + 1),
 }

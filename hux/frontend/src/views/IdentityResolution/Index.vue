@@ -45,19 +45,23 @@
               <template #label-content>
                 <span class="font-weight-semi-bold">
                   <template v-if="metric.format === 'numeric'">
-                    {{ metric.value | Numeric(true, true) }}
+                    {{ metric.value | Numeric(true, true) | Empty }}
                   </template>
                   <template v-if="metric.format === 'percentage'">
-                    {{ metric.value | Numeric(true, false, false, true) }}
+                    {{
+                      metric.value | Numeric(true, false, false, true) | Empty
+                    }}
                   </template>
                 </span>
               </template>
               <template #hover-content>
                 <template v-if="metric.format === 'numeric'">
-                  {{ metric.value | Numeric(true, false) }}
+                  {{ metric.value | Numeric(true, false) | Empty }}
                 </template>
                 <template v-if="metric.format === 'percentage'">
-                  {{ metric.value | Numeric(false, false, false, true) }}
+                  {{
+                    metric.value | Numeric(false, false, false, true) | Empty
+                  }}
                 </template>
               </template>
             </tooltip>

@@ -81,6 +81,7 @@ const state = {
   dataFeeds: {},
 
   dataFeedReports: {},
+
   matchingTrend: [],
 }
 
@@ -90,7 +91,7 @@ const getters = {
       return {
         title: METRICS[metric].title,
         description: METRICS[metric].description,
-        value: state.overview[metric],
+        value: state.overview["overview"][metric],
         format: METRICS[metric].format,
       }
     })
