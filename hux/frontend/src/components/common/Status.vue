@@ -411,6 +411,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.v-icon {
+  cursor: default !important;
+}
 .half-right-circle {
   height: 14px;
   width: 7px;

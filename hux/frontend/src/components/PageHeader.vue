@@ -5,7 +5,7 @@
     elevation="1"
     tile
     :color="bgColor"
-    :height="72"
+    :height="headerHeight"
   >
     <div>
       <div class="d-flex">
@@ -57,7 +57,7 @@ export default {
     headerHeight: {
       type: Number,
       required: false,
-      default: undefined,
+      default: 72,
     },
 
     headerPadding: {

@@ -1,6 +1,10 @@
 <template>
   <div class="overview-wrap">
-    <page-header :title="`Welcome back, ${fullName}!`" class="py-7">
+    <page-header
+      :title="`Welcome back, ${fullName}!`"
+      class="py-7"
+      headerHeight="auto"
+    >
       <template slot="description">
         Hux is here to help you make better, faster decisions to improve your
         customer experiences.
