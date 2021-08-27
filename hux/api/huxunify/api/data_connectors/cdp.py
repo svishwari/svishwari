@@ -347,11 +347,13 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
         start_date (str): Start date.
         end_date (str): End date.
     Returns:
-       list: datafeeds for the data source with given type
+       list: datafeeds processed within the given dates
     """
     # get config
     config = get_config()
-    logger.info("Retrieving data-feeds for data sources")
+    logger.info(
+        "Retrieving data-feeds for within %s and %s.", start_date, end_date
+    )
 
     response = requests.post(
         f"{config.CDP_CONNECTION_SERVICE}{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.CDM_DATAFEEDS}",
@@ -385,7 +387,10 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
     """
     # get config
     config = get_config()
-    logger.info("Retrieving identity data-feed details")
+    logger.info(
+        "Retrieving identity data-feed details with data feed id %s.",
+        datafeed_id,
+    )
 
     response = requests.get(
         f"{config.CDP_CONNECTION_SERVICE}{api_c.CDM_IDENTITY_ENDPOINT}/"
