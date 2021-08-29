@@ -1,7 +1,29 @@
 import filters from "@/filters"
-
+import dayjs from "dayjs"
 describe("Filters", () => {
   describe("Date filter", () => {
+    it("should return '' for empty values", () => {
+      expect(filters.Date()).toEqual("")
+    })
+
+    it("for format set to relative", () => {
+      let testdate = dayjs().subtract(7,"year")
+      expect(filters.Date(testdate.format(),"relative")).toEqual(testdate.fromNow())
+      testdate = dayjs().add(5,"day")
+      expect(filters.Date(testdate.format(),"relative")).toEqual(dayjs().fromNow())
+    })
+
+    it("for format set to calendar", () => {
+      expect(filters.Date("2021-12-25","calendar")).toEqual("12/25/2021")
+    })
+
+    it("for dates returned by APIs", () => {
+      var utc = require('dayjs/plugin/utc')
+      dayjs.extend(utc)
+      let testdate = dayjs("2021-08-26T14:44:38.470Z")
+      expect(filters.Date("2021-08-26T14:44:38.470Z")).toEqual(testdate.local().format("M/D/YYYY [at] h:mm A"))
+    })
+
     it("should display date in format as specified", () => {
       expect(filters.Date("2019-01-25", "DD/MM/YYYY")).toEqual("25/01/2019")
       expect(
@@ -11,7 +33,7 @@ describe("Filters", () => {
         "1/25/2019 at 12:00 AM"
       )
       expect(filters.Date("2019-01-25")).toEqual("1/25/2019 at 12:00 AM")
-    })
+      })
   })
 
   describe("Numeric filter", () => {
