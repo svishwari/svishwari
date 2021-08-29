@@ -8,30 +8,40 @@ describe("Filters", () => {
     })
 
     it("for format set to relative", () => {
-      let testdate = dayjs().subtract(7,"year")
-      expect(filters.Date(testdate.format(),"relative")).toEqual(testdate.fromNow())
+      let testdate = dayjs().subtract(7, "year")
+      expect(filters.Date(testdate.format(), "relative")).toEqual(
+        testdate.fromNow()
+      )
 
-      testdate = dayjs().subtract(1,"month")
-      expect(filters.Date(testdate.format(),"relative")).toEqual("a month ago")
+      testdate = dayjs().subtract(1, "month")
+      expect(filters.Date(testdate.format(), "relative")).toEqual("a month ago")
 
-      testdate = dayjs().subtract(42,"minute")
-      expect(filters.Date(testdate.format(),"relative")).toEqual("42 minutes ago")
+      testdate = dayjs().subtract(42, "minute")
+      expect(filters.Date(testdate.format(), "relative")).toEqual(
+        "42 minutes ago"
+      )
 
-      testdate = dayjs().add(5,"day")
-      expect(filters.Date(testdate.format(),"relative")).toEqual(dayjs().fromNow())
+      testdate = dayjs().add(5, "day")
+      expect(filters.Date(testdate.format(), "relative")).toEqual(
+        dayjs().fromNow()
+      )
     })
 
     it("for format set to calendar", () => {
-      expect(filters.Date("2021-12-25","calendar")).toEqual("12/25/2021")
-      let testdate = dayjs().subtract(1,"day")
-      expect(filters.Date(testdate.format(),"calendar")).toEqual(testdate.calendar())
+      expect(filters.Date("2021-12-25", "calendar")).toEqual("12/25/2021")
+      let testdate = dayjs().subtract(1, "day")
+      expect(filters.Date(testdate.format(), "calendar")).toEqual(
+        testdate.calendar()
+      )
     })
 
     it("for dates returned by APIs", () => {
-      var utc = require('dayjs/plugin/utc')
+      var utc = require("dayjs/plugin/utc")
       dayjs.extend(utc)
       let testdate = dayjs("2021-08-26T14:44:38.470Z")
-      expect(filters.Date("2021-08-26T14:44:38.470Z")).toEqual(testdate.local().format("M/D/YYYY [at] h:mm A"))
+      expect(filters.Date("2021-08-26T14:44:38.470Z")).toEqual(
+        testdate.local().format("M/D/YYYY [at] h:mm A")
+      )
     })
 
     it("should display date in format as specified", () => {
@@ -43,7 +53,7 @@ describe("Filters", () => {
         "1/25/2019 at 12:00 AM"
       )
       expect(filters.Date("2019-01-25")).toEqual("1/25/2019 at 12:00 AM")
-      })
+    })
   })
 
   describe("Numeric filter", () => {
