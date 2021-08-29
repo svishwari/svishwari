@@ -1,7 +1,9 @@
 """
 purpose of this script is for housing the decision routes for the API.
 """
+from random import uniform
 from datetime import datetime
+from datetime import timedelta
 from http import HTTPStatus
 from typing import Tuple, List
 
@@ -269,7 +271,19 @@ class ModelDriftView(SwaggerView):
 
         """
         body = ModelDriftPostSchema().load(request.get_json())
-        drift_data = tecton.get_model_drift(model_id, body[api_c.MODEL_TYPE])
+        # TODO Remove once Propensity to Purchase data is being served from tecton
+        if int(model_id) == 3:
+            drift_data = [
+                {
+                    api_c.DRIFT: round(uniform(0.8, 1), 2),
+                    api_c.RUN_DATE: datetime(2021, 6, 1) + timedelta(i),
+                }
+                for i in range(4)
+            ]
+        else:
+            drift_data = tecton.get_model_drift(
+                model_id, body[api_c.MODEL_TYPE]
+            )
 
         return (
             jsonify(ModelDriftSchema(many=True).dump(drift_data)),
