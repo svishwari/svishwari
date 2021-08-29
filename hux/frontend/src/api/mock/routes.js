@@ -419,7 +419,15 @@ export const defineRoutes = (server) => {
   server.post("/customers/overview", () => customersOverview)
 
   // identity resolution
-  server.get("/idr/overview", () => idrOverview)
+  server.get("/idr/overview", () => {
+    return {
+      date_range: {
+        start_date: faker.date.past(5),
+        end_date: moment().toJSON(),
+      },
+      overview: idrOverview,
+    }
+  })
   server.get(
     "/idr/datafeeds",
     (schema) => {
