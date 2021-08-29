@@ -2,19 +2,29 @@ import filters from "@/filters"
 import dayjs from "dayjs"
 describe("Filters", () => {
   describe("Date filter", () => {
-    it("should return '' for empty values", () => {
+    it("for empty and invalid values", () => {
       expect(filters.Date()).toEqual("")
+      expect(filters.Date("something invalid")).toEqual("Invalid Date")
     })
 
     it("for format set to relative", () => {
       let testdate = dayjs().subtract(7,"year")
       expect(filters.Date(testdate.format(),"relative")).toEqual(testdate.fromNow())
+
+      testdate = dayjs().subtract(1,"month")
+      expect(filters.Date(testdate.format(),"relative")).toEqual("a month ago")
+
+      testdate = dayjs().subtract(42,"minute")
+      expect(filters.Date(testdate.format(),"relative")).toEqual("42 minutes ago")
+
       testdate = dayjs().add(5,"day")
       expect(filters.Date(testdate.format(),"relative")).toEqual(dayjs().fromNow())
     })
 
     it("for format set to calendar", () => {
       expect(filters.Date("2021-12-25","calendar")).toEqual("12/25/2021")
+      let testdate = dayjs().subtract(1,"day")
+      expect(filters.Date(testdate.format(),"calendar")).toEqual(testdate.calendar())
     })
 
     it("for dates returned by APIs", () => {
