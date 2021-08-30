@@ -39,10 +39,10 @@ const DateRelative = (value) => {
   let dateTime = dayjs(value)
   let otherDates = dateTime.fromNow()
   let week = dateTime.calendar()
-  let calback = () => "[" + otherDates + "]"
-  let weekcal = () => "[" + week.split(" at ")[0] + "]"
+  let calback = () => otherDates
+  let weekcal = () => week.split(" at ")[0]
   return dateTime.calendar(null, {
-    sameDay: "[Today]",
+    sameDay: "Today",
     nextDay: weekcal,
     nextWeek: calback,
     lastDay: weekcal,
