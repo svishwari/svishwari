@@ -264,7 +264,8 @@ def generate_metrics_file(
         f"{file_path}/{datetime.now().strftime('%m%d%Y%H%M%S')}"
         f"_{engagement_id}_{metrics_type}_metrics.csv"
     )
-    with open(Path(file_name).absolute(), "w", newline="") as csv_file:
+    with open(Path(file_name).resolve(), "w", newline="") as csv_file:
+        logger.info("Writing File into %s", Path(file_name).resolve())
         field_names = [api_c.NAME] + list(final_metric[api_c.SUMMARY].keys())
         dict_writer = csv.DictWriter(csv_file, fieldnames=field_names)
         dict_writer.writeheader()
