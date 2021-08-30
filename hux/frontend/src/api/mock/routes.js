@@ -423,7 +423,7 @@ export const defineRoutes = (server) => {
     return {
       date_range: {
         start_date: faker.date.past(5),
-        end_date: moment().toJSON(),
+        end_date: dayjs().toJSON(),
       },
       overview: idrOverview,
     }
