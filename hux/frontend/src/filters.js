@@ -2,10 +2,11 @@
  * Globally registered Vue filters
  */
 import dayjs from "dayjs"
-var relativeTime = require("dayjs/plugin/relativeTime")
-dayjs.extend(relativeTime)
-var calendar = require("dayjs/plugin/calendar")
+import calendar from "dayjs/plugin/calendar"
+import relativeTime from "dayjs/plugin/relativeTime"
+
 dayjs.extend(calendar)
+dayjs.extend(relativeTime)
 /**
  * Formats a datetime field to human friendly date.
  *
