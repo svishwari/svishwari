@@ -919,7 +919,7 @@ class CustomersInsightsStates(SwaggerView):
     Customer insights by state
     """
 
-    params = parameters = [
+    params = [
         {
             "name": "body",
             "description": "Customer Overview Filters",
@@ -996,7 +996,7 @@ class CustomersInsightsCities(SwaggerView):
     Customer insights by city
     """
 
-    params = parameters = [
+    params = [
         {
             "name": api_c.QUERY_PARAMETER_BATCH_SIZE,
             "in": "query",
