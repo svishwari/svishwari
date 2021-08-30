@@ -51,13 +51,14 @@ describe("Filters", () => {
 
     it("should display date in format as specified", () => {
       expect(filters.Date("2019-01-25", "DD/MM/YYYY")).toEqual("25/01/2019")
-      expect(
-        filters.Date("2019-01-25", "[YYYYescape] YYYY-MM-DDTHH:mm:ss[Z]")
-      ).toEqual("YYYYescape 2019-01-25T00:00:00Z")
+      expect(filters.Date("2019-01-25")).toEqual("1/25/2019 at 12:00 AM")
       expect(filters.Date("2019-01-25", "M/D/YYYY [at] h:mm A")).toEqual(
         "1/25/2019 at 12:00 AM"
       )
-      expect(filters.Date("2019-01-25")).toEqual("1/25/2019 at 12:00 AM")
+      expect(filters.Date("2019-01-25", "M/YY")).toEqual("1/19")
+      expect(
+        filters.Date("2019-01-25", "[Last updated at] h:mma [on] M/DD/YYYY")
+      ).toEqual("Last updated at 12:00am on 1/25/2019")
     })
   })
 
