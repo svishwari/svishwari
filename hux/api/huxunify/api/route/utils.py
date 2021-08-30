@@ -11,7 +11,7 @@ from bson.errors import InvalidId
 import facebook_business.exceptions
 from healthcheck import HealthCheck
 from decouple import config
-from flask import request, Response, Flask
+from flask import request
 
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
