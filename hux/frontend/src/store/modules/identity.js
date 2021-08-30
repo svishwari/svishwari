@@ -148,9 +148,12 @@ const mutations = {
 }
 
 const actions = {
-  async getOverview({ commit }) {
+  async getOverview({ commit }, { startDate, endDate }) {
     try {
-      const response = await api.idr.overview()
+      const response = await api.idr.overview({
+        start_date: startDate,
+        end_date: endDate,
+      })
       commit("SET_OVERVIEW", response.data)
     } catch (error) {
       handleError(error)
@@ -158,9 +161,12 @@ const actions = {
     }
   },
 
-  async getDataFeeds({ commit }) {
+  async getDataFeeds({ commit }, { startDate, endDate }) {
     try {
-      const response = await api.idr.datafeeds()
+      const response = await api.idr.datafeeds({
+        start_date: startDate,
+        end_date: endDate,
+      })
       commit("SET_DATA_FEEDS", response.data)
     } catch (error) {
       handleError(error)
@@ -181,9 +187,12 @@ const actions = {
     }
   },
 
-  async getMatchingTrend({ commit }) {
+  async getMatchingTrend({ commit }, { startDate, endDate }) {
     try {
-      const response = await api.idr.matchingTrend()
+      const response = await api.idr.matchingTrend({
+        start_date: startDate,
+        end_date: endDate,
+      })
       commit("SET_MATCHINGTREND", response.data)
     } catch (error) {
       handleError(error)

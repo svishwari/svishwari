@@ -143,6 +143,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
+import moment from "moment"
 
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader"
@@ -209,6 +210,18 @@ export default {
       identityMatchingTrend: "identity/matchingTrend",
     }),
 
+    startDate() {
+      const startDate = moment(
+        `${this.filters.startMonth} ${this.filters.startYear}`
+      )
+      return startDate.isValid() ? startDate.format("YYYY-MM-DD") : null
+    },
+
+    endDate() {
+      const endDate = moment(`${this.filters.endMonth} ${this.filters.endYear}`)
+      return endDate.isValid() ? endDate.format("YYYY-MM-DD") : null
+    },
+
     loading() {
       return (
         this.loadingOverview ||
@@ -252,19 +265,28 @@ export default {
 
     async loadMatchingTrends() {
       this.loadingMatchingTrends = true
-      await this.getMatchingTrends()
+      await this.getMatchingTrends({
+        startDate: this.startDate,
+        endDate: this.endDate,
+      })
       this.loadingMatchingTrends = false
     },
 
     async loadDataFeeds() {
       this.loadingDataFeeds = true
-      await this.getDataFeeds()
+      await this.getDataFeeds({
+        startDate: this.startDate,
+        endDate: this.endDate,
+      })
       this.loadingDataFeeds = false
     },
 
     async loadOverview() {
       this.loadingOverview = true
-      await this.getOverview()
+      await this.getOverview({
+        startDate: this.startDate,
+        endDate: this.endDate,
+      })
       this.loadingOverview = false
     },
   },
