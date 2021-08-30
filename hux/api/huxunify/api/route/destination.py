@@ -517,7 +517,7 @@ class DestinationValidatePostView(SwaggerView):
             body.get(api_c.DESTINATION_TYPE)
             == db_c.DELIVERY_PLATFORM_QUALTRICS
         ):
-            QualtricsConnector(
+            qualtrics_connector = QualtricsConnector(
                 auth_details={
                     QualtricsCredentials.QUALTRICS_API_TOKEN.value: body.get(
                         api_c.AUTHENTICATION_DETAILS
@@ -535,9 +535,14 @@ class DestinationValidatePostView(SwaggerView):
                     ),
                 }
             )
-            return {
-                "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
-            }, HTTPStatus.OK
+            if qualtrics_connector.check_connection():
+                logger.info("Qualtrics destination validated successfully.")
+                return {
+                    "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
+                }, HTTPStatus.OK
+
+            logger.error("Could not validate Qualtrics successfully.")
+
         else:
             logger.error(
                 "Destination type %s not supported yet.", body.get(db_c.TYPE)

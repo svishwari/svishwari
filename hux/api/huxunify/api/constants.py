@@ -340,7 +340,11 @@ DESTINATION_SECRETS = {
         AWS_SSM_NAME: [TWILIO_AUTH_TOKEN],
     },
     db_c.DELIVERY_PLATFORM_QUALTRICS: {
-        MONGO: [],
+        MONGO: [
+            QUALTRICS_DIRECTORY_ID,
+            QUALTRICS_DATA_CENTER,
+            QUALTRICS_OWNER_ID,
+        ],
         AWS_SSM_NAME: [QUALTRICS_API_TOKEN],
     },
 }
