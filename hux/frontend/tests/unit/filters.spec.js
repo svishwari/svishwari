@@ -1,5 +1,8 @@
 import filters from "@/filters"
 import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
+dayjs.extend(utc)
+
 describe("Filters", () => {
   describe("Date filter", () => {
     it("for empty and invalid values", () => {
@@ -10,7 +13,7 @@ describe("Filters", () => {
     it("for format set to relative", () => {
       let testdate = dayjs().subtract(7, "year")
       expect(filters.Date(testdate.format(), "relative")).toEqual(
-        testdate.fromNow()
+        "7 years ago"
       )
 
       testdate = dayjs().subtract(1, "month")
@@ -23,7 +26,7 @@ describe("Filters", () => {
 
       testdate = dayjs().add(5, "day")
       expect(filters.Date(testdate.format(), "relative")).toEqual(
-        dayjs().fromNow()
+        "a few seconds ago"
       )
     })
 
@@ -31,13 +34,11 @@ describe("Filters", () => {
       expect(filters.Date("2021-12-25", "calendar")).toEqual("12/25/2021")
       let testdate = dayjs().subtract(1, "day")
       expect(filters.Date(testdate.format(), "calendar")).toEqual(
-        testdate.calendar()
+        testdate.format("[Yesterday at] h:mm A")
       )
     })
 
     it("for dates returned by APIs", () => {
-      var utc = require("dayjs/plugin/utc")
-      dayjs.extend(utc)
       let testdate = dayjs("2021-08-26T14:44:38.470Z")
       expect(filters.Date("2021-08-26T14:44:38.470Z")).toEqual(
         testdate.local().format("M/D/YYYY [at] h:mm A")
