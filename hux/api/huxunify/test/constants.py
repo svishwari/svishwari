@@ -2,6 +2,7 @@
 """
 purpose of this file is housing shared components for tests
 """
+from datetime import datetime
 import time
 from http import HTTPStatus
 from typing import Generator
@@ -510,12 +511,14 @@ MOCKED_MODEL_PERFORMANCE_LTV = {
         },
     ]
 }
+
 MOCKED_MODEL_LTV_PAYLOAD = {
     "params": {
         "feature_service_name": "ui_metadata_model_metrics_regression_service",
         "join_key_map": {"model_id": "2"},
     }
 }
+
 MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
     "results": [
         {
@@ -568,12 +571,14 @@ MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
         },
     ]
 }
+
 MOCKED_MODEL_UNSUBSCRIBE_PAYLOAD = {
     "params": {
         "feature_service_name": "ui_metadata_model_metrics_classification_service",
         "join_key_map": {"model_id": "1"},
     }
 }
+
 MOCKED_MODEL_LIFT_CHART = [
     {
         api_c.BUCKET: 100,
@@ -587,6 +592,97 @@ MOCKED_MODEL_LIFT_CHART = [
         api_c.PROFILE_SIZE_PERCENT: 0,
     }
 ]
+
+MOCKED_MODEL_VERSION_HISTORY_RESPONSE = [
+    {
+        api_c.ID: 1,
+        api_c.LAST_TRAINED: datetime.utcnow(),
+        api_c.DESCRIPTION: "Predicts the propensity of a customer",
+        api_c.FULCRUM_DATE: datetime.utcnow(),
+        api_c.LOOKBACK_WINDOW: 90,
+        api_c.NAME: "Propensity",
+        api_c.TYPE: api_c.PURCHASE,
+        api_c.OWNER: "Susan Miller",
+        api_c.STATUS: api_c.STATUS_ACTIVE,
+        api_c.CURRENT_VERSION: "21.7.28",
+        api_c.PREDICTION_WINDOW: 90,
+    },
+    {
+        api_c.ID: 1,
+        api_c.LAST_TRAINED: datetime.utcnow(),
+        api_c.DESCRIPTION: "Predicts the propensity of a customer",
+        api_c.FULCRUM_DATE: datetime.utcnow(),
+        api_c.LOOKBACK_WINDOW: 90,
+        api_c.NAME: "Propensity",
+        api_c.TYPE: api_c.PURCHASE,
+        api_c.OWNER: "Susan Miller",
+        api_c.STATUS: api_c.STATUS_ACTIVE,
+        api_c.CURRENT_VERSION: "21.7.29",
+        api_c.PREDICTION_WINDOW: 90,
+    },
+    {
+        api_c.ID: 1,
+        api_c.LAST_TRAINED: datetime.utcnow(),
+        api_c.DESCRIPTION: "Predicts the propensity of a customer",
+        api_c.FULCRUM_DATE: datetime.utcnow(),
+        api_c.LOOKBACK_WINDOW: 90,
+        api_c.NAME: "Propensity",
+        api_c.TYPE: api_c.PURCHASE,
+        api_c.OWNER: "Susan Miller",
+        api_c.STATUS: api_c.STATUS_ACTIVE,
+        api_c.CURRENT_VERSION: "21.7.30",
+        api_c.PREDICTION_WINDOW: 90,
+    },
+]
+
+MOCKED_MODEL_PROPENSITY_FEATURES = {
+    api_c.RESULTS: [
+        {
+            api_c.FEATURES: [
+                "2021-07-28",
+                "1to2y-COGS-sum",
+                1165.89062,
+                "Propensity to Unsubscribe",
+                api_c.UNSUBSCRIBE,
+                "21.7.28",
+            ],
+            api_c.JOIN_KEYS: ["21.7.28"],
+        },
+        {
+            api_c.FEATURES: [
+                "2021-07-29",
+                "1to2y-data_source-orders",
+                880.273438,
+                "Propensity to Unsubscribe",
+                api_c.UNSUBSCRIBE,
+                "21.7.29",
+            ],
+            api_c.JOIN_KEYS: ["21.7.29"],
+        },
+        {
+            api_c.FEATURES: [
+                "2021-07-30",
+                "1to2y-ITEMQTY-avg",
+                210.867187,
+                "Propensity to Unsubscribe",
+                api_c.UNSUBSCRIBE,
+                "21.7.30",
+            ],
+            api_c.JOIN_KEYS: ["21.7.30"],
+        },
+        {
+            api_c.FEATURES: [
+                "2021-07-31",
+                "1to2y-COGS-sum",
+                364.695312,
+                "Propensity to Unsubscribe",
+                api_c.UNSUBSCRIBE,
+                "21.7.31",
+            ],
+            api_c.JOIN_KEYS: ["21.7.31"],
+        },
+    ]
+}
 
 CUSTOMER_INSIGHTS_COUNT_BY_DAY_RESPONSE = {
     "code": 200,
