@@ -131,7 +131,28 @@ class ModelVersionView(SwaggerView):
             Tuple[List[dict], int]: dict of model versions and http code
 
         """
-        version_history = tecton.get_model_version_history(model_id)
+
+        # TODO Remove once Propensity to Purchase info can be retrieved from tecton
+        if int(model_id) == 3:
+            version_history = [
+                {
+                    api_c.ID: model_id,
+                    api_c.LAST_TRAINED: datetime(2021, 6, 24 + i),
+                    api_c.DESCRIPTION: "Propensity of a customer making a purchase"
+                    " after receiving an email.",
+                    api_c.FULCRUM_DATE: datetime(2021, 6, 24 + i),
+                    api_c.LOOKBACK_WINDOW: 90,
+                    api_c.NAME: "Propensity to Purchase",
+                    api_c.OWNER: "Susan Miller",
+                    api_c.STATUS: api_c.STATUS_ACTIVE,
+                    api_c.CURRENT_VERSION: f"22.8.3{i}",
+                    api_c.PREDICTION_WINDOW: 90,
+                }
+                for i in range(3)
+            ]
+
+        else:
+            version_history = tecton.get_model_version_history(model_id)
 
         # sort by version
         if version_history:
