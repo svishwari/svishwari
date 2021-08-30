@@ -43,6 +43,7 @@ class Singleton:
     def __instancecheck__(self, inst):
         return isinstance(inst, self._decorated)
 
+
 # pylint: disable=no-self-use, assigning-non-slot
 @Singleton
 class PrometheusClient:
