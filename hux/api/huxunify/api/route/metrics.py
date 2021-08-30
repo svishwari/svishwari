@@ -23,7 +23,7 @@ def before_request():
     """Protect all of the metrics endpoints."""
     pass  # pylint: disable=unnecessary-pass
 
-
+# pylint: disable=no-self-use
 @add_view_to_blueprint(metrics_bp, api_c.METRICS_ENDPOINT, "MetricsView")
 class MetricsView(SwaggerView):
     """
@@ -43,6 +43,7 @@ class MetricsView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.METRICS]
 
+    # pylint: disable=no-member
     def get(self) -> Response:
         """Retrieves plain text metrics for prometheus consumption
 

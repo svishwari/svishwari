@@ -97,7 +97,7 @@ def create_app() -> Flask:
 
     return flask_app
 
-
+# pylint: disable=no-member
 if __name__ == "__main__":
     from argparse import ArgumentParser
 
