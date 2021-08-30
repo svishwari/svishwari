@@ -79,6 +79,11 @@ POPULATION_PERCENTAGE = "population_percentage"
 INCOME = "income"
 CDP_SERVICE_URL = "CDP_SERVICE_URL"
 COUNT = "count"
+AVG_SPENT_WOMEN = "avg_spent_women"
+AVG_SPENT_MEN = "avg_spent_men"
+AVG_SPENT_OTHER = "avg_spent_other"
+YEAR = "year"
+MONTH = "month"
 # TODO: Remove State Names once it connected with CDM
 STATE_NAMES = {
     "AL": "Alabama",
@@ -646,6 +651,24 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
             ],
         }
     ]
+}
+
+START_DATE_PARAMS = {
+    "name": START_DATE,
+    "description": "Start date.",
+    "type": "string",
+    "in": "query",
+    "required": True,
+    "example": "2021-04-01",
+}
+
+END_DATE_PARAMS = {
+    "name": END_DATE,
+    "description": "End date.",
+    "type": "string",
+    "in": "query",
+    "required": True,
+    "example": "2021-08-01",
 }
 
 # IDR Fields
