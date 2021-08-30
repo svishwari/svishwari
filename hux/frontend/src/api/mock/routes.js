@@ -390,7 +390,7 @@ export const defineRoutes = (server) => {
 
   server.get("/customers-insights/geo", () => mapData)
 
-  server.post("/customers-insights/demo", () => demographicsData)
+  server.get("/customers-insights/demo", () => demographicsData)
 
   server.get("/customers-insights/total", () => totalCustomersData)
 

@@ -39,7 +39,7 @@ client["customers"].geoCities = (batchNumber, batchSize, data) => {
 }
 
 client["customers"].demographics = (data) => {
-  return http.post("/customers-insights/demo", data)
+  return http.get("/customers-insights/demo", data)
 }
 
 client["customers"].geoCountries = (data) => {
@@ -191,7 +191,7 @@ client["audiences"].getRules = () => {
 
 client["audiences"].demographics = (data) => {
   // TODO: replace with audienceId specific endpoint once available
-  return http.post("/customers-insights/demo", data)
+  return http.get("/customers-insights/demo", data)
 }
 
 client["audiences"].deliver = (resourceId, data) => {
