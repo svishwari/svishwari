@@ -116,7 +116,8 @@ class AudienceDownloadsTest(TestCase):
         ).start()
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{self.audience[db_c.ID]}/{api_c.GOOGLE_ADS}",
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
+            f"{self.audience[db_c.ID]}/{api_c.GOOGLE_ADS}",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -141,7 +142,8 @@ class AudienceDownloadsTest(TestCase):
         ).start()
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{self.audience[db_c.ID]}/{api_c.AMAZON_ADS}",
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
+            f"{self.audience[db_c.ID]}/{api_c.AMAZON_ADS}",
             headers=t_c.STANDARD_HEADERS,
         )
 
