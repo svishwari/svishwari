@@ -80,7 +80,7 @@ class AudienceDownload(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     @get_user_name()
     def get(
         self, audience_id: str, download_type: str, user_name: str

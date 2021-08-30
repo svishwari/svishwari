@@ -109,8 +109,6 @@ class CdpDataSourcesTest(TestCase):
 
         """
 
-        is_multiple = True
-
         valid_response = self.data_sources
 
         response = self.test_client.get(

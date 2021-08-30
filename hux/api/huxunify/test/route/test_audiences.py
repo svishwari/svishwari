@@ -2,23 +2,19 @@
 Purpose of this file is to house audience related tests
 """
 
-import json
 from http import HTTPStatus
 from unittest import TestCase, mock
 
 import mongomock
-import pandas as pd
 import requests_mock
 from huxunifylib.connectors.connector_cdp import ConnectorCDP
 
-from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.orchestration_management import create_audience
 
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
-from huxunify.api.schema.cdp_data_source import CdpDataSourceSchema
 from huxunify.app import create_app
 
 
