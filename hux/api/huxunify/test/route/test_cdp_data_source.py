@@ -182,7 +182,9 @@ class CdpDataSourcesTest(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(t_c.validate_schema(CdpDataSourceSchema(), response.json))
+        self.assertTrue(
+            t_c.validate_schema(CdpDataSourceSchema(), response.json)
+        )
         self.assertDictContainsSubset(valid_response, response.json)
 
     def test_get_data_source_by_id_invalid_id(self):

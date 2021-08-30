@@ -63,10 +63,12 @@ class AudienceDownloadsTest(TestCase):
         request_mocker = requests_mock.Mocker()
         request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
         request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
-        request_mocker.get(t_c.CDM_HEALTHCHECK_CALL, json=t_c.CDM_HEALTHCHECK_RESPONSE)
+        request_mocker.get(
+            t_c.CDM_HEALTHCHECK_CALL, json=t_c.CDM_HEALTHCHECK_RESPONSE
+        )
         request_mocker.post(
             f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/audience",
-            json=t_c.CUSTOMER_PROFILE_AUDIENCES_RESPONSE
+            json=t_c.CUSTOMER_PROFILE_AUDIENCES_RESPONSE,
         )
         request_mocker.start()
 
@@ -109,7 +111,8 @@ class AudienceDownloadsTest(TestCase):
         """
         # mock read_batches() in ConnectorCDP class to a return a test generator
         mock.patch.object(
-            ConnectorCDP, "read_batches",
+            ConnectorCDP,
+            "read_batches",
             return_value=t_c.dataframe_generator(
                 api_c.GOOGLE_ADS,
                 list(api_c.DOWNLOAD_TYPES[api_c.GOOGLE_ADS].keys()),
@@ -133,7 +136,8 @@ class AudienceDownloadsTest(TestCase):
         """
         # mock read_batches() in ConnectorCDP class to a return a test generator
         mock.patch.object(
-            ConnectorCDP, "read_batches",
+            ConnectorCDP,
+            "read_batches",
             return_value=t_c.dataframe_generator(
                 api_c.AMAZON_ADS,
                 list(api_c.DOWNLOAD_TYPES[api_c.AMAZON_ADS].keys()),

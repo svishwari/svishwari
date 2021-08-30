@@ -57,22 +57,22 @@ CDM_HEALTHCHECK_CALL = f"{TEST_CONFIG.CDP_SERVICE}/healthcheck"
 CUSTOMER_PROFILE_API = f"{TEST_CONFIG.CDP_SERVICE}"
 
 CDM_HEALTHCHECK_RESPONSE = {
-  "code": 200,
-  "status": "success",
-  "message": "ok",
-  "hostname": "localhost",
-  "timestamp": time.time(),
-  "environment": "Development",
-  "body": [
-    {
-      "checker": "check_snowflake_connection",
-      "output": "Snowflake up and running.",
-      "passed": True,
-      "timestamp": time.time(),
-      "expires": time.time()+3600,
-      "response_time": 0.012
-    }
-  ]
+    "code": 200,
+    "status": "success",
+    "message": "ok",
+    "hostname": "localhost",
+    "timestamp": time.time(),
+    "environment": "Development",
+    "body": [
+        {
+            "checker": "check_snowflake_connection",
+            "output": "Snowflake up and running.",
+            "passed": True,
+            "timestamp": time.time(),
+            "expires": time.time() + 3600,
+            "response_time": 0.012,
+        }
+    ],
 }
 
 CUSTOMER_PROFILE_AUDIENCES_RESPONSE = {
