@@ -480,7 +480,6 @@ class TestDeliveryRoutes(TestCase):
             f"{t_c.BASE_ENDPOINT}/{api_c.AUDIENCES}/{audience_id}/deliver",
             headers=t_c.STANDARD_HEADERS,
         )
-        print(f"Response: {response.json}")
 
         valid_response = {"message": "Audience does not exist."}
 
