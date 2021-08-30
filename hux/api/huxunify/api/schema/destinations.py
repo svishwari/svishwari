@@ -327,7 +327,7 @@ class QualtricsAuthCredsSchema(Schema):
     qualtrics_data_center = fields.String(
         required=True,
         validate=must_not_be_blank,
-        example="feiwygfewyfg  iuqef",
+        example="feiwygfewyfgiuqef",
     )
     qualtrics_owner_id = fields.String(
         required=True,
