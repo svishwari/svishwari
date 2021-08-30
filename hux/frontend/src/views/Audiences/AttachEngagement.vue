@@ -212,7 +212,7 @@
                       class=""
                       :label="selectedStartDate"
                       :selected="selectedStartDate"
-                      @on-date-select="(val) => (selectedStartDate = val)"
+                      @on-date-select="onStartDateSelect"
                     />
                   </div>
                   <icon class="ml-1 mt-9 mr-2" type="arrow" :size="28" />
@@ -227,7 +227,7 @@
                       :label="selectedEndDate"
                       :selected="selectedEndDate"
                       :is-sub-menu="true"
-                      :min-date="selectedStartDate"
+                      :min-date="endMinDate"
                       @on-date-select="(val) => (selectedEndDate = val)"
                     />
                   </div>
@@ -331,7 +331,7 @@ export default {
   data() {
     return {
       localDrawer: this.value,
-      toggleSortIcon: false,
+      toggleSortIcon: true,
       engagements: [],
       loading: false,
       viewStep: 1,
@@ -347,6 +347,9 @@ export default {
       selectedStartDate: "Select date",
       selectedEndDate: "Select date",
       schedule: JSON.parse(JSON.stringify(deliverySchedule())),
+      endMinDate: new Date(
+        new Date().getTime() - new Date().getTimezoneOffset() * 60000
+      ).toISOString(),
     }
   },
 
@@ -374,23 +377,32 @@ export default {
     },
   },
 
-  async mounted() {
-    this.loading = true
-    await this.fetchEngagements()
-    this.engagements = JSON.parse(
-      JSON.stringify(this.$store.getters["engagements/list"])
-    )
-    this.sortEngagements()
-    this.loading = false
-  },
-
   methods: {
     ...mapActions({
       fetchEngagements: "engagements/getAll",
       addEngagementToDB: "engagements/add",
     }),
+    async fetchDependencies() {
+      this.loading = true
+      await this.fetchEngagements()
+      this.engagements = JSON.parse(
+        JSON.stringify(this.$store.getters["engagements/list"])
+      )
+      this.sortEngagements()
+      this.loading = false
+    },
+    onStartDateSelect(val) {
+      this.selectedStartDate = val
+      this.selectedEndDate = null
+      this.endMinDate = val
+    },
     resetSchedule() {
       this.schedule = JSON.parse(JSON.stringify(deliverySchedule()))
+      this.endMinDate = new Date(
+        new Date().getTime() - new Date().getTimezoneOffset() * 60000
+      ).toISOString()
+      this.selectedStartDate = "Select date"
+      this.selectedEndDate = "Select date"
     },
     isEngagementSelected: function (engagement) {
       return (
@@ -490,7 +502,7 @@ export default {
   box-shadow: none !important;
 }
 .new-engament-wrap {
-  height: 600px;
+  height: 650px;
   .delivery-options {
     ::v-deep button {
       background: var(--v-white-base);
@@ -550,6 +562,7 @@ export default {
     }
   }
   .delivery-schedule {
+    margin: 0;
     .hux-date-picker {
       ::v-deep .main-button {
         margin-left: 0px !important;

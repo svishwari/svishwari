@@ -11,7 +11,9 @@
         </div>
       </template>
       <template #right>
-        <v-icon size="22" color="lightGrey" class="mr-2">mdi-refresh</v-icon>
+        <v-icon size="22" color="primary" class="mr-2" @click="refreshEntity()">
+          mdi-refresh
+        </v-icon>
         <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-pencil
         </v-icon>
@@ -163,6 +165,7 @@
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
       @onCreate="onCreated()"
+      @onError="onError($event)"
     />
   </div>
 </template>
@@ -292,7 +295,12 @@ export default {
       getAudiencePerformanceById: "engagements/getAudiencePerformance",
       getEngagementById: "engagements/get",
     }),
-
+    async refreshEntity() {
+      this.loading = true
+      this.$root.$emit("refresh-notifications")
+      await this.loadEngagement(this.engagementId)
+      this.loading = false
+    },
     // Drawer Section Starts
     closeDrawers() {
       this.showSelectAudiencesDrawer = false
@@ -432,6 +440,7 @@ export default {
             destination["status"] = destination.latest_delivery.status
             destination["size"] = destination.latest_delivery.size
             destination["update_time"] = destination.latest_delivery.update_time
+            destination["match_rate"] = destination.latest_delivery.match_rate
           }
           return destination
         })
@@ -463,9 +472,9 @@ export default {
                 id: engagementId,
                 audienceId: event.data.id,
               })
-              this.dataPendingMesssage(event.data.name, "engagement")
+              this.dataPendingMesssage(event, "audience")
             } catch (error) {
-              this.dataErrorMesssage(event.data.name, "engagement")
+              this.dataErrorMesssage(event, "audience")
               handleError(error)
               throw error
             }
@@ -489,12 +498,17 @@ export default {
         this.selectedAudienceId = event.parent.id
         switch (event.target.title.toLowerCase()) {
           case "deliver now":
-            await this.deliverAudienceDestination({
-              id: engagementId,
-              audienceId: this.selectedAudienceId,
-              destinationId: event.data.id,
-            })
-            this.dataPendingMesssage(event.data.name, "audience")
+            try {
+              await this.deliverAudienceDestination({
+                id: engagementId,
+                audienceId: this.selectedAudienceId,
+                destinationId: event.data.id,
+              })
+              this.dataPendingMesssage(event, "destination")
+            } catch (error) {
+              this.dataErrorMesssage(event, "destination")
+              console.error(error)
+            }
             break
           case "edit delivery schedule":
             this.showConfirmModal = true
@@ -515,23 +529,38 @@ export default {
             break
         }
       } catch (error) {
-        this.dataErrorMesssage(event.data.name, "audience")
         handleError(error)
         throw error
       }
     },
 
     //Alert Message
-    dataPendingMesssage(name) {
+    dataPendingMesssage(event, value) {
       this.alert.type = "Pending"
       this.alert.title = ""
-      this.alert.message = `Your audience, '${name}' , has started delivering.`
+      if (value == "audience") {
+        const engagementName = this.engagementList.name
+        const audienceName = event.data.name
+        this.alert.message = `Your audience '${audienceName}', has started delivering as part of the engagement '${engagementName}'.`
+      } else if (value == "destination") {
+        const audienceName = event.parent.name
+        const destinationName = event.data.name
+        this.alert.message = `Your audience '${audienceName}', has started delivering to '${destinationName}'.`
+      }
       this.flashAlert = true
     },
-    dataErrorMesssage(name) {
+    dataErrorMesssage(event, value) {
       this.alert.type = "error"
       this.alert.title = "OH NO!"
-      this.alert.message = `Failed to schedule a delivery for '${name}'`
+      if (value == "audience") {
+        const engagementName = this.engagementList.name
+        const audienceName = event.data.name
+        this.alert.message = `Failed to schedule a delivery of your audience '${audienceName}', from '${engagementName}'.`
+      } else if (value == "destination") {
+        const audienceName = event.parent.name
+        const destinationName = event.data.name
+        this.alert.message = `Failed to schedule delivery of your audience '${audienceName}', to '${destinationName}'.`
+      }
       this.flashAlert = true
     },
 
@@ -551,6 +580,12 @@ export default {
     onCreated() {
       this.lookalikeCreated = true
       this.alert.message = "Lookalike created successfully"
+      this.flashAlert = true
+    },
+    onError(message) {
+      this.alert.type = "error"
+      this.alert.title = "OH NO!"
+      this.alert.message = message
       this.flashAlert = true
     },
   },

@@ -5,7 +5,9 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <v-icon size="22" color="lightGrey" class="mr-2"> mdi-refresh </v-icon>
+        <v-icon size="22" color="primary" class="mr-2" @click="refreshEntity()">
+          mdi-refresh
+        </v-icon>
 
         <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-plus-circle-multiple-outline
@@ -51,6 +53,7 @@
         class="ma-2 audience-summary original-audience"
         :grow="0"
         :title="'Original Audience'"
+        :height="75"
       >
         <template #subtitle-extended>
           <span class="mr-2 pt-2">
@@ -65,9 +68,10 @@
         class="ma-2 audience-summary"
         :grow="0"
         :title="'Original • Actual size'"
+        :height="75"
       >
         <template #subtitle-extended>
-          <span class="mr-2">
+          <span class="mr-2 pt-2">
             <span class="neroBlack--text font-weight-semi-bold">
               <size :value="audience.size" /> &bull;
               <size :value="audience.size" />
@@ -226,7 +230,7 @@
     <v-row class="px-15 mt-2">
       <v-col md="7">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+          <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
                 Demographic Overview
@@ -239,7 +243,7 @@
       </v-col>
       <v-col md="5">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+          <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5"> United States </span>
             </div>
@@ -251,42 +255,64 @@
     </v-row>
     <v-row class="px-15 mt-2">
       <v-col md="3">
-        <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
-          <v-card-title class="chart-style pb-0 pl-5 pt-5">
+        <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
+          <v-progress-linear
+            v-if="loadingDemographics"
+            :active="loadingDemographics"
+            :indeterminate="loadingDemographics"
+          />
+          <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
                 Top location &amp; Income
               </span>
             </div>
           </v-card-title>
-          <income-chart />
+          <income-chart
+            v-if="!loadingDemographics"
+            :data="demographicsData.income"
+          />
         </v-card>
       </v-col>
       <v-col md="6">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="290">
+          <v-progress-linear
+            v-if="loadingDemographics"
+            :active="loadingDemographics"
+            :indeterminate="loadingDemographics"
+          />
+          <v-card-title v-if="!loadingDemographics" class="pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
-                Gender / monthly spending in 2021
+                Gender &sol; monthly spending in 2021
               </span>
             </div>
           </v-card-title>
-          <gender-spend-chart />
+          <gender-spend-chart
+            v-if="!loadingDemographics"
+            :data="demographicsData.spend"
+          />
         </v-card>
       </v-col>
       <v-col md="3">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="290">
+          <v-progress-linear
+            v-if="loadingDemographics"
+            :active="loadingDemographics"
+            :indeterminate="loadingDemographics"
+          />
+          <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5"> Gender </span>
             </div>
           </v-card-title>
-          <doughnut-chart
-            :width="250"
-            :height="200"
-            :data="genderChartData"
-            label="Gender"
-          />
+          <div v-if="!loadingDemographics" ref="genderChart">
+            <doughnut-chart
+              :chart-dimensions="genderChartDimensions"
+              :data="genderChartData"
+              label="Gender"
+            />
+          </div>
         </v-card>
       </v-col>
     </v-row>
@@ -349,6 +375,7 @@
       :selected-audience="audience"
       @onBack="reloadAudienceData()"
       @onCreate="lookalikeCreated = true"
+      @onError="onError($event)"
     />
 
     <delivery-history-drawer
@@ -370,13 +397,12 @@ import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import DeliveryOverview from "@/components/DeliveryOverview.vue"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
-import genderData from "@/components/common/DoughnutChart/genderData.json"
 import HuxAlert from "@/components/common/HuxAlert.vue"
 import Icon from "@/components/common/Icon.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart.vue"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
 import MapChart from "@/components/common/MapChart/MapChart"
-import mapData from "@/components/common/MapChart/mapData.json"
+import mapData from "@/components/common/MapChart/mapData.js"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import MetricCard from "@/components/common/MetricCard.vue"
@@ -422,7 +448,7 @@ export default {
   },
   data() {
     return {
-      mapChartData: mapData.demographic_overview,
+      mapChartData: mapData,
       showLookAlikeDrawer: false,
       lookalikeCreated: false,
       audienceHistory: [],
@@ -446,6 +472,7 @@ export default {
       ],
       loading: false,
       loadingRelationships: false,
+      loadingDemographics: true,
       flashAlert: false,
       alert: {
         type: "success",
@@ -487,26 +514,6 @@ export default {
         { value: "lifetime", icon: "lifetime" },
         { value: "churn", icon: "churn" },
       ],
-      genderChartData: [
-        {
-          label: "Men",
-          population_percentage:
-            genderData.gender.gender_men.population_percentage,
-          size: genderData.gender.gender_men.size,
-        },
-        {
-          label: "Women",
-          population_percentage:
-            genderData.gender.gender_women.population_percentage,
-          size: genderData.gender.gender_women.size,
-        },
-        {
-          label: "Other",
-          population_percentage:
-            genderData.gender.gender_other.population_percentage,
-          size: genderData.gender.gender_other.size,
-        },
-      ],
       selectedEngagements: [],
       selectedDestinations: [],
       showDeliveryHistoryDrawer: false,
@@ -523,12 +530,17 @@ export default {
         delivery_platform_type: null,
         id: null,
       },
+      genderChartDimensions: {
+        width: 269,
+        height: 200,
+      },
     }
   },
   computed: {
     ...mapGetters({
       getAudience: "audiences/audience",
       getAudienceInsights: "audiences/insights",
+      demographicsData: "audiences/demographics",
     }),
     audience() {
       return this.getAudience(this.$route.params.id)
@@ -538,6 +550,32 @@ export default {
     },
     audienceInsights() {
       return this.getAudienceInsights(this.audienceId)
+    },
+
+    genderChartData() {
+      if (this.demographicsData.gender) {
+        return [
+          {
+            label: "Men",
+            population_percentage:
+              this.demographicsData.gender.gender_men.population_percentage,
+            size: this.demographicsData.gender.gender_men.size,
+          },
+          {
+            label: "Women",
+            population_percentage:
+              this.demographicsData.gender.gender_women.population_percentage,
+            size: this.demographicsData.gender.gender_women.size,
+          },
+          {
+            label: "Other",
+            population_percentage:
+              this.demographicsData.gender.gender_other.population_percentage,
+            size: this.demographicsData.gender.gender_other.size,
+          },
+        ]
+      }
+      return []
     },
     showLookalike() {
       return !this.is_lookalike &&
@@ -624,8 +662,16 @@ export default {
       }
     },
   },
+  created() {
+    window.addEventListener("resize", this.sizeHandler)
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.sizeHandler)
+  },
   async mounted() {
+    this.sizeHandler()
     await this.loadAudienceInsights()
+    this.fetchDemographics()
   },
   methods: {
     ...mapActions({
@@ -637,12 +683,25 @@ export default {
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
       attachAudienceDestination: "engagements/attachAudienceDestination",
       detachAudienceDestination: "engagements/detachAudienceDestination",
+      getDemographics: "audiences/getDemographics",
     }),
+
+    async fetchDemographics() {
+      this.loadingDemographics = true
+      await this.getDemographics()
+      this.loadingDemographics = false
+    },
+
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
     },
     getColorCode(name) {
       return generateColor(name, 30, 60) + " !important"
+    },
+
+    async refreshEntity() {
+      this.$root.$emit("refresh-notifications")
+      await this.loadAudienceInsights()
     },
 
     /**
@@ -720,7 +779,7 @@ export default {
             })
             this.dataPendingMesssage(event.data.name, "engagement")
           } catch (error) {
-            this.dataErrorMesssage(event.data.name)
+            this.dataErrorMesssage(event, "engagement")
             console.error(error)
           }
           break
@@ -744,12 +803,17 @@ export default {
       try {
         switch (event.target.title.toLowerCase()) {
           case "deliver now":
-            await this.deliverAudienceDestination({
-              id: event.parent.id,
-              audienceId: this.audienceId,
-              destinationId: event.data.id,
-            })
-            this.dataPendingMesssage(event.data.name, "audience")
+            try {
+              await this.deliverAudienceDestination({
+                id: event.parent.id,
+                audienceId: this.audienceId,
+                destinationId: event.data.id,
+              })
+              this.dataPendingMesssage(event, "destination")
+            } catch (error) {
+              this.dataErrorMesssage(event, "destination")
+              console.error(error)
+            }
             break
           case "edit delivery schedule":
             this.engagementId = event.parent.id
@@ -771,27 +835,37 @@ export default {
             break
         }
       } catch (error) {
-        this.dataErrorMesssage(event.data.name)
         console.error(error)
       }
     },
 
     //Alert Message
-    dataPendingMesssage(name, value) {
+    dataPendingMesssage(event, value) {
       this.alert.type = "Pending"
       this.alert.title = ""
       if (value == "engagement") {
-        this.alert.message = `Your audience, '${this.audience.name}', has started delivering as part of the engagement, '${name}'.`
-      } else {
-        this.alert.message = `Your audience, '${name}' , has started delivering.`
+        const engagementName = event.data.name
+        const audienceName = this.audience.name
+        this.alert.message = `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`
+      } else if (value == "destination") {
+        const engagementName = event.parent.name
+        const destinationName = event.data.name
+        this.alert.message = `Your engagement '${engagementName}', has started delivering to '${destinationName}'.`
       }
-
       this.flashAlert = true
     },
-    dataErrorMesssage(name) {
+    dataErrorMesssage(event, value) {
       this.alert.type = "error"
       this.alert.title = "OH NO!"
-      this.alert.message = `Failed to schedule a delivery for ${name}`
+      if (value == "engagement") {
+        const engagementName = event.data.name
+        const audienceName = this.audience.name
+        this.alert.message = `Failed to schedule a delivery of your engagement '${engagementName}', from '${audienceName}'.`
+      } else if (value == "destination") {
+        const engagementName = event.parent.name
+        const destinationName = event.data.name
+        this.alert.message = `Failed to schedule delivery of your engagement '${engagementName}', to '${destinationName}'.`
+      }
       this.flashAlert = true
     },
 
@@ -889,6 +963,18 @@ export default {
       this.mapInsights()
       this.getDestinations()
       this.loading = false
+    },
+    onError(message) {
+      this.alert.type = "error"
+      this.alert.title = "OH NO!"
+      this.alert.message = message
+      this.flashAlert = true
+    },
+    sizeHandler() {
+      if (this.$refs.genderChart) {
+        this.genderChartDimensions.width = this.$refs.genderChart.clientWidth
+        this.genderChartDimensions.height = 200
+      }
     },
   },
 }

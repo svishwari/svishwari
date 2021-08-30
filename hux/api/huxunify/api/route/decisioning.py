@@ -5,8 +5,7 @@ from datetime import datetime
 from http import HTTPStatus
 from typing import Tuple, List
 
-from flask import Blueprint, jsonify
-from flask_apispec import marshal_with
+from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 from huxunifylib.database.cache_management import (
     create_cache_entry,
@@ -15,7 +14,6 @@ from huxunifylib.database.cache_management import (
 
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
-    handle_api_exception,
     secured,
     api_error_handler,
     get_db_client,
@@ -23,7 +21,9 @@ from huxunify.api.route.utils import (
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
-    DriftSchema,
+    ModelDriftSchema,
+    ModelDriftPostSchema,
+    ModelLiftSchema,
     ModelDashboardSchema,
     FeatureSchema,
 )
@@ -131,7 +131,28 @@ class ModelVersionView(SwaggerView):
             Tuple[List[dict], int]: dict of model versions and http code
 
         """
-        version_history = tecton.get_model_version_history(model_id)
+
+        # TODO Remove once Propensity to Purchase info can be retrieved from tecton
+        if int(model_id) == 3:
+            version_history = [
+                {
+                    api_c.ID: model_id,
+                    api_c.LAST_TRAINED: datetime(2021, 6, 24 + i),
+                    api_c.DESCRIPTION: "Propensity of a customer making a purchase"
+                    " after receiving an email.",
+                    api_c.FULCRUM_DATE: datetime(2021, 6, 24 + i),
+                    api_c.LOOKBACK_WINDOW: 90,
+                    api_c.NAME: "Propensity to Purchase",
+                    api_c.OWNER: "Susan Miller",
+                    api_c.STATUS: api_c.STATUS_ACTIVE,
+                    api_c.CURRENT_VERSION: f"22.8.3{i}",
+                    api_c.PREDICTION_WINDOW: 90,
+                }
+                for i in range(3)
+            ]
+
+        else:
+            version_history = tecton.get_model_version_history(model_id)
 
         # sort by version
         if version_history:
@@ -189,65 +210,40 @@ class ModelOverview(SwaggerView):
         """
         model_id = int(model_id)
 
-        output = {
-            api_c.MODEL_ID: model_id,
-            api_c.MODEL_TYPE: api_c.SUPPORTED_MODELS[model_id][
-                api_c.MODEL_TYPE
-            ],
-            api_c.MODEL_NAME: api_c.SUPPORTED_MODELS[model_id][api_c.NAME],
-            api_c.DESCRIPTION: api_c.SUPPORTED_MODELS[model_id][
-                api_c.DESCRIPTION
-            ],
-            api_c.PERFORMANCE_METRIC: {
-                api_c.AUC: api_c.SUPPORTED_MODELS[model_id][api_c.AUC],
-                api_c.PRECISION: api_c.SUPPORTED_MODELS[model_id][
-                    api_c.PRECISION
-                ],
-                api_c.RECALL: api_c.SUPPORTED_MODELS[model_id][api_c.RECALL],
-                api_c.CURRENT_VERSION: api_c.SUPPORTED_MODELS[model_id][
-                    api_c.CURRENT_VERSION
-                ],
-                api_c.RMSE: api_c.SUPPORTED_MODELS[model_id][api_c.RMSE],
-            },
-            api_c.LIFT_DATA: [
-                {
-                    api_c.BUCKET: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.BUCKET][x],
-                    api_c.PREDICTED_VALUE: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.PREDICTED_VALUE][x],
-                    api_c.ACTUAL_VALUE: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.ACTUAL_VALUE][x],
-                    api_c.PROFILE_COUNT: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.PROFILE_COUNT][x],
-                    api_c.PREDICTED_RATE: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.PREDICTED_RATE][x],
-                    api_c.ACTUAL_RATE: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.ACTUAL_RATE][x],
-                    api_c.PREDICTED_LIFT: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.PREDICTED_LIFT][x],
-                    api_c.ACTUAL_LIFT: api_c.SUPPORTED_MODELS[model_id][
-                        api_c.LIFT_DATA
-                    ][api_c.ACTUAL_LIFT][x],
-                    api_c.PROFILE_SIZE_PERCENT: api_c.SUPPORTED_MODELS[
-                        model_id
-                    ][api_c.LIFT_DATA][api_c.PROFILE_SIZE_PERCENT][x],
-                }
-                for x in range(10)
-            ],
+        # get model information
+        model_versions = tecton.get_model_version_history(model_id)
+
+        # if model versions not found, return not found.
+        if not model_versions:
+            return {}, HTTPStatus.NOT_FOUND
+
+        # take the latest model
+        latest_model = model_versions[-1]
+
+        # generate the output
+        overview_data = {
+            api_c.MODEL_ID: latest_model[api_c.ID],
+            api_c.MODEL_TYPE: latest_model[api_c.TYPE],
+            api_c.MODEL_NAME: latest_model[api_c.NAME],
+            api_c.DESCRIPTION: latest_model[api_c.DESCRIPTION],
+            # get the performance metrics for a given model
+            api_c.PERFORMANCE_METRIC: tecton.get_model_performance_metrics(
+                model_id,
+                latest_model[api_c.TYPE],
+                latest_model[api_c.CURRENT_VERSION],
+            ),
         }
-        return ModelDashboardSchema().dump(output), HTTPStatus.OK
+
+        # dump schema and return to client.
+        return (
+            ModelDashboardSchema().dump(overview_data),
+            HTTPStatus.OK,
+        )
 
 
 @add_view_to_blueprint(
     model_bp,
-    f"{api_c.MODELS_ENDPOINT}/<name>/drift",
+    f"{api_c.MODELS_ENDPOINT}/<model_id>/drift",
     "ModelDriftView",
 )
 class ModelDriftView(SwaggerView):
@@ -255,20 +251,31 @@ class ModelDriftView(SwaggerView):
     Model Drift Class
     """
 
-    parameters = api_c.MODEL_NAME_PARAMS
+    parameters = [
+        api_c.MODEL_ID_PARAMS[0],
+        {
+            "name": "body",
+            "description": "Model type",
+            "type": "object",
+            "in": "body",
+            "example": {api_c.MODEL_TYPE: "ltv"},
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model drift.",
-            "schema": {"type": "array", "items": DriftSchema},
+            "schema": {"type": "array", "items": ModelDriftSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to fetch drift data",
         },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    @marshal_with(DriftSchema(many=True))
     @api_error_handler()
-    def get(self, name: str) -> Tuple[List[dict], int]:
+    def post(self, model_id: int) -> Tuple[List[dict], int]:
         """Retrieves model drift details.
 
         ---
@@ -276,19 +283,19 @@ class ModelDriftView(SwaggerView):
             - Bearer: [Authorization]
 
         Args:
-            name (str): model name
+            model_id (int): model id.
 
         Returns:
             Tuple[List[dict], int]: dict of model drift and http code
 
         """
-        try:
-            return tecton.get_model_drift(name), HTTPStatus.OK.value
+        body = ModelDriftPostSchema().load(request.get_json())
+        drift_data = tecton.get_model_drift(model_id, body[api_c.MODEL_TYPE])
 
-        except Exception as exc:
-            raise handle_api_exception(
-                exc, "Unable to get model drift."
-            ) from exc
+        return (
+            jsonify(ModelDriftSchema(many=True).dump(drift_data)),
+            HTTPStatus.OK.value,
+        )
 
 
 @add_view_to_blueprint(
@@ -343,28 +350,40 @@ class ModelFeaturesView(SwaggerView):
 
         """
 
-        # only use the latest version if model version is None.
-        if model_version is None:
-            # get latest version first
-            model_version = tecton.get_model_version_history(model_id)
+        # TODO: Remove once this model data becomes available and can be fetched from Tecton
+        # intercept to check if the model_id is for propensity_to_purchase
+        # to set features with stub data
+        if model_id == "3":
+            features = api_c.PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB
+        else:
+            # only use the latest version if model version is None.
+            if model_version is None:
+                # get latest version first
+                model_version = tecton.get_model_version_history(model_id)
 
-            # check if there is a model version we can grab, if so take the last one (latest).
-            model_version = (
-                model_version[-1].get(api_c.CURRENT_VERSION)
-                if model_version
-                else ""
+                # check if there is a model version we can grab, if so take the last one (latest).
+                model_version = (
+                    model_version[-1].get(api_c.CURRENT_VERSION)
+                    if model_version
+                    else ""
+                )
+
+            # check cache first
+            database = get_db_client()
+            features = get_cache_entry(
+                database, f"features.{model_id}.{model_version}"
             )
 
-        # check cache first
-        database = get_db_client()
-        features = get_cache_entry(database, f"features.{1}.{model_version}")
-
-        # if no cache, grab from Tecton and cache after.
-        if not features:
-            features = tecton.get_model_features(model_id, model_version)
-            create_cache_entry(
-                database, f"features.{1}.{model_version}", features
-            )
+            # if no cache, grab from Tecton and cache after.
+            if not features:
+                features = tecton.get_model_features(model_id, model_version)
+                # create cache entry in db only if features fetched from Tecton is not empty
+                if features:
+                    create_cache_entry(
+                        database,
+                        f"features.{model_id}.{model_version}",
+                        features,
+                    )
 
         return (
             jsonify(FeatureSchema(many=True).dump(features)),
@@ -464,5 +483,60 @@ class ModelImportanceFeaturesView(SwaggerView):
 
         return (
             jsonify(FeatureSchema(many=True).dump(features[:limit])),
+            HTTPStatus.OK.value,
+        )
+
+
+@add_view_to_blueprint(
+    model_bp,
+    f"{api_c.MODELS_ENDPOINT}/<model_id>/lift",
+    "ModelLiftView",
+)
+class ModelLiftView(SwaggerView):
+    """
+    Model Lift Class
+    """
+
+    parameters = [
+        api_c.MODEL_ID_PARAMS[0],
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Model lift chart.",
+            "schema": {"type": "array", "items": ModelLiftSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve model lift data"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.MODELS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(
+        self,
+        model_id: int,
+    ) -> Tuple[List[dict], int]:
+        """Retrieves bucket data asynchronously.
+
+        ---
+        security:
+            - Bearer: [Authorization]
+
+        Args:
+            model_id (int): model id
+
+        Returns:
+            Tuple[List[dict], int]: dict of model lift data
+
+        """
+
+        # retrieves lift data
+        lift_data = tecton.get_model_lift_async(model_id)
+        lift_data.sort(key=lambda x: x[api_c.BUCKET])
+
+        return (
+            jsonify(ModelLiftSchema(many=True).dump(lift_data)),
             HTTPStatus.OK.value,
         )

@@ -10,17 +10,12 @@
       >
         Select attribute(s) - <i class="text-caption gray--text">Optional</i>
       </strong>
-      <v-card
-        v-if="rules.length == 0"
-        tile
-        elevation="0"
-        class="mt-2 blank-section"
-      >
+      <v-card v-if="rules.length == 0" tile elevation="0" class="blank-section">
         <div class="gray--text font-weight-normal new-attribute">
           <span @click="addNewSection()">
-            <icon class="add-icon cursor-pointer" type="add" :size="30" />
+            <icon class="add-icon cursor-pointer" type="add" :size="41" />
           </span>
-          <span class="mt-1 ml-4">
+          <span class="ml-4 no-attribute">
             You have not added any attributes, yet.
           </span>
         </div>
@@ -47,7 +42,7 @@
         >
           <v-col md="10" class="pa-0">
             <div class="condition-card">
-              <div class="condition-container">
+              <div class="condition-container pl-2">
                 <div class="condition-items col-10 pa-0">
                   <hux-dropdown
                     :selected="condition.attribute"
@@ -58,7 +53,7 @@
                   <hux-dropdown
                     v-if="isText(condition)"
                     label="Select operator"
-                    :items="operatorOptions"
+                    :items="operatorOptions(condition)"
                     :selected="condition.operator"
                     @on-select="onSelect('operator', condition, $event)"
                   />
@@ -135,7 +130,7 @@
                 :size="30"
               />
             </span>
-            <span class="primary--text pl-1">New section</span>
+            <span class="primary--text pl-1 add-new">New section</span>
           </div>
         </v-col>
         <v-col md="2" class="pr-0 pl-5">
@@ -266,12 +261,7 @@ export default {
         })
       } else return []
     },
-    operatorOptions() {
-      return Object.keys(this.ruleAttributes.text_operators).map((key) => ({
-        key: key,
-        name: this.ruleAttributes.text_operators[key],
-      }))
-    },
+
     lastIndex() {
       return this.rules.length - 1
     },
@@ -286,6 +276,26 @@ export default {
     }),
     isText(condition) {
       return condition.attribute ? condition.attribute.type === "text" : false
+    },
+    operatorOptions(condition) {
+      // Filter out only two options (equals and does_not_equals) for attribute type 'gender'
+      if (condition.attribute.key === "gender") {
+        return Object.keys(this.ruleAttributes.text_operators)
+          .map((key) => {
+            if (key.includes("equal")) {
+              return {
+                key: key,
+                name: this.ruleAttributes.text_operators[key],
+              }
+            }
+          })
+          .filter(Boolean)
+      } else {
+        return Object.keys(this.ruleAttributes.text_operators).map((key) => ({
+          key: key,
+          name: this.ruleAttributes.text_operators[key],
+        }))
+      }
     },
     async triggerSizing(condition, triggerOverallSize = true) {
       condition.awaitingSize = true
@@ -429,6 +439,10 @@ export default {
     padding: 14px 16px;
     .new-attribute {
       display: flex;
+      height: 39px;
+      .no-attribute {
+        margin-top: 8px;
+      }
     }
   }
   ::v-deep .seperator {
@@ -465,6 +479,10 @@ export default {
           .hux-dropdown {
             .v-btn__content {
               color: var(--v-gray-base);
+            }
+            button {
+              margin: 0 8px 0 0 !important;
+              min-width: 170px !important;
             }
           }
           .avatar-menu {
@@ -529,6 +547,9 @@ export default {
       display: flex;
       align-items: center;
       height: 60px;
+      .add-new {
+        margin-bottom: 6px;
+      }
     }
   }
   ::v-deep .condition-summary {
@@ -544,6 +565,7 @@ export default {
     .value {
       line-height: 19px;
     }
+    width: 130px;
   }
 }
 </style>

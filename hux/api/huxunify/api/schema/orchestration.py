@@ -1,6 +1,7 @@
 """
 Schemas for the Orchestration API
 """
+import datetime
 
 from flask_marshmallow import Schema
 from marshmallow import fields, validate
@@ -65,7 +66,7 @@ class DeliveriesSchema(Schema):
     updated_by = fields.String()
     name = fields.String()
     status = fields.String()
-    size = fields.Integer(attribute=db_c.DELIVERY_PLATFORM_AUD_SIZE)
+    size = fields.Integer(attribute=db_c.DELIVERY_PLATFORM_AUD_SIZE, default=0)
     match_rate = fields.Float(default=0, example=0.21)
     delivery_platform_type = fields.String()
 
@@ -279,10 +280,19 @@ def is_audience_lookalikeable(audience: dict) -> str:
             status = api_c.STATUS_INACTIVE
 
             # TODO - HUS-815
-            if delivery.get(db_c.STATUS) in [
-                db_c.STATUS_SUCCEEDED,
-                db_c.AUDIENCE_STATUS_DELIVERED,
-            ]:
+            # add 30 min wait time before making it lookalikable
+            if (
+                delivery.get(db_c.STATUS)
+                in [
+                    db_c.STATUS_SUCCEEDED,
+                    db_c.AUDIENCE_STATUS_DELIVERED,
+                ]
+                and (
+                    datetime.datetime.utcnow() - delivery.get(db_c.UPDATE_TIME)
+                ).total_seconds()
+                / 60
+                > 30
+            ):
                 # success, break the loop and return active.
                 return api_c.STATUS_ACTIVE
     return status

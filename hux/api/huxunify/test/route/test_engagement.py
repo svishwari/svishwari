@@ -121,6 +121,15 @@ class TestEngagementMetricsDisplayAds(TestCase):
             return_value=self.database,
         ).start()
 
+        self.campaign_id = "67345634618463874"
+        self.ad_set_id = "8134731897438943"
+        self.campaign_name = "Test campaing"
+        self.ad_set_name = "Test ad set name"
+        mock.patch(
+            "huxunify.api.data_connectors.performance_metrics.get_db_client",
+            return_value=self.database,
+        ).start()
+
         self.audience_id = create_audience(self.database, "Test Audience", [])[
             db_c.ID
         ]
@@ -156,8 +165,10 @@ class TestEngagementMetricsDisplayAds(TestCase):
             self.delivery_platform[db_c.ID],
             [
                 {
-                    db_c.ENGAGEMENT_ID: self.engagement_id,
-                    db_c.AUDIENCE_ID: self.audience_id,
+                    api_c.ID: self.campaign_id,
+                    api_c.AD_SET_ID: self.ad_set_id,
+                    api_c.NAME: self.campaign_name,
+                    api_c.AD_SET_NAME: self.ad_set_name,
                 }
             ],
             self.engagement_id,
@@ -208,16 +219,27 @@ class TestEngagementMetricsDisplayAds(TestCase):
         self.assertEqual(response.json["summary"]["spend"], 14507)
         self.assertTrue(response.json["audience_performance"])
         self.assertTrue(response.json["audience_performance"][0]["id"])
-        self.assertTrue(
+        self.assertEqual(
             response.json["audience_performance"][0]["impressions"], 70487
         )
         self.assertTrue(
             response.json["audience_performance"][0]["destinations"]
         )
-        self.assertTrue(
+        self.assertEqual(
             response.json["audience_performance"][0]["destinations"][0][
                 "impressions"
             ],
+            70487,
+        )
+        self.assertTrue(
+            response.json["audience_performance"][0]["destinations"][0][
+                "campaigns"
+            ]
+        )
+        self.assertEqual(
+            response.json["audience_performance"][0]["destinations"][0][
+                "campaigns"
+            ][0]["impressions"],
             70487,
         )
 
@@ -244,7 +266,10 @@ class TestEngagementMetricsDisplayAds(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
+        valid_response = {"message": api_c.BSON_INVALID_ID(engagement_id)}
+
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     def test_display_ads_audience_performance_invalid_engagement_id(self):
         """
@@ -306,6 +331,11 @@ class TestEngagementMetricsEmail(TestCase):
         # mock get_db_client() for the engagement.
         mock.patch(
             "huxunify.api.route.engagement.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        mock.patch(
+            "huxunify.api.data_connectors.performance_metrics.get_db_client",
             return_value=self.database,
         ).start()
 
@@ -439,7 +469,10 @@ class TestEngagementMetricsEmail(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
+        valid_response = {"message": api_c.BSON_INVALID_ID(engagement_id)}
+
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     def test_email_audience_performance(self):
         """
@@ -730,7 +763,7 @@ class TestEngagementRoutes(TestCase):
         Returns:
 
         """
-        engagement_id = "random_id"
+        engagement_id = t_c.INVALID_ID
         audience_id = self.audiences[0][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
 
@@ -743,7 +776,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+        valid_response = {"message": api_c.BSON_INVALID_ID(engagement_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -757,7 +790,7 @@ class TestEngagementRoutes(TestCase):
         Returns:
 
         """
-        engagement_id = "random_id"
+        engagement_id = t_c.INVALID_ID
         audience_id = self.audiences[0][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
 
@@ -770,7 +803,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+        valid_response = {"message": api_c.BSON_INVALID_ID(engagement_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -838,7 +871,7 @@ class TestEngagementRoutes(TestCase):
         Returns:
 
         """
-        audience_id = "XYZ123"
+        audience_id = t_c.INVALID_ID
         engagement_id = self.engagement_ids[0]
         destination_id = self.destinations[0][db_c.ID]
 
@@ -851,7 +884,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+        valid_response = {"message": api_c.BSON_INVALID_ID(audience_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -866,7 +899,7 @@ class TestEngagementRoutes(TestCase):
         Returns:
 
         """
-        audience_id = "XYZ123"
+        audience_id = t_c.INVALID_ID
         engagement_id = self.engagement_ids[0]
         destination_id = self.destinations[0][db_c.ID]
 
@@ -879,7 +912,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+        valid_response = {"message": api_c.BSON_INVALID_ID(audience_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -894,7 +927,7 @@ class TestEngagementRoutes(TestCase):
         Returns:
 
         """
-        audience_id = "XYZ123"
+        audience_id = t_c.INVALID_ID
         engagement_id = self.engagement_ids[0]
         destination_id = self.destinations[0][db_c.ID]
 
@@ -907,7 +940,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+        valid_response = {"message": api_c.BSON_INVALID_ID(audience_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -924,7 +957,7 @@ class TestEngagementRoutes(TestCase):
         """
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = self.engagement_ids[0]
-        destination_id = "XYZ123"
+        destination_id = t_c.INVALID_ID
 
         response = self.app.get(
             (
@@ -951,7 +984,7 @@ class TestEngagementRoutes(TestCase):
         """
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = self.engagement_ids[0]
-        destination_id = "XYZ123"
+        destination_id = t_c.INVALID_ID
 
         response = self.app.put(
             (
@@ -981,7 +1014,7 @@ class TestEngagementRoutes(TestCase):
         """
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = self.engagement_ids[0]
-        destination_id = "XYZ123"
+        destination_id = t_c.INVALID_ID
 
         response = self.app.get(
             (
@@ -1163,14 +1196,14 @@ class TestEngagementRoutes(TestCase):
 
         """
 
-        engagement_id = "XYZ"
-
-        valid_response = {"message": api_c.INVALID_ID}
+        engagement_id = t_c.INVALID_ID
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
             headers=t_c.STANDARD_HEADERS,
         )
+
+        valid_response = {"message": api_c.BSON_INVALID_ID(engagement_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -1228,18 +1261,38 @@ class TestEngagementRoutes(TestCase):
 
         """
 
-        engagement_id = "XYZ123"
-        valid_response = {"message": api_c.INVALID_ID}
+        engagement_id = t_c.INVALID_ID
 
         response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
             headers=t_c.STANDARD_HEADERS,
         )
+        valid_response = {"message": api_c.BSON_INVALID_ID(engagement_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
-    def test_set_engagement_valid_request(self):
+    def test_delete_engagement_non_existent_id(self) -> None:
+        """Test delete engagement API with non-existent id
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        non_existent_engagement_id = str(ObjectId())
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{non_existent_engagement_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(
+            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+        )
+
+    def test_set_engagement(self):
         """
         Test set engagement API with valid params
 
@@ -1389,7 +1442,7 @@ class TestEngagementRoutes(TestCase):
 
         """
 
-        bad_engagement_id = "asdfg123456"
+        bad_engagement_id = t_c.INVALID_ID
         good_engagement_id = self.engagement_ids[0]
 
         engagement_response = self.app.get(
@@ -1412,7 +1465,10 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
+        valid_response = {"message": api_c.BSON_INVALID_ID(bad_engagement_id)}
+
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     def test_add_audience_to_engagement(self):
         """
@@ -1452,7 +1508,7 @@ class TestEngagementRoutes(TestCase):
 
         """
 
-        engagement_id = "asdfg123456"
+        engagement_id = t_c.INVALID_ID
 
         new_audience = {
             "audiences": [
@@ -1471,8 +1527,46 @@ class TestEngagementRoutes(TestCase):
             json=new_audience,
             headers=t_c.STANDARD_HEADERS,
         )
+        valid_response = {"message": api_c.BSON_INVALID_ID(engagement_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_add_audience_to_engagement_non_existent_audience_id(self):
+        """Test add audience to engagement API with non-existent audience id
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        engagement_id = self.engagement_ids[0]
+        audience_id = str(ObjectId())
+
+        new_audience = {
+            "audiences": [
+                {
+                    db_c.OBJECT_ID: audience_id,
+                    "destinations": [
+                        {db_c.OBJECT_ID: str(ObjectId())},
+                        {db_c.OBJECT_ID: str(ObjectId())},
+                    ],
+                }
+            ]
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/{api_c.AUDIENCES}",
+            json=new_audience,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(
+            {"message": f"Audience does not exist: {audience_id}"},
+            response.json,
+        )
 
     def test_delete_audience_from_engagement(self):
         """
@@ -1512,6 +1606,91 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, delete_audience_response.status_code)
+
+    def test_delete_audience_from_engagement_invalid_engagement_id(self):
+        """Test delete audience from engagement with an invalid engagement id"""
+
+        bad_engagement_id = t_c.INVALID_ID
+        good_engagement_id = self.engagement_ids[0]
+        new_audience_id = self.audiences[0][db_c.ID]
+
+        new_audience = {
+            "audiences": [
+                {
+                    db_c.OBJECT_ID: str(new_audience_id),
+                    "destinations": [
+                        {db_c.OBJECT_ID: str(ObjectId())},
+                        {db_c.OBJECT_ID: str(ObjectId())},
+                    ],
+                }
+            ]
+        }
+
+        add_audience_response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}"
+            f"/{good_engagement_id}/{api_c.AUDIENCES}",
+            json=new_audience,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, add_audience_response.status_code)
+
+        delete_audience = {"audience_ids": [str(new_audience_id)]}
+
+        delete_audience_response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{bad_engagement_id}/{api_c.AUDIENCES}",
+            json=delete_audience,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {"message": api_c.BSON_INVALID_ID(bad_engagement_id)}
+
+        self.assertEqual(
+            HTTPStatus.BAD_REQUEST, delete_audience_response.status_code
+        )
+        self.assertEqual(valid_response, delete_audience_response.json)
+
+    def test_delete_audience_from_engagement_invalid_audience_id(self):
+        """Test delete audience from engagement with an invalid audience id"""
+
+        engagement_id = self.engagement_ids[0]
+        new_audience_id = self.audiences[0][db_c.ID]
+        invalid_audience_id = t_c.INVALID_ID
+
+        new_audience = {
+            "audiences": [
+                {
+                    db_c.OBJECT_ID: str(new_audience_id),
+                    "destinations": [
+                        {db_c.OBJECT_ID: str(ObjectId())},
+                        {db_c.OBJECT_ID: str(ObjectId())},
+                    ],
+                }
+            ]
+        }
+
+        add_audience_response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/{api_c.AUDIENCES}",
+            json=new_audience,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, add_audience_response.status_code)
+
+        delete_audience = {"audience_ids": [invalid_audience_id]}
+
+        delete_audience_response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/{api_c.AUDIENCES}",
+            json=delete_audience,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {
+            "message": api_c.BSON_INVALID_ID(invalid_audience_id)
+        }
+
+        self.assertEqual(
+            HTTPStatus.BAD_REQUEST, delete_audience_response.status_code
+        )
+        self.assertEqual(valid_response, delete_audience_response.json)
 
     def test_add_destination_to_engagement_audience(self):
         """Test add destination to engagement audience"""

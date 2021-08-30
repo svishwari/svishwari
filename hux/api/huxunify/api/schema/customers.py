@@ -102,10 +102,24 @@ class CustomerOverviewSchema(Schema):
     gender_women = Float(required=True)
     gender_men = Float(required=True)
     gender_other = Float(required=True)
+    gender_men_count = Integer(required=True)
+    gender_women_count = Integer(required=True)
+    gender_other_count = Integer(required=True)
     min_ltv_predicted = Float(required=True)
     max_ltv_predicted = Float(required=True)
     min_ltv_actual = Float(required=True)
     max_ltv_actual = Float(required=True)
+
+
+class IDROverviewSchema(Schema):
+    """IDR Overview Schema"""
+
+    total_unique_ids = Integer(required=True)
+    total_unknown_ids = Integer(required=True)
+    total_known_ids = Integer(required=True)
+    total_individual_ids = Integer(required=True)
+    total_household_ids = Integer(required=True)
+    total_customers = Integer(required=True)
 
 
 class CustomersSchema(Schema):
@@ -254,6 +268,30 @@ class MatchingTrendsSchema(Schema):
     anonymous_ids = Integer(required=True, example=100000)
 
 
+class DateRangeSchema(Schema):
+    """IDR Date Range Schema"""
+
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
+    start_date = DateTimeWithZ()
+    end_date = DateTimeWithZ()
+
+
+class IDROverviewWithDateRangeSchema(Schema):
+    """IDR Overview with Date range Schema"""
+
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
+    date_range = Nested(DateRangeSchema)
+    overview = Nested(IDROverviewSchema)
+
+
 class CustomerEventCountSchema(Schema):
     """Customer Event with Count Schema"""
 
@@ -267,6 +305,8 @@ class CustomerEventCountSchema(Schema):
     customer_login = Integer(required=True, example=1)
     viewed_checkout = Integer(required=True, example=1)
     viewed_sale_item = Integer(required=True, example=1)
+    item_purchased = Integer(required=True, example=1)
+    trait_computed = Integer(required=True, example=1)
 
 
 class CustomerEventsSchema(Schema):
@@ -285,6 +325,33 @@ class TotalCustomersInsightsSchema(Schema):
 
         ordered = True
 
-    date = DateTimeWithZ(required=True)
-    total_customers = Integer(required=True, example=5)
-    new_customers_added = Integer(required=True, example=5)
+    date = DateTimeWithZ(required=True, attribute=api_c.RECORDED)
+    total_customers = Integer(
+        required=True, attribute=api_c.TOTAL_COUNT, example=5
+    )
+    new_customers_added = Integer(
+        required=True, attribute=api_c.DIFFERENCE_COUNT, example=5
+    )
+
+
+class CustomersInsightsCitiesSchema(Schema):
+    """City-level geographic customer insights schema"""
+
+    city = Str(required=True, example="New York")
+    state = Str(required=True, example="NY")
+    size = Integer(
+        attribute=api_c.CUSTOMER_COUNT, required=True, default=0, example=1234
+    )
+    spending = Float(
+        attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.231
+    )
+
+
+class CustomersInsightsStatesSchema(Schema):
+    """State-level geographic customer insights schema"""
+
+    state = Str(attribute=api_c.NAME, required=True, example="New York")
+    size = Integer(required=True, default=0, example=1234)
+    spending = Float(
+        attribute=api_c.LTV, required=True, default=0.0, example=123.2345
+    )

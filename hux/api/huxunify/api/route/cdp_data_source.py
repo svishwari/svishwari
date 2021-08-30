@@ -360,7 +360,7 @@ class BatchUpdateDataSources(SwaggerView):
         data = request.get_json()
 
         # validate fields
-        if api_c.CDP_DATA_SOURCE_IDS not in data and api_c.BODY not in data:
+        if api_c.CDP_DATA_SOURCE_IDS not in data or api_c.BODY not in data:
             logger.error(
                 "Field %s not found in request data.",
                 api_c.CDP_DATA_SOURCE_IDS,
@@ -411,7 +411,7 @@ class BatchUpdateDataSources(SwaggerView):
                 ]
                 logger.info(
                     "Successfully update data sources with data source IDs %s.",
-                    ",".join(data_source_ids),
+                    ",".join([str(x) for x in data_source_ids]),
                 )
                 return (
                     jsonify(

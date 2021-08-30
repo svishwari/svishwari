@@ -10,6 +10,7 @@ Ensure you have the complete application and services running within an
 environment and that these integration tests have access to this environment.
 
 This includes the following.
+
 - UI
 - API
 - Database

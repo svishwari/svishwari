@@ -428,8 +428,7 @@
     <v-subheader>Donut Chart</v-subheader>
     <div class="gender-chart">
       <doughnut-chart
-        :width="250"
-        :height="273"
+        :chart-dimensions="genderChartDimensions"
         :data="genderChartData"
         label="Gender"
       ></doughnut-chart>
@@ -667,7 +666,7 @@ import Size from "@/components/common/huxTable/Size.vue"
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
-import genderData from "@/components/common/DoughnutChart/genderData.json"
+import demographicsData from "@/api/mock/fixtures/demographicData.js"
 
 export default {
   name: "Components",
@@ -703,24 +702,28 @@ export default {
   },
   data() {
     return {
+      genderChartDimensions: {
+        width: 269,
+        height: 200,
+      },
       genderChartData: [
         {
           label: "Men",
           population_percentage:
-            genderData.gender.gender_men.population_percentage,
-          size: genderData.gender.gender_men.size,
+            demographicsData.gender.gender_men.population_percentage,
+          size: demographicsData.gender.gender_men.size,
         },
         {
           label: "Women",
           population_percentage:
-            genderData.gender.gender_women.population_percentage,
-          size: genderData.gender.gender_women.size,
+            demographicsData.gender.gender_women.population_percentage,
+          size: demographicsData.gender.gender_women.size,
         },
         {
           label: "Other",
           population_percentage:
-            genderData.gender.gender_other.population_percentage,
-          size: genderData.gender.gender_other.size,
+            demographicsData.gender.gender_other.population_percentage,
+          size: demographicsData.gender.gender_other.size,
         },
       ],
       DataCards: {
@@ -986,9 +989,7 @@ export default {
         {
           icon: "mdi-home-outline",
           name: "Menu Item 1",
-          action: () => {
-            console.log("menu-item-1")
-          },
+          action: () => {},
         },
         { isDivider: true },
         { icon: "mdi-bullhorn-outline", name: "Menu Item 2" },
@@ -1016,16 +1017,12 @@ export default {
         {
           icon: "mdi-tune-vertical-variant",
           name: "Menu Item 4",
-          action: () => {
-            console.log("menu-item-4")
-          },
+          action: () => {},
         },
         {
           icon: "mdi-account-details-outline",
           name: "Menu Item 5",
-          action: () => {
-            console.log("menu-item-5")
-          },
+          action: () => {},
         },
       ],
 
@@ -1291,7 +1288,6 @@ export default {
       this.labelText = newValue
     },
     onSelectMenuItem(item) {
-      console.log(item.name)
       if (this.selectedMenuItem == item.name) {
         this.selectedMenuItem = "Select a value..."
       } else {

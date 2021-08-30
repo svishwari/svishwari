@@ -3,9 +3,11 @@ Schemas for the Model Object
 """
 
 from flask_marshmallow import Schema
+from marshmallow import fields
 from marshmallow.fields import Str, Int, Float, Nested
 
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
+from huxunify.api.schema.utils import must_not_be_blank
 from huxunify.api import constants as c
 
 
@@ -56,10 +58,9 @@ class FeatureSchema(Schema):
     popularity = Int()
 
 
-class LiftSchema(Schema):
+class ModelLiftSchema(Schema):
     """Lift Schema"""
 
-    # TODO - Update as it becomes available.
     bucket = Int(example=10)
     predicted_value = Float(example=693.69)
     actual_value = Float(example=797.81)
@@ -68,15 +69,22 @@ class LiftSchema(Schema):
     actual_rate = Float(example=0.29)
     predicted_lift = Float(example=1.03)
     actual_lift = Float(example=1.53)
-    profile_size_percent = Float(example=97.16)
+    profile_size_percent = Float(example=1.16)
 
 
-class DriftSchema(Schema):
+class ModelDriftSchema(Schema):
     """Drift Schema"""
 
-    # TODO - Update as it becomes available.
-    drift = Float()
-    run_date = DateTimeWithZ()
+    drift = Float(required=True)
+    run_date = DateTimeWithZ(required=True)
+
+
+class ModelDriftPostSchema(Schema):
+    """
+    ModelDriftPostSchema.
+    """
+
+    model_type = fields.Str(required=True, validate=must_not_be_blank)
 
 
 class PerformanceMetricSchema(Schema):
@@ -87,7 +95,6 @@ class PerformanceMetricSchema(Schema):
 
         ordered = True
 
-    # TODO - Update as it becomes available.
     rmse = Float(example=350)
     auc = Float(example=0.79)
     precision = Float(example=0.82)
@@ -102,4 +109,3 @@ class ModelDashboardSchema(Schema):
     model_name = Str()
     description = Str()
     performance_metric = Nested(PerformanceMetricSchema)
-    lift_data = Nested(LiftSchema, many=True)

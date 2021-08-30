@@ -1,5 +1,12 @@
+#This tests the following endpoints:
+#GET   /models                                  Retrieves all models 
+#GET   /models/{model_id}/feature-importance    Retrieves feature-importance of a model
+#GET   /models/{model_id}/version-history       Retrieves version-history of a model
+#GET   /models/{model_id}/overview              Retrieves overview of a model
+#GET   /models/{model_id}/features              Retrieves features of a model
+
 ---
-test_name: Test get all models
+test_name: Test decisioning APIS
 
 strict:
   - json:list_any_order
@@ -8,7 +15,7 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: test get all models
+  - name: Get a model_id
 
     # Define the request to be made...
     request:
@@ -25,22 +32,20 @@ stages:
       headers:
         content-type: application/json
       json:
-        !anylist
-        - "id": !anyint
-        - "name": !anystr
-        - "description": !anystr
-        - "status": !anystr
-        - "latest_version": !anystr
-        - "past_version_count": !anyint
-        - "last_trained": !anydate
-        - "owner":  !anystr
-        - "lookback_window": !anyint
-        - "prediction_window": !anyint
-        - "fulcrum_date": !anydate
-        - "type":  !anystr
-
+        - last_trained: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          lookback_window: !anyint
+          type: !anystr
+          past_version_count: !anyint
+          status: !anystr
+          id: !anyint
+          owner: !anystr
+          prediction_window: !anyint
+          latest_version: !re_fullmatch "(\\d{2})\\.(\\d{1})\\.(\\d{2})"
+          description: !anystr
+          fulcrum_date: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          name: !anystr 
 ---
-test_name: Test get model overview
+test_name: Test model APIs for model #id 
 
 strict:
   - json:list_any_order
@@ -50,21 +55,20 @@ includes:
 
 marks:
   - parametrize:
-      key: model-type
-      vals:
-        - "ltv"
-        - "purchase"
-        - "unsubscribe"
+      key: model_id
+      vals: 
+        - 1
+        - 2
+
+# TODO: Dynamically get model_ids which are active.
 
 stages:
-  - name: test get model overview
+  - name: Test feature-importance API
 
     # Define the request to be made...
     request:
-      url: "{host}/{version}/models/{model-type}/overview"
+      url: "{host}/{version}/models/{model_id}/feature-importance"
       method: GET
-      json:
-        value: "model-type"
       headers:
         content-type: application/json
         Authorization: "Bearer {token}"
@@ -76,26 +80,96 @@ stages:
       headers:
         content-type: application/json
       json:
-         "model_type": !anystr
-         "model_name": !anystr
-         "description": !anystr
-         "performance_metric": !anydict
-            - "rmse": !anyfloat
-            - "auc": !anyfloat
-            - "precision": !anyfloat
-            - "recall":  !anyfloat
-            - "current_version": !anystr
-         "feature_importance": !anylist
-            - "name": !anystr
-            - "description": !anystr
-            - "score": !anyfloat
-         "lift_data": !anylist
-            - "bucket": !anyint
-            - "predicted_value ": !anyfloat
-            - "actual_value ": !anyfloat
-            - "profile_count ": !anyint
-            - "predicted_rate ": !anyfloat
-            - "actual_rate ": !anyfloat
-            - "predicted_lift ": !anyfloat
-            - "actual_lift ": !anyfloat
-            - "profile_size_percent ": !anyfloat
+        - data_source: !anything
+          score: !anyfloat
+          status: !anystr
+          feature_service: !anystr
+          id: !anyint
+          version: !anystr
+          created_by: !anystr
+          description: !anystr
+          name: !anystr
+          popularity: !anyint
+
+  - name: Test version-history API
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/models/{model_id}/version-history"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - trained_date: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          lookback_window: !anyint
+          status: !anystr
+          id: !anyint
+          version: !anystr
+          owner: !anystr
+          prediction_window: !anyint
+          description: !anystr
+          fulcrum_date: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          name: !anystr
+
+  - name: Test model overview API
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/models/{model_id}/overview"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        model_type: !anystr
+        description: !anystr
+        performance_metric:
+          rmse: !anyfloat
+          auc: !anyfloat
+          precision: !anyfloat
+          recall: !anyfloat
+          current_version: !anystr
+        model_name: !anystr
+
+  - name: Test model features API
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/models/{model_id}/features"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - data_source: !anystr
+          score: !anyfloat
+          status: !anystr
+          feature_service: !anystr
+          id: !anyint
+          version: !anystr
+          created_by: !anystr
+          description: !anystr
+          name: !anystr
+          popularity: !anyint

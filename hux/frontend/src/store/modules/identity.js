@@ -59,13 +59,13 @@ const PINNING = {
   household_id_match: "Household ID match",
   input_records: "Input records",
   individual_id_match: "Individual ID match",
-  date_time: "Date & time",
+  pinning_timestamp: "Date & time",
   process_time: "Process time in seconds",
   new_individual_ids: "New individual IDs",
 }
 
 const STITCHED = {
-  time_stamp: "Time stamp",
+  stitched_timestamp: "Time stamp",
   records_source: "Records source",
   merge_rate: "Merge rate",
   match_rate: "Match rate",
@@ -81,6 +81,8 @@ const state = {
   dataFeeds: {},
 
   dataFeedReports: {},
+
+  matchingTrend: [],
 }
 
 const getters = {
@@ -89,7 +91,7 @@ const getters = {
       return {
         title: METRICS[metric].title,
         description: METRICS[metric].description,
-        value: state.overview[metric],
+        value: state.overview["overview"][metric],
         format: METRICS[metric].format,
       }
     })
@@ -98,6 +100,8 @@ const getters = {
   dataFeeds: (state) => Object.values(state.dataFeeds),
 
   dataFeed: (state) => (datafeed_id) => state.dataFeeds[datafeed_id],
+
+  matchingTrend: (state) => state.matchingTrend,
 
   dataFeedReport: (state) => (datafeed_id) => {
     const report = state.dataFeedReports[datafeed_id]
@@ -135,6 +139,10 @@ const mutations = {
   SET_DATA_FEED_REPORT(state, { datafeed_id, data }) {
     Vue.set(state.dataFeedReports, datafeed_id, data)
   },
+
+  SET_MATCHINGTREND(state, data) {
+    state.matchingTrend = data
+  },
 }
 
 const actions = {
@@ -165,6 +173,16 @@ const actions = {
         datafeed_id: datafeed_id,
         data: response.data,
       })
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getMatchingTrend({ commit }) {
+    try {
+      const response = await api.idr.matchingTrend()
+      commit("SET_MATCHINGTREND", response.data)
     } catch (error) {
       handleError(error)
       throw error

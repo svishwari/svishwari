@@ -9,11 +9,14 @@ import requests_mock
 from hypothesis import given, strategies as st
 
 from huxunifylib.database import constants as db_c
+
 from huxunify.api import constants as api_c
 from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.cdp import (
     clean_cdm_fields,
     DATETIME_FIELDS,
+    get_demographic_by_state,
+    get_city_ltvs,
 )
 from huxunify.app import create_app
 
@@ -186,3 +189,161 @@ class CDPTest(TestCase):
         }
 
         self.assertEqual(HTTPStatus.OK, expected_response["code"])
+
+    def test_get_customers_insights_count_by_day(self) -> None:
+        """Test get customers insights count by day
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        expected_response = {
+            "code": 200,
+            "body": [
+                {
+                    api_c.RECORDED: "2021-04-01",
+                    api_c.TOTAL_COUNT: 105080,
+                    api_c.DIFFERENCE_COUNT: 4321,
+                },
+                {
+                    api_c.RECORDED: "2021-04-06",
+                    api_c.TOTAL_COUNT: 108200,
+                    api_c.DIFFERENCE_COUNT: 3120,
+                },
+            ],
+            "message": "ok",
+        }
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-day",
+            json=expected_response,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.TOTAL}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        data = response.json
+        self.assertTrue(data)
+        for record in data:
+            self.assertTrue(record[api_c.TOTAL_CUSTOMERS])
+            self.assertIn(record[api_c.TOTAL_CUSTOMERS], [105080, 108200])
+            self.assertTrue(record[api_c.NEW_CUSTOMERS_ADDED])
+            self.assertIn(record[api_c.NEW_CUSTOMERS_ADDED], [4321, 3120])
+            self.assertTrue(record[api_c.DATE])
+            self.assertIn(
+                record[api_c.DATE][0:10],
+                [
+                    "2021-04-01",
+                    "2021-04-06",
+                ],
+            )
+
+    def test_get_demographic_by_state(self) -> None:
+        """Test get customers insights by state
+
+        Args:
+
+        Returns:
+            None
+        """
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        customer_insights_by_state = get_demographic_by_state(token="")
+
+        self.assertTrue(customer_insights_by_state)
+        for i, record in enumerate(customer_insights_by_state):
+            test_record = t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE[
+                api_c.BODY
+            ][i]
+            self.assertTrue(record[api_c.POPULATION_PERCENTAGE])
+            self.assertEqual(record[api_c.SIZE], test_record[api_c.SIZE])
+            self.assertEqual(
+                record[api_c.GENDER_MEN],
+                round(test_record[api_c.GENDER_MEN] / record[api_c.SIZE], 4),
+            )
+            self.assertEqual(
+                record[api_c.GENDER_WOMEN],
+                round(test_record[api_c.GENDER_WOMEN] / record[api_c.SIZE], 4),
+            )
+            self.assertEqual(
+                record[api_c.GENDER_OTHER],
+                round(test_record[api_c.GENDER_OTHER] / record[api_c.SIZE], 4),
+            )
+
+            self.assertEqual(
+                api_c.STATE_NAMES.get(test_record[api_c.STATE]),
+                record[api_c.NAME],
+            )
+
+    def test_get_city_ltvs(self) -> None:
+        """Test get customers insights by city
+
+        Args:
+
+        Returns:
+            None
+        """
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_CITIES_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        filters = api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+        filters[api_c.COUNT] = 5
+
+        customer_insights_by_cities = get_city_ltvs(token="", filters=filters)
+
+        self.assertTrue(customer_insights_by_cities)
+        for i, record in enumerate(customer_insights_by_cities):
+            test_record = t_c.CUSTOMERS_INSIGHTS_BY_CITIES_RESPONSE[
+                api_c.BODY
+            ][i]
+            self.assertEqual(record[api_c.CITY], test_record[api_c.CITY])
+            self.assertEqual(record[api_c.STATE], test_record[api_c.STATE])
+            self.assertEqual(record[api_c.COUNTRY], test_record[api_c.COUNTRY])
+            self.assertEqual(record[api_c.AVG_LTV], test_record[api_c.AVG_LTV])
+
+    def test_get_customers_overview(self) -> None:
+        """Test get customers overview
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{api_c.OVERVIEW}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+        data = response.json
+        self.assertGreaterEqual(data[api_c.GENDER_MEN], 0)
+        self.assertGreaterEqual(data[api_c.GENDER_WOMEN], 0)
+        self.assertGreaterEqual(data[api_c.GENDER_OTHER], 0)
+        self.assertGreaterEqual(data[api_c.GENDER_MEN_COUNT], 0)
+        self.assertGreaterEqual(data[api_c.GENDER_WOMEN_COUNT], 0)
+        self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)

@@ -2,6 +2,7 @@
   <div ref="incomeChart" class="container">
     <horizontal-bar-chart
       v-model="incomes"
+      :chart-dimensions="chartDimensions"
       @cordinates="getCordinates"
       @tooltipDisplay="toolTipDisplay"
     />
@@ -20,12 +21,16 @@
 <script>
 import BarChartTooltip from "@/components/common/incomeChart/BarChartTooltip"
 import HorizontalBarChart from "@/components/common/incomeChart/HorizontalBarChart"
-//TODO: API Integration
-import data from "./incomeData.json"
 
 export default {
   name: "IncomeChart",
   components: { HorizontalBarChart, BarChartTooltip },
+  props: {
+    data: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
       show: false,
@@ -37,7 +42,7 @@ export default {
         width: 0,
         height: 0,
       },
-      incomes: data.income,
+      incomes: this.data,
       currentData: {},
     }
   },
@@ -48,8 +53,7 @@ export default {
     window.removeEventListener("resize", this.sizeHandler)
   },
   mounted() {
-    this.chartDimensions.width = this.$refs.incomeChart.clientWidth
-    this.chartDimensions.height = this.$refs.incomeChart.clientHeight
+    this.sizeHandler()
   },
   methods: {
     toolTipDisplay(...arg) {
@@ -63,8 +67,10 @@ export default {
       this.tooltip.y = args.y
     },
     sizeHandler() {
-      this.chartDimensions.width = this.$refs.incomeChart.clientWidth
-      this.chartDimensions.height = this.$refs.incomeChart.clientHeight
+      if (this.$refs.incomeChart) {
+        this.chartDimensions.width = this.$refs.incomeChart.clientWidth
+        this.chartDimensions.height = 220
+      }
     },
   },
 }
@@ -78,7 +84,7 @@ export default {
   line-height: 19px;
 }
 .container {
-  height: 350px;
+  height: 450px;
   padding: 0px !important;
 }
 </style>

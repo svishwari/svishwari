@@ -45,19 +45,23 @@
               <template #label-content>
                 <span class="font-weight-semi-bold">
                   <template v-if="metric.format === 'numeric'">
-                    {{ metric.value | Numeric(true, true) }}
+                    {{ metric.value | Numeric(true, true) | Empty }}
                   </template>
                   <template v-if="metric.format === 'percentage'">
-                    {{ metric.value | Numeric(true, false, false, true) }}
+                    {{
+                      metric.value | Numeric(true, false, false, true) | Empty
+                    }}
                   </template>
                 </span>
               </template>
               <template #hover-content>
                 <template v-if="metric.format === 'numeric'">
-                  {{ metric.value | Numeric(true, false) }}
+                  {{ metric.value | Numeric(true, false) | Empty }}
                 </template>
                 <template v-if="metric.format === 'percentage'">
-                  {{ metric.value | Numeric(false, false, false, true) }}
+                  {{
+                    metric.value | Numeric(false, false, false, true) | Empty
+                  }}
                 </template>
               </template>
             </tooltip>
@@ -102,6 +106,7 @@ export default {
     return {
       loadingOverview: false,
       loadingDataFeeds: false,
+      loadingMatchingTrend: false,
     }
   },
 
@@ -109,6 +114,7 @@ export default {
     ...mapGetters({
       overview: "identity/overview",
       dataFeeds: "identity/dataFeeds",
+      identityMatchingTrend: "identity/matchingTrend",
     }),
 
     loading() {
@@ -119,13 +125,21 @@ export default {
   async mounted() {
     this.loadOverview()
     this.loadDataFeeds()
+    this.fetchMatchingTrend()
   },
 
   methods: {
     ...mapActions({
       getOverview: "identity/getOverview",
       getDataFeeds: "identity/getDataFeeds",
+      getMatchingTrend: "identity/getMatchingTrend",
     }),
+
+    async fetchMatchingTrend() {
+      this.loadingMatchingTrend = true
+      await this.getMatchingTrend()
+      this.loadingMatchingTrend = false
+    },
 
     async loadOverview() {
       this.loadingOverview = true

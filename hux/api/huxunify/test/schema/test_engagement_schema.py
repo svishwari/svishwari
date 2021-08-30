@@ -228,7 +228,7 @@ class EngagementSchemaTest(TestCase):
         """
         doc = {
             api_c.NAME: "Engagement 1",
-            api_c.ID: "campaign_id",
+            api_c.ID: str(ObjectId()),
             db_c.CREATE_TIME: "2021-10-10",
         }
         assert CampaignSchema().validate(doc) != {}
@@ -242,7 +242,7 @@ class EngagementSchemaTest(TestCase):
         """
         doc = {
             api_c.NAME: "Engagement 1",
-            api_c.ID: "campaign_id",
+            api_c.ID: str(ObjectId()),
             db_c.CREATE_TIME: "2021-10-10",
         }
         assert CampaignSchema().validate(doc) != {}
@@ -335,8 +335,8 @@ class EngagementSchemaTest(TestCase):
                 }
             ],
             api_c.DELIVERY_SCHEDULE: {
-                db_c.JOB_START_TIME: datetime.today() - timedelta(days=10),
-                db_c.JOB_END_TIME: datetime.today() + timedelta(days=5),
+                api_c.START_DATE: datetime.today() - timedelta(days=10),
+                api_c.END_DATE: datetime.today() + timedelta(days=5),
             },
         }
 
@@ -345,16 +345,16 @@ class EngagementSchemaTest(TestCase):
 
         # Test "Inactive" status for engagement
         engagement[api_c.DELIVERY_SCHEDULE] = {
-            db_c.JOB_START_TIME: datetime.today() - timedelta(days=10),
-            db_c.JOB_END_TIME: datetime.today() - timedelta(days=5),
+            api_c.START_DATE: datetime.today() - timedelta(days=10),
+            api_c.END_DATE: datetime.today() - timedelta(days=5),
         }
         weighted = weighted_engagement_status([engagement])[0]
         self.assertEqual(weighted[api_c.STATUS], api_c.STATUS_INACTIVE)
 
         engagement[api_c.STATUS] = api_c.STATUS_INACTIVE
         engagement[api_c.DELIVERY_SCHEDULE] = {
-            db_c.JOB_START_TIME: datetime.today() - timedelta(days=10),
-            db_c.JOB_END_TIME: datetime.today() + timedelta(days=5),
+            api_c.START_DATE: datetime.today() - timedelta(days=10),
+            api_c.END_DATE: datetime.today() + timedelta(days=5),
         }
         weighted = weighted_engagement_status([engagement])[0]
         self.assertEqual(weighted[api_c.STATUS], api_c.STATUS_INACTIVE)

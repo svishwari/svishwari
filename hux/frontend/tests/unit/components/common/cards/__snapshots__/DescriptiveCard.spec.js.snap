@@ -4,12 +4,12 @@ exports[`Cards Descriptive Card Displays custom properties 1`] = `
 <v-card-stub loaderheight="4" tag="div" class="descriptive-card align-center text-center rounded-lg mr-10 mb-10">
   <!---->
   <div class="d-flex justify-center pb-4">
-    <icon-stub type="model-unsubscribe" size="60" color="primary" class="d-block"></icon-stub>
+    <icon-stub type="model-unsubscribe" size="60" color="primary" fillopacity="1" class="d-block"></icon-stub>
   </div>
-  <div class="text-h4 px-3 pb-2 primary--text">
+  <div data-e2e="card-title" class="text-h4 px-3 pb-2 primary--text">
     Propensity to Unsubscribe
   </div>
-  <div class="text-caption px-3">
+  <div data-e2e="card-description" class="text-caption px-3">
     Propensity of a customer making a purchase after receiving an email.
   </div>
   <!---->
@@ -22,10 +22,10 @@ exports[`Cards Descriptive Card Displays custom slots 1`] = `
     <div>Top spot</div>
   </div>
   <!---->
-  <div class="text-h4 px-3 pb-2 primary--text">
+  <div data-e2e="card-title" class="text-h4 px-3 pb-2 primary--text">
     Model Name
   </div>
-  <div class="text-caption px-3">
+  <div data-e2e="card-description" class="text-caption px-3">
     Descriptive text for the model item chosen above
   </div>
   <div class="px-3 pt-2">

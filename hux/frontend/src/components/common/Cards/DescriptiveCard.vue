@@ -1,7 +1,7 @@
 <template>
   <v-card
     class="descriptive-card align-center text-center rounded-lg mr-10 mb-10"
-    :disabled="disabled"
+    :class="{ 'in-active': disabled }"
   >
     <div v-if="$slots.top" class="pa-3 pb-0">
       <slot name="top" />
@@ -14,11 +14,12 @@
     <div
       class="text-h4 px-3 pb-2"
       :class="disabled ? 'neroBlack--text' : 'primary--text'"
+      data-e2e="card-title"
     >
       {{ title }}
     </div>
 
-    <div class="text-caption px-3">
+    <div class="text-caption px-3" data-e2e="card-description">
       {{ description }}
     </div>
 
@@ -76,6 +77,12 @@ export default {
 
   &:hover {
     @extend .box-shadow-3;
+  }
+  &.in-active {
+    cursor: default;
+    &:hover {
+      @extend .box-shadow-5;
+    }
   }
 }
 </style>

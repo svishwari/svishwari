@@ -1,13 +1,13 @@
 <template>
-  <div ref="chartBox" class="container">
-    <div class="d-flex justify-content-start">
-      <line-area-chart
-        v-model="spendData"
-        :chart-dimensions="chartDimensions"
-        @cordinates="getCordinates"
-        @tooltipDisplay="toolTipDisplay"
-      />
-    </div>
+  <div ref="genderSpendChart" class="container">
+    <line-area-chart
+      v-model="modificationData"
+      :chart-dimensions="chartDimensions"
+      :y-value-data="yAxisData"
+      :date-data="dateData"
+      @cordinates="getCordinates"
+      @tooltipDisplay="toolTipDisplay"
+    />
     <line-area-chart-tooltip
       :position="{
         x: tooltip.x,
@@ -23,12 +23,16 @@
 <script>
 import LineAreaChartTooltip from "@/components/common/GenderSpendChart/LineAreaChartTooltip"
 import LineAreaChart from "@/components/common/GenderSpendChart/LineAreaChart"
-//TODO: API Integration
-import data from "./genderSpendChart.json"
 
 export default {
   name: "GenderSpendChart",
   components: { LineAreaChart, LineAreaChartTooltip },
+  props: {
+    data: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       show: false,
@@ -40,13 +44,66 @@ export default {
         width: 0,
         height: 0,
       },
-      spendData: data.spend,
+      spendData: [],
+      yAxisData: [],
       currentData: {},
+      dateData: [],
     }
   },
+  computed: {
+    modificationData() {
+      let dataValue = this.data
+      let areaChart = []
+      let areaChartData = []
+
+      dataValue.gender_men.forEach((element) => {
+        dataValue.gender_women.forEach((value) => {
+          if (element.date === value.date) {
+            areaChart.push({
+              date: element.date,
+              men_spend: element.ltv,
+              women_spend: value.ltv,
+            })
+          }
+        })
+      })
+
+      areaChart.forEach((element) => {
+        dataValue.gender_other.forEach((value) => {
+          if (element.date === value.date) {
+            this.yAxisData.push(
+              element.men_spend,
+              element.women_spend,
+              value.ltv
+            )
+            areaChartData.push({
+              date: element.date,
+              men_spend: element.men_spend,
+              women_spend: element.women_spend,
+              others_spend: value.ltv,
+            })
+          }
+        })
+      })
+
+      areaChartData.forEach((element) => {
+        this.dateData.push(new Date(element.date))
+      })
+
+      return areaChartData
+    },
+  },
+
+  created() {
+    this.modificationData
+    window.addEventListener("resize", this.sizeHandler)
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.sizeHandler)
+  },
   mounted() {
-    this.chartDimensions.width = this.$refs.chartBox.clientWidth
-    this.chartDimensions.height = this.$refs.chartBox.clientHeight
+    this.sizeHandler()
+    this.modificationData
   },
 
   methods: {
@@ -61,6 +118,12 @@ export default {
       this.tooltip.x = args.x
       this.tooltip.y = args.y
     },
+    sizeHandler() {
+      if (this.$refs.genderSpendChart) {
+        this.chartDimensions.width = this.$refs.genderSpendChart.clientWidth
+        this.chartDimensions.height = 180
+      }
+    },
   },
 }
 </script>
@@ -73,7 +136,7 @@ export default {
   line-height: 19px;
 }
 .container {
-  height: 350px;
+  height: 500px;
   padding: 0px !important;
 }
 </style>

@@ -99,7 +99,7 @@
   </div>
 
   <div v-else-if="Statuses.Pending.includes(status)">
-    <span v-if="!collapsed">
+    <span v-if="!collapsed" class="d-flex align-center">
       <v-btn
         width="15"
         height="15"
@@ -411,6 +411,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.v-icon,
+.v-btn--icon {
+  cursor: default !important;
+}
 .half-right-circle {
   height: 14px;
   width: 7px;

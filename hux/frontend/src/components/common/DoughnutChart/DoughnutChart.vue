@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <div id="chart" @mousemove="getCordinates($event)"></div>
+  <div class="container" :style="{ maxWidth: chartWidth }">
+    <div id="chart" ref="chart" @mousemove="getCordinates($event)"></div>
     <div ref="legend"></div>
     <doughnut-chart-tooltip
       :show-tooltip="showTooltip"
@@ -24,13 +24,15 @@ export default {
       type: Array,
       required: true,
     },
-    width: {
-      type: Number,
+    chartDimensions: {
+      type: Object,
       required: true,
-    },
-    height: {
-      type: Number,
-      required: true,
+      default() {
+        return {
+          width: 0,
+          height: 0,
+        }
+      },
     },
     label: {
       type: String,
@@ -39,6 +41,7 @@ export default {
   },
   data() {
     return {
+      chartWidth: "",
       sourceInput: null,
       showTooltip: false,
       tooltip: {
@@ -47,17 +50,27 @@ export default {
       },
     }
   },
+  watch: {
+    chartDimensions: {
+      handler() {
+        d3Select.select(this.$refs.chart).selectAll("svg").remove()
+        this.initiateChart()
+      },
+      immediate: false,
+      deep: true,
+    },
+  },
   mounted() {
     this.initiateChart()
   },
   methods: {
-    async initiateChart() {
-      let data = await this.data // TODO: Get this from API
-
+    initiateChart() {
+      let data = this.data // TODO: Get this from API
       // Initialize width, height & color range
-      let width = this.width,
-        height = this.height,
-        radius = Math.min(width, height) / 2
+      this.chartWidth = this.chartDimensions.width + "px"
+      let width = this.chartDimensions.width - 50,
+        height = this.chartDimensions.height - 25,
+        radius = Math.min(width, height) / 1.8
       let line = 0
       let col = 0
       let color = d3Scale
@@ -89,9 +102,8 @@ export default {
       let svg = d3Select
         .select("#mainPie")
         .append("svg")
-        .attr("viewBox", `0 0 ${width} ${height}`) // for responsive
-        .style("margin-left", "40px")
-        .style("margin-right", "40px")
+        .attr("width", width)
+        .attr("height", height)
         .append("g")
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
 
@@ -122,14 +134,19 @@ export default {
       }
 
       // Creating legends svg element & apply style
+      d3Select.select(this.$refs.legend).selectAll("svg").remove()
+
       let legendSvg = d3Select
-        .select(this.$refs.legend)
+        .select("#mainPie")
         .append("svg")
-        .attr("viewBox", "0 0 200 25") // for responsive
+        .attr("viewBox", "0 0 200 60") // for responsive
+        .attr("width", width - 50)
+        .attr("height", 54)
         .attr("id", "mainSvg")
         .attr("class", "svgBox")
-        .style("margin-left", "20px")
-        .style("margin-right", "20px")
+        .style("margin-left", "-10px")
+        .style("text-align", "left")
+        .style("margin-top", "15px")
 
       // calculating distance b/n each legend
       let legend = legendSvg
@@ -166,25 +183,6 @@ export default {
         .text(function (d) {
           return d.label
         })
-
-      // Creating label svg element & apply style
-      let label = d3Select
-        .select("#label")
-        .append("svg")
-        .attr("width", 200)
-        .attr("height", 20)
-        .attr("id", "label")
-        .style("margin-left", "5px")
-        .style("margin-top", "20px")
-
-      // Appending text to label & apply css class
-      label
-        .append("text")
-        .attr("x", 18)
-        .attr("y", 9)
-        .attr("dy", ".35em")
-        .attr("class", "neroBlack--text")
-        .text(this.label)
     },
     getCordinates(event) {
       this.tooltip.x = event.offsetX + 60
@@ -195,13 +193,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .container {
-  max-width: 100%;
+  padding: 0px !important;
   #chart {
     text-align: center;
   }
   .pieBox {
     display: inline-block;
-    height: auto;
   }
 }
 </style>

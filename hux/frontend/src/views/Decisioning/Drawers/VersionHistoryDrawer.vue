@@ -2,7 +2,7 @@
   <drawer
     v-model="localDrawer"
     :content-padding="'pa-0'"
-    :content-header-padding="'px-3'"
+    :content-header-padding="'px-6'"
   >
     <template #header-left>
       <div class="d-flex align-center">
@@ -26,7 +26,7 @@
           >
             <tooltip v-if="header.value == 'version'">
               <span
-                class="cell neroBlack--text"
+                class="cell neroBlack--text ml-2"
                 :class="[item.current ? 'font-weight-bold' : '']"
               >
                 {{ item.version }}
@@ -35,25 +35,25 @@
                 {{ item.current && "(Current)" }}
               </span>
               <template #tooltip>
-                <div class="my-2 gray--text">
+                <div class="my-2 neroBlack--text">
                   Trained date
                   <div class="neroBlack--text">
                     {{ item.trained_date | Date | Empty }}
                   </div>
                 </div>
-                <div class="my-2 gray--text">
+                <div class="my-2 neroBlack--text">
                   Fulcrum date
                   <div class="neroBlack--text">
                     {{ item.fulcrum_date | Date | Empty }}
                   </div>
                 </div>
-                <div class="my-2 gray--text">
+                <div class="my-2 neroBlack--text">
                   Lookback period (Days)
                   <div class="neroBlack--text">
                     {{ item.lookback_window }}
                   </div>
                 </div>
-                <div class="my-2 gray--text">
+                <div class="my-2 neroBlack--text">
                   Prediction period (Days)
                   <div class="neroBlack--text">
                     {{ item.prediction_window }}
@@ -63,7 +63,7 @@
             </tooltip>
 
             <tooltip v-if="header.value == 'description'">
-              <span class="cell neroBlack--text ellipsis-29">
+              <span class="cell neroBlack--text ellipsis-23">
                 {{ item.description }}
               </span>
               <template #tooltip>
@@ -157,7 +157,7 @@ export default {
         {
           text: "Trained date",
           value: "trained_date",
-          width: "120px",
+          width: "140px",
         },
       ],
     }
@@ -205,25 +205,34 @@ export default {
       th {
         background: var(--v-aliceBlue-base);
       }
+      th:nth-child(1) {
+        padding-left: 24px;
+      }
+    }
+    tr {
+      td {
+        height: 40px !important;
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+      }
     }
     .cell {
       font-family: Open Sans;
       font-style: normal;
       font-weight: normal;
       font-size: 14px !important;
-      line-height: 22px;
       display: inline-block;
       max-width: 100%;
       overflow: hidden;
       text-decoration: none;
     }
   }
-  .ellipsis-29 {
+  .ellipsis-23 {
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 29ch;
+    max-width: 23ch;
     display: inline-block;
-    width: 29ch;
+    width: 23ch;
     white-space: nowrap;
   }
 }

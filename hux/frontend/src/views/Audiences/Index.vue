@@ -51,18 +51,22 @@
               'fixed-column': header.fixed,
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
-              'pl-0': header.value === 'status',
             }"
             :style="{ width: header.width, left: 0 }"
           >
             <div v-if="header.value == 'name'" class="w-100 d-flex">
               <span v-if="item.is_lookalike == true" class="mr-3">
-                <icon
-                  type="lookalike"
-                  :size="20"
-                  color="neroBlack"
-                  class="mr-2"
-                />
+                <tooltip>
+                  <template #label-content>
+                    <icon
+                      type="lookalike"
+                      :size="20"
+                      color="neroBlack"
+                      class="mr-2"
+                    />
+                  </template>
+                  <template #hover-content>Lookalike audience</template>
+                </tooltip>
               </span>
               <menu-cell
                 :value="item[header.value]"
@@ -168,6 +172,13 @@
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
       @onToggle="(val) => (showLookAlikeDrawer = val)"
+      @onError="onError($event)"
+    />
+
+    <hux-alert
+      v-model="flashAlert"
+      :type="alert.type"
+      :message="alert.message"
     />
   </div>
 </template>
@@ -189,6 +200,7 @@ import Icon from "@/components/common/Icon.vue"
 import Status from "../../components/common/Status.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import Logo from "../../components/common/Logo.vue"
+import HuxAlert from "@/components/common/HuxAlert.vue"
 
 export default {
   name: "Audiences",
@@ -207,9 +219,15 @@ export default {
     Status,
     Tooltip,
     Logo,
+    HuxAlert,
   },
   data() {
     return {
+      flashAlert: false,
+      alert: {
+        type: "success",
+        message: "",
+      },
       breadcrumbItems: [
         {
           text: "Audiences",
@@ -229,7 +247,7 @@ export default {
         {
           text: "Status",
           value: "status",
-          width: "140px",
+          width: "160px",
         },
         {
           text: "Size",
@@ -332,6 +350,11 @@ export default {
       this.selectedAudience = audience
       this.showLookAlikeDrawer = true
     },
+    onError(message) {
+      this.alert.type = "error"
+      this.alert.message = message
+      this.flashAlert = true
+    },
   },
 }
 </script>
@@ -355,6 +378,7 @@ export default {
       margin-right: 10px;
     }
   }
+
   .hux-data-table {
     margin-top: 1px;
     table {

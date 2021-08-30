@@ -87,14 +87,16 @@ class TestNotificationRoutes(TestCase):
         """
         Test get notifications
 
-        Returns:
+        Args:
 
+        Returns:
+            None
         """
 
         params = {
-            db_c.NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE: api_c.DEFAULT_ALERT_BATCH_SIZE,
-            db_c.NOTIFICATION_QUERY_PARAMETER_SORT_ORDER: db_c.PAGINATION_DESCENDING,
-            db_c.NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER: api_c.DEFAULT_ALERT_BATCH_NUMBER,
+            api_c.QUERY_PARAMETER_BATCH_SIZE: api_c.DEFAULT_BATCH_SIZE,
+            api_c.QUERY_PARAMETER_SORT_ORDER: db_c.PAGINATION_DESCENDING,
+            api_c.QUERY_PARAMETER_BATCH_NUMBER: api_c.DEFAULT_BATCH_NUMBER,
         }
 
         response = self.app.get(
@@ -104,7 +106,29 @@ class TestNotificationRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(len(self.notifications), response.json["total"])
+        self.assertEqual(len(self.notifications), response.json[api_c.TOTAL])
+        self.assertCountEqual(
+            self.notifications, response.json[api_c.NOTIFICATIONS_TAG]
+        )
+
+    def test_get_notifications_default_params(self):
+        """
+        Test get notifications failure
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}",
+            data={},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(len(self.notifications), response.json[api_c.TOTAL])
         self.assertCountEqual(
             self.notifications, response.json[api_c.NOTIFICATIONS_TAG]
         )

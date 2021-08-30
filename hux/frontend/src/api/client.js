@@ -29,6 +29,31 @@ client["customers"].overview = () => {
   return http.get("/customers/overview")
 }
 
+client["customers"].geoOverview = () => http.get("/customers-insights/geo")
+
+client["customers"].geoCities = (batchNumber, batchSize, data) => {
+  return http.post(
+    `/customers-insights/cities?batch_number=${batchNumber}&batch_size=${batchSize}`,
+    data
+  )
+}
+
+client["customers"].demographics = (data) => {
+  return http.get("/customers-insights/demo", data)
+}
+
+client["customers"].geoCountries = (data) => {
+  return http.post("/customers-insights/countries", data)
+}
+
+client["customers"].geoStates = (data) => {
+  return http.post("/customers-insights/states", data)
+}
+
+client["customers"].totalCustomers = () => {
+  return http.get("/customers-insights/total")
+}
+
 client["customers"].getOverview = (data) => {
   return http.post("/customers/overview", data)
 }
@@ -138,6 +163,7 @@ client["engagements"].updateCampaignMapping = (
     data
   )
 }
+
 client["engagements"].getCampaigns = ({
   resourceId,
   audienceId,
@@ -153,11 +179,19 @@ client["engagements"].getCampaigns = ({
 client["idr"].overview = () => http.get("/idr/overview")
 client["idr"].datafeeds = () => http.get("/idr/datafeeds")
 client["idr"].datafeedReport = (id) => http.get(`/idr/datafeeds/${id}`)
+client["idr"].matchingTrend = () => {
+  return http.get("/idr/matching-trends")
+}
 //#endregion
 
 //#region audiences endpoints
 client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
+}
+
+client["audiences"].demographics = (data) => {
+  // TODO: replace with audienceId specific endpoint once available
+  return http.get("/customers-insights/demo", data)
 }
 
 client["audiences"].deliver = (resourceId, data) => {
@@ -181,8 +215,24 @@ client["models"].overview = (id) => {
   return http.get(`/models/${id}/overview`)
 }
 
+client["models"].features = (id) => {
+  return http.get(`/models/${id}/feature-importance`)
+}
+
 client["models"].versionHistory = (id) => {
   return http.get(`/models/${id}/version-history`)
+}
+
+client["models"].lift = (id) => {
+  return http.get(`/models/${id}/lift`)
+}
+
+client["models"].drift = (id, data) => {
+  return http.post(`/models/${id}/drift`, data)
+}
+
+client["models"].modelFeatures = (id) => {
+  return http.get(`/models/${id}/features`)
 }
 
 export default client

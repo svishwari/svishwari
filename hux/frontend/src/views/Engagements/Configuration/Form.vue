@@ -53,7 +53,7 @@
           </h5>
         </template>
 
-        <v-row class="delivery-schedule mt-4">
+        <v-row class="delivery-schedule mt-2">
           <v-radio-group
             v-model="value.delivery_schedule"
             row
@@ -90,8 +90,8 @@
             </v-radio>
           </v-radio-group>
         </v-row>
-        <v-row class="delivery-schedule mt-10 ml-n2">
-          <div v-if="isRecurring">
+        <v-row v-if="isRecurring" class="delivery-schedule mt-10 ml-n2">
+          <div>
             <span class="date-picker-label neroBlack--text text-caption">
               Start date
             </span>
@@ -112,7 +112,7 @@
               :label="selectedEndDate"
               :selected="selectedEndDate"
               :is-sub-menu="true"
-              :min-date="selectedStartDate"
+              :min-date="endMinDate"
               @on-date-select="onEndDateSelect"
             />
           </div>
@@ -200,7 +200,7 @@
                       <v-btn
                         x-small
                         fab
-                        class="primary ml-2"
+                        class="primary ml-2 box-shadow-25"
                         @click="openSelectDestinationsDrawer(row.item.id)"
                       >
                         <v-icon size="16">mdi-plus</v-icon>
@@ -220,7 +220,7 @@
                   <v-btn
                     x-small
                     fab
-                    class="primary mr-2"
+                    class="primary mr-2 box-shadow-25"
                     @click="openSelectAudiencesDrawer()"
                   >
                     <v-icon>mdi-plus</v-icon>
@@ -236,17 +236,19 @@
           </template>
 
           <template slot="empty">
-            <v-col class="grow">You have not added any audiences, yet.</v-col>
-            <v-col class="shrink">
+            <v-col class="shrink pl-5">
               <v-btn
                 x-small
                 fab
-                color="primary"
+                color="primary box-shadow-25"
                 elevation="0"
                 @click="openSelectAudiencesDrawer()"
               >
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
+            </v-col>
+            <v-col class="grow pl-2">
+              You have not added any audiences, yet.
             </v-col>
           </template>
         </data-cards>
@@ -286,6 +288,7 @@
     </hux-footer>
 
     <select-audiences-drawer
+      ref="selectAudiences"
       v-model="value.audiences"
       :toggle="showSelectAudiencesDrawer"
       @onToggle="(val) => (showSelectAudiencesDrawer = val)"
@@ -293,6 +296,7 @@
     />
 
     <add-audience-drawer
+      ref="addNewAudience"
       v-model="value.audiences"
       :toggle="showAddAudiencesDrawer"
       @onToggle="(val) => (showAddAudiencesDrawer = val)"
@@ -300,6 +304,7 @@
     />
 
     <select-destinations-drawer
+      ref="selectDestinations"
       v-model="value.audiences"
       :selected-audience-id="selectedAudienceId"
       :toggle="showSelectDestinationsDrawer"
@@ -378,6 +383,9 @@ export default {
       disableEndDate: true,
       errorMessages: [],
       schedule: JSON.parse(JSON.stringify(deliverySchedule())),
+      endMinDate: new Date(
+        new Date().getTime() - new Date().getTimezoneOffset() * 60000
+      ).toISOString(),
     }
   },
 
@@ -461,6 +469,9 @@ export default {
         this.selectedStartDate = "Select date"
         this.selectedEndDate = "Select date"
         this.disableEndDate = true
+        this.endMinDate = new Date(
+          new Date().getTime() - new Date().getTimezoneOffset() * 60000
+        ).toISOString()
         this.$set(this.value, "recurring", null)
         this.resetSchedule()
       }
@@ -483,17 +494,20 @@ export default {
 
     openSelectAudiencesDrawer() {
       this.closeAllDrawers()
+      this.$refs.selectAudiences.fetchAudiences()
       this.showSelectAudiencesDrawer = true
     },
 
     openAddAudiencesDrawer() {
       this.closeAllDrawers()
+      this.$refs.addNewAudience.fetchDependencies()
       this.showAddAudiencesDrawer = true
     },
 
     openSelectDestinationsDrawer(audienceId) {
       // set the selected audience on which we want to manage its destinations
       this.selectedAudienceId = audienceId
+      this.$refs.selectDestinations.fetchDependencies()
       this.closeAllDrawers()
       this.showSelectDestinationsDrawer = true
     },
@@ -558,6 +572,7 @@ export default {
         start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
         end: null,
       })
+      this.endMinDate = val
     },
 
     onEndDateSelect(val) {
@@ -637,5 +652,13 @@ export default {
   position: absolute;
   margin-top: -30px;
   margin-left: 8px;
+}
+.form-steps {
+  ::v-deep .form-step__header {
+    padding-bottom: 14px;
+  }
+  ::v-deep .form-step__content {
+    padding-top: 0px !important;
+  }
 }
 </style>

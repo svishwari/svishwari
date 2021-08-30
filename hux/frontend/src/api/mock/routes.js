@@ -1,5 +1,6 @@
 import { Response } from "miragejs"
 import moment from "moment"
+import faker from "faker"
 
 import { audienceInsights } from "./factories/audiences"
 import { customersOverview } from "./factories/customers"
@@ -11,7 +12,12 @@ import {
 import { idrOverview, idrDataFeedReport } from "./factories/identity"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
-import liftData from "./factories/liftChartData.json"
+import liftData from "./factories/liftChartData"
+import mapData from "@/components/common/MapChart/mapData.js"
+import demographicsData from "@/api/mock/fixtures/demographicData.js"
+import totalCustomersData from "./fixtures/totalCustomersData.js"
+import { driftData } from "@/api/mock/factories/driftData.js"
+import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -262,6 +268,19 @@ export const defineRoutes = (server) => {
       return { message: "Successfully created mappings" }
     }
   )
+  //update Engagement
+  server.put("/engagements/:id", (schema, request) => {
+    const engagementId = request.params.id
+    const requestData = JSON.parse(request.requestBody)
+    if (requestData.status) {
+      const payload = {
+        status: requestData.status,
+      }
+      schema.engagements.find(engagementId).update(payload)
+      return { message: "Successfully inactivated engagement" }
+    }
+  })
+
   server.get(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/campaigns",
     (schema, request) => {
@@ -288,6 +307,7 @@ export const defineRoutes = (server) => {
         },
         size: audience.size,
         delivered: moment().toJSON(),
+        match_rate: faker.datatype.number({ min: 0, max: 1, precision: 0.001 }),
       }
     })
   })
@@ -329,18 +349,30 @@ export const defineRoutes = (server) => {
       auc: 0.79,
       precision: 0.82,
     }
-    data.attrs.feature_importance = featureData.featureList
-    data.attrs.lift_data = liftData.lift_data
     data.attrs.model_name = data.attrs.name
     data.attrs.model_type = data.attrs.type
 
     return data
   })
 
+  server.get("/models/:id/feature-importance", () => {
+    return featureData.featureList
+  })
+
   server.get("/models/:id/version-history", (schema, request) => {
     const id = request.params.id
     const model = schema.models.find(id)
     return model.attrs.version_history
+  })
+
+  server.get("/models/:id/lift", () => liftData)
+
+  server.post("/models/:id/drift", () => driftData())
+
+  server.get("/models/:id/features", (schema, request) => {
+    const id = request.params.id
+    const model = schema.models.find(id)
+    return model.attrs.model_feature
   })
 
   // customers
@@ -356,6 +388,28 @@ export const defineRoutes = (server) => {
 
   server.get("/customers/overview", () => customersOverview)
 
+  server.get("/customers-insights/geo", () => mapData)
+
+  server.get("/customers-insights/demo", () => demographicsData)
+
+  server.get("/customers-insights/total", () => totalCustomersData)
+
+  server.post("/customers-insights/cities", (schema, request) => {
+    let batchNumber = request.queryParams["batch_number"] || 1
+    let batchSize = request.queryParams["batch_size"] || 100
+    let start = batchNumber === 1 ? 0 : (batchNumber - 1) * batchSize
+    let end = batchNumber === 1 ? batchSize : batchNumber * batchSize
+    return schema.geoCities.all().slice(start, end)
+  })
+
+  server.post("/customers-insights/states", (schema) => {
+    return schema.geoStates.all()
+  })
+
+  server.post("/customers-insights/countries", (schema) => {
+    return schema.geoCountries.all()
+  })
+
   server.get("/customers", (schema, request) => {
     let currentBatch = request.queryParams.batch_number
     let batchSize = request.queryParams.batch_size
@@ -368,7 +422,15 @@ export const defineRoutes = (server) => {
   server.post("/customers/overview", () => customersOverview)
 
   // identity resolution
-  server.get("/idr/overview", () => idrOverview)
+  server.get("/idr/overview", () => {
+    return {
+      date_range: {
+        start_date: faker.date.past(5),
+        end_date: moment().toJSON(),
+      },
+      overview: idrOverview,
+    }
+  })
   server.get(
     "/idr/datafeeds",
     (schema) => {
@@ -377,6 +439,7 @@ export const defineRoutes = (server) => {
     { timing: 10 }
   )
   server.get("/idr/datafeeds/:datafeed_id", () => idrDataFeedReport)
+  server.get("/idr/matching-trends", () => genderSpendData())
 
   // notifications
   server.get("/notifications", (schema, request) => {
@@ -452,6 +515,7 @@ export const defineRoutes = (server) => {
         },
         size: audience.size,
         delivered: moment().toJSON(),
+        match_rate: faker.datatype.number({ min: 0, max: 1, precision: 0.001 }),
       }
     })
   })

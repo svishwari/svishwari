@@ -1,6 +1,6 @@
 <template>
   <div>
-    <page-header>
+    <page-header data-e2e="models-header">
       <template slot="left">
         <breadcrumb
           :items="[
@@ -14,7 +14,7 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <v-row v-if="!loading" class="pa-14">
+    <v-row v-if="!loading" class="pa-14" data-e2e="models-list">
       <template v-if="hasModels">
         <descriptive-card
           v-for="model in models"
@@ -23,8 +23,9 @@
           :title="model.name"
           :description="model.description"
           :disabled="model.status !== 'Active'"
+          data-e2e="model-item"
           class="mr-10 cursor-pointer"
-          @click.native="goToDashboard(model.id)"
+          @click.native="goToDashboard(model)"
         >
           <template slot="top">
             <status
@@ -32,11 +33,12 @@
               :status="model.status || ''"
               collapsed
               class="d-flex"
+              data-e2e="model-status"
             />
           </template>
 
           <template slot="default">
-            <p class="text-caption gray--text">
+            <p class="text-caption gray--text" data-e2e="model-owner">
               {{ model.owner }}
             </p>
 
@@ -45,6 +47,7 @@
                 label="Version"
                 :value="model.latest_version | Empty"
                 stat-class="border-0"
+                data-e2e="model-version"
               >
                 <div class="mb-3">
                   Trained date<br />
@@ -66,6 +69,7 @@
               <card-stat
                 label="Last trained"
                 :value="model.last_trained | Date('relative') | Empty"
+                data-e2e="model-last-trained-date"
               >
                 {{ model.last_trained | Date | Empty }}
               </card-stat>
@@ -136,11 +140,13 @@ export default {
       getModels: "models/getAll",
     }),
 
-    goToDashboard(id) {
-      this.$router.push({
-        name: "ModelDashboard",
-        params: { id: id },
-      })
+    goToDashboard(model) {
+      if (model.status === "Active") {
+        this.$router.push({
+          name: "ModelDashboard",
+          params: { id: model.id },
+        })
+      }
     },
   },
 }
