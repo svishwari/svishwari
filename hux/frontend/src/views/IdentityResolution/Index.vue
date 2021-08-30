@@ -177,21 +177,10 @@ export default {
       loadingMatchingTrends: false,
       isFilterToggled: false,
       options: {
-        months: [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-          "August",
-          "September",
-          "October",
-          "November",
-          "December",
-        ],
-        years: ["2021", "2020", "2019", "2018", "2017", "2016", "2015"],
+        months: moment.months(),
+        years: Array.from({ length: 10 }, (_, index) => {
+          return moment().subtract(index, "years").format("YYYY")
+        }),
       },
       filters: {
         startMonth: null,
