@@ -323,7 +323,22 @@ MOCKED_CITY_LTVS_RESPONSE = {
     ],
     "message": "ok",
 }
-
+MOCKED_GENDER_SPENDING = {
+    "code": 200,
+    "body": [
+        {
+            "month": 4,
+            "year": 2021,
+            "avg_spent_men": 231.34,
+            "avg_spent_women": 231.34,
+            "avg_spent_other": 231.34,
+            "gender_men": 542,
+            "gender_women": 558,
+            "gender_other": 13,
+        }
+    ],
+    "message": "ok",
+}
 MOCKED_MODEL_PERFORMANCE_LTV = {
     "results": [
         {
