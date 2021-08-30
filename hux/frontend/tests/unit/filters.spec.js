@@ -16,7 +16,7 @@ describe("Filters", () => {
 
       testdate = dayjs().subtract(1, "month")
       expect(filters.Date(testdate.format(), "relative")).toEqual("a month ago")
-      
+
       testdate = dayjs().subtract(42, "minute")
       expect(filters.Date(testdate.format(), "relative", false)).toEqual(
         "42 minutes ago"
