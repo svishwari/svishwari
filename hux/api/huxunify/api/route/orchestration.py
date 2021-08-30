@@ -35,16 +35,18 @@ from huxunify.api.schema.engagement import (
 )
 from huxunify.api.data_connectors.cdp import get_customers_overview
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
+from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as api_c
-from huxunify.api.route.utils import (
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
-    get_db_client,
     secured,
-    get_user_name,
     api_error_handler,
+    get_user_name,
+)
+from huxunify.api.route.utils import (
+    get_db_client,
     validate_destination_id,
-    get_token_from_request,
 )
 
 # setup the orchestration blueprint
