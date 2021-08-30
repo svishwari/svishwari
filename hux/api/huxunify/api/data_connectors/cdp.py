@@ -755,7 +755,7 @@ def get_demographic_by_state(
     logger.info("Retrieving demographic insights by state.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
-        json={"filters": filters}
+        json={api_c.AUDIENCE_FILTERS: filters}
         if filters
         else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
         headers={
@@ -876,7 +876,7 @@ def get_city_ltvs(
     logger.info("Retrieving demographic insights by city.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
-        json={"filters": filters}
+        json={api_c.AUDIENCE_FILTERS: filters}
         if filters
         else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
         params=dict(offset=offset, limit=limit),
