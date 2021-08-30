@@ -12,9 +12,7 @@ describe("Filters", () => {
 
     it("for format set to relative", () => {
       let testdate = dayjs().subtract(7, "year")
-      expect(filters.Date(testdate.format(), "relative")).toEqual(
-        "7 years ago"
-      )
+      expect(filters.Date(testdate.format(), "relative")).toEqual("7 years ago")
 
       testdate = dayjs().subtract(1, "month")
       expect(filters.Date(testdate.format(), "relative")).toEqual("a month ago")
