@@ -1816,3 +1816,152 @@ class EngagementPerformanceDownload(SwaggerView):
             ),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/<audience_id>/<destination_id>/delivery-schedule",
+    "SetDestinationDeliverySchedule",
+)
+class SetDestinationDeliverySchedule(SwaggerView):
+    """
+    Class to set a destination delivery schedule.
+    """
+
+    parameters = [
+        {
+            "name": db_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": db_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Delivery Schedule body.",
+            "example": {
+                api_c.AUDIENCES: [
+                    {
+                        api_c.ID: "60ae035b6c5bf45da27f17d6",
+                        api_c.DESTINATIONS: [
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e5",
+                            },
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e6",
+                                db_c.DELIVERY_PLATFORM_CONFIG: {
+                                    db_c.DATA_EXTENSION_NAME: "SFMC Test Audience"
+                                },
+                            },
+                        ],
+                    }
+                ]
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "schema": EngagementGetSchema,
+            "description": "Audience added to Engagement.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to create the engagement.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ENGAGEMENT_TAG]
+
+    @api_error_handler()
+    @get_user_name()
+    def patch(self, engagement_id: str, user_name: str) -> Tuple[dict, int]:
+        """Adds audience to engagement.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (str): Engagement id
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Audience Engagement added, HTTP status.
+
+        """
+
+        database = get_db_client()
+
+        engagement = get_engagement(database, ObjectId(engagement_id))
+
+        if engagement is None:
+            return {
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
+        body = AudienceEngagementSchema().load(
+            request.get_json(), partial=True
+        )
+
+        # validate audiences exist
+        audience_names = []
+        for audience in body[api_c.AUDIENCES]:
+            audience_to_attach = get_audience(
+                database, ObjectId(audience[api_c.ID])
+            )
+            if not audience_to_attach:
+                logger.error(
+                    "Audience does not exist: %s.", audience[api_c.ID]
+                )
+                return {
+                    "message": f"Audience does not exist: {audience[api_c.ID]}"
+                }, HTTPStatus.BAD_REQUEST
+            audience_names.append(audience_to_attach[db_c.NAME])
+        append_audiences_to_engagement(
+            database,
+            ObjectId(engagement_id),
+            user_name,
+            body[api_c.AUDIENCES],
+        )
+
+        logger.info(
+            "Successfully added %s to engagement %s.",
+            len(audience_names),
+            engagement_id,
+        )
+
+        for audience_name in audience_names:
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f'Audience "{audience_name}" added to engagement '
+                    f'"{engagement[db_c.NAME]}" by {user_name}.'
+                ),
+                api_c.ENGAGEMENT_TAG,
+            )
+
+        # toggle routers since the engagement was updated.
+        toggle_event_driven_routers(database)
+
+        return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
