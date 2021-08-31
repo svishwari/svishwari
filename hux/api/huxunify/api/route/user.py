@@ -16,11 +16,13 @@ from huxunifylib.database.user_management import (
     manage_user_favorites,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import (
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
-    get_db_client,
     secured,
     api_error_handler,
+)
+from huxunify.api.route.utils import (
+    get_db_client,
 )
 from huxunify.api.schema.user import UserSchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE

@@ -59,13 +59,13 @@ const PINNING = {
   household_id_match: "Household ID match",
   input_records: "Input records",
   individual_id_match: "Individual ID match",
-  date_time: "Date & time",
+  pinning_timestamp: "Date & time",
   process_time: "Process time in seconds",
   new_individual_ids: "New individual IDs",
 }
 
 const STITCHED = {
-  time_stamp: "Time stamp",
+  stitched_timestamp: "Time stamp",
   records_source: "Records source",
   merge_rate: "Merge rate",
   match_rate: "Match rate",
@@ -81,6 +81,7 @@ const state = {
   dataFeeds: {},
 
   dataFeedReports: {},
+
   matchingTrend: [],
 }
 
@@ -90,7 +91,7 @@ const getters = {
       return {
         title: METRICS[metric].title,
         description: METRICS[metric].description,
-        value: state.overview[metric],
+        value: state.overview["overview"][metric],
         format: METRICS[metric].format,
       }
     })
