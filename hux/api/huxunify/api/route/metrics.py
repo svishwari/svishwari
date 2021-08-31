@@ -6,7 +6,7 @@ from http import HTTPStatus
 from flasgger import SwaggerView
 from flask import Blueprint, Response
 
-from huxunify.api.route.utils import secured, add_view_to_blueprint
+from huxunify.api.route.decorators import secured, add_view_to_blueprint
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.data_connectors.prometheus import PrometheusClient
 import huxunify.api.constants as api_c
