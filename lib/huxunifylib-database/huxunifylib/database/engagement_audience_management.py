@@ -1,11 +1,12 @@
 """
 This module enables functionality related to engagement audience management.
 """
-
+from datetime import datetime
 import logging
 from typing import Union
 
 import pymongo
+from bson import ObjectId
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.constants as db_c
@@ -79,3 +80,93 @@ def get_all_engagement_audience_destinations(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def set_engagement_audience_destination_schedule(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    audience_id: ObjectId,
+    destination_id: ObjectId,
+    cron_expression: str,
+    user_name: str,
+) -> dict:
+    """A function to set the destination cron expression.
+
+    Args:
+        database (DatabaseClient): A database client.
+        engagement_id (ObjectId): MongoDB ID of the engagement.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        destination_id (ObjectId): MongoDB ID of the destination.
+        cron_expression (str): CRON expression of the delivery schedule.
+        user_name (str): Name of the user updating the engagement.
+
+    Returns:
+        dict: updated engagement object
+
+    """
+
+    return database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ].find_one_and_update(
+        {
+            db_c.ID: engagement_id,
+            "audiences.id": audience_id,
+            "audiences.destinations.id": destination_id,
+        },
+        {
+            "$set": {
+                db_c.UPDATE_TIME: datetime.utcnow(),
+                db_c.UPDATED_BY: user_name,
+            },
+            "$push": {
+                "audiences.$.destination.cron_expression": cron_expression
+            },
+        },
+    )
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def remove_engagement_audience_destination_schedule(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    audience_id: ObjectId,
+    destination_id: ObjectId,
+    user_name: str,
+) -> dict:
+    """A function to remove the destination cron expression.
+
+    Args:
+        database (DatabaseClient): A database client.
+        engagement_id (ObjectId): MongoDB ID of the engagement.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        destination_id (ObjectId): MongoDB ID of the destination.
+        user_name (str): Name of the user updating the engagement.
+
+    Returns:
+        dict: updated engagement object
+
+    """
+
+    return database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ].find_one_and_update(
+        {
+            db_c.ID: engagement_id,
+            "audiences.id": audience_id,
+            "audiences.destinations.id": destination_id,
+        },
+        {
+            "$set": {
+                db_c.UPDATE_TIME: datetime.utcnow(),
+                db_c.UPDATED_BY: user_name,
+            },
+            "$unset": {"audiences.$.destination.cron_expression": 1},
+        },
+    )
