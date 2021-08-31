@@ -104,7 +104,7 @@ export default {
   data() {
     return {
       loadingCustomerChart: false,
-      timeFrameLabel: "last 6 months",
+      timeFrameLabel: "last 9 months",
       configureOptions: {
         configureHux: true,
         activeCustomers: true,
