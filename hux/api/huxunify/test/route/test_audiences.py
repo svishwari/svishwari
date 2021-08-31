@@ -8,10 +8,10 @@ from unittest import TestCase, mock
 import mongomock
 import requests_mock
 
+from huxunifylib.connectors.connector_cdp import ConnectorCDP
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.orchestration_management import create_audience
-from huxunifylib.connectors.connector_cdp import ConnectorCDP
 
 from huxunify.api import constants as api_c
 from huxunify.api.schema.customers import (
