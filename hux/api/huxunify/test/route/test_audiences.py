@@ -7,6 +7,7 @@ from unittest import TestCase, mock
 
 import mongomock
 import requests_mock
+
 from huxunifylib.database import constants as db_c
 from huxunifylib.connectors.connector_cdp import ConnectorCDP
 from huxunifylib.database.client import DatabaseClient
