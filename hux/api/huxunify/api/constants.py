@@ -827,13 +827,13 @@ DOWNLOAD_TYPES = {
         db_c.S_TYPE_POSTAL_CODE_HASHED: "Zip",
     },
     AMAZON_ADS: {
-        db_c.S_TYPE_CITY_HASHED: "city",
         db_c.S_TYPE_EMAIL_HASHED: "email",
         db_c.S_TYPE_FIRST_NAME_HASHED: "first_name",
         db_c.S_TYPE_LAST_NAME_HASHED: "last_name",
         db_c.S_TYPE_PHONE_NUMBER_HASHED: "phone",
         db_c.S_TYPE_POSTAL_CODE_HASHED: "zip",
         db_c.S_TYPE_STATE_OR_PROVINCE_HASHED: "state",
+        db_c.S_TYPE_CITY_HASHED: "city",
         # TODO Add address once CDP returns it
         # db_c.S_TYPE_ADDRESS: "address"
     },
