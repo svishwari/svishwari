@@ -1,4 +1,4 @@
-# pylint: disable=invalid-name,line-too-long
+# pylint: disable=invalid-name,line-too-long,too-many-lines
 """
 purpose of this file is housing shared components for tests
 """
