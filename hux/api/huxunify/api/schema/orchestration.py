@@ -41,6 +41,7 @@ class LookalikeAudienceGetSchema(Schema):
     updated_by = fields.String()
     favorite = fields.Boolean(required=True)
     is_lookalike = fields.Boolean(default=True)
+    status = fields.String(default=db_c.AUDIENCE_STATUS_ERROR)
 
 
 class AudienceDeliverySchema(Schema):
@@ -145,6 +146,9 @@ class AudienceGetSchema(Schema):
     is_lookalike = fields.Boolean(default=False)
     # defines if lookalikes can be created from the audience.
     lookalikeable = fields.String(default=api_c.STATUS_INACTIVE)
+    source_name = fields.String()
+    source_size = fields.Int()
+    source_id = fields.String()
 
 
 class AudiencePutSchema(Schema):

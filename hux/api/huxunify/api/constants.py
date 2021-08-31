@@ -35,6 +35,9 @@ HUX_ID = "hux_id"
 TOP_FEATURES = "top_features"
 LIMIT = "limit"
 OFFSET = "offset"
+SOURCE_NAME = "source_name"
+SOURCE_SIZE = "source_size"
+SOURCE_ID = "source_id"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -653,6 +656,10 @@ CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 CDP_DATA_SOURCE_IDS = "data_source_ids"
 
+# Monitoring
+METRICS = "metrics"
+METRICS_ENDPOINT = "/metrics"
+
 # Customers
 CUSTOMER_ID = "customer_id"
 CUSTOMERS_ENDPOINT = "/customers"
@@ -860,13 +867,13 @@ DOWNLOAD_TYPES = {
         db_c.S_TYPE_POSTAL_CODE_HASHED: "Zip",
     },
     AMAZON_ADS: {
-        db_c.S_TYPE_CITY_HASHED: "city",
         db_c.S_TYPE_EMAIL_HASHED: "email",
         db_c.S_TYPE_FIRST_NAME_HASHED: "first_name",
         db_c.S_TYPE_LAST_NAME_HASHED: "last_name",
         db_c.S_TYPE_PHONE_NUMBER_HASHED: "phone",
         db_c.S_TYPE_POSTAL_CODE_HASHED: "zip",
         db_c.S_TYPE_STATE_OR_PROVINCE_HASHED: "state",
+        db_c.S_TYPE_CITY_HASHED: "city",
         # TODO Add address once CDP returns it
         # db_c.S_TYPE_ADDRESS: "address"
     },
