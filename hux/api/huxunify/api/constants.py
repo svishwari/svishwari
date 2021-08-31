@@ -721,7 +721,7 @@ ANONYMOUS_IDS_MAX_COUNT = 120000
 ANONYMOUS_IDS_LAMBDA = 5
 
 # IDR Data feeds
-DATAFEED_ID = "data_feed_id"
+DATAFEED_ID = "datafeed_id"
 DATAFEED_DATA_SOURCE_TYPE = "datasource_name"
 DATAFEED_DATA_SOURCE_NAME = "datasource_label"
 DATAFEED_NEW_IDS_COUNT = "new_ids_generated"

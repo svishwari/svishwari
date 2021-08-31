@@ -408,7 +408,14 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
 
     logger.info("Successfully retrieved identity data feed details.")
 
-    return response.json()[api_c.BODY]
+    datafeed = response.json()[api_c.BODY]
+    datafeed[api_c.PINNING]["pinning_timestamp"] = parse(
+        datafeed[api_c.PINNING]["pinning_timestamp"]
+    )
+    datafeed[api_c.STITCHED]["stitched_timestamp"] = parse(
+        datafeed[api_c.STITCHED]["stitched_timestamp"]
+    )
+    return datafeed
 
 
 def generate_idr_matching_trends_distribution(

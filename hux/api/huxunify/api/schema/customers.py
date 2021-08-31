@@ -180,7 +180,9 @@ class DataFeedPinning(Schema):
     new_company_ids = Integer(required=True, example=1)
     new_address_ids = Integer(required=True, example=1)
     process_time = Float(required=True, example=6.43)
-    pinning_timestamp = Str(required=True, example="2021-08-05T14:44:42.694Z")
+    pinning_timestamp = DateTimeWithZ(
+        required=True, example="2021-08-05T14:44:42.694Z"
+    )
 
 
 class DataFeedStitched(Schema):
@@ -191,7 +193,9 @@ class DataFeedStitched(Schema):
     match_rate = Float(required=True, example=0.6606)
     merge_rate = Float(required=True, example=0.0)
     records_source = Str(required=True, example="Input Waterfall")
-    stitched_timestamp = Str(required=True, example="2021-08-05T14:44:42.694Z")
+    stitched_timestamp = DateTimeWithZ(
+        required=True, example="2021-08-05T14:44:42.694Z"
+    )
 
 
 class DataFeedDetailsSchema(Schema):
