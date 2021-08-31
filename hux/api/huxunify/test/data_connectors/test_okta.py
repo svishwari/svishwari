@@ -14,7 +14,7 @@ from huxunifylib.database.client import DatabaseClient
 from huxunify.api.config import get_config
 from huxunify.api import constants
 from huxunify.api.data_connectors import okta
-from huxunify.api.route.utils import secured, get_user_name
+from huxunify.api.route.decorators import secured, get_user_name
 from huxunify.api.data_connectors.okta import (
     get_user_info,
     get_token_from_request,
@@ -78,7 +78,13 @@ class OktaTest(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
-        # mock get_db_client()
+        # mock get_db_client() from decorators
+        unittest.mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() from utils
         unittest.mock.patch(
             "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
