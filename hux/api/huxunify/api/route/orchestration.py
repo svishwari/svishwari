@@ -11,7 +11,10 @@ from marshmallow import INCLUDE
 from pymongo import MongoClient
 
 from huxunifylib.util.general.logging import logger
-from huxunifylib.connectors import FacebookConnector
+from huxunifylib.connectors import (
+    CustomAudienceDeliveryStatusError,
+    FacebookConnector,
+)
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -19,6 +22,7 @@ from huxunifylib.database import (
     db_exceptions,
     engagement_management,
     data_management,
+    engagement_audience_management as eam,
 )
 import huxunifylib.database.constants as db_c
 
@@ -35,16 +39,18 @@ from huxunify.api.schema.engagement import (
 )
 from huxunify.api.data_connectors.cdp import get_customers_overview
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
+from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as api_c
-from huxunify.api.route.utils import (
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
-    get_db_client,
     secured,
-    get_user_name,
     api_error_handler,
+    get_user_name,
+)
+from huxunify.api.route.utils import (
+    get_db_client,
     validate_destination_id,
-    get_token_from_request,
 )
 
 # setup the orchestration blueprint
@@ -147,7 +153,7 @@ class AudienceView(SwaggerView):
 
         # workaround because DocumentDB does not allow $replaceRoot
         # do replace root by bringing the nested audience up a level.
-        _ = [x.update(audience_dict[x[db_c.ID]]) for x in audiences]
+        _ = [x.update(audience_dict.get(x[db_c.ID])) for x in audiences]
 
         # # get customer sizes
         # token_response = get_token_from_request(request)
@@ -164,8 +170,26 @@ class AudienceView(SwaggerView):
             )
         )
 
+        # get unique destinations per audience across engagements
+        audience_destinations = eam.get_all_engagement_audience_destinations(
+            database
+        )
+
         # process each audience object
         for audience in audiences:
+            # find the matched audience destinations
+            matched_destinations = [
+                x
+                for x in audience_destinations
+                if x[db_c.ID] == audience[db_c.ID]
+            ]
+            # set the unique destinations
+            audience[db_c.DESTINATIONS] = (
+                matched_destinations[0].get(db_c.DESTINATIONS, [])
+                if matched_destinations
+                else []
+            )
+
             # take the last X number of deliveries
             # remove any empty ones, and only show the delivered/succeeded
             audience[api_c.DELIVERIES] = [
@@ -175,11 +199,6 @@ class AudienceView(SwaggerView):
                 and x.get(db_c.STATUS)
                 in [db_c.AUDIENCE_STATUS_DELIVERED, db_c.STATUS_SUCCEEDED]
             ][:delivery_limit]
-
-            # set the destinations
-            audience[api_c.DESTINATIONS_TAG] = add_destinations(
-                database, audience.get(api_c.DESTINATIONS_TAG)
-            )
 
             # set the weighted status for the audience based on deliveries
             audience[api_c.STATUS] = weight_delivery_status(audience)
@@ -907,22 +926,22 @@ class SetLookalikeAudience(SwaggerView):
                 "message": api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
 
-        # Commented as creating lookalike audience is restricted in facebook
-        # as we are using fake customer data
-        # timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
-        #     db_c.AUDIENCE_NAME_DATE_FORMAT
-        # )
-        #
-        # destination_connector.get_new_lookalike_audience(
-        #     f"{source_audience[db_c.NAME]} - {timestamp}",
-        #     body[api_c.NAME],
-        #     body[api_c.AUDIENCE_SIZE_PERCENTAGE],
-        #     "US",
-        # )
+        try:
+            # Commented as creating lookalike audience is restricted in facebook
+            # as we are using fake customer data
+            # timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
+            #     db_c.AUDIENCE_NAME_DATE_FORMAT
+            # )
+            #
+            # destination_connector.get_new_lookalike_audience(
+            #     f"{source_audience[db_c.NAME]} - {timestamp}",
+            #     body[api_c.NAME],
+            #     body[api_c.AUDIENCE_SIZE_PERCENTAGE],
+            #     "US",
+            # )
 
-        logger.info("Creating delivery platform lookalike audience.")
-        lookalike_audience = (
-            destination_management.create_delivery_platform_lookalike_audience(
+            logger.info("Creating delivery platform lookalike audience.")
+            lookalike_audience = destination_management.create_delivery_platform_lookalike_audience(
                 database,
                 destination[db_c.ID],
                 ObjectId(body[api_c.AUDIENCE_ID]),
@@ -932,7 +951,15 @@ class SetLookalikeAudience(SwaggerView):
                 user_name,
                 0,  # TODO HUS-801 - set lookalike SIZE correctly.
             )
-        )
+
+        except CustomAudienceDeliveryStatusError:
+            return {
+                "message": (
+                    f"Failed to create a lookalike audience, "
+                    f"{body[api_c.NAME]}: the selected audience "
+                    f"to create a lookalike from is inactive or unusable.",
+                ),
+            }, HTTPStatus.NOT_FOUND
 
         for engagement_id in body[api_c.ENGAGEMENT_IDS]:
             engagement_management.append_audiences_to_engagement(

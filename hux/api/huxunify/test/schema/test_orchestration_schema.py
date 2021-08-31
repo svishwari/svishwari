@@ -334,4 +334,4 @@ class OrchestrationSchemaTest(TestCase):
         # deserialize the json document by loading it into the schema and
         # test the schema to have the match_rate value set
         schema = AudienceDeliveryHistorySchema().load(delivery_history)
-        self.assertGreater(schema[api_c.MATCH_RATE], 0.2)
+        self.assertGreater(schema[api_c.MATCH_RATE], 0.19)
