@@ -158,7 +158,7 @@ class DataFeedSchema(Schema):
     last_run = Str(attribute=api_c.TIMESTAMP)
     data_source_type = Str(
         attribute=api_c.DATAFEED_DATA_SOURCE_TYPE,
-        example=db_c.CDP_DATA_SOURCE_BLUECORE,
+        example="test_data_source_type",
     )
 
 

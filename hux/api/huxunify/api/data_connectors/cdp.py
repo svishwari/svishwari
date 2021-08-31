@@ -347,7 +347,7 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
         start_date (str): Start date.
         end_date (str): End date.
     Returns:
-       list: datafeeds processed within the given dates
+       list: datafeeds processed within the given dates.
     """
     # get config
     config = get_config()

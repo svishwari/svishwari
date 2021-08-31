@@ -697,7 +697,7 @@ DIGITAL_IDS_ADDED = "digital_ids_added"
 DIGITAL_IDS_MERGED = "digital_ids_merged"
 MERGE_RATE = "merge_rate"
 RECORDS_SOURCE = "records_source"
-TIME_STAMP = "time_stamp"
+TIMESTAMP = "timestamp"
 STITCHED = "stitched"
 PINNING = "pinning"
 
