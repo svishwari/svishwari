@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 """
 Paths for Orchestration API
 """
@@ -1004,15 +1005,13 @@ class DeleteAudienceView(SwaggerView):
             Tuple[dict, int]: response dict, HTTP status.
 
         """
-        database = get_db_client()
 
         deleted = orchestration_management.delete_audience(
-            database, ObjectId(audience_id)
+            get_db_client(), ObjectId(audience_id)
         )
 
         if deleted:
             return {}, HTTPStatus.NO_CONTENT
-        else:
-            return {
-                "message": "Internal Server Error."
-            }, HTTPStatus.INTERNAL_SERVER_ERROR
+        return {
+            "message": "Internal Server Error."
+        }, HTTPStatus.INTERNAL_SERVER_ERROR

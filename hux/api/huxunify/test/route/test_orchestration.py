@@ -29,7 +29,7 @@ from huxunify.api import constants as api_c
 import huxunify.test.constants as t_c
 from huxunify.app import create_app
 
-
+# pylint: disable=too-many-public-methods
 class OrchestrationRouteTest(TestCase):
     """Orchestration Route tests"""
 
@@ -958,7 +958,7 @@ class OrchestrationRouteTest(TestCase):
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
 
-    def test_delete_audience_where_audience_DNE(self) -> None:
+    def test_delete_audience_where_audience_does_not_exist(self) -> None:
         """
         Test delete audience API with valid id but the object does not exist
 
