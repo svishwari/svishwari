@@ -23,6 +23,9 @@ from huxunifylib.database.orchestration_management import (
     create_audience,
     get_audience,
 )
+from huxunifylib.database.engagement_audience_management import (
+    get_all_engagement_audience_destinations,
+)
 from huxunifylib.database.client import DatabaseClient
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api import constants as api_c
@@ -72,7 +75,13 @@ class OrchestrationRouteTest(TestCase):
             return_value=self.database,
         ).start()
 
-        # mock get_db_client() for the userinfo utils.
+        # mock get_db_client() for the userinfo decorator.
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() for the utils.
         mock.patch(
             "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
@@ -352,6 +361,43 @@ class OrchestrationRouteTest(TestCase):
         valid_response = {"message": api_c.AUTH401_ERROR_MESSAGE}
         self.assertEqual(valid_response, response.json)
         self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
+
+    def test_create_audience_no_destination_id(self) -> None:
+        """Test create audience with destination given no id in destination object.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        audience_post = {
+            db_c.AUDIENCE_NAME: "Test Audience Create",
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                            api_c.AUDIENCE_FILTER_TYPE: "type",
+                            api_c.AUDIENCE_FILTER_VALUE: "value",
+                        }
+                    ],
+                }
+            ],
+            api_c.DESTINATIONS: [
+                {api_c.DATA_EXTENSION_ID: str(d[db_c.ID])}
+                for d in self.destinations
+            ],
+        }
+
+        response = self.test_client.post(
+            self.audience_api_endpoint,
+            json=audience_post,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_create_audience_invalid_user_info(self):
         """Test create audience with destination given invalid user info.
@@ -657,6 +703,10 @@ class OrchestrationRouteTest(TestCase):
         audience_ids = [ObjectId(x[db_c.ID]) for x in self.audiences]
         return_ids = [ObjectId(x[db_c.OBJECT_ID]) for x in audiences]
 
+        expected_audience_destinations = (
+            get_all_engagement_audience_destinations(self.database)
+        )
+
         self.assertListEqual(audience_ids, return_ids)
         for audience in audiences:
             self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
@@ -672,6 +722,20 @@ class OrchestrationRouteTest(TestCase):
                     api_c.STATUS_DELIVERY_PAUSED,
                     api_c.STATUS_ERROR,
                 ],
+            )
+
+            # find the matched audience destinations, should be the same.
+            matched_audience = [
+                x
+                for x in expected_audience_destinations
+                if x[db_c.ID] == ObjectId(audience[api_c.ID])
+            ]
+
+            # test that the unique count of delivery destinations
+            # is the same as the response.
+            self.assertEqual(
+                len(audience[db_c.DESTINATIONS]),
+                len(matched_audience[0][db_c.DESTINATIONS]),
             )
 
     def test_update_audience(self):

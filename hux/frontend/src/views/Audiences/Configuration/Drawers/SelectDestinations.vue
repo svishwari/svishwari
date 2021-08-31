@@ -91,16 +91,15 @@ export default {
     },
   },
 
-  async mounted() {
-    this.loading = true
-    await this.getDestinations()
-    this.loading = false
-  },
-
   methods: {
     ...mapActions({
       getDestinations: "destinations/getAll",
     }),
+    async fetchDependencies() {
+      this.loading = true
+      await this.getDestinations()
+      this.loading = false
+    },
 
     isAdded(destination) {
       return this.value.findIndex((each) => destination.id === each.id) !== -1

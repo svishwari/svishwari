@@ -157,7 +157,7 @@ export default {
         {
           text: "Trained date",
           value: "trained_date",
-          width: "120px",
+          width: "140px",
         },
       ],
     }
@@ -209,12 +209,18 @@ export default {
         padding-left: 24px;
       }
     }
+    tr {
+      td {
+        height: 40px !important;
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+      }
+    }
     .cell {
       font-family: Open Sans;
       font-style: normal;
       font-weight: normal;
       font-size: 14px !important;
-      line-height: 22px;
       display: inline-block;
       max-width: 100%;
       overflow: hidden;

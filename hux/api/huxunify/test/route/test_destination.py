@@ -58,6 +58,12 @@ class TestDestinationRoutes(TestCase):
             return_value=self.database,
         ).start()
 
+        # mock get_db_client() for the userinfo decorator.
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
         # mock get_db_client() for the userinfo utils.
         mock.patch(
             "huxunify.api.route.utils.get_db_client",

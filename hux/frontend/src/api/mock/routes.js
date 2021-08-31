@@ -1,5 +1,5 @@
 import { Response } from "miragejs"
-import moment from "moment"
+import dayjs from "dayjs"
 import faker from "faker"
 
 import { audienceInsights } from "./factories/audiences"
@@ -14,6 +14,10 @@ import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
+import demographicsData from "@/api/mock/fixtures/demographicData.js"
+import totalCustomersData from "./fixtures/totalCustomersData.js"
+import { driftData } from "@/api/mock/factories/driftData.js"
+import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -105,7 +109,7 @@ export const defineRoutes = (server) => {
       return new Response(errorCode, errorHeaders, errorResponse)
     }
 
-    const now = moment().toJSON()
+    const now = dayjs().toJSON()
 
     const attrs = {
       ...requestData,
@@ -195,7 +199,7 @@ export const defineRoutes = (server) => {
           if (audience.id === audienceId) {
             audience.destinations = audience.destinations.map((destination) => {
               destination.latest_delivery = {
-                update_time: moment().toJSON(),
+                update_time: dayjs().toJSON(),
                 status: "Delivering",
               }
               return destination
@@ -302,7 +306,7 @@ export const defineRoutes = (server) => {
           type: destination.type,
         },
         size: audience.size,
-        delivered: moment().toJSON(),
+        delivered: dayjs().toJSON(),
         match_rate: faker.datatype.number({ min: 0, max: 1, precision: 0.001 }),
       }
     })
@@ -363,6 +367,14 @@ export const defineRoutes = (server) => {
 
   server.get("/models/:id/lift", () => liftData)
 
+  server.post("/models/:id/drift", () => driftData())
+
+  server.get("/models/:id/features", (schema, request) => {
+    const id = request.params.id
+    const model = schema.models.find(id)
+    return model.attrs.model_feature
+  })
+
   // customers
   server.get("/customers")
 
@@ -378,6 +390,26 @@ export const defineRoutes = (server) => {
 
   server.get("/customers-insights/geo", () => mapData)
 
+  server.get("/customers-insights/demo", () => demographicsData)
+
+  server.get("/customers-insights/total", () => totalCustomersData)
+
+  server.post("/customers-insights/cities", (schema, request) => {
+    let batchNumber = request.queryParams["batch_number"] || 1
+    let batchSize = request.queryParams["batch_size"] || 100
+    let start = batchNumber === 1 ? 0 : (batchNumber - 1) * batchSize
+    let end = batchNumber === 1 ? batchSize : batchNumber * batchSize
+    return schema.geoCities.all().slice(start, end)
+  })
+
+  server.post("/customers-insights/states", (schema) => {
+    return schema.geoStates.all()
+  })
+
+  server.post("/customers-insights/countries", (schema) => {
+    return schema.geoCountries.all()
+  })
+
   server.get("/customers", (schema, request) => {
     let currentBatch = request.queryParams.batch_number
     let batchSize = request.queryParams.batch_size
@@ -390,7 +422,15 @@ export const defineRoutes = (server) => {
   server.post("/customers/overview", () => customersOverview)
 
   // identity resolution
-  server.get("/idr/overview", () => idrOverview)
+  server.get("/idr/overview", () => {
+    return {
+      date_range: {
+        start_date: faker.date.past(5),
+        end_date: dayjs().toJSON(),
+      },
+      overview: idrOverview,
+    }
+  })
   server.get(
     "/idr/datafeeds",
     (schema) => {
@@ -399,6 +439,7 @@ export const defineRoutes = (server) => {
     { timing: 10 }
   )
   server.get("/idr/datafeeds/:datafeed_id", () => idrDataFeedReport)
+  server.get("/idr/matching-trends", () => genderSpendData())
 
   // notifications
   server.get("/notifications", (schema, request) => {
@@ -439,7 +480,7 @@ export const defineRoutes = (server) => {
       })
     }
 
-    const now = moment().toJSON()
+    const now = dayjs().toJSON()
 
     const attrs = {
       ...requestData,
@@ -473,7 +514,7 @@ export const defineRoutes = (server) => {
           type: destination.type,
         },
         size: audience.size,
-        delivered: moment().toJSON(),
+        delivered: dayjs().toJSON(),
         match_rate: faker.datatype.number({ min: 0, max: 1, precision: 0.001 }),
       }
     })
@@ -486,7 +527,7 @@ export const defineRoutes = (server) => {
       return schema.engagements.find(id)
     })
     requestData.is_lookalike = true
-    const now = moment().toJSON()
+    const now = dayjs().toJSON()
     const attrs = {
       ...requestData,
       create_time: now,

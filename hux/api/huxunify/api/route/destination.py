@@ -44,13 +44,15 @@ from huxunify.api.schema.destinations import (
     QualtricsAuthCredsSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
-from huxunify.api.route.utils import (
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
-    get_db_client,
     secured,
-    get_user_name,
     api_error_handler,
     validate_destination,
+    get_user_name,
+)
+from huxunify.api.route.utils import (
+    get_db_client,
 )
 import huxunify.api.constants as api_c
 

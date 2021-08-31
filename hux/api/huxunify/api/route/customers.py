@@ -1,13 +1,13 @@
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, too-many-lines
 """
 Paths for customer API
 """
 from http import HTTPStatus
 from typing import Tuple, List
 from datetime import datetime
+
 from dateutil.relativedelta import relativedelta
 from faker import Faker
-import pandas as pd
 
 from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
@@ -22,26 +22,32 @@ from huxunify.api.schema.customers import (
     CustomerGeoVisualSchema,
     CustomerDemographicInsightsSchema,
     MatchingTrendsSchema,
+    IDROverviewWithDateRangeSchema,
     CustomerEventsSchema,
     TotalCustomersInsightsSchema,
+    CustomersInsightsStatesSchema,
+    CustomersInsightsCitiesSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import (
-    secured,
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
+    secured,
     api_error_handler,
-    get_token_from_request,
 )
+from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunify.api.data_connectors.cdp import (
     get_customer_profiles,
     get_customer_profile,
     get_customers_overview,
     get_idr_data_feeds,
+    get_idr_overview,
     get_idr_matching_trends,
     get_customer_events_data,
     get_demographic_by_state,
     get_spending_by_cities,
     get_customers_insights_count_by_day,
+    get_city_ltvs,
+    get_spending_by_gender,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -193,16 +199,34 @@ class CustomerPostOverview(SwaggerView):
 @add_view_to_blueprint(
     customers_bp,
     f"/{api_c.IDR_ENDPOINT}/{api_c.OVERVIEW}",
-    "CustomerDashboardOverview",
+    "IDROverview",
 )
-class CustomerDashboardOverview(SwaggerView):
+class IDROverview(SwaggerView):
     """
     Customers Dashboard Overview class
     """
 
+    parameters = [
+        {
+            "name": api_c.START_DATE,
+            "description": "Start date.",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "05-01-2016",
+        },
+        {
+            "name": api_c.END_DATE,
+            "description": "End date.",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "09-01-2019",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
-            "schema": CustomerOverviewSchema,
+            "schema": IDROverviewWithDateRangeSchema,
             "description": "Customer Identity Resolution Dashboard overview.",
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -226,8 +250,12 @@ class CustomerDashboardOverview(SwaggerView):
         """
         token_response = get_token_from_request(request)
         return (
-            CustomerOverviewSchema().dump(
-                get_customers_overview(token_response[0])
+            IDROverviewWithDateRangeSchema().dump(
+                get_idr_overview(
+                    token_response[0],
+                    request.args.get(api_c.START_DATE),
+                    request.args.get(api_c.END_DATE),
+                )
             ),
             HTTPStatus.OK,
         )
@@ -256,9 +284,9 @@ class Customersview(SwaggerView):
             "in": "query",
             "type": "string",
             "description": "Number of which batch of customers should be returned.",
-            "example": api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER,
+            "example": api_c.DEFAULT_BATCH_NUMBER,
             "required": False,
-            "default": api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER,
+            "default": api_c.DEFAULT_BATCH_NUMBER,
         },
     ]
     responses = {
@@ -296,7 +324,7 @@ class Customersview(SwaggerView):
         )
         batch_number = request.args.get(
             api_c.QUERY_PARAMETER_BATCH_NUMBER,
-            default=api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER,
+            default=api_c.DEFAULT_BATCH_NUMBER,
         )
         offset = (int(batch_number) - 1) * int(batch_size)
         return (
@@ -376,6 +404,24 @@ class CustomerProfileSearch(SwaggerView):
 class IDRDataFeeds(SwaggerView):
     """IDR Data Feeds Report"""
 
+    parameters = [
+        {
+            "name": api_c.START_DATE,
+            "description": "Start date.",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "05-01-2016",
+        },
+        {
+            "name": api_c.END_DATE,
+            "description": "End date.",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "09-01-2019",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "schema": {"type": "array", "items": DataFeedSchema},
@@ -401,10 +447,20 @@ class IDRDataFeeds(SwaggerView):
         Returns:
             Tuple[List[dict], int] list of IDR data feeds object dicts
         """
+        token_response = get_token_from_request(request)
 
         return (
-            jsonify(DataFeedSchema().dump(get_idr_data_feeds(), many=True)),
-            HTTPStatus.OK.value,
+            jsonify(
+                DataFeedSchema().dump(
+                    get_idr_data_feeds(
+                        token_response[0],
+                        request.args.get(api_c.START_DATE),
+                        request.args.get(api_c.END_DATE),
+                    ),
+                    many=True,
+                )
+            ),
+            HTTPStatus.OK,
         )
 
 
@@ -549,20 +605,7 @@ class CustomerDemoVisualView(SwaggerView):
     Customers Profiles Demographic Insights class
     """
 
-    parameters = [
-        {
-            "name": "body",
-            "description": "Customer Insights Demographic Filters",
-            "type": "object",
-            "in": "body",
-            "example": {
-                "filters": {
-                    "start_date": "2020-11-30T00:00:00Z",
-                    "end_date": "2021-04-30T00:00:00Z",
-                }
-            },
-        }
-    ]
+    parameters = [api_c.START_DATE_PARAMS, api_c.END_DATE_PARAMS]
     responses = {
         HTTPStatus.OK.value: {
             "schema": {
@@ -580,12 +623,14 @@ class CustomerDemoVisualView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def post(self) -> Tuple[dict, int]:
+    def get(self) -> Tuple[dict, int]:
         """Retrieves a Demographical customer insights.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
 
         Returns:
             Tuple[dict, int] list of Customer insights on demo overview and http code
@@ -593,36 +638,59 @@ class CustomerDemoVisualView(SwaggerView):
 
         token_response = get_token_from_request(request)
 
-        start_date = datetime(2020, 11, 30)
-        dates = [
-            (start_date + pd.DateOffset(months=x)).to_pydatetime()
-            for x in range(0, 5)
-        ]
+        # get customers overview data from CDP to set gender specific
+        # population details
+        customers = get_customers_overview(token_response[0])
+
+        gender_spending = get_spending_by_gender(
+            token_response[0],
+            request.args.get(api_c.START_DATE),
+            request.args.get(api_c.END_DATE),
+        )
+        # if the customers overview response body is empty from CDP, then log
+        # error and return 400
+        if not customers:
+            logger.error("Failed to get Customer Profile Insights from CDP.")
+            return (
+                {
+                    "message": "Failed to get customers Demographical Visual Insights."
+                },
+                HTTPStatus.BAD_REQUEST,
+            )
+
+        date_parser = lambda x, y: datetime.strptime(
+            f"1-{str(x)}-{str(y)}", "%d-%m-%Y"
+        )
         output = {
             api_c.GENDER: {
                 gender: {
-                    api_c.POPULATION_PERCENTAGE: population_percent,
-                    api_c.SIZE: size,
+                    api_c.POPULATION_PERCENTAGE: customers.get(gender, 0),
+                    api_c.SIZE: customers.get(f"{gender}_{api_c.COUNT}", 0),
                 }
-                for gender, population_percent, size in zip(
-                    api_c.GENDERS,
-                    [0.5201, 0.4601, 0.0211],
-                    [6955119, 5627732, 289655],
-                )
+                for gender in api_c.GENDERS
             },
             api_c.INCOME: get_spending_by_cities(token_response[0]),
             api_c.SPEND: {
                 api_c.GENDER_WOMEN: [
-                    {api_c.DATE: date, api_c.LTV: ltv}
-                    for date, ltv in zip(dates, [3199, 4265, 4986, 4986, 6109])
+                    {
+                        api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
+                        api_c.LTV: round(x[api_c.AVG_SPENT_WOMEN], 4),
+                    }
+                    for x in gender_spending
                 ],
                 api_c.GENDER_MEN: [
-                    {api_c.DATE: date, api_c.LTV: ltv}
-                    for date, ltv in zip(dates, [3088, 3842, 3999, 3999, 6109])
+                    {
+                        api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
+                        api_c.LTV: round(x[api_c.AVG_SPENT_MEN], 4),
+                    }
+                    for x in gender_spending
                 ],
                 api_c.GENDER_OTHER: [
-                    {api_c.DATE: date, api_c.LTV: ltv}
-                    for date, ltv in zip(dates, [2144, 3144, 3211, 3211, 4866])
+                    {
+                        api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
+                        api_c.LTV: round(x[api_c.AVG_SPENT_OTHER], 4),
+                    }
+                    for x in gender_spending
                 ],
             },
         }
@@ -641,6 +709,24 @@ class CustomerDemoVisualView(SwaggerView):
 class IDRMatchingTrends(SwaggerView):
     """IDR Matching Trends YTD"""
 
+    parameters = [
+        {
+            "name": api_c.START_DATE,
+            "description": "Start date.",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "05-01-2016",
+        },
+        {
+            "name": api_c.END_DATE,
+            "description": "End date.",
+            "type": "string",
+            "in": "query",
+            "required": False,
+            "example": "09-01-2019",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "schema": {"type": "array", "items": MatchingTrendsSchema},
@@ -669,7 +755,12 @@ class IDRMatchingTrends(SwaggerView):
         return (
             jsonify(
                 MatchingTrendsSchema().dump(
-                    get_idr_matching_trends(token_response[0]), many=True
+                    get_idr_matching_trends(
+                        token_response[0],
+                        request.args.get(api_c.START_DATE),
+                        request.args.get(api_c.END_DATE),
+                    ),
+                    many=True,
                 )
             ),
             HTTPStatus.OK,
@@ -701,10 +792,8 @@ class CustomerEvents(SwaggerView):
             "type": "object",
             "in": "body",
             "example": {
-                api_c.START_DATE: "%s-01-01T00:00:00Z"
-                % datetime.utcnow().year,
-                api_c.END_DATE: datetime.utcnow().strftime("%Y-%m-%d")
-                + "T00:00:00Z",
+                api_c.START_DATE: datetime.utcnow().strftime("%Y-01-01"),
+                api_c.END_DATE: datetime.utcnow().strftime("%Y-%m-%d"),
             },
         },
     ]
@@ -813,6 +902,175 @@ class TotalCustomersGraphView(SwaggerView):
             jsonify(
                 TotalCustomersInsightsSchema().dump(
                     customers_insight_total,
+                    many=True,
+                )
+            ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.STATES}",
+    "CustomersInsightsStates",
+)
+class CustomersInsightsStates(SwaggerView):
+    """
+    Customer insights by state
+    """
+
+    params = parameters = [
+        {
+            "name": "body",
+            "description": "Customer Overview Filters",
+            "type": "object",
+            "in": "body",
+            "example": {
+                "filters": [
+                    {
+                        "section_aggregator": "ALL",
+                        "section_filters": [
+                            {
+                                "field": "country",
+                                "type": "equals",
+                                "value": "US",
+                            }
+                        ],
+                    }
+                ]
+            },
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "array",
+                "items": CustomersInsightsStatesSchema,
+            },
+            "description": "Customer Insights by states.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Customer Insights by states."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def post(self) -> Tuple[list, int]:
+        """Retrieves state-level geographic customer insights.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            - Tuple[list, int]
+                list of spend and size data by state,
+                http code
+        """
+        # get auth token from request
+        token_response = get_token_from_request(request)
+
+        return (
+            jsonify(
+                CustomersInsightsStatesSchema().dump(
+                    get_demographic_by_state(
+                        token_response[0], filters=request.json
+                    ),
+                    many=True,
+                )
+            ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.CITIES}",
+    "CustomersInsightsCities",
+)
+class CustomersInsightsCities(SwaggerView):
+    """
+    Customer insights by city
+    """
+
+    params = parameters = [
+        {
+            "name": api_c.QUERY_PARAMETER_BATCH_SIZE,
+            "in": "query",
+            "type": "integer",
+            "description": "Max number of cities to be returned.",
+            "example": "5",
+            "required": False,
+            "default": api_c.CITIES_DEFAULT_BATCH_SIZE,
+        },
+        {
+            "name": api_c.QUERY_PARAMETER_BATCH_NUMBER,
+            "in": "query",
+            "type": "string",
+            "description": "Number of which batch of notifications should be returned.",
+            "example": "10",
+            "required": False,
+            "default": api_c.DEFAULT_BATCH_NUMBER,
+        },
+        {
+            "name": "body",
+            "description": "Customer Overview Filters",
+            "type": "object",
+            "in": "body",
+            "example": api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "array",
+                "items": CustomersInsightsCitiesSchema,
+            },
+            "description": "Customer Insights by cities.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Customer Insights by cities."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def post(self) -> Tuple[list, int]:
+        """Retrieves city-level geographic customer insights.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            - Tuple[list, int]
+                list of spend and size by city,
+                http code
+        """
+        # get auth token from request
+        token_response = get_token_from_request(request)
+
+        batch_size = request.args.get(
+            api_c.QUERY_PARAMETER_BATCH_SIZE, api_c.CITIES_DEFAULT_BATCH_SIZE
+        )
+        batch_number = request.args.get(
+            api_c.QUERY_PARAMETER_BATCH_NUMBER, api_c.DEFAULT_BATCH_NUMBER
+        )
+
+        return (
+            jsonify(
+                CustomersInsightsCitiesSchema().dump(
+                    get_city_ltvs(
+                        token_response[0],
+                        filters=request.json,
+                        offset=int(batch_size) * (int(batch_number) - 1),
+                        limit=int(batch_size),
+                    ),
                     many=True,
                 )
             ),

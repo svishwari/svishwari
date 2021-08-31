@@ -1,9 +1,13 @@
 <template>
   <div class="overview-wrap">
-    <page-header :title="`Welcome back, ${fullName}!`" class="py-7">
+    <page-header
+      :title="`Welcome back, ${fullName}!`"
+      class="py-7"
+      header-height="auto"
+    >
       <template slot="description">
         Hux is here to help you make better, faster decisions to improve your
-        Customer Experiences.
+        customer experiences.
         <a
           class="text-decoration-none"
           href="https://consulting.deloitteresources.com/offerings/customer-marketing/advertising-marketing-commerce/Pages/hux_marketing.aspx"
@@ -59,28 +63,48 @@
         ></card-info>
       </div>
     </div>
-    <empty-state-chart>
-      <template #chart-image>
-        <img src="@/assets/images/empty-state-chart-1.png" alt="Empty state" />
-      </template>
-    </empty-state-chart>
+    <v-row class="px-8 mt-2">
+      <v-col md="12">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
+          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <div class="mt-2">
+              <span class="neroBlack--text text-h5">
+                Total customers ({{ timeFrameLabel }})
+              </span>
+            </div>
+          </v-card-title>
+          <v-progress-linear
+            v-if="loadingCustomerChart"
+            :active="loadingCustomerChart"
+            :indeterminate="loadingCustomerChart"
+          />
+          <total-customer-chart
+            v-if="!loadingCustomerChart"
+            :customers-data="totalCustomers"
+          />
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import CardInfo from "@/components/common/CardInfo"
-import EmptyStateChart from "@/components/common/EmptyStateChart"
+import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
 
 export default {
   name: "Overview",
   components: {
     PageHeader,
     CardInfo,
-    EmptyStateChart,
+    TotalCustomerChart,
   },
   data() {
     return {
+      loadingCustomerChart: false,
+      timeFrameLabel: "last 6 months",
       configureOptions: {
         configureHux: true,
         activeCustomers: true,
@@ -92,7 +116,7 @@ export default {
         {
           title: "Connect data source",
           description:
-            "Choose your data source from various customer touchpoint systems.",
+            "Connect your data sources to enable data unification in a single location.",
           route: {
             name: "DataSourceConfiguration",
             query: { select: true },
@@ -102,7 +126,7 @@ export default {
         {
           title: "Add a destination",
           description:
-            "Choose a destination where your actionable intelligence will be consumed.",
+            "Select the destinations you wish to deliver your audiences and/or engagements to.",
           route: {
             name: "DestinationConfiguration",
             query: { select: true },
@@ -112,14 +136,14 @@ export default {
         {
           title: "Create an audience",
           description:
-            "Create an audience based on customized orchestrated choices.",
+            "Create audiences by segmenting your customer list based on who you wish to target.",
           route: { name: "AudienceConfiguration" },
           active: true,
         },
         {
           title: "Create an engagement",
           description:
-            "Put all this great data and information to good use by creating an engagement.",
+            "Select your audiences and destinations where you wish to run campaigns on.",
           route: { name: "EngagementConfiguration" },
           active: true,
         },
@@ -127,6 +151,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      totalCustomers: "customers/totalCustomers",
+    }),
     firstName() {
       return this.$store.getters.getFirstname
     },
@@ -137,16 +164,33 @@ export default {
       return `${this.firstName} ${this.lastName}`
     },
   },
+  mounted() {
+    this.fetchTotalCustomers()
+  },
+  methods: {
+    ...mapActions({
+      getTotalCustomers: "customers/getTotalCustomers",
+    }),
+    async fetchTotalCustomers() {
+      this.loadingCustomerChart = true
+      await this.getTotalCustomers()
+      this.loadingCustomerChart = false
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .overview-wrap {
+  .page-header--wrap {
+    @extend .box-shadow-plain;
+  }
   .quickAccessMenu {
     background: var(--v-aliceBlue-base);
     min-height: 265px;
     padding: 16px 30px 40px 30px;
     overflow-x: auto;
+    border: 1px solid var(--v-zircon-base);
     h5 {
       line-height: 19px;
       letter-spacing: 0.5px;

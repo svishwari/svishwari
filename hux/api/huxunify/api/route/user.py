@@ -5,7 +5,6 @@ Paths for the User API
 from http import HTTPStatus
 from typing import Tuple
 
-from bson import ObjectId
 from connexion.exceptions import ProblemException
 from flask import Blueprint
 from flasgger import SwaggerView
@@ -17,11 +16,13 @@ from huxunifylib.database.user_management import (
     manage_user_favorites,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import (
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
-    get_db_client,
     secured,
     api_error_handler,
+)
+from huxunify.api.route.utils import (
+    get_db_client,
 )
 from huxunify.api.schema.user import UserSchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -151,9 +152,6 @@ class AddUserFavorite(SwaggerView):
 
         okta_id = None  # TODO : Fetch okta id from JWT Token (HUS-443)
 
-        if not ObjectId.is_valid(component_id):
-            logger.error("Invalid Object ID %s.", component_id)
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
         if component_name not in db_constants.FAVORITE_COMPONENTS:
             logger.error(
                 "Component name %s not in favorite components.", component_name
@@ -228,10 +226,6 @@ class DeleteUserFavorite(SwaggerView):
 
         """
         okta_id = None  # TODO : Fetch okta id from JWT Token (HUS-443)
-
-        if not ObjectId.is_valid(component_id):
-            logger.error("Invalid Object ID %s.", component_id)
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         if component_name not in db_constants.FAVORITE_COMPONENTS:
             logger.error(

@@ -1,7 +1,7 @@
 import Vue from "vue"
 import api from "@/api/client"
 import { handleError } from "@/utils"
-import moment from "moment"
+import dayjs from "dayjs"
 
 const namespaced = true
 
@@ -87,7 +87,7 @@ const mutations = {
         campaigns: payload.campaigns,
         delivery_jobs: payload.delivery_jobs.map((job) => ({
           ...job,
-          name: moment(job.created_time).format("MM/D/YYYY hh:ssA"),
+          name: dayjs(job.created_time).format("MM/D/YYYY hh:ssA"),
         })),
       }
     } else {

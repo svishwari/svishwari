@@ -18,7 +18,7 @@
           :key="item.id"
           class="legend-section"
         >
-          <icon :type="item.icon" :size="12" />
+          <icon :type="item.icon" :size="12" :color="primary" />
           <span>{{ item.prop }}</span>
         </v-list-item-subtitle>
       </v-list-item-content>

@@ -360,12 +360,12 @@
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
       @onCreate="onCreated()"
+      @onError="onError($event)"
     />
 
     <hux-alert
       v-model="flashAlert"
       :type="alert.type"
-      :title="alert.title"
       :message="alert.message"
     />
   </div>
@@ -410,8 +410,7 @@ export default {
       flashAlert: false,
       alert: {
         type: "success",
-        title: "YAY!",
-        message: "Successfully triggered delivery.",
+        message: "",
       },
       actionItems: [
         { title: "Favorite", isDisabled: true },
@@ -570,6 +569,11 @@ export default {
     },
     async onCreated() {
       this.alert.message = `Your lookalike audience, ${name}, has been created successfully.`
+      this.flashAlert = true
+    },
+    onError(message) {
+      this.alert.type = "error"
+      this.alert.message = message
       this.flashAlert = true
     },
   },

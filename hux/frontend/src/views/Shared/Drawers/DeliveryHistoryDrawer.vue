@@ -220,13 +220,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss" scoped>
-::v-deep .v-data-table > .v-data-table__wrapper > table > thead > tr > th {
-  background: var(--v-aliceBlue-base) !important;
-  padding: 11px 13px;
-}
-::v-deep .v-data-table > .v-data-table__wrapper > table > tbody > tr > td {
-  padding: 0 13px !important;
-}
-</style>

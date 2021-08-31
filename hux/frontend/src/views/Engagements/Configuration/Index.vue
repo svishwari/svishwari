@@ -4,11 +4,12 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
 
-    <h2 class="text-h2 mb-4">Add an engagement</h2>
+    <h2 class="text-h2">Add an engagement</h2>
 
     <p class="mb-10">
       Tell us a little bit about this engagement. What are its goals? When are
-      you planning to run it? Who are you targeting?
+      you planning to run it? Who are you targeting? If you don’t know yet -
+      that’s okay! You can always fill out the details later.
     </p>
 
     <engagement-overview v-model="data" />
@@ -20,7 +21,6 @@
 </template>
 
 <script>
-import { mapActions } from "vuex"
 import Page from "@/components/Page.vue"
 import EngagementOverview from "./Overview.vue"
 import EngagementForm from "./Form.vue"
@@ -45,20 +45,6 @@ export default {
 
       loading: false,
     }
-  },
-
-  async mounted() {
-    this.loading = true
-    await this.getAudiences()
-    await this.getDestinations()
-    this.loading = false
-  },
-
-  methods: {
-    ...mapActions({
-      getAudiences: "audiences/getAll",
-      getDestinations: "destinations/getAll",
-    }),
   },
 }
 </script>

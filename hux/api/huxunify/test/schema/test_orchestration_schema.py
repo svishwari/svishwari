@@ -6,6 +6,8 @@ from unittest import TestCase
 from datetime import datetime
 from random import uniform
 
+import bson
+
 from huxunifylib.database import constants as db_c
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
@@ -13,6 +15,7 @@ from huxunify.api.schema.orchestration import (
     AudienceDeliveryHistorySchema,
 )
 from huxunify.api import constants as api_c
+from huxunify.test import constants as t_c
 
 
 class OrchestrationSchemaTest(TestCase):
@@ -223,7 +226,7 @@ class OrchestrationSchemaTest(TestCase):
                 db_c.TYPE: "facebook",
             },
             db_c.SIZE: 1000,
-            api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
+            api_c.MATCH_RATE: round(uniform(0.21, 0.9), 2),
             api_c.DELIVERED: datetime.strftime(
                 datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
             ),
@@ -267,6 +270,36 @@ class OrchestrationSchemaTest(TestCase):
 
         self.assertFalse(AudienceDeliveryHistorySchema().validate(doc))
 
+    def test_audience_delivery_history_schema_invalid_id(self) -> None:
+        """
+        Test audience delivery history schema.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        doc = {
+            api_c.ENGAGEMENT: {
+                api_c.ID: t_c.INVALID_ID,
+                db_c.NAME: "Engagement 1",
+            },
+            api_c.DESTINATION: {
+                api_c.ID: "5f5f7262997acad4bac4384b",
+                db_c.NAME: "facebook",
+                db_c.TYPE: "facebook",
+            },
+            db_c.SIZE: 1000,
+            api_c.MATCH_RATE: 0,
+            api_c.DELIVERED: datetime.strftime(
+                datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
+            ),
+        }
+
+        with self.assertRaises(bson.errors.InvalidId):
+            AudienceDeliveryHistorySchema().validate(doc)
+
     def test_match_rate_audience_delivery_history_schema(self) -> None:
         """
         Test audience delivery history schema match_rate.
@@ -301,4 +334,4 @@ class OrchestrationSchemaTest(TestCase):
         # deserialize the json document by loading it into the schema and
         # test the schema to have the match_rate value set
         schema = AudienceDeliveryHistorySchema().load(delivery_history)
-        self.assertGreater(schema[api_c.MATCH_RATE], 0.2)
+        self.assertGreater(schema[api_c.MATCH_RATE], 0.19)

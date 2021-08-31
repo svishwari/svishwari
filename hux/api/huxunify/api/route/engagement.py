@@ -52,13 +52,15 @@ from huxunify.api.schema.engagement import (
     EngagementPutSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import (
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
-    get_db_client,
     secured,
     api_error_handler,
-    get_user_name,
     validate_destination,
+    get_user_name,
+)
+from huxunify.api.route.utils import (
+    get_db_client,
     validate_destination_id,
 )
 from huxunify.api.data_connectors.courier import toggle_event_driven_routers
@@ -175,10 +177,6 @@ class IndividualEngagementSearch(SwaggerView):
             Tuple[dict, int]: dict of the engagement and http code
 
         """
-
-        if not ObjectId.is_valid(engagement_id):
-            logger.error("Invalid Object ID %s.", engagement_id)
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         # get the engagement summary
         engagements = get_engagements_summary(
@@ -388,10 +386,6 @@ class UpdateEngagement(SwaggerView):
 
         """
 
-        if not ObjectId.is_valid(engagement_id):
-            logger.error("Invalid Object ID %s.", engagement_id)
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
-
         body = EngagementPutSchema().load(request.get_json())
 
         database = get_db_client()
@@ -475,10 +469,6 @@ class DeleteEngagement(SwaggerView):
             Tuple[dict, int]: message, HTTP status
 
         """
-
-        if not ObjectId.is_valid(engagement_id):
-            logger.error("Invalid Object ID %s.", engagement_id)
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         engagement_id = ObjectId(engagement_id)
         database = get_db_client()
@@ -581,10 +571,6 @@ class AddAudienceEngagement(SwaggerView):
             Tuple[dict, int]: Audience Engagement added, HTTP status.
 
         """
-
-        if not ObjectId.is_valid(engagement_id):
-            logger.error("Invalid Object ID %s.", engagement_id)
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
 
@@ -705,10 +691,6 @@ class DeleteAudienceEngagement(SwaggerView):
 
         """
 
-        if not ObjectId.is_valid(engagement_id):
-            logger.error("Invalid Object ID %s.", engagement_id)
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
-
         database = get_db_client()
 
         engagement = get_engagement(database, ObjectId(engagement_id))
@@ -724,9 +706,6 @@ class DeleteAudienceEngagement(SwaggerView):
         )
         audience_names = []
         for audience_id in body[api_c.AUDIENCE_IDS]:
-            if not ObjectId.is_valid(audience_id):
-                logger.error("Invalid Object ID %s.", audience_id)
-                return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
             audience_ids.append(ObjectId(audience_id))
             audience = get_audience(database, ObjectId(audience_id))
             if audience is None:
@@ -839,12 +818,6 @@ class AddDestinationEngagedAudience(SwaggerView):
             Tuple[dict, int]: Destination Audience Engagement added, HTTP status.
 
         """
-
-        if not (
-            ObjectId.is_valid(engagement_id) and ObjectId.is_valid(audience_id)
-        ):
-            logger.error("Invalid Object ID.")
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         destination = DestinationEngagedAudienceSchema().load(
             request.get_json(), partial=True
@@ -963,12 +936,6 @@ class RemoveDestinationEngagedAudience(SwaggerView):
 
         """
 
-        if not (
-            ObjectId.is_valid(engagement_id) and ObjectId.is_valid(audience_id)
-        ):
-            logger.error("Invalid Object ID.")
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
-
         destination = DestinationEngagedAudienceSchema().load(
             request.get_json(), partial=True
         )
@@ -1067,6 +1034,7 @@ class UpdateCampaignsForAudience(SwaggerView):
                     {
                         api_c.NAME: "Test Campaign",
                         api_c.ID: "campaign_id",
+                        api_c.AD_SET_ID: "ad_set_id",
                         api_c.DELIVERY_JOB_ID: "delivery_job_id",
                     },
                 ]
@@ -1117,11 +1085,6 @@ class UpdateCampaignsForAudience(SwaggerView):
                 success/failure, HTTP Status.
 
         """
-
-        # validate object id
-        if not all(ObjectId.is_valid(x) for x in [audience_id, engagement_id]):
-            logger.error("Invalid Object ID.")
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
@@ -1218,7 +1181,17 @@ class UpdateCampaignsForAudience(SwaggerView):
                 }, HTTPStatus.BAD_REQUEST
 
             updated_campaigns = [
-                {k: v for k, v in d.items() if k in [api_c.NAME, api_c.ID]}
+                {
+                    k: v
+                    for k, v in d.items()
+                    if k
+                    in [
+                        api_c.NAME,
+                        api_c.ID,
+                        api_c.AD_SET_ID,
+                        api_c.AD_SET_NAME,
+                    ]
+                }
                 for d in value
             ]
             delivery_jobs.append(
@@ -1335,11 +1308,6 @@ class AudienceCampaignsGetView(SwaggerView):
 
         """
 
-        # validate object id
-        if not all(ObjectId.is_valid(x) for x in [audience_id, engagement_id]):
-            logger.error("Invalid Object ID.")
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
-
         # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
         audience_id = ObjectId(audience_id)
@@ -1416,7 +1384,6 @@ class AudienceCampaignsGetView(SwaggerView):
                     db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS
                 ]
                 for campaign in delivery_campaigns:
-                    campaign[api_c.ID] = campaign[api_c.ID]
                     campaign[api_c.DELIVERY_JOB_ID] = delivery_job[db_c.ID]
                     campaign[db_c.CREATE_TIME] = delivery_job[db_c.CREATE_TIME]
                 campaigns.extend(delivery_campaigns)
@@ -1482,7 +1449,7 @@ class AudienceCampaignMappingsGetView(SwaggerView):
     tags = [api_c.CAMPAIGNS]
 
     # pylint: disable=no-self-use
-    # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-return-statements, too-many-locals
     @api_error_handler()
     @validate_destination()
     def get(
@@ -1504,10 +1471,6 @@ class AudienceCampaignMappingsGetView(SwaggerView):
                 success/failure, HTTP Status.
 
         """
-        # validate object id
-        if not all(ObjectId.is_valid(x) for x in [audience_id, engagement_id]):
-            logger.error("Invalid Object ID.")
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
@@ -1604,9 +1567,24 @@ class AudienceCampaignMappingsGetView(SwaggerView):
 
         logger.info("Got existing campaigns from Facebook.")
 
+        campaign_mappings = []
+        for campaign in campaigns:
+            ad_sets = facebook_connector.get_campaign_ad_sets(
+                campaign.get(api_c.ID)
+            )
+            for ad_set in ad_sets:
+                campaign_mappings.append(
+                    {
+                        api_c.ID: campaign.get(api_c.ID),
+                        api_c.AD_SET_ID: ad_set.get(api_c.ID),
+                        api_c.NAME: campaign.get(api_c.NAME),
+                        api_c.AD_SET_NAME: ad_set.get(api_c.NAME),
+                    }
+                )
+
         # Build response object
         campaign_schema = {
-            "campaigns": list(campaigns),
+            "campaigns": list(campaign_mappings),
             "delivery_jobs": delivery_jobs,
         }
 
@@ -1662,10 +1640,6 @@ class EngagementMetricsDisplayAds(SwaggerView):
                 HTTP Status Code
 
         """
-
-        if not ObjectId.is_valid(engagement_id):
-            logger.error("Invalid Object ID %s.", engagement_id)
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         # setup the database
         database = get_db_client()
@@ -1732,10 +1706,6 @@ class EngagementMetricsEmail(SwaggerView):
 
         """
 
-        if not ObjectId.is_valid(engagement_id):
-            logger.error("Invalid Object ID %s.", engagement_id)
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
-
         # setup the database
         database = get_db_client()
 
@@ -1795,10 +1765,6 @@ class EngagementPerformanceDownload(SwaggerView):
                 HTTP Status Code
 
         """
-
-        if not ObjectId.is_valid(engagement_id):
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
-
         # setup the database
         database = get_db_client()
 

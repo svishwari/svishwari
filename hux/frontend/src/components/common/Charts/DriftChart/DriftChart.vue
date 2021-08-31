@@ -1,8 +1,15 @@
 <template>
   <div ref="hux-drift-chart-container">
     <div ref="hux-drift-chart"></div>
-    <chart-tooltip v-if="showTooltip" :coordinates="coordinates">
-      {{ tooltipValue }}
+    <chart-tooltip
+      v-if="showTooltip"
+      :coordinates="coordinates"
+      class="neroBlack--text"
+    >
+      <div class="text-caption">{{ tooltipValue }}</div>
+      <div class="text-caption">
+        {{ tooltipValueDate | Date("MM/DD/YYYY") | Empty }}
+      </div>
     </chart-tooltip>
   </div>
 </template>
@@ -14,6 +21,7 @@ import * as d3Axis from "d3-axis"
 import * as d3Shape from "d3-shape"
 import * as d3Array from "d3-array"
 import * as d3TimeFormat from "d3-time-format"
+import * as d3Time from "d3-time"
 
 import ChartTooltip from "@/components/common/Charts/Tooltip/Tooltip.vue"
 
@@ -105,6 +113,7 @@ export default {
   data() {
     return {
       tooltipValue: null,
+      tooltipValueDate: null,
       showTooltip: false,
       coordinates: null,
     }
@@ -140,7 +149,7 @@ export default {
         .attr("width", width)
         .attr("height", height)
 
-      // function to generate coordinates for y-axis
+      // function to generate coordinates for x-axis
       let xCoordinateFunction = d3Scale
         .scaleTime()
         .domain(xAxisMinMaxValue)
@@ -161,18 +170,50 @@ export default {
         .y((d) => yCoordinateFunction(d.yAxisValue))
 
       // generates x-axis
-      let xAxis = svg
-        .append("g")
-        .attr("transform", `translate(0,${height - this.margin.bottom})`)
-        .style("font-size", 12)
-        .call(
-          d3Axis
-            .axisBottom(xCoordinateFunction)
-            .tickSize(this.enableGrid[0] ? -height : 0)
-            .tickPadding(this.tickPadding)
-            .ticks(this.xAxisMaxTicks)
-            .tickFormat(d3TimeFormat.timeFormat(this.xAxisFormat))
-        )
+      let xAxis = null
+
+      const days =
+        1 + d3Time.timeDay.count(xAxisMinMaxValue[0], xAxisMinMaxValue[1])
+      if (days <= 7) {
+        xAxis = svg
+          .append("g")
+          .attr("transform", `translate(0,${height - this.margin.bottom})`)
+          .style("font-size", 12)
+          .call(
+            d3Axis
+              .axisBottom(xCoordinateFunction)
+              .tickSize(this.enableGrid[0] ? -height : 0)
+              .ticks(d3Time.timeDay)
+              .tickPadding(this.tickPadding)
+              .tickFormat(d3TimeFormat.timeFormat(this.xAxisFormat))
+          )
+      } else if (days <= 100) {
+        xAxis = svg
+          .append("g")
+          .attr("transform", `translate(0,${height - this.margin.bottom})`)
+          .style("font-size", 12)
+          .call(
+            d3Axis
+              .axisBottom(xCoordinateFunction)
+              .tickSize(this.enableGrid[0] ? -height : 0)
+              .ticks(d3Time.timeWeek)
+              .tickPadding(this.tickPadding)
+              .tickFormat(d3TimeFormat.timeFormat(this.xAxisFormat))
+          )
+      } else {
+        xAxis = svg
+          .append("g")
+          .attr("transform", `translate(0,${height - this.margin.bottom})`)
+          .style("font-size", 12)
+          .call(
+            d3Axis
+              .axisBottom(xCoordinateFunction)
+              .tickSize(this.enableGrid[0] ? -height : 0)
+              .ticks(d3Time.timeMonth)
+              .tickPadding(this.tickPadding)
+              .tickFormat(d3TimeFormat.timeFormat(this.xAxisFormat))
+          )
+      }
 
       // generates y-axis
       let yAxis = svg
@@ -250,18 +291,24 @@ export default {
         .append("rect")
         .attr(
           "width",
-          width - this.margin.right > 0 ? width - this.margin.right : 0
+          width - this.margin.right > 0
+            ? width - this.margin.right - this.margin.left
+            : 0
         )
-        .attr("transform", `translate(${this.margin.left},0)`)
+        .attr("transform", `translate(${this.margin.left},${this.margin.top})`)
         .attr(
           "height",
-          height - this.margin.bottom > 0 ? height - this.margin.bottom : 0
+          height - this.margin.bottom > 0
+            ? height - this.margin.bottom - this.margin.top
+            : 0
         )
+        .style("stroke", this.tickColor)
         .style("fill", "transparent")
         .on("mouseover", () => {
           this.showTooltip = false
           this.coordinates = null
           this.tooltipValue = null
+          this.tooltipValueDate = null
           tooltip.style("display", null)
           svg.selectAll(".hover-line-x").style("display", null)
           svg.selectAll(".hover-line-y").style("display", null)
@@ -270,6 +317,7 @@ export default {
           this.showTooltip = false
           this.coordinates = null
           this.tooltipValue = null
+          this.tooltipValueDate = null
           tooltip.style("display", "none")
           svg.selectAll(".hover-line-x").style("display", "none")
           svg.selectAll(".hover-line-y").style("display", "none")
@@ -313,6 +361,7 @@ export default {
           `${finalXCoordinate + parentPosition.x - this.margin.left + 15}px`,
         ]
         this.tooltipValue = d.yAxisValue
+        this.tooltipValueDate = d.xAxisValue
       }
     },
   },

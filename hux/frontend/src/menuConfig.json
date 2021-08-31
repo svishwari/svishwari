@@ -1,7 +1,7 @@
 {
-  "menu" : [
+  "menu": [
     {
-      "label" : null,
+      "label": null,
       "icon": "home",
       "title": "Overview",
       "link": {
@@ -9,61 +9,61 @@
       }
     },
     {
-      "label" : "Orchestration",
+      "label": "Orchestration",
       "menu": [
-        { 
+        {
           "icon": "engagements",
-          "title": "Engagements", 
+          "title": "Engagements",
           "link": {
             "name": "Engagements"
           }
         },
-        { 
-          "icon": "audiences", 
-          "title": "Audiences", 
+        {
+          "icon": "audiences",
+          "title": "Audiences",
           "link": {
             "name": "Audiences"
           }
         }
-      ] 
+      ]
     },
     {
-      "label" : "Decisioning",
+      "label": "Decisioning",
       "menu": [
-        { 
-          "icon": "models", 
-          "title": "Models", 
+        {
+          "icon": "models",
+          "title": "Models",
           "link": {
             "name": "Models"
           }
         }
-      ] 
+      ]
     },
     {
-      "label" : "Data Management",
+      "label": "Data Management",
       "menu": [
-        { 
-        "icon": "customer-profiles", 
-          "title": "Customer Profiles", 
+        {
+          "icon": "customer-profiles",
+          "title": "Customer Profiles",
           "link": {
             "name": "CustomerProfiles"
           }
         },
-        { 
-          "icon": "identity-resolution", 
-          "title": "Identity Resolution", 
+        {
+          "icon": "identity-resolution",
+          "title": "Identity Resolution",
           "link": {
             "name": "IdentityResolution"
           }
         },
         {
-          "icon": "connections", 
-          "title": "Connections", 
+          "icon": "connections",
+          "title": "Connections",
           "link": {
             "name": "Connections"
           }
         }
-      ] 
+      ]
     }
   ]
 }

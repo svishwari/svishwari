@@ -15,11 +15,13 @@ from huxunifylib.database import (
     notification_management,
 )
 from huxunify.api.schema.notifications import NotificationsSchema
-from huxunify.api.route.utils import (
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
-    get_db_client,
     secured,
     api_error_handler,
+)
+from huxunify.api.route.utils import (
+    get_db_client,
 )
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -53,7 +55,7 @@ class NotificationsSearch(SwaggerView):
             "description": "Max number of notifications to be returned.",
             "example": "5",
             "required": False,
-            "default": api_c.DEFAULT_ALERT_BATCH_SIZE,
+            "default": api_c.DEFAULT_BATCH_SIZE,
         },
         {
             "name": db_c.NOTIFICATION_QUERY_PARAMETER_SORT_ORDER,
@@ -71,7 +73,7 @@ class NotificationsSearch(SwaggerView):
             "description": "Number of which batch of notifications should be returned.",
             "example": "10",
             "required": False,
-            "default": api_c.DEFAULT_ALERT_BATCH_NUMBER,
+            "default": api_c.DEFAULT_BATCH_NUMBER,
         },
     ]
     responses = {
@@ -97,15 +99,14 @@ class NotificationsSearch(SwaggerView):
             Tuple[dict, int] dict of notifications and http code
         """
 
-        batch_size = (
-            request.args.get("batch_size") or api_c.DEFAULT_ALERT_BATCH_SIZE
+        batch_size = request.args.get(
+            api_c.QUERY_PARAMETER_BATCH_SIZE, api_c.DEFAULT_BATCH_SIZE
         )
-        sort_order = (
-            request.args.get("sort_order") or db_c.PAGINATION_DESCENDING
+        sort_order = request.args.get(
+            api_c.QUERY_PARAMETER_SORT_ORDER, db_c.PAGINATION_DESCENDING
         )
-        batch_number = (
-            request.args.get("batch_number")
-            or api_c.DEFAULT_ALERT_BATCH_NUMBER
+        batch_number = request.args.get(
+            api_c.QUERY_PARAMETER_BATCH_NUMBER, api_c.DEFAULT_BATCH_NUMBER
         )
 
         if (

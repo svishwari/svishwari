@@ -26,6 +26,12 @@ export default {
       type: String,
       required: false,
     },
+
+    fillOpacity: {
+      type: Number,
+      required: false,
+      default: 1,
+    },
   },
 
   data() {
@@ -41,6 +47,7 @@ export default {
       if (this.width) style.width = `${this.width}px`
       if (this.height) style.height = `${this.height}px`
       if (this.color) style.fill = `${this.color}`
+      if (this.fillOpacity) style.fillOpacity = `${this.fillOpacity}`
 
       return style
     },

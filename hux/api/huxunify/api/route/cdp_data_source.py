@@ -24,14 +24,16 @@ from huxunify.api.schema.cdp_data_source import (
     CdpDataSourcePostSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import (
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
-    get_db_client,
     secured,
+    api_error_handler,
+)
+from huxunify.api.route.utils import (
+    get_db_client,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
-from huxunify.api.route.utils import api_error_handler
 
 # setup CDP data sources endpoint
 cdp_data_sources_bp = Blueprint(
@@ -360,7 +362,7 @@ class BatchUpdateDataSources(SwaggerView):
         data = request.get_json()
 
         # validate fields
-        if api_c.CDP_DATA_SOURCE_IDS not in data and api_c.BODY not in data:
+        if api_c.CDP_DATA_SOURCE_IDS not in data or api_c.BODY not in data:
             logger.error(
                 "Field %s not found in request data.",
                 api_c.CDP_DATA_SOURCE_IDS,
@@ -411,7 +413,7 @@ class BatchUpdateDataSources(SwaggerView):
                 ]
                 logger.info(
                     "Successfully update data sources with data source IDs %s.",
-                    ",".join(data_source_ids),
+                    ",".join([str(x) for x in data_source_ids]),
                 )
                 return (
                     jsonify(
