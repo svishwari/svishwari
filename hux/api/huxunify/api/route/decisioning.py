@@ -1,7 +1,7 @@
 """
 purpose of this script is for housing the decision routes for the API.
 """
-from random import uniform
+from random import uniform, randint
 from datetime import datetime
 from datetime import timedelta
 from http import HTTPStatus
@@ -271,7 +271,8 @@ class ModelDriftView(SwaggerView):
 
         """
         body = ModelDriftPostSchema().load(request.get_json())
-        # TODO Remove once Propensity to Purchase data is being served from tecton
+        # TODO Remove once Propensity to Purchase data is being served
+        #  from tecton
         if int(model_id) == 3:
             drift_data = [
                 {
@@ -514,7 +515,23 @@ class ModelLiftView(SwaggerView):
         """
 
         # retrieves lift data
-        lift_data = tecton.get_model_lift_async(model_id)
+        if int(model_id) == 3:
+            lift_data = [
+                {
+                    api_c.PREDICTED_RATE: uniform(0.01, 0.3),
+                    api_c.BUCKET: 10 * i,
+                    api_c.PROFILE_SIZE_PERCENT: 0,
+                    api_c.ACTUAL_VALUE: randint(1000, 5000),
+                    api_c.PREDICTED_LIFT: uniform(1, 5),
+                    api_c.ACTUAL_RATE: uniform(0.01, 0.3),
+                    api_c.PROFILE_COUNT: randint(1000, 100000),
+                    api_c.ACTUAL_LIFT: uniform(1, 5),
+                    api_c.PREDICTED_LIFT: round(uniform(1000, 5000), 4),
+                }
+                for i in range(1, 11)
+            ]
+        else:
+            lift_data = tecton.get_model_lift_async(model_id)
         lift_data.sort(key=lambda x: x[api_c.BUCKET])
 
         return (
