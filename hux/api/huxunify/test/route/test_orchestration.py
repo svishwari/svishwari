@@ -908,8 +908,9 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_audience_by_id_validate_match_rate(self) -> None:
-        """
-        Test get audience API and validate match_rate for a delivery on an AD platform.
+        """Test get audience API and validate match_rate.
+
+        This will check for match delivery for an AD platform.
 
         Args:
 
@@ -948,7 +949,8 @@ class OrchestrationRouteTest(TestCase):
                     self.assertIsNone(delivery.get(api_c.MATCH_RATE))
 
     def test_get_audience_by_id_validate_match_rate_lookalike_audience(self):
-        """Test get audience API with lookalike audience and validate match rate.
+        """Test validate match rate for a lookalike audience.
+
         Args:
 
         Returns:
