@@ -11,7 +11,6 @@ import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
 
 
-# pylint: disable=R0902,R0904,C0302
 class TestEngagementAudienceMgmt(unittest.TestCase):
     """Test engagement audience management module."""
 
