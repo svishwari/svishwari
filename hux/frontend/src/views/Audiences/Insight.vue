@@ -23,6 +23,62 @@
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
     <div v-if="audienceHistory.length > 0" class="row px-15 my-1">
+     <v-card  
+     v-if="audience.is_lookalike" 
+     class="rounded-lg card-info-wrapper ma-2 card-shadow no-background" 
+     >
+            <v-card-text>
+              <div class="text-caption gray--text ">
+               Original size
+                <tooltip position-top>
+                  <template #label-content>
+                    <icon type="info" :size="12" />
+                  </template>
+                  <template #hover-content>
+                    Size of original audience that was used to create this Lookalike.
+                  </template>
+                </tooltip>
+                | Match rate
+              </div>
+              
+              <div class="subtitle-slot size mr-2 pt-2 font-audience-text neroBlack--text font-weight-semi-bold">
+                 <size :value="audience.size" /> |
+              </div>
+            </v-card-text>
+          </v-card>
+
+<metric-card
+        v-if="audience.is_lookalike"
+        class="ma-2 audience-summary"
+        :grow="0"
+        :title="'Lookalike size'"
+        :height="75"
+      >
+        <template #subtitle-extended>
+          <span class="mr-2 pt-2">
+            <span class="neroBlack--text font-weight-semi-bold">
+               <size :value="audience.size" />
+            </span>
+          </span>
+        </template>
+      </metric-card>
+      
+<metric-card
+        v-if="audience.is_lookalike"
+        class="ma-2 audience-summary original-audience"
+        :grow="0"
+        :title="'Original Audience'"
+        :height="75"
+      >
+        <template #subtitle-extended>
+          <span class="mr-2 pt-2">
+            <span class="original-audience-text">
+              {{ audience.name }}
+            </span>
+          </span>
+        </template>
+      </metric-card>
+
       <metric-card
         v-for="(item, i) in audienceHistory"
         :key="i"
@@ -46,37 +102,6 @@
             </tooltip>
           </span>
           <avatar :name="item.fullName" />
-        </template>
-      </metric-card>
-      <metric-card
-        v-if="audience.is_lookalike"
-        class="ma-2 audience-summary original-audience"
-        :grow="0"
-        :title="'Original Audience'"
-        :height="75"
-      >
-        <template #subtitle-extended>
-          <span class="mr-2 pt-2">
-            <span class="original-audience-text">
-              {{ audience.name }}
-            </span>
-          </span>
-        </template>
-      </metric-card>
-      <metric-card
-        v-if="audience.is_lookalike"
-        class="ma-2 audience-summary"
-        :grow="0"
-        :title="'Original • Actual size'"
-        :height="75"
-      >
-        <template #subtitle-extended>
-          <span class="mr-2 pt-2">
-            <span class="neroBlack--text font-weight-semi-bold">
-              <size :value="audience.size" /> &bull;
-              <size :value="audience.size" />
-            </span>
-          </span>
         </template>
       </metric-card>
 
@@ -310,6 +335,7 @@
         </v-card>
       </v-col>
     </v-row>
+    
     <hux-alert
       v-model="flashAlert"
       :type="alert.type"
@@ -932,7 +958,11 @@ export default {
     async loadAudienceInsights() {
       this.loading = true
       await this.getAudienceById(this.$route.params.id)
-      this.audienceHistory = this.audience.audienceHistory
+      if(this.audience.is_lookalike) {
+  this.audienceHistory = this.audience.audienceHistory.filter(e => e.title == 'Created')
+      } else {
+        this.audienceHistory = this.audience.audienceHistory
+      }
       this.relatedEngagements = this.audience.engagements
       this.lookalikeAudiences = this.audience.lookalike_audiences
       this.isLookalikable = this.audience.lookalikeable
@@ -1013,12 +1043,15 @@ export default {
 .original-audience {
   background: var(--v-white-base) !important;
 }
-.original-audience-text {
+.font-audience-text {
   font-family: Open Sans;
   font-style: normal;
   font-weight: 600;
   font-size: 14px;
   line-height: 19px;
+}
+.original-audience-text {
+  @extend .font-audience-text;
   color: var(--v-primary-base) !important;
 }
 ::v-deep .v-snack__wrapper {
@@ -1040,5 +1073,8 @@ color: var(--v-grey-base) !important;
 .headingOverviewCard {
   @extend .font-lookalike;
   font-size: 15px !important;
+}
+.no-background {
+  background: transparent;
 }
 </style>

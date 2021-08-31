@@ -194,7 +194,7 @@
                 ? '- Enabled if Facebook is added as a destination'
                 : ''
             "
-            :disabled="!isLookAlikeCreateable"
+            v-if="isLookAlikeCreateable"
             class="neroBlack--text"
           >
             <div v-if="isLookAlikeCreateable" class="dark--text">
