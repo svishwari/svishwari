@@ -306,6 +306,7 @@ import MapStateList from "@/components/common/MapChart/MapStateList"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
+import dayjs from "dayjs"
 
 export default {
   name: "CustomerProfiles",
@@ -527,7 +528,10 @@ export default {
 
     async fetchDemographics() {
       this.loadingDemographics = true
-      await this.getDemographics()
+      await this.getDemographics({
+        start_date: dayjs().subtract(6, "months").format("YYYY-MM-DD"),
+        end_date: dayjs().format("YYYY-MM-DD"),
+      })
       this.loadingDemographics = false
     },
 

@@ -390,6 +390,7 @@
 // helpers
 import { generateColor } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
+import dayjs from "dayjs"
 
 // common components
 import Avatar from "@/components/common/Avatar.vue"
@@ -688,7 +689,10 @@ export default {
 
     async fetchDemographics() {
       this.loadingDemographics = true
-      await this.getDemographics()
+      await this.getDemographics({
+        start_date: dayjs().subtract(6, "months").format("YYYY-MM-DD"),
+        end_date: dayjs().format("YYYY-MM-DD"),
+      })
       this.loadingDemographics = false
     },
 
