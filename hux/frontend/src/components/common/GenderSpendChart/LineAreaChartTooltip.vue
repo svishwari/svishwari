@@ -94,10 +94,10 @@ export default {
 
 .tooltip-style {
   @extend .income-tooltip-style;
-  max-width: 110px;
-  height: 110px;
+  max-width: 96px;
+  height: 104px;
   top: -444px;
-  left: -240px;
+  left: -248px;
   z-index: 1;
 }
 .append-circle {

@@ -76,8 +76,8 @@ export default {
       this.height = this.chartDimensions.height
       let genders = [
         { label: "Women", xValue: 0 },
-        { label: "Men", xValue: 35 },
-        { label: "Other", xValue: 60 },
+        { label: "Men", xValue: 38 },
+        { label: "Other", xValue: 67 },
       ]
 
       let colorCodes = [
@@ -193,11 +193,12 @@ export default {
         .append("g")
         .attr("transform", `translate(0,${height})`)
         .attr("fill", "#4f4f4f")
+        .classed("xAxis", true)
         .call(
           d3Axis
             .axisBottom(xScale)
             .ticks(this.areaChartData.length)
-            .tickFormat(d3TimeFormat.timeFormat("%b '%y"))
+            .tickFormat(d3TimeFormat.timeFormat("%m/%d/%y"))
             .tickValues(
               this.dateData.map(function (d) {
                 return d
@@ -212,10 +213,20 @@ export default {
         .append("g")
         .attr("transform", "translate(0, 0)")
         .attr("fill", "#4f4f4f")
+        .classed("yAxis", true)
         .call(d3Axis.axisLeft(yScale).ticks(4).tickFormat(appendyAxisFormat))
         .call((g) => g.selectAll(".tick line").attr("stroke", "#ECECEC"))
         .call((g) => g.selectAll("path").attr("stroke", "#ECECEC"))
         .style("font-size", 12)
+        
+
+  d3Select
+        .selectAll(".xAxis .tick text")
+        .attr("x", 0)
+        .attr("y", 11)
+        .style("color", "#4F4F4F")
+
+        d3Select.selectAll(".yAxis .tick text").style("color", "#4F4F4F")
 
       svg
         .append("rect")
@@ -277,7 +288,7 @@ export default {
               .classed("hover-circle", true)
               .attr("cx", finalXCoordinate)
               .attr("cy", yPosition)
-              .attr("r", 6)
+              .attr("r", 5.5)
               .style("stroke", this.getAttribute("stroke"))
               .style("stroke-opacity", "1")
               .style("fill", "white")
@@ -294,7 +305,7 @@ export default {
           svg
             .append("circle")
             .attr("class", "dot")
-            .attr("r", 3.5)
+            .attr("r", 2.5)
             .attr("cx", () => xScale(new Date(points.data.date)) + 40)
             .attr("cy", () => yScale(points[1]))
             .attr("data", () => points.data)
