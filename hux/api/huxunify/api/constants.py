@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 """This module contains connector defines."""
+import random
 
 from huxunifylib.database import constants as db_c
 
@@ -696,7 +697,7 @@ DIGITAL_IDS_ADDED = "digital_ids_added"
 DIGITAL_IDS_MERGED = "digital_ids_merged"
 MERGE_RATE = "merge_rate"
 RECORDS_SOURCE = "records_source"
-TIMESTAMP = "timestamp"
+TIME_STAMP = "time_stamp"
 STITCHED = "stitched"
 PINNING = "pinning"
 
@@ -842,3 +843,39 @@ DOWNLOAD_TYPES = {
 CDM_CONNECTIONS_ENDPOINT = "connections"
 CDM_IDENTITY_ENDPOINT = "identity"
 CDM_DATAFEEDS = "datafeeds"
+
+PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
+    {
+        ID: 3,
+        VERSION: "22.8.32",
+        NAME: random.choice(
+            [
+                f"4w-ORDTDOL-cnt-{i}",
+                f"profile-NSTOREDIST-sum-{i}",
+                f"2m-ITEMNO-94508948346-{i}",
+                f"2w-ORDAMT-max-{i}",
+                f"1to2y-COGS-sum-{i}",
+                f"1to2y-ITEMQTY-avg-{i}",
+                f"2m-ORDTDOL-cnt-{i}",
+                f"dow-pe_u_dow-pe_count-{i}",
+                f"duration_days-item-min-{i}",
+                f"2m-COGS-cnt-{i}",
+            ]
+        ),
+        FEATURE_SERVICE: PURCHASE,
+        DATA_SOURCE: random.choice(
+            ["Buyers", "Retail", "Promotion", "Email", "Ecommerce"]
+        ),
+        CREATED_BY: random.choice(["Susan Miller", "Jack Miller"]),
+        STATUS: random.choice(
+            [
+                STATUS_PENDING,
+                STATUS_ACTIVE,
+                STATUS_STOPPED,
+            ]
+        ),
+        POPULARITY: random.randint(1, 3),
+        SCORE: round(random.uniform(0.5, 2.9), 4),
+    }
+    for i in range(50)
+]

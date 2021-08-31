@@ -24,14 +24,16 @@ from huxunify.api.schema.cdp_data_source import (
     CdpDataSourcePostSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import (
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
-    get_db_client,
     secured,
+    api_error_handler,
+)
+from huxunify.api.route.utils import (
+    get_db_client,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
-from huxunify.api.route.utils import api_error_handler
 
 # setup CDP data sources endpoint
 cdp_data_sources_bp = Blueprint(

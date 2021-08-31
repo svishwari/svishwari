@@ -23,6 +23,9 @@ from huxunifylib.database.orchestration_management import (
     create_audience,
     get_audience,
 )
+from huxunifylib.database.engagement_audience_management import (
+    get_all_engagement_audience_destinations,
+)
 from huxunifylib.database.client import DatabaseClient
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api import constants as api_c
@@ -72,7 +75,13 @@ class OrchestrationRouteTest(TestCase):
             return_value=self.database,
         ).start()
 
-        # mock get_db_client() for the userinfo utils.
+        # mock get_db_client() for the userinfo decorator.
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() for the utils.
         mock.patch(
             "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
@@ -694,6 +703,10 @@ class OrchestrationRouteTest(TestCase):
         audience_ids = [ObjectId(x[db_c.ID]) for x in self.audiences]
         return_ids = [ObjectId(x[db_c.OBJECT_ID]) for x in audiences]
 
+        expected_audience_destinations = (
+            get_all_engagement_audience_destinations(self.database)
+        )
+
         self.assertListEqual(audience_ids, return_ids)
         for audience in audiences:
             self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
@@ -709,6 +722,20 @@ class OrchestrationRouteTest(TestCase):
                     api_c.STATUS_DELIVERY_PAUSED,
                     api_c.STATUS_ERROR,
                 ],
+            )
+
+            # find the matched audience destinations, should be the same.
+            matched_audience = [
+                x
+                for x in expected_audience_destinations
+                if x[db_c.ID] == ObjectId(audience[api_c.ID])
+            ]
+
+            # test that the unique count of delivery destinations
+            # is the same as the response.
+            self.assertEqual(
+                len(audience[db_c.DESTINATIONS]),
+                len(matched_audience[0][db_c.DESTINATIONS]),
             )
 
     def test_update_audience(self):

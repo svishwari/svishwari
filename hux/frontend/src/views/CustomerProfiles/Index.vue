@@ -206,36 +206,57 @@
       <v-row class="px-15 mt-2">
         <v-col md="3">
           <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
-            <v-card-title class="pb-0 pl-5 pt-5">
+            <v-progress-linear
+              v-if="loadingDemographics"
+              :active="loadingDemographics"
+              :indeterminate="loadingDemographics"
+            />
+            <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
                   Top location &amp; Income
                 </span>
               </div>
             </v-card-title>
-            <income-chart />
+            <income-chart
+              v-if="!loadingDemographics"
+              :data="demographicsData.income"
+            />
           </v-card>
         </v-col>
         <v-col md="6">
           <v-card class="mt-3 genderSpend rounded-lg box-shadow-5" height="290">
-            <v-card-title class="pb-1 pl-5 pt-4">
+            <v-progress-linear
+              v-if="loadingDemographics"
+              :active="loadingDemographics"
+              :indeterminate="loadingDemographics"
+            />
+            <v-card-title v-if="!loadingDemographics" class="pb-1 pl-5 pt-4">
               <div class="mt-1">
                 <span class="neroBlack--text text-h5">
                   Gender &sol; monthly spending in 2021
                 </span>
               </div>
             </v-card-title>
-            <gender-spend-chart />
+            <gender-spend-chart
+              v-if="!loadingDemographics"
+              :data="demographicsData.spend"
+            />
           </v-card>
         </v-col>
         <v-col md="3">
           <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
-            <v-card-title class="pb-0 pl-5 pt-5">
+            <v-progress-linear
+              v-if="loadingDemographics"
+              :active="loadingDemographics"
+              :indeterminate="loadingDemographics"
+            />
+            <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5"> Gender </span>
               </div>
             </v-card-title>
-            <div ref="genderChart">
+            <div v-if="!loadingDemographics" ref="genderChart">
               <doughnut-chart
                 :chart-dimensions="genderChartDimensions"
                 :data="genderChartData"
@@ -282,7 +303,6 @@ import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import MapChart from "@/components/common/MapChart/MapChart"
 import MapStateList from "@/components/common/MapChart/MapStateList"
-import genderData from "@/components/common/DoughnutChart/genderData.json"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
@@ -317,6 +337,7 @@ export default {
         states: false,
       },
       loadingGeoOverview: false,
+      loadingDemographics: true,
       timeFrameLabel: "last 6 months",
       overviewListItems: [
         {
@@ -426,26 +447,6 @@ export default {
           href: this.$route.path,
         },
       ],
-      genderChartData: [
-        {
-          label: "Men",
-          population_percentage:
-            genderData.gender.gender_men.population_percentage,
-          size: genderData.gender.gender_men.size,
-        },
-        {
-          label: "Women",
-          population_percentage:
-            genderData.gender.gender_women.population_percentage,
-          size: genderData.gender.gender_women.size,
-        },
-        {
-          label: "Other",
-          population_percentage:
-            genderData.gender.gender_other.population_percentage,
-          size: genderData.gender.gender_other.size,
-        },
-      ],
       loading: false,
       updatedTime: [],
       genderChartDimensions: {
@@ -460,9 +461,36 @@ export default {
       customersInsights: "customers/insights",
       totalCustomers: "customers/totalCustomers",
       customersGeoOverview: "customers/geoOverview",
+      demographicsData: "customers/demographics",
     }),
     updatedTimeStamp() {
       return this.updatedTime[0] + "<span> &bull; </span>" + this.updatedTime[1]
+    },
+
+    genderChartData() {
+      if (this.demographicsData.gender) {
+        return [
+          {
+            label: "Men",
+            population_percentage:
+              this.demographicsData.gender.gender_men.population_percentage,
+            size: this.demographicsData.gender.gender_men.size,
+          },
+          {
+            label: "Women",
+            population_percentage:
+              this.demographicsData.gender.gender_women.population_percentage,
+            size: this.demographicsData.gender.gender_women.size,
+          },
+          {
+            label: "Other",
+            population_percentage:
+              this.demographicsData.gender.gender_other.population_percentage,
+            size: this.demographicsData.gender.gender_other.size,
+          },
+        ]
+      }
+      return []
     },
   },
   created() {
@@ -478,11 +506,9 @@ export default {
     await this.getOverview()
     this.mapOverviewData()
     this.fetchTotalCustomers()
+    this.fetchGeoOverview()
+    this.fetchDemographics()
     this.loading = false
-
-    this.loadingGeoOverview = true
-    await this.getGeoOverview()
-    this.loadingGeoOverview = false
   },
 
   methods: {
@@ -490,7 +516,20 @@ export default {
       getOverview: "customers/getOverview",
       getTotalCustomers: "customers/getTotalCustomers",
       getGeoOverview: "customers/getGeoOverview",
+      getDemographics: "customers/getDemographics",
     }),
+
+    async fetchGeoOverview() {
+      this.loadingGeoOverview = true
+      await this.getGeoOverview()
+      this.loadingGeoOverview = false
+    },
+
+    async fetchDemographics() {
+      this.loadingDemographics = true
+      await this.getDemographics()
+      this.loadingDemographics = false
+    },
 
     async fetchTotalCustomers() {
       this.loadingCustomerChart = true

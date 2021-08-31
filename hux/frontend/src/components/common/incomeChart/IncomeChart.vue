@@ -21,12 +21,16 @@
 <script>
 import BarChartTooltip from "@/components/common/incomeChart/BarChartTooltip"
 import HorizontalBarChart from "@/components/common/incomeChart/HorizontalBarChart"
-//TODO: API Integration
-import data from "./incomeData.json"
 
 export default {
   name: "IncomeChart",
   components: { HorizontalBarChart, BarChartTooltip },
+  props: {
+    data: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
       show: false,
@@ -38,7 +42,7 @@ export default {
         width: 0,
         height: 0,
       },
-      incomes: data.income,
+      incomes: this.data,
       currentData: {},
     }
   },

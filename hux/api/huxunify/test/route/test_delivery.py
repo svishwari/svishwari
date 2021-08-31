@@ -59,6 +59,12 @@ class TestDeliveryRoutes(TestCase):
             return_value=self.database,
         ).start()
 
+        # mock get db client from decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
         # mock get db client from delivery
         mock.patch(
             "huxunify.api.route.delivery.get_db_client",
@@ -209,7 +215,6 @@ class TestDeliveryRoutes(TestCase):
             ),
             headers=t_c.STANDARD_HEADERS,
         )
-        print(response.json)
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
