@@ -727,6 +727,8 @@ DATAFEED_DATA_SOURCE_NAME = "datasource_label"
 DATAFEED_NEW_IDS_COUNT = "new_ids_generated"
 DATAFEED_RECORDS_PROCESSED_COUNT = "total_rec_processed"
 DATAFEED_LAST_RUN_DATE = "timestamp"
+PINNING_TIMESTAMP = "pinning_timestamp"
+STITCHED_TIMESTAMP = "stitched_timestamp"
 
 # customer event fields
 CUSTOMER_TOTAL_DAILY_EVENT_COUNT = "total_event_count"
