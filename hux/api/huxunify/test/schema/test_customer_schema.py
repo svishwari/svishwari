@@ -1,4 +1,5 @@
 """Customer data related schema tests"""
+from datetime import datetime
 from unittest import TestCase
 
 from huxunifylib.database import constants as db_c
@@ -38,7 +39,7 @@ class CustomerSchemaTest(TestCase):
 
         datafeed = DataFeedSchema().load(doc)
 
-        self.assertIsInstance(datafeed["timestamp"], str)
+        self.assertIsInstance(datafeed["timestamp"], datetime)
         self.assertFalse(DataFeedSchema().validate(doc))
 
     def test_total_customer_insights_schema(self) -> None:

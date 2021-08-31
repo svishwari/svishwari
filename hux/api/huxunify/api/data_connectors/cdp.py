@@ -350,7 +350,8 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
     )
 
     response = requests.post(
-        f"{config.CDP_CONNECTION_SERVICE}{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.CDM_DATAFEEDS}",
+        f"{config.CDP_CONNECTION_SERVICE}{api_c.CDM_IDENTITY_ENDPOINT}/"
+        f"{api_c.CDM_DATAFEEDS}",
         json={api_c.START_DATE: start_date, api_c.END_DATE: end_date},
         headers={api_c.CUSTOMERS_API_HEADER_KEY: token},
     )
@@ -365,7 +366,13 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
 
     logger.info("Successfully retrieved identity data feeds.")
 
-    return response.json()[api_c.BODY]
+    datafeeds = response.json()[api_c.BODY]
+    [
+        x.update({api_c.TIMESTAMP: parse(x.get(api_c.TIMESTAMP))})
+        for x in datafeeds
+    ]
+
+    return datafeeds
 
 
 def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:

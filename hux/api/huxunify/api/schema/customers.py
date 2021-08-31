@@ -142,7 +142,7 @@ class DataFeedSchema(Schema):
     Customer Datafeed Schema
     """
 
-    datafeed_id = Str(attribute=api_c.ID, example="1")
+    datafeed_id = Integer(attribute=api_c.ID, example=1)
     datafeed_name = Str(
         attribute=api_c.NAME, example="Really_long_Feed_Name_106"
     )
@@ -155,7 +155,7 @@ class DataFeedSchema(Schema):
         attribute=api_c.DATAFEED_RECORDS_PROCESSED_COUNT, example=2000000
     )
     match_rate = Float(example=0.98)
-    last_run = Str(attribute=api_c.TIMESTAMP)
+    last_run = DateTimeWithZ(attribute=api_c.TIMESTAMP)
     data_source_type = Str(
         attribute=api_c.DATAFEED_DATA_SOURCE_TYPE,
         example="test_data_source_type",
