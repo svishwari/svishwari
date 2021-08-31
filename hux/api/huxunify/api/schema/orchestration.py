@@ -41,6 +41,7 @@ class LookalikeAudienceGetSchema(Schema):
     updated_by = fields.String()
     favorite = fields.Boolean(required=True)
     is_lookalike = fields.Boolean(default=True)
+    status = fields.String(default=db_c.AUDIENCE_STATUS_ERROR)
 
 
 class AudienceDeliverySchema(Schema):

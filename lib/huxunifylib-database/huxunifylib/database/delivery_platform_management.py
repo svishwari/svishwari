@@ -660,6 +660,7 @@ def create_delivery_platform_lookalike_audience(
     country: str = None,
     user_name: str = "",
     audience_size: int = 0,
+    status: str = c.AUDIENCE_STATUS_DELIVERING,
 ) -> Union[dict, None]:
     """A function to create a delivery platform lookalike audience.
 
@@ -672,6 +673,7 @@ def create_delivery_platform_lookalike_audience(
         country (str): Country of the lookalike audience.
         user_name (str): Name of the user creating the lookalike.
         audience_size (int): Size of the audience at creation.
+        status (str): Status of the lookalike, default is delivering.
 
     Returns:
         Union[dict, None]: The lookalike audience configuration.
@@ -714,6 +716,7 @@ def create_delivery_platform_lookalike_audience(
         c.SIZE: audience_size,
         c.CREATED_BY: user_name,
         c.UPDATED_BY: user_name,
+        c.STATUS: status,
     }
 
     try:
