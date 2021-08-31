@@ -1,6 +1,4 @@
-"""
-Purpose of this file is for holding methods to query and pull data from CDP.
-"""
+"""Purpose of this file is for holding methods to query and pull data from CDP."""
 import random
 import time
 import asyncio
@@ -8,7 +6,6 @@ import math
 from typing import Tuple, Optional, List
 from random import randint
 from datetime import datetime, timedelta
-
 import requests
 import aiohttp
 import async_timeout
@@ -367,7 +364,7 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
     logger.info("Successfully retrieved identity data feeds.")
 
     datafeeds = response.json()[api_c.BODY]
-    [
+    _ = [
         x.update({api_c.TIMESTAMP: parse(x.get(api_c.TIMESTAMP))})
         for x in datafeeds
     ]
