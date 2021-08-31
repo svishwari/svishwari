@@ -20,7 +20,7 @@ import huxunifylib.database.constants as db_c
 from huxunify.api.config import get_config
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as api_c
-from huxunify.api.route.utils import (
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     get_db_client,
     secured,
