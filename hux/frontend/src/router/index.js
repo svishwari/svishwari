@@ -60,6 +60,16 @@ const routes = [
     },
   },
   {
+    path: "/engagements/edit/:id?",
+    name: "EditEngagementConfiguration",
+    component: () => import("@/views/Engagements/Configuration/Index.vue"),
+    meta: {
+      layout: "app",
+      title: "Edit an Engagement",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/engagements/:id",
     name: "EngagementDashboard",
     component: () => import("@/views/Engagements/Dashboard"),

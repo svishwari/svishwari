@@ -11,10 +11,20 @@
         </div>
       </template>
       <template #right>
-        <v-icon size="22" color="primary" class="mr-2" @click="refreshEntity()">
+        <v-icon
+          size="22"
+          color="primary"
+          class="icon-border pa-2 ma-1"
+          @click="refreshEntity()"
+        >
           mdi-refresh
         </v-icon>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+        <v-icon
+          size="22"
+          color="primary"
+          class="icon-border pa-2 ma-1"
+          @click="editEngagement()"
+        >
           mdi-pencil
         </v-icon>
         <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
@@ -587,6 +597,12 @@ export default {
       this.alert.title = "OH NO!"
       this.alert.message = message
       this.flashAlert = true
+    },
+    editEngagement() {
+      this.$router.push({
+        name: "EditEngagementConfiguration",
+        params: { id: this.$route.params.id },
+      })
     },
   },
 }

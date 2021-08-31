@@ -264,7 +264,18 @@
 
       <template #right>
         <v-btn
-          v-if="hasDestinations && isManualDelivery"
+          v-if="isFormUpdate"
+          tile
+          color="primary"
+          height="44"
+          :disabled="!isValid"
+          @click="updateEngagement()"
+        >
+          Update
+        </v-btn>
+
+        <v-btn
+          v-else-if="hasDestinations && isManualDelivery"
           tile
           color="primary"
           height="44"
@@ -386,6 +397,7 @@ export default {
       endMinDate: new Date(
         new Date().getTime() - new Date().getTimezoneOffset() * 60000
       ).toISOString(),
+      engagementList: {},
     }
   },
 
@@ -393,6 +405,10 @@ export default {
     ...mapGetters({
       destination: "destinations/single",
     }),
+
+    isFormUpdate() {
+      return this.$route.params.id ? true : false
+    },
 
     payload() {
       return {
@@ -527,7 +543,7 @@ export default {
     },
 
     destinationType(id) {
-      return this.destination(id).type
+      return this.destination(id) && this.destination(id).type
     },
 
     async addNewEngagement() {
