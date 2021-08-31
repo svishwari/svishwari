@@ -44,17 +44,7 @@ class DeliveryScheduleWeeklySchema(DeliveryScheduleDailySchema):
     day_of_week = fields.List(
         fields.String(
             required=True,
-            validate=OneOf(
-                [
-                    "Sunday",
-                    "Monday",
-                    "Tuesday",
-                    "Wednesday",
-                    "Thursday",
-                    "Friday",
-                    "Saturday",
-                ]
-            ),
+            validate=OneOf(api_c.DAY_LIST),
         ),
     )
 
@@ -76,12 +66,6 @@ class DeliveryScheduleMonthlySchema(DeliveryScheduleDailySchema):
         fields.String(
             required=True,
             validate=OneOf(api_c.DAY_OF_MONTH_LIST),
-        ),
-    )
-    month = fields.List(
-        fields.String(
-            required=True,
-            validate=OneOf(api_c.MONTH_LIST),
         ),
     )
     day_of_week = fields.List(
