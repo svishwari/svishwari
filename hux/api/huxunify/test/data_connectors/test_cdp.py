@@ -182,14 +182,8 @@ class CDPTest(TestCase):
             token="", datafeed_id=datafeed_id
         )
 
-        self.assertDictEqual(
-            t_c.IDR_DATAFEED_DETAILS_RESPONSE[api_c.BODY][api_c.PINNING],
-            data_feed[api_c.PINNING],
-        )
-        self.assertDictEqual(
-            t_c.IDR_DATAFEED_DETAILS_RESPONSE[api_c.BODY][api_c.STITCHED],
-            data_feed[api_c.STITCHED],
-        )
+        self.assertIn(api_c.PINNING, data_feed)
+        self.assertIn(api_c.STITCHED, data_feed)
 
     def test_get_customers_insights_count_by_day(self) -> None:
         """Test get customers insights count by day

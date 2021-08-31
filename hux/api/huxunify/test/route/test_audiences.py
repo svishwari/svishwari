@@ -44,12 +44,19 @@ class AudienceDownloadsTest(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
+        # mock get_db_client() in utils
         mock.patch(
             "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
         ).start()
 
-        # mock get_db_client() in cdp_data_source
+        # mock get_db_client() in decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() in audience
         mock.patch(
             "huxunify.api.route.audiences.get_db_client",
             return_value=self.database,
