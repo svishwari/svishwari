@@ -814,3 +814,5 @@ DOWNLOAD_TYPES = {
         # db_c.S_TYPE_ADDRESS: "address"
     },
 }
+
+S3_DATASET_BUCKET = "hux-unified-dev1-datasets"

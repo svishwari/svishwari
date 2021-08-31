@@ -2,9 +2,12 @@
 purpose of this file is for interacting with aws
 """
 import logging
+import os
 from typing import Tuple
 from enum import Enum
 from http import HTTPStatus
+
+from botocore.exceptions import ClientError
 from connexion import ProblemException
 import boto3
 import botocore
@@ -12,6 +15,8 @@ from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
 import huxunifylib.database.constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api import config
+
+# from huxunify.api.route.utils import logger
 
 
 class ParameterStore:
@@ -396,3 +401,62 @@ def toggle_cloud_watch_rule(
 
     # exception was handled, return false.
     return False
+
+
+def upload_file(
+    file_name: str,
+    bucket: str,
+    object_name: str = None,
+    user_name: str = None,
+    file_type: str = None,
+) -> bool:
+    """Upload a file to an S3 bucket
+
+    Args:
+        file_name (str): Path to file object
+        bucket (str): S3 bucket name
+        object_name (str): S3 object name, defaulting to None
+        user_name (str): User name
+        file_type (str): File type
+    Returns:
+        bool: True for successful upload else False
+    """
+
+    # If S3 object_name was not specified, use file_name
+    if object_name is None:
+        object_name = os.path.basename(file_name)
+
+    # Upload the file
+    s3_client = boto3.client("s3")
+
+    extraargs = {
+        "Metadata": {
+            api_c.CREATED_BY: user_name if user_name else "",
+            api_c.TYPE: file_type if file_type else "",
+        }
+    }
+    try:
+        _ = s3_client.upload_file(file_name, bucket, object_name, extraargs)
+
+    except ClientError as exception:
+        logging.error(exception)
+        return False
+    logging.info("Uploaded %s file to %s", file_name, bucket)
+    return True
+
+
+def download_file(bucket: str, file_name: str, object_name: str = None):
+    """Downloads a file from S3 bucket
+
+    Args:
+        bucket (str): S3 bucket name
+        file_name (str): File mame
+        object_name (str): Object name
+
+    Returns:
+
+    """
+    object_name = object_name if object_name else file_name
+    s3_client = boto3.client("s3")
+    with open(file_name, "wb") as file:
+        s3_client.download_fileobj(bucket, object_name, file)
