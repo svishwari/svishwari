@@ -100,7 +100,6 @@ class OrchestrationRouteTest(TestCase):
                     api_c.FACEBOOK_AD_ACCOUNT_ID: "path4",
                 },
             },
-
             {
                 db_c.DELIVERY_PLATFORM_NAME: "SFMC",
                 db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SFMC,
@@ -116,11 +115,9 @@ class OrchestrationRouteTest(TestCase):
                     api_c.SFMC_SOAP_BASE_URI: "soap_base_uri",
                     api_c.SFMC_REST_BASE_URI: "rest_base_uri",
                 },
-
             },
         ]
         self.user_name = "Joe Smithers"
-
         self.destinations = []
         for destination in destinations:
             self.destinations.append(
@@ -206,8 +203,9 @@ class OrchestrationRouteTest(TestCase):
 
         self.engagement_ids = []
         for engagement in engagements:
-            engagement_id = set_engagement(self.database, **engagement)
-            self.engagement_ids.append(str(engagement_id))
+            self.engagement_ids.append(
+                str(set_engagement(self.database, **engagement))
+            )
 
         self.delivery_jobs = [
             set_delivery_job(
@@ -215,15 +213,9 @@ class OrchestrationRouteTest(TestCase):
                 self.audiences[0][db_c.ID],
                 self.destinations[0][db_c.ID],
                 [],
-                ObjectId(self.engagement_ids[0]),
-            ),
-            set_delivery_job(
-                self.database,
-                self.audiences[0][db_c.ID],
-                self.destinations[0][db_c.ID],
-                [],
-                ObjectId(self.engagement_ids[1]),
-            ),
+                ObjectId(engagement_id),
+            )
+            for engagement_id in self.engagement_ids
         ]
 
         for delivery_job in self.delivery_jobs:
@@ -231,12 +223,6 @@ class OrchestrationRouteTest(TestCase):
                 self.database,
                 delivery_job[db_c.ID],
                 db_c.AUDIENCE_STATUS_DELIVERING,
-            )
-
-            set_delivery_job_status(
-                self.database,
-                delivery_job[db_c.ID],
-                db_c.AUDIENCE_STATUS_DELIVERED,
             )
 
             set_delivery_job_status(
@@ -571,7 +557,7 @@ class OrchestrationRouteTest(TestCase):
             db_c.OBJECT_ID: audience_doc[db_c.ID],
             db_c.DESTINATIONS: [
                 {db_c.OBJECT_ID: [d[db_c.ID] for d in self.destinations][0]},
-                {db_c.OBJECT_ID: [d[db_c.ID] for d in self.destinations][1]}
+                {db_c.OBJECT_ID: [d[db_c.ID] for d in self.destinations][1]},
             ],
         }
 
@@ -921,7 +907,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
 
-    def test_get_audience_by_id_validate_match_rate_ad_platform(self) -> None:
+    def test_get_audience_by_id_validate_match_rate(self) -> None:
         """
         Test get audience API and validate match_rate for a delivery on an AD platform.
 
@@ -952,47 +938,13 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
 
         # Validate that the match_rate in deliveries contained within
-        # engagements are greater than or equal to 0.
+        # engagements are greater than or equal to 0 for ad platforms.
+        # None for non ad platforms.
         for engagement in audience.get(api_c.AUDIENCE_ENGAGEMENTS):
             for delivery in engagement.get(api_c.DELIVERIES):
                 if delivery.get(api_c.IS_AD_PLATFORM):
-                    self.assertGreaterEqual(delivery.get('match_rate'), 0)
-
-    def test_get_audience_by_id_validate_match_rate_non_ad_platform(self) -> None:
-        """
-        Test get audience API and validate match_rate for a delivery on a non AD platform.
-
-        Args:
-
-        Returns:
-            None
-        """
-
-        self.request_mocker.stop()
-        self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
-            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
-        )
-        self.request_mocker.start()
-
-        response = self.test_client.get(
-            f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        audience = response.json
-
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(
-            ObjectId(audience[db_c.OBJECT_ID]), self.audiences[0][db_c.ID]
-        )
-        self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
-
-        # Validate that the match_rate in deliveries is None for non AD platform.
-
-        for engagement in audience.get(api_c.AUDIENCE_ENGAGEMENTS):
-            for delivery in engagement.get(api_c.DELIVERIES):
-                if not delivery.get(api_c.IS_AD_PLATFORM):
+                    self.assertGreaterEqual(delivery.get(api_c.MATCH_RATE), 0)
+                else:
                     self.assertIsNone(delivery.get(api_c.MATCH_RATE))
 
     def test_get_audience_by_id_validate_match_rate_lookalike_audience(self):
@@ -1014,23 +966,17 @@ class OrchestrationRouteTest(TestCase):
             return_value="LA_ID_12345",
         ).start()
 
-        lookalike_audience_name = "NEW LA AUDIENCE"
-
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
             json={
                 api_c.AUDIENCE_ID: str(self.audiences[0][db_c.ID]),
-                api_c.NAME: lookalike_audience_name,
+                api_c.NAME: "TEST LOOKALIKE LA",
                 api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
                 api_c.ENGAGEMENT_IDS: self.engagement_ids,
             },
         )
-
-        lookalike_audience = response.json
-
         self.request_mocker.stop()
-
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
@@ -1038,14 +984,12 @@ class OrchestrationRouteTest(TestCase):
         self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{self.audience_api_endpoint}/{lookalike_audience.get('id')}",
+            f"{self.audience_api_endpoint}/{response.json.get(api_c.ID)}",
             headers=t_c.STANDARD_HEADERS,
         )
         audience = response.json
-
         # For lookalike audiences match rate will be None always.
-
         for engagement in audience.get(api_c.AUDIENCE_ENGAGEMENTS):
             for delivery in engagement.get(api_c.DELIVERIES):
                 if delivery.get(api_c.IS_AD_PLATFORM):
-                    self.assertIsNone(delivery.get('match_rate'))
+                    self.assertIsNone(delivery.get(api_c.MATCH_RATE))
