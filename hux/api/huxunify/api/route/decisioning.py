@@ -12,10 +12,12 @@ from huxunifylib.database.cache_management import (
     get_cache_entry,
 )
 
-from huxunify.api.route.utils import (
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+)
+from huxunify.api.route.utils import (
     get_db_client,
 )
 from huxunify.api.schema.model import (

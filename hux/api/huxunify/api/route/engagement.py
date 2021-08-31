@@ -52,13 +52,15 @@ from huxunify.api.schema.engagement import (
     EngagementPutSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import (
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
-    get_db_client,
     secured,
     api_error_handler,
-    get_user_name,
     validate_destination,
+    get_user_name,
+)
+from huxunify.api.route.utils import (
+    get_db_client,
     validate_destination_id,
 )
 from huxunify.api.data_connectors.courier import toggle_event_driven_routers
