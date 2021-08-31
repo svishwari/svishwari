@@ -65,9 +65,12 @@ export default defineComponent({
 })
 </script>
 
-<style lang="sass" scoped>
-.hux-select
-  .v-select-list
-    ::v-deep .v-list-item__title
-      font-size: 14px
+<style lang="scss" scoped>
+.hux-select {
+  .v-select-list {
+    ::v-deep .v-list-item__title {
+      font-size: 14px;
+    }
+  }
+}
 </style>

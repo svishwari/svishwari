@@ -28,10 +28,13 @@ export default defineComponent({
 })
 </script>
 
-<style lang="sass" scoped>
-.hux-filters-bar
-  border-bottom: 1px solid var(--v-lightGrey-base) !important
-  .wrapper
-    min-height: 70px
-    padding: 15px 30px
+<style lang="scss" scoped>
+.hux-filters-bar {
+  border-bottom: 1px solid var(--v-lightGrey-base) !important;
+
+  .wrapper {
+    min-height: 70px;
+    padding: 15px 30px;
+  }
+}
 </style>
