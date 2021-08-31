@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 """
 Paths for Orchestration API
 """
@@ -220,6 +221,13 @@ class AudienceView(SwaggerView):
         for lookalike in lookalikes:
             lookalike[api_c.LOOKALIKEABLE] = False
             lookalike[api_c.IS_LOOKALIKE] = True
+
+            lookalike[db_c.STATUS] = lookalike.get(
+                db_c.STATUS, db_c.AUDIENCE_STATUS_ERROR
+            )
+            lookalike[db_c.AUDIENCE_LAST_DELIVERED] = lookalike[
+                db_c.CREATE_TIME
+            ]
             lookalike[db_c.DESTINATIONS] = (
                 [facebook_destination] if facebook_destination else []
             )
@@ -937,6 +945,8 @@ class SetLookalikeAudience(SwaggerView):
             }, HTTPStatus.NOT_FOUND
 
         try:
+            # set status to error for now.
+            status = api_c.STATUS_ERROR
             # Commented as creating lookalike audience is restricted in facebook
             # as we are using fake customer data
             # timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
@@ -960,6 +970,7 @@ class SetLookalikeAudience(SwaggerView):
                 "US",
                 user_name,
                 0,  # TODO HUS-801 - set lookalike SIZE correctly.
+                status,
             )
 
         except CustomAudienceDeliveryStatusError:
