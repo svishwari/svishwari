@@ -218,15 +218,14 @@ export default {
         .call((g) => g.selectAll(".tick line").attr("stroke", "#ECECEC"))
         .call((g) => g.selectAll("path").attr("stroke", "#ECECEC"))
         .style("font-size", 12)
-        
 
-  d3Select
+      d3Select
         .selectAll(".xAxis .tick text")
         .attr("x", 0)
         .attr("y", 11)
         .style("color", "#4F4F4F")
 
-        d3Select.selectAll(".yAxis .tick text").style("color", "#4F4F4F")
+      d3Select.selectAll(".yAxis .tick text").style("color", "#4F4F4F")
 
       svg
         .append("rect")
