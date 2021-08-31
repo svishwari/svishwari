@@ -937,7 +937,6 @@ def dataframe_generator(
     """
 
     if download_type == api_c.GOOGLE_ADS:
-        print(pd.DataFrame(GOOGLE_ADS_CUSTOMER_DATA))
         yield pd.DataFrame(GOOGLE_ADS_CUSTOMER_DATA, columns=columns)
     elif download_type == api_c.AMAZON_ADS:
         yield pd.DataFrame(AMAZON_ADS_CUSTOMER_DATA, columns=columns)
