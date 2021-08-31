@@ -808,6 +808,7 @@ class OrchestrationRouteTest(TestCase):
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertEqual(lookalike_audience_name, response.json[api_c.NAME])
+        lookalike_audience_id = ObjectId(response.json[api_c.ID])
 
         engaged_lookalike_audience = None
 
@@ -826,25 +827,27 @@ class OrchestrationRouteTest(TestCase):
         self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
+            f"{self.audience_api_endpoint}/{lookalike_audience_id}",
             headers=t_c.STANDARD_HEADERS,
         )
-        audience = response.json
+
+        lookalike_audience = response.json
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(
-            ObjectId(audience[db_c.OBJECT_ID]), self.audiences[0][db_c.ID]
+            lookalike_audience[api_c.ID], str(lookalike_audience_id)
         )
-        self.assertTrue(audience[api_c.LOOKALIKE_AUDIENCES])
-
-        # test returned audience
-        lookalike_audience = audience[api_c.LOOKALIKE_AUDIENCES][0]
+        self.assertEqual(lookalike_audience[api_c.SIZE], 3329)
         self.assertEqual(
-            ObjectId(lookalike_audience[db_c.OBJECT_ID]),
-            engaged_lookalike_audience[db_c.OBJECT_ID],
+            lookalike_audience[api_c.SOURCE_SIZE], self.audiences[0][db_c.SIZE]
         )
         self.assertEqual(
-            lookalike_audience[db_c.NAME], lookalike_audience_name
+            lookalike_audience[api_c.SOURCE_NAME], self.audiences[0][db_c.NAME]
         )
+        self.assertEqual(
+            lookalike_audience[api_c.SOURCE_ID],
+            str(self.audiences[0][db_c.ID]),
+        )
+        self.assertTrue(lookalike_audience[api_c.IS_LOOKALIKE])
 
     def test_create_lookalike_audience_invalid_engagement_ids(self):
         """Test create lookalike audience with invalid engagement ids

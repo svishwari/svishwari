@@ -797,6 +797,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             "US",
             "Kam Chancellor",
             31,
+            c.AUDIENCE_STATUS_ERROR,
         )
 
         self.assertTrue(doc is not None)
@@ -807,6 +808,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.LOOKALIKE_AUD_SIZE_PERCENTAGE in doc)
         self.assertEqual(doc[c.CREATED_BY], "Kam Chancellor")
         self.assertEqual(doc[c.SIZE], 31)
+        self.assertEqual(doc[c.STATUS], c.AUDIENCE_STATUS_ERROR)
 
         delivery_job_doc = dpm.set_delivery_job(
             self.database,
