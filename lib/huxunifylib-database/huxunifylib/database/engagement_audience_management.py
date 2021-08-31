@@ -121,9 +121,7 @@ def set_engagement_audience_destination_schedule(
             "$set": {
                 db_c.UPDATE_TIME: datetime.utcnow(),
                 db_c.UPDATED_BY: user_name,
-            },
-            "$push": {
-                "audiences.$.destination.cron_expression": cron_expression
+                f"audiences.$.destinations.$.{db_c.ENGAGEMENT_DELIVERY_SCHEDULE}": cron_expression,
             },
         },
     )
@@ -167,6 +165,8 @@ def remove_engagement_audience_destination_schedule(
                 db_c.UPDATE_TIME: datetime.utcnow(),
                 db_c.UPDATED_BY: user_name,
             },
-            "$unset": {"audiences.$.destination.cron_expression": 1},
+            "$unset": {
+                f"audiences.$.destinations.$.{db_c.ENGAGEMENT_DELIVERY_SCHEDULE}": 1
+            },
         },
     )
