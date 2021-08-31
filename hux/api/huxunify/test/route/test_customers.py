@@ -330,7 +330,7 @@ class TestCustomersOverview(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual({}, DataFeedDetailsSchema().validate(response.json))
+        self.assertFalse(DataFeedDetailsSchema().validate(response.json))
 
     def test_get_customers_geo(self):
         """
