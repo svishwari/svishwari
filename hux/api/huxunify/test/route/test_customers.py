@@ -585,7 +585,7 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/city-ltvs",
             json=t_c.CUSTOMERS_INSIGHTS_BY_CITY_RESPONSE,
         )
 
@@ -618,7 +618,7 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/count-by-state",
             json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
         )
 

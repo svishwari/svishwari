@@ -11,6 +11,12 @@ from bson import ObjectId
 from flask import Blueprint, Response, request, jsonify
 
 from huxunifylib.connectors import connector_cdp
+from huxunifylib.database.orchestration_management import get_audience
+from huxunifylib.database.notification_management import create_notification
+from huxunifylib.database import (
+    orchestration_management,
+)
+import huxunifylib.database.constants as db_c
 
 from huxunify.api.data_connectors.cdp import (
     get_city_ltvs,
@@ -21,14 +27,8 @@ from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
 )
-from huxunifylib.database.notification_management import create_notification
-from huxunifylib.database import (
-    orchestration_management,
-)
-import huxunifylib.database.constants as db_c
-
-from huxunify.api.config import get_config
 from huxunify.api.schema.utils import AUTH401_RESPONSE
+from huxunify.api.config import get_config
 import huxunify.api.constants as api_c
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
@@ -39,7 +39,6 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.utils import get_db_client
 
 # setup the audiences blueprint
-from huxunifylib.database.orchestration_management import get_audience
 
 audience_bp = Blueprint(api_c.AUDIENCE_ENDPOINT, import_name=__name__)
 
@@ -92,7 +91,7 @@ class AudienceDownload(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
+    # @api_error_handler()
     @get_user_name()
     def get(
         self, audience_id: str, download_type: str, user_name: str
