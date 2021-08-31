@@ -257,7 +257,9 @@ class TestAudienceManagement(unittest.TestCase):
 
         all_audiences = am.get_all_audiences(self.database)
 
-        self.assertTrue(am.delete_audience(self.database, self.audiences[0][c.ID]))
+        self.assertTrue(
+            am.delete_audience(self.database, self.audiences[0][c.ID])
+        )
 
         audiences = am.get_all_audiences(self.database)
 
