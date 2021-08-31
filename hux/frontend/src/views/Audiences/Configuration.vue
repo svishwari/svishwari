@@ -187,6 +187,7 @@
           </form-step>
 
           <form-step
+            v-if="isLookAlikeCreateable"
             :step="4"
             label="Create a lookalike audience"
             :optional="
@@ -194,7 +195,6 @@
                 ? '- Enabled if Facebook is added as a destination'
                 : ''
             "
-            v-if="isLookAlikeCreateable"
             class="neroBlack--text"
           >
             <div v-if="isLookAlikeCreateable" class="dark--text">
