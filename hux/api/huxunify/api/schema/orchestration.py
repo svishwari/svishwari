@@ -69,6 +69,7 @@ class DeliveriesSchema(Schema):
     size = fields.Integer(attribute=db_c.DELIVERY_PLATFORM_AUD_SIZE, default=0)
     match_rate = fields.Float(default=0, example=0.21)
     delivery_platform_type = fields.String()
+    is_ad_platform = fields.Bool(attribute=api_c.IS_AD_PLATFORM)
 
 
 class EngagementDeliverySchema(EngagementGetSchema):

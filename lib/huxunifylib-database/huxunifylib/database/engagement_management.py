@@ -237,6 +237,7 @@ def get_engagements_summary(
         # add the destination name to the nested destinations.
         {
             "$addFields": {
+                "audiences.destinations.is_ad_platform": "$destination.is_ad_platform",
                 "audiences.destinations.name": "$destination.name",
                 "audiences.destinations.delivery_platform_type"
                 "": "$destination.delivery_platform_type",
@@ -299,6 +300,7 @@ def get_engagements_summary(
                     "$push": {
                         "id": "$audiences.destinations.id",
                         "name": "$audiences.destinations.name",
+                        "is_ad_platform": "$audiences.destinations.is_ad_platform",
                         "delivery_platform_type": "$audiences.destinations.delivery_platform_type",
                         "delivery_job_id": "$audiences.destinations.delivery_job_id",
                         "latest_delivery": {

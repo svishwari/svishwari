@@ -192,9 +192,12 @@ class IndividualEngagementSearch(SwaggerView):
             for audience in engagement[db_c.AUDIENCES]:
                 for destination in audience[db_c.DESTINATIONS]:
                     if db_c.LATEST_DELIVERY in destination:
-                        destination[db_c.LATEST_DELIVERY][
-                            api_c.MATCH_RATE
-                        ] = round(uniform(0.2, 0.9), 2)
+                        destination[db_c.LATEST_DELIVERY][api_c.MATCH_RATE] = (
+                            round(uniform(0.2, 0.9), 2)
+                            if destination.get(api_c.IS_AD_PLATFORM, False)
+                            and not audience.get(api_c.IS_LOOKALIKE, False)
+                            else None
+                        )
 
         # weight the engagement status
         engagements = weighted_engagement_status(engagements)[0]
