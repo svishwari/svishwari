@@ -311,6 +311,16 @@ class AudienceGetView(SwaggerView):
             lookalike[db_c.AUDIENCE_FILTERS] = audience[db_c.AUDIENCE_FILTERS]
             lookalike[api_c.IS_LOOKALIKE] = True
 
+            # set original audience attributes for the lookalike.
+            lookalike[api_c.SOURCE_NAME] = audience[db_c.NAME]
+            lookalike[api_c.SOURCE_SIZE] = audience[db_c.SIZE]
+            lookalike[api_c.SOURCE_ID] = lookalike[
+                db_c.LOOKALIKE_SOURCE_AUD_ID
+            ]
+
+            # TODO: HUS-837 change once we can generate real lookalikes from FB.
+            lookalike[api_c.MATCH_RATE] = round(uniform(0.2, 0.9), 2)
+
             # set audience to lookalike
             audience = lookalike
 
@@ -380,7 +390,7 @@ class AudienceGetView(SwaggerView):
 
         # Add insights, size.
         audience[api_c.AUDIENCE_INSIGHTS] = customers
-        audience[api_c.SIZE] = customers.get(api_c.TOTAL_CUSTOMERS)
+        audience[api_c.SIZE] = customers.get(api_c.TOTAL_CUSTOMERS, 0)
         audience[
             api_c.LOOKALIKE_AUDIENCES
         ] = destination_management.get_all_delivery_platform_lookalike_audiences(
