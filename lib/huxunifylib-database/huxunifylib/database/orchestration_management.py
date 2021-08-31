@@ -44,8 +44,7 @@ def create_audience(
         Union[list, None]: MongoDB audience doc.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
 
     # Make sure the name will be unique
     try:
@@ -157,8 +156,7 @@ def get_audience(
 
     """
     doc = None
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
 
     # Read the audience document which contains filtering rules
     try:
@@ -204,8 +202,7 @@ def get_all_audiences(
 
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
 
     # Get audience configurations and add to list
     try:
@@ -251,8 +248,7 @@ def update_audience(
         Union[dict, None]: Updated audience configuration dict.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
 
     try:
         audience_doc = collection.find_one(
@@ -303,6 +299,36 @@ def update_audience(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def delete_audience(
+    database: DatabaseClient,
+    audience_id: ObjectId,
+) -> bool:
+    """A function to delete an audience
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): The Mongo DB ID of the audience.
+
+    Returns:
+        bool: A flag to indicate successful deletion
+
+    """
+
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
+
+    try:
+        collection.delete_one({c.ID: audience_id})
+        return True
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def get_audience_insights(
     database: DatabaseClient,
     audience_id: ObjectId,
@@ -317,8 +343,7 @@ def get_audience_insights(
         Union[list, None]:  A list of engagements with delivery information for an audience
 
     """
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.ENGAGEMENTS_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.ENGAGEMENTS_COLLECTION]
 
     # use the audience pipeline to aggregate and join all the insight data
     try:
@@ -467,8 +492,8 @@ def get_all_audiences_and_deliveries(
         Union[list, None]:  A list of engagements with delivery
             information for an audience
     """
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
+
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
 
     # use the audience pipeline to aggregate and join all the delivery data
     try:

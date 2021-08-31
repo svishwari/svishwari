@@ -668,13 +668,15 @@ class OrchestrationRouteTest(TestCase):
 
         Returns:
         """
-        audience_id = "asdfg13456"
+
         response = self.test_client.get(
-            f"{self.audience_api_endpoint}/{audience_id}",
+            f"{self.audience_api_endpoint}/{t_c.INVALID_ID}",
             headers=t_c.STANDARD_HEADERS,
         )
+        valid_response = {"message": api_c.BSON_INVALID_ID(t_c.INVALID_ID)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     def test_get_audiences(self):
         """Test get audiences.
@@ -938,3 +940,57 @@ class OrchestrationRouteTest(TestCase):
                 all(x[api_c.MATCH_RATE] for x in engagement[api_c.DELIVERIES]),
                 0,
             )
+
+    def test_delete_audience(self) -> None:
+        """
+        Test delete audience API with valid id
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        response = self.test_client.delete(
+            f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+    def test_delete_audience_where_audience_DNE(self) -> None:
+        """
+        Test delete audience API with valid id but the object does not exist
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        response = self.test_client.delete(
+            f"{self.audience_api_endpoint}/{str(ObjectId())}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+    def test_delete_audience_with_invalid_id(self) -> None:
+        """
+        Test delete audience API with valid id but the object does not exist
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        response = self.test_client.delete(
+            f"{self.audience_api_endpoint}/{t_c.INVALID_ID}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {"message": api_c.BSON_INVALID_ID(t_c.INVALID_ID)}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
