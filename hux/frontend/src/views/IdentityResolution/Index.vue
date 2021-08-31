@@ -143,7 +143,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-import moment from "moment"
+import { listOfMonths, listOfYears } from "@/utils"
 
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader"
@@ -177,10 +177,8 @@ export default {
       loadingMatchingTrends: false,
       isFilterToggled: false,
       options: {
-        months: moment.months(),
-        years: Array.from({ length: 10 }, (_, index) => {
-          return moment().subtract(index, "years").format("YYYY")
-        }),
+        months: listOfMonths(),
+        years: listOfYears(),
       },
       filters: {
         startMonth: null,
@@ -200,15 +198,13 @@ export default {
     }),
 
     startDate() {
-      const startDate = moment(
-        `${this.filters.startMonth} ${this.filters.startYear}`
-      )
-      return startDate.isValid() ? startDate.format("YYYY-MM-DD") : null
+      const startDate = `${this.filters.startMonth} ${this.filters.startYear}`
+      return this.$options.filters.Date(startDate, "YYYY-MM-DD")
     },
 
     endDate() {
-      const endDate = moment(`${this.filters.endMonth} ${this.filters.endYear}`)
-      return endDate.isValid() ? endDate.format("YYYY-MM-DD") : null
+      const endDate = `${this.filters.endMonth} ${this.filters.endYear}`
+      return this.$options.filters.Date(endDate, "YYYY-MM-DD")
     },
 
     loading() {
