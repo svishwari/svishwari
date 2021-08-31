@@ -11,7 +11,10 @@ from marshmallow import INCLUDE
 from pymongo import MongoClient
 
 from huxunifylib.util.general.logging import logger
-from huxunifylib.connectors import FacebookConnector
+from huxunifylib.connectors import (
+    CustomAudienceDeliveryStatusError,
+    FacebookConnector,
+)
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -923,22 +926,22 @@ class SetLookalikeAudience(SwaggerView):
                 "message": api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
 
-        # Commented as creating lookalike audience is restricted in facebook
-        # as we are using fake customer data
-        # timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
-        #     db_c.AUDIENCE_NAME_DATE_FORMAT
-        # )
-        #
-        # destination_connector.get_new_lookalike_audience(
-        #     f"{source_audience[db_c.NAME]} - {timestamp}",
-        #     body[api_c.NAME],
-        #     body[api_c.AUDIENCE_SIZE_PERCENTAGE],
-        #     "US",
-        # )
+        try:
+            # Commented as creating lookalike audience is restricted in facebook
+            # as we are using fake customer data
+            # timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
+            #     db_c.AUDIENCE_NAME_DATE_FORMAT
+            # )
+            #
+            # destination_connector.get_new_lookalike_audience(
+            #     f"{source_audience[db_c.NAME]} - {timestamp}",
+            #     body[api_c.NAME],
+            #     body[api_c.AUDIENCE_SIZE_PERCENTAGE],
+            #     "US",
+            # )
 
-        logger.info("Creating delivery platform lookalike audience.")
-        lookalike_audience = (
-            destination_management.create_delivery_platform_lookalike_audience(
+            logger.info("Creating delivery platform lookalike audience.")
+            lookalike_audience = destination_management.create_delivery_platform_lookalike_audience(
                 database,
                 destination[db_c.ID],
                 ObjectId(body[api_c.AUDIENCE_ID]),
@@ -948,7 +951,15 @@ class SetLookalikeAudience(SwaggerView):
                 user_name,
                 0,  # TODO HUS-801 - set lookalike SIZE correctly.
             )
-        )
+
+        except CustomAudienceDeliveryStatusError:
+            return {
+                "message": (
+                    f"Failed to create a lookalike audience, "
+                    f"{body[api_c.NAME]}: the selected audience "
+                    f"to create a lookalike from is inactive or unusable.",
+                ),
+            }, HTTPStatus.NOT_FOUND
 
         for engagement_id in body[api_c.ENGAGEMENT_IDS]:
             engagement_management.append_audiences_to_engagement(
