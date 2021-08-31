@@ -209,10 +209,20 @@ class AudienceView(SwaggerView):
             database
         )
 
+        # get the facebook delivery platform for lookalikes
+        facebook_destination = (
+            destination_management.get_delivery_platform_by_type(
+                database, db_c.DELIVERY_PLATFORM_FACEBOOK
+            )
+        )
+
         # set the is_lookalike property to True so UI knows it is a lookalike.
         for lookalike in lookalikes:
             lookalike[api_c.LOOKALIKEABLE] = False
             lookalike[api_c.IS_LOOKALIKE] = True
+            lookalike[db_c.DESTINATIONS] = (
+                [facebook_destination] if facebook_destination else []
+            )
 
         # combine the two lists and serve.
         audiences += lookalikes
