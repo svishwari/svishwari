@@ -12,6 +12,7 @@ import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
 import * as d3Regression from "d3-regression"
 import * as d3Transition from "d3-transition"
+import * as d3Timer from "d3-timer"
 import colors from "../../../../plugins/theme"
 
 export default {
@@ -42,6 +43,7 @@ export default {
   },
   data() {
     return {
+      lastBarAnimation: "",
       totalCustomerData: this.value,
       chartWidth: "",
       toolTip: {
@@ -63,6 +65,9 @@ export default {
       immediate: false,
       deep: true,
     },
+  },
+  destroyed() {
+     clearInterval(this.lastBarAnimation)
   },
   methods: {
     async initiateStackBarChart() {
@@ -202,6 +207,7 @@ export default {
         .append("path")
         .attr("class", (d, i) => {
           if (i == this.totalCustomerData.length - 1) {
+           
             return "active-bar"
           }
         })
@@ -280,6 +286,18 @@ export default {
         this.toolTip.isEndingBar = data.isEndingBar
         this.tooltipDisplay(true, this.toolTip)
       }
+
+      let blinkLastBar = () => {
+        d3Select
+          .select(".active-bar")
+          .style("fill-opacity", "0.2")
+          .transition()
+          .duration(1000)
+          .style("fill-opacity", "0.5")
+      }
+
+     this.lastBarAnimation = setInterval(blinkLastBar, 1000);
+      
     },
     tooltipDisplay(showTip, customersData) {
       this.$emit("tooltipDisplay", showTip, customersData)

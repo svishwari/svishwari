@@ -16,8 +16,8 @@
 </template>
 
 <script>
-import * as d3TimeFormat from "d3-time-format"
-import * as d3Collection from "d3-collection"
+import { timeFormat } from "d3-time-format"
+import { nest } from "d3-collection"
 import StackBarChartTooltip from "@/components/common/TotalCustomerChart/StackBarChartTooltip"
 import StackBarChart from "@/components/common/Charts/StackBarChart/StackBarChart.vue"
 export default {
@@ -112,9 +112,8 @@ export default {
       })
 
       // Creating a weekly based divider
-      let week = d3TimeFormat.timeFormat("%U")
-      let weeklyAggData = d3Collection
-        .nest()
+      let week = timeFormat("%U")
+      let weeklyAggData = nest()
         .key((d) => week(new Date(d.date)))
         .entries(totalCustomerData)
 
