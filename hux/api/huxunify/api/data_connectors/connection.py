@@ -23,7 +23,7 @@ def check_cdp_connections_api_connection() -> Tuple[Union[int, bool], str]:
     # submit the post request to get documentation
     try:
         response = requests.get(
-            f"{config.CDP_CONNECTION_SERVICE}/healthcheck",
+            f"{config.CDP_CONNECTION_SERVICE}healthcheck",
             timeout=5,
         )
         return response.status_code, "CDP connections available."
