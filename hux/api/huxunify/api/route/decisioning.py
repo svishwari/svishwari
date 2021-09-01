@@ -1,7 +1,8 @@
 """
 purpose of this script is for housing the decision routes for the API.
 """
-from datetime import datetime
+from random import uniform, randint
+from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Tuple, List
 
@@ -212,29 +213,34 @@ class ModelOverview(SwaggerView):
         """
         model_id = int(model_id)
 
-        # get model information
-        model_versions = tecton.get_model_version_history(model_id)
+        # TODO Remove once Propensity to Purchase model data is being served
+        #  from tecton.
+        if model_id == 3:
+            overview_data = api_c.PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB
+        else:
+            # get model information
+            model_versions = tecton.get_model_version_history(model_id)
 
-        # if model versions not found, return not found.
-        if not model_versions:
-            return {}, HTTPStatus.NOT_FOUND
+            # if model versions not found, return not found.
+            if not model_versions:
+                return {}, HTTPStatus.NOT_FOUND
 
-        # take the latest model
-        latest_model = model_versions[-1]
+            # take the latest model
+            latest_model = model_versions[-1]
 
-        # generate the output
-        overview_data = {
-            api_c.MODEL_ID: latest_model[api_c.ID],
-            api_c.MODEL_TYPE: latest_model[api_c.TYPE],
-            api_c.MODEL_NAME: latest_model[api_c.NAME],
-            api_c.DESCRIPTION: latest_model[api_c.DESCRIPTION],
-            # get the performance metrics for a given model
-            api_c.PERFORMANCE_METRIC: tecton.get_model_performance_metrics(
-                model_id,
-                latest_model[api_c.TYPE],
-                latest_model[api_c.CURRENT_VERSION],
-            ),
-        }
+            # generate the output
+            overview_data = {
+                api_c.MODEL_ID: latest_model[api_c.ID],
+                api_c.MODEL_TYPE: latest_model[api_c.TYPE],
+                api_c.MODEL_NAME: latest_model[api_c.NAME],
+                api_c.DESCRIPTION: latest_model[api_c.DESCRIPTION],
+                # get the performance metrics for a given model
+                api_c.PERFORMANCE_METRIC: tecton.get_model_performance_metrics(
+                    model_id,
+                    latest_model[api_c.TYPE],
+                    latest_model[api_c.CURRENT_VERSION],
+                ),
+            }
 
         # dump schema and return to client.
         return (
@@ -292,7 +298,20 @@ class ModelDriftView(SwaggerView):
 
         """
         body = ModelDriftPostSchema().load(request.get_json())
-        drift_data = tecton.get_model_drift(model_id, body[api_c.MODEL_TYPE])
+        # TODO Remove once Propensity to Purchase data is being served
+        #  from tecton
+        if int(model_id) == 3:
+            drift_data = [
+                {
+                    api_c.DRIFT: round(uniform(0.8, 1), 2),
+                    api_c.RUN_DATE: datetime(2021, 6, 1) + timedelta(i),
+                }
+                for i in range(4)
+            ]
+        else:
+            drift_data = tecton.get_model_drift(
+                model_id, body[api_c.MODEL_TYPE]
+            )
 
         return (
             jsonify(ModelDriftSchema(many=True).dump(drift_data)),
@@ -535,7 +554,23 @@ class ModelLiftView(SwaggerView):
         """
 
         # retrieves lift data
-        lift_data = tecton.get_model_lift_async(model_id)
+        if int(model_id) == 3:
+            lift_data = [
+                {
+                    api_c.PREDICTED_RATE: uniform(0.01, 0.3),
+                    api_c.BUCKET: 10 * i,
+                    api_c.PROFILE_SIZE_PERCENT: 0,
+                    api_c.ACTUAL_VALUE: randint(1000, 5000),
+                    api_c.PREDICTED_LIFT: uniform(1, 5),
+                    api_c.ACTUAL_RATE: uniform(0.01, 0.3),
+                    api_c.PROFILE_COUNT: randint(1000, 100000),
+                    api_c.ACTUAL_LIFT: uniform(1, 5),
+                    api_c.PREDICTED_LIFT: round(uniform(1000, 5000), 4),
+                }
+                for i in range(1, 11)
+            ]
+        else:
+            lift_data = tecton.get_model_lift_async(model_id)
         lift_data.sort(key=lambda x: x[api_c.BUCKET])
 
         return (

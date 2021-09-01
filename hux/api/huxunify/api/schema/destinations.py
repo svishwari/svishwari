@@ -63,6 +63,7 @@ class DestinationGetSchema(Schema):
     )
     is_added = fields.Bool(attribute="added")
     is_enabled = fields.Bool(attribute="enabled")
+    is_ad_platform = fields.Bool(attribute=db_c.IS_AD_PLATFORM)
     create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
     created_by = fields.String(attribute=db_c.CREATED_BY, allow_none=True)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
