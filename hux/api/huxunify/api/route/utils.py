@@ -32,6 +32,9 @@ from huxunify.api.data_connectors.okta import (
     check_okta_connection,
 )
 from huxunify.api.data_connectors.cdp import check_cdm_api_connection
+from huxunify.api.data_connectors.connection import (
+    check_cdp_connections_api_connection,
+)
 
 
 def handle_api_exception(exc: Exception, description: str = "") -> None:
@@ -104,6 +107,7 @@ def get_health_check() -> HealthCheck:
     health.add_check(check_aws_ssm)
     health.add_check(check_aws_batch)
     health.add_check(check_cdm_api_connection)
+    health.add_check(check_cdp_connections_api_connection)
     return health
 
 
