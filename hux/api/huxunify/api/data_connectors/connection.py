@@ -2,10 +2,10 @@
 import requests
 from dateutil.parser import parse
 
+from huxunifylib.util.general.logging import logger
+
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
-
-from huxunifylib.util.general.logging import logger
 
 
 def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
