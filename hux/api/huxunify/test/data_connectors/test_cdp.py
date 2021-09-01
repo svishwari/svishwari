@@ -15,8 +15,6 @@ from huxunify.api.data_connectors.cdp import (
     DATETIME_FIELDS,
     get_demographic_by_state,
     get_city_ltvs,
-    get_idr_data_feed_details,
-    get_idr_data_feeds,
 )
 from huxunify.app import create_app
 
@@ -32,10 +30,6 @@ class CDPTest(TestCase):
         Returns:
 
         """
-        self.data_sources_api_endpoint = (
-            f"{t_c.BASE_ENDPOINT}{api_c.CDP_DATA_SOURCES_ENDPOINT}"
-        )
-
         # setup the flask test client
         self.test_client = create_app().test_client()
 
@@ -130,60 +124,6 @@ class CDPTest(TestCase):
                 continue
 
             self.assertEqual(value, None)
-
-    def test_get_idr_data_feeds(self):
-        """
-        Test fetch IDR data feeds
-
-        Args:
-
-        Returns:
-
-        """
-
-        self.request_mocker.stop()
-        self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
-            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.CDM_DATAFEEDS}",
-            json=t_c.IDR_DATAFEEDS_RESPONSE,
-        )
-        self.request_mocker.start()
-
-        data_feeds = get_idr_data_feeds(
-            token="", start_date="2021-08-02", end_date="2021-08-26"
-        )
-
-        for data_feed in data_feeds:
-            self.assertIn(api_c.DATAFEED_DATA_SOURCE_TYPE, data_feed)
-            self.assertIn(api_c.DATAFEED_DATA_SOURCE_NAME, data_feed)
-            self.assertIn(api_c.DATAFEED_RECORDS_PROCESSED_COUNT, data_feed)
-            self.assertIn(api_c.DATAFEED_NEW_IDS_COUNT, data_feed)
-
-    def test_get_idr_data_feed_details(self):
-        """
-        Test fetch IDR data feed details
-
-        Args:
-
-        Returns:
-
-        """
-        datafeed_id = 1
-        self.request_mocker.stop()
-        self.request_mocker.get(
-            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
-            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.CDM_DATAFEEDS}/"
-            f"{datafeed_id}",
-            json=t_c.IDR_DATAFEED_DETAILS_RESPONSE,
-        )
-        self.request_mocker.start()
-
-        data_feed = get_idr_data_feed_details(
-            token="", datafeed_id=datafeed_id
-        )
-
-        self.assertIn(api_c.PINNING, data_feed)
-        self.assertIn(api_c.STITCHED, data_feed)
 
     def test_get_customers_insights_count_by_day(self) -> None:
         """Test get customers insights count by day
