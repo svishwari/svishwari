@@ -576,8 +576,17 @@ export default {
 
     async restoreEngagement() {
       try {
-        const payload = { id: this.$route.params.id, data: this.payload }
+        const requestPayload = { ...this.payload }
+        if (requestPayload.delivery_schedule === 0) {
+          delete requestPayload.start_date
+          delete requestPayload.end_date
+        }
+        const payload = { id: this.$route.params.id, data: requestPayload }
         await this.updateEngagement(payload)
+        this.$router.push({
+          name: "EngagementDashboard",
+          params: { id: this.$route.params.id },
+        })
       } catch (error) {
         this.errorMessages.push(error.response.data.message)
         this.scrollToTop()
