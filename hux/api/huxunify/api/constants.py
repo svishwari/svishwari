@@ -882,3 +882,17 @@ PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
     }
     for i in range(50)
 ]
+
+PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB = {
+    MODEL_NAME: "Propensity to Purchase",
+    PERFORMANCE_METRIC: {
+        RMSE: -1,
+        AUC: 0.82,
+        PRECISION: 0.81,
+        RECALL: 0.59,
+        CURRENT_VERSION: "22.8.32",
+    },
+    DESCRIPTION: "Predicts the propensity of a customer to make a purchase "
+    "after receiving an email.",
+    MODEL_TYPE: "purchase",
+}
