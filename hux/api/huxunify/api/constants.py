@@ -35,6 +35,9 @@ HUX_ID = "hux_id"
 TOP_FEATURES = "top_features"
 LIMIT = "limit"
 OFFSET = "offset"
+SOURCE_NAME = "source_name"
+SOURCE_SIZE = "source_size"
+SOURCE_ID = "source_id"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -403,6 +406,7 @@ DELIVERY_JOB_ID = "delivery_job_id"
 AUDIENCE_PERFORMANCE = "audience-performance"
 AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
 DISPLAY_ADS = "display-ads"
+IS_AD_PLATFORM = "is_ad_platform"
 
 DISPLAY_ADS_METRICS = [
     "spend",
@@ -619,6 +623,10 @@ CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 CDP_DATA_SOURCE_IDS = "data_source_ids"
+
+# Monitoring
+METRICS = "metrics"
+METRICS_ENDPOINT = "/metrics"
 
 # Customers
 CUSTOMER_ID = "customer_id"
@@ -881,3 +889,17 @@ PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
     }
     for i in range(50)
 ]
+
+PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB = {
+    MODEL_NAME: "Propensity to Purchase",
+    PERFORMANCE_METRIC: {
+        RMSE: -1,
+        AUC: 0.82,
+        PRECISION: 0.81,
+        RECALL: 0.59,
+        CURRENT_VERSION: "22.8.32",
+    },
+    DESCRIPTION: "Predicts the propensity of a customer to make a purchase "
+    "after receiving an email.",
+    MODEL_TYPE: "purchase",
+}

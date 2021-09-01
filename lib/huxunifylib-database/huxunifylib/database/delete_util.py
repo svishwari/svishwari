@@ -331,6 +331,41 @@ def delete_performance_metrics_by_delivery_job_id(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def delete_campaign_activity_by_delivery_job_id(
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+) -> bool:
+    """
+    A function to hard delete campaign activity associated
+    with the given delivery_job_id.
+
+    Args:
+        database (DatabaseClient): A database client.
+        delivery_job_id (ObjectId): MongoDB document ID of delivery job.
+
+    Returns:
+        bool: A flag indicating successful deletion.
+
+    """
+
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    campaign_activity_collection = am_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
+
+    try:
+        campaign_activity_collection.delete_one(
+            {c.DELIVERY_JOB_ID: delivery_job_id}
+        )
+        return True
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def delete_delivery_platform(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
