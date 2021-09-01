@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 """
 Purpose of this file is for holding methods to query and pull data from CDP.
 """
@@ -54,32 +53,6 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
         logger.error("CDM Health Check failed with %s.", repr(exception))
-        return False, getattr(exception, "message", repr(exception))
-
-
-def check_cdp_connections_api_connection() -> Tuple[bool, str]:
-    """Validate the cdp connections api connection.
-    Args:
-
-    Returns:
-        tuple[bool, str]: Returns if the connection is valid, and the message.
-    """
-    # get config
-    config = get_config()
-
-    # submit the post request to get documentation
-    try:
-        response = requests.get(
-            f"{config.CDP_CONNECTION_SERVICE}/healthcheck",
-            timeout=5,
-        )
-        return response.status_code, "CDP connections available."
-
-    except Exception as exception:  # pylint: disable=broad-except
-        # report the generic error message
-        logger.error(
-            "CDP Connections Health Check failed with %s.", repr(exception)
-        )
         return False, getattr(exception, "message", repr(exception))
 
 
