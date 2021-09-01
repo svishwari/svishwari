@@ -892,7 +892,7 @@ PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB = {
         RECALL: 0.59,
         CURRENT_VERSION: "22.8.32",
     },
-    DESCRIPTION: "Propensity of a customer making a purchase "
+    DESCRIPTION: "Predicts the propensity of a customer to make a purchase "
     "after receiving an email.",
     MODEL_TYPE: "purchase",
 }
