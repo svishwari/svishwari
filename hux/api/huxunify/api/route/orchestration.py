@@ -375,7 +375,12 @@ class AudienceGetView(SwaggerView):
             # above to remove empty and not-delivered deliveries
             if api_c.DELIVERIES in engagement:
                 for delivery in engagement[api_c.DELIVERIES]:
-                    delivery[api_c.MATCH_RATE] = round(uniform(0.2, 0.9), 2)
+                    delivery[api_c.MATCH_RATE] = (
+                        round(uniform(0.2, 0.9), 2)
+                        if delivery.get(api_c.IS_AD_PLATFORM, False)
+                        and not audience.get(api_c.IS_LOOKALIKE, False)
+                        else None
+                    )
 
             # set the weighted status for the engagement based on deliveries
             engagement[api_c.STATUS] = weight_delivery_status(engagement)

@@ -406,6 +406,7 @@ DELIVERY_JOB_ID = "delivery_job_id"
 AUDIENCE_PERFORMANCE = "audience-performance"
 AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
 DISPLAY_ADS = "display-ads"
+IS_AD_PLATFORM = "is_ad_platform"
 
 DISPLAY_ADS_METRICS = [
     "spend",
