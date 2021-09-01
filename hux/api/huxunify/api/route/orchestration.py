@@ -511,12 +511,12 @@ class AudienceInsightsGetView(SwaggerView):
                 database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
             )
 
+        customers = get_customers_overview(
+            token_response[0],
+            {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
+        )
         audience_insights = {
             api_c.DEMOGRAPHIC: get_demographic_by_state(
-                token_response[0],
-                {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
-            ),
-            api_c.STATE: get_demographic_by_state(
                 token_response[0],
                 {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
             ),
@@ -538,6 +538,13 @@ class AudienceInsightsGetView(SwaggerView):
                     end_date=str(datetime.today().date()),
                 )
             ),
+            api_c.GENDER: {
+                gender: {
+                    api_c.POPULATION_PERCENTAGE: customers.get(gender, 0),
+                    api_c.SIZE: customers.get(f"{gender}_{api_c.COUNT}", 0),
+                }
+                for gender in api_c.GENDERS
+            },
         }
 
         return (

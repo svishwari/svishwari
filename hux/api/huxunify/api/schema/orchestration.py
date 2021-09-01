@@ -15,10 +15,9 @@ from huxunify.api.schema.destinations import DestinationGetSchema
 from huxunify.api.schema.engagement import EngagementGetSchema
 from huxunify.api.schema.customers import (
     CustomerOverviewSchema,
-    CustomerDemographicInsightsSchema,
+    CustomerGenderInsightsSchema,
     CustomerSpendingInsightsSchema,
     CustomersInsightsCitiesSchema,
-    CustomersInsightsStatesSchema,
     CustomerGeoVisualSchema,
 )
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
@@ -165,10 +164,9 @@ class AudienceInsightsGetSchema(Schema):
     """
 
     demo = fields.List(fields.Nested(CustomerGeoVisualSchema))
-    state = fields.List(fields.Nested(CustomersInsightsStatesSchema))
     income = fields.List(fields.Nested(CustomersInsightsCitiesSchema))
     spend = fields.Nested(CustomerSpendingInsightsSchema)
-    gender = fields.Nested(CustomerDemographicInsightsSchema)
+    gender = fields.Nested(CustomerGenderInsightsSchema)
 
 
 class AudiencePutSchema(Schema):
