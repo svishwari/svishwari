@@ -56,6 +56,7 @@ from huxunify.api.schema.customers import (
 )
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import redact_fields
+from huxunify.api.route.utils import group_gender_spending
 
 customers_bp = Blueprint(
     api_c.CUSTOMERS_ENDPOINT, import_name=__name__, url_prefix="/cdp"
@@ -658,9 +659,6 @@ class CustomerDemoVisualView(SwaggerView):
                 HTTPStatus.BAD_REQUEST,
             )
 
-        date_parser = lambda x, y: datetime.strptime(
-            f"1-{str(x)}-{str(y)}", "%d-%m-%Y"
-        )
         output = {
             api_c.GENDER: {
                 gender: {
@@ -670,29 +668,7 @@ class CustomerDemoVisualView(SwaggerView):
                 for gender in api_c.GENDERS
             },
             api_c.INCOME: get_spending_by_cities(token_response[0]),
-            api_c.SPEND: {
-                api_c.GENDER_WOMEN: [
-                    {
-                        api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
-                        api_c.LTV: round(x[api_c.AVG_SPENT_WOMEN], 4),
-                    }
-                    for x in gender_spending
-                ],
-                api_c.GENDER_MEN: [
-                    {
-                        api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
-                        api_c.LTV: round(x[api_c.AVG_SPENT_MEN], 4),
-                    }
-                    for x in gender_spending
-                ],
-                api_c.GENDER_OTHER: [
-                    {
-                        api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
-                        api_c.LTV: round(x[api_c.AVG_SPENT_OTHER], 4),
-                    }
-                    for x in gender_spending
-                ],
-            },
+            api_c.SPEND: group_gender_spending(gender_spending),
         }
 
         return (

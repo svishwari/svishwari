@@ -238,3 +238,47 @@ def validate_destination_id(
             }, HTTPStatus.NOT_FOUND
 
     return destination_id
+
+
+def group_gender_spending(gender_spending: list) -> dict:
+    """Groups gender spending by gender/month.
+
+    Args:
+        gender_spending (list) : list of spending details by gender.
+
+    Returns:
+        response(dict): Gender spending grouped by gender / month.
+    """
+
+    date_parser = lambda x, y: datetime.strptime(
+        f"1-{str(x)}-{str(y)}", "%d-%m-%Y"
+    )
+    return {
+        constants.GENDER_WOMEN: [
+            {
+                constants.DATE: date_parser(
+                    x[constants.MONTH], x[constants.YEAR]
+                ),
+                constants.LTV: round(x[constants.AVG_SPENT_WOMEN], 4),
+            }
+            for x in gender_spending
+        ],
+        constants.GENDER_MEN: [
+            {
+                constants.DATE: date_parser(
+                    x[constants.MONTH], x[constants.YEAR]
+                ),
+                constants.LTV: round(x[constants.AVG_SPENT_MEN], 4),
+            }
+            for x in gender_spending
+        ],
+        constants.GENDER_OTHER: [
+            {
+                constants.DATE: date_parser(
+                    x[constants.MONTH], x[constants.YEAR]
+                ),
+                constants.LTV: round(x[constants.AVG_SPENT_OTHER], 4),
+            }
+            for x in gender_spending
+        ],
+    }

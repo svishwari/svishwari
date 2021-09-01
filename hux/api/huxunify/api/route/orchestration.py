@@ -5,6 +5,7 @@ Paths for Orchestration API
 from http import HTTPStatus
 from random import uniform
 from typing import Tuple, Union
+from datetime import datetime, timedelta
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
@@ -29,6 +30,7 @@ import huxunifylib.database.constants as db_c
 
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
+    AudienceInsightsGetSchema,
     AudiencePutSchema,
     AudiencePostSchema,
     LookalikeAudiencePostSchema,
@@ -38,7 +40,12 @@ from huxunify.api.schema.orchestration import (
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
 )
-from huxunify.api.data_connectors.cdp import get_customers_overview
+from huxunify.api.data_connectors.cdp import (
+    get_customers_overview,
+    get_demographic_by_state,
+    get_spending_by_gender,
+    get_city_ltvs,
+)
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -52,6 +59,7 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.utils import (
     get_db_client,
     validate_destination_id,
+    group_gender_spending,
 )
 
 # setup the orchestration blueprint
@@ -423,6 +431,117 @@ class AudienceGetView(SwaggerView):
 
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    orchestration_bp,
+    f"{api_c.AUDIENCE_ENDPOINT}/<audience_id>/{api_c.AUDIENCE_INSIGHTS}",
+    "AudienceInsightsGetView",
+)
+class AudienceInsightsGetView(SwaggerView):
+    """
+    Single Audience Insights Get view class
+    """
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        }
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": AudienceInsightsGetSchema,
+            "description": "Retrieved Audience insights.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve audience insights.",
+            "schema": {
+                "example": {"message": "Failed to retrieve audience insights"},
+            },
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(self, audience_id: str) -> Tuple[dict, int]:
+        """Retrieves an audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (str): Audience ID.
+
+        Returns:
+            Tuple[dict, int]: AudienceInsights, HTTP status.
+
+        """
+
+        token_response = get_token_from_request(request)
+
+        database = get_db_client()
+
+        # get the audience
+        audience_id = ObjectId(audience_id)
+        audience = orchestration_management.get_audience(database, audience_id)
+
+        if not audience:
+            # check if lookalike
+            lookalike = destination_management.get_delivery_platform_lookalike_audience(
+                database, audience_id
+            )
+            if not lookalike:
+                logger.error("Audience with id %s not found.", audience_id)
+                return {
+                    "message": api_c.AUDIENCE_NOT_FOUND
+                }, HTTPStatus.NOT_FOUND
+
+            # grab the source audience ID of the lookalike
+            audience = orchestration_management.get_audience(
+                database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
+            )
+
+        audience_insights = {
+            api_c.DEMOGRAPHIC: get_demographic_by_state(
+                token_response[0],
+                {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
+            ),
+            api_c.STATE: get_demographic_by_state(
+                token_response[0],
+                {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
+            ),
+            api_c.INCOME: get_city_ltvs(
+                token_response[0],
+                {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
+            ),
+            api_c.SPEND: group_gender_spending(
+                get_spending_by_gender(
+                    token_response[0],
+                    filters={
+                        api_c.AUDIENCE_FILTERS: audience[
+                            api_c.AUDIENCE_FILTERS
+                        ]
+                    },
+                    start_date=str(
+                        datetime.today().date() - timedelta(days=180)
+                    ),
+                    end_date=str(datetime.today().date()),
+                )
+            ),
+        }
+
+        return (
+            AudienceInsightsGetSchema(unknown=INCLUDE).dump(audience_insights),
             HTTPStatus.OK,
         )
 
