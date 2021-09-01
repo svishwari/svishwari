@@ -922,7 +922,7 @@ def get_spending_by_gender(
     )
 
 
-def add_missing_customer_data_count_by_day(
+def add_missing_customer_count_by_day(
     response_body: list, date_filters: dict
 ) -> list:
     """
