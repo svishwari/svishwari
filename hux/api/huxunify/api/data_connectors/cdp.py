@@ -12,6 +12,7 @@ import aiohttp
 import async_timeout
 from bson import ObjectId
 from dateutil.parser import parse, ParserError
+from dateutil.relativedelta import relativedelta
 
 from huxunifylib.database import constants as db_c
 from huxunifylib.util.general.logging import logger
@@ -789,7 +790,7 @@ def get_customers_insights_count_by_day(
         except (ParserError, TypeError):
             record[api_c.RECORDED] = None
 
-    return response_body
+    return add_missing_customer_data_count_by_day(response_body, date_filters)
 
 
 def get_city_ltvs(
@@ -919,3 +920,46 @@ def get_spending_by_gender(
         clean_cdm_fields(response.json()[api_c.BODY]),
         key=lambda x: (x[api_c.YEAR], x[api_c.MONTH]),
     )
+
+
+def add_missing_customer_data_count_by_day(
+    response_body: list, date_filters: dict
+) -> list:
+    """
+    Add customer data for missing dates
+
+    Args:
+        response_body (list): list of customer count data
+        date_filters (dict): start_date and end_date for which customer
+            data is being fetched
+
+    Returns:
+        customer_data_by_day (list): customer count data
+            for all days within start_date and end_date
+
+    """
+
+    customer_data_by_day = []
+
+    start_date = datetime.strptime(date_filters[api_c.START_DATE], "%Y-%m-%d")
+    end_date = datetime.strptime(date_filters[api_c.END_DATE], "%Y-%m-%d")
+
+    for num_day in range(int((end_date - start_date).days)):
+        current_date = start_date + relativedelta(days=num_day)
+
+        if response_body and current_date == response_body[0].get(
+            api_c.RECORDED
+        ):
+            customer_data_by_day.append(response_body.pop(0))
+        else:
+            customer_data_by_day.append(
+                {
+                    api_c.RECORDED: current_date,
+                    api_c.TOTAL_COUNT: response_body[0].get(api_c.TOTAL_COUNT)
+                    - response_body[0].get(api_c.DIFFERENCE_COUNT)
+                    if len(response_body)
+                    else customer_data_by_day[-1][api_c.TOTAL_COUNT],
+                }
+            )
+
+    return customer_data_by_day

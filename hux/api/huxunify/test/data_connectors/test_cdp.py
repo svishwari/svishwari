@@ -1,11 +1,12 @@
 """
 purpose of this file is to house all the cdp tests.
 """
-import datetime
+from datetime import datetime
 import string
 from unittest import TestCase, mock
 from http import HTTPStatus
 import requests_mock
+from dateutil.relativedelta import relativedelta
 from hypothesis import given, strategies as st
 
 from huxunify.api import constants as api_c
@@ -118,7 +119,7 @@ class CDPTest(TestCase):
         for value in clean_cdm_fields(
             {DATETIME_FIELDS[0]: date_text}
         ).values():
-            if isinstance(date_text, datetime.datetime):
+            if isinstance(date_text, datetime):
                 # validate it is the same
                 self.assertEqual(date_text, value)
                 continue
@@ -133,17 +134,22 @@ class CDPTest(TestCase):
         Returns:
             None
         """
-
+        start_date = datetime.today() - relativedelta(months=6)
+        end_date = datetime.today()
         expected_response = {
             "code": 200,
             "body": [
                 {
-                    api_c.RECORDED: "2021-04-01",
+                    api_c.RECORDED: datetime.strftime(
+                        start_date + relativedelta(days=14), "%Y-%m-%d"
+                    ),
                     api_c.TOTAL_COUNT: 105080,
                     api_c.DIFFERENCE_COUNT: 4321,
                 },
                 {
-                    api_c.RECORDED: "2021-04-06",
+                    api_c.RECORDED: datetime.strftime(
+                        end_date - relativedelta(days=14), "%Y-%m-%d"
+                    ),
                     api_c.TOTAL_COUNT: 108200,
                     api_c.DIFFERENCE_COUNT: 3120,
                 },
@@ -168,15 +174,20 @@ class CDPTest(TestCase):
         self.assertTrue(data)
         for record in data:
             self.assertTrue(record[api_c.TOTAL_CUSTOMERS])
-            self.assertIn(record[api_c.TOTAL_CUSTOMERS], [105080, 108200])
-            self.assertTrue(record[api_c.NEW_CUSTOMERS_ADDED])
-            self.assertIn(record[api_c.NEW_CUSTOMERS_ADDED], [4321, 3120])
+            self.assertIn(
+                record[api_c.TOTAL_CUSTOMERS],
+                [(105080 - 4321), 105080, 108200],
+            )
+            self.assertIsNotNone(record[api_c.NEW_CUSTOMERS_ADDED])
+            self.assertIn(record[api_c.NEW_CUSTOMERS_ADDED], [0, 4321, 3120])
             self.assertTrue(record[api_c.DATE])
             self.assertIn(
                 record[api_c.DATE][0:10],
                 [
-                    "2021-04-01",
-                    "2021-04-06",
+                    datetime.strftime(
+                        start_date + relativedelta(days=n), "%Y-%m-%d"
+                    )
+                    for n in range(int((end_date - start_date).days))
                 ],
             )
 

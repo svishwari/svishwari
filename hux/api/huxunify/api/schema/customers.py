@@ -343,7 +343,7 @@ class TotalCustomersInsightsSchema(Schema):
         required=True, attribute=api_c.TOTAL_COUNT, example=5
     )
     new_customers_added = Integer(
-        required=True, attribute=api_c.DIFFERENCE_COUNT, example=5
+        required=True, attribute=api_c.DIFFERENCE_COUNT, example=5, default=0
     )
 
 
