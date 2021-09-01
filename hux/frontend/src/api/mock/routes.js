@@ -1,5 +1,5 @@
 import { Response } from "miragejs"
-import moment from "moment"
+import dayjs from "dayjs"
 import faker from "faker"
 
 import { audienceInsights } from "./factories/audiences"
@@ -14,6 +14,7 @@ import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
+import demographicsData from "@/api/mock/fixtures/demographicData.js"
 import totalCustomersData from "./fixtures/totalCustomersData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
@@ -108,7 +109,7 @@ export const defineRoutes = (server) => {
       return new Response(errorCode, errorHeaders, errorResponse)
     }
 
-    const now = moment().toJSON()
+    const now = dayjs().toJSON()
 
     const attrs = {
       ...requestData,
@@ -198,7 +199,7 @@ export const defineRoutes = (server) => {
           if (audience.id === audienceId) {
             audience.destinations = audience.destinations.map((destination) => {
               destination.latest_delivery = {
-                update_time: moment().toJSON(),
+                update_time: dayjs().toJSON(),
                 status: "Delivering",
               }
               return destination
@@ -305,7 +306,7 @@ export const defineRoutes = (server) => {
           type: destination.type,
         },
         size: audience.size,
-        delivered: moment().toJSON(),
+        delivered: dayjs().toJSON(),
         match_rate: faker.datatype.number({ min: 0, max: 1, precision: 0.001 }),
       }
     })
@@ -389,6 +390,8 @@ export const defineRoutes = (server) => {
 
   server.get("/customers-insights/geo", () => mapData)
 
+  server.get("/customers-insights/demo", () => demographicsData)
+
   server.get("/customers-insights/total", () => totalCustomersData)
 
   server.post("/customers-insights/cities", (schema, request) => {
@@ -423,7 +426,7 @@ export const defineRoutes = (server) => {
     return {
       date_range: {
         start_date: faker.date.past(5),
-        end_date: moment().toJSON(),
+        end_date: dayjs().toJSON(),
       },
       overview: idrOverview,
     }
@@ -477,7 +480,7 @@ export const defineRoutes = (server) => {
       })
     }
 
-    const now = moment().toJSON()
+    const now = dayjs().toJSON()
 
     const attrs = {
       ...requestData,
@@ -511,7 +514,7 @@ export const defineRoutes = (server) => {
           type: destination.type,
         },
         size: audience.size,
-        delivered: moment().toJSON(),
+        delivered: dayjs().toJSON(),
         match_rate: faker.datatype.number({ min: 0, max: 1, precision: 0.001 }),
       }
     })
@@ -524,7 +527,7 @@ export const defineRoutes = (server) => {
       return schema.engagements.find(id)
     })
     requestData.is_lookalike = true
-    const now = moment().toJSON()
+    const now = dayjs().toJSON()
     const attrs = {
       ...requestData,
       create_time: now,

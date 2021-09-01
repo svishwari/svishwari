@@ -81,3 +81,52 @@ def get_engagement_audience_destination_id(response: object) -> Union[Box, None]
                     }
                 )
     return None
+
+
+def get_campaign_engagement_audience_destiantion_id(response: object) -> Union[Box, None]:
+    """
+    Purpose of this function is to get the engagement id from the get
+    engagements response object and the corresponding audience_id and
+    destination_id that are nested within the response and return it
+    wrapped in a Box object with facebook destination.
+
+    Args:
+        response (object): response object.
+
+    Returns:
+        Box: engagement_id, and corresponding audience_id, destination_id.
+    """
+
+    for json in response.json():
+        for audience in json["audiences"]:
+            for destination in audience["destinations"]:
+                if destination["name"] == "Facebook":
+                    return Box(
+                        {
+                            "engagement_id": json["id"],
+                            "engagement_audience_id": audience["id"],
+                            "engagement_destination_id": destination["id"],
+                        }
+                    )
+    return None
+
+
+def get_campaign_mapping_details(response: object) -> Union[Box, None]:
+    """
+    Purpose of this function is to get the campaign and delivery_job for
+    updating campaigns and return it wrapped in a Box object
+
+    Args:
+        response (object): response object
+
+    Returns:
+        Box: campaign, delivery_job
+    """
+
+    for json in response.json():
+        return Box(
+            {
+                "campaign": json["campaigns"][0],
+                "delivery_job": json["delivery_jobs"][0]
+            }
+        )

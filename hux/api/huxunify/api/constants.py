@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 """This module contains connector defines."""
+import random
 
 from huxunifylib.database import constants as db_c
 
@@ -34,6 +35,9 @@ HUX_ID = "hux_id"
 TOP_FEATURES = "top_features"
 LIMIT = "limit"
 OFFSET = "offset"
+SOURCE_NAME = "source_name"
+SOURCE_SIZE = "source_size"
+SOURCE_ID = "source_id"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -397,6 +401,7 @@ DELIVERY_JOB_ID = "delivery_job_id"
 AUDIENCE_PERFORMANCE = "audience-performance"
 AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
 DISPLAY_ADS = "display-ads"
+IS_AD_PLATFORM = "is_ad_platform"
 
 DISPLAY_ADS_METRICS = [
     "spend",
@@ -614,6 +619,10 @@ CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 CDP_DATA_SOURCE_IDS = "data_source_ids"
 
+# Monitoring
+METRICS = "metrics"
+METRICS_ENDPOINT = "/metrics"
+
 # Customers
 CUSTOMER_ID = "customer_id"
 CUSTOMERS_ENDPOINT = "/customers"
@@ -646,6 +655,24 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
             ],
         }
     ]
+}
+
+START_DATE_PARAMS = {
+    "name": START_DATE,
+    "description": "Start date.",
+    "type": "string",
+    "in": "query",
+    "required": True,
+    "example": "2021-04-01",
+}
+
+END_DATE_PARAMS = {
+    "name": END_DATE,
+    "description": "End date.",
+    "type": "string",
+    "in": "query",
+    "required": True,
+    "example": "2021-08-01",
 }
 
 # IDR Fields
@@ -814,5 +841,41 @@ DOWNLOAD_TYPES = {
         # db_c.S_TYPE_ADDRESS: "address"
     },
 }
+
+PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
+    {
+        ID: 3,
+        VERSION: "22.8.32",
+        NAME: random.choice(
+            [
+                f"4w-ORDTDOL-cnt-{i}",
+                f"profile-NSTOREDIST-sum-{i}",
+                f"2m-ITEMNO-94508948346-{i}",
+                f"2w-ORDAMT-max-{i}",
+                f"1to2y-COGS-sum-{i}",
+                f"1to2y-ITEMQTY-avg-{i}",
+                f"2m-ORDTDOL-cnt-{i}",
+                f"dow-pe_u_dow-pe_count-{i}",
+                f"duration_days-item-min-{i}",
+                f"2m-COGS-cnt-{i}",
+            ]
+        ),
+        FEATURE_SERVICE: PURCHASE,
+        DATA_SOURCE: random.choice(
+            ["Buyers", "Retail", "Promotion", "Email", "Ecommerce"]
+        ),
+        CREATED_BY: random.choice(["Susan Miller", "Jack Miller"]),
+        STATUS: random.choice(
+            [
+                STATUS_PENDING,
+                STATUS_ACTIVE,
+                STATUS_STOPPED,
+            ]
+        ),
+        POPULARITY: random.randint(1, 3),
+        SCORE: round(random.uniform(0.5, 2.9), 4),
+    }
+    for i in range(50)
+]
 
 S3_DATASET_BUCKET = "hux-unified-dev1-datasets"

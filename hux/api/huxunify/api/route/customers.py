@@ -5,9 +5,9 @@ Paths for customer API
 from http import HTTPStatus
 from typing import Tuple, List
 from datetime import datetime
+
 from dateutil.relativedelta import relativedelta
 from faker import Faker
-import pandas as pd
 
 from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
@@ -29,12 +29,12 @@ from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import (
-    secured,
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
+    secured,
     api_error_handler,
-    get_token_from_request,
 )
+from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunify.api.data_connectors.cdp import (
     get_customer_profiles,
     get_customer_profile,
@@ -47,6 +47,7 @@ from huxunify.api.data_connectors.cdp import (
     get_spending_by_cities,
     get_customers_insights_count_by_day,
     get_city_ltvs,
+    get_spending_by_gender,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -604,20 +605,7 @@ class CustomerDemoVisualView(SwaggerView):
     Customers Profiles Demographic Insights class
     """
 
-    parameters = [
-        {
-            "name": "body",
-            "description": "Customer Insights Demographic Filters",
-            "type": "object",
-            "in": "body",
-            "example": {
-                "filters": {
-                    "start_date": "2020-11-30T00:00:00Z",
-                    "end_date": "2021-04-30T00:00:00Z",
-                }
-            },
-        }
-    ]
+    parameters = [api_c.START_DATE_PARAMS, api_c.END_DATE_PARAMS]
     responses = {
         HTTPStatus.OK.value: {
             "schema": {
@@ -635,12 +623,14 @@ class CustomerDemoVisualView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def post(self) -> Tuple[dict, int]:
+    def get(self) -> Tuple[dict, int]:
         """Retrieves a Demographical customer insights.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
 
         Returns:
             Tuple[dict, int] list of Customer insights on demo overview and http code
@@ -648,16 +638,15 @@ class CustomerDemoVisualView(SwaggerView):
 
         token_response = get_token_from_request(request)
 
-        start_date = datetime(2020, 11, 30)
-        dates = [
-            (start_date + pd.DateOffset(months=x)).to_pydatetime()
-            for x in range(0, 5)
-        ]
-
         # get customers overview data from CDP to set gender specific
         # population details
         customers = get_customers_overview(token_response[0])
 
+        gender_spending = get_spending_by_gender(
+            token_response[0],
+            request.args.get(api_c.START_DATE),
+            request.args.get(api_c.END_DATE),
+        )
         # if the customers overview response body is empty from CDP, then log
         # error and return 400
         if not customers:
@@ -669,6 +658,9 @@ class CustomerDemoVisualView(SwaggerView):
                 HTTPStatus.BAD_REQUEST,
             )
 
+        date_parser = lambda x, y: datetime.strptime(
+            f"1-{str(x)}-{str(y)}", "%d-%m-%Y"
+        )
         output = {
             api_c.GENDER: {
                 gender: {
@@ -680,16 +672,25 @@ class CustomerDemoVisualView(SwaggerView):
             api_c.INCOME: get_spending_by_cities(token_response[0]),
             api_c.SPEND: {
                 api_c.GENDER_WOMEN: [
-                    {api_c.DATE: date, api_c.LTV: ltv}
-                    for date, ltv in zip(dates, [3199, 4265, 4986, 4986, 6109])
+                    {
+                        api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
+                        api_c.LTV: round(x[api_c.AVG_SPENT_WOMEN], 4),
+                    }
+                    for x in gender_spending
                 ],
                 api_c.GENDER_MEN: [
-                    {api_c.DATE: date, api_c.LTV: ltv}
-                    for date, ltv in zip(dates, [3088, 3842, 3999, 3999, 6109])
+                    {
+                        api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
+                        api_c.LTV: round(x[api_c.AVG_SPENT_MEN], 4),
+                    }
+                    for x in gender_spending
                 ],
                 api_c.GENDER_OTHER: [
-                    {api_c.DATE: date, api_c.LTV: ltv}
-                    for date, ltv in zip(dates, [2144, 3144, 3211, 3211, 4866])
+                    {
+                        api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
+                        api_c.LTV: round(x[api_c.AVG_SPENT_OTHER], 4),
+                    }
+                    for x in gender_spending
                 ],
             },
         }
