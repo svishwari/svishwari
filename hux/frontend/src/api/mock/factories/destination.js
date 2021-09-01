@@ -57,6 +57,13 @@ export const destinationsConstants = {
     sfmc_rest_base_uri: field({ name: "REST Base URI" }),
     sfmc_soap_base_uri: field({ name: "Soap Base URI" }),
   },
+
+  qualtrics: {
+    qualtrics_data_center: field({ name: "Data Center" }),
+    qualtrics_owner_id: field({ name: "Owner ID" }),
+    qualtrics_directory_id: field({ name: "Directory ID" }),
+    qualtrics_api_token: field({ name: "API Token", type: "password" }),
+  },
 }
 
 /**
