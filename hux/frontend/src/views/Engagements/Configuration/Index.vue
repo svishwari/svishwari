@@ -96,7 +96,6 @@ export default {
       // Set date at step - 2
       if (this.engagementList.delivery_schedule) {
         // set start date
-        console.log(this.$refs.editEngagement)
         this.$refs.editEngagement.onStartDateSelect(
           this.$options.filters.Date(
             this.engagementList.delivery_schedule.start_date,

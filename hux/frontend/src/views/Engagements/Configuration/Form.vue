@@ -269,7 +269,7 @@
           color="primary"
           height="44"
           :disabled="!isValid"
-          @click="updateEngagement()"
+          @click="restoreEngagement()"
         >
           Update
         </v-btn>
@@ -474,6 +474,7 @@ export default {
     ...mapActions({
       addEngagement: "engagements/add",
       deliverEngagement: "engagements/deliver",
+      updateEngagement: "engagements/updateEngagement",
     }),
 
     resetSchedule() {
@@ -567,6 +568,16 @@ export default {
           name: "EngagementDashboard",
           params: { id: engagement.id },
         })
+      } catch (error) {
+        this.errorMessages.push(error.response.data.message)
+        this.scrollToTop()
+      }
+    },
+
+    async restoreEngagement() {
+      try {
+        const payload = { id: this.$route.params.id, data: this.payload }
+        await this.updateEngagement(payload)
       } catch (error) {
         this.errorMessages.push(error.response.data.message)
         this.scrollToTop()

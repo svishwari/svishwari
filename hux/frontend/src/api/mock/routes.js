@@ -273,11 +273,16 @@ export const defineRoutes = (server) => {
     const engagementId = request.params.id
     const requestData = JSON.parse(request.requestBody)
     if (requestData.status) {
+      // in-activating
       const payload = {
         status: requestData.status,
       }
       schema.engagements.find(engagementId).update(payload)
       return { message: "Successfully inactivated engagement" }
+    } else {
+      // updating engagement
+      schema.engagements.find(engagementId).update(requestData)
+      return { message: "Successfully updated engagement" }
     }
   })
 
