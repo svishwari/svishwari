@@ -57,8 +57,8 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
         return False, getattr(exception, "message", repr(exception))
 
 
-def check_data_sources_api_connection() -> Tuple[bool, str]:
-    """Validate the data sources api connection.
+def check_cdp_connections_api_connection() -> Tuple[bool, str]:
+    """Validate the cdp connections api connection.
     Args:
 
     Returns:
@@ -73,12 +73,12 @@ def check_data_sources_api_connection() -> Tuple[bool, str]:
             f"{config.CDP_CONNECTION_SERVICE}/healthcheck",
             timeout=5,
         )
-        return response.status_code, "Data sources available."
+        return response.status_code, "CDP connections available."
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
         logger.error(
-            "Data sources Health Check failed with %s.", repr(exception)
+            "CDP Connections Health Check failed with %s.", repr(exception)
         )
         return False, getattr(exception, "message", repr(exception))
 
