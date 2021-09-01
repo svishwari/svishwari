@@ -878,4 +878,4 @@ PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
     for i in range(50)
 ]
 
-S3_DATASET_BUCKET = "hux-unified-dev1-datasets"
+S3 = "s3"

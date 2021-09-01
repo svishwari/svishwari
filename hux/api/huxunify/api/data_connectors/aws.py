@@ -7,7 +7,6 @@ from typing import Tuple
 from enum import Enum
 from http import HTTPStatus
 
-from botocore.exceptions import ClientError
 from connexion import ProblemException
 import boto3
 import botocore
@@ -15,8 +14,6 @@ from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
 import huxunifylib.database.constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api import config
-
-# from huxunify.api.route.utils import logger
 
 
 class ParameterStore:
@@ -427,7 +424,7 @@ def upload_file(
         object_name = os.path.basename(file_name)
 
     # Upload the file
-    s3_client = boto3.client("s3")
+    s3_client = get_aws_client(api_c.S3)
 
     extraargs = {
         "Metadata": {
@@ -435,17 +432,20 @@ def upload_file(
             api_c.TYPE: file_type if file_type else "",
         }
     }
+    logging.info("Trying to upload %s file to %s", file_name, bucket)
     try:
         _ = s3_client.upload_file(file_name, bucket, object_name, extraargs)
 
-    except ClientError as exception:
+    except botocore.exceptions.ClientError as exception:
         logging.error(exception)
         return False
     logging.info("Uploaded %s file to %s", file_name, bucket)
     return True
 
 
-def download_file(bucket: str, file_name: str, object_name: str = None):
+def download_file(
+    bucket: str, file_name: str, object_name: str = None
+) -> bool:
     """Downloads a file from S3 bucket
 
     Args:
@@ -454,9 +454,16 @@ def download_file(bucket: str, file_name: str, object_name: str = None):
         object_name (str): Object name
 
     Returns:
-
+        bool: True for successful download else False
     """
     object_name = object_name if object_name else file_name
-    s3_client = boto3.client("s3")
-    with open(file_name, "wb") as file:
-        s3_client.download_fileobj(bucket, object_name, file)
+    s3_client = get_aws_client(api_c.S3)
+    logging.info("Trying to download %s file to %s", file_name, bucket)
+    try:
+        with open(file_name, "wb") as file:
+            s3_client.download_fileobj(bucket, object_name, file)
+    except botocore.exceptions.ClientError as exception:
+        logging.error(exception)
+        return False
+    logging.info("Downloaded %s file from %s", file_name, bucket)
+    return True
