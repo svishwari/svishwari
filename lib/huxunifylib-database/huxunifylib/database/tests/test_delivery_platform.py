@@ -1463,7 +1463,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         doc = dpm.set_campaign_activity(
             database=self.database,
             delivery_platform_id=ObjectId(),
-            delivery_platform_name=c.DELIVERY_PLATFORM_SFMC,
+            delivery_platform_type=c.DELIVERY_PLATFORM_SFMC,
             delivery_job_id=delivery_job_id,
             event_details=event_details,
             generic_campaigns=self.individual_generic_campaigns[0],
@@ -1727,7 +1727,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         doc = dpm.set_campaign_activity(
             database=self.database,
             delivery_platform_id=ObjectId(),
-            delivery_platform_name=c.DELIVERY_PLATFORM_SFMC,
+            delivery_platform_type=c.DELIVERY_PLATFORM_SFMC,
             delivery_job_id=delivery_job_id,
             event_details=event_details,
             generic_campaigns=self.individual_generic_campaigns[0],

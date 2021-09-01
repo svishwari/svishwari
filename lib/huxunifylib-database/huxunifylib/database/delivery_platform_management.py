@@ -2099,7 +2099,7 @@ def get_all_performance_metrics(
 def set_campaign_activity(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
-    delivery_platform_name: str,
+    delivery_platform_type: str,
     delivery_job_id: ObjectId,
     generic_campaigns: dict,
     event_details: dict,
@@ -2109,7 +2109,7 @@ def set_campaign_activity(
     Args:
         database (DatabaseClient): A database client.
         delivery_platform_id (ObjectId): delivery platform ID
-        delivery_platform_name (str): delivery platform name
+        delivery_platform_type (str): delivery platform type
         delivery_job_id (ObjectId): The delivery job ID of audience.
         generic_campaigns: (dict): generic campaigns
         event_dict (dict): A dict containing campaign activity data.
@@ -2127,7 +2127,7 @@ def set_campaign_activity(
 
     doc = {
         c.METRICS_DELIVERY_PLATFORM_ID: delivery_platform_id,
-        c.METRICS_DELIVERY_PLATFORM_NAME: delivery_platform_name,
+        c.METRICS_DELIVERY_PLATFORM_TYPE: delivery_platform_type,
         c.DELIVERY_JOB_ID: delivery_job_id,
         c.CREATE_TIME: datetime.datetime.utcnow(),
         c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaigns,
