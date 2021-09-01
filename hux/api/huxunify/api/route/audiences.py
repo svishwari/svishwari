@@ -39,7 +39,6 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.utils import get_db_client
 
 # setup the audiences blueprint
-
 audience_bp = Blueprint(api_c.AUDIENCE_ENDPOINT, import_name=__name__)
 
 
@@ -312,7 +311,7 @@ class AudienceInsightsCities(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            - audience_id (str): Audience ID ,
+            - audience_id (str): Audience ID.
 
         Returns:
             - Tuple[list, int]
