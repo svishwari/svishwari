@@ -53,7 +53,7 @@
               font-weight-semi-bold
             "
           >
-            <size :value="audience.size" /> |
+            <size :value="audience.source_size" /> |
           </div>
         </v-card-text>
       </v-card>
@@ -84,7 +84,7 @@
         <template #subtitle-extended>
           <span class="mr-2 pt-2">
             <span class="original-audience-text">
-              {{ audience.name }}
+              {{ audience.source_name }}
             </span>
           </span>
         </template>
@@ -249,11 +249,12 @@
               >
               <router-link
                 :to="{
-                  name: '',
+                  name: 'AudienceInsight',
+                  params: { id: audience.source_id },
                 }"
                 class="text-decoration-none"
                 append
-                >{{ audience.name }}
+                >{{ audience.source_name }}
               </router-link>
               <span>,&nbsp;to see insights.</span></template
             >
