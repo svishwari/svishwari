@@ -4,7 +4,7 @@ import requests_mock
 
 from huxunify.api import constants as api_c
 from huxunify.test import constants as t_c
-from huxunify.api.data_connectors.connection import (
+from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feeds,
     get_idr_data_feed_details,
 )
