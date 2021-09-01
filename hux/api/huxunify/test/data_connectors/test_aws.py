@@ -5,13 +5,14 @@ import string
 from unittest import TestCase
 
 import tempfile
+
+import boto3
 from hypothesis import given, strategies as st, settings
 from moto import mock_s3
 
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.aws import (
     upload_file,
-    get_aws_client,
     download_file,
 )
 from huxunify.api import constants as api_c
@@ -29,7 +30,7 @@ class AWSTest(TestCase):
 
         """
         self.config = get_config()
-        self.s3_client = get_aws_client(api_c.S3)
+        self.s3_client = boto3.client(api_c.S3)
 
     @mock_s3
     @given(
