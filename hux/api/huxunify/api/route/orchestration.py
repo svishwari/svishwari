@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 """
 Paths for Orchestration API
 """
@@ -209,10 +210,27 @@ class AudienceView(SwaggerView):
             database
         )
 
+        # get the facebook delivery platform for lookalikes
+        facebook_destination = (
+            destination_management.get_delivery_platform_by_type(
+                database, db_c.DELIVERY_PLATFORM_FACEBOOK
+            )
+        )
+
         # set the is_lookalike property to True so UI knows it is a lookalike.
         for lookalike in lookalikes:
             lookalike[api_c.LOOKALIKEABLE] = False
             lookalike[api_c.IS_LOOKALIKE] = True
+
+            lookalike[db_c.STATUS] = lookalike.get(
+                db_c.STATUS, db_c.AUDIENCE_STATUS_ERROR
+            )
+            lookalike[db_c.AUDIENCE_LAST_DELIVERED] = lookalike[
+                db_c.CREATE_TIME
+            ]
+            lookalike[db_c.DESTINATIONS] = (
+                [facebook_destination] if facebook_destination else []
+            )
 
         # combine the two lists and serve.
         audiences += lookalikes
@@ -311,6 +329,16 @@ class AudienceGetView(SwaggerView):
             lookalike[db_c.AUDIENCE_FILTERS] = audience[db_c.AUDIENCE_FILTERS]
             lookalike[api_c.IS_LOOKALIKE] = True
 
+            # set original audience attributes for the lookalike.
+            lookalike[api_c.SOURCE_NAME] = audience[db_c.NAME]
+            lookalike[api_c.SOURCE_SIZE] = audience[db_c.SIZE]
+            lookalike[api_c.SOURCE_ID] = lookalike[
+                db_c.LOOKALIKE_SOURCE_AUD_ID
+            ]
+
+            # TODO: HUS-837 change once we can generate real lookalikes from FB.
+            lookalike[api_c.MATCH_RATE] = round(uniform(0.2, 0.9), 2)
+
             # set audience to lookalike
             audience = lookalike
 
@@ -347,7 +375,12 @@ class AudienceGetView(SwaggerView):
             # above to remove empty and not-delivered deliveries
             if api_c.DELIVERIES in engagement:
                 for delivery in engagement[api_c.DELIVERIES]:
-                    delivery[api_c.MATCH_RATE] = round(uniform(0.2, 0.9), 2)
+                    delivery[api_c.MATCH_RATE] = (
+                        round(uniform(0.2, 0.9), 2)
+                        if delivery.get(api_c.IS_AD_PLATFORM, False)
+                        and not audience.get(api_c.IS_LOOKALIKE, False)
+                        else None
+                    )
 
             # set the weighted status for the engagement based on deliveries
             engagement[api_c.STATUS] = weight_delivery_status(engagement)
@@ -380,7 +413,7 @@ class AudienceGetView(SwaggerView):
 
         # Add insights, size.
         audience[api_c.AUDIENCE_INSIGHTS] = customers
-        audience[api_c.SIZE] = customers.get(api_c.TOTAL_CUSTOMERS)
+        audience[api_c.SIZE] = customers.get(api_c.TOTAL_CUSTOMERS, 0)
         audience[
             api_c.LOOKALIKE_AUDIENCES
         ] = destination_management.get_all_delivery_platform_lookalike_audiences(
@@ -927,6 +960,8 @@ class SetLookalikeAudience(SwaggerView):
             }, HTTPStatus.NOT_FOUND
 
         try:
+            # set status to error for now.
+            status = api_c.STATUS_ERROR
             # Commented as creating lookalike audience is restricted in facebook
             # as we are using fake customer data
             # timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
@@ -950,6 +985,7 @@ class SetLookalikeAudience(SwaggerView):
                 "US",
                 user_name,
                 0,  # TODO HUS-801 - set lookalike SIZE correctly.
+                status,
             )
 
         except CustomAudienceDeliveryStatusError:

@@ -36,6 +36,7 @@ def set_delivery_platform(
     deleted: bool = False,
     user_name: str = None,
     configuration: dict = None,
+    is_ad_platform: bool = False,
 ) -> Union[dict, None]:
     """A function to create a delivery platform.
 
@@ -54,7 +55,7 @@ def set_delivery_platform(
             This is Optional.
         configuration (dict): A dictionary consisting of any platform
             specific configurations.
-
+        is_ad_platform (bool): If the delivery platform is an AD platform.
     Returns:
         Union[dict, None]: MongoDB audience doc.
     """
@@ -92,6 +93,7 @@ def set_delivery_platform(
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
+        c.IS_AD_PLATFORM: is_ad_platform,
     }
     if authentication_details is not None:
         doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
@@ -555,6 +557,7 @@ def update_delivery_platform(
     enabled: bool = None,
     deleted: bool = None,
     performance_de: dict = None,
+    is_ad_platform: bool = None,
 ) -> Union[dict, None]:
     """A function to update delivery platform configuration.
 
@@ -569,7 +572,8 @@ def update_delivery_platform(
             This is Optional.
         enabled (bool): if the delivery platform is enabled.
         deleted (bool): if the delivery platform is deleted (soft-delete).
-        performance_de (dict): Performance Data Extension for only SFMC
+        performance_de (dict): Performance Data Extension for only SFMC.
+        is_ad_platform (bool): If the delivery platform is an AD platform.
     Returns:
         Union[dict, None]: Updated delivery platform configuration.
     """
@@ -624,6 +628,9 @@ def update_delivery_platform(
     if user_name:
         update_doc[c.UPDATED_BY] = user_name
 
+    if is_ad_platform:
+        update_doc[c.IS_AD_PLATFORM] = is_ad_platform
+
     for item in list(update_doc):
         if update_doc[item] is None:
             del update_doc[item]
@@ -660,6 +667,7 @@ def create_delivery_platform_lookalike_audience(
     country: str = None,
     user_name: str = "",
     audience_size: int = 0,
+    status: str = c.AUDIENCE_STATUS_DELIVERING,
 ) -> Union[dict, None]:
     """A function to create a delivery platform lookalike audience.
 
@@ -672,6 +680,7 @@ def create_delivery_platform_lookalike_audience(
         country (str): Country of the lookalike audience.
         user_name (str): Name of the user creating the lookalike.
         audience_size (int): Size of the audience at creation.
+        status (str): Status of the lookalike, default is delivering.
 
     Returns:
         Union[dict, None]: The lookalike audience configuration.
@@ -714,6 +723,7 @@ def create_delivery_platform_lookalike_audience(
         c.SIZE: audience_size,
         c.CREATED_BY: user_name,
         c.UPDATED_BY: user_name,
+        c.STATUS: status,
     }
 
     try:
