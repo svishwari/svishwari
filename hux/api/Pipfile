@@ -33,6 +33,7 @@ huxunifylib-util = {version="*", index="jfrog"}
 faker = {version="*", index="pypi"}
 connexion = "==2.7.0"
 prometheus-client = "*"
+moto = "*"
 
 [dev-packages]
 pytest = {version="*", index="pypi"}
