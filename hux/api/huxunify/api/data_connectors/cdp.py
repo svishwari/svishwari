@@ -790,7 +790,7 @@ def get_customers_insights_count_by_day(
         except (ParserError, TypeError):
             record[api_c.RECORDED] = None
 
-    return add_missing_customer_data_count_by_day(response_body, date_filters)
+    return add_missing_customer_count_by_day(response_body, date_filters)
 
 
 def get_city_ltvs(
