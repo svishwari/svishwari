@@ -2,8 +2,7 @@
 purpose of this script is for housing the decision routes for the API.
 """
 from random import uniform, randint
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Tuple, List
 
