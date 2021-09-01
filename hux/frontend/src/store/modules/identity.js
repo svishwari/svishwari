@@ -91,13 +91,18 @@ const getters = {
       return {
         title: METRICS[metric].title,
         description: METRICS[metric].description,
-        value: state.overview["overview"][metric],
+        value:
+          "overview" in state.overview
+            ? state.overview["overview"][metric]
+            : null,
         format: METRICS[metric].format,
       }
     })
   },
 
-  dateRange: (state) => state.overview["date_range"],
+  dateRange: (state) => {
+    return "overview" in state.overview ? state.overview["date_range"] : null
+  },
 
   dataFeeds: (state) => Object.values(state.dataFeeds),
 
