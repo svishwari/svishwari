@@ -5,6 +5,7 @@ Paths for customer API
 from http import HTTPStatus
 from typing import Tuple, List
 from datetime import datetime
+
 from dateutil.relativedelta import relativedelta
 from faker import Faker
 
@@ -605,6 +606,8 @@ class CustomerDemoVisualView(SwaggerView):
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
 
         Returns:
             Tuple[dict, int] list of Customer insights on demo overview and http code
