@@ -5,9 +5,9 @@ from typing import Tuple, Union
 
 import requests
 
-from huxunify.api.config import get_config
-
 from huxunifylib.util.general.logging import logger
+
+from huxunify.api.config import get_config
 
 
 def check_cdp_connections_api_connection() -> Tuple[Union[int, bool], str]:
