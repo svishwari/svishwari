@@ -1481,7 +1481,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIsNotNone(doc)
         self.assertIn(c.DELIVERY_JOB_ID, doc)
         self.assertIn(c.METRICS_DELIVERY_PLATFORM_ID, doc)
-        self.assertIn(c.METRICS_DELIVERY_PLATFORM_NAME, doc)
+        self.assertIn(c.METRICS_DELIVERY_PLATFORM_TYPE, doc)
         self.assertIn(c.CREATE_TIME, doc)
         self.assertIn(c.EVENT_DETAILS, doc)
         self.assertEqual(doc[c.EVENT_DETAILS]["event"], "sent")
