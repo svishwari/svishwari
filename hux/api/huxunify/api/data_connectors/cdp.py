@@ -6,6 +6,7 @@ import math
 from typing import Tuple, Optional, List
 from random import randint
 from datetime import datetime, timedelta
+
 import requests
 import aiohttp
 import async_timeout
@@ -65,6 +66,7 @@ def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
         dict: dictionary containing the customer profile information
 
     """
+
     # get config
     config = get_config()
     logger.info("Getting Customer Profiles info from CDP API.")
@@ -101,6 +103,7 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
         dict: dictionary containing the customer profile information
 
     """
+
     # get config
     config = get_config()
     logger.info("Getting Customer Profile info for %s from CDP API.", hux_id)
@@ -141,6 +144,7 @@ def get_idr_overview(
         dict: dictionary of overview data
 
     """
+
     # TODO : Update to use idr insights api, with start/end date as query params.
     # get config
     config = get_config()
@@ -189,6 +193,7 @@ def get_customers_overview(
         dict: dictionary of overview data
 
     """
+
     # get config
     config = get_config()
     logger.info("Getting Customer Profile Insights from CDP API.")
@@ -233,6 +238,7 @@ def get_customers_count_async(
         dict: Audience ObjectId to Size mapping dict.
 
     """
+
     # get the audience count URL.
     url = f"{get_config().CDP_SERVICE}/customer-profiles/audience/count"
 
@@ -309,6 +315,7 @@ async def get_async_customers(
     Returns:
        dict: audience id to size mapping dict.
     """
+
     # setup the aiohttp session so we can process the calls asynchronously
     async with aiohttp.ClientSession() as session, async_timeout.timeout(10):
         # run the async post request
@@ -575,6 +582,7 @@ def get_customer_events_data(
     Returns:
         list: Customer events with respective counts
     """
+
     config = get_config()
     current_time = datetime.utcnow()
 
@@ -742,6 +750,7 @@ def get_customers_insights_count_by_day(
     Returns:
         dict: dictionary of customer count data.
     """
+
     # get config
     config = get_config()
 
@@ -835,6 +844,7 @@ def clean_cdm_gender_fields(response_body: dict) -> dict:
         dict: dictionary of cleaned cdm response body.
 
     """
+
     gender_fields = [
         (api_c.GENDER_MEN, api_c.GENDER_MEN_COUNT),
         (api_c.GENDER_WOMEN, api_c.GENDER_WOMEN_COUNT),
