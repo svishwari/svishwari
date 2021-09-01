@@ -48,7 +48,7 @@ from huxunify.api.data_connectors.cdp import (
     get_city_ltvs,
     get_spending_by_gender,
 )
-from huxunify.api.data_connectors.connection import (
+from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feeds,
     get_idr_data_feed_details,
 )

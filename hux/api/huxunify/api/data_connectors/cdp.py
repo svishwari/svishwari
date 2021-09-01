@@ -27,6 +27,9 @@ DATETIME_FIELDS = [
     "last_purchase",
     "last_email_open",
     "updated",
+    api_c.PINNING_TIMESTAMP,
+    api_c.STITCHED_TIMESTAMP,
+    api_c.TIMESTAMP,
 ]
 
 

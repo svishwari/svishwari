@@ -1,12 +1,12 @@
 """Purpose of this file is to house all methods to connect to CDP connections API"""
-import requests
-from dateutil.parser import parse
 from typing import Tuple, Union
+import requests
 
 from huxunifylib.util.general.logging import logger
 
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
+from huxunify.api.data_connectors.cdp import clean_cdm_fields
 
 
 def check_cdp_connections_api_connection() -> Tuple[Union[int, bool], str]:
@@ -71,13 +71,7 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
 
     logger.info("Successfully retrieved identity data feeds.")
 
-    datafeeds = response.json()[api_c.BODY]
-    _ = [
-        x.update({api_c.TIMESTAMP: parse(x.get(api_c.TIMESTAMP))})
-        for x in datafeeds
-    ]
-
-    return datafeeds
+    return [clean_cdm_fields(d) for d in response.json()[api_c.BODY]]
 
 
 def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
@@ -114,15 +108,6 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
 
     logger.info("Successfully retrieved identity data feed details.")
 
-    datafeed = response.json()[api_c.BODY]
-    datafeed[api_c.PINNING][api_c.PINNING_TIMESTAMP] = (
-        parse(datafeed[api_c.PINNING].get(api_c.PINNING_TIMESTAMP))
-        if datafeed[api_c.PINNING].get(api_c.PINNING_TIMESTAMP)
-        else None
-    )
-    datafeed[api_c.STITCHED][api_c.STITCHED_TIMESTAMP] = (
-        parse(datafeed[api_c.STITCHED].get(api_c.STITCHED_TIMESTAMP))
-        if datafeed[api_c.STITCHED].get(api_c.STITCHED_TIMESTAMP)
-        else None
-    )
-    return datafeed
+    return {
+        k: clean_cdm_fields(v) for k, v in response.json()[api_c.BODY].items()
+    }

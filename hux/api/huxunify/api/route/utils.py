@@ -32,7 +32,7 @@ from huxunify.api.data_connectors.okta import (
     check_okta_connection,
 )
 from huxunify.api.data_connectors.cdp import check_cdm_api_connection
-from huxunify.api.data_connectors.connection import (
+from huxunify.api.data_connectors.cdp_connection import (
     check_cdp_connections_api_connection,
 )
 
