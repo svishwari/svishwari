@@ -167,6 +167,7 @@ DISABLED = "disabled"
 SIZE = "size"
 IS_ADDED = "is_added"
 UNKNOWN = "unknown"
+DAY = "day"
 
 STATUS_NOT_DELIVERED = "Not Delivered"
 STATUS_DELIVERED = "Delivered"
