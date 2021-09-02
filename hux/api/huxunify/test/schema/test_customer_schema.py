@@ -27,20 +27,19 @@ class CustomerSchemaTest(TestCase):
         """
 
         doc = dict(
-            datafeed_id="60e879d270815aade4d6c4fb",
+            datafeed_id="1",
             datafeed_name="Really_long_Feed_Name_106",
-            data_source_type=db_c.DELIVERY_PLATFORM_SFMC,
+            data_source_type=db_c.CDP_DATA_SOURCE_BLUECORE,
+            data_source_name=db_c.CDP_DATA_SOURCE_BLUECORE.title(),
             new_ids_generated=21,
-            num_records_processed=2000000,
+            total_records_processed=2000000,
             match_rate=0.98,
-            last_run=datetime.strftime(
-                datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
-            ),
+            last_run="2021-08-05T14:44:42.694Z",
         )
 
         datafeed = DataFeedSchema().load(doc)
 
-        self.assertIsInstance(datafeed["last_run"], datetime)
+        self.assertIsInstance(datafeed["timestamp"], datetime)
         self.assertFalse(DataFeedSchema().validate(doc))
 
     def test_total_customer_insights_schema(self) -> None:
