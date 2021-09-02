@@ -896,7 +896,7 @@ class CustomersInsightsStates(SwaggerView):
     Customer insights by state
     """
 
-    params = parameters = [
+    parameters = [
         {
             "name": "body",
             "description": "Customer Overview Filters",
@@ -973,7 +973,7 @@ class CustomersInsightsCities(SwaggerView):
     Customer insights by city
     """
 
-    params = parameters = [
+    parameters = [
         {
             "name": api_c.QUERY_PARAMETER_BATCH_SIZE,
             "in": "query",
@@ -987,7 +987,7 @@ class CustomersInsightsCities(SwaggerView):
             "name": api_c.QUERY_PARAMETER_BATCH_NUMBER,
             "in": "query",
             "type": "string",
-            "description": "Number of which batch of notifications should be returned.",
+            "description": "Number of which batch of cities should be returned.",
             "example": "10",
             "required": False,
             "default": api_c.DEFAULT_BATCH_NUMBER,
