@@ -1799,9 +1799,9 @@ class EngagementPerformanceDownload(SwaggerView):
             zipfile_name, "w", compression=zipfile.ZIP_STORED
         ) as zipfolder:
 
-            folder = Path(folder_name)
-            for file in folder.glob("**/*.csv"):
-                zipfolder.write(file)
+            folder = Path(__file__).parent.parent.parent.joinpath(folder_name)
+            for file in folder.rglob("**/*.csv"):
+                zipfolder.write(file, arcname=file.name)
                 file.unlink()
 
         zip_file = Path(zipfile_name)
