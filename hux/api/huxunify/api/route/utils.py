@@ -256,18 +256,18 @@ def add_chart_legend(data: dict) -> dict:
 
     for key in data:
         if key == constants.NAME:
-            data[constants.NAME]["prop"] = "Name"
-            data[constants.NAME]["icon"] = constants.NAME
+            data[constants.NAME][constants.PROP] = "Name"
+            data[constants.NAME][constants.ICON] = constants.NAME
         if key == constants.EMAIL:
-            data[constants.EMAIL]["prop"] = "Email"
-            data[constants.EMAIL]["icon"] = constants.EMAIL
+            data[constants.EMAIL][constants.PROP] = "Email"
+            data[constants.EMAIL][constants.ICON] = constants.EMAIL
         if key == constants.PHONE:
-            data[constants.PHONE]["prop"] = "Phone"
-            data[constants.PHONE]["icon"] = constants.PHONE
+            data[constants.PHONE][constants.PROP] = "Phone"
+            data[constants.PHONE][constants.ICON] = constants.PHONE
         if key == constants.ADDRESS:
-            data[constants.ADDRESS]["prop"] = "Address"
-            data[constants.ADDRESS]["icon"] = constants.ADDRESS
+            data[constants.ADDRESS][constants.PROP] = "Address"
+            data[constants.ADDRESS][constants.ICON] = constants.ADDRESS
         if key == constants.COOKIE:
-            data[constants.COOKIE]["prop"] = "Cookie"
-            data[constants.COOKIE]["icon"] = constants.COOKIE
+            data[constants.COOKIE][constants.PROP] = "Cookie"
+            data[constants.COOKIE][constants.ICON] = constants.COOKIE
     return data
