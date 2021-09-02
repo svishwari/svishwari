@@ -81,7 +81,7 @@ class CdpDataSourceDataFeedSchema(Schema):
     records_received = fields.Int(example=345612)
     records_processed = fields.Int(example=345612)
     records_processed_percentage = fields.Float(
-        validate=Range([0, 1]), example=0.9
+        validate=Range(min_inclusive=0.0, max_inclusive=1.0), example=0.9
     )
     thirty_days_avg = fields.Float(example=76.45)
     last_processed = DateTimeWithZ(

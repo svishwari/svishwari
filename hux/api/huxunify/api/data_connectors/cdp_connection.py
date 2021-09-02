@@ -161,9 +161,11 @@ def get_connections_data_feeds(token: str, data_source_type: str) -> list:
             data_feed.get(api_c.PROCESSED_AT)
         )
         data_feed["records_processed_percentage"] = data_feed.get(
-            "records_processed"
+            "records_processed", 0
         ) / data_feed.get("records_received", 1)
-        data_feed["thirty_days_avg"] = data_feed["thirty_days_avg"] / 100
+        data_feed["thirty_days_avg"] = (
+            data_feed.get("thirty_days_avg", 0) / 100
+        )
     return data_feeds
 
 
