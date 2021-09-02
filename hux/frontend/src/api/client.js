@@ -191,11 +191,8 @@ client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
 }
 
-client["audiences"].demographics = (data) => {
-  // TODO: replace with audienceId specific endpoint once available
-  return http.get(
-    `/customers-insights/demo?start_date=${data.start_date}&end_date=${data.end_date}`
-  )
+client["audiences"].demographics = (audienceId) => {
+  return http.get(`/audiences/${audienceId}/audience_insights`)
 }
 
 client["audiences"].deliver = (resourceId, data) => {
