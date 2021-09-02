@@ -75,6 +75,7 @@ export const audience = {
 source_id:() => faker.datatype.number({ min: 1, max: 10 }),
 source_name: (index) => `My audience ${index + 1}`,
 	source_size: () => faker.datatype.number({ min: 10000000, max: 999999999 }),
+  match_rate: 0.5972,
   status: () =>
     faker.random.arrayElement([
       "Delivered",

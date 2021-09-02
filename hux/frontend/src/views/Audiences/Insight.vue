@@ -53,7 +53,7 @@
               font-weight-semi-bold
             "
           >
-            <size :value="audience.source_size" /> |
+            <size :value="audience.source_size" /> | {{ audience.match_rate | Numeric(true, false, false, true) }}
           </div>
         </v-card-text>
       </v-card>
@@ -84,7 +84,15 @@
         <template #subtitle-extended>
           <span class="mr-2 pt-2">
             <span class="original-audience-text">
-              {{ audience.source_name }}
+               <router-link
+                :to="{
+                  name: 'AudienceInsight',
+                  params: { id: audience.source_id },
+                }"
+                class="text-decoration-none original-audience-text"
+                append
+                >{{ audience.source_name }}
+              </router-link>
             </span>
           </span>
         </template>
@@ -252,7 +260,7 @@
                   name: 'AudienceInsight',
                   params: { id: audience.source_id },
                 }"
-                class="text-decoration-none"
+                class="text-decoration-none colorLink"
                 append
                 >{{ audience.source_name }}
               </router-link>
@@ -1141,5 +1149,8 @@ export default {
 }
 .no-background {
   background: transparent;
+}
+.colorLink {
+  color: var(--v-primary-base) !important;
 }
 </style>
