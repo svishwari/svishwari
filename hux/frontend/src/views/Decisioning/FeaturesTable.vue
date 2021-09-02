@@ -105,7 +105,7 @@ export default {
         {
           text: "Created by",
           value: "created_by",
-          width: "107px",
+          width: "110px",
         },
       ],
 
