@@ -242,3 +242,32 @@ def validate_destination_id(
             }, HTTPStatus.NOT_FOUND
 
     return destination_id
+
+
+def add_chart_legend(data: dict) -> dict:
+    """Add chart legend data.
+
+    Args:
+        data (str) : Chart data.
+
+    Returns:
+        response(dict): Chart data with legend details.
+    """
+
+    for key in data:
+        if key == constants.NAME:
+            data[constants.NAME]["prop"] = "Name"
+            data[constants.NAME]["icon"] = constants.NAME
+        if key == constants.EMAIL:
+            data[constants.EMAIL]["prop"] = "Email"
+            data[constants.EMAIL]["icon"] = constants.EMAIL
+        if key == constants.PHONE:
+            data[constants.PHONE]["prop"] = "Phone"
+            data[constants.PHONE]["icon"] = constants.PHONE
+        if key == constants.ADDRESS:
+            data[constants.ADDRESS]["prop"] = "Address"
+            data[constants.ADDRESS]["icon"] = constants.ADDRESS
+        if key == constants.COOKIE:
+            data[constants.COOKIE]["prop"] = "Cookie"
+            data[constants.COOKIE]["icon"] = constants.COOKIE
+    return data

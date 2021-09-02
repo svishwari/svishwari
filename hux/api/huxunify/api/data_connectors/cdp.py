@@ -111,7 +111,7 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
     config = get_config()
     logger.info("Getting Customer Profile info for %s from CDP API.", hux_id)
     response = requests.get(
-        f"{config.CDP_SERVICE}/customer-profiles/{hux_id}",
+        f"{config.CDP_SERVICE}/customer-profile/{hux_id}",
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },

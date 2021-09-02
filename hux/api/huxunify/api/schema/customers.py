@@ -29,11 +29,23 @@ class DataSource(Schema):
     percentage = Float(required=True)
 
 
+class CooccurenceSchema(Schema):
+    """Cooccurence Schema"""
+
+    percentage = Float(required=True)
+    identifier = Str(required=True)
+    count = Integer(required=True)
+
+
 class Resolution(Schema):
     """Resolution Schema"""
 
+    prop = Str(required=True)
+    icon = Str(required=True)
     percentage = Float(required=True)
-    data_sources = List(cls_or_instance=Nested(DataSource), required=True)
+    count = Integer(required=True)
+    data_sources = List(Nested(DataSource), required=True)
+    cooccurrences = List(Nested(CooccurenceSchema), required=True)
 
 
 class IdentityResolution(Schema):
@@ -46,8 +58,8 @@ class IdentityResolution(Schema):
     cookie = Nested(Resolution, required=True)
 
 
-class CustomerProfileSchema(Schema):
-    """Customer Profile Schema"""
+class CustomerProfileOverviewSchema(Schema):
+    """Customer Profile Overview Schema"""
 
     hux_id = Str(required=True, attribute=api_c.ID)
     first_name = Str(required=True)
@@ -61,6 +73,11 @@ class CustomerProfileSchema(Schema):
     last_click = DateTimeWithZ(required=True)
     last_purchase = DateTimeWithZ(required=True)
     last_email_open = DateTimeWithZ(required=True)
+
+
+class CustomerProfileInsightsSchema(Schema):
+    """Customer Profile Insights Schema"""
+
     email = Str(required=True)
     phone = Str(required=True)
     # redacted age to a string.
@@ -70,13 +87,26 @@ class CustomerProfileSchema(Schema):
     city = Str(required=True)
     state = Str(required=True)
     zip = Str(required=True)
+
+
+class CustomerProfileContactPreferencesSchema(Schema):
+    """Customer Profile Contact Preferences Schema"""
+
     preference_email = Boolean(required=True)
     preference_push = Boolean(required=True)
     preference_sms = Boolean(required=True)
     preference_in_app = Boolean(required=True)
+
+
+class CustomerProfileSchema(Schema):
+    """Customer Profile Schema"""
+
+    overview = Nested(CustomerProfileOverviewSchema, required=True)
+    insights = Nested(CustomerProfileInsightsSchema, required=True)
+    contact_preferences = Nested(
+        CustomerProfileContactPreferencesSchema, required=True
+    )
     identity_resolution = Nested(IdentityResolution, required=True)
-    propensity_to_unsubscribe = Float(required=True)
-    propensity_to_purchase = Float(required=True)
 
 
 class CustomerOverviewSchema(Schema):

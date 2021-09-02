@@ -10,7 +10,6 @@ from dateutil.relativedelta import relativedelta
 from faker import Faker
 
 from flask import Blueprint, request, jsonify
-from flask_apispec import marshal_with
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
@@ -27,6 +26,9 @@ from huxunify.api.schema.customers import (
     TotalCustomersInsightsSchema,
     CustomersInsightsStatesSchema,
     CustomersInsightsCitiesSchema,
+    CustomerProfileOverviewSchema,
+    CustomerProfileInsightsSchema,
+    CustomerProfileContactPreferencesSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.decorators import (
@@ -52,13 +54,13 @@ from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feeds,
     get_idr_data_feed_details,
 )
-from huxunify.api.schema.utils import AUTH401_RESPONSE
+from huxunify.api.route.utils import add_chart_legend
+from huxunify.api.schema.utils import redact_fields, AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
     CustomerOverviewSchema,
     CustomersSchema,
 )
 from huxunify.api import constants as api_c
-from huxunify.api.schema.utils import redact_fields
 
 customers_bp = Blueprint(
     api_c.CUSTOMERS_ENDPOINT, import_name=__name__, url_prefix="/cdp"
@@ -372,7 +374,6 @@ class CustomerProfileSearch(SwaggerView):
 
     # pylint: disable=no-self-use
     # pylint: disable=unused-argument
-    @marshal_with(CustomerProfileSchema)
     @api_error_handler()
     def get(self, hux_id: str) -> Tuple[dict, int]:
         """Retrieves a customer profile.
@@ -389,12 +390,29 @@ class CustomerProfileSearch(SwaggerView):
 
         """
         token_response = get_token_from_request(request)
+        redacted_data = redact_fields(
+            get_customer_profile(token_response[0], hux_id),
+            api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
+        )
 
-        return (
-            redact_fields(
-                get_customer_profile(token_response[0], hux_id),
-                api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
+        idr_data = api_c.CUSTOMER_IDR_TEST_DATE
+        # TODO : Fetch IDR data from CDP once it is ready
+        # api_c.IDENTITY_RESOLUTION: redacted_data[api_c.IDENTITY_RESOLUTION]
+
+        customer_profile = {
+            api_c.OVERVIEW: CustomerProfileOverviewSchema().dump(
+                redacted_data
             ),
+            api_c.INSIGHTS: CustomerProfileInsightsSchema().dump(
+                redacted_data
+            ),
+            api_c.CONTACT_PREFERENCES: CustomerProfileContactPreferencesSchema().dump(
+                redacted_data
+            ),
+            api_c.IDENTITY_RESOLUTION: add_chart_legend(idr_data),
+        }
+        return (
+            CustomerProfileSchema().dump(customer_profile),
             HTTPStatus.OK.value,
         )
 
