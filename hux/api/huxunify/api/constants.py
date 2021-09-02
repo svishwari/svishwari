@@ -971,3 +971,5 @@ PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB = {
     "after receiving an email.",
     MODEL_TYPE: "purchase",
 }
+
+DEFAULT_DATE_FORMAT = "%Y-%m-%d"
