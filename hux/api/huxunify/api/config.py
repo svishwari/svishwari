@@ -124,7 +124,7 @@ class Config:
     )
     CDP_CONNECTION_SERVICE = config(
         "CDP_CONNECTION_SERVICE",
-        default="https://connections-api.main.use1.hux-unified-dev1.in/",
+        default="https://connections-api.main.use1.hux-unified-dev1.in",
     )
     # Preserve ordering in json
     JSON_SORT_KEYS = False
