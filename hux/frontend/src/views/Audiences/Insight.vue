@@ -247,7 +247,7 @@
       <v-card class="rounded pa-5 box-shadow-5">
         <div class="overview headingOverviewCard">Audience overview</div>
         <div
-          v-if="audience.is_lookalike"
+          v-if="audience && audience.is_lookalike"
           class="row overview-list lookalike-aud mb-0 ml-0 mr-1 mt-4"
         >
           <metric-card :height="60" :title="''" class="lookalikeMessageCard">
@@ -270,7 +270,7 @@
           </metric-card>
         </div>
         <div
-          v-if="!audience.is_lookalike"
+          v-if="audience && !audience.is_lookalike"
           class="row overview-list mb-0 ml-0 mt-1"
         >
           <metric-card
@@ -298,7 +298,7 @@
         </div>
       </v-card>
     </div>
-    <v-row v-if="!audience.is_lookalike" class="px-15 mt-2">
+    <v-row v-if="audience && !audience.is_lookalike" class="px-15 mt-2">
       <v-col md="7">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
           <v-card-title class="pb-2 pl-5 pt-5">
@@ -324,7 +324,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row v-if="!audience.is_lookalike" class="px-15 mt-2">
+    <v-row v-if="audience && !audience.is_lookalike" class="px-15 mt-2">
       <v-col md="3">
         <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
           <v-progress-linear
@@ -1030,7 +1030,7 @@ export default {
     async loadAudienceInsights() {
       this.loading = true
       await this.getAudienceById(this.$route.params.id)
-      if (this.audience.is_lookalike) {
+      if (this.audience && this.audience.is_lookalike) {
         this.audienceHistory = this.audience.audienceHistory.filter(
           (e) => e.title == "Created"
         )
