@@ -88,7 +88,13 @@ class CdpDataSourceDataFeedSchema(Schema):
         attribute=api_c.PROCESSED_AT, example="2021-01-01T17:56:07.290Z"
     )
     status = fields.Str(
-        validate=OneOf(choices=[api_c.STATUS_ACTIVE, api_c.STATUS_PENDING]),
+        validate=OneOf(
+            choices=[
+                api_c.STATUS_ACTIVE,
+                api_c.STATUS_PENDING,
+                api_c.STATUS_ERROR,
+            ]
+        ),
         default=api_c.STATUS_PENDING,
     )
 
