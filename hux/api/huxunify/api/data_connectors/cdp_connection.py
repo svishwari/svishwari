@@ -159,10 +159,7 @@ def get_idr_matching_trends(
         )
         return []
     logger.info("Successfully retrieved IDR matching trends from CDP API.")
-    idr_matching_trends_data = [
-        clean_cdm_fields(data) for data in response.json()[api_c.BODY]
-    ]
     return sorted(
-        idr_matching_trends_data,
+        [clean_cdm_fields(data) for data in response.json()[api_c.BODY]],
         key=lambda data: data.get(api_c.DAY, DEFAULT_DATETIME),
     )

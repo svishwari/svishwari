@@ -963,18 +963,18 @@ AMAZON_ADS_CUSTOMER_DATA = [
 IDR_MATCHING_TRENDS_BY_DAY_DATA = {
     "code": 200,
     "message": "ok",
-    "body": [
+    api_c.BODY: [
         {
-            "day": "2021-08-01",
-            "unique_hux_ids": 890,
-            "anonymous_ids": 97,
-            "known_ids": 890,
+            api_c.DAY: "2021-08-01",
+            api_c.UNIQUE_HUX_IDS: 890,
+            api_c.ANONYMOUS_IDS: 97,
+            api_c.KNOWN_IDS: 890,
         },
         {
-            "day": "2021-08-02",
-            "unique_hux_ids": 906,
-            "anonymous_ids": 104,
-            "known_ids": 906,
+            api_c.DAY: "2021-08-02",
+            api_c.UNIQUE_HUX_IDS: 906,
+            api_c.ANONYMOUS_IDS: 104,
+            api_c.KNOWN_IDS: 906,
         },
     ],
 }
