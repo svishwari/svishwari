@@ -115,10 +115,10 @@ client["engagements"].detachAudience = (resourceId, data) => {
   // NOTE: The Hux API supports post data for a DELETE request method.
   // Typically, this isn't RESTful so Mirage does not support this, hence this check
   if (process.env.NODE_ENV !== "development") {
-    return http.delete(`/engagements/${resourceId}/audience`, { data: data })
+    return http.delete(`/engagements/${resourceId}/audiences`, { data: data })
   } else {
     const audienceId = data.audience_ids[0]
-    return http.delete(`/engagements/${resourceId}/audience/${audienceId}`)
+    return http.delete(`/engagements/${resourceId}/audiences/${audienceId}`)
   }
 }
 
@@ -247,7 +247,7 @@ client["models"].modelFeatures = (id) => {
 
 //#region Data sources
 client.dataSources.dataFeeds = (type) => {
-  return http.get(`/data-sources/${type}/data-feeds`)
+  return http.get(`/data-sources/${type}/datafeeds`)
 }
 //#endregion
 
