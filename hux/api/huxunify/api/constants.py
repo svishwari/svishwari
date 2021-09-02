@@ -88,6 +88,33 @@ AVG_SPENT_MEN = "avg_spent_men"
 AVG_SPENT_OTHER = "avg_spent_other"
 YEAR = "year"
 MONTH = "month"
+MINUTE = "minute"
+HOUR = "hour"
+PERIOD = "period"
+DAY_OF_WEEK = "day_of_week"
+MONTHLY_PERIOD_ITEMS = "monthly_period_items"
+DAY_OF_MONTH = "day_of_month"
+DAILY = "Daily"
+MONTHLY = "Monthly"
+WEEKLY = "Weekly"
+EVERY = "every"
+AM = "AM"
+PM = "PM"
+PERIODICIY = "periodicity"
+MONTHLY_PERIOD_LIST = ["Day", "First", "Second", "Third", "Fourth", "Last"]
+DAY_LIST = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+DAY_OF_MONTH_LIST = [str(x) for x in range(1, 31)] + [
+    "Day",
+    "Weekend",
+    "Weekend day",
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+]
 # TODO: Remove State Names once it connected with CDM
 STATE_NAMES = {
     "AL": "Alabama",
