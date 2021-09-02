@@ -458,9 +458,9 @@ class TestCustomersOverview(TestCase):
             response.json["message"],
         )
 
-    def test_get_idr_trends_ytd(self):
+    def test_get_idr_trends(self):
         """
-        Test get matching trends YTD
+        Test get matching trends.
 
         Args:
 
@@ -469,8 +469,9 @@ class TestCustomersOverview(TestCase):
         """
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
-            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}identity/id-count-by"
+            f"-day",
+            json=t_c.IDR_MATCHING_TRENDS_BY_DAY_DATA,
         )
         self.request_mocker.start()
 

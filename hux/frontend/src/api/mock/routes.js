@@ -26,7 +26,7 @@ export const defineRoutes = (server) => {
 
   server.get("/data-sources/:id")
 
-  server.get("/data-sources/:type/data-feeds", () => {
+  server.get("/data-sources/:type/datafeeds", () => {
     return mockDataFeeds(5)
   })
 

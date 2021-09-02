@@ -5,7 +5,7 @@ Schemas for the Destinations API
 
 from flask_marshmallow import Schema
 from marshmallow import fields
-from marshmallow.validate import OneOf
+from marshmallow.validate import OneOf, Range, Equal
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import (
@@ -14,6 +14,63 @@ from huxunify.api.schema.utils import (
 )
 from huxunify.api.schema.engagement import EngagementDataExtensionSchema
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
+
+
+class DeliveryScheduleDailySchema(Schema):
+    """
+    Delivery Schedule Daily schema class
+    """
+
+    periodicity = fields.String(
+        default=api_c.DAILY, validate=Equal(api_c.DAILY)
+    )
+    every = fields.Int(example=2, validate=Range(min=1, max=7))
+    hour = fields.Int(example=11, validate=Range(min=1, max=12))
+    minute = fields.Int(example=15, validate=Range(min=0, max=45))
+    period = fields.String(
+        example=api_c.AM,
+        validate=[OneOf(choices=[api_c.AM, api_c.PM])],
+    )
+
+
+class DeliveryScheduleWeeklySchema(DeliveryScheduleDailySchema):
+    """
+    Delivery Schedule Weekly schema class
+    """
+
+    periodicity = fields.String(
+        default=api_c.WEEKLY, validate=Equal(api_c.WEEKLY)
+    )
+    every = fields.Int(example=2, validate=Range(min=1, max=4))
+    day_of_week = fields.List(
+        fields.String(
+            required=True,
+            validate=OneOf(api_c.DAY_LIST),
+        ),
+    )
+
+
+class DeliveryScheduleMonthlySchema(DeliveryScheduleDailySchema):
+    """
+    Delivery Schedule Monthly schema class
+    """
+
+    periodicity = fields.String(
+        default=api_c.MONTHLY, validate=Equal(api_c.MONTHLY)
+    )
+    every = fields.Int(example=2, validate=Range(min=1, max=12))
+    monthly_period_items = fields.List(
+        fields.String(
+            required=True,
+            validate=OneOf(api_c.MONTHLY_PERIOD_LIST),
+        ),
+    )
+    day_of_month = fields.List(
+        fields.String(
+            required=True,
+            validate=OneOf(api_c.DAY_OF_MONTH_LIST),
+        ),
+    )
 
 
 class DestinationGetSchema(Schema):
