@@ -291,6 +291,11 @@
     <v-row v-if="!audience.is_lookalike" class="px-15 mt-2">
       <v-col md="7">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+          <v-progress-linear
+            v-if="loadingDemographics"
+            :active="loadingDemographics"
+            :indeterminate="loadingDemographics"
+          />
           <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
@@ -298,19 +303,27 @@
               </span>
             </div>
           </v-card-title>
-          <map-chart :map-data="mapChartData" />
-          <map-slider :map-data="mapChartData" />
+          <map-chart v-if="!loadingDemographics" :map-data="mapChartData" />
+          <map-slider v-if="!loadingDemographics" :map-data="mapChartData" />
         </v-card>
       </v-col>
       <v-col md="5">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+          <v-progress-linear
+            v-if="loadingDemographics"
+            :active="loadingDemographics"
+            :indeterminate="loadingDemographics"
+          />
           <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5"> United States </span>
             </div>
           </v-card-title>
           <v-divider class="ml-5 mr-8 mt-0 mb-1" />
-          <map-state-list :map-data="mapChartData" />
+          <map-state-list
+            v-if="!loadingDemographics"
+            :map-data="mapChartData"
+          />
         </v-card>
       </v-col>
     </v-row>
@@ -452,7 +465,6 @@
 // helpers
 import { generateColor } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
-import dayjs from "dayjs"
 
 // common components
 import Avatar from "@/components/common/Avatar.vue"
@@ -465,7 +477,6 @@ import Icon from "@/components/common/Icon.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart.vue"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
 import MapChart from "@/components/common/MapChart/MapChart"
-import mapData from "@/components/common/MapChart/mapData.js"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import MetricCard from "@/components/common/MetricCard.vue"
@@ -511,7 +522,6 @@ export default {
   },
   data() {
     return {
-      mapChartData: mapData,
       showLookAlikeDrawer: false,
       lookalikeCreated: false,
       audienceHistory: [],
@@ -640,6 +650,9 @@ export default {
       }
       return []
     },
+    mapChartData() {
+      return this.demographicsData.demo
+    },
     showLookalike() {
       return !this.is_lookalike &&
         this.isLookalikable &&
@@ -751,10 +764,7 @@ export default {
 
     async fetchDemographics() {
       this.loadingDemographics = true
-      await this.getDemographics({
-        start_date: dayjs().subtract(6, "months").format("YYYY-MM-DD"),
-        end_date: dayjs().format("YYYY-MM-DD"),
-      })
+      await this.getDemographics(this.$route.params.id)
       this.loadingDemographics = false
     },
 

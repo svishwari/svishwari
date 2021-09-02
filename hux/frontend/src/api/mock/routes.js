@@ -465,6 +465,11 @@ export const defineRoutes = (server) => {
   // audiences
   server.get("/audiences")
 
+  server.get("/audiences/:id/audience_insights", () => {
+    demographicsData.demo = mapData
+    return demographicsData
+  })
+
   server.get("/audiences/:id", (schema, request) => {
     const id = request.params.id
     const audience = schema.audiences.find(id)
