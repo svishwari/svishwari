@@ -1,11 +1,9 @@
-"""
-Purpose of this file is for holding methods to query and pull data from CDP.
-"""
+"""Purpose of this file is for holding methods to query and pull data from CDP."""
 import random
 import time
 import asyncio
 import math
-from typing import Tuple, Optional
+from typing import Tuple, Optional, List
 from random import randint
 from datetime import datetime, timedelta
 
@@ -29,6 +27,9 @@ DATETIME_FIELDS = [
     "last_purchase",
     "last_email_open",
     "updated",
+    api_c.PINNING_TIMESTAMP,
+    api_c.STITCHED_TIMESTAMP,
+    api_c.TIMESTAMP,
 ]
 
 
@@ -336,64 +337,6 @@ async def get_async_customers(
                     "CDM post request failed for audience id %s.", audience_id
                 )
                 return {"code": 500}, str(audience_id)
-
-
-# pylint: disable=unused-argument
-def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
-    """
-    Fetch IDR data feeds
-
-    Args:
-        token (str): OKTA JWT Token.
-        start_date (str): Start date.
-        end_date (str): End date.
-    Returns:
-       list: count of known, anonymous, unique ids on a day.
-    """
-    # TODO: Update after CDM API for IDR data feeds is available. Use date range tp filter.
-    response = [
-        {
-            api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fc",
-            api_c.DATAFEED_NAME: "Really_long_Feed_Name_106",
-            api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-            api_c.DATAFEED_NEW_IDS_COUNT: 21,
-            api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2023532,
-            api_c.MATCH_RATE: 0.98,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow(),
-        },
-        {
-            api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fd",
-            api_c.DATAFEED_NAME: "Really_long_Feed_Name_105",
-            api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-            api_c.DATAFEED_NEW_IDS_COUNT: 54,
-            api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3232,
-            api_c.MATCH_RATE: 0.97,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
-            - timedelta(days=1),
-        },
-        {
-            api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fe",
-            api_c.DATAFEED_NAME: "Really_long_Feed_Name_102",
-            api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-            api_c.DATAFEED_NEW_IDS_COUNT: 300,
-            api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3012,
-            api_c.MATCH_RATE: 0.98,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
-            - timedelta(days=7),
-        },
-        {
-            api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4ff",
-            api_c.DATAFEED_NAME: "Really_long_Feed_Name_100",
-            api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-            api_c.DATAFEED_NEW_IDS_COUNT: 612,
-            api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2045,
-            api_c.MATCH_RATE: 0.98,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
-            - timedelta(days=30),
-        },
-    ]
-
-    return response
 
 
 def generate_idr_matching_trends_distribution(
@@ -925,3 +868,54 @@ def clean_cdm_gender_fields(response_body: dict) -> dict:
         )
 
     return response_body
+
+
+def get_spending_by_gender(
+    token: str,
+    start_date: str,
+    end_date: str,
+    filters: Optional[dict] = None,
+) -> List[Optional[dict]]:
+    """
+
+    Args:
+        token (str): OKTA JWT Token.
+        start_date (str): String value of start date
+        end_date (str): String value of end date
+        filters (dict):  filters to pass into
+            spending-by-month endpoint
+
+    Returns:
+        list: list of spending details by gender
+    """
+
+    request_payload = (
+        filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+    )
+    request_payload[api_c.START_DATE] = start_date
+    request_payload[api_c.END_DATE] = end_date
+
+    # get config
+    config = get_config()
+    logger.info("Retrieving spending insights by gender.")
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+        json=request_payload,
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve state demographic insights %s %s.",
+            response.status_code,
+            response.text,
+        )
+        return []
+
+    logger.info("Successfully retrieved state demographic insights.")
+    return sorted(
+        clean_cdm_fields(response.json()[api_c.BODY]),
+        key=lambda x: (x[api_c.YEAR], x[api_c.MONTH]),
+    )

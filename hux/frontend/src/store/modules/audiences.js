@@ -22,6 +22,8 @@ const state = {
   constants: {},
 
   deliveries: {},
+
+  demographics: {},
 }
 
 const getters = {
@@ -39,6 +41,8 @@ const getters = {
     const deliveries = state.deliveries[id]
     return deliveries ? Object.values(state.deliveries[id]) : []
   },
+
+  demographics: (state) => state.demographics,
 }
 
 const mutations = {
@@ -61,6 +65,10 @@ const mutations = {
 
   SET_DELIVERIES(state, { audienceId, deliveries }) {
     Vue.set(state.deliveries, audienceId, deliveries)
+  },
+
+  SET_DEMOGRAPHICS(state, data) {
+    state.demographics = data
   },
 }
 
@@ -219,6 +227,16 @@ const actions = {
         audienceId: audienceId,
         deliveries: response.data,
       })
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getDemographics({ commit }, data) {
+    try {
+      const response = await api.audiences.demographics(data)
+      commit("SET_DEMOGRAPHICS", response.data)
     } catch (error) {
       handleError(error)
       throw error

@@ -377,21 +377,20 @@ export default {
     },
   },
 
-  async mounted() {
-    this.loading = true
-    await this.fetchEngagements()
-    this.engagements = JSON.parse(
-      JSON.stringify(this.$store.getters["engagements/list"])
-    )
-    this.sortEngagements()
-    this.loading = false
-  },
-
   methods: {
     ...mapActions({
       fetchEngagements: "engagements/getAll",
       addEngagementToDB: "engagements/add",
     }),
+    async fetchDependencies() {
+      this.loading = true
+      await this.fetchEngagements()
+      this.engagements = JSON.parse(
+        JSON.stringify(this.$store.getters["engagements/list"])
+      )
+      this.sortEngagements()
+      this.loading = false
+    },
     onStartDateSelect(val) {
       this.selectedStartDate = val
       this.selectedEndDate = null

@@ -21,7 +21,6 @@
 </template>
 
 <script>
-import { mapActions } from "vuex"
 import Page from "@/components/Page.vue"
 import EngagementOverview from "./Overview.vue"
 import EngagementForm from "./Form.vue"
@@ -46,20 +45,6 @@ export default {
 
       loading: false,
     }
-  },
-
-  async mounted() {
-    this.loading = true
-    await this.getAudiences()
-    await this.getDestinations()
-    this.loading = false
-  },
-
-  methods: {
-    ...mapActions({
-      getAudiences: "audiences/getAll",
-      getDestinations: "destinations/getAll",
-    }),
   },
 }
 </script>

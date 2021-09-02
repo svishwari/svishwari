@@ -23,6 +23,73 @@
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
     <div v-if="audienceHistory.length > 0" class="row px-15 my-1">
+      <v-card
+        v-if="audience.is_lookalike"
+        class="rounded-lg card-info-wrapper ma-2 card-shadow no-background"
+      >
+        <v-card-text>
+          <div class="text-caption gray--text">
+            Original size
+            <tooltip position-top>
+              <template #label-content>
+                <icon type="info" :size="12" />
+              </template>
+              <template #hover-content>
+                Size of original audience that was used to create this
+                Lookalike.
+              </template>
+            </tooltip>
+            | Match rate
+          </div>
+
+          <div
+            class="
+              subtitle-slot
+              size
+              mr-2
+              pt-2
+              font-audience-text
+              neroBlack--text
+              font-weight-semi-bold
+            "
+          >
+            <size :value="audience.size" /> |
+          </div>
+        </v-card-text>
+      </v-card>
+
+      <metric-card
+        v-if="audience.is_lookalike"
+        class="ma-2 audience-summary"
+        :grow="0"
+        :title="'Lookalike size'"
+        :height="75"
+      >
+        <template #subtitle-extended>
+          <span class="mr-2 pt-2">
+            <span class="neroBlack--text font-weight-semi-bold">
+              <size :value="audience.size" />
+            </span>
+          </span>
+        </template>
+      </metric-card>
+
+      <metric-card
+        v-if="audience.is_lookalike"
+        class="ma-2 audience-summary original-audience"
+        :grow="0"
+        :title="'Original Audience'"
+        :height="75"
+      >
+        <template #subtitle-extended>
+          <span class="mr-2 pt-2">
+            <span class="original-audience-text">
+              {{ audience.name }}
+            </span>
+          </span>
+        </template>
+      </metric-card>
+
       <metric-card
         v-for="(item, i) in audienceHistory"
         :key="i"
@@ -46,37 +113,6 @@
             </tooltip>
           </span>
           <avatar :name="item.fullName" />
-        </template>
-      </metric-card>
-      <metric-card
-        v-if="audience.is_lookalike"
-        class="ma-2 audience-summary original-audience"
-        :grow="0"
-        :title="'Original Audience'"
-        :height="75"
-      >
-        <template #subtitle-extended>
-          <span class="mr-2 pt-2">
-            <span class="original-audience-text">
-              {{ audience.name }}
-            </span>
-          </span>
-        </template>
-      </metric-card>
-      <metric-card
-        v-if="audience.is_lookalike"
-        class="ma-2 audience-summary"
-        :grow="0"
-        :title="'Original • Actual size'"
-        :height="75"
-      >
-        <template #subtitle-extended>
-          <span class="mr-2 pt-2">
-            <span class="neroBlack--text font-weight-semi-bold">
-              <size :value="audience.size" /> &bull;
-              <size :value="audience.size" />
-            </span>
-          </span>
         </template>
       </metric-card>
 
@@ -200,8 +236,33 @@
     </div>
     <div class="px-15 my-1">
       <v-card class="rounded pa-5 box-shadow-5">
-        <div class="overview">Audience overview</div>
-        <div class="row overview-list mb-0 ml-0 mt-1">
+        <div class="overview headingOverviewCard">Audience overview</div>
+        <div
+          v-if="audience.is_lookalike"
+          class="row overview-list lookalike-aud mb-0 ml-0 mr-1 mt-4"
+        >
+          <metric-card :height="60" :title="''" class="lookalikeMessageCard">
+            <template #subtitle-extended>
+              <span
+                >This is a lookalike audience. Go to the original
+                audience,&nbsp;</span
+              >
+              <router-link
+                :to="{
+                  name: '',
+                }"
+                class="text-decoration-none"
+                append
+                >{{ audience.name }}
+              </router-link>
+              <span>,&nbsp;to see insights.</span></template
+            >
+          </metric-card>
+        </div>
+        <div
+          v-if="!audience.is_lookalike"
+          class="row overview-list mb-0 ml-0 mt-1"
+        >
           <metric-card
             v-for="(item, i) in Object.keys(insightInfoItems)"
             :key="i"
@@ -227,7 +288,7 @@
         </div>
       </v-card>
     </div>
-    <v-row class="px-15 mt-2">
+    <v-row v-if="!audience.is_lookalike" class="px-15 mt-2">
       <v-col md="7">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
           <v-card-title class="pb-2 pl-5 pt-5">
@@ -253,39 +314,60 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row class="px-15 mt-2">
+    <v-row v-if="!audience.is_lookalike" class="px-15 mt-2">
       <v-col md="3">
         <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
-          <v-card-title class="pb-0 pl-5 pt-5">
+          <v-progress-linear
+            v-if="loadingDemographics"
+            :active="loadingDemographics"
+            :indeterminate="loadingDemographics"
+          />
+          <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
                 Top location &amp; Income
               </span>
             </div>
           </v-card-title>
-          <income-chart />
+          <income-chart
+            v-if="!loadingDemographics"
+            :data="demographicsData.income"
+          />
         </v-card>
       </v-col>
       <v-col md="6">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="290">
-          <v-card-title class="pb-2 pl-5 pt-5">
+          <v-progress-linear
+            v-if="loadingDemographics"
+            :active="loadingDemographics"
+            :indeterminate="loadingDemographics"
+          />
+          <v-card-title v-if="!loadingDemographics" class="pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
                 Gender &sol; monthly spending in 2021
               </span>
             </div>
           </v-card-title>
-          <gender-spend-chart />
+          <gender-spend-chart
+            v-if="!loadingDemographics"
+            :data="demographicsData.spend"
+          />
         </v-card>
       </v-col>
       <v-col md="3">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="290">
-          <v-card-title class="pb-0 pl-5 pt-5">
+          <v-progress-linear
+            v-if="loadingDemographics"
+            :active="loadingDemographics"
+            :indeterminate="loadingDemographics"
+          />
+          <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5"> Gender </span>
             </div>
           </v-card-title>
-          <div ref="genderChart">
+          <div v-if="!loadingDemographics" ref="genderChart">
             <doughnut-chart
               :chart-dimensions="genderChartDimensions"
               :data="genderChartData"
@@ -295,6 +377,7 @@
         </v-card>
       </v-col>
     </v-row>
+
     <hux-alert
       v-model="flashAlert"
       :type="alert.type"
@@ -369,6 +452,7 @@
 // helpers
 import { generateColor } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
+import dayjs from "dayjs"
 
 // common components
 import Avatar from "@/components/common/Avatar.vue"
@@ -376,7 +460,6 @@ import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import DeliveryOverview from "@/components/DeliveryOverview.vue"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
-import genderData from "@/components/common/DoughnutChart/genderData.json"
 import HuxAlert from "@/components/common/HuxAlert.vue"
 import Icon from "@/components/common/Icon.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart.vue"
@@ -452,6 +535,7 @@ export default {
       ],
       loading: false,
       loadingRelationships: false,
+      loadingDemographics: true,
       flashAlert: false,
       alert: {
         type: "success",
@@ -493,26 +577,6 @@ export default {
         { value: "lifetime", icon: "lifetime" },
         { value: "churn", icon: "churn" },
       ],
-      genderChartData: [
-        {
-          label: "Men",
-          population_percentage:
-            genderData.gender.gender_men.population_percentage,
-          size: genderData.gender.gender_men.size,
-        },
-        {
-          label: "Women",
-          population_percentage:
-            genderData.gender.gender_women.population_percentage,
-          size: genderData.gender.gender_women.size,
-        },
-        {
-          label: "Other",
-          population_percentage:
-            genderData.gender.gender_other.population_percentage,
-          size: genderData.gender.gender_other.size,
-        },
-      ],
       selectedEngagements: [],
       selectedDestinations: [],
       showDeliveryHistoryDrawer: false,
@@ -539,6 +603,7 @@ export default {
     ...mapGetters({
       getAudience: "audiences/audience",
       getAudienceInsights: "audiences/insights",
+      demographicsData: "audiences/demographics",
     }),
     audience() {
       return this.getAudience(this.$route.params.id)
@@ -548,6 +613,32 @@ export default {
     },
     audienceInsights() {
       return this.getAudienceInsights(this.audienceId)
+    },
+
+    genderChartData() {
+      if (this.demographicsData.gender) {
+        return [
+          {
+            label: "Men",
+            population_percentage:
+              this.demographicsData.gender.gender_men.population_percentage,
+            size: this.demographicsData.gender.gender_men.size,
+          },
+          {
+            label: "Women",
+            population_percentage:
+              this.demographicsData.gender.gender_women.population_percentage,
+            size: this.demographicsData.gender.gender_women.size,
+          },
+          {
+            label: "Other",
+            population_percentage:
+              this.demographicsData.gender.gender_other.population_percentage,
+            size: this.demographicsData.gender.gender_other.size,
+          },
+        ]
+      }
+      return []
     },
     showLookalike() {
       return !this.is_lookalike &&
@@ -643,6 +734,7 @@ export default {
   async mounted() {
     this.sizeHandler()
     await this.loadAudienceInsights()
+    this.fetchDemographics()
   },
   methods: {
     ...mapActions({
@@ -654,7 +746,18 @@ export default {
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
       attachAudienceDestination: "engagements/attachAudienceDestination",
       detachAudienceDestination: "engagements/detachAudienceDestination",
+      getDemographics: "audiences/getDemographics",
     }),
+
+    async fetchDemographics() {
+      this.loadingDemographics = true
+      await this.getDemographics({
+        start_date: dayjs().subtract(6, "months").format("YYYY-MM-DD"),
+        end_date: dayjs().format("YYYY-MM-DD"),
+      })
+      this.loadingDemographics = false
+    },
+
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
     },
@@ -917,7 +1020,13 @@ export default {
     async loadAudienceInsights() {
       this.loading = true
       await this.getAudienceById(this.$route.params.id)
-      this.audienceHistory = this.audience.audienceHistory
+      if (this.audience.is_lookalike) {
+        this.audienceHistory = this.audience.audienceHistory.filter(
+          (e) => e.title == "Created"
+        )
+      } else {
+        this.audienceHistory = this.audience.audienceHistory
+      }
       this.relatedEngagements = this.audience.engagements
       this.lookalikeAudiences = this.audience.lookalike_audiences
       this.isLookalikable = this.audience.lookalikeable
@@ -998,15 +1107,38 @@ export default {
 .original-audience {
   background: var(--v-white-base) !important;
 }
-.original-audience-text {
+.font-audience-text {
   font-family: Open Sans;
   font-style: normal;
   font-weight: 600;
   font-size: 14px;
   line-height: 19px;
+}
+.original-audience-text {
+  @extend .font-audience-text;
   color: var(--v-primary-base) !important;
 }
 ::v-deep .v-snack__wrapper {
   max-width: 1300px !important;
+}
+.font-lookalike {
+  font-family: Open Sans;
+  font-style: normal;
+  font-weight: normal;
+}
+
+.lookalikeMessageCard {
+  @extend .font-lookalike;
+  border-radius: 5px !important;
+  background-color: var(--v-aliceBlue-base) !important;
+  font-size: 14px;
+  color: var(--v-grey-base) !important;
+}
+.headingOverviewCard {
+  @extend .font-lookalike;
+  font-size: 15px !important;
+}
+.no-background {
+  background: transparent;
 }
 </style>

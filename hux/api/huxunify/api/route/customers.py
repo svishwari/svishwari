@@ -5,9 +5,9 @@ Paths for customer API
 from http import HTTPStatus
 from typing import Tuple, List
 from datetime import datetime
+
 from dateutil.relativedelta import relativedelta
 from faker import Faker
-import pandas as pd
 
 from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
@@ -29,17 +29,16 @@ from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import (
-    secured,
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
+    secured,
     api_error_handler,
-    get_token_from_request,
 )
+from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunify.api.data_connectors.cdp import (
     get_customer_profiles,
     get_customer_profile,
     get_customers_overview,
-    get_idr_data_feeds,
     get_idr_overview,
     get_idr_matching_trends,
     get_customer_events_data,
@@ -47,6 +46,11 @@ from huxunify.api.data_connectors.cdp import (
     get_spending_by_cities,
     get_customers_insights_count_by_day,
     get_city_ltvs,
+    get_spending_by_gender,
+)
+from huxunify.api.data_connectors.cdp_connection import (
+    get_idr_data_feeds,
+    get_idr_data_feed_details,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -465,7 +469,7 @@ class IDRDataFeeds(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/<datafeed>",
+    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/<datafeed_id>",
     "IDRDataFeedDetails",
 )
 class IDRDataFeedDetails(SwaggerView):
@@ -473,12 +477,12 @@ class IDRDataFeedDetails(SwaggerView):
 
     parameters = [
         {
-            "name": api_c.DATA_FEED,
-            "description": "Data Feed Name",
-            "type": "string",
+            "name": api_c.DATAFEED_ID,
+            "description": "Data Feed ID",
+            "type": "integer",
             "in": "path",
             "required": True,
-            "example": "Really_long_feed_Name_106",
+            "example": "1",
         },
     ]
 
@@ -494,9 +498,9 @@ class IDRDataFeedDetails(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
-    # pylint: disable=no-self-use,unused-argument
+    # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, datafeed: str) -> Tuple[dict, int]:
+    def get(self, datafeed_id: int) -> Tuple[dict, int]:
         """Retrieves a IDR data feed waterfall report.
 
         ---
@@ -504,42 +508,16 @@ class IDRDataFeedDetails(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            datafeed (str): Data feed name
+            datafeed_id (int): Data feed ID
 
         Returns:
             Tuple[dict, int] dict of IDR data feed waterfall
         """
+        token_response = get_token_from_request(request)
 
         return (
             DataFeedDetailsSchema().dump(
-                {
-                    api_c.PINNING: {
-                        api_c.INPUT_RECORDS: 2,
-                        api_c.OUTPUT_RECORDS: 2,
-                        api_c.EMPTY_RECORDS: 0,
-                        api_c.INDIVIDUAL_ID_MATCH: 1,
-                        api_c.HOUSEHOLD_ID_MATCH: 1,
-                        api_c.COMPANY_ID_MATCH: 1,
-                        api_c.ADDRESS_ID_MATCH: 1,
-                        api_c.DB_READS: 1,
-                        api_c.DB_WRITES: 1,
-                        api_c.FILENAME: "Input.csv",
-                        api_c.NEW_INDIVIDUAL_IDS: 1,
-                        api_c.NEW_HOUSEHOLD_IDS: 1,
-                        api_c.NEW_COMPANY_IDS: 1,
-                        api_c.NEW_ADDRESS_IDS: 1,
-                        api_c.PROCESS_TIME: 6.43,
-                        api_c.DATE_TIME: datetime.now(),
-                    },
-                    api_c.STITCHED: {
-                        api_c.DIGITAL_IDS_ADDED: 3,
-                        api_c.DIGITAL_IDS_MERGED: 6,
-                        api_c.MATCH_RATE: 0.6606,
-                        api_c.MERGE_RATE: 0,
-                        api_c.RECORDS_SOURCE: "Input waterfall",
-                        api_c.TIME_STAMP: datetime.now(),
-                    },
-                }
+                get_idr_data_feed_details(token_response[0], int(datafeed_id))
             ),
             HTTPStatus.OK,
         )
@@ -604,20 +582,7 @@ class CustomerDemoVisualView(SwaggerView):
     Customers Profiles Demographic Insights class
     """
 
-    parameters = [
-        {
-            "name": "body",
-            "description": "Customer Insights Demographic Filters",
-            "type": "object",
-            "in": "body",
-            "example": {
-                "filters": {
-                    "start_date": "2020-11-30T00:00:00Z",
-                    "end_date": "2021-04-30T00:00:00Z",
-                }
-            },
-        }
-    ]
+    parameters = [api_c.START_DATE_PARAMS, api_c.END_DATE_PARAMS]
     responses = {
         HTTPStatus.OK.value: {
             "schema": {
@@ -635,12 +600,14 @@ class CustomerDemoVisualView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def post(self) -> Tuple[dict, int]:
+    def get(self) -> Tuple[dict, int]:
         """Retrieves a Demographical customer insights.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
 
         Returns:
             Tuple[dict, int] list of Customer insights on demo overview and http code
@@ -648,16 +615,15 @@ class CustomerDemoVisualView(SwaggerView):
 
         token_response = get_token_from_request(request)
 
-        start_date = datetime(2020, 11, 30)
-        dates = [
-            (start_date + pd.DateOffset(months=x)).to_pydatetime()
-            for x in range(0, 5)
-        ]
-
         # get customers overview data from CDP to set gender specific
         # population details
         customers = get_customers_overview(token_response[0])
 
+        gender_spending = get_spending_by_gender(
+            token_response[0],
+            request.args.get(api_c.START_DATE),
+            request.args.get(api_c.END_DATE),
+        )
         # if the customers overview response body is empty from CDP, then log
         # error and return 400
         if not customers:
@@ -669,6 +635,9 @@ class CustomerDemoVisualView(SwaggerView):
                 HTTPStatus.BAD_REQUEST,
             )
 
+        date_parser = lambda x, y: datetime.strptime(
+            f"1-{str(x)}-{str(y)}", "%d-%m-%Y"
+        )
         output = {
             api_c.GENDER: {
                 gender: {
@@ -680,16 +649,25 @@ class CustomerDemoVisualView(SwaggerView):
             api_c.INCOME: get_spending_by_cities(token_response[0]),
             api_c.SPEND: {
                 api_c.GENDER_WOMEN: [
-                    {api_c.DATE: date, api_c.LTV: ltv}
-                    for date, ltv in zip(dates, [3199, 4265, 4986, 4986, 6109])
+                    {
+                        api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
+                        api_c.LTV: round(x[api_c.AVG_SPENT_WOMEN], 4),
+                    }
+                    for x in gender_spending
                 ],
                 api_c.GENDER_MEN: [
-                    {api_c.DATE: date, api_c.LTV: ltv}
-                    for date, ltv in zip(dates, [3088, 3842, 3999, 3999, 6109])
+                    {
+                        api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
+                        api_c.LTV: round(x[api_c.AVG_SPENT_MEN], 4),
+                    }
+                    for x in gender_spending
                 ],
                 api_c.GENDER_OTHER: [
-                    {api_c.DATE: date, api_c.LTV: ltv}
-                    for date, ltv in zip(dates, [2144, 3144, 3211, 3211, 4866])
+                    {
+                        api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
+                        api_c.LTV: round(x[api_c.AVG_SPENT_OTHER], 4),
+                    }
+                    for x in gender_spending
                 ],
             },
         }

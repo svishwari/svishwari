@@ -210,6 +210,7 @@ delivery_platforms_constants = [
         c.STATUS: c.ACTIVE,
         c.ENABLED: True,
         c.ADDED: False,
+        c.IS_AD_PLATFORM: False,
     },
     {
         c.DELIVERY_PLATFORM_NAME: "Facebook",
@@ -217,6 +218,7 @@ delivery_platforms_constants = [
         c.STATUS: c.ACTIVE,
         c.ENABLED: True,
         c.ADDED: False,
+        c.IS_AD_PLATFORM: True,
     },
     {
         c.DELIVERY_PLATFORM_NAME: "Google Ads",
@@ -224,6 +226,7 @@ delivery_platforms_constants = [
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
+        c.IS_AD_PLATFORM: True,
     },
     {
         c.DELIVERY_PLATFORM_NAME: "Amazon Advertising",
@@ -231,6 +234,7 @@ delivery_platforms_constants = [
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
+        c.IS_AD_PLATFORM: True,
     },
     {
         c.DELIVERY_PLATFORM_NAME: "Adobe Experience",
@@ -238,6 +242,7 @@ delivery_platforms_constants = [
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
+        c.IS_AD_PLATFORM: False,
     },
     {
         c.DELIVERY_PLATFORM_NAME: "Twilio",
@@ -245,6 +250,7 @@ delivery_platforms_constants = [
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
+        c.IS_AD_PLATFORM: False,
     },
     {
         c.DELIVERY_PLATFORM_NAME: "SAP",
@@ -252,6 +258,7 @@ delivery_platforms_constants = [
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
+        c.IS_AD_PLATFORM: False,
     },
     {
         c.DELIVERY_PLATFORM_NAME: "Qualtrics",
@@ -259,6 +266,7 @@ delivery_platforms_constants = [
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
+        c.IS_AD_PLATFORM: False,
     },
     {
         c.DELIVERY_PLATFORM_NAME: "Litmus",
@@ -266,6 +274,7 @@ delivery_platforms_constants = [
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
+        c.IS_AD_PLATFORM: False,
     },
     {
         c.DELIVERY_PLATFORM_NAME: "Fullstory",
@@ -273,6 +282,7 @@ delivery_platforms_constants = [
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
+        c.IS_AD_PLATFORM: False,
     },
     {
         c.DELIVERY_PLATFORM_NAME: "QuantumMetric",
@@ -280,6 +290,7 @@ delivery_platforms_constants = [
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
+        c.IS_AD_PLATFORM: False,
     },
     {
         c.DELIVERY_PLATFORM_NAME: "Medallia",
@@ -287,6 +298,7 @@ delivery_platforms_constants = [
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
+        c.IS_AD_PLATFORM: False,
     },
     {
         c.DELIVERY_PLATFORM_NAME: "Mailchimp",
@@ -294,6 +306,7 @@ delivery_platforms_constants = [
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
+        c.IS_AD_PLATFORM: False,
     },
 ]
 
