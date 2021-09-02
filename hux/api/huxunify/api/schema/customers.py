@@ -262,7 +262,7 @@ class MatchingTrendsSchema(Schema):
 
         ordered = True
 
-    date = DateTimeWithZ(required=True)
+    date = DateTimeWithZ(required=True, attribute=api_c.DAY)
     known_ids = Integer(required=True, example=100000)
     unique_hux_ids = Integer(required=True, example=100000)
     anonymous_ids = Integer(required=True, example=100000)
