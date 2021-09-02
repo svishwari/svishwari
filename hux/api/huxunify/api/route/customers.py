@@ -40,7 +40,6 @@ from huxunify.api.data_connectors.cdp import (
     get_customer_profile,
     get_customers_overview,
     get_idr_overview,
-    get_idr_matching_trends,
     get_customer_events_data,
     get_demographic_by_state,
     get_spending_by_cities,
@@ -51,6 +50,7 @@ from huxunify.api.data_connectors.cdp import (
 from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feeds,
     get_idr_data_feed_details,
+    get_idr_matching_trends,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (

@@ -1,12 +1,16 @@
 """Purpose of this file is to house all methods to connect to CDP connections API"""
+import random
 from typing import Tuple, Union
+from datetime import datetime, timedelta
+
 import requests
+from dateutil.parser import parse
 
 from huxunifylib.util.general.logging import logger
 
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
-from huxunify.api.data_connectors.cdp import clean_cdm_fields
+from huxunify.api.data_connectors.cdp import clean_cdm_fields, DEFAULT_DATETIME
 
 
 def check_cdp_connections_api_connection() -> Tuple[Union[int, bool], str]:
@@ -111,3 +115,54 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
     return {
         k: clean_cdm_fields(v) for k, v in response.json()[api_c.BODY].items()
     }
+
+
+def get_idr_matching_trends(
+    token: str, start_date: str, end_date: str
+) -> list:
+    """Retrieves IDR matching trends data YTD
+    Args:
+        token (str): OKTA JWT Token.
+        start_date (str): Start date.
+        end_date (str): End date.
+    Returns:
+       list: count of known, anonymous, unique ids on a day.
+    """
+    # TODO : Fetch date range from CDP
+    start_date = (
+        parse(start_date)
+        if start_date
+        else datetime.today() - timedelta(days=random.randint(100, 1000))
+    ).strftime("%Y-%m-%d")
+
+    end_date = (parse(end_date) if end_date else datetime.today()).strftime(
+        "%Y-%m-%d"
+    )
+
+    filters = {api_c.START_DATE: start_date, api_c.END_DATE: end_date}
+
+    config = get_config()
+    logger.info("Getting IDR matching trends from CDP API.")
+    response = requests.post(
+        f"{config.CDP_CONNECTION_SERVICE}identity/id-count-by-day",
+        json=filters,
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Could not get IDR matching trends from CDP API got %s %s.",
+            response.status_code,
+            response.text,
+        )
+        return []
+    logger.info("Successfully retrieved IDR matching trends from CDP API.")
+    idr_matching_trends_data = [
+        clean_cdm_fields(data) for data in response.json()[api_c.BODY]
+    ]
+    return sorted(
+        idr_matching_trends_data,
+        key=lambda data: data.get(api_c.DAY, DEFAULT_DATETIME),
+    )
