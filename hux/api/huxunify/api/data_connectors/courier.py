@@ -22,6 +22,7 @@ from huxunifylib.util.general.const import (
     FacebookCredentials,
     SFMCCredentials,
     TwilioCredentials,
+    QualtricsCredentials,
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
 from huxunifylib.util.general.logging import logger
@@ -108,6 +109,28 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         secret_dict = {
             TwilioCredentials.TWILIO_AUTH_TOKEN.name: auth[
                 api_const.TWILIO_AUTH_TOKEN
+            ]
+        }
+
+    elif (
+        destination[db_const.DELIVERY_PLATFORM_TYPE]
+        == db_const.DELIVERY_PLATFORM_QUALTRICS
+    ):
+        env_dict = {
+            QualtricsCredentials.QUALTRICS_DATA_CENTER.name: auth[
+                api_const.QUALTRICS_DATA_CENTER
+            ],
+            QualtricsCredentials.QUALTRICS_OWNER_ID.name: auth[
+                api_const.QUALTRICS_OWNER_ID
+            ],
+            QualtricsCredentials.QUALTRICS_DIRECTORY_ID.name: auth[
+                api_const.QUALTRICS_DIRECTORY_ID
+            ],
+        }
+
+        secret_dict = {
+            QualtricsCredentials.QUALTRICS_API_TOKEN.name: auth[
+                api_const.QUALTRICS_API_TOKEN
             ]
         }
     else:

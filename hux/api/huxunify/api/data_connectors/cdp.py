@@ -1,12 +1,8 @@
-"""
-Purpose of this file is for holding methods to query and pull data from CDP.
-"""
+"""Purpose of this file is for holding methods to query and pull data from CDP."""
 import random
 import time
 import asyncio
-import math
 from typing import Tuple, Optional, List
-from random import randint
 from datetime import datetime, timedelta
 
 import requests
@@ -29,6 +25,10 @@ DATETIME_FIELDS = [
     "last_purchase",
     "last_email_open",
     "updated",
+    api_c.DAY,
+    api_c.PINNING_TIMESTAMP,
+    api_c.STITCHED_TIMESTAMP,
+    api_c.TIMESTAMP,
 ]
 
 
@@ -338,218 +338,6 @@ async def get_async_customers(
                 return {"code": 500}, str(audience_id)
 
 
-# pylint: disable=unused-argument
-def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
-    """
-    Fetch IDR data feeds
-
-    Args:
-        token (str): OKTA JWT Token.
-        start_date (str): Start date.
-        end_date (str): End date.
-    Returns:
-       list: count of known, anonymous, unique ids on a day.
-    """
-    # TODO: Update after CDM API for IDR data feeds is available. Use date range tp filter.
-    response = [
-        {
-            api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fc",
-            api_c.DATAFEED_NAME: "Really_long_Feed_Name_106",
-            api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-            api_c.DATAFEED_NEW_IDS_COUNT: 21,
-            api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2023532,
-            api_c.MATCH_RATE: 0.98,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow(),
-        },
-        {
-            api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fd",
-            api_c.DATAFEED_NAME: "Really_long_Feed_Name_105",
-            api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-            api_c.DATAFEED_NEW_IDS_COUNT: 54,
-            api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3232,
-            api_c.MATCH_RATE: 0.97,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
-            - timedelta(days=1),
-        },
-        {
-            api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fe",
-            api_c.DATAFEED_NAME: "Really_long_Feed_Name_102",
-            api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-            api_c.DATAFEED_NEW_IDS_COUNT: 300,
-            api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3012,
-            api_c.MATCH_RATE: 0.98,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
-            - timedelta(days=7),
-        },
-        {
-            api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4ff",
-            api_c.DATAFEED_NAME: "Really_long_Feed_Name_100",
-            api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
-            api_c.DATAFEED_NEW_IDS_COUNT: 612,
-            api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2045,
-            api_c.MATCH_RATE: 0.98,
-            api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
-            - timedelta(days=30),
-        },
-    ]
-
-    return response
-
-
-def generate_idr_matching_trends_distribution(
-    number_of_points: int,
-    min_point: int = 5,
-    max_point: int = 9,
-    lambda_: float = 0.5,
-    multiplier: int = 1,
-):
-    """Generates normalized exponential data with randomness
-    Args:
-        number_of_points (int): Number of points to generate
-        min_point (int): Maximum value in data.
-        max_point (int): Minimum value in data.
-        lambda_ (float): Value to control rise of exponent
-        multiplier (int): 1 represent increasing exponential data, -1 for decreasing
-    Returns:
-        list: Generated exponential data
-
-    """
-    # TODO: Remove after CDM API for IDR matching trends is available
-
-    data = [
-        multiplier * math.e ** (x * lambda_ / number_of_points)
-        for x in range(0, number_of_points)
-    ]
-    return add_randomness(
-        normalize_values(
-            data, max_range_val=max_point, min_range_val=min_point
-        )
-    )
-
-
-def normalize_values(
-    values: list, max_range_val: int = 1, min_range_val: int = 0
-):
-    """Normalizes values in a list to be in the given range
-    Args:
-        values (list): Values to be normalized.
-        max_range_val (int): Maximum value in range.
-        min_range_val (int): Minimum value in range.
-
-    Returns:
-        list: Normalized values.
-    """
-    # TODO: Remove after CDM API for IDR matching trends is available
-
-    min_val = min(values)
-    max_val = max(values)
-    return [
-        int(
-            ((x - min_val) / (max_val - min_val))
-            * (max_range_val - min_range_val)
-        )
-        + min_range_val
-        for x in values
-    ]
-
-
-def add_randomness(values: list, variation_percentage: float = 0.005):
-    """Adds random numbers to a list of values
-    Args:
-        values (list): List of values which needs randomness
-        variation_percentage (float): Variation percentage which is added or subtracted from a value
-    Returns:
-        list: Values with randomness
-    """
-    # TODO: Remove after CDM API for IDR matching trends is available
-
-    return [
-        val
-        + randint(
-            -int(variation_percentage * val), int(variation_percentage * val)
-        )
-        for val in values
-    ]
-
-
-def get_idr_matching_trends(
-    token: str, start_date: str, end_date: str
-) -> list:
-    """Retrieves IDR matching trends data YTD
-    Args:
-        token (str): OKTA JWT Token.
-        start_date (str): Start date.
-        end_date (str): End date.
-    Returns:
-       list: count of known, anonymous, unique ids on a day.
-    """
-    # TODO: Update after CDM API for IDR matching trends is available. Fetch date range from CDM.
-
-    # call customer-profile insights to get id counts
-    customer_profile_info = get_customers_overview(token)
-    known_ids_count = customer_profile_info.get(
-        api_c.TOTAL_KNOWN_IDS, api_c.KNOWN_IDS_MAX_COUNT
-    )
-
-    unique_ids_count = customer_profile_info.get(
-        api_c.TOTAL_UNIQUE_IDS, api_c.UNIQUE_HUX_IDS_MAX_COUNT
-    )
-
-    unknown_ids_count = customer_profile_info.get(
-        api_c.TOTAL_UNKNOWN_IDS, api_c.ANONYMOUS_IDS_MIN_COUNT
-    )
-
-    # TODO : Fetch date range from CDP
-    start_date = (
-        datetime.strptime(start_date, "%m-%d-%Y")
-        if start_date
-        else datetime.today() - timedelta(days=random.randint(100, 1000))
-    )
-    end_date = (
-        datetime.strptime(end_date, "%m-%d-%Y")
-        if end_date
-        else datetime.today()
-    )
-    weeks = []
-    while start_date < end_date:
-        weeks.append(start_date)
-        start_date += timedelta(days=7)
-
-    known_ids = generate_idr_matching_trends_distribution(
-        len(weeks),
-        min_point=known_ids_count - (0.35 * known_ids_count),
-        max_point=known_ids_count,
-        lambda_=api_c.KNOWN_IDS_LAMBDA,
-    )
-
-    unique_hux_ids = generate_idr_matching_trends_distribution(
-        len(weeks),
-        min_point=unique_ids_count - (0.35 * known_ids_count),
-        max_point=unique_ids_count,
-        lambda_=api_c.UNIQUE_HUX_IDS_LAMBDA,
-    )
-    # setting multiplier to -1 to get exponentially decreasing values
-    anonymous_ids = generate_idr_matching_trends_distribution(
-        len(weeks),
-        min_point=unknown_ids_count,
-        max_point=unknown_ids_count + (0.35 * unknown_ids_count),
-        lambda_=api_c.ANONYMOUS_IDS_LAMBDA,
-        multiplier=-1,
-    )
-
-    return [
-        {
-            api_c.DATE: week,
-            api_c.KNOWN_IDS: known_ids_count,
-            api_c.UNIQUE_HUX_IDS: unique_hux_ids_count,
-            api_c.ANONYMOUS_IDS: anonymous_ids_count,
-        }
-        for week, known_ids_count, unique_hux_ids_count, anonymous_ids_count in zip(
-            weeks, known_ids, unique_hux_ids, anonymous_ids
-        )
-    ]
-
-
 def fill_empty_customer_events(
     start_date: datetime, end_date: datetime
 ) -> list:
@@ -755,7 +543,9 @@ def get_demographic_by_state(
     logger.info("Retrieving demographic insights by state.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
-        json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        json={api_c.AUDIENCE_FILTERS: filters}
+        if filters
+        else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
@@ -874,7 +664,9 @@ def get_city_ltvs(
     logger.info("Retrieving demographic insights by city.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
-        json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        json={api_c.AUDIENCE_FILTERS: filters}
+        if filters
+        else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
         params=dict(offset=offset, limit=limit),
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
