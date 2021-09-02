@@ -157,6 +157,7 @@ AWS_HEALTH_TESTS = {
     AWS_SSM_NAME: ["get_parameter", {"Name": "unifieddb_host_alias"}],
     AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
 }
+S3 = "s3"
 
 REQUIRED = "required"
 DELIVERY_SCHEDULE = "delivery_schedule"
@@ -943,5 +944,3 @@ PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB = {
     "after receiving an email.",
     MODEL_TYPE: "purchase",
 }
-
-S3 = "s3"
