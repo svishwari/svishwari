@@ -691,6 +691,7 @@ CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 CDP_DATA_SOURCE_IDS = "data_source_ids"
+CDP_DATA_SOURCE_TYPE = "datasource_type"
 
 # Monitoring
 METRICS = "metrics"
@@ -971,3 +972,6 @@ PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB = {
     "after receiving an email.",
     MODEL_TYPE: "purchase",
 }
+
+# Connections Data feeds Constants
+PROCESSED_AT = "processed_at"

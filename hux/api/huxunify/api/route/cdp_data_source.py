@@ -11,6 +11,7 @@ from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
+
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
@@ -19,11 +20,13 @@ from huxunifylib.database.cdp_data_source_management import (
     delete_data_source,
     update_data_sources,
 )
-from huxunify.api.schema.cdp_data_source import (
-    CdpDataSourceSchema,
-    CdpDataSourcePostSchema,
+
+from huxunify.api import constants as api_c
+from huxunify.api.data_connectors.cdp_connection import (
+    get_connections_data_feeds,
 )
-from huxunify.api.schema.errors import NotFoundError
+from huxunify.api.data_connectors.okta import get_token_from_request
+
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
@@ -32,8 +35,14 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.utils import (
     get_db_client,
 )
+
+from huxunify.api.schema.cdp_data_source import (
+    CdpDataSourceSchema,
+    CdpDataSourcePostSchema,
+    DataSourceDataFeedsGetSchema,
+)
+from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import AUTH401_RESPONSE
-from huxunify.api import constants as api_c
 
 # setup CDP data sources endpoint
 cdp_data_sources_bp = Blueprint(
@@ -442,3 +451,72 @@ class BatchUpdateDataSources(SwaggerView):
                 title=HTTPStatus.BAD_REQUEST.description,
                 detail="Unable to get CDP data sources.",
             ) from exc
+
+
+@add_view_to_blueprint(
+    cdp_data_sources_bp,
+    f"{api_c.CDP_DATA_SOURCES_ENDPOINT}/<{api_c.CDP_DATA_SOURCE_TYPE}>/{api_c.DATA_FEEDS}",
+    "GetConnectionsDatafeeds",
+)
+class GetConnectionsDatafeeds(SwaggerView):
+    """
+    Create new CDP data source class
+    """
+
+    parameters = [
+        {
+            "name": api_c.CDP_DATA_SOURCE_TYPE,
+            "in": "path",
+            "type": "string",
+            "description": "Data source type",
+            "example": db_c.CDP_DATA_SOURCE_BLUECORE,
+        }
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "CDP data source data feeds retrieved successfully.",
+            "schema": {
+                "type": "array",
+                "items": DataSourceDataFeedsGetSchema,
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve data source data feeds",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CDP_DATA_SOURCES_TAG]
+
+    @api_error_handler()
+    def get(self, datasource_type: str) -> Tuple[str, int]:
+        """Get data feeds for data source.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            datasource_type (str): Data source type
+
+        Returns:
+            Tuple[dict, int]: Connections data feeds get object, http code
+
+        """
+        token_response = get_token_from_request(request)
+
+        data_source = get_data_source(
+            get_db_client(), data_source_type=datasource_type
+        )
+
+        response = {
+            api_c.NAME: data_source[db_c.NAME],
+            api_c.TYPE: data_source[db_c.TYPE],
+            api_c.DATA_FEEDS: get_connections_data_feeds(
+                token_response[0], datasource_type
+            ),
+        }
+
+        return (
+            DataSourceDataFeedsGetSchema().dump(response),
+            HTTPStatus.OK,
+        )

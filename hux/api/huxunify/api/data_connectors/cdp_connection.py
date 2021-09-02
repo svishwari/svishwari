@@ -117,6 +117,56 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
     }
 
 
+def get_connections_data_feeds(token: str, data_source_type: str) -> list:
+    """
+    Get CDP Connections Data Feeds
+
+    Args:
+        token (str): OKTA JWT Token
+        data_source_type (str): type of data source
+
+    Returns:
+        list: list of connection data-feeds
+
+    """
+    config = get_config()
+
+    logger.info(
+        "Retrieving data-feeds for data source with type %s.", data_source_type
+    )
+
+    response = requests.get(
+        f"{config.CDP_CONNECTION_SERVICE}{api_c.CDM_CONNECTIONS_ENDPOINT}/"
+        f"{data_source_type}/data_feeds",
+        headers={api_c.CUSTOMERS_API_HEADER_KEY: token},
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve %s connections data feeds %s %s.",
+            data_source_type,
+            response.status_code,
+            response.text,
+        )
+        return []
+
+    logger.info(
+        "Successfully retrieved %s data feed details.", data_source_type
+    )
+
+    data_feeds = response.json()[api_c.BODY]
+
+    for data_feed in data_feeds:
+        data_feed[api_c.PROCESSED_AT] = parse(
+            data_feed.get(api_c.PROCESSED_AT)
+        )
+        data_feed["records_processed_percentage"] = data_feed.get(
+            "records_processed"
+        ) / data_feed.get("records_received", 1)
+        data_feed["thirty_days_avg"] = data_feed["thirty_days_avg"] / 100
+    return data_feeds
+
+
 def get_idr_matching_trends(
     token: str, start_date: str, end_date: str
 ) -> list:
