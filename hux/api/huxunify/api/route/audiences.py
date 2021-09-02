@@ -140,7 +140,9 @@ class AudienceDownload(SwaggerView):
             f"_{audience_id}_{download_type}.csv"
         )
 
-        with open(audience_file_name, "w", newline="") as csvfile:
+        with open(
+            audience_file_name, "w", newline="", encoding="utf-8"
+        ) as csvfile:
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow(api_c.DOWNLOAD_TYPES[download_type].values())
             for dataframe_batch in data_batches:

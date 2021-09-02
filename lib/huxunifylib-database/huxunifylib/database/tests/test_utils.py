@@ -557,7 +557,7 @@ class TestUtils(unittest.TestCase):
         dpm.set_campaign_activity(
             database=self.database,
             delivery_platform_id=ObjectId(),
-            delivery_platform_name=c.DELIVERY_PLATFORM_FACEBOOK,
+            delivery_platform_type=c.DELIVERY_PLATFORM_FACEBOOK,
             delivery_job_id=delivery_job_doc[c.ID],
             event_details=event_details,
             generic_campaigns=self.individual_generic_campaigns[0],

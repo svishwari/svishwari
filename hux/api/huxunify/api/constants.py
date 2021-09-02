@@ -223,6 +223,12 @@ SFMC_CUSTOMER_KEY = "CustomerKey"
 # Twilio connector defines
 TWILIO_AUTH_TOKEN = "twilio_auth_token"
 
+# Qualtrics connector defines
+QUALTRICS_API_TOKEN = "qualtrics_api_token"
+QUALTRICS_DATA_CENTER = "qualtrics_data_center"
+QUALTRICS_OWNER_ID = "qualtrics_owner_id"
+QUALTRICS_DIRECTORY_ID = "qualtrics_directory_id"
+
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
 
@@ -299,6 +305,32 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
+    db_c.DELIVERY_PLATFORM_QUALTRICS: {
+        QUALTRICS_API_TOKEN: {
+            NAME: "Auth Token",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        QUALTRICS_DATA_CENTER: {
+            NAME: "Data Center",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        QUALTRICS_OWNER_ID: {
+            NAME: "Owner ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        QUALTRICS_DIRECTORY_ID: {
+            NAME: "Directory ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+    },
 }
 
 # DESTINATION Secret Mapping
@@ -324,6 +356,14 @@ DESTINATION_SECRETS = {
     db_c.DELIVERY_PLATFORM_TWILIO: {
         MONGO: [],
         AWS_SSM_NAME: [TWILIO_AUTH_TOKEN],
+    },
+    db_c.DELIVERY_PLATFORM_QUALTRICS: {
+        MONGO: [
+            QUALTRICS_DIRECTORY_ID,
+            QUALTRICS_DATA_CENTER,
+            QUALTRICS_OWNER_ID,
+        ],
+        AWS_SSM_NAME: [QUALTRICS_API_TOKEN],
     },
 }
 
@@ -705,7 +745,7 @@ DIGITAL_IDS_ADDED = "digital_ids_added"
 DIGITAL_IDS_MERGED = "digital_ids_merged"
 MERGE_RATE = "merge_rate"
 RECORDS_SOURCE = "records_source"
-TIME_STAMP = "time_stamp"
+TIMESTAMP = "timestamp"
 STITCHED = "stitched"
 PINNING = "pinning"
 
@@ -730,11 +770,13 @@ ANONYMOUS_IDS_LAMBDA = 5
 
 # IDR Data feeds
 DATAFEED_ID = "datafeed_id"
-DATAFEED_NAME = "datafeed_name"
-DATAFEED_DATA_SOURCE = "data_source_type"
+DATAFEED_DATA_SOURCE_TYPE = "datasource_name"
+DATAFEED_DATA_SOURCE_NAME = "datasource_label"
 DATAFEED_NEW_IDS_COUNT = "new_ids_generated"
-DATAFEED_RECORDS_PROCESSED_COUNT = "num_records_processed"
-DATAFEED_LAST_RUN_DATE = "last_run"
+DATAFEED_RECORDS_PROCESSED_COUNT = "total_rec_processed"
+DATAFEED_LAST_RUN_DATE = "timestamp"
+PINNING_TIMESTAMP = "pinning_timestamp"
+STITCHED_TIMESTAMP = "stitched_timestamp"
 
 # customer event fields
 CUSTOMER_TOTAL_DAILY_EVENT_COUNT = "total_event_count"
@@ -846,6 +888,11 @@ DOWNLOAD_TYPES = {
         # db_c.S_TYPE_ADDRESS: "address"
     },
 }
+
+# CDM API constants
+CDM_CONNECTIONS_ENDPOINT = "connections"
+CDM_IDENTITY_ENDPOINT = "identity"
+CDM_DATAFEEDS = "datafeeds"
 
 PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
     {
