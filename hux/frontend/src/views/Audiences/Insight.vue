@@ -18,7 +18,7 @@
           class="icon-border pa-2 ma-1"
           @click="
             $router.push({
-              name: 'AudienceUpdateConfiguration',
+              name: 'AudienceUpdate',
               params: { id: audienceId },
             })
           "

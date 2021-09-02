@@ -91,7 +91,7 @@ const routes = [
   },
   {
     path: "/audiences/:id/update",
-    name: "AudienceUpdateConfiguration",
+    name: "AudienceUpdate",
     component: () => import("@/views/Audiences/Configuration.vue"),
     meta: {
       layout: "app",

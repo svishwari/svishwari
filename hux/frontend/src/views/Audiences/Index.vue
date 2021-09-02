@@ -355,7 +355,7 @@ export default {
     },
     editAudience(id) {
       this.$router.push({
-        name: "AudienceUpdateConfiguration",
+        name: "AudienceUpdate",
         params: { id: id },
       })
     },
