@@ -6,8 +6,8 @@ dayjs.extend(utc)
 describe("Filters", () => {
   describe("Date filter", () => {
     it("for empty and invalid values", () => {
-      expect(filters.Date()).toEqual("")
-      expect(filters.Date("something invalid")).toEqual("Invalid Date")
+      expect(filters.Date()).toEqual(null)
+      expect(filters.Date("something invalid")).toEqual(null)
     })
 
     it("for format set to relative", () => {
