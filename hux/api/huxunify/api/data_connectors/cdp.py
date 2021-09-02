@@ -927,18 +927,18 @@ def get_spending_by_gender(
 
 
 def add_missing_customer_count_by_day(
-    response_body: list, date_filters: dict
-) -> list:
+    response_body: list[dict], date_filters: dict
+) -> list[dict]:
     """
     Add customer data for missing dates
 
     Args:
-        response_body (list): list of customer count data
+        response_body (list[dict]): list of customer count data
         date_filters (dict): start_date and end_date for which customer
             data is being fetched
 
     Returns:
-        customer_data_by_day (list): customer count data
+        customer_data_by_day (list[dict]): customer count data
             for all days within start_date and end_date
 
     """
@@ -961,7 +961,7 @@ def add_missing_customer_count_by_day(
                     api_c.RECORDED: current_date,
                     api_c.TOTAL_COUNT: response_body[0].get(api_c.TOTAL_COUNT)
                     - response_body[0].get(api_c.DIFFERENCE_COUNT)
-                    if len(response_body)
+                    if response_body
                     else customer_data_by_day[-1][api_c.TOTAL_COUNT],
                 }
             )
