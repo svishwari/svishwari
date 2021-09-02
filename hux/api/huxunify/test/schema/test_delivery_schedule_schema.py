@@ -25,18 +25,18 @@ class DeliveryScheduleSchemaTest(TestCase):
         """
 
         doc = {
-            "periodicity": "Daily",
-            "every": 2,
-            "hour": 11,
-            "minute": 15,
-            "period": "PM",
+            api_c.PERIODICIY: "Daily",
+            api_c.EVERY: 2,
+            api_c.HOUR: 11,
+            api_c.MINUTE: 15,
+            api_c.PERIOD: "PM",
         }
 
         daily_schedule = DeliveryScheduleDailySchema().load(doc)
         _ = [
             self.assertIn(type(x), [int, str]) for x in daily_schedule.values()
         ]
-        self.assertEqual(daily_schedule["periodicity"], api_c.DAILY)
+        self.assertEqual(daily_schedule[api_c.PERIODICIY], api_c.DAILY)
         self.assertFalse(DeliveryScheduleDailySchema().validate(doc))
 
     def test_weekly_schema(self) -> None:
@@ -49,12 +49,12 @@ class DeliveryScheduleSchemaTest(TestCase):
         """
 
         doc = {
-            "periodicity": "Weekly",
-            "every": 2,
-            "hour": 11,
-            "minute": 15,
-            "period": "PM",
-            "day_of_week": ["MON", "TUE"],
+            api_c.PERIODICIY: "Weekly",
+            api_c.EVERY: 2,
+            api_c.HOUR: 11,
+            api_c.MINUTE: 15,
+            api_c.PERIOD: "PM",
+            api_c.DAY_OF_WEEK: ["MON", "TUE"],
         }
 
         weekly_schedule = DeliveryScheduleWeeklySchema().load(doc)
@@ -62,7 +62,7 @@ class DeliveryScheduleSchemaTest(TestCase):
             self.assertIn(type(x), [int, str, list])
             for x in weekly_schedule.values()
         ]
-        self.assertEqual(weekly_schedule["periodicity"], api_c.WEEKLY)
+        self.assertEqual(weekly_schedule[api_c.PERIODICIY], api_c.WEEKLY)
         self.assertFalse(DeliveryScheduleWeeklySchema().validate(doc))
 
     def test_monthly_schema(self) -> None:
@@ -75,13 +75,13 @@ class DeliveryScheduleSchemaTest(TestCase):
         """
 
         doc = {
-            "periodicity": "Monthly",
-            "every": 12,
-            "hour": 11,
-            "minute": 15,
-            "period": "PM",
-            "monthly_period_items": ["Day"],
-            "day_of_month": ["1"],
+            api_c.PERIODICIY: "Monthly",
+            api_c.EVERY: 12,
+            api_c.HOUR: 11,
+            api_c.MINUTE: 15,
+            api_c.PERIOD: "PM",
+            api_c.MONTHLY_PERIOD_ITEMS: ["Day"],
+            api_c.DAY_OF_MONTH: ["1"],
         }
 
         monthly_schedule = DeliveryScheduleMonthlySchema().load(doc)
@@ -89,5 +89,5 @@ class DeliveryScheduleSchemaTest(TestCase):
             self.assertIn(type(x), [int, str, list])
             for x in monthly_schedule.values()
         ]
-        self.assertEqual(monthly_schedule["periodicity"], api_c.MONTHLY)
+        self.assertEqual(monthly_schedule[api_c.PERIODICIY], api_c.MONTHLY)
         self.assertFalse(DeliveryScheduleMonthlySchema().validate(doc))
