@@ -992,7 +992,7 @@ class DeleteAudienceView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     def delete(self, audience_id: str) -> Tuple[dict, int]:
-        """Sets lookalike audience
+        """Deletes lookalike audience
 
         ---
         security:
@@ -1002,7 +1002,7 @@ class DeleteAudienceView(SwaggerView):
             audience_id (str): ID of the audience to be deleted.
 
         Returns:
-            Tuple[dict, int]: response dict, HTTP status.
+            Tuple[dict, int]: response dict, HTTP status code.
 
         """
 
