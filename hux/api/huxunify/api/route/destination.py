@@ -18,11 +18,13 @@ from huxunifylib.util.general.const import (
     FacebookCredentials,
     SFMCCredentials,
     TwilioCredentials,
+    QualtricsCredentials,
 )
 from huxunifylib.connectors import (
     FacebookConnector,
     SFMCConnector,
     TwilioConnector,
+    QualtricsConnector,
     AudienceAlreadyExists,
 )
 from huxunify.api.data_connectors.aws import (
@@ -39,15 +41,18 @@ from huxunify.api.schema.destinations import (
     SFMCAuthCredsSchema,
     FacebookAuthCredsSchema,
     TwilioAuthCredsSchema,
+    QualtricsAuthCredsSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
-from huxunify.api.route.utils import (
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
-    get_db_client,
     secured,
-    get_user_name,
     api_error_handler,
     validate_destination,
+    get_user_name,
+)
+from huxunify.api.route.utils import (
+    get_db_client,
 )
 import huxunify.api.constants as api_c
 
@@ -310,6 +315,11 @@ class DestinationPutView(SwaggerView):
             == db_c.DELIVERY_PLATFORM_TWILIO
         ):
             TwilioAuthCredsSchema().load(auth_details)
+        elif (
+            destination[db_c.DELIVERY_PLATFORM_TYPE]
+            == db_c.DELIVERY_PLATFORM_QUALTRICS
+        ):
+            QualtricsAuthCredsSchema().load(auth_details)
 
         if auth_details:
             # store the secrets for the updated authentication details
@@ -505,6 +515,36 @@ class DestinationValidatePostView(SwaggerView):
             return {
                 "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
             }, HTTPStatus.OK
+        elif (
+            body.get(api_c.DESTINATION_TYPE)
+            == db_c.DELIVERY_PLATFORM_QUALTRICS
+        ):
+            qualtrics_connector = QualtricsConnector(
+                auth_details={
+                    QualtricsCredentials.QUALTRICS_API_TOKEN.value: body.get(
+                        api_c.AUTHENTICATION_DETAILS
+                    ).get(api_c.QUALTRICS_API_TOKEN),
+                    QualtricsCredentials.QUALTRICS_DATA_CENTER.value: body.get(
+                        api_c.AUTHENTICATION_DETAILS
+                    ).get(api_c.QUALTRICS_DATA_CENTER),
+                    QualtricsCredentials.QUALTRICS_OWNER_ID.value: body.get(
+                        api_c.AUTHENTICATION_DETAILS
+                    ).get(api_c.QUALTRICS_OWNER_ID),
+                    QualtricsCredentials.QUALTRICS_DIRECTORY_ID.value: body.get(
+                        api_c.AUTHENTICATION_DETAILS
+                    ).get(
+                        api_c.QUALTRICS_DIRECTORY_ID
+                    ),
+                }
+            )
+            if qualtrics_connector.check_connection():
+                logger.info("Qualtrics destination validated successfully.")
+                return {
+                    "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
+                }, HTTPStatus.OK
+
+            logger.error("Could not validate Qualtrics successfully.")
+
         else:
             logger.error(
                 "Destination type %s not supported yet.", body.get(db_c.TYPE)

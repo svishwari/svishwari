@@ -79,6 +79,7 @@
           </td>
         </template>
       </hux-data-table>
+      <v-progress-linear v-if="enableLazyLoad" active indeterminate />
       <observer v-if="customers.length" @intersect="intersected"></observer>
     </template>
     <template #footer-left>
@@ -125,6 +126,7 @@ export default {
   data() {
     return {
       loading: true,
+      enableLazyLoad: false,
       localDrawer: this.value,
       batchCount: 1,
       columnDefs: [
@@ -182,9 +184,11 @@ export default {
       await this.fetchCustomerByBatch()
       this.calculateLastBatch()
       this.loading = false
+      this.enableLazyLoad = true
     } else {
       this.batchDetails.batchNumber = 1
       this.batchDetails.isLazyLoad = false
+      this.enableLazyLoad = false
     }
   },
 
@@ -200,6 +204,8 @@ export default {
       if (this.batchDetails.batchNumber <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
         this.fetchCustomerByBatch()
+      } else {
+        this.enableLazyLoad = false
       }
     },
     calculateLastBatch() {

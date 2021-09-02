@@ -33,6 +33,10 @@ class TestUtils(unittest.TestCase):
             {"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}
         ]
 
+        self.individual_generic_campaigns = [
+            {"engagement_id": "engage_id_1", "audience_id": "audience_id_1"}
+        ]
+
         # Create data sources
         self.data_source_doc_1 = dm.set_data_source(
             database=self.database,
@@ -507,6 +511,80 @@ class TestUtils(unittest.TestCase):
         self.assertTrue(success_flag)
         try:
             check_doc = dpm.get_performance_metrics(
+                database=self.database,
+                delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+            )
+        except db_exceptions.InvalidID:
+            check_doc = None
+        self.assertIsNone(check_doc)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_delete_campaign_activity_by_delivery_job_id(self):
+        """Test hard deletion of campaign activity and it's delivery job"""
+        # set delivery platform connection status
+        auth_details = {
+            "facebook_access_token": "path1",
+            "facebook_app_secret": "path2",
+            "facebook_app_id": "path3",
+            "facebook_ad_account_id": "path4",
+        }
+
+        delivery_platform_doc = dpm.set_delivery_platform(
+            self.database,
+            c.DELIVERY_PLATFORM_FACEBOOK,
+            "My delivery platform",
+            auth_details,
+        )
+        delivery_platform_id = delivery_platform_doc[c.ID]
+        self.assertIsNotNone(delivery_platform_id)
+        dpm.set_connection_status(
+            self.database, delivery_platform_id, c.STATUS_SUCCEEDED
+        )
+
+        # Create a delivery job
+        delivery_job_doc = dpm.set_delivery_job(
+            database=self.database,
+            audience_id=ObjectId("5dff99c10345af022f219bbf"),
+            delivery_platform_id=delivery_platform_id,
+            delivery_platform_generic_campaigns=self.generic_campaigns,
+        )
+
+        event_details = {
+            "event": "sent",
+            "event_date": "2021-06-17T12:21:27.970Z",
+        }
+        # set synthetic campaign activity
+        dpm.set_campaign_activity(
+            database=self.database,
+            delivery_platform_id=ObjectId(),
+            delivery_platform_type=c.DELIVERY_PLATFORM_FACEBOOK,
+            delivery_job_id=delivery_job_doc[c.ID],
+            event_details=event_details,
+            generic_campaigns=self.individual_generic_campaigns[0],
+        )
+
+        success_flag = delete_util.delete_delivery_job(
+            database=self.database,
+            delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+            hard_delete=True,
+        )
+        self.assertTrue(success_flag)
+        try:
+            check_doc = dpm.get_delivery_job(
+                database=self.database,
+                delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+            )
+        except db_exceptions.InvalidID:
+            check_doc = None
+        self.assertIsNone(check_doc)
+
+        success_flag = delete_util.delete_campaign_activity_by_delivery_job_id(
+            database=self.database,
+            delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+        )
+        self.assertTrue(success_flag)
+        try:
+            check_doc = dpm.get_campaign_activity(
                 database=self.database,
                 delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
             )

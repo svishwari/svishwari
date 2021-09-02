@@ -2,8 +2,6 @@
 """
 Schemas for the Customers API
 """
-from datetime import datetime
-
 from flask_marshmallow import Schema
 from marshmallow.fields import (
     Str,
@@ -144,13 +142,24 @@ class DataFeedSchema(Schema):
     Customer Datafeed Schema
     """
 
-    datafeed_id = Str(example="60e879d270815aade4d6c4fb")
-    datafeed_name = Str(example="Really_long_Feed_Name_106")
-    data_source_type = Str(example=db_c.DELIVERY_PLATFORM_SFMC)
+    datafeed_id = Integer(attribute=api_c.ID, example=1)
+    datafeed_name = Str(
+        attribute=api_c.NAME, example="Really_long_Feed_Name_106"
+    )
+    data_source_name = Str(
+        attribute=api_c.DATAFEED_DATA_SOURCE_NAME,
+        example=db_c.CDP_DATA_SOURCE_BLUECORE.title(),
+    )
     new_ids_generated = Integer(example=21)
-    num_records_processed = Integer(example=2000000)
+    total_records_processed = Integer(
+        attribute=api_c.DATAFEED_RECORDS_PROCESSED_COUNT, example=2000000
+    )
     match_rate = Float(example=0.98)
-    last_run = DateTimeWithZ()
+    last_run = DateTimeWithZ(attribute=api_c.TIMESTAMP)
+    data_source_type = Str(
+        attribute=api_c.DATAFEED_DATA_SOURCE_TYPE,
+        example="test_data_source_type",
+    )
 
 
 class DataFeedPinning(Schema):
@@ -171,7 +180,9 @@ class DataFeedPinning(Schema):
     new_company_ids = Integer(required=True, example=1)
     new_address_ids = Integer(required=True, example=1)
     process_time = Float(required=True, example=6.43)
-    date_time = DateTimeWithZ(required=True, example=datetime.now())
+    pinning_timestamp = DateTimeWithZ(
+        required=True, example="2021-08-05T14:44:42.694Z"
+    )
 
 
 class DataFeedStitched(Schema):
@@ -182,7 +193,9 @@ class DataFeedStitched(Schema):
     match_rate = Float(required=True, example=0.6606)
     merge_rate = Float(required=True, example=0.0)
     records_source = Str(required=True, example="Input Waterfall")
-    time_stamp = DateTimeWithZ(required=True, example=datetime.now())
+    stitched_timestamp = DateTimeWithZ(
+        required=True, example="2021-08-05T14:44:42.694Z"
+    )
 
 
 class DataFeedDetailsSchema(Schema):

@@ -38,6 +38,12 @@ client["customers"].geoCities = (batchNumber, batchSize, data) => {
   )
 }
 
+client["customers"].demographics = (data) => {
+  return http.get(
+    `/customers-insights/demo?start_date=${data.start_date}&end_date=${data.end_date}`
+  )
+}
+
 client["customers"].geoCountries = (data) => {
   return http.post("/customers-insights/countries", data)
 }
@@ -185,6 +191,13 @@ client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
 }
 
+client["audiences"].demographics = (data) => {
+  // TODO: replace with audienceId specific endpoint once available
+  return http.get(
+    `/customers-insights/demo?start_date=${data.start_date}&end_date=${data.end_date}`
+  )
+}
+
 client["audiences"].deliver = (resourceId, data) => {
   return http.post(`/audiences/${resourceId}/deliver`, data)
 }
@@ -225,5 +238,11 @@ client["models"].drift = (id, data) => {
 client["models"].modelFeatures = (id) => {
   return http.get(`/models/${id}/features`)
 }
+
+//#region Data sources
+client.dataSources.dataFeeds = (type) => {
+  return http.get(`/data-sources/${type}/data-feeds`)
+}
+//#endregion
 
 export default client
