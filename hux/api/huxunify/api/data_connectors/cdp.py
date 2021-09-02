@@ -944,7 +944,7 @@ def add_missing_customer_count_by_day(
     start_date = datetime.strptime(date_filters[api_c.START_DATE], "%Y-%m-%d")
     end_date = datetime.strptime(date_filters[api_c.END_DATE], "%Y-%m-%d")
 
-    for num_day in range(int((end_date - start_date).days)):
+    for num_day in range(int((end_date - start_date).days) + 1):
         current_date = start_date + relativedelta(days=num_day)
 
         if response_body and current_date == response_body[0].get(

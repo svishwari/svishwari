@@ -187,7 +187,7 @@ class CDPTest(TestCase):
                     datetime.strftime(
                         start_date + relativedelta(days=n), "%Y-%m-%d"
                     )
-                    for n in range(int((end_date - start_date).days))
+                    for n in range(int((end_date - start_date).days) + 1)
                 ],
             )
 
