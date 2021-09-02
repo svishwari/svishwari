@@ -32,7 +32,7 @@ def check_cdp_connections_api_connection() -> Tuple[Union[int, bool], str]:
         logger.error(
             "CDP Connections Health Check failed with %s.", repr(exception)
         )
-        return response.status_code, getattr(
+        return False, getattr(
             exception, "message", repr(exception)
         )
 
