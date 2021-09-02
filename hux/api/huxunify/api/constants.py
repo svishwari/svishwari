@@ -95,20 +95,6 @@ AM = "AM"
 PM = "PM"
 MONTHLY_PERIOD_LIST = ["Day", "First", "Second", "Third", "Fourth", "Last"]
 DAY_LIST = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
-MONTH_LIST = [
-    "JAN",
-    "FEB",
-    "MAR",
-    "APR",
-    "MAY",
-    "JUN",
-    "JUL",
-    "AUG",
-    "SEP",
-    "OCT",
-    "NOV",
-    "DEC",
-]
 DAY_OF_MONTH_LIST = [str(x) for x in range(1, 31)] + [
     "Day",
     "Weekend",

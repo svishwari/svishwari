@@ -30,9 +30,6 @@ class DeliveryScheduleSchemaTest(TestCase):
             "hour": 11,
             "minute": 15,
             "period": "PM",
-            "day_of_month": "*",
-            "month": "*",
-            "day_of_week": "*",
         }
 
         daily_schedule = DeliveryScheduleDailySchema().load(doc)
@@ -57,8 +54,6 @@ class DeliveryScheduleSchemaTest(TestCase):
             "hour": 11,
             "minute": 15,
             "period": "PM",
-            "day_of_month": "*",
-            "month": "*",
             "day_of_week": ["MON", "TUE"],
         }
 
@@ -87,7 +82,6 @@ class DeliveryScheduleSchemaTest(TestCase):
             "period": "PM",
             "monthly_period_items": ["Day"],
             "day_of_month": ["1"],
-            "day_of_week": ["MON", "TUE"],
         }
 
         monthly_schedule = DeliveryScheduleMonthlySchema().load(doc)
