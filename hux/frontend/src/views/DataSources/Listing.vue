@@ -33,7 +33,13 @@
                 column.value === 'records_processed_percentage' ||
                 column.value === 'thirty_days_avg'
               "
-              class="neroBlack--text text-h6"
+              class="text-h6"
+              :class="
+                column.value === 'records_processed_percentage' &&
+                item[column.value] < 0.5
+                  ? 'red--text'
+                  : 'neroBlack--text'
+              "
             >
               {{ item[column.value] | Percentage }}
             </div>
