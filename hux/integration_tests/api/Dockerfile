@@ -15,9 +15,6 @@ RUN pip install pytest
 RUN pip install tavern
 RUN pip install python-box
 
-# set the working directory again
-#WORKDIR /app/hux-unified/api
-
 # run the pytests application
 # append hux-unified integration_tests api path to python path
 ENV PYTHONPATH "${PYTHONPATH}:/app/hux-unified/integration_tests/api"
