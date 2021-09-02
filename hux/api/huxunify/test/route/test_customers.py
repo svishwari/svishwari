@@ -303,6 +303,9 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(
             {}, DataFeedSchema().validate(response.json, many=True)
         )
+        for datafeed in response.json:
+            self.assertIn("num_records_processed", datafeed)
+            self.assertIn("new_ids_generated", datafeed)
 
     def test_get_idr_data_feed_details(self) -> None:
         """
