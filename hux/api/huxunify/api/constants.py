@@ -975,3 +975,5 @@ PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB = {
 
 # Connections Data feeds Constants
 PROCESSED_AT = "processed_at"
+
+DEFAULT_DATE_FORMAT = "%Y-%m-%d"
