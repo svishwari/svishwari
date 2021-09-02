@@ -1,6 +1,4 @@
-"""
-Purpose of this file is for holding methods to query and pull data from CDP.
-"""
+"""Purpose of this file is for holding methods to query and pull data from CDP."""
 import random
 import time
 import asyncio
@@ -27,7 +25,10 @@ DATETIME_FIELDS = [
     "last_purchase",
     "last_email_open",
     "updated",
-    "day",
+    api_c.DAY,
+    api_c.PINNING_TIMESTAMP,
+    api_c.STITCHED_TIMESTAMP,
+    api_c.TIMESTAMP,
 ]
 
 
@@ -651,7 +652,9 @@ def get_demographic_by_state(
     logger.info("Retrieving demographic insights by state.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
-        json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        json={api_c.AUDIENCE_FILTERS: filters}
+        if filters
+        else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
@@ -770,7 +773,9 @@ def get_city_ltvs(
     logger.info("Retrieving demographic insights by city.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
-        json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        json={api_c.AUDIENCE_FILTERS: filters}
+        if filters
+        else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
         params=dict(offset=offset, limit=limit),
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,

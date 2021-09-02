@@ -10,9 +10,12 @@
         <div v-if="item.icon" class="d-flex pr-2">
           <icon :type="item.icon" :size="24" color="neroBlack" />
         </div>
-        <span :class="{ 'neroBlack--text': item.disabled, 'pl-1': true }">{{
-          item.text
-        }}</span>
+        <div v-if="item.logo" class="d-flex pr-2">
+          <logo :type="item.logo" :size="24" />
+        </div>
+        <span :class="{ 'neroBlack--text': item.disabled, 'pl-1': true }">
+          {{ item.text }}
+        </span>
       </v-breadcrumbs-item>
     </template>
     <template #divider>
@@ -23,10 +26,11 @@
 
 <script>
 import Icon from "@/components/common/Icon"
+import Logo from "@/components/common/Logo"
 export default {
   name: "Breadcrumb",
 
-  components: { Icon },
+  components: { Icon, Logo },
 
   props: {
     items: {
