@@ -42,7 +42,6 @@ from huxunify.api.data_connectors.cdp import (
     get_customer_profile,
     get_customers_overview,
     get_idr_overview,
-    get_idr_matching_trends,
     get_customer_events_data,
     get_demographic_by_state,
     get_spending_by_cities,
@@ -53,6 +52,7 @@ from huxunify.api.data_connectors.cdp import (
 from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feeds,
     get_idr_data_feed_details,
+    get_idr_matching_trends,
 )
 from huxunify.api.route.utils import add_chart_legend
 from huxunify.api.schema.utils import redact_fields, AUTH401_RESPONSE
@@ -470,13 +470,27 @@ class IDRDataFeeds(SwaggerView):
         """
         token_response = get_token_from_request(request)
 
+        start_date = request.args.get(
+            api_c.START_DATE,
+            datetime.strftime(
+                datetime.utcnow().date() - relativedelta(months=6),
+                api_c.DEFAULT_DATE_FORMAT,
+            ),
+        )
+        end_date = request.args.get(
+            api_c.END_DATE,
+            datetime.strftime(
+                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
+            ),
+        )
+
         return (
             jsonify(
                 DataFeedSchema().dump(
                     get_idr_data_feeds(
                         token_response[0],
-                        request.args.get(api_c.START_DATE),
-                        request.args.get(api_c.END_DATE),
+                        start_date,
+                        end_date,
                     ),
                     many=True,
                 )
@@ -873,11 +887,15 @@ class TotalCustomersGraphView(SwaggerView):
         token_response = get_token_from_request(request)
 
         # create a dict for date_filters required by cdp endpoint
-        last_date = datetime.today() - relativedelta(months=6)
-        today = datetime.today()
+        last_date = datetime.utcnow().date() - relativedelta(months=6)
+        today = datetime.utcnow().date()
         date_filters = {
-            api_c.START_DATE: datetime.strftime(last_date, "%Y-%m-%d"),
-            api_c.END_DATE: datetime.strftime(today, "%Y-%m-%d"),
+            api_c.START_DATE: datetime.strftime(
+                last_date, api_c.DEFAULT_DATE_FORMAT
+            ),
+            api_c.END_DATE: datetime.strftime(
+                today, api_c.DEFAULT_DATE_FORMAT
+            ),
         }
 
         customers_insight_total = get_customers_insights_count_by_day(

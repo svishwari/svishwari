@@ -2,9 +2,7 @@
 import random
 import time
 import asyncio
-import math
 from typing import Tuple, Optional, List
-from random import randint
 from datetime import datetime, timedelta
 
 import requests
@@ -12,6 +10,7 @@ import aiohttp
 import async_timeout
 from bson import ObjectId
 from dateutil.parser import parse, ParserError
+from dateutil.relativedelta import relativedelta
 
 from huxunifylib.database import constants as db_c
 from huxunifylib.util.general.logging import logger
@@ -27,6 +26,7 @@ DATETIME_FIELDS = [
     "last_purchase",
     "last_email_open",
     "updated",
+    api_c.DAY,
     api_c.PINNING_TIMESTAMP,
     api_c.STITCHED_TIMESTAMP,
     api_c.TIMESTAMP,
@@ -339,160 +339,6 @@ async def get_async_customers(
                 return {"code": 500}, str(audience_id)
 
 
-def generate_idr_matching_trends_distribution(
-    number_of_points: int,
-    min_point: int = 5,
-    max_point: int = 9,
-    lambda_: float = 0.5,
-    multiplier: int = 1,
-):
-    """Generates normalized exponential data with randomness
-    Args:
-        number_of_points (int): Number of points to generate
-        min_point (int): Maximum value in data.
-        max_point (int): Minimum value in data.
-        lambda_ (float): Value to control rise of exponent
-        multiplier (int): 1 represent increasing exponential data, -1 for decreasing
-    Returns:
-        list: Generated exponential data
-
-    """
-    # TODO: Remove after CDM API for IDR matching trends is available
-
-    data = [
-        multiplier * math.e ** (x * lambda_ / number_of_points)
-        for x in range(0, number_of_points)
-    ]
-    return add_randomness(
-        normalize_values(
-            data, max_range_val=max_point, min_range_val=min_point
-        )
-    )
-
-
-def normalize_values(
-    values: list, max_range_val: int = 1, min_range_val: int = 0
-):
-    """Normalizes values in a list to be in the given range
-    Args:
-        values (list): Values to be normalized.
-        max_range_val (int): Maximum value in range.
-        min_range_val (int): Minimum value in range.
-
-    Returns:
-        list: Normalized values.
-    """
-    # TODO: Remove after CDM API for IDR matching trends is available
-
-    min_val = min(values)
-    max_val = max(values)
-    return [
-        int(
-            ((x - min_val) / (max_val - min_val))
-            * (max_range_val - min_range_val)
-        )
-        + min_range_val
-        for x in values
-    ]
-
-
-def add_randomness(values: list, variation_percentage: float = 0.005):
-    """Adds random numbers to a list of values
-    Args:
-        values (list): List of values which needs randomness
-        variation_percentage (float): Variation percentage which is added or subtracted from a value
-    Returns:
-        list: Values with randomness
-    """
-    # TODO: Remove after CDM API for IDR matching trends is available
-
-    return [
-        val
-        + randint(
-            -int(variation_percentage * val), int(variation_percentage * val)
-        )
-        for val in values
-    ]
-
-
-def get_idr_matching_trends(
-    token: str, start_date: str, end_date: str
-) -> list:
-    """Retrieves IDR matching trends data YTD
-    Args:
-        token (str): OKTA JWT Token.
-        start_date (str): Start date.
-        end_date (str): End date.
-    Returns:
-       list: count of known, anonymous, unique ids on a day.
-    """
-    # TODO: Update after CDM API for IDR matching trends is available. Fetch date range from CDM.
-
-    # call customer-profile insights to get id counts
-    customer_profile_info = get_customers_overview(token)
-    known_ids_count = customer_profile_info.get(
-        api_c.TOTAL_KNOWN_IDS, api_c.KNOWN_IDS_MAX_COUNT
-    )
-
-    unique_ids_count = customer_profile_info.get(
-        api_c.TOTAL_UNIQUE_IDS, api_c.UNIQUE_HUX_IDS_MAX_COUNT
-    )
-
-    unknown_ids_count = customer_profile_info.get(
-        api_c.TOTAL_UNKNOWN_IDS, api_c.ANONYMOUS_IDS_MIN_COUNT
-    )
-
-    # TODO : Fetch date range from CDP
-    start_date = (
-        datetime.strptime(start_date, "%m-%d-%Y")
-        if start_date
-        else datetime.today() - timedelta(days=random.randint(100, 1000))
-    )
-    end_date = (
-        datetime.strptime(end_date, "%m-%d-%Y")
-        if end_date
-        else datetime.today()
-    )
-    weeks = []
-    while start_date < end_date:
-        weeks.append(start_date)
-        start_date += timedelta(days=7)
-
-    known_ids = generate_idr_matching_trends_distribution(
-        len(weeks),
-        min_point=known_ids_count - (0.35 * known_ids_count),
-        max_point=known_ids_count,
-        lambda_=api_c.KNOWN_IDS_LAMBDA,
-    )
-
-    unique_hux_ids = generate_idr_matching_trends_distribution(
-        len(weeks),
-        min_point=unique_ids_count - (0.35 * known_ids_count),
-        max_point=unique_ids_count,
-        lambda_=api_c.UNIQUE_HUX_IDS_LAMBDA,
-    )
-    # setting multiplier to -1 to get exponentially decreasing values
-    anonymous_ids = generate_idr_matching_trends_distribution(
-        len(weeks),
-        min_point=unknown_ids_count,
-        max_point=unknown_ids_count + (0.35 * unknown_ids_count),
-        lambda_=api_c.ANONYMOUS_IDS_LAMBDA,
-        multiplier=-1,
-    )
-
-    return [
-        {
-            api_c.DATE: week,
-            api_c.KNOWN_IDS: known_ids_count,
-            api_c.UNIQUE_HUX_IDS: unique_hux_ids_count,
-            api_c.ANONYMOUS_IDS: anonymous_ids_count,
-        }
-        for week, known_ids_count, unique_hux_ids_count, anonymous_ids_count in zip(
-            weeks, known_ids, unique_hux_ids, anonymous_ids
-        )
-    ]
-
-
 def fill_empty_customer_events(
     start_date: datetime, end_date: datetime
 ) -> list:
@@ -791,7 +637,7 @@ def get_customers_insights_count_by_day(
         except (ParserError, TypeError):
             record[api_c.RECORDED] = None
 
-    return response_body
+    return add_missing_customer_count_by_day(response_body, date_filters)
 
 
 def get_city_ltvs(
@@ -923,3 +769,50 @@ def get_spending_by_gender(
         clean_cdm_fields(response.json()[api_c.BODY]),
         key=lambda x: (x[api_c.YEAR], x[api_c.MONTH]),
     )
+
+
+def add_missing_customer_count_by_day(
+    response_body: list, date_filters: dict
+) -> list:
+    """
+    Add customer data for missing dates
+
+    Args:
+        response_body (list): list of customer count data
+        date_filters (dict): start_date and end_date for which customer
+            data is being fetched
+
+    Returns:
+        customer_data_by_day (list): customer count data
+            for all days within start_date and end_date
+
+    """
+
+    customer_data_by_day = []
+
+    start_date = datetime.strptime(
+        date_filters[api_c.START_DATE], api_c.DEFAULT_DATE_FORMAT
+    )
+    end_date = datetime.strptime(
+        date_filters[api_c.END_DATE], api_c.DEFAULT_DATE_FORMAT
+    )
+
+    for num_day in range(int((end_date - start_date).days) + 1):
+        current_date = start_date + relativedelta(days=num_day)
+
+        if response_body and current_date == response_body[0].get(
+            api_c.RECORDED
+        ):
+            customer_data_by_day.append(response_body.pop(0))
+        else:
+            customer_data_by_day.append(
+                {
+                    api_c.RECORDED: current_date,
+                    api_c.TOTAL_COUNT: response_body[0].get(api_c.TOTAL_COUNT)
+                    - response_body[0].get(api_c.DIFFERENCE_COUNT)
+                    if response_body
+                    else customer_data_by_day[-1][api_c.TOTAL_COUNT],
+                }
+            )
+
+    return customer_data_by_day

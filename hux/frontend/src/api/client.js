@@ -115,10 +115,10 @@ client["engagements"].detachAudience = (resourceId, data) => {
   // NOTE: The Hux API supports post data for a DELETE request method.
   // Typically, this isn't RESTful so Mirage does not support this, hence this check
   if (process.env.NODE_ENV !== "development") {
-    return http.delete(`/engagements/${resourceId}/audience`, { data: data })
+    return http.delete(`/engagements/${resourceId}/audiences`, { data: data })
   } else {
     const audienceId = data.audience_ids[0]
-    return http.delete(`/engagements/${resourceId}/audience/${audienceId}`)
+    return http.delete(`/engagements/${resourceId}/audiences/${audienceId}`)
   }
 }
 
@@ -178,11 +178,20 @@ client["engagements"].getCampaigns = ({
 //#endregion Engagement custom endpoints
 
 //#region Customer Identity endpoint(s)
-client["idr"].overview = () => http.get("/idr/overview")
-client["idr"].datafeeds = () => http.get("/idr/datafeeds")
-client["idr"].datafeedReport = (id) => http.get(`/idr/datafeeds/${id}`)
-client["idr"].matchingTrend = () => {
-  return http.get("/idr/matching-trends")
+client["idr"].overview = (params) => {
+  return http.get("/idr/overview", { params: params })
+}
+
+client["idr"].datafeeds = (params) => {
+  return http.get("/idr/datafeeds", { params: params })
+}
+
+client["idr"].datafeedReport = (id) => {
+  http.get(`/idr/datafeeds/${id}`)
+}
+
+client["idr"].matchingTrend = (params) => {
+  return http.get("/idr/matching-trends", { params: params })
 }
 //#endregion
 
@@ -238,7 +247,7 @@ client["models"].modelFeatures = (id) => {
 
 //#region Data sources
 client.dataSources.dataFeeds = (type) => {
-  return http.get(`/data-sources/${type}/data-feeds`)
+  return http.get(`/data-sources/${type}/datafeeds`)
 }
 //#endregion
 

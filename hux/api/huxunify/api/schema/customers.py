@@ -142,6 +142,8 @@ class CustomerOverviewSchema(Schema):
 class IDROverviewSchema(Schema):
     """IDR Overview Schema"""
 
+    total_records = Integer(required=True)
+    match_rate = Float(required=True)
     total_unique_ids = Integer(required=True)
     total_unknown_ids = Integer(required=True)
     total_known_ids = Integer(required=True)
@@ -181,7 +183,7 @@ class DataFeedSchema(Schema):
         example=db_c.CDP_DATA_SOURCE_BLUECORE.title(),
     )
     new_ids_generated = Integer(example=21)
-    total_records_processed = Integer(
+    num_records_processed = Integer(
         attribute=api_c.DATAFEED_RECORDS_PROCESSED_COUNT, example=2000000
     )
     match_rate = Float(example=0.98)
@@ -305,7 +307,7 @@ class MatchingTrendsSchema(Schema):
 
         ordered = True
 
-    date = DateTimeWithZ(required=True)
+    date = DateTimeWithZ(required=True, attribute=api_c.DAY)
     known_ids = Integer(required=True, example=100000)
     unique_hux_ids = Integer(required=True, example=100000)
     anonymous_ids = Integer(required=True, example=100000)
@@ -373,7 +375,7 @@ class TotalCustomersInsightsSchema(Schema):
         required=True, attribute=api_c.TOTAL_COUNT, example=5
     )
     new_customers_added = Integer(
-        required=True, attribute=api_c.DIFFERENCE_COUNT, example=5
+        required=True, attribute=api_c.DIFFERENCE_COUNT, example=5, default=0
     )
 
 
