@@ -37,7 +37,7 @@
               :class="
                 column.value === 'records_processed_percentage' &&
                 item[column.value] < 0.5
-                  ? 'red--text'
+                  ? 'error--text'
                   : 'neroBlack--text'
               "
             >
