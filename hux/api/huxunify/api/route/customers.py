@@ -461,7 +461,9 @@ class IDRDataFeeds(SwaggerView):
         )
         end_date = request.args.get(
             api_c.END_DATE,
-            datetime.strftime(datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT),
+            datetime.strftime(
+                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
+            ),
         )
 
         return (
