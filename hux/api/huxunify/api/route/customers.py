@@ -452,13 +452,27 @@ class IDRDataFeeds(SwaggerView):
         """
         token_response = get_token_from_request(request)
 
+        start_date = request.args.get(
+            api_c.START_DATE,
+            datetime.strftime(
+                datetime.utcnow().date() - relativedelta(months=6),
+                api_c.DEFAULT_DATE_FORMAT,
+            ),
+        )
+        end_date = request.args.get(
+            api_c.END_DATE,
+            datetime.strftime(
+                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
+            ),
+        )
+
         return (
             jsonify(
                 DataFeedSchema().dump(
                     get_idr_data_feeds(
                         token_response[0],
-                        request.args.get(api_c.START_DATE),
-                        request.args.get(api_c.END_DATE),
+                        start_date,
+                        end_date,
                     ),
                     many=True,
                 )
