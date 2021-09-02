@@ -61,7 +61,6 @@ from huxunify.api.route.decorators import (
 )
 from huxunify.api.route.utils import (
     get_db_client,
-    validate_destination_id,
 )
 from huxunify.api.data_connectors.courier import toggle_event_driven_routers
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -822,7 +821,15 @@ class AddDestinationEngagedAudience(SwaggerView):
         destination = DestinationEngagedAudienceSchema().load(
             request.get_json(), partial=True
         )
-        destination[api_c.ID] = validate_destination_id(destination[api_c.ID])
+        destination[api_c.ID] = ObjectId(destination[api_c.ID])
+
+        if not get_delivery_platform(get_db_client(), destination[api_c.ID]):
+            logger.error(
+                "Could not find destination with id %s.", destination[api_c.ID]
+            )
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         database = get_db_client()
         # get destinations
@@ -939,7 +946,15 @@ class RemoveDestinationEngagedAudience(SwaggerView):
         destination = DestinationEngagedAudienceSchema().load(
             request.get_json(), partial=True
         )
-        destination_id = validate_destination_id(destination[api_c.ID])
+        destination_id = ObjectId(destination[api_c.ID])
+
+        if not get_delivery_platform(get_db_client(), destination_id):
+            logger.error(
+                "Could not find destination with id %s.", destination_id
+            )
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         database = get_db_client()
         # get destination

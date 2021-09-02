@@ -51,7 +51,6 @@ from huxunify.api.route.decorators import (
 )
 from huxunify.api.route.utils import (
     get_db_client,
-    validate_destination_id,
 )
 
 # setup the orchestration blueprint
@@ -530,9 +529,18 @@ class AudiencePostView(SwaggerView):
                 # validate object id
                 # map to an object ID field
                 # validate the destination object exists.
-                destination[db_c.OBJECT_ID] = validate_destination_id(
-                    destination[db_c.OBJECT_ID]
-                )
+                destination[db_c.OBJECT_ID] = ObjectId(destination[db_c.OBJECT_ID])
+
+                if not destination_management.get_delivery_platform(
+                    get_db_client(), destination[db_c.OBJECT_ID]
+                ):
+                    logger.error(
+                        "Could not find destination with id %s.",
+                        destination[db_c.OBJECT_ID],
+                    )
+                    return {
+                        "message": api_c.DESTINATION_NOT_FOUND
+                    }, HTTPStatus.NOT_FOUND
 
         engagement_ids = []
         if api_c.AUDIENCE_ENGAGEMENTS in body:
