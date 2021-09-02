@@ -2,7 +2,7 @@
   <page class="white create-audience-wrap" max-width="100%">
     <div>
       <div class="heading font-weight-light neroBlack--text">
-        Add an audience
+        {{ !isEdit ? "Add" : "Update" }} an audience
       </div>
       <div class="sub-heading text-h6 neroBlack--text">
         Build a target audience from the data you own. Add the attributes you
@@ -111,6 +111,7 @@
           >
             <v-col class="pa-0">
               <attribute-rules
+                ref="filters"
                 :rules="attributeRules"
                 @updateOverview="(data) => mapCDMOverview(data)"
               />
@@ -276,7 +277,7 @@
             :is-disabled="!isAudienceFormValid"
             @click="createAudience()"
           >
-            Create
+            {{ !isEdit ? "Create" : "Update" }}
           </huxButton>
         </template>
       </hux-footer>
@@ -363,7 +364,8 @@ export default {
       showSelectDestinationsDrawer: false,
       showSalesforceExtensionDrawer: false,
       salesforceDestination: {},
-
+      isEdit: false,
+      audienceId: "",
       engagementDrawer: false,
       audience: {
         name: null,
@@ -428,8 +430,15 @@ export default {
   async mounted() {
     this.loading = true
     await this.getOverview()
-    if (this.$route.params.id) await this.getAudienceById(this.$route.params.id)
     this.mapCDMOverview(this.overview)
+    if (this.$route.params.id) {
+      this.audienceId = this.$route.params.id
+      this.isEdit = true
+      await this.getAudienceById(this.audienceId)
+      const data = this.getAudience(this.audienceId)
+      this.mapAudienceData(data)
+    } else {
+    }
     this.loading = false
   },
 
@@ -437,6 +446,7 @@ export default {
     ...mapActions({
       fetchEngagements: "engagements/getAll",
       saveAudience: "audiences/add",
+      updateAudience: "audiences/update",
       getAudienceById: "audiences/getAudienceById",
       getOverview: "customers/getOverview",
     }),
@@ -588,7 +598,17 @@ export default {
         filters: filtersArray,
         name: this.audience.audienceName,
       }
-      const response = await this.saveAudience(payload)
+      let response = {}
+      if (!this.isEdit) {
+        response = await this.saveAudience(payload)
+      } else {
+        payload["engagement_ids"] = payload.engagements
+        delete payload["engagements"]
+        response = await this.updateAudience({
+          id: this.audienceId,
+          payload: payload,
+        })
+      }
       this.$router.push({
         name: "AudienceInsight",
         params: { id: response.id },
@@ -600,6 +620,65 @@ export default {
     },
     validateForm(value) {
       this.addDestinationFormValid = value
+    },
+    getAttributeOption(attribute_key, options) {
+      for (let opt of options) {
+        if (opt.menu && opt.menu.length > 0) {
+          return opt.menu.filter((menuOpt) => menuOpt.key === attribute_key)[0]
+        } else if (opt.key === attribute_key) {
+          return opt
+        }
+      }
+    },
+    mapAudienceData(data) {
+      const _audienceObject = JSON.parse(JSON.stringify(data))
+      _audienceObject.audienceName = _audienceObject.name
+      // Mapping the filters of audience.
+      const attributeOptions = this.$refs.filters.attributeOptions()
+      _audienceObject.attributeRules = _audienceObject.filters.map(
+        (filter) => ({
+          id: Math.floor(Math.random() * 1024).toString(16),
+          operand: filter.section_aggregator === "ALL",
+          conditions: filter.section_filters.map((cond) => ({
+            id: Math.floor(Math.random() * 1024).toString(16),
+            attribute: cond.field,
+            operator: cond.type === "range" ? "" : cond.type,
+            text: cond.type !== "range" ? cond.value : "",
+            range: cond.type === "range" ? cond.value : [],
+            awaitingSize: false,
+            outputSummary: "0",
+            size: "-",
+          })),
+        })
+      )
+      _audienceObject.attributeRules.forEach((section) => {
+        section.conditions.forEach((cond) => {
+          cond.attribute = this.getAttributeOption(
+            cond.attribute,
+            attributeOptions
+          )
+          let _operators = this.$refs.filters.operatorOptions(cond)
+          cond.operator =
+            cond.operator !== "range"
+              ? _operators.filter((opt) => opt.key === cond.operator)[0]
+              : cond.operator
+        })
+      })
+      this.selectedEngagements = _audienceObject.engagements.map((eng) => ({
+        id: eng.id,
+        name: eng.name,
+      }))
+      this.selectDestinations = _audienceObject.destinations
+        ? _audienceObject.destinations.map((dest) => ({
+            id: dest.id,
+            type: dest.delivery_platform_type,
+            name: dest.name,
+          }))
+        : []
+      this.$set(this, "audience", _audienceObject)
+      this.$nextTick(function () {
+        this.$refs.filters.updateSizes()
+      })
     },
   },
 }

@@ -90,6 +90,16 @@ const routes = [
     },
   },
   {
+    path: "/audiences/:id/update",
+    name: "AudienceUpdateConfiguration",
+    component: () => import("@/views/Audiences/Configuration.vue"),
+    meta: {
+      layout: "app",
+      title: "Update an Audience",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/audiences/:id/insight",
     name: "AudienceInsight",
     component: () => import("@/views/Audiences/Insight.vue"),

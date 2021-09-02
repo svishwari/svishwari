@@ -98,19 +98,26 @@ export default {
       required: false,
       default: () => [],
     },
+    value: {
+      type: String,
+      required: false,
+    },
   },
-  data: function () {
-    return {
-      TextFieldValue: null,
-    }
+
+  computed: {
+    TextFieldValue: {
+      get() {
+        return this.value || null
+      },
+      set(value) {
+        this.$emit("input", value)
+      },
+    },
   },
 
   methods: {
-    change: function () {
-      // This is a TODO
-    },
-    input: function () {
-      this.$emit("input", this.TextFieldValue)
+    input: function (value) {
+      this.$emit("input", value)
     },
   },
 }
