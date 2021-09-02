@@ -239,4 +239,10 @@ client["models"].modelFeatures = (id) => {
   return http.get(`/models/${id}/features`)
 }
 
+//#region Data sources
+client.dataSources.dataFeeds = (type) => {
+  return http.get(`/data-sources/${type}/data-feeds`)
+}
+//#endregion
+
 export default client
