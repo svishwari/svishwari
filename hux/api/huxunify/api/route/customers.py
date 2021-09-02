@@ -455,13 +455,13 @@ class IDRDataFeeds(SwaggerView):
         start_date = request.args.get(
             api_c.START_DATE,
             datetime.strftime(
-                datetime.today() - relativedelta(months=6),
+                datetime.utcnow().date() - relativedelta(months=6),
                 api_c.DEFAULT_DATE_FORMAT,
             ),
         )
         end_date = request.args.get(
             api_c.END_DATE,
-            datetime.strftime(datetime.today(), api_c.DEFAULT_DATE_FORMAT),
+            datetime.strftime(datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT),
         )
 
         return (
