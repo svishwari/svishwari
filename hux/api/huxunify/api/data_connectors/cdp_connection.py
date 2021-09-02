@@ -60,7 +60,7 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
 
     response = requests.post(
         f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_IDENTITY_ENDPOINT}/"
-        f"{api_c.CDM_DATAFEEDS}",
+        f"{api_c.DATAFEEDS}",
         json={api_c.START_DATE: start_date, api_c.END_DATE: end_date},
         headers={api_c.CUSTOMERS_API_HEADER_KEY: token},
     )
@@ -98,7 +98,7 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
 
     response = requests.get(
         f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_IDENTITY_ENDPOINT}/"
-        f"{api_c.CDM_DATAFEEDS}/{datafeed_id}",
+        f"{api_c.DATAFEEDS}/{datafeed_id}",
         headers={api_c.CUSTOMERS_API_HEADER_KEY: token},
     )
 
@@ -136,8 +136,8 @@ def get_connections_data_feeds(token: str, data_source_type: str) -> list:
     )
 
     response = requests.get(
-        f"{config.CDP_CONNECTION_SERVICE}{api_c.CDM_CONNECTIONS_ENDPOINT}/"
-        f"{data_source_type}/data_feeds",
+        f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_CONNECTIONS_ENDPOINT}/"
+        f"{data_source_type}/{api_c.DATA_FEEDS}",
         headers={api_c.CUSTOMERS_API_HEADER_KEY: token},
     )
 

@@ -401,7 +401,7 @@ class CustomerProfileSearch(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}",
+    f"/{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}",
     "IDRDataFeeds",
 )
 class IDRDataFeeds(SwaggerView):
@@ -483,7 +483,7 @@ class IDRDataFeeds(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/<datafeed_id>",
+    f"/{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}/<datafeed_id>",
     "IDRDataFeedDetails",
 )
 class IDRDataFeedDetails(SwaggerView):

@@ -455,7 +455,7 @@ class BatchUpdateDataSources(SwaggerView):
 
 @add_view_to_blueprint(
     cdp_data_sources_bp,
-    f"{api_c.CDP_DATA_SOURCES_ENDPOINT}/<{api_c.CDP_DATA_SOURCE_TYPE}>/{api_c.DATA_FEEDS}",
+    f"{api_c.CDP_DATA_SOURCES_ENDPOINT}/<{api_c.CDP_DATA_SOURCE_TYPE}>/{api_c.DATAFEEDS}",
     "GetConnectionsDatafeeds",
 )
 class GetConnectionsDatafeeds(SwaggerView):
@@ -487,7 +487,7 @@ class GetConnectionsDatafeeds(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
-    @api_error_handler()
+    # @api_error_handler()
     def get(self, datasource_type: str) -> Tuple[str, int]:
         """Get data feeds for data source.
 
@@ -511,7 +511,7 @@ class GetConnectionsDatafeeds(SwaggerView):
         response = {
             api_c.NAME: data_source[db_c.NAME],
             api_c.TYPE: data_source[db_c.TYPE],
-            api_c.DATA_FEEDS: get_connections_data_feeds(
+            api_c.DATAFEEDS: get_connections_data_feeds(
                 token_response[0], datasource_type
             ),
         }

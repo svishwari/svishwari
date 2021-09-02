@@ -752,7 +752,7 @@ END_DATE_PARAMS = {
 # IDR Fields
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
-DATA_FEEDS = "datafeeds"
+DATA_FEEDS = "data_feeds"
 DATA_FEED = "datafeed"
 INPUT_RECORDS = "input_records"
 OUTPUT_RECORDS = "output_records"
@@ -921,7 +921,7 @@ DOWNLOAD_TYPES = {
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
 CDM_IDENTITY_ENDPOINT = "identity"
-CDM_DATAFEEDS = "datafeeds"
+DATAFEEDS = "datafeeds"
 
 PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
     {
@@ -975,5 +975,9 @@ PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB = {
 
 # Connections Data feeds Constants
 PROCESSED_AT = "processed_at"
+RECORDS_PROCESSED = "records_processed"
+RECORDS_RECEIVED = "records_received"
+THIRTY_DAYS_AVG = "thirty_days_avg"
+RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
