@@ -151,7 +151,7 @@ class DataFeedSchema(Schema):
         example=db_c.CDP_DATA_SOURCE_BLUECORE.title(),
     )
     new_ids_generated = Integer(example=21)
-    total_records_processed = Integer(
+    num_records_processed = Integer(
         attribute=api_c.DATAFEED_RECORDS_PROCESSED_COUNT, example=2000000
     )
     match_rate = Float(example=0.98)
