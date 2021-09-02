@@ -437,7 +437,6 @@ export default {
       await this.getAudienceById(this.audienceId)
       const data = this.getAudience(this.audienceId)
       this.mapAudienceData(data)
-    } else {
     }
     this.loading = false
   },
