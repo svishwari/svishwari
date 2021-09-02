@@ -2,7 +2,7 @@
 purpose of this file is to house route utilities
 """
 from datetime import datetime
-from typing import Tuple, Union, Dict
+from typing import Tuple
 from http import HTTPStatus
 from bson import ObjectId
 
@@ -17,7 +17,6 @@ from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
 from huxunifylib.database import (
-    delivery_platform_management as destination_management,
     constants as db_c,
 )
 
