@@ -960,6 +960,25 @@ AMAZON_ADS_CUSTOMER_DATA = [
     },
 ]
 
+IDR_MATCHING_TRENDS_BY_DAY_DATA = {
+    "code": 200,
+    "message": "ok",
+    api_c.BODY: [
+        {
+            api_c.DAY: "2021-08-01",
+            api_c.UNIQUE_HUX_IDS: 890,
+            api_c.ANONYMOUS_IDS: 97,
+            api_c.KNOWN_IDS: 890,
+        },
+        {
+            api_c.DAY: "2021-08-02",
+            api_c.UNIQUE_HUX_IDS: 906,
+            api_c.ANONYMOUS_IDS: 104,
+            api_c.KNOWN_IDS: 906,
+        },
+    ],
+}
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False
