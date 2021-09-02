@@ -238,7 +238,7 @@ client["models"].modelFeatures = (id) => {
 
 //#region Data sources
 client.dataSources.dataFeeds = (type) => {
-  return http.get(`/data-sources/${type}/data-feeds`)
+  return http.get(`/data-sources/${type}/datafeeds`)
 }
 //#endregion
 
