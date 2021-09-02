@@ -52,7 +52,7 @@ class CDPConnectionsTest(TestCase):
         self.request_mocker.stop()
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
-            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.CDM_DATAFEEDS}",
+            f"/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.CDM_DATAFEEDS}",
             json=t_c.IDR_DATAFEEDS_RESPONSE,
         )
         self.request_mocker.start()
@@ -80,7 +80,7 @@ class CDPConnectionsTest(TestCase):
         self.request_mocker.stop()
         self.request_mocker.get(
             f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
-            f"{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.CDM_DATAFEEDS}/"
+            f"/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.CDM_DATAFEEDS}/"
             f"{datafeed_id}",
             json=t_c.IDR_DATAFEED_DETAILS_RESPONSE,
         )
