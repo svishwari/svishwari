@@ -1,6 +1,67 @@
 import filters from "@/filters"
+import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
+dayjs.extend(utc)
 
 describe("Filters", () => {
+  describe("Date filter", () => {
+    it("for empty and invalid values", () => {
+      expect(filters.Date()).toEqual(null)
+      expect(filters.Date("something invalid")).toEqual(null)
+    })
+
+    it("for format set to relative", () => {
+      let testdate = dayjs().subtract(7, "year")
+      expect(filters.Date(testdate.format(), "relative")).toEqual("7 years ago")
+
+      testdate = dayjs().subtract(1, "month")
+      expect(filters.Date(testdate.format(), "relative")).toEqual("a month ago")
+
+      testdate = dayjs().subtract(42, "minute")
+      expect(filters.Date(testdate.format(), "relative", false)).toEqual(
+        "42 minutes ago"
+      )
+      expect(filters.Date(testdate.format(), "relative", true)).toEqual(
+        "42 minutes"
+      )
+
+      testdate = dayjs().add(5, "day")
+      expect(filters.Date(testdate.format(), "relative", false)).toEqual(
+        "a few seconds ago"
+      )
+      expect(filters.Date(testdate.format(), "relative", true)).toEqual(
+        "a few seconds"
+      )
+    })
+
+    it("for format set to calendar", () => {
+      expect(filters.Date("2021-12-25", "calendar")).toEqual("12/25/2021")
+      let testdate = dayjs().subtract(1, "day")
+      expect(filters.Date(testdate.format(), "calendar")).toEqual(
+        testdate.format("[Yesterday at] h:mm A")
+      )
+    })
+
+    it("for dates returned by APIs", () => {
+      let testdate = dayjs("2021-08-26T14:44:38.470Z")
+      expect(filters.Date("2021-08-26T14:44:38.470Z")).toEqual(
+        testdate.local().format("M/D/YYYY [at] h:mm A")
+      )
+    })
+
+    it("should display date in format as specified", () => {
+      expect(filters.Date("2019-01-25", "DD/MM/YYYY")).toEqual("25/01/2019")
+      expect(filters.Date("2019-01-25")).toEqual("1/25/2019 at 12:00 AM")
+      expect(filters.Date("2019-01-25", "M/D/YYYY [at] h:mm A")).toEqual(
+        "1/25/2019 at 12:00 AM"
+      )
+      expect(filters.Date("2019-01-25", "M/YY")).toEqual("1/19")
+      expect(
+        filters.Date("2019-01-25", "[Last updated at] h:mma [on] M/DD/YYYY")
+      ).toEqual("Last updated at 12:00am on 1/25/2019")
+    })
+  })
+
   describe("Numeric filter", () => {
     it("should display numbers up to two decimal places, by default", () => {
       expect(filters.Numeric(0)).toEqual("0")

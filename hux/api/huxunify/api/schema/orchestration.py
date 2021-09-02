@@ -41,6 +41,7 @@ class LookalikeAudienceGetSchema(Schema):
     updated_by = fields.String()
     favorite = fields.Boolean(required=True)
     is_lookalike = fields.Boolean(default=True)
+    status = fields.String(default=db_c.AUDIENCE_STATUS_ERROR)
 
 
 class AudienceDeliverySchema(Schema):
@@ -69,6 +70,7 @@ class DeliveriesSchema(Schema):
     size = fields.Integer(attribute=db_c.DELIVERY_PLATFORM_AUD_SIZE, default=0)
     match_rate = fields.Float(default=0, example=0.21)
     delivery_platform_type = fields.String()
+    is_ad_platform = fields.Bool(attribute=api_c.IS_AD_PLATFORM)
 
 
 class EngagementDeliverySchema(EngagementGetSchema):
@@ -145,6 +147,10 @@ class AudienceGetSchema(Schema):
     is_lookalike = fields.Boolean(default=False)
     # defines if lookalikes can be created from the audience.
     lookalikeable = fields.String(default=api_c.STATUS_INACTIVE)
+    source_name = fields.String()
+    source_size = fields.Int()
+    source_id = fields.String()
+    match_rate = fields.Float(default=0)
 
 
 class AudiencePutSchema(Schema):

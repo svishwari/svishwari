@@ -52,13 +52,15 @@ from huxunify.api.schema.engagement import (
     EngagementPutSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import (
+from huxunify.api.route.decorators import (
     add_view_to_blueprint,
-    get_db_client,
     secured,
     api_error_handler,
-    get_user_name,
     validate_destination,
+    get_user_name,
+)
+from huxunify.api.route.utils import (
+    get_db_client,
     validate_destination_id,
 )
 from huxunify.api.data_connectors.courier import toggle_event_driven_routers
@@ -192,9 +194,12 @@ class IndividualEngagementSearch(SwaggerView):
             for audience in engagement[db_c.AUDIENCES]:
                 for destination in audience[db_c.DESTINATIONS]:
                     if db_c.LATEST_DELIVERY in destination:
-                        destination[db_c.LATEST_DELIVERY][
-                            api_c.MATCH_RATE
-                        ] = round(uniform(0.2, 0.9), 2)
+                        destination[db_c.LATEST_DELIVERY][api_c.MATCH_RATE] = (
+                            round(uniform(0.2, 0.9), 2)
+                            if destination.get(api_c.IS_AD_PLATFORM, False)
+                            and not audience.get(api_c.IS_LOOKALIKE, False)
+                            else None
+                        )
 
         # weight the engagement status
         engagements = weighted_engagement_status(engagements)[0]
@@ -1794,9 +1799,9 @@ class EngagementPerformanceDownload(SwaggerView):
             zipfile_name, "w", compression=zipfile.ZIP_STORED
         ) as zipfolder:
 
-            folder = Path(folder_name)
-            for file in folder.glob("**/*.csv"):
-                zipfolder.write(file)
+            folder = Path(__file__).parent.parent.parent.joinpath(folder_name)
+            for file in folder.rglob("**/*.csv"):
+                zipfolder.write(file, arcname=file.name)
                 file.unlink()
 
         zip_file = Path(zipfile_name)

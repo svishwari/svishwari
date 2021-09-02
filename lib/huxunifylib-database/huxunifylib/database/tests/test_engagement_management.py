@@ -12,6 +12,7 @@ from huxunifylib.database import (
     data_management as dm,
     delivery_platform_management as dpm,
     orchestration_management as om,
+    engagement_audience_management as eam,
 )
 
 # pylint: disable=R0904
@@ -61,7 +62,10 @@ class TestEngagementManagement(unittest.TestCase):
                 destination[c.ID],
                 c.STATUS_SUCCEEDED,
             )
-            self.destinations.append(destination)
+
+            self.destinations.append(
+                dpm.get_delivery_platform(self.database, destination[c.ID])
+            )
 
         self.destination = dpm.set_delivery_platform(
             self.database,
@@ -1149,3 +1153,66 @@ class TestEngagementManagement(unittest.TestCase):
         )
 
         self.assertFalse(active_deliveries)
+
+    def test_get_all_audience_destinations(self) -> None:
+        """Test getting all audiences and their unique assigned
+        destinations across engagements.
+
+        Returns:
+            Response: None
+
+        """
+
+        engagements = []
+        for item in range(2):
+
+            # set destination for audience
+            audience = self.audience
+            audience[c.DESTINATIONS] = [
+                {c.OBJECT_ID: x[c.ID]} for x in self.destinations
+            ]
+
+            # create engagement normally
+            engagement_id = em.set_engagement(
+                self.database,
+                f"Engagement Aud {item}",
+                f"Engagement {item} Description",
+                [audience],
+                self.user_name,
+            )
+
+            engagement = em.get_engagement(self.database, engagement_id)
+
+            # check engagement
+            self.assertIn(c.AUDIENCES, engagement)
+            self.assertEqual(len(engagement[c.AUDIENCES]), 1)
+            self.assertEqual(
+                engagement[c.AUDIENCES][0][c.OBJECT_ID],
+                self.audience[c.ID],
+            )
+            self.assertIsInstance(engagement_id, ObjectId)
+
+            engagements.append(engagement)
+
+        # find all three.
+        audience_destinations = eam.get_all_engagement_audience_destinations(
+            self.database
+        )
+
+        # test the response
+        self.assertTrue(audience_destinations)
+        self.assertIsInstance(audience_destinations, list)
+
+        # grab the first audience
+        audience_destination = audience_destinations[0]
+
+        # test each destination
+        self.assertIn(c.DESTINATIONS, audience_destination)
+        self.assertEqual(len(audience_destination[c.DESTINATIONS]), 2)
+        for destination in audience_destination[c.DESTINATIONS]:
+            # find the matching destination and ensure it is identical.
+            matched_destinations = [
+                x for x in self.destinations if x[c.ID] == destination[c.ID]
+            ]
+            self.assertTrue(matched_destinations)
+            self.assertEqual(destination, matched_destinations[0])

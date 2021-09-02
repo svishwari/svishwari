@@ -427,6 +427,7 @@ def get_audience_insights(
                             "deliveries.delivery_platform_type"
                             "": "$destinations.delivery_platform_type",
                             "deliveries.name": "$destinations.name",
+                            "deliveries.is_ad_platform": "$destinations.is_ad_platform",
                             "deliveries.status": {
                                 "$ifNull": [
                                     "$deliveries.status",

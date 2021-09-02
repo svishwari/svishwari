@@ -2,7 +2,7 @@
   <v-card
     class="page-header--wrap d-flex justify-space-between align-center"
     :class="[headerPadding, headerHeightChanges]"
-    elevation="1"
+    flat
     tile
     :color="bgColor"
     :height="headerHeight"
@@ -55,7 +55,7 @@ export default {
     },
 
     headerHeight: {
-      type: Number,
+      type: [Number, String],
       required: false,
       default: 72,
     },
@@ -74,3 +74,9 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.page-header--wrap {
+  border-bottom: 1px solid var(--v-lightGrey-base) !important;
+}
+</style>

@@ -1,8 +1,12 @@
 /**
- * Globally registerd Vue filters
+ * Globally registered Vue filters
  */
-import moment from "moment"
+import dayjs from "dayjs"
+import calendar from "dayjs/plugin/calendar"
+import relativeTime from "dayjs/plugin/relativeTime"
 
+dayjs.extend(calendar)
+dayjs.extend(relativeTime)
 /**
  * Formats a datetime field to human friendly date.
  *
@@ -11,15 +15,17 @@ import moment from "moment"
  * @return {string} Formatted date time string eg. 3/17/2021 at 1:29 PM
  */
 const Date = (value, format = "M/D/YYYY [at] h:mm A", noSuffix = false) => {
-  if (!value) return ""
+  if (!value) return null
 
-  let date = moment(value)
+  let date = dayjs(value)
+
+  if (!date.isValid()) return null
 
   if (format === "relative") {
     if (date.isBefore()) {
       return date.fromNow(noSuffix)
     }
-    return moment().fromNow(noSuffix)
+    return dayjs().fromNow(noSuffix)
   }
 
   if (format === "calendar") return date.calendar()
@@ -32,13 +38,13 @@ const Date = (value, format = "M/D/YYYY [at] h:mm A", noSuffix = false) => {
  * else convert it into relative date like a month ago, a year ago
  */
 const DateRelative = (value) => {
-  let dateTime = moment(value)
+  let dateTime = dayjs(value)
   let otherDates = dateTime.fromNow()
   let week = dateTime.calendar()
-  let calback = () => "[" + otherDates + "]"
-  let weekcal = () => "[" + week.split(" at ")[0] + "]"
+  let calback = () => otherDates
+  let weekcal = () => week.split(" at ")[0]
   return dateTime.calendar(null, {
-    sameDay: "[Today]",
+    sameDay: "Today",
     nextDay: weekcal,
     nextWeek: calback,
     lastDay: weekcal,
