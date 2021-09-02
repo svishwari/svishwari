@@ -30,7 +30,12 @@ class AWSTest(TestCase):
 
         """
         self.config = get_config()
-        self.s3_client = boto3.client(api_c.S3)
+        self.s3_client = boto3.client(
+            api_c.S3,
+            region_name="us-east-1",
+            aws_access_key_id="fake_access_key",
+            aws_secret_access_key="fake_secret_key",
+        )
 
     @mock_s3
     @given(
