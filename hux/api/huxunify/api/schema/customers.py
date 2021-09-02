@@ -112,6 +112,8 @@ class CustomerOverviewSchema(Schema):
 class IDROverviewSchema(Schema):
     """IDR Overview Schema"""
 
+    total_records = Integer(required=True)
+    match_rate = Float(required=True)
     total_unique_ids = Integer(required=True)
     total_unknown_ids = Integer(required=True)
     total_known_ids = Integer(required=True)
