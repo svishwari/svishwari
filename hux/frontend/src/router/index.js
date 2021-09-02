@@ -130,6 +130,16 @@ const routes = [
     },
   },
   {
+    path: "/datasources/:id",
+    name: "DataSourceListing",
+    component: () => import("@/views/DataSources/Listing.vue"),
+    meta: {
+      layout: "app",
+      title: "Data source",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/datasources/add",
     name: "DataSourceConfiguration",
     component: () => import("@/views/Connections/Index"),
