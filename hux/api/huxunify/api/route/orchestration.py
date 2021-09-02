@@ -534,7 +534,9 @@ class AudiencePostView(SwaggerView):
                 # validate object id
                 # map to an object ID field
                 # validate the destination object exists.
-                destination[db_c.OBJECT_ID] = ObjectId(destination[db_c.OBJECT_ID])
+                destination[db_c.OBJECT_ID] = ObjectId(
+                    destination[db_c.OBJECT_ID]
+                )
 
                 if not destination_management.get_delivery_platform(
                     get_db_client(), destination[db_c.OBJECT_ID]

@@ -508,7 +508,8 @@ def validate_destination(
                     get_db_client(), destination_id
                 ):
                     logger.error(
-                        "Could not find destination with id %s.", destination_id
+                        "Could not find destination with id %s.",
+                        destination_id,
                     )
                     return {
                         "message": constants.DESTINATION_NOT_FOUND
