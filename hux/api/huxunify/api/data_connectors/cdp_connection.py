@@ -1,5 +1,5 @@
 """Purpose of this file is to house all methods to connect to CDP connections API"""
-from typing import Tuple, Union
+from typing import Tuple
 import requests
 
 from huxunifylib.util.general.logging import logger
@@ -9,12 +9,12 @@ from huxunify.api.config import get_config
 from huxunify.api.data_connectors.cdp import clean_cdm_fields
 
 
-def check_cdp_connections_api_connection() -> Tuple[Union[int, bool], str]:
+def check_cdp_connections_api_connection() -> Tuple[int, str]:
     """Validate the cdp connections api connection.
     Args:
 
     Returns:
-        tuple[Union[int,bool], str]: Returns if the connection is valid, and the message.
+        tuple[int, str]: Returns if the connection is valid, and the message.
     """
     # get config
     config = get_config()
@@ -32,7 +32,7 @@ def check_cdp_connections_api_connection() -> Tuple[Union[int, bool], str]:
         logger.error(
             "CDP Connections Health Check failed with %s.", repr(exception)
         )
-        return False, getattr(
+        return getattr(exception, "code", repr(exception)), getattr(
             exception, "message", repr(exception)
         )
 
