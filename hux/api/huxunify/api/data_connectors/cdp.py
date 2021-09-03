@@ -588,6 +588,57 @@ def get_demographic_by_state(
     return geographic_response
 
 
+def get_demographic_by_country(
+    token: str, filters: Optional[dict] = None
+) -> list:
+    """
+    Get demographic details of customers by state
+
+    Args:
+        token (str): OKTA JWT Token.
+        filters (dict):  filters to pass into
+            count_by_state endpoint, default None
+
+    Returns:
+        list: list of demographic details by state
+
+    """
+    # TODO: Uncomment and update the request URL when CDM API is available
+    # get config
+    # config = get_config()
+    # logger.info("Retrieving demographic insights by country.")
+    # response = requests.post(
+    #     f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+    #     json={api_c.AUDIENCE_FILTERS: filters}
+    #     if filters
+    #     else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+    #     headers={
+    #         api_c.CUSTOMERS_API_HEADER_KEY: token,
+    #     },
+    # )
+    #
+    # if response.status_code != 200 or api_c.BODY not in response.json():
+    #     logger.error(
+    #         "Failed to retrieve country demographic insights %s %s.",
+    #         response.status_code,
+    #         response.text,
+    #     )
+    #     return []
+    #
+    # logger.info("Successfully retrieved country demographic insights.")
+
+    # TODO: Remove once CDM API is available
+    country_level_data = [
+        {
+            api_c.NAME: "United States of America",
+            api_c.LTV: 675.54,
+            api_c.SIZE: 435671,
+        }
+    ]
+
+    return country_level_data
+
+
 def get_customers_insights_count_by_day(
     token: str, date_filters: dict
 ) -> dict:
