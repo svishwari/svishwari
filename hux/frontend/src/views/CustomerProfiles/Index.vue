@@ -658,6 +658,6 @@ export default {
   margin-top: 14px !important;
 }
 .color-last-month {
-color: var(--v-grey-base) !important;;
+  color: var(--v-grey-base) !important;
 }
 </style>

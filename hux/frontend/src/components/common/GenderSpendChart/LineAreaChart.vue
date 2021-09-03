@@ -112,10 +112,7 @@ export default {
 
       let grp = chart
         .append("g")
-        .attr(
-          "transform",
-          `translate(-${margin.left - strokeWidth},0)`
-        )
+        .attr("transform", `translate(-${margin.left - strokeWidth},0)`)
 
       let stack = d3Shape
         .stack()
@@ -143,7 +140,7 @@ export default {
       let yScale = d3Scale
         .scaleLinear()
         .range([height, 0])
-        .domain([0, d3Array.max(this.yValueData, d => d)])
+        .domain([0, d3Array.max(this.yValueData, (d) => d)])
         .nice(5)
 
       let xScale = d3Scale
@@ -199,7 +196,7 @@ export default {
           d3Axis
             .axisBottom(xScale)
             .ticks(this.areaChartData.length)
-           .tickFormat(d3TimeFormat.timeFormat("%m/%d/%y"))
+            .tickFormat(d3TimeFormat.timeFormat("%m/%d/%y"))
             .tickValues(
               this.dateData.map(function (d) {
                 return d
@@ -214,12 +211,11 @@ export default {
         .append("g")
         .attr("transform", "translate(0, 0)")
         .attr("fill", "#4f4f4f")
-         .classed("yAxis", true)
+        .classed("yAxis", true)
         .call(d3Axis.axisLeft(yScale).ticks(5).tickFormat(appendyAxisFormat))
         .call((g) => g.selectAll(".tick line").attr("stroke", "#ECECEC"))
         .call((g) => g.selectAll("path").attr("stroke", "#ECECEC"))
         .style("font-size", 12)
-
 
       d3Select
         .selectAll(".xAxis .tick text")
@@ -307,7 +303,7 @@ export default {
             .attr("class", "dot")
             .attr("r", 2.5)
             .attr("cx", () => xScale(new Date(points.data.date)) + 40)
-            .attr("cy", () => yScale(points[1])+ margin.top)
+            .attr("cy", () => yScale(points[1]) + margin.top)
             .attr("data", () => points.data)
             .style("fill", colorCodes[index])
             .attr("stroke", colorCodes[index])

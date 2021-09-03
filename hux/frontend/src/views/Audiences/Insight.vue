@@ -59,7 +59,7 @@
                 {{ audience.match_rate | Numeric(true, false, false, true) }}
               </template>
               <template #hover-content>
-                {{audience.match_rate}}
+                {{ audience.match_rate }}
               </template>
             </tooltip>
           </div>
@@ -1158,7 +1158,7 @@ export default {
 .lookalikeMessageCard {
   @extend .font-lookalike;
   border-radius: 5px !important;
-  background-color: rgb(236 244 249 / 30%) !important;;
+  background-color: rgb(236 244 249 / 30%) !important;
   font-size: 14px;
   color: var(--v-grey-base) !important;
 }
