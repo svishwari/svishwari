@@ -26,9 +26,6 @@ from huxunify.api.schema.customers import (
     TotalCustomersInsightsSchema,
     CustomersInsightsStatesSchema,
     CustomersInsightsCitiesSchema,
-    CustomerProfileOverviewSchema,
-    CustomerProfileInsightsSchema,
-    CustomerProfileContactPreferencesSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.decorators import (
@@ -399,20 +396,15 @@ class CustomerProfileSearch(SwaggerView):
         # TODO : Fetch IDR data from CDP once it is ready
         # api_c.IDENTITY_RESOLUTION: redacted_data[api_c.IDENTITY_RESOLUTION]
 
-        customer_profile = {
-            api_c.OVERVIEW: CustomerProfileOverviewSchema().dump(
-                redacted_data
-            ),
-            api_c.INSIGHTS: CustomerProfileInsightsSchema().dump(
-                redacted_data
-            ),
-            api_c.CONTACT_PREFERENCES: CustomerProfileContactPreferencesSchema().dump(
-                redacted_data
-            ),
-            api_c.IDENTITY_RESOLUTION: add_chart_legend(idr_data),
-        }
         return (
-            CustomerProfileSchema().dump(customer_profile),
+            CustomerProfileSchema().dump(
+                {
+                    api_c.OVERVIEW: redacted_data,
+                    api_c.INSIGHTS: redacted_data,
+                    api_c.CONTACT_PREFERENCES: redacted_data,
+                    api_c.IDENTITY_RESOLUTION: add_chart_legend(idr_data),
+                }
+            ),
             HTTPStatus.OK.value,
         )
 

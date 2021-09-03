@@ -92,13 +92,15 @@ class CDPTest(TestCase):
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
         data = response.json
-        self.assertTrue(data[api_c.FIRST_NAME])
-        self.assertTrue(data[api_c.LAST_NAME])
-        self.assertEqual(data[api_c.EMAIL], api_c.REDACTED)
-        self.assertEqual(data[api_c.GENDER], api_c.REDACTED)
-        self.assertEqual(data[api_c.CITY], api_c.REDACTED)
-        self.assertEqual(data[api_c.ADDRESS], api_c.REDACTED)
-        self.assertEqual(data[api_c.AGE], api_c.REDACTED)
+        self.assertTrue(data[api_c.OVERVIEW])
+        self.assertTrue(data[api_c.OVERVIEW][api_c.FIRST_NAME])
+        self.assertTrue(data[api_c.OVERVIEW][api_c.LAST_NAME])
+        self.assertTrue(data[api_c.INSIGHTS])
+        self.assertEqual(data[api_c.INSIGHTS][api_c.EMAIL], api_c.REDACTED)
+        self.assertEqual(data[api_c.INSIGHTS][api_c.GENDER], api_c.REDACTED)
+        self.assertEqual(data[api_c.INSIGHTS][api_c.CITY], api_c.REDACTED)
+        self.assertEqual(data[api_c.INSIGHTS][api_c.ADDRESS], api_c.REDACTED)
+        self.assertEqual(data[api_c.INSIGHTS][api_c.AGE], api_c.REDACTED)
 
     @given(
         date_text=st.one_of(
