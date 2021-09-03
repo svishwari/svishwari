@@ -869,11 +869,15 @@ class TotalCustomersGraphView(SwaggerView):
         token_response = get_token_from_request(request)
 
         # create a dict for date_filters required by cdp endpoint
-        last_date = datetime.today() - relativedelta(months=6)
-        today = datetime.today()
+        last_date = datetime.utcnow().date() - relativedelta(months=6)
+        today = datetime.utcnow().date()
         date_filters = {
-            api_c.START_DATE: datetime.strftime(last_date, "%Y-%m-%d"),
-            api_c.END_DATE: datetime.strftime(today, "%Y-%m-%d"),
+            api_c.START_DATE: datetime.strftime(
+                last_date, api_c.DEFAULT_DATE_FORMAT
+            ),
+            api_c.END_DATE: datetime.strftime(
+                today, api_c.DEFAULT_DATE_FORMAT
+            ),
         }
 
         customers_insight_total = get_customers_insights_count_by_day(
