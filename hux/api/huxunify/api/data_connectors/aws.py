@@ -432,12 +432,14 @@ def upload_file(
             api_c.TYPE: file_type if file_type else "",
         }
     }
-    logging.info("Trying to upload %s file to %s", file_name, bucket)
+    logging.info("Uploading %s file to %s", file_name, bucket)
     try:
         _ = s3_client.upload_file(file_name, bucket, object_name, extraargs)
 
     except botocore.exceptions.ClientError as exception:
-        logging.error(exception)
+        logging.error(
+            "Failed to upload file %s to %s : %s", file_name, bucket, exception
+        )
         return False
     logging.info("Uploaded %s file to %s", file_name, bucket)
     return True
@@ -458,12 +460,17 @@ def download_file(
     """
     object_name = object_name if object_name else file_name
     s3_client = get_aws_client(api_c.S3)
-    logging.info("Trying to download %s file to %s", file_name, bucket)
+    logging.info("Downloading %s file to %s", file_name, bucket)
     try:
         with open(file_name, "wb") as file:
             s3_client.download_fileobj(bucket, object_name, file)
     except botocore.exceptions.ClientError as exception:
-        logging.error(exception)
+        logging.error(
+            "Failed to download file object %s from %s : %s",
+            object_name,
+            bucket,
+            exception,
+        )
         return False
     logging.info("Downloaded %s file from %s", file_name, bucket)
     return True
