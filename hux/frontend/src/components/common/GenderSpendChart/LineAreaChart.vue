@@ -101,10 +101,10 @@ export default {
         .attr("height", this.height)
 
       let strokeWidth = 1.5
-      let margin = { top: 0, bottom: 20, left: 40, right: 20 }
+      let margin = { top: 10, bottom: 20, left: 40, right: 20 }
       let chart = svg
         .append("g")
-        .attr("transform", `translate(${margin.left},0)`)
+        .attr("transform", `translate(${margin.left},10)`)
 
       let width =
         +svg.attr("width") - margin.left - margin.right - strokeWidth * 2
@@ -114,7 +114,7 @@ export default {
         .append("g")
         .attr(
           "transform",
-          `translate(-${margin.left - strokeWidth},-${margin.top})`
+          `translate(-${margin.left - strokeWidth},0)`
         )
 
       let stack = d3Shape
@@ -143,7 +143,8 @@ export default {
       let yScale = d3Scale
         .scaleLinear()
         .range([height, 0])
-        .domain([0, Math.max(...this.yValueData) + 500])
+        .domain([0, d3Array.max(this.yValueData, d => d)])
+        .nice(5)
 
       let xScale = d3Scale
         .scaleTime()
@@ -198,7 +199,7 @@ export default {
           d3Axis
             .axisBottom(xScale)
             .ticks(this.areaChartData.length)
-            .tickFormat(d3TimeFormat.timeFormat("%m/%d/%y"))
+           .tickFormat(d3TimeFormat.timeFormat("%m/%d/%y"))
             .tickValues(
               this.dateData.map(function (d) {
                 return d
@@ -213,11 +214,12 @@ export default {
         .append("g")
         .attr("transform", "translate(0, 0)")
         .attr("fill", "#4f4f4f")
-        .classed("yAxis", true)
-        .call(d3Axis.axisLeft(yScale).ticks(4).tickFormat(appendyAxisFormat))
+         .classed("yAxis", true)
+        .call(d3Axis.axisLeft(yScale).ticks(5).tickFormat(appendyAxisFormat))
         .call((g) => g.selectAll(".tick line").attr("stroke", "#ECECEC"))
         .call((g) => g.selectAll("path").attr("stroke", "#ECECEC"))
         .style("font-size", 12)
+
 
       d3Select
         .selectAll(".xAxis .tick text")
@@ -226,7 +228,6 @@ export default {
         .style("color", "#4F4F4F")
 
       d3Select.selectAll(".yAxis .tick text").style("color", "#4F4F4F")
-
       svg
         .append("rect")
         .attr("width", width)
@@ -274,8 +275,8 @@ export default {
           .selectAll(".hover-line-y")
           .attr("x1", finalXCoordinate)
           .attr("x2", finalXCoordinate)
-          .attr("y1", 0)
-          .attr("y2", height)
+          .attr("y1", margin.top)
+          .attr("y2", height + margin.top)
           .style("display", "block")
 
         svg.selectAll(".dot").each(function () {
@@ -306,7 +307,7 @@ export default {
             .attr("class", "dot")
             .attr("r", 2.5)
             .attr("cx", () => xScale(new Date(points.data.date)) + 40)
-            .attr("cy", () => yScale(points[1]))
+            .attr("cy", () => yScale(points[1])+ margin.top)
             .attr("data", () => points.data)
             .style("fill", colorCodes[index])
             .attr("stroke", colorCodes[index])

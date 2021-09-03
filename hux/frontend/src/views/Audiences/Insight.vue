@@ -24,7 +24,7 @@
 
     <div v-if="audienceHistory.length > 0" class="row px-15 my-1">
       <v-card
-        v-if="audience.is_lookalike"
+        v-if="audience && audience.is_lookalike"
         class="rounded-lg card-info-wrapper ma-2 card-shadow no-background"
       >
         <v-card-text>
@@ -54,13 +54,20 @@
             "
           >
             <size :value="audience.source_size" /> |
-            {{ audience.match_rate | Numeric(true, false, false, true) }}
+            <tooltip position-bottom>
+              <template #label-content>
+                {{ audience.match_rate | Numeric(true, false, false, true) }}
+              </template>
+              <template #hover-content>
+                {{audience.match_rate}}
+              </template>
+            </tooltip>
           </div>
         </v-card-text>
       </v-card>
 
       <metric-card
-        v-if="audience.is_lookalike"
+        v-if="audience && audience.is_lookalike"
         class="ma-2 audience-summary"
         :grow="0"
         :title="'Lookalike size'"
@@ -76,7 +83,7 @@
       </metric-card>
 
       <metric-card
-        v-if="audience.is_lookalike"
+        v-if="audience && audience.is_lookalike"
         class="ma-2 audience-summary original-audience"
         :grow="0"
         :title="'Original Audience'"
@@ -215,6 +222,7 @@
                   Add to an engagement
                 </v-btn>
                 <v-btn
+                  v-if="audience && audience.is_lookalike"
                   text
                   color="primary"
                   class="body-2 ml-n3"
@@ -1150,7 +1158,7 @@ export default {
 .lookalikeMessageCard {
   @extend .font-lookalike;
   border-radius: 5px !important;
-  background-color: var(--v-aliceBlue-base) !important;
+  background-color: rgb(236 244 249 / 30%) !important;;
   font-size: 14px;
   color: var(--v-grey-base) !important;
 }

@@ -234,8 +234,9 @@
             <v-card-title v-if="!loadingDemographics" class="pb-1 pl-5 pt-4">
               <div class="mt-1">
                 <span class="neroBlack--text text-h5">
-                  Gender &sol; monthly spending in 2021
+                  Gender &sol; monthly spending
                 </span>
+                <span class="color-last-month">(last 6 months)</span>
               </div>
             </v-card-title>
             <gender-spend-chart
@@ -655,5 +656,8 @@ export default {
 }
 ::v-deep .genderSpend .container {
   margin-top: 14px !important;
+}
+.color-last-month {
+color: var(--v-grey-base) !important;;
 }
 </style>
