@@ -59,6 +59,7 @@ export default {
     chartDimensions: {
       handler() {
         d3Select.select(this.$refs.stackBarChart).selectAll("svg").remove()
+        clearInterval(this.lastBarAnimation)
         this.initiateStackBarChart()
       },
       immediate: false,
@@ -138,9 +139,9 @@ export default {
       svg
         .append("g")
         .classed("xAxis-alternate", true)
-        .attr("transform", "translate(0," + 243 + ")")
+        .attr("transform", "translate(0," + 255 + ")")
         .call(d3Axis.axisBottom(xScale).tickSize(0).tickFormat(""))
-        .style("stroke-width", 16)
+        .style("stroke-width", 40)
 
       svg
         .append("g")
@@ -188,9 +189,7 @@ export default {
       d3Select.selectAll(".xAxis-alternate .domain").style("stroke", "white")
 
       let topRoundedRect = (x, y, width, height) => {
-        if (height < 0) {
-          height = 0
-        }
+        height = height < 0 ? 0 : height
         return `M${x},${y + ry}
         a${rx},${ry} 0 0 1 ${rx},${-ry}
         h${width - 2 * rx}
@@ -232,7 +231,9 @@ export default {
         .x((d) => d.barIndex)
         .y((d) => d.total_customers)
 
-      let regLine = linearRegression(this.totalCustomerData)
+      let regLine = linearRegression(
+        this.totalCustomerData.filter((d) => d.total_customers != 0)
+      )
 
       let max = d3Array.max(this.totalCustomerData, (d) => d.barIndex)
       svg
@@ -243,8 +244,6 @@ export default {
         .style("stroke-width", 1.5)
         .attr("x1", xScale(0) + 9)
         .attr("y1", yScale(regLine.a))
-        .transition()
-        .duration(2000)
         .attr("x2", xScale(max) + 14)
         .attr("y2", yScale(regLine.b))
 
@@ -288,9 +287,11 @@ export default {
       let blinkLastBar = () => {
         d3Select
           .select(".active-bar")
+          .transition()
+          .duration(500)
           .style("fill-opacity", "0.2")
           .transition()
-          .duration(1000)
+          .duration(500)
           .style("fill-opacity", "0.5")
       }
 
