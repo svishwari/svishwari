@@ -39,15 +39,18 @@ from huxunify.api.data_connectors.cdp import (
     get_customer_profiles,
     get_customer_profile,
     get_customers_overview,
-    get_idr_data_feeds,
     get_idr_overview,
-    get_idr_matching_trends,
     get_customer_events_data,
     get_demographic_by_state,
     get_spending_by_cities,
     get_customers_insights_count_by_day,
     get_city_ltvs,
     get_spending_by_gender,
+)
+from huxunify.api.data_connectors.cdp_connection import (
+    get_idr_data_feeds,
+    get_idr_data_feed_details,
+    get_idr_matching_trends,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -450,13 +453,27 @@ class IDRDataFeeds(SwaggerView):
         """
         token_response = get_token_from_request(request)
 
+        start_date = request.args.get(
+            api_c.START_DATE,
+            datetime.strftime(
+                datetime.utcnow().date() - relativedelta(months=6),
+                api_c.DEFAULT_DATE_FORMAT,
+            ),
+        )
+        end_date = request.args.get(
+            api_c.END_DATE,
+            datetime.strftime(
+                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
+            ),
+        )
+
         return (
             jsonify(
                 DataFeedSchema().dump(
                     get_idr_data_feeds(
                         token_response[0],
-                        request.args.get(api_c.START_DATE),
-                        request.args.get(api_c.END_DATE),
+                        start_date,
+                        end_date,
                     ),
                     many=True,
                 )
@@ -467,7 +484,7 @@ class IDRDataFeeds(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/<datafeed>",
+    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/<datafeed_id>",
     "IDRDataFeedDetails",
 )
 class IDRDataFeedDetails(SwaggerView):
@@ -475,12 +492,12 @@ class IDRDataFeedDetails(SwaggerView):
 
     parameters = [
         {
-            "name": api_c.DATA_FEED,
-            "description": "Data Feed Name",
-            "type": "string",
+            "name": api_c.DATAFEED_ID,
+            "description": "Data Feed ID",
+            "type": "integer",
             "in": "path",
             "required": True,
-            "example": "Really_long_feed_Name_106",
+            "example": "1",
         },
     ]
 
@@ -496,9 +513,9 @@ class IDRDataFeedDetails(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
-    # pylint: disable=no-self-use,unused-argument
+    # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, datafeed: str) -> Tuple[dict, int]:
+    def get(self, datafeed_id: int) -> Tuple[dict, int]:
         """Retrieves a IDR data feed waterfall report.
 
         ---
@@ -506,42 +523,16 @@ class IDRDataFeedDetails(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            datafeed (str): Data feed name
+            datafeed_id (int): Data feed ID
 
         Returns:
             Tuple[dict, int] dict of IDR data feed waterfall
         """
+        token_response = get_token_from_request(request)
 
         return (
             DataFeedDetailsSchema().dump(
-                {
-                    api_c.PINNING: {
-                        api_c.INPUT_RECORDS: 2,
-                        api_c.OUTPUT_RECORDS: 2,
-                        api_c.EMPTY_RECORDS: 0,
-                        api_c.INDIVIDUAL_ID_MATCH: 1,
-                        api_c.HOUSEHOLD_ID_MATCH: 1,
-                        api_c.COMPANY_ID_MATCH: 1,
-                        api_c.ADDRESS_ID_MATCH: 1,
-                        api_c.DB_READS: 1,
-                        api_c.DB_WRITES: 1,
-                        api_c.FILENAME: "Input.csv",
-                        api_c.NEW_INDIVIDUAL_IDS: 1,
-                        api_c.NEW_HOUSEHOLD_IDS: 1,
-                        api_c.NEW_COMPANY_IDS: 1,
-                        api_c.NEW_ADDRESS_IDS: 1,
-                        api_c.PROCESS_TIME: 6.43,
-                        api_c.DATE_TIME: datetime.now(),
-                    },
-                    api_c.STITCHED: {
-                        api_c.DIGITAL_IDS_ADDED: 3,
-                        api_c.DIGITAL_IDS_MERGED: 6,
-                        api_c.MATCH_RATE: 0.6606,
-                        api_c.MERGE_RATE: 0,
-                        api_c.RECORDS_SOURCE: "Input waterfall",
-                        api_c.TIME_STAMP: datetime.now(),
-                    },
-                }
+                get_idr_data_feed_details(token_response[0], int(datafeed_id))
             ),
             HTTPStatus.OK,
         )
@@ -854,11 +845,15 @@ class TotalCustomersGraphView(SwaggerView):
         token_response = get_token_from_request(request)
 
         # create a dict for date_filters required by cdp endpoint
-        last_date = datetime.today() - relativedelta(months=6)
-        today = datetime.today()
+        last_date = datetime.utcnow().date() - relativedelta(months=6)
+        today = datetime.utcnow().date()
         date_filters = {
-            api_c.START_DATE: datetime.strftime(last_date, "%Y-%m-%d"),
-            api_c.END_DATE: datetime.strftime(today, "%Y-%m-%d"),
+            api_c.START_DATE: datetime.strftime(
+                last_date, api_c.DEFAULT_DATE_FORMAT
+            ),
+            api_c.END_DATE: datetime.strftime(
+                today, api_c.DEFAULT_DATE_FORMAT
+            ),
         }
 
         customers_insight_total = get_customers_insights_count_by_day(
@@ -895,7 +890,7 @@ class CustomersInsightsStates(SwaggerView):
     Customer insights by state
     """
 
-    params = parameters = [
+    parameters = [
         {
             "name": "body",
             "description": "Customer Overview Filters",
@@ -972,7 +967,7 @@ class CustomersInsightsCities(SwaggerView):
     Customer insights by city
     """
 
-    params = parameters = [
+    parameters = [
         {
             "name": api_c.QUERY_PARAMETER_BATCH_SIZE,
             "in": "query",
@@ -986,7 +981,7 @@ class CustomersInsightsCities(SwaggerView):
             "name": api_c.QUERY_PARAMETER_BATCH_NUMBER,
             "in": "query",
             "type": "string",
-            "description": "Number of which batch of notifications should be returned.",
+            "description": "Number of which batch of cities should be returned.",
             "example": "10",
             "required": False,
             "default": api_c.DEFAULT_BATCH_NUMBER,

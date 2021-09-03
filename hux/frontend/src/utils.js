@@ -2,6 +2,8 @@
  * Utilities
  */
 
+import dayjs from "dayjs"
+
 /**
  * Forms the title for the page.
  *
@@ -100,4 +102,38 @@ export function deliverySchedule() {
     monthlyDayDate: 1,
     days: ["Sunday"],
   }
+}
+
+/**
+ * Get a list of months names.
+ *
+ * @returns {string[]}
+ */
+export function listOfMonths() {
+  return [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ]
+}
+
+/**
+ * Get a list of years.
+ *
+ * @param {number} [yearsBack=10]
+ * @returns {string[]}
+ */
+export function listOfYears(yearsBack = 10) {
+  return Array.from({ length: yearsBack }, (_, index) => {
+    return dayjs().subtract(index, "years").format("YYYY")
+  })
 }

@@ -35,9 +35,9 @@ data_sources_constants = [
     {
         c.DATA_SOURCE_NAME: "Aqfer",
         c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_AQFER,
-        c.STATUS: c.PENDING,
+        c.STATUS: c.ACTIVE,
         c.ENABLED: True,
-        c.ADDED: False,
+        c.ADDED: True,
     },
     {
         c.DATA_SOURCE_NAME: "Facebook",
