@@ -40,7 +40,6 @@ from huxunify.api.data_connectors.cdp import (
     get_customer_profile,
     get_customers_overview,
     get_idr_overview,
-    get_idr_matching_trends,
     get_customer_events_data,
     get_demographic_by_state,
     get_spending_by_cities,
@@ -51,6 +50,7 @@ from huxunify.api.data_connectors.cdp import (
 from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feeds,
     get_idr_data_feed_details,
+    get_idr_matching_trends,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -452,13 +452,27 @@ class IDRDataFeeds(SwaggerView):
         """
         token_response = get_token_from_request(request)
 
+        start_date = request.args.get(
+            api_c.START_DATE,
+            datetime.strftime(
+                datetime.utcnow().date() - relativedelta(months=6),
+                api_c.DEFAULT_DATE_FORMAT,
+            ),
+        )
+        end_date = request.args.get(
+            api_c.END_DATE,
+            datetime.strftime(
+                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
+            ),
+        )
+
         return (
             jsonify(
                 DataFeedSchema().dump(
                     get_idr_data_feeds(
                         token_response[0],
-                        request.args.get(api_c.START_DATE),
-                        request.args.get(api_c.END_DATE),
+                        start_date,
+                        end_date,
                     ),
                     many=True,
                 )
@@ -855,11 +869,15 @@ class TotalCustomersGraphView(SwaggerView):
         token_response = get_token_from_request(request)
 
         # create a dict for date_filters required by cdp endpoint
-        last_date = datetime.today() - relativedelta(months=6)
-        today = datetime.today()
+        last_date = datetime.utcnow().date() - relativedelta(months=6)
+        today = datetime.utcnow().date()
         date_filters = {
-            api_c.START_DATE: datetime.strftime(last_date, "%Y-%m-%d"),
-            api_c.END_DATE: datetime.strftime(today, "%Y-%m-%d"),
+            api_c.START_DATE: datetime.strftime(
+                last_date, api_c.DEFAULT_DATE_FORMAT
+            ),
+            api_c.END_DATE: datetime.strftime(
+                today, api_c.DEFAULT_DATE_FORMAT
+            ),
         }
 
         customers_insight_total = get_customers_insights_count_by_day(
@@ -896,7 +914,7 @@ class CustomersInsightsStates(SwaggerView):
     Customer insights by state
     """
 
-    params = parameters = [
+    parameters = [
         {
             "name": "body",
             "description": "Customer Overview Filters",
@@ -973,7 +991,7 @@ class CustomersInsightsCities(SwaggerView):
     Customer insights by city
     """
 
-    params = parameters = [
+    parameters = [
         {
             "name": api_c.QUERY_PARAMETER_BATCH_SIZE,
             "in": "query",
@@ -987,7 +1005,7 @@ class CustomersInsightsCities(SwaggerView):
             "name": api_c.QUERY_PARAMETER_BATCH_NUMBER,
             "in": "query",
             "type": "string",
-            "description": "Number of which batch of notifications should be returned.",
+            "description": "Number of which batch of cities should be returned.",
             "example": "10",
             "required": False,
             "default": api_c.DEFAULT_BATCH_NUMBER,

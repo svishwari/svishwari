@@ -150,6 +150,7 @@ class AudienceGetSchema(Schema):
     source_name = fields.String()
     source_size = fields.Int()
     source_id = fields.String()
+    match_rate = fields.Float(default=0)
 
 
 class AudiencePutSchema(Schema):

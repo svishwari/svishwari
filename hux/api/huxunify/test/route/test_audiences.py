@@ -7,15 +7,21 @@ from unittest import TestCase, mock
 
 import mongomock
 import requests_mock
-from huxunifylib.connectors.connector_cdp import ConnectorCDP
 
+from huxunifylib.connectors.connector_cdp import ConnectorCDP
+from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
-import huxunifylib.database.constants as db_c
 from huxunifylib.database.orchestration_management import create_audience
 
-import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
+from huxunify.api.schema.customers import (
+    CustomersInsightsCitiesSchema,
+    CustomersInsightsStatesSchema,
+)
+
 from huxunify.app import create_app
+
+from huxunify.test import constants as t_c
 
 
 class AudienceDownloadsTest(TestCase):
@@ -56,24 +62,22 @@ class AudienceDownloadsTest(TestCase):
             return_value=self.database,
         ).start()
 
-        # mock get_db_client() in audience
+        # mock get_db_client() in audiences
         mock.patch(
             "huxunify.api.route.audiences.get_db_client",
             return_value=self.database,
         ).start()
 
         # mock request for introspect call
-        request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
-        request_mocker.get(
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.get(
             t_c.CDM_HEALTHCHECK_CALL, json=t_c.CDM_HEALTHCHECK_RESPONSE
         )
-        request_mocker.post(
-            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/audience",
-            json=t_c.CUSTOMER_PROFILE_AUDIENCES_RESPONSE,
-        )
-        request_mocker.start()
+        self.request_mocker.start()
 
         # stop all mocks in cleanup
         self.addCleanup(mock.patch.stopall)
@@ -88,18 +92,7 @@ class AudienceDownloadsTest(TestCase):
         # create audience first
         audience = {
             db_c.AUDIENCE_NAME: "Test Audience",
-            "audience_filters": [
-                {
-                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
-                    api_c.AUDIENCE_SECTION_FILTERS: [
-                        {
-                            api_c.AUDIENCE_FILTER_FIELD: "filter_field",
-                            api_c.AUDIENCE_FILTER_TYPE: "type",
-                            api_c.AUDIENCE_FILTER_VALUE: "value",
-                        }
-                    ],
-                }
-            ],
+            "audience_filters": [],
             api_c.USER_NAME: self.user_name,
             api_c.DESTINATION_IDS: [],
         }
@@ -156,3 +149,66 @@ class AudienceDownloadsTest(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(response.content_type, "application/csv")
+
+    def test_audience_insights_cities_success(self) -> None:
+        """Test get audience insights by cities
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/city-ltvs",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_CITY_RESPONSE,
+        )
+
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{self.audience[db_c.ID]}/{api_c.CITIES}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(
+                CustomersInsightsCitiesSchema(),
+                response.json,
+                True,
+            )
+        )
+
+    def test_customers_insights_states_success(self) -> None:
+        """Test get customers insights by states
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/count-by-state",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{self.audience[db_c.ID]}/{api_c.STATES}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(
+                CustomersInsightsStatesSchema(),
+                response.json,
+                True,
+            )
+        )

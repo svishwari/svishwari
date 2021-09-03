@@ -88,6 +88,33 @@ AVG_SPENT_MEN = "avg_spent_men"
 AVG_SPENT_OTHER = "avg_spent_other"
 YEAR = "year"
 MONTH = "month"
+MINUTE = "minute"
+HOUR = "hour"
+PERIOD = "period"
+DAY_OF_WEEK = "day_of_week"
+MONTHLY_PERIOD_ITEMS = "monthly_period_items"
+DAY_OF_MONTH = "day_of_month"
+DAILY = "Daily"
+MONTHLY = "Monthly"
+WEEKLY = "Weekly"
+EVERY = "every"
+AM = "AM"
+PM = "PM"
+PERIODICIY = "periodicity"
+MONTHLY_PERIOD_LIST = ["Day", "First", "Second", "Third", "Fourth", "Last"]
+DAY_LIST = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+DAY_OF_MONTH_LIST = [str(x) for x in range(1, 31)] + [
+    "Day",
+    "Weekend",
+    "Weekend day",
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+]
 # TODO: Remove State Names once it connected with CDM
 STATE_NAMES = {
     "AL": "Alabama",
@@ -167,6 +194,7 @@ DISABLED = "disabled"
 SIZE = "size"
 IS_ADDED = "is_added"
 UNKNOWN = "unknown"
+DAY = "day"
 
 STATUS_NOT_DELIVERED = "Not Delivered"
 STATUS_DELIVERED = "Delivered"
@@ -222,6 +250,12 @@ SFMC_CUSTOMER_KEY = "CustomerKey"
 
 # Twilio connector defines
 TWILIO_AUTH_TOKEN = "twilio_auth_token"
+
+# Qualtrics connector defines
+QUALTRICS_API_TOKEN = "qualtrics_api_token"
+QUALTRICS_DATA_CENTER = "qualtrics_data_center"
+QUALTRICS_OWNER_ID = "qualtrics_owner_id"
+QUALTRICS_DIRECTORY_ID = "qualtrics_directory_id"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -299,6 +333,32 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
+    db_c.DELIVERY_PLATFORM_QUALTRICS: {
+        QUALTRICS_API_TOKEN: {
+            NAME: "Auth Token",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        QUALTRICS_DATA_CENTER: {
+            NAME: "Data Center",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        QUALTRICS_OWNER_ID: {
+            NAME: "Owner ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        QUALTRICS_DIRECTORY_ID: {
+            NAME: "Directory ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+    },
 }
 
 # DESTINATION Secret Mapping
@@ -324,6 +384,14 @@ DESTINATION_SECRETS = {
     db_c.DELIVERY_PLATFORM_TWILIO: {
         MONGO: [],
         AWS_SSM_NAME: [TWILIO_AUTH_TOKEN],
+    },
+    db_c.DELIVERY_PLATFORM_QUALTRICS: {
+        MONGO: [
+            QUALTRICS_DIRECTORY_ID,
+            QUALTRICS_DATA_CENTER,
+            QUALTRICS_OWNER_ID,
+        ],
+        AWS_SSM_NAME: [QUALTRICS_API_TOKEN],
     },
 }
 
@@ -903,3 +971,5 @@ PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB = {
     "after receiving an email.",
     MODEL_TYPE: "purchase",
 }
+
+DEFAULT_DATE_FORMAT = "%Y-%m-%d"
