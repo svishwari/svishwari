@@ -7,6 +7,7 @@
     }"
     :disabled="isDisabled"
     :color="isDisabledOrDeselectable ? 'background' : 'white'"
+    :to="to"
     height="60"
     @click="$emit('click')"
   >
@@ -88,6 +89,12 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+
+    to: {
+      type: Object,
+      required: false,
+      default: () => {},
     },
   },
 

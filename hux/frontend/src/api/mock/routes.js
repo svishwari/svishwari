@@ -10,6 +10,7 @@ import {
   destinationsDataExtensions,
 } from "./factories/destination"
 import { idrOverview, idrDataFeedReport } from "./factories/identity"
+import { mockDataFeeds } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData"
@@ -22,6 +23,12 @@ import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
 export const defineRoutes = (server) => {
   // data sources
   server.get("/data-sources")
+
+  server.get("/data-sources/:id")
+
+  server.get("/data-sources/:type/datafeeds", () => {
+    return mockDataFeeds(5)
+  })
 
   server.patch("/data-sources", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
@@ -458,6 +465,11 @@ export const defineRoutes = (server) => {
   // audiences
   server.get("/audiences")
 
+  server.get("/audiences/:id/audience_insights", () => {
+    demographicsData.demo = mapData
+    return demographicsData
+  })
+
   server.get("/audiences/:id", (schema, request) => {
     const id = request.params.id
     const audience = schema.audiences.find(id)
@@ -518,6 +530,22 @@ export const defineRoutes = (server) => {
         match_rate: faker.datatype.number({ min: 0, max: 1, precision: 0.001 }),
       }
     })
+  })
+
+  server.get("/audiences/:id/cities", (schema, request) => {
+    let batchNumber = request.queryParams["batch_number"] || 1
+    let batchSize = request.queryParams["batch_size"] || 100
+    let start = batchNumber === 1 ? 0 : (batchNumber - 1) * batchSize
+    let end = batchNumber === 1 ? batchSize : batchNumber * batchSize
+    return schema.geoCities.all().slice(start, end)
+  })
+
+  server.get("/audiences/:id/states", (schema) => {
+    return schema.geoStates.all()
+  })
+
+  server.get("/audiences/:id/countries", (schema) => {
+    return schema.geoCountries.all()
   })
 
   //lookalike audiences

@@ -38,18 +38,18 @@ client["customers"].geoCities = (batchNumber, batchSize, data) => {
   )
 }
 
-client["customers"].demographics = (data) => {
-  return http.get(
-    `/customers-insights/demo?start_date=${data.start_date}&end_date=${data.end_date}`
-  )
-}
-
 client["customers"].geoCountries = (data) => {
   return http.post("/customers-insights/countries", data)
 }
 
 client["customers"].geoStates = (data) => {
   return http.post("/customers-insights/states", data)
+}
+
+client["customers"].demographics = (data) => {
+  return http.get(
+    `/customers-insights/demo?start_date=${data.start_date}&end_date=${data.end_date}`
+  )
 }
 
 client["customers"].totalCustomers = () => {
@@ -115,10 +115,10 @@ client["engagements"].detachAudience = (resourceId, data) => {
   // NOTE: The Hux API supports post data for a DELETE request method.
   // Typically, this isn't RESTful so Mirage does not support this, hence this check
   if (process.env.NODE_ENV !== "development") {
-    return http.delete(`/engagements/${resourceId}/audience`, { data: data })
+    return http.delete(`/engagements/${resourceId}/audiences`, { data: data })
   } else {
     const audienceId = data.audience_ids[0]
-    return http.delete(`/engagements/${resourceId}/audience/${audienceId}`)
+    return http.delete(`/engagements/${resourceId}/audiences/${audienceId}`)
   }
 }
 
@@ -178,11 +178,20 @@ client["engagements"].getCampaigns = ({
 //#endregion Engagement custom endpoints
 
 //#region Customer Identity endpoint(s)
-client["idr"].overview = () => http.get("/idr/overview")
-client["idr"].datafeeds = () => http.get("/idr/datafeeds")
-client["idr"].datafeedReport = (id) => http.get(`/idr/datafeeds/${id}`)
-client["idr"].matchingTrend = () => {
-  return http.get("/idr/matching-trends")
+client["idr"].overview = (params) => {
+  return http.get("/idr/overview", { params: params })
+}
+
+client["idr"].datafeeds = (params) => {
+  return http.get("/idr/datafeeds", { params: params })
+}
+
+client["idr"].datafeedReport = (id) => {
+  http.get(`/idr/datafeeds/${id}`)
+}
+
+client["idr"].matchingTrend = (params) => {
+  return http.get("/idr/matching-trends", { params: params })
 }
 //#endregion
 
@@ -191,11 +200,8 @@ client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
 }
 
-client["audiences"].demographics = (data) => {
-  // TODO: replace with audienceId specific endpoint once available
-  return http.get(
-    `/customers-insights/demo?start_date=${data.start_date}&end_date=${data.end_date}`
-  )
+client["audiences"].demographics = (audienceId) => {
+  return http.get(`/audiences/${audienceId}/audience_insights`)
 }
 
 client["audiences"].deliver = (resourceId, data) => {
@@ -204,6 +210,20 @@ client["audiences"].deliver = (resourceId, data) => {
 
 client["audiences"].deliveries = (resourceId, data) => {
   return http.get(`/audiences/${resourceId}/delivery-history`, data)
+}
+
+client["audiences"].geoCities = (resourceId, batchNumber, batchSize) => {
+  return http.get(
+    `/audiences/${resourceId}/cities?batch_number=${batchNumber}&batch_size=${batchSize}`
+  )
+}
+
+client["audiences"].geoCountries = (resourceId) => {
+  return http.get(`/audiences/${resourceId}/countries`)
+}
+
+client["audiences"].geoStates = (resourceId) => {
+  return http.get(`/audiences/${resourceId}/states`)
 }
 //#endregion
 
@@ -238,5 +258,11 @@ client["models"].drift = (id, data) => {
 client["models"].modelFeatures = (id) => {
   return http.get(`/models/${id}/features`)
 }
+
+//#region Data sources
+client.dataSources.dataFeeds = (type) => {
+  return http.get(`/data-sources/${type}/datafeeds`)
+}
+//#endregion
 
 export default client

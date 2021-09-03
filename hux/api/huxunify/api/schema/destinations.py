@@ -5,7 +5,7 @@ Schemas for the Destinations API
 
 from flask_marshmallow import Schema
 from marshmallow import fields
-from marshmallow.validate import OneOf
+from marshmallow.validate import OneOf, Range, Equal
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import (
@@ -14,6 +14,63 @@ from huxunify.api.schema.utils import (
 )
 from huxunify.api.schema.engagement import EngagementDataExtensionSchema
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
+
+
+class DeliveryScheduleDailySchema(Schema):
+    """
+    Delivery Schedule Daily schema class
+    """
+
+    periodicity = fields.String(
+        default=api_c.DAILY, validate=Equal(api_c.DAILY)
+    )
+    every = fields.Int(example=2, validate=Range(min=1, max=7))
+    hour = fields.Int(example=11, validate=Range(min=1, max=12))
+    minute = fields.Int(example=15, validate=Range(min=0, max=45))
+    period = fields.String(
+        example=api_c.AM,
+        validate=[OneOf(choices=[api_c.AM, api_c.PM])],
+    )
+
+
+class DeliveryScheduleWeeklySchema(DeliveryScheduleDailySchema):
+    """
+    Delivery Schedule Weekly schema class
+    """
+
+    periodicity = fields.String(
+        default=api_c.WEEKLY, validate=Equal(api_c.WEEKLY)
+    )
+    every = fields.Int(example=2, validate=Range(min=1, max=4))
+    day_of_week = fields.List(
+        fields.String(
+            required=True,
+            validate=OneOf(api_c.DAY_LIST),
+        ),
+    )
+
+
+class DeliveryScheduleMonthlySchema(DeliveryScheduleDailySchema):
+    """
+    Delivery Schedule Monthly schema class
+    """
+
+    periodicity = fields.String(
+        default=api_c.MONTHLY, validate=Equal(api_c.MONTHLY)
+    )
+    every = fields.Int(example=2, validate=Range(min=1, max=12))
+    monthly_period_items = fields.List(
+        fields.String(
+            required=True,
+            validate=OneOf(api_c.MONTHLY_PERIOD_LIST),
+        ),
+    )
+    day_of_month = fields.List(
+        fields.String(
+            required=True,
+            validate=OneOf(api_c.DAY_OF_MONTH_LIST),
+        ),
+    )
 
 
 class DestinationGetSchema(Schema):
@@ -315,6 +372,90 @@ class TwilioAuthConstants(Schema):
     )
 
 
+class QualtricsAuthCredsSchema(Schema):
+    """
+    Qualtrics Auth Credentials schema class
+    """
+
+    qualtrics_api_token = fields.String(
+        required=True,
+        validate=must_not_be_blank,
+        example="wue812x2813eyqshjsdbw",
+    )
+    qualtrics_data_center = fields.String(
+        required=True,
+        validate=must_not_be_blank,
+        example="feiwygfewyfgiuqef",
+    )
+    qualtrics_owner_id = fields.String(
+        required=True,
+        validate=must_not_be_blank,
+        example="kjeahfhb81322132qef",
+    )
+    qualtrics_directory_id = fields.String(
+        required=True,
+        validate=must_not_be_blank,
+        example="qwjdqwu73176432nfkd",
+    )
+
+
+class QualtricsAuthConstants(Schema):
+    """
+    Qualtrics Auth constants schema class
+    """
+
+    class Meta:
+        """
+        set the ordering of qualtrics auth constants
+        """
+
+        ordered = True
+
+    qualtrics_api_token = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "API Token",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+
+    qualtrics_data_center = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Data Center",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+
+    qualtrics_owner_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Owner ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+
+    qualtrics_directory_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Directory ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+
+
 class DestinationConstantsSchema(Schema):
     """
     Destination constants schema class
@@ -330,6 +471,7 @@ class DestinationConstantsSchema(Schema):
     facebook = fields.Nested(FacebookAuthConstants)
     sfmc = fields.Nested(SFMCAuthConstants)
     twilio = fields.Nested(TwilioAuthConstants)
+    qualtrics = fields.Nested(QualtricsAuthConstants)
 
 
 class DestinationDataExtPostSchema(Schema):

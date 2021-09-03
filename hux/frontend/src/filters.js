@@ -15,9 +15,11 @@ dayjs.extend(relativeTime)
  * @return {string} Formatted date time string eg. 3/17/2021 at 1:29 PM
  */
 const Date = (value, format = "M/D/YYYY [at] h:mm A", noSuffix = false) => {
-  if (!value) return ""
+  if (!value) return null
 
   let date = dayjs(value)
+
+  if (!date.isValid()) return null
 
   if (format === "relative") {
     if (date.isBefore()) {
