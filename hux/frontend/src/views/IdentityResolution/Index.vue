@@ -88,7 +88,7 @@
           :key="index"
           :title="metric.title"
           :min-width="170"
-          class="mx-2 my-2"
+          class="mx-2 my-2 pt-3 pl-6"
         >
           <template #extra-item>
             <tooltip position-top>
