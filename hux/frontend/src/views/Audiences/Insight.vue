@@ -481,7 +481,7 @@
 
     <geo-drawer
       geo-level="cities"
-      :audience-id="'1'"
+      :audience-id="audienceId"
       :results="audienceInsights.total_cities"
       :toggle="geoDrawer.cities"
       @onToggle="(isToggled) => (geoDrawer.cities = isToggled)"
@@ -489,7 +489,7 @@
 
     <geo-drawer
       geo-level="countries"
-      :audience-id="'1'"
+      :audience-id="audienceId"
       :results="audienceInsights.total_countries"
       :toggle="geoDrawer.countries"
       @onToggle="(isToggled) => (geoDrawer.countries = isToggled)"
@@ -497,7 +497,7 @@
 
     <geo-drawer
       geo-level="states"
-      :audience-id="'1'"
+      :audience-id="audienceId"
       :results="audienceInsights.total_us_states"
       :toggle="geoDrawer.states"
       @onToggle="(isToggled) => (geoDrawer.states = isToggled)"
