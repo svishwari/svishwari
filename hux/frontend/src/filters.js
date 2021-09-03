@@ -76,7 +76,7 @@ const Numeric = (
   append = ""
 ) => {
   if (typeof value !== "number") return value
-
+  if (value === 0) return "-"
   let abrv = ""
 
   if (percentage) {
@@ -144,6 +144,7 @@ const shortName = (value) => {
 
 const Currency = (value) => {
   if (isNaN(value)) return "-"
+  if (parseFloat(value) === 0) return "-"
   return Number(value).toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
