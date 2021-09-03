@@ -6,3 +6,4 @@ variables:
   host: "{tavern.env_vars.TAVERN_TEST_HOST}"
   version: "{tavern.env_vars.TAVERN_TEST_API_VERSION}"
   token: ""
+  openapi: "apispec_1"

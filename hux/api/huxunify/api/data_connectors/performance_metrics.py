@@ -270,6 +270,7 @@ def generate_metrics_file(
         Path(__file__).parent.parent.parent.joinpath(file_path) / file_name,
         "w",
         newline="",
+        encoding="utf-8",
     ) as csv_file:
         field_names = [api_c.NAME] + list(final_metric[api_c.SUMMARY].keys())
         dict_writer = csv.DictWriter(csv_file, fieldnames=field_names)

@@ -53,7 +53,8 @@
               font-weight-semi-bold
             "
           >
-            <size :value="audience.size" /> |
+            <size :value="audience.source_size" /> |
+            {{ audience.match_rate | Numeric(true, false, false, true) }}
           </div>
         </v-card-text>
       </v-card>
@@ -84,7 +85,15 @@
         <template #subtitle-extended>
           <span class="mr-2 pt-2">
             <span class="original-audience-text">
-              {{ audience.name }}
+              <router-link
+                :to="{
+                  name: 'AudienceInsight',
+                  params: { id: audience.source_id },
+                }"
+                class="text-decoration-none original-audience-text"
+                append
+                >{{ audience.source_name }}
+              </router-link>
             </span>
           </span>
         </template>
@@ -238,7 +247,7 @@
       <v-card class="rounded pa-5 box-shadow-5">
         <div class="overview headingOverviewCard">Audience overview</div>
         <div
-          v-if="audience.is_lookalike"
+          v-if="audience && audience.is_lookalike"
           class="row overview-list lookalike-aud mb-0 ml-0 mr-1 mt-4"
         >
           <metric-card :height="60" :title="''" class="lookalikeMessageCard">
@@ -249,18 +258,19 @@
               >
               <router-link
                 :to="{
-                  name: '',
+                  name: 'AudienceInsight',
+                  params: { id: audience.source_id },
                 }"
-                class="text-decoration-none"
+                class="text-decoration-none colorLink"
                 append
-                >{{ audience.name }}
+                >{{ audience.source_name }}
               </router-link>
               <span>,&nbsp;to see insights.</span></template
             >
           </metric-card>
         </div>
         <div
-          v-if="!audience.is_lookalike"
+          v-if="audience && !audience.is_lookalike"
           class="row overview-list mb-0 ml-0 mt-1"
         >
           <metric-card
@@ -288,9 +298,14 @@
         </div>
       </v-card>
     </div>
-    <v-row v-if="!audience.is_lookalike" class="px-15 mt-2">
+    <v-row v-if="audience && !audience.is_lookalike" class="px-15 mt-2">
       <v-col md="7">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+          <v-progress-linear
+            v-if="loadingDemographics"
+            :active="loadingDemographics"
+            :indeterminate="loadingDemographics"
+          />
           <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
@@ -298,23 +313,31 @@
               </span>
             </div>
           </v-card-title>
-          <map-chart :map-data="mapChartData" />
-          <map-slider :map-data="mapChartData" />
+          <map-chart v-if="!loadingDemographics" :map-data="mapChartData" />
+          <map-slider v-if="!loadingDemographics" :map-data="mapChartData" />
         </v-card>
       </v-col>
       <v-col md="5">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+          <v-progress-linear
+            v-if="loadingDemographics"
+            :active="loadingDemographics"
+            :indeterminate="loadingDemographics"
+          />
           <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5"> United States </span>
             </div>
           </v-card-title>
           <v-divider class="ml-5 mr-8 mt-0 mb-1" />
-          <map-state-list :map-data="mapChartData" />
+          <map-state-list
+            v-if="!loadingDemographics"
+            :map-data="mapChartData"
+          />
         </v-card>
       </v-col>
     </v-row>
-    <v-row v-if="!audience.is_lookalike" class="px-15 mt-2">
+    <v-row v-if="audience && !audience.is_lookalike" class="px-15 mt-2">
       <v-col md="3">
         <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
           <v-progress-linear
@@ -452,7 +475,6 @@
 // helpers
 import { generateColor } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
-import dayjs from "dayjs"
 
 // common components
 import Avatar from "@/components/common/Avatar.vue"
@@ -465,7 +487,6 @@ import Icon from "@/components/common/Icon.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart.vue"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
 import MapChart from "@/components/common/MapChart/MapChart"
-import mapData from "@/components/common/MapChart/mapData.js"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import MetricCard from "@/components/common/MetricCard.vue"
@@ -511,7 +532,6 @@ export default {
   },
   data() {
     return {
-      mapChartData: mapData,
       showLookAlikeDrawer: false,
       lookalikeCreated: false,
       audienceHistory: [],
@@ -640,6 +660,9 @@ export default {
       }
       return []
     },
+    mapChartData() {
+      return this.demographicsData.demo
+    },
     showLookalike() {
       return !this.is_lookalike &&
         this.isLookalikable &&
@@ -751,10 +774,7 @@ export default {
 
     async fetchDemographics() {
       this.loadingDemographics = true
-      await this.getDemographics({
-        start_date: dayjs().subtract(6, "months").format("YYYY-MM-DD"),
-        end_date: dayjs().format("YYYY-MM-DD"),
-      })
+      await this.getDemographics(this.$route.params.id)
       this.loadingDemographics = false
     },
 
@@ -1020,7 +1040,7 @@ export default {
     async loadAudienceInsights() {
       this.loading = true
       await this.getAudienceById(this.$route.params.id)
-      if (this.audience.is_lookalike) {
+      if (this.audience && this.audience.is_lookalike) {
         this.audienceHistory = this.audience.audienceHistory.filter(
           (e) => e.title == "Created"
         )
@@ -1140,5 +1160,8 @@ export default {
 }
 .no-background {
   background: transparent;
+}
+.colorLink {
+  color: var(--v-primary-base) !important;
 }
 </style>
