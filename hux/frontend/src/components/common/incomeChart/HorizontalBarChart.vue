@@ -136,7 +136,7 @@ export default {
             .attr("stroke", "none")
             .attr("stroke-opacity", "0.3")
         )
-        
+
       svg
         .selectAll("myRect")
         .data(this.chartData)
