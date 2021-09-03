@@ -340,7 +340,7 @@ export default {
       },
       loadingGeoOverview: false,
       loadingDemographics: true,
-      timeFrameLabel: "last 6 months",
+      timeFrameLabel: "last 9 months",
       overviewListItems: [
         {
           title: "No. of customers",
