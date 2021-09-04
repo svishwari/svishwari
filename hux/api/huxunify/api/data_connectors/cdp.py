@@ -537,6 +537,7 @@ def get_customer_count_by_state(
             count_by_state endpoint.
 
     Returns:
+        list: list of state demographic data
 
     """
     # get config
@@ -629,6 +630,9 @@ def get_demographic_by_country(
 
     """
     customer_count_by_state = get_customer_count_by_state(token=token)
+    # start timer
+    timer = time.perf_counter()
+    # group customer count data by country
     data_by_country = defaultdict(list)
     customer_insights_by_country = []
     for item in customer_count_by_state:
@@ -645,6 +649,12 @@ def get_demographic_by_country(
         customer_insights_by_country.append(
             {"name": country, "avg_ltv": avg_ltv, "size": total_customer_count}
         )
+    # log execution time summary
+    total_ticks = time.perf_counter() - timer
+    logger.info(
+        "Grouped customer count data by country in %0.4f seconds.",
+        total_ticks
+    )
 
     return customer_insights_by_country
 
