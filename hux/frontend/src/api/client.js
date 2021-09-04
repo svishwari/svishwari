@@ -38,18 +38,18 @@ client["customers"].geoCities = (batchNumber, batchSize, data) => {
   )
 }
 
-client["customers"].demographics = (data) => {
-  return http.get(
-    `/customers-insights/demo?start_date=${data.start_date}&end_date=${data.end_date}`
-  )
-}
-
 client["customers"].geoCountries = (data) => {
   return http.post("/customers-insights/countries", data)
 }
 
 client["customers"].geoStates = (data) => {
   return http.post("/customers-insights/states", data)
+}
+
+client["customers"].demographics = (data) => {
+  return http.get(
+    `/customers-insights/demo?start_date=${data.start_date}&end_date=${data.end_date}`
+  )
 }
 
 client["customers"].totalCustomers = () => {
@@ -210,6 +210,20 @@ client["audiences"].deliver = (resourceId, data) => {
 
 client["audiences"].deliveries = (resourceId, data) => {
   return http.get(`/audiences/${resourceId}/delivery-history`, data)
+}
+
+client["audiences"].geoCities = (resourceId, batchNumber, batchSize) => {
+  return http.get(
+    `/audiences/${resourceId}/cities?batch_number=${batchNumber}&batch_size=${batchSize}`
+  )
+}
+
+client["audiences"].geoCountries = (resourceId) => {
+  return http.get(`/audiences/${resourceId}/countries`)
+}
+
+client["audiences"].geoStates = (resourceId) => {
+  return http.get(`/audiences/${resourceId}/states`)
 }
 //#endregion
 
