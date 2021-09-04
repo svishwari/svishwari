@@ -487,9 +487,9 @@ class GetConnectionsDatafeeds(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
-    # @api_error_handler()
+    @api_error_handler()
     def get(self, datasource_type: str) -> Tuple[str, int]:
-        """Get data feeds for data source.
+        """Retrieve data feeds for data source.
 
         ---
         security:

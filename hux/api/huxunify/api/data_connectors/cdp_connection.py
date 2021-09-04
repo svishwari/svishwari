@@ -119,7 +119,7 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
 
 def get_connections_data_feeds(token: str, data_source_type: str) -> list:
     """
-    Get CDP Connections Data Feeds
+    Retrieve data source data feeds
 
     Args:
         token (str): OKTA JWT Token
