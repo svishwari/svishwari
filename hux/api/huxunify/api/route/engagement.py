@@ -389,7 +389,9 @@ class UpdateEngagement(SwaggerView):
 
         """
 
-        body = EngagementPutSchema().load(request.get_json())
+        body = EngagementPutSchema(unknown=api_c.EXCLUDE).load(
+            request.get_json()
+        )
 
         database = get_db_client()
 
