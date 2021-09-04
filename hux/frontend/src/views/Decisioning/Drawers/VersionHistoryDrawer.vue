@@ -203,7 +203,7 @@ export default {
         height: 40px !important;
       }
       th {
-        background: var(--v-aliceBlue-base);
+        background: var(--v-primary-lighten2);
       }
       th:nth-child(1) {
         padding-left: 24px;

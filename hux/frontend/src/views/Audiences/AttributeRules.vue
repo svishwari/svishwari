@@ -113,7 +113,7 @@
             small
             class="mx-2 my-1 font-weight-semi-bold"
             text-color="primary"
-            color="pillBlue"
+            color="primary lighten-4"
             :ripple="false"
           >
             OR
@@ -430,7 +430,7 @@ export default {
 <style lang="scss" scoped>
 .attribute-rule {
   ::v-deep .blank-section {
-    background: var(--v-background-base);
+    background: var(--v-primary-lighten1);
     border: 1px solid var(--v-zircon-base);
     display: flex;
     justify-content: space-between;
@@ -460,9 +460,9 @@ export default {
     display: flex;
     .condition-card {
       background: var(--v-white-base);
-      border: 1px solid var(--v-background-base);
+      border: 1px solid var(--v-primary-lighten1);
       box-shadow: 0px 3px 8px var(--v-lightGrey-base);
-      border-left: solid 10px var(--v-aliceBlue-base);
+      border-left: solid 10px var(--v-primary-lighten2);
       display: flex;
       align-items: center;
       height: 60px;
@@ -541,7 +541,7 @@ export default {
   ::v-deep .add-section-wrap {
     display: flex;
     .add-section {
-      background: var(--v-background-base);
+      background: var(--v-primary-lighten1);
       border: 1px solid var(--v-zircon-base);
       border-radius: 5px;
       display: flex;
@@ -555,7 +555,7 @@ export default {
   ::v-deep .condition-summary {
     border: solid 1px var(--v-zircon-base);
     border-radius: 10px;
-    background: var(--v-background-base);
+    background: var(--v-primary-lighten1);
     padding: 10px 15px;
     display: flex;
     flex-direction: column;

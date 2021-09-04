@@ -603,7 +603,7 @@ export default {
     margin: 0 auto;
   }
   .empty-state {
-    background: var(--v-aliceBlue-base);
+    background: var(--v-primary-lighten2);
     width: 190px;
     margin: 0 auto;
     font-size: 14px;

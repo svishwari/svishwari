@@ -81,7 +81,7 @@ export default {
       transform: translateY(-50%);
       background: linear-gradient(
         0.25turn,
-        var(--v-tealBlue-base),
+        var(--v-primary-darken4),
         var(--v-white-base)
       );
       border: 1px solid rgba(0, 124, 176, 0.2);

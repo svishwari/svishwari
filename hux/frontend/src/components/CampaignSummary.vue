@@ -725,7 +725,7 @@ export default {
       }
       .v-data-table-header {
         th {
-          background: var(--v-aliceBlue-base);
+          background: var(--v-primary-lighten2);
           &:first-child {
             border-radius: 12px 0px 0px 0px;
           }
@@ -740,7 +740,7 @@ export default {
       }
       tr {
         &:hover {
-          background: var(--v-aliceBlue-base) !important;
+          background: var(--v-primary-lighten2) !important;
         }
         height: 64px;
         td {
@@ -757,7 +757,7 @@ export default {
           background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
           &:hover {
-            background: var(--v-aliceBlue-base) !important;
+            background: var(--v-primary-lighten2) !important;
           }
         }
       }
@@ -773,15 +773,15 @@ export default {
         width: 26ch;
       }
       .v-data-table__expanded__row {
-        background: var(--v-aliceBlue-base);
+        background: var(--v-primary-lighten2);
         td:nth-child(1) {
-          background: var(--v-aliceBlue-base);
+          background: var(--v-primary-lighten2);
         }
       }
     }
     .child {
       ::v-deep .theme--light {
-        background: var(--v-background-base);
+        background: var(--v-primary-lighten1);
         .v-data-table__wrapper {
           box-shadow: inset 0px 10px 10px -4px var(--v-lightGrey-base);
           border-bottom: thin solid rgba(0, 0, 0, 0.12);

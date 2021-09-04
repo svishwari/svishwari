@@ -51,7 +51,7 @@
             <div class="d-flex align-center justify-end">
               <hux-button
                 v-if="isAdded(row.item)"
-                variant="secondary"
+                variant="primary lighten-8"
                 width="100"
                 height="40"
                 icon="mdi-check"
@@ -89,7 +89,7 @@
         class="d-flex align-baseline"
       >
         <hux-button
-          variant="tertiary"
+          variant="white"
           size="large"
           :is-tile="true"
           class="mr-2"

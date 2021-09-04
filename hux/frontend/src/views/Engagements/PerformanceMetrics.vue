@@ -328,8 +328,8 @@ export default {
       .v-tabs-slider-wrapper {
         width: 128px;
         .v-tabs-slider {
-          background-color: var(--v-info-base) !important;
-          border-color: var(--v-info-base) !important;
+          background-color: var(--v-primary-lighten8) !important;
+          border-color: var(--v-primary-lighten8) !important;
         }
       }
       .v-tab {
@@ -346,10 +346,10 @@ export default {
           }
         }
         &.v-tab--active {
-          color: var(--v-info-base) !important;
+          color: var(--v-primary-lighten8) !important;
           svg {
             path {
-              stroke: var(--v-info-base);
+              stroke: var(--v-primary-lighten8);
             }
           }
         }

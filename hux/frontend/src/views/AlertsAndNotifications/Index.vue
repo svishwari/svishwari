@@ -231,7 +231,7 @@ export default {
 }
 
 .backGround-header-dropdown {
-  background-color: var(--v-aliceBlue-base) !important;
+  background-color: var(--v-primary-lighten2) !important;
 }
 ::v-deep .hux-dropdown {
   .v-btn__content {

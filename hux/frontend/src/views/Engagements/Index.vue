@@ -634,7 +634,7 @@ export default {
       tr {
         height: 64px;
         &:hover {
-          background: var(--v-aliceBlue-base) !important;
+          background: var(--v-primary-lighten2) !important;
         }
         td {
           font-size: 14px !important;
@@ -645,7 +645,7 @@ export default {
         }
       }
       .expanded-row {
-        background-color: var(--v-aliceBlue-base) !important;
+        background-color: var(--v-primary-lighten2) !important;
       }
       .v-data-table-header {
         th:nth-child(1) {
@@ -662,7 +662,7 @@ export default {
           border-top: thin solid rgba(0, 0, 0, 0.12);
         }
         &:hover {
-          background: var(--v-aliceBlue-base) !important;
+          background: var(--v-primary-lighten2) !important;
         }
         height: 64px;
         td {
@@ -678,7 +678,7 @@ export default {
           background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
           &:hover {
-            background: var(--v-aliceBlue-base) !important;
+            background: var(--v-primary-lighten2) !important;
           }
           .menu-cell-wrapper > div {
             a.text-decoration-none {
@@ -699,7 +699,7 @@ export default {
     }
     .child {
       ::v-deep .theme--light {
-        background: var(--v-background-base);
+        background: var(--v-primary-lighten1);
         .v-data-table__wrapper {
           box-shadow: inset 0px 10px 10px -4px var(--v-lightGrey-base);
           border-bottom: thin solid rgba(0, 0, 0, 0.12);

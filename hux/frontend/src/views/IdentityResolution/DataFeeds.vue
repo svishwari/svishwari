@@ -163,7 +163,7 @@ export default {
     .v-data-table-header {
       tr {
         th {
-          background: var(--v-aliceBlue-base);
+          background: var(--v-primary-lighten2);
           height: 40px !important;
         }
       }

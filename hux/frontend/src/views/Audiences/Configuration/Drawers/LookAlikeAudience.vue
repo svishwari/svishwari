@@ -7,7 +7,7 @@
   >
     <template #header-left>
       <div class="d-flex align-center">
-        <icon type="lookalike" :size="32" color="secondary" class="mr-2" />
+        <icon type="lookalike" :size="32" color="primary lighten-8" class="mr-2" />
         <h3 class="text-h3">Create a lookalike audience in Facebook</h3>
       </div>
     </template>
@@ -73,7 +73,7 @@
             small
             class="mr-2 my-2 font-weight-semi-bold"
             text-color="primary"
-            color="pillBlue"
+            color="primary lighten-4"
             close-icon="mdi-close"
             @click:close="detachEngagement(index)"
           >

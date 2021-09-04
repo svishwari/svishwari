@@ -1,6 +1,6 @@
 <template>
   <v-card class="empty-card text-center py-16" outlined>
-    <v-icon color="secondary" x-large>
+    <v-icon color="primary lighten-8" x-large>
       <slot name="icon"></slot>
     </v-icon>
     <v-card-title

@@ -176,7 +176,7 @@ export default {
 
   .card-heading {
     font-size: 15px !important;
-    background-color: var(--v-aliceBlue-base);
+    background-color: var(--v-primary-lighten2);
     font-weight: 400;
     height: 54px !important;
   }

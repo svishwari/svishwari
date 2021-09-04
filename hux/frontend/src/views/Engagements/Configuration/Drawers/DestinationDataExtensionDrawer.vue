@@ -132,7 +132,7 @@
             <v-icon color="info" size="15" class="mr-2">
               mdi-message-alert
             </v-icon>
-            <div class="text-body-1 secondary--text font-weight-bold">
+            <div class="text-body-1 primary--text text--lighten-8 font-weight-bold">
               FEEDBACK
             </div>
             <div class="mx-2 darkGrey--text text-caption">
@@ -348,7 +348,7 @@ export default {
     width: 42px;
     height: 42px;
     border-radius: 50%;
-    background: var(--v-secondary-base);
+    background: var(--v-primary-lighten8);
     padding: 11px;
   }
   .add-destination-wrapper {
@@ -356,7 +356,7 @@ export default {
       width: 42px;
       height: 42px;
       border-radius: 50%;
-      background: var(--v-secondary-base);
+      background: var(--v-primary-lighten8);
       padding: 11px;
     }
     .extension-type {

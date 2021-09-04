@@ -16,7 +16,7 @@
       <template #footer-right>
         <div v-if="isDataSourcesSelected" class="d-flex align-baseline">
           <huxButton
-            variant="tertiary"
+            variant="white"
             size="large"
             :is-tile="true"
             class="mr-2"

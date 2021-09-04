@@ -12,7 +12,7 @@
       <div
         class="
           modal-footer
-          background
+          primary lighten-1
           d-flex
           justify-space-between
           align-center
@@ -22,7 +22,7 @@
       >
         <huxButton
           size="large"
-          variant="tertiary"
+          variant="white"
           height="40"
           is-tile
           @click="onCancel()"

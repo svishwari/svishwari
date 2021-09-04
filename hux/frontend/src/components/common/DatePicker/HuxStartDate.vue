@@ -50,7 +50,7 @@
           </div>
           <v-spacer></v-spacer>
           <huxButton
-            variant="tertiary"
+            variant="white"
             is-tile
             class="btn-cancel ml-4"
             @click="menu = false"
@@ -58,7 +58,7 @@
             Cancel
           </huxButton>
           <huxButton
-            variant="tertiary"
+            variant="white"
             is-tile
             class="btn-select mr-4"
             @click="
@@ -189,7 +189,7 @@ export default {
     margin-top: -315px;
     padding: 4px 20px;
     width: 94%;
-    background-color: var(--v-aliceBlue-base) !important;
+    background-color: var(--v-primary-lighten2) !important;
     .header-value {
       margin-left: 48px;
       color: var(--v-primary-base) !important;

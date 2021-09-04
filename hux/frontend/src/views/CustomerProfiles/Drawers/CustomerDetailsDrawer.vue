@@ -222,7 +222,7 @@ export default {
   margin-top: 1px;
 }
 ::v-deep .v-sheet .theme--light .v-toolbar {
-  background: var(--v-aliceBlue-base);
+  background: var(--v-primary-lighten2);
 }
 ::v-deep .theme--light.v-sheet {
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
@@ -234,7 +234,7 @@ export default {
         height: 40px !important;
       }
       th {
-        background: var(--v-aliceBlue-base);
+        background: var(--v-primary-lighten2);
       }
     }
     > .v-data-table__wrapper {

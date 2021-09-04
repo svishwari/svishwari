@@ -135,7 +135,7 @@ export default {
   }
   .search-field-container {
     padding: 5px 15px 5px 10px;
-    background-color: var(--v-aliceBlue-base);
+    background-color: var(--v-primary-lighten2);
     align-items: center;
     height: 32px;
     margin-top: 0;
@@ -159,12 +159,12 @@ export default {
     padding: 5px 15px;
     @extend .cursor-pointer;
     &:hover {
-      background-color: var(--v-background-base);
+      background-color: var(--v-primary-lighten1);
     }
   }
   .search-item-selected {
     color: var(--v-primary-base);
-    background-color: var(--v-background-base);
+    background-color: var(--v-primary-lighten1);
   }
 }
 </style>

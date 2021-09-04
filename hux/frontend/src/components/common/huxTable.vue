@@ -201,7 +201,7 @@ export default {
       }
       .ag-icon.ag-icon-asc,
       .ag-icon.ag-icon-desc {
-        color: var(--v-anchor-base);
+        color: var(--v-primary-darken2);
       }
       .ag-horizontal-left-spacer {
         display: table;

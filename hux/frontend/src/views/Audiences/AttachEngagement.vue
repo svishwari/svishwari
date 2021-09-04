@@ -64,7 +64,7 @@
                   <v-icon
                     :class="{ 'rotate-icon-180': toggleSortIcon }"
                     class="ml-1"
-                    color="secondary"
+                    color="primary lighten-8"
                     size="12"
                     @click="onSortIconClick()"
                   >

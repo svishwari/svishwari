@@ -79,8 +79,8 @@ $form-step-spacing: 16px;
 
 .form-step {
   .form-step__indicator {
-    color: var(--v-secondary-base);
-    border: 1px solid var(--v-secondary-base);
+    color: var(--v-primary-lighten8);
+    border: 1px solid var(--v-primary-lighten8);
     width: $form-step-spacing * 2;
     height: $form-step-spacing * 2;
     line-height: $form-step-spacing * 2;
@@ -94,7 +94,7 @@ $form-step-spacing: 16px;
 
   .form-step__content {
     margin-left: $form-step-spacing;
-    border-left: 1px dashed var(--v-secondary-base);
+    border-left: 1px dashed var(--v-primary-lighten8);
 
     &.form-step__content--inactive {
       border-color: var(--v-lightGrey-base);

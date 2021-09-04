@@ -532,7 +532,7 @@ export default {
     white-space: nowrap;
   }
   .v-card__title {
-    background: var(--v-background-base);
+    background: var(--v-primary-lighten1);
     border-radius: 12px 12px 0px 0px;
     font-size: 14px;
     line-height: 22px;
@@ -595,7 +595,7 @@ export default {
         color: var(--v-lightGrey-base);
       }
       &:hover {
-        background: var(--v-aliceBlue-base);
+        background: var(--v-primary-lighten2);
       }
     }
     ::v-deep .sub-menu-class {

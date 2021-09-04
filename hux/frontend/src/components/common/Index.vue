@@ -188,13 +188,13 @@
     >
       Success!
     </huxButton>
-    <huxButton variant="tertiary" is-tile class="ma-2">
+    <huxButton variant="white" is-tile class="ma-2">
       Cancel &amp; Return
     </huxButton>
-    <huxButton variant="tertiary" is-tile is-disabled class="ma-2">
+    <huxButton variant="white" is-tile is-disabled class="ma-2">
       Disabled
     </huxButton>
-    <huxButton variant="tertiary" is-tile enable-loading class="ma-2">
+    <huxButton variant="white" is-tile enable-loading class="ma-2">
       Loader
     </huxButton>
 
@@ -408,7 +408,7 @@
 
     <v-subheader>Icons</v-subheader>
     <icon type="model-unsubscribe" />
-    <icon type="model-unsubscribe" :size="48" color="secondary" />
+    <icon type="model-unsubscribe" :size="48" color="primary lighten-8" />
 
     <v-divider class="mt-10" />
 

@@ -86,7 +86,17 @@ export default {
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`)
 
-      this.colorCodes.forEach((color) => barColorCodes.push(colors[color]))
+      this.colorCodes.forEach((color) => {
+        if(color == 'darken3') {
+          barColorCodes.push(colors.primary[color]) 
+        }else if(color == 'lighten8') {
+          barColorCodes.push(colors.primary[color]) 
+        }else if(color == 'lighten5') {
+          barColorCodes.push(colors.primary[color]) 
+        }else {
+          barColorCodes.push(colors[color]) 
+        }
+      })
 
       let week = d3TimeFormat.timeFormat("%U")
       let weeklyAggData = d3Collection

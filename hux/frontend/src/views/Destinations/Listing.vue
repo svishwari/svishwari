@@ -11,7 +11,7 @@
       </template>
     </page-header>
     <page-header
-      bg-color="background"
+      bg-color="primary lighten-1"
       style="height: 70px; border: 1px solid var(--v-lightGrey-base) !important"
     >
       <template slot="left">
@@ -48,7 +48,7 @@
       </template>
     </page-header>
     <page-header
-      bg-color="aliceBlue"
+      bg-color="primary lighten-2"
       style="height: 70px; border: 1px solid var(--v-lightGrey-base) !important"
     >
       <template slot="left">

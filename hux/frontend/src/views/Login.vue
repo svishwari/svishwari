@@ -70,7 +70,7 @@ export default {
 
 <style lang="scss" scoped>
 .login-wrap {
-  background: var(--v-background-base);
+  background: var(--v-primary-lighten1);
   .left-section {
     height: 100vh;
     position: relative;

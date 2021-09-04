@@ -90,7 +90,7 @@
                         small
                         class="mx-2 my-1 font-weight-semi-bold"
                         text-color="primary"
-                        color="pillBlue"
+                        color="primary lighten-4"
                         close-icon="mdi-close"
                         @click:close="detachEngagement(item)"
                       >
@@ -207,7 +207,7 @@
                 <v-radio-group v-model="isLookAlikeNeeeded" column mandatory>
                   <v-radio
                     :value="0"
-                    color="pantoneBlue"
+                    color="primary darken-3"
                     class="pb-3"
                     :ripple="false"
                   >
@@ -215,7 +215,7 @@
                       <span class="neroBlack--text">Nope! Not interested</span>
                     </template>
                   </v-radio>
-                  <v-radio :value="1" color="pantoneBlue" :ripple="false">
+                  <v-radio :value="1" color="primary darken-3" :ripple="false">
                     <template #label>
                       <span class="neroBlack--text">
                         Auto-create a lookalike based on this audience
@@ -649,16 +649,16 @@ export default {
     .theme--light.v-timeline:before {
       background: linear-gradient(
           to right,
-          var(--v-secondary-base) 50%,
+          var(--v-primary-lighten8) 50%,
           rgba(255, 255, 255, 0) 0%
         ),
-        linear-gradient(var(--v-secondary-base) 50%, rgba(255, 255, 255, 0) 0%),
+        linear-gradient(var(--v-primary-lighten8) 50%, rgba(255, 255, 255, 0) 0%),
         linear-gradient(
           to right,
-          var(--v-secondary-base) 49%,
+          var(--v-primary-lighten8) 49%,
           rgba(255, 255, 255, 0) 0%
         ),
-        linear-gradient(var(--v-secondary-base) 50%, rgba(255, 255, 255, 0) 0%);
+        linear-gradient(var(--v-primary-lighten8) 50%, rgba(255, 255, 255, 0) 0%);
       background-position: top, right, bottom, left;
       background-repeat: repeat-x, repeat-y;
       background-size: 12px 0px, 1px 12px;
@@ -666,10 +666,10 @@ export default {
     .theme--light.v-timeline-item {
       .v-timeline-item__divider {
         .v-timeline-item__dot {
-          background: var(--v-info-base);
+          background: var(--v-primary-lighten8);
           .v-timeline-item__inner-dot {
             background-color: var(--v-white-base) !important;
-            color: var(--v-info-base);
+            color: var(--v-primary-lighten8);
             height: 34.2px;
             margin: 2.1px;
             width: 34.2px;

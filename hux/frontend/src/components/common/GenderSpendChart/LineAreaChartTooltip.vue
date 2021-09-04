@@ -113,10 +113,10 @@ export default {
   border: 1px solid rgba(0, 85, 135, 1);
 }
 .color-men {
-  border: 1px solid var(--v-royalBlue-base);
+  border: 1px solid var(--v-primary-darken1);
 }
 .color-other {
-  border: 1px solid var(--v-oceanBlue-base);
+  border: 1px solid var(--v-primary-lighten7);
 }
 .hover-font {
   font-family: Open Sans;

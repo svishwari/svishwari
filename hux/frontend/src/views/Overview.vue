@@ -186,7 +186,7 @@ export default {
     @extend .box-shadow-plain;
   }
   .quickAccessMenu {
-    background: var(--v-aliceBlue-base);
+    background: var(--v-primary-lighten2);
     min-height: 265px;
     padding: 16px 30px 40px 30px;
     overflow-x: auto;
@@ -201,7 +201,7 @@ export default {
         margin-right: 15px;
         @extend .box-shadow-5;
         &.v-card--disabled {
-          background: var(--v-background-base);
+          background: var(--v-primary-lighten1);
         }
         &:hover {
           @extend .box-shadow-3;

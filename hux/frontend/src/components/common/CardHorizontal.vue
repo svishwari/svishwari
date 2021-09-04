@@ -6,7 +6,7 @@
       'box-shadow-5': !isDisabledOrDeselectable,
     }"
     :disabled="isDisabled"
-    :color="isDisabledOrDeselectable ? 'background' : 'white'"
+    :color="isDisabledOrDeselectable ? 'primary lighten-1' : 'white'"
     :to="to"
     height="60"
     @click="$emit('click')"
@@ -19,7 +19,7 @@
     <div v-if="isAvailable && !hideButton">
       <huxButton
         :is-outlined="!isAdded"
-        :variant="isAdded ? 'secondary' : 'primary'"
+        :variant="isAdded ? 'primary lighten-8' : 'primary'"
         :icon="isAdded ? 'mdi-check' : null"
         size="large"
         :is-disabled="isAlreadyAdded"
@@ -113,7 +113,7 @@ export default {
 <style lang="scss" scoped>
 .card-horizontal-disabled {
   border: 1px solid var(--v-zircon-base) !important;
-  background-color: var(--v-background-base) !important;
+  background-color: var(--v-primary-lighten1) !important;
   @extend .box-shadow-none;
   .theme--light.v-btn.v-btn--disabled.v-btn--has-bg {
     background-color: var(--v-smoke-base) !important;

@@ -26,7 +26,7 @@
       v-if="selectedDestination && destinationFields"
       v-model="isFormValid"
     >
-      <div class="destination-auth-wrap background pa-5 rounded mb-10">
+      <div class="destination-auth-wrap primary lighten-1 pa-5 rounded mb-10">
         <v-row>
           <v-col
             v-for="key in Object.keys(destinationFields)"
@@ -80,7 +80,7 @@
       </div>
       <div
         v-if="isSalesforceSelected && isValidated"
-        class="destination-auth-wrap background pa-4 rounded mt-10"
+        class="destination-auth-wrap primary lighten-1 pa-4 rounded mt-10"
       >
         <s-f-m-c :data-extensions="dataExtensions" @select="setExtension" />
       </div>
@@ -89,7 +89,7 @@
     <hux-footer slot="footer" max-width="850px">
       <template #left>
         <hux-button
-          variant="tertiary"
+          variant="white"
           size="large"
           :is-tile="true"
           @click="cancel()"

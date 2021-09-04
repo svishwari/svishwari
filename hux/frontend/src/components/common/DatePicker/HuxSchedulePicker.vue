@@ -79,12 +79,12 @@
         min-height="30"
         class="day-button"
         :ripple="false"
-        :color="isDaySelected(day) ? 'background' : 'aliceBlue'"
+        :color="isDaySelected(day) ? 'primary lighten-1' : 'primary lighten-2'"
         @click="toggleWeekDay(day)"
       >
         <span
           class="text-h6"
-          :class="isDaySelected(day) ? 'secondary--text' : 'gray--text'"
+          :class="isDaySelected(day) ? 'primary--text text--lighten-8' : 'gray--text'"
         >
           {{ day.day }}
         </span>

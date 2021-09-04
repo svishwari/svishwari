@@ -27,7 +27,7 @@
                   <v-icon
                     x-small
                     :class="{
-                      'secondary--text': isSortedBy(field.key),
+                      'primary--text text--lighten-8': isSortedBy(field.key),
                       'rotate-icon-180': isSortedBy(field.key) && sortDesc,
                     }"
                   >
@@ -71,7 +71,7 @@
 
       <!-- empty slot -->
       <template #no-data>
-        <v-alert color="background" class="empty-card">
+        <v-alert color="primary lighten-1" class="empty-card">
           <v-row align="center">
             <slot v-if="$slots.empty" name="empty"></slot>
             <v-col v-else class="grow">{{ empty }}</v-col>
@@ -179,7 +179,7 @@ export default {
 }
 .data-card-selected {
   border: 1px solid var(--v-zircon-base) !important;
-  background-color: var(--v-background-base) !important;
+  background-color: var(--v-primary-lighten1) !important;
   &:hover {
     @extend .box-shadow-25;
   }
@@ -189,6 +189,6 @@ export default {
 }
 
 .bordered-card {
-  border-left: 8px solid var(--v-aliceBlue-base);
+  border-left: 8px solid var(--v-primary-lighten2);
 }
 </style>

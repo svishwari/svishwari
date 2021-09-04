@@ -35,7 +35,7 @@
 
   <div v-else-if="Statuses.Inactive.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
-      <v-icon color="columbiaBlue" class="mr-2" :size="iconSize">
+      <v-icon color="primary lighten-5" class="mr-2" :size="iconSize">
         mdi-checkbox-blank-circle
       </v-icon>
       <span v-if="showLabel">{{ status }} </span>
@@ -43,7 +43,7 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon color="columbiaBlue" class="mr-2" :size="iconSize" v-on="on">
+        <v-icon color="primary lighten-5" class="mr-2" :size="iconSize" v-on="on">
           mdi-checkbox-blank-circle
         </v-icon>
       </template>
@@ -55,7 +55,7 @@
         <span class="d-flex align-center">
           <v-icon
             v-if="showIconTooltip"
-            color="columbiaBlue"
+            color="primary lighten-5"
             class="mr-2"
             :size="iconSize"
           >
@@ -70,7 +70,7 @@
   <div v-else-if="Statuses.Activating.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
       <span class="half-left-circle success" />
-      <span class="half-right-circle mr-2 secondary" />
+      <span class="half-right-circle mr-2 primary lighten-8" />
       <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
 
@@ -78,7 +78,7 @@
       <template #activator="{ on }">
         <span class="d-flex align-center" v-on="on">
           <span class="half-left-circle success" />
-          <span class="half-right-circle mr-2 secondary" />
+          <span class="half-right-circle mr-2 primary lighten-8" />
         </span>
       </template>
       <div
@@ -89,7 +89,7 @@
         <span class="d-flex align-center">
           <span v-if="showIconTooltip" class="d-flex align-center">
             <span class="half-left-circle success" />
-            <span class="half-right-circle mr-2 secondary" />
+            <span class="half-right-circle mr-2 primary lighten-8" />
             <span v-if="showLabel">{{ status | TitleCase }} </span>
           </span>
           {{ status | TitleCase }}

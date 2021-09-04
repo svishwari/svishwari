@@ -454,7 +454,7 @@ export default {
   }
 }
 ::v-deep .v-card__title {
-  background: var(--v-aliceBlue-base);
+  background: var(--v-primary-lighten2);
 }
 ::v-deep .v-card__text {
   padding: 0px;
@@ -466,7 +466,7 @@ export default {
         height: 40px !important;
       }
       th {
-        background: var(--v-aliceBlue-base);
+        background: var(--v-primary-lighten2);
       }
     }
   }
