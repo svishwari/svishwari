@@ -845,7 +845,7 @@ class TotalCustomersGraphView(SwaggerView):
         token_response = get_token_from_request(request)
 
         # create a dict for date_filters required by cdp endpoint
-        last_date = datetime.utcnow().date() - relativedelta(months=6)
+        last_date = datetime.utcnow().date() - relativedelta(months=9)
         today = datetime.utcnow().date()
         date_filters = {
             api_c.START_DATE: datetime.strftime(
