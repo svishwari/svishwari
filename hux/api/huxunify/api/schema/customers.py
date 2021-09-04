@@ -380,5 +380,5 @@ class CustomersInsightsCountriesSchema(Schema):
     )
     size = Integer(required=True, default=0, example=1234)
     spending = Float(
-        attribute=api_c.LTV, required=True, default=0.0, example=123.2345
+        attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.2345
     )

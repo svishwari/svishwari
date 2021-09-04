@@ -2,6 +2,7 @@
 import random
 import time
 import asyncio
+from collections import defaultdict
 from typing import Tuple, Optional, List
 from datetime import datetime, timedelta
 
@@ -524,19 +525,18 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> list:
     ]
 
 
-def get_demographic_by_state(
+def get_customer_count_by_state(
     token: str, filters: Optional[dict] = None
 ) -> list:
     """
-    Get demographic details of customers by state
+    Retrieve customer count data by state
 
     Args:
         token (str): OKTA JWT Token.
-        filters (dict):  filters to pass into
-            count_by_state endpoint, default None
+        filters (Optional[dict]): filters to pass into
+            count_by_state endpoint.
 
     Returns:
-        list: list of demographic details by state
 
     """
     # get config
@@ -544,9 +544,7 @@ def get_demographic_by_state(
     logger.info("Retrieving demographic insights by state.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
-        json={api_c.AUDIENCE_FILTERS: filters}
-        if filters
-        else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        json=filters if filters else {},
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
@@ -563,32 +561,10 @@ def get_demographic_by_state(
     logger.info("Successfully retrieved state demographic insights.")
     body = clean_cdm_fields(response.json()[api_c.BODY])
 
-    geographic_response = [
-        {
-            api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
-            api_c.POPULATION_PERCENTAGE: round(
-                x[api_c.SIZE] / sum([x[api_c.SIZE] for x in body]), 4
-            )
-            if sum([x[api_c.SIZE] for x in body]) != 0
-            else 0,
-            api_c.SIZE: x[api_c.SIZE],
-            api_c.GENDER_WOMEN: round(x[api_c.GENDER_WOMEN] / x[api_c.SIZE], 4)
-            if x[api_c.SIZE] != 0
-            else 0,
-            api_c.GENDER_MEN: round(x[api_c.GENDER_MEN] / x[api_c.SIZE], 4)
-            if x[api_c.SIZE] != 0
-            else 0,
-            api_c.GENDER_OTHER: round(x[api_c.GENDER_OTHER] / x[api_c.SIZE], 4)
-            if x[api_c.SIZE] != 0
-            else 0,
-            api_c.LTV: round(x.get(api_c.AVG_LTV, 0), 4),
-        }
-        for x in body
-    ]
-    return geographic_response
+    return body
 
 
-def get_demographic_by_country(
+def get_demographic_by_state(
     token: str, filters: Optional[dict] = None
 ) -> list:
     """
@@ -603,40 +579,74 @@ def get_demographic_by_country(
         list: list of demographic details by state
 
     """
-    # TODO: Uncomment and update the request URL when CDM API is available
-    # get config
-    # config = get_config()
-    # logger.info("Retrieving demographic insights by country.")
-    # response = requests.post(
-    #     f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
-    #     json={api_c.AUDIENCE_FILTERS: filters}
-    #     if filters
-    #     else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
-    #     headers={
-    #         api_c.CUSTOMERS_API_HEADER_KEY: token,
-    #     },
-    # )
-    #
-    # if response.status_code != 200 or api_c.BODY not in response.json():
-    #     logger.error(
-    #         "Failed to retrieve country demographic insights %s %s.",
-    #         response.status_code,
-    #         response.text,
-    #     )
-    #     return []
-    #
-    # logger.info("Successfully retrieved country demographic insights.")
+    filters = (
+        {api_c.AUDIENCE_FILTERS: filters}
+        if filters
+        else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+    )
+    customer_count_by_state = get_customer_count_by_state(token, filters)
 
-    # TODO: Remove once CDM API is available
-    country_level_data = [
+    geographic_response = [
         {
-            api_c.NAME: "United States of America",
-            api_c.LTV: 675.54,
-            api_c.SIZE: 435671,
+            api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
+            api_c.POPULATION_PERCENTAGE: round(
+                x[api_c.SIZE]
+                / sum([x[api_c.SIZE] for x in customer_count_by_state]),
+                4,
+            )
+            if sum([x[api_c.SIZE] for x in customer_count_by_state]) != 0
+            else 0,
+            api_c.SIZE: x[api_c.SIZE],
+            api_c.GENDER_WOMEN: round(x[api_c.GENDER_WOMEN] / x[api_c.SIZE], 4)
+            if x[api_c.SIZE] != 0
+            else 0,
+            api_c.GENDER_MEN: round(x[api_c.GENDER_MEN] / x[api_c.SIZE], 4)
+            if x[api_c.SIZE] != 0
+            else 0,
+            api_c.GENDER_OTHER: round(x[api_c.GENDER_OTHER] / x[api_c.SIZE], 4)
+            if x[api_c.SIZE] != 0
+            else 0,
+            api_c.LTV: round(x.get(api_c.AVG_LTV, 0), 4),
         }
+        for x in customer_count_by_state
     ]
+    return geographic_response
 
-    return country_level_data
+
+def get_demographic_by_country(
+    token: str, filters: Optional[dict] = None
+) -> list:
+    """
+    Get demographic details of customers by country
+
+    Args:
+        token (str): OKTA JWT Token.
+        filters (dict):  filters to pass into
+            count_by_state endpoint, default None
+
+    Returns:
+        list: list of demographic details by country
+
+    """
+    customer_count_by_state = get_customer_count_by_state(token=token)
+    data_by_country = defaultdict(list)
+    customer_insights_by_country = []
+    for item in customer_count_by_state:
+        data_by_country[item["country"]].append(item)
+
+    for country, country_items in data_by_country.items():
+        total_customer_count = sum(map(lambda x: x["size"], country_items))
+        avg_ltv = (
+            sum(map(lambda x: x["avg_ltv"] * x["size"], country_items))
+            / total_customer_count
+            if country_items
+            else None
+        )
+        customer_insights_by_country.append(
+            {"name": country, "avg_ltv": avg_ltv, "size": total_customer_count}
+        )
+
+    return customer_insights_by_country
 
 
 def get_customers_insights_count_by_day(
