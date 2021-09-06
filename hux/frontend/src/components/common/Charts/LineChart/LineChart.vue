@@ -11,7 +11,6 @@ import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
 import * as d3TimeFormat from "d3-time-format"
-import * as d3Collection from "d3-collection"
 
 export default {
   name: "LineChart",
