@@ -159,7 +159,7 @@
                       </td>
                       <td class="title-text">State</td>
                       <td class="table-text blur-text">
-                        {{ singleCustomer.state | Empty }} 
+                        {{ singleCustomer.state | Empty }}
                       </td>
                     </tr>
                     <tr>
@@ -208,23 +208,21 @@
           <identity-chart></identity-chart>
         </v-col>
       </v-row>
-        <v-row >
+      <v-row>
         <v-col md="12">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
               <div class="mt-2">
-                <span class="neroBlack--text text-h5">
-                  Customer events
-                </span>
+                <span class="neroBlack--text text-h5"> Customer events </span>
               </div>
               <v-progress-linear
-              v-if="loadingCustomerEvents"
-              :active="loadingCustomerEvents"
-              :indeterminate="loadingCustomerEvents"
-            />
+                v-if="loadingCustomerEvents"
+                :active="loadingCustomerEvents"
+                :indeterminate="loadingCustomerEvents"
+              />
             </v-card-title>
             <customer-event-chart
-            v-if="!loadingCustomerEvents"
+              v-if="!loadingCustomerEvents"
               :customers-data="events"
             />
           </v-card>
@@ -479,7 +477,7 @@ export default {
       this.loadingCustomerEvents = true
       await this.getEvents(this.id)
       this.loadingCustomerEvents = false
-    }
+    },
   },
 }
 </script>
@@ -503,7 +501,7 @@ export default {
         height: 40px !important;
       }
       th {
-       // background: var(--v-aliceBlue-base);
+        // background: var(--v-aliceBlue-base);
       }
     }
   }

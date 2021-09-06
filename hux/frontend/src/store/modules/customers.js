@@ -24,7 +24,7 @@ const state = {
 
   demographics: {},
 
-  events: []
+  events: [],
 }
 
 const getters = {
@@ -100,7 +100,7 @@ const mutations = {
 
   SET_CUSTOMER_EVENTS(state, data) {
     state.events = data
-  }
+  },
 }
 
 const actions = {

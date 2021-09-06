@@ -87,7 +87,7 @@ export default {
         .domain(
           d3Array.extent(this.data, (d) => new Date(dateFormatter(d.date)))
         )
-       .nice(8)
+        .nice(8)
 
       let yScale = d3Scale
         .scaleLinear()
@@ -178,13 +178,13 @@ export default {
         .style("fill", "white")
         .attr("stroke", "#9DD4CF")
 
-        svg
+      svg
         .append("line")
         .attr("class", "hover-line-y")
         .style("stroke", "#1E1E1E")
         .style("stroke-width", 1)
 
-        svg
+      svg
         .append("rect")
         .attr("width", w)
         .attr("height", h)
@@ -205,7 +205,7 @@ export default {
         svg.selectAll(".hover-circle").remove()
         this.tooltipDisplay(false)
 
-        let data = this.data.map(d => dateFormatter(d.date))
+        let data = this.data.map((d) => dateFormatter(d.date))
         let x0 = dateFormatter(xScale.invert(d3Select.pointer(mouseEvent)[0]))
 
         let i = bisectDate(data, x0, 1)
@@ -245,7 +245,7 @@ export default {
         })
         dataToolTip.xPosition = finalXCoordinate
         dataToolTip.yPosition = yData
-      this.tooltipDisplay(true, dataToolTip)
+        this.tooltipDisplay(true, dataToolTip)
       }
     },
     tooltipDisplay(showTip, eventsData) {
