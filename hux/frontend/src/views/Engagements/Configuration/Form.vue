@@ -106,7 +106,9 @@
           </div>
           <icon class="mx-2" type="arrow" :size="28" color="lightGrey" />
           <div>
-            <span class="date-picker-label black--text text--darken-4 text-caption">
+            <span
+              class="date-picker-label black--text text--darken-4 text-caption"
+            >
               End date
             </span>
             <hux-end-date
