@@ -53,8 +53,8 @@ export default {
       if (this.show) {
         let eventsOnly = []
         Object.entries(arg[1].event_type_counts)
-          .filter(([k,v]) => v > 0 ? k : "")
-         .forEach((data) => eventsOnly.push(data[0]))
+          .filter(([k, v]) => (v > 0 ? k : ""))
+          .forEach((data) => eventsOnly.push(data[0]))
         this.currentData = arg[1]
         let date = new Date(this.currentData.date)
         this.currentData.day = date.toLocaleString("en-us", { weekday: "long" })
