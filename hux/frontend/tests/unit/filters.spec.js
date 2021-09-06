@@ -64,7 +64,7 @@ describe("Filters", () => {
 
   describe("Numeric filter", () => {
     it("should display numbers up to two decimal places, by default", () => {
-      expect(filters.Numeric(0)).toEqual("-")
+      expect(filters.Numeric(0)).toEqual("0")
       expect(filters.Numeric(16.0)).toEqual("16")
       expect(filters.Numeric(1.5)).toEqual("1.5")
       expect(filters.Numeric(210.39012509562936345674576889)).toEqual("210.39")
@@ -93,7 +93,7 @@ describe("Filters", () => {
 
   describe("Percentage filter", () => {
     it("should convert and display a number as a percentage", () => {
-      expect(filters.Percentage(0)).toEqual("-")
+      expect(filters.Percentage(0)).toEqual("0%")
       expect(filters.Percentage(0.01)).toEqual("1%")
       expect(filters.Percentage(0.02)).toEqual("2%")
       expect(filters.Percentage(0.33)).toEqual("33%")
