@@ -4,7 +4,7 @@ import black from "./colors/black"
 export default {
   ...blue,
   white: "#ffffff",
- ...black,
+  ...black,
   red: "#da291c",
   green: "#43b02a",
   yellow: "#ffcd00",
