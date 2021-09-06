@@ -501,7 +501,7 @@ export default {
         height: 40px !important;
       }
       th {
-        // background: var(--v-aliceBlue-base);
+         background: var(--v-aliceBlue-base);
       }
     }
   }
