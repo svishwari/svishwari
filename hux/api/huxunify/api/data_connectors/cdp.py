@@ -652,8 +652,7 @@ def get_demographic_by_country(
     # log execution time summary
     total_ticks = time.perf_counter() - timer
     logger.info(
-        "Grouped customer count data by country in %0.4f seconds.",
-        total_ticks
+        "Grouped customer count data by country in %0.4f seconds.", total_ticks
     )
 
     return customer_insights_by_country
