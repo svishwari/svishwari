@@ -328,7 +328,13 @@ export default {
       let actionItems = [
         { title: "Favorite", isDisabled: true },
         { title: "Export", isDisabled: true },
-        { title: "Edit", isDisabled: true },
+        {
+          title: "Edit",
+          isDisabled: false,
+          onClick: () => {
+            this.editAudience(audience.id)
+          },
+        },
         { title: "Duplicate", isDisabled: true },
         {
           title: "Create a lookalike",
@@ -346,6 +352,12 @@ export default {
       ]
 
       return actionItems
+    },
+    editAudience(id) {
+      this.$router.push({
+        name: "AudienceUpdate",
+        params: { id: id },
+      })
     },
 
     openLookAlikeDrawer(audience) {
