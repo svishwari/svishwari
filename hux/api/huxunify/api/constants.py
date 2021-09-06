@@ -174,6 +174,7 @@ DEMOGRAPHIC = "demo"
 DATE = "date"
 RECORDED = "recorded"
 DIFFERENCE_COUNT = "diff_count"
+EXCLUDE = "exclude"
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
