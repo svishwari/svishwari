@@ -222,7 +222,7 @@
                   Add to an engagement
                 </v-btn>
                 <v-btn
-                  v-if="audience && audience.is_lookalike"
+                  v-if="audience && !audience.is_lookalike"
                   text
                   color="primary"
                   class="body-2 ml-n3"
@@ -375,7 +375,7 @@
             :active="loadingDemographics"
             :indeterminate="loadingDemographics"
           />
-          <v-card-title v-if="!loadingDemographics" class="pb-2 pl-5 pt-5">
+          <v-card-title v-if="!loadingDemographics" class="pb-2 pl-2 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
                 Gender &sol; monthly spending in 2021

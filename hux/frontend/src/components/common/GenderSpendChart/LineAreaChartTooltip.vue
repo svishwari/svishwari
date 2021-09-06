@@ -106,7 +106,13 @@ export default {
 
 //Fix for the tooltipn position : TO DO
 
-@media only screen and (max-width: 1774px) {
+@media only screen and (max-width: 1600px) {
+  .tooltip-style {
+    left: -212px !important;
+  }
+}
+
+@media (max-width: 1775px) and (min-width: 1600px) {
   .tooltip-style {
     left: -248px !important;
   }
