@@ -1,7 +1,7 @@
 <template>
   <div class="list-wrapper">
     <div class="d-flex align-end mb-4">
-      <icon type="destinations" :size="20" color="neroBlack" />
+      <icon type="destinations" :size="20" color="var(--v-black-darken4)" />
       <h5 class="text-h4 ml-2 mt-1">Destinations</h5>
       <router-link
         :to="{ name: 'DestinationConfiguration' }"

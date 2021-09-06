@@ -408,7 +408,7 @@
 
     <v-subheader>Icons</v-subheader>
     <icon type="model-unsubscribe" />
-    <icon type="model-unsubscribe" :size="48" color="primary lighten-8" />
+    <icon type="model-unsubscribe" :size="48" color="var(--v-primary-lighten8)" />
 
     <v-divider class="mt-10" />
 
