@@ -5,7 +5,7 @@
 
       <v-tab
         key="displayAds"
-        class="pa-2"
+        class="pa-2 mr-3"
         color
         @click="$emit('fetchMetrics', 'ads')"
       >

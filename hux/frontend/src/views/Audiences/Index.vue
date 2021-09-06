@@ -169,6 +169,7 @@
     </v-row>
 
     <look-alike-audience
+      ref="lookalikeWorkflow"
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
       @onToggle="(val) => (showLookAlikeDrawer = val)"
@@ -335,6 +336,7 @@ export default {
           menu: {
             title: "Facebook",
             onClick: () => {
+              this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
               this.openLookAlikeDrawer(audience)
             },
             icon: "facebook",

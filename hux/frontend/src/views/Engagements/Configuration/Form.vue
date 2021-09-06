@@ -104,11 +104,9 @@
               @on-date-select="onStartDateSelect"
             />
           </div>
-          <icon v-if="isRecurring" class="ml-2 mr-2" type="arrow" :size="28" />
-          <div v-if="isRecurring">
-            <span
-              class="date-picker-label black--text text--darken-4 text-caption"
-            >
+          <icon class="mx-2" type="arrow" :size="28" color="lightGrey" />
+          <div>
+            <span class="date-picker-label black--text text--darken-4 text-caption">
               End date
             </span>
             <hux-end-date

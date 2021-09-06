@@ -22,7 +22,7 @@ export default {
   },
   data() {
     return {
-      mapChartData: this.mapData,
+      mapChartData: [],
     }
   },
   mounted() {
@@ -30,6 +30,7 @@ export default {
   },
   methods: {
     sortStateData() {
+      this.mapChartData = JSON.parse(JSON.stringify(this.mapData))
       if (this.mapChartData) {
         this.mapChartData.sort(
           (a, b) => b.population_percentage - a.population_percentage

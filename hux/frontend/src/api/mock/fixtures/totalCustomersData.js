@@ -1,5 +1,20 @@
 export default [
   {
+    date: "2020-12-01T00:00:00.000Z",
+    total_customers: 71000,
+    new_customers_added: 71000,
+  },
+  {
+    date: "2021-01-01T00:00:00.000Z",
+    total_customers: 71000,
+    new_customers_added: 71000,
+  },
+  {
+    date: "2021-02-01T00:00:00.000Z",
+    total_customers: 71000,
+    new_customers_added: 71000,
+  },
+  {
     date: "2021-03-01T00:00:00.000Z",
     total_customers: 71000,
     new_customers_added: 71000,
@@ -101,47 +116,47 @@ export default [
   },
   {
     date: "2021-03-21T00:00:00.000Z",
-    total_customers: 95080,
+    total_customers: 105080,
     new_customers_added: -10000,
   },
   {
     date: "2021-03-22T00:00:00.000Z",
-    total_customers: 95080,
+    total_customers: 105080,
     new_customers_added: 0,
   },
   {
     date: "2021-03-23T00:00:00.000Z",
-    total_customers: 95080,
+    total_customers: 105080,
     new_customers_added: 0,
   },
   {
     date: "2021-03-24T00:00:00.000Z",
-    total_customers: 100050,
+    total_customers: 105080,
     new_customers_added: 4970,
   },
   {
     date: "2021-03-25T00:00:00.000Z",
-    total_customers: 101050,
+    total_customers: 105080,
     new_customers_added: 1000,
   },
   {
     date: "2021-03-26T00:00:00.000Z",
-    total_customers: 102000,
+    total_customers: 105080,
     new_customers_added: 950,
   },
   {
     date: "2021-03-27T00:00:00.000Z",
-    total_customers: 103000,
+    total_customers: 105080,
     new_customers_added: 1000,
   },
   {
     date: "2021-03-28T00:00:00.000Z",
-    total_customers: 103080,
+    total_customers: 105080,
     new_customers_added: 80,
   },
   {
     date: "2021-03-29T00:00:00.000Z",
-    total_customers: 104080,
+    total_customers: 105080,
     new_customers_added: 1000,
   },
   {
@@ -236,32 +251,32 @@ export default [
   },
   {
     date: "2021-07-11T00:00:00.000Z",
-    total_customers: 142904,
+    total_customers: 151904,
     new_customers_added: -9000,
   },
   {
     date: "2021-07-12T00:00:00.000Z",
-    total_customers: 139904,
+    total_customers: 151904,
     new_customers_added: -3000,
   },
   {
     date: "2021-07-13T00:00:00.000Z",
-    total_customers: 140674,
+    total_customers: 151904,
     new_customers_added: 770,
   },
   {
     date: "2021-07-16T00:00:00.000Z",
-    total_customers: 146110,
+    total_customers: 151904,
     new_customers_added: 5436,
   },
   {
     date: "2021-07-17T00:00:00.000Z",
-    total_customers: 148167,
+    total_customers: 151904,
     new_customers_added: 2057,
   },
   {
     date: "2021-07-18T00:00:00.000Z",
-    total_customers: 150105,
+    total_customers: 151904,
     new_customers_added: 1938,
   },
   {

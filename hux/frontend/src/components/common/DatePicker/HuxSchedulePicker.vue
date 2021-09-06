@@ -10,7 +10,7 @@
           dense
           outlined
           background-color="white"
-          class="select-common periodicity-select"
+          class="select-common periodicity-select mt-2"
           append-icon="mdi-chevron-down"
         />
       </span>
@@ -23,7 +23,7 @@
           dense
           outlined
           background-color="white"
-          class="select-common every-select"
+          class="select-common every-select mt-2"
           append-icon="mdi-chevron-down"
         />
       </span>
@@ -38,7 +38,7 @@
           dense
           outlined
           background-color="white"
-          class="select-common hour-select pt-5"
+          class="select-common hour-select pt-5 mt-2"
           append-icon="mdi-chevron-down"
         />
       </span>
@@ -50,7 +50,7 @@
           dense
           outlined
           background-color="white"
-          class="select-common minute-select pt-5"
+          class="select-common minute-select pt-5 mt-2"
           append-icon="mdi-chevron-down"
         />
       </span>
@@ -62,7 +62,7 @@
           dense
           outlined
           background-color="white"
-          class="select-common period-select pt-5"
+          class="select-common period-select pt-5 mt-2"
           append-icon="mdi-chevron-down"
         />
       </span>

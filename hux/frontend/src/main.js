@@ -1,4 +1,5 @@
 import Vue from "vue"
+import VueCompositionAPI from "@vue/composition-api"
 
 import App from "@/App"
 import filters from "@/filters"
@@ -17,6 +18,8 @@ import vuetify from "./plugins/vuetify"
 // Layouts as usable components
 Vue.component("app-layout", AppLayout)
 Vue.component("default-layout", DefaultLayout)
+
+Vue.use(VueCompositionAPI)
 
 // Filters
 Object.keys(filters).forEach((filterName) => {

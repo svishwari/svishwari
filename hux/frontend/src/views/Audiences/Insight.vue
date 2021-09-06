@@ -24,7 +24,7 @@
 
     <div v-if="audienceHistory.length > 0" class="row px-15 my-1">
       <v-card
-        v-if="audience.is_lookalike"
+        v-if="audience && audience.is_lookalike"
         class="rounded-lg card-info-wrapper ma-2 card-shadow no-background"
       >
         <v-card-text>
@@ -54,13 +54,21 @@
               font-weight-semi-bold
             "
           >
-            <size :value="audience.size" /> |
+            <size :value="audience.source_size" /> |
+            <tooltip position-bottom>
+              <template #label-content>
+                {{ audience.match_rate | Numeric(true, false, false, true) }}
+              </template>
+              <template #hover-content>
+                {{ audience.match_rate }}
+              </template>
+            </tooltip>
           </div>
         </v-card-text>
       </v-card>
 
       <metric-card
-        v-if="audience.is_lookalike"
+        v-if="audience && audience.is_lookalike"
         class="ma-2 audience-summary"
         :grow="0"
         :title="'Lookalike size'"
@@ -76,7 +84,7 @@
       </metric-card>
 
       <metric-card
-        v-if="audience.is_lookalike"
+        v-if="audience && audience.is_lookalike"
         class="ma-2 audience-summary original-audience"
         :grow="0"
         :title="'Original Audience'"
@@ -85,7 +93,15 @@
         <template #subtitle-extended>
           <span class="mr-2 pt-2">
             <span class="original-audience-text">
-              {{ audience.name }}
+              <router-link
+                :to="{
+                  name: 'AudienceInsight',
+                  params: { id: audience.source_id },
+                }"
+                class="text-decoration-none original-audience-text"
+                append
+                >{{ audience.source_name }}
+              </router-link>
             </span>
           </span>
         </template>
@@ -208,6 +224,7 @@
                   Add to an engagement
                 </v-btn>
                 <v-btn
+                  v-if="audience && audience.is_lookalike"
                   text
                   color="primary"
                   class="body-2 ml-n3"
@@ -238,9 +255,9 @@
     </div>
     <div class="px-15 my-1">
       <v-card class="rounded pa-5 box-shadow-5">
-        <div class="overview headingOverviewCard">Audience overview</div>
+        <h5 class="text-h5 mb-2">Audience overview</h5>
         <div
-          v-if="audience.is_lookalike"
+          v-if="audience && audience.is_lookalike"
           class="row overview-list lookalike-aud mb-0 ml-0 mr-1 mt-4"
         >
           <metric-card :height="60" :title="''" class="lookalikeMessageCard">
@@ -251,38 +268,41 @@
               >
               <router-link
                 :to="{
-                  name: '',
+                  name: 'AudienceInsight',
+                  params: { id: audience.source_id },
                 }"
-                class="text-decoration-none"
+                class="text-decoration-none colorLink"
                 append
-                >{{ audience.name }}
+                >{{ audience.source_name }}
               </router-link>
               <span>,&nbsp;to see insights.</span></template
             >
           </metric-card>
         </div>
         <div
-          v-if="!audience.is_lookalike"
+          v-if="audience && !audience.is_lookalike"
           class="row overview-list mb-0 ml-0 mt-1"
         >
           <metric-card
-            v-for="(item, i) in Object.keys(insightInfoItems)"
+            v-for="(item, i) in Object.values(audienceOverview)"
             :key="i"
             class="mr-3"
             :grow="i === 0 ? 2 : 1"
-            :title="insightInfoItems[item].title"
-            :icon="insightInfoItems[item].icon"
+            :title="item.title"
+            :icon="item.icon"
             :height="80"
+            :interactable="item.action ? true : false"
+            @click="item.action ? onClick(item.action) : ''"
           >
             <template #subtitle-extended>
               <tooltip>
                 <template #label-content>
                   <span class="font-weight-semi-bold">
-                    {{ getFormattedValue(insightInfoItems[item]) | Empty }}
+                    {{ getFormattedValue(item) | Empty }}
                   </span>
                 </template>
                 <template #hover-content>
-                  {{ insightInfoItems[item].subtitle | Empty }}
+                  {{ item.subtitle | Empty }}
                 </template>
               </tooltip>
             </template>
@@ -290,9 +310,14 @@
         </div>
       </v-card>
     </div>
-    <v-row v-if="!audience.is_lookalike" class="px-15 mt-2">
+    <v-row v-if="audience && !audience.is_lookalike" class="px-15 mt-2">
       <v-col md="7">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+          <v-progress-linear
+            v-if="loadingDemographics"
+            :active="loadingDemographics"
+            :indeterminate="loadingDemographics"
+          />
           <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="black--text text--darken-4 text-h5">
@@ -300,12 +325,17 @@
               </span>
             </div>
           </v-card-title>
-          <map-chart :map-data="mapChartData" />
-          <map-slider :map-data="mapChartData" />
+          <map-chart v-if="!loadingDemographics" :map-data="mapChartData" />
+          <map-slider v-if="!loadingDemographics" :map-data="mapChartData" />
         </v-card>
       </v-col>
       <v-col md="5">
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+          <v-progress-linear
+            v-if="loadingDemographics"
+            :active="loadingDemographics"
+            :indeterminate="loadingDemographics"
+          />
           <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="black--text text--darken-4 text-h5">
@@ -314,11 +344,14 @@
             </div>
           </v-card-title>
           <v-divider class="ml-5 mr-8 mt-0 mb-1" />
-          <map-state-list :map-data="mapChartData" />
+          <map-state-list
+            v-if="!loadingDemographics"
+            :map-data="mapChartData"
+          />
         </v-card>
       </v-col>
     </v-row>
-    <v-row v-if="!audience.is_lookalike" class="px-15 mt-2">
+    <v-row v-if="audience && !audience.is_lookalike" class="px-15 mt-2">
       <v-col md="3">
         <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
           <v-progress-linear
@@ -449,6 +482,30 @@
       :toggle="showDeliveryHistoryDrawer"
       @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
     />
+
+    <geo-drawer
+      geo-level="cities"
+      :audience-id="audienceId"
+      :results="audienceInsights.total_cities"
+      :toggle="geoDrawer.cities"
+      @onToggle="(isToggled) => (geoDrawer.cities = isToggled)"
+    />
+
+    <geo-drawer
+      geo-level="countries"
+      :audience-id="audienceId"
+      :results="audienceInsights.total_countries"
+      :toggle="geoDrawer.countries"
+      @onToggle="(isToggled) => (geoDrawer.countries = isToggled)"
+    />
+
+    <geo-drawer
+      geo-level="states"
+      :audience-id="audienceId"
+      :results="audienceInsights.total_us_states"
+      :toggle="geoDrawer.states"
+      @onToggle="(isToggled) => (geoDrawer.states = isToggled)"
+    />
   </div>
 </template>
 
@@ -456,7 +513,6 @@
 // helpers
 import { generateColor } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
-import dayjs from "dayjs"
 
 // common components
 import Avatar from "@/components/common/Avatar.vue"
@@ -469,7 +525,6 @@ import Icon from "@/components/common/Icon.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart.vue"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
 import MapChart from "@/components/common/MapChart/MapChart"
-import mapData from "@/components/common/MapChart/mapData.js"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import MetricCard from "@/components/common/MetricCard.vue"
@@ -485,6 +540,7 @@ import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/Edit
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations.vue"
 import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
 import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
+import GeoDrawer from "@/views/Shared/Drawers/GeoDrawer.vue"
 
 export default {
   name: "AudienceInsight",
@@ -512,10 +568,10 @@ export default {
     Size,
     Tooltip,
     GenderSpendChart,
+    GeoDrawer,
   },
   data() {
     return {
-      mapChartData: mapData,
       showLookAlikeDrawer: false,
       lookalikeCreated: false,
       audienceHistory: [],
@@ -546,36 +602,6 @@ export default {
         title: "YAY!",
         message: "Successfully triggered delivery.",
       },
-      insightInfoItems: {
-        total_customers: {
-          title: "Target size",
-          subtitle: "",
-        },
-        total_countries: {
-          title: "Countries",
-          subtitle: "",
-          icon: "mdi-earth",
-        },
-        total_us_states: { title: "US States", subtitle: "", icon: "mdi-map" },
-
-        total_cities: {
-          title: "Cities",
-          subtitle: "",
-          icon: "mdi-map-marker-radius",
-        },
-        age: { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
-        gender_women: {
-          title: "Women",
-          subtitle: "",
-          icon: "mdi-gender-female",
-        },
-        gender_men: { title: "Men", subtitle: "", icon: "mdi-gender-male" },
-        gender_other: {
-          title: "Other",
-          subtitle: "",
-          icon: "mdi-gender-male-female",
-        },
-      },
       modelInitial: [
         { value: "propensity", icon: "model" },
         { value: "lifetime", icon: "lifetime" },
@@ -587,7 +613,11 @@ export default {
       showSelectDestinationsDrawer: false,
       showSalesforceExtensionDrawer: false,
       salesforceDestination: {},
-
+      geoDrawer: {
+        cities: false,
+        countries: false,
+        states: false,
+      },
       engagementDrawer: false,
       engagementId: null,
       showConfirmModal: false,
@@ -606,7 +636,6 @@ export default {
   computed: {
     ...mapGetters({
       getAudience: "audiences/audience",
-      getAudienceInsights: "audiences/insights",
       demographicsData: "audiences/demographics",
     }),
     audience() {
@@ -616,7 +645,59 @@ export default {
       return this.$route.params.id
     },
     audienceInsights() {
-      return this.getAudienceInsights(this.audienceId)
+      return this.audience.audience_insights
+    },
+    audienceOverview() {
+      const metrics = {
+        total_customers: {
+          title: "Target size",
+          subtitle: "",
+        },
+        total_countries: {
+          title: "Countries",
+          subtitle: "",
+          icon: "mdi-earth",
+          action: "toggleCountriesDrawer",
+        },
+        total_us_states: {
+          title: "US States",
+          subtitle: "",
+          icon: "mdi-map",
+          action: "toggleStatesDrawer",
+        },
+        total_cities: {
+          title: "Cities",
+          subtitle: "",
+          icon: "mdi-map-marker-radius",
+          action: "toggleCitiesDrawer",
+        },
+        age: { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
+        gender_women: {
+          title: "Women",
+          subtitle: "",
+          icon: "mdi-gender-female",
+        },
+        gender_men: { title: "Men", subtitle: "", icon: "mdi-gender-male" },
+        gender_other: {
+          title: "Other",
+          subtitle: "",
+          icon: "mdi-gender-male-female",
+        },
+      }
+
+      const insights = this.audienceInsights
+
+      return Object.keys(metrics).map((metric) => {
+        return {
+          ...metrics[metric],
+          ...{
+            subtitle:
+              metric === "age"
+                ? this.getAgeString(insights["min_age"], insights["max_age"])
+                : insights[metric],
+          },
+        }
+      })
     },
 
     genderChartData() {
@@ -643,6 +724,9 @@ export default {
         ]
       }
       return []
+    },
+    mapChartData() {
+      return this.demographicsData.demo
     },
     showLookalike() {
       return !this.is_lookalike &&
@@ -755,10 +839,7 @@ export default {
 
     async fetchDemographics() {
       this.loadingDemographics = true
-      await this.getDemographics({
-        start_date: dayjs().subtract(6, "months").format("YYYY-MM-DD"),
-        end_date: dayjs().format("YYYY-MM-DD"),
-      })
+      await this.getDemographics(this.$route.params.id)
       this.loadingDemographics = false
     },
 
@@ -772,27 +853,6 @@ export default {
     async refreshEntity() {
       this.$root.$emit("refresh-notifications")
       await this.loadAudienceInsights()
-    },
-
-    /**
-     * This is to map the Insight Values from the getter.
-     */
-    mapInsights() {
-      this.insightInfoItems = Object.keys(this.insightInfoItems).map(
-        (insight) => {
-          return {
-            title: this.insightInfoItems[insight].title,
-            subtitle:
-              insight !== "age"
-                ? this.audience.audience_insights[insight]
-                : this.getAgeString(
-                    this.audience.audience_insights["min_age"],
-                    this.audience.audience_insights["max_age"]
-                  ),
-            icon: this.insightInfoItems[insight].icon,
-          }
-        }
-      )
     },
 
     getAgeString(min_age, max_age) {
@@ -1024,7 +1084,7 @@ export default {
     async loadAudienceInsights() {
       this.loading = true
       await this.getAudienceById(this.$route.params.id)
-      if (this.audience.is_lookalike) {
+      if (this.audience && this.audience.is_lookalike) {
         this.audienceHistory = this.audience.audienceHistory.filter(
           (e) => e.title == "Created"
         )
@@ -1036,7 +1096,6 @@ export default {
       this.isLookalikable = this.audience.lookalikeable
       this.is_lookalike = this.audience.is_lookalike
       this.items[1].text = this.audience.name
-      this.mapInsights()
       this.getDestinations()
       this.loading = false
     },
@@ -1050,6 +1109,22 @@ export default {
       if (this.$refs.genderChart) {
         this.genderChartDimensions.width = this.$refs.genderChart.clientWidth
         this.genderChartDimensions.height = 200
+      }
+    },
+    toggleGeoDrawer(geoLevel = "states") {
+      this.geoDrawer[geoLevel] = !this.geoDrawer[geoLevel]
+    },
+    onClick(action) {
+      switch (action) {
+        case "toggleCitiesDrawer":
+          this.toggleGeoDrawer("cities")
+          break
+        case "toggleCountriesDrawer":
+          this.toggleGeoDrawer("countries")
+          break
+        case "toggleStatesDrawer":
+          this.toggleGeoDrawer("states")
+          break
       }
     },
   },
@@ -1144,5 +1219,8 @@ export default {
 }
 .no-background {
   background: transparent;
+}
+.colorLink {
+  color: var(--v-primary-base) !important;
 }
 </style>
