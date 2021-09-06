@@ -26,7 +26,7 @@ def check_cdp_connections_api_connection() -> Tuple[int, str]:
     # submit the post request to get documentation
     try:
         response = requests.get(
-            f"{config.CDP_CONNECTION_SERVICE}healthcheck",
+            f"{config.CDP_CONNECTION_SERVICE}/healthcheck",
             timeout=5,
         )
         return response.status_code, "CDP connections available."
@@ -59,7 +59,7 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
     )
 
     response = requests.post(
-        f"{config.CDP_CONNECTION_SERVICE}{api_c.CDM_IDENTITY_ENDPOINT}/"
+        f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_IDENTITY_ENDPOINT}/"
         f"{api_c.CDM_DATAFEEDS}",
         json={api_c.START_DATE: start_date, api_c.END_DATE: end_date},
         headers={api_c.CUSTOMERS_API_HEADER_KEY: token},
@@ -97,7 +97,7 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
     )
 
     response = requests.get(
-        f"{config.CDP_CONNECTION_SERVICE}{api_c.CDM_IDENTITY_ENDPOINT}/"
+        f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_IDENTITY_ENDPOINT}/"
         f"{api_c.CDM_DATAFEEDS}/{datafeed_id}",
         headers={api_c.CUSTOMERS_API_HEADER_KEY: token},
     )
@@ -144,7 +144,7 @@ def get_idr_matching_trends(
     config = get_config()
     logger.info("Getting IDR matching trends from CDP API.")
     response = requests.post(
-        f"{config.CDP_CONNECTION_SERVICE}identity/id-count-by-day",
+        f"{config.CDP_CONNECTION_SERVICE}/identity/id-count-by-day",
         json=filters,
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,

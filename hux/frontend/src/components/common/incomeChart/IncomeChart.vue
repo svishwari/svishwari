@@ -84,7 +84,7 @@ export default {
   line-height: 19px;
 }
 .container {
-  height: 450px;
+  height: 350px;
   padding: 0px !important;
 }
 </style>

@@ -125,7 +125,7 @@ const microsoftAzureSQL = {
 const qualtrics = {
   name: "Qualtrics",
   type: "qualtrics",
-  is_enabled: false,
+  is_enabled: true,
 }
 
 const tableauDS = {
@@ -178,6 +178,11 @@ const tableau = {
 const mailchimp = {
   name: "Mailchimp",
   type: "mailchimp",
+}
+
+const qualtricsDS = {
+  name: "Qualtrics",
+  type: "qualtrics",
 }
 
 // engagements
@@ -397,7 +402,7 @@ export default function (server) {
   server.create("dataSource", mariaDB)
   server.create("dataSource", medallia)
   server.create("dataSource", microsoftAzureSQL)
-  server.create("dataSource", qualtrics)
+  server.create("dataSource", qualtricsDS)
   server.create("dataSource", tableauDS)
   server.create("dataSource", twilioDS)
 
@@ -408,6 +413,7 @@ export default function (server) {
   server.create("destination", sfmc)
   server.create("destination", adobe)
   server.create("destination", mailchimp)
+  server.create("destination", qualtrics)
   const facebookSeed = server.create("destination", facebook)
 
   // seed audiences

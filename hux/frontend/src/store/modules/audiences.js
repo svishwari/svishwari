@@ -14,9 +14,6 @@ const NEW_AUDIENCE = {
 const state = {
   audiences: [],
 
-  // TODO: to be integrated with HUS-226
-  insights: {},
-
   newAudience: NEW_AUDIENCE,
 
   constants: {},
@@ -24,6 +21,12 @@ const state = {
   deliveries: {},
 
   demographics: {},
+
+  geoCities: [],
+
+  geoCountries: [],
+
+  geoStates: [],
 }
 
 const getters = {
@@ -33,8 +36,6 @@ const getters = {
     return state.audiences[id]
   },
 
-  insights: (state) => (id) => state.insights[id],
-
   audiencesRules: (state) => state.constants,
 
   deliveries: (state) => (id) => {
@@ -43,6 +44,12 @@ const getters = {
   },
 
   demographics: (state) => state.demographics,
+
+  geoCities: (state) => state.geoCities,
+
+  geoCountries: (state) => state.geoCountries,
+
+  geoStates: (state) => state.geoStates,
 }
 
 const mutations = {
@@ -63,12 +70,28 @@ const mutations = {
     Vue.set(state, "constants", item)
   },
 
-  SET_DELIVERIES(state, { audienceId, deliveries }) {
-    Vue.set(state.deliveries, audienceId, deliveries)
+  SET_DELIVERIES(state, { id, deliveries }) {
+    Vue.set(state.deliveries, id, deliveries)
   },
 
   SET_DEMOGRAPHICS(state, data) {
     state.demographics = data
+  },
+
+  SET_GEO_COUNTRIES(state, data) {
+    state.geoCountries = data
+  },
+
+  SET_GEO_CITIES(state, data) {
+    state.geoCities = data
+  },
+
+  ADD_GEO_CITIES(state, data) {
+    state.geoCities.push(...data)
+  },
+
+  SET_GEO_STATES(state, data) {
+    state.geoStates = data
   },
 }
 
@@ -230,11 +253,11 @@ const actions = {
     }
   },
 
-  async getDeliveries({ commit }, audienceId) {
+  async getDeliveries({ commit }, id) {
     try {
-      const response = await api.audiences.deliveries(audienceId)
+      const response = await api.audiences.deliveries(id)
       commit("SET_DELIVERIES", {
-        audienceId: audienceId,
+        audienceId: id,
         deliveries: response.data,
       })
     } catch (error) {
@@ -247,6 +270,37 @@ const actions = {
     try {
       const response = await api.audiences.demographics(data)
       commit("SET_DEMOGRAPHICS", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getGeoCities({ commit }, { id, batchNumber, batchSize }) {
+    try {
+      if (batchNumber === 1) commit("SET_GEO_CITIES", [])
+      const response = await api.audiences.geoCities(id, batchNumber, batchSize)
+      commit("ADD_GEO_CITIES", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getGeoCountries({ commit }, id) {
+    try {
+      const response = await api.audiences.geoCountries(id)
+      commit("SET_GEO_COUNTRIES", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getGeoStates({ commit }, id) {
+    try {
+      const response = await api.audiences.geoStates(id)
+      commit("SET_GEO_STATES", response.data)
     } catch (error) {
       handleError(error)
       throw error
