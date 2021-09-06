@@ -592,7 +592,6 @@ export default {
       saveCampaignMappings: "engagements/saveCampaignMappings",
     }),
     hasData(data, type) {
-      // This will check all the values and makes sure that
       if (data && Array.isArray(data)) {
         if (type === "summary") {
           return !data
