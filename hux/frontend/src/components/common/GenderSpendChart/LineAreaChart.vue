@@ -77,29 +77,23 @@ export default {
       this.height = this.chartDimensions.height
       let genders = []
       let colorCodes = []
-      if(this.areaChartData.length === 0) {
-         genders = [
-        { label: "no data selected", xValue: 0 },
-      ]
+      if (this.areaChartData.length === 0) {
+        genders = [{ label: "no data selected", xValue: 0 }]
 
-      colorCodes = [
-        "rgba(208, 208, 206, 1)",
-      ]
+        colorCodes = ["rgba(208, 208, 206, 1)"]
       } else {
-           
-      genders = [
-        { label: "Women", xValue: 0 },
-        { label: "Men", xValue: 38 },
-        { label: "Other", xValue: 67 },
-      ]
+        genders = [
+          { label: "Women", xValue: 0 },
+          { label: "Men", xValue: 38 },
+          { label: "Other", xValue: 67 },
+        ]
 
-      colorCodes = [
-        "rgba(0, 85, 135, 1)",
-        "rgba(12, 157, 219, 1)",
-        "rgba(66, 239, 253, 1)",
-      ]
+        colorCodes = [
+          "rgba(0, 85, 135, 1)",
+          "rgba(12, 157, 219, 1)",
+          "rgba(66, 239, 253, 1)",
+        ]
       }
-
 
       let color = d3Scale
         .scaleOrdinal()
@@ -266,50 +260,50 @@ export default {
       let mousemove = (mouseEvent) => {
         svg.selectAll(".hover-circle").remove()
         this.tooltipDisplay(false)
-        if(this.areaChartData.length !== 0) {
-        let data = this.dateData
-        let x0 = xScale.invert(d3Select.pointer(mouseEvent)[0])
+        if (this.areaChartData.length !== 0) {
+          let data = this.dateData
+          let x0 = xScale.invert(d3Select.pointer(mouseEvent)[0])
 
-        let i = bisectDate(data, x0, 1)
-        let d0 = data[i - 1]
-        let d1 = data[i] || {}
-        let d = x0 - d0 > d1 - x0 ? d1 : d0
-        let finalXCoordinate = xScale(d) + 40
-        let dateD = this.$options.filters.Date(d, "DD/MM/YY")
-        let yData
-        let dataToolTip = this.areaChartData.find(
-          (element) =>
-            this.$options.filters.Date(new Date(element.date), "DD/MM/YY") ==
-            dateD
-        )
+          let i = bisectDate(data, x0, 1)
+          let d0 = data[i - 1]
+          let d1 = data[i] || {}
+          let d = x0 - d0 > d1 - x0 ? d1 : d0
+          let finalXCoordinate = xScale(d) + 40
+          let dateD = this.$options.filters.Date(d, "DD/MM/YY")
+          let yData
+          let dataToolTip = this.areaChartData.find(
+            (element) =>
+              this.$options.filters.Date(new Date(element.date), "DD/MM/YY") ==
+              dateD
+          )
 
-        svg
-          .selectAll(".hover-line-y")
-          .attr("x1", finalXCoordinate)
-          .attr("x2", finalXCoordinate)
-          .attr("y1", margin.top)
-          .attr("y2", height + margin.top)
-          .style("display", "block")
+          svg
+            .selectAll(".hover-line-y")
+            .attr("x1", finalXCoordinate)
+            .attr("x2", finalXCoordinate)
+            .attr("y1", margin.top)
+            .attr("y2", height + margin.top)
+            .style("display", "block")
 
-        svg.selectAll(".dot").each(function () {
-          if (this.getAttribute("cx") == finalXCoordinate) {
-            let yPosition = this.getAttribute("cy")
-            yData = yPosition
-            svg
-              .append("circle")
-              .classed("hover-circle", true)
-              .attr("cx", finalXCoordinate)
-              .attr("cy", yPosition)
-              .attr("r", 5.5)
-              .style("stroke", this.getAttribute("stroke"))
-              .style("stroke-opacity", "1")
-              .style("fill", "white")
-              .style("pointer-events", "none")
-          }
-        })
-        dataToolTip.xPosition = finalXCoordinate
-        dataToolTip.yPosition = yData
-        this.tooltipDisplay(true, dataToolTip)
+          svg.selectAll(".dot").each(function () {
+            if (this.getAttribute("cx") == finalXCoordinate) {
+              let yPosition = this.getAttribute("cy")
+              yData = yPosition
+              svg
+                .append("circle")
+                .classed("hover-circle", true)
+                .attr("cx", finalXCoordinate)
+                .attr("cy", yPosition)
+                .attr("r", 5.5)
+                .style("stroke", this.getAttribute("stroke"))
+                .style("stroke-opacity", "1")
+                .style("fill", "white")
+                .style("pointer-events", "none")
+            }
+          })
+          dataToolTip.xPosition = finalXCoordinate
+          dataToolTip.yPosition = yData
+          this.tooltipDisplay(true, dataToolTip)
         }
       }
 
