@@ -7,19 +7,12 @@ Decouple always searches for Options in this order:
 2. Repository: ini or .env file
 3. Default argument passed to config.
 """
-import logging
 from importlib import import_module
 from os import environ
 from pathlib import Path
 from decouple import config
+from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
-
-
-LOAD_VAR_DICT = {
-    api_c.TECTON_API_KEY: api_c.TECTON_API_KEY,
-    api_c.MONGO_DB_HOST: "unifieddb_host_alias",
-    api_c.MONGO_DB_PASSWORD: "unifieddb_rw",
-}
 
 
 class Config:
@@ -32,6 +25,7 @@ class Config:
 
     # AWS_CONFIG
     AWS_REGION = config(api_c.AWS_REGION)
+    S3_DATASET_BUCKET = config(api_c.AWS_S3_BUCKET_CONST)
 
     # MONGO CONFIG
     MONGO_DB_HOST = config(api_c.MONGO_DB_HOST)
@@ -46,7 +40,7 @@ class Config:
     MONGO_DB_CONFIG = {
         api_c.HOST: MONGO_DB_HOST,
         api_c.PORT: MONGO_DB_PORT,
-        api_c.USER_NAME: MONGO_DB_USERNAME,
+        api_c.USERNAME: MONGO_DB_USERNAME,
         api_c.PASSWORD: MONGO_DB_PASSWORD,
         api_c.SSL_CERT_PATH: MONGO_SSL_CERT,
     }
@@ -73,10 +67,10 @@ class Config:
     AUDIENCE_ROUTER_IMAGE = config(api_c.AUDIENCE_ROUTER_IMAGE_CONST)
 
     # campaign data performance router scheduled event name
-    CDPR_EVENT_NAME = config(api_c.CDPR_EVENT_NAME_CONST)
+    CDPR_EVENT_NAME = config(api_c.CDPR_EVENT_CONST)
 
     # feedback loop data router scheduled event name
-    FLDR_EVENT_NAME = config(api_c.FLDR_EVENT_NAME_CONST)
+    FLDR_EVENT_NAME = config(api_c.FLDR_EVENT_CONST)
 
     EVENT_ROUTERS = [CDPR_EVENT_NAME, FLDR_EVENT_NAME]
 
@@ -108,13 +102,13 @@ class DevelopmentConfig(Config):
     MONGO_DB_CONFIG = {
         api_c.HOST: Config.MONGO_DB_HOST,
         api_c.PORT: Config.MONGO_DB_PORT,
-        api_c.USER_NAME: MONGO_DB_USERNAME,
+        api_c.USERNAME: MONGO_DB_USERNAME,
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
         api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
     }
 
 
-def load_env_vars(flask_env=config("FLASK_ENV", default="")) -> None:
+def load_env_vars(flask_env=config(api_c.FLASK_ENV, default="")) -> None:
     """Load variables from secret store into ENV before we load the config.
 
     Args:
@@ -132,11 +126,35 @@ def load_env_vars(flask_env=config("FLASK_ENV", default="")) -> None:
 
     if flask_env in [api_c.DEVELOPMENT_MODE, api_c.PRODUCTION_MODE]:
         # load in variables before running flask app.
-        for key, value in LOAD_VAR_DICT.items():
+        for i in range(0, 50):
+            # attempt to grab the SSM from the ini file/
+            load_ssm_key = config(f"SSM_{i}", None)
+
+            # if empty, break loop
+            if not load_ssm_key:
+                break
+
+            # ensure the ssm key has the expected delimiter
+            if api_c.SSM_INIT_LOAD_DELIMITER not in load_ssm_key:
+                logger.error(
+                    "SSM Key '%s' missing %s delimiter.",
+                    load_ssm_key,
+                    api_c.SSM_INIT_LOAD_DELIMITER,
+                )
+                break
+
+            # split the ssm env var into key and value.
+            ssm_key, ssm_value = load_ssm_key.split(
+                api_c.SSM_INIT_LOAD_DELIMITER
+            )
+
+            # attempt to pull the ssm from the store and set env key value.
             try:
-                environ[key] = aws.parameter_store.get_store_value(value)
+                environ[ssm_key] = aws.parameter_store.get_store_value(
+                    ssm_value
+                )
             except ValueError:
-                logging.info("Unable to connect to AWS Parameter Store.")
+                logger.info("Unable to connect to AWS Parameter Store.")
 
 
 def get_config(flask_env=config(api_c.FLASK_ENV, default="")) -> Config:
@@ -148,6 +166,4 @@ def get_config(flask_env=config(api_c.FLASK_ENV, default="")) -> Config:
     Returns:
 
     """
-    if flask_env == api_c.DEVELOPMENT_MODE:
-        return DevelopmentConfig
-    return Config
+    return DevelopmentConfig if flask_env == api_c.DEVELOPMENT_MODE else Config
