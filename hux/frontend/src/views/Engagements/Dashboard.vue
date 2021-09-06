@@ -288,7 +288,7 @@ export default {
       return items
     },
 
-    getRouteId(){
+    getRouteId() {
       return this.$route.params.id
     },
   },

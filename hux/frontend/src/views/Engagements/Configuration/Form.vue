@@ -406,12 +406,12 @@ export default {
       destination: "destinations/single",
     }),
 
-    getRouteId(){
+    getRouteId() {
       return this.$route.params.id
     },
 
     isEditable() {
-      return (this.$route.name === "EngagementUpdate") ? true : false
+      return this.$route.name === "EngagementUpdate" ? true : false
     },
 
     payload() {
