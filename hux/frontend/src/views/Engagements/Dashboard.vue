@@ -287,11 +287,15 @@ export default {
       }
       return items
     },
+
+    getRouteId(){
+      return this.$route.params.id
+    },
   },
   async mounted() {
     this.loading = true
-    this.engagementId = this.$route.params.id
-    await this.loadEngagement(this.$route.params.id)
+    this.engagementId = this.getRouteId
+    await this.loadEngagement(this.getRouteId)
     this.loading = false
   },
   methods: {
@@ -600,8 +604,8 @@ export default {
     },
     editEngagement() {
       this.$router.push({
-        name: "EditEngagementConfiguration",
-        params: { id: this.$route.params.id },
+        name: "EngagementUpdate",
+        params: { id: this.getRouteId },
       })
     },
   },

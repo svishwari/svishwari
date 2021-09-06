@@ -64,7 +64,7 @@ export default {
     this.loading = true
     await this.getAudiences()
     await this.getDestinations()
-    if (this.$route.params.id) {
+    if (this.$route.name === "EngagementUpdate") {
       await this.loadEngagement(this.$route.params.id)
     }
     this.loading = false

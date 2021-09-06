@@ -264,7 +264,7 @@
 
       <template #right>
         <v-btn
-          v-if="isFormUpdate"
+          v-if="isEditable"
           tile
           color="primary"
           height="44"
@@ -406,8 +406,12 @@ export default {
       destination: "destinations/single",
     }),
 
-    isFormUpdate() {
-      return this.$route.params.id ? true : false
+    getRouteId(){
+      return this.$route.params.id
+    },
+
+    isEditable() {
+      return (this.$route.name === "EngagementUpdate") ? true : false
     },
 
     payload() {
@@ -581,11 +585,11 @@ export default {
           delete requestPayload.start_date
           delete requestPayload.end_date
         }
-        const payload = { id: this.$route.params.id, data: requestPayload }
+        const payload = { id: this.getRouteId, data: requestPayload }
         await this.updateEngagement(payload)
         this.$router.push({
           name: "EngagementDashboard",
-          params: { id: this.$route.params.id },
+          params: { id: this.getRouteId },
         })
       } catch (error) {
         this.errorMessages.push(error.response.data.message)
