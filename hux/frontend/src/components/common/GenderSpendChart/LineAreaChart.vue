@@ -71,7 +71,6 @@ export default {
   methods: {
     async initiateAreaChart() {
       await this.areaChartData
-      console.log("this.areaChartData", this.areaChartData)
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
