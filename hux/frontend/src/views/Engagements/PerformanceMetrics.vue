@@ -22,7 +22,13 @@
       <div>
         <download-tooltip>
           <template #label-content>
-            <v-icon size="22" color="primary" class="icon-border pa-1 ma-2 mr-0">
+            <v-icon 
+              size="22" 
+              :color="myIconColor" 
+              class="icon-border pa-1 ma-2 mr-0" 
+              @mousedown="changeColorOnSelect()" 
+              @mouseup="changeColorOnDeselect()"
+            >
               mdi-download
             </v-icon>
           </template>
@@ -96,6 +102,7 @@ export default {
   data() {
     return {
       tabOption: 0,
+      myIconColor: "primary",
       tooltipValue: "Download Email Marketing and Digital Advertising performance metrics as CSVs."
     }
   },
@@ -332,6 +339,12 @@ export default {
   methods: {
     fetchKey(obj, key) {
       return obj && obj[key] ? obj[key] : "-"
+    },
+    changeColorOnSelect() {
+      this.myIconColor = "secondary";
+    },
+    changeColorOnDeselect() {
+      this.myIconColor = "primary";
     },
   },
 }
