@@ -40,9 +40,8 @@ export default {
         "var(--v-primary-darken3)",
         "var(--v-success-base)",
       ],
-      sourceData: this.customersData,
       currentData: {},
-      // sourceData: [],
+      sourceData: [],
       barGroupChangeIndex: [],
       chartDimensions: {
         width: 0,
