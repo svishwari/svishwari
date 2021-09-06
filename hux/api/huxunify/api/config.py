@@ -111,7 +111,7 @@ class DevelopmentConfig(Config):
     }
 
 
-class TestConfig(Config):
+class PyTestConfig(Config):
     """
     Test Config Object
     """
@@ -197,18 +197,18 @@ def load_env_vars(flask_env=config(api_c.FLASK_ENV, default="")) -> None:
 
 def get_config(
     flask_env=config(api_c.FLASK_ENV, default="")
-) -> Union[DevelopmentConfig, Config, TestConfig]:
+) -> Union[DevelopmentConfig, Config, PyTestConfig]:
     """Get configuration for the environment.
 
     Args:
         flask_env (str): Flask environment value.
 
     Returns:
-        Union[DevelopmentConfig, Config, TestConfig]: config object.
+        Union[DevelopmentConfig, Config, PyTestConfig]: config object.
 
     """
     if flask_env == api_c.DEVELOPMENT_MODE:
         return DevelopmentConfig
     if flask_env == api_c.TEST_MODE:
-        return TestConfig
+        return PyTestConfig
     return Config
