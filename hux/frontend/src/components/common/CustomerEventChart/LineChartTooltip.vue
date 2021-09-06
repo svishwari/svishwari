@@ -25,16 +25,6 @@
           <span class="text-label">{{ event.label_name }}</span>
         </div>
       </div>
-      <!-- <div class="value-section">
-        {{ sourceInput.totalCustomers | Numeric(true, false, false) }}
-      </div>
-      <div class="value-container">
-        <icon type="name" :size="12" :color="colorCodes[sourceInput.index]" />
-        <span class="text-label">New customers added</span>
-        <div class="value-section">
-          {{ sourceInput.addedCustomers | Numeric(true, false, false) }}
-        </div>
-      </div> -->
     </div>
   </v-card>
 </template>
@@ -83,10 +73,6 @@ export default {
           label_name: "Viewed sale item",
           event_name: "viewed_sale_item",
         },
-        // {
-        //   label_name: "Item purchased",
-        //   event_name: "item_purchased",
-        // },
       ],
     }
   },
@@ -125,7 +111,6 @@ export default {
 
   .value-section {
     @extend .global-heading;
-    // margin-left: 21px;
   }
 
   .item_count {
