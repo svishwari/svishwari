@@ -505,6 +505,22 @@ export const defineRoutes = (server) => {
     return server.create("audience", attrs)
   })
 
+  server.put("/audiences/:id", (schema, request) => {
+    const audienceId = request.params.id
+    const requestData = JSON.parse(request.requestBody)
+    const payload = {
+      name: requestData.name,
+      filters: requestData.filters,
+      destinations: requestData.destinations,
+      // TODO: Need to update the blow 'engagements' update,
+      // once the Mirage Relationships between Audiences and Engagement Model are fixed.
+      // engagements: requestData.engagement_ids.map((engagementId) => {
+      //   return schema.engagements.find(engagementId)
+      // }),
+    }
+    return schema.audiences.find(audienceId).update(payload)
+  })
+
   server.post("/audiences/:id/deliver", () => {
     return { message: "Successfully created delivery jobs" }
   })

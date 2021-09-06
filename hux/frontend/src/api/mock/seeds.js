@@ -264,7 +264,7 @@ const multipleSectionFilters = () => {
           },
           {
             field: "gender",
-            type: "contains",
+            type: "equals",
             value: "female",
           },
         ],
@@ -273,7 +273,7 @@ const multipleSectionFilters = () => {
         section_aggregator: "ALL",
         section_filters: [
           {
-            field: "propensity_to_subscribe",
+            field: "propensity_to_purchase",
             type: "range",
             value: [0.55, 0.75],
           },
@@ -284,7 +284,7 @@ const multipleSectionFilters = () => {
           },
           {
             field: "gender",
-            type: "contains",
+            type: "equals",
             value: "male",
           },
         ],
@@ -293,17 +293,17 @@ const multipleSectionFilters = () => {
         section_aggregator: "ALL",
         section_filters: [
           {
-            field: "propensity_to_subscribe",
+            field: "predicted_lifetime_value",
             type: "range",
-            value: [0.75, 1],
+            value: [3500, 6000],
           },
           {
-            field: "city",
+            field: "City",
             type: "contains",
             value: "New York",
           },
           {
-            field: "zipcode",
+            field: "Zip code",
             type: "contains",
             value: "26H12219",
           },

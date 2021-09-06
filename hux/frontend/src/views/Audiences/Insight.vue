@@ -12,7 +12,17 @@
         <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-plus-circle-multiple-outline
         </v-icon>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+        <v-icon
+          size="22"
+          color="primary"
+          class="icon-border pa-2 ma-1"
+          @click="
+            $router.push({
+              name: 'AudienceUpdate',
+              params: { id: audienceId },
+            })
+          "
+        >
           mdi-pencil
         </v-icon>
         <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
