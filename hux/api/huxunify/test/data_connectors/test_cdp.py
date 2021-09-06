@@ -134,7 +134,7 @@ class CDPTest(TestCase):
         Returns:
             None
         """
-        start_date = datetime.utcnow().date() - relativedelta(months=6)
+        start_date = datetime.utcnow().date() - relativedelta(months=9)
         end_date = datetime.utcnow().date()
         expected_response = {
             "code": 200,
