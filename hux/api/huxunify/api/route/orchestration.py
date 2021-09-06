@@ -858,7 +858,38 @@ class AudiencePutView(SwaggerView):
             f'Audience "{audience_doc[db_c.NAME]}" updated by {user_name}.',
             api_c.ORCHESTRATION_TAG,
         )
-        # TODO : attach the audience to each of the engagements
+
+        # check if any engagements to add, otherwise return.
+        if not body.get(api_c.ENGAGEMENT_IDS):
+            return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
+
+        # remove the audience from existing engagements
+        engagement_deliveries = orchestration_management.get_audience_insights(
+            database,
+            audience_doc[db_c.ID],
+        )
+
+        # process each engagement that the audience is attached to.
+        for engagement in engagement_deliveries:
+            # remove the audience
+            engagement_management.remove_audiences_from_engagement(
+                database,
+                engagement[db_c.ID],
+                user_name,
+                [audience_doc[db_c.ID]],
+            )
+
+        # now attach each audience to the passed in engagements.
+        for engagement_id in body.get(api_c.ENGAGEMENT_IDS):
+            # the append function expects ID for audience _id.
+            audience_doc[db_c.OBJECT_ID] = audience_doc[db_c.ID]
+            engagement_management.append_audiences_to_engagement(
+                database,
+                ObjectId(engagement_id),
+                user_name,
+                [audience_doc],
+            )
+
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
 

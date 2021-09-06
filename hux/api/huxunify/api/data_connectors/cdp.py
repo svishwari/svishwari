@@ -529,12 +529,12 @@ def get_customer_count_by_state(
     token: str, filters: Optional[dict] = None
 ) -> list:
     """
-    Retrieve customer count data by state
+    Get demographic details of customers by state
 
     Args:
         token (str): OKTA JWT Token.
-        filters (Optional[dict]): filters to pass into
-            count_by_state endpoint.
+        filters (dict):  filters to pass into
+            count_by_state endpoint, default None
 
     Returns:
         list: list of state demographic data
@@ -735,9 +735,7 @@ def get_city_ltvs(
     logger.info("Retrieving spending insights by city.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
-        json={api_c.AUDIENCE_FILTERS: filters}
-        if filters
-        else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
         params=dict(offset=offset, limit=limit),
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
