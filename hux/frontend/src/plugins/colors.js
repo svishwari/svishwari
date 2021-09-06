@@ -1,30 +1,10 @@
+import blue from "./colors/blue"
+import black from "./colors/black"
+
 export default {
-  backgroundBlue: "#f9fafb",
-  aliceBlue: "#ecf4f9",
-  greyBlue: "#d5dce1",
-  dullBlue: "#b7cfd9",
-  columbiaBlue: "#a0dcff",
-  skyBlue: "#80d1ef",
-  oceanBlue: "42EFFD",
-  blue: "#00a3e0",
-  royalBlue: "0C9DDB",
-  lightBlue: "#007cb0",
-  pantoneBlue: "#0076A8",
-  tealBlue: "#396286",
-  darkBlue: "#005587",
-
+  ...blue,
   white: "#ffffff",
-
-  appBodyGrey: "#f8f9fa",
-  smoke: "#ECECEC",
-  lightGrey: "#d0d0ce",
-  lightGreyAnotherVariant: "#757b7b",
-  gray: "#4f4f4f",
-  darkGreyHeading: "#333333",
-  darkGrey: "#232323",
-  neroBlack: "#1e1e1e",
-  black: "#000000",
-
+ ...black,
   red: "#da291c",
   green: "#43b02a",
   yellow: "#ffcd00",
@@ -32,7 +12,6 @@ export default {
   pinkLittleDark: "#f03bc8",
   persianGreen: "#00abab",
   cerulean: "#006699",
-
   greenLight: "#86bc25",
   pink: "#b54acf",
   gradientSliderColors: [
