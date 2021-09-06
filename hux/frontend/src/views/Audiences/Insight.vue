@@ -632,7 +632,7 @@ export default {
           id: "c2b0bf2d9d48",
           name: ".csv",
           type: "amazon_ads",
-          title: "Amazon Ads CSV",
+          title: "Amazon Advertising CSV",
           icon: "amazon-advertising",
         },
         {
@@ -644,7 +644,7 @@ export default {
         },
         {
           id: "2349d4353b9f",
-          title: "CSV",
+          title: "Generic CSV",
           name: ".csv",
           type: "amazon_ads",
         },
