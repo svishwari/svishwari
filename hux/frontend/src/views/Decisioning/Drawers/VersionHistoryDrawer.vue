@@ -6,7 +6,12 @@
   >
     <template #header-left>
       <div class="d-flex align-center">
-        <icon type="history" :size="20" color="var(--v-black-darken4)" class="mr-2" />
+        <icon
+          type="history"
+          :size="20"
+          color="var(--v-black-darken4)"
+          class="mr-2"
+        />
         <h3 class="text-h3 ml-1 black--text text--darken-3">Version history</h3>
       </div>
     </template>
@@ -75,7 +80,10 @@
               </template>
             </tooltip>
 
-            <div v-if="header.value == 'status'" class="black--text text--darken-4">
+            <div
+              v-if="header.value == 'status'"
+              class="black--text text--darken-4"
+            >
               <status
                 :status="item.status"
                 :show-label="true"
@@ -96,7 +104,9 @@
     </template>
     <template #footer-left>
       <tooltip>
-        <div class="d-flex align-baseline black--text text--darken-1 text-caption">
+        <div
+          class="d-flex align-baseline black--text text--darken-1 text-caption"
+        >
           {{ versionHistoryList.length }} results
         </div>
         <template #tooltip> {{ versionHistoryList.length }} results </template>

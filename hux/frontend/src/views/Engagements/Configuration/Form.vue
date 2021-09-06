@@ -92,7 +92,9 @@
         </v-row>
         <v-row v-if="isRecurring" class="delivery-schedule mt-10 ml-n2">
           <div>
-            <span class="date-picker-label black--text text--darken-4 text-caption">
+            <span
+              class="date-picker-label black--text text--darken-4 text-caption"
+            >
               Start date
             </span>
             <hux-start-date
@@ -104,7 +106,9 @@
           </div>
           <icon v-if="isRecurring" class="ml-2 mr-2" type="arrow" :size="28" />
           <div v-if="isRecurring">
-            <span class="date-picker-label black--text text--darken-4 text-caption">
+            <span
+              class="date-picker-label black--text text--darken-4 text-caption"
+            >
               End date
             </span>
             <hux-end-date

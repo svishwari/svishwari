@@ -43,7 +43,12 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon color="primary lighten-5" class="mr-2" :size="iconSize" v-on="on">
+        <v-icon
+          color="primary lighten-5"
+          class="mr-2"
+          :size="iconSize"
+          v-on="on"
+        >
           mdi-checkbox-blank-circle
         </v-icon>
       </template>

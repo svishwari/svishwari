@@ -7,7 +7,9 @@
       </p>
     </div>
 
-    <label class="d-flex mb-2 black--text text--darken-4">Select a destination</label>
+    <label class="d-flex mb-2 black--text text--darken-4"
+      >Select a destination</label
+    >
 
     <div class="d-flex align-center mb-10">
       <template v-if="selectedDestination">
@@ -113,8 +115,12 @@
     <drawer v-model="drawer">
       <template #header-left>
         <div class="d-flex align-baseline">
-          <h5 class="text-h3 pr-2 black--text text--darken-4">Select a destination</h5>
-          <span class="text-caption black--text text--darken-1">(select one)</span>
+          <h5 class="text-h3 pr-2 black--text text--darken-4">
+            Select a destination
+          </h5>
+          <span class="text-caption black--text text--darken-1"
+            >(select one)</span
+          >
         </div>
       </template>
       <template #footer-left>

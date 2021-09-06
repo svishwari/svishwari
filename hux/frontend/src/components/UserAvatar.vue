@@ -15,7 +15,8 @@
         <v-btn color="primary" class="font-weight-bold mr-2" small outlined fab>
           {{ initials }}
         </v-btn>
-        <v-list-item-title class="text-h6 black--text text--darken-4 font-weight-bold"
+        <v-list-item-title
+          class="text-h6 black--text text--darken-4 font-weight-bold"
           >{{ firstName }} {{ lastName }}</v-list-item-title
         >
       </v-list-item>

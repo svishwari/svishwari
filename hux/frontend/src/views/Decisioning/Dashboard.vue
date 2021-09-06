@@ -16,7 +16,11 @@
           >
             Version history
           </hux-button>
-          <v-icon size="22" color="black lighten-3" class="icon-border pa-2 ma-1">
+          <v-icon
+            size="22"
+            color="black lighten-3"
+            class="icon-border pa-2 ma-1"
+          >
             mdi-download
           </v-icon>
         </template>
@@ -84,7 +88,10 @@
             />
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
               <div class="mt-2">
-                <span v-if="modelFeatures" class="black--text text--darken-4 text-h5">
+                <span
+                  v-if="modelFeatures"
+                  class="black--text text--darken-4 text-h5"
+                >
                   Top
                   {{ modelFeatures.length }}
                   feature importance
@@ -126,14 +133,18 @@
                 :enable-grid="[true, true]"
               />
             </div>
-            <div class="py-5 text-center black--text text--darken-4 text-h6">Date</div>
+            <div class="py-5 text-center black--text text--darken-4 text-h6">
+              Date
+            </div>
           </v-card>
         </v-col>
       </v-row>
       <v-row>
         <v-col col="12">
           <v-card class="rounded-lg box-shadow-5 px-6 py-5">
-            <div class="black--text text--darken-4 text-h5 pb-4">Lift chart</div>
+            <div class="black--text text--darken-4 text-h5 pb-4">
+              Lift chart
+            </div>
             <v-progress-linear
               v-if="loadingLift"
               :active="loadingLift"

@@ -8,10 +8,13 @@
           'text-caption': applyCaptionStyle,
         }"
       >
-        Select attribute(s) - <i class="text-caption black--text text--darken-1">Optional</i>
+        Select attribute(s) -
+        <i class="text-caption black--text text--darken-1">Optional</i>
       </strong>
       <v-card v-if="rules.length == 0" tile elevation="0" class="blank-section">
-        <div class="black--text text--darken-1 font-weight-normal new-attribute">
+        <div
+          class="black--text text--darken-1 font-weight-normal new-attribute"
+        >
           <span @click="addNewSection()">
             <icon class="add-icon cursor-pointer" type="add" :size="41" />
           </span>
@@ -24,7 +27,14 @@
     <v-col v-if="rules.length > 0" col="12" class="pt-0 pr-0 pa-0">
       <div v-for="(rule, index) in rules" :key="rule.id">
         <div
-          class="d-flex align-center col-12 pa-0 black--text text--darken-4 text-caption"
+          class="
+            d-flex
+            align-center
+            col-12
+            pa-0
+            black--text
+            text--darken-4 text-caption
+          "
         >
           <span class="mr-2">Match</span>
           <hux-switch

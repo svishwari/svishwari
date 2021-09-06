@@ -15,14 +15,22 @@
         <span
           v-else
           class="text-h5"
-          :class="disabled ? 'black--text text--lighten-3' : 'black--text text--darken-4'"
+          :class="
+            disabled
+              ? 'black--text text--lighten-3'
+              : 'black--text text--darken-4'
+          "
         >
           {{ label || `Step ${step}` }}
         </span>
         <span
           v-if="optional"
           class="text-caption pl-1"
-          :class="disabled ? 'black--text text--lighten-3' : 'black--text text--darken-4'"
+          :class="
+            disabled
+              ? 'black--text text--lighten-3'
+              : 'black--text text--darken-4'
+          "
         >
           <em>{{ optional }}</em>
         </span>

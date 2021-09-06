@@ -31,7 +31,12 @@ export default {
       show: false,
       isArcHover: false,
       colorCodes: ["lighten5", "lighten8", "darken3", "success"],
-      tooltipColorCodes: ["var(--v-primary-lighten5)", "var(--v-primary-lighten8)", "var(--v-primary-darken3)", "var(--v-success-base)"],
+      tooltipColorCodes: [
+        "var(--v-primary-lighten5)",
+        "var(--v-primary-lighten8)",
+        "var(--v-primary-darken3)",
+        "var(--v-success-base)",
+      ],
       sourceData: this.customersData,
       currentData: {},
       chartDimensions: {

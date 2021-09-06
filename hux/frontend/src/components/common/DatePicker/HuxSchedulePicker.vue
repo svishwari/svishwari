@@ -84,7 +84,11 @@
       >
         <span
           class="text-h6"
-          :class="isDaySelected(day) ? 'primary--text text--lighten-8' : 'black--text text--darken-1'"
+          :class="
+            isDaySelected(day)
+              ? 'primary--text text--lighten-8'
+              : 'black--text text--darken-1'
+          "
         >
           {{ day.day }}
         </span>
@@ -137,12 +141,18 @@
         {{ timeFrame }}{{ value.every !== 1 ? "s" : "" }}]
       </span>
       <span v-if="value.periodicity !== 'Daily'">on </span>
-      <span v-if="value.periodicity === 'Weekly'" class="black--text text--darken-4">
+      <span
+        v-if="value.periodicity === 'Weekly'"
+        class="black--text text--darken-4"
+      >
         <span v-if="selectedDaysString !== '[]'">
           {{ selectedDaysString }}
         </span>
       </span>
-      <span v-if="value.periodicity === 'Monthly'" class="black--text text--darken-4">
+      <span
+        v-if="value.periodicity === 'Monthly'"
+        class="black--text text--darken-4"
+      >
         <span v-if="value.monthlyPeriod === 'Day'">
           [Day {{ value.monthlyDayDate }}]
         </span>

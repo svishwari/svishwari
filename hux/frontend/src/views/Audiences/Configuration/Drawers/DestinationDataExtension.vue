@@ -16,7 +16,9 @@
     <template #default>
       <v-form ref="salesforceExtensionRef" v-model="isFormValid">
         <div class="add-destination-wrapper pa-2 font-weight-regular">
-          <span class="black--text text--darken-4 text-caption">Extension type</span>
+          <span class="black--text text--darken-4 text-caption"
+            >Extension type</span
+          >
           <div class="d-flex align-center mt-2">
             <div
               class="extension-type mr-4 text-center"
@@ -63,7 +65,9 @@
           <div v-if="isActive" class="mt-6">
             <div>
               <label class="d-flex align-items-center">
-                <span class="black--text text--darken-4 text-caption">Journey type</span>
+                <span class="black--text text--darken-4 text-caption"
+                  >Journey type</span
+                >
               </label>
               <v-radio-group v-model="journeyType" row>
                 <v-radio value="radio-1">
@@ -90,7 +94,14 @@
               :help-text="tooltipText"
               height="40"
               background-color="white"
-              class="mt-1 text-caption black--text text--darken-4 pt-2 input-placeholder"
+              class="
+                mt-1
+                text-caption
+                black--text
+                text--darken-4
+                pt-2
+                input-placeholder
+              "
               :rules="newExtensionRules"
               required
             />
@@ -102,8 +113,8 @@
                 d-flex
                 align-items-center
                 mb-2
-                black--text text--darken-4
-                text-caption
+                black--text
+                text--darken-4 text-caption
               "
             >
               Existing data extension
@@ -132,7 +143,9 @@
             <v-icon color="info" size="15" class="mr-2">
               mdi-message-alert
             </v-icon>
-            <div class="text-body-1 primary--text text--lighten-8 font-weight-bold">
+            <div
+              class="text-body-1 primary--text text--lighten-8 font-weight-bold"
+            >
               FEEDBACK
             </div>
             <div class="mx-2 black--text text--darken-3 text-caption">

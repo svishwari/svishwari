@@ -12,7 +12,8 @@
       <div
         class="
           modal-footer
-          primary lighten-1
+          primary
+          lighten-1
           d-flex
           justify-space-between
           align-center

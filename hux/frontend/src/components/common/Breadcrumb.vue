@@ -13,7 +13,9 @@
         <div v-if="item.logo" class="d-flex pr-2">
           <logo :type="item.logo" :size="24" />
         </div>
-        <span :class="{ 'black--text text--darken-4': item.disabled, 'pl-1': true }">
+        <span
+          :class="{ 'black--text text--darken-4': item.disabled, 'pl-1': true }"
+        >
           {{ item.text }}
         </span>
       </v-breadcrumbs-item>

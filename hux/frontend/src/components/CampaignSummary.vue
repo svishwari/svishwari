@@ -2,7 +2,10 @@
   <div class="pa-0 campaign-summary">
     <v-card flat class="card-style" style="position: sticky">
       <v-card-text>
-        <div v-if="summary.length == 0" class="empty-state pa-5 black--text text--darken-1">
+        <div
+          v-if="summary.length == 0"
+          class="empty-state pa-5 black--text text--darken-1"
+        >
           Be patient! Performance data is currently not available, check back
           tomorrow to see if the magic is ready.
         </div>
@@ -89,8 +92,15 @@
     <v-card min-height="145px" flat class="mt-6 card-style">
       <v-card-title class="d-flex justify-space-between pb-4 pl-7">
         <div class="d-flex align-center">
-          <icon type="audiences" :size="24" color="var(--v-black-darken4)" class="mr-2" />
-          <span class="text-h5 black--text text--darken-4"> Audience performance </span>
+          <icon
+            type="audiences"
+            :size="24"
+            color="var(--v-black-darken4)"
+            class="mr-2"
+          />
+          <span class="text-h5 black--text text--darken-4">
+            Audience performance
+          </span>
         </div>
       </v-card-title>
       <v-card-text class="pl-6 pb-6 mt-0 pr-0">

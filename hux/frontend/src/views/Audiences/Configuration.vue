@@ -61,7 +61,8 @@
                   class="
                     mt-1
                     text-caption
-                    black--text text--darken-4
+                    black--text
+                    text--darken-4
                     pt-2
                     input-placeholder
                   "
@@ -135,7 +136,14 @@
                   </template>
                   <template
                     #hover-content
-                    class="white black--text text--darken-4 shadow pa-2 text-caption"
+                    class="
+                      white
+                      black--text
+                      text--darken-4
+                      shadow
+                      pa-2
+                      text-caption
+                    "
                   >
                     <v-sheet max-width="240px">
                       The location(s) where Audiences are planned to be run.
@@ -212,7 +220,9 @@
                     :ripple="false"
                   >
                     <template #label>
-                      <span class="black--text text--darken-4">Nope! Not interested</span>
+                      <span class="black--text text--darken-4"
+                        >Nope! Not interested</span
+                      >
                     </template>
                   </v-radio>
                   <v-radio :value="1" color="primary darken-3" :ripple="false">
@@ -241,7 +251,9 @@
                 />
               </v-col>
               <v-col col="6" class="pr-14">
-                <div class="black--text text--darken-4 text-caption">Audience reach</div>
+                <div class="black--text text--darken-4 text-caption">
+                  Audience reach
+                </div>
                 <look-alike-slider v-model="lookalikeAudience.value" />
                 <div class="black--text text--darken-1 text-caption pt-4">
                   Audience reach ranges from 1% to 10% of the combined
@@ -652,13 +664,19 @@ export default {
           var(--v-primary-lighten8) 50%,
           rgba(255, 255, 255, 0) 0%
         ),
-        linear-gradient(var(--v-primary-lighten8) 50%, rgba(255, 255, 255, 0) 0%),
+        linear-gradient(
+          var(--v-primary-lighten8) 50%,
+          rgba(255, 255, 255, 0) 0%
+        ),
         linear-gradient(
           to right,
           var(--v-primary-lighten8) 49%,
           rgba(255, 255, 255, 0) 0%
         ),
-        linear-gradient(var(--v-primary-lighten8) 50%, rgba(255, 255, 255, 0) 0%);
+        linear-gradient(
+          var(--v-primary-lighten8) 50%,
+          rgba(255, 255, 255, 0) 0%
+        );
       background-position: top, right, bottom, left;
       background-repeat: repeat-x, repeat-y;
       background-size: 12px 0px, 1px 12px;

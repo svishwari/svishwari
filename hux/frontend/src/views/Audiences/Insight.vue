@@ -49,7 +49,8 @@
               mr-2
               pt-2
               font-audience-text
-              black--text text--darken-4
+              black--text
+              text--darken-4
               font-weight-semi-bold
             "
           >
@@ -142,7 +143,8 @@
                   <template #label-content>
                     <span
                       class="
-                        black--text text--darken-4
+                        black--text
+                        text--darken-4
                         font-weight-semi-bold
                         text-over-2
                         filter-title
@@ -306,7 +308,9 @@
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
           <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
-              <span class="black--text text--darken-4 text-h5"> United States </span>
+              <span class="black--text text--darken-4 text-h5">
+                United States
+              </span>
             </div>
           </v-card-title>
           <v-divider class="ml-5 mr-8 mt-0 mb-1" />

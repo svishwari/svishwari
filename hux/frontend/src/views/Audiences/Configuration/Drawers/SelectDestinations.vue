@@ -23,7 +23,9 @@
     </template>
 
     <template #footer-left>
-      <div class="d-flex align-baseline black--text text--darken-1 text-caption">
+      <div
+        class="d-flex align-baseline black--text text--darken-1 text-caption"
+      >
         {{ destinationsList.length }} results
       </div>
     </template>

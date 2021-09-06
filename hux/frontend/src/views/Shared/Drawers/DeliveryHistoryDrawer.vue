@@ -2,7 +2,12 @@
   <drawer v-model="localToggle" content-padding="pa-0">
     <template #header-left>
       <div class="d-flex align-center">
-        <icon type="history" :size="20" color="var(--v-black-darken4)" class="mr-4" />
+        <icon
+          type="history"
+          :size="20"
+          color="var(--v-black-darken4)"
+          class="mr-4"
+        />
         <h3 class="text-h3">Delivery history</h3>
       </div>
     </template>
@@ -85,7 +90,9 @@
     </template>
 
     <template #footer-left>
-      <span class="black--text text--darken-1 text-caption">{{ items.length }} results</span>
+      <span class="black--text text--darken-1 text-caption"
+        >{{ items.length }} results</span
+      >
     </template>
   </drawer>
 </template>

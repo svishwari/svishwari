@@ -8,7 +8,9 @@
     <template #header-left>
       <div class="d-flex">
         <v-icon color="primary" size="27">mdi-clock-time-five-outline</v-icon>
-        <h3 class="pl-1 text-h3 black--text text--darken-3">Edit delivery schedule</h3>
+        <h3 class="pl-1 text-h3 black--text text--darken-3">
+          Edit delivery schedule
+        </h3>
       </div>
     </template>
 
@@ -18,7 +20,9 @@
           Override the default delivery schedule for this engagement and setup a
           scheduling pattern for this specific destination.
         </div>
-        <div class="text-caption black--text text--darken-1 pt-8 pb-1">Destination</div>
+        <div class="text-caption black--text text--darken-1 pt-8 pb-1">
+          Destination
+        </div>
         <card-horizontal
           :title="destination.name"
           :icon="destination.delivery_platform_type"

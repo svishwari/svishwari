@@ -42,19 +42,25 @@
               <template #tooltip>
                 <div class="my-2 black--text text--darken-1">
                   Hux ID:
-                  <span class="font-weight-semi-bold black--text text--darken-4">
+                  <span
+                    class="font-weight-semi-bold black--text text--darken-4"
+                  >
                     {{ item[header.value] }}
                   </span>
                 </div>
                 <div class="my-2 black--text text--darken-1">
                   Full name:
-                  <span class="font-weight-semi-bold black--text text--darken-4">
+                  <span
+                    class="font-weight-semi-bold black--text text--darken-4"
+                  >
                     {{ item.last_name }}, {{ item.first_name }}
                   </span>
                 </div>
                 <div class="my-2 black--text text--darken-1">
                   Match confidence:
-                  <span class="font-weight-semi-bold black--text text--darken-4">
+                  <span
+                    class="font-weight-semi-bold black--text text--darken-4"
+                  >
                     {{
                       item.match_confidence | Numeric(true, false, false, true)
                     }}
@@ -84,7 +90,15 @@
     </template>
     <template #footer-left>
       <tooltip>
-        <div class="d-flex align-baseline footer-font black--text text--darken-1 text-caption">
+        <div
+          class="
+            d-flex
+            align-baseline
+            footer-font
+            black--text
+            text--darken-1 text-caption
+          "
+        >
           {{ customerOverview.total_customers | Numeric(true, true) }} results
         </div>
         <template #tooltip>

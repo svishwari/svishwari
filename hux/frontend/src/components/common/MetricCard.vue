@@ -15,7 +15,9 @@
         <span
           v-if="!titleTooltip"
           class="text-caption"
-          :class="interactable ? 'primary--text ' : 'black--text text--darken-1 '"
+          :class="
+            interactable ? 'primary--text ' : 'black--text text--darken-1 '
+          "
         >
           {{ title }}
         </span>
@@ -23,7 +25,9 @@
           <template #label-content>
             <span
               class="text-caption"
-              :class="interactable ? 'primary--text ' : 'black--text text--darken-1 '"
+              :class="
+                interactable ? 'primary--text ' : 'black--text text--darken-1 '
+              "
             >
               {{ title }}
             </span>

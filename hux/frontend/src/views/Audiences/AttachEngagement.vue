@@ -8,7 +8,10 @@
           :size="18"
           color="var(--v-black-darken4)"
         />
-        <h3 v-if="viewStep == '1'" class="text-h3 ml-2 black--text text--darken-4">
+        <h3
+          v-if="viewStep == '1'"
+          class="text-h3 ml-2 black--text text--darken-4"
+        >
           Add to an engagement
         </h3>
         <h3 v-else class="text-h3 ml-2 black--text text--darken-4">
@@ -87,14 +90,22 @@
                     </template>
                     <template #default>
                       <div class="px-4 py-2 white">
-                        <div class="black--text text--darken-4 text-caption">Name</div>
-                        <div class="black--text text--lighten-3 text-caption mt-1">
+                        <div class="black--text text--darken-4 text-caption">
+                          Name
+                        </div>
+                        <div
+                          class="black--text text--lighten-3 text-caption mt-1"
+                        >
                           {{ engagement.name }}
                         </div>
-                        <div class="black--text text--darken-4 text-caption mt-3">
+                        <div
+                          class="black--text text--darken-4 text-caption mt-3"
+                        >
                           Description
                         </div>
-                        <div class="black--text text--lighten-3 text-caption mt-1">
+                        <div
+                          class="black--text text--lighten-3 text-caption mt-1"
+                        >
                           {{ engagement.description }}
                         </div>
                       </div>
@@ -140,14 +151,20 @@
                         <div class="black--text text--darken-4 text-caption">
                           Manual delivery
                         </div>
-                        <div class="black--text text--darken-1 text-caption mt-1">
+                        <div
+                          class="black--text text--darken-1 text-caption mt-1"
+                        >
                           Choose this option if you want the engagement
                           delivered immediately or at a future date and time.
                         </div>
-                        <div class="black--text text--darken-4 text-caption mt-3">
+                        <div
+                          class="black--text text--darken-4 text-caption mt-3"
+                        >
                           Recurring delivery
                         </div>
-                        <div class="black--text text--darken-1 text-caption mt-1">
+                        <div
+                          class="black--text text--darken-1 text-caption mt-1"
+                        >
                           Choose this option if you want the engagement
                           delivered on a specific recurring basis you selected.
                         </div>
@@ -204,7 +221,11 @@
                 <v-row v-if="isRecurring" class="delivery-schedule ml-0 mt-6">
                   <div>
                     <span
-                      class="date-picker-label black--text text--darken-4 text-caption"
+                      class="
+                        date-picker-label
+                        black--text
+                        text--darken-4 text-caption
+                      "
                     >
                       Start date
                     </span>
@@ -218,7 +239,11 @@
                   <icon class="ml-1 mt-9 mr-2" type="arrow" :size="28" />
                   <div>
                     <span
-                      class="date-picker-label black--text text--darken-4 text-caption"
+                      class="
+                        date-picker-label
+                        black--text
+                        text--darken-4 text-caption
+                      "
                     >
                       End date
                     </span>

@@ -2,7 +2,9 @@
   <drawer v-model="localToggle" content-padding="pa-0 mapping-drawer">
     <template #header-left>
       <div class="d-flex align-center">
-        <h3 class="text-h3 black--text text--darken-4">Map Facebook Campaign</h3>
+        <h3 class="text-h3 black--text text--darken-4">
+          Map Facebook Campaign
+        </h3>
       </div>
     </template>
 
