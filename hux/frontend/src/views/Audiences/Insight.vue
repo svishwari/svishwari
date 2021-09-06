@@ -15,9 +15,45 @@
         <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-pencil
         </v-icon>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
-          mdi-download
-        </v-icon>
+        <span class="position-relative">
+          <v-menu :min-width="100" left offset-y close-on-click>
+            <template #activator="{ on }">
+              <v-icon
+                size="22"
+                color="primary"
+                class="icon-border pa-2 ma-1"
+                v-on="on"
+              >
+                mdi-download
+              </v-icon>
+            </template>
+            <v-list>
+              <v-list-item
+                v-for="option in downloadOptions"
+                :key="option.id"
+                @click="initiateFileDownload(option)"
+              >
+                <v-list-item-title class="text-h6 neroBlack--text">
+                  <div class="d-flex align-center">
+                    <logo :type="option.icon" :size="18" class="mr-4" />
+                    {{ option.name }}
+                  </div>
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+          <tooltip close-on-click>
+            <template #label-content>
+              <icon type="info" :size="12" class="position-absolute" />
+            </template>
+            <template #hover-content>
+              <span class="text--caption" style="width: 260px; display: block">
+                Download the hashed customer data file of this audience for
+                manual uploads to Amazon or Google.
+              </span>
+            </template>
+          </tooltip>
+        </span>
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -537,6 +573,7 @@ import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/Se
 import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
 import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import GeoDrawer from "@/views/Shared/Drawers/GeoDrawer.vue"
+import Logo from "../../components/common/Logo.vue"
 
 export default {
   name: "AudienceInsight",
@@ -565,6 +602,7 @@ export default {
     Tooltip,
     GenderSpendChart,
     GeoDrawer,
+    Logo,
   },
   data() {
     return {
@@ -587,6 +625,28 @@ export default {
           href: this.$route.path,
           icon: "lookalike",
           size: 12,
+        },
+      ],
+      downloadOptions: [
+        {
+          id: "c2b0bf2d9d48",
+          name: ".csv",
+          type: "amazon_ads",
+          title: "Amazon Ads CSV",
+          icon: "amazon-advertising",
+        },
+        {
+          id: "5e112c22f1b1",
+          name: ".csv",
+          type: "google_ads",
+          title: "Google Ads CSV",
+          icon: "google-ads",
+        },
+        {
+          id: "2349d4353b9f",
+          title: "CSV",
+          name: ".csv",
+          type: "amazon_ads",
         },
       ],
       loading: false,
@@ -641,7 +701,9 @@ export default {
       return this.$route.params.id
     },
     audienceInsights() {
-      return this.audience.audience_insights
+      return this.audience && this.audience.audience_insights
+        ? this.audience.audience_insights
+        : {}
     },
     audienceOverview() {
       const metrics = {
@@ -831,6 +893,7 @@ export default {
       attachAudienceDestination: "engagements/attachAudienceDestination",
       detachAudienceDestination: "engagements/detachAudienceDestination",
       getDemographics: "audiences/getDemographics",
+      downloadAudienceData: "audiences/fetchAudienceData",
     }),
 
     async fetchDemographics() {
@@ -838,7 +901,23 @@ export default {
       await this.getDemographics(this.$route.params.id)
       this.loadingDemographics = false
     },
-
+    async initiateFileDownload(option) {
+      const audienceName = this.audience.name
+      this.alert.type = "Pending"
+      this.alert.title = ""
+      this.alert.message = `Download for the '${audienceName}' with '${option.title}', has started in background, stay tuned.`
+      this.flashAlert = true
+      const fileBlob = await this.downloadAudienceData({
+        id: this.audienceId,
+        type: option.type,
+      })
+      const url = window.URL.createObjectURL(
+        new Blob([fileBlob.data], {
+          type: "text/csv" || "application/octet-stream",
+        })
+      )
+      window.location.assign(url)
+    },
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
     },
@@ -1128,6 +1207,14 @@ export default {
 </script>
 <style lang="scss" scoped>
 .audience-insight-wrap {
+  .position-relative {
+    position: relative;
+  }
+  .position-absolute {
+    position: absolute;
+    top: -7px;
+    right: 6px;
+  }
   .container {
     ul {
       padding: 0;

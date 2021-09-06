@@ -106,6 +106,16 @@ const actions = {
     }
   },
 
+  async fetchAudienceData(_, { id, type }) {
+    try {
+      const response = await api.audiences.downloadAudience(id, type)
+      return response
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async getAudienceById({ commit }, id) {
     try {
       const response = await api.audiences.find(id)
