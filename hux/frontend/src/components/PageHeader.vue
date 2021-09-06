@@ -14,7 +14,7 @@
           :type="icon"
           class="pr-1"
           :size="20"
-          color="neroBlack"
+          color="var(--v-black-darken4)"
         />
         <div class="text-h2">
           {{ title }}
