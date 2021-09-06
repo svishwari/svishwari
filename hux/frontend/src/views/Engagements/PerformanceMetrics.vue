@@ -20,13 +20,18 @@
         </v-tab>
       </div>
       <div>
-        <v-icon 
-          size="22"
-          color="primary"
-          class="icon-border pa-1 ma-2 mr-0"
-        >
-          mdi-download
-        </v-icon>
+        <download-tooltip>
+          <template #label-content>
+            <v-icon size="22" color="primary" class="icon-border pa-1 ma-2 mr-0">
+              mdi-download
+            </v-icon>
+          </template>
+          <template #hover-content>
+            <div id="tooltipdownload">
+              {{ tooltipValue }}
+            </div>
+          </template>
+        </download-tooltip>
       </div>
     </v-tabs>
     <v-tabs-items v-model="tabOption" class="mt-2">
@@ -60,10 +65,12 @@
 
 <script>
 import CampaignSummary from "../../components/CampaignSummary.vue"
+import DownloadTooltip from './DownloadTooltip.vue'
 export default {
   name: "EngagementPerformanceMetrics",
   components: {
     CampaignSummary,
+    DownloadTooltip,
   },
   props: {
     adData: {
@@ -89,6 +96,7 @@ export default {
   data() {
     return {
       tabOption: 0,
+      tooltipValue: "Download Email Marketing and Digital Advertising performance metrics as CSVs."
     }
   },
   computed: {
@@ -375,5 +383,16 @@ export default {
   .v-window-item--active {
     background: transparent;
   }
+}
+#tooltipdownload {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 6px 16px;
+  position: relative;
+  width: 280px;
+  height: 44px;
+  background: #FFFFFF;
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
 }
 </style>
