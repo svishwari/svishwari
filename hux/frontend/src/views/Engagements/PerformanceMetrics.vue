@@ -2,22 +2,32 @@
   <div>
     <v-tabs v-model="tabOption" class="mt-8">
       <v-tabs-slider color="primary"></v-tabs-slider>
-
-      <v-tab
-        key="displayAds"
-        class="pa-2 mr-3"
-        color
-        @click="$emit('fetchMetrics', 'ads')"
-      >
-        Digital Advertising
-      </v-tab>
-      <v-tab
-        key="email"
-        class="text-h5"
-        @click="$emit('fetchMetrics', 'email')"
-      >
-        Email Marketing
-      </v-tab>
+      <div class="d-flex">
+        <v-tab
+          key="displayAds"
+          class="pa-2 mr-3"
+          color
+          @click="$emit('fetchMetrics', 'ads')"
+        >
+          Digital Advertising
+        </v-tab>
+        <v-tab
+          key="email"
+          class="text-h5"
+          @click="$emit('fetchMetrics', 'email')"
+        >
+          Email Marketing
+        </v-tab>
+      </div>
+      <div>
+        <v-icon 
+          size="22"
+          color="primary"
+          class="icon-border pa-1 ma-2 mr-0"
+        >
+          mdi-download
+        </v-icon>
+      </div>
     </v-tabs>
     <v-tabs-items v-model="tabOption" class="mt-2">
       <v-tab-item key="displayAds">
@@ -325,6 +335,8 @@ export default {
     background: transparent !important;
     .v-tabs-bar__content {
       border-bottom: 2px solid var(--v-zircon-base);
+      display: flex;
+      justify-content: space-between;
       .v-tabs-slider-wrapper {
         width: 128px;
         .v-tabs-slider {
