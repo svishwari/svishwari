@@ -13,7 +13,13 @@ from huxunify.api.schema.utils import (
 )
 from huxunify.api.schema.destinations import DestinationGetSchema
 from huxunify.api.schema.engagement import EngagementGetSchema
-from huxunify.api.schema.customers import CustomerOverviewSchema
+from huxunify.api.schema.customers import (
+    CustomerOverviewSchema,
+    CustomerGenderInsightsSchema,
+    CustomerSpendingInsightsSchema,
+    CustomersInsightsCitiesSchema,
+    CustomerGeoVisualSchema,
+)
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
@@ -151,6 +157,17 @@ class AudienceGetSchema(Schema):
     source_size = fields.Int()
     source_id = fields.String()
     match_rate = fields.Float(default=0)
+
+
+class AudienceInsightsGetSchema(Schema):
+    """
+    Audience Insights schema class
+    """
+
+    demo = fields.List(fields.Nested(CustomerGeoVisualSchema))
+    income = fields.List(fields.Nested(CustomersInsightsCitiesSchema))
+    spend = fields.Nested(CustomerSpendingInsightsSchema)
+    gender = fields.Nested(CustomerGenderInsightsSchema)
 
 
 class AudiencePutSchema(Schema):
