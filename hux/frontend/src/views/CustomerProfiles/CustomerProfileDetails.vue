@@ -217,9 +217,15 @@
                   Customer events
                 </span>
               </div>
+              <v-progress-linear
+              v-if="loadingCustomerEvents"
+              :active="loadingCustomerEvents"
+              :indeterminate="loadingCustomerEvents"
+            />
             </v-card-title>
             <customer-event-chart
-              :customers-data="customerEvent"
+            v-if="!loadingCustomerEvents"
+              :customers-data="events"
             />
           </v-card>
         </v-col>
@@ -282,11 +288,13 @@ export default {
         },
       ],
       loading: false,
+      loadingCustomerEvents: true,
     }
   },
   computed: {
     ...mapGetters({
       customer: "customers/single",
+      events: "customers/getEvents",
     }),
 
     singleCustomer() {
@@ -453,11 +461,13 @@ export default {
   async mounted() {
     this.loading = true
     await this.getCustomer(this.id)
+    this.getCustomerEvent()
     this.loading = false
   },
   methods: {
     ...mapActions({
       getCustomer: "customers/get",
+      getEvents: "customers/getCustomerEvents",
     }),
     formattedDate(value) {
       if (value) {
@@ -465,6 +475,11 @@ export default {
       }
       return "-"
     },
+    async getCustomerEvent() {
+      this.loadingCustomerEvents = true
+      await this.getEvents(this.id)
+      this.loadingCustomerEvents = false
+    }
   },
 }
 </script>
@@ -567,5 +582,8 @@ export default {
 }
 ::v-deep .v-input {
   @extend .sample-card-text;
+}
+.chart-style {
+  background: white !important
 }
 </style>

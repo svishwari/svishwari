@@ -51,7 +51,16 @@ export default {
     toolTipDisplay(...arg) {
       this.show = arg[0]
       if (this.show) {
+        let eventsOnly = [] 
+        Object.entries(arg[1].event_type_counts).
+        filter(([key, value]) => value > 0).forEach((data) =>
+          eventsOnly.push(data[0])
+        )
         this.currentData = arg[1]
+        let date = new Date(this.currentData.date)
+        this.currentData.day = date.toLocaleString('en-us', {weekday:'long'})
+        this.currentData.month = date.toLocaleString('default', { month: 'long' })
+        this.currentData.eventsCollection = eventsOnly
       }
     },
     sizeHandler() {

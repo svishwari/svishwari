@@ -129,7 +129,7 @@ export default {
           (bar) => bar.index == value
         )
         if (tickDate) {
-          return this.$options.filters.Date(tickDate.date, "MM[/]YY")
+          return this.$options.filters.Date(tickDate.date, "MM/DD/YY")
         } else return ""
       }
 
@@ -154,7 +154,7 @@ export default {
             .tickFormat(convertCalendarFormat)
             .tickPadding(15)
         )
-        .style("font-size", "14px")
+        .style("font-size", "12px")
 
       svg
         .append("g")
