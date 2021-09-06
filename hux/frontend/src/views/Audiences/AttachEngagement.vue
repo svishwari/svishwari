@@ -456,7 +456,7 @@ export default {
           .length > 0
       ) {
         if (this.selectedEngagements.length !== 1) {
-          const deselectedId = this.selectedEngagements.indexOf(
+          const deselectedId = this.selectedEngagements.findIndex(
             (eng) => eng.id === engagement.id
           )
 
