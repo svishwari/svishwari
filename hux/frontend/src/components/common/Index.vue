@@ -172,7 +172,7 @@
     >
       Added
     </huxButton>
-    <huxButton is-outlined size="x-small" variant="darkGrey" class="ma-2">
+    <huxButton is-outlined size="x-small" variant="black darken-3" class="ma-2">
       Add
     </huxButton>
     <huxButton variant="primary" size="large" is-tile class="ma-2">
@@ -378,7 +378,7 @@
       </template>
 
       <template slot="default">
-        <p class="text-caption gray--text">Sarah Miller</p>
+        <p class="text-caption black--text text--darken-1">Sarah Miller</p>
 
         <div class="d-flex justify-center mb-6">
           <card-stat label="Version" value="0.02" stat-class="border-0">
@@ -1318,7 +1318,7 @@ export default {
 }
 ::v-deep .hux-data-table.expanded-table {
   .v-data-table__wrapper {
-    box-shadow: inset 0px 10px 10px -4px var(--v-lightGrey-base) !important;
+    box-shadow: inset 0px 10px 10px -4px var(--v-black-lighten3) !important;
     .child-row {
       padding-left: 317px;
       border-right: none;

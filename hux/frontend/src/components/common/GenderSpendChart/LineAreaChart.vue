@@ -338,7 +338,7 @@ export default {
         .attr("x", 16)
         .attr("y", 9)
         .attr("dy", ".55em")
-        .attr("class", "neroBlack--text")
+        .attr("class", "black--text text--darken-4")
         .style("font-size", "6px")
         .style("text-anchor", "start")
         .text(function (d) {

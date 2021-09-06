@@ -11,7 +11,7 @@ exports[`Card Info Card info displays a default 1`] = `
     <v-card-title-stub class="justify-center font-weight-regular primary--text">
       Info card title
     </v-card-title-stub>
-    <v-card-subtitle-stub class="neroBlack--text">
+    <v-card-subtitle-stub class="black--text text--darken-4">
       Info card description
     </v-card-subtitle-stub>
   </v-card-stub>
@@ -29,7 +29,7 @@ exports[`Card Info Card info displays custom properties 1`] = `
     <v-card-title-stub class="justify-center font-weight-regular primary--text">
       Add a Destination
     </v-card-title-stub>
-    <v-card-subtitle-stub class="neroBlack--text">
+    <v-card-subtitle-stub class="black--text text--darken-4">
       Choose a destination where your actionable intelligence will be consumed.
     </v-card-subtitle-stub>
   </v-card-stub>

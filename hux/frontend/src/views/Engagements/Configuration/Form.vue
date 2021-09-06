@@ -38,12 +38,12 @@
               <template #hover-content>
                 <v-sheet max-width="240px">
                   <h6 class="text-caption mb-2">Manual delivery</h6>
-                  <p class="gray--text">
+                  <p class="black--text text--darken-1">
                     Choose this option if you want the engagement delivered
                     immediately or at a future date and time.
                   </p>
                   <h6 class="text-caption mb-2">Recurring delivery</h6>
-                  <p class="gray--text">
+                  <p class="black--text text--darken-1">
                     Choose this option if you want the engagement delivered on a
                     specific recurring basis you selected.
                   </p>
@@ -92,7 +92,7 @@
         </v-row>
         <v-row v-if="isRecurring" class="delivery-schedule mt-10 ml-n2">
           <div>
-            <span class="date-picker-label neroBlack--text text-caption">
+            <span class="date-picker-label black--text text--darken-4 text-caption">
               Start date
             </span>
             <hux-start-date
@@ -104,7 +104,7 @@
           </div>
           <icon v-if="isRecurring" class="ml-2 mr-2" type="arrow" :size="28" />
           <div v-if="isRecurring">
-            <span class="date-picker-label neroBlack--text text-caption">
+            <span class="date-picker-label black--text text--darken-4 text-caption">
               End date
             </span>
             <hux-end-date
@@ -592,11 +592,11 @@ export default {
   border-radius: 4px;
 
   &.v-radio--is-disabled {
-    border-color: var(--v-lightGrey-base);
+    border-color: var(--v-black-lighten3);
   }
 }
 .btn-radio-inactive {
-  border: 1px solid var(--v-lightGrey-base);
+  border: 1px solid var(--v-black-lighten3);
   @extend .btn-radio;
 }
 .btn-radio-active {
@@ -645,7 +645,7 @@ export default {
     margin-left: 12px;
     margin-right: 12px;
     margin-top: -30px;
-    color: var(--v-lightGrey-base) !important;
+    color: var(--v-black-lighten3) !important;
   }
 }
 .date-picker-label {

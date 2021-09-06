@@ -15,14 +15,14 @@
         <span
           v-else
           class="text-h5"
-          :class="disabled ? 'lightGrey--text' : 'neroBlack--text'"
+          :class="disabled ? 'black--text text--lighten-3' : 'black--text text--darken-4'"
         >
           {{ label || `Step ${step}` }}
         </span>
         <span
           v-if="optional"
           class="text-caption pl-1"
-          :class="disabled ? 'lightGrey--text' : 'neroBlack--text'"
+          :class="disabled ? 'black--text text--lighten-3' : 'black--text text--darken-4'"
         >
           <em>{{ optional }}</em>
         </span>
@@ -97,20 +97,20 @@ $form-step-spacing: 16px;
     border-left: 1px dashed var(--v-primary-lighten8);
 
     &.form-step__content--inactive {
-      border-color: var(--v-lightGrey-base);
+      border-color: var(--v-black-lighten3);
     }
   }
 
   &.form-step--inactive {
-    color: var(--v-lightGrey-base);
+    color: var(--v-black-lighten3);
 
     .form-step__indicator {
-      color: var(--v-lightGrey-base);
-      border-color: var(--v-lightGrey-base);
+      color: var(--v-black-lighten3);
+      border-color: var(--v-black-lighten3);
     }
 
     .form-step__content {
-      border-color: var(--v-lightGrey-base);
+      border-color: var(--v-black-lighten3);
     }
   }
 }

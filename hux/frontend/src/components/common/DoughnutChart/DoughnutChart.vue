@@ -178,7 +178,7 @@ export default {
         .attr("x", 18)
         .attr("y", 10)
         .attr("dy", ".35em")
-        .attr("class", "neroBlack--text")
+        .attr("class", "black--text text--darken-4")
         .style("text-anchor", "start")
         .text(function (d) {
           return d.label

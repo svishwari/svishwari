@@ -15,7 +15,7 @@
       </v-list-item>
       <div class="notification-div">
         <v-list-item v-for="data in mostRecentNotifications" :key="data.id">
-          <v-list-item-title class="text-h6 neroBlack--text list-main">
+          <v-list-item-title class="text-h6 black--text text--darken-4 list-main">
             <div class="d-flex text-caption">
               <status
                 :status="data.notification_type"

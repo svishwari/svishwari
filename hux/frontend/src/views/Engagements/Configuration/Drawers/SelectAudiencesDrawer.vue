@@ -79,7 +79,7 @@
     </template>
 
     <template #footer-left>
-      <span class="gray--text text-caption">
+      <span class="black--text text--darken-1 text-caption">
         {{ audiences.length }} results
       </span>
     </template>

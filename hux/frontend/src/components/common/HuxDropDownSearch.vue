@@ -125,7 +125,7 @@ export default {
           content: none;
         }
         input::placeholder {
-          color: var(--v-gray-base) !important;
+          color: var(--v-black-darken1) !important;
         }
       }
       .v-text-field__details {
@@ -143,19 +143,19 @@ export default {
       margin: 0;
       .v-input__icon--prepend .v-icon {
         font-size: 16px;
-        color: var(--v-neroBlack-base);
+        color: var(--v-black-darken4);
       }
     }
     ::v-deep .v-input__control {
       .v-input__slot {
         input::placeholder {
-          color: var(--v-neroBlack-base) !important;
+          color: var(--v-black-darken4) !important;
         }
       }
     }
   }
   .search-item {
-    color: var(--v-neroBlack-base);
+    color: var(--v-black-darken4);
     padding: 5px 15px;
     @extend .cursor-pointer;
     &:hover {

@@ -22,10 +22,10 @@
           {{ sourceInput.label }}
         </span>
       </div>
-      <div class="percentage neroBlack--text">
+      <div class="percentage black--text text--darken-4">
         {{ getPercentage(sourceInput.population_percentage) }}
       </div>
-      <div class="value neroBlack--text">{{ sourceInput.size }}</div>
+      <div class="value black--text text--darken-4">{{ sourceInput.size }}</div>
     </v-card>
   </div>
 </template>

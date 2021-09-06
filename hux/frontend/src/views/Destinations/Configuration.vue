@@ -1,13 +1,13 @@
 <template>
   <page class="white" max-width="970px">
     <div class="mb-10">
-      <h4 class="text-h2 neroBlack--text">Add a destination</h4>
-      <p class="neroBlack--text">
+      <h4 class="text-h2 black--text text--darken-4">Add a destination</h4>
+      <p class="black--text text--darken-4">
         Please fill out the information below to connect a new destination.
       </p>
     </div>
 
-    <label class="d-flex mb-2 neroBlack--text">Select a destination</label>
+    <label class="d-flex mb-2 black--text text--darken-4">Select a destination</label>
 
     <div class="d-flex align-center mb-10">
       <template v-if="selectedDestination">
@@ -113,13 +113,13 @@
     <drawer v-model="drawer">
       <template #header-left>
         <div class="d-flex align-baseline">
-          <h5 class="text-h3 pr-2 neroBlack--text">Select a destination</h5>
-          <span class="text-caption gray--text">(select one)</span>
+          <h5 class="text-h3 pr-2 black--text text--darken-4">Select a destination</h5>
+          <span class="text-caption black--text text--darken-1">(select one)</span>
         </div>
       </template>
       <template #footer-left>
         <div class="d-flex align-baseline">
-          <span class="text-caption gray--text">
+          <span class="text-caption black--text text--darken-1">
             {{ destinations.length }} results
           </span>
         </div>

@@ -4,14 +4,14 @@
       <strong
         v-if="enableTitle"
         :class="{
-          'text-h5 neroBlack--text': true,
+          'text-h5 black--text text--darken-4': true,
           'text-caption': applyCaptionStyle,
         }"
       >
-        Select attribute(s) - <i class="text-caption gray--text">Optional</i>
+        Select attribute(s) - <i class="text-caption black--text text--darken-1">Optional</i>
       </strong>
       <v-card v-if="rules.length == 0" tile elevation="0" class="blank-section">
-        <div class="gray--text font-weight-normal new-attribute">
+        <div class="black--text text--darken-1 font-weight-normal new-attribute">
           <span @click="addNewSection()">
             <icon class="add-icon cursor-pointer" type="add" :size="41" />
           </span>
@@ -24,7 +24,7 @@
     <v-col v-if="rules.length > 0" col="12" class="pt-0 pr-0 pa-0">
       <div v-for="(rule, index) in rules" :key="rule.id">
         <div
-          class="d-flex align-center col-12 pa-0 neroBlack--text text-caption"
+          class="d-flex align-center col-12 pa-0 black--text text--darken-4 text-caption"
         >
           <span class="mr-2">Match</span>
           <hux-switch
@@ -461,7 +461,7 @@ export default {
     .condition-card {
       background: var(--v-white-base);
       border: 1px solid var(--v-primary-lighten1);
-      box-shadow: 0px 3px 8px var(--v-lightGrey-base);
+      box-shadow: 0px 3px 8px var(--v-black-lighten3);
       border-left: solid 10px var(--v-primary-lighten2);
       display: flex;
       align-items: center;
@@ -478,7 +478,7 @@ export default {
           width: 100%;
           .hux-dropdown {
             .v-btn__content {
-              color: var(--v-gray-base);
+              color: var(--v-black-darken1);
             }
             button {
               margin: 0 8px 0 0 !important;
@@ -488,7 +488,7 @@ export default {
           .avatar-menu {
             margin-right: 20px;
             max-width: 200px;
-            border: solid 1px var(--v-lightGrey-base);
+            border: solid 1px var(--v-black-lighten3);
             flex-grow: 1;
             button {
               width: 100%;
@@ -512,7 +512,7 @@ export default {
             .v-input__slot {
               min-height: inherit;
               height: 32px;
-              border: solid 1px var(--v-lightGrey-base) !important;
+              border: solid 1px var(--v-black-lighten3) !important;
               border-radius: 0;
               margin-bottom: 0;
               fieldset {

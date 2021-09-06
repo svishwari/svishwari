@@ -68,7 +68,7 @@
         <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
           <v-card-title class="chart-style pb-2 pl-5 pt-5">
             <div class="mt-2">
-              <span class="neroBlack--text text-h5">
+              <span class="black--text text--darken-4 text-h5">
                 Total customers ({{ timeFrameLabel }})
               </span>
             </div>
@@ -194,7 +194,7 @@ export default {
     h5 {
       line-height: 19px;
       letter-spacing: 0.5px;
-      color: var(--v-neroBlack-base);
+      color: var(--v-black-darken4);
     }
     .card-wrap {
       .v-card {

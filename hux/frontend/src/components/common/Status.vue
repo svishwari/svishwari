@@ -318,7 +318,7 @@
 
   <div v-else-if="Statuses.Stopped.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
-      <v-icon color="lightGrey" class="mr-2" :size="iconSize">
+      <v-icon color="black lighten-3" class="mr-2" :size="iconSize">
         mdi-checkbox-blank-circle
       </v-icon>
       <span v-if="showLabel">{{ status | TitleCase }} </span>
@@ -326,7 +326,7 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon color="lightGrey" class="mr-2" :size="iconSize" v-on="on">
+        <v-icon color="black lighten-3" class="mr-2" :size="iconSize" v-on="on">
           mdi-checkbox-blank-circle
         </v-icon>
       </template>
@@ -338,7 +338,7 @@
         <span class="d-flex align-center">
           <v-icon
             v-if="showIconTooltip"
-            color="lightGrey"
+            color="black lighten-3"
             class="mr-2"
             :size="iconSize"
           >

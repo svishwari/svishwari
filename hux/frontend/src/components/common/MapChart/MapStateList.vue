@@ -67,7 +67,7 @@ export default {
       }
       .value {
         @extend .global-text-line;
-        color: var(--v-neroBlack-base);
+        color: var(--v-black-darken4);
         flex: 1;
         text-align: left;
       }
@@ -81,11 +81,11 @@ export default {
     border-radius: 10px;
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--v-lightGrey-base);
+    background: var(--v-black-lighten3);
     border-radius: 5px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--v-lightGrey-base);
+    background: var(--v-black-lighten3);
   }
 }
 </style>

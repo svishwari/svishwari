@@ -85,7 +85,7 @@
     </template>
 
     <template #footer-left>
-      <span class="gray--text text-caption">{{ items.length }} results</span>
+      <span class="black--text text--darken-1 text-caption">{{ items.length }} results</span>
     </template>
   </drawer>
 </template>

@@ -4,7 +4,7 @@
     <chart-tooltip
       v-if="showTooltip"
       :coordinates="coordinates"
-      class="neroBlack--text"
+      class="black--text text--darken-4"
     >
       <div class="text-caption">{{ tooltipValue }}</div>
       <div class="text-caption">

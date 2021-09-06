@@ -15,7 +15,7 @@
     <template #default>
       <v-form ref="lookalikeForm" v-model="isFormValid">
         <div class="lookalike-form px-4 py-3">
-          <div class="text-h6 darkGrey--text pb-8">
+          <div class="text-h6 black--text text--darken-3 pb-8">
             Creating a lookalike audience will create a one-off new audience in
             Facebook.
           </div>
@@ -28,7 +28,7 @@
             required
           />
 
-          <div class="text-caption darkGrey--text">
+          <div class="text-caption black--text text--darken-3">
             Audience to create a lookalike from
           </div>
           <v-select
@@ -42,7 +42,7 @@
             required
           />
 
-          <div class="text-caption darkGrey--text">
+          <div class="text-caption black--text text--darken-3">
             Attach this audience to an engagement - you must have at least one
           </div>
 
@@ -80,10 +80,10 @@
             {{ item.name }}
           </v-chip>
 
-          <div class="text-caption darkGrey--text pt-9 pb-1">
+          <div class="text-caption black--text text--darken-3 pt-9 pb-1">
             The reach for this lookalike audience
           </div>
-          <div class="text-caption gray--text pb-1">
+          <div class="text-caption black--text text--darken-1 pb-1">
             Audience reach ranges from 1% to 10% of the combined population of
             your selected locations. A 1% lookalike consists of the people most
             similar to your lookalike source. Increasing the percentage creates
@@ -278,11 +278,11 @@ export default {
         .v-input__slot {
           min-height: 40px;
           fieldset {
-            color: var(--v-lightGrey-base) !important;
+            color: var(--v-black-lighten3) !important;
             border-width: 1px !important;
           }
           input::placeholder {
-            color: var(--v-lightGrey-base) !important;
+            color: var(--v-black-lighten3) !important;
           }
         }
       }
@@ -292,7 +292,7 @@ export default {
       ::v-deep .v-input__control {
         .v-input__slot {
           input::placeholder {
-            color: var(--v-gray-base) !important;
+            color: var(--v-black-darken1) !important;
           }
         }
         .v-text-field__details {

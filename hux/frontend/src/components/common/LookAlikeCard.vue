@@ -166,11 +166,11 @@ export default {
     font-family: Open Sans;
     font-style: normal;
     font-weight: normal;
-    color: var(--v-gray-base) !important;
+    color: var(--v-black-darken1) !important;
     font-size: 12px !important;
   }
   .table-text {
-    color: var(--v-neroBlack-base);
+    color: var(--v-black-darken4);
     font-size: 12px !important;
   }
 
@@ -185,7 +185,7 @@ export default {
     font-family: Open Sans;
     font-style: normal;
     font-weight: normal;
-    color: var(--v-gray-base) !important;
+    color: var(--v-black-darken1) !important;
     font-size: 12px !important;
     padding: 0px !important;
 

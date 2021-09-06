@@ -13,7 +13,7 @@
   >
     <div v-if="icon || title" class="d-flex align-center">
       <logo :type="icon" />
-      <div class="pl-2 text-h6 neroBlack--text">{{ title }}</div>
+      <div class="pl-2 text-h6 black--text text--darken-4">{{ title }}</div>
     </div>
     <slot></slot>
     <div v-if="isAvailable && !hideButton">
@@ -30,7 +30,7 @@
         <span
           :class="[
             isAdded ? 'white--text' : 'primary--text',
-            isAlreadyAdded ? 'gray--text' : '',
+            isAlreadyAdded ? 'black--text text--darken-1' : '',
           ]"
         >
           {{ isAdded ? "Added" : "Add" }}
@@ -116,7 +116,7 @@ export default {
   background-color: var(--v-primary-lighten1) !important;
   @extend .box-shadow-none;
   .theme--light.v-btn.v-btn--disabled.v-btn--has-bg {
-    background-color: var(--v-smoke-base) !important;
+    background-color: var(--v-black-lighten2) !important;
   }
   &:hover {
     @extend .box-shadow-25;

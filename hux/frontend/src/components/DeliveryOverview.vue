@@ -10,7 +10,7 @@
       :indeterminate="loadingRelationships"
     />
     <v-card-text v-else class="pl-6 pr-6 pb-4 pt-0">
-      <div v-if="sections.length == 0" class="empty-state pa-5 text--gray">
+      <div v-if="sections.length == 0" class="empty-state pa-5 black--text text--darken-1">
         <slot name="empty-sections"></slot>
       </div>
       <v-col v-else class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3">

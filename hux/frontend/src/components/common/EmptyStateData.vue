@@ -4,11 +4,11 @@
       <slot name="icon"></slot>
     </v-icon>
     <v-card-title
-      class="justify-center neroBlack--text text-h4 font-weight-light mb-4"
+      class="justify-center black--text text--darken-4 text-h4 font-weight-light mb-4"
     >
       <slot name="title"></slot>
     </v-card-title>
-    <v-card-subtitle class="body-1 neroBlack--text">
+    <v-card-subtitle class="body-1 black--text text--darken-4">
       <slot name="subtitle"></slot>
     </v-card-subtitle>
   </v-card>

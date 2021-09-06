@@ -19,15 +19,14 @@ export default {
   white: {
     base: colors.white,
   },  
-  // pending
   black: {
-    lighten1: colors.appBodyGrey,
-    lighten2: colors.smoke,
-    lighten3: colors.lightGrey,
-    lighten4: colors.lightGreyAnotherVariant, 
-    base: colors.black, 
-    darken1: colors.gray,
-    darken2: colors.darkGreyHeading,
+    lighten1: colors.appBodyGrey,  
+    lighten2: colors.smoke, 
+    lighten3: colors.lightGrey, 
+    lighten4: colors.lightGreyAnotherVariant,  
+    base: colors.black,  
+    darken1: colors.gray, 
+    darken2: colors.darkGreyHeading, 
     darken3: colors.darkGrey,
     darken4: colors.neroBlack,
   },

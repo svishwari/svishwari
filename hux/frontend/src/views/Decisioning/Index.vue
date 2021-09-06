@@ -38,7 +38,7 @@
           </template>
 
           <template slot="default">
-            <p class="text-caption gray--text" data-e2e="model-owner">
+            <p class="text-caption black--text text--darken-1" data-e2e="model-owner">
               {{ model.owner }}
             </p>
 

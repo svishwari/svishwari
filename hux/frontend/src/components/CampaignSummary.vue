@@ -2,7 +2,7 @@
   <div class="pa-0 campaign-summary">
     <v-card flat class="card-style" style="position: sticky">
       <v-card-text>
-        <div v-if="summary.length == 0" class="empty-state pa-5 text--gray">
+        <div v-if="summary.length == 0" class="empty-state pa-5 black--text text--darken-1">
           Be patient! Performance data is currently not available, check back
           tomorrow to see if the magic is ready.
         </div>
@@ -90,7 +90,7 @@
       <v-card-title class="d-flex justify-space-between pb-4 pl-7">
         <div class="d-flex align-center">
           <icon type="audiences" :size="24" color="neroBlack" class="mr-2" />
-          <span class="text-h5 neroBlack--text"> Audience performance </span>
+          <span class="text-h5 black--text text--darken-4"> Audience performance </span>
         </div>
       </v-card-title>
       <v-card-text class="pl-6 pb-6 mt-0 pr-0">
@@ -693,7 +693,7 @@ export default {
     width: 100%;
     font-size: 14px;
     line-height: 22px;
-    color: var(--v-gray-base);
+    color: var(--v-black-darken1);
     border: 1px solid rgba(208, 208, 206, 0.3);
     box-sizing: border-box;
     border-radius: 5px;
@@ -746,7 +746,7 @@ export default {
         td {
           font-size: 14px !important;
           line-height: 22px;
-          color: var(--v-neroBlack-base);
+          color: var(--v-black-darken4);
           .audience-name {
             span {
               display: flex;
@@ -783,7 +783,7 @@ export default {
       ::v-deep .theme--light {
         background: var(--v-primary-lighten1);
         .v-data-table__wrapper {
-          box-shadow: inset 0px 10px 10px -4px var(--v-lightGrey-base);
+          box-shadow: inset 0px 10px 10px -4px var(--v-black-lighten3);
           border-bottom: thin solid rgba(0, 0, 0, 0.12);
         }
       }

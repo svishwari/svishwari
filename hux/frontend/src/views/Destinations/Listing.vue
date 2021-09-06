@@ -5,14 +5,14 @@
         <breadcrumb :items="items" />
       </template>
       <template slot="right">
-        <v-icon color="lightGrey" size="22" class="icon-border pa-2 ma-1">
+        <v-icon color="black lighten-3" size="22" class="icon-border pa-2 ma-1">
           mdi-download
         </v-icon>
       </template>
     </page-header>
     <page-header
       bg-color="primary lighten-1"
-      style="height: 70px; border: 1px solid var(--v-lightGrey-base) !important"
+      style="height: 70px; border: 1px solid var(--v-black-lighten3) !important"
     >
       <template slot="left">
         <v-icon color="primary" class="mr-3 cursor-pointer" large>
@@ -28,7 +28,7 @@
         <v-icon color="primary" large class="mr-3 cursor-pointer">
           mdi-format-list-bulleted
         </v-icon>
-        <v-icon color="lightGrey" large class="mr-3 cursor-pointer">
+        <v-icon color="black lighten-3" large class="mr-3 cursor-pointer">
           mdi-dots-grid
         </v-icon>
         <router-link
@@ -49,7 +49,7 @@
     </page-header>
     <page-header
       bg-color="primary lighten-2"
-      style="height: 70px; border: 1px solid var(--v-lightGrey-base) !important"
+      style="height: 70px; border: 1px solid var(--v-black-lighten3) !important"
     >
       <template slot="left">
         <div class="d-flex filters-wrapper">

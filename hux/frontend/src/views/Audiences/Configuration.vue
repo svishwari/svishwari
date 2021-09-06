@@ -1,16 +1,16 @@
 <template>
   <page class="white create-audience-wrap" max-width="100%">
     <div>
-      <div class="heading font-weight-light neroBlack--text">
+      <div class="heading font-weight-light black--text text--darken-4">
         Add an audience
       </div>
-      <div class="sub-heading text-h6 neroBlack--text">
+      <div class="sub-heading text-h6 black--text text--darken-4">
         Build a target audience from the data you own. Add the attributes you
         want to involve in this particular audience and where you wish to send
         this audience.
       </div>
 
-      <div class="overview font-weight-regular neroBlack--text mt-8">
+      <div class="overview font-weight-regular black--text text--darken-4 mt-8">
         Audience overview
       </div>
       <div class="row overview-list mb-0 ml-0 mt-1">
@@ -47,7 +47,7 @@
           <form-step
             :step="1"
             label="General information"
-            class="neroBlack--text step-1"
+            class="black--text text--darken-4 step-1"
           >
             <v-row class="pt-1 mt-n10">
               <v-col cols="4">
@@ -61,7 +61,7 @@
                   class="
                     mt-1
                     text-caption
-                    neroBlack--text
+                    black--text text--darken-4
                     pt-2
                     input-placeholder
                   "
@@ -71,7 +71,7 @@
                 />
               </v-col>
               <v-col cols="8">
-                <div class="mt-3 ml-15 text-caption neroBlack--text">
+                <div class="mt-3 ml-15 text-caption black--text text--darken-4">
                   Add to an engagement -
                   <i style="tilt">you must have at least one</i>
                   <div class="mt-2 d-flex align-center">
@@ -107,7 +107,7 @@
             :step="2"
             label="Select attribute(s)"
             optional="- Optional"
-            class="neroBlack--text step-2"
+            class="black--text text--darken-4 step-2"
           >
             <v-col class="pa-0">
               <attribute-rules
@@ -122,7 +122,7 @@
             label="Select destination(s)"
             optional="- Optional"
             :border="!isLookAlikeCreateable ? 'inactive' : ''"
-            class="neroBlack--text step-3"
+            class="black--text text--darken-4 step-3"
           >
             <template slot="label">
               <h5 class="text-h5 d-flex align-start">
@@ -135,7 +135,7 @@
                   </template>
                   <template
                     #hover-content
-                    class="white neroBlack--text shadow pa-2 text-caption"
+                    class="white black--text text--darken-4 shadow pa-2 text-caption"
                   >
                     <v-sheet max-width="240px">
                       The location(s) where Audiences are planned to be run.
@@ -195,7 +195,7 @@
                 ? '- Enabled if Facebook is added as a destination'
                 : ''
             "
-            class="neroBlack--text"
+            class="black--text text--darken-4"
           >
             <div v-if="isLookAlikeCreateable" class="dark--text">
               Would you like to create a lookalike audience from this audience?
@@ -212,12 +212,12 @@
                     :ripple="false"
                   >
                     <template #label>
-                      <span class="neroBlack--text">Nope! Not interested</span>
+                      <span class="black--text text--darken-4">Nope! Not interested</span>
                     </template>
                   </v-radio>
                   <v-radio :value="1" color="primary darken-3" :ripple="false">
                     <template #label>
-                      <span class="neroBlack--text">
+                      <span class="black--text text--darken-4">
                         Auto-create a lookalike based on this audience
                       </span>
                     </template>
@@ -237,13 +237,13 @@
                   label-text="Lookalike audience name"
                   background-color="white"
                   required
-                  class="text-caption neroBlack--text"
+                  class="text-caption black--text text--darken-4"
                 />
               </v-col>
               <v-col col="6" class="pr-14">
-                <div class="neroBlack--text text-caption">Audience reach</div>
+                <div class="black--text text--darken-4 text-caption">Audience reach</div>
                 <look-alike-slider v-model="lookalikeAudience.value" />
-                <div class="gray--text text-caption pt-4">
+                <div class="black--text text--darken-1 text-caption pt-4">
                   Audience reach ranges from 1% to 10% of the combined
                   population of your selected locations. A 1% lookalike consists
                   of the people most similar to your lookalike source.
@@ -634,10 +634,10 @@ export default {
       .theme--light.v-timeline-item.disabled {
         .v-timeline-item__divider {
           .v-timeline-item__dot {
-            background: var(--v-lightGrey-base);
+            background: var(--v-black-lighten3);
             .v-timeline-item__inner-dot {
               background-color: var(--v-white-base) !important;
-              color: var(--v-lightGrey-base);
+              color: var(--v-black-lighten3);
               height: 34.2px;
               margin: 2.1px;
               width: 34.2px;
@@ -680,14 +680,14 @@ export default {
     .theme--light.v-timeline-item {
       &.disabled {
         .v-timeline-item__body {
-          color: var(--v-lightGrey-base);
+          color: var(--v-black-lighten3);
         }
         .v-timeline-item__divider {
           .v-timeline-item__dot {
-            color: var(--v-lightGrey-base);
+            color: var(--v-black-lighten3);
             .v-timeline-item__inner-dot {
               background-color: var(--v-white-base) !important;
-              color: var(--v-lightGrey-base);
+              color: var(--v-black-lighten3);
             }
           }
         }
@@ -716,7 +716,7 @@ export default {
       .v-text-field {
         .v-text-field__slot {
           label {
-            color: var(--v-gray-base) !important;
+            color: var(--v-black-darken1) !important;
           }
         }
       }

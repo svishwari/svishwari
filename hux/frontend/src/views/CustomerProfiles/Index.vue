@@ -15,7 +15,7 @@
         >
           View all customers
         </hux-button>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+        <v-icon size="22" color="black lighten-3" class="icon-border pa-2 ma-1">
           mdi-download
         </v-icon>
       </template>
@@ -141,7 +141,7 @@
           <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
               <div class="mt-2">
-                <span class="neroBlack--text text-h5">
+                <span class="black--text text--darken-4 text-h5">
                   Total customers ({{ timeFrameLabel }})
                 </span>
               </div>
@@ -163,7 +163,7 @@
           <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
             <v-card-title class="pb-2 pl-5 pt-5">
               <div class="mt-2">
-                <span class="neroBlack--text text-h5">
+                <span class="black--text text--darken-4 text-h5">
                   Demographic Overview
                 </span>
               </div>
@@ -187,7 +187,7 @@
           <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
             <v-card-title class="pb-2 pl-5 pt-5">
               <div class="mt-2">
-                <span class="neroBlack--text text-h5"> United States </span>
+                <span class="black--text text--darken-4 text-h5"> United States </span>
               </div>
             </v-card-title>
             <v-divider class="ml-5 mr-8 mt-0 mb-1" />
@@ -213,7 +213,7 @@
             />
             <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
               <div class="mt-2">
-                <span class="neroBlack--text text-h5">
+                <span class="black--text text--darken-4 text-h5">
                   Top location &amp; Income
                 </span>
               </div>
@@ -233,7 +233,7 @@
             />
             <v-card-title v-if="!loadingDemographics" class="pb-1 pl-5 pt-4">
               <div class="mt-1">
-                <span class="neroBlack--text text-h5">
+                <span class="black--text text--darken-4 text-h5">
                   Gender &sol; monthly spending in 2021
                 </span>
               </div>
@@ -253,7 +253,7 @@
             />
             <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
               <div class="mt-2">
-                <span class="neroBlack--text text-h5"> Gender </span>
+                <span class="black--text text--darken-4 text-h5"> Gender </span>
               </div>
             </v-card-title>
             <div v-if="!loadingDemographics" ref="genderChart">

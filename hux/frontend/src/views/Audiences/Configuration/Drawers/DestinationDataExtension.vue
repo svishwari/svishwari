@@ -16,7 +16,7 @@
     <template #default>
       <v-form ref="salesforceExtensionRef" v-model="isFormValid">
         <div class="add-destination-wrapper pa-2 font-weight-regular">
-          <span class="neroBlack--text text-caption">Extension type</span>
+          <span class="black--text text--darken-4 text-caption">Extension type</span>
           <div class="d-flex align-center mt-2">
             <div
               class="extension-type mr-4 text-center"
@@ -63,12 +63,12 @@
           <div v-if="isActive" class="mt-6">
             <div>
               <label class="d-flex align-items-center">
-                <span class="neroBlack--text text-caption">Journey type</span>
+                <span class="black--text text--darken-4 text-caption">Journey type</span>
               </label>
               <v-radio-group v-model="journeyType" row>
                 <v-radio value="radio-1">
                   <template #label>
-                    <div class="darkGreyHeading--text text-caption">
+                    <div class="black--text text--darken-2 text-caption">
                       Automated (Batched)
                     </div>
                   </template>
@@ -90,7 +90,7 @@
               :help-text="tooltipText"
               height="40"
               background-color="white"
-              class="mt-1 text-caption neroBlack--text pt-2 input-placeholder"
+              class="mt-1 text-caption black--text text--darken-4 pt-2 input-placeholder"
               :rules="newExtensionRules"
               required
             />
@@ -102,7 +102,7 @@
                 d-flex
                 align-items-center
                 mb-2
-                neroBlack--text
+                black--text text--darken-4
                 text-caption
               "
             >
@@ -135,7 +135,7 @@
             <div class="text-body-1 primary--text text--lighten-8 font-weight-bold">
               FEEDBACK
             </div>
-            <div class="mx-2 darkGrey--text text-caption">
+            <div class="mx-2 black--text text--darken-3 text-caption">
               Modifying this data extension may impact any independent journey.
             </div>
           </v-row>
@@ -355,7 +355,7 @@ export default {
       top: 126px;
       border-radius: 4px;
       background: var(--v-white-base);
-      border: 1px solid var(--v-lightGrey-base);
+      border: 1px solid var(--v-black-lighten3);
       box-sizing: border-box;
       &.active {
         border: 1px solid var(--v-primary-base);
@@ -376,11 +376,11 @@ export default {
           .v-input__slot {
             min-height: 40px;
             fieldset {
-              color: var(--v-lightGrey-base) !important;
+              color: var(--v-black-lighten3) !important;
               border-width: 1px !important;
             }
             input::placeholder {
-              color: var(--v-gray-base) !important;
+              color: var(--v-black-darken1) !important;
             }
           }
           .v-text-field__details {
@@ -393,7 +393,7 @@ export default {
       ::v-deep .v-text-field {
         .v-text-field__slot {
           label {
-            color: var(--v-gray-base) !important;
+            color: var(--v-black-darken1) !important;
           }
         }
       }

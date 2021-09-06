@@ -74,7 +74,7 @@ export default {
   font-style: normal;
   font-size: 12px;
   line-height: 16px;
-  color: var(--v-darkGreyHeading-base) !important;
+  color: var(--v-black-darken2) !important;
 }
 
 .card-padding {
@@ -127,7 +127,7 @@ export default {
 }
 .font-size-tooltip {
   @extend .hover-font;
-  color: var(--v-gray-base);
+  color: var(--v-black-darken1);
   position: absolute;
   margin-top: 5px;
 }

@@ -13,7 +13,7 @@
         <div v-if="item.logo" class="d-flex pr-2">
           <logo :type="item.logo" :size="24" />
         </div>
-        <span :class="{ 'neroBlack--text': item.disabled, 'pl-1': true }">
+        <span :class="{ 'black--text text--darken-4': item.disabled, 'pl-1': true }">
           {{ item.text }}
         </span>
       </v-breadcrumbs-item>
@@ -47,7 +47,7 @@ export default {
     padding: 0;
   }
   ::v-deep .v-breadcrumbs__item--disabled {
-    color: var(--v-neroBlack-base);
+    color: var(--v-black-darken4);
   }
 }
 </style>

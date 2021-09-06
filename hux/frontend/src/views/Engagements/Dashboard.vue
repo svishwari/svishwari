@@ -14,10 +14,10 @@
         <v-icon size="22" color="primary" class="mr-2" @click="refreshEntity()">
           mdi-refresh
         </v-icon>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+        <v-icon size="22" color="black lighten-3" class="icon-border pa-2 ma-1">
           mdi-pencil
         </v-icon>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+        <v-icon size="22" color="black lighten-3" class="icon-border pa-2 ma-1">
           mdi-download
         </v-icon>
       </template>
@@ -595,7 +595,7 @@ export default {
 <style lang="scss" scoped>
 .engagement-dash {
   .page-header--wrap {
-    box-shadow: 0px 1px 0px var(--v-lightGrey-base) !important;
+    box-shadow: 0px 1px 0px var(--v-black-lighten3) !important;
   }
   .empty-audience {
     width: 190px;
@@ -608,8 +608,8 @@ export default {
     margin: 0 auto;
     font-size: 14px;
     line-height: 22px;
-    color: var(--v-gray-base);
-    border: 1px solid var(--v-lightGrey-base);
+    color: var(--v-black-darken1);
+    border: 1px solid var(--v-black-lighten3);
     box-sizing: border-box;
     border-radius: 5px;
   }
@@ -650,7 +650,7 @@ export default {
 
               text-overflow: inherit;
               white-space: inherit;
-              color: var(--v-neroBlack-base) !important;
+              color: var(--v-black-darken4) !important;
             }
           }
         }

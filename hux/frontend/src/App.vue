@@ -28,7 +28,7 @@ body {
   margin: 0;
   width: 100%;
   height: 100vh;
-  background: var(--v-appBodyGrey-base) !important;
+  background: var(--v-black-lighten1) !important;
   font-family: "Open Sans";
   #nprogress .bar {
     height: 6px;

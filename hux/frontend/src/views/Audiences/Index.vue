@@ -5,19 +5,19 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template slot="right">
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1"
+        <v-icon size="22" color="black lighten-3" class="icon-border pa-2 ma-1"
           >mdi-download</v-icon
         >
       </template>
     </page-header>
     <page-header class="top-bar" :header-height="71">
       <template slot="left">
-        <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
-        <v-icon medium color="lightGrey" class="pl-6">mdi-magnify</v-icon>
+        <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
+        <v-icon medium color="black lighten-3" class="pl-6">mdi-magnify</v-icon>
       </template>
 
       <template slot="right">
-        <v-icon medium color="lightGrey refresh">mdi-refresh</v-icon>
+        <v-icon medium color="black lighten-3 refresh">mdi-refresh</v-icon>
         <router-link
           :to="{ name: 'AudienceConfiguration' }"
           class="text-decoration-none"
@@ -364,14 +364,14 @@ export default {
     display: none;
   }
   .page-header--wrap {
-    box-shadow: 0px 1px 1px -1px var(--v-lightGrey-base),
-      0px 1px 1px 0px var(--v-lightGrey-base),
-      0px 1px 2px 0px var(--v-lightGrey-base) !important;
+    box-shadow: 0px 1px 1px -1px var(--v-black-lighten3),
+      0px 1px 1px 0px var(--v-black-lighten3),
+      0px 1px 2px 0px var(--v-black-lighten3) !important;
   }
   .top-bar {
     margin-top: 1px;
     .v-icon--disabled {
-      color: var(--v-lightGrey-base) !important;
+      color: var(--v-black-lighten3) !important;
       font-size: 24px;
     }
     .text--refresh {
@@ -391,7 +391,7 @@ export default {
       tbody {
         tr:last-child {
           td {
-            border-bottom: 1px solid var(--v-lightGrey-base) !important;
+            border-bottom: 1px solid var(--v-black-lighten3) !important;
           }
         }
       }

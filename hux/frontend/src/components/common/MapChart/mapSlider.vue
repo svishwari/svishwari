@@ -61,7 +61,7 @@ export default {
   .slider-value-display {
     width: 30px;
     height: 16px;
-    color: var(--v-neroBlack-base);
+    color: var(--v-black-darken4);
     transform: rotate(-90deg);
     font-size: 12px;
   }

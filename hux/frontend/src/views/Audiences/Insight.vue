@@ -9,13 +9,13 @@
           mdi-refresh
         </v-icon>
 
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+        <v-icon size="22" color="black lighten-3" class="icon-border pa-2 ma-1">
           mdi-plus-circle-multiple-outline
         </v-icon>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+        <v-icon size="22" color="black lighten-3" class="icon-border pa-2 ma-1">
           mdi-pencil
         </v-icon>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+        <v-icon size="22" color="black lighten-3" class="icon-border pa-2 ma-1">
           mdi-download
         </v-icon>
       </template>
@@ -28,7 +28,7 @@
         class="rounded-lg card-info-wrapper ma-2 card-shadow no-background"
       >
         <v-card-text>
-          <div class="text-caption gray--text">
+          <div class="text-caption black--text text--darken-1">
             Original size
             <tooltip position-top>
               <template #label-content>
@@ -49,7 +49,7 @@
               mr-2
               pt-2
               font-audience-text
-              neroBlack--text
+              black--text text--darken-4
               font-weight-semi-bold
             "
           >
@@ -67,7 +67,7 @@
       >
         <template #subtitle-extended>
           <span class="mr-2 pt-2">
-            <span class="neroBlack--text font-weight-semi-bold">
+            <span class="black--text text--darken-4 font-weight-semi-bold">
               <size :value="audience.size" />
             </span>
           </span>
@@ -103,7 +103,7 @@
           <span class="mr-2 mt-1">
             <tooltip>
               <template #label-content>
-                <span class="neroBlack--text font-weight-semi-bold">
+                <span class="black--text text--darken-4 font-weight-semi-bold">
                   {{ getFormattedTime(item.subtitle) }}
                 </span>
               </template>
@@ -142,7 +142,7 @@
                   <template #label-content>
                     <span
                       class="
-                        neroBlack--text
+                        black--text text--darken-4
                         font-weight-semi-bold
                         text-over-2
                         filter-title
@@ -151,7 +151,7 @@
                     />
                   </template>
                   <template #hover-content>
-                    <span class="text-caption neroBlack--text">
+                    <span class="text-caption black--text text--darken-4">
                       <div class="mb-2">
                         {{ appliedFilters[filterKey][filter].name }}
                       </div>
@@ -293,7 +293,7 @@
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
           <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
-              <span class="neroBlack--text text-h5">
+              <span class="black--text text--darken-4 text-h5">
                 Demographic Overview
               </span>
             </div>
@@ -306,7 +306,7 @@
         <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
           <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
-              <span class="neroBlack--text text-h5"> United States </span>
+              <span class="black--text text--darken-4 text-h5"> United States </span>
             </div>
           </v-card-title>
           <v-divider class="ml-5 mr-8 mt-0 mb-1" />
@@ -324,7 +324,7 @@
           />
           <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
             <div class="mt-2">
-              <span class="neroBlack--text text-h5">
+              <span class="black--text text--darken-4 text-h5">
                 Top location &amp; Income
               </span>
             </div>
@@ -344,7 +344,7 @@
           />
           <v-card-title v-if="!loadingDemographics" class="pb-2 pl-5 pt-5">
             <div class="mt-2">
-              <span class="neroBlack--text text-h5">
+              <span class="black--text text--darken-4 text-h5">
                 Gender &sol; monthly spending in 2021
               </span>
             </div>
@@ -364,7 +364,7 @@
           />
           <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
             <div class="mt-2">
-              <span class="neroBlack--text text-h5"> Gender </span>
+              <span class="black--text text--darken-4 text-h5"> Gender </span>
             </div>
           </v-card-title>
           <div v-if="!loadingDemographics" ref="genderChart">
@@ -1096,7 +1096,7 @@ export default {
     width: 35px;
     height: 35px;
     line-height: 22px;
-    color: var(--v-neroBlack-base) !important;
+    color: var(--v-black-darken4) !important;
     cursor: default !important;
     background: transparent !important;
   }

@@ -5,15 +5,15 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+        <v-icon size="22" color="black lighten-3" class="icon-border pa-2 ma-1">
           mdi-download
         </v-icon>
       </template>
     </page-header>
     <page-header class="top-bar" :header-height="71">
       <template #left>
-        <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
-        <v-icon medium color="lightGrey" class="pl-6">mdi-magnify</v-icon>
+        <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
+        <v-icon medium color="black lighten-3" class="pl-6">mdi-magnify</v-icon>
       </template>
 
       <template #right>
@@ -615,14 +615,14 @@ export default {
     }
   }
   .page-header--wrap {
-    box-shadow: 0px 1px 1px -1px var(--v-lightGrey-base),
-      0px 1px 1px 0px var(--v-lightGrey-base),
-      0px 1px 2px 0px var(--v-lightGrey-base) !important;
+    box-shadow: 0px 1px 1px -1px var(--v-black-lighten3),
+      0px 1px 1px 0px var(--v-black-lighten3),
+      0px 1px 2px 0px var(--v-black-lighten3) !important;
   }
   .top-bar {
     margin-top: 1px;
     .v-icon--disabled {
-      color: var(--v-lightGrey-base) !important;
+      color: var(--v-black-lighten3) !important;
       font-size: 24px;
     }
     .text--refresh {
@@ -638,7 +638,7 @@ export default {
         }
         td {
           font-size: 14px !important;
-          color: var(--v-neroBlack-base);
+          color: var(--v-black-darken4);
         }
         td:nth-child(1) {
           font-size: 14px !important;
@@ -668,7 +668,7 @@ export default {
         td {
           font-size: 14px !important;
           line-height: 22px;
-          color: var(--v-neroBlack-base);
+          color: var(--v-black-darken4);
         }
         td:nth-child(1) {
           position: sticky;
@@ -692,7 +692,7 @@ export default {
       tbody {
         tr:last-child {
           td {
-            border-bottom: 1px solid var(--v-lightGrey-base) !important;
+            border-bottom: 1px solid var(--v-black-lighten3) !important;
           }
         }
       }
@@ -701,7 +701,7 @@ export default {
       ::v-deep .theme--light {
         background: var(--v-primary-lighten1);
         .v-data-table__wrapper {
-          box-shadow: inset 0px 10px 10px -4px var(--v-lightGrey-base);
+          box-shadow: inset 0px 10px 10px -4px var(--v-black-lighten3);
           border-bottom: thin solid rgba(0, 0, 0, 0.12);
         }
       }

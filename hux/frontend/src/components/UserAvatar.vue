@@ -15,14 +15,14 @@
         <v-btn color="primary" class="font-weight-bold mr-2" small outlined fab>
           {{ initials }}
         </v-btn>
-        <v-list-item-title class="text-h6 neroBlack--text font-weight-bold"
+        <v-list-item-title class="text-h6 black--text text--darken-4 font-weight-bold"
           >{{ firstName }} {{ lastName }}</v-list-item-title
         >
       </v-list-item>
       <v-list-item>
         <v-list-item-title>
           <a
-            class="text-decoration-none text-h6 neroBlack--text"
+            class="text-decoration-none text-h6 black--text text--darken-4"
             :href="changeDetailsLink"
             target="_blank"
             >My Hux Profile</a
@@ -31,7 +31,7 @@
       </v-list-item>
       <v-divider />
       <v-list-item @click="initiateLogout()">
-        <v-list-item-title class="text-h6 neroBlack--text"
+        <v-list-item-title class="text-h6 black--text text--darken-4"
           >Logout</v-list-item-title
         >
       </v-list-item>

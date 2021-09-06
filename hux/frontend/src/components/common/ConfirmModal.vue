@@ -6,8 +6,8 @@
     <div class="white text-center pt-10">
       <div class="px-15 modal-content">
         <v-icon :color="type" size="44">mdi-information-outline</v-icon>
-        <div class="neroBlack--text text-h3 py-3">{{ title }}</div>
-        <div class="neroBlack--text text-h6 pb-10">{{ body }}</div>
+        <div class="black--text text--darken-4 text-h3 py-3">{{ title }}</div>
+        <div class="black--text text--darken-4 text-h6 pb-10">{{ body }}</div>
       </div>
       <div
         class="
