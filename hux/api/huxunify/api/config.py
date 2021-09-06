@@ -165,7 +165,7 @@ def load_env_vars(flask_env=config(api_c.FLASK_ENV, default="")) -> None:
     if flask_env in [api_c.DEVELOPMENT_MODE, api_c.PRODUCTION_MODE]:
         # load in variables before running flask app.
         for i in range(0, 50):
-            # attempt to grab the SSM from the ini file/
+            # attempt to grab the SSM from the ini file
             load_ssm_key = config(f"SSM_{i}", None)
 
             # if empty, break loop
