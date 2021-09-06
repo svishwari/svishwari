@@ -27,7 +27,7 @@
             </v-icon>
           </template>
           <template #hover-content>
-            <div id="tooltipdownload">
+            <div id="tooltipdownloadmetrics">
               {{ tooltipValue }}
             </div>
           </template>
@@ -384,7 +384,7 @@ export default {
     background: transparent;
   }
 }
-#tooltipdownload {
+#tooltipdownloadmetrics {
   display: flex;
   flex-direction: row;
   align-items: center;
