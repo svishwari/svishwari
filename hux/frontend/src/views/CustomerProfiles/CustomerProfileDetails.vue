@@ -584,6 +584,6 @@ export default {
   @extend .sample-card-text;
 }
 .chart-style {
-  background: white !important
+  background: var(--v-white-base) !important;
 }
 </style>
