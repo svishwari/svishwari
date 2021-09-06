@@ -458,7 +458,7 @@ class TestCustomersOverview(TestCase):
         )
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(
-            "Failed to get customers Demographical Visual Insights.",
+            "Failed to get customers Demographic Visual Insights.",
             response.json["message"],
         )
 

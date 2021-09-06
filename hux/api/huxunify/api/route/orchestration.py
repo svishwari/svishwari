@@ -522,7 +522,7 @@ class AudienceInsightsGetView(SwaggerView):
             ),
             api_c.INCOME: get_city_ltvs(
                 token_response[0],
-                audience[api_c.AUDIENCE_FILTERS],
+                {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
             ),
             api_c.SPEND: group_gender_spending(
                 get_spending_by_gender(
@@ -533,9 +533,9 @@ class AudienceInsightsGetView(SwaggerView):
                         ]
                     },
                     start_date=str(
-                        datetime.today().date() - timedelta(days=180)
+                        datetime.utcnow().date() - timedelta(days=180)
                     ),
-                    end_date=str(datetime.today().date()),
+                    end_date=str(datetime.utcnow().date()),
                 )
             ),
             api_c.GENDER: {

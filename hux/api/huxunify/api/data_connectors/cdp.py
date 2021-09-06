@@ -735,7 +735,7 @@ def get_city_ltvs(
     logger.info("Retrieving spending insights by city.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
-        json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        json=filters if filters else {},
         params=dict(offset=offset, limit=limit),
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,

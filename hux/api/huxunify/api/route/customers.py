@@ -647,7 +647,7 @@ class CustomerDemoVisualView(SwaggerView):
             logger.error("Failed to get Customer Profile Insights from CDP.")
             return (
                 {
-                    "message": "Failed to get customers Demographical Visual Insights."
+                    "message": "Failed to get customers Demographic Visual Insights."
                 },
                 HTTPStatus.BAD_REQUEST,
             )

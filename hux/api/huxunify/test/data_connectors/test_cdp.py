@@ -278,10 +278,12 @@ class CDPTest(TestCase):
         )
         self.request_mocker.start()
 
-        filters = api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
-        filters[api_c.COUNT] = 5
-
-        customer_insights_by_cities = get_city_ltvs(token="", filters=filters)
+        customer_insights_by_cities = get_city_ltvs(
+            token="",
+            filters={
+                api_c.AUDIENCE_FILTERS: api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+            },
+        )
 
         self.assertTrue(customer_insights_by_cities)
         for i, record in enumerate(customer_insights_by_cities):
