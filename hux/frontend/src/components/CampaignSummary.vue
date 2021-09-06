@@ -605,12 +605,10 @@ export default {
             data[0]["destinations"] &&
             data[0]["destinations"].length === 0
           ) {
-            const _temp = JSON.parse(JSON.stringify(data))
-            _temp.forEach((o) => {
-              delete o.destinations
-              delete o.id
-              delete o.name
-            })
+            const _temp = JSON.parse(JSON.stringify(data[0]))
+            delete _temp.destinations
+            delete _temp.id
+            delete _temp.name
             if ([...new Set(Object.values(_temp[0]))].join() === "-")
               return false
           }
