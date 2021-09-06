@@ -23,7 +23,7 @@ from huxunifylib.database.cdp_data_source_management import (
 
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.cdp_connection import (
-    get_connections_data_feeds,
+    get_data_source_data_feeds,
 )
 from huxunify.api.data_connectors.okta import get_token_from_request
 
@@ -458,9 +458,9 @@ class BatchUpdateDataSources(SwaggerView):
     f"{api_c.CDP_DATA_SOURCES_ENDPOINT}/<{api_c.CDP_DATA_SOURCE_TYPE}>/{api_c.DATAFEEDS}",
     "GetConnectionsDatafeeds",
 )
-class GetConnectionsDatafeeds(SwaggerView):
+class GetDataSourceDatafeeds(SwaggerView):
     """
-    Create new CDP data source class
+    Get data source data feeds class
     """
 
     parameters = [
@@ -511,7 +511,7 @@ class GetConnectionsDatafeeds(SwaggerView):
         response = {
             api_c.NAME: data_source[db_c.NAME],
             api_c.TYPE: data_source[db_c.TYPE],
-            api_c.DATAFEEDS: get_connections_data_feeds(
+            api_c.DATAFEEDS: get_data_source_data_feeds(
                 token_response[0], datasource_type
             ),
         }

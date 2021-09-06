@@ -117,7 +117,7 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
     }
 
 
-def get_connections_data_feeds(token: str, data_source_type: str) -> list:
+def get_data_source_data_feeds(token: str, data_source_type: str) -> list:
     """
     Retrieve data source data feeds
 
