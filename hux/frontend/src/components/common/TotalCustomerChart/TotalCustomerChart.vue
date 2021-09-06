@@ -42,7 +42,7 @@ export default {
       ],
       sourceData: this.customersData,
       currentData: {},
-      sourceData: [],
+      // sourceData: [],
       barGroupChangeIndex: [],
       chartDimensions: {
         width: 0,
