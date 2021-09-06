@@ -187,6 +187,7 @@ export default {
         .style("color", "#4F4F4F")
       d3Select.selectAll(".yAxis .tick text").style("color", "#4F4F4F")
       d3Select.selectAll(".xAxis-alternate .domain").style("stroke", "white")
+      d3Select.selectAll(".xAxis .tick text").attr("x", 14)
 
       let topRoundedRect = (x, y, width, height) => {
         height = height < 0 ? 0 : height
