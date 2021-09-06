@@ -4,6 +4,7 @@ import random
 
 from huxunifylib.database import constants as db_c
 
+TEST_MODE = "test"
 DEVELOPMENT_MODE = "development"
 PRODUCTION_MODE = "production"
 FLASK_ENV = "FLASK_ENV"

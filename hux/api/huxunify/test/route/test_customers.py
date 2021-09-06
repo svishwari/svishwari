@@ -104,14 +104,12 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         data = response.json
 
-        response = self.test_client.get(
-            f"{self.customers}?{api_c.QUERY_PARAMETER_BATCH_SIZE}=abc&"
-            f"{api_c.QUERY_PARAMETER_BATCH_NUMBER}=def",
-            headers=t_c.STANDARD_HEADERS,
-        )
-        self.assertEqual(
-            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
-        )
+        with self.assertRaises(TypeError):
+            self.test_client.get(
+                f"{self.customers}?{api_c.QUERY_PARAMETER_BATCH_SIZE}=abc&"
+                f"{api_c.QUERY_PARAMETER_BATCH_NUMBER}=def",
+                headers=t_c.STANDARD_HEADERS,
+            )
 
         response = self.test_client.get(
             f"{self.customers}",

@@ -444,7 +444,7 @@ class IDRDataFeeds(SwaggerView):
         """Retrieves a IDR data feeds.
         ---
         security:
-            - Bearer: ["Authorization"]\
+            - Bearer: ["Authorization"]
 
         Args:
 

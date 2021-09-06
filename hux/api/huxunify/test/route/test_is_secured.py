@@ -6,23 +6,9 @@ import requests_mock
 from requests_mock import Mocker
 from huxunify.api.config import get_config
 from huxunify.app import create_app
+from huxunify.test import constants as t_c
 
 
-VALID_RESPONSE = {
-    "active": True,
-    "scope": "openid email profile",
-    "username": "davesmith",
-    "exp": 1234,
-    "iat": 12345,
-    "sub": "davesmith@fake",
-    "aud": "sample_aud",
-    "iss": "sample_iss",
-    "jti": "sample_jti",
-    "token_type": "Bearer",
-    "client_id": "1234",
-    "uid": "1234567",
-}
-INVALID_RESPONSE = {"active": False}
 UNSECURED_ROUTES = [
     "/api/v1/ui/",
     "/apidocs/index.html",
@@ -49,11 +35,6 @@ class OktaTest(TestCase):
         # setup the flask test client
         self.app = create_app().test_client()
         self.routes = list(create_app().url_map.iter_rules())
-        self.introspect_call = (
-            f"{self.config.OKTA_ISSUER}"
-            f"/oauth2/v1/introspect?client_id="
-            f"{self.config.OKTA_CLIENT_ID}"
-        )
 
     @requests_mock.Mocker()
     def test_secured_all_endpoints_invalid_response(
@@ -69,7 +50,9 @@ class OktaTest(TestCase):
         """
 
         # setup the request mock post
-        request_mocker.post(self.introspect_call, json=INVALID_RESPONSE)
+        request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.INVALID_OKTA_RESPONSE
+        )
         mock_header = {"Authorization": "Bearer 1234567"}
 
         # process each of the headers at once
@@ -97,7 +80,9 @@ class OktaTest(TestCase):
         """
 
         # setup the request mock post
-        request_mocker.post(self.introspect_call, json=INVALID_RESPONSE)
+        request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.INVALID_OKTA_RESPONSE
+        )
         mock_header = {"Authorization": "Bearer"}
 
         # process each of the headers at once
@@ -124,7 +109,9 @@ class OktaTest(TestCase):
 
         """
         # setup the request mock post
-        request_mocker.post(self.introspect_call, json=INVALID_RESPONSE)
+        request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.INVALID_OKTA_RESPONSE
+        )
         mock_header = {"Authorization": "Bearer 123456765"}
 
         # process each of the headers at once

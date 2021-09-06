@@ -38,6 +38,7 @@ VALID_RESPONSE = {
     "client_id": "1234",
     "uid": "1234567",
 }
+INVALID_OKTA_RESPONSE = {"active": False}
 VALID_USER_RESPONSE = {
     api_c.OKTA_ID_SUB: "8548bfh8d",
     api_c.EMAIL: "davesmith@fake.com",
@@ -49,7 +50,7 @@ INVALID_USER_RESPONSE = {
 }
 INVALID_ID = "invalid_id"
 BATCH_RESPONSE = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
-TEST_CONFIG = get_config("TEST")
+TEST_CONFIG = get_config(api_c.TEST_MODE)
 INTROSPECT_CALL = "{}/oauth2/v1/introspect?client_id={}".format(
     TEST_CONFIG.OKTA_ISSUER, TEST_CONFIG.OKTA_CLIENT_ID
 )

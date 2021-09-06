@@ -10,6 +10,7 @@ Decouple always searches for Options in this order:
 from importlib import import_module
 from os import environ
 from pathlib import Path
+from typing import Union
 from decouple import config
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
@@ -24,11 +25,11 @@ class Config:
     FLASK_ENV = "test"
 
     # AWS_CONFIG
-    AWS_REGION = config(api_c.AWS_REGION)
-    S3_DATASET_BUCKET = config(api_c.AWS_S3_BUCKET_CONST)
+    AWS_REGION = config(api_c.AWS_REGION, default="")
+    S3_DATASET_BUCKET = config(api_c.AWS_S3_BUCKET_CONST, default="")
 
     # MONGO CONFIG
-    MONGO_DB_HOST = config(api_c.MONGO_DB_HOST)
+    MONGO_DB_HOST = config(api_c.MONGO_DB_HOST, default="localhost")
     MONGO_DB_PORT = config(api_c.MONGO_DB_PORT, default=27017, cast=int)
     MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
     MONGO_DB_PASSWORD = config(api_c.MONGO_DB_PASSWORD, default="")
@@ -46,12 +47,12 @@ class Config:
     }
 
     # OKTA CONFIGURATION
-    OKTA_CLIENT_ID = config(api_c.OKTA_CLIENT_ID)
-    OKTA_ISSUER = config(api_c.OKTA_ISSUER)
+    OKTA_CLIENT_ID = config("OKTA_CLIENT_ID", default="")
+    OKTA_ISSUER = config("OKTA_ISSUER", default="")
 
     # TECTON
-    TECTON_API_KEY = config(api_c.TECTON_API_KEY)
-    TECTON_API = config(api_c.TECTON_API)
+    TECTON_API_KEY = config(api_c.TECTON_API_KEY, default="")
+    TECTON_API = config("TECTON_API", default="")
     TECTON_API_HEADERS = {
         "Authorization": f"Tecton-key {TECTON_API_KEY}",
     }
@@ -59,23 +60,25 @@ class Config:
 
     # audience router config
     AUDIENCE_ROUTER_JOB_ROLE_ARN = config(
-        api_c.AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST
+        api_c.AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST, default=""
     )
     AUDIENCE_ROUTER_EXECUTION_ROLE_ARN = config(
-        api_c.AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST
+        api_c.AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST, default=""
     )
-    AUDIENCE_ROUTER_IMAGE = config(api_c.AUDIENCE_ROUTER_IMAGE_CONST)
+    AUDIENCE_ROUTER_IMAGE = config(
+        api_c.AUDIENCE_ROUTER_IMAGE_CONST, default=""
+    )
 
     # campaign data performance router scheduled event name
-    CDPR_EVENT_NAME = config(api_c.CDPR_EVENT_CONST)
+    CDPR_EVENT_NAME = config(api_c.CDPR_EVENT_CONST, default="")
 
     # feedback loop data router scheduled event name
-    FLDR_EVENT_NAME = config(api_c.FLDR_EVENT_CONST)
+    FLDR_EVENT_NAME = config(api_c.FLDR_EVENT_CONST, default="")
 
     EVENT_ROUTERS = [CDPR_EVENT_NAME, FLDR_EVENT_NAME]
 
-    CDP_SERVICE = config(api_c.CDP_SERVICE)
-    CDP_CONNECTION_SERVICE = config(api_c.CDP_CONNECTION_SERVICE)
+    CDP_SERVICE = config(api_c.CDP_SERVICE, default="")
+    CDP_CONNECTION_SERVICE = config(api_c.CDP_CONNECTION_SERVICE, default="")
 
     # Preserve ordering in json
     JSON_SORT_KEYS = config(
@@ -98,7 +101,7 @@ class DevelopmentConfig(Config):
 
     DEBUG = False
     FLASK_ENV = api_c.DEVELOPMENT_MODE
-    MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME)
+    MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
     MONGO_DB_CONFIG = {
         api_c.HOST: Config.MONGO_DB_HOST,
         api_c.PORT: Config.MONGO_DB_PORT,
@@ -106,6 +109,41 @@ class DevelopmentConfig(Config):
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
         api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
     }
+
+
+class TestConfig(Config):
+    """
+    Test Config Object
+    """
+
+    DEBUG = True
+    FLASK_ENV = api_c.TEST_MODE
+    AWS_REGION = "fake-fake-1"
+    S3_DATASET_BUCKET = "test-bucket"
+    MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
+    MONGO_DB_CONFIG = {
+        api_c.HOST: Config.MONGO_DB_HOST,
+        api_c.PORT: Config.MONGO_DB_PORT,
+        api_c.USERNAME: MONGO_DB_USERNAME,
+        api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
+        api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
+    }
+
+    # OKTA CONFIGURATION
+    OKTA_CLIENT_ID = "test-client-id"
+    OKTA_ISSUER = "https://fake.fake"
+
+    # TECTON CONFIGURATION
+    TECTON_API_KEY = "fake-key"
+    TECTON_API = "https://fake.fake.com"
+    TECTON_API_HEADERS = {
+        "Authorization": f"Tecton-key {TECTON_API_KEY}",
+    }
+    TECTON_FEATURE_SERVICE = f"{TECTON_API}/feature-service/query-features"
+
+    # CDP CONFIGURATION
+    CDP_SERVICE = "https://fake.fake.com"
+    CDP_CONNECTION_SERVICE = "https://fake.fake.com"
 
 
 def load_env_vars(flask_env=config(api_c.FLASK_ENV, default="")) -> None:
@@ -157,13 +195,20 @@ def load_env_vars(flask_env=config(api_c.FLASK_ENV, default="")) -> None:
                 logger.info("Unable to connect to AWS Parameter Store.")
 
 
-def get_config(flask_env=config(api_c.FLASK_ENV, default="")) -> Config:
+def get_config(
+    flask_env=config(api_c.FLASK_ENV, default="")
+) -> Union[DevelopmentConfig, Config, TestConfig]:
     """Get configuration for the environment.
 
     Args:
         flask_env (str): Flask environment value.
 
     Returns:
+        Union[DevelopmentConfig, Config, TestConfig]: config object.
 
     """
-    return DevelopmentConfig if flask_env == api_c.DEVELOPMENT_MODE else Config
+    if flask_env == api_c.DEVELOPMENT_MODE:
+        return DevelopmentConfig
+    if flask_env == api_c.TEST_MODE:
+        return TestConfig
+    return Config
