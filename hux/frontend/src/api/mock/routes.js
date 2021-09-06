@@ -532,6 +532,22 @@ export const defineRoutes = (server) => {
     })
   })
 
+  server.get("/audiences/:id/cities", (schema, request) => {
+    let batchNumber = request.queryParams["batch_number"] || 1
+    let batchSize = request.queryParams["batch_size"] || 100
+    let start = batchNumber === 1 ? 0 : (batchNumber - 1) * batchSize
+    let end = batchNumber === 1 ? batchSize : batchNumber * batchSize
+    return schema.geoCities.all().slice(start, end)
+  })
+
+  server.get("/audiences/:id/states", (schema) => {
+    return schema.geoStates.all()
+  })
+
+  server.get("/audiences/:id/countries", (schema) => {
+    return schema.geoCountries.all()
+  })
+
   //lookalike audiences
   server.post("/lookalike-audiences", (schema, request) => {
     let requestData = JSON.parse(request.requestBody)

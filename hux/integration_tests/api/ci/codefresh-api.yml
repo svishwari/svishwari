@@ -61,4 +61,3 @@ steps:
       branch:
         only:
           - main
-          - /^app/hux-unified/hux/integration_tests/api/.*/i

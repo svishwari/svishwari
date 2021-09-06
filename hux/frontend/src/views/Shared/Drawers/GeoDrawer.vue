@@ -46,7 +46,7 @@
         </template>
       </hux-data-table>
       <v-progress-linear v-if="enableLazyLoad" active indeterminate />
-      <observer v-if="items.length" @intersect="onLazyLoad" />
+      <observer v-if="items && items.length" @intersect="onLazyLoad" />
     </template>
 
     <template #footer-left>
@@ -82,13 +82,20 @@ export default {
     },
 
     geoLevel: {
+      type: String,
       required: false,
       default: "states",
     },
 
     results: {
+      type: Number,
       required: false,
       default: 0,
+    },
+
+    audienceId: {
+      required: false,
+      default: null,
     },
   },
 
@@ -118,10 +125,28 @@ export default {
 
   computed: {
     ...mapGetters({
-      geoCities: "customers/geoCities",
-      geoCountries: "customers/geoCountries",
-      geoStates: "customers/geoStates",
+      customersGeoCities: "customers/geoCities",
+      customersGeoCountries: "customers/geoCountries",
+      customersGeoStates: "customers/geoStates",
+      audienceGeoCities: "audiences/geoCities",
+      audienceGeoCountries: "audiences/geoCountries",
+      audienceGeoStates: "audiences/geoStates",
     }),
+
+    geoCities() {
+      if (this.audienceId) return this.audienceGeoCities
+      else return this.customersGeoCities
+    },
+
+    geoStates() {
+      if (this.audienceId) return this.audienceGeoStates
+      else return this.customersGeoStates
+    },
+
+    geoCountries() {
+      if (this.audienceId) return this.audienceGeoCountries
+      else return this.customersGeoCountries
+    },
 
     items() {
       switch (this.geoLevel) {
@@ -213,9 +238,12 @@ export default {
 
   methods: {
     ...mapActions({
-      getGeoCities: "customers/getGeoCities",
-      getGeoCountries: "customers/getGeoCountries",
-      getGeoStates: "customers/getGeoStates",
+      getCustomersGeoCities: "customers/getGeoCities",
+      getCustomersGeoCountries: "customers/getGeoCountries",
+      getCustomersGeoStates: "customers/getGeoStates",
+      getAudienceGeoCities: "audiences/getGeoCities",
+      getAudienceGeoCountries: "audiences/getGeoCountries",
+      getAudienceGeoStates: "audiences/getGeoStates",
     }),
 
     async onLazyLoad() {
@@ -227,13 +255,34 @@ export default {
       }
     },
 
+    async getGeoCities() {
+      if (this.audienceId)
+        await this.getAudienceGeoCities({
+          id: this.audienceId,
+          batchNumber: this.batchNumber,
+          batchSize: this.batchSize,
+        })
+      else
+        await this.getCustomersGeoCities({
+          batchNumber: this.batchNumber,
+          batchSize: this.batchSize,
+        })
+    },
+
+    async getGeoCountries() {
+      if (this.audienceId) await this.getAudienceGeoCountries(this.audienceId)
+      else await this.getCustomersGeoCountries()
+    },
+
+    async getGeoStates() {
+      if (this.audienceId) await this.getAudienceGeoStates(this.audienceId)
+      else await this.getCustomersGeoStates()
+    },
+
     async refreshData() {
       switch (this.geoLevel) {
         case "cities":
-          await this.getGeoCities({
-            batchNumber: this.batchNumber,
-            batchSize: this.batchSize,
-          })
+          await this.getGeoCities()
           break
         case "countries":
           await this.getGeoCountries()
