@@ -184,7 +184,10 @@
         <v-list-item-content v-if="item.size" class="size-col py-1 mr-2">
           <tooltip>
             <template #label-content>
-              {{ getSize(item.size) }}
+              {{ getSize(item.size) | Empty("-") }}
+              <span v-if="item.match_rate">
+                | {{ item.match_rate | Percentage }}
+              </span>
             </template>
             <template #hover-content>
               <div class="d-flex flex-column text-caption">
@@ -203,6 +206,9 @@
           <tooltip>
             <template #label-content>
               {{ getSize(item.size) | Empty("-") }}
+              <span v-if="item.match_rate">
+                | {{ item.match_rate | Percentage }}
+              </span>
             </template>
             <template #hover-content>
               <div class="d-flex flex-column text-caption">
@@ -560,8 +566,8 @@ export default {
         max-width: 45px;
       }
       .size-col {
-        min-width: 50px;
-        max-width: 50px;
+        min-width: 60px;
+        max-width: 60px;
         font-size: 12px;
         line-height: 16px;
         color: var(--v--neroBlack-base);

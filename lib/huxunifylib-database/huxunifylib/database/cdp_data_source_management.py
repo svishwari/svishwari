@@ -2,13 +2,14 @@
 This module enables functionality for data source management
 """
 import logging
-from typing import Union
+from typing import Union, Optional
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
+import huxunifylib.database.db_exceptions as de
 from huxunifylib.database.engagement_management import validate_object_id_list
 
 
@@ -98,14 +99,16 @@ def get_all_data_sources(database: DatabaseClient) -> Union[list, None]:
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_data_source(
-    database: DatabaseClient, data_source_id: ObjectId
+    database: DatabaseClient,
+    data_source_id: Optional[ObjectId] = None,
+    data_source_type: Optional[str] = None,
 ) -> Union[dict, None]:
-    """A function to return a single data source based on a provided id
+    """A function to return a single data source based on a provided value
 
     Args:
         database (DatabaseClient): A database client.
-        data_source_id (ObjectId): data source id.
-
+        data_source_id (Optional[ObjectId]): data source id.
+        data_source_type (Optional[str]): data source type.
     Returns:
         Union[dict, None]: MongoDB document for a data source or None
 
@@ -113,9 +116,17 @@ def get_data_source(
     collection = database[c.DATA_MANAGEMENT_DATABASE][
         c.CDP_DATA_SOURCES_COLLECTION
     ]
+    query = {}
+
+    if data_source_id:
+        query.update({c.ID: data_source_id})
+    elif data_source_type:
+        query.update({c.TYPE: data_source_type})
+    else:
+        raise de.InsufficientDataException("data source")
 
     try:
-        return collection.find_one({c.ID: data_source_id})
+        return collection.find_one(query)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

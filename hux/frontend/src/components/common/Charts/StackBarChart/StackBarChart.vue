@@ -139,7 +139,7 @@ export default {
           (bar) => bar.index == value
         )
         if (tickDate) {
-          return this.$options.filters.Date(tickDate.date, "MM[/]YY")
+          return this.$options.filters.Date(tickDate.date, "MM/DD/YY")
         } else return ""
       }
 
@@ -164,7 +164,7 @@ export default {
             .tickFormat(convertCalendarFormat)
             .tickPadding(15)
         )
-        .style("font-size", "14px")
+        .style("font-size", "12px")
 
       svg
         .append("g")
@@ -197,6 +197,7 @@ export default {
         .style("color", "#4F4F4F")
       d3Select.selectAll(".yAxis .tick text").style("color", "#4F4F4F")
       d3Select.selectAll(".xAxis-alternate .domain").style("stroke", "white")
+      d3Select.selectAll(".xAxis .tick text").attr("x", 14)
 
       let topRoundedRect = (x, y, width, height) => {
         height = height < 0 ? 0 : height

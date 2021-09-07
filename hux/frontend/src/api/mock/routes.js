@@ -13,9 +13,11 @@ import { idrOverview, idrDataFeedReport } from "./factories/identity"
 import { mockDataFeeds } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
+import audienceCSVData from "./factories/audienceCSVData"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
 import demographicsData from "@/api/mock/fixtures/demographicData.js"
+import customerEventData from "@/api/mock/fixtures/customerEventData.js"
 import totalCustomersData from "./fixtures/totalCustomersData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
@@ -395,6 +397,8 @@ export const defineRoutes = (server) => {
 
   server.get("/customers/overview", () => customersOverview)
 
+  server.get("/customers/:huxId/events", () => customerEventData)
+
   server.get("/customers-insights/geo", () => mapData)
 
   server.get("/customers-insights/demo", () => demographicsData)
@@ -469,6 +473,12 @@ export const defineRoutes = (server) => {
     demographicsData.demo = mapData
     return demographicsData
   })
+  server.get("/audiences/:id/:type", async () => {
+    // Introduced a delay of 15 seconds to
+    // replicate the API delay in processing the BLOB.
+    await new Promise((r) => setTimeout(r, 15000))
+    return audienceCSVData
+  })
 
   server.get("/audiences/:id", (schema, request) => {
     const id = request.params.id
@@ -503,6 +513,22 @@ export const defineRoutes = (server) => {
     }
 
     return server.create("audience", attrs)
+  })
+
+  server.put("/audiences/:id", (schema, request) => {
+    const audienceId = request.params.id
+    const requestData = JSON.parse(request.requestBody)
+    const payload = {
+      name: requestData.name,
+      filters: requestData.filters,
+      destinations: requestData.destinations,
+      // TODO: Need to update the blow 'engagements' update,
+      // once the Mirage Relationships between Audiences and Engagement Model are fixed.
+      // engagements: requestData.engagement_ids.map((engagementId) => {
+      //   return schema.engagements.find(engagementId)
+      // }),
+    }
+    return schema.audiences.find(audienceId).update(payload)
   })
 
   server.post("/audiences/:id/deliver", () => {

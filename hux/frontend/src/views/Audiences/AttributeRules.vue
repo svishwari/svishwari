@@ -56,7 +56,7 @@
                 <div class="condition-items col-10 pa-0">
                   <hux-dropdown
                     :selected="condition.attribute"
-                    :items="attributeOptions"
+                    :items="attributeOptions()"
                     label="Select attribute"
                     @on-select="onSelect('attribute', condition, $event)"
                   />
@@ -224,6 +224,22 @@ export default {
       ruleAttributes: "audiences/audiencesRules",
     }),
 
+    lastIndex() {
+      return this.rules.length - 1
+    },
+  },
+  async mounted() {
+    await this.getAudiencesRules()
+    this.updateSizes()
+  },
+  methods: {
+    ...mapActions({
+      getRealtimeSize: "audiences/fetchFilterSize",
+      getAudiencesRules: "audiences/fetchConstants",
+    }),
+    isText(condition) {
+      return condition.attribute ? condition.attribute.type === "text" : false
+    },
     /**
      * This attributeOptions is transforming the API attributeRules into the Options Array
      *
@@ -270,22 +286,6 @@ export default {
           return a.order - b.order
         })
       } else return []
-    },
-
-    lastIndex() {
-      return this.rules.length - 1
-    },
-  },
-  async mounted() {
-    await this.getAudiencesRules()
-  },
-  methods: {
-    ...mapActions({
-      getRealtimeSize: "audiences/fetchFilterSize",
-      getAudiencesRules: "audiences/fetchConstants",
-    }),
-    isText(condition) {
-      return condition.attribute ? condition.attribute.type === "text" : false
     },
     operatorOptions(condition) {
       // Filter out only two options (equals and does_not_equals) for attribute type 'gender'
@@ -345,6 +345,12 @@ export default {
         let triggerOverallSize = rule.conditions.length - 1 === i ? true : false
         this.triggerSizing(rule.conditions[i], triggerOverallSize)
       }
+    },
+
+    updateSizes() {
+      this.rules.forEach((rule) => {
+        this.triggerSizingForRule(rule)
+      })
     },
 
     async getOverallSize() {

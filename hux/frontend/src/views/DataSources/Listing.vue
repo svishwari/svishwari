@@ -13,7 +13,7 @@
       <hux-data-table
         sort-desc
         :columns="columns"
-        :data-items="dataSourceDataFeeds.data_feeds"
+        :data-items="dataSourceDataFeeds.datafeeds"
       >
         <template #row-item="{ item }">
           <td v-for="column in columns" :key="column.value">

@@ -3,13 +3,16 @@
     <v-card flat class="card-style" style="position: sticky">
       <v-card-text>
         <div
-          v-if="summary.length == 0"
+          v-if="!hasData(summaryCards, 'summary')"
           class="empty-state pa-5 black--text text--darken-1"
         >
           Be patient! Performance data is currently not available, check back
           tomorrow to see if the magic is ready.
         </div>
-        <div v-if="summary.length > 0" class="d-flex summary-tab-wrap">
+        <div
+          v-if="hasData(summaryCards, 'summary')"
+          class="d-flex summary-tab-wrap"
+        >
           <metric-card
             v-for="(item, i) in summaryCards"
             :key="item.id"
@@ -104,8 +107,20 @@
         </div>
       </v-card-title>
       <v-card-text class="pl-6 pb-6 mt-0 pr-0">
+        <div
+          v-if="!hasData(data, 'performance')"
+          class="empty-state pa-5 text--gray"
+        >
+          Nothing to show here yet. Add an audience, assign and deliver that
+          audience to a destination.
+        </div>
         <!-- Campaign Nested Table -->
-        <hux-data-table :columns="headers" :data-items="data" nested>
+        <hux-data-table
+          v-if="hasData(data, 'performance')"
+          :columns="headers"
+          :data-items="data"
+          nested
+        >
           <template #item-row="{ item, expandFunc, isExpanded }">
             <tr :class="{ 'v-data-table__expanded__row': isExpanded }">
               <td v-for="header in headers" :key="header.value">
@@ -555,43 +570,6 @@ export default {
         "cost_per_click",
         // Email Columns
       ],
-      emptyCampaignData: [
-        {
-          campaigns: [],
-          click_through_rate: "-",
-          clicks: "-",
-          conversions: "-",
-          cost_per_action: "-",
-          cost_per_click: "-",
-          cost_per_thousand_impressions: "-",
-          engagement_rate: "-",
-          frequency: "-",
-          impressions: "-",
-          name: "Audience 1",
-          reach: "-",
-          spend: "-",
-        },
-      ],
-      emptyCampaignEmailData: [
-        {
-          campaigns: [],
-          sent: "-",
-          hard_bounces: "-",
-          hard_bounces_rate: "-",
-          delivered: "-",
-          delivered_rate: "-",
-          open: "-",
-          open_rate: "-",
-          clicks: "-",
-          click_through_rate: "-",
-          click_to_open_rate: "-",
-          unique_clicks: "-",
-          unique_opens: "-",
-          unsubscribe: "-",
-          unsubscribe_rate: "-",
-          name: "Audience 1",
-        },
-      ],
       audienceId: null,
       destinationId: null,
       showCampaignMapDrawer: false,
@@ -620,6 +598,32 @@ export default {
     ...mapActions({
       saveCampaignMappings: "engagements/saveCampaignMappings",
     }),
+    hasData(data, type) {
+      if (data && Array.isArray(data)) {
+        if (type === "summary") {
+          return !data
+            .map((o) => o.value)
+            .every((o) => o === "-" || o === "-|-")
+        } else {
+          if (data.length === 0) return false
+          if (
+            data.length === 1 &&
+            data[0] &&
+            data[0]["destinations"] &&
+            data[0]["destinations"].length === 0
+          ) {
+            const _temp = JSON.parse(JSON.stringify(data[0]))
+            delete _temp.destinations
+            delete _temp.id
+            delete _temp.name
+            if ([...new Set(Object.values(_temp[0]))].join() === "-")
+              return false
+          }
+          return true
+        }
+      }
+      return false
+    },
     logoType(name) {
       return name.split(" ")[0].toLowerCase()
     },

@@ -233,7 +233,7 @@
               :active="loadingDemographics"
               :indeterminate="loadingDemographics"
             />
-            <v-card-title v-if="!loadingDemographics" class="pb-1 pl-5 pt-4">
+            <v-card-title v-if="!loadingDemographics" class="pb-0 pl-2 pt-5">
               <div class="mt-1">
                 <span class="black--text text--darken-4 text-h5">
                   Gender &sol; monthly spending
@@ -657,7 +657,7 @@ export default {
   cursor: default !important;
 }
 ::v-deep .genderSpend .container {
-  margin-top: 14px !important;
+  margin-top: 8px !important;
 }
 .color-last-month {
   color: var(--v-grey-base) !important;
