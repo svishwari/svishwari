@@ -308,12 +308,7 @@ export default {
     },
     async fetchDrift() {
       this.loadingDrift = true
-      await this.getDrift({
-        model_id: this.$route.params.id,
-        payload: {
-          model_type: this.model.model_type,
-        },
-      })
+      await this.getDrift(this.$route.params.id)
       this.loadingDrift = false
     },
     viewVersionHistory() {

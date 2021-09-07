@@ -369,8 +369,16 @@
               </span>
             </div>
           </v-card-title>
-          <map-chart v-if="!loadingDemographics" :map-data="mapChartData" />
-          <map-slider v-if="!loadingDemographics" :map-data="mapChartData" />
+          <map-chart
+            v-if="!loadingDemographics"
+            :map-data="mapChartData"
+            :configuration-data="configurationData"
+          />
+          <map-slider
+            v-if="!loadingDemographics"
+            :map-data="mapChartData"
+            :configuration-data="configurationData"
+          />
         </v-card>
       </v-col>
       <v-col md="5">
@@ -389,6 +397,7 @@
           <map-state-list
             v-if="!loadingDemographics"
             :map-data="mapChartData"
+            :configuration-data="configurationData"
           />
         </v-card>
       </v-col>
@@ -582,6 +591,7 @@ import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/Edit
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations.vue"
 import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
 import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
+import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import GeoDrawer from "@/views/Shared/Drawers/GeoDrawer.vue"
 import Logo from "../../components/common/Logo.vue"
 
@@ -641,22 +651,29 @@ export default {
         {
           id: "c2b0bf2d9d48",
           name: ".csv",
+          type: "amazon_ads",
+          title: "Amazon Advertising CSV",
           icon: "amazon-advertising",
         },
         {
           id: "5e112c22f1b1",
           name: ".csv",
+          type: "google_ads",
+          title: "Google Ads CSV",
           icon: "google-ads",
         },
         {
           id: "2349d4353b9f",
+          title: "Generic CSV",
           name: ".csv",
+          type: "amazon_ads",
         },
       ],
       loading: false,
       loadingRelationships: false,
       loadingDemographics: true,
       flashAlert: false,
+      configurationData: configurationData,
       alert: {
         type: "success",
         title: "YAY!",
@@ -897,6 +914,7 @@ export default {
       attachAudienceDestination: "engagements/attachAudienceDestination",
       detachAudienceDestination: "engagements/detachAudienceDestination",
       getDemographics: "audiences/getDemographics",
+      downloadAudienceData: "audiences/fetchAudienceData",
     }),
 
     async fetchDemographics() {
@@ -904,18 +922,22 @@ export default {
       await this.getDemographics(this.$route.params.id)
       this.loadingDemographics = false
     },
-    initiateFileDownload(type) {
-      switch (type.icon) {
-        case "amazon-advertising":
-          // TODO Trigger API for Amazon type download
-          break
-        case "google-ads":
-          // TODO Trigger API for Amazon type download
-          break
-        default:
-          // TODO Trigger API for Generic CSV download
-          break
-      }
+    async initiateFileDownload(option) {
+      const audienceName = this.audience.name
+      this.alert.type = "Pending"
+      this.alert.title = ""
+      this.alert.message = `Download for the '${audienceName}' with '${option.title}', has started in background, stay tuned.`
+      this.flashAlert = true
+      const fileBlob = await this.downloadAudienceData({
+        id: this.audienceId,
+        type: option.type,
+      })
+      const url = window.URL.createObjectURL(
+        new Blob([fileBlob.data], {
+          type: "text/csv" || "application/octet-stream",
+        })
+      )
+      window.location.assign(url)
     },
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"

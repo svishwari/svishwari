@@ -176,10 +176,12 @@
             <map-chart
               v-if="!loadingGeoOverview"
               :map-data="customersGeoOverview"
+              :configuration-data="configurationData"
             />
             <map-slider
               v-if="!loadingGeoOverview"
               :map-data="customersGeoOverview"
+              :configuration-data="configurationData"
             />
           </v-card>
         </v-col>
@@ -199,6 +201,7 @@
             <map-state-list
               v-if="!loadingGeoOverview"
               :map-data="customersGeoOverview"
+              :configuration-data="configurationData"
             />
           </v-card>
         </v-col>
@@ -307,6 +310,7 @@ import MapStateList from "@/components/common/MapChart/MapStateList"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
+import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import dayjs from "dayjs"
 
 export default {
@@ -333,6 +337,7 @@ export default {
     return {
       customerProfilesDrawer: false,
       loadingCustomerChart: false,
+      configurationData: configurationData,
       geoDrawer: {
         cities: false,
         countries: false,
