@@ -1,10 +1,14 @@
 <template>
   <div class="list-container">
     <div class="content-style pl-6 pr-4 pb-4">
-      <div v-for="item in mapChartData" :key="item.name" class="sub-props pt-4">
-        <span class="subprop-name">{{ item.name }}</span>
+      <div
+        v-for="item in mapChartData"
+        :key="item[defaultMetric]"
+        class="sub-props pt-4"
+      >
+        <span class="subprop-name">{{ item[defaultMetric] }}</span>
         <span class="value ml-2 font-weight-semi-bold">
-          {{ item.population_percentage | Numeric(true, false, false, true) }}
+          {{ applyFilter(item[primaryMetric.key], primaryMetric.format) }}
         </span>
       </div>
     </div>
@@ -19,11 +23,23 @@ export default {
       type: Array,
       required: true,
     },
+    configurationData: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
       mapChartData: [],
     }
+  },
+  computed: {
+    primaryMetric() {
+      return this.configurationData.primary_metric
+    },
+    defaultMetric() {
+      return this.configurationData.default_metric.key
+    },
   },
   mounted() {
     this.sortStateData()
@@ -33,8 +49,20 @@ export default {
       this.mapChartData = JSON.parse(JSON.stringify(this.mapData))
       if (this.mapChartData) {
         this.mapChartData.sort(
-          (a, b) => b.population_percentage - a.population_percentage
+          (a, b) => b[this.primaryMetric.key] - a[this.primaryMetric.key]
         )
+      }
+    },
+    applyFilter(value, filter) {
+      switch (filter) {
+        case "numeric":
+          return this.$options.filters.Numeric(value, true, false, false)
+        case "percentage":
+          return this.$options.filters.Numeric(value, true, false, false, true)
+        case "currency":
+          return this.$options.filters.Currency(value)
+        default:
+          return this.$options.filters.Empty
       }
     },
   },
