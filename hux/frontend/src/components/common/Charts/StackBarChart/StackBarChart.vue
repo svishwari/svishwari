@@ -145,7 +145,7 @@ export default {
 
       svg
         .append("g")
-        .classed("xAxis", true)
+        .classed("xAxis-main", true)
         .attr("transform", `translate(0,${h})`)
         .call(
           d3Axis
@@ -158,7 +158,7 @@ export default {
 
       svg
         .append("g")
-        .classed("yAxis", true)
+        .classed("yAxis-main", true)
         .attr("transform", "translate(0, 0)")
         .call(d3Axis.axisLeft(yScale).ticks(4).tickFormat(applyNumericFilter))
         .attr("stroke-width", "1")
@@ -182,12 +182,12 @@ export default {
       d3Select.selectAll(".domain").style("stroke", "rgba(208, 208, 206, 1)")
       d3Select.selectAll(".tick line").style("stroke", "rgba(208, 208, 206, 1)")
       d3Select
-        .selectAll(".xAxis .tick text")
+        .selectAll(".xAxis-main .tick text")
         .attr("x", 10)
         .style("color", "#4F4F4F")
-      d3Select.selectAll(".yAxis .tick text").style("color", "#4F4F4F")
+      d3Select.selectAll(".yAxis-main .tick text").style("color", "#4F4F4F")
       d3Select.selectAll(".xAxis-alternate .domain").style("stroke", "white")
-      d3Select.selectAll(".xAxis .tick text").attr("x", 14)
+      d3Select.selectAll(".xAxis-main .tick text").attr("x", 14)
 
       let topRoundedRect = (x, y, width, height) => {
         height = height < 0 ? 0 : height

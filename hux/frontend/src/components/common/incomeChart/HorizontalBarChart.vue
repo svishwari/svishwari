@@ -95,6 +95,7 @@ export default {
       let appendCurrencySign = (text) => "$" + text.toLocaleString()
       svg
         .append("g")
+        .classed("xAxis", true)
         .attr("transform", "translate(0," + this.height + ")")
         .call(
           d3Axis

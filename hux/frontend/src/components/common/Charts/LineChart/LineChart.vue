@@ -11,6 +11,7 @@ import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
 import * as d3TimeFormat from "d3-time-format"
+import * as d3Transition from "d3-transition"
 
 export default {
   name: "LineChart",
@@ -150,11 +151,13 @@ export default {
       d3Select.selectAll(".yAlternateAxis .tick line").style("stroke", "black")
       d3Select.selectAll(".xAlternateAxis .tick line").style("stroke", "black")
 
-      let lineTrace = () => {
+      d3Transition.transition()
+
+      let lineTrace = (value) => {
         return d3Shape
           .line()
-          .x((d) => xScale(new Date(dateFormatter(d.date))))
-          .y((d) => yScale(d.total_event_count))
+          .x(value ? 0 : (d) => xScale(new Date(dateFormatter(d.date))))
+          .y(value ? h : (d) => yScale(d.total_event_count))
       }
 
       svg
@@ -163,6 +166,10 @@ export default {
         .attr("class", "line")
         .style("stroke", "#9DD4CF")
         .style("fill", "transparent")
+        .attr("d", lineTrace(0))
+        .transition()
+        .duration(1000)
+        .delay((d, i) => i * 15)
         .attr("d", lineTrace())
 
       svg
@@ -172,6 +179,11 @@ export default {
         .append("circle")
         .attr("class", "dot")
         .attr("r", 4)
+        .attr("cx", 0)
+        .attr("cy", h)
+        .transition()
+        .duration(500)
+        .delay((d, i) => i * 15)
         .attr("cx", (d) => xScale(new Date(dateFormatter(d.date))))
         .attr("cy", (d) => yScale(d.total_event_count))
         .style("fill", "white")
