@@ -18,13 +18,17 @@
         <div>
           <span class="append-circle color-unique-hux-ids"></span>
           <span class="font-size-tooltip">
-            {{ sourceInput.unique_hux_ids | Numeric(false, false, true) | Empty }}
+            {{
+              sourceInput.unique_hux_ids | Numeric(false, false, true) | Empty
+            }}
           </span>
         </div>
-         <div>
+        <div>
           <span class="append-circle color-anonymous-ids"></span>
           <span class="font-size-tooltip">
-            {{ sourceInput.anonymous_ids | Numeric(false, false, true) | Empty }}
+            {{
+              sourceInput.anonymous_ids | Numeric(false, false, true) | Empty
+            }}
           </span>
         </div>
       </div>
@@ -83,23 +87,22 @@ export default {
     font-weight: bold;
   }
   .append-circle {
-  height: 12px;
-  width: 12px;
-  background-color: #fff;
-  border-radius: 50%;
-  display: inline-block;
-  margin-top: 6px;
-  margin-right: 8px;
-}
+    height: 12px;
+    width: 12px;
+    background-color: #fff;
+    border-radius: 50%;
+    display: inline-block;
+    margin-top: 6px;
+    margin-right: 8px;
+  }
   .color-known-ids {
- border: 2px solid #42EFFD;
+    border: 2px solid #42effd;
   }
   .color-anonymous-ids {
-border: 2px solid #75787B;
+    border: 2px solid #75787b;
   }
   .color-unique-hux-ids {
-border: 2px solid #347DAC;
-
+    border: 2px solid #347dac;
   }
 }
 </style>

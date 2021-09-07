@@ -1,4 +1,3 @@
-
 <template>
   <div ref="customerEventChart" class="container-chart">
     <multi-line-chart
@@ -9,8 +8,8 @@
       @cordinates="getCordinates"
       @tooltipDisplay="toolTipDisplay"
     />
-    <IDR-matching-trend-toolTip
-    :position="{
+    <i-d-r-matching-trend-tool-tip
+      :position="{
         x: tooltip.x,
         y: tooltip.y,
       }"
@@ -39,7 +38,7 @@ export default {
     return {
       show: false,
       isArcHover: false,
-       tooltip: {
+      tooltip: {
         x: 0,
         y: 0,
       },
@@ -53,10 +52,11 @@ export default {
     }
   },
 
-    computed: {
+  computed: {
     modificationData() {
-         return Object.keys(this.sourceData[0])
-    }},
+      return Object.keys(this.sourceData[0])
+    },
+  },
 
   mounted() {
     this.sizeHandler()

@@ -136,13 +136,11 @@
             <v-card-title class="chart-style pb-12 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
-                 ID Resolution matching trends
+                  ID Resolution matching trends
                 </span>
               </div>
             </v-card-title>
-           <IDR-Matching-Trend
-           :map-data="identityMatchingTrend"
-           />
+            <i-d-r-matching-trend :map-data="identityMatchingTrend" />
           </v-card>
         </v-col>
       </v-row>
@@ -184,7 +182,7 @@ export default {
     PageHeader,
     Tooltip,
     DataFeeds,
-    IDRMatchingTrend
+    IDRMatchingTrend,
   },
 
   data() {

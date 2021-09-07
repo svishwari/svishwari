@@ -73,14 +73,7 @@ export default {
       let h = this.chartDimensions.height - margin.top - margin.bottom
       let dataKey = ["known_ids", "anonymous_ids", "unique_hux_ids"]
       let colorCodes = ["#42EFFD", "#75787B", "#347DAC"]
-   let genders = [
-        { label: "known ids", xValue: 0 },
-        { label: "anonymous ids", xValue: 35 },
-        { label: "unique hux ids", xValue: 60 },
-      ]
-      let color = d3Scale
-        .scaleOrdinal()
-        .range(["#42EFFD", "#75787B", "#347DAC"])
+
       let svg = d3Select
         .select(this.$refs.multiLineChart)
         .append("svg")
@@ -115,7 +108,7 @@ export default {
             .tickFormat("")
         )
         .style("font-size", "14px")
-              let appendyAxisFormat = (text) =>
+      let appendyAxisFormat = (text) =>
         `${this.$options.filters.Numeric(text, false, true, false)}`
       svg
         .append("g")
@@ -142,7 +135,14 @@ export default {
         .append("g")
         .classed("yAxis", true)
         .attr("transform", "translate(0, 0)")
-        .call(d3Axis.axisLeft(yScale).tickSize(-w).ticks(4).tickPadding(15).tickFormat(appendyAxisFormat))
+        .call(
+          d3Axis
+            .axisLeft(yScale)
+            .tickSize(-w)
+            .ticks(4)
+            .tickPadding(15)
+            .tickFormat(appendyAxisFormat)
+        )
         .attr("stroke-width", "1")
         .attr("stroke-opacity", "1")
         .style("font-size", "12px")
