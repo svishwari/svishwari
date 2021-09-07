@@ -6,6 +6,7 @@ import requests_mock
 from requests_mock import Mocker
 from huxunify.api.config import get_config
 from huxunify.app import create_app
+from huxunify.api import constants as api_c
 from huxunify.test import constants as t_c
 
 
@@ -30,7 +31,7 @@ class OktaTest(TestCase):
         Returns:
 
         """
-        self.config = get_config("TEST")
+        self.config = get_config(api_c.TEST_MODE)
 
         # setup the flask test client
         self.app = create_app().test_client()
