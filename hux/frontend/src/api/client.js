@@ -56,6 +56,10 @@ client["customers"].totalCustomers = () => {
   return http.get("/customers-insights/total")
 }
 
+client["customers"].events = (huxId) => {
+  return http.get(`/customers/${huxId}/events`)
+}
+
 client["customers"].getOverview = (data) => {
   return http.post("/customers/overview", data)
 }
@@ -258,8 +262,8 @@ client["models"].lift = (id) => {
   return http.get(`/models/${id}/lift`)
 }
 
-client["models"].drift = (id, data) => {
-  return http.post(`/models/${id}/drift`, data)
+client["models"].drift = (id) => {
+  return http.get(`/models/${id}/drift`)
 }
 
 client["models"].modelFeatures = (id) => {

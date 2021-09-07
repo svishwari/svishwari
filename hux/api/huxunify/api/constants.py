@@ -623,7 +623,7 @@ MODEL_ID_PARAMS = [
     {
         "name": MODEL_ID,
         "description": "Model id",
-        "type": "integer",
+        "type": "string",
         "in": "path",
         "required": True,
         "example": "1",
@@ -686,6 +686,7 @@ MODEL_TYPES_MAPPING = {
     "lifetime value": LTV,
     "propensity to purchase": PURCHASE,
     "propensity to unsubscribe": UNSUBSCRIBE,
+    "unsubscribe": UNSUBSCRIBE,
 }
 
 # CDP DATA SOURCES
