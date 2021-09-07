@@ -6,30 +6,27 @@ from datetime import datetime
 from http import HTTPStatus
 from pathlib import Path
 from typing import Tuple
-from flasgger import SwaggerView
-from bson import ObjectId
-from flask import Blueprint, Response, request, jsonify
 
+import huxunifylib.database.constants as db_c
+from bson import ObjectId
+from flasgger import SwaggerView
+from flask import Blueprint, Response, request, jsonify
 from huxunifylib.connectors import connector_cdp
-from huxunifylib.database.orchestration_management import get_audience
-from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     orchestration_management,
 )
-import huxunifylib.database.constants as db_c
+from huxunifylib.database.audit_management import create_audience_audit
+from huxunifylib.database.notification_management import create_notification
+from huxunifylib.database.orchestration_management import get_audience
 
+import huxunify.api.constants as api_c
+from huxunify.api.config import get_config
+from huxunify.api.data_connectors.aws import upload_file
 from huxunify.api.data_connectors.cdp import (
     get_city_ltvs,
     get_demographic_by_state,
 )
 from huxunify.api.data_connectors.okta import get_token_from_request
-from huxunify.api.schema.customers import (
-    CustomersInsightsCitiesSchema,
-    CustomersInsightsStatesSchema,
-)
-from huxunify.api.schema.utils import AUTH401_RESPONSE
-from huxunify.api.config import get_config
-import huxunify.api.constants as api_c
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
@@ -37,6 +34,12 @@ from huxunify.api.route.decorators import (
     api_error_handler,
 )
 from huxunify.api.route.utils import get_db_client
+from huxunify.api.schema.customers import (
+    CustomersInsightsCitiesSchema,
+    CustomersInsightsStatesSchema,
+)
+from huxunify.api.schema.utils import AUTH401_RESPONSE
+from huxunify.api.route.utils import logger
 
 # setup the audiences blueprint
 audience_bp = Blueprint(api_c.AUDIENCE_ENDPOINT, import_name=__name__)
@@ -119,14 +122,10 @@ class AudienceDownload(SwaggerView):
         )
 
         if not audience:
-            return {
-                "message": api_c.AUDIENCE_NOT_FOUND
-            }, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.BAD_REQUEST
 
         cdp = connector_cdp.ConnectorCDP(get_config().CDP_SERVICE)
-        column_set = [api_c.HUX_ID] + list(
-            api_c.DOWNLOAD_TYPES[download_type].keys()
-        )
+        column_set = [api_c.HUX_ID] + list(api_c.DOWNLOAD_TYPES[download_type].keys())
         data_batches = cdp.read_batches(
             location_details={
                 api_c.AUDIENCE_FILTERS: audience.get(api_c.AUDIENCE_FILTERS),
@@ -140,9 +139,7 @@ class AudienceDownload(SwaggerView):
             f"_{audience_id}_{download_type}.csv"
         )
 
-        with open(
-            audience_file_name, "w", newline="", encoding="utf-8"
-        ) as csvfile:
+        with open(audience_file_name, "w", newline="", encoding="utf-8") as csvfile:
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow(api_c.DOWNLOAD_TYPES[download_type].values())
             for dataframe_batch in data_batches:
@@ -154,6 +151,29 @@ class AudienceDownload(SwaggerView):
                     header=False,
                 )
 
+        logger.info(
+            "Uploading generated %s audience file to %s S3 bucket",
+            audience_file_name,
+            get_config().S3_DATASET_BUCKET,
+        )
+        if upload_file(
+            file_name=audience_file_name,
+            bucket=get_config().S3_DATASET_BUCKET,
+            object_name=audience_file_name,
+            user_name=user_name,
+            file_type=api_c.AUDIENCE,
+        ):
+            create_audience_audit(
+                database=database,
+                audience_id=audience_id,
+                download_time=datetime.now(),
+                download_type=download_type,
+                file_name=audience_file_name,
+                user_name=user_name,
+            )
+            logger.info(
+                "Created an audit log for %s audience file creation", audience_file_name
+            )
         audience_file = Path(audience_file_name)
         data = audience_file.read_bytes()
         audience_file.unlink()

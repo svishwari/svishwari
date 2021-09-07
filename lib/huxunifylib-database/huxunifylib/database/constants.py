@@ -356,3 +356,8 @@ FIELD_MAP_ORDER_QUANTITY_12M = "order_quantity_12m"
 FIELD_MAP_ORDER_QUANTITY_13M_24M = "order_quantity_13m_24m"
 
 EMAIL_REGEX = r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
+
+# Audit Logs Defination
+AUDIENCE_AUDIT_COLLECTION = "audit_logs"
+DOWNLOAD_TIME = "download_time"
+FILE_NAME = "file_name"
