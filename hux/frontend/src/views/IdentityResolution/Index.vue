@@ -15,11 +15,10 @@
           />
         </template>
       </page-header>
-
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
     <template>
-      <v-row v-if="!loadingOverview" no-gutters>
+      <v-row no-gutters>
         <metric-card
           v-for="(metric, index) in overview"
           :key="index"
@@ -64,6 +63,22 @@
           </template>
         </metric-card>
       </v-row>
+      <v-row class="px-2 mt-2">
+        <v-col md="12">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="522">
+            <v-card-title class="chart-style pb-12 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5">
+                 ID Resolution matching trends
+                </span>
+              </div>
+            </v-card-title>
+           <IDR-Matching-Trend
+           :map-data="identityMatchingTrend"
+           />
+          </v-card>
+        </v-col>
+      </v-row>
 
       <data-feeds
         v-if="!loadingDataFeeds"
@@ -84,6 +99,7 @@ import MetricCard from "@/components/common/MetricCard"
 import PageHeader from "@/components/PageHeader"
 import Tooltip from "@/components/common/Tooltip.vue"
 import DataFeeds from "./DataFeeds.vue"
+import IDRMatchingTrend from "@/components/common/IDRMatchingTrend/IDRMatchingTrend"
 
 export default {
   name: "IdentityResolution",
@@ -96,6 +112,7 @@ export default {
     PageHeader,
     Tooltip,
     DataFeeds,
+    IDRMatchingTrend
   },
 
   data() {
