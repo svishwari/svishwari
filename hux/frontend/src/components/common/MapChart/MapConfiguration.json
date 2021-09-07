@@ -1,0 +1,32 @@
+{
+  "default_metric": {
+    "key": "name",
+    "label": "Name",
+    "format": "string"
+  },
+  "primary_metric": {
+    "key": "population_percentage",
+    "label": "Population Percentage",
+    "format": "percentage"
+  },
+  "tooltip_metrics": [
+    {
+      "key": "size",
+      "label": "Size",
+      "format": "numeric",
+      "is_Combined_Metric": false
+    },
+    {
+      "key": ["gender_women", "gender_men", "gender_other"],
+      "label": "W/M/O",
+      "format": "percentage",
+      "is_Combined_Metric": true
+    },
+    {
+      "key": "ltv",
+      "label": "LTV",
+      "format": "currency",
+      "is_Combined_Metric": false
+    }
+  ]
+}
