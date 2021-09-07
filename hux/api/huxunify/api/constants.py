@@ -174,6 +174,7 @@ DEMOGRAPHIC = "demo"
 DATE = "date"
 RECORDED = "recorded"
 DIFFERENCE_COUNT = "diff_count"
+EXCLUDE = "exclude"
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
@@ -184,6 +185,7 @@ AWS_HEALTH_TESTS = {
     AWS_SSM_NAME: ["get_parameter", {"Name": "unifieddb_host_alias"}],
     AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
 }
+S3 = "s3"
 
 REQUIRED = "required"
 DELIVERY_SCHEDULE = "delivery_schedule"
