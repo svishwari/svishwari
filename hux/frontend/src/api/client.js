@@ -200,6 +200,13 @@ client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
 }
 
+client["audiences"].downloadAudience = (audienceId, fileType) => {
+  return http.get(`/audiences/${audienceId}/${fileType}`, {
+    timeout: 0,
+    responseType: "blob",
+  })
+}
+
 client["audiences"].demographics = (audienceId) => {
   return http.get(`/audiences/${audienceId}/audience_insights`)
 }
