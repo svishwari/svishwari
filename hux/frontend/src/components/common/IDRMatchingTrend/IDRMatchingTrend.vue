@@ -1,5 +1,5 @@
 <template>
-  <div ref="customerEventChart" class="container-chart">
+  <div ref="trendsChart" class="container-chart">
     <multi-line-chart
       v-model="sourceData"
       :chart-dimensions="chartDimensions"
@@ -79,7 +79,7 @@ export default {
       this.tooltip.y = args.y
     },
     sizeHandler() {
-      if (this.$refs.customerEventChart) {
+      if (this.$refs.trendsChart) {
         this.chartDimensions.width = 1200
         this.chartDimensions.height = 350
       }
