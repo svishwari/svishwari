@@ -287,7 +287,7 @@ export const defineRoutes = (server) => {
         status: requestData.status,
       }
       schema.engagements.find(engagementId).update(payload)
-      return { message: "Successfully inactivated engagement" }
+      return { message: "Successfully deactivated engagement" }
     } else {
       // updating engagement
       return schema.engagements.find(engagementId).update(requestData)
