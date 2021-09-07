@@ -35,6 +35,9 @@ HUX_ID = "hux_id"
 TOP_FEATURES = "top_features"
 LIMIT = "limit"
 OFFSET = "offset"
+SOURCE_NAME = "source_name"
+SOURCE_SIZE = "source_size"
+SOURCE_ID = "source_id"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -85,6 +88,33 @@ AVG_SPENT_MEN = "avg_spent_men"
 AVG_SPENT_OTHER = "avg_spent_other"
 YEAR = "year"
 MONTH = "month"
+MINUTE = "minute"
+HOUR = "hour"
+PERIOD = "period"
+DAY_OF_WEEK = "day_of_week"
+MONTHLY_PERIOD_ITEMS = "monthly_period_items"
+DAY_OF_MONTH = "day_of_month"
+DAILY = "Daily"
+MONTHLY = "Monthly"
+WEEKLY = "Weekly"
+EVERY = "every"
+AM = "AM"
+PM = "PM"
+PERIODICIY = "periodicity"
+MONTHLY_PERIOD_LIST = ["Day", "First", "Second", "Third", "Fourth", "Last"]
+DAY_LIST = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+DAY_OF_MONTH_LIST = [str(x) for x in range(1, 31)] + [
+    "Day",
+    "Weekend",
+    "Weekend day",
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+]
 # TODO: Remove State Names once it connected with CDM
 STATE_NAMES = {
     "AL": "Alabama",
@@ -144,6 +174,7 @@ DEMOGRAPHIC = "demo"
 DATE = "date"
 RECORDED = "recorded"
 DIFFERENCE_COUNT = "diff_count"
+EXCLUDE = "exclude"
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
@@ -154,6 +185,7 @@ AWS_HEALTH_TESTS = {
     AWS_SSM_NAME: ["get_parameter", {"Name": "unifieddb_host_alias"}],
     AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
 }
+S3 = "s3"
 
 REQUIRED = "required"
 DELIVERY_SCHEDULE = "delivery_schedule"
@@ -164,6 +196,7 @@ DISABLED = "disabled"
 SIZE = "size"
 IS_ADDED = "is_added"
 UNKNOWN = "unknown"
+DAY = "day"
 
 STATUS_NOT_DELIVERED = "Not Delivered"
 STATUS_DELIVERED = "Delivered"
@@ -219,6 +252,12 @@ SFMC_CUSTOMER_KEY = "CustomerKey"
 
 # Twilio connector defines
 TWILIO_AUTH_TOKEN = "twilio_auth_token"
+
+# Qualtrics connector defines
+QUALTRICS_API_TOKEN = "qualtrics_api_token"
+QUALTRICS_DATA_CENTER = "qualtrics_data_center"
+QUALTRICS_OWNER_ID = "qualtrics_owner_id"
+QUALTRICS_DIRECTORY_ID = "qualtrics_directory_id"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -296,6 +335,32 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
+    db_c.DELIVERY_PLATFORM_QUALTRICS: {
+        QUALTRICS_API_TOKEN: {
+            NAME: "Auth Token",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        QUALTRICS_DATA_CENTER: {
+            NAME: "Data Center",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        QUALTRICS_OWNER_ID: {
+            NAME: "Owner ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        QUALTRICS_DIRECTORY_ID: {
+            NAME: "Directory ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+    },
 }
 
 # DESTINATION Secret Mapping
@@ -321,6 +386,14 @@ DESTINATION_SECRETS = {
     db_c.DELIVERY_PLATFORM_TWILIO: {
         MONGO: [],
         AWS_SSM_NAME: [TWILIO_AUTH_TOKEN],
+    },
+    db_c.DELIVERY_PLATFORM_QUALTRICS: {
+        MONGO: [
+            QUALTRICS_DIRECTORY_ID,
+            QUALTRICS_DATA_CENTER,
+            QUALTRICS_OWNER_ID,
+        ],
+        AWS_SSM_NAME: [QUALTRICS_API_TOKEN],
     },
 }
 
@@ -403,6 +476,7 @@ DELIVERY_JOB_ID = "delivery_job_id"
 AUDIENCE_PERFORMANCE = "audience-performance"
 AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
 DISPLAY_ADS = "display-ads"
+IS_AD_PLATFORM = "is_ad_platform"
 
 DISPLAY_ADS_METRICS = [
     "spend",
@@ -549,7 +623,7 @@ MODEL_ID_PARAMS = [
     {
         "name": MODEL_ID,
         "description": "Model id",
-        "type": "integer",
+        "type": "string",
         "in": "path",
         "required": True,
         "example": "1",
@@ -612,6 +686,7 @@ MODEL_TYPES_MAPPING = {
     "lifetime value": LTV,
     "propensity to purchase": PURCHASE,
     "propensity to unsubscribe": UNSUBSCRIBE,
+    "unsubscribe": UNSUBSCRIBE,
 }
 
 # CDP DATA SOURCES
@@ -619,6 +694,11 @@ CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 CDP_DATA_SOURCE_IDS = "data_source_ids"
+CDP_DATA_SOURCE_TYPE = "datasource_type"
+
+# Monitoring
+METRICS = "metrics"
+METRICS_ENDPOINT = "/metrics"
 
 # Customers
 CUSTOMER_ID = "customer_id"
@@ -675,7 +755,7 @@ END_DATE_PARAMS = {
 # IDR Fields
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
-DATA_FEEDS = "datafeeds"
+DATA_FEEDS = "data_feeds"
 DATA_FEED = "datafeed"
 INPUT_RECORDS = "input_records"
 OUTPUT_RECORDS = "output_records"
@@ -697,7 +777,7 @@ DIGITAL_IDS_ADDED = "digital_ids_added"
 DIGITAL_IDS_MERGED = "digital_ids_merged"
 MERGE_RATE = "merge_rate"
 RECORDS_SOURCE = "records_source"
-TIME_STAMP = "time_stamp"
+TIMESTAMP = "timestamp"
 STITCHED = "stitched"
 PINNING = "pinning"
 
@@ -722,11 +802,13 @@ ANONYMOUS_IDS_LAMBDA = 5
 
 # IDR Data feeds
 DATAFEED_ID = "datafeed_id"
-DATAFEED_NAME = "datafeed_name"
-DATAFEED_DATA_SOURCE = "data_source_type"
+DATAFEED_DATA_SOURCE_TYPE = "datasource_name"
+DATAFEED_DATA_SOURCE_NAME = "datasource_label"
 DATAFEED_NEW_IDS_COUNT = "new_ids_generated"
-DATAFEED_RECORDS_PROCESSED_COUNT = "num_records_processed"
-DATAFEED_LAST_RUN_DATE = "last_run"
+DATAFEED_RECORDS_PROCESSED_COUNT = "total_rec_processed"
+DATAFEED_LAST_RUN_DATE = "timestamp"
+PINNING_TIMESTAMP = "pinning_timestamp"
+STITCHED_TIMESTAMP = "stitched_timestamp"
 
 # customer event fields
 CUSTOMER_TOTAL_DAILY_EVENT_COUNT = "total_event_count"
@@ -839,6 +921,11 @@ DOWNLOAD_TYPES = {
     },
 }
 
+# CDM API constants
+CDM_CONNECTIONS_ENDPOINT = "connections"
+CDM_IDENTITY_ENDPOINT = "identity"
+DATAFEEDS = "datafeeds"
+
 PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
     {
         ID: 3,
@@ -874,3 +961,26 @@ PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
     }
     for i in range(50)
 ]
+
+PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB = {
+    MODEL_NAME: "Propensity to Purchase",
+    PERFORMANCE_METRIC: {
+        RMSE: -1,
+        AUC: 0.82,
+        PRECISION: 0.81,
+        RECALL: 0.59,
+        CURRENT_VERSION: "22.8.32",
+    },
+    DESCRIPTION: "Predicts the propensity of a customer to make a purchase "
+    "after receiving an email.",
+    MODEL_TYPE: "purchase",
+}
+
+# Connections Data feeds Constants
+PROCESSED_AT = "processed_at"
+RECORDS_PROCESSED = "records_processed"
+RECORDS_RECEIVED = "records_received"
+THIRTY_DAYS_AVG = "thirty_days_avg"
+RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
+
+DEFAULT_DATE_FORMAT = "%Y-%m-%d"

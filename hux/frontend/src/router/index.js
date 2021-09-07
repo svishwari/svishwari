@@ -100,6 +100,16 @@ const routes = [
     },
   },
   {
+    path: "/audiences/:id/update",
+    name: "AudienceUpdate",
+    component: () => import("@/views/Audiences/Configuration.vue"),
+    meta: {
+      layout: "app",
+      title: "Update an Audience",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/audiences/:id/insight",
     name: "AudienceInsight",
     component: () => import("@/views/Audiences/Insight.vue"),
@@ -136,6 +146,16 @@ const routes = [
     meta: {
       layout: "app",
       title: "Connections",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/datasources/:id",
+    name: "DataSourceListing",
+    component: () => import("@/views/DataSources/Listing.vue"),
+    meta: {
+      layout: "app",
+      title: "Data source",
       requiresAuth: true,
     },
   },

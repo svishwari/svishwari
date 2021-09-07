@@ -36,7 +36,6 @@
       v-bind="$attrs"
       autocomplete="off"
       @input="input($event)"
-      @change="change($event)"
       @click:append="$emit('clickAppend')"
       @blur="$emit('blur', TextFieldValue)"
     >
@@ -116,9 +115,6 @@ export default {
   },
 
   methods: {
-    change: function () {
-      // This is a TODO
-    },
     input: function (value) {
       this.$emit("input", value)
     },

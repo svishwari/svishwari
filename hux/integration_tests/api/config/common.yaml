@@ -1,8 +1,0 @@
----
-name: integration test includes
-description: used for sharing anything common in the test scripts
-
-variables:
-  host: "{tavern.env_vars.TAVERN_TEST_HOST}"
-  version: "{tavern.env_vars.TAVERN_TEST_API_VERSION}"
-  token: ""

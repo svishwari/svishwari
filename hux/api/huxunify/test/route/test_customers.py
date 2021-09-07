@@ -15,9 +15,7 @@ import huxunifylib.database.constants as db_c
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.customers import (
-    DataFeedPinning,
     DataFeedDetailsSchema,
-    DataFeedStitched,
     DataFeedSchema,
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
@@ -164,7 +162,6 @@ class TestCustomersOverview(TestCase):
         Test get customers idr overview
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
@@ -289,9 +286,16 @@ class TestCustomersOverview(TestCase):
         Test get IDR Datafeeds
         """
 
-        # TODO: Update after integration of CDM APIs
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
+            f"/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.DATAFEEDS}",
+            json=t_c.IDR_DATAFEEDS_RESPONSE,
+        )
+        self.request_mocker.start()
+
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}",
+            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -299,39 +303,37 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(
             {}, DataFeedSchema().validate(response.json, many=True)
         )
+        for datafeed in response.json:
+            self.assertIn("num_records_processed", datafeed)
+            self.assertIn("new_ids_generated", datafeed)
 
-    @given(datafeed=st.text(alphabet=string.ascii_letters))
-    def test_get_idr_datafeed_report(self, datafeed: str):
+    def test_get_idr_data_feed_details(self) -> None:
         """
-        Test get idr datafeed report
+        Test get idr datafeed details
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
         """
-        if not datafeed:
-            return
+        datafeed_id = 1
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
+            f"/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.DATAFEEDS}/"
+            f"{datafeed_id}",
+            json=t_c.IDR_DATAFEED_DETAILS_RESPONSE,
+        )
+        self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/{datafeed}",
+            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}/"
+            f"{datafeed_id}",
             headers=t_c.STANDARD_HEADERS,
         )
+
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(
-            t_c.validate_schema(DataFeedDetailsSchema(), response.json)
-        )
-        self.assertTrue(
-            t_c.validate_schema(
-                DataFeedPinning(), response.json[api_c.PINNING]
-            )
-        )
-        self.assertTrue(
-            t_c.validate_schema(
-                DataFeedStitched(), response.json[api_c.STITCHED]
-            )
-        )
+        self.assertFalse(DataFeedDetailsSchema().validate(response.json))
 
     def test_get_customers_geo(self):
         """
@@ -459,9 +461,9 @@ class TestCustomersOverview(TestCase):
             response.json["message"],
         )
 
-    def test_get_idr_trends_ytd(self):
+    def test_get_idr_trends(self):
         """
-        Test get matching trends YTD
+        Test get matching trends.
 
         Args:
 
@@ -470,8 +472,9 @@ class TestCustomersOverview(TestCase):
         """
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
-            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/identity/id-count-by"
+            f"-day",
+            json=t_c.IDR_MATCHING_TRENDS_BY_DAY_DATA,
         )
         self.request_mocker.start()
 
@@ -585,7 +588,7 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/city-ltvs",
             json=t_c.CUSTOMERS_INSIGHTS_BY_CITY_RESPONSE,
         )
 
@@ -618,7 +621,7 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/count-by-state",
             json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
         )
 

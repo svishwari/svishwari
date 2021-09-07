@@ -10,11 +10,14 @@ import {
   destinationsDataExtensions,
 } from "./factories/destination"
 import { idrOverview, idrDataFeedReport } from "./factories/identity"
+import { mockDataFeeds } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
+import audienceCSVData from "./factories/audienceCSVData"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
 import demographicsData from "@/api/mock/fixtures/demographicData.js"
+import customerEventData from "@/api/mock/fixtures/customerEventData.js"
 import totalCustomersData from "./fixtures/totalCustomersData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
@@ -22,6 +25,12 @@ import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
 export const defineRoutes = (server) => {
   // data sources
   server.get("/data-sources")
+
+  server.get("/data-sources/:id")
+
+  server.get("/data-sources/:type/datafeeds", () => {
+    return mockDataFeeds(5)
+  })
 
   server.patch("/data-sources", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
@@ -392,6 +401,8 @@ export const defineRoutes = (server) => {
 
   server.get("/customers/overview", () => customersOverview)
 
+  server.get("/customers/:huxId/events", () => customerEventData)
+
   server.get("/customers-insights/geo", () => mapData)
 
   server.get("/customers-insights/demo", () => demographicsData)
@@ -462,6 +473,17 @@ export const defineRoutes = (server) => {
   // audiences
   server.get("/audiences")
 
+  server.get("/audiences/:id/audience_insights", () => {
+    demographicsData.demo = mapData
+    return demographicsData
+  })
+  server.get("/audiences/:id/:type", async () => {
+    // Introduced a delay of 15 seconds to
+    // replicate the API delay in processing the BLOB.
+    await new Promise((r) => setTimeout(r, 15000))
+    return audienceCSVData
+  })
+
   server.get("/audiences/:id", (schema, request) => {
     const id = request.params.id
     const audience = schema.audiences.find(id)
@@ -497,6 +519,22 @@ export const defineRoutes = (server) => {
     return server.create("audience", attrs)
   })
 
+  server.put("/audiences/:id", (schema, request) => {
+    const audienceId = request.params.id
+    const requestData = JSON.parse(request.requestBody)
+    const payload = {
+      name: requestData.name,
+      filters: requestData.filters,
+      destinations: requestData.destinations,
+      // TODO: Need to update the blow 'engagements' update,
+      // once the Mirage Relationships between Audiences and Engagement Model are fixed.
+      // engagements: requestData.engagement_ids.map((engagementId) => {
+      //   return schema.engagements.find(engagementId)
+      // }),
+    }
+    return schema.audiences.find(audienceId).update(payload)
+  })
+
   server.post("/audiences/:id/deliver", () => {
     return { message: "Successfully created delivery jobs" }
   })
@@ -522,6 +560,22 @@ export const defineRoutes = (server) => {
         match_rate: faker.datatype.number({ min: 0, max: 1, precision: 0.001 }),
       }
     })
+  })
+
+  server.get("/audiences/:id/cities", (schema, request) => {
+    let batchNumber = request.queryParams["batch_number"] || 1
+    let batchSize = request.queryParams["batch_size"] || 100
+    let start = batchNumber === 1 ? 0 : (batchNumber - 1) * batchSize
+    let end = batchNumber === 1 ? batchSize : batchNumber * batchSize
+    return schema.geoCities.all().slice(start, end)
+  })
+
+  server.get("/audiences/:id/states", (schema) => {
+    return schema.geoStates.all()
+  })
+
+  server.get("/audiences/:id/countries", (schema) => {
+    return schema.geoCountries.all()
   })
 
   //lookalike audiences

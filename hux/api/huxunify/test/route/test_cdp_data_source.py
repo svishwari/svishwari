@@ -15,7 +15,11 @@ from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
-from huxunify.api.schema.cdp_data_source import CdpDataSourceSchema
+from huxunify.api.schema.cdp_data_source import (
+    CdpDataSourceSchema,
+    DataSourceDataFeedsGetSchema,
+    CdpDataSourceDataFeedSchema,
+)
 from huxunify.app import create_app
 
 
@@ -52,9 +56,9 @@ class CdpDataSourcesTest(TestCase):
         ).start()
 
         # mock request for introspect call
-        request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.start()
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.start()
 
         # stop all mocks in cleanup
         self.addCleanup(mock.patch.stopall)
@@ -388,3 +392,53 @@ class CdpDataSourcesTest(TestCase):
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_get_data_source_data_feed(self) -> None:
+        """
+        Test get data source data feeds endpoint
+
+        Returns:
+
+        """
+        data_source_type = t_c.DATASOURCE_DATA_FEEDS_RESPONSE[api_c.BODY][0][
+            api_c.DATAFEED_DATA_SOURCE_NAME
+        ]
+        data_source_name = t_c.DATASOURCE_DATA_FEEDS_RESPONSE[api_c.BODY][0][
+            api_c.DATAFEED_DATA_SOURCE_TYPE
+        ]
+        # create a data source of type test_data_source
+        create_data_source(
+            self.database,
+            name=data_source_name,
+            category="",
+            source_type=data_source_type,
+        )
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
+            f"/{api_c.CDM_CONNECTIONS_ENDPOINT}/{data_source_type}/"
+            f"{api_c.DATA_FEEDS}",
+            json=t_c.DATASOURCE_DATA_FEEDS_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CDP_DATA_SOURCES_ENDPOINT}/"
+            f"{data_source_type}/{api_c.DATAFEEDS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIn(api_c.NAME, response.json)
+        self.assertIn(api_c.TYPE, response.json)
+        self.assertIn(api_c.DATAFEEDS, response.json)
+
+        self.assertFalse(
+            DataSourceDataFeedsGetSchema().validate(response.json)
+        )
+        self.assertFalse(
+            CdpDataSourceDataFeedSchema().validate(
+                response.json.get(api_c.DATAFEEDS), many=True
+            )
+        )

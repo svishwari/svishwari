@@ -1,9 +1,11 @@
+# pylint: disable=too-many-lines
 """
 Paths for Orchestration API
 """
 from http import HTTPStatus
 from random import uniform
 from typing import Tuple, Union
+from datetime import datetime, timedelta
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
@@ -28,6 +30,7 @@ import huxunifylib.database.constants as db_c
 
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
+    AudienceInsightsGetSchema,
     AudiencePutSchema,
     AudiencePostSchema,
     LookalikeAudiencePostSchema,
@@ -37,7 +40,12 @@ from huxunify.api.schema.orchestration import (
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
 )
-from huxunify.api.data_connectors.cdp import get_customers_overview
+from huxunify.api.data_connectors.cdp import (
+    get_customers_overview,
+    get_demographic_by_state,
+    get_spending_by_gender,
+    get_city_ltvs,
+)
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -51,6 +59,7 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.utils import (
     get_db_client,
     validate_destination_id,
+    group_gender_spending,
 )
 
 # setup the orchestration blueprint
@@ -209,10 +218,27 @@ class AudienceView(SwaggerView):
             database
         )
 
+        # get the facebook delivery platform for lookalikes
+        facebook_destination = (
+            destination_management.get_delivery_platform_by_type(
+                database, db_c.DELIVERY_PLATFORM_FACEBOOK
+            )
+        )
+
         # set the is_lookalike property to True so UI knows it is a lookalike.
         for lookalike in lookalikes:
             lookalike[api_c.LOOKALIKEABLE] = False
             lookalike[api_c.IS_LOOKALIKE] = True
+
+            lookalike[db_c.STATUS] = lookalike.get(
+                db_c.STATUS, db_c.AUDIENCE_STATUS_ERROR
+            )
+            lookalike[db_c.AUDIENCE_LAST_DELIVERED] = lookalike[
+                db_c.CREATE_TIME
+            ]
+            lookalike[db_c.DESTINATIONS] = (
+                [facebook_destination] if facebook_destination else []
+            )
 
         # combine the two lists and serve.
         audiences += lookalikes
@@ -311,6 +337,16 @@ class AudienceGetView(SwaggerView):
             lookalike[db_c.AUDIENCE_FILTERS] = audience[db_c.AUDIENCE_FILTERS]
             lookalike[api_c.IS_LOOKALIKE] = True
 
+            # set original audience attributes for the lookalike.
+            lookalike[api_c.SOURCE_NAME] = audience[db_c.NAME]
+            lookalike[api_c.SOURCE_SIZE] = audience[db_c.SIZE]
+            lookalike[api_c.SOURCE_ID] = lookalike[
+                db_c.LOOKALIKE_SOURCE_AUD_ID
+            ]
+
+            # TODO: HUS-837 change once we can generate real lookalikes from FB.
+            lookalike[api_c.MATCH_RATE] = round(uniform(0.2, 0.9), 2)
+
             # set audience to lookalike
             audience = lookalike
 
@@ -347,7 +383,12 @@ class AudienceGetView(SwaggerView):
             # above to remove empty and not-delivered deliveries
             if api_c.DELIVERIES in engagement:
                 for delivery in engagement[api_c.DELIVERIES]:
-                    delivery[api_c.MATCH_RATE] = round(uniform(0.2, 0.9), 2)
+                    delivery[api_c.MATCH_RATE] = (
+                        round(uniform(0.2, 0.9), 2)
+                        if delivery.get(api_c.IS_AD_PLATFORM, False)
+                        and not audience.get(api_c.IS_LOOKALIKE, False)
+                        else None
+                    )
 
             # set the weighted status for the engagement based on deliveries
             engagement[api_c.STATUS] = weight_delivery_status(engagement)
@@ -380,7 +421,7 @@ class AudienceGetView(SwaggerView):
 
         # Add insights, size.
         audience[api_c.AUDIENCE_INSIGHTS] = customers
-        audience[api_c.SIZE] = customers.get(api_c.TOTAL_CUSTOMERS)
+        audience[api_c.SIZE] = customers.get(api_c.TOTAL_CUSTOMERS, 0)
         audience[
             api_c.LOOKALIKE_AUDIENCES
         ] = destination_management.get_all_delivery_platform_lookalike_audiences(
@@ -390,6 +431,124 @@ class AudienceGetView(SwaggerView):
 
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    orchestration_bp,
+    f"{api_c.AUDIENCE_ENDPOINT}/<audience_id>/{api_c.AUDIENCE_INSIGHTS}",
+    "AudienceInsightsGetView",
+)
+class AudienceInsightsGetView(SwaggerView):
+    """
+    Single Audience Insights Get view class
+    """
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        }
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": AudienceInsightsGetSchema,
+            "description": "Retrieved Audience insights.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve audience insights.",
+            "schema": {
+                "example": {"message": "Failed to retrieve audience insights"},
+            },
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(self, audience_id: str) -> Tuple[dict, int]:
+        """Retrieves an audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (str): Audience ID.
+
+        Returns:
+            Tuple[dict, int]: AudienceInsights, HTTP status.
+
+        """
+
+        token_response = get_token_from_request(request)
+
+        database = get_db_client()
+
+        # get the audience
+        audience_id = ObjectId(audience_id)
+        audience = orchestration_management.get_audience(database, audience_id)
+
+        if not audience:
+            # check if lookalike
+            lookalike = destination_management.get_delivery_platform_lookalike_audience(
+                database, audience_id
+            )
+            if not lookalike:
+                logger.error("Audience with id %s not found.", audience_id)
+                return {
+                    "message": api_c.AUDIENCE_NOT_FOUND
+                }, HTTPStatus.NOT_FOUND
+
+            # grab the source audience ID of the lookalike
+            audience = orchestration_management.get_audience(
+                database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
+            )
+
+        customers = get_customers_overview(
+            token_response[0],
+            {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
+        )
+        audience_insights = {
+            api_c.DEMOGRAPHIC: get_demographic_by_state(
+                token_response[0],
+                {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
+            ),
+            api_c.INCOME: get_city_ltvs(
+                token_response[0],
+                {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
+            ),
+            api_c.SPEND: group_gender_spending(
+                get_spending_by_gender(
+                    token_response[0],
+                    filters={
+                        api_c.AUDIENCE_FILTERS: audience[
+                            api_c.AUDIENCE_FILTERS
+                        ]
+                    },
+                    start_date=str(
+                        datetime.today().date() - timedelta(days=180)
+                    ),
+                    end_date=str(datetime.today().date()),
+                )
+            ),
+            api_c.GENDER: {
+                gender: {
+                    api_c.POPULATION_PERCENTAGE: customers.get(gender, 0),
+                    api_c.SIZE: customers.get(f"{gender}_{api_c.COUNT}", 0),
+                }
+                for gender in api_c.GENDERS
+            },
+        }
+
+        return (
+            AudienceInsightsGetSchema(unknown=INCLUDE).dump(audience_insights),
             HTTPStatus.OK,
         )
 
@@ -699,7 +858,38 @@ class AudiencePutView(SwaggerView):
             f'Audience "{audience_doc[db_c.NAME]}" updated by {user_name}.',
             api_c.ORCHESTRATION_TAG,
         )
-        # TODO : attach the audience to each of the engagements
+
+        # check if any engagements to add, otherwise return.
+        if not body.get(api_c.ENGAGEMENT_IDS):
+            return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
+
+        # remove the audience from existing engagements
+        engagement_deliveries = orchestration_management.get_audience_insights(
+            database,
+            audience_doc[db_c.ID],
+        )
+
+        # process each engagement that the audience is attached to.
+        for engagement in engagement_deliveries:
+            # remove the audience
+            engagement_management.remove_audiences_from_engagement(
+                database,
+                engagement[db_c.ID],
+                user_name,
+                [audience_doc[db_c.ID]],
+            )
+
+        # now attach each audience to the passed in engagements.
+        for engagement_id in body.get(api_c.ENGAGEMENT_IDS):
+            # the append function expects ID for audience _id.
+            audience_doc[db_c.OBJECT_ID] = audience_doc[db_c.ID]
+            engagement_management.append_audiences_to_engagement(
+                database,
+                ObjectId(engagement_id),
+                user_name,
+                [audience_doc],
+            )
+
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
 
@@ -927,6 +1117,8 @@ class SetLookalikeAudience(SwaggerView):
             }, HTTPStatus.NOT_FOUND
 
         try:
+            # set status to error for now.
+            status = api_c.STATUS_ERROR
             # Commented as creating lookalike audience is restricted in facebook
             # as we are using fake customer data
             # timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
@@ -950,6 +1142,7 @@ class SetLookalikeAudience(SwaggerView):
                 "US",
                 user_name,
                 0,  # TODO HUS-801 - set lookalike SIZE correctly.
+                status,
             )
 
         except CustomAudienceDeliveryStatusError:

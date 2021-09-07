@@ -1,4 +1,4 @@
-# pylint: disable=invalid-name,line-too-long
+# pylint: disable=invalid-name,line-too-long,too-many-lines
 """
 purpose of this file is housing shared components for tests
 """
@@ -692,6 +692,83 @@ CUSTOMERS_INSIGHTS_BY_CITIES_RESPONSE = {
     "message": "ok",
 }
 
+IDR_DATAFEEDS_RESPONSE = {
+    "code": 200,
+    "message": "ok",
+    "body": [
+        {
+            "id": "3",
+            "name": "bluecore_email_clicks",
+            "datasource_name": "bluecore",
+            "new_ids_generated": 1159,
+            "total_rec_processed": 1159,
+            "match_rate": 0.888,
+            "timestamp": "2021-08-05T14:44:42.694Z",
+            "datasource_label": "Bluecore",
+        },
+        {
+            "id": "4",
+            "name": "bluecore_email_clicks",
+            "datasource_name": "bluecore",
+            "new_ids_generated": 1133,
+            "total_rec_processed": 1133,
+            "match_rate": 0.825,
+            "timestamp": "2021-08-16T14:45:10.283Z",
+            "datasource_label": "Bluecore",
+        },
+    ],
+}
+
+IDR_DATAFEED_DETAILS_RESPONSE = {
+    "code": 200,
+    "message": "ok",
+    "body": {
+        "pinning": {
+            "input_records": 38,
+            "output_records": 28,
+            "empty_records": 5,
+            "individual_id_match": 5,
+            "household_id_match": 6,
+            "company_id_match": 47,
+            "address_id_match": 35,
+            "db_reads": 9,
+            "db_writes": 21,
+            "filename": "email_analytics_extract_clicks_2021841437.csv",
+            "new_individual_ids": 27,
+            "new_household_ids": 34,
+            "new_company_ids": 46,
+            "new_address_ids": 27,
+            "process_time": 1.46,
+            "pinning_timestamp": "2021-08-05T14:44:42.694Z",
+        },
+        "stitched": {
+            "digital_ids_added": 12,
+            "digital_ids_merged": 21,
+            "match_rate": 66,
+            "merge_rate": 0,
+            "records_source": "input waterfall",
+            "stitched_timestamp": "2021-08-05T14:44:42.694Z",
+        },
+    },
+}
+
+DATASOURCE_DATA_FEEDS_RESPONSE = {
+    "code": 200,
+    "message": "ok",
+    "body": [
+        {
+            "datasource_name": "test_data_source",
+            "datasource_label": "Test data source",
+            "name": "test_datafeed",
+            "records_received": 2000000,
+            "records_processed": 1800000,
+            "thirty_days_avg": 75,
+            "processed_at": "2021-08-05T14:44:42.694Z",
+            "status": "Active",
+        }
+    ],
+}
+
 CUSTOMER_PROFILE_AUDIENCES_RESPONSE = {
     "code": 200,
     "body": [
@@ -899,6 +976,25 @@ AMAZON_ADS_CUSTOMER_DATA = [
         "zip": "9b39d0e97edaca4e11daabe538e7faf8a2bffe5d75afe78327409a2c4a820cde",
     },
 ]
+
+IDR_MATCHING_TRENDS_BY_DAY_DATA = {
+    "code": 200,
+    "message": "ok",
+    api_c.BODY: [
+        {
+            api_c.DAY: "2021-08-01",
+            api_c.UNIQUE_HUX_IDS: 890,
+            api_c.ANONYMOUS_IDS: 97,
+            api_c.KNOWN_IDS: 890,
+        },
+        {
+            api_c.DAY: "2021-08-02",
+            api_c.UNIQUE_HUX_IDS: 906,
+            api_c.ANONYMOUS_IDS: 104,
+            api_c.KNOWN_IDS: 906,
+        },
+    ],
+}
 
 
 def validate_schema(
