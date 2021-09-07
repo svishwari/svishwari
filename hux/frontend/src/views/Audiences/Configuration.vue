@@ -16,7 +16,9 @@
           this audience.
         </div>
 
-        <div class="overview font-weight-regular black--text text--darken-4 mt-8">
+        <div
+          class="overview font-weight-regular black--text text--darken-4 mt-8"
+        >
           Audience overview
         </div>
         <div class="row overview-list mb-0 ml-0 mt-1">
@@ -67,7 +69,8 @@
                     class="
                       mt-1
                       text-caption
-                      black--text text--darken-4
+                      black--text
+                      text--darken-4
                       pt-2
                       input-placeholder
                     "
@@ -77,7 +80,9 @@
                   />
                 </v-col>
                 <v-col cols="8">
-                  <div class="mt-3 ml-15 text-caption black--text text--darken-4">
+                  <div
+                    class="mt-3 ml-15 text-caption black--text text--darken-4"
+                  >
                     Add to an engagement -
                     <i style="tilt">you must have at least one</i>
                     <div class="mt-2 d-flex align-center">
@@ -142,7 +147,13 @@
                     </template>
                     <template
                       #hover-content
-                      class="black--text text--darken-4 shadow pa-2 text-caption"
+                      class="
+                        black--text
+                        text--darken-4
+                        shadow
+                        pa-2
+                        text-caption
+                      "
                     >
                       <v-sheet max-width="240px">
                         The location(s) where Audiences are planned to be run.
@@ -225,7 +236,11 @@
                         >
                       </template>
                     </v-radio>
-                    <v-radio :value="1" color="primary darken-3" :ripple="false">
+                    <v-radio
+                      :value="1"
+                      color="primary darken-3"
+                      :ripple="false"
+                    >
                       <template #label>
                         <span class="black--text text--darken-4">
                           Auto-create a lookalike based on this audience
@@ -251,7 +266,9 @@
                   />
                 </v-col>
                 <v-col col="6" class="pr-14">
-                  <div class="black--text text--darken-4 text-caption">Audience reach</div>
+                  <div class="black--text text--darken-4 text-caption">
+                    Audience reach
+                  </div>
                   <look-alike-slider v-model="lookalikeAudience.value" />
                   <div class="gray--text text-caption pt-4">
                     Audience reach ranges from 1% to 10% of the combined
