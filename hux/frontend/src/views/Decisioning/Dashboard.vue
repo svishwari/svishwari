@@ -37,8 +37,18 @@
                 v-if="metric !== -1"
                 class="model-dashboard__card px-6 py-3 mr-2"
               >
-                <div class="text-overline neroBlack--text">
+                <div
+                  v-if="key === 'current_version'"
+                  class="text-overline neroBlack--text"
+                >
                   {{ metric }}
+                </div>
+                <div
+                  v-else
+                  class="text-overline"
+                  :class="metric < 0.01 ? 'error--text' : 'neroBlack--text'"
+                >
+                  {{ metric.toFixed(2) }}
                 </div>
                 <div
                   v-if="key === 'current_version'"
