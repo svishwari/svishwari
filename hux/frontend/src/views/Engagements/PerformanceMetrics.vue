@@ -28,6 +28,7 @@
               class="icon-border pa-1 ma-2 mr-0"
               @mousedown="changeColorOnSelect()"
               @mouseup="changeColorOnDeselect()"
+              
             >
               mdi-download
             </v-icon>
@@ -70,6 +71,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import CampaignSummary from "../../components/CampaignSummary.vue"
 import DownloadTooltip from "./DownloadTooltip.vue"
 export default {
@@ -338,6 +340,24 @@ export default {
     },
   },
   methods: {
+    // ...mapActions({
+    //   downloadAudienceMetrics: "engagements/fetchAudienceMetrics",
+    // }),
+    // async initiateMetricsDownload() {
+    //   this.alert.type = "Pending"
+    //   this.alert.title = ""
+    //   this.alert.message = `Download has started in background, stay tuned.`
+    //   this.flashAlert = true
+    //   const fileBlob = await this.downloadAudienceMetrics({
+    //     id: this.engagementId,
+    //   })
+    //   const url = window.URL.createObjectURL(
+    //     new Blob([fileBlob.data], {
+    //       type: "text/csv" || "application/octet-stream",
+    //     })
+    //   )
+    //   window.location.assign(url)
+    // },
     fetchKey(obj, key) {
       return obj && obj[key] ? obj[key] : "-"
     },

@@ -180,15 +180,15 @@ client["engagements"].getCampaigns = ({
   )
 }
 
-client["engagements"].downloadAudienceMetrics = (engagementId) => {
-  return http.get(
-    `/engagements/${engagementId}/audience-performance/download`,
-    {
-      timeout: 0,
-      responseType: "blob",
-    }
-  )
-}
+// client["engagements"].downloadAudienceMetrics = (engagementId) => {
+//   return http.get(
+//     `/engagements/${engagementId}/audience-performance/download`,
+//     {
+//       timeout: 0,
+//       responseType: "blob",
+//     }
+//   )
+// }
 //#endregion Engagement custom endpoints
 
 //#region Customer Identity endpoint(s)
