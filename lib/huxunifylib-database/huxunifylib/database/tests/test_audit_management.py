@@ -6,8 +6,6 @@ import mongomock
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import constants as db_c, audit_management
 
-from huxunify.api import constants as api_c
-
 
 class AudienceAuditTest(TestCase):
     """
@@ -32,7 +30,7 @@ class AudienceAuditTest(TestCase):
         audience_audit = audit_management.create_audience_audit(
             database=self.database,
             audience_id="611d12f9d80297f5a7328779",
-            download_type=api_c.GOOGLE_ADS,
+            download_type="google_ads",
             download_time=datetime.now(),
             file_name="09082021003424_611d12f9d80297f5a7328779_google_ads.csv",
         )
