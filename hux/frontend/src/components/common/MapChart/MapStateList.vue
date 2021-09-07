@@ -1,10 +1,14 @@
 <template>
   <div class="list-container">
     <div class="content-style pl-6 pr-4 pb-4">
-      <div v-for="item in mapChartData" :key="item[defaultMetric]" class="sub-props pt-4">
+      <div
+        v-for="item in mapChartData"
+        :key="item[defaultMetric]"
+        class="sub-props pt-4"
+      >
         <span class="subprop-name">{{ item[defaultMetric] }}</span>
         <span class="value ml-2 font-weight-semi-bold">
-         {{ applyFilter(item[primaryMetric.key], primaryMetric.format) }}
+          {{ applyFilter(item[primaryMetric.key], primaryMetric.format) }}
         </span>
       </div>
     </div>
@@ -60,7 +64,7 @@ export default {
         default:
           return this.$options.filters.Empty
       }
-  },
+    },
   },
 }
 </script>

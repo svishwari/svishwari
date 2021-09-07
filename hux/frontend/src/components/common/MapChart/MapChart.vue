@@ -8,7 +8,7 @@
       @tooltipDisplay="toolTipDisplay"
     />
     <map-chart-tooltip
-    :configuration-data="configurationData"
+      :configuration-data="configurationData"
       :position="{
         x: tooltip.x,
         y: tooltip.y,

@@ -95,7 +95,9 @@ export default {
 
       featureCollection.features.forEach((state) => {
         let currentStateDetails = this.chartData.find(
-          (data) => data[this.defaultMetric] == usList.find((us) => us.id == state.id)[this.defaultMetric]
+          (data) =>
+            data[this.defaultMetric] ==
+            usList.find((us) => us.id == state.id)[this.defaultMetric]
         )
         state.properties = currentStateDetails
       })

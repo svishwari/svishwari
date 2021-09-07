@@ -13,9 +13,9 @@
         {{ sourceInput[defaultMetric] }}
       </span>
       <div
-        class="sub-props pt-4"
         v-for="metric in configurationData.tooltip_metrics"
         :key="metric.label"
+        class="sub-props pt-4"
       >
         <span v-if="metric.is_Combined_Metric" class="subprop-name">{{
           metric.label
