@@ -173,8 +173,8 @@ class OrchestrationSchemaTest(TestCase):
         schema = AudienceGetSchema().load(audience)
 
         deliveries = schema[db_c.ENGAGEMENTS_COLLECTION][0][db_c.DELIVERIES]
-        self.assertGreater(deliveries[0][api_c.MATCH_RATE], 0.2)
-        self.assertGreater(deliveries[1][api_c.MATCH_RATE], 0.2)
+        self.assertGreaterEqual(deliveries[0][api_c.MATCH_RATE], 0.2)
+        self.assertGreaterEqual(deliveries[1][api_c.MATCH_RATE], 0.2)
 
     def test_engagement_delivery_history_schema(self) -> None:
         """
