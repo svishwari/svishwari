@@ -3,15 +3,15 @@ Purpose of this file is to house the main application code.
 """
 import logging
 
-from flask import Flask
+from flask import Flask, request
 from flasgger import Swagger
 from flask_cors import CORS
+from prometheus_flask_exporter import PrometheusMetrics
 
 from huxunify.api.config import load_env_vars
 from huxunify.api.route import ROUTES
 from huxunify.api import constants
 from huxunify.api.route.utils import get_health_check
-from huxunify.api.data_connectors.prometheus import PrometheusClient
 
 
 # set config variables
@@ -59,6 +59,39 @@ def configure_flask(flask_app: Flask) -> None:
         raise Exception(desc) from error
 
 
+def monitor_app(flask_app: Flask) -> None:
+    """sets up prometheus monitoring for flask app
+
+    Args:
+        flask_app (Flask): Flask application.
+
+    Returns:
+        None
+
+    """
+
+    metrics = PrometheusMetrics(
+        app=flask_app, defaults_prefix="/api/v1", export_defaults=False
+    )
+
+    metrics.register_default(
+        metrics.counter(
+            name="by_path_counter",
+            description="Request count by request paths",
+            labels={"path": lambda: request.path},
+        )
+    )
+
+    metrics.register_default(
+        metrics.histogram(
+            name="requests_by_status_and_path",
+            description="Response time by status and path",
+            labels={"status": lambda r: r.status_code, "path": lambda: request.path},
+            buckets=(.005, .01, .025, .05, .075, .1, .25, .5, .75, 1.0, 2.5, 5.0)
+        )
+    )
+
+
 def create_app() -> Flask:
     """creates the flask app and blueprints
 
@@ -95,6 +128,9 @@ def create_app() -> Flask:
     # configure flask
     configure_flask(flask_app)
 
+    # monitor flask setup
+    monitor_app(flask_app)
+
     return flask_app
 
 
@@ -111,9 +147,6 @@ if __name__ == "__main__":
 
     # create the API
     app = create_app()
-
-    prometheus_helper = PrometheusClient.instance()
-    prometheus_helper.set_app(app)
 
     # run the API
     app.run(host="0.0.0.0", port=port, debug=True)
