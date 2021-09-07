@@ -130,18 +130,22 @@ def group_perf_metric(perf_metrics: list, metric_type: str) -> dict:
         for name in constants.DISPLAY_ADS_METRICS:
             metric[name] = sum(
                 [
-                    int(item[name])
+                    item[name]
                     for item in perf_metrics
                     if name in item.keys()
+                    and item[name] is not None
+                    and not isinstance(item[name], str)
                 ]
             )
     elif metric_type == constants.EMAIL:
         for name in constants.EMAIL_METRICS:
             metric[name] = sum(
                 [
-                    int(item[name])
+                    item[name]
                     for item in perf_metrics
                     if name in item.keys()
+                    and item[name] is not None
+                    and not isinstance(item[name], str)
                 ]
             )
 
