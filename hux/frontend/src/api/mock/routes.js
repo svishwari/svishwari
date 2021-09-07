@@ -396,7 +396,7 @@ export const defineRoutes = (server) => {
 
   server.get("/customers/overview", () => customersOverview)
 
-  server.get("/customers/:huxId/events", () => customerEventData)
+  server.post("/customers/:huxId/events", () => customerEventData)
 
   server.get("/customers-insights/geo", () => mapData)
 
