@@ -95,6 +95,7 @@ export default {
       let appendCurrencySign = (text) => "$" + text.toLocaleString()
       svg
         .append("g")
+        .classed("xAxis", true)
         .attr("transform", "translate(0," + this.height + ")")
         .call(
           d3Axis
@@ -136,10 +137,7 @@ export default {
             .attr("stroke", "none")
             .attr("stroke-opacity", "0.3")
         )
-      var ticks = d3Select.selectAll(".tick text")
-      ticks.each(function (_, i) {
-        if (i % 2 != 0) d3Select.select(this).remove()
-      })
+
       svg
         .selectAll("myRect")
         .data(this.chartData)

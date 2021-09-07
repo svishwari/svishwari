@@ -23,6 +23,7 @@ from huxunifylib.database.engagement_management import (
 from huxunifylib.database.orchestration_management import (
     create_audience,
     get_audience,
+    get_audience_insights,
 )
 from huxunifylib.database.engagement_audience_management import (
     get_all_engagement_audience_destinations,
@@ -771,11 +772,23 @@ class OrchestrationRouteTest(TestCase):
                     }
                 ],
                 api_c.DESTINATIONS: [],
+                api_c.ENGAGEMENT_IDS: self.engagement_ids,
             },
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(new_name, response.json[db_c.AUDIENCE_NAME])
+
+        # test the audience was appended to engagements
+        audience_engagements = get_audience_insights(
+            self.database,
+            self.audiences[0][db_c.ID],
+        )
+
+        self.assertListEqual(
+            self.engagement_ids,
+            [str(x[db_c.ID]) for x in audience_engagements],
+        )
 
     def test_create_lookalike_audience(self):
         """Test create lookalike audience

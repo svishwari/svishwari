@@ -3,10 +3,12 @@
     <geo-chart
       v-model="mapChartData"
       :chart-dimensions="chartDimensions"
+      :configuration-data="configurationData"
       @cordinates="getCordinates"
       @tooltipDisplay="toolTipDisplay"
     />
     <map-chart-tooltip
+      :configuration-data="configurationData"
       :position="{
         x: tooltip.x,
         y: tooltip.y,
@@ -28,6 +30,10 @@ export default {
   props: {
     mapData: {
       type: Array,
+      required: true,
+    },
+    configurationData: {
+      type: Object,
       required: true,
     },
   },

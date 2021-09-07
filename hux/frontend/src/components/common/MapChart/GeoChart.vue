@@ -30,6 +30,10 @@ export default {
         }
       },
     },
+    configurationData: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -46,7 +50,14 @@ export default {
       },
     }
   },
-
+  computed: {
+    primaryMetric() {
+      return this.configurationData.primary_metric.key
+    },
+    defaultMetric() {
+      return this.configurationData.default_metric.key
+    },
+  },
   watch: {
     chartDimensions: {
       handler() {
@@ -84,13 +95,15 @@ export default {
 
       featureCollection.features.forEach((state) => {
         let currentStateDetails = this.chartData.find(
-          (data) => data.name == usList.find((us) => us.id == state.id).name
+          (data) =>
+            data[this.defaultMetric] ==
+            usList.find((us) => us.id == state.id)[this.defaultMetric]
         )
         state.properties = currentStateDetails
       })
 
       let total_range = featureCollection.features.map(
-        (data) => data.properties.population_percentage
+        (data) => data.properties[this.primaryMetric]
       )
 
       this.minValue = Math.min(...total_range)
@@ -120,7 +133,7 @@ export default {
         .style("stroke", "#1E1E1E")
         .style("stroke-width", "0.5")
         .style("fill", (d) =>
-          colorScale(d.properties.population_percentage * 100)
+          colorScale(d.properties[this.primaryMetric] * 100)
         )
         .attr("fill-opacity", "1")
         .on("mouseover", (d) => applyHoverChanges(d))
@@ -150,7 +163,7 @@ export default {
           .style("stroke", "#1E1E1E")
           .style("stroke-width", "0.5")
           .style("fill", (d) =>
-            colorScale(d.properties.population_percentage * 100)
+            colorScale(d.properties[this.primaryMetric] * 100)
           )
           .attr("fill-opacity", "1")
         this.tooltipDisplay(false)

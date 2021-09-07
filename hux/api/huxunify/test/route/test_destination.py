@@ -281,6 +281,7 @@ class TestDestinationRoutes(TestCase):
         self.assertIn(db_c.DELIVERY_PLATFORM_FACEBOOK, response.json)
         self.assertIn(db_c.DELIVERY_PLATFORM_SFMC, response.json)
         self.assertIn(db_c.DELIVERY_PLATFORM_TWILIO, response.json)
+        self.assertIn(api_c.GOOGLE_ADS, response.json)
 
     def test_validate_facebook_credentials(self):
         """
@@ -421,6 +422,88 @@ class TestDestinationRoutes(TestCase):
             api_c.TYPE: db_c.DELIVERY_PLATFORM_TWILIO,
             api_c.AUTHENTICATION_DETAILS: {
                 api_c.TWILIO_AUTH_TOKEN: "123456",
+            },
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/validate",
+            json=validation_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        validation_failed = {
+            "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+        }
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(validation_failed, response.json)
+
+    @patch(
+        "huxunify.api.route.destination.GoogleConnector",
+        **{"return_value.raiseError.side_effect": Exception()},
+    )
+    def test_validate_google_ads_credentials(self, mock_connector: MagicMock):
+        """
+        Test successful authentication with google ads
+
+        Args:
+            mock_connector (MagicMock): MagicMock of the Google Connector
+
+        Returns:
+        """
+
+        validation_details = {
+            api_c.TYPE: db_c.DELIVERY_PLATFORM_GOOGLE,
+            api_c.AUTHENTICATION_DETAILS: {
+                api_c.GOOGLE_DEVELOPER_TOKEN: "dZ%z4Mt4UY=7L6?jSanGsS",
+                api_c.GOOGLE_REFRESH_TOKEN: "Z8BOWqt^PKVVNl&uOoQcL7",
+                api_c.GOOGLE_CLIENT_CUSTOMER_ID: "527-056-0438",
+                api_c.GOOGLE_CLIENT_ID: "ChM263kbF!f.apps.googleusercontent.com",
+                api_c.GOOGLE_CLIENT_SECRET: "Gbh+@gUzVc658Ry=6kgw@_Bx",
+            },
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/validate",
+            json=validation_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        validation_succeeded = {
+            "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS,
+        }
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(validation_succeeded, response.json)
+
+    @patch(
+        "huxunify.api.route.destination.GoogleConnector",
+        **{"return_value.raiseError.side_effect": Exception()},
+    )
+    def test_validate_google_ads_credentials_failure_bad_credentials(
+        self, mock_connector: MagicMock
+    ):
+        """
+        Test failure to authenticate with qualtrics due to bad credentials
+
+        Args:
+            mock_connector (MagicMock): MagicMock of the Qualtrics Connector
+
+        Returns:
+
+        """
+
+        # mocks the return value of the TwilioConnector Constructor
+        mock_connector.side_effect = Exception("Test Exception")
+
+        validation_details = {
+            api_c.TYPE: db_c.DELIVERY_PLATFORM_GOOGLE,
+            api_c.AUTHENTICATION_DETAILS: {
+                api_c.GOOGLE_DEVELOPER_TOKEN: "dZ%z4Mt4UY=7L6?jSanGsS",
+                api_c.GOOGLE_REFRESH_TOKEN: "Z8BOWqt^PKVVNl&uOoQcL7",
+                api_c.GOOGLE_CLIENT_CUSTOMER_ID: "527-056-0438",
+                api_c.GOOGLE_CLIENT_ID: "ChM263kbF!f.apps.googleusercontent.com",
+                api_c.GOOGLE_CLIENT_SECRET: "Gbh+@gUzVc658Ry=6kgw@_Bx",
             },
         }
 
