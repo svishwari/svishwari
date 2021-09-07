@@ -391,7 +391,7 @@ DESTINATION_CONSTANTS = {
         },
         GOOGLE_CLIENT_ID: {
             NAME: "Client ID",
-            TYPE: "text",
+            TYPE: "password",
             REQUIRED: True,
             DESCRIPTION: None,
         },

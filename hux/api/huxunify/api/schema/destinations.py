@@ -421,7 +421,7 @@ class GoogleAdsAuthConstants(Schema):
         validate=must_not_be_blank,
         example={
             api_c.NAME: "Google Developer Token",
-            api_c.TYPE: "text",
+            api_c.TYPE: "password",
             api_c.REQUIRED: True,
             api_c.DESCRIPTION: None,
         },
@@ -431,7 +431,7 @@ class GoogleAdsAuthConstants(Schema):
         validate=must_not_be_blank,
         example={
             api_c.NAME: "Google Refresh Token",
-            api_c.TYPE: "text",
+            api_c.TYPE: "password",
             api_c.REQUIRED: True,
             api_c.DESCRIPTION: None,
         },
@@ -451,7 +451,7 @@ class GoogleAdsAuthConstants(Schema):
         validate=must_not_be_blank,
         example={
             api_c.NAME: "Google Client ID",
-            api_c.TYPE: "text",
+            api_c.TYPE: "password",
             api_c.REQUIRED: True,
             api_c.DESCRIPTION: None,
         },
@@ -461,7 +461,7 @@ class GoogleAdsAuthConstants(Schema):
         validate=must_not_be_blank,
         example={
             api_c.NAME: "Google Client Secret",
-            api_c.TYPE: "text",
+            api_c.TYPE: "password",
             api_c.REQUIRED: True,
             api_c.DESCRIPTION: None,
         },
