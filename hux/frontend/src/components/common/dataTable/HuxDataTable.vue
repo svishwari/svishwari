@@ -26,7 +26,7 @@
           ></slot>
         </template>
         <template v-for="h in columns" v-slot:[`header.${h.value}`]>
-          <tooltip v-if="h.tooltipValue" :key="h.value">
+          <tooltip v-if="h.tooltipValue" :key="h.id">
             <template #label-content>
               {{ h.text }}
             </template>
@@ -40,11 +40,11 @@
             <!-- TODO: find a better solution and remove v-html -->
             <span :key="h.value" v-html="h.text" />
           </template>
-          <tooltip v-if="h.hoverTooltip" :key="h.value" position-top>
+          <tooltip v-if="h.hoverTooltip" :key="h.id" position-top>
             <template #label-content>
               <icon
                 v-if="h.hoverTooltip"
-                :key="h.value"
+                :key="h.id"
                 type="info"
                 :size="12"
                 class="ml-1"
