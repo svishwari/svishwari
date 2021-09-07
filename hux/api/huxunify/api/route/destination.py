@@ -18,12 +18,14 @@ from huxunifylib.util.general.const import (
     FacebookCredentials,
     SFMCCredentials,
     TwilioCredentials,
+    GoogleCredentials,
     QualtricsCredentials,
 )
 from huxunifylib.connectors import (
     FacebookConnector,
     SFMCConnector,
     TwilioConnector,
+    GoogleConnector,
     QualtricsConnector,
     AudienceAlreadyExists,
 )
@@ -41,6 +43,7 @@ from huxunify.api.schema.destinations import (
     SFMCAuthCredsSchema,
     FacebookAuthCredsSchema,
     TwilioAuthCredsSchema,
+    GoogleAdsAuthCredsSchema,
     QualtricsAuthCredsSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -320,6 +323,11 @@ class DestinationPutView(SwaggerView):
             == db_c.DELIVERY_PLATFORM_QUALTRICS
         ):
             QualtricsAuthCredsSchema().load(auth_details)
+        elif (
+            destination[db_c.DELIVERY_PLATFORM_TYPE]
+            == db_c.DELIVERY_PLATFORM_GOOGLE
+        ):
+            GoogleAdsAuthCredsSchema().load(auth_details)
 
         if auth_details:
             # store the secrets for the updated authentication details
@@ -441,7 +449,7 @@ class DestinationValidatePostView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
-    # pylint: disable=bare-except
+    # pylint: disable=bare-except,too-many-return-statements
     @api_error_handler(
         custom_message={"message": api_c.DESTINATION_AUTHENTICATION_FAILED}
     )
@@ -544,6 +552,35 @@ class DestinationValidatePostView(SwaggerView):
                 }, HTTPStatus.OK
 
             logger.error("Could not validate Qualtrics successfully.")
+        elif body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_GOOGLE:
+            google_connector = GoogleConnector(
+                auth_details={
+                    GoogleCredentials.GOOGLE_DEVELOPER_TOKEN.value: body.get(
+                        api_c.AUTHENTICATION_DETAILS
+                    ).get(api_c.GOOGLE_DEVELOPER_TOKEN),
+                    GoogleCredentials.GOOGLE_REFRESH_TOKEN.value: body.get(
+                        api_c.AUTHENTICATION_DETAILS
+                    ).get(api_c.GOOGLE_REFRESH_TOKEN),
+                    GoogleCredentials.GOOGLE_CLIENT_CUSTOMER_ID.value: body.get(
+                        api_c.AUTHENTICATION_DETAILS
+                    ).get(
+                        api_c.GOOGLE_CLIENT_CUSTOMER_ID
+                    ),
+                    GoogleCredentials.GOOGLE_CLIENT_ID.value: body.get(
+                        api_c.AUTHENTICATION_DETAILS
+                    ).get(api_c.GOOGLE_CLIENT_ID),
+                    GoogleCredentials.GOOGLE_CLIENT_SECRET.value: body.get(
+                        api_c.AUTHENTICATION_DETAILS
+                    ).get(api_c.GOOGLE_CLIENT_SECRET),
+                }
+            )
+            if google_connector.check_connection():
+                logger.info("Google Ads destination validated successfully.")
+                return {
+                    "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
+                }, HTTPStatus.OK
+
+            logger.error("Could not validate Google Ads successfully.")
 
         else:
             logger.error(
