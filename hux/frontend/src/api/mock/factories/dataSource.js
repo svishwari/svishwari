@@ -41,6 +41,6 @@ export const mockDataFeeds = (num = 3) => {
   return {
     name: "Bluecore",
     type: "bluecore",
-    data_feeds: Array.from({ length: num }, dataFeed),
+    datafeeds: Array.from({ length: num }, dataFeed),
   }
 }

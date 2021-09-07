@@ -174,6 +174,7 @@ DEMOGRAPHIC = "demo"
 DATE = "date"
 RECORDED = "recorded"
 DIFFERENCE_COUNT = "diff_count"
+EXCLUDE = "exclude"
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
@@ -184,6 +185,7 @@ AWS_HEALTH_TESTS = {
     AWS_SSM_NAME: ["get_parameter", {"Name": "unifieddb_host_alias"}],
     AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
 }
+S3 = "s3"
 
 REQUIRED = "required"
 DELIVERY_SCHEDULE = "delivery_schedule"
@@ -621,7 +623,7 @@ MODEL_ID_PARAMS = [
     {
         "name": MODEL_ID,
         "description": "Model id",
-        "type": "integer",
+        "type": "string",
         "in": "path",
         "required": True,
         "example": "1",
@@ -684,6 +686,7 @@ MODEL_TYPES_MAPPING = {
     "lifetime value": LTV,
     "propensity to purchase": PURCHASE,
     "propensity to unsubscribe": UNSUBSCRIBE,
+    "unsubscribe": UNSUBSCRIBE,
 }
 
 # CDP DATA SOURCES
@@ -691,6 +694,7 @@ CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 CDP_DATA_SOURCE_IDS = "data_source_ids"
+CDP_DATA_SOURCE_TYPE = "datasource_type"
 
 # Monitoring
 METRICS = "metrics"
@@ -751,7 +755,7 @@ END_DATE_PARAMS = {
 # IDR Fields
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
-DATA_FEEDS = "datafeeds"
+DATA_FEEDS = "data_feeds"
 DATA_FEED = "datafeed"
 INPUT_RECORDS = "input_records"
 OUTPUT_RECORDS = "output_records"
@@ -920,7 +924,7 @@ DOWNLOAD_TYPES = {
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
 CDM_IDENTITY_ENDPOINT = "identity"
-CDM_DATAFEEDS = "datafeeds"
+DATAFEEDS = "datafeeds"
 
 PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
     {
@@ -971,5 +975,12 @@ PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB = {
     "after receiving an email.",
     MODEL_TYPE: "purchase",
 }
+
+# Connections Data feeds Constants
+PROCESSED_AT = "processed_at"
+RECORDS_PROCESSED = "records_processed"
+RECORDS_RECEIVED = "records_received"
+THIRTY_DAYS_AVG = "thirty_days_avg"
+RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"

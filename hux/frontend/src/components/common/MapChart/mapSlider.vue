@@ -23,6 +23,10 @@ export default {
       type: Array,
       required: false,
     },
+    configurationData: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -30,9 +34,14 @@ export default {
       maxValue: "-%",
     }
   },
+  computed: {
+    primaryMetric() {
+      return this.configurationData.primary_metric.key
+    },
+  },
   async mounted() {
     await this.mapData
-    let total_range = this.mapData.map((data) => data.population_percentage)
+    let total_range = this.mapData.map((data) => data[this.primaryMetric])
     this.minValue = this.$options.filters.Percentage(0)
     this.maxValue = this.$options.filters.Percentage(Math.max(...total_range))
   },

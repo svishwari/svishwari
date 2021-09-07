@@ -204,6 +204,13 @@ client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
 }
 
+client["audiences"].downloadAudience = (audienceId, fileType) => {
+  return http.get(`/audiences/${audienceId}/${fileType}`, {
+    timeout: 0,
+    responseType: "blob",
+  })
+}
+
 client["audiences"].demographics = (audienceId) => {
   return http.get(`/audiences/${audienceId}/audience_insights`)
 }
@@ -255,8 +262,8 @@ client["models"].lift = (id) => {
   return http.get(`/models/${id}/lift`)
 }
 
-client["models"].drift = (id, data) => {
-  return http.post(`/models/${id}/drift`, data)
+client["models"].drift = (id) => {
+  return http.get(`/models/${id}/drift`)
 }
 
 client["models"].modelFeatures = (id) => {
