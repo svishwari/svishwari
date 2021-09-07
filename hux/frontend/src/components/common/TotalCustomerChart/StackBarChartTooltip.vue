@@ -4,6 +4,7 @@
     tile
     :style="{
       transform: `translate(${sourceInput.xPosition}px, ${sourceInput.yPosition}px)`,
+      left: sourceInput.isEndingBar ? '-136px' : '49px',
     }"
     class="mx-auto tooltip-style"
   >
@@ -72,13 +73,12 @@ export default {
 .tooltip-style {
   @extend .box-shadow-3;
   border-radius: 0px;
-  padding: 7px 14px 12px 14px;
-  max-width: 200px;
+  padding: 8px 8px 15px 8px;
+  max-width: 172px;
   height: 112px;
   z-index: 1;
   border-radius: 0px !important;
   position: absolute;
-  left: 47px;
   top: -38px;
   .value-container {
     margin-top: 2px;

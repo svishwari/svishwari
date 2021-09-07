@@ -9,38 +9,18 @@ from unittest import TestCase, mock
 import mongomock
 import requests_mock
 from bson import ObjectId
-from flask_marshmallow import Schema
-from marshmallow import ValidationError
 
 from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
-from huxunify.api.schema.cdp_data_source import CdpDataSourceSchema
+from huxunify.api.schema.cdp_data_source import (
+    CdpDataSourceSchema,
+    DataSourceDataFeedsGetSchema,
+    CdpDataSourceDataFeedSchema,
+)
 from huxunify.app import create_app
-
-
-def validate_schema(
-    schema: Schema, response_json: dict, is_multiple: bool = False
-) -> bool:
-    """
-    Validate if the response confirms with the given schema
-
-    Args:
-        schema (Schema): Instance of the Schema to validate against
-        response_json (dict): Response json as dict
-        is_multiple (bool): If response is a collection of objects
-
-    Returns:
-        (bool): True/False
-    """
-
-    try:
-        schema.load(response_json, many=is_multiple)
-        return True
-    except ValidationError:
-        return False
 
 
 class CdpDataSourcesTest(TestCase):
@@ -76,9 +56,9 @@ class CdpDataSourcesTest(TestCase):
         ).start()
 
         # mock request for introspect call
-        request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.start()
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.start()
 
         # stop all mocks in cleanup
         self.addCleanup(mock.patch.stopall)
@@ -118,7 +98,9 @@ class CdpDataSourcesTest(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(validate_schema(CdpDataSourceSchema(), response.json))
+        self.assertTrue(
+            t_c.validate_schema(CdpDataSourceSchema(), response.json)
+        )
         self.assertEqual(valid_response, response.json)
 
     def test_get_all_data_sources_success(self):
@@ -131,8 +113,6 @@ class CdpDataSourcesTest(TestCase):
 
         """
 
-        is_multiple = True
-
         valid_response = self.data_sources
 
         response = self.test_client.get(
@@ -142,7 +122,9 @@ class CdpDataSourcesTest(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
-            validate_schema(CdpDataSourceSchema(), response.json, is_multiple)
+            t_c.validate_schema(
+                CdpDataSourceSchema(), response.json, is_multiple=True
+            )
         )
         self.assertEqual(valid_response, response.json)
 
@@ -202,7 +184,9 @@ class CdpDataSourcesTest(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(validate_schema(CdpDataSourceSchema(), response.json))
+        self.assertTrue(
+            t_c.validate_schema(CdpDataSourceSchema(), response.json)
+        )
         self.assertDictContainsSubset(valid_response, response.json)
 
     def test_get_data_source_by_id_invalid_id(self):
@@ -383,7 +367,7 @@ class CdpDataSourcesTest(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         for record in response.json:
-            self.assertTrue(validate_schema(CdpDataSourceSchema(), record))
+            self.assertTrue(t_c.validate_schema(CdpDataSourceSchema(), record))
 
     def test_patch_data_source_invalid_params(self) -> None:
         """
@@ -408,3 +392,53 @@ class CdpDataSourcesTest(TestCase):
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_get_data_source_data_feed(self) -> None:
+        """
+        Test get data source data feeds endpoint
+
+        Returns:
+
+        """
+        data_source_type = t_c.DATASOURCE_DATA_FEEDS_RESPONSE[api_c.BODY][0][
+            api_c.DATAFEED_DATA_SOURCE_NAME
+        ]
+        data_source_name = t_c.DATASOURCE_DATA_FEEDS_RESPONSE[api_c.BODY][0][
+            api_c.DATAFEED_DATA_SOURCE_TYPE
+        ]
+        # create a data source of type test_data_source
+        create_data_source(
+            self.database,
+            name=data_source_name,
+            category="",
+            source_type=data_source_type,
+        )
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
+            f"/{api_c.CDM_CONNECTIONS_ENDPOINT}/{data_source_type}/"
+            f"{api_c.DATA_FEEDS}",
+            json=t_c.DATASOURCE_DATA_FEEDS_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CDP_DATA_SOURCES_ENDPOINT}/"
+            f"{data_source_type}/{api_c.DATAFEEDS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIn(api_c.NAME, response.json)
+        self.assertIn(api_c.TYPE, response.json)
+        self.assertIn(api_c.DATAFEEDS, response.json)
+
+        self.assertFalse(
+            DataSourceDataFeedsGetSchema().validate(response.json)
+        )
+        self.assertFalse(
+            CdpDataSourceDataFeedSchema().validate(
+                response.json.get(api_c.DATAFEEDS), many=True
+            )
+        )

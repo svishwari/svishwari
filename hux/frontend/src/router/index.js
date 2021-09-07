@@ -60,6 +60,16 @@ const routes = [
     },
   },
   {
+    path: "/engagements/:id/update",
+    name: "EngagementUpdate",
+    component: () => import("@/views/Engagements/Configuration/Index.vue"),
+    meta: {
+      layout: "app",
+      title: "Edit an Engagement",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/engagements/:id",
     name: "EngagementDashboard",
     component: () => import("@/views/Engagements/Dashboard"),
@@ -86,6 +96,16 @@ const routes = [
     meta: {
       layout: "app",
       title: "Add an Audience",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/audiences/:id/update",
+    name: "AudienceUpdate",
+    component: () => import("@/views/Audiences/Configuration.vue"),
+    meta: {
+      layout: "app",
+      title: "Update an Audience",
       requiresAuth: true,
     },
   },
@@ -126,6 +146,16 @@ const routes = [
     meta: {
       layout: "app",
       title: "Connections",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/datasources/:id",
+    name: "DataSourceListing",
+    component: () => import("@/views/DataSources/Listing.vue"),
+    meta: {
+      layout: "app",
+      title: "Data source",
       requiresAuth: true,
     },
   },

@@ -23,12 +23,16 @@
 <script>
 import LineAreaChartTooltip from "@/components/common/GenderSpendChart/LineAreaChartTooltip"
 import LineAreaChart from "@/components/common/GenderSpendChart/LineAreaChart"
-//TODO: API Integration
-import data from "./genderSpendChart.json"
 
 export default {
   name: "GenderSpendChart",
   components: { LineAreaChart, LineAreaChartTooltip },
+  props: {
+    data: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       show: false,
@@ -48,7 +52,7 @@ export default {
   },
   computed: {
     modificationData() {
-      let dataValue = data.spend
+      let dataValue = this.data
       let areaChart = []
       let areaChartData = []
 
@@ -132,7 +136,7 @@ export default {
   line-height: 19px;
 }
 .container {
-  height: 350px;
+  height: 500px;
   padding: 0px !important;
 }
 </style>

@@ -42,18 +42,18 @@
         >
           <v-col md="10" class="pa-0">
             <div class="condition-card">
-              <div class="condition-container">
+              <div class="condition-container pl-2">
                 <div class="condition-items col-10 pa-0">
                   <hux-dropdown
                     :selected="condition.attribute"
-                    :items="attributeOptions"
+                    :items="attributeOptions()"
                     label="Select attribute"
                     @on-select="onSelect('attribute', condition, $event)"
                   />
                   <hux-dropdown
                     v-if="isText(condition)"
                     label="Select operator"
-                    :items="operatorOptions"
+                    :items="operatorOptions(condition)"
                     :selected="condition.operator"
                     @on-select="onSelect('operator', condition, $event)"
                   />
@@ -214,6 +214,22 @@ export default {
       ruleAttributes: "audiences/audiencesRules",
     }),
 
+    lastIndex() {
+      return this.rules.length - 1
+    },
+  },
+  async mounted() {
+    await this.getAudiencesRules()
+    this.updateSizes()
+  },
+  methods: {
+    ...mapActions({
+      getRealtimeSize: "audiences/fetchFilterSize",
+      getAudiencesRules: "audiences/fetchConstants",
+    }),
+    isText(condition) {
+      return condition.attribute ? condition.attribute.type === "text" : false
+    },
     /**
      * This attributeOptions is transforming the API attributeRules into the Options Array
      *
@@ -261,26 +277,25 @@ export default {
         })
       } else return []
     },
-    operatorOptions() {
-      return Object.keys(this.ruleAttributes.text_operators).map((key) => ({
-        key: key,
-        name: this.ruleAttributes.text_operators[key],
-      }))
-    },
-    lastIndex() {
-      return this.rules.length - 1
-    },
-  },
-  async mounted() {
-    await this.getAudiencesRules()
-  },
-  methods: {
-    ...mapActions({
-      getRealtimeSize: "audiences/fetchFilterSize",
-      getAudiencesRules: "audiences/fetchConstants",
-    }),
-    isText(condition) {
-      return condition.attribute ? condition.attribute.type === "text" : false
+    operatorOptions(condition) {
+      // Filter out only two options (equals and does_not_equals) for attribute type 'gender'
+      if (condition.attribute.key === "gender") {
+        return Object.keys(this.ruleAttributes.text_operators)
+          .map((key) => {
+            if (key.includes("equal")) {
+              return {
+                key: key,
+                name: this.ruleAttributes.text_operators[key],
+              }
+            }
+          })
+          .filter(Boolean)
+      } else {
+        return Object.keys(this.ruleAttributes.text_operators).map((key) => ({
+          key: key,
+          name: this.ruleAttributes.text_operators[key],
+        }))
+      }
     },
     async triggerSizing(condition, triggerOverallSize = true) {
       condition.awaitingSize = true
@@ -320,6 +335,12 @@ export default {
         let triggerOverallSize = rule.conditions.length - 1 === i ? true : false
         this.triggerSizing(rule.conditions[i], triggerOverallSize)
       }
+    },
+
+    updateSizes() {
+      this.rules.forEach((rule) => {
+        this.triggerSizingForRule(rule)
+      })
     },
 
     async getOverallSize() {
@@ -464,6 +485,10 @@ export default {
           .hux-dropdown {
             .v-btn__content {
               color: var(--v-gray-base);
+            }
+            button {
+              margin: 0 8px 0 0 !important;
+              min-width: 170px !important;
             }
           }
           .avatar-menu {

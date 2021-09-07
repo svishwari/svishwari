@@ -1,311 +1,325 @@
 <template>
-  <page class="white create-audience-wrap" max-width="100%">
-    <div>
-      <div class="heading font-weight-light neroBlack--text">
-        Add an audience
-      </div>
-      <div class="sub-heading text-h6 neroBlack--text">
-        Build a target audience from the data you own. Add the attributes you
-        want to involve in this particular audience and where you wish to send
-        this audience.
-      </div>
+  <div>
+    <v-progress-linear
+      v-if="loading"
+      :active="loading"
+      :indeterminate="loading"
+    />
+    <page class="white create-audience-wrap" max-width="100%">
+      <div>
+        <div class="heading font-weight-light neroBlack--text">
+          {{ !isEdit ? "Add" : "Update" }} an audience
+        </div>
+        <div class="sub-heading text-h6 neroBlack--text">
+          Build a target audience from the data you own. Add the attributes you
+          want to involve in this particular audience and where you wish to send
+          this audience.
+        </div>
 
-      <div class="overview font-weight-regular neroBlack--text mt-8">
-        Audience overview
-      </div>
-      <div class="row overview-list mb-0 ml-0 mt-1">
-        <metric-card
-          v-for="(item, i) in overviewListItems"
-          :key="i"
-          class="list-item mr-3"
-          :grow="i === 0 ? 2 : 1"
-          :title="item.title"
-          :icon="item.icon"
-          :height="80"
-        >
-          <template #subtitle-extended>
-            <tooltip>
-              <template #label-content>
-                <span class="font-weight-semi-bold">
-                  {{ getFormattedValue(item) | Empty }}
-                </span>
-              </template>
-              <template #hover-content>
-                {{ item.subtitle | Empty }}
-              </template>
-            </tooltip>
-          </template>
-        </metric-card>
-      </div>
-      <v-divider class="divider mt-2 mb-9"></v-divider>
-    </div>
-
-    <div class="timeline-wrapper">
-      <v-form ref="form" v-model="isFormValid" class="ml-0" lazy-validation>
-        <!-- TODO: this can be moved Configuration folder -->
-        <form-steps>
-          <form-step
-            :step="1"
-            label="General information"
-            class="neroBlack--text step-1"
+        <div class="overview font-weight-regular neroBlack--text mt-8">
+          Audience overview
+        </div>
+        <div class="row overview-list mb-0 ml-0 mt-1">
+          <metric-card
+            v-for="(item, i) in overviewListItems"
+            :key="i"
+            class="list-item mr-3"
+            :grow="i === 0 ? 2 : 1"
+            :title="item.title"
+            :icon="item.icon"
+            :height="80"
           >
-            <v-row class="pt-1 mt-n10">
-              <v-col cols="4">
-                <text-field
-                  v-model="audience.audienceName"
-                  placeholder-text="What is the name for this audience ?"
-                  height="40"
-                  label-text="Audience name"
-                  background-color="white"
-                  required
-                  class="
-                    mt-1
-                    text-caption
-                    neroBlack--text
-                    pt-2
-                    input-placeholder
-                  "
-                  :rules="audienceNamesRules"
-                  help-text="This audience will appear in the delivered destinations as the provided Audience name. In Facebook it will appear as the provided Audience name with the timestamp of delivery."
-                  icon="mdi-information-outline"
+            <template #subtitle-extended>
+              <tooltip>
+                <template #label-content>
+                  <span class="font-weight-semi-bold">
+                    {{ getFormattedValue(item) | Empty }}
+                  </span>
+                </template>
+                <template #hover-content>
+                  {{ item.subtitle | Empty }}
+                </template>
+              </tooltip>
+            </template>
+          </metric-card>
+        </div>
+        <v-divider class="divider mt-2 mb-9"></v-divider>
+      </div>
+
+      <div class="timeline-wrapper">
+        <v-form ref="form" v-model="isFormValid" class="ml-0" lazy-validation>
+          <!-- TODO: this can be moved Configuration folder -->
+          <form-steps>
+            <form-step
+              :step="1"
+              label="General information"
+              class="neroBlack--text step-1"
+            >
+              <v-row class="pt-1 mt-n10">
+                <v-col cols="4">
+                  <text-field
+                    v-model="audience.audienceName"
+                    placeholder-text="What is the name for this audience ?"
+                    height="40"
+                    label-text="Audience name"
+                    background-color="white"
+                    required
+                    class="
+                      mt-1
+                      text-caption
+                      neroBlack--text
+                      pt-2
+                      input-placeholder
+                    "
+                    :rules="audienceNamesRules"
+                    help-text="This audience will appear in the delivered destinations as the provided Audience name. In Facebook it will appear as the provided Audience name with the timestamp of delivery."
+                    icon="mdi-information-outline"
+                  />
+                </v-col>
+                <v-col cols="8">
+                  <div class="mt-3 ml-15 text-caption neroBlack--text">
+                    Add to an engagement -
+                    <i style="tilt">you must have at least one</i>
+                    <div class="mt-2 d-flex align-center">
+                      <span @click="openAttachEngagementsDrawer()">
+                        <icon
+                          class="add-icon cursor-pointer"
+                          type="add"
+                          :size="41"
+                        />
+                      </span>
+                      <div>
+                        <v-chip
+                          v-for="item in selectedEngagements"
+                          :key="item.id"
+                          :close="isMinEngagementSelected"
+                          small
+                          class="mx-2 my-1 font-weight-semi-bold"
+                          text-color="primary"
+                          color="pillBlue"
+                          close-icon="mdi-close"
+                          @click:close="detachEngagement(item)"
+                        >
+                          {{ item.name }}
+                        </v-chip>
+                      </div>
+                    </div>
+                  </div>
+                </v-col>
+              </v-row>
+            </form-step>
+
+            <form-step
+              :step="2"
+              label="Select attribute(s)"
+              optional="- Optional"
+              class="neroBlack--text step-2"
+            >
+              <v-col class="pa-0">
+                <attribute-rules
+                  ref="filters"
+                  :rules="attributeRules"
+                  @updateOverview="(data) => mapCDMOverview(data)"
                 />
               </v-col>
-              <v-col cols="8">
-                <div class="mt-3 ml-15 text-caption neroBlack--text">
-                  Add to an engagement -
-                  <i style="tilt">you must have at least one</i>
-                  <div class="mt-2 d-flex align-center">
-                    <span @click="engagementDrawer = !engagementDrawer">
+            </form-step>
+
+            <form-step
+              :step="3"
+              label="Select destination(s)"
+              optional="- Optional"
+              :border="!isLookAlikeCreateable ? 'inactive' : ''"
+              class="neroBlack--text step-3"
+            >
+              <template slot="label">
+                <h5 class="text-h5 d-flex align-start">
+                  Select destination(s)
+                  <tooltip>
+                    <template #label-content>
+                      <v-icon color="primary" :size="12" class="ml-1 mb-2 mr-1">
+                        mdi-information-outline
+                      </v-icon>
+                    </template>
+                    <template
+                      #hover-content
+                      class="white neroBlack--text shadow pa-2 text-caption"
+                    >
+                      <v-sheet max-width="240px">
+                        The location(s) where Audiences are planned to be run.
+                      </v-sheet>
+                    </template>
+                  </tooltip>
+                </h5>
+              </template>
+
+              <v-row>
+                <v-col cols="12" class="pt-2">
+                  <div class="d-flex align-center">
+                    <span @click="openSelectDestinationsDrawer()">
                       <icon
                         class="add-icon cursor-pointer"
                         type="add"
                         :size="41"
                       />
                     </span>
-                    <div>
-                      <v-chip
-                        v-for="item in selectedEngagements"
-                        :key="item.id"
-                        :close="isMinEngagementSelected"
-                        small
-                        class="mx-2 my-1 font-weight-semi-bold"
-                        text-color="primary"
-                        color="pillBlue"
-                        close-icon="mdi-close"
-                        @click:close="detachEngagement(item)"
-                      >
-                        {{ item.name }}
-                      </v-chip>
-                    </div>
-                  </div>
-                </div>
-              </v-col>
-            </v-row>
-          </form-step>
-
-          <form-step
-            :step="2"
-            label="Select attribute(s)"
-            optional="- Optional"
-            class="neroBlack--text step-2"
-          >
-            <v-col class="pa-0">
-              <attribute-rules
-                :rules="attributeRules"
-                @updateOverview="(data) => mapCDMOverview(data)"
-              />
-            </v-col>
-          </form-step>
-
-          <form-step
-            :step="3"
-            label="Select destination(s)"
-            optional="- Optional"
-            :border="!isLookAlikeCreateable ? 'inactive' : ''"
-            class="neroBlack--text step-3"
-          >
-            <template slot="label">
-              <h5 class="text-h5 d-flex align-start">
-                Select destination(s)
-                <tooltip>
-                  <template #label-content>
-                    <v-icon color="primary" :size="12" class="ml-1 mb-2 mr-1">
-                      mdi-information-outline
-                    </v-icon>
-                  </template>
-                  <template
-                    #hover-content
-                    class="white neroBlack--text shadow pa-2 text-caption"
-                  >
-                    <v-sheet max-width="240px">
-                      The location(s) where Audiences are planned to be run.
-                    </v-sheet>
-                  </template>
-                </tooltip>
-              </h5>
-            </template>
-
-            <v-row>
-              <v-col cols="12" class="pt-2">
-                <div class="d-flex align-center">
-                  <span @click="openSelectDestinationsDrawer()">
-                    <icon
-                      class="add-icon cursor-pointer"
-                      type="add"
-                      :size="41"
-                    />
-                  </span>
-                  <tooltip
-                    v-for="destination in selectedDestinations"
-                    :key="destination.id"
-                  >
-                    <template #label-content>
-                      <div class="destination-logo-wrapper">
-                        <div class="logo-wrapper">
-                          <logo
-                            class="added-logo ml-2 svg-icon"
-                            :type="destination.type"
-                            :size="24"
-                          />
-                          <logo
-                            class="delete-icon"
-                            type="delete"
-                            @click.native="removeDestination(destination)"
-                          />
+                    <tooltip
+                      v-for="destination in selectedDestinations"
+                      :key="destination.id"
+                    >
+                      <template #label-content>
+                        <div class="destination-logo-wrapper">
+                          <div class="logo-wrapper">
+                            <logo
+                              class="added-logo ml-2 svg-icon"
+                              :type="destination.type"
+                              :size="24"
+                            />
+                            <logo
+                              class="delete-icon"
+                              type="delete"
+                              @click.native="removeDestination(destination)"
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </template>
-                    <template #hover-content>
-                      <div class="d-flex align-center">
-                        Remove {{ destination.name }}
-                      </div>
-                    </template>
-                  </tooltip>
-                </div>
-              </v-col>
-            </v-row>
-          </form-step>
+                      </template>
+                      <template #hover-content>
+                        <div class="d-flex align-center">
+                          Remove {{ destination.name }}
+                        </div>
+                      </template>
+                    </tooltip>
+                  </div>
+                </v-col>
+              </v-row>
+            </form-step>
 
-          <form-step
-            :step="4"
-            label="Create a lookalike audience"
-            :optional="
-              !isLookAlikeCreateable
-                ? '- Enabled if Facebook is added as a destination'
-                : ''
-            "
-            :disabled="!isLookAlikeCreateable"
-            class="neroBlack--text"
-          >
-            <div v-if="isLookAlikeCreateable" class="dark--text">
-              Would you like to create a lookalike audience from this audience?
-              This will create a one-off new audience in Facebook when this<br />
-              audience is first delivered.
-            </div>
-            <v-row v-if="isLookAlikeCreateable">
-              <v-col col="12">
-                <v-radio-group v-model="isLookAlikeNeeeded" column mandatory>
-                  <v-radio
-                    :value="0"
-                    color="pantoneBlue"
-                    class="pb-3"
-                    :ripple="false"
-                  >
-                    <template #label>
-                      <span class="neroBlack--text">Nope! Not interested</span>
-                    </template>
-                  </v-radio>
-                  <v-radio :value="1" color="pantoneBlue" :ripple="false">
-                    <template #label>
-                      <span class="neroBlack--text">
-                        Auto-create a lookalike based on this audience
-                      </span>
-                    </template>
-                  </v-radio>
-                </v-radio-group>
-              </v-col>
-            </v-row>
-            <v-row
-              v-if="isLookAlikeCreateable && isLookAlikeNeeeded"
-              class="mt-0"
+            <form-step
+              v-if="isLookAlikeCreateable"
+              :step="4"
+              label="Create a lookalike audience"
+              :optional="
+                !isLookAlikeCreateable
+                  ? '- Enabled if Facebook is added as a destination'
+                  : ''
+              "
+              class="neroBlack--text"
             >
-              <v-col col="6" class="pr-14">
-                <text-field
-                  v-model="lookalikeAudience.name"
-                  placeholder-text="What is the name for this new lookalike audience?"
-                  height="40"
-                  label-text="Lookalike audience name"
-                  background-color="white"
-                  required
-                  class="text-caption neroBlack--text"
-                />
-              </v-col>
-              <v-col col="6" class="pr-14">
-                <div class="neroBlack--text text-caption">Audience reach</div>
-                <look-alike-slider v-model="lookalikeAudience.value" />
-                <div class="gray--text text-caption pt-4">
-                  Audience reach ranges from 1% to 10% of the combined
-                  population of your selected locations. A 1% lookalike consists
-                  of the people most similar to your lookalike source.
-                  Increasing the percentage creates a bigger, broader audience.
-                </div>
-              </v-col>
-            </v-row>
-          </form-step>
-        </form-steps>
-      </v-form>
+              <div v-if="isLookAlikeCreateable" class="dark--text">
+                Would you like to create a lookalike audience from this
+                audience? This will create a one-off new audience in Facebook
+                when this<br />
+                audience is first delivered.
+              </div>
+              <v-row v-if="isLookAlikeCreateable">
+                <v-col col="12">
+                  <v-radio-group v-model="isLookAlikeNeeeded" column mandatory>
+                    <v-radio
+                      :value="0"
+                      color="pantoneBlue"
+                      class="pb-3"
+                      :ripple="false"
+                    >
+                      <template #label>
+                        <span class="neroBlack--text"
+                          >Nope! Not interested</span
+                        >
+                      </template>
+                    </v-radio>
+                    <v-radio :value="1" color="pantoneBlue" :ripple="false">
+                      <template #label>
+                        <span class="neroBlack--text">
+                          Auto-create a lookalike based on this audience
+                        </span>
+                      </template>
+                    </v-radio>
+                  </v-radio-group>
+                </v-col>
+              </v-row>
+              <v-row
+                v-if="isLookAlikeCreateable && isLookAlikeNeeeded"
+                class="mt-0"
+              >
+                <v-col col="6" class="pr-14">
+                  <text-field
+                    v-model="lookalikeAudience.name"
+                    placeholder-text="What is the name for this new lookalike audience?"
+                    height="40"
+                    label-text="Lookalike audience name"
+                    background-color="white"
+                    required
+                    class="text-caption neroBlack--text"
+                  />
+                </v-col>
+                <v-col col="6" class="pr-14">
+                  <div class="neroBlack--text text-caption">Audience reach</div>
+                  <look-alike-slider v-model="lookalikeAudience.value" />
+                  <div class="gray--text text-caption pt-4">
+                    Audience reach ranges from 1% to 10% of the combined
+                    population of your selected locations. A 1% lookalike
+                    consists of the people most similar to your lookalike
+                    source. Increasing the percentage creates a bigger, broader
+                    audience.
+                  </div>
+                </v-col>
+              </v-row>
+            </form-step>
+          </form-steps>
+        </v-form>
 
-      <hux-footer max-width="inherit">
-        <template #left>
-          <huxButton
-            variant="white"
-            is-tile
-            width="94"
-            height="40"
-            @click.native="$router.go(-1)"
-          >
-            <span class="primary--text">Cancel</span>
-          </huxButton>
-        </template>
-        <template #right>
-          <huxButton
-            variant="primary"
-            is-tile
-            width="94"
-            height="44"
-            :is-disabled="!isAudienceFormValid"
-            @click="createAudience()"
-          >
-            Create
-          </huxButton>
-        </template>
-      </hux-footer>
-    </div>
+        <hux-footer max-width="inherit">
+          <template #left>
+            <huxButton
+              variant="white"
+              is-tile
+              width="94"
+              height="40"
+              @click.native="$router.go(-1)"
+            >
+              <span class="primary--text">Cancel</span>
+            </huxButton>
+          </template>
+          <template #right>
+            <huxButton
+              variant="primary"
+              is-tile
+              width="94"
+              height="44"
+              :is-disabled="!isAudienceFormValid"
+              @click="createAudience()"
+            >
+              {{ !isEdit ? "Create" : "Update" }}
+            </huxButton>
+          </template>
+        </hux-footer>
+      </div>
 
-    <!-- Add destination workflow -->
-    <select-destinations-drawer
-      v-model="selectedDestinations"
-      :toggle="showSelectDestinationsDrawer"
-      @onToggle="(val) => (showSelectDestinationsDrawer = val)"
-      @onSalesforceAdd="openSalesforceExtensionDrawer"
-    />
+      <!-- Add destination workflow -->
+      <select-destinations-drawer
+        ref="selectDestinations"
+        v-model="selectedDestinations"
+        :toggle="showSelectDestinationsDrawer"
+        @onToggle="(val) => (showSelectDestinationsDrawer = val)"
+        @onSalesforceAdd="openSalesforceExtensionDrawer"
+      />
 
-    <!-- Salesforce extension workflow -->
-    <destination-data-extension-drawer
-      v-model="selectedDestinations"
-      :toggle="showSalesforceExtensionDrawer"
-      :destination="salesforceDestination"
-      @onToggle="(val) => (showSalesforceExtensionDrawer = val)"
-      @onBack="openSelectDestinationsDrawer"
-    />
+      <!-- Salesforce extension workflow -->
+      <destination-data-extension-drawer
+        v-model="selectedDestinations"
+        :toggle="showSalesforceExtensionDrawer"
+        :destination="salesforceDestination"
+        @onToggle="(val) => (showSalesforceExtensionDrawer = val)"
+        @onBack="openSelectDestinationsDrawer"
+      />
 
-    <!-- Engagement workflow -->
-    <attach-engagement
-      v-model="engagementDrawer"
-      :final-engagements="selectedEngagements"
-      @onEngagementChange="setSelectedEngagements"
-    />
-  </page>
+      <!-- Engagement workflow -->
+      <attach-engagement
+        ref="selectEngagements"
+        v-model="engagementDrawer"
+        :final-engagements="selectedEngagements"
+        @onEngagementChange="setSelectedEngagements"
+      />
+    </page>
+  </div>
 </template>
 
 <script>
@@ -361,7 +375,8 @@ export default {
       showSelectDestinationsDrawer: false,
       showSalesforceExtensionDrawer: false,
       salesforceDestination: {},
-
+      isEdit: false,
+      audienceId: "",
       engagementDrawer: false,
       audience: {
         name: null,
@@ -426,9 +441,14 @@ export default {
   async mounted() {
     this.loading = true
     await this.getOverview()
-    if (this.$route.params.id) await this.getAudienceById(this.$route.params.id)
-    await this.getAudiencesRules()
     this.mapCDMOverview(this.overview)
+    if (this.$route.name === "AudienceUpdate") {
+      this.audienceId = this.$route.params.id
+      this.isEdit = true
+      await this.getAudienceById(this.audienceId)
+      const data = this.getAudience(this.audienceId)
+      this.mapAudienceData(data)
+    }
     this.loading = false
   },
 
@@ -436,7 +456,7 @@ export default {
     ...mapActions({
       fetchEngagements: "engagements/getAll",
       saveAudience: "audiences/add",
-      getAudiencesRules: "audiences/fetchConstants",
+      updateAudience: "audiences/update",
       getAudienceById: "audiences/getAudienceById",
       getOverview: "customers/getOverview",
     }),
@@ -449,7 +469,14 @@ export default {
 
     openSelectDestinationsDrawer() {
       this.closeAllDrawers()
+      this.$refs.selectDestinations.fetchDependencies()
       this.showSelectDestinationsDrawer = true
+    },
+
+    openAttachEngagementsDrawer() {
+      this.closeAllDrawers()
+      this.$refs.selectEngagements.fetchDependencies()
+      this.engagementDrawer = true
     },
 
     openSalesforceExtensionDrawer(destination) {
@@ -581,7 +608,17 @@ export default {
         filters: filtersArray,
         name: this.audience.audienceName,
       }
-      const response = await this.saveAudience(payload)
+      let response = {}
+      if (!this.isEdit) {
+        response = await this.saveAudience(payload)
+      } else {
+        payload["engagement_ids"] = payload.engagements
+        delete payload["engagements"]
+        response = await this.updateAudience({
+          id: this.audienceId,
+          payload: payload,
+        })
+      }
       this.$router.push({
         name: "AudienceInsight",
         params: { id: response.id },
@@ -593,6 +630,63 @@ export default {
     },
     validateForm(value) {
       this.addDestinationFormValid = value
+    },
+    getAttributeOption(attribute_key, options) {
+      for (let opt of options) {
+        if (opt.menu && opt.menu.length > 0) {
+          return opt.menu.filter((menuOpt) => menuOpt.key === attribute_key)[0]
+        } else if (opt.key === attribute_key) {
+          return opt
+        }
+      }
+    },
+    mapAudienceData(data) {
+      const _audienceObject = JSON.parse(JSON.stringify(data))
+      _audienceObject.audienceName = _audienceObject.name
+      // Mapping the filters of audience.
+      const attributeOptions = this.$refs.filters.attributeOptions()
+      _audienceObject.attributeRules = _audienceObject.filters.map(
+        (filter) => ({
+          id: Math.floor(Math.random() * 1024).toString(16),
+          operand: filter.section_aggregator === "ALL",
+          conditions: filter.section_filters.map((cond) => ({
+            id: Math.floor(Math.random() * 1024).toString(16),
+            attribute: cond.field,
+            operator: cond.type === "range" ? "" : cond.type,
+            text: cond.type !== "range" ? cond.value : "",
+            range: cond.type === "range" ? cond.value : [],
+          })),
+        })
+      )
+      _audienceObject.attributeRules.forEach((section) => {
+        section.conditions.forEach((cond) => {
+          cond.attribute = this.getAttributeOption(
+            cond.attribute,
+            attributeOptions
+          )
+          let _operators = this.$refs.filters.operatorOptions(cond)
+          cond.operator =
+            cond.operator !== "range"
+              ? _operators.filter((opt) => opt.key === cond.operator)[0]
+              : cond.operator
+          this.$refs.filters.triggerSizing(cond, false)
+        })
+      })
+      this.selectedEngagements = _audienceObject.engagements.map((eng) => ({
+        id: eng.id,
+        name: eng.name,
+      }))
+      this.selectDestinations = _audienceObject.destinations
+        ? _audienceObject.destinations.map((dest) => ({
+            id: dest.id,
+            type: dest.delivery_platform_type,
+            name: dest.name,
+          }))
+        : []
+      this.$set(this, "audience", _audienceObject)
+      this.$nextTick(function () {
+        this.$refs.filters.getOverallSize()
+      })
     },
   },
 }
@@ -719,11 +813,17 @@ export default {
     }
     .form-steps {
       .step-1 {
+        .form-step__label {
+          padding-bottom: 14px;
+        }
         .form-step__content {
           padding-bottom: 25px !important;
         }
       }
       .step-2 {
+        .form-step__label {
+          padding-bottom: 7px;
+        }
         .form-step__content {
           padding-top: 0px !important;
           margin-top: 0px;
@@ -731,6 +831,9 @@ export default {
         }
       }
       .step-3 {
+        .form-step__label {
+          padding-bottom: 6px;
+        }
         .form-step__content {
           padding-top: 0px !important;
           margin-top: 0px;

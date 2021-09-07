@@ -232,7 +232,7 @@
                     />
                   </div>
                 </v-row>
-                <v-row v-if="isRecurring" class="delivery-schedule ml-0 mt-8">
+                <v-row v-if="isRecurring" class="delivery-schedule ml-0 mt-6">
                   <hux-schedule-picker v-model="schedule" />
                 </v-row>
               </v-form>
@@ -331,7 +331,7 @@ export default {
   data() {
     return {
       localDrawer: this.value,
-      toggleSortIcon: false,
+      toggleSortIcon: true,
       engagements: [],
       loading: false,
       viewStep: 1,
@@ -377,21 +377,20 @@ export default {
     },
   },
 
-  async mounted() {
-    this.loading = true
-    await this.fetchEngagements()
-    this.engagements = JSON.parse(
-      JSON.stringify(this.$store.getters["engagements/list"])
-    )
-    this.sortEngagements()
-    this.loading = false
-  },
-
   methods: {
     ...mapActions({
       fetchEngagements: "engagements/getAll",
       addEngagementToDB: "engagements/add",
     }),
+    async fetchDependencies() {
+      this.loading = true
+      await this.fetchEngagements()
+      this.engagements = JSON.parse(
+        JSON.stringify(this.$store.getters["engagements/list"])
+      )
+      this.sortEngagements()
+      this.loading = false
+    },
     onStartDateSelect(val) {
       this.selectedStartDate = val
       this.selectedEndDate = null
@@ -457,7 +456,7 @@ export default {
           .length > 0
       ) {
         if (this.selectedEngagements.length !== 1) {
-          const deselectedId = this.selectedEngagements.indexOf(
+          const deselectedId = this.selectedEngagements.findIndex(
             (eng) => eng.id === engagement.id
           )
 

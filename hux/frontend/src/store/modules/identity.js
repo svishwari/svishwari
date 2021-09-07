@@ -59,13 +59,13 @@ const PINNING = {
   household_id_match: "Household ID match",
   input_records: "Input records",
   individual_id_match: "Individual ID match",
-  date_time: "Date & time",
+  pinning_timestamp: "Date & time",
   process_time: "Process time in seconds",
   new_individual_ids: "New individual IDs",
 }
 
 const STITCHED = {
-  time_stamp: "Time stamp",
+  stitched_timestamp: "Time stamp",
   records_source: "Records source",
   merge_rate: "Merge rate",
   match_rate: "Match rate",
@@ -81,6 +81,7 @@ const state = {
   dataFeeds: {},
 
   dataFeedReports: {},
+
   matchingTrend: [],
 }
 
@@ -90,10 +91,17 @@ const getters = {
       return {
         title: METRICS[metric].title,
         description: METRICS[metric].description,
-        value: state.overview[metric],
+        value:
+          "overview" in state.overview
+            ? state.overview["overview"][metric]
+            : null,
         format: METRICS[metric].format,
       }
     })
+  },
+
+  dateRange: (state) => {
+    return "overview" in state.overview ? state.overview["date_range"] : null
   },
 
   dataFeeds: (state) => Object.values(state.dataFeeds),
@@ -145,9 +153,12 @@ const mutations = {
 }
 
 const actions = {
-  async getOverview({ commit }) {
+  async getOverview({ commit }, { startDate, endDate }) {
     try {
-      const response = await api.idr.overview()
+      const response = await api.idr.overview({
+        start_date: startDate,
+        end_date: endDate,
+      })
       commit("SET_OVERVIEW", response.data)
     } catch (error) {
       handleError(error)
@@ -155,9 +166,12 @@ const actions = {
     }
   },
 
-  async getDataFeeds({ commit }) {
+  async getDataFeeds({ commit }, { startDate, endDate }) {
     try {
-      const response = await api.idr.datafeeds()
+      const response = await api.idr.datafeeds({
+        start_date: startDate,
+        end_date: endDate,
+      })
       commit("SET_DATA_FEEDS", response.data)
     } catch (error) {
       handleError(error)
@@ -178,9 +192,12 @@ const actions = {
     }
   },
 
-  async getMatchingTrend({ commit }) {
+  async getMatchingTrend({ commit }, { startDate, endDate }) {
     try {
-      const response = await api.idr.matchingTrend()
+      const response = await api.idr.matchingTrend({
+        start_date: startDate,
+        end_date: endDate,
+      })
       commit("SET_MATCHINGTREND", response.data)
     } catch (error) {
       handleError(error)

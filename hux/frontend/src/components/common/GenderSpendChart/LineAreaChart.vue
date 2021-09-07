@@ -74,17 +74,25 @@ export default {
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
-      let genders = [
-        { label: "Women", xValue: 0 },
-        { label: "Men", xValue: 35 },
-        { label: "Other", xValue: 60 },
-      ]
+      let genders = []
+      let colorCodes = []
+      if (this.areaChartData.length === 0) {
+        genders = [{ label: "no data selected", xValue: 0 }]
 
-      let colorCodes = [
-        "rgba(0, 85, 135, 1)",
-        "rgba(12, 157, 219, 1)",
-        "rgba(66, 239, 253, 1)",
-      ]
+        colorCodes = ["rgba(208, 208, 206, 1)"]
+      } else {
+        genders = [
+          { label: "Women", xValue: 0 },
+          { label: "Men", xValue: 38 },
+          { label: "Other", xValue: 67 },
+        ]
+
+        colorCodes = [
+          "rgba(0, 85, 135, 1)",
+          "rgba(12, 157, 219, 1)",
+          "rgba(66, 239, 253, 1)",
+        ]
+      }
 
       let color = d3Scale
         .scaleOrdinal()
@@ -101,10 +109,10 @@ export default {
         .attr("height", this.height)
 
       let strokeWidth = 1.5
-      let margin = { top: 0, bottom: 20, left: 40, right: 20 }
+      let margin = { top: 10, bottom: 20, left: 40, right: 30 }
       let chart = svg
         .append("g")
-        .attr("transform", `translate(${margin.left},0)`)
+        .attr("transform", `translate(${margin.left},10)`)
 
       let width =
         +svg.attr("width") - margin.left - margin.right - strokeWidth * 2
@@ -112,10 +120,7 @@ export default {
 
       let grp = chart
         .append("g")
-        .attr(
-          "transform",
-          `translate(-${margin.left - strokeWidth},-${margin.top})`
-        )
+        .attr("transform", `translate(-${margin.left - strokeWidth},0)`)
 
       let stack = d3Shape
         .stack()
@@ -143,7 +148,8 @@ export default {
       let yScale = d3Scale
         .scaleLinear()
         .range([height, 0])
-        .domain([0, Math.max(...this.yValueData) + 500])
+        .domain([0, d3Array.max(this.yValueData, (d) => d)])
+        .nice(4)
 
       let xScale = d3Scale
         .scaleTime()
@@ -172,7 +178,7 @@ export default {
         .attr("transform", `translate(${margin.left},0)`)
         .style("fill", (d, i) => colorCodes[i])
         .attr("stroke-width", 2)
-        .attr("fill-opacity", 0.5)
+        .attr("fill-opacity", 0.2)
         .attr("d", (d) => area(d))
 
       let lineStock = d3Shape
@@ -193,11 +199,12 @@ export default {
         .append("g")
         .attr("transform", `translate(0,${height})`)
         .attr("fill", "#4f4f4f")
+        .classed("xAxis", true)
         .call(
           d3Axis
             .axisBottom(xScale)
             .ticks(this.areaChartData.length)
-            .tickFormat(d3TimeFormat.timeFormat("%b '%y"))
+            .tickFormat(d3TimeFormat.timeFormat("%m/%d/%y"))
             .tickValues(
               this.dateData.map(function (d) {
                 return d
@@ -212,11 +219,19 @@ export default {
         .append("g")
         .attr("transform", "translate(0, 0)")
         .attr("fill", "#4f4f4f")
+        .classed("yAxis", true)
         .call(d3Axis.axisLeft(yScale).ticks(4).tickFormat(appendyAxisFormat))
         .call((g) => g.selectAll(".tick line").attr("stroke", "#ECECEC"))
         .call((g) => g.selectAll("path").attr("stroke", "#ECECEC"))
         .style("font-size", 12)
 
+      d3Select
+        .selectAll(".xAxis .tick text")
+        .attr("x", 0)
+        .attr("y", 11)
+        .style("color", "#4F4F4F")
+
+      d3Select.selectAll(".yAxis .tick text").style("color", "#4F4F4F")
       svg
         .append("rect")
         .attr("width", width)
@@ -244,49 +259,51 @@ export default {
       let mousemove = (mouseEvent) => {
         svg.selectAll(".hover-circle").remove()
         this.tooltipDisplay(false)
-        let data = this.dateData
-        let x0 = xScale.invert(d3Select.pointer(mouseEvent)[0])
+        if (this.areaChartData.length !== 0) {
+          let data = this.dateData
+          let x0 = xScale.invert(d3Select.pointer(mouseEvent)[0])
 
-        let i = bisectDate(data, x0, 1)
-        let d0 = data[i - 1]
-        let d1 = data[i] || {}
-        let d = x0 - d0 > d1 - x0 ? d1 : d0
-        let finalXCoordinate = xScale(d) + 40
-        let dateD = this.$options.filters.Date(d, "DD/MM/YY")
-        let yData
-        let dataToolTip = this.areaChartData.find(
-          (element) =>
-            this.$options.filters.Date(new Date(element.date), "DD/MM/YY") ==
-            dateD
-        )
+          let i = bisectDate(data, x0, 1)
+          let d0 = data[i - 1]
+          let d1 = data[i] || {}
+          let d = x0 - d0 > d1 - x0 ? d1 : d0
+          let finalXCoordinate = xScale(d) + 40
+          let dateD = this.$options.filters.Date(d, "DD/MM/YY")
+          let yData
+          let dataToolTip = this.areaChartData.find(
+            (element) =>
+              this.$options.filters.Date(new Date(element.date), "DD/MM/YY") ==
+              dateD
+          )
 
-        svg
-          .selectAll(".hover-line-y")
-          .attr("x1", finalXCoordinate)
-          .attr("x2", finalXCoordinate)
-          .attr("y1", 0)
-          .attr("y2", height)
-          .style("display", "block")
+          svg
+            .selectAll(".hover-line-y")
+            .attr("x1", finalXCoordinate)
+            .attr("x2", finalXCoordinate)
+            .attr("y1", margin.top)
+            .attr("y2", height + margin.top)
+            .style("display", "block")
 
-        svg.selectAll(".dot").each(function () {
-          if (this.getAttribute("cx") == finalXCoordinate) {
-            let yPosition = this.getAttribute("cy")
-            yData = yPosition
-            svg
-              .append("circle")
-              .classed("hover-circle", true)
-              .attr("cx", finalXCoordinate)
-              .attr("cy", yPosition)
-              .attr("r", 6)
-              .style("stroke", this.getAttribute("stroke"))
-              .style("stroke-opacity", "1")
-              .style("fill", "white")
-              .style("pointer-events", "none")
-          }
-        })
-        dataToolTip.xPosition = finalXCoordinate
-        dataToolTip.yPosition = yData
-        this.tooltipDisplay(true, dataToolTip)
+          svg.selectAll(".dot").each(function () {
+            if (this.getAttribute("cx") == finalXCoordinate) {
+              let yPosition = this.getAttribute("cy")
+              yData = yPosition
+              svg
+                .append("circle")
+                .classed("hover-circle", true)
+                .attr("cx", finalXCoordinate)
+                .attr("cy", yPosition)
+                .attr("r", 5.5)
+                .style("stroke", this.getAttribute("stroke"))
+                .style("stroke-opacity", "1")
+                .style("fill", "white")
+                .style("pointer-events", "none")
+            }
+          })
+          dataToolTip.xPosition = finalXCoordinate
+          dataToolTip.yPosition = yData
+          this.tooltipDisplay(true, dataToolTip)
+        }
       }
 
       stackedValues.forEach(function (layer, index) {
@@ -294,9 +311,9 @@ export default {
           svg
             .append("circle")
             .attr("class", "dot")
-            .attr("r", 3.5)
+            .attr("r", 2.5)
             .attr("cx", () => xScale(new Date(points.data.date)) + 40)
-            .attr("cy", () => yScale(points[1]))
+            .attr("cy", () => yScale(points[1]) + margin.top)
             .attr("data", () => points.data)
             .style("fill", colorCodes[index])
             .attr("stroke", colorCodes[index])
@@ -339,7 +356,7 @@ export default {
         .attr("y", 9)
         .attr("dy", ".55em")
         .attr("class", "neroBlack--text")
-        .style("font-size", 6)
+        .style("font-size", "6px")
         .style("text-anchor", "start")
         .text(function (d) {
           return d.label

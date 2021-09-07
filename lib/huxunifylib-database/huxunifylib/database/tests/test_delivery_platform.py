@@ -797,6 +797,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             "US",
             "Kam Chancellor",
             31,
+            c.AUDIENCE_STATUS_ERROR,
         )
 
         self.assertTrue(doc is not None)
@@ -807,6 +808,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.LOOKALIKE_AUD_SIZE_PERCENTAGE in doc)
         self.assertEqual(doc[c.CREATED_BY], "Kam Chancellor")
         self.assertEqual(doc[c.SIZE], 31)
+        self.assertEqual(doc[c.STATUS], c.AUDIENCE_STATUS_ERROR)
 
         delivery_job_doc = dpm.set_delivery_job(
             self.database,
@@ -1463,7 +1465,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         doc = dpm.set_campaign_activity(
             database=self.database,
             delivery_platform_id=ObjectId(),
-            delivery_platform_name=c.DELIVERY_PLATFORM_SFMC,
+            delivery_platform_type=c.DELIVERY_PLATFORM_SFMC,
             delivery_job_id=delivery_job_id,
             event_details=event_details,
             generic_campaigns=self.individual_generic_campaigns[0],
@@ -1481,7 +1483,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIsNotNone(doc)
         self.assertIn(c.DELIVERY_JOB_ID, doc)
         self.assertIn(c.METRICS_DELIVERY_PLATFORM_ID, doc)
-        self.assertIn(c.METRICS_DELIVERY_PLATFORM_NAME, doc)
+        self.assertIn(c.METRICS_DELIVERY_PLATFORM_TYPE, doc)
         self.assertIn(c.CREATE_TIME, doc)
         self.assertIn(c.EVENT_DETAILS, doc)
         self.assertEqual(doc[c.EVENT_DETAILS]["event"], "sent")
@@ -1727,7 +1729,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         doc = dpm.set_campaign_activity(
             database=self.database,
             delivery_platform_id=ObjectId(),
-            delivery_platform_name=c.DELIVERY_PLATFORM_SFMC,
+            delivery_platform_type=c.DELIVERY_PLATFORM_SFMC,
             delivery_job_id=delivery_job_id,
             event_details=event_details,
             generic_campaigns=self.individual_generic_campaigns[0],

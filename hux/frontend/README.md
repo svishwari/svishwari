@@ -1,9 +1,19 @@
 # Hux UI
 
-## Project setup
+## Setup
 ```sh
 yarn install
 ```
+
+Pre-commit hooks will also be installed.
+If not or you need to re-install them, then run:
+
+```sh
+yarn prepare
+```
+
+This will set you up with git pre-commit hooks and pre-push hooks that will run
+your code changes against lint, style and tests before opening a pull request.
 
 ### Compiles and hot-reloads for development
 ```sh
@@ -28,7 +38,7 @@ snaphots for them and commit them with your changes using:
 yarn test:unit -u
 ```
 
-### Lints and fixes files
+### Lint
 ```sh
 yarn lint
 ```
@@ -38,12 +48,20 @@ yarn lint
 > unit tests are passing (or vice versa), try a fresh install locally:
 >    ```sh
 >    rm -rf node_modules
->    yarn install # or yarn ci
+>    yarn install
 >    ```
 >    This should clear up most issues.
 >
 > 2. Use **`yarn <command>`** — <ins>do not</ins> use **`npm <command>`** and
 > remove `package-lock.json` if somehow you ended up with one locally.
+
+### Style
+
+```sh
+yarn style
+```
+
+If there are style issues, run `yarn style:fix` to fix them.
 
 ### Run storybook
 

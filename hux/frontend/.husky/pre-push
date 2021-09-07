@@ -1,0 +1,8 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+cd ./hux/frontend || exit
+
+yarn lint
+yarn style
+yarn test

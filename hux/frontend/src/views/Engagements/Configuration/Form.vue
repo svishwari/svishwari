@@ -53,7 +53,7 @@
           </h5>
         </template>
 
-        <v-row class="delivery-schedule mt-4">
+        <v-row class="delivery-schedule mt-2">
           <v-radio-group
             v-model="value.delivery_schedule"
             row
@@ -90,8 +90,8 @@
             </v-radio>
           </v-radio-group>
         </v-row>
-        <v-row class="delivery-schedule mt-10 ml-n2">
-          <div v-if="isRecurring">
+        <v-row v-if="isRecurring" class="delivery-schedule mt-10 ml-n2">
+          <div>
             <span class="date-picker-label neroBlack--text text-caption">
               Start date
             </span>
@@ -102,8 +102,8 @@
               @on-date-select="onStartDateSelect"
             />
           </div>
-          <icon v-if="isRecurring" class="ml-2 mr-2" type="arrow" :size="28" />
-          <div v-if="isRecurring">
+          <icon class="mx-2" type="arrow" :size="28" color="lightGrey" />
+          <div>
             <span class="date-picker-label neroBlack--text text-caption">
               End date
             </span>
@@ -200,7 +200,7 @@
                       <v-btn
                         x-small
                         fab
-                        class="primary ml-2"
+                        class="primary ml-2 box-shadow-25"
                         @click="openSelectDestinationsDrawer(row.item.id)"
                       >
                         <v-icon size="16">mdi-plus</v-icon>
@@ -220,7 +220,7 @@
                   <v-btn
                     x-small
                     fab
-                    class="primary mr-2"
+                    class="primary mr-2 box-shadow-25"
                     @click="openSelectAudiencesDrawer()"
                   >
                     <v-icon>mdi-plus</v-icon>
@@ -236,17 +236,19 @@
           </template>
 
           <template slot="empty">
-            <v-col class="grow">You have not added any audiences, yet.</v-col>
-            <v-col class="shrink">
+            <v-col class="shrink pl-5">
               <v-btn
                 x-small
                 fab
-                color="primary"
+                color="primary box-shadow-25"
                 elevation="0"
                 @click="openSelectAudiencesDrawer()"
               >
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
+            </v-col>
+            <v-col class="grow pl-2">
+              You have not added any audiences, yet.
             </v-col>
           </template>
         </data-cards>
@@ -262,7 +264,18 @@
 
       <template #right>
         <v-btn
-          v-if="hasDestinations && isManualDelivery"
+          v-if="isEditable"
+          tile
+          color="primary"
+          height="44"
+          :disabled="!isValid"
+          @click="restoreEngagement()"
+        >
+          Update
+        </v-btn>
+
+        <v-btn
+          v-else-if="hasDestinations && isManualDelivery"
           tile
           color="primary"
           height="44"
@@ -286,6 +299,7 @@
     </hux-footer>
 
     <select-audiences-drawer
+      ref="selectAudiences"
       v-model="value.audiences"
       :toggle="showSelectAudiencesDrawer"
       @onToggle="(val) => (showSelectAudiencesDrawer = val)"
@@ -301,6 +315,7 @@
     />
 
     <select-destinations-drawer
+      ref="selectDestinations"
       v-model="value.audiences"
       :selected-audience-id="selectedAudienceId"
       :toggle="showSelectDestinationsDrawer"
@@ -382,6 +397,7 @@ export default {
       endMinDate: new Date(
         new Date().getTime() - new Date().getTimezoneOffset() * 60000
       ).toISOString(),
+      engagementList: {},
     }
   },
 
@@ -389,6 +405,14 @@ export default {
     ...mapGetters({
       destination: "destinations/single",
     }),
+
+    getRouteId() {
+      return this.$route.params.id
+    },
+
+    isEditable() {
+      return this.$route.name === "EngagementUpdate" ? true : false
+    },
 
     payload() {
       return {
@@ -454,6 +478,7 @@ export default {
     ...mapActions({
       addEngagement: "engagements/add",
       deliverEngagement: "engagements/deliver",
+      updateEngagement: "engagements/updateEngagement",
     }),
 
     resetSchedule() {
@@ -490,6 +515,7 @@ export default {
 
     openSelectAudiencesDrawer() {
       this.closeAllDrawers()
+      this.$refs.selectAudiences.fetchAudiences()
       this.showSelectAudiencesDrawer = true
     },
 
@@ -502,6 +528,7 @@ export default {
     openSelectDestinationsDrawer(audienceId) {
       // set the selected audience on which we want to manage its destinations
       this.selectedAudienceId = audienceId
+      this.$refs.selectDestinations.fetchDependencies()
       this.closeAllDrawers()
       this.showSelectDestinationsDrawer = true
     },
@@ -521,7 +548,7 @@ export default {
     },
 
     destinationType(id) {
-      return this.destination(id).type
+      return this.destination(id) && this.destination(id).type
     },
 
     async addNewEngagement() {
@@ -544,6 +571,25 @@ export default {
         this.$router.push({
           name: "EngagementDashboard",
           params: { id: engagement.id },
+        })
+      } catch (error) {
+        this.errorMessages.push(error.response.data.message)
+        this.scrollToTop()
+      }
+    },
+
+    async restoreEngagement() {
+      try {
+        const requestPayload = { ...this.payload }
+        if (requestPayload.delivery_schedule === 0) {
+          delete requestPayload.start_date
+          delete requestPayload.end_date
+        }
+        const payload = { id: this.getRouteId, data: requestPayload }
+        await this.updateEngagement(payload)
+        this.$router.push({
+          name: "EngagementDashboard",
+          params: { id: this.getRouteId },
         })
       } catch (error) {
         this.errorMessages.push(error.response.data.message)
@@ -646,5 +692,13 @@ export default {
   position: absolute;
   margin-top: -30px;
   margin-left: 8px;
+}
+.form-steps {
+  ::v-deep .form-step__header {
+    padding-bottom: 14px;
+  }
+  ::v-deep .form-step__content {
+    padding-top: 0px !important;
+  }
 }
 </style>

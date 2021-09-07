@@ -1,0 +1,214 @@
+#TODO: Test this once Facebook is available
+---
+test_name: Test get campaigns with valid engagement_id, audience_id and destination_id
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: get engagements to save engagement_id and corresponding audience_id, destination_id
+
+      request:
+        url: "{host}/{version}/engagements"
+        method: GET
+        headers:
+          content-type: application/json
+          Authorization: "Bearer {token}"
+
+      response:
+        strict: false
+        status_code: 200
+        headers:
+          content-type: application/json
+        json:
+          !anylist
+          - id: !anystr
+            name: !anystr
+            description: !anything
+            created_by: !anystr
+            updated_by: !anystr
+            create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+            update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+            audiences: !anylist
+              - id: !anystr
+        save:
+          $ext:
+            function: tavern_test_utils:get_campaign_engagement_audience_destiantion_id
+
+  - name: Test get campaigns with valid engagement_id, audience_id, destination_id
+
+    request:
+      url: "{host}/{version}/engagements/{engagement_id}/audience/{engagement_audience_id}/destination/{engagement_destination_id}/campaigns"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+      response:
+        strict: false
+        status_code: 200
+        headers:
+          content-type: application/json
+        json:
+          - id: !anystr
+            name: !anystr
+            ad_set_name: !anystr
+            ad_set_id: !anystr
+            delivery_job_id: !anystr
+            create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+
+
+---
+test_name: Test get campaign-mappings with valid engagement_id, audience_id and destination_id
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: get engagements to save engagement_id and corresponding audience_id, destination_id
+
+    request:
+      url: "{host}/{version}/engagements"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        !anylist
+        - id: !anystr
+          name: !anystr
+          description: !anything
+          created_by: !anystr
+          updated_by: !anystr
+          create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          audiences: !anylist
+            - id: !anystr
+      save:
+        $ext:
+          function: tavern_test_utils:get_campaign_engagement_audience_destiantion_id
+
+  - name: Test get campaign-mappings with valid engagement_id, audience_id, destination_id
+
+    request:
+      url: "{host}/{version}/engagements/{engagement_id}/audience/{engagement_audience_id}/destination/{engagement_destination_id}/campaign-mappings"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+      response:
+        strict: false
+        status_code: 200
+        headers:
+          content-type: application/json
+        json:
+          - id: !anystr
+            name: !anystr
+            ad_set_name: !anystr
+            ad_set_id: !anystr
+            delivery_job_id: !anystr
+            create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+
+
+---
+test_name: Test updating campaign with valid engagement id, audience_id and destination_id
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: get engagements to save engagement_id and corresponding audience_id, destination_id
+
+      request:
+        url: "{host}/{version}/engagements"
+        method: GET
+        headers:
+          content-type: application/json
+          Authorization: "Bearer {token}"
+
+      response:
+        strict: false
+        status_code: 200
+        headers:
+          content-type: application/json
+        json:
+          !anylist
+          - id: !anystr
+            name: !anystr
+            description: !anything
+            created_by: !anystr
+            updated_by: !anystr
+            create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+            update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+            audiences: !anylist
+              - id: !anystr
+        save:
+          $ext:
+            function: tavern_test_utils:get_campaign_engagement_audience_destiantion_id
+
+  - name: get campaign-mappings to save for engagement_id, audience_id, destination_id
+
+      request:
+        url: "{host}/{version}/engagements/{engagement_id}/audience/{engagement_audience_id}/destination/{engagement_destination_id}/campaign-mappings"
+        method: GET
+        headers:
+          content-type: application/json
+          Authorization: "Bearer {token}"
+
+      response:
+        strict: false
+        status_code: 200
+        headers:
+          content-type: application/json
+        json:
+          - campaings:
+            - id: !anystr
+              name: !anystr
+              ad_set_name: !anystr
+              ad_set_id: !anystr
+          - delivery_jobs:
+            - id: !anystr
+              create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        save:
+          $ext:
+            function: tavern_test_utils:get_campaign_mapping_details
+
+  - name: Test updating campaign with valid engagement id, audience_id and destination_id
+
+      request:
+        url: "{host}/{version}/engagements/{engagement_id}/audience/{engagement_audience_id}/destination/{engagement_destination_id}/campaigns"
+        method: PUT
+        headers:
+          content-type: application/json
+          Authorization: "Bearer {token}"
+        json:
+          campaigns:
+            name: !anystr
+            id: {campaign.id}
+            ad_set_id: {campaign.ad_set_id}
+            delivery_job_id: {delivery_job.id}
+
+      response:
+        strict: false
+        status_code: 200
+        headers:
+          content-type: application/json
+        json:
+          message: "Campaigns updated successfully"
+

@@ -10,8 +10,8 @@ import * as d3Shape from "d3-shape"
 import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
-import * as d3TimeFormat from "d3-time-format"
-import * as d3Collection from "d3-collection"
+import * as d3Regression from "d3-regression"
+import * as d3Transition from "d3-transition"
 import colors from "../../../../plugins/theme"
 
 export default {
@@ -35,9 +35,14 @@ export default {
         }
       },
     },
+    barGroupChangeIndex: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
+      lastBarAnimation: "",
       totalCustomerData: this.value,
       chartWidth: "",
       toolTip: {
@@ -50,16 +55,19 @@ export default {
       },
     }
   },
-
   watch: {
     chartDimensions: {
       handler() {
         d3Select.select(this.$refs.stackBarChart).selectAll("svg").remove()
+        clearInterval(this.lastBarAnimation)
         this.initiateStackBarChart()
       },
       immediate: false,
       deep: true,
     },
+  },
+  destroyed() {
+    clearInterval(this.lastBarAnimation)
   },
   methods: {
     async initiateStackBarChart() {
@@ -67,15 +75,12 @@ export default {
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
-      let margin = { top: 30, right: 30, bottom: 100, left: 65 }
+      let margin = { top: 15, right: 45, bottom: 100, left: 68 }
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
-      let formattedData = []
-      let initialIndex = 0
       let barColorCodes = []
-      let monthChangeIndexs = []
-      let rx = 15
-      let ry = 12
+      let rx = 10
+      let ry = 10
 
       let svg = d3Select
         .select(this.$refs.stackBarChart)
@@ -87,53 +92,12 @@ export default {
 
       this.colorCodes.forEach((color) => barColorCodes.push(colors[color]))
 
-      let week = d3TimeFormat.timeFormat("%U")
-      let weeklyAggData = d3Collection
-        .nest()
-        .key((d) => week(new Date(d.date)))
-        .entries(this.totalCustomerData)
-
-      let initialWeek = weeklyAggData[0].values
-      let initialWeekEndingDate = initialWeek[initialWeek.length - 1].date
-
-      monthChangeIndexs.push({ index: 0, date: initialWeekEndingDate })
-
-      let initialMonth = new Date(initialWeekEndingDate).getMonth()
-
-      weeklyAggData.forEach((element, index) => {
-        let weekData = element.values
-        let weekLastDate = weekData[weekData.length - 1].date
-        if (new Date(weekLastDate).getMonth() != initialMonth) {
-          initialMonth = new Date(weekLastDate).getMonth()
-          if (initialIndex == 2) {
-            initialIndex = 0
-          } else initialIndex++
-
-          monthChangeIndexs.push({
-            index: index,
-            date: weekLastDate,
-          })
-        }
-
-        formattedData.push({
-          date: weekLastDate,
-          total_customers: weekData.reduce(
-            (sum, d) => sum + d.total_customers,
-            0
-          ),
-          new_customers_added: weekData.reduce(
-            (sum, d) => sum + d.new_customers_added,
-            0
-          ),
-          index: index == weeklyAggData.length - 1 ? 3 : initialIndex,
-          barIndex: index,
-        })
-      })
-
       let stack = d3Shape
         .stack()
         .keys(["total_customers", "new_customers_added"])
-      let stackedValues = stack(formattedData)
+
+      let stackedValues = stack(this.totalCustomerData)
+      d3Transition.transition()
 
       stackedValues.forEach((layer) => {
         layer.forEach((d) => {
@@ -144,23 +108,28 @@ export default {
 
       let xScale = d3Scale
         .scaleBand()
-        .domain(d3Array.range(formattedData.length))
+        .domain(d3Array.range(this.totalCustomerData.length))
         .range([0, w])
         .paddingInner(0.33)
         .paddingOuter(0.11)
 
       let yScale = d3Scale
         .scaleLinear()
-        .domain([0, d3Array.max(formattedData, (d) => d.total_customers)])
+        .domain([
+          0,
+          d3Array.max(this.totalCustomerData, (d) => d.total_customers),
+        ])
         .range([h, 0])
         .nice(4)
 
       let bars = svg.append("g").attr("class", "bars")
 
       let convertCalendarFormat = (value) => {
-        let tickDate = monthChangeIndexs.find((bar) => bar.index == value)
+        let tickDate = this.barGroupChangeIndex.find(
+          (bar) => bar.index == value
+        )
         if (tickDate) {
-          return this.$options.filters.Date(tickDate.date, "MMM [']YY")
+          return this.$options.filters.Date(tickDate.date, "MM/DD/YY")
         } else return ""
       }
 
@@ -170,9 +139,9 @@ export default {
       svg
         .append("g")
         .classed("xAxis-alternate", true)
-        .attr("transform", "translate(0," + 378 + ")")
+        .attr("transform", "translate(0," + 255 + ")")
         .call(d3Axis.axisBottom(xScale).tickSize(0).tickFormat(""))
-        .style("stroke-width", 16)
+        .style("stroke-width", 40)
 
       svg
         .append("g")
@@ -185,7 +154,7 @@ export default {
             .tickFormat(convertCalendarFormat)
             .tickPadding(15)
         )
-        .style("font-size", "14px")
+        .style("font-size", "12px")
 
       svg
         .append("g")
@@ -212,84 +181,62 @@ export default {
 
       d3Select.selectAll(".domain").style("stroke", "rgba(208, 208, 206, 1)")
       d3Select.selectAll(".tick line").style("stroke", "rgba(208, 208, 206, 1)")
-      d3Select.selectAll(".xAxis .tick text").attr("x", 10)
+      d3Select
+        .selectAll(".xAxis .tick text")
+        .attr("x", 10)
+        .style("color", "#4F4F4F")
+      d3Select.selectAll(".yAxis .tick text").style("color", "#4F4F4F")
       d3Select.selectAll(".xAxis-alternate .domain").style("stroke", "white")
+      d3Select.selectAll(".xAxis .tick text").attr("x", 14)
 
-      let topRoundedRect = (x, y, width, height) =>
-        `M${x},${y + ry}
+      let topRoundedRect = (x, y, width, height) => {
+        height = height < 0 ? 0 : height
+        return `M${x},${y + ry}
         a${rx},${ry} 0 0 1 ${rx},${-ry}
         h${width - 2 * rx}
         a${rx},${ry} 0 0 1 ${rx},${ry}
         v${height - ry}
         h${-width}Z`
+      }
 
       groups
         .selectAll("bar")
         .data((d) => d)
         .enter()
         .append("path")
+        .attr("class", (d, i) => {
+          if (i == this.totalCustomerData.length - 1) {
+            return "active-bar"
+          }
+        })
+        .attr("height", 0)
+        .attr("width", xScale.bandwidth() < 30 ? xScale.bandwidth() : 30)
+        .attr("data", (d, i) => i)
+        .style("fill", (d) => barColorCodes[d.data.index])
+        .on("mouseover", (d) => applyHoverEffects(d, xScale.bandwidth()))
+        .on("mouseout", () => removeHoverEffects())
+        .transition()
+        .duration(500)
+        .delay((d, i) => i * 25)
         .attr("d", (d, i) =>
           topRoundedRect(
             xScale(i),
             yScale(d[1]),
-            xScale.bandwidth(),
+            xScale.bandwidth() < 30 ? xScale.bandwidth() : 30,
             yScale(d[0]) - yScale(d[1])
           )
         )
-        .style("margin-right", "10px")
-        .style("fill", (d) => barColorCodes[d.data.index])
-        .on("mouseover", (d) => applyHoverEffects(d, xScale.bandwidth()))
-        .on("mouseout", () => removeHoverEffects())
 
-      let getLinearRegression = (data, x, y, minX, minY) => {
-        let n = data.length
-        let pts = []
-        data.forEach((d) => {
-          let obj = {}
-          obj.x = d[x]
-          obj.y = d[y]
-          obj.mult = obj.x * obj.y
-          pts.push(obj)
-        })
-        let sum = 0
-        let xSum = 0
-        let ySum = 0
-        let sumSq = 0
-        pts.forEach((pt) => {
-          sum = sum + pt.mult
-          xSum = xSum + pt.x
-          ySum = ySum + pt.y
-          sumSq = sumSq + pt.x * pt.x
-        })
-        let a = sum * n
-        let b = xSum * ySum
-        let c = sumSq * n
-        let d = xSum * xSum
-        let m = (a - b) / (c - d)
-        let e = ySum
-        let f = m * xSum
-        b = (e - f) / n
-        return {
-          ptA: {
-            x: minX,
-            y: m * minX + b,
-          },
-          ptB: {
-            y: minY,
-            x: (minY - b) / m,
-          },
-        }
-      }
+      let linearRegression = d3Regression
+        .regressionLinear()
+        .x((d) => d.barIndex)
+        .y((d) => d.total_customers)
 
-      let lg = getLinearRegression(
-        formattedData,
-        "barIndex",
-        "total_customers",
-        d3Array.min(formattedData, (d) => d.barIndex),
-        d3Array.min(formattedData, (d) => d.total_customers)
+      let regLine = linearRegression(
+        this.totalCustomerData.filter((d) => d.total_customers != 0)
       )
 
-      let max = d3Array.max(formattedData, (d) => d.barIndex)
+      let max = d3Array.max(this.totalCustomerData, (d) => d.barIndex)
       svg
         .append("line")
         .attr("class", "regression")
@@ -297,9 +244,9 @@ export default {
         .style("stroke", "#86BC25")
         .style("stroke-width", 1.5)
         .attr("x1", xScale(0) + 9)
-        .attr("y1", yScale(lg.ptB.y))
+        .attr("y1", yScale(regLine.a))
         .attr("x2", xScale(max) + 14)
-        .attr("y2", yScale(lg.ptA.y))
+        .attr("y2", yScale(regLine.b))
 
       let applyHoverEffects = (d, width) => {
         d3Select
@@ -334,8 +281,22 @@ export default {
         this.toolTip.totalCustomers = data.total_customers
         this.toolTip.addedCustomers = data.new_customers_added
         this.toolTip.index = data.index
+        this.toolTip.isEndingBar = data.isEndingBar
         this.tooltipDisplay(true, this.toolTip)
       }
+
+      let blinkLastBar = () => {
+        d3Select
+          .select(".active-bar")
+          .transition()
+          .duration(500)
+          .style("fill-opacity", "0.2")
+          .transition()
+          .duration(500)
+          .style("fill-opacity", "0.5")
+      }
+
+      this.lastBarAnimation = setInterval(blinkLastBar, 1000)
     },
     tooltipDisplay(showTip, customersData) {
       this.$emit("tooltipDisplay", showTip, customersData)
