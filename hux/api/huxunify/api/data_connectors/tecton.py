@@ -86,13 +86,13 @@ def map_model_response(response: dict) -> List[dict]:
 
 
 def map_model_version_history_response(
-    response: dict, model_id: int
+    response: dict, model_id: str
 ) -> List[dict]:
     """Map model version history response to a usable dict.
 
     Args:
         response (dict): Input Tecton API response.
-        model_id (int): Model ID number.
+        model_id (str): Model ID.
 
     Returns:
         List[dict]: A cleaned model version dict.
@@ -117,7 +117,7 @@ def map_model_version_history_response(
             constants.LOOKBACK_WINDOW: int(feature[3]),
             constants.NAME: feature[5],
             constants.TYPE: constants.MODEL_TYPES_MAPPING.get(
-                str(feature[5]).lower(), constants.UNKNOWN
+                str(feature[6]).lower(), constants.UNKNOWN
             ),
             constants.OWNER: feature[7],
             constants.STATUS: feature[9],
@@ -130,7 +130,7 @@ def map_model_version_history_response(
 
 def map_model_performance_response(
     response: dict,
-    model_id: int,
+    model_id: str,
     model_type: str,
     model_version: str,
     metric_default_value: float = -1,
@@ -139,7 +139,7 @@ def map_model_performance_response(
 
     Args:
         response (dict): Input Tecton API response.
-        model_id (int): Model ID number.
+        model_id (str): Model ID.
         model_type (str): Model type.
         model_version (str): Model version.
 
@@ -202,11 +202,11 @@ def get_models() -> List[dict]:
     return map_model_response(response)
 
 
-def get_model_version_history(model_id: int) -> List[ModelVersionSchema]:
+def get_model_version_history(model_id: str) -> List[ModelVersionSchema]:
     """Get model version history based on id.
 
     Args:
-        model_id (int): model id.
+        model_id (str): model id.
 
     Returns:
          List[ModelVersionSchema] List of model versions.
@@ -234,11 +234,11 @@ def get_model_version_history(model_id: int) -> List[ModelVersionSchema]:
 
 
 # pylint: disable=unused-argument
-def get_model_drift(model_id: int, model_type: str) -> List[ModelDriftSchema]:
+def get_model_drift(model_id: str, model_type: str) -> List[ModelDriftSchema]:
     """Get model drift based on model_id and model_type.
 
     Args:
-        model_id (int): model id.
+        model_id (str): model id.
         model_type (int): model type.
 
     Returns:
@@ -277,7 +277,7 @@ def get_model_drift(model_id: int, model_type: str) -> List[ModelDriftSchema]:
     )
 
     result_drift = []
-    for result in response.json()[constants.RESULTS]:
+    for result in response.json().get(constants.RESULTS, []):
         if not result:
             continue
 
@@ -293,11 +293,11 @@ def get_model_drift(model_id: int, model_type: str) -> List[ModelDriftSchema]:
     return result_drift
 
 
-def get_model_lift_async(model_id: int) -> List[ModelLiftSchema]:
+def get_model_lift_async(model_id: str) -> List[ModelLiftSchema]:
     """Get model lift based on id.
 
     Args:
-        model_id (int): model id.
+        model_id (str): model id.
 
     Returns:
          List[ModelLiftSchema]: List of model lift.
@@ -359,12 +359,12 @@ def get_model_lift_async(model_id: int) -> List[ModelLiftSchema]:
 
 
 async def get_async_lift_bucket(
-    model_id: int, bucket: int
+    model_id: str, bucket: int
 ) -> Tuple[dict, int]:
     """asynchronously gets lift by bucket
 
     Args:
-        model_id (int): model id.
+        model_id (str): model id.
         bucket (int): bucket.
 
     Returns:
@@ -403,12 +403,12 @@ async def get_async_lift_bucket(
 
 
 def get_model_features(
-    model_id: int, model_version: str
+    model_id: str, model_version: str
 ) -> List[FeatureSchema]:
     """Get model features based on model id.
 
     Args:
-        model_id (int): model id.
+        model_id (str): model id.
         model_version (str): model version.
 
     Returns:
@@ -478,12 +478,12 @@ def get_model_features(
 
 
 def get_model_performance_metrics(
-    model_id: int, model_type: str, model_version: str
+    model_id: str, model_type: str, model_version: str
 ) -> dict:
     """Get model performance metrics based on model ID.
 
     Args:
-        model_id (int): Model id.
+        model_id (str): Model id.
         model_type (str): Model type.
         model_version (str): Model version.
 
@@ -501,7 +501,7 @@ def get_model_performance_metrics(
     elif model_type in constants.CLASSIFICATION_MODELS:
         service_name = "ui_metadata_model_metrics_classification_service"
     else:
-        raise ValueError(f"Model type not supported {model_type}")
+        logger.warning("Model type not supported '%s'.", model_type)
 
     # set payload and service name.
     payload = {
