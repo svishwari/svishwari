@@ -120,16 +120,6 @@ const actions = {
     }
   },
 
-  // async fetchAudienceMetrics(_, { id }) {
-  //   try {
-  //     const response = await api.engagements.downloadAudienceMetrics(id)
-  //     return response
-  //   } catch (error) {
-  //     handleError(error)
-  //     throw error
-  //   }
-  // },
-
   async getDeliveries({ commit }, engagementId) {
     try {
       const response = await api.engagements.deliveries(engagementId)
@@ -152,6 +142,16 @@ const actions = {
       item: response.data,
       type: payload.type,
     })
+  },
+
+  async fetchAudienceMetrics(_, { id }) {
+    try {
+      const response = await api.engagements.downloadAudienceMetrics(id)
+      return response
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
   },
 
   async add({ commit }, engagement) {

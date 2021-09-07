@@ -1,5 +1,11 @@
 <template>
   <div>
+    <hux-alert
+      v-model="flashAlert"
+      :type="alert.type"
+      :title="alert.title"
+      :message="alert.message"
+    />
     <v-tabs v-model="tabOption" class="mt-8">
       <v-tabs-slider color="primary"></v-tabs-slider>
       <div class="d-flex">
@@ -27,8 +33,10 @@
               :color="myIconColor"
               class="icon-border pa-1 ma-2 mr-0"
               @mousedown="changeColorOnSelect()"
-              @mouseup="changeColorOnDeselect()"
-              
+              @mouseup="
+                changeColorOnDeselect()
+                initiateMetricsDownload()
+              "
             >
               mdi-download
             </v-icon>
@@ -71,14 +79,16 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions } from "vuex"
 import CampaignSummary from "../../components/CampaignSummary.vue"
+import HuxAlert from "../../components/common/HuxAlert.vue"
 import DownloadTooltip from "./DownloadTooltip.vue"
 export default {
   name: "EngagementPerformanceMetrics",
   components: {
     CampaignSummary,
     DownloadTooltip,
+    HuxAlert,
   },
   props: {
     adData: {
@@ -103,6 +113,12 @@ export default {
   },
   data() {
     return {
+      flashAlert: false,
+      alert: {
+        type: "success",
+        title: "YAY!",
+        message: "Downloading...",
+      },
       tabOption: 0,
       myIconColor: "primary",
       tooltipValue:
@@ -340,24 +356,24 @@ export default {
     },
   },
   methods: {
-    // ...mapActions({
-    //   downloadAudienceMetrics: "engagements/fetchAudienceMetrics",
-    // }),
-    // async initiateMetricsDownload() {
-    //   this.alert.type = "Pending"
-    //   this.alert.title = ""
-    //   this.alert.message = `Download has started in background, stay tuned.`
-    //   this.flashAlert = true
-    //   const fileBlob = await this.downloadAudienceMetrics({
-    //     id: this.engagementId,
-    //   })
-    //   const url = window.URL.createObjectURL(
-    //     new Blob([fileBlob.data], {
-    //       type: "text/csv" || "application/octet-stream",
-    //     })
-    //   )
-    //   window.location.assign(url)
-    // },
+    ...mapActions({
+      downloadAudienceMetrics: "engagements/fetchAudienceMetrics",
+    }),
+    async initiateMetricsDownload() {
+      this.alert.type = "Pending"
+      this.alert.title = ""
+      this.alert.message = "Download has started in background, stay tuned."
+      this.flashAlert = true
+      const fileBlob = await this.downloadAudienceMetrics({
+        id: this.engagementId,
+      })
+      const url = window.URL.createObjectURL(
+        new Blob([fileBlob.data], {
+          type: "text/csv" || "application/octet-stream",
+        })
+      )
+      window.location.assign(url)
+    },
     fetchKey(obj, key) {
       return obj && obj[key] ? obj[key] : "-"
     },
