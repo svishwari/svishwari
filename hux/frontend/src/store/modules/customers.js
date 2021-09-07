@@ -23,6 +23,8 @@ const state = {
   geoStates: [],
 
   demographics: {},
+
+  events: [],
 }
 
 const getters = {
@@ -45,6 +47,8 @@ const getters = {
   geoStates: (state) => state.geoStates,
 
   demographics: (state) => state.demographics,
+
+  getEvents: (state) => state.events,
 }
 
 const mutations = {
@@ -92,6 +96,10 @@ const mutations = {
 
   SET_DEMOGRAPHICS(state, data) {
     state.demographics = data
+  },
+
+  SET_CUSTOMER_EVENTS(state, data) {
+    state.events = data
   },
 }
 
@@ -187,6 +195,16 @@ const actions = {
     try {
       const response = await api.customers.demographics(data)
       commit("SET_DEMOGRAPHICS", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getCustomerEvents({ commit }, id) {
+    try {
+      const response = await api.customers.events(id)
+      commit("SET_CUSTOMER_EVENTS", response.data)
     } catch (error) {
       handleError(error)
       throw error

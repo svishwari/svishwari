@@ -498,6 +498,9 @@
 
     <logo type="twilio"></logo>
     <logo type="twilio" :size="48"></logo>
+
+    <logo type="qualtrics"></logo>
+    <logo type="qualtrics" :size="48"></logo>
     <v-divider class="mt-10" />
 
     <v-subheader>Nested Data Table</v-subheader>

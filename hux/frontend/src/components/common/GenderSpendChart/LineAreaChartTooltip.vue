@@ -94,12 +94,54 @@ export default {
 
 .tooltip-style {
   @extend .income-tooltip-style;
-  max-width: 110px;
-  height: 110px;
+  max-width: 96px;
+  height: 104px;
   top: -444px;
-  left: -240px;
+  left: -248px;
   z-index: 1;
+  .bar-hover {
+    @extend .card-padding;
+  }
 }
+
+//Fix for the tooltipn position : TO DO
+
+@media only screen and (max-width: 1600px) {
+  .tooltip-style {
+    left: -212px !important;
+  }
+}
+
+@media (max-width: 1775px) and (min-width: 1600px) {
+  .tooltip-style {
+    left: -248px !important;
+  }
+}
+
+@media (max-width: 2000px) and (min-width: 1775px) {
+  .tooltip-style {
+    left: -300px !important;
+  }
+}
+
+@media (max-width: 2220px) and (min-width: 2000px) {
+  .tooltip-style {
+    left: -354px !important;
+  }
+}
+
+@media (max-width: 2692px) and (min-width: 2221px) {
+  .tooltip-style {
+    left: -431px !important;
+  }
+}
+
+@media only screen and (min-width: 2693px) {
+  .tooltip-style {
+    left: -524px !important;
+  }
+}
+
 .append-circle {
   height: 12px;
   width: 12px;
