@@ -22,11 +22,11 @@
       <div>
         <download-tooltip>
           <template #label-content>
-            <v-icon 
-              size="22" 
-              :color="myIconColor" 
-              class="icon-border pa-1 ma-2 mr-0" 
-              @mousedown="changeColorOnSelect()" 
+            <v-icon
+              size="22"
+              :color="myIconColor"
+              class="icon-border pa-1 ma-2 mr-0"
+              @mousedown="changeColorOnSelect()"
               @mouseup="changeColorOnDeselect()"
             >
               mdi-download
@@ -71,7 +71,7 @@
 
 <script>
 import CampaignSummary from "../../components/CampaignSummary.vue"
-import DownloadTooltip from './DownloadTooltip.vue'
+import DownloadTooltip from "./DownloadTooltip.vue"
 export default {
   name: "EngagementPerformanceMetrics",
   components: {
@@ -103,7 +103,8 @@ export default {
     return {
       tabOption: 0,
       myIconColor: "primary",
-      tooltipValue: "Download Email Marketing and Digital Advertising performance metrics as CSVs."
+      tooltipValue:
+        "Download Email Marketing and Digital Advertising performance metrics as CSVs.",
     }
   },
   computed: {
@@ -341,10 +342,10 @@ export default {
       return obj && obj[key] ? obj[key] : "-"
     },
     changeColorOnSelect() {
-      this.myIconColor = "secondary";
+      this.myIconColor = "secondary"
     },
     changeColorOnDeselect() {
-      this.myIconColor = "primary";
+      this.myIconColor = "primary"
     },
   },
 }
@@ -405,7 +406,7 @@ export default {
   position: relative;
   width: 280px;
   height: 44px;
-  background: #FFFFFF;
+  background: #ffffff;
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
 }
 </style>
