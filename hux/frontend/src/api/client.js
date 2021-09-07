@@ -56,6 +56,10 @@ client["customers"].totalCustomers = () => {
   return http.get("/customers-insights/total")
 }
 
+client["customers"].events = (huxId) => {
+  return http.get(`/customers/${huxId}/events`)
+}
+
 client["customers"].getOverview = (data) => {
   return http.post("/customers/overview", data)
 }
