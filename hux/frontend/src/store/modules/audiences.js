@@ -106,6 +106,16 @@ const actions = {
     }
   },
 
+  async fetchAudienceData(_, { id, type }) {
+    try {
+      const response = await api.audiences.downloadAudience(id, type)
+      return response
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async getAudienceById({ commit }, id) {
     try {
       const response = await api.audiences.find(id)
@@ -203,6 +213,16 @@ const actions = {
   async add({ commit }, audience) {
     try {
       const response = await api.audiences.create(audience)
+      commit("SET_ONE", response.data)
+      return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async update({ commit }, { id, payload }) {
+    try {
+      const response = await api.audiences.update(id, payload)
       commit("SET_ONE", response.data)
       return response.data
     } catch (error) {

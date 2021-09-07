@@ -3,18 +3,16 @@ Schemas for the Model Object
 """
 
 from flask_marshmallow import Schema
-from marshmallow import fields
 from marshmallow.fields import Str, Int, Float, Nested
 
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
-from huxunify.api.schema.utils import must_not_be_blank
 from huxunify.api import constants as c
 
 
 class ModelSchema(Schema):
     """Model Schema"""
 
-    id = Int()
+    id = Str()
     name = Str(required=True)
     description = Str()
     status = Str()
@@ -31,7 +29,7 @@ class ModelSchema(Schema):
 class ModelVersionSchema(Schema):
     """Model Version Schema"""
 
-    id = Int()
+    id = Str()
     name = Str(required=True)
     description = Str()
     status = Str()
@@ -46,7 +44,7 @@ class ModelVersionSchema(Schema):
 class FeatureSchema(Schema):
     """Feature Schema"""
 
-    id = Int()
+    id = Str()
     version = Str()
     feature_service = Str()
     data_source = Str()
@@ -77,14 +75,6 @@ class ModelDriftSchema(Schema):
 
     drift = Float(required=True)
     run_date = DateTimeWithZ(required=True)
-
-
-class ModelDriftPostSchema(Schema):
-    """
-    ModelDriftPostSchema.
-    """
-
-    model_type = fields.Str(required=True, validate=must_not_be_blank)
 
 
 class PerformanceMetricSchema(Schema):
