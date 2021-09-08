@@ -22,6 +22,7 @@ from huxunifylib.util.general.const import (
     FacebookCredentials,
     SFMCCredentials,
     TwilioCredentials,
+    GoogleCredentials,
     QualtricsCredentials,
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
@@ -132,6 +133,31 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
             QualtricsCredentials.QUALTRICS_API_TOKEN.name: auth[
                 api_const.QUALTRICS_API_TOKEN
             ]
+        }
+
+    elif (
+        destination[db_const.DELIVERY_PLATFORM_TYPE]
+        == db_const.DELIVERY_PLATFORM_GOOGLE
+    ):
+        env_dict = {
+            GoogleCredentials.GOOGLE_CLIENT_CUSTOMER_ID.name: auth[
+                api_const.GOOGLE_CLIENT_CUSTOMER_ID
+            ],
+        }
+
+        secret_dict = {
+            GoogleCredentials.GOOGLE_DEVELOPER_TOKEN.name: auth[
+                api_const.GOOGLE_DEVELOPER_TOKEN
+            ],
+            GoogleCredentials.GOOGLE_CLIENT_ID.name: auth[
+                api_const.GOOGLE_CLIENT_ID
+            ],
+            GoogleCredentials.GOOGLE_REFRESH_TOKEN.name: auth[
+                api_const.GOOGLE_REFRESH_TOKEN
+            ],
+            GoogleCredentials.GOOGLE_CLIENT_SECRET.name: auth[
+                api_const.GOOGLE_CLIENT_SECRET
+            ],
         }
     else:
         raise KeyError(

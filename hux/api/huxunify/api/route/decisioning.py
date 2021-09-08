@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Tuple, List
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify
 from flasgger import SwaggerView
 from huxunifylib.database.cache_management import (
     create_cache_entry,
@@ -25,7 +25,6 @@ from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
     ModelDriftSchema,
-    ModelDriftPostSchema,
     ModelLiftSchema,
     ModelDashboardSchema,
     FeatureSchema,
@@ -120,7 +119,7 @@ class ModelVersionView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, model_id: int) -> Tuple[List[dict], int]:
+    def get(self, model_id: str) -> Tuple[List[dict], int]:
         """Retrieves model version history.
 
         ---
@@ -128,7 +127,7 @@ class ModelVersionView(SwaggerView):
             - Bearer: [Authorization]
 
         Args:
-            model_id (int): model id
+            model_id (str): model id
 
         Returns:
             Tuple[List[dict], int]: dict of model versions and http code
@@ -136,7 +135,7 @@ class ModelVersionView(SwaggerView):
         """
 
         # TODO Remove once Propensity to Purchase info can be retrieved from tecton
-        if int(model_id) == 3:
+        if model_id == "3":
             version_history = [
                 {
                     api_c.ID: model_id,
@@ -197,7 +196,7 @@ class ModelOverview(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, model_id: int) -> Tuple[dict, int]:
+    def get(self, model_id: str) -> Tuple[dict, int]:
         """Retrieves model overview.
 
         ---
@@ -205,17 +204,16 @@ class ModelOverview(SwaggerView):
             - Bearer: [Authorization]
 
         Args:
-            model_id (int): model id
+            model_id (str): model id
 
         Returns:
             Tuple[dict, int]: dict of model features and http code
 
         """
-        model_id = int(model_id)
 
         # TODO Remove once Propensity to Purchase model data is being served
         #  from tecton.
-        if model_id == 3:
+        if model_id == "3":
             overview_data = api_c.PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB
         else:
             # get model information
@@ -259,16 +257,7 @@ class ModelDriftView(SwaggerView):
     Model Drift Class
     """
 
-    parameters = [
-        api_c.MODEL_ID_PARAMS[0],
-        {
-            "name": "body",
-            "description": "Model type",
-            "type": "object",
-            "in": "body",
-            "example": {api_c.MODEL_TYPE: "ltv"},
-        },
-    ]
+    parameters = api_c.MODEL_ID_PARAMS
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model drift.",
@@ -283,7 +272,7 @@ class ModelDriftView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def post(self, model_id: int) -> Tuple[List[dict], int]:
+    def get(self, model_id: int) -> Tuple[List[dict], int]:
         """Retrieves model drift details.
 
         ---
@@ -291,16 +280,15 @@ class ModelDriftView(SwaggerView):
             - Bearer: [Authorization]
 
         Args:
-            model_id (int): model id.
+            model_id (str): model id.
 
         Returns:
             Tuple[List[dict], int]: dict of model drift and http code
 
         """
-        body = ModelDriftPostSchema().load(request.get_json())
         # TODO Remove once Propensity to Purchase data is being served
         #  from tecton
-        if int(model_id) == 3:
+        if model_id == "3":
             drift_data = [
                 {
                     api_c.DRIFT: round(uniform(0.8, 1), 2),
@@ -309,8 +297,18 @@ class ModelDriftView(SwaggerView):
                 for i in range(4)
             ]
         else:
+            # get model information
+            model_versions = tecton.get_model_version_history(model_id)
+
+            # if model versions not found, return not found.
+            if not model_versions:
+                return {}, HTTPStatus.NOT_FOUND
+
+            # take the latest model
+            latest_model = model_versions[-1]
+
             drift_data = tecton.get_model_drift(
-                model_id, body[api_c.MODEL_TYPE]
+                model_id, latest_model[api_c.TYPE]
             )
 
         return (
@@ -353,7 +351,7 @@ class ModelFeaturesView(SwaggerView):
     @api_error_handler()
     def get(
         self,
-        model_id: int,
+        model_id: str,
         model_version: str = None,
     ) -> Tuple[List[dict], int]:
         """Retrieves model features.
@@ -363,7 +361,7 @@ class ModelFeaturesView(SwaggerView):
             - Bearer: [Authorization]
 
         Args:
-            model_id (int): model id
+            model_id (str): model id
             model_version (str): model version.
 
         Returns:
@@ -454,7 +452,7 @@ class ModelImportanceFeaturesView(SwaggerView):
     @api_error_handler()
     def get(
         self,
-        model_id: int,
+        model_id: str,
         model_version: str = None,
         limit: int = 20,
     ) -> Tuple[List[dict], int]:
@@ -465,7 +463,7 @@ class ModelImportanceFeaturesView(SwaggerView):
             - Bearer: [Authorization]
 
         Args:
-            model_id (int): model id
+            model_id (str): model id
             model_version (str): model version.
             limit (int): Limit of features to return, default is 20.
 
@@ -518,9 +516,7 @@ class ModelLiftView(SwaggerView):
     Model Lift Class
     """
 
-    parameters = [
-        api_c.MODEL_ID_PARAMS[0],
-    ]
+    parameters = api_c.MODEL_ID_PARAMS
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model lift chart.",
@@ -539,14 +535,14 @@ class ModelLiftView(SwaggerView):
         self,
         model_id: int,
     ) -> Tuple[List[dict], int]:
-        """Retrieves bucket data asynchronously.
+        """Retrieves model lift data.
 
         ---
         security:
             - Bearer: [Authorization]
 
         Args:
-            model_id (int): model id
+            model_id (str): model id
 
         Returns:
             Tuple[List[dict], int]: dict of model lift data
@@ -554,7 +550,7 @@ class ModelLiftView(SwaggerView):
         """
 
         # retrieves lift data
-        if int(model_id) == 3:
+        if model_id == "3":
             lift_data = [
                 {
                     api_c.PREDICTED_RATE: uniform(0.01, 0.3),

@@ -30,6 +30,10 @@ export default {
         }
       },
     },
+    configurationData: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -46,7 +50,14 @@ export default {
       },
     }
   },
-
+  computed: {
+    primaryMetric() {
+      return this.configurationData.primary_metric.key
+    },
+    defaultMetric() {
+      return this.configurationData.default_metric.key
+    },
+  },
   watch: {
     chartDimensions: {
       handler() {
@@ -84,16 +95,17 @@ export default {
 
       featureCollection.features.forEach((state) => {
         let currentStateDetails = this.chartData.find(
-          (data) => data.name == usList.find((us) => us.id == state.id).name
+          (data) =>
+            data[this.defaultMetric] ==
+            usList.find((us) => us.id == state.id)[this.defaultMetric]
         )
         state.properties = currentStateDetails
       })
 
-      let total_range = featureCollection.features.map(
-        (data) => data.properties.population_percentage
+      let total_range = featureCollection.features.map((data) =>
+        data.properties ? data.properties[this.primaryMetric] : 0
       )
 
-      this.minValue = Math.min(...total_range)
       this.maxValue = Math.max(...total_range)
 
       var projection = d3Geo.geoIdentity().fitExtent(
@@ -108,7 +120,7 @@ export default {
 
       let colorScale = d3Scale
         .scaleLinear()
-        .domain([this.minValue * 100, this.maxValue * 100])
+        .domain([0, this.maxValue * 100])
         .range(["#ffffff", "#396286"])
 
       svg
@@ -120,7 +132,7 @@ export default {
         .style("stroke", "#1E1E1E")
         .style("stroke-width", "0.5")
         .style("fill", (d) =>
-          colorScale(d.properties.population_percentage * 100)
+          colorScale(d.properties ? d.properties[this.primaryMetric] * 100 : 0)
         )
         .attr("fill-opacity", "1")
         .on("mouseover", (d) => applyHoverChanges(d))
@@ -140,7 +152,9 @@ export default {
       }
 
       let emitStateData = (d) => {
-        this.tooltipDisplay(true, d.properties)
+        if (d.properties) {
+          this.tooltipDisplay(true, d.properties)
+        }
         return "1"
       }
 
@@ -150,7 +164,9 @@ export default {
           .style("stroke", "#1E1E1E")
           .style("stroke-width", "0.5")
           .style("fill", (d) =>
-            colorScale(d.properties.population_percentage * 100)
+            colorScale(
+              d.properties ? d.properties[this.primaryMetric] * 100 : 0
+            )
           )
           .attr("fill-opacity", "1")
         this.tooltipDisplay(false)
