@@ -81,7 +81,7 @@
       </hux-filters-bar>
     </template>
     <template>
-      <v-row no-gutters>
+      <v-row v-if="!loadingOverview" no-gutters>
         <metric-card
           v-for="(metric, index) in overview"
           :key="index"
