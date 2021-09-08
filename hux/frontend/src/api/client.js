@@ -170,6 +170,16 @@ client["engagements"].updateCampaignMapping = (
   )
 }
 
+client["engagements"].downloadAudienceMetrics = (engagementId) => {
+  return http.get(
+    `/engagements/${engagementId}/audience-performance/download`,
+    {
+      timeout: 0,
+      responseType: "blob",
+    }
+  )
+}
+
 client["engagements"].getCampaigns = ({
   resourceId,
   audienceId,

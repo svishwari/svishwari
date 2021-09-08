@@ -144,6 +144,16 @@ const actions = {
     })
   },
 
+  async fetchAudienceMetrics(_, { id }) {
+    try {
+      const response = await api.engagements.downloadAudienceMetrics(id)
+      return response
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async add({ commit }, engagement) {
     try {
       const payload = {
