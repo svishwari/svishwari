@@ -47,7 +47,7 @@ export default {
       },
     }
   },
- computed: {
+  computed: {
     getMatchingTrendData() {
       return this.mapData
     },
