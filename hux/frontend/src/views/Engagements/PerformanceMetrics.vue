@@ -1,11 +1,5 @@
 <template>
   <div>
-    <hux-alert
-      v-model="flashAlert"
-      :type="alert.type"
-      :title="alert.title"
-      :message="alert.message"
-    />
     <v-tabs v-model="tabOption" class="mt-8">
       <v-tabs-slider color="primary"></v-tabs-slider>
       <div class="d-flex">
@@ -26,7 +20,7 @@
         </v-tab>
       </div>
       <div>
-        <download-tooltip>
+        <tooltip>
           <template #label-content>
             <v-icon
               size="22"
@@ -42,11 +36,11 @@
             </v-icon>
           </template>
           <template #hover-content>
-            <div id="tooltipdownloadmetrics">
+            <div class="tooltipdownloadmetrics">
               {{ tooltipValue }}
             </div>
           </template>
-        </download-tooltip>
+        </tooltip>
       </div>
     </v-tabs>
     <v-tabs-items v-model="tabOption" class="mt-2">
@@ -75,6 +69,12 @@
         />
       </v-tab-item>
     </v-tabs-items>
+    <hux-alert
+      v-model="flashAlert"
+      :type="alert.type"
+      :title="alert.title"
+      :message="alert.message"
+    />
   </div>
 </template>
 
@@ -82,12 +82,13 @@
 import { mapActions } from "vuex"
 import CampaignSummary from "../../components/CampaignSummary.vue"
 import HuxAlert from "../../components/common/HuxAlert.vue"
-import DownloadTooltip from "./DownloadTooltip.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+
 export default {
   name: "EngagementPerformanceMetrics",
   components: {
     CampaignSummary,
-    DownloadTooltip,
+    Tooltip,
     HuxAlert,
   },
   props: {
@@ -434,15 +435,8 @@ export default {
     background: transparent;
   }
 }
-#tooltipdownloadmetrics {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 6px 16px;
-  position: relative;
-  width: 280px;
-  height: 44px;
-  background: #ffffff;
-  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
+.tooltipdownloadmetrics {
+  width: 252px;
+  height: 38px;
 }
 </style>
