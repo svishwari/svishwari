@@ -20,7 +20,7 @@ import demographicsData from "@/api/mock/fixtures/demographicData.js"
 import customerEventData from "@/api/mock/fixtures/customerEventData.js"
 import totalCustomersData from "./fixtures/totalCustomersData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
-import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
+import idrMatchingTrend from "@/api/mock/fixtures/idrMatchingTrendData.js"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -460,7 +460,7 @@ export const defineRoutes = (server) => {
     { timing: 10 }
   )
   server.get("/idr/datafeeds/:datafeed_id", () => idrDataFeedReport)
-  server.get("/idr/matching-trends", () => genderSpendData())
+  server.get("/idr/matching-trends", () => idrMatchingTrend)
 
   // notifications
   server.get("/notifications", (schema, request) => {
