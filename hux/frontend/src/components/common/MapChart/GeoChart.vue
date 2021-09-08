@@ -120,12 +120,13 @@ export default {
 
       let colorScale = d3Scale
         .scaleLinear()
-        .domain([0, this.maxValue !==0 ? this.maxValue * 100 : 100])
+        .domain([0, this.maxValue !== 0 ? this.maxValue * 100 : 100])
         .range(["#ffffff", "#396286"])
 
-      let applyValueColor = (metricValue) => colorScale(metricValue ? metricValue[this.primaryMetric]*100 : 0) 
+      let applyValueColor = (metricValue) =>
+        colorScale(metricValue ? metricValue[this.primaryMetric] * 100 : 0)
       d3Transition.transition()
-      
+
       svg
         .selectAll("path")
         .data(featureCollection.features)

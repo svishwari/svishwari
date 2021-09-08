@@ -458,5 +458,5 @@ export default [
     gender_men: 0.6057,
     gender_other: 0.6057,
     ltv: 1234.5,
-  }
+  },
 ]
