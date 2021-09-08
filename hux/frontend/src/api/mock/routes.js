@@ -380,7 +380,7 @@ export const defineRoutes = (server) => {
 
   server.get("/models/:id/lift", () => liftData)
 
-  server.post("/models/:id/drift", () => driftData())
+  server.get("/models/:id/drift", () => driftData())
 
   server.get("/models/:id/features", (schema, request) => {
     const id = request.params.id
@@ -401,7 +401,7 @@ export const defineRoutes = (server) => {
 
   server.get("/customers/overview", () => customersOverview)
 
-  server.get("/customers/:huxId/events", () => customerEventData)
+  server.post("/customers/:huxId/events", () => customerEventData)
 
   server.get("/customers-insights/geo", () => mapData)
 

@@ -229,6 +229,10 @@ STATUS_WEIGHTS = {
     STATUS_ERROR: 0,
     db_c.STATUS_FAILED: 0,
 }
+# Download Audience Fields
+DOWNLOAD_TYPE = "download_type"
+GOOGLE_ADS = "google_ads"
+AMAZON_ADS = "amazon_ads"
 
 # Facebook connector defines
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
@@ -258,6 +262,13 @@ QUALTRICS_API_TOKEN = "qualtrics_api_token"
 QUALTRICS_DATA_CENTER = "qualtrics_data_center"
 QUALTRICS_OWNER_ID = "qualtrics_owner_id"
 QUALTRICS_DIRECTORY_ID = "qualtrics_directory_id"
+
+# google ads connector defines
+GOOGLE_DEVELOPER_TOKEN = "google_developer_token"
+GOOGLE_REFRESH_TOKEN = "google_refresh_token"
+GOOGLE_CLIENT_CUSTOMER_ID = "google_client_customer_id"
+GOOGLE_CLIENT_ID = "google_client_id"
+GOOGLE_CLIENT_SECRET = "google_client_secret"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -361,6 +372,38 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
+    GOOGLE_ADS: {
+        GOOGLE_DEVELOPER_TOKEN: {
+            NAME: "Developer Token",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        GOOGLE_REFRESH_TOKEN: {
+            NAME: "Refresh Token",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        GOOGLE_CLIENT_CUSTOMER_ID: {
+            NAME: "Client Customer ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        GOOGLE_CLIENT_ID: {
+            NAME: "Client ID",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        GOOGLE_CLIENT_SECRET: {
+            NAME: "Client Secret",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+    },
 }
 
 # DESTINATION Secret Mapping
@@ -394,6 +437,16 @@ DESTINATION_SECRETS = {
             QUALTRICS_OWNER_ID,
         ],
         AWS_SSM_NAME: [QUALTRICS_API_TOKEN],
+    },
+    db_c.DELIVERY_PLATFORM_GOOGLE: {
+        MONGO: [
+            GOOGLE_DEVELOPER_TOKEN,
+            GOOGLE_REFRESH_TOKEN,
+            GOOGLE_CLIENT_CUSTOMER_ID,
+            GOOGLE_CLIENT_ID,
+            GOOGLE_CLIENT_SECRET,
+        ],
+        AWS_SSM_NAME: [GOOGLE_DEVELOPER_TOKEN],
     },
 }
 
@@ -892,11 +945,6 @@ DEFAULT_ALERT_SORT_ORDER = "descending"
 DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
-
-# Download Audience Fields
-DOWNLOAD_TYPE = "download_type"
-GOOGLE_ADS = "google_ads"
-AMAZON_ADS = "amazon_ads"
 
 DOWNLOAD_TYPES = {
     GOOGLE_ADS: {
