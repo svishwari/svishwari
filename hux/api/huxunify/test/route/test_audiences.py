@@ -1,7 +1,7 @@
 """
 Purpose of this file is to house audience related tests
 """
-
+from datetime import datetime
 from http import HTTPStatus
 from unittest import TestCase, mock
 
@@ -68,6 +68,11 @@ class AudienceDownloadsTest(TestCase):
             return_value=self.database,
         ).start()
 
+        mock.patch(
+            "huxunify.api.route.audiences.upload_file",
+            return_value=True,
+        ).start()
+
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
@@ -97,6 +102,17 @@ class AudienceDownloadsTest(TestCase):
             api_c.DESTINATION_IDS: [],
         }
         self.audience = create_audience(self.database, **audience)
+
+        mock.patch(
+            "huxunify.api.route.audiences.create_audience_audit",
+            return_value={
+                api_c.USER_NAME: self.user_name,
+                api_c.AUDIENCE_ID: self.audience,
+                db_c.DOWNLOAD_TIME: datetime.now(),
+                api_c.DOWNLOAD_TYPE: "google_ads",
+                db_c.FILE_NAME: "abc.csv",
+            },
+        ).start()
 
     def test_download_google_ads(self) -> None:
         """
