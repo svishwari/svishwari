@@ -9,8 +9,6 @@ from huxunifylib.database import constants as c
 from huxunifylib.database.client import DatabaseClient
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
-from huxunify.api import constants as api_c
-
 
 @retry(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
@@ -41,10 +39,10 @@ def create_audience_audit(
     collection = dm_db[c.AUDIENCE_AUDIT_COLLECTION]
 
     doc = {
-        api_c.USER_NAME: user_name if user_name else "",
+        c.USER_NAME: user_name if user_name else "",
         c.AUDIENCE_ID: ObjectId(audience_id),
         c.DOWNLOAD_TIME: download_time,
-        api_c.DOWNLOAD_TYPE: download_type,
+        c.DOWNLOAD_TYPE: download_type,
         c.FILE_NAME: file_name,
     }
 
