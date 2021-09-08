@@ -349,7 +349,7 @@ export const defineRoutes = (server) => {
     }
   )
   server.get("/engagements/:id/audience-performance/download", async () => {
-    // Introduced a delay of 15 seconds to
+    // Introduced a delay of 5 seconds to
     // replicate the API delay in processing the BLOB.
     await new Promise((r) => setTimeout(r, 5000))
     return audienceCSVData
