@@ -171,6 +171,7 @@ class AudienceDownload(SwaggerView):
                 data,
                 headers={
                     "Content-Type": "application/csv",
+                    "Access-Control-Expose-Headers": "Content-Disposition",
                     "Content-Disposition": "attachment; filename=%s;"
                     % audience_file_name,
                 },
