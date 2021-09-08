@@ -136,13 +136,14 @@ export default {
         .style("stroke", "#1E1E1E")
         .style("stroke-width", "0.5")
         .style("fill", "#ffffff")
+        .on("mouseover", (d) => applyHoverChanges(d))
+        .on("mouseout", () => removeHoverChanges())
         .transition()
         .duration(500)
         .delay((d, i) => i * 30)
         .style("fill", (d) => applyValueColor(d.properties))
         .attr("fill-opacity", "1")
-        .on("mouseover", (d) => applyHoverChanges(d))
-        .on("mouseout", () => removeHoverChanges())
+
 
       let applyHoverChanges = (d) => {
         svg
