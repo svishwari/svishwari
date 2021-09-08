@@ -348,6 +348,12 @@ export const defineRoutes = (server) => {
       return engagement.campaign_performance["adsPerformance"]
     }
   )
+  server.get("/engagements/:id/audience-performance/download", async () => {
+    // Introduced a delay of 5 seconds to
+    // replicate the API delay in processing the BLOB.
+    await new Promise((r) => setTimeout(r, 5000))
+    return audienceCSVData
+  })
 
   // models
   server.get("/models")
