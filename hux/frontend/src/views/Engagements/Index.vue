@@ -61,7 +61,7 @@
             <div v-if="header.value == 'name'" class="w-80">
               <menu-cell
                 :value="item[header.value]"
-                :menu-options="actionItems"
+                :menu-options="getActionItems(item)"
                 route-name="EngagementDashboard"
                 :route-param="item['id']"
                 :data="item"
@@ -167,7 +167,7 @@
                   <div v-if="header.value == 'name'">
                     <menu-cell
                       :value="item[header.value]"
-                      :menu-options="audienceActionItems"
+                      :menu-options="getAudienceActionItems(item)"
                       route-name="AudienceInsight"
                       :route-param="item['id']"
                       :data="item"
@@ -412,39 +412,6 @@ export default {
         type: "success",
         message: "",
       },
-      actionItems: [
-        { title: "Favorite", isDisabled: true },
-        { title: "Export", isDisabled: true },
-        { title: "Edit engagement", isDisabled: true },
-        { title: "Duplicate", isDisabled: true },
-        {
-          title: "Make inactive",
-          isDisabled: false,
-          onClick: (value) => {
-            this.makeInactiveEngagement(value)
-          },
-        },
-        { title: "Delete engagement", isDisabled: true },
-      ],
-      audienceActionItems: [
-        { title: "Favorite", isDisabled: true },
-        { title: "Export", isDisabled: true },
-        { title: "Edit audience", isDisabled: true },
-        { title: "Duplicate", isDisabled: true },
-        {
-          title: "Create a lookalike",
-          isDisabled: false,
-          menu: {
-            icon: "facebook",
-            title: "Facebook",
-            isDisabled: true,
-            onClick: (value) => {
-              this.openLookAlikeDrawer(value)
-            },
-          },
-        },
-        { title: "Remove audience", isDisabled: true },
-      ],
       breadcrumbItems: [
         {
           text: "Engagements",
@@ -575,6 +542,68 @@ export default {
       this.alert.type = "error"
       this.alert.message = message
       this.flashAlert = true
+    },
+    getActionItems(engagement) {
+      let actionItems = [
+        { title: "Favorite", isDisabled: true },
+        { title: "Export", isDisabled: true },
+        { title: "Edit engagement", 
+          isDisabled: false,  
+          onClick: () => {
+            this.editEngagement(engagement.id)
+          }, 
+        },
+        { title: "Duplicate", isDisabled: true },
+        {
+          title: "Make inactive",
+          isDisabled: false,
+          onClick: (value) => {
+            this.makeInactiveEngagement(value)
+          },
+        },
+        { title: "Delete engagement", isDisabled: true },
+      ]
+
+      return actionItems
+    },
+    editEngagement(id) {
+      this.$router.push({
+        name: "EngagementUpdate",
+        params: { id: id },
+      })
+    },
+    getAudienceActionItems(audience){
+      let  audienceActionItems = [
+        { title: "Favorite", isDisabled: true },
+        { title: "Export", isDisabled: true },
+        { title: "Edit audience", 
+          isDisabled: false,
+          onClick: () => {
+            this.editAudience(audience.id)
+          },
+        },
+        { title: "Duplicate", isDisabled: true },
+        {
+          title: "Create a lookalike",
+          isDisabled: false,
+          menu: {
+            icon: "facebook",
+            title: "Facebook",
+            isDisabled: true,
+            onClick: (value) => {
+              this.openLookAlikeDrawer(value)
+            },
+          },
+        },
+        { title: "Remove audience", isDisabled: true },
+      ]
+      return audienceActionItems
+    },
+    editAudience(id) {
+      this.$router.push({
+        name: "AudienceUpdate",
+        params: { id: id },
+      })
     },
   },
 }
