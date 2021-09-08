@@ -1,6 +1,7 @@
 <template>
   <div class="chart-container" :style="{ maxWidth: chartWidth }">
     <div ref="multiLineChart" class="chart-section"></div>
+    <div ref="legend"></div>
   </div>
 </template>
 
@@ -73,7 +74,14 @@ export default {
       let h = this.chartDimensions.height - margin.top - margin.bottom
       let dataKey = ["known_ids", "anonymous_ids", "unique_hux_ids"]
       let colorCodes = ["#42EFFD", "#75787B", "#347DAC"]
-
+       let ids = [
+        { label: "known ids", xValue: 0 },
+        { label: "anonymous ids", xValue: 35 },
+        { label: "unique hux ids", xValue: 60 },
+      ]
+      let color = d3Scale
+        .scaleOrdinal()
+        .range(["#42EFFD", "#75787B", "#347DAC"])
       let svg = d3Select
         .select(this.$refs.multiLineChart)
         .append("svg")
@@ -171,7 +179,6 @@ export default {
           .datum(this.data)
           .attr("class", "line")
           .style("stroke", colorCodes[i])
-          .style("stroke-width", 3)
           .style("fill", "transparent")
           .attr("d", lineFunction)
 
@@ -192,7 +199,7 @@ export default {
         .append("line")
         .attr("class", "hover-line-y")
         .style("stroke", "#1E1E1E")
-        .style("stroke-width", 1)
+        .style("stroke-width", 2)
       svg
         .append("rect")
         .attr("width", w)
@@ -252,6 +259,53 @@ export default {
         dataToolTip.yPosition = yData
         this.tooltipDisplay(true, dataToolTip)
       }
+ 	      d3Select.select(this.$refs.legend).selectAll("svg").remove()
+        let legendSvg = d3Select
+          .select(this.$refs.legend)
+          .append("svg")
+         
+          .attr("id", "mainSvg")
+          .attr("class", "svgBox")
+          .style("margin-left", "20px")
+          .style("margin-right", "20px")
+          .style("margin-top", "10px")
+
+        let legend = legendSvg
+          .selectAll(".legend")
+          .data(ids)
+          .enter()
+          .append("g")
+          .attr("class", "legend")
+          .attr("transform", function (d) {
+            return `translate(${d.xValue}, 0)`
+          })
+
+        legend
+          .append("circle")
+          .attr("cx", 10)
+          .attr("cy", 10)
+          .attr("r", 3)
+          .style("fill", function (d) {
+            return color(d.label)
+          })
+
+        legend
+          .append("text")
+          .attr("x", 16)
+          .attr("y", 9)
+          .attr("dy", ".55em")
+          .attr("class", "neroBlack--text")
+          .style("font-size", 6)
+          .style("text-anchor", "start")
+          .text(function (d) {
+            return d.label
+          })
+
+
+
+
+
+
     },
     tooltipDisplay(showTip, eventsData) {
       this.$emit("tooltipDisplay", showTip, eventsData)

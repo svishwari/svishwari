@@ -23,7 +23,7 @@
 import IDRMatchingTrendToolTip from "@/components/common/IDRMatchingTrend/IDRMatchingTrendToolTip"
 import MultiLineChart from "@/components/common/IDRMatchingTrend/MultiLineChart.vue"
 //TODO
-// import data from "./IDRMatchingTrendData.json"
+import data from "./IDRMatchingTrendData.json"
 
 export default {
   name: "IDRMatchingTrend",
@@ -43,7 +43,7 @@ export default {
         y: 0,
       },
       colorCodes: ["#42EFFD", "#347DAC", "#75787B"],
-      sourceData: this.mapData,
+      sourceData: data,
       currentData: {},
       chartDimensions: {
         width: 0,
@@ -80,7 +80,7 @@ export default {
     sizeHandler() {
       if (this.$refs.trendsChart) {
         this.chartDimensions.width = 1200
-        this.chartDimensions.height = 350
+        this.chartDimensions.height = 300
       }
     },
   },
