@@ -75,7 +75,7 @@ export default {
     },
     sizeHandler() {
       if (this.$refs.trendsChart) {
-        this.chartDimensions.width = 1200
+        this.chartDimensions.width = this.$refs.trendsChart.clientWidth
         this.chartDimensions.height = 300
       }
     },

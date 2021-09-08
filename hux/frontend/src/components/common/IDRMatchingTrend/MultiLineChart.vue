@@ -1,6 +1,7 @@
 <template>
   <div class="chart-container" :style="{ maxWidth: chartWidth }">
     <div ref="multiLineChart" class="chart-section"></div>
+    <div ref="legend"></div>
   </div>
 </template>
 
@@ -41,10 +42,6 @@ export default {
       toolTip: {
         xPosition: 0,
         yPosition: 0,
-        index: 0,
-        date: "",
-        totalCustomers: 0,
-        addedCustomers: 0,
       },
     }
   },
@@ -69,12 +66,19 @@ export default {
       let h = this.chartDimensions.height - margin.top - margin.bottom
       let dataKey = ["known_ids", "anonymous_ids", "unique_hux_ids"]
       let colorCodes = ["#42EFFD", "#75787B", "#347DAC"]
-
+      let ids = [
+        { label: "known ids", xValue: 0 },
+        { label: "anonymous ids", xValue: 95 },
+        { label: "unique hux ids", xValue: 225 },
+      ]
+      let color = d3Scale
+        .scaleOrdinal()
+        .range(["#42EFFD", "#75787B", "#347DAC"])
       let svg = d3Select
         .select(this.$refs.multiLineChart)
         .append("svg")
         .attr("width", this.width + margin.left + margin.right)
-        .attr("height", this.height + margin.top + margin.bottom)
+        .attr("height", this.height - margin.top)
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`)
       let dateFormatter = (value) =>
@@ -179,8 +183,9 @@ export default {
           .attr("r", 3)
           .attr("cx", (d) => xScale(new Date(dateFormatter(d.date))))
           .attr("cy", (d) => yScale(d[dataKey[i]]))
-          .style("fill", "white")
-          .attr("stroke", colorCodes[i])
+          .attr("data", colorCodes[i])
+          .style("fill", "transparent")
+          .attr("stroke", "transparent")
       }
 
       svg
@@ -235,8 +240,8 @@ export default {
               .classed("hover-circle", true)
               .attr("cx", finalXCoordinate)
               .attr("cy", yPosition)
-              .attr("r", 4.5)
-              .style("stroke", this.getAttribute("stroke"))
+              .attr("r", 5.5)
+              .style("stroke", this.getAttribute("data"))
               .style("stroke-opacity", "1")
               .style("fill", "white")
               .style("pointer-events", "none")
@@ -247,6 +252,48 @@ export default {
         dataToolTip.yPosition = yData
         this.tooltipDisplay(true, dataToolTip)
       }
+      d3Select.select(this.$refs.legend).selectAll("svg").remove()
+      let legendSvg = d3Select
+        .select(this.$refs.legend)
+        .append("svg")
+        .attr("id", "mainSvg")
+        .attr("class", "svgBox")
+        .attr("width", 400)
+        .style("margin-left", "20px")
+        .style("margin-right", "20px")
+        .style("margin-top", "10px")
+
+      let legend = legendSvg
+        .selectAll(".legend")
+        .data(ids)
+        .enter()
+        .append("g")
+        .attr("class", "legend")
+        .attr("transform", function (d) {
+          return `translate(${d.xValue}, 0)`
+        })
+
+      legend
+        .append("circle")
+        .attr("cx", 10)
+        .attr("cy", 10)
+        .attr("r", 6)
+        .attr("stroke", function (d) {
+          return color(d.label)
+        })
+        .style("fill", "white")
+
+      legend
+        .append("text")
+        .attr("x", 22)
+        .attr("y", 7)
+        .attr("dy", ".55em")
+        .attr("class", "neroBlack--text")
+        .style("font-size", 14)
+        .style("text-anchor", "start")
+        .text(function (d) {
+          return d.label
+        })
     },
     tooltipDisplay(showTip, eventsData) {
       this.$emit("tooltipDisplay", showTip, eventsData)

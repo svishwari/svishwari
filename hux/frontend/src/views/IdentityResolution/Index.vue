@@ -145,6 +145,7 @@
                 </span>
               </div>
             </v-card-title>
+
             <i-d-r-matching-trend
               v-if="!loadingMatchingTrends"
               :map-data="identityMatchingTrend"
