@@ -103,10 +103,9 @@ export default {
       })
 
       let total_range = featureCollection.features.map(
-        (data) => data.properties[this.primaryMetric]
+        (data) => data.properties ? data.properties[this.primaryMetric] : 0
       )
 
-      this.minValue = Math.min(...total_range)
       this.maxValue = Math.max(...total_range)
 
       var projection = d3Geo.geoIdentity().fitExtent(
@@ -121,7 +120,7 @@ export default {
 
       let colorScale = d3Scale
         .scaleLinear()
-        .domain([this.minValue * 100, this.maxValue * 100])
+        .domain([0, this.maxValue * 100])
         .range(["#ffffff", "#396286"])
 
       svg
@@ -133,7 +132,7 @@ export default {
         .style("stroke", "#1E1E1E")
         .style("stroke-width", "0.5")
         .style("fill", (d) =>
-          colorScale(d.properties[this.primaryMetric] * 100)
+          colorScale(d.properties ?  d.properties[this.primaryMetric]* 100 : 0)
         )
         .attr("fill-opacity", "1")
         .on("mouseover", (d) => applyHoverChanges(d))
@@ -153,7 +152,9 @@ export default {
       }
 
       let emitStateData = (d) => {
+        if (d.properties) {
         this.tooltipDisplay(true, d.properties)
+        }
         return "1"
       }
 
@@ -163,7 +164,7 @@ export default {
           .style("stroke", "#1E1E1E")
           .style("stroke-width", "0.5")
           .style("fill", (d) =>
-            colorScale(d.properties[this.primaryMetric] * 100)
+            colorScale(d.properties ? d.properties[this.primaryMetric] * 100 : 0)
           )
           .attr("fill-opacity", "1")
         this.tooltipDisplay(false)
