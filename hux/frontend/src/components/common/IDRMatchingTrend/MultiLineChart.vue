@@ -171,6 +171,7 @@ export default {
           .datum(this.data)
           .attr("class", "line")
           .style("stroke", colorCodes[i])
+          .style("stroke-width", 3)
           .style("fill", "transparent")
           .attr("d", lineFunction)
 

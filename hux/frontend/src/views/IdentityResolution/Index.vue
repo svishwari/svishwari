@@ -133,6 +133,11 @@
       <v-row class="px-2 mt-2">
         <v-col md="12">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="522">
+             <v-progress-linear
+              v-if="loadingMatchingTrends"
+              :active="loadingMatchingTrends"
+              :indeterminate="loadingMatchingTrends"
+            />
             <v-card-title class="chart-style pb-12 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
@@ -140,7 +145,7 @@
                 </span>
               </div>
             </v-card-title>
-            <i-d-r-matching-trend :map-data="identityMatchingTrend" />
+            <i-d-r-matching-trend v-if="!loadingMatchingTrends" :map-data="getIDRTrendData" />
           </v-card>
         </v-col>
       </v-row>
@@ -216,7 +221,9 @@ export default {
       const startDate = `${this.filters.startMonth} ${this.filters.startYear}`
       return this.$options.filters.Date(startDate, "YYYY-MM-DD")
     },
-
+     getIDRTrendData() {
+      return this.identityMatchingTrend;
+     },
     endDate() {
       const endDate = `${this.filters.endMonth} ${this.filters.endYear}`
       return this.$options.filters.Date(endDate, "YYYY-MM-DD")

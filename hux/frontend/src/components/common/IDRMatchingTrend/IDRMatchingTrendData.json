@@ -1,542 +1,218 @@
 [
     {
-        "date": "2021-01-01T17:56:07.290Z",
-        "known_ids": 9839,
-        "unique_hux_ids": 5856,
-        "anonymous_ids": 0
+      "date": "2021-07-12T00:00:00.000Z",
+      "known_ids": 1200,
+      "unique_hux_ids": 1049,
+      "anonymous_ids": 70
     },
     {
-        "date": "2021-01-02T17:56:07.290Z",
-        "known_ids": 8333,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-07-13T00:00:00.000Z",
+      "known_ids": 496,
+      "unique_hux_ids": 496,
+      "anonymous_ids": 91
     },
     {
-        "date": "2021-01-03T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-07-14T00:00:00.000Z",
+      "known_ids": 200,
+      "unique_hux_ids": 216,
+      "anonymous_ids": 36
     },
     {
-        "date": "2021-01-04T17:56:07.290Z",
-        "known_ids": 3940,
-        "unique_hux_ids": 4000,
-        "anonymous_ids": 0
+      "date": "2021-07-15T00:00:00.000Z",
+      "known_ids": 510,
+      "unique_hux_ids": 510,
+      "anonymous_ids": 54
     },
     {
-        "date": "2021-01-05T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 5000,
-        "anonymous_ids": 0
+      "date": "2021-07-16T00:00:00.000Z",
+      "known_ids": 616,
+      "unique_hux_ids": 616,
+      "anonymous_ids": 149
     },
     {
-        "date": "2021-01-06T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 4000,
-        "anonymous_ids": 0
+      "date": "2021-07-17T00:00:00.000Z",
+      "known_ids": 921,
+      "unique_hux_ids": 921,
+      "anonymous_ids": 110
     },
     {
-        "date": "2021-01-07T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
+      "date": "2021-07-18T00:00:00.000Z",
+      "known_ids": 722,
+      "unique_hux_ids": 722,
+      "anonymous_ids": 127
     },
     {
-        "date": "2021-01-08T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
+      "date": "2021-07-19T00:00:00.000Z",
+      "known_ids": 98,
+      "unique_hux_ids": 98,
+      "anonymous_ids": 11
     },
     {
-        "date": "2021-01-09T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-07-20T00:00:00.000Z",
+      "known_ids": 483,
+      "unique_hux_ids": 483,
+      "anonymous_ids": 107
     },
     {
-        "date": "2021-01-10T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
+      "date": "2021-07-21T00:00:00.000Z",
+      "known_ids": 461,
+      "unique_hux_ids": 461,
+      "anonymous_ids": 80
     },
     {
-        "date": "2021-01-11T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-07-22T00:00:00.000Z",
+      "known_ids": 1027,
+      "unique_hux_ids": 1027,
+      "anonymous_ids": 221
     },
     {
-        "date": "2021-01-12T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
+      "date": "2021-07-23T00:00:00.000Z",
+      "known_ids": 195,
+      "unique_hux_ids": 195,
+      "anonymous_ids": 27
     },
     {
-        "date": "2021-01-13T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-07-24T00:00:00.000Z",
+      "known_ids": 1278,
+      "unique_hux_ids": 1278,
+      "anonymous_ids": 116
     },
     {
-        "date": "2021-01-14T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
+      "date": "2021-07-25T00:00:00.000Z",
+      "known_ids": 833,
+      "unique_hux_ids": 833,
+      "anonymous_ids": 161
     },
     {
-        "date": "2021-01-15T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-07-26T00:00:00.000Z",
+      "known_ids": 658,
+      "unique_hux_ids": 658,
+      "anonymous_ids": 76
     },
     {
-        "date": "2021-01-16T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
+      "date": "2021-07-27T00:00:00.000Z",
+      "known_ids": 455,
+      "unique_hux_ids": 455,
+      "anonymous_ids": 87
     },
     {
-        "date": "2021-01-17T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-07-28T00:00:00.000Z",
+      "known_ids": 713,
+      "unique_hux_ids": 713,
+      "anonymous_ids": 153
     },
     {
-        "date": "2021-01-18T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
+      "date": "2021-07-29T00:00:00.000Z",
+      "known_ids": 560,
+      "unique_hux_ids": 560,
+      "anonymous_ids": 34
     },
     {
-        "date": "2021-01-19T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-07-30T00:00:00.000Z",
+      "known_ids": 21,
+      "unique_hux_ids": 21,
+      "anonymous_ids": 3
     },
     {
-        "date": "2021-01-20T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
+      "date": "2021-07-31T00:00:00.000Z",
+      "known_ids": 684,
+      "unique_hux_ids": 684,
+      "anonymous_ids": 69
     },
     {
-        "date": "2021-01-21T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-08-01T00:00:00.000Z",
+      "known_ids": 890,
+      "unique_hux_ids": 890,
+      "anonymous_ids": 97
     },
     {
-        "date": "2021-01-22T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
+      "date": "2021-08-02T00:00:00.000Z",
+      "known_ids": 906,
+      "unique_hux_ids": 906,
+      "anonymous_ids": 104
     },
     {
-        "date": "2021-01-23T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-08-03T00:00:00.000Z",
+      "known_ids": 542,
+      "unique_hux_ids": 542,
+      "anonymous_ids": 73
     },
     {
-        "date": "2021-01-24T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
+      "date": "2021-08-04T00:00:00.000Z",
+      "known_ids": 763,
+      "unique_hux_ids": 763,
+      "anonymous_ids": 44
     },
     {
-        "date": "2021-01-25T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-08-05T00:00:00.000Z",
+      "known_ids": 1029,
+      "unique_hux_ids": 1029,
+      "anonymous_ids": 130
     },
     {
-        "date": "2021-01-26T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
+      "date": "2021-08-06T00:00:00.000Z",
+      "known_ids": 714,
+      "unique_hux_ids": 714,
+      "anonymous_ids": 155
     },
     {
-        "date": "2021-01-27T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-08-07T00:00:00.000Z",
+      "known_ids": 183,
+      "unique_hux_ids": 183,
+      "anonymous_ids": 12
     },
     {
-        "date": "2021-01-28T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-08-08T00:00:00.000Z",
+      "known_ids": 43,
+      "unique_hux_ids": 43,
+      "anonymous_ids": 9
     },
     {
-        "date": "2021-01-29T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
+      "date": "2021-08-09T00:00:00.000Z",
+      "known_ids": 393,
+      "unique_hux_ids": 393,
+      "anonymous_ids": 39
     },
     {
-        "date": "2021-01-30T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-08-10T00:00:00.000Z",
+      "known_ids": 220,
+      "unique_hux_ids": 220,
+      "anonymous_ids": 43
     },
     {
-        "date": "2021-01-31T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-08-11T00:00:00.000Z",
+      "known_ids": 1114,
+      "unique_hux_ids": 1114,
+      "anonymous_ids": 206
     },
     {
-        "date": "2021-02-01T17:56:07.290Z",
-        "known_ids": 8000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
+      "date": "2021-08-12T00:00:00.000Z",
+      "known_ids": 597,
+      "unique_hux_ids": 597,
+      "anonymous_ids": 58
     },
     {
-        "date": "2021-02-02T17:56:07.290Z",
-        "known_ids": 7325,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-08-13T00:00:00.000Z",
+      "known_ids": 1061,
+      "unique_hux_ids": 1061,
+      "anonymous_ids": 126
     },
     {
-        "date": "2021-02-03T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
+      "date": "2021-08-14T00:00:00.000Z",
+      "known_ids": 1029,
+      "unique_hux_ids": 1029,
+      "anonymous_ids": 75
     },
     {
-        "date": "2021-02-04T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-08-15T00:00:00.000Z",
+      "known_ids": 458,
+      "unique_hux_ids": 458,
+      "anonymous_ids": 82
     },
     {
-        "date": "2021-02-05T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-06T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-07T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-08T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-09T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-10T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-11T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-12T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-13T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-14T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-15T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-16T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-17T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-18T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-19T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-20T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-21T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-22T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-23T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-24T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-25T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-26T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-27T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-02-28T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-01T17:56:07.290Z",
-        "known_ids": 8000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-02T17:56:07.290Z",
-        "known_ids": 7325,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-03T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-04T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-05T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-06T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-07T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-08T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-09T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-10T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-11T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-12T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-13T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-14T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-15T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-16T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-17T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-18T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-19T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-20T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-21T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-22T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-23T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-24T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-25T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-26T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-27T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-28T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-29T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 2856,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-30T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
-    },
-    {
-        "date": "2021-03-31T17:56:07.290Z",
-        "known_ids": 4000,
-        "unique_hux_ids": 3000,
-        "anonymous_ids": 0
+      "date": "2021-08-16T00:00:00.000Z",
+      "known_ids": 935,
+      "unique_hux_ids": 935,
+      "anonymous_ids": 198
     }
-]
+  ]
