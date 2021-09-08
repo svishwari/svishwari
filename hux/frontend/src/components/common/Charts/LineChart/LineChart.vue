@@ -86,7 +86,8 @@ export default {
         .rangeRound([0, w])
         .domain(
           d3Array.extent(this.data, (d) => new Date(dateFormatter(d.date)))
-        ).nice(8)
+        )
+        .nice(8)
 
       let yScale = d3Scale
         .scaleLinear()
