@@ -253,50 +253,5 @@
     "id": "56",
     "code": "WY",
     "name": "Wyoming"
-  },
-  {
-    "id": "60",
-    "code": "AS",
-    "name": "America Samoa"
-  },
-  {
-    "id": "64",
-    "code": "FM",
-    "name": "Federated States of Micronesia"
-  },
-  {
-    "id": "66",
-    "code": "GU",
-    "name": "Guam"
-  },
-  {
-    "id": "68",
-    "code": "MH",
-    "name": "Marshall Islands"
-  },
-  {
-    "id": "69",
-    "code": "MP",
-    "name": "Northern Mariana Islands"
-  },
-  {
-    "id": "70",
-    "code": "PW",
-    "name": "Palau"
-  },
-  {
-    "id": "72",
-    "code": "PR",
-    "name": "Puerto Rico"
-  },
-  {
-    "id": "74",
-    "code": "UM",
-    "name": "U.S. Minor Outlying Islands"
-  },
-  {
-    "id": "78",
-    "code": "VI",
-    "name": "Virgin Islands of the United States"
   }
 ]
