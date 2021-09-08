@@ -289,13 +289,13 @@ class TestCustomersOverview(TestCase):
         self.request_mocker.stop()
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
-            f"/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.CDM_DATAFEEDS}",
+            f"/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.DATAFEEDS}",
             json=t_c.IDR_DATAFEEDS_RESPONSE,
         )
         self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}",
+            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -303,6 +303,9 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(
             {}, DataFeedSchema().validate(response.json, many=True)
         )
+        for datafeed in response.json:
+            self.assertIn("num_records_processed", datafeed)
+            self.assertIn("new_ids_generated", datafeed)
 
     def test_get_idr_data_feed_details(self) -> None:
         """
@@ -317,14 +320,14 @@ class TestCustomersOverview(TestCase):
         self.request_mocker.stop()
         self.request_mocker.get(
             f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
-            f"/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.CDM_DATAFEEDS}/"
+            f"/{api_c.CDM_IDENTITY_ENDPOINT}/{api_c.DATAFEEDS}/"
             f"{datafeed_id}",
             json=t_c.IDR_DATAFEED_DETAILS_RESPONSE,
         )
         self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/"
+            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}/"
             f"{datafeed_id}",
             headers=t_c.STANDARD_HEADERS,
         )

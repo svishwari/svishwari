@@ -139,10 +139,13 @@
       <v-row class="px-15 mt-2">
         <v-col md="12">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <v-card-title class="pb-2 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
-                  Total customers ({{ timeFrameLabel }})
+                  Total customers
+                  <span class="text-body-2 time-frame">
+                    ({{ timeFrameLabel }})
+                  </span>
                 </span>
               </div>
             </v-card-title>
@@ -176,10 +179,12 @@
             <map-chart
               v-if="!loadingGeoOverview"
               :map-data="customersGeoOverview"
+              :configuration-data="configurationData"
             />
             <map-slider
               v-if="!loadingGeoOverview"
               :map-data="customersGeoOverview"
+              :configuration-data="configurationData"
             />
           </v-card>
         </v-col>
@@ -199,6 +204,7 @@
             <map-state-list
               v-if="!loadingGeoOverview"
               :map-data="customersGeoOverview"
+              :configuration-data="configurationData"
             />
           </v-card>
         </v-col>
@@ -231,11 +237,12 @@
               :active="loadingDemographics"
               :indeterminate="loadingDemographics"
             />
-            <v-card-title v-if="!loadingDemographics" class="pb-1 pl-5 pt-4">
+            <v-card-title v-if="!loadingDemographics" class="pb-0 pl-2 pt-5">
               <div class="mt-1">
                 <span class="neroBlack--text text-h5">
-                  Gender &sol; monthly spending in 2021
+                  Gender &sol; monthly spending
                 </span>
+                <span class="color-last-month">(last 6 months)</span>
               </div>
             </v-card-title>
             <gender-spend-chart
@@ -298,7 +305,7 @@ import MetricCard from "@/components/common/MetricCard"
 import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
 import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
-import GeoDrawer from "./Drawers/GeoDrawer.vue"
+import GeoDrawer from "@/views/Shared/Drawers/GeoDrawer.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import MapChart from "@/components/common/MapChart/MapChart"
@@ -306,6 +313,7 @@ import MapStateList from "@/components/common/MapChart/MapStateList"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
+import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import dayjs from "dayjs"
 
 export default {
@@ -332,6 +340,7 @@ export default {
     return {
       customerProfilesDrawer: false,
       loadingCustomerChart: false,
+      configurationData: configurationData,
       geoDrawer: {
         cities: false,
         countries: false,
@@ -339,7 +348,7 @@ export default {
       },
       loadingGeoOverview: false,
       loadingDemographics: true,
-      timeFrameLabel: "last 6 months",
+      timeFrameLabel: "last 9 months",
       overviewListItems: [
         {
           title: "No. of customers",
@@ -645,6 +654,10 @@ export default {
   margin: 6px !important;
 }
 
+.time-frame {
+  color: var(--v-gray-base) !important;
+}
+
 .customer-dashboard-wrap {
   ::v-deep .mdi-chevron-right::before {
     content: none;
@@ -654,6 +667,9 @@ export default {
   cursor: default !important;
 }
 ::v-deep .genderSpend .container {
-  margin-top: 14px !important;
+  margin-top: 8px !important;
+}
+.color-last-month {
+  color: var(--v-grey-base) !important;
 }
 </style>

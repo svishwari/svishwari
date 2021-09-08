@@ -36,7 +36,6 @@
           </v-btn>
         </template>
       </page-header>
-
       <v-progress-linear :active="loading" :indeterminate="loading" />
 
       <hux-filters-bar :is-toggled="isFilterToggled">
@@ -88,7 +87,7 @@
           :key="index"
           :title="metric.title"
           :min-width="170"
-          class="mx-2 my-2"
+          class="mx-2 my-2 pt-3 pl-6"
         >
           <template #extra-item>
             <tooltip position-top>
@@ -131,6 +130,29 @@
           </template>
         </metric-card>
       </v-row>
+      <v-row class="px-2 mt-2">
+        <v-col md="12">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="422">
+            <v-progress-linear
+              v-if="loadingMatchingTrends"
+              :active="loadingMatchingTrends"
+              :indeterminate="loadingMatchingTrends"
+            />
+            <v-card-title class="chart-style pb-12 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5">
+                  ID Resolution matching trends
+                </span>
+              </div>
+            </v-card-title>
+
+            <i-d-r-matching-trend
+              v-if="!loadingMatchingTrends"
+              :map-data="identityMatchingTrend"
+            />
+          </v-card>
+        </v-col>
+      </v-row>
 
       <data-feeds
         v-if="!loadingDataFeeds"
@@ -154,6 +176,7 @@ import Icon from "@/components/common/Icon"
 import MetricCard from "@/components/common/MetricCard"
 import Tooltip from "@/components/common/Tooltip.vue"
 import DataFeeds from "./DataFeeds.vue"
+import IDRMatchingTrend from "@/components/common/IDRMatchingTrend/IDRMatchingTrend"
 
 export default {
   name: "IdentityResolution",
@@ -168,6 +191,7 @@ export default {
     PageHeader,
     Tooltip,
     DataFeeds,
+    IDRMatchingTrend,
   },
 
   data() {
@@ -201,7 +225,6 @@ export default {
       const startDate = `${this.filters.startMonth} ${this.filters.startYear}`
       return this.$options.filters.Date(startDate, "YYYY-MM-DD")
     },
-
     endDate() {
       const endDate = `${this.filters.endMonth} ${this.filters.endYear}`
       return this.$options.filters.Date(endDate, "YYYY-MM-DD")
@@ -234,7 +257,7 @@ export default {
     async refreshData() {
       await this.loadOverview()
       this.loadDataFeeds()
-      this.loadMatchingTrends()
+      await this.loadMatchingTrends()
     },
 
     setFilters({ startDate, endDate }) {

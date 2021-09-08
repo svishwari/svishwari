@@ -76,7 +76,6 @@ const Numeric = (
   append = ""
 ) => {
   if (typeof value !== "number") return value
-
   let abrv = ""
 
   if (percentage) {

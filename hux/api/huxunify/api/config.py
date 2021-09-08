@@ -126,6 +126,9 @@ class Config:
         "CDP_CONNECTION_SERVICE",
         default="https://connections-api.main.use1.hux-unified-dev1.in",
     )
+    S3_DATASET_BUCKET = config(
+        "S3_DATASET_BUCKET", default="hux-unified-dev1-datasets"
+    )
     # Preserve ordering in json
     JSON_SORT_KEYS = False
 
