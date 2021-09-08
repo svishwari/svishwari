@@ -144,7 +144,6 @@ export default {
         .style("fill", (d) => applyValueColor(d.properties))
         .attr("fill-opacity", "1")
 
-
       let applyHoverChanges = (d) => {
         svg
           .selectAll("path")
