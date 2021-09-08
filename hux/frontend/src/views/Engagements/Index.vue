@@ -547,11 +547,12 @@ export default {
       let actionItems = [
         { title: "Favorite", isDisabled: true },
         { title: "Export", isDisabled: true },
-        { title: "Edit engagement", 
-          isDisabled: false,  
+        {
+          title: "Edit engagement",
+          isDisabled: false,
           onClick: () => {
             this.editEngagement(engagement.id)
-          }, 
+          },
         },
         { title: "Duplicate", isDisabled: true },
         {
@@ -572,11 +573,12 @@ export default {
         params: { id: id },
       })
     },
-    getAudienceActionItems(audience){
-      let  audienceActionItems = [
+    getAudienceActionItems(audience) {
+      let audienceActionItems = [
         { title: "Favorite", isDisabled: true },
         { title: "Export", isDisabled: true },
-        { title: "Edit audience", 
+        {
+          title: "Edit audience",
           isDisabled: false,
           onClick: () => {
             this.editAudience(audience.id)
