@@ -117,6 +117,7 @@ export default {
   max-width: 213px;
   min-width: 210px;
   height: auto;
+  z-index: 99 !important;
   position: absolute;
   top: -160px;
   left: -240px;
