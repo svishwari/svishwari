@@ -60,7 +60,7 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
 
     response = requests.post(
         f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_IDENTITY_ENDPOINT}/"
-        f"{api_c.CDM_DATAFEEDS}",
+        f"{api_c.DATAFEEDS}",
         json={api_c.START_DATE: start_date, api_c.END_DATE: end_date},
         headers={api_c.CUSTOMERS_API_HEADER_KEY: token},
     )
@@ -98,7 +98,7 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
 
     response = requests.get(
         f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_IDENTITY_ENDPOINT}/"
-        f"{api_c.CDM_DATAFEEDS}/{datafeed_id}",
+        f"{api_c.DATAFEEDS}/{datafeed_id}",
         headers={api_c.CUSTOMERS_API_HEADER_KEY: token},
     )
 
@@ -115,6 +115,58 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
     return {
         k: clean_cdm_fields(v) for k, v in response.json()[api_c.BODY].items()
     }
+
+
+def get_data_source_data_feeds(token: str, data_source_type: str) -> list:
+    """
+    Retrieve data source data feeds
+
+    Args:
+        token (str): OKTA JWT Token
+        data_source_type (str): type of data source
+
+    Returns:
+        list: list of connection data-feeds
+
+    """
+    config = get_config()
+
+    logger.info(
+        "Retrieving data-feeds for data source with type %s.", data_source_type
+    )
+
+    response = requests.get(
+        f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_CONNECTIONS_ENDPOINT}/"
+        f"{data_source_type}/{api_c.DATA_FEEDS}",
+        headers={api_c.CUSTOMERS_API_HEADER_KEY: token},
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve %s connections data feeds %s %s.",
+            data_source_type,
+            response.status_code,
+            response.text,
+        )
+        return []
+
+    logger.info(
+        "Successfully retrieved %s data feed details.", data_source_type
+    )
+
+    data_feeds = response.json()[api_c.BODY]
+
+    for data_feed in data_feeds:
+        data_feed[api_c.PROCESSED_AT] = parse(
+            data_feed.get(api_c.PROCESSED_AT)
+        )
+        data_feed["records_processed_percentage"] = data_feed.get(
+            "records_processed", 0
+        ) / data_feed.get("records_received", 1)
+        data_feed["thirty_days_avg"] = (
+            data_feed.get("thirty_days_avg", 0) / 100
+        )
+    return data_feeds
 
 
 def get_idr_matching_trends(

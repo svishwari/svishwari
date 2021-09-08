@@ -10,9 +10,8 @@ import * as d3Shape from "d3-shape"
 import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
-import * as d3TimeFormat from "d3-time-format"
-import * as d3Collection from "d3-collection"
 import * as d3Regression from "d3-regression"
+import * as d3Transition from "d3-transition"
 import colors from "../../../../plugins/theme"
 
 export default {
@@ -36,9 +35,14 @@ export default {
         }
       },
     },
+    barGroupChangeIndex: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
+      lastBarAnimation: "",
       totalCustomerData: this.value,
       chartWidth: "",
       toolTip: {
@@ -51,16 +55,19 @@ export default {
       },
     }
   },
-
   watch: {
     chartDimensions: {
       handler() {
         d3Select.select(this.$refs.stackBarChart).selectAll("svg").remove()
+        clearInterval(this.lastBarAnimation)
         this.initiateStackBarChart()
       },
       immediate: false,
       deep: true,
     },
+  },
+  destroyed() {
+    clearInterval(this.lastBarAnimation)
   },
   methods: {
     async initiateStackBarChart() {
@@ -71,12 +78,9 @@ export default {
       let margin = { top: 15, right: 45, bottom: 100, left: 68 }
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
-      let formattedData = []
-      let initialIndex = 0
       let barColorCodes = []
-      let monthChangeIndexs = []
-      let rx = 15
-      let ry = 15
+      let rx = 10
+      let ry = 10
 
       let svg = d3Select
         .select(this.$refs.stackBarChart)
@@ -88,54 +92,12 @@ export default {
 
       this.colorCodes.forEach((color) => barColorCodes.push(colors[color]))
 
-      let week = d3TimeFormat.timeFormat("%U")
-      let weeklyAggData = d3Collection
-        .nest()
-        .key((d) => week(new Date(d.date)))
-        .entries(this.totalCustomerData)
-
-      let initialWeek = weeklyAggData[0].values
-      let initialWeekEndingDate = initialWeek[initialWeek.length - 1].date
-
-      monthChangeIndexs.push({ index: 0, date: initialWeekEndingDate })
-
-      let initialMonth = new Date(initialWeekEndingDate).getMonth()
-      let lastWeekEndingData = 0
-
-      weeklyAggData.forEach((element, index) => {
-        let weekData = element.values
-        let weekLastDate = weekData[weekData.length - 1].date
-        let currentWeekEndingData =
-          weekData[weekData.length - 1].total_customers
-        if (new Date(weekLastDate).getMonth() != initialMonth) {
-          initialMonth = new Date(weekLastDate).getMonth()
-          if (initialIndex == 2) {
-            initialIndex = 0
-          } else initialIndex++
-
-          monthChangeIndexs.push({
-            index: index,
-            date: weekLastDate,
-          })
-        }
-        formattedData.push({
-          date: weekLastDate,
-          total_customers: currentWeekEndingData,
-          new_customers_added:
-            lastWeekEndingData == 0
-              ? weekData.reduce((sum, d) => sum + d.new_customers_added, 0)
-              : currentWeekEndingData - lastWeekEndingData,
-          index: index == weeklyAggData.length - 1 ? 3 : initialIndex,
-          barIndex: index,
-          isEndingBar: index > weeklyAggData.length - 3,
-        })
-        lastWeekEndingData = currentWeekEndingData
-      })
-
       let stack = d3Shape
         .stack()
         .keys(["total_customers", "new_customers_added"])
-      let stackedValues = stack(formattedData)
+
+      let stackedValues = stack(this.totalCustomerData)
+      d3Transition.transition()
 
       stackedValues.forEach((layer) => {
         layer.forEach((d) => {
@@ -146,23 +108,28 @@ export default {
 
       let xScale = d3Scale
         .scaleBand()
-        .domain(d3Array.range(formattedData.length))
+        .domain(d3Array.range(this.totalCustomerData.length))
         .range([0, w])
         .paddingInner(0.33)
         .paddingOuter(0.11)
 
       let yScale = d3Scale
         .scaleLinear()
-        .domain([0, d3Array.max(formattedData, (d) => d.total_customers)])
+        .domain([
+          0,
+          d3Array.max(this.totalCustomerData, (d) => d.total_customers),
+        ])
         .range([h, 0])
         .nice(4)
 
       let bars = svg.append("g").attr("class", "bars")
 
       let convertCalendarFormat = (value) => {
-        let tickDate = monthChangeIndexs.find((bar) => bar.index == value)
+        let tickDate = this.barGroupChangeIndex.find(
+          (bar) => bar.index == value
+        )
         if (tickDate) {
-          return this.$options.filters.Date(tickDate.date, "MMM [']YY")
+          return this.$options.filters.Date(tickDate.date, "MM/DD/YY")
         } else return ""
       }
 
@@ -172,13 +139,13 @@ export default {
       svg
         .append("g")
         .classed("xAxis-alternate", true)
-        .attr("transform", "translate(0," + 243 + ")")
+        .attr("transform", "translate(0," + 255 + ")")
         .call(d3Axis.axisBottom(xScale).tickSize(0).tickFormat(""))
-        .style("stroke-width", 16)
+        .style("stroke-width", 40)
 
       svg
         .append("g")
-        .classed("xAxis", true)
+        .classed("xAxis-main", true)
         .attr("transform", `translate(0,${h})`)
         .call(
           d3Axis
@@ -187,11 +154,11 @@ export default {
             .tickFormat(convertCalendarFormat)
             .tickPadding(15)
         )
-        .style("font-size", "14px")
+        .style("font-size", "12px")
 
       svg
         .append("g")
-        .classed("yAxis", true)
+        .classed("yAxis-main", true)
         .attr("transform", "translate(0, 0)")
         .call(d3Axis.axisLeft(yScale).ticks(4).tickFormat(applyNumericFilter))
         .attr("stroke-width", "1")
@@ -215,16 +182,15 @@ export default {
       d3Select.selectAll(".domain").style("stroke", "rgba(208, 208, 206, 1)")
       d3Select.selectAll(".tick line").style("stroke", "rgba(208, 208, 206, 1)")
       d3Select
-        .selectAll(".xAxis .tick text")
+        .selectAll(".xAxis-main .tick text")
         .attr("x", 10)
         .style("color", "#4F4F4F")
-      d3Select.selectAll(".yAxis .tick text").style("color", "#4F4F4F")
+      d3Select.selectAll(".yAxis-main .tick text").style("color", "#4F4F4F")
       d3Select.selectAll(".xAxis-alternate .domain").style("stroke", "white")
+      d3Select.selectAll(".xAxis-main .tick text").attr("x", 14)
 
       let topRoundedRect = (x, y, width, height) => {
-        if (height < 0) {
-          height = 0
-        }
+        height = height < 0 ? 0 : height
         return `M${x},${y + ry}
         a${rx},${ry} 0 0 1 ${rx},${-ry}
         h${width - 2 * rx}
@@ -238,6 +204,20 @@ export default {
         .data((d) => d)
         .enter()
         .append("path")
+        .attr("class", (d, i) => {
+          if (i == this.totalCustomerData.length - 1) {
+            return "active-bar"
+          }
+        })
+        .attr("height", 0)
+        .attr("width", xScale.bandwidth() < 30 ? xScale.bandwidth() : 30)
+        .attr("data", (d, i) => i)
+        .style("fill", (d) => barColorCodes[d.data.index])
+        .on("mouseover", (d) => applyHoverEffects(d, xScale.bandwidth()))
+        .on("mouseout", () => removeHoverEffects())
+        .transition()
+        .duration(500)
+        .delay((d, i) => i * 25)
         .attr("d", (d, i) =>
           topRoundedRect(
             xScale(i),
@@ -246,18 +226,17 @@ export default {
             yScale(d[0]) - yScale(d[1])
           )
         )
-        .style("fill", (d) => barColorCodes[d.data.index])
-        .on("mouseover", (d) => applyHoverEffects(d, xScale.bandwidth()))
-        .on("mouseout", () => removeHoverEffects())
 
       let linearRegression = d3Regression
         .regressionLinear()
         .x((d) => d.barIndex)
         .y((d) => d.total_customers)
 
-      let regLine = linearRegression(formattedData)
+      let regLine = linearRegression(
+        this.totalCustomerData.filter((d) => d.total_customers != 0)
+      )
 
-      let max = d3Array.max(formattedData, (d) => d.barIndex)
+      let max = d3Array.max(this.totalCustomerData, (d) => d.barIndex)
       svg
         .append("line")
         .attr("class", "regression")
@@ -305,6 +284,19 @@ export default {
         this.toolTip.isEndingBar = data.isEndingBar
         this.tooltipDisplay(true, this.toolTip)
       }
+
+      let blinkLastBar = () => {
+        d3Select
+          .select(".active-bar")
+          .transition()
+          .duration(500)
+          .style("fill-opacity", "0.2")
+          .transition()
+          .duration(500)
+          .style("fill-opacity", "0.5")
+      }
+
+      this.lastBarAnimation = setInterval(blinkLastBar, 1000)
     },
     tooltipDisplay(showTip, customersData) {
       this.$emit("tooltipDisplay", showTip, customersData)

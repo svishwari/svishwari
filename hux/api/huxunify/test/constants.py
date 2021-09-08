@@ -752,6 +752,23 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
     },
 }
 
+DATASOURCE_DATA_FEEDS_RESPONSE = {
+    "code": 200,
+    "message": "ok",
+    "body": [
+        {
+            "datasource_name": "test_data_source",
+            "datasource_label": "Test data source",
+            "name": "test_datafeed",
+            "records_received": 2000000,
+            "records_processed": 1800000,
+            "thirty_days_avg": 75,
+            "processed_at": "2021-08-05T14:44:42.694Z",
+            "status": "Active",
+        }
+    ],
+}
+
 CUSTOMER_PROFILE_AUDIENCES_RESPONSE = {
     "code": 200,
     "body": [

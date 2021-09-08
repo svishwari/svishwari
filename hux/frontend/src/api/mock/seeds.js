@@ -125,7 +125,7 @@ const microsoftAzureSQL = {
 const qualtrics = {
   name: "Qualtrics",
   type: "qualtrics",
-  is_enabled: false,
+  is_enabled: true,
 }
 
 const tableauDS = {
@@ -178,6 +178,11 @@ const tableau = {
 const mailchimp = {
   name: "Mailchimp",
   type: "mailchimp",
+}
+
+const qualtricsDS = {
+  name: "Qualtrics",
+  type: "qualtrics",
 }
 
 // engagements
@@ -259,7 +264,7 @@ const multipleSectionFilters = () => {
           },
           {
             field: "gender",
-            type: "contains",
+            type: "equals",
             value: "female",
           },
         ],
@@ -268,7 +273,7 @@ const multipleSectionFilters = () => {
         section_aggregator: "ALL",
         section_filters: [
           {
-            field: "propensity_to_subscribe",
+            field: "propensity_to_purchase",
             type: "range",
             value: [0.55, 0.75],
           },
@@ -279,7 +284,7 @@ const multipleSectionFilters = () => {
           },
           {
             field: "gender",
-            type: "contains",
+            type: "equals",
             value: "male",
           },
         ],
@@ -288,17 +293,17 @@ const multipleSectionFilters = () => {
         section_aggregator: "ALL",
         section_filters: [
           {
-            field: "propensity_to_subscribe",
+            field: "predicted_lifetime_value",
             type: "range",
-            value: [0.75, 1],
+            value: [3500, 6000],
           },
           {
-            field: "city",
+            field: "City",
             type: "contains",
             value: "New York",
           },
           {
-            field: "zipcode",
+            field: "Zip code",
             type: "contains",
             value: "26H12219",
           },
@@ -397,7 +402,7 @@ export default function (server) {
   server.create("dataSource", mariaDB)
   server.create("dataSource", medallia)
   server.create("dataSource", microsoftAzureSQL)
-  server.create("dataSource", qualtrics)
+  server.create("dataSource", qualtricsDS)
   server.create("dataSource", tableauDS)
   server.create("dataSource", twilioDS)
 
@@ -408,6 +413,7 @@ export default function (server) {
   server.create("destination", sfmc)
   server.create("destination", adobe)
   server.create("destination", mailchimp)
+  server.create("destination", qualtrics)
   const facebookSeed = server.create("destination", facebook)
 
   // seed audiences

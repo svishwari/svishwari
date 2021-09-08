@@ -16,39 +16,6 @@
           Learn More &gt;
         </a>
       </template>
-      <template slot="right" class="paheHeadRightPanel">
-        <v-menu offset-y :close-on-content-click="false">
-          <template #activator="{ on, attrs }">
-            <v-btn
-              min-width="40"
-              height="40"
-              width="40"
-              color="primary"
-              v-bind="attrs"
-              :disabled="true"
-              v-on="on"
-            >
-              <v-icon size="23" color="white">mdi-cog</v-icon>
-            </v-btn>
-          </template>
-          <v-list>
-            <v-list-item class="drop-wrap">
-              <div class="title-wrap">
-                <span class="heading">Configure Dashboard</span>
-                <span class="description">Show or hide element panels.</span>
-              </div>
-              <v-checkbox
-                v-for="(item, ix) in Object.keys(configureOptions)"
-                :key="ix"
-                v-model="configureOptions[item]"
-                :label="item | TitleCase"
-                hide-details
-              >
-              </v-checkbox>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </template>
     </page-header>
     <div v-if="configureOptions['configureHux']" class="quickAccessMenu">
       <h5 class="mb-3 text-h5">Configure Hux</h5>
@@ -69,7 +36,10 @@
           <v-card-title class="chart-style pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
-                Total customers ({{ timeFrameLabel }})
+                Total customers
+                <span class="text-body-2 time-frame">
+                  ({{ timeFrameLabel }})
+                </span>
               </span>
             </div>
           </v-card-title>
@@ -104,7 +74,7 @@ export default {
   data() {
     return {
       loadingCustomerChart: false,
-      timeFrameLabel: "last 6 months",
+      timeFrameLabel: "last 9 months",
       configureOptions: {
         configureHux: true,
         activeCustomers: true,
@@ -208,6 +178,9 @@ export default {
         }
       }
     }
+  }
+  .time-frame {
+    color: var(--v-gray-base) !important;
   }
 }
 .drop-wrap {

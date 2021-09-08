@@ -544,9 +544,7 @@ def get_demographic_by_state(
     logger.info("Retrieving demographic insights by state.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
-        json={api_c.AUDIENCE_FILTERS: filters}
-        if filters
-        else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
@@ -647,7 +645,7 @@ def get_city_ltvs(
     limit: int = api_c.DEFAULT_BATCH_SIZE,
 ) -> list:
     """
-    Get demographic details of customers by city
+    Get spending details of customers by city
 
     Args:
         token (str): OKTA JWT Token.
@@ -657,17 +655,15 @@ def get_city_ltvs(
         limit (int): limit
 
     Returns:
-        list: list of demographic details by cities
+        list: list of spending details by cities
 
     """
     # get config
     config = get_config()
-    logger.info("Retrieving demographic insights by city.")
+    logger.info("Retrieving spending insights by city.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
-        json={api_c.AUDIENCE_FILTERS: filters}
-        if filters
-        else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
         params=dict(offset=offset, limit=limit),
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
@@ -676,7 +672,7 @@ def get_city_ltvs(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Failed to retrieve city-level demographic insights %s %s.",
+            "Failed to retrieve city-level spending insights %s %s.",
             response.status_code,
             response.text,
         )

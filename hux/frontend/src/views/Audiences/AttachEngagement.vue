@@ -232,7 +232,7 @@
                     />
                   </div>
                 </v-row>
-                <v-row v-if="isRecurring" class="delivery-schedule ml-0 mt-8">
+                <v-row v-if="isRecurring" class="delivery-schedule ml-0 mt-6">
                   <hux-schedule-picker v-model="schedule" />
                 </v-row>
               </v-form>
@@ -456,7 +456,7 @@ export default {
           .length > 0
       ) {
         if (this.selectedEngagements.length !== 1) {
-          const deselectedId = this.selectedEngagements.indexOf(
+          const deselectedId = this.selectedEngagements.findIndex(
             (eng) => eng.id === engagement.id
           )
 

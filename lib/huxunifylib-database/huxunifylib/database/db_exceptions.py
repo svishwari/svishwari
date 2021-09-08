@@ -103,3 +103,9 @@ class InvalidValueException(HuxAdvException):
     """Exception for invalid value provided."""
 
     exception_message = "Invalid value provided: <{}>!"
+
+
+class InsufficientDataException(HuxAdvException):
+    """Exception for insufficient values provided."""
+
+    exception_message = "Insufficient data to fetch <{}>!"
