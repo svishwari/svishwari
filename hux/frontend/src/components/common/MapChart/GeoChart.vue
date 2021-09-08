@@ -102,8 +102,8 @@ export default {
         state.properties = currentStateDetails
       })
 
-      let total_range = featureCollection.features.map(
-        (data) => data.properties ? data.properties[this.primaryMetric] : 0
+      let total_range = featureCollection.features.map((data) =>
+        data.properties ? data.properties[this.primaryMetric] : 0
       )
 
       this.maxValue = Math.max(...total_range)
@@ -132,7 +132,7 @@ export default {
         .style("stroke", "#1E1E1E")
         .style("stroke-width", "0.5")
         .style("fill", (d) =>
-          colorScale(d.properties ?  d.properties[this.primaryMetric]* 100 : 0)
+          colorScale(d.properties ? d.properties[this.primaryMetric] * 100 : 0)
         )
         .attr("fill-opacity", "1")
         .on("mouseover", (d) => applyHoverChanges(d))
@@ -153,7 +153,7 @@ export default {
 
       let emitStateData = (d) => {
         if (d.properties) {
-        this.tooltipDisplay(true, d.properties)
+          this.tooltipDisplay(true, d.properties)
         }
         return "1"
       }
@@ -164,7 +164,9 @@ export default {
           .style("stroke", "#1E1E1E")
           .style("stroke-width", "0.5")
           .style("fill", (d) =>
-            colorScale(d.properties ? d.properties[this.primaryMetric] * 100 : 0)
+            colorScale(
+              d.properties ? d.properties[this.primaryMetric] * 100 : 0
+            )
           )
           .attr("fill-opacity", "1")
         this.tooltipDisplay(false)
