@@ -143,9 +143,9 @@
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
                   Total customers
-                  <span class="text-body-2 time-frame"
-                    >({{ timeFrameLabel }})</span
-                  >
+                  <span class="text-body-2 time-frame">
+                    ({{ timeFrameLabel }})
+                  </span>
                 </span>
               </div>
             </v-card-title>
