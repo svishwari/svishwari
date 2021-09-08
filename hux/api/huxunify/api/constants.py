@@ -741,6 +741,7 @@ MODEL_TYPES_MAPPING = {
     "propensity to unsubscribe": UNSUBSCRIBE,
     "unsubscribe": UNSUBSCRIBE,
 }
+MODEL_STATUS_MAPPING = {"success": STATUS_ACTIVE, "pending": STATUS_PENDING}
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
