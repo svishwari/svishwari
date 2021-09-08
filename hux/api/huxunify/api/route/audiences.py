@@ -122,10 +122,14 @@ class AudienceDownload(SwaggerView):
         )
 
         if not audience:
-            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.BAD_REQUEST
+            return {
+                "message": api_c.AUDIENCE_NOT_FOUND
+            }, HTTPStatus.BAD_REQUEST
 
         cdp = connector_cdp.ConnectorCDP(get_config().CDP_SERVICE)
-        column_set = [api_c.HUX_ID] + list(api_c.DOWNLOAD_TYPES[download_type].keys())
+        column_set = [api_c.HUX_ID] + list(
+            api_c.DOWNLOAD_TYPES[download_type].keys()
+        )
         data_batches = cdp.read_batches(
             location_details={
                 api_c.AUDIENCE_FILTERS: audience.get(api_c.AUDIENCE_FILTERS),
@@ -139,7 +143,9 @@ class AudienceDownload(SwaggerView):
             f"_{audience_id}_{download_type}.csv"
         )
 
-        with open(audience_file_name, "w", newline="", encoding="utf-8") as csvfile:
+        with open(
+            audience_file_name, "w", newline="", encoding="utf-8"
+        ) as csvfile:
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow(api_c.DOWNLOAD_TYPES[download_type].values())
             for dataframe_batch in data_batches:
@@ -172,7 +178,8 @@ class AudienceDownload(SwaggerView):
                 user_name=user_name,
             )
             logger.info(
-                "Created an audit log for %s audience file creation", audience_file_name
+                "Created an audit log for %s audience file creation",
+                audience_file_name,
             )
         audience_file = Path(audience_file_name)
         data = audience_file.read_bytes()

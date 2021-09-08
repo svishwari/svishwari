@@ -420,7 +420,9 @@ BSON_INVALID_ID = (
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
 INVALID_DELIVERY_SCHEDULE = "Delivery schedule is not valid."
 DUPLICATE_NAME = "Name already exists."
-PERFORMANCE_METRIC_DE_NOT_ASSIGNED = "Performance metrics data extension not assigned."
+PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
+    "Performance metrics data extension not assigned."
+)
 INVALID_AUTH_DETAILS = "Invalid authentication details."
 INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."
@@ -581,7 +583,8 @@ IS_LOOKALIKE = "is_lookalike"
 
 PARAM_STORE_PREFIX = "unified"
 PARAMETER_STORE_ERROR_MSG = (
-    "An error occurred while attempting to store secrets in the parameter store."
+    "An error occurred while attempting"
+    " to store secrets in the parameter store."
 )
 # users
 USER_TAG = "user"
@@ -639,7 +642,9 @@ PERFORMANCE_METRIC = "performance_metric"
 FEATURE_IMPORTANCE = "feature_importance"
 SCORE = "score"
 FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service"
-FEATURE_DRIFT_REGRESSION_MODEL_SERVICE = "ui_metadata_model_metrics_regression_service"
+FEATURE_DRIFT_REGRESSION_MODEL_SERVICE = (
+    "ui_metadata_model_metrics_regression_service"
+)
 FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE = (
     "ui_metadata_model_metrics_classification_service"
 )
@@ -722,7 +727,9 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
     "filters": [
         {
             "section_aggregator": "ALL",
-            "section_filters": [{"field": "country", "type": "equals", "value": "US"}],
+            "section_filters": [
+                {"field": "country", "type": "equals", "value": "US"}
+            ],
         }
     ]
 }

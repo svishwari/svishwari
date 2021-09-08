@@ -5,9 +5,10 @@ from datetime import datetime
 import pymongo
 from bson import ObjectId
 
+from tenacity import retry, wait_fixed, retry_if_exception_type
+
 from huxunifylib.database import constants as c
 from huxunifylib.database.client import DatabaseClient
-from tenacity import retry, wait_fixed, retry_if_exception_type
 
 
 @retry(
