@@ -409,7 +409,7 @@ export const defineRoutes = (server) => {
 
   server.get("/customers-insights/total", () => totalCustomersData)
 
-  server.post("/customers-insights/cities", (schema, request) => {
+  server.get("/customers-insights/cities", (schema, request) => {
     let batchNumber = request.queryParams["batch_number"] || 1
     let batchSize = request.queryParams["batch_size"] || 100
     let start = batchNumber === 1 ? 0 : (batchNumber - 1) * batchSize
@@ -417,11 +417,11 @@ export const defineRoutes = (server) => {
     return schema.geoCities.all().slice(start, end)
   })
 
-  server.post("/customers-insights/states", (schema) => {
+  server.get("/customers-insights/states", (schema) => {
     return schema.geoStates.all()
   })
 
-  server.post("/customers-insights/countries", (schema) => {
+  server.get("/customers-insights/countries", (schema) => {
     return schema.geoCountries.all()
   })
 
