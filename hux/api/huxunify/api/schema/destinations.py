@@ -372,6 +372,102 @@ class TwilioAuthConstants(Schema):
     )
 
 
+class GoogleAdsAuthCredsSchema(Schema):
+    """
+    Google Ads Auth Credentials schema class
+    """
+
+    google_developer_token = fields.String(
+        required=True,
+        validate=must_not_be_blank,
+        example="dZ%z4Mt4UY=7L6?jSanGsS",
+    )
+    google_refresh_token = fields.String(
+        required=True,
+        validate=must_not_be_blank,
+        example="Z8BOWqt^PKVVNl&uOoQcL7",
+    )
+    google_client_customer_id = fields.String(
+        required=True,
+        validate=must_not_be_blank,
+        example="527-056-0438",
+    )
+    google_client_id = fields.String(
+        required=True,
+        validate=must_not_be_blank,
+        example="ChM263kbF!f.apps.googleusercontent.com",
+    )
+    google_client_secret = fields.String(
+        required=True,
+        validate=must_not_be_blank,
+        example="Gbh+@gUzVc658Ry=6kgw@_Bx",
+    )
+
+
+class GoogleAdsAuthConstants(Schema):
+    """
+    Google Ads Auth constants schema class
+    """
+
+    class Meta:
+        """
+        set the ordering of google ads auth constants
+        """
+
+        ordered = True
+
+    google_developer_token = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Google Developer Token",
+            api_c.TYPE: "password",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+    google_refresh_token = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Google Refresh Token",
+            api_c.TYPE: "password",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+    google_client_customer_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Google Client Customer ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+    google_client_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Google Client ID",
+            api_c.TYPE: "password",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+    google_client_secret = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Google Client Secret",
+            api_c.TYPE: "password",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+
+
 class QualtricsAuthCredsSchema(Schema):
     """
     Qualtrics Auth Credentials schema class
@@ -471,6 +567,7 @@ class DestinationConstantsSchema(Schema):
     facebook = fields.Nested(FacebookAuthConstants)
     sfmc = fields.Nested(SFMCAuthConstants)
     twilio = fields.Nested(TwilioAuthConstants)
+    google_ads = fields.Nested(GoogleAdsAuthConstants)
     qualtrics = fields.Nested(QualtricsAuthConstants)
 
 
