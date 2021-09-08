@@ -73,6 +73,10 @@ export default {
           label_name: "Viewed sale item",
           event_name: "viewed_sale_item",
         },
+        {
+          label_name: "Item purchased",
+          event_name: "item_purchased",
+        },
       ],
     }
   },

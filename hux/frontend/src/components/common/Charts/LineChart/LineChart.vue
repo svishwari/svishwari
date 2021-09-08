@@ -179,21 +179,16 @@ export default {
         .append("circle")
         .attr("class", "dot")
         .attr("r", 4)
-        .attr("cx", 0)
-        .attr("cy", h)
-        .transition()
-        .duration(500)
-        .delay((d, i) => i * 15)
         .attr("cx", (d) => xScale(new Date(dateFormatter(d.date))))
         .attr("cy", (d) => yScale(d.total_event_count))
-        .style("fill", "white")
-        .attr("stroke", "#9DD4CF")
+        .style("fill", "transparent")
+        .attr("stroke", "transparent")
 
       svg
         .append("line")
         .attr("class", "hover-line-y")
         .style("stroke", "#1E1E1E")
-        .style("stroke-width", 1)
+        .style("stroke-width", 3)
 
       svg
         .append("rect")
