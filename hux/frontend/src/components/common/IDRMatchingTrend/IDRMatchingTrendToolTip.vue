@@ -71,8 +71,8 @@ export default {
   z-index: 1;
   border-radius: 0px !important;
   position: absolute;
-  top: -130px;
-  left: 76px;
+  top: -100px;
+  left: 69px;
   .value-container {
     margin-top: 2px;
     @extend .global-heading;

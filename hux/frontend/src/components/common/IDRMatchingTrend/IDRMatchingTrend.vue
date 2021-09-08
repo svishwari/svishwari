@@ -1,9 +1,8 @@
 <template>
   <div ref="trendsChart" class="container-chart">
     <multi-line-chart
-      v-model="sourceData"
+      v-model="getMatchingTrendData"
       :chart-dimensions="chartDimensions"
-      :data-keys="modificationData"
       :color-codes="colorCodes"
       @cordinates="getCordinates"
       @tooltipDisplay="toolTipDisplay"
@@ -22,8 +21,6 @@
 <script>
 import IDRMatchingTrendToolTip from "@/components/common/IDRMatchingTrend/IDRMatchingTrendToolTip"
 import MultiLineChart from "@/components/common/IDRMatchingTrend/MultiLineChart.vue"
-//TODO
-import data from "./IDRMatchingTrendData.json"
 
 export default {
   name: "IDRMatchingTrend",
@@ -43,7 +40,6 @@ export default {
         y: 0,
       },
       colorCodes: ["#42EFFD", "#347DAC", "#75787B"],
-      sourceData: data,
       currentData: {},
       chartDimensions: {
         width: 0,
@@ -51,13 +47,13 @@ export default {
       },
     }
   },
-
-  computed: {
-    modificationData() {
-      // return Object.keys(this.sourceData[0])
+ computed: {
+    getMatchingTrendData() {
+      return this.mapData
     },
   },
-  mounted() { 
+
+  mounted() {
     this.sizeHandler()
   },
   created() {
