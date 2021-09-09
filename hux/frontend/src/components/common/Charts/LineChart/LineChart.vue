@@ -128,7 +128,7 @@ export default {
             .tickSize(-h)
             .ticks(8)
             .tickPadding(15)
-            .tickFormat(d3TimeFormat.timeFormat("%-m/%-d/%Y"))
+            .tickFormat(d3TimeFormat.timeFormat("%m/%d/%y"))
         )
         .style("font-size", "12px")
 
@@ -188,7 +188,7 @@ export default {
         .append("line")
         .attr("class", "hover-line-y")
         .style("stroke", "#1E1E1E")
-        .style("stroke-width", 3)
+        .style("stroke-width", 2)
 
       svg
         .append("rect")
