@@ -2,7 +2,6 @@
 """
 Purpose of this file is to house all tests related to orchestration
 """
-import json
 from http import HTTPStatus
 from unittest import TestCase, mock
 from bson import ObjectId
