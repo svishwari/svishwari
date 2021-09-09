@@ -245,8 +245,8 @@ delivery_platforms_constants = [
         c.IS_AD_PLATFORM: False,
     },
     {
-        c.DELIVERY_PLATFORM_NAME: "Sendgrid by Twilio",
-        c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_SENDGRID,
+        c.DELIVERY_PLATFORM_NAME: "Twilio",
+        c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_TWILIO,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
