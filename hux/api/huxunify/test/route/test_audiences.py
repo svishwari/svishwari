@@ -62,6 +62,7 @@ class AudienceDownloadsTest(TestCase):
             return_value=self.database,
         ).start()
 
+        # mock get_db_client() in audiences
         mock.patch(
             "huxunify.api.route.audiences.get_db_client",
             return_value=self.database,
