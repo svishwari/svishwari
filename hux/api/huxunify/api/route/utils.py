@@ -267,7 +267,9 @@ def group_gender_spending(gender_spending: list) -> dict:
                 constants.DATE: date_parser(
                     x[constants.MONTH], x[constants.YEAR]
                 ),
-                constants.LTV: round(x[constants.AVG_SPENT_WOMEN], 4),
+                constants.LTV: round(x[constants.AVG_SPENT_WOMEN], 4)
+                if x[constants.AVG_SPENT_WOMEN]
+                else 0,
             }
             for x in gender_spending
         ],
@@ -276,7 +278,9 @@ def group_gender_spending(gender_spending: list) -> dict:
                 constants.DATE: date_parser(
                     x[constants.MONTH], x[constants.YEAR]
                 ),
-                constants.LTV: round(x[constants.AVG_SPENT_MEN], 4),
+                constants.LTV: round(x[constants.AVG_SPENT_MEN], 4)
+                if x[constants.AVG_SPENT_MEN]
+                else 0,
             }
             for x in gender_spending
         ],
@@ -285,7 +289,9 @@ def group_gender_spending(gender_spending: list) -> dict:
                 constants.DATE: date_parser(
                     x[constants.MONTH], x[constants.YEAR]
                 ),
-                constants.LTV: round(x[constants.AVG_SPENT_OTHER], 4),
+                constants.LTV: round(x[constants.AVG_SPENT_OTHER], 4)
+                if x[constants.AVG_SPENT_OTHER]
+                else 0,
             }
             for x in gender_spending
         ],
