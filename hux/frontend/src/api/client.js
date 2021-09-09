@@ -31,19 +31,18 @@ client["customers"].overview = () => {
 
 client["customers"].geoOverview = () => http.get("/customers-insights/geo")
 
-client["customers"].geoCities = (batchNumber, batchSize, data) => {
+client["customers"].geoCities = (batchNumber, batchSize) => {
   return http.get(
-    `/customers-insights/cities?batch_number=${batchNumber}&batch_size=${batchSize}`,
-    data
+    `/customers-insights/cities?batch_number=${batchNumber}&batch_size=${batchSize}`
   )
 }
 
-client["customers"].geoCountries = (data) => {
-  return http.get("/customers-insights/countries", data)
+client["customers"].geoCountries = () => {
+  return http.get("/customers-insights/countries")
 }
 
-client["customers"].geoStates = (data) => {
-  return http.get("/customers-insights/states", data)
+client["customers"].geoStates = () => {
+  return http.get("/customers-insights/states")
 }
 
 client["customers"].demographics = (data) => {
