@@ -3,6 +3,7 @@
 import unittest
 import mongomock
 import pymongo
+from bson import ObjectId
 
 import huxunifylib.database.orchestration_management as am
 import huxunifylib.database.delivery_platform_management as dpm
@@ -452,7 +453,7 @@ class TestAudienceManagement(unittest.TestCase):
         all_audiences = am.get_all_audiences(self.database)
 
         self.assertTrue(
-            am.delete_audience(self.database, all_audiences[0][c.ID])
+            am.delete_audience(self.database, ObjectId(all_audiences[0][c.ID]))
         )
 
         audiences = am.get_all_audiences(self.database)

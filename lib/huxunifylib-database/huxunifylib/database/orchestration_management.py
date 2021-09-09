@@ -316,7 +316,7 @@ def delete_audience(
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.ENGAGEMENTS_COLLECTION]
+    collection = am_db[c.AUDIENCES_COLLECTION]
 
     try:
         collection.delete_one({c.ID: audience_id})
