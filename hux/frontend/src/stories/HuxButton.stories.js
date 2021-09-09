@@ -1,13 +1,18 @@
 // import MyButton from './Button.vue';
-import huxButton from '../components/common/huxButton.vue';
+import huxButton from "../components/common/huxButton.vue"
 
 export default {
-  title: 'Example/HuxButton',
+  title: "Example/HuxButton",
   component: huxButton,
   argTypes: {
-    variant: { control: { type: 'select', options: ['primary', 'tertiary', 'success', 'secondary'] } },
+    variant: {
+      control: {
+        type: "select",
+        options: ["primary", "tertiary", "success", "secondary"],
+      },
+    },
   },
-};
+}
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
@@ -18,6 +23,6 @@ const Template = (args, { argTypes }) => ({
               v-bind="$props"> 
               Added 
             </huxButton>`,
-});
+})
 
-export const Primary = Template.bind({});
+export const Primary = Template.bind({})
