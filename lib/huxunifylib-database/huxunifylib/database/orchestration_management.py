@@ -202,7 +202,8 @@ def get_all_audiences(
 
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[c.AUDIENCES_COLLECTION]
 
     # Get audience configurations and add to list
     try:
@@ -314,7 +315,8 @@ def delete_audience(
 
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[c.ENGAGEMENTS_COLLECTION]
 
     try:
         collection.delete_one({c.ID: audience_id})
