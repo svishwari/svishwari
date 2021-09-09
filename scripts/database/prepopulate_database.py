@@ -194,8 +194,8 @@ data_sources_constants = [
         c.ADDED: False,
     },
     {
-        c.DATA_SOURCE_NAME: "Twilio",
-        c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_TWILIO,
+        c.DATA_SOURCE_NAME: "Sendgrid by Twilio",
+        c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_SENDGRID,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
