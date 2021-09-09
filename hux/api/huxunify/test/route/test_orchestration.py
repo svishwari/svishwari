@@ -34,7 +34,7 @@ from huxunify.api import constants as api_c
 import huxunify.test.constants as t_c
 from huxunify.app import create_app
 
-
+# pylint: disable=too-many-public-methods
 class OrchestrationRouteTest(TestCase):
     """Orchestration Route tests"""
 
