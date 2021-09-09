@@ -104,12 +104,12 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         }
     elif (
         destination[db_const.DELIVERY_PLATFORM_TYPE]
-        == db_const.DELIVERY_PLATFORM_TWILIO
+        == db_const.DELIVERY_PLATFORM_SENDGRID
     ):
         env_dict = {}
         secret_dict = {
-            TwilioCredentials.TWILIO_AUTH_TOKEN.name: auth[
-                api_const.TWILIO_AUTH_TOKEN
+            TwilioCredentials.SENDGRID_AUTH_TOKEN.name: auth[
+                api_const.SENDGRID_AUTH_TOKEN
             ]
         }
 
