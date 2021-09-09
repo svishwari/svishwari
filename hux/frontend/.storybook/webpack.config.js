@@ -16,7 +16,7 @@ module.exports = async ({ config }) => {
       {
         loader: "sass-loader",
         options: {
-          additionalData: `@import "${path.resolve(__dirname, "..", "src", "styles")}/variables.scss"`
+          // additionalData: `@import "${path.resolve(__dirname, "..", "src", "styles", "variables.scss")}"`
         }
       }
     ],

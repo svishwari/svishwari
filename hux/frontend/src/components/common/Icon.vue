@@ -10,7 +10,8 @@
 
 <script>
 import svgAsComponent from "./SVG"
-import theme from "@/plugins/theme"
+// import theme from "@/plugins/theme"
+import theme from "../../plugins/theme"
 
 export default {
   name: "Icon",
