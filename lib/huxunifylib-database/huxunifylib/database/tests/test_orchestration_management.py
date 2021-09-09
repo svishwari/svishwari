@@ -62,7 +62,7 @@ class TestAudienceManagement(unittest.TestCase):
             },
         ]
         self.destination_ids = ["destination_id1", "destination_id2"]
-        self.audiences = self._setup_audience()
+        self.audience_doc = None
 
     def _setup_audience(self) -> dict:
 
@@ -87,18 +87,21 @@ class TestAudienceManagement(unittest.TestCase):
     def test_set_audience(self):
         """Audience is set."""
 
-        audience_doc = am.get_audience(self.database, self.audiences[0][c.ID])
+        audiences = self._setup_audience()
+        audience_doc = am.get_audience(self.database, audiences[0][c.ID])
 
         self.assertIsNotNone(audience_doc)
         self.assertIn(c.ID, audience_doc)
         self.assertIn(c.SIZE, audience_doc)
-        self.assertEqual(1450, audience_doc[c.SIZE])
+        self.assertEqual(audience_doc[c.SIZE], 1450)
 
     def test_get_audience_filter_variant(self):
         """Test get audiences. The filter variant of the function"""
 
+        audiences = self._setup_audience()
+
         audience = am.get_audience_by_filter(
-            self.database, filter_dict={c.ID: self.audiences[1][c.ID]}, limit=1
+            self.database, filter_dict={c.ID: audiences[1][c.ID]}, limit=1
         )
 
         self.assertEqual("Audience2", audience[0][c.NAME])
@@ -106,6 +109,8 @@ class TestAudienceManagement(unittest.TestCase):
     def test_get_audience_filter_variant_order_by_name(self):
         """Test get audiences. The filter variant of the function.
         Get the audiences ordered by name"""
+
+        self._setup_audience()
 
         audience = am.get_audience_by_filter(
             self.database, sort_list=[("name", pymongo.DESCENDING)]
@@ -118,6 +123,8 @@ class TestAudienceManagement(unittest.TestCase):
         """Test get audiences. The filter variant of the function.
         Get only the name of the audience"""
 
+        self._setup_audience()
+
         audience = am.get_audience_by_filter(
             self.database, {}, {}, [("name", pymongo.DESCENDING)]
         )
@@ -127,39 +134,42 @@ class TestAudienceManagement(unittest.TestCase):
     def test_get_audience(self):
         """Test get audience."""
 
-        audience_doc = am.get_audience(self.database, self.audiences[0][c.ID])
+        set_audience = self._setup_audience()
+        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
 
         self.assertIsNotNone(audience_doc)
         self.assertTrue(c.ID in audience_doc)
         self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS])
         self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS][0])
         self.assertEqual(
-            c.AUDIENCE_FILTER_AGGREGATOR_ALL,
             audience_doc[c.AUDIENCE_FILTERS][0][
                 c.AUDIENCE_FILTERS_SECTION_AGGREGATOR
             ],
+            c.AUDIENCE_FILTER_AGGREGATOR_ALL,
         )
         self.assertEqual(
-            c.AUDIENCE_FILTER_AGGREGATOR_ANY,
             audience_doc[c.AUDIENCE_FILTERS][1][
                 c.AUDIENCE_FILTERS_SECTION_AGGREGATOR
             ],
+            c.AUDIENCE_FILTER_AGGREGATOR_ANY,
         )
 
     def test_get_audience_with_user(self):
         """Test get audience with user."""
 
-        audience_doc = am.get_audience(self.database, self.audiences[0][c.ID])
+        set_audience = self._setup_audience()
+        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
 
         self.assertIsNotNone(audience_doc)
         self.assertIn(c.ID, audience_doc)
         self.assertTrue(audience_doc[c.AUDIENCE_FILTERS])
-        self.assertEqual(self.user_name, audience_doc[c.CREATED_BY])
+        self.assertEqual(audience_doc[c.CREATED_BY], self.user_name)
 
     def test_update_audience_name(self):
         """Test update audience name."""
 
-        audience_doc = self.audiences[0]
+        set_audience = self._setup_audience()
+        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
 
         self.assertIsNotNone(audience_doc)
 
@@ -178,7 +188,8 @@ class TestAudienceManagement(unittest.TestCase):
     def test_update_audience_name_unchanged(self):
         """Test update audience and check name remains unchanged"""
 
-        audience_doc = self.audiences[0]
+        set_audience = self._setup_audience()
+        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
 
         self.assertIsNotNone(audience_doc)
 
@@ -190,12 +201,13 @@ class TestAudienceManagement(unittest.TestCase):
         )
         self.assertTrue(doc is not None)
         self.assertTrue(c.AUDIENCE_NAME in doc)
-        self.assertEqual(audience_doc[c.AUDIENCE_NAME], doc[c.AUDIENCE_NAME])
+        self.assertEqual(doc[c.AUDIENCE_NAME], audience_doc[c.AUDIENCE_NAME])
 
     def test_duplicate_audience_name(self):
         """Test duplicate audience name."""
 
-        audience_doc = am.get_audience(self.database, self.audiences[0][c.ID])
+        set_audience = self._setup_audience()
+        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
 
         self.assertIsNotNone(audience_doc)
 
@@ -209,7 +221,8 @@ class TestAudienceManagement(unittest.TestCase):
     def test_update_audience_filters(self):
         """Test update audience filters."""
 
-        audience_doc = self.audiences[0]
+        set_audience = self._setup_audience()
+        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
 
         self.assertIsNotNone(audience_doc)
         self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS])
@@ -220,7 +233,7 @@ class TestAudienceManagement(unittest.TestCase):
             ],
             c.AUDIENCE_FILTER_AGGREGATOR_ALL,
         )
-        self.assertEqual(2, len(audience_doc[c.AUDIENCE_FILTERS]))
+        self.assertEqual(len(audience_doc[c.AUDIENCE_FILTERS]), 2)
 
         # Update audience filters
         new_filters = [
@@ -250,20 +263,7 @@ class TestAudienceManagement(unittest.TestCase):
             doc[c.AUDIENCE_FILTERS][0][c.AUDIENCE_FILTERS_SECTION_AGGREGATOR],
             c.AUDIENCE_FILTER_AGGREGATOR_ANY,
         )
-        self.assertEqual(1, len(doc[c.AUDIENCE_FILTERS]))
-
-    def test_delete_audience(self):
-        """Test delete an audience"""
-
-        all_audiences = am.get_all_audiences(self.database)
-
-        self.assertTrue(
-            am.delete_audience(self.database, self.audiences[0][c.ID])
-        )
-
-        audiences = am.get_all_audiences(self.database)
-
-        self.assertEqual(len(all_audiences) - 1, len(audiences))
+        self.assertEqual(len(doc[c.AUDIENCE_FILTERS]), 1)
 
     def test_add_audience_with_destination(self):
         """Test add audience with destinations."""
@@ -280,8 +280,8 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(doc is not None)
         self.assertTrue(c.AUDIENCE_FILTERS in doc)
         self.assertTrue(c.DESTINATIONS in doc)
-        self.assertEqual("destination_id1", doc[c.DESTINATIONS][0])
-        self.assertEqual("destination_id2", doc[c.DESTINATIONS][1])
+        self.assertEqual(doc[c.DESTINATIONS][0], "destination_id1")
+        self.assertEqual(doc[c.DESTINATIONS][1], "destination_id2")
 
     def test_update_audience_destination(self):
         """Test update audience destinations."""
@@ -298,8 +298,8 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(doc is not None)
         self.assertTrue(c.AUDIENCE_FILTERS in doc)
         self.assertTrue(c.DESTINATIONS in doc)
-        self.assertEqual("destination_id1", doc[c.DESTINATIONS][0])
-        self.assertEqual("destination_id2", doc[c.DESTINATIONS][1])
+        self.assertEqual(doc[c.DESTINATIONS][0], "destination_id1")
+        self.assertEqual(doc[c.DESTINATIONS][1], "destination_id2")
 
         new_destination_ids = ["destination_id1", "destination_id3"]
         am.update_audience(
@@ -313,14 +313,17 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertTrue(updated_doc is not None)
         self.assertTrue(c.DESTINATIONS in updated_doc)
-        self.assertEqual("destination_id1", updated_doc[c.DESTINATIONS][0])
-        self.assertEqual("destination_id3", updated_doc[c.DESTINATIONS][1])
+        self.assertEqual(updated_doc[c.DESTINATIONS][0], "destination_id1")
+        self.assertEqual(updated_doc[c.DESTINATIONS][1], "destination_id3")
 
     def test_get_all_audiences(self):
         """Test get_all_audiences."""
 
-        self.assertIsNotNone(self.audiences)
-        self.assertEqual(2, len(self.audiences))
+        self._setup_audience()
+        audiences = am.get_all_audiences(self.database)
+
+        self.assertIsNotNone(audiences)
+        self.assertEqual(len(audiences), 2)
 
         am.create_audience(
             self.database,
@@ -340,14 +343,17 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertIsNotNone(audiences)
         self.assertEqual(len(audiences), 4)
-        self.assertEqual("Audience1", audiences[0][c.AUDIENCE_NAME])
-        self.assertEqual("Audience2", audiences[1][c.AUDIENCE_NAME])
+        self.assertEqual(audiences[0][c.AUDIENCE_NAME], "Audience1")
+        self.assertEqual(audiences[1][c.AUDIENCE_NAME], "Audience2")
 
     def test_get_all_audiences_with_users(self):
         """Test get_all_audiences with users."""
 
-        self.assertIsNotNone(self.audiences)
-        self.assertEqual(len(self.audiences), 2)
+        self._setup_audience()
+        audiences = am.get_all_audiences(self.database)
+
+        self.assertIsNotNone(audiences)
+        self.assertEqual(len(audiences), 2)
 
         am.create_audience(
             self.database,
@@ -423,7 +429,7 @@ class TestAudienceManagement(unittest.TestCase):
             self.assertIn(c.ID, audience)
 
             # test there are deliveries
-            self.assertIsNotNone(audience[c.DELIVERIES])
+            self.assertTrue(audience[c.DELIVERIES])
 
             for delivery in audience[c.DELIVERIES]:
                 self.assertEqual(
@@ -438,3 +444,17 @@ class TestAudienceManagement(unittest.TestCase):
                 self.assertEqual(
                     delivery[c.STATUS], c.AUDIENCE_STATUS_DELIVERING
                 )
+
+    def test_delete_audience(self):
+        """Test delete an audience"""
+        _ = self._setup_audience()
+
+        all_audiences = am.get_all_audiences(self.database)
+
+        self.assertTrue(
+            am.delete_audience(self.database, all_audiences[0][c.ID])
+        )
+
+        audiences = am.get_all_audiences(self.database)
+
+        self.assertEqual(len(all_audiences) - 1, len(audiences))
