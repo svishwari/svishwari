@@ -35,6 +35,7 @@ from huxunifylib.database import (
 )
 from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
+    get_delivery_platform_lookalike_audience,
 )
 
 from huxunify.api.schema.engagement import (
@@ -535,9 +536,6 @@ class AddAudienceEngagement(SwaggerView):
                             },
                             {
                                 api_c.ID: "60ae035b6c5bf45da27f17e6",
-                                db_c.DELIVERY_PLATFORM_CONFIG: {
-                                    db_c.DATA_EXTENSION_NAME: "SFMC Test Audience"
-                                },
                             },
                         ],
                     }
@@ -547,12 +545,19 @@ class AddAudienceEngagement(SwaggerView):
     ]
 
     responses = {
-        HTTPStatus.CREATED.value: {
-            "schema": EngagementGetSchema,
+        HTTPStatus.OK.value: {
+            "schema": {
+                "example": {"message": api_c.OPERATION_SUCCESS},
+            },
             "description": "Audience added to Engagement.",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to create the engagement.",
+            "schema": {
+                "example": {
+                    "message": "Audience does not exist: <audience_id>"
+                },
+            },
+            "description": "Failed to add Audience to Engagement.",
         },
     }
 
@@ -592,18 +597,23 @@ class AddAudienceEngagement(SwaggerView):
 
         # validate audiences exist
         audience_names = []
+
         for audience in body[api_c.AUDIENCES]:
-            audience_to_attach = get_audience(
-                database, ObjectId(audience[api_c.ID])
-            )
+            audience_to_attach = get_audience(database, audience[api_c.ID])
             if not audience_to_attach:
-                logger.error(
-                    "Audience does not exist: %s.", audience[api_c.ID]
+                # check if lookalike
+                audience_to_attach = get_delivery_platform_lookalike_audience(
+                    database, audience[api_c.ID]
                 )
-                return {
-                    "message": f"Audience does not exist: {audience[api_c.ID]}"
-                }, HTTPStatus.BAD_REQUEST
+                if not audience_to_attach:
+                    logger.error(
+                        "Audience does not exist: %s.", audience[api_c.ID]
+                    )
+                    return {
+                        "message": f"Audience does not exist: {audience[api_c.ID]}"
+                    }, HTTPStatus.BAD_REQUEST
             audience_names.append(audience_to_attach[db_c.NAME])
+
         append_audiences_to_engagement(
             database,
             ObjectId(engagement_id),
