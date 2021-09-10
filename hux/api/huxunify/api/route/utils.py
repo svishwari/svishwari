@@ -2,7 +2,7 @@
 purpose of this file is to house route utilities
 """
 from datetime import datetime
-from typing import Tuple, Union, Dict
+from typing import Tuple
 from http import HTTPStatus
 from bson import ObjectId
 
@@ -17,7 +17,6 @@ from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
 from huxunifylib.database import (
-    delivery_platform_management as destination_management,
     constants as db_c,
 )
 
@@ -212,40 +211,6 @@ def update_metrics(
         )
     )
     return metric
-
-
-def validate_destination_id(
-    destination_id: str, check_if_destination_in_db: bool = True
-) -> Union[ObjectId, Tuple[Dict[str, str], int]]:
-    """Checks on destination_id
-
-    Check if destination id is valid converts it to object_id.
-    Also can check if destination_id is in db
-
-    Args:
-        destination_id (str) : Destination id.
-        check_if_destination_in_db (bool): Optional; flag to check if destination in db
-
-    Returns:
-        response(dict): Message and HTTP status to be returned in response in
-            case of failing checks,
-        destination_id (ObjectId): Destination id as object id if
-            all checks are successful.
-    """
-    destination_id = ObjectId(destination_id)
-
-    if check_if_destination_in_db:
-        if not destination_management.get_delivery_platform(
-            get_db_client(), destination_id
-        ):
-            logger.error(
-                "Could not find destination with id %s.", destination_id
-            )
-            return {
-                "message": constants.DESTINATION_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
-
-    return destination_id
 
 
 def group_gender_spending(gender_spending: list) -> dict:
