@@ -691,17 +691,17 @@ PRECISION = "precision"
 PERFORMANCE_METRIC = "performance_metric"
 FEATURE_IMPORTANCE = "feature_importance"
 SCORE = "score"
-FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service"
+FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service_v2"
 FEATURE_DRIFT_REGRESSION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_regression_service"
+    "ui_metadata_model_metrics_regression_service_v2"
 )
 FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_classification_service"
+    "ui_metadata_model_metrics_classification_service_v2"
 )
 
 MODEL_LIST_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_models_service",
+        "feature_service_name": "ui_metadata_models_service_v2",
         "join_key_map": {"model_metadata_client": "HUS"},
     }
 }
@@ -732,15 +732,6 @@ RUN_DATE = "run_date"
 DRIFT = "drift"
 REGRESSION_MODELS = [LTV]
 CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
-
-# used for the icons on front-end.
-MODEL_TYPES_MAPPING = {
-    "lifetime value": LTV,
-    "propensity to purchase": PURCHASE,
-    "propensity to unsubscribe": UNSUBSCRIBE,
-    "unsubscribe": UNSUBSCRIBE,
-}
-MODEL_STATUS_MAPPING = {"success": STATUS_ACTIVE, "pending": STATUS_PENDING}
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
