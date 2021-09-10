@@ -30,6 +30,7 @@ venv.bak/
 settings.ini
 .tox
 .python-version
+.coverage
 
 # docs
 docs/build/*
