@@ -5,9 +5,19 @@ from typing import Tuple
 
 import requests
 from flask import request
+from prometheus_client import Gauge
+from prometheus_flask_exporter import PrometheusMetrics
 
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
+
+metrics = PrometheusMetrics.for_app_factory()
+health_check_metrics = Gauge(
+    name=api_c.OKTA_CONNECTION_HEALTH,
+    documentation="health check metrics",
+    registry=metrics.registry,
+    labelnames=["name"],
+)
 
 
 def check_okta_connection() -> Tuple[bool, str]:
@@ -27,10 +37,16 @@ def check_okta_connection() -> Tuple[bool, str]:
             f"/oauth2/v1/keys?client_id="
             f"{config.OKTA_CLIENT_ID}"
         )
+        health_check_metrics.labels(name=api_c.OKTA_CONNECTION_HEALTH).set(
+            True
+        )
         return response.status_code, "OKTA available."
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
+        health_check_metrics.labels(name=api_c.OKTA_CONNECTION_HEALTH).set(
+            False
+        )
         return False, getattr(exception, "message", repr(exception))
 
 

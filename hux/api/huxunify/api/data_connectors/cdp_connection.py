@@ -7,10 +7,20 @@ import requests
 from dateutil.parser import parse
 
 from huxunifylib.util.general.logging import logger
+from prometheus_client import Gauge
+from prometheus_flask_exporter import PrometheusMetrics
 
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.cdp import clean_cdm_fields, DEFAULT_DATETIME
+
+metrics = PrometheusMetrics.for_app_factory()
+health_check_metrics = Gauge(
+    name=api_c.CDM_CONNECTION_SERVICE_CONNECTION_HEALTH,
+    documentation="health check metrics",
+    registry=metrics.registry,
+    labelnames=["name"],
+)
 
 
 def check_cdp_connections_api_connection() -> Tuple[int, str]:
@@ -29,12 +39,18 @@ def check_cdp_connections_api_connection() -> Tuple[int, str]:
             f"{config.CDP_CONNECTION_SERVICE}/healthcheck",
             timeout=5,
         )
+        health_check_metrics.labels(name=api_c.CDM_CONNECTION_SERVICE_CONNECTION_HEALTH).set(
+            True
+        )
         return response.status_code, "CDP connections available."
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
         logger.error(
             "CDP Connections Health Check failed with %s.", repr(exception)
+        )
+        health_check_metrics.labels(name=api_c.CDM_CONNECTION_SERVICE_CONNECTION_HEALTH).set(
+            False
         )
         return getattr(exception, "code", repr(exception)), getattr(
             exception, "message", repr(exception)

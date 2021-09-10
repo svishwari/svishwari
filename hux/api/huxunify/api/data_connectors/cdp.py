@@ -11,6 +11,8 @@ import async_timeout
 from bson import ObjectId
 from dateutil.parser import parse, ParserError
 from dateutil.relativedelta import relativedelta
+from prometheus_client import Gauge
+from prometheus_flask_exporter import PrometheusMetrics
 
 from huxunifylib.database import constants as db_c
 from huxunifylib.util.general.logging import logger
@@ -32,6 +34,13 @@ DATETIME_FIELDS = [
     api_c.TIMESTAMP,
 ]
 
+metrics = PrometheusMetrics.for_app_factory()
+health_check_metrics = Gauge(
+    name=api_c.CDM_API_CONNECTION_HEALTH,
+    documentation="health check metrics",
+    registry=metrics.registry,
+    labelnames=["name"],
+)
 
 def check_cdm_api_connection() -> Tuple[bool, str]:
     """Validate the cdm api connection.
@@ -49,11 +58,17 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
             f"{config.CDP_SERVICE}/healthcheck",
             timeout=5,
         )
+        health_check_metrics.labels(name=api_c.CDM_API_CONNECTION_HEALTH).set(
+            True
+        )
         return response.status_code, "CDM available."
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
         logger.error("CDM Health Check failed with %s.", repr(exception))
+        health_check_metrics.labels(name=api_c.CDM_API_CONNECTION_HEALTH).set(
+            False
+        )
         return False, getattr(exception, "message", repr(exception))
 
 
