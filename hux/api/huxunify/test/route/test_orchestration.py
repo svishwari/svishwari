@@ -34,7 +34,7 @@ from huxunify.api import constants as api_c
 import huxunify.test.constants as t_c
 from huxunify.app import create_app
 
-# pylint: disable=too-many-public-methods
+
 class OrchestrationRouteTest(TestCase):
     """Orchestration Route tests"""
 
@@ -42,8 +42,8 @@ class OrchestrationRouteTest(TestCase):
     def setUp(self) -> None:
         """
         Setup resources before each test
-
         Args:
+
         Returns:
         """
 
@@ -247,6 +247,7 @@ class OrchestrationRouteTest(TestCase):
     def test_get_audience_rules_success(self):
         """Test the get audience rules route
         Args:
+
         """
 
         data_management.set_constant(
@@ -273,7 +274,9 @@ class OrchestrationRouteTest(TestCase):
     def test_create_audience_with_destination(self):
         """Test create audience with destination.
         Args:
+
         Returns:
+
         """
 
         self.request_mocker.stop()
@@ -324,10 +327,14 @@ class OrchestrationRouteTest(TestCase):
 
     def test_create_audience_empty_user_info(self):
         """Test create audience with destination given empty user info.
+
         The introspect call returns a valid response but user info call
         returns an empty response.
+
         Args:
+
         Returns:
+
         """
 
         audience_post = {
@@ -363,7 +370,9 @@ class OrchestrationRouteTest(TestCase):
 
     def test_create_audience_no_destination_id(self) -> None:
         """Test create audience with destination given no id in destination object.
+
         Args:
+
         Returns:
             None
         """
@@ -398,10 +407,14 @@ class OrchestrationRouteTest(TestCase):
 
     def test_create_audience_invalid_user_info(self):
         """Test create audience with destination given invalid user info.
+
         The introspect call returns a valid response but user info call
         returns an invalid response, i.e., missing some fields.
+
         Args:
+
         Returns:
+
         """
 
         audience_post = {
@@ -439,8 +452,11 @@ class OrchestrationRouteTest(TestCase):
 
     def test_create_audience_with_no_destinations_no_engagements(self):
         """Test create audience with no destinations or engagements
+
         Args:
+
         Returns:
+
         """
 
         self.request_mocker.stop()
@@ -492,8 +508,11 @@ class OrchestrationRouteTest(TestCase):
 
     def test_create_audience_with_engagements(self):
         """Test create audience with engagements.
+
         Args:
+
         Returns:
+
         """
 
         self.request_mocker.stop()
@@ -569,8 +588,11 @@ class OrchestrationRouteTest(TestCase):
 
     def test_create_audience_with_no_engagement(self):
         """Test create audience without engagement ids.
+
         Args:
+
         Returns:
+
         """
 
         self.request_mocker.stop()
@@ -609,6 +631,7 @@ class OrchestrationRouteTest(TestCase):
     def test_get_audience(self):
         """Test get audience.
         Args:
+
         Returns:
         """
 
@@ -644,6 +667,7 @@ class OrchestrationRouteTest(TestCase):
     def test_get_audience_does_not_exist(self):
         """Test get audience that does not exist
         Args:
+
         Returns:
         """
         audience_id = ObjectId()
@@ -657,6 +681,7 @@ class OrchestrationRouteTest(TestCase):
     def test_get_audience_invalid_id(self):
         """Test get audience that does not exist
         Args:
+
         Returns:
         """
         audience_id = "asdfg13456"
@@ -670,6 +695,7 @@ class OrchestrationRouteTest(TestCase):
     def test_get_audiences(self):
         """Test get audiences.
         Args:
+
         Returns:
         """
 
@@ -722,6 +748,7 @@ class OrchestrationRouteTest(TestCase):
     def test_update_audience(self):
         """Test update an audience.
         Args:
+
         Returns:
         """
         new_name = "New Test Audience"
@@ -765,6 +792,7 @@ class OrchestrationRouteTest(TestCase):
     def test_create_lookalike_audience(self):
         """Test create lookalike audience
         Args:
+
         Returns:
         """
         # setup facebook connector mock address
@@ -844,6 +872,7 @@ class OrchestrationRouteTest(TestCase):
     def test_create_lookalike_audience_invalid_engagement_ids(self):
         """Test create lookalike audience with invalid engagement ids
         Args:
+
         Returns:
         """
 
@@ -879,6 +908,7 @@ class OrchestrationRouteTest(TestCase):
     def test_create_lookalike_audience_invalid_source_audience_id(self):
         """Test create lookalike audience with invalid engagement ids
         Args:
+
         Returns:
         """
 
@@ -901,6 +931,7 @@ class OrchestrationRouteTest(TestCase):
     def test_create_lookalike_audience_source_audience_not_found(self):
         """Test create lookalike audience with invalid engagement ids
         Args:
+
         Returns:
         """
 
@@ -922,8 +953,11 @@ class OrchestrationRouteTest(TestCase):
 
     def test_get_audience_by_id_validate_match_rate(self) -> None:
         """Test get audience API and validate match_rate.
+
         This will check for match delivery for an AD platform.
+
         Args:
+
         Returns:
             None
         """
@@ -960,7 +994,9 @@ class OrchestrationRouteTest(TestCase):
 
     def test_get_audience_by_id_validate_match_rate_lookalike_audience(self):
         """Test validate match rate for a lookalike audience.
+
         Args:
+
         Returns:
         """
         # setup facebook connector mock address
