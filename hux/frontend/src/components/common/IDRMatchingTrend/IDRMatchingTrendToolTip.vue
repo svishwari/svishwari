@@ -10,7 +10,7 @@
     <div class="neroBlack--text caption">
       <div class="value-section">
         <div class="date-font">
-          {{ sourceInput.date | date("MMM DD[,] YYYY") }}
+          {{ sourceInput.date | Date("MMM DD[,] YYYY") }}
         </div>
         <div>
           <span class="append-circle color-known-ids"></span>
