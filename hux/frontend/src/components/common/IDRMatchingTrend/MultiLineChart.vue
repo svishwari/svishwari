@@ -67,9 +67,9 @@ export default {
       let dataKey = ["known_ids", "anonymous_ids", "unique_hux_ids"]
       let colorCodes = ["#42EFFD", "#75787B", "#347DAC"]
       let ids = [
-        { label: "known ids", xValue: 0 },
-        { label: "anonymous ids", xValue: 95 },
-        { label: "unique hux ids", xValue: 225 },
+        { label: "Known IDs", xValue: 0 },
+        { label: "Anonymous IDs", xValue: 100 },
+        { label: "Unique Hux IDs", xValue: 235 },
       ]
       let color = d3Scale
         .scaleOrdinal()
@@ -78,7 +78,7 @@ export default {
         .select(this.$refs.multiLineChart)
         .append("svg")
         .attr("width", this.width + margin.left + margin.right)
-        .attr("height", this.height - margin.top)
+        .attr("height", this.height - margin.top - 20)
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`)
       let dateFormatter = (value) =>
@@ -192,7 +192,7 @@ export default {
         .append("line")
         .attr("class", "hover-line-y")
         .style("stroke", "#1E1E1E")
-        .style("stroke-width", 2)
+        .style("stroke-width", 1)
       svg
         .append("rect")
         .attr("width", w)
@@ -289,6 +289,7 @@ export default {
         .attr("y", 7)
         .attr("dy", ".55em")
         .attr("class", "neroBlack--text")
+         .style("fill", "#4f4f4f")
         .style("font-size", 14)
         .style("text-anchor", "start")
         .text(function (d) {
