@@ -106,6 +106,7 @@
               <span v-if="item[header.value].length > 3" class="ml-1">
                 + {{ item[header.value].length - 2 }}
               </span>
+               <span v-else-if="item[header.value].length == 1">—</span>
             </div>
             <div v-if="header.value == 'status'" class="text-caption">
               <status
