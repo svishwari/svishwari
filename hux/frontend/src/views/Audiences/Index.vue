@@ -4,11 +4,11 @@
       <template slot="left">
         <breadcrumb :items="breadcrumbItems" />
       </template>
-      <template slot="right">
+      <!-- <template slot="right">
         <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1"
           >mdi-download</v-icon
         >
-      </template>
+      </template> -->
     </page-header>
     <page-header class="top-bar" :header-height="71">
       <template slot="left">
@@ -17,7 +17,7 @@
       </template>
 
       <template slot="right">
-        <v-icon medium color="lightGrey refresh">mdi-refresh</v-icon>
+        <!-- <v-icon medium color="lightGrey refresh">mdi-refresh</v-icon> -->
         <router-link
           :to="{ name: 'AudienceConfiguration' }"
           class="text-decoration-none"
