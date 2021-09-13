@@ -562,7 +562,7 @@
 
 <script>
 // helpers
-import { generateColor } from "@/utils"
+import { generateColor, saveFile } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
 
 // common components
@@ -938,12 +938,7 @@ export default {
         id: this.audienceId,
         type: option.type,
       })
-      const url = window.URL.createObjectURL(
-        new Blob([fileBlob.data], {
-          type: "text/csv" || "application/octet-stream",
-        })
-      )
-      window.location.assign(url)
+      saveFile(fileBlob)
     },
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
