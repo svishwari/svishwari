@@ -2,7 +2,7 @@
   <v-hover>
     <template #default="{ hover }">
       <v-card
-        class="text-center rounded-lg card-info-wrapper card-shadow"
+        class="text-center rounded-lg card-info-wrapper card-shadow pa-2"
         min-width="220px"
         max-width="260px"
         :disabled="!active"

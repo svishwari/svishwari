@@ -4,11 +4,6 @@
       <template #left>
         <breadcrumb :items="breadcrumbItems" />
       </template>
-      <template #right>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
-          mdi-download
-        </v-icon>
-      </template>
     </page-header>
     <page-header class="top-bar" :header-height="71">
       <template #left>
@@ -17,7 +12,6 @@
       </template>
 
       <template #right>
-        <v-icon medium disabled color="primary refresh">mdi-refresh</v-icon>
         <router-link
           :to="{ name: 'EngagementConfiguration' }"
           class="text-decoration-none"
@@ -39,7 +33,7 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <hux-data-table
-      v-if="rowData.length > 0"
+      v-if="!loading && rowData.length > 0"
       :columns="columnDefs"
       :data-items="rowData"
       nested
@@ -106,7 +100,7 @@
               <span v-if="item[header.value].length > 3" class="ml-1">
                 + {{ item[header.value].length - 2 }}
               </span>
-               <span v-else-if="item[header.value].length == 1">—</span>
+              <span v-else-if="item[header.value].length == 1">—</span>
             </div>
             <div v-if="header.value == 'status'" class="text-caption">
               <status

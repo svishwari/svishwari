@@ -113,7 +113,7 @@
 <script>
 import menuConfig from "@/menuConfig.json"
 import Icon from "@/components/common/Icon"
-import Tooltip from "@/components/common/Tooltip.vue"
+import Tooltip from "@/components/common/Tooltip"
 
 export default {
   name: "SideMenu",
@@ -135,7 +135,7 @@ export default {
     },
 
     iconSize() {
-      return this.isMini ? 24 : 21
+      return this.isMini ? 21 : 18
     },
   },
 }
@@ -186,7 +186,7 @@ export default {
   }
 
   .list-group {
-    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 
     span {
       color: var(--v-white-base);

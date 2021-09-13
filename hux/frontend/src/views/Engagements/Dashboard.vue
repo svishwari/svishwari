@@ -340,7 +340,7 @@ export default {
     triggerSelectDestination(audienceId) {
       this.closeDrawers()
       this.selectedAudienceId = audienceId
-      this.$refs.selectDestinations.fetchDestination()
+      this.$refs.selectDestinations.fetchDependencies()
       this.showSelectDestinationsDrawer = true
     },
     triggerDataExtensionDrawer(destination) {

@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="metric-card-wrapper rounded-lg"
+    class="metric-card-wrapper rounded-lg d-flex align-center"
     :class="{ 'no-click': !interactable }"
     :style="{ 'flex-grow': grow }"
     :max-width="maxWidth"
@@ -10,7 +10,7 @@
     :ripple="interactable"
     @click="$emit('click')"
   >
-    <div class="d-flex align-center justify-space-between">
+    <div class="d-flex align-center justify-space-between w-100">
       <div class="flex-grow-1">
         <span
           v-if="!titleTooltip"
