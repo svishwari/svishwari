@@ -172,7 +172,6 @@ class AudienceDownload(SwaggerView):
             create_audience_audit(
                 database=database,
                 audience_id=audience_id,
-                download_time=datetime.now(),
                 download_type=download_type,
                 file_name=audience_file_name,
                 user_name=user_name,
