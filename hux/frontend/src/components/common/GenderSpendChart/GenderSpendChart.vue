@@ -139,13 +139,4 @@ export default {
   height: 500px;
   padding: 0px !important;
 }
-.append-circle {
-  height: 12px;
-  width: 12px;
-  background-color: rgba(208, 208, 206, 1);
-  border-radius: 50%;
-  display: inline-block;
-  margin-top: 6px;
-  margin-right: 8px;
-}
 </style>
