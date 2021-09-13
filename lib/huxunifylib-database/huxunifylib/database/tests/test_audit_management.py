@@ -1,5 +1,4 @@
 """This module is to park all unit tests of audit_management.py"""
-from datetime import datetime
 from unittest import TestCase
 
 import mongomock
@@ -31,7 +30,6 @@ class AudienceAuditTest(TestCase):
             database=self.database,
             audience_id="611d12f9d80297f5a7328779",
             download_type="google_ads",
-            download_time=datetime.now(),
             file_name="09082021003424_611d12f9d80297f5a7328779_google_ads.csv",
         )
 
