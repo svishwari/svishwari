@@ -404,7 +404,7 @@ MOCKED_MODEL_PERFORMANCE_LTV = {
 
 MOCKED_MODEL_LTV_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_model_metrics_regression_service",
+        "feature_service_name": api_c.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE,
         "join_key_map": {"model_id": "2"},
     }
 }
@@ -464,7 +464,7 @@ MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
 
 MOCKED_MODEL_UNSUBSCRIBE_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_model_metrics_classification_service",
+        "feature_service_name": api_c.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE,
         "join_key_map": {"model_id": "1"},
     }
 }
@@ -644,6 +644,14 @@ CUSTOMERS_INSIGHTS_BY_CITY_RESPONSE = {
             "avg_ltv": 573.278802,
         },
     ],
+}
+
+CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE = {
+    "code": 200,
+    "body": [
+        {api_c.NAME: "Test Country", api_c.SIZE: 1234, api_c.LTV: 324.45}
+    ],
+    "message": "ok",
 }
 
 CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE = {

@@ -57,10 +57,11 @@ TOTAL_HOUSEHOLD_IDS = "total_household_ids"
 UPDATED = "updated"
 TOTAL_CUSTOMERS = "total_customers"
 NEW_CUSTOMERS_ADDED = "new_customers_added"
-COUNTRIES = "total_countries"
+TOTAL_COUNTRIES = "total_countries"
 TOTAL_COUNT = "total_count"
 TOTAL_STATES = "total_us_states"
 TOTAL_CITIES = "total_cities"
+COUNTRIES = "countries"
 STATES = "states"
 CITIES = "cities"
 MIN_AGE = "min_age"
@@ -439,14 +440,13 @@ DESTINATION_SECRETS = {
         AWS_SSM_NAME: [QUALTRICS_API_TOKEN],
     },
     db_c.DELIVERY_PLATFORM_GOOGLE: {
-        MONGO: [
+        MONGO: [GOOGLE_CLIENT_CUSTOMER_ID],
+        AWS_SSM_NAME: [
             GOOGLE_DEVELOPER_TOKEN,
-            GOOGLE_REFRESH_TOKEN,
-            GOOGLE_CLIENT_CUSTOMER_ID,
-            GOOGLE_CLIENT_ID,
             GOOGLE_CLIENT_SECRET,
+            GOOGLE_REFRESH_TOKEN,
+            GOOGLE_CLIENT_ID,
         ],
-        AWS_SSM_NAME: [GOOGLE_DEVELOPER_TOKEN],
     },
 }
 
@@ -692,17 +692,17 @@ PRECISION = "precision"
 PERFORMANCE_METRIC = "performance_metric"
 FEATURE_IMPORTANCE = "feature_importance"
 SCORE = "score"
-FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service"
+FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service_v2"
 FEATURE_DRIFT_REGRESSION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_regression_service"
+    "ui_metadata_model_metrics_regression_service_v2"
 )
 FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_classification_service"
+    "ui_metadata_model_metrics_classification_service_v2"
 )
 
 MODEL_LIST_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_models_service",
+        "feature_service_name": "ui_metadata_models_service_v2",
         "join_key_map": {"model_metadata_client": "HUS"},
     }
 }
@@ -733,15 +733,6 @@ RUN_DATE = "run_date"
 DRIFT = "drift"
 REGRESSION_MODELS = [LTV]
 CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
-
-# used for the icons on front-end.
-MODEL_TYPES_MAPPING = {
-    "lifetime value": LTV,
-    "propensity to purchase": PURCHASE,
-    "propensity to unsubscribe": UNSUBSCRIBE,
-    "unsubscribe": UNSUBSCRIBE,
-}
-MODEL_STATUS_MAPPING = {"success": STATUS_ACTIVE, "pending": STATUS_PENDING}
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
