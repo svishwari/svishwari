@@ -1,5 +1,6 @@
 <template>
   <div class="container" :style="{ maxWidth: chartWidth }">
+    <span v-if="showChart">
     <div id="chart" ref="chart" @mousemove="getCordinates($event)"></div>
     <div ref="legend"></div>
     <doughnut-chart-tooltip
@@ -7,6 +8,17 @@
       :tooltip="tooltip"
       :source-input="sourceInput"
     />
+    </span>
+    <span v-else>
+      <img
+        src="@/assets/images/Chart_donut.png"
+        alt="Hux"
+        width="200"
+        height="200"
+        class="d-flex ml-10"
+      />
+      <div  class="d-flex ml-6 global-text-line"><span class="append-circle"></span> no data available</div>
+    </span>
   </div>
 </template>
 
@@ -44,6 +56,7 @@ export default {
       chartWidth: "",
       sourceInput: null,
       showTooltip: false,
+      showChart: true,
       tooltip: {
         x: 0,
         y: 0,
@@ -66,6 +79,9 @@ export default {
   methods: {
     initiateChart() {
       let data = this.data // TODO: Get this from API
+      this.showChart = false
+      if(data.length != 0){
+      this.showChart = true
       // Initialize width, height & color range
       this.chartWidth = this.chartDimensions.width + "px"
       let width = this.chartDimensions.width - 50,
@@ -183,6 +199,7 @@ export default {
         .text(function (d) {
           return d.label
         })
+      }
     },
     getCordinates(event) {
       this.tooltip.x = event.offsetX + 60
@@ -200,5 +217,14 @@ export default {
   .pieBox {
     display: inline-block;
   }
+  .append-circle {
+  height: 12px;
+  width: 12px;
+  background-color: rgba(208, 208, 206, 1);
+  border-radius: 50%;
+  display: inline-block;
+  margin-top: 6px;
+  margin-right: 8px;
+}
 }
 </style>

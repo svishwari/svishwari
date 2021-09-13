@@ -1,5 +1,6 @@
 <template>
   <div ref="incomeChart" class="container">
+    <span v-if="incomes.length != 0">
     <horizontal-bar-chart
       v-model="incomes"
       :chart-dimensions="chartDimensions"
@@ -15,6 +16,17 @@
       :source-input="currentData"
     >
     </bar-chart-tooltip>
+    </span>
+    <span v-else>
+        <img
+        src="@/assets/images/Chart.png"
+        alt="Hux"
+        width="180"
+        height="150"
+        class="d-flex ma-6"
+      />
+      <div  class="d-flex ma-6 global-text-line"><span class="append-circle"></span> no data available</div>
+    </span>
   </div>
 </template>
 
@@ -86,5 +98,14 @@ export default {
 .container {
   height: 350px;
   padding: 0px !important;
+}
+.append-circle {
+  height: 12px;
+  width: 12px;
+  background-color: rgba(208, 208, 206, 1);
+  border-radius: 50%;
+  display: inline-block;
+  margin-top: 4px;
+  margin-right: 8px;
 }
 </style>

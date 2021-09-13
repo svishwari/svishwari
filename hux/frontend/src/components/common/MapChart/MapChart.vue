@@ -1,5 +1,6 @@
 <template>
   <div ref="chartBox" class="container">
+    <span v-if="mapChartData.length != 0">
     <geo-chart
       v-model="mapChartData"
       :chart-dimensions="chartDimensions"
@@ -17,6 +18,16 @@
       :source-input="currentData"
     >
     </map-chart-tooltip>
+    </span>
+    <span v-else>
+        <img
+        src="@/assets/images/USA.png"
+        alt="Hux"
+        width="548"
+        height="290"
+        class="d-flex ma-4"
+      />
+    </span>
   </div>
 </template>
 
