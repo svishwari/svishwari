@@ -110,8 +110,8 @@
         </v-col>
       </v-row>
 
-      <v-row>
-        <v-col cols="5">
+      <v-row class="table-card">
+        <v-col cols="5" class="pb-0">
           <v-card class="rounded-lg card-info-wrapper box-shadow-5">
             <v-card-title class="py-3 card-heading">
               {{ cardTitles[0].title }}
@@ -182,7 +182,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="3">
+        <v-col cols="3" class="pb-0">
           <v-card class="rounded-lg card-info-wrapper box-shadow-5">
             <v-card-title class="card-heading py-3">
               {{ cardTitles[1].title }}
@@ -204,8 +204,28 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="4" class="matix-card-space">
+        <v-col cols="4" class="matix-card-space pb-0">
           <identity-chart></identity-chart>
+        </v-col>
+      </v-row>
+      <v-row class="mt-0">
+        <v-col md="12" class="pt-0 pr-1">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
+            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5"> Customer events </span>
+              </div>
+              <v-progress-linear
+                v-if="loadingCustomerEvents"
+                :active="loadingCustomerEvents"
+                :indeterminate="loadingCustomerEvents"
+              />
+            </v-card-title>
+            <customer-event-chart
+              v-if="!loadingCustomerEvents"
+              :customers-data="events"
+            />
+          </v-card>
         </v-col>
       </v-row>
     </div>
@@ -221,6 +241,9 @@ import Tooltip from "@/components/common/Tooltip.vue"
 import Icon from "@/components/common/Icon"
 import HuxSlider from "@/components/common/HuxSlider"
 import IdentityChart from "@/components/common/identityChart/IdentityChart"
+import CustomerEventChart from "@/components/common/CustomerEventChart/CustomerEventChart"
+import CustomerData from "@/api/mock/fixtures/totalCustomersData.js"
+import CustomerEventData from "@/api/mock/fixtures/customerEventData.js"
 
 export default {
   name: "CustomerProfileDetails",
@@ -231,9 +254,12 @@ export default {
     Icon,
     HuxSlider,
     IdentityChart,
+    CustomerEventChart,
   },
   data() {
     return {
+      customerEvent: CustomerEventData,
+      customerData: CustomerData,
       items: [
         {
           text: "Customer Profiles",
@@ -260,11 +286,13 @@ export default {
         },
       ],
       loading: false,
+      loadingCustomerEvents: true,
     }
   },
   computed: {
     ...mapGetters({
       customer: "customers/single",
+      events: "customers/getEvents",
     }),
 
     singleCustomer() {
@@ -431,17 +459,24 @@ export default {
   async mounted() {
     this.loading = true
     await this.getCustomer(this.id)
+    this.getCustomerEvent()
     this.loading = false
   },
   methods: {
     ...mapActions({
       getCustomer: "customers/get",
+      getEvents: "customers/getCustomerEvents",
     }),
     formattedDate(value) {
       if (value) {
         return this.$options.filters.Date(value, "relative")
       }
       return "-"
+    },
+    async getCustomerEvent() {
+      this.loadingCustomerEvents = true
+      await this.getEvents(this.id)
+      this.loadingCustomerEvents = false
     },
   },
 }
@@ -518,6 +553,9 @@ export default {
   position: relative;
   margin-top: -93px;
 }
+.table-card {
+  height: 284px;
+}
 .card-height {
   height: 155px !important;
 }
@@ -545,5 +583,8 @@ export default {
 }
 ::v-deep .v-input {
   @extend .sample-card-text;
+}
+.chart-style {
+  background: var(--v-white-base) !important;
 }
 </style>

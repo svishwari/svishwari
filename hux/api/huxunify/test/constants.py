@@ -405,7 +405,7 @@ MOCKED_MODEL_PERFORMANCE_LTV = {
 
 MOCKED_MODEL_LTV_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_model_metrics_regression_service",
+        "feature_service_name": api_c.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE,
         "join_key_map": {"model_id": "2"},
     }
 }
@@ -465,7 +465,7 @@ MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
 
 MOCKED_MODEL_UNSUBSCRIBE_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_model_metrics_classification_service",
+        "feature_service_name": api_c.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE,
         "join_key_map": {"model_id": "1"},
     }
 }
@@ -647,6 +647,14 @@ CUSTOMERS_INSIGHTS_BY_CITY_RESPONSE = {
     ],
 }
 
+CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE = {
+    "code": 200,
+    "body": [
+        {api_c.NAME: "Test Country", api_c.SIZE: 1234, api_c.LTV: 324.45}
+    ],
+    "message": "ok",
+}
+
 CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE = {
     "code": 200,
     "body": [
@@ -751,6 +759,23 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
             "stitched_timestamp": "2021-08-05T14:44:42.694Z",
         },
     },
+}
+
+DATASOURCE_DATA_FEEDS_RESPONSE = {
+    "code": 200,
+    "message": "ok",
+    "body": [
+        {
+            "datasource_name": "test_data_source",
+            "datasource_label": "Test data source",
+            "name": "test_datafeed",
+            "records_received": 2000000,
+            "records_processed": 1800000,
+            "thirty_days_avg": 75,
+            "processed_at": "2021-08-05T14:44:42.694Z",
+            "status": "Active",
+        }
+    ],
 }
 
 CUSTOMER_PROFILE_AUDIENCES_RESPONSE = {

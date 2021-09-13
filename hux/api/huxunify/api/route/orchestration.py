@@ -58,7 +58,6 @@ from huxunify.api.route.decorators import (
 )
 from huxunify.api.route.utils import (
     get_db_client,
-    validate_destination_id,
     group_gender_spending,
 )
 
@@ -518,7 +517,7 @@ class AudienceInsightsGetView(SwaggerView):
         audience_insights = {
             api_c.DEMOGRAPHIC: get_demographic_by_state(
                 token_response[0],
-                {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
+                audience[api_c.AUDIENCE_FILTERS],
             ),
             api_c.INCOME: get_city_ltvs(
                 token_response[0],
@@ -533,9 +532,9 @@ class AudienceInsightsGetView(SwaggerView):
                         ]
                     },
                     start_date=str(
-                        datetime.today().date() - timedelta(days=180)
+                        datetime.utcnow().date() - timedelta(days=180)
                     ),
-                    end_date=str(datetime.today().date()),
+                    end_date=str(datetime.utcnow().date()),
                 )
             ),
             api_c.GENDER: {
@@ -661,9 +660,20 @@ class AudiencePostView(SwaggerView):
                 # validate object id
                 # map to an object ID field
                 # validate the destination object exists.
-                destination[db_c.OBJECT_ID] = validate_destination_id(
+                destination[db_c.OBJECT_ID] = ObjectId(
                     destination[db_c.OBJECT_ID]
                 )
+
+                if not destination_management.get_delivery_platform(
+                    get_db_client(), destination[db_c.OBJECT_ID]
+                ):
+                    logger.error(
+                        "Could not find destination with id %s.",
+                        destination[db_c.OBJECT_ID],
+                    )
+                    return {
+                        "message": api_c.DESTINATION_NOT_FOUND
+                    }, HTTPStatus.NOT_FOUND
 
         engagement_ids = []
         if api_c.AUDIENCE_ENGAGEMENTS in body:

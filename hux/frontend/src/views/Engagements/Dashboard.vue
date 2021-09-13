@@ -11,14 +11,21 @@
         </div>
       </template>
       <template #right>
-        <v-icon size="22" color="primary" class="mr-2" @click="refreshEntity()">
+        <v-icon
+          size="22"
+          color="primary"
+          class="icon-border pa-2 ma-1"
+          @click="refreshEntity()"
+        >
           mdi-refresh
         </v-icon>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+        <v-icon
+          size="22"
+          color="primary"
+          class="icon-border pa-2 ma-1"
+          @click="editEngagement()"
+        >
           mdi-pencil
-        </v-icon>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
-          mdi-download
         </v-icon>
       </template>
     </page-header>
@@ -277,11 +284,15 @@ export default {
       }
       return items
     },
+
+    getRouteId() {
+      return this.$route.params.id
+    },
   },
   async mounted() {
     this.loading = true
-    this.engagementId = this.$route.params.id
-    await this.loadEngagement(this.$route.params.id)
+    this.engagementId = this.getRouteId
+    await this.loadEngagement(this.getRouteId)
     this.loading = false
   },
   methods: {
@@ -587,6 +598,12 @@ export default {
       this.alert.title = "OH NO!"
       this.alert.message = message
       this.flashAlert = true
+    },
+    editEngagement() {
+      this.$router.push({
+        name: "EngagementUpdate",
+        params: { id: this.getRouteId },
+      })
     },
   },
 }

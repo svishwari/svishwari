@@ -13,12 +13,14 @@ import { idrOverview, idrDataFeedReport } from "./factories/identity"
 import { mockDataFeeds } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
+import audienceCSVData from "./factories/audienceCSVData"
 import liftData from "./factories/liftChartData"
 import mapData from "@/components/common/MapChart/mapData.js"
 import demographicsData from "@/api/mock/fixtures/demographicData.js"
+import customerEventData from "@/api/mock/fixtures/customerEventData.js"
 import totalCustomersData from "./fixtures/totalCustomersData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
-import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
+import idrMatchingTrend from "@/api/mock/fixtures/idrMatchingTrendData.js"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -280,11 +282,15 @@ export const defineRoutes = (server) => {
     const engagementId = request.params.id
     const requestData = JSON.parse(request.requestBody)
     if (requestData.status) {
+      // deactivate engagement
       const payload = {
         status: requestData.status,
       }
       schema.engagements.find(engagementId).update(payload)
-      return { message: "Successfully inactivated engagement" }
+      return { message: "Successfully deactivated engagement" }
+    } else {
+      // updating engagement
+      return schema.engagements.find(engagementId).update(requestData)
     }
   })
 
@@ -342,6 +348,12 @@ export const defineRoutes = (server) => {
       return engagement.campaign_performance["adsPerformance"]
     }
   )
+  server.get("/engagements/:id/audience-performance/download", async () => {
+    // Introduced a delay of 5 seconds to
+    // replicate the API delay in processing the BLOB.
+    await new Promise((r) => setTimeout(r, 5000))
+    return audienceCSVData
+  })
 
   // models
   server.get("/models")
@@ -374,7 +386,7 @@ export const defineRoutes = (server) => {
 
   server.get("/models/:id/lift", () => liftData)
 
-  server.post("/models/:id/drift", () => driftData())
+  server.get("/models/:id/drift", () => driftData())
 
   server.get("/models/:id/features", (schema, request) => {
     const id = request.params.id
@@ -395,13 +407,15 @@ export const defineRoutes = (server) => {
 
   server.get("/customers/overview", () => customersOverview)
 
+  server.post("/customers/:huxId/events", () => customerEventData)
+
   server.get("/customers-insights/geo", () => mapData)
 
   server.get("/customers-insights/demo", () => demographicsData)
 
   server.get("/customers-insights/total", () => totalCustomersData)
 
-  server.post("/customers-insights/cities", (schema, request) => {
+  server.get("/customers-insights/cities", (schema, request) => {
     let batchNumber = request.queryParams["batch_number"] || 1
     let batchSize = request.queryParams["batch_size"] || 100
     let start = batchNumber === 1 ? 0 : (batchNumber - 1) * batchSize
@@ -409,11 +423,11 @@ export const defineRoutes = (server) => {
     return schema.geoCities.all().slice(start, end)
   })
 
-  server.post("/customers-insights/states", (schema) => {
+  server.get("/customers-insights/states", (schema) => {
     return schema.geoStates.all()
   })
 
-  server.post("/customers-insights/countries", (schema) => {
+  server.get("/customers-insights/countries", (schema) => {
     return schema.geoCountries.all()
   })
 
@@ -446,7 +460,7 @@ export const defineRoutes = (server) => {
     { timing: 10 }
   )
   server.get("/idr/datafeeds/:datafeed_id", () => idrDataFeedReport)
-  server.get("/idr/matching-trends", () => genderSpendData())
+  server.get("/idr/matching-trends", () => idrMatchingTrend)
 
   // notifications
   server.get("/notifications", (schema, request) => {
@@ -468,6 +482,12 @@ export const defineRoutes = (server) => {
   server.get("/audiences/:id/audience_insights", () => {
     demographicsData.demo = mapData
     return demographicsData
+  })
+  server.get("/audiences/:id/:type", async () => {
+    // Introduced a delay of 15 seconds to
+    // replicate the API delay in processing the BLOB.
+    await new Promise((r) => setTimeout(r, 15000))
+    return audienceCSVData
   })
 
   server.get("/audiences/:id", (schema, request) => {

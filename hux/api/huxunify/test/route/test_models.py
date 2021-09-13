@@ -152,12 +152,15 @@ class TestModelRoutes(TestCase):
         )
         self.request_mocker.start()
 
+        # mock get version history.
+        mock.patch(
+            "huxunify.api.route.decisioning.tecton.get_model_version_history",
+            return_value=t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE,
+        ).start()
+
         model_id = 2
-        response = self.app.post(
+        response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/drift",
-            json={
-                api_c.MODEL_TYPE: api_c.LTV,
-            },
             headers=t_c.STANDARD_HEADERS,
         )
 

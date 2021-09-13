@@ -31,19 +31,18 @@ client["customers"].overview = () => {
 
 client["customers"].geoOverview = () => http.get("/customers-insights/geo")
 
-client["customers"].geoCities = (batchNumber, batchSize, data) => {
-  return http.post(
-    `/customers-insights/cities?batch_number=${batchNumber}&batch_size=${batchSize}`,
-    data
+client["customers"].geoCities = (batchNumber, batchSize) => {
+  return http.get(
+    `/customers-insights/cities?batch_number=${batchNumber}&batch_size=${batchSize}`
   )
 }
 
-client["customers"].geoCountries = (data) => {
-  return http.post("/customers-insights/countries", data)
+client["customers"].geoCountries = () => {
+  return http.get("/customers-insights/countries")
 }
 
-client["customers"].geoStates = (data) => {
-  return http.post("/customers-insights/states", data)
+client["customers"].geoStates = () => {
+  return http.get("/customers-insights/states")
 }
 
 client["customers"].demographics = (data) => {
@@ -54,6 +53,10 @@ client["customers"].demographics = (data) => {
 
 client["customers"].totalCustomers = () => {
   return http.get("/customers-insights/total")
+}
+
+client["customers"].events = (huxId) => {
+  return http.post(`/customers/${huxId}/events`)
 }
 
 client["customers"].getOverview = (data) => {
@@ -166,6 +169,16 @@ client["engagements"].updateCampaignMapping = (
   )
 }
 
+client["engagements"].downloadAudienceMetrics = (engagementId) => {
+  return http.get(
+    `/engagements/${engagementId}/audience-performance/download`,
+    {
+      timeout: 0,
+      responseType: "blob",
+    }
+  )
+}
+
 client["engagements"].getCampaigns = ({
   resourceId,
   audienceId,
@@ -198,6 +211,13 @@ client["idr"].matchingTrend = (params) => {
 //#region audiences endpoints
 client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
+}
+
+client["audiences"].downloadAudience = (audienceId, fileType) => {
+  return http.get(`/audiences/${audienceId}/${fileType}`, {
+    timeout: 0,
+    responseType: "blob",
+  })
 }
 
 client["audiences"].demographics = (audienceId) => {
@@ -251,8 +271,8 @@ client["models"].lift = (id) => {
   return http.get(`/models/${id}/lift`)
 }
 
-client["models"].drift = (id, data) => {
-  return http.post(`/models/${id}/drift`, data)
+client["models"].drift = (id) => {
+  return http.get(`/models/${id}/drift`)
 }
 
 client["models"].modelFeatures = (id) => {
