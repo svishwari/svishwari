@@ -1,5 +1,10 @@
 <template>
-  <v-slider class="hux-map-slider" v-if="mapData.length != 0" always-dirty readonly>
+  <v-slider
+    v-if="mapData.length != 0"
+    class="hux-map-slider"
+    always-dirty
+    readonly
+  >
     <template #append>
       <span
         class="slider-value-display font-weight-semi-bold"

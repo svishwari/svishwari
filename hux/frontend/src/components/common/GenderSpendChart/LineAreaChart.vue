@@ -81,11 +81,7 @@ export default {
         genders = [{ label: "no data available", xValue: 0 }]
 
         colorCodes = ["rgba(208, 208, 206, 1)"]
-          color = d3Scale
-        .scaleOrdinal()
-        .range([
-         " rgba(208, 208, 206, 1)"
-        ])
+        color = d3Scale.scaleOrdinal().range([" rgba(208, 208, 206, 1)"])
       } else {
         genders = [
           { label: "Women", xValue: 0 },
@@ -100,15 +96,13 @@ export default {
         ]
 
         color = d3Scale
-        .scaleOrdinal()
-        .range([
-          "rgba(0, 85, 135, 1)",
-          "rgba(12, 157, 219, 1)",
-          "rgba(66, 239, 253, 1)",
-        ])
+          .scaleOrdinal()
+          .range([
+            "rgba(0, 85, 135, 1)",
+            "rgba(12, 157, 219, 1)",
+            "rgba(66, 239, 253, 1)",
+          ])
       }
-
-
 
       let svg = d3Select
         .select(this.$refs.huxChart)

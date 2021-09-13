@@ -1,31 +1,33 @@
 <template>
   <div ref="incomeChart" class="container">
     <span v-if="incomes.length != 0">
-    <horizontal-bar-chart
-      v-model="incomes"
-      :chart-dimensions="chartDimensions"
-      @cordinates="getCordinates"
-      @tooltipDisplay="toolTipDisplay"
-    />
-    <bar-chart-tooltip
-      :position="{
-        x: tooltip.x,
-        y: tooltip.y,
-      }"
-      :show-tooltip="show"
-      :source-input="currentData"
-    >
-    </bar-chart-tooltip>
+      <horizontal-bar-chart
+        v-model="incomes"
+        :chart-dimensions="chartDimensions"
+        @cordinates="getCordinates"
+        @tooltipDisplay="toolTipDisplay"
+      />
+      <bar-chart-tooltip
+        :position="{
+          x: tooltip.x,
+          y: tooltip.y,
+        }"
+        :show-tooltip="show"
+        :source-input="currentData"
+      >
+      </bar-chart-tooltip>
     </span>
     <span v-else>
-        <img
+      <img
         src="@/assets/images/Chart.png"
         alt="Hux"
         width="180"
         height="150"
         class="d-flex ma-6"
       />
-      <div  class="d-flex ma-6 global-text-line"><span class="append-circle"></span> no data available</div>
+      <div class="d-flex ma-6 global-text-line">
+        <span class="append-circle"></span> no data available
+      </div>
     </span>
   </div>
 </template>

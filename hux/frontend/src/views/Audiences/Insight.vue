@@ -780,7 +780,12 @@ export default {
     },
 
     genderChartData() {
-      if (this.demographicsData.gender && (this.demographicsData.gender.gender_men || this.demographicsData.gender.gender_women || this.demographicsData.gender.gender_other)) {
+      if (
+        this.demographicsData.gender &&
+        (this.demographicsData.gender.gender_men ||
+          this.demographicsData.gender.gender_women ||
+          this.demographicsData.gender.gender_other)
+      ) {
         return [
           {
             label: "Men",
@@ -801,9 +806,8 @@ export default {
             size: this.demographicsData.gender.gender_other.size,
           },
         ]
-      }
-      else {
-      return []
+      } else {
+        return []
       }
     },
     mapChartData() {

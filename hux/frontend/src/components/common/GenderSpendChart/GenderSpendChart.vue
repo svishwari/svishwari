@@ -24,7 +24,6 @@
 import LineAreaChartTooltip from "@/components/common/GenderSpendChart/LineAreaChartTooltip"
 import LineAreaChart from "@/components/common/GenderSpendChart/LineAreaChart"
 
-
 export default {
   name: "GenderSpendChart",
   components: { LineAreaChart, LineAreaChartTooltip },

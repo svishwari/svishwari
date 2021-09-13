@@ -1,6 +1,6 @@
 <template>
   <div class="list-container">
-    <div class="content-style pl-6 pr-4 pb-4" v-if="mapChartData.length != 0">
+    <div v-if="mapChartData.length != 0" class="content-style pl-6 pr-4 pb-4">
       <div
         v-for="item in mapChartData"
         :key="item[defaultMetric]"
@@ -12,7 +12,7 @@
         </span>
       </div>
     </div>
-    <div class="content-style pl-6 pr-4 pb-4 mt-3 global-text-line" v-else>
+    <div v-else class="content-style pl-6 pr-4 pb-4 mt-3 global-text-line">
       No data is available. Come back at another time.
     </div>
   </div>
