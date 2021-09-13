@@ -13,7 +13,11 @@
   >
     <div v-if="icon || title" class="d-flex align-center">
       <logo :type="icon" />
-      <div class="card-horizontal-title  pl-2 text-h6 black--text text--darken-4">{{ title }}</div>
+      <div
+        class="card-horizontal-title pl-2 text-h6 black--text text--darken-4"
+      >
+        {{ title }}
+      </div>
     </div>
     <slot></slot>
     <div v-if="isAvailable && !hideButton">
