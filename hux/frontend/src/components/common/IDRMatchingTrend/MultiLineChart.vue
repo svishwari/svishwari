@@ -289,7 +289,7 @@ export default {
         .attr("y", 7)
         .attr("dy", ".55em")
         .attr("class", "neroBlack--text")
-         .style("fill", "#4f4f4f")
+        .style("fill", "#4f4f4f")
         .style("font-size", 14)
         .style("text-anchor", "start")
         .text(function (d) {

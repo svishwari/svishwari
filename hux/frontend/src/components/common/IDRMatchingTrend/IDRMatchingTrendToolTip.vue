@@ -9,7 +9,7 @@
   >
     <div class="neroBlack--text caption">
       <div class="value-section">
-          <div class="date-font">
+        <div class="date-font">
           {{ sourceInput.date | date("MMM DD[,] YYYY") }}
         </div>
         <div>
