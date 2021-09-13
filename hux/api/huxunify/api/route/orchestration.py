@@ -517,7 +517,7 @@ class AudienceInsightsGetView(SwaggerView):
         audience_insights = {
             api_c.DEMOGRAPHIC: get_demographic_by_state(
                 token_response[0],
-                {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
+                audience[api_c.AUDIENCE_FILTERS],
             ),
             api_c.INCOME: get_city_ltvs(
                 token_response[0],
@@ -532,9 +532,9 @@ class AudienceInsightsGetView(SwaggerView):
                         ]
                     },
                     start_date=str(
-                        datetime.today().date() - timedelta(days=180)
+                        datetime.utcnow().date() - timedelta(days=180)
                     ),
-                    end_date=str(datetime.today().date()),
+                    end_date=str(datetime.utcnow().date()),
                 )
             ),
             api_c.GENDER: {
