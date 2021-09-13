@@ -91,7 +91,7 @@ steps:
 
   Tox_Tests:
     stage: tox_parallel
-    title: "Tox - Safety and Coverage checks."
+    title: "Tox - Safety, Bandit and Coverage checks."
     image: huxhub.repo.mgnt.in/tox-ci
     working_directory: '${{CF_REPO_NAME}}/hux/api'
     description: "run tests using tox"
