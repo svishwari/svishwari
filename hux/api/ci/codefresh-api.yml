@@ -102,6 +102,10 @@ steps:
         title: 'safety'
         environment:
           - TOXENV=safety
+      bandit:
+        title: 'bandit'
+        environment:
+          - TOXENV=bandit
       checkCoverage:
         title: 'checkCoverage'
         environment:
