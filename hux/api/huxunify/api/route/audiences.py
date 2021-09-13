@@ -332,12 +332,18 @@ class AudienceInsightsCities(SwaggerView):
 
         audience = get_audience(get_db_client(), ObjectId(audience_id))
 
+        filters = (
+            {api_c.AUDIENCE_FILTERS: audience.get(db_c.AUDIENCE_FILTERS)}
+            if audience.get(db_c.AUDIENCE_FILTERS)
+            else None
+        )
+
         return (
             jsonify(
                 CustomersInsightsCitiesSchema().dump(
                     get_city_ltvs(
                         token_response[0],
-                        filters=audience.get(db_c.AUDIENCE_FILTERS),
+                        filters=filters,
                         offset=int(batch_size) * (int(batch_number) - 1),
                         limit=int(batch_size),
                     ),
