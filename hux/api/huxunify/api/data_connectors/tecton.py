@@ -13,8 +13,6 @@ import aiohttp
 import async_timeout
 import requests
 from huxunifylib.util.general.logging import logger
-from prometheus_client import Gauge
-from prometheus_flask_exporter import PrometheusMetrics
 
 from huxunify.api.config import get_config
 from huxunify.api import constants
@@ -24,14 +22,7 @@ from huxunify.api.schema.model import (
     ModelDriftSchema,
     ModelLiftSchema,
 )
-
-metrics = PrometheusMetrics.for_app_factory()
-health_check_metrics = Gauge(
-    name=constants.TECTON_CONNECTION_HEALTH,
-    documentation="health check metrics",
-    registry=metrics.registry,
-    labelnames=["name"],
-)
+from huxunify.api.prometheus import record_health_status_metric
 
 
 def check_tecton_connection() -> Tuple[bool, str]:
@@ -51,16 +42,12 @@ def check_tecton_connection() -> Tuple[bool, str]:
             dumps(constants.MODEL_LIST_PAYLOAD),
             headers=config.TECTON_API_HEADERS,
         )
-        health_check_metrics.labels(
-            name=constants.TECTON_CONNECTION_HEALTH
-        ).set(True)
+        record_health_status_metric(constants.TECTON_CONNECTION_HEALTH, True)
         return response.status_code, "Tecton available."
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
-        health_check_metrics.labels(
-            name=constants.TECTON_CONNECTION_HEALTH
-        ).set(False)
+        record_health_status_metric(constants.TECTON_CONNECTION_HEALTH, False)
         return False, getattr(exception, "message", repr(exception))
 
 

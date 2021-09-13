@@ -11,26 +11,11 @@ from connexion import ProblemException
 import boto3
 import botocore
 from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
-from prometheus_client import Gauge
-from prometheus_flask_exporter import PrometheusMetrics
 
 import huxunifylib.database.constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api import config
-
-metrics = PrometheusMetrics.for_app_factory()
-aws_ssm_health_check_metrics = Gauge(
-    name=api_c.AWS_SSM_CONNECTION_HEALTH,
-    documentation="health check metrics",
-    registry=metrics.registry,
-    labelnames=["name"],
-)
-aws_batch_health_check_metrics = Gauge(
-    name=api_c.AWS_BATCH_CONNECTION_HEALTH,
-    documentation="health check metrics",
-    registry=metrics.registry,
-    labelnames=["name"],
-)
+from huxunify.api.prometheus import record_health_status_metric
 
 
 class ParameterStore:
@@ -175,21 +160,13 @@ def check_aws_connection(client="s3") -> Tuple[bool, str]:
         # lookup the health test to run from api constants
         health_test = api_c.AWS_HEALTH_TESTS[client]
         getattr(get_aws_client(client), health_test[0])(**health_test[1])
-        aws_ssm_health_check_metrics.labels(
-            name=api_c.AWS_SSM_CONNECTION_HEALTH
-        ).set(True)
-        aws_batch_health_check_metrics.labels(
-            name=api_c.AWS_BATCH_CONNECTION_HEALTH
-        ).set(True)
+        record_health_status_metric(api_c.AWS_SSM_CONNECTION_HEALTH, True)
+        record_health_status_metric(api_c.AWS_BATCH_CONNECTION_HEALTH, True)
         return True, f"{client} available."
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
-        aws_ssm_health_check_metrics.labels(
-            name=api_c.AWS_SSM_CONNECTION_HEALTH
-        ).set(False)
-        aws_batch_health_check_metrics.labels(
-            name=api_c.AWS_BATCH_CONNECTION_HEALTH
-        ).set(False)
+        record_health_status_metric(api_c.AWS_SSM_CONNECTION_HEALTH, False)
+        record_health_status_metric(api_c.AWS_BATCH_CONNECTION_HEALTH, False)
         return False, getattr(exception, "message", repr(exception))
 
 

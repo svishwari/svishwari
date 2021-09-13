@@ -9,8 +9,6 @@ from bson import ObjectId
 from healthcheck import HealthCheck
 from decouple import config
 from connexion.exceptions import ProblemException
-from prometheus_client import Gauge
-from prometheus_flask_exporter import PrometheusMetrics
 from pymongo import MongoClient
 
 from huxunifylib.util.general.logging import logger
@@ -37,14 +35,7 @@ from huxunify.api.data_connectors.cdp import check_cdm_api_connection
 from huxunify.api.data_connectors.cdp_connection import (
     check_cdp_connections_api_connection,
 )
-
-metrics = PrometheusMetrics.for_app_factory()
-health_check_metrics = Gauge(
-    name=constants.MONGO_CONNECTION_HEALTH,
-    documentation="health check metrics",
-    registry=metrics.registry,
-    labelnames=["name"],
-)
+from huxunify.api.prometheus import record_health_status_metric
 
 
 def handle_api_exception(exc: Exception, description: str = "") -> None:
@@ -89,31 +80,13 @@ def check_mongo_connection() -> Tuple[bool, str]:
     try:
         # test finding documents
         get_all_data_sources(get_db_client())
-        health_check_metrics.labels(
-            name=constants.MONGO_CONNECTION_HEALTH
-        ).set(True)
+        record_health_status_metric(constants.MONGO_CONNECTION_HEALTH, True)
         return True, "Mongo available."
     # pylint: disable=broad-except
     # pylint: disable=unused-variable
     except Exception as exception:
-        health_check_metrics.labels(
-            name=constants.MONGO_CONNECTION_HEALTH
-        ).set(False)
+        record_health_status_metric(constants.MONGO_CONNECTION_HEALTH, False)
         return False, "Mongo not available."
-
-
-def record_connection_health_status(connection_name: str, value: int) -> None:
-    """
-    Sets the prometheus health value
-
-    Args:
-        connection_name (str):
-        value (int):
-
-    Returns:
-
-    """
-    health_check_metrics.labels(name=connection_name).set(value)
 
 
 def get_health_check() -> HealthCheck:
