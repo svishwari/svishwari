@@ -1,4 +1,0 @@
-[bandit]
-targets: ./huxunify
-exclude: ./huxunify/test/
-skips: B105,B311
