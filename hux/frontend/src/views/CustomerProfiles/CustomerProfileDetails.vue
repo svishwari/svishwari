@@ -111,7 +111,7 @@
       </v-row>
 
       <v-row class="table-card">
-        <v-col cols="5"  class="pb-0">
+        <v-col cols="5" class="pb-0">
           <v-card class="rounded-lg card-info-wrapper box-shadow-5">
             <v-card-title class="py-3 card-heading">
               {{ cardTitles[0].title }}
@@ -182,7 +182,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="3"  class="pb-0">
+        <v-col cols="3" class="pb-0">
           <v-card class="rounded-lg card-info-wrapper box-shadow-5">
             <v-card-title class="card-heading py-3">
               {{ cardTitles[1].title }}
