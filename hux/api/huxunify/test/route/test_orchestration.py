@@ -42,6 +42,7 @@ class OrchestrationRouteTest(TestCase):
     def setUp(self) -> None:
         """
         Setup resources before each test
+
         Args:
 
         Returns:
@@ -273,8 +274,8 @@ class OrchestrationRouteTest(TestCase):
 
     def test_create_audience_with_destination(self):
         """Test create audience with destination.
-        Args:
 
+        Args:
         Returns:
 
         """
