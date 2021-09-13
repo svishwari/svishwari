@@ -558,16 +558,16 @@ export default {
   .v-list {
     .v-list-item {
       .icon-col {
-        min-width: 55px;
-        max-width: 55px;
+        min-width: 40px;
+        max-width: 40px;
       }
       .status-col {
-        min-width: 45px;
-        max-width: 45px;
+        min-width: 35px;
+        max-width: 35px;
       }
       .size-col {
         min-width: 60px;
-        max-width: 60px;
+        max-width: 90px;
         font-size: 12px;
         line-height: 16px;
         color: var(--v--neroBlack-base);
