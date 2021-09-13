@@ -36,7 +36,6 @@
       v-bind="$attrs"
       autocomplete="off"
       @input="input($event)"
-      @change="change($event)"
       @click:append="$emit('clickAppend')"
       @blur="$emit('blur', TextFieldValue)"
     >

@@ -371,8 +371,16 @@
               </span>
             </div>
           </v-card-title>
-          <map-chart v-if="!loadingDemographics" :map-data="mapChartData" />
-          <map-slider v-if="!loadingDemographics" :map-data="mapChartData" />
+          <map-chart
+            v-if="!loadingDemographics"
+            :map-data="mapChartData"
+            :configuration-data="configurationData"
+          />
+          <map-slider
+            v-if="!loadingDemographics"
+            :map-data="mapChartData"
+            :configuration-data="configurationData"
+          />
         </v-card>
       </v-col>
       <v-col md="5">
@@ -393,6 +401,7 @@
           <map-state-list
             v-if="!loadingDemographics"
             :map-data="mapChartData"
+            :configuration-data="configurationData"
           />
         </v-card>
       </v-col>
@@ -586,6 +595,7 @@ import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/Edit
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations.vue"
 import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
 import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
+import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import GeoDrawer from "@/views/Shared/Drawers/GeoDrawer.vue"
 import Logo from "../../components/common/Logo.vue"
 
@@ -667,6 +677,7 @@ export default {
       loadingRelationships: false,
       loadingDemographics: true,
       flashAlert: false,
+      configurationData: configurationData,
       alert: {
         type: "success",
         title: "YAY!",

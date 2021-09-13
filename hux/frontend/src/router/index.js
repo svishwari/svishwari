@@ -60,6 +60,16 @@ const routes = [
     },
   },
   {
+    path: "/engagements/:id/update",
+    name: "EngagementUpdate",
+    component: () => import("@/views/Engagements/Configuration/Index.vue"),
+    meta: {
+      layout: "app",
+      title: "Edit an Engagement",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/engagements/:id",
     name: "EngagementDashboard",
     component: () => import("@/views/Engagements/Dashboard"),
@@ -260,6 +270,7 @@ router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
   if (requiresAuth && !(await Vue.prototype.$auth.isAuthenticated())) {
+    sessionStorage.setItem("appRedirect", to.fullPath)
     next({
       path: "/login",
       query: { redirect: to.fullPath },

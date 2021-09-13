@@ -20,7 +20,7 @@ import demographicsData from "@/api/mock/fixtures/demographicData.js"
 import customerEventData from "@/api/mock/fixtures/customerEventData.js"
 import totalCustomersData from "./fixtures/totalCustomersData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
-import { genderSpendData } from "@/api/mock/factories/idrMatchingTrendData.js"
+import idrMatchingTrend from "@/api/mock/fixtures/idrMatchingTrendData.js"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -282,11 +282,15 @@ export const defineRoutes = (server) => {
     const engagementId = request.params.id
     const requestData = JSON.parse(request.requestBody)
     if (requestData.status) {
+      // deactivate engagement
       const payload = {
         status: requestData.status,
       }
       schema.engagements.find(engagementId).update(payload)
-      return { message: "Successfully inactivated engagement" }
+      return { message: "Successfully deactivated engagement" }
+    } else {
+      // updating engagement
+      return schema.engagements.find(engagementId).update(requestData)
     }
   })
 
@@ -344,6 +348,12 @@ export const defineRoutes = (server) => {
       return engagement.campaign_performance["adsPerformance"]
     }
   )
+  server.get("/engagements/:id/audience-performance/download", async () => {
+    // Introduced a delay of 5 seconds to
+    // replicate the API delay in processing the BLOB.
+    await new Promise((r) => setTimeout(r, 5000))
+    return audienceCSVData
+  })
 
   // models
   server.get("/models")
@@ -376,7 +386,7 @@ export const defineRoutes = (server) => {
 
   server.get("/models/:id/lift", () => liftData)
 
-  server.post("/models/:id/drift", () => driftData())
+  server.get("/models/:id/drift", () => driftData())
 
   server.get("/models/:id/features", (schema, request) => {
     const id = request.params.id
@@ -397,7 +407,7 @@ export const defineRoutes = (server) => {
 
   server.get("/customers/overview", () => customersOverview)
 
-  server.get("/customers/:huxId/events", () => customerEventData)
+  server.post("/customers/:huxId/events", () => customerEventData)
 
   server.get("/customers-insights/geo", () => mapData)
 
@@ -450,7 +460,7 @@ export const defineRoutes = (server) => {
     { timing: 10 }
   )
   server.get("/idr/datafeeds/:datafeed_id", () => idrDataFeedReport)
-  server.get("/idr/matching-trends", () => genderSpendData())
+  server.get("/idr/matching-trends", () => idrMatchingTrend)
 
   // notifications
   server.get("/notifications", (schema, request) => {

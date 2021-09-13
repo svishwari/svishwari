@@ -57,7 +57,7 @@ client["customers"].totalCustomers = () => {
 }
 
 client["customers"].events = (huxId) => {
-  return http.get(`/customers/${huxId}/events`)
+  return http.post(`/customers/${huxId}/events`)
 }
 
 client["customers"].getOverview = (data) => {
@@ -167,6 +167,16 @@ client["engagements"].updateCampaignMapping = (
   return http.put(
     `/engagements/${resourceId}/audience/${audienceId}/destination/${destinationId}/campaigns`,
     data
+  )
+}
+
+client["engagements"].downloadAudienceMetrics = (engagementId) => {
+  return http.get(
+    `/engagements/${engagementId}/audience-performance/download`,
+    {
+      timeout: 0,
+      responseType: "blob",
+    }
   )
 }
 

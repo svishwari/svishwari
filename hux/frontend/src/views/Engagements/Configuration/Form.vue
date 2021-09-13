@@ -268,7 +268,18 @@
 
       <template #right>
         <v-btn
-          v-if="hasDestinations && isManualDelivery"
+          v-if="isEditable"
+          tile
+          color="primary"
+          height="44"
+          :disabled="!isValid"
+          @click="restoreEngagement()"
+        >
+          Update
+        </v-btn>
+
+        <v-btn
+          v-else-if="hasDestinations && isManualDelivery"
           tile
           color="primary"
           height="44"
@@ -390,6 +401,7 @@ export default {
       endMinDate: new Date(
         new Date().getTime() - new Date().getTimezoneOffset() * 60000
       ).toISOString(),
+      engagementList: {},
     }
   },
 
@@ -397,6 +409,14 @@ export default {
     ...mapGetters({
       destination: "destinations/single",
     }),
+
+    getRouteId() {
+      return this.$route.params.id
+    },
+
+    isEditable() {
+      return this.$route.name === "EngagementUpdate" ? true : false
+    },
 
     payload() {
       return {
@@ -462,6 +482,7 @@ export default {
     ...mapActions({
       addEngagement: "engagements/add",
       deliverEngagement: "engagements/deliver",
+      updateEngagement: "engagements/updateEngagement",
     }),
 
     resetSchedule() {
@@ -531,7 +552,7 @@ export default {
     },
 
     destinationType(id) {
-      return this.destination(id).type
+      return this.destination(id) && this.destination(id).type
     },
 
     async addNewEngagement() {
@@ -554,6 +575,25 @@ export default {
         this.$router.push({
           name: "EngagementDashboard",
           params: { id: engagement.id },
+        })
+      } catch (error) {
+        this.errorMessages.push(error.response.data.message)
+        this.scrollToTop()
+      }
+    },
+
+    async restoreEngagement() {
+      try {
+        const requestPayload = { ...this.payload }
+        if (requestPayload.delivery_schedule === 0) {
+          delete requestPayload.start_date
+          delete requestPayload.end_date
+        }
+        const payload = { id: this.getRouteId, data: requestPayload }
+        await this.updateEngagement(payload)
+        this.$router.push({
+          name: "EngagementDashboard",
+          params: { id: this.getRouteId },
         })
       } catch (error) {
         this.errorMessages.push(error.response.data.message)

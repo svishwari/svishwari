@@ -139,10 +139,13 @@
       <v-row class="px-15 mt-2">
         <v-col md="12">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <v-card-title class="pb-2 pl-5 pt-5">
               <div class="mt-2">
                 <span class="black--text text--darken-4 text-h5">
-                  Total customers ({{ timeFrameLabel }})
+                  Total customers
+                  <span class="text-body-2 time-frame">
+                    ({{ timeFrameLabel }})
+                  </span>
                 </span>
               </div>
             </v-card-title>
@@ -176,10 +179,12 @@
             <map-chart
               v-if="!loadingGeoOverview"
               :map-data="customersGeoOverview"
+              :configuration-data="configurationData"
             />
             <map-slider
               v-if="!loadingGeoOverview"
               :map-data="customersGeoOverview"
+              :configuration-data="configurationData"
             />
           </v-card>
         </v-col>
@@ -201,6 +206,7 @@
             <map-state-list
               v-if="!loadingGeoOverview"
               :map-data="customersGeoOverview"
+              :configuration-data="configurationData"
             />
           </v-card>
         </v-col>
@@ -309,6 +315,7 @@ import MapStateList from "@/components/common/MapChart/MapStateList"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
+import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import dayjs from "dayjs"
 
 export default {
@@ -335,6 +342,7 @@ export default {
     return {
       customerProfilesDrawer: false,
       loadingCustomerChart: false,
+      configurationData: configurationData,
       geoDrawer: {
         cities: false,
         countries: false,
@@ -646,6 +654,10 @@ export default {
 
 .card-margin {
   margin: 6px !important;
+}
+
+.time-frame {
+  color: var(--v-gray-base) !important;
 }
 
 .customer-dashboard-wrap {

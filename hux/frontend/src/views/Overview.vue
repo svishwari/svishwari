@@ -36,7 +36,10 @@
           <v-card-title class="chart-style pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="black--text text--darken-4 text-h5">
-                Total customers ({{ timeFrameLabel }})
+                Total customers
+                <span class="text-body-2 time-frame">
+                  ({{ timeFrameLabel }})
+                </span>
               </span>
             </div>
           </v-card-title>
@@ -175,6 +178,9 @@ export default {
         }
       }
     }
+  }
+  .time-frame {
+    color: var(--v-gray-base) !important;
   }
 }
 .drop-wrap {

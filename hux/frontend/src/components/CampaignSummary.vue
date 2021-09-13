@@ -616,7 +616,9 @@ export default {
             delete _temp.destinations
             delete _temp.id
             delete _temp.name
-            if ([...new Set(Object.values(_temp[0]))].join() === "-")
+            delete _temp.is_mapped
+            const uniqueValues = [...new Set(Object.values(_temp))].join()
+            if (uniqueValues === "0,$0,0%" || uniqueValues === "0,0%")
               return false
           }
           return true

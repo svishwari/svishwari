@@ -17,7 +17,6 @@ from huxunify.api.schema.customers import (
     CustomerOverviewSchema,
     CustomerGenderInsightsSchema,
     CustomerSpendingInsightsSchema,
-    CustomersInsightsCitiesSchema,
     CustomerGeoVisualSchema,
 )
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
@@ -159,13 +158,20 @@ class AudienceGetSchema(Schema):
     match_rate = fields.Float(default=0)
 
 
+class CityIncomeInsightsSchema(Schema):
+    """Customer Income Insights Schema"""
+
+    name = fields.String(required=True, example="New York", attribute="city")
+    ltv = fields.Float(required=True, example=1235.31, attribute="avg_ltv")
+
+
 class AudienceInsightsGetSchema(Schema):
     """
     Audience Insights schema class
     """
 
     demo = fields.List(fields.Nested(CustomerGeoVisualSchema))
-    income = fields.List(fields.Nested(CustomersInsightsCitiesSchema))
+    income = fields.List(fields.Nested(CityIncomeInsightsSchema))
     spend = fields.Nested(CustomerSpendingInsightsSchema)
     gender = fields.Nested(CustomerGenderInsightsSchema)
 

@@ -10,33 +10,28 @@
   >
     <div class="map-hover">
       <span class="prop-name font-weight-semi-bold">
-        {{ sourceInput.name }}
+        {{ sourceInput[defaultMetric] }}
       </span>
-      <div class="sub-props pt-4">
-        <span class="subprop-name">Size</span>
-        <span class="value ml-1">
-          {{ sourceInput.size | Numeric(true, false, false) | Empty }}
+      <div
+        v-for="metric in configurationData.tooltip_metrics"
+        :key="metric.label"
+        class="sub-props pt-4"
+      >
+        <span v-if="metric.is_Combined_Metric" class="subprop-name">{{
+          metric.label
+        }}</span>
+        <span v-if="!metric.is_Combined_Metric" class="subprop-name">{{
+          metric.label
+        }}</span>
+        <span v-if="metric.is_Combined_Metric" class="value ml-1">
+          <span v-for="(value, index) in metric.key" :key="value">
+            {{ applyFilter(sourceInput[value], metric.format) }}
+            <span v-if="index !== metric.key.length - 1">|</span>
+          </span>
         </span>
-      </div>
-      <div class="sub-props pt-4">
-        <span class="subprop-name">W/M/O</span>
-        <span class="value ml-1">
-          {{
-            sourceInput.gender_women | Numeric(true, false, false, true) | Empty
-          }}
-          |
-          {{
-            sourceInput.gender_men | Numeric(true, false, false, true) | Empty
-          }}
-          |
-          {{
-            sourceInput.gender_other | Numeric(true, false, false, true) | Empty
-          }}
+        <span v-if="!metric.is_Combined_Metric" class="value ml-1">
+          {{ applyFilter(sourceInput[metric.key], metric.format) }}
         </span>
-      </div>
-      <div class="sub-props pt-4">
-        <span class="subprop-name">LTV</span>
-        <span class="value ml-1">{{ sourceInput.ltv | Currency | Empty }}</span>
       </div>
     </div>
   </v-card>
@@ -64,6 +59,29 @@ export default {
     sourceInput: {
       type: Object,
       required: false,
+    },
+    configurationData: {
+      type: Object,
+      required: true,
+    },
+  },
+  computed: {
+    defaultMetric() {
+      return this.configurationData.default_metric.key
+    },
+  },
+  methods: {
+    applyFilter(value, filter) {
+      switch (filter) {
+        case "numeric":
+          return this.$options.filters.Numeric(value, true, false, false)
+        case "percentage":
+          return this.$options.filters.Numeric(value, true, false, false, true)
+        case "currency":
+          return this.$options.filters.Currency(value)
+        default:
+          return this.$options.filters.Empty
+      }
     },
   },
 }
@@ -99,6 +117,7 @@ export default {
   max-width: 213px;
   min-width: 210px;
   height: auto;
+  z-index: 99 !important;
   position: absolute;
   top: -160px;
   left: -240px;

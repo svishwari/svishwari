@@ -229,6 +229,10 @@ STATUS_WEIGHTS = {
     STATUS_ERROR: 0,
     db_c.STATUS_FAILED: 0,
 }
+# Download Audience Fields
+DOWNLOAD_TYPE = "download_type"
+GOOGLE_ADS = "google_ads"
+AMAZON_ADS = "amazon_ads"
 
 # Facebook connector defines
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
@@ -258,6 +262,13 @@ QUALTRICS_API_TOKEN = "qualtrics_api_token"
 QUALTRICS_DATA_CENTER = "qualtrics_data_center"
 QUALTRICS_OWNER_ID = "qualtrics_owner_id"
 QUALTRICS_DIRECTORY_ID = "qualtrics_directory_id"
+
+# google ads connector defines
+GOOGLE_DEVELOPER_TOKEN = "google_developer_token"
+GOOGLE_REFRESH_TOKEN = "google_refresh_token"
+GOOGLE_CLIENT_CUSTOMER_ID = "google_client_customer_id"
+GOOGLE_CLIENT_ID = "google_client_id"
+GOOGLE_CLIENT_SECRET = "google_client_secret"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -361,6 +372,38 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
+    GOOGLE_ADS: {
+        GOOGLE_DEVELOPER_TOKEN: {
+            NAME: "Developer Token",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        GOOGLE_REFRESH_TOKEN: {
+            NAME: "Refresh Token",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        GOOGLE_CLIENT_CUSTOMER_ID: {
+            NAME: "Client Customer ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        GOOGLE_CLIENT_ID: {
+            NAME: "Client ID",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        GOOGLE_CLIENT_SECRET: {
+            NAME: "Client Secret",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+    },
 }
 
 # DESTINATION Secret Mapping
@@ -394,6 +437,15 @@ DESTINATION_SECRETS = {
             QUALTRICS_OWNER_ID,
         ],
         AWS_SSM_NAME: [QUALTRICS_API_TOKEN],
+    },
+    db_c.DELIVERY_PLATFORM_GOOGLE: {
+        MONGO: [GOOGLE_CLIENT_CUSTOMER_ID],
+        AWS_SSM_NAME: [
+            GOOGLE_DEVELOPER_TOKEN,
+            GOOGLE_CLIENT_SECRET,
+            GOOGLE_REFRESH_TOKEN,
+            GOOGLE_CLIENT_ID,
+        ],
     },
 }
 
@@ -639,17 +691,17 @@ PRECISION = "precision"
 PERFORMANCE_METRIC = "performance_metric"
 FEATURE_IMPORTANCE = "feature_importance"
 SCORE = "score"
-FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service"
+FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service_v2"
 FEATURE_DRIFT_REGRESSION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_regression_service"
+    "ui_metadata_model_metrics_regression_service_v2"
 )
 FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_classification_service"
+    "ui_metadata_model_metrics_classification_service_v2"
 )
 
 MODEL_LIST_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_models_service",
+        "feature_service_name": "ui_metadata_models_service_v2",
         "join_key_map": {"model_metadata_client": "HUS"},
     }
 }
@@ -680,14 +732,6 @@ RUN_DATE = "run_date"
 DRIFT = "drift"
 REGRESSION_MODELS = [LTV]
 CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
-
-# used for the icons on front-end.
-MODEL_TYPES_MAPPING = {
-    "lifetime value": LTV,
-    "propensity to purchase": PURCHASE,
-    "propensity to unsubscribe": UNSUBSCRIBE,
-    "unsubscribe": UNSUBSCRIBE,
-}
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
@@ -892,11 +936,6 @@ DEFAULT_ALERT_SORT_ORDER = "descending"
 DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
-
-# Download Audience Fields
-DOWNLOAD_TYPE = "download_type"
-GOOGLE_ADS = "google_ads"
-AMAZON_ADS = "amazon_ads"
 
 DOWNLOAD_TYPES = {
     GOOGLE_ADS: {

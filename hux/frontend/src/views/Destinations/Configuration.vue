@@ -223,7 +223,11 @@ export default {
     },
 
     destinationFields() {
-      return this.destinationConstants[this.selectedDestination.type] || null
+      return (
+        this.destinationConstants[
+          this.selectedDestination.type.replace("-", "_")
+        ] || null
+      )
     },
 
     enabledDestinations() {

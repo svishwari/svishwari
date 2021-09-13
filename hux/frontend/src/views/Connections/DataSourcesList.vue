@@ -24,13 +24,22 @@
         :key="dataSource.id"
         :title="dataSource.name"
         :icon="dataSource.type"
+        :class="
+          dataSource.status === 'Active'
+            ? 'data-source-list-active'
+            : 'data-source-list-pending'
+        "
         hide-button
         data-e2e="dataSourcesList"
         class="mb-3 pr-10 list"
-        :to="{
-          name: 'DataSourceListing',
-          params: { id: dataSource.id, type: dataSource.type },
-        }"
+        :to="
+          dataSource.status === 'Active'
+            ? {
+                name: 'DataSourceListing',
+                params: { id: dataSource.id, type: dataSource.type },
+              }
+            : {}
+        "
       >
         <status :status="dataSource.status" :icon-size="17" class="status" />
       </card-horizontal>
@@ -91,6 +100,15 @@ export default {
         font-size: 17px;
       }
     }
+  }
+  .data-source-list-active {
+    @extend .cursor-pointer;
+    ::v-deep .card-horizontal-title {
+      color: var(--v-primary-base);
+    }
+  }
+  .data-source-list-pending {
+    @extend .cursor-default;
   }
 }
 </style>
