@@ -3,6 +3,10 @@
 import random
 
 from huxunifylib.database import constants as db_c
+from huxunifylib.util.transform.transform_dataframe import (
+    transform_fields_google_file,
+    transform_fields_amazon_file,
+)
 
 DEVELOPMENT_MODE = "development"
 PRODUCTION_MODE = "production"
@@ -948,26 +952,8 @@ DEFAULT_BATCH_NUMBER = 1
 NOTIFICATION_TYPE = "notification_type"
 
 DOWNLOAD_TYPES = {
-    GOOGLE_ADS: {
-        db_c.S_TYPE_EMAIL_HASHED: "Email",
-        db_c.S_TYPE_FIRST_NAME_HASHED: "First Name",
-        db_c.S_TYPE_FIRST_NAME_INITIAL_HASHED: "First Name Initial",
-        db_c.S_TYPE_LAST_NAME_HASHED: "Last Name",
-        db_c.S_TYPE_MOBILE_DEVICE_ID: "Mobile Device ID",
-        db_c.S_TYPE_PHONE_NUMBER_HASHED: "Phone",
-        db_c.S_TYPE_POSTAL_CODE_HASHED: "Zip",
-    },
-    AMAZON_ADS: {
-        db_c.S_TYPE_EMAIL_HASHED: "email",
-        db_c.S_TYPE_FIRST_NAME_HASHED: "first_name",
-        db_c.S_TYPE_LAST_NAME_HASHED: "last_name",
-        db_c.S_TYPE_PHONE_NUMBER_HASHED: "phone",
-        db_c.S_TYPE_POSTAL_CODE_HASHED: "zip",
-        db_c.S_TYPE_STATE_OR_PROVINCE_HASHED: "state",
-        db_c.S_TYPE_CITY_HASHED: "city",
-        # TODO Add address once CDP returns it
-        # db_c.S_TYPE_ADDRESS: "address"
-    },
+    GOOGLE_ADS: transform_fields_google_file,
+    AMAZON_ADS: transform_fields_amazon_file,
 }
 
 # CDM API constants
