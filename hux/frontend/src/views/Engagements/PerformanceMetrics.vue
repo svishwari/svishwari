@@ -25,7 +25,7 @@
             <v-icon
               size="22"
               :color="myIconColor"
-              class="icon-border pa-1 ma-2 mr-0"
+              class="icon-border pa-2 ma-1 mr-0"
               @mousedown="changeColorOnSelect()"
               @mouseup="
                 changeColorOnDeselect()
@@ -424,6 +424,9 @@ export default {
             }
           }
         }
+      }
+      .v-icon {
+        bottom: 4px;
       }
     }
   }
