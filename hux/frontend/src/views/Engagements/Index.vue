@@ -536,6 +536,9 @@ export default {
             last_delivered: last_delivered_aud,
           }
         })
+        engDestinationList = engDestinationList.sort((a, b) =>
+          a.name > b.name ? 1 : -1
+        )
         return {
           ...eng,
           audiences: eng_audiences,

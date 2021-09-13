@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="metric-card-wrapper rounded-lg d-flex align-center"
+    class="metric-card-wrapper rounded-lg align-center"
     :class="{ 'no-click': !interactable }"
     :style="{ 'flex-grow': grow }"
     :max-width="maxWidth"
@@ -110,6 +110,10 @@ export default {
 .metric-card-wrapper {
   border: 1px solid var(--v-zircon-base);
   padding: 20px 15px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
   &.no-click {
     cursor: default;
     background-color: transparent;
