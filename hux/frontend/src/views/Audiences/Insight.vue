@@ -46,7 +46,7 @@
                 <v-list-item-title class="text-h6 neroBlack--text">
                   <div class="d-flex align-center">
                     <logo :type="option.icon" :size="18" class="mr-4" />
-                    {{ option.name }}
+                    <span> {{ option.name }}</span>
                   </div>
                 </v-list-item-title>
               </v-list-item>
@@ -653,14 +653,14 @@ export default {
           name: ".csv",
           type: "amazon_ads",
           title: "Amazon Advertising CSV",
-          icon: "amazon-advertising",
+          icon: "amazon-outline",
         },
         {
           id: "5e112c22f1b1",
           name: ".csv",
           type: "google_ads",
           title: "Google Ads CSV",
-          icon: "google-ads",
+          icon: "google-ads-outline",
         },
         {
           id: "2349d4353b9f",
