@@ -63,9 +63,9 @@
     </v-card-title>
     <v-list v-if="section[deliveriesKey].length > 0" dense class="pa-0">
       <v-list-item
-        class="status-list"
         v-for="item in section[deliveriesKey]"
         :key="item.id"
+        class="status-list"
         @click="toggleFocus()"
       >
         <v-list-item-content class="icon-col">

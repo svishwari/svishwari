@@ -16,7 +16,7 @@
         height="55"
         class="d-flex ma-4"
       />
-      <v-menu open-on-hover offset-y  v-if="!isMini">
+      <v-menu v-if="!isMini" open-on-hover offset-y>
         <template #activator="{ on }">
           <div class="client" v-on="on">
             <span>
@@ -55,7 +55,11 @@
         :to="item.link"
         :data-e2e="`nav-${item.icon}`"
       >
-        <v-list-item-icon v-if="item.icon" class="my-3" v-bind:class="{ 'home-menu-icon': !isMini }">
+        <v-list-item-icon
+          v-if="item.icon"
+          class="my-3"
+          :class="{ 'home-menu-icon': !isMini }"
+        >
           <tooltip
             v-if="item.title"
             :key="item.title"
@@ -63,7 +67,12 @@
             color="black"
           >
             <template #label-content>
-              <icon :type="item.icon" :size="iconSize" color="white" class="mt-1"/>
+              <icon
+                :type="item.icon"
+                :size="iconSize"
+                color="white"
+                class="mt-1"
+              />
             </template>
             <template #hover-content>
               {{ item.title }}
@@ -82,7 +91,11 @@
           :to="menu.link"
           :data-e2e="`nav-${menu.icon}`"
         >
-          <v-list-item-icon v-if="menu.icon" class="my-3" v-bind:class="{ 'menu-icon': !isMini }">
+          <v-list-item-icon
+            v-if="menu.icon"
+            class="my-3"
+            :class="{ 'menu-icon': !isMini }"
+          >
             <tooltip
               v-if="menu.icon"
               :key="menu.title"
@@ -207,10 +220,10 @@ export default {
     padding: 1rem;
   }
   .side-menu-icon {
-     position: absolute;
-      left: 11.82%;
-      right: 81.82%;
-      bottom: 79.66%;
+    position: absolute;
+    left: 11.82%;
+    right: 81.82%;
+    bottom: 79.66%;
   }
   // Apply this css only if icon size is 14 otherwise icon size should be 18
   .home-menu-icon {
@@ -223,7 +236,7 @@ export default {
   .menu-icon {
     svg {
       top: 32.89%;
-       @extend .side-menu-icon;
+      @extend .side-menu-icon;
     }
   }
 }

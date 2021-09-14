@@ -3,7 +3,7 @@
     <label class="d-flex align-items-center mb-2">
       <span class="neroBlack--text text-caption">
         {{ labelText }}
-        <em class="text-caption gray--text" v-if="!required"> - optional</em>
+        <em v-if="!required" class="text-caption gray--text"> - optional</em>
       </span>
       <tooltip v-if="helpText" position-top>
         <template #label-content>
