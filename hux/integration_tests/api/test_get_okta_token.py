@@ -28,9 +28,13 @@ class TestOktaTokenGet(TestCase):
         """
         Test the password type class.
 
+        Args:
+            request_mocker (Mocker): Request mock object.
+
         Returns:
 
         """
+
         # setup the request mock post
         request_mocker.post(
             "https://fake.com/api/v1/authn", json={"sessionToken": "fake"}

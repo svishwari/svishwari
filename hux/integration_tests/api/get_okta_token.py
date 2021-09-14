@@ -142,21 +142,21 @@ if __name__ == "__main__":
     parser.add_argument(
         "-orgUrl",
         help="Example - https://your-domain.okta.com or https://your-domain.oktapreview.com",
-        required="True",
+        required=True,
         default="https://example.okta.com",
     )
 
     parser.add_argument(
         "-user",
         help="Okta UserName: user@example.com",
-        required="True",
+        required=True,
         default="user@example.com",
     )
 
     parser.add_argument(
         "-pw",
         help="Okta Password: fake-pw",
-        required="True",
+        required=True,
         type=PasswordType,
         default="",
     )
@@ -164,7 +164,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-clientId",
         help="Okta Open ID Connect Client Id",
-        required="True",
+        required=True,
         default=":clientId",
     )
 
@@ -178,7 +178,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-redirectUri",
         help="Redirect Uri registered in OIDC client in Okta",
-        required="True",
+        required=True,
         default="https://www.google.com/",
     )
 
