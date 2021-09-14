@@ -121,7 +121,7 @@
                   {{ item[header.value] | Date("relative") | Empty }}
                 </template>
                 <template #hover-content>
-                  <div>
+                  <div v-if="item[header.value] !== ''">
                     <div class="neroBlack--text text-caption mb-2">
                       Delivered to:
                     </div>
@@ -141,11 +141,14 @@
                       </div>
                       <div class="neroBlack--text text-caption">
                         {{
-                          destination.latest_delivery.update_time | Date | Empty
+                          destination.latest_delivery
+                            ? destination.latest_delivery.update_time
+                            : "" | Date | Empty
                         }}
                       </div>
                     </div>
                   </div>
+                  <div v-else>—</div>
                 </template>
               </tooltip>
             </div>
@@ -522,14 +525,23 @@ export default {
         let eng_audiences = eng.audiences.map((audience) => {
           let last_delivered_aud = ""
           audience.destinations.map((destination) => {
-            if (last_delivered_aud < destination.latest_delivery.update_time) {
-              last_delivered_aud = destination.latest_delivery.update_time
+            let dest_latest_delivery_time = destination.latest_delivery
+              ? destination.latest_delivery.update_time || ""
+              : ""
+            let engDestIndex = engDestinationList.findIndex(
+              (each) => destination.id === each.id
+            )
+            if (last_delivered_aud < dest_latest_delivery_time) {
+              last_delivered_aud = dest_latest_delivery_time
             }
-            if (
-              engDestinationList.findIndex(
-                (each) => destination.id === each.id
-              ) === -1
-            ) {
+            if (engDestIndex !== -1) {
+              if (
+                engDestinationList[engDestIndex].latest_delivery.update_time ||
+                "" < dest_latest_delivery_time
+              ) {
+                engDestinationList[engDestIndex] = destination
+              }
+            } else {
               engDestinationList.push(destination)
             }
           })
