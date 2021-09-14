@@ -28,16 +28,6 @@
             </template>
           </tooltip>
         </router-link>
-        <!-- <status
-          v-if="section.status"
-          :status="section.status"
-          :icon-size="statusIcon"
-          class="ml-3"
-          collapsed
-          show-label
-          show-icon-tooltip
-          :tooltip-title="`${sectionTypePrefix} status`"
-        /> -->
       </span>
       <v-menu class="menu-wrapper" bottom offset-y>
         <template #activator="{ on, attrs }">
