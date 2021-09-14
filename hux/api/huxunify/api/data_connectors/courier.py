@@ -21,7 +21,7 @@ from huxunifylib.util.general.const import (
     MongoDBCredentials,
     FacebookCredentials,
     SFMCCredentials,
-    TwilioCredentials,
+    SendgridCredentials,
     GoogleCredentials,
     QualtricsCredentials,
 )
@@ -108,7 +108,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
     ):
         env_dict = {}
         secret_dict = {
-            TwilioCredentials.SENDGRID_AUTH_TOKEN.name: auth[
+            SendgridCredentials.SENDGRID_AUTH_TOKEN.name: auth[
                 api_const.SENDGRID_AUTH_TOKEN
             ]
         }

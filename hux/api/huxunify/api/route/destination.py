@@ -17,14 +17,14 @@ import huxunifylib.database.constants as db_c
 from huxunifylib.util.general.const import (
     FacebookCredentials,
     SFMCCredentials,
-    TwilioCredentials,
+    SendgridCredentials,
     GoogleCredentials,
     QualtricsCredentials,
 )
 from huxunifylib.connectors import (
     FacebookConnector,
     SFMCConnector,
-    TwilioConnector,
+    SendgridConnector,
     GoogleConnector,
     QualtricsConnector,
     AudienceAlreadyExists,
@@ -513,9 +513,9 @@ class DestinationValidatePostView(SwaggerView):
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: ext_list,
             }, HTTPStatus.OK
         elif body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_SENDGRID:
-            TwilioConnector(
+            SendgridConnector(
                 auth_details={
-                    TwilioCredentials.SENDGRID_AUTH_TOKEN.value: body.get(
+                    SendgridCredentials.SENDGRID_AUTH_TOKEN.value: body.get(
                         api_c.AUTHENTICATION_DETAILS
                     ).get(api_c.SENDGRID_AUTH_TOKEN),
                 },
