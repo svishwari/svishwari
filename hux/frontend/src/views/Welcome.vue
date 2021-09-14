@@ -57,7 +57,9 @@ export default {
           accessToken: authStorage.accessToken,
           idToken: authStorage.idToken,
         })
-        this.$router.replace(this.$route.query.redirect || "/overview")
+        const redirect = sessionStorage.getItem("appRedirect")
+        sessionStorage.removeItem("appRedirect")
+        this.$router.replace(redirect || "/overview")
       } else {
         this.$store.dispatch("setUserProfile", {})
         this.$store.dispatch("setUserToken", {})

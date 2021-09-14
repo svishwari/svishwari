@@ -3,9 +3,41 @@
 import random
 
 from huxunifylib.database import constants as db_c
+from huxunifylib.util.transform.transform_dataframe import (
+    transform_fields_google_file,
+    transform_fields_amazon_file,
+)
 
+TEST_MODE = "pytest"
 DEVELOPMENT_MODE = "development"
 PRODUCTION_MODE = "production"
+FLASK_ENV = "FLASK_ENV"
+SSM_INIT_LOAD_DELIMITER = "||"
+HOST = "host"
+PORT = "port"
+USERNAME = "username"
+PASSWORD = "password"
+SSL_CERT_PATH = "ssl_cert_path"
+AWS_REGION = "AWS_REGION"
+AWS_S3_BUCKET_CONST = "S3_DATASET_BUCKET"
+MONGO_DB_HOST = "MONGO_DB_HOST"
+MONGO_DB_PORT = "MONGO_DB_PORT"
+MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
+MONGO_DB_PASSWORD = "MONGO_DB_PASSWORD"
+OKTA_CLIENT_ID = "OKTA_CLIENT_ID"
+OKTA_ISSUER = "OKTA_ISSUER"
+JSON_SORT_KEYS_CONST = "JSON_SORT_KEYS"
+CDP_SERVICE = "CDP_SERVICE"
+CDP_CONNECTION_SERVICE = "CDP_CONNECTION_SERVICE"
+TECTON_API_KEY = "TECTON_API_KEY"
+TECTON_API = "TECTON_API"
+AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST = "AUDIENCE-ROUTER-JOB-ROLE-ARN"
+AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST = "AUDIENCE-ROUTER-EXECUTION-ROLE-ARN"
+AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
+CDPR_EVENT_CONST = "CDPR-EVENT"
+FLDR_EVENT_CONST = "FLDR-EVENT"
+
+
 # general defines
 ID = "id"
 NAME = "name"
@@ -57,10 +89,11 @@ TOTAL_HOUSEHOLD_IDS = "total_household_ids"
 UPDATED = "updated"
 TOTAL_CUSTOMERS = "total_customers"
 NEW_CUSTOMERS_ADDED = "new_customers_added"
-COUNTRIES = "total_countries"
+TOTAL_COUNTRIES = "total_countries"
 TOTAL_COUNT = "total_count"
 TOTAL_STATES = "total_us_states"
 TOTAL_CITIES = "total_cities"
+COUNTRIES = "countries"
 STATES = "states"
 CITIES = "cities"
 MIN_AGE = "min_age"
@@ -231,6 +264,10 @@ STATUS_WEIGHTS = {
     STATUS_ERROR: 0,
     db_c.STATUS_FAILED: 0,
 }
+# Download Audience Fields
+DOWNLOAD_TYPE = "download_type"
+GOOGLE_ADS = "google_ads"
+AMAZON_ADS = "amazon_ads"
 
 # Facebook connector defines
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
@@ -260,6 +297,13 @@ QUALTRICS_API_TOKEN = "qualtrics_api_token"
 QUALTRICS_DATA_CENTER = "qualtrics_data_center"
 QUALTRICS_OWNER_ID = "qualtrics_owner_id"
 QUALTRICS_DIRECTORY_ID = "qualtrics_directory_id"
+
+# google ads connector defines
+GOOGLE_DEVELOPER_TOKEN = "google_developer_token"
+GOOGLE_REFRESH_TOKEN = "google_refresh_token"
+GOOGLE_CLIENT_CUSTOMER_ID = "google_client_customer_id"
+GOOGLE_CLIENT_ID = "google_client_id"
+GOOGLE_CLIENT_SECRET = "google_client_secret"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -363,6 +407,38 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
+    GOOGLE_ADS: {
+        GOOGLE_DEVELOPER_TOKEN: {
+            NAME: "Developer Token",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        GOOGLE_REFRESH_TOKEN: {
+            NAME: "Refresh Token",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        GOOGLE_CLIENT_CUSTOMER_ID: {
+            NAME: "Client Customer ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        GOOGLE_CLIENT_ID: {
+            NAME: "Client ID",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        GOOGLE_CLIENT_SECRET: {
+            NAME: "Client Secret",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+    },
 }
 
 # DESTINATION Secret Mapping
@@ -396,6 +472,15 @@ DESTINATION_SECRETS = {
             QUALTRICS_OWNER_ID,
         ],
         AWS_SSM_NAME: [QUALTRICS_API_TOKEN],
+    },
+    db_c.DELIVERY_PLATFORM_GOOGLE: {
+        MONGO: [GOOGLE_CLIENT_CUSTOMER_ID],
+        AWS_SSM_NAME: [
+            GOOGLE_DEVELOPER_TOKEN,
+            GOOGLE_CLIENT_SECRET,
+            GOOGLE_REFRESH_TOKEN,
+            GOOGLE_CLIENT_ID,
+        ],
     },
 }
 
@@ -625,7 +710,7 @@ MODEL_ID_PARAMS = [
     {
         "name": MODEL_ID,
         "description": "Model id",
-        "type": "integer",
+        "type": "string",
         "in": "path",
         "required": True,
         "example": "1",
@@ -641,17 +726,17 @@ PRECISION = "precision"
 PERFORMANCE_METRIC = "performance_metric"
 FEATURE_IMPORTANCE = "feature_importance"
 SCORE = "score"
-FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service"
+FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service_v2"
 FEATURE_DRIFT_REGRESSION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_regression_service"
+    "ui_metadata_model_metrics_regression_service_v2"
 )
 FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_classification_service"
+    "ui_metadata_model_metrics_classification_service_v2"
 )
 
 MODEL_LIST_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_models_service",
+        "feature_service_name": "ui_metadata_models_service_v2",
         "join_key_map": {"model_metadata_client": "HUS"},
     }
 }
@@ -683,18 +768,12 @@ DRIFT = "drift"
 REGRESSION_MODELS = [LTV]
 CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
 
-# used for the icons on front-end.
-MODEL_TYPES_MAPPING = {
-    "lifetime value": LTV,
-    "propensity to purchase": PURCHASE,
-    "propensity to unsubscribe": UNSUBSCRIBE,
-}
-
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 CDP_DATA_SOURCE_IDS = "data_source_ids"
+CDP_DATA_SOURCE_TYPE = "datasource_type"
 
 # Monitoring
 METRICS = "metrics"
@@ -755,7 +834,7 @@ END_DATE_PARAMS = {
 # IDR Fields
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
-DATA_FEEDS = "datafeeds"
+DATA_FEEDS = "data_feeds"
 DATA_FEED = "datafeed"
 INPUT_RECORDS = "input_records"
 OUTPUT_RECORDS = "output_records"
@@ -893,38 +972,15 @@ DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
 
-# Download Audience Fields
-DOWNLOAD_TYPE = "download_type"
-GOOGLE_ADS = "google_ads"
-AMAZON_ADS = "amazon_ads"
-
 DOWNLOAD_TYPES = {
-    GOOGLE_ADS: {
-        db_c.S_TYPE_EMAIL_HASHED: "Email",
-        db_c.S_TYPE_FIRST_NAME_HASHED: "First Name",
-        db_c.S_TYPE_FIRST_NAME_INITIAL_HASHED: "First Name Initial",
-        db_c.S_TYPE_LAST_NAME_HASHED: "Last Name",
-        db_c.S_TYPE_MOBILE_DEVICE_ID: "Mobile Device ID",
-        db_c.S_TYPE_PHONE_NUMBER_HASHED: "Phone",
-        db_c.S_TYPE_POSTAL_CODE_HASHED: "Zip",
-    },
-    AMAZON_ADS: {
-        db_c.S_TYPE_EMAIL_HASHED: "email",
-        db_c.S_TYPE_FIRST_NAME_HASHED: "first_name",
-        db_c.S_TYPE_LAST_NAME_HASHED: "last_name",
-        db_c.S_TYPE_PHONE_NUMBER_HASHED: "phone",
-        db_c.S_TYPE_POSTAL_CODE_HASHED: "zip",
-        db_c.S_TYPE_STATE_OR_PROVINCE_HASHED: "state",
-        db_c.S_TYPE_CITY_HASHED: "city",
-        # TODO Add address once CDP returns it
-        # db_c.S_TYPE_ADDRESS: "address"
-    },
+    GOOGLE_ADS: transform_fields_google_file,
+    AMAZON_ADS: transform_fields_amazon_file,
 }
 
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
 CDM_IDENTITY_ENDPOINT = "identity"
-CDM_DATAFEEDS = "datafeeds"
+DATAFEEDS = "datafeeds"
 
 PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
     {
@@ -975,5 +1031,12 @@ PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB = {
     "after receiving an email.",
     MODEL_TYPE: "purchase",
 }
+
+# Connections Data feeds Constants
+PROCESSED_AT = "processed_at"
+RECORDS_PROCESSED = "records_processed"
+RECORDS_RECEIVED = "records_received"
+THIRTY_DAYS_AVG = "thirty_days_avg"
+RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"

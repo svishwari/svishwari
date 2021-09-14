@@ -6,13 +6,14 @@ from datetime import datetime
 from http import HTTPStatus
 from pathlib import Path
 from typing import Tuple
-
-from bson import ObjectId
 from flasgger import SwaggerView
+from bson import ObjectId
 from flask import Blueprint, Response, request, jsonify
 
 import huxunifylib.database.constants as db_c
 from huxunifylib.connectors import connector_cdp
+from huxunifylib.database.orchestration_management import get_audience
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     orchestration_management,
 )
@@ -123,16 +124,16 @@ class AudienceDownload(SwaggerView):
         )
 
         if not audience:
-            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.BAD_REQUEST
+            return {
+                "message": api_c.AUDIENCE_NOT_FOUND
+            }, HTTPStatus.BAD_REQUEST
 
         cdp = connector_cdp.ConnectorCDP(get_config().CDP_SERVICE)
-        column_set = [api_c.HUX_ID] + list(api_c.DOWNLOAD_TYPES[download_type].keys())
         data_batches = cdp.read_batches(
             location_details={
                 api_c.AUDIENCE_FILTERS: audience.get(api_c.AUDIENCE_FILTERS),
             },
             batch_size=int(api_c.CUSTOMERS_DEFAULT_BATCH_SIZE),
-            column_set=column_set,
         )
 
         audience_file_name = (
@@ -140,16 +141,15 @@ class AudienceDownload(SwaggerView):
             f"_{audience_id}_{download_type}.csv"
         )
 
-        with open(audience_file_name, "w", newline="", encoding="utf-8") as csvfile:
-            csvwriter = csv.writer(csvfile)
-            csvwriter.writerow(api_c.DOWNLOAD_TYPES[download_type].values())
+        transform_function = api_c.DOWNLOAD_TYPES.get(download_type)
+        with open(
+            audience_file_name, "w", newline="", encoding="utf-8"
+        ) as csvfile:
             for dataframe_batch in data_batches:
-                dataframe_batch.to_csv(
+                transform_function(dataframe_batch).to_csv(
                     csvfile,
                     mode="a",
                     index=False,
-                    columns=list(api_c.DOWNLOAD_TYPES[download_type].keys()),
-                    header=False,
                 )
 
         logger.info(
@@ -192,6 +192,7 @@ class AudienceDownload(SwaggerView):
                 data,
                 headers={
                     "Content-Type": "application/csv",
+                    "Access-Control-Expose-Headers": "Content-Disposition",
                     "Content-Disposition": "attachment; filename=%s;"
                     % audience_file_name,
                 },
@@ -353,12 +354,18 @@ class AudienceInsightsCities(SwaggerView):
 
         audience = get_audience(get_db_client(), ObjectId(audience_id))
 
+        filters = (
+            {api_c.AUDIENCE_FILTERS: audience.get(db_c.AUDIENCE_FILTERS)}
+            if audience.get(db_c.AUDIENCE_FILTERS)
+            else None
+        )
+
         return (
             jsonify(
                 CustomersInsightsCitiesSchema().dump(
                     get_city_ltvs(
                         token_response[0],
-                        filters=audience.get(db_c.AUDIENCE_FILTERS),
+                        filters=filters,
                         offset=int(batch_size) * (int(batch_number) - 1),
                         limit=int(batch_size),
                     ),

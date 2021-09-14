@@ -1,5 +1,10 @@
 <template>
-  <v-slider class="hux-map-slider" always-dirty readonly>
+  <v-slider
+    v-if="mapData.length != 0"
+    class="hux-map-slider"
+    always-dirty
+    readonly
+  >
     <template #append>
       <span
         class="slider-value-display font-weight-semi-bold"
@@ -23,6 +28,10 @@ export default {
       type: Array,
       required: false,
     },
+    configurationData: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -30,11 +39,19 @@ export default {
       maxValue: "-%",
     }
   },
+  computed: {
+    primaryMetric() {
+      return this.configurationData.primary_metric.key
+    },
+  },
   async mounted() {
     await this.mapData
-    let total_range = this.mapData.map((data) => data.population_percentage)
+    let total_range = this.mapData.map((data) => data[this.primaryMetric])
+    let maximumRange = Math.max(...total_range)
     this.minValue = this.$options.filters.Percentage(0)
-    this.maxValue = this.$options.filters.Percentage(Math.max(...total_range))
+    this.maxValue = maximumRange
+      ? this.$options.filters.Percentage(maximumRange)
+      : "100%"
   },
 }
 </script>
@@ -59,7 +76,7 @@ export default {
     }
   }
   .slider-value-display {
-    width: 30px;
+    width: 31px;
     height: 16px;
     color: var(--v-neroBlack-base);
     transform: rotate(-90deg);

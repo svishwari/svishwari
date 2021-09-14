@@ -7,6 +7,7 @@ from flask.testing import FlaskClient
 
 from huxunify.api.config import get_config
 from huxunify.app import create_app
+from huxunify.api import constants as api_c
 
 
 class CreateAppTest(TestCase):
@@ -20,7 +21,7 @@ class CreateAppTest(TestCase):
         Returns:
 
         """
-        self.config = get_config("TEST")
+        self.config = get_config(api_c.TEST_MODE)
 
     def test_creating_flask_app(self):
         """Test Creating the APP test client

@@ -31,6 +31,17 @@
   cursor: pointer;
 }
 
+.cursor-default {
+  cursor: default;
+}
+
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  white-space: nowrap;
+}
+
 .background-border {
   border: 1px solid;
   border-color: #d0d0ce;

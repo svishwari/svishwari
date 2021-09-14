@@ -119,7 +119,36 @@
               <span v-else>—</span>
             </div>
             <div v-if="header.value == 'last_delivered'">
-              <time-stamp :value="item[header.value]" />
+              <tooltip>
+                <template #label-content>
+                  {{ item[header.value] | Date("relative") | Empty }}
+                </template>
+                <template #hover-content>
+                  <div>
+                    <div class="neroBlack--text text-caption mb-2">
+                      Delivered to:
+                    </div>
+                    <div
+                      v-for="deliveries in item['deliveries']"
+                      :key="deliveries.last_delivered"
+                      class="mb-2"
+                    >
+                      <div class="d-flex align-center mb-1">
+                        <logo
+                          :type="deliveries.delivery_platform_type"
+                          :size="18"
+                        />
+                        <span class="ml-1 neroBlack--text text-caption">
+                          {{ deliveries.delivery_platform_name }}
+                        </span>
+                      </div>
+                      <div class="neroBlack--text text-caption">
+                        {{ deliveries.last_delivered | Date | Empty }}
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </tooltip>
             </div>
             <div
               v-if="
@@ -328,7 +357,13 @@ export default {
       let actionItems = [
         { title: "Favorite", isDisabled: true },
         { title: "Export", isDisabled: true },
-        { title: "Edit", isDisabled: true },
+        {
+          title: "Edit",
+          isDisabled: false,
+          onClick: () => {
+            this.editAudience(audience.id)
+          },
+        },
         { title: "Duplicate", isDisabled: true },
         {
           title: "Create a lookalike",
@@ -346,6 +381,12 @@ export default {
       ]
 
       return actionItems
+    },
+    editAudience(id) {
+      this.$router.push({
+        name: "AudienceUpdate",
+        params: { id: id },
+      })
     },
 
     openLookAlikeDrawer(audience) {

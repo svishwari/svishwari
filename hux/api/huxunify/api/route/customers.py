@@ -27,6 +27,7 @@ from huxunify.api.schema.customers import (
     TotalCustomersInsightsSchema,
     CustomersInsightsStatesSchema,
     CustomersInsightsCitiesSchema,
+    CustomersInsightsCountriesSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.decorators import (
@@ -46,6 +47,7 @@ from huxunify.api.data_connectors.cdp import (
     get_customers_insights_count_by_day,
     get_city_ltvs,
     get_spending_by_gender,
+    get_demographic_by_country,
 )
 from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feeds,
@@ -402,7 +404,7 @@ class CustomerProfileSearch(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}",
+    f"/{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}",
     "IDRDataFeeds",
 )
 class IDRDataFeeds(SwaggerView):
@@ -444,7 +446,7 @@ class IDRDataFeeds(SwaggerView):
         """Retrieves a IDR data feeds.
         ---
         security:
-            - Bearer: ["Authorization"]\
+            - Bearer: ["Authorization"]
 
         Args:
 
@@ -484,7 +486,7 @@ class IDRDataFeeds(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/<datafeed_id>",
+    f"/{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}/<datafeed_id>",
     "IDRDataFeedDetails",
 )
 class IDRDataFeedDetails(SwaggerView):
@@ -645,7 +647,7 @@ class CustomerDemoVisualView(SwaggerView):
             logger.error("Failed to get Customer Profile Insights from CDP.")
             return (
                 {
-                    "message": "Failed to get customers Demographical Visual Insights."
+                    "message": "Failed to get customers Demographic Visual Insights."
                 },
                 HTTPStatus.BAD_REQUEST,
             )
@@ -882,36 +884,14 @@ class TotalCustomersGraphView(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.STATES}",
-    "CustomersInsightsStates",
+    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.COUNTRIES}",
+    "CustomersInsightsCountries",
 )
-class CustomersInsightsStates(SwaggerView):
+class CustomersInsightsCountries(SwaggerView):
     """
-    Customer insights by state
+    Customer insights by country
     """
 
-    parameters = [
-        {
-            "name": "body",
-            "description": "Customer Overview Filters",
-            "type": "object",
-            "in": "body",
-            "example": {
-                "filters": [
-                    {
-                        "section_aggregator": "ALL",
-                        "section_filters": [
-                            {
-                                "field": "country",
-                                "type": "equals",
-                                "value": "US",
-                            }
-                        ],
-                    }
-                ]
-            },
-        },
-    ]
     responses = {
         HTTPStatus.OK.value: {
             "schema": {
@@ -929,7 +909,60 @@ class CustomersInsightsStates(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def post(self) -> Tuple[list, int]:
+    def get(self) -> Tuple[list, int]:
+        """Retrieves country-level geographic customer insights.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            - Tuple[list, int]
+                list of spend and size data by state,
+                http code
+        """
+        # get auth token from request
+        token_response = get_token_from_request(request)
+
+        return (
+            jsonify(
+                CustomersInsightsCountriesSchema().dump(
+                    get_demographic_by_country(token_response[0]),
+                    many=True,
+                )
+            ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.STATES}",
+    "CustomersInsightsStates",
+)
+class CustomersInsightsStates(SwaggerView):
+    """
+    Customer insights by state
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "array",
+                "items": CustomersInsightsStatesSchema,
+            },
+            "description": "Customer Insights by states.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Customer Insights by states."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(self) -> Tuple[list, int]:
         """Retrieves state-level geographic customer insights.
 
         ---
@@ -947,9 +980,7 @@ class CustomersInsightsStates(SwaggerView):
         return (
             jsonify(
                 CustomersInsightsStatesSchema().dump(
-                    get_demographic_by_state(
-                        token_response[0], filters=request.json
-                    ),
+                    get_demographic_by_state(token_response[0]),
                     many=True,
                 )
             ),
@@ -986,13 +1017,6 @@ class CustomersInsightsCities(SwaggerView):
             "required": False,
             "default": api_c.DEFAULT_BATCH_NUMBER,
         },
-        {
-            "name": "body",
-            "description": "Customer Overview Filters",
-            "type": "object",
-            "in": "body",
-            "example": api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
-        },
     ]
     responses = {
         HTTPStatus.OK.value: {
@@ -1011,7 +1035,7 @@ class CustomersInsightsCities(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def post(self) -> Tuple[list, int]:
+    def get(self) -> Tuple[list, int]:
         """Retrieves city-level geographic customer insights.
 
         ---
@@ -1038,7 +1062,6 @@ class CustomersInsightsCities(SwaggerView):
                 CustomersInsightsCitiesSchema().dump(
                     get_city_ltvs(
                         token_response[0],
-                        filters=request.json,
                         offset=int(batch_size) * (int(batch_number) - 1),
                         limit=int(batch_size),
                     ),

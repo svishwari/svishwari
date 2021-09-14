@@ -2,22 +2,46 @@
   <div>
     <v-tabs v-model="tabOption" class="mt-8">
       <v-tabs-slider color="primary"></v-tabs-slider>
-
-      <v-tab
-        key="displayAds"
-        class="pa-2 mr-3"
-        color
-        @click="$emit('fetchMetrics', 'ads')"
-      >
-        Digital Advertising
-      </v-tab>
-      <v-tab
-        key="email"
-        class="text-h5"
-        @click="$emit('fetchMetrics', 'email')"
-      >
-        Email Marketing
-      </v-tab>
+      <div class="d-flex">
+        <v-tab
+          key="displayAds"
+          class="pa-2 mr-3"
+          color
+          @click="$emit('fetchMetrics', 'ads')"
+        >
+          Digital Advertising
+        </v-tab>
+        <v-tab
+          key="email"
+          class="text-h5"
+          @click="$emit('fetchMetrics', 'email')"
+        >
+          Email Marketing
+        </v-tab>
+      </div>
+      <div>
+        <tooltip>
+          <template #label-content>
+            <v-icon
+              size="22"
+              :color="myIconColor"
+              class="icon-border pa-2 ma-1 mr-0"
+              @mousedown="changeColorOnSelect()"
+              @mouseup="
+                changeColorOnDeselect()
+                initiateMetricsDownload()
+              "
+            >
+              mdi-download
+            </v-icon>
+          </template>
+          <template #hover-content>
+            <div class="tooltipdownloadmetrics">
+              {{ tooltipValue }}
+            </div>
+          </template>
+        </tooltip>
+      </div>
     </v-tabs>
     <v-tabs-items v-model="tabOption" class="mt-2">
       <v-tab-item key="displayAds">
@@ -45,15 +69,28 @@
         />
       </v-tab-item>
     </v-tabs-items>
+    <hux-alert
+      v-model="flashAlert"
+      :type="alert.type"
+      :title="alert.title"
+      :message="alert.message"
+    />
   </div>
 </template>
 
 <script>
+import { saveFile } from "@/utils"
+import { mapActions } from "vuex"
 import CampaignSummary from "../../components/CampaignSummary.vue"
+import HuxAlert from "../../components/common/HuxAlert.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+
 export default {
   name: "EngagementPerformanceMetrics",
   components: {
     CampaignSummary,
+    Tooltip,
+    HuxAlert,
   },
   props: {
     adData: {
@@ -78,7 +115,16 @@ export default {
   },
   data() {
     return {
+      flashAlert: false,
+      alert: {
+        type: "success",
+        title: "YAY!",
+        message: "Downloading...",
+      },
       tabOption: 0,
+      myIconColor: "primary",
+      tooltipValue:
+        "Download Email Marketing and Digital Advertising performance metrics as CSVs.",
     }
   },
   computed: {
@@ -312,8 +358,27 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      downloadAudienceMetrics: "engagements/fetchAudienceMetrics",
+    }),
+    async initiateMetricsDownload() {
+      this.alert.type = "Pending"
+      this.alert.title = ""
+      this.alert.message = "Download has started in background, stay tuned."
+      this.flashAlert = true
+      const fileBlob = await this.downloadAudienceMetrics({
+        id: this.engagementId,
+      })
+      saveFile(fileBlob)
+    },
     fetchKey(obj, key) {
       return obj && obj[key] ? obj[key] : "-"
+    },
+    changeColorOnSelect() {
+      this.myIconColor = "secondary"
+    },
+    changeColorOnDeselect() {
+      this.myIconColor = "primary"
     },
   },
 }
@@ -325,6 +390,8 @@ export default {
     background: transparent !important;
     .v-tabs-bar__content {
       border-bottom: 2px solid var(--v-zircon-base);
+      display: flex;
+      justify-content: space-between;
       .v-tabs-slider-wrapper {
         width: 128px;
         .v-tabs-slider {
@@ -354,6 +421,9 @@ export default {
           }
         }
       }
+      .v-icon {
+        bottom: 4px;
+      }
     }
   }
 }
@@ -363,5 +433,9 @@ export default {
   .v-window-item--active {
     background: transparent;
   }
+}
+.tooltipdownloadmetrics {
+  width: 252px;
+  height: 38px;
 }
 </style>
