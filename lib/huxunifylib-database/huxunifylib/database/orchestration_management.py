@@ -347,7 +347,8 @@ def get_audience_insights(
         Union[list, None]:  A list of engagements with delivery information for an audience
 
     """
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.ENGAGEMENTS_COLLECTION]
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[c.ENGAGEMENTS_COLLECTION]
 
     # use the audience pipeline to aggregate and join all the insight data
     try:
