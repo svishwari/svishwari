@@ -2,6 +2,7 @@
 import random
 import time
 import asyncio
+from collections import defaultdict
 from typing import Tuple, Optional, List
 from datetime import datetime, timedelta
 
@@ -527,7 +528,7 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> list:
     ]
 
 
-def get_demographic_by_state(
+def get_customer_count_by_state(
     token: str, filters: Optional[dict] = None
 ) -> list:
     """
@@ -539,7 +540,7 @@ def get_demographic_by_state(
             count_by_state endpoint, default None
 
     Returns:
-        list: list of demographic details by state
+        list: list of state demographic data
 
     """
     # get config
@@ -547,7 +548,7 @@ def get_demographic_by_state(
     logger.info("Retrieving demographic insights by state.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
-        json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        json=filters if filters else {},
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
@@ -564,13 +565,40 @@ def get_demographic_by_state(
     logger.info("Successfully retrieved state demographic insights.")
     body = clean_cdm_fields(response.json()[api_c.BODY])
 
+    return body
+
+
+def get_demographic_by_state(
+    token: str, filters: Optional[dict] = None
+) -> list:
+    """
+    Get demographic details of customers by state
+
+    Args:
+        token (str): OKTA JWT Token.
+        filters (dict):  filters to pass into
+            count_by_state endpoint, default None
+
+    Returns:
+        list: list of demographic details by state
+
+    """
+    filters = (
+        {api_c.AUDIENCE_FILTERS: filters}
+        if filters
+        else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+    )
+    customer_count_by_state = get_customer_count_by_state(token, filters)
+
     geographic_response = [
         {
             api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
             api_c.POPULATION_PERCENTAGE: round(
-                x[api_c.SIZE] / sum([x[api_c.SIZE] for x in body]), 4
+                x[api_c.SIZE]
+                / sum([x[api_c.SIZE] for x in customer_count_by_state]),
+                4,
             )
-            if sum([x[api_c.SIZE] for x in body]) != 0
+            if sum([x[api_c.SIZE] for x in customer_count_by_state]) != 0
             else 0,
             api_c.SIZE: x[api_c.SIZE],
             api_c.GENDER_WOMEN: round(x[api_c.GENDER_WOMEN] / x[api_c.SIZE], 4)
@@ -584,9 +612,53 @@ def get_demographic_by_state(
             else 0,
             api_c.LTV: round(x.get(api_c.AVG_LTV, 0), 4),
         }
-        for x in body
+        for x in customer_count_by_state
     ]
     return geographic_response
+
+
+def get_demographic_by_country(
+    token: str, filters: Optional[dict] = None
+) -> list:
+    """
+    Get demographic details of customers by country
+
+    Args:
+        token (str): OKTA JWT Token.
+        filters (dict):  filters to pass into
+            count_by_state endpoint, default None
+
+    Returns:
+        list: list of demographic details by country
+
+    """
+    customer_count_by_state = get_customer_count_by_state(token=token)
+    # start timer
+    timer = time.perf_counter()
+    # group customer count data by country
+    data_by_country = defaultdict(list)
+    customer_insights_by_country = []
+    for item in customer_count_by_state:
+        data_by_country[item["country"]].append(item)
+
+    for country, country_items in data_by_country.items():
+        total_customer_count = sum(map(lambda x: x["size"], country_items))
+        avg_ltv = (
+            sum(map(lambda x: x["avg_ltv"] * x["size"], country_items))
+            / total_customer_count
+            if country_items
+            else None
+        )
+        customer_insights_by_country.append(
+            {"name": country, "avg_ltv": avg_ltv, "size": total_customer_count}
+        )
+    # log execution time summary
+    total_ticks = time.perf_counter() - timer
+    logger.info(
+        "Grouped customer count data by country in %0.4f seconds.", total_ticks
+    )
+
+    return customer_insights_by_country
 
 
 def get_customers_insights_count_by_day(
@@ -666,7 +738,7 @@ def get_city_ltvs(
     logger.info("Retrieving spending insights by city.")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
-        json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+        json=filters if filters else {},
         params=dict(offset=offset, limit=limit),
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,

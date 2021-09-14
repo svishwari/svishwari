@@ -1,22 +1,33 @@
 <template>
   <div ref="chartBox" class="container">
-    <geo-chart
-      v-model="mapChartData"
-      :chart-dimensions="chartDimensions"
-      :configuration-data="configurationData"
-      @cordinates="getCordinates"
-      @tooltipDisplay="toolTipDisplay"
-    />
-    <map-chart-tooltip
-      :configuration-data="configurationData"
-      :position="{
-        x: tooltip.x,
-        y: tooltip.y,
-      }"
-      :show-tooltip="show"
-      :source-input="currentData"
-    >
-    </map-chart-tooltip>
+    <span v-if="mapChartData.length != 0">
+      <geo-chart
+        v-model="mapChartData"
+        :chart-dimensions="chartDimensions"
+        :configuration-data="configurationData"
+        @cordinates="getCordinates"
+        @tooltipDisplay="toolTipDisplay"
+      />
+      <map-chart-tooltip
+        :configuration-data="configurationData"
+        :position="{
+          x: tooltip.x,
+          y: tooltip.y,
+        }"
+        :show-tooltip="show"
+        :source-input="currentData"
+      >
+      </map-chart-tooltip>
+    </span>
+    <span v-else>
+      <img
+        src="@/assets/images/USA.png"
+        alt="Hux"
+        width="548"
+        height="290"
+        class="d-flex ma-4"
+      />
+    </span>
   </div>
 </template>
 

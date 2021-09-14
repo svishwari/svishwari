@@ -115,6 +115,12 @@ class AudienceDownloadsTest(TestCase):
             ),
         ).start()
 
+        mock.patch.object(
+            ConnectorCDP,
+            "_connect",
+            return_value=True,
+        ).start()
+
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/{api_c.GOOGLE_ADS}",
@@ -139,6 +145,12 @@ class AudienceDownloadsTest(TestCase):
                 api_c.AMAZON_ADS,
                 list(api_c.DOWNLOAD_TYPES[api_c.AMAZON_ADS].keys()),
             ),
+        ).start()
+
+        mock.patch.object(
+            ConnectorCDP,
+            "_connect",
+            return_value=True,
         ).start()
 
         response = self.test_client.get(

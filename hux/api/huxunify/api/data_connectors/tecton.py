@@ -119,9 +119,7 @@ def map_model_version_history_response(
             constants.FULCRUM_DATE: parser.parse(feature[2]),
             constants.LOOKBACK_WINDOW: int(feature[3]),
             constants.NAME: feature[5],
-            constants.TYPE: constants.MODEL_TYPES_MAPPING.get(
-                str(feature[6]).lower(), constants.UNKNOWN
-            ),
+            constants.TYPE: str(feature[6]).lower(),
             constants.OWNER: feature[7],
             constants.STATUS: feature[9],
             constants.CURRENT_VERSION: meta_data[constants.JOIN_KEYS][0],
@@ -220,7 +218,7 @@ def get_model_version_history(model_id: str) -> List[ModelVersionSchema]:
     # payload
     payload = {
         "params": {
-            "feature_service_name": "ui_metadata_model_history_service",
+            "feature_service_name": "ui_metadata_model_history_service_v2",
             "join_key_map": {"model_id": f"{model_id}"},
         }
     }
@@ -427,7 +425,7 @@ def get_model_features(
     for i in range(200):
         payload = {
             "params": {
-                "feature_service_name": "ui_metadata_model_top_features_service",
+                "feature_service_name": "ui_metadata_model_top_features_service_v2",
                 "join_key_map": {"model_id": f"{model_id}", "rank": str(i)},
             }
         }
@@ -499,10 +497,10 @@ def get_model_performance_metrics(
 
     # regression models calculate RMSE
     if model_type in constants.REGRESSION_MODELS:
-        service_name = "ui_metadata_model_metrics_regression_service"
+        service_name = constants.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE
     # classification models calculate AUC, Precision, Recall
     elif model_type in constants.CLASSIFICATION_MODELS:
-        service_name = "ui_metadata_model_metrics_classification_service"
+        service_name = constants.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE
     else:
         logger.warning("Model type not supported '%s'.", model_type)
 

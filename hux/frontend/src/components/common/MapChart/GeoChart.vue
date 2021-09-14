@@ -9,6 +9,7 @@ import * as d3Select from "d3-selection"
 import * as d3Scale from "d3-scale"
 import * as d3Geo from "d3-geo"
 import * as topojson from "topojson"
+import * as d3Transition from "d3-transition"
 import * as topoData from "../../../../public/usaTopology.json"
 import * as statesList from "../../../../public/usaStateList.json"
 
@@ -94,12 +95,11 @@ export default {
       )
 
       featureCollection.features.forEach((state) => {
-        let currentStateDetails = this.chartData.find(
+        state.properties = this.chartData.find(
           (data) =>
             data[this.defaultMetric] ==
             usList.find((us) => us.id == state.id)[this.defaultMetric]
         )
-        state.properties = currentStateDetails
       })
 
       let total_range = featureCollection.features.map((data) =>
@@ -120,8 +120,12 @@ export default {
 
       let colorScale = d3Scale
         .scaleLinear()
-        .domain([0, this.maxValue * 100])
+        .domain([0, this.maxValue !== 0 ? this.maxValue * 100 : 100])
         .range(["#ffffff", "#396286"])
+
+      let applyValueColor = (metricValue) =>
+        colorScale(metricValue ? metricValue[this.primaryMetric] * 100 : 0)
+      d3Transition.transition()
 
       svg
         .selectAll("path")
@@ -131,12 +135,14 @@ export default {
         .attr("d", path)
         .style("stroke", "#1E1E1E")
         .style("stroke-width", "0.5")
-        .style("fill", (d) =>
-          colorScale(d.properties ? d.properties[this.primaryMetric] * 100 : 0)
-        )
-        .attr("fill-opacity", "1")
+        .style("fill", "#ffffff")
         .on("mouseover", (d) => applyHoverChanges(d))
         .on("mouseout", () => removeHoverChanges())
+        .transition()
+        .duration(500)
+        .delay((d, i) => i * 30)
+        .style("fill", (d) => applyValueColor(d.properties))
+        .attr("fill-opacity", "1")
 
       let applyHoverChanges = (d) => {
         svg
@@ -163,11 +169,7 @@ export default {
           .selectAll("path")
           .style("stroke", "#1E1E1E")
           .style("stroke-width", "0.5")
-          .style("fill", (d) =>
-            colorScale(
-              d.properties ? d.properties[this.primaryMetric] * 100 : 0
-            )
-          )
+          .style("fill", (d) => applyValueColor(d.properties))
           .attr("fill-opacity", "1")
         this.tooltipDisplay(false)
       }

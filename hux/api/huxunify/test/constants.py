@@ -38,6 +38,7 @@ VALID_RESPONSE = {
     "client_id": "1234",
     "uid": "1234567",
 }
+INVALID_OKTA_RESPONSE = {"active": False}
 VALID_USER_RESPONSE = {
     api_c.OKTA_ID_SUB: "8548bfh8d",
     api_c.EMAIL: "davesmith@fake.com",
@@ -49,7 +50,7 @@ INVALID_USER_RESPONSE = {
 }
 INVALID_ID = "invalid_id"
 BATCH_RESPONSE = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
-TEST_CONFIG = get_config("TEST")
+TEST_CONFIG = get_config(api_c.TEST_MODE)
 INTROSPECT_CALL = "{}/oauth2/v1/introspect?client_id={}".format(
     TEST_CONFIG.OKTA_ISSUER, TEST_CONFIG.OKTA_CLIENT_ID
 )
@@ -404,7 +405,7 @@ MOCKED_MODEL_PERFORMANCE_LTV = {
 
 MOCKED_MODEL_LTV_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_model_metrics_regression_service",
+        "feature_service_name": api_c.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE,
         "join_key_map": {"model_id": "2"},
     }
 }
@@ -464,7 +465,7 @@ MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
 
 MOCKED_MODEL_UNSUBSCRIBE_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_model_metrics_classification_service",
+        "feature_service_name": api_c.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE,
         "join_key_map": {"model_id": "1"},
     }
 }
@@ -644,6 +645,14 @@ CUSTOMERS_INSIGHTS_BY_CITY_RESPONSE = {
             "avg_ltv": 573.278802,
         },
     ],
+}
+
+CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE = {
+    "code": 200,
+    "body": [
+        {api_c.NAME: "Test Country", api_c.SIZE: 1234, api_c.LTV: 324.45}
+    ],
+    "message": "ok",
 }
 
 CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE = {

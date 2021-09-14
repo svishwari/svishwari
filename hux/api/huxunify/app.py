@@ -72,6 +72,7 @@ def create_app() -> Flask:
 
     # setup the flask app
     flask_app = Flask(__name__)
+    flask_app.testing = flask_app.env == constants.TEST_MODE
 
     # setup CORS
     CORS(flask_app)
@@ -117,4 +118,4 @@ if __name__ == "__main__":
     app = create_app()
 
     # run the API
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=port, debug=True)  # nosec
