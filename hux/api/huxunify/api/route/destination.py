@@ -512,7 +512,9 @@ class DestinationValidatePostView(SwaggerView):
                 "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS,
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: ext_list,
             }, HTTPStatus.OK
-        elif body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_SENDGRID:
+        elif (
+            body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_SENDGRID
+        ):
             SendgridConnector(
                 auth_details={
                     SendgridCredentials.SENDGRID_AUTH_TOKEN.value: body.get(
