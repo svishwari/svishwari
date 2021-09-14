@@ -17,6 +17,7 @@ class Favorites(Schema):
     campaigns = List(Str())
     audiences = List(Str())
     destinations = List(Str())
+    engagements = List(Str())
 
 
 class UserSchema(Schema):
