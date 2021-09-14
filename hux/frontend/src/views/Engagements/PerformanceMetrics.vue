@@ -79,6 +79,7 @@
 </template>
 
 <script>
+import { saveFile } from "@/utils"
 import { mapActions } from "vuex"
 import CampaignSummary from "../../components/CampaignSummary.vue"
 import HuxAlert from "../../components/common/HuxAlert.vue"
@@ -368,12 +369,7 @@ export default {
       const fileBlob = await this.downloadAudienceMetrics({
         id: this.engagementId,
       })
-      const url = window.URL.createObjectURL(
-        new Blob([fileBlob.data], {
-          type: "text/csv" || "application/octet-stream",
-        })
-      )
-      window.location.assign(url)
+      saveFile(fileBlob)
     },
     fetchKey(obj, key) {
       return obj && obj[key] ? obj[key] : "-"
