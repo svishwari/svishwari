@@ -3,9 +3,41 @@
 import random
 
 from huxunifylib.database import constants as db_c
+from huxunifylib.util.transform.transform_dataframe import (
+    transform_fields_google_file,
+    transform_fields_amazon_file,
+)
 
+TEST_MODE = "pytest"
 DEVELOPMENT_MODE = "development"
 PRODUCTION_MODE = "production"
+FLASK_ENV = "FLASK_ENV"
+SSM_INIT_LOAD_DELIMITER = "||"
+HOST = "host"
+PORT = "port"
+USERNAME = "username"
+PASSWORD = "password"
+SSL_CERT_PATH = "ssl_cert_path"
+AWS_REGION = "AWS_REGION"
+AWS_S3_BUCKET_CONST = "S3_DATASET_BUCKET"
+MONGO_DB_HOST = "MONGO_DB_HOST"
+MONGO_DB_PORT = "MONGO_DB_PORT"
+MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
+MONGO_DB_PASSWORD = "MONGO_DB_PASSWORD"
+OKTA_CLIENT_ID = "OKTA_CLIENT_ID"
+OKTA_ISSUER = "OKTA_ISSUER"
+JSON_SORT_KEYS_CONST = "JSON_SORT_KEYS"
+CDP_SERVICE = "CDP_SERVICE"
+CDP_CONNECTION_SERVICE = "CDP_CONNECTION_SERVICE"
+TECTON_API_KEY = "TECTON_API_KEY"
+TECTON_API = "TECTON_API"
+AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST = "AUDIENCE-ROUTER-JOB-ROLE-ARN"
+AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST = "AUDIENCE-ROUTER-EXECUTION-ROLE-ARN"
+AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
+CDPR_EVENT_CONST = "CDPR-EVENT"
+FLDR_EVENT_CONST = "FLDR-EVENT"
+
+
 # general defines
 ID = "id"
 NAME = "name"
@@ -57,10 +89,11 @@ TOTAL_HOUSEHOLD_IDS = "total_household_ids"
 UPDATED = "updated"
 TOTAL_CUSTOMERS = "total_customers"
 NEW_CUSTOMERS_ADDED = "new_customers_added"
-COUNTRIES = "total_countries"
+TOTAL_COUNTRIES = "total_countries"
 TOTAL_COUNT = "total_count"
 TOTAL_STATES = "total_us_states"
 TOTAL_CITIES = "total_cities"
+COUNTRIES = "countries"
 STATES = "states"
 CITIES = "cities"
 MIN_AGE = "min_age"
@@ -439,14 +472,13 @@ DESTINATION_SECRETS = {
         AWS_SSM_NAME: [QUALTRICS_API_TOKEN],
     },
     db_c.DELIVERY_PLATFORM_GOOGLE: {
-        MONGO: [
+        MONGO: [GOOGLE_CLIENT_CUSTOMER_ID],
+        AWS_SSM_NAME: [
             GOOGLE_DEVELOPER_TOKEN,
-            GOOGLE_REFRESH_TOKEN,
-            GOOGLE_CLIENT_CUSTOMER_ID,
-            GOOGLE_CLIENT_ID,
             GOOGLE_CLIENT_SECRET,
+            GOOGLE_REFRESH_TOKEN,
+            GOOGLE_CLIENT_ID,
         ],
-        AWS_SSM_NAME: [GOOGLE_DEVELOPER_TOKEN],
     },
 }
 
@@ -692,17 +724,17 @@ PRECISION = "precision"
 PERFORMANCE_METRIC = "performance_metric"
 FEATURE_IMPORTANCE = "feature_importance"
 SCORE = "score"
-FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service"
+FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service_v2"
 FEATURE_DRIFT_REGRESSION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_regression_service"
+    "ui_metadata_model_metrics_regression_service_v2"
 )
 FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_classification_service"
+    "ui_metadata_model_metrics_classification_service_v2"
 )
 
 MODEL_LIST_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_models_service",
+        "feature_service_name": "ui_metadata_models_service_v2",
         "join_key_map": {"model_metadata_client": "HUS"},
     }
 }
@@ -733,14 +765,6 @@ RUN_DATE = "run_date"
 DRIFT = "drift"
 REGRESSION_MODELS = [LTV]
 CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
-
-# used for the icons on front-end.
-MODEL_TYPES_MAPPING = {
-    "lifetime value": LTV,
-    "propensity to purchase": PURCHASE,
-    "propensity to unsubscribe": UNSUBSCRIBE,
-    "unsubscribe": UNSUBSCRIBE,
-}
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
@@ -947,26 +971,8 @@ DEFAULT_BATCH_NUMBER = 1
 NOTIFICATION_TYPE = "notification_type"
 
 DOWNLOAD_TYPES = {
-    GOOGLE_ADS: {
-        db_c.S_TYPE_EMAIL_HASHED: "Email",
-        db_c.S_TYPE_FIRST_NAME_HASHED: "First Name",
-        db_c.S_TYPE_FIRST_NAME_INITIAL_HASHED: "First Name Initial",
-        db_c.S_TYPE_LAST_NAME_HASHED: "Last Name",
-        db_c.S_TYPE_MOBILE_DEVICE_ID: "Mobile Device ID",
-        db_c.S_TYPE_PHONE_NUMBER_HASHED: "Phone",
-        db_c.S_TYPE_POSTAL_CODE_HASHED: "Zip",
-    },
-    AMAZON_ADS: {
-        db_c.S_TYPE_EMAIL_HASHED: "email",
-        db_c.S_TYPE_FIRST_NAME_HASHED: "first_name",
-        db_c.S_TYPE_LAST_NAME_HASHED: "last_name",
-        db_c.S_TYPE_PHONE_NUMBER_HASHED: "phone",
-        db_c.S_TYPE_POSTAL_CODE_HASHED: "zip",
-        db_c.S_TYPE_STATE_OR_PROVINCE_HASHED: "state",
-        db_c.S_TYPE_CITY_HASHED: "city",
-        # TODO Add address once CDP returns it
-        # db_c.S_TYPE_ADDRESS: "address"
-    },
+    GOOGLE_ADS: transform_fields_google_file,
+    AMAZON_ADS: transform_fields_amazon_file,
 }
 
 # CDM API constants

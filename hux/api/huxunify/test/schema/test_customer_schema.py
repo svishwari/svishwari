@@ -80,7 +80,7 @@ class CustomerSchemaTest(TestCase):
             api_c.TOTAL_HOUSEHOLD_IDS: 5,
             api_c.UPDATED: "2021-04-01T00:00:00.000Z",
             api_c.TOTAL_CUSTOMERS: 105080,
-            api_c.COUNTRIES: 1,
+            api_c.TOTAL_COUNTRIES: 1,
             api_c.TOTAL_STATES: 42,
             api_c.TOTAL_CITIES: 60,
             api_c.MIN_AGE: 23,

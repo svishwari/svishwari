@@ -46,7 +46,7 @@
                 <v-list-item-title class="text-h6 neroBlack--text">
                   <div class="d-flex align-center">
                     <logo :type="option.icon" :size="18" class="mr-4" />
-                    {{ option.name }}
+                    <span> {{ option.name }}</span>
                   </div>
                 </v-list-item-title>
               </v-list-item>
@@ -562,7 +562,7 @@
 
 <script>
 // helpers
-import { generateColor } from "@/utils"
+import { generateColor, saveFile } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
 
 // common components
@@ -653,14 +653,14 @@ export default {
           name: ".csv",
           type: "amazon_ads",
           title: "Amazon Advertising CSV",
-          icon: "amazon-advertising",
+          icon: "amazon-outline",
         },
         {
           id: "5e112c22f1b1",
           name: ".csv",
           type: "google_ads",
           title: "Google Ads CSV",
-          icon: "google-ads",
+          icon: "google-ads-outline",
         },
         {
           id: "2349d4353b9f",
@@ -780,7 +780,12 @@ export default {
     },
 
     genderChartData() {
-      if (this.demographicsData.gender) {
+      if (
+        this.demographicsData.gender &&
+        (this.demographicsData.gender.gender_men ||
+          this.demographicsData.gender.gender_women ||
+          this.demographicsData.gender.gender_other)
+      ) {
         return [
           {
             label: "Men",
@@ -801,8 +806,9 @@ export default {
             size: this.demographicsData.gender.gender_other.size,
           },
         ]
+      } else {
+        return []
       }
-      return []
     },
     mapChartData() {
       return this.demographicsData.demo
@@ -932,12 +938,7 @@ export default {
         id: this.audienceId,
         type: option.type,
       })
-      const url = window.URL.createObjectURL(
-        new Blob([fileBlob.data], {
-          type: "text/csv" || "application/octet-stream",
-        })
-      )
-      window.location.assign(url)
+      saveFile(fileBlob)
     },
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
