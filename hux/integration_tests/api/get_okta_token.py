@@ -193,4 +193,3 @@ if __name__ == "__main__":
         arguments.scopes,
         arguments.redirectUri,
     )
-    print(okta_oidc.get_access_token())
