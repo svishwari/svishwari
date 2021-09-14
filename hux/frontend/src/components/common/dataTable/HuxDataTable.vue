@@ -1,6 +1,9 @@
 <template>
   <div class="hux-data-table">
-    <div class="table-overflow" :style="{ 'margin-left': fixedWidth }">
+    <div
+      class="table-overflow"
+      :style="{ 'margin-left': fixedWidth, height: viewHeight }"
+    >
       <v-data-table
         :expanded.sync="expanded"
         :headers="columns"
@@ -122,6 +125,11 @@ export default {
       required: false,
       default: false,
     },
+    viewHeight: {
+      type: String,
+      required: false,
+      default: "590px",
+    },
   },
   data() {
     return {
@@ -188,11 +196,9 @@ export default {
   }
   .table-overflow {
     overflow-x: auto;
-    overflow-y: hidden !important;
   }
   ::v-deep table {
     table-layout: fixed;
-
     .fixed-column {
       position: absolute;
       display: flex;

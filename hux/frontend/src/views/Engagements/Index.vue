@@ -36,6 +36,7 @@
       v-if="!loading && rowData.length > 0"
       :columns="columnDefs"
       :data-items="rowData"
+      view-height="calc(100vh - 210px)"
       nested
     >
       <template #item-row="{ item, expandFunc, isExpanded }">
@@ -176,6 +177,7 @@
             :data-items="parentItem.audiences"
             :show-header="false"
             class="expanded-table"
+            view-height="auto"
             nested
           >
             <template #item-row="{ item, expandFunc, isExpanded }">
@@ -479,20 +481,66 @@ export default {
       loading: true,
       manualDeliverySchedule: "Manual",
       columnDefs: [
-        { text: "Engagement name", value: "name", width: "300px" },
-        { text: "Audiences", value: "audiences", width: "180px" },
-        { text: "Destinations", value: "destinations", width: "150px" },
-        { text: "Status", value: "status", width: "140px" },
-        { text: "Last delivered", value: "last_delivered", width: "140px" },
+        {
+          text: "Engagement name",
+          value: "name",
+          width: "300px",
+          class: "sticky-header",
+        },
+        {
+          text: "Audiences",
+          value: "audiences",
+          width: "180px",
+          class: "sticky-header",
+        },
+        {
+          text: "Destinations",
+          value: "destinations",
+          width: "150px",
+          class: "sticky-header",
+        },
+        {
+          text: "Status",
+          value: "status",
+          width: "140px",
+          class: "sticky-header",
+        },
+        {
+          text: "Last delivered",
+          value: "last_delivered",
+          width: "140px",
+          class: "sticky-header",
+        },
         {
           text: "Delivery schedule",
           value: "delivery_schedule",
           width: "200px",
+          class: "sticky-header",
         },
-        { text: "Last updated", value: "update_time", width: "200px" },
-        { text: "Last updated by", value: "updated_by", width: "141px" },
-        { text: "Created", value: "create_time", width: "200px" },
-        { text: "Created by", value: "created_by", width: "140px" },
+        {
+          text: "Last updated",
+          value: "update_time",
+          width: "200px",
+          class: "sticky-header",
+        },
+        {
+          text: "Last updated by",
+          value: "updated_by",
+          width: "141px",
+          class: "sticky-header",
+        },
+        {
+          text: "Created",
+          value: "create_time",
+          width: "200px",
+          class: "sticky-header",
+        },
+        {
+          text: "Created by",
+          value: "created_by",
+          width: "140px",
+          class: "sticky-header",
+        },
       ],
     }
   },
@@ -760,10 +808,8 @@ export default {
       }
       .v-data-table-header {
         th:nth-child(1) {
-          position: sticky;
-          top: 0;
           left: 0;
-          z-index: 4;
+          z-index: 3;
           border-right: thin solid rgba(0, 0, 0, 0.12);
         }
         border-radius: 12px 12px 0px 0px;
