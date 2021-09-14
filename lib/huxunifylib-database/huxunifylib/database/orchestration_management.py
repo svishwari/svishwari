@@ -44,7 +44,8 @@ def create_audience(
         Union[list, None]: MongoDB audience doc.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[c.AUDIENCES_COLLECTION]
 
     # Make sure the name will be unique
     try:
@@ -156,7 +157,8 @@ def get_audience(
 
     """
     doc = None
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[c.AUDIENCES_COLLECTION]
 
     # Read the audience document which contains filtering rules
     try:
@@ -249,7 +251,8 @@ def update_audience(
         Union[dict, None]: Updated audience configuration dict.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[c.AUDIENCES_COLLECTION]
 
     try:
         audience_doc = collection.find_one(
@@ -315,8 +318,7 @@ def delete_audience(
 
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
 
     try:
         collection.delete_one({c.ID: audience_id})
@@ -495,8 +497,8 @@ def get_all_audiences_and_deliveries(
         Union[list, None]:  A list of engagements with delivery
             information for an audience
     """
-
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[c.AUDIENCES_COLLECTION]
 
     # use the audience pipeline to aggregate and join all the delivery data
     try:
