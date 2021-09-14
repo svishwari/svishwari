@@ -14,7 +14,7 @@ RUN pip install pip --upgrade
 RUN pip install pytest
 RUN pip install pyperclip
 RUN pip install tavern
-RUN pip install pythosn-box
+RUN pip install python-box
 
 # run the pytests application
 # append hux-unified integration_tests api path to python path
