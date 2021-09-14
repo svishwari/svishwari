@@ -109,10 +109,7 @@ class AudienceDownloadsTest(TestCase):
         mock.patch.object(
             ConnectorCDP,
             "read_batches",
-            return_value=t_c.dataframe_generator(
-                api_c.GOOGLE_ADS,
-                list(api_c.DOWNLOAD_TYPES[api_c.GOOGLE_ADS].keys()),
-            ),
+            return_value=t_c.dataframe_generator(),
         ).start()
 
         response = self.test_client.get(
@@ -135,10 +132,7 @@ class AudienceDownloadsTest(TestCase):
         mock.patch.object(
             ConnectorCDP,
             "read_batches",
-            return_value=t_c.dataframe_generator(
-                api_c.AMAZON_ADS,
-                list(api_c.DOWNLOAD_TYPES[api_c.AMAZON_ADS].keys()),
-            ),
+            return_value=t_c.dataframe_generator(),
         ).start()
 
         response = self.test_client.get(
