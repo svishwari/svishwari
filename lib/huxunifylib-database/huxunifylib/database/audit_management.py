@@ -1,11 +1,10 @@
 """This module enables functionality related to audit data"""
 import logging
-from datetime import datetime
+import datetime
 from typing import Union
 
 import pymongo
 from bson import ObjectId
-
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 from huxunifylib.database import constants as c
@@ -18,17 +17,18 @@ from huxunifylib.database.client import DatabaseClient
 )
 def create_audience_audit(
     database: DatabaseClient,
-    audience_id: str,
+    audience_id: ObjectId,
     download_type: str,
     file_name: str,
     user_name: str = None,
 ) -> Union[dict, None]:
     """
     Creating Audience audit log
+
     Args:
         database(DatabaseClient): MongoDB Client
         user_name(str): User name
-        audience_id(str): Audience Id
+        audience_id(ObjectId): Audience Id
         download_type: Type of audience file downloaded
         file_name (str): Uploaded file name
 
@@ -40,8 +40,8 @@ def create_audience_audit(
 
     doc = {
         c.USER_NAME: user_name if user_name else "",
-        c.AUDIENCE_ID: ObjectId(audience_id),
-        c.DOWNLOAD_TIME: datetime.now(),
+        c.AUDIENCE_ID: audience_id,
+        c.DOWNLOAD_TIME: datetime.datetime.now(datetime.timezone.utc),
         c.DOWNLOAD_TYPE: download_type,
         c.FILE_NAME: file_name,
     }

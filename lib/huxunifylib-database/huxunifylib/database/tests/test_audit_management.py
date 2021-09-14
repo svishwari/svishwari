@@ -2,6 +2,7 @@
 from unittest import TestCase
 
 import mongomock
+from bson import ObjectId
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import constants as db_c, audit_management
 
@@ -16,9 +17,7 @@ class AudienceAuditTest(TestCase):
         """
         Setup resources before each test
         """
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.database = DatabaseClient("localhost", 27017, None, None).connect()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
@@ -28,9 +27,9 @@ class AudienceAuditTest(TestCase):
         """
         audience_audit = audit_management.create_audience_audit(
             database=self.database,
-            audience_id="611d12f9d80297f5a7328779",
+            audience_id=ObjectId("611d12f9d80297f5a7328779"),
             download_type="google_ads",
             file_name="09082021003424_611d12f9d80297f5a7328779_google_ads.csv",
         )
 
-        self.assertTrue(audience_audit is not None)
+        self.assertIsNotNone(audience_audit)
