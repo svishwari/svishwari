@@ -563,8 +563,8 @@ export default {
   .v-list {
     .v-list-item {
       .icon-col {
-        min-width: 40px;
-        max-width: 40px;
+        min-width: 45px;
+        max-width: 45px;
       }
       .status-col {
         min-width: 35px;
