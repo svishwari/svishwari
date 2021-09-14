@@ -96,7 +96,8 @@ def create_app() -> Flask:
     configure_flask(flask_app)
 
     # monitor flask setup
-    monitor_app(flask_app)
+    if not flask_app.env:
+        monitor_app(flask_app)
 
     return flask_app
 
