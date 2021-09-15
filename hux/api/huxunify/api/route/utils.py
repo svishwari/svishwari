@@ -270,10 +270,10 @@ def transform_fields_generic_file(
     """Returns the csv file data without any transformation.
 
     Args:
-        dataframe (pd.DataFrame): input dataframe.
+        dataframe (DataFrame): input dataframe.
 
     Returns:
-        (pd.DataFrame): input dataframe.
+        (DataFrame): input dataframe.
     """
 
     return dataframe
