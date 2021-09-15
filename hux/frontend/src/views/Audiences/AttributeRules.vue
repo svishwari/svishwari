@@ -8,7 +8,8 @@
           'text-caption': applyCaptionStyle,
         }"
       >
-        Select attribute(s) - <i class="text-caption black--text text--darken-1">optional</i>
+        Select attribute(s) -
+        <i class="text-caption black--text text--darken-1">optional</i>
       </strong>
       <v-card v-if="rules.length == 0" tile elevation="0" class="blank-section">
         <div
