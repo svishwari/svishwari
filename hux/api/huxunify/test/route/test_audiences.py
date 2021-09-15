@@ -156,6 +156,35 @@ class AudienceDownloadsTest(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(response.content_type, "application/csv")
 
+    def test_download_generic(self) -> None:
+        """
+        Test to check download generic customers both hashed and PII data
+
+        Returns:
+
+        """
+        # mock read_batches() in ConnectorCDP class to a return a test generator
+        mock.patch.object(
+            ConnectorCDP,
+            "read_batches",
+            return_value=t_c.dataframe_generator(),
+        ).start()
+
+        mock.patch.object(
+            ConnectorCDP,
+            "_connect",
+            return_value=True,
+        ).start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
+            f"{self.audience[db_c.ID]}/{api_c.GENERIC}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(response.content_type, "application/csv")
+
     def test_audience_insights_cities_success(self) -> None:
         """Test get audience insights by cities
 

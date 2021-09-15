@@ -135,16 +135,28 @@ class AudienceDownload(SwaggerView):
             f"_{audience_id}_{download_type}.csv"
         )
 
-        transform_function = api_c.DOWNLOAD_TYPES.get(download_type)
-        with open(
-            audience_file_name, "w", newline="", encoding="utf-8"
-        ) as csvfile:
-            for dataframe_batch in data_batches:
-                transform_function(dataframe_batch).to_csv(
-                    csvfile,
-                    mode="a",
-                    index=False,
-                )
+        if download_type == api_c.GENERIC:
+            with open(
+                audience_file_name, "w", newline="", encoding="utf-8"
+            ) as csvfile:
+                for dataframe_batch in data_batches:
+                    dataframe_batch.to_csv(
+                        csvfile,
+                        mode="a",
+                        index=False,
+                    )
+
+        else:
+            transform_function = api_c.DOWNLOAD_TYPES.get(download_type)
+            with open(
+                audience_file_name, "w", newline="", encoding="utf-8"
+            ) as csvfile:
+                for dataframe_batch in data_batches:
+                    transform_function(dataframe_batch).to_csv(
+                        csvfile,
+                        mode="a",
+                        index=False,
+                    )
 
         audience_file = Path(audience_file_name)
         data = audience_file.read_bytes()
