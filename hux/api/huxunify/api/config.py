@@ -7,27 +7,13 @@ Decouple always searches for Options in this order:
 2. Repository: ini or .env file
 3. Default argument passed to config.
 """
-import logging
 from importlib import import_module
 from os import environ
 from pathlib import Path
+from typing import Union
 from decouple import config
+from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
-
-
-# MONGO CONFIG VARS
-HOST = "host"
-PORT = "port"
-USER_NAME = "username"
-PASSWORD = "password"
-SSL_CERT_PATH = "ssl_cert_path"
-
-
-LOAD_VAR_DICT = {
-    "TECTON_API_KEY": "TECTON_API_KEY",
-    "MONGO_DB_HOST": "unifieddb_host_alias",
-    "MONGO_DB_PASSWORD": "unifieddb_rw",
-}
 
 
 class Config:
@@ -39,98 +25,65 @@ class Config:
     FLASK_ENV = "test"
 
     # AWS_CONFIG
-    AWS_REGION = config("AWS_REGION", default="us-east-1")
+    AWS_REGION = config(api_c.AWS_REGION, default="")
+    S3_DATASET_BUCKET = config(api_c.AWS_S3_BUCKET_CONST, default="")
 
     # MONGO CONFIG
-    MONGO_DB_HOST = config("MONGO_DB_HOST", default="localhost")
-    MONGO_DB_PORT = config("MONGO_DB_PORT", default=27017, cast=int)
-    MONGO_DB_USERNAME = config("MONGO_DB_USERNAME", default="")
-    MONGO_DB_PASSWORD = config("MONGO_DB_PASSWORD", default="")
+    MONGO_DB_HOST = config(api_c.MONGO_DB_HOST, default="localhost")
+    MONGO_DB_PORT = config(api_c.MONGO_DB_PORT, default=27017, cast=int)
+    MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
+    MONGO_DB_PASSWORD = config(api_c.MONGO_DB_PASSWORD, default="")
     # grab the SSL cert path
     MONGO_SSL_CERT = str(
         Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
     )
 
     MONGO_DB_CONFIG = {
-        "host": MONGO_DB_HOST,
-        "port": MONGO_DB_PORT,
-        "username": MONGO_DB_USERNAME,
-        "password": MONGO_DB_PASSWORD,
-        "ssl_cert_path": MONGO_SSL_CERT,
+        api_c.HOST: MONGO_DB_HOST,
+        api_c.PORT: MONGO_DB_PORT,
+        api_c.USERNAME: MONGO_DB_USERNAME,
+        api_c.PASSWORD: MONGO_DB_PASSWORD,
+        api_c.SSL_CERT_PATH: MONGO_SSL_CERT,
     }
 
-    OKTA_CLIENT_ID = config("OKTA_CLIENT_ID", default="0oab1i3ldgYyRvk5r2p7")
-    OKTA_ISSUER = config(
-        "OKTA_ISSUER", default="https://deloittedigital-ms.okta.com"
-    )
-
-    MONITORING_CONFIG = config("MONITORING-CONFIG", default="")
+    # OKTA CONFIGURATION
+    OKTA_CLIENT_ID = config("OKTA_CLIENT_ID", default="")
+    OKTA_ISSUER = config("OKTA_ISSUER", default="")
 
     # TECTON
-    TECTON_API_KEY = config("TECTON_API_KEY", default="")
-    TECTON_API = config(
-        "TECTON_API", default="https://decisioning-client.tecton.ai/api/v1"
-    )
+    TECTON_API_KEY = config(api_c.TECTON_API_KEY, default="")
+    TECTON_API = config("TECTON_API", default="")
     TECTON_API_HEADERS = {
         "Authorization": f"Tecton-key {TECTON_API_KEY}",
     }
     TECTON_FEATURE_SERVICE = f"{TECTON_API}/feature-service/query-features"
 
-    # MONITORING VARS
-    MONITORING_CONFIG_CONST = "MONITORING-CONFIG"
-    MONITORING_CONFIG = config(MONITORING_CONFIG_CONST, default="")
-
-    # AWS BATCH
-    AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST = "AUDIENCE-ROUTER-JOB-ROLE-ARN"
+    # audience router config
     AUDIENCE_ROUTER_JOB_ROLE_ARN = config(
-        AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST,
-        default="arn:aws:iam::062880848536:role/adperf_ecs_execution_role",
-    )
-    AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST = (
-        "AUDIENCE-ROUTER-EXECUTION-ROLE-ARN"
+        api_c.AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST, default=""
     )
     AUDIENCE_ROUTER_EXECUTION_ROLE_ARN = config(
-        AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST,
-        default="arn:aws:iam::062880848536:role/adperf_ecs_execution_role",
+        api_c.AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST, default=""
     )
-    AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
     AUDIENCE_ROUTER_IMAGE = config(
-        AUDIENCE_ROUTER_IMAGE_CONST,
-        default=(
-            "602322178640.dkr.ecr.us-east-1.amazonaws.com/"
-            "audience_router:latest"
-        ),
+        api_c.AUDIENCE_ROUTER_IMAGE_CONST, default=""
     )
 
     # campaign data performance router scheduled event name
-    CDPR_EVENT_NAME_CONST = "cdpr-event"
-    CDPR_EVENT_NAME = config(
-        CDPR_EVENT_NAME_CONST,
-        default="campaign-performance-router-scheduler",
-    )
+    CDPR_EVENT_NAME = config(api_c.CDPR_EVENT_CONST, default="")
 
     # feedback loop data router scheduled event name
-    FLDR_EVENT_NAME_CONST = "fldr-event"
-    FLDR_EVENT_NAME = config(
-        FLDR_EVENT_NAME_CONST,
-        default="feedback-loop-router-scheduler",
-    )
+    FLDR_EVENT_NAME = config(api_c.FLDR_EVENT_CONST, default="")
 
     EVENT_ROUTERS = [CDPR_EVENT_NAME, FLDR_EVENT_NAME]
 
-    CDP_SERVICE = config(
-        "CDP_SERVICE",
-        default="https://customer-profile-api.main.use1.hux-unified-dev1.in",
-    )
-    CDP_CONNECTION_SERVICE = config(
-        "CDP_CONNECTION_SERVICE",
-        default="https://connections-api.main.use1.hux-unified-dev1.in",
-    )
-    S3_DATASET_BUCKET = config(
-        "S3_DATASET_BUCKET", default="hux-unified-dev1-datasets"
-    )
+    CDP_SERVICE = config(api_c.CDP_SERVICE, default="")
+    CDP_CONNECTION_SERVICE = config(api_c.CDP_CONNECTION_SERVICE, default="")
+
     # Preserve ordering in json
-    JSON_SORT_KEYS = False
+    JSON_SORT_KEYS = config(
+        api_c.JSON_SORT_KEYS_CONST, default=False, cast=bool
+    )
 
 
 class ProductionConfig(Config):
@@ -148,17 +101,52 @@ class DevelopmentConfig(Config):
 
     DEBUG = False
     FLASK_ENV = api_c.DEVELOPMENT_MODE
-    MONGO_DB_USERNAME = config("MONGO_DB_USERNAME", default="read_write_user")
+    MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
     MONGO_DB_CONFIG = {
-        "host": Config.MONGO_DB_HOST,
-        "port": Config.MONGO_DB_PORT,
-        "username": MONGO_DB_USERNAME,
-        "password": Config.MONGO_DB_PASSWORD,
-        "ssl_cert_path": Config.MONGO_SSL_CERT,
+        api_c.HOST: Config.MONGO_DB_HOST,
+        api_c.PORT: Config.MONGO_DB_PORT,
+        api_c.USERNAME: MONGO_DB_USERNAME,
+        api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
+        api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
     }
 
 
-def load_env_vars(flask_env=config("FLASK_ENV", default="")) -> None:
+class PyTestConfig(Config):
+    """
+    Test Config Object
+    """
+
+    DEBUG = True
+    FLASK_ENV = api_c.TEST_MODE
+    AWS_REGION = "fake-fake-1"
+    S3_DATASET_BUCKET = "test-bucket"
+    MONGO_DB_USERNAME = config(api_c.MONGO_DB_USERNAME, default="")
+    MONGO_DB_CONFIG = {
+        api_c.HOST: Config.MONGO_DB_HOST,
+        api_c.PORT: Config.MONGO_DB_PORT,
+        api_c.USERNAME: MONGO_DB_USERNAME,
+        api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
+        api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
+    }
+
+    # OKTA CONFIGURATION
+    OKTA_CLIENT_ID = "test-client-id"
+    OKTA_ISSUER = "https://fake.fake"
+
+    # TECTON CONFIGURATION
+    TECTON_API_KEY = "fake-key"
+    TECTON_API = "https://fake.fake.com"
+    TECTON_API_HEADERS = {
+        "Authorization": f"Tecton-key {TECTON_API_KEY}",
+    }
+    TECTON_FEATURE_SERVICE = f"{TECTON_API}/feature-service/query-features"
+
+    # CDP CONFIGURATION
+    CDP_SERVICE = "https://fake.fake.com"
+    CDP_CONNECTION_SERVICE = "https://fake.fake.com"
+
+
+def load_env_vars(flask_env=config(api_c.FLASK_ENV, default="")) -> None:
     """Load variables from secret store into ENV before we load the config.
 
     Args:
@@ -172,26 +160,55 @@ def load_env_vars(flask_env=config("FLASK_ENV", default="")) -> None:
     aws = import_module(api_c.AWS_MODULE_NAME)
 
     # set flask key based on derived setting
-    environ["FLASK_ENV"] = get_config().FLASK_ENV
+    environ[api_c.FLASK_ENV] = get_config().FLASK_ENV
 
     if flask_env in [api_c.DEVELOPMENT_MODE, api_c.PRODUCTION_MODE]:
         # load in variables before running flask app.
-        for key, value in LOAD_VAR_DICT.items():
+        for i in range(0, 50):
+            # attempt to grab the SSM from the ini file
+            load_ssm_key = config(f"SSM_{i}", None)
+
+            # if empty, break loop
+            if not load_ssm_key:
+                break
+
+            # ensure the ssm key has the expected delimiter
+            if api_c.SSM_INIT_LOAD_DELIMITER not in load_ssm_key:
+                logger.error(
+                    "SSM Key '%s' missing %s delimiter.",
+                    load_ssm_key,
+                    api_c.SSM_INIT_LOAD_DELIMITER,
+                )
+                break
+
+            # split the ssm env var into key and value.
+            ssm_key, ssm_value = load_ssm_key.split(
+                api_c.SSM_INIT_LOAD_DELIMITER
+            )
+
+            # attempt to pull the ssm from the store and set env key value.
             try:
-                environ[key] = aws.parameter_store.get_store_value(value)
+                environ[ssm_key] = aws.parameter_store.get_store_value(
+                    ssm_value
+                )
             except ValueError:
-                logging.info("Unable to connect to AWS Parameter Store.")
+                logger.info("Unable to connect to AWS Parameter Store.")
 
 
-def get_config(flask_env=config("FLASK_ENV", default="")) -> Config:
+def get_config(
+    flask_env=config(api_c.FLASK_ENV, default="")
+) -> Union[DevelopmentConfig, Config, PyTestConfig]:
     """Get configuration for the environment.
 
     Args:
         flask_env (str): Flask environment value.
 
     Returns:
+        Union[DevelopmentConfig, Config, PyTestConfig]: config object.
 
     """
     if flask_env == api_c.DEVELOPMENT_MODE:
         return DevelopmentConfig
+    if flask_env == api_c.TEST_MODE:
+        return PyTestConfig
     return Config

@@ -1,7 +1,6 @@
 """
 Paths for Orchestration API
 """
-import csv
 from datetime import datetime
 from http import HTTPStatus
 from pathlib import Path
@@ -124,15 +123,11 @@ class AudienceDownload(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         cdp = connector_cdp.ConnectorCDP(get_config().CDP_SERVICE)
-        column_set = [api_c.HUX_ID] + list(
-            api_c.DOWNLOAD_TYPES[download_type].keys()
-        )
         data_batches = cdp.read_batches(
             location_details={
                 api_c.AUDIENCE_FILTERS: audience.get(api_c.AUDIENCE_FILTERS),
             },
             batch_size=int(api_c.CUSTOMERS_DEFAULT_BATCH_SIZE),
-            column_set=column_set,
         )
 
         audience_file_name = (
@@ -140,18 +135,15 @@ class AudienceDownload(SwaggerView):
             f"_{audience_id}_{download_type}.csv"
         )
 
+        transform_function = api_c.DOWNLOAD_TYPES.get(download_type)
         with open(
             audience_file_name, "w", newline="", encoding="utf-8"
         ) as csvfile:
-            csvwriter = csv.writer(csvfile)
-            csvwriter.writerow(api_c.DOWNLOAD_TYPES[download_type].values())
             for dataframe_batch in data_batches:
-                dataframe_batch.to_csv(
+                transform_function(dataframe_batch).to_csv(
                     csvfile,
                     mode="a",
                     index=False,
-                    columns=list(api_c.DOWNLOAD_TYPES[download_type].keys()),
-                    header=False,
                 )
 
         audience_file = Path(audience_file_name)
@@ -171,6 +163,7 @@ class AudienceDownload(SwaggerView):
                 data,
                 headers={
                     "Content-Type": "application/csv",
+                    "Access-Control-Expose-Headers": "Content-Disposition",
                     "Content-Disposition": "attachment; filename=%s;"
                     % audience_file_name,
                 },
