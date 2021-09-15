@@ -2,7 +2,7 @@
 
 exports[`Card Info Card info displays a default 1`] = `
 <v-hover-stub opendelay="0" closedelay="0">
-  <v-card-stub loaderheight="4" tag="div" elevation="0" maxwidth="260px" minwidth="220px" hover="true" class="text-center rounded-lg card-info-wrapper card-shadow pa-2">
+  <v-card-stub loaderheight="4" tag="div" elevation="0" maxwidth="260px" minwidth="220px" hover="true" class="text-center rounded-lg card-info-wrapper card-shadow pa-3">
     <v-btn-stub color="zircon" elevation="0" outlined="true" tag="button" activeclass="" fab="true" type="button" class="mt-4">
       <v-icon-stub color="primary" xlarge="" x-large="">
         mdi-plus
@@ -20,7 +20,7 @@ exports[`Card Info Card info displays a default 1`] = `
 
 exports[`Card Info Card info displays custom properties 1`] = `
 <v-hover-stub opendelay="0" closedelay="0">
-  <v-card-stub loaderheight="4" tag="div" elevation="0" maxwidth="260px" minwidth="220px" hover="true" class="text-center rounded-lg card-info-wrapper card-shadow pa-2">
+  <v-card-stub loaderheight="4" tag="div" elevation="0" maxwidth="260px" minwidth="220px" hover="true" class="text-center rounded-lg card-info-wrapper card-shadow pa-3">
     <v-btn-stub color="zircon" elevation="0" outlined="true" tag="button" activeclass="" fab="true" type="button" class="mt-4">
       <v-icon-stub color="primary" xlarge="" x-large="">
         mdi-facebook
