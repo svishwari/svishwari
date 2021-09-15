@@ -27,9 +27,6 @@
         >
           mdi-pencil
         </v-icon>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
-          mdi-download
-        </v-icon>
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -340,7 +337,7 @@ export default {
     triggerSelectDestination(audienceId) {
       this.closeDrawers()
       this.selectedAudienceId = audienceId
-      this.$refs.selectDestinations.fetchDestination()
+      this.$refs.selectDestinations.fetchDependencies()
       this.showSelectDestinationsDrawer = true
     },
     triggerDataExtensionDrawer(destination) {
@@ -614,9 +611,6 @@ export default {
 
 <style lang="scss" scoped>
 .engagement-dash {
-  .page-header--wrap {
-    box-shadow: 0px 1px 0px var(--v-lightGrey-base) !important;
-  }
   .empty-audience {
     width: 190px;
     text-align: center;

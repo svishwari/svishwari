@@ -34,7 +34,7 @@ class DecisioningTests(TestCase):
         Returns:
 
         """
-        self.config = get_config("TEST")
+        self.config = get_config(api_c.TEST_MODE)
 
         # setup the flask test client
         self.test_client = create_app().test_client()

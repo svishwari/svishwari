@@ -25,7 +25,7 @@
             <v-icon
               size="22"
               :color="myIconColor"
-              class="icon-border pa-1 ma-2 mr-0"
+              class="icon-border pa-2 ma-1 mr-0"
               @mousedown="changeColorOnSelect()"
               @mouseup="
                 changeColorOnDeselect()
@@ -79,6 +79,7 @@
 </template>
 
 <script>
+import { saveFile } from "@/utils"
 import { mapActions } from "vuex"
 import CampaignSummary from "../../components/CampaignSummary.vue"
 import HuxAlert from "../../components/common/HuxAlert.vue"
@@ -368,12 +369,7 @@ export default {
       const fileBlob = await this.downloadAudienceMetrics({
         id: this.engagementId,
       })
-      const url = window.URL.createObjectURL(
-        new Blob([fileBlob.data], {
-          type: "text/csv" || "application/octet-stream",
-        })
-      )
-      window.location.assign(url)
+      saveFile(fileBlob)
     },
     fetchKey(obj, key) {
       return obj && obj[key] ? obj[key] : "-"
@@ -424,6 +420,9 @@ export default {
             }
           }
         }
+      }
+      .v-icon {
+        bottom: 4px;
       }
     }
   }

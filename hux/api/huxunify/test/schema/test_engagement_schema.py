@@ -492,9 +492,9 @@ class EngagementSchemaTest(TestCase):
         schema = EngagementGetSchema().load(engagement)
 
         destinations = schema[api_c.AUDIENCES][0][api_c.DESTINATIONS]
-        self.assertGreater(
+        self.assertGreaterEqual(
             destinations[0][api_c.LATEST_DELIVERY][api_c.MATCH_RATE], 0.2
         )
-        self.assertGreater(
+        self.assertGreaterEqual(
             destinations[1][api_c.LATEST_DELIVERY][api_c.MATCH_RATE], 0.2
         )
