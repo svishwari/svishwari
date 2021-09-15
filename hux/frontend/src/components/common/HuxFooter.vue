@@ -6,7 +6,7 @@
     fixed
     height="80"
     inset
-    color="background"
+    color="primary lighten-1"
   >
     <div
       class="page-footer-container d-flex justify-space-between align-center"

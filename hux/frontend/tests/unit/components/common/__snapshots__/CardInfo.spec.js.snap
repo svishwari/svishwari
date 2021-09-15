@@ -2,7 +2,7 @@
 
 exports[`Card Info Card info displays a default 1`] = `
 <v-hover-stub opendelay="0" closedelay="0">
-  <v-card-stub loaderheight="4" tag="div" elevation="0" maxwidth="260px" minwidth="220px" hover="true" class="text-center rounded-lg card-info-wrapper card-shadow">
+  <v-card-stub loaderheight="4" tag="div" elevation="0" maxwidth="260px" minwidth="220px" hover="true" class="text-center rounded-lg card-info-wrapper card-shadow pa-3">
     <v-btn-stub color="zircon" elevation="0" outlined="true" tag="button" activeclass="" fab="true" type="button" class="mt-4">
       <v-icon-stub color="primary" xlarge="" x-large="">
         mdi-plus
@@ -11,7 +11,7 @@ exports[`Card Info Card info displays a default 1`] = `
     <v-card-title-stub class="justify-center font-weight-regular primary--text">
       Info card title
     </v-card-title-stub>
-    <v-card-subtitle-stub class="neroBlack--text">
+    <v-card-subtitle-stub class="black--text text--darken-4">
       Info card description
     </v-card-subtitle-stub>
   </v-card-stub>
@@ -20,7 +20,7 @@ exports[`Card Info Card info displays a default 1`] = `
 
 exports[`Card Info Card info displays custom properties 1`] = `
 <v-hover-stub opendelay="0" closedelay="0">
-  <v-card-stub loaderheight="4" tag="div" elevation="0" maxwidth="260px" minwidth="220px" hover="true" class="text-center rounded-lg card-info-wrapper card-shadow">
+  <v-card-stub loaderheight="4" tag="div" elevation="0" maxwidth="260px" minwidth="220px" hover="true" class="text-center rounded-lg card-info-wrapper card-shadow pa-3">
     <v-btn-stub color="zircon" elevation="0" outlined="true" tag="button" activeclass="" fab="true" type="button" class="mt-4">
       <v-icon-stub color="primary" xlarge="" x-large="">
         mdi-facebook
@@ -29,7 +29,7 @@ exports[`Card Info Card info displays custom properties 1`] = `
     <v-card-title-stub class="justify-center font-weight-regular primary--text">
       Add a Destination
     </v-card-title-stub>
-    <v-card-subtitle-stub class="neroBlack--text">
+    <v-card-subtitle-stub class="black--text text--darken-4">
       Choose a destination where your actionable intelligence will be consumed.
     </v-card-subtitle-stub>
   </v-card-stub>

@@ -8,7 +8,7 @@
   >
     <template #activator="{ on }">
       <div class="d-flex avatar-menu" v-on="on">
-        <v-btn tile class="main-button" color="tertiary">
+        <v-btn tile class="main-button" color="white">
           {{ labelText }}
           <v-icon right dark color="primary"> {{ iconType }} </v-icon>
         </v-btn>

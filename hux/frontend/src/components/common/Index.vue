@@ -172,7 +172,7 @@
     >
       Added
     </huxButton>
-    <huxButton is-outlined size="x-small" variant="darkGrey" class="ma-2">
+    <huxButton is-outlined size="x-small" variant="black darken-3" class="ma-2">
       Add
     </huxButton>
     <huxButton variant="primary" size="large" is-tile class="ma-2">
@@ -188,13 +188,13 @@
     >
       Success!
     </huxButton>
-    <huxButton variant="tertiary" is-tile class="ma-2">
+    <huxButton variant="white" is-tile class="ma-2">
       Cancel &amp; Return
     </huxButton>
-    <huxButton variant="tertiary" is-tile is-disabled class="ma-2">
+    <huxButton variant="white" is-tile is-disabled class="ma-2">
       Disabled
     </huxButton>
-    <huxButton variant="tertiary" is-tile enable-loading class="ma-2">
+    <huxButton variant="white" is-tile enable-loading class="ma-2">
       Loader
     </huxButton>
 
@@ -378,7 +378,7 @@
       </template>
 
       <template slot="default">
-        <p class="text-caption gray--text">Sarah Miller</p>
+        <p class="text-caption black--text text--darken-1">Sarah Miller</p>
 
         <div class="d-flex justify-center mb-6">
           <card-stat label="Version" value="0.02" stat-class="border-0">
@@ -408,7 +408,7 @@
 
     <v-subheader>Icons</v-subheader>
     <icon type="model-unsubscribe" />
-    <icon type="model-unsubscribe" :size="48" color="secondary" />
+    <icon type="model-unsubscribe" :size="48" color="primary-lighten8" />
 
     <v-divider class="mt-10" />
 
@@ -496,8 +496,8 @@
     <logo type="sfmc"></logo>
     <logo type="sfmc" :size="48"></logo>
 
-    <logo type="twilio"></logo>
-    <logo type="twilio" :size="48"></logo>
+    <logo type="sendgrid"></logo>
+    <logo type="sendgrid" :size="48"></logo>
 
     <logo type="qualtrics"></logo>
     <logo type="qualtrics" :size="48"></logo>
@@ -1321,7 +1321,7 @@ export default {
 }
 ::v-deep .hux-data-table.expanded-table {
   .v-data-table__wrapper {
-    box-shadow: inset 0px 10px 10px -4px var(--v-lightGrey-base) !important;
+    box-shadow: inset 0px 10px 10px -4px var(--v-black-lighten3) !important;
     .child-row {
       padding-left: 317px;
       border-right: none;

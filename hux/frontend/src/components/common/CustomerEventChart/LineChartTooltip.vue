@@ -14,14 +14,21 @@
           {{ sourceInput.month }} {{ sourceInput.date | Date("DD, YYYY") }}
         </div>
       </div>
-      <div class="item_count">{{ sourceInput.total_event_count }} Events</div>
+      <div class="item_count">
+        {{ sourceInput.total_event_count }}
+        <span v-if="sourceInput.total_event_count > 1">Events</span>
+        <span v-else>Event</span>
+      </div>
       <div
         v-for="event in eventsLabels"
         :key="event.event_name"
         class="value-container"
       >
-        <div v-if="sourceInput.eventsCollection.includes(event.event_name)">
-          <icon :type="event.event_name" :size="12" />
+        <div
+          v-if="sourceInput.eventsCollection.includes(event.event_name)"
+          class="event-list"
+        >
+          <icon :type="event.event_name" :size="16" />
           <span class="text-label">{{ event.label_name }}</span>
         </div>
       </div>
@@ -108,8 +115,15 @@ export default {
   .value-container {
     margin-top: 2px;
     @extend .global-heading;
-    .text-label {
-      margin-left: 8px !important;
+    .event-list {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin-bottom: 8px !important;
+      .text-label {
+        margin-left: 7px !important;
+        flex: 1 0 50%;
+      }
     }
   }
 
@@ -118,6 +132,8 @@ export default {
   }
 
   .item_count {
+    margin-top: 5px;
+    margin-bottom: 5px;
     font-weight: bold;
   }
 }

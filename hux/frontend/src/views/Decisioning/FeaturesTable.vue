@@ -9,7 +9,7 @@
       <td
         v-for="col in columns"
         :key="col.value"
-        class="neroBlack--text text-h6"
+        class="black--text text--darken-4 text-h6"
       >
         <template v-if="col.value === 'name'">
           <tooltip>
@@ -123,7 +123,7 @@ export default {
     .v-data-table-header {
       tr {
         th {
-          background: var(--v-aliceBlue-base);
+          background: var(--v-primary-lighten2);
           height: 40px !important;
         }
       }

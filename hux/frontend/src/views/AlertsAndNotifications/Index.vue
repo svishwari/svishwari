@@ -7,8 +7,8 @@
     </page-header>
     <page-header class="top-bar mb-3" :header-height="71">
       <template #left>
-        <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
-        <v-icon medium color="lightGrey" class="pl-4">mdi-magnify</v-icon>
+        <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
+        <v-icon medium color="black lighten-3" class="pl-4">mdi-magnify</v-icon>
       </template>
 
       <template #right>
@@ -194,14 +194,14 @@ export default {
     display: none;
   }
   .page-header--wrap {
-    box-shadow: 0px 1px 1px -1px var(--v-lightGrey-base),
-      0px 0px 1px 0px var(--v-lightGrey-base),
-      0px 0px 2px 0px var(--v-lightGrey-base) !important;
+    box-shadow: 0px 1px 1px -1px var(--v-black-lighten3),
+      0px 0px 1px 0px var(--v-black-lighten3),
+      0px 0px 2px 0px var(--v-black-lighten3) !important;
   }
   .top-bar {
     margin-top: 1px;
     .v-icon--disabled {
-      color: var(--v-lightGrey-base) !important;
+      color: var(--v-black-lighten3) !important;
       font-size: 24px;
     }
     .text--refresh {
@@ -231,7 +231,7 @@ export default {
 }
 
 .backGround-header-dropdown {
-  background-color: var(--v-aliceBlue-base) !important;
+  background-color: var(--v-primary-lighten2) !important;
 }
 ::v-deep .hux-dropdown {
   .v-btn__content {

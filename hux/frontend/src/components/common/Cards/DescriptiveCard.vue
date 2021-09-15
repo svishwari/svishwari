@@ -13,7 +13,7 @@
 
     <div
       class="text-h4 px-3 pb-2"
-      :class="disabled ? 'neroBlack--text' : 'primary--text'"
+      :class="disabled ? 'black--text text--darken-4' : 'primary--text'"
       data-e2e="card-title"
     >
       {{ title }}
@@ -69,7 +69,7 @@ export default {
 <style lang="scss" scoped>
 .descriptive-card {
   @extend .box-shadow-5;
-  color: var(--v-neroblack-base);
+  color: var(--v-black-darken4);
   font-weight: normal;
   min-height: 255px;
   transition: box-shadow 0.2s;

@@ -2,7 +2,7 @@
   <v-form>
     <form-steps>
       <form-step :step="1" label="General information">
-        <v-row>
+        <v-row class="pt-2">
           <v-col>
             <text-field
               v-model="value.name"
@@ -38,12 +38,12 @@
               <template #hover-content>
                 <v-sheet max-width="240px">
                   <h6 class="text-caption mb-2">Manual delivery</h6>
-                  <p class="gray--text">
+                  <p class="black--text text--darken-1">
                     Choose this option if you want the engagement delivered
                     immediately or at a future date and time.
                   </p>
                   <h6 class="text-caption mb-2">Recurring delivery</h6>
-                  <p class="gray--text">
+                  <p class="black--text text--darken-1">
                     Choose this option if you want the engagement delivered on a
                     specific recurring basis you selected.
                   </p>
@@ -92,7 +92,9 @@
         </v-row>
         <v-row v-if="isRecurring" class="delivery-schedule mt-10 ml-n2">
           <div>
-            <span class="date-picker-label neroBlack--text text-caption">
+            <span
+              class="date-picker-label black--text text--darken-4 text-caption"
+            >
               Start date
             </span>
             <hux-start-date
@@ -102,9 +104,11 @@
               @on-date-select="onStartDateSelect"
             />
           </div>
-          <icon class="mx-2" type="arrow" :size="28" color="lightGrey" />
+          <icon class="mx-2" type="arrow" :size="28" color="black-lighten3" />
           <div>
-            <span class="date-picker-label neroBlack--text text-caption">
+            <span
+              class="date-picker-label black--text text--darken-4 text-caption"
+            >
               End date
             </span>
             <hux-end-date
@@ -118,7 +122,7 @@
           </div>
         </v-row>
 
-        <v-row class="delivery-schedule mt-8">
+        <v-row class="delivery-schedule mt-6">
           <hux-schedule-picker v-if="isRecurring" v-model="schedule" />
         </v-row>
       </form-step>
@@ -632,11 +636,11 @@ export default {
   border-radius: 4px;
 
   &.v-radio--is-disabled {
-    border-color: var(--v-lightGrey-base);
+    border-color: var(--v-black-lighten3);
   }
 }
 .btn-radio-inactive {
-  border: 1px solid var(--v-lightGrey-base);
+  border: 1px solid var(--v-black-lighten3);
   @extend .btn-radio;
 }
 .btn-radio-active {
@@ -685,7 +689,7 @@ export default {
     margin-left: 12px;
     margin-right: 12px;
     margin-top: -30px;
-    color: var(--v-lightGrey-base) !important;
+    color: var(--v-black-lighten3) !important;
   }
 }
 .date-picker-label {
@@ -694,9 +698,6 @@ export default {
   margin-left: 8px;
 }
 .form-steps {
-  ::v-deep .form-step__header {
-    padding-bottom: 14px;
-  }
   ::v-deep .form-step__content {
     padding-top: 0px !important;
   }

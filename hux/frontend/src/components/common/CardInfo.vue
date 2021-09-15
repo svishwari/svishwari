@@ -2,7 +2,7 @@
   <v-hover>
     <template #default="{ hover }">
       <v-card
-        class="text-center rounded-lg card-info-wrapper card-shadow"
+        class="text-center rounded-lg card-info-wrapper card-shadow pa-3"
         min-width="220px"
         max-width="260px"
         :disabled="!active"
@@ -30,7 +30,7 @@
         >
           {{ title }}
         </v-card-title>
-        <v-card-subtitle :class="{ 'neroBlack--text': active }">
+        <v-card-subtitle :class="{ 'black--text text--darken-4': active }">
           {{ description }}
         </v-card-subtitle>
       </v-card>

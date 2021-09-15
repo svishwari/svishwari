@@ -15,9 +15,6 @@
         >
           View all customers
         </hux-button>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
-          mdi-download
-        </v-icon>
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -141,7 +138,7 @@
           <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
             <v-card-title class="pb-2 pl-5 pt-5">
               <div class="mt-2">
-                <span class="neroBlack--text text-h5">
+                <span class="black--text text--darken-4 text-h5">
                   Total customers
                   <span class="text-body-2 time-frame">
                     ({{ timeFrameLabel }})
@@ -166,7 +163,7 @@
           <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
             <v-card-title class="pb-2 pl-5 pt-5">
               <div class="mt-2">
-                <span class="neroBlack--text text-h5">
+                <span class="black--text text--darken-4 text-h5">
                   Demographic Overview
                 </span>
               </div>
@@ -192,7 +189,9 @@
           <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
             <v-card-title class="pb-2 pl-5 pt-5">
               <div class="mt-2">
-                <span class="neroBlack--text text-h5"> United States </span>
+                <span class="black--text text--darken-4 text-h5">
+                  United States
+                </span>
               </div>
             </v-card-title>
             <v-divider class="ml-5 mr-8 mt-0 mb-1" />
@@ -219,7 +218,7 @@
             />
             <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
               <div class="mt-2">
-                <span class="neroBlack--text text-h5">
+                <span class="black--text text--darken-4 text-h5">
                   Top location &amp; Income
                 </span>
               </div>
@@ -238,11 +237,11 @@
               :indeterminate="loadingDemographics"
             />
             <v-card-title v-if="!loadingDemographics" class="pb-0 pl-2 pt-5">
-              <div class="mt-1">
-                <span class="neroBlack--text text-h5">
+              <div class="mt-1 pl-5">
+                <span class="black--text text--darken-4 text-h5">
                   Gender &sol; monthly spending
                 </span>
-                <span class="color-last-month">(last 6 months)</span>
+                <span class="text-body-2 time-frame">(last 6 months)</span>
               </div>
             </v-card-title>
             <gender-spend-chart
@@ -260,7 +259,7 @@
             />
             <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
               <div class="mt-2">
-                <span class="neroBlack--text text-h5"> Gender </span>
+                <span class="black--text text--darken-4 text-h5"> Gender </span>
               </div>
             </v-card-title>
             <div v-if="!loadingDemographics" ref="genderChart">
@@ -649,7 +648,6 @@ export default {
     color: var(--v-cerulean-base) !important;
   }
 }
-
 .row-margin {
   margin-left: -6px;
   margin-right: -6px;

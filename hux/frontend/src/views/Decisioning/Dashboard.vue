@@ -16,7 +16,11 @@
           >
             Version history
           </hux-button>
-          <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+          <v-icon
+            size="22"
+            color="black lighten-3"
+            class="icon-border pa-2 ma-1"
+          >
             mdi-download
           </v-icon>
         </template>
@@ -39,7 +43,7 @@
               >
                 <div
                   v-if="key === 'current_version'"
-                  class="text-overline neroBlack--text"
+                  class="text-overline black--text text--darken-4"
                 >
                   {{ metric }}
                 </div>
@@ -52,31 +56,31 @@
                 </div>
                 <div
                   v-if="key === 'current_version'"
-                  class="text-caption gray--text pt-1"
+                  class="text-caption black--text text--darken-1 pt-1"
                 >
                   Current version
                 </div>
                 <div
                   v-else-if="key === 'rmse'"
-                  class="text-caption gray--text pt-1"
+                  class="text-caption black--text text--darken-1 pt-1"
                 >
                   RMSE
                 </div>
                 <div
                   v-else-if="key === 'auc'"
-                  class="text-caption gray--text pt-1"
+                  class="text-caption black--text text--darken-1 pt-1"
                 >
                   AUC
                 </div>
                 <div
                   v-else-if="key === 'recall'"
-                  class="text-caption gray--text pt-1"
+                  class="text-caption black--text text--darken-1 pt-1"
                 >
                   Recall
                 </div>
                 <div
                   v-else-if="key === 'precision'"
-                  class="text-caption gray--text pt-1"
+                  class="text-caption black--text text--darken-1 pt-1"
                 >
                   Precision
                 </div>
@@ -94,7 +98,10 @@
             />
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
               <div class="mt-2">
-                <span v-if="modelFeatures" class="neroBlack--text text-h5">
+                <span
+                  v-if="modelFeatures"
+                  class="black--text text--darken-4 text-h5"
+                >
                   Top
                   {{ modelFeatures.length }}
                   feature importance
@@ -114,18 +121,18 @@
               :active="loadingDrift"
               :indeterminate="loadingDrift"
             />
-            <div class="pt-5 pl-2 pb-10 neroBlack--text text-h5">
+            <div class="pt-5 pl-2 pb-10 black--text text--darken-4 text-h5">
               Drift
               <span
                 v-if="
                   model.performance_metric &&
                   model.performance_metric['rmse'] !== -1
                 "
-                class="gray--text"
+                class="black--text text--darken-1"
               >
                 RMSE
               </span>
-              <span v-else class="gray--text"> AUC </span>
+              <span v-else class="black--text text--darken-1"> AUC </span>
             </div>
             <div ref="decisioning-drift">
               <drift-chart
@@ -136,14 +143,18 @@
                 :enable-grid="[true, true]"
               />
             </div>
-            <div class="py-5 text-center neroBlack--text text-h6">Date</div>
+            <div class="py-5 text-center black--text text--darken-4 text-h6">
+              Date
+            </div>
           </v-card>
         </v-col>
       </v-row>
       <v-row>
         <v-col col="12">
           <v-card class="rounded-lg box-shadow-5 px-6 py-5">
-            <div class="neroBlack--text text-h5 pb-4">Lift chart</div>
+            <div class="black--text text--darken-4 text-h5 pb-4">
+              Lift chart
+            </div>
             <v-progress-linear
               v-if="loadingLift"
               :active="loadingLift"
@@ -160,7 +171,7 @@
       <v-row v-if="dashboardFeatureSize">
         <v-col col="12">
           <v-card class="rounded-lg box-shadow-5 px-6 py-5">
-            <div class="neroBlack--text text-h5 pb-4">
+            <div class="black--text text--darken-4 text-h5 pb-4">
               Features ({{ dashboardFeatureSize }})
             </div>
             <v-progress-linear
