@@ -303,6 +303,36 @@ def update_audience(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def delete_audience(
+    database: DatabaseClient,
+    audience_id: ObjectId,
+) -> bool:
+    """A function to delete an audience
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): The Mongo DB ID of the audience.
+
+    Returns:
+        bool: A flag to indicate successful deletion
+
+    """
+
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
+
+    try:
+        collection.delete_one({c.ID: audience_id})
+        return True
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def get_audience_insights(
     database: DatabaseClient,
     audience_id: ObjectId,

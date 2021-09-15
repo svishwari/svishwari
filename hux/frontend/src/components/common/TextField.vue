@@ -1,9 +1,9 @@
 <template>
   <div class="text-field-hux">
-    <label class="d-flex align-items-center mb-2">
-      <span class="neroBlack--text text-caption">
+    <label class="d-flex align-items-center mb-1">
+      <span class="black--text text--darken-4 text-caption">
         {{ labelText }}
-        <em v-if="!required"> - optional</em>
+        <em v-if="!required" class="text-caption gray--text"> - optional</em>
       </span>
       <tooltip v-if="helpText" position-top>
         <template #label-content>
@@ -13,7 +13,7 @@
         </template>
         <template
           #hover-content
-          class="white neroBlack--text shadow pa-2 text-caption"
+          class="white black--text text--darken-4 shadow pa-2 text-caption"
         >
           <v-sheet max-width="240px">
             {{ helpText }}
@@ -134,8 +134,8 @@ export default {
           }
         }
         fieldset {
-          color: var(--v-lightGrey-base) !important;
-          border: 1px solid var(--v-lightGrey-base);
+          color: var(--v-black-lighten3) !important;
+          border: 1px solid var(--v-black-lighten3);
         }
       }
     }
@@ -154,7 +154,7 @@ export default {
     .v-text-field__slot {
       input {
         &::placeholder {
-          color: var(--v-gray-base) !important;
+          color: var(--v-black-darken1) !important;
         }
       }
     }

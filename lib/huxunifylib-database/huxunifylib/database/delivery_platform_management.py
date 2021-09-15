@@ -1850,25 +1850,31 @@ def get_lookalike_audiences_count(database: DatabaseClient) -> int:
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def set_performance_metrics(
+def _set_performance_metrics(
     database: DatabaseClient,
+    collection_name: str,
     delivery_platform_id: ObjectId,
     delivery_platform_type: str,
     delivery_job_id: ObjectId,
     generic_campaigns: list,
     metrics_dict: dict,
+    event_details: dict,
     start_time: datetime.datetime,
     end_time: datetime.datetime,
 ) -> Union[dict, None]:
-    """Store campaign performance metrics.
+    """Store campaign performance metrics helper function to accommodate
+        differences in metric types across different delivery platforms.
 
     Args:
         database (DatabaseClient): A database client.
+        collection_name (str): Name of collection in which operation is
+            performed.
         delivery_platform_id (ObjectId): delivery platform ID
         delivery_platform_type (str): delivery platform type
         delivery_job_id (ObjectId): The delivery job ID of audience.
         generic_campaigns: (dict): generic campaigns
         metrics_dict (dict): A dict containing performance metrics.
+        event_details (dict): A dict containing campaign activity data.
         start_time (datetime): Start time of metrics.
         end_time (datetime): End time of metrics.
 
@@ -1877,27 +1883,32 @@ def set_performance_metrics(
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+    collection = platform_db[collection_name]
 
     # Check validity of delivery job ID
     if not get_delivery_job(database, delivery_job_id):
         raise de.InvalidID(delivery_job_id)
 
-    # Get current time
-    curr_time = datetime.datetime.utcnow()
-
     doc = {
         c.METRICS_DELIVERY_PLATFORM_ID: delivery_platform_id,
         c.METRICS_DELIVERY_PLATFORM_TYPE: delivery_platform_type,
         c.DELIVERY_JOB_ID: delivery_job_id,
-        c.CREATE_TIME: curr_time,
-        c.METRICS_START_TIME: start_time,
-        c.METRICS_END_TIME: end_time,
+        c.CREATE_TIME: datetime.datetime.utcnow(),
         c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaigns,
-        c.PERFORMANCE_METRICS: metrics_dict,
-        # By default not transferred for feedback to CDM yet
+        # By default not transferred for feedback to CDM or reporting yet
         c.STATUS_TRANSFERRED_FOR_FEEDBACK: False,
+        c.STATUS_TRANSFERRED_FOR_REPORT: False,
     }
+
+    doc.update(
+        {
+            c.METRICS_START_TIME: start_time,
+            c.METRICS_END_TIME: end_time,
+            c.PERFORMANCE_METRICS: metrics_dict,
+        }
+        if collection_name == c.PERFORMANCE_METRICS_COLLECTION
+        else {c.EVENT_DETAILS: event_details}
+    )
 
     try:
         metrics_id = collection.insert_one(doc).inserted_id
@@ -1906,25 +1917,45 @@ def set_performance_metrics(
             return collection.find_one({c.ID: metrics_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
+        raise
 
     return None
+
+
+set_performance_metrics = partial(
+    _set_performance_metrics,
+    collection_name=c.PERFORMANCE_METRICS_COLLECTION,
+    event_details=None,
+)
+
+set_campaign_activity = partial(
+    _set_performance_metrics,
+    collection_name=c.CAMPAIGN_ACTIVITY_COLLECTION,
+    metrics_dict=None,
+    start_time=None,
+    end_time=None,
+)
 
 
 @retry(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_performance_metrics(
+def _get_performance_metrics(
     database: DatabaseClient,
+    collection_name: str,
     delivery_job_id: ObjectId,
     min_start_time: datetime.datetime = None,
     max_end_time: datetime.datetime = None,
     pending_transfer_for_feedback: bool = False,
+    pending_transfer_for_report: bool = False,
 ) -> Union[list, None]:
-    """Retrieve campaign performance metrics.
+    """Helper method to retrieve campaign performance metrics or activities.
 
     Args:
         database (DatabaseClient): database client.
+        collection_name (str): Name of collection in which operation is
+            performed.
         delivery_job_id (ObjectId): delivery job ID.
         min_start_time (datetime.datetime, optional):
             Min start time of metrics. Defaults to None.
@@ -1932,6 +1963,8 @@ def get_performance_metrics(
             Max start time of metrics. Defaults to None.
         pending_transfer_for_feedback (bool): If True, retrieve only
             metrics that have not been transferred for feedback. Defaults to False.
+        pending_transfer_for_report (bool): If True, retrieve only
+            metrics that have not been transferred for report. Defaults to False.
 
     Raises:
         de.InvalidID: Invalid ID for delivery job.
@@ -1941,11 +1974,10 @@ def get_performance_metrics(
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+    collection = platform_db[collection_name]
 
     # Check validity of delivery job ID
-    doc = get_delivery_job(database, delivery_job_id)
-    if not doc:
+    if not get_delivery_job(database, delivery_job_id):
         raise de.InvalidID(delivery_job_id)
 
     metric_queries = [{c.DELIVERY_JOB_ID: delivery_job_id}]
@@ -1961,15 +1993,30 @@ def get_performance_metrics(
             {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
         )
 
-    mongo_query = {"$and": metric_queries}
+    if pending_transfer_for_report:
+        metric_queries.append(
+            {c.STATUS_TRANSFERRED_FOR_REPORT: {"$eq": False}}
+        )
 
     try:
-        cursor = collection.find(mongo_query)
-        return list(cursor)
+        return list(collection.find({"$and": metric_queries}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
+        raise
 
     return None
+
+
+get_performance_metrics = partial(
+    _get_performance_metrics, collection_name=c.PERFORMANCE_METRICS_COLLECTION
+)
+
+get_campaign_activity = partial(
+    _get_performance_metrics,
+    collection_name=c.CAMPAIGN_ACTIVITY_COLLECTION,
+    min_start_time=None,
+    max_end_time=None,
+)
 
 
 @retry(
@@ -2025,13 +2072,16 @@ def get_performance_metrics_by_engagement_details(
 )
 def _set_performance_metrics_status(
     database: DatabaseClient,
+    collection_name: str,
     performance_metrics_id: ObjectId,
     performance_metrics_status: str,
 ) -> Union[dict, None]:
-    """Set performance metrics status.
+    """Helper to set performance metrics status.
 
     Args:
         database (DatabaseClient): database client.
+        collection_name (str): Name of collection in which operation is
+            performed.
         performance_metrics_id (ObjectId): performance metrics ID.
         performance_metrics_status (str): performance metrics status.
 
@@ -2039,13 +2089,16 @@ def _set_performance_metrics_status(
         Union[dict, None]: performance metrics document.
     """
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+    collection = platform_db[collection_name]
 
     # TODO Below is also designed to accommodate
     # "transferred for reporting" status in the future
     update_doc = {}
     if performance_metrics_status == c.STATUS_TRANSFERRED_FOR_FEEDBACK:
         update_doc.update({c.STATUS_TRANSFERRED_FOR_FEEDBACK: True})
+
+    if performance_metrics_status == c.STATUS_TRANSFERRED_FOR_REPORT:
+        update_doc.update({c.STATUS_TRANSFERRED_FOR_REPORT: True})
 
     if update_doc:
         try:
@@ -2062,263 +2115,96 @@ def _set_performance_metrics_status(
     return None
 
 
-set_transferred_for_feedback = partial(
+set_metrics_transferred_for_feedback = partial(
     _set_performance_metrics_status,
+    collection_name=c.PERFORMANCE_METRICS_COLLECTION,
     performance_metrics_status=c.STATUS_TRANSFERRED_FOR_FEEDBACK,
 )
 
+set_metrics_transferred_for_report = partial(
+    _set_performance_metrics_status,
+    collection_name=c.PERFORMANCE_METRICS_COLLECTION,
+    performance_metrics_status=c.STATUS_TRANSFERRED_FOR_REPORT,
+)
 
-def get_all_performance_metrics(
+set_campaign_activity_transferred_for_feedback = partial(
+    _set_performance_metrics_status,
+    collection_name=c.CAMPAIGN_ACTIVITY_COLLECTION,
+    performance_metrics_status=c.STATUS_TRANSFERRED_FOR_FEEDBACK,
+)
+
+set_campaign_activity_transferred_for_report = partial(
+    _set_performance_metrics_status,
+    collection_name=c.CAMPAIGN_ACTIVITY_COLLECTION,
+    performance_metrics_status=c.STATUS_TRANSFERRED_FOR_REPORT,
+)
+
+
+def _get_all_performance_metrics(
     database: DatabaseClient,
+    collection_name: str,
     pending_transfer_for_feedback: bool = False,
+    pending_transfer_for_report: bool = False,
 ) -> Union[list, None]:
-    """Retrieve all campaign performance metrics.
+    """Helper to retrieve all campaign performance metrics or activity
+        depending on delivery platform. Optionally the result can be
+        filtered by metrics that are pending transfer either for
+        feedback or reporting, but not both at the same time.
 
     Args:
         database (DatabaseClient): database client.
-        pending_transfer_for_feedback (bool): If True, retrieve only
-            metrics that have not been transferred for feedback. Defaults to False.
+        collection_name (str): Name of collection in which operation is
+            performed.
+        pending_transfer_for_feedback (bool): If True, retrieve only metrics
+            that have not been transferred for feedback. Defaults to False.
+        pending_transfer_for_report (bool): If True, retrieve only metrics
+            that have not been transferred for reporting. Defaults to False.
+
+    Raises:
+        ValueError: Error indicating flags pending_transfer_for_feedback and
+            pending_transfer_for_report cannot both be True at the same time.
 
     Returns:
         Union[list, None]: list of performance metrics.
     """
 
-    metric_docs = None
-
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+    collection = platform_db[collection_name]
+
+    if pending_transfer_for_feedback and pending_transfer_for_report:
+        raise ValueError(
+            "get_all_performance_metrics: Flags pending_transfer_for_feedback "
+            "and pending_transfer_for_report cannot both be True at the "
+            "same time."
+        )
+
     try:
         if pending_transfer_for_feedback:
-            metric_docs = list(
+            return list(
                 collection.find(
                     {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
                 )
             )
-        else:
-            metric_docs = list(collection.find())
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-
-    return metric_docs
-
-
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
-def set_campaign_activity(
-    database: DatabaseClient,
-    delivery_platform_id: ObjectId,
-    delivery_platform_type: str,
-    delivery_job_id: ObjectId,
-    generic_campaigns: dict,
-    event_details: dict,
-) -> Union[dict, None]:
-    """Store campaign activity data.
-
-    Args:
-        database (DatabaseClient): A database client.
-        delivery_platform_id (ObjectId): delivery platform ID
-        delivery_platform_type (str): delivery platform type
-        delivery_job_id (ObjectId): The delivery job ID of audience.
-        generic_campaigns: (dict): generic campaigns
-        event_dict (dict): A dict containing campaign activity data.
-
-    Returns:
-        Union[dict, None]: Campaign Activity document.
-    """
-
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
-
-    # Check validity of delivery job ID
-    if not get_delivery_job(database, delivery_job_id):
-        raise de.InvalidID(delivery_job_id)
-
-    doc = {
-        c.METRICS_DELIVERY_PLATFORM_ID: delivery_platform_id,
-        c.METRICS_DELIVERY_PLATFORM_TYPE: delivery_platform_type,
-        c.DELIVERY_JOB_ID: delivery_job_id,
-        c.CREATE_TIME: datetime.datetime.utcnow(),
-        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaigns,
-        c.EVENT_DETAILS: event_details,
-        # By default not transferred for feedback to CDM yet
-        c.STATUS_TRANSFERRED_FOR_FEEDBACK: False,
-    }
-
-    try:
-        event_doc_id = collection.insert_one(doc).inserted_id
-        collection.create_index([(c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
-        if event_doc_id:
-            return collection.find_one({c.ID: event_doc_id})
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-
-    return None
-
-
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
-def get_campaign_activity(
-    database: DatabaseClient,
-    delivery_job_id: ObjectId,
-    pending_transfer_for_feedback: bool = False,
-) -> Union[list, None]:
-    """Retrieve campaign activity data.
-
-    Args:
-        database (DatabaseClient): database client.
-        delivery_job_id (ObjectId): delivery job ID.
-        pending_transfer_for_feedback (bool): If True, retrieve only
-            those campaign activties that have not been transferred for feedback.
-            Defaults to False.
-
-    Raises:
-        de.InvalidID: Invalid ID for delivery job.
-
-    Returns:
-        Union[list, None]: list of campaign activity documents.
-    """
-
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
-
-    # Check validity of delivery job ID
-    if not get_delivery_job(database, delivery_job_id):
-        raise de.InvalidID(delivery_job_id)
-
-    event_queries = [{c.DELIVERY_JOB_ID: delivery_job_id}]
-
-    if pending_transfer_for_feedback:
-        event_queries.append(
-            {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
-        )
-
-    try:
-        return list(collection.find({"$and": event_queries}))
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-
-    return None
-
-
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
-def set_campaign_activities(
-    database: DatabaseClient,
-    campaign_activity_docs: list,
-) -> bool:
-    """Store many campaign activities data.
-
-    Args:
-        database (DatabaseClient): A database client.
-        campaign_activity_docs (list): A list containing campaign activity documents.
-
-    Returns:
-        bool: Success flag.
-    """
-
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
-    # Insert the batch into the Mongo db
-    try:
-        collection.insert_many(campaign_activity_docs, ordered=True)
-        collection.create_index([(c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
-        return True
-    except pymongo.errors.BulkWriteError as exc:
-        for err in exc.details["writeErrors"]:
-            if err["code"] == c.DUPLICATE_ERR_CODE:
-                logging.warning(
-                    "Ignoring %s due to duplicate unique field!",
-                    str(err["op"]),
+        if pending_transfer_for_report:
+            return list(
+                collection.find(
+                    {c.STATUS_TRANSFERRED_FOR_REPORT: {"$eq": False}}
                 )
-                continue
-
-            logging.error(exc)
-            return False
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-        return False
-
-    return True
-
-
-def get_all_feedback_campaign_activities(
-    database: DatabaseClient,
-) -> Union[list, None]:
-    """Retrieve all campaign activities with feedback false.
-
-    Args:
-        database (DatabaseClient): database client.
-
-    Returns:
-        Union[list, None]: list of campaign activities docs.
-    """
-
-    campaign_activities_docs = None
-
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
-    try:
-        campaign_activities_docs = list(
-            collection.find(
-                {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
             )
-        )
+        return list(collection.find())
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
+        raise
 
-    return campaign_activities_docs
 
-
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+get_all_performance_metrics = partial(
+    _get_all_performance_metrics,
+    collection_name=c.PERFORMANCE_METRICS_COLLECTION,
 )
-def _set_campaign_activity_feedback_status(
-    database: DatabaseClient,
-    campaign_activity_id: ObjectId,
-    campaign_activity_feedback_status: str,
-) -> Union[dict, None]:
-    """Set campaign activity feedback status.
 
-    Args:
-        database (DatabaseClient): database client.
-        campaign_activity_id (ObjectId): campaign activity ID.
-        campaign_activity_feedback_status (str): campaign_activity feedback status.
-
-    Returns:
-        Union[dict, None]: campaign activitiy document.
-    """
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
-
-    update_doc = {}
-    if campaign_activity_feedback_status == c.STATUS_TRANSFERRED_FOR_FEEDBACK:
-        update_doc.update({c.STATUS_TRANSFERRED_FOR_FEEDBACK: True})
-
-    if update_doc:
-        try:
-            doc = collection.find_one_and_update(
-                {c.ID: campaign_activity_id},
-                {"$set": update_doc},
-                upsert=False,
-                new=True,
-            )
-            return doc
-        except pymongo.errors.OperationFailure as exc:
-            logging.error(exc)
-
-    return None
-
-
-set_campaign_activity_transferred_for_feedback = partial(
-    _set_campaign_activity_feedback_status,
-    campaign_activity_feedback_status=c.STATUS_TRANSFERRED_FOR_FEEDBACK,
+get_all_campaign_activities = partial(
+    _get_all_performance_metrics,
+    collection_name=c.CAMPAIGN_ACTIVITY_COLLECTION,
 )
 
 
@@ -2400,14 +2286,18 @@ def get_all_audience_customers(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def set_performance_metrics_bulk(
+def _set_performance_metrics_bulk(
     database: DatabaseClient,
+    collection_name: str,
     performance_metric_docs: list,
 ) -> dict:
-    """Store bulk performance metrics data.
+    """Helper to store bulk campaign performance metrics or activities data
+        depending on delivery platform.
 
     Args:
         database (DatabaseClient): A database client.
+        collection_name (str): Name of collection in which operation is
+            performed.
         performance_metric_docs (list): A list containing performance metrics documents.
 
     Returns:
@@ -2415,7 +2305,7 @@ def set_performance_metrics_bulk(
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+    collection = platform_db[collection_name]
 
     insert_result = {"insert_status": False}
 
@@ -2441,9 +2331,19 @@ def set_performance_metrics_bulk(
             return insert_result
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
-        return insert_result
 
     return insert_result
+
+
+set_performance_metrics_bulk = partial(
+    _set_performance_metrics_bulk,
+    collection_name=c.PERFORMANCE_METRICS_COLLECTION,
+)
+
+set_campaign_activities = partial(
+    _set_performance_metrics_bulk,
+    collection_name=c.CAMPAIGN_ACTIVITY_COLLECTION,
+)
 
 
 @retry(

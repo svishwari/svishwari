@@ -134,7 +134,7 @@ export default {
       .v-slider__thumb-label {
         transform: translateY(35px) translateX(-50%) rotate(45deg) !important;
         background-color: inherit !important;
-        color: var(--v-gray-base);
+        color: var(--v-black-darken1);
         border: none !important;
         font-size: 12px;
         line-height: 16px;

@@ -16,7 +16,7 @@
         height="55"
         class="d-flex ma-4"
       />
-      <v-menu open-on-hover offset-y>
+      <v-menu v-if="!isMini" open-on-hover offset-y>
         <template #activator="{ on }">
           <div class="client" v-on="on">
             <span>
@@ -30,7 +30,7 @@
         <template #default>
           <div class="px-6 py-5 white">
             <v-icon color="primary"> mdi-information </v-icon>
-            <span class="pl-4 text-caption neroBlack--text">
+            <span class="pl-4 text-caption black--text text--darken-4">
               This is where your future client accounts will be held.
             </span>
           </div>
@@ -55,7 +55,11 @@
         :to="item.link"
         :data-e2e="`nav-${item.icon}`"
       >
-        <v-list-item-icon v-if="item.icon" class="my-3">
+        <v-list-item-icon
+          v-if="item.icon"
+          class="my-3"
+          :class="{ 'home-menu-icon': !isMini }"
+        >
           <tooltip
             v-if="item.title"
             :key="item.title"
@@ -63,7 +67,12 @@
             color="black"
           >
             <template #label-content>
-              <icon :type="item.icon" :size="iconSize" color="white" />
+              <icon
+                :type="item.icon"
+                :size="iconSize"
+                color="white"
+                class="mt-1"
+              />
             </template>
             <template #hover-content>
               {{ item.title }}
@@ -82,7 +91,11 @@
           :to="menu.link"
           :data-e2e="`nav-${menu.icon}`"
         >
-          <v-list-item-icon v-if="menu.icon" class="my-3">
+          <v-list-item-icon
+            v-if="menu.icon"
+            class="my-3"
+            :class="{ 'menu-icon': !isMini }"
+          >
             <tooltip
               v-if="menu.icon"
               :key="menu.title"
@@ -113,7 +126,7 @@
 <script>
 import menuConfig from "@/menuConfig.json"
 import Icon from "@/components/common/Icon"
-import Tooltip from "@/components/common/Tooltip.vue"
+import Tooltip from "@/components/common/Tooltip"
 
 export default {
   name: "SideMenu",
@@ -135,7 +148,7 @@ export default {
     },
 
     iconSize() {
-      return this.isMini ? 24 : 21
+      return this.isMini ? 21 : 14
     },
   },
 }
@@ -186,7 +199,7 @@ export default {
   }
 
   .list-group {
-    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 
     span {
       color: var(--v-white-base);
@@ -205,6 +218,26 @@ export default {
     font-weight: normal;
     opacity: 0.5;
     padding: 1rem;
+  }
+  .side-menu-icon {
+    position: absolute;
+    left: 11.82%;
+    right: 81.82%;
+    bottom: 79.66%;
+  }
+  // Apply this css only if icon size is 14 otherwise icon size should be 18
+  .home-menu-icon {
+    svg {
+      top: 22.89%;
+      @extend .side-menu-icon;
+    }
+  }
+  // Apply this css only if icon size is 14 otherwise icon size should be 18
+  .menu-icon {
+    svg {
+      top: 32.89%;
+      @extend .side-menu-icon;
+    }
   }
 }
 .v-menu__content {

@@ -9,7 +9,7 @@
         :title="item.title"
         :icon="item.icon"
         :max-width="172"
-        class="mr-4"
+        class="mr-4 py-3"
       >
         <template #subtitle-extended>
           <span
