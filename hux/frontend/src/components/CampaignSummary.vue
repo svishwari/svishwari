@@ -4,7 +4,7 @@
       <v-card-text>
         <div
           v-if="!hasData(summaryCards, 'summary')"
-          class="empty-state pa-5 text--gray"
+          class="empty-state pa-5 black--text text--darken-1"
         >
           Be patient! Performance data is currently not available, check back
           tomorrow to see if the magic is ready.
@@ -95,8 +95,15 @@
     <v-card min-height="145px" flat class="mt-6 card-style">
       <v-card-title class="d-flex justify-space-between pb-4 pl-7">
         <div class="d-flex align-center">
-          <icon type="audiences" :size="24" color="neroBlack" class="mr-2" />
-          <span class="text-h5 neroBlack--text"> Audience performance </span>
+          <icon
+            type="audiences"
+            :size="24"
+            color="black-darken4"
+            class="mr-2"
+          />
+          <span class="text-h5 black--text text--darken-4">
+            Audience performance
+          </span>
         </div>
       </v-card-title>
       <v-card-text class="pl-6 pb-6 mt-0 pr-0">
@@ -702,7 +709,7 @@ export default {
     width: 100%;
     font-size: 14px;
     line-height: 22px;
-    color: var(--v-gray-base);
+    color: var(--v-black-darken1);
     border: 1px solid rgba(208, 208, 206, 0.3);
     box-sizing: border-box;
     border-radius: 5px;
@@ -734,7 +741,7 @@ export default {
       }
       .v-data-table-header {
         th {
-          background: var(--v-aliceBlue-base);
+          background: var(--v-primary-lighten2);
           &:first-child {
             border-radius: 12px 0px 0px 0px;
           }
@@ -749,13 +756,13 @@ export default {
       }
       tr {
         &:hover {
-          background: var(--v-aliceBlue-base) !important;
+          background: var(--v-primary-lighten2) !important;
         }
         height: 64px;
         td {
           font-size: 14px !important;
           line-height: 22px;
-          color: var(--v-neroBlack-base);
+          color: var(--v-black-darken4);
           .audience-name {
             span {
               display: flex;
@@ -766,7 +773,7 @@ export default {
           background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
           &:hover {
-            background: var(--v-aliceBlue-base) !important;
+            background: var(--v-primary-lighten2) !important;
           }
         }
       }
@@ -782,17 +789,17 @@ export default {
         width: 26ch;
       }
       .v-data-table__expanded__row {
-        background: var(--v-aliceBlue-base);
+        background: var(--v-primary-lighten2);
         td:nth-child(1) {
-          background: var(--v-aliceBlue-base);
+          background: var(--v-primary-lighten2);
         }
       }
     }
     .child {
       ::v-deep .theme--light {
-        background: var(--v-background-base);
+        background: var(--v-primary-lighten1);
         .v-data-table__wrapper {
-          box-shadow: inset 0px 10px 10px -4px var(--v-lightGrey-base);
+          box-shadow: inset 0px 10px 10px -4px var(--v-black-lighten3);
           border-bottom: thin solid rgba(0, 0, 0, 0.12);
         }
       }

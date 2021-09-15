@@ -7,7 +7,7 @@
       <template #right>
         <v-icon
           size="22"
-          color="lightGrey"
+          color="black lighten-3"
           class="icon-border icon-cursor pa-2 ma-1"
         >
           mdi-download
@@ -37,7 +37,7 @@
               </span>
             </v-card-title>
             <v-card-text class="justify-center title-text py-3">
-              <icon type="smile" :size="16" color="blue" />
+              <icon type="smile" :size="16" color="primary-lighten8" />
               <div>Hux ID</div>
               <span class="sample-card-text">{{ singleCustomer.hux_id }} </span>
             </v-card-text>
@@ -53,7 +53,7 @@
             class="rounded-lg card-info-wrapper card-shadow no-background"
           >
             <v-card-text class="pl-3 pr-3 pb-3 pt-3 matrix-card">
-              <div class="text-caption gray--text pb-1">
+              <div class="text-caption black--text text--darken-1 pb-1">
                 {{ data.title }}
                 <tooltip v-if="data.hoverTooltip" position-top>
                   <template #label-content>
@@ -110,8 +110,8 @@
         </v-col>
       </v-row>
 
-      <v-row>
-        <v-col cols="5">
+      <v-row class="table-card">
+        <v-col cols="5" class="pb-0">
           <v-card class="rounded-lg card-info-wrapper box-shadow-5">
             <v-card-title class="py-3 card-heading">
               {{ cardTitles[0].title }}
@@ -119,7 +119,7 @@
                 <icon
                   type="ds_lock_special"
                   :size="17"
-                  color="neroBlack"
+                  color="black-darken4"
                   class="ml-2"
                 />
                 <template #tooltip>
@@ -182,7 +182,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="3">
+        <v-col cols="3" class="pb-0">
           <v-card class="rounded-lg card-info-wrapper box-shadow-5">
             <v-card-title class="card-heading py-3">
               {{ cardTitles[1].title }}
@@ -204,12 +204,12 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="4" class="matix-card-space">
+        <v-col cols="4" class="matix-card-space pb-0">
           <identity-chart></identity-chart>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col md="12">
+      <v-row class="mt-0">
+        <v-col md="12" class="pt-0 pr-1">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
               <div class="mt-2">
@@ -489,7 +489,7 @@ export default {
   }
 }
 ::v-deep .v-card__title {
-  background: var(--v-aliceBlue-base);
+  background: var(--v-primary-lighten2);
 }
 ::v-deep .v-card__text {
   padding: 0px;
@@ -501,7 +501,7 @@ export default {
         height: 40px !important;
       }
       th {
-        background: var(--v-aliceBlue-base);
+        background: var(--v-primary-lighten2);
       }
     }
   }
@@ -519,23 +519,23 @@ export default {
   font-weight: 300 !important;
   font-size: 21px;
   line-height: 25px;
-  color: var(--v-neroBlack-base);
+  color: var(--v-black-darken4);
   justify-content: center;
 }
 .title-text {
   font-family: Open Sans;
   font-style: normal;
   font-weight: normal;
-  color: var(--v-gray-base) !important;
+  color: var(--v-black-darken1) !important;
   font-size: 12px !important;
 }
 .table-text {
-  color: var(--v-neroBlack-base);
+  color: var(--v-black-darken4);
   font-size: 12px !important;
 }
 .card-heading {
   font-size: 15px !important;
-  color: var(--v-neroBlack-base);
+  color: var(--v-black-darken4);
   font-weight: 400;
   height: 54px !important;
 }
@@ -544,7 +544,7 @@ export default {
   font-family: Open Sans;
   font-style: normal;
   font-weight: 600;
-  color: var(--v-neroBlack-base) !important;
+  color: var(--v-black-darken4) !important;
 }
 .icon-cursor {
   cursor: default !important;
@@ -552,6 +552,9 @@ export default {
 .details-card {
   position: relative;
   margin-top: -93px;
+}
+.table-card {
+  height: 284px;
 }
 .card-height {
   height: 155px !important;

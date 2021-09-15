@@ -1,6 +1,6 @@
 <template>
   <div class="list-container">
-    <div class="content-style pl-6 pr-4 pb-4">
+    <div v-if="mapChartData.length != 0" class="content-style pl-6 pr-4 pb-4">
       <div
         v-for="item in mapChartData"
         :key="item[defaultMetric]"
@@ -11,6 +11,9 @@
           {{ applyFilter(item[primaryMetric.key], primaryMetric.format) }}
         </span>
       </div>
+    </div>
+    <div v-else class="content-style pl-6 pr-4 pb-4 mt-3 global-text-line">
+      No data is available. Come back at another time.
     </div>
   </div>
 </template>
@@ -96,7 +99,7 @@ export default {
       }
       .value {
         @extend .global-text-line;
-        color: var(--v-neroBlack-base);
+        color: var(--v-black-darken4);
         flex: 1;
         text-align: left;
       }
@@ -110,11 +113,11 @@ export default {
     border-radius: 10px;
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--v-lightGrey-base);
+    background: var(--v-black-lighten3);
     border-radius: 5px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--v-lightGrey-base);
+    background: var(--v-black-lighten3);
   }
 }
 </style>

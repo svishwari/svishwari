@@ -3,7 +3,16 @@
     class="rounded-lg card-info-wrapper lookalike-card box-shadow-5"
     height="100%"
   >
-    <v-card-title class="card-heading d-flex justify-space-between py-3 pl-4">
+    <v-card-title
+      class="
+        card-heading
+        d-flex
+        justify-space-between
+        py-3
+        pl-4
+        lookalike-card-title
+      "
+    >
       <span>Lookalikes</span>
       <v-btn
         :disabled="!isActive"
@@ -12,7 +21,12 @@
         class="body-2 pa-1"
         @click="onCreateLookalike"
       >
-        <icon type="lookalike-card" :size="14" class="mr-1" />
+        <icon
+          type="lookalike-card"
+          :size="14"
+          class="mr-1"
+          :color="!isActive ? 'lightGreyAnotherVariant' : 'primary'"
+        />
         Create lookalike
       </v-btn>
     </v-card-title>
@@ -166,17 +180,17 @@ export default {
     font-family: Open Sans;
     font-style: normal;
     font-weight: normal;
-    color: var(--v-gray-base) !important;
+    color: var(--v-black-darken1) !important;
     font-size: 12px !important;
   }
   .table-text {
-    color: var(--v-neroBlack-base);
+    color: var(--v-black-darken4);
     font-size: 12px !important;
   }
 
   .card-heading {
     font-size: 15px !important;
-    background-color: var(--v-aliceBlue-base);
+    background-color: var(--v-primary-lighten2);
     font-weight: 400;
     height: 54px !important;
   }
@@ -185,7 +199,7 @@ export default {
     font-family: Open Sans;
     font-style: normal;
     font-weight: normal;
-    color: var(--v-gray-base) !important;
+    color: var(--v-black-darken1) !important;
     font-size: 12px !important;
     padding: 0px !important;
 
@@ -197,6 +211,20 @@ export default {
     height: inherit !important;
     min-height: 100px !important;
     max-height: 190px;
+  }
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px var(--v-white-base);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--v-lightGrey-base);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--v-lightGrey-base);
   }
 }
 </style>

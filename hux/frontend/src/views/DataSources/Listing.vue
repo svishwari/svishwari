@@ -19,12 +19,12 @@
           <td v-for="column in columns" :key="column.value">
             <div
               v-if="column.value === 'status'"
-              class="neroBlack--text text-h6"
+              class="black--text text--darken-4 text-h6"
             >
               <status
                 :status="item[column.value]"
                 :show-label="true"
-                class="d-flex"
+                class="data-feed-status d-flex"
                 :icon-size="15"
               />
             </div>
@@ -38,24 +38,30 @@
                 column.value === 'records_processed_percentage' &&
                 item[column.value] < 0.5
                   ? 'error--text'
-                  : 'neroBlack--text'
+                  : 'black--text text--darken-4'
               "
             >
               {{ item[column.value] | Percentage }}
             </div>
             <div
               v-else-if="column.value === 'last_processed'"
-              class="neroBlack--text text-h6"
+              class="black--text text--darken-4 text-h6"
             >
               <time-stamp :value="item[column.value]" />
             </div>
-            <div
-              v-else-if="column.value === 'name'"
-              class="neroBlack--text text-h6"
-            >
-              {{ item[column.value] }}
-            </div>
-            <div v-else class="neroBlack--text text-h6">
+            <tooltip v-else-if="column.value === 'name'">
+              <template #label-content>
+                <span class="black--text text--darken-4 text-h6 data-feed-name">
+                  {{ item[column.value] }}
+                </span>
+              </template>
+              <template #hover-content>
+                <span class="black--text text--darken-4 text-h6">
+                  {{ item[column.value] }}
+                </span>
+              </template>
+            </tooltip>
+            <div v-else class="black--text text--darken-4 text-h6">
               {{ item[column.value].toLocaleString() | Empty }}
             </div>
           </td>
@@ -71,13 +77,21 @@ import { mapGetters, mapActions } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import Status from "@/components/common/Status.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
 import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 
 export default {
   name: "DataSourceListing",
 
-  components: { Breadcrumb, PageHeader, HuxDataTable, Status, TimeStamp },
+  components: {
+    Breadcrumb,
+    PageHeader,
+    HuxDataTable,
+    Status,
+    Tooltip,
+    TimeStamp,
+  },
 
   data() {
     return {
@@ -85,27 +99,27 @@ export default {
         {
           text: "Data feed",
           value: "name",
-          width: "180",
+          width: "170",
         },
         {
           text: "Status",
           value: "status",
-          width: "120",
+          width: "84",
         },
         {
           text: "Records received",
           value: "records_received",
-          width: "120",
+          width: "125",
         },
         {
           text: "Records processed",
           value: "records_processed",
-          width: "120",
+          width: "132",
         },
         {
           text: "% of records processed",
           value: "records_processed_percentage",
-          width: "140",
+          width: "150",
         },
         {
           text: "30 day avg",
@@ -131,6 +145,10 @@ export default {
 
     selectedDataSourceExists() {
       return !!this.dataSource(this.dataSourceId)
+    },
+
+    selectedDataSource() {
+      return this.dataSource(this.dataSourceId)
     },
 
     dataSourceDataFeeds() {
@@ -166,7 +184,10 @@ export default {
     if (!this.selectedDataSourceExists) {
       await this.getDataSource(this.dataSourceId)
     }
-    await this.getDataFeeds(this.$route.params)
+    await this.getDataFeeds({
+      id: this.selectedDataSource.id,
+      type: this.selectedDataSource.type,
+    })
     this.loading = false
   },
 
@@ -183,6 +204,17 @@ export default {
   margin-top: 1px;
   ::v-deep .hux-data-table {
     table {
+      .data-feed-name {
+        @extend .text-ellipsis;
+        max-width: 25ch;
+      }
+      .data-feed-status {
+        span {
+          span {
+            font-size: 12px;
+          }
+        }
+      }
       .v-data-table-header {
         tr:first-child {
           th {
@@ -203,7 +235,7 @@ export default {
         }
         tr:last-child {
           td {
-            border-bottom: 1px solid var(--v-lightGrey-base) !important;
+            border-bottom: 1px solid var(--v-black-lighten3) !important;
           }
         }
       }

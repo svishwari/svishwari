@@ -92,4 +92,18 @@ export const audience = {
   is_lookalike: () => false,
   lookalikeable: () => faker.random.arrayElement(["Active"]),
   lookalike_audiences: () => mockLookalikeAudiences(5),
+  deliveries: [
+    {
+      delivery_platform_type: "sendgrid",
+      status: "Delivered",
+      last_delivered: faker.date.recent(),
+      delivery_platform_name: "Sendgrid by Twilio",
+    },
+    {
+      delivery_platform_type: "facebook",
+      status: "Delivered",
+      last_delivered: faker.date.recent(),
+      delivery_platform_name: "Facebook",
+    },
+  ],
 }

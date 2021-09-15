@@ -4,20 +4,14 @@
       <template #left>
         <breadcrumb :items="breadcrumbItems" />
       </template>
-      <template #right>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
-          mdi-download
-        </v-icon>
-      </template>
     </page-header>
     <page-header class="top-bar" :header-height="71">
       <template #left>
-        <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
-        <v-icon medium color="lightGrey" class="pl-6">mdi-magnify</v-icon>
+        <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
+        <v-icon medium color="black lighten-3" class="pl-6">mdi-magnify</v-icon>
       </template>
 
       <template #right>
-        <v-icon medium disabled color="primary refresh">mdi-refresh</v-icon>
         <router-link
           :to="{ name: 'EngagementConfiguration' }"
           class="text-decoration-none"
@@ -39,9 +33,10 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <hux-data-table
-      v-if="rowData.length > 0"
+      v-if="!loading && rowData.length > 0"
       :columns="columnDefs"
       :data-items="rowData"
+      view-height="calc(100vh - 210px)"
       nested
     >
       <template #item-row="{ item, expandFunc, isExpanded }">
@@ -54,14 +49,14 @@
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
               'expanded-row': isExpanded,
-              'pl-2': header.value == 'audiences',
+              'pl-3': header.value == 'audiences',
             }"
             :style="{ width: header.width }"
           >
             <div v-if="header.value == 'name'" class="w-80">
               <menu-cell
                 :value="item[header.value]"
-                :menu-options="actionItems"
+                :menu-options="getActionItems(item)"
                 route-name="EngagementDashboard"
                 :route-param="item['id']"
                 :data="item"
@@ -89,11 +84,10 @@
                   v-for="destination in getOverallDestinations(
                     item[header.value]
                   )"
-                  :key="destination.delivery_platform_type"
+                  :key="destination.id"
                 >
                   <template #label-content>
                     <logo
-                      :key="destination.id"
                       class="mr-1"
                       :type="destination.delivery_platform_type"
                       :size="18"
@@ -107,6 +101,7 @@
               <span v-if="item[header.value].length > 3" class="ml-1">
                 + {{ item[header.value].length - 2 }}
               </span>
+              <span v-else-if="item[header.value].length == 1">—</span>
             </div>
             <div v-if="header.value == 'status'" class="text-caption">
               <status
@@ -117,7 +112,41 @@
               />
             </div>
             <div v-if="header.value == 'last_delivered'">
-              <time-stamp :value="item[header.value]" />
+              <tooltip>
+                <template #label-content>
+                  {{ item[header.value] | Date("relative") | Empty }}
+                </template>
+                <template #hover-content>
+                  <div v-if="item[header.value] !== ''">
+                    <div class="neroBlack--text text-caption mb-2">
+                      Delivered to:
+                    </div>
+                    <div
+                      v-for="destination in item['destinations']"
+                      :key="destination.id"
+                      class="mb-2"
+                    >
+                      <div class="d-flex align-center mb-1">
+                        <logo
+                          :type="destination.delivery_platform_type"
+                          :size="18"
+                        />
+                        <span class="ml-1 neroBlack--text text-caption">
+                          {{ destination.name }}
+                        </span>
+                      </div>
+                      <div class="neroBlack--text text-caption">
+                        {{
+                          destination.latest_delivery
+                            ? destination.latest_delivery.update_time
+                            : "" | Date | Empty
+                        }}
+                      </div>
+                    </div>
+                  </div>
+                  <div v-else>—</div>
+                </template>
+              </tooltip>
             </div>
             <div v-if="header.value == 'delivery_schedule'">
               {{ item[header.value] | DeliverySchedule }}
@@ -151,6 +180,7 @@
             :data-items="parentItem.audiences"
             :show-header="false"
             class="expanded-table"
+            view-height="auto"
             nested
           >
             <template #item-row="{ item, expandFunc, isExpanded }">
@@ -167,10 +197,13 @@
                   <div v-if="header.value == 'name'">
                     <menu-cell
                       :value="item[header.value]"
-                      :menu-options="audienceActionItems"
+                      :menu-options="getAudienceActionItems(item)"
                       route-name="AudienceInsight"
                       :route-param="item['id']"
                       :data="item"
+                      :label-class="{
+                        'no-expand': item.destinations.length == 0,
+                      }"
                     >
                       <template #expand-icon>
                         <v-icon
@@ -202,11 +235,10 @@
                         v-for="destination in getOverallDestinations(
                           item[header.value]
                         )"
-                        :key="destination.delivery_platform_type"
+                        :key="destination.id"
                       >
                         <template #label-content>
                           <logo
-                            :key="destination.id"
                             class="mr-1"
                             :type="destination.delivery_platform_type"
                             :size="18"
@@ -222,7 +254,40 @@
                     </span>
                   </div>
                   <div v-if="header.value == 'last_delivered'">
-                    <time-stamp :value="item[header.value]" />
+                    <tooltip>
+                      <template #label-content>
+                        {{ item[header.value] | Date("relative") | Empty }}
+                      </template>
+                      <template #hover-content>
+                        <div>
+                          <div class="neroBlack--text text-caption mb-2">
+                            Delivered to:
+                          </div>
+                          <div
+                            v-for="destination in item['destinations']"
+                            :key="destination.id"
+                            class="mb-2"
+                          >
+                            <div class="d-flex align-center mb-1">
+                              <logo
+                                :type="destination.delivery_platform_type"
+                                :size="18"
+                              />
+                              <span class="ml-1 neroBlack--text text-caption">
+                                {{ destination.name }}
+                              </span>
+                            </div>
+                            <div class="neroBlack--text text-caption">
+                              {{
+                                destination.latest_delivery.update_time
+                                  | Date
+                                  | Empty
+                              }}
+                            </div>
+                          </div>
+                        </div>
+                      </template>
+                    </tooltip>
                   </div>
                   <div v-if="header.value == 'delivery_schedule'">
                     {{ item[header.value] | DeliverySchedule }}
@@ -258,6 +323,7 @@
                   :columns="expandedHeaders"
                   :data-items="getDestinations(parentItem)"
                   :show-header="false"
+                  view-height="auto"
                 >
                   <template #row-item="{ item }">
                     <td
@@ -412,39 +478,6 @@ export default {
         type: "success",
         message: "",
       },
-      actionItems: [
-        { title: "Favorite", isDisabled: true },
-        { title: "Export", isDisabled: true },
-        { title: "Edit engagement", isDisabled: true },
-        { title: "Duplicate", isDisabled: true },
-        {
-          title: "Make inactive",
-          isDisabled: false,
-          onClick: (value) => {
-            this.makeInactiveEngagement(value)
-          },
-        },
-        { title: "Delete engagement", isDisabled: true },
-      ],
-      audienceActionItems: [
-        { title: "Favorite", isDisabled: true },
-        { title: "Export", isDisabled: true },
-        { title: "Edit audience", isDisabled: true },
-        { title: "Duplicate", isDisabled: true },
-        {
-          title: "Create a lookalike",
-          isDisabled: false,
-          menu: {
-            icon: "facebook",
-            title: "Facebook",
-            isDisabled: true,
-            onClick: (value) => {
-              this.openLookAlikeDrawer(value)
-            },
-          },
-        },
-        { title: "Remove audience", isDisabled: true },
-      ],
       breadcrumbItems: [
         {
           text: "Engagements",
@@ -455,20 +488,66 @@ export default {
       loading: true,
       manualDeliverySchedule: "Manual",
       columnDefs: [
-        { text: "Engagement name", value: "name", width: "300px" },
-        { text: "Audiences", value: "audiences", width: "180px" },
-        { text: "Destinations", value: "destinations", width: "150px" },
-        { text: "Status", value: "status", width: "140px" },
-        { text: "Last delivered", value: "last_delivered", width: "140px" },
+        {
+          text: "Engagement name",
+          value: "name",
+          width: "300px",
+          class: "sticky-header",
+        },
+        {
+          text: "Audiences",
+          value: "audiences",
+          width: "180px",
+          class: "sticky-header",
+        },
+        {
+          text: "Destinations",
+          value: "destinations",
+          width: "150px",
+          class: "sticky-header",
+        },
+        {
+          text: "Status",
+          value: "status",
+          width: "140px",
+          class: "sticky-header",
+        },
+        {
+          text: "Last delivered",
+          value: "last_delivered",
+          width: "140px",
+          class: "sticky-header",
+        },
         {
           text: "Delivery schedule",
           value: "delivery_schedule",
           width: "200px",
+          class: "sticky-header",
         },
-        { text: "Last updated", value: "update_time", width: "200px" },
-        { text: "Last updated by", value: "updated_by", width: "141px" },
-        { text: "Created", value: "create_time", width: "200px" },
-        { text: "Created by", value: "created_by", width: "140px" },
+        {
+          text: "Last updated",
+          value: "update_time",
+          width: "200px",
+          class: "sticky-header",
+        },
+        {
+          text: "Last updated by",
+          value: "updated_by",
+          width: "141px",
+          class: "sticky-header",
+        },
+        {
+          text: "Created",
+          value: "create_time",
+          width: "200px",
+          class: "sticky-header",
+        },
+        {
+          text: "Created by",
+          value: "created_by",
+          width: "140px",
+          class: "sticky-header",
+        },
       ],
     }
   },
@@ -488,16 +567,48 @@ export default {
     rowData() {
       let engagementList = this.engagementData
       engagementList = engagementList.map((eng) => {
-        let destinationList = eng.audiences.map((aud) => aud["destinations"])
-        // Flattering the list of sub audiences
-        destinationList = [].concat.apply([], destinationList)
-        // Fetch unique destinations based on id
-        destinationList = Array.from(
-          new Set(destinationList.map((a) => a.id))
-        ).map((id) => {
-          return destinationList.find((a) => a.id === id)
+        let last_delivered_eng = ""
+        let engDestinationList = []
+        let eng_audiences = eng.audiences.map((audience) => {
+          let last_delivered_aud = ""
+          audience.destinations.map((destination) => {
+            let dest_latest_delivery_time = destination.latest_delivery
+              ? destination.latest_delivery.update_time || ""
+              : ""
+            let engDestIndex = engDestinationList.findIndex(
+              (each) => destination.id === each.id
+            )
+            if (last_delivered_aud < dest_latest_delivery_time) {
+              last_delivered_aud = dest_latest_delivery_time
+            }
+            if (engDestIndex !== -1) {
+              if (
+                engDestinationList[engDestIndex].latest_delivery.update_time ||
+                "" < dest_latest_delivery_time
+              ) {
+                engDestinationList[engDestIndex] = destination
+              }
+            } else {
+              engDestinationList.push(destination)
+            }
+          })
+          if (last_delivered_eng < last_delivered_aud) {
+            last_delivered_eng = last_delivered_aud
+          }
+          return {
+            ...audience,
+            last_delivered: last_delivered_aud,
+          }
         })
-        return { ...eng, destinations: destinationList }
+        engDestinationList = engDestinationList.sort((a, b) =>
+          a.name > b.name ? 1 : -1
+        )
+        return {
+          ...eng,
+          audiences: eng_audiences,
+          destinations: engDestinationList,
+          last_delivered: last_delivered_eng,
+        }
       })
       return engagementList.sort((a, b) => (a.name > b.name ? 1 : -1))
     },
@@ -576,6 +687,70 @@ export default {
       this.alert.message = message
       this.flashAlert = true
     },
+    getActionItems(engagement) {
+      let actionItems = [
+        { title: "Favorite", isDisabled: true },
+        { title: "Export", isDisabled: true },
+        {
+          title: "Edit engagement",
+          isDisabled: false,
+          onClick: () => {
+            this.editEngagement(engagement.id)
+          },
+        },
+        { title: "Duplicate", isDisabled: true },
+        {
+          title: "Make inactive",
+          isDisabled: false,
+          onClick: (value) => {
+            this.makeInactiveEngagement(value)
+          },
+        },
+        { title: "Delete engagement", isDisabled: true },
+      ]
+
+      return actionItems
+    },
+    editEngagement(id) {
+      this.$router.push({
+        name: "EngagementUpdate",
+        params: { id: id },
+      })
+    },
+    getAudienceActionItems(audience) {
+      let audienceActionItems = [
+        { title: "Favorite", isDisabled: true },
+        { title: "Export", isDisabled: true },
+        {
+          title: "Edit audience",
+          isDisabled: false,
+          onClick: () => {
+            this.editAudience(audience.id)
+          },
+        },
+        { title: "Duplicate", isDisabled: true },
+        {
+          title: "Create a lookalike",
+          isDisabled: false,
+          menu: {
+            icon: "facebook",
+            title: "Facebook",
+            isDisabled: true,
+            onClick: (value) => {
+              this.openLookAlikeDrawer(value)
+            },
+          },
+        },
+        { title: "Remove audience", isDisabled: true },
+      ]
+      return audienceActionItems
+    },
+    editAudience(id) {
+      this.$router.push({
+        name: "AudienceUpdate",
+        params: { id: id },
+      })
+    },
   },
 }
 </script>
@@ -590,6 +765,9 @@ export default {
     .mdi-chevron-right,
     .mdi-dots-vertical {
       background: transparent !important;
+    }
+    .no-expand {
+      padding-left: 8px;
     }
   }
   // This CSS is to avoid conflict with Tooltip component.
@@ -614,15 +792,10 @@ export default {
       transform: rotate(90deg);
     }
   }
-  .page-header--wrap {
-    box-shadow: 0px 1px 1px -1px var(--v-lightGrey-base),
-      0px 1px 1px 0px var(--v-lightGrey-base),
-      0px 1px 2px 0px var(--v-lightGrey-base) !important;
-  }
   .top-bar {
     margin-top: 1px;
     .v-icon--disabled {
-      color: var(--v-lightGrey-base) !important;
+      color: var(--v-black-lighten3) !important;
       font-size: 24px;
     }
     .text--refresh {
@@ -634,41 +807,38 @@ export default {
       tr {
         height: 64px;
         &:hover {
-          background: var(--v-aliceBlue-base) !important;
+          background: var(--v-primary-lighten2) !important;
         }
         td {
           font-size: 14px !important;
-          color: var(--v-neroBlack-base);
+          color: var(--v-black-darken4);
         }
         td:nth-child(1) {
           font-size: 14px !important;
         }
       }
       .expanded-row {
-        background-color: var(--v-aliceBlue-base) !important;
+        background-color: var(--v-primary-lighten2) !important;
       }
       .v-data-table-header {
         th:nth-child(1) {
-          position: sticky;
-          top: 0;
           left: 0;
-          z-index: 4;
+          z-index: 5;
           border-right: thin solid rgba(0, 0, 0, 0.12);
+          overflow-y: visible;
+          overflow-x: visible;
         }
         border-radius: 12px 12px 0px 0px;
       }
       tr {
-        th {
-          border-top: thin solid rgba(0, 0, 0, 0.12);
-        }
         &:hover {
-          background: var(--v-aliceBlue-base) !important;
+          background: var(--v-primary-lighten2) !important;
         }
         height: 64px;
         td {
           font-size: 14px !important;
           line-height: 22px;
-          color: var(--v-neroBlack-base);
+          color: var(--v-black-darken4);
         }
         td:nth-child(1) {
           position: sticky;
@@ -678,7 +848,7 @@ export default {
           background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
           &:hover {
-            background: var(--v-aliceBlue-base) !important;
+            background: var(--v-primary-lighten2) !important;
           }
           .menu-cell-wrapper > div {
             a.text-decoration-none {
@@ -692,16 +862,16 @@ export default {
       tbody {
         tr:last-child {
           td {
-            border-bottom: 1px solid var(--v-lightGrey-base) !important;
+            border-bottom: 1px solid var(--v-black-lighten3) !important;
           }
         }
       }
     }
     .child {
       ::v-deep .theme--light {
-        background: var(--v-background-base);
+        background: var(--v-primary-lighten1);
         .v-data-table__wrapper {
-          box-shadow: inset 0px 10px 10px -4px var(--v-lightGrey-base);
+          box-shadow: inset 0px 10px 10px -4px var(--v-black-lighten3);
           border-bottom: thin solid rgba(0, 0, 0, 0.12);
         }
       }

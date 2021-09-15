@@ -15,6 +15,7 @@ from marshmallow import ValidationError
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.delivery_platform_management import (
+    create_delivery_platform_lookalike_audience,
     set_delivery_platform,
     set_delivery_job,
     set_performance_metrics,
@@ -175,14 +176,14 @@ class TestEngagementMetricsDisplayAds(TestCase):
         )
 
         set_performance_metrics(
-            self.database,
-            self.delivery_platform[db_c.ID],
-            "facebook",
-            self.delivery_job[db_c.ID],
-            None,
-            DISPLAY_ADS_METRICS,
-            None,
-            None,
+            database=self.database,
+            delivery_platform_id=self.delivery_platform[db_c.ID],
+            delivery_platform_type=db_c.DELIVERY_PLATFORM_FACEBOOK,
+            delivery_job_id=self.delivery_job[db_c.ID],
+            metrics_dict=DISPLAY_ADS_METRICS,
+            start_time=datetime.utcnow(),
+            end_time=datetime.utcnow(),
+            generic_campaigns=[],
         )
 
         self.addCleanup(mock.patch.stopall)
@@ -384,14 +385,14 @@ class TestEngagementMetricsEmail(TestCase):
         )
 
         set_performance_metrics(
-            self.database,
-            self.delivery_platform_sfmc[db_c.ID],
-            "salesforce",
-            self.delivery_job_sfmc[db_c.ID],
-            None,
-            EMAIL_METRICS,
-            None,
-            None,
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_sfmc[db_c.ID],
+            delivery_platform_type=db_c.DELIVERY_PLATFORM_SFMC,
+            delivery_job_id=self.delivery_job_sfmc[db_c.ID],
+            metrics_dict=EMAIL_METRICS,
+            start_time=datetime.utcnow(),
+            end_time=datetime.utcnow(),
+            generic_campaigns=[],
         )
 
         self.addCleanup(mock.patch.stopall)
@@ -674,6 +675,29 @@ class TestEngagementRoutes(TestCase):
         self.engagement_ids = [
             str(set_engagement(self.database, **x)) for x in engagements
         ]
+
+        # set delivery platform
+        self.delivery_platform = set_delivery_platform(
+            self.database,
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
+            "My delivery platform 1",
+            {
+                "facebook_access_token": "unified_facebook_access_token",
+                "facebook_app_secret": "unified_facebook_app_secret",
+                "facebook_app_id": "2849684615131430",
+                "facebook_ad_account_id": "act_1429837470372777",
+            },
+        )
+
+        # create a lookalike audience
+        self.lookalike_audience = create_delivery_platform_lookalike_audience(
+            self.database,
+            self.delivery_platform[db_c.ID],
+            self.audiences[0][db_c.ID],
+            "My lookalike audience 1",
+            0.01,
+            "US",
+        )
 
         self.addCleanup(mock.patch.stopall)
 
@@ -1504,6 +1528,38 @@ class TestEngagementRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_add_lookalike_audience_to_engagement(self) -> None:
+        """Test add lookalike audience to engagement
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        engagement_id = self.engagement_ids[0]
+
+        new_lookalike_audience = {
+            "audiences": [
+                {
+                    db_c.OBJECT_ID: str(self.lookalike_audience[db_c.ID]),
+                    "destinations": [
+                        {db_c.OBJECT_ID: str(ObjectId())},
+                        {db_c.OBJECT_ID: str(ObjectId())},
+                    ],
+                }
+            ]
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/{api_c.AUDIENCES}",
+            json=new_lookalike_audience,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(api_c.OPERATION_SUCCESS, response.json["message"])
 
     def test_add_audience_to_engagement_invalid_id(self):
         """

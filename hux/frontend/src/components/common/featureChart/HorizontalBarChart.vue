@@ -15,7 +15,7 @@
           }"
           class="mx-auto score-tooltip-style"
         >
-          <div class="neroBlack--text caption">
+          <div class="black--text text--darken-4 caption">
             {{ scoreTip.score }}
           </div>
         </v-card>

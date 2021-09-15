@@ -193,6 +193,36 @@ class CDPTest(TestCase):
                 ],
             )
 
+    def test_get_demographic_by_country(self) -> None:
+        """Test get customers insights by state
+
+        Args:
+
+        Returns:
+            None
+        """
+        # TODO: Uncomment and update once CDM API is available
+        # self.request_mocker.stop()
+        # self.request_mocker.post(
+        #     f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+        #     json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
+        # )
+        # self.request_mocker.start()
+        #
+        customer_insights_by_country = (
+            t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE[api_c.BODY]
+        )
+
+        self.assertTrue(customer_insights_by_country)
+        for i, record in enumerate(customer_insights_by_country):
+            test_record = t_c.CUSTOMERS_INSIGHTS_BY_COUNTRIES_RESPONSE[
+                api_c.BODY
+            ][i]
+            self.assertIn(api_c.NAME, record)
+            self.assertEqual(record[api_c.NAME], test_record[api_c.NAME])
+            self.assertIn(api_c.SIZE, record)
+            self.assertEqual(record[api_c.SIZE], test_record[api_c.SIZE])
+
     def test_get_demographic_by_state(self) -> None:
         """Test get customers insights by state
 
@@ -250,10 +280,12 @@ class CDPTest(TestCase):
         )
         self.request_mocker.start()
 
-        filters = api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
-        filters[api_c.COUNT] = 5
-
-        customer_insights_by_cities = get_city_ltvs(token="", filters=filters)
+        customer_insights_by_cities = get_city_ltvs(
+            token="",
+            filters={
+                api_c.AUDIENCE_FILTERS: api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+            },
+        )
 
         self.assertTrue(customer_insights_by_cities)
         for i, record in enumerate(customer_insights_by_cities):

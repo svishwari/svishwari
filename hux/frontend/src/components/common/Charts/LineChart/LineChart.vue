@@ -53,15 +53,15 @@ export default {
   watch: {
     chartDimensions: {
       handler() {
-        d3Select.select(this.$refs.stackBarChart).selectAll("svg").remove()
-        this.initiateStackBarChart()
+        d3Select.select(this.$refs.lineChart).selectAll("svg").remove()
+        this.initiateLineChart()
       },
       immediate: false,
       deep: true,
     },
   },
   methods: {
-    async initiateStackBarChart() {
+    async initiateLineChart() {
       await this.value
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
@@ -69,6 +69,8 @@ export default {
       let margin = { top: 15, right: 45, bottom: 100, left: 48 }
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
+
+      d3Select.select(this.$refs.lineChart).selectAll("svg").remove()
 
       let svg = d3Select
         .select(this.$refs.lineChart)
@@ -128,7 +130,7 @@ export default {
             .tickSize(-h)
             .ticks(8)
             .tickPadding(15)
-            .tickFormat(d3TimeFormat.timeFormat("%-m/%-d/%Y"))
+            .tickFormat(d3TimeFormat.timeFormat("%m/%d/%y"))
         )
         .style("font-size", "12px")
 
@@ -165,6 +167,7 @@ export default {
         .datum(this.data)
         .attr("class", "line")
         .style("stroke", "#9DD4CF")
+        .style("stroke-width", 2)
         .style("fill", "transparent")
         .attr("d", lineTrace(0))
         .transition()
@@ -179,15 +182,10 @@ export default {
         .append("circle")
         .attr("class", "dot")
         .attr("r", 4)
-        .attr("cx", 0)
-        .attr("cy", h)
-        .transition()
-        .duration(500)
-        .delay((d, i) => i * 15)
         .attr("cx", (d) => xScale(new Date(dateFormatter(d.date))))
         .attr("cy", (d) => yScale(d.total_event_count))
-        .style("fill", "white")
-        .attr("stroke", "#9DD4CF")
+        .style("fill", "transparent")
+        .attr("stroke", "transparent")
 
       svg
         .append("line")
@@ -248,7 +246,7 @@ export default {
               .attr("cx", finalXCoordinate)
               .attr("cy", yPosition)
               .attr("r", 5.5)
-              .style("stroke", "#00a3e0")
+              .style("stroke", "#9DD4CF")
               .style("stroke-opacity", "1")
               .style("fill", "white")
               .style("pointer-events", "none")

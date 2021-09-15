@@ -1,7 +1,7 @@
 <template>
   <div class="list-wrapper">
     <div class="d-flex align-end mb-4">
-      <icon type="data-sources-list" :size="20" color="neroBlack" />
+      <icon type="data-sources-list" :size="20" color="black-darken4" />
       <h5 class="text-h4 ml-2 mt-1">Data Sources</h5>
       <router-link
         :to="{
@@ -20,13 +20,22 @@
         :key="dataSource.id"
         :title="dataSource.name"
         :icon="dataSource.type"
+        :class="
+          dataSource.status === 'Active'
+            ? 'data-source-list-active'
+            : 'data-source-list-pending'
+        "
         hide-button
         data-e2e="dataSourcesList"
         class="mb-3 pr-10 list"
-        :to="{
-          name: 'DataSourceListing',
-          params: { id: dataSource.id, type: dataSource.type },
-        }"
+        :to="
+          dataSource.status === 'Active'
+            ? {
+                name: 'DataSourceListing',
+                params: { id: dataSource.id },
+              }
+            : {}
+        "
       >
         <status :status="dataSource.status" :icon-size="17" class="status" />
       </card-horizontal>
@@ -87,6 +96,15 @@ export default {
         font-size: 17px;
       }
     }
+  }
+  .data-source-list-active {
+    @extend .cursor-pointer;
+    ::v-deep .card-horizontal-title {
+      color: var(--v-primary-base);
+    }
+  }
+  .data-source-list-pending {
+    @extend .cursor-default;
   }
 }
 </style>

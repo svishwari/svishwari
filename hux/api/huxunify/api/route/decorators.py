@@ -19,10 +19,11 @@ from huxunifylib.database.engagement_management import get_engagement
 from huxunifylib.database import (
     orchestration_management,
     constants as db_c,
+    delivery_platform_management as destination_management,
 )
 import huxunifylib.database.db_exceptions as de
 
-from huxunify.api.route.utils import get_db_client, validate_destination_id
+from huxunify.api.route.utils import get_db_client
 from huxunify.api import constants
 from huxunify.api.data_connectors.okta import (
     introspect_token,
@@ -500,22 +501,22 @@ def validate_destination(
             Returns:
                object: returns a decorated function object.
             """
-            destination_id = kwargs.get("destination_id", None)
-            return_val = validate_destination_id(
-                destination_id, check_if_destination_in_db
-            )
-            # check if destination_id is returned
-            if isinstance(return_val, ObjectId):
-                kwargs["destination_id"] = ObjectId(destination_id)
-            else:
-                # return response message
-                logger.error(
-                    "%s Encountered executing %s in %s.",
-                    return_val[0].get("message"),
-                    in_function.__qualname__,
-                    in_function.__module__,
-                )
-                return return_val
+            destination_id = ObjectId(kwargs.get("destination_id", None))
+
+            if check_if_destination_in_db:
+                if not destination_management.get_delivery_platform(
+                    get_db_client(), destination_id
+                ):
+                    logger.error(
+                        "Could not find destination with id %s.",
+                        destination_id,
+                    )
+                    return {
+                        "message": constants.DESTINATION_NOT_FOUND
+                    }, HTTPStatus.NOT_FOUND
+
+            kwargs["destination_id"] = destination_id
+
             return in_function(*args, **kwargs)
 
         decorator.__wrapped__ = in_function

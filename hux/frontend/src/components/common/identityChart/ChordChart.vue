@@ -216,14 +216,14 @@ export default {
 <style lang="scss" scoped>
 .chart-container {
   max-width: none;
-  height: 252px;
+  height: 247px;
 
   .legend-section {
     span {
       margin-left: 8px;
       font-size: 12px;
       line-height: 16px;
-      color: var(--v-gray-base) !important;
+      color: var(--v-black-darken1) !important;
     }
   }
 

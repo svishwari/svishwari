@@ -4,20 +4,14 @@
       <template slot="left">
         <breadcrumb :items="breadcrumbItems" />
       </template>
-      <template slot="right">
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1"
-          >mdi-download</v-icon
-        >
-      </template>
     </page-header>
     <page-header class="top-bar" :header-height="71">
       <template slot="left">
-        <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
-        <v-icon medium color="lightGrey" class="pl-6">mdi-magnify</v-icon>
+        <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
+        <v-icon medium color="black lighten-3" class="pl-6">mdi-magnify</v-icon>
       </template>
 
       <template slot="right">
-        <v-icon medium color="lightGrey refresh">mdi-refresh</v-icon>
         <router-link
           :to="{ name: 'AudienceConfiguration' }"
           class="text-decoration-none"
@@ -37,11 +31,12 @@
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row v-if="!loading" class="pt-3 pb-7 pl-3 white">
+    <div v-if="!loading" class="white">
       <hux-data-table
         v-if="isDataExists"
         :columns="columnDefs"
         :data-items="audienceList"
+        view-height="calc(100vh - 210px)"
       >
         <template #row-item="{ item }">
           <td
@@ -61,7 +56,7 @@
                     <icon
                       type="lookalike"
                       :size="20"
-                      color="neroBlack"
+                      color="black-darken4"
                       class="mr-2"
                     />
                   </template>
@@ -119,7 +114,36 @@
               <span v-else>—</span>
             </div>
             <div v-if="header.value == 'last_delivered'">
-              <time-stamp :value="item[header.value]" />
+              <tooltip>
+                <template #label-content>
+                  {{ item[header.value] | Date("relative") | Empty }}
+                </template>
+                <template #hover-content>
+                  <div>
+                    <div class="neroBlack--text text-caption mb-2">
+                      Delivered to:
+                    </div>
+                    <div
+                      v-for="deliveries in item['deliveries']"
+                      :key="deliveries.last_delivered"
+                      class="mb-2"
+                    >
+                      <div class="d-flex align-center mb-1">
+                        <logo
+                          :type="deliveries.delivery_platform_type"
+                          :size="18"
+                        />
+                        <span class="ml-1 neroBlack--text text-caption">
+                          {{ deliveries.delivery_platform_name }}
+                        </span>
+                      </div>
+                      <div class="neroBlack--text text-caption">
+                        {{ deliveries.last_delivered | Date | Empty }}
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </tooltip>
             </div>
             <div
               v-if="
@@ -166,7 +190,7 @@
           </router-link>
         </template>
       </empty-page>
-    </v-row>
+    </div>
 
     <look-alike-audience
       ref="lookalikeWorkflow"
@@ -243,7 +267,6 @@ export default {
           width: "331px",
           fixed: true,
           divider: true,
-          class: "fixed-header",
         },
         {
           text: "Status",
@@ -283,7 +306,7 @@ export default {
         {
           text: "Created by",
           value: "created_by",
-          width: "100%",
+          width: "148",
         },
       ],
       loading: false,
@@ -377,15 +400,10 @@ export default {
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
   }
-  .page-header--wrap {
-    box-shadow: 0px 1px 1px -1px var(--v-lightGrey-base),
-      0px 1px 1px 0px var(--v-lightGrey-base),
-      0px 1px 2px 0px var(--v-lightGrey-base) !important;
-  }
   .top-bar {
     margin-top: 1px;
     .v-icon--disabled {
-      color: var(--v-lightGrey-base) !important;
+      color: var(--v-black-lighten3) !important;
       font-size: 24px;
     }
     .text--refresh {
@@ -395,6 +413,33 @@ export default {
 
   .hux-data-table {
     margin-top: 1px;
+    ::v-deep table {
+      .v-data-table-header {
+        th:nth-child(1) {
+          position: sticky;
+          left: 0;
+          z-index: 5;
+          border-right: thin solid rgba(0, 0, 0, 0.12);
+          overflow-y: visible;
+          overflow-x: visible;
+        }
+        border-radius: 12px 12px 0px 0px;
+      }
+      tr {
+        td:nth-child(1) {
+          position: sticky;
+          top: 0;
+          left: 0;
+          z-index: 4;
+          background: var(--v-white-base);
+          border-right: thin solid rgba(0, 0, 0, 0.12);
+          &:hover {
+            background: var(--v-aliceBlue-base) !important;
+          }
+        }
+      }
+    }
+
     table {
       tr {
         td {
@@ -405,7 +450,7 @@ export default {
       tbody {
         tr:last-child {
           td {
-            border-bottom: 1px solid var(--v-lightGrey-base) !important;
+            border-bottom: 1px solid var(--v-black-lighten3) !important;
           }
         }
       }

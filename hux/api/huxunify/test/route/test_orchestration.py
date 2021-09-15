@@ -34,7 +34,7 @@ from huxunify.api import constants as api_c
 import huxunify.test.constants as t_c
 from huxunify.app import create_app
 
-
+# pylint: disable=too-many-public-methods
 class OrchestrationRouteTest(TestCase):
     """Orchestration Route tests"""
 
@@ -1040,3 +1040,57 @@ class OrchestrationRouteTest(TestCase):
             for delivery in engagement.get(api_c.DELIVERIES):
                 if delivery.get(api_c.IS_AD_PLATFORM):
                     self.assertIsNone(delivery.get(api_c.MATCH_RATE))
+
+    def test_delete_audience(self) -> None:
+        """
+        Test delete audience API with valid id
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        response = self.test_client.delete(
+            f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+    def test_delete_audience_where_audience_does_not_exist(self) -> None:
+        """
+        Test delete audience API with valid id but the object does not exist
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        response = self.test_client.delete(
+            f"{self.audience_api_endpoint}/{str(ObjectId())}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+    def test_delete_audience_with_invalid_id(self) -> None:
+        """
+        Test delete audience API with valid id but the object does not exist
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        response = self.test_client.delete(
+            f"{self.audience_api_endpoint}/{t_c.INVALID_ID}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {"message": api_c.BSON_INVALID_ID(t_c.INVALID_ID)}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)

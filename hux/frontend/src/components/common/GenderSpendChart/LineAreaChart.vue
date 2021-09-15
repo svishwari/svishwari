@@ -5,7 +5,7 @@
       class="chart-section"
       @mouseover="getCordinates($event)"
     ></div>
-    <div class="pt-2">
+    <div class="pt-2 pl-4">
       <div id="legend"></div>
     </div>
   </div>
@@ -76,10 +76,12 @@ export default {
       this.height = this.chartDimensions.height
       let genders = []
       let colorCodes = []
+      let color = []
       if (this.areaChartData.length === 0) {
-        genders = [{ label: "no data selected", xValue: 0 }]
+        genders = [{ label: "no data available", xValue: 0 }]
 
         colorCodes = ["rgba(208, 208, 206, 1)"]
+        color = d3Scale.scaleOrdinal().range([" rgba(208, 208, 206, 1)"])
       } else {
         genders = [
           { label: "Women", xValue: 0 },
@@ -92,15 +94,15 @@ export default {
           "rgba(12, 157, 219, 1)",
           "rgba(66, 239, 253, 1)",
         ]
-      }
 
-      let color = d3Scale
-        .scaleOrdinal()
-        .range([
-          "rgba(0, 85, 135, 1)",
-          "rgba(12, 157, 219, 1)",
-          "rgba(66, 239, 253, 1)",
-        ])
+        color = d3Scale
+          .scaleOrdinal()
+          .range([
+            "rgba(0, 85, 135, 1)",
+            "rgba(12, 157, 219, 1)",
+            "rgba(66, 239, 253, 1)",
+          ])
+      }
 
       let svg = d3Select
         .select(this.$refs.huxChart)
@@ -109,7 +111,7 @@ export default {
         .attr("height", this.height)
 
       let strokeWidth = 1.5
-      let margin = { top: 10, bottom: 20, left: 40, right: 30 }
+      let margin = { top: 10, bottom: 20, left: 60, right: 40 }
       let chart = svg
         .append("g")
         .attr("transform", `translate(${margin.left},10)`)
@@ -267,7 +269,7 @@ export default {
           let d0 = data[i - 1]
           let d1 = data[i] || {}
           let d = x0 - d0 > d1 - x0 ? d1 : d0
-          let finalXCoordinate = xScale(d) + 40
+          let finalXCoordinate = xScale(d) + margin.left
           let dateD = this.$options.filters.Date(d, "DD/MM/YY")
           let yData
           let dataToolTip = this.areaChartData.find(
@@ -294,7 +296,7 @@ export default {
                 .attr("cx", finalXCoordinate)
                 .attr("cy", yPosition)
                 .attr("r", 5.5)
-                .style("stroke", this.getAttribute("stroke"))
+                .style("stroke", this.getAttribute("addData"))
                 .style("stroke-opacity", "1")
                 .style("fill", "white")
                 .style("pointer-events", "none")
@@ -312,11 +314,12 @@ export default {
             .append("circle")
             .attr("class", "dot")
             .attr("r", 2.5)
-            .attr("cx", () => xScale(new Date(points.data.date)) + 40)
+            .attr("cx", () => xScale(new Date(points.data.date)) + margin.left)
             .attr("cy", () => yScale(points[1]) + margin.top)
             .attr("data", () => points.data)
-            .style("fill", colorCodes[index])
-            .attr("stroke", colorCodes[index])
+            .attr("addData", colorCodes[index])
+            .style("fill", "transparent")
+            .attr("stroke", "transparent")
         })
       })
 
@@ -324,7 +327,7 @@ export default {
       let legendSvg = d3Select
         .select("#legend")
         .append("svg")
-        .attr("viewBox", "0 0 200 50")
+        .attr("viewBox", "0 0 190 50")
         .attr("id", "mainSvg")
         .attr("class", "svgBox")
         .style("margin-left", "20px")
@@ -355,7 +358,7 @@ export default {
         .attr("x", 16)
         .attr("y", 9)
         .attr("dy", ".55em")
-        .attr("class", "neroBlack--text")
+        .attr("class", "black--text text--darken-4")
         .style("font-size", "6px")
         .style("text-anchor", "start")
         .text(function (d) {

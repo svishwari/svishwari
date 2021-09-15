@@ -12,6 +12,7 @@ RUN pip install pip --upgrade
 
 # install pipenv
 RUN pip install pytest
+RUN pip install pyperclip
 RUN pip install tavern
 RUN pip install python-box
 

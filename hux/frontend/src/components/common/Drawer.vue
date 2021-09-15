@@ -197,7 +197,7 @@ $drawer-data-table-padding: 9px 25px;
         > thead {
           > tr {
             > th {
-              background: var(--v-aliceBlue-base) !important;
+              background: var(--v-primary-lighten2) !important;
             }
           }
         }
