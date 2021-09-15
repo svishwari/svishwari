@@ -176,14 +176,14 @@ class TestEngagementMetricsDisplayAds(TestCase):
         )
 
         set_performance_metrics(
-            self.database,
-            self.delivery_platform[db_c.ID],
-            "facebook",
-            self.delivery_job[db_c.ID],
-            None,
-            DISPLAY_ADS_METRICS,
-            None,
-            None,
+            database=self.database,
+            delivery_platform_id=self.delivery_platform[db_c.ID],
+            delivery_platform_type="facebook",
+            delivery_job_id=self.delivery_job[db_c.ID],
+            metrics_dict=DISPLAY_ADS_METRICS,
+            start_time=datetime.utcnow(),
+            end_time=datetime.utcnow(),
+            generic_campaigns=[],
         )
 
         self.addCleanup(mock.patch.stopall)
@@ -385,14 +385,14 @@ class TestEngagementMetricsEmail(TestCase):
         )
 
         set_performance_metrics(
-            self.database,
-            self.delivery_platform_sfmc[db_c.ID],
-            "salesforce",
-            self.delivery_job_sfmc[db_c.ID],
-            None,
-            EMAIL_METRICS,
-            None,
-            None,
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_sfmc[db_c.ID],
+            delivery_platform_type="salesforce",
+            delivery_job_id=self.delivery_job_sfmc[db_c.ID],
+            metrics_dict=EMAIL_METRICS,
+            start_time=datetime.utcnow(),
+            end_time=datetime.utcnow(),
+            generic_campaigns=[],
         )
 
         self.addCleanup(mock.patch.stopall)
