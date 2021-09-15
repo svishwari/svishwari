@@ -27,9 +27,6 @@
         >
           mdi-pencil
         </v-icon>
-        <v-icon size="22" color="black lighten-3" class="icon-border pa-2 ma-1">
-          mdi-download
-        </v-icon>
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />

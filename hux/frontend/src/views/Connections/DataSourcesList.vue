@@ -36,7 +36,7 @@
           dataSource.status === 'Active'
             ? {
                 name: 'DataSourceListing',
-                params: { id: dataSource.id, type: dataSource.type },
+                params: { id: dataSource.id },
               }
             : {}
         "

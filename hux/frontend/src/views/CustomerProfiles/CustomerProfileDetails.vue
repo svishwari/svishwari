@@ -110,8 +110,8 @@
         </v-col>
       </v-row>
 
-      <v-row>
-        <v-col cols="5">
+      <v-row class="table-card">
+        <v-col cols="5" class="pb-0">
           <v-card class="rounded-lg card-info-wrapper box-shadow-5">
             <v-card-title class="py-3 card-heading">
               {{ cardTitles[0].title }}
@@ -182,7 +182,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="3">
+        <v-col cols="3" class="pb-0">
           <v-card class="rounded-lg card-info-wrapper box-shadow-5">
             <v-card-title class="card-heading py-3">
               {{ cardTitles[1].title }}
@@ -204,12 +204,12 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="4" class="matix-card-space">
+        <v-col cols="4" class="matix-card-space pb-0">
           <identity-chart></identity-chart>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col md="12">
+      <v-row class="mt-0">
+        <v-col md="12" class="pt-0 pr-1">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
               <div class="mt-2">
@@ -552,6 +552,9 @@ export default {
 .details-card {
   position: relative;
   margin-top: -93px;
+}
+.table-card {
+  height: 284px;
 }
 .card-height {
   height: 155px !important;

@@ -480,7 +480,12 @@ export default {
     },
 
     genderChartData() {
-      if (this.demographicsData.gender) {
+      if (
+        this.demographicsData.gender &&
+        (this.demographicsData.gender.gender_men ||
+          this.demographicsData.gender.gender_women ||
+          this.demographicsData.gender.gender_other)
+      ) {
         return [
           {
             label: "Men",

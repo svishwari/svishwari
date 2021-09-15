@@ -147,6 +147,10 @@ export default {
       return !!this.dataSource(this.dataSourceId)
     },
 
+    selectedDataSource() {
+      return this.dataSource(this.dataSourceId)
+    },
+
     dataSourceDataFeeds() {
       if (this.selectedDataSourceExists) {
         return this.dataFeeds(this.dataSourceId)
@@ -180,7 +184,10 @@ export default {
     if (!this.selectedDataSourceExists) {
       await this.getDataSource(this.dataSourceId)
     }
-    await this.getDataFeeds(this.$route.params)
+    await this.getDataFeeds({
+      id: this.selectedDataSource.id,
+      type: this.selectedDataSource.type,
+    })
     this.loading = false
   },
 

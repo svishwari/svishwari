@@ -21,7 +21,7 @@
         class="value-container"
       >
         <div v-if="sourceInput.eventsCollection.includes(event.event_name)">
-          <icon :type="event.event_name" :size="10" />
+          <icon :type="event.event_name" :size="12" />
           <span class="text-label">{{ event.label_name }}</span>
         </div>
       </div>
