@@ -1,13 +1,15 @@
 <template>
   <page class="white" max-width="970px">
     <div class="mb-10">
-      <h4 class="text-h2 neroBlack--text">Add a destination</h4>
-      <p class="neroBlack--text">
+      <h4 class="text-h2 black--text text--darken-4">Add a destination</h4>
+      <p class="black--text text--darken-4">
         Please fill out the information below to connect a new destination.
       </p>
     </div>
 
-    <label class="d-flex mb-2 neroBlack--text">Select a destination</label>
+    <label class="d-flex mb-2 black--text text--darken-4"
+      >Select a destination</label
+    >
 
     <div class="d-flex align-center mb-10">
       <template v-if="selectedDestination">
@@ -26,7 +28,7 @@
       v-if="selectedDestination && destinationFields"
       v-model="isFormValid"
     >
-      <div class="destination-auth-wrap background pa-5 rounded mb-10">
+      <div class="destination-auth-wrap primary lighten-1 pa-5 rounded mb-10">
         <v-row>
           <v-col
             v-for="key in Object.keys(destinationFields)"
@@ -80,7 +82,7 @@
       </div>
       <div
         v-if="isSalesforceSelected && isValidated"
-        class="destination-auth-wrap background pa-4 rounded mt-10"
+        class="destination-auth-wrap primary lighten-1 pa-4 rounded mt-10"
       >
         <s-f-m-c :data-extensions="dataExtensions" @select="setExtension" />
       </div>
@@ -89,7 +91,7 @@
     <hux-footer slot="footer" max-width="850px">
       <template #left>
         <hux-button
-          variant="tertiary"
+          variant="white"
           size="large"
           :is-tile="true"
           @click="cancel()"
@@ -113,13 +115,17 @@
     <drawer v-model="drawer">
       <template #header-left>
         <div class="d-flex align-baseline">
-          <h5 class="text-h3 pr-2 neroBlack--text">Select a destination</h5>
-          <span class="text-caption gray--text">(select one)</span>
+          <h5 class="text-h3 pr-2 black--text text--darken-4">
+            Select a destination
+          </h5>
+          <span class="text-caption black--text text--darken-1"
+            >(select one)</span
+          >
         </div>
       </template>
       <template #footer-left>
         <div class="d-flex align-baseline">
-          <span class="text-caption gray--text">
+          <span class="text-caption black--text text--darken-1">
             {{ destinations.length }} results
           </span>
         </div>

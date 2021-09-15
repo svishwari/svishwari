@@ -19,7 +19,7 @@
           <td v-for="column in columns" :key="column.value">
             <div
               v-if="column.value === 'status'"
-              class="neroBlack--text text-h6"
+              class="black--text text--darken-4 text-h6"
             >
               <status
                 :status="item[column.value]"
@@ -38,30 +38,30 @@
                 column.value === 'records_processed_percentage' &&
                 item[column.value] < 0.5
                   ? 'error--text'
-                  : 'neroBlack--text'
+                  : 'black--text text--darken-4'
               "
             >
               {{ item[column.value] | Percentage }}
             </div>
             <div
               v-else-if="column.value === 'last_processed'"
-              class="neroBlack--text text-h6"
+              class="black--text text--darken-4 text-h6"
             >
               <time-stamp :value="item[column.value]" />
             </div>
             <tooltip v-else-if="column.value === 'name'">
               <template #label-content>
-                <span class="neroBlack--text text-h6 data-feed-name">
+                <span class="black--text text--darken-4 text-h6 data-feed-name">
                   {{ item[column.value] }}
                 </span>
               </template>
               <template #hover-content>
-                <span class="neroBlack--text text-h6">
+                <span class="black--text text--darken-4 text-h6">
                   {{ item[column.value] }}
                 </span>
               </template>
             </tooltip>
-            <div v-else class="neroBlack--text text-h6">
+            <div v-else class="black--text text--darken-4 text-h6">
               {{ item[column.value].toLocaleString() | Empty }}
             </div>
           </td>
@@ -235,7 +235,7 @@ export default {
         }
         tr:last-child {
           td {
-            border-bottom: 1px solid var(--v-lightGrey-base) !important;
+            border-bottom: 1px solid var(--v-black-lighten3) !important;
           }
         }
       }

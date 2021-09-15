@@ -7,8 +7,8 @@
     </page-header>
     <page-header class="top-bar" :header-height="71">
       <template slot="left">
-        <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
-        <v-icon medium color="lightGrey" class="pl-6">mdi-magnify</v-icon>
+        <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
+        <v-icon medium color="black lighten-3" class="pl-6">mdi-magnify</v-icon>
       </template>
 
       <template slot="right">
@@ -56,7 +56,7 @@
                     <icon
                       type="lookalike"
                       :size="20"
-                      color="neroBlack"
+                      color="black-darken4"
                       class="mr-2"
                     />
                   </template>
@@ -403,7 +403,7 @@ export default {
   .top-bar {
     margin-top: 1px;
     .v-icon--disabled {
-      color: var(--v-lightGrey-base) !important;
+      color: var(--v-black-lighten3) !important;
       font-size: 24px;
     }
     .text--refresh {
@@ -450,7 +450,7 @@ export default {
       tbody {
         tr:last-child {
           td {
-            border-bottom: 1px solid var(--v-lightGrey-base) !important;
+            border-bottom: 1px solid var(--v-black-lighten3) !important;
           }
         }
       }

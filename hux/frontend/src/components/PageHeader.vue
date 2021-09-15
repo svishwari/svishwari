@@ -15,7 +15,7 @@
           :type="icon"
           class="pr-1"
           :size="20"
-          color="neroBlack"
+          color="black-darken4"
         />
         <div class="text-h2">
           {{ title }}
@@ -78,6 +78,6 @@ export default {
 
 <style lang="scss" scoped>
 .page-header--wrap {
-  border-bottom: 1px solid var(--v-lightGrey-base) !important;
+  border-bottom: 1px solid var(--v-black-lighten3) !important;
 }
 </style>
