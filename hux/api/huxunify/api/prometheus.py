@@ -68,7 +68,7 @@ def record_health_status_metric(
 
     Args:
         connection_name (str): name of the connection metric.
-        connection_health (int): value for the health of the connection metric
+        connection_health (int): value for the health of the connection metric.
 
     Returns:
 
