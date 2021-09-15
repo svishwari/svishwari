@@ -211,7 +211,7 @@
           </v-card>
         </v-col>
         <v-col cols="4" class="matix-card-space pb-0">
-          <identity-chart></identity-chart>
+          <identity-chart :chart-data="customerIdentityResolution" />
         </v-col>
       </v-row>
 
@@ -316,6 +316,10 @@ export default {
 
     customerInsights() {
       return this.customerProfile["insights"]
+    },
+
+    customerIdentityResolution() {
+      return this.customerProfile["identity_resolution"]
     },
 
     customerContactPreferences() {
