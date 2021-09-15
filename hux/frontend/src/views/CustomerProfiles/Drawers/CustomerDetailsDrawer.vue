@@ -97,7 +97,6 @@ import Drawer from "@/components/common/Drawer"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import HuxSlider from "@/components/common/HuxSlider"
 import Tooltip from "@/components/common/Tooltip"
-import PageHeader from "@/components/PageHeader"
 import Observer from "@/components/common/Observer"
 
 export default {
@@ -107,7 +106,6 @@ export default {
     HuxDataTable,
     HuxSlider,
     Tooltip,
-    PageHeader,
     Observer,
   },
 

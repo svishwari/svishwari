@@ -70,7 +70,7 @@ export default {
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
 
-       d3Select.select(this.$refs.lineChart).selectAll("svg").remove()
+      d3Select.select(this.$refs.lineChart).selectAll("svg").remove()
 
       let svg = d3Select
         .select(this.$refs.lineChart)

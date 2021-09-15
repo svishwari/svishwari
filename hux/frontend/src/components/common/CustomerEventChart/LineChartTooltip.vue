@@ -14,7 +14,8 @@
           {{ sourceInput.month }} {{ sourceInput.date | Date("DD, YYYY") }}
         </div>
       </div>
-      <div class="item_count">{{ sourceInput.total_event_count }} 
+      <div class="item_count">
+        {{ sourceInput.total_event_count }}
         <span v-if="sourceInput.total_event_count > 1">Events</span>
         <span v-else>Event</span>
       </div>

@@ -137,3 +137,21 @@ export function listOfYears(yearsBack = 10) {
     return dayjs().subtract(index, "years").format("YYYY")
   })
 }
+
+/**
+ * Download file from the blob API response.
+ */
+export function saveFile(response) {
+  const fileName = response.headers["content-disposition"].match(
+    /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+  )[1]
+  const link = document.createElement("a")
+  link.href = window.URL.createObjectURL(
+    new Blob([response.data], {
+      type: response.headers["content-type"],
+    })
+  )
+  link.download = fileName
+  link.click()
+  URL.revokeObjectURL(link.href)
+}

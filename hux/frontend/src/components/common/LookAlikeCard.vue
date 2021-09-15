@@ -198,7 +198,7 @@ export default {
     min-height: 100px !important;
     max-height: 190px;
   }
-    ::-webkit-scrollbar {
+  ::-webkit-scrollbar {
     width: 5px;
   }
   ::-webkit-scrollbar-track {
