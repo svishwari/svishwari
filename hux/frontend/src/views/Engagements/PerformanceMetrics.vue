@@ -364,7 +364,8 @@ export default {
     async initiateMetricsDownload() {
       this.alert.type = "Pending"
       this.alert.title = ""
-      this.alert.message = "Download has started in background, stay tuned."
+      this.alert.message =
+        "The download has started. Please be patient while it finishes."
       this.flashAlert = true
       const fileBlob = await this.downloadAudienceMetrics({
         id: this.engagementId,
