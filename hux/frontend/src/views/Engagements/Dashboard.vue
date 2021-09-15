@@ -51,7 +51,7 @@
               <icon
                 type="audiences"
                 :size="24"
-                color="var(--v-black-darken4)"
+                color="black-darken4"
                 class="mr-2"
               /><span class="text-h5">Audiences</span>
             </div>

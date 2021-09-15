@@ -61,7 +61,7 @@
                     <icon
                       type="lookalike"
                       :size="20"
-                      color="var(--v-black-darken4)"
+                      color="black-darken4"
                       class="mr-2"
                     />
                   </template>

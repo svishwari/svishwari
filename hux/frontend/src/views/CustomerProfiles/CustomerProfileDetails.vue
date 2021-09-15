@@ -37,7 +37,7 @@
               </span>
             </v-card-title>
             <v-card-text class="justify-center title-text py-3">
-              <icon type="smile" :size="16" color="var(--v-primary-lighten8)" />
+              <icon type="smile" :size="16" color="primary-lighten8" />
               <div>Hux ID</div>
               <span class="sample-card-text">{{ singleCustomer.hux_id }} </span>
             </v-card-text>
@@ -119,7 +119,7 @@
                 <icon
                   type="ds_lock_special"
                   :size="17"
-                  color="var(--v-black-darken4)"
+                  color="black-darken4"
                   class="ml-2"
                 />
                 <template #tooltip>

@@ -9,7 +9,7 @@
         <icon
           type="history"
           :size="20"
-          color="var(--v-black-darken4)"
+          color="black-darken4"
           class="mr-2"
         />
         <h3 class="text-h3 ml-1 black--text text--darken-3">Version history</h3>

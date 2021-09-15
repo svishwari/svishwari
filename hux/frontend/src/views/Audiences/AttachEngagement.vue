@@ -6,7 +6,7 @@
           v-if="viewStep == '1'"
           type="engagements"
           :size="18"
-          color="var(--v-black-darken4)"
+          color="black-darken4"
         />
         <h3
           v-if="viewStep == '1'"

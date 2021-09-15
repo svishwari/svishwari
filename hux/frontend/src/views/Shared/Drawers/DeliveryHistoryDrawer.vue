@@ -5,7 +5,7 @@
         <icon
           type="history"
           :size="20"
-          color="var(--v-black-darken4)"
+          color="black-darken4"
           class="mr-4"
         />
         <h3 class="text-h3">Delivery history</h3>

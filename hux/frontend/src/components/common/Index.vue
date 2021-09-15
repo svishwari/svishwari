@@ -411,7 +411,7 @@
     <icon
       type="model-unsubscribe"
       :size="48"
-      color="var(--v-primary-lighten8)"
+      color="primary-lighten8"
     />
 
     <v-divider class="mt-10" />

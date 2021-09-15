@@ -4,7 +4,7 @@
       <icon
         type="data-sources-list"
         :size="20"
-        color="var(--v-black-darken4)"
+        color="black-darken4"
       />
       <h5 class="text-h4 ml-2 mt-1">Data Sources</h5>
       <router-link
