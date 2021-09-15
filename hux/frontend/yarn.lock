@@ -2014,7 +2014,7 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
-"@socheatsok78/storybook-addon-vuetify@^0.1.8":
+"@socheatsok78/storybook-addon-vuetify@0.1.8":
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/@socheatsok78/storybook-addon-vuetify/-/storybook-addon-vuetify-0.1.8.tgz#b76b65734610b2412084e52babb39cb720758844"
   integrity sha512-R5/Gc7sOVfDn56lb5qTIOIvayh9iLjo/8lQ6USTD6soXlncxwJmFZWyUe1OGbprDYL76qqtOoXErHv3mqlTL6Q==
