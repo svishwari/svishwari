@@ -178,7 +178,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
         set_performance_metrics(
             database=self.database,
             delivery_platform_id=self.delivery_platform[db_c.ID],
-            delivery_platform_type="facebook",
+            delivery_platform_type=db_c.DELIVERY_PLATFORM_FACEBOOK,
             delivery_job_id=self.delivery_job[db_c.ID],
             metrics_dict=DISPLAY_ADS_METRICS,
             start_time=datetime.utcnow(),
@@ -387,7 +387,7 @@ class TestEngagementMetricsEmail(TestCase):
         set_performance_metrics(
             database=self.database,
             delivery_platform_id=self.delivery_platform_sfmc[db_c.ID],
-            delivery_platform_type="salesforce",
+            delivery_platform_type=db_c.DELIVERY_PLATFORM_SFMC,
             delivery_job_id=self.delivery_job_sfmc[db_c.ID],
             metrics_dict=EMAIL_METRICS,
             start_time=datetime.utcnow(),
