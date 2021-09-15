@@ -1,8 +1,7 @@
-// import MyButton from './Button.vue';
 import CardInfo from "../components/common/CardInfo.vue"
 
 export default {
-  title: "Example/CardInfo",
+  title: "Library/CardInfo",
   component: CardInfo,
   argTypes: {
     title: { control: { type: "text" } },
@@ -16,4 +15,4 @@ const Template = (args, { argTypes }) => ({
              </card-info>`,
 })
 
-export const Primary = Template.bind({})
+export const Default = Template.bind({})

@@ -1,8 +1,7 @@
-// import MyButton from './Button.vue';
 import huxButton from "../components/common/huxButton.vue"
 
 export default {
-  title: "Example/HuxButton",
+  title: "Library/HuxButton",
   component: huxButton,
   argTypes: {
     variant: {

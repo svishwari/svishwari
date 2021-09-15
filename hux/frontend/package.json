@@ -15,9 +15,7 @@
     "style:fix": "yarn prettier --write src/",
     "prepare": "cd ../../ && husky install hux/frontend/.husky",
     "build:storybook": "build-storybook",
-    "serve:storybook": "start-storybook -p 6006",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "serve:storybook": "start-storybook -p 6006"
   },
   "dependencies": {
     "@okta/okta-signin-widget": "^4.2.3",
@@ -55,7 +53,7 @@
     "@babel/core": "^7.15.5",
     "@babel/preset-react": "^7.14.5",
     "@mdi/font": "^5.9.55",
-    "@socheatsok78/storybook-addon-vuetify": "^0.1.8",
+    "@socheatsok78/storybook-addon-vuetify": "0.1.8",
     "@storybook/addon-a11y": "^5.2",
     "@storybook/addon-actions": "^6.3.8",
     "@storybook/addon-essentials": "^6.3.8",

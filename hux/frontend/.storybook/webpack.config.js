@@ -16,6 +16,7 @@ module.exports = async ({ config }) => {
       {
         loader: "sass-loader",
         options: {
+          // TODO : need to resolve using webpack config for loading styles variables
           // additionalData: `@import "${path.resolve(__dirname, "..", "src", "styles", "variables.scss")}"`
         }
       }

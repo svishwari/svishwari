@@ -28,7 +28,6 @@
 </template>
 
 <script>
-// import Icon from "@/components/common/Icon"
 import Icon from "../common/Icon.vue"
 export default {
   name: "HuxButton",
