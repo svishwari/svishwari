@@ -51,5 +51,8 @@ export default {
   ::v-deep .v-breadcrumbs__item--disabled {
     color: var(--v-black-darken4);
   }
+  ::v-deep a {
+    color: var(--v-primary-base) !important;
+  }
 }
 </style>

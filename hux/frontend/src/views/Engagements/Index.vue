@@ -4,11 +4,6 @@
       <template #left>
         <breadcrumb :items="breadcrumbItems" />
       </template>
-      <template #right>
-        <v-icon size="22" color="black lighten-3" class="icon-border pa-2 ma-1">
-          mdi-download
-        </v-icon>
-      </template>
     </page-header>
     <page-header class="top-bar" :header-height="71">
       <template #left>
@@ -17,7 +12,6 @@
       </template>
 
       <template #right>
-        <v-icon medium disabled color="primary refresh">mdi-refresh</v-icon>
         <router-link
           :to="{ name: 'EngagementConfiguration' }"
           class="text-decoration-none"
@@ -39,9 +33,10 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <hux-data-table
-      v-if="rowData.length > 0"
+      v-if="!loading && rowData.length > 0"
       :columns="columnDefs"
       :data-items="rowData"
+      view-height="calc(100vh - 210px)"
       nested
     >
       <template #item-row="{ item, expandFunc, isExpanded }">
@@ -54,7 +49,7 @@
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
               'expanded-row': isExpanded,
-              'pl-2': header.value == 'audiences',
+              'pl-3': header.value == 'audiences',
             }"
             :style="{ width: header.width }"
           >
@@ -106,6 +101,7 @@
               <span v-if="item[header.value].length > 3" class="ml-1">
                 + {{ item[header.value].length - 2 }}
               </span>
+              <span v-else-if="item[header.value].length == 1">—</span>
             </div>
             <div v-if="header.value == 'status'" class="text-caption">
               <status
@@ -184,6 +180,7 @@
             :data-items="parentItem.audiences"
             :show-header="false"
             class="expanded-table"
+            view-height="auto"
             nested
           >
             <template #item-row="{ item, expandFunc, isExpanded }">
@@ -204,6 +201,9 @@
                       route-name="AudienceInsight"
                       :route-param="item['id']"
                       :data="item"
+                      :label-class="{
+                        'no-expand': item.destinations.length == 0,
+                      }"
                     >
                       <template #expand-icon>
                         <v-icon
@@ -323,6 +323,7 @@
                   :columns="expandedHeaders"
                   :data-items="getDestinations(parentItem)"
                   :show-header="false"
+                  view-height="auto"
                 >
                   <template #row-item="{ item }">
                     <td
@@ -487,20 +488,66 @@ export default {
       loading: true,
       manualDeliverySchedule: "Manual",
       columnDefs: [
-        { text: "Engagement name", value: "name", width: "300px" },
-        { text: "Audiences", value: "audiences", width: "180px" },
-        { text: "Destinations", value: "destinations", width: "150px" },
-        { text: "Status", value: "status", width: "140px" },
-        { text: "Last delivered", value: "last_delivered", width: "140px" },
+        {
+          text: "Engagement name",
+          value: "name",
+          width: "300px",
+          class: "sticky-header",
+        },
+        {
+          text: "Audiences",
+          value: "audiences",
+          width: "180px",
+          class: "sticky-header",
+        },
+        {
+          text: "Destinations",
+          value: "destinations",
+          width: "150px",
+          class: "sticky-header",
+        },
+        {
+          text: "Status",
+          value: "status",
+          width: "140px",
+          class: "sticky-header",
+        },
+        {
+          text: "Last delivered",
+          value: "last_delivered",
+          width: "140px",
+          class: "sticky-header",
+        },
         {
           text: "Delivery schedule",
           value: "delivery_schedule",
           width: "200px",
+          class: "sticky-header",
         },
-        { text: "Last updated", value: "update_time", width: "200px" },
-        { text: "Last updated by", value: "updated_by", width: "141px" },
-        { text: "Created", value: "create_time", width: "200px" },
-        { text: "Created by", value: "created_by", width: "140px" },
+        {
+          text: "Last updated",
+          value: "update_time",
+          width: "200px",
+          class: "sticky-header",
+        },
+        {
+          text: "Last updated by",
+          value: "updated_by",
+          width: "141px",
+          class: "sticky-header",
+        },
+        {
+          text: "Created",
+          value: "create_time",
+          width: "200px",
+          class: "sticky-header",
+        },
+        {
+          text: "Created by",
+          value: "created_by",
+          width: "140px",
+          class: "sticky-header",
+        },
       ],
     }
   },
@@ -553,6 +600,9 @@ export default {
             last_delivered: last_delivered_aud,
           }
         })
+        engDestinationList = engDestinationList.sort((a, b) =>
+          a.name > b.name ? 1 : -1
+        )
         return {
           ...eng,
           audiences: eng_audiences,
@@ -716,6 +766,9 @@ export default {
     .mdi-dots-vertical {
       background: transparent !important;
     }
+    .no-expand {
+      padding-left: 8px;
+    }
   }
   // This CSS is to avoid conflict with Tooltip component.
   ::v-deep .destination-ico {
@@ -738,11 +791,6 @@ export default {
     &.normal-icon {
       transform: rotate(90deg);
     }
-  }
-  .page-header--wrap {
-    box-shadow: 0px 1px 1px -1px var(--v-black-lighten3),
-      0px 1px 1px 0px var(--v-black-lighten3),
-      0px 1px 2px 0px var(--v-black-lighten3) !important;
   }
   .top-bar {
     margin-top: 1px;
@@ -774,18 +822,15 @@ export default {
       }
       .v-data-table-header {
         th:nth-child(1) {
-          position: sticky;
-          top: 0;
           left: 0;
-          z-index: 4;
+          z-index: 5;
           border-right: thin solid rgba(0, 0, 0, 0.12);
+          overflow-y: visible;
+          overflow-x: visible;
         }
         border-radius: 12px 12px 0px 0px;
       }
       tr {
-        th {
-          border-top: thin solid rgba(0, 0, 0, 0.12);
-        }
         &:hover {
           background: var(--v-primary-lighten2) !important;
         }

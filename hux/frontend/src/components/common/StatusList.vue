@@ -12,7 +12,7 @@
         >
           <tooltip>
             <template #label-content>
-              <span class="ellipsis">
+              <span class="ellipsis primary--text">
                 {{ section.name }}
               </span>
             </template>
@@ -28,16 +28,6 @@
             </template>
           </tooltip>
         </router-link>
-        <status
-          v-if="section.status"
-          :status="section.status"
-          :icon-size="statusIcon"
-          class="ml-3"
-          collapsed
-          show-label
-          show-icon-tooltip
-          :tooltip-title="`${sectionTypePrefix} status`"
-        />
       </span>
       <v-menu class="menu-wrapper" bottom offset-y>
         <template #activator="{ on, attrs }">
@@ -65,9 +55,10 @@
       <v-list-item
         v-for="item in section[deliveriesKey]"
         :key="item.id"
+        class="status-list"
         @click="toggleFocus()"
       >
-        <v-list-item-content class="icon-col py-1">
+        <v-list-item-content class="icon-col">
           <div class="d-flex align-center">
             <tooltip>
               <template #label-content>
@@ -530,6 +521,10 @@ export default {
   box-sizing: border-box;
   border-radius: 12px !important;
   display: table;
+  .status-list {
+    min-height: 20px !important;
+    max-height: 30px !important;
+  }
   .ellipsis {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -558,8 +553,8 @@ export default {
   .v-list {
     .v-list-item {
       .icon-col {
-        min-width: 40px;
-        max-width: 40px;
+        min-width: 45px;
+        max-width: 45px;
       }
       .status-col {
         min-width: 35px;

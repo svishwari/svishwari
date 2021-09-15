@@ -115,7 +115,7 @@
 
       <metric-card
         v-if="audience && audience.is_lookalike"
-        class="ma-2 audience-summary"
+        class="ma-2 audience-summary py-2"
         :grow="0"
         :title="'Lookalike size'"
         :height="75"

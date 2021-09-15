@@ -152,9 +152,6 @@ export default {
 
 <style lang="scss" scoped>
 .overview-wrap {
-  .page-header--wrap {
-    @extend .box-shadow-plain;
-  }
   .quickAccessMenu {
     background: var(--v-primary-lighten2);
     min-height: 265px;
