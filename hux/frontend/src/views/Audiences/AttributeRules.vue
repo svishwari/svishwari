@@ -8,7 +8,7 @@
           'text-caption': applyCaptionStyle,
         }"
       >
-        Select attribute(s) - <i class="text-caption gray--text">Optional</i>
+        Select attribute(s) - <i class="text-caption gray--text">optional</i>
       </strong>
       <v-card v-if="rules.length == 0" tile elevation="0" class="blank-section">
         <div class="gray--text font-weight-normal new-attribute">
