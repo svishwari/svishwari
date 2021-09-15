@@ -28,7 +28,7 @@
           class="event-list"
           v-if="sourceInput.eventsCollection.includes(event.event_name)"
         >
-          <icon :type="event.event_name" :size="14" />
+          <icon :type="event.event_name" :size="16" />
           <span class="text-label">{{ event.label_name }}</span>
         </div>
       </div>
@@ -119,6 +119,7 @@ export default {
       display: flex;
       justify-content: flex-start;
       align-items: center;
+      margin-bottom: 8px !important;
       .text-label {
         margin-left: 7px !important;
         flex: 1 0 50%;

@@ -663,9 +663,6 @@ export default {
   ::v-deep .mdi-chevron-right::before {
     content: none;
   }
-  ::v-deep .v-icon::before {
-    font-size: 30px;
-  }
 }
 .icon-border {
   cursor: default !important;
