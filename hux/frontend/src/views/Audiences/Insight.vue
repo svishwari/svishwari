@@ -114,7 +114,7 @@
 
       <metric-card
         v-if="audience && audience.is_lookalike"
-        class="ma-2 audience-summary"
+        class="ma-2 audience-summary py-2"
         :grow="0"
         :title="'Lookalike size'"
         :height="75"
@@ -431,10 +431,11 @@
             :indeterminate="loadingDemographics"
           />
           <v-card-title v-if="!loadingDemographics" class="pb-2 pl-2 pt-5">
-            <div class="mt-2">
+            <div class="mt-2 ml-5">
               <span class="neroBlack--text text-h5">
-                Gender &sol; monthly spending in 2021
+                Gender &sol; monthly spending
               </span>
+              <span class="text-body-2 time-frame">(last 6 months)</span>
             </div>
           </v-card-title>
           <gender-spend-chart

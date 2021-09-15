@@ -1,7 +1,7 @@
 version: "1.0"
 stages:
   - clone
-  - safety_test_check
+  - safety_bandit_test_check
   - coverage_style_check
   - publish
 
@@ -16,8 +16,8 @@ steps:
     git: "DeloitteHux_github"
 
   safety_test_check:
-    stage: "safety_test_check"
-    title: "Safety and test checks"
+    stage: "safety_bandit_test_check"
+    title: "Safety, bandit and test checks"
     image: huxhub.repo.mgnt.in/tox-ci
     working_directory: '${{CF_REPO_NAME}}/lib/huxunifylib-database'
     description: "run tests using tox"
@@ -32,6 +32,10 @@ steps:
         title: 'safety'
         environment:
           - TOXENV=safety
+      bandit:
+        title: 'bandit'
+        environment:
+          - TOXENV=bandit
     fail_fast: false
 
   coverageStyleCheck:

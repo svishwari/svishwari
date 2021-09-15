@@ -2,7 +2,7 @@
   <v-form>
     <form-steps>
       <form-step :step="1" label="General information">
-        <v-row>
+        <v-row class="pt-2">
           <v-col>
             <text-field
               v-model="value.name"
@@ -118,7 +118,7 @@
           </div>
         </v-row>
 
-        <v-row class="delivery-schedule mt-8">
+        <v-row class="delivery-schedule mt-6">
           <hux-schedule-picker v-if="isRecurring" v-model="schedule" />
         </v-row>
       </form-step>
@@ -694,9 +694,6 @@ export default {
   margin-left: 8px;
 }
 .form-steps {
-  ::v-deep .form-step__header {
-    padding-bottom: 14px;
-  }
   ::v-deep .form-step__content {
     padding-top: 0px !important;
   }

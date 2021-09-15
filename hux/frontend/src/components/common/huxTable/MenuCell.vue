@@ -5,7 +5,9 @@
       <router-link :to="routePath" class="text-decoration-none" append>
         <tooltip>
           <template slot="label-content">
-            <span class="primary--text ellipsis"> {{ value }} </span>
+            <span class="primary--text ellipsis" :class="labelClass">
+              {{ value }}
+            </span>
           </template>
           <template slot="hover-content">
             {{ value }}
@@ -112,6 +114,11 @@ export default Vue.extend({
     data: {
       type: Object,
       required: false,
+    },
+    labelClass: {
+      type: String,
+      required: false,
+      default: "",
     },
   },
 
