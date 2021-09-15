@@ -9,14 +9,13 @@ from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, Response, request, jsonify
 
-import huxunifylib.database.constants as db_c
 from huxunifylib.connectors import connector_cdp
 from huxunifylib.database import (
     orchestration_management,
 )
 from huxunifylib.database.audit_management import create_audience_audit
 from huxunifylib.database.notification_management import create_notification
-from huxunifylib.database.orchestration_management import get_audience
+from huxunifylib.database import constants as db_c
 
 import huxunify.api.constants as api_c
 from huxunify.api.config import get_config
@@ -32,13 +31,12 @@ from huxunify.api.route.decorators import (
     get_user_name,
     api_error_handler,
 )
-from huxunify.api.route.utils import get_db_client
+from huxunify.api.route.utils import get_db_client,logger
 from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
-from huxunify.api.route.utils import logger
 
 # setup the audiences blueprint
 audience_bp = Blueprint(api_c.AUDIENCE_ENDPOINT, import_name=__name__)
@@ -253,7 +251,7 @@ class AudienceInsightsStates(SwaggerView):
         # get auth token from request
         token_response = get_token_from_request(request)
 
-        audience = get_audience(get_db_client(), ObjectId(audience_id))
+        audience = orchestration_management.get_audience(get_db_client(), ObjectId(audience_id))
 
         return (
             jsonify(
@@ -349,7 +347,7 @@ class AudienceInsightsCities(SwaggerView):
             api_c.QUERY_PARAMETER_BATCH_NUMBER, api_c.DEFAULT_BATCH_NUMBER
         )
 
-        audience = get_audience(get_db_client(), ObjectId(audience_id))
+        audience = orchestration_management.get_audience(get_db_client(), ObjectId(audience_id))
 
         filters = (
             {api_c.AUDIENCE_FILTERS: audience.get(db_c.AUDIENCE_FILTERS)}
