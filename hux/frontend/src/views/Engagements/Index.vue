@@ -780,11 +780,6 @@ export default {
       transform: rotate(90deg);
     }
   }
-  .page-header--wrap {
-    box-shadow: 0px 1px 1px -1px var(--v-lightGrey-base),
-      0px 1px 1px 0px var(--v-lightGrey-base),
-      0px 1px 2px 0px var(--v-lightGrey-base) !important;
-  }
   .top-bar {
     margin-top: 1px;
     .v-icon--disabled {
@@ -824,9 +819,6 @@ export default {
         border-radius: 12px 12px 0px 0px;
       }
       tr {
-        th {
-          border-top: thin solid rgba(0, 0, 0, 0.12);
-        }
         &:hover {
           background: var(--v-aliceBlue-base) !important;
         }

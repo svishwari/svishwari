@@ -400,11 +400,6 @@ export default {
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
   }
-  .page-header--wrap {
-    box-shadow: 0px 1px 1px -1px var(--v-lightGrey-base),
-      0px 1px 1px 0px var(--v-lightGrey-base),
-      0px 1px 2px 0px var(--v-lightGrey-base) !important;
-  }
   .top-bar {
     margin-top: 1px;
     .v-icon--disabled {

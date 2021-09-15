@@ -614,9 +614,6 @@ export default {
 
 <style lang="scss" scoped>
 .engagement-dash {
-  .page-header--wrap {
-    box-shadow: 0px 1px 0px var(--v-lightGrey-base) !important;
-  }
   .empty-audience {
     width: 190px;
     text-align: center;
