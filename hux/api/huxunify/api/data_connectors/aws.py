@@ -10,6 +10,7 @@ from http import HTTPStatus
 from connexion import ProblemException
 import boto3
 import botocore
+from bson import ObjectId
 from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
 import huxunifylib.database.constants as db_c
 from huxunify.api import constants as api_c
@@ -299,7 +300,11 @@ def set_cloud_watch_rule(
 
 
 def put_rule_targets_aws_batch(
-    rule_name: str, batch_params: dict, arn: str, role_arn: str
+    rule_name: str,
+    batch_params: dict,
+    delivery_job_id: ObjectId,
+    role_arn: str,
+    job_queue: str,
 ) -> str:
     """Adds the specified targets to the specified rule or updates
     the targets if they are already associated with the rule.
@@ -307,9 +312,10 @@ def put_rule_targets_aws_batch(
     Args:
         rule_name (str): name of the rule you are creating or updating.
         batch_params (dict): Batch parameter dict for all batch job params.
-        arn (str): The Amazon resource name (arn) of the target.
+        delivery_job_id (ObjectId): Delivery Job Id.
         role_arn (str): The Amazon resource name of the IAM role to be used
             for this target and when the rule is triggered.
+        job_queue (str): The Batch Job queue.
 
     Returns:
         event request id (str): The Amazon resource name (ARN) of the rule.
@@ -324,8 +330,8 @@ def put_rule_targets_aws_batch(
             Rule=rule_name,
             Targets=[
                 {
-                    "Id": rule_name,
-                    "Arn": arn,
+                    "Id": str(delivery_job_id),
+                    "Arn": job_queue,
                     "RoleArn": role_arn,
                     "BatchParameters": batch_params,
                 }
