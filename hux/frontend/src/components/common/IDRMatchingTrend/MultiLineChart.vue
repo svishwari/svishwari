@@ -153,8 +153,12 @@ export default {
         .attr("x", 0)
         .style("color", "#4F4F4F")
       d3Select.selectAll(".yAxis .tick text").style("color", "#4F4F4F")
-      d3Select.selectAll(".yAlternateAxis .tick line").style("stroke", "#4F4F4F")
-      d3Select.selectAll(".xAlternateAxis .tick line").style("stroke", "#4F4F4F")
+      d3Select
+        .selectAll(".yAlternateAxis .tick line")
+        .style("stroke", "#4F4F4F")
+      d3Select
+        .selectAll(".xAlternateAxis .tick line")
+        .style("stroke", "#4F4F4F")
 
       var multiline = function (dataSet) {
         var line = d3Shape
