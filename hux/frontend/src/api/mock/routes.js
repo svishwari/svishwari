@@ -399,10 +399,10 @@ export const defineRoutes = (server) => {
 
   server.get("/customers/:hux_id", (schema, request) => {
     const huxId = request.params.hux_id
-    return server.create(
-      "customerProfile",
-      schema.customers.findBy({ hux_id: huxId }).attrs
-    )
+    const attrs = schema.customers.findBy({ hux_id: huxId }).attrs
+    const customerProfile = server.create("customerProfile")
+    customerProfile["overview"] = { ...customerProfile["overview"], ...attrs }
+    return customerProfile
   })
 
   server.get("/customers/overview", () => customersOverview)

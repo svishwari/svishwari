@@ -16,7 +16,7 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <div v-if="!loading && singleCustomer" class="pl-15 py-6 pr-9">
+    <div v-if="!loading && customerProfile" class="pl-15 py-6 pr-9">
       <v-row>
         <v-col cols="3">
           <v-card
@@ -30,21 +30,23 @@
           >
             <v-card-title class="title-font-size">
               <span class="d-inline-block text-truncate mr-1">
-                {{ singleCustomer.first_name }}
+                {{ customerDetails["first_name"] }}
               </span>
               <span class="d-inline-block text-truncate">
-                {{ singleCustomer.last_name }}
+                {{ customerDetails["last_name"] }}
               </span>
             </v-card-title>
             <v-card-text class="justify-center title-text py-3">
               <icon type="smile" :size="16" color="primary-lighten8" />
               <div>Hux ID</div>
-              <span class="sample-card-text">{{ singleCustomer.hux_id }} </span>
+              <span class="sample-card-text">
+                {{ customerDetails["hux_id"] }}
+              </span>
             </v-card-text>
           </v-card>
         </v-col>
         <v-col
-          v-for="data in customerDataDisplay"
+          v-for="data in customerOverview"
           :key="data.id"
           :cols="data.colValue"
           class="matix-card-space"
@@ -81,10 +83,11 @@
           </v-card>
         </v-col>
       </v-row>
+
       <v-row class="details-card">
         <v-col cols="3"> </v-col>
         <v-col
-          v-for="data in customerDetailsMore"
+          v-for="data in customerOverviewMore"
           :key="data.id"
           :cols="data.colValue"
           class="matix-card-space"
@@ -135,44 +138,44 @@
                     <tr>
                       <td class="title-text">Email</td>
                       <td class="table-text blur-text">
-                        {{ singleCustomer.email | Empty }}
+                        {{ customerInsights["email"] | Empty }}
                       </td>
                       <td class="title-text">Address</td>
                       <td class="table-text blur-text">
-                        {{ singleCustomer.address | Empty }}
+                        {{ customerInsights["address"] | Empty }}
                       </td>
                     </tr>
                     <tr>
                       <td class="title-text">Phone</td>
                       <td class="table-text blur-text">
-                        {{ singleCustomer.phone | Empty }}
+                        {{ customerInsights["phone"] | Empty }}
                       </td>
                       <td class="title-text">City</td>
                       <td class="table-text blur-text">
-                        {{ singleCustomer.city | Empty }}
+                        {{ customerInsights["city"] | Empty }}
                       </td>
                     </tr>
                     <tr>
                       <td class="title-text">Age</td>
                       <td class="table-text blur-text">
-                        {{ singleCustomer.age | Empty }}
+                        {{ customerInsights["age"] | Empty }}
                       </td>
                       <td class="title-text">State</td>
                       <td class="table-text blur-text">
-                        {{ singleCustomer.state | Empty }}
+                        {{ customerInsights["state"] | Empty }}
                       </td>
                     </tr>
                     <tr>
                       <td class="title-text">Gender</td>
                       <td class="table-text">
-                        <span v-if="singleCustomer.gender" class="blur-text">
-                          {{ singleCustomer.gender | Empty }}
+                        <span class="blur-text">
+                          {{ customerInsights["gender"] | Empty }}
                         </span>
                       </td>
                       <td class="title-text">Zip</td>
                       <td class="table-text">
-                        <span v-if="singleCustomer.zip" class="blur-text">
-                          {{ singleCustomer.zip | Empty }}
+                        <span class="blur-text">
+                          {{ customerInsights["zip"] | Empty }}
                         </span>
                       </td>
                     </tr>
@@ -191,11 +194,14 @@
               <v-simple-table>
                 <template v-slot:default>
                   <tbody>
-                    <tr v-for="data in contactPreferences" :key="data.id">
-                      <td class="title-text">{{ data.title }}</td>
+                    <tr
+                      v-for="pref in customerContactPreferences"
+                      :key="pref.id"
+                    >
+                      <td class="title-text">{{ pref.title }}</td>
                       <td class="table-text cl">
-                        <template v-if="data.value === true">True</template>
-                        <template v-if="data.value === false">False</template>
+                        <template v-if="pref.value === true">True</template>
+                        <template v-if="pref.value === false">False</template>
                       </td>
                     </tr>
                   </tbody>
@@ -208,6 +214,7 @@
           <identity-chart></identity-chart>
         </v-col>
       </v-row>
+
       <v-row class="mt-0">
         <v-col md="12" class="pt-0 pr-1">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
@@ -295,105 +302,68 @@ export default {
       events: "customers/getEvents",
     }),
 
-    singleCustomer() {
-      return this.customer(this.$route.params.id)
-    },
-
     id() {
       return this.$route.params.id
     },
 
-    customerInsightsData() {
-      const insightsData = [
-        {
-          id: 1,
-          title: "Email",
-          value: this.$options.filters.Empty(this.singleCustomer.email),
-        },
-        {
-          id: 2,
-          title: "Phone",
-          value: this.$options.filters.Empty(this.singleCustomer.phone),
-        },
-        {
-          id: 3,
-          title: "Age",
-          value: this.$options.filters.Empty(this.singleCustomer.age),
-        },
-        {
-          id: 4,
-          title: "Gender",
-          value: this.$options.filters.Empty(this.singleCustomer.gender),
-        },
-        {
-          id: 5,
-          titleNex: "Address",
-          valueNex: this.$options.filters.Empty(this.singleCustomer.address),
-        },
-        {
-          id: 6,
-          titleNex: "City",
-          valueNex: this.$options.filters.Empty(this.singleCustomer.city),
-        },
-        {
-          id: 7,
-          titleNex: "State",
-          valueNex: this.$options.filters.Empty(this.singleCustomer.state),
-        },
-        {
-          id: 8,
-          titleNex: "Zip",
-          valueNex: this.$options.filters.Empty(this.singleCustomer.zip),
-        },
-      ]
-      return insightsData.filter(
-        (item) => item.title !== null && item.titleNex !== null
-      )
+    customerProfile() {
+      return this.customer(this.$route.params.id)
     },
-    contactPreferences() {
-      const contactData = [
+
+    customerDetails() {
+      return this.customerProfile["overview"]
+    },
+
+    customerInsights() {
+      return this.customerProfile["insights"]
+    },
+
+    customerContactPreferences() {
+      const contactPreferences = this.customerProfile["contact_preferences"]
+      return [
         {
           id: 1,
           title: "Email",
-          value: this.singleCustomer.preference_email,
+          value: contactPreferences["preference_email"],
           subLabel: null,
         },
         {
           id: 2,
           title: "Push",
-          value: this.singleCustomer.preference_push,
+          value: contactPreferences["preference_push"],
           width: "19%",
           minWidth: "164px",
         },
         {
           id: 3,
           title: "SMS",
-          value: this.singleCustomer.preference_sms,
+          value: contactPreferences["preference_sms"],
           width: "19%",
           minWidth: "164px",
         },
         {
           id: 4,
           title: "In-App",
-          value: this.singleCustomer.preference_in_app,
+          value: contactPreferences["preference_in_app"],
           subLabel: null,
         },
       ]
-      return contactData.filter((item) => item.title !== null)
     },
-    customerDataDisplay() {
+
+    customerOverview() {
+      const overview = this.customerProfile["overview"]
       return [
         {
           id: 1,
           title: "Customer length",
-          value: this.singleCustomer.since,
+          value: overview["since"],
           format: "date-relative",
           colValue: 2.5,
         },
         {
           id: 2,
           title: "Match confidence",
-          value: this.singleCustomer.match_confidence,
+          value: overview["match_confidence"],
           format: "slider",
           colValue: 2.5,
           hoverTooltip:
@@ -402,7 +372,7 @@ export default {
         {
           id: 3,
           title: "Lifetime value",
-          value: this.singleCustomer.ltv_actual,
+          value: overview["ltv_actual"],
           format: "currency",
           colValue: 2,
           hoverTooltip:
@@ -414,7 +384,7 @@ export default {
           // then display this date as relative time (x days, months, years, etc)
           id: 4,
           title: "Conversion time",
-          value: dayjs().subtract(this.singleCustomer.conversion_time, "month"),
+          value: dayjs().subtract(overview["conversion_time"], "month"),
           format: "date-relative",
           colValue: 2.5,
           hoverTooltip:
@@ -422,12 +392,14 @@ export default {
         },
       ]
     },
-    customerDetailsMore() {
-      const details = [
+
+    customerOverviewMore() {
+      const overviewMore = this.customerProfile["overview"]
+      return [
         {
           id: 5,
           title: "Churn score",
-          value: this.$options.filters.Empty(this.singleCustomer.churn_rate),
+          value: this.$options.filters.Empty(overviewMore["churn_rate"]),
           colValue: 2,
           hoverTooltip:
             "The measure of a customer’s likelihood to stop using a product.",
@@ -436,32 +408,33 @@ export default {
           id: 6,
           title: "Last click",
           colValue: 2.5,
-          value: this.formattedDate(this.singleCustomer.last_click)
-            ? this.formattedDate(this.singleCustomer.last_click)
+          value: this.formattedDate(overviewMore["last_click"])
+            ? this.formattedDate(overviewMore["last_click"])
             : "n/a",
         },
         {
           id: 7,
           title: "Last purchase date",
           colValue: 2.5,
-          value: this.formattedDate(this.singleCustomer.last_purchase),
+          value: this.formattedDate(overviewMore["last_purchase"]),
         },
         {
           id: 8,
           title: "Last open",
           colValue: 2.5,
-          value: this.formattedDate(this.singleCustomer.last_email_open),
+          value: this.formattedDate(overviewMore["last_email_open"]),
         },
       ]
-      return details
     },
   },
+
   async mounted() {
     this.loading = true
     await this.getCustomer(this.id)
     this.getCustomerEvent()
     this.loading = false
   },
+
   methods: {
     ...mapActions({
       getCustomer: "customers/get",

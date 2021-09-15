@@ -17,10 +17,6 @@ const somePercentage = () => {
   return faker.datatype.float({ min: 0, max: 1, precision: 0.000000001 })
 }
 
-const someScore = () => {
-  return faker.datatype.float({ min: 0, max: 1, precision: 0.000000001 })
-}
-
 const someValue = () => {
   return faker.datatype.float({ min: 100, max: 1000, precision: 0.01 })
 }
@@ -59,6 +55,10 @@ const cooccurrenceItem = (identifier, cooccurence) => {
 
 const idrBreakdown = (identifier, percentage) => {
   return {
+    cooccurrences: identifiers.map((cooccurence) => {
+      return cooccurrenceItem(identifier, cooccurence)
+    }),
+    count: Math.round(percentage * cooccurrencesTotal),
     data_sources: [
       {
         id: "1",
@@ -73,11 +73,9 @@ const idrBreakdown = (identifier, percentage) => {
         percentage: 0.65,
       },
     ],
-    cooccurrences: identifiers.map((cooccurence) => {
-      return cooccurrenceItem(identifier, cooccurence)
-    }),
+    icon: identifier,
     percentage: percentage,
-    count: Math.round(percentage * cooccurrencesTotal),
+    prop: startCase(identifier),
   }
 }
 
@@ -85,7 +83,7 @@ const idrBreakdown = (identifier, percentage) => {
  * Customer schema
  */
 export const customer = {
-  hux_id: (index) => `HUX:${index + 1000000000000001}`,
+  hux_id: (index) => `HUX${index + 1000000000000001}`,
   first_name: () => faker.name.firstName(),
   last_name: () => someLastName(),
   match_confidence: () => somePercentage(),
@@ -95,18 +93,37 @@ export const customer = {
  * Customer profile schema
  */
 export const customerProfile = {
-  first_name: () => customer.first_name(),
-  last_name: () => customer.last_name(),
-  match_confidence: () => customer.match_confidence(),
+  insights: {
+    address: REDACTED,
+    age: REDACTED,
+    city: REDACTED,
+    email: REDACTED,
+    gender: REDACTED,
+    phone: REDACTED,
+    state: REDACTED,
+    zip: REDACTED,
+  },
 
-  address: REDACTED,
-  age: REDACTED,
-  churn_rate: () => faker.datatype.number(1, 10),
-  city: REDACTED,
-  conversion_time: () =>
-    faker.datatype.float({ min: 1, max: 24, precision: 0.01 }),
-  email: REDACTED,
-  gender: REDACTED,
+  contact_preferences: {
+    preference_email: faker.datatype.boolean(),
+    preference_in_app: faker.datatype.boolean(),
+    preference_push: faker.datatype.boolean(),
+    preference_sms: faker.datatype.boolean(),
+  },
+
+  overview: {
+    ...customer, // extends base customer
+    churn_rate: () => faker.datatype.number(1, 10),
+    conversion_time: () =>
+      faker.datatype.float({ min: 1, max: 24, precision: 0.01 }),
+    last_click: () => faker.date.recent(30),
+    last_email_open: () => faker.date.recent(30),
+    last_purchase: () => faker.date.recent(30),
+    ltv_actual: someValue(),
+    ltv_predicted: someValue(),
+    since: () => faker.date.past(20),
+  },
+
   identity_resolution: {
     name: idrBreakdown("name", 0.2),
     address: idrBreakdown("address", 0.4),
@@ -114,21 +131,6 @@ export const customerProfile = {
     phone: idrBreakdown("phone", 0.1),
     cookie: idrBreakdown("cookie", 0.1),
   },
-  last_click: () => faker.date.recent(30),
-  last_email_open: () => faker.date.recent(30),
-  last_purchase: () => faker.date.recent(30),
-  ltv_actual: someValue(),
-  ltv_predicted: someValue(),
-  phone: REDACTED,
-  preference_email: faker.datatype.boolean(),
-  preference_in_app: faker.datatype.boolean(),
-  preference_push: faker.datatype.boolean(),
-  preference_sms: faker.datatype.boolean(),
-  propensity_to_purchase: someScore(),
-  propensity_to_unsubscribe: someScore(),
-  since: () => faker.date.past(20),
-  state: REDACTED,
-  zip: REDACTED,
 }
 
 /**
