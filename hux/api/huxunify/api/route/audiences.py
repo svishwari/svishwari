@@ -31,7 +31,7 @@ from huxunify.api.route.decorators import (
     get_user_name,
     api_error_handler,
 )
-from huxunify.api.route.utils import get_db_client,logger
+from huxunify.api.route.utils import get_db_client, logger
 from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
@@ -251,7 +251,9 @@ class AudienceInsightsStates(SwaggerView):
         # get auth token from request
         token_response = get_token_from_request(request)
 
-        audience = orchestration_management.get_audience(get_db_client(), ObjectId(audience_id))
+        audience = orchestration_management.get_audience(
+            get_db_client(), ObjectId(audience_id)
+        )
 
         return (
             jsonify(
@@ -347,7 +349,9 @@ class AudienceInsightsCities(SwaggerView):
             api_c.QUERY_PARAMETER_BATCH_NUMBER, api_c.DEFAULT_BATCH_NUMBER
         )
 
-        audience = orchestration_management.get_audience(get_db_client(), ObjectId(audience_id))
+        audience = orchestration_management.get_audience(
+            get_db_client(), ObjectId(audience_id)
+        )
 
         filters = (
             {api_c.AUDIENCE_FILTERS: audience.get(db_c.AUDIENCE_FILTERS)}
