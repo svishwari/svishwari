@@ -24,7 +24,10 @@
         :key="event.event_name"
         class="value-container"
       >
-        <div v-if="sourceInput.eventsCollection.includes(event.event_name)">
+        <div
+          class="event-list"
+          v-if="sourceInput.eventsCollection.includes(event.event_name)"
+        >
           <icon :type="event.event_name" :size="14" />
           <span class="text-label">{{ event.label_name }}</span>
         </div>
@@ -112,8 +115,14 @@ export default {
   .value-container {
     margin-top: 2px;
     @extend .global-heading;
-    .text-label {
-      margin-left: 8px !important;
+    .event-list {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      .text-label {
+        margin-left: 7px !important;
+        flex: 1 0 50%;
+      }
     }
   }
 
