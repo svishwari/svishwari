@@ -117,7 +117,7 @@ export default {
   .ribbon-hover {
     @extend .card-padding;
     .pipe {
-      border-left: 1px solid var(--v-lightGrey-base) !important;
+      border-left: 1px solid var(--v-black-lighten3) !important;
       height: 500px;
       transform: rotate(90deg);
       margin-left: 10px;

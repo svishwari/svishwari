@@ -166,17 +166,17 @@ export default {
     font-family: Open Sans;
     font-style: normal;
     font-weight: normal;
-    color: var(--v-gray-base) !important;
+    color: var(--v-black-darken1) !important;
     font-size: 12px !important;
   }
   .table-text {
-    color: var(--v-neroBlack-base);
+    color: var(--v-black-darken4);
     font-size: 12px !important;
   }
 
   .card-heading {
     font-size: 15px !important;
-    background-color: var(--v-aliceBlue-base);
+    background-color: var(--v-primary-lighten2);
     font-weight: 400;
     height: 54px !important;
   }
@@ -185,7 +185,7 @@ export default {
     font-family: Open Sans;
     font-style: normal;
     font-weight: normal;
-    color: var(--v-gray-base) !important;
+    color: var(--v-black-darken1) !important;
     font-size: 12px !important;
     padding: 0px !important;
 
@@ -197,6 +197,20 @@ export default {
     height: inherit !important;
     min-height: 100px !important;
     max-height: 190px;
+  }
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px var(--v-white-base);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--v-lightGrey-base);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--v-lightGrey-base);
   }
 }
 </style>

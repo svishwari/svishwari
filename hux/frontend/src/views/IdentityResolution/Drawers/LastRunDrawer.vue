@@ -163,7 +163,7 @@ export default {
 
 <style lang="scss" scoped>
 ::v-deep .v-data-table > .v-data-table__wrapper > table > thead > tr > th {
-  background: var(--v-aliceBlue-base) !important;
+  background: var(--v-primary-lighten2) !important;
   padding-top: 13px;
   padding-bottom: 13px;
 }
@@ -177,7 +177,7 @@ export default {
 .panel-header {
   border-bottom-width: 1px;
   border-bottom-style: solid;
-  border-color: var(--v-greyBlue-base);
+  border-color: var(--v-primary-lighten3);
   flex-direction: row-reverse;
   height: 40px;
 

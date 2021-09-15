@@ -1184,3 +1184,63 @@ class SetLookalikeAudience(SwaggerView):
             LookalikeAudienceGetSchema().dump(lookalike_audience),
             HTTPStatus.CREATED,
         )
+
+
+@add_view_to_blueprint(
+    orchestration_bp,
+    f"{api_c.AUDIENCE_ENDPOINT}/<audience_id>",
+    "DeleteAudienceView",
+)
+class DeleteAudienceView(SwaggerView):
+    """Hard deletes an audience"""
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        }
+    ]
+    responses = {
+        HTTPStatus.NO_CONTENT.value: {
+            "description": "Successfully deleted the audience from the database.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to delete the audience.",
+            "schema": {
+                "example": {"message": "Destination cannot be validated"},
+            },
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def delete(self, audience_id: str) -> Tuple[dict, int]:
+        """Deletes an audience
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (str): ID of the audience to be deleted.
+
+        Returns:
+            Tuple[dict, int]: response dict, HTTP status code.
+
+        """
+
+        deleted = orchestration_management.delete_audience(
+            get_db_client(), ObjectId(audience_id)
+        )
+
+        if deleted:
+            return {}, HTTPStatus.NO_CONTENT
+        return {
+            "message": "Internal Server Error."
+        }, HTTPStatus.INTERNAL_SERVER_ERROR

@@ -40,7 +40,7 @@ export default {
 }
 .view-all {
   line-height: 22px;
-  color: var(--v-neroblack-base) !important;
+  color: var(--v-black-darken4) !important;
   @extend .cursor-pointer;
 }
 </style>

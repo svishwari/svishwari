@@ -9,7 +9,7 @@
       }"
       class="mx-auto description-tooltip-style"
     >
-      <div class="bar-hover neroBlack--text">
+      <div class="bar-hover black--text text--darken-4">
         <span class="feature-name">
           {{ sourceInput.name }}
         </span>
@@ -59,7 +59,7 @@ export default {
   font-style: normal;
   font-size: 12px;
   line-height: 16px;
-  color: var(--v-darkGreyHeading-base) !important;
+  color: var(--v-black-darken2) !important;
 }
 
 .card-padding {
