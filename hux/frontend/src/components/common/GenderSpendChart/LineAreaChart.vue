@@ -269,7 +269,7 @@ export default {
           let d0 = data[i - 1]
           let d1 = data[i] || {}
           let d = x0 - d0 > d1 - x0 ? d1 : d0
-          let finalXCoordinate = xScale(d) + 60
+          let finalXCoordinate = xScale(d) + margin.left
           let dateD = this.$options.filters.Date(d, "DD/MM/YY")
           let yData
           let dataToolTip = this.areaChartData.find(
@@ -314,7 +314,7 @@ export default {
             .append("circle")
             .attr("class", "dot")
             .attr("r", 2.5)
-            .attr("cx", () => xScale(new Date(points.data.date)) + 60)
+            .attr("cx", () => xScale(new Date(points.data.date)) + margin.left)
             .attr("cy", () => yScale(points[1]) + margin.top)
             .attr("data", () => points.data)
             .style("fill", colorCodes[index])
