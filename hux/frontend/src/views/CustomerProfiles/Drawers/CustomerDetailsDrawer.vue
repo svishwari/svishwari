@@ -50,7 +50,9 @@
                 <div class="my-2 black--text text--darken-1">
                   Match confidence:
                   <span class="black--text text--darken-4">
-                    {{ item.match_confidence | Numeric(true, false, false, true) }}
+                    {{
+                      item.match_confidence | Numeric(true, false, false, true)
+                    }}
                   </span>
                 </div>
               </template>
