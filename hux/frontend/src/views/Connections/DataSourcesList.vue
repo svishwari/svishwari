@@ -10,7 +10,11 @@
         }"
         class="text-decoration-none"
       >
-        <v-icon class="ml-2 add-icon" color="primary"> mdi-plus-circle </v-icon>
+        <icon
+          class="add-icon cursor-pointer"
+          type="add"
+          :size="27"
+        />
       </router-link>
     </div>
 
@@ -89,6 +93,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .list-wrapper {
+  .add-icon {
+    display: block;
+    margin-left: 7px;
+    position: relative;
+    top: 2px;
+  }
   .v-card {
     .status {
       min-width: 80px;
