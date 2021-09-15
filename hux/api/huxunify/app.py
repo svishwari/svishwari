@@ -97,7 +97,7 @@ def create_app() -> Flask:
     configure_flask(flask_app)
 
     # monitor flask setup
-    if not flask_app.env:
+    if flask_app.env != "pytest":
         monitor_app(flask_app)
 
     return flask_app
