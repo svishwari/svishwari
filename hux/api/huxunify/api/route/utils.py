@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Tuple
 from http import HTTPStatus
 from bson import ObjectId
+from pandas import DataFrame
 
 from healthcheck import HealthCheck
 from decouple import config
@@ -261,3 +262,18 @@ def group_gender_spending(gender_spending: list) -> dict:
             for x in gender_spending
         ],
     }
+
+
+def transform_fields_generic_file(
+    dataframe: DataFrame,
+) -> DataFrame:
+    """Returns the csv file data without any transformation.
+
+    Args:
+        dataframe (pd.DataFrame): input dataframe.
+
+    Returns:
+        (pd.DataFrame): input dataframe.
+    """
+
+    return dataframe
