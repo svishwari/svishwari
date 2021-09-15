@@ -306,7 +306,7 @@ export default {
         {
           text: "Created by",
           value: "created_by",
-          width: "100%",
+          width: "148",
         },
       ],
       loading: false,
