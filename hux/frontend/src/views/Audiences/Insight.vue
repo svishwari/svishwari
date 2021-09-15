@@ -431,7 +431,7 @@
             :indeterminate="loadingDemographics"
           />
           <v-card-title v-if="!loadingDemographics" class="pb-2 pl-2 pt-5">
-            <div class="mt-2">
+            <div class="mt-2 ml-5">
               <span class="neroBlack--text text-h5">
                 Gender &sol; monthly spending in 2021
               </span>

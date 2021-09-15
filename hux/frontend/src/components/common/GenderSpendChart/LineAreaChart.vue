@@ -5,7 +5,7 @@
       class="chart-section"
       @mouseover="getCordinates($event)"
     ></div>
-    <div class="pt-2">
+    <div class="pt-2 pl-4">
       <div id="legend"></div>
     </div>
   </div>
@@ -111,7 +111,7 @@ export default {
         .attr("height", this.height)
 
       let strokeWidth = 1.5
-      let margin = { top: 10, bottom: 20, left: 40, right: 30 }
+      let margin = { top: 10, bottom: 20, left: 60, right: 40 }
       let chart = svg
         .append("g")
         .attr("transform", `translate(${margin.left},10)`)
@@ -269,7 +269,7 @@ export default {
           let d0 = data[i - 1]
           let d1 = data[i] || {}
           let d = x0 - d0 > d1 - x0 ? d1 : d0
-          let finalXCoordinate = xScale(d) + 40
+          let finalXCoordinate = xScale(d) + margin.left
           let dateD = this.$options.filters.Date(d, "DD/MM/YY")
           let yData
           let dataToolTip = this.areaChartData.find(
@@ -314,7 +314,7 @@ export default {
             .append("circle")
             .attr("class", "dot")
             .attr("r", 2.5)
-            .attr("cx", () => xScale(new Date(points.data.date)) + 40)
+            .attr("cx", () => xScale(new Date(points.data.date)) + margin.left)
             .attr("cy", () => yScale(points[1]) + margin.top)
             .attr("data", () => points.data)
             .style("fill", colorCodes[index])
@@ -326,7 +326,7 @@ export default {
       let legendSvg = d3Select
         .select("#legend")
         .append("svg")
-        .attr("viewBox", "0 0 200 50")
+        .attr("viewBox", "0 0 190 50")
         .attr("id", "mainSvg")
         .attr("class", "svgBox")
         .style("margin-left", "20px")
