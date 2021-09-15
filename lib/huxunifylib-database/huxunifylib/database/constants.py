@@ -112,6 +112,7 @@ STATUS_SUCCEEDED = "Succeeded"
 STATUS_PAUSED = "Paused"
 STATUS_DELIVERED = "Delivered"
 STATUS_TRANSFERRED_FOR_FEEDBACK = "transferred_for_feedback"
+STATUS_TRANSFERRED_FOR_REPORT = "transferred_for_report"
 
 INGESTED_DATA = "data"
 

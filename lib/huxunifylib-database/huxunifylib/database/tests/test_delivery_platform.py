@@ -1017,7 +1017,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(doc is not None)
 
         metrics_list = dpm.get_performance_metrics(
-            self.database, delivery_job_id
+            database=self.database, delivery_job_id=delivery_job_id
         )
 
         self.assertTrue(metrics_list is not None)
@@ -1113,7 +1113,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             generic_campaigns=self.generic_campaigns[0],
         )
 
-        doc = dpm.set_transferred_for_feedback(
+        doc = dpm.set_metrics_transferred_for_feedback(
             database=self.database,
             performance_metrics_id=metrics_init_doc[c.ID],
         )
@@ -1121,7 +1121,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         # Read metrics separately of setting
         metrics_list = dpm.get_performance_metrics(
-            self.database, delivery_job_id
+            database=self.database, delivery_job_id=delivery_job_id
         )
         self.assertTrue(metrics_list[0][c.STATUS_TRANSFERRED_FOR_FEEDBACK])
 
@@ -1155,7 +1155,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             generic_campaigns=self.generic_campaigns[0],
         )
 
-        dpm.set_transferred_for_feedback(
+        dpm.set_metrics_transferred_for_feedback(
             database=self.database,
             performance_metrics_id=metrics_doc_2[c.ID],
         )
@@ -1473,7 +1473,9 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertIsNotNone(doc)
 
-        events_list = dpm.get_campaign_activity(self.database, delivery_job_id)
+        events_list = dpm.get_campaign_activity(
+            database=self.database, delivery_job_id=delivery_job_id
+        )
 
         self.assertIsNotNone(events_list)
         self.assertEqual(len(events_list), 1)
@@ -1629,13 +1631,13 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         status = dpm.set_campaign_activities(
             database=self.database,
-            campaign_activity_docs=campaign_activity_docs,
+            performance_metric_docs=campaign_activity_docs,
         )
 
         self.assertTrue(status)
 
         campaign_activity_doc_list = dpm.get_campaign_activity(
-            self.database, delivery_job_id
+            database=self.database, delivery_job_id=delivery_job_id
         )
 
         self.assertIsNotNone(campaign_activity_doc_list)
@@ -1693,13 +1695,13 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         status = dpm.set_campaign_activities(
             database=self.database,
-            campaign_activity_docs=campaign_activity_docs,
+            performance_metric_docs=campaign_activity_docs,
         )
 
         self.assertTrue(status)
 
-        campaign_activity_doc_list = dpm.get_all_feedback_campaign_activities(
-            self.database
+        campaign_activity_doc_list = dpm.get_all_campaign_activities(
+            self.database, pending_transfer_for_feedback=True
         )
 
         self.assertIsNotNone(campaign_activity_doc_list)
@@ -1737,13 +1739,13 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         doc = dpm.set_campaign_activity_transferred_for_feedback(
             database=self.database,
-            campaign_activity_id=doc[c.ID],
+            performance_metrics_id=doc[c.ID],
         )
         self.assertTrue(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK])
 
         # Read activities separately of setting
         campaign_activities_list = dpm.get_campaign_activity(
-            self.database, delivery_job_id
+            database=self.database, delivery_job_id=delivery_job_id
         )
         self.assertTrue(
             campaign_activities_list[0][c.STATUS_TRANSFERRED_FOR_FEEDBACK]
@@ -1900,7 +1902,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(status["insert_status"])
 
         performance_metrics_docs_list = dpm.get_performance_metrics(
-            self.database, delivery_job_id
+            database=self.database, delivery_job_id=delivery_job_id
         )
         self.assertIsNotNone(performance_metrics_docs_list)
         self.assertEqual(len(performance_metrics_docs_list), 2)
@@ -1953,7 +1955,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         status = dpm.set_campaign_activities(
             database=self.database,
-            campaign_activity_docs=campaign_activity_docs,
+            performance_metric_docs=campaign_activity_docs,
         )
 
         self.assertTrue(status)
