@@ -49,7 +49,7 @@
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
               'expanded-row': isExpanded,
-              'pl-2': header.value == 'audiences',
+              'pl-3': header.value == 'audiences',
             }"
             :style="{ width: header.width }"
           >
@@ -187,7 +187,7 @@
                   v-for="header in getAudienceHeaders(subHeaders)"
                   :key="header.value"
                   :class="{
-                    'child-row pl-0': header.value == 'name',
+                    'child-row pl-1': header.value == 'name',
                   }"
                   :style="{ width: header.width }"
                 >
