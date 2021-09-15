@@ -198,5 +198,19 @@ export default {
     min-height: 100px !important;
     max-height: 190px;
   }
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px var(--v-white-base);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--v-lightGrey-base);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--v-lightGrey-base);
+  }
 }
 </style>

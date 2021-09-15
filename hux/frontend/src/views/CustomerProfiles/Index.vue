@@ -15,9 +15,6 @@
         >
           View all customers
         </hux-button>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
-          mdi-download
-        </v-icon>
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -242,7 +239,7 @@
                 <span class="neroBlack--text text-h5">
                   Gender &sol; monthly spending
                 </span>
-                <span class="color-last-month">(last 6 months)</span>
+                <span class="text-body-2 time-frame">(last 6 months)</span>
               </div>
             </v-card-title>
             <gender-spend-chart
@@ -649,7 +646,6 @@ export default {
     color: var(--v-cerulean-base) !important;
   }
 }
-
 .row-margin {
   margin-left: -6px;
   margin-right: -6px;

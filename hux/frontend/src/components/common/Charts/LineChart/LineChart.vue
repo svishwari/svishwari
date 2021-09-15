@@ -53,15 +53,15 @@ export default {
   watch: {
     chartDimensions: {
       handler() {
-        d3Select.select(this.$refs.stackBarChart).selectAll("svg").remove()
-        this.initiateStackBarChart()
+        d3Select.select(this.$refs.lineChart).selectAll("svg").remove()
+        this.initiateLineChart()
       },
       immediate: false,
       deep: true,
     },
   },
   methods: {
-    async initiateStackBarChart() {
+    async initiateLineChart() {
       await this.value
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
@@ -69,6 +69,8 @@ export default {
       let margin = { top: 15, right: 45, bottom: 100, left: 48 }
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
+
+      d3Select.select(this.$refs.lineChart).selectAll("svg").remove()
 
       let svg = d3Select
         .select(this.$refs.lineChart)
