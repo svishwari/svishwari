@@ -12,11 +12,6 @@
 
     <template #default>
       <v-progress-linear :active="loading" :indeterminate="loading" />
-      <page-header class="top-bar" :header-height="40" :header-padding="'px-4'">
-        <template slot="left">
-          <v-icon size="18" color="lightGrey">mdi-magnify</v-icon>
-        </template>
-      </page-header>
       <hux-data-table
         :columns="columnDefs"
         :sort-column="'hux_id'"
@@ -42,19 +37,19 @@
               <template #tooltip>
                 <div class="my-2 gray--text">
                   Hux ID:
-                  <span class="font-weight-semi-bold neroBlack--text">
+                  <span class="neroBlack--text">
                     {{ item[header.value] }}
                   </span>
                 </div>
                 <div class="my-2 gray--text">
                   Full name:
-                  <span class="font-weight-semi-bold neroBlack--text">
+                  <span class="neroBlack--text">
                     {{ item.last_name }}, {{ item.first_name }}
                   </span>
                 </div>
                 <div class="my-2 gray--text">
                   Match confidence:
-                  <span class="font-weight-semi-bold neroBlack--text">
+                  <span class="neroBlack--text">
                     {{
                       item.match_confidence | Numeric(true, false, false, true)
                     }}

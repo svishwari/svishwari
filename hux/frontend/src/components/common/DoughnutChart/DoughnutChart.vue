@@ -81,7 +81,7 @@ export default {
       let arc = d3Shape
         .arc()
         .outerRadius(radius - 10)
-        .innerRadius(radius - 35)
+        .innerRadius(radius - 25)
 
       // Assign value to chart
       let pie = d3Shape

@@ -433,8 +433,9 @@
           <v-card-title v-if="!loadingDemographics" class="pb-2 pl-2 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
-                Gender &sol; monthly spending in 2021
+                Gender &sol; monthly spending
               </span>
+              <span class="text-body-2 time-frame">(last 6 months)</span>
             </div>
           </v-card-title>
           <gender-spend-chart
