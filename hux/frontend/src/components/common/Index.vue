@@ -496,8 +496,8 @@
     <logo type="sfmc"></logo>
     <logo type="sfmc" :size="48"></logo>
 
-    <logo type="twilio"></logo>
-    <logo type="twilio" :size="48"></logo>
+    <logo type="sendgrid"></logo>
+    <logo type="sendgrid" :size="48"></logo>
 
     <logo type="qualtrics"></logo>
     <logo type="qualtrics" :size="48"></logo>
