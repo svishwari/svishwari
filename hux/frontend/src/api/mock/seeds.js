@@ -134,9 +134,9 @@ const tableauDS = {
   is_enabled: false,
 }
 
-const sendgridDS = {
-  name: "Sendgrid",
-  type: "sendgrid",
+const twilioDS = {
+  name: "Twilio",
+  type: "twilio",
   is_enabled: false,
 }
 
@@ -404,7 +404,7 @@ export default function (server) {
   server.create("dataSource", microsoftAzureSQL)
   server.create("dataSource", qualtricsDS)
   server.create("dataSource", tableauDS)
-  server.create("dataSource", sendgridDS)
+  server.create("dataSource", twilioDS)
 
   // seed destinations
   server.create("destination", sendgrid)
