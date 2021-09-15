@@ -1,5 +1,5 @@
 <template>
-  <page max-width="100%">
+  <page max-width="100%" class="idr-wrapper">
     <template #header>
       <page-header header-height="70">
         <template #left>
@@ -14,24 +14,19 @@
             ]"
           />
         </template>
-        <template #right>
-          <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
-            mdi-download
-          </v-icon>
-        </template>
       </page-header>
 
-      <page-header header-height="70">
+      <page-header header-height="71">
         <template #left>
           <v-btn
             icon
             :color="isFilterToggled ? 'secondary' : 'black'"
-            class="mr-6"
+            class="ml-n2"
             @click.native="isFilterToggled = !isFilterToggled"
           >
             <v-icon medium>mdi-filter-variant</v-icon>
           </v-btn>
-          <v-btn disabled icon color="black" class="mr-6">
+          <v-btn disabled icon color="black" class="pl-6">
             <v-icon medium>mdi-magnify</v-icon>
           </v-btn>
         </template>
@@ -81,7 +76,7 @@
       </hux-filters-bar>
     </template>
     <template>
-      <v-row v-if="!loadingOverview" no-gutters>
+      <v-row v-if="!loadingOverview" no-gutters class="idr-overview">
         <metric-card
           v-for="(metric, index) in overview"
           :key="index"
@@ -301,4 +296,10 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.idr-wrapper {
+  .idr-overview {
+    display: -webkit-box;
+  }
+}
+</style>
