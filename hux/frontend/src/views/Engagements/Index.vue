@@ -187,7 +187,7 @@
                   v-for="header in getAudienceHeaders(subHeaders)"
                   :key="header.value"
                   :class="{
-                    'child-row pl-1': header.value == 'name',
+                    'child-row pl-0': header.value == 'name',
                   }"
                   :style="{ width: header.width }"
                 >
@@ -198,6 +198,9 @@
                       route-name="AudienceInsight"
                       :route-param="item['id']"
                       :data="item"
+                      :label-class="{
+                        'no-expand': item.destinations.length == 0,
+                      }"
                     >
                       <template #expand-icon>
                         <v-icon
@@ -317,6 +320,7 @@
                   :columns="expandedHeaders"
                   :data-items="getDestinations(parentItem)"
                   :show-header="false"
+                  view-height="auto"
                 >
                   <template #row-item="{ item }">
                     <td
@@ -750,6 +754,9 @@ export default {
     .mdi-dots-vertical {
       background: transparent !important;
     }
+    .no-expand {
+      padding-left: 8px;
+    }
   }
   // This CSS is to avoid conflict with Tooltip component.
   ::v-deep .destination-ico {
@@ -809,8 +816,10 @@ export default {
       .v-data-table-header {
         th:nth-child(1) {
           left: 0;
-          z-index: 3;
+          z-index: 5;
           border-right: thin solid rgba(0, 0, 0, 0.12);
+          overflow-y: visible;
+          overflow-x: visible;
         }
         border-radius: 12px 12px 0px 0px;
       }
