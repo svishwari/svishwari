@@ -6,7 +6,6 @@
     tile
     :color="bgColor"
     :height="headerHeight"
-    fixed
   >
     <div>
       <div class="d-flex">
