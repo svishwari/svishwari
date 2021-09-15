@@ -5,8 +5,9 @@ Paths for the User API
 from http import HTTPStatus
 from typing import Tuple
 
+from bson import ObjectId
 from connexion.exceptions import ProblemException
-from flask import Blueprint
+from flask import Blueprint, request
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
@@ -27,7 +28,10 @@ from huxunify.api.route.utils import (
 from huxunify.api.schema.user import UserSchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
-
+from huxunify.api.data_connectors.okta import (
+    get_token_from_request,
+    introspect_token,
+)
 
 # setup the cdm blueprint
 user_bp = Blueprint(api_c.USER_ENDPOINT, import_name=__name__)
@@ -150,7 +154,9 @@ class AddUserFavorite(SwaggerView):
 
         """
 
-        okta_id = None  # TODO : Fetch okta id from JWT Token (HUS-443)
+        okta_id = introspect_token(get_token_from_request(request)[0]).get(
+            "user_id"
+        )
 
         if component_name not in db_constants.FAVORITE_COMPONENTS:
             logger.error(
@@ -160,14 +166,20 @@ class AddUserFavorite(SwaggerView):
                 "message": api_c.INVALID_COMPONENT_NAME
             }, HTTPStatus.BAD_REQUEST
 
-        response = manage_user_favorites(
+        component_id = ObjectId(component_id)
+
+        user_details = manage_user_favorites(
             get_db_client(),
             okta_id=okta_id,
             component_name=component_name,
             component_id=component_id,
         )
+        if user_details:
+            return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.CREATED
 
-        return response, HTTPStatus.CREATED
+        return {
+            "message": f"{str(component_id)} already in favorites."
+        }, HTTPStatus.OK
 
 
 @add_view_to_blueprint(
@@ -225,7 +237,9 @@ class DeleteUserFavorite(SwaggerView):
             Tuple[dict, int]: Configuration dict, HTTP status
 
         """
-        okta_id = None  # TODO : Fetch okta id from JWT Token (HUS-443)
+        okta_id = introspect_token(get_token_from_request(request)[0]).get(
+            "user_id"
+        )
 
         if component_name not in db_constants.FAVORITE_COMPONENTS:
             logger.error(
@@ -235,12 +249,19 @@ class DeleteUserFavorite(SwaggerView):
                 "message": api_c.INVALID_COMPONENT_NAME
             }, HTTPStatus.BAD_REQUEST
 
-        manage_user_favorites(
+        user_details = manage_user_favorites(
             get_db_client(),
             okta_id=okta_id,
             component_name=component_name,
-            component_id=component_id,
+            component_id=ObjectId(component_id),
             delete_flag=True,
         )
-        logger.info("Successfully deleted user favorite %s.", component_name)
-        return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK
+        if user_details:
+            logger.info(
+                "Successfully deleted user favorite %s.", component_name
+            )
+            return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK
+
+        return {
+            "message": f"{component_id} not part of user favorites"
+        }, HTTPStatus.OK

@@ -674,7 +674,7 @@ USER_TAG = "user"
 USER_NAME = "user_name"
 USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
-
+FAVORITE = "favorite"
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
 MODELS_TAG = "model"
