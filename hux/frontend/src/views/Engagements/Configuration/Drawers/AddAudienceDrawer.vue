@@ -14,7 +14,7 @@
 
     <template #default>
       <div class="pa-4">
-        <h6 class="pb-6 text-h6 neroBlack--text">
+        <h6 class="pb-6 text-h6 black--text text--darken-4">
           Build a target audience from the data you own.
         </h6>
         <v-form ref="newAudienceRef" v-model="newAudienceValidity">
@@ -27,7 +27,7 @@
             required
           />
         </v-form>
-        <div class="pt-4 pb-2 neroBlack--text text-caption">
+        <div class="pt-4 pb-2 black--text text--darken-4 text-caption">
           Audience overview
         </div>
         <div class="d-flex align-center pb-4">
