@@ -19,6 +19,7 @@ from huxunify.api.schema.customers import (
     DataFeedSchema,
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
+    CustomersInsightsCountriesSchema,
 )
 from huxunify.api.schema.customers import (
     CustomerGeoVisualSchema,
@@ -104,14 +105,12 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         data = response.json
 
-        response = self.test_client.get(
-            f"{self.customers}?{api_c.QUERY_PARAMETER_BATCH_SIZE}=abc&"
-            f"{api_c.QUERY_PARAMETER_BATCH_NUMBER}=def",
-            headers=t_c.STANDARD_HEADERS,
-        )
-        self.assertEqual(
-            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
-        )
+        with self.assertRaises(TypeError):
+            self.test_client.get(
+                f"{self.customers}?{api_c.QUERY_PARAMETER_BATCH_SIZE}=abc&"
+                f"{api_c.QUERY_PARAMETER_BATCH_NUMBER}=def",
+                headers=t_c.STANDARD_HEADERS,
+            )
 
         response = self.test_client.get(
             f"{self.customers}",
@@ -457,7 +456,7 @@ class TestCustomersOverview(TestCase):
         )
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(
-            "Failed to get customers Demographical Visual Insights.",
+            "Failed to get customers Demographic Visual Insights.",
             response.json["message"],
         )
 
@@ -594,9 +593,8 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.start()
 
-        response = self.test_client.post(
+        response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.CITIES}",
-            json={"filters": {}},
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -627,9 +625,8 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.start()
 
-        response = self.test_client.post(
+        response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.STATES}",
-            json={"filters": {}},
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -638,6 +635,38 @@ class TestCustomersOverview(TestCase):
         self.assertTrue(
             t_c.validate_schema(
                 CustomersInsightsStatesSchema(),
+                response.json,
+                True,
+            )
+        )
+
+    def test_customers_insights_countries_success(self) -> None:
+        """Test get customers insights by countries
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/count-by-state",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
+        )
+
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.COUNTRIES}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(
+                CustomersInsightsCountriesSchema(),
                 response.json,
                 True,
             )

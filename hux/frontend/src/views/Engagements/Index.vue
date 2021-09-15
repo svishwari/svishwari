@@ -61,7 +61,7 @@
             <div v-if="header.value == 'name'" class="w-80">
               <menu-cell
                 :value="item[header.value]"
-                :menu-options="actionItems"
+                :menu-options="getActionItems(item)"
                 route-name="EngagementDashboard"
                 :route-param="item['id']"
                 :data="item"
@@ -89,11 +89,10 @@
                   v-for="destination in getOverallDestinations(
                     item[header.value]
                   )"
-                  :key="destination.delivery_platform_type"
+                  :key="destination.id"
                 >
                   <template #label-content>
                     <logo
-                      :key="destination.id"
                       class="mr-1"
                       :type="destination.delivery_platform_type"
                       :size="18"
@@ -117,7 +116,41 @@
               />
             </div>
             <div v-if="header.value == 'last_delivered'">
-              <time-stamp :value="item[header.value]" />
+              <tooltip>
+                <template #label-content>
+                  {{ item[header.value] | Date("relative") | Empty }}
+                </template>
+                <template #hover-content>
+                  <div v-if="item[header.value] !== ''">
+                    <div class="neroBlack--text text-caption mb-2">
+                      Delivered to:
+                    </div>
+                    <div
+                      v-for="destination in item['destinations']"
+                      :key="destination.id"
+                      class="mb-2"
+                    >
+                      <div class="d-flex align-center mb-1">
+                        <logo
+                          :type="destination.delivery_platform_type"
+                          :size="18"
+                        />
+                        <span class="ml-1 neroBlack--text text-caption">
+                          {{ destination.name }}
+                        </span>
+                      </div>
+                      <div class="neroBlack--text text-caption">
+                        {{
+                          destination.latest_delivery
+                            ? destination.latest_delivery.update_time
+                            : "" | Date | Empty
+                        }}
+                      </div>
+                    </div>
+                  </div>
+                  <div v-else>—</div>
+                </template>
+              </tooltip>
             </div>
             <div v-if="header.value == 'delivery_schedule'">
               {{ item[header.value] | DeliverySchedule }}
@@ -167,7 +200,7 @@
                   <div v-if="header.value == 'name'">
                     <menu-cell
                       :value="item[header.value]"
-                      :menu-options="audienceActionItems"
+                      :menu-options="getAudienceActionItems(item)"
                       route-name="AudienceInsight"
                       :route-param="item['id']"
                       :data="item"
@@ -202,11 +235,10 @@
                         v-for="destination in getOverallDestinations(
                           item[header.value]
                         )"
-                        :key="destination.delivery_platform_type"
+                        :key="destination.id"
                       >
                         <template #label-content>
                           <logo
-                            :key="destination.id"
                             class="mr-1"
                             :type="destination.delivery_platform_type"
                             :size="18"
@@ -222,7 +254,40 @@
                     </span>
                   </div>
                   <div v-if="header.value == 'last_delivered'">
-                    <time-stamp :value="item[header.value]" />
+                    <tooltip>
+                      <template #label-content>
+                        {{ item[header.value] | Date("relative") | Empty }}
+                      </template>
+                      <template #hover-content>
+                        <div>
+                          <div class="neroBlack--text text-caption mb-2">
+                            Delivered to:
+                          </div>
+                          <div
+                            v-for="destination in item['destinations']"
+                            :key="destination.id"
+                            class="mb-2"
+                          >
+                            <div class="d-flex align-center mb-1">
+                              <logo
+                                :type="destination.delivery_platform_type"
+                                :size="18"
+                              />
+                              <span class="ml-1 neroBlack--text text-caption">
+                                {{ destination.name }}
+                              </span>
+                            </div>
+                            <div class="neroBlack--text text-caption">
+                              {{
+                                destination.latest_delivery.update_time
+                                  | Date
+                                  | Empty
+                              }}
+                            </div>
+                          </div>
+                        </div>
+                      </template>
+                    </tooltip>
                   </div>
                   <div v-if="header.value == 'delivery_schedule'">
                     {{ item[header.value] | DeliverySchedule }}
@@ -412,39 +477,6 @@ export default {
         type: "success",
         message: "",
       },
-      actionItems: [
-        { title: "Favorite", isDisabled: true },
-        { title: "Export", isDisabled: true },
-        { title: "Edit engagement", isDisabled: true },
-        { title: "Duplicate", isDisabled: true },
-        {
-          title: "Make inactive",
-          isDisabled: false,
-          onClick: (value) => {
-            this.makeInactiveEngagement(value)
-          },
-        },
-        { title: "Delete engagement", isDisabled: true },
-      ],
-      audienceActionItems: [
-        { title: "Favorite", isDisabled: true },
-        { title: "Export", isDisabled: true },
-        { title: "Edit audience", isDisabled: true },
-        { title: "Duplicate", isDisabled: true },
-        {
-          title: "Create a lookalike",
-          isDisabled: false,
-          menu: {
-            icon: "facebook",
-            title: "Facebook",
-            isDisabled: true,
-            onClick: (value) => {
-              this.openLookAlikeDrawer(value)
-            },
-          },
-        },
-        { title: "Remove audience", isDisabled: true },
-      ],
       breadcrumbItems: [
         {
           text: "Engagements",
@@ -488,16 +520,45 @@ export default {
     rowData() {
       let engagementList = this.engagementData
       engagementList = engagementList.map((eng) => {
-        let destinationList = eng.audiences.map((aud) => aud["destinations"])
-        // Flattering the list of sub audiences
-        destinationList = [].concat.apply([], destinationList)
-        // Fetch unique destinations based on id
-        destinationList = Array.from(
-          new Set(destinationList.map((a) => a.id))
-        ).map((id) => {
-          return destinationList.find((a) => a.id === id)
+        let last_delivered_eng = ""
+        let engDestinationList = []
+        let eng_audiences = eng.audiences.map((audience) => {
+          let last_delivered_aud = ""
+          audience.destinations.map((destination) => {
+            let dest_latest_delivery_time = destination.latest_delivery
+              ? destination.latest_delivery.update_time || ""
+              : ""
+            let engDestIndex = engDestinationList.findIndex(
+              (each) => destination.id === each.id
+            )
+            if (last_delivered_aud < dest_latest_delivery_time) {
+              last_delivered_aud = dest_latest_delivery_time
+            }
+            if (engDestIndex !== -1) {
+              if (
+                engDestinationList[engDestIndex].latest_delivery.update_time ||
+                "" < dest_latest_delivery_time
+              ) {
+                engDestinationList[engDestIndex] = destination
+              }
+            } else {
+              engDestinationList.push(destination)
+            }
+          })
+          if (last_delivered_eng < last_delivered_aud) {
+            last_delivered_eng = last_delivered_aud
+          }
+          return {
+            ...audience,
+            last_delivered: last_delivered_aud,
+          }
         })
-        return { ...eng, destinations: destinationList }
+        return {
+          ...eng,
+          audiences: eng_audiences,
+          destinations: engDestinationList,
+          last_delivered: last_delivered_eng,
+        }
       })
       return engagementList.sort((a, b) => (a.name > b.name ? 1 : -1))
     },
@@ -575,6 +636,70 @@ export default {
       this.alert.type = "error"
       this.alert.message = message
       this.flashAlert = true
+    },
+    getActionItems(engagement) {
+      let actionItems = [
+        { title: "Favorite", isDisabled: true },
+        { title: "Export", isDisabled: true },
+        {
+          title: "Edit engagement",
+          isDisabled: false,
+          onClick: () => {
+            this.editEngagement(engagement.id)
+          },
+        },
+        { title: "Duplicate", isDisabled: true },
+        {
+          title: "Make inactive",
+          isDisabled: false,
+          onClick: (value) => {
+            this.makeInactiveEngagement(value)
+          },
+        },
+        { title: "Delete engagement", isDisabled: true },
+      ]
+
+      return actionItems
+    },
+    editEngagement(id) {
+      this.$router.push({
+        name: "EngagementUpdate",
+        params: { id: id },
+      })
+    },
+    getAudienceActionItems(audience) {
+      let audienceActionItems = [
+        { title: "Favorite", isDisabled: true },
+        { title: "Export", isDisabled: true },
+        {
+          title: "Edit audience",
+          isDisabled: false,
+          onClick: () => {
+            this.editAudience(audience.id)
+          },
+        },
+        { title: "Duplicate", isDisabled: true },
+        {
+          title: "Create a lookalike",
+          isDisabled: false,
+          menu: {
+            icon: "facebook",
+            title: "Facebook",
+            isDisabled: true,
+            onClick: (value) => {
+              this.openLookAlikeDrawer(value)
+            },
+          },
+        },
+        { title: "Remove audience", isDisabled: true },
+      ]
+      return audienceActionItems
+    },
+    editAudience(id) {
+      this.$router.push({
+        name: "AudienceUpdate",
+        params: { id: id },
+      })
     },
   },
 }
