@@ -132,7 +132,7 @@ export default {
   ::v-deep .ag-root-wrapper {
     border: none;
     border-top: solid 1px;
-    border-color: var(--v-lightGrey-base) !important;
+    border-color: var(--v-black-lighten3) !important;
     .menu-cells {
       .ag-cell-value {
         width: 100%;
@@ -149,13 +149,13 @@ export default {
         font-weight: 600;
         line-height: 16px;
         background: transparent;
-        border-color: var(--v-lightGrey-base) !important;
+        border-color: var(--v-black-lighten3) !important;
         .ag-header-row {
           height: 32px !important;
         }
       }
       .ag-row {
-        border-color: var(--v-lightGrey-base) !important;
+        border-color: var(--v-black-lighten3) !important;
         .ag-cell {
           display: flex;
           align-items: center;
@@ -182,7 +182,7 @@ export default {
         font-weight: 400;
         font-size: 12px;
         line-height: 16px;
-        color: var(--v-neroBlack-base);
+        color: var(--v-black-darken4);
         .ag-checkbox {
           .ag-input-wrapper {
             display: block;
@@ -201,7 +201,7 @@ export default {
       }
       .ag-icon.ag-icon-asc,
       .ag-icon.ag-icon-desc {
-        color: var(--v-anchor-base);
+        color: var(--v-primary-darken2);
       }
       .ag-horizontal-left-spacer {
         display: table;

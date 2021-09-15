@@ -6,7 +6,7 @@
       :height="75"
     >
       <template #subtitle-extended>
-        <div class="font-weight-semi-bold neroBlack--text mb-2">
+        <div class="font-weight-semi-bold black--text text--darken-4 mb-2">
           {{ deliverySchedule }}
         </div>
       </template>
@@ -20,7 +20,7 @@
         <span class="mr-2">
           <tooltip>
             <template #label-content>
-              <span class="font-weight-semi-bold neroBlack--text">
+              <span class="font-weight-semi-bold black--text text--darken-4">
                 {{ summaryCards[1].value }}
               </span>
             </template>
@@ -43,7 +43,7 @@
         <span class="mr-2">
           <tooltip>
             <template #label-content>
-              <span class="font-weight-semi-bold neroBlack--text">
+              <span class="font-weight-semi-bold black--text text--darken-4">
                 {{ summaryCards[2].value }}
               </span>
             </template>

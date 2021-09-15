@@ -21,7 +21,7 @@
         </v-icon>
         <v-icon
           size="22"
-          color="primary"
+          color="black lighten-3"
           class="icon-border pa-2 ma-1"
           @click="editEngagement()"
         >
@@ -51,7 +51,7 @@
               <icon
                 type="audiences"
                 :size="24"
-                color="neroBlack"
+                color="black-darken4"
                 class="mr-2"
               /><span class="text-h5">Audiences</span>
             </div>
@@ -337,7 +337,7 @@ export default {
     triggerSelectDestination(audienceId) {
       this.closeDrawers()
       this.selectedAudienceId = audienceId
-      this.$refs.selectDestinations.fetchDestination()
+      this.$refs.selectDestinations.fetchDependencies()
       this.showSelectDestinationsDrawer = true
     },
     triggerDataExtensionDrawer(destination) {
@@ -611,22 +611,19 @@ export default {
 
 <style lang="scss" scoped>
 .engagement-dash {
-  .page-header--wrap {
-    box-shadow: 0px 1px 0px var(--v-lightGrey-base) !important;
-  }
   .empty-audience {
     width: 190px;
     text-align: center;
     margin: 0 auto;
   }
   .empty-state {
-    background: var(--v-aliceBlue-base);
+    background: var(--v-primary-lighten2);
     width: 190px;
     margin: 0 auto;
     font-size: 14px;
     line-height: 22px;
-    color: var(--v-gray-base);
-    border: 1px solid var(--v-lightGrey-base);
+    color: var(--v-black-darken1);
+    border: 1px solid var(--v-black-lighten3);
     box-sizing: border-box;
     border-radius: 5px;
   }
@@ -667,7 +664,7 @@ export default {
 
               text-overflow: inherit;
               white-space: inherit;
-              color: var(--v-neroBlack-base) !important;
+              color: var(--v-black-darken4) !important;
             }
           }
         }

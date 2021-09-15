@@ -6,12 +6,15 @@
           v-if="viewStep == '1'"
           type="engagements"
           :size="18"
-          color="neroBlack"
+          color="black-darken4"
         />
-        <h3 v-if="viewStep == '1'" class="text-h3 ml-2 neroBlack--text">
+        <h3
+          v-if="viewStep == '1'"
+          class="text-h3 ml-2 black--text text--darken-4"
+        >
           Add to an engagement
         </h3>
-        <h3 v-else class="text-h3 ml-2 neroBlack--text">
+        <h3 v-else class="text-h3 ml-2 black--text text--darken-4">
           Add a new engagement
         </h3>
       </div>
@@ -44,7 +47,7 @@
               </empty-page>
             </div>
             <div v-else class="ma-1">
-              <h6 class="mb-6 text-h6 neroBlack--text">
+              <h6 class="mb-6 text-h6 black--text text--darken-4">
                 Select an existing engagement or create a new one. You are
                 required to have at least one selected.
               </h6>
@@ -64,7 +67,7 @@
                   <v-icon
                     :class="{ 'rotate-icon-180': toggleSortIcon }"
                     class="ml-1"
-                    color="secondary"
+                    color="primary lighten-8"
                     size="12"
                     @click="onSortIconClick()"
                   >
@@ -87,14 +90,22 @@
                     </template>
                     <template #default>
                       <div class="px-4 py-2 white">
-                        <div class="neroBlack--text text-caption">Name</div>
-                        <div class="lightGreyText--text text-caption mt-1">
+                        <div class="black--text text--darken-4 text-caption">
+                          Name
+                        </div>
+                        <div
+                          class="black--text text--lighten-3 text-caption mt-1"
+                        >
                           {{ engagement.name }}
                         </div>
-                        <div class="neroBlack--text text-caption mt-3">
+                        <div
+                          class="black--text text--darken-4 text-caption mt-3"
+                        >
                           Description
                         </div>
-                        <div class="lightGreyText--text text-caption mt-1">
+                        <div
+                          class="black--text text--lighten-3 text-caption mt-1"
+                        >
                           {{ engagement.description }}
                         </div>
                       </div>
@@ -106,7 +117,7 @@
           </v-stepper-content>
           <v-stepper-content step="2">
             <div class="new-engament-wrap">
-              <h6 class="mb-8 text-h6 neroBlack--text">
+              <h6 class="mb-8 text-h6 black--text text--darken-4">
                 Build a new engagement to see performance information on this
                 audience.
               </h6>
@@ -126,7 +137,7 @@
                   height="40"
                 />
                 <div class="mb-2">
-                  <span class="neroBlack--text text-caption">
+                  <span class="black--text text--darken-4 text-caption">
                     Delivery schedule
                   </span>
                   <v-menu max-width="240" open-on-hover offset-y>
@@ -137,17 +148,23 @@
                     </template>
                     <template #default>
                       <div class="px-4 py-2 white">
-                        <div class="neroBlack--text text-caption">
+                        <div class="black--text text--darken-4 text-caption">
                           Manual delivery
                         </div>
-                        <div class="gray--text text-caption mt-1">
+                        <div
+                          class="black--text text--darken-1 text-caption mt-1"
+                        >
                           Choose this option if you want the engagement
                           delivered immediately or at a future date and time.
                         </div>
-                        <div class="neroBlack--text text-caption mt-3">
+                        <div
+                          class="black--text text--darken-4 text-caption mt-3"
+                        >
                           Recurring delivery
                         </div>
-                        <div class="gray--text text-caption mt-1">
+                        <div
+                          class="black--text text--darken-1 text-caption mt-1"
+                        >
                           Choose this option if you want the engagement
                           delivered on a specific recurring basis you selected.
                         </div>
@@ -204,7 +221,11 @@
                 <v-row v-if="isRecurring" class="delivery-schedule ml-0 mt-6">
                   <div>
                     <span
-                      class="date-picker-label neroBlack--text text-caption"
+                      class="
+                        date-picker-label
+                        black--text
+                        text--darken-4 text-caption
+                      "
                     >
                       Start date
                     </span>
@@ -218,7 +239,11 @@
                   <icon class="ml-1 mt-9 mr-2" type="arrow" :size="28" />
                   <div>
                     <span
-                      class="date-picker-label neroBlack--text text-caption"
+                      class="
+                        date-picker-label
+                        black--text
+                        text--darken-4 text-caption
+                      "
                     >
                       End date
                     </span>
@@ -259,7 +284,7 @@
     <template #footer-left>
       <div
         v-if="viewStep == 1 && areEngagementAlreadyCreated"
-        class="d-flex align-baseline gray--text text-caption"
+        class="d-flex align-baseline black--text text--darken-1 text-caption"
       >
         {{ engagements.length }} results
       </div>
@@ -543,12 +568,12 @@ export default {
       border-color: var(--v-primary-base) !important;
     }
     .active-delivery-option.v-btn.btn-radio-inactive {
-      border-color: var(--v-lightGrey-base) !important;
+      border-color: var(--v-black-lighten3) !important;
       .v-btn__content {
         .v-radio.theme--light {
           ::v-deep .v-input--selection-controls__input {
             .v-icon.notranslate.mdi.mdi-radiobox-blank.theme--light {
-              color: var(--v-gray-base) !important;
+              color: var(--v-black-darken1) !important;
             }
           }
         }
@@ -573,10 +598,10 @@ export default {
       margin-left: 8px;
       margin-right: 12px;
       margin-top: 20px;
-      color: var(--v-lightGrey-base) !important;
+      color: var(--v-black-lighten3) !important;
     }
     ::v-deep.v-icon {
-      color: var(--v-lightGrey-base) !important;
+      color: var(--v-black-lighten3) !important;
     }
   }
 }
