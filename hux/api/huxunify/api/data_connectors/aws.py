@@ -330,10 +330,10 @@ def put_rule_targets_aws_batch(
             Rule=rule_name,
             Targets=[
                 {
-                    "Id": str(delivery_job_id),
-                    "Arn": job_queue,
-                    "RoleArn": role_arn,
-                    "BatchParameters": batch_params,
+                    api_c.AWS_TARGET_ID: str(delivery_job_id),
+                    api_c.AWS_TARGET_ARN: job_queue,
+                    api_c.AWS_TARGET_ROLE_ARN: role_arn,
+                    api_c.AWS_TARGET_BATCH_PARAMS: batch_params,
                 }
             ],
         )

@@ -678,10 +678,10 @@ class CourierTest(TestCase):
             "Rule": cw_name,
             "Targets": [
                 {
-                    "Id": str(sample_delivery_job_id),
-                    "Arn": "fake_job_queue",
-                    "RoleArn": "fake_role_arn",
-                    "BatchParameters": batch_params,
+                    api_c.AWS_TARGET_ID: str(sample_delivery_job_id),
+                    api_c.AWS_TARGET_ARN: "fake_job_queue",
+                    api_c.AWS_TARGET_ROLE_ARN: "fake_role_arn",
+                    api_c.AWS_TARGET_BATCH_PARAMS: batch_params,
                 }
             ],
         }
@@ -749,10 +749,10 @@ class CourierTest(TestCase):
             "Rule": cw_name,
             "Targets": [
                 {
-                    "Id": str(sample_delivery_job_id),
-                    "Arn": "fake_role_arn",
-                    "RoleArn": "fake_role_arn",
-                    "BatchParameters": batch_params,
+                    api_c.AWS_TARGET_ID: str(sample_delivery_job_id),
+                    api_c.AWS_TARGET_ARN: "fake_job_queue",
+                    api_c.AWS_TARGET_ROLE_ARN: "fake_role_arn",
+                    api_c.AWS_TARGET_BATCH_PARAMS: batch_params,
                 }
             ],
         }
