@@ -139,7 +139,7 @@ export default {
           (bar) => bar.index == value
         )
         if (tickDate) {
-          return this.$options.filters.Date(tickDate.date, "MM/DD/YY")
+          return this.$options.filters.Date(tickDate.date, "MM[/01/]YY")
         } else return ""
       }
 

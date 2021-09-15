@@ -12,11 +12,6 @@
 
     <template #default>
       <v-progress-linear :active="loading" :indeterminate="loading" />
-      <page-header class="top-bar" :header-height="40" :header-padding="'px-4'">
-        <template slot="left">
-          <v-icon size="18" color="black lighten-3">mdi-magnify</v-icon>
-        </template>
-      </page-header>
       <hux-data-table
         :columns="columnDefs"
         :sort-column="'hux_id'"
@@ -42,28 +37,20 @@
               <template #tooltip>
                 <div class="my-2 black--text text--darken-1">
                   Hux ID:
-                  <span
-                    class="font-weight-semi-bold black--text text--darken-4"
-                  >
+                  <span class="black--text text--darken-4">
                     {{ item[header.value] }}
                   </span>
                 </div>
                 <div class="my-2 black--text text--darken-1">
                   Full name:
-                  <span
-                    class="font-weight-semi-bold black--text text--darken-4"
-                  >
+                  <span class="black--text text--darken-4">
                     {{ item.last_name }}, {{ item.first_name }}
                   </span>
                 </div>
                 <div class="my-2 black--text text--darken-1">
                   Match confidence:
-                  <span
-                    class="font-weight-semi-bold black--text text--darken-4"
-                  >
-                    {{
-                      item.match_confidence | Numeric(true, false, false, true)
-                    }}
+                  <span class="black--text text--darken-4">
+                    {{ item.match_confidence | Numeric(true, false, false, true) }}
                   </span>
                 </div>
               </template>
@@ -116,7 +103,6 @@ import Drawer from "@/components/common/Drawer"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import HuxSlider from "@/components/common/HuxSlider"
 import Tooltip from "@/components/common/Tooltip"
-import PageHeader from "@/components/PageHeader"
 import Observer from "@/components/common/Observer"
 
 export default {
@@ -126,7 +112,6 @@ export default {
     HuxDataTable,
     HuxSlider,
     Tooltip,
-    PageHeader,
     Observer,
   },
 
