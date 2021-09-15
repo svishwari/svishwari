@@ -254,13 +254,19 @@ class IDROverview(SwaggerView):
         Returns:
             Tuple[dict, int] dict of Customer data overview and http code
         """
+        start_date = request.args.get(api_c.START_DATE)
+        end_date = request.args.get(api_c.END_DATE)
+        if start_date and end_date and start_date > end_date:
+            return {
+                api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE
+            }, HTTPStatus.BAD_REQUEST
         token_response = get_token_from_request(request)
         return (
             IDROverviewWithDateRangeSchema().dump(
                 get_idr_overview(
                     token_response[0],
-                    request.args.get(api_c.START_DATE),
-                    request.args.get(api_c.END_DATE),
+                    start_date,
+                    end_date,
                 )
             ),
             HTTPStatus.OK,
@@ -469,6 +475,11 @@ class IDRDataFeeds(SwaggerView):
             ),
         )
 
+        if start_date > end_date:
+            return {
+                api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE
+            }, HTTPStatus.BAD_REQUEST
+
         return (
             jsonify(
                 DataFeedSchema().dump(
@@ -630,6 +641,13 @@ class CustomerDemoVisualView(SwaggerView):
             Tuple[dict, int] list of Customer insights on demo overview and http code
         """
 
+        start_date = request.args.get(api_c.START_DATE)
+        end_date = request.args.get(api_c.END_DATE)
+        if start_date and end_date and start_date > end_date:
+            return {
+                api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE
+            }, HTTPStatus.BAD_REQUEST
+
         token_response = get_token_from_request(request)
 
         # get customers overview data from CDP to set gender specific
@@ -638,8 +656,8 @@ class CustomerDemoVisualView(SwaggerView):
 
         gender_spending = get_spending_by_gender(
             token_response[0],
-            request.args.get(api_c.START_DATE),
-            request.args.get(api_c.END_DATE),
+            start_date,
+            end_date,
         )
         # if the customers overview response body is empty from CDP, then log
         # error and return 400
@@ -720,14 +738,22 @@ class IDRMatchingTrends(SwaggerView):
         Returns:
             Tuple[dict, int] dict of IDR Matching trends YTD and http code
         """
+
+        start_date = request.args.get(api_c.START_DATE)
+        end_date = request.args.get(api_c.END_DATE)
+        if start_date and end_date and start_date > end_date:
+            return {
+                api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE
+            }, HTTPStatus.BAD_REQUEST
+        
         token_response = get_token_from_request(request)
         return (
             jsonify(
                 MatchingTrendsSchema().dump(
                     get_idr_matching_trends(
                         token_response[0],
-                        request.args.get(api_c.START_DATE),
-                        request.args.get(api_c.END_DATE),
+                        start_date,
+                        end_date,
                     ),
                     many=True,
                 )
