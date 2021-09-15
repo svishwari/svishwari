@@ -7,8 +7,8 @@
     </page-header>
     <page-header class="top-bar" :header-height="71">
       <template #left>
-        <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
-        <v-icon medium color="lightGrey" class="pl-6">mdi-magnify</v-icon>
+        <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
+        <v-icon medium color="black lighten-3" class="pl-6">mdi-magnify</v-icon>
       </template>
 
       <template #right>
@@ -795,7 +795,7 @@ export default {
   .top-bar {
     margin-top: 1px;
     .v-icon--disabled {
-      color: var(--v-lightGrey-base) !important;
+      color: var(--v-black-lighten3) !important;
       font-size: 24px;
     }
     .text--refresh {
@@ -807,18 +807,18 @@ export default {
       tr {
         height: 64px;
         &:hover {
-          background: var(--v-aliceBlue-base) !important;
+          background: var(--v-primary-lighten2) !important;
         }
         td {
           font-size: 14px !important;
-          color: var(--v-neroBlack-base);
+          color: var(--v-black-darken4);
         }
         td:nth-child(1) {
           font-size: 14px !important;
         }
       }
       .expanded-row {
-        background-color: var(--v-aliceBlue-base) !important;
+        background-color: var(--v-primary-lighten2) !important;
       }
       .v-data-table-header {
         th:nth-child(1) {
@@ -832,13 +832,13 @@ export default {
       }
       tr {
         &:hover {
-          background: var(--v-aliceBlue-base) !important;
+          background: var(--v-primary-lighten2) !important;
         }
         height: 64px;
         td {
           font-size: 14px !important;
           line-height: 22px;
-          color: var(--v-neroBlack-base);
+          color: var(--v-black-darken4);
         }
         td:nth-child(1) {
           position: sticky;
@@ -848,7 +848,7 @@ export default {
           background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
           &:hover {
-            background: var(--v-aliceBlue-base) !important;
+            background: var(--v-primary-lighten2) !important;
           }
           .menu-cell-wrapper > div {
             a.text-decoration-none {
@@ -862,16 +862,16 @@ export default {
       tbody {
         tr:last-child {
           td {
-            border-bottom: 1px solid var(--v-lightGrey-base) !important;
+            border-bottom: 1px solid var(--v-black-lighten3) !important;
           }
         }
       }
     }
     .child {
       ::v-deep .theme--light {
-        background: var(--v-background-base);
+        background: var(--v-primary-lighten1);
         .v-data-table__wrapper {
-          box-shadow: inset 0px 10px 10px -4px var(--v-lightGrey-base);
+          box-shadow: inset 0px 10px 10px -4px var(--v-black-lighten3);
           border-bottom: thin solid rgba(0, 0, 0, 0.12);
         }
       }

@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col cols="6" class="sfmc-data-extension">
-      <div class="text-caption neroBlack--text pb-2">
+      <div class="text-caption black--text text--darken-4 pb-2">
         Performance metric data extension name
       </div>
       <v-select
@@ -64,7 +64,7 @@ export default {
       .v-input__slot {
         min-height: 40px;
         fieldset {
-          color: var(--v-lightGrey-base) !important;
+          color: var(--v-black-lighten3) !important;
           border-width: 1px !important;
         }
       }
