@@ -254,22 +254,15 @@ def add_chart_legend(data: dict) -> dict:
         response(dict): Chart data with legend details.
     """
 
-    for key in data:
-        if key == constants.NAME:
-            data[constants.NAME][constants.PROP] = constants.NAME.title()
-            data[constants.NAME][constants.ICON] = constants.NAME
-        if key == constants.EMAIL:
-            data[constants.EMAIL][constants.PROP] = constants.EMAIL.title()
-            data[constants.EMAIL][constants.ICON] = constants.EMAIL
-        if key == constants.PHONE:
-            data[constants.PHONE][constants.PROP] = constants.PHONE.title()
-            data[constants.PHONE][constants.ICON] = constants.PHONE
-        if key == constants.ADDRESS:
-            data[constants.ADDRESS][constants.PROP] = constants.ADDRESS.title()
-            data[constants.ADDRESS][constants.ICON] = constants.ADDRESS
-        if key == constants.COOKIE:
-            data[constants.COOKIE][constants.PROP] = constants.COOKIE.title()
-            data[constants.COOKIE][constants.ICON] = constants.COOKIE
+    for val in [
+        constants.NAME,
+        constants.EMAIL,
+        constants.PHONE,
+        constants.ADDRESS,
+        constants.COOKIE,
+    ]:
+        data[val][constants.PROP] = val.title()
+        data[val][constants.ICON] = val
     return data
 
 
