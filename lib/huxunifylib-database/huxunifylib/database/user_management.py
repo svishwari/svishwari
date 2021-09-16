@@ -309,8 +309,20 @@ def manage_user_favorites(
     ):
         return None
 
+    component_collection = {
+        c.ENGAGEMENTS: c.ENGAGEMENTS_COLLECTION,
+        c.AUDIENCES: c.AUDIENCES_COLLECTION,
+    }
+
     # TODO - validate input component ID if it exists
-    #      - fill out when we have campaigns/audiences/destinations
+    #      - fill out when we have campaigns, destinations
+    try:
+        if not delete_flag and not database[c.DATA_MANAGEMENT_DATABASE][
+            component_collection[component_name]
+        ].find_one({c.ID: component_id}):
+            raise de.InvalidID(component_id)
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
 
     # grab the collection
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]

@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="metric-card-wrapper rounded-lg"
+    class="metric-card-wrapper rounded-lg align-center"
     :class="{ 'no-click': !interactable }"
     :style="{ 'flex-grow': grow }"
     :max-width="maxWidth"
@@ -10,12 +10,14 @@
     :ripple="interactable"
     @click="$emit('click')"
   >
-    <div class="d-flex align-center justify-space-between">
+    <div class="d-flex align-center justify-space-between w-100">
       <div class="flex-grow-1">
         <span
           v-if="!titleTooltip"
           class="text-caption"
-          :class="interactable ? 'primary--text ' : 'gray--text '"
+          :class="
+            interactable ? 'primary--text ' : 'black--text text--darken-1 '
+          "
         >
           {{ title }}
         </span>
@@ -23,7 +25,9 @@
           <template #label-content>
             <span
               class="text-caption"
-              :class="interactable ? 'primary--text ' : 'gray--text '"
+              :class="
+                interactable ? 'primary--text ' : 'black--text text--darken-1 '
+              "
             >
               {{ title }}
             </span>
@@ -110,6 +114,10 @@ export default {
 .metric-card-wrapper {
   border: 1px solid var(--v-zircon-base);
   padding: 20px 15px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
   &.no-click {
     cursor: default;
     background-color: transparent;
@@ -117,7 +125,7 @@ export default {
   }
   .item-headline {
     font-size: 12px;
-    color: var(--v-gray-base) !important;
+    color: var(--v-black-darken1) !important;
   }
   .v-list-item__title {
     font-weight: 400;
@@ -129,7 +137,7 @@ export default {
   &.v-card--disabled {
     background-color: transparent;
     .v-list-item__title {
-      color: var(--v-gray-base);
+      color: var(--v-black-darken1);
     }
   }
   div.d-flex.align-center.justify-space-between {

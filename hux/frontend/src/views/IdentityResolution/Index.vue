@@ -130,15 +130,15 @@
           </template>
         </metric-card>
       </v-row>
-      <v-row class="px-2 mt-2">
+      <v-row class="px-2 mt-0 mb-1">
         <v-col md="12">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="422">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="400">
             <v-progress-linear
               v-if="loadingMatchingTrends"
               :active="loadingMatchingTrends"
               :indeterminate="loadingMatchingTrends"
             />
-            <v-card-title class="chart-style pb-12 pl-5 pt-5">
+            <v-card-title class="chart-style pb-8 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
                   ID Resolution matching trends

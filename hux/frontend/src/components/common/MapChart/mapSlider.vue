@@ -78,7 +78,7 @@ export default {
   .slider-value-display {
     width: 31px;
     height: 16px;
-    color: var(--v-neroBlack-base);
+    color: var(--v-black-darken4);
     transform: rotate(-90deg);
     font-size: 12px;
   }
@@ -98,7 +98,7 @@ export default {
       transform: translateY(-50%);
       background: linear-gradient(
         0.25turn,
-        var(--v-tealBlue-base),
+        var(--v-primary-darken4),
         var(--v-white-base)
       );
       border: 1px solid rgba(0, 124, 176, 0.2);

@@ -113,7 +113,7 @@ export default {
       font-size: 14px;
       line-height: 22px;
       text-align: center;
-      color: var(--v-gray-base);
+      color: var(--v-black-darken1);
       margin-top: 8px;
       max-width: 80%;
     }

@@ -1,6 +1,6 @@
 <template>
   <div class="hux-data-table">
-    <div class="table-overflow" :style="{ 'margin-left': fixedWidth }">
+    <div class="table-overflow" :style="{ height: viewHeight }">
       <v-data-table
         :expanded.sync="expanded"
         :headers="columns"
@@ -122,24 +122,17 @@ export default {
       required: false,
       default: false,
     },
+    viewHeight: {
+      type: String,
+      required: false,
+      default: "auto",
+    },
   },
   data() {
     return {
       expanded: [],
       itemPerPage: ALL,
     }
-  },
-  computed: {
-    fixedWidth() {
-      const fixedHeaders = this.columns.filter((item) => item.fixed)
-
-      return fixedHeaders.length > 0
-        ? fixedHeaders
-            .map(({ width }) => width)
-            .map((item) => parseInt(item, 0))
-            .reduce((a, b) => a + b) + "px"
-        : "0px"
-    },
   },
   methods: {
     clickRow(_, event) {
@@ -162,6 +155,10 @@ export default {
   ::v-deep .material-icons.alert {
     color: var(--v-error-base);
   }
+  ::v-deep .v-data-table__wrapper {
+    overflow-y: visible;
+    overflow-x: visible;
+  }
   ::v-deep .rotate-icon {
     transition: 0.3s;
     -webkit-transition: 0.3s;
@@ -182,17 +179,15 @@ export default {
     width: 35px;
     height: 35px;
     line-height: 22px;
-    color: var(--v-neroBlack-base) !important;
+    color: var(--v-black-darken4) !important;
     cursor: default !important;
     background: transparent !important;
   }
   .table-overflow {
     overflow-x: auto;
-    overflow-y: hidden !important;
   }
   ::v-deep table {
     table-layout: fixed;
-
     .fixed-column {
       position: absolute;
       display: flex;
@@ -219,7 +214,7 @@ export default {
           line-height: 8px;
           padding-top: 0px;
           padding-bottom: 0px;
-          color: var(--v-neroBlack-base) !important;
+          color: var(--v-black-darken4) !important;
           i {
             font-size: 16px !important;
             color: #00a3e0 !important;
