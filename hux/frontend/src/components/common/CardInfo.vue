@@ -30,7 +30,7 @@
         >
           {{ title }}
         </v-card-title>
-        <v-card-subtitle :class="{ 'neroBlack--text': active }">
+        <v-card-subtitle :class="{ 'black--text text--darken-4': active }">
           {{ description }}
         </v-card-subtitle>
       </v-card>

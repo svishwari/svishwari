@@ -9,7 +9,7 @@
           mdi-refresh
         </v-icon>
 
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+        <v-icon size="22" color="black lighten-3" class="icon-border pa-2 ma-1">
           mdi-plus-circle-multiple-outline
         </v-icon>
         <v-icon
@@ -31,11 +31,32 @@
               <v-icon
                 size="22"
                 color="primary"
-                class="icon-border pa-2 ma-1"
+                class="icon-border pa-2 ma-1 d-none"
                 v-on="on"
               >
                 mdi-download
               </v-icon>
+              <tooltip>
+                <template #label-content>
+                  <v-icon
+                    size="22"
+                    color="primary"
+                    class="icon-border pa-2 ma-1"
+                    v-on="on"
+                  >
+                    mdi-download
+                  </v-icon>
+                </template>
+                <template #hover-content>
+                  <span
+                    class="text--caption"
+                    style="width: 260px; display: block"
+                  >
+                    Download the hashed customer data file of this audience for
+                    manual uploads to Amazon or Google.
+                  </span>
+                </template>
+              </tooltip>
             </template>
             <v-list>
               <v-list-item
@@ -43,7 +64,7 @@
                 :key="option.id"
                 @click="initiateFileDownload(option)"
               >
-                <v-list-item-title class="text-h6 neroBlack--text">
+                <v-list-item-title class="text-h6 black--text text--darken-4">
                   <div class="d-flex align-center">
                     <logo :type="option.icon" :size="18" class="mr-4" />
                     <span> {{ option.name }}</span>
@@ -53,9 +74,7 @@
             </v-list>
           </v-menu>
           <tooltip close-on-click>
-            <template #label-content>
-              <icon type="info" :size="12" class="position-absolute" />
-            </template>
+            <template #label-content> </template>
             <template #hover-content>
               <span class="text--caption" style="width: 260px; display: block">
                 Download the hashed customer data file of this audience for
@@ -74,7 +93,7 @@
         class="rounded-lg card-info-wrapper ma-2 card-shadow no-background"
       >
         <v-card-text>
-          <div class="text-caption gray--text">
+          <div class="text-caption black--text text--darken-1">
             Original size
             <tooltip position-top>
               <template #label-content>
@@ -95,7 +114,8 @@
               mr-2
               pt-2
               font-audience-text
-              neroBlack--text
+              black--text
+              text--darken-4
               font-weight-semi-bold
             "
           >
@@ -121,7 +141,7 @@
       >
         <template #subtitle-extended>
           <span class="mr-2 pt-2">
-            <span class="neroBlack--text font-weight-semi-bold">
+            <span class="black--text text--darken-4 font-weight-semi-bold">
               <size :value="audience.size" />
             </span>
           </span>
@@ -165,7 +185,7 @@
           <span class="mr-2 mt-1">
             <tooltip>
               <template #label-content>
-                <span class="neroBlack--text font-weight-semi-bold">
+                <span class="black--text text--darken-4 font-weight-semi-bold">
                   {{ getFormattedTime(item.subtitle) }}
                 </span>
               </template>
@@ -204,7 +224,8 @@
                   <template #label-content>
                     <span
                       class="
-                        neroBlack--text
+                        black--text
+                        text--darken-4
                         font-weight-semi-bold
                         text-over-2
                         filter-title
@@ -213,7 +234,7 @@
                     />
                   </template>
                   <template #hover-content>
-                    <span class="text-caption neroBlack--text">
+                    <span class="text-caption black--text text--darken-4">
                       <div class="mb-2">
                         {{ appliedFilters[filterKey][filter].name }}
                       </div>
@@ -289,7 +310,6 @@
         </v-col>
         <v-col v-if="showLookalike" md="3" class="pl-6 pr-0 py-0">
           <look-alike-card
-            :key="lookalikeAudiences"
             v-model="lookalikeAudiences"
             :status="isLookalikable"
             @createLookalike="openLookAlikeDrawer"
@@ -364,7 +384,7 @@
           />
           <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
-              <span class="neroBlack--text text-h5">
+              <span class="black--text text--darken-4 text-h5">
                 Demographic Overview
               </span>
             </div>
@@ -390,7 +410,9 @@
           />
           <v-card-title class="pb-2 pl-5 pt-5">
             <div class="mt-2">
-              <span class="neroBlack--text text-h5"> United States </span>
+              <span class="black--text text--darken-4 text-h5">
+                United States
+              </span>
             </div>
           </v-card-title>
           <v-divider class="ml-5 mr-8 mt-0 mb-1" />
@@ -412,7 +434,7 @@
           />
           <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
             <div class="mt-2">
-              <span class="neroBlack--text text-h5">
+              <span class="black--text text--darken-4 text-h5">
                 Top location &amp; Income
               </span>
             </div>
@@ -432,7 +454,7 @@
           />
           <v-card-title v-if="!loadingDemographics" class="pb-2 pl-2 pt-5">
             <div class="mt-2 ml-5">
-              <span class="neroBlack--text text-h5">
+              <span class="black--text text--darken-4 text-h5">
                 Gender &sol; monthly spending
               </span>
               <span class="text-body-2 time-frame">(last 6 months)</span>
@@ -453,7 +475,7 @@
           />
           <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
             <div class="mt-2">
-              <span class="neroBlack--text text-h5"> Gender </span>
+              <span class="black--text text--darken-4 text-h5"> Gender </span>
             </div>
           </v-card-title>
           <div v-if="!loadingDemographics" ref="genderChart">
@@ -667,7 +689,7 @@ export default {
           id: "2349d4353b9f",
           title: "Generic CSV",
           name: ".csv",
-          type: "amazon_ads",
+          type: "generic_ads",
         },
       ],
       loading: false,
@@ -1281,7 +1303,7 @@ export default {
     width: 35px;
     height: 35px;
     line-height: 22px;
-    color: var(--v-neroBlack-base) !important;
+    color: var(--v-black-darken4) !important;
     cursor: default !important;
     background: transparent !important;
   }
@@ -1315,7 +1337,7 @@ export default {
 .lookalikeMessageCard {
   @extend .font-lookalike;
   border-radius: 5px !important;
-  background-color: rgb(236 244 249 / 30%) !important;
+  background-color: var(--v-primary-lighten2) !important;
   font-size: 14px;
   color: var(--v-grey-base) !important;
 }

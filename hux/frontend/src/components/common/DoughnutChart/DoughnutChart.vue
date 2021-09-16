@@ -2,9 +2,9 @@
   <div class="container">
     <span v-if="showChart">
       <div id="chart" ref="chart" @mousemove="getCordinates($event)"></div>
-    <div class="pt-2 pl-4">
-      <div id="chartLegend"></div>
-    </div>
+      <div class="pt-2 pl-4">
+        <div id="chartLegend"></div>
+      </div>
       <doughnut-chart-tooltip
         :show-tooltip="showTooltip"
         :tooltip="tooltip"
@@ -85,12 +85,12 @@ export default {
       let data = this.data
 
       let legendsData = [
-          { label: "Women", position: 10 },
-          { label: "Men", position: 47 },
-          { label: "Other", position: 78 },
-        ]
+        { label: "Women", position: 10 },
+        { label: "Men", position: 47 },
+        { label: "Other", position: 78 },
+      ]
 
-        let colorCodes = [ "#005587","#0C9DDB", "#42EFFD"]
+      let colorCodes = ["#005587", "#0C9DDB", "#42EFFD"]
 
       this.showChart = false
       if (data.length != 0) {
@@ -161,52 +161,52 @@ export default {
         }
 
         // Creating legends svg element & apply style
-      d3Select.select("#chartLegend").selectAll("svg").remove()
-      let legendSvg = d3Select
-        .select("#chartLegend")
-        .append("svg")
-        .attr("viewBox", "8 0 130 42")
-        .attr("id", "mainSvg")
-        .attr("class", "svgBox")
-        .style("margin-right", "20px")
-        .style("margin-left", "-10px")
-        .style("text-align", "left")
+        d3Select.select("#chartLegend").selectAll("svg").remove()
+        let legendSvg = d3Select
+          .select("#chartLegend")
+          .append("svg")
+          .attr("viewBox", "8 0 130 42")
+          .attr("id", "mainSvg")
+          .attr("class", "svgBox")
+          .style("margin-right", "20px")
+          .style("margin-left", "-10px")
+          .style("text-align", "left")
 
-      let legend = legendSvg
-        .selectAll(".legend")
-        .data(legendsData)
-        .enter()
-        .append("g")
-        .attr("class", "legend")
-        .attr("transform", function (d) {
-          return `translate(${d.position}, 0)`
-        })
+        let legend = legendSvg
+          .selectAll(".legend")
+          .data(legendsData)
+          .enter()
+          .append("g")
+          .attr("class", "legend")
+          .attr("transform", function (d) {
+            return `translate(${d.position}, 0)`
+          })
 
-      legend
-        .append("circle")
-        .attr("cx", 10)
-        .attr("cy", 10)
-        .attr("r", 3)
-        .style("fill", function (d, i) {
-          return colorCodes[i]
-        })
+        legend
+          .append("circle")
+          .attr("cx", 10)
+          .attr("cy", 10)
+          .attr("r", 3)
+          .style("fill", function (d, i) {
+            return colorCodes[i]
+          })
 
-      legend
-        .append("text")
-        .attr("x", 16)
-        .attr("y", 9)
-        .attr("dy", ".55em")
-        .attr("class", "neroBlack--text")
-        .style("font-size", "6px")
-        .style("text-anchor", "start")
-        .text(function (d) {
-          return d.label
-        })
+        legend
+          .append("text")
+          .attr("x", 16)
+          .attr("y", 9)
+          .attr("dy", ".55em")
+          .attr("class", "black--text text--darken-4")
+          .style("font-size", "6px")
+          .style("text-anchor", "start")
+          .text(function (d) {
+            return d.label
+          })
       }
     },
-    getCordinates(event) {
-      this.tooltip.x = event.offsetX + 60
-      this.tooltip.y = event.offsetY - 200
+    getCordinates(evt) {
+      this.tooltip.x = evt.offsetX + 60
+      this.tooltip.y = evt.offsetY - 200
     },
   },
 }

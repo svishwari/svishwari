@@ -8,7 +8,7 @@
     }"
     class="mx-auto tooltip-style"
   >
-    <div class="neroBlack--text caption">
+    <div class="black--text text--darken-4 caption">
       <div class="value-section">
         {{ sourceInput.date | Date("MM/DD/YYYY") }}
       </div>

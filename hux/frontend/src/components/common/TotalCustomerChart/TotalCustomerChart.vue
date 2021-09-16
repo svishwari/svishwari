@@ -9,7 +9,7 @@
     />
     <stack-bar-chart-tooltip
       :show-tool-tip="show"
-      :color-codes="colorCodes"
+      :color-codes="tooltipColorCodes"
       :source-input="currentData"
     />
   </div>
@@ -33,7 +33,13 @@ export default {
     return {
       show: false,
       isArcHover: false,
-      colorCodes: ["columbiaBlue", "info", "pantoneBlue", "success"],
+      colorCodes: ["lighten5", "lighten8", "darken3", "success"],
+      tooltipColorCodes: [
+        "var(--v-primary-lighten5)",
+        "var(--v-primary-lighten8)",
+        "var(--v-primary-darken3)",
+        "var(--v-success-base)",
+      ],
       currentData: {},
       sourceData: [],
       barGroupChangeIndex: [],

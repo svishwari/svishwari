@@ -70,7 +70,7 @@ export default {
 
 <style lang="scss" scoped>
 .login-wrap {
-  background: var(--v-background-base);
+  background: var(--v-primary-lighten1);
   .left-section {
     height: 100vh;
     position: relative;
@@ -100,7 +100,7 @@ export default {
       font-size: 24px !important;
       margin-top: 30px;
       line-height: 43px;
-      color: var(--v-darkGreyHeading-base);
+      color: var(--v-black-darken2);
       .altcolor {
         color: var(--v-pinkLittleDark-base);
       }
@@ -108,7 +108,7 @@ export default {
     p {
       font-size: 14px !important;
       line-height: 22px;
-      color: var(--v-gray-base);
+      color: var(--v-black-darken1);
       margin-bottom: 20px;
     }
     .login-form {
@@ -139,7 +139,7 @@ export default {
                 font-weight: normal;
                 font-size: 12px;
                 line-height: 16px;
-                color: var(--v-neroBlack-base);
+                color: var(--v-black-darken4);
               }
             }
             .o-form-input {
@@ -161,7 +161,7 @@ export default {
               input {
                 padding: 10px 16px;
                 background: var(--v-white-base);
-                border: 1px solid var(--v-lightGrey-base);
+                border: 1px solid var(--v-black-lighten3);
                 box-sizing: border-box;
                 border-radius: 4px;
               }
