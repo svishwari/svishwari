@@ -30,6 +30,7 @@ TECTON_API = "TECTON_API"
 AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST = "AUDIENCE-ROUTER-JOB-ROLE-ARN"
 AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST = "AUDIENCE-ROUTER-EXECUTION-ROLE-ARN"
 AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
+AUDIENCE_ROUTER_JOB_QUEUE_CONST = "AUDIENCE-ROUTER-JOB-QUEUE"
 CDPR_EVENT_CONST = "CDPR-EVENT"
 FLDR_EVENT_CONST = "FLDR-EVENT"
 
@@ -52,6 +53,9 @@ ADDRESS = "address"
 CITY = "city"
 STATE = "state"
 ZIP = "zip"
+COOKIE = "cookie"
+PROP = "prop"
+ICON = "icon"
 CREATED_BY = "created_by"
 UPDATED_BY = "updated_by"
 MATCH_CONFIDENCE = "match_confidence"
@@ -108,6 +112,8 @@ MIN_LTV_ACTUAL = "min_ltv_actual"
 MAX_LTV_ACTUAL = "max_ltv_actual"
 AVG_LTV = "avg_ltv"
 COUNTRY = "country"
+CONTACT_PREFERENCES = "contact_preferences"
+IDENTITY_RESOLUTION = "identity_resolution"
 POPULATION_PERCENTAGE = "population_percentage"
 INCOME = "income"
 CDP_SERVICE_URL = "CDP_SERVICE_URL"
@@ -215,6 +221,10 @@ AWS_HEALTH_TESTS = {
     AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
 }
 S3 = "s3"
+AWS_TARGET_ID = "Id"
+AWS_TARGET_ARN = "Arn"
+AWS_TARGET_ROLE_ARN = "RoleArn"
+AWS_TARGET_BATCH_PARAMS = "BatchParameters"
 
 REQUIRED = "required"
 DELIVERY_SCHEDULE = "delivery_schedule"
@@ -1033,3 +1043,211 @@ THIRTY_DAYS_AVG = "thirty_days_avg"
 RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
+
+CUSTOMER_IDR_TEST_DATE = {
+    "name": {
+        "data_sources": [
+            {
+                "id": "1",
+                "name": "Bluecore",
+                "type": "bluecore",
+                "percentage": 0.45,
+            },
+            {
+                "id": "2",
+                "name": "Netsuite",
+                "type": "netsuite",
+                "percentage": 0.55,
+            },
+        ],
+        "cooccurrences": [
+            {"identifier": "name", "count": 0, "percentage": 0},
+            {
+                "identifier": "address",
+                "count": 5,
+                "percentage": 0.05332667241927426,
+            },
+            {
+                "identifier": "email",
+                "count": 8,
+                "percentage": 0.08098460420545892,
+            },
+            {
+                "identifier": "phone",
+                "count": 2,
+                "percentage": 0.024424360779326946,
+            },
+            {
+                "identifier": "cookie",
+                "count": 0,
+                "percentage": 0.10876969889640765,
+            },
+        ],
+        "percentage": 0.2,
+        "count": 22,
+    },
+    "address": {
+        "data_sources": [
+            {
+                "id": "1",
+                "name": "Bluecore",
+                "type": "bluecore",
+                "percentage": 0.3,
+            },
+            {
+                "id": "2",
+                "name": "Netsuite",
+                "type": "netsuite",
+                "percentage": 0.7,
+            },
+        ],
+        "cooccurrences": [
+            {
+                "identifier": "name",
+                "count": 7,
+                "percentage": 0.06470775239565829,
+            },
+            {"identifier": "address", "count": 0, "percentage": 0},
+            {
+                "identifier": "email",
+                "count": 8,
+                "percentage": 0.07485353558290567,
+            },
+            {
+                "identifier": "phone",
+                "count": 5,
+                "percentage": 0.04560606748717017,
+            },
+            {
+                "identifier": "cookie",
+                "count": 1,
+                "percentage": 0.04725010218447704,
+            },
+        ],
+        "percentage": 0.4,
+        "count": 19,
+    },
+    "email": {
+        "data_sources": [
+            {
+                "id": "1",
+                "name": "Bluecore",
+                "type": "bluecore",
+                "percentage": 0.77,
+            },
+            {
+                "id": "2",
+                "name": "Netsuite",
+                "type": "netsuite",
+                "percentage": 0.23,
+            },
+        ],
+        "cooccurrences": [
+            {
+                "identifier": "name",
+                "count": 9,
+                "percentage": 0.00828375493891639,
+            },
+            {
+                "identifier": "address",
+                "count": 6,
+                "percentage": 0.056778236977156095,
+            },
+            {"identifier": "email", "count": 0, "percentage": 0},
+            {
+                "identifier": "phone",
+                "count": 7,
+                "percentage": 0.08311004132794404,
+            },
+            {
+                "identifier": "cookie",
+                "count": 1,
+                "percentage": 0.03635042463327127,
+            },
+        ],
+        "percentage": 0.2,
+        "count": 22,
+    },
+    "phone": {
+        "data_sources": [
+            {
+                "id": "1",
+                "name": "Bluecore",
+                "type": "bluecore",
+                "percentage": 0.59,
+            },
+            {
+                "id": "2",
+                "name": "Netsuite",
+                "type": "netsuite",
+                "percentage": 0.41,
+            },
+        ],
+        "cooccurrences": [
+            {
+                "identifier": "name",
+                "count": 4,
+                "percentage": 0.038430446432626365,
+            },
+            {
+                "identifier": "address",
+                "count": 2,
+                "percentage": 0.019110767973114128,
+            },
+            {
+                "identifier": "email",
+                "count": 5,
+                "percentage": 0.05176438530360143,
+            },
+            {"identifier": "phone", "count": 0, "percentage": 0},
+            {
+                "identifier": "cookie",
+                "count": 0,
+                "percentage": 0.017475816340433263,
+            },
+        ],
+        "percentage": 0.1,
+        "count": 11,
+    },
+    "cookie": {
+        "data_sources": [
+            {
+                "id": "1",
+                "name": "Bluecore",
+                "type": "bluecore",
+                "percentage": 0.8,
+            },
+            {
+                "id": "2",
+                "name": "Netsuite",
+                "type": "netsuite",
+                "percentage": 0.2,
+            },
+        ],
+        "cooccurrences": [
+            {
+                "identifier": "name",
+                "count": 0,
+                "percentage": 0.10876969889640765,
+            },
+            {
+                "identifier": "address",
+                "count": 0,
+                "percentage": 0.012025977564830374,
+            },
+            {
+                "identifier": "email",
+                "count": 4,
+                "percentage": 0.014124165493437486,
+            },
+            {
+                "identifier": "phone",
+                "count": 0,
+                "percentage": 0.05385349016758254,
+            },
+            {"identifier": "cookie", "count": 0, "percentage": 0},
+        ],
+        "percentage": 0.1,
+        "count": 11,
+    },
+}

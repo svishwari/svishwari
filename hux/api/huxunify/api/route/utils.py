@@ -214,6 +214,28 @@ def update_metrics(
     return metric
 
 
+def add_chart_legend(data: dict) -> dict:
+    """Add chart legend data.
+
+    Args:
+        data (dict) : Chart data.
+
+    Returns:
+        response(dict): Chart data with legend details.
+    """
+
+    for val in [
+        constants.NAME,
+        constants.EMAIL,
+        constants.PHONE,
+        constants.ADDRESS,
+        constants.COOKIE,
+    ]:
+        data[val][constants.PROP] = val.title()
+        data[val][constants.ICON] = val
+    return data
+
+
 def group_gender_spending(gender_spending: list) -> dict:
     """Groups gender spending by gender/month.
 

@@ -671,15 +671,17 @@ class CourierTest(TestCase):
             "JobName": "sample_job_name",
         }
 
+        sample_delivery_job_id = ObjectId()
+
         # put params
         put_targets_params = {
             "Rule": cw_name,
             "Targets": [
                 {
-                    "Id": cw_name,
-                    "Arn": "fake_arn",
-                    "RoleArn": "fake_role_arn",
-                    "BatchParameters": batch_params,
+                    api_c.AWS_TARGET_ID: str(sample_delivery_job_id),
+                    api_c.AWS_TARGET_ARN: "fake_job_queue",
+                    api_c.AWS_TARGET_ROLE_ARN: "fake_role_arn",
+                    api_c.AWS_TARGET_BATCH_PARAMS: batch_params,
                 }
             ],
         }
@@ -707,7 +709,11 @@ class CourierTest(TestCase):
         mock_boto_client.return_value = client
 
         result = put_rule_targets_aws_batch(
-            cw_name, batch_params, "fake_arn", "fake_role_arn"
+            cw_name,
+            batch_params,
+            sample_delivery_job_id,
+            "fake_role_arn",
+            "fake_job_queue",
         )
 
         # test mocked client result
@@ -736,15 +742,17 @@ class CourierTest(TestCase):
             "JobName": "sample_job_name",
         }
 
+        sample_delivery_job_id = ObjectId()
+
         # put params
         put_targets_params = {
             "Rule": cw_name,
             "Targets": [
                 {
-                    "Id": cw_name,
-                    "Arn": "fake_arn",
-                    "RoleArn": "fake_role_arn",
-                    "BatchParameters": batch_params,
+                    api_c.AWS_TARGET_ID: str(sample_delivery_job_id),
+                    api_c.AWS_TARGET_ARN: "fake_job_queue",
+                    api_c.AWS_TARGET_ROLE_ARN: "fake_role_arn",
+                    api_c.AWS_TARGET_BATCH_PARAMS: batch_params,
                 }
             ],
         }
@@ -774,7 +782,11 @@ class CourierTest(TestCase):
         mock_boto_client.return_value = client
 
         result = put_rule_targets_aws_batch(
-            cw_name, batch_params, "fake_arn", "fake_role_arn"
+            cw_name,
+            batch_params,
+            sample_delivery_job_id,
+            "fake_role_arn",
+            "fake_job_queue",
         )
 
         # test mocked client result

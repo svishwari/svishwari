@@ -10,7 +10,6 @@ from dateutil.relativedelta import relativedelta
 from faker import Faker
 
 from flask import Blueprint, request, jsonify
-from flask_apispec import marshal_with
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
@@ -54,7 +53,8 @@ from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feed_details,
     get_idr_matching_trends,
 )
-from huxunify.api.schema.utils import AUTH401_RESPONSE
+from huxunify.api.route.utils import add_chart_legend
+from huxunify.api.schema.utils import redact_fields, AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
     CustomerOverviewSchema,
     CustomersSchema,
@@ -390,7 +390,6 @@ class CustomerProfileSearch(SwaggerView):
 
     # pylint: disable=no-self-use
     # pylint: disable=unused-argument
-    @marshal_with(CustomerProfileSchema)
     @api_error_handler()
     def get(self, hux_id: str) -> Tuple[dict, int]:
         """Retrieves a customer profile.
@@ -407,11 +406,23 @@ class CustomerProfileSearch(SwaggerView):
 
         """
         token_response = get_token_from_request(request)
+        redacted_data = redact_fields(
+            get_customer_profile(token_response[0], hux_id),
+            api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
+        )
+
+        idr_data = api_c.CUSTOMER_IDR_TEST_DATE
+        # TODO : Fetch IDR data from CDP once it is ready
+        # api_c.IDENTITY_RESOLUTION: redacted_data[api_c.IDENTITY_RESOLUTION]
 
         return (
-            redact_fields(
-                get_customer_profile(token_response[0], hux_id),
-                api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
+            CustomerProfileSchema().dump(
+                {
+                    api_c.OVERVIEW: redacted_data,
+                    api_c.INSIGHTS: redacted_data,
+                    api_c.CONTACT_PREFERENCES: redacted_data,
+                    api_c.IDENTITY_RESOLUTION: add_chart_legend(idr_data),
+                }
             ),
             HTTPStatus.OK.value,
         )
