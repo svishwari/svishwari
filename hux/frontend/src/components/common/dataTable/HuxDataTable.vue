@@ -179,7 +179,7 @@ export default {
     width: 35px;
     height: 35px;
     line-height: 22px;
-    color: var(--v-neroBlack-base) !important;
+    color: var(--v-black-darken4) !important;
     cursor: default !important;
     background: transparent !important;
   }
@@ -214,7 +214,7 @@ export default {
           line-height: 8px;
           padding-top: 0px;
           padding-bottom: 0px;
-          color: var(--v-neroBlack-base) !important;
+          color: var(--v-black-darken4) !important;
           i {
             font-size: 16px !important;
             color: #00a3e0 !important;

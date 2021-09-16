@@ -39,7 +39,7 @@
             <div class="d-flex align-center justify-end">
               <hux-button
                 v-if="isAdded(item.id)"
-                variant="secondary"
+                variant="primary lighten-8"
                 width="100"
                 height="40"
                 icon="mdi-check"
@@ -67,7 +67,7 @@
     </template>
 
     <template #footer-left>
-      <span class="gray--text text-caption">
+      <span class="black--text text--darken-1 text-caption">
         {{ connectedDestinations.length }} results
       </span>
     </template>

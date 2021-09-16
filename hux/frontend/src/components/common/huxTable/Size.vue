@@ -1,7 +1,7 @@
 <template>
   <tooltip>
     <template #label-content>
-      <span class="neroBlack--text">
+      <span class="black--text text--darken-4">
         {{ Value | Numeric(false, false, true) | Empty }}
       </span>
     </template>

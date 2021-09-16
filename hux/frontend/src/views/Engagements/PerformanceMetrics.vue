@@ -364,7 +364,8 @@ export default {
     async initiateMetricsDownload() {
       this.alert.type = "Pending"
       this.alert.title = ""
-      this.alert.message = "Download has started in background, stay tuned."
+      this.alert.message =
+        "The download has started. Please be patient while it finishes."
       this.flashAlert = true
       const fileBlob = await this.downloadAudienceMetrics({
         id: this.engagementId,
@@ -395,8 +396,8 @@ export default {
       .v-tabs-slider-wrapper {
         width: 128px;
         .v-tabs-slider {
-          background-color: var(--v-info-base) !important;
-          border-color: var(--v-info-base) !important;
+          background-color: var(--v-primary-lighten8) !important;
+          border-color: var(--v-primary-lighten8) !important;
         }
       }
       .v-tab {
@@ -413,10 +414,10 @@ export default {
           }
         }
         &.v-tab--active {
-          color: var(--v-info-base) !important;
+          color: var(--v-primary-lighten8) !important;
           svg {
             path {
-              stroke: var(--v-info-base);
+              stroke: var(--v-primary-lighten8);
             }
           }
         }

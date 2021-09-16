@@ -16,6 +16,11 @@ from huxunifylib.database import (
 from huxunifylib.database.audit_management import create_audience_audit
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import constants as db_c
+from huxunifylib.util.transform.transform_dataframe import (
+    transform_fields_google_file,
+    transform_fields_amazon_file,
+)
+
 
 import huxunify.api.constants as api_c
 from huxunify.api.config import get_config
@@ -37,6 +42,10 @@ from huxunify.api.schema.customers import (
     CustomersInsightsStatesSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
+from huxunify.api.route.utils import (
+    get_db_client,
+    transform_fields_generic_file,
+)
 
 # setup the audiences blueprint
 audience_bp = Blueprint(api_c.AUDIENCE_ENDPOINT, import_name=__name__)
@@ -110,7 +119,12 @@ class AudienceDownload(SwaggerView):
             Tuple[Response, int]: File Object Response, HTTP status.
 
         """
-        if not api_c.DOWNLOAD_TYPES.get(download_type):
+        download_types = {
+            api_c.GOOGLE_ADS: transform_fields_google_file,
+            api_c.AMAZON_ADS: transform_fields_amazon_file,
+            api_c.GENERIC_ADS: transform_fields_generic_file,
+        }
+        if not download_types.get(download_type):
             return {"message": "Invalid download type"}, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
@@ -136,7 +150,7 @@ class AudienceDownload(SwaggerView):
             f"_{audience_id}_{download_type}.csv"
         )
 
-        transform_function = api_c.DOWNLOAD_TYPES.get(download_type)
+        transform_function = download_types.get(download_type)
         with open(
             audience_file_name, "w", newline="", encoding="utf-8"
         ) as csvfile:

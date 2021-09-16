@@ -196,16 +196,16 @@ export default {
           .attr("x", 18)
           .attr("y", 10)
           .attr("dy", ".35em")
-          .attr("class", "neroBlack--text")
+          .attr("class", "black--text text--darken-4")
           .style("text-anchor", "start")
           .text(function (d) {
             return d.label
           })
       }
     },
-    getCordinates(event) {
-      this.tooltip.x = event.offsetX + 60
-      this.tooltip.y = event.offsetY - 200
+    getCordinates(evt) {
+      this.tooltip.x = evt.offsetX + 60
+      this.tooltip.y = evt.offsetY - 200
     },
   },
 }

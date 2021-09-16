@@ -2,7 +2,7 @@
   <div>
     <div class="edit-schedule-wrapper">
       <span class="pr-2">
-        <div class="neroBlack--text text-caption">Repeat</div>
+        <span class="black--text text--darken-4 text-caption">Repeat</span>
         <v-select
           v-model="value.periodicity"
           :items="repeatItems"
@@ -15,7 +15,7 @@
         />
       </span>
       <span class="pr-2">
-        <div class="neroBlack--text text-caption">Every</div>
+        <span class="black--text text--darken-4 text-caption">Every</span>
         <v-select
           v-model="value.every"
           :items="everyItems"
@@ -27,7 +27,7 @@
           append-icon="mdi-chevron-down"
         />
       </span>
-      <span class="neroBlack--text text-h6 pt-3 pr-3">
+      <span class="black--text text--darken-4 text-h6 pt-3 pr-3">
         {{ timeFrame }}(s) at
       </span>
       <span class="pr-2">
@@ -79,12 +79,16 @@
         min-height="30"
         class="day-button"
         :ripple="false"
-        :color="isDaySelected(day) ? 'background' : 'aliceBlue'"
+        :color="isDaySelected(day) ? 'primary lighten-1' : 'primary lighten-2'"
         @click="toggleWeekDay(day)"
       >
         <span
           class="text-h6"
-          :class="isDaySelected(day) ? 'secondary--text' : 'gray--text'"
+          :class="
+            isDaySelected(day)
+              ? 'primary--text text--lighten-8'
+              : 'black--text text--darken-1'
+          "
         >
           {{ day.day }}
         </span>
@@ -129,20 +133,26 @@
       </div>
     </div>
 
-    <div class="gray--text pt-4">
+    <div class="black--text text--darken-1 pt-4">
       Delivery takes place
-      <span class="neroBlack--text">
+      <span class="black--text text--darken-4">
         [every
         {{ value.every !== 1 ? value.every : "" }}
         {{ timeFrame }}{{ value.every !== 1 ? "s" : "" }}]
       </span>
       <span v-if="value.periodicity !== 'Daily'">on </span>
-      <span v-if="value.periodicity === 'Weekly'" class="neroBlack--text">
+      <span
+        v-if="value.periodicity === 'Weekly'"
+        class="black--text text--darken-4"
+      >
         <span v-if="selectedDaysString !== '[]'">
           {{ selectedDaysString }}
         </span>
       </span>
-      <span v-if="value.periodicity === 'Monthly'" class="neroBlack--text">
+      <span
+        v-if="value.periodicity === 'Monthly'"
+        class="black--text text--darken-4"
+      >
         <span v-if="value.monthlyPeriod === 'Day'">
           [Day {{ value.monthlyDayDate }}]
         </span>
@@ -151,7 +161,7 @@
         </span>
       </span>
       starting at
-      <span class="neroBlack--text">
+      <span class="black--text text--darken-4">
         [{{ value.hour }}:{{ value.minute }}{{ value.period }}]
       </span>
     </div>
@@ -162,7 +172,7 @@
         value.monthlyPeriod === 'Day' &&
         value.monthlyDayDate === 31
       "
-      class="gray--text pt-1"
+      class="black--text text--darken-1 pt-1"
     >
       Some months are fewer than 31 days, for these months the delivery will
       take place on the last day of the month.
@@ -336,11 +346,11 @@ export default {
     .v-input__slot {
       min-height: 40px;
       fieldset {
-        color: var(--v-lightGrey-base) !important;
+        color: var(--v-black-lighten3) !important;
         border-width: 1px !important;
       }
       input::placeholder {
-        color: var(--v-lightGrey-base) !important;
+        color: var(--v-black-lighten3) !important;
       }
     }
     .v-text-field__details {

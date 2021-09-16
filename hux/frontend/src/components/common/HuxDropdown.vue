@@ -133,7 +133,7 @@ export default {
     padding: 0 16px;
     border-style: solid !important;
     border-width: 1px;
-    border-color: var(--v-lightGrey-base) !important;
+    border-color: var(--v-black-lighten3) !important;
     border-radius: 0;
     box-shadow: none !important;
     background-color: var(--v-white-base) !important;
@@ -142,7 +142,7 @@ export default {
     line-height: 22px;
     width: auto !important;
     min-width: 200px;
-    color: var(--v-neroBlack-base);
+    color: var(--v-black-darken4);
     ::v-deep .v-btn__content {
       .spacer {
         &:nth-child(2) {
@@ -160,7 +160,7 @@ export default {
   font-size: 14px;
   line-height: 22px !important;
 
-  color: var(--v-neroBlack-base);
+  color: var(--v-black-darken4);
   .v-list-item {
     min-height: 32px;
     .v-list-item__title {
@@ -169,7 +169,7 @@ export default {
   }
   .group_title {
     text-transform: uppercase;
-    color: var(--v-gray-base);
+    color: var(--v-black-darken1);
   }
 }
 </style>

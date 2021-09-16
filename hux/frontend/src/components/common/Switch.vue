@@ -65,12 +65,12 @@ export default {
         width: 61px;
         height: 24px;
         background: var(--v-white-base);
-        border: 1px solid var(--v-secondary-base);
+        border: 1px solid var(--v-primary-lighten8);
         box-sizing: border-box;
         border-radius: 21px;
       }
       .v-input--switch__thumb {
-        background: var(--v-secondary-base);
+        background: var(--v-primary-lighten8);
         border: 1px solid var(--v-white-base);
         box-sizing: border-box;
         width: 20px;
@@ -86,7 +86,7 @@ export default {
       line-height: 16px;
       top: 3px !important;
       left: 25px !important;
-      color: var(--v-secondary-base);
+      color: var(--v-primary-lighten8);
     }
   }
   &.v-input--is-dirty {

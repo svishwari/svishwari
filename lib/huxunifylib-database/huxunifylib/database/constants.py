@@ -268,7 +268,8 @@ COMPONENT_NAME = "component_name"
 CAMPAIGNS = "campaigns"
 DESTINATIONS = "destinations"
 AUDIENCES = "audiences"
-FAVORITE_COMPONENTS = [CAMPAIGNS, DESTINATIONS, AUDIENCES]
+ENGAGEMENTS = "engagements"
+FAVORITE_COMPONENTS = [AUDIENCES, ENGAGEMENTS]
 
 DELIVERY_JOB_ID = "delivery_job_id"
 DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID = "delivery_platform_generic_campaign_id"

@@ -60,7 +60,7 @@ export default Vue.extend({
   width: 35px;
   height: 35px;
   line-height: 22px;
-  color: var(--v-neroBlack-base) !important;
+  color: var(--v-black-darken4) !important;
   cursor: default !important;
   background: transparent !important;
 }

@@ -94,10 +94,10 @@ export const audience = {
   lookalike_audiences: () => mockLookalikeAudiences(5),
   deliveries: [
     {
-      delivery_platform_type: "twilio",
+      delivery_platform_type: "sendgrid",
       status: "Delivered",
       last_delivered: faker.date.recent(),
-      delivery_platform_name: "Twilio",
+      delivery_platform_name: "Sendgrid by Twilio",
     },
     {
       delivery_platform_type: "facebook",
