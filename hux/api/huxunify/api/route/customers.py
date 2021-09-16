@@ -61,7 +61,10 @@ from huxunify.api.schema.customers import (
 )
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import redact_fields
-from huxunify.api.route.utils import group_gender_spending
+from huxunify.api.route.utils import (
+    group_gender_spending,
+    check_end_date_greater_than_start_date,
+)
 
 customers_bp = Blueprint(
     api_c.CUSTOMERS_ENDPOINT, import_name=__name__, url_prefix="/cdp"
@@ -256,10 +259,16 @@ class IDROverview(SwaggerView):
         """
         start_date = request.args.get(api_c.START_DATE)
         end_date = request.args.get(api_c.END_DATE)
-        if start_date and end_date and start_date > end_date:
-            return {
-                api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE
-            }, HTTPStatus.BAD_REQUEST
+
+        try:
+            check_end_date_greater_than_start_date(start_date, end_date)
+
+        except Exception as error:  # pylint: disable=broad-except
+            return (
+                error.args[0],
+                HTTPStatus.BAD_REQUEST,
+            )
+
         token_response = get_token_from_request(request)
         return (
             IDROverviewWithDateRangeSchema().dump(
@@ -461,24 +470,17 @@ class IDRDataFeeds(SwaggerView):
         """
         token_response = get_token_from_request(request)
 
-        start_date = request.args.get(
-            api_c.START_DATE,
-            datetime.strftime(
-                datetime.utcnow().date() - relativedelta(months=6),
-                api_c.DEFAULT_DATE_FORMAT,
-            ),
-        )
-        end_date = request.args.get(
-            api_c.END_DATE,
-            datetime.strftime(
-                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
-            ),
-        )
+        start_date = request.args.get(api_c.START_DATE)
+        end_date = request.args.get(api_c.END_DATE)
 
-        if start_date > end_date:
-            return {
-                api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE
-            }, HTTPStatus.BAD_REQUEST
+        try:
+            check_end_date_greater_than_start_date(start_date, end_date)
+
+        except Exception as error:  # pylint: disable=broad-except
+            return (
+                error.args[0],
+                HTTPStatus.BAD_REQUEST,
+            )
 
         return (
             jsonify(
@@ -643,10 +645,15 @@ class CustomerDemoVisualView(SwaggerView):
 
         start_date = request.args.get(api_c.START_DATE)
         end_date = request.args.get(api_c.END_DATE)
-        if start_date and end_date and start_date > end_date:
-            return {
-                api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE
-            }, HTTPStatus.BAD_REQUEST
+
+        try:
+            check_end_date_greater_than_start_date(start_date, end_date)
+
+        except Exception as error:  # pylint: disable=broad-except
+            return (
+                error.args[0],
+                HTTPStatus.BAD_REQUEST,
+            )
 
         token_response = get_token_from_request(request)
 
@@ -741,10 +748,15 @@ class IDRMatchingTrends(SwaggerView):
 
         start_date = request.args.get(api_c.START_DATE)
         end_date = request.args.get(api_c.END_DATE)
-        if start_date and end_date and start_date > end_date:
-            return {
-                api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE
-            }, HTTPStatus.BAD_REQUEST
+
+        try:
+            check_end_date_greater_than_start_date(start_date, end_date)
+
+        except Exception as error:  # pylint: disable=broad-except
+            return (
+                error.args[0],
+                HTTPStatus.BAD_REQUEST,
+            )
 
         token_response = get_token_from_request(request)
         return (
@@ -822,10 +834,15 @@ class CustomerEvents(SwaggerView):
         """
         start_date = request.json[api_c.START_DATE]
         end_date = request.json[api_c.END_DATE]
-        if start_date and end_date and start_date > end_date:
-            return {
-                api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE
-            }, HTTPStatus.BAD_REQUEST
+
+        try:
+            check_end_date_greater_than_start_date(start_date, end_date)
+
+        except Exception as error:  # pylint: disable=broad-except
+            return (
+                error.args[0],
+                HTTPStatus.BAD_REQUEST,
+            )
 
         token_response = get_token_from_request(request)
         return (

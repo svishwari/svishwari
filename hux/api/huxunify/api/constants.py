@@ -497,7 +497,7 @@ BSON_INVALID_ID = (
     f"12-byte input or a 24-character hex string"
 )
 MESSAGE = "message"
-START_DATE_GREATER_THAN_END_DATE = "Start date cannot be greater than end date"
+START_DATE_GREATER_THAN_END_DATE = "Start date cannot be greater than end date."
 
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
 INVALID_DELIVERY_SCHEDULE = "Delivery schedule is not valid."

@@ -277,3 +277,42 @@ def transform_fields_generic_file(
     """
 
     return dataframe
+
+
+def check_end_date_greater_than_start_date(
+    start_date: str,
+    end_date: str,
+) -> bool:
+    """Raises error if start date is greater than end date.
+
+    Args:
+        start_date (str): start date.
+        end_date (str): end date.
+
+    Returns:
+        (bool): Returns if the start date is less than end date.
+    """
+
+    start_date_format = ""
+    end_date_format = ""
+
+    if start_date:
+        start_date_format = datetime.strptime(
+            start_date, constants.DEFAULT_DATE_FORMAT
+        )
+
+    if end_date:
+        end_date_format = datetime.strptime(
+            end_date, constants.DEFAULT_DATE_FORMAT
+        )
+
+    if (
+        start_date_format
+        and end_date_format
+        and start_date_format > end_date_format
+    ):
+        raise Exception(
+            {constants.MESSAGE: constants.START_DATE_GREATER_THAN_END_DATE}
+        )
+
+    return True
