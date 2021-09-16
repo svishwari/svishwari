@@ -1,8 +1,10 @@
 <template>
-  <div class="container" :style="{ maxWidth: chartWidth }">
+  <div class="container">
     <span v-if="showChart">
       <div id="chart" ref="chart" @mousemove="getCordinates($event)"></div>
-      <div ref="legend"></div>
+    <div class="pt-2 pl-4">
+      <div id="chartLegend"></div>
+    </div>
       <doughnut-chart-tooltip
         :show-tooltip="showTooltip"
         :tooltip="tooltip"
@@ -80,7 +82,16 @@ export default {
   },
   methods: {
     initiateChart() {
-      let data = this.data // TODO: Get this from API
+      let data = this.data
+
+      let legendsData = [
+          { label: "Women", position: 10 },
+          { label: "Men", position: 47 },
+          { label: "Other", position: 78 },
+        ]
+
+        let colorCodes = [ "#005587","#0C9DDB", "#42EFFD"]
+
       this.showChart = false
       if (data.length != 0) {
         this.showChart = true
@@ -89,8 +100,6 @@ export default {
         let width = this.chartDimensions.width - 50,
           height = this.chartDimensions.height - 25,
           radius = Math.min(width, height) / 1.8
-        let line = 0
-        let col = 0
         let color = d3Scale
           .scaleOrdinal()
           .range(["#0C9DDB", "#005587", "#42EFFD"])
@@ -152,55 +161,47 @@ export default {
         }
 
         // Creating legends svg element & apply style
-        d3Select.select(this.$refs.legend).selectAll("svg").remove()
+      d3Select.select("#chartLegend").selectAll("svg").remove()
+      let legendSvg = d3Select
+        .select("#chartLegend")
+        .append("svg")
+        .attr("viewBox", "8 0 130 42")
+        .attr("id", "mainSvg")
+        .attr("class", "svgBox")
+        .style("margin-right", "20px")
+        .style("margin-left", "-10px")
+        .style("text-align", "left")
 
-        let legendSvg = d3Select
-          .select("#mainPie")
-          .append("svg")
-          .attr("viewBox", "0 0 200 60") // for responsive
-          .attr("width", width - 50)
-          .attr("height", 54)
-          .attr("id", "mainSvg")
-          .attr("class", "svgBox")
-          .style("margin-left", "-10px")
-          .style("text-align", "left")
-          .style("margin-top", "15px")
+      let legend = legendSvg
+        .selectAll(".legend")
+        .data(legendsData)
+        .enter()
+        .append("g")
+        .attr("class", "legend")
+        .attr("transform", function (d) {
+          return `translate(${d.position}, 0)`
+        })
 
-        // calculating distance b/n each legend
-        let legend = legendSvg
-          .selectAll(".legend")
-          .data(data)
-          .enter()
-          .append("g")
-          .attr("class", "legend")
-          .attr("transform", function (d) {
-            let y = line * 25
-            let x = col
-            col += d.label.length * 10 + 25
-            return "translate(" + x + "," + y + ")"
-          })
+      legend
+        .append("circle")
+        .attr("cx", 10)
+        .attr("cy", 10)
+        .attr("r", 3)
+        .style("fill", function (d, i) {
+          return colorCodes[i]
+        })
 
-        // creating legend circle & fill color
-        legend
-          .append("circle")
-          .attr("cx", 10)
-          .attr("cy", 10)
-          .attr("r", 6)
-          .style("fill", function (d) {
-            return color(d.population_percentage)
-          })
-
-        // creating legend text & apply css class
-        legend
-          .append("text")
-          .attr("x", 18)
-          .attr("y", 10)
-          .attr("dy", ".35em")
-          .attr("class", "neroBlack--text")
-          .style("text-anchor", "start")
-          .text(function (d) {
-            return d.label
-          })
+      legend
+        .append("text")
+        .attr("x", 16)
+        .attr("y", 9)
+        .attr("dy", ".55em")
+        .attr("class", "neroBlack--text")
+        .style("font-size", "6px")
+        .style("text-anchor", "start")
+        .text(function (d) {
+          return d.label
+        })
       }
     },
     getCordinates(event) {
@@ -215,6 +216,10 @@ export default {
   padding: 0px !important;
   #chart {
     text-align: center;
+  }
+  #chartLegend {
+    max-width: 400px;
+    min-width: 150px;
   }
   .pieBox {
     display: inline-block;

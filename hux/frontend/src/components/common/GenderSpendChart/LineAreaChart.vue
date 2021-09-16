@@ -386,12 +386,5 @@ export default {
   .chart-section {
     margin-bottom: -20px;
   }
-  .area-card-title {
-    font-family: Open Sans;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 15px;
-    line-height: 20px;
-  }
 }
 </style>
