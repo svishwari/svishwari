@@ -19,6 +19,7 @@ from huxunifylib.util.general.logging import logger
 from huxunify.api.config import get_config
 from huxunify.api.exceptions import integration_api_exceptions as iae
 from huxunify.api import constants as api_c
+from huxunify.api.prometheus import record_health_status_metric
 
 # fields to convert to datetime from the responses
 DEFAULT_DATETIME = datetime(1, 1, 1, 1, 00)
@@ -51,11 +52,13 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
             f"{config.CDP_SERVICE}/healthcheck",
             timeout=5,
         )
+        record_health_status_metric(api_c.CDM_API_CONNECTION_HEALTH, True)
         return response.status_code, "CDM available."
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
         logger.error("CDM Health Check failed with %s.", repr(exception))
+        record_health_status_metric(api_c.CDM_API_CONNECTION_HEALTH, False)
         return False, getattr(exception, "message", repr(exception))
 
 

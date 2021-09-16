@@ -35,6 +35,7 @@ from huxunify.api.data_connectors.cdp import check_cdm_api_connection
 from huxunify.api.data_connectors.cdp_connection import (
     check_cdp_connections_api_connection,
 )
+from huxunify.api.prometheus import record_health_status_metric
 
 
 def handle_api_exception(exc: Exception, description: str = "") -> None:
@@ -79,10 +80,12 @@ def check_mongo_connection() -> Tuple[bool, str]:
     try:
         # test finding documents
         get_all_data_sources(get_db_client())
+        record_health_status_metric(constants.MONGO_CONNECTION_HEALTH, True)
         return True, "Mongo available."
     # pylint: disable=broad-except
     # pylint: disable=unused-variable
     except Exception as exception:
+        record_health_status_metric(constants.MONGO_CONNECTION_HEALTH, False)
         return False, "Mongo not available."
 
 
