@@ -54,7 +54,11 @@ from huxunify.api.data_connectors.cdp_connection import (
     get_idr_matching_trends,
 )
 from huxunify.api.route.utils import add_chart_legend
-from huxunify.api.schema.utils import redact_fields, AUTH401_RESPONSE, FAILED_DEPENDENCY_424_RESPONSE
+from huxunify.api.schema.utils import (
+    redact_fields,
+    AUTH401_RESPONSE,
+    FAILED_DEPENDENCY_424_RESPONSE,
+)
 from huxunify.api.schema.customers import (
     CustomerOverviewSchema,
     CustomersSchema,
