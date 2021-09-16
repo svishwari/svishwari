@@ -4,7 +4,7 @@
       <v-data-table
         :expanded.sync="expanded"
         :headers="columns"
-        :hide-default-header="!showHeader"
+        :hide-default-header="!showHeader || !hasData"
         :height="height"
         :items="dataItems"
         :sort-by.sync="sortColumn"
@@ -17,7 +17,42 @@
         single-select
         :disable-sort="disableSort"
       >
-        <template v-if="nested" #item="{ item, expand, isExpanded }">
+        <!-- table headers -->
+        <template v-for="column in columns" #[`header.${column.value}`]>
+          <tooltip v-if="column.tooltipValue" :key="column.id">
+            <template #label-content>
+              {{ column.text }}
+            </template>
+            <template #hover-content>
+              <span
+                v-html="
+                  column.tooltipValue.replace(/(?:\r\n|\r|\n)/g, '<br />')
+                "
+              ></span>
+            </template>
+          </tooltip>
+          <template v-if="!column.tooltipValue">
+            <!-- TODO: find a better solution and remove v-html -->
+            <span :key="column.value" v-html="column.text" />
+          </template>
+          <tooltip v-if="column.hoverTooltip" :key="column.id" position-top>
+            <template #label-content>
+              <icon
+                v-if="column.hoverTooltip"
+                :key="column.id"
+                type="info"
+                :size="12"
+                class="ml-1"
+              />
+            </template>
+            <template #hover-content>
+              {{ column.hoverTooltip }}
+            </template>
+          </tooltip>
+        </template>
+
+        <!-- table rows -->
+        <template v-if="hasData && nested" #item="{ item, expand, isExpanded }">
           <slot
             name="item-row"
             :item="item"
@@ -25,49 +60,32 @@
             :isExpanded="isExpanded"
           ></slot>
         </template>
-        <template v-for="h in columns" v-slot:[`header.${h.value}`]>
-          <tooltip v-if="h.tooltipValue" :key="h.id">
-            <template #label-content>
-              {{ h.text }}
-            </template>
-            <template #hover-content>
-              <span
-                v-html="h.tooltipValue.replace(/(?:\r\n|\r|\n)/g, '<br />')"
-              ></span>
-            </template>
-          </tooltip>
-          <template v-if="!h.tooltipValue">
-            <!-- TODO: find a better solution and remove v-html -->
-            <span :key="h.value" v-html="h.text" />
-          </template>
-          <tooltip v-if="h.hoverTooltip" :key="h.id" position-top>
-            <template #label-content>
-              <icon
-                v-if="h.hoverTooltip"
-                :key="h.id"
-                type="info"
-                :size="12"
-                class="ml-1"
-              />
-            </template>
-            <template #hover-content>
-              {{ h.hoverTooltip }}
-            </template>
-          </tooltip>
-        </template>
-        <template v-if="!nested" #body="{ nestedHeaders, items }">
+
+        <template v-if="hasData && !nested" #body="{ nestedHeaders, items }">
           <tbody>
             <tr v-for="item in items" :key="item.id">
               <slot name="row-item" :item="item" :headers="nestedHeaders" />
             </tr>
           </tbody>
         </template>
+
+        <!-- table expanded content -->
         <template #expanded-item="{ headers, item }">
           <slot
             name="expanded-row"
             :expandedHeaders="headers"
             :parentItem="item"
           />
+        </template>
+
+        <!-- table empty slot -->
+        <template #no-data>
+          <v-alert color="primary lighten-1" class="empty-table ma-0">
+            <v-row class="text-left black--text text--darken-1">
+              <slot v-if="$slots.empty" name="empty"></slot>
+              <v-col v-else class="grow">{{ empty }}</v-col>
+            </v-row>
+          </v-alert>
         </template>
       </v-data-table>
     </div>
@@ -127,12 +145,22 @@ export default {
       required: false,
       default: "auto",
     },
+    empty: {
+      type: String,
+      required: false,
+      default: "Nothing to show here yet.",
+    },
   },
   data() {
     return {
       expanded: [],
       itemPerPage: ALL,
     }
+  },
+  computed: {
+    hasData() {
+      return this.dataItems && this.dataItems.length
+    },
   },
   methods: {
     clickRow(_, event) {
@@ -227,6 +255,20 @@ export default {
     }
     ::v-deep .v-data-table__expanded__content {
       padding: 0px;
+    }
+  }
+
+  ::v-deep .v-data-table__empty-wrapper {
+    text-align: left;
+
+    td {
+      padding: 0 !important;
+      border: 0 !important;
+
+      .empty-table {
+        border: 1px solid var(--v-black-lighten2) !important;
+        padding: 20px;
+      }
     }
   }
 }
