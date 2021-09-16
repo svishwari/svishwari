@@ -3,10 +3,6 @@
 import random
 
 from huxunifylib.database import constants as db_c
-from huxunifylib.util.transform.transform_dataframe import (
-    transform_fields_google_file,
-    transform_fields_amazon_file,
-)
 
 TEST_MODE = "pytest"
 DEVELOPMENT_MODE = "development"
@@ -266,6 +262,7 @@ STATUS_WEIGHTS = {
 DOWNLOAD_TYPE = "download_type"
 GOOGLE_ADS = "google_ads"
 AMAZON_ADS = "amazon_ads"
+GENERIC_ADS = "generic_ads"
 
 # Facebook connector defines
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
@@ -970,10 +967,6 @@ DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
 
-DOWNLOAD_TYPES = {
-    GOOGLE_ADS: transform_fields_google_file,
-    AMAZON_ADS: transform_fields_amazon_file,
-}
 
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
