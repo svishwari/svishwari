@@ -12,9 +12,11 @@ import boto3
 import botocore
 from bson import ObjectId
 from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
+
 import huxunifylib.database.constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api import config
+from huxunify.api.prometheus import record_health_status_metric
 
 
 class ParameterStore:
@@ -159,9 +161,13 @@ def check_aws_connection(client="s3") -> Tuple[bool, str]:
         # lookup the health test to run from api constants
         health_test = api_c.AWS_HEALTH_TESTS[client]
         getattr(get_aws_client(client), health_test[0])(**health_test[1])
+        record_health_status_metric(api_c.AWS_SSM_CONNECTION_HEALTH, True)
+        record_health_status_metric(api_c.AWS_BATCH_CONNECTION_HEALTH, True)
         return True, f"{client} available."
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
+        record_health_status_metric(api_c.AWS_SSM_CONNECTION_HEALTH, False)
+        record_health_status_metric(api_c.AWS_BATCH_CONNECTION_HEALTH, False)
         return False, getattr(exception, "message", repr(exception))
 
 
@@ -346,7 +352,7 @@ def put_rule_targets_aws_batch(
             # return the request id
             return response["FailedEntryCount"]
 
-        error_msg = "Failed to put target for %s: client error." % rule_name
+        error_msg = f"Failed to put target for {rule_name}: client error."
         logging.error(error_msg)
         return None
 

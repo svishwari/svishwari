@@ -8,6 +8,7 @@ from flask import request
 
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
+from huxunify.api.prometheus import record_health_status_metric
 
 
 def check_okta_connection() -> Tuple[bool, str]:
@@ -27,10 +28,12 @@ def check_okta_connection() -> Tuple[bool, str]:
             f"/oauth2/v1/keys?client_id="
             f"{config.OKTA_CLIENT_ID}"
         )
+        record_health_status_metric(api_c.OKTA_CONNECTION_HEALTH, True)
         return response.status_code, "OKTA available."
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
+        record_health_status_metric(api_c.OKTA_CONNECTION_HEALTH, False)
         return False, getattr(exception, "message", repr(exception))
 
 
