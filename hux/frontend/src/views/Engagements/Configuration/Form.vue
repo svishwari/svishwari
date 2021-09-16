@@ -618,13 +618,13 @@ export default {
     },
 
     onEndDateSelect(val) {
-      if(!val){
+      if (!val) {
         this.selectedEndDate = "No end date"
         this.$set(this.value, "recurring", {
           start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
           end: null,
         })
-      }else {
+      } else {
         this.selectedEndDate = val
         this.$set(this.value, "recurring", {
           start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
