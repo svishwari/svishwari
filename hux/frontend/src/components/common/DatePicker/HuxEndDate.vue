@@ -158,7 +158,6 @@ export default {
   },
 }
 </script>
-
 <style lang="scss" scoped>
 .hux-date-picker {
   .main-button {
