@@ -68,6 +68,9 @@ class Config:
     AUDIENCE_ROUTER_IMAGE = config(
         api_c.AUDIENCE_ROUTER_IMAGE_CONST, default=""
     )
+    AUDIENCE_ROUTER_JOB_QUEUE = config(
+        api_c.AUDIENCE_ROUTER_JOB_QUEUE_CONST, default=""
+    )
 
     # campaign data performance router scheduled event name
     CDPR_EVENT_NAME = config(api_c.CDPR_EVENT_CONST, default="")
