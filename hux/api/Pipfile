@@ -29,7 +29,7 @@ flask-cors = {version="3.0.10", index="pypi"}
 py-healthcheck = {version="1.10.1", index="pypi"}
 huxunifylib-database = {path="../../lib/huxunifylib-database", editable=true}
 huxunifylib-connectors = "==0.1.29"
-huxunifylib-util = {version="*", index="jfrog"}
+huxunifylib-util = "==0.1.29"
 faker = {version="*", index="pypi"}
 connexion = "==2.7.0"
 prometheus-client = "*"
