@@ -2,10 +2,10 @@
 
 import unittest
 import mongomock
-from bson import ObjectId
-
 import huxunifylib.database.db_exceptions
 import huxunifylib.database.user_management as um
+import huxunifylib.database.orchestration_management as am
+import huxunifylib.database.engagement_management as em
 import huxunifylib.database.constants as c
 
 from huxunifylib.database.client import DatabaseClient
@@ -48,6 +48,23 @@ class TestUserManagement(unittest.TestCase):
             display_name=self.sample_user[c.USER_DISPLAY_NAME],
             profile_photo=self.sample_user[c.USER_PROFILE_PHOTO],
         )
+
+        self.audience = am.create_audience(self.database, "Test Audience", [])
+
+        # setting id to set engagement
+        self.audience[c.OBJECT_ID] = self.audience[c.ID]
+
+        self.engagement_id = em.set_engagement(
+            self.database,
+            "Engagement",
+            "Engagement Description",
+            [self.audience],
+            "user1",
+        )
+        self.component_ids = {
+            c.ENGAGEMENTS: self.engagement_id,
+            c.AUDIENCES: self.audience[c.OBJECT_ID],
+        }
 
     def test_set_user(self) -> None:
         """Test set_user routine
@@ -169,8 +186,7 @@ class TestUserManagement(unittest.TestCase):
 
         # test each component
         for component in c.FAVORITE_COMPONENTS:
-            # generate source of truth
-            component_id = ObjectId()
+            component_id = self.component_ids[component]
 
             # add favorite component
             update_doc = um.manage_user_favorites(
@@ -197,8 +213,7 @@ class TestUserManagement(unittest.TestCase):
 
         # test all the components
         for component in c.FAVORITE_COMPONENTS:
-            # generate source of truth
-            component_id = ObjectId()
+            component_id = self.component_ids[component]
 
             # add favorite component
             um.manage_user_favorites(
@@ -229,8 +244,7 @@ class TestUserManagement(unittest.TestCase):
 
         # test all the components
         for component in c.FAVORITE_COMPONENTS:
-            # generate source of truth
-            component_id = ObjectId()
+            component_id = self.component_ids[component]
 
             # add favorite component x2
             for _ in range(2):
