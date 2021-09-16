@@ -26,11 +26,11 @@ def create_audience_audit(
     Creating Audience audit log
 
     Args:
-        database(DatabaseClient): MongoDB Client
-        user_name(str): User name
-        audience_id(ObjectId): Audience Id
-        download_type: Type of audience file downloaded
+        database (DatabaseClient): MongoDB Client
+        audience_id (ObjectId): Audience Id
+        download_type (str): Type of audience file downloaded
         file_name (str): Uploaded file name
+        user_name (str): User name
 
     Returns:
         Union[dict,None]: Audit doc or None, if errors
