@@ -3,11 +3,11 @@ from flask import Flask, request
 from prometheus_client import Gauge
 from prometheus_flask_exporter import PrometheusMetrics
 
-metrics_reference = PrometheusMetrics.for_app_factory()
+prometheus_metrics = PrometheusMetrics.for_app_factory()
 health_check_metrics = Gauge(
     name="health_check_metrics",
     documentation="health check metrics",
-    registry=metrics_reference.registry,
+    registry=prometheus_metrics.registry,
     labelnames=["name"],
 )
 

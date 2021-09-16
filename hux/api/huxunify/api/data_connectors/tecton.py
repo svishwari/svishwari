@@ -22,7 +22,9 @@ from huxunify.api.schema.model import (
     ModelDriftSchema,
     ModelLiftSchema,
 )
-from huxunify.api.prometheus import record_health_status_metric
+from huxunify.api.prometheus import (
+    record_health_status_metric,
+)
 
 
 def check_tecton_connection() -> Tuple[bool, str]:
