@@ -31,11 +31,32 @@
               <v-icon
                 size="22"
                 color="primary"
-                class="icon-border pa-2 ma-1"
+                class="icon-border pa-2 ma-1 d-none"
                 v-on="on"
               >
                 mdi-download
               </v-icon>
+              <tooltip>
+                <template #label-content>
+                  <v-icon
+                    size="22"
+                    color="primary"
+                    class="icon-border pa-2 ma-1"
+                    v-on="on"
+                  >
+                    mdi-download
+                  </v-icon>
+                </template>
+                <template #hover-content>
+                  <span
+                    class="text--caption"
+                    style="width: 260px; display: block"
+                  >
+                    Download the hashed customer data file of this audience for
+                    manual uploads to Amazon or Google.
+                  </span>
+                </template>
+              </tooltip>
             </template>
             <v-list>
               <v-list-item
@@ -53,9 +74,7 @@
             </v-list>
           </v-menu>
           <tooltip close-on-click>
-            <template #label-content>
-              <icon type="info" :size="12" class="position-absolute" />
-            </template>
+            <template #label-content> </template>
             <template #hover-content>
               <span class="text--caption" style="width: 260px; display: block">
                 Download the hashed customer data file of this audience for
@@ -291,7 +310,6 @@
         </v-col>
         <v-col v-if="showLookalike" md="3" class="pl-6 pr-0 py-0">
           <look-alike-card
-            :key="lookalikeAudiences"
             v-model="lookalikeAudiences"
             :status="isLookalikable"
             @createLookalike="openLookAlikeDrawer"
@@ -671,7 +689,7 @@ export default {
           id: "2349d4353b9f",
           title: "Generic CSV",
           name: ".csv",
-          type: "amazon_ads",
+          type: "generic_ads",
         },
       ],
       loading: false,
