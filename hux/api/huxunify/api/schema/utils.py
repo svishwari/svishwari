@@ -109,6 +109,23 @@ AUTH401_RESPONSE = {
 }
 
 
+class FailedDependency424Schema(Schema):
+    """424 schema."""
+
+    code = Int(name="code", example=424)
+    message = Str(
+        name="message", example=api_c.FAILED_DEPENDENCY_ERROR_MESSAGE
+    )
+
+
+FAILED_DEPENDENCY_424_RESPONSE = {
+    HTTPStatus.FAILED_DEPENDENCY.value: {
+        "schema": FailedDependency424Schema,
+        "description": api_c.FAILED_DEPENDENCY_ERROR_MESSAGE,
+    },
+}
+
+
 def redact_fields(data: dict, redacted_fields: list) -> dict:
     """Function is meant to redact fields that a customer is not allowed to see
 

@@ -26,7 +26,10 @@ from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
 )
-from huxunify.api.schema.utils import AUTH401_RESPONSE
+from huxunify.api.schema.utils import (
+    AUTH401_RESPONSE,
+    FAILED_DEPENDENCY_424_RESPONSE,
+)
 from huxunify.api.config import get_config
 import huxunify.api.constants as api_c
 from huxunify.api.route.decorators import (
@@ -205,6 +208,7 @@ class AudienceInsightsStates(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
@@ -294,6 +298,7 @@ class AudienceInsightsCities(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use

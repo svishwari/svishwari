@@ -2,14 +2,20 @@
 purpose of this file is to house all the tecton api tests.
 """
 import json
+import string
 from unittest import TestCase, mock
 from datetime import datetime
 import requests_mock
 from requests_mock import Mocker
 from bson import json_util
+from hypothesis import given, strategies as st
+
 from huxunify.api import constants
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors import tecton
+from huxunify.api.exceptions.integration_api_exceptions import (
+    FailedAPIDependencyError,
+)
 from huxunify.test import constants as t_c
 
 
@@ -349,3 +355,107 @@ class TectonTest(TestCase):
                 constants.RUN_DATE: datetime(2021, 7, 30, 0, 0),
             },
         )
+
+    @requests_mock.Mocker()
+    def test_get_models_raise_dependency_error(
+        self, request_mocker: Mocker
+    ) -> None:
+        """Test get models raise dependency error
+
+        Args:
+            request_mocker: request mocker object
+
+        Returns:
+            None
+        """
+
+        request_mocker.post(
+            self.config.TECTON_FEATURE_SERVICE,
+            text=json.dumps({}),
+            headers=self.config.TECTON_API_HEADERS,
+        )
+
+        with self.assertRaises(FailedAPIDependencyError):
+            tecton.get_models()
+
+    @requests_mock.Mocker()
+    @given(model_id=st.text(alphabet=string.ascii_letters))
+    def test_get_model_version_history_raise_dependency_error(
+        self, request_mocker: Mocker, model_id: str
+    ) -> None:
+        """Test get model version history raise dependency error
+
+        Args:
+            request_mocker: request mocker object
+            model_id: model ID value for request
+
+        Returns:
+            None
+        """
+
+        request_mocker.post(
+            self.config.TECTON_FEATURE_SERVICE,
+            text=json.dumps({}),
+            headers=self.config.TECTON_API_HEADERS,
+        )
+
+        with self.assertRaises(FailedAPIDependencyError):
+            tecton.get_model_version_history(model_id=model_id)
+
+    @requests_mock.Mocker()
+    @given(
+        model_id=st.text(alphabet=string.ascii_letters),
+        model_type=st.text(alphabet=string.ascii_letters),
+    )
+    def test_get_model_drift_raise_dependency_error(
+        self, request_mocker: Mocker, model_id: str, model_type: str
+    ) -> None:
+        """Test get model drift raise dependency error
+
+        Args:
+            request_mocker: request mocker object
+            model_id: model ID value for request
+            model_type: model type value for request
+
+        Returns:
+            None
+        """
+
+        request_mocker.post(
+            self.config.TECTON_FEATURE_SERVICE,
+            text=json.dumps({}),
+            headers=self.config.TECTON_API_HEADERS,
+        )
+
+        with self.assertRaises(FailedAPIDependencyError):
+            tecton.get_model_drift(model_id=model_id, model_type=model_type)
+
+    @requests_mock.Mocker()
+    @given(
+        model_id=st.text(alphabet=string.ascii_letters),
+        model_version=st.text(alphabet=string.ascii_letters),
+    )
+    def test_get_model_features_raise_dependency_error(
+        self, request_mocker: Mocker, model_id: str, model_version: str
+    ) -> None:
+        """Test get model features raise dependency error
+
+        Args:
+            request_mocker: request mocker object
+            model_id: model ID value for request
+            model_version: model version value for request
+
+        Returns:
+            None
+        """
+
+        request_mocker.post(
+            self.config.TECTON_FEATURE_SERVICE,
+            text=json.dumps({}),
+            headers=self.config.TECTON_API_HEADERS,
+        )
+
+        with self.assertRaises(FailedAPIDependencyError):
+            tecton.get_model_features(
+                model_id=model_id, model_version=model_version
+            )
