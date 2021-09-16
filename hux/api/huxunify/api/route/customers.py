@@ -745,7 +745,7 @@ class IDRMatchingTrends(SwaggerView):
             return {
                 api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE
             }, HTTPStatus.BAD_REQUEST
-        
+
         token_response = get_token_from_request(request)
         return (
             jsonify(
@@ -820,6 +820,13 @@ class CustomerEvents(SwaggerView):
         Returns:
             Tuple[dict, int] list of Customer events grouped by day and http code
         """
+        start_date = request.json[api_c.START_DATE]
+        end_date = request.json[api_c.END_DATE]
+        if start_date and end_date and start_date > end_date:
+            return {
+                api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE
+            }, HTTPStatus.BAD_REQUEST
+
         token_response = get_token_from_request(request)
         return (
             jsonify(
