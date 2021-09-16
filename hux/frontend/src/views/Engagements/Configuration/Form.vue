@@ -128,7 +128,7 @@
       </form-step>
 
       <form-step :step="3" label="Select audience(s) and destination(s)">
-        <p v-if="hasAudiences" class="text-caption">
+        <p v-if="hasAudiences" class="text-h6">
           First add and deliver an audience to Facebook in order to create a
           lookalike audience from this engagement’s dashboard.
         </p>
@@ -610,11 +610,9 @@ export default {
 
     onStartDateSelect(val) {
       this.selectedStartDate = val
-      this.selectedEndDate = null
       this.disableEndDate = false
       this.$set(this.value, "recurring", {
         start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
-        end: null,
       })
       this.endMinDate = val
     },

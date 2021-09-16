@@ -101,7 +101,7 @@
               <span v-if="item[header.value].length > 3" class="ml-1">
                 + {{ item[header.value].length - 2 }}
               </span>
-              <span v-else-if="item[header.value].length == 1">—</span>
+              <span v-else-if="item[header.value].length == 0">—</span>
             </div>
             <div v-if="header.value == 'status'" class="text-caption">
               <status
@@ -197,7 +197,9 @@
                   <div v-if="header.value == 'name'">
                     <menu-cell
                       :value="item[header.value]"
-                      :menu-options="getAudienceActionItems(item)"
+                      :menu-options="
+                        getAudienceActionItems(item, parentItem.id)
+                      "
                       route-name="AudienceInsight"
                       :route-param="item['id']"
                       :data="item"
@@ -434,6 +436,17 @@
       :type="alert.type"
       :message="alert.message"
     />
+    <confirm-modal
+      v-model="showAudienceRemoveConfirmation"
+      :title="confirmDialog.title"
+      :right-btn-text="confirmDialog.btnText"
+      :body="confirmDialog.body"
+      @onCancel="showAudienceRemoveConfirmation = false"
+      @onConfirm="
+        showAudienceRemoveConfirmation = false
+        removeAudience()
+      "
+    />
   </div>
 </template>
 
@@ -452,6 +465,7 @@ import HuxAlert from "@/components/common/HuxAlert.vue"
 import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
 import Logo from "../../components/common/Logo.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
+import ConfirmModal from "../../components/common/ConfirmModal.vue"
 export default {
   name: "Engagements",
   components: {
@@ -468,11 +482,20 @@ export default {
     HuxAlert,
     Logo,
     Tooltip,
+    ConfirmModal,
   },
   data() {
     return {
       selectedAudience: null,
       showLookAlikeDrawer: false,
+      showAudienceRemoveConfirmation: false,
+      selectedEngagementId: "",
+      selectedAudienceId: "",
+      confirmDialog: {
+        title: "Remove  audience?",
+        btnText: "Yes, remove it",
+        body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
+      },
       flashAlert: false,
       alert: {
         type: "success",
@@ -509,7 +532,7 @@ export default {
         {
           text: "Status",
           value: "status",
-          width: "140px",
+          width: "160px",
           class: "sticky-header",
         },
         {
@@ -565,7 +588,7 @@ export default {
       return _headers
     },
     rowData() {
-      let engagementList = this.engagementData
+      let engagementList = JSON.parse(JSON.stringify(this.engagementData))
       engagementList = engagementList.map((eng) => {
         let last_delivered_eng = ""
         let engDestinationList = []
@@ -595,6 +618,9 @@ export default {
           if (last_delivered_eng < last_delivered_aud) {
             last_delivered_eng = last_delivered_aud
           }
+          audience.destinations = audience.destinations.sort((a, b) =>
+            a.name > b.name ? 1 : -1
+          )
           return {
             ...audience,
             last_delivered: last_delivered_aud,
@@ -625,10 +651,22 @@ export default {
       getAllEngagements: "engagements/getAll",
       updateAudienceList: "engagements/updateAudienceList",
       updateEngagement: "engagements/updateEngagement",
+      detachAudience: "engagements/detachAudience",
     }),
     getAudienceHeaders(headers) {
       headers[0].width = "180px"
       return headers
+    },
+    async removeAudience() {
+      this.loading = true
+      const removePayload = { audience_ids: [] }
+      removePayload.audience_ids.push(this.selectedAudienceId)
+      await this.detachAudience({
+        engagementId: this.selectedEngagementId,
+        data: removePayload,
+      })
+      await this.getAllEngagements()
+      this.loading = false
     },
     getOverallDestinations(destinations) {
       if (destinations.length > 3) {
@@ -717,7 +755,7 @@ export default {
         params: { id: id },
       })
     },
-    getAudienceActionItems(audience) {
+    getAudienceActionItems(audience, engagementId) {
       let audienceActionItems = [
         { title: "Favorite", isDisabled: true },
         { title: "Export", isDisabled: true },
@@ -741,7 +779,16 @@ export default {
             },
           },
         },
-        { title: "Remove audience", isDisabled: true },
+        {
+          title: "Remove audience",
+          isDisabled: false,
+          onClick: (value) => {
+            this.showAudienceRemoveConfirmation = true
+            this.selectedEngagementId = engagementId
+            this.confirmDialog.title = `Remove ${value.name} audience?`
+            this.selectedAudienceId = value.id
+          },
+        },
       ]
       return audienceActionItems
     },
@@ -844,7 +891,6 @@ export default {
           position: sticky;
           top: 0;
           left: 0;
-          z-index: 4;
           background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
           &:hover {
