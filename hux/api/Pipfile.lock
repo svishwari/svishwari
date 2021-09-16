@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1b039133025502d03f09cc9a761403856f55af9de69f0314c079e2b47d32290c"
+            "sha256": "fb7ae8cc8d1e8f0c631ae8d16541dfc94d2b2d065843945465c2f5285436b2a9"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -316,10 +316,10 @@
         },
         "facebook-business": {
             "hashes": [
-                "sha256:94a6e43697c815edb2133e05d937b6e0eb13e5225c1ae48e88c40b33d18401ee",
-                "sha256:994c26268c52f6dfeecb0aa40b8edc3d1a66d26694156844f36e2e962d8fa0c0"
+                "sha256:01b451613c9e8b7e12b3f08eafc4c12ca1206d97d6386b1421371b1b15e7214f",
+                "sha256:61dc6180a6a3ca19e3e3c6210d168ac809d42bc91de0ba53402e3c0a6483699d"
             ],
-            "version": "==11.0.0"
+            "version": "==12.0.0"
         },
         "faker": {
             "hashes": [
@@ -415,11 +415,11 @@
         },
         "huxunifylib-connectors": {
             "hashes": [
-                "sha256:55bbcce1909f36fe8f121821aa1fa3747a4f611738463fcc5bd9960c7def9e6b",
-                "sha256:cfb00cfc752ea4cfe055549b14966647c3f2eaba0bba5dd1bd9d2fdad1dbf258"
+                "sha256:1c9c3765a37d235993203ab2b74fadead21ed4e5cc476deef76ebec89825d082",
+                "sha256:bf1e2c6cb294e5351fe606ca82292c3f036e23787cddd1b2854b385334448da6"
             ],
-            "index": "jfrog",
-            "version": "==0.1.30"
+            "index": "pypi",
+            "version": "==0.1.29"
         },
         "huxunifylib-database": {
             "editable": true,
