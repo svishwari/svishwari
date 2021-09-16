@@ -60,7 +60,6 @@ from huxunify.api.schema.customers import (
     CustomersSchema,
 )
 from huxunify.api import constants as api_c
-from huxunify.api.schema.utils import redact_fields
 from huxunify.api.route.utils import (
     group_gender_spending,
     check_end_date_greater_than_start_date,
