@@ -148,7 +148,7 @@ export default {
       this.$refs.endmenu.$parent.$el.parentNode.children[0].click()
     },
     resetDate() {
-      this.selected = "No end date"
+      this.$emit("on-date-select", null)
       this.onCancel()
     },
     selectDate(data) {

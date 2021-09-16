@@ -610,21 +610,27 @@ export default {
 
     onStartDateSelect(val) {
       this.selectedStartDate = val
-      this.selectedEndDate = null
-      this.disableEndDate = false
       this.$set(this.value, "recurring", {
         start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
-        end: null,
+        end: this.$options.filters.Date(this.selectedEndDate, "MMM D") || null,
       })
       this.endMinDate = val
     },
 
     onEndDateSelect(val) {
-      this.selectedEndDate = val
-      this.$set(this.value, "recurring", {
-        start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
-        end: this.$options.filters.Date(this.selectedEndDate, "MMM D"),
-      })
+      if(!val){
+        this.selectedEndDate = "No end date"
+        this.$set(this.value, "recurring", {
+          start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
+          end: null,
+        })
+      }else {
+        this.selectedEndDate = val
+        this.$set(this.value, "recurring", {
+          start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
+          end: this.$options.filters.Date(this.selectedEndDate, "MMM D"),
+        })
+      }
     },
   },
 }
