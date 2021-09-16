@@ -68,7 +68,7 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Failed to retrieve identity data feeds, got %s %s.",
+            "Failed to retrieve identity data feeds, %s %s.",
             response.status_code,
             response.text,
         )
@@ -109,7 +109,7 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Failed to retrieve identity data feed details, got %s %s.",
+            "Failed to retrieve identity data feed details, %s %s.",
             response.status_code,
             response.text,
         )
@@ -152,7 +152,7 @@ def get_data_source_data_feeds(token: str, data_source_type: str) -> list:
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Failed to retrieve %s connections data feeds, got %s %s.",
+            "Failed to retrieve %s connections data feeds, %s %s.",
             data_source_type,
             response.status_code,
             response.text,
@@ -218,7 +218,7 @@ def get_idr_matching_trends(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Could not get IDR matching trends from CDP API, got %s %s.",
+            "Unable to retrieve IDR matching trends, %s %s.",
             response.status_code,
             response.text,
         )

@@ -144,11 +144,11 @@ class CDPConnectionsTest(TestCase):
     def test_get_idr_data_feeds_raise_dependency_error(
         self, start_date: str, end_date: str
     ) -> None:
-        """Test get IDR data feeds raise dependency error
+        """Test get IDR data feeds raise dependency error.
 
         Args:
-            start_date: start date value for request
-            end_date: end date value for request
+            start_date (str): start date value for request.
+            end_date (str): end date value for request.
 
         Returns:
             None
@@ -173,10 +173,10 @@ class CDPConnectionsTest(TestCase):
     def test_get_idr_data_feed_details_raise_dependency_error(
         self, datafeed_id: int
     ) -> None:
-        """Test get IDR data feed details raise dependency error
+        """Test get IDR data feed details raise dependency error.
 
         Args:
-            datafeed_id: datafeed ID value for request
+            datafeed_id (int): datafeed ID value for request.
 
         Returns:
             None
@@ -200,10 +200,10 @@ class CDPConnectionsTest(TestCase):
     def test_get_data_source_data_feeds_raise_dependency_error(
         self, data_source_type: str
     ) -> None:
-        """Test get data source data feeds raise dependency error
+        """Test get data source data feeds raise dependency error.
 
         Args:
-            data_source_type: data source type value for request
+            data_source_type (str): data source type value for request.
 
         Returns:
             None
@@ -234,11 +234,11 @@ class CDPConnectionsTest(TestCase):
     def test_get_idr_matching_trends_raise_dependency_error(
         self, start_date: str, end_date: str
     ) -> None:
-        """Test get IDR matching trends raise dependency error
+        """Test get IDR matching trends raise dependency error.
 
         Args:
-            start_date: start date value for request
-            end_date: end date value for request
+            start_date (str): start date value for request.
+            end_date (str): end date value for request.
 
         Returns:
             None

@@ -360,10 +360,10 @@ class TectonTest(TestCase):
     def test_get_models_raise_dependency_error(
         self, request_mocker: Mocker
     ) -> None:
-        """Test get models raise dependency error
+        """Test get models raise dependency error.
 
         Args:
-            request_mocker: request mocker object
+            request_mocker (Mocker): request mocker object.
 
         Returns:
             None
@@ -383,11 +383,11 @@ class TectonTest(TestCase):
     def test_get_model_version_history_raise_dependency_error(
         self, request_mocker: Mocker, model_id: str
     ) -> None:
-        """Test get model version history raise dependency error
+        """Test get model version history raise dependency error.
 
         Args:
-            request_mocker: request mocker object
-            model_id: model ID value for request
+            request_mocker (Mocker): request mocker object.
+            model_id (str): model ID value for request.
 
         Returns:
             None
@@ -410,12 +410,12 @@ class TectonTest(TestCase):
     def test_get_model_drift_raise_dependency_error(
         self, request_mocker: Mocker, model_id: str, model_type: str
     ) -> None:
-        """Test get model drift raise dependency error
+        """Test get model drift raise dependency error.
 
         Args:
-            request_mocker: request mocker object
-            model_id: model ID value for request
-            model_type: model type value for request
+            request_mocker (Mocker): request mocker object.
+            model_id (str): model ID value for request.
+            model_type (str): model type value for request.
 
         Returns:
             None
@@ -438,12 +438,12 @@ class TectonTest(TestCase):
     def test_get_model_features_raise_dependency_error(
         self, request_mocker: Mocker, model_id: str, model_version: str
     ) -> None:
-        """Test get model features raise dependency error
+        """Test get model features raise dependency error.
 
         Args:
-            request_mocker: request mocker object
-            model_id: model ID value for request
-            model_version: model version value for request
+            request_mocker (Mocker): request mocker object.
+            model_id (str): model ID value for request.
+            model_version (str): model version value for request.
 
         Returns:
             None

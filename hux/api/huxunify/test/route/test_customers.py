@@ -614,7 +614,7 @@ class TestCustomersOverview(TestCase):
         )
 
     def test_get_customer_overview_dependency_failure(self) -> None:
-        """Test get customer overview 424 dependency failure
+        """Test get customer overview 424 dependency failure.
 
         Args:
 
@@ -637,7 +637,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_get_customers_dependency_failure(self) -> None:
-        """Test get customers 424 dependency failure
+        """Test get customers 424 dependency failure.
 
         Args:
 
@@ -663,7 +663,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_get_customer_by_id_dependency_failure(self) -> None:
-        """Test get customer by ID 424 dependency failure
+        """Test get customer by ID 424 dependency failure.
 
         Args:
 
@@ -686,7 +686,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_get_idr_overview_dependency_failure(self) -> None:
-        """Test get idr overview 424 dependency failure
+        """Test get idr overview 424 dependency failure.
 
         Args:
 
@@ -709,7 +709,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_get_customer_events_dependency_failure(self) -> None:
-        """Test get customer events 424 dependency failure
+        """Test get customer events 424 dependency failure.
 
         Args:
 
@@ -738,7 +738,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_get_customers_geo_dependency_failure(self) -> None:
-        """Test get customer geographic 424 dependency failure
+        """Test get customer geographic 424 dependency failure.
 
         Args:
 
@@ -761,7 +761,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_customers_insights_countries_dependency_failure(self) -> None:
-        """Test get customer insights countries 424 dependency failure
+        """Test get customer insights countries 424 dependency failure.
 
         Args:
 
@@ -785,7 +785,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_total_customer_insights_dependency_failure(self) -> None:
-        """Test get total customer insights 424 dependency failure
+        """Test get total customer insights 424 dependency failure.
 
         Args:
 
@@ -808,7 +808,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_customers_insights_cities_dependency_failure(self) -> None:
-        """Test get customers insights cities 424 dependency failure
+        """Test get customers insights cities 424 dependency failure.
 
         Args:
 
@@ -832,7 +832,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_get_customers_demographics_dependency_failure(self) -> None:
-        """Test get customer demographics 424 dependency failure
+        """Test get customer demographics 424 dependency failure.
 
         Args:
 

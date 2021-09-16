@@ -341,7 +341,7 @@ class CDPTest(TestCase):
         self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)
 
     def test_get_customers_overview_raise_dependency_error(self) -> None:
-        """Test get customers overview raise dependency error
+        """Test get customers overview raise dependency error.
 
         Args:
 
@@ -366,11 +366,11 @@ class CDPTest(TestCase):
     def test_get_customer_profiles_raise_dependency_error(
         self, batch_size: int, offset: int
     ) -> None:
-        """Test get customer profiles raise dependency error
+        """Test get customer profiles raise dependency error.
 
         Args:
-            batch_size: batch size query param in request
-            offset: offset query param in request
+            batch_size (int): batch size query param in request.
+            offset (int): offset query param in request.
 
         Returns:
             None
@@ -392,10 +392,10 @@ class CDPTest(TestCase):
     def test_get_customer_profile_raise_dependency_error(
         self, customer_id: str
     ) -> None:
-        """Test get customer profile raise dependency error
+        """Test get customer profile raise dependency error.
 
         Args:
-            customer_id: customer ID value for request
+            customer_id (str): customer ID value for request.
 
         Returns:
             None
@@ -412,7 +412,7 @@ class CDPTest(TestCase):
             get_customer_profile(token=t_c.TEST_AUTH_TOKEN, hux_id=customer_id)
 
     def test_get_idr_overview_raise_dependency_error(self) -> None:
-        """Test get IDR overview raise dependency error
+        """Test get IDR overview raise dependency error.
 
         Args:
 
@@ -434,10 +434,10 @@ class CDPTest(TestCase):
     def test_get_customer_events_raise_dependency_error(
         self, customer_id: str
     ) -> None:
-        """Test get customer events raise dependency error
+        """Test get customer events raise dependency error.
 
         Args:
-            customer_id: customer ID value for request
+            customer_id (str): customer ID value for request.
 
         Returns:
             None
@@ -456,7 +456,7 @@ class CDPTest(TestCase):
             )
 
     def test_get_customer_count_by_state_raise_dependency_error(self) -> None:
-        """Test get customer count by state raise dependency error
+        """Test get customer count by state raise dependency error.
 
         Args:
 
@@ -475,7 +475,7 @@ class CDPTest(TestCase):
             get_customer_count_by_state(token=t_c.TEST_AUTH_TOKEN)
 
     def test_get_demographic_by_state_raise_dependency_error(self) -> None:
-        """Test get customer demographic by state raise dependency error
+        """Test get customer demographic by state raise dependency error.
 
         Args:
 
@@ -494,7 +494,7 @@ class CDPTest(TestCase):
             get_demographic_by_state(token=t_c.TEST_AUTH_TOKEN)
 
     def test_get_demographic_by_country_raise_dependency_error(self) -> None:
-        """Test get customer demographic by country raise dependency error
+        """Test get customer demographic by country raise dependency error.
 
         Args:
 
@@ -527,10 +527,10 @@ class CDPTest(TestCase):
     def test_get_customers_count_by_day_raise_dependency_error(
         self, date_filters: dict
     ) -> None:
-        """Test get customers insights count by day raise dependency error
+        """Test get customers insights count by day raise dependency error.
 
         Args:
-            date_filters: date filters dictionary
+            date_filters (dict): date filters dictionary.
 
         Returns:
             None
@@ -549,7 +549,7 @@ class CDPTest(TestCase):
             )
 
     def test_get_city_ltvs_raise_dependency_error(self) -> None:
-        """Test get customers insights by city raise dependency error
+        """Test get customers insights by city raise dependency error.
 
         Args:
 
@@ -578,11 +578,11 @@ class CDPTest(TestCase):
     def test_get_spending_by_gender_raise_dependency_error(
         self, start_date: str, end_date: str
     ) -> None:
-        """Test get customer spending by gender raise dependency error
+        """Test get customer spending by gender raise dependency error.
 
         Args:
-            start_date: start date value for request
-            end_date: end date value for request
+            start_date (str): start date value for request.
+            end_date (str): end date value for request.
 
         Returns:
             None

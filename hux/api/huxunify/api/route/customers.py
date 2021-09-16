@@ -12,8 +12,6 @@ from faker import Faker
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 
-from huxunifylib.util.general.logging import logger
-
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
     DataFeedSchema,
@@ -664,16 +662,6 @@ class CustomerDemoVisualView(SwaggerView):
             request.args.get(api_c.START_DATE),
             request.args.get(api_c.END_DATE),
         )
-        # if the customers overview response body is empty from CDP, then log
-        # error and return 400
-        if not customers:
-            logger.error("Failed to get Customer Profile Insights from CDP.")
-            return (
-                {
-                    "message": "Failed to get customers Demographic Visual Insights."
-                },
-                HTTPStatus.BAD_REQUEST,
-            )
 
         output = {
             api_c.GENDER: {
@@ -887,15 +875,6 @@ class TotalCustomersGraphView(SwaggerView):
         customers_insight_total = get_customers_insights_count_by_day(
             token_response[0], date_filters
         )
-
-        # if the customers insight total response body is empty from CDP,
-        # then log and return 400
-        if not customers_insight_total:
-            logger.error("Failed to get Total Customer Insights from CDP.")
-            return (
-                {"message": "Failed to get Total Customer Insights."},
-                HTTPStatus.BAD_REQUEST,
-            )
 
         return (
             jsonify(

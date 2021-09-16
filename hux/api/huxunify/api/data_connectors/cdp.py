@@ -84,7 +84,7 @@ def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Unable to get Customer Profiles from CDP API, got %s %s.",
+            "Unable to retrieve Customer Profiles, %s %s.",
             response.status_code,
             response.text,
         )
@@ -125,7 +125,7 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Unable to get Customer Profile info for %s from CDP API, got %s %s.",
+            "Unable to retrieve Customer Profile info for %s, %s %s.",
             hux_id,
             response.status_code,
             response.text,
@@ -172,7 +172,7 @@ def get_idr_overview(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Could not get customer profile insights from CDP API, got %s %s.",
+            "Unable to retrieve customer profile insights, %s %s.",
             response.status_code,
             response.text,
         )
@@ -224,7 +224,7 @@ def get_customers_overview(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Could not get customer profile insights from CDP API, got %s %s.",
+            "Unable to retrieve profile insights, %s %s.",
             response.status_code,
             response.text,
         )
@@ -481,7 +481,7 @@ def get_customer_events_data(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Unable to get Customer Profiles from CDP API, got %s %s.",
+            "Unable to retrieve Customer Profiles, %s %s.",
             response.status_code,
             response.text,
         )
@@ -710,8 +710,7 @@ def get_customers_insights_count_by_day(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Could not get customer insights count by day data from CDP API - "
-            "status_code: %s, response_text: %s.",
+            "Unable to retrieve customer insights count by day data, %s %s.",
             response.status_code,
             response.text,
         )
@@ -770,7 +769,7 @@ def get_city_ltvs(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Failed to retrieve city-level spending insights, got %s %s.",
+            "Failed to retrieve city-level spending insights, %s %s.",
             response.status_code,
             response.text,
         )
@@ -855,7 +854,7 @@ def get_spending_by_gender(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Failed to retrieve state demographic insights, got %s %s.",
+            "Failed to retrieve state demographic insights, %s %s.",
             response.status_code,
             response.text,
         )

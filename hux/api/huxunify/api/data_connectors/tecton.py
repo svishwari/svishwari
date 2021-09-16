@@ -191,7 +191,7 @@ def get_models() -> List[dict]:
 
     if response.status_code != 200 or constants.RESULTS not in response.json():
         logger.error(
-            "Could not get models from Tecton API, got %s %s.",
+            "Unable to retrieve models, %s %s.",
             response.status_code,
             response.text,
         )
@@ -231,7 +231,7 @@ def get_model_version_history(model_id: str) -> List[ModelVersionSchema]:
 
     if response.status_code != 200 or constants.RESULTS not in response.json():
         logger.error(
-            "Could not get model version history from Tecton API, got %s %s.",
+            "Unable to retrieve model version history, %s %s.",
             response.status_code,
             response.text,
         )
@@ -292,7 +292,7 @@ def get_model_drift(model_id: str, model_type: str) -> List[ModelDriftSchema]:
 
     if response.status_code != 200 or constants.RESULTS not in response.json():
         logger.error(
-            "Could not get model drift from Tecton API, got %s %s.",
+            "Unable to retrieve model drift, %s %s.",
             response.status_code,
             response.text,
         )
@@ -500,7 +500,7 @@ def get_model_features(
 
     if not result_features:
         logger.error(
-            "Could not get model features from Tecton API, got %s %s.",
+            "Unable to retrieve model features, %s %s.",
             response.status_code,
             response.text,
         )

@@ -110,7 +110,7 @@ AUTH401_RESPONSE = {
 
 
 class FailedDependency424Schema(Schema):
-    """424 schema."""
+    """Failed Dependency schema."""
 
     code = Int(name="code", example=424)
     message = Str(
