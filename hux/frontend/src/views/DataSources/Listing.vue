@@ -35,24 +35,28 @@
               "
             >
               <template #label-content>
-                <span class="text-h6"
-              :class="
-                column.value === 'records_processed_percentage' &&
-                item[column.value] < 0.5
-                  ? 'error--text'
-                  : 'black--text text--darken-4'
-              ">
+                <span
+                  class="text-h6"
+                  :class="
+                    column.value === 'records_processed_percentage' &&
+                    item[column.value] < 0.5
+                      ? 'error--text'
+                      : 'black--text text--darken-4'
+                  "
+                >
                   {{ item[column.value] | Percentage }}
                 </span>
               </template>
               <template #hover-content>
-                <span class="text-h6"
-              :class="
-                column.value === 'records_processed_percentage' &&
-                item[column.value] < 0.5
-                  ? 'error--text'
-                  : 'black--text text--darken-4'
-              ">
+                <span
+                  class="text-h6"
+                  :class="
+                    column.value === 'records_processed_percentage' &&
+                    item[column.value] < 0.5
+                      ? 'error--text'
+                      : 'black--text text--darken-4'
+                  "
+                >
                   {{ item[column.value] | Percentage }}
                 </span>
               </template>

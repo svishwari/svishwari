@@ -7,11 +7,7 @@
         :to="{ name: 'DestinationConfiguration' }"
         class="text-decoration-none"
       >
-        <icon
-          class="add-icon cursor-pointer"
-          type="add"
-          :size="27"
-        />
+        <icon class="add-icon cursor-pointer" type="add" :size="27" />
       </router-link>
     </div>
     <template v-if="hasAddedDestinations">
