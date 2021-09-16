@@ -523,6 +523,50 @@ class TestDeliveryRoutes(TestCase):
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    def test_get_engagement_delivery_history_destination_filter(self):
+        """
+        Test get engagement delivery history API with destination filter
+
+        Args:
+
+        Returns:
+
+        """
+
+        engagement_id = self.engagement_ids[0]
+        destination_id = self.destinations[0][db_c.ID]
+
+        params = {api_c.DESTINATIONS: str(destination_id)}
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.DELIVERY_HISTORY}",
+            data=params,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_get_audience_delivery_history_destination_filter(self):
+        """
+        Test get audience delivery history API with destination filter
+
+        Args:
+
+        Returns:
+
+        """
+
+        audience_id = self.audiences[0][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
+
+        params = {api_c.DESTINATIONS: str(destination_id)}
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
+            f"{api_c.DELIVERY_HISTORY}",
+            data=params,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
     def test_get_engagement_delivery_history_by_id_non_existent_id(self):
         """
         Test get delivery history API with non-existent id

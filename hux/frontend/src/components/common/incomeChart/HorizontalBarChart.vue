@@ -162,6 +162,7 @@ export default {
         .style("fill", "white")
         .style("font-size", 12)
         .text((d) => `${d.name}`)
+        .style("pointer-events", "none")
       let applyHoverEffects = (d) => {
         d3Select.selectAll("rect").style("fill-opacity", "0.5")
         d3Select
