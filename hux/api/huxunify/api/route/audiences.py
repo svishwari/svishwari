@@ -164,8 +164,7 @@ class AudienceDownload(SwaggerView):
                 headers={
                     "Content-Type": "application/csv",
                     "Access-Control-Expose-Headers": "Content-Disposition",
-                    "Content-Disposition": "attachment; filename=%s;"
-                    % audience_file_name,
+                    "Content-Disposition": f"attachment; filename={audience_file_name};",
                 },
             ),
             HTTPStatus.OK,

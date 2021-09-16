@@ -346,7 +346,7 @@ def put_rule_targets_aws_batch(
             # return the request id
             return response["FailedEntryCount"]
 
-        error_msg = "Failed to put target for %s: client error." % rule_name
+        error_msg = f"Failed to put target for {rule_name}: client error."
         logging.error(error_msg)
         return None
 
