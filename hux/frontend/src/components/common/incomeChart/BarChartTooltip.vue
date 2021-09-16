@@ -54,7 +54,7 @@ export default {
   font-style: normal;
   font-size: 12px;
   line-height: 16px;
-  color: var(--v-darkGreyHeading-base) !important;
+  color: var(--v-black-darken2) !important;
 }
 
 .card-padding {

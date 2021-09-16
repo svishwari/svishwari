@@ -35,7 +35,7 @@
         <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
           <v-card-title class="chart-style pb-2 pl-5 pt-5">
             <div class="mt-2">
-              <span class="neroBlack--text text-h5">
+              <span class="black--text text--darken-4 text-h5">
                 Total customers
                 <span class="text-body-2 time-frame">
                   ({{ timeFrameLabel }})
@@ -153,7 +153,7 @@ export default {
 <style lang="scss" scoped>
 .overview-wrap {
   .quickAccessMenu {
-    background: var(--v-aliceBlue-base);
+    background: var(--v-primary-lighten2);
     min-height: 265px;
     padding: 16px 30px 40px 30px;
     overflow-x: auto;
@@ -161,14 +161,14 @@ export default {
     h5 {
       line-height: 19px;
       letter-spacing: 0.5px;
-      color: var(--v-neroBlack-base);
+      color: var(--v-black-darken4);
     }
     .card-wrap {
       .v-card {
         margin-right: 15px;
         @extend .box-shadow-5;
         &.v-card--disabled {
-          background: var(--v-background-base);
+          background: var(--v-primary-lighten1);
         }
         &:hover {
           @extend .box-shadow-3;
