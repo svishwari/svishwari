@@ -6,7 +6,7 @@ from http import HTTPStatus
 from random import uniform
 from typing import Tuple
 from bson import ObjectId
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flasgger import SwaggerView
 from huxunifylib.util.general.logging import logger
 from huxunifylib.database import (
@@ -507,7 +507,15 @@ class EngagementDeliverHistoryView(SwaggerView):
             "in": "path",
             "required": True,
             "example": "60bfeaa3fa9ba04689906f7a",
-        }
+        },
+        {
+            "name": api_c.DESTINATIONS,
+            "in": "query",
+            "type": "string",
+            "description": "Destination Ids to be filtered.",
+            "example": "60b9601a6021710aa146df30,60b9601c6021710aa146df36",
+            "required": False,
+        },
     ]
 
     responses = {
@@ -554,9 +562,19 @@ class EngagementDeliverHistoryView(SwaggerView):
                 "message": api_c.ENGAGEMENT_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
 
+        destination_ids = request.args.get(api_c.DESTINATIONS)
+
+        if destination_ids:
+            destination_ids = [
+                ObjectId(destination)
+                for destination in destination_ids.replace(" ", "").split(",")
+            ]
+
         delivery_jobs = (
             delivery_platform_management.get_delivery_jobs_using_metadata(
-                database, engagement_id=engagement_id
+                database,
+                engagement_id=engagement_id,
+                delivery_platform_ids=destination_ids,
             )
         )
 
@@ -632,7 +650,15 @@ class AudienceDeliverHistoryView(SwaggerView):
             "in": "path",
             "required": True,
             "example": "60bfeaa3fa9ba04689906f7a",
-        }
+        },
+        {
+            "name": api_c.DESTINATIONS,
+            "in": "query",
+            "type": "string",
+            "description": "Destination Ids to be filtered.",
+            "example": "60b9601a6021710aa146df30,60b9601c6021710aa146df36",
+            "required": False,
+        },
     ]
 
     responses = {
@@ -679,9 +705,19 @@ class AudienceDeliverHistoryView(SwaggerView):
             logger.error("Audience with ID %s not found.", audience_id)
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
+        destination_ids = request.args.get(api_c.DESTINATIONS)
+
+        if destination_ids:
+            destination_ids = [
+                ObjectId(destination)
+                for destination in destination_ids.replace(" ", "").split(",")
+            ]
+
         delivery_jobs = (
             delivery_platform_management.get_delivery_jobs_using_metadata(
-                database, audience_id=audience_id
+                database,
+                audience_id=audience_id,
+                delivery_platform_ids=destination_ids,
             )
         )
 
