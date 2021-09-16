@@ -104,7 +104,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         }
     elif (
         destination[db_const.DELIVERY_PLATFORM_TYPE]
-        == db_const.DELIVERY_PLATFORM_SENDGRID
+        in [db_const.DELIVERY_PLATFORM_SENDGRID, db_const.DELIVERY_PLATFORM_TWILIO]
     ):
         env_dict = {}
         secret_dict = {

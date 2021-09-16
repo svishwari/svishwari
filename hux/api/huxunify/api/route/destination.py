@@ -315,7 +315,7 @@ class DestinationPutView(SwaggerView):
             FacebookAuthCredsSchema().load(auth_details)
         elif (
             destination[db_c.DELIVERY_PLATFORM_TYPE]
-            == db_c.DELIVERY_PLATFORM_SENDGRID
+            in [db_c.DELIVERY_PLATFORM_SENDGRID, db_c.DELIVERY_PLATFORM_TWILIO]
         ):
             SendgridAuthCredsSchema().load(auth_details)
         elif (
@@ -513,7 +513,7 @@ class DestinationValidatePostView(SwaggerView):
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: ext_list,
             }, HTTPStatus.OK
         elif (
-            body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_SENDGRID
+            body.get(api_c.DESTINATION_TYPE) in [db_c.DELIVERY_PLATFORM_SENDGRID, db_c.DELIVERY_PLATFORM_TWILIO]
         ):
             SendgridConnector(
                 auth_details={
