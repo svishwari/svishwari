@@ -217,7 +217,7 @@ def add_chart_legend(data: dict) -> dict:
     """Add chart legend data.
 
     Args:
-        data (str) : Chart data.
+        data (dict) : Chart data.
 
     Returns:
         response(dict): Chart data with legend details.
