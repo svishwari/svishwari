@@ -671,7 +671,7 @@ export default {
           id: "2349d4353b9f",
           title: "Generic CSV",
           name: ".csv",
-          type: "amazon_ads",
+          type: "generic_ads",
         },
       ],
       loading: false,
