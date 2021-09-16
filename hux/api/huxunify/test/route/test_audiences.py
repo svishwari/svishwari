@@ -108,7 +108,7 @@ class AudienceDownloadsTest(TestCase):
             return_value={
                 api_c.USER_NAME: self.user_name,
                 api_c.AUDIENCE_ID: self.audience,
-                db_c.DOWNLOAD_TIME: datetime.now(),
+                db_c.DOWNLOAD_TIME: datetime.utcnow(),
                 api_c.DOWNLOAD_TYPE: "google_ads",
                 db_c.FILE_NAME: "abc.csv",
             },
