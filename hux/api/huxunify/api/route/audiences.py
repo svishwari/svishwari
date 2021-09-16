@@ -21,7 +21,6 @@ from huxunifylib.util.transform.transform_dataframe import (
     transform_fields_amazon_file,
 )
 
-
 import huxunify.api.constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.aws import upload_file
@@ -36,7 +35,6 @@ from huxunify.api.route.decorators import (
     get_user_name,
     api_error_handler,
 )
-from huxunify.api.route.utils import get_db_client, logger
 from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
@@ -45,6 +43,7 @@ from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.route.utils import (
     get_db_client,
     transform_fields_generic_file,
+    logger,
 )
 
 # setup the audiences blueprint
