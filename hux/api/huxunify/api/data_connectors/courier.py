@@ -102,10 +102,10 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
                 api_const.SFMC_CLIENT_SECRET
             ]
         }
-    elif (
-        destination[db_const.DELIVERY_PLATFORM_TYPE]
-        in [db_const.DELIVERY_PLATFORM_SENDGRID, db_const.DELIVERY_PLATFORM_TWILIO]
-    ):
+    elif destination[db_const.DELIVERY_PLATFORM_TYPE] in [
+        db_const.DELIVERY_PLATFORM_SENDGRID,
+        db_const.DELIVERY_PLATFORM_TWILIO,
+    ]:
         env_dict = {}
         secret_dict = {
             SendgridCredentials.SENDGRID_AUTH_TOKEN.name: auth[
