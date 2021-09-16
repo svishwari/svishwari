@@ -511,7 +511,7 @@ class EngagementDeliverHistoryView(SwaggerView):
         {
             "name": api_c.DESTINATIONS,
             "in": "query",
-            "type": "list",
+            "type": "string",
             "description": "Destination Ids to be filtered.",
             "example": "60b9601a6021710aa146df30,60b9601c6021710aa146df36",
             "required": False,
@@ -654,7 +654,7 @@ class AudienceDeliverHistoryView(SwaggerView):
         {
             "name": api_c.DESTINATIONS,
             "in": "query",
-            "type": "list",
+            "type": "string",
             "description": "Destination Ids to be filtered.",
             "example": "60b9601a6021710aa146df30,60b9601c6021710aa146df36",
             "required": False,
