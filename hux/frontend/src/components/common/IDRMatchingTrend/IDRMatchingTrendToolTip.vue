@@ -66,6 +66,7 @@ export default {
   line-height: 19px;
 }
 .tooltip-style {
+  pointer-events: none;
   @extend .box-shadow-3;
   border-radius: 0px;
   padding: 8px 8px 15px 8px;

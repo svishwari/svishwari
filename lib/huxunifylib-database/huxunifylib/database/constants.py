@@ -43,6 +43,7 @@ CAMPAIGN_ACTIVITY_COLLECTION = "campaign_activity"
 USER_COLLECTION = "users"
 NOTIFICATIONS_COLLECTION = "notifications"
 CACHE_COLLECTION = "cache"
+AUDIENCE_AUDIT_COLLECTION = "audit_logs"
 
 CONSTANT_NAME = "constant"
 CONSTANT_KEY = "key"
@@ -358,3 +359,9 @@ FIELD_MAP_ORDER_QUANTITY_12M = "order_quantity_12m"
 FIELD_MAP_ORDER_QUANTITY_13M_24M = "order_quantity_13m_24m"
 
 EMAIL_REGEX = r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
+
+# Audit Logs Defination
+DOWNLOAD_TIME = "download_time"
+FILE_NAME = "file_name"
+USER_NAME = "user_name"
+DOWNLOAD_TYPE = "download_type"
