@@ -134,7 +134,10 @@ export default {
 
       let bars = svg.append("g").attr("class", "bars")
 
-      let hideInitialTick = this.totalCustomerData.filter(bar => bar.index == 0 && bar.barIndex < 5).length < 3
+      let hideInitialTick =
+        this.totalCustomerData.filter(
+          (bar) => bar.index == 0 && bar.barIndex < 5
+        ).length < 3
 
       let convertCalendarFormat = (value) => {
         let tickDate = this.barGroupChangeIndex.find(
@@ -143,7 +146,9 @@ export default {
         if (tickDate && tickDate.index == 0 && hideInitialTick) {
           return ""
         }
-        return tickDate ? this.$options.filters.Date(tickDate.date, "MM[/01/]YY") : ""
+        return tickDate
+          ? this.$options.filters.Date(tickDate.date, "MM[/01/]YY")
+          : ""
       }
 
       let applyNumericFilter = (value) =>

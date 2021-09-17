@@ -169,7 +169,6 @@ export default {
 
         lastWeekEndingData = currentWeekEndingData
       })
-
     },
 
     // Setting week's last day count in case of no records
