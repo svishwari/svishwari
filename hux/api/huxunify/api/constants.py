@@ -221,6 +221,8 @@ AWS_HEALTH_TESTS = {
     AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
 }
 S3 = "s3"
+AWS_BUCKET = "Bucket"
+AWS_KEY = "Key"
 AWS_TARGET_ID = "Id"
 AWS_TARGET_ARN = "Arn"
 AWS_TARGET_ROLE_ARN = "RoleArn"
