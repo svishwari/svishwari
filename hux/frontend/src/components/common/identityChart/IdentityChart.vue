@@ -23,10 +23,18 @@
 <script>
 import ChartTooltip from "@/components/common/identityChart/ChartTooltip"
 import ChordChart from "@/components/common/identityChart/ChordChart"
-import identity_resolution from "@/components/common/identityChart/chartData.json"
 export default {
   name: "IdentityChart",
+
   components: { ChordChart, ChartTooltip },
+
+  props: {
+    chartData: {
+      type: Object,
+      required: true,
+    },
+  },
+
   data() {
     return {
       // TODO provide actual color code as per Icon colors
@@ -45,7 +53,6 @@ export default {
         x: 0,
         y: 0,
       },
-      chartData: identity_resolution,
       currentData: {},
       arcData: {
         icon: null,
@@ -81,7 +88,7 @@ export default {
   },
   methods: {
     generateChartGroups() {
-      this.groupNames = Object.keys(this.chartData.identity_resolution)
+      this.groupNames = Object.keys(this.chartData)
     },
 
     toolTipDisplay(...arg) {
@@ -98,7 +105,7 @@ export default {
 
     generateToolTipData(groupIndex) {
       if (groupIndex.length > 0) {
-        let sourceData = this.chartData.identity_resolution
+        let sourceData = this.chartData
         let group1 = this.groupNames[groupIndex[0]]
         if (this.isArcHover) {
           this.arcData.name = this.$options.filters.TitleCase(group1)
@@ -139,7 +146,7 @@ export default {
     },
 
     transformData() {
-      let sourceData = this.chartData.identity_resolution
+      let sourceData = this.chartData
       for (let key of this.groupNames) {
         this.createGroupRelationMatrix(sourceData[key].cooccurrences)
       }

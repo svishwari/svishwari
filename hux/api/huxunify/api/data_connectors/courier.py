@@ -299,8 +299,9 @@ class DestinationBatchJob:
         put_rule_targets_aws_batch(
             cw_name,
             batch_params,
-            config.AUDIENCE_ROUTER_JOB_ROLE_ARN,
+            self.audience_delivery_job_id,
             config.AUDIENCE_ROUTER_EXECUTION_ROLE_ARN,
+            config.AUDIENCE_ROUTER_JOB_QUEUE,
         )
 
         self.scheduled = True

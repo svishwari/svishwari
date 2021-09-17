@@ -10,10 +10,13 @@ from http import HTTPStatus
 from connexion import ProblemException
 import boto3
 import botocore
+from bson import ObjectId
 from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
+
 import huxunifylib.database.constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api import config
+from huxunify.api.prometheus import record_health_status_metric
 
 
 class ParameterStore:
@@ -158,9 +161,13 @@ def check_aws_connection(client="s3") -> Tuple[bool, str]:
         # lookup the health test to run from api constants
         health_test = api_c.AWS_HEALTH_TESTS[client]
         getattr(get_aws_client(client), health_test[0])(**health_test[1])
+        record_health_status_metric(api_c.AWS_SSM_CONNECTION_HEALTH, True)
+        record_health_status_metric(api_c.AWS_BATCH_CONNECTION_HEALTH, True)
         return True, f"{client} available."
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
+        record_health_status_metric(api_c.AWS_SSM_CONNECTION_HEALTH, False)
+        record_health_status_metric(api_c.AWS_BATCH_CONNECTION_HEALTH, False)
         return False, getattr(exception, "message", repr(exception))
 
 
@@ -299,7 +306,11 @@ def set_cloud_watch_rule(
 
 
 def put_rule_targets_aws_batch(
-    rule_name: str, batch_params: dict, arn: str, role_arn: str
+    rule_name: str,
+    batch_params: dict,
+    delivery_job_id: ObjectId,
+    role_arn: str,
+    job_queue: str,
 ) -> str:
     """Adds the specified targets to the specified rule or updates
     the targets if they are already associated with the rule.
@@ -307,9 +318,10 @@ def put_rule_targets_aws_batch(
     Args:
         rule_name (str): name of the rule you are creating or updating.
         batch_params (dict): Batch parameter dict for all batch job params.
-        arn (str): The Amazon resource name (arn) of the target.
+        delivery_job_id (ObjectId): Delivery Job Id.
         role_arn (str): The Amazon resource name of the IAM role to be used
             for this target and when the rule is triggered.
+        job_queue (str): The Batch Job queue.
 
     Returns:
         event request id (str): The Amazon resource name (ARN) of the rule.
@@ -324,10 +336,10 @@ def put_rule_targets_aws_batch(
             Rule=rule_name,
             Targets=[
                 {
-                    "Id": rule_name,
-                    "Arn": arn,
-                    "RoleArn": role_arn,
-                    "BatchParameters": batch_params,
+                    api_c.AWS_TARGET_ID: str(delivery_job_id),
+                    api_c.AWS_TARGET_ARN: job_queue,
+                    api_c.AWS_TARGET_ROLE_ARN: role_arn,
+                    api_c.AWS_TARGET_BATCH_PARAMS: batch_params,
                 }
             ],
         )
@@ -340,7 +352,7 @@ def put_rule_targets_aws_batch(
             # return the request id
             return response["FailedEntryCount"]
 
-        error_msg = "Failed to put target for %s: client error." % rule_name
+        error_msg = f"Failed to put target for {rule_name}: client error."
         logging.error(error_msg)
         return None
 
