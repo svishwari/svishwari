@@ -1,17 +1,11 @@
 <template>
   <div class="list-wrapper">
     <div class="d-flex align-end mb-4">
-      <icon type="data-sources-list" :size="20" color="black-darken4" />
+      <icon type="data-sources-list" :size="20" color="neroBlack" />
       <h5 class="text-h4 ml-2 mt-1">Data Sources</h5>
-      <router-link
-        :to="{
-          name: 'DataSourceConfiguration',
-          query: { select: true },
-        }"
-        class="text-decoration-none"
-      >
+      <span @click="$emit('onAddDatasource')">
         <icon class="add-icon cursor-pointer" type="add" :size="27" />
-      </router-link>
+      </span>
     </div>
 
     <template v-if="hasAddedDatasources">

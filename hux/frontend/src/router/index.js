@@ -160,16 +160,6 @@ const routes = [
     },
   },
   {
-    path: "/datasources/add",
-    name: "DataSourceConfiguration",
-    component: () => import("@/views/Connections/Index"),
-    meta: {
-      layout: "app",
-      title: "Add a Data Source",
-      requiresAuth: true,
-    },
-  },
-  {
     path: "/destinations/add",
     name: "DestinationConfiguration",
     component: () => import("@/views/Destinations/Configuration"),
