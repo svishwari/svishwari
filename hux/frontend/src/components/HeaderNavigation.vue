@@ -39,7 +39,6 @@ export default {
   },
   data() {
     return {
-      //drawer: false,
       dropdownLinks: [
         { name: "Data Source", path: "Connections" },
         { name: "Destination", path: "DestinationConfiguration" },
