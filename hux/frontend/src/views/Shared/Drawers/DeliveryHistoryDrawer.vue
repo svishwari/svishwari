@@ -137,22 +137,22 @@ export default {
         {
           value: "destination",
           text: "Destination",
-          width: "113px",
+          width: "20%",
         },
         {
           value: "size",
           text: "Target size",
-          width: "108px",
+          width: "20%",
         },
         {
           value: "match_rate",
           text: "Match Rate",
-          width: "111px",
+          width: "20%",
         },
         {
           value: "delivered",
           text: "Delivered",
-          width: "114px",
+          width: "20%",
         },
       ],
     }
@@ -192,14 +192,14 @@ export default {
       this.columns.unshift({
         value: "audience",
         text: "Audience name",
-        width: "35%",
+        width: "25%",
       })
 
     if (this.audienceId !== null)
       this.columns.unshift({
         value: "engagement",
         text: "Engagement name",
-        width: "35%",
+        width: "30%",
       })
   },
 
@@ -222,3 +222,21 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.hux-data-table {
+  ::v-deep .v-data-table__wrapper {
+    .v-data-table-header {
+      background: red;
+      th {
+        &:first-child {
+          padding: 9px 10px 9px 25px !important;
+        }
+        padding: 9px 10px !important;
+      }
+      &:last-child {
+        padding: 9px 20px 9px 10px !important;
+      }
+    }
+  }
+}
+</style>
