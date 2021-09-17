@@ -20,7 +20,7 @@ import demographicsData from "@/api/mock/fixtures/demographicData.js"
 import customerEventData from "@/api/mock/fixtures/customerEventData.js"
 import totalCustomersData from "./fixtures/totalCustomersData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
-import idrMatchingTrend from "@/api/mock/fixtures/idrMatchingTrendData.js"
+import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -449,7 +449,7 @@ export const defineRoutes = (server) => {
         start_date: faker.date.past(5),
         end_date: dayjs().toJSON(),
       },
-      overview: idrOverview,
+      overview: idrOverview(),
     }
   })
   server.get(
@@ -460,7 +460,7 @@ export const defineRoutes = (server) => {
     { timing: 10 }
   )
   server.get("/idr/datafeeds/:datafeed_id", () => idrDataFeedReport)
-  server.get("/idr/matching-trends", () => idrMatchingTrend)
+  server.get("/idr/matching-trends", () => idrMatchingTrends)
 
   // notifications
   server.get("/notifications", (schema, request) => {

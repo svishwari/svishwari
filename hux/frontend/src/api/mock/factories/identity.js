@@ -61,18 +61,30 @@ export const idrDataFeed = {
 /**
  * Identity resolution overview schema
  */
-export const idrOverview = {
-  match_rate: customersOverview.match_rate,
+export const idrOverview = (state = "default") => {
+  const defaultValues = [
+    customersOverview.match_rate,
+    customersOverview.total_household_ids,
+    customersOverview.total_individual_ids,
+    customersOverview.total_known_ids,
+    customersOverview.total_records,
+    customersOverview.total_unique_ids,
+    customersOverview.total_unknown_ids,
+  ]
 
-  total_household_ids: customersOverview.total_household_ids,
+  const nullValues = Array.from(Array(3), () => null)
 
-  total_individual_ids: customersOverview.total_individual_ids,
+  let values = defaultValues
 
-  total_known_ids: customersOverview.total_known_ids,
+  if (state === "unavailable") values = nullValues
 
-  total_records: customersOverview.total_records,
-
-  total_unique_ids: customersOverview.total_unique_ids,
-
-  total_unknown_ids: customersOverview.total_unknown_ids,
+  return {
+    match_rate: values[0],
+    total_household_ids: values[1],
+    total_individual_ids: values[2],
+    total_known_ids: values[3],
+    total_records: values[4],
+    total_unique_ids: values[5],
+    total_unknown_ids: values[6],
+  }
 }

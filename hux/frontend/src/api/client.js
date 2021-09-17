@@ -200,10 +200,10 @@ client["idr"].datafeeds = (params) => {
 }
 
 client["idr"].datafeedReport = (id) => {
-  http.get(`/idr/datafeeds/${id}`)
+  return http.get(`/idr/datafeeds/${id}`)
 }
 
-client["idr"].matchingTrend = (params) => {
+client["idr"].matchingTrends = (params) => {
   return http.get("/idr/matching-trends", { params: params })
 }
 //#endregion
