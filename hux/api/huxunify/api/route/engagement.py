@@ -1841,8 +1841,7 @@ class EngagementPerformanceDownload(SwaggerView):
                 headers={
                     "Content-Type": "application/zip",
                     "Access-Control-Expose-Headers": "Content-Disposition",
-                    "Content-Disposition": "attachment; filename=%s;"
-                    % zipfile_name,
+                    "Content-Disposition": f"attachment; filename={zipfile_name};",
                 },
             ),
             HTTPStatus.OK,

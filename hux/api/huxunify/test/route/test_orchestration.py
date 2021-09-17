@@ -48,9 +48,7 @@ class OrchestrationRouteTest(TestCase):
         Returns:
         """
 
-        self.audience_api_endpoint = "/api/v1{}".format(
-            api_c.AUDIENCE_ENDPOINT
-        )
+        self.audience_api_endpoint = f"/api/v1{api_c.AUDIENCE_ENDPOINT}"
 
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
