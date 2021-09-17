@@ -10,7 +10,7 @@ import {
   destinationsDataExtensions,
 } from "./factories/destination"
 import { idrOverview, idrDataFeedReport } from "./factories/identity"
-import { mockDataFeeds } from "./factories/dataSource"
+import { dataFeeds } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import audienceCSVData from "./factories/audienceCSVData"
@@ -28,8 +28,10 @@ export const defineRoutes = (server) => {
 
   server.get("/data-sources/:id")
 
-  server.get("/data-sources/:type/datafeeds", () => {
-    return mockDataFeeds(5)
+  server.get("/data-sources/:type/datafeeds", (schema, request) => {
+    const dataSourceType = request.params["type"]
+    const dataSource = schema.dataSources.findBy({ type: dataSourceType }).attrs
+    return dataFeeds(dataSource)
   })
 
   server.patch("/data-sources", (schema, request) => {
