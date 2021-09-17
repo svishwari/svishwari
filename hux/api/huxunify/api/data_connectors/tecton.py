@@ -22,6 +22,9 @@ from huxunify.api.schema.model import (
     ModelDriftSchema,
     ModelLiftSchema,
 )
+from huxunify.api.prometheus import (
+    record_health_status_metric,
+)
 
 
 def check_tecton_connection() -> Tuple[bool, str]:
@@ -41,10 +44,12 @@ def check_tecton_connection() -> Tuple[bool, str]:
             dumps(constants.MODEL_LIST_PAYLOAD),
             headers=config.TECTON_API_HEADERS,
         )
+        record_health_status_metric(constants.TECTON_CONNECTION_HEALTH, True)
         return response.status_code, "Tecton available."
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
+        record_health_status_metric(constants.TECTON_CONNECTION_HEALTH, False)
         return False, getattr(exception, "message", repr(exception))
 
 

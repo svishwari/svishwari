@@ -1,7 +1,7 @@
 """
 Purpose of this file is to house audience related tests
 """
-
+from datetime import datetime
 from http import HTTPStatus
 from unittest import TestCase, mock
 
@@ -68,6 +68,11 @@ class AudienceDownloadsTest(TestCase):
             return_value=self.database,
         ).start()
 
+        mock.patch(
+            "huxunify.api.route.audiences.upload_file",
+            return_value=True,
+        ).start()
+
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
@@ -98,6 +103,24 @@ class AudienceDownloadsTest(TestCase):
         }
         self.audience = create_audience(self.database, **audience)
 
+        mock.patch(
+            "huxunify.api.route.audiences.create_audience_audit",
+            return_value={
+                api_c.USER_NAME: self.user_name,
+                api_c.AUDIENCE_ID: self.audience,
+                db_c.DOWNLOAD_TIME: datetime.utcnow(),
+                api_c.DOWNLOAD_TYPE: "google_ads",
+                db_c.FILE_NAME: "abc.csv",
+            },
+        ).start()
+
+    def test_download_google_ads(self) -> None:
+        """
+        Test to check download google_ads customers hashed data
+
+        Returns:
+
+        """
         # mock read_batches() in ConnectorCDP class to a return a test generator
         mock.patch.object(
             ConnectorCDP,
@@ -111,13 +134,6 @@ class AudienceDownloadsTest(TestCase):
             return_value=True,
         ).start()
 
-    def test_download_google_ads(self) -> None:
-        """
-        Test to check download google_ads customers hashed data
-
-        Returns:
-
-        """
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/{api_c.GOOGLE_ADS}",
@@ -134,6 +150,19 @@ class AudienceDownloadsTest(TestCase):
         Returns:
 
         """
+        # mock read_batches() in ConnectorCDP class to a return a test generator
+        mock.patch.object(
+            ConnectorCDP,
+            "read_batches",
+            return_value=t_c.dataframe_generator(),
+        ).start()
+
+        mock.patch.object(
+            ConnectorCDP,
+            "_connect",
+            return_value=True,
+        ).start()
+
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/{api_c.AMAZON_ADS}",
@@ -150,6 +179,18 @@ class AudienceDownloadsTest(TestCase):
         Returns:
 
         """
+        # mock read_batches() in ConnectorCDP class to a return a test generator
+        mock.patch.object(
+            ConnectorCDP,
+            "read_batches",
+            return_value=t_c.dataframe_generator(),
+        ).start()
+
+        mock.patch.object(
+            ConnectorCDP,
+            "_connect",
+            return_value=True,
+        ).start()
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/{api_c.GENERIC_ADS}",

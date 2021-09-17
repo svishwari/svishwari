@@ -8,10 +8,10 @@ from flasgger import Swagger
 from flask_cors import CORS
 
 from huxunify.api.config import load_env_vars
+from huxunify.api.prometheus import monitor_app
 from huxunify.api.route import ROUTES
 from huxunify.api import constants
 from huxunify.api.route.utils import get_health_check
-from huxunify.api.data_connectors.prometheus import PrometheusClient
 
 
 # set config variables
@@ -96,6 +96,10 @@ def create_app() -> Flask:
     # configure flask
     configure_flask(flask_app)
 
+    # monitor flask setup
+    if flask_app.env != constants.TEST_MODE:
+        monitor_app(flask_app)
+
     return flask_app
 
 
@@ -112,9 +116,6 @@ if __name__ == "__main__":
 
     # create the API
     app = create_app()
-
-    prometheus_helper = PrometheusClient.instance()
-    prometheus_helper.set_app(app)
 
     # run the API
     app.run(host="0.0.0.0", port=port, debug=True)  # nosec

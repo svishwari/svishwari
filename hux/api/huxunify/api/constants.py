@@ -221,6 +221,8 @@ AWS_HEALTH_TESTS = {
     AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
 }
 S3 = "s3"
+AWS_BUCKET = "Bucket"
+AWS_KEY = "Key"
 AWS_TARGET_ID = "Id"
 AWS_TARGET_ARN = "Arn"
 AWS_TARGET_ROLE_ARN = "RoleArn"
@@ -977,6 +979,17 @@ DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
 
+
+# health check prometheus metric constants
+MONGO_CONNECTION_HEALTH = "mongo_connection_health"
+TECTON_CONNECTION_HEALTH = "tecton_connection_health"
+OKTA_CONNECTION_HEALTH = "okta_connection_health"
+AWS_SSM_CONNECTION_HEALTH = "aws_ssm_connection_health"
+AWS_BATCH_CONNECTION_HEALTH = "aws_batch_connection_health"
+CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
+CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
+    "cdm_connection_service_connection_health"
+)
 
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
