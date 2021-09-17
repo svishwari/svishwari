@@ -30,6 +30,7 @@ from huxunify.api.data_connectors.okta import (
     get_token_from_request,
     get_user_info,
 )
+from huxunify.api.exceptions import integration_api_exceptions as iae
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
@@ -258,7 +259,7 @@ def api_error_handler(custom_message: dict = None) -> object:
            object: returns a wrapped decorated function object.
         """
 
-        # pylint: disable=too-many-return-statements
+        # pylint: disable=too-many-return-statements, too-many-branches
         @wraps(in_function)
         def decorator(*args, **kwargs) -> object:
             """Decorator for handling errors.
@@ -320,12 +321,14 @@ def api_error_handler(custom_message: dict = None) -> object:
                 return {
                     "message": "Error connecting to Facebook"
                 }, HTTPStatus.BAD_REQUEST
+
             except ValueError:
                 return {
                     "message": custom_message
                     if custom_message
                     else "Value Error Encountered"
                 }, HTTPStatus.INTERNAL_SERVER_ERROR
+
             except ZeroDivisionError:
                 return {
                     "message": custom_message
@@ -356,6 +359,18 @@ def api_error_handler(custom_message: dict = None) -> object:
                 return {
                     "message": "Delivered custom audience is inactive or unusable."
                 }, HTTPStatus.NOT_FOUND
+
+            except iae.FailedAPIDependencyError as exc:
+                logger.error(
+                    "%s: %s while executing %s in module %s.",
+                    exc.__class__,
+                    exc.args[0] if exc.args else exc.exception_message,
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
+                return {
+                    "message": constants.FAILED_DEPENDENCY_ERROR_MESSAGE
+                }, HTTPStatus.FAILED_DEPENDENCY
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.

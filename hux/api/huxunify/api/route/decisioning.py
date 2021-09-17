@@ -30,7 +30,10 @@ from huxunify.api.schema.model import (
     FeatureSchema,
 )
 from huxunify.api.data_connectors import tecton
-from huxunify.api.schema.utils import AUTH401_RESPONSE
+from huxunify.api.schema.utils import (
+    AUTH401_RESPONSE,
+    FAILED_DEPENDENCY_424_RESPONSE,
+)
 from huxunify.api import constants as api_c
 
 # setup the models blueprint
@@ -57,6 +60,7 @@ class ModelsView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
@@ -115,6 +119,7 @@ class ModelVersionView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
@@ -192,6 +197,7 @@ class ModelOverview(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
@@ -268,6 +274,7 @@ class ModelDriftView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
@@ -345,6 +352,7 @@ class ModelFeaturesView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
@@ -446,6 +454,7 @@ class ModelImportanceFeaturesView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use

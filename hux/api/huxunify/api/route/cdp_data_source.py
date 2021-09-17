@@ -42,7 +42,10 @@ from huxunify.api.schema.cdp_data_source import (
     DataSourceDataFeedsGetSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.schema.utils import AUTH401_RESPONSE
+from huxunify.api.schema.utils import (
+    AUTH401_RESPONSE,
+    FAILED_DEPENDENCY_424_RESPONSE,
+)
 
 # setup CDP data sources endpoint
 cdp_data_sources_bp = Blueprint(
@@ -485,6 +488,7 @@ class GetDataSourceDatafeeds(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @api_error_handler()

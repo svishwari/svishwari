@@ -12,6 +12,7 @@ from huxunify.api.prometheus import record_health_status_metric
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.cdp import clean_cdm_fields, DEFAULT_DATETIME
+from huxunify.api.exceptions import integration_api_exceptions as iae
 
 
 def check_cdp_connections_api_connection() -> Tuple[int, str]:
@@ -74,11 +75,15 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Failed to retrieve identity data feeds %s %s.",
+            "Failed to retrieve identity data feeds, %s %s.",
             response.status_code,
             response.text,
         )
-        return []
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_IDENTITY_ENDPOINT}/"
+            f"{api_c.DATAFEEDS}",
+            response.status_code,
+        )
 
     logger.info("Successfully retrieved identity data feeds.")
 
@@ -111,11 +116,15 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Failed to retrieve identity data feed details %s %s.",
+            "Failed to retrieve identity data feed details, %s %s.",
             response.status_code,
             response.text,
         )
-        return []
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_IDENTITY_ENDPOINT}/"
+            f"{api_c.DATAFEEDS}/{datafeed_id}",
+            response.status_code,
+        )
 
     logger.info("Successfully retrieved identity data feed details.")
 
@@ -150,12 +159,16 @@ def get_data_source_data_feeds(token: str, data_source_type: str) -> list:
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Failed to retrieve %s connections data feeds %s %s.",
+            "Failed to retrieve %s connections data feeds, %s %s.",
             data_source_type,
             response.status_code,
             response.text,
         )
-        return []
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_CONNECTIONS_ENDPOINT}/"
+            f"{data_source_type}/{api_c.DATA_FEEDS}",
+            response.status_code,
+        )
 
     logger.info(
         "Successfully retrieved %s data feed details.", data_source_type
@@ -212,11 +225,15 @@ def get_idr_matching_trends(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Could not get IDR matching trends from CDP API got %s %s.",
+            "Unable to retrieve IDR matching trends, %s %s.",
             response.status_code,
             response.text,
         )
-        return []
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_CONNECTION_SERVICE}/identity/id-count-by-day",
+            response.status_code,
+        )
+
     logger.info("Successfully retrieved IDR matching trends from CDP API.")
     return sorted(
         [clean_cdm_fields(data) for data in response.json()[api_c.BODY]],
