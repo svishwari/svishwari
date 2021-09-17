@@ -211,7 +211,22 @@
           </v-card>
         </v-col>
         <v-col cols="4" class="matix-card-space pb-0">
-          <identity-chart :chart-data="customerIdentityResolution" />
+          <v-card class="rounded-lg box-shadow-5" height="247">
+            <v-card-title class="card-heading chart-style py-3">
+              <tooltip position-top>
+                <template #label-content>
+                  Individual Identity
+                  <icon type="info" :size="12" />
+                </template>
+                <template #hover-content>
+                  Most recent co-occurence between identifiers
+                </template>
+              </tooltip>
+            </v-card-title>
+            <identity-chart
+              :chart-data="customerIdentityResolution"
+            ></identity-chart>
+          </v-card>
         </v-col>
       </v-row>
 

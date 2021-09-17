@@ -156,18 +156,20 @@ export default {
           .style("fill", function (d) {
             return color(d.data.population_percentage)
           })
-          .on("mouseover", (e, d) => showTooltip(e, d))
-          .on("mouseout", (e, d) => hideTooltip(e, d))
+          .on("mouseover", (e, d) => applyArcHoverEvent(e, d))
+          .on("mouseout", (e, d) => removeArcHoverEvent(e, d))
 
-        let showTooltip = (e, d) => {
+        let applyArcHoverEvent = (e, d) => {
           d3Select
             .select(e.srcElement)
             .attr("d", transformedArc)
             .style("filter", "drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.4)")
           this.sourceInput = d.data
           this.showTooltip = true
+          this.sourceInput.xPosition = this.tooltip.x
+          this.sourceInput.yPosition = this.tooltip.y
         }
-        let hideTooltip = (e, d) => {
+        let removeArcHoverEvent = (e, d) => {
           d3Select.select(e.srcElement).attr("d", arc).style("filter", "none")
           this.sourceInput = d.data
           this.showTooltip = false
@@ -219,7 +221,7 @@ export default {
     },
     getCordinates(evt) {
       this.tooltip.x = evt.offsetX + 60
-      this.tooltip.y = evt.offsetY - 200
+      this.tooltip.y = evt.offsetY - 270
     },
   },
 }
