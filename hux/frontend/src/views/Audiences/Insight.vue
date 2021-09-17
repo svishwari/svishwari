@@ -1069,13 +1069,6 @@ export default {
             },
           }
           this.showConfirmModal = true
-          // let payload = {
-          //   data: {
-          //     id: event.data.id,
-          //     action: "Detach",
-          //   },
-          // }
-          // this.triggerAttachEngagement(payload)
           break
         }
         default:

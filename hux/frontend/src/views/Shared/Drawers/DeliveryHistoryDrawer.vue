@@ -227,7 +227,6 @@ export default {
 .hux-data-table {
   ::v-deep .v-data-table__wrapper {
     .v-data-table-header {
-      background: red;
       th {
         &:first-child {
           padding: 9px 10px 9px 25px !important;
