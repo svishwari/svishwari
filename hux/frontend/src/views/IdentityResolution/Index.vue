@@ -77,14 +77,13 @@
     </template>
     <template>
       <v-row v-if="!loadingOverview" no-gutters class="idr-overview">
-
         <v-slide-group show-arrows>
           <v-slide-item v-for="(metric, index) in overview" :key="index">
             <metric-card
               :title="metric.title"
               :min-width="170"
-              class="mx-2 my-2 pt-3 pl-6">
-
+              class="mx-2 my-2 pt-3 pl-6"
+            >
               <template #extra-item>
                 <tooltip position-top>
                   <template #label-content>
@@ -106,7 +105,11 @@
                         {{ metric.value | Numeric(true, true) | Empty }}
                       </template>
                       <template v-if="metric.format === 'percentage'">
-                        {{ metric.value | Numeric(true, false, false, true) | Empty }}
+                        {{
+                          metric.value
+                            | Numeric(true, false, false, true)
+                            | Empty
+                        }}
                       </template>
                     </span>
                   </template>
@@ -115,16 +118,18 @@
                       {{ metric.value | Numeric(true, false) | Empty }}
                     </template>
                     <template v-if="metric.format === 'percentage'">
-                      {{ metric.value | Numeric(false, false, false, true) | Empty }}
+                      {{
+                        metric.value
+                          | Numeric(false, false, false, true)
+                          | Empty
+                      }}
                     </template>
                   </template>
                 </tooltip>
               </template>
-
             </metric-card>
           </v-slide-item>
         </v-slide-group>
-
       </v-row>
       <v-row class="px-2 mt-2">
         <v-col md="12">
