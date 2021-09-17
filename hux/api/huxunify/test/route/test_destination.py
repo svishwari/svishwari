@@ -280,7 +280,7 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIn(db_c.DELIVERY_PLATFORM_FACEBOOK, response.json)
         self.assertIn(db_c.DELIVERY_PLATFORM_SFMC, response.json)
-        self.assertIn(db_c.DELIVERY_PLATFORM_TWILIO, response.json)
+        self.assertIn(db_c.DELIVERY_PLATFORM_SENDGRID, response.json)
         self.assertIn(api_c.GOOGLE_ADS, response.json)
 
     def test_validate_facebook_credentials(self):
@@ -365,23 +365,23 @@ class TestDestinationRoutes(TestCase):
 
     # pylint: disable=unused-argument
     @patch(
-        "huxunify.api.route.destination.TwilioConnector",
+        "huxunify.api.route.destination.SendgridConnector",
         **{"return_value.raiseError.side_effect": Exception()},
     )
-    def test_validate_twilio_credentials(self, mock_connector: MagicMock):
+    def test_validate_sendgrid_credentials(self, mock_connector: MagicMock):
         """
-        Test successful authentication with twilio
+        Test successful authentication with sendgrid
 
         Args:
-            mock_connector (MagicMock): MagicMock of the Twilio Connector
+            mock_connector (MagicMock): MagicMock of the Sendgrid Connector
 
         Returns:
         """
 
         validation_details = {
-            api_c.TYPE: db_c.DELIVERY_PLATFORM_TWILIO,
+            api_c.TYPE: db_c.DELIVERY_PLATFORM_SENDGRID,
             api_c.AUTHENTICATION_DETAILS: {
-                api_c.TWILIO_AUTH_TOKEN: "123456",
+                api_c.SENDGRID_AUTH_TOKEN: "123456",
             },
         }
 
@@ -399,29 +399,29 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(validation_succeeded, response.json)
 
     @patch(
-        "huxunify.api.route.destination.TwilioConnector",
+        "huxunify.api.route.destination.SendgridConnector",
         **{"return_value.raiseError.side_effect": Exception()},
     )
-    def test_validate_twilio_credentials_failure_bad_credentials(
+    def test_validate_sendgrid_credentials_failure_bad_credentials(
         self, mock_connector: MagicMock
     ):
         """
-        Test failure to authenticate with twilio due to bad credentials
+        Test failure to authenticate with sendgrid due to bad credentials
 
         Args:
-            mock_connector (MagicMock): MagicMock of the Twilio Connector
+            mock_connector (MagicMock): MagicMock of the Sendgrid Connector
 
         Returns:
 
         """
 
-        # mocks the return value of the TwilioConnector Constructor
+        # mocks the return value of the SendgridConnector Constructor
         mock_connector.side_effect = Exception("Test Exception")
 
         validation_details = {
-            api_c.TYPE: db_c.DELIVERY_PLATFORM_TWILIO,
+            api_c.TYPE: db_c.DELIVERY_PLATFORM_SENDGRID,
             api_c.AUTHENTICATION_DETAILS: {
-                api_c.TWILIO_AUTH_TOKEN: "123456",
+                api_c.SENDGRID_AUTH_TOKEN: "123456",
             },
         }
 
@@ -493,7 +493,7 @@ class TestDestinationRoutes(TestCase):
 
         """
 
-        # mocks the return value of the TwilioConnector Constructor
+        # mocks the return value of the GoogleConnector Constructor
         mock_connector.side_effect = Exception("Test Exception")
 
         validation_details = {
@@ -575,7 +575,7 @@ class TestDestinationRoutes(TestCase):
 
         """
 
-        # mocks the return value of the TwilioConnector Constructor
+        # mocks the return value of the QualtricsConnector Constructor
         mock_connector.side_effect = Exception("Test Exception")
 
         validation_details = {

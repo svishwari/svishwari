@@ -110,6 +110,7 @@ export default {
   z-index: 1;
   border-radius: 0px !important;
   position: absolute;
+  pointer-events: none;
   top: -130px;
   left: 56px;
   .value-container {

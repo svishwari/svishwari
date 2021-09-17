@@ -336,31 +336,31 @@ class SFMCAuthCredsSchema(Schema):
     )
 
 
-class TwilioAuthCredsSchema(Schema):
+class SendgridAuthCredsSchema(Schema):
     """
-    Twilio Auth Credentials schema class
+    Sendgrid Auth Credentials schema class
     """
 
-    twilio_auth_token = fields.String(
+    sendgrid_auth_token = fields.String(
         required=True,
         validate=must_not_be_blank,
         example="wue812x2813eyqshjsdbw",
     )
 
 
-class TwilioAuthConstants(Schema):
+class SendgridAuthConstants(Schema):
     """
-    Twilio Auth constants schema class
+    Sendgrid Auth constants schema class
     """
 
     class Meta:
         """
-        set the ordering of twilio auth constants
+        set the ordering of sendgrid auth constants
         """
 
         ordered = True
 
-    twilio_auth_token = fields.Dict(
+    sendgrid_auth_token = fields.Dict(
         required=True,
         validate=must_not_be_blank,
         example={
@@ -566,7 +566,7 @@ class DestinationConstantsSchema(Schema):
 
     facebook = fields.Nested(FacebookAuthConstants)
     sfmc = fields.Nested(SFMCAuthConstants)
-    twilio = fields.Nested(TwilioAuthConstants)
+    sendgrid = fields.Nested(SendgridAuthConstants)
     google_ads = fields.Nested(GoogleAdsAuthConstants)
     qualtrics = fields.Nested(QualtricsAuthConstants)
 

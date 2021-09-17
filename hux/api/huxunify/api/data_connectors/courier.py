@@ -21,7 +21,7 @@ from huxunifylib.util.general.const import (
     MongoDBCredentials,
     FacebookCredentials,
     SFMCCredentials,
-    TwilioCredentials,
+    SendgridCredentials,
     GoogleCredentials,
     QualtricsCredentials,
 )
@@ -102,14 +102,14 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
                 api_const.SFMC_CLIENT_SECRET
             ]
         }
-    elif (
-        destination[db_const.DELIVERY_PLATFORM_TYPE]
-        == db_const.DELIVERY_PLATFORM_TWILIO
-    ):
+    elif destination[db_const.DELIVERY_PLATFORM_TYPE] in [
+        db_const.DELIVERY_PLATFORM_SENDGRID,
+        db_const.DELIVERY_PLATFORM_TWILIO,
+    ]:
         env_dict = {}
         secret_dict = {
-            TwilioCredentials.TWILIO_AUTH_TOKEN.name: auth[
-                api_const.TWILIO_AUTH_TOKEN
+            SendgridCredentials.SENDGRID_AUTH_TOKEN.name: auth[
+                api_const.SENDGRID_AUTH_TOKEN
             ]
         }
 
@@ -299,8 +299,9 @@ class DestinationBatchJob:
         put_rule_targets_aws_batch(
             cw_name,
             batch_params,
-            config.AUDIENCE_ROUTER_JOB_ROLE_ARN,
+            self.audience_delivery_job_id,
             config.AUDIENCE_ROUTER_EXECUTION_ROLE_ARN,
+            config.AUDIENCE_ROUTER_JOB_QUEUE,
         )
 
         self.scheduled = True

@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="hasData" flat class="pa-2 card-style">
+  <v-card flat class="pa-2 card-style">
     <v-card-title>
       <h5 class="text-h5 black--text text--darken-4">Data feeds</h5>
     </v-card-title>
@@ -9,6 +9,7 @@
         :data-items="data"
         :sort-column="sortColumn"
         :sort-desc="sortDesc"
+        empty="Be patient! The data feeds are currently not available, check back tomorrow to see if the magic is ready."
       >
         <template #row-item="{ item }">
           <td
@@ -158,7 +159,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .hux-data-table {
-  @extend .box-shadow-5;
   ::v-deep table {
     .v-data-table-header {
       tr {
