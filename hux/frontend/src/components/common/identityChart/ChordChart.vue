@@ -1,34 +1,9 @@
 <template>
-  <v-card tile class="chart-container rounded-lg box-shadow-5">
-    <v-list-item three-line>
-      <v-list-item-content>
-        <div class="title-section">
-          <tooltip position-top>
-            <template #label-content>
-              Individual Identity
-              <icon type="info" :size="12" />
-            </template>
-            <template #hover-content>
-              {{ tooltipText }}
-            </template>
-          </tooltip>
-        </div>
-        <v-list-item-subtitle
-          v-for="item in legendsData"
-          :key="item.id"
-          class="legend-section"
-        >
-          <icon :type="item.icon" :size="12" color="primary" />
-          <span>{{ item.prop }}</span>
-        </v-list-item-subtitle>
-      </v-list-item-content>
       <div
-        ref="huxChart"
+        ref="chordChart"
         class="chart-section"
         @mouseover="getCordinates($event)"
       ></div>
-    </v-list-item>
-  </v-card>
 </template>
 
 <script>
@@ -64,9 +39,15 @@ export default {
      * Accepts an Array of Objects needs to map with legends.
      * eg: {prop: '', icon: ''}
      */
-    chartLegendsData: {
-      type: Array,
+    chartDimensions: {
+      type: Object,
       required: true,
+      default() {
+        return {
+          width: 0,
+          height: 0,
+        }
+      },
     },
   },
   data() {
@@ -74,8 +55,6 @@ export default {
       width: 220,
       height: 250,
       radius: 0,
-      tooltipText: "Most recent co-occurence between identifiers",
-      legendsData: this.chartLegendsData,
       top: 50,
       left: 60,
       show: false,
@@ -85,11 +64,14 @@ export default {
       },
     }
   },
-
   watch: {
-    value: function () {
-      d3Select.select(this.$refs.huxChart).select("svg").remove()
-      this.initiateChordChart()
+    chartDimensions: {
+      handler() {
+        d3Select.select(this.$refs.chordChart).selectAll("svg").remove()
+        this.initiateChordChart()
+      },
+      immediate: false,
+      deep: true,
     },
   },
 
@@ -99,10 +81,11 @@ export default {
   methods: {
     initiateChordChart() {
       this.radius = Math.min(this.width, this.height) / 1.8
+
       const padAngle = 0.03
 
       let svg = d3Select
-        .select(this.$refs.huxChart)
+        .select(this.$refs.chordChart)
         .append("svg")
         .attr("width", this.width)
         .attr("height", this.height)
@@ -126,6 +109,7 @@ export default {
 
       let ribbon = d3Chord.ribbon().radius(this.radius - 25).padAngle(padAngle)
 
+
       let color = d3Scale
         .scaleOrdinal()
         .domain(d3Array.range(this.colorCodes.length))
@@ -135,7 +119,7 @@ export default {
         .append("g")
         .attr(
           "transform",
-          "translate(" + this.width * 0.5 + "," + this.height * 0.5 + ")"
+          "translate(" + this.width / 2 + "," + this.height / 2 + ")"
         )
         .datum(chord(this.value))
 

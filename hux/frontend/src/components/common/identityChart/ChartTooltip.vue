@@ -107,11 +107,12 @@ export default {
 
 .card-style {
   @extend .box-shadow-3;
+  pointer-events: none;
   border-radius: 0px;
   max-width: 213px;
   height: auto;
-  top: -220px;
-  left: -55px;
+  top: -100px;
+  left: -76px;
   z-index: 1;
 
   .ribbon-hover {
