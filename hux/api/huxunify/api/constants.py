@@ -296,8 +296,8 @@ SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "perf_data_extension"
 SFMC_DATA_EXTENSION_NAME = "Name"
 SFMC_CUSTOMER_KEY = "CustomerKey"
 
-# Twilio connector defines
-TWILIO_AUTH_TOKEN = "twilio_auth_token"
+# Sendgrid connector defines
+SENDGRID_AUTH_TOKEN = "sendgrid_auth_token"
 
 # Qualtrics connector defines
 QUALTRICS_API_TOKEN = "qualtrics_api_token"
@@ -380,8 +380,8 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
-    db_c.DELIVERY_PLATFORM_TWILIO: {
-        TWILIO_AUTH_TOKEN: {
+    db_c.DELIVERY_PLATFORM_SENDGRID: {
+        SENDGRID_AUTH_TOKEN: {
             NAME: "Auth Token",
             TYPE: "password",
             REQUIRED: True,
@@ -468,9 +468,9 @@ DESTINATION_SECRETS = {
         ],
         AWS_SSM_NAME: [SFMC_CLIENT_SECRET],
     },
-    db_c.DELIVERY_PLATFORM_TWILIO: {
+    db_c.DELIVERY_PLATFORM_SENDGRID: {
         MONGO: [],
-        AWS_SSM_NAME: [TWILIO_AUTH_TOKEN],
+        AWS_SSM_NAME: [SENDGRID_AUTH_TOKEN],
     },
     db_c.DELIVERY_PLATFORM_QUALTRICS: {
         MONGO: [

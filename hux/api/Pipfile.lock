@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b52d9280d1916130af0c1004c52cc13e2e63cf0b746d5a1a6af09060ccb8272f"
+            "sha256": "e01db99e0cdb5418d73b066d10ca09ebdebbd007ebc53975c04df9910d05eee9"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -415,11 +415,11 @@
         },
         "huxunifylib-connectors": {
             "hashes": [
-                "sha256:1c9c3765a37d235993203ab2b74fadead21ed4e5cc476deef76ebec89825d082",
-                "sha256:bf1e2c6cb294e5351fe606ca82292c3f036e23787cddd1b2854b385334448da6"
+                "sha256:55bbcce1909f36fe8f121821aa1fa3747a4f611738463fcc5bd9960c7def9e6b",
+                "sha256:cfb00cfc752ea4cfe055549b14966647c3f2eaba0bba5dd1bd9d2fdad1dbf258"
             ],
             "index": "pypi",
-            "version": "==0.1.29"
+            "version": "==0.1.30"
         },
         "huxunifylib-database": {
             "editable": true,
@@ -427,11 +427,11 @@
         },
         "huxunifylib-util": {
             "hashes": [
-                "sha256:0400ae6cfc6328e35832439c0f85f57bca486091d7144dde4c2644cfb1ed9928",
-                "sha256:fa30955d052ef191177b47d132f4cc3c49310edcd4e89e9d3a1d5aadeaba01b1"
+                "sha256:d0f13123065289bddfbf530dc55bd89a7b58098049022206373e36eb0d1e338e",
+                "sha256:d2066863ad4b6b530973891b7ec74095983cac874b879484d28a4f27096b77c0"
             ],
             "index": "pypi",
-            "version": "==0.1.29"
+            "version": "==0.1.30"
         },
         "identify": {
             "hashes": [
@@ -1437,11 +1437,11 @@
         },
         "hypothesis": {
             "hashes": [
-                "sha256:0729766a5969bcde9d01a625c7dc3f64705efa7cb47e567504eacfebc08e4d3c",
-                "sha256:92810e59f01ed25a18589d92fd38c931a4c8509134c7a9d18ed1b6c3a8464f5e"
+                "sha256:bea32ba5f4b20b3a0be564928c7990bd69c27c0a6717f34f62ecbf4f60b8e8b6",
+                "sha256:ed74ccff898359383797826aaec35033bc67087d3d39c71c4cbac8a53003d077"
             ],
             "index": "pypi",
-            "version": "==6.21.4"
+            "version": "==6.21.5"
         },
         "idna": {
             "hashes": [
@@ -1643,11 +1643,11 @@
         },
         "pylint": {
             "hashes": [
-                "sha256:315fc81fad20d495f374d8fde685e442d4b6e3b275a5940fc212ae0484cb2eb6",
-                "sha256:87ed31da38248b9cc34869516af89f58d3bb1898736674c5759ca99092b382aa"
+                "sha256:0f358e221c45cbd4dad2a1e4b883e75d28acdcccd29d40c76eb72b307269b126",
+                "sha256:2c9843fff1a88ca0ad98a256806c82c5a8f86086e7ccbdb93297d86c3f90c436"
             ],
             "index": "pypi",
-            "version": "==2.11.0"
+            "version": "==2.11.1"
         },
         "pyparsing": {
             "hashes": [
