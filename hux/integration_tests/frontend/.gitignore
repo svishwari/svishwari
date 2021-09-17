@@ -4,3 +4,5 @@ logs
 cypress.env.**
 **/cypress/screenshots
 **/cypress/videos
+
+yarn.lock

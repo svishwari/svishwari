@@ -13,6 +13,7 @@
     <template #default>
       <v-progress-linear :active="loading" :indeterminate="loading" />
       <hux-data-table
+        v-if="!loading"
         :columns="columnDefs"
         :sort-column="sortColumn"
         :sort-desc="sortDesc"

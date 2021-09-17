@@ -12,6 +12,7 @@
 
     <template #default>
       <hux-data-table
+        v-if="!loading"
         :columns="columns"
         :data-items="items"
         :sort-column="sortColumn"

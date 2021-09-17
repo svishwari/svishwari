@@ -13,7 +13,7 @@ const getters = {
 
   single: (state) => (id) => state.items[id],
 
-  dataFeeds: (state) => (id) => state.items[id].dataFeeds,
+  dataFeeds: (state) => (id) => state.items[id]["dataFeeds"],
 }
 
 const mutations = {
@@ -68,7 +68,10 @@ const actions = {
   async getDataFeeds({ commit }, data) {
     try {
       const response = await api.dataSources.dataFeeds(data.type)
-      commit("SET_DATA_FEEDS", { items: response.data, id: data.id })
+      commit("SET_DATA_FEEDS", {
+        items: response.data["datafeeds"],
+        id: data.id,
+      })
     } catch (error) {
       handleError(error)
       throw error
