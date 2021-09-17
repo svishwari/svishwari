@@ -39,7 +39,10 @@ from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
 )
-from huxunify.api.schema.utils import AUTH401_RESPONSE, FAILED_DEPENDENCY_424_RESPONSE
+from huxunify.api.schema.utils import (
+    AUTH401_RESPONSE,
+    FAILED_DEPENDENCY_424_RESPONSE,
+)
 from huxunify.api.route.utils import (
     get_db_client,
     transform_fields_generic_file,
