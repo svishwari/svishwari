@@ -1,9 +1,9 @@
 <template>
-      <div
-        ref="chordChart"
-        class="chart-section"
-        @mouseover="getCordinates($event)"
-      ></div>
+  <div
+    ref="chordChart"
+    class="chart-section"
+    @mouseover="getCordinates($event)"
+  ></div>
 </template>
 
 <script>
@@ -12,11 +12,8 @@ import * as d3Shape from "d3-shape"
 import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
-import Tooltip from "@/components/common/Tooltip"
-import Icon from "@/components/common/Icon"
 export default {
   name: "ChordChart",
-  components: { Icon, Tooltip },
   props: {
     /**
      * Accepts an array of ranges in N*N matrix  format for creating chart arc & ribbon mapping
@@ -36,8 +33,7 @@ export default {
       required: true,
     },
     /**
-     * Accepts an Array of Objects needs to map with legends.
-     * eg: {prop: '', icon: ''}
+     * Adjust chart height as per screen resolution.
      */
     chartDimensions: {
       type: Object,
@@ -106,8 +102,10 @@ export default {
         .innerRadius(this.radius - 12)
         .outerRadius(this.radius - 25)
 
-      let ribbon = d3Chord.ribbon().radius(this.radius - 25).padAngle(padAngle)
-
+      let ribbon = d3Chord
+        .ribbon()
+        .radius(this.radius - 25)
+        .padAngle(padAngle)
 
       let color = d3Scale
         .scaleOrdinal()
