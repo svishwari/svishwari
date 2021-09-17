@@ -77,53 +77,54 @@
     </template>
     <template>
       <v-row v-if="!loadingOverview" no-gutters class="idr-overview">
-        <metric-card
-          v-for="(metric, index) in overview"
-          :key="index"
-          :title="metric.title"
-          :min-width="170"
-          class="mx-2 my-2 pt-3 pl-6"
-        >
-          <template #extra-item>
-            <tooltip position-top>
-              <template #label-content>
-                <icon type="info" :size="12" />
-              </template>
-              <template #hover-content>
-                <v-sheet max-width="240px">
-                  {{ metric.description }}
-                </v-sheet>
-              </template>
-            </tooltip>
-          </template>
 
-          <template #subtitle-extended>
-            <tooltip>
-              <template #label-content>
-                <span class="font-weight-semi-bold">
-                  <template v-if="metric.format === 'numeric'">
-                    {{ metric.value | Numeric(true, true) | Empty }}
+        <v-slide-group show-arrows>
+          <v-slide-item v-for="(metric, index) in overview" :key="index">
+            <metric-card
+              :title="metric.title"
+              :min-width="170"
+              class="mx-2 my-2 pt-3 pl-6">
+
+              <template #extra-item>
+                <tooltip position-top>
+                  <template #label-content>
+                    <icon type="info" :size="12" />
                   </template>
-                  <template v-if="metric.format === 'percentage'">
-                    {{
-                      metric.value | Numeric(true, false, false, true) | Empty
-                    }}
+                  <template #hover-content>
+                    <v-sheet max-width="240px">
+                      {{ metric.description }}
+                    </v-sheet>
                   </template>
-                </span>
+                </tooltip>
               </template>
-              <template #hover-content>
-                <template v-if="metric.format === 'numeric'">
-                  {{ metric.value | Numeric(true, false) | Empty }}
-                </template>
-                <template v-if="metric.format === 'percentage'">
-                  {{
-                    metric.value | Numeric(false, false, false, true) | Empty
-                  }}
-                </template>
+
+              <template #subtitle-extended>
+                <tooltip>
+                  <template #label-content>
+                    <span class="font-weight-semi-bold">
+                      <template v-if="metric.format === 'numeric'">
+                        {{ metric.value | Numeric(true, true) | Empty }}
+                      </template>
+                      <template v-if="metric.format === 'percentage'">
+                        {{ metric.value | Numeric(true, false, false, true) | Empty }}
+                      </template>
+                    </span>
+                  </template>
+                  <template #hover-content>
+                    <template v-if="metric.format === 'numeric'">
+                      {{ metric.value | Numeric(true, false) | Empty }}
+                    </template>
+                    <template v-if="metric.format === 'percentage'">
+                      {{ metric.value | Numeric(false, false, false, true) | Empty }}
+                    </template>
+                  </template>
+                </tooltip>
               </template>
-            </tooltip>
-          </template>
-        </metric-card>
+
+            </metric-card>
+          </v-slide-item>
+        </v-slide-group>
+
       </v-row>
       <v-row class="px-2 mt-2">
         <v-col md="12">
@@ -295,11 +296,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss" scoped>
-.idr-wrapper {
-  .idr-overview {
-    display: -webkit-box;
-  }
-}
-</style>
