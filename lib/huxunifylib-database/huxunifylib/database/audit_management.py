@@ -41,7 +41,7 @@ def create_audience_audit(
     doc = {
         c.USER_NAME: user_name if user_name else "",
         c.AUDIENCE_ID: audience_id,
-        c.DOWNLOAD_TIME: datetime.datetime.now(datetime.timezone.utc),
+        c.DOWNLOAD_TIME: datetime.datetime.utcnow(),
         c.DOWNLOAD_TYPE: download_type,
         c.FILE_NAME: file_name,
     }
