@@ -80,8 +80,7 @@ export default {
   },
   methods: {
     initiateChordChart() {
-      this.radius = Math.min(this.width, this.height) / 1.8
-
+      this.radius = Math.min(this.width, this.height) / 2.1
       const padAngle = 0.03
 
       let svg = d3Select
