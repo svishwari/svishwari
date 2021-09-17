@@ -88,6 +88,7 @@
           :title="metric.title"
           :min-width="170"
           class="mx-2 my-2 pt-3 pl-6"
+          data-e2e="overviewList"
         >
           <template #extra-item>
             <tooltip position-top>
@@ -158,6 +159,7 @@
         v-if="!loadingDataFeeds"
         :data="dataFeeds"
         class="mt-6 mx-2"
+        data-e2e="datafeedtable"
       />
     </template>
   </page>
