@@ -18,6 +18,8 @@ const aqfer = {
   name: "Aqfer",
   type: "aqfer",
   is_enabled: true,
+  is_added: true,
+  status: "Active",
 }
 
 const amazonAdvertising = {

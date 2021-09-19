@@ -1,19 +1,18 @@
 <template>
   <div class="white">
-    <page-header>
+    <page-header v-if="selectedDataSource">
       <template #left>
         <breadcrumb :items="breadcrumbItems" />
       </template>
     </page-header>
+
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row
-      v-if="!loading && dataSourceDataFeeds"
-      class="datasource-datafeeds-table"
-    >
+
+    <v-row v-if="!loading && hasDataFeeds" class="datasource-datafeeds-table">
       <hux-data-table
         sort-desc
         :columns="columns"
-        :data-items="dataSourceDataFeeds.datafeeds"
+        :data-items="dataSourceDataFeeds"
       >
         <template #row-item="{ item }">
           <td v-for="column in columns" :key="column.value">
@@ -68,6 +67,15 @@
         </template>
       </hux-data-table>
     </v-row>
+
+    <empty-page v-if="!loading && !hasDataFeeds">
+      <template #icon> mdi-alert-circle-outline </template>
+      <template #title> Oops! There’s nothing here yet </template>
+      <template #subtitle>
+        Our team is still working hard processing your datafeeds. <br />
+        Please be patient in the meantime!
+      </template>
+    </empty-page>
   </div>
 </template>
 
@@ -80,6 +88,7 @@ import Status from "@/components/common/Status.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
+import EmptyPage from "@/components/common/EmptyPage.vue"
 
 export default {
   name: "DataSourceListing",
@@ -91,6 +100,7 @@ export default {
     Status,
     Tooltip,
     TimeStamp,
+    EmptyPage,
   },
 
   data() {
@@ -133,7 +143,6 @@ export default {
         },
       ],
       loading: true,
-      dataSourceId: null,
     }
   },
 
@@ -143,8 +152,8 @@ export default {
       dataFeeds: "dataSources/dataFeeds",
     }),
 
-    selectedDataSourceExists() {
-      return !!this.dataSource(this.dataSourceId)
+    dataSourceId() {
+      return this.$route.params.id
     },
 
     selectedDataSource() {
@@ -152,36 +161,33 @@ export default {
     },
 
     dataSourceDataFeeds() {
-      if (this.selectedDataSourceExists) {
-        return this.dataFeeds(this.dataSourceId)
-      }
-      return {}
+      return this.selectedDataSource ? this.dataFeeds(this.dataSourceId) : null
+    },
+
+    hasDataFeeds() {
+      return this.dataSourceDataFeeds.length
     },
 
     breadcrumbItems() {
-      const items = [
+      return [
         {
           text: "Connections",
           disabled: false,
           href: this.$router.resolve({ name: "Connections" }).href,
           icon: "connections",
         },
-      ]
-      if (this.dataSourceDataFeeds) {
-        items.push({
-          text: this.dataSourceDataFeeds.name,
+        {
+          text: this.selectedDataSource.name,
+          logo: this.selectedDataSource.type,
           disabled: true,
-          logo: this.dataSourceDataFeeds.type,
-        })
-      }
-      return items
+        },
+      ]
     },
   },
 
   async mounted() {
     this.loading = true
-    this.dataSourceId = this.$route.params.id
-    if (!this.selectedDataSourceExists) {
+    if (!this.selectedDataSource) {
       await this.getDataSource(this.dataSourceId)
     }
     await this.getDataFeeds({

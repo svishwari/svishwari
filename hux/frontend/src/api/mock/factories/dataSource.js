@@ -13,11 +13,11 @@ export default {
 }
 
 /**
- * Data source's data feed schema
+ * Data source's single data feed schema
  */
-const dataFeed = () => {
+const dataFeed = (type) => {
   return {
-    name: `bluecore_data_feed_${faker.name.firstName()}`,
+    name: `${type}_data_feed_${faker.name.firstName()}`.toLowerCase(),
 
     status: "Pending",
 
@@ -37,10 +37,19 @@ const dataFeed = () => {
   }
 }
 
-export const mockDataFeeds = (num = 3) => {
+/**
+ * Data source's data feeds schema
+ */
+export const dataFeeds = ({ name, type }) => {
+  let num = faker.datatype.number(100)
+
+  if (type === "aqfer") num = 0
+
   return {
-    name: "Bluecore",
-    type: "bluecore",
-    datafeeds: Array.from({ length: num }, dataFeed),
+    name: name,
+
+    type: type,
+
+    datafeeds: Array.from({ length: num }, () => dataFeed(type)),
   }
 }

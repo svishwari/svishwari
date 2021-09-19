@@ -10,12 +10,24 @@ from dateutil.relativedelta import relativedelta
 from hypothesis import given, strategies as st
 
 from huxunify.api import constants as api_c
+from huxunify.api.exceptions.integration_api_exceptions import (
+    FailedAPIDependencyError,
+)
 from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.cdp import (
     clean_cdm_fields,
     DATETIME_FIELDS,
     get_demographic_by_state,
     get_city_ltvs,
+    get_customers_overview,
+    get_customer_profiles,
+    get_customer_profile,
+    get_idr_overview,
+    get_customer_events_data,
+    get_customer_count_by_state,
+    get_demographic_by_country,
+    get_customers_insights_count_by_day,
+    get_spending_by_gender,
 )
 from huxunify.app import create_app
 
@@ -327,3 +339,265 @@ class CDPTest(TestCase):
         self.assertGreaterEqual(data[api_c.GENDER_MEN_COUNT], 0)
         self.assertGreaterEqual(data[api_c.GENDER_WOMEN_COUNT], 0)
         self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)
+
+    def test_get_customers_overview_raise_dependency_error(self) -> None:
+        """Test get customers overview raise dependency error.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json={},
+        )
+        self.request_mocker.start()
+
+        with self.assertRaises(FailedAPIDependencyError):
+            get_customers_overview(token=t_c.TEST_AUTH_TOKEN)
+
+    @given(
+        batch_size=st.integers(min_value=1, max_value=10),
+        offset=st.integers(min_value=10, max_value=100),
+    )
+    def test_get_customer_profiles_raise_dependency_error(
+        self, batch_size: int, offset: int
+    ) -> None:
+        """Test get customer profiles raise dependency error.
+
+        Args:
+            batch_size (int): batch size query param in request.
+            offset (int): offset query param in request.
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles",
+            json={},
+        )
+        self.request_mocker.start()
+
+        with self.assertRaises(FailedAPIDependencyError):
+            get_customer_profiles(
+                token=t_c.TEST_AUTH_TOKEN, batch_size=batch_size, offset=offset
+            )
+
+    @given(customer_id=st.text(alphabet=string.ascii_letters))
+    def test_get_customer_profile_raise_dependency_error(
+        self, customer_id: str
+    ) -> None:
+        """Test get customer profile raise dependency error.
+
+        Args:
+            customer_id (str): customer ID value for request.
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{customer_id}",
+            json={},
+        )
+        self.request_mocker.start()
+
+        with self.assertRaises(FailedAPIDependencyError):
+            get_customer_profile(token=t_c.TEST_AUTH_TOKEN, hux_id=customer_id)
+
+    def test_get_idr_overview_raise_dependency_error(self) -> None:
+        """Test get IDR overview raise dependency error.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json={},
+        )
+        self.request_mocker.start()
+
+        with self.assertRaises(FailedAPIDependencyError):
+            get_idr_overview(token=t_c.TEST_AUTH_TOKEN)
+
+    @given(customer_id=st.text(alphabet=string.ascii_letters))
+    def test_get_customer_events_raise_dependency_error(
+        self, customer_id: str
+    ) -> None:
+        """Test get customer events raise dependency error.
+
+        Args:
+            customer_id (str): customer ID value for request.
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{customer_id}/events",
+            json={},
+        )
+        self.request_mocker.start()
+
+        with self.assertRaises(FailedAPIDependencyError):
+            get_customer_events_data(
+                token=t_c.TEST_AUTH_TOKEN, hux_id=customer_id
+            )
+
+    def test_get_customer_count_by_state_raise_dependency_error(self) -> None:
+        """Test get customer count by state raise dependency error.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+            json={},
+        )
+        self.request_mocker.start()
+
+        with self.assertRaises(FailedAPIDependencyError):
+            get_customer_count_by_state(token=t_c.TEST_AUTH_TOKEN)
+
+    def test_get_demographic_by_state_raise_dependency_error(self) -> None:
+        """Test get customer demographic by state raise dependency error.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+            json={},
+        )
+        self.request_mocker.start()
+
+        with self.assertRaises(FailedAPIDependencyError):
+            get_demographic_by_state(token=t_c.TEST_AUTH_TOKEN)
+
+    def test_get_demographic_by_country_raise_dependency_error(self) -> None:
+        """Test get customer demographic by country raise dependency error.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/count-by-state",
+            json={},
+        )
+        self.request_mocker.start()
+
+        with self.assertRaises(FailedAPIDependencyError):
+            get_demographic_by_country(token=t_c.TEST_AUTH_TOKEN)
+
+    @given(
+        date_filters=st.fixed_dictionaries(
+            {
+                api_c.START_DATE: st.dates().map(
+                    lambda date: date.strftime(api_c.DEFAULT_DATE_FORMAT)
+                ),
+                api_c.END_DATE: st.dates().map(
+                    lambda date: date.strftime(api_c.DEFAULT_DATE_FORMAT)
+                ),
+            }
+        )
+    )
+    def test_get_customers_count_by_day_raise_dependency_error(
+        self, date_filters: dict
+    ) -> None:
+        """Test get customers insights count by day raise dependency error.
+
+        Args:
+            date_filters (dict): date filters dictionary.
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-day",
+            json={},
+        )
+        self.request_mocker.start()
+
+        with self.assertRaises(FailedAPIDependencyError):
+            get_customers_insights_count_by_day(
+                token=t_c.TEST_AUTH_TOKEN, date_filters=date_filters
+            )
+
+    def test_get_city_ltvs_raise_dependency_error(self) -> None:
+        """Test get customers insights by city raise dependency error.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/city-ltvs",
+            json={},
+        )
+        self.request_mocker.start()
+
+        with self.assertRaises(FailedAPIDependencyError):
+            get_city_ltvs(token=t_c.TEST_AUTH_TOKEN)
+
+    @given(
+        start_date=st.dates().map(
+            lambda date: date.strftime(api_c.DEFAULT_DATE_FORMAT)
+        ),
+        end_date=st.dates().map(
+            lambda date: date.strftime(api_c.DEFAULT_DATE_FORMAT)
+        ),
+    )
+    def test_get_spending_by_gender_raise_dependency_error(
+        self, start_date: str, end_date: str
+    ) -> None:
+        """Test get customer spending by gender raise dependency error.
+
+        Args:
+            start_date (str): start date value for request.
+            end_date (str): end date value for request.
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+            json={},
+        )
+        self.request_mocker.start()
+
+        with self.assertRaises(FailedAPIDependencyError):
+            get_spending_by_gender(
+                token=t_c.TEST_AUTH_TOKEN,
+                start_date=start_date,
+                end_date=end_date,
+            )

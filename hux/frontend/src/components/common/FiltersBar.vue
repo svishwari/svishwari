@@ -4,7 +4,8 @@
       v-show="isToggled"
       flat
       tile
-      color="aliceBlue"
+      color="primary lighten-2"
+      variant
       class="hux-filters-bar"
     >
       <div class="wrapper d-flex align-center">
@@ -30,7 +31,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .hux-filters-bar {
-  border-bottom: 1px solid var(--v-lightGrey-base) !important;
+  &.primary {
+    border-bottom: 1px solid var(--v-black-lighten3) !important;
+  }
 
   .wrapper {
     min-height: 70px;

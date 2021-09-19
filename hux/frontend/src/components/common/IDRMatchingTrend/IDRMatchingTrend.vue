@@ -1,7 +1,7 @@
 <template>
   <div ref="trendsChart" class="container-chart">
     <multi-line-chart
-      v-model="getMatchingTrendData"
+      v-model="mapData"
       :chart-dimensions="chartDimensions"
       :color-codes="colorCodes"
       @cordinates="getCordinates"
@@ -47,12 +47,6 @@ export default {
       },
     }
   },
-  computed: {
-    getMatchingTrendData() {
-      return this.mapData
-    },
-  },
-
   mounted() {
     this.sizeHandler()
   },
@@ -92,7 +86,6 @@ export default {
 }
 .container-chart {
   position: relative;
-  height: 650px;
   padding: 0px !important;
 }
 </style>

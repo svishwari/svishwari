@@ -1,12 +1,27 @@
 <template>
-  <div class="container">
-    <chord-chart
-      v-model="chartMatrix"
-      :color-codes="colorCodes"
-      :chart-legends-data="chartLegendsData"
-      @cordinates="getCordinates"
-      @tooltipDisplay="toolTipDisplay"
-    />
+  <div ref="identityChart" class="container">
+    <div class="legend-chart-divider">
+      <div class="chart-legends pl-4">
+        <div
+          v-for="item in chartLegendsData"
+          :key="item.id"
+          class="legend-section mt-3"
+        >
+          <icon :type="item.icon" :size="12" color="primary" />
+          <span>{{ item.prop }}</span>
+        </div>
+      </div>
+      <div ref="chordsChart" class="chart-svg">
+        <chord-chart
+          v-model="chartMatrix"
+          :color-codes="colorCodes"
+          :chart-dimensions="chartDimensions"
+          @cordinates="getCordinates"
+          @tooltipDisplay="toolTipDisplay"
+        />
+      </div>
+    </div>
+
     <chart-tooltip
       :position="{
         x: tooltip.x,
@@ -23,18 +38,16 @@
 <script>
 import ChartTooltip from "@/components/common/identityChart/ChartTooltip"
 import ChordChart from "@/components/common/identityChart/ChordChart"
+import Icon from "@/components/common/Icon"
 export default {
   name: "IdentityChart",
-
-  components: { ChordChart, ChartTooltip },
-
+  components: { ChordChart, ChartTooltip, Icon },
   props: {
     chartData: {
       type: Object,
       required: true,
     },
   },
-
   data() {
     return {
       // TODO provide actual color code as per Icon colors
@@ -80,11 +93,22 @@ export default {
       },
       chartMatrix: [],
       groupNames: [],
+      chartDimensions: {
+        width: 0,
+        height: 0,
+      },
     }
   },
   mounted() {
     this.generateChartGroups()
     this.transformData()
+    this.sizeHandler()
+  },
+  created() {
+    window.addEventListener("resize", this.sizeHandler)
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.sizeHandler)
   },
   methods: {
     generateChartGroups() {
@@ -101,6 +125,13 @@ export default {
     getCordinates(args) {
       this.tooltip.x = args.x
       this.tooltip.y = args.y
+    },
+
+    sizeHandler() {
+      if (this.$refs.chordsChart) {
+        this.chartDimensions.width = this.$refs.chordsChart.clientWidth
+        this.chartDimensions.height = 200
+      }
     },
 
     generateToolTipData(groupIndex) {
@@ -183,6 +214,31 @@ export default {
 <style lang="scss" scoped>
 .container {
   height: 280px;
-  padding: 0px !important;
+
+  .legend-chart-divider {
+    margin-top: 57px;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 30px;
+    .chart-legends {
+      flex: 1 0 32%;
+      padding-left: 5px;
+      .legend-section {
+        max-width: 100px;
+        span {
+          margin-left: 8px;
+          font-size: 12px;
+          line-height: 16px;
+          color: var(--v-black-darken1) !important;
+        }
+      }
+    }
+    .chart-svg {
+      min-width: 200px;
+      max-width: 240px;
+    }
+  }
 }
 </style>

@@ -221,6 +221,8 @@ AWS_HEALTH_TESTS = {
     AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
 }
 S3 = "s3"
+AWS_BUCKET = "Bucket"
+AWS_KEY = "Key"
 AWS_TARGET_ID = "Id"
 AWS_TARGET_ARN = "Arn"
 AWS_TARGET_ROLE_ARN = "RoleArn"
@@ -294,8 +296,8 @@ SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "perf_data_extension"
 SFMC_DATA_EXTENSION_NAME = "Name"
 SFMC_CUSTOMER_KEY = "CustomerKey"
 
-# Twilio connector defines
-TWILIO_AUTH_TOKEN = "twilio_auth_token"
+# Sendgrid connector defines
+SENDGRID_AUTH_TOKEN = "sendgrid_auth_token"
 
 # Qualtrics connector defines
 QUALTRICS_API_TOKEN = "qualtrics_api_token"
@@ -378,8 +380,8 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
-    db_c.DELIVERY_PLATFORM_TWILIO: {
-        TWILIO_AUTH_TOKEN: {
+    db_c.DELIVERY_PLATFORM_SENDGRID: {
+        SENDGRID_AUTH_TOKEN: {
             NAME: "Auth Token",
             TYPE: "password",
             REQUIRED: True,
@@ -466,9 +468,9 @@ DESTINATION_SECRETS = {
         ],
         AWS_SSM_NAME: [SFMC_CLIENT_SECRET],
     },
-    db_c.DELIVERY_PLATFORM_TWILIO: {
+    db_c.DELIVERY_PLATFORM_SENDGRID: {
         MONGO: [],
-        AWS_SSM_NAME: [TWILIO_AUTH_TOKEN],
+        AWS_SSM_NAME: [SENDGRID_AUTH_TOKEN],
     },
     db_c.DELIVERY_PLATFORM_QUALTRICS: {
         MONGO: [
@@ -507,7 +509,12 @@ BSON_INVALID_ID = (
     f"12-byte input or a 24-character hex string"
 )
 MESSAGE = "message"
-START_DATE_GREATER_THAN_END_DATE = "Start date cannot be greater than end date."
+START_DATE_GREATER_THAN_END_DATE = (
+    "Start date cannot be greater than end date."
+)
+FAILED_DEPENDENCY_ERROR_MESSAGE = (
+    "Failed to obtain data from dependent API endpoint."
+)
 
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
 INVALID_DELIVERY_SCHEDULE = "Delivery schedule is not valid."
@@ -979,6 +986,17 @@ DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
 
+
+# health check prometheus metric constants
+MONGO_CONNECTION_HEALTH = "mongo_connection_health"
+TECTON_CONNECTION_HEALTH = "tecton_connection_health"
+OKTA_CONNECTION_HEALTH = "okta_connection_health"
+AWS_SSM_CONNECTION_HEALTH = "aws_ssm_connection_health"
+AWS_BATCH_CONNECTION_HEALTH = "aws_batch_connection_health"
+CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
+CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
+    "cdm_connection_service_connection_health"
+)
 
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"

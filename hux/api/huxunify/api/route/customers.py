@@ -12,8 +12,6 @@ from faker import Faker
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 
-from huxunifylib.util.general.logging import logger
-
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
     DataFeedSchema,
@@ -54,7 +52,11 @@ from huxunify.api.data_connectors.cdp_connection import (
     get_idr_matching_trends,
 )
 from huxunify.api.route.utils import add_chart_legend
-from huxunify.api.schema.utils import redact_fields, AUTH401_RESPONSE
+from huxunify.api.schema.utils import (
+    redact_fields,
+    AUTH401_RESPONSE,
+    FAILED_DEPENDENCY_424_RESPONSE,
+)
 from huxunify.api.schema.customers import (
     CustomerOverviewSchema,
     CustomersSchema,
@@ -99,6 +101,7 @@ class CustomerOverview(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
@@ -176,6 +179,7 @@ class CustomerPostOverview(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
@@ -242,6 +246,7 @@ class IDROverview(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
@@ -319,6 +324,7 @@ class Customersview(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
@@ -385,6 +391,7 @@ class CustomerProfileSearch(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
@@ -463,6 +470,7 @@ class IDRDataFeeds(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use,unused-argument
@@ -536,6 +544,7 @@ class IDRDataFeedDetails(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
@@ -583,6 +592,7 @@ class CustomerGeoVisualView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
@@ -636,6 +646,7 @@ class CustomerDemoVisualView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
@@ -676,16 +687,6 @@ class CustomerDemoVisualView(SwaggerView):
             start_date,
             end_date,
         )
-        # if the customers overview response body is empty from CDP, then log
-        # error and return 400
-        if not customers:
-            logger.error("Failed to get Customer Profile Insights from CDP.")
-            return (
-                {
-                    "message": "Failed to get customers Demographic Visual Insights."
-                },
-                HTTPStatus.BAD_REQUEST,
-            )
 
         output = {
             api_c.GENDER: {
@@ -741,6 +742,7 @@ class IDRMatchingTrends(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use,unused-argument
@@ -827,6 +829,7 @@ class CustomerEvents(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
@@ -888,6 +891,7 @@ class TotalCustomersGraphView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
@@ -921,15 +925,6 @@ class TotalCustomersGraphView(SwaggerView):
         customers_insight_total = get_customers_insights_count_by_day(
             token_response[0], date_filters
         )
-
-        # if the customers insight total response body is empty from CDP,
-        # then log and return 400
-        if not customers_insight_total:
-            logger.error("Failed to get Total Customer Insights from CDP.")
-            return (
-                {"message": "Failed to get Total Customer Insights."},
-                HTTPStatus.BAD_REQUEST,
-            )
 
         return (
             jsonify(
@@ -965,6 +960,7 @@ class CustomersInsightsCountries(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
@@ -1018,6 +1014,7 @@ class CustomersInsightsStates(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
@@ -1091,6 +1088,7 @@ class CustomersInsightsCities(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use

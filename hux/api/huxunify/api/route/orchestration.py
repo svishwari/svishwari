@@ -48,7 +48,10 @@ from huxunify.api.data_connectors.cdp import (
 )
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.okta import get_token_from_request
-from huxunify.api.schema.utils import AUTH401_RESPONSE
+from huxunify.api.schema.utils import (
+    AUTH401_RESPONSE,
+    FAILED_DEPENDENCY_424_RESPONSE,
+)
 import huxunify.api.constants as api_c
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
@@ -290,6 +293,7 @@ class AudienceGetView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
@@ -467,6 +471,7 @@ class AudienceInsightsGetView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
@@ -606,8 +611,8 @@ class AudiencePostView(SwaggerView):
             "description": "Failed to create audience.",
         },
     }
-
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=too-many-return-statements

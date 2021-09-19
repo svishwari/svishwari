@@ -68,8 +68,8 @@ export default {
       let colorCodes = ["#347DAC", "#4F4F4F", "#42EFFD"]
       let ids = [
         { label: "Unique Hux IDs", xValue: 0 },
-        { label: "Anonymous IDs", xValue: 140 },
-        { label: "Known IDs", xValue: 285 },
+        { label: "Anonymous IDs", xValue: 122 },
+        { label: "Known IDs", xValue: 245 },
       ]
       let color = d3Scale
         .scaleOrdinal()
@@ -200,7 +200,7 @@ export default {
         .style("stroke-width", 1)
       svg
         .append("rect")
-        .attr("width", w)
+        .attr("width", w + 20)
         .attr("height", h)
         .style("stroke", "transparent")
         .style("fill", "transparent")
@@ -264,6 +264,7 @@ export default {
         .attr("id", "mainSvg")
         .attr("class", "svgBox")
         .attr("width", 400)
+        .attr("height", "auto")
         .style("margin-left", "20px")
         .style("margin-right", "20px")
         .style("margin-top", "10px")
@@ -280,8 +281,8 @@ export default {
 
       legend
         .append("circle")
-        .attr("cx", 10)
-        .attr("cy", 10)
+        .attr("cx", 9)
+        .attr("cy", 9)
         .attr("r", 6)
         .attr("stroke", function (d) {
           return color(d.label)
@@ -296,7 +297,7 @@ export default {
         .attr("dy", ".55em")
         .attr("class", "neroBlack--text")
         .style("fill", "#4f4f4f")
-        .style("font-size", 14)
+        .style("font-size", 12)
         .style("text-anchor", "start")
         .text(function (d) {
           return d.label

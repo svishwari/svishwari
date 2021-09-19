@@ -1,9 +1,10 @@
 <template>
   <div
     v-if="showTooltip"
-    class="tooltip"
+    tile
+    class="mx-auto tooltip"
     :style="{
-      transform: `translate(${tooltip.x}px, ${tooltip.y}px)`,
+      transform: `translate(${sourceInput.xPosition}px, ${sourceInput.yPosition}px)`,
     }"
   >
     <v-card tile>
@@ -81,6 +82,7 @@ export default {
   width: 82px !important;
   height: 64px;
   position: absolute;
+  pointer-events: none;
   .v-card {
     padding: 8px 8px;
     @extend .box-shadow-25;

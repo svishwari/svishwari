@@ -15,12 +15,16 @@ import requests
 from huxunifylib.util.general.logging import logger
 
 from huxunify.api.config import get_config
+from huxunify.api.exceptions import integration_api_exceptions as iae
 from huxunify.api import constants
 from huxunify.api.schema.model import (
     ModelVersionSchema,
     FeatureSchema,
     ModelDriftSchema,
     ModelLiftSchema,
+)
+from huxunify.api.prometheus import (
+    record_health_status_metric,
 )
 
 
@@ -41,10 +45,12 @@ def check_tecton_connection() -> Tuple[bool, str]:
             dumps(constants.MODEL_LIST_PAYLOAD),
             headers=config.TECTON_API_HEADERS,
         )
+        record_health_status_metric(constants.TECTON_CONNECTION_HEALTH, True)
         return response.status_code, "Tecton available."
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
+        record_health_status_metric(constants.TECTON_CONNECTION_HEALTH, False)
         return False, getattr(exception, "message", repr(exception))
 
 
@@ -55,15 +61,10 @@ def map_model_response(response: dict) -> List[dict]:
 
     Returns:
         List[dict]: A cleaned model dict.
-
     """
-    if response.status_code != 200:
-        return []
-
-    if constants.RESULTS not in response.json():
-        return []
 
     models = []
+
     for meta_data in response.json()[constants.RESULTS]:
         # get model metadata from tecton
         feature = meta_data[constants.FEATURES]
@@ -82,6 +83,7 @@ def map_model_response(response: dict) -> List[dict]:
             constants.PAST_VERSION_COUNT: 0,
         }
         models.append(model)
+
     return models
 
 
@@ -96,13 +98,7 @@ def map_model_version_history_response(
 
     Returns:
         List[dict]: A cleaned model version dict.
-
     """
-    if response.status_code != 200:
-        return []
-
-    if constants.RESULTS not in response.json():
-        return []
 
     models = []
 
@@ -123,6 +119,7 @@ def map_model_version_history_response(
             constants.PREDICTION_WINDOW: int(feature[3]),
         }
         models.append(model)
+
     return models
 
 
@@ -143,7 +140,6 @@ def map_model_performance_response(
 
     Returns:
         dict: A cleaned model performance dict.
-
     """
 
     if response.status_code != 200 or constants.RESULTS not in response.json():
@@ -197,6 +193,18 @@ def get_models() -> List[dict]:
         dumps(constants.MODEL_LIST_PAYLOAD),
         headers=config.TECTON_API_HEADERS,
     )
+
+    if response.status_code != 200 or constants.RESULTS not in response.json():
+        logger.error(
+            "Unable to retrieve models, %s %s.",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.TECTON_FEATURE_SERVICE} : in_function={get_models.__name__}",
+            response.status_code,
+        )
+
     return map_model_response(response)
 
 
@@ -220,13 +228,26 @@ def get_model_version_history(model_id: str) -> List[ModelVersionSchema]:
         }
     }
 
+    response = requests.post(
+        config.TECTON_FEATURE_SERVICE,
+        dumps(payload),
+        headers=config.TECTON_API_HEADERS,
+    )
+
+    if response.status_code != 200 or constants.RESULTS not in response.json():
+        logger.error(
+            "Unable to retrieve model version history, %s %s.",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.TECTON_FEATURE_SERVICE} : in_function={get_model_version_history.__name__}",
+            response.status_code,
+        )
+
     # submit the post request to get the models
     return map_model_version_history_response(
-        requests.post(
-            config.TECTON_FEATURE_SERVICE,
-            dumps(payload),
-            headers=config.TECTON_API_HEADERS,
-        ),
+        response,
         model_id,
     )
 
@@ -273,6 +294,17 @@ def get_model_drift(model_id: str, model_type: str) -> List[ModelDriftSchema]:
         "Executed drift chart data request to the Tecton API in %0.4f seconds.",
         total_ticks,
     )
+
+    if response.status_code != 200 or constants.RESULTS not in response.json():
+        logger.error(
+            "Unable to retrieve model drift, %s %s.",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.TECTON_FEATURE_SERVICE} : in_function={get_model_drift.__name__}",
+            response.status_code,
+        )
 
     result_drift = []
     for result in response.json().get(constants.RESULTS, []):
@@ -471,7 +503,17 @@ def get_model_features(
                 }
             )
 
-    # submit the post request to get the models
+    if not result_features:
+        logger.error(
+            "Unable to retrieve model features, %s %s.",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.TECTON_FEATURE_SERVICE} : in_function={get_model_features.__name__}",
+            response.status_code,
+        )
+
     return result_features
 
 

@@ -17,7 +17,9 @@ from huxunifylib.database import constants as db_c
 from huxunifylib.util.general.logging import logger
 
 from huxunify.api.config import get_config
+from huxunify.api.exceptions import integration_api_exceptions as iae
 from huxunify.api import constants as api_c
+from huxunify.api.prometheus import record_health_status_metric
 
 # fields to convert to datetime from the responses
 DEFAULT_DATETIME = datetime(1, 1, 1, 1, 00)
@@ -50,11 +52,13 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
             f"{config.CDP_SERVICE}/healthcheck",
             timeout=5,
         )
+        record_health_status_metric(api_c.CDM_API_CONNECTION_HEALTH, True)
         return response.status_code, "CDM available."
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
         logger.error("CDM Health Check failed with %s.", repr(exception))
+        record_health_status_metric(api_c.CDM_API_CONNECTION_HEALTH, False)
         return False, getattr(exception, "message", repr(exception))
 
 
@@ -83,10 +87,14 @@ def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Unable to get Customer Profiles from CDP API got %s.",
+            "Unable to retrieve Customer Profiles, %s %s.",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles?limit={batch_size}&offset={offset}",
             response.status_code,
         )
-        return {}
 
     response_data = response.json()[api_c.BODY]
     logger.info("Successfully retrieved Customer Profiles info from CDP API.")
@@ -120,11 +128,15 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Unable to get Customer Profile info for %s from CDP API got %s.",
+            "Unable to retrieve Customer Profile info for %s, %s %s.",
             hux_id,
             response.status_code,
+            response.text,
         )
-        return {}
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/{hux_id}",
+            response.status_code,
+        )
 
     logger.info(
         "Successfully retrieved Customer Profile info for %s from CDP API.",
@@ -163,11 +175,15 @@ def get_idr_overview(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Could not get customer profile insights from CDP API got %s %s.",
+            "Unable to retrieve customer profile insights, %s %s.",
             response.status_code,
             response.text,
         )
-        return {}
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/insights",
+            response.status_code,
+        )
+
     logger.info(
         "Successfully retrieved Customer Profile Insights from CDP API."
     )
@@ -211,11 +227,14 @@ def get_customers_overview(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Could not get customer profile insights from CDP API got %s %s.",
+            "Unable to retrieve profile insights, %s %s.",
             response.status_code,
             response.text,
         )
-        return {}
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/insights",
+            response.status_code,
+        )
 
     logger.info(
         "Successfully retrieved Customer Profile Insights from CDP API."
@@ -465,10 +484,14 @@ def get_customer_events_data(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Unable to get Customer Profiles from CDP API got %s.",
+            "Unable to retrieve Customer Profiles, %s %s.",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/{hux_id}/events",
             response.status_code,
         )
-        return {}
 
     customer_events = response.json().get(api_c.BODY)
 
@@ -557,7 +580,10 @@ def get_customer_count_by_state(
             response.status_code,
             response.text,
         )
-        return []
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+            response.status_code,
+        )
 
     logger.info("Successfully retrieved state demographic insights.")
     body = clean_cdm_fields(response.json()[api_c.BODY])
@@ -687,12 +713,14 @@ def get_customers_insights_count_by_day(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Could not get customer insights count by day data from CDP API - "
-            "status_code: %s, response_text: %s.",
+            "Unable to retrieve customer insights count by day data, %s %s.",
             response.status_code,
             response.text,
         )
-        return {}
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-day",
+            response.status_code,
+        )
 
     logger.info(
         "Successfully retrieved customer insights count by day data from "
@@ -744,11 +772,14 @@ def get_city_ltvs(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Failed to retrieve city-level spending insights %s %s.",
+            "Failed to retrieve city-level spending insights, %s %s.",
             response.status_code,
             response.text,
         )
-        return []
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+            response.status_code,
+        )
 
     logger.info("Successfully retrieved city-level demographic insights.")
 
@@ -826,11 +857,14 @@ def get_spending_by_gender(
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
-            "Failed to retrieve state demographic insights %s %s.",
+            "Failed to retrieve state demographic insights, %s %s.",
             response.status_code,
             response.text,
         )
-        return []
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+            response.status_code,
+        )
 
     logger.info("Successfully retrieved state demographic insights.")
     return sorted(

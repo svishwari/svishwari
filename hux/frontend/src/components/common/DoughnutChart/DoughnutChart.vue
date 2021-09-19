@@ -98,7 +98,7 @@ export default {
         // Initialize width, height & color range
         this.chartWidth = this.chartDimensions.width + "px"
         let width = this.chartDimensions.width - 50,
-          height = this.chartDimensions.height - 25,
+          height = this.chartDimensions.height - 10,
           radius = Math.min(width, height) / 1.8
         let color = d3Scale
           .scaleOrdinal()
@@ -107,8 +107,13 @@ export default {
         // Define outer-radius & inner-radius of donut-chart
         let arc = d3Shape
           .arc()
-          .outerRadius(radius - 10)
-          .innerRadius(radius - 25)
+          .outerRadius(radius - 20)
+          .innerRadius(radius - 30)
+
+        let transformedArc = d3Shape
+          .arc()
+          .outerRadius(radius - 15)
+          .innerRadius(radius - 35)
 
         // Assign value to chart
         let pie = d3Shape
@@ -132,7 +137,10 @@ export default {
           .attr("width", width)
           .attr("height", height)
           .append("g")
-          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr(
+            "transform",
+            "translate(" + width / 2 + "," + (height - 2) / 2 + ")"
+          )
 
         // create arc & append class attribute
         let g = svg
@@ -148,14 +156,21 @@ export default {
           .style("fill", function (d) {
             return color(d.data.population_percentage)
           })
-          .on("mouseover", (e, d) => showTooltip(e, d))
-          .on("mouseout", (e, d) => hideTooltip(e, d))
+          .on("mouseover", (e, d) => applyArcHoverEvent(e, d))
+          .on("mouseout", (e, d) => removeArcHoverEvent(e, d))
 
-        let showTooltip = (e, d) => {
+        let applyArcHoverEvent = (e, d) => {
+          d3Select
+            .select(e.srcElement)
+            .attr("d", transformedArc)
+            .style("filter", "drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.4)")
           this.sourceInput = d.data
           this.showTooltip = true
+          this.sourceInput.xPosition = this.tooltip.x
+          this.sourceInput.yPosition = this.tooltip.y
         }
-        let hideTooltip = (e, d) => {
+        let removeArcHoverEvent = (e, d) => {
+          d3Select.select(e.srcElement).attr("d", arc).style("filter", "none")
           this.sourceInput = d.data
           this.showTooltip = false
         }
@@ -206,7 +221,7 @@ export default {
     },
     getCordinates(evt) {
       this.tooltip.x = evt.offsetX + 60
-      this.tooltip.y = evt.offsetY - 200
+      this.tooltip.y = evt.offsetY - 270
     },
   },
 }

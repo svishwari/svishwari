@@ -83,6 +83,7 @@ export default {
 
 .income-tooltip-style {
   @extend .box-shadow-3;
+  pointer-events: none;
   border-radius: 0px;
   height: auto;
   z-index: 1;
