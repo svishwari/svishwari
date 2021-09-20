@@ -7,9 +7,11 @@ from datetime import datetime, timedelta
 from unittest import TestCase, mock
 from http import HTTPStatus
 import requests_mock
+from faker import Faker
 from flask_marshmallow import Schema
 import mongomock
 from bson import ObjectId
+from hypothesis import given, strategies as st
 from marshmallow import ValidationError
 
 from huxunifylib.database import constants as db_c
@@ -699,6 +701,7 @@ class TestEngagementRoutes(TestCase):
             "US",
         )
 
+        self.faker = Faker()
         self.addCleanup(mock.patch.stopall)
 
     def test_get_campaign_mappings_no_delivery_jobs(self):
@@ -1352,6 +1355,81 @@ class TestEngagementRoutes(TestCase):
         )
 
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
+
+    @given(schedule=st.sampled_from(t_c.SCHEDULES))
+    def test_set_engagement_with_delivery_schedule(self, schedule: dict):
+        """
+        Test set engagement API with valid params
+
+        Args:
+
+        Returns:
+
+        """
+        engagement_delivery_schedule = {api_c.SCHEDULE: schedule}
+
+        engagement = {
+            db_c.AUDIENCES: [
+                {
+                    db_c.OBJECT_ID: str(self.audiences[0][db_c.ID]),
+                    db_c.DESTINATIONS: [
+                        {db_c.OBJECT_ID: str(self.destinations[0][db_c.ID])},
+                    ],
+                }
+            ],
+            db_c.ENGAGEMENT_DESCRIPTION: "Test Engagement Description",
+            db_c.ENGAGEMENT_NAME: self.faker.first_name(),
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE: engagement_delivery_schedule,
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}",
+            data=json.dumps(engagement),
+            headers=t_c.STANDARD_HEADERS,
+        )
+        # check if cron string is generated
+        self.assertIsInstance(
+            response.json.get(api_c.DELIVERY_SCHEDULE).get(
+                api_c.SCHEDULE_CRON
+            ),
+            str,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.CREATED)
+
+    def test_set_engagement_with_invalid_delivery_schedule(self):
+        """
+        Test set engagement API with valid params
+
+        Args:
+
+        Returns:
+
+        """
+        engagement_delivery_schedule = {
+            api_c.SCHEDULE: t_c.DAILY_SCHEDULE_INVALID
+        }
+
+        engagement = {
+            db_c.AUDIENCES: [
+                {
+                    db_c.OBJECT_ID: str(self.audiences[0][db_c.ID]),
+                    db_c.DESTINATIONS: [
+                        {db_c.OBJECT_ID: str(self.destinations[0][db_c.ID])},
+                    ],
+                }
+            ],
+            db_c.ENGAGEMENT_DESCRIPTION: "Test Engagement Description",
+            db_c.ENGAGEMENT_NAME: "Soumya's Test Engagement",
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE: engagement_delivery_schedule,
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}",
+            data=json.dumps(engagement),
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
 
     def test_set_engagement_without_audience(self):
         """
