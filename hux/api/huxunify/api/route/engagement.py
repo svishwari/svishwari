@@ -405,6 +405,17 @@ class UpdateEngagement(SwaggerView):
             request.get_json()
         )
 
+        # Check if delivery schedule exists, if exists generate cron string.
+        if body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
+            schedule = body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE).get(
+                api_c.SCHEDULE
+            )
+            if schedule:
+                cron_schedule = generate_cron(schedule)
+                body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                    api_c.SCHEDULE_CRON
+                ] = cron_schedule
+
         database = get_db_client()
 
         engagement = update_engagement(
