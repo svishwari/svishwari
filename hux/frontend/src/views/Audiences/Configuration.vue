@@ -335,6 +335,15 @@
         :final-engagements="selectedEngagements"
         @onEngagementChange="setSelectedEngagements"
       />
+
+      <confirm-modal
+        v-model="showConfirmModal"
+        title="You are about to navigate away"
+        right-btn-text="Yes, navigate away"
+        body=" Are you sure you want to stop the configuration and go to another page? You will not be able to recover it and will need to start the process again."
+        @onCancel="showConfirmModal = false"
+        @onConfirm="navigateaway()"
+      />
     </page>
   </div>
 </template>
@@ -356,6 +365,7 @@ import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Draw
 import Logo from "@/components/common/Logo"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Icon from "@/components/common/Icon"
+import ConfirmModal from "@/components/common/ConfirmModal.vue"
 
 export default {
   name: "Configuration",
@@ -375,6 +385,7 @@ export default {
     SelectDestinationsDrawer,
     DestinationDataExtensionDrawer,
     Icon,
+    ConfirmModal,
   },
   data() {
     return {
@@ -417,6 +428,9 @@ export default {
         name: null,
         value: 5,
       },
+      showConfirmModal: false,
+      navigateTo: false,
+      temp: false,
     }
   },
 
@@ -455,6 +469,15 @@ export default {
     },
   },
 
+  beforeRouteLeave(to, from, next) {
+    if (this.temp == false) {
+      this.showConfirmModal = true
+      this.navigateTo = to.name
+    } else {
+      if (this.navigateTo) next()
+    }
+  },
+
   async mounted() {
     this.loading = true
     await this.getOverview()
@@ -477,6 +500,12 @@ export default {
       getAudienceById: "audiences/getAudienceById",
       getOverview: "customers/getOverview",
     }),
+
+    navigateaway() {
+      this.showConfirmModal = false
+      this.temp = true
+      this.$router.push({ name: this.navigateTo })
+    },
 
     closeAllDrawers() {
       this.engagementDrawer = false
