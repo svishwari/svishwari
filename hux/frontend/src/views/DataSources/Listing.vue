@@ -27,21 +27,39 @@
                 :icon-size="15"
               />
             </div>
-            <div
+            <tooltip
               v-else-if="
                 column.value === 'records_processed_percentage' ||
                 column.value === 'thirty_days_avg'
               "
-              class="text-h6"
-              :class="
-                column.value === 'records_processed_percentage' &&
-                item[column.value] < 0.5
-                  ? 'error--text'
-                  : 'black--text text--darken-4'
-              "
             >
-              {{ item[column.value] | Percentage }}
-            </div>
+              <template #label-content>
+                <span
+                  class="text-h6"
+                  :class="
+                    column.value === 'records_processed_percentage' &&
+                    item[column.value] < 0.5
+                      ? 'error--text'
+                      : 'black--text text--darken-4'
+                  "
+                >
+                  {{ item[column.value] | Percentage }}
+                </span>
+              </template>
+              <template #hover-content>
+                <span
+                  class="text-h6"
+                  :class="
+                    column.value === 'records_processed_percentage' &&
+                    item[column.value] < 0.5
+                      ? 'error--text'
+                      : 'black--text text--darken-4'
+                  "
+                >
+                  {{ item[column.value] | Percentage }}
+                </span>
+              </template>
+            </tooltip>
             <div
               v-else-if="column.value === 'last_processed'"
               class="black--text text--darken-4 text-h6"
@@ -60,9 +78,18 @@
                 </span>
               </template>
             </tooltip>
-            <div v-else class="black--text text--darken-4 text-h6">
-              {{ item[column.value].toLocaleString() | Empty }}
-            </div>
+            <tooltip v-else>
+              <template #label-content>
+                <span class="black--text text--darken-4 text-h6">
+                  {{ item[column.value] | Numeric(false, true) }}
+                </span>
+              </template>
+              <template #hover-content>
+                <span class="black--text text--darken-4 text-h6">
+                  {{ item[column.value] | Numeric }}
+                </span>
+              </template>
+            </tooltip>
           </td>
         </template>
       </hux-data-table>

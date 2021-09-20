@@ -88,8 +88,8 @@ export default {
           description:
             "Connect your data sources to enable data unification in a single location.",
           route: {
-            name: "DataSourceConfiguration",
-            query: { select: true },
+            name: "Connections",
+            params: { select: true },
           },
           active: true,
         },

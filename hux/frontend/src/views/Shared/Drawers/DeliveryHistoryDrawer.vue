@@ -34,7 +34,12 @@
                       : 'EngagementDashboard',
                   params: { id: item[col.value].id },
                 }"
-                class="d-inline-block mw-100 text-truncate text-decoration-none"
+                class="
+                  d-inline-block
+                  mw-100
+                  text-truncate text-decoration-none
+                  primary--text
+                "
               >
                 {{ item[col.value].name }}
               </router-link>
@@ -74,7 +79,9 @@
             </tooltip>
             <tooltip v-if="col.value === 'delivered'">
               <template #label-content>
-                {{ item[col.value] | Date("relative") }}
+                <span class="d-inline-block mw-100 text-truncate">
+                  {{ item[col.value] | Date("relative") }}
+                </span>
               </template>
               <template #hover-content>
                 {{ item[col.value] | Date }}
@@ -138,22 +145,22 @@ export default {
         {
           value: "destination",
           text: "Destination",
-          width: "113px",
+          width: "20%",
         },
         {
           value: "size",
           text: "Target size",
-          width: "108px",
+          width: "20%",
         },
         {
           value: "match_rate",
           text: "Match Rate",
-          width: "111px",
+          width: "20%",
         },
         {
           value: "delivered",
           text: "Delivered",
-          width: "114px",
+          width: "20%",
         },
       ],
     }
@@ -193,14 +200,14 @@ export default {
       this.columns.unshift({
         value: "audience",
         text: "Audience name",
-        width: "35%",
+        width: "25%",
       })
 
     if (this.audienceId !== null)
       this.columns.unshift({
         value: "engagement",
         text: "Engagement name",
-        width: "35%",
+        width: "30%",
       })
   },
 
@@ -223,3 +230,33 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.hux-data-table {
+  ::v-deep .v-data-table__wrapper {
+    .v-data-table-header {
+      th {
+        &:first-child {
+          padding: 9px 10px 9px 25px !important;
+        }
+        padding: 9px 10px !important;
+        &:last-child {
+          padding: 9px 20px 9px 10px !important;
+        }
+      }
+    }
+    tbody {
+      tr {
+        td {
+          &:first-child {
+            padding: 9px 10px 9px 25px !important;
+          }
+          padding: 9px 10px !important;
+          &:last-child {
+            padding: 9px 20px 9px 10px !important;
+          }
+        }
+      }
+    }
+  }
+}
+</style>

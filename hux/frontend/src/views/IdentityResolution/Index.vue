@@ -181,6 +181,7 @@
         v-if="!loadingDataFeeds"
         :data="dataFeeds"
         class="mt-6 mx-2"
+        data-e2e="datafeedtable"
       />
     </template>
   </page>

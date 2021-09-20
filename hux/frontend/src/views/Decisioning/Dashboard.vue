@@ -16,13 +16,6 @@
           >
             Version history
           </hux-button>
-          <v-icon
-            size="22"
-            color="black lighten-3"
-            class="icon-border pa-2 ma-1"
-          >
-            mdi-download
-          </v-icon>
         </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -41,19 +34,46 @@
                 v-if="metric !== -1"
                 class="model-dashboard__card px-6 py-3 mr-2"
               >
-                <div
-                  v-if="key === 'current_version'"
-                  class="text-overline black--text text--darken-4"
-                >
-                  {{ metric }}
-                </div>
-                <div
-                  v-else
-                  class="text-overline"
-                  :class="metric < 0.01 ? 'error--text' : 'neroBlack--text'"
-                >
-                  {{ metric.toFixed(2) }}
-                </div>
+                <tooltip>
+                  <template #label-content>
+                    <div
+                      v-if="key === 'current_version'"
+                      class="text-overline black--text text--darken-4"
+                    >
+                      {{ metric }}
+                    </div>
+                    <div
+                      v-else
+                      class="text-overline"
+                      :class="metric < 0.01 ? 'error--text' : 'neroBlack--text'"
+                    >
+                      {{ metric.toFixed(2) }}
+                    </div>
+                  </template>
+                  <template #hover-content>
+                    <div v-if="key === 'current_version'">
+                      <div class="mb-3">
+                        Trained date<br />
+                        {{ modelMetricDetails.last_trained | Date | Empty }}
+                      </div>
+                      <div class="mb-3">
+                        Fulcrum date<br />
+                        {{ modelMetricDetails.fulcrum_date | Date | Empty }}
+                      </div>
+                      <div class="mb-3">
+                        Lookback period (days)<br />
+                        {{ modelMetricDetails.lookback_window }}
+                      </div>
+                      <div>
+                        Prediction period (days)<br />
+                        {{ modelMetricDetails.prediction_window }}
+                      </div>
+                    </div>
+                    <div v-else>
+                      {{ metric | Empty }}
+                    </div>
+                  </template>
+                </tooltip>
                 <div
                   v-if="key === 'current_version'"
                   class="text-caption black--text text--darken-1 pt-1"
@@ -89,9 +109,9 @@
           </div>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col md="6">
-          <v-card class="mt-6 rounded-lg box-shadow-5" height="662">
+      <v-row class="pt-0">
+        <v-col md="6" class="pt-0">
+          <v-card class="mt-2 rounded-lg box-shadow-5" height="662">
             <v-progress-linear
               :active="featuresLoading"
               :indeterminate="featuresLoading"
@@ -114,8 +134,8 @@
             />
           </v-card>
         </v-col>
-        <v-col md="6">
-          <v-card class="rounded-lg px-4 box-shadow-5 mt-6" height="662">
+        <v-col md="6" class="pt-0">
+          <v-card class="rounded-lg px-4 box-shadow-5 mt-2" height="662">
             <v-progress-linear
               v-if="loadingDrift"
               :active="loadingDrift"
@@ -189,6 +209,7 @@
 </template>
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb"
+import Tooltip from "@/components/common/Tooltip"
 import DriftChart from "@/components/common/Charts/DriftChart/DriftChart.vue"
 import FeaturesTable from "./FeaturesTable.vue"
 import FeatureChart from "@/components/common/featureChart/FeatureChart"
@@ -203,6 +224,7 @@ export default {
   name: "ModelsDashboard",
   components: {
     Breadcrumb,
+    Tooltip,
     FeatureChart,
     LiftChart,
     Page,
@@ -230,11 +252,16 @@ export default {
   computed: {
     ...mapGetters({
       model: "models/overview",
+      modelDetails: "models/single",
       lift: "models/lift",
       features: "models/features",
       modelDashboardFeatures: "models/modelFeatures",
       drift: "models/drift",
     }),
+
+    modelMetricDetails() {
+      return this.modelDetails(this.$route.params.id) || {}
+    },
 
     driftChartData() {
       let data = this.drift.map((each) => {
@@ -293,6 +320,9 @@ export default {
     this.loading = true
     this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     this.chartDimensions.height = 520
+    if (!this.modelDetails(this.$route.params.id)) {
+      await this.getModels()
+    }
     await this.getOverview(this.$route.params.id)
     this.fetchLift()
     this.fetchDrift()
@@ -317,6 +347,7 @@ export default {
   methods: {
     ...mapActions({
       getOverview: "models/getOverview",
+      getModels: "models/getAll",
       getLift: "models/getLift",
       getFeatures: "models/getFeatures",
       getModelFeatures: "models/getModelFeatures", // used for Model feature table.
