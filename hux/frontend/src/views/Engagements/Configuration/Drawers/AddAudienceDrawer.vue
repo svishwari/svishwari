@@ -4,7 +4,6 @@
     class="add-audience-drawer-wrapper"
     :width="drawerWidth"
     :loading="loading"
-    expandable
     @onClose="closeDrawer()"
     @iconToggle="changeOverviewListItems"
   >
@@ -119,7 +118,7 @@ export default {
     return {
       loading: false,
       localToggle: false,
-      drawerWidth: 640,
+      drawerWidth: 900,
       newAudienceRules: [(v) => !!v || "Audience name is required"],
       newAudienceValidity: false,
       // TODO: need to make API call and update the cards/sizes of metric cards

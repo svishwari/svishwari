@@ -155,14 +155,12 @@
                         </tooltip>
                         <tooltip>
                           <template #label-content>
-                            <v-icon
+                            <icon
                               v-if="needsCampaignMapping(item)"
-                              small
-                              color="error"
+                              type="information"
+                              :size="16"
                               class="ml-2"
-                            >
-                              mdi-information-outline
-                            </v-icon>
+                            />
                           </template>
                           <template #hover-content>
                             Mapping required to show related metrics.
@@ -260,11 +258,13 @@
                         ),
                       }"
                     >
-                      <div class="d-flex">
-                        <div class="error--text mr-2 mt-1">
-                          <v-icon small color="error" class="icon-info mr-1">
-                            mdi-information-outline
-                          </v-icon>
+                      <div class="d-flex align-center">
+                        <div class="error--text mr-2 d-flex align-center">
+                          <icon
+                            type="information"
+                            :size="16"
+                            class="icon-info mr-2"
+                          />
                           To view KPIs you need to map to a Facebook campaign.
                         </div>
                         <v-btn
@@ -829,9 +829,6 @@ export default {
         }
       }
     }
-  }
-  .icon-info {
-    margin-top: -3px;
   }
   .icon-audiences {
     position: absolute;

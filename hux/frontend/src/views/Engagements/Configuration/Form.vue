@@ -128,7 +128,7 @@
       </form-step>
 
       <form-step :step="3" label="Select audience(s) and destination(s)">
-        <p v-if="hasAudiences" class="text-caption">
+        <p v-if="hasAudiences" class="text-h6">
           First add and deliver an audience to Facebook in order to create a
           lookalike audience from this engagement’s dashboard.
         </p>

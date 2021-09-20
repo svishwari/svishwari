@@ -68,6 +68,7 @@ export default {
         border: 1px solid var(--v-primary-lighten8);
         box-sizing: border-box;
         border-radius: 21px;
+        opacity: inherit;
       }
       .v-input--switch__thumb {
         background: var(--v-primary-lighten8);
@@ -106,7 +107,7 @@ export default {
       .v-label {
         position: absolute !important;
         font-style: normal;
-        font-weight: normal;
+        font-weight: 600;
         font-size: 12px;
         line-height: 16px;
         top: 3px !important;

@@ -4,7 +4,7 @@
       <strong
         v-if="enableTitle"
         :class="{
-          'text-h5 black--text text--darken-4': true,
+          'text-h5 black--text text--darken-4 mb-2 d-block': true,
           'text-caption': applyCaptionStyle,
         }"
       >
@@ -86,10 +86,23 @@
                     @onFinalValue="triggerSizing(condition)"
                   />
                 </div>
-                <div class="condition-actions col-2 pa-0">
-                  <v-icon color="primary" @click="addNewCondition(rule.id)">
-                    mdi-plus-circle
-                  </v-icon>
+                <div
+                  class="
+                    condition-actions
+                    col-2
+                    pa-0
+                    d-flex
+                    align-center
+                    justify-end
+                  "
+                >
+                  <icon
+                    class="add-icon cursor-pointer"
+                    type="add"
+                    :size="24"
+                    @click="addNewCondition(rule.id)"
+                  />
+
                   <v-icon
                     color="primary"
                     @click="removeCondition(rule, ixcondition)"
