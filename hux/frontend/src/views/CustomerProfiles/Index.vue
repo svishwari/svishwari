@@ -19,7 +19,7 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div v-if="!loading">
-      <div class="idr-slide-group">
+      <div class="customer-slide-group">
         <v-slide-group class="row px-15 mt-6 mb-6 row-margin" show-arrows>
           <v-slide-item v-for="(item, index) in primaryItems" :key="index">
             <metric-card
@@ -675,7 +675,7 @@ export default {
     font-size: 30px;
   }
 
-  .idr-slide-group {
+  .customer-slide-group {
     ::v-deep .v-slide-group__wrapper {
       overflow: auto !important;
     }
