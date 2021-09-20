@@ -58,7 +58,7 @@ export default {
       loading: false,
       showConfirmModal: false,
       navigateTo: false,
-      temp: false,
+      flagForModal: false,
     }
   },
 
@@ -75,7 +75,7 @@ export default {
   },
 
   beforeRouteLeave(to, from, next) {
-    if (this.temp == false) {
+    if (this.flagForModal == false) {
       this.showConfirmModal = true
       this.navigateTo = to.name
     } else {
@@ -101,7 +101,7 @@ export default {
     }),
     navigateaway() {
       this.showConfirmModal = false
-      this.temp = true
+      this.flagForModal = true
       this.$router.push({ name: this.navigateTo })
     },
     async loadEngagement(engagementId) {
