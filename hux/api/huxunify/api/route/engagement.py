@@ -16,6 +16,7 @@ from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
 from huxunifylib.connectors import FacebookConnector
+
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.engagement_management import (
@@ -73,6 +74,7 @@ from huxunify.api.data_connectors.performance_metrics import (
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
 )
+from huxunify.api.data_connectors.scheduler import generate_cron
 
 engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 
@@ -280,6 +282,17 @@ class SetEngagement(SwaggerView):
         body = EngagementPostSchema().load(
             request.get_json(), partial=("delivery_schedule",)
         )
+
+        # Check if delivery schedule exists, if exists generate cron string.
+        if body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
+            schedule = body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE).get(
+                api_c.SCHEDULE
+            )
+            if schedule:
+                cron_schedule = generate_cron(schedule)
+                body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                    api_c.SCHEDULE_CRON
+                ] = cron_schedule
 
         database = get_db_client()
         engagement_id = set_engagement(
