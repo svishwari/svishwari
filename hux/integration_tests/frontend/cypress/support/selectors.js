@@ -15,7 +15,7 @@
   // common components
   card: {
     title: "[data-e2e='card-title']",
-    description: "[data-e2e='card-description']"
+    description: "[data-e2e='card-description']",
     },
 
   // navigation
