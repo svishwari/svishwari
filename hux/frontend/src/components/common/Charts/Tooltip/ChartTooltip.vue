@@ -3,13 +3,13 @@
     <v-card
       tile
       class="mx-auto chart-tooltip"
+      :max-width="tooltipStyle.maxWidth"
+      :min-width="tooltipStyle.minWidth"
       :style="{
         transform: `translate(${position.x}px, ${position.y}px)`,
         padding: tooltipStyle.padding,
         top: tooltipStyle.top,
         left: tooltipStyle.left,
-        minWidth: tooltipStyle.minWidth,
-        maxWidth: tooltipStyle.maxWidth,
       }"
     >
       <slot name="content" />
@@ -41,8 +41,8 @@ export default {
           padding: 0,
           top: 0,
           left: 0,
-          minWidth: undefined,
-          maxWidth: undefined,
+          minWidth: 'auto',
+          maxWidth: 'auto',
         }
       },
     },
