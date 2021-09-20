@@ -6,12 +6,8 @@ exports[`Cards Descriptive Card Displays custom properties 1`] = `
   <div class="d-flex justify-center pb-4">
     <icon-stub type="model-unsubscribe" size="60" color="primary" fillopacity="1" class="d-block"></icon-stub>
   </div>
-  <div data-e2e="card-title" class="text-h4 px-3 pb-2 primary--text">
-    Propensity to Unsubscribe
-  </div>
-  <div data-e2e="card-description" class="text-caption px-3">
-    Propensity of a customer making a purchase after receiving an email.
-  </div>
+  <tooltip-stub contentclass="" maxwidth="auto" minwidth="auto !important" nudgeright="100px"></tooltip-stub>
+  <tooltip-stub contentclass="" maxwidth="auto" minwidth="auto !important" nudgeright="100px"></tooltip-stub>
   <!---->
 </v-card-stub>
 `;
@@ -22,12 +18,8 @@ exports[`Cards Descriptive Card Displays custom slots 1`] = `
     <div>Top spot</div>
   </div>
   <!---->
-  <div data-e2e="card-title" class="text-h4 px-3 pb-2 primary--text">
-    Model Name
-  </div>
-  <div data-e2e="card-description" class="text-caption px-3">
-    Descriptive text for the model item chosen above
-  </div>
+  <tooltip-stub contentclass="" maxwidth="auto" minwidth="auto !important" nudgeright="100px"></tooltip-stub>
+  <tooltip-stub contentclass="" maxwidth="auto" minwidth="auto !important" nudgeright="100px"></tooltip-stub>
   <div class="px-3 pt-2">
     <p>Default content</p>
   </div>

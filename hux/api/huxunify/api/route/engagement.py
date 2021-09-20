@@ -73,6 +73,7 @@ from huxunify.api.data_connectors.performance_metrics import (
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
 )
+from huxunify.api.data_connectors.scheduler import generate_cron
 
 engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 
@@ -281,6 +282,17 @@ class SetEngagement(SwaggerView):
             request.get_json(), partial=("delivery_schedule",)
         )
 
+        # Check if delivery schedule exists, if exists generate cron string.
+        if body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
+            schedule = body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE).get(
+                api_c.SCHEDULE
+            )
+            if schedule:
+                cron_schedule = generate_cron(schedule)
+                body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                    api_c.SCHEDULE_CRON
+                ] = cron_schedule
+
         database = get_db_client()
         engagement_id = set_engagement(
             database=database,
@@ -392,6 +404,17 @@ class UpdateEngagement(SwaggerView):
         body = EngagementPutSchema(unknown=api_c.EXCLUDE).load(
             request.get_json()
         )
+
+        # Check if delivery schedule exists, if exists generate cron string.
+        if body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
+            schedule = body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE).get(
+                api_c.SCHEDULE
+            )
+            if schedule:
+                cron_schedule = generate_cron(schedule)
+                body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                    api_c.SCHEDULE_CRON
+                ] = cron_schedule
 
         database = get_db_client()
 

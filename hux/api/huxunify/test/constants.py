@@ -912,6 +912,32 @@ IDR_MATCHING_TRENDS_BY_DAY_DATA = {
     ],
 }
 
+SCHEDULES = [
+    {
+        api_c.PERIODICIY: api_c.DAILY,
+        api_c.EVERY: 2,
+        api_c.HOUR: 3,
+        api_c.MINUTE: 4,
+        api_c.PERIOD: api_c.PM,
+    },
+    {
+        api_c.PERIODICIY: api_c.WEEKLY,
+        api_c.EVERY: 2,
+        api_c.HOUR: 3,
+        api_c.MINUTE: 4,
+        api_c.PERIOD: api_c.PM,
+        api_c.DAY_OF_WEEK: api_c.DAY_LIST[0:2],
+    },
+]
+
+DAILY_SCHEDULE_INVALID = {
+    api_c.PERIODICIY: api_c.DAILY,
+    api_c.EVERY: 2,
+    api_c.HOUR: 300,
+    api_c.MINUTE: 400,
+    api_c.PERIOD: api_c.PM,
+}
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False

@@ -35,15 +35,17 @@ def generate_cron(schedule: dict) -> str:
         str: cron expression
     """
 
-    cron_exp["minute"] = schedule.get("minute")
+    cron_exp["minute"] = schedule.get("minute", "*")
     if schedule.get("period") == "AM":
         cron_exp["hour"] = (
-            0 if schedule.get("hour") == 12 else schedule.get("hour")
+            0 if schedule.get("hour") == 12 else schedule.get("hour", "*")
         )
     else:
-        cron_exp["hour"] = schedule.get("hour") + 12
-    cron_exp["day_of_month"] = schedule.get("day_of_month")
-    cron_exp["month"] = schedule.get("month")
+        if schedule.get("hour"):
+            cron_exp["hour"] = schedule.get("hour") + 12
+    cron_exp["day_of_month"] = schedule.get("day_of_month", "*")
+    cron_exp["month"] = schedule.get("month", "*")
+
     if schedule["periodicity"] == "Weekly":
         cron_exp["day_of_month"] = "?"
         if schedule["every"] > 1:
