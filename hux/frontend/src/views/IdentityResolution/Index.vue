@@ -333,10 +333,10 @@ export default {
   .idr-overview {
     .idr-slide-group {
       ::v-deep .v-slide-group__wrapper {
-        overflow: auto !important
+        overflow: auto !important;
       }
       ::v-deep .v-icon--disabled {
-        display: none !important
+        display: none !important;
       }
     }
   }
