@@ -77,7 +77,7 @@
     </template>
     <template>
       <v-row v-if="!loadingOverview" no-gutters class="idr-overview">
-        <v-slide-group show-arrows>
+        <v-slide-group class="idr-slide-group" show-arrows>
           <v-slide-item v-for="(metric, index) in overview" :key="index">
             <metric-card
               :title="metric.title"
@@ -328,3 +328,17 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.idr-wrapper {
+  .idr-overview {
+    .idr-slide-group {
+      ::v-deep .v-slide-group__wrapper {
+        overflow: auto !important
+      }
+      ::v-deep .v-icon--disabled {
+        display: none !important
+      }
+    }
+  }
+}
+</style>
