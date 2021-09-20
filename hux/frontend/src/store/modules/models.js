@@ -16,6 +16,7 @@ const state = {
 
 const getters = {
   list: (state) => Object.values(state.items),
+  single: (state) => (id) => state.items[`_${id}`],
   overview: (state) => state.overview,
   history: (state) => Object.values(state.history),
   lift: (state) => state.lift,
