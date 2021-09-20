@@ -19,57 +19,63 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div v-if="!loading">
-      <div class="row px-15 mt-6 mb-6 row-margin">
-        <metric-card
-          v-for="item in primaryItems"
-          :key="item.title"
-          class="card-margin"
-          :grow="item.toolTipText ? 1 : 0"
-          :icon="item.icon"
-          :title="item.title"
-        >
-          <template #subtitle-extended>
-            <tooltip v-if="!item.toolTipText">
-              <template #label-content>
-                <span class="font-weight-semi-bold" v-html="updatedTimeStamp">
-                </span>
+      <div class="idr-slide-group">
+        <v-slide-group class="row px-15 mt-6 mb-6 row-margin" show-arrows>
+          <v-slide-item v-for="(item, index) in primaryItems" :key="index">
+            <metric-card
+              :key="item.title"
+              class="card-margin"
+              :grow="item.toolTipText ? 1 : 0"
+              :icon="item.icon"
+              :title="item.title"
+            >
+              <template #subtitle-extended>
+                <tooltip v-if="!item.toolTipText">
+                  <template #label-content>
+                    <span
+                      class="font-weight-semi-bold"
+                      v-html="updatedTimeStamp"
+                    >
+                    </span>
+                  </template>
+                  <template #hover-content>
+                    {{ item.subtitle }}
+                  </template>
+                </tooltip>
+                <tooltip v-if="item.toolTipText">
+                  <template #label-content>
+                    <span class="font-weight-semi-bold">
+                      <span v-if="item.value == 'percentage'">
+                        {{ item.subtitle | Numeric(true, false, false, true) }}
+                      </span>
+                      <span v-if="item.value == 'numeric'">
+                        {{ item.subtitle | Numeric(true, true) }}
+                      </span>
+                    </span>
+                  </template>
+                  <template #hover-content>
+                    <span v-if="item.value == 'percentage'">
+                      {{ item.subtitle | Numeric(true, false, false, true) }}
+                    </span>
+                    <span v-else>
+                      {{ item.subtitle | Numeric(true, false, false) }}
+                    </span>
+                  </template>
+                </tooltip>
               </template>
-              <template #hover-content>
-                {{ item.subtitle }}
+              <template v-if="item.toolTipText" #extra-item>
+                <tooltip position-top>
+                  <template #label-content>
+                    <icon type="info" :size="12" />
+                  </template>
+                  <template #hover-content>
+                    {{ item.toolTipText }}
+                  </template>
+                </tooltip>
               </template>
-            </tooltip>
-            <tooltip v-if="item.toolTipText">
-              <template #label-content>
-                <span class="font-weight-semi-bold">
-                  <span v-if="item.value == 'percentage'">
-                    {{ item.subtitle | Numeric(true, false, false, true) }}
-                  </span>
-                  <span v-if="item.value == 'numeric'">
-                    {{ item.subtitle | Numeric(true, true) }}
-                  </span>
-                </span>
-              </template>
-              <template #hover-content>
-                <span v-if="item.value == 'percentage'">
-                  {{ item.subtitle | Numeric(true, false, false, true) }}
-                </span>
-                <span v-else>
-                  {{ item.subtitle | Numeric(true, false, false) }}
-                </span>
-              </template>
-            </tooltip>
-          </template>
-          <template v-if="item.toolTipText" #extra-item>
-            <tooltip position-top>
-              <template #label-content>
-                <icon type="info" :size="12" />
-              </template>
-              <template #hover-content>
-                {{ item.toolTipText }}
-              </template>
-            </tooltip>
-          </template>
-        </metric-card>
+            </metric-card>
+          </v-slide-item>
+        </v-slide-group>
       </div>
       <div v-if="overviewListItems" class="px-15 my-1">
         <v-card class="rounded pa-5 box-shadow-5">
@@ -667,6 +673,15 @@ export default {
   }
   ::v-deep .metric-card-wrapper .v-icon::before {
     font-size: 30px;
+  }
+
+  .idr-slide-group {
+    ::v-deep .v-slide-group__wrapper {
+      overflow: auto !important;
+    }
+    ::v-deep .v-icon--disabled {
+      display: none !important;
+    }
   }
 }
 
