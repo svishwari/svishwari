@@ -16,6 +16,7 @@ from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
 import huxunifylib.database.constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api import config
+from huxunify.api.config import get_config
 from huxunify.api.prometheus import record_health_status_metric
 
 
@@ -160,7 +161,12 @@ def check_aws_connection(client="s3") -> Tuple[bool, str]:
     try:
         # lookup the health test to run from api constants
         health_test = api_c.AWS_HEALTH_TESTS[client]
-        getattr(get_aws_client(client), health_test[0])(**health_test[1])
+        if client == api_c.S3:
+            getattr(get_aws_client(client), health_test[0])(
+                **{api_c.AWS_BUCKET: get_config().S3_DATASET_BUCKET}
+            )
+        else:
+            getattr(get_aws_client(client), health_test[0])(**health_test[1])
         record_health_status_metric(api_c.AWS_SSM_CONNECTION_HEALTH, True)
         record_health_status_metric(api_c.AWS_BATCH_CONNECTION_HEALTH, True)
         return True, f"{client} available."
@@ -189,6 +195,27 @@ def check_aws_batch() -> Tuple[bool, str]:
             and the message.
     """
     return check_aws_connection(api_c.AWS_BATCH_NAME)
+
+
+def check_aws_s3() -> Tuple[bool, str]:
+    """Validate AWS S3 Function
+
+    Returns:
+        tuple[bool, str]: Returns if the AWS connection is valid,
+            and the message.
+
+    """
+    return check_aws_connection(api_c.S3)
+
+
+def check_aws_events() -> Tuple[bool, str]:
+    """
+
+    Returns:
+        tuple[bool, str]: Returns if the AWS connection is valid,
+            and the message.
+    """
+    return check_aws_connection(api_c.AWS_EVENTS_NAME)
 
 
 def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
