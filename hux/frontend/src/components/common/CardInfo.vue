@@ -27,10 +27,11 @@
         <v-card-title
           class="justify-center font-weight-regular"
           :class="{ 'primary--text': active }"
+          data-e2e="card-title"
         >
           {{ title }}
         </v-card-title>
-        <v-card-subtitle :class="{ 'black--text text--darken-4': active }">
+        <v-card-subtitle data-e2e="card-description" :class="{ 'black--text text--darken-4': active }">
           {{ description }}
         </v-card-subtitle>
       </v-card>
