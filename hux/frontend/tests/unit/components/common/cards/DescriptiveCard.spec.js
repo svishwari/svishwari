@@ -17,8 +17,6 @@ describe("Cards", () => {
       // TODO: since the content is now moved inside tooltip it is stubbing
       // the tooltip and not mounting the title and description in shallowMount
       // mounting the element needs to load alot of dependencies which needs further investigation.
-      // expect(wrapper.text()).toContain(customProps.title)
-      // expect(wrapper.text()).toContain(customProps.description)
       expect(wrapper).toMatchSnapshot()
     })
 
