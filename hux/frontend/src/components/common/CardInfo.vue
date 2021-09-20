@@ -31,7 +31,10 @@
         >
           {{ title }}
         </v-card-title>
-        <v-card-subtitle data-e2e="card-description" :class="{ 'black--text text--darken-4': active }">
+        <v-card-subtitle
+          data-e2e="card-description"
+          :class="{ 'black--text text--darken-4': active }"
+        >
           {{ description }}
         </v-card-subtitle>
       </v-card>
