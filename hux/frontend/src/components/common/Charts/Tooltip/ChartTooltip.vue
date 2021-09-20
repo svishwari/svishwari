@@ -42,7 +42,7 @@ export default {
           top: 0,
           left: 0,
           minWidth: 0,
-          maxWidth: 0
+          maxWidth: 0,
         }
       },
     },
