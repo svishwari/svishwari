@@ -38,7 +38,9 @@ export default {
   },
 
   //IDR
-  identityResolution: "a[href='/identity-resolution']",
-  overview: "[data-e2e='overviewList']",
-  datafeed: "[data-e2e='datafeedtable']",
+  idr: {
+    identityResolution: "a[href='/identity-resolution']",
+    overview: "[data-e2e='overviewList']",
+    datafeed: "[data-e2e='datafeedtable']",
+  }
 }

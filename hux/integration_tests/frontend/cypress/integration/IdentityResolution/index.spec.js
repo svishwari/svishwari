@@ -1,7 +1,7 @@
 import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
-describe("Tests overview in Identity Resolution", () => {
+describe("Data management > Identity resolution", () => {
   before(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
@@ -9,31 +9,31 @@ describe("Tests overview in Identity Resolution", () => {
     })
   })
 
-  it("testing data management >  identity resolution", () => {
+  it("should be able to view the overview", () => {
     cy.location("pathname").should("eq", route.overview)
 
     //click on identity resolution on side nav bar
-    cy.get(selector.identityResolution).click()
+    cy.get(selector.idr.identityResolution).click()
     cy.location("pathname").should("eq", route.identityResolution)
 
   })
 
-  it("testing data management >  identity resolution > overview", () => {
+  it("should be able to view the matching trends", () => {
 
     //validate overview exist by getting total no. of them
-    cy.get(selector.overview).its("length").as("overviewListCount")
+    cy.get(selector.idr.overview).its("length").as("overviewListCount")
     cy.get("@overviewListCount").then((overviewListCount) => {
-        cy.get(selector.overview).its("length").should("eq", overviewListCount)
+        cy.get(selector.idr.overview).its("length").should("eq", 7)
     })
 
   })
 
-  it("testing data management >  identity resolution > data feed", () => {
+  it("should be able to view the data feeds", () => {
 
     //validate data feed
-    cy.get(selector.datafeed).its("length").as("datafeedListCount")
+    cy.get(selector.idr.datafeed).its("length").as("datafeedListCount")
     cy.get("@datafeedListCount").then((datafeedListCount) => {
-        cy.get(selector.datafeed).its("length").should("eq", datafeedListCount)
+        cy.get(selector.idr.datafeed).its("length").should("gt", 0)
     })
 
   })
