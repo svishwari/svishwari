@@ -160,14 +160,13 @@ const actions = {
         name: engagement.name,
 
         description: engagement.description,
-        delivery_schedule:
-          engagement.delivery_schedule === 0
+        delivery_schedule:  engagement.delivery_schedule === 0
             ? null
             : {
-                end_date: engagement.end_date,
-                start_date: engagement.start_date,
+                schedule: engagement.delivery_schedule.schedule,
+                end_date: engagement.delivery_schedule.end_date,
+                start_date: engagement.delivery_schedule.start_date,
               },
-
         audiences: Object.values(engagement.audiences).map((audience) => {
           return {
             id: audience.id,
