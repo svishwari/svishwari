@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex navbar-menu align-center">
     <header-navigation />
-    <v-divider vertical color="lightGrey" />
+    <v-divider vertical color="black lighten-3" />
     <user-avatar />
   </div>
 </template>
@@ -40,7 +40,7 @@ export default {
   .v-divider {
     &.v-divider--vertical {
       border: 0;
-      border-left: 1px solid var(--v-lightGrey-base);
+      border-left: 1px solid var(--v-black-lighten3);
       margin-right: 9px;
       margin-left: 9px;
     }

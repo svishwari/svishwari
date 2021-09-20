@@ -63,7 +63,7 @@ const mutations = {
   },
 
   SET_ONE(state, item) {
-    Vue.set(state.items, item.hux_id, item)
+    Vue.set(state.items, item["overview"]["hux_id"], item)
   },
 
   SET_OVERVIEW(state, data) {

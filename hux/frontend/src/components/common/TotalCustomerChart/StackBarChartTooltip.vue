@@ -8,7 +8,7 @@
     }"
     class="mx-auto tooltip-style"
   >
-    <div class="neroBlack--text caption">
+    <div class="black--text text--darken-4 caption">
       <div class="value-section">
         {{ sourceInput.date | Date("MM/DD/YYYY") }}
       </div>
@@ -72,6 +72,7 @@ export default {
 
 .tooltip-style {
   @extend .box-shadow-3;
+  pointer-events: none;
   border-radius: 0px;
   padding: 8px 8px 15px 8px;
   max-width: 172px;

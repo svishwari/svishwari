@@ -38,12 +38,12 @@
               <template #hover-content>
                 <v-sheet max-width="240px">
                   <h6 class="text-caption mb-2">Manual delivery</h6>
-                  <p class="gray--text">
+                  <p class="black--text text--darken-1">
                     Choose this option if you want the engagement delivered
                     immediately or at a future date and time.
                   </p>
                   <h6 class="text-caption mb-2">Recurring delivery</h6>
-                  <p class="gray--text">
+                  <p class="black--text text--darken-1">
                     Choose this option if you want the engagement delivered on a
                     specific recurring basis you selected.
                   </p>
@@ -92,7 +92,9 @@
         </v-row>
         <v-row v-if="isRecurring" class="delivery-schedule mt-10 ml-n2">
           <div>
-            <span class="date-picker-label neroBlack--text text-caption">
+            <span
+              class="date-picker-label black--text text--darken-4 text-caption"
+            >
               Start date
             </span>
             <hux-start-date
@@ -102,9 +104,11 @@
               @on-date-select="onStartDateSelect"
             />
           </div>
-          <icon class="mx-2" type="arrow" :size="28" color="lightGrey" />
+          <icon class="mx-2" type="arrow" :size="28" color="black-lighten3" />
           <div>
-            <span class="date-picker-label neroBlack--text text-caption">
+            <span
+              class="date-picker-label black--text text--darken-4 text-caption"
+            >
               End date
             </span>
             <hux-end-date
@@ -606,21 +610,27 @@ export default {
 
     onStartDateSelect(val) {
       this.selectedStartDate = val
-      this.selectedEndDate = null
-      this.disableEndDate = false
       this.$set(this.value, "recurring", {
         start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
-        end: null,
+        end: this.$options.filters.Date(this.selectedEndDate, "MMM D") || null,
       })
       this.endMinDate = val
     },
 
     onEndDateSelect(val) {
-      this.selectedEndDate = val
-      this.$set(this.value, "recurring", {
-        start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
-        end: this.$options.filters.Date(this.selectedEndDate, "MMM D"),
-      })
+      if (!val) {
+        this.selectedEndDate = "No end date"
+        this.$set(this.value, "recurring", {
+          start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
+          end: null,
+        })
+      } else {
+        this.selectedEndDate = val
+        this.$set(this.value, "recurring", {
+          start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
+          end: this.$options.filters.Date(this.selectedEndDate, "MMM D"),
+        })
+      }
     },
   },
 }
@@ -632,11 +642,11 @@ export default {
   border-radius: 4px;
 
   &.v-radio--is-disabled {
-    border-color: var(--v-lightGrey-base);
+    border-color: var(--v-black-lighten3);
   }
 }
 .btn-radio-inactive {
-  border: 1px solid var(--v-lightGrey-base);
+  border: 1px solid var(--v-black-lighten3);
   @extend .btn-radio;
 }
 .btn-radio-active {
@@ -685,7 +695,7 @@ export default {
     margin-left: 12px;
     margin-right: 12px;
     margin-top: -30px;
-    color: var(--v-lightGrey-base) !important;
+    color: var(--v-black-lighten3) !important;
   }
 }
 .date-picker-label {

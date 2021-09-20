@@ -1,9 +1,10 @@
 <template>
   <div
     v-if="showTooltip"
-    class="tooltip"
+    tile
+    class="mx-auto tooltip"
     :style="{
-      transform: `translate(${tooltip.x}px, ${tooltip.y}px)`,
+      transform: `translate(${sourceInput.xPosition}px, ${sourceInput.yPosition}px)`,
     }"
   >
     <v-card tile>
@@ -12,20 +13,26 @@
         <span v-if="sourceInput.label == 'Women'" class="circle-women"></span>
         <span v-if="sourceInput.label == 'Other'" class="circle-other"></span>
 
-        <span v-if="sourceInput.label == 'Men'" class="royalBlue--text">
+        <span
+          v-if="sourceInput.label == 'Men'"
+          class="primary--text text--darken-1"
+        >
           {{ sourceInput.label }}
         </span>
         <span v-if="sourceInput.label == 'Women'" class="primary--text">
           {{ sourceInput.label }}
         </span>
-        <span v-if="sourceInput.label == 'Other'" class="oceanBlue--text">
+        <span
+          v-if="sourceInput.label == 'Other'"
+          class="primary--text text--lighten-7"
+        >
           {{ sourceInput.label }}
         </span>
       </div>
-      <div class="percentage neroBlack--text">
+      <div class="percentage black--text text--darken-4">
         {{ getPercentage(sourceInput.population_percentage) }}
       </div>
-      <div class="value neroBlack--text">{{ sourceInput.size }}</div>
+      <div class="value black--text text--darken-4">{{ sourceInput.size }}</div>
     </v-card>
   </div>
 </template>
@@ -75,16 +82,17 @@ export default {
   width: 82px !important;
   height: 64px;
   position: absolute;
+  pointer-events: none;
   .v-card {
     padding: 8px 8px;
     @extend .box-shadow-25;
     .circle-men {
       @extend .circle;
-      border: 2px solid var(--v-royalBlue-base);
+      border: 2px solid var(--v-primary-darken1);
     }
     .circle-other {
       @extend .circle;
-      border: 2px solid var(--v-oceanBlue-base);
+      border: 2px solid var(--v-primary-lighten7);
     }
     .circle-women {
       @extend .circle;

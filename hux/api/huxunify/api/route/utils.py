@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Tuple
 from http import HTTPStatus
 from bson import ObjectId
+from pandas import DataFrame
 
 from healthcheck import HealthCheck
 from decouple import config
@@ -34,6 +35,7 @@ from huxunify.api.data_connectors.cdp import check_cdm_api_connection
 from huxunify.api.data_connectors.cdp_connection import (
     check_cdp_connections_api_connection,
 )
+from huxunify.api.prometheus import record_health_status_metric
 
 
 def handle_api_exception(exc: Exception, description: str = "") -> None:
@@ -78,10 +80,12 @@ def check_mongo_connection() -> Tuple[bool, str]:
     try:
         # test finding documents
         get_all_data_sources(get_db_client())
+        record_health_status_metric(constants.MONGO_CONNECTION_HEALTH, True)
         return True, "Mongo available."
     # pylint: disable=broad-except
     # pylint: disable=unused-variable
     except Exception as exception:
+        record_health_status_metric(constants.MONGO_CONNECTION_HEALTH, False)
         return False, "Mongo not available."
 
 
@@ -213,6 +217,28 @@ def update_metrics(
     return metric
 
 
+def add_chart_legend(data: dict) -> dict:
+    """Add chart legend data.
+
+    Args:
+        data (dict) : Chart data.
+
+    Returns:
+        response(dict): Chart data with legend details.
+    """
+
+    for val in [
+        constants.NAME,
+        constants.EMAIL,
+        constants.PHONE,
+        constants.ADDRESS,
+        constants.COOKIE,
+    ]:
+        data[val][constants.PROP] = val.title()
+        data[val][constants.ICON] = val
+    return data
+
+
 def group_gender_spending(gender_spending: list) -> dict:
     """Groups gender spending by gender/month.
 
@@ -261,3 +287,18 @@ def group_gender_spending(gender_spending: list) -> dict:
             for x in gender_spending
         ],
     }
+
+
+def transform_fields_generic_file(
+    dataframe: DataFrame,
+) -> DataFrame:
+    """Returns the csv file data without any transformation.
+
+    Args:
+        dataframe (DataFrame): input dataframe.
+
+    Returns:
+        (DataFrame): input dataframe.
+    """
+
+    return dataframe

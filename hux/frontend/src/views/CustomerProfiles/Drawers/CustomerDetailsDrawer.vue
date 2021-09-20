@@ -6,18 +6,14 @@
   >
     <template #header-left>
       <div class="d-flex align-center">
-        <h3 class="text-h3 ml-1 neroBlack--text">Customers</h3>
+        <h3 class="text-h3 ml-1 black--text text--darken-4">Customers</h3>
       </div>
     </template>
 
     <template #default>
       <v-progress-linear :active="loading" :indeterminate="loading" />
-      <page-header class="top-bar" :header-height="40" :header-padding="'px-4'">
-        <template slot="left">
-          <v-icon size="18" color="lightGrey">mdi-magnify</v-icon>
-        </template>
-      </page-header>
       <hux-data-table
+        v-if="!loading"
         :columns="columnDefs"
         :sort-column="'hux_id'"
         :data-items="customers"
@@ -40,21 +36,21 @@
                 {{ item[header.value] }}
               </router-link>
               <template #tooltip>
-                <div class="my-2 gray--text">
+                <div class="my-2 black--text text--darken-1">
                   Hux ID:
-                  <span class="font-weight-semi-bold neroBlack--text">
+                  <span class="black--text text--darken-4">
                     {{ item[header.value] }}
                   </span>
                 </div>
-                <div class="my-2 gray--text">
+                <div class="my-2 black--text text--darken-1">
                   Full name:
-                  <span class="font-weight-semi-bold neroBlack--text">
+                  <span class="black--text text--darken-4">
                     {{ item.last_name }}, {{ item.first_name }}
                   </span>
                 </div>
-                <div class="my-2 gray--text">
+                <div class="my-2 black--text text--darken-1">
                   Match confidence:
-                  <span class="font-weight-semi-bold neroBlack--text">
+                  <span class="black--text text--darken-4">
                     {{
                       item.match_confidence | Numeric(true, false, false, true)
                     }}
@@ -84,7 +80,15 @@
     </template>
     <template #footer-left>
       <tooltip>
-        <div class="d-flex align-baseline footer-font gray--text text-caption">
+        <div
+          class="
+            d-flex
+            align-baseline
+            footer-font
+            black--text
+            text--darken-1 text-caption
+          "
+        >
           {{ customerOverview.total_customers | Numeric(true, true) }} results
         </div>
         <template #tooltip>
@@ -102,7 +106,6 @@ import Drawer from "@/components/common/Drawer"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import HuxSlider from "@/components/common/HuxSlider"
 import Tooltip from "@/components/common/Tooltip"
-import PageHeader from "@/components/PageHeader"
 import Observer from "@/components/common/Observer"
 
 export default {
@@ -112,7 +115,6 @@ export default {
     HuxDataTable,
     HuxSlider,
     Tooltip,
-    PageHeader,
     Observer,
   },
 
@@ -222,7 +224,7 @@ export default {
   margin-top: 1px;
 }
 ::v-deep .v-sheet .theme--light .v-toolbar {
-  background: var(--v-aliceBlue-base);
+  background: var(--v-primary-lighten2);
 }
 ::v-deep .theme--light.v-sheet {
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
@@ -234,7 +236,7 @@ export default {
         height: 40px !important;
       }
       th {
-        background: var(--v-aliceBlue-base);
+        background: var(--v-primary-lighten2);
       }
     }
     > .v-data-table__wrapper {
@@ -276,6 +278,6 @@ export default {
   font-weight: normal;
   font-size: 12px;
   line-height: 16px;
-  color: var(gray);
+  color: var(--v-black-darken1);
 }
 </style>

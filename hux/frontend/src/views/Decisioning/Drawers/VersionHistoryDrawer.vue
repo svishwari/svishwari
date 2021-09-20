@@ -6,13 +6,14 @@
   >
     <template #header-left>
       <div class="d-flex align-center">
-        <icon type="history" :size="20" color="neroBlack" class="mr-2" />
-        <h3 class="text-h3 ml-1 darkGrey--text">Version history</h3>
+        <icon type="history" :size="20" color="black-darken4" class="mr-2" />
+        <h3 class="text-h3 ml-1 black--text text--darken-3">Version history</h3>
       </div>
     </template>
     <template #default>
       <v-progress-linear :active="loading" :indeterminate="loading" />
       <hux-data-table
+        v-if="!loading"
         :columns="columnDefs"
         :sort-column="sortColumn"
         :sort-desc="sortDesc"
@@ -26,36 +27,36 @@
           >
             <tooltip v-if="header.value == 'version'">
               <span
-                class="cell neroBlack--text ml-2"
+                class="cell black--text text--darken-4 ml-2"
                 :class="[item.current ? 'font-weight-bold' : '']"
               >
                 {{ item.version }}
               </span>
-              <span class="cell neroBlack--text ml-1">
+              <span class="cell black--text text--darken-4 ml-1">
                 {{ item.current && "(Current)" }}
               </span>
               <template #tooltip>
-                <div class="my-2 neroBlack--text">
+                <div class="my-2 black--text text--darken-4">
                   Trained date
-                  <div class="neroBlack--text">
+                  <div class="black--text text--darken-4">
                     {{ item.trained_date | Date | Empty }}
                   </div>
                 </div>
-                <div class="my-2 neroBlack--text">
+                <div class="my-2 black--text text--darken-4">
                   Fulcrum date
-                  <div class="neroBlack--text">
+                  <div class="black--text text--darken-4">
                     {{ item.fulcrum_date | Date | Empty }}
                   </div>
                 </div>
-                <div class="my-2 neroBlack--text">
+                <div class="my-2 black--text text--darken-4">
                   Lookback period (Days)
-                  <div class="neroBlack--text">
+                  <div class="black--text text--darken-4">
                     {{ item.lookback_window }}
                   </div>
                 </div>
-                <div class="my-2 neroBlack--text">
+                <div class="my-2 black--text text--darken-4">
                   Prediction period (Days)
-                  <div class="neroBlack--text">
+                  <div class="black--text text--darken-4">
                     {{ item.prediction_window }}
                   </div>
                 </div>
@@ -63,19 +64,22 @@
             </tooltip>
 
             <tooltip v-if="header.value == 'description'">
-              <span class="cell neroBlack--text ellipsis-23">
+              <span class="cell black--text text--darken-4 ellipsis-23">
                 {{ item.description }}
               </span>
               <template #tooltip>
-                <div class="my-2 gray--text">
-                  <div class="neroBlack--text">
+                <div class="my-2 black--text text--darken-1">
+                  <div class="black--text text--darken-4">
                     {{ item.description }}
                   </div>
                 </div>
               </template>
             </tooltip>
 
-            <div v-if="header.value == 'status'" class="neroBlack--text">
+            <div
+              v-if="header.value == 'status'"
+              class="black--text text--darken-4"
+            >
               <status
                 :status="item.status"
                 :show-label="true"
@@ -86,7 +90,7 @@
 
             <div
               v-if="header.value == 'trained_date'"
-              class="cell neroBlack--text"
+              class="cell black--text text--darken-4"
             >
               <time-stamp :value="item.trained_date" />
             </div>
@@ -96,7 +100,9 @@
     </template>
     <template #footer-left>
       <tooltip>
-        <div class="d-flex align-baseline gray--text text-caption">
+        <div
+          class="d-flex align-baseline black--text text--darken-1 text-caption"
+        >
           {{ versionHistoryList.length }} results
         </div>
         <template #tooltip> {{ versionHistoryList.length }} results </template>
@@ -203,7 +209,7 @@ export default {
         height: 40px !important;
       }
       th {
-        background: var(--v-aliceBlue-base);
+        background: var(--v-primary-lighten2);
       }
       th:nth-child(1) {
         padding-left: 24px;

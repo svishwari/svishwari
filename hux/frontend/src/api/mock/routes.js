@@ -10,7 +10,7 @@ import {
   destinationsDataExtensions,
 } from "./factories/destination"
 import { idrOverview, idrDataFeedReport } from "./factories/identity"
-import { mockDataFeeds } from "./factories/dataSource"
+import { dataFeeds } from "./factories/dataSource"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import audienceCSVData from "./factories/audienceCSVData"
@@ -20,7 +20,7 @@ import demographicsData from "@/api/mock/fixtures/demographicData.js"
 import customerEventData from "@/api/mock/fixtures/customerEventData.js"
 import totalCustomersData from "./fixtures/totalCustomersData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
-import idrMatchingTrend from "@/api/mock/fixtures/idrMatchingTrendData.js"
+import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -28,8 +28,10 @@ export const defineRoutes = (server) => {
 
   server.get("/data-sources/:id")
 
-  server.get("/data-sources/:type/datafeeds", () => {
-    return mockDataFeeds(5)
+  server.get("/data-sources/:type/datafeeds", (schema, request) => {
+    const dataSourceType = request.params["type"]
+    const dataSource = schema.dataSources.findBy({ type: dataSourceType }).attrs
+    return dataFeeds(dataSource)
   })
 
   server.patch("/data-sources", (schema, request) => {
@@ -399,10 +401,10 @@ export const defineRoutes = (server) => {
 
   server.get("/customers/:hux_id", (schema, request) => {
     const huxId = request.params.hux_id
-    return server.create(
-      "customerProfile",
-      schema.customers.findBy({ hux_id: huxId }).attrs
-    )
+    const attrs = schema.customers.findBy({ hux_id: huxId }).attrs
+    const customerProfile = server.create("customerProfile")
+    customerProfile["overview"] = { ...customerProfile["overview"], ...attrs }
+    return customerProfile
   })
 
   server.get("/customers/overview", () => customersOverview)
@@ -449,7 +451,7 @@ export const defineRoutes = (server) => {
         start_date: faker.date.past(5),
         end_date: dayjs().toJSON(),
       },
-      overview: idrOverview,
+      overview: idrOverview(),
     }
   })
   server.get(
@@ -460,7 +462,7 @@ export const defineRoutes = (server) => {
     { timing: 10 }
   )
   server.get("/idr/datafeeds/:datafeed_id", () => idrDataFeedReport)
-  server.get("/idr/matching-trends", () => idrMatchingTrend)
+  server.get("/idr/matching-trends", () => idrMatchingTrends)
 
   // notifications
   server.get("/notifications", (schema, request) => {

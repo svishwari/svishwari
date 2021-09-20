@@ -70,7 +70,7 @@
                   </div>
                   <v-spacer></v-spacer>
                   <huxButton
-                    variant="tertiary"
+                    variant="white"
                     is-tile
                     class="btn-cancel ml-4"
                     @click="onCancel()"
@@ -78,7 +78,7 @@
                     Cancel
                   </huxButton>
                   <huxButton
-                    variant="tertiary"
+                    variant="white"
                     is-tile
                     class="btn-select mr-4"
                     @click="
@@ -148,7 +148,7 @@ export default {
       this.$refs.endmenu.$parent.$el.parentNode.children[0].click()
     },
     resetDate() {
-      this.selected = "No end date"
+      this.$emit("on-date-select", null)
       this.onCancel()
     },
     selectDate(data) {
@@ -158,7 +158,6 @@ export default {
   },
 }
 </script>
-
 <style lang="scss" scoped>
 .hux-date-picker {
   .main-button {
@@ -167,7 +166,7 @@ export default {
     padding: 0 16px;
     border-style: solid !important;
     border-width: 1px;
-    border-color: var(--v-lightGrey-base) !important;
+    border-color: var(--v-black-lighten3) !important;
     border-radius: 0;
     box-shadow: none !important;
     background-color: var(--v-white-base) !important;
@@ -176,10 +175,10 @@ export default {
     line-height: 22px;
     width: auto !important;
     min-width: 200px;
-    color: var(--v-neroBlack-base);
+    color: var(--v-black-darken4);
     width: 215px !important;
     height: 42px;
-    border: 1px solid var(--v-lightGrey-base) !important;
+    border: 1px solid var(--v-black-lighten3) !important;
     border-radius: 4px;
     ::v-deep .v-btn__content {
       .spacer {
@@ -197,7 +196,7 @@ export default {
   min-width: 230px;
   font-size: 14px;
   line-height: 22px !important;
-  color: var(--v-neroBlack-base);
+  color: var(--v-black-darken4);
   .v-list-item {
     min-height: 32px;
     .v-list-item__title {
@@ -206,24 +205,24 @@ export default {
   }
   .group_title {
     text-transform: uppercase;
-    color: var(--v-gray-base);
+    color: var(--v-black-darken1);
   }
 }
 .end-date-picker {
   ::v-deep .v-picker__body {
     margin-top: 30px;
-    border-bottom: 1px solid var(--v-lightGrey-base);
+    border-bottom: 1px solid var(--v-black-lighten3);
     .v-date-picker-table {
       table {
         border-collapse: collapse;
         thead {
-          border-bottom: 1px solid var(--v-lightGrey-base);
+          border-bottom: 1px solid var(--v-black-lighten3);
         }
       }
       .v-btn--active {
         background-color: rgba(0, 124, 176, 0.2) !important;
         .v-btn__content {
-          color: var(--v-neroBlack-base) !important;
+          color: var(--v-black-darken4) !important;
         }
       }
     }
@@ -244,7 +243,7 @@ export default {
     margin-top: -315px;
     padding: 4px 20px;
     width: 94%;
-    background-color: var(--v-aliceBlue-base) !important;
+    background-color: var(--v-primary-lighten2) !important;
     .header-value {
       margin-left: 48px;
       color: var(--v-primary-base) !important;

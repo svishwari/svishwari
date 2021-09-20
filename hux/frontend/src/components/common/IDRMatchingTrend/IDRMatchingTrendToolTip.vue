@@ -9,6 +9,9 @@
   >
     <div class="neroBlack--text caption">
       <div class="value-section">
+        <div class="date-font">
+          {{ sourceInput.date | Date("MMM DD[,] YYYY") }}
+        </div>
         <div>
           <span class="append-circle color-known-ids"></span>
           <span class="font-size-tooltip">
@@ -63,6 +66,7 @@ export default {
   line-height: 19px;
 }
 .tooltip-style {
+  pointer-events: none;
   @extend .box-shadow-3;
   border-radius: 0px;
   padding: 8px 8px 15px 8px;

@@ -131,15 +131,16 @@
           </v-slide-item>
         </v-slide-group>
       </v-row>
-      <v-row class="px-2 mt-2">
+      <v-row class="px-2 mt-0 mb-1">
         <v-col md="12">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="422">
+          <v-card class="mt-3 rounded-lg box-shadow-5" min-height="400">
             <v-progress-linear
               v-if="loadingMatchingTrends"
               :active="loadingMatchingTrends"
               :indeterminate="loadingMatchingTrends"
             />
-            <v-card-title class="chart-style pb-12 pl-5 pt-5">
+
+            <v-card-title class="chart-style pb-8 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
                   ID Resolution matching trends
@@ -147,10 +148,31 @@
               </div>
             </v-card-title>
 
-            <i-d-r-matching-trend
-              v-if="!loadingMatchingTrends"
-              :map-data="identityMatchingTrend"
-            />
+            <template v-if="!loadingMatchingTrends">
+              <i-d-r-matching-trend
+                v-if="hasMatchingTrendsData"
+                :map-data="matchingTrends"
+              />
+              <div v-if="!hasMatchingTrendsData" class="overflow-hidden px-10">
+                <svg-as-component
+                  src="assets/images/MultiLineChartEmpty"
+                  class="d-flex"
+                />
+                <p class="text-caption d-flex align-center my-5">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    class="mr-2"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <circle cx="6" cy="6" r="6" fill="#d0d0ce" />
+                  </svg>
+                  no data available
+                </p>
+              </div>
+            </template>
           </v-card>
         </v-col>
       </v-row>
@@ -178,6 +200,7 @@ import MetricCard from "@/components/common/MetricCard"
 import Tooltip from "@/components/common/Tooltip.vue"
 import DataFeeds from "./DataFeeds.vue"
 import IDRMatchingTrend from "@/components/common/IDRMatchingTrend/IDRMatchingTrend"
+import svgAsComponent from "@/components/common/SVG.vue"
 
 export default {
   name: "IdentityResolution",
@@ -193,6 +216,7 @@ export default {
     Tooltip,
     DataFeeds,
     IDRMatchingTrend,
+    svgAsComponent,
   },
 
   data() {
@@ -219,16 +243,28 @@ export default {
       overview: "identity/overview",
       dateRange: "identity/dateRange",
       dataFeeds: "identity/dataFeeds",
-      identityMatchingTrend: "identity/matchingTrend",
+      matchingTrends: "identity/matchingTrends",
     }),
 
     startDate() {
       const startDate = `${this.filters.startMonth} ${this.filters.startYear}`
       return this.$options.filters.Date(startDate, "YYYY-MM-DD")
     },
+
     endDate() {
       const endDate = `${this.filters.endMonth} ${this.filters.endYear}`
       return this.$options.filters.Date(endDate, "YYYY-MM-DD")
+    },
+
+    selectedDateRange() {
+      return {
+        startDate: this.startDate,
+        endDate: this.endDate,
+      }
+    },
+
+    hasMatchingTrendsData() {
+      return this.matchingTrends && this.matchingTrends.length
     },
 
     loading() {
@@ -252,7 +288,7 @@ export default {
     ...mapActions({
       getOverview: "identity/getOverview",
       getDataFeeds: "identity/getDataFeeds",
-      getMatchingTrends: "identity/getMatchingTrend",
+      getMatchingTrends: "identity/getMatchingTrends",
     }),
 
     async refreshData() {
@@ -274,28 +310,19 @@ export default {
 
     async loadMatchingTrends() {
       this.loadingMatchingTrends = true
-      await this.getMatchingTrends({
-        startDate: this.startDate,
-        endDate: this.endDate,
-      })
+      await this.getMatchingTrends(this.selectedDateRange)
       this.loadingMatchingTrends = false
     },
 
     async loadDataFeeds() {
       this.loadingDataFeeds = true
-      await this.getDataFeeds({
-        startDate: this.startDate,
-        endDate: this.endDate,
-      })
+      await this.getDataFeeds(this.selectedDateRange)
       this.loadingDataFeeds = false
     },
 
     async loadOverview() {
       this.loadingOverview = true
-      await this.getOverview({
-        startDate: this.startDate,
-        endDate: this.endDate,
-      })
+      await this.getOverview(this.selectedDateRange)
       this.loadingOverview = false
     },
   },

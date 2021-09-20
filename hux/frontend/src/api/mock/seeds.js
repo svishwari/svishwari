@@ -18,6 +18,8 @@ const aqfer = {
   name: "Aqfer",
   type: "aqfer",
   is_enabled: true,
+  is_added: true,
+  status: "Active",
 }
 
 const amazonAdvertising = {
@@ -165,9 +167,9 @@ const google = {
   type: "google-ads",
 }
 
-const twilio = {
-  name: "Twilio",
-  type: "twilio",
+const sendgrid = {
+  name: "SendGrid by Twilio",
+  type: "sendgrid",
 }
 
 const tableau = {
@@ -407,7 +409,7 @@ export default function (server) {
   server.create("dataSource", twilioDS)
 
   // seed destinations
-  server.create("destination", twilio)
+  server.create("destination", sendgrid)
   server.create("destination", google)
   server.create("destination", tableau)
   server.create("destination", sfmc)

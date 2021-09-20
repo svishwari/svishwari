@@ -34,6 +34,7 @@ from huxunify.api.schema.customers import (
 from huxunify.app import create_app
 
 
+# pylint: disable=R0904
 class TestCustomersOverview(TestCase):
     """
     Purpose of this class is to test Customers overview
@@ -230,13 +231,15 @@ class TestCustomersOverview(TestCase):
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
         data = response.json
-        self.assertTrue(data[api_c.FIRST_NAME])
-        self.assertTrue(data[api_c.LAST_NAME])
-        self.assertEqual(data[api_c.EMAIL], api_c.REDACTED)
-        self.assertEqual(data[api_c.GENDER], api_c.REDACTED)
-        self.assertEqual(data[api_c.CITY], api_c.REDACTED)
-        self.assertEqual(data[api_c.ADDRESS], api_c.REDACTED)
-        self.assertEqual(data[api_c.AGE], api_c.REDACTED)
+        self.assertTrue(data[api_c.OVERVIEW])
+        self.assertTrue(data[api_c.OVERVIEW][api_c.FIRST_NAME])
+        self.assertTrue(data[api_c.OVERVIEW][api_c.LAST_NAME])
+        self.assertTrue(data[api_c.INSIGHTS])
+        self.assertEqual(data[api_c.INSIGHTS][api_c.EMAIL], api_c.REDACTED)
+        self.assertEqual(data[api_c.INSIGHTS][api_c.GENDER], api_c.REDACTED)
+        self.assertEqual(data[api_c.INSIGHTS][api_c.CITY], api_c.REDACTED)
+        self.assertEqual(data[api_c.INSIGHTS][api_c.ADDRESS], api_c.REDACTED)
+        self.assertEqual(data[api_c.INSIGHTS][api_c.AGE], api_c.REDACTED)
 
     def test_post_customer_overview_by_attributes(self) -> None:
         """
@@ -420,46 +423,6 @@ class TestCustomersOverview(TestCase):
             )
         )
 
-    def test_get_customers_demographic_customer_insights_failure(self):
-        """
-        Test get customers demographical insights
-
-        Args:
-
-        Returns:
-
-        """
-        start_date = "2021-04-01"
-        end_date = "2021-08-01"
-
-        self.request_mocker.stop()
-        self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
-            json=t_c.MOCKED_GENDER_SPENDING,
-        )
-
-        self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
-            json={},
-        )
-        self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
-            json=t_c.MOCKED_CITY_LTVS_RESPONSE,
-        )
-        self.request_mocker.start()
-
-        response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/"
-            f"{api_c.DEMOGRAPHIC}",
-            data={api_c.START_DATE: start_date, api_c.END_DATE: end_date},
-            headers=t_c.STANDARD_HEADERS,
-        )
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
-        self.assertEqual(
-            "Failed to get customers Demographic Visual Insights.",
-            response.json["message"],
-        )
-
     def test_get_idr_trends(self):
         """
         Test get matching trends.
@@ -553,28 +516,6 @@ class TestCustomersOverview(TestCase):
                 TotalCustomersInsightsSchema(), response.json, True
             )
         )
-
-    def test_total_customer_insights_failure(self) -> None:
-        """Test get total customer insights failure response
-
-        Args:
-
-        Returns:
-            None
-        """
-
-        self.request_mocker.stop()
-        self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-day",
-            json={},
-        )
-        self.request_mocker.start()
-
-        response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.TOTAL}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_customers_insights_cities_success(self) -> None:
         """Test get customers insights by cities
@@ -671,3 +612,257 @@ class TestCustomersOverview(TestCase):
                 True,
             )
         )
+
+    def test_get_customer_overview_dependency_failure(self) -> None:
+        """Test get customer overview 424 dependency failure.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json={},
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{api_c.OVERVIEW}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+
+    def test_get_customers_dependency_failure(self) -> None:
+        """Test get customers 424 dependency failure.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles",
+            json={},
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}?{api_c.QUERY_PARAMETER_BATCH_SIZE}="
+            f"{api_c.CUSTOMERS_DEFAULT_BATCH_SIZE}&"
+            f"{api_c.QUERY_PARAMETER_BATCH_NUMBER}="
+            f"{api_c.DEFAULT_BATCH_NUMBER}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+
+    def test_get_customer_by_id_dependency_failure(self) -> None:
+        """Test get customer by ID 424 dependency failure.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/abc",
+            json={},
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/abc",
+            headers=t_c.AUTH_HEADER,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+
+    def test_get_idr_overview_dependency_failure(self) -> None:
+        """Test get idr overview 424 dependency failure.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json={},
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.OVERVIEW}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+
+    def test_get_customer_events_dependency_failure(self) -> None:
+        """Test get customer events 424 dependency failure.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        filter_attributes = {
+            "start_date": "2021-01-01",
+            "end_date": "2021-01-02",
+        }
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/abc/events",
+            json={},
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/abc/events",
+            data=json.dumps(filter_attributes),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+
+    def test_get_customers_geo_dependency_failure(self) -> None:
+        """Test get customer geographic 424 dependency failure.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+            json={},
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.GEOGRAPHICAL}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+
+    def test_customers_insights_countries_dependency_failure(self) -> None:
+        """Test get customer insights countries 424 dependency failure.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/count-by-state",
+            json={},
+        )
+
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.COUNTRIES}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+
+    def test_total_customer_insights_dependency_failure(self) -> None:
+        """Test get total customer insights 424 dependency failure.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-day",
+            json={},
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.TOTAL}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+
+    def test_customers_insights_cities_dependency_failure(self) -> None:
+        """Test get customers insights cities 424 dependency failure.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/city-ltvs",
+            json={},
+        )
+
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.CITIES}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+
+    def test_get_customers_demographics_dependency_failure(self) -> None:
+        """Test get customer demographics 424 dependency failure.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+            json=t_c.MOCKED_CITY_LTVS_RESPONSE,
+        )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+            json={},
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/"
+            f"{api_c.DEMOGRAPHIC}",
+            data={
+                api_c.START_DATE: "2021-04-01",
+                api_c.END_DATE: "2021-08-01",
+            },
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)

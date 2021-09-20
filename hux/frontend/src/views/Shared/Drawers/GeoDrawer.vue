@@ -12,6 +12,7 @@
 
     <template #default>
       <hux-data-table
+        v-if="!loading"
         :columns="columns"
         :data-items="items"
         :sort-column="sortColumn"
@@ -50,7 +51,7 @@
     </template>
 
     <template #footer-left>
-      <span class="gray--text text-caption">
+      <span class="black--text text--darken-1 text-caption">
         {{ results | Numeric }} results
       </span>
     </template>

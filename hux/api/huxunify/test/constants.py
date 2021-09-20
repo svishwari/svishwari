@@ -51,9 +51,7 @@ INVALID_USER_RESPONSE = {
 INVALID_ID = "invalid_id"
 BATCH_RESPONSE = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
 TEST_CONFIG = get_config(api_c.TEST_MODE)
-INTROSPECT_CALL = "{}/oauth2/v1/introspect?client_id={}".format(
-    TEST_CONFIG.OKTA_ISSUER, TEST_CONFIG.OKTA_CLIENT_ID
-)
+INTROSPECT_CALL = f"{TEST_CONFIG.OKTA_ISSUER}/oauth2/v1/introspect?client_id={TEST_CONFIG.OKTA_CLIENT_ID}"
 USER_INFO_CALL = f"{TEST_CONFIG.OKTA_ISSUER}/oauth2/v1/userinfo"
 CDM_HEALTHCHECK_CALL = f"{TEST_CONFIG.CDP_SERVICE}/healthcheck"
 CUSTOMER_PROFILE_API = f"{TEST_CONFIG.CDP_SERVICE}"

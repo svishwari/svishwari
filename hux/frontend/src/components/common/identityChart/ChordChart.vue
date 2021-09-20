@@ -1,34 +1,9 @@
 <template>
-  <v-card tile class="chart-container rounded-lg box-shadow-5">
-    <v-list-item three-line>
-      <v-list-item-content>
-        <div class="title-section">
-          <tooltip position-top>
-            <template #label-content>
-              Individual Identity
-              <icon type="info" :size="12" />
-            </template>
-            <template #hover-content>
-              {{ tooltipText }}
-            </template>
-          </tooltip>
-        </div>
-        <v-list-item-subtitle
-          v-for="item in legendsData"
-          :key="item.id"
-          class="legend-section"
-        >
-          <icon :type="item.icon" :size="12" color="primary" />
-          <span>{{ item.prop }}</span>
-        </v-list-item-subtitle>
-      </v-list-item-content>
-      <div
-        ref="huxChart"
-        class="chart-section"
-        @mouseover="getCordinates($event)"
-      ></div>
-    </v-list-item>
-  </v-card>
+  <div
+    ref="chordChart"
+    class="chart-section"
+    @mouseover="getCordinates($event)"
+  ></div>
 </template>
 
 <script>
@@ -37,11 +12,8 @@ import * as d3Shape from "d3-shape"
 import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
-import Tooltip from "@/components/common/Tooltip"
-import Icon from "@/components/common/Icon"
 export default {
   name: "ChordChart",
-  components: { Icon, Tooltip },
   props: {
     /**
      * Accepts an array of ranges in N*N matrix  format for creating chart arc & ribbon mapping
@@ -61,22 +33,24 @@ export default {
       required: true,
     },
     /**
-     * Accepts an Array of Objects needs to map with legends.
-     * eg: {prop: '', icon: ''}
+     * Adjust chart height as per screen resolution.
      */
-    chartLegendsData: {
-      type: Array,
+    chartDimensions: {
+      type: Object,
       required: true,
+      default() {
+        return {
+          width: 0,
+          height: 0,
+        }
+      },
     },
   },
   data() {
     return {
       width: 220,
       height: 250,
-      outerRadius: 0,
-      innerRadius: 0,
-      tooltipText: "Most recent co-occurence between identifiers",
-      legendsData: this.chartLegendsData,
+      radius: 0,
       top: 50,
       left: 60,
       show: false,
@@ -86,34 +60,32 @@ export default {
       },
     }
   },
-
   watch: {
-    value: function () {
-      d3Select.select(this.$refs.huxChart).select("svg").remove()
-      this.calculateChartValues()
+    chartDimensions: {
+      handler() {
+        d3Select.select(this.$refs.chordChart).selectAll("svg").remove()
+        this.initiateChordChart()
+      },
+      immediate: false,
+      deep: true,
     },
   },
 
   mounted() {
-    this.initializeValues()
-    this.calculateChartValues()
+    this.initiateChordChart()
   },
   methods: {
-    initializeValues() {
-      this.outerRadius = Math.min(this.width, this.height) * 0.5 - 10
-      this.innerRadius = this.outerRadius - 7
-    },
-
-    calculateChartValues() {
+    initiateChordChart() {
+      this.radius = Math.min(this.width, this.height) / 2.1
       const padAngle = 0.03
 
       let svg = d3Select
-        .select(this.$refs.huxChart)
+        .select(this.$refs.chordChart)
         .append("svg")
         .attr("width", this.width)
         .attr("height", this.height)
-        .attr("outerRadius", this.outerRadius)
-        .attr("innerRadius", this.innerRadius)
+        .attr("outerRadius", this.radius - 18)
+        .attr("innerRadius", this.radius - 25)
 
       let chord = d3Chord
         .chord()
@@ -122,10 +94,18 @@ export default {
 
       let arc = d3Shape
         .arc()
-        .innerRadius(this.innerRadius)
-        .outerRadius(this.outerRadius)
+        .innerRadius(this.radius - 25)
+        .outerRadius(this.radius - 18)
 
-      let ribbon = d3Chord.ribbon().radius(this.innerRadius).padAngle(padAngle)
+      let transformedArc = d3Shape
+        .arc()
+        .innerRadius(this.radius - 12)
+        .outerRadius(this.radius - 25)
+
+      let ribbon = d3Chord
+        .ribbon()
+        .radius(this.radius - 25)
+        .padAngle(padAngle)
 
       let color = d3Scale
         .scaleOrdinal()
@@ -136,7 +116,7 @@ export default {
         .append("g")
         .attr(
           "transform",
-          "translate(" + this.width * 0.5 + "," + this.height * 0.5 + ")"
+          "translate(" + this.width / 2 + "," + this.height / 2 + ")"
         )
         .datum(chord(this.value))
 
@@ -153,7 +133,7 @@ export default {
         .style("fill", (d) => color(d.index))
         .attr("d", arc)
         .on("mouseover", (g, i) => arcMouseOver(g, i))
-        .on("mouseout", () => mouseOut())
+        .on("mouseout", (g, i) => mouseOut(g, i))
 
       g.append("g")
         .attr("class", "ribbons")
@@ -165,9 +145,13 @@ export default {
         .attr("fill-opacity", "0.5")
         .style("fill", (d) => color(d.target.index))
         .on("mouseover", (e, d) => ribbonMouseOver(e, d))
-        .on("mouseout", () => mouseOut())
+        .on("mouseout", (g) => ribbonMouseOut(g))
 
       let arcMouseOver = (g, i) => {
+        d3Select
+          .select(g.srcElement)
+          .attr("d", transformedArc)
+          .style("filter", "drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.4)")
         this.tooltipDisplay(true, true, [i.index])
         d3Select
           .selectAll("g.ribbons path")
@@ -179,6 +163,9 @@ export default {
       }
 
       let ribbonMouseOver = (e, d) => {
+        d3Select
+          .select(e.srcElement)
+          .style("filter", "drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.4)")
         this.tooltipDisplay(true, false, [d.source.index, d.target.index])
         d3Select
           .selectAll("g.ribbons path")
@@ -191,7 +178,17 @@ export default {
           .style("fill", (d) => color(d.target.index))
       }
 
-      let mouseOut = () => {
+      let mouseOut = (g) => {
+        d3Select.select(g.srcElement).attr("d", arc).style("filter", "none")
+        this.tooltipDisplay(false, false, [])
+        d3Select
+          .selectAll("g.ribbons path")
+          .attr("fill-opacity", "0.5")
+          .style("fill", (d) => color(d.target.index))
+      }
+
+      let ribbonMouseOut = (g) => {
+        d3Select.select(g.srcElement).style("filter", "none")
         this.tooltipDisplay(false, false, [])
         d3Select
           .selectAll("g.ribbons path")
@@ -223,7 +220,7 @@ export default {
       margin-left: 8px;
       font-size: 12px;
       line-height: 16px;
-      color: var(--v-gray-base) !important;
+      color: var(--v-black-darken1) !important;
     }
   }
 

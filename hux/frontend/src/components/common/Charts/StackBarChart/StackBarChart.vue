@@ -90,7 +90,17 @@ export default {
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`)
 
-      this.colorCodes.forEach((color) => barColorCodes.push(colors[color]))
+      this.colorCodes.forEach((color) => {
+        if (color == "darken3") {
+          barColorCodes.push(colors.primary[color])
+        } else if (color == "lighten8") {
+          barColorCodes.push(colors.primary[color])
+        } else if (color == "lighten5") {
+          barColorCodes.push(colors.primary[color])
+        } else {
+          barColorCodes.push(colors[color])
+        }
+      })
 
       let stack = d3Shape
         .stack()
@@ -124,13 +134,21 @@ export default {
 
       let bars = svg.append("g").attr("class", "bars")
 
+      let hideInitialTick =
+        this.totalCustomerData.filter(
+          (bar) => bar.index == 0 && bar.barIndex < 5
+        ).length < 3
+
       let convertCalendarFormat = (value) => {
         let tickDate = this.barGroupChangeIndex.find(
           (bar) => bar.index == value
         )
-        if (tickDate) {
-          return this.$options.filters.Date(tickDate.date, "MM/DD/YY")
-        } else return ""
+        if (tickDate && tickDate.index == 0 && hideInitialTick) {
+          return ""
+        }
+        return tickDate
+          ? this.$options.filters.Date(tickDate.date, "MM[/01/]YY")
+          : ""
       }
 
       let applyNumericFilter = (value) =>

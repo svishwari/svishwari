@@ -3,14 +3,13 @@
     :src="`assets/icons/${type}`"
     :width="size"
     :height="size"
-    :color="theme[color]"
+    :color="color"
     :fill-opacity="fillOpacity"
   />
 </template>
 
 <script>
 import svgAsComponent from "./SVG"
-import theme from "@/plugins/theme"
 
 export default {
   name: "Icon",
@@ -43,9 +42,5 @@ export default {
       default: 1,
     },
   },
-
-  data: () => ({
-    theme: theme,
-  }),
 }
 </script>

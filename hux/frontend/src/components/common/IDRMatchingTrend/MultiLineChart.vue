@@ -64,21 +64,21 @@ export default {
       let margin = { top: 15, right: 45, bottom: 100, left: 60 }
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
-      let dataKey = ["known_ids", "anonymous_ids", "unique_hux_ids"]
-      let colorCodes = ["#42EFFD", "#75787B", "#347DAC"]
+      let dataKey = ["unique_hux_ids", "anonymous_ids", "known_ids"]
+      let colorCodes = ["#347DAC", "#4F4F4F", "#42EFFD"]
       let ids = [
-        { label: "known ids", xValue: 0 },
-        { label: "anonymous ids", xValue: 95 },
-        { label: "unique hux ids", xValue: 225 },
+        { label: "Unique Hux IDs", xValue: 0 },
+        { label: "Anonymous IDs", xValue: 122 },
+        { label: "Known IDs", xValue: 245 },
       ]
       let color = d3Scale
         .scaleOrdinal()
-        .range(["#42EFFD", "#75787B", "#347DAC"])
+        .range(["#347DAC", "#75787B", "#42EFFD"])
       let svg = d3Select
         .select(this.$refs.multiLineChart)
         .append("svg")
         .attr("width", this.width + margin.left + margin.right)
-        .attr("height", this.height - margin.top)
+        .attr("height", this.height - margin.top - 20)
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`)
       let dateFormatter = (value) =>
@@ -94,7 +94,7 @@ export default {
         .scaleLinear()
         .rangeRound([h, 0])
         .domain([0, d3Array.max(this.data, (d) => d.known_ids)])
-        .nice(2)
+        .nice(4)
       svg
         .append("g")
         .classed("xAlternateAxis", true)
@@ -128,7 +128,7 @@ export default {
             .tickSize(-h)
             .ticks(8)
             .tickPadding(15)
-            .tickFormat(d3TimeFormat.timeFormat("%-m/%-d/%Y"))
+            .tickFormat(d3TimeFormat.timeFormat("%-m/%-d/%y"))
         )
         .style("font-size", "12px")
       svg
@@ -150,11 +150,15 @@ export default {
       d3Select.selectAll(".tick line").style("stroke", "#E2EAEC")
       d3Select
         .selectAll(".xAxis .tick text")
-        .attr("x", 10)
+        .attr("x", 0)
         .style("color", "#4F4F4F")
       d3Select.selectAll(".yAxis .tick text").style("color", "#4F4F4F")
-      d3Select.selectAll(".yAlternateAxis .tick line").style("stroke", "black")
-      d3Select.selectAll(".xAlternateAxis .tick line").style("stroke", "black")
+      d3Select
+        .selectAll(".yAlternateAxis .tick line")
+        .style("stroke", "#4F4F4F")
+      d3Select
+        .selectAll(".xAlternateAxis .tick line")
+        .style("stroke", "#4F4F4F")
 
       var multiline = function (dataSet) {
         var line = d3Shape
@@ -171,6 +175,7 @@ export default {
           .datum(this.data)
           .attr("class", "line")
           .style("stroke", colorCodes[i])
+          .style("stroke-width", 2)
           .style("fill", "transparent")
           .attr("d", lineFunction)
 
@@ -192,10 +197,10 @@ export default {
         .append("line")
         .attr("class", "hover-line-y")
         .style("stroke", "#1E1E1E")
-        .style("stroke-width", 2)
+        .style("stroke-width", 1)
       svg
         .append("rect")
-        .attr("width", w)
+        .attr("width", w + 20)
         .attr("height", h)
         .style("stroke", "transparent")
         .style("fill", "transparent")
@@ -259,6 +264,7 @@ export default {
         .attr("id", "mainSvg")
         .attr("class", "svgBox")
         .attr("width", 400)
+        .attr("height", "auto")
         .style("margin-left", "20px")
         .style("margin-right", "20px")
         .style("margin-top", "10px")
@@ -275,12 +281,13 @@ export default {
 
       legend
         .append("circle")
-        .attr("cx", 10)
-        .attr("cy", 10)
+        .attr("cx", 9)
+        .attr("cy", 9)
         .attr("r", 6)
         .attr("stroke", function (d) {
           return color(d.label)
         })
+        .attr("stroke-width", 2)
         .style("fill", "white")
 
       legend
@@ -289,7 +296,8 @@ export default {
         .attr("y", 7)
         .attr("dy", ".55em")
         .attr("class", "neroBlack--text")
-        .style("font-size", 14)
+        .style("fill", "#4f4f4f")
+        .style("font-size", 12)
         .style("text-anchor", "start")
         .text(function (d) {
           return d.label

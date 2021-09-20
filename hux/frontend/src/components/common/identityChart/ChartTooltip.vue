@@ -107,17 +107,18 @@ export default {
 
 .card-style {
   @extend .box-shadow-3;
+  pointer-events: none;
   border-radius: 0px;
   max-width: 213px;
   height: auto;
-  top: -220px;
-  left: -55px;
+  top: -100px;
+  left: -76px;
   z-index: 1;
 
   .ribbon-hover {
     @extend .card-padding;
     .pipe {
-      border-left: 1px solid var(--v-lightGrey-base) !important;
+      border-left: 1px solid var(--v-black-lighten3) !important;
       height: 500px;
       transform: rotate(90deg);
       margin-left: 10px;

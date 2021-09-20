@@ -139,7 +139,8 @@ export function listOfYears(yearsBack = 10) {
 }
 
 /**
- * Download file from the blob API response.
+ * Download file from the blob API response.\
+ *
  */
 export function saveFile(response) {
   const fileName = response.headers["content-disposition"].match(

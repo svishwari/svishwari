@@ -10,32 +10,44 @@ from bson import ObjectId
 from flask import Blueprint, Response, request, jsonify
 
 from huxunifylib.connectors import connector_cdp
-from huxunifylib.database.orchestration_management import get_audience
-from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     orchestration_management,
 )
-import huxunifylib.database.constants as db_c
+from huxunifylib.database.audit_management import create_audience_audit
+from huxunifylib.database.notification_management import create_notification
+from huxunifylib.database import constants as db_c
+from huxunifylib.util.transform.transform_dataframe import (
+    transform_fields_google_file,
+    transform_fields_amazon_file,
+)
 
+import huxunify.api.constants as api_c
+from huxunify.api.config import get_config
+from huxunify.api.data_connectors.aws import upload_file
 from huxunify.api.data_connectors.cdp import (
     get_city_ltvs,
     get_demographic_by_state,
 )
 from huxunify.api.data_connectors.okta import get_token_from_request
-from huxunify.api.schema.customers import (
-    CustomersInsightsCitiesSchema,
-    CustomersInsightsStatesSchema,
-)
-from huxunify.api.schema.utils import AUTH401_RESPONSE
-from huxunify.api.config import get_config
-import huxunify.api.constants as api_c
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     get_user_name,
     api_error_handler,
 )
-from huxunify.api.route.utils import get_db_client
+from huxunify.api.schema.customers import (
+    CustomersInsightsCitiesSchema,
+    CustomersInsightsStatesSchema,
+)
+from huxunify.api.schema.utils import (
+    AUTH401_RESPONSE,
+    FAILED_DEPENDENCY_424_RESPONSE,
+)
+from huxunify.api.route.utils import (
+    get_db_client,
+    transform_fields_generic_file,
+    logger,
+)
 
 # setup the audiences blueprint
 audience_bp = Blueprint(api_c.AUDIENCE_ENDPOINT, import_name=__name__)
@@ -109,7 +121,12 @@ class AudienceDownload(SwaggerView):
             Tuple[Response, int]: File Object Response, HTTP status.
 
         """
-        if not api_c.DOWNLOAD_TYPES.get(download_type):
+        download_types = {
+            api_c.GOOGLE_ADS: transform_fields_google_file,
+            api_c.AMAZON_ADS: transform_fields_amazon_file,
+            api_c.GENERIC_ADS: transform_fields_generic_file,
+        }
+        if not download_types.get(download_type):
             return {"message": "Invalid download type"}, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
@@ -135,7 +152,7 @@ class AudienceDownload(SwaggerView):
             f"_{audience_id}_{download_type}.csv"
         )
 
-        transform_function = api_c.DOWNLOAD_TYPES.get(download_type)
+        transform_function = download_types.get(download_type)
         with open(
             audience_file_name, "w", newline="", encoding="utf-8"
         ) as csvfile:
@@ -146,6 +163,29 @@ class AudienceDownload(SwaggerView):
                     index=False,
                 )
 
+        logger.info(
+            "Uploading generated %s audience file to %s S3 bucket",
+            audience_file_name,
+            get_config().S3_DATASET_BUCKET,
+        )
+        if upload_file(
+            file_name=audience_file_name,
+            bucket=get_config().S3_DATASET_BUCKET,
+            object_name=audience_file_name,
+            user_name=user_name,
+            file_type=api_c.AUDIENCE,
+        ):
+            create_audience_audit(
+                database=database,
+                audience_id=audience_id,
+                download_type=download_type,
+                file_name=audience_file_name,
+                user_name=user_name,
+            )
+            logger.info(
+                "Created an audit log for %s audience file creation",
+                audience_file_name,
+            )
         audience_file = Path(audience_file_name)
         data = audience_file.read_bytes()
         audience_file.unlink()
@@ -164,8 +204,7 @@ class AudienceDownload(SwaggerView):
                 headers={
                     "Content-Type": "application/csv",
                     "Access-Control-Expose-Headers": "Content-Disposition",
-                    "Content-Disposition": "attachment; filename=%s;"
-                    % audience_file_name,
+                    "Content-Disposition": f"attachment; filename={audience_file_name};",
                 },
             ),
             HTTPStatus.OK,
@@ -205,6 +244,7 @@ class AudienceInsightsStates(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
@@ -227,7 +267,9 @@ class AudienceInsightsStates(SwaggerView):
         # get auth token from request
         token_response = get_token_from_request(request)
 
-        audience = get_audience(get_db_client(), ObjectId(audience_id))
+        audience = orchestration_management.get_audience(
+            get_db_client(), ObjectId(audience_id)
+        )
 
         return (
             jsonify(
@@ -294,6 +336,7 @@ class AudienceInsightsCities(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
@@ -323,7 +366,9 @@ class AudienceInsightsCities(SwaggerView):
             api_c.QUERY_PARAMETER_BATCH_NUMBER, api_c.DEFAULT_BATCH_NUMBER
         )
 
-        audience = get_audience(get_db_client(), ObjectId(audience_id))
+        audience = orchestration_management.get_audience(
+            get_db_client(), ObjectId(audience_id)
+        )
 
         filters = (
             {api_c.AUDIENCE_FILTERS: audience.get(db_c.AUDIENCE_FILTERS)}

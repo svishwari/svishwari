@@ -533,7 +533,7 @@ export default {
     white-space: nowrap;
   }
   .v-card__title {
-    background: var(--v-background-base);
+    background: var(--v-primary-lighten1);
     border-radius: 12px 12px 0px 0px;
     font-size: 14px;
     line-height: 22px;
@@ -541,7 +541,7 @@ export default {
     height: 46px;
     flex-wrap: inherit;
     .top-action {
-      color: var(--v-neroBlack-base);
+      color: var(--v-black-darken4);
     }
   }
   .empty-destinations {
@@ -570,7 +570,7 @@ export default {
       .deliverdOn-col {
         font-size: 12px;
         line-height: 16px;
-        color: var(--v-neroBlack-base);
+        color: var(--v-black-darken4);
         min-width: 60px;
       }
       &:hover,
@@ -591,12 +591,12 @@ export default {
       min-height: 32px !important;
       font-size: 14px;
       line-height: 22px;
-      color: var(--v-neroBlack-base);
+      color: var(--v-black-darken4);
       &.v-list-item--disabled {
-        color: var(--v-lightGrey-base);
+        color: var(--v-black-lighten3);
       }
       &:hover {
-        background: var(--v-aliceBlue-base);
+        background: var(--v-primary-lighten2);
       }
     }
     ::v-deep .sub-menu-class {

@@ -15,7 +15,9 @@
         <span
           v-if="!titleTooltip"
           class="text-caption"
-          :class="interactable ? 'primary--text ' : 'gray--text '"
+          :class="
+            interactable ? 'primary--text ' : 'black--text text--darken-1 '
+          "
         >
           {{ title }}
         </span>
@@ -23,7 +25,9 @@
           <template #label-content>
             <span
               class="text-caption"
-              :class="interactable ? 'primary--text ' : 'gray--text '"
+              :class="
+                interactable ? 'primary--text ' : 'black--text text--darken-1 '
+              "
             >
               {{ title }}
             </span>
@@ -121,7 +125,7 @@ export default {
   }
   .item-headline {
     font-size: 12px;
-    color: var(--v-gray-base) !important;
+    color: var(--v-black-darken1) !important;
   }
   .v-list-item__title {
     font-weight: 400;
@@ -133,7 +137,7 @@ export default {
   &.v-card--disabled {
     background-color: transparent;
     .v-list-item__title {
-      color: var(--v-gray-base);
+      color: var(--v-black-darken1);
     }
   }
   div.d-flex.align-center.justify-space-between {
