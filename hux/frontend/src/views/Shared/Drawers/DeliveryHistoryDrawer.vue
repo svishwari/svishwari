@@ -34,7 +34,12 @@
                       : 'EngagementDashboard',
                   params: { id: item[col.value].id },
                 }"
-                class="d-inline-block mw-100 text-truncate text-decoration-none"
+                class="
+                  d-inline-block
+                  mw-100
+                  text-truncate text-decoration-none
+                  primary--text
+                "
               >
                 {{ item[col.value].name }}
               </router-link>
@@ -74,7 +79,9 @@
             </tooltip>
             <tooltip v-if="col.value === 'delivered'">
               <template #label-content>
-                {{ item[col.value] | Date("relative") }}
+                <span class="d-inline-block mw-100 text-truncate">
+                  {{ item[col.value] | Date("relative") }}
+                </span>
               </template>
               <template #hover-content>
                 {{ item[col.value] | Date }}
@@ -232,9 +239,22 @@ export default {
           padding: 9px 10px 9px 25px !important;
         }
         padding: 9px 10px !important;
+        &:last-child {
+          padding: 9px 20px 9px 10px !important;
+        }
       }
-      &:last-child {
-        padding: 9px 20px 9px 10px !important;
+    }
+    tbody {
+      tr {
+        td {
+          &:first-child {
+            padding: 9px 10px 9px 25px !important;
+          }
+          padding: 9px 10px !important;
+          &:last-child {
+            padding: 9px 20px 9px 10px !important;
+          }
+        }
       }
     }
   }
