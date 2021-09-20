@@ -8,6 +8,8 @@
         padding: tooltipStyle.padding,
         top: tooltipStyle.top,
         left: tooltipStyle.left,
+        minWidth: tooltipStyle.minWidth,
+        maxWidth: tooltipStyle.maxWidth,
       }"
     >
       <slot name="content" />
@@ -39,6 +41,8 @@ export default {
           padding: 0,
           top: 0,
           left: 0,
+          minWidth: 0,
+          maxWidth: 0
         }
       },
     },
@@ -63,5 +67,6 @@ export default {
   background: var(--v-white-base);
   pointer-events: none;
   position: fixed;
+  height: auto;
 }
 </style>
