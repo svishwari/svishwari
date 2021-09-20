@@ -16,7 +16,6 @@ from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
 from huxunifylib.connectors import FacebookConnector
-
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.engagement_management import (
