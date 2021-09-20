@@ -41,8 +41,8 @@ export default {
           padding: 0,
           top: 0,
           left: 0,
-          minWidth: 0,
-          maxWidth: 0,
+          minWidth: '100px',
+          maxWidth: '200px',
         }
       },
     },
