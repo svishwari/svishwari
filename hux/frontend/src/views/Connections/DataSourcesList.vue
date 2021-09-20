@@ -3,15 +3,9 @@
     <div class="d-flex align-end mb-4">
       <icon type="data-sources-list" :size="20" color="black-darken4" />
       <h5 class="text-h4 ml-2 mt-1">Data Sources</h5>
-      <router-link
-        :to="{
-          name: 'DataSourceConfiguration',
-          query: { select: true },
-        }"
-        class="text-decoration-none"
-      >
-        <v-icon class="ml-2 add-icon" color="primary"> mdi-plus-circle </v-icon>
-      </router-link>
+      <span @click="$emit('onAddDatasource')">
+        <icon class="add-icon cursor-pointer" type="add" :size="27" />
+      </span>
     </div>
 
     <template v-if="hasAddedDatasources">
@@ -89,6 +83,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .list-wrapper {
+  .add-icon {
+    display: block;
+    margin-left: 7px;
+    position: relative;
+    top: 2px;
+  }
   .v-card {
     .status {
       min-width: 80px;

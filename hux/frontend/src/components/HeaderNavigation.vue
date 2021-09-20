@@ -40,7 +40,7 @@ export default {
   data() {
     return {
       dropdownLinks: [
-        { name: "Data Source", path: "DataSourceConfiguration" },
+        { name: "Data Source", path: "Connections" },
         { name: "Destination", path: "DestinationConfiguration" },
         { name: "Audience", path: "AudienceConfiguration" },
         { name: "Engagement", path: "EngagementConfiguration" },
@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     routerRedirect(path) {
-      this.$router.push({ name: path, query: { select: true } })
+      this.$router.push({ name: path, params: { select: true } })
     },
   },
 }
