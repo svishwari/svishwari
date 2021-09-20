@@ -7,6 +7,7 @@
       :chart-dimensions="chartDimensions"
       @tooltipDisplay="toolTipDisplay"
     />
+    <chart-legends :legendsData="test"></chart-legends>
     <stack-bar-chart-tooltip
       :show-tool-tip="show"
       :color-codes="tooltipColorCodes"
@@ -20,9 +21,11 @@ import { timeFormat } from "d3-time-format"
 import { nest } from "d3-collection"
 import StackBarChartTooltip from "@/components/common/TotalCustomerChart/StackBarChartTooltip"
 import StackBarChart from "@/components/common/Charts/StackBarChart/StackBarChart.vue"
+import ChartLegends from "@/components/common/Charts/Legends/ChartLegends.vue"
+
 export default {
   name: "TotalCustomerChart",
-  components: { StackBarChart, StackBarChartTooltip },
+  components: { StackBarChart, StackBarChartTooltip, ChartLegends },
   props: {
     customersData: {
       type: Array,
@@ -31,6 +34,11 @@ export default {
   },
   data() {
     return {
+      test: [
+        {color: "red", text: "women"},
+        {color: "blue", text: "men"},
+        {color: "green", text: "other"}
+      ],
       show: false,
       isArcHover: false,
       colorCodes: ["lighten5", "lighten8", "darken3", "success"],
