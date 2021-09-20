@@ -420,34 +420,33 @@ export default {
 
     payload() {
       const recurringPayload = {}
-      if(this.schedule && this.schedule.periodicity == 'Daily'){
-
-        recurringPayload['periodicity'] = 'Daily'
-        recurringPayload['every'] = this.schedule.every
-        recurringPayload['hour'] = this.schedule.hour
-        recurringPayload['minute'] = this.schedule.minute
-        recurringPayload['period'] = this.schedule.period
-
-      }else if(this.schedule && this.schedule.periodicity == 'Weekly'){
-      
-        recurringPayload['periodicity'] = 'Weekly'
-        recurringPayload['every'] = this.schedule.every
-        recurringPayload['day_of_week'] = this.schedule.days
-
-      }else if(this.schedule && this.schedule.periodicity == 'Monthly'){
-      
-        recurringPayload['periodicity'] = 'Monthly'
-        recurringPayload['every'] = this.schedule.every
-        recurringPayload['day_of_month'] = this.schedule.monthlyDayDate
-
+      if (this.schedule && this.schedule.periodicity == "Daily") {
+        recurringPayload["periodicity"] = "Daily"
+        recurringPayload["every"] = this.schedule.every
+        recurringPayload["hour"] = this.schedule.hour
+        recurringPayload["minute"] = this.schedule.minute
+        recurringPayload["period"] = this.schedule.period
+      } else if (this.schedule && this.schedule.periodicity == "Weekly") {
+        recurringPayload["periodicity"] = "Weekly"
+        recurringPayload["every"] = this.schedule.every
+        recurringPayload["day_of_week"] = this.schedule.days
+      } else if (this.schedule && this.schedule.periodicity == "Monthly") {
+        recurringPayload["periodicity"] = "Monthly"
+        recurringPayload["every"] = this.schedule.every
+        recurringPayload["day_of_month"] = this.schedule.monthlyDayDate
       }
 
       const requestPayload = {
         name: this.value.name,
         description: this.value.description,
         delivery_schedule: {
-          start_date: !this.isManualDelivery ? new Date(this.selectedStartDate).toISOString() : null,
-          end_date: !this.isManualDelivery && this.selectedEndDate ? new Date(this.selectedEndDate).toISOString() : null,
+          start_date: !this.isManualDelivery
+            ? new Date(this.selectedStartDate).toISOString()
+            : null,
+          end_date:
+            !this.isManualDelivery && this.selectedEndDate
+              ? new Date(this.selectedEndDate).toISOString()
+              : null,
           schedule: recurringPayload,
         },
         audiences: Object.values(this.value.audiences).map((audience) => {
