@@ -15,7 +15,7 @@ export default {
   props: {
     legendsData: {
       type: Array,
-      required: false,
+      required: true,
     },
   },
 }
