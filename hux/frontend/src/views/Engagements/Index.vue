@@ -494,7 +494,7 @@ export default {
       confirmDialog: {
         title: "Remove  audience?",
         btnText: "Yes, remove it",
-        body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
+        body: "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement.",
       },
       flashAlert: false,
       alert: {
@@ -785,7 +785,7 @@ export default {
           onClick: (value) => {
             this.showAudienceRemoveConfirmation = true
             this.selectedEngagementId = engagementId
-            this.confirmDialog.title = `Remove ${value.name} audience?`
+            this.confirmDialog.title = `You are about to remove ${value.name}?`
             this.selectedAudienceId = value.id
           },
         },
@@ -870,7 +870,7 @@ export default {
       .v-data-table-header {
         th:nth-child(1) {
           left: 0;
-          z-index: 5;
+          z-index: 9;
           border-right: thin solid rgba(0, 0, 0, 0.12);
           overflow-y: visible;
           overflow-x: visible;
@@ -891,11 +891,9 @@ export default {
           position: sticky;
           top: 0;
           left: 0;
+          z-index: 8;
           background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
-          &:hover {
-            background: var(--v-primary-lighten2) !important;
-          }
           .menu-cell-wrapper > div {
             a.text-decoration-none {
               .ellipsis {

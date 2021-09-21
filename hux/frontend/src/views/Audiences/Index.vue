@@ -418,7 +418,7 @@ export default {
         th:nth-child(1) {
           position: sticky;
           left: 0;
-          z-index: 5;
+          z-index: 9;
           border-right: thin solid rgba(0, 0, 0, 0.12);
           overflow-y: visible;
           overflow-x: visible;
@@ -430,12 +430,9 @@ export default {
           position: sticky;
           top: 0;
           left: 0;
-          z-index: 4;
+          z-index: 8;
           background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
-          &:hover {
-            background: var(--v-aliceBlue-base) !important;
-          }
         }
       }
     }
