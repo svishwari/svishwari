@@ -4,6 +4,7 @@
     :width="size"
     :height="size"
     :color="color"
+    :variant="variant"
     :fill-opacity="fillOpacity"
   />
 </template>
@@ -34,6 +35,12 @@ export default {
       type: String,
       required: false,
       default: "primary",
+    },
+    
+    variant: {
+      type: String,
+      required: false,
+      default: "base",
     },
 
     fillOpacity: {

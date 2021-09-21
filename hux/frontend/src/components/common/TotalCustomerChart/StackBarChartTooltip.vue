@@ -17,7 +17,8 @@
           type="name"
           :size="12"
           :fill-opacity="0.5"
-          :color="colorCodes[sourceInput.index]"
+          :color="colorCodes[sourceInput.index].base"
+          :variant="colorCodes[sourceInput.index].variant"
         />
         <span class="text-label">Total customers</span>
       </div>
@@ -25,7 +26,7 @@
         {{ sourceInput.totalCustomers | Numeric(true, false, false) }}
       </div>
       <div class="value-container">
-        <icon type="name" :size="12" :color="colorCodes[sourceInput.index]" />
+        <icon type="name" :size="12" :color="colorCodes[sourceInput.index].base" :variant="colorCodes[sourceInput.index].variant" />
         <span class="text-label">New customers added</span>
         <div class="value-section">
           {{ sourceInput.addedCustomers | Numeric(true, false, false) }}
