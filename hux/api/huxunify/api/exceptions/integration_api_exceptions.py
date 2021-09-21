@@ -30,6 +30,6 @@ class FailedAPIDependencyError(IntegratedAPIEndpointException):
 
 
 class FailedDateFilterIssue(IntegratedAPIEndpointException):
-    """Exception for dependency failure from integrated APIs."""
+    """Exception for date filter failure."""
 
     exception_message = constants.START_DATE_GREATER_THAN_END_DATE
