@@ -1058,10 +1058,10 @@ export default {
           break
         case "remove engagement": {
           this.confirmDialog.actionType = "remove-engagement"
-          this.confirmDialog.title = `Remove ${event.data.name} engagement?`
+          this.confirmDialog.title = `You are about to remove ${event.data.name}`
           this.confirmDialog.btnText = "Yes, remove it"
           this.confirmDialog.body =
-            "You will not be deleting this engagement; this engagement will not be attached to this specific audience anymore."
+            "Are you sure you want to remove this engagement? By removing this engagement, it will not be deleted, but it will become unattached from this audience."
           this.deleteActionData = {
             data: {
               id: event.data.id,

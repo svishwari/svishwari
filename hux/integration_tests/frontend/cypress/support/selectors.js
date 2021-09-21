@@ -43,6 +43,7 @@
     header: "[data-e2e='models-header']",
     list: "[data-e2e='models-list']",
     item: "[data-e2e='model-item']",
+    models: "a[href='/models']",
   },
 
   //IDR
@@ -50,5 +51,27 @@
     identityResolution: "a[href='/identity-resolution']",
     overview: "[data-e2e='overviewList']",
     datafeed: "[data-e2e='datafeedtable']",
+    lastrun: "[data-e2e='lastrun']",
+    pinning: "[data-e2e='Pinning']",
+    stitched: "[data-e2e='Stitched']",
   },
+    //notification
+    notification: {
+      notificationicon: "[data-e2e='notification-bell']",
+      notificationReturnButton: "[data-e2e='notification-return']",
+      notifications: "a[href='/notifications']",
+      notificationlistmenu: "[data-e2e='notification-item']",
+    },
+    // navigation
+    navigation: {
+      profiledropdown: "[data-e2e='profile-dropdown']",
+      profile: "[data-e2e='profile']",
+      logout: "[data-e2e='logout']",
+      help: "[data-e2e='help-dropdown']",
+      contactus: "[data-e2e='contactus']",
+      add: "[data-e2e='addicon']",
+    },
+    customers: "a[href='/customers']",
+    engagements: "a[href='/engagements']",
+    audiences: "a[href='/audiences']",
 }
