@@ -18,7 +18,7 @@
 <script>
 import { timeFormat } from "d3-time-format"
 import { nest } from "d3-collection"
-import StackBarChartTooltip from "@/components/common/TotalCustomerChart/StackBarChartTooltip"
+import StackBarChartTooltip from "@/components/common/TotalCustomerChart/StackBarChartTooltip.vue"
 import StackBarChart from "@/components/common/Charts/StackBarChart/StackBarChart.vue"
 
 export default {

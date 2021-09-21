@@ -1,16 +1,28 @@
 import filters from "@/filters"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
+import timezone from "dayjs/plugin/timezone"
 dayjs.extend(utc)
+dayjs.extend(timezone)
+
+const defaultTimeZone = "Pacific/Honolulu"
 
 describe("Filters", () => {
   describe("Date filter", () => {
-    it("for empty and invalid values", () => {
+    beforeEach(() => {
+      dayjs.tz.setDefault(defaultTimeZone, true)
+    })
+
+    afterEach(() => {
+      dayjs.tz.setDefault()
+    })
+
+    it("should handle empty and invalid values", () => {
       expect(filters.Date()).toEqual(null)
       expect(filters.Date("something invalid")).toEqual(null)
     })
 
-    it("for format set to relative", () => {
+    it("should show as 'relative' format", () => {
       let testdate = dayjs().subtract(7, "year")
       expect(filters.Date(testdate.format(), "relative")).toEqual("7 years ago")
 
@@ -25,6 +37,14 @@ describe("Filters", () => {
         "42 minutes"
       )
 
+      testdate = dayjs()
+      expect(filters.Date(testdate.format(), "relative", false)).toEqual(
+        "a few seconds ago"
+      )
+      expect(filters.Date(testdate.format(), "relative", true)).toEqual(
+        "a few seconds"
+      )
+
       testdate = dayjs().add(5, "day")
       expect(filters.Date(testdate.format(), "relative", false)).toEqual(
         "a few seconds ago"
@@ -34,7 +54,7 @@ describe("Filters", () => {
       )
     })
 
-    it("for format set to calendar", () => {
+    it("should show as 'calendar' format", () => {
       expect(filters.Date("2021-12-25", "calendar")).toEqual("12/25/2021")
       let testdate = dayjs().subtract(1, "day")
       expect(filters.Date(testdate.format(), "calendar")).toEqual(
@@ -42,14 +62,19 @@ describe("Filters", () => {
       )
     })
 
-    it("for dates returned by APIs", () => {
-      let testdate = dayjs("2021-08-26T14:44:38.470Z")
-      expect(filters.Date("2021-08-26T14:44:38.470Z")).toEqual(
-        testdate.local().format("M/D/YYYY [at] h:mm A")
-      )
+    it("should handle 'UTC' format (provided by the API) as local time", () => {
+      // default timezone configured to: Pacific/Honolulu (-10 hours)
+      const utcDate = "2021-09-21T00:00:00.000Z"
+      const localDateAsString = "9/20/2021 at 2:00 PM" // -10 hours
+      const localDate = dayjs(utcDate)
+        .tz(defaultTimeZone, true)
+        .format("M/D/YYYY [at] h:mm A")
+
+      expect(filters.Date(utcDate)).toEqual(localDateAsString)
+      expect(filters.Date(utcDate)).toEqual(localDate)
     })
 
-    it("should display date in format as specified", () => {
+    it("should show as the 'custom' format when provided", () => {
       expect(filters.Date("2019-01-25", "DD/MM/YYYY")).toEqual("25/01/2019")
       expect(filters.Date("2019-01-25")).toEqual("1/25/2019 at 12:00 AM")
       expect(filters.Date("2019-01-25", "M/D/YYYY [at] h:mm A")).toEqual(
