@@ -88,7 +88,7 @@ export default {
         this.legendsData = [
           { color: "rgba(208, 208, 206, 1)", text: "no data available" },
         ]
-        
+
         colorCodes = ["rgba(208, 208, 206, 1)"]
       }
 
