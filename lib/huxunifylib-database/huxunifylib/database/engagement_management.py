@@ -439,7 +439,8 @@ def get_engagement(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_engagement(
-    database: DatabaseClient, engagement_id: ObjectId,
+    database: DatabaseClient,
+    engagement_id: ObjectId,
     hard_delete: bool = False,
 ) -> bool:
     """A function to delete an engagement based on ID
