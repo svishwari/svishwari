@@ -2,7 +2,9 @@
   <div
     class="chart-legends"
   >
-    <span class="legends" :style="{ backgroundColor: item.color }" v-for="item in legendsData" :key="item.text" >{{item.text}}</span>
+  <span class="legends" v-for="item in legendsData" :key="item.text">
+    <span class="dots" :style="{ backgroundColor: item.color }"></span><span>{{item.text}}</span>
+  </span>
   </div>
 </template>
 
@@ -19,14 +21,18 @@ export default {
 </script>
 <style lang="scss" scoped>
 .chart-legends {
+  margin-top: 20px;
   .legends {
-    margin-right: 20px;
-  height: 25px;
-  width: 25px;
+    margin-right: 10px;
+    .dots {
+    margin-top: 20px;
+    margin-right: 5px;
+  height: 10px;
+  width: 10px;
   background-color: #bbb;
   border-radius: 50%;
   display: inline-block;
-
+    }
   }
 }
 
