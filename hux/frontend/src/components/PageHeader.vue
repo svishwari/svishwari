@@ -14,7 +14,8 @@
           :type="icon"
           class="pr-1"
           :size="20"
-          color="black-darken4"
+          color="black"
+          variant="darken4"
         />
         <div class="text-h2" data-e2e="card-title">
           {{ title }}

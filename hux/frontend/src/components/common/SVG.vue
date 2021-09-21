@@ -30,6 +30,7 @@ export default {
     variant: {
       type: String,
       required: false,
+      default: "base",
     },
 
     fillOpacity: {
