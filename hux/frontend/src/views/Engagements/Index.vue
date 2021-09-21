@@ -944,7 +944,6 @@ export default {
           position: sticky;
           top: 0;
           left: 0;
-          z-index: 8;
           background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
           .menu-cell-wrapper > div {
