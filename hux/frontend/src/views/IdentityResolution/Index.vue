@@ -76,7 +76,7 @@
       </hux-filters-bar>
     </template>
     <template>
-      <v-row v-if="!loadingOverview" no-gutters class="idr-overview">
+      <v-row v-if="!loadingOverview" no-gutters>
         <v-slide-group class="idr-slide-group" show-arrows>
           <v-slide-item v-for="(metric, index) in overview" :key="index">
             <metric-card
@@ -331,14 +331,15 @@ export default {
 </script>
 <style lang="scss" scoped>
 .idr-wrapper {
-  .idr-overview {
-    .idr-slide-group {
-      ::v-deep .v-slide-group__wrapper {
-        overflow: auto !important;
-      }
-      ::v-deep .v-icon--disabled {
-        display: none !important;
-      }
+  .idr-slide-group {
+    ::v-deep .v-slide-group__wrapper {
+      overflow: auto !important;
+    }
+    ::v-deep .theme--light.v-icon {
+      color: var(--v-primary-base) !important;
+    }
+    ::v-deep .v-icon--disabled.theme--light.v-icon {
+      color: var(--v-black-lighten3) !important;
     }
   }
 }
