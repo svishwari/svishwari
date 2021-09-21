@@ -28,14 +28,69 @@ npm install
 Run the integration tests in headless mode (CLI).
 
 ```sh
-npm run test
+npm test
 ```
+
+Run the integration tests with additional parameters, such as video enabled.
+
+```sh
+npm test -- --config video=true
+```
+
+For more parameters, refer to the [Cypress docs](https://docs.cypress.io/guides/references/configuration#Options)
+and [specifically for videos](https://docs.cypress.io/guides/references/configuration#Videos).
 
 Run the integration tests in browser with the Cypress app.
 
 ```sh
 npm run test:dev
 ```
+
+## Running in a dedicated environment
+
+To run the integration/end-to-end tests in a dev environment, use the following
+configuration below.
+
+Here is the example configuration to run in dev.
+
+| `baseUrl`                                           | `USER_EMAIL`                         | `USER_PASSWORD`                      |
+|-----------------------------------------------------|--------------------------------------|--------------------------------------|
+|https://unified-ui-dev.main.use1.hux-unified-dev1.in | See 1Password: Unified Dev Test User | See 1Password: Unified Dev Test User |
+
+1. Ensure you are connected to the dev VPN and are able to access the `baseUrl` from your browser.
+
+2. Run `npm test` with the configured additional parameters:
+
+```sh
+npm test -- --config baseUrl=https://unified-ui-dev.main.use1.hux-unified-dev1.in --env USER_EMAIL=<...>,USER_PASSWORD=<...>
+```
+
+3. You can also update both `cypress.json` for configuration and
+`cypress.env.json` for environment variables:
+
+```json
+// cypress.json
+{
+  "baseUrl": "https://unified-ui-dev.main.use1.hux-unified-dev1.in",
+  "chromeWebSecurity": false,
+  "video": false
+}
+```
+
+```json
+// cypress.env.json
+{
+  "USER_EMAIL": "<...>",
+  "USER_PASSWORD": "<...>",
+}
+```
+
+These will run the tests locally against the dedicated environment in dev.
+
+**Note**:
+
+Tests are also built and run with CI/CD pipelines, with any merge to main.
+They are run in the staging environment.
 
 ## Running with Docker
 
