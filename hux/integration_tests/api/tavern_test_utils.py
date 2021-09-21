@@ -83,7 +83,9 @@ def get_engagement_audience_destination_id(response: object) -> Union[Box, None]
     return None
 
 
-def get_campaign_engagement_audience_destiantion_id(response: object) -> Union[Box, None]:
+def get_campaign_engagement_audience_destiantion_id(
+    response: object,
+) -> Union[Box, None]:
     """
     Purpose of this function is to get the engagement id from the get
     engagements response object and the corresponding audience_id and
@@ -125,8 +127,24 @@ def get_campaign_mapping_details(response: object) -> Union[Box, None]:
 
     for json in response.json():
         return Box(
-            {
-                "campaign": json["campaigns"][0],
-                "delivery_job": json["delivery_jobs"][0]
-            }
+            {"campaign": json["campaigns"][0], "delivery_job": json["delivery_jobs"][0]}
         )
+
+
+def get_destination_by_name(
+    response: object, destination_name: str
+) -> Union[Box, None]:
+    """
+    Purpose of this function is to get the specifically requested data source by name.
+    Args:
+        response (object): response object
+        destination_name (str): name of the data source
+
+    Returns:
+        Box: destination
+
+    """
+
+    for destination in response.json():
+        if destination["name"] == destination_name:
+            return Box({"destination": destination})
