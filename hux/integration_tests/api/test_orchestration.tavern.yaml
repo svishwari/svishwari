@@ -112,7 +112,7 @@ stages:
 
 
 ---
-test_name: Test retrieve non existant audience
+test_name: Test audience operations for non-existant audiences
 
 strict:
   - json:list_any_order
@@ -121,7 +121,37 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: Test Retrieving an audience that does not exist
+  - name: Retrieve destinations for and get an id
+
+    request:
+      url: "{host}/{version}/destinations"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        !anylist
+        - id: !anystr
+          name: !anystr
+          type: !anystr
+          status: !anystr
+          category: !anystr
+          feed_count: !anyint
+          is_enabled: !anybool
+          is_added: !anybool
+      save:
+        $ext:
+          function: tavern_test_utils:get_destination_by_name
+          extra_kwargs:
+            destination_name: "Facebook"
+
+  - name: Test retrieving an audience that does not exist
 
     # Define the request to be made...
     request:
@@ -135,6 +165,108 @@ stages:
       status_code: 404
       headers:
         content-type: application/json
+
+  - name: Test deleting an audience that does not exist
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/audiences/61135de24af31a0f33029092"
+      method: DELETE
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      status_code: 204
+      headers:
+        content-type: application/json
+
+  - name: Test updating an audience that does not exist
+      # Define the request to be made...
+    request:
+      url: "{host}/{version}/audiences/61135de24af31a0f33029092"
+      method: PUT
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        name: "TAVERN_TEST_AUDIENCE_UPDATED"
+        destinations:
+          - id: "{destination.id}"
+            delivery_platform_config:
+              data_extension_name: "txt"
+
+    response:
+      strict: false
+      # TODO HUS-1164 change this to 404 when the code has been changed
+      status_code: 400
+      headers:
+        content-type: application/json
+
+  - name: Test retrieving state-level insights for an audience that does not exist
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/audiences/61135de24af31a0f33029092/states"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      # TODO HUS-1164 change this to 404 when the code has been changed
+      status_code: 500
+      headers:
+        content-type: application/json
+
+  - name: Test retrieving state-level insights for an audience that does not exist
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/audiences/61135de24af31a0f33029092/cities"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      # TODO HUS-1164 change this to 404 when the code has been changed
+      status_code: 500
+      headers:
+        content-type: application/json
+
+  - name: Test retrieving audience insights for an audience that does not exist
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/audiences/61135de24af31a0f33029092/audience_insights"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      status_code: 404
+      headers:
+        content-type: application/json
+
+  - name: Test download audience insights for an audience that does not exist
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/audiences/61135de24af31a0f33029092/google_ads"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      # TODO HUS-1164 change this to 404 when the code has been changed
+      status_code: 400
+      headers:
+        content-type: application/json
+
 
 ---
 test_name: Test create - update - delete an audience
@@ -192,12 +324,6 @@ stages:
             delivery_platform_config:
               data_extension_name: "txt"
         engagements: []
-        filters:
-          - section_aggregator: "ALL"
-            section_filters:
-              - field: "filter_field"
-                type: "value"
-                value: "value"
 
     response:
       status_code: 201
@@ -207,47 +333,86 @@ stages:
         json:
           audience_id: "id"
 
-#  - name: Update the new audience
-#      # Define the request to be made...
-#      request:
-#        url: "{host}/{version}/audiences/{audience_id}"
-#        method: PUT
-#        headers:
-#          content-type: application/json
-#          Authorization: "Bearer {token}"
-#        json:
-#          name: "TAVERN_TEST_AUDIENCE_UPDATED"
-#          destinations:
-#            - id: "{destination.id}"
-#              delivery_platform_config:
-#                data_extension_name: "txt"
-#          engagements: [ ]
-#          filters:
-#            - section_aggregator: "ALL"
-#              section_filters:
-#                - field: "filter_field"
-#                  type: "value"
-#                  value: "value"
-#
-#      response:
-#        strict: false
-#        status_code: 200
-#        headers:
-#          content-type: application/json
-#        json:
-#          name: "TAVERN_TEST_AUDIENCE_UPDATED"
-#
-#  - name: Delete the new audience
-#      # Define the request to be made...
-#      request:
-#        url: "{host}/{version}/audiences/{audience_id}"
-#        method: DELETE
-#        headers:
-#          content-type: application/json
-#          Authorization: "Bearer {token}"
-#
-#      response:
-#        strict: false
-#        status_code: 204
-#        headers:
-#          content-type: application/json
+  - name: Test retrieving state-level insights for the new audience
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/audiences/{audience_id}/states"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+
+  - name: Test retrieving state-level insights for the new audience
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/audiences/{audience_id}/cities"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      status_code: 200
+      headers:
+        content-type: application/json
+
+  - name: Test retrieving audience insights for the new audience
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/audiences/{audience_id}/audience_insights"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      status_code: 200
+      headers:
+        content-type: application/json
+
+  - name: Update the new audience
+      # Define the request to be made...
+    request:
+      url: "{host}/{version}/audiences/{audience_id}"
+      method: PUT
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        name: "TAVERN_TEST_AUDIENCE_UPDATED"
+        destinations:
+          - id: "{destination.id}"
+            delivery_platform_config:
+              data_extension_name: "txt"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        name: "TAVERN_TEST_AUDIENCE_UPDATED"
+
+  - name: Delete the new audience
+      # Define the request to be made...
+    request:
+      url: "{host}/{version}/audiences/{audience_id}"
+      method: DELETE
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 204
+      headers:
+        content-type: application/json
