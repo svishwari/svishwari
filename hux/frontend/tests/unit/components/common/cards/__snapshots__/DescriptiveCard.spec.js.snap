@@ -4,7 +4,7 @@ exports[`Cards Descriptive Card Displays custom properties 1`] = `
 <v-card-stub loaderheight="4" tag="div" class="descriptive-card align-center text-center rounded-lg mr-10 mb-10">
   <!---->
   <div class="d-flex justify-center pb-4">
-    <icon-stub type="model-unsubscribe" size="60" color="primary" variant="base" fillopacity="1" class="d-block"></icon-stub>
+    <icon-stub type="model-unsubscribe" size="60" color="primary" fillopacity="1" class="d-block"></icon-stub>
   </div>
   <tooltip-stub contentclass="" maxwidth="auto" minwidth="auto !important" nudgeright="100px"></tooltip-stub>
   <tooltip-stub contentclass="" maxwidth="auto" minwidth="auto !important" nudgeright="100px"></tooltip-stub>
