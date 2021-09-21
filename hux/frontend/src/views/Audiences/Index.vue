@@ -47,7 +47,7 @@
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
             }"
-            :style="{ width: header.width, left: 0 }"
+            :style="{ minWidth: header.width, left: 0 }"
           >
             <div v-if="header.value == 'name'" class="w-100 d-flex">
               <span v-if="item.is_lookalike == true" class="mr-3">
@@ -86,9 +86,11 @@
                 v-if="item[header.value] && item[header.value].length > 0"
                 class="d-flex align-center"
               >
-                <div class="d-flex align-center">
+                <div class="d-flex align-center destination-ico">
                   <tooltip
-                    v-for="destination in item[header.value]"
+                    v-for="destination in getOverallDestinations(
+                      item[header.value]
+                    )"
                     :key="`${item.id}-${destination.type}`"
                   >
                     <template #label-content>
@@ -104,11 +106,35 @@
                     </template>
                   </tooltip>
                 </div>
+
                 <span
                   v-if="item[header.value] && item[header.value].length > 3"
                   class="ml-1"
                 >
-                  + {{ item[header.value].length - 2 }}
+                  <tooltip>
+                    <template #label-content>
+                      + {{ item[header.value].length - 3 }}
+                    </template>
+                    <template #hover-content>
+                      <div class="d-flex flex-column">
+                        <div
+                          v-for="extraDestination in getExtraDestinations(
+                            item[header.value]
+                          )"
+                          :key="extraDestination.id"
+                          class="d-flex align-center py-2"
+                        >
+                          <logo
+                            :key="extraDestination.id"
+                            class="mr-4"
+                            :type="extraDestination.type"
+                            :size="18"
+                          />
+                          <span>{{ extraDestination.name }}</span>
+                        </div>
+                      </div>
+                    </template>
+                  </tooltip>
                 </span>
               </div>
               <span v-else>—</span>
@@ -376,6 +402,19 @@ export default {
 
       return actionItems
     },
+    getOverallDestinations(destinations) {
+      if (destinations.length > 3) {
+        debugger
+        return destinations.slice(0, 3)
+      }
+      return destinations
+    },
+    getExtraDestinations(destinations) {
+      if (destinations.length > 3) {
+        return destinations.slice(3)
+      }
+      return destinations
+    },
     editAudience(id) {
       this.$router.push({
         name: "AudienceUpdate",
@@ -410,7 +449,13 @@ export default {
       margin-right: 10px;
     }
   }
-
+  // This CSS is to avoid conflict with Tooltip component.
+  ::v-deep .destination-ico {
+    span {
+      display: flex;
+      align-items: center;
+    }
+  }
   .hux-data-table {
     margin-top: 1px;
     ::v-deep table {
