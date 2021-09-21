@@ -99,7 +99,30 @@
                 </tooltip>
               </div>
               <span v-if="item[header.value].length > 3" class="ml-1">
-                + {{ item[header.value].length - 2 }}
+                <tooltip>
+                  <template #label-content>
+                    + {{ item[header.value].length - 3 }}
+                  </template>
+                  <template #hover-content>
+                    <div class="d-flex flex-column">
+                      <div
+                        v-for="extraDestination in getExtraDestinations(
+                          item[header.value]
+                        )"
+                        :key="extraDestination.id"
+                        class="d-flex align-center py-2"
+                      >
+                        <logo
+                          :key="extraDestination.id"
+                          class="mr-4"
+                          :type="extraDestination.delivery_platform_type"
+                          :size="18"
+                        />
+                        <span>{{ extraDestination.name }}</span>
+                      </div>
+                    </div>
+                  </template>
+                </tooltip>
               </span>
               <span v-else-if="item[header.value].length == 0">—</span>
             </div>
@@ -232,7 +255,7 @@
                     v-if="header.value == 'destinations'"
                     class="d-flex align-center"
                   >
-                    <div class="d-flex align-center">
+                    <div class="d-flex align-center destination-ico">
                       <tooltip
                         v-for="destination in getOverallDestinations(
                           item[header.value]
@@ -252,8 +275,32 @@
                       </tooltip>
                     </div>
                     <span v-if="item[header.value].length > 3" class="ml-1">
-                      + {{ item[header.value].length - 2 }}
+                      <tooltip>
+                        <template #label-content>
+                          + {{ item[header.value].length - 3 }}
+                        </template>
+                        <template #hover-content>
+                          <div class="d-flex flex-column">
+                            <div
+                              v-for="extraDestination in getExtraDestinations(
+                                item[header.value]
+                              )"
+                              :key="extraDestination.id"
+                              class="d-flex align-center py-2"
+                            >
+                              <logo
+                                :key="extraDestination.id"
+                                class="mr-4"
+                                :type="extraDestination.delivery_platform_type"
+                                :size="18"
+                              />
+                              <span>{{ extraDestination.name }}</span>
+                            </div>
+                          </div>
+                        </template>
+                      </tooltip>
                     </span>
+                    <span v-else-if="item[header.value].length == 0">—</span>
                   </div>
                   <div v-if="header.value == 'last_delivered'">
                     <tooltip>
@@ -494,7 +541,7 @@ export default {
       confirmDialog: {
         title: "Remove  audience?",
         btnText: "Yes, remove it",
-        body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
+        body: "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement.",
       },
       flashAlert: false,
       alert: {
@@ -670,7 +717,13 @@ export default {
     },
     getOverallDestinations(destinations) {
       if (destinations.length > 3) {
-        return destinations.slice(0, 2)
+        return destinations.slice(0, 3)
+      }
+      return destinations
+    },
+    getExtraDestinations(destinations) {
+      if (destinations.length > 3) {
+        return destinations.slice(3)
       }
       return destinations
     },
@@ -728,7 +781,8 @@ export default {
     getActionItems(engagement) {
       let actionItems = [
         { title: "Favorite", isDisabled: true },
-        { title: "Export", isDisabled: true },
+        // TODO: enable once features are available
+        // { title: "Export", isDisabled: true },
         {
           title: "Edit engagement",
           isDisabled: false,
@@ -736,7 +790,8 @@ export default {
             this.editEngagement(engagement.id)
           },
         },
-        { title: "Duplicate", isDisabled: true },
+        // TODO: enable once features are available
+        // { title: "Duplicate", isDisabled: true },
         {
           title: "Make inactive",
           isDisabled: false,
@@ -757,7 +812,8 @@ export default {
     },
     getAudienceActionItems(audience, engagementId) {
       let audienceActionItems = [
-        { title: "Favorite", isDisabled: true },
+        // TODO: enable once features are available
+        // { title: "Favorite", isDisabled: true },
         { title: "Export", isDisabled: true },
         {
           title: "Edit audience",
@@ -785,7 +841,7 @@ export default {
           onClick: (value) => {
             this.showAudienceRemoveConfirmation = true
             this.selectedEngagementId = engagementId
-            this.confirmDialog.title = `Remove ${value.name} audience?`
+            this.confirmDialog.title = `You are about to remove ${value.name}?`
             this.selectedAudienceId = value.id
           },
         },
@@ -850,6 +906,11 @@ export default {
     }
   }
   .hux-data-table {
+    .mdi-chevron-right {
+      &::after {
+        opacity: 0;
+      }
+    }
     ::v-deep table {
       tr {
         height: 64px;
@@ -870,7 +931,7 @@ export default {
       .v-data-table-header {
         th:nth-child(1) {
           left: 0;
-          z-index: 5;
+          z-index: 9;
           border-right: thin solid rgba(0, 0, 0, 0.12);
           overflow-y: visible;
           overflow-x: visible;
@@ -893,9 +954,6 @@ export default {
           left: 0;
           background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
-          &:hover {
-            background: var(--v-primary-lighten2) !important;
-          }
           .menu-cell-wrapper > div {
             a.text-decoration-none {
               .ellipsis {
@@ -916,6 +974,9 @@ export default {
     .child {
       ::v-deep .theme--light {
         background: var(--v-primary-lighten1);
+        .v-icon {
+          background: transparent;
+        }
         .v-data-table__wrapper {
           box-shadow: inset 0px 10px 10px -4px var(--v-black-lighten3);
           border-bottom: thin solid rgba(0, 0, 0, 0.12);
