@@ -8,7 +8,7 @@
       @cordinates="getCordinates"
       @tooltipDisplay="toolTipDisplay"
     />
- 
+
     <line-area-chart-tooltip
       :position="{
         x: tooltip.x,
@@ -24,7 +24,6 @@
 <script>
 import LineAreaChartTooltip from "@/components/common/GenderSpendChart/LineAreaChartTooltip"
 import LineAreaChart from "@/components/common/GenderSpendChart/LineAreaChart"
-
 
 export default {
   name: "GenderSpendChart",

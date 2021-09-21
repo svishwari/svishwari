@@ -5,7 +5,7 @@
       class="chart-section"
       @mouseover="getCordinates($event)"
     ></div>
-    <chart-legends class="pl-7 legend-style" />
+    <chart-legends :legends-data="legendsData" class="legend-style pl-7" />
   </div>
 </template>
 
@@ -56,6 +56,11 @@ export default {
         y: 0,
       },
       areaChartData: this.value,
+      legendsData: [
+        { color: "rgba(0, 85, 135, 1)", text: "Women" },
+        { color: "rgba(12, 157, 219, 1)", text: "Men" },
+        { color: "rgba(66, 239, 253, 1)", text: "Other" },
+      ],
     }
   },
   watch: {
@@ -74,34 +79,16 @@ export default {
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
-      let genders = []
-      let colorCodes = []
-      let color = []
+      let colorCodes = [
+        "rgba(0, 85, 135, 1)",
+        "rgba(12, 157, 219, 1)",
+        "rgba(66, 239, 253, 1)",
+      ]
       if (this.areaChartData.length === 0) {
-        genders = [{ label: "no data available", xValue: 0 }]
-
+        this.legendsData = [
+          { color: "rgba(208, 208, 206, 1)", text: "no data available" },
+        ]
         colorCodes = ["rgba(208, 208, 206, 1)"]
-        color = d3Scale.scaleOrdinal().range([" rgba(208, 208, 206, 1)"])
-      } else {
-        genders = [
-          { label: "Women", xValue: 0 },
-          { label: "Men", xValue: 38 },
-          { label: "Other", xValue: 67 },
-        ]
-
-        colorCodes = [
-          "rgba(0, 85, 135, 1)",
-          "rgba(12, 157, 219, 1)",
-          "rgba(66, 239, 253, 1)",
-        ]
-
-        color = d3Scale
-          .scaleOrdinal()
-          .range([
-            "rgba(0, 85, 135, 1)",
-            "rgba(12, 157, 219, 1)",
-            "rgba(66, 239, 253, 1)",
-          ])
       }
 
       let svg = d3Select
