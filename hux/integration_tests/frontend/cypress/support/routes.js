@@ -25,4 +25,6 @@ export default {
   connections: "/connections",
   destinations: "/destinations",
   addDataSource: "/datasources/add",
+    //notification
+    notifications: "/notifications"
 }
