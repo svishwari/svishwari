@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-legends">
+  <div>
     <span v-for="item in legendsData" :key="item.text" class="chart-legends">
       <span class="legend-items"
         ><span class="dots" :style="{ backgroundColor: item.color }"></span
