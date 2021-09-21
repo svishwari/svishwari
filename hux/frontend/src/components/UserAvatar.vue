@@ -1,7 +1,11 @@
 <template>
   <v-menu v-model="menu" offset-y close-on-click>
     <template #activator="{ on }">
-      <span class="d-flex cursor-pointer mr-6" v-on="on">
+      <span
+        class="d-flex cursor-pointer mr-6"
+        data-e2e="profile-dropdown"
+        v-on="on"
+      >
         <v-btn color="primary" class="font-weight-bold" small outlined fab>
           {{ initials }}
         </v-btn>
@@ -26,12 +30,13 @@
             class="text-decoration-none text-h6 black--text text--darken-4"
             :href="changeDetailsLink"
             target="_blank"
+            data-e2e="profile"
             >My Hux Profile</a
           >
         </v-list-item-title>
       </v-list-item>
       <v-divider />
-      <v-list-item @click="initiateLogout()">
+      <v-list-item data-e2e="logout" @click="initiateLogout()">
         <v-list-item-title class="text-h6 black--text text--darken-4"
           >Logout</v-list-item-title
         >

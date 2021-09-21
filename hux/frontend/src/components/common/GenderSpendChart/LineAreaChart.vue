@@ -5,9 +5,7 @@
       class="chart-section"
       @mouseover="getCordinates($event)"
     ></div>
-    <div class="pt-2 pl-4">
-      <div id="legend"></div>
-    </div>
+    <chart-legends :legends-data="legendsData" class="legend-style pl-7" />
   </div>
 </template>
 
@@ -18,9 +16,11 @@ import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
 import * as d3Axis from "d3-axis"
 import * as d3TimeFormat from "d3-time-format"
+import ChartLegends from "@/components/common/Charts/Legends/ChartLegends.vue"
 
 export default {
   name: "LineAreaChart",
+  components: { ChartLegends },
   props: {
     value: {
       type: Array,
@@ -56,6 +56,11 @@ export default {
         y: 0,
       },
       areaChartData: this.value,
+      legendsData: [
+        { color: "rgba(0, 85, 135, 1)", text: "Women" },
+        { color: "rgba(12, 157, 219, 1)", text: "Men" },
+        { color: "rgba(66, 239, 253, 1)", text: "Other" },
+      ],
     }
   },
   watch: {
@@ -74,34 +79,17 @@ export default {
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
-      let genders = []
-      let colorCodes = []
-      let color = []
+      let colorCodes = [
+        "rgba(0, 85, 135, 1)",
+        "rgba(12, 157, 219, 1)",
+        "rgba(66, 239, 253, 1)",
+      ]
       if (this.areaChartData.length === 0) {
-        genders = [{ label: "no data available", xValue: 0 }]
+        this.legendsData = [
+          { color: "rgba(208, 208, 206, 1)", text: "no data available" },
+        ]
 
         colorCodes = ["rgba(208, 208, 206, 1)"]
-        color = d3Scale.scaleOrdinal().range([" rgba(208, 208, 206, 1)"])
-      } else {
-        genders = [
-          { label: "Women", xValue: 0 },
-          { label: "Men", xValue: 38 },
-          { label: "Other", xValue: 67 },
-        ]
-
-        colorCodes = [
-          "rgba(0, 85, 135, 1)",
-          "rgba(12, 157, 219, 1)",
-          "rgba(66, 239, 253, 1)",
-        ]
-
-        color = d3Scale
-          .scaleOrdinal()
-          .range([
-            "rgba(0, 85, 135, 1)",
-            "rgba(12, 157, 219, 1)",
-            "rgba(66, 239, 253, 1)",
-          ])
       }
 
       let svg = d3Select
@@ -322,52 +310,10 @@ export default {
             .attr("stroke", "transparent")
         })
       })
-
-      d3Select.select("#legend").selectAll("svg").remove()
-      let legendSvg = d3Select
-        .select("#legend")
-        .append("svg")
-        .attr("viewBox", "0 0 190 50")
-        .attr("id", "mainSvg")
-        .attr("class", "svgBox")
-        .style("margin-left", "20px")
-        .style("margin-right", "20px")
-        .style("margin-top", "10px")
-
-      let legend = legendSvg
-        .selectAll(".legend")
-        .data(genders)
-        .enter()
-        .append("g")
-        .attr("class", "legend")
-        .attr("transform", function (d) {
-          return `translate(${d.xValue}, 0)`
-        })
-
-      legend
-        .append("circle")
-        .attr("cx", 10)
-        .attr("cy", 10)
-        .attr("r", 3)
-        .style("fill", function (d) {
-          return color(d.label)
-        })
-
-      legend
-        .append("text")
-        .attr("x", 16)
-        .attr("y", 9)
-        .attr("dy", ".55em")
-        .attr("class", "black--text text--darken-4")
-        .style("font-size", "6px")
-        .style("text-anchor", "start")
-        .text(function (d) {
-          return d.label
-        })
     },
     getCordinates(event) {
       this.tooltip.x = event.offsetX
-      this.tooltip.y = event.offsetY
+      this.tooltip.y = event.offsetY - 150
       this.$emit("cordinates", this.tooltip)
     },
     tooltipDisplay(showTip, spendData) {
@@ -385,6 +331,9 @@ export default {
   height: 325px;
   .chart-section {
     margin-bottom: -20px;
+  }
+  .legend-style {
+    margin-top: 35px;
   }
 }
 </style>

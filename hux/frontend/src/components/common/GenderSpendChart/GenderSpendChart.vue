@@ -8,6 +8,7 @@
       @cordinates="getCordinates"
       @tooltipDisplay="toolTipDisplay"
     />
+
     <line-area-chart-tooltip
       :position="{
         x: tooltip.x,
