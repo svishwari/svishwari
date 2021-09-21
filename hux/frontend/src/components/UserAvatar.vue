@@ -1,7 +1,11 @@
 <template>
   <v-menu v-model="menu" offset-y close-on-click>
     <template #activator="{ on }">
-      <span class="d-flex cursor-pointer mr-6" data-e2e="profile-dropdown" v-on="on">
+      <span
+        class="d-flex cursor-pointer mr-6"
+        data-e2e="profile-dropdown"
+        v-on="on"
+      >
         <v-btn color="primary" class="font-weight-bold" small outlined fab>
           {{ initials }}
         </v-btn>

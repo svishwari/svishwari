@@ -2,7 +2,13 @@
   <v-menu :min-width="200" left offset-y close-on-click>
     <template #activator="{ on }">
       <span class="d-flex cursor-pointer" v-on="on">
-        <v-btn class="mx-2 box-shadow-25" data-e2e="notification-bell" color="white" fab x-small>
+        <v-btn
+          class="mx-2 box-shadow-25"
+          data-e2e="notification-bell"
+          color="white"
+          fab
+          x-small
+        >
           <v-icon color="primary"> mdi-bell-outline </v-icon>
         </v-btn>
       </span>
@@ -14,7 +20,11 @@
         </v-list-item-title>
       </v-list-item>
       <div class="notification-div">
-        <v-list-item v-for="data in mostRecentNotifications" :key="data.id" data-e2e="notification-item">
+        <v-list-item
+          v-for="data in mostRecentNotifications"
+          :key="data.id"
+          data-e2e="notification-item"
+        >
           <v-list-item-title
             class="text-h6 black--text text--darken-4 list-main"
           >
