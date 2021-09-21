@@ -5,9 +5,7 @@
       class="chart-section"
       @mouseover="getCordinates($event)"
     ></div>
-    <div class="pt-2 pl-4">
-      <div id="legend"></div>
-    </div>
+    <chart-legends class="pl-7 legend-style" />
   </div>
 </template>
 
@@ -18,9 +16,11 @@ import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
 import * as d3Axis from "d3-axis"
 import * as d3TimeFormat from "d3-time-format"
+import ChartLegends from "@/components/common/Charts/Legends/ChartLegends.vue"
 
 export default {
   name: "LineAreaChart",
+  components: { ChartLegends },
   props: {
     value: {
       type: Array,
@@ -322,52 +322,10 @@ export default {
             .attr("stroke", "transparent")
         })
       })
-
-      d3Select.select("#legend").selectAll("svg").remove()
-      let legendSvg = d3Select
-        .select("#legend")
-        .append("svg")
-        .attr("viewBox", "0 0 190 50")
-        .attr("id", "mainSvg")
-        .attr("class", "svgBox")
-        .style("margin-left", "20px")
-        .style("margin-right", "20px")
-        .style("margin-top", "10px")
-
-      let legend = legendSvg
-        .selectAll(".legend")
-        .data(genders)
-        .enter()
-        .append("g")
-        .attr("class", "legend")
-        .attr("transform", function (d) {
-          return `translate(${d.xValue}, 0)`
-        })
-
-      legend
-        .append("circle")
-        .attr("cx", 10)
-        .attr("cy", 10)
-        .attr("r", 3)
-        .style("fill", function (d) {
-          return color(d.label)
-        })
-
-      legend
-        .append("text")
-        .attr("x", 16)
-        .attr("y", 9)
-        .attr("dy", ".55em")
-        .attr("class", "black--text text--darken-4")
-        .style("font-size", "6px")
-        .style("text-anchor", "start")
-        .text(function (d) {
-          return d.label
-        })
     },
     getCordinates(event) {
       this.tooltip.x = event.offsetX
-      this.tooltip.y = event.offsetY
+      this.tooltip.y = event.offsetY - 150
       this.$emit("cordinates", this.tooltip)
     },
     tooltipDisplay(showTip, spendData) {
@@ -385,6 +343,9 @@ export default {
   height: 325px;
   .chart-section {
     margin-bottom: -20px;
+  }
+  .legend-style {
+    margin-top: 35px;
   }
 }
 </style>

@@ -2,9 +2,7 @@
   <div class="container">
     <span v-if="showChart">
       <div id="chart" ref="chart" @mousemove="getCordinates($event)"></div>
-      <div class="pt-2 pl-4">
-        <div id="chartLegend"></div>
-      </div>
+      <chart-legends class="pl-5" />
       <doughnut-chart-tooltip
         :show-tooltip="showTooltip"
         :tooltip="tooltip"
@@ -28,13 +26,14 @@
 
 <script>
 import DoughnutChartTooltip from "@/components/common/DoughnutChart/DoughnutChartTooltip"
+import ChartLegends from "@/components/common/Charts/Legends/ChartLegends.vue"
 import * as d3Select from "d3-selection"
 import * as d3Scale from "d3-scale"
 import * as d3Shape from "d3-shape"
 
 export default {
   name: "DoughnutChart",
-  components: { DoughnutChartTooltip },
+  components: { DoughnutChartTooltip, ChartLegends },
   props: {
     data: {
       type: Array,
@@ -174,49 +173,6 @@ export default {
           this.sourceInput = d.data
           this.showTooltip = false
         }
-
-        // Creating legends svg element & apply style
-        d3Select.select("#chartLegend").selectAll("svg").remove()
-        let legendSvg = d3Select
-          .select("#chartLegend")
-          .append("svg")
-          .attr("viewBox", "8 0 130 42")
-          .attr("id", "mainSvg")
-          .attr("class", "svgBox")
-          .style("margin-right", "20px")
-          .style("margin-left", "-10px")
-          .style("text-align", "left")
-
-        let legend = legendSvg
-          .selectAll(".legend")
-          .data(legendsData)
-          .enter()
-          .append("g")
-          .attr("class", "legend")
-          .attr("transform", function (d) {
-            return `translate(${d.position}, 0)`
-          })
-
-        legend
-          .append("circle")
-          .attr("cx", 10)
-          .attr("cy", 10)
-          .attr("r", 3)
-          .style("fill", function (d, i) {
-            return colorCodes[i]
-          })
-
-        legend
-          .append("text")
-          .attr("x", 16)
-          .attr("y", 9)
-          .attr("dy", ".55em")
-          .attr("class", "black--text text--darken-4")
-          .style("font-size", "6px")
-          .style("text-anchor", "start")
-          .text(function (d) {
-            return d.label
-          })
       }
     },
     getCordinates(evt) {
