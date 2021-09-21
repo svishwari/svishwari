@@ -23,5 +23,6 @@ export default {
   customerProfiles: "/customers",
   identityResolution: "/identity-resolution",
   connections: "/connections",
+  destinations: "/destinations",
   addDataSource: "/datasources/add",
 }

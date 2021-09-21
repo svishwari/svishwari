@@ -1,7 +1,7 @@
 /**
  * Selectors for DOM elements in the application.
  */
-export default {
+ export default {
   home: {
     signin: "[data-e2e='signin']",
   },
@@ -16,11 +16,19 @@ export default {
   card: {
     title: "[data-e2e='card-title']",
     description: "[data-e2e='card-description']",
-  },
+    },
 
   // navigation
   nav: {
     models: "[data-e2e='nav-models']",
+  },
+
+  // overview
+  overview: {
+    header: "[data-e2e='overview-header']",
+    list: "[data-e2e='configuration-list']",
+    item: "[data-e2e='configuration-item']",
+    chart: "[data-e2e='overview-chart']",
   },
 
   // connections

@@ -16,7 +16,7 @@
           :size="20"
           color="black-darken4"
         />
-        <div class="text-h2">
+        <div class="text-h2" data-e2e="card-title">
           {{ title }}
         </div>
       </div>
