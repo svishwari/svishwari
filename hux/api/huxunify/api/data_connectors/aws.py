@@ -147,10 +147,13 @@ def get_aws_client(
     )
 
 
-def check_aws_connection(client="s3", **extra_params) -> Tuple[bool, str]:
+def check_aws_connection(
+    client_method: str, extra_params: dict, client="s3"
+) -> Tuple[bool, str]:
     """Validate an AWS connection.
 
     Args:
+        client_method (str): Method name for the client
         client (str): name of the boto3 client to use.
         extra_params (dict): Extra params required for aws connection
     Returns:
@@ -160,8 +163,7 @@ def check_aws_connection(client="s3", **extra_params) -> Tuple[bool, str]:
 
     try:
         # lookup the health test to run from api constants
-        health_test = api_c.AWS_HEALTH_TESTS[client]
-        getattr(get_aws_client(client), health_test[0])(**extra_params)
+        getattr(get_aws_client(client), client_method)(**extra_params)
         record_health_status_metric(api_c.AWS_SSM_CONNECTION_HEALTH, True)
         record_health_status_metric(api_c.AWS_BATCH_CONNECTION_HEALTH, True)
         return True, f"{client} available."
@@ -180,7 +182,9 @@ def check_aws_ssm() -> Tuple[bool, str]:
             and the message.
     """
     return check_aws_connection(
-        api_c.AWS_SSM_NAME, **api_c.AWS_HEALTH_TESTS.get(api_c.AWS_SSM_NAME)[1]
+        client_method="get_parameter",
+        client=api_c.AWS_SSM_NAME,
+        extra_params={"Name": "unifieddb_host_alias"},
     )
 
 
@@ -192,8 +196,9 @@ def check_aws_batch() -> Tuple[bool, str]:
             and the message.
     """
     return check_aws_connection(
-        api_c.AWS_BATCH_NAME,
-        **api_c.AWS_HEALTH_TESTS.get(api_c.AWS_BATCH_NAME)[1],
+        client_method="cancel_job",
+        client=api_c.AWS_BATCH_NAME,
+        extra_params={"jobId": "test", "reason": "test"},
     )
 
 
@@ -206,8 +211,9 @@ def check_aws_s3() -> Tuple[bool, str]:
 
     """
     return check_aws_connection(
-        api_c.AWS_S3_NAME,
-        **{api_c.AWS_BUCKET: config.get_config().S3_DATASET_BUCKET},
+        client_method="get_bucket_versioning",
+        client=api_c.AWS_S3_NAME,
+        extra_params={api_c.AWS_BUCKET: config.get_config().S3_DATASET_BUCKET},
     )
 
 
@@ -219,8 +225,9 @@ def check_aws_events() -> Tuple[bool, str]:
             and the message.
     """
     return check_aws_connection(
-        api_c.AWS_EVENTS_NAME,
-        **api_c.AWS_HEALTH_TESTS.get(api_c.AWS_EVENTS_NAME)[1],
+        client_method="list_event_buses",
+        client=api_c.AWS_EVENTS_NAME,
+        extra_params={"NamePrefix": "EC2"},
     )
 
 

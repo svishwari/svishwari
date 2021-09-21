@@ -216,12 +216,6 @@ AWS_SSM_NAME = "ssm"
 AWS_EVENTS_NAME = "events"
 AWS_BATCH_NAME = "batch"
 AWS_S3_NAME = "s3"
-AWS_HEALTH_TESTS = {
-    AWS_SSM_NAME: ["get_parameter", {"Name": "unifieddb_host_alias"}],
-    AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
-    AWS_S3_NAME: ["get_bucket_versioning"],
-    AWS_EVENTS_NAME: ["list_event_buses", {"NamePrefix": "EC2"}],
-}
 
 AWS_BUCKET = "Bucket"
 AWS_KEY = "Key"
