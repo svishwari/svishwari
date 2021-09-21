@@ -35,6 +35,7 @@ from huxunify.api.data_connectors.cdp import check_cdm_api_connection
 from huxunify.api.data_connectors.cdp_connection import (
     check_cdp_connections_api_connection,
 )
+from huxunify.api.exceptions import integration_api_exceptions as iae
 from huxunify.api.prometheus import record_health_status_metric
 
 
@@ -335,4 +336,4 @@ def check_end_date_greater_than_start_date(
         and end_date_format
         and start_date_format > end_date_format
     ):
-        raise Exception()
+        raise iae.FailedDateFilterIssue()

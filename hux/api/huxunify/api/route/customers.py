@@ -250,9 +250,7 @@ class IDROverview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler(
-        custom_message={api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE}
-    )
+    @api_error_handler()
     def get(self) -> Tuple[dict, int]:
         """Retrieves a customer data dashboard overview.
 
@@ -469,9 +467,7 @@ class IDRDataFeeds(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use,unused-argument
-    @api_error_handler(
-        custom_message={api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE}
-    )
+    @api_error_handler()
     def get(self) -> Tuple[List[dict], int]:
         """Retrieves a IDR data feeds.
         ---
@@ -650,9 +646,7 @@ class CustomerDemoVisualView(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler(
-        custom_message={api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE}
-    )
+    @api_error_handler()
     def get(self) -> Tuple[dict, int]:
         """Retrieves a Demographical customer insights.
 
@@ -741,9 +735,7 @@ class IDRMatchingTrends(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use,unused-argument
-    @api_error_handler(
-        custom_message={api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE}
-    )
+    @api_error_handler()
     def get(self) -> Tuple[dict, int]:
         """Retrieves IDR Matching trends YTD data
 
@@ -823,9 +815,7 @@ class CustomerEvents(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler(
-        custom_message={api_c.MESSAGE: api_c.START_DATE_GREATER_THAN_END_DATE}
-    )
+    @api_error_handler()
     def post(self, hux_id: str) -> Tuple[dict, int]:
         """Retrieves events for a given HUX ID.
 
