@@ -13,6 +13,10 @@
 export default {
   name: "ChartLegends",
   props: {
+      /**
+     * Accepts an array of object consist of Label circle color & text
+     * eg:  [{ color: "rgba(208, 208, 206, 1)", text: "no data available" }]
+     */
     legendsData: {
       type: Array,
       required: true,
