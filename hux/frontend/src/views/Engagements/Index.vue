@@ -717,7 +717,6 @@ export default {
     },
     getOverallDestinations(destinations) {
       if (destinations.length > 3) {
-        debugger
         return destinations.slice(0, 3)
       }
       return destinations
