@@ -146,10 +146,10 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: Retrieve data sources for and get an id
+  - name: Retrieve destinations for and get an id
 
     request:
-      url: "{host}/{version}/data-sources"
+      url: "{host}/{version}/destinations"
       method: GET
       headers:
         content-type: application/json
@@ -173,7 +173,8 @@ stages:
       save:
         $ext:
           function: tavern_test_utils:get_destination_by_name
-
+          extra_kwargs:
+            destination_name: "Facebook"
 
   - name: Create the new audience
 
@@ -206,47 +207,47 @@ stages:
         json:
           audience_id: "id"
 
-  - name: Update the new audience
-      # Define the request to be made...
-      request:
-        url: "{host}/{version}/audiences/{audience_id}"
-        method: PUT
-        headers:
-          content-type: application/json
-          Authorization: "Bearer {token}"
-        json:
-          name: "TAVERN_TEST_AUDIENCE_UPDATED"
-          destinations:
-            - id: "{destination.id}"
-              delivery_platform_config:
-                data_extension_name: "txt"
-          engagements: [ ]
-          filters:
-            - section_aggregator: "ALL"
-              section_filters:
-                - field: "filter_field"
-                  type: "value"
-                  value: "value"
-
-      response:
-        strict: false
-        status_code: 200
-        headers:
-          content-type: application/json
-        json:
-          name: "TAVERN_TEST_AUDIENCE_UPDATED"
-
-  - name: Delete the new audience
-      # Define the request to be made...
-      request:
-        url: "{host}/{version}/audiences/{audience_id}"
-        method: DELETE
-        headers:
-          content-type: application/json
-          Authorization: "Bearer {token}"
-
-      response:
-        strict: false
-        status_code: 204
-        headers:
-          content-type: application/json
+#  - name: Update the new audience
+#      # Define the request to be made...
+#      request:
+#        url: "{host}/{version}/audiences/{audience_id}"
+#        method: PUT
+#        headers:
+#          content-type: application/json
+#          Authorization: "Bearer {token}"
+#        json:
+#          name: "TAVERN_TEST_AUDIENCE_UPDATED"
+#          destinations:
+#            - id: "{destination.id}"
+#              delivery_platform_config:
+#                data_extension_name: "txt"
+#          engagements: [ ]
+#          filters:
+#            - section_aggregator: "ALL"
+#              section_filters:
+#                - field: "filter_field"
+#                  type: "value"
+#                  value: "value"
+#
+#      response:
+#        strict: false
+#        status_code: 200
+#        headers:
+#          content-type: application/json
+#        json:
+#          name: "TAVERN_TEST_AUDIENCE_UPDATED"
+#
+#  - name: Delete the new audience
+#      # Define the request to be made...
+#      request:
+#        url: "{host}/{version}/audiences/{audience_id}"
+#        method: DELETE
+#        headers:
+#          content-type: application/json
+#          Authorization: "Bearer {token}"
+#
+#      response:
+#        strict: false
+#        status_code: 204
+#        headers:
+#          content-type: application/json
