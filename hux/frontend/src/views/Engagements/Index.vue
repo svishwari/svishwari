@@ -728,7 +728,8 @@ export default {
     getActionItems(engagement) {
       let actionItems = [
         { title: "Favorite", isDisabled: true },
-        { title: "Export", isDisabled: true },
+        // TODO: enable once features are available
+        // { title: "Export", isDisabled: true },
         {
           title: "Edit engagement",
           isDisabled: false,
@@ -736,7 +737,8 @@ export default {
             this.editEngagement(engagement.id)
           },
         },
-        { title: "Duplicate", isDisabled: true },
+        // TODO: enable once features are available
+        // { title: "Duplicate", isDisabled: true },
         {
           title: "Make inactive",
           isDisabled: false,
@@ -757,7 +759,8 @@ export default {
     },
     getAudienceActionItems(audience, engagementId) {
       let audienceActionItems = [
-        { title: "Favorite", isDisabled: true },
+        // TODO: enable once features are available
+        // { title: "Favorite", isDisabled: true },
         { title: "Export", isDisabled: true },
         {
           title: "Edit audience",
@@ -850,6 +853,11 @@ export default {
     }
   }
   .hux-data-table {
+    .mdi-chevron-right {
+      &::after {
+        opacity: 0;
+      }
+    }
     ::v-deep table {
       tr {
         height: 64px;
@@ -916,6 +924,9 @@ export default {
     .child {
       ::v-deep .theme--light {
         background: var(--v-primary-lighten1);
+        .v-icon {
+          background: transparent;
+        }
         .v-data-table__wrapper {
           box-shadow: inset 0px 10px 10px -4px var(--v-black-lighten3);
           border-bottom: thin solid rgba(0, 0, 0, 0.12);
