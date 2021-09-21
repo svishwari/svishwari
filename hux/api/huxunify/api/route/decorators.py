@@ -34,8 +34,7 @@ from huxunify.api.exceptions import integration_api_exceptions as iae
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
-    """
-    This decorator takes a blueprint and assigns the view function directly
+    """This decorator takes a blueprint and assigns the view function directly
     the alternative to this is having to manually define this in app.py
     or at the bottom of the route file, as the input is a class.
 
@@ -51,22 +50,22 @@ def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
         self (func): a flask/blueprint object, must have 'add_url_rule'
         rule (str): an input rule
         endpoint (str): the name of the endpoint
+        options: options to be added to URL rule
 
     Returns:
-        Response: decorator
-
+        Response (object): decorator
     """
 
     def decorator(cls) -> Any:
-        """decorator function
+        """Decorator function.
 
         Args:
             cls (object): a function to decorate
 
         Returns:
-            Response: Returns the decorated object.
-
+            Response (Any): Returns the decorated object.
         """
+
         # add the url to the flask object
         self.add_url_rule(rule, view_func=cls.as_view(endpoint), **options)
         return cls
@@ -75,8 +74,7 @@ def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
 
 
 def secured() -> object:
-    """
-    This decorator takes an API request and validates
+    """This decorator takes an API request and validates
     if the user provides a JWT token and if that token is valid.
 
     Eventually this decorator will extract the ROLE from
@@ -84,11 +82,8 @@ def secured() -> object:
 
     Example: @secured()
 
-    Args:
-
     Returns:
-        Response: decorator
-
+        Response (object): decorator
     """
 
     def wrapper(in_function) -> object:
@@ -111,7 +106,7 @@ def secured() -> object:
                 **kwargs (dict): function keyword arguments.
 
             Returns:
-               object: returns a decorated function object.
+               Response (object): returns a decorated function object.
             """
 
             # override if flag set locally
@@ -143,38 +138,34 @@ def secured() -> object:
 
 
 def get_user_name() -> object:
-    """
-    This decorator takes an API request and extracts the user namr.
+    """This decorator takes an API request and extracts the user name.
 
     Example: @get_user_name()
 
-    Args:
-
     Returns:
-        Response: decorator
-
+        Response (object): decorator
     """
 
     def wrapper(in_function) -> object:
-        """Decorator for wrapping a function
+        """Decorator for wrapping a function.
 
         Args:
             in_function (object): function object.
 
         Returns:
-           object: returns a wrapped decorated function object.
+           Response (object): returns a wrapped decorated function object.
         """
 
         @wraps(in_function)
         def decorator(*args, **kwargs) -> object:
-            """Decorator for extracting the user_name
+            """Decorator for extracting the user_name.
 
             Args:
                 *args (object): function arguments.
                 **kwargs (dict): function keyword arguments.
 
             Returns:
-               object: returns a decorated function object.
+               Response (object): returns a decorated function object.
             """
 
             # override if flag set locally
@@ -233,8 +224,7 @@ def get_user_name() -> object:
 
 # pylint: disable=too-many-return-statements
 def api_error_handler(custom_message: dict = None) -> object:
-    """
-    This decorator handles generic errors for API requests.
+    """This decorator handles generic errors for API requests.
 
     Eventually this decorator will handle more types of errors.
 
@@ -242,21 +232,20 @@ def api_error_handler(custom_message: dict = None) -> object:
 
     Args:
         custom_message (dict): Optional; A dict containing custom messages for
-            particular exceptions
+            particular exceptions.
 
     Returns:
-        Response: decorator
-
+        Response (object): decorator.
     """
 
     def wrapper(in_function) -> object:
-        """Decorator for wrapping a function
+        """Decorator for wrapping a function.
 
         Args:
             in_function (object): function object.
 
         Returns:
-           object: returns a wrapped decorated function object.
+           Response (object): returns a wrapped decorated function object.
         """
 
         # pylint: disable=too-many-return-statements, too-many-branches
@@ -269,7 +258,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                 **kwargs (dict): function keyword arguments.
 
             Returns:
-               object: returns a decorated function object.
+               Response (object): returns a decorated function object.
             """
             try:
                 return in_function(*args, **kwargs)
@@ -396,7 +385,7 @@ def api_error_handler(custom_message: dict = None) -> object:
 
 
 def validate_delivery_params(func) -> object:
-    """A decorator for common validations in delivery.py
+    """A decorator for common validations in delivery.py.
 
     Performs checks to determine if object ids are valid,
     engagement id exists, engagements have audiences,
@@ -406,20 +395,22 @@ def validate_delivery_params(func) -> object:
     Example: @validate_delivery_params
 
     Args:
-        func(object): function object
+        func(object): function object.
+
     Returns:
-        object: returns a wrapped decorated function object.
+        Response (object): returns a wrapped decorated function object.
     """
 
     @wraps(func)
     def wrapper(*args, **kwargs) -> object:
         """Decorator for validation and converting to ObjectId.
+
         Args:
             *args (object): function arguments.
             **kwargs (dict): function keyword arguments.
 
         Returns:
-           object: returns a decorated function object.
+           Response (object): returns a decorated function object.
         """
 
         # convert to object id
@@ -493,8 +484,8 @@ def validate_delivery_params(func) -> object:
 def validate_destination(
     check_if_destination_in_db: bool = True,
 ) -> object:
-    """
-    This decorator handles validation of destination objects.
+    """This decorator handles validation of destination objects.
+
     Example: @validate_destination_wrapper()
 
     Args:
@@ -502,17 +493,17 @@ def validate_destination(
             a check is performed to verify if destination exists in the db.
 
     Returns:
-        Response: decorator
+        Response (object): decorator.
     """
 
     def wrapper(in_function) -> object:
-        """Decorator for wrapping a function
+        """Decorator for wrapping a function.
 
         Args:
             in_function (object): function object.
 
         Returns:
-           object: returns a wrapped decorated function object.
+           Response (object): returns a wrapped decorated function object.
         """
 
         @wraps(in_function)
@@ -524,8 +515,9 @@ def validate_destination(
                 **kwargs (dict): function keyword arguments.
 
             Returns:
-               object: returns a decorated function object.
+               Response (object): returns a decorated function object.
             """
+
             destination_id = ObjectId(kwargs.get("destination_id", None))
 
             if check_if_destination_in_db:

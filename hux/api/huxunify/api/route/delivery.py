@@ -1,7 +1,5 @@
 # pylint: disable=no-self-use, C0302
-"""
-Paths for delivery API
-"""
+"""Paths for delivery API"""
 from http import HTTPStatus
 from random import uniform
 from typing import Tuple
@@ -47,7 +45,6 @@ from huxunify.api.data_connectors.courier import (
     get_audience_destination_pairs,
 )
 
-
 delivery_bp = Blueprint("/", import_name=__name__)
 
 
@@ -65,9 +62,7 @@ def before_request():
     "EngagementDeliverDestinationView",
 )
 class EngagementDeliverDestinationView(SwaggerView):
-    """
-    Engagement audience destination delivery class
-    """
+    """Engagement audience destination delivery class."""
 
     parameters = [
         {
@@ -126,7 +121,7 @@ class EngagementDeliverDestinationView(SwaggerView):
 
         ---
         security:
-            - Bearer: ["Authorization"]
+            Bearer: ["Authorization"]
 
         Args:
             engagement_id (ObjectId): Engagement ID.
@@ -135,9 +130,9 @@ class EngagementDeliverDestinationView(SwaggerView):
 
         Returns:
             Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP Status.
-
+                success/failure, HTTP status code.
         """
+
         database = get_db_client()
         engagement = get_engagement(database, engagement_id)
         target_audience = get_audience(database, audience_id)
@@ -209,9 +204,7 @@ class EngagementDeliverDestinationView(SwaggerView):
     "EngagementDeliverAudienceView",
 )
 class EngagementDeliverAudienceView(SwaggerView):
-    """
-    Engagement audience delivery class
-    """
+    """Engagement audience delivery class."""
 
     parameters = [
         {
@@ -257,16 +250,20 @@ class EngagementDeliverAudienceView(SwaggerView):
         self, engagement_id: ObjectId, audience_id: ObjectId
     ) -> Tuple[dict, int]:
         """Delivers one audience for an engagement.
+
         ---
         security:
-            - Bearer: ["Authorization"]
+            Bearer: ["Authorization"]
+
         Args:
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
+
         Returns:
             Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP Status.
+                success/failure, HTTP status code.
         """
+
         database = get_db_client()
 
         engagement = get_engagement(database, engagement_id)
@@ -314,9 +311,7 @@ class EngagementDeliverAudienceView(SwaggerView):
     "EngagementDeliverView",
 )
 class EngagementDeliverView(SwaggerView):
-    """
-    Engagement delivery class
-    """
+    """Engagement delivery class."""
 
     parameters = [
         {
@@ -352,14 +347,17 @@ class EngagementDeliverView(SwaggerView):
     @validate_delivery_params
     def post(self, engagement_id: ObjectId) -> Tuple[dict, int]:
         """Delivers all audiences for an engagement.
+
         ---
         security:
-            - Bearer: ["Authorization"]
+            Bearer: ["Authorization"]
+
         Args:
             engagement_id (ObjectId): Engagement ID.
+
         Returns:
             Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP Status.
+                success/failure, HTTP status code.
         """
 
         database = get_db_client()
@@ -404,9 +402,7 @@ class EngagementDeliverView(SwaggerView):
     "AudienceDeliverView",
 )
 class AudienceDeliverView(SwaggerView):
-    """
-    Audience delivery class
-    """
+    """Audience delivery class."""
 
     parameters = [
         {
@@ -438,15 +434,18 @@ class AudienceDeliverView(SwaggerView):
     @api_error_handler()
     @validate_delivery_params
     def post(self, audience_id: ObjectId) -> Tuple[dict, int]:
-        """Delivers an audience for all of the engagements it is apart of.
+        """Delivers an audience for all of the engagements it is part of.
+
         ---
         security:
-            - Bearer: ["Authorization"]
+            Bearer: ["Authorization"]
+
         Args:
             audience_id (ObjectId): Audience ID.
+
         Returns:
             Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP Status.
+                success/failure, HTTP status code.
         """
 
         database = get_db_client()
@@ -495,9 +494,7 @@ class AudienceDeliverView(SwaggerView):
     "EngagementDeliverHistoryView",
 )
 class EngagementDeliverHistoryView(SwaggerView):
-    """
-    Engagement delivery history class
-    """
+    """Engagement delivery history class."""
 
     parameters = [
         {
@@ -541,13 +538,16 @@ class EngagementDeliverHistoryView(SwaggerView):
     @api_error_handler()
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Delivery history of all audiences for an engagement.
+
         ---
         security:
-            - Bearer: ["Authorization"]
+            Bearer: ["Authorization"]
+
         Args:
             engagement_id (str): Engagement ID.
+
         Returns:
-            Tuple[dict, int]: Delivery history, HTTP Status.
+            Tuple[dict, int]: Delivery history, HTTP status code.
         """
 
         # convert the engagement ID
@@ -638,9 +638,7 @@ class EngagementDeliverHistoryView(SwaggerView):
     "AudienceDeliverHistoryView",
 )
 class AudienceDeliverHistoryView(SwaggerView):
-    """
-    Audience delivery history class
-    """
+    """Audience delivery history class."""
 
     parameters = [
         {
@@ -685,14 +683,13 @@ class AudienceDeliverHistoryView(SwaggerView):
 
         ---
         security:
-            - Bearer: ["Authorization"]
+            Bearer: ["Authorization"]
 
         Args:
             audience_id (str): Audience ID.
 
         Returns:
-            Tuple[dict, int]: Delivery history, HTTP Status.
-
+            Tuple[dict, int]: Delivery history, HTTP status code.
         """
 
         # convert the audience ID

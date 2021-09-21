@@ -1,6 +1,4 @@
-"""
-purpose of this file is to house route utilities
-"""
+"""Purpose of this file is to house route utilities"""
 from datetime import datetime
 from typing import Tuple
 from http import HTTPStatus
@@ -39,16 +37,17 @@ from huxunify.api.prometheus import record_health_status_metric
 
 
 def handle_api_exception(exc: Exception, description: str = "") -> None:
-    """
-    Purpose of this function is to handle general api exceptions,
-    and reduce code in the route
+    """Purpose of this function is to handle general api exceptions,
+    and reduce code in the route.
+
     Args:
-        exc (Exception): Exception object to handle
+        exc (Exception): Exception object to handle.
         description (str): Exception description.
 
     Returns:
           None
     """
+
     logger.error(
         "%s: %s.",
         exc.__class__,
@@ -64,19 +63,21 @@ def handle_api_exception(exc: Exception, description: str = "") -> None:
 
 def get_db_client() -> MongoClient:
     """Get DB client.
+
     Returns:
         MongoClient: MongoDB client.
     """
+
     return db_client_factory.get_resource(**get_config().MONGO_DB_CONFIG)
 
 
 def check_mongo_connection() -> Tuple[bool, str]:
     """Validate mongo DB connection.
-    Args:
 
     Returns:
-        tuple[bool, str]: Returns if the connection is valid, and the message.
+        Tuple[bool, str]: Returns if the connection is valid, and the message.
     """
+
     try:
         # test finding documents
         get_all_data_sources(get_db_client())
@@ -90,14 +91,12 @@ def check_mongo_connection() -> Tuple[bool, str]:
 
 
 def get_health_check() -> HealthCheck:
-    """build and return the health check object
-
-    Args:
+    """Build and return the health check object.
 
     Returns:
-        HealthCheck: HealthCheck object that processes checks when called
-
+        HealthCheck: HealthCheck object that processes checks when called.
     """
+
     health = HealthCheck()
 
     # check variable
@@ -115,16 +114,14 @@ def get_health_check() -> HealthCheck:
 
 
 def group_perf_metric(perf_metrics: list, metric_type: str) -> dict:
-    """Group performance metrics
-    ---
+    """Group performance metrics.
 
-        Args:
-            perf_metrics (list): List of performance metrics.
-            metric_type (list): Type of performance metrics.
+    Args:
+        perf_metrics (list): List of performance metrics.
+        metric_type (list): Type of performance metrics.
 
-        Returns:
-            perf_metric (dict): Grouped performance metric .
-
+    Returns:
+        perf_metric (dict): Grouped performance metric.
     """
 
     metric = {}
@@ -156,15 +153,13 @@ def group_perf_metric(perf_metrics: list, metric_type: str) -> dict:
 
 
 def get_friendly_delivered_time(delivered_time: datetime) -> str:
-    """Group performance metrics
-    ---
+    """Group performance metrics.
 
-        Args:
-            delivered_time (datetime): Delivery time.
+    Args:
+        delivered_time (datetime): Delivery time.
 
-        Returns:
-            time_difference (str): Time difference as days / hours / mins.
-
+    Returns:
+        time_difference (str): Time difference as days / hours / mins.
     """
 
     delivered = (datetime.utcnow() - delivered_time).total_seconds()
@@ -187,7 +182,7 @@ def update_metrics(
     perf_metrics: list,
     metric_type: str,
 ) -> dict:
-    """Update performance metrics
+    """Update performance metrics.
 
     Args:
         target_id (ObjectId) : Group Id.
@@ -197,8 +192,9 @@ def update_metrics(
         metric_type (str): Type of performance metrics.
 
     Returns:
-        metric (dict): Grouped performance metrics .
+        metric (dict): Grouped performance metrics.
     """
+
     delivery_jobs = [x[db_c.ID] for x in jobs]
     metric = {
         constants.ID: str(target_id),
