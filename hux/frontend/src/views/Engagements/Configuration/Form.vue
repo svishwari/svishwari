@@ -419,21 +419,17 @@ export default {
     },
 
     payload() {
-      const recurringPayload = {}
+      const recurringConfig = {}
+      recurringConfig["every"] = this.schedule.every
+      recurringConfig["periodicity"] = this.schedule.periodicity
       if (this.schedule && this.schedule.periodicity == "Daily") {
-        recurringPayload["periodicity"] = "Daily"
-        recurringPayload["every"] = this.schedule.every
-        recurringPayload["hour"] = this.schedule.hour
-        recurringPayload["minute"] = this.schedule.minute
-        recurringPayload["period"] = this.schedule.period
+        recurringConfig["hour"] = this.schedule.hour
+        recurringConfig["minute"] = this.schedule.minute
+        recurringConfig["period"] = this.schedule.period
       } else if (this.schedule && this.schedule.periodicity == "Weekly") {
-        recurringPayload["periodicity"] = "Weekly"
-        recurringPayload["every"] = this.schedule.every
-        recurringPayload["day_of_week"] = this.schedule.days
+        recurringConfig["day_of_week"] = this.schedule.days
       } else if (this.schedule && this.schedule.periodicity == "Monthly") {
-        recurringPayload["periodicity"] = "Monthly"
-        recurringPayload["every"] = this.schedule.every
-        recurringPayload["day_of_month"] = this.schedule.monthlyDayDate
+        recurringConfig["day_of_month"] = this.schedule.monthlyDayDate
       }
 
       const requestPayload = {
@@ -447,7 +443,7 @@ export default {
             !this.isManualDelivery && this.selectedEndDate
               ? new Date(this.selectedEndDate).toISOString()
               : null,
-          schedule: recurringPayload,
+          schedule: recurringConfig,
         },
         audiences: Object.values(this.value.audiences).map((audience) => {
           return {
