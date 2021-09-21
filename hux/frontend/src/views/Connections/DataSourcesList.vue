@@ -3,7 +3,7 @@
     <div class="d-flex align-end mb-4">
       <icon type="data-sources-list" :size="20" color="black-darken4" />
       <h5 class="text-h4 ml-2 mt-1">Data Sources</h5>
-      <span @click="$emit('onAddDatasource')">
+      <span data-e2e="addDataSource" @click="$emit('onAddDatasource')">
         <icon class="add-icon cursor-pointer" type="add" :size="27" />
       </span>
     </div>
