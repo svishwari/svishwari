@@ -338,9 +338,9 @@
 
       <confirm-modal
         v-model="showConfirmModal"
-        title="You are about to navigate away"
-        right-btn-text="Yes, navigate away"
-        body=" Are you sure you want to stop the configuration and go to another page? You will not be able to recover it and will need to start the process again."
+        :title="title"
+        :right-btn-text="buttonText"
+        :body="message"
         @onCancel="showConfirmModal = false"
         @onConfirm="navigateaway()"
       />
@@ -431,6 +431,9 @@ export default {
       showConfirmModal: false,
       navigateTo: false,
       flagForModal: false,
+      title: "",
+      buttonText: "",
+      message: "",
     }
   },
 
@@ -470,6 +473,10 @@ export default {
   },
 
   beforeRouteLeave(to, from, next) {
+    this.title = "You are about to navigate away"
+    this.buttonText = "Yes, navigate away"
+    this.message =
+      "Are you sure you want to stop the configuration and go to another page? You will not be able to recover it and will need to start the process again."
     if (this.flagForModal == false) {
       this.showConfirmModal = true
       this.navigateTo = to.name
