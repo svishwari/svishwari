@@ -36,4 +36,11 @@ export default {
     list: "[data-e2e='models-list']",
     item: "[data-e2e='model-item']",
   },
+
+  //IDR
+  idr: {
+    identityResolution: "a[href='/identity-resolution']",
+    overview: "[data-e2e='overviewList']",
+    datafeed: "[data-e2e='datafeedtable']",
+  },
 }
