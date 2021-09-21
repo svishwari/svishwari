@@ -21,7 +21,7 @@
         </v-icon>
         <v-icon
           size="22"
-          color="black lighten-3"
+          color="primary"
           class="icon-border pa-2 ma-1"
           @click="editEngagement()"
         >
@@ -149,14 +149,11 @@
 
     <confirm-modal
       v-model="showConfirmModal"
-      title="You are about to edit delivery schedule."
-      right-btn-text="Yes, edit delivery schedule"
-      body="This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
+      :title="confirmDialog.title"
+      :right-btn-text="confirmDialog.btnText"
+      :body="confirmDialog.body"
       @onCancel="showConfirmModal = false"
-      @onConfirm="
-        showConfirmModal = false
-        editDeliveryDrawer = true
-      "
+      @onConfirm="onConfirmAction()"
     />
 
     <edit-delivery-schedule
@@ -258,6 +255,13 @@ export default {
         delivery_platform_type: null,
         id: null,
       },
+      deleteActionData: {},
+      confirmDialog: {
+        title: "Remove  audience?",
+        btnText: "Yes, remove it",
+        body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
+        actionType: "remove-audience",
+      },
     }
   },
   computed: {
@@ -311,6 +315,23 @@ export default {
       this.$root.$emit("refresh-notifications")
       await this.loadEngagement(this.engagementId)
       this.loading = false
+    },
+    async onConfirmAction() {
+      this.showConfirmModal = false
+      switch (this.confirmDialog.actionType) {
+        case "edit-schedule":
+          this.editDeliveryDrawer = true
+          break
+        case "remove-audience":
+          this.triggerDetachAudiences(this.deleteActionData)
+          break
+        case "remove-destination":
+          await this.detachAudienceDestination(this.deleteActionData)
+          await this.loadEngagement(this.engagementId)
+          break
+        default:
+          break
+      }
     },
     // Drawer Section Starts
     closeDrawers() {
@@ -444,6 +465,7 @@ export default {
       return acronymObject[0].description
     },
     mapDeliveries() {
+      this.selectedAudiences = {}
       this.engagementList.audiences.forEach((audience) => {
         this.selectedAudiences[audience.id] = audience
         audience.destinations.map((destination) => {
@@ -492,7 +514,13 @@ export default {
             break
 
           case "remove audience":
-            this.triggerDetachAudiences(event.data)
+            this.showConfirmModal = true
+            this.confirmDialog.actionType = "remove-audience"
+            this.confirmDialog.title = `You are about to remove ${event.data.name}`
+            this.confirmDialog.btnText = "Yes, remove it"
+            this.confirmDialog.body =
+              "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement."
+            this.deleteActionData = event.data
             break
           default:
             break
@@ -522,16 +550,27 @@ export default {
             }
             break
           case "edit delivery schedule":
+            this.confirmDialog.actionType = "edit-schedule"
+            this.confirmDialog.title =
+              "You are about to edit delivery schedule."
+            this.confirmDialog.btnText = "Yes, edit delivery schedule"
+            this.confirmDialog.body =
+              "This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
             this.showConfirmModal = true
             this.scheduleDestination = event.data
             break
           case "remove destination":
-            await this.detachAudienceDestination({
+            this.confirmDialog.actionType = "remove-destination"
+            this.confirmDialog.title = `Remove ${event.data.name} destination?`
+            this.confirmDialog.btnText = "Yes, remove it"
+            this.confirmDialog.body =
+              "You will not be deleting this destination; this destination will not be attached to this specific audience anymore."
+            this.deleteActionData = {
               engagementId: this.engagementId,
               audienceId: this.selectedAudienceId,
               data: { id: event.data.id },
-            })
-            await this.loadEngagement(this.engagementId)
+            }
+            this.showConfirmModal = true
             break
           case "create lookalike":
             this.openLookAlikeDrawer(event)

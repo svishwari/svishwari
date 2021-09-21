@@ -148,7 +148,7 @@ export default {
         {
           text: "Version",
           value: "version",
-          width: "160px",
+          width: "165px",
         },
         {
           text: "Description",

@@ -11,6 +11,7 @@ from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import must_not_be_blank, validate_object_id
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
+from huxunify.api.schema.destinations import DeliveryScheduleSchema
 
 
 class DeliverySchedule(Schema):
@@ -20,6 +21,8 @@ class DeliverySchedule(Schema):
 
     start_date = DateTimeWithZ(allow_none=True)
     end_date = DateTimeWithZ(allow_none=True)
+    schedule = fields.Nested(DeliveryScheduleSchema)
+    schedule_cron = fields.String(example="")
 
 
 class EngagementPostSchema(Schema):

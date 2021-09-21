@@ -116,7 +116,7 @@ export default Vue.extend({
       required: false,
     },
     labelClass: {
-      type: String,
+      type: [String, Object],
       required: false,
       default: "",
     },

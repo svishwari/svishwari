@@ -166,7 +166,6 @@ export default {
         this.$emit("addedDestination", {
           destination: { id: destination.id },
         })
-        this.localToggle = false
       }
     },
 

@@ -8,10 +8,10 @@ exports[`Card Info Card info displays a default 1`] = `
         mdi-plus
       </v-icon-stub>
     </v-btn-stub>
-    <v-card-title-stub class="justify-center font-weight-regular primary--text">
+    <v-card-title-stub datae2e="card-title" data-e2e="card-title" class="justify-center font-weight-regular primary--text">
       Info card title
     </v-card-title-stub>
-    <v-card-subtitle-stub class="black--text text--darken-4">
+    <v-card-subtitle-stub datae2e="card-description" data-e2e="card-description" class="black--text text--darken-4">
       Info card description
     </v-card-subtitle-stub>
   </v-card-stub>
@@ -26,10 +26,10 @@ exports[`Card Info Card info displays custom properties 1`] = `
         mdi-facebook
       </v-icon-stub>
     </v-btn-stub>
-    <v-card-title-stub class="justify-center font-weight-regular primary--text">
+    <v-card-title-stub datae2e="card-title" data-e2e="card-title" class="justify-center font-weight-regular primary--text">
       Add a Destination
     </v-card-title-stub>
-    <v-card-subtitle-stub class="black--text text--darken-4">
+    <v-card-subtitle-stub datae2e="card-description" data-e2e="card-description" class="black--text text--darken-4">
       Choose a destination where your actionable intelligence will be consumed.
     </v-card-subtitle-stub>
   </v-card-stub>

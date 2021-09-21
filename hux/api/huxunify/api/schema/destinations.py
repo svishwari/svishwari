@@ -4,7 +4,7 @@ Schemas for the Destinations API
 """
 
 from flask_marshmallow import Schema
-from marshmallow import fields
+from marshmallow import fields, pre_load, ValidationError
 from marshmallow.validate import OneOf, Range, Equal
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
@@ -12,8 +12,15 @@ from huxunify.api.schema.utils import (
     must_not_be_blank,
     validate_object_id,
 )
-from huxunify.api.schema.engagement import EngagementDataExtensionSchema
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
+
+
+class DataExtensionSchema(Schema):
+    """
+    Engagement Audience Destination Data Extension Schema
+    """
+
+    data_extension_name = fields.String()
 
 
 class DeliveryScheduleDailySchema(Schema):
@@ -26,7 +33,7 @@ class DeliveryScheduleDailySchema(Schema):
     )
     every = fields.Int(example=2, validate=Range(min=1, max=7))
     hour = fields.Int(example=11, validate=Range(min=1, max=12))
-    minute = fields.Int(example=15, validate=Range(min=0, max=45))
+    minute = fields.Int(example=15, validate=Range(min=0, max=59))
     period = fields.String(
         example=api_c.AM,
         validate=[OneOf(choices=[api_c.AM, api_c.PM])],
@@ -71,6 +78,66 @@ class DeliveryScheduleMonthlySchema(DeliveryScheduleDailySchema):
             validate=OneOf(api_c.DAY_OF_MONTH_LIST),
         ),
     )
+
+
+class DeliveryScheduleSchema(Schema):
+    """
+    Generalized Delivery Schedule Schema
+    """
+
+    periodicity = fields.String(example=api_c.DAILY, required=True)
+    every = fields.Int(example=2)
+    minute = fields.Int(example=15, validate=Range(min=0, max=45))
+    hour = fields.Int(example=11, validate=Range(min=1, max=12))
+    period = fields.String(
+        example=api_c.AM,
+        validate=[OneOf(choices=[api_c.AM, api_c.PM])],
+    )
+    day_of_week = fields.List(
+        fields.String(
+            required=True,
+            validate=OneOf(api_c.DAY_LIST),
+        ),
+    )
+    monthly_period_items = fields.List(
+        fields.String(
+            required=True,
+            validate=OneOf(api_c.MONTHLY_PERIOD_LIST),
+        ),
+    )
+    day_of_month = fields.List(
+        fields.String(
+            required=True,
+            validate=OneOf(api_c.DAY_OF_MONTH_LIST),
+        ),
+    )
+
+    @pre_load
+    # pylint: disable=unused-argument
+    # pylint: disable=no-self-use
+    def unwrap_envelope(self, data: dict, **kwargs) -> dict:
+        """
+        Validates delivery schedule as daily, monthly and weekly.
+        Args:
+            data(dict): Data passed to schema.
+            **kwargs: Key word args.
+        Returns:
+            data: Data after validation, modification.
+        """
+        if data.get(api_c.PERIODICIY) == api_c.DAILY:
+            DeliveryScheduleDailySchema().validate(api_c.DAILY)
+        elif data.get(api_c.PERIODICIY) == api_c.MONTHLY:
+            DeliveryScheduleMonthlySchema().validate(api_c.MONTHLY)
+        elif data.get(api_c.PERIODICIY) == api_c.WEEKLY:
+            DeliveryScheduleWeeklySchema().validate(api_c.WEEKLY)
+        else:
+            raise ValidationError(
+                "Delivery Schedule does not conform with "
+                f"either {api_c.DAILY}, {api_c.MONTHLY}, "
+                f"{api_c.WEEKLY} schemas."
+            )
+
+        return data
 
 
 class DestinationGetSchema(Schema):
@@ -125,7 +192,7 @@ class DestinationGetSchema(Schema):
     created_by = fields.String(attribute=db_c.CREATED_BY, allow_none=True)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
-    delivery_platform_config = fields.Nested(EngagementDataExtensionSchema)
+    delivery_platform_config = fields.Nested(DataExtensionSchema)
 
 
 class DestinationPutSchema(Schema):

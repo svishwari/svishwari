@@ -71,7 +71,7 @@
 
       <!-- empty slot -->
       <template #no-data>
-        <v-alert color="primary lighten-1" class="empty-card">
+        <v-alert color="primary" class="empty-card">
           <v-row align="center">
             <slot v-if="$slots.empty" name="empty"></slot>
             <v-col v-else class="grow">{{ empty }}</v-col>
@@ -186,6 +186,7 @@ export default {
 }
 .empty-card {
   border: 1px solid var(--v-zircon-base) !important;
+  background: var(--v-primary-lighten1) !important;
 }
 
 .bordered-card {

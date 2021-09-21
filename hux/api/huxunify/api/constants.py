@@ -150,6 +150,8 @@ DAY_OF_MONTH_LIST = [str(x) for x in range(1, 31)] + [
     "Friday",
     "Saturday",
 ]
+SCHEDULE = "schedule"
+SCHEDULE_CRON = "schedule_cron"
 # TODO: Remove State Names once it connected with CDM
 STATE_NAMES = {
     "AL": "Alabama",

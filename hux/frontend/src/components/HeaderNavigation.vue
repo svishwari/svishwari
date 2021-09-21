@@ -2,7 +2,7 @@
   <div class="d-flex">
     <v-menu :min-width="200" left offset-y close-on-click>
       <template #activator="{ on }">
-        <span class="d-flex cursor-pointer" v-on="on">
+        <span class="d-flex cursor-pointer" data-e2e="addicon" v-on="on">
           <v-btn class="mx-2 box-shadow-25" color="white" fab x-small>
             <v-icon color="primary"> mdi-plus </v-icon>
           </v-btn>
@@ -40,7 +40,7 @@ export default {
   data() {
     return {
       dropdownLinks: [
-        { name: "Data Source", path: "DataSourceConfiguration" },
+        { name: "Data Source", path: "Connections" },
         { name: "Destination", path: "DestinationConfiguration" },
         { name: "Audience", path: "AudienceConfiguration" },
         { name: "Engagement", path: "EngagementConfiguration" },
@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     routerRedirect(path) {
-      this.$router.push({ name: path, query: { select: true } })
+      this.$router.push({ name: path, params: { select: true } })
     },
   },
 }

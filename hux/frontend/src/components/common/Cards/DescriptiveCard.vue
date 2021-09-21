@@ -11,17 +11,34 @@
       <icon :type="icon" :size="60" color="primary" class="d-block" />
     </div>
 
-    <div
-      class="text-h4 px-3 pb-2"
-      :class="disabled ? 'black--text text--darken-4' : 'primary--text'"
-      data-e2e="card-title"
-    >
-      {{ title }}
-    </div>
+    <tooltip nudge-right="100px" min-width="auto !important">
+      <template #label-content>
+        <div
+          class="text-h4 px-3 pb-2 text-ellipsis d-block"
+          :class="disabled ? 'black--text text--darken-4' : 'primary--text'"
+          data-e2e="card-title"
+        >
+          {{ title }}
+        </div>
+      </template>
+      <template #hover-content>
+        <span class="black--text text--darken-4">{{ title }}</span>
+      </template>
+    </tooltip>
 
-    <div class="text-caption px-3" data-e2e="card-description">
-      {{ description }}
-    </div>
+    <tooltip nudge-right="100px" min-width="auto !important">
+      <template #label-content>
+        <div
+          class="text-caption px-3 text-ellipsis d-block"
+          data-e2e="card-description"
+        >
+          {{ description }}
+        </div>
+      </template>
+      <template #hover-content>
+        <span class="black--text text--darken-4">{{ description }}</span>
+      </template>
+    </tooltip>
 
     <div v-if="$slots.default" class="px-3 pt-2">
       <slot />
@@ -31,12 +48,14 @@
 
 <script>
 import Icon from "@/components/common/Icon"
+import Tooltip from "@/components/common/Tooltip"
 
 export default {
   name: "DescriptiveCard",
 
   components: {
     Icon,
+    Tooltip,
   },
 
   props: {

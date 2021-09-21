@@ -11,7 +11,9 @@
     <div v-if="!loading">
       <v-row v-if="isConnectionStarted">
         <v-col cols="6">
-          <data-sources-list></data-sources-list>
+          <data-sources-list
+            @onAddDatasource="toggleDrawer()"
+          ></data-sources-list>
         </v-col>
         <v-col cols="6">
           <destinations-list></destinations-list>
@@ -45,7 +47,7 @@
           </huxButton>
         </router-link>
         <router-link
-          :to="{ name: 'DataSourceConfiguration', query: { select: true } }"
+          :to="{ name: 'Connections', params: { select: true } }"
           class="text-decoration-none"
         >
           <huxButton
@@ -122,16 +124,10 @@ export default {
 
   watch: {
     $route() {
-      if (this.$route.query.select) {
+      if (this.$route.params.select) {
         this.drawer = true
       } else {
         this.drawer = false
-      }
-    },
-
-    drawer() {
-      if (!this.drawer) {
-        this.$router.push({ name: "Connections" })
       }
     },
   },
@@ -142,7 +138,7 @@ export default {
     await this.getDestinations()
     this.loading = false
 
-    if (this.$route.query.select) {
+    if (this.$route.params.select) {
       this.drawer = true
     }
   },

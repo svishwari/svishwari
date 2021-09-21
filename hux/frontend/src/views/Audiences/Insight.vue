@@ -498,14 +498,11 @@
 
     <confirm-modal
       v-model="showConfirmModal"
-      title="You are about to edit delivery schedule."
-      right-btn-text="Yes, edit delivery schedule"
-      body="This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
+      :title="confirmDialog.title"
+      :right-btn-text="confirmDialog.btnText"
+      :body="confirmDialog.body"
       @onCancel="showConfirmModal = false"
-      @onConfirm="
-        showConfirmModal = false
-        editDeliveryDrawer = true
-      "
+      @onConfirm="onConfirmAction()"
     />
 
     <edit-delivery-schedule
@@ -536,6 +533,7 @@
 
     <!-- Engagement workflow -->
     <attach-engagement
+      ref="selectEngagements"
       v-model="engagementDrawer"
       close-on-action
       :final-engagements="selectedEngagements"
@@ -730,6 +728,13 @@ export default {
       genderChartDimensions: {
         width: 269,
         height: 200,
+      },
+      deleteActionData: {},
+      confirmDialog: {
+        title: "Remove  audience?",
+        btnText: "Yes, remove it",
+        body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
+        actionType: "remove-audience",
       },
     }
   },
@@ -974,6 +979,22 @@ export default {
       this.$root.$emit("refresh-notifications")
       await this.loadAudienceInsights()
     },
+    async onConfirmAction() {
+      this.showConfirmModal = false
+      switch (this.confirmDialog.actionType) {
+        case "edit-schedule":
+          this.editDeliveryDrawer = true
+          break
+        case "remove-engagement":
+          this.triggerAttachEngagement(this.deleteActionData)
+          break
+        case "remove-destination":
+          await this.detachAudienceDestination(this.deleteActionData)
+          break
+        default:
+          break
+      }
+    },
 
     getAgeString(min_age, max_age) {
       if (min_age && max_age && min_age === max_age) {
@@ -1036,13 +1057,18 @@ export default {
         case "view delivery history":
           break
         case "remove engagement": {
-          let payload = {
+          this.confirmDialog.actionType = "remove-engagement"
+          this.confirmDialog.title = `You are about to remove ${event.data.name}`
+          this.confirmDialog.btnText = "Yes, remove it"
+          this.confirmDialog.body =
+            "Are you sure you want to remove this engagement? By removing this engagement, it will not be deleted, but it will become unattached from this audience."
+          this.deleteActionData = {
             data: {
               id: event.data.id,
               action: "Detach",
             },
           }
-          this.triggerAttachEngagement(payload)
+          this.showConfirmModal = true
           break
         }
         default:
@@ -1066,17 +1092,29 @@ export default {
             }
             break
           case "edit delivery schedule":
-            this.engagementId = event.parent.id
+            this.confirmDialog.actionType = "edit-schedule"
+            this.confirmDialog.title =
+              "You are about to edit delivery schedule."
+            this.confirmDialog.btnText = "Yes, edit delivery schedule"
+            this.confirmDialog.body =
+              "This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
             this.showConfirmModal = true
+            this.engagementId = event.parent.id
             this.scheduleDestination = event.data
             break
           case "remove destination":
             this.engagementId = event.parent.id
-            await this.detachAudienceDestination({
+            this.confirmDialog.actionType = "remove-destination"
+            this.confirmDialog.title = `Remove ${event.data.name} destination?`
+            this.confirmDialog.btnText = "Yes, remove it"
+            this.confirmDialog.body =
+              "You will not be deleting this destination; this destination will not be attached to this specific engagement anymore."
+            this.deleteActionData = {
               engagementId: this.engagementId,
               audienceId: this.audienceId,
               data: { id: event.data.id },
-            })
+            }
+            this.showConfirmModal = true
             break
           case "create lookalike":
             this.openLookAlikeDrawer()
@@ -1130,6 +1168,7 @@ export default {
     },
     openAttachEngagementDrawer() {
       this.closeAllDrawers()
+      this.$refs.selectEngagements.fetchDependencies()
       this.selectedEngagements = this.relatedEngagements.map((eng) => ({
         id: eng.id,
       }))

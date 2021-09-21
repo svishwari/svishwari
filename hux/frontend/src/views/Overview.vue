@@ -4,6 +4,7 @@
       :title="`Welcome back, ${fullName}!`"
       class="py-7"
       header-height="auto"
+      data-e2e="overview-header"
     >
       <template slot="description">
         Hux is here to help you make better, faster decisions to improve your
@@ -19,7 +20,7 @@
     </page-header>
     <div v-if="configureOptions['configureHux']" class="quickAccessMenu">
       <h5 class="mb-3 text-h5">Configure Hux</h5>
-      <div class="card-wrap d-flex">
+      <div class="card-wrap d-flex" data-e2e="configuration-list">
         <card-info
           v-for="(item, i) in configureHuxOptions"
           :key="i"
@@ -27,6 +28,7 @@
           :description="item.description"
           :active="item.active"
           :to="item.route"
+          data-e2e="configuration-item"
         ></card-info>
       </div>
     </div>
@@ -51,6 +53,7 @@
           <total-customer-chart
             v-if="!loadingCustomerChart"
             :customers-data="totalCustomers"
+            data-e2e="overview-chart"
           />
         </v-card>
       </v-col>
@@ -88,8 +91,8 @@ export default {
           description:
             "Connect your data sources to enable data unification in a single location.",
           route: {
-            name: "DataSourceConfiguration",
-            query: { select: true },
+            name: "Connections",
+            params: { select: true },
           },
           active: true,
         },

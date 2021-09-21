@@ -9,7 +9,7 @@
     <bar-chart-tooltip
       :position="{
         x: tooltip.x,
-        y: tooltip.y,
+        y: tooltip.y - 50,
       }"
       :show-tooltip="show"
       :source-input="currentData"

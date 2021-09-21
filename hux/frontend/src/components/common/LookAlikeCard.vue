@@ -25,6 +25,7 @@
           type="lookalike-card"
           :size="14"
           class="mr-1"
+          :class="!isActive ? 'opacity-2' : ''"
           :color="!isActive ? 'lightGreyAnotherVariant' : 'primary'"
         />
         Create lookalike
@@ -142,6 +143,9 @@ export default {
 
   ::v-deep .v-card-text {
     padding: 0px !important;
+  }
+  .opacity-2 {
+    opacity: 0.2;
   }
 
   .v-data-table {
