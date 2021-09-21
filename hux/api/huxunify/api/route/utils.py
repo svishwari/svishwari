@@ -315,7 +315,6 @@ def check_end_date_greater_than_start_date(
         end_date (str): end date.
 
     Returns:
-        (bool): Returns if the start date is less than end date.
     """
 
     start_date_format = ""
@@ -336,8 +335,4 @@ def check_end_date_greater_than_start_date(
         and end_date_format
         and start_date_format > end_date_format
     ):
-        raise Exception(
-            {constants.MESSAGE: constants.START_DATE_GREATER_THAN_END_DATE}
-        )
-
-    return True
+        raise Exception()
