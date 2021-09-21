@@ -410,12 +410,14 @@ def delete_delivery_platform(
 def delete_audience(
     database: DatabaseClient,
     audience_id: ObjectId,
+    hard_delete: bool = False,
 ) -> bool:
-    """A function to soft delete an audience.
+    """A function to delete an audience.
 
     Args:
         database (DatabaseClient): A database client.
         audience_id (ObjectId): MongoDB ID of the audience.
+        hard_delete (bool) - optional: hard deletes an audience if True.
 
     Returns:
         bool: A flag indicating successful deletion.
@@ -428,6 +430,9 @@ def delete_audience(
         update_dict = {c.DELETED: True}
 
         try:
+            if hard_delete:
+                collection.delete_one({c.ID: audience_id})
+                return True
             if collection.find_one_and_update(
                 {c.ID: audience_id},
                 {"$set": update_dict},
