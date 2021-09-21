@@ -50,5 +50,8 @@
     identityResolution: "a[href='/identity-resolution']",
     overview: "[data-e2e='overviewList']",
     datafeed: "[data-e2e='datafeedtable']",
+    lastrun: "[data-e2e='lastrun']",
+    pinning: "[data-e2e='Pinning']",
+    stitched: "[data-e2e='Stitched']",
   },
 }
