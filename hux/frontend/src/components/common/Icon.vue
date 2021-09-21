@@ -36,7 +36,7 @@ export default {
       required: false,
       default: "primary",
     },
-    
+
     variant: {
       type: String,
       required: false,

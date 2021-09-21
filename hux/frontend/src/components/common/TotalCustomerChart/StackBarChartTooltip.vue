@@ -26,7 +26,12 @@
         {{ sourceInput.totalCustomers | Numeric(true, false, false) }}
       </div>
       <div class="value-container">
-        <icon type="name" :size="12" :color="colorCodes[sourceInput.index].base" :variant="colorCodes[sourceInput.index].variant" />
+        <icon
+          type="name"
+          :size="12"
+          :color="colorCodes[sourceInput.index].base"
+          :variant="colorCodes[sourceInput.index].variant"
+        />
         <span class="text-label">New customers added</span>
         <div class="value-section">
           {{ sourceInput.addedCustomers | Numeric(true, false, false) }}
