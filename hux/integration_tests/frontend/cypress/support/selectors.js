@@ -28,7 +28,7 @@ export default {
   destinations: "[data-e2e='destinationsList']",
   dataSourcesAdd: "[tabindex='0'][data-e2e='dataSourcesAddList']",
   connections: "a[href='/connections']",
-  addDataSource: "a[href='/datasources/add?select=true']",
+  addDataSource: "[data-e2e='addDataSource']",
 
   // decisioning
   models: {
