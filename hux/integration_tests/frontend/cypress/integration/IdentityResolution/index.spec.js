@@ -32,4 +32,25 @@ describe("Data management > Identity resolution", () => {
       cy.get(selector.idr.datafeed).its("length").should("gt", 0)
     })
   })
+
+  it("should be able to open last run drawer", () => {
+    //open last run drawer
+    cy.get(selector.idr.lastrun).first().click()
+    cy.wait(3000)
+  })
+
+  it("should be able to toggle pinning panel", () => {
+    //toggle pinning panel
+    cy.get(selector.idr.pinning).click()
+    cy.wait(1000)
+    cy.get(selector.idr.pinning).click()
+  })
+
+  it("should be able to toggle stitched panel", () => {
+    //toggle stitched panel
+    cy.get(selector.idr.stitched).click()
+    cy.wait(1000)
+    cy.get(selector.idr.stitched).click()
+  })
+  
 })

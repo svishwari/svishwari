@@ -21,7 +21,7 @@
           v-for="(reportKey, i) in Object.keys(reports)"
           :key="i"
         >
-          <v-expansion-panel-header class="panel-header">
+          <v-expansion-panel-header class="panel-header" :data-e2e="reportNames[reportKey]">
             <template #actions>
               <v-icon color="blue"> $expand </v-icon>
             </template>
