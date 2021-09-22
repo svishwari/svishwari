@@ -427,7 +427,7 @@ export default {
         recurringConfig["minute"] = this.schedule.minute
         recurringConfig["period"] = this.schedule.period
       } else if (this.schedule && this.schedule.periodicity == "Weekly") {
-        recurringConfig["day_of_week"] = this.schedule.days.map(item => {
+        recurringConfig["day_of_week"] = this.schedule.days.map((item) => {
           return item.substring(0, 3).toUpperCase()
         })
       } else if (this.schedule && this.schedule.periodicity == "Monthly") {
