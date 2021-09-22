@@ -41,10 +41,14 @@ describe("View Navigation", () => {
         //click on models on side nav bar and route in models screen
         cy.get(selector.models.models).click()
         cy.location("pathname").should("eq", route.models)
-
-        //click on identity resolution on side nav bar and route in identity resolution screen
-        cy.get(selector.idr.identityResolution).click()
-        cy.location("pathname").should("eq", route.identityResolution)
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(1000)
+        // click on the profile drop menu 
+        cy.get(selector.navigation.profiledropdown).click()
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(500)
+        // select the profile option
+        cy.get(selector.navigation.profile).click()
 
         //click on audiences on side nav bar and route in audiences screen
         cy.get(selector.connections).click()
@@ -56,7 +60,7 @@ describe("View Navigation", () => {
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(500)
         // select the profile option
-        cy.get(selector.navigation.profile).click()
+        cy.get(selector.navigation.logout).click()
     })
 
 })
