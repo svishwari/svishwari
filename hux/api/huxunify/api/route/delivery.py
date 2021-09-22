@@ -726,25 +726,21 @@ class AudienceDeliverHistoryView(SwaggerView):
             )
         }
 
-        # get engagements ahead of time by the audience
-        engagement_dict = {
-            x[db_c.ID]: x
-            for x in get_engagements_by_audience(database, audience_id)
-        }
-
         delivery_history = []
         for job in delivery_jobs:
+            delivery_engagement = get_engagement(
+                database, job.get(db_c.ENGAGEMENT_ID)
+            )
             if (
                 job.get(db_c.STATUS) == db_c.AUDIENCE_STATUS_DELIVERED
                 and job.get(api_c.ENGAGEMENT_ID)
+                and delivery_engagement
                 and job.get(db_c.DELIVERY_PLATFORM_ID)
             ):
 
                 delivery_history.append(
                     {
-                        api_c.ENGAGEMENT: engagement_dict.get(
-                            job.get(db_c.ENGAGEMENT_ID)
-                        ),
+                        api_c.ENGAGEMENT: delivery_engagement,
                         api_c.DESTINATION: destination_dict.get(
                             job.get(db_c.DELIVERY_PLATFORM_ID)
                         ),

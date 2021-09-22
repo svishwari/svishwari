@@ -122,7 +122,7 @@
           </div>
         </v-row>
 
-        <v-row class="delivery-schedule mt-6">
+        <v-row class="delivery-schedule mt-5">
           <hux-schedule-picker v-if="isRecurring" v-model="schedule" />
         </v-row>
       </form-step>
@@ -419,24 +419,43 @@ export default {
     },
 
     payload() {
-      return {
+      const recurringConfig = {}
+      recurringConfig["every"] = this.schedule.every
+      recurringConfig["periodicity"] = this.schedule.periodicity
+      if (this.schedule && this.schedule.periodicity == "Daily") {
+        recurringConfig["hour"] = this.schedule.hour
+        recurringConfig["minute"] = this.schedule.minute
+        recurringConfig["period"] = this.schedule.period
+      } else if (this.schedule && this.schedule.periodicity == "Weekly") {
+        recurringConfig["day_of_week"] = this.schedule.days.map((item) => {
+          return item.substring(0, 3).toUpperCase()
+        })
+      } else if (this.schedule && this.schedule.periodicity == "Monthly") {
+        recurringConfig["day_of_month"] = this.schedule.monthlyDayDate
+      }
+
+      const requestPayload = {
         name: this.value.name,
         description: this.value.description,
-        delivery_schedule: this.value.delivery_schedule,
+        delivery_schedule: {
+          start_date: !this.isManualDelivery
+            ? new Date(this.selectedStartDate).toISOString()
+            : null,
+          end_date:
+            !this.isManualDelivery && this.selectedEndDate
+              ? new Date(this.selectedEndDate).toISOString()
+              : null,
+          schedule: recurringConfig,
+        },
         audiences: Object.values(this.value.audiences).map((audience) => {
           return {
             id: audience.id,
             destinations: audience.destinations,
           }
         }),
-        start_date: !this.isManualDelivery
-          ? new Date(this.selectedStartDate).toISOString()
-          : null,
-        end_date:
-          !this.isManualDelivery && this.selectedEndDate
-            ? new Date(this.selectedEndDate).toISOString()
-            : null,
       }
+
+      return requestPayload
     },
 
     isValid() {

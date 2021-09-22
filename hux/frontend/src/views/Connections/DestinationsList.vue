@@ -70,7 +70,7 @@ export default {
     display: block;
     margin-left: 7px;
     position: relative;
-    top: 2px;
+    top: 3px;
   }
   .list {
     &:hover {

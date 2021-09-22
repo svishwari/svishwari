@@ -361,6 +361,13 @@ def api_error_handler(custom_message: dict = None) -> object:
                     "message": constants.FAILED_DEPENDENCY_ERROR_MESSAGE
                 }, HTTPStatus.FAILED_DEPENDENCY
 
+            except iae.FailedDateFilterIssue as exc:
+                return {
+                    "message": custom_message
+                    if custom_message
+                    else exc.exception_message
+                }, HTTPStatus.BAD_REQUEST.value
+
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.
                 logger.error(

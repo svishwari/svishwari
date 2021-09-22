@@ -38,7 +38,9 @@ describe("Tests data souces and destinations in connections", () => {
       //validate correct status on all added data sources
       cy.get(selector.datasources).as("dataSourcesList")
       for (let index = 0; index <= dataSourcesCount; index++) {
-        cy.get("@dataSourcesList").eq(index).contains(/Active|Pending/)
+        cy.get("@dataSourcesList")
+          .eq(index)
+          .contains(/Active|Pending/)
       }
     })
   })
