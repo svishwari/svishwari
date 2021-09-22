@@ -148,14 +148,14 @@ def get_aws_client(
 
 
 def check_aws_connection(
-    client_method: str, extra_params: dict, client="s3"
+    client_method: str, extra_params: dict, client: str = "s3"
 ) -> Tuple[bool, str]:
     """Validate an AWS connection.
 
     Args:
         client_method (str): Method name for the client
-        client (str): name of the boto3 client to use.
         extra_params (dict): Extra params required for aws connection
+        client (str): name of the boto3 client to use.
     Returns:
         tuple[bool, str]: Returns if the AWS connection is valid,
             and the message.
@@ -211,9 +211,9 @@ def check_aws_s3() -> Tuple[bool, str]:
 
     """
     return check_aws_connection(
-        client_method="get_bucket_versioning",
+        client_method="list_buckets",
         client=api_c.AWS_S3_NAME,
-        extra_params={api_c.AWS_BUCKET: config.get_config().S3_DATASET_BUCKET},
+        extra_params={},
     )
 
 
