@@ -25,6 +25,7 @@
           :key="data.id"
           data-e2e="notification-item"
         >
+        
           <v-list-item-title
             class="text-h6 black--text text--darken-4 list-main"
           >
