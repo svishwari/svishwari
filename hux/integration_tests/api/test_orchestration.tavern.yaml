@@ -155,7 +155,7 @@ stages:
 
     # Define the request to be made...
     request:
-      url: "{host}/{version}/audiences/61135de24af31a0f33029092"
+      url: "{host}/{version}/audiences/{fake_object_id}"
       method: GET
       headers:
         content-type: application/json
@@ -170,7 +170,7 @@ stages:
 
     # Define the request to be made...
     request:
-      url: "{host}/{version}/audiences/61135de24af31a0f33029092"
+      url: "{host}/{version}/audiences/{fake_object_id}"
       method: DELETE
       headers:
         content-type: application/json
@@ -184,7 +184,7 @@ stages:
   - name: Test updating an audience that does not exist
       # Define the request to be made...
     request:
-      url: "{host}/{version}/audiences/61135de24af31a0f33029092"
+      url: "{host}/{version}/audiences/{fake_object_id}"
       method: PUT
       headers:
         content-type: application/json
@@ -207,7 +207,7 @@ stages:
 
     # Define the request to be made...
     request:
-      url: "{host}/{version}/audiences/61135de24af31a0f33029092/states"
+      url: "{host}/{version}/audiences/{fake_object_id}/states"
       method: GET
       headers:
         content-type: application/json
@@ -224,7 +224,7 @@ stages:
 
     # Define the request to be made...
     request:
-      url: "{host}/{version}/audiences/61135de24af31a0f33029092/cities"
+      url: "{host}/{version}/audiences/{fake_object_id}/cities"
       method: GET
       headers:
         content-type: application/json
@@ -240,7 +240,7 @@ stages:
 
     # Define the request to be made...
     request:
-      url: "{host}/{version}/audiences/61135de24af31a0f33029092/audience_insights"
+      url: "{host}/{version}/audiences/{fake_object_id}/audience_insights"
       method: GET
       headers:
         content-type: application/json
@@ -255,7 +255,7 @@ stages:
 
     # Define the request to be made...
     request:
-      url: "{host}/{version}/audiences/61135de24af31a0f33029092/google_ads"
+      url: "{host}/{version}/audiences/{fake_object_id}/google_ads"
       method: GET
       headers:
         content-type: application/json
@@ -345,7 +345,7 @@ stages:
 
     response:
       strict: false
-      status_code: 200
+      status_code: 201
       headers:
         content-type: application/json
 
