@@ -60,6 +60,9 @@ export const idrDataFeed = {
 
 /**
  * Identity resolution overview schema
+ *
+ * @param {string} state either 'default' or 'unavailable' states
+ * @returns {object} overview
  */
 export const idrOverview = (state = "default") => {
   const defaultValues = [

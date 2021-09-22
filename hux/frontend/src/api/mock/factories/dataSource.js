@@ -14,6 +14,9 @@ export default {
 
 /**
  * Data source's single data feed schema
+ *
+ * @param {string} type data type
+ * @returns {object} datafeed
  */
 const dataFeed = (type) => {
   return {
@@ -39,6 +42,11 @@ const dataFeed = (type) => {
 
 /**
  * Data source's data feeds schema
+ *
+ * @param {object} dataFeed config
+ * @param {string} dataFeed.name data feed name
+ * @param {string} dataFeed.type data feed type
+ * @returns {object} data feeds response schema
  */
 export const dataFeeds = ({ name, type }) => {
   let num = faker.datatype.number(100)

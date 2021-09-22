@@ -31,6 +31,13 @@ import {
 } from "./factories/campaigns"
 import { notification as notificationFactory } from "./factories/notifications"
 
+/**
+ * Starts up a Mirage server with the given configuration.
+ *
+ * @param {object} config mirage server configuration
+ * @param {string} config.environment environment server is running in
+ * @returns {object} mirage server
+ */
 export function makeServer({ environment = "development" } = {}) {
   // models
   const models = {
