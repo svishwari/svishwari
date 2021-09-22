@@ -117,6 +117,6 @@ export default {
   font-weight: normal;
   font-size: 12px;
   line-height: 16px;
-  color: #4f4f4f;
+  color: rgba(79, 79, 79, 1);
 }
 </style>
