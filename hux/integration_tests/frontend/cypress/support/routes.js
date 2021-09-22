@@ -26,5 +26,5 @@ export default {
   destinations: "/destinations",
 
   //notification
-  notifications: "/notifications"
+  notifications: "/notifications",
 }
