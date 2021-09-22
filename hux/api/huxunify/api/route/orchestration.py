@@ -37,6 +37,7 @@ from huxunify.api.schema.orchestration import (
     LookalikeAudiencePostSchema,
     LookalikeAudienceGetSchema,
     is_audience_lookalikeable,
+    AudienceDestinationSchema,
 )
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
@@ -582,7 +583,7 @@ class AudiencePostView(SwaggerView):
                     {
                         api_c.ID: "60b9601a6021710aa146df2f",
                         db_c.DELIVERY_PLATFORM_CONFIG: {
-                            db_c.DATA_EXTENSION_NAME: "SFMC Test Audience"
+                            db_c.DATA_EXTENSION_NAME: "Data Extension Name"
                         },
                     }
                 ],
@@ -646,25 +647,9 @@ class AudiencePostView(SwaggerView):
         database = get_db_client()
         if db_c.DESTINATIONS in body:
             # validate list of dict objects
-            for destination in body[db_c.DESTINATIONS]:
-                # check if dict instance
-                if not isinstance(destination, dict):
-                    logger.error("Destination must be objects.")
-                    return {
-                        "message": "destinations must be objects"
-                    }, HTTPStatus.BAD_REQUEST
-
-                # check if destination id assigned
-                if db_c.OBJECT_ID not in destination:
-                    logger.error(
-                        "Destination object missing the %s field.",
-                        db_c.OBJECT_ID,
-                    )
-                    return {
-                        "message": f"{destination} missing the "
-                        f"{db_c.OBJECT_ID} field."
-                    }, HTTPStatus.BAD_REQUEST
-
+            for destination in AudienceDestinationSchema().load(
+                body[db_c.DESTINATIONS], many=True
+            ):
                 # validate object id
                 # map to an object ID field
                 # validate the destination object exists.
