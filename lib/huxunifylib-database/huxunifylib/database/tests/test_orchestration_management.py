@@ -464,12 +464,21 @@ class TestAudienceManagement(unittest.TestCase):
     def test_delete_engagement(self):
         """Test delete_engagement"""
 
+        #creat audience
+        audience1 = am.create_audience(
+            self.database,
+            "Audience1",
+            self.audience_filters,
+            user_name=self.user_name,
+            size=1450,
+        )
+
         # create engagement
         engagement_id = em.set_engagement(
             self.database,
             "Fall 2024",
             "fall of 2024",
-            [self.audience],
+            [audience1],
             self.user_name,
         )
 
