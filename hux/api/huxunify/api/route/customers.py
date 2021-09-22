@@ -827,8 +827,8 @@ class CustomerEvents(SwaggerView):
         Returns:
             Tuple[dict, int] list of Customer events grouped by day and http code
         """
-        start_date = request.json[api_c.START_DATE]
-        end_date = request.json[api_c.END_DATE]
+        start_date = request.json.get(api_c.START_DATE)
+        end_date = request.json.get(api_c.END_DATE)
 
         check_end_date_greater_than_start_date(start_date, end_date)
 
