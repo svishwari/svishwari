@@ -73,7 +73,7 @@ export const destinationsConstants = {
   },
 }
 
-/**s
+/**
  * Destination data extensions
  *
  * @returns {Array} list of data extensions
