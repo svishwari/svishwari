@@ -378,7 +378,7 @@ export default {
         { title: "Favorite", isDisabled: true },
         { title: "Export", isDisabled: true },
         {
-          title: "Edit",
+          title: "Edit audience",
           isDisabled: false,
           onClick: () => {
             this.editAudience(audience.id)
