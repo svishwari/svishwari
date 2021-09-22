@@ -260,6 +260,8 @@ export default {
      * Appending the sub options next to the group label.
      *
      * Also, having an Top Priority Order to Models.
+     *
+     * @returns {Array} options array
      */
     attributeOptions() {
       if (this.ruleAttributes.rule_attributes) {
