@@ -131,11 +131,10 @@ def get_campaign_mapping_details(response: object) -> Union[Box, None]:
         )
 
 
-def get_destination_by_name(
-    response: object, **kwargs: dict
-) -> Union[Box, None]:
+def get_destination_by_name(response: object, **kwargs: dict) -> Union[Box, None]:
     """
     Purpose of this function is to get the specifically requested data source by name.
+
     Args:
         response (object): response object
         destination_name (str): name of the data source
@@ -149,6 +148,4 @@ def get_destination_by_name(
 
     for destination in response.json():
         if destination["name"] == destination_name:
-            print("Destination object:::")
-            print(destination)
             return Box({"destination": destination})
