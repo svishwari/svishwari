@@ -404,16 +404,15 @@ export default {
     },
     getOverallDestinations(destinations) {
       if (destinations.length > 3) {
-        debugger
-        return destinations.slice(0, 3)
+        return destinations.slice(0, 3).sort((a, b) => a.name.localeCompare(b.name))
       }
-      return destinations
+      return destinations.sort((a, b) => a.name.localeCompare(b.name))
     },
     getExtraDestinations(destinations) {
       if (destinations.length > 3) {
-        return destinations.slice(3)
+        return destinations.slice(3).sort((a, b) => a.name.localeCompare(b.name))
       }
-      return destinations
+      return destinations.sort((a, b) => a.name.localeCompare(b.name))
     },
     editAudience(id) {
       this.$router.push({
