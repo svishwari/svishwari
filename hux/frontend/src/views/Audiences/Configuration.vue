@@ -472,7 +472,7 @@ export default {
   beforeRouteLeave(to, from, next) {
     if (this.flagForModal == false) {
       this.showConfirmModal = true
-      this.navigateTo = to.name
+      this.navigateTo = to
     } else {
       if (this.navigateTo) next()
     }
@@ -504,7 +504,7 @@ export default {
     navigateaway() {
       this.showConfirmModal = false
       this.flagForModal = true
-      this.$router.push({ name: this.navigateTo })
+      this.$router.push(this.navigateTo)
     },
 
     closeAllDrawers() {
