@@ -462,7 +462,8 @@ class IDRDataFeeds(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[List[dict], int]: list of IDR data feeds object dicts, HTTP status code.
+            Tuple[List[dict], int]: list of IDR data feeds object dicts,
+                HTTP status code.
         """
 
         token_response = get_token_from_request(request)
@@ -542,7 +543,8 @@ class IDRDataFeedDetails(SwaggerView):
             datafeed_id (int): Data feed ID.
 
         Returns:
-            Tuple[dict, int]: dict of IDR data feed waterfall, HTTP status code.
+            Tuple[dict, int]: dict of IDR data feed waterfall,
+                HTTP status code.
         """
 
         token_response = get_token_from_request(request)
@@ -590,7 +592,8 @@ class CustomerGeoVisualView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[list, int]: list of Customer insights on geo overview, HTTP status code.
+            Tuple[list, int]: list of Customer insights on geo overview,
+                HTTP status code.
         """
 
         token_response = get_token_from_request(request)
@@ -639,7 +642,8 @@ class CustomerDemoVisualView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int]: dict of Customer insights on demo overview, HTTP status code.
+            Tuple[dict, int]: dict of Customer insights on demo overview,
+                HTTP status code.
         """
 
         start_date = request.args.get(api_c.START_DATE)
@@ -726,7 +730,8 @@ class IDRMatchingTrends(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int]: dict of IDR Matching trends YTD, HTTP status code.
+            Tuple[dict, int]: dict of IDR Matching trends YTD,
+                HTTP status code.
         """
 
         start_date = request.args.get(api_c.START_DATE)
@@ -807,7 +812,8 @@ class CustomerEvents(SwaggerView):
             hux_id (str): ID of the customer
 
         Returns:
-            Tuple[dict, int]: dict of Customer events grouped by day, HTTP status code.
+            Tuple[dict, int]: dict of Customer events grouped by day,
+                HTTP status code.
         """
 
         start_date = request.json.get(api_c.START_DATE)
@@ -860,7 +866,8 @@ class TotalCustomersGraphView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[list, int]: list of total customers & new customers added, HTTP status code.
+            Tuple[list, int]: list of total customers & new customers added,
+                HTTP status code.
         """
 
         # get auth token from request
@@ -927,7 +934,8 @@ class CustomersInsightsCountries(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[list, int]: list of spend and size data by state, HTTP status code.
+            Tuple[list, int]: list of spend and size data by state,
+                HTTP status code.
         """
 
         # get auth token from request
@@ -978,7 +986,8 @@ class CustomersInsightsStates(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[list, int]: list of spend and size data by state, HTTP status code.
+            Tuple[list, int]: list of spend and size data by state,
+                HTTP status code.
         """
 
         # get auth token from request

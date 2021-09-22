@@ -1048,7 +1048,8 @@ class SetLookalikeAudience(SwaggerView):
             user_name (str): user_name extracted from Okta.
 
         Returns:
-            Tuple[dict, int]: lookalike audience configuration, HTTP status code.
+            Tuple[dict, int]: lookalike audience configuration,
+                HTTP status code.
         """
 
         body = LookalikeAudiencePostSchema().load(

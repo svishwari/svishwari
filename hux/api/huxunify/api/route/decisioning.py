@@ -69,7 +69,8 @@ class ModelsView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[List[dict], int]: list containing dict of models, HTTP status code.
+            Tuple[List[dict], int]: list containing dict of models,
+                HTTP status code.
         """
 
         purchase_model = {
@@ -128,7 +129,8 @@ class ModelVersionView(SwaggerView):
             model_id (str): Model ID.
 
         Returns:
-            Tuple[List[dict], int]: List containing dict of model versions, HTTP status code.
+            Tuple[List[dict], int]: List containing dict of model versions,
+                HTTP status code.
         """
 
         # TODO Remove once Propensity to Purchase info can be retrieved from tecton
@@ -277,7 +279,8 @@ class ModelDriftView(SwaggerView):
             model_id (str): Model ID.
 
         Returns:
-            Tuple[List[dict], int]: List containing dict of model drift, HTTP status code.
+            Tuple[List[dict], int]: List containing dict of model drift,
+                HTTP status code.
         """
 
         # TODO Remove once Propensity to Purchase data is being served
@@ -358,7 +361,8 @@ class ModelFeaturesView(SwaggerView):
             model_version (str): Model Version.
 
         Returns:
-            Tuple[List[dict], int]: List containing dict of model features, HTTP status code.
+            Tuple[List[dict], int]: List containing dict of model features,
+                HTTP status code.
         """
 
         # TODO: Remove once this model data becomes available and can be fetched from Tecton
@@ -459,7 +463,8 @@ class ModelImportanceFeaturesView(SwaggerView):
             limit (int): Limit of features to return, default is 20.
 
         Returns:
-            Tuple[List[dict], int]: List containing dict of model features, HTTP status code.
+            Tuple[List[dict], int]: List containing dict of model features,
+                HTTP status code.
         """
 
         # only use the latest version if model version is None.
@@ -533,7 +538,8 @@ class ModelLiftView(SwaggerView):
             model_id (str): Model ID
 
         Returns:
-            Tuple[List[dict], int]: List containing adict of model lift data, HTTP status code.
+            Tuple[List[dict], int]: List containing a dict of model lift data,
+                HTTP status code.
         """
 
         # retrieves lift data

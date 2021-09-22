@@ -50,7 +50,7 @@ def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
         self (func): a flask/blueprint object, must have 'add_url_rule'
         rule (str): an input rule
         endpoint (str): the name of the endpoint
-        options: options to be added to URL rule
+        options (Any): options to be added to URL rule
 
     Returns:
         Response (object): decorator

@@ -357,7 +357,7 @@ class BatchUpdateDataSources(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int]: Data source updated, , HTTP status code.
+            Tuple[dict, int]: Data source updated, HTTP status code.
 
         Raises:
             ProblemException: Any exception raised during endpoint execution.
@@ -493,7 +493,8 @@ class GetDataSourceDatafeeds(SwaggerView):
             datasource_type (str): Data source type.
 
         Returns:
-            Tuple[dict, int]: Connections data feeds get object, HTTP status code.
+            Tuple[dict, int]: Connections data feeds get object,
+                HTTP status code.
         """
 
         token_response = get_token_from_request(request)

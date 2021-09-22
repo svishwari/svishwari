@@ -702,7 +702,8 @@ class DeleteAudienceEngagement(SwaggerView):
             user_name (str): user_name extracted from Okta.
 
         Returns:
-            Tuple[dict, int]: Audience deleted from engagement, HTTP status code.
+            Tuple[dict, int]: Audience deleted from engagement,
+                HTTP status code.
         """
 
         database = get_db_client()
@@ -827,7 +828,8 @@ class AddDestinationEngagedAudience(SwaggerView):
             user_name (str): user_name extracted from Okta.
 
         Returns:
-            Tuple[dict, int]: Destination Audience Engagement added, HTTP status code.
+            Tuple[dict, int]: Destination Audience Engagement added,
+                HTTP status code.
         """
 
         destination = DestinationEngagedAudienceSchema().load(
@@ -949,7 +951,8 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             user_name (str): user_name extracted from Okta.
 
         Returns:
-            Tuple[dict, int]: Destination Audience Engagement added, HTTP status code.
+            Tuple[dict, int]: Destination Audience Engagement added,
+                HTTP status code.
         """
 
         destination = DestinationEngagedAudienceSchema().load(
@@ -1103,8 +1106,8 @@ class UpdateCampaignsForAudience(SwaggerView):
             destination_id (str): Destination ID.
 
         Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP status code.
+            Tuple[dict, int]: Message indicating connection success/failure,
+            HTTP status code.
         """
 
         # convert to ObjectIds
@@ -1322,8 +1325,8 @@ class AudienceCampaignsGetView(SwaggerView):
             destination_id (str): Destination ID.
 
         Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP status code.
+            Tuple[dict, int]: Message indicating connection success/failure,
+                HTTP status code.
         """
 
         # convert to ObjectIds
@@ -1483,8 +1486,8 @@ class AudienceCampaignMappingsGetView(SwaggerView):
             destination_id (str): Destination ID.
 
         Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP status code.
+            Tuple[dict, int]: Message indicating connection success/failure,
+                HTTP status code.
         """
 
         # convert to ObjectIds

@@ -77,7 +77,7 @@ def set_sfmc_auth_details(sfmc_auth: dict) -> dict:
         sfmc_auth (dict): Auth details.
 
     Returns:
-        Auth Object (dict): SFMC auth object.
+        SFMC auth (dict): SFMC auth dict containing SFMC credentials.
     """
 
     return {
@@ -446,8 +446,8 @@ class DestinationValidatePostView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP status code.
+            Tuple[dict, int]: Message indicating connection success/failure,
+                HTTP status code.
         """
 
         body = DestinationValidationSchema().load(request.get_json())

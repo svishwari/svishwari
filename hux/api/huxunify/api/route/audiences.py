@@ -254,7 +254,8 @@ class AudienceInsightsStates(SwaggerView):
             audience_id (str): Audience ID.
 
         Returns:
-            Tuple[list, int]: list of spend and size data by state, HTTP status code.
+            Tuple[list, int]: list of spend and size data by state,
+                HTTP status code.
         """
 
         # get auth token from request

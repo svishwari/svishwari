@@ -129,8 +129,8 @@ class EngagementDeliverDestinationView(SwaggerView):
             destination_id (ObjectId): Destination ID.
 
         Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP status code.
+            Tuple[dict, int]: Message indicating connection success/failure,
+                HTTP status code.
         """
 
         database = get_db_client()
@@ -260,8 +260,8 @@ class EngagementDeliverAudienceView(SwaggerView):
             audience_id (ObjectId): Audience ID.
 
         Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP status code.
+            Tuple[dict, int]: Message indicating connection success/failure,
+                HTTP status code.
         """
 
         database = get_db_client()
@@ -356,8 +356,8 @@ class EngagementDeliverView(SwaggerView):
             engagement_id (ObjectId): Engagement ID.
 
         Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP status code.
+            Tuple[dict, int]: Message indicating connection success/failure,
+                HTTP status code.
         """
 
         database = get_db_client()
@@ -444,8 +444,8 @@ class AudienceDeliverView(SwaggerView):
             audience_id (ObjectId): Audience ID.
 
         Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP status code.
+            Tuple[dict, int]: Message indicating connection success/failure, .
+                HTTP status code.
         """
 
         database = get_db_client()

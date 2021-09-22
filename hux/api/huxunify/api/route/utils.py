@@ -295,7 +295,7 @@ def transform_fields_generic_file(
         dataframe (DataFrame): input dataframe.
 
     Returns:
-        (DataFrame): input dataframe.
+        dataframe (DataFrame): input dataframe.
     """
 
     return dataframe
@@ -304,14 +304,16 @@ def transform_fields_generic_file(
 def check_end_date_greater_than_start_date(
     start_date: str,
     end_date: str,
-) -> bool:
+):
     """Raises error if start date is greater than end date.
 
     Args:
         start_date (str): start date.
         end_date (str): end date.
 
-    Returns:
+    Raises:
+        FailedDateFilterIssue: Exception if start date is greater than
+            end date.
     """
 
     start_date_format = ""
