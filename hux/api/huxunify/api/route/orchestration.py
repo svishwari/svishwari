@@ -2,6 +2,7 @@
 """
 Paths for Orchestration API
 """
+from distutils.util import strtobool
 from http import HTTPStatus
 from random import uniform
 from typing import Tuple, Union
@@ -111,7 +112,7 @@ class AudienceView(SwaggerView):
             "name": api_c.LOOKALIKEABLE,
             "description": "Only return audiences that are lookalikeable",
             "in": "query",
-            "type": "string",
+            "type": "boolean",
             "required": False,
             "default": False,
         },
@@ -247,7 +248,9 @@ class AudienceView(SwaggerView):
 
         # if lookalikeable flag was passed, filter out the audiences
         # that are not lookalikeable.
-        if request.args.get(api_c.LOOKALIKEABLE, False):
+        if request.args.get(api_c.LOOKALIKEABLE) and strtobool(
+            request.args.get(api_c.LOOKALIKEABLE)
+        ):
             audiences = [
                 x
                 for x in audiences
@@ -1103,7 +1106,7 @@ class SetLookalikeAudience(SwaggerView):
             logger.error("Facebook authentication failed.")
             return {
                 "message": api_c.DESTINATION_AUTHENTICATION_FAILED
-            }, HTTPStatus.BAD_REQUEST
+            }, HTTPStatus.INTERNAL_SERVER_ERROR
 
         most_recent_job = destination_management.get_all_delivery_jobs(
             database,
@@ -1187,7 +1190,7 @@ class SetLookalikeAudience(SwaggerView):
         )
         return (
             LookalikeAudienceGetSchema().dump(lookalike_audience),
-            HTTPStatus.CREATED,
+            HTTPStatus.ACCEPTED,
         )
 
 

@@ -34,6 +34,7 @@ from huxunify.api import constants as api_c
 import huxunify.test.constants as t_c
 from huxunify.app import create_app
 
+
 # pylint: disable=too-many-public-methods
 class OrchestrationRouteTest(TestCase):
     """Orchestration Route tests"""
@@ -788,6 +789,36 @@ class OrchestrationRouteTest(TestCase):
             [str(x[db_c.ID]) for x in audience_engagements],
         )
 
+    def test_create_lookalike_audience_facebook_connection_fail(self):
+        """Test create lookalike audience when facebook connection fails
+        Args:
+
+        Returns:
+        """
+        # setup facebook connector mock address
+        mock.patch.object(
+            FacebookConnector,
+            "check_connection",
+            return_value=False,
+        ).start()
+
+        lookalike_audience_name = "FAILED LA AUDIENCE"
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json={
+                api_c.AUDIENCE_ID: str(self.audiences[0][db_c.ID]),
+                api_c.NAME: lookalike_audience_name,
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
+                api_c.ENGAGEMENT_IDS: self.engagement_ids,
+            },
+        )
+
+        self.assertEqual(
+            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+        )
+
     def test_create_lookalike_audience(self):
         """Test create lookalike audience
         Args:
@@ -824,7 +855,7 @@ class OrchestrationRouteTest(TestCase):
             self.database, ObjectId(self.engagement_ids[0])
         )
 
-        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertEqual(HTTPStatus.ACCEPTED, response.status_code)
         self.assertEqual(lookalike_audience_name, response.json[api_c.NAME])
         lookalike_audience_id = ObjectId(response.json[api_c.ID])
 
