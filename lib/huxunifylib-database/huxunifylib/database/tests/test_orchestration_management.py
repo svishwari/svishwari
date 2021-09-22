@@ -1,4 +1,4 @@
-"""Audience Management tests."""
+"""Audience/Engagement Management tests."""
 
 import unittest
 import mongomock
@@ -6,6 +6,7 @@ import pymongo
 from bson import ObjectId
 
 import huxunifylib.database.orchestration_management as am
+import huxunifylib.database.engagement_management as em
 import huxunifylib.database.delivery_platform_management as dpm
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
@@ -459,3 +460,35 @@ class TestAudienceManagement(unittest.TestCase):
         audiences = am.get_all_audiences(self.database)
 
         self.assertEqual(len(all_audiences) - 1, len(audiences))
+
+    def test_delete_engagement(self):
+        """Test delete_engagement"""
+
+        #creat audience
+        audience1 = am.create_audience(
+            self.database,
+            "Audience1",
+            self.audience_filters,
+            user_name=self.user_name,
+            size=1450,
+        )
+
+        # create engagement
+        engagement_id = em.set_engagement(
+            self.database,
+            "Fall 2024",
+            "fall of 2024",
+            [audience1],
+            self.user_name,
+        )
+
+        self.assertIsInstance(engagement_id, ObjectId)
+
+        # delete created engagement
+        delete_flag = am.delete_engagement(self.database, engagement_id)
+
+        self.assertTrue(delete_flag)
+
+        # validate the engagement was deleted
+        engagement_doc = em.get_engagement(self.database, engagement_id)
+        self.assertIsNone(engagement_doc)

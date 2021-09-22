@@ -439,15 +439,13 @@ def get_engagement(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_engagement(
-    database: DatabaseClient, engagement_id: ObjectId,
-    hard_delete: bool = False,
+    database: DatabaseClient, engagement_id: ObjectId
 ) -> bool:
     """A function to delete an engagement based on ID
 
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): Object Id of the engagement
-        hard_delete (bool) - optional: hard deletes an engagement if True.
 
     Returns:
         bool: Flag indicating successful operation.
@@ -459,9 +457,6 @@ def delete_engagement(
     ]
 
     try:
-        if hard_delete:
-            collection.delete_one({db_c.ID: engagement_id})
-            return True
         doc = collection.find_one_and_update(
             {db_c.ID: engagement_id},
             {"$set": {db_c.DELETED: True}},

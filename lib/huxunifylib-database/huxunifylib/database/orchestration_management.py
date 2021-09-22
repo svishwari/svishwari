@@ -333,6 +333,36 @@ def delete_audience(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def delete_engagement(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+) -> bool:
+    """A function to delete an engagement
+
+    Args:
+        database (DatabaseClient): A database client.
+        engagement_id (ObjectId): The Mongo DB ID of the engagement.
+
+    Returns:
+        bool: A flag to indicate successful deletion
+
+    """
+
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.ENGAGEMENTS_COLLECTION]
+
+    try:
+        collection.delete_one({c.ID: engagement_id})
+        return True
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def get_audience_insights(
     database: DatabaseClient,
     audience_id: ObjectId,
