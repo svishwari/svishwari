@@ -327,7 +327,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                     "message": custom_message
                     if custom_message
                     else "Value Error Encountered"
-                }, HTTPStatus.INTERNAL_SERVER_ERROR
+                }, HTTPStatus.BAD_REQUEST
 
             except ZeroDivisionError:
                 return {
