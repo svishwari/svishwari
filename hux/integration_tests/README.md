@@ -110,3 +110,10 @@ In this case, {test_user_name} is available for use in later requests.
 #### Documentation
 For more information regarding usages of external functions in tavern, refer the below link on official tavern documentation.
  - [External Functions - Tavern Documentation](https://tavern.readthedocs.io/en/latest/basics.html#calling-external-functions)
+
+
+### Running Cypress tests
+
+We run integration and end-to-end tests specifically against the UI using Cypress.
+
+To run them, please view the README under the [frontend](./frontend/README.md) directory.

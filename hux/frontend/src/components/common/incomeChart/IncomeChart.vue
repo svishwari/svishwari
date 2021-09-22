@@ -25,8 +25,8 @@
         height="150"
         class="d-flex ma-6"
       />
-      <div class="d-flex ma-6 global-text-line">
-        <span class="append-circle"></span> no data available
+      <div class="d-flex ml-6 mt-8 global-text-line">
+        <chart-legends :legends-data="legendsData" />
       </div>
     </span>
   </div>
@@ -35,10 +35,11 @@
 <script>
 import BarChartTooltip from "@/components/common/incomeChart/BarChartTooltip"
 import HorizontalBarChart from "@/components/common/incomeChart/HorizontalBarChart"
+import ChartLegends from "@/components/common/Charts/Legends/ChartLegends.vue"
 
 export default {
   name: "IncomeChart",
-  components: { HorizontalBarChart, BarChartTooltip },
+  components: { HorizontalBarChart, BarChartTooltip, ChartLegends },
   props: {
     data: {
       type: Array,
@@ -58,6 +59,9 @@ export default {
       },
       incomes: this.data,
       currentData: {},
+      legendsData: [
+        { color: "rgba(208, 208, 206, 1)", text: "no data available" },
+      ],
     }
   },
   created() {
@@ -100,14 +104,5 @@ export default {
 .container {
   height: 350px;
   padding: 0px !important;
-}
-.append-circle {
-  height: 12px;
-  width: 12px;
-  background-color: rgba(208, 208, 206, 1);
-  border-radius: 50%;
-  display: inline-block;
-  margin-top: 4px;
-  margin-right: 8px;
 }
 </style>
