@@ -77,7 +77,9 @@ class UserProfile(SwaggerView):
             Tuple[dict, int]: dict of user and http code
 
         """
-        okta_id = None  # TODO : Fetch okta id from JWT Token (HUS-443)
+        okta_id = introspect_token(get_token_from_request(request)[0]).get(
+            "user_id"
+        )
 
         try:
             return (

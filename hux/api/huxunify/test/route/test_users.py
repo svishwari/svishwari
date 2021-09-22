@@ -15,8 +15,12 @@ from huxunifylib.database.delivery_platform_management import (
 from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.database.user_management import set_user
-from huxunify.api import constants as api_c
+
 from huxunify.app import create_app
+
+from huxunify.api import constants as api_c
+from huxunify.api.schema.user import UserSchema
+
 import huxunify.test.constants as t_c
 
 
@@ -234,3 +238,23 @@ class TestUserRoutes(TestCase):
         self.assertEqual(
             response.json.get("message"), expected_response_message
         )
+
+    def test_get_user_profile(self):
+        """
+        Tests getting user profile using Okta ID.
+
+        Args:
+
+        Returns:
+            None
+        """
+        endpoint = (
+            f"{t_c.BASE_ENDPOINT}" f"{api_c.USER_ENDPOINT}/" f"{api_c.PROFILE}"
+        )
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        t_c.validate_schema(UserSchema(), response.json)
+        self.assertEqual(response.status_code, HTTPStatus.OK)

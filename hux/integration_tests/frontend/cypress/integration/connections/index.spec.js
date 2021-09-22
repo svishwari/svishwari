@@ -13,7 +13,7 @@ describe("Tests data souces and destinations in connections", () => {
     cy.location("pathname").should("eq", route.overview)
 
     //click on connections on side nav bar
-    cy.get(selector.connections).click()
+    cy.get(selector.connections).eq(0).click()
     cy.location("pathname").should("eq", route.connections)
 
     //validate data sources exist by getting total no. of them
@@ -21,7 +21,6 @@ describe("Tests data souces and destinations in connections", () => {
 
     //add a data source
     cy.get(selector.addDataSource).click()
-    cy.location("pathname").should("eq", route.addDataSource)
     cy.get(selector.dataSourcesAdd).eq(0).click()
     cy.get("button").contains("Add 1 data source").click()
     cy.location("pathname").should("eq", route.connections)
@@ -38,10 +37,11 @@ describe("Tests data souces and destinations in connections", () => {
 
       //validate correct status on all added data sources
       cy.get(selector.datasources).as("dataSourcesList")
-      for (let index = 0; index < dataSourcesCount; index++) {
-        cy.get("@dataSourcesList").eq(index).contains("Active")
+      for (let index = 0; index <= dataSourcesCount; index++) {
+        cy.get("@dataSourcesList")
+          .eq(index)
+          .contains(/Active|Pending/)
       }
-      cy.get("@dataSourcesList").eq(dataSourcesCount).contains("Pending")
     })
   })
 

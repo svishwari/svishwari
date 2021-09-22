@@ -1,7 +1,7 @@
 <template>
   <v-menu :min-width="200" left offset-y close-on-click>
     <template #activator="{ on }">
-      <span class="d-flex cursor-pointer" v-on="on">
+      <span class="d-flex cursor-pointer" data-e2e="help-dropdown" v-on="on">
         <v-btn class="mx-2 box-shadow-25" color="white" fab x-small>
           <v-icon color="primary"> mdi-help </v-icon>
         </v-btn>
@@ -11,7 +11,7 @@
       <v-list-item>
         <v-list-item-title class="font-weight-bold"> Help </v-list-item-title>
       </v-list-item>
-      <v-list-item class="v-list-item--link">
+      <v-list-item class="v-list-item--link" data-e2e="contactus">
         <a
           href="mailto:ushuxproductsupport@deloitte.com"
           class="text-h6 view-all text-decoration-none"

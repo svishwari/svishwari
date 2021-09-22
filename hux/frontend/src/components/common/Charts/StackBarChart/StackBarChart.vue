@@ -91,14 +91,14 @@ export default {
         .attr("transform", `translate(${margin.left},${margin.top})`)
 
       this.colorCodes.forEach((color) => {
-        if (color == "darken3") {
-          barColorCodes.push(colors.primary[color])
-        } else if (color == "lighten8") {
-          barColorCodes.push(colors.primary[color])
-        } else if (color == "lighten5") {
-          barColorCodes.push(colors.primary[color])
+        if (color.variant == "darken3") {
+          barColorCodes.push(colors.primary[color.variant])
+        } else if (color.variant == "lighten8") {
+          barColorCodes.push(colors.primary[color.variant])
+        } else if (color.variant == "lighten5") {
+          barColorCodes.push(colors.primary[color.variant])
         } else {
-          barColorCodes.push(colors[color])
+          barColorCodes.push(colors[color.base])
         }
       })
 

@@ -17,6 +17,15 @@
     <v-divider class="divider my-4 mb-8"></v-divider>
 
     <engagement-form ref="editEngagement" v-model="data" />
+
+    <confirm-modal
+      v-model="showConfirmModal"
+      title="You are about to navigate away"
+      right-btn-text="Yes, navigate away"
+      body=" Are you sure you want to stop the configuration and go to another page? You will not be able to recover it and will need to start the process again."
+      @onCancel="showConfirmModal = false"
+      @onConfirm="navigateaway()"
+    />
   </page>
 </template>
 
@@ -25,6 +34,7 @@ import { mapActions, mapGetters } from "vuex"
 import Page from "@/components/Page.vue"
 import EngagementOverview from "./Overview.vue"
 import EngagementForm from "./Form.vue"
+import ConfirmModal from "@/components/common/ConfirmModal.vue"
 
 export default {
   name: "Configuration",
@@ -33,6 +43,7 @@ export default {
     Page,
     EngagementOverview,
     EngagementForm,
+    ConfirmModal,
   },
 
   data() {
@@ -45,6 +56,9 @@ export default {
       },
 
       loading: false,
+      showConfirmModal: false,
+      navigateTo: false,
+      flagForModal: false,
     }
   },
 
@@ -58,6 +72,15 @@ export default {
         ? `Edit ${this.data.name} `
         : "Add an engagement"
     },
+  },
+
+  beforeRouteLeave(to, from, next) {
+    if (this.flagForModal == false) {
+      this.showConfirmModal = true
+      this.navigateTo = to.name
+    } else {
+      if (this.navigateTo) next()
+    }
   },
 
   async mounted() {
@@ -76,6 +99,11 @@ export default {
       getDestinations: "destinations/getAll",
       getEngagementById: "engagements/get",
     }),
+    navigateaway() {
+      this.showConfirmModal = false
+      this.flagForModal = true
+      this.$router.push({ name: this.navigateTo })
+    },
     async loadEngagement(engagementId) {
       await this.getEngagementById(engagementId)
       this.engagementList = this.getEngagementObject(engagementId)

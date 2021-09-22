@@ -1,5 +1,5 @@
 <template>
-  <page max-width="100%">
+  <page max-width="100%" class="idr-wrapper">
     <template #header>
       <page-header header-height="70">
         <template #left>
@@ -14,24 +14,19 @@
             ]"
           />
         </template>
-        <template #right>
-          <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
-            mdi-download
-          </v-icon>
-        </template>
       </page-header>
 
-      <page-header header-height="70">
+      <page-header header-height="71">
         <template #left>
           <v-btn
             icon
             :color="isFilterToggled ? 'secondary' : 'black'"
-            class="mr-6"
+            class="ml-n2"
             @click.native="isFilterToggled = !isFilterToggled"
           >
             <v-icon medium>mdi-filter-variant</v-icon>
           </v-btn>
-          <v-btn disabled icon color="black" class="mr-6">
+          <v-btn disabled icon color="black" class="pl-6">
             <v-icon medium>mdi-magnify</v-icon>
           </v-btn>
         </template>
@@ -82,58 +77,59 @@
     </template>
     <template>
       <v-row v-if="!loadingOverview" no-gutters>
-        <metric-card
-          v-for="(metric, index) in overview"
-          :key="index"
-          :title="metric.title"
-          :min-width="170"
-          class="mx-2 my-2 pt-3 pl-6"
-          data-e2e="overviewList"
-        >
-          <template #extra-item>
-            <tooltip position-top>
-              <template #label-content>
-                <icon type="info" :size="12" />
+        <v-slide-group class="idr-slide-group" show-arrows>
+          <v-slide-item v-for="(metric, index) in overview" :key="index">
+            <metric-card
+              :title="metric.title"
+              :min-width="170"
+              class="mx-2 my-2 pt-3 pl-6"
+            >
+              <template #extra-item>
+                <tooltip position-top>
+                  <template #label-content>
+                    <icon type="info" :size="12" />
+                  </template>
+                  <template #hover-content>
+                    <v-sheet max-width="240px">
+                      {{ metric.description }}
+                    </v-sheet>
+                  </template>
+                </tooltip>
               </template>
-              <template #hover-content>
-                <v-sheet max-width="240px">
-                  {{ metric.description }}
-                </v-sheet>
-              </template>
-            </tooltip>
-          </template>
 
-          <template #subtitle-extended>
-            <tooltip>
-              <template #label-content>
-                <span class="font-weight-semi-bold">
-                  <template v-if="metric.format === 'numeric'">
-                    {{ metric.value | Numeric(true, true) | Empty("-") }}
+              <template #subtitle-extended>
+                <tooltip>
+                  <template #label-content>
+                    <span class="font-weight-semi-bold">
+                      <template v-if="metric.format === 'numeric'">
+                        {{ metric.value | Numeric(true, true) | Empty }}
+                      </template>
+                      <template v-if="metric.format === 'percentage'">
+                        {{
+                          metric.value
+                            | Numeric(true, false, false, true)
+                            | Empty
+                        }}
+                      </template>
+                    </span>
                   </template>
-                  <template v-if="metric.format === 'percentage'">
-                    {{
-                      metric.value
-                        | Numeric(true, false, false, true)
-                        | Empty("-")
-                    }}
+                  <template #hover-content>
+                    <template v-if="metric.format === 'numeric'">
+                      {{ metric.value | Numeric(true, false) | Empty }}
+                    </template>
+                    <template v-if="metric.format === 'percentage'">
+                      {{
+                        metric.value
+                          | Numeric(false, false, false, true)
+                          | Empty
+                      }}
+                    </template>
                   </template>
-                </span>
+                </tooltip>
               </template>
-              <template #hover-content>
-                <template v-if="metric.format === 'numeric'">
-                  {{ metric.value | Numeric(true, false) | Empty("-") }}
-                </template>
-                <template v-if="metric.format === 'percentage'">
-                  {{
-                    metric.value
-                      | Numeric(false, false, false, true)
-                      | Empty("-")
-                  }}
-                </template>
-              </template>
-            </tooltip>
-          </template>
-        </metric-card>
+            </metric-card>
+          </v-slide-item>
+        </v-slide-group>
       </v-row>
       <v-row class="px-2 mt-0 mb-1">
         <v-col md="12">
@@ -333,5 +329,18 @@ export default {
   },
 }
 </script>
-
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.idr-wrapper {
+  .idr-slide-group {
+    ::v-deep .v-slide-group__wrapper {
+      overflow: auto !important;
+    }
+    ::v-deep .theme--light.v-icon {
+      color: var(--v-primary-base) !important;
+    }
+    ::v-deep .v-icon--disabled.theme--light.v-icon {
+      color: var(--v-black-lighten3) !important;
+    }
+  }
+}
+</style>

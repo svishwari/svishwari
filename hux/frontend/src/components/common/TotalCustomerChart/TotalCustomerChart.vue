@@ -9,7 +9,7 @@
     />
     <stack-bar-chart-tooltip
       :show-tool-tip="show"
-      :color-codes="tooltipColorCodes"
+      :color-codes="colorCodes"
       :source-input="currentData"
     />
   </div>
@@ -20,6 +20,7 @@ import { timeFormat } from "d3-time-format"
 import { nest } from "d3-collection"
 import StackBarChartTooltip from "@/components/common/TotalCustomerChart/StackBarChartTooltip"
 import StackBarChart from "@/components/common/Charts/StackBarChart/StackBarChart.vue"
+
 export default {
   name: "TotalCustomerChart",
   components: { StackBarChart, StackBarChartTooltip },
@@ -33,12 +34,11 @@ export default {
     return {
       show: false,
       isArcHover: false,
-      colorCodes: ["lighten5", "lighten8", "darken3", "success"],
-      tooltipColorCodes: [
-        "var(--v-primary-lighten5)",
-        "var(--v-primary-lighten8)",
-        "var(--v-primary-darken3)",
-        "var(--v-success-base)",
+      colorCodes: [
+        { base: "primary", variant: "lighten5" },
+        { base: "primary", variant: "lighten8" },
+        { base: "primary", variant: "darken3" },
+        { base: "success", variant: "base" },
       ],
       currentData: {},
       sourceData: [],
