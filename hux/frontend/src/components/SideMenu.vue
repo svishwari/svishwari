@@ -103,7 +103,7 @@
               color="black"
             >
               <template #label-content>
-                <icon :type="menu.icon" :size="iconSize" color="white" />
+                <icon :type="menu.icon" :size="menu.size" color="white" />
               </template>
               <template #hover-content>
                 {{ menu.title }}
