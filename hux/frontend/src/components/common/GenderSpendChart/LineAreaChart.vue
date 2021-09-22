@@ -79,6 +79,8 @@ export default {
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
+      let margin = {}
+      margin = { top: 10, bottom: 20, left: 60, right: 40 }
       let colorCodes = [
         "rgba(0, 85, 135, 1)",
         "rgba(12, 157, 219, 1)",
@@ -88,7 +90,7 @@ export default {
         this.legendsData = [
           { color: "rgba(208, 208, 206, 1)", text: "no data available" },
         ]
-
+        margin = { top: 10, bottom: 20, left: 40, right: 40 }
         colorCodes = ["rgba(208, 208, 206, 1)"]
       }
 
@@ -99,7 +101,7 @@ export default {
         .attr("height", this.height)
 
       let strokeWidth = 1.5
-      let margin = { top: 10, bottom: 20, left: 60, right: 40 }
+
       let chart = svg
         .append("g")
         .attr("transform", `translate(${margin.left},10)`)

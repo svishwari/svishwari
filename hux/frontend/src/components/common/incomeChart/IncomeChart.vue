@@ -25,8 +25,9 @@
         height="150"
         class="d-flex ma-6"
       />
-      <div class="d-flex ma-6 global-text-line">
-        <span class="append-circle"></span> no data available
+      <div class="d-flex ma-6 mt-9 no-data-text">
+        <span class="append-circle"></span>
+        <span> no data available </span>
       </div>
     </span>
   </div>
@@ -107,7 +108,15 @@ export default {
   background-color: rgba(208, 208, 206, 1);
   border-radius: 50%;
   display: inline-block;
-  margin-top: 4px;
+  margin-top: 3px;
   margin-right: 8px;
+}
+.no-data-text {
+  font-family: Open Sans;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 16px;
+  color: #4f4f4f;
 }
 </style>
