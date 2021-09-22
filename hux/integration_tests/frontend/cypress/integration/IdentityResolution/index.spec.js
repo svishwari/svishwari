@@ -52,5 +52,4 @@ describe("Data management > Identity resolution", () => {
     cy.wait(1000)
     cy.get(selector.idr.stitched).click()
   })
-  
 })

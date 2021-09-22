@@ -122,7 +122,7 @@
           </div>
         </v-row>
 
-        <v-row class="delivery-schedule mt-6">
+        <v-row class="delivery-schedule mt-5">
           <hux-schedule-picker v-if="isRecurring" v-model="schedule" />
         </v-row>
       </form-step>
