@@ -100,7 +100,7 @@
                     class="add-icon cursor-pointer"
                     type="add"
                     :size="24"
-                    @click="addNewCondition(rule.id)"
+                    @click.native="addNewCondition(rule.id)"
                   />
 
                   <v-icon
