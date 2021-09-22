@@ -62,7 +62,10 @@ from huxunify.api.schema.customers import (
     CustomersSchema,
 )
 from huxunify.api import constants as api_c
-from huxunify.api.route.utils import group_gender_spending
+from huxunify.api.route.utils import (
+    group_gender_spending,
+    check_end_date_greater_than_start_date,
+)
 
 customers_bp = Blueprint(
     api_c.CUSTOMERS_ENDPOINT, import_name=__name__, url_prefix="/cdp"
@@ -258,13 +261,18 @@ class IDROverview(SwaggerView):
         Returns:
             Tuple[dict, int] dict of Customer data overview and http code
         """
+        start_date = request.args.get(api_c.START_DATE)
+        end_date = request.args.get(api_c.END_DATE)
+
+        check_end_date_greater_than_start_date(start_date, end_date)
+
         token_response = get_token_from_request(request)
         return (
             IDROverviewWithDateRangeSchema().dump(
                 get_idr_overview(
                     token_response[0],
-                    request.args.get(api_c.START_DATE),
-                    request.args.get(api_c.END_DATE),
+                    start_date,
+                    end_date,
                 )
             ),
             HTTPStatus.OK,
@@ -487,6 +495,7 @@ class IDRDataFeeds(SwaggerView):
             ),
         )
 
+        check_end_date_greater_than_start_date(start_date, end_date)
         return (
             jsonify(
                 DataFeedSchema().dump(
@@ -651,6 +660,11 @@ class CustomerDemoVisualView(SwaggerView):
             Tuple[dict, int] list of Customer insights on demo overview and http code
         """
 
+        start_date = request.args.get(api_c.START_DATE)
+        end_date = request.args.get(api_c.END_DATE)
+
+        check_end_date_greater_than_start_date(start_date, end_date)
+
         token_response = get_token_from_request(request)
 
         # get customers overview data from CDP to set gender specific
@@ -659,8 +673,8 @@ class CustomerDemoVisualView(SwaggerView):
 
         gender_spending = get_spending_by_gender(
             token_response[0],
-            request.args.get(api_c.START_DATE),
-            request.args.get(api_c.END_DATE),
+            start_date,
+            end_date,
         )
 
         output = {
@@ -732,14 +746,20 @@ class IDRMatchingTrends(SwaggerView):
         Returns:
             Tuple[dict, int] dict of IDR Matching trends YTD and http code
         """
+
+        start_date = request.args.get(api_c.START_DATE)
+        end_date = request.args.get(api_c.END_DATE)
+
+        check_end_date_greater_than_start_date(start_date, end_date)
+
         token_response = get_token_from_request(request)
         return (
             jsonify(
                 MatchingTrendsSchema().dump(
                     get_idr_matching_trends(
                         token_response[0],
-                        request.args.get(api_c.START_DATE),
-                        request.args.get(api_c.END_DATE),
+                        start_date,
+                        end_date,
                     ),
                     many=True,
                 )
@@ -807,6 +827,11 @@ class CustomerEvents(SwaggerView):
         Returns:
             Tuple[dict, int] list of Customer events grouped by day and http code
         """
+        start_date = request.json[api_c.START_DATE]
+        end_date = request.json[api_c.END_DATE]
+
+        check_end_date_greater_than_start_date(start_date, end_date)
+
         token_response = get_token_from_request(request)
         return (
             jsonify(
