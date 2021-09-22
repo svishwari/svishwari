@@ -382,6 +382,11 @@ const sampleEng = {
   name: "Pre-Demo Test Engagement",
 }
 
+/**
+ * Seeds the server with mock data.
+ *
+ * @param {object} server Mirage server
+ */
 export default function (server) {
   // seed data sources
   server.create("dataSource", bluecore)

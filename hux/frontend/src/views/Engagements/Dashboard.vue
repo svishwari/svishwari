@@ -516,10 +516,10 @@ export default {
           case "remove audience":
             this.showConfirmModal = true
             this.confirmDialog.actionType = "remove-audience"
-            this.confirmDialog.title = `Remove ${event.data.name} audience?`
+            this.confirmDialog.title = `You are about to remove ${event.data.name}`
             this.confirmDialog.btnText = "Yes, remove it"
             this.confirmDialog.body =
-              "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore."
+              "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement."
             this.deleteActionData = event.data
             break
           default:

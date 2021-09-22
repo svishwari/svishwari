@@ -56,6 +56,7 @@
                 class="pa-1"
                 height="auto"
                 color="primary"
+                data-e2e="lastrun"
                 @click="openLastRunDrawer(item)"
               >
                 {{ item[col.value] | Date("relative") }}

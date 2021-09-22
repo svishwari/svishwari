@@ -20,6 +20,7 @@
           size="large"
           is-tile
           class="ma-2 font-weight-regular no-shadow mr-0"
+          data-e2e="notification-return"
           @click="goBack()"
         >
           Return to previous page

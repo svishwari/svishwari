@@ -200,7 +200,7 @@ export default {
         .style("stroke-width", 1)
       svg
         .append("rect")
-        .attr("width", w + 20)
+        .attr("width", w + 100)
         .attr("height", h)
         .style("stroke", "transparent")
         .style("fill", "transparent")

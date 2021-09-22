@@ -8,7 +8,7 @@ import dayjs from "dayjs"
  * Forms the title for the page.
  *
  * @param {string} title - The title of the page
- * @return {string} The page title
+ * @returns {string} The page title
  */
 export function pageTitle(title) {
   return `${title} · Hux`
@@ -18,17 +18,28 @@ export function pageTitle(title) {
  * Handles an error.
  *
  * @param {string} error
+ * eslint-disable-next-line jsdoc/require-returns-check
  */
 export function handleError(error) {
   // TODO: do more with the error than just logging it to the console
   console.error(error)
 }
+
 /**
- * get color HEX code
+ * Get color HEX code
  *
- * @param {string} error
+ * @param {*} str string to generate color from
+ * @param {*} s ?
+ * @param {*} l ?
+ * @returns {string} hex code
  */
 export function generateColor(str, s, l) {
+  /**
+   * @param {*} h ?
+   * @param {*} s ?
+   * @param {*} l ?
+   * @returns {string} hex
+   */
   function hslToHex(h, s, l) {
     l /= 100
     const a = (s * Math.min(l, 1 - l)) / 100
@@ -49,6 +60,13 @@ export function generateColor(str, s, l) {
   var h = hash % 360
   return hslToHex(h, s, l)
 }
+
+/**
+ * getApproxSize
+ *
+ * @param {number} value number
+ * @returns {string} approximate size
+ */
 export function getApproxSize(value) {
   // Nine Zeroes for Billions
   return Math.abs(Number(value)) >= 1.0e9
@@ -65,8 +83,9 @@ export function getApproxSize(value) {
 /**
  * Extracts audiences that have destinations passed in the params
  *
- * @param {Array} destinations - List of destination to match
- * @return {string} List of filtered audiences
+ * @param {Array} audiences List of audiences
+ * @param {Array} destinations List of destination to match
+ * @returns {string} List of filtered audiences
  */
 export function filterAudiencesByDestinations(audiences, destinations = []) {
   let filteredAudiences = audiences.filter((audience) => {
@@ -88,7 +107,7 @@ export function filterAudiencesByDestinations(audiences, destinations = []) {
 /**
  * Uses to initialize or reset while using hux-schedule-picker component
  *
- * @returns {Object}
+ * @returns {object} delivery schedule
  */
 export function deliverySchedule() {
   return {
@@ -107,7 +126,7 @@ export function deliverySchedule() {
 /**
  * Get a list of months names.
  *
- * @returns {string[]}
+ * @returns {string[]} list of months
  */
 export function listOfMonths() {
   return [
@@ -129,8 +148,8 @@ export function listOfMonths() {
 /**
  * Get a list of years.
  *
- * @param {number} [yearsBack=10]
- * @returns {string[]}
+ * @param {number} [yearsBack=10] configuration for how many years back
+ * @returns {string[]} list of years
  */
 export function listOfYears(yearsBack = 10) {
   return Array.from({ length: yearsBack }, (_, index) => {
@@ -139,8 +158,10 @@ export function listOfYears(yearsBack = 10) {
 }
 
 /**
- * Download file from the blob API response.\
+ * Download file from the blob API response.
  *
+ * @param {*} response
+ * eslint-disable-next-line jsdoc/require-returns-check
  */
 export function saveFile(response) {
   const fileName = response.headers["content-disposition"].match(

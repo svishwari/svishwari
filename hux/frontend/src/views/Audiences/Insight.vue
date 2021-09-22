@@ -453,7 +453,7 @@
             :indeterminate="loadingDemographics"
           />
           <v-card-title v-if="!loadingDemographics" class="pb-2 pl-2 pt-5">
-            <div class="mt-2 ml-5">
+            <div class="mt-2 pl-5">
               <span class="black--text text--darken-4 text-h5">
                 Gender &sol; monthly spending
               </span>
@@ -881,6 +881,8 @@ export default {
      * This computed property is converting the audience filters conditions
      * into groups of fiters and having custom keys which are needed
      * on the UI transformation.
+     *
+     * @returns {Array} filters
      */
     appliedFilters() {
       try {
@@ -1007,7 +1009,11 @@ export default {
     },
 
     /**
-     * Formatting the values to the desired format using predebfined application filters.
+     * Formatting the values to the desired format using predefined application filters.
+     *
+     * @param {object} item item
+     * @param {string} item.title item's title
+     * @returns {string} formatted value
      */
     getFormattedValue(item) {
       switch (item.title) {
@@ -1058,10 +1064,10 @@ export default {
           break
         case "remove engagement": {
           this.confirmDialog.actionType = "remove-engagement"
-          this.confirmDialog.title = `Remove ${event.data.name} engagement?`
+          this.confirmDialog.title = `You are about to remove ${event.data.name}`
           this.confirmDialog.btnText = "Yes, remove it"
           this.confirmDialog.body =
-            "You will not be deleting this engagement; this engagement will not be attached to this specific audience anymore."
+            "Are you sure you want to remove this engagement? By removing this engagement, it will not be deleted, but it will become unattached from this audience."
           this.deleteActionData = {
             data: {
               id: event.data.id,

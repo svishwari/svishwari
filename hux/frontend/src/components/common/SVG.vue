@@ -27,6 +27,12 @@ export default {
       required: false,
     },
 
+    variant: {
+      type: String,
+      required: false,
+      default: "base",
+    },
+
     fillOpacity: {
       type: Number,
       required: false,
@@ -46,7 +52,7 @@ export default {
 
       if (this.width) style.width = `${this.width}px`
       if (this.height) style.height = `${this.height}px`
-      if (this.color) style.fill = `var(--v-${this.color}-base)`
+      if (this.color) style.fill = `var(--v-${this.color}-${this.variant})`
       if (this.fillOpacity) style.fillOpacity = `${this.fillOpacity}`
 
       return style
