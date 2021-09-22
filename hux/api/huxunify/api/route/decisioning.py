@@ -66,7 +66,7 @@ class ModelsView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[List[dict], int]: list containing dict of models, HTTP status code.
@@ -122,7 +122,7 @@ class ModelVersionView(SwaggerView):
 
         ---
         security:
-            Bearer: [Authorization]
+            - Bearer: ["Authorization"]
 
         Args:
             model_id (str): Model ID.
@@ -197,7 +197,7 @@ class ModelOverview(SwaggerView):
 
         ---
         security:
-            Bearer: [Authorization]
+            - Bearer: ["Authorization"]
 
         Args:
             model_id (str): Model ID.
@@ -271,7 +271,7 @@ class ModelDriftView(SwaggerView):
 
         ---
         security:
-            Bearer: [Authorization]
+            - Bearer: ["Authorization"]
 
         Args:
             model_id (str): Model ID.
@@ -351,7 +351,7 @@ class ModelFeaturesView(SwaggerView):
 
         ---
         security:
-            Bearer: [Authorization]
+            - Bearer: ["Authorization"]
 
         Args:
             model_id (str): Model ID.
@@ -451,7 +451,7 @@ class ModelImportanceFeaturesView(SwaggerView):
 
         ---
         security:
-            Bearer: [Authorization]
+            - Bearer: ["Authorization"]
 
         Args:
             model_id (str): Model ID.
@@ -527,7 +527,7 @@ class ModelLiftView(SwaggerView):
 
         ---
         security:
-            Bearer: [Authorization]
+            - Bearer: ["Authorization"]
 
         Args:
             model_id (str): Model ID

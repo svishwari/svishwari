@@ -143,7 +143,7 @@ class DestinationGetView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             destination_id (str): Destination ID.
@@ -183,7 +183,7 @@ class DestinationsView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[list, int]: list of destinations, HTTP status code.
@@ -261,7 +261,7 @@ class DestinationPutView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             destination_id (str): Destination ID.
@@ -376,7 +376,7 @@ class DestinationsConstants(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[dict, int]: dict of destination constants, HTTP status code.
@@ -443,7 +443,7 @@ class DestinationValidatePostView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[dict, int]: Message indicating connection
@@ -625,7 +625,7 @@ class DestinationDataExtView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             destination_id (str): Destination ID.
@@ -734,7 +734,7 @@ class DestinationDataExtPostView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             destination_id (str): Destination ID.

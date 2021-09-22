@@ -140,7 +140,7 @@ class AudienceView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[list, int]: list of audience, HTTP status code.
@@ -297,7 +297,7 @@ class AudienceGetView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             audience_id (str): Audience ID.
@@ -472,7 +472,7 @@ class AudienceInsightsGetView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             audience_id (str): Audience ID.
@@ -613,7 +613,7 @@ class AudiencePostView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             user_name (str): user_name extracted from Okta.
@@ -828,7 +828,7 @@ class AudiencePutView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             audience_id (str): Audience ID.
@@ -913,7 +913,7 @@ class AudienceRules(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[dict, int]: dict of audience rules, HTTP status code.
@@ -1042,7 +1042,7 @@ class SetLookalikeAudience(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             user_name (str): user_name extracted from Okta.
@@ -1208,7 +1208,7 @@ class DeleteAudienceView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             audience_id (str): ID of the audience to be deleted.

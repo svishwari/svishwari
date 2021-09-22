@@ -248,7 +248,7 @@ class AudienceInsightsStates(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             audience_id (str): Audience ID.
@@ -337,7 +337,7 @@ class AudienceInsightsCities(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             audience_id (str): Audience ID.

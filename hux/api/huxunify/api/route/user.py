@@ -67,7 +67,7 @@ class UserProfile(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[dict, int]: dict of user, HTTP status code
@@ -140,7 +140,7 @@ class AddUserFavorite(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             component_name (str): Component name.
@@ -221,7 +221,7 @@ class DeleteUserFavorite(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             component_name (str): Component name.

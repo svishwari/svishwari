@@ -90,7 +90,7 @@ class NotificationsSearch(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[dict, int] dict of notifications, HTTP status code.

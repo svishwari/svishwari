@@ -104,7 +104,7 @@ class CustomerOverview(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[dict, int]: dict of Customer data overview, HTTP status code.
@@ -180,7 +180,7 @@ class CustomerPostOverview(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[dict, int]: dict of Customer data overview, HTTP status code.
@@ -242,7 +242,7 @@ class IDROverview(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[dict, int]: dict of Customer data overview, HTTP status code.
@@ -309,7 +309,7 @@ class Customersview(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[dict, int]: dict of Customers, HTTP status code.
@@ -373,7 +373,7 @@ class CustomerProfileSearch(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             hux_id (str): ID of the customer.
@@ -451,7 +451,7 @@ class IDRDataFeeds(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[List[dict], int]: list of IDR data feeds object dicts, HTTP status code.
@@ -527,7 +527,7 @@ class IDRDataFeedDetails(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             datafeed_id (int): Data feed ID.
@@ -578,7 +578,7 @@ class CustomerGeoVisualView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[list, int]: list of Customer insights on geo overview, HTTP status code.
@@ -627,7 +627,7 @@ class CustomerDemoVisualView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[dict, int]: dict of Customer insights on demo overview, HTTP status code.
@@ -709,7 +709,7 @@ class IDRMatchingTrends(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[dict, int]: dict of IDR Matching trends YTD, HTTP status code.
@@ -782,7 +782,7 @@ class CustomerEvents(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             hux_id (str): ID of the customer
@@ -833,7 +833,7 @@ class TotalCustomersGraphView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[list, int]: list of total customers & new customers added, HTTP status code.
@@ -900,7 +900,7 @@ class CustomersInsightsCountries(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[list, int]: list of spend and size data by state, HTTP status code.
@@ -951,7 +951,7 @@ class CustomersInsightsStates(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[list, int]: list of spend and size data by state, HTTP status code.
@@ -1022,7 +1022,7 @@ class CustomersInsightsCities(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[list, int]: list of spend and size by city, HTTP status code.

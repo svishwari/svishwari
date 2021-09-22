@@ -80,7 +80,7 @@ class DataSourceSearch(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[list, int]: list of CDP data sources, HTTP status code.
@@ -145,7 +145,7 @@ class IndividualDataSourceSearch(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             data_source_id (str): id of CDP data source.
@@ -226,7 +226,7 @@ class CreateCdpDataSource(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[str, int]: ID of CDP Data source, HTTP status code.
@@ -281,7 +281,7 @@ class DeleteCdpDataSource(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             data_source_id (str): CDP data source id.
@@ -354,7 +354,7 @@ class BatchUpdateDataSources(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[dict, int]: Data source updated, , HTTP status code.
@@ -487,7 +487,7 @@ class GetDataSourceDatafeeds(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             datasource_type (str): Data source type.

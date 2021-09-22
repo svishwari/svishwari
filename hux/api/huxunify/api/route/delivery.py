@@ -121,7 +121,7 @@ class EngagementDeliverDestinationView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (ObjectId): Engagement ID.
@@ -253,7 +253,7 @@ class EngagementDeliverAudienceView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (ObjectId): Engagement ID.
@@ -350,7 +350,7 @@ class EngagementDeliverView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (ObjectId): Engagement ID.
@@ -438,7 +438,7 @@ class AudienceDeliverView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             audience_id (ObjectId): Audience ID.
@@ -541,7 +541,7 @@ class EngagementDeliverHistoryView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (str): Engagement ID.
@@ -683,7 +683,7 @@ class AudienceDeliverHistoryView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             audience_id (str): Audience ID.

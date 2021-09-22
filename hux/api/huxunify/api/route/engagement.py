@@ -107,7 +107,7 @@ class EngagementSearch(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[dict, int]: dict of engagements, HTTP status code.
@@ -161,7 +161,7 @@ class IndividualEngagementSearch(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (str): ID of the engagement.
@@ -257,7 +257,7 @@ class SetEngagement(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             user_name (str): user_name extracted from Okta.
@@ -376,7 +376,7 @@ class UpdateEngagement(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (str): Engagement ID.
@@ -471,7 +471,7 @@ class DeleteEngagement(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (str): Engagement ID.
@@ -574,7 +574,7 @@ class AddAudienceEngagement(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (str): Engagement ID.
@@ -695,7 +695,7 @@ class DeleteAudienceEngagement(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (str): Engagement ID.
@@ -819,7 +819,7 @@ class AddDestinationEngagedAudience(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (str): Engagement ID.
@@ -941,7 +941,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (str): Engagement ID.
@@ -1095,7 +1095,7 @@ class UpdateCampaignsForAudience(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (str): Engagement ID.
@@ -1314,7 +1314,7 @@ class AudienceCampaignsGetView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (str): Engagement ID.
@@ -1475,7 +1475,7 @@ class AudienceCampaignMappingsGetView(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (str): Engagement ID.
@@ -1643,7 +1643,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (str): ID of an engagement.
@@ -1705,7 +1705,7 @@ class EngagementMetricsEmail(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (str): ID of an engagement.
@@ -1762,7 +1762,7 @@ class EngagementPerformanceDownload(SwaggerView):
 
         ---
         security:
-            Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (str): ID of an engagement.
