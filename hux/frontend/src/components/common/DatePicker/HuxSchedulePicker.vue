@@ -133,7 +133,7 @@
       </div>
     </div>
 
-    <div class="black--text text--darken-1 pt-4">
+    <div class="black--text text--darken-1 pt-4 text-caption">
       Delivery takes place
       <span class="black--text text--darken-4">
         [every
