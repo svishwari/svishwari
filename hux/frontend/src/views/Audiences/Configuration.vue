@@ -291,7 +291,7 @@
               width="94"
               height="40"
               @click.native="
-                dontShowModal = true
+                flagForModal = true
                 $router.go(-1)
               "
             >
@@ -434,7 +434,6 @@ export default {
       showConfirmModal: false,
       navigateTo: false,
       flagForModal: false,
-      dontShowModal: false,
     }
   },
 
@@ -474,15 +473,11 @@ export default {
   },
 
   beforeRouteLeave(to, from, next) {
-    if (this.dontShowModal) {
-      next()
+    if (this.flagForModal == false) {
+      this.showConfirmModal = true
+      this.navigateTo = to
     } else {
-      if (this.flagForModal == false) {
-        this.showConfirmModal = true
-        this.navigateTo = to
-      } else {
-        if (this.navigateTo) next()
-      }
+      next()
     }
   },
 
@@ -673,7 +668,7 @@ export default {
           payload: payload,
         })
       }
-      this.dontShowModal = true
+      this.flagForModal = true
       this.$router.push({
         name: "AudienceInsight",
         params: { id: response.id },
