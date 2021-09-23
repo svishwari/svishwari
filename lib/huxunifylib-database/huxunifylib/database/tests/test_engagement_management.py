@@ -87,12 +87,7 @@ class TestEngagementManagement(unittest.TestCase):
         )
 
     def test_set_engagement(self) -> None:
-        """Test set_engagement routine
-
-        Returns:
-            Response: None
-
-        """
+        """Test set_engagement routine"""
 
         engagement_id = em.set_engagement(
             self.database,
@@ -105,12 +100,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIsInstance(engagement_id, ObjectId)
 
     def test_set_engagement_string_audience_id(self) -> None:
-        """Test set_engagement routine with string audience id
-
-        Returns:
-            Response: None
-
-        """
+        """Test set_engagement routine with string audience id"""
 
         # change audience_id to string
         audience = self.audience.copy()
@@ -126,12 +116,7 @@ class TestEngagementManagement(unittest.TestCase):
             )
 
     def test_get_engagements(self) -> None:
-        """Test get_engagements routine
-
-        Returns:
-            Response: None
-
-        """
+        """Test get_engagements routine"""
 
         # test for a list with data.
         engagement_docs = em.get_engagements(database=self.database)
@@ -139,12 +124,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertFalse([e for e in engagement_docs if c.DELETED in e])
 
     def test_get_engagements_with_users(self) -> None:
-        """Test get_engagements with users routine
-
-        Returns:
-            Response: None
-
-        """
+        """Test get_engagements with users routine"""
 
         # test for a list with data.
         engagements = em.get_engagements(self.database)
@@ -152,12 +132,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertEqual(engagements[0][c.CREATED_BY], self.user_name)
 
     def test_get_engagement(self) -> None:
-        """Test get_engagement routine
-
-        Returns:
-            Response: None
-
-        """
+        """Test get_engagement routine"""
 
         # take the first document
         engagement_docs = em.get_engagements(database=self.database)
@@ -173,12 +148,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertFalse(c.DELETED in engagement_doc)
 
     def test_get_engagement_with_user(self) -> None:
-        """Test get_engagement with user routine
-
-        Returns:
-            Response: None
-
-        """
+        """Test get_engagement with user routine"""
 
         # take the first document
         engagement_doc = em.get_engagement(self.database, self.engagement_id)
@@ -186,12 +156,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertEqual(engagement_doc[c.CREATED_BY], self.user_name)
 
     def test_update_engagement(self) -> None:
-        """Test update_engagement routine
-
-        Returns:
-            Response: None
-
-        """
+        """Test update_engagement routine"""
 
         new_name = "Engagement 3"
         new_description = "Engagement 3 description"
@@ -217,12 +182,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertEqual(self.user_name, engagement_doc[c.UPDATED_BY])
 
     def test_update_engagement_status(self) -> None:
-        """Test update_engagement status
-
-        Returns:
-            Response: None
-
-        """
+        """Test update_engagement status"""
 
         engagement_docs = em.get_engagements(database=self.database)
         engagement_id = engagement_docs[0]["_id"]
@@ -237,12 +197,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertEqual(engagement_doc[c.STATUS], "Inactive")
 
     def test_update_engagement_bad_string_id(self) -> None:
-        """Test update_engagement routine with a bad string id
-
-        Returns:
-            Response: None
-
-        """
+        """Test update_engagement routine with a bad string id"""
 
         new_name = "Engagement 3"
         new_description = "Engagement 3 description"
@@ -266,12 +221,7 @@ class TestEngagementManagement(unittest.TestCase):
             )
 
     def test_delete_engagement(self) -> None:
-        """Test delete_engagement routine
-
-        Returns:
-            Response: None
-
-        """
+        """Test delete_engagement routine"""
 
         # create engagement
         engagement_id = em.set_engagement(
@@ -294,12 +244,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIsNone(engagement_doc)
 
     def test_create_and_get_engagement_with_many_audiences(self) -> None:
-        """Test creating an engagement with many audiences
-
-        Returns:
-            Response: None
-
-        """
+        """Test creating an engagement with many audiences"""
 
         # create an engagement that has
         # an audience with three destinations
@@ -350,12 +295,7 @@ class TestEngagementManagement(unittest.TestCase):
         )
 
     def test_set_engagement_remove_audience_after(self) -> None:
-        """Test creating an engagement and remove an audience after
-
-        Returns:
-            Response: None
-
-        """
+        """Test creating an engagement and remove an audience after"""
 
         engagement_id = em.set_engagement(
             self.database,
@@ -393,12 +333,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertFalse(updated[c.AUDIENCES])
 
     def test_set_engagement_remove_audience_str_audience(self) -> None:
-        """Test creating an engagement and remove a string audience id
-
-        Returns:
-            Response: None
-
-        """
+        """Test creating an engagement and remove a string audience id"""
 
         # create audience normally
         engagement_id = em.set_engagement(
@@ -430,12 +365,7 @@ class TestEngagementManagement(unittest.TestCase):
             )
 
     def test_set_engagement_attach_audience_after(self) -> None:
-        """Test creating an engagement and attaching an audience after
-
-        Returns:
-            Response: None
-
-        """
+        """Test creating an engagement and attaching an audience after"""
 
         engagement_id = em.set_engagement(
             self.database,
@@ -477,12 +407,7 @@ class TestEngagementManagement(unittest.TestCase):
 
     def test_set_engagement_attach_audience_str_id(self) -> None:
         """Test creating an engagement and attaching an audience
-            with a str object id
-
-        Returns:
-            Response: None
-
-        """
+        with a str object id"""
 
         engagement_id = em.set_engagement(
             self.database,
@@ -515,12 +440,8 @@ class TestEngagementManagement(unittest.TestCase):
             )
 
     def test_set_engagement_attach_lookalike_audience(self):
-        """Test creating an engagement and attaching a lookalike audience after
-
-        Returns:
-            Response: None
-
-        """
+        """Test creating an engagement and attaching a lookalike
+        audience after"""
         engagement_id = em.set_engagement(
             self.database,
             "Engagement 2",
@@ -595,12 +516,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertTrue(updated[c.AUDIENCES][1][c.LOOKALIKE])
 
     def test_get_engagements_via_audience_id(self) -> None:
-        """Test getting engagements with an audience_id
-
-        Returns:
-            Response: None
-
-        """
+        """Test getting engagements with an audience_id"""
 
         engagements = []
         for item in range(2):
@@ -636,12 +552,7 @@ class TestEngagementManagement(unittest.TestCase):
 
     # pylint: disable=too-many-function-args
     def test_get_engaged_audience_insights(self) -> None:
-        """Test getting engaged audience insights
-
-        Returns:
-            Response: None
-
-        """
+        """Test getting engaged audience insights"""
 
         engagements = []
         for item in range(2):
@@ -709,12 +620,7 @@ class TestEngagementManagement(unittest.TestCase):
                     self.assertEqual(engagement[c.ENGAGEMENT][key], value)
 
     def test_add_delivery_jobs_to_engaged_audience_destination(self) -> None:
-        """Test adding a delivery job to the engaged_audience_destination
-
-        Returns:
-            Response: None
-
-        """
+        """Test adding a delivery job to the engaged_audience_destination"""
 
         # create an engagement
         new_engagement = {
@@ -768,12 +674,7 @@ class TestEngagementManagement(unittest.TestCase):
             )
 
     def test_get_engagements_summary(self) -> None:
-        """Test get_engagements routine
-
-        Returns:
-            Response: None
-
-        """
+        """Test get_engagements routine"""
 
         # create another audience
         audience = om.create_audience(
@@ -860,12 +761,7 @@ class TestEngagementManagement(unittest.TestCase):
                     self.assertIn(c.OBJECT_ID, destination)
 
     def test_get_engagement_summary(self) -> None:
-        """Test get_engagement_summary routine
-
-        Returns:
-            Response: None
-
-        """
+        """Test get_engagement_summary routine"""
 
         # create another audience
         audience = om.create_audience(
@@ -951,12 +847,7 @@ class TestEngagementManagement(unittest.TestCase):
                 self.assertIn(c.OBJECT_ID, destination)
 
     def test_append_destination_to_engagement_audience(self):
-        """
-        Test appending a destination to an engagement audience
-
-        Returns: None
-
-        """
+        """Test appending a destination to an engagement audience"""
 
         destination = dpm.get_delivery_platform_by_type(
             self.database, c.DELIVERY_PLATFORM_FACEBOOK
@@ -1000,12 +891,7 @@ class TestEngagementManagement(unittest.TestCase):
             )
 
     def test_remove_destination_from_engagement_audience(self):
-        """
-        Test removing a destination from an engagement audience
-
-        Returns: None
-
-        """
+        """Test removing a destination from an engagement audience"""
         audience_one = om.create_audience(
             self.database, "Audience1", [], [], self.user_name, 201
         )
@@ -1044,12 +930,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIsNone(updated_engagement)
 
     def test_check_active_engagement_deliveries(self) -> None:
-        """Test check_active_engagement_deliveries routine
-
-        Returns:
-            Response: None
-
-        """
+        """Test check_active_engagement_deliveries routine"""
 
         # an audience with two destinations
         new_engagement = {
@@ -1114,12 +995,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIn(c.DELIVERY_JOB_ID, active_deliveries[0])
 
     def test_check_active_engagement_deliveries_non_delivered(self) -> None:
-        """Test check_active_engagement_deliveries routine with no deliveries
-
-        Returns:
-            Response: None
-
-        """
+        """Test check_active_engagement_deliveries routine with no deliveries"""
 
         # an audience with two destinations
         new_engagement = {
@@ -1156,12 +1032,7 @@ class TestEngagementManagement(unittest.TestCase):
 
     def test_get_all_audience_destinations(self) -> None:
         """Test getting all audiences and their unique assigned
-        destinations across engagements.
-
-        Returns:
-            Response: None
-
-        """
+        destinations across engagements."""
 
         engagements = []
         for item in range(2):
