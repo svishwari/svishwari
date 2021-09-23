@@ -1653,7 +1653,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
 
         Returns:
             Tuple[dict, int]: Response of Display Ads Performance Metrics,
-                HTTP Code.
+                HTTP status code.
         """
 
         # setup the database
@@ -1715,7 +1715,7 @@ class EngagementMetricsEmail(SwaggerView):
 
         Returns:
             Tuple[dict, int]: Response of Email Performance Metrics,
-                HTTP code.
+                HTTP status code.
         """
 
         # setup the database
@@ -1772,7 +1772,7 @@ class EngagementPerformanceDownload(SwaggerView):
 
         Returns:
             Tuple[Response, int]: Response of Performance Metrics
-                HTTP code.
+                HTTP status code.
         """
 
         # setup the database
