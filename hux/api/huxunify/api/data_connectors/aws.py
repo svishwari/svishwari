@@ -225,9 +225,13 @@ def check_aws_events() -> Tuple[bool, str]:
             and the message.
     """
     return check_aws_connection(
-        client_method="create_event_bus",
+        client_method="put_rule",
         client=api_c.AWS_EVENTS_NAME,
-        extra_params={"Name": "unified_health_event"},
+        extra_params={
+            "Name": "unified_health_check",
+            "State": "DISABLED",
+            "ScheduleExpression": "cron(15 0 * * ? *)",
+        },
     )
 
 
