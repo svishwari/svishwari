@@ -372,6 +372,18 @@ def api_error_handler(custom_message: dict = None) -> object:
                     "message": constants.FAILED_DEPENDENCY_ERROR_MESSAGE
                 }, HTTPStatus.FAILED_DEPENDENCY
 
+            except iae.FailedDeliveryPlatformDependencyError as exc:
+                logger.error(
+                    "%s: %s while executing %s in module %s.",
+                    exc.__class__,
+                    exc.args[0] if exc.args else exc.exception_message,
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
+                return {
+                    "message": "Error connecting to Facebook"
+                }, HTTPStatus.FAILED_DEPENDENCY
+
             except iae.FailedDateFilterIssue as exc:
                 return {
                     "message": custom_message

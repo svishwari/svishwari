@@ -815,7 +815,7 @@ class OrchestrationRouteTest(TestCase):
         )
 
         self.assertEqual(
-            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+            HTTPStatus.FAILED_DEPENDENCY, response.status_code
         )
 
     def test_create_lookalike_audience(self):

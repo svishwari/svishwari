@@ -29,6 +29,7 @@ from huxunifylib.database import (
 )
 import huxunifylib.database.constants as db_c
 
+from huxunify.api.exceptions import integration_api_exceptions as iae
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
     AudienceInsightsGetSchema,
