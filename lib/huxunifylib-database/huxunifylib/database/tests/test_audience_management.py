@@ -108,6 +108,12 @@ class TestAudienceManagement(unittest.TestCase):
         self.audience_doc = None
 
     def _setup_ingestion_job(self) -> dict:
+        """Setup ingestion job
+
+        Returns:
+            ingestion_job_doc (dict): Ingestion job document
+
+        """
         data_source_doc = dm.set_data_source(
             self.database, *self.data_source_params
         )
@@ -117,7 +123,13 @@ class TestAudienceManagement(unittest.TestCase):
         return ingestion_job_doc
 
     def _setup_audience(self) -> Union[tuple, dict]:
+        """Setup audience
 
+        Returns:
+            audience_doc (dict): Audience document
+            ingestion_job_doc (dict): Ingestion job document
+
+        """
         ingestion_job_doc = self._setup_ingestion_job()
         ingestion_job_id = ingestion_job_doc[c.ID]
 

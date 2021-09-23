@@ -65,8 +65,12 @@ class TestAudienceManagement(unittest.TestCase):
         self.destination_ids = ["destination_id1", "destination_id2"]
         self.audience_doc = None
 
-    def _setup_audience(self) -> dict:
+    def _setup_audience(self) -> list:
+        """Setup audience
 
+        Returns:
+            (list): List of all audiences
+        """
         am.create_audience(
             self.database,
             "Audience1",
