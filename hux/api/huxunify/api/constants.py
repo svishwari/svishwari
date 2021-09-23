@@ -34,7 +34,6 @@ AUDIENCE_ROUTER_JOB_QUEUE_CONST = "AUDIENCE-ROUTER-JOB-QUEUE"
 CDPR_EVENT_CONST = "CDPR-EVENT"
 FLDR_EVENT_CONST = "FLDR-EVENT"
 
-
 # general defines
 ID = "id"
 NAME = "name"
@@ -218,11 +217,8 @@ AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
 AWS_SSM_NAME = "ssm"
 AWS_EVENTS_NAME = "events"
 AWS_BATCH_NAME = "batch"
-AWS_HEALTH_TESTS = {
-    AWS_SSM_NAME: ["get_parameter", {"Name": "unifieddb_host_alias"}],
-    AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
-}
-S3 = "s3"
+AWS_S3_NAME = "s3"
+
 AWS_BUCKET = "Bucket"
 AWS_KEY = "Key"
 AWS_TARGET_ID = "Id"
@@ -510,6 +506,10 @@ BSON_INVALID_ID = (
     lambda invalid_id: f"'{invalid_id}' is not a valid ObjectId, it must be a "
     f"12-byte input or a 24-character hex string"
 )
+MESSAGE = "message"
+START_DATE_GREATER_THAN_END_DATE = (
+    "Start date cannot be greater than end date."
+)
 FAILED_DEPENDENCY_ERROR_MESSAGE = (
     "Failed to obtain data from dependent API endpoint."
 )
@@ -689,6 +689,7 @@ USER_NAME = "user_name"
 USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
+PROFILE = "profile"
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
 MODELS_TAG = "model"
@@ -738,17 +739,19 @@ PRECISION = "precision"
 PERFORMANCE_METRIC = "performance_metric"
 FEATURE_IMPORTANCE = "feature_importance"
 SCORE = "score"
-FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service_v2"
+FEATURE_MODEL_HISTORY = "ui_metadata_model_history_service_mock"
+FEATURE_TOP_SERVICE = "ui_metadata_model_top_features_service_mock"
+FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service_mock"
 FEATURE_DRIFT_REGRESSION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_regression_service_v2"
+    "ui_metadata_model_metrics_regression_service_mock"
 )
 FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_classification_service_v2"
+    "ui_metadata_model_metrics_classification_service_mock"
 )
 
 MODEL_LIST_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_models_service_v2",
+        "feature_service_name": "ui_metadata_models_service_mock",
         "join_key_map": {"model_metadata_client": "HUS"},
     }
 }
@@ -983,7 +986,6 @@ DEFAULT_ALERT_SORT_ORDER = "descending"
 DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
-
 
 # health check prometheus metric constants
 MONGO_CONNECTION_HEALTH = "mongo_connection_health"

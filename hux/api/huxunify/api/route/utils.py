@@ -27,6 +27,8 @@ from huxunify.api.data_connectors.tecton import check_tecton_connection
 from huxunify.api.data_connectors.aws import (
     check_aws_ssm,
     check_aws_batch,
+    check_aws_s3,
+    check_aws_events,
 )
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
@@ -35,6 +37,7 @@ from huxunify.api.data_connectors.cdp import check_cdm_api_connection
 from huxunify.api.data_connectors.cdp_connection import (
     check_cdp_connections_api_connection,
 )
+from huxunify.api.exceptions import integration_api_exceptions as iae
 from huxunify.api.prometheus import record_health_status_metric
 
 
@@ -109,6 +112,8 @@ def get_health_check() -> HealthCheck:
     health.add_check(check_okta_connection)
     health.add_check(check_aws_ssm)
     health.add_check(check_aws_batch)
+    health.add_check(check_aws_s3)
+    health.add_check(check_aws_events)
     health.add_check(check_cdm_api_connection)
     health.add_check(check_cdp_connections_api_connection)
     return health
@@ -302,3 +307,37 @@ def transform_fields_generic_file(
     """
 
     return dataframe
+
+
+def check_end_date_greater_than_start_date(
+    start_date: str,
+    end_date: str,
+) -> bool:
+    """Raises error if start date is greater than end date.
+
+    Args:
+        start_date (str): start date.
+        end_date (str): end date.
+
+    Returns:
+    """
+
+    start_date_format = ""
+    end_date_format = ""
+
+    if start_date:
+        start_date_format = datetime.strptime(
+            start_date, constants.DEFAULT_DATE_FORMAT
+        )
+
+    if end_date:
+        end_date_format = datetime.strptime(
+            end_date, constants.DEFAULT_DATE_FORMAT
+        )
+
+    if (
+        start_date_format
+        and end_date_format
+        and start_date_format > end_date_format
+    ):
+        raise iae.FailedDateFilterIssue()

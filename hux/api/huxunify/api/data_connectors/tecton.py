@@ -223,7 +223,7 @@ def get_model_version_history(model_id: str) -> List[ModelVersionSchema]:
     # payload
     payload = {
         "params": {
-            "feature_service_name": "ui_metadata_model_history_service_v2",
+            "feature_service_name": constants.FEATURE_MODEL_HISTORY,
             "join_key_map": {"model_id": f"{model_id}"},
         }
     }
@@ -454,7 +454,7 @@ def get_model_features(
     for i in range(200):
         payload = {
             "params": {
-                "feature_service_name": "ui_metadata_model_top_features_service_v2",
+                "feature_service_name": constants.FEATURE_TOP_SERVICE,
                 "join_key_map": {"model_id": f"{model_id}", "rank": str(i)},
             }
         }

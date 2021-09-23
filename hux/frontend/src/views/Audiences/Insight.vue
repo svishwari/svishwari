@@ -881,6 +881,8 @@ export default {
      * This computed property is converting the audience filters conditions
      * into groups of fiters and having custom keys which are needed
      * on the UI transformation.
+     *
+     * @returns {Array} filters
      */
     appliedFilters() {
       try {
@@ -1007,7 +1009,11 @@ export default {
     },
 
     /**
-     * Formatting the values to the desired format using predebfined application filters.
+     * Formatting the values to the desired format using predefined application filters.
+     *
+     * @param {object} item item
+     * @param {string} item.title item's title
+     * @returns {string} formatted value
      */
     getFormattedValue(item) {
       switch (item.title) {
