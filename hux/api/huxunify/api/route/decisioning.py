@@ -1,6 +1,4 @@
-"""
-purpose of this script is for housing the decision routes for the API.
-"""
+"""Purpose of this script is for housing the decision routes for the API"""
 from random import uniform, randint
 from datetime import datetime, timedelta
 from http import HTTPStatus
@@ -49,9 +47,7 @@ def before_request():
 
 @add_view_to_blueprint(model_bp, api_c.MODELS_ENDPOINT, "ModelsView")
 class ModelsView(SwaggerView):
-    """
-    Models Class
-    """
+    """Models Class."""
 
     responses = {
         HTTPStatus.OK.value: {
@@ -73,8 +69,8 @@ class ModelsView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[List[dict], int] dict of models and http code
-
+            Tuple[List[dict], int]: list containing dict of models,
+                HTTP status code.
         """
 
         purchase_model = {
@@ -107,9 +103,7 @@ class ModelsView(SwaggerView):
     "ModelVersionView",
 )
 class ModelVersionView(SwaggerView):
-    """
-    Model Version Class
-    """
+    """Model Version Class."""
 
     parameters = api_c.MODEL_ID_PARAMS
     responses = {
@@ -129,14 +123,14 @@ class ModelVersionView(SwaggerView):
 
         ---
         security:
-            - Bearer: [Authorization]
+            - Bearer: ["Authorization"]
 
         Args:
-            model_id (str): model id
+            model_id (str): Model ID.
 
         Returns:
-            Tuple[List[dict], int]: dict of model versions and http code
-
+            Tuple[List[dict], int]: List containing dict of model versions,
+                HTTP status code.
         """
 
         # TODO Remove once Propensity to Purchase info can be retrieved from tecton
@@ -182,9 +176,7 @@ class ModelVersionView(SwaggerView):
     model_bp, f"{api_c.MODELS_ENDPOINT}/<model_id>/overview", "ModelOverview"
 )
 class ModelOverview(SwaggerView):
-    """
-    Model Overview Class
-    """
+    """Model Overview Class."""
 
     parameters = api_c.MODEL_ID_PARAMS
     responses = {
@@ -207,14 +199,13 @@ class ModelOverview(SwaggerView):
 
         ---
         security:
-            - Bearer: [Authorization]
+            - Bearer: ["Authorization"]
 
         Args:
-            model_id (str): model id
+            model_id (str): Model ID.
 
         Returns:
-            Tuple[dict, int]: dict of model features and http code
-
+            Tuple[dict, int]: dict of model features, HTTP status code.
         """
 
         # TODO Remove once Propensity to Purchase model data is being served
@@ -259,9 +250,7 @@ class ModelOverview(SwaggerView):
     "ModelDriftView",
 )
 class ModelDriftView(SwaggerView):
-    """
-    Model Drift Class
-    """
+    """Model Drift Class"""
 
     parameters = api_c.MODEL_ID_PARAMS
     responses = {
@@ -284,17 +273,18 @@ class ModelDriftView(SwaggerView):
 
         ---
         security:
-            - Bearer: [Authorization]
+            - Bearer: ["Authorization"]
 
         Args:
-            model_id (str): model id.
+            model_id (str): Model ID.
 
         Returns:
-            Tuple[List[dict], int]: dict of model drift and http code
-
+            Tuple[List[dict], int]: List containing dict of model drift,
+                HTTP status code.
         """
+
         # TODO Remove once Propensity to Purchase data is being served
-        #  from tecton
+        # from tecton
         if model_id == "3":
             drift_data = [
                 {
@@ -330,9 +320,7 @@ class ModelDriftView(SwaggerView):
     "ModelFeaturesView",
 )
 class ModelFeaturesView(SwaggerView):
-    """
-    Model Features Class
-    """
+    """Model Features Class."""
 
     parameters = [
         api_c.MODEL_ID_PARAMS[0],
@@ -366,15 +354,15 @@ class ModelFeaturesView(SwaggerView):
 
         ---
         security:
-            - Bearer: [Authorization]
+            - Bearer: ["Authorization"]
 
         Args:
-            model_id (str): model id
-            model_version (str): model version.
+            model_id (str): Model ID.
+            model_version (str): Model Version.
 
         Returns:
-            Tuple[List[dict], int]: dict of model features and http code
-
+            Tuple[List[dict], int]: List containing dict of model features,
+                HTTP status code.
         """
 
         # TODO: Remove once this model data becomes available and can be fetched from Tecton
@@ -424,9 +412,7 @@ class ModelFeaturesView(SwaggerView):
     "ModelImportanceFeaturesView",
 )
 class ModelImportanceFeaturesView(SwaggerView):
-    """
-    Model Feature Importance Class
-    """
+    """Model Feature Importance Class."""
 
     parameters = [
         api_c.MODEL_ID_PARAMS[0],
@@ -469,16 +455,16 @@ class ModelImportanceFeaturesView(SwaggerView):
 
         ---
         security:
-            - Bearer: [Authorization]
+            - Bearer: ["Authorization"]
 
         Args:
-            model_id (str): model id
-            model_version (str): model version.
+            model_id (str): Model ID.
+            model_version (str): Model Version.
             limit (int): Limit of features to return, default is 20.
 
         Returns:
-            Tuple[List[dict], int]: dict of model features and http code
-
+            Tuple[List[dict], int]: List containing dict of model features,
+                HTTP status code.
         """
 
         # only use the latest version if model version is None.
@@ -521,9 +507,7 @@ class ModelImportanceFeaturesView(SwaggerView):
     "ModelLiftView",
 )
 class ModelLiftView(SwaggerView):
-    """
-    Model Lift Class
-    """
+    """Model Lift Class."""
 
     parameters = api_c.MODEL_ID_PARAMS
     responses = {
@@ -548,14 +532,14 @@ class ModelLiftView(SwaggerView):
 
         ---
         security:
-            - Bearer: [Authorization]
+            - Bearer: ["Authorization"]
 
         Args:
-            model_id (str): model id
+            model_id (str): Model ID
 
         Returns:
-            Tuple[List[dict], int]: dict of model lift data
-
+            Tuple[List[dict], int]: List containing a dict of model lift data,
+                HTTP status code.
         """
 
         # retrieves lift data
