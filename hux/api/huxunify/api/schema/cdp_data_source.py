@@ -1,6 +1,4 @@
-"""
-Schemas for cdp data sources API
-"""
+"""Schemas for cdp data sources API"""
 
 from flask_marshmallow import Schema
 from marshmallow import post_dump, fields
@@ -13,18 +11,14 @@ from huxunify.api import constants as api_c
 
 
 class CdpDataSourcePostSchema(Schema):
-    """
-    CdpDataSourcePostSchema.
-    """
+    """CdpDataSourcePostSchema."""
 
     name = fields.Str(required=True, validate=must_not_be_blank)
     category = fields.Str(required=True, validate=must_not_be_blank)
 
 
 class CdpDataSourceSchema(Schema):
-    """
-    CdpDataSourceSchema
-    """
+    """CdpDataSourceSchema"""
 
     _id = fields.Str(
         data_key=api_c.ID,
@@ -72,9 +66,7 @@ class CdpDataSourceSchema(Schema):
 
 
 class CdpDataSourceDataFeedSchema(Schema):
-    """
-    Data source data feed schema
-    """
+    """Data source data feed schema"""
 
     name = fields.Str()
     datasource_type = fields.Str(example=db_c.CDP_DATA_SOURCE_BLUECORE)
@@ -100,9 +92,7 @@ class CdpDataSourceDataFeedSchema(Schema):
 
 
 class DataSourceDataFeedsGetSchema(Schema):
-    """
-    Data source data feeds get schema
-    """
+    """Data source data feeds get schema"""
 
     name = fields.Str()
     type = fields.Str()

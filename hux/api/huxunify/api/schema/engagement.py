@@ -1,7 +1,5 @@
 # pylint: disable=no-self-use
-"""
-Schemas for the Engagements API
-"""
+"""Schemas for the Engagements API"""
 import logging
 from datetime import datetime
 from bson import ObjectId
@@ -15,9 +13,7 @@ from huxunify.api.schema.destinations import DeliveryScheduleSchema
 
 
 class DeliverySchedule(Schema):
-    """
-    Delivery Schedule schema
-    """
+    """Delivery Schedule schema"""
 
     start_date = DateTimeWithZ(allow_none=True)
     end_date = DateTimeWithZ(allow_none=True)
@@ -26,9 +22,7 @@ class DeliverySchedule(Schema):
 
 
 class EngagementPostSchema(Schema):
-    """
-    Engagement post schema class
-    """
+    """Engagement post schema class"""
 
     name = fields.String(required=True, validate=must_not_be_blank)
     description = fields.String()
@@ -77,9 +71,7 @@ class EngagementPostSchema(Schema):
 
 
 class EngagementPutSchema(Schema):
-    """
-    Engagement put schema class
-    """
+    """Engagement put schema class"""
 
     name = fields.String(required=False)
     description = fields.String(required=False)
@@ -142,9 +134,7 @@ class EngagementPutSchema(Schema):
 
 
 class AudienceEngagementSchema(Schema):
-    """
-    Schema for adding/deleting audience to engagement
-    """
+    """Schema for adding/deleting audience to engagement"""
 
     audiences = fields.List(
         fields.Dict(),
@@ -183,9 +173,7 @@ class AudienceEngagementSchema(Schema):
 
 
 class AudienceEngagementDeleteSchema(Schema):
-    """
-    Schema for adding/deleting audience to engagement
-    """
+    """Schema for adding/deleting audience to engagement"""
 
     audience_ids = fields.List(
         fields.String,
@@ -197,9 +185,7 @@ class AudienceEngagementDeleteSchema(Schema):
 
 
 class DestinationEngagedAudienceSchema(Schema):
-    """
-    Schema for adding destination to engagement audience
-    """
+    """Schema for adding destination to engagement audience"""
 
     id = fields.String(
         example="60ae035b6c5bf45da27f17e5",
@@ -213,9 +199,7 @@ class DestinationEngagedAudienceSchema(Schema):
 
 
 class DisplayAdsSummary(Schema):
-    """
-    Schema for Display Ads Summary
-    """
+    """Schema for Display Ads Summary"""
 
     class Meta:
         """Set Order for the Audience Response"""
@@ -236,9 +220,7 @@ class DisplayAdsSummary(Schema):
 
 
 class DispAdIndividualCampaignSummary(DisplayAdsSummary):
-    """
-    Schema for Individual Campaign Summary
-    """
+    """Schema for Individual Campaign Summary"""
 
     class Meta:
         """Set Order for the Audience Response"""
@@ -251,9 +233,7 @@ class DispAdIndividualCampaignSummary(DisplayAdsSummary):
 
 
 class DispAdIndividualDestinationSummary(DisplayAdsSummary):
-    """
-    Schema for Individual Campaign Summary
-    """
+    """Schema for Individual Campaign Summary"""
 
     class Meta:
         """Set Order for the Audience Response"""
@@ -268,9 +248,7 @@ class DispAdIndividualDestinationSummary(DisplayAdsSummary):
 
 
 class DispAdIndividualAudienceSummary(DisplayAdsSummary):
-    """
-    Schema for Individual Audience Summary
-    """
+    """Schema for Individual Audience Summary"""
 
     class Meta:
         """Set Order for the Audience Response"""
@@ -285,9 +263,7 @@ class DispAdIndividualAudienceSummary(DisplayAdsSummary):
 
 
 class AudiencePerformanceDisplayAdsSchema(Schema):
-    """
-    Schema for Performance Metrics of Display Ads
-    """
+    """Schema for Performance Metrics of Display Ads"""
 
     class Meta:
         """Set Order for the Audience Response"""
@@ -301,9 +277,7 @@ class AudiencePerformanceDisplayAdsSchema(Schema):
 
 
 class EmailSummary(Schema):
-    """
-    Schema for Summary Performance Metrics of Email
-    """
+    """Schema for Summary Performance Metrics of Email"""
 
     class Meta:
         """Set Order for the Audience Response"""
@@ -327,9 +301,7 @@ class EmailSummary(Schema):
 
 
 class EmailIndividualDestinationSummary(EmailSummary):
-    """
-    Schema for Individual Campaign Summary of Email
-    """
+    """Schema for Individual Campaign Summary of Email"""
 
     class Meta:
         """Set Order for the Audience Response"""
@@ -343,9 +315,7 @@ class EmailIndividualDestinationSummary(EmailSummary):
 
 
 class EmailIndividualAudienceSummary(EmailSummary):
-    """
-    Schema for Individual Audience Summary of Email
-    """
+    """Schema for Individual Audience Summary of Email"""
 
     class Meta:
         """Set Order for the Audience Response"""
@@ -360,9 +330,7 @@ class EmailIndividualAudienceSummary(EmailSummary):
 
 
 class AudiencePerformanceEmailSchema(Schema):
-    """
-    Schema for Performance Metrics of Email
-    """
+    """Schema for Performance Metrics of Email"""
 
     class Meta:
         """Set Order for the Audience Response"""
@@ -376,9 +344,7 @@ class AudiencePerformanceEmailSchema(Schema):
 
 
 class FacebookCampaignSchema(Schema):
-    """
-    Schema for Campaigns
-    """
+    """Schema for Campaigns"""
 
     class Meta:
         """Set Order for the Campaign Response"""
@@ -398,9 +364,7 @@ class FacebookCampaignSchema(Schema):
 
 
 class CampaignSchema(Schema):
-    """
-    Schema for Campaigns
-    """
+    """Schema for Campaigns"""
 
     class Meta:
         """Set Order for the Campaign Response"""
@@ -422,9 +386,7 @@ class CampaignSchema(Schema):
 
 
 class CampaignPutSchema(Schema):
-    """
-    Schema for Campaigns PUT.
-    """
+    """Schema for Campaigns PUT."""
 
     class Meta:
         """Set Order for the Campaigns Response"""
@@ -446,9 +408,7 @@ class CampaignPutSchema(Schema):
 
 
 class DeliveryJobSchema(Schema):
-    """
-    Schema for Campaigns
-    """
+    """Schema for Campaigns"""
 
     class Meta:
         """Set Order for the Campaign Response"""
@@ -464,9 +424,7 @@ class DeliveryJobSchema(Schema):
 
 
 class CampaignMappingSchema(Schema):
-    """
-    Schema for Campaigns
-    """
+    """Schema for Campaigns"""
 
     class Meta:
         """Set Order for the Campaign Response"""
@@ -478,17 +436,13 @@ class CampaignMappingSchema(Schema):
 
 
 class EngagementDataExtensionSchema(Schema):
-    """
-    Engagement Audience Destination Data Extension Schema
-    """
+    """Engagement Audience Destination Data Extension Schema"""
 
     data_extension_name = fields.String()
 
 
 class LatestDeliverySchema(Schema):
-    """
-    Engagement Audience Destination Delivery Schema
-    """
+    """Engagement Audience Destination Delivery Schema"""
 
     id = fields.String()
     status = fields.String()
@@ -498,9 +452,7 @@ class LatestDeliverySchema(Schema):
 
 
 class EngagementAudienceDestinationSchema(Schema):
-    """
-    Engagement Audience Destination Schema
-    """
+    """Engagement Audience Destination Schema"""
 
     name = fields.String()
     id = fields.String()
@@ -511,9 +463,7 @@ class EngagementAudienceDestinationSchema(Schema):
 
 
 class EngagementAudienceSchema(Schema):
-    """
-    Engagement Audience Schema
-    """
+    """Engagement Audience Schema"""
 
     name = fields.String()
     id = fields.String()
@@ -530,9 +480,7 @@ class EngagementAudienceSchema(Schema):
 
 
 class EngagementGetSchema(Schema):
-    """
-    Engagement get schema class
-    """
+    """Engagement get schema class"""
 
     _id = fields.String(
         data_key=api_c.ID,

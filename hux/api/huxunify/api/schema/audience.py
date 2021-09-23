@@ -1,6 +1,4 @@
-"""
-Purpose of this file is to house the audience schema
-"""
+"""Purpose of this file is to house the audience schema"""
 
 from flask_marshmallow import Schema
 from marshmallow.fields import Str, Integer
@@ -11,9 +9,7 @@ import huxunify.api.constants as api_c
 
 
 class AudienceSchema(Schema):
-    """
-    audience schema class, return the serialized messages back
-    """
+    """audience schema class, return the serialized messages back"""
 
     class Meta:
         """expose the fields for serialization"""
@@ -39,9 +35,7 @@ audiences_schema = AudienceSchema(many=True)
 
 
 class AudienceDeliverySchema(Schema):
-    """
-    audience schema class, return the serialized messages back
-    """
+    """audience schema class, return the serialized messages back"""
 
     class Meta:
         """expose the fields for serialization"""
@@ -87,9 +81,7 @@ audience_delivery_schemas = AudienceDeliverySchema(many=True)
 
 
 class AudienceInsightsSchema(Schema):
-    """
-    Decision schema class, return the serialized messages back
-    """
+    """Decision schema class, return the serialized messages back"""
 
     # define parameters
     insights = List(
@@ -154,9 +146,7 @@ audience_insights_schema = AudienceInsightsSchema()
 
 
 class AudienceDeliveryInsightsSchema(Schema):
-    """
-    audience schema class, return the serialized messages back
-    """
+    """audience schema class, return the serialized messages back"""
 
     class Meta:
         """expose the fields for serialization"""

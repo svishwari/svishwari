@@ -1,7 +1,5 @@
 # pylint: disable=no-self-use
-"""
-Schemas for the Destinations API
-"""
+"""Schemas for the Destinations API"""
 
 from flask_marshmallow import Schema
 from marshmallow import fields, pre_load, ValidationError
@@ -16,17 +14,13 @@ from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
 class DataExtensionSchema(Schema):
-    """
-    Engagement Audience Destination Data Extension Schema
-    """
+    """Engagement Audience Destination Data Extension Schema"""
 
     data_extension_name = fields.String()
 
 
 class DeliveryScheduleDailySchema(Schema):
-    """
-    Delivery Schedule Daily schema class
-    """
+    """Delivery Schedule Daily schema class"""
 
     periodicity = fields.String(
         default=api_c.DAILY, validate=Equal(api_c.DAILY)
@@ -41,9 +35,7 @@ class DeliveryScheduleDailySchema(Schema):
 
 
 class DeliveryScheduleWeeklySchema(DeliveryScheduleDailySchema):
-    """
-    Delivery Schedule Weekly schema class
-    """
+    """Delivery Schedule Weekly schema class"""
 
     periodicity = fields.String(
         default=api_c.WEEKLY, validate=Equal(api_c.WEEKLY)
@@ -58,9 +50,7 @@ class DeliveryScheduleWeeklySchema(DeliveryScheduleDailySchema):
 
 
 class DeliveryScheduleMonthlySchema(DeliveryScheduleDailySchema):
-    """
-    Delivery Schedule Monthly schema class
-    """
+    """Delivery Schedule Monthly schema class"""
 
     periodicity = fields.String(
         default=api_c.MONTHLY, validate=Equal(api_c.MONTHLY)
@@ -81,9 +71,7 @@ class DeliveryScheduleMonthlySchema(DeliveryScheduleDailySchema):
 
 
 class DeliveryScheduleSchema(Schema):
-    """
-    Generalized Delivery Schedule Schema
-    """
+    """Generalized Delivery Schedule Schema"""
 
     periodicity = fields.String(example=api_c.DAILY, required=True)
     every = fields.Int(example=2)
@@ -141,9 +129,7 @@ class DeliveryScheduleSchema(Schema):
 
 
 class DestinationGetSchema(Schema):
-    """
-    Destinations schema class
-    """
+    """Destinations schema class"""
 
     _id = fields.String(
         data_key=api_c.ID,
@@ -196,9 +182,7 @@ class DestinationGetSchema(Schema):
 
 
 class DestinationPutSchema(Schema):
-    """
-    Destination put schema class
-    """
+    """Destination put schema class"""
 
     authentication_details = fields.Field()
     perf_data_extension = fields.Dict(
@@ -213,23 +197,17 @@ class DestinationPutSchema(Schema):
 
 
 class DestinationValidationSchema(Schema):
-    """
-    Destination put schema class
-    """
+    """Destination put schema class"""
 
     authentication_details = fields.Field()
     type = fields.String()
 
 
 class FacebookAuthConstants(Schema):
-    """
-    Facebook Auth constants schema class
-    """
+    """Facebook Auth constants schema class"""
 
     class Meta:
-        """
-        set the ordering of facebook auth constants
-        """
+        """set the ordering of facebook auth constants"""
 
         ordered = True
 
@@ -276,9 +254,7 @@ class FacebookAuthConstants(Schema):
 
 
 class FacebookAuthCredsSchema(Schema):
-    """
-    Facebook Auth Credentials schema class
-    """
+    """Facebook Auth Credentials schema class"""
 
     facebook_ad_account_id = fields.String(
         required=True,
@@ -299,14 +275,10 @@ class FacebookAuthCredsSchema(Schema):
 
 
 class SFMCAuthConstants(Schema):
-    """
-    SFMC Auth constants schema class
-    """
+    """SFMC Auth constants schema class"""
 
     class Meta:
-        """
-        set the ordering of sfmc auth constants
-        """
+        """set the ordering of sfmc auth constants"""
 
         ordered = True
 
@@ -373,9 +345,7 @@ class SFMCAuthConstants(Schema):
 
 
 class SFMCAuthCredsSchema(Schema):
-    """
-    SFMC Auth Credentials schema class
-    """
+    """SFMC Auth Credentials schema class"""
 
     sfmc_account_id = fields.String(
         required=True,
@@ -404,9 +374,7 @@ class SFMCAuthCredsSchema(Schema):
 
 
 class SendgridAuthCredsSchema(Schema):
-    """
-    Sendgrid Auth Credentials schema class
-    """
+    """Sendgrid Auth Credentials schema class"""
 
     sendgrid_auth_token = fields.String(
         required=True,
@@ -421,9 +389,7 @@ class SendgridAuthConstants(Schema):
     """
 
     class Meta:
-        """
-        set the ordering of sendgrid auth constants
-        """
+        """set the ordering of sendgrid auth constants"""
 
         ordered = True
 
@@ -440,9 +406,7 @@ class SendgridAuthConstants(Schema):
 
 
 class GoogleAdsAuthCredsSchema(Schema):
-    """
-    Google Ads Auth Credentials schema class
-    """
+    """Google Ads Auth Credentials schema class"""
 
     google_developer_token = fields.String(
         required=True,
@@ -472,9 +436,7 @@ class GoogleAdsAuthCredsSchema(Schema):
 
 
 class GoogleAdsAuthConstants(Schema):
-    """
-    Google Ads Auth constants schema class
-    """
+    """Google Ads Auth constants schema class"""
 
     class Meta:
         """
@@ -536,9 +498,7 @@ class GoogleAdsAuthConstants(Schema):
 
 
 class QualtricsAuthCredsSchema(Schema):
-    """
-    Qualtrics Auth Credentials schema class
-    """
+    """Qualtrics Auth Credentials schema class"""
 
     qualtrics_api_token = fields.String(
         required=True,
@@ -563,14 +523,10 @@ class QualtricsAuthCredsSchema(Schema):
 
 
 class QualtricsAuthConstants(Schema):
-    """
-    Qualtrics Auth constants schema class
-    """
+    """Qualtrics Auth constants schema class"""
 
     class Meta:
-        """
-        set the ordering of qualtrics auth constants
-        """
+        """set the ordering of qualtrics auth constants"""
 
         ordered = True
 
@@ -620,14 +576,10 @@ class QualtricsAuthConstants(Schema):
 
 
 class DestinationConstantsSchema(Schema):
-    """
-    Destination constants schema class
-    """
+    """Destination constants schema class"""
 
     class Meta:
-        """
-        set the ordering of destination constants
-        """
+        """set the ordering of destination constants"""
 
         ordered = True
 
@@ -639,18 +591,14 @@ class DestinationConstantsSchema(Schema):
 
 
 class DestinationDataExtPostSchema(Schema):
-    """
-    Destination data extension post schema class
-    """
+    """Destination data extension post schema class"""
 
     data_extension = fields.String()
     type = fields.String()
 
 
 class DestinationDataExtGetSchema(Schema):
-    """
-    Destination data extension get schema class
-    """
+    """Destination data extension get schema class"""
 
     name = fields.String(attribute="Name", example="data_extension_name")
     data_extension_id = fields.String(
