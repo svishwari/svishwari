@@ -1091,8 +1091,7 @@ class SetLookalikeAudience(SwaggerView):
         if not destination_connector.check_connection():
             logger.error("Facebook authentication failed.")
             raise iae.FailedDeliveryPlatformDependencyError(
-                destination[api_c.NAME],
-                HTTPStatus.FAILED_DEPENDENCY
+                destination[api_c.NAME], HTTPStatus.FAILED_DEPENDENCY
             )
 
         most_recent_job = destination_management.get_all_delivery_jobs(
