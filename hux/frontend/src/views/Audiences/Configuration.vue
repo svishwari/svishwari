@@ -290,7 +290,10 @@
               is-tile
               width="94"
               height="40"
-              @click.native="$router.go(-1)"
+              @click.native="
+                dontShowModal = true
+                $router.go(-1)
+              "
             >
               <span class="primary--text">Cancel</span>
             </huxButton>
@@ -431,6 +434,7 @@ export default {
       showConfirmModal: false,
       navigateTo: false,
       flagForModal: false,
+      dontShowModal: false,
     }
   },
 
@@ -470,11 +474,15 @@ export default {
   },
 
   beforeRouteLeave(to, from, next) {
-    if (this.flagForModal == false) {
-      this.showConfirmModal = true
-      this.navigateTo = to
+    if (this.dontShowModal) {
+      next()
     } else {
-      if (this.navigateTo) next()
+      if (this.flagForModal == false) {
+        this.showConfirmModal = true
+        this.navigateTo = to
+      } else {
+        if (this.navigateTo) next()
+      }
     }
   },
 
@@ -665,6 +673,7 @@ export default {
           payload: payload,
         })
       }
+      this.dontShowModal = true
       this.$router.push({
         name: "AudienceInsight",
         params: { id: response.id },

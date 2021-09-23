@@ -75,11 +75,15 @@ export default {
   },
 
   beforeRouteLeave(to, from, next) {
-    if (this.flagForModal == false) {
-      this.showConfirmModal = true
-      this.navigateTo = to
+    if (this.$refs.editEngagement.dontShowModal) {
+      next()
     } else {
-      if (this.navigateTo) next()
+      if (this.flagForModal == false) {
+        this.showConfirmModal = true
+        this.navigateTo = to
+      } else {
+        if (this.navigateTo) next()
+      }
     }
   },
 
