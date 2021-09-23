@@ -715,13 +715,15 @@ export default {
       await this.getAllEngagements()
       this.loading = false
     },
-    getOverallDestinations(destinations) {
+    getOverallDestinations(engagementDestinations) {
+      let destinations = [...engagementDestinations]
       if (destinations.length > 3) {
         return destinations.slice(0, 3)
       }
       return destinations
     },
-    getExtraDestinations(destinations) {
+    getExtraDestinations(engagementDestinations) {
+      let destinations = [...engagementDestinations]
       if (destinations.length > 3) {
         return destinations.slice(3)
       }
