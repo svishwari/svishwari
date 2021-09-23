@@ -20,7 +20,7 @@
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div v-if="!loading">
       <div class="customer-slide-group px-15 mt-6 mb-6 row-margin">
-        <v-slide-group class="" show-arrows>
+        <v-slide-group ref="wrapper" show-arrows>
           <v-slide-item v-for="(item, index) in primaryItems" :key="index">
             <metric-card
               :key="item.title"
@@ -462,7 +462,7 @@ export default {
           href: this.$route.path,
         },
       ],
-      loading: false,
+      loading: true,
       updatedTime: [],
       genderChartDimensions: {
         width: 269,
