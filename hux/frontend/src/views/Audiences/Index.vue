@@ -402,7 +402,8 @@ export default {
 
       return actionItems
     },
-    getOverallDestinations(destinations) {
+    getOverallDestinations(audienceDestinations) {
+      let destinations = [...audienceDestinations]
       if (destinations.length > 3) {
         return destinations
           .slice(0, 3)
@@ -410,7 +411,8 @@ export default {
       }
       return destinations.sort((a, b) => a.name.localeCompare(b.name))
     },
-    getExtraDestinations(destinations) {
+    getExtraDestinations(audienceDestinations) {
+      let destinations = [...audienceDestinations]
       if (destinations.length > 3) {
         return destinations
           .slice(3)

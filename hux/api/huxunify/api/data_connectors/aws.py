@@ -147,10 +147,14 @@ def get_aws_client(
     )
 
 
-def check_aws_connection(client="s3") -> Tuple[bool, str]:
+def check_aws_connection(
+    client_method: str, extra_params: dict, client: str = "s3"
+) -> Tuple[bool, str]:
     """Validate an AWS connection.
 
     Args:
+        client_method (str): Method name for the client
+        extra_params (dict): Extra params required for aws connection
         client (str): name of the boto3 client to use.
     Returns:
         tuple[bool, str]: Returns if the AWS connection is valid,
@@ -159,8 +163,7 @@ def check_aws_connection(client="s3") -> Tuple[bool, str]:
 
     try:
         # lookup the health test to run from api constants
-        health_test = api_c.AWS_HEALTH_TESTS[client]
-        getattr(get_aws_client(client), health_test[0])(**health_test[1])
+        getattr(get_aws_client(client), client_method)(**extra_params)
         record_health_status_metric(api_c.AWS_SSM_CONNECTION_HEALTH, True)
         record_health_status_metric(api_c.AWS_BATCH_CONNECTION_HEALTH, True)
         return True, f"{client} available."
@@ -178,7 +181,11 @@ def check_aws_ssm() -> Tuple[bool, str]:
         tuple[bool, str]: Returns if the AWS connection is valid,
             and the message.
     """
-    return check_aws_connection(api_c.AWS_SSM_NAME)
+    return check_aws_connection(
+        client_method="get_parameter",
+        client=api_c.AWS_SSM_NAME,
+        extra_params={"Name": "unifieddb_host_alias"},
+    )
 
 
 def check_aws_batch() -> Tuple[bool, str]:
@@ -188,7 +195,40 @@ def check_aws_batch() -> Tuple[bool, str]:
         tuple[bool, str]: Returns if the AWS connection is valid,
             and the message.
     """
-    return check_aws_connection(api_c.AWS_BATCH_NAME)
+    return check_aws_connection(
+        client_method="cancel_job",
+        client=api_c.AWS_BATCH_NAME,
+        extra_params={"jobId": "test", "reason": "test"},
+    )
+
+
+def check_aws_s3() -> Tuple[bool, str]:
+    """Validate AWS S3 Function
+
+    Returns:
+        tuple[bool, str]: Returns if the AWS connection is valid,
+            and the message.
+
+    """
+    return check_aws_connection(
+        client_method="list_buckets",
+        client=api_c.AWS_S3_NAME,
+        extra_params={},
+    )
+
+
+def check_aws_events() -> Tuple[bool, str]:
+    """Validates AWS events function
+
+    Returns:
+        tuple[bool, str]: Returns if the AWS connection is valid,
+            and the message.
+    """
+    return check_aws_connection(
+        client_method="list_event_buses",
+        client=api_c.AWS_EVENTS_NAME,
+        extra_params={"NamePrefix": "EC2"},
+    )
 
 
 def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
@@ -436,7 +476,7 @@ def upload_file(
         object_name = os.path.basename(file_name)
 
     # Upload the file
-    s3_client = get_aws_client(api_c.S3)
+    s3_client = get_aws_client(api_c.AWS_S3_NAME)
 
     extraargs = {
         "Metadata": {
@@ -471,7 +511,7 @@ def download_file(
         bool: True for successful download else False
     """
     object_name = object_name if object_name else file_name
-    s3_client = get_aws_client(api_c.S3)
+    s3_client = get_aws_client(api_c.AWS_S3_NAME)
     logging.info("Downloading %s file to %s", file_name, bucket)
     try:
         with open(file_name, "wb") as file:
