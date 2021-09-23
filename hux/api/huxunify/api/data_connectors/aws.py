@@ -211,9 +211,9 @@ def check_aws_s3() -> Tuple[bool, str]:
 
     """
     return check_aws_connection(
-        client_method="list_buckets",
+        client_method="get_bucket_versioning",
         client=api_c.AWS_S3_NAME,
-        extra_params={},
+        extra_params={api_c.AWS_BUCKET: config.get_config().S3_DATASET_BUCKET},
     )
 
 
@@ -225,9 +225,9 @@ def check_aws_events() -> Tuple[bool, str]:
             and the message.
     """
     return check_aws_connection(
-        client_method="list_event_buses",
+        client_method="create_event_bus",
         client=api_c.AWS_EVENTS_NAME,
-        extra_params={"NamePrefix": "EC2"},
+        extra_params={"Name": "unified_health_event"},
     )
 
 
