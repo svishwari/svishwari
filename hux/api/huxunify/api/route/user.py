@@ -70,7 +70,7 @@ class UserProfile(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int]: dict of user, HTTP status code
+            Tuple[dict, int]: dict of user, HTTP status code.
 
         Raises:
             ProblemException: Any exception raised during endpoint execution.

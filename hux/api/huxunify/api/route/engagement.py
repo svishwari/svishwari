@@ -1107,7 +1107,7 @@ class UpdateCampaignsForAudience(SwaggerView):
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
-            HTTP status code.
+                HTTP status code.
         """
 
         # convert to ObjectIds
