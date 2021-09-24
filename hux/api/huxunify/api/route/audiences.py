@@ -1,6 +1,4 @@
-"""
-Paths for Orchestration API
-"""
+"""Paths for Orchestration API"""
 from datetime import datetime
 from http import HTTPStatus
 from pathlib import Path
@@ -66,9 +64,7 @@ def before_request():
     "AudienceDownloadView",
 )
 class AudienceDownload(SwaggerView):
-    """
-    Audience Put view class
-    """
+    """Audience download by ID and download type."""
 
     parameters = [
         {
@@ -118,9 +114,9 @@ class AudienceDownload(SwaggerView):
             user_name (str): User name.
 
         Returns:
-            Tuple[Response, int]: File Object Response, HTTP status.
-
+            Tuple[Response, int]: File Object Response, HTTP status code.
         """
+
         download_types = {
             api_c.GOOGLE_ADS: transform_fields_google_file,
             api_c.AMAZON_ADS: transform_fields_amazon_file,
@@ -217,9 +213,7 @@ class AudienceDownload(SwaggerView):
     "AudienceInsightsStates",
 )
 class AudienceInsightsStates(SwaggerView):
-    """
-    Audience insights by state
-    """
+    """Audience insights by state."""
 
     parameters = [
         {
@@ -257,13 +251,13 @@ class AudienceInsightsStates(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            - audience_id (str): Audience ID
+            audience_id (str): Audience ID.
 
         Returns:
-            - Tuple[list, int]
-                list of spend and size data by state,
-                http code
+            Tuple[list, int]: list of spend and size data by state,
+                HTTP status code.
         """
+
         # get auth token from request
         token_response = get_token_from_request(request)
 
@@ -291,9 +285,7 @@ class AudienceInsightsStates(SwaggerView):
     "AudienceInsightsCities",
 )
 class AudienceInsightsCities(SwaggerView):
-    """
-    Audience insights by city
-    """
+    """Audience insights by city."""
 
     parameters = [
         {
@@ -349,12 +341,10 @@ class AudienceInsightsCities(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            - audience_id (str): Audience ID.
+            audience_id (str): Audience ID.
 
         Returns:
-            - Tuple[list, int]
-                list of spend and size by city,
-                http code
+            Tuple[list, int]: list of spend and size by city, HTTP status code.
         """
         # get auth token from request
         token_response = get_token_from_request(request)
