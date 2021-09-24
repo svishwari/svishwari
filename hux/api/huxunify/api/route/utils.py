@@ -353,7 +353,7 @@ class Validation:
         """Validates that an integer is valid
 
         Args:
-            value (int): String integer value from the caller.
+            value (str): String value from the caller.
 
         Returns:
             int: Result of the integer conversion.
