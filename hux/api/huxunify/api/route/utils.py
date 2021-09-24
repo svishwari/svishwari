@@ -375,7 +375,7 @@ class Validation:
                 )
             return int(value)
 
-        raise ValidationError(f"Value {value} is not a valid integer")
+        raise ValidationError(f"Value {value} is not a valid integer.")
 
     @staticmethod
     def validate_bool(value: str) -> bool:
