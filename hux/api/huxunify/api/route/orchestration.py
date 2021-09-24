@@ -472,7 +472,7 @@ class AudienceInsightsGetView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     def get(self, audience_id: str) -> Tuple[dict, int]:
-        """Retrieves an audience.
+        """Retrieves audience insights for an audience.
 
         ---
         security:
