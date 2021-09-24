@@ -67,11 +67,7 @@ class TestUserManagement(unittest.TestCase):
         }
 
     def test_set_user(self) -> None:
-        """Test set_user routine
-
-        Returns:
-            Response: None
-        """
+        """Test set_user routine."""
 
         # set a user document, use a duplicate okta id
         user_doc = um.set_user(
@@ -88,11 +84,7 @@ class TestUserManagement(unittest.TestCase):
         self.assertTrue(user_doc is not None)
 
     def test_duplicate_set_user(self) -> None:
-        """Test duplicate set_user routine based on okta id
-
-        Returns:
-            Response: None
-        """
+        """Test duplicate set_user routine based on okta id."""
 
         # set a user document, use a different okta id and email
         um.set_user(
@@ -121,11 +113,7 @@ class TestUserManagement(unittest.TestCase):
             )
 
     def test_get_user(self) -> None:
-        """Test get_user routine.
-
-        Returns:
-            Response: None
-        """
+        """Test get_user routine."""
 
         user_doc = um.get_user(self.database, self.user_doc[c.OKTA_ID])
 
@@ -135,22 +123,14 @@ class TestUserManagement(unittest.TestCase):
         )
 
     def test_get_users(self) -> None:
-        """Test get_all_users routine.
-
-        Returns:
-            Response: None
-        """
+        """Test get_all_users routine."""
 
         user_docs = um.get_all_users(database=self.database)
 
         self.assertIsNotNone(user_docs)
 
     def test_delete_user(self) -> None:
-        """Test delete_user routine.
-
-        Returns:
-            Response: None
-        """
+        """Test delete_user routine."""
 
         # create a user first
         user_doc = um.set_user(
@@ -175,11 +155,7 @@ class TestUserManagement(unittest.TestCase):
         self.assertIsNone(user_doc)
 
     def test_add_favorite(self) -> None:
-        """Test function for adding manage_user_favorites routine.
-
-        Returns:
-            Response: None
-        """
+        """Test function for adding manage_user_favorites routine."""
 
         # first get user before we modify
         user_doc = um.get_user(self.database, self.user_doc[c.OKTA_ID])
@@ -202,11 +178,7 @@ class TestUserManagement(unittest.TestCase):
             )
 
     def test_delete_favorite(self) -> None:
-        """Test function for deleting via manage_user_favorites routine
-
-        Returns:
-            Response: None
-        """
+        """Test function for deleting via manage_user_favorites routine"""
 
         # first get user before we modify
         user_doc = um.get_user(self.database, self.user_doc[c.OKTA_ID])
@@ -233,11 +205,7 @@ class TestUserManagement(unittest.TestCase):
             self.assertFalse(removed_doc[c.USER_FAVORITES][component])
 
     def test_duplicate_add_favorite(self) -> None:
-        """Test function for duplicate adding manage_user_favorites routine.
-
-        Returns:
-            Response: None
-        """
+        """Test function for duplicate adding manage_user_favorites routine."""
 
         # first get user before we modify
         user_doc = um.get_user(self.database, self.user_doc[c.OKTA_ID])
@@ -269,11 +237,7 @@ class TestUserManagement(unittest.TestCase):
             )
 
     def test_set_dashboard_config(self) -> None:
-        """Test function for manage_user_dashboard_config routine.
-
-        Returns:
-            Response: None
-        """
+        """Test function for manage_user_dashboard_config routine."""
 
         # first get user before we modify
         user_doc = um.get_user(self.database, self.user_doc[c.OKTA_ID])
@@ -297,11 +261,7 @@ class TestUserManagement(unittest.TestCase):
         )
 
     def test_unset_dashboard_config(self) -> None:
-        """Test delete_flag for manage_user_dashboard_config routine.
-
-        Returns:
-            Response: None
-        """
+        """Test delete_flag for manage_user_dashboard_config routine."""
 
         # first get user before we modify
         user_doc = um.get_user(self.database, self.user_doc[c.OKTA_ID])

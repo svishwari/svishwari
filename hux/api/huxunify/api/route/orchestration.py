@@ -1,8 +1,5 @@
 # pylint: disable=too-many-lines
-"""
-Paths for Orchestration API
-"""
-from distutils.util import strtobool
+"""Paths for Orchestration API"""
 from http import HTTPStatus
 from random import uniform
 from typing import Tuple, Union
@@ -77,6 +74,7 @@ orchestration_bp = Blueprint(
 @secured()
 def before_request():
     """Protect all of the orchestration endpoints."""
+
     pass  # pylint: disable=unnecessary-pass
 
 
@@ -84,13 +82,13 @@ def add_destinations(
     database: MongoClient, destinations: list
 ) -> Union[list, None]:
     """Add destinations data using destination ids.
-    ---
-        Args:
-            database (MongoClient): Mongo database.
-            destinations (list): Destinations list.
 
-        Returns:
-            destinations (Union[list, None]): Destination objects.
+    Args:
+        database (MongoClient): Mongo database.
+        destinations (list): Destinations list.
+
+    Returns:
+        destinations (Union[list, None]): Destination objects.
     """
 
     if destinations is not None:
@@ -105,9 +103,7 @@ def add_destinations(
     orchestration_bp, api_c.AUDIENCE_ENDPOINT, "AudienceView"
 )
 class AudienceView(SwaggerView):
-    """
-    Audience view class
-    """
+    """Audience view class."""
 
     parameters = [
         {
@@ -149,8 +145,7 @@ class AudienceView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[list, int]: list of audience, HTTP status.
-
+            Tuple[list, int]: list of audience, HTTP status code.
         """
 
         # get all audiences and deliveries
@@ -271,9 +266,7 @@ class AudienceView(SwaggerView):
     "AudienceGetView",
 )
 class AudienceGetView(SwaggerView):
-    """
-    Single Audience Get view class
-    """
+    """Single Audience Get view class."""
 
     parameters = [
         {
@@ -314,8 +307,7 @@ class AudienceGetView(SwaggerView):
             audience_id (str): Audience ID.
 
         Returns:
-            Tuple[dict, int]: Audience, HTTP status.
-
+            Tuple[dict, int]: Audience, HTTP status code.
         """
 
         token_response = get_token_from_request(request)
@@ -449,9 +441,7 @@ class AudienceGetView(SwaggerView):
     "AudienceInsightsGetView",
 )
 class AudienceInsightsGetView(SwaggerView):
-    """
-    Single Audience Insights Get view class
-    """
+    """Single Audience Insights Get view class."""
 
     parameters = [
         {
@@ -492,8 +482,7 @@ class AudienceInsightsGetView(SwaggerView):
             audience_id (str): Audience ID.
 
         Returns:
-            Tuple[dict, int]: AudienceInsights, HTTP status.
-
+            Tuple[dict, int]: AudienceInsights, HTTP status code.
         """
 
         token_response = get_token_from_request(request)
@@ -568,9 +557,7 @@ class AudienceInsightsGetView(SwaggerView):
     "AudiencePostView",
 )
 class AudiencePostView(SwaggerView):
-    """
-    Audience Post view class
-    """
+    """Audience Post view class."""
 
     parameters = [
         {
@@ -636,8 +623,7 @@ class AudiencePostView(SwaggerView):
             user_name (str): user_name extracted from Okta.
 
         Returns:
-            Tuple[dict, int]: Created audience, HTTP status.
-
+            Tuple[dict, int]: Created audience, HTTP status code.
         """
 
         body = AudiencePostSchema().load(request.get_json(), partial=True)
@@ -764,9 +750,7 @@ class AudiencePostView(SwaggerView):
     "AudiencePutView",
 )
 class AudiencePutView(SwaggerView):
-    """
-    Audience Put view class
-    """
+    """Audience Put view class."""
 
     parameters = [
         {
@@ -839,8 +823,7 @@ class AudiencePutView(SwaggerView):
             user_name (str): user_name extracted from Okta.
 
         Returns:
-            Tuple[dict, int]: Audience doc, HTTP status.
-
+            Tuple[dict, int]: Audience doc, HTTP status code.
         """
 
         # load into the schema object
@@ -901,9 +884,7 @@ class AudiencePutView(SwaggerView):
     orchestration_bp, f"{api_c.AUDIENCE_ENDPOINT}/rules", "AudienceRules"
 )
 class AudienceRules(SwaggerView):
-    """
-    Audience rules class
-    """
+    """Audience rules class."""
 
     responses = {
         HTTPStatus.OK.value: {"description": "Get audience rules dictionary"},
@@ -923,8 +904,7 @@ class AudienceRules(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int]: dict of audience rules, HTTP status.
-
+            Tuple[dict, int]: dict of audience rules, HTTP status code.
         """
 
         rules_constants = data_management.get_constant(
@@ -1008,9 +988,7 @@ class AudienceRules(SwaggerView):
     "SetLookalikeAudience",
 )
 class SetLookalikeAudience(SwaggerView):
-    """
-    Set Lookalike Audience Class
-    """
+    """Set Lookalike Audience Class."""
 
     parameters = [
         {
@@ -1048,18 +1026,18 @@ class SetLookalikeAudience(SwaggerView):
     @api_error_handler()
     @get_user_name()
     def post(self, user_name: str) -> Tuple[dict, int]:
-        """Sets lookalike audience
+        """Sets lookalike audience.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta
+            user_name (str): user_name extracted from Okta.
 
         Returns:
-            Tuple[dict, int]: lookalike audience configuration, HTTP status.
-
+            Tuple[dict, int]: lookalike audience configuration,
+                HTTP status code.
         """
 
         body = LookalikeAudiencePostSchema().load(
@@ -1186,7 +1164,7 @@ class SetLookalikeAudience(SwaggerView):
     "DeleteAudienceView",
 )
 class DeleteAudienceView(SwaggerView):
-    """Hard deletes an audience"""
+    """Hard deletes an audience."""
 
     parameters = [
         {
@@ -1215,7 +1193,7 @@ class DeleteAudienceView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     def delete(self, audience_id: str) -> Tuple[dict, int]:
-        """Deletes an audience
+        """Deletes an audience.
 
         ---
         security:
@@ -1226,7 +1204,6 @@ class DeleteAudienceView(SwaggerView):
 
         Returns:
             Tuple[dict, int]: response dict, HTTP status code.
-
         """
 
         deleted = orchestration_management.delete_audience(

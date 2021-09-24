@@ -1,7 +1,5 @@
 # pylint: disable=no-self-use, C0302
-"""
-Paths for engagement API
-"""
+"""Paths for engagement API"""
 from pathlib import Path
 import zipfile
 from http import HTTPStatus
@@ -83,6 +81,7 @@ engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 @secured()
 def before_request():
     """Protect all of the engagement endpoints."""
+
     pass  # pylint: disable=unnecessary-pass
 
 
@@ -90,9 +89,7 @@ def before_request():
     engagement_bp, f"{api_c.ENGAGEMENT_ENDPOINT}", "EngagementSearch"
 )
 class EngagementSearch(SwaggerView):
-    """
-    Engagement Search Class
-    """
+    """Engagement Search Class."""
 
     parameters = []
     responses = {
@@ -112,11 +109,8 @@ class EngagementSearch(SwaggerView):
         security:
             - Bearer: ["Authorization"]
 
-        Args:
-
         Returns:
-            Tuple[dict, int]: dict of engagements and http code
-
+            Tuple[dict, int]: dict of engagements, HTTP status code.
         """
 
         # get the engagement summary
@@ -137,9 +131,7 @@ class EngagementSearch(SwaggerView):
     "IndividualEngagementSearch",
 )
 class IndividualEngagementSearch(SwaggerView):
-    """
-    Individual Engagement Search Class
-    """
+    """Individual Engagement Search Class."""
 
     parameters = [
         {
@@ -172,11 +164,10 @@ class IndividualEngagementSearch(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            engagement_id (str): id of the engagement
+            engagement_id (str): ID of the engagement.
 
         Returns:
-            Tuple[dict, int]: dict of the engagement and http code
-
+            Tuple[dict, int]: dict of the engagement, HTTP status code.
         """
 
         # get the engagement summary
@@ -215,9 +206,7 @@ class IndividualEngagementSearch(SwaggerView):
     engagement_bp, f"{api_c.ENGAGEMENT_ENDPOINT}", "SetEngagement"
 )
 class SetEngagement(SwaggerView):
-    """
-    Class to create a new engagement
-    """
+    """Class to create a new engagement."""
 
     parameters = [
         {
@@ -274,8 +263,7 @@ class SetEngagement(SwaggerView):
             user_name (str): user_name extracted from Okta.
 
         Returns:
-            Tuple[dict, int]: Engagement created, HTTP status.
-
+            Tuple[dict, int]: Engagement created, HTTP status code.
         """
 
         body = EngagementPostSchema().load(
@@ -332,9 +320,7 @@ class SetEngagement(SwaggerView):
     "UpdateEngagement",
 )
 class UpdateEngagement(SwaggerView):
-    """
-    Class to update an engagement
-    """
+    """Class to update an engagement."""
 
     parameters = [
         {
@@ -393,12 +379,11 @@ class UpdateEngagement(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            engagement_id (str): Engagement id
+            engagement_id (str): Engagement ID.
             user_name (str): user_name extracted from Okta.
 
         Returns:
-            Tuple[dict, int]: Engagement updated, HTTP status.
-
+            Tuple[dict, int]: Engagement updated, HTTP status code.
         """
 
         body = EngagementPutSchema(unknown=api_c.EXCLUDE).load(
@@ -455,9 +440,7 @@ class UpdateEngagement(SwaggerView):
     "DeleteEngagement",
 )
 class DeleteEngagement(SwaggerView):
-    """
-    Delete Engagement Class
-    """
+    """Delete Engagement Class."""
 
     parameters = [
         {
@@ -491,11 +474,11 @@ class DeleteEngagement(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            engagement_id (str): Engagement id
+            engagement_id (str): Engagement ID.
+            user_name (str): user_name extracted from Okta.
 
         Returns:
-            Tuple[dict, int]: message, HTTP status
-
+            Tuple[dict, int]: message, HTTP status code.
         """
 
         engagement_id = ObjectId(engagement_id)
@@ -530,9 +513,7 @@ class DeleteEngagement(SwaggerView):
     "AddAudienceEngagement",
 )
 class AddAudienceEngagement(SwaggerView):
-    """
-    Class to add audience to an engagement
-    """
+    """Class to add audience to an engagement."""
 
     parameters = [
         {
@@ -596,12 +577,11 @@ class AddAudienceEngagement(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            engagement_id (str): Engagement id
+            engagement_id (str): Engagement ID.
             user_name (str): user_name extracted from Okta.
 
         Returns:
-            Tuple[dict, int]: Audience Engagement added, HTTP status.
-
+            Tuple[dict, int]: Audience Engagement added, HTTP status code.
         """
 
         database = get_db_client()
@@ -672,9 +652,7 @@ class AddAudienceEngagement(SwaggerView):
     "DeleteAudienceEngagement",
 )
 class DeleteAudienceEngagement(SwaggerView):
-    """
-    Delete AudienceEngagement Class
-    """
+    """Delete Audience Engagement Class."""
 
     parameters = [
         {
@@ -720,12 +698,12 @@ class DeleteAudienceEngagement(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            engagement_id (str): Engagement id
+            engagement_id (str): Engagement ID.
             user_name (str): user_name extracted from Okta.
 
         Returns:
-            Tuple[dict, int]: Audience deleted from engagement, HTTP status
-
+            Tuple[dict, int]: Audience deleted from engagement,
+                HTTP status code.
         """
 
         database = get_db_client()
@@ -787,9 +765,7 @@ class DeleteAudienceEngagement(SwaggerView):
     "AddDestinationEngagedAudience",
 )
 class AddDestinationEngagedAudience(SwaggerView):
-    """
-    Class to add a destination to an engagement audience
-    """
+    """Class to add a destination to an engagement audience."""
 
     parameters = [
         {
@@ -847,13 +823,13 @@ class AddDestinationEngagedAudience(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            engagement_id (str): Engagement id
-            audience_id (str): Audience id
+            engagement_id (str): Engagement ID.
+            audience_id (str): Audience ID.
             user_name (str): user_name extracted from Okta.
 
         Returns:
-            Tuple[dict, int]: Destination Audience Engagement added, HTTP status.
-
+            Tuple[dict, int]: Destination Audience Engagement added,
+                HTTP status code.
         """
 
         destination = DestinationEngagedAudienceSchema().load(
@@ -915,9 +891,7 @@ class AddDestinationEngagedAudience(SwaggerView):
     "RemoveDestinationEngagedAudience",
 )
 class RemoveDestinationEngagedAudience(SwaggerView):
-    """
-    Class to remove a destination from an engagement audience
-    """
+    """Class to remove a destination from an engagement audience"""
 
     parameters = [
         {
@@ -972,13 +946,13 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            engagement_id (str): Engagement id
-            audience_id (str): Audience id
+            engagement_id (str): Engagement ID.
+            audience_id (str): Audience ID.
             user_name (str): user_name extracted from Okta.
 
         Returns:
-            Tuple[dict, int]: Destination Audience Engagement added, HTTP status.
-
+            Tuple[dict, int]: Destination Audience Engagement added,
+                HTTP status code.
         """
 
         destination = DestinationEngagedAudienceSchema().load(
@@ -1048,9 +1022,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
     "UpdateCampaignsForAudience",
 )
 class UpdateCampaignsForAudience(SwaggerView):
-    """
-    Update campaigns for audience class
-    """
+    """Update campaigns for audience class."""
 
     parameters = [
         {
@@ -1134,9 +1106,8 @@ class UpdateCampaignsForAudience(SwaggerView):
             destination_id (str): Destination ID.
 
         Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP Status.
-
+            Tuple[dict, int]: Message indicating connection success/failure,
+                HTTP status code.
         """
 
         # convert to ObjectIds
@@ -1289,9 +1260,7 @@ class UpdateCampaignsForAudience(SwaggerView):
     "AudienceCampaignsGetView",
 )
 class AudienceCampaignsGetView(SwaggerView):
-    """
-    Audience campaigns GET class
-    """
+    """Audience campaigns GET class."""
 
     parameters = [
         {
@@ -1356,9 +1325,8 @@ class AudienceCampaignsGetView(SwaggerView):
             destination_id (str): Destination ID.
 
         Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP Status.
-
+            Tuple[dict, int]: Message indicating connection success/failure,
+                HTTP status code.
         """
 
         # convert to ObjectIds
@@ -1454,9 +1422,7 @@ class AudienceCampaignsGetView(SwaggerView):
     "AudienceCampaignMappingsGetView",
 )
 class AudienceCampaignMappingsGetView(SwaggerView):
-    """
-    Audience campaign mappings class
-    """
+    """Audience campaign mappings class."""
 
     parameters = [
         {
@@ -1520,9 +1486,8 @@ class AudienceCampaignMappingsGetView(SwaggerView):
             destination_id (str): Destination ID.
 
         Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP Status.
-
+            Tuple[dict, int]: Message indicating connection success/failure,
+                HTTP status code.
         """
 
         # convert to ObjectIds
@@ -1652,9 +1617,7 @@ class AudienceCampaignMappingsGetView(SwaggerView):
     "AudiencePerformanceDisplayAdsSchema",
 )
 class EngagementMetricsDisplayAds(SwaggerView):
-    """
-    Display Ads Engagement Metrics
-    """
+    """Display Ads Engagement Metrics."""
 
     parameters = api_c.ENGAGEMENT_ID_PARAMS
 
@@ -1686,12 +1649,11 @@ class EngagementMetricsDisplayAds(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            engagement_id (str): ID of an engagement
+            engagement_id (str): ID of an engagement.
 
         Returns:
             Tuple[dict, int]: Response of Display Ads Performance Metrics,
-                HTTP Status Code
-
+                HTTP status code.
         """
 
         # setup the database
@@ -1722,9 +1684,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
     "AudiencePerformanceEmailSchema",
 )
 class EngagementMetricsEmail(SwaggerView):
-    """
-    Email Engagement Metrics
-    """
+    """Email Engagement Metrics."""
 
     parameters = api_c.ENGAGEMENT_ID_PARAMS
 
@@ -1751,12 +1711,11 @@ class EngagementMetricsEmail(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            engagement_id (str): ID of an engagement
+            engagement_id (str): ID of an engagement.
 
         Returns:
             Tuple[dict, int]: Response of Email Performance Metrics,
-                HTTP Status Code
-
+                HTTP status code.
         """
 
         # setup the database
@@ -1785,9 +1744,7 @@ class EngagementMetricsEmail(SwaggerView):
     "EngagementPerformanceDownloadView",
 )
 class EngagementPerformanceDownload(SwaggerView):
-    """
-    Class for downloading engagement performance metrics
-    """
+    """Class for downloading engagement performance metrics."""
 
     parameters = api_c.ENGAGEMENT_ID_PARAMS
 
@@ -1811,13 +1768,13 @@ class EngagementPerformanceDownload(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            engagement_id (str): ID of an engagement
+            engagement_id (str): ID of an engagement.
 
         Returns:
             Tuple[Response, int]: Response of Performance Metrics
-                HTTP Status Code
-
+                HTTP status code.
         """
+
         # setup the database
         database = get_db_client()
 
