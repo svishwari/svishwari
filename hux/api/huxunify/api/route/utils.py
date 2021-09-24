@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Tuple
 from http import HTTPStatus
 from bson import ObjectId
+from marshmallow import ValidationError
 from pandas import DataFrame
 
 from healthcheck import HealthCheck
@@ -339,3 +340,112 @@ def check_end_date_greater_than_start_date(
         and start_date_format > end_date_format
     ):
         raise iae.FailedDateFilterIssue()
+
+
+class Validation:
+    """ Validation class for input parameters"""
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def validate_integer(value: str) -> int:
+        """Validates that an integer is valid
+
+        Args:
+            value (int): String integer value from the caller.
+
+        Returns:
+            int: Result of the integer conversion.
+
+        Raises:
+            ValidationError: Error that is raised if input is invalid.
+
+        """
+        max_value = 2147483647
+
+        if value.isdigit():
+            if int(value) <= 0:
+                raise ValidationError(
+                    f"Value {value} must be a positive integer"
+                )
+            if int(value) > max_value:
+                raise ValidationError(
+                    f"Value {value} must be less than {max_value}"
+                )
+            return int(value)
+
+        raise ValidationError(f"Value {value} is not a valid integer")
+
+    @staticmethod
+    def validate_bool(value: str) -> bool:
+        """Validates input boolean value for the user
+
+        Args:
+            value (str): String boolean value from the caller.
+
+        Returns:
+            bool: Result of the boolean conversion.
+
+        Raises:
+            ValidationError: Error that is raised if input is invalid.
+
+        """
+
+        if value.lower() == "true":
+            return True
+        if value.lower() == "false":
+            return False
+
+        raise ValidationError(f"{value} is not a valid boolean expression.")
+
+    @staticmethod
+    def validate_date(
+        date_string: str, date_format: str = constants.DEFAULT_DATE_FORMAT
+    ) -> datetime:
+        """Validates is a single date is valid
+
+        Args:
+            date_string (str): Input date string.
+            date_format (str): Date string format.
+
+        Returns:
+            datetime: datetime object for the string date passed in
+
+        Raises:
+            ValidationError: Error that is raised if input is invalid.
+
+        """
+
+        try:
+            return datetime.strptime(date_string, date_format)
+        except ValueError:
+            raise ValidationError(
+                f"The date {date_string} is not in the proper format: {date_format}"
+            ) from ValueError
+
+    @staticmethod
+    def validate_date_range(
+        start_date: str,
+        end_date: str,
+        date_format: str = constants.DEFAULT_DATE_FORMAT,
+    ):
+        """Validates that a date range is valid
+
+        Args:
+            start_date (str): Input start date string.
+            end_date (str): Input end date string.
+            date_format (str): Date string format.
+
+        Raises:
+            ValidationError: Error that is raised if input is invalid.
+
+        """
+
+        start = Validation.validate_date(start_date, date_format)
+        end = Validation.validate_date(end_date, date_format)
+
+        if start >= end:
+            raise ValidationError(
+                f"{start_date} is not earlier than {end_date}."
+            )
