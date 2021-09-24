@@ -421,7 +421,7 @@ class Validation:
             return datetime.strptime(date_string, date_format)
         except ValueError:
             raise ValidationError(
-                f"The date {date_string} is not in the proper format: {date_format}"
+                f"The date {date_string} is not in the proper format: {date_format}."
             ) from ValueError
 
     @staticmethod
