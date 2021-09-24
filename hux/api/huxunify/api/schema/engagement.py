@@ -53,7 +53,7 @@ class EngagementPostSchema(Schema):
 
         Args:
             data (dict): The Engagement data source object
-            **kwargs: Field-specific keyword arguments.
+            **kwargs (dict): Field-specific keyword arguments.
         Returns:
             Response: Returns a Engagement data source object
 
@@ -114,7 +114,7 @@ class EngagementPutSchema(Schema):
 
         Args:
             data (dict): The Engagement data source object
-            **kwargs: Field-specific keyword arguments.
+            **kwargs (dict): Field-specific keyword arguments.
         Returns:
             Response: Returns a Engagement data source object
 
@@ -161,7 +161,7 @@ class AudienceEngagementSchema(Schema):
 
         Args:
             data (dict): The Engagement data source object
-            **kwargs: Field-specific keyword arguments.
+            **kwargs (dict): Field-specific keyword arguments.
         Returns:
             Response: Returns a Engagement data source object
 
