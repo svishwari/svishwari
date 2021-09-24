@@ -52,8 +52,8 @@
                     class="text--caption"
                     style="width: 260px; display: block"
                   >
-                    Download the hashed customer data file of this audience for
-                    manual uploads to Amazon or Google.
+                    Download a generic .csv of this audience or a hashed file to
+                    directly upload to Amazon or Google.
                   </span>
                 </template>
               </tooltip>
@@ -744,7 +744,10 @@ export default {
       demographicsData: "audiences/demographics",
     }),
     audience() {
-      return this.getAudience(this.$route.params.id)
+      const _getAudience = this.getAudience(this.$route.params.id)
+      return _getAudience
+        ? JSON.parse(JSON.stringify(_getAudience))
+        : _getAudience
     },
     audienceId() {
       return this.$route.params.id
@@ -1054,7 +1057,7 @@ export default {
               id: event.data.id,
               audienceId: this.audienceId,
             })
-            this.dataPendingMesssage(event.data.name, "engagement")
+            this.dataPendingMesssage(event, "engagement")
           } catch (error) {
             this.dataErrorMesssage(event, "engagement")
             console.error(error)

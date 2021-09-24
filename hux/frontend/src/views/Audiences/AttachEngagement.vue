@@ -464,7 +464,10 @@ export default {
       }
       const newEngagement = await this.addEngagementToDB(payload)
       this.engagements.push(newEngagement)
-      this.sortEngagements()
+      this.engagements = this.engagements.sort((a, b) => {
+        return new Date(b.update_time) - new Date(a.update_time)
+      })
+      this.toggleSortIcon = undefined
       this.onEngagementClick(newEngagement)
       if (this.closeOnAction) {
         this.$emit("onAddEngagement", newEngagement)
