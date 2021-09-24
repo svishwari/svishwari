@@ -382,7 +382,7 @@ class Validation:
         """Validates input boolean value for the user
 
         Args:
-            value (str): String boolean value from the caller.
+            value (str): String value from the caller.
 
         Returns:
             bool: Result of the boolean conversion.
