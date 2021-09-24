@@ -371,7 +371,7 @@ class Validation:
                 )
             if int(value) > max_value:
                 raise ValidationError(
-                    f"Value {value} must be less than {max_value}"
+                    f"Value {value} must be less than {max_value}."
                 )
             return int(value)
 
