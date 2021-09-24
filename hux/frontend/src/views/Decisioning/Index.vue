@@ -24,7 +24,7 @@
           :description="model.description"
           :disabled="model.status !== 'Active'"
           data-e2e="model-item"
-          class="mr-10 cursor-pointer"
+          class="mr-10 model-desc-card"
           @click.native="goToDashboard(model)"
         >
           <template slot="top">
@@ -39,7 +39,7 @@
 
           <template slot="default">
             <p
-              class="text-caption black--text text--darken-1"
+              class="text-caption black--text text--darken-1 mt-4"
               data-e2e="model-owner"
             >
               {{ model.owner }}
@@ -154,3 +154,11 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.model-desc-card {
+  @extend .cursor-pointer;
+  width: 280px;
+  height: 280px;
+}
+</style>

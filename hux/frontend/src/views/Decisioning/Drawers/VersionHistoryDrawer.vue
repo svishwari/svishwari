@@ -24,6 +24,7 @@
             v-for="header in columnDefs"
             :key="header.value"
             :style="{ width: header.width }"
+            class="pr-0"
           >
             <tooltip v-if="header.value == 'version'">
               <span
