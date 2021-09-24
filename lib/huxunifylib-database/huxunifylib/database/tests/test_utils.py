@@ -1,4 +1,4 @@
-"""Database util tests."""
+"""Database util tests"""
 
 import os
 import unittest
@@ -9,10 +9,9 @@ import huxunifylib.database.constants as c
 import huxunifylib.database.data_management as dm
 import huxunifylib.database.audience_management as am
 import huxunifylib.database.delivery_platform_management as dpm
-import huxunifylib.database.delete_util as delete_util
 
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database import db_exceptions
+from huxunifylib.database import db_exceptions, delete_util
 
 
 # pylint: disable=R0902,R0914,R0915

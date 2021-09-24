@@ -261,7 +261,15 @@
 
     <hux-footer>
       <template #left>
-        <v-btn tile color="white" height="40" @click.native="$router.go(-1)">
+        <v-btn
+          tile
+          color="white"
+          height="40"
+          @click.native="
+            dontShowModal = true
+            $router.go(-1)
+          "
+        >
           <span class="primary--text">Cancel</span>
         </v-btn>
       </template>
@@ -402,6 +410,7 @@ export default {
         new Date().getTime() - new Date().getTimezoneOffset() * 60000
       ).toISOString(),
       engagementList: {},
+      dontShowModal: false,
     }
   },
 
@@ -577,6 +586,7 @@ export default {
     async addNewEngagement() {
       try {
         const engagement = await this.addEngagement(this.payload)
+        this.dontShowModal = true
         this.$router.push({
           name: "EngagementDashboard",
           params: { id: engagement.id },
@@ -591,6 +601,7 @@ export default {
       try {
         const engagement = await this.addEngagement(this.payload)
         await this.deliverEngagement(engagement.id)
+        this.dontShowModal = true
         this.$router.push({
           name: "EngagementDashboard",
           params: { id: engagement.id },
@@ -610,6 +621,7 @@ export default {
         }
         const payload = { id: this.getRouteId, data: requestPayload }
         await this.updateEngagement(payload)
+        this.dontShowModal = true
         this.$router.push({
           name: "EngagementDashboard",
           params: { id: this.getRouteId },
