@@ -104,13 +104,16 @@ class DeliveryScheduleSchema(Schema):
     # pylint: disable=unused-argument
     # pylint: disable=no-self-use
     def unwrap_envelope(self, data: dict, **kwargs) -> dict:
-        """
-        Validates delivery schedule as daily, monthly and weekly.
+        """Validates delivery schedule as daily, monthly and weekly.
+
         Args:
             data(dict): Data passed to schema.
             **kwargs: Key word args.
         Returns:
             data: Data after validation, modification.
+        Raises:
+            ValidationError: Error for improperly formatted delivery schedule
+
         """
         if data.get(api_c.PERIODICIY) == api_c.DAILY:
             DeliveryScheduleDailySchema().validate(api_c.DAILY)
@@ -384,12 +387,10 @@ class SendgridAuthCredsSchema(Schema):
 
 
 class SendgridAuthConstants(Schema):
-    """
-    Sendgrid Auth constants schema class
-    """
+    """Sendgrid Auth constants schema class"""
 
     class Meta:
-        """set the ordering of sendgrid auth constants"""
+        """Set the ordering of sendgrid auth constants"""
 
         ordered = True
 
@@ -439,9 +440,7 @@ class GoogleAdsAuthConstants(Schema):
     """Google Ads Auth constants schema class"""
 
     class Meta:
-        """
-        set the ordering of google ads auth constants
-        """
+        """Set the ordering of google ads auth constants"""
 
         ordered = True
 

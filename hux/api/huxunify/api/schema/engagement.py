@@ -48,12 +48,12 @@ class EngagementPostSchema(Schema):
 
     @pre_load
     # pylint: disable=unused-argument
-    def pre_process_details(self, data, **kwarg):
+    def pre_process_details(self, data, **kwargs):
         """process the schema before loading.
 
         Args:
             data (dict): The Engagement data source object
-            many (bool): If there are many to process
+            **kwargs: Field-specific keyword arguments.
         Returns:
             Response: Returns a Engagement data source object
 
@@ -109,11 +109,12 @@ class EngagementPutSchema(Schema):
 
     @pre_load
     # pylint: disable=unused-argument
-    def pre_process_details(self, data: dict, **kwarg):
+    def pre_process_details(self, data: dict, **kwargs):
         """process the schema before loading.
 
         Args:
             data (dict): The Engagement data source object
+            **kwargs: Field-specific keyword arguments.
         Returns:
             Response: Returns a Engagement data source object
 
@@ -155,12 +156,12 @@ class AudienceEngagementSchema(Schema):
 
     @pre_load
     # pylint: disable=unused-argument
-    def pre_process_details(self, data, **kwarg):
+    def pre_process_details(self, data, **kwargs):
         """process the schema before loading.
 
         Args:
             data (dict): The Engagement data source object
-            many (bool): If there are many to process
+            **kwargs: Field-specific keyword arguments.
         Returns:
             Response: Returns a Engagement data source object
 
