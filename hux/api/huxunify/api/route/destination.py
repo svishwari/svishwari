@@ -1,7 +1,5 @@
 # pylint: disable=no-self-use
-"""
-Paths for destinations api
-"""
+"""Paths for destinations API"""
 from http import HTTPStatus
 from typing import Tuple
 from flasgger import SwaggerView
@@ -68,19 +66,18 @@ dest_bp = Blueprint(api_c.DESTINATIONS_ENDPOINT, import_name=__name__)
 @secured()
 def before_request():
     """Protect all of the destinations endpoints."""
+
     pass  # pylint: disable=unnecessary-pass
 
 
 def set_sfmc_auth_details(sfmc_auth: dict) -> dict:
-    """Set SFMC auth details
-    ---
+    """Set SFMC auth details.
 
-        Args:
-            sfmc_auth (dict): Auth details.
+    Args:
+        sfmc_auth (dict): Auth details.
 
-        Returns:
-            Auth Object (dict): SFMC auth object.
-
+    Returns:
+        SFMC auth (dict): SFMC auth dict containing SFMC credentials.
     """
 
     return {
@@ -111,9 +108,7 @@ def set_sfmc_auth_details(sfmc_auth: dict) -> dict:
     "DestinationGetView",
 )
 class DestinationGetView(SwaggerView):
-    """
-    Single Destination Get view class
-    """
+    """Single Destination Get view class."""
 
     parameters = [
         {
@@ -154,9 +149,9 @@ class DestinationGetView(SwaggerView):
             destination_id (str): Destination ID.
 
         Returns:
-            Tuple[dict, int]: Destination dict, HTTP status.
-
+            Tuple[dict, int]: Destination dict, HTTP status code.
         """
+
         destination = destination_management.get_delivery_platform(
             get_db_client(), destination_id
         )
@@ -168,9 +163,7 @@ class DestinationGetView(SwaggerView):
     dest_bp, api_c.DESTINATIONS_ENDPOINT, "DestinationsView"
 )
 class DestinationsView(SwaggerView):
-    """
-    Destinations view class
-    """
+    """Destinations view class."""
 
     responses = {
         HTTPStatus.OK.value: {
@@ -193,8 +186,7 @@ class DestinationsView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[list, int]: list of destinations, HTTP status.
-
+            Tuple[list, int]: list of destinations, HTTP status code.
         """
 
         destinations = destination_management.get_all_delivery_platforms(
@@ -212,9 +204,7 @@ class DestinationsView(SwaggerView):
     "DestinationPutView",
 )
 class DestinationPutView(SwaggerView):
-    """
-    Destination Put view class
-    """
+    """Destination Put view class."""
 
     parameters = [
         {
@@ -278,9 +268,9 @@ class DestinationPutView(SwaggerView):
             user_name (str): user_name extracted from Okta.
 
         Returns:
-            Tuple[dict, int]: Destination doc, HTTP status.
-
+            Tuple[dict, int]: Destination doc, HTTP status code.
         """
+
         # load into the schema object
         body = DestinationPutSchema().load(request.get_json(), partial=True)
 
@@ -366,9 +356,7 @@ class DestinationPutView(SwaggerView):
     "DestinationsConstants",
 )
 class DestinationsConstants(SwaggerView):
-    """
-    DestinationsConstants view class.
-    """
+    """Destinations Constants view class."""
 
     responses = {
         HTTPStatus.OK.value: {
@@ -391,8 +379,7 @@ class DestinationsConstants(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int]: dict of destination constants, HTTP status.
-
+            Tuple[dict, int]: dict of destination constants, HTTP status code.
         """
 
         return (
@@ -407,9 +394,7 @@ class DestinationsConstants(SwaggerView):
     "DestinationValidatePostView",
 )
 class DestinationValidatePostView(SwaggerView):
-    """
-    Destination Validation Post view class
-    """
+    """Destination Validation Post view class."""
 
     parameters = [
         {
@@ -461,9 +446,8 @@ class DestinationValidatePostView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP Status.
-
+            Tuple[dict, int]: Message indicating connection success/failure,
+                HTTP status code.
         """
 
         body = DestinationValidationSchema().load(request.get_json())
@@ -608,9 +592,7 @@ class DestinationValidatePostView(SwaggerView):
     "DestinationDataExtView",
 )
 class DestinationDataExtView(SwaggerView):
-    """
-    Destination Data Extension view class
-    """
+    """Destination Data Extension view class."""
 
     parameters = [
         {
@@ -649,8 +631,7 @@ class DestinationDataExtView(SwaggerView):
             destination_id (str): Destination ID.
 
         Returns:
-            Tuple[list, int]: List of data extensions, HTTP Status.
-
+            Tuple[list, int]: List of data extensions, HTTP status code.
         """
 
         destination = destination_management.get_delivery_platform(
@@ -703,9 +684,7 @@ class DestinationDataExtView(SwaggerView):
     "DestinationDataExtPostView",
 )
 class DestinationDataExtPostView(SwaggerView):
-    """
-    Destination Data Extension Post class
-    """
+    """Destination Data Extension Post class."""
 
     parameters = [
         {
@@ -752,14 +731,18 @@ class DestinationDataExtPostView(SwaggerView):
     @validate_destination()
     def post(self, destination_id: str) -> Tuple[dict, int]:
         """Creates a destination data extension.
+
         ---
         security:
             - Bearer: ["Authorization"]
+
         Args:
             destination_id (str): Destination ID.
+
         Returns:
-            Tuple[dict, int]: Data Extension ID, HTTP Status.
+            Tuple[dict, int]: Data Extension ID, HTTP status code.
         """
+
         database = get_db_client()
         destination = destination_management.get_delivery_platform(
             database, destination_id

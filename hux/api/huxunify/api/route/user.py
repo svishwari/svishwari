@@ -1,7 +1,5 @@
 # pylint: disable=no-self-use
-"""
-Paths for the User API
-"""
+"""Paths for the User API"""
 from http import HTTPStatus
 from typing import Tuple
 
@@ -41,6 +39,7 @@ user_bp = Blueprint(api_c.USER_ENDPOINT, import_name=__name__)
 @secured()
 def before_request():
     """Protect all of the user endpoints."""
+
     pass  # pylint: disable=unnecessary-pass
 
 
@@ -48,9 +47,7 @@ def before_request():
     user_bp, f"{api_c.USER_ENDPOINT}/profile", "IndividualUserSearch"
 )
 class UserProfile(SwaggerView):
-    """
-    User Profile Class
-    """
+    """User Profile Class."""
 
     responses = {
         HTTPStatus.OK.value: {
@@ -69,14 +66,16 @@ class UserProfile(SwaggerView):
         """Retrieves a user profile.
 
         ---
-
         security:
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int]: dict of user and http code
+            Tuple[dict, int]: dict of user, HTTP status code.
 
+        Raises:
+            ProblemException: Any exception raised during endpoint execution.
         """
+
         okta_id = introspect_token(get_token_from_request(request)[0]).get(
             "user_id"
         )
@@ -106,9 +105,7 @@ class UserProfile(SwaggerView):
     user_bp, "<component_name>/<component_id>/favorite", "AddUserFavorite"
 )
 class AddUserFavorite(SwaggerView):
-    """
-    Add user favorites class
-    """
+    """Add user favorites class."""
 
     parameters = [
         {
@@ -148,12 +145,11 @@ class AddUserFavorite(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            component_name (str): Component name
-            component_id (str): Component id
+            component_name (str): Component name.
+            component_id (str): Component ID.
 
         Returns:
-            Tuple[dict, int]: Configuration dict, HTTP status
-
+            Tuple[dict, int]: Configuration dict, HTTP status code.
         """
 
         okta_id = introspect_token(get_token_from_request(request)[0]).get(
@@ -188,9 +184,7 @@ class AddUserFavorite(SwaggerView):
     user_bp, "<component_name>/<component_id>/favorite", "DeleteUserFavorite"
 )
 class DeleteUserFavorite(SwaggerView):
-    """
-    Delete user favorites class
-    """
+    """Delete user favorites class."""
 
     parameters = [
         {
@@ -232,13 +226,13 @@ class DeleteUserFavorite(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            component_name (str): Component name
-            component_id (str): Component id
+            component_name (str): Component name.
+            component_id (str): Component ID.
 
         Returns:
-            Tuple[dict, int]: Configuration dict, HTTP status
-
+            Tuple[dict, int]: Configuration dict, HTTP status code.
         """
+
         okta_id = introspect_token(get_token_from_request(request)[0]).get(
             "user_id"
         )
