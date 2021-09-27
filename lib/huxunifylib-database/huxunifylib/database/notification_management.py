@@ -149,7 +149,9 @@ def get_notifications(
             total_records=collection.count_documents(query_filter),
             notifications=list(
                 collection.find(query_filter).sort(
-                    sort_order if sort_order else []
+                    sort_order
+                    if sort_order
+                    else [("$natural", pymongo.ASCENDING)]
                 )
             ),
         )
