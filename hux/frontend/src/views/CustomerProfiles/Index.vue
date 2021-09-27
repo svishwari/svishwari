@@ -186,6 +186,7 @@
               v-if="!loadingGeoOverview"
               :map-data="customersGeoOverview"
               :configuration-data="configurationData"
+              data-e2e="map-chart"
             />
             <map-slider
               v-if="!loadingGeoOverview"
@@ -235,6 +236,7 @@
             <income-chart
               v-if="!loadingDemographics"
               :data="demographicsData.income"
+              data-e2e="income-chart"
             />
           </v-card>
         </v-col>
@@ -256,6 +258,7 @@
             <gender-spend-chart
               v-if="!loadingDemographics"
               :data="demographicsData.spend"
+              data-e2e="gender-spend-chart"
             />
           </v-card>
         </v-col>
@@ -276,6 +279,7 @@
                 :chart-dimensions="genderChartDimensions"
                 :data="genderChartData"
                 label="Gender"
+                data-e2e="gender-chart"
               />
             </div>
           </v-card>

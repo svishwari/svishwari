@@ -52,6 +52,11 @@ export default {
     overview: "[data-e2e='overviewList']",
     customeroverview: "[data-e2e='customeroverview']",
     chart: "[data-e2e='overview-chart']",
+    mapchart: "[data-e2e='map-chart']",
+    mapStateList: "[data-e2e='map-state-list']",
+    incomeChart: "[data-e2e='income-chart']",
+    genderSpendChart: "[data-e2e='gender-spend-chart']",
+    genderChart: "[data-e2e='gender-chart']",
   },
   //IDR
   idr: {
