@@ -549,19 +549,10 @@ def validate_destination(
     return wrapper
 
 
-def validate_engagement_and_audience(
-    do_validate_engagement: bool = True,
-    do_validate_audience: bool = True,
-) -> object:
+def validate_engagement_and_audience() -> object:
     """This decorator handles validation of engagement and audience objects.
 
     Example: @validate_engagement_and_audience()
-
-    Args:
-        do_validate_engagement (bool): Optional; If is_engagement_in_db, a check
-            is performed to verify if engagement exists in db.
-        do_validate_audience (bool): Optional; If is_audience_in_db, a check
-            is performed to verify if audience exists in db.
 
     Returns:
         Response (object): decorator.
@@ -594,7 +585,7 @@ def validate_engagement_and_audience(
             # engagement validation
             engagement_id = ObjectId(kwargs.get(constants.ENGAGEMENT_ID, None))
 
-            if do_validate_engagement and engagement_id is not None:
+            if engagement_id is not None:
                 if not get_engagement(database, engagement_id):
                     logger.error(
                         "Engagement with engagement ID %s not found.",
@@ -609,7 +600,7 @@ def validate_engagement_and_audience(
             # audience validation
             audience_id = ObjectId(kwargs.get(constants.AUDIENCE_ID, None))
 
-            if do_validate_audience and audience_id is not None:
+            if audience_id is not None:
                 if not orchestration_management.get_audience(
                     database, audience_id
                 ):
