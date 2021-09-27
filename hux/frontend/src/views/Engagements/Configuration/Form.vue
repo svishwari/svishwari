@@ -454,8 +454,8 @@ export default {
         }),
       }
 
-      if(this.value.delivery_schedule == 1) {
-        requestPayload['delivery_schedule'] = {
+      if (this.value.delivery_schedule == 1) {
+        requestPayload["delivery_schedule"] = {
           start_date: !this.isManualDelivery
             ? new Date(this.selectedStartDate).toISOString()
             : null,
@@ -465,8 +465,8 @@ export default {
               : null,
           schedule: recurringConfig,
         }
-      }else {
-         requestPayload['delivery_schedule'] = null
+      } else {
+        requestPayload["delivery_schedule"] = null
       }
 
       return requestPayload
