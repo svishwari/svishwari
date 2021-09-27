@@ -1,6 +1,4 @@
-"""
-This module enables functionality related to engagement management.
-"""
+"""This module enables functionality related to engagement management."""
 
 import logging
 import datetime
@@ -30,7 +28,7 @@ def set_engagement(
     delivery_schedule: dict = None,
     deleted: bool = False,
 ) -> ObjectId:
-    """A function to create an engagement
+    """A function to create an engagement.
 
     Args:
         database (DatabaseClient): A database client.
@@ -38,11 +36,15 @@ def set_engagement(
         description (str): Description of the engagement.
         audiences (list): List of audiences assigned to the engagement.
         user_name (str): Name of the user creating the engagement.
-        delivery_schedule (dict): Delivery Schedule dict
+        delivery_schedule (dict): Delivery Schedule dict.
         deleted (bool): if the engagement is deleted (soft-delete).
-    Returns:
-        ObjectId: id of the newly created engagement
 
+    Returns:
+        ObjectId: id of the newly created engagement.
+
+    Raises:
+        DuplicateName: Error if an engagement with the same name exists
+            already.
     """
 
     # validate audiences
@@ -102,7 +104,7 @@ def set_engagement(
 def get_engagements_summary(
     database: DatabaseClient, engagement_ids: list = None
 ) -> Union[list, None]:
-    """A function to get all engagements summary with all nested lookups
+    """A function to get all engagements summary with all nested lookups.
 
     Args:
         database (DatabaseClient): A database client.
@@ -110,7 +112,6 @@ def get_engagements_summary(
 
     Returns:
         Union[list, None]: List of all engagement documents.
-
     """
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
@@ -380,14 +381,13 @@ def get_engagements_summary(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_engagements(database: DatabaseClient) -> Union[list, None]:
-    """A function to get all engagements
+    """A function to get all engagements.
 
     Args:
         database (DatabaseClient): A database client.
 
     Returns:
         Union[list, None]: List of all engagement documents.
-
     """
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
@@ -409,7 +409,7 @@ def get_engagements(database: DatabaseClient) -> Union[list, None]:
 def get_engagement(
     database: DatabaseClient, engagement_id: ObjectId
 ) -> Union[dict, None]:
-    """A function to get an engagement based on ID
+    """A function to get an engagement based on ID.
 
     Args:
         database (DatabaseClient): A database client.
@@ -417,7 +417,6 @@ def get_engagement(
 
     Returns:
         Union[dict, None]: Dict of an engagement.
-
     """
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
@@ -443,16 +442,15 @@ def delete_engagement(
     engagement_id: ObjectId,
     hard_delete: bool = False,
 ) -> bool:
-    """A function to delete an engagement based on ID
+    """A function to delete an engagement based on ID.
 
     Args:
         database (DatabaseClient): A database client.
-        engagement_id (ObjectId): Object Id of the engagement
-        hard_delete (bool) - optional: hard deletes an engagement if True.
+        engagement_id (ObjectId): Object Id of the engagement.
+        hard_delete (bool): hard deletes an engagement if True.
 
     Returns:
         bool: Flag indicating successful operation.
-
     """
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
@@ -492,7 +490,7 @@ def update_engagement(
     delivery_schedule: dict = None,
     status: str = None,
 ) -> Union[dict, None]:
-    """A function to update fields in an engagement
+    """A function to update fields in an engagement.
 
     Args:
         database (DatabaseClient): A database client.
@@ -505,7 +503,11 @@ def update_engagement(
         status (str): Engagement status.
 
     Returns:
-        Union[dict, None]: dict object of the engagement that has been updated
+        Union[dict, None]: dict object of the engagement that has been updated.
+
+    Raises:
+        NoUpdatesSpecified: Error if the no updates were done to the
+            engagement.
     """
 
     if audiences:
@@ -567,7 +569,7 @@ def remove_audiences_from_engagement(
         audience_ids (list): list of audience ObjectIds.
 
     Returns:
-        Union[dict, None]: dict object of the engagement that has been updated
+        Union[dict, None]: dict object of the engagement that has been updated.
     """
 
     # validate audiences
@@ -622,7 +624,7 @@ def append_audiences_to_engagement(
         audiences (list): list of audiences.
 
     Returns:
-        Union[dict, None]: dict object of the engagement that has been updated
+        Union[dict, None]: dict object of the engagement that has been updated.
     """
 
     # validate audiences
@@ -658,9 +660,15 @@ def validate_audiences(audiences: list, check_empty: bool = True) -> None:
     Args:
         audiences (list): list of audiences.
         check_empty (bool): check empty list.
-    Returns:
 
+    Raises:
+        AttributeError: If check_empty is true and passed in audiences
+            collection is empty.
+        KeyError: If an audience object in the audiences collection does not
+            have an ID field.
+        ValueError: If ID field of an audience object is invalid.
     """
+
     if not audiences and check_empty:
         raise AttributeError("A minimum of one audience is required.")
 
@@ -683,7 +691,7 @@ def validate_audiences(audiences: list, check_empty: bool = True) -> None:
 def get_engagements_by_audience(
     database: DatabaseClient, audience_id: ObjectId
 ) -> Union[list, None]:
-    """A function to get a list of engagements by audience_id
+    """A function to get a list of engagements by audience_id.
 
     Args:
         database (DatabaseClient): A database client.
@@ -691,7 +699,6 @@ def get_engagements_by_audience(
 
     Returns:
         Union[list, None]: list of engagements.
-
     """
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
@@ -723,9 +730,12 @@ def validate_object_id_list(
         object_ids (list): list of object ids.
         check_empty (bool): check empty list.
 
-    Returns:
-
+    Raises:
+        AttributeError: If check_empty is true and passed in object_ids
+            collection is empty.
+        ValueError: If ID field of an audience object is invalid.
     """
+
     if not object_ids and check_empty:
         raise AttributeError("A minimum of one item is required.")
 
@@ -746,7 +756,7 @@ def add_delivery_job(
     destination_id: ObjectId,
     delivery_job_id: ObjectId,
 ) -> Union[dict, None]:
-    """A function to update fields in an engagement
+    """A function to update fields in an engagement.
 
     Args:
         database (DatabaseClient): A database client.
@@ -756,7 +766,7 @@ def add_delivery_job(
         delivery_job_id (ObjectId): ObjectID of the delivery job.
 
     Returns:
-        Union[dict, None]: dict object of the engagement that has been updated
+        Union[dict, None]: dict object of the engagement that has been updated.
     """
 
     # get the engagement collection
@@ -812,19 +822,20 @@ def append_destination_to_engagement_audience(
     destination: dict,
     user_name: str,
 ) -> dict:
-    """A function to append destination to engagement audience
+    """A function to append destination to engagement audience.
 
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): MongoDB ID of the engagement.
         audience_id (ObjectId): MongoDB ID of the audience.
         destination (dict): Destination to add to engagement audience.
-        user_name (str): Name of the user appending the destination to the audience.
+        user_name (str): Name of the user appending the destination to the
+            audience.
 
     Returns:
-        dict: updated engagement object
-
+        dict: updated engagement object.
     """
+
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION
     ]
@@ -852,19 +863,20 @@ def remove_destination_from_engagement_audience(
     destination_id: ObjectId,
     user_name: str,
 ) -> dict:
-    """A function to remove destination from engagement audience
+    """A function to remove destination from engagement audience.
 
-    Args
+    Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): MongoDB ID of the engagement.
         audience_id (ObjectId): MongoDB ID of the audience.
-        destination_id (ObjectId): MongoDB ID of the destination to be removed
-        user_name (str): Name of the user removing the destination from the audience.
+        destination_id (ObjectId): MongoDB ID of the destination to be removed.
+        user_name (str): Name of the user removing the destination from the
+            audience.
 
     Returns:
-        dict: updated engagement object
-
+        dict: updated engagement object.
     """
+
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.AUDIENCES_COLLECTION
     ]
@@ -897,7 +909,6 @@ def check_active_engagement_deliveries(
 
     Returns:
         Union[list, None]: List of all engagement documents.
-
     """
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][

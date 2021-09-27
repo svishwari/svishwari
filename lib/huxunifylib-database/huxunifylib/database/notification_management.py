@@ -1,6 +1,4 @@
-"""
-This module enables functionality related to notification management
-"""
+"""This module enables functionality related to notification management."""
 import logging
 from datetime import datetime
 from typing import Union
@@ -23,7 +21,7 @@ def create_notification(
     description: str,
     category: str = None,
 ) -> Union[dict, None]:
-    """A function to create a new notification
+    """A function to create a new notification.
 
     Args:
         database (DatabaseClient): A database client.
@@ -34,6 +32,9 @@ def create_notification(
     Returns:
         Union[dict, None]: MongoDB document for a notification.
 
+    Raises:
+        InvalidNotificationType: Error if the passed in notification_type value
+            is not valid.
     """
 
     # validate type
@@ -79,19 +80,20 @@ def get_notifications(
     sort_order: int,
     batch_number: int,
 ) -> Union[dict, None]:
-    """A function to get notifications
+    """A function to get notifications.
 
     Args:
         database (DatabaseClient): A database client.
         batch_size (int): Number of notifications per batch.
         sort_order (int): dictate the order of the records that are returned.
-                    (pymongo.DESCENDING or pymongo.ASCENDING)
-        batch_number (int): Number of which batch should be returned
+            (pymongo.DESCENDING or pymongo.ASCENDING)
+        batch_number (int): Number of which batch should be returned.
 
     Returns:
-        Union[dict, None]: MongoDB notification documents with total count of notifications .
-
+        Union[dict, None]: MongoDB notification documents with total count of
+            notifications .
     """
+
     # get collection
     collection = database[c.DATA_MANAGEMENT_DATABASE][
         c.NOTIFICATIONS_COLLECTION

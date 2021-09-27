@@ -109,13 +109,16 @@ def set_data_source(
         data_source_name (str): Name of data source.
         data_source_type (int): Type of data source.
         data_source_format (str): Format of data source.
-        location_type (str): Type of locations (e.g. S3)
-        location_details (dict): Details of location (e.g. S3 bucket and key)
+        location_type (str): Type of locations (e.g. S3).
+        location_details (dict): Details of location (e.g. S3 bucket and key).
         fields (list): A list of fields of data source.
 
     Returns:
         Union[dict, None]: MongoDB document.
 
+    Raises:
+        DuplicateName: Error if a data source with the same data_source_name
+            exists already.
     """
 
     data_source_doc = None
@@ -185,7 +188,6 @@ def get_data_source(
 
     Returns:
         Union[dict, None]: Data source configuration.
-
     """
 
     doc = None
@@ -214,7 +216,6 @@ def get_all_data_sources(database: DatabaseClient) -> list:
 
     Returns:
         list: List of all data source configurations.
-
     """
 
     dm_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -240,7 +241,6 @@ def get_data_source_non_breakdown_fields(
 
     Returns:
         list: A list of no breakdown fields.
-
     """
 
     # Get the current no breakdown list
@@ -274,7 +274,11 @@ def update_data_source_param(
     Returns:
         Union[dict, None]: Updated data source configuration.
 
+    Raises:
+        DataSourceLocked: Error if the data source is not mutable and is not
+            allowed to be updated.
     """
+
     doc = None
     dm_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = dm_db[c.DATA_SOURCES_COLLECTION]
@@ -326,6 +330,9 @@ def update_data_source_name(
     Returns:
         Union[dict, None]: Updated data source configuration.
 
+    Raises:
+        DuplicateName: Error if a data source with the same data_source_name
+            exists already.
     """
 
     # Make sure the name will be unique
@@ -365,7 +372,6 @@ def update_data_source_format(
 
     Returns:
         Union[dict, None]: Updated data source configuration.
-
     """
 
     return update_data_source_param(
@@ -390,7 +396,6 @@ def update_data_source_location_type(
 
     Returns:
         Union[dict, None]: Updated data source configuration.
-
     """
 
     return update_data_source_param(
@@ -415,7 +420,6 @@ def update_data_source_location_details(
 
     Returns:
         Union[dict, None]: Updated data source configuration.
-
     """
 
     return update_data_source_param(
@@ -440,7 +444,6 @@ def update_data_source_fields(
 
     Returns:
         Union[dict, None]: Updated data source configuration.
-
     """
 
     # Validate fields
@@ -465,11 +468,11 @@ def update_data_source_recent_ingestion_job_id(
     Args:
         database (DatabaseClient): A database client.
         data_source_id (ObjectId): MongoDB ID of data source.
-        recent_ingestion_job_id (ObjectId): MongoDB ID of the most recent ingestion job.
+        recent_ingestion_job_id (ObjectId): MongoDB ID of the most recent
+            ingestion job.
 
     Returns:
         Union[dict, None]: Updated data source configuration.
-
     """
 
     return update_data_source_param(
@@ -491,11 +494,11 @@ def update_data_source_recent_ingestion_job_status(
     Args:
         database (DatabaseClient): A database client.
         data_source_id (ObjectId): MongoDB ID of data source.
-        recent_ingestion_job_status (str): Status of the  most recent ingestion job.
+        recent_ingestion_job_status (str): Status of the  most recent ingestion
+            job.
 
     Returns:
         Union[dict, None]: Updated data source configuration.
-
     """
 
     return update_data_source_param(
@@ -524,7 +527,6 @@ def update_data_source_non_breakdown_fields(
 
     Returns:
         Union[dict, None]: Updated data source configuration.
-
     """
 
     return update_data_source_param(
@@ -562,7 +564,15 @@ def update_data_source(
     Returns:
         Union[dict, None]: Updated data source configuration.
 
+    Raises:
+        DuplicateName: Error if a data source with the same data_source_name
+            exists already.
+        DataSourceLocked: Error if the data source is not mutable and is not
+            allowed to be updated.
+        NoUpdatesSpecified: Error if the no updates were done to the
+            data source.
     """
+
     doc = None
     dm_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = dm_db[c.DATA_SOURCES_COLLECTION]
@@ -631,7 +641,6 @@ def set_ingestion_job(
 
     Returns:
         Union[dict, None]: Ingestion job configuration.
-
     """
 
     ingestion_job_doc = None
@@ -692,7 +701,6 @@ def get_ingestion_job(
 
     Returns:
         dict: Ingestion job configuration.
-
     """
 
     dm_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -723,7 +731,6 @@ def get_data_source_ingestion_jobs(
 
     Returns:
         list: List of corresponding ingestion job configurations.
-
     """
 
     dm_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -757,7 +764,6 @@ def is_data_source_mutable(
 
     Returns:
         bool: A flag indicating that the data source is mutable.
-
     """
 
     dm_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -861,13 +867,11 @@ def get_ingestion_job_status(
 
     Args:
         database (DatabaseClient): A database client.
-        ingestion_job_id (ObjectId): MongoDB document ID of ingestion
-          job.
+        ingestion_job_id (ObjectId): MongoDB document ID of ingestion job.
 
     Returns:
-        tuple: A tuple containing the status of the ingestion job and
-        status message. Status can be Pending, In Progress, Failed,
-        or Succeeded.
+        tuple: A tuple containing the status of the ingestion job and status
+            message. Status can be Pending, In Progress, Failed, or Succeeded.
     """
 
     doc = get_ingestion_job(database, ingestion_job_id)
@@ -887,7 +891,6 @@ def get_ingestion_job_data_source_fields(
 
     Returns:
         list: A list of field names of the data source.
-
     """
 
     data_source_id = None
@@ -929,7 +932,6 @@ def get_ingestion_job_custom_fields(
 
     Returns:
         list: A list of custom fields.
-
     """
 
     data_source_id = None
@@ -973,6 +975,7 @@ def append_ingested_data(
     Returns:
         bool: Success flag.
     """
+
     ingested_data = clean_dataframe_types(ingested_data)
 
     dm_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -1033,17 +1036,15 @@ def append_ingested_data(
 def get_ingested_data_stats(
     database: DatabaseClient, ingestion_job_id: ObjectId
 ) -> dict:
-    """
-    A function to get data statistics based on the corresponding ingestion job.
+    """A function to get data statistics based on the corresponding ingestion
+    job.
 
     Args:
         database (DatabaseClient): A database client.
-        ingestion_job_id (ObjectId): MongoDB document ID of ingestion
-          job.
+        ingestion_job_id (ObjectId): MongoDB document ID of ingestion job.
 
     Returns:
         dict: Stored data statistics.
-
     """
 
     dm_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -1080,7 +1081,6 @@ def append_ingested_data_stats(
 
     Returns:
         dict: Stats MongoDB doc.
-
     """
 
     dm_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -1143,8 +1143,7 @@ def get_all_data_source_ids(
         database (DatabaseClient): A database client.
 
     Returns:
-        List: A list of all data source ids.
-
+        Union[list, None]: A list of all data source ids or None.
     """
 
     dm_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -1165,8 +1164,7 @@ def get_data_source_recent_ingestion_job_id(
     database: DatabaseClient,
     data_source_id: ObjectId,
 ) -> ObjectId:
-    """
-    A function to get the most recent ingestion job ID of a data source.
+    """A function to get the most recent ingestion job ID of a data source.
 
     Args:
         database (DatabaseClient): A database client.
@@ -1174,7 +1172,6 @@ def get_data_source_recent_ingestion_job_id(
 
     Returns:
         ObjectId: The ID of the most recent ingestion job.
-
     """
 
     job_id = None
@@ -1199,7 +1196,6 @@ def favorite_data_source(
 
     Returns:
         Union[dict, None]: Updated data source configuration.
-
     """
 
     return update_data_source_param(
@@ -1222,7 +1218,6 @@ def unfavorite_data_source(
 
     Returns:
         Union[dict, None]: Updated data source configuration.
-
     """
 
     return update_data_source_param(
@@ -1245,8 +1240,8 @@ def get_data_sources_count(database: DatabaseClient) -> int:
 
     Returns:
         int: Count of data sources documents.
-
     """
+
     dm_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = dm_db[c.DATA_SOURCES_COLLECTION]
     count = 0

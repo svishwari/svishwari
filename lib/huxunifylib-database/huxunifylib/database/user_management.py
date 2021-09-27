@@ -1,6 +1,4 @@
-"""
-This module enables functionality related to user management.
-"""
+"""This module enables functionality related to user management."""
 
 import logging
 import datetime
@@ -76,14 +74,19 @@ def set_user(
         okta_id (str): Okta user id.
         email_address (str): email address of a user.
         role (str): user role, defaults to a viewer role.
-        organization (str): organization the user belongs to, defaults an empty string.
+        organization (str): organization the user belongs to, defaults an empty
+            string.
         subscriptions (list): subscription list, defaults to an empty list.
-        display_name (str): display name for a user, defaults to the entered email address.
-        profile_photo (str): a profile photo url for the user, defaults to an empty string.
+        display_name (str): display name for a user, defaults to the entered
+            email address.
+        profile_photo (str): a profile photo url for the user, defaults to an
+            empty string.
 
     Returns:
         Union[dict, None]: MongoDB document for a user.
 
+    Raises:
+        DuplicateName: Error if an user with the same okta_id exists already.
     """
 
     # validate okta_id and email_address
@@ -154,8 +157,8 @@ def get_user(database: DatabaseClient, okta_id: str) -> Union[dict, None]:
 
     Returns:
         Union[dict, None]: MongoDB document for a user.
-
     """
+
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
 
     try:
@@ -178,8 +181,8 @@ def get_all_users(database: DatabaseClient) -> list:
 
     Returns:
         list: List of all user documents.
-
     """
+
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
 
     try:
@@ -207,6 +210,7 @@ def delete_user(
     Returns:
         bool: A flag indicating successful deletion.
     """
+
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
 
     try:
@@ -234,6 +238,9 @@ def update_user(
     Returns:
         Union[dict, None]: Updated MongoDB document for a user.
 
+    Raises:
+        DuplicateFieldType: Error if any key in passed in update_doc dict is
+            not part of allowed fields list.
     """
 
     # validate user input id
@@ -290,15 +297,20 @@ def manage_user_favorites(
     Args:
         database (DatabaseClient): A database client.
         okta_id (str): Okta ID of a user doc.
-        component_name (ObjectId): name of the component (i.e campaigns, destinations, etc.).
-        component_id (ObjectId): MongoDB ID of the input component
-        delete_flag (bool): Boolean that specifies to add/remove a favorite component,
-            defaults to false.
+        component_name (ObjectId): name of the component (i.e campaigns,
+            destinations, etc.).
+        component_id (ObjectId): MongoDB ID of the input component.
+        delete_flag (bool): Boolean that specifies to add/remove a favorite
+            component, defaults to false.
 
     Returns:
         Union[dict, None]: Updated MongoDB document for a user.
 
+    Raises:
+        InvalidID: If the passed in component_id did not fetch a doc from the
+            relevant db collections(audiences/engagements).
     """
+
     component_name = component_name.lower()
 
     # validate user input id and campaign id
@@ -365,7 +377,7 @@ def manage_user_dashboard_config(
     config_value: Any,
     delete_flag: bool = False,
 ) -> Union[dict, None]:
-    """A function to manage user dashboard configuration
+    """A function to manage user dashboard configuration.
 
     Args:
         database (DatabaseClient): A database client.
@@ -376,7 +388,6 @@ def manage_user_dashboard_config(
 
     Returns:
         Union[dict, None]: Updated MongoDB document for a user.
-
     """
 
     # validate user input id and config param

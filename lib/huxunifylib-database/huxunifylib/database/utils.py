@@ -31,7 +31,6 @@ def name_exists(
 
     Returns:
         bool: A flag indicating existence of an entity name in database.
-
     """
 
     doc = None
@@ -63,7 +62,6 @@ def detect_non_breakdown_fields(
 
     Returns:
         list: List of detected no breakdown fields.
-
     """
 
     new_non_breakdown_fields = []
