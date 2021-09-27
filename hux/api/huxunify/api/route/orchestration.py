@@ -569,7 +569,7 @@ class AudiencePostView(SwaggerView):
                     {
                         api_c.ID: "60b9601a6021710aa146df2f",
                         db_c.DELIVERY_PLATFORM_CONFIG: {
-                            db_c.DATA_EXTENSION_NAME: "Data Extension Name"
+                            db_c.DATA_EXTENSION_NAME: "Deloitte SFMC Ext"
                         },
                     }
                 ],
