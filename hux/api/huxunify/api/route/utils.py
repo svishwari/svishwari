@@ -399,7 +399,7 @@ class Validation:
         if value.lower() == "false":
             return False
 
-        raise ValidationError(f"{value} is not a valid boolean expression.")
+        raise ValidationError(f"{value} is not a valid boolean value.")
 
     @staticmethod
     def validate_date(
