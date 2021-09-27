@@ -316,7 +316,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                     "message": custom_message
                     if custom_message
                     else "Value Error Encountered"
-                }, HTTPStatus.BAD_REQUEST
+                }, HTTPStatus.INTERNAL_SERVER_ERROR
 
             except ZeroDivisionError:
                 return {
@@ -363,14 +363,14 @@ def api_error_handler(custom_message: dict = None) -> object:
 
             except iae.FailedDeliveryPlatformDependencyError as exc:
                 logger.error(
-                    "%s: %s while executing %s in module %s.",
+                    "%s: %s Error encountered while executing %s in module %s.",
                     exc.__class__,
                     exc.args[0] if exc.args else exc.exception_message,
                     in_function.__qualname__,
                     in_function.__module__,
                 )
                 return {
-                    "message": "Error connecting to Facebook"
+                    "message": constants.DESTINATION_CONNECTION_FAILED
                 }, HTTPStatus.FAILED_DEPENDENCY
 
             except iae.FailedDateFilterIssue as exc:

@@ -245,9 +245,7 @@ class AudienceView(SwaggerView):
 
         # if lookalikeable flag was passed, filter out the audiences
         # that are not lookalikeable.
-        if request.args.get(api_c.LOOKALIKEABLE) and strtobool(
-            request.args.get(api_c.LOOKALIKEABLE)
-        ):
+        if request.args.get(api_c.LOOKALIKEABLE, False):
             audiences = [
                 x
                 for x in audiences
