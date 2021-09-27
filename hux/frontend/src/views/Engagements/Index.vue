@@ -968,6 +968,11 @@ export default {
         }
       }
       tbody {
+        tr {
+          td:first-child {
+            z-index: 1;
+          }
+        }
         tr:last-child {
           td {
             border-bottom: 1px solid var(--v-black-lighten3) !important;
