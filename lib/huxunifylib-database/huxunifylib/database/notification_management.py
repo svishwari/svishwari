@@ -141,14 +141,11 @@ def get_notifications(
         c.NOTIFICATIONS_COLLECTION
     ]
 
-    # check if filter query is None.
-    query_filter = query_filter if query_filter else {}
-
     try:
         return dict(
             total_records=collection.count_documents(query_filter),
             notifications=list(
-                collection.find(query_filter).sort(
+                collection.find(query_filter if query_filter else {}).sort(
                     sort_order
                     if sort_order
                     else [("$natural", pymongo.ASCENDING)]
