@@ -33,4 +33,9 @@ describe("Data management > Customer Profiles", () => {
     })
   })
 
+  it("should be able to check if valid response for total customers has received", () => {
+    //validate Total Customer response
+    cy.get(selector.customerProfile.chart).its("length").should("gt", 0)
+  })
+
 })

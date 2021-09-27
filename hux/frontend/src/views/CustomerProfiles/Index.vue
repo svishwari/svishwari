@@ -162,6 +162,7 @@
             <total-customer-chart
               v-if="!loadingCustomerChart"
               :customers-data="totalCustomers"
+              data-e2e="overview-chart"
             />
           </v-card>
         </v-col>

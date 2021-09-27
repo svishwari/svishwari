@@ -51,6 +51,7 @@ export default {
     customers: "a[href='/customers']",
     overview: "[data-e2e='overviewList']",
     customeroverview: "[data-e2e='customeroverview']",
+    chart: "[data-e2e='overview-chart']",
   },
   //IDR
   idr: {
