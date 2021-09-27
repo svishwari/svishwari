@@ -396,7 +396,7 @@ class Validation:
 
         if value.lower() == "true":
             return True
-        if value.lower() == "false":
+        elif value.lower() == "false":
             return False
 
         raise ValidationError(f"{value} is not a valid boolean expression.")

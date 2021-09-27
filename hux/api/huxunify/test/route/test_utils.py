@@ -92,7 +92,7 @@ class TestRouteUtils(TestCase):
             Validation.validate_date("2021-09-aa")
 
         with self.assertRaises(expected_exception=ValidationError):
-            Validation.validate_date("2021-09-111")
+            Validation.validate_date("2021-09-1O")
 
         with self.assertRaises(expected_exception=ValidationError):
             Validation.validate_date("2021-13-1")
