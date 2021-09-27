@@ -19,7 +19,6 @@ from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
     orchestration_management,
-    db_exceptions,
     engagement_management,
     data_management,
     engagement_audience_management as eam,
