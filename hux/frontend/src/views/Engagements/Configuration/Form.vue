@@ -446,7 +446,16 @@ export default {
       const requestPayload = {
         name: this.value.name,
         description: this.value.description,
-        delivery_schedule: {
+        audiences: Object.values(this.value.audiences).map((audience) => {
+          return {
+            id: audience.id,
+            destinations: audience.destinations,
+          }
+        }),
+      }
+
+      if(this.value.delivery_schedule == 1) {
+        requestPayload['delivery_schedule'] = {
           start_date: !this.isManualDelivery
             ? new Date(this.selectedStartDate).toISOString()
             : null,
@@ -455,13 +464,9 @@ export default {
               ? new Date(this.selectedEndDate).toISOString()
               : null,
           schedule: recurringConfig,
-        },
-        audiences: Object.values(this.value.audiences).map((audience) => {
-          return {
-            id: audience.id,
-            destinations: audience.destinations,
-          }
-        }),
+        }
+      }else {
+         requestPayload['delivery_schedule'] = null
       }
 
       return requestPayload

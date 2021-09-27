@@ -350,9 +350,14 @@ export default {
           },
         ],
       }
-      let data = await this.getRealtimeSize(filterJSON)
-      condition.size = data.total_customers
-      condition.awaitingSize = false
+      try {
+        let data = await this.getRealtimeSize(filterJSON)
+        condition.size = data.total_customers
+        condition.awaitingSize = false
+      } catch (error) {
+        condition.size = 0
+        condition.awaitingSize = false
+      }
     },
 
     async triggerSizingForRule(rule) {
@@ -398,10 +403,15 @@ export default {
         }
         filterJSON.filters.push(sectionObject)
       }
-      let data = await this.getRealtimeSize(filterJSON)
-      this.$emit("updateOverview", data)
-      this.overAllSize = data.total_customers
-      this.loadingOverAllSize = false
+      try {
+        let data = await this.getRealtimeSize(filterJSON)
+        this.$emit("updateOverview", data)
+        this.overAllSize = data.total_customers
+        this.loadingOverAllSize = false
+      } catch (error) {
+        this.overAllSize = 0
+        this.loadingOverAllSize = false
+      }
     },
 
     onSelect(type, condition, item) {

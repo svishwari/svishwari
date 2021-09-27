@@ -24,7 +24,7 @@
     },
     {
       "key": "ltv",
-      "label": "LTV",
+      "label": "Avg. Actual LTV",
       "format": "currency",
       "is_Combined_Metric": false
     }

@@ -26,13 +26,13 @@
               size="22"
               :color="myIconColor"
               class="icon-border pa-2 ma-1 mr-0"
-              @mousedown="changeColorOnSelect()"
-              @mouseup="
-                changeColorOnDeselect()
-                initiateMetricsDownload()
+              :disabled="
+                !hasData(audiencePerformanceAdsData, 'performance') &&
+                !hasData(emailDataData, 'performance')
               "
             >
-              mdi-download
+              @mousedown="changeColorOnSelect()" @mouseup="
+              changeColorOnDeselect() initiateMetricsDownload() " > mdi-download
             </v-icon>
           </template>
           <template #hover-content>
@@ -380,6 +380,34 @@ export default {
     },
     changeColorOnDeselect() {
       this.myIconColor = "primary"
+    },
+    hasData(data, type) {
+      if (data && Array.isArray(data)) {
+        if (type === "summary") {
+          return !data
+            .map((o) => o.value)
+            .every((o) => o === "-" || o === "-|-")
+        } else {
+          if (data.length === 0) return false
+          if (
+            data.length === 1 &&
+            data[0] &&
+            data[0]["destinations"] &&
+            data[0]["destinations"].length === 0
+          ) {
+            const _temp = JSON.parse(JSON.stringify(data[0]))
+            delete _temp.destinations
+            delete _temp.id
+            delete _temp.name
+            delete _temp.is_mapped
+            const uniqueValues = [...new Set(Object.values(_temp))].join()
+            if (uniqueValues === "0,$0,0%" || uniqueValues === "0,0%")
+              return false
+          }
+          return true
+        }
+      }
+      return false
     },
   },
 }
