@@ -1074,7 +1074,7 @@ class UpdateCampaignsForAudience(SwaggerView):
             "description": "Failed to update campaigns.",
         },
         HTTPStatus.NOT_FOUND.value: {
-            "description": api_c.ENGAGEMENT_NOT_FOUND
+            "description": api_c.ENGAGEMENT_ENDPOINT
         },
     }
 
@@ -1660,7 +1660,9 @@ class EngagementMetricsDisplayAds(SwaggerView):
             logger.error(
                 "Engagement with engagement ID %s not found", engagement_id
             )
-            return {"message": api_c.ENGAGEMENT_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            return {
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         final_metric = get_performance_metrics(
             database, engagement, engagement_id, api_c.DISPLAY_ADS
@@ -1722,7 +1724,9 @@ class EngagementMetricsEmail(SwaggerView):
             logger.error(
                 "Engagement with engagement ID %s not found.", engagement_id
             )
-            return {"message": api_c.ENGAGEMENT_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            return {
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         final_metric = get_performance_metrics(
             database, engagement, engagement_id, api_c.EMAIL
@@ -1776,7 +1780,9 @@ class EngagementPerformanceDownload(SwaggerView):
 
         engagement = get_engagement(database, ObjectId(engagement_id))
         if not engagement:
-            return {"message": api_c.ENGAGEMENT_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            return {
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         final_email_metric = get_performance_metrics(
             database, engagement, engagement_id, api_c.EMAIL
