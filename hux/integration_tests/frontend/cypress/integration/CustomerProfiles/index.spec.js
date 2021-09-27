@@ -19,7 +19,9 @@ describe("Data management > Customer Profiles", () => {
 
   it("should be able to view overview of customer profiles", () => {
     //validate overview exist by getting total no. of them
-    cy.get(selector.customerProfile.overview).its("length").as("overviewListCount")
+    cy.get(selector.customerProfile.overview)
+      .its("length")
+      .as("overviewListCount")
     cy.get("@overviewListCount").then(() => {
       cy.get(selector.customerProfile.overview).its("length").should("eq", 8)
     })
@@ -27,9 +29,13 @@ describe("Data management > Customer Profiles", () => {
 
   it("should be able to view customer overview of customer profiles", () => {
     //validate customer overview exist by getting total no. of them
-    cy.get(selector.customerProfile.customeroverview).its("length").as("customeroverviewListCount")
+    cy.get(selector.customerProfile.customeroverview)
+      .its("length")
+      .as("customeroverviewListCount")
     cy.get("@customeroverviewListCount").then(() => {
-      cy.get(selector.customerProfile.customeroverview).its("length").should("eq", 8)
+      cy.get(selector.customerProfile.customeroverview)
+        .its("length")
+        .should("eq", 8)
     })
   })
 
@@ -40,11 +46,13 @@ describe("Data management > Customer Profiles", () => {
 
   it("should be able to hover over state", () => {
     // mouse hover on state
-    cy.get('.state').first().trigger('mouseover', { eventConstructor: 'MouseEvent' })
+    cy.get(".state")
+      .first()
+      .trigger("mouseover", { eventConstructor: "MouseEvent" })
   })
 
   it("map state list should have 51 state", () => {
-    // validate no of state in list 
+    // validate no of state in list
     cy.get(selector.customerProfile.mapStateList).its("length").should("eq", 51)
   })
 
@@ -55,12 +63,16 @@ describe("Data management > Customer Profiles", () => {
 
   it("should be able to hover over bar of top location & income chart", () => {
     // mouse hover on income chart
-    cy.get('.bar').first().trigger('mouseover', { eventConstructor: 'MouseEvent' })
+    cy.get(".bar")
+      .first()
+      .trigger("mouseover", { eventConstructor: "MouseEvent" })
   })
 
   it("should be able to view Gender / monthly spending chart", () => {
     //validate Gender / monthly spending chart
-    cy.get(selector.customerProfile.genderSpendChart).its("length").should("gt", 0)
+    cy.get(selector.customerProfile.genderSpendChart)
+      .its("length")
+      .should("gt", 0)
   })
 
   it("should be able to view Gender chart", () => {
@@ -70,7 +82,8 @@ describe("Data management > Customer Profiles", () => {
 
   it("should be able to hover over arc of gender chart", () => {
     // mouse hover on income chart
-    cy.get('.arc').first().trigger('mouseover', { force: true, eventConstructor: 'MouseEvent' })
+    cy.get(".arc")
+      .first()
+      .trigger("mouseover", { force: true, eventConstructor: "MouseEvent" })
   })
-
 })
