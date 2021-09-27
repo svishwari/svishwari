@@ -676,70 +676,61 @@ class AudiencePostView(SwaggerView):
                     }
                 engagement_ids.append(engagement_id)
 
-        try:
-            # get live audience size
-            customers = get_customers_overview(
-                token_response[0],
-                {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)},
-            )
+        # get live audience size
+        customers = get_customers_overview(
+            token_response[0],
+            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)},
+        )
 
-            # create the audience
-            audience_doc = orchestration_management.create_audience(
-                database=database,
-                name=body[api_c.AUDIENCE_NAME],
-                audience_filters=body.get(api_c.AUDIENCE_FILTERS),
-                destination_ids=body.get(api_c.DESTINATIONS),
-                user_name=user_name,
-                size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
-            )
+        # create the audience
+        audience_doc = orchestration_management.create_audience(
+            database=database,
+            name=body[api_c.AUDIENCE_NAME],
+            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+            destination_ids=body.get(api_c.DESTINATIONS),
+            user_name=user_name,
+            size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
+        )
 
-            # add notification
+        # add notification
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f'New audience named "{audience_doc[db_c.NAME]}" '
+                f"added by {user_name}."
+            ),
+            api_c.ORCHESTRATION_TAG,
+        )
+
+        # attach the audience to each of the engagements
+        for engagement_id in engagement_ids:
+            engagement = (
+                engagement_management.append_audiences_to_engagement(
+                    database,
+                    engagement_id,
+                    user_name,
+                    [
+                        {
+                            db_c.OBJECT_ID: audience_doc[db_c.ID],
+                            db_c.DESTINATIONS: body.get(
+                                api_c.DESTINATIONS
+                            ),
+                        }
+                    ],
+                )
+            )
+            # add audience attached notification
             create_notification(
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 (
-                    f'New audience named "{audience_doc[db_c.NAME]}" '
-                    f"added by {user_name}."
+                    f'Audience "{audience_doc[db_c.NAME]}" '
+                    f'added to engagement "{engagement[db_c.NAME]}" '
+                    f"by {user_name}."
                 ),
                 api_c.ORCHESTRATION_TAG,
             )
-
-            # attach the audience to each of the engagements
-            for engagement_id in engagement_ids:
-                engagement = (
-                    engagement_management.append_audiences_to_engagement(
-                        database,
-                        engagement_id,
-                        user_name,
-                        [
-                            {
-                                db_c.OBJECT_ID: audience_doc[db_c.ID],
-                                db_c.DESTINATIONS: body.get(
-                                    api_c.DESTINATIONS
-                                ),
-                            }
-                        ],
-                    )
-                )
-                # add audience attached notification
-                create_notification(
-                    database,
-                    db_c.NOTIFICATION_TYPE_SUCCESS,
-                    (
-                        f'Audience "{audience_doc[db_c.NAME]}" '
-                        f'added to engagement "{engagement[db_c.NAME]}" '
-                        f"by {user_name}."
-                    ),
-                    api_c.ORCHESTRATION_TAG,
-                )
-
-        except db_exceptions.DuplicateName:
-            logger.error(
-                "Duplicate Audience name %s.", body[api_c.AUDIENCE_NAME]
-            )
-            return {
-                "message": f"Duplicate name '{body[api_c.AUDIENCE_NAME]}'"
-            }, HTTPStatus.BAD_REQUEST
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.CREATED
 

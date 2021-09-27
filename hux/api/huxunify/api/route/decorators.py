@@ -327,15 +327,15 @@ def api_error_handler(custom_message: dict = None) -> object:
 
             except de.DuplicateName as exc:
                 logger.error(
-                    "%s: %s while executing %s in module %s.",
+                    "%s: %s Error encountered while executing %s in module %s.",
                     exc.__class__,
-                    exc.exception_message,
+                    exc.args[0] if exc.args else exc.exception_message,
                     in_function.__qualname__,
                     in_function.__module__,
                 )
                 return {
                     "message": constants.DUPLICATE_NAME
-                }, HTTPStatus.BAD_REQUEST.value
+                }, HTTPStatus.FORBIDDEN
 
             except CustomAudienceDeliveryStatusError as exc:
                 logger.error(
