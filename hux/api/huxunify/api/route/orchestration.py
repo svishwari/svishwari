@@ -703,20 +703,16 @@ class AudiencePostView(SwaggerView):
 
         # attach the audience to each of the engagements
         for engagement_id in engagement_ids:
-            engagement = (
-                engagement_management.append_audiences_to_engagement(
-                    database,
-                    engagement_id,
-                    user_name,
-                    [
-                        {
-                            db_c.OBJECT_ID: audience_doc[db_c.ID],
-                            db_c.DESTINATIONS: body.get(
-                                api_c.DESTINATIONS
-                            ),
-                        }
-                    ],
-                )
+            engagement = engagement_management.append_audiences_to_engagement(
+                database,
+                engagement_id,
+                user_name,
+                [
+                    {
+                        db_c.OBJECT_ID: audience_doc[db_c.ID],
+                        db_c.DESTINATIONS: body.get(api_c.DESTINATIONS),
+                    }
+                ],
             )
             # add audience attached notification
             create_notification(
