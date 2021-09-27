@@ -1074,7 +1074,7 @@ class UpdateCampaignsForAudience(SwaggerView):
             "description": "Failed to update campaigns.",
         },
         HTTPStatus.NOT_FOUND.value: {
-            "description": api_c.ENGAGEMENT_ENDPOINT
+            "description": api_c.ENGAGEMENT_NOT_FOUND
         },
     }
 
