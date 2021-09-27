@@ -215,5 +215,5 @@ class NotificationStream(SwaggerView):
                     )
                 )
 
-        # return the event stream, which returns Tuple[dict, int].
+        # return the event stream response
         return Response(event_stream(), mimetype="text/event-stream")
