@@ -46,6 +46,12 @@ export default {
     models: "a[href='/models']",
   },
 
+  //Customer Profiles
+  customerProfile: {
+    customers: "a[href='/customers']",
+    overview: "[data-e2e='overviewList']",
+    customeroverview: "[data-e2e='customeroverview']",
+  },
   //IDR
   idr: {
     identityResolution: "a[href='/identity-resolution']",

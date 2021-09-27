@@ -28,6 +28,7 @@
               :grow="item.toolTipText ? 1 : 0"
               :icon="item.icon"
               :title="item.title"
+              data-e2e='overviewList'
             >
               <template #subtitle-extended>
                 <tooltip v-if="!item.toolTipText">
@@ -90,6 +91,7 @@
               :icon="item.icon"
               :interactable="item.action ? true : false"
               @click="item.action ? onClick(item.action) : ''"
+              data-e2e='customeroverview'
             >
               <template #subtitle-extended>
                 <tooltip>
