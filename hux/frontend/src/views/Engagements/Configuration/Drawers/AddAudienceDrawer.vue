@@ -45,7 +45,7 @@
                   </span>
                 </template>
                 <template #hover-content>
-                  {{ item.subtitle | Empty }}
+                  {{ item.subtitle | Numeric | Empty }}
                 </template>
               </tooltip>
             </template>

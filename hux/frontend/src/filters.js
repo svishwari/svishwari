@@ -114,10 +114,12 @@ const Numeric = (
 
   return approx
     ? value
-    : value.toLocaleString("en-US", {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: round && Number(value) ? 0 : 2,
-      }) +
+    : value
+        .toLocaleString("en-US", {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: round && Number(value) ? 0 : 2,
+        })
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
         abrv +
         append
 }

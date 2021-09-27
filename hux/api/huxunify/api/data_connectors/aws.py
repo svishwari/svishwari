@@ -211,7 +211,7 @@ def check_aws_s3() -> Tuple[bool, str]:
 
     """
     return check_aws_connection(
-        client_method="get_bucket_versioning",
+        client_method="get_bucket_location",
         client=api_c.AWS_S3_NAME,
         extra_params={api_c.AWS_BUCKET: config.get_config().S3_DATASET_BUCKET},
     )
@@ -230,6 +230,8 @@ def check_aws_events() -> Tuple[bool, str]:
         extra_params={
             "Name": "unified_health_check",
             "State": "DISABLED",
+            "Description": "test health check",
+            "RoleArn": config.get_config().AUDIENCE_ROUTER_JOB_ROLE_ARN,
             "ScheduleExpression": "cron(15 0 * * ? *)",
         },
     )

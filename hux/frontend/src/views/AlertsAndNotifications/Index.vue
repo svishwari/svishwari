@@ -194,11 +194,6 @@ export default {
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
   }
-  .page-header--wrap {
-    box-shadow: 0px 1px 1px -1px var(--v-black-lighten3),
-      0px 0px 1px 0px var(--v-black-lighten3),
-      0px 0px 2px 0px var(--v-black-lighten3) !important;
-  }
   .top-bar {
     margin-top: 1px;
     .v-icon--disabled {
