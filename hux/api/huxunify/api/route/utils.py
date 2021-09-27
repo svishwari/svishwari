@@ -343,7 +343,7 @@ def check_end_date_greater_than_start_date(
 
 
 class Validation:
-    """ Validation class for input parameters"""
+    """Validation class for input parameters"""
 
     def __init__(self):
         pass
