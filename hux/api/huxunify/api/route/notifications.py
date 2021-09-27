@@ -192,7 +192,9 @@ class NotificationStream(SwaggerView):
                 # get the previous time, take last minute.
                 previous_time = datetime.utcnow().replace(
                     tzinfo=timezone.utc
-                ) - timedelta(minutes=1)
+                ) - timedelta(
+                    minutes=int(api_c.NOTIFICATION_STREAM_TIME_SECONDS / 60)
+                )
 
                 # dump the output notification list to the notification schema.
                 yield json.dumps(
