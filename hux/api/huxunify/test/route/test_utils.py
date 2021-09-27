@@ -111,9 +111,10 @@ class TestRouteUtils(TestCase):
         """Tests the Validation class static method validate_date_range"""
 
         with self.assertRaises(expected_exception=ValidationError):
-            Validation.validate_date_range("2021-09-11", "2021-09-11")
-
-        with self.assertRaises(expected_exception=ValidationError):
             Validation.validate_date_range("2021-09-11", "2021-13-11")
 
+        with self.assertRaises(expected_exception=ValidationError):
+            Validation.validate_date_range("2021-09-11", "2021-08")
+
         Validation.validate_date_range("2021-9-11", "2021-9-12")
+        Validation.validate_date_range("2021-9-11", "2021-09-11")

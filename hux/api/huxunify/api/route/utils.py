@@ -362,6 +362,7 @@ class Validation:
             ValidationError: Error that is raised if input is invalid.
 
         """
+        # max_value added to protect snowflake/and other apps that are not able to handle 32int+
         max_value = 2147483647
 
         if value.isdigit():
@@ -445,7 +446,7 @@ class Validation:
         start = Validation.validate_date(start_date, date_format)
         end = Validation.validate_date(end_date, date_format)
 
-        if start >= end:
+        if start > end:
             raise ValidationError(
                 f"{start_date} is not earlier than {end_date}."
             )
