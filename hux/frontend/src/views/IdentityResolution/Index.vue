@@ -34,11 +34,14 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
 
       <hux-filters-bar :is-toggled="isFilterToggled">
-        <label class="neroBlack--text mr-2"> Select timeframe: </label>
+        <label class="black--text text--darken-4 mr-2">
+          Select timeframe:
+        </label>
 
         <hux-select
           v-model="filters.startMonth"
           :items="options.months"
+          :items-disabled="disabledOptions.startMonths"
           label="Start month"
           class="mx-1"
           width="141"
@@ -48,6 +51,7 @@
         <hux-select
           v-model="filters.startYear"
           :items="options.years"
+          :items-disabled="disabledOptions.startYears"
           label="Start year"
           class="mx-1"
           width="126"
@@ -59,6 +63,7 @@
         <hux-select
           v-model="filters.endMonth"
           :items="options.months"
+          :items-disabled="disabledOptions.endMonths"
           label="End month"
           class="mx-1"
           width="141"
@@ -69,6 +74,7 @@
           v-model="filters.endYear"
           label="End year"
           :items="options.years"
+          :items-disabled="disabledOptions.endYears"
           class="mx-1"
           width="126"
           @change="refreshData"
@@ -142,7 +148,7 @@
 
             <v-card-title class="chart-style pb-8 pl-5 pt-5">
               <div class="mt-2">
-                <span class="neroBlack--text text-h5">
+                <span class="black--text text--darken-4 text-h5">
                   ID Resolution matching trends
                 </span>
               </div>
@@ -223,9 +229,9 @@ export default {
   data() {
     return {
       loadingOverview: true,
-      loadingDataFeeds: false,
-      loadingMatchingTrends: false,
-      isFilterToggled: false,
+      loadingDataFeeds: true,
+      loadingMatchingTrends: true,
+      isFilterToggled: true,
       options: {
         months: listOfMonths(),
         years: listOfYears(),
@@ -242,25 +248,126 @@ export default {
   computed: {
     ...mapGetters({
       overview: "identity/overview",
-      dateRange: "identity/dateRange",
+      timeFrame: "identity/timeFrame",
       dataFeeds: "identity/dataFeeds",
       matchingTrends: "identity/matchingTrends",
     }),
 
     startDate() {
-      const startDate = `${this.filters.startMonth} ${this.filters.startYear}`
-      return this.$options.filters.Date(startDate, "YYYY-MM-DD")
+      return this.formatDate(
+        `${this.filters.startMonth} ${this.filters.startYear}`
+      )
     },
 
     endDate() {
-      const endDate = `${this.filters.endMonth} ${this.filters.endYear}`
-      return this.$options.filters.Date(endDate, "YYYY-MM-DD")
+      return this.formatDate(`${this.filters.endMonth} ${this.filters.endYear}`)
     },
 
     selectedDateRange() {
       return {
         startDate: this.startDate,
         endDate: this.endDate,
+      }
+    },
+
+    timeFrameBounds() {
+      const timeFrameStart = this.timeFrame["start_date"]
+      const timeFrameEnd = this.timeFrame["end_date"]
+      return {
+        minMonth: this.formatDate(timeFrameStart, "month"),
+        minYear: this.formatDate(timeFrameStart, "year"),
+        maxMonth: this.formatDate(timeFrameEnd, "month"),
+        maxYear: this.formatDate(timeFrameEnd, "year"),
+      }
+    },
+
+    enabledOptions() {
+      let startMonth = "January"
+      let endMonth = "December"
+      const sameYearSelected = this.filters.startYear === this.filters.endYear
+
+      if (sameYearSelected) {
+        const yearSelected = this.filters.startYear
+        const startYearSelected = yearSelected === this.timeFrameBounds.minYear
+        const endYearSelected = yearSelected === this.timeFrameBounds.maxYear
+
+        if (startYearSelected) {
+          startMonth = this.timeFrameBounds.minMonth
+        } else if (endYearSelected) {
+          endMonth = this.timeFrameBounds.maxMonth
+        }
+      }
+
+      return {
+        startMonths: listOfMonths({
+          startMonth: this.timeFrameBounds.minMonth,
+          endMonth: endMonth,
+        }),
+        startYears: listOfYears({
+          startYear: this.timeFrameBounds.minYear,
+          endYear: this.filters.endYear,
+        }),
+        endMonths: listOfMonths({
+          startMonth: startMonth,
+          endMonth: this.timeFrameBounds.maxMonth,
+        }),
+        endYears: listOfYears({
+          startYear: this.filters.startYear,
+          endYear: this.timeFrameBounds.maxYear,
+        }),
+      }
+    },
+
+    disabledOptions() {
+      let startMonths = []
+      let endMonths = []
+
+      const disabledStartMonths = this.options.months.filter(
+        (month) => !this.enabledOptions.startMonths.includes(month)
+      )
+
+      const disabledEndMonths = this.options.months.filter(
+        (month) => !this.enabledOptions.endMonths.includes(month)
+      )
+
+      if (this.filters.startYear === this.timeFrameBounds.maxYear) {
+        startMonths = disabledEndMonths
+      }
+
+      if (this.filters.startYear === this.timeFrameBounds.minYear) {
+        startMonths = disabledStartMonths
+      }
+
+      if (this.filters.endYear === this.timeFrameBounds.minYear) {
+        endMonths = disabledStartMonths
+      }
+
+      if (this.filters.endYear === this.timeFrameBounds.maxYear) {
+        endMonths = disabledEndMonths
+      }
+
+      if (this.filters.startYear === this.filters.endYear) {
+        if (this.filters.startYear === this.timeFrameBounds.minYear) {
+          startMonths = endMonths = disabledStartMonths
+        }
+        if (this.filters.endYear === this.timeFrameBounds.maxYear) {
+          startMonths = endMonths = disabledEndMonths
+        }
+      }
+
+      const startYears = this.options.years.filter(
+        (year) => !this.enabledOptions.startYears.includes(year)
+      )
+
+      const endYears = this.options.years.filter(
+        (year) => !this.enabledOptions.endYears.includes(year)
+      )
+
+      return {
+        startMonths: startMonths,
+        endMonths: endMonths,
+        startYears: startYears,
+        endYears: endYears,
       }
     },
 
@@ -280,8 +387,8 @@ export default {
   async mounted() {
     await this.refreshData()
     this.setFilters({
-      startDate: this.dateRange["start_date"],
-      endDate: this.dateRange["end_date"],
+      startDate: this.timeFrame["start_date"],
+      endDate: this.timeFrame["end_date"],
     })
   },
 
@@ -294,19 +401,33 @@ export default {
 
     async refreshData() {
       await this.loadOverview()
-      this.loadDataFeeds()
+      await this.loadDataFeeds()
       await this.loadMatchingTrends()
     },
 
     setFilters({ startDate, endDate }) {
       if (startDate && endDate) {
-        const month = "MMMM"
-        const year = "YYYY"
-        this.filters.startMonth = this.$options.filters.Date(startDate, month)
-        this.filters.startYear = this.$options.filters.Date(startDate, year)
-        this.filters.endMonth = this.$options.filters.Date(endDate, month)
-        this.filters.endYear = this.$options.filters.Date(endDate, year)
+        const updatedFilters = {
+          startMonth: this.formatDate(startDate, "month"),
+          startYear: this.formatDate(startDate, "year"),
+          endMonth: this.formatDate(endDate, "month"),
+          endYear: this.formatDate(endDate, "year"),
+        }
+
+        this.filters = updatedFilters
+
+        this.options.years = listOfYears({
+          startYear: updatedFilters.startYear,
+          endYear: updatedFilters.endYear,
+        })
       }
+    },
+
+    formatDate(date, format) {
+      let dateFormat = "YYYY-MM-DD"
+      if (format === "month") dateFormat = "MMMM"
+      if (format === "year") dateFormat = "YYYY"
+      return this.$options.filters.Date(date, dateFormat)
     },
 
     async loadMatchingTrends() {

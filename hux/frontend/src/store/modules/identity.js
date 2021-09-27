@@ -78,6 +78,8 @@ const namespaced = true
 const state = {
   overview: {},
 
+  timeFrame: {},
+
   dataFeeds: {},
 
   dataFeedReports: {},
@@ -100,9 +102,7 @@ const getters = {
     })
   },
 
-  dateRange: (state) => {
-    return "overview" in state.overview ? state.overview["date_range"] : null
-  },
+  timeFrame: (state) => state.timeFrame,
 
   dataFeeds: (state) => Object.values(state.dataFeeds),
 
@@ -137,6 +137,10 @@ const mutations = {
     state.overview = data
   },
 
+  SET_TIME_FRAME(state, data) {
+    state.timeFrame = data
+  },
+
   SET_DATA_FEEDS(state, items) {
     items.forEach((item) => {
       Vue.set(state.dataFeeds, item.datafeed_id, item)
@@ -160,6 +164,10 @@ const actions = {
         end_date: endDate,
       })
       commit("SET_OVERVIEW", response.data)
+
+      if (!startDate && !endDate) {
+        commit("SET_TIME_FRAME", response.data["date_range"])
+      }
     } catch (error) {
       handleError(error)
       throw error

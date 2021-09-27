@@ -1,7 +1,7 @@
 <template>
   <v-select
     v-model="localValue"
-    :items="items"
+    :items="localItems"
     :label="label"
     :menu-props="{
       contentClass: 'hux-select',
@@ -34,6 +34,12 @@ export default defineComponent({
       required: true,
     },
 
+    itemsDisabled: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+
     label: {
       type: String,
       required: false,
@@ -58,8 +64,20 @@ export default defineComponent({
       },
     })
 
+    const localItems = computed({
+      get: () =>
+        props.items.map((item) => {
+          return {
+            text: item,
+            value: item,
+            disabled: props.itemsDisabled.includes(item),
+          }
+        }),
+    })
+
     return {
       localValue,
+      localItems,
     }
   },
 })
