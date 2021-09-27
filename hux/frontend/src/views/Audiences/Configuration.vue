@@ -156,7 +156,8 @@
                       "
                     >
                       <v-sheet max-width="240px">
-                        The location(s) where Audiences are planned to be run.
+                        The external platforms where this audience will be
+                        delivered.
                       </v-sheet>
                     </template>
                   </tooltip>
@@ -290,7 +291,10 @@
               is-tile
               width="94"
               height="40"
-              @click.native="$router.go(-1)"
+              @click.native="
+                flagForModal = true
+                $router.go(-1)
+              "
             >
               <span class="primary--text">Cancel</span>
             </huxButton>
@@ -474,7 +478,7 @@ export default {
       this.showConfirmModal = true
       this.navigateTo = to
     } else {
-      if (this.navigateTo) next()
+      next()
     }
   },
 
@@ -665,6 +669,7 @@ export default {
           payload: payload,
         })
       }
+      this.flagForModal = true
       this.$router.push({
         name: "AudienceInsight",
         params: { id: response.id },

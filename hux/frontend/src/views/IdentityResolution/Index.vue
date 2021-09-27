@@ -77,7 +77,7 @@
     </template>
     <template>
       <v-row v-if="!loadingOverview" no-gutters>
-        <v-slide-group class="idr-slide-group" show-arrows>
+        <v-slide-group ref="wrapper" class="idr-slide-group" show-arrows>
           <v-slide-item v-for="(metric, index) in overview" :key="index">
             <metric-card
               :title="metric.title"
@@ -222,7 +222,7 @@ export default {
 
   data() {
     return {
-      loadingOverview: false,
+      loadingOverview: true,
       loadingDataFeeds: false,
       loadingMatchingTrends: false,
       isFilterToggled: false,

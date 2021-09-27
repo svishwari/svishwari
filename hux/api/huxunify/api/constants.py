@@ -34,7 +34,6 @@ AUDIENCE_ROUTER_JOB_QUEUE_CONST = "AUDIENCE-ROUTER-JOB-QUEUE"
 CDPR_EVENT_CONST = "CDPR-EVENT"
 FLDR_EVENT_CONST = "FLDR-EVENT"
 
-
 # general defines
 ID = "id"
 NAME = "name"
@@ -218,11 +217,8 @@ AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
 AWS_SSM_NAME = "ssm"
 AWS_EVENTS_NAME = "events"
 AWS_BATCH_NAME = "batch"
-AWS_HEALTH_TESTS = {
-    AWS_SSM_NAME: ["get_parameter", {"Name": "unifieddb_host_alias"}],
-    AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
-}
-S3 = "s3"
+AWS_S3_NAME = "s3"
+
 AWS_BUCKET = "Bucket"
 AWS_KEY = "Key"
 AWS_TARGET_ID = "Id"
@@ -991,7 +987,6 @@ DEFAULT_ALERT_SORT_ORDER = "descending"
 DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
-
 
 # health check prometheus metric constants
 MONGO_CONNECTION_HEALTH = "mongo_connection_health"

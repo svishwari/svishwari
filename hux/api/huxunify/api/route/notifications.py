@@ -1,7 +1,5 @@
 # pylint: disable=no-self-use
-"""
-Paths for Notifications API
-"""
+"""Paths for Notifications API"""
 import json
 from http import HTTPStatus
 from typing import Tuple, Generator
@@ -39,6 +37,7 @@ notifications_bp = Blueprint(
 @secured()
 def before_request():
     """Protect all of the notifications endpoints."""
+
     pass  # pylint: disable=unnecessary-pass
 
 
@@ -46,9 +45,7 @@ def before_request():
     notifications_bp, f"/{api_c.NOTIFICATIONS_ENDPOINT}", "NotificationsSearch"
 )
 class NotificationsSearch(SwaggerView):
-    """
-    Notifications search class
-    """
+    """Notifications search class."""
 
     parameters = [
         {
@@ -99,7 +96,7 @@ class NotificationsSearch(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] dict of notifications and http code
+            Tuple[dict, int] dict of notifications, HTTP status code.
         """
 
         batch_size = request.args.get(
@@ -171,7 +168,7 @@ class NotificationStream(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] dict of notifications and http code
+            Tuple[dict, int] dict of notifications, HTTP status code.
         """
 
         def event_stream() -> Generator[Tuple[dict, int], None, None]:

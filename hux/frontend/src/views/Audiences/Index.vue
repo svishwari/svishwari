@@ -37,6 +37,8 @@
         :columns="columnDefs"
         :data-items="audienceList"
         view-height="calc(100vh - 210px)"
+        sort-column="update_time"
+        sort-desc="false"
       >
         <template #row-item="{ item }">
           <td
@@ -346,13 +348,10 @@ export default {
     }),
     audienceList() {
       let audienceValue = this.rowData
-      return audienceValue.sort((a, b) =>
-        a.name.toLowerCase() === b.name.toLowerCase()
-          ? 0
-          : a.name.toLowerCase() < b.name.toLowerCase()
-          ? -1
-          : 1
-      )
+      audienceValue.forEach((audience) => {
+        audience.destinations.sort((a, b) => a.name.localeCompare(b.name))
+      })
+      return audienceValue
     },
     isDataExists() {
       if (this.rowData) return this.rowData.length > 0
@@ -402,7 +401,8 @@ export default {
 
       return actionItems
     },
-    getOverallDestinations(destinations) {
+    getOverallDestinations(audienceDestinations) {
+      let destinations = [...audienceDestinations]
       if (destinations.length > 3) {
         return destinations
           .slice(0, 3)
@@ -410,7 +410,8 @@ export default {
       }
       return destinations.sort((a, b) => a.name.localeCompare(b.name))
     },
-    getExtraDestinations(destinations) {
+    getExtraDestinations(audienceDestinations) {
+      let destinations = [...audienceDestinations]
       if (destinations.length > 3) {
         return destinations
           .slice(3)

@@ -261,7 +261,15 @@
 
     <hux-footer>
       <template #left>
-        <v-btn tile color="white" height="40" @click.native="$router.go(-1)">
+        <v-btn
+          tile
+          color="white"
+          height="40"
+          @click.native="
+            dontShowModal = true
+            $router.go(-1)
+          "
+        >
           <span class="primary--text">Cancel</span>
         </v-btn>
       </template>
@@ -402,6 +410,7 @@ export default {
         new Date().getTime() - new Date().getTimezoneOffset() * 60000
       ).toISOString(),
       engagementList: {},
+      dontShowModal: false,
     }
   },
 
@@ -437,7 +446,16 @@ export default {
       const requestPayload = {
         name: this.value.name,
         description: this.value.description,
-        delivery_schedule: {
+        audiences: Object.values(this.value.audiences).map((audience) => {
+          return {
+            id: audience.id,
+            destinations: audience.destinations,
+          }
+        }),
+      }
+
+      if (this.value.delivery_schedule == 1) {
+        requestPayload["delivery_schedule"] = {
           start_date: !this.isManualDelivery
             ? new Date(this.selectedStartDate).toISOString()
             : null,
@@ -446,13 +464,9 @@ export default {
               ? new Date(this.selectedEndDate).toISOString()
               : null,
           schedule: recurringConfig,
-        },
-        audiences: Object.values(this.value.audiences).map((audience) => {
-          return {
-            id: audience.id,
-            destinations: audience.destinations,
-          }
-        }),
+        }
+      } else {
+        requestPayload["delivery_schedule"] = null
       }
 
       return requestPayload
@@ -577,6 +591,7 @@ export default {
     async addNewEngagement() {
       try {
         const engagement = await this.addEngagement(this.payload)
+        this.dontShowModal = true
         this.$router.push({
           name: "EngagementDashboard",
           params: { id: engagement.id },
@@ -591,6 +606,7 @@ export default {
       try {
         const engagement = await this.addEngagement(this.payload)
         await this.deliverEngagement(engagement.id)
+        this.dontShowModal = true
         this.$router.push({
           name: "EngagementDashboard",
           params: { id: engagement.id },
@@ -610,6 +626,7 @@ export default {
         }
         const payload = { id: this.getRouteId, data: requestPayload }
         await this.updateEngagement(payload)
+        this.dontShowModal = true
         this.$router.push({
           name: "EngagementDashboard",
           params: { id: this.getRouteId },
