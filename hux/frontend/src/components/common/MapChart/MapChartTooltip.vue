@@ -17,10 +17,10 @@
         :key="metric.label"
         class="sub-props pt-4"
       >
-        <span v-if="metric.is_Combined_Metric" class="subprop-name">{{
+        <span v-if="metric.is_Combined_Metric" class="subprop-name mr-2">{{
           metric.label
         }}</span>
-        <span v-if="!metric.is_Combined_Metric" class="subprop-name">{{
+        <span v-if="!metric.is_Combined_Metric" class="subprop-name mr-2">{{
           metric.label
         }}</span>
         <span v-if="metric.is_Combined_Metric" class="value ml-1">
@@ -53,7 +53,7 @@ export default {
     },
     showTooltip: {
       type: Boolean,
-      required: false,
+      required: true,
       default: false,
     },
     sourceInput: {
@@ -114,8 +114,8 @@ export default {
 .tooltip-style {
   @extend .box-shadow-3;
   border-radius: 0px;
-  max-width: 213px;
-  min-width: 210px;
+  max-width: 300px;
+  min-width: 250px;
   height: auto;
   z-index: 99 !important;
   position: absolute;

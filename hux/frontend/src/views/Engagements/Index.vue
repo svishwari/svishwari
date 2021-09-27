@@ -37,6 +37,8 @@
       :columns="columnDefs"
       :data-items="rowData"
       view-height="calc(100vh - 210px)"
+      sort-column="update_time"
+      sort-desc="false"
       nested
     >
       <template #item-row="{ item, expandFunc, isExpanded }">
