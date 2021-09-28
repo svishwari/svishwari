@@ -87,7 +87,7 @@ def bulk_write_data_sources(
         c.CDP_DATA_SOURCES_COLLECTION
     ]
 
-    [
+    _ = [
         data_source.update(
             {c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1, c.ADDED: True}
         )
