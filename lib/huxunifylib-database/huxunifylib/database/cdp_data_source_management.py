@@ -200,6 +200,38 @@ def delete_data_source(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def bulk_delete_data_sources(
+    database: DatabaseClient, data_source_types: list
+) -> bool:
+    """A function that deletes selected data sources
+
+    Args:
+        database (DatabaseClient): A database client.
+        data_source_types (list): List of data source types to delete
+    Returns:
+        bool: a flag indicating successful deletion
+    """
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
+
+    try:
+        return (
+            collection.delete_many(
+                {c.TYPE: {"$in": data_source_types}}
+            ).deleted_count
+            > 0
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def update_data_sources(
     database: DatabaseClient, data_source_ids: list, update_dict: dict
 ) -> bool:

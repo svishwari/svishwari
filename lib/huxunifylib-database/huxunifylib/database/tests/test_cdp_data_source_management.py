@@ -237,3 +237,22 @@ class TestCdpDataSourceManagement(unittest.TestCase):
             self.assertIn(c.CDP_DATA_SOURCE_FIELD_FEED_COUNT, data_source)
             self.assertIn(c.ADDED, data_source)
             self.assertTrue(c.ADDED)
+
+    def test_bulk_delete_data_sources(self) -> None:
+        """Test bulk delete data sources"""
+        # create data source first
+        data_sources = [
+            {c.NAME: "Bluecore", c.TYPE: "bluecore", c.STATUS: "Active"},
+            {c.NAME: "Netsuite", c.TYPE: "netsuite", c.STATUS: "Pending"},
+        ]
+
+        # create data sources
+        created_data_sources = dsmgmt.bulk_write_data_sources(
+            self.database, data_sources
+        )
+
+        self.assertTrue(
+            dsmgmt.bulk_delete_data_sources(
+                self.database, [x[c.TYPE] for x in created_data_sources]
+            )
+        )
