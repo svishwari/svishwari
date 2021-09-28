@@ -18,7 +18,7 @@ def pytest_configure(config: Config):
         initial conftest file after command line options have been parsed.
 
     Args:
-        config (Config):
+        config (Config): Existing pytest config.
 
     Returns:
 
