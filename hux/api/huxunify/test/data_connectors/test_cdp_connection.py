@@ -105,7 +105,7 @@ class CDPConnectionsTest(TestCase):
         self.request_mocker.stop()
         self.request_mocker.get(
             f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
-            f"/{api_c.CDM_CONNECTIONS_ENDPOINT}/{api_c.DATASOURCES}/",
+            f"/{api_c.CDM_CONNECTIONS_ENDPOINT}/{api_c.DATASOURCES}",
             json=t_c.DATASOURCES_RESPONSE,
         )
         self.request_mocker.start()
