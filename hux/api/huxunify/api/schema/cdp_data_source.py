@@ -49,6 +49,9 @@ class CdpDataSourceSchema(Schema):
         default=api_c.STATUS_ACTIVE,
     )
     is_added = fields.Bool(required=False, attribute="added", default=False)
+    is_enabled = fields.Bool(
+        required=False, attribute="enabled"
+    )  # TODO Remove in HUS-1109
     type = fields.Str()
 
 
