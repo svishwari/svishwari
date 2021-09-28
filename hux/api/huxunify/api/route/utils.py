@@ -22,12 +22,7 @@ from huxunifylib.database import (
 from huxunify.api.config import get_config
 from huxunify.api import constants
 from huxunify.api.data_connectors.tecton import check_tecton_connection
-from huxunify.api.data_connectors.aws import (
-    check_aws_ssm,
-    check_aws_batch,
-    check_aws_s3,
-    check_aws_events,
-)
+from huxunify.api.data_connectors.aws import check_aws_ssm, check_aws_batch
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
 )
@@ -111,8 +106,9 @@ def get_health_check() -> HealthCheck:
     health.add_check(check_okta_connection)
     health.add_check(check_aws_ssm)
     health.add_check(check_aws_batch)
-    health.add_check(check_aws_s3)
-    health.add_check(check_aws_events)
+    # TODO HUS-1200
+    # health.add_check(check_aws_s3)
+    # health.add_check(check_aws_events)
     health.add_check(check_cdm_api_connection)
     health.add_check(check_cdp_connections_api_connection)
     return health
