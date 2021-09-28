@@ -169,17 +169,17 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-redirectUri",
-        help="Redirect Uri registered in OIDC client in Okta",
-        required=True,
-        default="https://www.google.com/",
-    )
-
-    parser.add_argument(
         "-scopes",
         help="Scopes separated with + e.g. openid+profile+email",
         required=False,
         default="openid+profile+email",
+    )
+
+    parser.add_argument(
+        "-redirectUri",
+        help="Redirect Uri registered in OIDC client in Okta",
+        required=True,
+        default="https://www.google.com/",
     )
 
     arguments = parser.parse_args()
