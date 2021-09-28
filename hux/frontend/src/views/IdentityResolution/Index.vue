@@ -205,7 +205,7 @@ export default {
       loadingOverview: true,
       loadingDataFeeds: true,
       loadingMatchingTrends: true,
-      isFilterToggled: true,
+      isFilterToggled: false,
       filterStartDate: null,
       filterEndDate: null,
     }
