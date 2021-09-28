@@ -38,7 +38,6 @@ def create_data_source(
         status (str): status of the data source.
     Returns:
         Union[dict, None]: MongoDB document for a data source or None
-
     """
     collection = database[c.DATA_MANAGEMENT_DATABASE][
         c.CDP_DATA_SOURCES_COLLECTION
@@ -47,11 +46,9 @@ def create_data_source(
     # TODO - feed count to be updated per CDM in future tickets.
     doc = {
         c.CDP_DATA_SOURCE_FIELD_NAME: name,
-        c.CDP_DATA_SOURCE_FIELD_CATEGORY: category,
         c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
         c.CDP_DATA_SOURCE_FIELD_STATUS: status,
         c.ADDED: added,
-        c.ENABLED: enabled,
     }
 
     if source_type:
@@ -66,6 +63,40 @@ def create_data_source(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def bulk_write_data_sources(
+    database: DatabaseClient, data_sources: list
+) -> Union[list, None]:
+    """A function that creates new data sources
+
+    Args:
+        database (DatabaseClient): A database client.
+        data_sources (list): List of data sources to create
+    Returns:
+        Union[list, None]: List of MongoDB documents for data source or None
+    """
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
+
+    [
+        data_source.update(
+            {c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1, c.ADDED: True}
+        )
+        for data_source in data_sources
+    ]
+
+    try:
+        data_source_ids = collection.insert_many(data_sources).inserted_ids
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return list(collection.find({c.ID: {"$in": data_source_ids}}))
 
 
 @retry(
