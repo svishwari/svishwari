@@ -1090,7 +1090,10 @@ class UpdateCampaignsForAudience(SwaggerView):
     @validate_engagement_and_audience()
     @validate_destination()
     def put(
-        self, engagement_id: str, audience_id: str, destination_id: str
+        self,
+        engagement_id: ObjectId,
+        audience_id: ObjectId,
+        destination_id: ObjectId,
     ) -> Tuple[dict, int]:
         """Updates campaigns for an engagement audience.
 
@@ -1310,7 +1313,10 @@ class AudienceCampaignsGetView(SwaggerView):
     @validate_engagement_and_audience()
     @validate_destination()
     def get(
-        self, engagement_id: str, audience_id: str, destination_id: str
+        self,
+        engagement_id: ObjectId,
+        audience_id: ObjectId,
+        destination_id: ObjectId,
     ) -> Tuple[dict, int]:
         """Get the campaign mappings from mongo.
 
@@ -1465,7 +1471,10 @@ class AudienceCampaignMappingsGetView(SwaggerView):
     @validate_engagement_and_audience()
     @validate_destination()
     def get(
-        self, engagement_id: str, audience_id: str, destination_id: str
+        self,
+        engagement_id: ObjectId,
+        audience_id: ObjectId,
+        destination_id: ObjectId,
     ) -> Tuple[dict, int]:
         """Get the list of possible campaign mappings to attach to audience.
 
