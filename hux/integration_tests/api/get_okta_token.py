@@ -4,6 +4,7 @@ https://developer.okta.com/docs/reference/api/authn/
 """
 import re
 import json
+import sys
 import urllib
 from argparse import ArgumentParser
 from getpass import getpass
@@ -169,17 +170,17 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-scopes",
-        help="Scopes separated with + e.g. openid+profile+email",
-        required=False,
-        default="openid+profile+email",
-    )
-
-    parser.add_argument(
         "-redirectUri",
         help="Redirect Uri registered in OIDC client in Okta",
         required=True,
         default="https://www.google.com/",
+    )
+
+    parser.add_argument(
+        "-scopes",
+        help="Scopes separated with + e.g. openid+profile+email",
+        required=False,
+        default="openid+profile+email",
     )
 
     arguments = parser.parse_args()
@@ -193,3 +194,10 @@ if __name__ == "__main__":
         arguments.scopes,
         arguments.redirectUri,
     )
+
+    # get token
+    access_token = okta_oidc.get_access_token()
+
+    # write token out
+    sys.stdout.write(access_token)
+    sys.exit(0)
