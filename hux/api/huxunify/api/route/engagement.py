@@ -1102,9 +1102,9 @@ class UpdateCampaignsForAudience(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            engagement_id (str): Engagement ID.
-            audience_id (str): Audience ID.
-            destination_id (str): Destination ID.
+            engagement_id (ObjectId): Engagement ID.
+            audience_id (ObjectId): Audience ID.
+            destination_id (ObjectId): Destination ID.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -1325,9 +1325,9 @@ class AudienceCampaignsGetView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            engagement_id (str): Engagement ID.
-            audience_id (str): Audience ID.
-            destination_id (str): Destination ID.
+            engagement_id (ObjectId): Engagement ID.
+            audience_id (ObjectId): Audience ID.
+            destination_id (ObjectId): Destination ID.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -1483,9 +1483,9 @@ class AudienceCampaignMappingsGetView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            engagement_id (str): Engagement ID.
-            audience_id (str): Audience ID.
-            destination_id (str): Destination ID.
+            engagement_id (ObjectId): Engagement ID.
+            audience_id (ObjectId): Audience ID.
+            destination_id (ObjectId): Destination ID.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
