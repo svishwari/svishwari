@@ -13,7 +13,7 @@ from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feeds,
     get_idr_data_feed_details,
     get_data_source_data_feeds,
-    get_idr_matching_trends,
+    get_idr_matching_trends, get_data_sources,
 )
 from huxunify.app import create_app
 
@@ -99,6 +99,23 @@ class CDPConnectionsTest(TestCase):
 
         self.assertIn(api_c.PINNING, data_feed)
         self.assertIn(api_c.STITCHED, data_feed)
+
+    def test_get_data_sources(self) -> None:
+        """Test fetch data sources"""
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
+            f"/{api_c.CDM_CONNECTIONS_ENDPOINT}/{api_c.DATASOURCES}/",
+            json=t_c.DATASOURCES_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        data_sources = get_data_sources(token="")
+
+        for data_source in data_sources:
+            self.assertIn(api_c.NAME, data_source)
+            self.assertIn(api_c.LABEL, data_source)
+            self.assertIn(api_c.STATUS, data_source)
 
     def test_get_data_source_data_feeds(self) -> None:
         """

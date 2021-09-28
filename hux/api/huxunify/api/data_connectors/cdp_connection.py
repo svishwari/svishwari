@@ -133,6 +133,44 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
     }
 
 
+def get_data_sources(token: str) -> list:
+    """Fetch data sources
+
+    Args:
+        token (str): OKTA JWT token
+
+    Returns:
+        (list): List of data sources
+    """
+    # get config
+    config = get_config()
+    logger.info(
+        "Retrieving data-sources."
+    )
+
+    response = requests.get(
+        f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_CONNECTIONS_ENDPOINT}/"
+        f"{api_c.DATASOURCES}",
+        headers={api_c.CUSTOMERS_API_HEADER_KEY: token},
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve data sources, %s %s.",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_CONNECTIONS_ENDPOINT}/"
+            f"{api_c.DATASOURCES}",
+            response.status_code,
+        )
+
+    logger.info("Successfully retrieved data sources.")
+
+    return response.json()[api_c.BODY]
+
+
 def get_data_source_data_feeds(token: str, data_source_type: str) -> list:
     """
     Retrieve data source data feeds
