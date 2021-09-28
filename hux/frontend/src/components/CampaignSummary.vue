@@ -49,7 +49,10 @@
                           percentileColumns.includes(item.field.split('|')[1])
                         "
                       >
-                        {{ item.value.split("|")[1] | Percentage }}
+                        {{
+                          parseFloat(item.value.split("|")[1])
+                            | Numeric(false, false, false, (percentage = true))
+                        }}
                       </span>
                       <span
                         v-else-if="
@@ -57,13 +60,30 @@
                         "
                       >
                         {{
-                          item.value.split("|")[1] | Numeric(false, false, true)
+                          Number(item.value.split("|")[1])
+                            | Numeric(false, false, true)
                         }}
                       </span>
                     </span>
                   </template>
                   <template #hover-content>
-                    {{ item.value.split("|")[1] }}
+                    <span
+                      v-if="
+                        percentileColumns.includes(item.field.split('|')[1])
+                      "
+                    >
+                      {{
+                        parseFloat(item.value.split("|")[1])
+                          | Numeric(false, false, false, (percentage = true))
+                      }}
+                    </span>
+                    <span
+                      v-else-if="
+                        numericColumns.includes(item.field.split('|')[1])
+                      "
+                    >
+                      {{ Number(item.value.split("|")[1]) | Numeric }}
+                    </span>
                   </template>
                 </tooltip>
               </span>
@@ -75,7 +95,10 @@
                         {{ item.value | Numeric(false, false, true) }}
                       </span>
                       <span v-else-if="percentileColumns.includes(item.field)">
-                        {{ item.value | Percentage }}
+                        {{
+                          item.value
+                            | Numeric(false, false, false, (percentage = true))
+                        }}
                       </span>
                       <span v-else-if="currencyColumns.includes(item.field)">
                         {{ item.value | Currency }}
@@ -83,7 +106,13 @@
                     </span>
                   </template>
                   <template #hover-content>
-                    {{ item.value }}
+                    <span v-if="percentileColumns.includes(item.field)">
+                      {{
+                        item.value
+                          | Numeric(false, false, false, (percentage = true))
+                      }}
+                    </span>
+                    <span v-else> {{ item.value }}</span>
                   </template>
                 </tooltip>
               </span>
@@ -671,8 +700,6 @@ export default {
           )
         } else if (this.currencyColumns.includes(key)) {
           obj[key] = this.$options.filters.Currency(obj[key])
-        } else if (key === "name") {
-          obj[key] = this.$options.filters.TitleCase(obj[key])
         }
       })
       return obj
