@@ -7,8 +7,8 @@
         :hide-default-header="!showHeader || !hasData"
         :height="height"
         :items="dataItems"
-        :sort-by.sync="sortColumn"
-        :sort-desc.sync="sortDesc"
+        :sort-by.sync="sortByColumn"
+        :sort-desc.sync="sortOrder"
         item-key="name"
         :items-per-page="-1"
         fixed-header
@@ -131,9 +131,9 @@ export default {
       default: "name",
     },
     sortDesc: {
-      type: Boolean,
+      type: String,
       required: false,
-      default: false,
+      default: "false",
     },
     disableSort: {
       type: Boolean,
@@ -160,6 +160,22 @@ export default {
   computed: {
     hasData() {
       return this.dataItems && this.dataItems.length
+    },
+    sortOrder: {
+      get: function () {
+        return Boolean(this.sortDesc)
+      },
+      set: function (value) {
+        this.$emit("sortDesc", value)
+      },
+    },
+    sortByColumn: {
+      get: function () {
+        return this.sortColumn
+      },
+      set: function (value) {
+        this.$emit("sortColumn", value)
+      },
     },
   },
   methods: {
