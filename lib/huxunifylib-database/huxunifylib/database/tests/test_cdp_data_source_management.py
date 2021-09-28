@@ -219,20 +219,14 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         """Test bulk write data sources"""
         # create data source first
         data_sources = [
-            {
-                c.NAME: "Bluecore",
-                c.TYPE: "bluecore",
-                c.STATUS: "Active"
-            },
-            {
-                c.NAME: "Netsuite",
-                c.TYPE: "netsuite",
-                c.STATUS: "Pending"
-            }
+            {c.NAME: "Bluecore", c.TYPE: "bluecore", c.STATUS: "Active"},
+            {c.NAME: "Netsuite", c.TYPE: "netsuite", c.STATUS: "Pending"},
         ]
 
         # create data sources
-        created_data_sources = dsmgmt.bulk_write_data_sources(self.database, data_sources)
+        created_data_sources = dsmgmt.bulk_write_data_sources(
+            self.database, data_sources
+        )
 
         self.assertCountEqual(created_data_sources, data_sources)
 
