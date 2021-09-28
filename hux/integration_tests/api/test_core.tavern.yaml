@@ -44,6 +44,7 @@ stages:
             "output": "batch available.",
             "passed": true
           },
+# TODO: HUS-1200
 #          {
 #            "checker": "check_aws_s3",
 #            "output": "s3 available.",
