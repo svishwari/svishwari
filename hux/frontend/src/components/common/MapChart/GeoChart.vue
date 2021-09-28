@@ -136,6 +136,7 @@ export default {
         .style("stroke", "#1E1E1E")
         .style("stroke-width", "0.5")
         .style("fill", "#ffffff")
+        .attr("class", "state")
         .on("mouseover", (d) => applyHoverChanges(d))
         .on("mouseout", () => removeHoverChanges())
         .transition()
