@@ -18,7 +18,7 @@
       </div>
       <v-col v-else class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3">
         <status-list
-          v-for="item in sections"
+          v-for="item in availableRelationships"
           :key="item.id"
           :section="item"
           :status-icon="17"
@@ -95,6 +95,12 @@ export default {
     }
   },
   computed: {
+    availableRelationships() {
+      const _sections = JSON.parse(JSON.stringify(this.sections))
+      return _sections.sort(function (a, b) {
+        return new Date(b.update_time) - new Date(a.update_time)
+      })
+    },
     sectionActions() {
       return this.sectionType === "engagement"
         ? this.engagementMenuOptions

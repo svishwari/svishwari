@@ -510,14 +510,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_update_sfmc_performance_data_extension(self) -> None:
-        """
-        For testing update of Performance Data Extension only for SFMC
-
-        Args:
-
-        Returns:
-            None
-        """
+        """For testing update of Performance Data Extension only for SFMC"""
 
         performance_data_extension = {
             c.DELIVERY_PLATFORM_SFMC_DATA_EXT_NAME: "HUX Performance Ext",

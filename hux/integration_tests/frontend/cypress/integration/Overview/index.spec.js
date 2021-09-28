@@ -1,7 +1,7 @@
 import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
-describe("View models", () => {
+describe("View Overview", () => {
   before(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),

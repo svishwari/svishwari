@@ -156,7 +156,8 @@
                       "
                     >
                       <v-sheet max-width="240px">
-                        The location(s) where Audiences are planned to be run.
+                        The external platforms where this audience will be
+                        delivered.
                       </v-sheet>
                     </template>
                   </tooltip>
