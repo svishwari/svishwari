@@ -13,6 +13,7 @@ REDIRECT_URI = getenv("OKTA_REDIRECT_URI")
 SCOPES = "openid+profile+email"
 ACCESS_TOKEN = "ACCESS_TOKEN"
 
+
 # pylint: disable=unused-argument
 def pytest_configure(config: Config):
     """Override the pytest plugin. This hook is called for every plugin and
