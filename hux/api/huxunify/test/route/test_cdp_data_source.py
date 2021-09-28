@@ -9,6 +9,7 @@ from unittest import TestCase, mock
 import mongomock
 import requests_mock
 from bson import ObjectId
+from marshmallow import ValidationError
 
 from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.client import DatabaseClient
@@ -160,34 +161,38 @@ class CdpDataSourcesTest(TestCase):
 
         """
 
-        ds_name = "test create data source"
-        ds_category = "test category"
-
-        valid_response = {
-            api_c.CDP_DATA_SOURCE_NAME: ds_name,
-            api_c.CDP_DATA_SOURCE_CATEGORY: ds_category,
-            api_c.CDP_DATA_SOURCE_FEED_COUNT: 1,
-            api_c.STATUS: db_c.CDP_DATA_SOURCE_STATUS_ACTIVE,
-            api_c.CDP_DATA_SOURCE_ADDED: False,
-            api_c.CDP_DATA_SOURCE_ENABLED: False,
-        }
+        data_sources = [
+            {
+                api_c.NAME: "Test Data Source 1",
+                api_c.TYPE: "test_data_source_type_1",
+                api_c.STATUS: api_c.STATUS_ACTIVE
+            },
+            {
+                api_c.NAME: "Test Data Source 2",
+                api_c.TYPE: "test_data_source_type_2",
+                api_c.STATUS: api_c.STATUS_PENDING
+            }
+        ]
 
         response = self.test_client.post(
             self.data_sources_api_endpoint,
-            data=json.dumps(
-                {
-                    db_c.CDP_DATA_SOURCE_FIELD_NAME: ds_name,
-                    db_c.CDP_DATA_SOURCE_FIELD_CATEGORY: ds_category,
-                }
-            ),
+            data=json.dumps(data_sources),
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
-            t_c.validate_schema(CdpDataSourceSchema(), response.json)
+            t_c.validate_schema(CdpDataSourceSchema(), response.json, is_multiple=True)
         )
-        self.assertDictContainsSubset(valid_response, response.json)
+        self.assertEqual(len(response.json), len(data_sources))
+
+        for data_source in response.json:
+            self.assertIn(api_c.NAME, data_source)
+            self.assertIn(api_c.TYPE, data_source)
+            self.assertIn(api_c.STATUS, data_source)
+            self.assertIn(db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT, data_source)
+            self.assertIn(api_c.IS_ADDED, data_source)
+            self.assertTrue(api_c.IS_ADDED)
 
     def test_get_data_source_by_id_invalid_id(self):
         """
@@ -267,20 +272,27 @@ class CdpDataSourcesTest(TestCase):
 
         """
 
-        ds_name = ""
+        data_sources = [
+            {
+                api_c.NAME: "",
+                api_c.TYPE: "test_data_source_type_1",
+                api_c.STATUS: api_c.STATUS_ACTIVE
+            },
+            {
+                api_c.NAME: "Test Data Source 2",
+                api_c.TYPE: "test_data_source_type_2",
+                api_c.STATUS: api_c.STATUS_PENDING
+            }
+        ]
 
-        valid_response = {
-            "category": ["Missing data for required field."],
-            "name": ["Data not provided."],
-        }
         response = self.test_client.post(
             self.data_sources_api_endpoint,
-            data=json.dumps({db_c.CDP_DATA_SOURCE_FIELD_NAME: ds_name}),
+            data=json.dumps(data_sources),
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
-        self.assertEqual(valid_response, response.json)
+        self.assertRaises(ValidationError)
 
     def test_create_data_source_no_inputs(self):
         """
@@ -292,19 +304,14 @@ class CdpDataSourcesTest(TestCase):
 
         """
 
-        valid_response = {
-            "category": ["Missing data for required field."],
-            "name": ["Missing data for required field."],
-        }
-
         response = self.test_client.post(
             self.data_sources_api_endpoint,
-            data=json.dumps({}),
+            data=json.dumps([{}]),
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
-        self.assertEqual(valid_response, response.json)
+        self.assertRaises(ValidationError)
 
     def test_create_data_source_w_no_values(self):
         """
@@ -317,27 +324,27 @@ class CdpDataSourcesTest(TestCase):
 
         """
 
-        ds_name = ""
-        ds_category = ""
-
-        valid_response = {
-            "category": ["Data not provided."],
-            "name": ["Data not provided."],
-        }
+        data_sources = [
+            {
+                api_c.NAME: "",
+                api_c.TYPE: "",
+                api_c.STATUS: api_c.STATUS_ACTIVE
+            },
+            {
+                api_c.NAME: "",
+                api_c.TYPE: "",
+                api_c.STATUS: api_c.STATUS_PENDING
+            }
+        ]
 
         response = self.test_client.post(
             self.data_sources_api_endpoint,
-            data=json.dumps(
-                {
-                    db_c.CDP_DATA_SOURCE_FIELD_NAME: ds_name,
-                    db_c.CDP_DATA_SOURCE_FIELD_CATEGORY: ds_category,
-                }
-            ),
+            data=json.dumps(data_sources),
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
-        self.assertEqual(valid_response, response.json)
+        self.assertRaises(ValidationError)
 
     def test_patch_data_source_valid_params(self) -> None:
         """
