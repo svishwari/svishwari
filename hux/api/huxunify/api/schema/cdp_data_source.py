@@ -3,7 +3,7 @@ Schemas for cdp data sources API
 """
 
 from flask_marshmallow import Schema
-from marshmallow import post_dump, fields
+from marshmallow import fields
 from marshmallow.validate import OneOf, Range
 
 import huxunifylib.database.constants as db_c
