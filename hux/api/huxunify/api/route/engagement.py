@@ -1145,7 +1145,7 @@ class UpdateCampaignsForAudience(SwaggerView):
 
         if not valid_destination:
             logger.error(
-                "Destination with ID %s is not attached to engagement "
+                "Destination with ID %s is not attached to the engagement "
                 "audience with ID %s.",
                 destination_id,
                 audience_id,
@@ -1196,7 +1196,7 @@ class UpdateCampaignsForAudience(SwaggerView):
                 delivery_job[api_c.ENGAGEMENT_ID] != engagement_id
             ):
                 logger.error(
-                    "Invalid data cannot attach campaign to engagement %s "
+                    "Invalid data, cannot attach campaign to engagement %s "
                     "audience %s.",
                     engagement_id,
                     audience_id,
@@ -1368,7 +1368,7 @@ class AudienceCampaignsGetView(SwaggerView):
 
         if not valid_destination:
             logger.error(
-                "Destination with ID %s is not attached to engagement "
+                "Destination with ID %s is not attached to the engagement "
                 "audience with ID %s.",
                 destination_id,
                 audience_id,
@@ -1529,7 +1529,7 @@ class AudienceCampaignMappingsGetView(SwaggerView):
 
         if not valid_destination:
             logger.error(
-                "Destination with ID %s is not attached to engagement "
+                "Destination with ID %s is not attached to the engagement "
                 "audience with ID %s.",
                 destination_id,
                 audience_id,
