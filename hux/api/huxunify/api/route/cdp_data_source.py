@@ -14,7 +14,6 @@ from huxunifylib.database import constants as db_c
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
     get_data_source,
-    create_data_source,
     delete_data_source,
     update_data_sources,
     bulk_write_data_sources,
