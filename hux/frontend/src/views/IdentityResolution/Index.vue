@@ -38,45 +38,19 @@
           Select timeframe:
         </label>
 
-        <hux-select
-          v-model="filters.startMonth"
-          :items="options.months"
-          :items-disabled="disabledOptions.startMonths"
-          label="Start month"
-          class="mx-1"
-          width="141"
-          @change="refreshData"
-        />
-
-        <hux-select
-          v-model="filters.startYear"
-          :items="options.years"
-          :items-disabled="disabledOptions.startYears"
-          label="Start year"
-          class="mx-1"
-          width="126"
+        <hux-select-date
+          v-model="filterStartDate"
+          :min="minDate"
+          :max="filterEndDate"
           @change="refreshData"
         />
 
         <icon class="mx-1" type="arrow" color="primary" :size="19" />
 
-        <hux-select
-          v-model="filters.endMonth"
-          :items="options.months"
-          :items-disabled="disabledOptions.endMonths"
-          label="End month"
-          class="mx-1"
-          width="141"
-          @change="refreshData"
-        />
-
-        <hux-select
-          v-model="filters.endYear"
-          label="End year"
-          :items="options.years"
-          :items-disabled="disabledOptions.endYears"
-          class="mx-1"
-          width="126"
+        <hux-select-date
+          v-model="filterEndDate"
+          :min="filterStartDate"
+          :max="maxDate"
           @change="refreshData"
         />
       </hux-filters-bar>
@@ -201,7 +175,7 @@ import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import HuxFiltersBar from "@/components/common/FiltersBar"
-import HuxSelect from "@/components/common/Select.vue"
+import HuxSelectDate from "@/components/common/SelectDate.vue"
 import Icon from "@/components/common/Icon"
 import MetricCard from "@/components/common/MetricCard"
 import Tooltip from "@/components/common/Tooltip.vue"
@@ -217,7 +191,7 @@ export default {
     Breadcrumb,
     Icon,
     HuxFiltersBar,
-    HuxSelect,
+    HuxSelectDate,
     MetricCard,
     PageHeader,
     Tooltip,
@@ -232,16 +206,8 @@ export default {
       loadingDataFeeds: true,
       loadingMatchingTrends: true,
       isFilterToggled: true,
-      options: {
-        months: listOfMonths(),
-        years: listOfYears(),
-      },
-      filters: {
-        startMonth: null,
-        startYear: null,
-        endMonth: null,
-        endYear: null,
-      },
+      filterStartDate: null,
+      filterEndDate: null,
     }
   },
 
@@ -253,121 +219,24 @@ export default {
       matchingTrends: "identity/matchingTrends",
     }),
 
-    startDate() {
-      return this.formatDate(
-        `${this.filters.startMonth} ${this.filters.startYear}`
+    minDate() {
+      return this.$options.filters.Date(
+        this.timeFrame["start_date"],
+        "YYYY-MM-DD"
       )
     },
 
-    endDate() {
-      return this.formatDate(`${this.filters.endMonth} ${this.filters.endYear}`)
+    maxDate() {
+      return this.$options.filters.Date(
+        this.timeFrame["end_date"],
+        "YYYY-MM-DD"
+      )
     },
 
     selectedDateRange() {
       return {
-        startDate: this.startDate,
-        endDate: this.endDate,
-      }
-    },
-
-    timeFrameBounds() {
-      const timeFrameStart = this.timeFrame["start_date"]
-      const timeFrameEnd = this.timeFrame["end_date"]
-      return {
-        minMonth: this.formatDate(timeFrameStart, "month"),
-        minYear: this.formatDate(timeFrameStart, "year"),
-        maxMonth: this.formatDate(timeFrameEnd, "month"),
-        maxYear: this.formatDate(timeFrameEnd, "year"),
-      }
-    },
-
-    enabledOptions() {
-      let startMonth = "January"
-      let endMonth = "December"
-      const sameYearSelected = this.filters.startYear === this.filters.endYear
-
-      if (sameYearSelected) {
-        const yearSelected = this.filters.startYear
-        const startYearSelected = yearSelected === this.timeFrameBounds.minYear
-        const endYearSelected = yearSelected === this.timeFrameBounds.maxYear
-
-        if (startYearSelected) {
-          startMonth = this.timeFrameBounds.minMonth
-        } else if (endYearSelected) {
-          endMonth = this.timeFrameBounds.maxMonth
-        }
-      }
-
-      return {
-        startMonths: listOfMonths({
-          startMonth: this.timeFrameBounds.minMonth,
-          endMonth: endMonth,
-        }),
-        startYears: listOfYears({
-          startYear: this.timeFrameBounds.minYear,
-          endYear: this.filters.endYear,
-        }),
-        endMonths: listOfMonths({
-          startMonth: startMonth,
-          endMonth: this.timeFrameBounds.maxMonth,
-        }),
-        endYears: listOfYears({
-          startYear: this.filters.startYear,
-          endYear: this.timeFrameBounds.maxYear,
-        }),
-      }
-    },
-
-    disabledOptions() {
-      let startMonths = []
-      let endMonths = []
-
-      const disabledStartMonths = this.options.months.filter(
-        (month) => !this.enabledOptions.startMonths.includes(month)
-      )
-
-      const disabledEndMonths = this.options.months.filter(
-        (month) => !this.enabledOptions.endMonths.includes(month)
-      )
-
-      if (this.filters.startYear === this.timeFrameBounds.maxYear) {
-        startMonths = disabledEndMonths
-      }
-
-      if (this.filters.startYear === this.timeFrameBounds.minYear) {
-        startMonths = disabledStartMonths
-      }
-
-      if (this.filters.endYear === this.timeFrameBounds.minYear) {
-        endMonths = disabledStartMonths
-      }
-
-      if (this.filters.endYear === this.timeFrameBounds.maxYear) {
-        endMonths = disabledEndMonths
-      }
-
-      if (this.filters.startYear === this.filters.endYear) {
-        if (this.filters.startYear === this.timeFrameBounds.minYear) {
-          startMonths = endMonths = disabledStartMonths
-        }
-        if (this.filters.endYear === this.timeFrameBounds.maxYear) {
-          startMonths = endMonths = disabledEndMonths
-        }
-      }
-
-      const startYears = this.options.years.filter(
-        (year) => !this.enabledOptions.startYears.includes(year)
-      )
-
-      const endYears = this.options.years.filter(
-        (year) => !this.enabledOptions.endYears.includes(year)
-      )
-
-      return {
-        startMonths: startMonths,
-        endMonths: endMonths,
-        startYears: startYears,
-        endYears: endYears,
+        startDate: this.filterStartDate,
+        endDate: this.filterEndDate,
       }
     },
 
@@ -407,27 +276,12 @@ export default {
 
     setFilters({ startDate, endDate }) {
       if (startDate && endDate) {
-        const updatedFilters = {
-          startMonth: this.formatDate(startDate, "month"),
-          startYear: this.formatDate(startDate, "year"),
-          endMonth: this.formatDate(endDate, "month"),
-          endYear: this.formatDate(endDate, "year"),
-        }
-
-        this.filters = updatedFilters
-
-        this.options.years = listOfYears({
-          startYear: updatedFilters.startYear,
-          endYear: updatedFilters.endYear,
-        })
+        this.filterStartDate = this.$options.filters.Date(
+          startDate,
+          "YYYY-MM-DD"
+        )
+        this.filterEndDate = this.$options.filters.Date(endDate, "YYYY-MM-DD")
       }
-    },
-
-    formatDate(date, format) {
-      let dateFormat = "YYYY-MM-DD"
-      if (format === "month") dateFormat = "MMMM"
-      if (format === "year") dateFormat = "YYYY"
-      return this.$options.filters.Date(date, dateFormat)
     },
 
     async loadMatchingTrends() {

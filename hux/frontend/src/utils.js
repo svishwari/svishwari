@@ -170,8 +170,8 @@ export function listOfMonths(config = {}) {
  */
 export function listOfYears(
   config = {
-    startYear: dayjs().format("YYYY"),
-    endYear: dayjs().subtract(10, "year").format("YYYY"),
+    startYear: dayjs().subtract(5, "year").format("YYYY"),
+    endYear: dayjs().format("YYYY"),
   }
 ) {
   let min = Number(config.startYear)
