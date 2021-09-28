@@ -4,7 +4,6 @@ https://developer.okta.com/docs/reference/api/authn/
 """
 import re
 import json
-import sys
 import urllib
 from argparse import ArgumentParser
 from getpass import getpass
@@ -194,10 +193,3 @@ if __name__ == "__main__":
         arguments.scopes,
         arguments.redirectUri,
     )
-
-    # get token
-    access_token = okta_oidc.get_access_token()
-
-    # write token out
-    sys.stdout.write(access_token)
-    sys.exit(0)
