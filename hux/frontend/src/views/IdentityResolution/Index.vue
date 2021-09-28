@@ -158,8 +158,8 @@
       </v-row>
 
       <data-feeds
-        v-if="!loadingDataFeeds"
         :data="dataFeeds"
+        :is-loading="loadingDataFeeds"
         class="mt-6 mx-2"
         data-e2e="datafeedtable"
       />
@@ -269,9 +269,12 @@ export default {
     }),
 
     async refreshData() {
+      this.loadingMatchingTrends = true
+      this.loadingDataFeeds = true
+      this.loadingOverview = true
       await this.loadOverview()
-      await this.loadDataFeeds()
-      await this.loadMatchingTrends()
+      this.loadDataFeeds()
+      this.loadMatchingTrends()
     },
 
     setFilters({ startDate, endDate }) {

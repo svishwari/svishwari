@@ -34,12 +34,6 @@ export default defineComponent({
       required: true,
     },
 
-    itemsDisabled: {
-      type: Array,
-      required: false,
-      default: () => [],
-    },
-
     label: {
       type: String,
       required: false,
@@ -65,14 +59,7 @@ export default defineComponent({
     })
 
     const localItems = computed({
-      get: () =>
-        props.items.map((item) => {
-          return {
-            text: item,
-            value: item,
-            disabled: props.itemsDisabled.includes(item),
-          }
-        }),
+      get: () => props.items,
     })
 
     return {
