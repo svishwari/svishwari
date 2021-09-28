@@ -1,5 +1,6 @@
 """Purpose of this file is for housing pytest startup scripts"""
 from os import getenv, environ
+from requests.exceptions import MissingSchema
 from _pytest.config import Config
 from get_okta_token import OktaOIDC
 
@@ -24,15 +25,18 @@ def pytest_configure(config: Config):
 
     """
 
-    # setup the oidc class.
-    okta_oidc = OktaOIDC(
-        ORG_URL,
-        USER,
-        PW,
-        CLIENT_ID,
-        SCOPES,
-        REDIRECT_URI,
-    )
+    try:
+        # setup the oidc class.
+        okta_oidc = OktaOIDC(
+            ORG_URL,
+            USER,
+            PW,
+            CLIENT_ID,
+            SCOPES,
+            REDIRECT_URI,
+        )
 
-    # set the token for pytest usage.
-    environ[ACCESS_TOKEN] = okta_oidc.get_access_token()
+        # set the token for pytest usage.
+        environ[ACCESS_TOKEN] = okta_oidc.get_access_token()
+    except MissingSchema:
+        pass
