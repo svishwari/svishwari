@@ -49,7 +49,7 @@ class EngagementPostSchema(Schema):
     @pre_load
     # pylint: disable=unused-argument
     def pre_process_details(self, data, **kwargs):
-        """process the schema before loading.
+        """Process the schema before loading.
 
         Args:
             data (dict): The Engagement data source object
@@ -110,7 +110,7 @@ class EngagementPutSchema(Schema):
     @pre_load
     # pylint: disable=unused-argument
     def pre_process_details(self, data: dict, **kwargs):
-        """process the schema before loading.
+        """Process the schema before loading.
 
         Args:
             data (dict): The Engagement data source object
@@ -157,7 +157,7 @@ class AudienceEngagementSchema(Schema):
     @pre_load
     # pylint: disable=unused-argument
     def pre_process_details(self, data, **kwargs):
-        """process the schema before loading.
+        """Process the schema before loading.
 
         Args:
             data (dict): The Engagement data source object

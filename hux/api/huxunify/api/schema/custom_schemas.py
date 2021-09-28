@@ -10,14 +10,16 @@ from marshmallow.fields import DateTime
 class DateTimeWithZ(DateTime):
     """This class is to modify serialization of datetime"""
 
-    def _serialize(self, value: datetime.datetime, attr: str, obj: Any, **kwargs):
+    def _serialize(
+        self, value: datetime.datetime, attr: str, obj: Any, **kwargs
+    ):
         """Serializes Date Time Object with Z
 
         Args:
             value (datetime.datetime): The value to be serialized.
             attr (str): The attribute or key on the object to be serialized.
             obj (obj): The object the value was pulled from.
-            **kwargs: Field-specific keyword arguments.
+            **kwargs (dict): Field-specific keyword arguments.
 
         Returns:
             str: datetime value with Z

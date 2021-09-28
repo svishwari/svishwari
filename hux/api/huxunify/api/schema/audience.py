@@ -9,10 +9,10 @@ import huxunify.api.constants as api_c
 
 
 class AudienceSchema(Schema):
-    """audience schema class, return the serialized messages back"""
+    """Audience schema class, return the serialized messages back"""
 
     class Meta:
-        """expose the fields for serialization"""
+        """Expose the fields for serialization"""
 
         # Fields to expose
         fields = [
@@ -35,10 +35,10 @@ audiences_schema = AudienceSchema(many=True)
 
 
 class AudienceDeliverySchema(Schema):
-    """audience schema class, return the serialized messages back"""
+    """Audience schema class, return the serialized messages back"""
 
     class Meta:
-        """expose the fields for serialization"""
+        """Expose the fields for serialization"""
 
         # Fields to expose
         fields = [
@@ -81,7 +81,7 @@ audience_delivery_schemas = AudienceDeliverySchema(many=True)
 
 
 class AudienceInsightsSchema(Schema):
-    """Decision schema class, return the serialized messages back"""
+    """Audience insights schema class, return the serialized messages back"""
 
     # define parameters
     insights = List(
@@ -136,7 +136,7 @@ class AudienceInsightsSchema(Schema):
     )
 
     class Meta:
-        """expose the fields for serialization"""
+        """Expose the fields for serialization"""
 
         # Fields to expose
         fields = ["insights"]
@@ -146,10 +146,10 @@ audience_insights_schema = AudienceInsightsSchema()
 
 
 class AudienceDeliveryInsightsSchema(Schema):
-    """audience schema class, return the serialized messages back"""
+    """Audience schema class, return the serialized messages back"""
 
     class Meta:
-        """expose the fields for serialization"""
+        """Expose the fields for serialization"""
 
         # Fields to expose
         fields = ["audience_id", "delivery_job_id", "count"]

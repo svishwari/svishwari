@@ -11,14 +11,14 @@ from huxunify.api import constants as api_c
 
 
 class CdpDataSourcePostSchema(Schema):
-    """CdpDataSourcePostSchema."""
+    """CDP data source post schema class"""
 
     name = fields.Str(required=True, validate=must_not_be_blank)
     category = fields.Str(required=True, validate=must_not_be_blank)
 
 
 class CdpDataSourceSchema(Schema):
-    """CdpDataSourceSchema"""
+    """CDP data source get schema class, return the serialized messages back"""
 
     _id = fields.Str(
         data_key=api_c.ID,
@@ -48,7 +48,7 @@ class CdpDataSourceSchema(Schema):
     # pylint: disable=unused-argument
     # pylint: disable=no-self-use
     def post_serialize(self, data: dict, many=False) -> dict:
-        """process the schema before serializing.
+        """Process the schema before serializing.
 
         Args:
             data (dict): The CDP data source object

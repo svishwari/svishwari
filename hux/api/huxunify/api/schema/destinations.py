@@ -132,7 +132,7 @@ class DeliveryScheduleSchema(Schema):
 
 
 class DestinationGetSchema(Schema):
-    """Destinations schema class"""
+    """Destinations get schema class"""
 
     _id = fields.String(
         data_key=api_c.ID,
@@ -200,7 +200,7 @@ class DestinationPutSchema(Schema):
 
 
 class DestinationValidationSchema(Schema):
-    """Destination put schema class"""
+    """Destination validation schema class"""
 
     authentication_details = fields.Field()
     type = fields.String()
@@ -210,7 +210,7 @@ class FacebookAuthConstants(Schema):
     """Facebook Auth constants schema class"""
 
     class Meta:
-        """set the ordering of facebook auth constants"""
+        """Set the ordering of facebook auth constants"""
 
         ordered = True
 
@@ -281,7 +281,7 @@ class SFMCAuthConstants(Schema):
     """SFMC Auth constants schema class"""
 
     class Meta:
-        """set the ordering of sfmc auth constants"""
+        """Set the ordering of sfmc auth constants"""
 
         ordered = True
 
@@ -525,7 +525,7 @@ class QualtricsAuthConstants(Schema):
     """Qualtrics Auth constants schema class"""
 
     class Meta:
-        """set the ordering of qualtrics auth constants"""
+        """Set the ordering of qualtrics auth constants"""
 
         ordered = True
 
@@ -578,7 +578,7 @@ class DestinationConstantsSchema(Schema):
     """Destination constants schema class"""
 
     class Meta:
-        """set the ordering of destination constants"""
+        """Set the ordering of destination constants"""
 
         ordered = True
 
