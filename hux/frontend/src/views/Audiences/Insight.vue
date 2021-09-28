@@ -750,10 +750,6 @@ export default {
       demographicsData: "audiences/demographics",
     }),
     audience() {
-      const _getAudience = this.getAudience(this.$route.params.id)
-      if (_getAudience && this.refreshAudience) {
-        this.audienceData = JSON.parse(JSON.stringify(_getAudience))
-      }
       return this.audienceData
     },
     audienceId() {
@@ -803,7 +799,6 @@ export default {
       }
 
       const insights = this.audienceInsights
-      debugger
       return Object.keys(metrics).map((metric) => {
         return {
           ...metrics[metric],
@@ -1261,6 +1256,10 @@ export default {
       this.loading = true
       this.refreshAudience = true
       await this.getAudienceById(this.$route.params.id)
+      const _getAudience = this.getAudience(this.$route.params.id)
+      if (_getAudience && this.refreshAudience) {
+        this.audienceData = JSON.parse(JSON.stringify(_getAudience))
+      }
       if (this.audience && this.audience.is_lookalike) {
         this.audienceHistory = this.audience.audienceHistory.filter(
           (e) => e.title == "Created"
