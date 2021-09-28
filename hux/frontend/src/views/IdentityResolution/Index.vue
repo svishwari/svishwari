@@ -169,7 +169,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-import { listOfMonths, listOfYears } from "@/utils"
+import { endOfMonth } from "@/utils"
 
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader"
@@ -236,7 +236,7 @@ export default {
     selectedDateRange() {
       return {
         startDate: this.filterStartDate,
-        endDate: this.filterEndDate,
+        endDate: this.filterEndDate ? endOfMonth(this.filterEndDate) : null,
       }
     },
 

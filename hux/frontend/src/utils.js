@@ -170,7 +170,7 @@ export function listOfMonths(config = {}) {
  */
 export function listOfYears(
   config = {
-    startYear: dayjs().subtract(5, "year").format("YYYY"),
+    startYear: dayjs().subtract(4, "year").format("YYYY"),
     endYear: dayjs().format("YYYY"),
   }
 ) {
@@ -182,6 +182,16 @@ export function listOfYears(
     min++
   }
   return years
+}
+
+/**
+ * Gets the last date of the month.
+ *
+ * @param {string} date a date which to get the last date of the month
+ * @returns {string} the date at the end of month
+ */
+export function endOfMonth(date) {
+  return dayjs(date).endOf("month").format("YYYY-MM-DD")
 }
 
 /**

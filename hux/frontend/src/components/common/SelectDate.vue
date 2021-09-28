@@ -3,21 +3,19 @@
     <hux-select
       v-model="month"
       :items="monthOptions"
-      :items-disabled="[]"
-      label="Select month"
+      label="Select a month"
       class="mx-1"
       width="141"
-      @change="onChange"
+      @change="onChange('month', month)"
     />
 
     <hux-select
       v-model="year"
       :items="yearOptions"
-      :items-disabled="[]"
-      label="Select year"
+      label="Select a year"
       class="mx-1"
       width="126"
-      @change="onChange"
+      @change="onChange('year', year)"
     />
   </div>
 </template>
@@ -71,6 +69,7 @@ export default defineComponent({
     })
 
     const month = ref(null)
+
     const year = ref(null)
 
     const monthOptions = computed({
@@ -82,13 +81,27 @@ export default defineComponent({
           const maxYear = filters.Date(props.max, "YYYY")
 
           if (year.value === minYear) {
+            let endMonth
+
+            if (maxYear === minYear) {
+              endMonth = filters.Date(props.max, "MMMM")
+            }
+
             config = {
               startMonth: filters.Date(props.min, "MMMM"),
+              endMonth: endMonth,
             }
           }
 
           if (year.value === maxYear) {
+            let startMonth
+
+            if (minYear === maxYear) {
+              startMonth = filters.Date(props.min, "MMMM")
+            }
+
             config = {
+              startMonth: startMonth,
               endMonth: filters.Date(props.max, "MMMM"),
             }
           }
@@ -114,9 +127,17 @@ export default defineComponent({
     })
 
     /**
-     * Change value to the selected month/year
+     * Change value to the selected month/year.
+     *
+     * @param {string} input the input changed ex. month or year
+     * @param {string} value the new value
      */
-    function onChange() {
+    function onChange(input, value) {
+      // select the first option available for that year, should the previous
+      // selection be unavailable in the list of months
+      if (input === "year" && !monthOptions.value.includes(month.value)) {
+        month.value = monthOptions.value[0]
+      }
       localValue.value = filters.Date(
         `${month.value} ${year.value}`,
         "YYYY-MM-DD"
@@ -124,7 +145,7 @@ export default defineComponent({
     }
 
     /**
-     * Watch value to update the selected month/year
+     * Watch value to update the selected month/year.
      */
     watch(localValue, (value) => {
       if (value) {
