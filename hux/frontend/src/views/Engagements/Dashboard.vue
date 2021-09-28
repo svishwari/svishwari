@@ -315,6 +315,10 @@ export default {
       this.$root.$emit("refresh-notifications")
       await this.loadEngagement(this.engagementId)
       this.loading = false
+      this.$forceUpdate()
+      this.$nextTick(() => {
+        this.$forceUpdate()
+      })
     },
     async onConfirmAction() {
       this.showConfirmModal = false
@@ -482,7 +486,9 @@ export default {
     },
     async loadEngagement(engagementId) {
       await this.getEngagementById(engagementId)
-      this.engagementList = this.getEngagementObject(this.engagementId)
+      this.engagementList = JSON.parse(
+        JSON.stringify(this.getEngagementObject(this.engagementId))
+      )
       await this.getAudiencePerformanceById({
         type: "ads",
         id: this.engagementList.id,
@@ -506,6 +512,7 @@ export default {
                 audienceId: event.data.id,
               })
               this.dataPendingMesssage(event, "audience")
+              this.refreshEntity()
             } catch (error) {
               this.dataErrorMesssage(event, "audience")
               handleError(error)

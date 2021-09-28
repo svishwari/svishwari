@@ -267,7 +267,7 @@ const actions = {
     try {
       const response = await api.audiences.deliveries(id)
       commit("SET_DELIVERIES", {
-        audienceId: id,
+        id: id,
         deliveries: response.data,
       })
     } catch (error) {
