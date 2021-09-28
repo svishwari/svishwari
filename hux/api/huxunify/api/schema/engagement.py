@@ -82,7 +82,7 @@ class EngagementPutSchema(Schema):
     """
 
     name = fields.String(required=False)
-    description = fields.String(required=False)
+    description = fields.String(required=False, allow_none=True)
     audiences = fields.List(
         fields.Dict(),
         attribute=api_c.AUDIENCES,
