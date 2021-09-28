@@ -31,6 +31,6 @@ def pytest_configure(config: Config):
         okta_oidc = OktaOIDC(**OKTA_PARAM_DICT)
 
         # set the token for pytest usage.
-        environ[ACCESS_TOKEN] = okta_oidc.get_access_token()
+        environ[ACCESS_TOKEN] = okta_oidc.get_access_token(False)
     except MissingSchema:
         pass
