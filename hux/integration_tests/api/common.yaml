@@ -7,3 +7,4 @@ variables:
   version: "{tavern.env_vars.TAVERN_TEST_API_VERSION}"
   token: "{tavern.env_vars.ACCESS_TOKEN}"
   openapi: "apispec_1"
+  fake_object_id: "00035de24af31a0f33029092"

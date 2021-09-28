@@ -44,7 +44,10 @@
                 >
                   <template v-if="col.value === 'result'">
                     <template v-if="resultAsPercentage.includes(item.metric)">
-                      {{ item[col.value] | Numeric(true, false, false, true) }}
+                      {{
+                        item[col.value]
+                          | Numeric(false, false, false, (percentage = true))
+                      }}
                     </template>
                     <template v-else-if="resultAsDate.includes(item.metric)">
                       {{ item[col.value] | Date }}

@@ -27,8 +27,8 @@
               :color="myIconColor"
               class="icon-border pa-2 ma-1 mr-0"
               :disabled="
-                !hasData(audiencePerformanceAdsData, 'performance') &&
-                !hasData(emailDataData, 'performance')
+                !hasData(emailDataData, 'performance') &&
+                !hasData(audiencePerformanceAdsData, 'performance')
               "
             >
               @mousedown="changeColorOnSelect()" @mouseup="
@@ -401,8 +401,7 @@ export default {
             delete _temp.name
             delete _temp.is_mapped
             const uniqueValues = [...new Set(Object.values(_temp))].join()
-            if (uniqueValues === "0,$0,0%" || uniqueValues === "0,0%")
-              return false
+            if (uniqueValues === "0") return false
           }
           return true
         }

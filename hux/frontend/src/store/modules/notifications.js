@@ -46,6 +46,14 @@ const actions = {
         batchDetails.batchSize,
         batchDetails.batchNumber
       )
+      // Replacing the special characters like (", ', <, >) with "
+      response.data.notifications.forEach((notification) => {
+        notification.description = notification.description.replace(
+          />|<|"/g,
+          /*eslint-disable */
+          '"'
+        )
+      })
       commit("SET_TOTAL", response.data.total)
       commit("SET_ALL", response.data)
     } catch (error) {

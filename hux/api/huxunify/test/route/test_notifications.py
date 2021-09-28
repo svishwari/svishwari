@@ -1,7 +1,7 @@
 """
 Purpose of this file is to house all the notification api tests
 """
-
+import json
 from unittest import TestCase, mock
 from http import HTTPStatus
 
@@ -132,3 +132,34 @@ class TestNotificationRoutes(TestCase):
         self.assertCountEqual(
             self.notifications, response.json[api_c.NOTIFICATIONS_TAG]
         )
+
+    def test_get_notifications_stream(self):
+        """Test streaming notifications."""
+
+        # create the test notification
+        create_notification(
+            database=self.database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description="Successfully delivered audience to platform A.",
+        )
+
+        with self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/stream",
+            headers=t_c.STANDARD_HEADERS,
+        ) as stream:
+            for line in stream.iter_encoded():
+                self.assertTrue(line)
+
+                # load the response into a list of notifications.
+                notifications = json.loads(line)
+                self.assertIn(db_c.NOTIFICATIONS_COLLECTION, notifications)
+                self.assertEqual(notifications[api_c.TOTAL], 1)
+
+                for notification in notifications[
+                    db_c.NOTIFICATIONS_COLLECTION
+                ]:
+                    self.assertEqual(
+                        notification[api_c.NOTIFICATION_TYPE],
+                        db_c.NOTIFICATION_TYPE_SUCCESS.title(),
+                    )
+                break

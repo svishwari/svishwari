@@ -32,8 +32,8 @@
       <hux-data-table
         :columns="columnDefs"
         :data-items="notifications"
-        :sort-column="sortColumn"
-        :sort-desc="sortDesc"
+        sort-column="created"
+        sort-desc
       >
         <template #row-item="{ item }">
           <td

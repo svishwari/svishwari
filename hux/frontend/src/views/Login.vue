@@ -130,7 +130,7 @@ export default {
               visibility: hidden;
             }
             .okta-form-title {
-              display: none;
+              text-align: left;
             }
             .o-form-label {
               label {
