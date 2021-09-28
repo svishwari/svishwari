@@ -24,7 +24,6 @@ def pytest_configure(config: Config):
     Args:
         config (Config): Existing pytest config.
 
-    Returns:
 
     """
 
