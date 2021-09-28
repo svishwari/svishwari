@@ -179,7 +179,10 @@ export default {
 
     selectAudience: {
       get() {
-        return this.selectedAudience
+        const aud = this.audiences.filter(
+          (aud) => aud.id === this.selectedAudience.id
+        )
+        return aud.length > 0 ? aud[0] : {}
       },
       set(value) {
         this.lookalikeAudience.audience = value

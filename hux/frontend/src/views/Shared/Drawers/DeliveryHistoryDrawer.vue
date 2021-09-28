@@ -15,6 +15,7 @@
         :columns="columns"
         :data-items="items"
         sort-column="delivered"
+        sort-desc="false"
         class="delivery-list"
       >
         <template #row-item="{ item }">
@@ -71,10 +72,25 @@
             </tooltip>
             <tooltip v-if="col.value === 'match_rate'">
               <template #label-content>
-                {{ item[col.value] | Percentage }}
+                <span
+                  v-if="
+                    nonCompliantMatchRatePlatforms.includes(
+                      item['destination'].type
+                    )
+                  "
+                  >N/A</span
+                >
+                <span
+                  v-if="
+                    !nonCompliantMatchRatePlatforms.includes(
+                      item['destination'].type
+                    )
+                  "
+                  >{{ item[col.value] | Percentage }}</span
+                >
               </template>
               <template #hover-content>
-                {{ item[col.value] }}
+                {{ item[col.value] | Percentage }}
               </template>
             </tooltip>
             <tooltip v-if="col.value === 'delivered'">
@@ -141,6 +157,7 @@ export default {
     return {
       localToggle: false,
       loading: false,
+      nonCompliantMatchRatePlatforms: ["salesforce", "sendgrid", "qualtrics"],
       columns: [
         {
           value: "destination",

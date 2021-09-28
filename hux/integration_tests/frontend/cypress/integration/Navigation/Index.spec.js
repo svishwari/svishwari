@@ -13,12 +13,12 @@ describe("View Navigation", () => {
     // after login land in the overview page
     cy.location("pathname").should("eq", route.overview)
 
-    //click on engagement on side nav bar and route in engagement screen 
+    //click on engagement on side nav bar and route in engagement screen
     cy.get(selector.engagements).click()
     cy.location("pathname").should("eq", route.engagements)
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
-    // from the header click on the help icon  
+    // from the header click on the help icon
     cy.get(selector.navigation.help).click()
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
@@ -33,7 +33,7 @@ describe("View Navigation", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
 
-    // from the header click on the add icon  
+    // from the header click on the add icon
     cy.get(selector.navigation.add).click()
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
@@ -43,7 +43,7 @@ describe("View Navigation", () => {
     cy.location("pathname").should("eq", route.models)
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
-    // click on the profile drop menu 
+    // click on the profile drop menu
     cy.get(selector.navigation.profiledropdown).click()
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
@@ -55,11 +55,11 @@ describe("View Navigation", () => {
     cy.location("pathname").should("eq", route.connections)
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
-    // click on the profile drop menu 
+    // click on the profile drop menu
     cy.get(selector.navigation.profiledropdown).click()
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
     // select the profile option
     cy.get(selector.navigation.logout).click()
-})
+  })
 })

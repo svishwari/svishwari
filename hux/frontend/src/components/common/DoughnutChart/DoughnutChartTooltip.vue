@@ -32,7 +32,9 @@
       <div class="percentage black--text text--darken-4">
         {{ getPercentage(sourceInput.population_percentage) }}
       </div>
-      <div class="value black--text text--darken-4">{{ sourceInput.size }}</div>
+      <div class="value black--text text--darken-4">
+        {{ sourceInput.size | Numeric }}
+      </div>
     </v-card>
   </div>
 </template>

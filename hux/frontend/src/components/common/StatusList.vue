@@ -183,11 +183,9 @@
             <template #hover-content>
               <div class="d-flex flex-column text-caption">
                 <span>Audience size</span>
-                <span class="pb-3">{{ item.size | Numeric(true, false) }}</span>
+                <span class="pb-3">{{ item.size }}</span>
                 <span>Match rate</span>
-                <i v-if="!item.match_rate">
-                  Pending... check back in a few hours
-                </i>
+                <i v-if="!item.match_rate"> N/A </i>
                 <span v-else>{{ item.match_rate | Percentage }}</span>
               </div>
             </template>
@@ -206,17 +204,24 @@
                 <span>Audience size</span>
                 <span class="pb-3">{{ item.size | Numeric(true, false) }}</span>
                 <span>Match rate</span>
-                <i v-if="!item.match_rate">
-                  Pending... check back in a few hours
-                </i>
-                <span v-else>{{ item.match_rate | Percentage }}</span>
+                <span
+                  v-if="
+                    matchRatePlatforms.includes(item.delivery_platform_type)
+                  "
+                >
+                  <i v-if="!item.match_rate">
+                    Pending... check back in a few hours
+                  </i>
+                  <span v-else>{{ item.match_rate | Percentage }}</span>
+                </span>
+                <span v-else>N/A</span>
               </div>
             </template>
           </tooltip>
         </v-list-item-content>
         <v-list-item-content
           v-if="item.update_time"
-          class="deliverdOn-col py-1"
+          class="deliverdOn-col py-1 mr-2 d-inline-block mw-100 text-truncate"
         >
           <tooltip>
             <template #label-content>
@@ -297,6 +302,7 @@ export default {
       isSubMenuOpen: {},
       showDeliveryAlert: false,
       selection: null,
+      matchRatePlatforms: ["facebook", "google-ads"],
       lookALikeAllowedEntries: ["Facebook"],
       engagementMenuOptions: [
         { id: 1, title: "View delivery history", active: false },
@@ -562,7 +568,7 @@ export default {
       }
       .size-col {
         min-width: 60px;
-        max-width: 90px;
+        max-width: 85px;
         font-size: 12px;
         line-height: 16px;
         color: var(--v--neroBlack-base);

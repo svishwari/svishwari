@@ -278,26 +278,22 @@ class SetEngagement(SwaggerView):
             )
             if schedule:
                 cron_schedule = generate_cron(schedule)
-                body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE)[
                     api_c.SCHEDULE_CRON
                 ] = cron_schedule
 
         database = get_db_client()
         engagement_id = set_engagement(
             database=database,
-            name=body[db_c.ENGAGEMENT_NAME],
-            description=body[db_c.ENGAGEMENT_DESCRIPTION]
-            if db_c.ENGAGEMENT_DESCRIPTION in body
-            else None,
-            audiences=body[db_c.AUDIENCES] if db_c.AUDIENCES in body else None,
-            delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
-            if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
-            else None,
+            name=body.get(db_c.ENGAGEMENT_NAME),
+            description=body.get(db_c.ENGAGEMENT_DESCRIPTION),
+            audiences=body.get(db_c.AUDIENCES),
+            delivery_schedule=body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE),
             user_name=user_name,
         )
         engagement = get_engagement(database, engagement_id=engagement_id)
         logger.info(
-            "Successfully created engagement %s.", engagement[db_c.NAME]
+            "Successfully created engagement %s.", engagement.get(db_c.NAME)
         )
 
         create_notification(
@@ -1654,7 +1650,9 @@ class EngagementMetricsDisplayAds(SwaggerView):
             logger.error(
                 "Engagement with engagement ID %s not found", engagement_id
             )
-            return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
+            return {
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         final_metric = get_performance_metrics(
             database, engagement, engagement_id, api_c.DISPLAY_ADS
@@ -1716,7 +1714,9 @@ class EngagementMetricsEmail(SwaggerView):
             logger.error(
                 "Engagement with engagement ID %s not found.", engagement_id
             )
-            return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
+            return {
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         final_metric = get_performance_metrics(
             database, engagement, engagement_id, api_c.EMAIL
@@ -1770,7 +1770,9 @@ class EngagementPerformanceDownload(SwaggerView):
 
         engagement = get_engagement(database, ObjectId(engagement_id))
         if not engagement:
-            return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
+            return {
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         final_email_metric = get_performance_metrics(
             database, engagement, engagement_id, api_c.EMAIL

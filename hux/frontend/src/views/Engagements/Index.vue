@@ -37,6 +37,8 @@
       :columns="columnDefs"
       :data-items="rowData"
       view-height="calc(100vh - 210px)"
+      sort-column="update_time"
+      sort-desc="false"
       nested
     >
       <template #item-row="{ item, expandFunc, isExpanded }">
@@ -966,6 +968,11 @@ export default {
         }
       }
       tbody {
+        tr {
+          td:first-child {
+            z-index: 1;
+          }
+        }
         tr:last-child {
           td {
             border-bottom: 1px solid var(--v-black-lighten3) !important;
