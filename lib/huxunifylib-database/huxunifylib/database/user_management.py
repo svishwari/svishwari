@@ -239,8 +239,8 @@ def update_user(
         Union[dict, None]: Updated MongoDB document for a user.
 
     Raises:
-        DuplicateFieldType: Error if any key in passed in update_doc dict is
-            not part of allowed fields list.
+        DuplicateFieldType: Error if a key that is passed in update_doc dict is
+            not part of the allowed fields list.
     """
 
     # validate user input id

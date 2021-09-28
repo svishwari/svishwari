@@ -44,7 +44,7 @@ def create_audience(
         Union[list, None]: MongoDB audience doc.
 
     Raises:
-        DuplicateName: Error if is an audience with the same name exists
+        DuplicateName: Error if an audience with the same name exists
             already.
     """
 

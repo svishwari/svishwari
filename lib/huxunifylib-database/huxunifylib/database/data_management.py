@@ -569,8 +569,7 @@ def update_data_source(
             exists already.
         DataSourceLocked: Error if the data source is not mutable and is not
             allowed to be updated.
-        NoUpdatesSpecified: Error if the no updates were done to the
-            data source.
+        NoUpdatesSpecified: Error if no updates were done to the data source.
     """
 
     doc = None

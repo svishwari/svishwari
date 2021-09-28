@@ -598,8 +598,8 @@ def update_delivery_platform(
         UnknownDeliveryPlatformType: If the delivery platform type is unknown.
         DuplicateName: Error if a delivery platform with the same name exists
             already.
-        NoUpdatesSpecified: Error if the no updates were done to the
-            delivery platform.
+        NoUpdatesSpecified: Error if no updates were done to the delivery
+            platform.
     """
 
     if delivery_platform_type.upper() not in [
@@ -997,7 +997,7 @@ def update_lookalike_audience(
     Raises:
         DuplicateName: Error if a lookalike audience with the same name exists
             already.
-        NoUpdatesSpecified: Error if the no updates were done to the lookalike
+        NoUpdatesSpecified: Error if no updates were done to the lookalike
             audience collection.
     """
 

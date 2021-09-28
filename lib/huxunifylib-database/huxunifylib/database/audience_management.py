@@ -46,7 +46,7 @@ def create_audience(
         Union[dict, None]: MongoDB audience doc or None
 
     Raises:
-        DuplicateName: Error if is an audience with the same name exists
+        DuplicateName: Error if an audience with the same name exists
             already.
         InvalidID: If the passed in ingestion_job_id did not fetch a doc from
             the relevant db collection.
@@ -661,7 +661,7 @@ def update_audience_name(
         dict: Updated audience configuration dict.
 
     Raises:
-        DuplicateName: Error if is an audience with the same name exists
+        DuplicateName: Error if an audience with the same name exists
             already.
     """
 

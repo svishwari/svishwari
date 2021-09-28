@@ -506,8 +506,7 @@ def update_engagement(
         Union[dict, None]: dict object of the engagement that has been updated.
 
     Raises:
-        NoUpdatesSpecified: Error if the no updates were done to the
-            engagement.
+        NoUpdatesSpecified: Error if no updates were done to the engagement.
     """
 
     if audiences:
