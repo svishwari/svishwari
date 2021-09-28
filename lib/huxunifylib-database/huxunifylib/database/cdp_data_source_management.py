@@ -38,6 +38,7 @@ def create_data_source(
         status (str): status of the data source.
     Returns:
         Union[dict, None]: MongoDB document for a data source or None
+
     """
     collection = database[c.DATA_MANAGEMENT_DATABASE][
         c.CDP_DATA_SOURCES_COLLECTION
@@ -46,9 +47,11 @@ def create_data_source(
     # TODO - feed count to be updated per CDM in future tickets.
     doc = {
         c.CDP_DATA_SOURCE_FIELD_NAME: name,
+        c.CDP_DATA_SOURCE_FIELD_CATEGORY: category,
         c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
         c.CDP_DATA_SOURCE_FIELD_STATUS: status,
         c.ADDED: added,
+        c.ENABLED: enabled,
     }
 
     if source_type:
