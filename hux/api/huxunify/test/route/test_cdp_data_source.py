@@ -165,13 +165,13 @@ class CdpDataSourcesTest(TestCase):
             {
                 api_c.NAME: "Test Data Source 1",
                 api_c.TYPE: "test_data_source_type_1",
-                api_c.STATUS: api_c.STATUS_ACTIVE
+                api_c.STATUS: api_c.STATUS_ACTIVE,
             },
             {
                 api_c.NAME: "Test Data Source 2",
                 api_c.TYPE: "test_data_source_type_2",
-                api_c.STATUS: api_c.STATUS_PENDING
-            }
+                api_c.STATUS: api_c.STATUS_PENDING,
+            },
         ]
 
         response = self.test_client.post(
@@ -182,7 +182,9 @@ class CdpDataSourcesTest(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
-            t_c.validate_schema(CdpDataSourceSchema(), response.json, is_multiple=True)
+            t_c.validate_schema(
+                CdpDataSourceSchema(), response.json, is_multiple=True
+            )
         )
         self.assertEqual(len(response.json), len(data_sources))
 
@@ -276,13 +278,13 @@ class CdpDataSourcesTest(TestCase):
             {
                 api_c.NAME: "",
                 api_c.TYPE: "test_data_source_type_1",
-                api_c.STATUS: api_c.STATUS_ACTIVE
+                api_c.STATUS: api_c.STATUS_ACTIVE,
             },
             {
                 api_c.NAME: "Test Data Source 2",
                 api_c.TYPE: "test_data_source_type_2",
-                api_c.STATUS: api_c.STATUS_PENDING
-            }
+                api_c.STATUS: api_c.STATUS_PENDING,
+            },
         ]
 
         response = self.test_client.post(
@@ -328,13 +330,13 @@ class CdpDataSourcesTest(TestCase):
             {
                 api_c.NAME: "",
                 api_c.TYPE: "",
-                api_c.STATUS: api_c.STATUS_ACTIVE
+                api_c.STATUS: api_c.STATUS_ACTIVE,
             },
             {
                 api_c.NAME: "",
                 api_c.TYPE: "",
-                api_c.STATUS: api_c.STATUS_PENDING
-            }
+                api_c.STATUS: api_c.STATUS_PENDING,
+            },
         ]
 
         response = self.test_client.post(

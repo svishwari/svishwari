@@ -13,7 +13,8 @@ from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feeds,
     get_idr_data_feed_details,
     get_data_source_data_feeds,
-    get_idr_matching_trends, get_data_sources,
+    get_idr_matching_trends,
+    get_data_sources,
 )
 from huxunify.app import create_app
 

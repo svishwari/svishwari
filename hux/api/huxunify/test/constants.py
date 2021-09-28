@@ -762,13 +762,7 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
 DATASOURCES_RESPONSE = {
     "code": 200,
     "message": "ok",
-    "body": [
-        {
-            "name": "blueCore",
-            "label": "BlueCore",
-            "status": "Active"
-        }
-    ],
+    "body": [{"name": "blueCore", "label": "BlueCore", "status": "Active"}],
 }
 
 DATASOURCE_DATA_FEEDS_RESPONSE = {

@@ -144,9 +144,7 @@ def get_data_sources(token: str) -> list:
     """
     # get config
     config = get_config()
-    logger.info(
-        "Retrieving data-sources."
-    )
+    logger.info("Retrieving data-sources.")
 
     response = requests.get(
         f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_CONNECTIONS_ENDPOINT}/"
