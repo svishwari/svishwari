@@ -130,11 +130,10 @@ export default defineComponent({
      * Change value to the selected month/year.
      *
      * @param {string} input the input changed ex. month or year
-     * @param {string} value the new value
      */
-    function onChange(input, value) {
-      // select the first option available for that year, should the previous
-      // selection be unavailable in the list of months
+    function onChange(input) {
+      // when selecting a year and the selected month is not available,
+      // fall back to selecting the first month available
       if (input === "year" && !monthOptions.value.includes(month.value)) {
         month.value = monthOptions.value[0]
       }
