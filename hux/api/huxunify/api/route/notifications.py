@@ -168,7 +168,7 @@ class NotificationStream(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] dict of notifications, HTTP status code.
+            Tuple[dict, int]: dict of notifications, HTTP status code.
         """
 
         def event_stream() -> Generator[Tuple[dict, int], None, None]:
