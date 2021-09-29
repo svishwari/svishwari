@@ -187,6 +187,18 @@ class AudiencePutSchema(Schema):
     filters = fields.List(fields.Dict())
 
 
+class AudienceDestinationSchema(Schema):
+    """
+    Audience destination schema class
+    """
+
+    id = fields.String(required=True)
+    delivery_platform_config = fields.Dict(
+        required=False,
+        example={db_c.DATA_EXTENSION_NAME: "Data Extension Name"},
+    )
+
+
 class AudiencePostSchema(AudiencePutSchema):
     """
     Audience post schema class
@@ -194,14 +206,7 @@ class AudiencePostSchema(AudiencePutSchema):
 
     name = fields.String(validate=must_not_be_blank)
     destinations = fields.List(
-        fields.Dict(),
-        attribute=api_c.DESTINATIONS,
-        example=[
-            {
-                api_c.ID: "60ae035b6c5bf45da27f17d6",
-                api_c.DATA_EXTENSION_ID: "data_extension_id",
-            }
-        ],
+        fields.Nested(AudienceDestinationSchema), required=False
     )
     engagements = fields.List(fields.String(), required=True)
     filters = fields.List(fields.Dict())
