@@ -33,3 +33,12 @@ class FailedDateFilterIssue(IntegratedAPIEndpointException):
     """Exception for date filter failure."""
 
     exception_message = constants.START_DATE_GREATER_THAN_END_DATE
+
+
+class EmptyAPIResponseError(IntegratedAPIEndpointException):
+    """Exception for empty response from integrated APIs."""
+
+    exception_message = (
+        "Integrated API <{}> failure, returned status code "
+        "<{}>. Failed obtaining dependent data"
+    )

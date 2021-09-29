@@ -126,6 +126,23 @@ FAILED_DEPENDENCY_424_RESPONSE = {
 }
 
 
+class EmptyResponseDependencySchema(Schema):
+    """Empty Response Dependency schema."""
+
+    code = Int(name="code", example=404)
+    message = Str(
+        name="message", example=api_c.EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE
+    )
+
+
+EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE = {
+    HTTPStatus.NOT_FOUND.value: {
+        "schema": EmptyResponseDependencySchema,
+        "description": api_c.FAILED_DEPENDENCY_ERROR_MESSAGE,
+    },
+}
+
+
 def redact_fields(data: dict, redacted_fields: list) -> dict:
     """Function is meant to redact fields that a customer is not allowed to see
 
