@@ -2279,8 +2279,8 @@ def get_all_audience_customers(
     collection = am_db[c.AUDIENCE_CUSTOMERS_COLLECTION]
 
     try:
-        audience_customers_docs = list(
-            collection.find({c.DELIVERY_JOB_ID: delivery_job_id})
+        audience_customers_docs = collection.find(
+            {c.DELIVERY_JOB_ID: delivery_job_id}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
