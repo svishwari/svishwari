@@ -670,9 +670,9 @@ class DestinationDataExtView(SwaggerView):
             )
 
         else:
-            logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED(destination_id))
+            logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
             return {
-                "message": api_c.DATA_EXTENSION_NOT_SUPPORTED(destination_id)
+                "message": api_c.DATA_EXTENSION_NOT_SUPPORTED
             }, HTTPStatus.BAD_REQUEST
 
         return (
@@ -766,9 +766,9 @@ class DestinationDataExtPostView(SwaggerView):
             }, HTTPStatus.NOT_FOUND
 
         if api_c.AUTHENTICATION_DETAILS not in destination:
-            logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED(destination_id))
+            logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
             return {
-                "message": api_c.DATA_EXTENSION_NOT_SUPPORTED(destination_id)
+                "message": api_c.DATA_EXTENSION_NOT_SUPPORTED
             }, HTTPStatus.BAD_REQUEST
 
         body = DestinationDataExtPostSchema().load(
@@ -820,7 +820,7 @@ class DestinationDataExtPostView(SwaggerView):
                         extension = ext
             return DestinationDataExtGetSchema().dump(extension), status_code
 
-        logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED(destination_id))
+        logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
         return {
-            "message": api_c.DATA_EXTENSION_NOT_SUPPORTED(destination_id)
+            "message": api_c.DATA_EXTENSION_NOT_SUPPORTED
         }, HTTPStatus.BAD_REQUEST
