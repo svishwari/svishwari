@@ -12,6 +12,7 @@
               :error-messages="errorMessages"
               required
               @blur="errorMessages = []"
+              data-e2e="engagement-name"
             />
           </v-col>
           <v-col>
@@ -19,6 +20,7 @@
               v-model="value.description"
               label-text="Description"
               placeholder="What is the purpose of this engagement?"
+              data-e2e="engagement-description"
             />
           </v-col>
         </v-row>
@@ -206,6 +208,7 @@
                         fab
                         class="primary ml-2 box-shadow-25"
                         @click="openSelectDestinationsDrawer(row.item.id)"
+                        data-e2e="add-destination"
                       >
                         <v-icon size="16">mdi-plus</v-icon>
                       </v-btn>
@@ -247,6 +250,7 @@
                 color="primary box-shadow-25"
                 elevation="0"
                 @click="openSelectAudiencesDrawer()"
+                data-e2e="add-audience"
               >
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
@@ -293,6 +297,7 @@
           height="44"
           :disabled="!isValid"
           @click="deliverNewEngagement()"
+          data-e2e="create-engagement"
         >
           Create &amp; deliver
         </v-btn>

@@ -97,6 +97,7 @@
               class="mt-1 text-caption black--text text--darken-4 pt-2"
               :rules="newExtensionRules"
               required
+              data-e2e="new-data-extension"
             />
           </div>
 
@@ -159,6 +160,7 @@
           class="ma-2"
           :is-disabled="isActive ? !isFormValid : !extension"
           @click="addDestination()"
+          data-e2e="destination-added"
         >
           Add
         </hux-button>

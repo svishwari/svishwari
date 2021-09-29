@@ -16,6 +16,7 @@
           :to="{ name: 'EngagementConfiguration' }"
           class="text-decoration-none"
           append
+          data-e2e="add-engagement"
         >
           <huxButton
             button-text="Engagement"

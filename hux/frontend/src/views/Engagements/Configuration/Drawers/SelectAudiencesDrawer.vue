@@ -69,6 +69,7 @@
                 height="40"
                 :box-shadow="false"
                 @click="add(row.item)"
+                data-e2e="audience-select-button"
               >
                 Add
               </hux-button>

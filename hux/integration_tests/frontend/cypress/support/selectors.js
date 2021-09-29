@@ -46,6 +46,21 @@ export default {
     models: "a[href='/models']",
   },
 
+  // engagement 
+  engagement: {
+    addEngagement: "[data-e2e='add-engagement']",
+    addEngagements: "a[href='/engagements/add']",
+    enagagementName: "[data-e2e='engagement-name']",
+    enagagementDescription: "[data-e2e='engagement-description']",
+    dataExtensionName: "[data-e2e='new-data-extension']",
+    addAudience: "[data-e2e='add-audience']",
+    addDestination: "[data-e2e='add-destination']",
+    selectAudience: "[data-e2e='audience-select-button']",
+    selectDestination: "[data-e2e='destination-select-button']",
+    exitDrawer: "[data-e2e='click-outside']",
+    exitDataExtensionDrawer: "[data-e2e='destination-added']",
+  },
+
   //IDR
   idr: {
     identityResolution: "a[href='/identity-resolution']",
