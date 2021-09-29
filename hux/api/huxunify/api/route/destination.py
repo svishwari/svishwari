@@ -284,10 +284,8 @@ class DestinationPutView(SwaggerView):
         destination = destination_management.get_delivery_platform(
             database, destination_id
         )
-        if (
-            destination[db_c.DELIVERY_PLATFORM_TYPE]
-            == db_c.DELIVERY_PLATFORM_SFMC
-        ):
+        platform_type = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
+        if platform_type == db_c.DELIVERY_PLATFORM_SFMC:
             SFMCAuthCredsSchema().load(auth_details)
             performance_de = body.get(
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
@@ -298,25 +296,16 @@ class DestinationPutView(SwaggerView):
                     {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
                     HTTPStatus.BAD_REQUEST,
                 )
-        elif (
-            destination[db_c.DELIVERY_PLATFORM_TYPE]
-            == db_c.DELIVERY_PLATFORM_FACEBOOK
-        ):
+        elif platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
             FacebookAuthCredsSchema().load(auth_details)
-        elif destination[db_c.DELIVERY_PLATFORM_TYPE] in [
+        elif platform_type in [
             db_c.DELIVERY_PLATFORM_SENDGRID,
             db_c.DELIVERY_PLATFORM_TWILIO,
         ]:
             SendgridAuthCredsSchema().load(auth_details)
-        elif (
-            destination[db_c.DELIVERY_PLATFORM_TYPE]
-            == db_c.DELIVERY_PLATFORM_QUALTRICS
-        ):
+        elif platform_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
             QualtricsAuthCredsSchema().load(auth_details)
-        elif (
-            destination[db_c.DELIVERY_PLATFORM_TYPE]
-            == db_c.DELIVERY_PLATFORM_GOOGLE
-        ):
+        elif platform_type == db_c.DELIVERY_PLATFORM_GOOGLE:
             GoogleAdsAuthCredsSchema().load(auth_details)
 
         if auth_details:
@@ -326,7 +315,7 @@ class DestinationPutView(SwaggerView):
                     authentication_details=auth_details,
                     is_updated=True,
                     destination_id=destination_id,
-                    destination_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
+                    destination_type=platform_type,
                 )
             )
             is_added = True
