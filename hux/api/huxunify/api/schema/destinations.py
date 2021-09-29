@@ -108,7 +108,7 @@ class DeliveryScheduleSchema(Schema):
 
         Args:
             data(dict): Data passed to schema.
-            **kwargs: Key word args.
+            **kwargs (dict): Key word args.
         Returns:
             data: Data after validation, modification.
         Raises:
