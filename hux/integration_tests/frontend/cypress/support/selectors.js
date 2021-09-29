@@ -46,7 +46,7 @@ export default {
     models: "a[href='/models']",
   },
 
-  // engagement 
+  // engagement
   engagement: {
     addEngagement: "[data-e2e='add-engagement']",
     addEngagements: "a[href='/engagements/add']",
@@ -73,7 +73,7 @@ export default {
     genderSpendChart: "[data-e2e='gender-spend-chart']",
     genderChart: "[data-e2e='gender-chart']",
   },
-  
+
   //IDR
   idr: {
     identityResolution: "a[href='/identity-resolution']",

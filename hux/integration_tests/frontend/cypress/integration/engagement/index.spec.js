@@ -12,10 +12,10 @@ describe("Orchestration > Engagement > Create Engagement", () => {
   it("should be able to navigate to engagement and click on add engagement button", () => {
     // after login land in the overview page
     cy.location("pathname").should("eq", route.overview)
-    //click on engagement on side nav bar and route in engagement screen 
+    //click on engagement on side nav bar and route in engagement screen
     cy.get(selector.engagements).click()
     cy.location("pathname").should("eq", route.engagements)
-    //click on add engagement button 
+    //click on add engagement button
     cy.get(selector.engagement.addEngagements).click()
   })
 
@@ -23,7 +23,9 @@ describe("Orchestration > Engagement > Create Engagement", () => {
     // add new engagement name
     cy.get(selector.engagement.enagagementName).eq(0).type("Test Engagement")
     // add new engagement description
-    cy.get(selector.engagement.enagagementDescription).eq(0).type("Engagement for E2E testing")
+    cy.get(selector.engagement.enagagementDescription)
+      .eq(0)
+      .type("Engagement for E2E testing")
   })
 
   it("should add audience to the engagement", () => {
