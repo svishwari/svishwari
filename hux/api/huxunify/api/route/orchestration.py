@@ -61,6 +61,7 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.utils import (
     get_db_client,
     group_gender_spending,
+    Validation as validation,
 )
 
 # setup the orchestration blueprint
@@ -172,10 +173,15 @@ class AudienceView(SwaggerView):
         # )
 
         # get the x number of last deliveries to provide per audience
-        delivery_limit = int(
-            request.args.get(
-                api_c.DELIVERIES, api_c.DEFAULT_AUDIENCE_DELIVERY_COUNT
-            )
+        delivery_limit = (
+            validation.validate_integer(request.args.get(api_c.DELIVERIES))
+            if request.args.get(api_c.DELIVERIES)
+            else api_c.DEFAULT_AUDIENCE_DELIVERY_COUNT
+        )
+        lookalikeable = (
+            validation.validate_bool(request.args.get(api_c.LOOKALIKEABLE))
+            if request.args.get(api_c.LOOKALIKEABLE)
+            else False
         )
 
         # get unique destinations per audience across engagements
@@ -212,39 +218,42 @@ class AudienceView(SwaggerView):
             audience[api_c.STATUS] = weight_delivery_status(audience)
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
-        # get all lookalikes and append to the audience list
-        lookalikes = destination_management.get_all_delivery_platform_lookalike_audiences(
-            database
-        )
-
-        # get the facebook delivery platform for lookalikes
-        facebook_destination = (
-            destination_management.get_delivery_platform_by_type(
-                database, db_c.DELIVERY_PLATFORM_FACEBOOK
-            )
-        )
-
-        # set the is_lookalike property to True so UI knows it is a lookalike.
-        for lookalike in lookalikes:
-            lookalike[api_c.LOOKALIKEABLE] = False
-            lookalike[api_c.IS_LOOKALIKE] = True
-
-            lookalike[db_c.STATUS] = lookalike.get(
-                db_c.STATUS, db_c.AUDIENCE_STATUS_ERROR
-            )
-            lookalike[db_c.AUDIENCE_LAST_DELIVERED] = lookalike[
-                db_c.CREATE_TIME
-            ]
-            lookalike[db_c.DESTINATIONS] = (
-                [facebook_destination] if facebook_destination else []
+        # fetch lookalike audiences if lookalikeable is set to false
+        # as lookalike audiences can not be lookalikeable
+        if not lookalikeable:
+            # get all lookalikes and append to the audience list
+            lookalikes = destination_management.get_all_delivery_platform_lookalike_audiences(
+                database
             )
 
-        # combine the two lists and serve.
-        audiences += lookalikes
+            # get the facebook delivery platform for lookalikes
+            facebook_destination = (
+                destination_management.get_delivery_platform_by_type(
+                    database, db_c.DELIVERY_PLATFORM_FACEBOOK
+                )
+            )
 
-        # if lookalikeable flag was passed, filter out the audiences
-        # that are not lookalikeable.
-        if request.args.get(api_c.LOOKALIKEABLE, False):
+            # set the is_lookalike property to True so UI knows it is a lookalike.
+            for lookalike in lookalikes:
+                lookalike[api_c.LOOKALIKEABLE] = False
+                lookalike[api_c.IS_LOOKALIKE] = True
+
+                lookalike[db_c.STATUS] = lookalike.get(
+                    db_c.STATUS, db_c.AUDIENCE_STATUS_ERROR
+                )
+                lookalike[db_c.AUDIENCE_LAST_DELIVERED] = lookalike[
+                    db_c.CREATE_TIME
+                ]
+                lookalike[db_c.DESTINATIONS] = (
+                    [facebook_destination] if facebook_destination else []
+                )
+
+            # combine the two lists and serve.
+            audiences += lookalikes
+
+        else:
+            # if lookalikeable is set to true, filter out the audiences
+            # that are not lookalikeable.
             audiences = [
                 x
                 for x in audiences
