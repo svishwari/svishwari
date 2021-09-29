@@ -122,6 +122,36 @@ class DecisioningTests(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(ModelVersionSchema(many=True).dump(response))
 
+    @given(model_id=st.integers(min_value=100, max_value=1000))
+    def test_get_model_version_history_failed(self, model_id: int):
+        """
+        Test get model version history failed
+
+        Args:
+            model_id (int): Model Id.
+
+        Returns:
+            None
+        """
+
+        # mock the version history
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
+            json={},
+            status_code=200,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/{api_c.MODELS_VERSION_HISTORY}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        if model_id in t_c.SUPPORTED_MODELS.keys():
+            self.assertEqual(HTTPStatus.OK, response.status_code)
+        else:
+            self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     @settings(deadline=600)
     def test_get_model_features(self, model_id: int) -> None:
