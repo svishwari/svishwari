@@ -555,8 +555,9 @@ DATA_EXTENSIONS = "data-extensions"
 DATA_EXTENSION = "data_extension"
 DATA_EXTENSION_ID = "data_extension_id"
 DATA_EXTENSION_FAILED = "Unable to retrieve destination data extension."
-DATA_EXTENSION_CREATION_FAILED = (
-    "Provided destination currently doesn't support data extensions."
+DATA_EXTENSION_NOT_SUPPORTED = (
+    lambda destination_id: f"Data extensions for destination"
+    f"{destination_id} not supported yet."
 )
 
 # Engagement fields

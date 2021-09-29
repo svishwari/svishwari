@@ -569,7 +569,7 @@ class DestinationValidatePostView(SwaggerView):
         )
         return (
             {"message": api_c.DESTINATION_AUTHENTICATION_FAILED},
-            HTTPStatus.INTERNAL_SERVER_ERROR,
+            HTTPStatus.FORBIDDEN,
         )
 
 
@@ -625,20 +625,19 @@ class DestinationDataExtView(SwaggerView):
             get_db_client(), destination_id
         )
 
+        if not destination:
+            logger.error(
+                "Destination does not exist: %s",
+                destination_id,
+            )
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND,
+            }, HTTPStatus.NOT_FOUND
+
         if api_c.AUTHENTICATION_DETAILS not in destination:
             logger.error(
                 "Destination Authentication for %s failed since authentication "
                 "details missing.",
-                destination_id,
-            )
-            return {
-                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
-            }, HTTPStatus.BAD_REQUEST
-
-        if api_c.DELIVERY_PLATFORM_TYPE not in destination:
-            logger.error(
-                "Destination Authentication for %s failed since "
-                "delivery platform type missing.",
                 destination_id,
             )
             return {
@@ -651,16 +650,37 @@ class DestinationDataExtView(SwaggerView):
             destination[api_c.DELIVERY_PLATFORM_TYPE]
             == db_c.DELIVERY_PLATFORM_SFMC
         ):
-            connector = SFMCConnector(
+            sfmc_connector = SFMCConnector(
                 auth_details=get_auth_from_parameter_store(
                     destination[api_c.AUTHENTICATION_DETAILS],
                     destination[api_c.DELIVERY_PLATFORM_TYPE],
                 )
             )
-            ext_list = connector.get_list_of_data_extensions()
-        logger.info(
-            "Found %s data extensions for %s.", len(ext_list), destination_id
-        )
+            if not sfmc_connector.check_connection():
+                logger.info("Could not validate SFMC successfully.")
+                return {
+                    "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+                }, HTTPStatus.FORBIDDEN
+
+            ext_list = sfmc_connector.get_list_of_data_extensions()
+            logger.info(
+                "Found %s data extensions for %s.",
+                len(ext_list),
+                destination_id,
+            )
+
+        else:
+            logger.error(
+                "The delivery platform with destination_id: %s is not supported",
+                destination_id,
+            )
+            return {
+                "message": (
+                    "The delivery platform with destination_id: %s is not supported",
+                    destination_id,
+                )
+            }, HTTPStatus.BAD_REQUEST
+
         return (
             jsonify(
                 sorted(
@@ -742,24 +762,19 @@ class DestinationDataExtPostView(SwaggerView):
             database, destination_id
         )
 
-        if api_c.AUTHENTICATION_DETAILS not in destination:
+        if not destination:
             logger.error(
-                "Destination Authentication for %s failed since authentication "
-                "details missing.",
+                "Destination does not exist: %s",
                 destination_id,
             )
             return {
-                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
-            }, HTTPStatus.BAD_REQUEST
+                "message": api_c.DESTINATION_NOT_FOUND,
+            }, HTTPStatus.NOT_FOUND
 
-        if api_c.DELIVERY_PLATFORM_TYPE not in destination:
-            logger.error(
-                "Destination Authentication for %s failed since "
-                "delivery platform type missing.",
-                destination_id,
-            )
+        if api_c.AUTHENTICATION_DETAILS not in destination:
+            logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED(destination_id))
             return {
-                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+                "message": api_c.DATA_EXTENSION_NOT_SUPPORTED(destination_id)
             }, HTTPStatus.BAD_REQUEST
 
         body = DestinationDataExtPostSchema().load(
@@ -771,16 +786,23 @@ class DestinationDataExtPostView(SwaggerView):
             == db_c.DELIVERY_PLATFORM_SFMC
         ):
 
-            connector = SFMCConnector(
+            sfmc_connector = SFMCConnector(
                 auth_details=get_auth_from_parameter_store(
                     destination[api_c.AUTHENTICATION_DETAILS],
                     destination[api_c.DELIVERY_PLATFORM_TYPE],
                 )
             )
+
+            if not sfmc_connector.check_connection():
+                logger.info("Could not validate SFMC successfully.")
+                return {
+                    "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+                }, HTTPStatus.FORBIDDEN
+
             status_code = HTTPStatus.CREATED
 
             try:
-                extension = connector.create_data_extension(
+                extension = sfmc_connector.create_data_extension(
                     body.get(api_c.DATA_EXTENSION)
                 )
                 # pylint: disable=too-many-function-args
@@ -799,15 +821,12 @@ class DestinationDataExtPostView(SwaggerView):
                 # TODO - this is a work around until ORCH-288 is done
                 status_code = HTTPStatus.OK
                 extension = {}
-                for ext in connector.get_list_of_data_extensions():
+                for ext in sfmc_connector.get_list_of_data_extensions():
                     if ext["CustomerKey"] == body.get(api_c.DATA_EXTENSION):
                         extension = ext
             return DestinationDataExtGetSchema().dump(extension), status_code
 
-        logger.error(
-            "Could not create data extension for platform type %s.",
-            api_c.DELIVERY_PLATFORM_TYPE,
-        )
+        logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED(destination_id))
         return {
-            "message": api_c.DATA_EXTENSION_CREATION_FAILED
+            "message": api_c.DATA_EXTENSION_NOT_SUPPORTED(destination_id)
         }, HTTPStatus.BAD_REQUEST
