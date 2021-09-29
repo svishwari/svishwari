@@ -892,12 +892,10 @@ class AddDestinationEngagedAudience(SwaggerView):
         # toggle routers since the engagement was updated.
         toggle_event_driven_routers(database)
 
-        updated_engagement = get_engagements_summary(
-            database, [ObjectId(engagement_id)]
-        )[0]
-
         return (
-            EngagementGetSchema().dump(updated_engagement),
+            EngagementGetSchema().dump(
+                get_engagements_summary(database, [ObjectId(engagement_id)])[0]
+            ),
             HTTPStatus.OK.value,
         )
 
