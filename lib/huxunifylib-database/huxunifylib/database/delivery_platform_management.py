@@ -1,5 +1,4 @@
-"""
-This module enables functionality related to delivery platform management.
+"""This module enables functionality related to delivery platform management.
 """
 # pylint: disable=C0302
 
@@ -56,8 +55,14 @@ def set_delivery_platform(
         configuration (dict): A dictionary consisting of any platform
             specific configurations.
         is_ad_platform (bool): If the delivery platform is an AD platform.
+
     Returns:
         Union[dict, None]: MongoDB audience doc.
+
+    Raises:
+        DuplicateName: Error if a delivery platform with the same name exists
+            already.
+        UnknownDeliveryPlatformType: If delivery platform type is unknown.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -135,8 +140,8 @@ def get_delivery_platforms_by_id(
 
     Args:
         database (DatabaseClient): A database client.
-        delivery_platform_ids (list[ObjectId]):
-            List of Delivery platform object ids.
+        delivery_platform_ids (list[ObjectId]): List of Delivery platform
+            object ids.
 
     Returns:
         Union[list, None]: Delivery platform configuration.
@@ -170,7 +175,8 @@ def get_delivery_platform(
 
     Args:
         database (DatabaseClient): A database client.
-        delivery_platform_id (ObjectId): The MongoDB ID of the delivery platform.
+        delivery_platform_id (ObjectId): The MongoDB ID of the delivery
+            platform.
 
     Returns:
         Union[dict, None]: Delivery platform configuration.
@@ -264,9 +270,10 @@ def set_connection_status(
 
     Args:
         database (DatabaseClient): A database client.
-        delivery_platform_id (ObjectId): MongoDB document ID of delivery platform.
-        connection_status: Status of connection to delivery platform. Can be Pending,
-            In progress, Failed, or Succeeded.
+        delivery_platform_id (ObjectId): MongoDB document ID of delivery
+            platform.
+        connection_status: Status of connection to delivery platform. Can be
+            Pending, In progress, Failed, or Succeeded.
 
     Returns:
         Union[dict, None]: Updated delivery platform configuration.
@@ -305,8 +312,8 @@ def get_connection_status(
           platform.
 
     Returns:
-        Union[str, None]: Status of delivery platform connection. Can be Pending,
-          In Progress, Failed, or Succeeded.
+        Union[str, None]: Status of delivery platform connection. Can be
+            Pending, In Progress, Failed, or Succeeded.
     """
 
     connection_status = None
@@ -333,7 +340,8 @@ def set_authentication_details(
     Args:
         database (DatabaseClient): A database client.
         delivery_platform_id (ObjectId): The MongoDB ID of delivery platform.
-        authentication_details (dict): A dict containing delivery platform authentication details.
+        authentication_details (dict): A dict containing delivery platform
+            authentication details.
 
     Returns:
         Union[dict, None]: Updated delivery platform configuration.
@@ -403,6 +411,10 @@ def set_name(
 
     Returns:
         Union[dict, None]: Updated delivery platform configuration.
+
+    Raises:
+        DuplicateName: Error if a delivery platform with the same name exists
+            already.
     """
 
     doc = None
@@ -453,7 +465,7 @@ def get_name(
     Args:
         database (DatabaseClient): A database client.
         delivery_platform_id (ObjectId): MongoDB document ID of delivery
-          platform.
+            platform.
 
     Returns:
         Union[str, None]: Delivery platform name.
@@ -487,6 +499,9 @@ def set_platform_type(
 
     Returns:
         Union[dict, None]: Updated delivery platform configuration.
+
+    Raises:
+        UnknownDeliveryPlatformType: If the delivery platform type is unknown.
     """
 
     if delivery_platform_type.upper() not in [
@@ -566,7 +581,8 @@ def update_delivery_platform(
         delivery_platform_id (ObjectId): The MongoDB ID of delivery platform.
         name (str): Delivery platform name.
         delivery_platform_type (str): Delivery platform type.
-        authentication_details (dict): A dict containing delivery platform authentication details.
+        authentication_details (dict): A dict containing delivery platform
+            authentication details.
         added (bool): if the delivery platform is added.
         user_name (str): Name of the user updating the delivery platform.
             This is Optional.
@@ -574,8 +590,16 @@ def update_delivery_platform(
         deleted (bool): if the delivery platform is deleted (soft-delete).
         performance_de (dict): Performance Data Extension for only SFMC.
         is_ad_platform (bool): If the delivery platform is an AD platform.
+
     Returns:
         Union[dict, None]: Updated delivery platform configuration.
+
+    Raises:
+        UnknownDeliveryPlatformType: If the delivery platform type is unknown.
+        DuplicateName: Error if a delivery platform with the same name exists
+            already.
+        NoUpdatesSpecified: Error if no updates were done to the delivery
+            platform.
     """
 
     if delivery_platform_type.upper() not in [
@@ -676,7 +700,8 @@ def create_delivery_platform_lookalike_audience(
         delivery_platform_id (ObjectId): The Mongo ID of delivery platform.
         source_audience_id (ObjectId): The Mongo ID of source audience.
         name (str): Name of the lookalike audience.
-        audience_size_percentage (float): Size percentage of the lookalike audience.
+        audience_size_percentage (float): Size percentage of the lookalike
+            audience.
         country (str): Country of the lookalike audience.
         user_name (str): Name of the user creating the lookalike.
         audience_size (int): Size of the audience at creation.
@@ -684,6 +709,12 @@ def create_delivery_platform_lookalike_audience(
 
     Returns:
         Union[dict, None]: The lookalike audience configuration.
+
+    Raises:
+        InvalidID: If the passed in delivery_platform_id did not fetch a doc
+            from the relevant db collection.
+        DuplicateName: Error if a lookalike audience with the same name exists
+            already.
     """
 
     ret_doc = None
@@ -792,16 +823,17 @@ def get_all_delivery_platform_lookalike_audiences(
     filter_dict: dict = None,
     projection: dict = None,
 ) -> Union[list, None]:
-    """A function to get all delivery platform lookalike audience configurations.
+    """A function to get all delivery platform lookalike audience
+    configurations.
 
     Args:
         database (DatabaseClient): A database client.
         filter_dict (dict): filter dictionary for adding custom filters.
-        projection (dict): Dict that specifies which fields to return or not return.
+        projection (dict): Dict that specifies which fields to return or not
+            return.
 
     Returns:
         Union[list, None]: List of all lookalike audience configurations.
-
     """
 
     collection = database[c.DATA_MANAGEMENT_DATABASE][
@@ -846,6 +878,10 @@ def update_lookalike_audience_name(
 
     Returns:
         Union[dict, None]: The updated lookalike audience configuration.
+
+    Raises:
+        DuplicateName: Error if a lookalike audience with the same name exists
+            already.
     """
 
     ret_doc = None
@@ -901,7 +937,8 @@ def update_lookalike_audience_size_percentage(
     Args:
         database (DatabaseClient): A database client.
         lookalike_audience_id (ObjectId): The Mongo ID of lookalike audience.
-        audience_size_percentage (float): The new size percentage of the lookalike audience.
+        audience_size_percentage (float): The new size percentage of the
+            lookalike audience.
 
     Returns:
         Union[dict, None]: The updated lookalike audience configuration.
@@ -948,14 +985,22 @@ def update_lookalike_audience(
         database (DatabaseClient): A database client.
         lookalike_audience_id (ObjectId): The Mongo ID of lookalike audience.
         name (str): The new name of the lookalike audience.
-        audience_size_percentage (float): The new size percentage of the lookalike audience.
+        audience_size_percentage (float): The new size percentage of the
+            lookalike audience.
         country (str): Updated lookalike audience country.
         user_name (str): Username of the user updating the audience.
         audience_size (int): Size of the audience at update time.
 
     Returns:
         Union[dict, None]: The updated lookalike audience configuration.
+
+    Raises:
+        DuplicateName: Error if a lookalike audience with the same name exists
+            already.
+        NoUpdatesSpecified: Error if no updates were done to the lookalike
+            audience collection.
     """
+
     ret_doc = None
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
@@ -1029,10 +1074,16 @@ def set_delivery_job(
         delivery_platform_generic_campaigns (list): generic campaign IDs.
         engagement_id (ObjectId): Engagement ID.
         delivery_platform_config (dict): the delivery platform config
-            object that holds the data extensions
+            object that holds the data extensions.
+
     Returns:
         Union[dict, None]: Delivery job configuration.
 
+    Raises:
+        InvalidID: If the passed in delivery_platform_id did not fetch a doc
+            from the relevant db collection.
+        NoDeliveryPlatformConnection: If the delivery platform connection is
+            not successful.
     """
 
     dp_doc = get_delivery_platform(database, delivery_platform_id)
@@ -1106,7 +1157,6 @@ def get_delivery_job(
 
     Returns:
         Union[dict, None]: Delivery job configuration.
-
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -1137,14 +1187,20 @@ def get_delivery_jobs_using_metadata(
     delivery_platform_ids: list = None,
 ) -> Union[list, None]:
     """A function to get delivery jobs based on engagement details.
+
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): Engagement id.
         audience_id (ObjectId): Audience id.
         delivery_platform_id (ObjectId): Delivery platform id.
         delivery_platform_ids (list): List of Delivery platform ids.
+
     Returns:
         Union[list, None]: List of matching delivery jobs, if any.
+
+    Raises:
+        InvalidID: If the passed in audience_id, engagement_id,
+            delivery_platform_id is None.
     """
 
     if (
@@ -1266,7 +1322,6 @@ def set_delivery_job_audience_size(
 
     Returns:
         Union[dict, None]: Stored delivery job configuration.
-
     """
 
     doc = None
@@ -1310,7 +1365,6 @@ def set_delivery_job_lookalike_audiences(
 
     Returns:
         Union[dict, None]: Stored delivery job configuration.
-
     """
 
     doc = None
@@ -1347,7 +1401,6 @@ def get_delivery_job_audience_size(
 
     Returns:
         Union[int, None]: Delivery platform audience size.
-
     """
 
     audience_size = None
@@ -1384,7 +1437,10 @@ def get_delivery_jobs(
     Returns:
         list: List of delivery jobs.
 
+    Raises:
+        OperationFailure: If an exception occurs during mongo operation.
     """
+
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
 
@@ -1428,7 +1484,6 @@ def get_all_delivery_jobs(
 
     Returns:
         Union[list, None]: List of n delivery jobs.
-
     """
 
     collection = database[c.DATA_MANAGEMENT_DATABASE][
@@ -1486,8 +1541,8 @@ def get_audience_recent_delivery_job(
         delivery_platform_id (ObjectId): The MongoDB ID of a delivery platform.
 
     Returns:
-        Union[dict, None]: Most recent delivery job stored associated
-        with the audience and delivery platform.
+        Union[dict, None]: Most recent delivery job stored associated with the
+            audience and delivery platform.
     """
 
     recent_delivery_job = None
@@ -1534,7 +1589,6 @@ def get_ingestion_job_audience_delivery_jobs(
 
     Returns:
         List: A list of audience deliveries.
-
     """
 
     all_delivery_jobs = []
@@ -1574,6 +1628,10 @@ def create_delivery_job_generic_campaigns(
 
     Returns:
         Union[dict, None]: Updated delivery job configuration.
+
+    Raises:
+        InvalidID: If the passed in delivery_job_id did not fetch a doc from
+            the relevant db collection.
     """
 
     if get_delivery_job(database, delivery_job_id) is None:
@@ -1804,6 +1862,8 @@ def get_delivery_platform_delivery_jobs(
     Returns:
         list: List of delivery jobs for a delivery platform.
 
+    Raises:
+        OperationFailure: If an exception occurs during mongo operation.
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -1829,8 +1889,8 @@ def get_delivery_platforms_count(database: DatabaseClient) -> int:
 
     Returns:
         int: Count of delivery platforms documents.
-
     """
+
     return get_collection_count(
         database, c.DATA_MANAGEMENT_DATABASE, c.DELIVERY_PLATFORM_COLLECTION
     )
@@ -1844,8 +1904,8 @@ def get_lookalike_audiences_count(database: DatabaseClient) -> int:
 
     Returns:
         int: Count of lookalike audiences documents.
-
     """
+
     return get_collection_count(
         database, c.DATA_MANAGEMENT_DATABASE, c.LOOKALIKE_AUDIENCE_COLLECTION
     )
@@ -1885,6 +1945,11 @@ def _set_performance_metrics(
 
     Returns:
         Union[dict, None]: MongoDB metrics doc.
+
+    Raises:
+        InvalidID: If the passed in delivery_job_id did not fetch a doc from
+            the relevant db collection.
+        OperationFailure: If an exception occurs during mongo operation.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -1962,20 +2027,22 @@ def _get_performance_metrics(
         collection_name (str): Name of collection in which operation is
             performed.
         delivery_job_id (ObjectId): delivery job ID.
-        min_start_time (datetime.datetime, optional):
-            Min start time of metrics. Defaults to None.
-        max_end_time (datetime.datetime, optional):
-            Max start time of metrics. Defaults to None.
-        pending_transfer_for_feedback (bool): If True, retrieve only
-            metrics that have not been transferred for feedback. Defaults to False.
-        pending_transfer_for_report (bool): If True, retrieve only
-            metrics that have not been transferred for report. Defaults to False.
-
-    Raises:
-        de.InvalidID: Invalid ID for delivery job.
+        min_start_time (datetime.datetime, optional): Min start time of
+            metrics. Defaults to None.
+        max_end_time (datetime.datetime, optional): Max start time of metrics.
+            Defaults to None.
+        pending_transfer_for_feedback (bool): If True, retrieve only metrics
+            that have not been transferred for feedback. Defaults to False.
+        pending_transfer_for_report (bool): If True, retrieve only metrics
+            that have not been transferred for report. Defaults to False.
 
     Returns:
         Union[list, None]: list of metrics.
+
+    Raises:
+        InvalidID: If the passed in delivery_job_id did not fetch a doc from
+            the relevant db collection.
+        OperationFailure: If an exception occurs during mongo operation.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -2040,11 +2107,12 @@ def get_performance_metrics_by_engagement_details(
         engagement_id (ObjectId): Engagement ID.
         destination_ids (list): Destination IDs.
 
-    Raises:
-        de.InvalidID: Invalid ID for engagement.
-
     Returns:
-        Union[list, None]: list of metrics or None
+        Union[list, None]: list of metrics or None.
+
+    Raises:
+        InvalidID: If the passed in engagement_id did not fetch a doc from the
+            relevant db collection.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -2093,6 +2161,7 @@ def _set_performance_metrics_status(
     Returns:
         Union[dict, None]: performance metrics document.
     """
+
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[collection_name]
 
@@ -2152,9 +2221,9 @@ def _get_all_performance_metrics(
     pending_transfer_for_report: bool = False,
 ) -> Union[list, None]:
     """Helper to retrieve all campaign performance metrics or activity
-        depending on delivery platform. Optionally the result can be
-        filtered by metrics that are pending transfer either for
-        feedback or reporting, but not both at the same time.
+    depending on delivery platform. Optionally the result can be filtered by
+    metrics that are pending transfer either for feedback or reporting, but
+    not both at the same time.
 
     Args:
         database (DatabaseClient): database client.
@@ -2165,12 +2234,13 @@ def _get_all_performance_metrics(
         pending_transfer_for_report (bool): If True, retrieve only metrics
             that have not been transferred for reporting. Defaults to False.
 
+    Returns:
+        Union[list, None]: list of performance metrics.
+
     Raises:
         ValueError: Error indicating flags pending_transfer_for_feedback and
             pending_transfer_for_report cannot both be True at the same time.
-
-    Returns:
-        Union[list, None]: list of performance metrics.
+        OperationFailure: If an exception occurs during mongo operation.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -2227,7 +2297,8 @@ def set_audience_customers(
     Args:
         database (DatabaseClient): A database client. Defaults to None.
         delivery_job_id (ObjectId): Delivery job ID.
-        customer_list (list): List of customer ID processed during the delivery job.
+        customer_list (list): List of customer ID processed during the
+            delivery job.
 
     Returns:
         Union[dict, None]: MongoDB audience doc or None
@@ -2297,13 +2368,14 @@ def _set_performance_metrics_bulk(
     performance_metric_docs: list,
 ) -> dict:
     """Helper to store bulk campaign performance metrics or activities data
-        depending on delivery platform.
+    depending on delivery platform.
 
     Args:
         database (DatabaseClient): A database client.
         collection_name (str): Name of collection in which operation is
             performed.
-        performance_metric_docs (list): A list containing performance metrics documents.
+        performance_metric_docs (list): A list containing performance metrics
+            documents.
 
     Returns:
         dict: dict containing insert_status & list of inserted ids.
@@ -2359,18 +2431,19 @@ def get_most_recent_performance_metric_by_delivery_job(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
 ) -> Union[dict, None]:
-    """Retrieve the most recent campaign performance
-    metrics associated with a given delivery job ID.
+    """Retrieve the most recent campaign performance metrics associated with a
+    given delivery job ID.
 
     Args:
         database (DatabaseClient): database client.
         delivery_job_id (ObjectId): delivery job ID.
 
-    Raises:
-        de.InvalidID: Invalid ID for delivery job.
-
     Returns:
         Union[dict, None]: most recent performance metric.
+
+    Raises:
+        InvalidID: If the passed in delivery_job_id did not fetch a doc from
+            the relevant db collection.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -2404,18 +2477,19 @@ def get_most_recent_campaign_activity_by_delivery_job(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
 ) -> Union[dict, None]:
-    """Retrieve the most recent campaign activity
-    event associated with a given delivery job ID.
+    """Retrieve the most recent campaign activity event associated with a given
+     delivery job ID.
 
     Args:
         database (DatabaseClient): database client.
         delivery_job_id (ObjectId): delivery job ID.
 
-    Raises:
-        de.InvalidID: Invalid ID for delivery job.
-
     Returns:
         Union[dict, None]: most recent performance metric.
+
+    Raises:
+        InvalidID: If the passed in delivery_job_id did not fetch a doc from
+            the relevant db collection.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
