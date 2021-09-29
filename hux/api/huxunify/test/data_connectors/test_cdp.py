@@ -452,7 +452,14 @@ class CDPTest(TestCase):
 
         with self.assertRaises(FailedAPIDependencyError):
             get_customer_events_data(
-                token=t_c.TEST_AUTH_TOKEN, hux_id=customer_id
+                token=t_c.TEST_AUTH_TOKEN,
+                hux_id=customer_id,
+                start_date_str=datetime.utcnow()
+                .date()
+                .strftime(api_c.DEFAULT_DATE_FORMAT),
+                end_date_str=datetime.utcnow()
+                .date()
+                .strftime(api_c.DEFAULT_DATE_FORMAT),
             )
 
     def test_get_customer_count_by_state_raise_dependency_error(self) -> None:

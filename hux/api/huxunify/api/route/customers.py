@@ -851,14 +851,14 @@ class CustomerEvents(SwaggerView):
                 HTTP status code.
         """
 
-        start_date = request.args.get(
+        start_date = request.json.get(
             api_c.START_DATE,
             datetime.strftime(
                 datetime.utcnow().date() - relativedelta(months=6),
                 api_c.DEFAULT_DATE_FORMAT,
             ),
         )
-        end_date = request.args.get(
+        end_date = request.json.get(
             api_c.END_DATE,
             datetime.strftime(
                 datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
