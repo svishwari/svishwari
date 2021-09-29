@@ -1,8 +1,8 @@
 """Set up for pact between HUX and CDP."""
-from pact import Consumer, Provider
+import atexit
 from pathlib import Path
 
-import atexit
+from pact import Consumer, Provider
 
 import huxunify.test.constants as t_c
 from huxunify.test.contract_testing.utils import upload_pact_files_to_s3
