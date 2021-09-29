@@ -625,13 +625,20 @@ class DestinationDataExtView(SwaggerView):
             get_db_client(), destination_id
         )
 
-        if (
-            api_c.AUTHENTICATION_DETAILS not in destination
-            or api_c.DELIVERY_PLATFORM_TYPE not in destination
-        ):
+        if api_c.AUTHENTICATION_DETAILS not in destination:
             logger.error(
                 "Destination Authentication for %s failed since authentication "
-                "details missing or delivery platform type missing.",
+                "details missing.",
+                destination_id,
+            )
+            return {
+                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+            }, HTTPStatus.BAD_REQUEST
+
+        if api_c.DELIVERY_PLATFORM_TYPE not in destination:
+            logger.error(
+                "Destination Authentication for %s failed since "
+                "delivery platform type missing.",
                 destination_id,
             )
             return {
@@ -735,13 +742,20 @@ class DestinationDataExtPostView(SwaggerView):
             database, destination_id
         )
 
-        if (
-            api_c.AUTHENTICATION_DETAILS not in destination
-            or api_c.DELIVERY_PLATFORM_TYPE not in destination
-        ):
+        if api_c.AUTHENTICATION_DETAILS not in destination:
             logger.error(
-                "Destination Authentication for %s not executed since "
-                "Authentication details missing or delivery platform type missing.",
+                "Destination Authentication for %s failed since authentication "
+                "details missing.",
+                destination_id,
+            )
+            return {
+                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+            }, HTTPStatus.BAD_REQUEST
+
+        if api_c.DELIVERY_PLATFORM_TYPE not in destination:
+            logger.error(
+                "Destination Authentication for %s failed since "
+                "delivery platform type missing.",
                 destination_id,
             )
             return {
@@ -794,4 +808,6 @@ class DestinationDataExtPostView(SwaggerView):
             "Could not create data extension for platform type %s.",
             api_c.DELIVERY_PLATFORM_TYPE,
         )
-        return {"message": api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST
+        return {
+            "message": api_c.DATA_EXTENSION_CREATION_FAILED
+        }, HTTPStatus.BAD_REQUEST
