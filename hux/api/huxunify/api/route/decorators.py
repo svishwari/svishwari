@@ -30,7 +30,10 @@ from huxunify.api.data_connectors.okta import (
     get_token_from_request,
     get_user_info,
 )
-from huxunify.api.exceptions import integration_api_exceptions as iae
+from huxunify.api.exceptions import (
+    integration_api_exceptions as iae,
+    unified_exceptions as ue,
+)
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
@@ -379,6 +382,16 @@ def api_error_handler(custom_message: dict = None) -> object:
                     if custom_message
                     else exc.exception_message
                 }, HTTPStatus.BAD_REQUEST.value
+
+            except ue.InputParamsValidationError as exc:
+                logger.error(
+                    "%s: %s Error encountered while executing %s in module %s.",
+                    exc.__class__,
+                    exc.args[0] if exc.args else exc.exception_message,
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
+                return {"message": exc.args[0]}, HTTPStatus.BAD_REQUEST
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.

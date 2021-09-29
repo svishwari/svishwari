@@ -2,8 +2,13 @@
 from datetime import datetime, timedelta
 from unittest import TestCase
 from bson import ObjectId
-from marshmallow import ValidationError
 
+from huxunify.api.exceptions.integration_api_exceptions import (
+    FailedDateFilterIssue,
+)
+from huxunify.api.exceptions.unified_exceptions import (
+    InputParamsValidationError,
+)
 from huxunify.api.route.utils import (
     get_friendly_delivered_time,
     update_metrics,
@@ -48,19 +53,19 @@ class TestRouteUtils(TestCase):
     def test_validate_integer(self):
         """Tests the Validation class static method validate_integer"""
 
-        with self.assertRaises(expected_exception=ValidationError):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_integer("a")
 
-        with self.assertRaises(expected_exception=ValidationError):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_integer("1.1")
 
-        with self.assertRaises(expected_exception=ValidationError):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_integer("-1")
 
-        with self.assertRaises(expected_exception=ValidationError):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_integer("0")
 
-        with self.assertRaises(expected_exception=ValidationError):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_integer("12341234567123456")
 
         Validation.validate_integer("1")
@@ -69,10 +74,10 @@ class TestRouteUtils(TestCase):
     def test_validate_boolean(self):
         """Tests the Validation class static method validate_boolean"""
 
-        with self.assertRaises(expected_exception=ValidationError):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_bool("tru")
 
-        with self.assertRaises(expected_exception=ValidationError):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_bool("0")
 
         Validation.validate_bool("true")
@@ -85,22 +90,22 @@ class TestRouteUtils(TestCase):
     def test_validate_date(self):
         """Tests the Validation class static method validate_date"""
 
-        with self.assertRaises(expected_exception=ValidationError):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_date("2021-09-111")
 
-        with self.assertRaises(expected_exception=ValidationError):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_date("2021-09-aa")
 
-        with self.assertRaises(expected_exception=ValidationError):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_date("2021-09-1O")
 
-        with self.assertRaises(expected_exception=ValidationError):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_date("2021-13-1")
 
-        with self.assertRaises(expected_exception=ValidationError):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_date("20212-13-1")
 
-        with self.assertRaises(expected_exception=ValidationError):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_date("1969-0009-0001")
 
         Validation.validate_date("2021-12-1")
@@ -110,11 +115,14 @@ class TestRouteUtils(TestCase):
     def test_validate_date_range(self):
         """Tests the Validation class static method validate_date_range"""
 
-        with self.assertRaises(expected_exception=ValidationError):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_date_range("2021-09-11", "2021-13-11")
 
-        with self.assertRaises(expected_exception=ValidationError):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_date_range("2021-09-11", "2021-08")
+
+        with self.assertRaises(expected_exception=FailedDateFilterIssue):
+            Validation.validate_date_range("2021-09-11", "2021-08-01")
 
         Validation.validate_date_range("2021-9-11", "2021-9-12")
         Validation.validate_date_range("2021-9-11", "2021-09-11")
