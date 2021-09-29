@@ -13,7 +13,7 @@
       </v-list-item>
       <v-list-item class="v-list-item--link" data-e2e="contactus">
         <a
-          href="mailto:ushuxproductsupport@deloitte.com"
+          href="mailto:ushuxproductidea@deloitte.com"
           class="text-h6 view-all text-decoration-none"
         >
           Contact Us
