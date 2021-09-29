@@ -143,19 +143,14 @@ class CustomerPostOverview(SwaggerView):
                         "section_aggregator": "ALL",
                         "section_filters": [
                             {
-                                "field": "max_age",
+                                "field": "country",
                                 "type": "equals",
-                                "value": 87,
+                                "value": "US",
                             },
                             {
-                                "field": "min_age",
-                                "type": "equals",
-                                "value": 25,
-                            },
-                            {
-                                "field": "match_rate",
-                                "type": "equals",
-                                "value": 0.5,
+                                "field": "age",
+                                "type": "range",
+                                "value": [40, 50],
                             },
                         ],
                     }
