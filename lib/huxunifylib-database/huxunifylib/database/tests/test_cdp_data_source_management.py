@@ -217,10 +217,18 @@ class TestCdpDataSourceManagement(unittest.TestCase):
 
     def test_bulk_write_data_sources(self) -> None:
         """Test bulk write data sources"""
-        # create data source first
+
         data_sources = [
-            {c.NAME: "Bluecore", c.TYPE: "bluecore", c.STATUS: "Active"},
-            {c.NAME: "Netsuite", c.TYPE: "netsuite", c.STATUS: "Pending"},
+            {
+                c.NAME: "Data source 1",
+                c.TYPE: "dataSource1",
+                c.STATUS: "Active",
+            },
+            {
+                c.NAME: "Data source 2",
+                c.TYPE: "dataSource2",
+                c.STATUS: "Pending",
+            },
         ]
 
         # create data sources
@@ -242,8 +250,16 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         """Test bulk delete data sources"""
         # create data source first
         data_sources = [
-            {c.NAME: "Bluecore", c.TYPE: "bluecore", c.STATUS: "Active"},
-            {c.NAME: "Netsuite", c.TYPE: "netsuite", c.STATUS: "Pending"},
+            {
+                c.NAME: "Data source 1",
+                c.TYPE: "dataSource1",
+                c.STATUS: "Active",
+            },
+            {
+                c.NAME: "Data source 2",
+                c.TYPE: "dataSource2",
+                c.STATUS: "Pending",
+            },
         ]
 
         # create data sources

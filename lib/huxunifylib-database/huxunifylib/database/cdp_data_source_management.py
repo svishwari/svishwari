@@ -79,9 +79,10 @@ def bulk_write_data_sources(
 
     Args:
         database (DatabaseClient): A database client.
-        data_sources (list): List of data sources to create
+        data_sources (list): List of data sources to create.
+
     Returns:
-        Union[list, None]: List of MongoDB documents for data source or None
+        Union[list, None]: List of MongoDB documents for data sources or None.
     """
     collection = database[c.DATA_MANAGEMENT_DATABASE][
         c.CDP_DATA_SOURCES_COLLECTION
@@ -207,9 +208,9 @@ def bulk_delete_data_sources(
 
     Args:
         database (DatabaseClient): A database client.
-        data_source_types (list): List of data source types to delete
+        data_source_types (list): List of data source types to delete.
     Returns:
-        bool: a flag indicating successful deletion
+        bool: a flag indicating successful deletion.
     """
     collection = database[c.DATA_MANAGEMENT_DATABASE][
         c.CDP_DATA_SOURCES_COLLECTION

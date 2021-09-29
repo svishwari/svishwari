@@ -204,8 +204,8 @@ class CreateCdpDataSources(SwaggerView):
             "description": api_c.CDP_DATA_SOURCE_DESCRIPTION,
             "example": [
                 {
-                    api_c.NAME: "Bluecore",
-                    api_c.TYPE: "bluecore",
+                    api_c.NAME: "Data source ",
+                    api_c.TYPE: "dataSource",
                     api_c.STATUS: api_c.STATUS_ACTIVE,
                 }
             ],

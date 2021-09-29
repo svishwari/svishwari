@@ -113,10 +113,18 @@ class CDPConnectionsTest(TestCase):
 
         data_sources = get_data_sources(token="")
 
-        for data_source in data_sources:
+        self.assertCountEqual(
+            data_sources, t_c.DATASOURCES_RESPONSE[api_c.BODY]
+        )
+        self.assertEqual(data_sources, t_c.DATASOURCES_RESPONSE[api_c.BODY])
+
+        for idx, data_source in enumerate(data_sources):
             self.assertIn(api_c.NAME, data_source)
             self.assertIn(api_c.LABEL, data_source)
             self.assertIn(api_c.STATUS, data_source)
+            self.assertEqual(
+                data_source, t_c.DATASOURCES_RESPONSE[api_c.BODY][idx]
+            )
 
     def test_get_data_source_data_feeds(self) -> None:
         """
