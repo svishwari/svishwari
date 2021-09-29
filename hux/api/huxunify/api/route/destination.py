@@ -451,9 +451,10 @@ class DestinationValidatePostView(SwaggerView):
         """
 
         body = DestinationValidationSchema().load(request.get_json())
+        platform_type = body.get(api_c.TYPE)
 
         # test the destination connection and update connection status
-        if body.get(db_c.TYPE) == db_c.DELIVERY_PLATFORM_FACEBOOK:
+        if platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
             logger.info("Trying to connect to Facebook.")
             destination_connector = FacebookConnector(
                 auth_details={
@@ -477,7 +478,7 @@ class DestinationValidatePostView(SwaggerView):
                     "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
                 }, HTTPStatus.OK
             logger.error("Could not validate Facebook successfully.")
-        elif body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_SFMC:
+        elif platform_type == db_c.DELIVERY_PLATFORM_SFMC:
             logger.info("Validating SFMC destination.")
             connector = SFMCConnector(
                 auth_details=set_sfmc_auth_details(
@@ -496,7 +497,7 @@ class DestinationValidatePostView(SwaggerView):
                 "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS,
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: ext_list,
             }, HTTPStatus.OK
-        elif body.get(api_c.DESTINATION_TYPE) in [
+        elif platform_type in [
             db_c.DELIVERY_PLATFORM_SENDGRID,
             db_c.DELIVERY_PLATFORM_TWILIO,
         ]:
@@ -510,10 +511,7 @@ class DestinationValidatePostView(SwaggerView):
             return {
                 "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
             }, HTTPStatus.OK
-        elif (
-            body.get(api_c.DESTINATION_TYPE)
-            == db_c.DELIVERY_PLATFORM_QUALTRICS
-        ):
+        elif platform_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
             qualtrics_connector = QualtricsConnector(
                 auth_details={
                     QualtricsCredentials.QUALTRICS_API_TOKEN.value: body.get(
@@ -539,7 +537,7 @@ class DestinationValidatePostView(SwaggerView):
                 }, HTTPStatus.OK
 
             logger.error("Could not validate Qualtrics successfully.")
-        elif body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_GOOGLE:
+        elif platform_type == db_c.DELIVERY_PLATFORM_GOOGLE:
             google_connector = GoogleConnector(
                 auth_details={
                     GoogleCredentials.GOOGLE_DEVELOPER_TOKEN.value: body.get(
@@ -582,7 +580,7 @@ class DestinationValidatePostView(SwaggerView):
         )
         return (
             {"message": api_c.DESTINATION_AUTHENTICATION_FAILED},
-            HTTPStatus.BAD_REQUEST,
+            HTTPStatus.INTERNAL_SERVER_ERROR,
         )
 
 
