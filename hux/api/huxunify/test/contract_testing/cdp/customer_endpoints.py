@@ -12,6 +12,7 @@ class CDPCustomersContracts(unittest.TestCase):
     """
     Generate pact contracts for customer-profile-api endpoints.
     """
+
     def test_get_count_by_state(self):
         """
         Test get count by state endpoint to generate pact contract.
@@ -22,37 +23,39 @@ class CDPCustomersContracts(unittest.TestCase):
             None
         """
         expected = {
-                "code": 200,
-                "body": EachLike(
-                    {
-                        "state": Like("IN"),
-                        "country": Like("US"),
-                        "gender_men": Like(2028),
-                        "gender_women": Like(1461),
-                        "gender_other": Like(191),
-                        "size": Like(3680),
-                        "avg_ltv": Like(240.05151167119567)
-                    }
-                ),
-                "message": "ok"
+            "code": 200,
+            "body": EachLike(
+                {
+                    "state": Like("IN"),
+                    "country": Like("US"),
+                    "gender_men": Like(2028),
+                    "gender_women": Like(1461),
+                    "gender_other": Like(191),
+                    "size": Like(3680),
+                    "avg_ltv": Like(240.05151167119567),
+                }
+            ),
+            "message": "ok",
         }
 
-        (pact
-         .given('No filters passed.')
-         .upon_receiving('A request for count by state.')
-         .with_request(
-            method='POST',
-            path='/customer-profiles/insights/count-by-state',
-            body={},
-            headers={'Content-Type': 'application/json'},
-        ).will_respond_with(200, body=expected))
+        (
+            pact.given("No filters passed.")
+            .upon_receiving("A request for count by state.")
+            .with_request(
+                method="POST",
+                path="/customer-profiles/insights/count-by-state",
+                body={},
+                headers={"Content-Type": "application/json"},
+            )
+            .will_respond_with(200, body=expected)
+        )
 
         with pact:
             result = requests.post(
-                pact.uri+"/customer-profiles/insights/count-by-state",
+                pact.uri + "/customer-profiles/insights/count-by-state",
                 json={},
                 headers={
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
             )
 
