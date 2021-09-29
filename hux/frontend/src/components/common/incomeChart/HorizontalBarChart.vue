@@ -148,6 +148,7 @@ export default {
         .attr("width", (d) => x(d.ltv))
         .attr("height", y.bandwidth())
         .attr("fill", "#40BAE8")
+        .attr("class", "bar")
         .attr("rx", 2)
         .on("mouseover", (d) => applyHoverEffects(d))
         .on("mouseout", () => removeHoverEffects())

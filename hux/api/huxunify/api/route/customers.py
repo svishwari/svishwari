@@ -816,18 +816,19 @@ class CustomerEvents(SwaggerView):
                 HTTP status code.
         """
 
-        start_date = request.json.get(api_c.START_DATE)
-        end_date = request.json.get(api_c.END_DATE)
+        # start_date = request.json.get(api_c.START_DATE)
+        # end_date = request.json.get(api_c.END_DATE)
+        #
+        # start_date = None
+        # end_date = None
 
-        check_end_date_greater_than_start_date(start_date, end_date)
+        # check_end_date_greater_than_start_date(start_date, end_date)
 
         token_response = get_token_from_request(request)
         return (
             jsonify(
                 CustomerEventsSchema().dump(
-                    get_customer_events_data(
-                        token_response[0], hux_id, request.json
-                    ),
+                    get_customer_events_data(token_response[0], hux_id),
                     many=True,
                 )
             ),

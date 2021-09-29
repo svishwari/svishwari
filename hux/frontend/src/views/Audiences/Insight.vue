@@ -366,7 +366,10 @@
                   </span>
                 </template>
                 <template #hover-content>
-                  {{ item.subtitle | Numeric | Empty }}
+                  <span v-if="percentageColumns.includes(item.title)">{{
+                    item.subtitle | Percentage | Empty
+                  }}</span>
+                  <span v-else>{{ item.subtitle | Numeric | Empty }}</span>
                 </template>
               </tooltip>
             </template>
@@ -652,7 +655,10 @@ export default {
       audienceHistory: [],
       relatedEngagements: [],
       isLookalikable: false,
+      refreshAudience: false,
+      audienceData: {},
       is_lookalike: false,
+      percentageColumns: ["Women", "Men", "Other"],
       items: [
         {
           text: "Audiences",
@@ -744,10 +750,7 @@ export default {
       demographicsData: "audiences/demographics",
     }),
     audience() {
-      const _getAudience = this.getAudience(this.$route.params.id)
-      return _getAudience
-        ? JSON.parse(JSON.stringify(_getAudience))
-        : _getAudience
+      return this.audienceData
     },
     audienceId() {
       return this.$route.params.id
@@ -796,7 +799,6 @@ export default {
       }
 
       const insights = this.audienceInsights
-
       return Object.keys(metrics).map((metric) => {
         return {
           ...metrics[metric],
@@ -1252,7 +1254,12 @@ export default {
     },
     async loadAudienceInsights() {
       this.loading = true
+      this.refreshAudience = true
       await this.getAudienceById(this.$route.params.id)
+      const _getAudience = this.getAudience(this.$route.params.id)
+      if (_getAudience && this.refreshAudience) {
+        this.audienceData = JSON.parse(JSON.stringify(_getAudience))
+      }
       if (this.audience && this.audience.is_lookalike) {
         this.audienceHistory = this.audience.audienceHistory.filter(
           (e) => e.title == "Created"
@@ -1266,6 +1273,7 @@ export default {
       this.is_lookalike = this.audience.is_lookalike
       this.items[1].text = this.audience.name
       this.getDestinations()
+      this.refreshAudience = false
       this.loading = false
     },
     onError(message) {
