@@ -113,6 +113,7 @@ class ModelVersionView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    responses.update(EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
