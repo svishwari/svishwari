@@ -74,4 +74,7 @@ export default {
   customers: "a[href='/customers']",
   engagements: "a[href='/engagements']",
   audiences: "a[href='/audiences']",
+  audience: {
+    audienceList: "[data-e2e='audience-list']"
+  }
 }
