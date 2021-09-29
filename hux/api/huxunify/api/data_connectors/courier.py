@@ -1,5 +1,4 @@
-"""
-purpose of this file is to house all delivery related components.
+"""purpose of this file is to house all delivery related components.
  - delivery of an audience
 """
 from http import HTTPStatus
@@ -45,6 +44,9 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
 
     Returns:
         tuple: The credential tuple for (env, secrets).
+
+    Raises:
+        KeyError: Exception when key is missing in object.
     """
 
     # skip if no authentication details provided.
@@ -169,9 +171,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
 
 # pylint: disable=too-many-instance-attributes
 class DestinationBatchJob:
-    """
-    Class for housing the Destination batch config.
-    """
+    """Class for housing the Destination batch config."""
 
     def __init__(
         self,
@@ -313,6 +313,8 @@ class DestinationBatchJob:
 
         Returns:
 
+        Raises:
+            Exception: Exception raised if job is missing.
         """
 
         # don't process if schedule set.
@@ -444,6 +446,9 @@ def get_audience_destination_pairs(audiences: list) -> list:
 
     Returns:
         list: list of lists [[audience_id, destination_id],..]
+
+    Raises:
+        TypeError: Raised when empty list is provided.
     """
 
     if not audiences or not any(x for x in audiences if x):

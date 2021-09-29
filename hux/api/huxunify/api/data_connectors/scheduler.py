@@ -1,6 +1,5 @@
 # Purpose of this module is to park schedule modules for delivery schedule
-"""
-Sample object
+"""Sample object
 schedule = {
     "periodicity": "Weekly",
     "every": 2,
@@ -26,8 +25,7 @@ cron_exp = {
 
 
 def generate_cron(schedule: dict) -> str:
-    """
-    To generate cron expression based on the schedule object
+    """To generate cron expression based on the schedule object
     Args:
         schedule: dictionary object of schedule
 
