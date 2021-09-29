@@ -26,7 +26,7 @@ describe("Orchestration > Engagement > Create Engagement", () => {
     cy.get(selector.engagement.enagagementDescription).eq(0).type("Engagement for E2E testing")
   })
 
-  it("should add audience to the enagement", () => {
+  it("should add audience to the engagement", () => {
     // Click on add audience icon
     cy.get(selector.engagement.addAudience).click()
     // Select the first audience from the existing ones
@@ -35,7 +35,7 @@ describe("Orchestration > Engagement > Create Engagement", () => {
     cy.get(selector.engagement.exitDrawer).click()
   })
 
-  it("should add destination to the enagement", () => {
+  it("should add destination to the engagement", () => {
     // Click on add audience icon
     cy.get(selector.engagement.addDestination).click()
     // Select the first audience from the existing ones
