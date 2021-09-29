@@ -56,6 +56,10 @@ USER_INFO_CALL = f"{TEST_CONFIG.OKTA_ISSUER}/oauth2/v1/userinfo"
 CDM_HEALTHCHECK_CALL = f"{TEST_CONFIG.CDP_SERVICE}/healthcheck"
 CUSTOMER_PROFILE_API = f"{TEST_CONFIG.CDP_SERVICE}"
 
+HUX = 'HUX'
+CDP = 'CDP'
+CONTRACTS_FOLDER = 'contracts'
+
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
     "status": "success",
