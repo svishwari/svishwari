@@ -487,19 +487,19 @@ class AudienceInsightsGetView(SwaggerView):
 
         # get the audience
         audience_id = ObjectId(audience_id)
-        audience = orchestration_management.get_audience(database, audience_id)
 
-        if not audience:
-            # check if lookalike
-            lookalike = destination_management.get_delivery_platform_lookalike_audience(
+        audience = orchestration_management.get_audience(database, audience_id)
+        lookalike = (
+            destination_management.get_delivery_platform_lookalike_audience(
                 database, audience_id
             )
-            if not lookalike:
-                logger.error("Audience with id %s not found.", audience_id)
-                return {
-                    "message": api_c.AUDIENCE_NOT_FOUND
-                }, HTTPStatus.NOT_FOUND
+        )
 
+        if not audience and not lookalike:
+            logger.error("Audience with id %s not found.", audience_id)
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+
+        if not audience and lookalike:
             # grab the source audience ID of the lookalike
             audience = orchestration_management.get_audience(
                 database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
@@ -840,8 +840,48 @@ class AudiencePutView(SwaggerView):
 
         # load into the schema object
         body = AudiencePutSchema().load(request.get_json(), partial=True)
-
         database = get_db_client()
+
+        # validate destinations
+        if db_c.DESTINATIONS in body:
+            # validate list of dict objects
+            for destination in body[db_c.DESTINATIONS]:
+                # check if dict instance
+                if not isinstance(destination, dict):
+                    logger.error("Destination must be objects.")
+                    return {
+                        "message": "destinations must be objects"
+                    }, HTTPStatus.BAD_REQUEST
+
+                # check if destination id assigned
+                if db_c.OBJECT_ID not in destination:
+                    logger.error(
+                        "Destination object missing the %s field.",
+                        db_c.OBJECT_ID,
+                    )
+                    return {
+                        "message": f"{destination} missing the "
+                        f"{db_c.OBJECT_ID} field."
+                    }, HTTPStatus.BAD_REQUEST
+
+                # validate object id
+                # map to an object ID field
+                # validate the destination object exists.
+                destination[db_c.OBJECT_ID] = ObjectId(
+                    destination[db_c.OBJECT_ID]
+                )
+
+                if not destination_management.get_delivery_platform(
+                    get_db_client(), destination[db_c.OBJECT_ID]
+                ):
+                    logger.error(
+                        "Could not find destination with id %s.",
+                        destination[db_c.OBJECT_ID],
+                    )
+                    return {
+                        "message": api_c.DESTINATION_NOT_FOUND
+                    }, HTTPStatus.NOT_FOUND
+
         audience_doc = orchestration_management.update_audience(
             database=database,
             audience_id=ObjectId(audience_id),

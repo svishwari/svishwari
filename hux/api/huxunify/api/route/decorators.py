@@ -297,7 +297,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__qualname__,
                     in_function.__module__,
                 )
-                return {"message": str(invalid_id)}, HTTPStatus.BAD_REQUEST
+                return {"message": str(invalid_id)}, HTTPStatus.NOT_FOUND
 
             except facebook_business.exceptions.FacebookRequestError as exc:
                 logger.error(

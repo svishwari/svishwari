@@ -915,10 +915,10 @@ class CustomersInsightsCountries(SwaggerView):
                 "type": "array",
                 "items": CustomersInsightsStatesSchema,
             },
-            "description": "Customer Insights by states.",
+            "description": "Customer Insights by countries.",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get Customer Insights by states."
+            "description": "Failed to get Customer Insights by countries."
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -935,7 +935,7 @@ class CustomersInsightsCountries(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[list, int]: list of spend and size data by state,
+            Tuple[list, int]: list of spend and size data by country,
                 HTTP status code.
         """
 
