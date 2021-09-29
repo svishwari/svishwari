@@ -670,15 +670,9 @@ class DestinationDataExtView(SwaggerView):
             )
 
         else:
-            logger.error(
-                "The delivery platform with destination_id: %s is not supported",
-                destination_id,
-            )
+            logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED(destination_id))
             return {
-                "message": (
-                    "The delivery platform with destination_id: %s is not supported",
-                    destination_id,
-                )
+                "message": api_c.DATA_EXTENSION_NOT_SUPPORTED(destination_id)
             }, HTTPStatus.BAD_REQUEST
 
         return (
