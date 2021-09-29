@@ -8,6 +8,7 @@ class HuxAdvException(Exception):
 
     def __init__(self, *args):
         """Initialize the exception class."""
+
         super().__init__(
             self.exception_message.format(*args)
             if args
@@ -30,7 +31,8 @@ class InvalidName(HuxAdvException):
 
 
 class DataSourceLocked(HuxAdvException):
-    """Exception for when data source is already associated with an ingestion job."""
+    """Exception for when data source is already associated with an ingestion
+    job."""
 
     exception_message = (
         "Data source with ID <{}> is associated to an ingestion job "
