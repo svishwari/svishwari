@@ -142,7 +142,7 @@ const mutations = {
   },
 
   SET_DATA_FEEDS(state, items) {
-    state.dataFeeds = []
+    state.dataFeeds = {}
 
     items.forEach((item) => {
       Vue.set(state.dataFeeds, item.datafeed_id, item)
