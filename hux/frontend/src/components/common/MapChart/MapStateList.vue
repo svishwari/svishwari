@@ -5,6 +5,7 @@
         v-for="item in mapChartData"
         :key="item[defaultMetric]"
         class="sub-props pt-4"
+        data-e2e="map-state-list"
       >
         <span class="subprop-name">{{ item[defaultMetric] }}</span>
         <span class="value ml-2 font-weight-semi-bold">
