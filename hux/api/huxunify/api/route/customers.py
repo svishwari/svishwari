@@ -615,7 +615,24 @@ class CustomerGeoVisualView(SwaggerView):
 class CustomerDemoVisualView(SwaggerView):
     """Customers Profiles Demographic Insights class."""
 
-    parameters = [api_c.START_DATE_PARAMS, api_c.END_DATE_PARAMS]
+    parameters = [
+        {
+            "name": api_c.START_DATE,
+            "description": "Start date.",
+            "type": "string",
+            "in": "query",
+            "required": True,
+            "example": "05-01-2016",
+        },
+        {
+            "name": api_c.END_DATE,
+            "description": "End date.",
+            "type": "string",
+            "in": "query",
+            "required": True,
+            "example": "09-01-2019",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "schema": {

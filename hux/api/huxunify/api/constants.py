@@ -829,23 +829,6 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
     ]
 }
 
-START_DATE_PARAMS = {
-    "name": START_DATE,
-    "description": "Start date.",
-    "type": "string",
-    "in": "query",
-    "required": True,
-    "example": "2021-04-01",
-}
-
-END_DATE_PARAMS = {
-    "name": END_DATE,
-    "description": "End date.",
-    "type": "string",
-    "in": "query",
-    "required": True,
-    "example": "2021-08-01",
-}
 
 # IDR Fields
 IDR_TAG = "idr"
