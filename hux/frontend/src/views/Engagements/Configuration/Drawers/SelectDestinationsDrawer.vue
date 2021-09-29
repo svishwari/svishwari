@@ -56,8 +56,8 @@
                 width="100"
                 height="40"
                 :box-shadow="false"
-                @click="add(item)"
                 data-e2e="destination-select-button"
+                @click="add(item)"
               >
                 Add
               </hux-button>

@@ -159,8 +159,8 @@
           height="40"
           class="ma-2"
           :is-disabled="isActive ? !isFormValid : !extension"
-          @click="addDestination()"
           data-e2e="destination-added"
+          @click="addDestination()"
         >
           Add
         </hux-button>
