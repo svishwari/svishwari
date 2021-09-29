@@ -16,6 +16,7 @@ from huxunify.api.exceptions.integration_api_exceptions import (
 from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.cdp import (
     clean_cdm_fields,
+    clean_cdm_gender_fields,
     DATETIME_FIELDS,
     get_demographic_by_state,
     get_city_ltvs,
@@ -601,3 +602,43 @@ class CDPTest(TestCase):
                 start_date=start_date,
                 end_date=end_date,
             )
+
+
+class CdpFieldTests(TestCase):
+    """
+    Test CDP Field methods
+    """
+
+    def test_cdm_clean_gender_fields(self):
+        """Test clean_cdm_gender_fields function."""
+
+        # ensure no errors are raised, otherwise it will fail.
+        partial_none_response = {
+            "total_records": 316574,
+            "match_rate": 0.5,
+            "total_unique_ids": 156485,
+            "total_unknown_ids": 0,
+            "total_known_ids": 156485,
+            "total_individual_ids": 126629,
+            "total_household_ids": 31658,
+            "updated": datetime(2021, 7, 30, 11, 28, 49, 109000),
+            "total_customers": 0,
+            "total_countries": 0,
+            "total_us_states": 0,
+            "total_cities": 0,
+            "min_age": None,
+            "max_age": None,
+            "avg_age": None,
+            "gender_women": None,
+            "gender_men": None,
+            "gender_other": None,
+            "max_ltv_actual": None,
+            "max_ltv_predicted": None,
+            "min_ltv_actual": None,
+            "min_ltv_predicted": None,
+        }
+
+        self.assertDictEqual(
+            clean_cdm_gender_fields(partial_none_response),
+            partial_none_response,
+        )

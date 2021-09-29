@@ -29,8 +29,8 @@ def audience_name_exists(
         name (str): Name of the entity.
 
     Returns:
-        bool: A flag indicating existence of an audience name for an ingestion job.
-
+        bool: A flag indicating existence of an audience name for an ingestion
+            job.
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -64,7 +64,6 @@ def add_stats_to_update_dict(
 
     Returns:
         dict: Updated dict.
-
     """
 
     new_count = new_data.shape[0]
@@ -233,7 +232,11 @@ def validate_data_source_fields(fields: list) -> None:
     Args:
         fields (list): Data source fields.
 
+    Raises:
+        DuplicateDataSourceFieldType: If there are duplicate data source fields
+            in the input collection
     """
+
     types_dict: dict = {
         "special_type_dict": dict(),
         "field_mapping_dict": dict(),
@@ -295,6 +298,7 @@ def clean_dataframe_types(dataframe: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: output dataframe
     """
+
     dataframe[dataframe.select_dtypes(include=["int64"]).columns] = dataframe[
         dataframe.select_dtypes(include=["int64"]).columns
     ].astype("int32")

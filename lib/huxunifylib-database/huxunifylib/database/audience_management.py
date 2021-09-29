@@ -44,6 +44,12 @@ def create_audience(
 
     Returns:
         Union[dict, None]: MongoDB audience doc or None
+
+    Raises:
+        DuplicateName: Error if an audience with the same name exists
+            already.
+        InvalidID: If the passed in ingestion_job_id did not fetch a doc from
+            the relevant db collection.
     """
 
     ret_doc = None
@@ -118,6 +124,8 @@ def get_ingested_data(
         Tuple[pd.DataFrame, ObjectId]:  A tuple of ingested data in
             Pandas format and next_start_id.
 
+    Raises:
+        OperationFailure: If an exception occurs during mongo operation.
     """
 
     # Get a cursor of ingested data
@@ -187,6 +195,11 @@ def get_audience(
         Tuple[pd.DataFrame, ObjectId]:  A tuple of audience data in
             Pandas format and next_start_id.
 
+    Raises:
+        InvalidID: If the passed in audience_id did not fetch a doc from the
+            relevant db collection.
+        IncorrectFilterValue: If the filters associated with the audience doc
+            has incorrect filters.
     """
 
     # TODO - per Greg Ronin, future we improve it to be a generator to avoid start_id
@@ -320,9 +333,9 @@ def get_audience_batches(
         audience_id (ObjectId): The Mongo DB ID of the audience.
         batch_size (int): Batch size.
 
-    Returns:
-        Generator: A generator of audience data in pandas format.
-
+    Yields:
+        Generator[pd.DataFrame, None, None]: A generator of audience data in
+            pandas format.
     """
 
     start_id = None
@@ -354,8 +367,7 @@ def get_audience_config(
         audience_id (ObjectId): The Mongo DB ID of the audience.
 
     Returns:
-        Union[dict, None]: Configuration of the audience in Mongo DB or None
-
+        Union[dict, None]: Configuration of the audience in Mongo DB or None.
     """
 
     doc = None
@@ -387,7 +399,6 @@ def get_audience_insights(
 
     Returns:
         dict: Stored audience insights.
-
     """
 
     dm_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -405,8 +416,7 @@ def get_audience_data_source_id(
     database: DatabaseClient,
     audience_id: ObjectId,
 ) -> ObjectId:
-    """
-    A function to get data source ID of an audience.
+    """A function to get data source ID of an audience.
 
     Args:
         database (DatabaseClient): A database client.
@@ -414,7 +424,6 @@ def get_audience_data_source_id(
 
     Returns:
         ObjectId: MongoDB ID of data source.
-
     """
 
     data_source_id = None
@@ -442,16 +451,14 @@ def get_audience_non_breakdown_fields(
     database: DatabaseClient,
     audience_id: ObjectId,
 ) -> Union[list, None]:
-    """
-    A function to get non breakdown fields of an audience.
+    """A function to get non breakdown fields of an audience.
 
     Args:
         database (DatabaseClient): A database client.
         audience_id (ObjectId): MongoDB document ID of audience.
 
     Returns:
-        Union[list,None]: A list of non breakdown fields or None
-
+        Union[list,None]: A list of non breakdown fields or None.
     """
 
     non_breakdown_fields = None
@@ -492,8 +499,7 @@ def append_audience_insights(
             breakdowns should be calculated.
 
     Returns:
-        Union[dict, None]: Stored audience insights or None
-
+        Union[dict, None]: Stored audience insights or None.
     """
 
     beg_time = time.time()
@@ -626,8 +632,7 @@ def get_audience_name(
         audience_id (ObjectId): The Mongo DB ID of the audience.
 
     Returns:
-        Union[str,None]: Name of the audience in Mongo DB or None
-
+        Union[str,None]: Name of the audience in Mongo DB or None.
     """
 
     audience_name = None
@@ -655,7 +660,11 @@ def update_audience_name(
     Returns:
         dict: Updated audience configuration dict.
 
+    Raises:
+        DuplicateName: Error if an audience with the same name exists
+            already.
     """
+
     exists_flag = audience_name_exists(
         database,
         name,
@@ -697,9 +706,9 @@ def update_audience_filters(
             breakdowns should be calculated.
 
     Returns:
-        Union[dict, None]: Updated audience configuration dict or None
-
+        Union[dict, None]: Updated audience configuration dict or None.
     """
+
     doc = None
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.AUDIENCES_COLLECTION]
@@ -748,8 +757,10 @@ def get_ingestion_job_audience_ids(
         ingestion_job_id (ObjectId): The Mongo DB ID of the ingestion job.
 
     Returns:
-        List: A list of audience IDs.
+        list: A list of audience IDs.
 
+    Raises:
+        OperationFailure: If an exception occurs during mongo operation.
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -781,8 +792,7 @@ def get_ingestion_job_audience_insights(
         ingestion_job_id (ObjectId): The Mongo DB ID of the ingestion job.
 
     Returns:
-        List: A list of audience insights.
-
+        list: A list of audience insights.
     """
 
     all_audience_insights = []
@@ -818,8 +828,7 @@ def get_all_recent_audiences(
         database (DatabaseClient): A database client.
 
     Returns:
-        List: A list of all audience configuration dicts.
-
+        list: A list of all audience configuration dicts.
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -878,8 +887,7 @@ def get_all_audiences(
         database (DatabaseClient): A database client.
 
     Returns:
-        Union[dict, None]: A list of all audience configuration dicts or None
-
+        Union[dict, None]: A list of all audience configuration dicts or None.
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -907,7 +915,6 @@ def favorite_audience(
 
     Returns:
         dict: Updated audience configuration dict.
-
     """
 
     # Update dict
@@ -931,7 +938,6 @@ def unfavorite_audience(
 
     Returns:
         dict: Updated audience configuration dict.
-
     """
 
     update_dict = {
@@ -950,8 +956,8 @@ def get_audiences_count(database: DatabaseClient) -> int:
 
     Returns:
         int: Count of audiences documents.
-
     """
+
     return get_collection_count(
         database, c.DATA_MANAGEMENT_DATABASE, c.AUDIENCES_COLLECTION
     )
@@ -963,7 +969,6 @@ def set_ingestion_job_status(
     job_status: str,
     status_msg: str = "",
 ) -> dict:
-
     """Set an ingestion job status.
 
     Args:
@@ -1000,7 +1005,6 @@ def update_audience_status_for_delivery(
 
     Returns:
         dict: Updated audience configuration dict.
-
     """
 
     # Update dict
