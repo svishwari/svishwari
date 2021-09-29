@@ -1,7 +1,7 @@
 """
 Purpose of this file is to house all tests related to decisioning
 """
-
+import json
 from http import HTTPStatus
 from unittest import TestCase, mock
 
@@ -138,8 +138,7 @@ class DecisioningTests(TestCase):
         self.request_mocker.stop()
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
-            json={},
-            status_code=200,
+            text=json.dumps({}),
         )
         self.request_mocker.start()
 

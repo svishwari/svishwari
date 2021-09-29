@@ -15,6 +15,7 @@ from huxunify.api.config import get_config
 from huxunify.api.data_connectors import tecton
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
+    EmptyAPIResponseError,
 )
 from huxunify.test import constants as t_c
 
@@ -379,11 +380,11 @@ class TectonTest(TestCase):
             tecton.get_models()
 
     @requests_mock.Mocker()
-    @given(model_id=st.text(alphabet=string.ascii_letters))
-    def test_get_model_version_history_raise_dependency_error(
-        self, request_mocker: Mocker, model_id: str
+    @given(model_id=st.integers(min_value=100, max_value=1000))
+    def test_get_model_version_history_raise_empty_response_dependency_error(
+        self, request_mocker: Mocker, model_id: int
     ) -> None:
-        """Test get model version history raise dependency error.
+        """Test get model version history raise empty response dependency error.
 
         Args:
             request_mocker (Mocker): request mocker object.
@@ -399,22 +400,22 @@ class TectonTest(TestCase):
             headers=self.config.TECTON_API_HEADERS,
         )
 
-        with self.assertRaises(FailedAPIDependencyError):
+        with self.assertRaises(EmptyAPIResponseError):
             tecton.get_model_version_history(model_id=model_id)
 
     @requests_mock.Mocker()
     @given(
-        model_id=st.text(alphabet=string.ascii_letters),
+        model_id=st.integers(min_value=100, max_value=1000),
         model_type=st.text(alphabet=string.ascii_letters),
     )
-    def test_get_model_drift_raise_dependency_error(
+    def test_get_model_drift_raise_empty_responsedependency_error(
         self, request_mocker: Mocker, model_id: str, model_type: str
     ) -> None:
-        """Test get model drift raise dependency error.
+        """Test get model drift raise empty response dependency error.
 
         Args:
             request_mocker (Mocker): request mocker object.
-            model_id (str): model ID value for request.
+            model_id (int): model ID value for request.
             model_type (str): model type value for request.
 
         Returns:
@@ -427,7 +428,7 @@ class TectonTest(TestCase):
             headers=self.config.TECTON_API_HEADERS,
         )
 
-        with self.assertRaises(FailedAPIDependencyError):
+        with self.assertRaises(EmptyAPIResponseError):
             tecton.get_model_drift(model_id=model_id, model_type=model_type)
 
     @requests_mock.Mocker()
