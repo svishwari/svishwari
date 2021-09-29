@@ -150,8 +150,8 @@ stages:
         content-type: application/json
         Authorization: "Bearer {token}"
       json:
-        name: "Tavern_Test_Name"
-        category: "Tavern_Test_Category"
+        name: "tavern_test"
+        category: "test"
 
     # ...and the expected response code and body
     response:
