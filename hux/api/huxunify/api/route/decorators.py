@@ -547,3 +547,78 @@ def validate_destination(
         return decorator
 
     return wrapper
+
+
+def validate_engagement_and_audience() -> object:
+    """This decorator handles validation of engagement and audience objects.
+
+    Example: @validate_engagement_and_audience()
+
+    Returns:
+        Response (object): decorator.
+    """
+
+    def wrapper(in_function) -> object:
+        """Decorator for wrapping a function.
+
+        Args:
+            in_function (object): function object.
+
+        Returns:
+           Response (object): returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for handling engagement validation.
+
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+
+            Returns:
+               Response (object): returns a decorated function object.
+            """
+
+            database = get_db_client()
+
+            # engagement validation
+            engagement_id = ObjectId(kwargs.get(constants.ENGAGEMENT_ID, None))
+
+            if engagement_id is not None:
+                if not get_engagement(database, engagement_id):
+                    logger.error(
+                        "Engagement with engagement ID %s not found.",
+                        engagement_id,
+                    )
+                    return {
+                        constants.MESSAGE: constants.ENGAGEMENT_NOT_FOUND
+                    }, HTTPStatus.NOT_FOUND
+
+                kwargs[constants.ENGAGEMENT_ID] = engagement_id
+
+            # audience validation
+            audience_id = ObjectId(kwargs.get(constants.AUDIENCE_ID, None))
+
+            if audience_id is not None:
+                if not orchestration_management.get_audience(
+                    database, audience_id
+                ):
+                    logger.error(
+                        "Audience with audience ID %s not found.",
+                        audience_id,
+                    )
+                    return {
+                        constants.MESSAGE: constants.AUDIENCE_NOT_FOUND
+                    }, HTTPStatus.NOT_FOUND
+
+                kwargs[constants.AUDIENCE_ID] = audience_id
+
+            return in_function(*args, **kwargs)
+
+        # set tag so we can assert if a function is secured via this decorator
+        decorator.__wrapped__ = in_function
+
+        return decorator
+
+    return wrapper

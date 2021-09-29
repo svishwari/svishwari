@@ -531,6 +531,14 @@ ENGAGEMENT_NOT_FOUND = "Engagement not found."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported."
 SUCCESSFUL_DELIVERY_JOB_NOT_FOUND = "No successful delivery job found"
 ZERO_AUDIENCE_SIZE = "Sum of Audience(s) is zero"
+ENGAGEMENT_NO_AUDIENCES = "Engagement has no audiences."
+AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT = (
+    "Audience not attached to the engagement."
+)
+DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE = (
+    "Destination not attached to the engagement audience."
+)
+DELIVERY_JOBS_NOT_FOUND_TO_MAP = "No delivery jobs found to map."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
