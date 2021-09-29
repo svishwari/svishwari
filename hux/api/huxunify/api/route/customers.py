@@ -62,7 +62,7 @@ from huxunify.api.schema.customers import (
 from huxunify.api import constants as api_c
 from huxunify.api.route.utils import (
     group_gender_spending,
-    check_end_date_greater_than_start_date,
+    Validation,
 )
 
 customers_bp = Blueprint(
@@ -251,10 +251,21 @@ class IDROverview(SwaggerView):
             Tuple[dict, int]: dict of Customer data overview, HTTP status code.
         """
 
-        start_date = request.args.get(api_c.START_DATE)
-        end_date = request.args.get(api_c.END_DATE)
+        start_date = request.args.get(
+            api_c.START_DATE,
+            datetime.strftime(
+                datetime.utcnow().date() - relativedelta(months=6),
+                api_c.DEFAULT_DATE_FORMAT,
+            ),
+        )
+        end_date = request.args.get(
+            api_c.END_DATE,
+            datetime.strftime(
+                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
+            ),
+        )
 
-        check_end_date_greater_than_start_date(start_date, end_date)
+        Validation().validate_date_range(start_date, end_date)
 
         token_response = get_token_from_request(request)
         return (
@@ -482,7 +493,8 @@ class IDRDataFeeds(SwaggerView):
             ),
         )
 
-        check_end_date_greater_than_start_date(start_date, end_date)
+        Validation().validate_date_range(start_date, end_date)
+
         return (
             jsonify(
                 DataFeedSchema().dump(
@@ -646,10 +658,21 @@ class CustomerDemoVisualView(SwaggerView):
                 HTTP status code.
         """
 
-        start_date = request.args.get(api_c.START_DATE)
-        end_date = request.args.get(api_c.END_DATE)
+        start_date = request.args.get(
+            api_c.START_DATE,
+            datetime.strftime(
+                datetime.utcnow().date() - relativedelta(months=6),
+                api_c.DEFAULT_DATE_FORMAT,
+            ),
+        )
+        end_date = request.args.get(
+            api_c.END_DATE,
+            datetime.strftime(
+                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
+            ),
+        )
 
-        check_end_date_greater_than_start_date(start_date, end_date)
+        Validation().validate_date_range(start_date, end_date)
 
         token_response = get_token_from_request(request)
 
@@ -734,10 +757,21 @@ class IDRMatchingTrends(SwaggerView):
                 HTTP status code.
         """
 
-        start_date = request.args.get(api_c.START_DATE)
-        end_date = request.args.get(api_c.END_DATE)
+        start_date = request.args.get(
+            api_c.START_DATE,
+            datetime.strftime(
+                datetime.utcnow().date() - relativedelta(months=6),
+                api_c.DEFAULT_DATE_FORMAT,
+            ),
+        )
+        end_date = request.args.get(
+            api_c.END_DATE,
+            datetime.strftime(
+                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
+            ),
+        )
 
-        check_end_date_greater_than_start_date(start_date, end_date)
+        Validation().validate_date_range(start_date, end_date)
 
         token_response = get_token_from_request(request)
         return (
@@ -776,6 +810,7 @@ class CustomerEvents(SwaggerView):
             "name": "body",
             "description": "Customer Events Filters",
             "type": "object",
+            "required": False,
             "in": "body",
             "example": {
                 api_c.START_DATE: datetime.utcnow().strftime("%Y-01-01"),
@@ -816,19 +851,29 @@ class CustomerEvents(SwaggerView):
                 HTTP status code.
         """
 
-        # start_date = request.json.get(api_c.START_DATE)
-        # end_date = request.json.get(api_c.END_DATE)
-        #
-        # start_date = None
-        # end_date = None
+        start_date = request.args.get(
+            api_c.START_DATE,
+            datetime.strftime(
+                datetime.utcnow().date() - relativedelta(months=6),
+                api_c.DEFAULT_DATE_FORMAT,
+            ),
+        )
+        end_date = request.args.get(
+            api_c.END_DATE,
+            datetime.strftime(
+                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
+            ),
+        )
 
-        # check_end_date_greater_than_start_date(start_date, end_date)
+        Validation().validate_date_range(start_date, end_date)
 
         token_response = get_token_from_request(request)
         return (
             jsonify(
                 CustomerEventsSchema().dump(
-                    get_customer_events_data(token_response[0], hux_id),
+                    get_customer_events_data(
+                        token_response[0], hux_id, start_date, end_date
+                    ),
                     many=True,
                 )
             ),
