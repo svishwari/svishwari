@@ -863,7 +863,7 @@ class AddDestinationEngagedAudience(SwaggerView):
                 "message": api_c.DESTINATION_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
 
-        updated_engagement = append_destination_to_engagement_audience(
+        append_destination_to_engagement_audience(
             database,
             ObjectId(engagement_id),
             ObjectId(audience_id),
@@ -875,7 +875,7 @@ class AddDestinationEngagedAudience(SwaggerView):
             "Destination %s added to audience %s from engagement %s.",
             destination_to_attach[db_c.NAME],
             audience[db_c.NAME],
-            updated_engagement[db_c.NAME],
+            engagement[db_c.NAME],
         )
 
         create_notification(
@@ -884,13 +884,17 @@ class AddDestinationEngagedAudience(SwaggerView):
             (
                 f'Destination "{destination_to_attach[db_c.NAME]}" added to '
                 f'audience "{audience[db_c.NAME]}" from engagement '
-                f'"{updated_engagement[db_c.NAME]}" by {user_name}'
+                f'"{engagement[db_c.NAME]}" by {user_name}'
             ),
             api_c.ENGAGEMENT_TAG,
         )
 
         # toggle routers since the engagement was updated.
         toggle_event_driven_routers(database)
+
+        updated_engagement = get_engagements_summary(
+            database, [ObjectId(engagement_id)]
+        )[0]
 
         return (
             EngagementGetSchema().dump(updated_engagement),
@@ -1001,7 +1005,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
                 "message": api_c.DESTINATION_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
 
-        updated_engagement = remove_destination_from_engagement_audience(
+        remove_destination_from_engagement_audience(
             database,
             ObjectId(engagement_id),
             ObjectId(audience_id),
@@ -1013,7 +1017,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             "Destination %s successfully removed from audience %s from engagement %s by %s.",
             destination_to_remove[db_c.NAME],
             audience[db_c.NAME],
-            updated_engagement[db_c.NAME],
+            engagement[db_c.NAME],
             user_name,
         )
 
@@ -1023,13 +1027,17 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             (
                 f'Destination "{destination_to_remove[db_c.NAME]}" removed from audience '
                 f'"{audience[db_c.NAME]}" from engagement '
-                f'"{updated_engagement[db_c.NAME]}" by {user_name}'
+                f'"{engagement[db_c.NAME]}" by {user_name}'
             ),
             api_c.ENGAGEMENT_TAG,
         )
 
         # toggle routers since the engagement was updated.
         toggle_event_driven_routers(database)
+
+        updated_engagement = get_engagements_summary(
+            database, [ObjectId(engagement_id)]
+        )[0]
 
         return (
             EngagementGetSchema().dump(updated_engagement),
