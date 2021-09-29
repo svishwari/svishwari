@@ -22,7 +22,9 @@ describe("Data management > Identity resolution", () => {
     cy.get(selector.idr.overview).its("length").as("overviewListCount")
     cy.get("@overviewListCount").then((overviewListCount) => {
       cy.get(selector.idr.overview).its("length").should("eq", 7)
-      cy.get(selector.idr.overview).its("length").should("eq", overviewListCount)
+      cy.get(selector.idr.overview)
+        .its("length")
+        .should("eq", overviewListCount)
     })
   })
 
@@ -31,7 +33,9 @@ describe("Data management > Identity resolution", () => {
     cy.get(selector.idr.datafeed).its("length").as("datafeedListCount")
     cy.get("@datafeedListCount").then((datafeedListCount) => {
       cy.get(selector.idr.datafeed).its("length").should("gt", 0)
-      cy.get(selector.idr.datafeed).its("length").should("eq", datafeedListCount)
+      cy.get(selector.idr.datafeed)
+        .its("length")
+        .should("eq", datafeedListCount)
     })
   })
 
