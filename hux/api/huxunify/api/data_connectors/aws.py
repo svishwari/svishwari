@@ -1,4 +1,4 @@
-"""purpose of this file is for interacting with aws"""
+"""Purpose of this file is for interacting with aws"""
 import logging
 import os
 from typing import Tuple
@@ -31,7 +31,7 @@ class ParameterStore:
         Returns:
             dict: boto3 response.
         Raises:
-            ClientError: All AWS service errors and exceptions.
+            ClientError: Boto client request error.
         """
         try:
             return get_aws_client(api_c.AWS_SSM_NAME).put_parameter(
@@ -53,7 +53,7 @@ class ParameterStore:
         Returns:
             str: Parameter Value.
         Raises:
-            ClientError: All AWS service errors and exceptions.
+            ClientError: Boto client request error.
         """
         try:
             return (
@@ -86,7 +86,7 @@ class ParameterStore:
         Returns:
             ssm_params (dict): The key to where the parameters are stored.
         Raises:
-            KeyError: Exception when key is missing in object.
+            KeyError: Exception when the key is missing in the object.
             ProblemException: Any exception raised during endpoint execution.
         """
         ssm_params = {}
@@ -252,7 +252,7 @@ def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
         Auth Object (dict): SFMC auth object.
 
     Raises:
-        KeyError: Exception when key is missing in object.
+        KeyError: Exception when the key is missing in the object.
     """
 
     # only get the secrets from ssm, otherwise take from the auth details.
@@ -439,7 +439,7 @@ def toggle_cloud_watch_rule(
         bool: exception was handled, return false.
 
     Raises:
-        ClientError: All AWS service errors and exceptions.
+        ClientError: Boto client request error.
 
     """
 

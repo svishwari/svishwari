@@ -249,8 +249,8 @@ def get_performance_metrics(
 def generate_metrics_file(
     engagement_id: str, final_metric: dict, metrics_type: str
 ) -> None:
-    """Generates performance metrics .csv file for
-    specified metric for an engagement
+    """Generates performance metrics .csv file for a specified
+    engagement metric.
 
     Args:
         engagement_id (str): Id of engagement
@@ -258,7 +258,7 @@ def generate_metrics_file(
         metrics_type (str): Type of performance metrics
 
     Returns:
-        file name: Name of the csv file generated
+        file_name (str): Name of the csv file generated.
 
     """
     file_path = "performancemetrics"

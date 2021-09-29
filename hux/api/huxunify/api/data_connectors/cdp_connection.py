@@ -59,7 +59,7 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
     Returns:
        list: datafeeds processed within the given dates.
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
     # get config
     config = get_config()
@@ -102,7 +102,7 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
         dict: Datafeed details object
 
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
     # get config
     config = get_config()
@@ -147,7 +147,7 @@ def get_data_source_data_feeds(token: str, data_source_type: str) -> list:
         list: list of connection data-feeds
 
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
 
     """
     config = get_config()
@@ -205,7 +205,7 @@ def get_idr_matching_trends(
     Returns:
        list: count of known, anonymous, unique ids on a day.
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
     # TODO : Fetch date range from CDP
     start_date = (

@@ -1,5 +1,5 @@
-# Purpose of this module is to park schedule modules for delivery schedule
-"""Sample object
+"""Purpose of this module is to park schedule modules for delivery schedule
+Sample object
 schedule = {
     "periodicity": "Weekly",
     "every": 2,

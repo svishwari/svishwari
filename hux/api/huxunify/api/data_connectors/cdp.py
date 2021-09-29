@@ -74,7 +74,7 @@ def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
         dict: dictionary containing the customer profile information
 
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
 
     """
 
@@ -118,7 +118,7 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
         dict: dictionary containing the customer profile information
 
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
 
     """
 
@@ -166,7 +166,7 @@ def get_idr_overview(
         dict: dictionary of overview data
 
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
 
     """
 
@@ -222,7 +222,7 @@ def get_customers_overview(
         dict: dictionary of overview data
 
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
 
     """
 
@@ -464,7 +464,7 @@ def get_customer_events_data(
         list: Customer events with respective counts
 
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
 
     config = get_config()
@@ -577,7 +577,7 @@ def get_customer_count_by_state(
         list: list of state demographic data
 
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
 
     """
     # get config
@@ -713,7 +713,7 @@ def get_customers_insights_count_by_day(
         dict: dictionary of customer count data.
 
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
 
     # get config
@@ -775,7 +775,7 @@ def get_city_ltvs(
         list: list of spending details by cities
 
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
 
     """
     # get config
@@ -858,7 +858,7 @@ def get_spending_by_gender(
         list: list of spending details by gender
 
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
 
     request_payload = (

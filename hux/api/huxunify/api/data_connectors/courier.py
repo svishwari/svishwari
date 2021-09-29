@@ -46,7 +46,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         tuple: The credential tuple for (env, secrets).
 
     Raises:
-        KeyError: Exception when key is missing in object.
+        KeyError: Exception when the key is missing in the object.
     """
 
     # skip if no authentication details provided.
@@ -169,7 +169,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
     return env_dict, secret_dict
 
 
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,too-many-arguments
 class DestinationBatchJob:
     """Class for housing the Destination batch config."""
 
@@ -314,7 +314,7 @@ class DestinationBatchJob:
         Returns:
 
         Raises:
-            Exception: Exception raised if job is missing.
+            Exception: Exception raised if a job is missing.
         """
 
         # don't process if schedule set.
@@ -448,7 +448,7 @@ def get_audience_destination_pairs(audiences: list) -> list:
         list: list of lists [[audience_id, destination_id],..]
 
     Raises:
-        TypeError: Raised when empty list is provided.
+        TypeError: Raised when an empty list is provided.
     """
 
     if not audiences or not any(x for x in audiences if x):

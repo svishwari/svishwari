@@ -137,7 +137,7 @@ def map_model_performance_response(
         model_id (str): Model ID.
         model_type (str): Model type.
         model_version (str): Model version.
-        metric_default_value: Default values for model metric
+        metric_default_value: Default values for model metric.
 
     Returns:
         dict: A cleaned model performance dict.
@@ -185,7 +185,7 @@ def get_models() -> List[dict]:
         List[dict]: List of models.
 
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
 
     # get config
@@ -222,7 +222,7 @@ def get_model_version_history(model_id: str) -> List[ModelVersionSchema]:
         List[ModelVersionSchema] List of model versions.
 
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
     # get config
     config = get_config()
@@ -271,7 +271,7 @@ def get_model_drift(model_id: str, model_type: str) -> List[ModelDriftSchema]:
         List[DriftSchema] List of model drift.
 
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
     # get config
     config = get_config()
@@ -455,7 +455,7 @@ def get_model_features(
         List[FeatureSchema] List of model features.
 
     Raises:
-        FailedAPIDependencyError: Exception for dependency failure from integrated APIs.
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
 
     # get config
