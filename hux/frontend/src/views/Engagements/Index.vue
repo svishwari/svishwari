@@ -56,7 +56,7 @@
             }"
             :style="{ width: header.width }"
           >
-            <div v-if="header.value == 'name'" class="w-80" >
+            <div v-if="header.value == 'name'" class="w-80">
               <menu-cell
                 :value="item[header.value]"
                 :menu-options="getActionItems(item)"
