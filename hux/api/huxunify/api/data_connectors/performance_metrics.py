@@ -183,7 +183,7 @@ def get_performance_metrics(
     engagement_id: str,
     ad_type: str,
 ) -> dict:
-    """
+    """Gets performance metrics for engagement
 
     Args:
         database (MongoClient): Mongoclient instance
@@ -249,7 +249,8 @@ def get_performance_metrics(
 def generate_metrics_file(
     engagement_id: str, final_metric: dict, metrics_type: str
 ) -> None:
-    """
+    """Generates performance metrics .csv file for a specified
+    engagement metric.
 
     Args:
         engagement_id (str): Id of engagement
@@ -257,6 +258,7 @@ def generate_metrics_file(
         metrics_type (str): Type of performance metrics
 
     Returns:
+        file_name (str): Name of the csv file generated.
 
     """
     file_path = "performancemetrics"

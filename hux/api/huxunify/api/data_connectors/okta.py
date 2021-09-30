@@ -1,5 +1,4 @@
-"""
-Purpose of this file is for holding methods to query and pull data from OKTA.
+"""Purpose of this file is for holding methods to query and pull data from OKTA.
 """
 from typing import Tuple
 

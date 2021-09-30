@@ -37,6 +37,7 @@ FLDR_EVENT_CONST = "FLDR-EVENT"
 # general defines
 ID = "id"
 NAME = "name"
+LABEL = "label"
 OWNER = "owner"
 STATUS = "status"
 BODY = "body"
@@ -557,6 +558,7 @@ CONNECTION_STATUS = "connection_status"
 AUTHENTICATION_DETAILS = "authentication_details"
 DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
 DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
+DESTINATION_CONNECTION_FAILED = "Destination connection failed."
 INVALID_STATUS = "Invalid status value."
 INVALID_COMPONENT_NAME = "Invalid component name."
 DATA_EXTENSIONS = "data-extensions"
@@ -1010,6 +1012,7 @@ CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
 CDM_IDENTITY_ENDPOINT = "identity"
+DATASOURCES = "datasources"
 DATAFEEDS = "datafeeds"
 
 PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [

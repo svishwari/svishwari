@@ -1,7 +1,5 @@
 # pylint: disable=no-self-use
-"""
-Schemas for the Customers API
-"""
+"""Schemas for the Customers API"""
 from flask_marshmallow import Schema
 from marshmallow.fields import (
     Str,
@@ -170,9 +168,7 @@ class CustomersSchema(Schema):
 
 
 class DataFeedSchema(Schema):
-    """
-    Customer Datafeed Schema
-    """
+    """Customer Datafeed Schema"""
 
     datafeed_id = Integer(attribute=api_c.ID, example=1)
     datafeed_name = Str(
