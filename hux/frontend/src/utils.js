@@ -126,10 +126,16 @@ export function deliverySchedule() {
 /**
  * Get a list of months names.
  *
- * @returns {string[]} list of months
+ * @param {object} config configuration for list of months
+ * @param {string} config.startMonth the first month in list. Default: "January"
+ * @param {string} config.endMonth the last month in list. Default: "December"
+ * @param {boolean} config.inclusive whether to include the selected months or not. Default: true
+ * @returns {string[]} list of months in the range provided
  */
-export function listOfMonths() {
-  return [
+export function listOfMonths(config = {}) {
+  const { startMonth, endMonth } = config
+
+  const months = [
     "January",
     "February",
     "March",
@@ -143,18 +149,49 @@ export function listOfMonths() {
     "November",
     "December",
   ]
+
+  if (startMonth || endMonth) {
+    const startIndex = months.indexOf(startMonth || "January")
+    const endIndex = months.indexOf(endMonth || "December") + 1
+    const selectedMonths = months.slice(startIndex, endIndex)
+    return selectedMonths
+  }
+
+  return months
 }
 
 /**
  * Get a list of years.
  *
- * @param {number} [yearsBack=10] configuration for how many years back
+ * @param {object} config configuration for list of years
+ * @param {string} config.startYear the first year to start from. Default: "2015"
+ * @param {string} config.endYear the last year to end on. Default: "2021"
  * @returns {string[]} list of years
  */
-export function listOfYears(yearsBack = 10) {
-  return Array.from({ length: yearsBack }, (_, index) => {
-    return dayjs().subtract(index, "years").format("YYYY")
-  })
+export function listOfYears(
+  config = {
+    startYear: dayjs().subtract(4, "year").format("YYYY"),
+    endYear: dayjs().format("YYYY"),
+  }
+) {
+  let min = Number(config.startYear)
+  let max = Number(config.endYear)
+  let years = []
+  for (let i = min; i <= max; i++) {
+    years.push(min.toString())
+    min++
+  }
+  return years
+}
+
+/**
+ * Gets the last date of the month.
+ *
+ * @param {string} date a date which to get the last date of the month
+ * @returns {string} the date at the end of month
+ */
+export function endOfMonth(date) {
+  return dayjs(date).endOf("month").format("YYYY-MM-DD")
 }
 
 /**

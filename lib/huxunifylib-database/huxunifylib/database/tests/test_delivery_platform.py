@@ -1809,9 +1809,11 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIsNotNone(doc)
 
         # fetch customer audience doc for `delivery_job_doc`
-        all_docs = dpm.get_all_audience_customers(
-            database=self.database,
-            delivery_job_id=self.delivery_job_doc[c.ID],
+        all_docs = list(
+            dpm.get_all_audience_customers(
+                database=self.database,
+                delivery_job_id=self.delivery_job_doc[c.ID],
+            )
         )
 
         self.assertIsNotNone(all_docs)
