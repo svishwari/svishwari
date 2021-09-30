@@ -59,7 +59,6 @@
           v-if="item.icon"
           class="my-3 ml-1"
           :class="{ 'home-menu-icon': !isMini }"
-          
         >
           <tooltip
             v-if="item.title"

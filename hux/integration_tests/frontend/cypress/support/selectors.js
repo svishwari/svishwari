@@ -83,10 +83,19 @@ export default {
     contactus: "[data-e2e='contactus']",
     add: "[data-e2e='addicon']",
   },
+  audience: {
+    audiencelist: "[data-e2e='audiencelist']",
+    audiencenameclick: "[data-e2e='audiencename']",
+  },
+  lifetable: "[data-e2e='table-lift']",
+  lifefeature: "[data-e2e='table-feature']",
+  performancemetric: "[data-e2e='performancemetric']",
+  driftchart: "[data-e2e='drift-chart']", 
+  featurechart: "[data-e2e='feature-chart']", 
+  versionhistorybutton: "[data-e2e='version-history-button']", 
+  versionhistory: "[data-e2e='version-history']", 
   customers: "a[href='/customers']",
   engagements: "a[href='/engagements']",
   audiences: "a[href='/audiences']",
-  audience: {
-    audienceList: "[data-e2e='audience-list']"
-  }
+
 }
