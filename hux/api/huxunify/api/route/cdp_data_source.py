@@ -225,7 +225,7 @@ class CreateCdpDataSources(SwaggerView):
 
     @api_error_handler()
     def post(self) -> Tuple[list, int]:
-        """Creates a new CDP data source.
+        """Creates new CDP data sources.
 
         ---
         security:
