@@ -857,16 +857,11 @@ class CustomerEvents(SwaggerView):
         if request.json:
             start_date = request.json.get(
                 api_c.START_DATE,
-                datetime.strftime(
-                    datetime.utcnow().date() - relativedelta(months=6),
-                    api_c.DEFAULT_DATE_FORMAT,
-                ),
+                start_date,
             )
             end_date = request.json.get(
                 api_c.END_DATE,
-                datetime.strftime(
-                    datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
-                ),
+                end_date,
             )
 
             Validation().validate_date_range(start_date, end_date)
