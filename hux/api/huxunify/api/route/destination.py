@@ -636,7 +636,7 @@ class DestinationDataExtView(SwaggerView):
 
         if api_c.AUTHENTICATION_DETAILS not in destination:
             logger.error(
-                "Destination Authentication for %s failed since authentication "
+                "Destination authentication for %s failed since authentication "
                 "details missing.",
                 destination_id,
             )
