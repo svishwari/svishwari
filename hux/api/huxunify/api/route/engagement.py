@@ -456,8 +456,7 @@ class DeleteEngagement(SwaggerView):
     ]
     responses = {
         HTTPStatus.NO_CONTENT.value: {
-            "description": "Delete Individual Engagement",
-            "schema": EngagementGetSchema,
+            "description": "Deleted Individual Engagement.",
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to delete the engagement.",
@@ -508,9 +507,7 @@ class DeleteEngagement(SwaggerView):
             # toggle routers since the engagement was deleted.
             toggle_event_driven_routers(database)
 
-            return {
-                api_c.MESSAGE: api_c.OPERATION_SUCCESS
-            }, HTTPStatus.NO_CONTENT.value
+            return {}, HTTPStatus.NO_CONTENT.value
 
         logger.info("Could not delete engagement with ID %s.", engagement_id)
         return {
@@ -686,10 +683,7 @@ class DeleteAudienceEngagement(SwaggerView):
     ]
     responses = {
         HTTPStatus.NO_CONTENT.value: {
-            "schema": {
-                "example": {api_c.MESSAGE: api_c.OPERATION_SUCCESS},
-            },
-            "description": "Delete Audience from Engagement.",
+            "description": "Deleted Audience from Engagement.",
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to delete audience from the engagement.",
@@ -777,9 +771,7 @@ class DeleteAudienceEngagement(SwaggerView):
         # toggle routers since the engagement was updated.
         toggle_event_driven_routers(database)
 
-        return {
-            api_c.MESSAGE: api_c.OPERATION_SUCCESS
-        }, HTTPStatus.NO_CONTENT.value
+        return {}, HTTPStatus.NO_CONTENT.value
 
 
 @add_view_to_blueprint(
