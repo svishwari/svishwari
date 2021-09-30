@@ -37,6 +37,7 @@ FLDR_EVENT_CONST = "FLDR-EVENT"
 # general defines
 ID = "id"
 NAME = "name"
+LABEL = "label"
 OWNER = "owner"
 STATUS = "status"
 BODY = "body"
@@ -531,6 +532,14 @@ ENGAGEMENT_NOT_FOUND = "Engagement not found."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported."
 SUCCESSFUL_DELIVERY_JOB_NOT_FOUND = "No successful delivery job found"
 ZERO_AUDIENCE_SIZE = "Sum of Audience(s) is zero"
+ENGAGEMENT_NO_AUDIENCES = "Engagement has no audiences."
+AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT = (
+    "Audience not attached to the engagement."
+)
+DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE = (
+    "Destination not attached to the engagement audience."
+)
+DELIVERY_JOBS_NOT_FOUND_TO_MAP = "No delivery jobs found to map."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -549,6 +558,7 @@ CONNECTION_STATUS = "connection_status"
 AUTHENTICATION_DETAILS = "authentication_details"
 DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
 DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
+DESTINATION_CONNECTION_FAILED = "Destination connection failed."
 INVALID_STATUS = "Invalid status value."
 INVALID_COMPONENT_NAME = "Invalid component name."
 DATA_EXTENSIONS = "data-extensions"
@@ -1002,6 +1012,7 @@ CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
 CDM_IDENTITY_ENDPOINT = "identity"
+DATASOURCES = "datasources"
 DATAFEEDS = "datafeeds"
 
 PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [

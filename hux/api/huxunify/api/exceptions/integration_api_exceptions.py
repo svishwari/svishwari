@@ -29,6 +29,15 @@ class FailedAPIDependencyError(IntegratedAPIEndpointException):
     )
 
 
+class FailedDeliveryPlatformDependencyError(IntegratedAPIEndpointException):
+    """Exception for dependency failure for delivery platform APIs."""
+
+    exception_message = (
+        "Failed to establish connection to delivery platform <{}>, "
+        "returned status code <{}>."
+    )
+
+
 class FailedDateFilterIssue(IntegratedAPIEndpointException):
     """Exception for date filter failure."""
 

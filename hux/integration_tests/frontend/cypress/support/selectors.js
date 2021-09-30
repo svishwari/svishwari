@@ -38,6 +38,16 @@ export default {
   connections: "a[href='/connections']",
   addDataSource: "[data-e2e='addDataSource']",
 
+  //destinations
+  destination: {
+    drawerToggle: "[data-e2e='drawerToggle']",
+    addDestination: "[data-e2e='addDestination']",
+    destinationsList: "[tabindex='0'][data-e2e='destinationsDrawer']",
+    destinationConfigDetails: "[data-e2e='destinationConfigDetails']",
+    validateDestination: "[data-e2e='validateDestination']",
+    footer: "[data-e2e='footer']",
+  },
+
   // decisioning
   models: {
     header: "[data-e2e='models-header']",

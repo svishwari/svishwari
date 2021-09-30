@@ -1,4 +1,4 @@
-"""This module enables functionality related to audit data"""
+"""This module enables functionality related to audit data."""
 import logging
 import datetime
 from typing import Union
@@ -22,19 +22,19 @@ def create_audience_audit(
     file_name: str,
     user_name: str = None,
 ) -> Union[dict, None]:
-    """
-    Creating Audience audit log
+    """Creating Audience audit log.
 
     Args:
-        database (DatabaseClient): MongoDB Client
-        audience_id (ObjectId): Audience Id
-        download_type (str): Type of audience file downloaded
-        file_name (str): Uploaded file name
-        user_name (str): User name
+        database (DatabaseClient): MongoDB Client.
+        audience_id (ObjectId): Audience Id.
+        download_type (str): Type of audience file downloaded.
+        file_name (str): Uploaded file name.
+        user_name (str): User name.
 
     Returns:
-        Union[dict,None]: Audit doc or None, if errors
+        Union[dict,None]: Audit doc or None, if errors.
     """
+
     dm_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = dm_db[c.AUDIENCE_AUDIT_COLLECTION]
 
