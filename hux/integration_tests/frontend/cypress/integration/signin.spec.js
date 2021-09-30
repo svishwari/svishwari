@@ -1,5 +1,4 @@
 import route from "../support/routes.js"
-import selector from "../support/selectors.js"
 
 describe("Tests user sign in", () => {
   before(() => {

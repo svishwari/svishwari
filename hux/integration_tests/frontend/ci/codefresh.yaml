@@ -7,6 +7,7 @@ stages:
   - git
   - set_env
   - docker
+  - checks
   - artifactory
 
 steps:
@@ -27,7 +28,7 @@ steps:
     repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
     revision: "${{CF_BRANCH}}" # Git branch triggering the pipeline
 
-  set_env_var:
+  SetEnvironment:
     stage: set_env
     title: Set environment variables
     type: freestyle
@@ -37,13 +38,31 @@ steps:
       - cat ./hux/integration_tests/frontend/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
 
   BuildImage:
-    stage: "docker"
-    title: "Building Docker Image for Unified UI"
+    stage: docker
+    title: Building image for UI integration tests.
     type: "build"
     image_name: "${{BUILD_NAME}}"
     working_directory: "${{CF_REPO_NAME}}/${{UI_INTEGRATION_TEST_PATH}}"
     dockerfile: "Dockerfile"
     tag: "${{DOCKER_TAG}}"
+
+  Checks:
+    stage: checks
+    title: Running checks for lint and style.
+    type: parallel
+    steps:
+      lint:
+        title: "Running lint."
+        image: ${{BuildImage}}
+        working_directory: /app
+        commands:
+          - npm run lint
+      style:
+        title: "Running style."
+        image: ${{BuildImage}}
+        working_directory: /app
+        commands:
+          - npm run style
 
   PublishToArtifactory:
     stage: artifactory
@@ -58,4 +77,4 @@ steps:
       branch:
         only:
           - main
-          - /^app/${{CF_REPO_NAME}}/hux/integration_tests/frontend//.*/i
+          - /^app.*/i
