@@ -1569,9 +1569,7 @@ class TestEngagementRoutes(TestCase):
         }
 
         valid_response = {
-            "message": {
-                db_c.ENGAGEMENT_NAME: ["Missing data for required field."]
-            }
+            db_c.ENGAGEMENT_NAME: ["Missing data for required field."]
         }
 
         response = self.app.post(
