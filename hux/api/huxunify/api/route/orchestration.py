@@ -638,6 +638,7 @@ class AudiencePostView(SwaggerView):
 
         # validate destinations
         database = get_db_client()
+        destinations = []
         if db_c.DESTINATIONS in body:
             # validate list of dict objects
             for destination in AudienceDestinationSchema().load(
@@ -660,6 +661,7 @@ class AudiencePostView(SwaggerView):
                     return {
                         "message": api_c.DESTINATION_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
+                destinations.append(destination)
 
         engagement_ids = []
         if api_c.AUDIENCE_ENGAGEMENTS in body:
@@ -693,7 +695,7 @@ class AudiencePostView(SwaggerView):
             database=database,
             name=body[api_c.AUDIENCE_NAME],
             audience_filters=body.get(api_c.AUDIENCE_FILTERS),
-            destination_ids=body.get(api_c.DESTINATIONS),
+            destination_ids=destinations,
             user_name=user_name,
             size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
         )
@@ -718,7 +720,7 @@ class AudiencePostView(SwaggerView):
                 [
                     {
                         db_c.OBJECT_ID: audience_doc[db_c.ID],
-                        db_c.DESTINATIONS: body.get(api_c.DESTINATIONS),
+                        db_c.DESTINATIONS: destinations,
                     }
                 ],
             )
