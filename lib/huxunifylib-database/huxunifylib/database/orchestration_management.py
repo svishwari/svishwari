@@ -1,5 +1,5 @@
-"""This module enables functionality related
-to orchestration (audience/engagement) management.
+"""This module enables functionality related to
+orchestration(audience/engagement) management.
 """
 
 import logging
@@ -34,14 +34,18 @@ def create_audience(
         database (DatabaseClient): A database client.
         name (str): Name of the audience.
         audience_filters (list of list): Multiple sections of audience filters.
-        These are aggregated using "OR".
-        destination_ids (list): List of destination
-            / delivery platform ids attached to the audience
-        user_name (str): Name of the user creating / updating the audience
+            These are aggregated using "OR".
+        destination_ids (list): List of destination/delivery platform ids
+            attached to the audience.
+        user_name (str): Name of the user creating / updating the audience.
         size (int): audience size.
 
     Returns:
         Union[list, None]: MongoDB audience doc.
+
+    Raises:
+        DuplicateName: Error if an audience with the same name exists
+            already.
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -93,18 +97,23 @@ def get_audience_by_filter(
     sort_list: list = None,
     limit: int = None,
 ) -> Union[list, None]:
-    """A function to get all delivery platform lookalike audience configurations.
+    """A function to get all delivery platform lookalike audience
+    configurations.
 
     Args:
         database (DatabaseClient): A database client.
         filter_dict (dict): filter dictionary for adding custom filters.
-        projection (dict): Dict that specifies which fields to return or not return.
-        sort_list (list): List of tuples to sort by. Example: [(c.CREATE_TIME, pymongo.DESCENDING)]
+        projection (dict): Dict that specifies which fields to return or
+            not return.
+        sort_list (list): List of tuples to sort by.
+            Example: [(c.CREATE_TIME, pymongo.DESCENDING)]
         limit (int): limit for number of audiences returned.
 
     Returns:
         Union[list, None]: List of all lookalike audience configurations.
 
+    Raises:
+        InvalidValueException: If passed in limit value is invalid.
     """
 
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
@@ -152,10 +161,15 @@ def get_audience(
         database (DatabaseClient): A database client.
         audience_id (ObjectId): The Mongo DB ID of the audience.
         include_users (bool): Flag to include users.
+
     Returns:
         Union[dict, None]:  An audience document.
 
+    Raises:
+        InvalidID: If the passed in audience_id did not fetch a doc from the
+            relevant db collection.
     """
+
     doc = None
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.AUDIENCES_COLLECTION]
@@ -201,7 +215,6 @@ def get_all_audiences(
 
     Returns:
         Union[list, None]: A list of all audiences.
-
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -238,17 +251,24 @@ def update_audience(
     user_name: str = None,
 ) -> Union[dict, None]:
     """A function to update an audience.
+
     Args:
         database (DatabaseClient): A database client.
         audience_id (ObjectId): MongoDB ID of the audience.
         name (str): New audience name.
         audience_filters (list of list): Multiple sections of audience filters.
             These are aggregated using "OR".
-        destination_ids (list): List of destination / delivery platform
-            ids attached to the audience
-        user_name (str): Name of the user creating / updating the audience
+        destination_ids (list): List of destination/delivery platform
+            ids attached to the audience.
+        user_name (str): Name of the user creating/updating the audience.
+
     Returns:
         Union[dict, None]: Updated audience configuration dict.
+
+    Raises:
+        InvalidID: If the passed in audience_id did not fetch a doc from the
+            relevant db collection.
+        DuplicateName: Error if an audience with the same name exists already.
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -307,15 +327,14 @@ def delete_audience(
     database: DatabaseClient,
     audience_id: ObjectId,
 ) -> bool:
-    """A function to delete an audience
+    """A function to delete an audience.
 
     Args:
         database (DatabaseClient): A database client.
         audience_id (ObjectId): The Mongo DB ID of the audience.
 
     Returns:
-        bool: A flag to indicate successful deletion
-
+        bool: A flag to indicate successful deletion.
     """
 
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
@@ -344,9 +363,10 @@ def get_audience_insights(
         audience_id (ObjectId): The Mongo DB ID of the audience.
 
     Returns:
-        Union[list, None]:  A list of engagements with delivery information for an audience
-
+        Union[list, None]:  A list of engagements with delivery information for
+            an audience.
     """
+
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.ENGAGEMENTS_COLLECTION]
 
@@ -495,9 +515,10 @@ def get_all_audiences_and_deliveries(
         database (DatabaseClient): A database client.
 
     Returns:
-        Union[list, None]:  A list of engagements with delivery
-            information for an audience
+        Union[list, None]:  A list of engagements with delivery information for
+            an audience.
     """
+
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.AUDIENCES_COLLECTION]
 

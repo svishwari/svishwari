@@ -1,9 +1,7 @@
-"""
-Schemas for cdp data sources API
-"""
+"""Schemas for cdp data sources API"""
 
 from flask_marshmallow import Schema
-from marshmallow import post_dump, fields
+from marshmallow import fields
 from marshmallow.validate import OneOf, Range
 
 import huxunifylib.database.constants as db_c
@@ -13,29 +11,31 @@ from huxunify.api import constants as api_c
 
 
 class CdpDataSourcePostSchema(Schema):
-    """
-    CdpDataSourcePostSchema.
-    """
+    """CDP data source post schema class"""
 
     name = fields.Str(required=True, validate=must_not_be_blank)
-    category = fields.Str(required=True, validate=must_not_be_blank)
+    type = fields.Str(required=True, validate=must_not_be_blank)
+    status = fields.Str(
+        required=True,
+        validate=OneOf(choices=[api_c.STATUS_ACTIVE, api_c.STATUS_PENDING]),
+        default=api_c.STATUS_PENDING,
+    )
 
 
 class CdpDataSourceSchema(Schema):
-    """
-    CdpDataSourceSchema
-    """
+    """CDP data source get schema class, return the serialized messages back"""
 
-    _id = fields.Str(
-        data_key=api_c.ID,
+    id = fields.Str(
+        attribute=db_c.ID,
         example="5f5f7262997acad4bac4373b",
         required=True,
         validate=validate_object_id,
     )
     name = fields.Str(required=True)
-    category = fields.Str(required=True)
-    feed_count = fields.Int()
+    category = fields.Str(required=False, default="")
+    feed_count = fields.Int(required=False, default=1)
     status = fields.Str(
+        required=True,
         validate=[
             OneOf(
                 choices=[
@@ -46,35 +46,15 @@ class CdpDataSourceSchema(Schema):
         ],
         default=api_c.STATUS_ACTIVE,
     )
-    is_added = fields.Bool(attribute="added")
-    is_enabled = fields.Bool(attribute="enabled")
+    is_added = fields.Bool(required=False, attribute="added", default=False)
+    is_enabled = fields.Bool(
+        required=False, attribute="enabled"
+    )  # TODO Remove in HUS-1109
     type = fields.Str()
-
-    @post_dump
-    # pylint: disable=unused-argument
-    # pylint: disable=no-self-use
-    def post_serialize(self, data: dict, many=False) -> dict:
-        """process the schema before serializing.
-
-        Args:
-            data (dict): The CDP data source object
-            many (bool): If there are many to process
-        Returns:
-            Response: Returns a CDP data source object
-
-        """
-        # map id to data_source_id
-        if db_c.ID in data:
-            data[db_c.CDP_DATA_SOURCE_ID] = str(data[db_c.ID])
-            del data[db_c.ID]
-
-        return data
 
 
 class CdpDataSourceDataFeedSchema(Schema):
-    """
-    Data source data feed schema
-    """
+    """Data source data feed schema"""
 
     name = fields.Str()
     datasource_type = fields.Str(example=db_c.CDP_DATA_SOURCE_BLUECORE)
@@ -100,9 +80,7 @@ class CdpDataSourceDataFeedSchema(Schema):
 
 
 class DataSourceDataFeedsGetSchema(Schema):
-    """
-    Data source data feeds get schema
-    """
+    """Data source data feeds get schema"""
 
     name = fields.Str()
     type = fields.Str()
