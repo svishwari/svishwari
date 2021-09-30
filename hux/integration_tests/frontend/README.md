@@ -53,9 +53,9 @@ configuration below.
 
 Here is the example configuration to run in dev.
 
-| `baseUrl`                                            | `USER_EMAIL`                         | `USER_PASSWORD`                      |
-| ---------------------------------------------------- | ------------------------------------ | ------------------------------------ |
-| https://unified-ui-dev.main.use1.hux-unified-dev1.in | See 1Password: Unified Dev Test User | See 1Password: Unified Dev Test User |
+| `baseUrl`                                           | `USER_EMAIL`                         | `USER_PASSWORD`                      |
+|-----------------------------------------------------|--------------------------------------|--------------------------------------|
+|https://unified-ui-dev.main.use1.hux-unified-dev1.in | See 1Password: Unified Dev Test User | See 1Password: Unified Dev Test User |
 
 1. Ensure you are connected to the dev VPN and are able to access the `baseUrl` from your browser.
 
@@ -66,7 +66,7 @@ npm test -- --config baseUrl=https://unified-ui-dev.main.use1.hux-unified-dev1.i
 ```
 
 3. You can also update both `cypress.json` for configuration and
-   `cypress.env.json` for environment variables:
+`cypress.env.json` for environment variables:
 
 ```json
 // cypress.json
@@ -81,7 +81,7 @@ npm test -- --config baseUrl=https://unified-ui-dev.main.use1.hux-unified-dev1.i
 // cypress.env.json
 {
   "USER_EMAIL": "<...>",
-  "USER_PASSWORD": "<...>"
+  "USER_PASSWORD": "<...>",
 }
 ```
 
