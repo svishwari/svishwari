@@ -1,5 +1,4 @@
 """Purpose of this file is for holding methods to query and pull data from CDP."""
-import random
 import time
 import asyncio
 from collections import defaultdict
@@ -145,7 +144,6 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
     return clean_cdm_fields(response.json()[api_c.BODY])
 
 
-# pylint: disable=unused-argument
 def get_idr_overview(
     token: str, start_date: str = None, end_date: str = None
 ) -> dict:
@@ -191,9 +189,12 @@ def get_idr_overview(
     return {
         "overview": clean_cdm_fields(response.json()[api_c.BODY]),
         "date_range": {
-            api_c.START_DATE: datetime.now()
-            - timedelta(days=random.randint(1000, 5000)),
-            api_c.END_DATE: datetime.now(),
+            api_c.START_DATE: datetime.strptime(
+                start_date, api_c.DEFAULT_DATE_FORMAT
+            ),
+            api_c.END_DATE: datetime.strptime(
+                end_date, api_c.DEFAULT_DATE_FORMAT
+            ),
         },
     }
 
@@ -439,39 +440,20 @@ def fill_customer_events_missing_dates(
 
 
 def get_customer_events_data(
-    token: str, hux_id: str, filters: Optional[dict] = None
+    token: str, hux_id: str, start_date_str: str, end_date_str: str
 ) -> list:
     """Get events for a customer grouped by date.
 
     Args:
         token (str): OKTA JWT Token.
         hux_id (str): hux id for a customer.
-        filters (Optional[dict]): filters to pass into
-            customer events endpoint.
+        start_date_str (str): Start date string for sql query.
+        end_date_str (str): End date string for sql query.
     Returns:
         list: Customer events with respective counts
     """
 
     config = get_config()
-    current_time = datetime.utcnow()
-
-    # YTD by default
-    default_filter = {
-        api_c.START_DATE: current_time.strftime("%Y-01-01"),
-        api_c.END_DATE: current_time.strftime("%Y-%m-%d"),
-    }
-
-    filters = filters if filters else default_filter
-
-    # set missing start or end date
-    filters[api_c.START_DATE] = filters.get(
-        api_c.START_DATE,
-        current_time.strftime("%Y-01-01"),
-    )
-    filters[api_c.END_DATE] = filters.get(
-        api_c.END_DATE,
-        current_time.strftime("%Y-%m-%d"),
-    )
 
     logger.info("Getting customer events info from CDP API.")
     response = requests.post(
@@ -479,7 +461,7 @@ def get_customer_events_data(
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
-        json=filters,
+        json={api_c.START_DATE: start_date_str, api_c.END_DATE: end_date_str},
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
@@ -501,8 +483,8 @@ def get_customer_events_data(
 
     return fill_customer_events_missing_dates(
         customer_events,
-        parse(filters.get(api_c.START_DATE) + "T00:00:00Z"),
-        parse(filters.get(api_c.END_DATE) + "T00:00:00Z"),
+        parse(start_date_str + "T00:00:00Z"),
+        parse(end_date_str + "T00:00:00Z"),
     )
 
 
@@ -640,6 +622,7 @@ def get_demographic_by_state(
     return geographic_response
 
 
+# pylint: disable=unused-argument
 def get_demographic_by_country(
     token: str, filters: Optional[dict] = None
 ) -> list:
@@ -804,7 +787,12 @@ def clean_cdm_gender_fields(response_body: dict) -> dict:
     ]
 
     # add each individual gender count from the response body into total_count
-    total_count = sum([response_body[gender[0]] for gender in gender_fields])
+    total_count = sum(
+        [
+            response_body[gender[0]] if response_body[gender[0]] else 0
+            for gender in gender_fields
+        ]
+    )
 
     # set the count values and the calculated individual gender average against
     # appropriate fields in the response body for each individual gender

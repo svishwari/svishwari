@@ -3,7 +3,6 @@ from datetime import datetime
 from typing import Tuple
 from http import HTTPStatus
 from bson import ObjectId
-from marshmallow import ValidationError
 from pandas import DataFrame
 
 from healthcheck import HealthCheck
@@ -13,6 +12,7 @@ from pymongo import MongoClient
 
 from huxunifylib.util.general.logging import logger
 from huxunifylib.connectors.util.client import db_client_factory
+
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
@@ -31,7 +31,10 @@ from huxunify.api.data_connectors.cdp import check_cdm_api_connection
 from huxunify.api.data_connectors.cdp_connection import (
     check_cdp_connections_api_connection,
 )
-from huxunify.api.exceptions import integration_api_exceptions as iae
+from huxunify.api.exceptions import (
+    integration_api_exceptions as iae,
+    unified_exceptions as ue,
+)
 from huxunify.api.prometheus import record_health_status_metric
 
 
@@ -364,16 +367,12 @@ class Validation:
 
         if value.isdigit():
             if int(value) <= 0:
-                raise ValidationError(
-                    f"Value {value} must be a positive integer"
-                )
+                raise ue.InputParamsValidationError(value, "positive integer")
             if int(value) > max_value:
-                raise ValidationError(
-                    f"Value {value} must be less than {max_value}."
-                )
+                raise ue.InputParamsValidationError(value, "integer")
             return int(value)
 
-        raise ValidationError(f"Value {value} is not a valid integer.")
+        raise ue.InputParamsValidationError(value, "integer")
 
     @staticmethod
     def validate_bool(value: str) -> bool:
@@ -395,7 +394,7 @@ class Validation:
         if value.lower() == "false":
             return False
 
-        raise ValidationError(f"{value} is not a valid boolean value.")
+        raise ue.InputParamsValidationError(value, "boolean")
 
     @staticmethod
     def validate_date(
@@ -418,8 +417,8 @@ class Validation:
         try:
             return datetime.strptime(date_string, date_format)
         except ValueError:
-            raise ValidationError(
-                f"The date {date_string} is not in the proper format: {date_format}."
+            raise ue.InputParamsValidationError(
+                date_string, date_format
             ) from ValueError
 
     @staticmethod
@@ -444,6 +443,4 @@ class Validation:
         end = Validation.validate_date(end_date, date_format)
 
         if start > end:
-            raise ValidationError(
-                f"{start_date} is not earlier than {end_date}."
-            )
+            raise iae.FailedDateFilterIssue

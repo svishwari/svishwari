@@ -1,19 +1,30 @@
-"""
-Creating this file to have modifications to default schema fields
-"""
+"""Creating this file to have modifications to default schema fields"""
 import datetime
 import logging
+from typing import Any
+
 import pytz
 from marshmallow.fields import DateTime
 
 
 class DateTimeWithZ(DateTime):
-    """
-    This class is to modify serialization of datetime
-    We need
-    """
+    """This class is to modify serialization of datetime"""
 
-    def _serialize(self, value, attr, obj, **kwargs):
+    def _serialize(
+        self, value: datetime.datetime, attr: str, obj: Any, **kwargs
+    ):
+        """Serializes Date Time Object with Z
+
+        Args:
+            value (datetime.datetime): The value to be serialized.
+            attr (str): The attribute or key on the object to be serialized.
+            obj (obj): The object the value was pulled from.
+            **kwargs (dict): Field-specific keyword arguments.
+
+        Returns:
+            str: datetime value with Z
+
+        """
         if value is None:
             return None
         try:

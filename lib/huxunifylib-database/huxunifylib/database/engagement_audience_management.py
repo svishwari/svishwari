@@ -1,5 +1,4 @@
-"""
-This module enables functionality related to engagement audience management.
+"""This module enables functionality related to engagement audience management.
 """
 from datetime import datetime
 import logging
@@ -27,8 +26,8 @@ def get_all_engagement_audience_destinations(
         audience_ids (list): List of audience ids.
 
     Returns:
-        Union[list, None]:  A list of engagements with delivery
-            information for an audience
+        Union[list, None]:  A list of engagements with delivery information
+            for an audience.
     """
 
     # check if any audience ids
@@ -106,7 +105,6 @@ def set_engagement_audience_destination_schedule(
 
     Returns:
         dict: updated engagement object
-
     """
 
     return database[db_c.DATA_MANAGEMENT_DATABASE][
@@ -148,8 +146,7 @@ def remove_engagement_audience_destination_schedule(
         user_name (str): Name of the user updating the engagement.
 
     Returns:
-        dict: updated engagement object
-
+        dict: updated engagement object.
     """
 
     return database[db_c.DATA_MANAGEMENT_DATABASE][
