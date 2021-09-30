@@ -149,6 +149,7 @@
             :is-available="destination.is_enabled"
             :is-already-added="destination.is_added"
             class="my-3"
+            data-e2e="destinationsDrawer"
             @click="onSelectDestination(destination.id)"
           />
 

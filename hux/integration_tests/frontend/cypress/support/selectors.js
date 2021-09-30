@@ -42,7 +42,7 @@ export default {
   destination: {
     drawerToggle: "[data-e2e='drawerToggle']",
     addDestination: "[data-e2e='addDestination']",
-    destinationsList: "[tabindex='0']",
+    destinationsList: "[tabindex='0'][data-e2e='destinationsDrawer']",
     destinationConfigDetails: "[data-e2e='destinationConfigDetails']",
     validateDestination: "[data-e2e='validateDestination']",
     footer: "[data-e2e='footer']",
