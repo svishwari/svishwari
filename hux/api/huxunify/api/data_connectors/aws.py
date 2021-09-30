@@ -1,6 +1,4 @@
-"""
-purpose of this file is for interacting with aws
-"""
+"""Purpose of this file is for interacting with aws"""
 import logging
 import os
 from typing import Tuple
@@ -32,6 +30,8 @@ class ParameterStore:
             overwrite (bool): Overwrite an existing parameter.
         Returns:
             dict: boto3 response.
+        Raises:
+            ClientError: Boto client request error.
         """
         try:
             return get_aws_client(api_c.AWS_SSM_NAME).put_parameter(
@@ -45,14 +45,15 @@ class ParameterStore:
 
     @staticmethod
     def get_store_value(name: str, value: str = "Value") -> str:
-        """
-        Retrieve a parameter/value from the param store.
+        """Retrieve a parameter/value from the param store.
 
         Args:
             name (str): Name of the parameter.
             value (str): Name of the value to get (i.e. Name or Value)
         Returns:
             str: Parameter Value.
+        Raises:
+            ClientError: Boto client request error.
         """
         try:
             return (
@@ -84,6 +85,9 @@ class ParameterStore:
 
         Returns:
             ssm_params (dict): The key to where the parameters are stored.
+        Raises:
+            KeyError: Exception when the key is missing in the object.
+            ProblemException: Any exception raised during endpoint execution.
         """
         ssm_params = {}
 
@@ -247,6 +251,8 @@ def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
     Returns:
         Auth Object (dict): SFMC auth object.
 
+    Raises:
+        KeyError: Exception when the key is missing in the object.
     """
 
     # only get the secrets from ssm, otherwise take from the auth details.
@@ -314,6 +320,9 @@ def set_cloud_watch_rule(
 
     Returns:
         rule_arn (str): The Amazon resource name (ARN) of the rule.
+
+    Raises:
+        ValueError: Error indicating unsupported values.
     """
 
     if state.upper() not in [api_c.ENABLED.upper(), api_c.DISABLED.upper()]:
@@ -427,6 +436,10 @@ def toggle_cloud_watch_rule(
             Toggle regardless of checking existence.
 
     Returns:
+        bool: exception was handled, return false.
+
+    Raises:
+        ClientError: Boto client request error.
 
     """
 

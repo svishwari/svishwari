@@ -38,6 +38,16 @@ export default {
   connections: "a[href='/connections']",
   addDataSource: "[data-e2e='addDataSource']",
 
+  //destinations
+  destination: {
+    drawerToggle: "[data-e2e='drawerToggle']",
+    addDestination: "[data-e2e='addDestination']",
+    destinationsList: "[tabindex='0'][data-e2e='destinationsDrawer']",
+    destinationConfigDetails: "[data-e2e='destinationConfigDetails']",
+    validateDestination: "[data-e2e='validateDestination']",
+    footer: "[data-e2e='footer']",
+  },
+
   // decisioning
   models: {
     header: "[data-e2e='models-header']",
@@ -72,6 +82,18 @@ export default {
     incomeChart: "[data-e2e='income-chart']",
     genderSpendChart: "[data-e2e='gender-spend-chart']",
     genderChart: "[data-e2e='gender-chart']",
+    customerID: "[data-e2e='customerID']",
+    customerlength: "[data-e2e='customer-length']",
+    matchConfidence: "[data-e2e='match-confidence']",
+    lifeTimeValue: "[data-e2e='life-time-value']",
+    conversionTime: "[data-e2e='conversion-time']",
+    churnScore: "[data-e2e='churn-score']",
+    lastClick: "[data-e2e='last-click']",
+    lastPurchaseDate: "[data-e2e='last-purchase-date']",
+    lastOpen: "[data-e2e='last-open']",
+    customerInsights: "[data-e2e='customer-insights']",
+    contactPreferencecs: "[data-e2e='contact-preferencecs']",
+    chord: "[data-e2e='chord']",
   },
 
   //IDR

@@ -56,7 +56,8 @@ client["customers"].totalCustomers = () => {
 }
 
 client["customers"].events = (huxId) => {
-  return http.post(`/customers/${huxId}/events`)
+  const emptyDateFilter = {}
+  return http.post(`/customers/${huxId}/events`, emptyDateFilter)
 }
 
 client["customers"].getOverview = (data) => {

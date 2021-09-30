@@ -10,6 +10,7 @@ from typing import Union
 
 from bson import ObjectId
 import pymongo
+from pymongo.cursor import Cursor
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.db_exceptions as de
@@ -2333,7 +2334,7 @@ def set_audience_customers(
 def get_all_audience_customers(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
-) -> Union[list, None]:
+) -> Cursor:
     """A function to fetch all audience customers docs for a delivery job.
 
     Args:
@@ -2341,7 +2342,7 @@ def get_all_audience_customers(
         delivery_job_id (ObjectId): Delivery job ID.
 
     Returns:
-        Union[list, None]: A list of all audience customers docs or None
+        Cursor: An iterable cursor of customer lists.
     """
 
     audience_customers_docs = None
@@ -2349,8 +2350,8 @@ def get_all_audience_customers(
     collection = am_db[c.AUDIENCE_CUSTOMERS_COLLECTION]
 
     try:
-        audience_customers_docs = list(
-            collection.find({c.DELIVERY_JOB_ID: delivery_job_id})
+        audience_customers_docs = collection.find(
+            {c.DELIVERY_JOB_ID: delivery_job_id}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

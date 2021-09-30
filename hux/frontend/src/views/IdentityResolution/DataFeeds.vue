@@ -1,10 +1,12 @@
 <template>
-  <v-card flat class="pa-2 card-style">
-    <v-card-title>
+  <v-card flat class="card-style">
+    <v-progress-linear :active="isLoading" :indeterminate="isLoading" />
+    <v-card-title class="pa-6">
       <h5 class="text-h5 black--text text--darken-4">Data feeds</h5>
     </v-card-title>
-    <v-card-text>
+    <v-card-text class="px-6">
       <hux-data-table
+        v-if="!isLoading"
         :columns="columns"
         :data-items="data"
         :sort-column="sortColumn"
@@ -94,6 +96,12 @@ export default {
     data: {
       type: Array,
       required: false,
+    },
+
+    isLoading: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 
