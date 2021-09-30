@@ -283,7 +283,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                 return {
                     "message": " ".join(error_message)
                     if isinstance(error_message, list)
-                    else str(error_message)
+                    else error_message
                 }, HTTPStatus.BAD_REQUEST
 
             except InvalidId as invalid_id:

@@ -270,8 +270,10 @@ class CdpDataSourcesTest(TestCase):
         ds_name = ""
 
         valid_response = {
-            "category": ["Missing data for required field."],
-            "name": ["Data not provided."],
+            "message": {
+                "category": ["Missing data for required field."],
+                "name": ["Data not provided."],
+            }
         }
         response = self.test_client.post(
             self.data_sources_api_endpoint,
@@ -293,8 +295,10 @@ class CdpDataSourcesTest(TestCase):
         """
 
         valid_response = {
-            "category": ["Missing data for required field."],
-            "name": ["Missing data for required field."],
+            "message": {
+                "category": ["Missing data for required field."],
+                "name": ["Missing data for required field."],
+            }
         }
 
         response = self.test_client.post(
@@ -321,8 +325,10 @@ class CdpDataSourcesTest(TestCase):
         ds_category = ""
 
         valid_response = {
-            "category": ["Data not provided."],
-            "name": ["Data not provided."],
+            "message": {
+                "category": ["Data not provided."],
+                "name": ["Data not provided."],
+            }
         }
 
         response = self.test_client.post(
