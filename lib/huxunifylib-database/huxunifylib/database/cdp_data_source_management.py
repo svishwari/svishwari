@@ -71,6 +71,41 @@ def create_data_source(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def bulk_write_data_sources(
+    database: DatabaseClient, data_sources: list
+) -> Union[list, None]:
+    """A function that creates new data sources
+
+    Args:
+        database (DatabaseClient): A database client.
+        data_sources (list): List of data sources to create.
+
+    Returns:
+        Union[list, None]: List of MongoDB documents for data sources or None.
+    """
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
+
+    _ = [
+        data_source.update(
+            {c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1, c.ADDED: True}
+        )
+        for data_source in data_sources
+    ]
+
+    try:
+        data_source_ids = collection.insert_many(data_sources).inserted_ids
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return list(collection.find({c.ID: {"$in": data_source_ids}}))
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def get_all_data_sources(database: DatabaseClient) -> Union[list, None]:
     """A function that returns all data sources.
 
@@ -161,6 +196,38 @@ def delete_data_source(
 
     try:
         return collection.delete_one({c.ID: data_source_id}).deleted_count > 0
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def bulk_delete_data_sources(
+    database: DatabaseClient, data_source_types: list
+) -> bool:
+    """A function that deletes selected data sources
+
+    Args:
+        database (DatabaseClient): A database client.
+        data_source_types (list): List of data source types to delete.
+    Returns:
+        bool: a flag indicating successful deletion.
+    """
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
+
+    try:
+        return (
+            collection.delete_many(
+                {c.TYPE: {"$in": data_source_types}}
+            ).deleted_count
+            > 0
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

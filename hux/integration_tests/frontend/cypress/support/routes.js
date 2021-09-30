@@ -24,6 +24,7 @@ export default {
   identityResolution: "/identity-resolution",
   connections: "/connections",
   destinations: "/destinations",
+  addDestinations: "/destinations/add",
 
   //notification
   notifications: "/notifications",
