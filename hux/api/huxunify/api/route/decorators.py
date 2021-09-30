@@ -30,7 +30,10 @@ from huxunify.api.data_connectors.okta import (
     get_token_from_request,
     get_user_info,
 )
-from huxunify.api.exceptions import integration_api_exceptions as iae
+from huxunify.api.exceptions import (
+    integration_api_exceptions as iae,
+    unified_exceptions as ue,
+)
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
@@ -331,15 +334,15 @@ def api_error_handler(custom_message: dict = None) -> object:
 
             except de.DuplicateName as exc:
                 logger.error(
-                    "%s: %s while executing %s in module %s.",
+                    "%s: %s Error encountered while executing %s in module %s.",
                     exc.__class__,
-                    exc.exception_message,
+                    exc.args[0] if exc.args else exc.exception_message,
                     in_function.__qualname__,
                     in_function.__module__,
                 )
                 return {
                     "message": constants.DUPLICATE_NAME
-                }, HTTPStatus.BAD_REQUEST.value
+                }, HTTPStatus.FORBIDDEN
 
             except CustomAudienceDeliveryStatusError as exc:
                 logger.error(
@@ -365,12 +368,34 @@ def api_error_handler(custom_message: dict = None) -> object:
                     "message": constants.FAILED_DEPENDENCY_ERROR_MESSAGE
                 }, HTTPStatus.FAILED_DEPENDENCY
 
+            except iae.FailedDeliveryPlatformDependencyError as exc:
+                logger.error(
+                    "%s: %s Error encountered while executing %s in module %s.",
+                    exc.__class__,
+                    exc.args[0] if exc.args else exc.exception_message,
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
+                return {
+                    "message": constants.DESTINATION_CONNECTION_FAILED
+                }, HTTPStatus.FAILED_DEPENDENCY
+
             except iae.FailedDateFilterIssue as exc:
                 return {
                     "message": custom_message
                     if custom_message
                     else exc.exception_message
                 }, HTTPStatus.BAD_REQUEST.value
+
+            except ue.InputParamsValidationError as exc:
+                logger.error(
+                    "%s: %s Error encountered while executing %s in module %s.",
+                    exc.__class__,
+                    exc.args[0] if exc.args else exc.exception_message,
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
+                return {"message": exc.args[0]}, HTTPStatus.BAD_REQUEST
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.
@@ -548,6 +573,81 @@ def validate_destination(
             return in_function(*args, **kwargs)
 
         decorator.__wrapped__ = in_function
+        return decorator
+
+    return wrapper
+
+
+def validate_engagement_and_audience() -> object:
+    """This decorator handles validation of engagement and audience objects.
+
+    Example: @validate_engagement_and_audience()
+
+    Returns:
+        Response (object): decorator.
+    """
+
+    def wrapper(in_function) -> object:
+        """Decorator for wrapping a function.
+
+        Args:
+            in_function (object): function object.
+
+        Returns:
+           Response (object): returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for handling engagement validation.
+
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+
+            Returns:
+               Response (object): returns a decorated function object.
+            """
+
+            database = get_db_client()
+
+            # engagement validation
+            engagement_id = ObjectId(kwargs.get(constants.ENGAGEMENT_ID, None))
+
+            if engagement_id is not None:
+                if not get_engagement(database, engagement_id):
+                    logger.error(
+                        "Engagement with engagement ID %s not found.",
+                        engagement_id,
+                    )
+                    return {
+                        constants.MESSAGE: constants.ENGAGEMENT_NOT_FOUND
+                    }, HTTPStatus.NOT_FOUND
+
+                kwargs[constants.ENGAGEMENT_ID] = engagement_id
+
+            # audience validation
+            audience_id = ObjectId(kwargs.get(constants.AUDIENCE_ID, None))
+
+            if audience_id is not None:
+                if not orchestration_management.get_audience(
+                    database, audience_id
+                ):
+                    logger.error(
+                        "Audience with audience ID %s not found.",
+                        audience_id,
+                    )
+                    return {
+                        constants.MESSAGE: constants.AUDIENCE_NOT_FOUND
+                    }, HTTPStatus.NOT_FOUND
+
+                kwargs[constants.AUDIENCE_ID] = audience_id
+
+            return in_function(*args, **kwargs)
+
+        # set tag so we can assert if a function is secured via this decorator
+        decorator.__wrapped__ = in_function
+
         return decorator
 
     return wrapper
