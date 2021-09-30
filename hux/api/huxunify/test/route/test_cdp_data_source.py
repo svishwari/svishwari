@@ -8,7 +8,6 @@ from unittest import TestCase, mock
 
 import mongomock
 import requests_mock
-from bson import ObjectId
 from marshmallow import ValidationError
 
 from huxunifylib.database.cdp_data_source_management import create_data_source
@@ -77,7 +76,12 @@ class CdpDataSourcesTest(TestCase):
         ]:
             self.data_sources.append(
                 CdpDataSourceSchema().dump(
-                    create_data_source(self.database, ds_name, "")
+                    create_data_source(
+                        self.database,
+                        name=ds_name,
+                        category="",
+                        source_type=ds_name,
+                    )
                 )
             )
 
@@ -129,9 +133,9 @@ class CdpDataSourcesTest(TestCase):
         )
         self.assertEqual(valid_response, response.json)
 
-    def test_delete_data_source_by_id_valid_id(self):
+    def test_delete_data_sources_by_type_success(self):
         """
-        Test delete data source by id from DB
+        Test delete data sources by type from DB
 
         Args:
 
@@ -139,12 +143,17 @@ class CdpDataSourcesTest(TestCase):
 
         """
 
-        ds_id = self.data_sources[0][api_c.ID]
+        data_source_types = ", ".join(
+            [data_source[api_c.TYPE] for data_source in self.data_sources]
+        )
 
-        valid_response = dict(message="SUCCESS")
+        valid_response = dict(
+            message=api_c.DELETE_DATASOURCES_SUCCESS.format(data_source_types)
+        )
 
         response = self.test_client.delete(
-            f"{self.data_sources_api_endpoint}/{ds_id}",
+            f"{self.data_sources_api_endpoint}",
+            query_string={api_c.DATASOURCES: data_source_types},
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -219,9 +228,9 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
-    def test_delete_data_source_by_id_invalid_id(self):
+    def test_delete_data_sources_by_type_empty_data(self):
         """
-        Test delete data source with an invalid id
+        Test delete data sources with empty data
 
         Args:
 
@@ -229,40 +238,37 @@ class CdpDataSourcesTest(TestCase):
 
         """
 
-        ds_id = "ABC123"
-        valid_response = {
-            "message": f"Invalid CDP data source ID received {ds_id}."
-        }
-
         response = self.test_client.delete(
-            f"{self.data_sources_api_endpoint}/{ds_id}",
+            f"{self.data_sources_api_endpoint}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
-        self.assertEqual(valid_response, response.json)
-
-    def test_delete_data_source_by_id_non_existent_id(self) -> None:
-        """
-        Test delete data source with an non-existent id
-
-        Args:
-
-        Returns:
-            None
-        """
-
-        non_existent_data_source_id = str(ObjectId())
-
-        response = self.test_client.delete(
-            f"{self.data_sources_api_endpoint}/{non_existent_data_source_id}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
         self.assertEqual(
-            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+            {api_c.MESSAGE: api_c.EMPTY_OBJECT_ERROR_MESSAGE}, response.json
         )
-        self.assertEqual({"message": api_c.OPERATION_FAILED}, response.json)
+
+    # def test_delete_data_source_by_id_non_existent_id(self) -> None:
+    #     """
+    #     Test delete data source with an non-existent id
+    #
+    #     Args:
+    #
+    #     Returns:
+    #         None
+    #     """
+    #
+    #     non_existent_data_source_id = str(ObjectId())
+    #
+    #     response = self.test_client.delete(
+    #         f"{self.data_sources_api_endpoint}/{non_existent_data_source_id}",
+    #         headers=t_c.STANDARD_HEADERS,
+    #     )
+    #
+    #     self.assertEqual(
+    #         HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+    #     )
+    #     self.assertEqual({"message": api_c.OPERATION_FAILED}, response.json)
 
     def test_create_data_source_w_empty_name_string(self):
         """

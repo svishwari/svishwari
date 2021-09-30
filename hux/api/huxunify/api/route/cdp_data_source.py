@@ -14,9 +14,9 @@ from huxunifylib.database import constants as db_c
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
     get_data_source,
-    delete_data_source,
     update_data_sources,
     bulk_write_data_sources,
+    bulk_delete_data_sources,
 )
 
 from huxunify.api import constants as api_c
@@ -253,25 +253,25 @@ class CreateCdpDataSources(SwaggerView):
 
 @add_view_to_blueprint(
     cdp_data_sources_bp,
-    f"{api_c.CDP_DATA_SOURCES_ENDPOINT}/<data_source_id>",
+    f"{api_c.CDP_DATA_SOURCES_ENDPOINT}",
     "DeleteCdpDataSource",
 )
-class DeleteCdpDataSource(SwaggerView):
-    """Deletes a CDP data source."""
+class DeleteCdpDataSources(SwaggerView):
+    """Deletes CDP data sources."""
 
     parameters = [
         {
-            "name": db_c.CDP_DATA_SOURCE_ID,
-            "description": "CDP Data Source ID.",
+            "name": api_c.DATASOURCES,
+            "description": "Comma-separated data source types to be deleted.",
             "type": "string",
-            "in": "path",
+            "in": "query",
             "required": True,
-            "example": "5f5f7262997acad4bac4373b",
+            "example": "datasource1,datasource2",
         }
     ]
     responses = {
         HTTPStatus.OK.value: {
-            "description": "Deletes a CDP data source.",
+            "description": "Deletes CDP data sources.",
             "schema": CdpDataSourceSchema,
         },
         HTTPStatus.NOT_FOUND.value: {"schema": NotFoundError},
@@ -280,40 +280,50 @@ class DeleteCdpDataSource(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @api_error_handler()
-    def delete(self, data_source_id: str) -> Tuple[dict, int]:
-        """Deletes a CDP data source.
+    def delete(self) -> Tuple[dict, int]:
+        """Deletes CDP data sources.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
         Args:
-            data_source_id (str): CDP data source id.
+            datasources (str): Comma-separated data source types to be deleted.
 
         Returns:
-            Tuple[dict, int]: CDP data source dict, HTTP status code.
+            Tuple[str, int]: Message, HTTP status code.
         """
 
-        if ObjectId.is_valid(data_source_id):
-            data_source_id = ObjectId(data_source_id)
-        else:
+        data_source_types = request.args.get(api_c.DATASOURCES)
+
+        if data_source_types:
+            success_flag = bulk_delete_data_sources(
+                get_db_client(), data_source_types.replace(" ", "").split(",")
+            )
+
+            if success_flag:
+                logger.info(
+                    "Successfully deleted data sources - %s.",
+                    data_source_types,
+                )
+                return {
+                    "message": api_c.DELETE_DATASOURCES_SUCCESS.format(
+                        data_source_types
+                    )
+                }, HTTPStatus.OK
+
             logger.error(
-                "Invalid CDP data source ID received %s.", data_source_id
+                "Could not delete data sources - %s.", data_source_types
             )
             return {
-                "message": f"Invalid CDP data source ID received {data_source_id}."
-            }, HTTPStatus.BAD_REQUEST
-        database = get_db_client()
-        success_flag = delete_data_source(database, data_source_id)
+                "message": api_c.CANNOT_DELETE_DATASOURCES.format(
+                    data_source_types
+                )
+            }, HTTPStatus.INTERNAL_SERVER_ERROR
 
-        if success_flag:
-            logger.info("Successfully deleted data source %s.", data_source_id)
-            return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK
-
-        logger.error("Could not delete data source %s.", data_source_id)
         return {
-            "message": api_c.OPERATION_FAILED
-        }, HTTPStatus.INTERNAL_SERVER_ERROR
+            api_c.MESSAGE: api_c.EMPTY_OBJECT_ERROR_MESSAGE
+        }, HTTPStatus.BAD_REQUEST
 
 
 @add_view_to_blueprint(

@@ -540,7 +540,7 @@ class TestDeliveryRoutes(TestCase):
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
             f"{api_c.DELIVERY_HISTORY}",
-            data=params,
+            query_string=params,
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -562,7 +562,7 @@ class TestDeliveryRoutes(TestCase):
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
             f"{api_c.DELIVERY_HISTORY}",
-            data=params,
+            query_string=params,
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)

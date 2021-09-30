@@ -498,7 +498,10 @@ PREFERENCE_VALUE_DESCRIPTION = "the value of the preference."
 PREFERENCE_BODY_DESCRIPTION = "Input preference body."
 FAVORITE_BODY_DESCRIPTION = "Input favorite component body."
 
+DELETE_DATASOURCES_SUCCESS = "Successfully deleted data source(s) - {}."
+
 # error messages
+CANNOT_DELETE_DATASOURCES = "Error deleting data source(s) - {}."
 CANNOT_DELETE_DESTINATIONS = "Error deleting destination(s)."
 CANNOT_UPDATE_DESTINATIONS = "Error updating destination."
 INVALID_DESTINATION_AUTH = "Invalid authentication details entered."
