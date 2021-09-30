@@ -47,19 +47,29 @@
                   <template #label-content>
                     <span class="font-weight-semi-bold">
                       <span v-if="item.value == 'percentage'">
-                        {{ item.subtitle | Numeric(true, false, false, true) }}
+                        {{
+                          item.subtitle
+                            | Numeric(true, false, false, true)
+                            | Empty("-")
+                        }}
                       </span>
                       <span v-if="item.value == 'numeric'">
-                        {{ item.subtitle | Numeric(true, true) }}
+                        {{ item.subtitle | Numeric(true, true) | Empty("-") }}
                       </span>
                     </span>
                   </template>
                   <template #hover-content>
                     <span v-if="item.value == 'percentage'">
-                      {{ item.subtitle | Numeric(true, false, false, true) }}
+                      {{
+                        item.subtitle
+                          | Numeric(true, false, false, true)
+                          | Empty("-")
+                      }}
                     </span>
                     <span v-else>
-                      {{ item.subtitle | Numeric(true, false, false) }}
+                      {{
+                        item.subtitle | Numeric(true, false, false) | Empty("-")
+                      }}
                     </span>
                   </template>
                 </tooltip>
@@ -98,31 +108,41 @@
                   <template #label-content>
                     <span class="font-weight-semi-bold">
                       <span v-if="item.value == 'percentage'">
-                        {{ item.subtitle | Numeric(true, false, false, true) }}
+                        {{
+                          item.subtitle
+                            | Numeric(true, false, false, true)
+                            | Empty("-")
+                        }}
                       </span>
                       <span v-if="item.value == 'numeric'">
-                        {{ item.subtitle | Numeric(true, true) }}
+                        {{ item.subtitle | Numeric(true, true) | Empty("-") }}
                       </span>
                       <span v-if="item.value == 'none'">
-                        {{ item.subtitle }}
+                        {{ item.subtitle | Empty("-") }}
                       </span>
                       <span v-if="item.value == ''">
-                        {{ item.subtitle | Numeric(true, true) }}
+                        {{ item.subtitle | Numeric(true, true) | Empty("-") }}
                       </span>
                     </span>
                   </template>
                   <template #hover-content>
                     <span v-if="item.value == 'percentage'">
-                      {{ item.subtitle | Numeric(true, false, false, true) }}
+                      {{
+                        item.subtitle
+                          | Numeric(true, false, false, true)
+                          | Empty("-")
+                      }}
                     </span>
                     <span v-if="item.value == 'numeric'">
-                      {{ item.subtitle | Numeric(true, false, false) }}
+                      {{
+                        item.subtitle | Numeric(true, false, false) | Empty("-")
+                      }}
                     </span>
                     <span v-if="item.value == 'none'">
-                      {{ item.subtitle }}
+                      {{ item.subtitle | Empty("-") }}
                     </span>
                     <span v-if="item.value == ''">
-                      {{ item.subtitle }}
+                      {{ item.subtitle | Empty("-") }}
                     </span>
                   </template>
                 </tooltip>
@@ -573,26 +593,14 @@ export default {
       this.loadingCustomerChart = false
     },
 
-    // TODO: use filters instead - if no value then assign empty value
-    assignFinalValue(value) {
-      return value !== null ? value : "-"
-    },
     // TODO: refactor this and move this logic to a getter in the store
     mapOverviewData() {
       if (this.overview) {
-        this.overviewListItems[0].subtitle = this.assignFinalValue(
-          this.overview.total_customers
-        )
+        this.overviewListItems[0].subtitle = this.overview.total_customers
         this.overviewListItems[0].value = "numeric"
-        this.overviewListItems[1].subtitle = this.assignFinalValue(
-          this.overview.total_countries
-        )
-        this.overviewListItems[2].subtitle = this.assignFinalValue(
-          this.overview.total_us_states
-        )
-        this.overviewListItems[3].subtitle = this.assignFinalValue(
-          this.overview.total_cities
-        )
+        this.overviewListItems[1].subtitle = this.overview.total_countries
+        this.overviewListItems[2].subtitle = this.overview.total_us_states
+        this.overviewListItems[3].subtitle = this.overview.total_cities
         this.overviewListItems[3].value = "numeric"
         let min_age = this.overview.min_age
         let max_age = this.overview.max_age
@@ -604,50 +612,28 @@ export default {
           this.overviewListItems[4].subtitle = "-"
         }
         this.overviewListItems[4].value = "none"
-        this.overviewListItems[5].subtitle = this.assignFinalValue(
-          this.overview.gender_women
-        )
+        this.overviewListItems[5].subtitle = this.overview.gender_women
         this.overviewListItems[5].value = "percentage"
-        this.overviewListItems[6].subtitle = this.assignFinalValue(
-          this.overview.gender_men
-        )
+        this.overviewListItems[6].subtitle = this.overview.gender_men
         this.overviewListItems[6].value = "percentage"
-        this.overviewListItems[7].subtitle = this.assignFinalValue(
-          this.overview.gender_other
-        )
+        this.overviewListItems[7].subtitle = this.overview.gender_other
         this.overviewListItems[7].value = "percentage"
 
-        this.primaryItems[0].subtitle = this.assignFinalValue(
-          this.overview.total_records
-        )
+        this.primaryItems[0].subtitle = this.overview.total_records
         this.primaryItems[0].value = "numeric"
-        this.primaryItems[1].subtitle = this.assignFinalValue(
-          this.overview.match_rate
-        )
+        this.primaryItems[1].subtitle = this.overview.match_rate
         this.primaryItems[1].value = "percentage"
-        this.primaryItems[2].subtitle = this.assignFinalValue(
-          this.overview.total_unique_ids
-        )
+        this.primaryItems[2].subtitle = this.overview.total_unique_ids
         this.primaryItems[2].value = "numeric"
-        this.primaryItems[3].subtitle = this.assignFinalValue(
-          this.overview.total_unknown_ids
-        )
+        this.primaryItems[3].subtitle = this.overview.total_unknown_ids
         this.primaryItems[3].value = "numeric"
-        this.primaryItems[4].subtitle = this.assignFinalValue(
-          this.overview.total_known_ids
-        )
+        this.primaryItems[4].subtitle = this.overview.total_known_ids
         this.primaryItems[4].value = "numeric"
-        this.primaryItems[5].subtitle = this.assignFinalValue(
-          this.overview.total_individual_ids
-        )
+        this.primaryItems[5].subtitle = this.overview.total_individual_ids
         this.primaryItems[5].value = "numeric"
-        this.primaryItems[6].subtitle = this.assignFinalValue(
-          this.overview.total_household_ids
-        )
+        this.primaryItems[6].subtitle = this.overview.total_household_ids
         this.primaryItems[6].value = "numeric"
-        this.primaryItems[7].subtitle = this.getUpdatedDateTime(
-          this.overview.updated
-        )
+        this.primaryItems[7].subtitle = this.overview.updated
       }
     },
     getUpdatedDateTime(value) {
