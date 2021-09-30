@@ -25,38 +25,48 @@ describe("Data Management > Connections > Destinations", () => {
 
     //find a addable destination from the drawer
     cy.get(selector.destination.drawerToggle).click()
-    cy.get(selector.destination.destinationsList).contains("Add").as("addableDestinations")
-    
-    cy.get("@addableDestinations").its("length").then((addableDestinations) => {
-      if(addableDestinations > 0){
-        //if a destination can be added
-        cy.get("@addableDestinations").eq(0).click()
+    cy.get(selector.destination.destinationsList)
+      .contains("Add")
+      .as("addableDestinations")
 
-        //configure destination details
-        cy.get(selector.destination.destinationConfigDetails).get("input").each(($el) => {
-          cy.wrap($el).type("123456")
-        })
-        cy.get(selector.destination.validateDestination).click()
-        cy.get(selector.destination.validateDestination).contains("Success")
+    cy.get("@addableDestinations")
+      .its("length")
+      .then((addableDestinations) => {
+        if (addableDestinations > 0) {
+          //if a destination can be added
 
-        //Click on Add and return button
-        cy.get(selector.destination.footer).contains("return").click()
-        cy.location("pathname").should("eq", route.connections)
+          cy.get("@addableDestinations").eq(0).click()
 
-        //verify if number of destinations incremented by 1
-        cy.get("@destinationsCount").then((destinationsCount) => {
-          cy.get(selector.destinations).its("length").should("eq",destinationsCount + 1)
-        })
-      }
-      else{
-        //if no destination can be added, cancel adding a destination
-        cy.get(selector.destination.footer).contains("Cancel").click()
+          //configure destination details
+          cy.get(selector.destination.destinationConfigDetails)
+            .get("input")
+            .each(($el) => {
+              cy.wrap($el).type("123456")
+            })
+          cy.get(selector.destination.validateDestination).click()
+          cy.get(selector.destination.validateDestination).contains("Success")
 
-        //verify no change in number of destinations
-        cy.get("@destinationsCount").then((destinationsCount) => {
-          cy.get(selector.destinations).its("length").should("eq",destinationsCount)
-        })
-      }
-    })
+          //Click on Add and return button
+          cy.get(selector.destination.footer).contains("return").click()
+          cy.location("pathname").should("eq", route.connections)
+
+          //verify if number of destinations incremented by 1
+          cy.get("@destinationsCount").then((destinationsCount) => {
+            cy.get(selector.destinations)
+              .its("length")
+              .should("eq", destinationsCount + 1)
+          })
+        } else {
+          //if no destination can be added, cancel adding a destination
+          cy.get(selector.destination.footer).contains("Cancel").click()
+
+          //verify no change in number of destinations
+          cy.get("@destinationsCount").then((destinationsCount) => {
+            cy.get(selector.destinations)
+              .its("length")
+              .should("eq", destinationsCount)
+          })
+        }
+      })
   })
 })
