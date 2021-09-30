@@ -1,11 +1,23 @@
 """Contracts for CDPs customer-profile-api"""
 import unittest
+import atexit
+from pathlib import Path
 import requests
-
+from pact import Consumer, Provider
 from pact import EachLike, Like
 from pact.matchers import get_generated_values
+import huxunify.test.constants as t_c
 
-from huxunify.test.contract_testing.cdp import hux_cdp_pact as pact
+# Folder where generated pacts are stored.
+contracts_folder = Path(__file__).parent.joinpath(t_c.CONTRACTS_FOLDER)
+
+# Initializing pact
+pact = Consumer(t_c.HUX).has_pact_with(
+    Provider(t_c.CDP_CUSTOMER_PROFILE), pact_dir=str(contracts_folder)
+)
+pact.start_service()
+
+atexit.register(pact.stop_service)
 
 
 class CDPCustomersContracts(unittest.TestCase):
@@ -43,7 +55,7 @@ class CDPCustomersContracts(unittest.TestCase):
             .upon_receiving("A request for count by state.")
             .with_request(
                 method="POST",
-                path="/customer-profiles/insights/count-by-state",
+                path=t_c.CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT,
                 body={},
                 headers={"Content-Type": "application/json"},
             )
@@ -52,7 +64,7 @@ class CDPCustomersContracts(unittest.TestCase):
 
         with pact:
             result = requests.post(
-                pact.uri + "/customer-profiles/insights/count-by-state",
+                pact.uri + t_c.CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT,
                 json={},
                 headers={
                     "Content-Type": "application/json",
