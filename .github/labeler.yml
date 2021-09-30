@@ -1,0 +1,15 @@
+
+# Add 'API' label to any change within the hux/api files within source dir
+API:
+- hux/api/*
+- hux/api/**/*
+
+# Add 'UX/UI' label to any change to files within the hux/frontend files within source dir
+UX/UI:
+- hux/frontend/*
+- hux/frontend/**/*
+
+# Add 'DB' label to any change to lib/ files within the source dir
+DB:
+- lib/*
+- lib/**/*

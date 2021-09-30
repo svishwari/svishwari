@@ -1,6 +1,4 @@
-"""
-Schemas for the User API
-"""
+"""Schemas for the User API"""
 
 from flask_marshmallow import Schema
 from marshmallow.fields import Str, Int, validate, List, Nested, Dict
