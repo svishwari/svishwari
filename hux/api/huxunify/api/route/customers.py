@@ -188,6 +188,11 @@ class CustomerPostOverview(SwaggerView):
         token_response = get_token_from_request(request)
         customers = get_customers_overview(token_response[0], request.json)
 
+        customers = {
+            overview_key: customers.get(overview_key) or 0
+            for overview_key in customers
+        }
+
         return (
             CustomerOverviewSchema().dump(customers),
             HTTPStatus.OK,
