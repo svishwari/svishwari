@@ -25,6 +25,7 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
     cy.wait(2000)
     cy.get(selector.customerProfile.customerID).first().click()
 
+    // TODO: remove the need to re-login
     cy.get(selector.login.email).type(Cypress.env("USER_EMAIL"), { log: false })
     cy.get(selector.login.password).type(Cypress.env("USER_PASSWORD"), {
       log: false,
@@ -66,6 +67,7 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
     cy.get("table").contains("td", "Email")
     cy.get("table").contains("td", "Push")
     cy.get("table").contains("td", "SMS")
+    cy.get("table").contains("td", "In-App")
   })
   it("should validate chord card", () => {
     cy.get(selector.customerProfile.chord).should("exist")
