@@ -1,6 +1,4 @@
-"""
-Schemas for the User API
-"""
+"""Schemas for the User API"""
 
 from flask_marshmallow import Schema
 from marshmallow.fields import Str, Int, validate, List, Nested, Dict
@@ -29,7 +27,8 @@ class UserSchema(Schema):
         required=True,
         validate=validate_object_id,
     )
-    email = Str(required=True)
+    email = Str(required=True, attribute="email_address")
+    display_name = Str(example="Joe M")
     first_name = Str()
     last_name = Str()
     role = Str(required=True, validate=validate.OneOf(USER_ROLES))

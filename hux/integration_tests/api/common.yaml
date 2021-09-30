@@ -5,5 +5,6 @@ description: used for sharing anything common in the test scripts
 variables:
   host: "{tavern.env_vars.TAVERN_TEST_HOST}"
   version: "{tavern.env_vars.TAVERN_TEST_API_VERSION}"
-  token: ""
+  token: "{tavern.env_vars.ACCESS_TOKEN}"
   openapi: "apispec_1"
+  fake_object_id: "00035de24af31a0f33029092"

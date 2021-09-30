@@ -9,15 +9,11 @@ from huxunifylib.database import notification_management as nmg
 
 
 class NotificationManagementTest(TestCase):
-    """
-    Test notification management
-    """
+    """Test notification management"""
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
-        """
-        Setup resources before each test
-        """
+        """Setup resources before each test"""
         self.database = DatabaseClient(
             "localhost", 27017, None, None
         ).connect()
@@ -41,9 +37,7 @@ class NotificationManagementTest(TestCase):
         ]
 
     def test_create_notification(self):
-        """
-        Test creating a notification
-        """
+        """Test creating a notification"""
         notification = nmg.create_notification(
             database=self.database,
             notification_type=db_c.NOTIFICATION_TYPE_CRITICAL,
@@ -52,11 +46,9 @@ class NotificationManagementTest(TestCase):
 
         self.assertTrue(notification is not None)
 
-    def test_get_notifications(self):
-        """
-        Test get all notifications
-        """
-        notifications = nmg.get_notifications(
+    def test_get_notifications_batch(self):
+        """Test get all notifications via batch"""
+        notifications = nmg.get_notifications_batch(
             database=self.database,
             batch_size=10,
             sort_order=pymongo.DESCENDING,
@@ -68,4 +60,17 @@ class NotificationManagementTest(TestCase):
         )
         self.assertEqual(
             len(self.notifications), notifications["total_records"]
+        )
+
+    def test_get_notifications(self):
+        """Test get all notifications with a filter."""
+        notifications = nmg.get_notifications(
+            self.database, {db_c.TYPE: db_c.NOTIFICATION_TYPE_CRITICAL}
+        )
+
+        self.assertTrue(notifications[db_c.NOTIFICATIONS_COLLECTION])
+        self.assertEqual(1, len(notifications[db_c.NOTIFICATIONS_COLLECTION]))
+        self.assertEqual(
+            notifications[db_c.NOTIFICATIONS_COLLECTION][0][db_c.TYPE],
+            db_c.NOTIFICATION_TYPE_CRITICAL,
         )

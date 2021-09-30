@@ -77,12 +77,13 @@
     </template>
     <template>
       <v-row v-if="!loadingOverview" no-gutters>
-        <v-slide-group class="idr-slide-group" show-arrows>
+        <v-slide-group ref="wrapper" class="idr-slide-group" show-arrows>
           <v-slide-item v-for="(metric, index) in overview" :key="index">
             <metric-card
               :title="metric.title"
               :min-width="170"
               class="mx-2 my-2 pt-3 pl-6"
+              data-e2e="overviewList"
             >
               <template #extra-item>
                 <tooltip position-top>
@@ -222,7 +223,7 @@ export default {
 
   data() {
     return {
-      loadingOverview: false,
+      loadingOverview: true,
       loadingDataFeeds: false,
       loadingMatchingTrends: false,
       isFilterToggled: false,

@@ -1,6 +1,4 @@
-"""
-This module enables functionality for data source management
-"""
+"""This module enables functionality for data source management."""
 import logging
 from typing import Union, Optional
 from bson import ObjectId
@@ -26,7 +24,7 @@ def create_data_source(
     source_type: str = None,
     status: str = c.CDP_DATA_SOURCE_STATUS_ACTIVE,
 ) -> Union[dict, None]:
-    """A function that creates a new data source
+    """A function that creates a new data source.
 
     Args:
         database (DatabaseClient): A database client.
@@ -36,10 +34,11 @@ def create_data_source(
         enabled (bool): data source is enabled.
         source_type (str): type of the data source.
         status (str): status of the data source.
-    Returns:
-        Union[dict, None]: MongoDB document for a data source or None
 
+    Returns:
+        Union[dict, None]: MongoDB document for a data source or None.
     """
+
     collection = database[c.DATA_MANAGEMENT_DATABASE][
         c.CDP_DATA_SOURCES_COLLECTION
     ]
@@ -72,16 +71,51 @@ def create_data_source(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def bulk_write_data_sources(
+    database: DatabaseClient, data_sources: list
+) -> Union[list, None]:
+    """A function that creates new data sources
+
+    Args:
+        database (DatabaseClient): A database client.
+        data_sources (list): List of data sources to create.
+
+    Returns:
+        Union[list, None]: List of MongoDB documents for data sources or None.
+    """
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
+
+    _ = [
+        data_source.update(
+            {c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1, c.ADDED: True}
+        )
+        for data_source in data_sources
+    ]
+
+    try:
+        data_source_ids = collection.insert_many(data_sources).inserted_ids
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return list(collection.find({c.ID: {"$in": data_source_ids}}))
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def get_all_data_sources(database: DatabaseClient) -> Union[list, None]:
-    """A function that returns all data sources
+    """A function that returns all data sources.
 
     Args:
         database (DatabaseClient): A database client.
 
     Returns:
-        Union[list, None]: List of all data sources or None
-
+        Union[list, None]: List of all data sources or None.
     """
+
     collection = database[c.DATA_MANAGEMENT_DATABASE][
         c.CDP_DATA_SOURCES_COLLECTION
     ]
@@ -103,16 +137,22 @@ def get_data_source(
     data_source_id: Optional[ObjectId] = None,
     data_source_type: Optional[str] = None,
 ) -> Union[dict, None]:
-    """A function to return a single data source based on a provided value
+    """A function to return a single data source based on a provided value.
 
     Args:
         database (DatabaseClient): A database client.
         data_source_id (Optional[ObjectId]): data source id.
         data_source_type (Optional[str]): data source type.
-    Returns:
-        Union[dict, None]: MongoDB document for a data source or None
 
+    Returns:
+        Union[dict, None]: MongoDB document for a data source or None.
+
+    Raises:
+        InsufficientDataException: If the passed in information in
+            data_source_id and data_source_type are insufficient to perform
+            the mongo operation.
     """
+
     collection = database[c.DATA_MANAGEMENT_DATABASE][
         c.CDP_DATA_SOURCES_COLLECTION
     ]
@@ -140,22 +180,54 @@ def get_data_source(
 def delete_data_source(
     database: DatabaseClient, data_source_id: ObjectId
 ) -> bool:
-    """A function to delete a data source
+    """A function to delete a data source.
 
     Args:
         database (DatabaseClient): A database client.
         data_source_id (ObjectId): data source id.
 
     Returns:
-        bool: a flag indicating successful deletion
-
+        bool: a flag indicating successful deletion.
     """
+
     collection = database[c.DATA_MANAGEMENT_DATABASE][
         c.CDP_DATA_SOURCES_COLLECTION
     ]
 
     try:
         return collection.delete_one({c.ID: data_source_id}).deleted_count > 0
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def bulk_delete_data_sources(
+    database: DatabaseClient, data_source_types: list
+) -> bool:
+    """A function that deletes selected data sources
+
+    Args:
+        database (DatabaseClient): A database client.
+        data_source_types (list): List of data source types to delete.
+    Returns:
+        bool: a flag indicating successful deletion.
+    """
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
+
+    try:
+        return (
+            collection.delete_many(
+                {c.TYPE: {"$in": data_source_types}}
+            ).deleted_count
+            > 0
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -178,7 +250,6 @@ def update_data_sources(
 
     Returns:
         bool: Success flag.
-
     """
 
     if not update_dict:

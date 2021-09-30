@@ -100,7 +100,7 @@
                     class="add-icon cursor-pointer"
                     type="add"
                     :size="24"
-                    @click="addNewCondition(rule.id)"
+                    @click.native="addNewCondition(rule.id)"
                   />
 
                   <v-icon
@@ -260,6 +260,8 @@ export default {
      * Appending the sub options next to the group label.
      *
      * Also, having an Top Priority Order to Models.
+     *
+     * @returns {Array} options array
      */
     attributeOptions() {
       if (this.ruleAttributes.rule_attributes) {
@@ -348,9 +350,14 @@ export default {
           },
         ],
       }
-      let data = await this.getRealtimeSize(filterJSON)
-      condition.size = data.total_customers
-      condition.awaitingSize = false
+      try {
+        let data = await this.getRealtimeSize(filterJSON)
+        condition.size = data.total_customers
+        condition.awaitingSize = false
+      } catch (error) {
+        condition.size = 0
+        condition.awaitingSize = false
+      }
     },
 
     async triggerSizingForRule(rule) {
@@ -396,10 +403,15 @@ export default {
         }
         filterJSON.filters.push(sectionObject)
       }
-      let data = await this.getRealtimeSize(filterJSON)
-      this.$emit("updateOverview", data)
-      this.overAllSize = data.total_customers
-      this.loadingOverAllSize = false
+      try {
+        let data = await this.getRealtimeSize(filterJSON)
+        this.$emit("updateOverview", data)
+        this.overAllSize = data.total_customers
+        this.loadingOverAllSize = false
+      } catch (error) {
+        this.overAllSize = 0
+        this.loadingOverAllSize = false
+      }
     },
 
     onSelect(type, condition, item) {

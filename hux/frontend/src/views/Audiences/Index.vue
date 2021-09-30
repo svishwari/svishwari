@@ -37,6 +37,8 @@
         :columns="columnDefs"
         :data-items="audienceList"
         view-height="calc(100vh - 210px)"
+        sort-column="update_time"
+        sort-desc="false"
       >
         <template #row-item="{ item }">
           <td
@@ -346,13 +348,10 @@ export default {
     }),
     audienceList() {
       let audienceValue = this.rowData
-      return audienceValue.sort((a, b) =>
-        a.name.toLowerCase() === b.name.toLowerCase()
-          ? 0
-          : a.name.toLowerCase() < b.name.toLowerCase()
-          ? -1
-          : 1
-      )
+      audienceValue.forEach((audience) => {
+        audience.destinations.sort((a, b) => a.name.localeCompare(b.name))
+      })
+      return audienceValue
     },
     isDataExists() {
       if (this.rowData) return this.rowData.length > 0
@@ -378,7 +377,7 @@ export default {
         { title: "Favorite", isDisabled: true },
         { title: "Export", isDisabled: true },
         {
-          title: "Edit",
+          title: "Edit audience",
           isDisabled: false,
           onClick: () => {
             this.editAudience(audience.id)
@@ -402,18 +401,23 @@ export default {
 
       return actionItems
     },
-    getOverallDestinations(destinations) {
+    getOverallDestinations(audienceDestinations) {
+      let destinations = [...audienceDestinations]
       if (destinations.length > 3) {
-        debugger
-        return destinations.slice(0, 3)
+        return destinations
+          .slice(0, 3)
+          .sort((a, b) => a.name.localeCompare(b.name))
       }
-      return destinations
+      return destinations.sort((a, b) => a.name.localeCompare(b.name))
     },
-    getExtraDestinations(destinations) {
+    getExtraDestinations(audienceDestinations) {
+      let destinations = [...audienceDestinations]
       if (destinations.length > 3) {
-        return destinations.slice(3)
+        return destinations
+          .slice(3)
+          .sort((a, b) => a.name.localeCompare(b.name))
       }
-      return destinations
+      return destinations.sort((a, b) => a.name.localeCompare(b.name))
     },
     editAudience(id) {
       this.$router.push({

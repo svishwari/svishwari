@@ -41,12 +41,7 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         )
 
     def test_create_data_source(self) -> None:
-        """Test create data source routine
-
-        Returns:
-            Response: None
-
-        """
+        """Test create data source routine"""
 
         data_source_doc = dsmgmt.create_data_source(
             self.database, "Facebook", "Web Events"
@@ -55,22 +50,14 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         self.assertTrue(data_source_doc is not None)
 
     def test_get_all_data_sources(self) -> None:
-        """Test get all data sources routine
-
-        Returns:
-            Response: None
-        """
+        """Test get all data sources routine"""
 
         data_source_docs = dsmgmt.get_all_data_sources(self.database)
 
         self.assertIsNotNone(data_source_docs)
 
     def test_get_data_source(self) -> None:
-        """Test get data source based on id
-
-        Returns:
-            Response: None
-        """
+        """Test get data source based on id"""
 
         data_source_doc = dsmgmt.get_data_source(
             self.database, self.data_source_doc[c.ID]
@@ -83,11 +70,7 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         )
 
     def test_delete_data_source(self) -> None:
-        """Test delete data source based on id
-
-        Returns:
-            Response: None
-        """
+        """Test delete data source based on id"""
 
         # create a data source
         data_source_doc = dsmgmt.create_data_source(
@@ -116,9 +99,6 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         Args:
             description (str): random text.
             data_source_name (str): random text.
-
-        Returns:
-            Response: None
 
         """
 
@@ -152,9 +132,6 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         Args:
             description (str): random text.
             data_source_name (str): random text.
-
-        Returns:
-            Response: None
 
         """
 
@@ -190,9 +167,6 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         Args:
             text (list): hypothesis list of random data.
 
-        Returns:
-            Response: None
-
         """
 
         with self.assertRaises(ValueError):
@@ -214,9 +188,6 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         Args:
             update_body (dict): hypothesis dict of random data.
 
-        Returns:
-            Response: None
-
         """
 
         # create data source first
@@ -232,26 +203,72 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         )
 
     def test_update_data_source_empty_list(self) -> None:
-        """Test update data sources with an empty list.
-
-        Args:
-
-        Returns:
-            Response: None
-
-        """
+        """Test update data sources with an empty list."""
 
         with self.assertRaises(AttributeError):
             dsmgmt.update_data_sources(self.database, [], {c.ENABLED: True})
 
     def test_update_data_source_empty_update_dict(self) -> None:
-        """Test update data sources with an empty update dict.
-
-        Returns:
-            Response: None
-
-        """
+        """Test update data sources with an empty update dict."""
 
         self.assertFalse(
             dsmgmt.update_data_sources(self.database, [ObjectId()], {})
+        )
+
+    def test_bulk_write_data_sources(self) -> None:
+        """Test bulk write data sources"""
+
+        data_sources = [
+            {
+                c.NAME: "Data source 1",
+                c.TYPE: "dataSource1",
+                c.STATUS: "Active",
+            },
+            {
+                c.NAME: "Data source 2",
+                c.TYPE: "dataSource2",
+                c.STATUS: "Pending",
+            },
+        ]
+
+        # create data sources
+        created_data_sources = dsmgmt.bulk_write_data_sources(
+            self.database, data_sources
+        )
+
+        self.assertCountEqual(created_data_sources, data_sources)
+
+        for data_source in created_data_sources:
+            self.assertIn(c.NAME, data_source)
+            self.assertIn(c.TYPE, data_source)
+            self.assertIn(c.STATUS, data_source)
+            self.assertIn(c.CDP_DATA_SOURCE_FIELD_FEED_COUNT, data_source)
+            self.assertIn(c.ADDED, data_source)
+            self.assertTrue(c.ADDED)
+
+    def test_bulk_delete_data_sources(self) -> None:
+        """Test bulk delete data sources"""
+        # create data source first
+        data_sources = [
+            {
+                c.NAME: "Data source 1",
+                c.TYPE: "dataSource1",
+                c.STATUS: "Active",
+            },
+            {
+                c.NAME: "Data source 2",
+                c.TYPE: "dataSource2",
+                c.STATUS: "Pending",
+            },
+        ]
+
+        # create data sources
+        created_data_sources = dsmgmt.bulk_write_data_sources(
+            self.database, data_sources
+        )
+
+        self.assertTrue(
+            dsmgmt.bulk_delete_data_sources(
+                self.database, [x[c.TYPE] for x in created_data_sources]
+            )
         )

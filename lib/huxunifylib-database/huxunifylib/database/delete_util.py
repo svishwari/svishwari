@@ -37,7 +37,6 @@ def get_docs_bulk(
 
     Returns:
         list: A list of documents.
-
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -79,7 +78,6 @@ def delete_lookalike_audience(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -113,7 +111,6 @@ def delete_data_source_ingestion_jobs(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
 
     ingestion_jobs = dm.get_data_source_ingestion_jobs(
@@ -137,7 +134,6 @@ def delete_data_source(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
 
     if delete_data_source_ingestion_jobs(database, data_source_id):
@@ -163,7 +159,6 @@ def delete_ingestion_job_audiences(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
 
     audience_ids = am.get_ingestion_job_audience_ids(
@@ -188,7 +183,6 @@ def delete_delivery_job_lookalike_audiences(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
 
     doc = dpm.get_delivery_job(database, delivery_job_id)
@@ -213,8 +207,8 @@ def delete_delivery_platform_delivery_jobs(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
+
     delivery_jobs = dpm.get_delivery_platform_delivery_jobs(
         database, delivery_platform_id
     )
@@ -236,8 +230,8 @@ def delete_audience_delivery_jobs(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
+
     delivery_jobs = dpm.get_delivery_jobs(database, audience_id)
     return all(
         delete_delivery_job(database, delivery_job[c.ID])
@@ -259,11 +253,10 @@ def delete_delivery_job(
     Args:
         database (DatabaseClient): A database client.
         delivery_job_id (ObjectId): MongoDB document ID of delivery job.
-        hard_delete (bool) - optional: hard deletes delivery_job if True.
+        hard_delete (bool): hard deletes delivery_job if True.
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -300,9 +293,8 @@ def delete_performance_metrics_by_delivery_job_id(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
 ) -> bool:
-    """
-    A function to hard delete performance metrics associated
-    with the given delivery_job_id.
+    """A function to hard delete performance metrics associated with the given
+    delivery_job_id.
 
     Args:
         database (DatabaseClient): A database client.
@@ -310,7 +302,6 @@ def delete_performance_metrics_by_delivery_job_id(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -335,9 +326,8 @@ def delete_campaign_activity_by_delivery_job_id(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
 ) -> bool:
-    """
-    A function to hard delete campaign activity associated
-    with the given delivery_job_id.
+    """A function to hard delete campaign activity associated with the given
+    delivery_job_id.
 
     Args:
         database (DatabaseClient): A database client.
@@ -345,7 +335,6 @@ def delete_campaign_activity_by_delivery_job_id(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -378,8 +367,8 @@ def delete_delivery_platform(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
+
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
 
@@ -419,8 +408,8 @@ def delete_audience(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
+
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.AUDIENCES_COLLECTION]
 
@@ -457,7 +446,6 @@ def delete_ingestion_job(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
 
     dm_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -494,10 +482,10 @@ def delete_bulk(
     Args:
         database (DatabaseClient): A database client.
         mongo_ids (list): A list of Mongo IDs.
+        collection_name (str): Name of collection.
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -530,7 +518,6 @@ def delete_lookalike_audiences_bulk(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
 
     return delete_bulk(
@@ -550,7 +537,6 @@ def delete_audiences_bulk(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
 
     # Delete dependent delivery jobs
@@ -593,7 +579,6 @@ def delete_delivery_platforms_bulk(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
 
     # Delete dependent delivery jobs
@@ -638,7 +623,6 @@ def delete_data_sources_bulk(
 
     Returns:
         bool: A flag indicating successful deletion.
-
     """
 
     ingestion_jobs = get_docs_bulk(

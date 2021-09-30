@@ -65,6 +65,7 @@
                 <div>
                   <span class="text-caption">Engagement name</span>
                   <v-icon
+                    v-if="showSortIcon"
                     :class="{ 'rotate-icon-180': toggleSortIcon }"
                     class="ml-1"
                     color="primary lighten-8"
@@ -357,6 +358,7 @@ export default {
     return {
       localDrawer: this.value,
       toggleSortIcon: true,
+      showSortIcon: true,
       engagements: [],
       loading: false,
       viewStep: 1,
@@ -395,6 +397,7 @@ export default {
       this.$emit("input", this.localDrawer)
       if (!this.localDrawer) {
         this.$emit("onClose")
+        this.showSortIcon = true
       }
     },
     finalEngagements: function (newVal) {
@@ -464,7 +467,10 @@ export default {
       }
       const newEngagement = await this.addEngagementToDB(payload)
       this.engagements.push(newEngagement)
-      this.sortEngagements()
+      this.engagements = this.engagements.sort((a, b) => {
+        return new Date(b.update_time) - new Date(a.update_time)
+      })
+      this.showSortIcon = false
       this.onEngagementClick(newEngagement)
       if (this.closeOnAction) {
         this.$emit("onAddEngagement", newEngagement)

@@ -1,7 +1,5 @@
 # pylint: disable=no-self-use, too-many-lines
-"""
-Paths for customer API
-"""
+"""Paths for customer API"""
 from http import HTTPStatus
 from typing import Tuple, List
 from datetime import datetime
@@ -62,7 +60,10 @@ from huxunify.api.schema.customers import (
     CustomersSchema,
 )
 from huxunify.api import constants as api_c
-from huxunify.api.route.utils import group_gender_spending
+from huxunify.api.route.utils import (
+    group_gender_spending,
+    Validation,
+)
 
 customers_bp = Blueprint(
     api_c.CUSTOMERS_ENDPOINT, import_name=__name__, url_prefix="/cdp"
@@ -84,9 +85,7 @@ def before_request():
     "CustomerOverviewSchema",
 )
 class CustomerOverview(SwaggerView):
-    """
-    Customers Overview class
-    """
+    """Customers Overview class."""
 
     responses = {
         HTTPStatus.OK.value: {
@@ -111,7 +110,7 @@ class CustomerOverview(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] dict of Customer data overview and http code
+            Tuple[dict, int]: dict of Customer data overview, HTTP status code.
         """
 
         # TODO - resolve post demo, set unique IDs as total customers.
@@ -130,9 +129,7 @@ class CustomerOverview(SwaggerView):
     "CustomerOverviewPostSchema",
 )
 class CustomerPostOverview(SwaggerView):
-    """
-    Customers Post Overview class
-    """
+    """Customers Post Overview class."""
 
     parameters = [
         {
@@ -146,19 +143,14 @@ class CustomerPostOverview(SwaggerView):
                         "section_aggregator": "ALL",
                         "section_filters": [
                             {
-                                "field": "max_age",
+                                "field": "country",
                                 "type": "equals",
-                                "value": 87,
+                                "value": "US",
                             },
                             {
-                                "field": "min_age",
-                                "type": "equals",
-                                "value": 25,
-                            },
-                            {
-                                "field": "match_rate",
-                                "type": "equals",
-                                "value": 0.5,
+                                "field": "age",
+                                "type": "range",
+                                "value": [40, 50],
                             },
                         ],
                     }
@@ -188,11 +180,8 @@ class CustomerPostOverview(SwaggerView):
         security:
             - Bearer: ["Authorization"]
 
-        Args:
-
-
         Returns:
-            Tuple[dict, int] dict of Customer data overview and http code
+            Tuple[dict, int]: dict of Customer data overview, HTTP status code.
         """
 
         # TODO - cdm to return single field
@@ -216,9 +205,7 @@ class CustomerPostOverview(SwaggerView):
     "IDROverview",
 )
 class IDROverview(SwaggerView):
-    """
-    Customers Dashboard Overview class
-    """
+    """Customers Dashboard Overview class."""
 
     parameters = [
         {
@@ -261,15 +248,32 @@ class IDROverview(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] dict of Customer data overview and http code
+            Tuple[dict, int]: dict of Customer data overview, HTTP status code.
         """
+
+        start_date = request.args.get(
+            api_c.START_DATE,
+            datetime.strftime(
+                datetime.utcnow().date() - relativedelta(months=6),
+                api_c.DEFAULT_DATE_FORMAT,
+            ),
+        )
+        end_date = request.args.get(
+            api_c.END_DATE,
+            datetime.strftime(
+                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
+            ),
+        )
+
+        Validation().validate_date_range(start_date, end_date)
+
         token_response = get_token_from_request(request)
         return (
             IDROverviewWithDateRangeSchema().dump(
                 get_idr_overview(
                     token_response[0],
-                    request.args.get(api_c.START_DATE),
-                    request.args.get(api_c.END_DATE),
+                    start_date,
+                    end_date,
                 )
             ),
             HTTPStatus.OK,
@@ -280,9 +284,7 @@ class IDROverview(SwaggerView):
     customers_bp, f"/{api_c.CUSTOMERS_ENDPOINT}", "Customersview"
 )
 class Customersview(SwaggerView):
-    """
-    Customers Overview class
-    """
+    """Customers Overview class."""
 
     parameters = [
         {
@@ -329,7 +331,7 @@ class Customersview(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] dict of Customers and http code
+            Tuple[dict, int]: dict of Customers, HTTP status code.
         """
 
         # get token
@@ -357,9 +359,7 @@ class Customersview(SwaggerView):
     "CustomerProfileSearch",
 )
 class CustomerProfileSearch(SwaggerView):
-    """
-    Individual Customer Profile Search Class
-    """
+    """Individual Customer Profile Search Class."""
 
     parameters = [
         {
@@ -395,12 +395,12 @@ class CustomerProfileSearch(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            hux_id (str): ID of the customer
+            hux_id (str): ID of the customer.
 
         Returns:
-            Tuple[dict, int]: dict of customer profile and http code
-
+            Tuple[dict, int]: dict of customer profile, HTTP status code.
         """
+
         token_response = get_token_from_request(request)
         redacted_data = redact_fields(
             get_customer_profile(token_response[0], hux_id),
@@ -430,7 +430,7 @@ class CustomerProfileSearch(SwaggerView):
     "IDRDataFeeds",
 )
 class IDRDataFeeds(SwaggerView):
-    """IDR Data Feeds Report"""
+    """IDR Data Feeds Report."""
 
     parameters = [
         {
@@ -467,15 +467,16 @@ class IDRDataFeeds(SwaggerView):
     @api_error_handler()
     def get(self) -> Tuple[List[dict], int]:
         """Retrieves a IDR data feeds.
+
         ---
         security:
             - Bearer: ["Authorization"]
 
-        Args:
-
         Returns:
-            Tuple[List[dict], int] list of IDR data feeds object dicts
+            Tuple[List[dict], int]: list of IDR data feeds object dicts,
+                HTTP status code.
         """
+
         token_response = get_token_from_request(request)
 
         start_date = request.args.get(
@@ -491,6 +492,8 @@ class IDRDataFeeds(SwaggerView):
                 datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
             ),
         )
+
+        Validation().validate_date_range(start_date, end_date)
 
         return (
             jsonify(
@@ -513,7 +516,7 @@ class IDRDataFeeds(SwaggerView):
     "IDRDataFeedDetails",
 )
 class IDRDataFeedDetails(SwaggerView):
-    """IDR Data Feeds Report"""
+    """IDR Data Feeds Report."""
 
     parameters = [
         {
@@ -549,11 +552,13 @@ class IDRDataFeedDetails(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            datafeed_id (int): Data feed ID
+            datafeed_id (int): Data feed ID.
 
         Returns:
-            Tuple[dict, int] dict of IDR data feed waterfall
+            Tuple[dict, int]: dict of IDR data feed waterfall,
+                HTTP status code.
         """
+
         token_response = get_token_from_request(request)
 
         return (
@@ -570,9 +575,7 @@ class IDRDataFeedDetails(SwaggerView):
     "CustomerInsightsGeo",
 )
 class CustomerGeoVisualView(SwaggerView):
-    """
-    Customer Profiles Geographical insights class
-    """
+    """Customer Profiles Geographical insights class."""
 
     responses = {
         HTTPStatus.OK.value: {
@@ -601,8 +604,10 @@ class CustomerGeoVisualView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] list of Customer insights on geo overview and http code
+            Tuple[list, int]: list of Customer insights on geo overview,
+                HTTP status code.
         """
+
         token_response = get_token_from_request(request)
         return (
             jsonify(
@@ -620,9 +625,7 @@ class CustomerGeoVisualView(SwaggerView):
     "CustomerInsightsDemo",
 )
 class CustomerDemoVisualView(SwaggerView):
-    """
-    Customers Profiles Demographic Insights class
-    """
+    """Customers Profiles Demographic Insights class."""
 
     parameters = [api_c.START_DATE_PARAMS, api_c.END_DATE_PARAMS]
     responses = {
@@ -650,11 +653,26 @@ class CustomerDemoVisualView(SwaggerView):
         security:
             - Bearer: ["Authorization"]
 
-        Args:
-
         Returns:
-            Tuple[dict, int] list of Customer insights on demo overview and http code
+            Tuple[dict, int]: dict of Customer insights on demo overview,
+                HTTP status code.
         """
+
+        start_date = request.args.get(
+            api_c.START_DATE,
+            datetime.strftime(
+                datetime.utcnow().date() - relativedelta(months=6),
+                api_c.DEFAULT_DATE_FORMAT,
+            ),
+        )
+        end_date = request.args.get(
+            api_c.END_DATE,
+            datetime.strftime(
+                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
+            ),
+        )
+
+        Validation().validate_date_range(start_date, end_date)
 
         token_response = get_token_from_request(request)
 
@@ -664,8 +682,8 @@ class CustomerDemoVisualView(SwaggerView):
 
         gender_spending = get_spending_by_gender(
             token_response[0],
-            request.args.get(api_c.START_DATE),
-            request.args.get(api_c.END_DATE),
+            start_date,
+            end_date,
         )
 
         output = {
@@ -692,7 +710,7 @@ class CustomerDemoVisualView(SwaggerView):
     "IDRMatchingTrends",
 )
 class IDRMatchingTrends(SwaggerView):
-    """IDR Matching Trends YTD"""
+    """IDR Matching Trends YTD."""
 
     parameters = [
         {
@@ -728,23 +746,41 @@ class IDRMatchingTrends(SwaggerView):
     # pylint: disable=no-self-use,unused-argument
     @api_error_handler()
     def get(self) -> Tuple[dict, int]:
-        """Retrieves IDR Matching trends YTD data
+        """Retrieves IDR Matching trends YTD data.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] dict of IDR Matching trends YTD and http code
+            Tuple[dict, int]: dict of IDR Matching trends YTD,
+                HTTP status code.
         """
+
+        start_date = request.args.get(
+            api_c.START_DATE,
+            datetime.strftime(
+                datetime.utcnow().date() - relativedelta(months=6),
+                api_c.DEFAULT_DATE_FORMAT,
+            ),
+        )
+        end_date = request.args.get(
+            api_c.END_DATE,
+            datetime.strftime(
+                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
+            ),
+        )
+
+        Validation().validate_date_range(start_date, end_date)
+
         token_response = get_token_from_request(request)
         return (
             jsonify(
                 MatchingTrendsSchema().dump(
                     get_idr_matching_trends(
                         token_response[0],
-                        request.args.get(api_c.START_DATE),
-                        request.args.get(api_c.END_DATE),
+                        start_date,
+                        end_date,
                     ),
                     many=True,
                 )
@@ -759,9 +795,7 @@ class IDRMatchingTrends(SwaggerView):
     "CustomerEvents",
 )
 class CustomerEvents(SwaggerView):
-    """
-    Customer events under customer profile
-    """
+    """Customer events under customer profile."""
 
     parameters = [
         {
@@ -776,6 +810,7 @@ class CustomerEvents(SwaggerView):
             "name": "body",
             "description": "Customer Events Filters",
             "type": "object",
+            "required": False,
             "in": "body",
             "example": {
                 api_c.START_DATE: datetime.utcnow().strftime("%Y-01-01"),
@@ -807,17 +842,37 @@ class CustomerEvents(SwaggerView):
         ---
         security:
             - Bearer: ["Authorization"]
+
         Args:
             hux_id (str): ID of the customer
+
         Returns:
-            Tuple[dict, int] list of Customer events grouped by day and http code
+            Tuple[dict, int]: dict of Customer events grouped by day,
+                HTTP status code.
         """
+
+        start_date = request.json.get(
+            api_c.START_DATE,
+            datetime.strftime(
+                datetime.utcnow().date() - relativedelta(months=6),
+                api_c.DEFAULT_DATE_FORMAT,
+            ),
+        )
+        end_date = request.json.get(
+            api_c.END_DATE,
+            datetime.strftime(
+                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
+            ),
+        )
+
+        Validation().validate_date_range(start_date, end_date)
+
         token_response = get_token_from_request(request)
         return (
             jsonify(
                 CustomerEventsSchema().dump(
                     get_customer_events_data(
-                        token_response[0], hux_id, request.json
+                        token_response[0], hux_id, start_date, end_date
                     ),
                     many=True,
                 )
@@ -832,9 +887,7 @@ class CustomerEvents(SwaggerView):
     "TotalCustomersGraphView",
 )
 class TotalCustomersGraphView(SwaggerView):
-    """
-    Total customer insights graph view class
-    """
+    """Total customer insights graph view class."""
 
     responses = {
         HTTPStatus.OK.value: {
@@ -859,7 +912,8 @@ class TotalCustomersGraphView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] list of total customers & new customers added, http status code
+            Tuple[list, int]: list of total customers & new customers added,
+                HTTP status code.
         """
 
         # get auth token from request
@@ -898,9 +952,7 @@ class TotalCustomersGraphView(SwaggerView):
     "CustomersInsightsCountries",
 )
 class CustomersInsightsCountries(SwaggerView):
-    """
-    Customer insights by country
-    """
+    """Customer insights by country"""
 
     responses = {
         HTTPStatus.OK.value: {
@@ -928,10 +980,10 @@ class CustomersInsightsCountries(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            - Tuple[list, int]
-                list of spend and size data by state,
-                http code
+            Tuple[list, int]: list of spend and size data by state,
+                HTTP status code.
         """
+
         # get auth token from request
         token_response = get_token_from_request(request)
 
@@ -952,9 +1004,7 @@ class CustomersInsightsCountries(SwaggerView):
     "CustomersInsightsStates",
 )
 class CustomersInsightsStates(SwaggerView):
-    """
-    Customer insights by state
-    """
+    """Customer insights by state."""
 
     responses = {
         HTTPStatus.OK.value: {
@@ -982,10 +1032,10 @@ class CustomersInsightsStates(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            - Tuple[list, int]
-                list of spend and size data by state,
-                http code
+            Tuple[list, int]: list of spend and size data by state,
+                HTTP status code.
         """
+
         # get auth token from request
         token_response = get_token_from_request(request)
 
@@ -1006,9 +1056,7 @@ class CustomersInsightsStates(SwaggerView):
     "CustomersInsightsCities",
 )
 class CustomersInsightsCities(SwaggerView):
-    """
-    Customer insights by city
-    """
+    """Customer insights by city."""
 
     parameters = [
         {
@@ -1056,10 +1104,9 @@ class CustomersInsightsCities(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            - Tuple[list, int]
-                list of spend and size by city,
-                http code
+            Tuple[list, int]: list of spend and size by city, HTTP status code.
         """
+
         # get auth token from request
         token_response = get_token_from_request(request)
 

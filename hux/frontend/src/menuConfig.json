@@ -6,7 +6,8 @@
       "title": "Overview",
       "link": {
         "name": "Overview"
-      }
+      },
+      "size": 16
     },
     {
       "label": "Orchestration",
@@ -16,14 +17,16 @@
           "title": "Engagements",
           "link": {
             "name": "Engagements"
-          }
+          },
+          "size": 16
         },
         {
           "icon": "audiences",
           "title": "Audiences",
           "link": {
             "name": "Audiences"
-          }
+          },
+          "size": 18
         }
       ]
     },
@@ -35,7 +38,8 @@
           "title": "Models",
           "link": {
             "name": "Models"
-          }
+          },
+          "size": 14
         }
       ]
     },
@@ -47,21 +51,24 @@
           "title": "Customer Profiles",
           "link": {
             "name": "CustomerProfiles"
-          }
+          },
+          "size": 18
         },
         {
           "icon": "identity-resolution",
           "title": "Identity Resolution",
           "link": {
             "name": "IdentityResolution"
-          }
+          },
+          "size": 18
         },
         {
           "icon": "connections",
           "title": "Connections",
           "link": {
             "name": "Connections"
-          }
+          },
+          "size": 18
         }
       ]
     }

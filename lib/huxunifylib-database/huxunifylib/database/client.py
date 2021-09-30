@@ -27,8 +27,8 @@ class DatabaseClient:
                 authentication (optional).
             ssl_cert_path (Optional(str)): SSL Certificate path for
                 connecting to MongoDB (optional).
-
         """
+
         self._host = host
         self._port = port
         self._username = username
@@ -41,25 +41,45 @@ class DatabaseClient:
         self._ssl_cert_path = ssl_cert_path
 
     @property
-    def host(self):
-        """Union[str, list]: Host name or list of host names used to
-        initialize the client.
+    def host(self) -> Union[str, list]:
+        """Get the host name or list of host names.
+
+        Returns:
+            Union[str, list]: Host name or list of host names used to
+                initialize the client.
         """
+
         return self._host
 
     @property
-    def port(self):
-        """Union[int, None]: Port number used to initialize the client."""
+    def port(self) -> Union[int, None]:
+        """Get the port number.
+
+        Returns:
+            Union[int, None]: Port number used to initialize the client.
+        """
+
         return self._port
 
     @property
-    def username(self):
-        """Union[str, None]: Username used when authenticating the client."""
+    def username(self) -> Union[str, None]:
+        """Get the username.
+
+        Returns:
+            Union[str, None]: Username used when authenticating the client.
+        """
+
         return self._username
 
     @property
-    def ssl_cert_path(self):
-        """Union[str, None]: SSL Certificate used when authenticating the client."""
+    def ssl_cert_path(self) -> Union[str, None]:
+        """Get the SSL certeficate used to authenticate the client.
+
+        Returns:
+            Union[str, None]: SSL Certificate used when authenticating the
+                client.
+        """
+
         return self._ssl_cert_path
 
     def connect(self) -> pymongo.MongoClient:

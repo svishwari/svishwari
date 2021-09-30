@@ -30,12 +30,14 @@ from huxunify.api.data_connectors.okta import (
     get_token_from_request,
     get_user_info,
 )
-from huxunify.api.exceptions import integration_api_exceptions as iae
+from huxunify.api.exceptions import (
+    integration_api_exceptions as iae,
+    unified_exceptions as ue,
+)
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
-    """
-    This decorator takes a blueprint and assigns the view function directly
+    """This decorator takes a blueprint and assigns the view function directly
     the alternative to this is having to manually define this in app.py
     or at the bottom of the route file, as the input is a class.
 
@@ -51,22 +53,22 @@ def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
         self (func): a flask/blueprint object, must have 'add_url_rule'
         rule (str): an input rule
         endpoint (str): the name of the endpoint
+        options (Any): options to be added to URL rule
 
     Returns:
-        Response: decorator
-
+        Response (object): decorator
     """
 
     def decorator(cls) -> Any:
-        """decorator function
+        """Decorator function.
 
         Args:
             cls (object): a function to decorate
 
         Returns:
-            Response: Returns the decorated object.
-
+            Response (Any): Returns the decorated object.
         """
+
         # add the url to the flask object
         self.add_url_rule(rule, view_func=cls.as_view(endpoint), **options)
         return cls
@@ -75,8 +77,7 @@ def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
 
 
 def secured() -> object:
-    """
-    This decorator takes an API request and validates
+    """This decorator takes an API request and validates
     if the user provides a JWT token and if that token is valid.
 
     Eventually this decorator will extract the ROLE from
@@ -84,11 +85,8 @@ def secured() -> object:
 
     Example: @secured()
 
-    Args:
-
     Returns:
-        Response: decorator
-
+        Response (object): decorator
     """
 
     def wrapper(in_function) -> object:
@@ -111,7 +109,7 @@ def secured() -> object:
                 **kwargs (dict): function keyword arguments.
 
             Returns:
-               object: returns a decorated function object.
+               Response (object): returns a decorated function object.
             """
 
             # override if flag set locally
@@ -143,38 +141,34 @@ def secured() -> object:
 
 
 def get_user_name() -> object:
-    """
-    This decorator takes an API request and extracts the user namr.
+    """This decorator takes an API request and extracts the user name.
 
     Example: @get_user_name()
 
-    Args:
-
     Returns:
-        Response: decorator
-
+        Response (object): decorator
     """
 
     def wrapper(in_function) -> object:
-        """Decorator for wrapping a function
+        """Decorator for wrapping a function.
 
         Args:
             in_function (object): function object.
 
         Returns:
-           object: returns a wrapped decorated function object.
+           Response (object): returns a wrapped decorated function object.
         """
 
         @wraps(in_function)
         def decorator(*args, **kwargs) -> object:
-            """Decorator for extracting the user_name
+            """Decorator for extracting the user_name.
 
             Args:
                 *args (object): function arguments.
                 **kwargs (dict): function keyword arguments.
 
             Returns:
-               object: returns a decorated function object.
+               Response (object): returns a decorated function object.
             """
 
             # override if flag set locally
@@ -233,8 +227,7 @@ def get_user_name() -> object:
 
 # pylint: disable=too-many-return-statements
 def api_error_handler(custom_message: dict = None) -> object:
-    """
-    This decorator handles generic errors for API requests.
+    """This decorator handles generic errors for API requests.
 
     Eventually this decorator will handle more types of errors.
 
@@ -242,21 +235,20 @@ def api_error_handler(custom_message: dict = None) -> object:
 
     Args:
         custom_message (dict): Optional; A dict containing custom messages for
-            particular exceptions
+            particular exceptions.
 
     Returns:
-        Response: decorator
-
+        Response (object): decorator.
     """
 
     def wrapper(in_function) -> object:
-        """Decorator for wrapping a function
+        """Decorator for wrapping a function.
 
         Args:
             in_function (object): function object.
 
         Returns:
-           object: returns a wrapped decorated function object.
+           Response (object): returns a wrapped decorated function object.
         """
 
         # pylint: disable=too-many-return-statements, too-many-branches
@@ -269,7 +261,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                 **kwargs (dict): function keyword arguments.
 
             Returns:
-               object: returns a decorated function object.
+               Response (object): returns a decorated function object.
             """
             try:
                 return in_function(*args, **kwargs)
@@ -338,15 +330,15 @@ def api_error_handler(custom_message: dict = None) -> object:
 
             except de.DuplicateName as exc:
                 logger.error(
-                    "%s: %s while executing %s in module %s.",
+                    "%s: %s Error encountered while executing %s in module %s.",
                     exc.__class__,
-                    exc.exception_message,
+                    exc.args[0] if exc.args else exc.exception_message,
                     in_function.__qualname__,
                     in_function.__module__,
                 )
                 return {
                     "message": constants.DUPLICATE_NAME
-                }, HTTPStatus.BAD_REQUEST.value
+                }, HTTPStatus.FORBIDDEN
 
             except CustomAudienceDeliveryStatusError as exc:
                 logger.error(
@@ -372,6 +364,35 @@ def api_error_handler(custom_message: dict = None) -> object:
                     "message": constants.FAILED_DEPENDENCY_ERROR_MESSAGE
                 }, HTTPStatus.FAILED_DEPENDENCY
 
+            except iae.FailedDeliveryPlatformDependencyError as exc:
+                logger.error(
+                    "%s: %s Error encountered while executing %s in module %s.",
+                    exc.__class__,
+                    exc.args[0] if exc.args else exc.exception_message,
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
+                return {
+                    "message": constants.DESTINATION_CONNECTION_FAILED
+                }, HTTPStatus.FAILED_DEPENDENCY
+
+            except iae.FailedDateFilterIssue as exc:
+                return {
+                    "message": custom_message
+                    if custom_message
+                    else exc.exception_message
+                }, HTTPStatus.BAD_REQUEST.value
+
+            except ue.InputParamsValidationError as exc:
+                logger.error(
+                    "%s: %s Error encountered while executing %s in module %s.",
+                    exc.__class__,
+                    exc.args[0] if exc.args else exc.exception_message,
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
+                return {"message": exc.args[0]}, HTTPStatus.BAD_REQUEST
+
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.
                 logger.error(
@@ -396,7 +417,7 @@ def api_error_handler(custom_message: dict = None) -> object:
 
 
 def validate_delivery_params(func) -> object:
-    """A decorator for common validations in delivery.py
+    """A decorator for common validations in delivery.py.
 
     Performs checks to determine if object ids are valid,
     engagement id exists, engagements have audiences,
@@ -406,20 +427,22 @@ def validate_delivery_params(func) -> object:
     Example: @validate_delivery_params
 
     Args:
-        func(object): function object
+        func(object): function object.
+
     Returns:
-        object: returns a wrapped decorated function object.
+        Response (object): returns a wrapped decorated function object.
     """
 
     @wraps(func)
     def wrapper(*args, **kwargs) -> object:
         """Decorator for validation and converting to ObjectId.
+
         Args:
             *args (object): function arguments.
             **kwargs (dict): function keyword arguments.
 
         Returns:
-           object: returns a decorated function object.
+           Response (object): returns a decorated function object.
         """
 
         # convert to object id
@@ -493,8 +516,8 @@ def validate_delivery_params(func) -> object:
 def validate_destination(
     check_if_destination_in_db: bool = True,
 ) -> object:
-    """
-    This decorator handles validation of destination objects.
+    """This decorator handles validation of destination objects.
+
     Example: @validate_destination_wrapper()
 
     Args:
@@ -502,17 +525,17 @@ def validate_destination(
             a check is performed to verify if destination exists in the db.
 
     Returns:
-        Response: decorator
+        Response (object): decorator.
     """
 
     def wrapper(in_function) -> object:
-        """Decorator for wrapping a function
+        """Decorator for wrapping a function.
 
         Args:
             in_function (object): function object.
 
         Returns:
-           object: returns a wrapped decorated function object.
+           Response (object): returns a wrapped decorated function object.
         """
 
         @wraps(in_function)
@@ -524,8 +547,9 @@ def validate_destination(
                 **kwargs (dict): function keyword arguments.
 
             Returns:
-               object: returns a decorated function object.
+               Response (object): returns a decorated function object.
             """
+
             destination_id = ObjectId(kwargs.get("destination_id", None))
 
             if check_if_destination_in_db:
@@ -545,6 +569,81 @@ def validate_destination(
             return in_function(*args, **kwargs)
 
         decorator.__wrapped__ = in_function
+        return decorator
+
+    return wrapper
+
+
+def validate_engagement_and_audience() -> object:
+    """This decorator handles validation of engagement and audience objects.
+
+    Example: @validate_engagement_and_audience()
+
+    Returns:
+        Response (object): decorator.
+    """
+
+    def wrapper(in_function) -> object:
+        """Decorator for wrapping a function.
+
+        Args:
+            in_function (object): function object.
+
+        Returns:
+           Response (object): returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for handling engagement validation.
+
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+
+            Returns:
+               Response (object): returns a decorated function object.
+            """
+
+            database = get_db_client()
+
+            # engagement validation
+            engagement_id = ObjectId(kwargs.get(constants.ENGAGEMENT_ID, None))
+
+            if engagement_id is not None:
+                if not get_engagement(database, engagement_id):
+                    logger.error(
+                        "Engagement with engagement ID %s not found.",
+                        engagement_id,
+                    )
+                    return {
+                        constants.MESSAGE: constants.ENGAGEMENT_NOT_FOUND
+                    }, HTTPStatus.NOT_FOUND
+
+                kwargs[constants.ENGAGEMENT_ID] = engagement_id
+
+            # audience validation
+            audience_id = ObjectId(kwargs.get(constants.AUDIENCE_ID, None))
+
+            if audience_id is not None:
+                if not orchestration_management.get_audience(
+                    database, audience_id
+                ):
+                    logger.error(
+                        "Audience with audience ID %s not found.",
+                        audience_id,
+                    )
+                    return {
+                        constants.MESSAGE: constants.AUDIENCE_NOT_FOUND
+                    }, HTTPStatus.NOT_FOUND
+
+                kwargs[constants.AUDIENCE_ID] = audience_id
+
+            return in_function(*args, **kwargs)
+
+        # set tag so we can assert if a function is secured via this decorator
+        decorator.__wrapped__ = in_function
+
         return decorator
 
     return wrapper

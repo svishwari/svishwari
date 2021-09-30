@@ -1,12 +1,13 @@
 # pylint: disable=no-self-use
-"""
-Paths for Notifications API
-"""
+"""Paths for Notifications API"""
+import json
 from http import HTTPStatus
-from typing import Tuple
+from typing import Tuple, Generator
+from time import sleep
+from datetime import datetime, timedelta, timezone
 
 import pymongo
-from flask import Blueprint, request
+from flask import Blueprint, request, Response
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
@@ -36,6 +37,7 @@ notifications_bp = Blueprint(
 @secured()
 def before_request():
     """Protect all of the notifications endpoints."""
+
     pass  # pylint: disable=unnecessary-pass
 
 
@@ -43,9 +45,7 @@ def before_request():
     notifications_bp, f"/{api_c.NOTIFICATIONS_ENDPOINT}", "NotificationsSearch"
 )
 class NotificationsSearch(SwaggerView):
-    """
-    Notifications search class
-    """
+    """Notifications search class."""
 
     parameters = [
         {
@@ -96,7 +96,7 @@ class NotificationsSearch(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] dict of notifications and http code
+            Tuple[dict, int] dict of notifications, HTTP status code.
         """
 
         batch_size = request.args.get(
@@ -130,7 +130,7 @@ class NotificationsSearch(SwaggerView):
 
         return (
             NotificationsSchema().dump(
-                notification_management.get_notifications(
+                notification_management.get_notifications_batch(
                     get_db_client(),
                     batch_size=int(batch_size),
                     sort_order=sort_order,
@@ -139,3 +139,78 @@ class NotificationsSearch(SwaggerView):
             ),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    notifications_bp,
+    f"/{api_c.NOTIFICATIONS_ENDPOINT}/stream",
+    "NotificationStream",
+)
+class NotificationStream(SwaggerView):
+    """Notifications stream class"""
+
+    parameters = []
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "List of notifications with total number of notifications.",
+            "schema": NotificationsSchema,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.NOTIFICATIONS_TAG]
+
+    @api_error_handler()
+    def get(self) -> Tuple[dict, int]:
+        """Stream notifications.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int]: dict of notifications, HTTP status code.
+        """
+
+        def event_stream() -> Generator[Tuple[dict, int], None, None]:
+            """Stream notifications with a generator.
+
+            Returns:
+                Generator[Tuple[dict, int], None, None]: Generator of notifications.
+
+            """
+            i = 0
+            while True:
+                # sleep each iteration, don't sleep first iteration
+                sleep(0 if i == 0 else api_c.NOTIFICATION_STREAM_TIME_SECONDS)
+
+                # increase iteration
+                i += 1
+
+                # get the previous time, take last minute.
+                previous_time = datetime.utcnow().replace(
+                    tzinfo=timezone.utc
+                ) - timedelta(
+                    minutes=int(api_c.NOTIFICATION_STREAM_TIME_SECONDS / 60)
+                )
+
+                # dump the output notification list to the notification schema.
+                yield json.dumps(
+                    NotificationsSchema().dump(
+                        notification_management.get_notifications(
+                            get_db_client(),
+                            {
+                                db_c.NOTIFICATION_FIELD_CREATED: {
+                                    "$gt": previous_time
+                                },
+                                db_c.TYPE: db_c.NOTIFICATION_TYPE_SUCCESS,
+                                db_c.NOTIFICATION_FIELD_DESCRIPTION: {
+                                    "$regex": "^Successfully delivered audience"
+                                },
+                            },
+                            [(db_c.NOTIFICATION_FIELD_CREATED, -1)],
+                        )
+                    )
+                )
+
+        # return the event stream response
+        return Response(event_stream(), mimetype="text/event-stream")

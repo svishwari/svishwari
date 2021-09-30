@@ -510,14 +510,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_update_sfmc_performance_data_extension(self) -> None:
-        """
-        For testing update of Performance Data Extension only for SFMC
-
-        Args:
-
-        Returns:
-            None
-        """
+        """For testing update of Performance Data Extension only for SFMC"""
 
         performance_data_extension = {
             c.DELIVERY_PLATFORM_SFMC_DATA_EXT_NAME: "HUX Performance Ext",
@@ -1816,9 +1809,11 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIsNotNone(doc)
 
         # fetch customer audience doc for `delivery_job_doc`
-        all_docs = dpm.get_all_audience_customers(
-            database=self.database,
-            delivery_job_id=self.delivery_job_doc[c.ID],
+        all_docs = list(
+            dpm.get_all_audience_customers(
+                database=self.database,
+                delivery_job_id=self.delivery_job_doc[c.ID],
+            )
         )
 
         self.assertIsNotNone(all_docs)

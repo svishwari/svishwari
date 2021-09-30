@@ -17,6 +17,13 @@ export const destination = {
 
 /**
  * Destination field schema
+ *
+ * @param {object} field field configuration
+ * @param {string} field.name field name
+ * @param {string} field.type field type
+ * @param {boolean} field.required flag whether field is required
+ * @param {string} field.description field's description
+ * @returns {object} the field object
  */
 const field = ({
   name,
@@ -68,6 +75,8 @@ export const destinationsConstants = {
 
 /**
  * Destination data extensions
+ *
+ * @returns {Array} list of data extensions
  */
 export const destinationsDataExtensions = () => {
   let dataExtensions = []

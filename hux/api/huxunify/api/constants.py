@@ -34,10 +34,10 @@ AUDIENCE_ROUTER_JOB_QUEUE_CONST = "AUDIENCE-ROUTER-JOB-QUEUE"
 CDPR_EVENT_CONST = "CDPR-EVENT"
 FLDR_EVENT_CONST = "FLDR-EVENT"
 
-
 # general defines
 ID = "id"
 NAME = "name"
+LABEL = "label"
 OWNER = "owner"
 STATUS = "status"
 BODY = "body"
@@ -218,11 +218,8 @@ AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
 AWS_SSM_NAME = "ssm"
 AWS_EVENTS_NAME = "events"
 AWS_BATCH_NAME = "batch"
-AWS_HEALTH_TESTS = {
-    AWS_SSM_NAME: ["get_parameter", {"Name": "unifieddb_host_alias"}],
-    AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
-}
-S3 = "s3"
+AWS_S3_NAME = "s3"
+
 AWS_BUCKET = "Bucket"
 AWS_KEY = "Key"
 AWS_TARGET_ID = "Id"
@@ -510,6 +507,10 @@ BSON_INVALID_ID = (
     lambda invalid_id: f"'{invalid_id}' is not a valid ObjectId, it must be a "
     f"12-byte input or a 24-character hex string"
 )
+MESSAGE = "message"
+START_DATE_GREATER_THAN_END_DATE = (
+    "Start date cannot be greater than end date."
+)
 FAILED_DEPENDENCY_ERROR_MESSAGE = (
     "Failed to obtain data from dependent API endpoint."
 )
@@ -531,6 +532,14 @@ ENGAGEMENT_NOT_FOUND = "Engagement not found."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported."
 SUCCESSFUL_DELIVERY_JOB_NOT_FOUND = "No successful delivery job found"
 ZERO_AUDIENCE_SIZE = "Sum of Audience(s) is zero"
+ENGAGEMENT_NO_AUDIENCES = "Engagement has no audiences."
+AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT = (
+    "Audience not attached to the engagement."
+)
+DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE = (
+    "Destination not attached to the engagement audience."
+)
+DELIVERY_JOBS_NOT_FOUND_TO_MAP = "No delivery jobs found to map."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -549,6 +558,7 @@ CONNECTION_STATUS = "connection_status"
 AUTHENTICATION_DETAILS = "authentication_details"
 DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
 DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
+DESTINATION_CONNECTION_FAILED = "Destination connection failed."
 INVALID_STATUS = "Invalid status value."
 INVALID_COMPONENT_NAME = "Invalid component name."
 DATA_EXTENSIONS = "data-extensions"
@@ -689,6 +699,7 @@ USER_NAME = "user_name"
 USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
+PROFILE = "profile"
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
 MODELS_TAG = "model"
@@ -811,6 +822,7 @@ CITIES_DEFAULT_BATCH_SIZE = 100
 NOTIFICATIONS_TAG = "notifications"
 NOTIFICATIONS_DESCRIPTION = "Notifications API"
 NOTIFICATIONS_ENDPOINT = "/notifications"
+NOTIFICATION_STREAM_TIME_SECONDS = 60
 
 # AWS BATCH
 BATCH_SIZE = "batch_size"
@@ -986,7 +998,6 @@ DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
 
-
 # health check prometheus metric constants
 MONGO_CONNECTION_HEALTH = "mongo_connection_health"
 TECTON_CONNECTION_HEALTH = "tecton_connection_health"
@@ -1001,6 +1012,7 @@ CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
 CDM_IDENTITY_ENDPOINT = "identity"
+DATASOURCES = "datasources"
 DATAFEEDS = "datafeeds"
 
 PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [

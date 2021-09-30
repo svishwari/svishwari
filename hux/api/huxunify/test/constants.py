@@ -759,6 +759,14 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
     },
 }
 
+DATASOURCES_RESPONSE = {
+    "code": 200,
+    "message": "ok",
+    "body": [
+        {"name": "dataSource", "label": "Data Source", "status": "Active"}
+    ],
+}
+
 DATASOURCE_DATA_FEEDS_RESPONSE = {
     "code": 200,
     "message": "ok",

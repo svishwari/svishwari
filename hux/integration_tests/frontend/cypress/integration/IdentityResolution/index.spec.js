@@ -36,12 +36,14 @@ describe("Data management > Identity resolution", () => {
   it("should be able to open last run drawer", () => {
     //open last run drawer
     cy.get(selector.idr.lastrun).first().click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000)
   })
 
   it("should be able to toggle pinning panel", () => {
     //toggle pinning panel
     cy.get(selector.idr.pinning).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
     cy.get(selector.idr.pinning).click()
   })
@@ -49,8 +51,8 @@ describe("Data management > Identity resolution", () => {
   it("should be able to toggle stitched panel", () => {
     //toggle stitched panel
     cy.get(selector.idr.stitched).click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
     cy.get(selector.idr.stitched).click()
   })
-  
 })

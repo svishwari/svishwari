@@ -200,7 +200,7 @@ export default {
         .style("stroke-width", 1)
       svg
         .append("rect")
-        .attr("width", w + 20)
+        .attr("width", w + 100)
         .attr("height", h)
         .style("stroke", "transparent")
         .style("fill", "transparent")
@@ -264,7 +264,6 @@ export default {
         .attr("id", "mainSvg")
         .attr("class", "svgBox")
         .attr("width", 400)
-        .attr("height", "auto")
         .style("margin-left", "20px")
         .style("margin-right", "20px")
         .style("margin-top", "10px")

@@ -1,6 +1,4 @@
-"""
-purpose of this file is for interacting with aws
-"""
+"""Purpose of this file is for interacting with aws"""
 import logging
 import os
 from typing import Tuple
@@ -32,6 +30,8 @@ class ParameterStore:
             overwrite (bool): Overwrite an existing parameter.
         Returns:
             dict: boto3 response.
+        Raises:
+            ClientError: Boto client request error.
         """
         try:
             return get_aws_client(api_c.AWS_SSM_NAME).put_parameter(
@@ -45,14 +45,15 @@ class ParameterStore:
 
     @staticmethod
     def get_store_value(name: str, value: str = "Value") -> str:
-        """
-        Retrieve a parameter/value from the param store.
+        """Retrieve a parameter/value from the param store.
 
         Args:
             name (str): Name of the parameter.
             value (str): Name of the value to get (i.e. Name or Value)
         Returns:
             str: Parameter Value.
+        Raises:
+            ClientError: Boto client request error.
         """
         try:
             return (
@@ -84,6 +85,9 @@ class ParameterStore:
 
         Returns:
             ssm_params (dict): The key to where the parameters are stored.
+        Raises:
+            KeyError: Exception when the key is missing in the object.
+            ProblemException: Any exception raised during endpoint execution.
         """
         ssm_params = {}
 
@@ -147,10 +151,14 @@ def get_aws_client(
     )
 
 
-def check_aws_connection(client="s3") -> Tuple[bool, str]:
+def check_aws_connection(
+    client_method: str, extra_params: dict, client: str = "s3"
+) -> Tuple[bool, str]:
     """Validate an AWS connection.
 
     Args:
+        client_method (str): Method name for the client
+        extra_params (dict): Extra params required for aws connection
         client (str): name of the boto3 client to use.
     Returns:
         tuple[bool, str]: Returns if the AWS connection is valid,
@@ -159,8 +167,7 @@ def check_aws_connection(client="s3") -> Tuple[bool, str]:
 
     try:
         # lookup the health test to run from api constants
-        health_test = api_c.AWS_HEALTH_TESTS[client]
-        getattr(get_aws_client(client), health_test[0])(**health_test[1])
+        getattr(get_aws_client(client), client_method)(**extra_params)
         record_health_status_metric(api_c.AWS_SSM_CONNECTION_HEALTH, True)
         record_health_status_metric(api_c.AWS_BATCH_CONNECTION_HEALTH, True)
         return True, f"{client} available."
@@ -178,7 +185,11 @@ def check_aws_ssm() -> Tuple[bool, str]:
         tuple[bool, str]: Returns if the AWS connection is valid,
             and the message.
     """
-    return check_aws_connection(api_c.AWS_SSM_NAME)
+    return check_aws_connection(
+        client_method="get_parameter",
+        client=api_c.AWS_SSM_NAME,
+        extra_params={"Name": "unifieddb_host_alias"},
+    )
 
 
 def check_aws_batch() -> Tuple[bool, str]:
@@ -188,7 +199,46 @@ def check_aws_batch() -> Tuple[bool, str]:
         tuple[bool, str]: Returns if the AWS connection is valid,
             and the message.
     """
-    return check_aws_connection(api_c.AWS_BATCH_NAME)
+    return check_aws_connection(
+        client_method="cancel_job",
+        client=api_c.AWS_BATCH_NAME,
+        extra_params={"jobId": "test", "reason": "test"},
+    )
+
+
+def check_aws_s3() -> Tuple[bool, str]:
+    """Validate AWS S3 Function
+
+    Returns:
+        tuple[bool, str]: Returns if the AWS connection is valid,
+            and the message.
+
+    """
+    return check_aws_connection(
+        client_method="get_bucket_location",
+        client=api_c.AWS_S3_NAME,
+        extra_params={api_c.AWS_BUCKET: config.get_config().S3_DATASET_BUCKET},
+    )
+
+
+def check_aws_events() -> Tuple[bool, str]:
+    """Validates AWS events function
+
+    Returns:
+        tuple[bool, str]: Returns if the AWS connection is valid,
+            and the message.
+    """
+    return check_aws_connection(
+        client_method="put_rule",
+        client=api_c.AWS_EVENTS_NAME,
+        extra_params={
+            "Name": "unified_health_check",
+            "State": "DISABLED",
+            "Description": "test health check",
+            "RoleArn": config.get_config().AUDIENCE_ROUTER_JOB_ROLE_ARN,
+            "ScheduleExpression": "cron(15 0 * * ? *)",
+        },
+    )
 
 
 def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
@@ -201,6 +251,8 @@ def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
     Returns:
         Auth Object (dict): SFMC auth object.
 
+    Raises:
+        KeyError: Exception when the key is missing in the object.
     """
 
     # only get the secrets from ssm, otherwise take from the auth details.
@@ -268,6 +320,9 @@ def set_cloud_watch_rule(
 
     Returns:
         rule_arn (str): The Amazon resource name (ARN) of the rule.
+
+    Raises:
+        ValueError: Error indicating unsupported values.
     """
 
     if state.upper() not in [api_c.ENABLED.upper(), api_c.DISABLED.upper()]:
@@ -381,6 +436,10 @@ def toggle_cloud_watch_rule(
             Toggle regardless of checking existence.
 
     Returns:
+        bool: exception was handled, return false.
+
+    Raises:
+        ClientError: Boto client request error.
 
     """
 
@@ -436,7 +495,7 @@ def upload_file(
         object_name = os.path.basename(file_name)
 
     # Upload the file
-    s3_client = get_aws_client(api_c.S3)
+    s3_client = get_aws_client(api_c.AWS_S3_NAME)
 
     extraargs = {
         "Metadata": {
@@ -471,7 +530,7 @@ def download_file(
         bool: True for successful download else False
     """
     object_name = object_name if object_name else file_name
-    s3_client = get_aws_client(api_c.S3)
+    s3_client = get_aws_client(api_c.AWS_S3_NAME)
     logging.info("Downloading %s file to %s", file_name, bucket)
     try:
         with open(file_name, "wb") as file:

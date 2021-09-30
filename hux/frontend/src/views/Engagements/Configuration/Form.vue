@@ -122,7 +122,7 @@
           </div>
         </v-row>
 
-        <v-row class="delivery-schedule mt-6">
+        <v-row class="delivery-schedule mt-5">
           <hux-schedule-picker v-if="isRecurring" v-model="schedule" />
         </v-row>
       </form-step>
@@ -261,7 +261,15 @@
 
     <hux-footer>
       <template #left>
-        <v-btn tile color="white" height="40" @click.native="$router.go(-1)">
+        <v-btn
+          tile
+          color="white"
+          height="40"
+          @click.native="
+            dontShowModal = true
+            $router.go(-1)
+          "
+        >
           <span class="primary--text">Cancel</span>
         </v-btn>
       </template>
@@ -402,6 +410,7 @@ export default {
         new Date().getTime() - new Date().getTimezoneOffset() * 60000
       ).toISOString(),
       engagementList: {},
+      dontShowModal: false,
     }
   },
 
@@ -419,24 +428,48 @@ export default {
     },
 
     payload() {
-      return {
+      const recurringConfig = {}
+      recurringConfig["every"] = this.schedule.every
+      recurringConfig["periodicity"] = this.schedule.periodicity
+      if (this.schedule && this.schedule.periodicity == "Daily") {
+        recurringConfig["hour"] = this.schedule.hour
+        recurringConfig["minute"] = this.schedule.minute
+        recurringConfig["period"] = this.schedule.period
+      } else if (this.schedule && this.schedule.periodicity == "Weekly") {
+        recurringConfig["day_of_week"] = this.schedule.days.map((item) => {
+          return item.substring(0, 3).toUpperCase()
+        })
+      } else if (this.schedule && this.schedule.periodicity == "Monthly") {
+        recurringConfig["day_of_month"] = this.schedule.monthlyDayDate
+      }
+
+      const requestPayload = {
         name: this.value.name,
         description: this.value.description,
-        delivery_schedule: this.value.delivery_schedule,
         audiences: Object.values(this.value.audiences).map((audience) => {
           return {
             id: audience.id,
             destinations: audience.destinations,
           }
         }),
-        start_date: !this.isManualDelivery
-          ? new Date(this.selectedStartDate).toISOString()
-          : null,
-        end_date:
-          !this.isManualDelivery && this.selectedEndDate
-            ? new Date(this.selectedEndDate).toISOString()
-            : null,
       }
+
+      if (this.value.delivery_schedule == 1) {
+        requestPayload["delivery_schedule"] = {
+          start_date: !this.isManualDelivery
+            ? new Date(this.selectedStartDate).toISOString()
+            : null,
+          end_date:
+            !this.isManualDelivery && this.selectedEndDate
+              ? new Date(this.selectedEndDate).toISOString()
+              : null,
+          schedule: recurringConfig,
+        }
+      } else {
+        requestPayload["delivery_schedule"] = null
+      }
+
+      return requestPayload
     },
 
     isValid() {
@@ -558,6 +591,7 @@ export default {
     async addNewEngagement() {
       try {
         const engagement = await this.addEngagement(this.payload)
+        this.dontShowModal = true
         this.$router.push({
           name: "EngagementDashboard",
           params: { id: engagement.id },
@@ -572,6 +606,7 @@ export default {
       try {
         const engagement = await this.addEngagement(this.payload)
         await this.deliverEngagement(engagement.id)
+        this.dontShowModal = true
         this.$router.push({
           name: "EngagementDashboard",
           params: { id: engagement.id },
@@ -591,6 +626,7 @@ export default {
         }
         const payload = { id: this.getRouteId, data: requestPayload }
         await this.updateEngagement(payload)
+        this.dontShowModal = true
         this.$router.push({
           name: "EngagementDashboard",
           params: { id: this.getRouteId },

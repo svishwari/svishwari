@@ -44,10 +44,26 @@ stages:
             "output": "batch available.",
             "passed": true
           },
+# TODO: HUS-1200
+#          {
+#            "checker": "check_aws_s3",
+#            "output": "s3 available.",
+#            "passed": true,
+#          },
+#          {
+#            "checker": "check_aws_events",
+#            "output": "events available.",
+#            "passed": true,
+#          },
           {
             "checker": "check_cdm_api_connection",
             "output": "CDM available.",
             "passed": 200
+          },
+          {
+            "checker": "check_cdp_connections_api_connection",
+            "output": "CDP connections available.",
+            "passed": 200,
           }
         ]
       headers:

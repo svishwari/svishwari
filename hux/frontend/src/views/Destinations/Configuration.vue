@@ -18,7 +18,13 @@
         <a class="pl-2" color="primary" @click="toggleDrawer()">Change</a>
       </template>
       <template v-else>
-        <v-btn fab x-small color="primary" @click="toggleDrawer()">
+        <v-btn
+          fab
+          x-small
+          color="primary"
+          data-e2e="drawerToggle"
+          @click="toggleDrawer()"
+        >
           <v-icon dark> mdi-plus </v-icon>
         </v-btn>
       </template>
@@ -34,6 +40,7 @@
             v-for="key in Object.keys(destinationFields)"
             :key="key"
             cols="6"
+            data-e2e="destinationConfigDetails"
           >
             <text-field
               v-model="authenticationDetails[key]"
@@ -63,6 +70,7 @@
           size="large"
           :is-tile="true"
           :is-disabled="!isFormValid"
+          data-e2e="validateDestination"
           @click="validate()"
         >
           {{ isValidated ? "Success!" : "Validate connection" }}
@@ -88,7 +96,7 @@
       </div>
     </v-form>
 
-    <hux-footer slot="footer" max-width="850px">
+    <hux-footer slot="footer" max-width="850px" data-e2e="footer">
       <template #left>
         <hux-button
           variant="white"
@@ -141,6 +149,7 @@
             :is-available="destination.is_enabled"
             :is-already-added="destination.is_added"
             class="my-3"
+            data-e2e="destinationsDrawer"
             @click="onSelectDestination(destination.id)"
           />
 
@@ -162,6 +171,14 @@
         </div>
       </template>
     </drawer>
+    <confirm-modal
+      v-model="showConfirmModal"
+      title="You are about to navigate away"
+      right-btn-text="Yes, navigate away"
+      body=" Are you sure you want to stop the configuration and go to another page? You will not be able to recover it and will need to start the process again."
+      @onCancel="showConfirmModal = false"
+      @onConfirm="navigateaway()"
+    />
   </page>
 </template>
 
@@ -174,6 +191,7 @@ import Logo from "@/components/common/Logo"
 import huxButton from "@/components/common/huxButton"
 import HuxFooter from "@/components/common/HuxFooter"
 import TextField from "@/components/common/TextField"
+import ConfirmModal from "@/components/common/ConfirmModal.vue"
 
 import SFMC from "./Configuration/SFMC.vue"
 
@@ -189,6 +207,7 @@ export default {
     TextField,
     Logo,
     SFMC,
+    ConfirmModal,
   },
 
   data() {
@@ -206,6 +225,9 @@ export default {
       },
       selectedDataExtension: null,
       dataExtensions: [],
+      showConfirmModal: false,
+      navigateTo: false,
+      flagForModal: false,
     }
   },
 
@@ -251,6 +273,15 @@ export default {
     },
   },
 
+  beforeRouteLeave(to, from, next) {
+    if (this.flagForModal == false) {
+      this.showConfirmModal = true
+      this.navigateTo = to
+    } else {
+      next()
+    }
+  },
+
   async mounted() {
     this.loading = true
 
@@ -272,6 +303,12 @@ export default {
       addDestination: "destinations/add",
       validateDestination: "destinations/validate",
     }),
+
+    navigateaway() {
+      this.showConfirmModal = false
+      this.flagForModal = true
+      this.$router.push(this.navigateTo)
+    },
 
     setExtension(data) {
       this.selectedDataExtension = data
@@ -327,6 +364,7 @@ export default {
           data.perf_data_extension = this.selectedDataExtension
         }
         await this.addDestination(data)
+        this.flagForModal = true
         this.$router.push({ name: "Connections" })
       } catch (error) {
         console.error(error)
@@ -335,6 +373,7 @@ export default {
 
     cancel() {
       // TODO: need to add modal that confirms to leave configuration
+      this.flagForModal = true
       this.$router.push({ name: "Connections" })
     },
   },

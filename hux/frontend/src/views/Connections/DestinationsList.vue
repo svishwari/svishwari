@@ -6,6 +6,7 @@
       <router-link
         :to="{ name: 'DestinationConfiguration' }"
         class="text-decoration-none"
+        data-e2e="addDestination"
       >
         <icon class="add-icon cursor-pointer" type="add" :size="27" />
       </router-link>
@@ -70,7 +71,7 @@ export default {
     display: block;
     margin-left: 7px;
     position: relative;
-    top: 2px;
+    top: 3px;
   }
   .list {
     &:hover {

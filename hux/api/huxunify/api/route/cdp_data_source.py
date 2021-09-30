@@ -1,7 +1,5 @@
 # pylint: disable=no-self-use
-"""
-Paths for the CDP data sources API
-"""
+"""Paths for the CDP data sources API"""
 from http import HTTPStatus
 from typing import Tuple
 
@@ -16,9 +14,9 @@ from huxunifylib.database import constants as db_c
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
     get_data_source,
-    create_data_source,
     delete_data_source,
     update_data_sources,
+    bulk_write_data_sources,
 )
 
 from huxunify.api import constants as api_c
@@ -64,9 +62,7 @@ def before_request():
     cdp_data_sources_bp, api_c.CDP_DATA_SOURCES_ENDPOINT, "DataSourceSearch"
 )
 class DataSourceSearch(SwaggerView):
-    """
-    Data Source Search class
-    """
+    """Data Source Search class."""
 
     parameters = []
     responses = {
@@ -87,8 +83,10 @@ class DataSourceSearch(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[list, int] list of CDP data sources and http code
+            Tuple[list, int]: list of CDP data sources, HTTP status code.
 
+        Raises:
+            ProblemException: Any exception raised during endpoint execution.
         """
 
         try:
@@ -119,9 +117,7 @@ class DataSourceSearch(SwaggerView):
     "IndividualDataSourceSearch",
 )
 class IndividualDataSourceSearch(SwaggerView):
-    """
-    Individual CDP data source search class
-    """
+    """Individual CDP data source search class."""
 
     parameters = [
         {
@@ -152,11 +148,13 @@ class IndividualDataSourceSearch(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            data_source_id (str): id of CDP data source
+            data_source_id (str): id of CDP data source.
 
         Returns:
-            Tuple[dict, int]: dict of data source and http code
+            Tuple[dict, int]: dict of data source, HTTP status code.
 
+        Raises:
+            ProblemException: Any exception raised during endpoint execution.
         """
 
         if ObjectId.is_valid(data_source_id):
@@ -191,12 +189,12 @@ class IndividualDataSourceSearch(SwaggerView):
 
 
 @add_view_to_blueprint(
-    cdp_data_sources_bp, api_c.CDP_DATA_SOURCES_ENDPOINT, "CreateCdpDataSource"
+    cdp_data_sources_bp,
+    api_c.CDP_DATA_SOURCES_ENDPOINT,
+    "CreateCdpDataSources",
 )
-class CreateCdpDataSource(SwaggerView):
-    """
-    Create new CDP data source class
-    """
+class CreateCdpDataSources(SwaggerView):
+    """Create new CDP data source class."""
 
     parameters = [
         {
@@ -204,47 +202,49 @@ class CreateCdpDataSource(SwaggerView):
             "in": "body",
             "type": "object",
             "description": api_c.CDP_DATA_SOURCE_DESCRIPTION,
-            "example": {
-                api_c.CDP_DATA_SOURCE_NAME: "Facebook",
-                api_c.CDP_DATA_SOURCE_CATEGORY: "Web Events",
-            },
-            api_c.CDP_DATA_SOURCE_NAME: api_c.CDP_DATA_SOURCE_NAME_DESCRIPTION,
-            api_c.CDP_DATA_SOURCE_CATEGORY: api_c.CDP_DATA_SOURCE_CATEGORY_DESCRIPTION,
+            "example": [
+                {
+                    api_c.NAME: "Data source ",
+                    api_c.TYPE: "dataSource",
+                    api_c.STATUS: api_c.STATUS_ACTIVE,
+                }
+            ],
         }
     ]
     responses = {
         HTTPStatus.OK.value: {
-            "description": "CDP data source created.",
-            "schema": CdpDataSourceSchema,
+            "description": "CDP data sources created.",
+            "schema": {"type": "array", "items": CdpDataSourceSchema},
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to create CDP data source",
+            "description": "Failed to create CDP data sources",
         },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @api_error_handler()
-    def post(self) -> Tuple[str, int]:
-        """Creates a new CDP data source.
+    def post(self) -> Tuple[list, int]:
+        """Creates new CDP data sources.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[str, int]: ID of CDP Data source, http code
-
+            Tuple[list, int]: List of CDP Data sources created, HTTP status code.
         """
-        body = CdpDataSourcePostSchema().load(request.get_json())
-        database = get_db_client()
 
         return (
-            CdpDataSourceSchema().dump(
-                create_data_source(
-                    database=database,
-                    name=body[api_c.CDP_DATA_SOURCE_NAME],
-                    category=body[api_c.CDP_DATA_SOURCE_CATEGORY],
+            jsonify(
+                CdpDataSourceSchema().dump(
+                    bulk_write_data_sources(
+                        database=get_db_client(),
+                        data_sources=CdpDataSourcePostSchema().load(
+                            request.get_json(), many=True
+                        ),
+                    ),
+                    many=True,
                 )
             ),
             HTTPStatus.OK,
@@ -257,9 +257,7 @@ class CreateCdpDataSource(SwaggerView):
     "DeleteCdpDataSource",
 )
 class DeleteCdpDataSource(SwaggerView):
-    """
-    Deletes a CDP data source
-    """
+    """Deletes a CDP data source."""
 
     parameters = [
         {
@@ -290,10 +288,10 @@ class DeleteCdpDataSource(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            data_source_id (str): CDP data source id
+            data_source_id (str): CDP data source id.
 
         Returns:
-            Tuple[dict, int]: CDP data source dict, http code
+            Tuple[dict, int]: CDP data source dict, HTTP status code.
         """
 
         if ObjectId.is_valid(data_source_id):
@@ -324,9 +322,7 @@ class DeleteCdpDataSource(SwaggerView):
     "BatchUpdateDataSources",
 )
 class BatchUpdateDataSources(SwaggerView):
-    """
-    Class to partially batch update data sources
-    """
+    """Class to partially batch update data sources."""
 
     parameters = [
         {
@@ -364,11 +360,11 @@ class BatchUpdateDataSources(SwaggerView):
         security:
             - Bearer: ["Authorization"]
 
-        Args:
-
         Returns:
             Tuple[dict, int]: Data source updated, HTTP status code.
 
+        Raises:
+            ProblemException: Any exception raised during endpoint execution.
         """
 
         data = request.get_json()
@@ -462,9 +458,7 @@ class BatchUpdateDataSources(SwaggerView):
     "GetConnectionsDatafeeds",
 )
 class GetDataSourceDatafeeds(SwaggerView):
-    """
-    Get data source data feeds class
-    """
+    """Get data source data feeds class."""
 
     parameters = [
         {
@@ -500,12 +494,13 @@ class GetDataSourceDatafeeds(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            datasource_type (str): Data source type
+            datasource_type (str): Data source type.
 
         Returns:
-            Tuple[dict, int]: Connections data feeds get object, http code
-
+            Tuple[dict, int]: Connections data feeds get object,
+                HTTP status code.
         """
+
         token_response = get_token_from_request(request)
 
         data_source = get_data_source(

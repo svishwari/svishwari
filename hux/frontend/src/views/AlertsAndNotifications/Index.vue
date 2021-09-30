@@ -32,8 +32,8 @@
       <hux-data-table
         :columns="columnDefs"
         :data-items="notifications"
-        :sort-column="sortColumn"
-        :sort-desc="sortDesc"
+        sort-column="created"
+        sort-desc
       >
         <template #row-item="{ item }">
           <td
@@ -193,11 +193,6 @@ export default {
   background: white;
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
-  }
-  .page-header--wrap {
-    box-shadow: 0px 1px 1px -1px var(--v-black-lighten3),
-      0px 0px 1px 0px var(--v-black-lighten3),
-      0px 0px 2px 0px var(--v-black-lighten3) !important;
   }
   .top-bar {
     margin-top: 1px;
