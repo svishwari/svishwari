@@ -100,7 +100,7 @@ export default {
   .data-source-list-active {
     @extend .cursor-pointer;
     ::v-deep .card-horizontal-title {
-      color: var(--v-primary-base);
+      color: var(--v-primary-base) !important;
     }
   }
   .data-source-list-pending {
