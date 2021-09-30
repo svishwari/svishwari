@@ -118,7 +118,10 @@
       <v-row class="table-card">
         <v-col cols="5" class="pb-0">
           <v-card class="rounded-lg card-info-wrapper box-shadow-5">
-            <v-card-title class="py-3 card-heading" data-e2e="customer-insights">
+            <v-card-title
+              class="py-3 card-heading"
+              data-e2e="customer-insights"
+            >
               {{ cardTitles[0].title }}
               <tooltip position-top>
                 <icon
@@ -189,7 +192,10 @@
         </v-col>
         <v-col cols="3" class="pb-0">
           <v-card class="rounded-lg card-info-wrapper box-shadow-5">
-            <v-card-title class="card-heading py-3" data-e2e="contact-preferencecs">
+            <v-card-title
+              class="card-heading py-3"
+              data-e2e="contact-preferencecs"
+            >
               {{ cardTitles[1].title }}
             </v-card-title>
             <v-card-text class="title-text">
@@ -380,7 +386,7 @@ export default {
           value: overview["since"],
           format: "date-relative",
           colValue: 2.5,
-          e2e: "customer-length"
+          e2e: "customer-length",
         },
         {
           id: 2,
@@ -390,7 +396,7 @@ export default {
           colValue: 2.5,
           hoverTooltip:
             "A percentage that indicates the level of certainty that all incoming records were accurately matched to a given customer.",
-          e2e: "match-confidence"
+          e2e: "match-confidence",
         },
         {
           id: 3,
@@ -400,7 +406,7 @@ export default {
           colValue: 2,
           hoverTooltip:
             "Assessment of the lifetime financial value of each customer.",
-          e2e: "life-time-value"
+          e2e: "life-time-value",
         },
         {
           // this value from the API is a number of months (float).
@@ -413,7 +419,7 @@ export default {
           colValue: 2.5,
           hoverTooltip:
             "The average time customer takes to convert to a purchase.",
-          e2e: "conversion-time"
+          e2e: "conversion-time",
         },
       ]
     },
@@ -428,7 +434,7 @@ export default {
           colValue: 2,
           hoverTooltip:
             "The measure of a customer’s likelihood to stop using a product.",
-          e2e: "churn-score"
+          e2e: "churn-score",
         },
         {
           id: 6,
@@ -437,21 +443,21 @@ export default {
           value: this.formattedDate(overviewMore["last_click"])
             ? this.formattedDate(overviewMore["last_click"])
             : "n/a",
-          e2e: "last-click"
+          e2e: "last-click",
         },
         {
           id: 7,
           title: "Last purchase date",
           colValue: 2.5,
           value: this.formattedDate(overviewMore["last_purchase"]),
-          e2e: "last-purchase-date"
+          e2e: "last-purchase-date",
         },
         {
           id: 8,
           title: "Last open",
           colValue: 2.5,
           value: this.formattedDate(overviewMore["last_email_open"]),
-          e2e: "last-open"
+          e2e: "last-open",
         },
       ]
     },
