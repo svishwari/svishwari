@@ -16,6 +16,7 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
   })
 
   it("should be able to open drawer & navigate to profile dashboard", () => {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(5000)
     //click on view all customer profiles button
     cy.get("button").contains("View all customers").click()
@@ -31,12 +32,13 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
 
     // submit the form & it will redirect to customer profile dashboard
     cy.get(selector.login.submit).click()
-
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(5000)
   })
 
   // Inside customer profile dashboard
   it("should validate customer length card", () => {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(5000)
     cy.get(selector.customerProfile.customerlength).should("exist")
   })
