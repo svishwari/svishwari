@@ -18,7 +18,13 @@
         <a class="pl-2" color="primary" @click="toggleDrawer()">Change</a>
       </template>
       <template v-else>
-        <v-btn fab x-small color="primary" @click="toggleDrawer()">
+        <v-btn
+          fab
+          x-small
+          color="primary"
+          data-e2e="drawerToggle"
+          @click="toggleDrawer()"
+        >
           <v-icon dark> mdi-plus </v-icon>
         </v-btn>
       </template>
@@ -34,6 +40,7 @@
             v-for="key in Object.keys(destinationFields)"
             :key="key"
             cols="6"
+            data-e2e="destinationConfigDetails"
           >
             <text-field
               v-model="authenticationDetails[key]"
@@ -63,6 +70,7 @@
           size="large"
           :is-tile="true"
           :is-disabled="!isFormValid"
+          data-e2e="validateDestination"
           @click="validate()"
         >
           {{ isValidated ? "Success!" : "Validate connection" }}
@@ -88,7 +96,7 @@
       </div>
     </v-form>
 
-    <hux-footer slot="footer" max-width="850px">
+    <hux-footer slot="footer" max-width="850px" data-e2e="footer">
       <template #left>
         <hux-button
           variant="white"
@@ -141,6 +149,7 @@
             :is-available="destination.is_enabled"
             :is-already-added="destination.is_added"
             class="my-3"
+            data-e2e="destinationsDrawer"
             @click="onSelectDestination(destination.id)"
           />
 

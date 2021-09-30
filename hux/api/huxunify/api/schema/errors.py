@@ -1,6 +1,4 @@
-"""
-Schemas for API error responses
-"""
+"""Schemas for API error responses"""
 
 from http import HTTPStatus
 from flask_marshmallow import Schema

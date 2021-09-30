@@ -50,8 +50,7 @@ def check_cdp_connections_api_connection() -> Tuple[int, str]:
 
 
 def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
-    """
-    Fetch IDR data feeds
+    """Fetch IDR data feeds
 
     Args:
         token (str): OKTA JWT Token.
@@ -59,6 +58,8 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
         end_date (str): End date.
     Returns:
        list: datafeeds processed within the given dates.
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
     # get config
     config = get_config()
@@ -91,8 +92,7 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
 
 
 def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
-    """
-    Fetch details of IDR datafeed by ID
+    """Fetch details of IDR datafeed by ID
 
     Args:
         token (str): OKTA JWT Token
@@ -100,6 +100,9 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
 
     Returns:
         dict: Datafeed details object
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
     # get config
     config = get_config()
@@ -133,9 +136,44 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
     }
 
 
-def get_data_source_data_feeds(token: str, data_source_type: str) -> list:
+def get_data_sources(token: str) -> list:
+    """Fetch data sources
+
+    Args:
+        token (str): OKTA JWT token
+
+    Returns:
+        (list): List of data sources
     """
-    Retrieve data source data feeds
+    # get config
+    config = get_config()
+    logger.info("Retrieving data-sources.")
+
+    response = requests.get(
+        f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_CONNECTIONS_ENDPOINT}/"
+        f"{api_c.DATASOURCES}",
+        headers={api_c.CUSTOMERS_API_HEADER_KEY: token},
+    )
+
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve data sources, %s %s.",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_CONNECTIONS_ENDPOINT}/"
+            f"{api_c.DATASOURCES}",
+            response.status_code,
+        )
+
+    logger.info("Successfully retrieved data sources.")
+
+    return response.json()[api_c.BODY]
+
+
+def get_data_source_data_feeds(token: str, data_source_type: str) -> list:
+    """Retrieve data source data feeds
 
     Args:
         token (str): OKTA JWT Token
@@ -143,6 +181,9 @@ def get_data_source_data_feeds(token: str, data_source_type: str) -> list:
 
     Returns:
         list: list of connection data-feeds
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
 
     """
     config = get_config()
@@ -199,6 +240,8 @@ def get_idr_matching_trends(
         end_date (str): End date.
     Returns:
        list: count of known, anonymous, unique ids on a day.
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
     # TODO : Fetch date range from CDP
     start_date = (

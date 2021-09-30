@@ -1,6 +1,4 @@
-"""
-Purpose of this file is for storing the cache management.
-"""
+"""Purpose of this file is for storing the cache management."""
 import datetime
 import logging
 from typing import Union
@@ -21,17 +19,15 @@ def create_cache_entry(
     cache_value: str,
     expire_after_seconds: int = 86400,
 ) -> None:
-    """A function that creates a new cache entry
+    """A function that creates a new cache entry.
 
     Args:
         database (DatabaseClient): A database client.
         cache_key (str): name of the cache key.
         cache_value (str): name of the cache key value.
         expire_after_seconds (int): Time for the document to expire in seconds.
-
-    Returns:
-
     """
+
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.CACHE_COLLECTION]
 
     try:
@@ -59,7 +55,7 @@ def create_cache_entry(
 def get_cache_entry(
     database: DatabaseClient, cache_key: str
 ) -> Union[dict, None]:
-    """A function that creates a new cache entry
+    """A function that creates a new cache entry.
 
     Args:
         database (DatabaseClient): A database client.
@@ -67,8 +63,8 @@ def get_cache_entry(
 
     Returns:
         Union[dict, None]: MongoDB document for a cache entry.
-
     """
+
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.CACHE_COLLECTION]
 
     try:

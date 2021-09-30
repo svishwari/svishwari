@@ -1,6 +1,4 @@
-"""
-Schemas for the Model Object
-"""
+"""Schemas for the Model Object"""
 
 from flask_marshmallow import Schema
 from marshmallow.fields import Str, Int, Float, Nested

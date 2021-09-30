@@ -1,6 +1,4 @@
-"""
-purpose of this file is to house schema utilities
-"""
+"""Purpose of this file is to house schema utilities"""
 import uuid
 from typing import AnyStr
 from http import HTTPStatus
@@ -46,8 +44,8 @@ def must_not_be_blank(data: AnyStr) -> None:
     Args:
         data (AnyStr): any string
 
-    Returns:
-        None
+    Raises:
+        ValidationError: Error for if data is empty
 
     """
     if not data:
@@ -60,9 +58,6 @@ def validate_object_id(data: AnyStr) -> None:
     Args:
         data (AnyStr): any string
 
-    Returns:
-        None
-
     """
     ObjectId(data)
 
@@ -73,8 +68,11 @@ def validate_dest_constants(data: dict) -> None:
     Args:
         data (dict): input dict
 
-    Returns:
-        None
+    Raises:
+        ValidationError:
+            - raised if data is not a dict
+            - raised if an account id is not in the dict
+            - raised if improper fields are in the dict
 
     """
     # check if dictionary first

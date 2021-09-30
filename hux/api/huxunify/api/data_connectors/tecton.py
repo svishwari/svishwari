@@ -1,5 +1,5 @@
-"""
-Purpose of this file is for holding methods to query and pull data from Tecton.
+"""Purpose of this file is for holding methods to query and pull data
+from Tecton.
 """
 import random
 import time
@@ -137,6 +137,7 @@ def map_model_performance_response(
         model_id (str): Model ID.
         model_type (str): Model type.
         model_version (str): Model version.
+        metric_default_value: Default values for model metric.
 
     Returns:
         dict: A cleaned model performance dict.
@@ -182,6 +183,9 @@ def get_models() -> List[dict]:
 
     Returns:
         List[dict]: List of models.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
 
     # get config
@@ -215,7 +219,10 @@ def get_model_version_history(model_id: int) -> List[ModelVersionSchema]:
         model_id (str): model id.
 
     Returns:
-         List[ModelVersionSchema] List of model versions.
+        List[ModelVersionSchema] List of model versions.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
     # get config
     config = get_config()
@@ -266,7 +273,10 @@ def get_model_drift(model_id: int, model_type: str) -> List[ModelDriftSchema]:
         model_type (str): model type.
 
     Returns:
-         List[DriftSchema] List of model drift.
+        List[DriftSchema] List of model drift.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
     # get config
     config = get_config()
@@ -452,7 +462,10 @@ def get_model_features(
         model_version (str): model version.
 
     Returns:
-         List[FeatureSchema] List of model features.
+        List[FeatureSchema] List of model features.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
 
     # get config
