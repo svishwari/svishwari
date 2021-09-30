@@ -39,7 +39,9 @@ def create_data_source(
         Union[dict, None]: MongoDB document for a data source or None.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.CDP_DATA_SOURCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
 
     # TODO - feed count to be updated per CDM in future tickets.
     doc = {
@@ -81,7 +83,9 @@ def bulk_write_data_sources(
     Returns:
         Union[list, None]: List of MongoDB documents for data sources or None.
     """
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.CDP_DATA_SOURCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
 
     _ = [data_source.update({c.ADDED: True}) for data_source in data_sources]
 
@@ -107,7 +111,9 @@ def get_all_data_sources(database: DatabaseClient) -> Union[list, None]:
         Union[list, None]: List of all data sources or None.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.CDP_DATA_SOURCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
 
     try:
         return list(collection.find({}))
@@ -142,7 +148,9 @@ def get_data_source(
             the mongo operation.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.CDP_DATA_SOURCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
     query = {}
 
     if data_source_id:
@@ -164,7 +172,9 @@ def get_data_source(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def delete_data_source(database: DatabaseClient, data_source_id: ObjectId) -> bool:
+def delete_data_source(
+    database: DatabaseClient, data_source_id: ObjectId
+) -> bool:
     """A function to delete a data source.
 
     Args:
@@ -175,7 +185,9 @@ def delete_data_source(database: DatabaseClient, data_source_id: ObjectId) -> bo
         bool: a flag indicating successful deletion.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.CDP_DATA_SOURCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
 
     try:
         return collection.delete_one({c.ID: data_source_id}).deleted_count > 0
@@ -189,7 +201,9 @@ def delete_data_source(database: DatabaseClient, data_source_id: ObjectId) -> bo
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def bulk_delete_data_sources(database: DatabaseClient, data_source_types: list) -> bool:
+def bulk_delete_data_sources(
+    database: DatabaseClient, data_source_types: list
+) -> bool:
     """A function that deletes selected data sources
 
     Args:
@@ -198,11 +212,15 @@ def bulk_delete_data_sources(database: DatabaseClient, data_source_types: list) 
     Returns:
         bool: a flag indicating successful deletion.
     """
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.CDP_DATA_SOURCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
 
     try:
         return (
-            collection.delete_many({c.TYPE: {"$in": data_source_types}}).deleted_count
+            collection.delete_many(
+                {c.TYPE: {"$in": data_source_types}}
+            ).deleted_count
             > 0
         )
     except pymongo.errors.OperationFailure as exc:
@@ -238,7 +256,9 @@ def update_data_sources(
     # remove duplicates if any.
     data_source_ids = list(set(data_source_ids))
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.CDP_DATA_SOURCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
 
     try:
         result = collection.update_many(

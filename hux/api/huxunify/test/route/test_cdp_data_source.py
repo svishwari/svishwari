@@ -49,7 +49,9 @@ class CdpDataSourcesTest(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         # mock get_db_client() in cdp_data_source
         mock.patch(
@@ -98,7 +100,9 @@ class CdpDataSourcesTest(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(t_c.validate_schema(CdpDataSourceSchema(), response.json))
+        self.assertTrue(
+            t_c.validate_schema(CdpDataSourceSchema(), response.json)
+        )
         self.assertEqual(valid_response, response.json)
 
     def test_get_all_data_sources_success(self):
@@ -126,7 +130,9 @@ class CdpDataSourcesTest(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
-            t_c.validate_schema(CdpDataSourceSchema(), response.json, is_multiple=True)
+            t_c.validate_schema(
+                CdpDataSourceSchema(), response.json, is_multiple=True
+            )
         )
         for data_source in response.json:
             if data_source in self.data_sources:
@@ -194,7 +200,9 @@ class CdpDataSourcesTest(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
-            t_c.validate_schema(CdpDataSourceSchema(), response.json, is_multiple=True)
+            t_c.validate_schema(
+                CdpDataSourceSchema(), response.json, is_multiple=True
+            )
         )
         self.assertEqual(len(response.json), len(data_sources))
 
@@ -216,7 +224,9 @@ class CdpDataSourcesTest(TestCase):
         """
 
         ds_id = "XYZ"
-        valid_response = {"message": f"Invalid CDP data source ID received {ds_id}."}
+        valid_response = {
+            "message": f"Invalid CDP data source ID received {ds_id}."
+        }
 
         response = self.test_client.get(
             f"{self.data_sources_api_endpoint}/{ds_id}",
@@ -425,7 +435,9 @@ class CdpDataSourcesTest(TestCase):
         self.assertIn(api_c.TYPE, response.json)
         self.assertIn(api_c.DATAFEEDS, response.json)
 
-        self.assertFalse(DataSourceDataFeedsGetSchema().validate(response.json))
+        self.assertFalse(
+            DataSourceDataFeedsGetSchema().validate(response.json)
+        )
         self.assertFalse(
             CdpDataSourceDataFeedSchema().validate(
                 response.json.get(api_c.DATAFEEDS), many=True
