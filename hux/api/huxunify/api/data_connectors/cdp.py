@@ -808,10 +808,7 @@ def clean_cdm_gender_fields(response_body: dict) -> dict:
 
     # add each individual gender count from the response body into total_count
     total_count = sum(
-        [
-            response_body[gender[0]] if response_body[gender[0]] else 0
-            for gender in gender_fields
-        ]
+        [response_body.get(gender[0]) or 0 for gender in gender_fields]
     )
 
     # set the count values and the calculated individual gender average against
