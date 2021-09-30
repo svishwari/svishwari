@@ -22,6 +22,7 @@ from huxunifylib.database.cdp_data_source_management import (
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.cdp_connection import (
     get_data_source_data_feeds,
+    get_data_sources,
 )
 from huxunify.api.data_connectors.okta import get_token_from_request
 
@@ -32,12 +33,14 @@ from huxunify.api.route.decorators import (
 )
 from huxunify.api.route.utils import (
     get_db_client,
+    Validation as validation,
 )
 
 from huxunify.api.schema.cdp_data_source import (
     CdpDataSourceSchema,
     CdpDataSourcePostSchema,
     DataSourceDataFeedsGetSchema,
+    CdpConnectionsDataSourceSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import (
@@ -64,7 +67,17 @@ def before_request():
 class DataSourceSearch(SwaggerView):
     """Data Source Search class."""
 
-    parameters = []
+    parameters = [
+        {
+            "name": api_c.ONLY_ADDED,
+            "description": "Flag to specify if only added data soources are to be fetched.",
+            "type": "boolean",
+            "in": "query",
+            "required": False,
+            "example": "true",
+            "default": True,
+        }
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "description": "List of CDP data sources.",
@@ -88,27 +101,30 @@ class DataSourceSearch(SwaggerView):
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
+        only_added = validation.validate_bool(request.args.get(api_c.ONLY_ADDED))
 
-        try:
-            data_sources = get_all_data_sources(get_db_client())
-            return (
-                jsonify(CdpDataSourceSchema().dump(data_sources, many=True)),
-                HTTPStatus.OK.value,
+        data_sources = get_all_data_sources(get_db_client())
+
+        if not only_added:
+            token_response = get_token_from_request(request)
+            connections_data_sources = CdpConnectionsDataSourceSchema().load(
+                get_data_sources(token_response[0]), many=True
+            )
+            added_data_source_types = [
+                data_source[db_c.TYPE] for data_source in data_sources
+            ]
+            data_sources.extend(
+                [
+                    data_source
+                    for data_source in connections_data_sources
+                    if data_source[api_c.TYPE] not in added_data_source_types
+                ]
             )
 
-        except Exception as exc:
-
-            logger.error(
-                "%s: %s.",
-                exc.__class__,
-                exc,
-            )
-
-            raise ProblemException(
-                status=HTTPStatus.BAD_REQUEST.value,
-                title=HTTPStatus.BAD_REQUEST.description,
-                detail="Unable to get CDP data sources.",
-            ) from exc
+        return (
+            jsonify(CdpDataSourceSchema().dump(data_sources, many=True)),
+            HTTPStatus.OK,
+        )
 
 
 @add_view_to_blueprint(
@@ -312,18 +328,12 @@ class DeleteCdpDataSources(SwaggerView):
                     )
                 }, HTTPStatus.OK
 
-            logger.error(
-                "Could not delete data sources - %s.", data_source_types
-            )
+            logger.error("Could not delete data sources - %s.", data_source_types)
             return {
-                "message": api_c.CANNOT_DELETE_DATASOURCES.format(
-                    data_source_types
-                )
+                "message": api_c.CANNOT_DELETE_DATASOURCES.format(data_source_types)
             }, HTTPStatus.INTERNAL_SERVER_ERROR
 
-        return {
-            api_c.MESSAGE: api_c.EMPTY_OBJECT_ERROR_MESSAGE
-        }, HTTPStatus.BAD_REQUEST
+        return {api_c.MESSAGE: api_c.EMPTY_OBJECT_ERROR_MESSAGE}, HTTPStatus.BAD_REQUEST
 
 
 @add_view_to_blueprint(
@@ -392,9 +402,7 @@ class BatchUpdateDataSources(SwaggerView):
 
         # validate data source ids
         data_source_ids = [
-            ObjectId(x)
-            for x in data[api_c.CDP_DATA_SOURCE_IDS]
-            if ObjectId.is_valid(x)
+            ObjectId(x) for x in data[api_c.CDP_DATA_SOURCE_IDS] if ObjectId.is_valid(x)
         ]
         if not data_source_ids or len(data_source_ids) != len(
             data[api_c.CDP_DATA_SOURCE_IDS]
@@ -435,9 +443,7 @@ class BatchUpdateDataSources(SwaggerView):
                 )
                 return (
                     jsonify(
-                        CdpDataSourceSchema().dump(
-                            updated_data_sources, many=True
-                        )
+                        CdpDataSourceSchema().dump(updated_data_sources, many=True)
                     ),
                     HTTPStatus.OK.value,
                 )
@@ -513,9 +519,7 @@ class GetDataSourceDatafeeds(SwaggerView):
 
         token_response = get_token_from_request(request)
 
-        data_source = get_data_source(
-            get_db_client(), data_source_type=datasource_type
-        )
+        data_source = get_data_source(get_db_client(), data_source_type=datasource_type)
 
         response = {
             api_c.NAME: data_source[db_c.NAME],

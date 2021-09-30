@@ -498,6 +498,7 @@ PREFERENCE_VALUE_DESCRIPTION = "the value of the preference."
 PREFERENCE_BODY_DESCRIPTION = "Input preference body."
 FAVORITE_BODY_DESCRIPTION = "Input favorite component body."
 
+ONLY_ADDED = "only_added"
 DELETE_DATASOURCES_SUCCESS = "Successfully deleted data source(s) - {}."
 
 # error messages
@@ -511,19 +512,13 @@ BSON_INVALID_ID = (
     f"12-byte input or a 24-character hex string"
 )
 MESSAGE = "message"
-START_DATE_GREATER_THAN_END_DATE = (
-    "Start date cannot be greater than end date."
-)
-FAILED_DEPENDENCY_ERROR_MESSAGE = (
-    "Failed to obtain data from dependent API endpoint."
-)
+START_DATE_GREATER_THAN_END_DATE = "Start date cannot be greater than end date."
+FAILED_DEPENDENCY_ERROR_MESSAGE = "Failed to obtain data from dependent API endpoint."
 
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
 INVALID_DELIVERY_SCHEDULE = "Delivery schedule is not valid."
 DUPLICATE_NAME = "Name already exists."
-PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
-    "Performance metrics data extension not assigned."
-)
+PERFORMANCE_METRIC_DE_NOT_ASSIGNED = "Performance metrics data extension not assigned."
 INVALID_AUTH_DETAILS = "Invalid authentication details."
 INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."
@@ -536,9 +531,7 @@ DESTINATION_NOT_SUPPORTED = "Destination is not supported."
 SUCCESSFUL_DELIVERY_JOB_NOT_FOUND = "No successful delivery job found"
 ZERO_AUDIENCE_SIZE = "Sum of Audience(s) is zero"
 ENGAGEMENT_NO_AUDIENCES = "Engagement has no audiences."
-AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT = (
-    "Audience not attached to the engagement."
-)
+AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT = "Audience not attached to the engagement."
 DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE = (
     "Destination not attached to the engagement audience."
 )
@@ -693,8 +686,7 @@ IS_LOOKALIKE = "is_lookalike"
 
 PARAM_STORE_PREFIX = "unified"
 PARAMETER_STORE_ERROR_MSG = (
-    "An error occurred while attempting to"
-    " store secrets in the parameter store."
+    "An error occurred while attempting to" " store secrets in the parameter store."
 )
 # users
 USER_TAG = "user"
@@ -835,9 +827,7 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
     "filters": [
         {
             "section_aggregator": "ALL",
-            "section_filters": [
-                {"field": "country", "type": "equals", "value": "US"}
-            ],
+            "section_filters": [{"field": "country", "type": "equals", "value": "US"}],
         }
     ]
 }
@@ -1008,9 +998,7 @@ OKTA_CONNECTION_HEALTH = "okta_connection_health"
 AWS_SSM_CONNECTION_HEALTH = "aws_ssm_connection_health"
 AWS_BATCH_CONNECTION_HEALTH = "aws_batch_connection_health"
 CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
-CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
-    "cdm_connection_service_connection_health"
-)
+CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = "cdm_connection_service_connection_health"
 
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
