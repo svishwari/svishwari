@@ -42,28 +42,18 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
     cy.wait(5000)
     cy.get(selector.customerProfile.customerlength).should("exist")
   })
-  it("should validate match Confidence card", () => {
+  it("should have (Match Confidence, Life-Time Value, Conversion Time card)", () => {
     cy.get(selector.customerProfile.matchConfidence).should("exist")
-  })
-  it("should validate life-Time Value card", () => {
     cy.get(selector.customerProfile.lifeTimeValue).should("exist")
-  })
-  it("should validate conversion Time card", () => {
     cy.get(selector.customerProfile.conversionTime).should("exist")
   })
-  it("should validate churn score card", () => {
+  it("should have (Churn score, Last click, Last purchase date) card", () => {
     cy.get(selector.customerProfile.churnScore).should("exist")
-  })
-  it("should validate last click card", () => {
     cy.get(selector.customerProfile.lastClick).should("exist")
-  })
-  it("should validate last purchase date card", () => {
     cy.get(selector.customerProfile.lastPurchaseDate).should("exist")
   })
-  it("should validate last open card", () => {
+  it("should have (Last open, Customer Insights date) card", () => {
     cy.get(selector.customerProfile.lastOpen).should("exist")
-  })
-  it("should validate customer Insights card", () => {
     cy.get(selector.customerProfile.customerInsights).should("exist")
   })
   it("should ++REDACTED++ value in customer insights table", () => {
@@ -72,13 +62,9 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
   it("should validate contact preferencecs card", () => {
     cy.get(selector.customerProfile.contactPreferencecs).should("exist")
   })
-  it("should have Email in contact preferencecs table", () => {
+  it("should have a customer's contact preferences (Email, Push, SMS, In-App)", () => {
     cy.get("table").contains("td", "Email")
-  })
-  it("should have Push in contact preferencecs table", () => {
     cy.get("table").contains("td", "Push")
-  })
-  it("should have SMS in contact preferencecs table", () => {
     cy.get("table").contains("td", "SMS")
   })
   it("should validate chord card", () => {
