@@ -134,7 +134,7 @@ class TestNotificationRoutes(TestCase):
         )
 
     def test_get_notifications_bad_params(self):
-        """Test get notifications by setting batch size, 
+        """Test get notifications by setting batch size,
         batch number to strings.
 
         Args:
