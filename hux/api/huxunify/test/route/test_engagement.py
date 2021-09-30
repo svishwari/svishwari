@@ -581,6 +581,22 @@ class TestEngagementRoutes(TestCase):
                     api_c.FACEBOOK_AD_ACCOUNT_ID: "path4",
                 },
             },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "SFMC",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SFMC,
+                db_c.STATUS: db_c.STATUS_SUCCEEDED,
+                db_c.ENABLED: True,
+                db_c.ADDED: True,
+                db_c.IS_AD_PLATFORM: False,
+                db_c.DELIVERY_PLATFORM_AUTH: {
+                    api_c.SFMC_ACCOUNT_ID: "id12345",
+                    api_c.SFMC_AUTH_BASE_URI: "base_uri",
+                    api_c.SFMC_CLIENT_ID: "id12345",
+                    api_c.SFMC_CLIENT_SECRET: "client_secret",
+                    api_c.SFMC_SOAP_BASE_URI: "soap_base_uri",
+                    api_c.SFMC_REST_BASE_URI: "rest_base_uri",
+                },
+            },
         ]
 
         self.destinations = []
@@ -727,25 +743,16 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {
-            "message": "Could not find any delivery jobs to map."
-        }
+        valid_response = {api_c.MESSAGE: api_c.DELIVERY_JOBS_NOT_FOUND_TO_MAP}
 
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
 
     def test_get_campaigns_no_delivery_jobs(self):
-        """
-        Test get all engagements API
+        """Test get campaigns no delivery jobs"""
 
-        Args:
-
-        Returns:
-
-        """
-
-        audience_id = self.audiences[0][db_c.ID]
         engagement_id = self.engagement_ids[0]
+        audience_id = self.audiences[0][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
 
         response = self.app.get(
@@ -757,7 +764,10 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        valid_response = {api_c.MESSAGE: api_c.DELIVERY_JOBS_NOT_FOUND_TO_MAP}
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     def test_get_campaigns_for_non_existent_engagement(self):
         """
@@ -782,6 +792,27 @@ class TestEngagementRoutes(TestCase):
         )
 
         valid_response = {"message": api_c.ENGAGEMENT_NOT_FOUND}
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_get_campaigns_for_non_existent_audience(self):
+        """Test get campaigns for a non-existent audience"""
+
+        engagement_id = self.engagement_ids[0]
+        audience_id = str(ObjectId())
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {api_c.MESSAGE: api_c.AUDIENCE_NOT_FOUND}
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -867,6 +898,27 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
 
+    def test_get_campaign_mappings_for_non_existent_audience(self):
+        """Test get campaign mappings for a non-existent audience"""
+
+        engagement_id = self.engagement_ids[0]
+        audience_id = str(ObjectId())
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaign-mappings"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {api_c.MESSAGE: api_c.AUDIENCE_NOT_FOUND}
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
     def test_put_campaign_mappings_for_non_existent_engagement(self):
         """
         Test delivery of a destination for a non-existent engagement
@@ -890,6 +942,27 @@ class TestEngagementRoutes(TestCase):
         )
 
         valid_response = {"message": api_c.ENGAGEMENT_NOT_FOUND}
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_put_campaigns_for_non_existent_audience(self):
+        """Test put/update campaigns for a non-existent audience"""
+
+        engagement_id = self.engagement_ids[0]
+        audience_id = str(ObjectId())
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.put(
+            (
+                f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {api_c.MESSAGE: api_c.AUDIENCE_NOT_FOUND}
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -1087,7 +1160,7 @@ class TestEngagementRoutes(TestCase):
         )
 
         valid_response = {
-            "message": "Audience is not attached to the engagement."
+            api_c.MESSAGE: api_c.AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT
         }
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
@@ -1118,7 +1191,7 @@ class TestEngagementRoutes(TestCase):
         )
 
         valid_response = {
-            "message": "Audience is not attached to the engagement."
+            api_c.MESSAGE: api_c.AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT
         }
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
@@ -1133,9 +1206,9 @@ class TestEngagementRoutes(TestCase):
         Returns:
 
         """
-        engagement_id = self.engagement_ids[0]
+        engagement_id = self.engagement_ids[1]
         # Unattached audience id
-        audience_id = self.audiences[0][db_c.ID]
+        audience_id = self.audiences[1][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
 
         response = self.app.get(
@@ -1158,9 +1231,9 @@ class TestEngagementRoutes(TestCase):
         Returns:
 
         """
-        engagement_id = self.engagement_ids[0]
+        engagement_id = self.engagement_ids[1]
         # Unattached audience id
-        audience_id = self.audiences[0][db_c.ID]
+        audience_id = self.audiences[1][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
 
         response = self.app.get(
