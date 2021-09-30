@@ -571,17 +571,18 @@ export default {
       this.loadingCustomerChart = false
     },
 
-    applyEmptyState(value) {
+    // If no value then assign empty value
+    assignFinalValue(value) {
       return value ? value : "-"
     },
     // TODO: refactor this and move this logic to a getter in the store
     mapOverviewData() {
       if (this.overview) {
-        this.overviewListItems[0].subtitle = this.applyEmptyState(this.overview.total_customers)
+        this.overviewListItems[0].subtitle = this.assignFinalValue(this.overview.total_customers)
         this.overviewListItems[0].value = "numeric"
-        this.overviewListItems[1].subtitle = this.applyEmptyState(this.overview.total_countries)
-        this.overviewListItems[2].subtitle = this.applyEmptyState(this.overview.total_us_states)
-        this.overviewListItems[3].subtitle = this.applyEmptyState(this.overview.total_cities)
+        this.overviewListItems[1].subtitle = this.assignFinalValue(this.overview.total_countries)
+        this.overviewListItems[2].subtitle = this.assignFinalValue(this.overview.total_us_states)
+        this.overviewListItems[3].subtitle = this.assignFinalValue(this.overview.total_cities)
         this.overviewListItems[3].value = "numeric"
         let min_age = this.overview.min_age
         let max_age = this.overview.max_age
@@ -593,26 +594,26 @@ export default {
           this.overviewListItems[4].subtitle = "-"
         }
         this.overviewListItems[4].value = "none"
-        this.overviewListItems[5].subtitle = this.applyEmptyState(this.overview.gender_women)
+        this.overviewListItems[5].subtitle = this.assignFinalValue(this.overview.gender_women)
         this.overviewListItems[5].value = "percentage"
-        this.overviewListItems[6].subtitle = this.applyEmptyState(this.overview.gender_men)
+        this.overviewListItems[6].subtitle = this.assignFinalValue(this.overview.gender_men)
         this.overviewListItems[6].value = "percentage"
-        this.overviewListItems[7].subtitle = this.applyEmptyState(this.overview.gender_other)
+        this.overviewListItems[7].subtitle = this.assignFinalValue(this.overview.gender_other)
         this.overviewListItems[7].value = "percentage"
 
-        this.primaryItems[0].subtitle = this.applyEmptyState(this.overview.total_records)
+        this.primaryItems[0].subtitle = this.assignFinalValue(this.overview.total_records)
         this.primaryItems[0].value = "numeric"
-        this.primaryItems[1].subtitle = this.applyEmptyState(this.overview.match_rate)
+        this.primaryItems[1].subtitle = this.assignFinalValue(this.overview.match_rate)
         this.primaryItems[1].value = "percentage"
-        this.primaryItems[2].subtitle = this.applyEmptyState(this.overview.total_unique_ids)
+        this.primaryItems[2].subtitle = this.assignFinalValue(this.overview.total_unique_ids)
         this.primaryItems[2].value = "numeric"
-        this.primaryItems[3].subtitle = this.applyEmptyState(this.overview.total_unknown_ids)
+        this.primaryItems[3].subtitle = this.assignFinalValue(this.overview.total_unknown_ids)
         this.primaryItems[3].value = "numeric"
-        this.primaryItems[4].subtitle = this.applyEmptyState(this.overview.total_known_ids)
+        this.primaryItems[4].subtitle = this.assignFinalValue(this.overview.total_known_ids)
         this.primaryItems[4].value = "numeric"
-        this.primaryItems[5].subtitle = this.applyEmptyState(this.overview.total_individual_ids)
+        this.primaryItems[5].subtitle = this.assignFinalValue(this.overview.total_individual_ids)
         this.primaryItems[5].value = "numeric"
-        this.primaryItems[6].subtitle = this.applyEmptyState(this.overview.total_household_ids)
+        this.primaryItems[6].subtitle = this.assignFinalValue(this.overview.total_household_ids)
         this.primaryItems[6].value = "numeric"
         this.primaryItems[7].subtitle = this.getUpdatedDateTime(
           this.overview.updated
