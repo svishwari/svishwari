@@ -59,8 +59,6 @@ export default {
     selectDestination: "[data-e2e='destination-select-button']",
     exitDrawer: "[data-e2e='click-outside']",
     exitDataExtensionDrawer: "[data-e2e='destination-added']",
-
-    engagementCollection: "[data-e2e='engagement-collection']",
   },
 
   //Customer Profiles
