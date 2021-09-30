@@ -72,6 +72,9 @@ def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
     Returns:
         dict: dictionary containing the customer profile information
 
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+
     """
 
     # get config
@@ -112,6 +115,9 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
 
     Returns:
         dict: dictionary containing the customer profile information
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
 
     """
 
@@ -156,6 +162,9 @@ def get_idr_overview(
 
     Returns:
         dict: dictionary of overview data
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
 
     """
 
@@ -212,6 +221,9 @@ def get_customers_overview(
 
     Returns:
         dict: dictionary of overview data
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
 
     """
 
@@ -451,6 +463,9 @@ def get_customer_events_data(
         end_date_str (str): End date string for sql query.
     Returns:
         list: Customer events with respective counts
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
 
     config = get_config()
@@ -533,8 +548,7 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> list:
 def get_customer_count_by_state(
     token: str, filters: Optional[dict] = None
 ) -> list:
-    """
-    Get demographic details of customers by state
+    """Get demographic details of customers by state
 
     Args:
         token (str): OKTA JWT Token.
@@ -543,6 +557,9 @@ def get_customer_count_by_state(
 
     Returns:
         list: list of state demographic data
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
 
     """
     # get config
@@ -576,8 +593,7 @@ def get_customer_count_by_state(
 def get_demographic_by_state(
     token: str, filters: Optional[dict] = None
 ) -> list:
-    """
-    Get demographic details of customers by state
+    """Get demographic details of customers by state
 
     Args:
         token (str): OKTA JWT Token.
@@ -626,8 +642,7 @@ def get_demographic_by_state(
 def get_demographic_by_country(
     token: str, filters: Optional[dict] = None
 ) -> list:
-    """
-    Get demographic details of customers by country
+    """Get demographic details of customers by country
 
     Args:
         token (str): OKTA JWT Token.
@@ -679,6 +694,9 @@ def get_customers_insights_count_by_day(
 
     Returns:
         dict: dictionary of customer count data.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
 
     # get config
@@ -727,8 +745,7 @@ def get_city_ltvs(
     offset: int = 0,
     limit: int = api_c.DEFAULT_BATCH_SIZE,
 ) -> list:
-    """
-    Get spending details of customers by city
+    """Get spending details of customers by city
 
     Args:
         token (str): OKTA JWT Token.
@@ -739,6 +756,9 @@ def get_city_ltvs(
 
     Returns:
         list: list of spending details by cities
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
 
     """
     # get config
@@ -813,7 +833,7 @@ def get_spending_by_gender(
     end_date: str,
     filters: Optional[dict] = None,
 ) -> List[Optional[dict]]:
-    """
+    """Get spending details of customer by gender
 
     Args:
         token (str): OKTA JWT Token.
@@ -824,6 +844,9 @@ def get_spending_by_gender(
 
     Returns:
         list: list of spending details by gender
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
     """
 
     request_payload = (
@@ -864,8 +887,7 @@ def get_spending_by_gender(
 def add_missing_customer_count_by_day(
     response_body: list, date_filters: dict
 ) -> list:
-    """
-    Add customer data for missing dates
+    """Add customer data for missing dates
 
     Args:
         response_body (list): list of customer count data
