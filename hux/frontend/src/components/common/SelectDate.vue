@@ -127,9 +127,11 @@ export default defineComponent({
     })
 
     /**
-     * Change value to the selected month/year.
+     *
+     Change value to the selected month/year.
      *
      * @param {string} input the input changed ex. month or year
+     * @param input
      */
     function onChange(input) {
       // when selecting a year and the selected month is not available,
