@@ -573,9 +573,9 @@ export default {
       this.loadingCustomerChart = false
     },
 
-    // If no value then assign empty value
+    // TODO: use filters instead - if no value then assign empty value
     assignFinalValue(value) {
-      return value ? value : "-"
+      return value !== null ? value : "-"
     },
     // TODO: refactor this and move this logic to a getter in the store
     mapOverviewData() {
