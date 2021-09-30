@@ -132,8 +132,9 @@ export default {
         .scaleLinear()
         .domain([
           0,
-          this.emptyState ? 100 : 
-          d3Array.max(this.totalCustomerData, (d) => d.total_customers),
+          this.emptyState
+            ? 100
+            : d3Array.max(this.totalCustomerData, (d) => d.total_customers),
         ])
         .range([h, 0])
         .nice(4)
@@ -153,14 +154,16 @@ export default {
           return ""
         }
         return tickDate
-          ?  this.emptyState ? "date" :
-          this.$options.filters.Date(tickDate.date, "MM[/01/]YY")
+          ? this.emptyState
+            ? "date"
+            : this.$options.filters.Date(tickDate.date, "MM[/01/]YY")
           : ""
       }
 
       let applyNumericFilter = (value) =>
-      this.emptyState ? 
-        "-" : this.$options.filters.Numeric(value, true, false, true)
+        this.emptyState
+          ? "-"
+          : this.$options.filters.Numeric(value, true, false, true)
 
       svg
         .append("g")
@@ -238,7 +241,9 @@ export default {
         .attr("height", 0)
         .attr("width", xScale.bandwidth() < 30 ? xScale.bandwidth() : 30)
         .attr("data", (d, i) => i)
-        .style("fill", (d) => this.emptyState ? "transparent": barColorCodes[d.data.index])
+        .style("fill", (d) =>
+          this.emptyState ? "transparent" : barColorCodes[d.data.index]
+        )
         .on("mouseover", (d) => applyHoverEffects(d, xScale.bandwidth()))
         .on("mouseout", () => removeHoverEffects())
         .transition()
@@ -267,7 +272,7 @@ export default {
         .append("line")
         .attr("class", "regression")
         .style("stroke-dasharray", "6")
-        .style("stroke",  this.emptyState ? "transparent": "#86BC25")
+        .style("stroke", this.emptyState ? "transparent" : "#86BC25")
         .style("stroke-width", 1.5)
         .attr("x1", xScale(0) + 9)
         .attr("y1", yScale(regLine.a))

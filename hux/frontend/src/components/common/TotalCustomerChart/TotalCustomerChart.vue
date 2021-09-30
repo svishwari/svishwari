@@ -5,7 +5,7 @@
       :bar-group-change-index="barGroupChangeIndex"
       :color-codes="colorCodes"
       :chart-dimensions="chartDimensions"
-      :emptyState="isEmptyState"
+      :empty-state="isEmptyState"
       @tooltipDisplay="toolTipDisplay"
     />
     <stack-bar-chart-tooltip
