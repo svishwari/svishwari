@@ -37,6 +37,7 @@ FLDR_EVENT_CONST = "FLDR-EVENT"
 # general defines
 ID = "id"
 NAME = "name"
+LABEL = "label"
 OWNER = "owner"
 STATUS = "status"
 BODY = "body"
@@ -1011,6 +1012,7 @@ CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
 CDM_IDENTITY_ENDPOINT = "identity"
+DATASOURCES = "datasources"
 DATAFEEDS = "datafeeds"
 
 PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB = [
