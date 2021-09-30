@@ -322,7 +322,7 @@ class OrchestrationRouteTest(TestCase):
         )
         self.assertListEqual(
             audience_doc[db_c.DESTINATIONS],
-            [{api_c.ID: str(d[db_c.ID])} for d in self.destinations],
+            [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
 
     def test_create_audience_empty_user_info(self):
@@ -560,13 +560,13 @@ class OrchestrationRouteTest(TestCase):
         # test destinations
         self.assertListEqual(
             audience_doc[db_c.DESTINATIONS],
-            [{api_c.ID: str(d[db_c.ID])} for d in self.destinations],
+            [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
 
         expected_audience = {
             db_c.OBJECT_ID: audience_doc[db_c.ID],
             db_c.DESTINATIONS: [
-                {api_c.ID: str(d[db_c.ID])} for d in self.destinations
+                {api_c.ID: d[db_c.ID]} for d in self.destinations
             ],
         }
 
