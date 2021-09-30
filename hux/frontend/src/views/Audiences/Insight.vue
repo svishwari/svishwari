@@ -1021,7 +1021,7 @@ export default {
      * @param {object} item item
      * @param {string} item.title item's title
      * @returns {string} formatted value
-    //  * @param item
+     * @param item
      */
     getFormattedValue(item) {
       switch (item.title) {
