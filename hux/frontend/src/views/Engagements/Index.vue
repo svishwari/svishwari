@@ -56,13 +56,14 @@
             }"
             :style="{ width: header.width }"
           >
-            <div v-if="header.value == 'name'" class="w-80">
+            <div v-if="header.value == 'name'" class="w-80" >
               <menu-cell
                 :value="item[header.value]"
                 :menu-options="getActionItems(item)"
                 route-name="EngagementDashboard"
                 :route-param="item['id']"
                 :data="item"
+                data-e2e="engagement-collection"
               >
                 <template #expand-icon>
                   <v-icon
