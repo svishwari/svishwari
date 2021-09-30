@@ -56,6 +56,13 @@ USER_INFO_CALL = f"{TEST_CONFIG.OKTA_ISSUER}/oauth2/v1/userinfo"
 CDM_HEALTHCHECK_CALL = f"{TEST_CONFIG.CDP_SERVICE}/healthcheck"
 CUSTOMER_PROFILE_API = f"{TEST_CONFIG.CDP_SERVICE}"
 
+HUX = "HUX"
+CDP_CUSTOMER_PROFILE = "CDP_CUSTOMER_PROFILE"
+CONTRACTS_FOLDER = "contracts"
+CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT = (
+    "/customer-profiles/insights/count-by-state"
+)
+
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
     "status": "success",
