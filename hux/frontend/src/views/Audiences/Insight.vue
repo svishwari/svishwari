@@ -1015,13 +1015,11 @@ export default {
 
     /**
      *
-     
      Formatting the values to the desired format using predefined application filters.
      *
      * @param {object} item item
      * @param {string} item.title item's title
      * @returns {string} formatted value
-     * @param item
      */
     getFormattedValue(item) {
       switch (item.title) {
