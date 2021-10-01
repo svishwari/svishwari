@@ -730,6 +730,10 @@ class OrchestrationRouteTest(TestCase):
                 ],
             )
 
+            # validate that not delivered has no delivery time set.
+            if audience[api_c.STATUS] == api_c.STATUS_NOT_DELIVERED:
+                self.assertIsNone(audience[api_c.AUDIENCE_LAST_DELIVERED])
+
             # find the matched audience destinations, should be the same.
             matched_audience = [
                 x

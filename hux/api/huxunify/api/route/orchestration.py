@@ -216,6 +216,12 @@ class AudienceView(SwaggerView):
 
             # set the weighted status for the audience based on deliveries
             audience[api_c.STATUS] = weight_delivery_status(audience)
+
+            # if not a part of any engagements and not delivered.
+            # set last delivery date to None.
+            if audience[api_c.STATUS] == api_c.STATUS_NOT_DELIVERED:
+                audience[api_c.AUDIENCE_LAST_DELIVERED] = None
+
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
         # fetch lookalike audiences if lookalikeable is set to false
