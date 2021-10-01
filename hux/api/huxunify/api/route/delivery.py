@@ -506,19 +506,23 @@ class EngagementDeliverHistoryView(SwaggerView):
             "example": "60bfeaa3fa9ba04689906f7a",
         },
         {
-            "name": api_c.DESTINATIONS,
+            "name": api_c.DESTINATION,
             "in": "query",
-            "type": "string",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
             "description": "Destination Ids to be filtered.",
-            "example": "60b9601a6021710aa146df30,60b9601c6021710aa146df36",
+            "example": "60b9601a6021710aa146df30",
             "required": False,
         },
         {
-            "name": api_c.AUDIENCES,
+            "name": api_c.AUDIENCE,
             "in": "query",
-            "type": "string",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
             "description": "Audience Ids to be filtered.",
-            "example": "60b9601a6021710aa146df30,60b9601c6021710aa146df36",
+            "example": "612808e511d8c67ac2427d18",
             "required": False,
         },
     ]
@@ -570,20 +574,16 @@ class EngagementDeliverHistoryView(SwaggerView):
                 "message": api_c.ENGAGEMENT_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
 
-        destination_ids = request.args.get(api_c.DESTINATIONS)
-        audience_ids = request.args.get(api_c.AUDIENCES)
+        destination_ids = request.args.getlist(api_c.DESTINATION)
+        audience_ids = request.args.getlist(api_c.AUDIENCE)
 
         if destination_ids:
             destination_ids = [
-                ObjectId(destination)
-                for destination in destination_ids.replace(" ", "").split(",")
+                ObjectId(destination) for destination in destination_ids
             ]
 
         if audience_ids:
-            audience_ids = [
-                ObjectId(audience)
-                for audience in audience_ids.replace(" ", "").split(",")
-            ]
+            audience_ids = [ObjectId(audience) for audience in audience_ids]
         delivery_jobs = (
             delivery_platform_management.get_delivery_jobs_using_metadata(
                 database,
@@ -669,19 +669,23 @@ class AudienceDeliverHistoryView(SwaggerView):
             "example": "60bfeaa3fa9ba04689906f7a",
         },
         {
-            "name": api_c.DESTINATIONS,
+            "name": api_c.DESTINATION,
             "in": "query",
-            "type": "string",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
             "description": "Destination Ids to be filtered.",
-            "example": "60b9601a6021710aa146df30,60b9601c6021710aa146df36",
+            "example": "60b9601a6021710aa146df30",
             "required": False,
         },
         {
-            "name": api_c.ENGAGEMENT_TAG,
+            "name": api_c.ENGAGEMENT,
             "in": "query",
-            "type": "string",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
             "description": "Engagement Ids to be filtered.",
-            "example": "60b9601a6021710aa146df30,60b9601c6021710aa146df36",
+            "example": "60b9601a6021710aa146df30",
             "required": False,
         },
     ]
@@ -729,19 +733,17 @@ class AudienceDeliverHistoryView(SwaggerView):
             logger.error("Audience with ID %s not found.", audience_id)
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
-        destination_ids = request.args.get(api_c.DESTINATIONS)
-        engagement_ids = request.args.get(api_c.ENGAGEMENT_TAG)
+        destination_ids = request.args.getlist(api_c.DESTINATION)
+        engagement_ids = request.args.getlist(api_c.ENGAGEMENT)
 
         if destination_ids:
             destination_ids = [
-                ObjectId(destination)
-                for destination in destination_ids.replace(" ", "").split(",")
+                ObjectId(destination) for destination in destination_ids
             ]
 
         if engagement_ids:
             engagement_ids = [
-                ObjectId(engagement)
-                for engagement in engagement_ids.replace(" ", "").split(",")
+                ObjectId(engagement) for engagement in engagement_ids
             ]
 
         delivery_jobs = (

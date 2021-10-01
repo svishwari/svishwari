@@ -578,8 +578,9 @@ class TestDeliveryRoutes(TestCase):
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
-            f"{api_c.DELIVERY_HISTORY}?{api_c.ENGAGEMENT_TAG}="
-            f"{','.join(self.engagement_ids)}",
+            f"{api_c.DELIVERY_HISTORY}?{api_c.ENGAGEMENT}="
+            f"{self.engagement_ids[0]}&{api_c.ENGAGEMENT}="
+            f"{self.engagement_ids[1]}",
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -619,8 +620,8 @@ class TestDeliveryRoutes(TestCase):
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
-            f"{api_c.DELIVERY_HISTORY}?{api_c.AUDIENCES}="
-            f"{','.join(audience_ids)}",
+            f"{api_c.DELIVERY_HISTORY}?{api_c.AUDIENCE}={audience_ids[0]}&"
+            f"{api_c.AUDIENCE}={audience_ids[1]}",
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
