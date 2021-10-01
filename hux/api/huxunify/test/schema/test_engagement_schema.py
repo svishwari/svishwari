@@ -4,7 +4,6 @@ Purpose of this file is to test the engagement schemas
 """
 from unittest import TestCase
 from datetime import datetime, timedelta
-from random import uniform
 from bson import ObjectId
 
 from huxunifylib.database import constants as db_c
@@ -468,7 +467,7 @@ class EngagementSchemaTest(TestCase):
                             api_c.LATEST_DELIVERY: {
                                 api_c.ID: "5f5f7262997acad4bac4373c",
                                 api_c.STATUS: api_c.STATUS_ERROR,
-                                api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
+                                api_c.MATCH_RATE: 0,
                             },
                         },
                         {
@@ -477,7 +476,7 @@ class EngagementSchemaTest(TestCase):
                             api_c.LATEST_DELIVERY: {
                                 api_c.ID: "5f5f7262997acad4bac4373e",
                                 api_c.STATUS: api_c.STATUS_DELIVERED,
-                                api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
+                                api_c.MATCH_RATE: 0,
                             },
                         },
                     ],
