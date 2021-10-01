@@ -360,7 +360,7 @@ class TestDestinationRoutes(TestCase):
             "message": api_c.DESTINATION_AUTHENTICATION_FAILED
         }
 
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(HTTPStatus.FORBIDDEN, response.status_code)
         self.assertEqual(validation_failed, response.json)
 
     # pylint: disable=unused-argument
