@@ -337,6 +337,14 @@ class EngagementSchemaTest(TestCase):
             api_c.DELIVERY_SCHEDULE: {
                 api_c.START_DATE: datetime.today() - timedelta(days=10),
                 api_c.END_DATE: datetime.today() + timedelta(days=5),
+                api_c.SCHEDULE: {
+                    api_c.EVERY: 3,
+                    api_c.MINUTE: 15,
+                    api_c.PERIODICIY: "Daily",
+                    api_c.HOUR: 12,
+                    api_c.PERIOD: "PM",
+                },
+                api_c.SCHEDULE_CRON: "15 23 */3 * *",
             },
         }
 
@@ -347,6 +355,14 @@ class EngagementSchemaTest(TestCase):
         engagement[api_c.DELIVERY_SCHEDULE] = {
             api_c.START_DATE: datetime.today() - timedelta(days=10),
             api_c.END_DATE: datetime.today() - timedelta(days=5),
+            api_c.SCHEDULE: {
+                api_c.EVERY: 3,
+                api_c.MINUTE: 15,
+                api_c.PERIODICIY: "Daily",
+                api_c.HOUR: 12,
+                api_c.PERIOD: "PM",
+            },
+            api_c.SCHEDULE_CRON: "15 23 */3 * *",
         }
         weighted = weighted_engagement_status([engagement])[0]
         self.assertEqual(weighted[api_c.STATUS], api_c.STATUS_INACTIVE)
@@ -355,6 +371,14 @@ class EngagementSchemaTest(TestCase):
         engagement[api_c.DELIVERY_SCHEDULE] = {
             api_c.START_DATE: datetime.today() - timedelta(days=10),
             api_c.END_DATE: datetime.today() + timedelta(days=5),
+            api_c.SCHEDULE: {
+                api_c.EVERY: 3,
+                api_c.MINUTE: 15,
+                api_c.PERIODICIY: "Daily",
+                api_c.HOUR: 12,
+                api_c.PERIOD: "PM",
+            },
+            api_c.SCHEDULE_CRON: "15 23 */3 * *",
         }
         weighted = weighted_engagement_status([engagement])[0]
         self.assertEqual(weighted[api_c.STATUS], api_c.STATUS_INACTIVE)
