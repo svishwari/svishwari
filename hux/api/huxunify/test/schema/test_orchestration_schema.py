@@ -172,8 +172,8 @@ class OrchestrationSchemaTest(TestCase):
         schema = AudienceGetSchema().load(audience)
 
         deliveries = schema[db_c.ENGAGEMENTS_COLLECTION][0][db_c.DELIVERIES]
-        self.assertGreaterEqual(deliveries[0][api_c.MATCH_RATE], 0.2)
-        self.assertGreaterEqual(deliveries[1][api_c.MATCH_RATE], 0.2)
+        self.assertGreaterEqual(deliveries[0][api_c.MATCH_RATE], 0)
+        self.assertGreaterEqual(deliveries[1][api_c.MATCH_RATE], 0)
 
     def test_engagement_delivery_history_schema(self) -> None:
         """
@@ -238,7 +238,7 @@ class OrchestrationSchemaTest(TestCase):
         # deserialize the json document by loading it into the schema and
         # test the schema to have the match_rate value set
         schema = EngagementDeliveryHistorySchema().load(delivery_history)
-        self.assertGreaterEqual(schema[api_c.MATCH_RATE], 0.2)
+        self.assertGreaterEqual(schema[api_c.MATCH_RATE], 0)
 
     def test_audience_delivery_history_schema(self) -> None:
         """
@@ -333,4 +333,4 @@ class OrchestrationSchemaTest(TestCase):
         # deserialize the json document by loading it into the schema and
         # test the schema to have the match_rate value set
         schema = AudienceDeliveryHistorySchema().load(delivery_history)
-        self.assertGreater(schema[api_c.MATCH_RATE], 0.19)
+        self.assertGreaterEqual(schema[api_c.MATCH_RATE], 0)
