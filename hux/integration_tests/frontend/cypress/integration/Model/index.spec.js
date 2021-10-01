@@ -36,22 +36,12 @@ describe("Decisioning > models", () => {
     })
 
     it("view and validate overview", () => {
-        //validate performance metric exist by getting total no. of them
-        cy.get(selector.models.performancemetric)
-  .then(dataId => console.log('dataId : ', dataId.length));
-
+        //validate overview by getting total no. of them
         cy.get(selector.models.performancemetric)
             .its("length")
             .as("overviewListCount")
         cy.get("@overviewListCount").then(() => {
             cy.get(selector.models.performancemetric).its("length").should("eq", 5)
-        })
-
-        cy.get(selector.models.performancemetric).should(($models) => {
-          
-           let value = $models.text()
-           let data = value.replace(" ", ",");
-           console.log("data++++++++++++++++++++++++++++++++++++", data)
         })
     })
 
@@ -61,6 +51,12 @@ describe("Decisioning > models", () => {
         cy.get(selector.models.featurechart).its("length").should("be.gt", 0)
         // scroll down
         cy.scrollTo("bottom", { duration: 1000 })
+    })
+    it("should be able to hover over Feature chart", () => {
+        // mouse hover on income chart
+        cy.get(".bar")
+            .first()
+            .trigger("mouseover", { eventConstructor: "MouseEvent" })
     })
 
     it("validate feature and lift table", () => {
@@ -76,8 +72,6 @@ describe("Decisioning > models", () => {
 
         //validate the history list
         cy.get(selector.models.versionhistory).its("length").should("gt", 0)
-
-
     })
 
 })

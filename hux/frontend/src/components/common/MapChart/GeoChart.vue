@@ -144,6 +144,7 @@ export default {
         .delay((d, i) => i * 30)
         .style("fill", (d) => applyValueColor(d.properties))
         .attr("fill-opacity", "1")
+        .attr("class", "geochart")
 
       let applyHoverChanges = (d) => {
         svg
