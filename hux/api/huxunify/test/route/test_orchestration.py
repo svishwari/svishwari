@@ -654,6 +654,9 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(audience[api_c.LOOKALIKEABLE], api_c.STATUS_INACTIVE)
         self.assertFalse(audience[api_c.IS_LOOKALIKE])
 
+        self.assertIn(api_c.DESTINATIONS, audience)
+        self.assertEqual(len(audience[api_c.DESTINATIONS]), 2)
+
         # validate the facebook destination in the audience is set to "Not delivered"
         for audience in audience[api_c.AUDIENCE_ENGAGEMENTS]:
             self.assertTrue(
