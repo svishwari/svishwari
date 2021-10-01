@@ -2,11 +2,7 @@
 
 
 class UnifiedExceptions(Exception):
-    """Custom Unified API Exception.
-
-    Args:
-        Exception: Exception being raised.
-    """
+    """Custom Unified API Exception."""
 
     exception_message = ""
 

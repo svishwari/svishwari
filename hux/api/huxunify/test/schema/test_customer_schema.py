@@ -1,4 +1,4 @@
-"""Customer data related schema tests"""
+"""Customer data related schema tests."""
 from datetime import datetime
 from unittest import TestCase
 
@@ -13,18 +13,10 @@ from huxunify.api.schema.customers import (
 
 
 class CustomerSchemaTest(TestCase):
-    """
-    Test customer data related schemas
-    """
+    """Test customer data related schemas."""
 
     def test_idr_datafeed_schema(self) -> None:
-        """Test idr datafeed schema.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test IDR DataFeedSchema."""
 
         doc = dict(
             datafeed_id="1",
@@ -43,13 +35,7 @@ class CustomerSchemaTest(TestCase):
         self.assertFalse(DataFeedSchema().validate(doc))
 
     def test_total_customer_insights_schema(self) -> None:
-        """Test total customers insights schema.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test TotalCustomersInsightsSchema."""
 
         customer_count_doc = {
             api_c.DATE: "2021-04-01T00:00:00.000Z",
@@ -62,13 +48,7 @@ class CustomerSchemaTest(TestCase):
         )
 
     def test_customers_overview_schema(self) -> None:
-        """Test customers overview schema.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test CustomerOverviewSchema."""
 
         customer = {
             api_c.TOTAL_RECORDS: 10,
