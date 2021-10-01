@@ -8,7 +8,6 @@ describe("Orchestration > Engagements", () => {
       password: Cypress.env("USER_PASSWORD"),
     })
   })
-  let targetEngagement = 0
   it("should be able to navigate to Engagements", () => {
     // after login land in the overview page
     cy.location("pathname").should("eq", route.overview)
