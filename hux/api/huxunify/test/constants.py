@@ -973,6 +973,9 @@ DAILY_SCHEDULE_INVALID = {
     api_c.PERIOD: api_c.PM,
 }
 
+BATCH_NUMBER_BAD_PARAM = "12a"
+BATCH_SIZE_BAD_PARAM = "100@"
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False
