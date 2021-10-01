@@ -27,8 +27,8 @@ def get_all_engagement_audience_destinations(
         audience_ids (list): List of audience ids.
 
     Returns:
-        Union[list, None]:  A list of engagements with delivery information
-            for an audience.
+        Union[list, None]:  A list of audiences with
+            their unique destinations across engagements.
     """
 
     pipeline = [
