@@ -105,6 +105,17 @@ export default {
     contactus: "[data-e2e='contactus']",
     add: "[data-e2e='addicon']",
   },
+  // Engagements
+  engagement: {
+    list: {
+      engagementTable: "[data-e2e='engagement-table']",
+      engagementTableHeaders: "table thead tr",
+      engagementTableExpand: "[data-e2e='expand-engagement']",
+      audienceTable: "[data-e2e='audience-table']",
+      lastDeliveredColumn: "[data-e2e='last-delivered']",
+      audienceTableExpand: "[data-e2e='expand-audience']",
+    },
+  },
   customers: "a[href='/customers']",
   engagements: "a[href='/engagements']",
   audiences: "a[href='/audiences']",
