@@ -1,6 +1,4 @@
-"""
-purpose of this file is to house all the courier tests.
-"""
+"""Purpose of this file is to house all the courier tests."""
 from http import HTTPStatus
 from unittest import TestCase, mock
 import mongomock
@@ -49,19 +47,12 @@ from huxunify.test import constants as t_c
 
 
 class CourierTest(TestCase):
-    """
-    Test Courier
-    """
+    """Test Courier methods."""
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
-        """Setup method for unit tests.
+        """Setup method for unit tests."""
 
-        Args:
-
-        Returns:
-
-        """
         # setup the mock DB client
         self.database = DatabaseClient(
             "localhost", 27017, None, None
@@ -154,13 +145,7 @@ class CourierTest(TestCase):
         self.assertTrue(self.engagement)
 
     def test_map_destination_credentials_facebook(self):
-        """Test mapping of destination credentials for submitting to AWS Batch.
-
-        Args:
-
-        Returns:
-
-        """
+        """Test mapping of destination credentials for submitting to AWS Batch."""
 
         # setup destination object with synthetic credentials.
         sample_auth = "sample_auth"
@@ -211,13 +196,7 @@ class CourierTest(TestCase):
         )
 
     def test_map_destination_credentials_sfmc(self):
-        """Test mapping of destination credentials for submitting to AWS Batch.
-
-        Args:
-
-        Returns:
-
-        """
+        """Test mapping of destination credentials for submitting to AWS Batch."""
 
         # setup destination object with synthetic credentials.
         sample_auth = "sample_auth"
@@ -274,13 +253,7 @@ class CourierTest(TestCase):
         )
 
     def test_get_pairs(self):
-        """Test get audience/destination pairs
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get audience/destination pairs valid destination."""
 
         delivery_route = get_audience_destination_pairs(
             self.engagement[c.AUDIENCES]
@@ -290,13 +263,7 @@ class CourierTest(TestCase):
         self.assertEqual(len(delivery_route), 2)
 
     def test_get_pairs_invalid_dest(self):
-        """Test get audience/destination pairs
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get audience/destination pairs invalid destination."""
 
         # take the first engagement audience and set an invalid audience destination
         invalid_engagement = self.engagement[c.AUDIENCES]
@@ -311,13 +278,7 @@ class CourierTest(TestCase):
         self.assertEqual(len(delivery_route), 1)
 
     def test_get_delivery_route_audience(self):
-        """Test get delivery route with specific audience
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get delivery route with specific audience."""
 
         engagement = self.engagement.copy()
         engagement[c.AUDIENCES] = [engagement[c.AUDIENCES][0]]
@@ -338,13 +299,8 @@ class CourierTest(TestCase):
         self.assertListEqual(expected_route, delivery_route)
 
     def test_destination_batch_init(self):
-        """Test destination batch init
+        """Test destination batch init."""
 
-        Args:
-
-        Returns:
-
-        """
         delivery_route = get_audience_destination_pairs(
             self.engagement[c.AUDIENCES]
         )
@@ -380,13 +336,8 @@ class CourierTest(TestCase):
             )
 
     def test_destination_register_job(self):
-        """Test destination batch register job
+        """Test destination batch register job."""
 
-        Args:
-
-        Returns:
-
-        """
         delivery_route = get_audience_destination_pairs(
             self.engagement[c.AUDIENCES]
         )
@@ -424,13 +375,8 @@ class CourierTest(TestCase):
             )
 
     def test_destination_submit_job(self):
-        """Test destination batch submit job
+        """Test destination batch submit job."""
 
-        Args:
-
-        Returns:
-
-        """
         delivery_route = get_audience_destination_pairs(
             self.engagement[c.AUDIENCES]
         )
@@ -479,10 +425,8 @@ class CourierTest(TestCase):
 
         Args:
             bad_dict (dict): hypothesis dict of random data.
-
-        Returns:
-
         """
+
         with self.assertRaises(KeyError):
             map_destination_credentials_to_dict(bad_dict)
 
@@ -498,22 +442,14 @@ class CourierTest(TestCase):
         """Test getting audience destinations with bad data.
 
         Args:
-            bad_list (dict): hypothesis list of random data.
-
-        Returns:
-
+            bad_list (list): hypothesis list of random data.
         """
+
         with self.assertRaises(TypeError):
             get_audience_destination_pairs(bad_list)
 
     def test_get_auth_from_parameter_store(self):
-        """Test function get_auth_from_parameter_store
-
-        Args:
-
-        Returns:
-
-        """
+        """Test function get_auth_from_parameter_store."""
 
         # use audience once
         for destination_id in self.audience_one[c.DESTINATIONS]:
@@ -548,9 +484,9 @@ class CourierTest(TestCase):
     @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
     def test_create_cloud_watch_rule(self, mock_boto_client: mock.MagicMock):
         """Test function create_cloud_watch_rule
+
         Args:
             mock_boto_client (mock.MagicMock): mock boto client.
-        Returns:
         """
 
         # use audience once
@@ -600,9 +536,9 @@ class CourierTest(TestCase):
         self, mock_boto_client: mock.MagicMock
     ):
         """Test function create_cloud_watch_rule failure.
+
         Args:
             mock_boto_client (mock.MagicMock): mock boto client.
-        Returns:
         """
 
         # use audience once
@@ -651,9 +587,9 @@ class CourierTest(TestCase):
     @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
     def test_put_targets(self, mock_boto_client: mock.MagicMock):
         """Test function put_targets.
+
         Args:
             mock_boto_client (mock.MagicMock): mock boto client.
-        Returns:
         """
 
         # get destination
@@ -722,9 +658,9 @@ class CourierTest(TestCase):
     @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
     def test_put_targets_failure(self, mock_boto_client: mock.MagicMock):
         """Test function put_targets failure.
+
         Args:
             mock_boto_client (mock.MagicMock): mock boto client.
-        Returns:
         """
 
         # get destination
@@ -798,8 +734,6 @@ class CourierTest(TestCase):
 
         Args:
             mock_boto_client (mock.MagicMock): mock boto client.
-
-        Returns:
         """
 
         rule_params = {"Name": "fake-rule"}
@@ -831,8 +765,6 @@ class CourierTest(TestCase):
 
         Args:
             mock_boto_client (mock.MagicMock): mock boto client.
-
-        Returns:
         """
 
         rule_params = {"Name": "fake-rule"}
@@ -864,8 +796,6 @@ class CourierTest(TestCase):
 
         Args:
             mock_boto_client (mock.MagicMock): mock boto client.
-
-        Returns:
         """
 
         rule_params = {"Name": "fake-rule"}

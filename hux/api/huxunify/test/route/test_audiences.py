@@ -1,6 +1,4 @@
-"""
-Purpose of this file is to house audience related tests
-"""
+"""Purpose of this file is to house audience related tests."""
 from datetime import datetime
 from http import HTTPStatus
 from unittest import TestCase, mock
@@ -25,17 +23,10 @@ from huxunify.test import constants as t_c
 
 
 class AudienceDownloadsTest(TestCase):
-    """
-    Test audience download
-    """
+    """Test audience download."""
 
     def setUp(self) -> None:
-        """
-        Setup tests
-
-        Returns:
-
-        """
+        """Setup tests."""
 
         self.audiences_endpoint = (
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}"
@@ -115,12 +106,8 @@ class AudienceDownloadsTest(TestCase):
         ).start()
 
     def test_download_google_ads(self) -> None:
-        """
-        Test to check download google_ads customers hashed data
+        """Test to check download google_ads customers hashed data."""
 
-        Returns:
-
-        """
         # mock read_batches() in ConnectorCDP class to a return a test generator
         mock.patch.object(
             ConnectorCDP,
@@ -144,12 +131,8 @@ class AudienceDownloadsTest(TestCase):
         self.assertEqual(response.content_type, "application/csv")
 
     def test_download_amazon_ads(self) -> None:
-        """
-        Test to check download amazon_ads customers hashed data
+        """Test to check download amazon_ads customers hashed data."""
 
-        Returns:
-
-        """
         # mock read_batches() in ConnectorCDP class to a return a test generator
         mock.patch.object(
             ConnectorCDP,
@@ -173,12 +156,8 @@ class AudienceDownloadsTest(TestCase):
         self.assertEqual(response.content_type, "application/csv")
 
     def test_download_generic(self) -> None:
-        """
-        Test to check download generic customers both hashed and PII data
+        """Test to check download generic customers both hashed and PII data."""
 
-        Returns:
-
-        """
         # mock read_batches() in ConnectorCDP class to a return a test generator
         mock.patch.object(
             ConnectorCDP,
@@ -201,13 +180,7 @@ class AudienceDownloadsTest(TestCase):
         self.assertEqual(response.content_type, "application/csv")
 
     def test_audience_insights_cities_success(self) -> None:
-        """Test get audience insights by cities
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get audience insights by cities."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -233,13 +206,7 @@ class AudienceDownloadsTest(TestCase):
         )
 
     def test_customers_insights_states_success(self) -> None:
-        """Test get customers insights by states
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customers insights by states."""
 
         self.request_mocker.stop()
         self.request_mocker.post(

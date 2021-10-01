@@ -419,9 +419,16 @@ class AudienceGetView(SwaggerView):
             max(delivery_times) if delivery_times else None
         )
 
-        # set the destinations
-        audience[api_c.DESTINATIONS_TAG] = add_destinations(
-            database, audience.get(api_c.DESTINATIONS_TAG)
+        # get unique destinations per audience across engagements
+        audience_destinations = eam.get_all_engagement_audience_destinations(
+            database, [audience[db_c.ID]]
+        )
+
+        # check if any audiences returned, if so, set the destinations.
+        audience[db_c.DESTINATIONS] = (
+            audience_destinations[0].get(db_c.DESTINATIONS, [])
+            if audience_destinations
+            else []
         )
 
         # get live audience size

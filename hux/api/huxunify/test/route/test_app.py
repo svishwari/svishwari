@@ -1,6 +1,5 @@
-"""
-purpose of this file is for testing that the app can be created without any issues.
-"""
+"""Purpose of this file is for testing that the app can be created without any
+issues."""
 from unittest import TestCase
 
 from flask.testing import FlaskClient
@@ -11,24 +10,14 @@ from huxunify.api import constants as api_c
 
 
 class CreateAppTest(TestCase):
-    """
-    Test Creating an App.
-    """
+    """Test Creating an App."""
 
     def setUp(self) -> None:
-        """Setup tests
+        """Setup tests."""
 
-        Returns:
-
-        """
         self.config = get_config(api_c.TEST_MODE)
 
     def test_creating_flask_app(self):
-        """Test Creating the APP test client
+        """Test Creating the APP test client."""
 
-        Args:
-
-        Returns:
-
-        """
         self.assertIsInstance(create_app().test_client(), FlaskClient)

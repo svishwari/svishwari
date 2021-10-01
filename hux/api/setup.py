@@ -1,6 +1,4 @@
-"""
-setup code for the huxunify package
-"""
+"""Setup code for the huxunify package."""
 from setuptools import setup
 
 setup(
