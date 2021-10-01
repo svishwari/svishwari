@@ -70,7 +70,7 @@ class DataSourceSearch(SwaggerView):
     parameters = [
         {
             "name": api_c.ONLY_ADDED,
-            "description": "Flag to specify if only added data soources are to be fetched.",
+            "description": "Flag to specify if only added data sources are to be fetched.",
             "type": "boolean",
             "in": "query",
             "required": False,
