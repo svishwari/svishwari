@@ -34,7 +34,10 @@
     <div v-if="!loading" class="inner-wrap px-15 py-8">
       <div>
         <!-- Summary Cards Wrapper -->
-        <engagement-overview-summary data-e2e="overview-summary" :data="engagementList" />
+        <engagement-overview-summary
+          data-e2e="overview-summary"
+          :data="engagementList"
+        />
         <!-- Audience Destination Cards Wrapper -->
         <delivery-overview
           :sections="engagementList && engagementList.audiences"
@@ -66,7 +69,12 @@
                 <icon type="audiences" :size="16" class="mr-1" />
                 Add an audience
               </v-btn>
-              <v-btn text color="primary" @click="openDeliveryHistoryDrawer()" data-e2e="deliver-history">
+              <v-btn
+                text
+                color="primary"
+                data-e2e="deliver-history"
+                @click="openDeliveryHistoryDrawer()"
+              >
                 <icon type="history" :size="16" class="mr-1" />
                 Delivery history
               </v-btn>

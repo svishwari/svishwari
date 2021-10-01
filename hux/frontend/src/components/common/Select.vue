@@ -1,7 +1,7 @@
 <template>
   <v-select
     v-model="localValue"
-    :items="items"
+    :items="localItems"
     :label="label"
     :menu-props="{
       contentClass: 'hux-select',
@@ -58,8 +58,13 @@ export default defineComponent({
       },
     })
 
+    const localItems = computed({
+      get: () => props.items,
+    })
+
     return {
       localValue,
+      localItems,
     }
   },
 })

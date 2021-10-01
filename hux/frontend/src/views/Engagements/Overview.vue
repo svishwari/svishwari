@@ -6,7 +6,10 @@
       :height="75"
     >
       <template #subtitle-extended>
-        <div class="font-weight-semi-bold black--text text--darken-4 mb-2"  data-e2e="delivery-schedule-metric">
+        <div
+          class="font-weight-semi-bold black--text text--darken-4 mb-2"
+          data-e2e="delivery-schedule-metric"
+        >
           {{ deliverySchedule }}
         </div>
       </template>
@@ -20,7 +23,10 @@
         <span class="mr-2">
           <tooltip>
             <template #label-content>
-              <span data-e2e="updated-metric" class="font-weight-semi-bold black--text text--darken-4">
+              <span
+                data-e2e="updated-metric"
+                class="font-weight-semi-bold black--text text--darken-4"
+              >
                 {{ summaryCards[1].value }}
               </span>
             </template>

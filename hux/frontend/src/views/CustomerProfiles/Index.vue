@@ -47,7 +47,11 @@
                   <template #label-content>
                     <span class="font-weight-semi-bold">
                       <span v-if="item.value == 'percentage'">
-                        {{ item.subtitle | Numeric(true, false, false, true) | Empty("-") }}
+                        {{
+                          item.subtitle
+                            | Numeric(true, false, false, true)
+                            | Empty("-")
+                        }}
                       </span>
                       <span v-if="item.value == 'numeric'">
                         {{ item.subtitle | Numeric(true, true) | Empty("-") }}
@@ -56,10 +60,16 @@
                   </template>
                   <template #hover-content>
                     <span v-if="item.value == 'percentage'">
-                      {{ item.subtitle | Numeric(true, false, false, true) | Empty("-") }}
+                      {{
+                        item.subtitle
+                          | Numeric(true, false, false, true)
+                          | Empty("-")
+                      }}
                     </span>
                     <span v-else>
-                      {{ item.subtitle | Numeric(true, false, false) | Empty("-") }}
+                      {{
+                        item.subtitle | Numeric(true, false, false) | Empty("-")
+                      }}
                     </span>
                   </template>
                 </tooltip>
@@ -98,7 +108,11 @@
                   <template #label-content>
                     <span class="font-weight-semi-bold">
                       <span v-if="item.value == 'percentage'">
-                        {{ item.subtitle | Numeric(true, false, false, true) | Empty("-") }}
+                        {{
+                          item.subtitle
+                            | Numeric(true, false, false, true)
+                            | Empty("-")
+                        }}
                       </span>
                       <span v-if="item.value == 'numeric'">
                         {{ item.subtitle | Numeric(true, true) | Empty("-") }}
@@ -113,10 +127,16 @@
                   </template>
                   <template #hover-content>
                     <span v-if="item.value == 'percentage'">
-                      {{ item.subtitle | Numeric(true, false, false, true) | Empty("-") }}
+                      {{
+                        item.subtitle
+                          | Numeric(true, false, false, true)
+                          | Empty("-")
+                      }}
                     </span>
                     <span v-if="item.value == 'numeric'">
-                      {{ item.subtitle | Numeric(true, false, false) | Empty("-") }}
+                      {{
+                        item.subtitle | Numeric(true, false, false) | Empty("-")
+                      }}
                     </span>
                     <span v-if="item.value == 'none'">
                       {{ item.subtitle | Empty("-") }}
