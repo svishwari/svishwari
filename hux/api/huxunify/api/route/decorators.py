@@ -608,9 +608,10 @@ def validate_engagement_and_audience() -> object:
             database = get_db_client()
 
             # engagement validation
-            engagement_id = ObjectId(kwargs.get(constants.ENGAGEMENT_ID, None))
+            engagement_id = kwargs.get(constants.ENGAGEMENT_ID, None)
 
             if engagement_id is not None:
+                engagement_id = ObjectId(engagement_id)
                 if not get_engagement(database, engagement_id):
                     logger.error(
                         "Engagement with engagement ID %s not found.",
@@ -623,9 +624,10 @@ def validate_engagement_and_audience() -> object:
                 kwargs[constants.ENGAGEMENT_ID] = engagement_id
 
             # audience validation
-            audience_id = ObjectId(kwargs.get(constants.AUDIENCE_ID, None))
+            audience_id = kwargs.get(constants.AUDIENCE_ID, None)
 
             if audience_id is not None:
+                audience_id = ObjectId(audience_id)
                 if not orchestration_management.get_audience(
                     database, audience_id
                 ):

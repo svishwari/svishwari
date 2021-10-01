@@ -43,6 +43,7 @@ safety = {version="*", index="pypi"}
 requests-mock= {version="*", index="pypi"}
 hypothesis = {version="*", index="pypi"}
 moto= {version="*", index="pypi"}
+pact-python= {version="*", index="pypi"}
 
 [requires]
 python_version = "3.7"

@@ -56,13 +56,13 @@
       </hux-filters-bar>
     </template>
     <template>
-      <v-row v-if="!loadingOverview" no-gutters>
+      <div v-if="!loadingOverview">
         <v-slide-group ref="wrapper" class="idr-slide-group" show-arrows>
           <v-slide-item v-for="(metric, index) in overview" :key="index">
             <metric-card
               :title="metric.title"
               :min-width="170"
-              class="mx-2 my-2 pt-3 pl-6"
+              class="idr-metric-card"
               data-e2e="overviewList"
             >
               <template #extra-item>
@@ -111,7 +111,7 @@
             </metric-card>
           </v-slide-item>
         </v-slide-group>
-      </v-row>
+      </div>
       <v-row class="px-2 mt-0 mb-1">
         <v-col md="12">
           <v-card class="mt-3 rounded-lg box-shadow-5" min-height="400">
@@ -320,6 +320,10 @@ export default {
     ::v-deep .v-icon--disabled.theme--light.v-icon {
       color: var(--v-black-lighten3) !important;
     }
+  }
+
+  .idr-metric-card {
+    margin: 6px !important;
   }
 }
 </style>
