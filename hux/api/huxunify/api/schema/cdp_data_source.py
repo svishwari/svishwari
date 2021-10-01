@@ -46,7 +46,9 @@ class CdpDataSourceSchema(Schema):
         default=api_c.STATUS_ACTIVE,
     )
     is_added = fields.Bool(required=False, attribute="added", default=False)
-    is_enabled = fields.Bool(required=False, attribute="enabled", default=False)
+    is_enabled = fields.Bool(
+        required=False, attribute="enabled", default=False
+    )
 
 
 class CdpConnectionsDataSourceSchema(Schema):
