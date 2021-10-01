@@ -33,8 +33,7 @@ describe("Orchestration > Engagements", () => {
       "Created by",
     ]
 
-    let huxTable = cy.get(selector.engagement.list.engagementTable)
-    huxTable
+    cy.get(selector.engagement.list.engagementTable)
       .find(selector.engagement.list.engagementTableHeaders)
       .children()
       .each(($elm, i) => {
@@ -44,20 +43,25 @@ describe("Orchestration > Engagements", () => {
 
   // Verifying the expand feature of the table.
   it("should be able to expand the second engagement", () => {
-    let huxTable = cy.get(selector.engagement.list.engagementTable)
-    huxTable
+    cy.get(selector.engagement.list.engagementTable)
       .get(selector.engagement.list.engagementTableExpand)
       .last()
       .scrollIntoView()
-    huxTable.get(selector.engagement.list.engagementTableExpand).last().click()
+    cy.get(selector.engagement.list.engagementTable)
+      .get(selector.engagement.list.engagementTableExpand)
+      .last()
+      .click()
   })
 
   // Verifying the hover of the last delivered column of the audience table.
   it("should have hover on the last delivered column of audience table", () => {
-    let huxTable = cy.get(selector.engagement.list.engagementTable)
-    let huxAudienceTable = huxTable.find(selector.engagement.list.audienceTable)
-    huxAudienceTable.scrollIntoView({ easing: "linear" })
-    huxTable
+    cy.get(selector.engagement.list.engagementTable)
+      .find(selector.engagement.list.audienceTable)
+      .scrollIntoView({
+        easing: "linear",
+      })
+    cy.get(selector.engagement.list.engagementTable)
+      .find(selector.engagement.list.audienceTable)
       .find(selector.engagement.list.lastDeliveredColumn)
       .first()
       .scrollIntoView({ easing: "linear" })
@@ -69,8 +73,7 @@ describe("Orchestration > Engagements", () => {
 
   // Verifying the expand feature of the audience table.
   it("should have ability to expand the destinations under an audience table", () => {
-    let huxTable = cy.get(selector.engagement.list.engagementTable)
-    huxTable
+    cy.get(selector.engagement.list.engagementTable)
       .find(selector.engagement.list.audienceTable)
       .find(selector.engagement.list.audienceTableExpand)
       .first()
