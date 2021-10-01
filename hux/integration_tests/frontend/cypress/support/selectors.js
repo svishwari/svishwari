@@ -54,9 +54,16 @@ export default {
     list: "[data-e2e='models-list']",
     item: "[data-e2e='model-item']",
     models: "a[href='/models']",
+    lifttable: "[data-e2e='table-lift']",
+    featuretable: "[data-e2e='table-feature']",
+    performancemetric: "[data-e2e='performancemetric']",
+    driftchart: "[data-e2e='drift-chart']",
+    featurechart: "[data-e2e='feature-chart']",
+    versionhistorybutton: "[data-e2e='version-history-button']",
+    versionhistory: "[data-e2e='version-history']",
   },
 
-  // engagement
+  // engagements
   engagement: {
     addEngagement: "[data-e2e='add-engagement']",
     addEngagements: "a[href='/engagements/add']",
@@ -79,7 +86,15 @@ export default {
     audiencePerformance: "[data-e2e='audience-performance']",
     emailMarketing: "[data-e2e='email-marketing']",
     emailData: "[data-e2e='email-data']",
-    engagementAudienceList: "[data-e2e='audience-list']"
+    engagementAudienceList: "[data-e2e='status-list']",
+    list: {
+      engagementTable: "[data-e2e='engagement-table']",
+      engagementTableHeaders: "table thead tr",
+      engagementTableExpand: "[data-e2e='expand-engagement']",
+      audienceTable: "[data-e2e='audience-table']",
+      lastDeliveredColumn: "[data-e2e='last-delivered']",
+      audienceTableExpand: "[data-e2e='expand-audience']",
+    },
   },
 
   //Customer Profiles
@@ -132,17 +147,21 @@ export default {
     contactus: "[data-e2e='contactus']",
     add: "[data-e2e='addicon']",
   },
-  // Engagements
-  engagement: {
-    list: {
-      engagementTable: "[data-e2e='engagement-table']",
-      engagementTableHeaders: "table thead tr",
-      engagementTableExpand: "[data-e2e='expand-engagement']",
-      audienceTable: "[data-e2e='audience-table']",
-      lastDeliveredColumn: "[data-e2e='last-delivered']",
-      audienceTableExpand: "[data-e2e='expand-audience']",
-    },
+  audience: {
+    audiencelist: "[data-e2e='audiencelist']",
+    audiencenameclick: "[data-e2e='audiencename']",
+    audiencehistory: "[data-e2e='audience-history']",
+    engagementdelivery: "[data-e2e='status-list']",
+    deliveryhistory: "[data-e2e='delivery-history']",
+    deliveryhistorydrawer: "[data-e2e='delivery-history-drawer']",
+    overview: "[data-e2e='audience-overview']",
+    mapchart: "[data-e2e='map-chart']",
+    mapStateList: "[data-e2e='map-state-list']",
+    incomeChart: "[data-e2e='income-chart']",
+    genderSpendChart: "[data-e2e='gender-spend-chart']",
+    genderChart: "[data-e2e='gender-chart']",
   },
+
   customers: "a[href='/customers']",
   engagements: "a[href='/engagements']",
   audiences: "a[href='/audiences']",
