@@ -30,6 +30,7 @@
                   name: 'CustomerProfileDetails',
                   params: { id: item[header.value] },
                 }"
+                data-e2e="customerID"
                 class="cell"
                 append
               >

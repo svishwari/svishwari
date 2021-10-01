@@ -47,19 +47,29 @@
                   <template #label-content>
                     <span class="font-weight-semi-bold">
                       <span v-if="item.value == 'percentage'">
-                        {{ item.subtitle | Numeric(true, false, false, true) }}
+                        {{
+                          item.subtitle
+                            | Numeric(true, false, false, true)
+                            | Empty("-")
+                        }}
                       </span>
                       <span v-if="item.value == 'numeric'">
-                        {{ item.subtitle | Numeric(true, true) }}
+                        {{ item.subtitle | Numeric(true, true) | Empty("-") }}
                       </span>
                     </span>
                   </template>
                   <template #hover-content>
                     <span v-if="item.value == 'percentage'">
-                      {{ item.subtitle | Numeric(true, false, false, true) }}
+                      {{
+                        item.subtitle
+                          | Numeric(true, false, false, true)
+                          | Empty("-")
+                      }}
                     </span>
                     <span v-else>
-                      {{ item.subtitle | Numeric(true, false, false) }}
+                      {{
+                        item.subtitle | Numeric(true, false, false) | Empty("-")
+                      }}
                     </span>
                   </template>
                 </tooltip>
@@ -98,31 +108,41 @@
                   <template #label-content>
                     <span class="font-weight-semi-bold">
                       <span v-if="item.value == 'percentage'">
-                        {{ item.subtitle | Numeric(true, false, false, true) }}
+                        {{
+                          item.subtitle
+                            | Numeric(true, false, false, true)
+                            | Empty("-")
+                        }}
                       </span>
                       <span v-if="item.value == 'numeric'">
-                        {{ item.subtitle | Numeric(true, true) }}
+                        {{ item.subtitle | Numeric(true, true) | Empty("-") }}
                       </span>
                       <span v-if="item.value == 'none'">
-                        {{ item.subtitle }}
+                        {{ item.subtitle | Empty("-") }}
                       </span>
                       <span v-if="item.value == ''">
-                        {{ item.subtitle | Numeric(true, true) }}
+                        {{ item.subtitle | Numeric(true, true) | Empty("-") }}
                       </span>
                     </span>
                   </template>
                   <template #hover-content>
                     <span v-if="item.value == 'percentage'">
-                      {{ item.subtitle | Numeric(true, false, false, true) }}
+                      {{
+                        item.subtitle
+                          | Numeric(true, false, false, true)
+                          | Empty("-")
+                      }}
                     </span>
                     <span v-if="item.value == 'numeric'">
-                      {{ item.subtitle | Numeric(true, false, false) }}
+                      {{
+                        item.subtitle | Numeric(true, false, false) | Empty("-")
+                      }}
                     </span>
                     <span v-if="item.value == 'none'">
-                      {{ item.subtitle }}
+                      {{ item.subtitle | Empty("-") }}
                     </span>
                     <span v-if="item.value == ''">
-                      {{ item.subtitle }}
+                      {{ item.subtitle | Empty("-") }}
                     </span>
                   </template>
                 </tooltip>
@@ -486,7 +506,13 @@ export default {
       demographicsData: "customers/demographics",
     }),
     updatedTimeStamp() {
-      return this.updatedTime[0] + "<span> &bull; </span>" + this.updatedTime[1]
+      if (this.updatedTime.length !== 0) {
+        return (
+          this.updatedTime[0] + "<span> &bull; </span>" + this.updatedTime[1]
+        )
+      } else {
+        return "-"
+      }
     },
 
     genderChartData() {
@@ -566,6 +592,7 @@ export default {
       await this.getTotalCustomers()
       this.loadingCustomerChart = false
     },
+
     // TODO: refactor this and move this logic to a getter in the store
     mapOverviewData() {
       if (this.overview) {
@@ -617,6 +644,8 @@ export default {
         this.updatedTime = updatedValue.split(" at ")
         this.updatedTime[0] = this.$options.filters.DateRelative(value)
         return updatedValue
+      } else {
+        return "-"
       }
     },
     toggleProfilesDrawer() {

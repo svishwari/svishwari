@@ -322,7 +322,7 @@ class OrchestrationRouteTest(TestCase):
         )
         self.assertListEqual(
             audience_doc[db_c.DESTINATIONS],
-            [{api_c.ID: str(d[db_c.ID])} for d in self.destinations],
+            [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
 
     def test_create_audience_empty_user_info(self):
@@ -560,13 +560,13 @@ class OrchestrationRouteTest(TestCase):
         # test destinations
         self.assertListEqual(
             audience_doc[db_c.DESTINATIONS],
-            [{api_c.ID: str(d[db_c.ID])} for d in self.destinations],
+            [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
 
         expected_audience = {
             db_c.OBJECT_ID: audience_doc[db_c.ID],
             db_c.DESTINATIONS: [
-                {api_c.ID: str(d[db_c.ID])} for d in self.destinations
+                {api_c.ID: d[db_c.ID]} for d in self.destinations
             ],
         }
 
@@ -730,6 +730,10 @@ class OrchestrationRouteTest(TestCase):
                 ],
             )
 
+            # validate that not delivered has no delivery time set.
+            if audience[api_c.STATUS] == api_c.STATUS_NOT_DELIVERED:
+                self.assertIsNone(audience[api_c.AUDIENCE_LAST_DELIVERED])
+
             # find the matched audience destinations, should be the same.
             matched_audience = [
                 x
@@ -889,7 +893,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(
             lookalike_audience[api_c.SOURCE_NAME], self.audiences[0][db_c.NAME]
         )
-        self.assertGreater(lookalike_audience[api_c.MATCH_RATE], 0)
+        self.assertGreaterEqual(lookalike_audience[api_c.MATCH_RATE], 0)
         self.assertEqual(
             lookalike_audience[api_c.SOURCE_ID],
             str(self.audiences[0][db_c.ID]),
