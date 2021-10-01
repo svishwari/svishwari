@@ -5,7 +5,6 @@
       <router-link
         :to="routePath"
         class="text-decoration-none"
-        data-e2e="audiencename"
         append
       >
         <tooltip>

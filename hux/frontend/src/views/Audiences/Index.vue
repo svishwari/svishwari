@@ -74,6 +74,7 @@
                 :menu-options="getActionItems(item)"
                 route-name="AudienceInsight"
                 :route-param="item['id']"
+                data-e2e="audiencename"
               />
             </div>
             <div v-if="header.value == 'status'" class="text-caption">

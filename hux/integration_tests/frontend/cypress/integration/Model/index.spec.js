@@ -37,35 +37,45 @@ describe("Decisioning > models", () => {
 
     it("view and validate overview", () => {
         //validate performance metric exist by getting total no. of them
-        cy.get(selector.performancemetric)
+        cy.get(selector.models.performancemetric)
+  .then(dataId => console.log('dataId : ', dataId.length));
+
+        cy.get(selector.models.performancemetric)
             .its("length")
             .as("overviewListCount")
         cy.get("@overviewListCount").then(() => {
-            cy.get(selector.performancemetric).its("length").should("eq", 5)
+            cy.get(selector.models.performancemetric).its("length").should("eq", 5)
+        })
+
+        cy.get(selector.models.performancemetric).should(($models) => {
+          
+           let value = $models.text()
+           let data = value.replace(" ", ",");
+           console.log("data++++++++++++++++++++++++++++++++++++", data)
         })
     })
 
     it("should be able to view and validate Drift and Feature chart", () => {
         //validate Gender chart
-        cy.get(selector.driftchart).its("length").should("gt", 0)
-        cy.get(selector.driftchart).its("length").should("gt", 0)
+        cy.get(selector.models.driftchart).its("length").should("be.gt", 0)
+        cy.get(selector.models.featurechart).its("length").should("be.gt", 0)
         // scroll down
         cy.scrollTo("bottom", { duration: 1000 })
     })
 
-    it("validate feature and life table", () => {
-        cy.get(selector.lifetable).its("length").should("be.gt", 0)
-        cy.get(selector.lifefeature).its("length").should("be.gt", 0)
+    it("validate feature and lift table", () => {
+        cy.get(selector.models.lifttable).its("length").should("be.gt", 0)
+        cy.get(selector.models.featuretable).its("length").should("be.gt", 0)
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(1000)
     })
 
     it("should be able to view version history list", () => {
         //open version history drawer
-        cy.get(selector.versionhistorybutton).click()
+        cy.get(selector.models.versionhistorybutton).click()
 
         //validate the history list
-        cy.get(selector.versionhistory).its("length").should("gt", 0)
+        cy.get(selector.models.versionhistory).its("length").should("gt", 0)
 
 
     })
