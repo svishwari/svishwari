@@ -269,7 +269,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.BSON_INVALID_ID(engagement_id)}
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(engagement_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -472,7 +472,7 @@ class TestEngagementMetricsEmail(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.BSON_INVALID_ID(engagement_id)}
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(engagement_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -791,7 +791,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.ENGAGEMENT_NOT_FOUND}
+        valid_response = {api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND}
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -839,7 +839,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.BSON_INVALID_ID(engagement_id)}
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(engagement_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -866,7 +866,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.BSON_INVALID_ID(engagement_id)}
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(engagement_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -893,7 +893,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.ENGAGEMENT_NOT_FOUND}
+        valid_response = {api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND}
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -941,7 +941,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.ENGAGEMENT_NOT_FOUND}
+        valid_response = {api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND}
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -989,7 +989,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.BSON_INVALID_ID(audience_id)}
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(audience_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -1017,7 +1017,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.BSON_INVALID_ID(audience_id)}
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(audience_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -1045,7 +1045,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.BSON_INVALID_ID(audience_id)}
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(audience_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -1073,7 +1073,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.BSON_INVALID_ID(destination_id)}
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(destination_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -1100,7 +1100,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.BSON_INVALID_ID(destination_id)}
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(destination_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -1130,7 +1130,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.BSON_INVALID_ID(destination_id)}
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(destination_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -1308,7 +1308,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.BSON_INVALID_ID(engagement_id)}
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(engagement_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -1325,7 +1325,7 @@ class TestEngagementRoutes(TestCase):
 
         engagement_id = str(ObjectId())
 
-        valid_response = {"message": "Not found"}
+        valid_response = {api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND}
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
@@ -1347,15 +1347,12 @@ class TestEngagementRoutes(TestCase):
 
         engagement_id = self.engagement_ids[0]
 
-        valid_response = {"message": api_c.OPERATION_SUCCESS}
-
         response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(valid_response, response.json)
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
 
     def test_delete_engagement_invalid_id(self):
         """Test delete engagement API with invalid id
@@ -1372,7 +1369,7 @@ class TestEngagementRoutes(TestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
             headers=t_c.STANDARD_HEADERS,
         )
-        valid_response = {"message": api_c.BSON_INVALID_ID(engagement_id)}
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(engagement_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -1393,8 +1390,9 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(
-            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+            {api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND}, response.json
         )
 
     def test_set_engagement(self):
@@ -1645,18 +1643,15 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.BSON_INVALID_ID(bad_engagement_id)}
+        valid_response = {
+            api_c.MESSAGE: api_c.BSON_INVALID_ID(bad_engagement_id)
+        }
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
     def test_add_audience_to_engagement(self):
-        """
-        Test add audience to engagement
-
-        Returns:
-
-        """
+        """Test add audience to engagement."""
 
         engagement_id = self.engagement_ids[0]
 
@@ -1678,16 +1673,14 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertEqual(
+            {api_c.MESSAGE: api_c.OPERATION_SUCCESS},
+            response.json,
+        )
 
     def test_add_lookalike_audience_to_engagement(self) -> None:
-        """Test add lookalike audience to engagement
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test add lookalike audience to engagement."""
 
         engagement_id = self.engagement_ids[0]
 
@@ -1709,16 +1702,14 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(api_c.OPERATION_SUCCESS, response.json["message"])
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertEqual(
+            {api_c.MESSAGE: api_c.OPERATION_SUCCESS},
+            response.json,
+        )
 
     def test_add_audience_to_engagement_invalid_id(self):
-        """
-        Test add audience to engagement invalid id
-
-        Returns:
-
-        """
+        """Test add audience to engagement invalid id."""
 
         engagement_id = t_c.INVALID_ID
 
@@ -1739,19 +1730,13 @@ class TestEngagementRoutes(TestCase):
             json=new_audience,
             headers=t_c.STANDARD_HEADERS,
         )
-        valid_response = {"message": api_c.BSON_INVALID_ID(engagement_id)}
+        valid_response = {api_c.MESSAGE: api_c.BSON_INVALID_ID(engagement_id)}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
     def test_add_audience_to_engagement_non_existent_audience_id(self):
-        """Test add audience to engagement API with non-existent audience id
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test add audience to engagement API with non-existent audience ID."""
 
         engagement_id = self.engagement_ids[0]
         audience_id = str(ObjectId())
@@ -1769,24 +1754,20 @@ class TestEngagementRoutes(TestCase):
         }
 
         response = self.app.post(
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/{api_c.AUDIENCES}",
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.AUDIENCES}",
             json=new_audience,
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(
-            {"message": f"Audience does not exist: {audience_id}"},
+            {api_c.MESSAGE: f"Audience with ID {audience_id} does not exist."},
             response.json,
         )
 
     def test_delete_audience_from_engagement(self):
-        """
-        Test delete audience from engagement
-
-        Returns:
-
-        """
+        """Test delete audience from engagement."""
 
         engagement_id = self.engagement_ids[0]
         new_audience_id = self.audiences[0][db_c.ID]
@@ -1808,7 +1789,7 @@ class TestEngagementRoutes(TestCase):
             json=new_audience,
             headers=t_c.STANDARD_HEADERS,
         )
-        self.assertEqual(HTTPStatus.OK, add_audience_response.status_code)
+        self.assertEqual(HTTPStatus.CREATED, add_audience_response.status_code)
 
         delete_audience = {"audience_ids": [str(new_audience_id)]}
 
@@ -1817,7 +1798,9 @@ class TestEngagementRoutes(TestCase):
             json=delete_audience,
             headers=t_c.STANDARD_HEADERS,
         )
-        self.assertEqual(HTTPStatus.OK, delete_audience_response.status_code)
+        self.assertEqual(
+            HTTPStatus.NO_CONTENT, delete_audience_response.status_code
+        )
 
     def test_delete_audience_from_engagement_invalid_engagement_id(self):
         """Test delete audience from engagement with an invalid engagement id"""
@@ -1844,7 +1827,7 @@ class TestEngagementRoutes(TestCase):
             json=new_audience,
             headers=t_c.STANDARD_HEADERS,
         )
-        self.assertEqual(HTTPStatus.OK, add_audience_response.status_code)
+        self.assertEqual(HTTPStatus.CREATED, add_audience_response.status_code)
 
         delete_audience = {"audience_ids": [str(new_audience_id)]}
 
@@ -1854,7 +1837,9 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.BSON_INVALID_ID(bad_engagement_id)}
+        valid_response = {
+            api_c.MESSAGE: api_c.BSON_INVALID_ID(bad_engagement_id)
+        }
 
         self.assertEqual(
             HTTPStatus.BAD_REQUEST, delete_audience_response.status_code
@@ -1885,7 +1870,7 @@ class TestEngagementRoutes(TestCase):
             json=new_audience,
             headers=t_c.STANDARD_HEADERS,
         )
-        self.assertEqual(HTTPStatus.OK, add_audience_response.status_code)
+        self.assertEqual(HTTPStatus.CREATED, add_audience_response.status_code)
 
         delete_audience = {"audience_ids": [invalid_audience_id]}
 
@@ -1896,7 +1881,7 @@ class TestEngagementRoutes(TestCase):
         )
 
         valid_response = {
-            "message": api_c.BSON_INVALID_ID(invalid_audience_id)
+            api_c.MESSAGE: api_c.BSON_INVALID_ID(invalid_audience_id)
         }
 
         self.assertEqual(
