@@ -181,7 +181,7 @@ class IndividualEngagementSearch(SwaggerView):
             )
             return {
                 api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND.value
+            }, HTTPStatus.NOT_FOUND
 
         # TODO: HUS-837 Change once match_rate data can be fetched from CDM
         for engagement in engagements:
@@ -507,12 +507,10 @@ class DeleteEngagement(SwaggerView):
             # toggle routers since the engagement was deleted.
             toggle_event_driven_routers(database)
 
-            return {}, HTTPStatus.NO_CONTENT.value
+            return {}, HTTPStatus.NO_CONTENT
 
         logger.info("Could not delete engagement with ID %s.", engagement_id)
-        return {
-            api_c.MESSAGE: api_c.OPERATION_FAILED
-        }, HTTPStatus.BAD_REQUEST.value
+        return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST
 
 
 @add_view_to_blueprint(
@@ -646,9 +644,7 @@ class AddAudienceEngagement(SwaggerView):
         # toggle routers since the engagement was updated.
         toggle_event_driven_routers(database)
 
-        return {
-            api_c.MESSAGE: api_c.OPERATION_SUCCESS
-        }, HTTPStatus.CREATED.value
+        return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.CREATED
 
 
 @add_view_to_blueprint(
@@ -771,7 +767,7 @@ class DeleteAudienceEngagement(SwaggerView):
         # toggle routers since the engagement was updated.
         toggle_event_driven_routers(database)
 
-        return {}, HTTPStatus.NO_CONTENT.value
+        return {}, HTTPStatus.NO_CONTENT
 
 
 @add_view_to_blueprint(
