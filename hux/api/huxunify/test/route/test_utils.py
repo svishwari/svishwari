@@ -1,4 +1,4 @@
-"""Purpose of this file is to house all the route/utils tests"""
+"""Purpose of this file is to house all the route/utils tests."""
 from datetime import datetime, timedelta
 from unittest import TestCase
 from bson import ObjectId
@@ -18,10 +18,10 @@ from huxunify.api import constants
 
 
 class TestRouteUtils(TestCase):
-    """Test routes utils"""
+    """Test routes utils."""
 
     def test_get_friendly_delivery_time(self):
-        """Test get friendly delivered time"""
+        """Test get friendly delivered time."""
 
         delivered_time = datetime.utcnow() - timedelta(days=2)
         response = get_friendly_delivered_time(delivered_time)
@@ -40,7 +40,7 @@ class TestRouteUtils(TestCase):
         self.assertEqual("15 seconds ago", response)
 
     def test_update_metrics(self):
-        """Test update metrics"""
+        """Test update metrics."""
 
         target_id = ObjectId()
         perf_metric = update_metrics(
@@ -51,7 +51,7 @@ class TestRouteUtils(TestCase):
         self.assertEqual("test_name", perf_metric.get(constants.NAME))
 
     def test_validate_integer(self):
-        """Tests the Validation class static method validate_integer"""
+        """Tests the Validation class static method validate_integer."""
 
         with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_integer("a")
@@ -72,7 +72,7 @@ class TestRouteUtils(TestCase):
         Validation.validate_integer("12345")
 
     def test_validate_boolean(self):
-        """Tests the Validation class static method validate_boolean"""
+        """Tests the Validation class static method validate_boolean."""
 
         with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_bool("tru")
@@ -88,7 +88,7 @@ class TestRouteUtils(TestCase):
         Validation.validate_bool("fAlSe")
 
     def test_validate_date(self):
-        """Tests the Validation class static method validate_date"""
+        """Tests the Validation class static method validate_date."""
 
         with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_date("2021-09-111")
@@ -113,7 +113,7 @@ class TestRouteUtils(TestCase):
         Validation.validate_date("1969-9-1")
 
     def test_validate_date_range(self):
-        """Tests the Validation class static method validate_date_range"""
+        """Tests the Validation class static method validate_date_range."""
 
         with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_date_range("2021-09-11", "2021-13-11")

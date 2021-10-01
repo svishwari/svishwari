@@ -1,6 +1,4 @@
-"""
-Purpose of this file is to house all the destination api tests
-"""
+"""Purpose of this file is to house all the destination api tests."""
 
 from unittest import TestCase, mock
 from unittest.mock import MagicMock, patch
@@ -24,16 +22,10 @@ from huxunify.app import create_app
 
 # pylint: disable=too-many-public-methods
 class TestDestinationRoutes(TestCase):
-    """Test Destination Routes"""
+    """Test Destination Routes."""
 
     def setUp(self) -> None:
-        """
-        Setup resources before each test
-
-        Args:
-
-        Returns:
-        """
+        """Setup resources before each test."""
 
         # mock request for introspect call
         request_mocker = requests_mock.Mocker()
@@ -115,12 +107,8 @@ class TestDestinationRoutes(TestCase):
         self.addCleanup(mock.patch.stopall)
 
     def test_get_all_destinations(self):
-        """
-        Test get all destinations
+        """Test get all destinations."""
 
-        Returns:
-
-        """
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
@@ -130,12 +118,8 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(len(self.destinations), len(response.json))
 
     def test_get_destination_with_valid_id(self):
-        """
-        Test get destination with valid id
+        """Test get destination with valid ID."""
 
-        Returns:
-
-        """
         destination_id = self.destinations[0][db_c.ID]
 
         response = self.app.get(
@@ -149,12 +133,8 @@ class TestDestinationRoutes(TestCase):
         )
 
     def test_get_destination_where_destination_not_found(self):
-        """
-        Test get destination with a valid id that is not in the db
+        """Test get destination with a valid ID that is not in the DB."""
 
-        Returns:
-
-        """
         destination_id = ObjectId()
 
         response = self.app.get(
@@ -168,12 +148,8 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
 
     def test_get_destination_invalid_object_id(self):
-        """
-        Test get destination with an invalid ObjectID
+        """Test get destination with an invalid ObjectID."""
 
-        Returns:
-
-        """
         destination_id = "asdfgh2345"
 
         response = self.app.get(
@@ -187,12 +163,8 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_update_destination(self):
-        """
-        Test update destination
+        """Test update destination."""
 
-        Returns:
-
-        """
         destination_id = self.destinations[0][db_c.ID]
 
         new_auth_details = {
@@ -213,12 +185,8 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_update_destination_where_destination_not_found(self):
-        """
-        Test update destination where no destination is found
+        """Test update destination where no destination is found."""
 
-        Returns:
-
-        """
         destination_id = ObjectId()
 
         new_auth_details = {
@@ -239,12 +207,8 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
 
     def test_update_destination_invalid_object_id(self):
-        """
-        Test update destination where invalid id given
+        """Test update destination where invalid ID given."""
 
-        Returns:
-
-        """
         destination_id = "asdfg1234"
 
         new_auth_details = {
@@ -265,12 +229,7 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_retrieve_destinations_constants(self):
-        """
-        Test retrieve all destination constants
-
-        Returns:
-
-        """
+        """Test retrieve all destination constants."""
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/constants",
@@ -284,12 +243,7 @@ class TestDestinationRoutes(TestCase):
         self.assertIn(api_c.GOOGLE_ADS, response.json)
 
     def test_validate_facebook_credentials(self):
-        """
-        Test validation of facebook credentials
-
-        Returns:
-
-        """
+        """Test validation of facebook credentials."""
 
         mock_facebook_connector = mock.patch.object(
             FacebookConnector, "check_connection", return_value=True
@@ -327,14 +281,10 @@ class TestDestinationRoutes(TestCase):
     def test_validate_facebook_failure_bad_credentials(
         self, mock_connector: MagicMock
     ):
-        """
-        Test failure to authenticate with facebook due to bad credentials
+        """Test failure to authenticate with facebook due to bad credentials.
 
         Args:
-            mock_connector (MagicMock): MagicMock of the Facebook Connector
-
-        Returns:
-
+            mock_connector (MagicMock): MagicMock of the Facebook Connector.
         """
 
         mock_facebook_connector = mock_connector.return_value
@@ -369,13 +319,10 @@ class TestDestinationRoutes(TestCase):
         **{"return_value.raiseError.side_effect": Exception()},
     )
     def test_validate_sendgrid_credentials(self, mock_connector: MagicMock):
-        """
-        Test successful authentication with sendgrid
+        """Test successful authentication with sendgrid.
 
         Args:
-            mock_connector (MagicMock): MagicMock of the Sendgrid Connector
-
-        Returns:
+            mock_connector (MagicMock): MagicMock of the Sendgrid Connector.
         """
 
         validation_details = {
@@ -405,14 +352,10 @@ class TestDestinationRoutes(TestCase):
     def test_validate_sendgrid_credentials_failure_bad_credentials(
         self, mock_connector: MagicMock
     ):
-        """
-        Test failure to authenticate with sendgrid due to bad credentials
+        """Test failure to authenticate with sendgrid due to bad credentials
 
         Args:
-            mock_connector (MagicMock): MagicMock of the Sendgrid Connector
-
-        Returns:
-
+            mock_connector (MagicMock): MagicMock of the Sendgrid Connector.
         """
 
         # mocks the return value of the SendgridConnector Constructor
@@ -443,13 +386,10 @@ class TestDestinationRoutes(TestCase):
         **{"return_value.raiseError.side_effect": Exception()},
     )
     def test_validate_google_ads_credentials(self, mock_connector: MagicMock):
-        """
-        Test successful authentication with google ads
+        """Test successful authentication with google ads.
 
         Args:
-            mock_connector (MagicMock): MagicMock of the Google Connector
-
-        Returns:
+            mock_connector (MagicMock): MagicMock of the Google Connector.
         """
 
         validation_details = {
@@ -483,14 +423,10 @@ class TestDestinationRoutes(TestCase):
     def test_validate_google_ads_credentials_failure_bad_credentials(
         self, mock_connector: MagicMock
     ):
-        """
-        Test failure to authenticate with qualtrics due to bad credentials
+        """Test failure to authenticate with qualtrics due to bad credentials.
 
         Args:
-            mock_connector (MagicMock): MagicMock of the Qualtrics Connector
-
-        Returns:
-
+            mock_connector (MagicMock): MagicMock of the Qualtrics Connector.
         """
 
         # mocks the return value of the GoogleConnector Constructor
@@ -526,13 +462,10 @@ class TestDestinationRoutes(TestCase):
         **{"return_value.raiseError.side_effect": Exception()},
     )
     def test_validate_qualtrics_credentials(self, mock_connector: MagicMock):
-        """
-        Test successful authentication with qualtrics
+        """Test successful authentication with qualtrics.
 
         Args:
-            mock_connector (MagicMock): MagicMock of the Qualtrics Connector
-
-        Returns:
+            mock_connector (MagicMock): MagicMock of the Qualtrics Connector.
         """
 
         validation_details = {
@@ -565,14 +498,10 @@ class TestDestinationRoutes(TestCase):
     def test_validate_qualtrics_credentials_failure_bad_credentials(
         self, mock_connector: MagicMock
     ):
-        """
-        Test failure to authenticate with qualtrics due to bad credentials
+        """Test failure to authenticate with qualtrics due to bad credentials.
 
         Args:
-            mock_connector (MagicMock): MagicMock of the Qualtrics Connector
-
-        Returns:
-
+            mock_connector (MagicMock): MagicMock of the Qualtrics Connector.
         """
 
         # mocks the return value of the QualtricsConnector Constructor
@@ -607,14 +536,10 @@ class TestDestinationRoutes(TestCase):
         **{"return_value.raiseError.side_effect": Exception()},
     )
     def test_validate_sfmc_credentials(self, mock_connector: MagicMock):
-        """
-        Test successful authentication with sfmc
+        """Test successful authentication with sfmc.
 
         Args:
-            mock_connector (MagicMock): MagicMock of the SFMC Connector
-
-        Returns:
-
+            mock_connector (MagicMock): MagicMock of the SFMC Connector.
         """
 
         validation_details = {
@@ -650,14 +575,10 @@ class TestDestinationRoutes(TestCase):
     def test_validate_sfmc_credentials_failure_bad_credentials(
         self, mock_connector: MagicMock
     ):
-        """
-        Test failure to authenticate with sfmc due to bad credentials
+        """Test failure to authenticate with sfmc due to bad credentials.
 
         Args:
-            mock_connector (MagicMock): MagicMock of the SFMC Connector
-
-        Returns:
-
+            mock_connector (MagicMock): MagicMock of the SFMC Connector.
         """
 
         # mocks the return value of the SFMCConnector Constructor
@@ -690,14 +611,10 @@ class TestDestinationRoutes(TestCase):
 
     @mock.patch("huxunify.api.route.destination.SFMCConnector")
     def test_create_data_extension(self, mock_connector: MagicMock):
-        """
-        Test create data extension
+        """Test create data extension.
 
         Args:
             mock_connector (MagicMock): magic mock of SFMCConnector
-
-        Returns:
-
         """
 
         mock_sfmc_instance = mock_connector.return_value
@@ -716,14 +633,7 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
     def test_create_data_extension_invalid_id(self):
-        """
-        Test create data extension where id is invalid
-
-        Args:
-
-        Returns:
-
-        """
+        """Test create data extension where id is invalid."""
 
         destination_id = "asdfg123456"
 
@@ -741,14 +651,7 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_create_data_extension_destination_not_found(self):
-        """
-        Test create data extension where id is invalid
-
-        Args:
-
-        Returns:
-
-        """
+        """Test create data extension where id is invalid."""
 
         destination_id = ObjectId()
 
@@ -769,14 +672,10 @@ class TestDestinationRoutes(TestCase):
     def test_retrieve_ordered_destination_data_extensions(
         self, mock_sfmc: MagicMock
     ):
-        """
-        Test retrieve destination data extensions
+        """Test retrieve destination data extensions.
 
         Args:
-            mock_sfmc (MagicMock): magic mock of SFMCConnector
-
-        Returns:
-
+            mock_sfmc (MagicMock): magic mock of SFMCConnector.
         """
 
         return_value = [
@@ -811,14 +710,10 @@ class TestDestinationRoutes(TestCase):
     def test_retrieve_empty_destination_data_extensions(
         self, mock_sfmc: MagicMock
     ):
-        """
-        Test retrieve destination data extensions
+        """Test retrieve destination data extensions.
 
         Args:
-            mock_sfmc (MagicMock): magic mock of SFMCConnector
-
-        Returns:
-
+            mock_sfmc (MagicMock): magic mock of SFMCConnector.
         """
 
         return_value = []
@@ -838,14 +733,7 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(response.json, [])
 
     def test_retrieve_destination_data_extensions_invalid_id(self):
-        """
-        Test create data extension where id is invalid
-
-        Args:
-
-        Returns:
-
-        """
+        """Test create data extension where id is invalid."""
 
         destination_id = "asdfg123456"
 
@@ -860,14 +748,7 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_retrieve_destination_data_extensions_destination_not_found(self):
-        """
-        Test create data extension where id is invalid
-
-        Args:
-
-        Returns:
-
-        """
+        """Test create data extension where id is invalid."""
 
         destination_id = ObjectId()
 

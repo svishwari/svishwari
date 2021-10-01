@@ -1,6 +1,4 @@
-"""
-Purpose of this file is to house the main application code.
-"""
+"""Purpose of this file is to house the main application code."""
 import logging
 
 from flask import Flask
@@ -37,9 +35,11 @@ def configure_flask(flask_app: Flask) -> None:
     Args:
         flask_app (Flask): Flask application.
 
-    Returns:
-
+    Raises:
+        Exception: Error if the flask app config doesn't have the "ENV" key
+            setup appropriately.
     """
+
     # setup the environment config
     try:
         if flask_app.config["ENV"] == constants.PRODUCTION_MODE:
@@ -60,14 +60,12 @@ def configure_flask(flask_app: Flask) -> None:
 
 
 def create_app() -> Flask:
-    """creates the flask app and blueprints
-
-    Args:
+    """creates the flask app and blueprints.
 
     Returns:
         Flask: Returns a flask object.
-
     """
+
     load_env_vars()
 
     # setup the flask app

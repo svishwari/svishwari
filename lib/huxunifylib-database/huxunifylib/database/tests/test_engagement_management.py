@@ -1067,7 +1067,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         # find all three.
         audience_destinations = eam.get_all_engagement_audience_destinations(
-            self.database
+            self.database, [self.audience[c.ID]]
         )
 
         # test the response

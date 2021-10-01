@@ -19,21 +19,51 @@ from huxunifylib.database.client import DatabaseClient
 def get_all_engagement_audience_destinations(
     database: DatabaseClient, audience_ids: list = None
 ) -> Union[list, None]:
-    """A function to get engagement audiences and their destinations across engagements.
+    """A function to get engagement audiences and their destinations
+    across engagements.
 
     Args:
         database (DatabaseClient): A database client.
         audience_ids (list): List of audience ids.
 
     Returns:
-        Union[list, None]:  A list of engagements with delivery information
-            for an audience.
+        Union[list, None]:  A list of audiences with
+            their unique destinations across engagements.
     """
 
-    # check if any audience ids
-    match_statement = {db_c.DELETED: False}
+    pipeline = [
+        {"$match": {db_c.DELETED: False}},
+        {"$unwind": {"path": "$audiences"}},
+        {"$unwind": {"path": "$audiences.destinations"}},
+        {
+            "$group": {
+                "_id": "$audiences.id",
+                "destinations": {"$addToSet": "$audiences.destinations.id"},
+            }
+        },
+        {"$unwind": {"path": "$destinations"}},
+        {
+            "$lookup": {
+                "from": "delivery_platforms",
+                "localField": "destinations",
+                "foreignField": "_id",
+                "as": "delivery_platform",
+            }
+        },
+        {"$unwind": {"path": "$delivery_platform"}},
+        {
+            "$group": {
+                "_id": "$_id",
+                "destinations": {"$push": "$delivery_platform"},
+            }
+        },
+        {"$project": {"destinations.deleted": 0}},
+    ]
+
+    # check if audience filter was provided
     if audience_ids:
-        match_statement[db_c.ID] = {"$in": audience_ids}
+        # insert into the pipeline after the unwind of audience/destinations
+        pipeline.insert(3, {"$match": {"audiences.id": {"$in": audience_ids}}})
 
     # use the audience pipeline to aggregate and get all unique
     # delivery platforms per audience.
@@ -41,38 +71,7 @@ def get_all_engagement_audience_destinations(
         return list(
             database[db_c.DATA_MANAGEMENT_DATABASE][
                 db_c.ENGAGEMENTS_COLLECTION
-            ].aggregate(
-                [
-                    {"$match": match_statement},
-                    {"$unwind": {"path": "$audiences"}},
-                    {"$unwind": {"path": "$audiences.destinations"}},
-                    {
-                        "$group": {
-                            "_id": "$audiences.id",
-                            "destinations": {
-                                "$addToSet": "$audiences.destinations.id"
-                            },
-                        }
-                    },
-                    {"$unwind": {"path": "$destinations"}},
-                    {
-                        "$lookup": {
-                            "from": "delivery_platforms",
-                            "localField": "destinations",
-                            "foreignField": "_id",
-                            "as": "delivery_platform",
-                        }
-                    },
-                    {"$unwind": {"path": "$delivery_platform"}},
-                    {
-                        "$group": {
-                            "_id": "$_id",
-                            "destinations": {"$push": "$delivery_platform"},
-                        }
-                    },
-                    {"$project": {"destinations.deleted": 0}},
-                ]
-            )
+            ].aggregate(pipeline)
         )
 
     except pymongo.errors.OperationFailure as exc:
