@@ -15,6 +15,7 @@
         width="55"
         height="55"
         class="d-flex ma-4"
+        data-e2e="click-outside"
       />
       <v-menu v-if="!isMini" open-on-hover offset-y>
         <template #activator="{ on }">
