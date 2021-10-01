@@ -1,6 +1,4 @@
-"""
-Purpose of this file is to park all tests for scheduler
-"""
+"""Purpose of this file is to park all tests for scheduler."""
 import unittest
 from huxunify.api.data_connectors.scheduler import generate_cron
 
@@ -28,16 +26,11 @@ daily_schedule = {
 
 
 class SchedulerTest(unittest.TestCase):
-    """
-    Class for Scheduler Test
-    """
+    """Class for Scheduler Test."""
 
     def test_generate_cron(self):
-        """
-        Test for generating cron from scheduler module
-        Returns:
+        """Test for generating cron from scheduler module."""
 
-        """
         self.assertEqual(generate_cron(daily_schedule), "15 23 ? * 1/2 *")
 
         self.assertEqual(

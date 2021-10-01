@@ -1,4 +1,4 @@
-"""purpose of this file is to house all the cdp connections tests."""
+"""Purpose of this file is to house all the cdp connections tests."""
 from unittest import TestCase, mock
 import string
 import requests_mock
@@ -20,16 +20,11 @@ from huxunify.app import create_app
 
 
 class CDPConnectionsTest(TestCase):
-    """
-    Test CDP request methods
-    """
+    """Test CDP request methods."""
 
     def setUp(self) -> None:
-        """Setup tests
+        """Setup tests."""
 
-        Returns:
-
-        """
         # setup the flask test client
         self.test_client = create_app().test_client()
 
@@ -40,22 +35,12 @@ class CDPConnectionsTest(TestCase):
         self.addCleanup(mock.patch.stopall)
 
     def tearDown(self) -> None:
-        """Tear down tests
+        """Tear down tests."""
 
-        Returns:
-
-        """
         self.request_mocker.stop()
 
     def test_get_idr_data_feeds(self) -> None:
-        """
-        Test fetch IDR data feeds
-
-        Args:
-
-        Returns:
-
-        """
+        """Test fetch IDR data feeds."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -76,14 +61,8 @@ class CDPConnectionsTest(TestCase):
             self.assertIn(api_c.DATAFEED_NEW_IDS_COUNT, data_feed)
 
     def test_get_idr_data_feed_details(self):
-        """
-        Test fetch IDR data feed details
+        """Test fetch IDR data feed details."""
 
-        Args:
-
-        Returns:
-
-        """
         datafeed_id = 1
         self.request_mocker.stop()
         self.request_mocker.get(
@@ -102,7 +81,8 @@ class CDPConnectionsTest(TestCase):
         self.assertIn(api_c.STITCHED, data_feed)
 
     def test_get_data_sources(self) -> None:
-        """Test fetch data sources"""
+        """Test fetch data sources."""
+
         self.request_mocker.stop()
         self.request_mocker.get(
             f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
@@ -127,14 +107,8 @@ class CDPConnectionsTest(TestCase):
             )
 
     def test_get_data_source_data_feeds(self) -> None:
-        """
-        Test fetch data source data feeds
+        """Test fetch data source data feeds."""
 
-        Args:
-
-        Returns:
-
-        """
         data_source_type = "test_data_source"
 
         self.request_mocker.stop()
@@ -175,9 +149,6 @@ class CDPConnectionsTest(TestCase):
         Args:
             start_date (str): start date value for request.
             end_date (str): end date value for request.
-
-        Returns:
-            None
         """
 
         self.request_mocker.stop()
@@ -203,9 +174,6 @@ class CDPConnectionsTest(TestCase):
 
         Args:
             datafeed_id (int): datafeed ID value for request.
-
-        Returns:
-            None
         """
 
         self.request_mocker.stop()
@@ -230,9 +198,6 @@ class CDPConnectionsTest(TestCase):
 
         Args:
             data_source_type (str): data source type value for request.
-
-        Returns:
-            None
         """
 
         self.request_mocker.stop()
@@ -265,9 +230,6 @@ class CDPConnectionsTest(TestCase):
         Args:
             start_date (str): start date value for request.
             end_date (str): end date value for request.
-
-        Returns:
-            None
         """
 
         self.request_mocker.stop()
