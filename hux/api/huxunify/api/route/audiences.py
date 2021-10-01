@@ -45,6 +45,7 @@ from huxunify.api.route.utils import (
     get_db_client,
     transform_fields_generic_file,
     logger,
+    Validation,
 )
 
 # setup the audiences blueprint
@@ -335,9 +336,7 @@ class AudienceInsightsCities(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler(
-        custom_message={ValueError: {"message": api_c.INVALID_BATCH_PARAMS}}
-    )
+    @api_error_handler()
     def get(self, audience_id: str) -> Tuple[list, int]:
         """Retrieves city-level geographic customer insights for the audience.
 
@@ -354,18 +353,18 @@ class AudienceInsightsCities(SwaggerView):
         # get auth token from request
         token_response = get_token_from_request(request)
 
-        batch_size = request.args.get(
-            api_c.QUERY_PARAMETER_BATCH_SIZE, api_c.CITIES_DEFAULT_BATCH_SIZE
+        batch_size = Validation.validate_integer(
+            request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_SIZE,
+                str(api_c.CITIES_DEFAULT_BATCH_SIZE),
+            )
         )
-
-        batch_number = request.args.get(
-            api_c.QUERY_PARAMETER_BATCH_NUMBER, api_c.DEFAULT_BATCH_NUMBER
+        batch_number = Validation.validate_integer(
+            request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_NUMBER,
+                str(api_c.DEFAULT_BATCH_NUMBER),
+            )
         )
-
-        if int(batch_size) <= 0 or int(batch_number) < 0:
-            return {
-                "message": api_c.INVALID_BATCH_PARAMS
-            }, HTTPStatus.BAD_REQUEST
 
         audience = orchestration_management.get_audience(
             get_db_client(), ObjectId(audience_id)

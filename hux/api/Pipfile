@@ -34,7 +34,6 @@ faker = {version="*", index="pypi"}
 connexion = "==2.7.0"
 prometheus-client = "*"
 prometheus-flask-exporter = "*"
-huxunifylib-connectors = "*"
 
 [dev-packages]
 pytest = {version="*", index="pypi"}

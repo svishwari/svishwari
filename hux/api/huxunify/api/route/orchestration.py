@@ -33,7 +33,6 @@ from huxunify.api.schema.orchestration import (
     LookalikeAudiencePostSchema,
     LookalikeAudienceGetSchema,
     is_audience_lookalikeable,
-    AudienceDestinationSchema,
 )
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
@@ -650,12 +649,9 @@ class AudiencePostView(SwaggerView):
 
         # validate destinations
         database = get_db_client()
-        destinations = []
         if db_c.DESTINATIONS in body:
             # validate list of dict objects
-            for destination in AudienceDestinationSchema().load(
-                body[db_c.DESTINATIONS], many=True
-            ):
+            for destination in body[api_c.DESTINATIONS]:
                 # validate object id
                 # map to an object ID field
                 # validate the destination object exists.
@@ -673,7 +669,6 @@ class AudiencePostView(SwaggerView):
                     return {
                         "message": api_c.DESTINATION_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
-                destinations.append(destination)
 
         engagement_ids = []
         if api_c.AUDIENCE_ENGAGEMENTS in body:
@@ -707,7 +702,7 @@ class AudiencePostView(SwaggerView):
             database=database,
             name=body[api_c.AUDIENCE_NAME],
             audience_filters=body.get(api_c.AUDIENCE_FILTERS),
-            destination_ids=destinations,
+            destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user_name,
             size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
         )
@@ -732,7 +727,7 @@ class AudiencePostView(SwaggerView):
                 [
                     {
                         db_c.OBJECT_ID: audience_doc[db_c.ID],
-                        db_c.DESTINATIONS: destinations,
+                        db_c.DESTINATIONS: body.get(api_c.DESTINATIONS),
                     }
                 ],
             )
@@ -840,26 +835,7 @@ class AudiencePutView(SwaggerView):
         # validate destinations
         if db_c.DESTINATIONS in body:
             # validate list of dict objects
-            for destination in body[db_c.DESTINATIONS]:
-                # check if dict instance
-                if not isinstance(destination, dict):
-                    logger.error("Destination must be objects.")
-                    return {
-                        "message": "destinations must be objects"
-                    }, HTTPStatus.BAD_REQUEST
-
-                # check if destination id assigned
-                if db_c.OBJECT_ID not in destination:
-                    logger.error(
-                        "Destination object missing the %s field.",
-                        db_c.OBJECT_ID,
-                    )
-                    return {
-                        "message": f"{destination} missing the "
-                        f"{db_c.OBJECT_ID} field."
-                    }, HTTPStatus.BAD_REQUEST
-
-                # validate object id
+            for destination in body[api_c.DESTINATIONS]:
                 # map to an object ID field
                 # validate the destination object exists.
                 destination[db_c.OBJECT_ID] = ObjectId(
@@ -882,7 +858,7 @@ class AudiencePutView(SwaggerView):
             audience_id=ObjectId(audience_id),
             name=body.get(api_c.AUDIENCE_NAME),
             audience_filters=body.get(api_c.AUDIENCE_FILTERS),
-            destination_ids=body.get(api_c.DESTINATIONS_TAG),
+            destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user_name,
         )
 
