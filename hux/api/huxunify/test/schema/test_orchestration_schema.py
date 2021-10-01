@@ -4,7 +4,6 @@ Purpose of this file is to test the orchestration schemas
 """
 from unittest import TestCase
 from datetime import datetime
-from random import uniform
 
 import bson
 
@@ -146,13 +145,13 @@ class OrchestrationSchemaTest(TestCase):
                             api_c.ID: "5f5f7262997acad4bac4384c",
                             db_c.NAME: "Delivery 1",
                             db_c.SIZE: 1000,
-                            api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
+                            api_c.MATCH_RATE: 0,
                         },
                         {
                             api_c.ID: "5f5f7262997acad4bac4384d",
                             db_c.NAME: "Delivery 2",
                             db_c.SIZE: 1000,
-                            api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
+                            api_c.MATCH_RATE: 0,
                         },
                     ],
                 }
@@ -173,8 +172,8 @@ class OrchestrationSchemaTest(TestCase):
         schema = AudienceGetSchema().load(audience)
 
         deliveries = schema[db_c.ENGAGEMENTS_COLLECTION][0][db_c.DELIVERIES]
-        self.assertGreaterEqual(deliveries[0][api_c.MATCH_RATE], 0.2)
-        self.assertGreaterEqual(deliveries[1][api_c.MATCH_RATE], 0.2)
+        self.assertGreaterEqual(deliveries[0][api_c.MATCH_RATE], 0)
+        self.assertGreaterEqual(deliveries[1][api_c.MATCH_RATE], 0)
 
     def test_engagement_delivery_history_schema(self) -> None:
         """
@@ -226,7 +225,7 @@ class OrchestrationSchemaTest(TestCase):
                 db_c.TYPE: "facebook",
             },
             db_c.SIZE: 1000,
-            api_c.MATCH_RATE: round(uniform(0.21, 0.9), 2),
+            api_c.MATCH_RATE: 0,
             api_c.DELIVERED: datetime.strftime(
                 datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
             ),
@@ -239,7 +238,7 @@ class OrchestrationSchemaTest(TestCase):
         # deserialize the json document by loading it into the schema and
         # test the schema to have the match_rate value set
         schema = EngagementDeliveryHistorySchema().load(delivery_history)
-        self.assertGreaterEqual(schema[api_c.MATCH_RATE], 0.2)
+        self.assertGreaterEqual(schema[api_c.MATCH_RATE], 0)
 
     def test_audience_delivery_history_schema(self) -> None:
         """
@@ -321,7 +320,7 @@ class OrchestrationSchemaTest(TestCase):
                 db_c.TYPE: "facebook",
             },
             db_c.SIZE: 1000,
-            api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
+            api_c.MATCH_RATE: 0,
             api_c.DELIVERED: datetime.strftime(
                 datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
             ),
@@ -334,4 +333,4 @@ class OrchestrationSchemaTest(TestCase):
         # deserialize the json document by loading it into the schema and
         # test the schema to have the match_rate value set
         schema = AudienceDeliveryHistorySchema().load(delivery_history)
-        self.assertGreater(schema[api_c.MATCH_RATE], 0.19)
+        self.assertGreaterEqual(schema[api_c.MATCH_RATE], 0)
