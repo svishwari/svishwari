@@ -60,6 +60,7 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.utils import (
     get_db_client,
     group_gender_spending,
+    get_next_schedule,
 )
 
 # setup the orchestration blueprint
@@ -385,6 +386,22 @@ class AudienceGetView(SwaggerView):
                         and not audience.get(api_c.IS_LOOKALIKE, False)
                         else None
                     )
+                    if engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
+                        delivery[
+                            db_c.ENGAGEMENT_DELIVERY_SCHEDULE
+                        ] = engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                            api_c.SCHEDULE
+                        ][
+                            api_c.PERIODICIY
+                        ]
+                        delivery[api_c.NEXT_DELIVERY] = get_next_schedule(
+                            engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                                api_c.SCHEDULE_CRON
+                            ],
+                            engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                                api_c.START_DATE
+                            ],
+                        )
 
             # set the weighted status for the engagement based on deliveries
             engagement[api_c.STATUS] = weight_delivery_status(engagement)
