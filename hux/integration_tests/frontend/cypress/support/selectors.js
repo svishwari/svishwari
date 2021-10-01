@@ -57,13 +57,13 @@ export default {
     lifttable: "[data-e2e='table-lift']",
     featuretable: "[data-e2e='table-feature']",
     performancemetric: "[data-e2e='performancemetric']",
-    driftchart: "[data-e2e='drift-chart']", 
-    featurechart: "[data-e2e='feature-chart']", 
-    versionhistorybutton: "[data-e2e='version-history-button']", 
-    versionhistory: "[data-e2e='version-history']", 
+    driftchart: "[data-e2e='drift-chart']",
+    featurechart: "[data-e2e='feature-chart']",
+    versionhistorybutton: "[data-e2e='version-history-button']",
+    versionhistory: "[data-e2e='version-history']",
   },
 
-  // engagement
+  // engagements
   engagement: {
     addEngagement: "[data-e2e='add-engagement']",
     addEngagements: "a[href='/engagements/add']",
@@ -76,6 +76,14 @@ export default {
     selectDestination: "[data-e2e='destination-select-button']",
     exitDrawer: "[data-e2e='click-outside']",
     exitDataExtensionDrawer: "[data-e2e='destination-added']",
+    list: {
+      engagementTable: "[data-e2e='engagement-table']",
+      engagementTableHeaders: "table thead tr",
+      engagementTableExpand: "[data-e2e='expand-engagement']",
+      audienceTable: "[data-e2e='audience-table']",
+      lastDeliveredColumn: "[data-e2e='last-delivered']",
+      audienceTableExpand: "[data-e2e='expand-audience']",
+    },
   },
 
   //Customer Profiles
@@ -142,17 +150,7 @@ export default {
     genderSpendChart: "[data-e2e='gender-spend-chart']",
     genderChart: "[data-e2e='gender-chart']",
   },
-  // Engagements
-  engagement: {
-    list: {
-      engagementTable: "[data-e2e='engagement-table']",
-      engagementTableHeaders: "table thead tr",
-      engagementTableExpand: "[data-e2e='expand-engagement']",
-      audienceTable: "[data-e2e='audience-table']",
-      lastDeliveredColumn: "[data-e2e='last-delivered']",
-      audienceTableExpand: "[data-e2e='expand-audience']",
-    },
-  },
+
   customers: "a[href='/customers']",
   engagements: "a[href='/engagements']",
   audiences: "a[href='/audiences']",
