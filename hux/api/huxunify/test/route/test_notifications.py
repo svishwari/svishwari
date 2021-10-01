@@ -1,6 +1,4 @@
-"""
-Purpose of this file is to house all the notification api tests
-"""
+"""Purpose of this file is to house all the notification API tests."""
 import json
 from unittest import TestCase, mock
 from http import HTTPStatus
@@ -17,16 +15,10 @@ from huxunify.app import create_app
 
 
 class TestNotificationRoutes(TestCase):
-    """Test Notifications Tests"""
+    """Test Notifications Tests."""
 
     def setUp(self) -> None:
-        """
-        Setup resources before each test
-
-        Args:
-
-        Returns:
-        """
+        """Setup resources before each test."""
 
         # mock request for introspect call
         request_mocker = requests_mock.Mocker()
@@ -84,14 +76,7 @@ class TestNotificationRoutes(TestCase):
         self.addCleanup(mock.patch.stopall)
 
     def test_get_notifications(self):
-        """
-        Test get notifications
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get notifications."""
 
         params = {
             api_c.QUERY_PARAMETER_BATCH_SIZE: api_c.DEFAULT_BATCH_SIZE,
@@ -112,14 +97,7 @@ class TestNotificationRoutes(TestCase):
         )
 
     def test_get_notifications_default_params(self):
-        """
-        Test get notifications failure
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get notifications failure."""
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}",
@@ -134,14 +112,8 @@ class TestNotificationRoutes(TestCase):
         )
 
     def test_get_notifications_bad_params(self):
-        """Test get notifications by setting batch size,
-        batch number to strings.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get notifications by setting batch size, batch number to
+        incorrect values."""
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}?"

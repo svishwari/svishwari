@@ -1,7 +1,5 @@
 # pylint: disable=invalid-name,line-too-long,too-many-lines
-"""
-purpose of this file is housing shared components for tests
-"""
+"""Purpose of this file is housing shared components for tests."""
 from datetime import datetime
 import time
 from http import HTTPStatus
@@ -980,16 +978,15 @@ BATCH_SIZE_BAD_PARAM = "100@"
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False
 ) -> bool:
-    """
-    Validate if the response confirms with the given schema
+    """Validate if the response confirms with the given schema.
 
     Args:
-        schema (Schema): Instance of the Schema to validate against
-        response_json (dict): Response json as dict
-        is_multiple (bool): If response is a collection of objects
+        schema (Schema): Instance of the Schema to validate against.
+        response_json (dict): Response json as dict.
+        is_multiple (bool): If response is a collection of objects.
 
     Returns:
-        (bool): True/False
+        (bool): True/False.
     """
 
     try:

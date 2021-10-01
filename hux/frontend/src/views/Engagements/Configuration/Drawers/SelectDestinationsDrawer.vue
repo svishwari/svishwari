@@ -56,6 +56,7 @@
                 width="100"
                 height="40"
                 :box-shadow="false"
+                data-e2e="destination-select-button"
                 @click="add(item)"
               >
                 Add

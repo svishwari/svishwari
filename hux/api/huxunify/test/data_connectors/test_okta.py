@@ -1,6 +1,4 @@
-"""
-purpose of this file is to house all the okta tests
-"""
+"""Purpose of this file is to house all the okta tests."""
 import unittest
 import json
 from unittest import TestCase
@@ -51,16 +49,11 @@ INVALID_RESPONSE = {"active": False}
 
 
 class OktaTest(TestCase):
-    """
-    Test Okta request methods
-    """
+    """Test Okta request methods."""
 
     def setUp(self) -> None:
-        """Setup tests
+        """Setup tests."""
 
-        Returns:
-
-        """
         self.config = get_config()
         self.introspect_call = (
             f"{self.config.OKTA_ISSUER}"
@@ -98,9 +91,6 @@ class OktaTest(TestCase):
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
 
         # setup the request mock post
@@ -128,9 +118,6 @@ class OktaTest(TestCase):
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
 
         # setup the request mock post
@@ -151,30 +138,26 @@ class OktaTest(TestCase):
         self.assertDictEqual(response, expected_response)
 
     def test_secured_decorator_invalid_header(self):
-        """Test secured decorator with an invalid header.
+        """Test secured decorator with an invalid header."""
 
-        Args:
-
-        Returns:
-
-        """
         invalid_header = (constants.INVALID_AUTH_HEADER, 401)
         with Flask("invalid_test").test_request_context("/"):
 
             @secured()
             def demo_endpoint():
+                """Demo endpoint.
+
+                Returns:
+                    bool: True.
+                """
+
                 return True
 
             self.assertEqual(invalid_header, demo_endpoint())
 
     def test_secured_decorator_valid_header_none_token(self):
-        """Test secured decorator with a valid header, None token.
+        """Test secured decorator with a valid header, None token."""
 
-        Args:
-
-        Returns:
-
-        """
         invalid_header = (constants.INVALID_AUTH_HEADER, 401)
         with Flask("invalid_test").test_request_context(
             "/", headers={"Authorization": None}
@@ -182,18 +165,19 @@ class OktaTest(TestCase):
 
             @secured()
             def demo_endpoint():
+                """Demo endpoint.
+
+                Returns:
+                    bool: True.
+                """
+
                 return True
 
             self.assertEqual(invalid_header, demo_endpoint())
 
     def test_secured_decorator_misspelled_bearer(self):
-        """Test secured decorator with a misspelled bearer
+        """Test secured decorator with a misspelled bearer."""
 
-        Args:
-
-        Returns:
-
-        """
         invalid_header = (constants.INVALID_AUTH_HEADER, 401)
         with Flask("invalid_test").test_request_context(
             "/", headers={"Authorization": "Bearerr "}
@@ -201,19 +185,22 @@ class OktaTest(TestCase):
 
             @secured()
             def demo_endpoint():
+                """Demo endpoint.
+
+                Returns:
+                    bool: True.
+                """
+
                 return True
 
             self.assertEqual(invalid_header, demo_endpoint())
 
     @requests_mock.Mocker()
     def test_secured_decorator_bad_token(self, request_mocker: Mocker):
-        """Test secured decorator with a bad token
+        """Test secured decorator with a bad token.
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
 
         request_mocker.post(self.introspect_call, json=INVALID_RESPONSE)
@@ -225,19 +212,22 @@ class OktaTest(TestCase):
 
             @secured()
             def demo_endpoint():
+                """Demo endpoint.
+
+                Returns:
+                    bool: True.
+                """
+
                 return True
 
             self.assertEqual(invalid_header, demo_endpoint())
 
     @requests_mock.Mocker()
     def test_secured_decorator_valid_token(self, request_mocker: Mocker):
-        """Test secured decorator with a good token
+        """Test secured decorator with a good token.
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
 
         # setup the request mock post
@@ -249,22 +239,28 @@ class OktaTest(TestCase):
 
             @secured()
             def demo_endpoint():
+                """Demo endpoint.
+
+                Returns:
+                    bool: True.
+                """
+
                 return True
 
             # true means the endpoint and token call were successfully passed.
             self.assertTrue(demo_endpoint())
 
     def test_secured_decorator_exists(self):
-        """Test if the secured decorator is attached to the endpoint
-
-        Args:
-
-        Returns:
-
-        """
+        """Test if the secured decorator is attached to the endpoint."""
 
         @secured()
         def demo_endpoint():
+            """Demo endpoint.
+
+            Returns:
+                bool: True.
+            """
+
             return True
 
         self.assertEqual(
@@ -272,33 +268,34 @@ class OktaTest(TestCase):
         )
 
     def test_unsecured_decorator_exists(self):
-        """Test if the secured decorator is not attached to the endpoint
-
-        Args:
-
-        Returns:
-
-        """
+        """Test if the secured decorator is not attached to the endpointy."""
 
         def demo_endpoint():
+            """Demo endpoint.
+
+            Returns:
+                bool: True.
+            """
+
             return True
 
         with self.assertRaises(AttributeError):
             getattr(demo_endpoint, "__wrapped__")
 
     def test_secured_decorator_get_user_id_invalid_header(self):
-        """Test secured decorator with an invalid header to get_user_id.
+        """Test secured decorator with an invalid header to get_user_id."""
 
-        Args:
-
-        Returns:
-
-        """
         invalid_header = (constants.INVALID_AUTH_HEADER, 401)
         with Flask("invalid_test").test_request_context("/"):
 
             @get_user_name()
             def demo_endpoint():
+                """Demo endpoint.
+
+                Returns:
+                    bool: True.
+                """
+
                 return True
 
             self.assertEqual(invalid_header, demo_endpoint())
@@ -307,13 +304,10 @@ class OktaTest(TestCase):
     def test_secured_decorator_valid_token_user_id(
         self, request_mocker: Mocker
     ):
-        """Test secured decorator with a good token to get user id
+        """Test secured decorator with a good token to get user id.
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
 
         # setup the request mock post
@@ -324,10 +318,19 @@ class OktaTest(TestCase):
         ):
 
             @get_user_name()
-            def demo_endpoint(user_name=None):
+            def demo_endpoint(user_name=None) -> str:
+                """Demo endpoint.
+
+                Args:
+                    user_name (str): User name value.
+
+                Returns:
+                    user_name (str): User name value.
+                """
+
                 return user_name
 
-            # true means the endpoint and token call were succesfully passed.
+            # true means the endpoint and token call were successfully passed.
             self.assertIsInstance(demo_endpoint(), str)
 
     @given(access_token=st.one_of(st.text(), st.floats(), st.none()))
@@ -340,10 +343,8 @@ class OktaTest(TestCase):
         Args:
             request_mocker (Mocker): Request mock object.
             access_token (str): hypothesis random data.
-
-        Returns:
-
         """
+
         # run an invalid response (empty)
         # try to break by throwing a bunch of random data into it.
         request_mocker.get(self.user_info_call, json={})
@@ -357,10 +358,8 @@ class OktaTest(TestCase):
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
+
         # run an invalid response (empty)
         # try to break by throwing a bunch of random data into it.
         request_mocker.get(self.user_info_call, json=VALID_RESPONSE)
@@ -384,9 +383,6 @@ class OktaTest(TestCase):
 
         Args:
             random_data (str): hypothesis random data.
-
-        Returns:
-
         """
 
         # should always return a 401
@@ -396,16 +392,13 @@ class OktaTest(TestCase):
     @requests_mock.Mocker()
     def test_get_user_info_invalid_response(self, request_mocker: Mocker):
         """Test get_user_info with an invalid response.
-
         The token allows introspection but gives an invalid response when
-        used with get_user_info
+        used with get_user_info.
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
+
         # valid response after introspection with token
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
         response = okta.introspect_token("access_token")
@@ -421,16 +414,13 @@ class OktaTest(TestCase):
     @requests_mock.Mocker()
     def test_get_user_info_empty_response(self, request_mocker: Mocker):
         """Test get_user_info with an empty response.
-
         The token allows introspection but gives an empty response when
-        used with get_user_info
+        used with get_user_info.
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
+
         # valid response after introspection with token
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
         response = okta.introspect_token("access_token")

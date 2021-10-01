@@ -1,4 +1,4 @@
-"""Notification Schema Tests"""
+"""Notification Schema Tests."""
 from datetime import datetime
 from unittest import TestCase
 from bson import ObjectId
@@ -10,14 +10,11 @@ from huxunify.api.schema.notifications import NotificationSchema
 
 
 class TestNotificationSchema(TestCase):
-    """
-    Test notification schema
-    """
+    """Test Notification related schemas."""
 
     def test_notification_schema(self):
-        """
-        Test notification schema
-        """
+        """Test NotificationSchema."""
+
         current_time = datetime.utcnow()
         doc = dict(
             _id=str(ObjectId()),

@@ -1,6 +1,4 @@
-"""
-Purpose of this file is to house all data sources tests
-"""
+"""Purpose of this file is to house all data sources tests."""
 
 import json
 from http import HTTPStatus
@@ -28,17 +26,10 @@ from huxunify.app import create_app
 
 
 class CdpDataSourcesTest(TestCase):
-    """
-    Test CDP Data Sources CRUD APIs
-    """
+    """Test CDP Data Sources CRUD APIs."""
 
     def setUp(self) -> None:
-        """
-        Setup tests
-
-        Returns:
-
-        """
+        """Setup tests."""
 
         self.data_sources_api_endpoint = (
             f"{t_c.BASE_ENDPOINT}{api_c.CDP_DATA_SOURCES_ENDPOINT}"
@@ -83,14 +74,7 @@ class CdpDataSourcesTest(TestCase):
         )
 
     def test_get_data_source_by_id_valid_id(self):
-        """
-        Test get data source by id from DB
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get data source by id from DB."""
 
         valid_response = self.data_sources[0]
 
@@ -106,14 +90,7 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_all_data_sources_success(self):
-        """
-        Test get all data source from DB
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get all data source from DB."""
         self.request_mocker.stop()
         self.request_mocker.get(
             f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
@@ -143,14 +120,7 @@ class CdpDataSourcesTest(TestCase):
                 self.assertNotIn(api_c.ID, data_source)
 
     def test_delete_data_sources_by_type_success(self):
-        """
-        Test delete data sources by type from DB
-
-        Args:
-
-        Returns:
-
-        """
+        """]Test delete data sources by type from DB."""
 
         data_source_types = ", ".join(
             [data_source[api_c.TYPE] for data_source in self.data_sources]
@@ -170,14 +140,7 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_create_data_sources_valid_params(self):
-        """
-        Test creating new data sources with valid params
-
-        Args:
-
-        Returns:
-
-        """
+        """Test creating new data sources with valid params."""
 
         data_sources = [
             {
@@ -214,14 +177,7 @@ class CdpDataSourcesTest(TestCase):
             self.assertTrue(api_c.IS_ADDED)
 
     def test_get_data_source_by_id_invalid_id(self):
-        """
-        Test get data source with an invalid id
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get data source with an invalid id."""
 
         ds_id = "XYZ"
         valid_response = {
@@ -237,14 +193,7 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_delete_data_sources_by_type_empty_data(self):
-        """
-        Test delete data sources with empty data
-
-        Args:
-
-        Returns:
-
-        """
+        """Test delete data sources with empty data."""
 
         response = self.test_client.delete(
             f"{self.data_sources_api_endpoint}",
@@ -257,14 +206,7 @@ class CdpDataSourcesTest(TestCase):
         )
 
     def test_create_data_source_w_empty_name_string(self):
-        """
-        Test creating data sources with name set as empty string
-
-        Args:
-
-        Returns:
-
-        """
+        """Test creating data sources with name set as empty string."""
 
         data_sources = [
             {
@@ -289,14 +231,7 @@ class CdpDataSourcesTest(TestCase):
         self.assertRaises(ValidationError)
 
     def test_create_data_source_no_inputs(self):
-        """
-        Test creating data source without any inputs
-
-        Args:
-
-        Returns:
-
-        """
+        """Test creating data source without any inputs"""
 
         response = self.test_client.post(
             self.data_sources_api_endpoint,
@@ -308,15 +243,8 @@ class CdpDataSourcesTest(TestCase):
         self.assertRaises(ValidationError)
 
     def test_create_data_source_w_no_values(self):
-        """
-        Test creating data sources with name and category
-        set as empty string
-
-        Args:
-
-        Returns:
-
-        """
+        """Test creating data sources with name and category set as empty
+        string."""
 
         data_sources = [
             {
@@ -341,14 +269,7 @@ class CdpDataSourcesTest(TestCase):
         self.assertRaises(ValidationError)
 
     def test_patch_data_source_valid_params(self) -> None:
-        """
-        Test patching/updating an existing data source with valid params
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test patching/updating an existing data source with valid params."""
 
         valid_data_source = self.data_sources[0]
 
@@ -371,14 +292,7 @@ class CdpDataSourcesTest(TestCase):
             self.assertTrue(t_c.validate_schema(CdpDataSourceSchema(), record))
 
     def test_patch_data_source_invalid_params(self) -> None:
-        """
-        Test patching/updating an existing data source with invalid params
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test patching/updating an existing data source with invalid params."""
 
         valid_data_source = self.data_sources[0]
 
@@ -395,12 +309,8 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_get_data_source_data_feed(self) -> None:
-        """
-        Test get data source data feeds endpoint
+        """Test get data source data feeds endpoint."""
 
-        Returns:
-
-        """
         data_source_type = t_c.DATASOURCE_DATA_FEEDS_RESPONSE[api_c.BODY][0][
             api_c.DATAFEED_DATA_SOURCE_NAME
         ]

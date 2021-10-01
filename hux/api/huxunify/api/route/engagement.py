@@ -3,7 +3,6 @@
 from pathlib import Path
 import zipfile
 from http import HTTPStatus
-from random import uniform
 from typing import Tuple
 from itertools import groupby
 from operator import itemgetter
@@ -189,7 +188,7 @@ class IndividualEngagementSearch(SwaggerView):
                 for destination in audience[db_c.DESTINATIONS]:
                     if db_c.LATEST_DELIVERY in destination:
                         destination[db_c.LATEST_DELIVERY][api_c.MATCH_RATE] = (
-                            round(uniform(0.2, 0.9), 2)
+                            0
                             if destination.get(api_c.IS_AD_PLATFORM, False)
                             and not audience.get(api_c.IS_LOOKALIKE, False)
                             else None

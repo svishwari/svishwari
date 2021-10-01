@@ -1,6 +1,4 @@
-"""
-Purpose of this file is to house all the customers api tests
-"""
+"""Purpose of this file is to house all the customers api tests."""
 import string
 import json
 from unittest import TestCase
@@ -36,16 +34,11 @@ from huxunify.app import create_app
 
 # pylint: disable=R0904
 class TestCustomersOverview(TestCase):
-    """
-    Purpose of this class is to test Customers overview
-    """
+    """Purpose of this class is to test Customers overview."""
 
     def setUp(self):  # pylint: disable=arguments-differ
-        """
-        Sets up Test Client
+        """Sets up Test Client."""
 
-        Returns:
-        """
         self.customers = f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}"
         self.idr = f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}"
 
@@ -68,14 +61,7 @@ class TestCustomersOverview(TestCase):
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
     def test_get_customers(self):
-        """
-        Test get customers
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get customers."""
 
         expected_response = {
             "code": 200,
@@ -127,14 +113,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(customer[api_c.MATCH_CONFIDENCE], 0.97)
 
     def test_get_customer_overview(self):
-        """
-        Test get customers overview
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get customers overview."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -158,14 +137,7 @@ class TestCustomersOverview(TestCase):
         self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)
 
     def test_get_idr_overview(self):
-        """
-        Test get customers idr overview
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get customers idr overview."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -187,14 +159,10 @@ class TestCustomersOverview(TestCase):
 
     @given(customer_id=st.text(alphabet=string.ascii_letters))
     def test_get_customer_by_id(self, customer_id: str):
-        """
-        Test get customer by id
+        """Test get customer by ID.
 
         Args:
-            customer_id (str): customer id.
-
-        Returns:
-
+            customer_id (str): HUX ID of a customer.
         """
 
         if not customer_id:
@@ -242,14 +210,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(data[api_c.INSIGHTS][api_c.AGE], api_c.REDACTED)
 
     def test_post_customer_overview_by_attributes(self) -> None:
-        """
-        Test get customer over by attributes
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customer over by attributes."""
 
         filter_attributes = {
             "filters": {
@@ -284,9 +245,7 @@ class TestCustomersOverview(TestCase):
         self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)
 
     def test_get_idr_data_feeds(self):
-        """
-        Test get IDR Datafeeds
-        """
+        """Test get IDR Datafeeds."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -310,14 +269,8 @@ class TestCustomersOverview(TestCase):
             self.assertIn("new_ids_generated", datafeed)
 
     def test_get_idr_data_feed_details(self) -> None:
-        """
-        Test get idr datafeed details
+        """Test get idr datafeed details."""
 
-        Args:
-
-        Returns:
-
-        """
         datafeed_id = 1
         self.request_mocker.stop()
         self.request_mocker.get(
@@ -338,14 +291,7 @@ class TestCustomersOverview(TestCase):
         self.assertFalse(DataFeedDetailsSchema().validate(response.json))
 
     def test_get_customers_geo(self):
-        """
-        Test get customers geo insights
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get customers geo insights."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -365,14 +311,7 @@ class TestCustomersOverview(TestCase):
         )
 
     def test_get_customers_demographics(self):
-        """
-        Test get customers demographical insights
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get customers demographic insights."""
 
         start_date = "2021-04-01"
         end_date = "2021-08-01"
@@ -427,14 +366,8 @@ class TestCustomersOverview(TestCase):
         )
 
     def test_get_idr_trends(self):
-        """
-        Test get matching trends.
+        """Test get matching trends."""
 
-        Args:
-
-        Returns:
-
-        """
         self.request_mocker.stop()
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/identity/id-count-by"
@@ -455,14 +388,12 @@ class TestCustomersOverview(TestCase):
 
     @given(customer_id=st.text(alphabet=string.ascii_letters))
     def test_customer_events(self, customer_id: str):
-        """
-        Test customer events for a hux-id
+        """Test customer events for a hux-id.
 
         Args:
             customer_id (str): HUX ID of a customer.
-        Returns:
-
         """
+
         if not customer_id:
             return
         filter_attributes = {
@@ -492,14 +423,7 @@ class TestCustomersOverview(TestCase):
         )
 
     def test_total_customer_insights_success(self) -> None:
-        """
-        Test get total customer insights success response
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get total customer insights success response."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -521,13 +445,7 @@ class TestCustomersOverview(TestCase):
         )
 
     def test_customers_insights_cities_success(self) -> None:
-        """Test get customers insights by cities
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customers insights by cities."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -553,13 +471,7 @@ class TestCustomersOverview(TestCase):
         )
 
     def test_customers_insights_states_success(self) -> None:
-        """Test get customers insights by states
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customers insights by states."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -585,13 +497,7 @@ class TestCustomersOverview(TestCase):
         )
 
     def test_customers_insights_countries_success(self) -> None:
-        """Test get customers insights by countries
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customers insights by countries."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -617,13 +523,7 @@ class TestCustomersOverview(TestCase):
         )
 
     def test_get_customer_overview_dependency_failure(self) -> None:
-        """Test get customer overview 424 dependency failure.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customer overview 424 dependency failure."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -640,13 +540,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_get_customers_dependency_failure(self) -> None:
-        """Test get customers 424 dependency failure.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customers 424 dependency failure."""
 
         self.request_mocker.stop()
         self.request_mocker.get(
@@ -666,13 +560,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_get_customer_by_id_dependency_failure(self) -> None:
-        """Test get customer by ID 424 dependency failure.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customer by ID 424 dependency failure."""
 
         self.request_mocker.stop()
         self.request_mocker.get(
@@ -689,13 +577,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_get_idr_overview_dependency_failure(self) -> None:
-        """Test get idr overview 424 dependency failure.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get idr overview 424 dependency failure."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -712,13 +594,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_get_customer_events_dependency_failure(self) -> None:
-        """Test get customer events 424 dependency failure.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customer events 424 dependency failure."""
 
         filter_attributes = {
             "start_date": "2021-01-01",
@@ -741,13 +617,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_get_customers_geo_dependency_failure(self) -> None:
-        """Test get customer geographic 424 dependency failure.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customer geographic 424 dependency failure."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -764,13 +634,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_customers_insights_countries_dependency_failure(self) -> None:
-        """Test get customer insights countries 424 dependency failure.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customer insights countries 424 dependency failure."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -788,13 +652,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_total_customer_insights_dependency_failure(self) -> None:
-        """Test get total customer insights 424 dependency failure.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get total customer insights 424 dependency failure."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -811,13 +669,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_customers_insights_cities_dependency_failure(self) -> None:
-        """Test get customers insights cities 424 dependency failure.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customers insights cities 424 dependency failure."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -835,13 +687,7 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
 
     def test_get_customers_demographics_dependency_failure(self) -> None:
-        """Test get customer demographics 424 dependency failure.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customer demographics 424 dependency failure."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
