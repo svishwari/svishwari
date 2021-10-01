@@ -26,9 +26,9 @@
           :deliveries-key="deliveriesKey"
           :section-type="sectionType"
           :destination-menu-items="destinationActions"
+          data-e2e="status-list"
           @onSectionAction="$emit('onOverviewSectionAction', $event)"
           @onDestinationAction="$emit('onOverviewDestinationAction', $event)"
-          data-e2e="status-list"
         >
           <template #empty-destinations>
             <slot name="empty-deliveries" :sectionId="item.id" />

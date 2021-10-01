@@ -279,8 +279,8 @@
                     text-decoration-none
                     body-2
                   "
-                  @click="openAttachEngagementDrawer()"
                   data-e2e="add-engagement"
+                  @click="openAttachEngagementDrawer()"
                 >
                   <icon
                     type="engagements"
@@ -359,8 +359,8 @@
             :icon="item.icon"
             :height="80"
             :interactable="item.action ? true : false"
-            @click="item.action ? onClick(item.action) : ''"
             data-e2e="audience-overview"
+            @click="item.action ? onClick(item.action) : ''"
           >
             <template #subtitle-extended>
               <tooltip>
@@ -563,8 +563,8 @@
     <delivery-history-drawer
       :audience-id="audienceId"
       :toggle="showDeliveryHistoryDrawer"
-      @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
       data-e2e="delivery-history-drawer"
+      @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
     />
 
     <geo-drawer
@@ -1024,6 +1024,7 @@ export default {
 
     /**
      *
+     
      Formatting the values to the desired format using predefined application filters.
      *
      * @param {object} item item

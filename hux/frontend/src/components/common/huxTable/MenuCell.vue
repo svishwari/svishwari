@@ -2,11 +2,7 @@
   <v-row class="menu-cell-wrapper">
     <v-col class="d-flex pr-0">
       <slot name="expand-icon"></slot>
-      <router-link
-        :to="routePath"
-        class="text-decoration-none"
-        append
-      >
+      <router-link :to="routePath" class="text-decoration-none" append>
         <tooltip>
           <template slot="label-content">
             <span class="primary--text ellipsis" :class="labelClass">
