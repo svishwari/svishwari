@@ -419,14 +419,10 @@ class AudienceGetView(SwaggerView):
             database, [audience[db_c.ID]]
         )
 
-        # find the matched audience destinations
-        matched_destinations = [
-            x for x in audience_destinations if x[db_c.ID] == audience[db_c.ID]
-        ]
-        # set the unique destinations
+        # check if any audiences returned, if so, set the destinations.
         audience[db_c.DESTINATIONS] = (
-            matched_destinations[0].get(db_c.DESTINATIONS, [])
-            if matched_destinations
+            audience_destinations[0].get(db_c.DESTINATIONS, [])
+            if audience_destinations
             else []
         )
 
