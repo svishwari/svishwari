@@ -40,6 +40,7 @@
       sort-column="update_time"
       sort-desc="false"
       nested
+      data-e2e="engagement-table"
     >
       <template #item-row="{ item, expandFunc, isExpanded }">
         <tr :class="{ 'expanded-row': isExpanded }">
@@ -67,6 +68,7 @@
                   <v-icon
                     v-if="item.audiences.length > 0"
                     :class="{ 'normal-icon': isExpanded }"
+                    data-e2e="expand-engagement"
                     @click="expandFunc(!isExpanded)"
                   >
                     mdi-chevron-right
@@ -207,6 +209,7 @@
             class="expanded-table"
             view-height="auto"
             nested
+            data-e2e="audience-table"
           >
             <template #item-row="{ item, expandFunc, isExpanded }">
               <tr :class="{ 'expanded-row': isExpanded }">
@@ -236,6 +239,7 @@
                         <v-icon
                           v-if="item.destinations.length > 0"
                           :class="{ 'normal-icon': isExpanded }"
+                          data-e2e="expand-audience"
                           @click="expandFunc(!isExpanded)"
                         >
                           mdi-chevron-right
@@ -307,7 +311,9 @@
                   <div v-if="header.value == 'last_delivered'">
                     <tooltip>
                       <template #label-content>
-                        {{ item[header.value] | Date("relative") | Empty }}
+                        <span data-e2e="last-delivered">{{
+                          item[header.value] | Date("relative") | Empty
+                        }}</span>
                       </template>
                       <template #hover-content>
                         <div>
