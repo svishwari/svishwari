@@ -33,7 +33,7 @@ def get_all_engagement_audience_destinations(
     # check if any audience ids
     match_statement = {db_c.DELETED: False}
     if audience_ids:
-        match_statement[db_c.ID] = {"$in": audience_ids}
+        match_statement["audiences.id"] = {"$in": audience_ids}
 
     # use the audience pipeline to aggregate and get all unique
     # delivery platforms per audience.
