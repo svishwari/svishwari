@@ -46,12 +46,12 @@ describe("Orchestration > Engagement > Engagement Dashboard", () => {
   })
 
   it("should be able to view the audience performance data for digital advertising", () => {
-    // after login land in the overview page
+    // By default Digital Advertising tab is active
     cy.get(selector.engagement.audiencePerformance).its("length").should("gt", 0)
   })
 
   it("should be able to view the audience performance data for email marketing", () => {
-    // after login land in the overview page
+    // click on Email Marketing tab
     cy.get(selector.engagement.emailMarketing).click()
     cy.get(selector.engagement.emailData).its("length").should("gt", 0)
   })
