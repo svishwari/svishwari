@@ -23,7 +23,7 @@ from huxunify.app import create_app
 from huxunify.api.data_connectors.aws import parameter_store
 
 
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,too-many-public-methods
 class TestDeliveryRoutes(TestCase):
     """Test Delivery Endpoints"""
 
@@ -567,7 +567,13 @@ class TestDeliveryRoutes(TestCase):
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
-    def test_get_audience_delivery_history_engagement_filer(self):
+    def test_get_audience_delivery_history_engagement_filter(self):
+        """Test get delivery history API with engagement ids as params.
+
+        Args:
+
+        Returns:
+        """
         audience_id = self.audiences[0][db_c.ID]
 
         response = self.app.get(
@@ -601,7 +607,13 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
 
-    def test_get_engagement_delivery_history_audience_filer(self):
+    def test_get_engagement_delivery_history_audience_filter(self):
+        """Test get delivery history API with audience ids as params.
+
+        Args:
+
+        Returns:
+        """
         engagement_id = self.engagement_ids[0]
         audience_ids = [str(audience[db_c.ID]) for audience in self.audiences]
 
