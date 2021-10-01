@@ -94,7 +94,8 @@ class TestUserRoutes(TestCase):
         """Tests adding engagement as a user favorite."""
 
         endpoint = (
-            f"{t_c.BASE_ENDPOINT}/"
+            f"{t_c.BASE_ENDPOINT}"
+            f"{api_c.USER_ENDPOINT}/"
             f"{db_c.ENGAGEMENTS}/"
             f"{self.engagement_id}/"
             f"{api_c.FAVORITE}"
@@ -112,7 +113,8 @@ class TestUserRoutes(TestCase):
         """Tests adding audience as a user favorite."""
 
         endpoint = (
-            f"{t_c.BASE_ENDPOINT}/"
+            f"{t_c.BASE_ENDPOINT}"
+            f"{api_c.USER_ENDPOINT}/"
             f"{db_c.AUDIENCES}/"
             f"{self.audience_id}/"
             f"{api_c.FAVORITE}"
@@ -133,7 +135,8 @@ class TestUserRoutes(TestCase):
         invalid_audience_id = self.engagement_id
 
         endpoint = (
-            f"{t_c.BASE_ENDPOINT}/"
+            f"{t_c.BASE_ENDPOINT}"
+            f"{api_c.USER_ENDPOINT}/"
             f"{db_c.AUDIENCES}/"
             f"{invalid_audience_id}/"
             f"{api_c.FAVORITE}"
@@ -156,7 +159,8 @@ class TestUserRoutes(TestCase):
         """Tests deleting/un-favorite an audience."""
 
         endpoint = (
-            f"{t_c.BASE_ENDPOINT}/"
+            f"{t_c.BASE_ENDPOINT}"
+            f"{api_c.USER_ENDPOINT}/"
             f"{db_c.AUDIENCES}/"
             f"{self.audience_id}/"
             f"{api_c.FAVORITE}"
@@ -180,7 +184,8 @@ class TestUserRoutes(TestCase):
         """Tests deleting/un-favorite an audience not in favorites."""
 
         endpoint = (
-            f"{t_c.BASE_ENDPOINT}/"
+            f"{t_c.BASE_ENDPOINT}"
+            f"{api_c.USER_ENDPOINT}/"
             f"{db_c.AUDIENCES}/"
             f"{self.audience_id}/"
             f"{api_c.FAVORITE}"
