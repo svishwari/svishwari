@@ -1,5 +1,5 @@
 ---
-test_name: Test get data sources API
+test_name: Test get added data sources API
 
 strict:
   - json:list_any_order
@@ -13,6 +13,8 @@ stages:
     # Define the request to be made...
     request:
       url: "{host}/{version}/data-sources"
+      params:
+        only_added: true
       method: GET
       headers:
         content-type: application/json
@@ -29,14 +31,11 @@ stages:
         - id: !anystr
           type: !anystr
           name: !anystr
-          category: !anything
           status: !anystr
-          feed_count: !anyint
           is_added: !anybool
-          is_enabled: !anybool
 
 ---
-test_name: Test get individual data-source by data_source_id
+test_name: Test get all data sources API
 
 strict:
   - json:list_any_order
@@ -45,11 +44,48 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: get data-sources to save data_source_id
+  - name: test get data-sources API
 
     # Define the request to be made...
     request:
       url: "{host}/{version}/data-sources"
+      params:
+        only_added: false
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        !anylist
+        - type: !anystr
+          name: !anystr
+          status: !anystr
+          is_added: !anybool
+
+---
+test_name: Test get individual added data-source by data_source_id
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: get data-sources from unified database to save data_source_id
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/data-sources"
+      params:
+        only_added: true
       method: GET
       headers:
         content-type: application/json
@@ -66,11 +102,8 @@ stages:
         - id: !anystr
           type: !anystr
           name: !anystr
-          category: !anything
           status: !anystr
-          feed_count: !anyint
           is_added: !anybool
-          is_enabled: !anybool
       save:
         json:
           first_data_source: "[0]"
@@ -95,11 +128,8 @@ stages:
         id: !anystr
         type: !anystr
         name: !anystr
-        category: !anything
         status: !anystr
-        feed_count: !anyint
         is_added: !anybool
-        is_enabled: !anybool
 
 ---
 test_name: Test get individual data-source by invalid data_source_id
@@ -163,21 +193,21 @@ stages:
       json:
         - id: !anystr
           name: !anystr
-          category: !anything
           status: !anystr
           type: !anystr
-          feed_count: !anyint
           is_added: !anybool
       save:
         json:
-          created_data_source_id: "[0].id"
+          created_data_source_type: "[0].type"
 
   - name: test delete data-sources delete newly created data source
 
     # Define the request to be made...
     request:
-      url: "{host}/{version}/data-sources/{created_data_source_id}"
+      url: "{host}/{version}/data-sources"
       method: DELETE
+      params:
+        datasources: "{created_data_source_type}"
       headers:
         content-type: application/json
         Authorization: "Bearer {token}"
@@ -189,10 +219,10 @@ stages:
       headers:
         content-type: application/json
       json:
-        message: !re_search "SUCCESS"
+        message: !re_search "Success"
 
 ---
-test_name: Test delete data-source by invalid data_source_id
+test_name: Test patch/update individual data-sources in unified database by data_source_id
 
 strict:
   - json:list_any_order
@@ -201,40 +231,13 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: test delete data-source by invalid data_source_id
-
-    # Define the request to be made...
-    request:
-      url: "{host}/{version}/data-sources/XYZ"
-      method: DELETE
-      headers:
-        content-type: application/json
-        Authorization: "Bearer {token}"
-
-    # ...and the expected response code and body
-    response:
-      strict: false
-      status_code: 400
-      headers:
-        content-type: application/json
-      json:
-        message: !re_search "Invalid"
-
----
-test_name: Test patch/update individual data-sources by data_source_id
-
-strict:
-  - json:list_any_order
-
-includes:
-  - !include common.yaml
-
-stages:
-  - name: get data-sources to save data_source_ids
+  - name: get data-sources to save data_source_ids of data sources added to unified database
 
     # Define the request to be made...
     request:
       url: "{host}/{version}/data-sources"
+      params:
+        only_added: true
       method: GET
       headers:
         content-type: application/json
@@ -251,11 +254,8 @@ stages:
         - id: !anystr
           type: !anystr
           name: !anystr
-          category: !anything
           status: !anystr
-          feed_count: !anyint
           is_added: !anybool
-          is_enabled: !anybool
       save:
         json:
           first_data_source: "[0]"
@@ -287,11 +287,8 @@ stages:
         - id: !anystr
           type: !anystr
           name: !anystr
-          category: !anything
           status: !anystr
-          feed_count: !anyint
           is_added: !anybool
-          is_enabled: !anybool
 
 ---
 test_name: Test patch/update individual data-sources by invalid data_source_id
