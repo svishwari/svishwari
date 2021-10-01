@@ -513,6 +513,14 @@ class EngagementDeliverHistoryView(SwaggerView):
             "example": "60b9601a6021710aa146df30,60b9601c6021710aa146df36",
             "required": False,
         },
+        {
+            "name": api_c.AUDIENCES,
+            "in": "query",
+            "type": "string",
+            "description": "Audience Ids to be filtered.",
+            "example": "60b9601a6021710aa146df30,60b9601c6021710aa146df36",
+            "required": False,
+        },
     ]
 
     responses = {
@@ -563,6 +571,7 @@ class EngagementDeliverHistoryView(SwaggerView):
             }, HTTPStatus.NOT_FOUND
 
         destination_ids = request.args.get(api_c.DESTINATIONS)
+        audience_ids = request.args.get(api_c.AUDIENCES)
 
         if destination_ids:
             destination_ids = [
@@ -570,11 +579,17 @@ class EngagementDeliverHistoryView(SwaggerView):
                 for destination in destination_ids.replace(" ", "").split(",")
             ]
 
+        if audience_ids:
+            audience_ids = [
+                ObjectId(audience)
+                for audience in audience_ids.replace(" ", "").split(",")
+            ]
         delivery_jobs = (
             delivery_platform_management.get_delivery_jobs_using_metadata(
                 database,
                 engagement_id=engagement_id,
                 delivery_platform_ids=destination_ids,
+                audience_ids=audience_ids,
             )
         )
 
@@ -661,6 +676,14 @@ class AudienceDeliverHistoryView(SwaggerView):
             "example": "60b9601a6021710aa146df30,60b9601c6021710aa146df36",
             "required": False,
         },
+        {
+            "name": api_c.ENGAGEMENT_TAG,
+            "in": "query",
+            "type": "string",
+            "description": "Engagement Ids to be filtered.",
+            "example": "60b9601a6021710aa146df30,60b9601c6021710aa146df36",
+            "required": False,
+        },
     ]
 
     responses = {
@@ -707,6 +730,7 @@ class AudienceDeliverHistoryView(SwaggerView):
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         destination_ids = request.args.get(api_c.DESTINATIONS)
+        engagement_ids = request.args.get(api_c.ENGAGEMENT_TAG)
 
         if destination_ids:
             destination_ids = [
@@ -714,11 +738,18 @@ class AudienceDeliverHistoryView(SwaggerView):
                 for destination in destination_ids.replace(" ", "").split(",")
             ]
 
+        if engagement_ids:
+            engagement_ids = [
+                ObjectId(engagement)
+                for engagement in engagement_ids.replace(" ", "").split(",")
+            ]
+
         delivery_jobs = (
             delivery_platform_management.get_delivery_jobs_using_metadata(
                 database,
                 audience_id=audience_id,
                 delivery_platform_ids=destination_ids,
+                engagement_ids=engagement_ids,
             )
         )
 

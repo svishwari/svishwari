@@ -567,6 +567,17 @@ class TestDeliveryRoutes(TestCase):
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    def test_get_audience_delivery_history_engagement_filer(self):
+        audience_id = self.audiences[0][db_c.ID]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
+            f"{api_c.DELIVERY_HISTORY}?{api_c.ENGAGEMENT_TAG}="
+            f"{','.join(self.engagement_ids)}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
     def test_get_engagement_delivery_history_by_id_non_existent_id(self):
         """
         Test get delivery history API with non-existent id
@@ -589,6 +600,18 @@ class TestDeliveryRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    def test_get_engagement_delivery_history_audience_filer(self):
+        engagement_id = self.engagement_ids[0]
+        audience_ids = [str(audience[db_c.ID]) for audience in self.audiences]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.DELIVERY_HISTORY}?{api_c.AUDIENCES}="
+            f"{','.join(audience_ids)}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_get_audience_delivery_history_invalid_id(self):
         """
