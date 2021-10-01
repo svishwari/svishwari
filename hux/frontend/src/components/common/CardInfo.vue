@@ -81,6 +81,8 @@ export default {
 <style lang="scss" scoped>
 .card-info-wrapper {
   .v-card__title {
+    // background-color: red;
+    background-color: var(--v-primary-lighten1) !important;
     margin-bottom: 10px;
   }
 }
