@@ -625,15 +625,6 @@ class DestinationDataExtView(SwaggerView):
             get_db_client(), destination_id
         )
 
-        if not destination:
-            logger.error(
-                "Destination does not exist: %s",
-                destination_id,
-            )
-            return {
-                "message": api_c.DESTINATION_NOT_FOUND,
-            }, HTTPStatus.NOT_FOUND
-
         if api_c.AUTHENTICATION_DETAILS not in destination:
             logger.error(
                 "Destination authentication for %s failed since authentication "
@@ -755,15 +746,6 @@ class DestinationDataExtPostView(SwaggerView):
         destination = destination_management.get_delivery_platform(
             database, destination_id
         )
-
-        if not destination:
-            logger.error(
-                "Destination does not exist: %s",
-                destination_id,
-            )
-            return {
-                "message": api_c.DESTINATION_NOT_FOUND,
-            }, HTTPStatus.NOT_FOUND
 
         if api_c.AUTHENTICATION_DETAILS not in destination:
             logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
