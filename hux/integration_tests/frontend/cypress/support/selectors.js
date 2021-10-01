@@ -31,21 +31,6 @@ export default {
     chart: "[data-e2e='overview-chart']",
   },
 
-  engagement: {
-    exitDrawer: "[data-e2e='click-outside']",
-    engagementList: "[data-e2e='engagement-list']",
-    overviewSummary: "[data-e2e='overview-summary']",
-    deliveryScheduleMetric: "[data-e2e='delivery-schedule-metric']",
-    updatedMetric: "[data-e2e='updated-metric']",
-    createdMetric: "[data-e2e='created-metric']",
-    deliveryHistory: "[data-e2e='deliver-history']",
-    deliveryHistoryItems: "[data-e2e='delivery-list-items']",
-    audiencePerformance: "[data-e2e='audience-performance']",
-    emailMarketing: "[data-e2e='email-marketing']",
-    emailData: "[data-e2e='email-data']",
-    engagementAudienceList: "[data-e2e='audience-list']"
-  },
-
   // connections
   datasources: "[data-e2e='dataSourcesList']",
   destinations: "[data-e2e='destinationsList']",
@@ -84,6 +69,17 @@ export default {
     selectDestination: "[data-e2e='destination-select-button']",
     exitDrawer: "[data-e2e='click-outside']",
     exitDataExtensionDrawer: "[data-e2e='destination-added']",
+    engagementList: "[data-e2e='engagement-list']",
+    overviewSummary: "[data-e2e='overview-summary']",
+    deliveryScheduleMetric: "[data-e2e='delivery-schedule-metric']",
+    updatedMetric: "[data-e2e='updated-metric']",
+    createdMetric: "[data-e2e='created-metric']",
+    deliveryHistory: "[data-e2e='deliver-history']",
+    deliveryHistoryItems: "[data-e2e='delivery-list-items']",
+    audiencePerformance: "[data-e2e='audience-performance']",
+    emailMarketing: "[data-e2e='email-marketing']",
+    emailData: "[data-e2e='email-data']",
+    engagementAudienceList: "[data-e2e='audience-list']"
   },
 
   //Customer Profiles
