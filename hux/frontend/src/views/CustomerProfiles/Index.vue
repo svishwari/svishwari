@@ -633,7 +633,9 @@ export default {
         this.primaryItems[5].value = "numeric"
         this.primaryItems[6].subtitle = this.overview.total_household_ids
         this.primaryItems[6].value = "numeric"
-        this.primaryItems[7].subtitle = this.overview.updated
+        this.primaryItems[7].subtitle = this.getUpdatedDateTime(
+          this.overview.updated
+        )
       }
     },
     getUpdatedDateTime(value) {
