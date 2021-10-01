@@ -14,9 +14,9 @@ from huxunifylib.database import constants as db_c
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
     get_data_source,
-    create_data_source,
     delete_data_source,
     update_data_sources,
+    bulk_write_data_sources,
 )
 
 from huxunify.api import constants as api_c
@@ -189,9 +189,11 @@ class IndividualDataSourceSearch(SwaggerView):
 
 
 @add_view_to_blueprint(
-    cdp_data_sources_bp, api_c.CDP_DATA_SOURCES_ENDPOINT, "CreateCdpDataSource"
+    cdp_data_sources_bp,
+    api_c.CDP_DATA_SOURCES_ENDPOINT,
+    "CreateCdpDataSources",
 )
-class CreateCdpDataSource(SwaggerView):
+class CreateCdpDataSources(SwaggerView):
     """Create new CDP data source class."""
 
     parameters = [
@@ -200,47 +202,49 @@ class CreateCdpDataSource(SwaggerView):
             "in": "body",
             "type": "object",
             "description": api_c.CDP_DATA_SOURCE_DESCRIPTION,
-            "example": {
-                api_c.CDP_DATA_SOURCE_NAME: "Facebook",
-                api_c.CDP_DATA_SOURCE_CATEGORY: "Web Events",
-            },
-            api_c.CDP_DATA_SOURCE_NAME: api_c.CDP_DATA_SOURCE_NAME_DESCRIPTION,
-            api_c.CDP_DATA_SOURCE_CATEGORY: api_c.CDP_DATA_SOURCE_CATEGORY_DESCRIPTION,
+            "example": [
+                {
+                    api_c.NAME: "Data source ",
+                    api_c.TYPE: "dataSource",
+                    api_c.STATUS: api_c.STATUS_ACTIVE,
+                }
+            ],
         }
     ]
     responses = {
         HTTPStatus.OK.value: {
-            "description": "CDP data source created.",
-            "schema": CdpDataSourceSchema,
+            "description": "CDP data sources created.",
+            "schema": {"type": "array", "items": CdpDataSourceSchema},
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to create CDP data source",
+            "description": "Failed to create CDP data sources",
         },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @api_error_handler()
-    def post(self) -> Tuple[str, int]:
-        """Creates a new CDP data source.
+    def post(self) -> Tuple[list, int]:
+        """Creates new CDP data sources.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[str, int]: ID of CDP Data source, HTTP status code.
+            Tuple[list, int]: List of CDP Data sources created, HTTP status code.
         """
 
-        body = CdpDataSourcePostSchema().load(request.get_json())
-        database = get_db_client()
-
         return (
-            CdpDataSourceSchema().dump(
-                create_data_source(
-                    database=database,
-                    name=body[api_c.CDP_DATA_SOURCE_NAME],
-                    category=body[api_c.CDP_DATA_SOURCE_CATEGORY],
+            jsonify(
+                CdpDataSourceSchema().dump(
+                    bulk_write_data_sources(
+                        database=get_db_client(),
+                        data_sources=CdpDataSourcePostSchema().load(
+                            request.get_json(), many=True
+                        ),
+                    ),
+                    many=True,
                 )
             ),
             HTTPStatus.OK,

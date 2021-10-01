@@ -150,8 +150,9 @@ stages:
         content-type: application/json
         Authorization: "Bearer {token}"
       json:
-        name: "tavern"
-        category: "test"
+        - name: "tavern"
+          type: "test"
+          status: "Active"
 
     # ...and the expected response code and body
     response:
@@ -160,16 +161,16 @@ stages:
       headers:
         content-type: application/json
       json:
-        id: !anystr
-        name: !anystr
-        category: !anything
-        status: !anystr
-        feed_count: !anyint
-        is_added: !anybool
-        is_enabled: !anybool
+        - id: !anystr
+          name: !anystr
+          category: !anything
+          status: !anystr
+          type: !anystr
+          feed_count: !anyint
+          is_added: !anybool
       save:
         json:
-          created_data_source_id: id
+          created_data_source_id: "[0].id"
 
   - name: test delete data-sources delete newly created data source
 

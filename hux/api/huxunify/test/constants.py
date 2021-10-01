@@ -56,6 +56,13 @@ USER_INFO_CALL = f"{TEST_CONFIG.OKTA_ISSUER}/oauth2/v1/userinfo"
 CDM_HEALTHCHECK_CALL = f"{TEST_CONFIG.CDP_SERVICE}/healthcheck"
 CUSTOMER_PROFILE_API = f"{TEST_CONFIG.CDP_SERVICE}"
 
+HUX = "HUX"
+CDP_CUSTOMER_PROFILE = "CDP_CUSTOMER_PROFILE"
+CONTRACTS_FOLDER = "contracts"
+CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT = (
+    "/customer-profiles/insights/count-by-state"
+)
+
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
     "status": "success",
@@ -759,6 +766,14 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
     },
 }
 
+DATASOURCES_RESPONSE = {
+    "code": 200,
+    "message": "ok",
+    "body": [
+        {"name": "dataSource", "label": "Data Source", "status": "Active"}
+    ],
+}
+
 DATASOURCE_DATA_FEEDS_RESPONSE = {
     "code": 200,
     "message": "ok",
@@ -937,6 +952,9 @@ DAILY_SCHEDULE_INVALID = {
     api_c.MINUTE: 400,
     api_c.PERIOD: api_c.PM,
 }
+
+BATCH_NUMBER_BAD_PARAM = "12a"
+BATCH_SIZE_BAD_PARAM = "100@"
 
 
 def validate_schema(

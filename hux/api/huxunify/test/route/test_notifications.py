@@ -133,6 +133,28 @@ class TestNotificationRoutes(TestCase):
             self.notifications, response.json[api_c.NOTIFICATIONS_TAG]
         )
 
+    def test_get_notifications_bad_params(self):
+        """Test get notifications by setting batch size,
+        batch number to strings.
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}?"
+            f"{api_c.QUERY_PARAMETER_BATCH_SIZE}="
+            f"{t_c.BATCH_SIZE_BAD_PARAM}&"
+            f"{api_c.QUERY_PARAMETER_SORT_ORDER}="
+            f"{db_c.PAGINATION_DESCENDING}&"
+            f"{api_c.QUERY_PARAMETER_BATCH_NUMBER}={t_c.BATCH_NUMBER_BAD_PARAM}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
     def test_get_notifications_stream(self):
         """Test streaming notifications."""
 

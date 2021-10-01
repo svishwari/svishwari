@@ -4,3 +4,4 @@ COPY package*.json /app/
 RUN npm ci
 RUN $(npm bin)/cypress verify
 COPY . /app
+CMD ["npm", "run", "test"]

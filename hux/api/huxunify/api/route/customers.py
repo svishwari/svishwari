@@ -188,6 +188,11 @@ class CustomerPostOverview(SwaggerView):
         token_response = get_token_from_request(request)
         customers = get_customers_overview(token_response[0], request.json)
 
+        customers = {
+            overview_key: customers.get(overview_key) or 0
+            for overview_key in customers
+        }
+
         return (
             CustomerOverviewSchema().dump(customers),
             HTTPStatus.OK,
@@ -846,21 +851,25 @@ class CustomerEvents(SwaggerView):
                 HTTP status code.
         """
 
-        start_date = request.json.get(
-            api_c.START_DATE,
-            datetime.strftime(
-                datetime.utcnow().date() - relativedelta(months=6),
-                api_c.DEFAULT_DATE_FORMAT,
-            ),
+        start_date = datetime.strftime(
+            datetime.utcnow().date() - relativedelta(months=6),
+            api_c.DEFAULT_DATE_FORMAT,
         )
-        end_date = request.json.get(
-            api_c.END_DATE,
-            datetime.strftime(
-                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
-            ),
+        end_date = datetime.strftime(
+            datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
         )
 
-        Validation().validate_date_range(start_date, end_date)
+        if request.json:
+            start_date = request.json.get(
+                api_c.START_DATE,
+                start_date,
+            )
+            end_date = request.json.get(
+                api_c.END_DATE,
+                end_date,
+            )
+
+            Validation().validate_date_range(start_date, end_date)
 
         token_response = get_token_from_request(request)
         return (
