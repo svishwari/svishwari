@@ -50,6 +50,8 @@ stages:
     # Define the request to be made...
     request:
       url: "{host}/{version}/data-sources"
+      params:
+        only_added: true
       method: GET
       headers:
         content-type: application/json
@@ -66,11 +68,9 @@ stages:
         - id: !anystr
           type: !anystr
           name: !anystr
-          category: !anything
           status: !anystr
           feed_count: !anyint
           is_added: !anybool
-          is_enabled: !anybool
       save:
         json:
           first_data_source: "[0]"
@@ -95,11 +95,9 @@ stages:
         id: !anystr
         type: !anystr
         name: !anystr
-        category: !anything
         status: !anystr
         feed_count: !anyint
         is_added: !anybool
-        is_enabled: !anybool
 
 ---
 test_name: Test get individual data-source by invalid data_source_id
