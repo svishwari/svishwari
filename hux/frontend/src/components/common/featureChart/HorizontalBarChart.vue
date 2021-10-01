@@ -206,6 +206,7 @@ export default {
         .attr("width", (d) => x(d.score))
         .attr("height", y.bandwidth())
         .attr("fill", "#93d8f2")
+        .attr("class", "bar")
         .on("mouseover", (d) => applyHoverEffects(d))
         .on("mouseout", () => removeHoverEffects())
 
