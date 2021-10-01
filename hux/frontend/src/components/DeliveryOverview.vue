@@ -28,6 +28,7 @@
           :destination-menu-items="destinationActions"
           @onSectionAction="$emit('onOverviewSectionAction', $event)"
           @onDestinationAction="$emit('onOverviewDestinationAction', $event)"
+          data-e2e="audience-list"
         >
           <template #empty-destinations>
             <slot name="empty-deliveries" :sectionId="item.id" />

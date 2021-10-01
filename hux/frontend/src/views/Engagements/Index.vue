@@ -62,6 +62,7 @@
                 route-name="EngagementDashboard"
                 :route-param="item['id']"
                 :data="item"
+                data-e2e="engagement-list"
               >
                 <template #expand-icon>
                   <v-icon

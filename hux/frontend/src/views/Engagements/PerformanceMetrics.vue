@@ -8,6 +8,7 @@
           class="pa-2 mr-3"
           color
           @click="$emit('fetchMetrics', 'ads')"
+          data-e2e="digital-advertising"
         >
           Digital Advertising
         </v-tab>
@@ -15,6 +16,7 @@
           key="email"
           class="text-h5"
           @click="$emit('fetchMetrics', 'email')"
+          data-e2e="email-marketing"
         >
           Email Marketing
         </v-tab>
@@ -55,6 +57,7 @@
           :engagement-id="engagementId"
           type="ads"
           @onUpdateCampaignMappings="$emit('fetchMetrics', 'ads')"
+          data-e2e="audience-performance"
         />
       </v-tab-item>
       <v-tab-item key="email">
@@ -66,6 +69,7 @@
           :summary="emailSummary"
           :campaign-data="emailDataData"
           type="email"
+          data-e2e="email-data"
         />
       </v-tab-item>
     </v-tabs-items>

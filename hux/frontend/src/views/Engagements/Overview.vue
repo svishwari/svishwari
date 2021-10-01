@@ -6,7 +6,7 @@
       :height="75"
     >
       <template #subtitle-extended>
-        <div class="font-weight-semi-bold black--text text--darken-4 mb-2">
+        <div class="font-weight-semi-bold black--text text--darken-4 mb-2"  data-e2e="delivery-schedule-metric">
           {{ deliverySchedule }}
         </div>
       </template>
@@ -20,7 +20,7 @@
         <span class="mr-2">
           <tooltip>
             <template #label-content>
-              <span class="font-weight-semi-bold black--text text--darken-4">
+              <span data-e2e="updated-metric" class="font-weight-semi-bold black--text text--darken-4">
                 {{ summaryCards[1].value }}
               </span>
             </template>
@@ -42,7 +42,7 @@
       <template v-if="summaryCards[2].subLabel" #subtitle-extended>
         <span class="mr-2">
           <tooltip>
-            <template #label-content>
+            <template #label-content data-e2e="created-metric">
               <span class="font-weight-semi-bold black--text text--darken-4">
                 {{ summaryCards[2].value }}
               </span>
