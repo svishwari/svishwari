@@ -730,6 +730,10 @@ class OrchestrationRouteTest(TestCase):
                 ],
             )
 
+            # validate that not delivered has no delivery time set.
+            if audience[api_c.STATUS] == api_c.STATUS_NOT_DELIVERED:
+                self.assertIsNone(audience[api_c.AUDIENCE_LAST_DELIVERED])
+
             # find the matched audience destinations, should be the same.
             matched_audience = [
                 x
@@ -889,7 +893,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(
             lookalike_audience[api_c.SOURCE_NAME], self.audiences[0][db_c.NAME]
         )
-        self.assertGreater(lookalike_audience[api_c.MATCH_RATE], 0)
+        self.assertGreaterEqual(lookalike_audience[api_c.MATCH_RATE], 0)
         self.assertEqual(
             lookalike_audience[api_c.SOURCE_ID],
             str(self.audiences[0][db_c.ID]),

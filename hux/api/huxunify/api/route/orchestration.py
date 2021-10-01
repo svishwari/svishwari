@@ -1,7 +1,6 @@
 # pylint: disable=too-many-lines
 """Paths for Orchestration API"""
 from http import HTTPStatus
-from random import uniform
 from typing import Tuple, Union
 from datetime import datetime, timedelta
 from flasgger import SwaggerView
@@ -216,6 +215,12 @@ class AudienceView(SwaggerView):
 
             # set the weighted status for the audience based on deliveries
             audience[api_c.STATUS] = weight_delivery_status(audience)
+
+            # if not a part of any engagements and not delivered.
+            # set last delivery date to None.
+            if audience[api_c.STATUS] == api_c.STATUS_NOT_DELIVERED:
+                audience[api_c.AUDIENCE_LAST_DELIVERED] = None
+
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
         # fetch lookalike audiences if lookalikeable is set to false
@@ -351,7 +356,7 @@ class AudienceGetView(SwaggerView):
             ]
 
             # TODO: HUS-837 change once we can generate real lookalikes from FB.
-            lookalike[api_c.MATCH_RATE] = round(uniform(0.2, 0.9), 2)
+            lookalike[api_c.MATCH_RATE] = 0
 
             # set audience to lookalike
             audience = lookalike
@@ -390,7 +395,7 @@ class AudienceGetView(SwaggerView):
             if api_c.DELIVERIES in engagement:
                 for delivery in engagement[api_c.DELIVERIES]:
                     delivery[api_c.MATCH_RATE] = (
-                        round(uniform(0.2, 0.9), 2)
+                        0
                         if delivery.get(api_c.IS_AD_PLATFORM, False)
                         and not audience.get(api_c.IS_LOOKALIKE, False)
                         else None
