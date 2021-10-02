@@ -16,14 +16,10 @@ health_check_metrics = Gauge(
 
 
 def monitor_app(flask_app: Flask) -> None:
-    """sets up prometheus monitoring for flask app
+    """Sets up prometheus monitoring for flask app.
 
     Args:
         flask_app (Flask): Flask application.
-
-    Returns:
-        None
-
     """
 
     metrics = PrometheusMetrics(
@@ -78,14 +74,11 @@ def monitor_app(flask_app: Flask) -> None:
 def record_health_status_metric(
     connection_name: str, connection_health: int
 ) -> None:
-    """Updates connection health metric for a connection
+    """Updates connection health metric for a connection.
 
     Args:
         connection_name (str): name of the connection metric.
         connection_health (int): value for the health of the connection metric.
-
-    Returns:
-
     """
 
     health_check_metrics.labels(name=connection_name).set(connection_health)

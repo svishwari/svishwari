@@ -1,7 +1,5 @@
 # pylint: disable=invalid-name,line-too-long,too-many-lines
-"""
-purpose of this file is housing shared components for tests
-"""
+"""Purpose of this file is housing shared components for tests."""
 from datetime import datetime
 import time
 from http import HTTPStatus
@@ -55,6 +53,13 @@ INTROSPECT_CALL = f"{TEST_CONFIG.OKTA_ISSUER}/oauth2/v1/introspect?client_id={TE
 USER_INFO_CALL = f"{TEST_CONFIG.OKTA_ISSUER}/oauth2/v1/userinfo"
 CDM_HEALTHCHECK_CALL = f"{TEST_CONFIG.CDP_SERVICE}/healthcheck"
 CUSTOMER_PROFILE_API = f"{TEST_CONFIG.CDP_SERVICE}"
+
+HUX = "HUX"
+CDP_CUSTOMER_PROFILE = "CDP_CUSTOMER_PROFILE"
+CONTRACTS_FOLDER = "contracts"
+CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT = (
+    "/customer-profiles/insights/count-by-state"
+)
 
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
@@ -946,20 +951,22 @@ DAILY_SCHEDULE_INVALID = {
     api_c.PERIOD: api_c.PM,
 }
 
+BATCH_NUMBER_BAD_PARAM = "12a"
+BATCH_SIZE_BAD_PARAM = "100@"
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False
 ) -> bool:
-    """
-    Validate if the response confirms with the given schema
+    """Validate if the response confirms with the given schema.
 
     Args:
-        schema (Schema): Instance of the Schema to validate against
-        response_json (dict): Response json as dict
-        is_multiple (bool): If response is a collection of objects
+        schema (Schema): Instance of the Schema to validate against.
+        response_json (dict): Response json as dict.
+        is_multiple (bool): If response is a collection of objects.
 
     Returns:
-        (bool): True/False
+        (bool): True/False.
     """
 
     try:

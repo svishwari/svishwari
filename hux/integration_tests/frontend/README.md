@@ -116,7 +116,7 @@ docker build --no-cache -f Dockerfile -t ui-integration-tests .
 Run the tests, using your defined configuration and environment variables.
 
 ```sh
-docker run ui-integration-tests npm run test -- --config baseUrl=https://host.docker.internal:9090 --env FOO=foo,BAR=bar
+docker run ui-integration-tests --config baseUrl=https://host.docker.internal:9090 --env FOO=foo,BAR=bar
 ```
 
 To avoid environment variables being packaged with the build, we ignore any
@@ -134,7 +134,7 @@ export CYPRESS_USER_PASSWORD=<e2e_test_user_password>
 ```
 
 ```sh
-docker run --ipc=host ui-integration-tests npm run test -- --config baseUrl=$CYPRESS_BASE_URL,video=true --env USER_EMAIL=$CYPRESS_USER_EMAIL,USER_PASSWORD=$CYPRESS_USER_PASSWORD
+docker run --ipc=host ui-integration-tests --config baseUrl=$CYPRESS_BASE_URL,video=true --env USER_EMAIL=$CYPRESS_USER_EMAIL,USER_PASSWORD=$CYPRESS_USER_PASSWORD
 ```
 
 To review/debug test runs, mount volumes for the tests, logs and outputs.
@@ -142,7 +142,7 @@ To review/debug test runs, mount volumes for the tests, logs and outputs.
 ```sh
 export CYPRESS_LOGS="$(pwd)"/logs:/root/.npm/_logs
 export CYPRESS_DEV="$(pwd)"/cypress:/app/cypress
-docker run -it --ipc=host -v $CYPRESS_LOGS -v $CYPRESS_DEV ui-integration-tests npm run test -- --config baseUrl=$CYPRESS_BASE_URL,video=true --env USER_EMAIL=$CYPRESS_USER_EMAIL,USER_PASSWORD=$CYPRESS_USER_PASSWORD
+docker run -it --ipc=host -v $CYPRESS_LOGS -v $CYPRESS_DEV ui-integration-tests --config baseUrl=$CYPRESS_BASE_URL,video=true --env USER_EMAIL=$CYPRESS_USER_EMAIL,USER_PASSWORD=$CYPRESS_USER_PASSWORD
 ```
 
 These are useful for debugging runs locally, where you can view the tests'

@@ -1,6 +1,4 @@
-"""
-purpose of this file is to house all the cdp tests.
-"""
+"""Purpose of this file is to house all the cdp tests."""
 from datetime import datetime
 import string
 from unittest import TestCase, mock
@@ -34,16 +32,11 @@ from huxunify.app import create_app
 
 
 class CDPTest(TestCase):
-    """
-    Test CDP request methods
-    """
+    """Test CDP API endpoint methods."""
 
     def setUp(self) -> None:
-        """Setup tests
+        """Setup tests."""
 
-        Returns:
-
-        """
         # setup the flask test client
         self.test_client = create_app().test_client()
 
@@ -54,22 +47,16 @@ class CDPTest(TestCase):
         self.addCleanup(mock.patch.stopall)
 
     def tearDown(self) -> None:
-        """Tear down tests
+        """Tear down tests."""
 
-        Returns:
-
-        """
         self.request_mocker.stop()
 
     @given(customer_id=st.text(alphabet=string.ascii_letters))
     def test_get_customer(self, customer_id: str):
-        """Test get customer profiles
+        """Test get customer profiles.
 
         Args:
             customer_id (str): string for testing get customer.
-
-        Returns:
-
         """
 
         # skip empty string from hypothesis
@@ -125,9 +112,6 @@ class CDPTest(TestCase):
 
         Args:
             date_text (str): string for testing cdm datetime mapping.
-
-        Returns:
-
         """
 
         # ensure no errors are raised, otherwise it will fail.
@@ -142,13 +126,8 @@ class CDPTest(TestCase):
             self.assertEqual(value, None)
 
     def test_get_customers_insights_count_by_day(self) -> None:
-        """Test get customers insights count by day
+        """Test get customers insights count by day."""
 
-        Args:
-
-        Returns:
-            None
-        """
         start_date = datetime.utcnow().date() - relativedelta(months=9)
         end_date = datetime.utcnow().date()
         expected_response = {
@@ -207,13 +186,8 @@ class CDPTest(TestCase):
             )
 
     def test_get_demographic_by_country(self) -> None:
-        """Test get customers insights by state
+        """Test get customers insights by state."""
 
-        Args:
-
-        Returns:
-            None
-        """
         # TODO: Uncomment and update once CDM API is available
         # self.request_mocker.stop()
         # self.request_mocker.post(
@@ -237,13 +211,8 @@ class CDPTest(TestCase):
             self.assertEqual(record[api_c.SIZE], test_record[api_c.SIZE])
 
     def test_get_demographic_by_state(self) -> None:
-        """Test get customers insights by state
+        """Test get customers insights by state."""
 
-        Args:
-
-        Returns:
-            None
-        """
         self.request_mocker.stop()
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
@@ -279,13 +248,8 @@ class CDPTest(TestCase):
             )
 
     def test_get_city_ltvs(self) -> None:
-        """Test get customers insights by city
+        """Test get customers insights by city."""
 
-        Args:
-
-        Returns:
-            None
-        """
         self.request_mocker.stop()
         self.request_mocker.post(
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
@@ -311,13 +275,7 @@ class CDPTest(TestCase):
             self.assertEqual(record[api_c.AVG_LTV], test_record[api_c.AVG_LTV])
 
     def test_get_customers_overview(self) -> None:
-        """Test get customers overview
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customers overview."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -342,13 +300,7 @@ class CDPTest(TestCase):
         self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)
 
     def test_get_customers_overview_raise_dependency_error(self) -> None:
-        """Test get customers overview raise dependency error.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customers overview raise dependency error."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -372,9 +324,6 @@ class CDPTest(TestCase):
         Args:
             batch_size (int): batch size query param in request.
             offset (int): offset query param in request.
-
-        Returns:
-            None
         """
 
         self.request_mocker.stop()
@@ -397,9 +346,6 @@ class CDPTest(TestCase):
 
         Args:
             customer_id (str): customer ID value for request.
-
-        Returns:
-            None
         """
 
         self.request_mocker.stop()
@@ -413,13 +359,7 @@ class CDPTest(TestCase):
             get_customer_profile(token=t_c.TEST_AUTH_TOKEN, hux_id=customer_id)
 
     def test_get_idr_overview_raise_dependency_error(self) -> None:
-        """Test get IDR overview raise dependency error.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get IDR overview raise dependency error."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -439,9 +379,6 @@ class CDPTest(TestCase):
 
         Args:
             customer_id (str): customer ID value for request.
-
-        Returns:
-            None
         """
 
         self.request_mocker.stop()
@@ -464,13 +401,7 @@ class CDPTest(TestCase):
             )
 
     def test_get_customer_count_by_state_raise_dependency_error(self) -> None:
-        """Test get customer count by state raise dependency error.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customer count by state raise dependency error."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -483,13 +414,7 @@ class CDPTest(TestCase):
             get_customer_count_by_state(token=t_c.TEST_AUTH_TOKEN)
 
     def test_get_demographic_by_state_raise_dependency_error(self) -> None:
-        """Test get customer demographic by state raise dependency error.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customer demographic by state raise dependency error."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -502,13 +427,7 @@ class CDPTest(TestCase):
             get_demographic_by_state(token=t_c.TEST_AUTH_TOKEN)
 
     def test_get_demographic_by_country_raise_dependency_error(self) -> None:
-        """Test get customer demographic by country raise dependency error.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customer demographic by country raise dependency error."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -539,9 +458,6 @@ class CDPTest(TestCase):
 
         Args:
             date_filters (dict): date filters dictionary.
-
-        Returns:
-            None
         """
 
         self.request_mocker.stop()
@@ -557,13 +473,7 @@ class CDPTest(TestCase):
             )
 
     def test_get_city_ltvs_raise_dependency_error(self) -> None:
-        """Test get customers insights by city raise dependency error.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get customers insights by city raise dependency error."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -591,9 +501,6 @@ class CDPTest(TestCase):
         Args:
             start_date (str): start date value for request.
             end_date (str): end date value for request.
-
-        Returns:
-            None
         """
 
         self.request_mocker.stop()
@@ -612,9 +519,7 @@ class CDPTest(TestCase):
 
 
 class CdpFieldTests(TestCase):
-    """
-    Test CDP Field methods
-    """
+    """Test CDP Field methods."""
 
     def test_cdm_clean_gender_fields(self):
         """Test clean_cdm_gender_fields function."""

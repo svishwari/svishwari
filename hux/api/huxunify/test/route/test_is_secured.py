@@ -1,6 +1,4 @@
-"""
-purpose of this file is to house all the route is secured tests
-"""
+"""Purpose of this file is to house all the route is secured tests."""
 from unittest import TestCase
 import requests_mock
 from requests_mock import Mocker
@@ -21,16 +19,11 @@ UNSECURED_ROUTES = [
 
 
 class OktaTest(TestCase):
-    """
-    Test Okta request methods
-    """
+    """Test Okta request methods."""
 
     def setUp(self) -> None:
-        """Setup tests
+        """Setup tests."""
 
-        Returns:
-
-        """
         self.config = get_config(api_c.TEST_MODE)
 
         # setup the flask test client
@@ -41,13 +34,10 @@ class OktaTest(TestCase):
     def test_secured_all_endpoints_invalid_response(
         self, request_mocker: Mocker
     ):
-        """Test all endpoints with a mocked invalid response
+        """Test all endpoints with a mocked invalid response.
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
 
         # setup the request mock post
@@ -71,13 +61,10 @@ class OktaTest(TestCase):
     def test_secured_all_endpoints_invalid_header(
         self, request_mocker: Mocker
     ):
-        """Test all endpoints with a mocked invalid header
+        """Test all endpoints with a mocked invalid header.
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
 
         # setup the request mock post
@@ -101,14 +88,12 @@ class OktaTest(TestCase):
     def test_secured_all_endpoints_valid_header_bad_token(
         self, request_mocker: Mocker
     ):
-        """Test all endpoints with a mocked valid header, bad token
+        """Test all endpoints with a mocked valid header, bad token.
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
+
         # setup the request mock post
         request_mocker.post(
             t_c.INTROSPECT_CALL, json=t_c.INVALID_OKTA_RESPONSE
@@ -128,14 +113,19 @@ class OktaTest(TestCase):
 
 
 def get_method(methods: set) -> str:
-    """Support function for extracting method from swaggerview endpoint.
+    """Support function for extracting method from swagger view endpoint.
 
     Args:
         methods (set): set of methods for an endpoint.
 
     Returns:
         str: returns the method to invoke.
+
+    Raises:
+        AttributeError: If the method name is not one of the acceptable REST
+            method type.
     """
+
     # get method
     if "GET" in methods:
         method = "get"
