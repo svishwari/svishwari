@@ -31,8 +31,6 @@ class SchedulerTest(unittest.TestCase):
     def test_generate_cron(self):
         """Test for generating cron from scheduler module."""
 
-
         self.assertEqual(generate_cron(daily_schedule), "15 23 */2 * *")
-        self.assertEqual(generate_cron(daily_schedule), "15 23 ? * 1/2 *")
 
         self.assertEqual(generate_cron(weekly_schedule), "15 23 * * SUN,MON")
