@@ -1,23 +1,23 @@
-import React, { createElement } from 'react'
-import Highlight, { defaultProps } from 'prism-react-renderer'
-import './styles.css'
+import React, { createElement } from "react"
+import Highlight, { defaultProps } from "prism-react-renderer"
+// import "!style-loader!css-loader!sass-loader!../../src/styles/variables.scss"
 
-import addons, { types } from '@storybook/addons'
+import addons, { types } from "@storybook/addons"
 
-const ADDON_ID = 'show-vue-markup'
+const ADDON_ID = "show-vue-markup"
 const PANEL_ID = `${ADDON_ID}/panel`
 export const EVENT_ID = `${ADDON_ID}/markup`
 
 class MarkupPanel extends React.Component {
-  state = { markup: '' }
+  state = { markup: "" }
 
-  componentDidMount () {
+  componentDidMount() {
     const { channel } = this.props
 
     channel.on(EVENT_ID, this.onStoryChange)
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     const { channel } = this.props
 
     channel.off(EVENT_ID, this.onStoryChange)
@@ -27,25 +27,45 @@ class MarkupPanel extends React.Component {
     this.setState({ markup })
   }
 
-  render () {
+  render() {
     const { markup } = this.state
     const { active } = this.props
 
-    return active ? createElement(Highlight, {
-      ...defaultProps,
-      code: markup,
-      language: 'html',
-      children: ({ className, style, tokens, getLineProps, getTokenProps }) => {
-        return createElement('pre', {
-          className,
-          style,
-        }, tokens.map((line, i) => createElement('div', {
-          ...getLineProps({ line, key: i }),
-        }, line.map((token, key) => createElement('span', {
-          ...getTokenProps({ token, key }),
-        })))))
-      },
-    }) : null
+    return active
+      ? createElement(Highlight, {
+          ...defaultProps,
+          code: markup,
+          language: "html",
+          children: ({
+            className,
+            style,
+            tokens,
+            getLineProps,
+            getTokenProps,
+          }) => {
+            return createElement(
+              "pre",
+              {
+                className,
+                style,
+              },
+              tokens.map((line, i) =>
+                createElement(
+                  "div",
+                  {
+                    ...getLineProps({ line, key: i }),
+                  },
+                  line.map((token, key) =>
+                    createElement("span", {
+                      ...getTokenProps({ token, key }),
+                    })
+                  )
+                )
+              )
+            )
+          },
+        })
+      : null
   }
 }
 
@@ -54,7 +74,8 @@ addons.register(ADDON_ID, () => {
 
   addons.add(PANEL_ID, {
     type: types.PANEL,
-    title: 'Markup',
-    render: ({ active, key }) => createElement(MarkupPanel, { active, key, channel }),
+    title: "Markup",
+    render: ({ active, key }) =>
+      createElement(MarkupPanel, { active, key, channel }),
   })
 })
