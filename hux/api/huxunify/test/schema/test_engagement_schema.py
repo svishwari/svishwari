@@ -1,10 +1,7 @@
 # pylint: disable=no-self-use
-"""
-Purpose of this file is to test the engagement schemas
-"""
+"""Purpose of this file is to test the engagement schemas."""
 from unittest import TestCase
 from datetime import datetime, timedelta
-from random import uniform
 from bson import ObjectId
 
 from huxunifylib.database import constants as db_c
@@ -22,15 +19,11 @@ from huxunify.api import constants as api_c
 
 
 class EngagementSchemaTest(TestCase):
-    """Test Engagement Schema Classes"""
+    """Test Engagement Schema Classes."""
 
     def test_successful_engagement_get_schema(self) -> None:
-        """Test Successful EngagementGetSchema Serialization
+        """Test Successful EngagementGetSchema."""
 
-        Returns:
-            Response: None
-
-        """
         doc = {
             api_c.ID: "5f5f7262997acad4bac4373b",
             api_c.NAME: "Engagement 1",
@@ -43,12 +36,8 @@ class EngagementSchemaTest(TestCase):
         assert EngagementGetSchema().validate(doc) == {}
 
     def test_successful_engagement_post_schema(self) -> None:
-        """Test Successful EngagementPostSchema Serialization
+        """Test Successful EngagementPostSchema."""
 
-        Returns:
-            Response: None
-
-        """
         doc = {
             api_c.NAME: "Engagement 1",
             api_c.DESCRIPTION: "Engagement 1 description",
@@ -59,12 +48,8 @@ class EngagementSchemaTest(TestCase):
         assert EngagementPostSchema().validate(doc) == {}
 
     def test_successful_engagement_put_schema(self) -> None:
-        """Test Successful EngagementPutSchema Serialization
+        """Test Successful EngagementPutSchema."""
 
-        Returns:
-            Response: None
-
-        """
         doc = {
             api_c.NAME: "Engagement 1",
             api_c.DESCRIPTION: "Engagement 1 description",
@@ -73,12 +58,8 @@ class EngagementSchemaTest(TestCase):
         assert EngagementPutSchema().validate(doc) == {}
 
     def test_unsuccessful_engagement_get_schema_bad_name(self) -> None:
-        """Test unsuccessful EngagementGetSchema Serialization
+        """Test unsuccessful EngagementGetSchema."""
 
-        Returns:
-            Response: None
-
-        """
         doc = {
             api_c.ID: "5f5f7262997acad4bac4373b",
             api_c.NAME: 3,
@@ -93,12 +74,8 @@ class EngagementSchemaTest(TestCase):
     def test_unsuccessful_engagement_get_schema_missing_audiences(
         self,
     ) -> None:
-        """Test unsuccessful EngagementGetSchema Serialization
+        """Test unsuccessful EngagementGetSchema."""
 
-        Returns:
-            Response: None
-
-        """
         doc = {
             api_c.ID: "5f5f7262997acad4bac4373b",
             api_c.NAME: "Engagement 1",
@@ -111,12 +88,8 @@ class EngagementSchemaTest(TestCase):
         assert EngagementGetSchema().validate(doc) != {}
 
     def test_unsuccessful_engagement_post_schema_bad_name(self) -> None:
-        """Test unsuccessful EngagementPostSchema Serialization
+        """Test unsuccessful EngagementPostSchema."""
 
-        Returns:
-            Response: None
-
-        """
         doc = {
             api_c.NAME: 3,
             api_c.DESCRIPTION: "Engagement 1 description",
@@ -127,24 +100,15 @@ class EngagementSchemaTest(TestCase):
         assert EngagementPostSchema().validate(doc) != {}
 
     def test_unsuccessful_engagement_put_schema_bad_field(self) -> None:
-        """Test unsuccessful EngagementPutSchema Serialization
+        """Test unsuccessful EngagementPutSchema."""
 
-        Returns:
-            Response: None
-
-        """
         doc = {"SomeRandomField": "Some Random String"}
 
         assert EngagementPutSchema().validate(doc) != {}
 
     def test_successful_engagement_schedule_post_schema(self) -> None:
-        """Test Successful EngagementPostSchema Serialization
-        with a null delivery schedule.
+        """Test Successful EngagementPostSchema with a null delivery schedule."""
 
-        Returns:
-            Response: None
-
-        """
         doc = {
             api_c.NAME: "Engagement 1",
             api_c.DESCRIPTION: "Engagement 1 description",
@@ -155,13 +119,8 @@ class EngagementSchemaTest(TestCase):
         assert EngagementPostSchema().validate(doc) == {}
 
     def test_successful_engagement_no_schedule_post_schema(self) -> None:
-        """Test Successful EngagementPostSchema Serialization
-        with no delivery schedule.
+        """Test Successful EngagementPostSchema with no delivery schedule."""
 
-        Returns:
-            Response: None
-
-        """
         doc = {
             api_c.NAME: "Engagement 1",
             api_c.DESCRIPTION: "Engagement 1 description",
@@ -171,12 +130,8 @@ class EngagementSchemaTest(TestCase):
         assert EngagementPostSchema().validate(doc) == {}
 
     def test_successful_campaign_put_schema(self) -> None:
-        """Test Successful EngagementPutSchema Serialization
+        """Test Successful EngagementPutSchema."""
 
-        Returns:
-            Response: None
-
-        """
         doc = {
             api_c.CAMPAIGNS: [
                 {
@@ -189,12 +144,8 @@ class EngagementSchemaTest(TestCase):
         assert CampaignPutSchema().validate(doc) == {}
 
     def test_unsuccessful_campaign_put_schema(self) -> None:
-        """Test Successful EngagementPutSchema Serialization
+        """Test Successful EngagementPutSchema."""
 
-        Returns:
-            Response: None
-
-        """
         doc = {
             api_c.CAMPAIGNS: {
                 api_c.NAME: "Engagement 1",
@@ -205,12 +156,8 @@ class EngagementSchemaTest(TestCase):
         assert CampaignPutSchema().validate(doc) != {}
 
     def test_successful_campaign_get_schema(self) -> None:
-        """Test Successful EngagementPutSchema Serialization
+        """Test Successful EngagementPutSchema."""
 
-        Returns:
-            Response: None
-
-        """
         doc = {
             api_c.NAME: "Engagement 1",
             api_c.ID: "5f5f7262997acad4bac4373b",
@@ -220,12 +167,8 @@ class EngagementSchemaTest(TestCase):
         assert CampaignSchema().validate(doc) == {}
 
     def test_unsuccessful_campaign_get_schema_missing_field(self) -> None:
-        """Test Successful EngagementPutSchema Serialization
+        """Test Successful EngagementPutSchema."""
 
-        Returns:
-            Response: None
-
-        """
         doc = {
             api_c.NAME: "Engagement 1",
             api_c.ID: str(ObjectId()),
@@ -234,12 +177,8 @@ class EngagementSchemaTest(TestCase):
         assert CampaignSchema().validate(doc) != {}
 
     def test_unsuccessful_campaign_get_schema_invalid_objectid(self) -> None:
-        """Test Successful EngagementPutSchema Serialization
+        """Test Successful EngagementPutSchema."""
 
-        Returns:
-            Response: None
-
-        """
         doc = {
             api_c.NAME: "Engagement 1",
             api_c.ID: str(ObjectId()),
@@ -248,12 +187,8 @@ class EngagementSchemaTest(TestCase):
         assert CampaignSchema().validate(doc) != {}
 
     def test_successful_campaignmapping_get_schema(self) -> None:
-        """Test Successful EngagementPutSchema Serialization
+        """Test Successful EngagementPutSchema."""
 
-        Returns:
-            Response: None
-
-        """
         doc = {
             api_c.CAMPAIGNS: [
                 {
@@ -271,12 +206,8 @@ class EngagementSchemaTest(TestCase):
         assert CampaignMappingSchema().validate(doc) == {}
 
     def test_weighted_ranking(self) -> None:
-        """Test weighted ranking logic.
+        """Test weighted ranking logic."""
 
-        Returns:
-            Response: None
-
-        """
         engagement = {
             db_c.ID: ObjectId(),
             api_c.AUDIENCES: [
@@ -384,12 +315,8 @@ class EngagementSchemaTest(TestCase):
         self.assertEqual(weighted[api_c.STATUS], api_c.STATUS_INACTIVE)
 
     def test_weighted_ranking_bad_status(self) -> None:
-        """Test weighted ranking logic.
+        """Test weighted ranking logic."""
 
-        Returns:
-            Response: None
-
-        """
         bad_status_value = "bad_status_value"
         engagement = {
             db_c.ID: ObjectId(),
@@ -422,12 +349,7 @@ class EngagementSchemaTest(TestCase):
             self.assertEqual(audience[api_c.STATUS], api_c.STATUS_ERROR)
 
     def test_weight_delivery_status(self) -> None:
-        """Test weight_delivery_status.
-
-        Returns:
-            Response: None
-
-        """
+        """Test weight delivery status."""
 
         engagement = {
             "deliveries": [
@@ -446,12 +368,7 @@ class EngagementSchemaTest(TestCase):
         )
 
     def test_weight_delivery_bad_status(self) -> None:
-        """Test weight_delivery_status with a bad status.
-
-        Returns:
-            Response: None
-
-        """
+        """Test weight delivery status with a bad status."""
 
         engagement = {
             "deliveries": [
@@ -468,14 +385,7 @@ class EngagementSchemaTest(TestCase):
         self.assertEqual("bad", weight_delivery_status(engagement))
 
     def test_match_rate_engagement_get_schema(self) -> None:
-        """
-        Test engagement get schema match_rate.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test engagement get schema match_rate."""
 
         engagement = {
             api_c.ID: "5f5f7262997acad4bac4374a",
@@ -492,7 +402,7 @@ class EngagementSchemaTest(TestCase):
                             api_c.LATEST_DELIVERY: {
                                 api_c.ID: "5f5f7262997acad4bac4373c",
                                 api_c.STATUS: api_c.STATUS_ERROR,
-                                api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
+                                api_c.MATCH_RATE: 0,
                             },
                         },
                         {
@@ -501,7 +411,7 @@ class EngagementSchemaTest(TestCase):
                             api_c.LATEST_DELIVERY: {
                                 api_c.ID: "5f5f7262997acad4bac4373e",
                                 api_c.STATUS: api_c.STATUS_DELIVERED,
-                                api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
+                                api_c.MATCH_RATE: 0,
                             },
                         },
                     ],
@@ -517,8 +427,8 @@ class EngagementSchemaTest(TestCase):
 
         destinations = schema[api_c.AUDIENCES][0][api_c.DESTINATIONS]
         self.assertGreaterEqual(
-            destinations[0][api_c.LATEST_DELIVERY][api_c.MATCH_RATE], 0.2
+            destinations[0][api_c.LATEST_DELIVERY][api_c.MATCH_RATE], 0
         )
         self.assertGreaterEqual(
-            destinations[1][api_c.LATEST_DELIVERY][api_c.MATCH_RATE], 0.2
+            destinations[1][api_c.LATEST_DELIVERY][api_c.MATCH_RATE], 0
         )

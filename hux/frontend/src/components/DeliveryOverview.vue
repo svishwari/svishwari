@@ -26,6 +26,7 @@
           :deliveries-key="deliveriesKey"
           :section-type="sectionType"
           :destination-menu-items="destinationActions"
+          data-e2e="status-list"
           @onSectionAction="$emit('onOverviewSectionAction', $event)"
           @onDestinationAction="$emit('onOverviewDestinationAction', $event)"
         >

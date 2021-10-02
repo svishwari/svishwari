@@ -21,9 +21,7 @@ from huxunify.api.route.decorators import (
     secured,
     api_error_handler,
 )
-from huxunify.api.route.utils import (
-    get_db_client,
-)
+from huxunify.api.route.utils import get_db_client, Validation
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 
@@ -69,7 +67,7 @@ class NotificationsSearch(SwaggerView):
         {
             "name": db_c.NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER,
             "in": "query",
-            "type": "string",
+            "type": "integer",
             "description": "Number of which batch of notifications should be returned.",
             "example": "10",
             "required": False,
@@ -98,15 +96,21 @@ class NotificationsSearch(SwaggerView):
         Returns:
             Tuple[dict, int] dict of notifications, HTTP status code.
         """
-
-        batch_size = request.args.get(
-            api_c.QUERY_PARAMETER_BATCH_SIZE, api_c.DEFAULT_BATCH_SIZE
+        batch_size = Validation.validate_integer(
+            request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_SIZE, str(api_c.DEFAULT_BATCH_SIZE)
+            )
         )
+
         sort_order = request.args.get(
             api_c.QUERY_PARAMETER_SORT_ORDER, db_c.PAGINATION_DESCENDING
         )
-        batch_number = request.args.get(
-            api_c.QUERY_PARAMETER_BATCH_NUMBER, api_c.DEFAULT_BATCH_NUMBER
+
+        batch_number = Validation.validate_integer(
+            request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_NUMBER,
+                str(api_c.DEFAULT_BATCH_NUMBER),
+            )
         )
 
         if (
@@ -132,9 +136,9 @@ class NotificationsSearch(SwaggerView):
             NotificationsSchema().dump(
                 notification_management.get_notifications_batch(
                     get_db_client(),
-                    batch_size=int(batch_size),
+                    batch_size=batch_size,
                     sort_order=sort_order,
-                    batch_number=int(batch_number),
+                    batch_number=batch_number,
                 )
             ),
             HTTPStatus.OK,

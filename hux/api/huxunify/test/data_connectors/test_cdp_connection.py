@@ -1,4 +1,4 @@
-"""purpose of this file is to house all the cdp connections tests."""
+"""Purpose of this file is to house all the cdp connections tests."""
 from unittest import TestCase, mock
 import string
 import requests_mock
@@ -14,21 +14,17 @@ from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feed_details,
     get_data_source_data_feeds,
     get_idr_matching_trends,
+    get_data_sources,
 )
 from huxunify.app import create_app
 
 
 class CDPConnectionsTest(TestCase):
-    """
-    Test CDP request methods
-    """
+    """Test CDP request methods."""
 
     def setUp(self) -> None:
-        """Setup tests
+        """Setup tests."""
 
-        Returns:
-
-        """
         # setup the flask test client
         self.test_client = create_app().test_client()
 
@@ -39,22 +35,12 @@ class CDPConnectionsTest(TestCase):
         self.addCleanup(mock.patch.stopall)
 
     def tearDown(self) -> None:
-        """Tear down tests
+        """Tear down tests."""
 
-        Returns:
-
-        """
         self.request_mocker.stop()
 
     def test_get_idr_data_feeds(self) -> None:
-        """
-        Test fetch IDR data feeds
-
-        Args:
-
-        Returns:
-
-        """
+        """Test fetch IDR data feeds."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -75,14 +61,8 @@ class CDPConnectionsTest(TestCase):
             self.assertIn(api_c.DATAFEED_NEW_IDS_COUNT, data_feed)
 
     def test_get_idr_data_feed_details(self):
-        """
-        Test fetch IDR data feed details
+        """Test fetch IDR data feed details."""
 
-        Args:
-
-        Returns:
-
-        """
         datafeed_id = 1
         self.request_mocker.stop()
         self.request_mocker.get(
@@ -100,15 +80,35 @@ class CDPConnectionsTest(TestCase):
         self.assertIn(api_c.PINNING, data_feed)
         self.assertIn(api_c.STITCHED, data_feed)
 
+    def test_get_data_sources(self) -> None:
+        """Test fetch data sources."""
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}"
+            f"/{api_c.CDM_CONNECTIONS_ENDPOINT}/{api_c.DATASOURCES}",
+            json=t_c.DATASOURCES_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        data_sources = get_data_sources(token="")
+
+        self.assertCountEqual(
+            data_sources, t_c.DATASOURCES_RESPONSE[api_c.BODY]
+        )
+        self.assertEqual(data_sources, t_c.DATASOURCES_RESPONSE[api_c.BODY])
+
+        for idx, data_source in enumerate(data_sources):
+            self.assertIn(api_c.NAME, data_source)
+            self.assertIn(api_c.LABEL, data_source)
+            self.assertIn(api_c.STATUS, data_source)
+            self.assertEqual(
+                data_source, t_c.DATASOURCES_RESPONSE[api_c.BODY][idx]
+            )
+
     def test_get_data_source_data_feeds(self) -> None:
-        """
-        Test fetch data source data feeds
+        """Test fetch data source data feeds."""
 
-        Args:
-
-        Returns:
-
-        """
         data_source_type = "test_data_source"
 
         self.request_mocker.stop()
@@ -149,9 +149,6 @@ class CDPConnectionsTest(TestCase):
         Args:
             start_date (str): start date value for request.
             end_date (str): end date value for request.
-
-        Returns:
-            None
         """
 
         self.request_mocker.stop()
@@ -177,9 +174,6 @@ class CDPConnectionsTest(TestCase):
 
         Args:
             datafeed_id (int): datafeed ID value for request.
-
-        Returns:
-            None
         """
 
         self.request_mocker.stop()
@@ -204,9 +198,6 @@ class CDPConnectionsTest(TestCase):
 
         Args:
             data_source_type (str): data source type value for request.
-
-        Returns:
-            None
         """
 
         self.request_mocker.stop()
@@ -239,9 +230,6 @@ class CDPConnectionsTest(TestCase):
         Args:
             start_date (str): start date value for request.
             end_date (str): end date value for request.
-
-        Returns:
-            None
         """
 
         self.request_mocker.stop()

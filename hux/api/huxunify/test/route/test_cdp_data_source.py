@@ -1,6 +1,4 @@
-"""
-Purpose of this file is to house all data sources tests
-"""
+"""Purpose of this file is to house all data sources tests."""
 
 import json
 from http import HTTPStatus
@@ -9,6 +7,7 @@ from unittest import TestCase, mock
 import mongomock
 import requests_mock
 from bson import ObjectId
+from marshmallow import ValidationError
 
 from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.client import DatabaseClient
@@ -24,17 +23,10 @@ from huxunify.app import create_app
 
 
 class CdpDataSourcesTest(TestCase):
-    """
-    Test CDP Data Sources CRUD APIs
-    """
+    """Test CDP Data Sources CRUD APIs."""
 
     def setUp(self) -> None:
-        """
-        Setup tests
-
-        Returns:
-
-        """
+        """Setup tests."""
 
         self.data_sources_api_endpoint = (
             f"{t_c.BASE_ENDPOINT}{api_c.CDP_DATA_SOURCES_ENDPOINT}"
@@ -81,14 +73,7 @@ class CdpDataSourcesTest(TestCase):
             )
 
     def test_get_data_source_by_id_valid_id(self):
-        """
-        Test get data source by id from DB
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get data source by id from DB."""
 
         valid_response = self.data_sources[0]
 
@@ -104,14 +89,7 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_all_data_sources_success(self):
-        """
-        Test get all data source from DB
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get all data source from DB."""
 
         valid_response = self.data_sources
 
@@ -129,14 +107,7 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_delete_data_source_by_id_valid_id(self):
-        """
-        Test delete data source by id from DB
-
-        Args:
-
-        Returns:
-
-        """
+        """Test delete data source by id from DB."""
 
         ds_id = self.data_sources[0][api_c.ID]
 
@@ -151,53 +122,45 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_create_data_source_valid_params(self):
-        """
-        Test creating a new data source with valid params
+        """Test creating a new data source with valid params."""
 
-        Args:
-
-        Returns:
-
-        """
-
-        ds_name = "test create data source"
-        ds_category = "test category"
-
-        valid_response = {
-            api_c.CDP_DATA_SOURCE_NAME: ds_name,
-            api_c.CDP_DATA_SOURCE_CATEGORY: ds_category,
-            api_c.CDP_DATA_SOURCE_FEED_COUNT: 1,
-            api_c.STATUS: db_c.CDP_DATA_SOURCE_STATUS_ACTIVE,
-            api_c.CDP_DATA_SOURCE_ADDED: False,
-            api_c.CDP_DATA_SOURCE_ENABLED: False,
-        }
+        data_sources = [
+            {
+                api_c.NAME: "Test Data Source 1",
+                api_c.TYPE: "test_data_source_type_1",
+                api_c.STATUS: api_c.STATUS_ACTIVE,
+            },
+            {
+                api_c.NAME: "Test Data Source 2",
+                api_c.TYPE: "test_data_source_type_2",
+                api_c.STATUS: api_c.STATUS_PENDING,
+            },
+        ]
 
         response = self.test_client.post(
             self.data_sources_api_endpoint,
-            data=json.dumps(
-                {
-                    db_c.CDP_DATA_SOURCE_FIELD_NAME: ds_name,
-                    db_c.CDP_DATA_SOURCE_FIELD_CATEGORY: ds_category,
-                }
-            ),
+            data=json.dumps(data_sources),
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
-            t_c.validate_schema(CdpDataSourceSchema(), response.json)
+            t_c.validate_schema(
+                CdpDataSourceSchema(), response.json, is_multiple=True
+            )
         )
-        self.assertDictContainsSubset(valid_response, response.json)
+        self.assertEqual(len(response.json), len(data_sources))
+
+        for data_source in response.json:
+            self.assertIn(api_c.NAME, data_source)
+            self.assertIn(api_c.TYPE, data_source)
+            self.assertIn(api_c.STATUS, data_source)
+            self.assertIn(db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT, data_source)
+            self.assertIn(api_c.IS_ADDED, data_source)
+            self.assertTrue(api_c.IS_ADDED)
 
     def test_get_data_source_by_id_invalid_id(self):
-        """
-        Test get data source with an invalid id
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get data source with an invalid id."""
 
         ds_id = "XYZ"
         valid_response = {
@@ -213,14 +176,7 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_delete_data_source_by_id_invalid_id(self):
-        """
-        Test delete data source with an invalid id
-
-        Args:
-
-        Returns:
-
-        """
+        """Test delete data source with an invalid id."""
 
         ds_id = "ABC123"
         valid_response = {
@@ -236,14 +192,7 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_delete_data_source_by_id_non_existent_id(self) -> None:
-        """
-        Test delete data source with an non-existent id
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test delete data source with an non-existent id."""
 
         non_existent_data_source_id = str(ObjectId())
 
@@ -258,96 +207,70 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual({"message": api_c.OPERATION_FAILED}, response.json)
 
     def test_create_data_source_w_empty_name_string(self):
-        """
-        Test creating a data source with name set as empty string
+        """Test creating a data source with name set as empty string."""
 
-        Args:
+        data_sources = [
+            {
+                api_c.NAME: "",
+                api_c.TYPE: "test_data_source_type_1",
+                api_c.STATUS: api_c.STATUS_ACTIVE,
+            },
+            {
+                api_c.NAME: "Test Data Source 2",
+                api_c.TYPE: "test_data_source_type_2",
+                api_c.STATUS: api_c.STATUS_PENDING,
+            },
+        ]
 
-        Returns:
-
-        """
-
-        ds_name = ""
-
-        valid_response = {
-            "category": ["Missing data for required field."],
-            "name": ["Data not provided."],
-        }
         response = self.test_client.post(
             self.data_sources_api_endpoint,
-            data=json.dumps({db_c.CDP_DATA_SOURCE_FIELD_NAME: ds_name}),
+            data=json.dumps(data_sources),
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
-        self.assertEqual(valid_response, response.json)
+        self.assertRaises(ValidationError)
 
     def test_create_data_source_no_inputs(self):
-        """
-        Test creating a data source without any inputs
-
-        Args:
-
-        Returns:
-
-        """
-
-        valid_response = {
-            "category": ["Missing data for required field."],
-            "name": ["Missing data for required field."],
-        }
+        """Test creating a data source without any inputs."""
 
         response = self.test_client.post(
             self.data_sources_api_endpoint,
-            data=json.dumps({}),
+            data=json.dumps([{}]),
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
-        self.assertEqual(valid_response, response.json)
+        self.assertRaises(ValidationError)
 
     def test_create_data_source_w_no_values(self):
-        """
-        Test creating a data source with name and category
-        set as empty string
+        """Test creating a data source with name and category set as empty
+        string."""
 
-        Args:
-
-        Returns:
-
-        """
-
-        ds_name = ""
-        ds_category = ""
-
-        valid_response = {
-            "category": ["Data not provided."],
-            "name": ["Data not provided."],
-        }
+        data_sources = [
+            {
+                api_c.NAME: "",
+                api_c.TYPE: "",
+                api_c.STATUS: api_c.STATUS_ACTIVE,
+            },
+            {
+                api_c.NAME: "",
+                api_c.TYPE: "",
+                api_c.STATUS: api_c.STATUS_PENDING,
+            },
+        ]
 
         response = self.test_client.post(
             self.data_sources_api_endpoint,
-            data=json.dumps(
-                {
-                    db_c.CDP_DATA_SOURCE_FIELD_NAME: ds_name,
-                    db_c.CDP_DATA_SOURCE_FIELD_CATEGORY: ds_category,
-                }
-            ),
+            data=json.dumps(data_sources),
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
-        self.assertEqual(valid_response, response.json)
+        self.assertRaises(ValidationError)
 
     def test_patch_data_source_valid_params(self) -> None:
-        """
-        Test patching/updating an existing data source with valid params
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test patching/updating an existing data source with valid params."""
 
         valid_data_source = self.data_sources[0]
 
@@ -370,14 +293,7 @@ class CdpDataSourcesTest(TestCase):
             self.assertTrue(t_c.validate_schema(CdpDataSourceSchema(), record))
 
     def test_patch_data_source_invalid_params(self) -> None:
-        """
-        Test patching/updating an existing data source with invalid params
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test patching/updating an existing data source with invalid params."""
 
         valid_data_source = self.data_sources[0]
 
@@ -394,12 +310,8 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_get_data_source_data_feed(self) -> None:
-        """
-        Test get data source data feeds endpoint
+        """Test get data source data feeds endpoint."""
 
-        Returns:
-
-        """
         data_source_type = t_c.DATASOURCE_DATA_FEEDS_RESPONSE[api_c.BODY][0][
             api_c.DATAFEED_DATA_SOURCE_NAME
         ]

@@ -1,6 +1,4 @@
-"""
-Schemas for the Orchestration API
-"""
+"""Schemas for the Orchestration API"""
 import datetime
 
 from flask_marshmallow import Schema
@@ -23,9 +21,7 @@ from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
 class LookalikeAudienceGetSchema(Schema):
-    """
-    Schema for retrieving the lookalike audience
-    """
+    """Schema for retrieving the lookalike audience"""
 
     _id = fields.String(
         data_key=api_c.ID,
@@ -50,9 +46,7 @@ class LookalikeAudienceGetSchema(Schema):
 
 
 class AudienceDeliverySchema(Schema):
-    """
-    Audience delivery schema class
-    """
+    """Audience delivery schema class"""
 
     delivery_platform_name = fields.String()
     delivery_platform_type = fields.String()
@@ -61,9 +55,7 @@ class AudienceDeliverySchema(Schema):
 
 
 class DeliveriesSchema(Schema):
-    """
-    Delivery schema class
-    """
+    """Delivery schema class"""
 
     id = fields.String(attribute=db_c.ID)
     create_time = DateTimeWithZ()
@@ -81,9 +73,7 @@ class DeliveriesSchema(Schema):
 
 
 class EngagementDeliverySchema(EngagementGetSchema):
-    """
-    Engagement Delivery schema class
-    """
+    """Engagement Delivery schema class"""
 
     deliveries = fields.Nested(DeliveriesSchema, many=True)
     last_delivered = DateTimeWithZ()
@@ -95,9 +85,7 @@ class EngagementDeliverySchema(EngagementGetSchema):
 
 
 class AudienceGetSchema(Schema):
-    """
-    Audience schema class
-    """
+    """Audience schema class"""
 
     _id = fields.String(
         data_key=api_c.ID,
@@ -168,9 +156,7 @@ class CityIncomeInsightsSchema(Schema):
 
 
 class AudienceInsightsGetSchema(Schema):
-    """
-    Audience Insights schema class
-    """
+    """Audience Insights schema class"""
 
     demo = fields.List(fields.Nested(CustomerGeoVisualSchema))
     income = fields.List(fields.Nested(CityIncomeInsightsSchema))
@@ -179,9 +165,7 @@ class AudienceInsightsGetSchema(Schema):
 
 
 class AudiencePutSchema(Schema):
-    """
-    Audience put schema class
-    """
+    """Audience put schema class"""
 
     name = fields.String()
     destinations = fields.List(fields.Dict())
@@ -189,30 +173,31 @@ class AudiencePutSchema(Schema):
     filters = fields.List(fields.Dict())
 
 
+class AudienceDestinationSchema(Schema):
+    """
+    Audience destination schema class
+    """
+
+    id = fields.String(required=True)
+    delivery_platform_config = fields.Dict(
+        required=False,
+        example={db_c.DATA_EXTENSION_NAME: "Data Extension Name"},
+    )
+
+
 class AudiencePostSchema(AudiencePutSchema):
-    """
-    Audience post schema class
-    """
+    """Audience post schema class"""
 
     name = fields.String(validate=must_not_be_blank)
     destinations = fields.List(
-        fields.Dict(),
-        attribute=api_c.DESTINATIONS,
-        example=[
-            {
-                api_c.ID: "60ae035b6c5bf45da27f17d6",
-                api_c.DATA_EXTENSION_ID: "data_extension_id",
-            }
-        ],
+        fields.Nested(AudienceDestinationSchema), required=False
     )
     engagements = fields.List(fields.String(), required=True)
     filters = fields.List(fields.Dict())
 
 
 class EngagementDeliveryHistorySchema(Schema):
-    """
-    Schema for Engagement Delivery History
-    """
+    """Schema for Engagement Delivery History"""
 
     class Meta:
         """Set Order for the Audience Response"""
@@ -236,9 +221,7 @@ class EngagementDeliveryHistorySchema(Schema):
 
 
 class AudienceDeliveryHistorySchema(Schema):
-    """
-    Schema for Audience Delivery History
-    """
+    """Schema for Audience Delivery History"""
 
     class Meta:
         """Set Order for the Audience Response"""
@@ -262,9 +245,7 @@ class AudienceDeliveryHistorySchema(Schema):
 
 
 class LookalikeAudiencePostSchema(Schema):
-    """
-    Schema for creating a lookalike audience
-    """
+    """Schema for creating a lookalike audience"""
 
     audience_id = fields.String(validate=must_not_be_blank, required=True)
     name = fields.String(required=True)

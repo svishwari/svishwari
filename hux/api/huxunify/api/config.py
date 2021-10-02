@@ -1,5 +1,4 @@
-"""
-purpose of this file is for housing the config settings for the API
+"""Purpose of this file is for housing the config settings for the API.
 Ensure that all config values are pulled in a single spot.
 
 Decouple always searches for Options in this order:
@@ -17,9 +16,7 @@ from huxunify.api import constants as api_c
 
 
 class Config:
-    """
-    Config Object
-    """
+    """Config Object."""
 
     DEBUG = False
     FLASK_ENV = "test"
@@ -90,17 +87,13 @@ class Config:
 
 
 class ProductionConfig(Config):
-    """
-    Production Config Object
-    """
+    """Production Config Object."""
 
     FLASK_ENV = api_c.PRODUCTION_MODE
 
 
 class DevelopmentConfig(Config):
-    """
-    Development Config Object
-    """
+    """Development Config Object."""
 
     DEBUG = False
     FLASK_ENV = api_c.DEVELOPMENT_MODE
@@ -115,9 +108,7 @@ class DevelopmentConfig(Config):
 
 
 class PyTestConfig(Config):
-    """
-    Test Config Object
-    """
+    """Test Config Object."""
 
     DEBUG = True
     FLASK_ENV = api_c.TEST_MODE
@@ -154,9 +145,6 @@ def load_env_vars(flask_env=config(api_c.FLASK_ENV, default="")) -> None:
 
     Args:
         flask_env (str): Flask environment value.
-
-    Returns:
-
     """
 
     # import the aws module to prevent app context issues.
@@ -208,8 +196,8 @@ def get_config(
 
     Returns:
         Union[DevelopmentConfig, Config, PyTestConfig]: config object.
-
     """
+
     if flask_env == api_c.DEVELOPMENT_MODE:
         return DevelopmentConfig
     if flask_env == api_c.TEST_MODE:

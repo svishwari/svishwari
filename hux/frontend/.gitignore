@@ -23,5 +23,8 @@ tsconfig.json
 # Local History for Visual Studio Code
 .history/
 
+# Tests
+coverage/
+
 # Ignore snapshots for views
 tests/unit/views/**__snapshots**

@@ -51,7 +51,11 @@
             }"
             :style="{ minWidth: header.width, left: 0 }"
           >
-            <div v-if="header.value == 'name'" class="w-100 d-flex">
+            <div
+              v-if="header.value == 'name'"
+              class="w-100 d-flex"
+              data-e2e="audiencelist"
+            >
               <span v-if="item.is_lookalike == true" class="mr-3">
                 <tooltip>
                   <template #label-content>
@@ -70,6 +74,7 @@
                 :menu-options="getActionItems(item)"
                 route-name="AudienceInsight"
                 :route-param="item['id']"
+                data-e2e="audiencename"
               />
             </div>
             <div v-if="header.value == 'status'" class="text-caption">

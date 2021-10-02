@@ -38,12 +38,52 @@ export default {
   connections: "a[href='/connections']",
   addDataSource: "[data-e2e='addDataSource']",
 
+  //destinations
+  destination: {
+    drawerToggle: "[data-e2e='drawerToggle']",
+    addDestination: "[data-e2e='addDestination']",
+    destinationsList: "[tabindex='0'][data-e2e='destinationsDrawer']",
+    destinationConfigDetails: "[data-e2e='destinationConfigDetails']",
+    validateDestination: "[data-e2e='validateDestination']",
+    footer: "[data-e2e='footer']",
+  },
+
   // decisioning
   models: {
     header: "[data-e2e='models-header']",
     list: "[data-e2e='models-list']",
     item: "[data-e2e='model-item']",
     models: "a[href='/models']",
+    lifttable: "[data-e2e='table-lift']",
+    featuretable: "[data-e2e='table-feature']",
+    performancemetric: "[data-e2e='performancemetric']",
+    driftchart: "[data-e2e='drift-chart']",
+    featurechart: "[data-e2e='feature-chart']",
+    versionhistorybutton: "[data-e2e='version-history-button']",
+    versionhistory: "[data-e2e='version-history']",
+  },
+
+  // engagements
+  engagement: {
+    addEngagement: "[data-e2e='add-engagement']",
+    addEngagements: "a[href='/engagements/add']",
+    enagagementName: "[data-e2e='engagement-name']",
+    enagagementDescription: "[data-e2e='engagement-description']",
+    dataExtensionName: "[data-e2e='new-data-extension']",
+    addAudience: "[data-e2e='add-audience']",
+    addDestination: "[data-e2e='add-destination']",
+    selectAudience: "[data-e2e='audience-select-button']",
+    selectDestination: "[data-e2e='destination-select-button']",
+    exitDrawer: "[data-e2e='click-outside']",
+    exitDataExtensionDrawer: "[data-e2e='destination-added']",
+    list: {
+      engagementTable: "[data-e2e='engagement-table']",
+      engagementTableHeaders: "table thead tr",
+      engagementTableExpand: "[data-e2e='expand-engagement']",
+      audienceTable: "[data-e2e='audience-table']",
+      lastDeliveredColumn: "[data-e2e='last-delivered']",
+      audienceTableExpand: "[data-e2e='expand-audience']",
+    },
   },
 
   //Customer Profiles
@@ -57,7 +97,20 @@ export default {
     incomeChart: "[data-e2e='income-chart']",
     genderSpendChart: "[data-e2e='gender-spend-chart']",
     genderChart: "[data-e2e='gender-chart']",
+    customerID: "[data-e2e='customerID']",
+    customerlength: "[data-e2e='customer-length']",
+    matchConfidence: "[data-e2e='match-confidence']",
+    lifeTimeValue: "[data-e2e='life-time-value']",
+    conversionTime: "[data-e2e='conversion-time']",
+    churnScore: "[data-e2e='churn-score']",
+    lastClick: "[data-e2e='last-click']",
+    lastPurchaseDate: "[data-e2e='last-purchase-date']",
+    lastOpen: "[data-e2e='last-open']",
+    customerInsights: "[data-e2e='customer-insights']",
+    contactPreferencecs: "[data-e2e='contact-preferencecs']",
+    chord: "[data-e2e='chord']",
   },
+
   //IDR
   idr: {
     identityResolution: "a[href='/identity-resolution']",
@@ -83,6 +136,21 @@ export default {
     contactus: "[data-e2e='contactus']",
     add: "[data-e2e='addicon']",
   },
+  audience: {
+    audiencelist: "[data-e2e='audiencelist']",
+    audiencenameclick: "[data-e2e='audiencename']",
+    audiencehistory: "[data-e2e='audience-history']",
+    engagementdelivery: "[data-e2e='status-list']",
+    deliveryhistory: "[data-e2e='delivery-history']",
+    deliveryhistorydrawer: "[data-e2e='delivery-history-drawer']",
+    overview: "[data-e2e='audience-overview']",
+    mapchart: "[data-e2e='map-chart']",
+    mapStateList: "[data-e2e='map-state-list']",
+    incomeChart: "[data-e2e='income-chart']",
+    genderSpendChart: "[data-e2e='gender-spend-chart']",
+    genderChart: "[data-e2e='gender-chart']",
+  },
+
   customers: "a[href='/customers']",
   engagements: "a[href='/engagements']",
   audiences: "a[href='/audiences']",

@@ -1,7 +1,5 @@
 # pylint: disable=too-many-lines
-"""
-Purpose of this file is to house all tests related to orchestration
-"""
+"""Purpose of this file is to house all tests related to orchestration."""
 from http import HTTPStatus
 from unittest import TestCase, mock
 from bson import ObjectId
@@ -34,19 +32,14 @@ from huxunify.api import constants as api_c
 import huxunify.test.constants as t_c
 from huxunify.app import create_app
 
+
 # pylint: disable=too-many-public-methods
 class OrchestrationRouteTest(TestCase):
-    """Orchestration Route tests"""
+    """Orchestration Route tests."""
 
     # pylint: disable=too-many-instance-attributes
     def setUp(self) -> None:
-        """
-        Setup resources before each test
-
-        Args:
-
-        Returns:
-        """
+        """Setup resources before each test."""
 
         self.audience_api_endpoint = f"/api/v1{api_c.AUDIENCE_ENDPOINT}"
 
@@ -244,10 +237,7 @@ class OrchestrationRouteTest(TestCase):
         self.test_client = create_app().test_client()
 
     def test_get_audience_rules_success(self):
-        """Test the get audience rules route
-        Args:
-
-        """
+        """Test the get audience rules route success."""
 
         data_management.set_constant(
             self.database,
@@ -271,12 +261,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertIn("text_operators", response.json)
 
     def test_create_audience_with_destination(self):
-        """Test create audience with destination.
-
-        Args:
-        Returns:
-
-        """
+        """Test create audience with destination."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -326,14 +311,8 @@ class OrchestrationRouteTest(TestCase):
 
     def test_create_audience_empty_user_info(self):
         """Test create audience with destination given empty user info.
-
         The introspect call returns a valid response but user info call
         returns an empty response.
-
-        Args:
-
-        Returns:
-
         """
 
         audience_post = {
@@ -368,12 +347,8 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
 
     def test_create_audience_no_destination_id(self) -> None:
-        """Test create audience with destination given no id in destination object.
-
-        Args:
-
-        Returns:
-            None
+        """Test create audience with destination given no id in destination
+        object.
         """
 
         audience_post = {
@@ -406,14 +381,8 @@ class OrchestrationRouteTest(TestCase):
 
     def test_create_audience_invalid_user_info(self):
         """Test create audience with destination given invalid user info.
-
         The introspect call returns a valid response but user info call
         returns an invalid response, i.e., missing some fields.
-
-        Args:
-
-        Returns:
-
         """
 
         audience_post = {
@@ -450,13 +419,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
 
     def test_create_audience_with_no_destinations_no_engagements(self):
-        """Test create audience with no destinations or engagements
-
-        Args:
-
-        Returns:
-
-        """
+        """Test create audience with no destinations or engagements."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -506,13 +469,7 @@ class OrchestrationRouteTest(TestCase):
         )
 
     def test_create_audience_with_engagements(self):
-        """Test create audience with engagements.
-
-        Args:
-
-        Returns:
-
-        """
+        """Test create audience with engagements."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -565,8 +522,7 @@ class OrchestrationRouteTest(TestCase):
         expected_audience = {
             db_c.OBJECT_ID: audience_doc[db_c.ID],
             db_c.DESTINATIONS: [
-                {db_c.OBJECT_ID: [d[db_c.ID] for d in self.destinations][0]},
-                {db_c.OBJECT_ID: [d[db_c.ID] for d in self.destinations][1]},
+                {api_c.ID: d[db_c.ID]} for d in self.destinations
             ],
         }
 
@@ -586,13 +542,7 @@ class OrchestrationRouteTest(TestCase):
             self.assertDictEqual(engagement_audience, expected_audience)
 
     def test_create_audience_with_no_engagement(self):
-        """Test create audience without engagement ids.
-
-        Args:
-
-        Returns:
-
-        """
+        """Test create audience without engagement IDs."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -628,11 +578,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
     def test_get_audience(self):
-        """Test get audience.
-        Args:
-
-        Returns:
-        """
+        """Test get audience."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -654,6 +600,9 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(audience[api_c.LOOKALIKEABLE], api_c.STATUS_INACTIVE)
         self.assertFalse(audience[api_c.IS_LOOKALIKE])
 
+        self.assertIn(api_c.DESTINATIONS, audience)
+        self.assertEqual(len(audience[api_c.DESTINATIONS]), 2)
+
         # validate the facebook destination in the audience is set to "Not delivered"
         for audience in audience[api_c.AUDIENCE_ENGAGEMENTS]:
             self.assertTrue(
@@ -664,11 +613,8 @@ class OrchestrationRouteTest(TestCase):
             )
 
     def test_get_audience_does_not_exist(self):
-        """Test get audience that does not exist
-        Args:
+        """Test get audience that does not exist."""
 
-        Returns:
-        """
         audience_id = ObjectId()
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/{audience_id}",
@@ -678,11 +624,8 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
 
     def test_get_audience_invalid_id(self):
-        """Test get audience that does not exist
-        Args:
+        """Test get audience with invalid ID."""
 
-        Returns:
-        """
         audience_id = "asdfg13456"
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/{audience_id}",
@@ -692,11 +635,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_get_audiences(self):
-        """Test get audiences.
-        Args:
-
-        Returns:
-        """
+        """Test get all audiences."""
 
         response = self.test_client.get(
             f"{self.audience_api_endpoint}",
@@ -730,6 +669,10 @@ class OrchestrationRouteTest(TestCase):
                 ],
             )
 
+            # validate that not delivered has no delivery time set.
+            if audience[api_c.STATUS] == api_c.STATUS_NOT_DELIVERED:
+                self.assertIsNone(audience[api_c.AUDIENCE_LAST_DELIVERED])
+
             # find the matched audience destinations, should be the same.
             matched_audience = [
                 x
@@ -745,11 +688,8 @@ class OrchestrationRouteTest(TestCase):
             )
 
     def test_update_audience(self):
-        """Test update an audience.
-        Args:
+        """Test update an audience."""
 
-        Returns:
-        """
         new_name = "New Test Audience"
 
         response = self.test_client.put(
@@ -788,12 +728,34 @@ class OrchestrationRouteTest(TestCase):
             [str(x[db_c.ID]) for x in audience_engagements],
         )
 
-    def test_create_lookalike_audience(self):
-        """Test create lookalike audience
-        Args:
+    def test_create_lookalike_audience_facebook_connection_fail(self):
+        """Test create lookalike audience when facebook connection fails."""
 
-        Returns:
-        """
+        # setup facebook connector mock address
+        mock.patch.object(
+            FacebookConnector,
+            "check_connection",
+            return_value=False,
+        ).start()
+
+        lookalike_audience_name = "FAILED LA AUDIENCE"
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json={
+                api_c.AUDIENCE_ID: str(self.audiences[0][db_c.ID]),
+                api_c.NAME: lookalike_audience_name,
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
+                api_c.ENGAGEMENT_IDS: self.engagement_ids,
+            },
+        )
+
+        self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
+
+    def test_create_lookalike_audience(self):
+        """Test create lookalike audience."""
+
         # setup facebook connector mock address
         mock.patch.object(
             FacebookConnector,
@@ -824,7 +786,7 @@ class OrchestrationRouteTest(TestCase):
             self.database, ObjectId(self.engagement_ids[0])
         )
 
-        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertEqual(HTTPStatus.ACCEPTED, response.status_code)
         self.assertEqual(lookalike_audience_name, response.json[api_c.NAME])
         lookalike_audience_id = ObjectId(response.json[api_c.ID])
 
@@ -861,7 +823,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(
             lookalike_audience[api_c.SOURCE_NAME], self.audiences[0][db_c.NAME]
         )
-        self.assertGreater(lookalike_audience[api_c.MATCH_RATE], 0)
+        self.assertGreaterEqual(lookalike_audience[api_c.MATCH_RATE], 0)
         self.assertEqual(
             lookalike_audience[api_c.SOURCE_ID],
             str(self.audiences[0][db_c.ID]),
@@ -869,11 +831,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertTrue(lookalike_audience[api_c.IS_LOOKALIKE])
 
     def test_create_lookalike_audience_invalid_engagement_ids(self):
-        """Test create lookalike audience with invalid engagement ids
-        Args:
-
-        Returns:
-        """
+        """Test create lookalike audience with invalid engagement IDs."""
 
         # setup facebook connector mock address
         mock.patch.object(
@@ -905,11 +863,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_create_lookalike_audience_invalid_source_audience_id(self):
-        """Test create lookalike audience with invalid engagement ids
-        Args:
-
-        Returns:
-        """
+        """Test create lookalike audience with invalid engagement IDs."""
 
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
@@ -928,11 +882,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_create_lookalike_audience_source_audience_not_found(self):
-        """Test create lookalike audience with invalid engagement ids
-        Args:
-
-        Returns:
-        """
+        """Test create lookalike audience with invalid engagement IDs."""
 
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
@@ -952,13 +902,7 @@ class OrchestrationRouteTest(TestCase):
 
     def test_get_audience_by_id_validate_match_rate(self) -> None:
         """Test get audience API and validate match_rate.
-
         This will check for match delivery for an AD platform.
-
-        Args:
-
-        Returns:
-            None
         """
 
         self.request_mocker.stop()
@@ -992,12 +936,8 @@ class OrchestrationRouteTest(TestCase):
                     self.assertIsNone(delivery.get(api_c.MATCH_RATE))
 
     def test_get_audience_by_id_validate_match_rate_lookalike_audience(self):
-        """Test validate match rate for a lookalike audience.
+        """Test validate match rate for a lookalike audience."""
 
-        Args:
-
-        Returns:
-        """
         # setup facebook connector mock address
         mock.patch.object(
             FacebookConnector,
@@ -1040,14 +980,7 @@ class OrchestrationRouteTest(TestCase):
                     self.assertIsNone(delivery.get(api_c.MATCH_RATE))
 
     def test_delete_audience(self) -> None:
-        """
-        Test delete audience API with valid id
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test delete audience API with valid ID."""
 
         response = self.test_client.delete(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
@@ -1057,14 +990,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
 
     def test_delete_audience_where_audience_does_not_exist(self) -> None:
-        """
-        Test delete audience API with valid id but the object does not exist
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test delete audience API with valid ID but the object does not exist"""
 
         response = self.test_client.delete(
             f"{self.audience_api_endpoint}/{str(ObjectId())}",
@@ -1074,14 +1000,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
 
     def test_delete_audience_with_invalid_id(self) -> None:
-        """
-        Test delete audience API with valid id but the object does not exist
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test delete audience API with invalid ID."""
 
         response = self.test_client.delete(
             f"{self.audience_api_endpoint}/{t_c.INVALID_ID}",

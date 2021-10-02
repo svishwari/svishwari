@@ -3,11 +3,7 @@ from huxunify.api import constants
 
 
 class IntegratedAPIEndpointException(Exception):
-    """Exception due to Integration APIs like CDP/Tecton.
-
-    Args:
-        Exception: Exception being raised.
-    """
+    """Exception due to Integration APIs like CDP/Tecton."""
 
     exception_message = ""
 
@@ -26,6 +22,15 @@ class FailedAPIDependencyError(IntegratedAPIEndpointException):
     exception_message = (
         "Integrated API <{}> failure, returned status code "
         "<{}>. Failed obtaining dependent data"
+    )
+
+
+class FailedDeliveryPlatformDependencyError(IntegratedAPIEndpointException):
+    """Exception for dependency failure for delivery platform APIs."""
+
+    exception_message = (
+        "Failed to establish connection to delivery platform <{}>, "
+        "returned status code <{}>."
     )
 
 

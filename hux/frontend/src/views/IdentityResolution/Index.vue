@@ -34,55 +34,35 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
 
       <hux-filters-bar :is-toggled="isFilterToggled">
-        <label class="neroBlack--text mr-2"> Select timeframe: </label>
+        <label class="black--text text--darken-4 mr-2">
+          Select timeframe:
+        </label>
 
-        <hux-select
-          v-model="filters.startMonth"
-          :items="options.months"
-          label="Start month"
-          class="mx-1"
-          width="141"
-          @change="refreshData"
-        />
-
-        <hux-select
-          v-model="filters.startYear"
-          :items="options.years"
-          label="Start year"
-          class="mx-1"
-          width="126"
+        <hux-select-date
+          v-model="filterStartDate"
+          :min="minDate"
+          :max="filterEndDate"
           @change="refreshData"
         />
 
         <icon class="mx-1" type="arrow" color="primary" :size="19" />
 
-        <hux-select
-          v-model="filters.endMonth"
-          :items="options.months"
-          label="End month"
-          class="mx-1"
-          width="141"
-          @change="refreshData"
-        />
-
-        <hux-select
-          v-model="filters.endYear"
-          label="End year"
-          :items="options.years"
-          class="mx-1"
-          width="126"
+        <hux-select-date
+          v-model="filterEndDate"
+          :min="filterStartDate"
+          :max="maxDate"
           @change="refreshData"
         />
       </hux-filters-bar>
     </template>
     <template>
-      <v-row v-if="!loadingOverview" no-gutters>
+      <div v-if="!loadingOverview">
         <v-slide-group ref="wrapper" class="idr-slide-group" show-arrows>
           <v-slide-item v-for="(metric, index) in overview" :key="index">
             <metric-card
               :title="metric.title"
               :min-width="170"
-              class="mx-2 my-2 pt-3 pl-6"
+              class="idr-metric-card"
               data-e2e="overviewList"
             >
               <template #extra-item>
@@ -131,7 +111,7 @@
             </metric-card>
           </v-slide-item>
         </v-slide-group>
-      </v-row>
+      </div>
       <v-row class="px-2 mt-0 mb-1">
         <v-col md="12">
           <v-card class="mt-3 rounded-lg box-shadow-5" min-height="400">
@@ -143,7 +123,7 @@
 
             <v-card-title class="chart-style pb-8 pl-5 pt-5">
               <div class="mt-2">
-                <span class="neroBlack--text text-h5">
+                <span class="black--text text--darken-4 text-h5">
                   ID Resolution matching trends
                 </span>
               </div>
@@ -179,8 +159,8 @@
       </v-row>
 
       <data-feeds
-        v-if="!loadingDataFeeds"
         :data="dataFeeds"
+        :is-loading="loadingDataFeeds"
         class="mt-6 mx-2"
         data-e2e="datafeedtable"
       />
@@ -190,13 +170,13 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-import { listOfMonths, listOfYears } from "@/utils"
+import { endOfMonth } from "@/utils"
 
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import HuxFiltersBar from "@/components/common/FiltersBar"
-import HuxSelect from "@/components/common/Select.vue"
+import HuxSelectDate from "@/components/common/SelectDate.vue"
 import Icon from "@/components/common/Icon"
 import MetricCard from "@/components/common/MetricCard"
 import Tooltip from "@/components/common/Tooltip.vue"
@@ -212,7 +192,7 @@ export default {
     Breadcrumb,
     Icon,
     HuxFiltersBar,
-    HuxSelect,
+    HuxSelectDate,
     MetricCard,
     PageHeader,
     Tooltip,
@@ -224,44 +204,40 @@ export default {
   data() {
     return {
       loadingOverview: true,
-      loadingDataFeeds: false,
-      loadingMatchingTrends: false,
+      loadingDataFeeds: true,
+      loadingMatchingTrends: true,
       isFilterToggled: false,
-      options: {
-        months: listOfMonths(),
-        years: listOfYears(),
-      },
-      filters: {
-        startMonth: null,
-        startYear: null,
-        endMonth: null,
-        endYear: null,
-      },
+      filterStartDate: null,
+      filterEndDate: null,
     }
   },
 
   computed: {
     ...mapGetters({
       overview: "identity/overview",
-      dateRange: "identity/dateRange",
+      timeFrame: "identity/timeFrame",
       dataFeeds: "identity/dataFeeds",
       matchingTrends: "identity/matchingTrends",
     }),
 
-    startDate() {
-      const startDate = `${this.filters.startMonth} ${this.filters.startYear}`
-      return this.$options.filters.Date(startDate, "YYYY-MM-DD")
+    minDate() {
+      return this.$options.filters.Date(
+        this.timeFrame["start_date"],
+        "YYYY-MM-DD"
+      )
     },
 
-    endDate() {
-      const endDate = `${this.filters.endMonth} ${this.filters.endYear}`
-      return this.$options.filters.Date(endDate, "YYYY-MM-DD")
+    maxDate() {
+      return this.$options.filters.Date(
+        this.timeFrame["end_date"],
+        "YYYY-MM-DD"
+      )
     },
 
     selectedDateRange() {
       return {
-        startDate: this.startDate,
-        endDate: this.endDate,
+        startDate: this.filterStartDate,
+        endDate: this.filterEndDate ? endOfMonth(this.filterEndDate) : null,
       }
     },
 
@@ -281,8 +257,8 @@ export default {
   async mounted() {
     await this.refreshData()
     this.setFilters({
-      startDate: this.dateRange["start_date"],
-      endDate: this.dateRange["end_date"],
+      startDate: this.timeFrame["start_date"],
+      endDate: this.timeFrame["end_date"],
     })
   },
 
@@ -294,19 +270,21 @@ export default {
     }),
 
     async refreshData() {
+      this.loadingMatchingTrends = true
+      this.loadingDataFeeds = true
+      this.loadingOverview = true
       await this.loadOverview()
       this.loadDataFeeds()
-      await this.loadMatchingTrends()
+      this.loadMatchingTrends()
     },
 
     setFilters({ startDate, endDate }) {
       if (startDate && endDate) {
-        const month = "MMMM"
-        const year = "YYYY"
-        this.filters.startMonth = this.$options.filters.Date(startDate, month)
-        this.filters.startYear = this.$options.filters.Date(startDate, year)
-        this.filters.endMonth = this.$options.filters.Date(endDate, month)
-        this.filters.endYear = this.$options.filters.Date(endDate, year)
+        this.filterStartDate = this.$options.filters.Date(
+          startDate,
+          "YYYY-MM-DD"
+        )
+        this.filterEndDate = this.$options.filters.Date(endDate, "YYYY-MM-DD")
       }
     },
 
@@ -342,6 +320,10 @@ export default {
     ::v-deep .v-icon--disabled.theme--light.v-icon {
       color: var(--v-black-lighten3) !important;
     }
+  }
+
+  .idr-metric-card {
+    margin: 6px !important;
   }
 }
 </style>

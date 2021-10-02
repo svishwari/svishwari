@@ -53,9 +53,9 @@ configuration below.
 
 Here is the example configuration to run in dev.
 
-| `baseUrl`                                           | `USER_EMAIL`                         | `USER_PASSWORD`                      |
-|-----------------------------------------------------|--------------------------------------|--------------------------------------|
-|https://unified-ui-dev.main.use1.hux-unified-dev1.in | See 1Password: Unified Dev Test User | See 1Password: Unified Dev Test User |
+| `baseUrl`                                            | `USER_EMAIL`                         | `USER_PASSWORD`                      |
+| ---------------------------------------------------- | ------------------------------------ | ------------------------------------ |
+| https://unified-ui-dev.main.use1.hux-unified-dev1.in | See 1Password: Unified Dev Test User | See 1Password: Unified Dev Test User |
 
 1. Ensure you are connected to the dev VPN and are able to access the `baseUrl` from your browser.
 
@@ -66,7 +66,7 @@ npm test -- --config baseUrl=https://unified-ui-dev.main.use1.hux-unified-dev1.i
 ```
 
 3. You can also update both `cypress.json` for configuration and
-`cypress.env.json` for environment variables:
+   `cypress.env.json` for environment variables:
 
 ```json
 // cypress.json
@@ -81,7 +81,7 @@ npm test -- --config baseUrl=https://unified-ui-dev.main.use1.hux-unified-dev1.i
 // cypress.env.json
 {
   "USER_EMAIL": "<...>",
-  "USER_PASSWORD": "<...>",
+  "USER_PASSWORD": "<...>"
 }
 ```
 
@@ -116,7 +116,7 @@ docker build --no-cache -f Dockerfile -t ui-integration-tests .
 Run the tests, using your defined configuration and environment variables.
 
 ```sh
-docker run ui-integration-tests npm run test -- --config baseUrl=https://host.docker.internal:9090 --env FOO=foo,BAR=bar
+docker run ui-integration-tests --config baseUrl=https://host.docker.internal:9090 --env FOO=foo,BAR=bar
 ```
 
 To avoid environment variables being packaged with the build, we ignore any
@@ -134,7 +134,7 @@ export CYPRESS_USER_PASSWORD=<e2e_test_user_password>
 ```
 
 ```sh
-docker run --ipc=host ui-integration-tests npm run test -- --config baseUrl=$CYPRESS_BASE_URL,video=true --env USER_EMAIL=$CYPRESS_USER_EMAIL,USER_PASSWORD=$CYPRESS_USER_PASSWORD
+docker run --ipc=host ui-integration-tests --config baseUrl=$CYPRESS_BASE_URL,video=true --env USER_EMAIL=$CYPRESS_USER_EMAIL,USER_PASSWORD=$CYPRESS_USER_PASSWORD
 ```
 
 To review/debug test runs, mount volumes for the tests, logs and outputs.
@@ -142,7 +142,7 @@ To review/debug test runs, mount volumes for the tests, logs and outputs.
 ```sh
 export CYPRESS_LOGS="$(pwd)"/logs:/root/.npm/_logs
 export CYPRESS_DEV="$(pwd)"/cypress:/app/cypress
-docker run -it --ipc=host -v $CYPRESS_LOGS -v $CYPRESS_DEV ui-integration-tests npm run test -- --config baseUrl=$CYPRESS_BASE_URL,video=true --env USER_EMAIL=$CYPRESS_USER_EMAIL,USER_PASSWORD=$CYPRESS_USER_PASSWORD
+docker run -it --ipc=host -v $CYPRESS_LOGS -v $CYPRESS_DEV ui-integration-tests --config baseUrl=$CYPRESS_BASE_URL,video=true --env USER_EMAIL=$CYPRESS_USER_EMAIL,USER_PASSWORD=$CYPRESS_USER_PASSWORD
 ```
 
 These are useful for debugging runs locally, where you can view the tests'

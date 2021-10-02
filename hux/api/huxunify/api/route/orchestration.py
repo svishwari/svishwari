@@ -1,7 +1,6 @@
 # pylint: disable=too-many-lines
 """Paths for Orchestration API"""
 from http import HTTPStatus
-from random import uniform
 from typing import Tuple, Union
 from datetime import datetime, timedelta
 from flasgger import SwaggerView
@@ -19,13 +18,13 @@ from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
     orchestration_management,
-    db_exceptions,
     engagement_management,
     data_management,
     engagement_audience_management as eam,
 )
 import huxunifylib.database.constants as db_c
 
+from huxunify.api.exceptions import integration_api_exceptions as iae
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
     AudienceInsightsGetSchema,
@@ -34,6 +33,7 @@ from huxunify.api.schema.orchestration import (
     LookalikeAudiencePostSchema,
     LookalikeAudienceGetSchema,
     is_audience_lookalikeable,
+    AudienceDestinationSchema,
 )
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
@@ -60,6 +60,7 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.utils import (
     get_db_client,
     group_gender_spending,
+    Validation as validation,
     get_next_schedule,
 )
 
@@ -109,7 +110,7 @@ class AudienceView(SwaggerView):
             "name": api_c.LOOKALIKEABLE,
             "description": "Only return audiences that are lookalikeable",
             "in": "query",
-            "type": "string",
+            "type": "boolean",
             "required": False,
             "default": False,
         },
@@ -172,10 +173,15 @@ class AudienceView(SwaggerView):
         # )
 
         # get the x number of last deliveries to provide per audience
-        delivery_limit = int(
-            request.args.get(
-                api_c.DELIVERIES, api_c.DEFAULT_AUDIENCE_DELIVERY_COUNT
-            )
+        delivery_limit = (
+            validation.validate_integer(request.args.get(api_c.DELIVERIES))
+            if request.args.get(api_c.DELIVERIES)
+            else api_c.DEFAULT_AUDIENCE_DELIVERY_COUNT
+        )
+        lookalikeable = (
+            validation.validate_bool(request.args.get(api_c.LOOKALIKEABLE))
+            if request.args.get(api_c.LOOKALIKEABLE)
+            else False
         )
 
         # get unique destinations per audience across engagements
@@ -210,41 +216,50 @@ class AudienceView(SwaggerView):
 
             # set the weighted status for the audience based on deliveries
             audience[api_c.STATUS] = weight_delivery_status(audience)
+
+            # if not a part of any engagements and not delivered.
+            # set last delivery date to None.
+            if audience[api_c.STATUS] == api_c.STATUS_NOT_DELIVERED:
+                audience[api_c.AUDIENCE_LAST_DELIVERED] = None
+
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
-        # get all lookalikes and append to the audience list
-        lookalikes = destination_management.get_all_delivery_platform_lookalike_audiences(
-            database
-        )
-
-        # get the facebook delivery platform for lookalikes
-        facebook_destination = (
-            destination_management.get_delivery_platform_by_type(
-                database, db_c.DELIVERY_PLATFORM_FACEBOOK
-            )
-        )
-
-        # set the is_lookalike property to True so UI knows it is a lookalike.
-        for lookalike in lookalikes:
-            lookalike[api_c.LOOKALIKEABLE] = False
-            lookalike[api_c.IS_LOOKALIKE] = True
-
-            lookalike[db_c.STATUS] = lookalike.get(
-                db_c.STATUS, db_c.AUDIENCE_STATUS_ERROR
-            )
-            lookalike[db_c.AUDIENCE_LAST_DELIVERED] = lookalike[
-                db_c.CREATE_TIME
-            ]
-            lookalike[db_c.DESTINATIONS] = (
-                [facebook_destination] if facebook_destination else []
+        # fetch lookalike audiences if lookalikeable is set to false
+        # as lookalike audiences can not be lookalikeable
+        if not lookalikeable:
+            # get all lookalikes and append to the audience list
+            lookalikes = destination_management.get_all_delivery_platform_lookalike_audiences(
+                database
             )
 
-        # combine the two lists and serve.
-        audiences += lookalikes
+            # get the facebook delivery platform for lookalikes
+            facebook_destination = (
+                destination_management.get_delivery_platform_by_type(
+                    database, db_c.DELIVERY_PLATFORM_FACEBOOK
+                )
+            )
 
-        # if lookalikeable flag was passed, filter out the audiences
-        # that are not lookalikeable.
-        if request.args.get(api_c.LOOKALIKEABLE, False):
+            # set the is_lookalike property to True so UI knows it is a lookalike.
+            for lookalike in lookalikes:
+                lookalike[api_c.LOOKALIKEABLE] = False
+                lookalike[api_c.IS_LOOKALIKE] = True
+
+                lookalike[db_c.STATUS] = lookalike.get(
+                    db_c.STATUS, db_c.AUDIENCE_STATUS_ERROR
+                )
+                lookalike[db_c.AUDIENCE_LAST_DELIVERED] = lookalike[
+                    db_c.CREATE_TIME
+                ]
+                lookalike[db_c.DESTINATIONS] = (
+                    [facebook_destination] if facebook_destination else []
+                )
+
+            # combine the two lists and serve.
+            audiences += lookalikes
+
+        else:
+            # if lookalikeable is set to true, filter out the audiences
+            # that are not lookalikeable.
             audiences = [
                 x
                 for x in audiences
@@ -342,7 +357,7 @@ class AudienceGetView(SwaggerView):
             ]
 
             # TODO: HUS-837 change once we can generate real lookalikes from FB.
-            lookalike[api_c.MATCH_RATE] = round(uniform(0.2, 0.9), 2)
+            lookalike[api_c.MATCH_RATE] = 0
 
             # set audience to lookalike
             audience = lookalike
@@ -381,7 +396,7 @@ class AudienceGetView(SwaggerView):
             if api_c.DELIVERIES in engagement:
                 for delivery in engagement[api_c.DELIVERIES]:
                     delivery[api_c.MATCH_RATE] = (
-                        round(uniform(0.2, 0.9), 2)
+                        0
                         if delivery.get(api_c.IS_AD_PLATFORM, False)
                         and not audience.get(api_c.IS_LOOKALIKE, False)
                         else None
@@ -421,9 +436,16 @@ class AudienceGetView(SwaggerView):
             max(delivery_times) if delivery_times else None
         )
 
-        # set the destinations
-        audience[api_c.DESTINATIONS_TAG] = add_destinations(
-            database, audience.get(api_c.DESTINATIONS_TAG)
+        # get unique destinations per audience across engagements
+        audience_destinations = eam.get_all_engagement_audience_destinations(
+            database, [audience[db_c.ID]]
+        )
+
+        # check if any audiences returned, if so, set the destinations.
+        audience[db_c.DESTINATIONS] = (
+            audience_destinations[0].get(db_c.DESTINATIONS, [])
+            if audience_destinations
+            else []
         )
 
         # get live audience size
@@ -485,7 +507,7 @@ class AudienceInsightsGetView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     def get(self, audience_id: str) -> Tuple[dict, int]:
-        """Retrieves an audience.
+        """Retrieves audience insights for an audience.
 
         ---
         security:
@@ -584,7 +606,7 @@ class AudiencePostView(SwaggerView):
                     {
                         api_c.ID: "60b9601a6021710aa146df2f",
                         db_c.DELIVERY_PLATFORM_CONFIG: {
-                            db_c.DATA_EXTENSION_NAME: "SFMC Test Audience"
+                            db_c.DATA_EXTENSION_NAME: "Deloitte SFMC Ext"
                         },
                     }
                 ],
@@ -645,27 +667,12 @@ class AudiencePostView(SwaggerView):
 
         # validate destinations
         database = get_db_client()
+        destinations = []
         if db_c.DESTINATIONS in body:
             # validate list of dict objects
-            for destination in body[db_c.DESTINATIONS]:
-                # check if dict instance
-                if not isinstance(destination, dict):
-                    logger.error("Destination must be objects.")
-                    return {
-                        "message": "destinations must be objects"
-                    }, HTTPStatus.BAD_REQUEST
-
-                # check if destination id assigned
-                if db_c.OBJECT_ID not in destination:
-                    logger.error(
-                        "Destination object missing the %s field.",
-                        db_c.OBJECT_ID,
-                    )
-                    return {
-                        "message": f"{destination} missing the "
-                        f"{db_c.OBJECT_ID} field."
-                    }, HTTPStatus.BAD_REQUEST
-
+            for destination in AudienceDestinationSchema().load(
+                body[db_c.DESTINATIONS], many=True
+            ):
                 # validate object id
                 # map to an object ID field
                 # validate the destination object exists.
@@ -683,6 +690,7 @@ class AudiencePostView(SwaggerView):
                     return {
                         "message": api_c.DESTINATION_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
+                destinations.append(destination)
 
         engagement_ids = []
         if api_c.AUDIENCE_ENGAGEMENTS in body:
@@ -705,70 +713,57 @@ class AudiencePostView(SwaggerView):
                     }
                 engagement_ids.append(engagement_id)
 
-        try:
-            # get live audience size
-            customers = get_customers_overview(
-                token_response[0],
-                {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)},
-            )
+        # get live audience size
+        customers = get_customers_overview(
+            token_response[0],
+            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)},
+        )
 
-            # create the audience
-            audience_doc = orchestration_management.create_audience(
-                database=database,
-                name=body[api_c.AUDIENCE_NAME],
-                audience_filters=body.get(api_c.AUDIENCE_FILTERS),
-                destination_ids=body.get(api_c.DESTINATIONS),
-                user_name=user_name,
-                size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
-            )
+        # create the audience
+        audience_doc = orchestration_management.create_audience(
+            database=database,
+            name=body[api_c.AUDIENCE_NAME],
+            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+            destination_ids=destinations,
+            user_name=user_name,
+            size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
+        )
 
-            # add notification
+        # add notification
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f'New audience named "{audience_doc[db_c.NAME]}" '
+                f"added by {user_name}."
+            ),
+            api_c.ORCHESTRATION_TAG,
+        )
+
+        # attach the audience to each of the engagements
+        for engagement_id in engagement_ids:
+            engagement = engagement_management.append_audiences_to_engagement(
+                database,
+                engagement_id,
+                user_name,
+                [
+                    {
+                        db_c.OBJECT_ID: audience_doc[db_c.ID],
+                        db_c.DESTINATIONS: destinations,
+                    }
+                ],
+            )
+            # add audience attached notification
             create_notification(
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 (
-                    f'New audience named "{audience_doc[db_c.NAME]}" '
-                    f"added by {user_name}."
+                    f'Audience "{audience_doc[db_c.NAME]}" '
+                    f'added to engagement "{engagement[db_c.NAME]}" '
+                    f"by {user_name}."
                 ),
                 api_c.ORCHESTRATION_TAG,
             )
-
-            # attach the audience to each of the engagements
-            for engagement_id in engagement_ids:
-                engagement = (
-                    engagement_management.append_audiences_to_engagement(
-                        database,
-                        engagement_id,
-                        user_name,
-                        [
-                            {
-                                db_c.OBJECT_ID: audience_doc[db_c.ID],
-                                db_c.DESTINATIONS: body.get(
-                                    api_c.DESTINATIONS
-                                ),
-                            }
-                        ],
-                    )
-                )
-                # add audience attached notification
-                create_notification(
-                    database,
-                    db_c.NOTIFICATION_TYPE_SUCCESS,
-                    (
-                        f'Audience "{audience_doc[db_c.NAME]}" '
-                        f'added to engagement "{engagement[db_c.NAME]}" '
-                        f"by {user_name}."
-                    ),
-                    api_c.ORCHESTRATION_TAG,
-                )
-
-        except db_exceptions.DuplicateName:
-            logger.error(
-                "Duplicate Audience name %s.", body[api_c.AUDIENCE_NAME]
-            )
-            return {
-                "message": f"Duplicate name '{body[api_c.AUDIENCE_NAME]}'"
-            }, HTTPStatus.BAD_REQUEST
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.CREATED
 
@@ -1097,9 +1092,9 @@ class SetLookalikeAudience(SwaggerView):
 
         if not destination_connector.check_connection():
             logger.error("Facebook authentication failed.")
-            return {
-                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
-            }, HTTPStatus.BAD_REQUEST
+            raise iae.FailedDeliveryPlatformDependencyError(
+                destination[api_c.NAME], HTTPStatus.FAILED_DEPENDENCY
+            )
 
         most_recent_job = destination_management.get_all_delivery_jobs(
             database,
@@ -1183,7 +1178,7 @@ class SetLookalikeAudience(SwaggerView):
         )
         return (
             LookalikeAudienceGetSchema().dump(lookalike_audience),
-            HTTPStatus.CREATED,
+            HTTPStatus.ACCEPTED,
         )
 
 

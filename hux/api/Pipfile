@@ -28,8 +28,8 @@ requests= {version="2.25.1", index="pypi"}
 flask-cors = {version="3.0.10", index="pypi"}
 py-healthcheck = {version="1.10.1", index="pypi"}
 huxunifylib-database = {path="../../lib/huxunifylib-database", editable=true}
-huxunifylib-connectors = "==0.1.30"
-huxunifylib-util = "==0.1.30"
+huxunifylib-connectors = {version="==0.1.30", index="jfrog"}
+huxunifylib-util = {version="==0.1.30", index="jfrog"}
 faker = {version="*", index="pypi"}
 croniter = {version="*", index="pypi"}
 connexion = "==2.7.0"
@@ -43,6 +43,7 @@ safety = {version="*", index="pypi"}
 requests-mock= {version="*", index="pypi"}
 hypothesis = {version="*", index="pypi"}
 moto= {version="*", index="pypi"}
+pact-python= {version="*", index="pypi"}
 
 [requires]
 python_version = "3.7"
