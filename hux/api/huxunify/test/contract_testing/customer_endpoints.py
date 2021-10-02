@@ -1,4 +1,4 @@
-"""Contracts for CDPs customer-profile-api"""
+"""Contracts for CDPs customer-profile-api."""
 import unittest
 import atexit
 from pathlib import Path
@@ -21,19 +21,11 @@ atexit.register(pact.stop_service)
 
 
 class CDPCustomersContracts(unittest.TestCase):
-    """
-    Generate pact contracts for customer-profile-api endpoints.
-    """
+    """Generate pact contracts for customer-profile-api endpoints."""
 
     def test_get_count_by_state(self):
-        """
-        Test get count by state endpoint to generate pact contract.
+        """Test get count by state endpoint to generate pact contract."""
 
-        Args:
-
-        Returns:
-            None
-        """
         expected = {
             "code": 200,
             "body": EachLike(

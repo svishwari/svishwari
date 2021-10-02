@@ -1,6 +1,4 @@
-"""
-Purpose of this sub-folder is to store any api modules
-"""
+"""Purpose of this sub-folder is to store any api modules."""
 
 import logging
 

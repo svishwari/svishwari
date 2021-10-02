@@ -1,6 +1,4 @@
-"""
-Purpose of this file is to house all the models api tests
-"""
+"""Purpose of this file is to house all the models API tests."""
 from unittest import TestCase, mock
 from http import HTTPStatus
 import requests_mock
@@ -50,16 +48,10 @@ MOCK_MODEL_RESPONSE = {
 
 
 class TestModelRoutes(TestCase):
-    """Test Model Endpoints"""
+    """Test Model Endpoints."""
 
     def setUp(self) -> None:
-        """
-        Setup resources before each test
-
-        Args:
-
-        Returns:
-        """
+        """Setup resources before each test."""
 
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
@@ -80,14 +72,8 @@ class TestModelRoutes(TestCase):
         self.addCleanup(mock.patch.stopall)
 
     def test_get_all_models(self):
-        """
-        Test get all models from Tecton
+        """Test get all models from Tecton."""
 
-        Args:
-
-        Returns:
-
-        """
         self.request_mocker.stop()
         self.request_mocker.post(
             t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE,
@@ -104,14 +90,7 @@ class TestModelRoutes(TestCase):
         self.assertEqual(3, len(response.json))
 
     def test_retrieve_version_history_for_model(self):
-        """
-        Test get version history for a model from Tecton
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get version history for a model from Tecton."""
 
         # mock the version history
         self.request_mocker.stop()
@@ -135,14 +114,7 @@ class TestModelRoutes(TestCase):
         self.assertEqual(response.json[-1][api_c.VERSION], "21.7.28")
 
     def test_retrieve_drift_details_for_model(self):
-        """
-        Test get drift details for a model from Tecton
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get drift details for a model from Tecton."""
 
         # mock the drift data.
         self.request_mocker.stop()

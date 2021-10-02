@@ -1,3 +1,1 @@
-"""
-Purpose of this sub-folder is for housing any api related exceptions.
-"""
+"""Purpose of this sub-folder is for housing any api related exceptions."""

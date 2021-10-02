@@ -68,6 +68,7 @@
                 width="100"
                 height="40"
                 :box-shadow="false"
+                data-e2e="audience-select-button"
                 @click="add(row.item)"
               >
                 Add

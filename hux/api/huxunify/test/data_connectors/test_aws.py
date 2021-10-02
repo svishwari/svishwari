@@ -1,6 +1,4 @@
-"""
-Purpose of this file is to house all aws unit tests
-"""
+"""Purpose of this file is to house all aws unit tests."""
 import string
 from unittest import TestCase
 
@@ -19,16 +17,11 @@ from huxunify.api import constants as api_c
 
 
 class AWSTest(TestCase):
-    """
-    Test AWS Methods
-    """
+    """Test AWS Methods."""
 
     def setUp(self) -> None:
-        """Setup tests
+        """Setup tests."""
 
-        Returns:
-
-        """
         self.config = get_config()
         self.s3_client = boto3.client(
             api_c.AWS_S3_NAME,
@@ -43,12 +36,14 @@ class AWSTest(TestCase):
         file_type=st.text(alphabet=string.ascii_letters),
     )
     @settings(deadline=600)
-    def test_upload_file(self, user_name, file_type):
+    def test_upload_file(self, user_name: str, file_type: str):
+        """Test upload of file to mocked S3 dataset bucket.
+
+        Args:
+            user_name (str): Value for User name.
+            file_type (str): Type of File.
         """
 
-        Returns:
-
-        """
         if not user_name:
             return
 
@@ -69,11 +64,7 @@ class AWSTest(TestCase):
 
     @mock_s3
     def test_download_file(self):
-        """
-
-        Returns:
-
-        """
+        """Test download of file to mocked S3 dataset bucket."""
 
         with tempfile.NamedTemporaryFile(mode="w+", delete=False) as temp_file:
             self.s3_client.create_bucket(Bucket=self.config.S3_DATASET_BUCKET)

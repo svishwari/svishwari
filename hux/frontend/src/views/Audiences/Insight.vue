@@ -180,6 +180,7 @@
         :title="item.title"
         :icon="item.icon"
         :height="75"
+        data-e2e="audience-history"
       >
         <template #subtitle-extended>
           <span class="mr-2 mt-1">
@@ -278,6 +279,7 @@
                     text-decoration-none
                     body-2
                   "
+                  data-e2e="add-engagement"
                   @click="openAttachEngagementDrawer()"
                 >
                   <icon
@@ -293,6 +295,7 @@
                   text
                   color="primary"
                   class="body-2 ml-n3"
+                  data-e2e="delivery-history"
                   @click="openDeliveryHistoryDrawer()"
                 >
                   <icon type="history" :size="14" class="mr-1" />
@@ -356,6 +359,7 @@
             :icon="item.icon"
             :height="80"
             :interactable="item.action ? true : false"
+            data-e2e="audience-overview"
             @click="item.action ? onClick(item.action) : ''"
           >
             <template #subtitle-extended>
@@ -396,6 +400,7 @@
             v-if="!loadingDemographics"
             :map-data="mapChartData"
             :configuration-data="configurationData"
+            data-e2e="map-chart"
           />
           <map-slider
             v-if="!loadingDemographics"
@@ -445,6 +450,7 @@
           <income-chart
             v-if="!loadingDemographics"
             :data="demographicsData.income"
+            data-e2e="income-chart"
           />
         </v-card>
       </v-col>
@@ -466,6 +472,7 @@
           <gender-spend-chart
             v-if="!loadingDemographics"
             :data="demographicsData.spend"
+            data-e2e="gender-spend-chart"
           />
         </v-card>
       </v-col>
@@ -486,6 +493,7 @@
               :chart-dimensions="genderChartDimensions"
               :data="genderChartData"
               label="Gender"
+              data-e2e="gender-chart"
             />
           </div>
         </v-card>
@@ -555,6 +563,7 @@
     <delivery-history-drawer
       :audience-id="audienceId"
       :toggle="showDeliveryHistoryDrawer"
+      data-e2e="delivery-history-drawer"
       @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
     />
 

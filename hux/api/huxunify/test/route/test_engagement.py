@@ -1,7 +1,5 @@
 # pylint: disable=too-many-lines
-"""
-Purpose of this file is to house all the engagement api tests
-"""
+"""Purpose of this file is to house all the engagement API endpoint tests."""
 import json
 from datetime import datetime, timedelta
 from unittest import TestCase, mock
@@ -67,16 +65,16 @@ DISPLAY_ADS_METRICS = {
 
 
 def validate_schema(schema: Schema, response: dict) -> bool:
-    """
-    Utility Function to Validate the Schema with respect to Response
+    """Utility Function to Validate the Schema with respect to Response.
 
     Args:
         schema (Schema): Marshmallow Schema
         response (dict): json response
 
     Returns:
-        (bool)
+        bool: True if schema validation is successful, False otherwise.
     """
+
     try:
         schema.load(data=response)
         return True
@@ -86,16 +84,10 @@ def validate_schema(schema: Schema, response: dict) -> bool:
 
 # pylint: disable=too-many-instance-attributes
 class TestEngagementMetricsDisplayAds(TestCase):
-    """
-    Purpose of this class is to test Engagement Metrics of Display Ads
-    """
+    """Purpose of this class is to test Engagement Metrics of Display Ads."""
 
     def setUp(self):
-        """
-        Sets up Test Client
-
-        Returns:
-        """
+        """Sets up Test Client."""
 
         self.app = create_app().test_client()
 
@@ -191,15 +183,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
         self.addCleanup(mock.patch.stopall)
 
     def test_display_ads_summary(self):
-        """
-        It validates the schema for Display Ads Summary
-        Schema Name: DisplayAdsSummary
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test display ads summary success."""
 
         engagement_id = self.engagement_id
         endpoint = (
@@ -247,14 +231,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
         )
 
     def test_display_ads_invalid_engagement(self):
-        """
-        Tests response for invalid engagement id
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Tests display ads response for invalid engagement ID."""
 
         engagement_id = "random_id"
         endpoint = (
@@ -275,16 +252,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_display_ads_audience_performance_invalid_engagement_id(self):
-        """
-        It validates the schema for Individual Audience
-        Display Ads Performance Summary
-        Schema Name: DispAdIndividualAudienceSummary
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test display ads audience performance with invalid engagement ID."""
 
         engagement_id = ObjectId()
         endpoint = (
@@ -304,16 +272,10 @@ class TestEngagementMetricsDisplayAds(TestCase):
 
 # pylint: disable=too-many-instance-attributes
 class TestEngagementMetricsEmail(TestCase):
-    """
-    Purpose of this class is to test Engagement Metrics of Email
-    """
+    """Purpose of this class is to test Engagement Metrics of Email."""
 
     def setUp(self):
-        """
-        Sets up Test Client
-
-        Returns:
-        """
+        """Sets up Test Client."""
 
         self.app = create_app().test_client()
 
@@ -400,15 +362,7 @@ class TestEngagementMetricsEmail(TestCase):
         self.addCleanup(mock.patch.stopall)
 
     def test_email_summary(self):
-        """
-        It validates the schema for Email Summary
-        Schema Name: EmailSummary
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test email summary success response."""
 
         endpoint = (
             f"/api/v1/{api_c.ENGAGEMENT_TAG}/"
@@ -450,14 +404,7 @@ class TestEngagementMetricsEmail(TestCase):
         )
 
     def test_email_invalid_engagement(self):
-        """
-        Tests response for invalid engagement id
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Tests email for invalid engagement ID."""
 
         engagement_id = "invalid_object_id"
         endpoint = (
@@ -478,15 +425,7 @@ class TestEngagementMetricsEmail(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_email_audience_performance(self):
-        """
-        It validates the schema for Individual Audience Display Ads Performance Summary
-        Schema Name: EmailIndividualAudienceSummary
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test email audience performance success response."""
 
         endpoint = (
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
@@ -504,18 +443,10 @@ class TestEngagementMetricsEmail(TestCase):
 
 # pylint: disable=too-many-instance-attributes,too-many-public-methods
 class TestEngagementRoutes(TestCase):
-    """
-    Tests for Engagement APIs
-    """
+    """Tests for Engagement route APIs."""
 
     def setUp(self) -> None:
-        """
-        Setup resources before each test
-
-        Args:
-
-        Returns:
-        """
+        """Setup resources before each test."""
 
         # mock request for introspect call
         request_mocker = requests_mock.Mocker()
@@ -721,14 +652,7 @@ class TestEngagementRoutes(TestCase):
         self.addCleanup(mock.patch.stopall)
 
     def test_get_campaign_mappings_no_delivery_jobs(self):
-        """
-        Test get all engagements API
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get all engagements API."""
 
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = self.engagement_ids[0]
@@ -749,7 +673,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_campaigns_no_delivery_jobs(self):
-        """Test get campaigns no delivery jobs"""
+        """Test get campaigns no delivery jobs."""
 
         engagement_id = self.engagement_ids[0]
         audience_id = self.audiences[0][db_c.ID]
@@ -770,14 +694,8 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_campaigns_for_non_existent_engagement(self):
-        """
-        Test delivery of a destination for a non-existent engagement
+        """Test delivery of a destination for a non-existent engagement."""
 
-        Args:
-
-        Returns:
-
-        """
         engagement_id = str(ObjectId())
         audience_id = self.audiences[0][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
@@ -797,7 +715,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_campaigns_for_non_existent_audience(self):
-        """Test get campaigns for a non-existent audience"""
+        """Test get campaigns for a non-existent audience."""
 
         engagement_id = self.engagement_ids[0]
         audience_id = str(ObjectId())
@@ -818,14 +736,8 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_campaigns_for_invalid_engagement(self):
-        """
-        Test delivery of a destination for a non-existent engagement
+        """Test delivery of a destination for a non-existent engagement."""
 
-        Args:
-
-        Returns:
-
-        """
         engagement_id = t_c.INVALID_ID
         audience_id = self.audiences[0][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
@@ -845,14 +757,8 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_campaign_mappings_for_invalid_engagement(self):
-        """
-        Test delivery of a destination for a non-existent engagement
+        """Test delivery of a destination for a non-existent engagement."""
 
-        Args:
-
-        Returns:
-
-        """
         engagement_id = t_c.INVALID_ID
         audience_id = self.audiences[0][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
@@ -872,14 +778,8 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_campaign_mappings_for_non_existent_engagement(self):
-        """
-        Test delivery of a destination for a non-existent engagement
+        """Test delivery of a destination for a non-existent engagement."""
 
-        Args:
-
-        Returns:
-
-        """
         engagement_id = str(ObjectId())
         audience_id = self.audiences[0][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
@@ -899,7 +799,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_campaign_mappings_for_non_existent_audience(self):
-        """Test get campaign mappings for a non-existent audience"""
+        """Test get campaign mappings for a non-existent audience."""
 
         engagement_id = self.engagement_ids[0]
         audience_id = str(ObjectId())
@@ -920,14 +820,8 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_put_campaign_mappings_for_non_existent_engagement(self):
-        """
-        Test delivery of a destination for a non-existent engagement
+        """Test delivery of a destination for a non-existent engagement."""
 
-        Args:
-
-        Returns:
-
-        """
         engagement_id = str(ObjectId())
         audience_id = self.audiences[0][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
@@ -947,7 +841,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_put_campaigns_for_non_existent_audience(self):
-        """Test put/update campaigns for a non-existent audience"""
+        """Test put/update campaigns for a non-existent audience."""
 
         engagement_id = self.engagement_ids[0]
         audience_id = str(ObjectId())
@@ -968,14 +862,8 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_put_campaigns_invalid_audience_id(self):
-        """
-        Test delivery of a destination for a non-existent engagement
+        """Test delivery of a destination for a non-existent engagement."""
 
-        Args:
-
-        Returns:
-
-        """
         audience_id = t_c.INVALID_ID
         engagement_id = self.engagement_ids[0]
         destination_id = self.destinations[0][db_c.ID]
@@ -995,15 +883,9 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_campaigns_for_an_engagement_invalid_audience_id(self):
-        """
-        Test delivery of an audience for an engagement
-        with invalid audience id
+        """Test delivery of an audience for an engagement with invalid
+        audience ID."""
 
-        Args:
-
-        Returns:
-
-        """
         audience_id = t_c.INVALID_ID
         engagement_id = self.engagement_ids[0]
         destination_id = self.destinations[0][db_c.ID]
@@ -1023,15 +905,9 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_campaign_mappings_for_an_engagement_invalid_audience_id(self):
-        """
-        Test delivery of an audience for an engagement
-        with invalid audience id
+        """Test delivery of an audience for an engagement with invalid
+        audience ID."""
 
-        Args:
-
-        Returns:
-
-        """
         audience_id = t_c.INVALID_ID
         engagement_id = self.engagement_ids[0]
         destination_id = self.destinations[0][db_c.ID]
@@ -1051,15 +927,9 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_campaigns_for_an_engagement_invalid_destination_id(self):
-        """
-        Test delivery of an audience for an engagement
-        with invalid audience id
+        """Test delivery of an audience for an engagement with invalid
+        audience ID."""
 
-        Args:
-
-        Returns:
-
-        """
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = self.engagement_ids[0]
         destination_id = t_c.INVALID_ID
@@ -1079,14 +949,8 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_put_campaigns_invalid_destination_id(self):
-        """
-        Test delivery of a destination for a non-existent engagement
+        """Test delivery of a destination for a non-existent engagement."""
 
-        Args:
-
-        Returns:
-
-        """
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = self.engagement_ids[0]
         destination_id = t_c.INVALID_ID
@@ -1108,15 +972,8 @@ class TestEngagementRoutes(TestCase):
     def test_get_campaign_mappings_for_an_engagement_invalid_destination_id(
         self,
     ):
-        """
-        Test get campaigns for an engagement
-        with invalid audience id
+        """Test get campaigns for an engagement with invalid audience id."""
 
-        Args:
-
-        Returns:
-
-        """
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = self.engagement_ids[0]
         destination_id = t_c.INVALID_ID
@@ -1136,14 +993,8 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_campaign_for_unattached_audience(self):
-        """
-        Test delivery of a destination for an unattached audience
+        """Test delivery of a destination for an unattached audience."""
 
-        Args:
-
-        Returns:
-
-        """
         engagement_id = self.engagement_ids[1]
 
         # Unattached audience id
@@ -1167,14 +1018,8 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_campaign_mappings_for_unattached_audience(self):
-        """
-        Test delivery of a destination for an unattached audience
+        """Test delivery of a destination for an unattached audience."""
 
-        Args:
-
-        Returns:
-
-        """
         engagement_id = self.engagement_ids[1]
 
         # Unattached audience id
@@ -1198,14 +1043,8 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_campaigns_for_unattached_destination(self):
-        """
-        Test get campaigns for an unattached destination
+        """Test get campaigns for an unattached destination."""
 
-        Args:
-
-        Returns:
-
-        """
         engagement_id = self.engagement_ids[1]
         # Unattached audience id
         audience_id = self.audiences[1][db_c.ID]
@@ -1223,14 +1062,8 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_campaign_mappings_for_unattached_destination(self):
-        """
-        Test get campaign mappings for an unattached destination
+        """Test get campaign mappings for an unattached destination."""
 
-        Args:
-
-        Returns:
-
-        """
         engagement_id = self.engagement_ids[1]
         # Unattached audience id
         audience_id = self.audiences[1][db_c.ID]
@@ -1248,14 +1081,8 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_get_engagements_success(self):
-        """
-        Test get all engagements API
+        """Test get all engagements API success."""
 
-        Args:
-
-        Returns:
-
-        """
         expected_engagements = get_engagements(self.database)
 
         response = self.app.get(
@@ -1271,14 +1098,7 @@ class TestEngagementRoutes(TestCase):
             self.assertIsNotNone(engagement[db_c.STATUS])
 
     def test_get_engagement_by_id_valid_id(self):
-        """
-        Test get engagement API with valid id
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get engagement API with valid ID."""
 
         engagement_id = self.engagement_ids[0]
         response = self.app.get(
@@ -1292,14 +1112,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(api_c.STATUS_INACTIVE, return_engagement[db_c.STATUS])
 
     def test_get_engagement_by_id_invalid_id(self):
-        """
-        Test get engagements API with invalid id
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get engagements API with invalid ID."""
 
         engagement_id = t_c.INVALID_ID
 
@@ -1314,14 +1127,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_engagement_by_id_non_existent_id(self):
-        """
-        Test get engagements API with non-existent id
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get engagements API with non-existent ID."""
 
         engagement_id = str(ObjectId())
 
@@ -1336,14 +1142,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_delete_engagement_valid_id(self):
-        """
-        Test delete engagement API with valid id
-
-        Args:
-
-        Returns:
-
-        """
+        """Test delete engagement API with valid ID."""
 
         engagement_id = self.engagement_ids[0]
 
@@ -1355,13 +1154,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
 
     def test_delete_engagement_invalid_id(self):
-        """Test delete engagement API with invalid id
-
-        Args:
-
-        Returns:
-
-        """
+        """Test delete engagement API with invalid ID."""
 
         engagement_id = t_c.INVALID_ID
 
@@ -1375,13 +1168,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_delete_engagement_non_existent_id(self) -> None:
-        """Test delete engagement API with non-existent id
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test delete engagement API with non-existent ID."""
 
         non_existent_engagement_id = str(ObjectId())
 
@@ -1396,14 +1183,7 @@ class TestEngagementRoutes(TestCase):
         )
 
     def test_set_engagement(self):
-        """
-        Test set engagement API with valid params
-
-        Args:
-
-        Returns:
-
-        """
+        """Test set engagement API with valid params."""
 
         engagement = {
             db_c.AUDIENCES: [
@@ -1429,14 +1209,12 @@ class TestEngagementRoutes(TestCase):
 
     @given(schedule=st.sampled_from(t_c.SCHEDULES))
     def test_set_engagement_with_delivery_schedule(self, schedule: dict):
-        """
-        Test set engagement API with valid params
+        """Test set engagement API with valid delivery schedule params.
 
         Args:
-
-        Returns:
-
+            schedule (dict): A dictionary of schedules.
         """
+
         engagement_delivery_schedule = {api_c.SCHEDULE: schedule}
 
         engagement = {
@@ -1469,14 +1247,8 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
 
     def test_set_engagement_with_invalid_delivery_schedule(self):
-        """
-        Test set engagement API with valid params
+        """Test set engagement API with invalid delivery schedule params."""
 
-        Args:
-
-        Returns:
-
-        """
         engagement_delivery_schedule = {
             api_c.SCHEDULE: t_c.DAILY_SCHEDULE_INVALID
         }
@@ -1503,14 +1275,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
 
     def test_set_engagement_without_audience(self):
-        """
-        Test set engagement API without audience
-
-        Args:
-
-        Returns:
-
-        """
+        """Test set engagement API without audience."""
 
         engagement = {
             db_c.AUDIENCES: [],
@@ -1528,14 +1293,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
 
     def test_set_engagement_without_description(self):
-        """
-        Test set engagement API without description
-
-        Args:
-
-        Returns:
-
-        """
+        """Test set engagement API without description."""
 
         engagement = {
             db_c.AUDIENCES: [],
@@ -1552,14 +1310,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
 
     def test_set_engagement_without_name(self):
-        """
-        Test set engagement API without name
-
-        Args:
-
-        Returns:
-
-        """
+        """Test set engagement API without name."""
 
         engagement = {
             db_c.AUDIENCES: [],
@@ -1580,12 +1331,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_update_engagement(self):
-        """
-        Test update an engagement
-
-        Returns:
-
-        """
+        """Test update an engagement."""
 
         engagement_id = self.engagement_ids[0]
 
@@ -1613,12 +1359,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual("new name", response.json[db_c.NAME])
 
     def test_update_engagement_invalid_id(self):
-        """
-        Test update an engagement invalid id
-
-        Returns:
-
-        """
+        """Test update an engagement invalid ID."""
 
         bad_engagement_id = t_c.INVALID_ID
         good_engagement_id = self.engagement_ids[0]
@@ -1803,7 +1544,7 @@ class TestEngagementRoutes(TestCase):
         )
 
     def test_delete_audience_from_engagement_invalid_engagement_id(self):
-        """Test delete audience from engagement with an invalid engagement id"""
+        """Test delete audience from engagement with an invalid engagement ID."""
 
         bad_engagement_id = t_c.INVALID_ID
         good_engagement_id = self.engagement_ids[0]
@@ -1847,7 +1588,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, delete_audience_response.json)
 
     def test_delete_audience_from_engagement_invalid_audience_id(self):
-        """Test delete audience from engagement with an invalid audience id"""
+        """Test delete audience from engagement with an invalid audience ID."""
 
         engagement_id = self.engagement_ids[0]
         new_audience_id = self.audiences[0][db_c.ID]
@@ -1890,7 +1631,8 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, delete_audience_response.json)
 
     def test_add_destination_to_engagement_audience(self):
-        """Test add destination to engagement audience"""
+        """Test add destination to engagement audience."""
+
         engagement_id = self.engagement_ids[0]
         audience_id = self.audiences[1][db_c.ID]
 
@@ -1917,7 +1659,8 @@ class TestEngagementRoutes(TestCase):
         )
 
     def test_remove_destination_from_engagement_audience(self):
-        """Test remove destination from engagement audience"""
+        """Test remove destination from engagement audience."""
+
         engagement_id = self.engagement_ids[0]
         audience_id = self.audiences[1][db_c.ID]
 
@@ -1935,10 +1678,7 @@ class TestEngagementRoutes(TestCase):
         )
 
     def test_set_engagement_flight_schedule(self):
-        """
-        Test setting an engagement flight schedule
-        Returns:
-        """
+        """Test setting an engagement flight schedule."""
 
         engagement_id = self.engagement_ids[0]
 
@@ -1992,10 +1732,7 @@ class TestEngagementRoutes(TestCase):
             self.assertEqual(response_datetime, expected_datetime)
 
     def test_remove_engagement_flight_schedule(self):
-        """
-        Test removing an engagement flight schedule
-        Returns:
-        """
+        """Test removing an engagement flight schedule."""
 
         engagement_id = self.engagement_ids[0]
         engagement_response = self.app.get(
@@ -2048,14 +1785,7 @@ class TestEngagementRoutes(TestCase):
         self.assertFalse(response.json[api_c.DELIVERY_SCHEDULE])
 
     def test_get_engagement_by_id_validate_match_rate(self) -> None:
-        """
-        Test get engagement API with valid id and valid match_rate present
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get engagement API with valid id and valid match_rate present."""
 
         engagements = get_engagements(self.database)
 

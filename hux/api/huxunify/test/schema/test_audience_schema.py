@@ -1,6 +1,4 @@
-"""
-Purpose of this file is to test the audience schemas
-"""
+"""Purpose of this file is to test the audience schemas."""
 from unittest import TestCase
 from datetime import datetime, timedelta
 
@@ -10,15 +8,10 @@ from huxunify.api import constants as api_c
 
 
 class EngagementSchemaTest(TestCase):
-    """Test Audience Schema Classes"""
+    """Test Audience Schema Classes."""
 
     def test_is_audience_lookalikeable_active(self) -> None:
-        """Test is_audience_lookalikeable active status
-
-        Returns:
-            Response: None
-
-        """
+        """Test is_audience_lookalikeable active status."""
 
         audience = {
             api_c.DELIVERIES: [
@@ -35,12 +28,7 @@ class EngagementSchemaTest(TestCase):
         self.assertEqual(db_c.ACTIVE, is_audience_lookalikeable(audience))
 
     def test_is_audience_lookalikeable_inactive(self) -> None:
-        """Test is_audience_lookalikeable inactive status
-
-        Returns:
-            Response: None
-
-        """
+        """Test is audience lookalikeable inactive status."""
 
         audience = {
             api_c.DELIVERIES: [
@@ -57,12 +45,7 @@ class EngagementSchemaTest(TestCase):
         )
 
     def test_is_audience_lookalikeable_disabled(self) -> None:
-        """Test is_audience_lookalikeable disabled status
-
-        Returns:
-            Response: None
-
-        """
+        """Test is audience lookalikeable disabled status."""
 
         audience = {
             api_c.DELIVERIES: [
