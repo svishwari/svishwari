@@ -78,10 +78,10 @@ export default {
   },
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .card-info-wrapper {
   .v-card__title {
-    background-color: var(--v-primary-lighten1) !important;
+    background-color: var(--v-primary-lighten1);
     margin-bottom: 10px;
   }
 }
