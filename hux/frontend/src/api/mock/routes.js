@@ -51,12 +51,7 @@ export const defineRoutes = (server) => {
     )
     return new Response(code, headers, body)
   })
-  // client["users"].markFavorite = (resourceId, entityType) => {
-  //   return http.post(`/${entityType}/${resourceId}/favorite`)
-  // }
-  // client["users"].clearFavorite = (resourceId, entityType) => {
-  //   return http.delete(`/${entityType}/${resourceId}/favorite`)
-  // }
+
   // data sources
   server.get("/data-sources")
 
