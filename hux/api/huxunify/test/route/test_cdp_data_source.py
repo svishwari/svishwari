@@ -119,6 +119,35 @@ class CdpDataSourcesTest(TestCase):
                 self.assertFalse(data_source[api_c.IS_ADDED])
                 self.assertNotIn(api_c.ID, data_source)
 
+    def test_get_all_data_sources_no_args(self):
+        """Test get all data source with no args."""
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_CONNECTIONS_ENDPOINT}/{api_c.DATASOURCES}",
+            json=t_c.DATASOURCES_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            self.data_sources_api_endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(
+            t_c.validate_schema(
+                CdpDataSourceSchema(), response.json, is_multiple=True
+            )
+        )
+        for data_source in response.json:
+            if data_source in self.data_sources:
+                self.assertTrue(data_source[api_c.IS_ADDED])
+                self.assertIn(api_c.ID, data_source)
+            else:
+                self.assertFalse(data_source[api_c.IS_ADDED])
+                self.assertNotIn(api_c.ID, data_source)
+
     def test_delete_data_sources_by_type_success(self):
         """]Test delete data sources by type from DB."""
 

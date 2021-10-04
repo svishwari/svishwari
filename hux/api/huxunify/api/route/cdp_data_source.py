@@ -75,7 +75,7 @@ class DataSourceSearch(SwaggerView):
             "in": "query",
             "required": False,
             "example": "true",
-            "default": True,
+            "default": "true",
         }
     ]
     responses = {
@@ -101,8 +101,10 @@ class DataSourceSearch(SwaggerView):
         Raises:
             ProblemException: Any exception raised during endpoint execution.
         """
-        only_added = validation.validate_bool(
-            request.args.get(api_c.ONLY_ADDED)
+        only_added = (
+            validation.validate_bool(request.args.get(api_c.ONLY_ADDED))
+            if request.args
+            else False
         )
 
         data_sources = get_all_data_sources(get_db_client())
