@@ -3,6 +3,7 @@
  */
 
 import dayjs from "dayjs"
+import store from "@/store/index.js"
 
 /**
  * Forms the title for the page.
@@ -22,7 +23,15 @@ export function pageTitle(title) {
  */
 export function handleError(error) {
   // TODO: do more with the error than just logging it to the console
-  console.error(error)
+  let errorMessage =
+    error.response.data.message ||
+    error.response.data.exception_message ||
+    error.message
+  store._actions["alerts/setAlert"][0]({
+    message: errorMessage,
+    code: error.response.status,
+    type: "error",
+  })
 }
 
 /**

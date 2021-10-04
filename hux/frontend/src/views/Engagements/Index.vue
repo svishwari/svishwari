@@ -483,14 +483,8 @@
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
       @onCreate="onCreated()"
-      @onError="onError($event)"
     />
 
-    <hux-alert
-      v-model="flashAlert"
-      :type="alert.type"
-      :message="alert.message"
-    />
     <confirm-modal
       v-model="showAudienceRemoveConfirmation"
       :title="confirmDialog.title"
@@ -516,7 +510,6 @@ import Avatar from "../../components/common/Avatar.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Status from "../../components/common/Status.vue"
 import MenuCell from "../../components/common/huxTable/MenuCell.vue"
-import HuxAlert from "@/components/common/HuxAlert.vue"
 import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
 import Logo from "../../components/common/Logo.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
@@ -534,7 +527,6 @@ export default {
     Status,
     MenuCell,
     LookAlikeAudience,
-    HuxAlert,
     Logo,
     Tooltip,
     ConfirmModal,
@@ -550,11 +542,6 @@ export default {
         title: "Remove  audience?",
         btnText: "Yes, remove it",
         body: "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement.",
-      },
-      flashAlert: false,
-      alert: {
-        type: "success",
-        message: "",
       },
       breadcrumbItems: [
         {
@@ -707,6 +694,7 @@ export default {
       updateAudienceList: "engagements/updateAudienceList",
       updateEngagement: "engagements/updateEngagement",
       detachAudience: "engagements/detachAudience",
+      setAlert: "alerts/setAlert",
     }),
     getAudienceHeaders(headers) {
       headers[0].width = "180px"
@@ -780,13 +768,10 @@ export default {
       this.showLookAlikeDrawer = false
     },
     async onCreated() {
-      this.alert.message = `Your lookalike audience, ${name}, has been created successfully.`
-      this.flashAlert = true
-    },
-    onError(message) {
-      this.alert.type = "error"
-      this.alert.message = message
-      this.flashAlert = true
+      this.setAlert({
+        type: "success",
+        message: `Your lookalike audience, ${name}, has been created successfully.`,
+      })
     },
     getActionItems(engagement) {
       let actionItems = [

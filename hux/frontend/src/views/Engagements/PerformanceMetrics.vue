@@ -69,12 +69,6 @@
         />
       </v-tab-item>
     </v-tabs-items>
-    <hux-alert
-      v-model="flashAlert"
-      :type="alert.type"
-      :title="alert.title"
-      :message="alert.message"
-    />
   </div>
 </template>
 
@@ -82,7 +76,6 @@
 import { saveFile } from "@/utils"
 import { mapActions } from "vuex"
 import CampaignSummary from "../../components/CampaignSummary.vue"
-import HuxAlert from "../../components/common/HuxAlert.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
@@ -90,7 +83,6 @@ export default {
   components: {
     CampaignSummary,
     Tooltip,
-    HuxAlert,
   },
   props: {
     adData: {
@@ -115,12 +107,6 @@ export default {
   },
   data() {
     return {
-      flashAlert: false,
-      alert: {
-        type: "success",
-        title: "YAY!",
-        message: "Downloading...",
-      },
       tabOption: 0,
       myIconColor: "primary",
       tooltipValue:
@@ -360,13 +346,14 @@ export default {
   methods: {
     ...mapActions({
       downloadAudienceMetrics: "engagements/fetchAudienceMetrics",
+      setAlert: "alerts/setAlert",
     }),
     async initiateMetricsDownload() {
-      this.alert.type = "Pending"
-      this.alert.title = ""
-      this.alert.message =
-        "The download has started. Please be patient while it finishes."
-      this.flashAlert = true
+      this.setAlert({
+        type: "pending",
+        message:
+          "The download has started. Please be patient while it finishes.",
+      })
       const fileBlob = await this.downloadAudienceMetrics({
         id: this.engagementId,
       })

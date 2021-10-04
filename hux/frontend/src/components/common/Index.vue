@@ -153,12 +153,7 @@
 
     <v-subheader> Alert </v-subheader>
     <v-btn @click="alert = !alert">Toogle alert</v-btn>
-    <hux-alert
-      v-model="alert"
-      type="success"
-      title="YAY!"
-      message="This is a success message! It will disappear in 5 seconds on its own."
-    />
+    <hux-alert />
 
     <v-divider class="mt-10" />
 
