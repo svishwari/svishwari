@@ -75,6 +75,9 @@
                 route-name="AudienceInsight"
                 :route-param="item['id']"
                 data-e2e="audiencename"
+                has-favorite
+                :is-favorite="isUserFavorite(item, 'audiences')"
+                @actionFavorite="handleActionFavorite(item, 'audiences')"
               />
             </div>
             <div v-if="header.value == 'status'" class="text-caption">
@@ -350,6 +353,7 @@ export default {
   computed: {
     ...mapGetters({
       rowData: "audiences/list",
+      userFavories: "users/favorites",
     }),
     audienceList() {
       let audienceValue = this.rowData
@@ -371,7 +375,22 @@ export default {
   methods: {
     ...mapActions({
       getAllAudiences: "audiences/getAll",
+      markFavorite: "users/markFavorite",
+      clearFavorite: "users/clearFavorite",
     }),
+
+    isUserFavorite(entity, type) {
+      return (
+        this.userFavories[type] && this.userFavories[type].includes(entity.id)
+      )
+    },
+    handleActionFavorite(item, type) {
+      if (!this.isUserFavorite(item, type)) {
+        this.markFavorite({ id: item.id, type: type })
+      } else {
+        this.clearFavorite({ id: item.id, type: type })
+      }
+    },
 
     getActionItems(audience) {
       // This assumes we cannot create a lookalike audience from a lookalike audience
