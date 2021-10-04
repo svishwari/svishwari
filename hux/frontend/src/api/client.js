@@ -23,6 +23,18 @@ Object.keys(resources).forEach((resource) => {
 })
 /* #endregion */
 
+//#region Users
+client["users"].fetchProfile = () => {
+  return http.get("/users/profile")
+}
+client["users"].markFavorite = (resourceId, entityType) => {
+  return http.post(`/${entityType}/${resourceId}/favorite`)
+}
+client["users"].clearFavorite = (resourceId, entityType) => {
+  return http.delete(`/${entityType}/${resourceId}/favorite`)
+}
+//#endregion
+
 //#region Customers
 // Custom one-off resource endpoints
 client["customers"].overview = () => {
