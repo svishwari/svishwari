@@ -627,7 +627,24 @@ class CustomerGeoVisualView(SwaggerView):
 class CustomerDemoVisualView(SwaggerView):
     """Customers Profiles Demographic Insights class."""
 
-    parameters = [api_c.START_DATE_PARAMS, api_c.END_DATE_PARAMS]
+    parameters = [
+        {
+            "name": api_c.START_DATE,
+            "description": "Start date.",
+            "type": "string",
+            "in": "query",
+            "required": True,
+            "example": "05-01-2016",
+        },
+        {
+            "name": api_c.END_DATE,
+            "description": "End date.",
+            "type": "string",
+            "in": "query",
+            "required": True,
+            "example": "09-01-2019",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "schema": {
@@ -964,10 +981,10 @@ class CustomersInsightsCountries(SwaggerView):
                 "type": "array",
                 "items": CustomersInsightsStatesSchema,
             },
-            "description": "Customer Insights by states.",
+            "description": "Customer Insights by countries.",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get Customer Insights by states."
+            "description": "Failed to get Customer Insights by countries."
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -984,7 +1001,7 @@ class CustomersInsightsCountries(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[list, int]: list of spend and size data by state,
+            Tuple[list, int]: list of spend and size data by country,
                 HTTP status code.
         """
 

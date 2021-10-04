@@ -47,22 +47,23 @@ export default {
       this.isAuthenticated()
       this.claims = await this.$auth.getUser()
       if (this.claims) {
-        this.$store.dispatch("setUserProfile", {
+        this.$store.dispatch("users/setUserProfile", {
           userProfile: this.claims,
         })
         const authStorage = JSON.parse(
           localStorage.getItem("okta-token-storage")
         )
-        this.$store.dispatch("setUserToken", {
+        this.$store.dispatch("users/setUserToken", {
           accessToken: authStorage.accessToken,
           idToken: authStorage.idToken,
         })
         const redirect = sessionStorage.getItem("appRedirect")
         sessionStorage.removeItem("appRedirect")
+        this.$store.dispatch("users/getUserProfile")
         this.$router.replace(redirect || "/overview")
       } else {
-        this.$store.dispatch("setUserProfile", {})
-        this.$store.dispatch("setUserToken", {})
+        this.$store.dispatch("users/setUserProfile", {})
+        this.$store.dispatch("users/setUserToken", {})
       }
     },
     async isAuthenticated() {

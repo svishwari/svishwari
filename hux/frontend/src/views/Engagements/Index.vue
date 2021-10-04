@@ -65,6 +65,9 @@
                 :route-param="item['id']"
                 :data="item"
                 data-e2e="engagement-collection"
+                has-favorite
+                :is-favorite="isUserFavorite(item, 'engagements')"
+                @actionFavorite="handleActionFavorite(item, 'engagements')"
               >
                 <template #expand-icon>
                   <v-icon
@@ -313,9 +316,9 @@
                   <div v-if="header.value == 'last_delivered'">
                     <tooltip>
                       <template #label-content>
-                        <span data-e2e="last-delivered">{{
-                          item[header.value] | Date("relative") | Empty
-                        }}</span>
+                        <span data-e2e="last-delivered">
+                          {{ item[header.value] | Date("relative") | Empty }}
+                        </span>
                       </template>
                       <template #hover-content>
                         <div>
@@ -635,6 +638,7 @@ export default {
     ...mapGetters({
       engagementData: "engagements/list",
       audiencesData: "audiences/audience",
+      userFavorites: "users/favorites",
     }),
     audience(id) {
       return this.audiencesData(id)
@@ -709,7 +713,23 @@ export default {
       updateAudienceList: "engagements/updateAudienceList",
       updateEngagement: "engagements/updateEngagement",
       detachAudience: "engagements/detachAudience",
+      markFavorite: "users/markFavorite",
+      clearFavorite: "users/clearFavorite",
     }),
+
+    isUserFavorite(entity, type) {
+      return (
+        this.userFavorites[type] && this.userFavorites[type].includes(entity.id)
+      )
+    },
+
+    handleActionFavorite(item, type) {
+      if (!this.isUserFavorite(item, type)) {
+        this.markFavorite({ id: item.id, type: type })
+      } else {
+        this.clearFavorite({ id: item.id, type: type })
+      }
+    },
     getAudienceHeaders(headers) {
       headers[0].width = "180px"
       return headers
@@ -791,8 +811,15 @@ export default {
       this.flashAlert = true
     },
     getActionItems(engagement) {
+      let isFavorite = this.isUserFavorite(engagement, "audiences")
       let actionItems = [
-        { title: "Favorite", isDisabled: true },
+        {
+          title: isFavorite ? "Unfavorite" : "Favorite",
+          isDisabled: false,
+          onClick: () => {
+            this.handleActionFavorite(engagement, "engagements")
+          },
+        },
         // TODO: enable once features are available
         // { title: "Export", isDisabled: true },
         {

@@ -21,7 +21,7 @@ from huxunify.app import create_app
 from huxunify.api.data_connectors.aws import parameter_store
 
 
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,too-many-public-methods
 class TestDeliveryRoutes(TestCase):
     """Test Delivery Endpoints."""
 
@@ -444,7 +444,7 @@ class TestDeliveryRoutes(TestCase):
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
             f"{api_c.DELIVERY_HISTORY}",
-            data=params,
+            query_string=params,
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -459,7 +459,25 @@ class TestDeliveryRoutes(TestCase):
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
             f"{api_c.DELIVERY_HISTORY}",
-            data=params,
+            query_string=params,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_get_audience_delivery_history_engagement_filter(self):
+        """Test get delivery history API with engagement ids as params.
+
+        Args:
+
+        Returns:
+        """
+        audience_id = self.audiences[0][db_c.ID]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
+            f"{api_c.DELIVERY_HISTORY}?{api_c.ENGAGEMENT}="
+            f"{self.engagement_ids[0]}&{api_c.ENGAGEMENT}="
+            f"{self.engagement_ids[1]}",
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -479,6 +497,24 @@ class TestDeliveryRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    def test_get_engagement_delivery_history_audience_filter(self):
+        """Test get delivery history API with audience ids as params.
+
+        Args:
+
+        Returns:
+        """
+        engagement_id = self.engagement_ids[0]
+        audience_ids = [str(audience[db_c.ID]) for audience in self.audiences]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.DELIVERY_HISTORY}?{api_c.AUDIENCE}={audience_ids[0]}&"
+            f"{api_c.AUDIENCE}={audience_ids[1]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_get_audience_delivery_history_invalid_id(self):
         """Test get delivery history API with valid ID."""
