@@ -499,7 +499,11 @@ PREFERENCE_VALUE_DESCRIPTION = "the value of the preference."
 PREFERENCE_BODY_DESCRIPTION = "Input preference body."
 FAVORITE_BODY_DESCRIPTION = "Input favorite component body."
 
+ONLY_ADDED = "only_added"
+DELETE_DATASOURCES_SUCCESS = "Successfully deleted data source(s) - {}."
+
 # error messages
+CANNOT_DELETE_DATASOURCES = "Error deleting data source(s) - {}."
 CANNOT_DELETE_DESTINATIONS = "Error deleting destination(s)."
 CANNOT_UPDATE_DESTINATIONS = "Error updating destination."
 INVALID_DESTINATION_AUTH = "Invalid authentication details entered."
@@ -841,23 +845,6 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
     ]
 }
 
-START_DATE_PARAMS = {
-    "name": START_DATE,
-    "description": "Start date.",
-    "type": "string",
-    "in": "query",
-    "required": True,
-    "example": "2021-04-01",
-}
-
-END_DATE_PARAMS = {
-    "name": END_DATE,
-    "description": "End date.",
-    "type": "string",
-    "in": "query",
-    "required": True,
-    "example": "2021-08-01",
-}
 
 # IDR Fields
 IDR_TAG = "idr"

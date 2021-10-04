@@ -638,7 +638,7 @@ export default {
     ...mapGetters({
       engagementData: "engagements/list",
       audiencesData: "audiences/audience",
-      userFavories: "users/favorites",
+      userFavorites: "users/favorites",
     }),
     audience(id) {
       return this.audiencesData(id)
@@ -719,7 +719,7 @@ export default {
 
     isUserFavorite(entity, type) {
       return (
-        this.userFavories[type] && this.userFavories[type].includes(entity.id)
+        this.userFavorites[type] && this.userFavorites[type].includes(entity.id)
       )
     },
 
@@ -811,9 +811,10 @@ export default {
       this.flashAlert = true
     },
     getActionItems(engagement) {
+      let isFavorite = this.isUserFavorite(engagement, "audiences")
       let actionItems = [
         {
-          title: "Favorite",
+          title: isFavorite ? "Unfavorite" : "Favorite",
           isDisabled: false,
           onClick: () => {
             this.handleActionFavorite(engagement, "engagements")

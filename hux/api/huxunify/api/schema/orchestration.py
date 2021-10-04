@@ -164,25 +164,27 @@ class AudienceInsightsGetSchema(Schema):
     gender = fields.Nested(CustomerGenderInsightsSchema)
 
 
-class AudiencePutSchema(Schema):
-    """Audience put schema class"""
-
-    name = fields.String()
-    destinations = fields.List(fields.Dict())
-    engagement_ids = fields.List(fields.String())
-    filters = fields.List(fields.Dict())
-
-
 class AudienceDestinationSchema(Schema):
     """
     Audience destination schema class
     """
 
-    id = fields.String(required=True)
+    id = fields.String(required=True, validate=validate_object_id)
     delivery_platform_config = fields.Dict(
         required=False,
         example={db_c.DATA_EXTENSION_NAME: "Data Extension Name"},
     )
+
+
+class AudiencePutSchema(Schema):
+    """Audience put schema class"""
+
+    name = fields.String()
+    destinations = fields.List(
+        fields.Nested(AudienceDestinationSchema), required=False
+    )
+    engagement_ids = fields.List(fields.String())
+    filters = fields.List(fields.Dict())
 
 
 class AudiencePostSchema(AudiencePutSchema):
