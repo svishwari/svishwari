@@ -1,18 +1,8 @@
-import { withVuetify, withThemeProvider } from '@socheatsok78/storybook-addon-vuetify/dist/decorators'
+import vuetify from "./addon-vuetify/custom"
+import { addDecorator } from "@storybook/vue"
+import "!style-loader!css-loader!sass-loader!../src/styles/variables.scss"
 
-export const globalTypes = {
-  theme: {
-    name: 'Theme',
-    description: 'Global theme for components',
-    defaultValue: 'light',
-    toolbar: {
-      icon: 'circlehollow',
-      items: ['light', 'dark']
-    }
-  }
-}
-
-export const decorators = [
-  withThemeProvider,
-  withVuetify
-]
+addDecorator(() => ({
+  vuetify,
+  template: "<v-app><story/></v-app>",
+}))

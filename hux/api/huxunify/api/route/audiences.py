@@ -45,6 +45,7 @@ from huxunify.api.route.utils import (
     get_db_client,
     transform_fields_generic_file,
     logger,
+    Validation,
 )
 
 # setup the audiences blueprint
@@ -123,7 +124,9 @@ class AudienceDownload(SwaggerView):
             api_c.GENERIC_ADS: transform_fields_generic_file,
         }
         if not download_types.get(download_type):
-            return {"message": "Invalid download type"}, HTTPStatus.BAD_REQUEST
+            return {
+                "message": "Invalid download type or download type not supported"
+            }, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
         audience = orchestration_management.get_audience(
@@ -131,9 +134,7 @@ class AudienceDownload(SwaggerView):
         )
 
         if not audience:
-            return {
-                "message": api_c.AUDIENCE_NOT_FOUND
-            }, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         cdp = connector_cdp.ConnectorCDP(get_config().CDP_SERVICE)
         data_batches = cdp.read_batches(
@@ -244,7 +245,7 @@ class AudienceInsightsStates(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     def get(self, audience_id: str) -> Tuple[list, int]:
-        """Retrieves state-level geographic audience insights.
+        """Retrieves state-level geographic customer insights for the audience.
 
         ---
         security:
@@ -264,6 +265,9 @@ class AudienceInsightsStates(SwaggerView):
         audience = orchestration_management.get_audience(
             get_db_client(), ObjectId(audience_id)
         )
+
+        if not audience:
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         return (
             jsonify(
@@ -308,7 +312,7 @@ class AudienceInsightsCities(SwaggerView):
         {
             "name": api_c.QUERY_PARAMETER_BATCH_NUMBER,
             "in": "query",
-            "type": "string",
+            "type": "integer",
             "description": "Number of which batch of cities should be returned.",
             "example": "10",
             "required": False,
@@ -349,16 +353,25 @@ class AudienceInsightsCities(SwaggerView):
         # get auth token from request
         token_response = get_token_from_request(request)
 
-        batch_size = request.args.get(
-            api_c.QUERY_PARAMETER_BATCH_SIZE, api_c.CITIES_DEFAULT_BATCH_SIZE
+        batch_size = Validation.validate_integer(
+            request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_SIZE,
+                str(api_c.CITIES_DEFAULT_BATCH_SIZE),
+            )
         )
-        batch_number = request.args.get(
-            api_c.QUERY_PARAMETER_BATCH_NUMBER, api_c.DEFAULT_BATCH_NUMBER
+        batch_number = Validation.validate_integer(
+            request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_NUMBER,
+                str(api_c.DEFAULT_BATCH_NUMBER),
+            )
         )
 
         audience = orchestration_management.get_audience(
             get_db_client(), ObjectId(audience_id)
         )
+
+        if not audience:
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         filters = (
             {api_c.AUDIENCE_FILTERS: audience.get(db_c.AUDIENCE_FILTERS)}

@@ -1,0 +1,57 @@
+{
+  "incomeChart": {
+    "maxWidth": "70px",
+    "top": "370px"
+  },
+  "genderSpendChart": {
+    "maxWidth": "96px",
+    "top": "-60px",
+    "padding": "10px"
+  },
+  "genderChart": {
+    "minWidth": "82px",
+    "padding": "8px"
+  },
+  "mapChart": {
+    "maxWidth": "300px",
+    "minWidth": "250px",
+    "top": "-150px",
+    "left": "-250px",
+    "padding": "10px"
+  },
+  "totalCustomerChart": {
+    "maxWidth": "172px",
+    "top": "-45px",
+    "left": "45px",
+    "padding": "8px 8px 15px 8px"
+  },
+  "identityChart": {
+    "maxWidth": "213px",
+    "minWidth": "213px",
+    "top": "-112px",
+    "left": "-210px"
+  },
+  "customerEventChart": {
+    "maxWidth": "172px",
+    "top": "-130px",
+    "left": "56px",
+    "padding": "8px 8px 15px 8px"
+  },
+  "idrMatchingTrendChart": {
+    "maxWidth": "172px",
+    "top": "-100px",
+    "left": "69px",
+    "padding": "8px 8px 15px 8px"
+  },
+  "featureChart": {
+    "maxWidth": "230px",
+    "top": "35px",
+    "left": "30px"
+  },
+  "driftChart": {
+    "maxWidth": "70px",
+    "top": "-45px",
+    "left": "45px",
+    "padding": "5px"
+  }
+}

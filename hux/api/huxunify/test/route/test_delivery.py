@@ -10,6 +10,8 @@ import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
+    set_delivery_job,
+    set_delivery_job_status,
 )
 from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
@@ -21,7 +23,7 @@ from huxunify.app import create_app
 from huxunify.api.data_connectors.aws import parameter_store
 
 
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,too-many-public-methods
 class TestDeliveryRoutes(TestCase):
     """Test Delivery Endpoints."""
 
@@ -102,6 +104,16 @@ class TestDeliveryRoutes(TestCase):
                     api_c.FACEBOOK_AD_ACCOUNT_ID: "path4",
                 },
             },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "SendGrid by Twilio",
+                db_c.DELIVERY_PLATFORM_TYPE: "sendgrid",
+                db_c.STATUS: db_c.STATUS_SUCCEEDED,
+                db_c.ENABLED: True,
+                db_c.ADDED: True,
+                db_c.DELIVERY_PLATFORM_AUTH: {
+                    api_c.SENDGRID_AUTH_TOKEN: "auth1",
+                },
+            },
         ]
 
         self.destinations = []
@@ -156,15 +168,13 @@ class TestDeliveryRoutes(TestCase):
                     {
                         db_c.OBJECT_ID: self.audiences[0][db_c.ID],
                         api_c.DESTINATIONS_TAG: [
-                            {db_c.OBJECT_ID: dest[db_c.ID]}
-                            for dest in self.destinations
+                            {db_c.OBJECT_ID: self.destinations[0][db_c.ID]}
                         ],
                     },
                     {
                         db_c.OBJECT_ID: self.audiences[1][db_c.ID],
                         api_c.DESTINATIONS_TAG: [
-                            {db_c.OBJECT_ID: dest[db_c.ID]}
-                            for dest in self.destinations
+                            {db_c.OBJECT_ID: self.destinations[0][db_c.ID]}
                         ],
                     },
                 ],
@@ -186,6 +196,24 @@ class TestDeliveryRoutes(TestCase):
         self.engagement_ids = [
             str(set_engagement(self.database, **x)) for x in engagements
         ]
+
+        delivery_jobs = [
+            {
+                api_c.AUDIENCE_ID: self.audiences[1][db_c.ID],
+                db_c.DELIVERY_PLATFORM_ID: self.destinations[1][db_c.ID],
+                db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: [],
+                api_c.ENGAGEMENT_ID: ObjectId(self.engagement_ids[0]),
+                # db_c.DELETED: False
+            }
+        ]
+        self.delivery_jobs = [
+            set_delivery_job(self.database, **job) for job in delivery_jobs
+        ]
+        set_delivery_job_status(
+            self.database,
+            self.delivery_jobs[0][db_c.ID],
+            db_c.STATUS_DELIVERED,
+        )
 
     def test_deliver_audience_for_an_engagement_valid_ids(self):
         """Test delivery of an audience for an engagement with valid IDs."""
@@ -444,7 +472,7 @@ class TestDeliveryRoutes(TestCase):
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
             f"{api_c.DELIVERY_HISTORY}",
-            data=params,
+            query_string=params,
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -459,7 +487,25 @@ class TestDeliveryRoutes(TestCase):
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
             f"{api_c.DELIVERY_HISTORY}",
-            data=params,
+            query_string=params,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_get_audience_delivery_history_engagement_filter(self):
+        """Test get delivery history API with engagement ids as params.
+
+        Args:
+
+        Returns:
+        """
+        audience_id = self.audiences[0][db_c.ID]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
+            f"{api_c.DELIVERY_HISTORY}?{api_c.ENGAGEMENT}="
+            f"{self.engagement_ids[0]}&{api_c.ENGAGEMENT}="
+            f"{self.engagement_ids[1]}",
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -479,6 +525,24 @@ class TestDeliveryRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    def test_get_engagement_delivery_history_audience_filter(self):
+        """Test get delivery history API with audience ids as params.
+
+        Args:
+
+        Returns:
+        """
+        engagement_id = self.engagement_ids[0]
+        audience_ids = [str(audience[db_c.ID]) for audience in self.audiences]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.DELIVERY_HISTORY}?{api_c.AUDIENCE}={audience_ids[0]}&"
+            f"{api_c.AUDIENCE}={audience_ids[1]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_get_audience_delivery_history_invalid_id(self):
         """Test get delivery history API with valid ID."""

@@ -19,29 +19,71 @@
           @cordinates="getCordinates"
           @tooltipDisplay="toolTipDisplay"
         />
+        <chart-tooltip
+          v-if="show"
+          :position="{
+            x: tooltip.x,
+            y: tooltip.y,
+          }"
+          :tooltip-style="toolTipStyle"
+        >
+          <template #content>
+            <div v-if="isArcHover" class="arc-hover">
+              <icon
+                v-if="currentData.icon"
+                :type="currentData.icon"
+                :size="12"
+              />
+              <span class="prop-name">{{ currentData.name }}</span>
+              <div
+                v-for="item in currentData.assetsData"
+                :key="item.name"
+                class="sub-props pt-4"
+              >
+                <logo v-if="item.icon" :type="item.icon" :size="14" />
+                <span class="subprop-name">{{ item.description }}</span>
+                <span class="value ml-1">{{ item.value }}</span>
+              </div>
+            </div>
+            <div v-if="!isArcHover" class="ribbon-hover">
+              <icon
+                v-if="currentData.sourceIcon"
+                :type="currentData.sourceIcon"
+                :size="12"
+                color="primary"
+              />
+              <span class="prop-name">{{ currentData.sourceName }}</span>
+              <span class="pipe"></span>
+              <icon
+                v-if="currentData.targetIcon"
+                :type="currentData.targetIcon"
+                :size="12"
+                color="primary"
+              />
+              <span class="prop-name">{{ currentData.targetName }}</span>
+              <span class="text-line">
+                {{ currentData.currentOccurence }} Co-occurrences
+              </span>
+              <span class="text-line-italic">
+                out of {{ currentData.totalOccurence }} total co-occurrences
+              </span>
+            </div>
+          </template>
+        </chart-tooltip>
       </div>
     </div>
-
-    <chart-tooltip
-      :position="{
-        x: tooltip.x,
-        y: tooltip.y,
-      }"
-      :show-tooltip="show"
-      :is-arc-hover="isArcHover"
-      :source-input="currentData"
-    >
-    </chart-tooltip>
   </div>
 </template>
 
 <script>
-import ChartTooltip from "@/components/common/identityChart/ChartTooltip"
 import ChordChart from "@/components/common/identityChart/ChordChart"
+import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
+import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
 import Icon from "@/components/common/Icon"
+import Logo from "@/components/common/Logo"
 export default {
   name: "IdentityChart",
-  components: { ChordChart, ChartTooltip, Icon },
+  components: { ChordChart, ChartTooltip, Icon, Logo },
   props: {
     chartData: {
       type: Object,
@@ -97,6 +139,7 @@ export default {
         width: 0,
         height: 0,
       },
+      toolTipStyle: TooltipConfiguration.identityChart,
     }
   },
   mounted() {
@@ -212,6 +255,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.global-heading {
+  @extend .font-weight-semi-bold;
+  font-style: normal;
+  font-size: $font-size-root;
+  line-height: 19px;
+  padding-left: 10px;
+}
+
+.global-text-line {
+  display: inline-block;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.card-padding {
+  padding: 10px 20px 20px 20px;
+}
 .container {
   height: 280px;
 
@@ -238,6 +300,49 @@ export default {
     .chart-svg {
       min-width: 200px;
       max-width: 240px;
+      position: relative;
+      .ribbon-hover {
+        @extend .card-padding;
+        .pipe {
+          border-left: 1px solid var(--v-black-lighten3) !important;
+          height: 500px;
+          transform: rotate(90deg);
+          margin-left: 10px;
+          margin-right: 10px;
+        }
+        .prop-name {
+          @extend .global-heading;
+        }
+        .text-line {
+          @extend .global-text-line;
+          margin-top: 10px;
+        }
+        .text-line-italic {
+          @extend .global-text-line;
+          font-style: italic;
+        }
+      }
+
+      .arc-hover {
+        @extend .card-padding;
+        .prop-name {
+          @extend .global-heading;
+        }
+        .sub-props {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          height: 30px;
+          .subprop-name {
+            @extend .global-text-line;
+            flex: 1 0 50%;
+            padding-left: 5px;
+          }
+          .value {
+            @extend .global-text-line;
+          }
+        }
+      }
     }
   }
 }

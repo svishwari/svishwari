@@ -23,6 +23,35 @@ import { driftData } from "@/api/mock/factories/driftData.js"
 import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
 
 export const defineRoutes = (server) => {
+  // Users
+  server.get("/users/profile", (schema) => {
+    return schema.users.find(1)
+  })
+  server.post("users/:type/:id/favorite", (schema, request) => {
+    const code = 200
+    const headers = {}
+    const body = { message: "SUCCESS" }
+    const id = request.params.id
+    const favoriteType = request.params.type
+    const user = schema.users.find(1)
+
+    user.favorites[favoriteType].push(id)
+    return new Response(code, headers, body)
+  })
+  server.del("users/:type/:id/favorite", (schema, request) => {
+    const code = 200
+    const headers = {}
+    const body = { message: "SUCCESS" }
+    const id = request.params.id
+    const favoriteType = request.params.type
+    const user = schema.users.find(1)
+
+    user.favorites[favoriteType] = user.favorites[favoriteType].filter(
+      (item) => item !== id
+    )
+    return new Response(code, headers, body)
+  })
+
   // data sources
   server.get("/data-sources")
 

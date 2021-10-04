@@ -69,7 +69,7 @@
         </template>
       </hux-data-table>
     </v-row>
-    <v-divider class="hr-devider"></v-divider>
+    <v-divider v-if="enableLazyLoad" class="hr-devider"></v-divider>
     <v-progress-linear v-if="enableLazyLoad" active indeterminate />
     <observer v-if="notifications.length" @intersect="intersected"></observer>
   </div>
@@ -160,6 +160,9 @@ export default {
     this.calculateLastBatch()
     this.loading = false
     this.enableLazyLoad = true
+    if (this.notifications.length === 0) {
+      this.enableLazyLoad = false
+    }
   },
   methods: {
     ...mapActions({
