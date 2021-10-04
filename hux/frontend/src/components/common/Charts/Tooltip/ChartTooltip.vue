@@ -1,15 +1,15 @@
 <template>
   <div>
     <v-card
-      tile
       class="mx-auto chart-tooltip"
+      tile
       :max-width="tooltipStyle.maxWidth"
       :min-width="tooltipStyle.minWidth"
       :style="{
         transform: `translate(${position.x}px, ${position.y}px)`,
-        padding: tooltipStyle.padding,
         top: tooltipStyle.top,
         left: tooltipStyle.left,
+        padding: tooltipStyle.padding,
       }"
     >
       <slot name="content" />
@@ -55,18 +55,12 @@ export default {
   border-radius: 0px !important;
 }
 
-.global-font-style {
-  font-style: normal;
-  font-size: 12px;
-  line-height: 19px;
-}
-
 .chart-tooltip {
-  @extend .global-font-style;
+  //  @extend .global-font-style;
   @extend .box-shadow-3;
-  background: var(--v-white-base);
   pointer-events: none;
-  position: fixed;
+  position: absolute;
   height: auto;
+  z-index: 999999;
 }
 </style>
