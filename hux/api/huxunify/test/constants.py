@@ -768,11 +768,31 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
 
 DATASOURCES_RESPONSE = {
     "code": 200,
-    "message": "ok",
+    "message": "Data Sources Fetched successfully",
     "body": [
-        {"name": "dataSource", "label": "Data Source", "status": "Active"}
+        {
+            api_c.LABEL: "Data source 1",
+            api_c.NAME: "test_data_source_1",
+            api_c.STATUS: "Active",
+        },
+        {
+            api_c.LABEL: "Data source 2",
+            api_c.NAME: "test_data_source_2",
+            api_c.STATUS: "Active",
+        },
+        {
+            api_c.LABEL: "Data source 3",
+            api_c.NAME: "test_data_source_3",
+            api_c.STATUS: "Pending",
+        },
+        {
+            api_c.LABEL: "Data source 4",
+            api_c.NAME: "test_data_source_4",
+            api_c.STATUS: "Pending",
+        },
     ],
 }
+
 
 DATASOURCE_DATA_FEEDS_RESPONSE = {
     "code": 200,
