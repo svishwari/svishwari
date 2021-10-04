@@ -28,12 +28,11 @@ class CdpDataSourceSchema(Schema):
     id = fields.Str(
         attribute=db_c.ID,
         example="5f5f7262997acad4bac4373b",
-        required=True,
+        required=False,
         validate=validate_object_id,
     )
     name = fields.Str(required=True)
-    category = fields.Str(required=False, default="")
-    feed_count = fields.Int(required=False, default=1)
+    type = fields.Str(required=True)
     status = fields.Str(
         required=True,
         validate=[
@@ -48,9 +47,26 @@ class CdpDataSourceSchema(Schema):
     )
     is_added = fields.Bool(required=False, attribute="added", default=False)
     is_enabled = fields.Bool(
-        required=False, attribute="enabled"
-    )  # TODO Remove in HUS-1109
-    type = fields.Str()
+        required=False, attribute="enabled", default=False
+    )
+
+
+class CdpConnectionsDataSourceSchema(Schema):
+    """CDP connections data source get schema"""
+
+    label = fields.Str(attribute=api_c.NAME, required=True)
+    name = fields.Str(attribute=api_c.TYPE, required=True)
+    status = fields.Str(
+        required=True,
+        validate=[
+            OneOf(
+                choices=[
+                    api_c.STATUS_ACTIVE,
+                    api_c.STATUS_PENDING,
+                ]
+            )
+        ],
+    )
 
 
 class CdpDataSourceDataFeedSchema(Schema):

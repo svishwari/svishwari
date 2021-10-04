@@ -426,6 +426,7 @@
         :chart-dimensions="genderChartDimensions"
         :data="genderChartData"
         label="Gender"
+        data-e2e="gender-chart"
       ></doughnut-chart>
     </div>
 

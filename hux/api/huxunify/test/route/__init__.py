@@ -1,3 +1,1 @@
-"""
-Purpose of this script is for storing unittest routes
-"""
+"""Purpose of this script is for storing route unit tests."""

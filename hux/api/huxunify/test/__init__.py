@@ -1,6 +1,4 @@
-"""
-Purpose of this script is for storing unittests
-"""
+"""Purpose of this script is for storing unittests."""
 import logging
 from os import environ
 from huxunify.api import constants as c

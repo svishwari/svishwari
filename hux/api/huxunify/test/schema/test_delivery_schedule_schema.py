@@ -1,4 +1,4 @@
-"""Scheduled Delivery related schema tests"""
+"""Scheduled Delivery related schema tests."""
 from unittest import TestCase
 
 
@@ -11,18 +11,10 @@ from huxunify.api.schema.destinations import (
 
 
 class DeliveryScheduleSchemaTest(TestCase):
-    """
-    Test DeliveryScheduleDailySchema
-    """
+    """Test Delivery Schedule Schemas."""
 
     def test_daily_schema(self) -> None:
-        """Test DeliveryScheduleDailySchema.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test DeliveryScheduleDailySchema."""
 
         doc = {
             api_c.PERIODICIY: "Daily",
@@ -40,13 +32,7 @@ class DeliveryScheduleSchemaTest(TestCase):
         self.assertFalse(DeliveryScheduleDailySchema().validate(doc))
 
     def test_weekly_schema(self) -> None:
-        """Test DeliveryScheduleWeeklySchema.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test DeliveryScheduleWeeklySchema."""
 
         doc = {
             api_c.PERIODICIY: "Weekly",
@@ -66,13 +52,7 @@ class DeliveryScheduleSchemaTest(TestCase):
         self.assertFalse(DeliveryScheduleWeeklySchema().validate(doc))
 
     def test_monthly_schema(self) -> None:
-        """Test DeliveryScheduleMonthlySchema.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test DeliveryScheduleMonthlySchema."""
 
         doc = {
             api_c.PERIODICIY: "Monthly",

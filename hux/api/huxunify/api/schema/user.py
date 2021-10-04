@@ -12,10 +12,10 @@ from huxunify.api import constants as api_c
 class Favorites(Schema):
     """Favorites Schema"""
 
-    campaigns = List(Str())
-    audiences = List(Str())
-    destinations = List(Str())
-    engagements = List(Str())
+    campaigns = List(Str(), default=[])
+    audiences = List(Str(), default=[])
+    destinations = List(Str(), default=[])
+    engagements = List(Str(), default=[])
 
 
 class UserSchema(Schema):

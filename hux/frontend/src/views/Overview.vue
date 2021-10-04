@@ -126,13 +126,9 @@ export default {
   computed: {
     ...mapGetters({
       totalCustomers: "customers/totalCustomers",
+      firstName: "users/getFirstname",
+      lastName: "users/getLastName",
     }),
-    firstName() {
-      return this.$store.getters.getFirstname
-    },
-    lastName() {
-      return this.$store.getters.getLastName
-    },
     fullName() {
       return `${this.firstName} ${this.lastName}`
     },

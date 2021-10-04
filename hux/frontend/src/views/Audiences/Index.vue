@@ -51,7 +51,11 @@
             }"
             :style="{ minWidth: header.width, left: 0 }"
           >
-            <div v-if="header.value == 'name'" class="w-100 d-flex">
+            <div
+              v-if="header.value == 'name'"
+              class="w-100 d-flex"
+              data-e2e="audiencelist"
+            >
               <span v-if="item.is_lookalike == true" class="mr-3">
                 <tooltip>
                   <template #label-content>
@@ -70,6 +74,10 @@
                 :menu-options="getActionItems(item)"
                 route-name="AudienceInsight"
                 :route-param="item['id']"
+                data-e2e="audiencename"
+                has-favorite
+                :is-favorite="isUserFavorite(item, 'audiences')"
+                @actionFavorite="handleActionFavorite(item, 'audiences')"
               />
             </div>
             <div v-if="header.value == 'status'" class="text-caption">
@@ -331,6 +339,7 @@ export default {
   computed: {
     ...mapGetters({
       rowData: "audiences/list",
+      userFavorites: "users/favorites",
     }),
     audienceList() {
       let audienceValue = this.rowData
@@ -352,15 +361,36 @@ export default {
   methods: {
     ...mapActions({
       getAllAudiences: "audiences/getAll",
+      markFavorite: "users/markFavorite",
+      clearFavorite: "users/clearFavorite",
     }),
+
+    isUserFavorite(entity, type) {
+      return (
+        this.userFavorites[type] && this.userFavorites[type].includes(entity.id)
+      )
+    },
+    handleActionFavorite(item, type) {
+      if (!this.isUserFavorite(item, type)) {
+        this.markFavorite({ id: item.id, type: type })
+      } else {
+        this.clearFavorite({ id: item.id, type: type })
+      }
+    },
 
     getActionItems(audience) {
       // This assumes we cannot create a lookalike audience from a lookalike audience
       let isLookalikeableActive =
         audience.lookalikeable === "Active" && !audience.is_lookalike
-
+      let isFavorite = this.isUserFavorite(audience, "audiences")
       let actionItems = [
-        { title: "Favorite", isDisabled: true },
+        {
+          title: isFavorite ? "Unfavorite" : "Favorite",
+          isDisabled: false,
+          onClick: () => {
+            this.handleActionFavorite(audience, "audiences")
+          },
+        },
         { title: "Export", isDisabled: true },
         {
           title: "Edit audience",

@@ -119,6 +119,7 @@ def set_user(
             c.AUDIENCES: [],
             c.DESTINATIONS: [],
             c.CAMPAIGNS: [],
+            c.ENGAGEMENTS: [],
         },
         c.USER_DASHBOARD_CONFIGURATION: {},
     }

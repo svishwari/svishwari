@@ -15,6 +15,7 @@
         width="55"
         height="55"
         class="d-flex ma-4"
+        data-e2e="click-outside"
       />
       <v-menu v-if="!isMini" open-on-hover offset-y>
         <template #activator="{ on }">
@@ -93,7 +94,7 @@
         >
           <v-list-item-icon
             v-if="menu.icon"
-            class="my-3"
+            class="my-3 ml-1"
             :class="{ 'menu-icon': !isMini }"
           >
             <tooltip

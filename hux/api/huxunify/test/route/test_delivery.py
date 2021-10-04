@@ -1,6 +1,4 @@
-"""
-Purpose of this file is to house all the delivery api tests
-"""
+"""Purpose of this file is to house all the delivery API tests."""
 
 from unittest import TestCase, mock
 from http import HTTPStatus
@@ -23,19 +21,13 @@ from huxunify.app import create_app
 from huxunify.api.data_connectors.aws import parameter_store
 
 
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,too-many-public-methods
 class TestDeliveryRoutes(TestCase):
-    """Test Delivery Endpoints"""
+    """Test Delivery Endpoints."""
 
     # pylint: disable=unused-variable
     def setUp(self) -> None:
-        """
-        Setup resources before each test
-
-        Args:
-
-        Returns:
-        """
+        """Setup resources before each test."""
 
         # mock request for introspect call
         request_mocker = requests_mock.Mocker()
@@ -196,15 +188,8 @@ class TestDeliveryRoutes(TestCase):
         ]
 
     def test_deliver_audience_for_an_engagement_valid_ids(self):
-        """
-        Test delivery of an audience for an engagement
-        with valid ids
+        """Test delivery of an audience for an engagement with valid IDs."""
 
-        Args:
-
-        Returns:
-
-        """
         audience_id = self.audiences[1][db_c.ID]
         engagement_id = self.engagement_ids[0]
 
@@ -219,15 +204,9 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_deliver_audience_for_an_engagement_invalid_audience_id(self):
-        """
-        Test delivery of an audience for an engagement
-        with invalid audience id
+        """Test delivery of an audience for an engagement with invalid
+        audience ID."""
 
-        Args:
-
-        Returns:
-
-        """
         audience_id = t_c.INVALID_ID
         engagement_id = self.engagement_ids[0]
 
@@ -245,15 +224,9 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_deliver_audience_for_an_engagement_invalid_engagement_id(self):
-        """
-        Test delivery of an audience for an engagement
-        with invalid engagement id
+        """Test delivery of an audience for an engagementcwith invalid
+        engagement ID."""
 
-        Args:
-
-        Returns:
-
-        """
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = t_c.INVALID_ID
 
@@ -271,15 +244,9 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_deliver_audience_for_an_engagement_non_existent_engagement(self):
-        """
-        Test delivery of an audience for an engagement
-        with non-existent engagement id
+        """Test delivery of an audience for an engagement with non-existent
+        engagement ID."""
 
-        Args:
-
-        Returns:
-
-        """
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = ObjectId()
 
@@ -297,15 +264,9 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_deliver_destination_for_engagement_audience_valid_ids(self):
-        """
-        Test delivery of a destination for an audience in engagement
-        with valid ids
+        """Test delivery of a destination for an audience in engagement with
+        valid IDs."""
 
-        Args:
-
-        Returns:
-
-        """
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = self.engagement_ids[0]
         destination_id = self.destinations[0][db_c.ID]
@@ -324,14 +285,8 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_deliver_destination_for_non_existent_engagement(self):
-        """
-        Test delivery of a destination for a non-existent engagement
+        """Test delivery of a destination for a non-existent engagement."""
 
-        Args:
-
-        Returns:
-
-        """
         engagement_id = str(ObjectId())
         audience_id = self.audiences[0][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
@@ -353,14 +308,8 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(response.json, valid_response)
 
     def test_deliver_destination_for_unattached_audience(self):
-        """
-        Test delivery of a destination for an unattached audience
+        """Test delivery of a destination for an unattached audience."""
 
-        Args:
-
-        Returns:
-
-        """
         engagement_id = self.engagement_ids[1]
 
         # Unattached audience id
@@ -386,14 +335,8 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_deliver_destination_for_unattached_destination(self):
-        """
-        Test delivery of a destination for an unattached destination
+        """Test delivery of a destination for an unattached destination."""
 
-        Args:
-
-        Returns:
-
-        """
         engagement_id = self.engagement_ids[1]
         audience_id = self.audiences[1][db_c.ID]
 
@@ -419,15 +362,9 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_deliver_audience_for_all_engagements_valid_audience_id(self):
-        """
-        Test delivery of audience for all engagements
-        with valid audience id
+        """Test delivery of audience for all engagements with valid
+        audience ID."""
 
-        Args:
-
-        Returns:
-
-        """
         audience_id = self.audiences[0][db_c.ID]
 
         response = self.app.post(
@@ -443,15 +380,9 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_deliver_audience_for_all_engagements_invalid_audience_id(self):
-        """
-        Test delivery of audience for all engagements
-        with invalid audience id
+        """Test delivery of audience for all engagements with invalid
+        audience ID."""
 
-        Args:
-
-        Returns:
-
-        """
         audience_id = t_c.INVALID_ID
 
         response = self.app.post(
@@ -465,15 +396,9 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_deliver_audience_for_all_engagements_non_existent_audience(self):
-        """
-        Test delivery of audience for all engagements
-        with non-existent audience id
+        """Test delivery of audience for all engagements with non-existent
+        audience ID."""
 
-        Args:
-
-        Returns:
-
-        """
         audience_id = ObjectId()
 
         response = self.app.post(
@@ -487,14 +412,7 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_deliver_audience_for_engagement(self):
-        """
-        Test delivery of audience for a valid engagement id
-
-        Args:
-
-        Returns:
-
-        """
+        """Test delivery of audience for a valid engagement ID."""
 
         engagement_id = self.engagement_ids[0]
 
@@ -506,14 +424,7 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_get_engagement_delivery_history(self):
-        """
-        Test get delivery history API with valid id
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get delivery history API with valid ID."""
 
         engagement_id = self.engagement_ids[0]
         response = self.app.get(
@@ -524,14 +435,7 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_get_engagement_delivery_history_destination_filter(self):
-        """
-        Test get engagement delivery history API with destination filter
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get engagement delivery history API with destination filter."""
 
         engagement_id = self.engagement_ids[0]
         destination_id = self.destinations[0][db_c.ID]
@@ -540,20 +444,13 @@ class TestDeliveryRoutes(TestCase):
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
             f"{api_c.DELIVERY_HISTORY}",
-            data=params,
+            query_string=params,
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_get_audience_delivery_history_destination_filter(self):
-        """
-        Test get audience delivery history API with destination filter
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get audience delivery history API with destination filter."""
 
         audience_id = self.audiences[0][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
@@ -562,20 +459,31 @@ class TestDeliveryRoutes(TestCase):
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
             f"{api_c.DELIVERY_HISTORY}",
-            data=params,
+            query_string=params,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_get_audience_delivery_history_engagement_filter(self):
+        """Test get delivery history API with engagement ids as params.
+
+        Args:
+
+        Returns:
+        """
+        audience_id = self.audiences[0][db_c.ID]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
+            f"{api_c.DELIVERY_HISTORY}?{api_c.ENGAGEMENT}="
+            f"{self.engagement_ids[0]}&{api_c.ENGAGEMENT}="
+            f"{self.engagement_ids[1]}",
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_get_engagement_delivery_history_by_id_non_existent_id(self):
-        """
-        Test get delivery history API with non-existent id
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get delivery history API with non-existent ID."""
 
         engagement_id = str(ObjectId())
 
@@ -590,15 +498,26 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
 
-    def test_get_audience_delivery_history_invalid_id(self):
-        """
-        Test get delivery history API with valid id
+    def test_get_engagement_delivery_history_audience_filter(self):
+        """Test get delivery history API with audience ids as params.
 
         Args:
 
         Returns:
-
         """
+        engagement_id = self.engagement_ids[0]
+        audience_ids = [str(audience[db_c.ID]) for audience in self.audiences]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.DELIVERY_HISTORY}?{api_c.AUDIENCE}={audience_ids[0]}&"
+            f"{api_c.AUDIENCE}={audience_ids[1]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_get_audience_delivery_history_invalid_id(self):
+        """Test get delivery history API with valid ID."""
 
         audience_id = t_c.INVALID_ID
 
@@ -614,14 +533,7 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_audience_delivery_history_by_id_non_existent_id(self):
-        """
-        Test get delivery history API with non-existent id
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get delivery history API with non-existent ID."""
 
         engagement_id = str(ObjectId())
 

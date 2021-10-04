@@ -1,7 +1,5 @@
 # pylint: disable=invalid-name,line-too-long,too-many-lines
-"""
-purpose of this file is housing shared components for tests
-"""
+"""Purpose of this file is housing shared components for tests."""
 from datetime import datetime
 import time
 from http import HTTPStatus
@@ -62,6 +60,8 @@ CONTRACTS_FOLDER = "contracts"
 CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT = (
     "/customer-profiles/insights/count-by-state"
 )
+CDP_CUSTOMER_PROFILES_AUDIENCE_COUNT = "/customer-profiles/audience/count"
+CDP_CUSTOMER_PROFILE_BASE_ENDPOINT = "/customer-profiles/"
 
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
@@ -768,11 +768,31 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
 
 DATASOURCES_RESPONSE = {
     "code": 200,
-    "message": "ok",
+    "message": "Data Sources Fetched successfully",
     "body": [
-        {"name": "dataSource", "label": "Data Source", "status": "Active"}
+        {
+            api_c.LABEL: "Data source 1",
+            api_c.NAME: "test_data_source_1",
+            api_c.STATUS: "Active",
+        },
+        {
+            api_c.LABEL: "Data source 2",
+            api_c.NAME: "test_data_source_2",
+            api_c.STATUS: "Active",
+        },
+        {
+            api_c.LABEL: "Data source 3",
+            api_c.NAME: "test_data_source_3",
+            api_c.STATUS: "Pending",
+        },
+        {
+            api_c.LABEL: "Data source 4",
+            api_c.NAME: "test_data_source_4",
+            api_c.STATUS: "Pending",
+        },
     ],
 }
+
 
 DATASOURCE_DATA_FEEDS_RESPONSE = {
     "code": 200,
@@ -960,16 +980,15 @@ BATCH_SIZE_BAD_PARAM = "100@"
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False
 ) -> bool:
-    """
-    Validate if the response confirms with the given schema
+    """Validate if the response confirms with the given schema.
 
     Args:
-        schema (Schema): Instance of the Schema to validate against
-        response_json (dict): Response json as dict
-        is_multiple (bool): If response is a collection of objects
+        schema (Schema): Instance of the Schema to validate against.
+        response_json (dict): Response json as dict.
+        is_multiple (bool): If response is a collection of objects.
 
     Returns:
-        (bool): True/False
+        (bool): True/False.
     """
 
     try:

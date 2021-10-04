@@ -1,10 +1,7 @@
 # pylint: disable=no-self-use
-"""
-Purpose of this file is to test the orchestration schemas
-"""
+"""Purpose of this file is to test the orchestration schemas."""
 from unittest import TestCase
 from datetime import datetime
-from random import uniform
 
 import bson
 
@@ -19,19 +16,10 @@ from huxunify.test import constants as t_c
 
 
 class OrchestrationSchemaTest(TestCase):
-    """
-    Test Orchestration Schema Classes
-    """
+    """Test Orchestration related Schema Classes."""
 
     def test_successful_audience_get_schema(self) -> None:
-        """
-        Test Successful EngagementGetSchema Serialization
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test Successful EngagementGetSchema."""
 
         doc = {
             api_c.ID: "5f5f7262997acad4bac4384a",
@@ -63,14 +51,7 @@ class OrchestrationSchemaTest(TestCase):
         self.assertFalse(AudienceGetSchema().validate(doc))
 
     def test_unsuccessful_audience_get_schema_bad_name(self) -> None:
-        """
-        Test unsuccessful AudienceGetSchema serialization
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test unsuccessful AudienceGetSchema."""
 
         doc = {
             api_c.ID: "5f5f7262997acad4bac4384a",
@@ -92,14 +73,7 @@ class OrchestrationSchemaTest(TestCase):
     def test_unsuccessful_audience_get_schema_engagement_no_name(
         self,
     ) -> None:
-        """
-        Test unsuccessful AudienceGetSchema engagement no name serialization
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test unsuccessful AudienceGetSchema engagement no name."""
 
         doc = {
             api_c.ID: "5f5f7262997acad4bac4384a",
@@ -123,14 +97,7 @@ class OrchestrationSchemaTest(TestCase):
         self.assertTrue(AudienceGetSchema().validate(doc))
 
     def test_match_rate_audience_get_schema(self) -> None:
-        """
-        Test audience get schema match_rate.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test audience get schema match_rate."""
 
         audience = {
             api_c.ID: "5f5f7262997acad4bac4384a",
@@ -146,13 +113,13 @@ class OrchestrationSchemaTest(TestCase):
                             api_c.ID: "5f5f7262997acad4bac4384c",
                             db_c.NAME: "Delivery 1",
                             db_c.SIZE: 1000,
-                            api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
+                            api_c.MATCH_RATE: 0,
                         },
                         {
                             api_c.ID: "5f5f7262997acad4bac4384d",
                             db_c.NAME: "Delivery 2",
                             db_c.SIZE: 1000,
-                            api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
+                            api_c.MATCH_RATE: 0,
                         },
                     ],
                 }
@@ -173,18 +140,11 @@ class OrchestrationSchemaTest(TestCase):
         schema = AudienceGetSchema().load(audience)
 
         deliveries = schema[db_c.ENGAGEMENTS_COLLECTION][0][db_c.DELIVERIES]
-        self.assertGreaterEqual(deliveries[0][api_c.MATCH_RATE], 0.2)
-        self.assertGreaterEqual(deliveries[1][api_c.MATCH_RATE], 0.2)
+        self.assertGreaterEqual(deliveries[0][api_c.MATCH_RATE], 0)
+        self.assertGreaterEqual(deliveries[1][api_c.MATCH_RATE], 0)
 
     def test_engagement_delivery_history_schema(self) -> None:
-        """
-        Test engagement delivery history schema.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test engagement delivery history schema."""
 
         doc = {
             api_c.AUDIENCE: {
@@ -206,14 +166,7 @@ class OrchestrationSchemaTest(TestCase):
         self.assertFalse(EngagementDeliveryHistorySchema().validate(doc))
 
     def test_match_rate_engagement_delivery_history_schema(self) -> None:
-        """
-        Test engagement delivery history schema match_rate.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test engagement delivery history schema match_rate."""
 
         delivery_history = {
             api_c.AUDIENCE: {
@@ -226,7 +179,7 @@ class OrchestrationSchemaTest(TestCase):
                 db_c.TYPE: "facebook",
             },
             db_c.SIZE: 1000,
-            api_c.MATCH_RATE: round(uniform(0.21, 0.9), 2),
+            api_c.MATCH_RATE: 0,
             api_c.DELIVERED: datetime.strftime(
                 datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
             ),
@@ -239,17 +192,10 @@ class OrchestrationSchemaTest(TestCase):
         # deserialize the json document by loading it into the schema and
         # test the schema to have the match_rate value set
         schema = EngagementDeliveryHistorySchema().load(delivery_history)
-        self.assertGreaterEqual(schema[api_c.MATCH_RATE], 0.2)
+        self.assertGreaterEqual(schema[api_c.MATCH_RATE], 0)
 
     def test_audience_delivery_history_schema(self) -> None:
-        """
-        Test audience delivery history schema.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test audience delivery history schema."""
 
         doc = {
             api_c.ENGAGEMENT: {
@@ -271,14 +217,7 @@ class OrchestrationSchemaTest(TestCase):
         self.assertFalse(AudienceDeliveryHistorySchema().validate(doc))
 
     def test_audience_delivery_history_schema_invalid_id(self) -> None:
-        """
-        Test audience delivery history schema.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test audience delivery history schema."""
 
         doc = {
             api_c.ENGAGEMENT: {
@@ -301,14 +240,7 @@ class OrchestrationSchemaTest(TestCase):
             AudienceDeliveryHistorySchema().validate(doc)
 
     def test_match_rate_audience_delivery_history_schema(self) -> None:
-        """
-        Test audience delivery history schema match_rate.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test audience delivery history schema match_rate."""
 
         delivery_history = {
             api_c.ENGAGEMENT: {
@@ -321,7 +253,7 @@ class OrchestrationSchemaTest(TestCase):
                 db_c.TYPE: "facebook",
             },
             db_c.SIZE: 1000,
-            api_c.MATCH_RATE: round(uniform(0.2, 0.9), 2),
+            api_c.MATCH_RATE: 0,
             api_c.DELIVERED: datetime.strftime(
                 datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
             ),
@@ -334,4 +266,4 @@ class OrchestrationSchemaTest(TestCase):
         # deserialize the json document by loading it into the schema and
         # test the schema to have the match_rate value set
         schema = AudienceDeliveryHistorySchema().load(delivery_history)
-        self.assertGreater(schema[api_c.MATCH_RATE], 0.19)
+        self.assertGreaterEqual(schema[api_c.MATCH_RATE], 0)

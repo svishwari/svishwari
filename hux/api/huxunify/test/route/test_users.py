@@ -1,7 +1,5 @@
 # pylint: disable=too-many-lines
-"""
-Purpose of this file is to house all the engagement api tests
-"""
+"""Purpose of this file is to house all the engagement API tests."""
 from unittest import TestCase, mock
 from http import HTTPStatus
 import requests_mock
@@ -25,18 +23,10 @@ import huxunify.test.constants as t_c
 
 
 class TestUserRoutes(TestCase):
-    """
-    Tests for User APIs
-    """
+    """Tests for User APIs."""
 
     def setUp(self) -> None:
-        """
-        Setup resources before each test
-
-        Args:
-
-        Returns:
-        """
+        """Setup resources before each test."""
 
         # mock request for introspect call
         request_mocker = requests_mock.Mocker()
@@ -101,16 +91,11 @@ class TestUserRoutes(TestCase):
         self.addCleanup(mock.patch.stopall)
 
     def test_adding_engagement_to_favorite(self):
-        """
-        Tests adding engagement as a user favorite.
+        """Tests adding engagement as a user favorite."""
 
-        Args:
-
-        Returns:
-            None
-        """
         endpoint = (
-            f"{t_c.BASE_ENDPOINT}/"
+            f"{t_c.BASE_ENDPOINT}"
+            f"{api_c.USER_ENDPOINT}/"
             f"{db_c.ENGAGEMENTS}/"
             f"{self.engagement_id}/"
             f"{api_c.FAVORITE}"
@@ -125,16 +110,11 @@ class TestUserRoutes(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
 
     def test_adding_audience_to_favorite(self):
-        """
-        Tests adding audience as a user favorite.
+        """Tests adding audience as a user favorite."""
 
-        Args:
-
-        Returns:
-            None
-        """
         endpoint = (
-            f"{t_c.BASE_ENDPOINT}/"
+            f"{t_c.BASE_ENDPOINT}"
+            f"{api_c.USER_ENDPOINT}/"
             f"{db_c.AUDIENCES}/"
             f"{self.audience_id}/"
             f"{api_c.FAVORITE}"
@@ -148,19 +128,15 @@ class TestUserRoutes(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
 
     def test_adding_invalid_audience_to_favorite(self):
+        """Tests adding invalid audience as a user favorite.
+        Testing by sending audience_id not in DB, here using engagement ID.
         """
-        Tests adding invalid audience as a user favorite.
-            Testing by sending audience_id not in DB, here using engagement ID.
 
-        Args:
-
-        Returns:
-            None
-        """
         invalid_audience_id = self.engagement_id
 
         endpoint = (
-            f"{t_c.BASE_ENDPOINT}/"
+            f"{t_c.BASE_ENDPOINT}"
+            f"{api_c.USER_ENDPOINT}/"
             f"{db_c.AUDIENCES}/"
             f"{invalid_audience_id}/"
             f"{api_c.FAVORITE}"
@@ -180,17 +156,11 @@ class TestUserRoutes(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
 
     def test_deleting_audience_from_favorite(self):
-        """
-        Tests deleting/un-favorite an audience.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Tests deleting/un-favorite an audience."""
 
         endpoint = (
-            f"{t_c.BASE_ENDPOINT}/"
+            f"{t_c.BASE_ENDPOINT}"
+            f"{api_c.USER_ENDPOINT}/"
             f"{db_c.AUDIENCES}/"
             f"{self.audience_id}/"
             f"{api_c.FAVORITE}"
@@ -211,17 +181,11 @@ class TestUserRoutes(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_deleting_audience_not_in_favorite(self):
-        """
-        Tests deleting/un-favorite an audience not in favorites.
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Tests deleting/un-favorite an audience not in favorites."""
 
         endpoint = (
-            f"{t_c.BASE_ENDPOINT}/"
+            f"{t_c.BASE_ENDPOINT}"
+            f"{api_c.USER_ENDPOINT}/"
             f"{db_c.AUDIENCES}/"
             f"{self.audience_id}/"
             f"{api_c.FAVORITE}"
@@ -240,14 +204,8 @@ class TestUserRoutes(TestCase):
         )
 
     def test_get_user_profile(self):
-        """
-        Tests getting user profile using Okta ID.
+        """Tests getting user profile using Okta ID."""
 
-        Args:
-
-        Returns:
-            None
-        """
         endpoint = (
             f"{t_c.BASE_ENDPOINT}" f"{api_c.USER_ENDPOINT}/" f"{api_c.PROFILE}"
         )

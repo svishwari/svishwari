@@ -1,6 +1,4 @@
-"""
-Purpose of this file is to house all data sources tests
-"""
+"""Purpose of this file is to house all data sources tests."""
 
 import json
 from http import HTTPStatus
@@ -8,10 +6,12 @@ from unittest import TestCase, mock
 
 import mongomock
 import requests_mock
-from bson import ObjectId
 from marshmallow import ValidationError
 
-from huxunifylib.database.cdp_data_source_management import create_data_source
+from huxunifylib.database.cdp_data_source_management import (
+    create_data_source,
+    bulk_write_data_sources,
+)
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c
 import huxunify.test.constants as t_c
@@ -20,22 +20,16 @@ from huxunify.api.schema.cdp_data_source import (
     CdpDataSourceSchema,
     DataSourceDataFeedsGetSchema,
     CdpDataSourceDataFeedSchema,
+    CdpConnectionsDataSourceSchema,
 )
 from huxunify.app import create_app
 
 
 class CdpDataSourcesTest(TestCase):
-    """
-    Test CDP Data Sources CRUD APIs
-    """
+    """Test CDP Data Sources CRUD APIs."""
 
     def setUp(self) -> None:
-        """
-        Setup tests
-
-        Returns:
-
-        """
+        """Setup tests."""
 
         self.data_sources_api_endpoint = (
             f"{t_c.BASE_ENDPOINT}{api_c.CDP_DATA_SOURCES_ENDPOINT}"
@@ -69,27 +63,18 @@ class CdpDataSourcesTest(TestCase):
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
+        data_sources = t_c.DATASOURCES_RESPONSE[api_c.BODY][:2]
         # create data sources first
-        self.data_sources = []
-        for ds_name in [
-            db_c.DELIVERY_PLATFORM_FACEBOOK,
-            db_c.DELIVERY_PLATFORM_SFMC,
-        ]:
-            self.data_sources.append(
-                CdpDataSourceSchema().dump(
-                    create_data_source(self.database, ds_name, "")
-                )
-            )
+        self.data_sources = CdpDataSourceSchema().dump(
+            bulk_write_data_sources(
+                self.database,
+                CdpConnectionsDataSourceSchema().load(data_sources, many=True),
+            ),
+            many=True,
+        )
 
     def test_get_data_source_by_id_valid_id(self):
-        """
-        Test get data source by id from DB
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get data source by id from DB."""
 
         valid_response = self.data_sources[0]
 
@@ -105,19 +90,18 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_all_data_sources_success(self):
-        """
-        Test get all data source from DB
-
-        Args:
-
-        Returns:
-
-        """
-
-        valid_response = self.data_sources
+        """Test get all data source from DB."""
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/"
+            f"{api_c.CDM_CONNECTIONS_ENDPOINT}/{api_c.DATASOURCES}",
+            json=t_c.DATASOURCES_RESPONSE,
+        )
+        self.request_mocker.start()
 
         response = self.test_client.get(
             self.data_sources_api_endpoint,
+            query_string={api_c.ONLY_ADDED: False},
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -127,39 +111,36 @@ class CdpDataSourcesTest(TestCase):
                 CdpDataSourceSchema(), response.json, is_multiple=True
             )
         )
-        self.assertEqual(valid_response, response.json)
+        for data_source in response.json:
+            if data_source in self.data_sources:
+                self.assertTrue(data_source[api_c.IS_ADDED])
+                self.assertIn(api_c.ID, data_source)
+            else:
+                self.assertFalse(data_source[api_c.IS_ADDED])
+                self.assertNotIn(api_c.ID, data_source)
 
-    def test_delete_data_source_by_id_valid_id(self):
-        """
-        Test delete data source by id from DB
+    def test_delete_data_sources_by_type_success(self):
+        """]Test delete data sources by type from DB."""
 
-        Args:
+        data_source_types = ", ".join(
+            [data_source[api_c.TYPE] for data_source in self.data_sources]
+        )
 
-        Returns:
-
-        """
-
-        ds_id = self.data_sources[0][api_c.ID]
-
-        valid_response = dict(message="SUCCESS")
+        valid_response = dict(
+            message=api_c.DELETE_DATASOURCES_SUCCESS.format(data_source_types)
+        )
 
         response = self.test_client.delete(
-            f"{self.data_sources_api_endpoint}/{ds_id}",
+            f"{self.data_sources_api_endpoint}",
+            query_string={api_c.DATASOURCES: data_source_types},
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(valid_response, response.json)
 
-    def test_create_data_source_valid_params(self):
-        """
-        Test creating a new data source with valid params
-
-        Args:
-
-        Returns:
-
-        """
+    def test_create_data_sources_valid_params(self):
+        """Test creating new data sources with valid params."""
 
         data_sources = [
             {
@@ -192,19 +173,11 @@ class CdpDataSourcesTest(TestCase):
             self.assertIn(api_c.NAME, data_source)
             self.assertIn(api_c.TYPE, data_source)
             self.assertIn(api_c.STATUS, data_source)
-            self.assertIn(db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT, data_source)
             self.assertIn(api_c.IS_ADDED, data_source)
             self.assertTrue(api_c.IS_ADDED)
 
     def test_get_data_source_by_id_invalid_id(self):
-        """
-        Test get data source with an invalid id
-
-        Args:
-
-        Returns:
-
-        """
+        """Test get data source with an invalid id."""
 
         ds_id = "XYZ"
         valid_response = {
@@ -219,60 +192,21 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
-    def test_delete_data_source_by_id_invalid_id(self):
-        """
-        Test delete data source with an invalid id
-
-        Args:
-
-        Returns:
-
-        """
-
-        ds_id = "ABC123"
-        valid_response = {
-            "message": f"Invalid CDP data source ID received {ds_id}."
-        }
+    def test_delete_data_sources_by_type_empty_data(self):
+        """Test delete data sources with empty data."""
 
         response = self.test_client.delete(
-            f"{self.data_sources_api_endpoint}/{ds_id}",
+            f"{self.data_sources_api_endpoint}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
-        self.assertEqual(valid_response, response.json)
-
-    def test_delete_data_source_by_id_non_existent_id(self) -> None:
-        """
-        Test delete data source with an non-existent id
-
-        Args:
-
-        Returns:
-            None
-        """
-
-        non_existent_data_source_id = str(ObjectId())
-
-        response = self.test_client.delete(
-            f"{self.data_sources_api_endpoint}/{non_existent_data_source_id}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
         self.assertEqual(
-            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+            {api_c.MESSAGE: api_c.EMPTY_OBJECT_ERROR_MESSAGE}, response.json
         )
-        self.assertEqual({"message": api_c.OPERATION_FAILED}, response.json)
 
     def test_create_data_source_w_empty_name_string(self):
-        """
-        Test creating a data source with name set as empty string
-
-        Args:
-
-        Returns:
-
-        """
+        """Test creating data sources with name set as empty string."""
 
         data_sources = [
             {
@@ -297,14 +231,7 @@ class CdpDataSourcesTest(TestCase):
         self.assertRaises(ValidationError)
 
     def test_create_data_source_no_inputs(self):
-        """
-        Test creating a data source without any inputs
-
-        Args:
-
-        Returns:
-
-        """
+        """Test creating data source without any inputs"""
 
         response = self.test_client.post(
             self.data_sources_api_endpoint,
@@ -316,15 +243,8 @@ class CdpDataSourcesTest(TestCase):
         self.assertRaises(ValidationError)
 
     def test_create_data_source_w_no_values(self):
-        """
-        Test creating a data source with name and category
-        set as empty string
-
-        Args:
-
-        Returns:
-
-        """
+        """Test creating data sources with name and category set as empty
+        string."""
 
         data_sources = [
             {
@@ -349,14 +269,7 @@ class CdpDataSourcesTest(TestCase):
         self.assertRaises(ValidationError)
 
     def test_patch_data_source_valid_params(self) -> None:
-        """
-        Test patching/updating an existing data source with valid params
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test patching/updating an existing data source with valid params."""
 
         valid_data_source = self.data_sources[0]
 
@@ -379,14 +292,7 @@ class CdpDataSourcesTest(TestCase):
             self.assertTrue(t_c.validate_schema(CdpDataSourceSchema(), record))
 
     def test_patch_data_source_invalid_params(self) -> None:
-        """
-        Test patching/updating an existing data source with invalid params
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test patching/updating an existing data source with invalid params."""
 
         valid_data_source = self.data_sources[0]
 
@@ -403,12 +309,8 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_get_data_source_data_feed(self) -> None:
-        """
-        Test get data source data feeds endpoint
+        """Test get data source data feeds endpoint."""
 
-        Returns:
-
-        """
         data_source_type = t_c.DATASOURCE_DATA_FEEDS_RESPONSE[api_c.BODY][0][
             api_c.DATAFEED_DATA_SOURCE_NAME
         ]
