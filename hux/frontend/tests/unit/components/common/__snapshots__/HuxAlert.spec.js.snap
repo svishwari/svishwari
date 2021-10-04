@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Hux Alert Hux alert displays custom message for success type 1`] = `
+exports[`Hux Alert Hux alert displays custom message for error type 1`] = `
 <div class="hux-alert">
   <v-card-stub loaderheight="4" tag="div" minheight="56" rounded="0" class="alert-card">
     <div class="hux-alert-container">
@@ -9,7 +9,7 @@ exports[`Hux Alert Hux alert displays custom message for success type 1`] = `
         OH NO!
       </div>
       <div class="pr-6 text-body-2 error--text">
-        Test message
+        This is a error message!
       </div>
     </div>
     <icon-stub type="cross" size="14" color="primary" fillopacity="1" class="alert-icon cursor-pointer"></icon-stub>

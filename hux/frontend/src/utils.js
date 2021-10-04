@@ -27,7 +27,7 @@ export function handleError(error) {
     error.response.data.message ||
     error.response.data.exception_message ||
     error.message
-  store._actions["alerts/setAlert"][0]({
+  store.dispatch("alerts/setAlert", {
     message: errorMessage,
     code: error.response.status,
     type: "error",

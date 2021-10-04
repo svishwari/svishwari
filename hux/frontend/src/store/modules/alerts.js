@@ -9,7 +9,6 @@ const state = {
 
 const getters = {
   list: (state) => Object.values(state.items),
-  id: (state) => state.id,
 }
 
 const mutations = {
