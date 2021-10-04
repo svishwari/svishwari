@@ -396,9 +396,15 @@ export default {
       // This assumes we cannot create a lookalike audience from a lookalike audience
       let isLookalikeableActive =
         audience.lookalikeable === "Active" && !audience.is_lookalike
-
+      let isFavorite = this.isUserFavorite(audience, "audiences")
       let actionItems = [
-        { title: "Favorite", isDisabled: true },
+        {
+          title: isFavorite ? "Unfavorite" : "Favorite",
+          isDisabled: false,
+          onClick: () => {
+            this.handleActionFavorite(audience, "audiences")
+          },
+        },
         { title: "Export", isDisabled: true },
         {
           title: "Edit audience",
