@@ -102,9 +102,7 @@ def get_routes(app: Flask) -> list:
         routes.append(
             {
                 "url": rule.rule,
-                "filter": "^"
-                + re.sub("<(.*?)>", "[A-Za-z0-9]+", rule.rule)
-                + "$",
+                "filter": f"^{re.sub('<(.*?)>', '[A-Za-z0-9]+', rule.rule)}$",
                 "methods": rule.methods,
             }
         )
