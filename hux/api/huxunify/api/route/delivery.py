@@ -618,6 +618,13 @@ class EngagementDeliverHistoryView(SwaggerView):
                 and job.get(api_c.AUDIENCE_ID)
                 and job.get(db_c.DELIVERY_PLATFORM_ID)
             ):
+                # Ignore deliveries to destinations no longer attached to engagement audiences
+                if (
+                    job.get(db_c.DELIVERY_PLATFORM_ID)
+                    not in destination_dict.keys()
+                ):
+                    continue
+
                 # append the necessary schema to the response list.
                 delivery_history.append(
                     {
