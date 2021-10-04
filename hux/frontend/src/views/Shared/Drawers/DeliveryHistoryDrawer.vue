@@ -72,10 +72,8 @@
             </tooltip>
             <tooltip v-if="col.value === 'match_rate'">
               <template #label-content>
-                <span v-if="item['destination'].type">N/A</span>
-                <span v-if="item['destination'].type">{{
-                  item[col.value] | Percentage
-                }}</span>
+                <span v-if="item[col.value] == null">N/A</span>
+                <span v-else>{{ item[col.value] | Percentage }}</span>
               </template>
               <template #hover-content>
                 {{ item[col.value] | Percentage }}
