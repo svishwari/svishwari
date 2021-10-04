@@ -198,7 +198,6 @@
           <avatar :name="item.fullName" />
         </template>
       </metric-card>
-
       <metric-card
         v-if="Object.keys(appliedFilters).length > 0"
         class="ma-2 audience-summary"
@@ -597,6 +596,7 @@
 // helpers
 import { generateColor, saveFile } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
+import filter from "lodash/filter"
 
 // common components
 import Avatar from "@/components/common/Avatar.vue"
@@ -717,7 +717,7 @@ export default {
       },
       modelInitial: [
         { value: "propensity", icon: "model" },
-        { value: "lifetime", icon: "lifetime" },
+        { value: "ltv", icon: "lifetime" },
         { value: "churn", icon: "churn" },
       ],
       selectedEngagements: [],
@@ -757,6 +757,7 @@ export default {
     ...mapGetters({
       getAudience: "audiences/audience",
       demographicsData: "audiences/demographics",
+      ruleAttributes: "audiences/audiencesRules",
     }),
     audience() {
       return this.audienceData
@@ -901,37 +902,42 @@ export default {
     appliedFilters() {
       try {
         let _filters = {}
+        const attributeOptions = this.attributeOptions()
         if (this.audience && this.audience.filters) {
           this.audience.filters.forEach((section) => {
-            section.section_filters.forEach((filter) => {
+            section.section_filters.forEach((sectionFilter) => {
               const model = this.modelInitial.filter(
                 (model) =>
-                  typeof filter.field === "string" &&
-                  filter.field.includes(model.value)
+                  typeof sectionFilter.field === "string" &&
+                  sectionFilter.field.includes(model.value)
               )
+              // TODO for the nestd filter check
+              let ruleFilterObject = filter(attributeOptions, {
+                key: sectionFilter.field.toLowerCase(),
+              })
               const filterObj = {
-                name: this.$options.filters.TitleCase(filter.field),
-                key: filter.field,
+                name: ruleFilterObject[0]["name"],
+                key: sectionFilter.field,
               }
 
               filterObj.name = filterObj.name.replace(/_/gi, " ")
               if (model.length > 0) {
-                filterObj["hover"] = "Between " + filter.value.join("-")
+                filterObj["hover"] = "Between " + sectionFilter.value.join("-")
                 if (!_filters[model[0].icon]) _filters[model[0].icon] = {}
-                if (_filters[model[0].icon][filter.field])
-                  _filters[model[0].icon][filter.field]["hover"] +=
+                if (_filters[model[0].icon][sectionFilter.field])
+                  _filters[model[0].icon][sectionFilter.field]["hover"] +=
                     "<br/> " + filterObj.hover
-                else _filters[model[0].icon][filter.field] = filterObj
+                else _filters[model[0].icon][sectionFilter.field] = filterObj
               } else {
                 if (!_filters["general"]) _filters["general"] = {}
                 filterObj["hover"] =
-                  filter.type === "range"
-                    ? "Include " + filter.value.join("-")
-                    : filter.value
-                if (_filters["general"][filter.field])
-                  _filters["general"][filter.field]["hover"] +=
+                  sectionFilter.type === "range"
+                    ? "Include " + sectionFilter.value.join("-")
+                    : sectionFilter.value
+                if (_filters["general"][sectionFilter.field])
+                  _filters["general"][sectionFilter.field]["hover"] +=
                     "<br/> " + filterObj.hover
-                else _filters["general"][filter.field] = filterObj
+                else _filters["general"][sectionFilter.field] = filterObj
               }
             })
           })
@@ -965,8 +971,35 @@ export default {
       detachAudienceDestination: "engagements/detachAudienceDestination",
       getDemographics: "audiences/getDemographics",
       downloadAudienceData: "audiences/fetchAudienceData",
+      getAudiencesRules: "audiences/fetchConstants",
     }),
-
+    attributeOptions() {
+      const options = []
+      Object.values(this.ruleAttributes.rule_attributes).forEach((attr) => {
+        Object.keys(attr).forEach((optionKey) => {
+          if (
+            Object.values(attr[optionKey])
+              .map((o) => typeof o === "object" && !Array.isArray(o))
+              .includes(Boolean(true))
+          ) {
+            Object.keys(attr[optionKey]).forEach((att) => {
+              if (typeof attr[optionKey][att] === "object") {
+                options.push({
+                  key: att,
+                  name: attr[optionKey][att]["name"],
+                })
+              }
+            })
+          } else {
+            options.push({
+              key: optionKey,
+              name: attr[optionKey]["name"],
+            })
+          }
+        })
+      })
+      return options
+    },
     async fetchDemographics() {
       this.loadingDemographics = true
       await this.getDemographics(this.$route.params.id)
@@ -992,8 +1025,10 @@ export default {
     },
 
     async refreshEntity() {
+      this.loading = true
       this.$root.$emit("refresh-notifications")
       await this.loadAudienceInsights()
+      this.loading = false
     },
     async onConfirmAction() {
       this.showConfirmModal = false
@@ -1024,7 +1059,8 @@ export default {
 
     /**
      *
-     * Formatting the values to the desired format using predefined application filters.
+     
+     Formatting the values to the desired format using predefined application filters.
      *
      * @param {object} item item
      * @param {string} item.title item's title
@@ -1070,6 +1106,7 @@ export default {
               audienceId: this.audienceId,
             })
             this.dataPendingMesssage(event, "engagement")
+            this.refreshEntity()
           } catch (error) {
             this.dataErrorMesssage(event, "engagement")
             console.error(error)
@@ -1264,6 +1301,7 @@ export default {
     async loadAudienceInsights() {
       this.loading = true
       this.refreshAudience = true
+      this.getAudiencesRules()
       await this.getAudienceById(this.$route.params.id)
       const _getAudience = this.getAudience(this.$route.params.id)
       if (_getAudience && this.refreshAudience) {
