@@ -9,46 +9,46 @@
       @tooltipDisplay="toolTipDisplay"
     />
     <chart-tooltip
-        v-if="show"
-        :position="{
-          x: currentData.xPosition,
-          y: currentData.yPosition,
-        }"
-        :tooltip-style="toolTipStyle"
-      >
+      v-if="show"
+      :position="{
+        x: currentData.xPosition,
+        y: currentData.yPosition,
+      }"
+      :tooltip-style="toolTipStyle"
+    >
       <template #content>
         <div class="black--text text--darken-4 caption">
-      <div class="value-section">
-        {{ currentData.date | Date("MM/DD/YYYY") }}
-      </div>
-      <div class="value-container">
-        <icon
-          type="name"
-          :size="12"
-          :fill-opacity="0.5"
-          :color="colorCodes[currentData.index].base"
-          :variant="colorCodes[currentData.index].variant"
-        />
-        <span class="text-label">Total customers</span>
-      </div>
-      <div class="value-section">
-        {{ currentData.totalCustomers | Numeric(true, false, false) }}
-      </div>
-      <div class="value-container">
-        <icon
-          type="name"
-          :size="12"
-          :color="colorCodes[currentData.index].base"
-          :variant="colorCodes[currentData.index].variant"
-        />
-        <span class="text-label">New customers added</span>
-        <div class="value-section">
-          {{ currentData.addedCustomers | Numeric(true, false, false) }}
+          <div class="value-section">
+            {{ currentData.date | Date("MM/DD/YYYY") }}
+          </div>
+          <div class="value-container">
+            <icon
+              type="name"
+              :size="12"
+              :fill-opacity="0.5"
+              :color="colorCodes[currentData.index].base"
+              :variant="colorCodes[currentData.index].variant"
+            />
+            <span class="text-label">Total customers</span>
+          </div>
+          <div class="value-section">
+            {{ currentData.totalCustomers | Numeric(true, false, false) }}
+          </div>
+          <div class="value-container">
+            <icon
+              type="name"
+              :size="12"
+              :color="colorCodes[currentData.index].base"
+              :variant="colorCodes[currentData.index].variant"
+            />
+            <span class="text-label">New customers added</span>
+            <div class="value-section">
+              {{ currentData.addedCustomers | Numeric(true, false, false) }}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
       </template>
-      </chart-tooltip>
+    </chart-tooltip>
   </div>
 </template>
 
@@ -59,7 +59,6 @@ import StackBarChart from "@/components/common/Charts/StackBarChart/StackBarChar
 import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
 import Icon from "@/components/common/Icon"
 import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
-
 
 export default {
   name: "TotalCustomerChart",
@@ -106,7 +105,9 @@ export default {
       this.show = arg[0]
       if (this.show) {
         this.currentData = arg[1]
-        this.toolTipStyle.left = this.currentData.isEndingBar ? '-130px' : '45px'
+        this.toolTipStyle.left = this.currentData.isEndingBar
+          ? "-130px"
+          : "45px"
         console.log(this.toolTipStyle)
       }
     },

@@ -7,22 +7,22 @@
       @tooltipDisplay="toolTipDisplay"
     />
     <chart-tooltip
-        v-if="show"
-        :position="{
-          x: tooltip.x,
-          y: tooltip.y,
-        }"
-        :tooltip-style="toolTipStyle"
-      >
+      v-if="show"
+      :position="{
+        x: tooltip.x,
+        y: tooltip.y,
+      }"
+      :tooltip-style="toolTipStyle"
+    >
       <template #content>
-      <div class="bar-hover black--text text--darken-4">
-        <span class="feature-name">
-          {{ currentData.name }}
-        </span>
-        <span class="feature-description">
-          {{ currentData.description }}
-        </span>
-      </div>
+        <div class="bar-hover black--text text--darken-4">
+          <span class="feature-name">
+            {{ currentData.name }}
+          </span>
+          <span class="feature-description">
+            {{ currentData.description }}
+          </span>
+        </div>
       </template>
     </chart-tooltip>
   </div>
@@ -101,7 +101,7 @@ export default {
   height: 650px;
   padding: 0px !important;
   position: relative;
-    .bar-hover {
+  .bar-hover {
     padding: 7px 20px 20px 20px;
     .feature-name {
       @extend .global-text-format;
