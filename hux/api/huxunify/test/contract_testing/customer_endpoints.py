@@ -79,8 +79,8 @@ class CDPCustomersContracts(unittest.TestCase):
         self.assertEqual(result.json(), get_generated_values(expected))
 
     def test_get_customer_profile_events(self):
-        """Test get customer profile events endpoint
-        to generate pact contract."""
+        """Test get customer profile events endpoint to generate pact
+        contract."""
 
         expected = {
             "code": 200,
@@ -131,8 +131,8 @@ class CDPCustomersContracts(unittest.TestCase):
         self.assertEqual(result.json(), get_generated_values(expected))
 
     def test_get_customer_profile_audience_count(self):
-        """Test get customer profile audience count endpoint
-        to generate pact contract."""
+        """Test get customer profile audience count endpoint to generate pact
+        contract."""
 
         expected = {
             "code": 200,
@@ -164,8 +164,8 @@ class CDPCustomersContracts(unittest.TestCase):
         self.assertEqual(result.json(), get_generated_values(expected))
 
     def test_get_profile_by_huxid(self):
-        """Test get customer profile by huxid endpoint
-        to generate pact contract."""
+        """Test get customer profile by huxid endpoint to generate pact
+        contract."""
 
         expected = {
             "code": 200,
@@ -373,6 +373,7 @@ class CDPCustomersContracts(unittest.TestCase):
 
     def test_get_count_by_day(self):
         """Test get count by day endpoint to generate pact contract."""
+
         end_date = datetime.datetime.utcnow()
         start_date = end_date - relativedelta(years=1)
         filters = {
