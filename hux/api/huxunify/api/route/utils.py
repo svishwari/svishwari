@@ -186,7 +186,7 @@ def get_next_schedule(cron_expression: str, start_date: datetime) -> datetime:
 
     Args:
         cron_expression(str): Cron Expression of the schedule
-        start_date(datetime): Start Datetime
+        start_date (datetime): Start Datetime
 
     Returns:
         next_schedule(datetime): Next Schedule datetime
