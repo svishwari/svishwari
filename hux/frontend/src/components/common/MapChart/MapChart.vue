@@ -26,16 +26,12 @@
               :key="metric.label"
               class="sub-props pt-4"
             >
-              <span
-                v-if="metric.is_Combined_Metric"
-                class="subprop-name mr-2"
-                >{{ metric.label }}</span
-              >
-              <span
-                v-if="!metric.is_Combined_Metric"
-                class="subprop-name mr-2"
-                >{{ metric.label }}</span
-              >
+              <span v-if="metric.is_Combined_Metric" class="subprop-name mr-2"
+                >{{ metric.label }}
+              </span>
+              <span v-if="!metric.is_Combined_Metric" class="subprop-name mr-2"
+                >{{ metric.label }}
+              </span>
               <span v-if="metric.is_Combined_Metric" class="value ml-1">
                 <span v-for="(value, index) in metric.key" :key="value">
                   {{ applyFilter(currentData[value], metric.format) }}

@@ -25,5 +25,23 @@
     "top": "-150px",
     "left": "-250px",
     "padding": "10px"
+  },
+  "identityChart": {
+    "maxWidth": "213px",
+    "minWidth": "213px",
+    "top": "-112px",
+    "left": "-210px"
+  },
+  "customerEventChart": {
+    "maxWidth": "172px",
+    "top": "-130px",
+    "left": "56px",
+    "padding": "8px 8px 15px 8px"
+  },
+  "idrMatchingTrendChart": {
+    "maxWidth": "172px",
+    "top": "-100px",
+    "left": "69px",
+    "padding": "8px 8px 15px 8px"
   }
 }

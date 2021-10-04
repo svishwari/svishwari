@@ -56,7 +56,6 @@ export default {
 }
 
 .chart-tooltip {
-  //  @extend .global-font-style;
   @extend .box-shadow-3;
   pointer-events: none;
   position: absolute;
