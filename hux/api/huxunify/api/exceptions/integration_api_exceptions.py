@@ -3,11 +3,7 @@ from huxunify.api import constants
 
 
 class IntegratedAPIEndpointException(Exception):
-    """Exception due to Integration APIs like CDP/Tecton.
-
-    Args:
-        Exception: Exception being raised.
-    """
+    """Exception due to Integration APIs like CDP/Tecton."""
 
     exception_message = ""
 

@@ -12,6 +12,7 @@
             is-tile
             icon="history"
             variant="white"
+            data-e2e="version-history-button"
             @click="viewVersionHistory()"
           >
             Version history
@@ -29,7 +30,11 @@
         </v-col>
         <v-col col="6">
           <div class="d-flex">
-            <div v-for="(metric, key) in model.performance_metric" :key="key">
+            <div
+              v-for="(metric, key) in model.performance_metric"
+              :key="key"
+              data-e2e="performancemetric"
+            >
               <div
                 v-if="metric !== -1"
                 class="model-dashboard__card px-6 py-3 mr-2"
@@ -131,6 +136,7 @@
             <feature-chart
               v-if="!featuresLoading"
               :feature-data="modelFeatures"
+              data-e2e="feature-chart"
             />
           </v-card>
         </v-col>
@@ -161,6 +167,7 @@
                 :chart-dimensions="chartDimensions"
                 x-axis-format="%m/%d"
                 :enable-grid="[true, true]"
+                data-e2e="drift-chart"
               />
             </div>
             <div class="py-5 text-center black--text text--darken-4 text-h6">
@@ -184,13 +191,17 @@
               v-else
               :data="lift"
               :rmse="model.performance_metric['rmse']"
+              data-e2e="table-lift"
             />
           </v-card>
         </v-col>
       </v-row>
       <v-row v-if="dashboardFeatureSize">
         <v-col col="12">
-          <v-card class="rounded-lg box-shadow-5 px-6 py-5">
+          <v-card
+            class="rounded-lg box-shadow-5 px-6 py-5"
+            data-e2e="table-feature"
+          >
             <div class="black--text text--darken-4 text-h5 pb-4">
               Features ({{ dashboardFeatureSize }})
             </div>
@@ -203,7 +214,10 @@
           </v-card>
         </v-col>
       </v-row>
-      <version-history v-model="versionHistoryDrawer" />
+      <version-history
+        v-model="versionHistoryDrawer"
+        data-e2e="version-history"
+      />
     </template>
   </page>
 </template>

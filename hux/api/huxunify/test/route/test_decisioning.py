@@ -1,6 +1,6 @@
-"""
-Purpose of this file is to house all tests related to decisioning
-"""
+"""Purpose of this file is to house all tests related to decisioning."""
+
+
 import json
 from http import HTTPStatus
 from unittest import TestCase, mock
@@ -23,17 +23,11 @@ from huxunify.test import constants as t_c
 
 
 class DecisioningTests(TestCase):
-    """
-    Tests for decisioning
-    """
+    """Tests for decisioning."""
 
     def setUp(self) -> None:
-        """
-        Setup tests
+        """Setup tests."""
 
-        Returns:
-
-        """
         self.config = get_config(api_c.TEST_MODE)
 
         # setup the flask test client
@@ -65,14 +59,7 @@ class DecisioningTests(TestCase):
         self.request_mocker.start()
 
     def test_get_models_success(self):
-        """
-        Test get models from Tecton
-
-        Args:
-
-        Returns:
-            None
-        """
+        """Test get models from Tecton."""
 
         get_models_mock = mock.patch(
             "huxunify.api.data_connectors.tecton.get_models"
@@ -96,14 +83,10 @@ class DecisioningTests(TestCase):
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     def test_get_model_version_history(self, model_id: int):
-        """
-        Test get model version history
+        """Test get model version history
 
         Args:
-            model_id (int): Model Id.
-
-        Returns:
-            None
+            model_id (int): Model ID.
         """
 
         # mock the version history
@@ -154,14 +137,10 @@ class DecisioningTests(TestCase):
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     @settings(deadline=600)
     def test_get_model_features(self, model_id: int) -> None:
-        """
-        Test get model features
+        """Test get model features
 
         Args:
-            model_id (int): Model Id.
-
-        Returns:
-            None
+            model_id (int): Model ID.
         """
 
         get_model_version_mock = mock.patch(

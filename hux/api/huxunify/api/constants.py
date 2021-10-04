@@ -568,6 +568,7 @@ DATA_EXTENSIONS = "data-extensions"
 DATA_EXTENSION = "data_extension"
 DATA_EXTENSION_ID = "data_extension_id"
 DATA_EXTENSION_FAILED = "Unable to retrieve destination data extension."
+DATA_EXTENSION_NOT_SUPPORTED = "Data extension not supported"
 
 # Engagement fields
 ENGAGEMENT = "engagement"

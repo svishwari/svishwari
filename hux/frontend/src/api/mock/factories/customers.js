@@ -155,7 +155,7 @@ export const customersOverview = {
   total_known_ids: 15270332,
   total_records: 20372628,
   total_unique_ids: 73374722,
-  total_unknown_ids: 30637984,
+  total_unknown_ids: 0,
   total_us_states: 52,
   updated: faker.date.recent(7),
 }

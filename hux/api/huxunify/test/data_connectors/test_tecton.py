@@ -1,6 +1,4 @@
-"""
-purpose of this file is to house all the tecton api tests.
-"""
+"""Purpose of this file is to house all the tecton api tests."""
 import json
 import string
 from unittest import TestCase, mock
@@ -58,27 +56,19 @@ MOCK_MODEL_RESPONSE = {
 
 
 class TectonTest(TestCase):
-    """
-    Test Tecton request methods
-    """
+    """Test Tecton request API endpoint methods."""
 
     def setUp(self) -> None:
-        """Setup tests
+        """Setup tests."""
 
-        Returns:
-
-        """
         self.config = get_config()
 
     @requests_mock.Mocker()
     def test_list_models(self, request_mocker: Mocker):
-        """Test list models
+        """Test list models.
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
 
         # setup the request mock post
@@ -108,10 +98,8 @@ class TectonTest(TestCase):
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
+
         # setup the request mock post
         request_mocker.post(
             self.config.TECTON_FEATURE_SERVICE,
@@ -153,10 +141,8 @@ class TectonTest(TestCase):
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
+
         # setup the request mock post
         request_mocker.post(
             self.config.TECTON_FEATURE_SERVICE,
@@ -200,10 +186,8 @@ class TectonTest(TestCase):
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
+
         # setup the request mock post
         request_mocker.post(
             self.config.TECTON_FEATURE_SERVICE,
@@ -226,10 +210,8 @@ class TectonTest(TestCase):
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
+
         # setup the request mock post
         request_mocker.post(
             self.config.TECTON_FEATURE_SERVICE,
@@ -268,31 +250,25 @@ class TectonTest(TestCase):
         )
 
     def test_list_features(self):
-        """test list features for a model"""
+        """Test list features for a model."""
 
         # TODO - when available.
         self.assertEqual(2 + 2, 4)
 
     def test_performance_metrics(self):
-        """test getting performance metrics for a model"""
+        """Test getting performance metrics for a model."""
 
         # TODO - when available.
         self.assertEqual(2 + 2, 4)
 
     def test_feature_importance(self):
-        """test getting feature importance for a model"""
+        """Test getting feature importance for a model."""
 
         # TODO - when available.
         self.assertEqual(2 + 2, 4)
 
     def test_lift_chart(self):
-        """Test getting lift charts for a model.
-
-        Args:
-
-        Returns:
-
-        """
+        """Test getting lift charts for a model."""
 
         # TODO- find async post mocker
         mock.patch(
@@ -325,9 +301,7 @@ class TectonTest(TestCase):
         """Test getting drift charts for a model.
 
         Args:
-
-        Returns:
-
+            request_mocker (Mocker): request mocker object.
         """
 
         # setup the request mock post
@@ -365,9 +339,6 @@ class TectonTest(TestCase):
 
         Args:
             request_mocker (Mocker): request mocker object.
-
-        Returns:
-            None
         """
 
         request_mocker.post(
@@ -389,9 +360,6 @@ class TectonTest(TestCase):
         Args:
             request_mocker (Mocker): request mocker object.
             model_id (str): model ID value for request.
-
-        Returns:
-            None
         """
 
         request_mocker.post(
@@ -417,9 +385,6 @@ class TectonTest(TestCase):
             request_mocker (Mocker): request mocker object.
             model_id (int): model ID value for request.
             model_type (str): model type value for request.
-
-        Returns:
-            None
         """
 
         request_mocker.post(
@@ -445,9 +410,6 @@ class TectonTest(TestCase):
             request_mocker (Mocker): request mocker object.
             model_id (str): model ID value for request.
             model_version (str): model version value for request.
-
-        Returns:
-            None
         """
 
         request_mocker.post(

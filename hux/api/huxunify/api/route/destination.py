@@ -284,10 +284,8 @@ class DestinationPutView(SwaggerView):
         destination = destination_management.get_delivery_platform(
             database, destination_id
         )
-        if (
-            destination[db_c.DELIVERY_PLATFORM_TYPE]
-            == db_c.DELIVERY_PLATFORM_SFMC
-        ):
+        platform_type = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
+        if platform_type == db_c.DELIVERY_PLATFORM_SFMC:
             SFMCAuthCredsSchema().load(auth_details)
             performance_de = body.get(
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
@@ -298,25 +296,16 @@ class DestinationPutView(SwaggerView):
                     {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
                     HTTPStatus.BAD_REQUEST,
                 )
-        elif (
-            destination[db_c.DELIVERY_PLATFORM_TYPE]
-            == db_c.DELIVERY_PLATFORM_FACEBOOK
-        ):
+        elif platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
             FacebookAuthCredsSchema().load(auth_details)
-        elif destination[db_c.DELIVERY_PLATFORM_TYPE] in [
+        elif platform_type in [
             db_c.DELIVERY_PLATFORM_SENDGRID,
             db_c.DELIVERY_PLATFORM_TWILIO,
         ]:
             SendgridAuthCredsSchema().load(auth_details)
-        elif (
-            destination[db_c.DELIVERY_PLATFORM_TYPE]
-            == db_c.DELIVERY_PLATFORM_QUALTRICS
-        ):
+        elif platform_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
             QualtricsAuthCredsSchema().load(auth_details)
-        elif (
-            destination[db_c.DELIVERY_PLATFORM_TYPE]
-            == db_c.DELIVERY_PLATFORM_GOOGLE
-        ):
+        elif platform_type == db_c.DELIVERY_PLATFORM_GOOGLE:
             GoogleAdsAuthCredsSchema().load(auth_details)
 
         if auth_details:
@@ -326,7 +315,7 @@ class DestinationPutView(SwaggerView):
                     authentication_details=auth_details,
                     is_updated=True,
                     destination_id=destination_id,
-                    destination_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
+                    destination_type=platform_type,
                 )
             )
             is_added = True
@@ -451,9 +440,10 @@ class DestinationValidatePostView(SwaggerView):
         """
 
         body = DestinationValidationSchema().load(request.get_json())
+        platform_type = body.get(api_c.TYPE)
 
         # test the destination connection and update connection status
-        if body.get(db_c.TYPE) == db_c.DELIVERY_PLATFORM_FACEBOOK:
+        if platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
             logger.info("Trying to connect to Facebook.")
             destination_connector = FacebookConnector(
                 auth_details={
@@ -477,7 +467,7 @@ class DestinationValidatePostView(SwaggerView):
                     "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
                 }, HTTPStatus.OK
             logger.error("Could not validate Facebook successfully.")
-        elif body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_SFMC:
+        elif platform_type == db_c.DELIVERY_PLATFORM_SFMC:
             logger.info("Validating SFMC destination.")
             connector = SFMCConnector(
                 auth_details=set_sfmc_auth_details(
@@ -496,7 +486,7 @@ class DestinationValidatePostView(SwaggerView):
                 "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS,
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: ext_list,
             }, HTTPStatus.OK
-        elif body.get(api_c.DESTINATION_TYPE) in [
+        elif platform_type in [
             db_c.DELIVERY_PLATFORM_SENDGRID,
             db_c.DELIVERY_PLATFORM_TWILIO,
         ]:
@@ -510,10 +500,7 @@ class DestinationValidatePostView(SwaggerView):
             return {
                 "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
             }, HTTPStatus.OK
-        elif (
-            body.get(api_c.DESTINATION_TYPE)
-            == db_c.DELIVERY_PLATFORM_QUALTRICS
-        ):
+        elif platform_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
             qualtrics_connector = QualtricsConnector(
                 auth_details={
                     QualtricsCredentials.QUALTRICS_API_TOKEN.value: body.get(
@@ -539,7 +526,7 @@ class DestinationValidatePostView(SwaggerView):
                 }, HTTPStatus.OK
 
             logger.error("Could not validate Qualtrics successfully.")
-        elif body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_GOOGLE:
+        elif platform_type == db_c.DELIVERY_PLATFORM_GOOGLE:
             google_connector = GoogleConnector(
                 auth_details={
                     GoogleCredentials.GOOGLE_DEVELOPER_TOKEN.value: body.get(
@@ -582,7 +569,7 @@ class DestinationValidatePostView(SwaggerView):
         )
         return (
             {"message": api_c.DESTINATION_AUTHENTICATION_FAILED},
-            HTTPStatus.BAD_REQUEST,
+            HTTPStatus.FORBIDDEN,
         )
 
 
@@ -638,13 +625,10 @@ class DestinationDataExtView(SwaggerView):
             get_db_client(), destination_id
         )
 
-        if (
-            api_c.AUTHENTICATION_DETAILS not in destination
-            or api_c.DELIVERY_PLATFORM_TYPE not in destination
-        ):
+        if api_c.AUTHENTICATION_DETAILS not in destination:
             logger.error(
-                "Destination Authentication for %s failed since authentication "
-                "details missing or delivery platform type missing.",
+                "Destination authentication for %s failed since authentication "
+                "details missing.",
                 destination_id,
             )
             return {
@@ -657,16 +641,31 @@ class DestinationDataExtView(SwaggerView):
             destination[api_c.DELIVERY_PLATFORM_TYPE]
             == db_c.DELIVERY_PLATFORM_SFMC
         ):
-            connector = SFMCConnector(
+            sfmc_connector = SFMCConnector(
                 auth_details=get_auth_from_parameter_store(
                     destination[api_c.AUTHENTICATION_DETAILS],
                     destination[api_c.DELIVERY_PLATFORM_TYPE],
                 )
             )
-            ext_list = connector.get_list_of_data_extensions()
-        logger.info(
-            "Found %s data extensions for %s.", len(ext_list), destination_id
-        )
+            if not sfmc_connector.check_connection():
+                logger.info("Could not validate SFMC successfully.")
+                return {
+                    "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+                }, HTTPStatus.FORBIDDEN
+
+            ext_list = sfmc_connector.get_list_of_data_extensions()
+            logger.info(
+                "Found %s data extensions for %s.",
+                len(ext_list),
+                destination_id,
+            )
+
+        else:
+            logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
+            return {
+                "message": api_c.DATA_EXTENSION_NOT_SUPPORTED
+            }, HTTPStatus.BAD_REQUEST
+
         return (
             jsonify(
                 sorted(
@@ -748,17 +747,10 @@ class DestinationDataExtPostView(SwaggerView):
             database, destination_id
         )
 
-        if (
-            api_c.AUTHENTICATION_DETAILS not in destination
-            or api_c.DELIVERY_PLATFORM_TYPE not in destination
-        ):
-            logger.error(
-                "Destination Authentication for %s not executed since "
-                "Authentication details missing or delivery platform type missing.",
-                destination_id,
-            )
+        if api_c.AUTHENTICATION_DETAILS not in destination:
+            logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
             return {
-                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+                "message": api_c.DATA_EXTENSION_NOT_SUPPORTED
             }, HTTPStatus.BAD_REQUEST
 
         body = DestinationDataExtPostSchema().load(
@@ -770,16 +762,23 @@ class DestinationDataExtPostView(SwaggerView):
             == db_c.DELIVERY_PLATFORM_SFMC
         ):
 
-            connector = SFMCConnector(
+            sfmc_connector = SFMCConnector(
                 auth_details=get_auth_from_parameter_store(
                     destination[api_c.AUTHENTICATION_DETAILS],
                     destination[api_c.DELIVERY_PLATFORM_TYPE],
                 )
             )
+
+            if not sfmc_connector.check_connection():
+                logger.info("Could not validate SFMC successfully.")
+                return {
+                    "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+                }, HTTPStatus.FORBIDDEN
+
             status_code = HTTPStatus.CREATED
 
             try:
-                extension = connector.create_data_extension(
+                extension = sfmc_connector.create_data_extension(
                     body.get(api_c.DATA_EXTENSION)
                 )
                 # pylint: disable=too-many-function-args
@@ -798,13 +797,12 @@ class DestinationDataExtPostView(SwaggerView):
                 # TODO - this is a work around until ORCH-288 is done
                 status_code = HTTPStatus.OK
                 extension = {}
-                for ext in connector.get_list_of_data_extensions():
+                for ext in sfmc_connector.get_list_of_data_extensions():
                     if ext["CustomerKey"] == body.get(api_c.DATA_EXTENSION):
                         extension = ext
             return DestinationDataExtGetSchema().dump(extension), status_code
 
-        logger.error(
-            "Could not create data extension for platform type %s.",
-            api_c.DELIVERY_PLATFORM_TYPE,
-        )
-        return {"message": api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST
+        logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
+        return {
+            "message": api_c.DATA_EXTENSION_NOT_SUPPORTED
+        }, HTTPStatus.BAD_REQUEST

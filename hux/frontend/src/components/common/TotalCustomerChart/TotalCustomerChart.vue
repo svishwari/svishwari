@@ -5,6 +5,7 @@
       :bar-group-change-index="barGroupChangeIndex"
       :color-codes="colorCodes"
       :chart-dimensions="chartDimensions"
+      :empty-state="isEmptyState"
       @tooltipDisplay="toolTipDisplay"
     />
     <stack-bar-chart-tooltip
@@ -34,6 +35,7 @@ export default {
     return {
       show: false,
       isArcHover: false,
+      isEmptyState: false,
       colorCodes: [
         { base: "primary", variant: "lighten5" },
         { base: "primary", variant: "lighten8" },
@@ -104,6 +106,9 @@ export default {
           new_customers_added: 0,
         })
       })
+
+      // Checking the empty state
+      this.isEmptyState = this.customersData.length == 0
 
       // Mapping date collection with API response
       totalCustomerData.forEach((data) => {
