@@ -1029,10 +1029,6 @@ export default {
       this.$root.$emit("refresh-notifications")
       await this.loadAudienceInsights()
       this.loading = false
-      this.$forceUpdate()
-      this.$nextTick(() => {
-        this.$forceUpdate()
-      })
     },
     async onConfirmAction() {
       this.showConfirmModal = false
@@ -1063,7 +1059,8 @@ export default {
 
     /**
      *
-     * Formatting the values to the desired format using predefined application filters.
+     
+     Formatting the values to the desired format using predefined application filters.
      *
      * @param {object} item item
      * @param {string} item.title item's title
