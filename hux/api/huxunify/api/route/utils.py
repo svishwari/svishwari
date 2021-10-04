@@ -4,7 +4,6 @@ from typing import Tuple
 from http import HTTPStatus
 from bson import ObjectId
 from croniter import croniter
-from marshmallow import ValidationError
 from pandas import DataFrame
 
 from healthcheck import HealthCheck
