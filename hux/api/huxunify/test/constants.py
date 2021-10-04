@@ -57,11 +57,20 @@ CUSTOMER_PROFILE_API = f"{TEST_CONFIG.CDP_SERVICE}"
 HUX = "HUX"
 CDP_CUSTOMER_PROFILE = "CDP_CUSTOMER_PROFILE"
 CONTRACTS_FOLDER = "contracts"
+
 CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT = (
     "/customer-profiles/insights/count-by-state"
 )
 CDP_CUSTOMER_PROFILES_AUDIENCE_COUNT = "/customer-profiles/audience/count"
 CDP_CUSTOMER_PROFILE_BASE_ENDPOINT = "/customer-profiles/"
+CUSTOMER_PROFILE_COUNT_BY_DAY = "/customer-profiles/insights/count-by-day"
+CUSTOMER_PROFILE_SPENDING_BY_MONTH = (
+    "/customer-profiles/insights/spending-by-month"
+)
+CUSTOMER_PROFILE_CITY_LTVS = "/customer-profiles/insights/city-ltvs"
+
+
+AUDIENCE_STATE_FILTER = {"field": "state", "type": "equals", "value": "HI"}
 
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
