@@ -151,12 +151,6 @@
 
     <v-divider class="mt-10" />
 
-    <v-subheader> Alert </v-subheader>
-    <v-btn @click="alert = !alert">Toogle alert</v-btn>
-    <hux-alert />
-
-    <v-divider class="mt-10" />
-
     <v-subheader> Button </v-subheader>
     <huxButton
       is-outlined
@@ -638,7 +632,6 @@
 <script>
 import CardInfo from "@/components/common/CardInfo"
 import ConfirmModal from "@/components/common/ConfirmModal"
-import HuxAlert from "@/components/common/HuxAlert"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import TextField from "@/components/common/TextField"
 import HuxTable from "@/components/common/huxTable.vue"
@@ -672,7 +665,6 @@ export default {
   components: {
     CardInfo,
     ConfirmModal,
-    HuxAlert,
     Breadcrumb,
     TextField,
     huxButton,
@@ -978,7 +970,6 @@ export default {
 
       drawer: false,
       modal: false,
-      alert: false,
 
       overviewListItems: [
         { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
