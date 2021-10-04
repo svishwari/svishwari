@@ -121,7 +121,7 @@
 }
 
 .border-zircon {
-  border-color: #e2eaec;
+  border-color: #e2eaec !important;
 }
 
 .card-style {
@@ -134,9 +134,9 @@
 
 .card-shadow {
   @extend .box-shadow-none;
-  border: 1px solid var(--v-zircon-base);
-  box-sizing: border-box;
-  border-radius: 12px;
+  border: 1px solid var(--v-zircon-base) !important;
+  box-sizing: border-box !important;
+  border-radius: 12px !important;
 }
 
 .list-shadow {
@@ -145,9 +145,9 @@
 }
 
 .w-100 {
-  width: 100%;
+  width: 100% !important;
 }
 
 .mw-100 {
-  max-width: 100%;
+  max-width: 100% !important;
 }
