@@ -9,7 +9,11 @@ from pact.matchers import get_generated_values
 import huxunify.test.constants as t_c
 
 # Folder where generated pacts are stored.
-contracts_folder = Path(__file__).parent.joinpath(t_c.CONTRACTS_FOLDER)
+contracts_folder = (
+    Path(__file__)
+    .parent.joinpath(t_c.CONTRACTS_DIR)
+    .joinpath(t_c.CDP_CUSTOMERS_CONTRACTS_DIR)
+)
 
 # Initializing pact
 pact = Consumer(t_c.HUX).has_pact_with(

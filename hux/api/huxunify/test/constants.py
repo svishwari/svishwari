@@ -56,10 +56,23 @@ CUSTOMER_PROFILE_API = f"{TEST_CONFIG.CDP_SERVICE}"
 
 HUX = "HUX"
 CDP_CUSTOMER_PROFILE = "CDP_CUSTOMER_PROFILE"
-CONTRACTS_FOLDER = "contracts"
+CDP_CONNECTIONS = "CDP_CONNECTIONS"
+CONTRACTS_DIR = "contracts"
+CDP_CUSTOMERS_CONTRACTS_DIR = "cdp_customers"
+CDP_CONNECTIONS_CONTRACTS_DIR = "cdp_connections"
+TECTON_CONTRACTS_DIR = "tecton"
 CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT = (
     "/customer-profiles/insights/count-by-state"
 )
+CDP_CONNECTIONS_DATA_SOURCES_ENDPOINT = "/connections/datasources"
+CDP_CONNECTIONS_DATA_SOURCE_DATA_FEEDS_ENDPOINT = (
+    "/connections/{data_source_name}/data_feeds"
+)
+CDP_IDENTITY_DATA_FEEDS_ENDPOINT = "/identity/datafeeds"
+CDP_IDENTITY_DATA_FEEDS_FEED_ID_ENDPOINT = (
+    "/identity/datafeeds/{data_feeds_feed_id}"
+)
+CDP_IDENTITY_ID_COUNT_BY_DAY_ENDPOINT = "/identity/id-count-by-day"
 
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,

@@ -1,0 +1,374 @@
+{
+  "consumer": {
+    "name": "HUX"
+  },
+  "provider": {
+    "name": "CDP_CONNECTIONS"
+  },
+  "interactions": [
+    {
+      "description": "A request to get data source's data feeds.",
+      "providerState": "Valid data source name exists.",
+      "request": {
+        "method": "GET",
+        "path": "/connections/bluecore/data_feeds",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "code": 200,
+          "message": "Data Feed Fetched successfully",
+          "body": [
+            {
+              "datasource_name": "bluecore",
+              "datasource_label": "Bluecore",
+              "name": "bluecore_email_clicks",
+              "records_received": 2000000,
+              "records_processed": 1800000,
+              "thirty_days_avg": 75,
+              "processed_at": "2021-08-16T12:17:24.628Z",
+              "status": "Active"
+            }
+          ]
+        },
+        "matchingRules": {
+          "$.body.body": {
+            "min": 1
+          },
+          "$.body.body[*].*": {
+            "match": "type"
+          },
+          "$.body.body[*].datasource_name": {
+            "match": "type"
+          },
+          "$.body.body[*].datasource_label": {
+            "match": "type"
+          },
+          "$.body.body[*].name": {
+            "match": "type"
+          },
+          "$.body.body[*].records_received": {
+            "match": "type"
+          },
+          "$.body.body[*].records_processed": {
+            "match": "type"
+          },
+          "$.body.body[*].thirty_days_avg": {
+            "match": "type"
+          },
+          "$.body.body[*].processed_at": {
+            "match": "type"
+          },
+          "$.body.body[*].status": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "A request to get data sources.",
+      "providerState": "No filters passed.",
+      "request": {
+        "method": "GET",
+        "path": "/connections/datasources",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "code": 200,
+          "message": "Data Sources Fetched successfully",
+          "body": [
+            {
+              "name": "bluecore",
+              "label": "Bluecore",
+              "status": "Active"
+            }
+          ]
+        },
+        "matchingRules": {
+          "$.body.body": {
+            "min": 1
+          },
+          "$.body.body[*].*": {
+            "match": "type"
+          },
+          "$.body.body[*].name": {
+            "match": "type"
+          },
+          "$.body.body[*].label": {
+            "match": "type"
+          },
+          "$.body.body[*].status": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "A request to get identity data feeds.",
+      "providerState": "Start date and end date passed as filters.",
+      "request": {
+        "method": "POST",
+        "path": "/identity/datafeeds",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "start_date": "2021-09-04",
+          "end_date": "2021-10-04"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "code": 200,
+          "message": "ok",
+          "body": [
+            {
+              "id": "3",
+              "name": "bluecore_email_clicks",
+              "datasource_name": "bluecore",
+              "new_ids_generated": 1159,
+              "total_rec_processed": 1159,
+              "match_rate": 0.888,
+              "timestamp": "2021-08-05T14:44:42.694Z",
+              "datasource_label": "Bluecore"
+            }
+          ]
+        },
+        "matchingRules": {
+          "$.body.body": {
+            "min": 1
+          },
+          "$.body.body[*].*": {
+            "match": "type"
+          },
+          "$.body.body[*].id": {
+            "match": "type"
+          },
+          "$.body.body[*].name": {
+            "match": "type"
+          },
+          "$.body.body[*].datasource_name": {
+            "match": "type"
+          },
+          "$.body.body[*].new_ids_generated": {
+            "match": "type"
+          },
+          "$.body.body[*].total_rec_processed": {
+            "match": "type"
+          },
+          "$.body.body[*].match_rate": {
+            "match": "type"
+          },
+          "$.body.body[*].timestamp": {
+            "match": "type"
+          },
+          "$.body.body[*].datasource_label": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "A request to get identity data feeds by feed ID.",
+      "providerState": "Valid data feeds feed ID exists.",
+      "request": {
+        "method": "GET",
+        "path": "/identity/datafeeds/3",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "code": 200,
+          "message": "ok",
+          "body": {
+            "pinning": {
+              "input_records": 38,
+              "output_records": 28,
+              "empty_records": 5,
+              "individual_id_match": 5,
+              "household_id_match": 6,
+              "company_id_match": 47,
+              "address_id_match": 35,
+              "db_reads": 9,
+              "db_writes": 21,
+              "filename": "email_analytics_extract_clicks_2021841437.csv",
+              "new_individual_ids": 27,
+              "new_household_ids": 34,
+              "new_company_ids": 46,
+              "new_address_ids": 27,
+              "process_time": 1.46,
+              "pinning_timestamp": "2021-08-05T14:44:42.694Z"
+            },
+            "stitched": {
+              "digital_ids_added": 12,
+              "digital_ids_merged": 21,
+              "match_rate": 0.66,
+              "merge_rate": 0.46,
+              "records_source": "input waterfall",
+              "stitched_timestamp": "2021-08-05T14:44:42.694Z"
+            }
+          }
+        },
+        "matchingRules": {
+          "$.body.body": {
+            "match": "type"
+          },
+          "$.body.body.pinning": {
+            "match": "type"
+          },
+          "$.body.body.pinning.input_records": {
+            "match": "type"
+          },
+          "$.body.body.pinning.output_records": {
+            "match": "type"
+          },
+          "$.body.body.pinning.empty_records": {
+            "match": "type"
+          },
+          "$.body.body.pinning.individual_id_match": {
+            "match": "type"
+          },
+          "$.body.body.pinning.household_id_match": {
+            "match": "type"
+          },
+          "$.body.body.pinning.company_id_match": {
+            "match": "type"
+          },
+          "$.body.body.pinning.address_id_match": {
+            "match": "type"
+          },
+          "$.body.body.pinning.db_reads": {
+            "match": "type"
+          },
+          "$.body.body.pinning.db_writes": {
+            "match": "type"
+          },
+          "$.body.body.pinning.filename": {
+            "match": "type"
+          },
+          "$.body.body.pinning.new_individual_ids": {
+            "match": "type"
+          },
+          "$.body.body.pinning.new_household_ids": {
+            "match": "type"
+          },
+          "$.body.body.pinning.new_company_ids": {
+            "match": "type"
+          },
+          "$.body.body.pinning.new_address_ids": {
+            "match": "type"
+          },
+          "$.body.body.pinning.process_time": {
+            "match": "type"
+          },
+          "$.body.body.pinning.pinning_timestamp": {
+            "match": "type"
+          },
+          "$.body.body.stitched": {
+            "match": "type"
+          },
+          "$.body.body.stitched.digital_ids_added": {
+            "match": "type"
+          },
+          "$.body.body.stitched.digital_ids_merged": {
+            "match": "type"
+          },
+          "$.body.body.stitched.match_rate": {
+            "match": "type"
+          },
+          "$.body.body.stitched.merge_rate": {
+            "match": "type"
+          },
+          "$.body.body.stitched.records_source": {
+            "match": "type"
+          },
+          "$.body.body.stitched.stitched_timestamp": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "A request to get identity count by day.",
+      "providerState": "Start date and end date passed as filters.",
+      "request": {
+        "method": "POST",
+        "path": "/identity/id-count-by-day",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "start_date": "2021-09-04",
+          "end_date": "2021-10-04"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "code": 200,
+          "message": "ok",
+          "body": [
+            {
+              "day": "2021-10-04",
+              "unique_hux_ids": 1029,
+              "anonymous_ids": 130,
+              "known_ids": 1029
+            }
+          ]
+        },
+        "matchingRules": {
+          "$.body.body": {
+            "min": 1
+          },
+          "$.body.body[*].*": {
+            "match": "type"
+          },
+          "$.body.body[*].day": {
+            "match": "type"
+          },
+          "$.body.body[*].unique_hux_ids": {
+            "match": "type"
+          },
+          "$.body.body[*].anonymous_ids": {
+            "match": "type"
+          },
+          "$.body.body[*].known_ids": {
+            "match": "type"
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}
