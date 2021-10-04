@@ -60,6 +60,8 @@ CONTRACTS_FOLDER = "contracts"
 CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT = (
     "/customer-profiles/insights/count-by-state"
 )
+CDP_CUSTOMER_PROFILES_AUDIENCE_COUNT = "/customer-profiles/audience/count"
+CDP_CUSTOMER_PROFILE_BASE_ENDPOINT = "/customer-profiles/"
 
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
