@@ -191,7 +191,6 @@ def get_next_schedule(cron_expression: str, start_date: datetime) -> datetime:
     Returns:
         next_schedule(datetime): Next Schedule datetime
     """
-    cron_iterator = croniter(cron_expression, start_date)
     return croniter(cron_expression, start_date).get_next(datetime)
 
 
