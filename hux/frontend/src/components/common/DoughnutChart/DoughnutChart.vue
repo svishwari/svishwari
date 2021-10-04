@@ -3,11 +3,50 @@
     <span v-if="showChart">
       <div id="chart" ref="chart" @mousemove="getCordinates($event)"></div>
       <chart-legends :legends-data="legendsData" class="legend-style pl-5" />
-      <doughnut-chart-tooltip
-        :show-tooltip="showTooltip"
-        :tooltip="tooltip"
-        :source-input="sourceInput"
-      />
+      <chart-tooltip
+        v-if="showTooltip"
+        :position="{
+          x: sourceInput.xPosition,
+          y: sourceInput.yPosition,
+        }"
+        :tooltip-style="toolTipStyle"
+      >
+        <template #content>
+          <div class="type mb-1">
+            <span v-if="sourceInput.label == 'Men'" class="circle-men"></span>
+            <span
+              v-if="sourceInput.label == 'Women'"
+              class="circle-women"
+            ></span>
+            <span
+              v-if="sourceInput.label == 'Other'"
+              class="circle-other"
+            ></span>
+
+            <span
+              v-if="sourceInput.label == 'Men'"
+              class="primary--text text--darken-1"
+            >
+              {{ sourceInput.label }}
+            </span>
+            <span v-if="sourceInput.label == 'Women'" class="primary--text">
+              {{ sourceInput.label }}
+            </span>
+            <span
+              v-if="sourceInput.label == 'Other'"
+              class="primary--text text--lighten-7"
+            >
+              {{ sourceInput.label }}
+            </span>
+          </div>
+          <div class="percentage black--text text--darken-4">
+            {{ getPercentage(sourceInput.population_percentage) }}
+          </div>
+          <div class="value black--text text--darken-4">
+            {{ sourceInput.size | Numeric }}
+          </div>
+        </template>
+      </chart-tooltip>
     </span>
     <span v-else>
       <img
@@ -25,15 +64,16 @@
 </template>
 
 <script>
-import DoughnutChartTooltip from "@/components/common/DoughnutChart/DoughnutChartTooltip"
+import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
 import ChartLegends from "@/components/common/Charts/Legends/ChartLegends.vue"
+import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
 import * as d3Select from "d3-selection"
 import * as d3Scale from "d3-scale"
 import * as d3Shape from "d3-shape"
 
 export default {
   name: "DoughnutChart",
-  components: { DoughnutChartTooltip, ChartLegends },
+  components: { ChartLegends, ChartTooltip },
   props: {
     data: {
       type: Array,
@@ -64,6 +104,7 @@ export default {
         x: 0,
         y: 0,
       },
+      toolTipStyle: TooltipConfiguration.genderChart,
       legendsData: [
         { color: "rgba(0, 85, 135, 1)", text: "Women" },
         { color: "rgba(12, 157, 219, 1)", text: "Men" },
@@ -161,7 +202,7 @@ export default {
             .style("filter", "drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.4)")
           this.sourceInput = d.data
           this.showTooltip = true
-          this.sourceInput.xPosition = this.tooltip.x
+          this.sourceInput.xPosition = this.tooltip.x - 20
           this.sourceInput.yPosition = this.tooltip.y
         }
         let removeArcHoverEvent = (e, d) => {
@@ -179,6 +220,9 @@ export default {
       this.tooltip.x = evt.offsetX + 60
       this.tooltip.y = evt.offsetY - 270
     },
+    getPercentage(data) {
+      return parseInt((data * 100).toFixed(0)) + "%"
+    },
   },
 }
 </script>
@@ -193,6 +237,26 @@ export default {
   }
   .legend-style {
     margin-top: 8px;
+  }
+  .circle {
+    height: 9px;
+    border-radius: 9px;
+    width: 9px;
+    float: left;
+    margin-top: 7px;
+    margin-right: 3px;
+  }
+  .circle-men {
+    @extend .circle;
+    border: 2px solid var(--v-primary-darken1);
+  }
+  .circle-other {
+    @extend .circle;
+    border: 2px solid var(--v-primary-lighten7);
+  }
+  .circle-women {
+    @extend .circle;
+    border: 2px solid var(--v-primary-base);
   }
 }
 </style>

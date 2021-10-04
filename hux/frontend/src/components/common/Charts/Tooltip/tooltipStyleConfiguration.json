@@ -1,0 +1,29 @@
+{
+  "incomeChart": {
+    "maxWidth": "70px",
+    "top": "370px"
+  },
+  "genderSpendChart": {
+    "maxWidth": "96px",
+    "top": "-60px",
+    "padding": "10px"
+  },
+  "genderChart": {
+    "minWidth": "82px",
+    "padding": "8px"
+  },
+  "mapChart": {
+    "maxWidth": "300px",
+    "minWidth": "250px",
+    "top": "-150px",
+    "left": "-250px",
+    "padding": "10px"
+  },
+  "totalCustomrChart": {
+    "maxWidth": "300px",
+    "minWidth": "250px",
+    "top": "-150px",
+    "left": "-250px",
+    "padding": "10px"
+  }
+}
