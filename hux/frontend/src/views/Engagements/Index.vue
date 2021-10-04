@@ -811,7 +811,7 @@ export default {
       this.flashAlert = true
     },
     getActionItems(engagement) {
-      let isFavorite = this.isUserFavorite(audience, "audiences")
+      let isFavorite = this.isUserFavorite(engagement, "audiences")
       let actionItems = [
         {
           title: isFavorite ? "Unfavorite" : "Favorite",
