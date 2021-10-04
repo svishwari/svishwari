@@ -544,22 +544,6 @@ class TestDeliveryRoutes(TestCase):
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
-    def test_get_engagement_delivery_history(self):
-        """Test get engagement delivery history API.
-
-        Args:
-
-        Returns:
-        """
-        engagement_id = self.engagement_ids[0]
-
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
-            f"{api_c.DELIVERY_HISTORY}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-
     def test_get_audience_delivery_history_invalid_id(self):
         """Test get delivery history API with valid ID."""
 
