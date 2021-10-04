@@ -14,14 +14,8 @@
         <template #content>
           <div class="type mb-1">
             <span v-if="sourceInput.label == 'Men'" class="circle-men"></span>
-            <span
-              v-if="sourceInput.label == 'Women'"
-              class="circle-women"
-            />
-            <span
-              v-if="sourceInput.label == 'Other'"
-              class="circle-other"
-            />
+            <span v-if="sourceInput.label == 'Women'" class="circle-women" />
+            <span v-if="sourceInput.label == 'Other'" class="circle-other" />
             <span
               v-if="sourceInput.label == 'Men'"
               class="primary--text text--darken-1"
