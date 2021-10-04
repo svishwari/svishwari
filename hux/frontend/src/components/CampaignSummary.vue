@@ -31,13 +31,17 @@
                         v-if="numericColumns.includes(item.field.split('|')[0])"
                       >
                         {{
-                          parseInt(item.value.split("|")[0]) | Numeric(true) | Empty
+                          Number(item.value.split("|")[0])
+                            | Numeric(true)
+                            | Empty
                         }}
                       </span>
                     </span>
                   </template>
                   <template #hover-content>
-                    {{ parseInt(item.value.split("|")[0]) | Numeric(true) | Empty }}
+                    {{
+                      Number(item.value.split("|")[0]) | Numeric(true) | Empty
+                    }}
                   </template>
                 </tooltip>
                 &nbsp;&bull;&nbsp;
@@ -82,7 +86,9 @@
                         numericColumns.includes(item.field.split('|')[1])
                       "
                     >
-                      {{ Number(item.value.split("|")[1]) | Numeric(true, false) }}
+                      {{
+                        Number(item.value.split("|")[1]) | Numeric(true, false)
+                      }}
                     </span>
                   </template>
                 </tooltip>
@@ -95,7 +101,7 @@
                         {{ item.value | Numeric(true, false) }}
                       </span>
                       <span v-else-if="percentileColumns.includes(item.field)">
-                       {{ item.value | Percentage }}
+                        {{ item.value | Percentage }}
                       </span>
                       <span v-else-if="currencyColumns.includes(item.field)">
                         {{ item.value | Currency }}
@@ -109,7 +115,7 @@
                           | Numeric(false, false, false, (percentage = true))
                       }}
                     </span>
-                    <span v-else> {{ item.value| Numeric(true, false) }}</span>
+                    <span v-else> {{ item.value | Numeric(true, false) }}</span>
                   </template>
                 </tooltip>
               </span>

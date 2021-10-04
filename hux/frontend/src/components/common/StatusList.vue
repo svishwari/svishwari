@@ -183,7 +183,9 @@
             <template #hover-content>
               <div class="d-flex flex-column text-caption">
                 <span>Audience size</span>
-                <span class="pb-3">{{ item.size | Numeric(true) | Empty }}</span>
+                <span class="pb-3">
+                  {{ item.size | Numeric(true) | Empty }}
+                </span>
                 <span>Match rate</span>
                 <i v-if="!item.match_rate"> N/A </i>
                 <span v-else>{{ item.match_rate | Percentage }}</span>
