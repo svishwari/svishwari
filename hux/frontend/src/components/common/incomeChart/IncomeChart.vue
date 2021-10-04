@@ -4,18 +4,22 @@
       <horizontal-bar-chart
         v-model="incomes"
         :chart-dimensions="chartDimensions"
-        @cordinates="getCordinates"
         @tooltipDisplay="toolTipDisplay"
       />
-      <bar-chart-tooltip
+      <chart-tooltip
+        v-if="show"
         :position="{
-          x: tooltip.x,
-          y: tooltip.y,
+          x: currentData.xPosition,
+          y: currentData.yPosition,
         }"
-        :show-tooltip="show"
-        :source-input="currentData"
+        :tooltip-style="toolTipStyle"
       >
-      </bar-chart-tooltip>
+        <template #content>
+          <div class="bar-hover">
+            {{ currentData.ltv | Currency }}
+          </div>
+        </template>
+      </chart-tooltip>
     </span>
     <span v-else>
       <img
@@ -33,13 +37,18 @@
 </template>
 
 <script>
-import BarChartTooltip from "@/components/common/incomeChart/BarChartTooltip"
 import HorizontalBarChart from "@/components/common/incomeChart/HorizontalBarChart"
 import ChartLegends from "@/components/common/Charts/Legends/ChartLegends.vue"
+import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
+import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
 
 export default {
   name: "IncomeChart",
-  components: { HorizontalBarChart, BarChartTooltip, ChartLegends },
+  components: {
+    HorizontalBarChart,
+    ChartLegends,
+    ChartTooltip,
+  },
   props: {
     data: {
       type: Array,
@@ -49,14 +58,11 @@ export default {
   data() {
     return {
       show: false,
-      tooltip: {
-        x: 0,
-        y: 0,
-      },
       chartDimensions: {
         width: 0,
         height: 0,
       },
+      toolTipStyle: TooltipConfiguration.incomeChart,
       incomes: this.data,
       currentData: {},
       legendsData: [
@@ -80,10 +86,6 @@ export default {
         this.currentData = arg[1]
       }
     },
-    getCordinates(args) {
-      this.tooltip.x = args.x
-      this.tooltip.y = args.y
-    },
     sizeHandler() {
       if (this.$refs.incomeChart) {
         this.chartDimensions.width = this.$refs.incomeChart.clientWidth
@@ -95,14 +97,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.global-text-line {
-  display: inline-block;
-  font-style: normal;
-  font-size: $font-size-root;
-  line-height: 19px;
-}
 .container {
   height: 350px;
   padding: 0px !important;
+  position: relative;
+  .global-text-line {
+    display: inline-block;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--v-black-darken2) !important;
+  }
+  .bar-hover {
+    padding: 5px 10px 5px 10px;
+    color: var(--v-primary-darken1) !important;
+  }
 }
 </style>

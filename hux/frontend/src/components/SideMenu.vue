@@ -58,7 +58,7 @@
       >
         <v-list-item-icon
           v-if="item.icon"
-          class="my-3 ml-1"
+          class="my-3"
           :class="{ 'home-menu-icon': !isMini }"
         >
           <tooltip
@@ -94,7 +94,7 @@
         >
           <v-list-item-icon
             v-if="menu.icon"
-            class="my-3"
+            class="my-3 ml-1"
             :class="{ 'menu-icon': !isMini }"
           >
             <tooltip

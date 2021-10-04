@@ -8,23 +8,61 @@
       :empty-state="isEmptyState"
       @tooltipDisplay="toolTipDisplay"
     />
-    <stack-bar-chart-tooltip
-      :show-tool-tip="show"
-      :color-codes="colorCodes"
-      :source-input="currentData"
-    />
+    <chart-tooltip
+      v-if="show"
+      :position="{
+        x: currentData.xPosition,
+        y: currentData.yPosition,
+      }"
+      :tooltip-style="toolTipStyle"
+    >
+      <template #content>
+        <div class="black--text text--darken-4 caption">
+          <div class="value-section">
+            {{ currentData.date | Date("MM/DD/YYYY") }}
+          </div>
+          <div class="value-container">
+            <icon
+              type="name"
+              :size="12"
+              :fill-opacity="0.5"
+              :color="colorCodes[currentData.index].base"
+              :variant="colorCodes[currentData.index].variant"
+            />
+            <span class="text-label">Total customers</span>
+          </div>
+          <div class="value-section">
+            {{ currentData.totalCustomers | Numeric(true, false, false) }}
+          </div>
+          <div class="value-container">
+            <icon
+              type="name"
+              :size="12"
+              :color="colorCodes[currentData.index].base"
+              :variant="colorCodes[currentData.index].variant"
+            />
+            <span class="text-label">New customers added</span>
+            <div class="value-section">
+              {{ currentData.addedCustomers | Numeric(true, false, false) }}
+            </div>
+          </div>
+        </div>
+      </template>
+    </chart-tooltip>
   </div>
 </template>
 
 <script>
 import { timeFormat } from "d3-time-format"
 import { nest } from "d3-collection"
-import StackBarChartTooltip from "@/components/common/TotalCustomerChart/StackBarChartTooltip"
 import StackBarChart from "@/components/common/Charts/StackBarChart/StackBarChart.vue"
+import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
+import Icon from "@/components/common/Icon"
+import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
 
 export default {
   name: "TotalCustomerChart",
-  components: { StackBarChart, StackBarChartTooltip },
+  components: { StackBarChart, ChartTooltip, Icon },
   props: {
     customersData: {
       type: Array,
@@ -49,6 +87,7 @@ export default {
         width: 0,
         height: 0,
       },
+      toolTipStyle: TooltipConfiguration.totalCustomerChart,
     }
   },
   mounted() {
@@ -66,6 +105,10 @@ export default {
       this.show = arg[0]
       if (this.show) {
         this.currentData = arg[1]
+        this.toolTipStyle.left = this.currentData.isEndingBar
+          ? "-130px"
+          : "45px"
+        console.log(this.toolTipStyle)
       }
     },
     sizeHandler() {
@@ -203,9 +246,25 @@ export default {
   font-size: $font-size-root;
   line-height: 19px;
 }
+.global-heading {
+  font-style: normal;
+  font-size: 12px;
+  line-height: 19px;
+}
 .container-chart {
   position: relative;
   height: 650px;
   padding: 0px !important;
+  .value-container {
+    margin-top: 2px;
+    @extend .global-heading;
+    .text-label {
+      margin-left: 8px !important;
+    }
+  }
+  .value-section {
+    @extend .global-heading;
+    margin-left: 21px;
+  }
 }
 </style>

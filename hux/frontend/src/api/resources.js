@@ -12,4 +12,5 @@ export default {
   models: "/models",
   notifications: "/notifications",
   lookalike: "/lookalike-audiences",
+  users: "/users",
 }
