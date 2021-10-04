@@ -353,7 +353,7 @@ export default {
   computed: {
     ...mapGetters({
       rowData: "audiences/list",
-      userFavories: "users/favorites",
+      userFavorites: "users/favorites",
     }),
     audienceList() {
       let audienceValue = this.rowData
@@ -381,7 +381,7 @@ export default {
 
     isUserFavorite(entity, type) {
       return (
-        this.userFavories[type] && this.userFavories[type].includes(entity.id)
+        this.userFavorites[type] && this.userFavorites[type].includes(entity.id)
       )
     },
     handleActionFavorite(item, type) {
