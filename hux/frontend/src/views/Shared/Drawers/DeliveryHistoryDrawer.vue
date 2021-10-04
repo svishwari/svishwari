@@ -72,22 +72,10 @@
             </tooltip>
             <tooltip v-if="col.value === 'match_rate'">
               <template #label-content>
-                <span
-                  v-if="
-                    nonCompliantMatchRatePlatforms.includes(
-                      item['destination'].type
-                    )
-                  "
-                  >N/A</span
-                >
-                <span
-                  v-if="
-                    !nonCompliantMatchRatePlatforms.includes(
-                      item['destination'].type
-                    )
-                  "
-                  >{{ item[col.value] | Percentage }}</span
-                >
+                <span v-if="item['destination'].type">N/A</span>
+                <span v-if="item['destination'].type">{{
+                  item[col.value] | Percentage
+                }}</span>
               </template>
               <template #hover-content>
                 {{ item[col.value] | Percentage }}
@@ -157,7 +145,12 @@ export default {
     return {
       localToggle: false,
       loading: false,
-      nonCompliantMatchRatePlatforms: ["salesforce", "sendgrid", "qualtrics"],
+      nonCompliantMatchRatePlatforms: [
+        "salesforce",
+        "sendgrid",
+        "qualtrics",
+        "sfmc",
+      ],
       columns: [
         {
           value: "destination",

@@ -27,7 +27,7 @@ export const defineRoutes = (server) => {
   server.get("/users/profile", (schema) => {
     return schema.users.find(1)
   })
-  server.post("/:type/:id/favorite", (schema, request) => {
+  server.post("users/:type/:id/favorite", (schema, request) => {
     const code = 200
     const headers = {}
     const body = { message: "SUCCESS" }
@@ -38,7 +38,7 @@ export const defineRoutes = (server) => {
     user.favorites[favoriteType].push(id)
     return new Response(code, headers, body)
   })
-  server.del("/:type/:id/favorite", (schema, request) => {
+  server.del("users/:type/:id/favorite", (schema, request) => {
     const code = 200
     const headers = {}
     const body = { message: "SUCCESS" }
