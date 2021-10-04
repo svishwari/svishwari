@@ -292,7 +292,7 @@ export default {
                 .style("pointer-events", "none")
             }
           })
-          dataToolTip.xPosition = finalXCoordinate
+          dataToolTip.xPosition = finalXCoordinate + 8
           dataToolTip.yPosition = yData
           this.tooltipDisplay(true, dataToolTip)
         }

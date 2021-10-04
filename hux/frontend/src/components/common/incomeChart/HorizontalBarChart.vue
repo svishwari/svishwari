@@ -1,10 +1,6 @@
 <template>
   <div class="chart-container" :style="{ maxWidth: chartWidth }">
-    <div
-      ref="huxChart"
-      class="chart-section"
-      @mouseover="getCordinates($event)"
-    ></div>
+    <div ref="huxChart" class="chart-section"></div>
   </div>
 </template>
 
@@ -178,14 +174,9 @@ export default {
       let changeHoverPosition = (data) => {
         let incomeData = data
         incomeData.xPosition = x(data.ltv)
-        incomeData.yPosition = y(data.name) + 12
+        incomeData.yPosition = y(data.name) - 380
         this.tooltipDisplay(true, incomeData)
       }
-    },
-    getCordinates(event) {
-      this.tooltip.x = event.offsetX
-      this.tooltip.y = event.offsetY
-      this.$emit("cordinates", this.tooltip)
     },
     tooltipDisplay(showTip, incomeData) {
       this.$emit("tooltipDisplay", showTip, incomeData)

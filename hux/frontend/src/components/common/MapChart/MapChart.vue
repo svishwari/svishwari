@@ -8,16 +8,43 @@
         @cordinates="getCordinates"
         @tooltipDisplay="toolTipDisplay"
       />
-      <map-chart-tooltip
-        :configuration-data="configurationData"
+      <chart-tooltip
+        v-if="show"
         :position="{
           x: tooltip.x,
           y: tooltip.y,
         }"
-        :show-tooltip="show"
-        :source-input="currentData"
+        :tooltip-style="toolTipStyle"
       >
-      </map-chart-tooltip>
+        <template #content>
+          <div class="map-hover">
+            <span class="prop-name font-weight-semi-bold">
+              {{ currentData[defaultMetric] }}
+            </span>
+            <div
+              v-for="metric in configurationData.tooltip_metrics"
+              :key="metric.label"
+              class="sub-props pt-4"
+            >
+              <span v-if="metric.is_Combined_Metric" class="subprop-name mr-2"
+                >{{ metric.label }}
+              </span>
+              <span v-if="!metric.is_Combined_Metric" class="subprop-name mr-2"
+                >{{ metric.label }}
+              </span>
+              <span v-if="metric.is_Combined_Metric" class="value ml-1">
+                <span v-for="(value, index) in metric.key" :key="value">
+                  {{ applyFilter(currentData[value], metric.format) }}
+                  <span v-if="index !== metric.key.length - 1">|</span>
+                </span>
+              </span>
+              <span v-if="!metric.is_Combined_Metric" class="value ml-1">
+                {{ applyFilter(currentData[metric.key], metric.format) }}
+              </span>
+            </div>
+          </div>
+        </template>
+      </chart-tooltip>
     </span>
     <span v-else>
       <img
@@ -32,12 +59,13 @@
 </template>
 
 <script>
-import MapChartTooltip from "@/components/common/MapChart/MapChartTooltip"
 import GeoChart from "@/components/common/MapChart/GeoChart"
+import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
+import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
 
 export default {
   name: "MapChart",
-  components: { GeoChart, MapChartTooltip },
+  components: { GeoChart, ChartTooltip },
   props: {
     mapData: {
       type: Array,
@@ -61,7 +89,13 @@ export default {
       },
       mapChartData: this.mapData,
       currentData: {},
+      toolTipStyle: TooltipConfiguration.mapChart,
     }
+  },
+  computed: {
+    defaultMetric() {
+      return this.configurationData.default_metric.key
+    },
   },
   created() {
     window.addEventListener("resize", this.sizeHandler)
@@ -91,13 +125,61 @@ export default {
     generateToolTipData(currentStateinfo) {
       this.currentData = currentStateinfo
     },
+    applyFilter(value, filter) {
+      switch (filter) {
+        case "numeric":
+          return this.$options.filters.Numeric(value, true, false, false)
+        case "percentage":
+          return this.$options.filters.Numeric(value, true, false, false, true)
+        case "currency":
+          return this.$options.filters.Currency(value)
+        default:
+          return this.$options.filters.Empty
+      }
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
+.global-heading {
+  @extend .font-weight-semi-bold;
+  font-style: normal;
+  font-size: $font-size-root;
+  line-height: 19px;
+  padding-left: 2px;
+}
+
+.global-text-line {
+  display: inline-block;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 16px;
+}
 .container {
   position: relative;
   padding: 0px !important;
+  .map-hover {
+    .prop-name {
+      @extend .global-heading;
+    }
+    .sub-props {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      height: 30px;
+      .subprop-name {
+        @extend .global-text-line;
+        flex: 0 0 40%;
+        padding-left: 5px;
+      }
+      .value {
+        @extend .global-text-line;
+        flex: 1;
+        text-align: left;
+      }
+    }
+  }
 }
 </style>
