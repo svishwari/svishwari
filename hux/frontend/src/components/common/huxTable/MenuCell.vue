@@ -15,65 +15,80 @@
         </tooltip>
       </router-link>
       <v-spacer></v-spacer>
-      <span class="action-icon font-weight-light float-right">
-        <v-menu v-model="openMenu" class="menu-wrapper" bottom offset-y>
-          <template #activator="{ on, attrs }">
-            <v-icon
-              v-bind="attrs"
-              class="mr-2 more-action"
-              color="primary"
-              v-on="on"
-              @click="takeActions($event)"
-            >
-              mdi-dots-vertical
-            </v-icon>
-          </template>
-          <v-list class="list-wrapper">
-            <v-list-item-group>
-              <v-list-item
-                v-for="(item, index) in menuOptions"
-                :key="index"
-                :disabled="item.isDisabled"
+      <div class="d-flex align-center">
+        <v-btn
+          v-if="hasFavorite"
+          icon
+          height="22"
+          width="22"
+          plain
+          class="align-center"
+          :class="{ 'action-icon': !isFavorite, 'mr-3 fixed-icon': isFavorite }"
+          @click="$emit('actionFavorite')"
+        >
+          <icon v-if="isFavorite" type="fav_filled" :size="18" color="" />
+          <icon v-else type="fav_blank" :size="18" color="" />
+        </v-btn>
+        <span class="action-icon font-weight-light float-right">
+          <v-menu v-model="openMenu" class="menu-wrapper" bottom offset-y>
+            <template #activator="{ on, attrs }">
+              <v-icon
+                v-bind="attrs"
+                class="mr-2 more-action"
+                color="primary"
+                v-on="on"
+                @click="takeActions($event)"
               >
-                <v-list-item-title
-                  v-if="!item.menu"
-                  @click="item.onClick && item.onClick(data)"
+                mdi-dots-vertical
+              </v-icon>
+            </template>
+            <v-list class="list-wrapper">
+              <v-list-item-group>
+                <v-list-item
+                  v-for="(item, index) in menuOptions"
+                  :key="index"
+                  :disabled="item.isDisabled"
                 >
-                  {{ item.title }}
-                </v-list-item-title>
+                  <v-list-item-title
+                    v-if="!item.menu"
+                    @click="item.onClick && item.onClick(data)"
+                  >
+                    {{ item.title }}
+                  </v-list-item-title>
 
-                <v-menu
-                  v-else
-                  v-model="isSubMenuOpen"
-                  offset-x
-                  nudge-right="16"
-                  nudge-top="4"
-                >
-                  <template #activator="{ on, attrs }">
-                    <v-list-item-title v-bind="attrs" v-on="on">
-                      {{ item.title }}
-                      <v-icon> mdi-chevron-right </v-icon>
-                    </v-list-item-title>
-                  </template>
-                  <template #default>
-                    <div
-                      class="sub-menu-class white"
-                      @click="item.menu.onClick(data)"
-                    >
-                      <logo
-                        v-if="item.menu.icon"
-                        :size="18"
-                        :type="item.menu.icon"
-                      />
-                      <span class="ml-1">{{ item.menu.title }}</span>
-                    </div>
-                  </template>
-                </v-menu>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-menu>
-      </span>
+                  <v-menu
+                    v-else
+                    v-model="isSubMenuOpen"
+                    offset-x
+                    nudge-right="16"
+                    nudge-top="4"
+                  >
+                    <template #activator="{ on, attrs }">
+                      <v-list-item-title v-bind="attrs" v-on="on">
+                        {{ item.title }}
+                        <v-icon> mdi-chevron-right </v-icon>
+                      </v-list-item-title>
+                    </template>
+                    <template #default>
+                      <div
+                        class="sub-menu-class white"
+                        @click="item.menu.onClick(data)"
+                      >
+                        <logo
+                          v-if="item.menu.icon"
+                          :size="18"
+                          :type="item.menu.icon"
+                        />
+                        <span class="ml-1">{{ item.menu.title }}</span>
+                      </div>
+                    </template>
+                  </v-menu>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-menu>
+        </span>
+      </div>
     </v-col>
   </v-row>
 </template>
@@ -81,13 +96,16 @@
 import Vue from "vue"
 import Tooltip from "../Tooltip.vue"
 import Logo from "@/components/common/Logo.vue"
+import Icon from "../Icon.vue"
 
 export default Vue.extend({
   name: "MenuCell",
   components: {
     Logo,
     Tooltip,
+    Icon,
   },
+
   props: {
     navigateTo: {
       type: Object,
@@ -119,6 +137,16 @@ export default Vue.extend({
       type: [String, Object],
       required: false,
       default: "",
+    },
+    isFavorite: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    hasFavorite: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 
@@ -169,6 +197,9 @@ export default Vue.extend({
   :hover {
     .action-icon {
       display: block;
+    }
+    .fixed-icon {
+      margin-right: 0px !important;
     }
   }
 }

@@ -501,4 +501,6 @@ export default function (server) {
   server.createList("geoCity", 14659)
   server.create("geoCountry", { country: "United States" })
   server.createList("geoState", 52)
+
+  server.createList("user", 1)
 }

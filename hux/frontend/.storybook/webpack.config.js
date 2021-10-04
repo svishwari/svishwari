@@ -1,28 +1,42 @@
 const path = require("path")
+const VuetifyLoaderPlugin = require("vuetify-loader/lib/plugin")
 
 module.exports = async ({ config }) => {
-  config.resolve.alias["~storybook"] = path.resolve(__dirname)
-
+  config.resolve.extensions.push(".vue", ".css", ".scss", ".sass", ".html")
   config.module.rules.push({
-    resourceQuery: /blockType=story/,
-    loader: "vue-storybook"
-  })
-
-  config.module.rules.push({
-    test: /\.s(a|c)ss$/,
+    resourceQuery: /module/,
     use: [
-      "vue-style-loader",
-      "css-loader",
+      {
+        loader: "vue-style-loader",
+        options: {
+          sourceMap: false,
+          shadowMode: false,
+        },
+      },
+      {
+        loader: "css-loader",
+        options: {
+          sourceMap: false,
+          importLoaders: 2,
+          modules: true,
+          localIdentName: "[name]_[local]_[hash:base64:5]",
+        },
+      },
+      {
+        loader: "postcss-loader",
+        options: {
+          sourceMap: false,
+        },
+      },
       {
         loader: "sass-loader",
         options: {
-          // TODO : need to resolve using webpack config for loading styles variables
-          // additionalData: `@import "${path.resolve(__dirname, "..", "src", "styles", "variables.scss")}"`
-        }
-      }
+          sourceMap: false,
+          indentedSyntax: true,
+          data: '@import "@/styles/variables.scss";',
+        },
+      },
     ],
-    include: path.resolve(__dirname, "../")
   })
-
   return config
 }
