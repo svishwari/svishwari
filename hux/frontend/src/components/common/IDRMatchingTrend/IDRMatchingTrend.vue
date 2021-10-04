@@ -7,24 +7,63 @@
       @cordinates="getCordinates"
       @tooltipDisplay="toolTipDisplay"
     />
-    <i-d-r-matching-trend-tool-tip
+    <chart-tooltip
+      v-if="show"
       :position="{
-        x: tooltip.x,
-        y: tooltip.y,
+        x: currentData.xPosition,
+        y: currentData.yPosition,
       }"
-      :show-tool-tip="show"
-      :source-input="currentData"
-    />
+      :tooltip-style="toolTipStyle"
+    >
+      <template #content>
+        <div class="neroBlack--text caption">
+          <div class="value-section">
+            <div class="date-font">
+              {{ currentData.date | Date("MMM DD[,] YYYY") }}
+            </div>
+            <div>
+              <span class="append-circle color-known-ids" />
+              <span class="font-size-tooltip">
+                {{
+                  currentData.known_ids | Numeric(false, false, true) | Empty
+                }}
+              </span>
+            </div>
+            <div>
+              <span class="append-circle color-unique-hux-ids" />
+              <span class="font-size-tooltip">
+                {{
+                  currentData.unique_hux_ids
+                    | Numeric(false, false, true)
+                    | Empty
+                }}
+              </span>
+            </div>
+            <div>
+              <span class="append-circle color-anonymous-ids" />
+              <span class="font-size-tooltip">
+                {{
+                  currentData.anonymous_ids
+                    | Numeric(false, false, true)
+                    | Empty
+                }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </template>
+    </chart-tooltip>
   </div>
 </template>
 
 <script>
-import IDRMatchingTrendToolTip from "@/components/common/IDRMatchingTrend/IDRMatchingTrendToolTip"
 import MultiLineChart from "@/components/common/IDRMatchingTrend/MultiLineChart.vue"
+import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
+import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
 
 export default {
   name: "IDRMatchingTrend",
-  components: { MultiLineChart, IDRMatchingTrendToolTip },
+  components: { MultiLineChart, ChartTooltip },
   props: {
     mapData: {
       type: Array,
@@ -40,6 +79,7 @@ export default {
         y: 0,
       },
       colorCodes: ["#42EFFD", "#347DAC", "#75787B"],
+      toolTipStyle: TooltipConfiguration.idrMatchingTrendChart,
       currentData: {},
       chartDimensions: {
         width: 0,
@@ -84,8 +124,44 @@ export default {
   font-size: $font-size-root;
   line-height: 19px;
 }
+.global-heading {
+  font-style: normal;
+  font-size: 12px;
+  line-height: 19px;
+}
 .container-chart {
   position: relative;
   padding: 0px !important;
+  .value-container {
+    margin-top: 2px;
+    @extend .global-heading;
+    .text-label {
+      margin-left: 8px !important;
+    }
+  }
+  .value-section {
+    @extend .global-heading;
+  }
+  .item_count {
+    font-weight: bold;
+  }
+  .append-circle {
+    height: 12px;
+    width: 12px;
+    background-color: var(--v-white-base);
+    border-radius: 50%;
+    display: inline-block;
+    margin-top: 6px;
+    margin-right: 8px;
+  }
+  .color-known-ids {
+    border: 2px solid #42effd;
+  }
+  .color-anonymous-ids {
+    border: 2px solid #75787b;
+  }
+  .color-unique-hux-ids {
+    border: 2px solid #347dac;
+  }
 }
 </style>

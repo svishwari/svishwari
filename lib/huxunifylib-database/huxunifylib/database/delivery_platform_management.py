@@ -1186,6 +1186,8 @@ def get_delivery_jobs_using_metadata(
     audience_id: ObjectId = None,
     delivery_platform_id: ObjectId = None,
     delivery_platform_ids: list = None,
+    engagement_ids: list = None,
+    audience_ids: list = None,
 ) -> Union[list, None]:
     """A function to get delivery jobs based on engagement details.
 
@@ -1195,7 +1197,8 @@ def get_delivery_jobs_using_metadata(
         audience_id (ObjectId): Audience id.
         delivery_platform_id (ObjectId): Delivery platform id.
         delivery_platform_ids (list): List of Delivery platform ids.
-
+        engagement_ids (list): List of engagement ids.
+        audience_ids (list): List of audience ids.
     Returns:
         Union[list, None]: List of matching delivery jobs, if any.
 
@@ -1227,6 +1230,10 @@ def get_delivery_jobs_using_metadata(
             mongo_filter[c.DELIVERY_PLATFORM_ID] = {
                 "$in": delivery_platform_ids
             }
+        if engagement_ids:
+            mongo_filter[c.ENGAGEMENT_ID] = {"$in": engagement_ids}
+        if audience_ids:
+            mongo_filter[c.AUDIENCE_ID] = {"$in": audience_ids}
         return list(collection.find(mongo_filter, {c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

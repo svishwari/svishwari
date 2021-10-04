@@ -43,7 +43,6 @@
 
 <script>
 import Icon from "@/components/common/Icon"
-
 export default {
   name: "StackBarChartTooltip",
   components: { Icon },
@@ -69,13 +68,11 @@ export default {
 ::v-deep .v-card {
   border-radius: 0px !important;
 }
-
 .global-heading {
   font-style: normal;
   font-size: 12px;
   line-height: 19px;
 }
-
 .tooltip-style {
   @extend .box-shadow-3;
   pointer-events: none;
@@ -94,7 +91,6 @@ export default {
       margin-left: 8px !important;
     }
   }
-
   .value-section {
     @extend .global-heading;
     margin-left: 21px;

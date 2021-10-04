@@ -49,7 +49,7 @@ const actions = {
       // Replacing the special characters like (", ', <, >) with "
       response.data.notifications.forEach((notification) => {
         notification.description = notification.description.replace(
-          />|<|"/g,
+          />|<|"|'/g,
           /*eslint-disable */
           '"'
         )
