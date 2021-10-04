@@ -992,8 +992,14 @@ export default {
     },
 
     async refreshEntity() {
+      this.loading = true
       this.$root.$emit("refresh-notifications")
       await this.loadAudienceInsights()
+      this.loading = false
+      this.$forceUpdate()
+      this.$nextTick(() => {
+        this.$forceUpdate()
+      })
     },
     async onConfirmAction() {
       this.showConfirmModal = false
@@ -1071,6 +1077,7 @@ export default {
               audienceId: this.audienceId,
             })
             this.dataPendingMesssage(event, "engagement")
+            this.refreshEntity()
           } catch (error) {
             this.dataErrorMesssage(event, "engagement")
             console.error(error)

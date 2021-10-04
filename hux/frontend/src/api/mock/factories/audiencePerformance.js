@@ -12,7 +12,7 @@ const audiencePerformanceMock = {
           clicks: faker.datatype.number({ min: 0, max: 99999 }),
           frequency: faker.datatype.number({ min: 0, max: 999 }),
           cost_per_thousand_impressions: faker.finance.amount(0, 100, 3),
-          click_through_rate: faker.datatype.number({ min: 0, max: 100 }),
+          click_through_rate: faker.finance.amount(0, 100, 3) / 100,
           cost_per_action: faker.datatype.number({ min: 0, max: 999 }),
           cost_per_click: faker.datatype.number({ min: 0, max: 999 }),
           engagement_rate: faker.finance.amount(0, 100, 3) / 100,
@@ -50,7 +50,7 @@ const audiencePerformanceMock = {
           clicks: faker.datatype.number({ min: 100000, max: 99999 }),
           frequency: faker.datatype.number({ min: 100, max: 999 }),
           cost_per_thousand_impressions: faker.finance.amount(50, 100, 3),
-          click_through_rate: faker.datatype.number({ min: 20, max: 100 }),
+          click_through_rate: faker.finance.amount(1, 100, 3) / 100,
           cost_per_action: faker.datatype.number({ min: 100, max: 999 }),
           cost_per_click: faker.datatype.number({ min: 100, max: 999 }),
           engagement_rate: faker.finance.amount(1, 100, 3) / 100,
@@ -97,10 +97,7 @@ const audiencePerformanceMock = {
                 ? faker.finance.amount(50, 100, 3)
                 : 0,
               click_through_rate: is_mapped
-                ? faker.datatype.number({
-                    min: 20,
-                    max: 100,
-                  })
+                ? faker.finance.amount(1, 100, 3) / 100
                 : 0,
               cost_per_action: is_mapped
                 ? faker.datatype.number({

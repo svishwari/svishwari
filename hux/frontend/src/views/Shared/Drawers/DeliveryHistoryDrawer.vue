@@ -157,7 +157,7 @@ export default {
     return {
       localToggle: false,
       loading: false,
-      nonCompliantMatchRatePlatforms: ["salesforce", "sendgrid", "qualtrics"],
+      nonCompliantMatchRatePlatforms: ["salesforce", "sendgrid", "qualtrics", "sfmc"],
       columns: [
         {
           value: "destination",
