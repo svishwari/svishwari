@@ -102,7 +102,9 @@ class UserProfile(SwaggerView):
 
 
 @add_view_to_blueprint(
-    user_bp, "<component_name>/<component_id>/favorite", "AddUserFavorite"
+    user_bp,
+    f"{api_c.USER_ENDPOINT}/<component_name>/<component_id>/favorite",
+    "AddUserFavorite",
 )
 class AddUserFavorite(SwaggerView):
     """Add user favorites class."""
@@ -181,7 +183,9 @@ class AddUserFavorite(SwaggerView):
 
 
 @add_view_to_blueprint(
-    user_bp, "<component_name>/<component_id>/favorite", "DeleteUserFavorite"
+    user_bp,
+    f"{api_c.USER_ENDPOINT}/<component_name>/<component_id>/favorite",
+    "DeleteUserFavorite",
 )
 class DeleteUserFavorite(SwaggerView):
     """Delete user favorites class."""
