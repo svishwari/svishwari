@@ -1,0 +1,63 @@
+# This is the CI pipeline for Unified Solution API
+
+version: "1.0"
+
+stages:
+  - prepare
+  - git
+  - set_env
+  - docker
+  - artifactory
+
+steps:
+
+  PrepareBuildDetails:
+    stage: prepare
+    title: Prepare Build Details
+    type: parallel
+    steps:
+      GetTriggerName:
+        stage: prepare
+        title: get trigger name using id from spec yaml
+        type: deloittehux/get-trigger-name
+
+
+  CloneRepository:
+    stage: git
+    title: Cloning ${{CF_REPO_NAME}} repository...
+    type: git-clone
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: '${{CF_BRANCH}}' # Git branch triggering the pipeline
+
+
+  set_env_var:
+    stage: set_env
+    title: Set environment variables
+    type: freestyle
+    image: alpine
+    working_directory: "${{CF_REPO_NAME}}"
+    commands:
+      - cat ./hux/integration_tests/api/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
+
+  build_image:
+    stage: "docker"
+    title: "Building Docker Image for Unified API"
+    type: "build"
+    image_name: '${{BUILD_NAME}}'
+    working_directory: '${{CF_REPO_NAME}}/${{API_INTEGRATION_TEST_PATH}}'
+    dockerfile: 'Dockerfile'
+    tag: '${{DOCKER_TAG}}'
+
+  PublishToArtifactory:
+    stage: artifactory
+    title: Publish Unified API Image to JFrog Artifactory
+    type: deloittehux/jfrog-docker-publish
+    arguments:
+      BUILD_NAME: '${{BUILD_NAME}}'
+      BUILD_NUMBER: '${{DOCKER_TAG}}'
+      JFROG_REGISTRY: '${{JFROG_REGISTRY}}'
+      BUILD_TAG: '${{DOCKER_TAG}}'
+    when:
+      branch:
+        only:
+          - main

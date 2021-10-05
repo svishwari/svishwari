@@ -13,6 +13,7 @@ stages:
   - tox_api_unittests
   - artifactory
   - argo-deploy
+  - load_tests
 
 steps:
 
