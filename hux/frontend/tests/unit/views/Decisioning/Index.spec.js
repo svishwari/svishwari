@@ -9,7 +9,7 @@ import Vuetify from "vuetify"
 import filters from "@/filters"
 //Miragejs
 import { makeServer } from "@/api/mock/server.js"
-import { unsubscribeModel, ltvModel } from "@/api/mock/seeds.js"
+import { unsubscribeModel, ltvModel } from "@/api/mock/seeds/index.js"
 
 let server
 
