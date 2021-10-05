@@ -401,7 +401,7 @@ class AudienceGetView(SwaggerView):
                         else None
                     )
                     # update time
-                    if delivery[api_c.STATUS] != api_c.STATUS_DELIVERED:
+                    if delivery[api_c.STATUS] == api_c.STATUS_NOT_DELIVERED:
                         delivery[db_c.UPDATE_TIME] = None
                     if engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
                         delivery[
