@@ -940,6 +940,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # set the delivery schedule for the engaged audience destination
+        # TODO - convert the schedule object into a CRON expression in another PR.
         set_engagement_audience_destination_schedule(
             database,
             engagement_id,
