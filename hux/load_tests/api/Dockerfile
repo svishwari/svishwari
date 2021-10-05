@@ -9,8 +9,7 @@ RUN pip install python-dotenv
 RUN pip install locust
 RUN pip install pyperclip
 
-CMD ["locust",
-        "--locustfile", "/app/hux-unified/load_tests/api/locustfile.py", \
+CMD ["--locustfile", "/app/hux-unified/load_tests/api/locustfile.py", \
         "--headless", \
         "--users", "2", \
         "--spawn-rate", "20", \
