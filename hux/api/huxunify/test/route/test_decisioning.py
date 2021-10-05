@@ -130,7 +130,7 @@ class DecisioningTests(TestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/{api_c.MODELS_VERSION_HISTORY}",
             headers=t_c.STANDARD_HEADERS,
         )
-        if model_id in t_c.SUPPORTED_MODELS.keys():
+        if model_id in t_c.SUPPORTED_MODELS:
             self.assertEqual(HTTPStatus.OK, response.status_code)
         else:
             self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
