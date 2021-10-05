@@ -8,7 +8,7 @@ import userSeeds from "./user"
 /**
  * Seeds the Mirage.js server with mock data.
  *
- * @param {Server} server
+ * @param {object} server Mirage server
  */
 export default function (server) {
   dataSourceSeeds.forEach((seed) => server.create("dataSource", seed))
@@ -29,4 +29,5 @@ export default function (server) {
   server.createList("geoCity", 14659)
   server.create("geoCountry", { country: "United States" })
   server.createList("geoState", 52)
+  server.createList("user", 1)
 }
