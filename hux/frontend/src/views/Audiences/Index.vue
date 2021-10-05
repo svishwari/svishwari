@@ -233,13 +233,6 @@
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
       @onToggle="(val) => (showLookAlikeDrawer = val)"
-      @onError="onError($event)"
-    />
-
-    <hux-alert
-      v-model="flashAlert"
-      :type="alert.type"
-      :message="alert.message"
     />
   </div>
 </template>
@@ -261,7 +254,6 @@ import Icon from "@/components/common/Icon.vue"
 import Status from "../../components/common/Status.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import Logo from "../../components/common/Logo.vue"
-import HuxAlert from "@/components/common/HuxAlert.vue"
 
 export default {
   name: "Audiences",
@@ -280,15 +272,9 @@ export default {
     Status,
     Tooltip,
     Logo,
-    HuxAlert,
   },
   data() {
     return {
-      flashAlert: false,
-      alert: {
-        type: "success",
-        message: "",
-      },
       breadcrumbItems: [
         {
           text: "Audiences",
@@ -459,11 +445,6 @@ export default {
     openLookAlikeDrawer(audience) {
       this.selectedAudience = audience
       this.showLookAlikeDrawer = true
-    },
-    onError(message) {
-      this.alert.type = "error"
-      this.alert.message = message
-      this.flashAlert = true
     },
   },
 }
