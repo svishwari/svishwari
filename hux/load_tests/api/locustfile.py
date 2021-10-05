@@ -30,20 +30,18 @@ class APIUser(HttpUser):
     wait_time = between(1, 3)
     host = "https://unified-ui-dev.main.use1.hux-unified-dev1.in/api/v1"
 
-    def __init__(self):
-        super().__init__()
-        okta_oidc = OktaOIDC(**OKTA_PARAM_DICT)
-        # set the token for pytest usage.
-        access_token = okta_oidc.get_access_token(False)
-        self.headers = {
-            "content-type": "application/json",
-            "Authorization": f"Bearer {access_token}",
-        }
-
     # A User will call its on_start method when it starts running
     def on_start(self):
         logger.info("Starting load tests")
         self.host = "https://unified-ui-dev.main.use1.hux-unified-dev1.in/api/v1"
+        okta_oidc = OktaOIDC(**OKTA_PARAM_DICT)
+        # set the token for pytest usage.
+        access_token = okta_oidc.get_access_token(False)
+        # pylint: disable=attribute-defined-outside-init
+        self.headers = {
+            "content-type": "application/json",
+            "Authorization": f"Bearer {access_token}",
+        }
 
     # When the instance of this user stops, the initialized test data is deleted.
     def on_stop(self):
