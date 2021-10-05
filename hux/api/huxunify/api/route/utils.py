@@ -429,9 +429,11 @@ class Validation:
 
         if start > end:
             raise ue.InputParamsValidationError(
-                message=f"The start date {start_date} cannot be greater than the end date {end_date}."
+                message=f"The start date {start_date} cannot "
+                f"be greater than the end date {end_date}."
             )
 
+    # pylint: disable=anomalous-backslash-in-string
     @staticmethod
     def validate_hux_id(hux_id: str) -> None:
         """Validates the format of the HUX ID.
