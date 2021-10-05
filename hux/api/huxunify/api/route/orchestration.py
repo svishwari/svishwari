@@ -400,8 +400,8 @@ class AudienceGetView(SwaggerView):
                         and not audience.get(api_c.IS_LOOKALIKE, False)
                         else None
                     )
-                    # update time
-                    if delivery[api_c.STATUS] == api_c.STATUS_NOT_DELIVERED:
+                    # Update time field can be missing if no deliveries.
+                    if not delivery.get(db_c.UPDATE_TIME):
                         delivery[db_c.UPDATE_TIME] = None
                     if engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
                         delivery[
