@@ -6,27 +6,26 @@ from pathlib import Path
 
 import requests
 from dateutil.relativedelta import relativedelta
-from pact import Consumer, Provider
-from pact import EachLike, Like
+from pact import Consumer, Provider, EachLike, Like
 from pact.matchers import get_generated_values
 
 import huxunify.test.constants as t_c
 import huxunify.api.constants as api_c
 
-# Folder where generated pacts are stored.
-contracts_folder = (
+# Folder where generated pacts are saved
+CONTRACTS_FOLDER = (
     Path(__file__)
     .parent.joinpath(t_c.CONTRACTS_DIR)
     .joinpath(t_c.CDP_CONNECTIONS_CONTRACTS_DIR)
 )
 
 # Initializing pact
-pact = Consumer(t_c.HUX).has_pact_with(
-    Provider(t_c.CDP_CONNECTIONS), pact_dir=str(contracts_folder)
+PACT = Consumer(t_c.HUX).has_pact_with(
+    Provider(t_c.CDP_CONNECTIONS), pact_dir=str(CONTRACTS_FOLDER)
 )
-pact.start_service()
+PACT.start_service()
 
-atexit.register(pact.stop_service)
+atexit.register(PACT.stop_service)
 
 
 class CDPConnectionsContracts(unittest.TestCase):
@@ -57,7 +56,7 @@ class CDPConnectionsContracts(unittest.TestCase):
         }
 
         (
-            pact.given("No filters passed.")
+            PACT.given("No filters passed.")
             .upon_receiving("A request to get data sources.")
             .with_request(
                 method="GET",
@@ -68,9 +67,9 @@ class CDPConnectionsContracts(unittest.TestCase):
             .will_respond_with(200, body=expected)
         )
 
-        with pact:
+        with PACT:
             result = requests.get(
-                pact.uri + t_c.CDP_CONNECTIONS_DATA_SOURCES_ENDPOINT,
+                PACT.uri + t_c.CDP_CONNECTIONS_DATA_SOURCES_ENDPOINT,
                 json={},
                 headers={
                     "Content-Type": "application/json",
@@ -101,7 +100,7 @@ class CDPConnectionsContracts(unittest.TestCase):
         }
 
         (
-            pact.given("Valid data source name exists.")
+            PACT.given("Valid data source name exists.")
             .upon_receiving("A request to get data source's data feeds.")
             .with_request(
                 method="GET",
@@ -114,9 +113,9 @@ class CDPConnectionsContracts(unittest.TestCase):
             .will_respond_with(200, body=expected)
         )
 
-        with pact:
+        with PACT:
             result = requests.get(
-                pact.uri
+                PACT.uri
                 + t_c.CDP_CONNECTIONS_DATA_SOURCE_DATA_FEEDS_ENDPOINT.format(
                     data_source_name=self.data_source_name
                 ),
@@ -135,7 +134,7 @@ class CDPIdentityContracts(unittest.TestCase):
     def setUp(self) -> None:
         """Setup tests."""
 
-        self.data_feeds_feed_id = "3"
+        self.feed_id = "3"
         self.data_source_name = "bluecore"
         self.data_source_label = "Bluecore"
         self.data_source_data_feed_name = "bluecore_email_clicks"
@@ -157,7 +156,7 @@ class CDPIdentityContracts(unittest.TestCase):
             "message": "ok",
             "body": EachLike(
                 {
-                    "id": Like(self.data_feeds_feed_id),
+                    "id": Like(self.feed_id),
                     "name": Like(self.data_source_data_feed_name),
                     "datasource_name": Like(self.data_source_name),
                     "new_ids_generated": Like(1159),
@@ -170,7 +169,7 @@ class CDPIdentityContracts(unittest.TestCase):
         }
 
         (
-            pact.given("Start date and end date passed as filters.")
+            PACT.given("Start date and end date passed as filters.")
             .upon_receiving("A request to get identity data feeds.")
             .with_request(
                 method="POST",
@@ -181,9 +180,9 @@ class CDPIdentityContracts(unittest.TestCase):
             .will_respond_with(200, body=expected)
         )
 
-        with pact:
+        with PACT:
             result = requests.post(
-                pact.uri + t_c.CDP_IDENTITY_DATA_FEEDS_ENDPOINT,
+                PACT.uri + t_c.CDP_IDENTITY_DATA_FEEDS_ENDPOINT,
                 json=self.filters,
                 headers={
                     "Content-Type": "application/json",
@@ -237,12 +236,12 @@ class CDPIdentityContracts(unittest.TestCase):
         }
 
         (
-            pact.given("Valid data feeds feed ID exists.")
+            PACT.given("Valid data feeds feed ID exists.")
             .upon_receiving("A request to get identity data feeds by feed ID.")
             .with_request(
                 method="GET",
                 path=t_c.CDP_IDENTITY_DATA_FEEDS_FEED_ID_ENDPOINT.format(
-                    data_feeds_feed_id=self.data_feeds_feed_id
+                    feed_id=self.feed_id
                 ),
                 body={},
                 headers={"Content-Type": "application/json"},
@@ -250,11 +249,11 @@ class CDPIdentityContracts(unittest.TestCase):
             .will_respond_with(200, body=expected)
         )
 
-        with pact:
+        with PACT:
             result = requests.get(
-                pact.uri
+                PACT.uri
                 + t_c.CDP_IDENTITY_DATA_FEEDS_FEED_ID_ENDPOINT.format(
-                    data_feeds_feed_id=self.data_feeds_feed_id
+                    feed_id=self.feed_id
                 ),
                 json={},
                 headers={
@@ -285,7 +284,7 @@ class CDPIdentityContracts(unittest.TestCase):
         }
 
         (
-            pact.given("Start date and end date passed as filters.")
+            PACT.given("Start date and end date passed as filters.")
             .upon_receiving("A request to get identity count by day.")
             .with_request(
                 method="POST",
@@ -296,9 +295,9 @@ class CDPIdentityContracts(unittest.TestCase):
             .will_respond_with(200, body=expected)
         )
 
-        with pact:
+        with PACT:
             result = requests.post(
-                pact.uri + t_c.CDP_IDENTITY_ID_COUNT_BY_DAY_ENDPOINT,
+                PACT.uri + t_c.CDP_IDENTITY_ID_COUNT_BY_DAY_ENDPOINT,
                 json=self.filters,
                 headers={
                     "Content-Type": "application/json",

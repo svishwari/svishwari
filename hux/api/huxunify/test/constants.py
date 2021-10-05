@@ -76,9 +76,7 @@ CDP_CONNECTIONS_DATA_SOURCE_DATA_FEEDS_ENDPOINT = (
     "/connections/{data_source_name}/data_feeds"
 )
 CDP_IDENTITY_DATA_FEEDS_ENDPOINT = "/identity/datafeeds"
-CDP_IDENTITY_DATA_FEEDS_FEED_ID_ENDPOINT = (
-    "/identity/datafeeds/{data_feeds_feed_id}"
-)
+CDP_IDENTITY_DATA_FEEDS_FEED_ID_ENDPOINT = "/identity/datafeeds/{feed_id}"
 CDP_IDENTITY_ID_COUNT_BY_DAY_ENDPOINT = "/identity/id-count-by-day"
 
 AUDIENCE_STATE_FILTER = {"field": "state", "type": "equals", "value": "HI"}

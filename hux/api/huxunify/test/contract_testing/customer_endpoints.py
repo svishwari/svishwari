@@ -5,27 +5,26 @@ import atexit
 from pathlib import Path
 import requests
 from dateutil.relativedelta import relativedelta
-from pact import Consumer, Provider
-from pact import EachLike, Like, Term
+from pact import Consumer, Provider, EachLike, Like, Term
 from pact.matchers import get_generated_values
 
 import huxunify.test.constants as t_c
 import huxunify.api.constants as api_c
 
-# Folder where generated pacts are stored.
-contracts_folder = (
+# Folder where generated pacts are saved
+CONTRACTS_FOLDER = (
     Path(__file__)
     .parent.joinpath(t_c.CONTRACTS_DIR)
     .joinpath(t_c.CDP_CUSTOMERS_CONTRACTS_DIR)
 )
 
 # Initializing pact
-pact = Consumer(t_c.HUX).has_pact_with(
-    Provider(t_c.CDP_CUSTOMER_PROFILE), pact_dir=str(contracts_folder)
+PACT = Consumer(t_c.HUX).has_pact_with(
+    Provider(t_c.CDP_CUSTOMER_PROFILE), pact_dir=str(CONTRACTS_FOLDER)
 )
-pact.start_service()
+PACT.start_service()
 
-atexit.register(pact.stop_service)
+atexit.register(PACT.stop_service)
 
 
 class CDPCustomersContracts(unittest.TestCase):
@@ -56,7 +55,7 @@ class CDPCustomersContracts(unittest.TestCase):
         }
 
         (
-            pact.given("No filters passed.")
+            PACT.given("No filters passed.")
             .upon_receiving("A request for count by state.")
             .with_request(
                 method="POST",
@@ -67,9 +66,9 @@ class CDPCustomersContracts(unittest.TestCase):
             .will_respond_with(200, body=expected)
         )
 
-        with pact:
+        with PACT:
             result = requests.post(
-                pact.uri + t_c.CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT,
+                PACT.uri + t_c.CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT,
                 json={},
                 headers={
                     "Content-Type": "application/json",
@@ -103,7 +102,7 @@ class CDPCustomersContracts(unittest.TestCase):
         }
 
         (
-            pact.given("No filters passed.")
+            PACT.given("No filters passed.")
             .upon_receiving("A request for customer profile events.")
             .with_request(
                 method="POST",
@@ -116,9 +115,9 @@ class CDPCustomersContracts(unittest.TestCase):
             .will_respond_with(200, body=expected)
         )
 
-        with pact:
+        with PACT:
             result = requests.post(
-                pact.uri
+                PACT.uri
                 + t_c.CDP_CUSTOMER_PROFILE_BASE_ENDPOINT
                 + self.hux_id
                 + "/events",
@@ -141,7 +140,7 @@ class CDPCustomersContracts(unittest.TestCase):
         }
 
         (
-            pact.given("No filters passed.")
+            PACT.given("No filters passed.")
             .upon_receiving("A request for audience count.")
             .with_request(
                 method="POST",
@@ -152,9 +151,9 @@ class CDPCustomersContracts(unittest.TestCase):
             .will_respond_with(200, body=expected)
         )
 
-        with pact:
+        with PACT:
             result = requests.post(
-                pact.uri + t_c.CDP_CUSTOMER_PROFILES_AUDIENCE_COUNT,
+                PACT.uri + t_c.CDP_CUSTOMER_PROFILES_AUDIENCE_COUNT,
                 json={},
                 headers={
                     "Content-Type": "application/json",
@@ -347,7 +346,7 @@ class CDPCustomersContracts(unittest.TestCase):
         }
 
         (
-            pact.given("HUX ID exists.")
+            PACT.given("HUX ID exists.")
             .upon_receiving("A request for customer profile by hux id.")
             .with_request(
                 method="GET",
@@ -358,9 +357,9 @@ class CDPCustomersContracts(unittest.TestCase):
             .will_respond_with(200, body=expected)
         )
 
-        with pact:
+        with PACT:
             result = requests.get(
-                pact.uri
+                PACT.uri
                 + t_c.CDP_CUSTOMER_PROFILE_BASE_ENDPOINT
                 + self.hux_id,
                 json={},
@@ -394,7 +393,7 @@ class CDPCustomersContracts(unittest.TestCase):
         }
 
         (
-            pact.given("Start date and end date passed.")
+            PACT.given("Start date and end date passed.")
             .upon_receiving("A request for count by day.")
             .with_request(
                 method="POST",
@@ -405,9 +404,9 @@ class CDPCustomersContracts(unittest.TestCase):
             .will_respond_with(200, body=expected)
         )
 
-        with pact:
+        with PACT:
             result = requests.post(
-                pact.uri + t_c.CUSTOMER_PROFILE_COUNT_BY_DAY,
+                PACT.uri + t_c.CUSTOMER_PROFILE_COUNT_BY_DAY,
                 json=filters,
                 headers={
                     "Content-Type": "application/json",
@@ -455,7 +454,7 @@ class CDPCustomersContracts(unittest.TestCase):
         }
 
         (
-            pact.given("Start date, end date, country, state filter passed.")
+            PACT.given("Start date, end date, country, state filter passed.")
             .upon_receiving("A request for spending by month.")
             .with_request(
                 method="POST",
@@ -466,9 +465,9 @@ class CDPCustomersContracts(unittest.TestCase):
             .will_respond_with(200, body=expected)
         )
 
-        with pact:
+        with PACT:
             result = requests.post(
-                pact.uri + t_c.CUSTOMER_PROFILE_SPENDING_BY_MONTH,
+                PACT.uri + t_c.CUSTOMER_PROFILE_SPENDING_BY_MONTH,
                 json=filters,
                 headers={
                     "Content-Type": "application/json",
@@ -495,7 +494,7 @@ class CDPCustomersContracts(unittest.TestCase):
         }
 
         (
-            pact.given("No filters passed.")
+            PACT.given("No filters passed.")
             .upon_receiving("A request for city ltvs.")
             .with_request(
                 method="POST",
@@ -507,9 +506,9 @@ class CDPCustomersContracts(unittest.TestCase):
             .will_respond_with(200, body=expected)
         )
 
-        with pact:
+        with PACT:
             result = requests.post(
-                pact.uri + t_c.CUSTOMER_PROFILE_CITY_LTVS,
+                PACT.uri + t_c.CUSTOMER_PROFILE_CITY_LTVS,
                 params={"limit": "100", "offset": "0"},
                 json={},
                 headers={
@@ -555,7 +554,7 @@ class CDPCustomersContracts(unittest.TestCase):
         }
 
         (
-            pact.given("Default filters passed.")
+            PACT.given("Default filters passed.")
             .upon_receiving("A request for customer insights.")
             .with_request(
                 method="POST",
@@ -566,9 +565,9 @@ class CDPCustomersContracts(unittest.TestCase):
             .will_respond_with(200, body=expected)
         )
 
-        with pact:
+        with PACT:
             result = requests.post(
-                pact.uri + t_c.CDP_CUSTOMER_PROFILE_BASE_ENDPOINT + "insights",
+                PACT.uri + t_c.CDP_CUSTOMER_PROFILE_BASE_ENDPOINT + "insights",
                 json=api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
                 headers={
                     "Content-Type": "application/json",

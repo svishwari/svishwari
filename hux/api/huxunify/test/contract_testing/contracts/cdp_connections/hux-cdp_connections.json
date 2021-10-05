@@ -128,8 +128,8 @@
           "Content-Type": "application/json"
         },
         "body": {
-          "start_date": "2021-09-04",
-          "end_date": "2021-10-04"
+          "start_date": "2021-09-05",
+          "end_date": "2021-10-05"
         }
       },
       "response": {
@@ -323,8 +323,8 @@
           "Content-Type": "application/json"
         },
         "body": {
-          "start_date": "2021-09-04",
-          "end_date": "2021-10-04"
+          "start_date": "2021-09-05",
+          "end_date": "2021-10-05"
         }
       },
       "response": {
@@ -336,7 +336,7 @@
           "message": "ok",
           "body": [
             {
-              "day": "2021-10-04",
+              "day": "2021-10-05",
               "unique_hux_ids": 1029,
               "anonymous_ids": 130,
               "known_ids": 1029
