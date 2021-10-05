@@ -44,7 +44,7 @@ steps:
     title: "Building Docker Image for Unified API"
     type: "build"
     image_name: '${{BUILD_NAME}}'
-    working_directory: '${{CF_REPO_NAME}}/${{API_INTEGRATION_TEST_PATH}}'
+    working_directory: '${{CF_REPO_NAME}}/${{API_LOAD_TEST_PATH}}'
     dockerfile: 'Dockerfile'
     tag: '${{DOCKER_TAG}}'
 
