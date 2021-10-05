@@ -5,8 +5,8 @@ exports[`Listing of models Models store successfully filled 1`] = `
   <page-header-stub bgcolor="white" headerheight="72" headerpadding="px-8" headerheightchanges="py-5" data-e2e="models-header"><template></template></page-header-stub>
   <v-progress-linear-stub color="primary" value="0" buffervalue="100" height="4"></v-progress-linear-stub>
   <v-row-stub tag="div" data-e2e="models-list" class="pa-14">
-    <descriptive-card-stub icon="model-unsubscribe" title="Propensity to Unsubscribe" description="Propensity of a customer unsubscribing to emails." disabled="true" data-e2e="model-item" class="mr-10 cursor-pointer"><template></template> <template></template></descriptive-card-stub>
-    <descriptive-card-stub icon="model-unsubscribe" title="Propensity to Unsubscribe" description="Propensity of a customer unsubscribing to emails." disabled="true" data-e2e="model-item" class="mr-10 cursor-pointer"><template></template> <template></template></descriptive-card-stub>
+    <descriptive-card-stub icon="model-unsubscribe" title="Propensity to Unsubscribe" description="Propensity of a customer unsubscribing to emails." disabled="true" data-e2e="model-item" class="mr-10 model-desc-card"><template></template> <template></template></descriptive-card-stub>
+    <descriptive-card-stub icon="model-unsubscribe" title="Propensity to Unsubscribe" description="Propensity of a customer unsubscribing to emails." disabled="true" data-e2e="model-item" class="mr-10 model-desc-card"><template></template> <template></template></descriptive-card-stub>
   </v-row-stub>
 </div>
 `;
