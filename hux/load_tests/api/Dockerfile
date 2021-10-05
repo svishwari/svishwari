@@ -1,4 +1,4 @@
-FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
+FROM locustio/locust
 
 # set the work dir on the docker image
 WORKDIR /app/hux-unified/load_tests/api
