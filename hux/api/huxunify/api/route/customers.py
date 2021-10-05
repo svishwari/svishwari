@@ -979,7 +979,7 @@ class CustomersInsightsCountries(SwaggerView):
         HTTPStatus.OK.value: {
             "schema": {
                 "type": "array",
-                "items": CustomersInsightsStatesSchema,
+                "items": CustomersInsightsCountriesSchema,
             },
             "description": "Customer Insights by countries.",
         },

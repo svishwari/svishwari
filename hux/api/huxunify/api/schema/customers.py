@@ -401,9 +401,7 @@ class CustomersInsightsStatesSchema(Schema):
 class CustomersInsightsCountriesSchema(Schema):
     """State-level geographic customer insights schema"""
 
-    country = Str(
-        attribute=api_c.NAME, required=True, example="United States of America"
-    )
+    country = Str(attribute=api_c.NAME, required=True, example="US")
     size = Integer(required=True, default=0, example=1234)
     spending = Float(
         attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.2345

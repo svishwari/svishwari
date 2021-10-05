@@ -25,6 +25,7 @@ from huxunify.api.data_connectors.aws import upload_file
 from huxunify.api.data_connectors.cdp import (
     get_city_ltvs,
     get_demographic_by_state,
+    get_demographic_by_country,
 )
 from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunify.api.route.decorators import (
@@ -36,6 +37,7 @@ from huxunify.api.route.decorators import (
 from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
+    CustomersInsightsCountriesSchema,
 )
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
@@ -387,6 +389,81 @@ class AudienceInsightsCities(SwaggerView):
                         filters=filters,
                         offset=int(batch_size) * (int(batch_number) - 1),
                         limit=int(batch_size),
+                    ),
+                    many=True,
+                )
+            ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    audience_bp,
+    f"/{api_c.AUDIENCE_ENDPOINT}/<audience_id>/{api_c.COUNTRIES}",
+    "AudienceInsightsCountries",
+)
+class AudienceInsightsCountries(SwaggerView):
+    """Audience insights by countries."""
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "612cd8eb6a9815be11cd6006",
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "array",
+                "items": CustomersInsightsCountriesSchema,
+            },
+            "description": "Audience Insights by countries.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Audience Insights by countries."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(self, audience_id: str) -> Tuple[list, int]:
+        """Retrieves country-level geographic customer insights for the audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (str): Audience ID.
+
+        Returns:
+            Tuple[list, int]: list of spend and size data by country,
+                HTTP status code.
+        """
+
+        # get auth token from request
+        token_response = get_token_from_request(request)
+
+        audience = orchestration_management.get_audience(
+            get_db_client(), ObjectId(audience_id)
+        )
+
+        if not audience:
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+
+        return (
+            jsonify(
+                CustomersInsightsCountriesSchema().dump(
+                    get_demographic_by_country(
+                        token_response[0],
+                        filters=audience.get(db_c.AUDIENCE_FILTERS),
                     ),
                     many=True,
                 )
