@@ -1016,8 +1016,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     def test_get_audience_with_not_delivered(self):
-        """Test get audience returns update_time for un-delivered
-        engagements."""
+        """Test get audience empty update_time for un-delivered engagements."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -1035,4 +1034,4 @@ class OrchestrationRouteTest(TestCase):
         for audience_engagement in audience[api_c.AUDIENCE_ENGAGEMENTS]:
             for delivery in audience_engagement[api_c.DELIVERIES]:
                 if delivery[api_c.STATUS] != db_c.STATUS_DELIVERED:
-                    self.assertNotIn(db_c.UPDATE_TIME, delivery.keys())
+                    self.assertIsNone(delivery[db_c.UPDATE_TIME])
