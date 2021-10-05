@@ -611,6 +611,9 @@ class OrchestrationRouteTest(TestCase):
                     for x in audience[api_c.DELIVERIES]
                 )
             )
+            self.assertIn(db_c.DELIVERIES, audience)
+            for delivery in audience[db_c.DELIVERIES]:
+                self.assertIn(db_c.DELIVERY_PLATFORM_ID, delivery)
 
     def test_get_audience_does_not_exist(self):
         """Test get audience that does not exist."""

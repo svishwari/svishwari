@@ -20,7 +20,6 @@ cron_exp = {
     "day_of_month": "*",
     "month": "*",
     "day_of_week": "*",
-    "year": "*",
 }
 
 
@@ -45,21 +44,18 @@ def generate_cron(schedule: dict) -> str:
     cron_exp["month"] = schedule.get("month", "*")
 
     if schedule["periodicity"] == "Weekly":
-        cron_exp["day_of_month"] = "?"
         if schedule["every"] > 1:
-            if schedule.get("day_of_week")[0] == "Weekend":
-                cron_exp["day_of_week"] = ",".join(["SAT", "SUN"])
-                cron_exp[
-                    "day_of_week"
-                ] = f"{cron_exp['day_of_week']}/{schedule['every']}"
-            else:
-                cron_exp["day_of_week"] = ",".join(schedule.get("day_of_week"))
-                cron_exp[
-                    "day_of_week"
-                ] = f"{cron_exp['day_of_week']}/{schedule['every']}"
+            # TODO Implement every x weeks
+            pass
+        if schedule.get("day_of_week")[0] == "Weekend":
+            cron_exp["day_of_week"] = ",".join(["SAT", "SUN"])
+        else:
+            cron_exp["day_of_week"] = ",".join(schedule.get("day_of_week"))
 
     if schedule["periodicity"] == "Daily":
-        cron_exp["day_of_month"] = "?"
+        cron_exp["day_of_month"] = "*"
         if schedule["every"] > 1:
-            cron_exp["day_of_week"] = f"1/{schedule['every']}"
+            cron_exp[
+                "day_of_month"
+            ] = f"{cron_exp['day_of_month']}/{schedule['every']}"
     return " ".join([str(val) for val in cron_exp.values()])
