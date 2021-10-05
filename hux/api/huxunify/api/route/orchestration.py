@@ -33,7 +33,6 @@ from huxunify.api.schema.orchestration import (
     LookalikeAudiencePostSchema,
     LookalikeAudienceGetSchema,
     is_audience_lookalikeable,
-    AudienceDestinationSchema,
 )
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
@@ -61,6 +60,7 @@ from huxunify.api.route.utils import (
     get_db_client,
     group_gender_spending,
     Validation as validation,
+    get_next_schedule,
 )
 
 # setup the orchestration blueprint
@@ -400,6 +400,22 @@ class AudienceGetView(SwaggerView):
                         and not audience.get(api_c.IS_LOOKALIKE, False)
                         else None
                     )
+                    if engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
+                        delivery[
+                            db_c.ENGAGEMENT_DELIVERY_SCHEDULE
+                        ] = engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                            api_c.SCHEDULE
+                        ][
+                            api_c.PERIODICIY
+                        ]
+                        delivery[api_c.NEXT_DELIVERY] = get_next_schedule(
+                            engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                                api_c.SCHEDULE_CRON
+                            ],
+                            engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                                api_c.START_DATE
+                            ],
+                        )
 
             # set the weighted status for the engagement based on deliveries
             engagement[api_c.STATUS] = weight_delivery_status(engagement)
@@ -509,19 +525,19 @@ class AudienceInsightsGetView(SwaggerView):
 
         # get the audience
         audience_id = ObjectId(audience_id)
-        audience = orchestration_management.get_audience(database, audience_id)
 
-        if not audience:
-            # check if lookalike
-            lookalike = destination_management.get_delivery_platform_lookalike_audience(
+        audience = orchestration_management.get_audience(database, audience_id)
+        lookalike = (
+            destination_management.get_delivery_platform_lookalike_audience(
                 database, audience_id
             )
-            if not lookalike:
-                logger.error("Audience with id %s not found.", audience_id)
-                return {
-                    "message": api_c.AUDIENCE_NOT_FOUND
-                }, HTTPStatus.NOT_FOUND
+        )
 
+        if not audience and not lookalike:
+            logger.error("Audience with id %s not found.", audience_id)
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+
+        if not audience and lookalike:
             # grab the source audience ID of the lookalike
             audience = orchestration_management.get_audience(
                 database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
@@ -650,12 +666,9 @@ class AudiencePostView(SwaggerView):
 
         # validate destinations
         database = get_db_client()
-        destinations = []
         if db_c.DESTINATIONS in body:
             # validate list of dict objects
-            for destination in AudienceDestinationSchema().load(
-                body[db_c.DESTINATIONS], many=True
-            ):
+            for destination in body[api_c.DESTINATIONS]:
                 # validate object id
                 # map to an object ID field
                 # validate the destination object exists.
@@ -673,7 +686,6 @@ class AudiencePostView(SwaggerView):
                     return {
                         "message": api_c.DESTINATION_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
-                destinations.append(destination)
 
         engagement_ids = []
         if api_c.AUDIENCE_ENGAGEMENTS in body:
@@ -707,7 +719,7 @@ class AudiencePostView(SwaggerView):
             database=database,
             name=body[api_c.AUDIENCE_NAME],
             audience_filters=body.get(api_c.AUDIENCE_FILTERS),
-            destination_ids=destinations,
+            destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user_name,
             size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
         )
@@ -732,7 +744,7 @@ class AudiencePostView(SwaggerView):
                 [
                     {
                         db_c.OBJECT_ID: audience_doc[db_c.ID],
-                        db_c.DESTINATIONS: destinations,
+                        db_c.DESTINATIONS: body.get(api_c.DESTINATIONS),
                     }
                 ],
             )
@@ -835,14 +847,35 @@ class AudiencePutView(SwaggerView):
 
         # load into the schema object
         body = AudiencePutSchema().load(request.get_json(), partial=True)
-
         database = get_db_client()
+
+        # validate destinations
+        if db_c.DESTINATIONS in body:
+            # validate list of dict objects
+            for destination in body[api_c.DESTINATIONS]:
+                # map to an object ID field
+                # validate the destination object exists.
+                destination[db_c.OBJECT_ID] = ObjectId(
+                    destination[db_c.OBJECT_ID]
+                )
+
+                if not destination_management.get_delivery_platform(
+                    get_db_client(), destination[db_c.OBJECT_ID]
+                ):
+                    logger.error(
+                        "Could not find destination with id %s.",
+                        destination[db_c.OBJECT_ID],
+                    )
+                    return {
+                        "message": api_c.DESTINATION_NOT_FOUND
+                    }, HTTPStatus.NOT_FOUND
+
         audience_doc = orchestration_management.update_audience(
             database=database,
             audience_id=ObjectId(audience_id),
             name=body.get(api_c.AUDIENCE_NAME),
             audience_filters=body.get(api_c.AUDIENCE_FILTERS),
-            destination_ids=body.get(api_c.DESTINATIONS_TAG),
+            destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user_name,
         )
 

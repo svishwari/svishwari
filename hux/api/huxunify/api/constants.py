@@ -152,6 +152,7 @@ DAY_OF_MONTH_LIST = [str(x) for x in range(1, 31)] + [
 ]
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
+NEXT_DELIVERY = "next_delivery"
 # TODO: Remove State Names once it connected with CDM
 STATE_NAMES = {
     "AL": "Alabama",
@@ -844,23 +845,6 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
     ]
 }
 
-START_DATE_PARAMS = {
-    "name": START_DATE,
-    "description": "Start date.",
-    "type": "string",
-    "in": "query",
-    "required": True,
-    "example": "2021-04-01",
-}
-
-END_DATE_PARAMS = {
-    "name": END_DATE,
-    "description": "End date.",
-    "type": "string",
-    "in": "query",
-    "required": True,
-    "example": "2021-08-01",
-}
 
 # IDR Fields
 IDR_TAG = "idr"

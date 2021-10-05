@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Tuple
 from http import HTTPStatus
 from bson import ObjectId
+from croniter import croniter
 from pandas import DataFrame
 
 from healthcheck import HealthCheck
@@ -178,6 +179,19 @@ def get_friendly_delivered_time(delivered_time: datetime) -> str:
         return str(int(delivered / 60)) + " minutes ago"
     else:
         return str(int(delivered)) + " seconds ago"
+
+
+def get_next_schedule(cron_expression: str, start_date: datetime) -> datetime:
+    """
+
+    Args:
+        cron_expression (str): Cron Expression of the schedule
+        start_date (datetime): Start Datetime
+
+    Returns:
+        next_schedule(datetime): Next Schedule datetime
+    """
+    return croniter(cron_expression, start_date).get_next(datetime)
 
 
 def update_metrics(
