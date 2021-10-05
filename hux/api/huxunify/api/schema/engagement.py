@@ -7,6 +7,7 @@ from flask_marshmallow import Schema
 from marshmallow import fields, validate, pre_load, post_dump
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
+from huxunify.api.route.utils import get_next_schedule
 from huxunify.api.schema.utils import must_not_be_blank, validate_object_id
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 from huxunify.api.schema.destinations import DeliveryScheduleSchema
@@ -450,6 +451,8 @@ class LatestDeliverySchema(Schema):
     update_time = DateTimeWithZ()
     size = fields.Int(default=0)
     match_rate = fields.Float(default=0, example=0.21)
+    next_delivery = DateTimeWithZ()
+    delivery_schedule = fields.String()
 
 
 class EngagementAudienceDestinationSchema(Schema):
@@ -625,7 +628,24 @@ def weighted_engagement_status(engagements: list) -> list:
                     status = api_c.STATUS_ERROR
 
                 destination[api_c.LATEST_DELIVERY][api_c.STATUS] = status
-
+                if engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
+                    destination[api_c.LATEST_DELIVERY][
+                        db_c.ENGAGEMENT_DELIVERY_SCHEDULE
+                    ] = engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                        api_c.SCHEDULE
+                    ][
+                        api_c.PERIODICIY
+                    ]
+                    destination[api_c.LATEST_DELIVERY][
+                        api_c.NEXT_DELIVERY
+                    ] = get_next_schedule(
+                        engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                            api_c.SCHEDULE_CRON
+                        ],
+                        engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                            api_c.START_DATE
+                        ],
+                    )
                 status_rank = {
                     api_c.STATUS: status,
                     api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(status, 0),

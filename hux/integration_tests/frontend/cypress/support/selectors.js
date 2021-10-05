@@ -9,6 +9,7 @@ export default {
   login: {
     email: "[id=okta-signin-username]",
     password: "[id=okta-signin-password]",
+    remember: "[data-se-for-name=remember]",
     submit: "[id=okta-signin-submit]",
   },
 
@@ -34,7 +35,7 @@ export default {
   // connections
   datasources: "[data-e2e='dataSourcesList']",
   destinations: "[data-e2e='destinationsList']",
-  dataSourcesAdd: "[tabindex='0'][data-e2e='dataSourcesAddList']",
+  dataSourcesAdd: "[data-e2e='dataSourcesAddList']",
   connections: "a[href='/connections']",
   addDataSource: "[data-e2e='addDataSource']",
 
@@ -109,6 +110,8 @@ export default {
     customerInsights: "[data-e2e='customer-insights']",
     contactPreferencecs: "[data-e2e='contact-preferencecs']",
     chord: "[data-e2e='chord']",
+    loader: "[data-e2e='loader']",
+    viewAllCustomers: "[data-e2e='view-all-customers']",
   },
 
   //IDR

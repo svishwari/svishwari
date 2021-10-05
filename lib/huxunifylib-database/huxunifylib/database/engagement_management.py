@@ -877,7 +877,7 @@ def remove_destination_from_engagement_audience(
     """
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.AUDIENCES_COLLECTION
+        db_c.ENGAGEMENTS_COLLECTION
     ]
 
     return collection.find_one_and_update(

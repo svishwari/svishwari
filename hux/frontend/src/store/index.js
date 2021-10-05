@@ -11,6 +11,7 @@ import identity from "@/store/modules/identity"
 import models from "@/store/modules/models"
 import users from "@/store/modules/users"
 import notifications from "@/store/modules/notifications"
+import alerts from "@/store/modules/alerts"
 
 Vue.use(Vuex)
 
@@ -22,6 +23,7 @@ const persistedStores = ["users"]
 export default new Vuex.Store({
   modules: {
     audiences,
+    alerts,
     customers,
     dataSources,
     destinations,
