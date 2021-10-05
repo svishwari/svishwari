@@ -48,7 +48,9 @@ describe("View Navigation", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
     // select the profile option
-    cy.get(selector.navigation.profile).click()
+    cy.get(selector.navigation.profile)
+      .should("have.attr", "href")
+      .and("include", "okta.com")
 
     //click on audiences on side nav bar and route in audiences screen
     cy.get(selector.connections).click()

@@ -1,7 +1,7 @@
 import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
-describe("Tests data souces and destinations in connections", () => {
+describe("Tests data sources and destinations in connections", () => {
   before(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
@@ -9,7 +9,8 @@ describe("Tests data souces and destinations in connections", () => {
     })
   })
 
-  it("testing data management > connections > data sources", () => {
+  // TODO: temporarily skipping - HUS-1267
+  it.skip("testing data management > connections > data sources", () => {
     cy.location("pathname").should("eq", route.overview)
 
     //click on connections on side nav bar
@@ -46,6 +47,7 @@ describe("Tests data souces and destinations in connections", () => {
   })
 
   it("testing data management > connections > destinations", () => {
+    cy.get(selector.connections).eq(0).click()
     cy.location("pathname").should("eq", route.connections)
     cy.get(selector.destinations).its("length").should("be.gt", 0)
   })

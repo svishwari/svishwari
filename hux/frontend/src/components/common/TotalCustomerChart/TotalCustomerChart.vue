@@ -108,7 +108,6 @@ export default {
         this.toolTipStyle.left = this.currentData.isEndingBar
           ? "-130px"
           : "45px"
-        console.log(this.toolTipStyle)
       }
     },
     sizeHandler() {

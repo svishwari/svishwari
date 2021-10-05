@@ -1,9 +1,10 @@
 """Purpose of this file is to house route utilities"""
 from datetime import datetime
 import re
-from typing import Tuple
+from typing import Tuple, Union
 from http import HTTPStatus
 from bson import ObjectId
+from croniter import croniter, CroniterNotAlphaError
 from pandas import DataFrame
 
 from healthcheck import HealthCheck
@@ -33,7 +34,6 @@ from huxunify.api.data_connectors.cdp_connection import (
     check_cdp_connections_api_connection,
 )
 from huxunify.api.exceptions import (
-    integration_api_exceptions as iae,
     unified_exceptions as ue,
 )
 from huxunify.api.prometheus import record_health_status_metric
@@ -179,6 +179,26 @@ def get_friendly_delivered_time(delivered_time: datetime) -> str:
         return str(int(delivered / 60)) + " minutes ago"
     else:
         return str(int(delivered)) + " seconds ago"
+
+
+def get_next_schedule(
+    cron_expression: str, start_date: datetime
+) -> Union[datetime, None]:
+    """
+
+    Args:
+        cron_expression (str): Cron Expression of the schedule
+        start_date (datetime): Start Datetime
+
+    Returns:
+        next_schedule(datetime): Next Schedule datetime
+    """
+    if isinstance(cron_expression, str) and isinstance(start_date, datetime):
+        try:
+            return croniter(cron_expression, start_date).get_next(datetime)
+        except CroniterNotAlphaError:
+            logger.error("Encountered cron expression error, returning None")
+    return None
 
 
 def update_metrics(

@@ -31,6 +31,7 @@ huxunifylib-database = {path="../../lib/huxunifylib-database", editable=true}
 huxunifylib-util = {version="==0.1.30", index="jfrog"}
 huxunifylib-connectors = {version="*", index="jfrog"}
 faker = {version="*", index="pypi"}
+croniter = {version="*", index="pypi"}
 connexion = "==2.7.0"
 prometheus-client = "*"
 prometheus-flask-exporter = "*"

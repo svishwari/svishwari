@@ -28,6 +28,8 @@ Cypress.Commands.add("signin", ({ email, password }) => {
     log: false,
   })
 
+  cy.get(selector.login.remember).click()
+
   // submit the form
   cy.get(selector.login.submit).click()
 
@@ -41,4 +43,22 @@ Cypress.Commands.add("signin", ({ email, password }) => {
       // once its done, we should be redirected back to the app
       cy.location("pathname").should("eq", route.oktaSignInRedirectURI)
     })
+})
+
+Cypress.Commands.add("reLogin", () => {
+  const email = Cypress.env("USER_EMAIL")
+  const password = Cypress.env("USER_PASSWORD")
+
+  cy.location("pathname").should("eq", route.login)
+
+  cy.get(selector.login.email).type(email, { log: false })
+
+  cy.get(selector.login.password).type(password, {
+    log: false,
+  })
+
+  cy.get(selector.login.remember).click()
+
+  // submit the form
+  cy.get(selector.login.submit).click()
 })

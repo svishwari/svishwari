@@ -499,13 +499,6 @@
       </v-col>
     </v-row>
 
-    <hux-alert
-      v-model="flashAlert"
-      :type="alert.type"
-      :title="alert.title"
-      :message="alert.message"
-    />
-
     <confirm-modal
       v-model="showConfirmModal"
       :title="confirmDialog.title"
@@ -556,7 +549,6 @@
       :selected-audience="audience"
       @onBack="reloadAudienceData()"
       @onCreate="lookalikeCreated = true"
-      @onError="onError($event)"
     />
 
     <delivery-history-drawer
@@ -604,7 +596,6 @@ import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import DeliveryOverview from "@/components/DeliveryOverview.vue"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
-import HuxAlert from "@/components/common/HuxAlert.vue"
 import Icon from "@/components/common/Icon.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart.vue"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
@@ -640,7 +631,6 @@ export default {
     DestinationDataExtensionDrawer,
     DoughnutChart,
     EditDeliverySchedule,
-    HuxAlert,
     Icon,
     IncomeChart,
     LookAlikeAudience,
@@ -708,13 +698,7 @@ export default {
       loading: false,
       loadingRelationships: false,
       loadingDemographics: true,
-      flashAlert: false,
       configurationData: configurationData,
-      alert: {
-        type: "success",
-        title: "YAY!",
-        message: "Successfully triggered delivery.",
-      },
       modelInitial: [
         { value: "propensity", icon: "model" },
         { value: "ltv", icon: "lifetime" },
@@ -971,6 +955,7 @@ export default {
       detachAudienceDestination: "engagements/detachAudienceDestination",
       getDemographics: "audiences/getDemographics",
       downloadAudienceData: "audiences/fetchAudienceData",
+      setAlert: "alerts/setAlert",
       getAudiencesRules: "audiences/fetchConstants",
     }),
     attributeOptions() {
@@ -1007,10 +992,10 @@ export default {
     },
     async initiateFileDownload(option) {
       const audienceName = this.audience.name
-      this.alert.type = "Pending"
-      this.alert.title = ""
-      this.alert.message = `Download for the '${audienceName}' with '${option.title}', has started in background, stay tuned.`
-      this.flashAlert = true
+      this.setAlert({
+        type: "pending",
+        message: `Download for the '${audienceName}' with '${option.title}', has started in background, stay tuned.`,
+      })
       const fileBlob = await this.downloadAudienceData({
         id: this.audienceId,
         type: option.type,
@@ -1100,17 +1085,11 @@ export default {
           break
         }
         case "deliver all":
-          try {
-            await this.deliverAudience({
-              id: event.data.id,
-              audienceId: this.audienceId,
-            })
-            this.dataPendingMesssage(event, "engagement")
-            this.refreshEntity()
-          } catch (error) {
-            this.dataErrorMesssage(event, "engagement")
-            console.error(error)
-          }
+          await this.deliverAudience({
+            id: event.data.id,
+            audienceId: this.audienceId,
+          })
+          this.dataPendingMesssage(event, "engagement")
           break
         case "view delivery history":
           break
@@ -1137,17 +1116,12 @@ export default {
       try {
         switch (event.target.title.toLowerCase()) {
           case "deliver now":
-            try {
-              await this.deliverAudienceDestination({
-                id: event.parent.id,
-                audienceId: this.audienceId,
-                destinationId: event.data.id,
-              })
-              this.dataPendingMesssage(event, "destination")
-            } catch (error) {
-              this.dataErrorMesssage(event, "destination")
-              console.error(error)
-            }
+            await this.deliverAudienceDestination({
+              id: event.parent.id,
+              audienceId: this.audienceId,
+              destinationId: event.data.id,
+            })
+            this.dataPendingMesssage(event, "destination")
             break
           case "edit delivery schedule":
             this.confirmDialog.actionType = "edit-schedule"
@@ -1187,32 +1161,21 @@ export default {
 
     //Alert Message
     dataPendingMesssage(event, value) {
-      this.alert.type = "Pending"
-      this.alert.title = ""
       if (value == "engagement") {
         const engagementName = event.data.name
         const audienceName = this.audience.name
-        this.alert.message = `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`
+        this.setAlert({
+          type: "pending",
+          message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
+        })
       } else if (value == "destination") {
         const engagementName = event.parent.name
         const destinationName = event.data.name
-        this.alert.message = `Your engagement '${engagementName}', has started delivering to '${destinationName}'.`
+        this.setAlert({
+          type: "pending",
+          message: `Your engagement '${engagementName}', has started delivering to '${destinationName}'.`,
+        })
       }
-      this.flashAlert = true
-    },
-    dataErrorMesssage(event, value) {
-      this.alert.type = "error"
-      this.alert.title = "OH NO!"
-      if (value == "engagement") {
-        const engagementName = event.data.name
-        const audienceName = this.audience.name
-        this.alert.message = `Failed to schedule a delivery of your engagement '${engagementName}', from '${audienceName}'.`
-      } else if (value == "destination") {
-        const engagementName = event.parent.name
-        const destinationName = event.data.name
-        this.alert.message = `Failed to schedule delivery of your engagement '${engagementName}', to '${destinationName}'.`
-      }
-      this.flashAlert = true
     },
 
     // Drawer Section Starts
@@ -1322,12 +1285,6 @@ export default {
       this.getDestinations()
       this.refreshAudience = false
       this.loading = false
-    },
-    onError(message) {
-      this.alert.type = "error"
-      this.alert.title = "OH NO!"
-      this.alert.message = message
-      this.flashAlert = true
     },
     sizeHandler() {
       if (this.$refs.genderChart) {

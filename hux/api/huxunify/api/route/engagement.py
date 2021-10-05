@@ -953,9 +953,9 @@ class RemoveDestinationEngagedAudience(SwaggerView):
     ]
 
     responses = {
-        HTTPStatus.CREATED.value: {
+        HTTPStatus.NO_CONTENT.value: {
             "schema": EngagementGetSchema,
-            "description": "Destination added to Engagement Audience.",
+            "description": "Destination Removed from the Engagement Audience.",
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to create the engagement.",
@@ -1014,9 +1014,9 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             logger.error(
                 "Could not find destination with id %s.", destination_id
             )
-            return {
-                "message": api_c.DESTINATION_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            # set the destination name to remove as unknown, still allow for the destination
+            # to be removed from the engagement audience.
+            destination_to_remove = {api_c.NAME: "Unknown"}
 
         remove_destination_from_engagement_audience(
             database,

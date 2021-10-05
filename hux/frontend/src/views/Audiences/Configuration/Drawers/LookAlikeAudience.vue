@@ -243,12 +243,8 @@ export default {
         audience_size_percentage: this.lookalikeAudience.value,
         engagement_ids: engagementIds,
       }
-      try {
-        await this.createLookalikeAudience(payload)
-        this.$emit("onCreate")
-      } catch (error) {
-        this.$emit("onError", error.response.data.message)
-      }
+      await this.createLookalikeAudience(payload)
+      this.$emit("onCreate")
       this.onBack()
     },
 

@@ -150,6 +150,7 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
     return clean_cdm_fields(response.json()[api_c.BODY])
 
 
+# pylint: disable=unused-argument
 def get_idr_overview(
     token: str, start_date: str = None, end_date: str = None
 ) -> dict:
@@ -194,18 +195,8 @@ def get_idr_overview(
     logger.info(
         "Successfully retrieved Customer Profile Insights from CDP API."
     )
-    # TODO : Get date range from CDP
-    return {
-        "overview": clean_cdm_fields(response.json()[api_c.BODY]),
-        "date_range": {
-            api_c.START_DATE: datetime.strptime(
-                start_date, api_c.DEFAULT_DATE_FORMAT
-            ),
-            api_c.END_DATE: datetime.strptime(
-                end_date, api_c.DEFAULT_DATE_FORMAT
-            ),
-        },
-    }
+
+    return clean_cdm_fields(response.json()[api_c.BODY])
 
 
 def get_customers_overview(
