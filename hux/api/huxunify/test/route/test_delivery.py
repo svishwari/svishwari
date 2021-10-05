@@ -35,9 +35,9 @@ class TestDeliveryRoutes(TestCase):
         """Setup resources before each test."""
 
         # mock request for introspect call
-        request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.start()
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.start()
 
         self.app = create_app().test_client()
 
@@ -582,6 +582,12 @@ class TestDeliveryRoutes(TestCase):
     def test_set_delivery_schedule(self):
         """Test setting a delivery schedule for an engaged audience destination"""
 
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.start()
+
         delivery_schedule = {
             api_c.PERIODICIY: "Daily",
             api_c.EVERY: 2,
@@ -625,18 +631,26 @@ class TestDeliveryRoutes(TestCase):
     def test_delete_delivery_schedule(self):
         """Test setting a delivery schedule for an engaged audience destination"""
 
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.start()
+
+        response = self.app.delete(
+            (
+                f"{t_c.BASE_ENDPOINT}"
+                f"{api_c.ENGAGEMENT_ENDPOINT}/{self.engagement_ids[0]}/"
+                f"{api_c.AUDIENCE}/{self.audiences[0][db_c.ID]}/"
+                f"{api_c.DESTINATION}/{self.destinations[0][db_c.ID]}/"
+                f"{api_c.SCHEDULE}"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
         self.assertEqual(
             HTTPStatus.OK,
-            self.app.delete(
-                (
-                    f"{t_c.BASE_ENDPOINT}"
-                    f"{api_c.ENGAGEMENT_ENDPOINT}/{self.engagement_ids[0]}/"
-                    f"{api_c.AUDIENCE}/{self.audiences[0][db_c.ID]}/"
-                    f"{api_c.DESTINATION}/{self.destinations[0][db_c.ID]}/"
-                    f"{api_c.SCHEDULE}"
-                ),
-                headers=t_c.STANDARD_HEADERS,
-            ).status_code,
+            response.status_code,
         )
 
         # validate the schedule was actually unset.
