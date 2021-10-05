@@ -3,9 +3,6 @@ from datetime import datetime, timedelta
 from unittest import TestCase
 from bson import ObjectId
 
-from huxunify.api.exceptions.integration_api_exceptions import (
-    FailedDateFilterIssue,
-)
 from huxunify.api.exceptions.unified_exceptions import (
     InputParamsValidationError,
 )
@@ -121,8 +118,22 @@ class TestRouteUtils(TestCase):
         with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_date_range("2021-09-11", "2021-08")
 
-        with self.assertRaises(expected_exception=FailedDateFilterIssue):
+        with self.assertRaises(expected_exception=InputParamsValidationError):
             Validation.validate_date_range("2021-09-11", "2021-08-01")
 
         Validation.validate_date_range("2021-9-11", "2021-9-12")
         Validation.validate_date_range("2021-9-11", "2021-09-11")
+
+    def test_validate_hux_id(self):
+        """Tests the Validation class static method validate_hux_id."""
+
+        with self.assertRaises(expected_exception=InputParamsValidationError):
+            Validation.validate_hux_id("HUX12345678901234")
+
+        with self.assertRaises(expected_exception=InputParamsValidationError):
+            Validation.validate_hux_id("123456789012345")
+
+        with self.assertRaises(expected_exception=InputParamsValidationError):
+            Validation.validate_hux_id("HUX1234567890l2345")
+
+        Validation.validate_hux_id("HUX123456789012345")

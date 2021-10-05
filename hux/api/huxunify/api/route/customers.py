@@ -250,6 +250,7 @@ class IDROverview(SwaggerView):
         Returns:
             Tuple[dict, int]: dict of Customer data overview, HTTP status code.
         """
+        token_response = get_token_from_request(request)
 
         start_date = request.args.get(
             api_c.START_DATE,
@@ -265,9 +266,8 @@ class IDROverview(SwaggerView):
             ),
         )
 
-        Validation().validate_date_range(start_date, end_date)
+        Validation.validate_date_range(start_date, end_date)
 
-        token_response = get_token_from_request(request)
         return (
             IDROverviewWithDateRangeSchema().dump(
                 get_idr_overview(
@@ -281,10 +281,10 @@ class IDROverview(SwaggerView):
 
 
 @add_view_to_blueprint(
-    customers_bp, f"/{api_c.CUSTOMERS_ENDPOINT}", "Customersview"
+    customers_bp, f"/{api_c.CUSTOMERS_ENDPOINT}", "CustomersListview"
 )
-class Customersview(SwaggerView):
-    """Customers Overview class."""
+class CustomersListview(SwaggerView):
+    """Customers List class."""
 
     parameters = [
         {
@@ -320,9 +320,7 @@ class Customersview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler(
-        custom_message={ValueError: {"message": api_c.INVALID_BATCH_PARAMS}}
-    )
+    @api_error_handler()
     def get(self) -> Tuple[dict, int]:
         """Retrieves a list of customers.
 
@@ -336,15 +334,22 @@ class Customersview(SwaggerView):
 
         # get token
         token_response = get_token_from_request(request)
-        batch_size = request.args.get(
-            api_c.QUERY_PARAMETER_BATCH_SIZE,
-            default=api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
+
+        batch_size = Validation.validate_integer(
+            request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_SIZE,
+                str(api_c.DEFAULT_BATCH_SIZE),
+            )
         )
-        batch_number = request.args.get(
-            api_c.QUERY_PARAMETER_BATCH_NUMBER,
-            default=api_c.DEFAULT_BATCH_NUMBER,
+
+        batch_number = Validation.validate_integer(
+            request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_NUMBER,
+                str(api_c.DEFAULT_BATCH_NUMBER),
+            )
         )
-        offset = (int(batch_number) - 1) * int(batch_size)
+
+        offset = (batch_number - 1) * batch_size
         return (
             CustomersSchema().dump(
                 get_customer_profiles(token_response[0], batch_size, offset)
@@ -364,11 +369,11 @@ class CustomerProfileSearch(SwaggerView):
     parameters = [
         {
             "name": api_c.HUX_ID,
-            "description": f"{api_c.HUX_ID}.",
+            "description": "Unique HUX ID.",
             "type": "string",
             "in": "path",
             "required": True,
-            "example": "1531-1234-21",
+            "example": "HUX123456789012345",
         }
     ]
     responses = {
@@ -400,8 +405,10 @@ class CustomerProfileSearch(SwaggerView):
         Returns:
             Tuple[dict, int]: dict of customer profile, HTTP status code.
         """
-
         token_response = get_token_from_request(request)
+
+        Validation.validate_hux_id(hux_id)
+
         redacted_data = redact_fields(
             get_customer_profile(token_response[0], hux_id),
             api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
@@ -493,7 +500,7 @@ class IDRDataFeeds(SwaggerView):
             ),
         )
 
-        Validation().validate_date_range(start_date, end_date)
+        Validation.validate_date_range(start_date, end_date)
 
         return (
             jsonify(
@@ -544,7 +551,7 @@ class IDRDataFeedDetails(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, datafeed_id: int) -> Tuple[dict, int]:
+    def get(self, datafeed_id: str) -> Tuple[dict, int]:
         """Retrieves a IDR data feed waterfall report.
 
         ---
@@ -552,7 +559,7 @@ class IDRDataFeedDetails(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            datafeed_id (int): Data feed ID.
+            datafeed_id (str): Data feed ID.
 
         Returns:
             Tuple[dict, int]: dict of IDR data feed waterfall,
@@ -561,9 +568,11 @@ class IDRDataFeedDetails(SwaggerView):
 
         token_response = get_token_from_request(request)
 
+        datafeed_id = Validation.validate_integer(datafeed_id)
+
         return (
             DataFeedDetailsSchema().dump(
-                get_idr_data_feed_details(token_response[0], int(datafeed_id))
+                get_idr_data_feed_details(token_response[0], datafeed_id)
             ),
             HTTPStatus.OK,
         )
@@ -675,6 +684,8 @@ class CustomerDemoVisualView(SwaggerView):
                 HTTP status code.
         """
 
+        token_response = get_token_from_request(request)
+
         start_date = request.args.get(
             api_c.START_DATE,
             datetime.strftime(
@@ -689,9 +700,7 @@ class CustomerDemoVisualView(SwaggerView):
             ),
         )
 
-        Validation().validate_date_range(start_date, end_date)
-
-        token_response = get_token_from_request(request)
+        Validation.validate_date_range(start_date, end_date)
 
         # get customers overview data from CDP to set gender specific
         # population details
@@ -773,6 +782,7 @@ class IDRMatchingTrends(SwaggerView):
             Tuple[dict, int]: dict of IDR Matching trends YTD,
                 HTTP status code.
         """
+        token_response = get_token_from_request(request)
 
         start_date = request.args.get(
             api_c.START_DATE,
@@ -788,9 +798,8 @@ class IDRMatchingTrends(SwaggerView):
             ),
         )
 
-        Validation().validate_date_range(start_date, end_date)
+        Validation.validate_date_range(start_date, end_date)
 
-        token_response = get_token_from_request(request)
         return (
             jsonify(
                 MatchingTrendsSchema().dump(
@@ -817,11 +826,11 @@ class CustomerEvents(SwaggerView):
     parameters = [
         {
             "name": api_c.HUX_ID,
-            "description": "ID of the customer whose events need to be fetched.",
+            "description": "Unique HUX ID.",
             "type": "string",
             "in": "path",
             "required": True,
-            "example": "1531-1234-21",
+            "example": "HUX123456789012345",
         },
         {
             "name": "body",
@@ -867,28 +876,26 @@ class CustomerEvents(SwaggerView):
             Tuple[dict, int]: dict of Customer events grouped by day,
                 HTTP status code.
         """
-
-        start_date = datetime.strftime(
-            datetime.utcnow().date() - relativedelta(months=6),
-            api_c.DEFAULT_DATE_FORMAT,
-        )
-        end_date = datetime.strftime(
-            datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
-        )
-
-        if request.json:
-            start_date = request.json.get(
-                api_c.START_DATE,
-                start_date,
-            )
-            end_date = request.json.get(
-                api_c.END_DATE,
-                end_date,
-            )
-
-            Validation().validate_date_range(start_date, end_date)
-
         token_response = get_token_from_request(request)
+
+        Validation.validate_hux_id(hux_id)
+
+        start_date = request.args.get(
+            api_c.START_DATE,
+            datetime.strftime(
+                datetime.utcnow().date() - relativedelta(months=6),
+                api_c.DEFAULT_DATE_FORMAT,
+            ),
+        )
+        end_date = request.args.get(
+            api_c.END_DATE,
+            datetime.strftime(
+                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
+            ),
+        )
+
+        Validation.validate_date_range(start_date, end_date)
+
         return (
             jsonify(
                 CustomerEventsSchema().dump(
@@ -1131,11 +1138,18 @@ class CustomersInsightsCities(SwaggerView):
         # get auth token from request
         token_response = get_token_from_request(request)
 
-        batch_size = request.args.get(
-            api_c.QUERY_PARAMETER_BATCH_SIZE, api_c.CITIES_DEFAULT_BATCH_SIZE
+        batch_size = Validation.validate_integer(
+            request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_SIZE,
+                str(api_c.DEFAULT_BATCH_SIZE),
+            )
         )
-        batch_number = request.args.get(
-            api_c.QUERY_PARAMETER_BATCH_NUMBER, api_c.DEFAULT_BATCH_NUMBER
+
+        batch_number = Validation.validate_integer(
+            request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_NUMBER,
+                str(api_c.DEFAULT_BATCH_NUMBER),
+            )
         )
 
         return (
@@ -1143,8 +1157,8 @@ class CustomersInsightsCities(SwaggerView):
                 CustomersInsightsCitiesSchema().dump(
                     get_city_ltvs(
                         token_response[0],
-                        offset=int(batch_size) * (int(batch_number) - 1),
-                        limit=int(batch_size),
+                        offset=batch_size * (batch_number - 1),
+                        limit=batch_size,
                     ),
                     many=True,
                 )

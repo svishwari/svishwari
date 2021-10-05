@@ -376,13 +376,6 @@ def api_error_handler(custom_message: dict = None) -> object:
                     "message": constants.DESTINATION_CONNECTION_FAILED
                 }, HTTPStatus.FAILED_DEPENDENCY
 
-            except iae.FailedDateFilterIssue as exc:
-                return {
-                    "message": custom_message
-                    if custom_message
-                    else exc.exception_message
-                }, HTTPStatus.BAD_REQUEST.value
-
             except ue.InputParamsValidationError as exc:
                 logger.error(
                     "%s: %s Error encountered while executing %s in module %s.",

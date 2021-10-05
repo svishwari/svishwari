@@ -478,6 +478,7 @@ def get_customer_events_data(
         },
         json={api_c.START_DATE: start_date_str, api_c.END_DATE: end_date_str},
     )
+    print(response.json())
 
     if response.status_code != 200 or api_c.BODY not in response.json():
         logger.error(
