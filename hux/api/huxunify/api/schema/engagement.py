@@ -631,20 +631,25 @@ def weighted_engagement_status(engagements: list) -> list:
                 if engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
                     destination[api_c.LATEST_DELIVERY][
                         db_c.ENGAGEMENT_DELIVERY_SCHEDULE
-                    ] = engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
-                        api_c.SCHEDULE
-                    ][
-                        api_c.PERIODICIY
-                    ]
+                    ] = (
+                        engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE)
+                        .get(api_c.SCHEDULE)
+                        .get(api_c.PERIODICIY)
+                        if engagement.get(
+                            db_c.ENGAGEMENT_DELIVERY_SCHEDULE
+                        ).get(api_c.SCHEDULE)
+                        else None
+                    )
+
                     destination[api_c.LATEST_DELIVERY][
                         api_c.NEXT_DELIVERY
                     ] = get_next_schedule(
-                        engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                        engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(
                             api_c.SCHEDULE_CRON
-                        ],
-                        engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                        ),
+                        engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(
                             api_c.START_DATE
-                        ],
+                        ),
                     )
                 status_rank = {
                     api_c.STATUS: status,

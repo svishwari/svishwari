@@ -101,7 +101,7 @@ class EngagementSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @api_error_handler()
+    # @api_error_handler()
     def get(self) -> Tuple[dict, int]:
         """Retrieves all engagements.
 
