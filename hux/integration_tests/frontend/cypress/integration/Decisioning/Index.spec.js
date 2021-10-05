@@ -14,21 +14,28 @@ describe("View models", () => {
 
     cy.location("pathname").should("eq", route.models)
 
-    cy.get(selector.models.item).should(($models) => {
-      expect($models).to.have.length(2)
+    cy.get(selector.models.item).its("length").should("gt", 0)
 
-      // propensity to unsubscribe model
+    cy.get(selector.models.item).should(($models) => {
       expect($models.eq(0).find(selector.card.title)).to.contain(
-        "Propensity to Unsubscribe",
+        "Lifetime Value",
       )
       expect($models.eq(0).find(selector.card.description)).to.contain(
-        "Propensity of a customer unsubscribing to emails.",
+        "Predict the lifetime value of a customer",
       )
 
-      // LTV model
-      expect($models.eq(1).find(selector.card.title)).to.contain("LTV")
+      expect($models.eq(1).find(selector.card.title)).to.contain(
+        "Propensity to Purchase",
+      )
       expect($models.eq(1).find(selector.card.description)).to.contain(
-        "Propensity of a customer unsubscribing to emails.",
+        "Propensity of a customer making a purchase after receiving an email",
+      )
+
+      expect($models.eq(2).find(selector.card.title)).to.contain(
+        "Propensity to Unsubscribe",
+      )
+      expect($models.eq(2).find(selector.card.description)).to.contain(
+        "Predicts the propensity of a customer to unsubscribe from an email list",
       )
     })
   })

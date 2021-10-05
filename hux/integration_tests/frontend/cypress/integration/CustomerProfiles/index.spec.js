@@ -51,9 +51,11 @@ describe("Data management > Customer Profiles", () => {
       .trigger("mouseover", { eventConstructor: "MouseEvent" })
   })
 
-  it("map state list should have 51 state", () => {
+  it("map state list should have a list of states", () => {
     // validate no of state in list
-    cy.get(selector.customerProfile.mapStateList).its("length").should("eq", 51)
+    cy.get(selector.customerProfile.mapStateList)
+      .its("length")
+      .should("gte", 51)
   })
 
   it("should be able to view top location & income chart", () => {

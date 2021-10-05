@@ -9,7 +9,7 @@ describe("Decisioning > models", () => {
     })
   })
 
-  it("should be able to view a list of models and dashboard", () => {
+  it("should be able to get to a model dashboard", () => {
     cy.get(selector.nav.models).click()
 
     cy.location("pathname").should("eq", route.models)
@@ -19,7 +19,7 @@ describe("Decisioning > models", () => {
     cy.get(selector.models.item).first().click()
   })
 
-  it("view and validate overview", () => {
+  it("should be able to view model overview", () => {
     //validate overview by getting total no. of them
     cy.get(selector.models.performancemetric)
       .its("length")
