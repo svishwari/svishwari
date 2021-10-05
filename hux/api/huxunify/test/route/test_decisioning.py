@@ -58,7 +58,7 @@ class DecisioningTests(TestCase):
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
         self.request_mocker.start()
 
-    def test_get_models_success(self):
+    def test_sucess_get_models(self):
         """Test get models from Tecton."""
 
         get_models_mock = mock.patch(
@@ -82,7 +82,7 @@ class DecisioningTests(TestCase):
         )
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
-    def test_get_model_version_history(self, model_id: int):
+    def test_get_model_version_history_success(self, model_id: int):
         """Test get model version history
 
         Args:
@@ -106,6 +106,7 @@ class DecisioningTests(TestCase):
         self.assertTrue(ModelVersionSchema(many=True).dump(response))
 
     @given(model_id=st.integers(min_value=100, max_value=1000))
+    @settings(deadline=600)
     def test_get_model_version_history_failed(self, model_id: int):
         """
         Test get model version history failed
@@ -136,7 +137,7 @@ class DecisioningTests(TestCase):
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     @settings(deadline=600)
-    def test_get_model_features(self, model_id: int) -> None:
+    def test_success_get_model_features(self, model_id: int) -> None:
         """Test get model features
 
         Args:
