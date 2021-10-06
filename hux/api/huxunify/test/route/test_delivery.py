@@ -10,8 +10,13 @@ import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
+    set_delivery_job,
+    set_delivery_job_status,
 )
-from huxunifylib.database.engagement_management import set_engagement
+from huxunifylib.database.engagement_management import (
+    set_engagement,
+    get_engagement,
+)
 from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.database.user_management import set_user
 from huxunifylib.connectors import AWSBatchConnector
@@ -30,9 +35,9 @@ class TestDeliveryRoutes(TestCase):
         """Setup resources before each test."""
 
         # mock request for introspect call
-        request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.start()
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.start()
 
         self.app = create_app().test_client()
 
@@ -102,6 +107,16 @@ class TestDeliveryRoutes(TestCase):
                     api_c.FACEBOOK_AD_ACCOUNT_ID: "path4",
                 },
             },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "SendGrid by Twilio",
+                db_c.DELIVERY_PLATFORM_TYPE: "sendgrid",
+                db_c.STATUS: db_c.STATUS_SUCCEEDED,
+                db_c.ENABLED: True,
+                db_c.ADDED: True,
+                db_c.DELIVERY_PLATFORM_AUTH: {
+                    api_c.SENDGRID_AUTH_TOKEN: "auth1",
+                },
+            },
         ]
 
         self.destinations = []
@@ -156,15 +171,13 @@ class TestDeliveryRoutes(TestCase):
                     {
                         db_c.OBJECT_ID: self.audiences[0][db_c.ID],
                         api_c.DESTINATIONS_TAG: [
-                            {db_c.OBJECT_ID: dest[db_c.ID]}
-                            for dest in self.destinations
+                            {db_c.OBJECT_ID: self.destinations[0][db_c.ID]}
                         ],
                     },
                     {
                         db_c.OBJECT_ID: self.audiences[1][db_c.ID],
                         api_c.DESTINATIONS_TAG: [
-                            {db_c.OBJECT_ID: dest[db_c.ID]}
-                            for dest in self.destinations
+                            {db_c.OBJECT_ID: self.destinations[0][db_c.ID]}
                         ],
                     },
                 ],
@@ -186,6 +199,24 @@ class TestDeliveryRoutes(TestCase):
         self.engagement_ids = [
             str(set_engagement(self.database, **x)) for x in engagements
         ]
+
+        delivery_jobs = [
+            {
+                api_c.AUDIENCE_ID: self.audiences[1][db_c.ID],
+                db_c.DELIVERY_PLATFORM_ID: self.destinations[1][db_c.ID],
+                db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: [],
+                api_c.ENGAGEMENT_ID: ObjectId(self.engagement_ids[0]),
+                # db_c.DELETED: False
+            }
+        ]
+        self.delivery_jobs = [
+            set_delivery_job(self.database, **job) for job in delivery_jobs
+        ]
+        set_delivery_job_status(
+            self.database,
+            self.delivery_jobs[0][db_c.ID],
+            db_c.STATUS_DELIVERED,
+        )
 
     def test_deliver_audience_for_an_engagement_valid_ids(self):
         """Test delivery of an audience for an engagement with valid IDs."""
@@ -444,7 +475,7 @@ class TestDeliveryRoutes(TestCase):
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
             f"{api_c.DELIVERY_HISTORY}",
-            data=params,
+            query_string=params,
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -459,7 +490,7 @@ class TestDeliveryRoutes(TestCase):
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
             f"{api_c.DELIVERY_HISTORY}",
-            data=params,
+            query_string=params,
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -547,3 +578,90 @@ class TestDeliveryRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    def test_set_delivery_schedule(self):
+        """Test setting a delivery schedule for an engaged audience destination"""
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.start()
+
+        delivery_schedule = {
+            api_c.PERIODICIY: "Daily",
+            api_c.EVERY: 2,
+            api_c.HOUR: 11,
+            api_c.MINUTE: 15,
+            api_c.PERIOD: "PM",
+        }
+
+        self.assertEqual(
+            HTTPStatus.OK,
+            self.app.post(
+                (
+                    f"{t_c.BASE_ENDPOINT}"
+                    f"{api_c.ENGAGEMENT_ENDPOINT}/{self.engagement_ids[0]}/"
+                    f"{api_c.AUDIENCE}/{self.audiences[0][db_c.ID]}/"
+                    f"{api_c.DESTINATION}/{self.destinations[0][db_c.ID]}/"
+                    f"{api_c.SCHEDULE}"
+                ),
+                json=delivery_schedule,
+                headers=t_c.STANDARD_HEADERS,
+            ).status_code,
+        )
+
+        # validate the schedule was actually set.
+        engagement = get_engagement(
+            self.database, ObjectId(self.engagement_ids[0])
+        )
+        self.assertIn(db_c.AUDIENCES, engagement)
+
+        # take the first audience
+        audience = engagement.get(db_c.AUDIENCES)[0]
+        self.assertIn(db_c.DESTINATIONS, audience)
+
+        # take the first destination
+        destination = audience.get(db_c.DESTINATIONS)[0]
+        self.assertIn(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, destination)
+        self.assertDictEqual(
+            destination[db_c.ENGAGEMENT_DELIVERY_SCHEDULE], delivery_schedule
+        )
+
+    def test_delete_delivery_schedule(self):
+        """Test setting a delivery schedule for an engaged audience destination"""
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.start()
+
+        response = self.app.delete(
+            (
+                f"{t_c.BASE_ENDPOINT}"
+                f"{api_c.ENGAGEMENT_ENDPOINT}/{self.engagement_ids[0]}/"
+                f"{api_c.AUDIENCE}/{self.audiences[0][db_c.ID]}/"
+                f"{api_c.DESTINATION}/{self.destinations[0][db_c.ID]}/"
+                f"{api_c.SCHEDULE}"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(
+            HTTPStatus.OK,
+            response.status_code,
+        )
+
+        # validate the schedule was actually unset.
+        engagement = get_engagement(
+            self.database, ObjectId(self.engagement_ids[0])
+        )
+        self.assertIn(db_c.AUDIENCES, engagement)
+        self.assertTrue(
+            not any(
+                d.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE)
+                for x in engagement[db_c.AUDIENCES]
+                for d in x[db_c.DESTINATIONS]
+            )
+        )

@@ -27,7 +27,7 @@ class ModelSchema(Schema):
 class ModelVersionSchema(Schema):
     """Model Version Schema"""
 
-    id = Str()
+    id = Int()
     name = Str(required=True)
     description = Str()
     status = Str()

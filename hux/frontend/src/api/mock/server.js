@@ -6,7 +6,7 @@ import AppSerializer from "./serializer"
 import { defineRoutes } from "./routes"
 
 // seeds
-import seeds from "./seeds"
+import seeds from "./seeds/index"
 
 // factories
 import { audience as audienceFactory } from "./factories/audiences"

@@ -9,7 +9,7 @@ import Vuetify from "vuetify"
 import filters from "@/filters"
 //Miragejs
 import { makeServer } from "@/api/mock/server.js"
-import { unsubscribeModel, ltvModel } from "@/api/mock/seeds.js"
+import modelSeeds from "@/api/mock/seeds/model.js"
 
 let server
 
@@ -18,8 +18,7 @@ let vuetify
 beforeEach(() => {
   vuetify = new Vuetify()
   server = makeServer({ environment: "test" })
-  server.create("model", unsubscribeModel)
-  server.create("model", ltvModel)
+  modelSeeds.forEach((seed) => server.create("model", seed))
 })
 
 afterEach(() => {

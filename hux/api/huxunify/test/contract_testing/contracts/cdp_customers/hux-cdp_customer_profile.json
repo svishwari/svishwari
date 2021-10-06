@@ -1,0 +1,981 @@
+{
+  "consumer": {
+    "name": "HUX"
+  },
+  "provider": {
+    "name": "CDP_CUSTOMER_PROFILE"
+  },
+  "interactions": [
+    {
+      "description": "A request for city ltvs.",
+      "providerState": "No filters passed.",
+      "request": {
+        "method": "POST",
+        "path": "/customer-profiles/insights/city-ltvs",
+        "query": "limit=100&offset=0",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "code": 200,
+          "body": [
+            {
+              "city": "Santa Anna",
+              "state": "TX",
+              "country": "US",
+              "customer_count": 5,
+              "avg_ltv": 668.03003
+            }
+          ],
+          "message": "ok"
+        },
+        "matchingRules": {
+          "$.body.body": {
+            "min": 1
+          },
+          "$.body.body[*].*": {
+            "match": "type"
+          },
+          "$.body.body[*].city": {
+            "match": "type"
+          },
+          "$.body.body[*].state": {
+            "match": "type"
+          },
+          "$.body.body[*].country": {
+            "match": "type"
+          },
+          "$.body.body[*].customer_count": {
+            "match": "type"
+          },
+          "$.body.body[*].avg_ltv": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "A request for count by day.",
+      "providerState": "Start date and end date passed.",
+      "request": {
+        "method": "POST",
+        "path": "/customer-profiles/insights/count-by-day",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "start_date": "2020-10-05",
+          "end_date": "2021-10-05"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "code": 200,
+          "body": [
+            {
+              "recorded": "2021-06-20",
+              "total_count": 71000,
+              "diff_count": 70000
+            }
+          ],
+          "message": "ok"
+        },
+        "matchingRules": {
+          "$.body.body": {
+            "min": 1
+          },
+          "$.body.body[*].*": {
+            "match": "type"
+          },
+          "$.body.body[*].recorded": {
+            "match": "regex",
+            "regex": "\\d+-\\d+-\\d+"
+          },
+          "$.body.body[*].total_count": {
+            "match": "type"
+          },
+          "$.body.body[*].diff_count": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "A request for count by state.",
+      "providerState": "No filters passed.",
+      "request": {
+        "method": "POST",
+        "path": "/customer-profiles/insights/count-by-state",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "code": 200,
+          "body": [
+            {
+              "state": "IN",
+              "country": "US",
+              "gender_men": 2028,
+              "gender_women": 1461,
+              "gender_other": 191,
+              "size": 3680,
+              "avg_ltv": 240.05151167119567
+            }
+          ],
+          "message": "ok"
+        },
+        "matchingRules": {
+          "$.body.body": {
+            "min": 1
+          },
+          "$.body.body[*].*": {
+            "match": "type"
+          },
+          "$.body.body[*].state": {
+            "match": "type"
+          },
+          "$.body.body[*].country": {
+            "match": "type"
+          },
+          "$.body.body[*].gender_men": {
+            "match": "type"
+          },
+          "$.body.body[*].gender_women": {
+            "match": "type"
+          },
+          "$.body.body[*].gender_other": {
+            "match": "type"
+          },
+          "$.body.body[*].size": {
+            "match": "type"
+          },
+          "$.body.body[*].avg_ltv": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "A request for customer insights.",
+      "providerState": "Default filters passed.",
+      "request": {
+        "method": "POST",
+        "path": "/customer-profiles/insights",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "filters": [
+            {
+              "section_aggregator": "ALL",
+              "section_filters": [
+                {
+                  "field": "country",
+                  "type": "equals",
+                  "value": "US"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "code": 200,
+          "body": {
+            "total_records": 316574,
+            "match_rate": 0.5,
+            "total_unique_ids": 156485,
+            "total_unknown_ids": 0,
+            "total_known_ids": 156485,
+            "total_individual_ids": 126629,
+            "total_household_ids": 31658,
+            "updated": "2021-07-30T11:28:49.109Z",
+            "total_customers": 156485,
+            "total_countries": 1,
+            "total_us_states": 52,
+            "total_cities": 14659,
+            "min_age": 14,
+            "max_age": 79,
+            "avg_age": 38,
+            "gender_women": 62647,
+            "gender_men": 86029,
+            "gender_other": 7809,
+            "max_ltv_actual": 998.79824,
+            "max_ltv_predicted": 1069.68824,
+            "min_ltv_actual": 0.00072,
+            "min_ltv_predicted": 70.89072
+          },
+          "message": "ok"
+        },
+        "matchingRules": {
+          "$.body.body.total_records": {
+            "match": "type"
+          },
+          "$.body.body.match_rate": {
+            "match": "type"
+          },
+          "$.body.body.total_unique_ids": {
+            "match": "type"
+          },
+          "$.body.body.total_unknown_ids": {
+            "match": "type"
+          },
+          "$.body.body.total_known_ids": {
+            "match": "type"
+          },
+          "$.body.body.total_individual_ids": {
+            "match": "type"
+          },
+          "$.body.body.total_household_ids": {
+            "match": "type"
+          },
+          "$.body.body.updated": {
+            "match": "regex",
+            "regex": "\\d+-\\d+-\\d+T\\d+:\\d+:\\d+\\.\\d+Z"
+          },
+          "$.body.body.total_customers": {
+            "match": "type"
+          },
+          "$.body.body.total_countries": {
+            "match": "type"
+          },
+          "$.body.body.total_us_states": {
+            "match": "type"
+          },
+          "$.body.body.total_cities": {
+            "match": "type"
+          },
+          "$.body.body.min_age": {
+            "match": "type"
+          },
+          "$.body.body.max_age": {
+            "match": "type"
+          },
+          "$.body.body.avg_age": {
+            "match": "type"
+          },
+          "$.body.body.gender_women": {
+            "match": "type"
+          },
+          "$.body.body.gender_men": {
+            "match": "type"
+          },
+          "$.body.body.gender_other": {
+            "match": "type"
+          },
+          "$.body.body.max_ltv_actual": {
+            "match": "type"
+          },
+          "$.body.body.max_ltv_predicted": {
+            "match": "type"
+          },
+          "$.body.body.min_ltv_actual": {
+            "match": "type"
+          },
+          "$.body.body.min_ltv_predicted": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "A request for audience count.",
+      "providerState": "No filters passed.",
+      "request": {
+        "method": "POST",
+        "path": "/customer-profiles/audience/count",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "code": 200,
+          "body": {
+            "total_count": 5
+          },
+          "message": "ok"
+        },
+        "matchingRules": {
+          "$.body.body": {
+            "match": "type"
+          },
+          "$.body.body.total_count": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "A request for customer profile events.",
+      "providerState": "No filters passed.",
+      "request": {
+        "method": "POST",
+        "path": "/customer-profiles/HUX000000000000001/events",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "code": 200,
+          "body": [
+            {
+              "total_event_count": 25,
+              "event_type_counts": {
+                "abandoned_cart": 5,
+                "customer_login": 5,
+                "item_purchased": 4,
+                "trait_computed": 6,
+                "viewed_cart": 3,
+                "viewed_checkout": 2,
+                "viewed_sale_item": 1
+              },
+              "date": "2021-05-24T14:35:12.001Z"
+            }
+          ],
+          "message": "ok"
+        },
+        "matchingRules": {
+          "$.body.body": {
+            "min": 1
+          },
+          "$.body.body[*].*": {
+            "match": "type"
+          },
+          "$.body.body[*].total_event_count": {
+            "match": "type"
+          },
+          "$.body.body[*].event_type_counts.abandoned_cart": {
+            "match": "type"
+          },
+          "$.body.body[*].event_type_counts.customer_login": {
+            "match": "type"
+          },
+          "$.body.body[*].event_type_counts.item_purchased": {
+            "match": "type"
+          },
+          "$.body.body[*].event_type_counts.trait_computed": {
+            "match": "type"
+          },
+          "$.body.body[*].event_type_counts.viewed_cart": {
+            "match": "type"
+          },
+          "$.body.body[*].event_type_counts.viewed_checkout": {
+            "match": "type"
+          },
+          "$.body.body[*].event_type_counts.viewed_sale_item": {
+            "match": "type"
+          },
+          "$.body.body[*].date": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "A request for customer profile by hux id.",
+      "providerState": "HUX ID exists.",
+      "request": {
+        "method": "GET",
+        "path": "/customer-profiles/HUX000000000000001",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "code": 200,
+          "body": {
+            "id": "1531-2039-11",
+            "first_name": "John",
+            "last_name": "Doe",
+            "match_confidence": 3,
+            "since": "2021-05-24T00:00:00.000",
+            "ltv_actual": 5.07,
+            "ltv_predicted": 6.28,
+            "conversion_time": 3.48,
+            "churn_rate": 5,
+            "last_click": "2021-04-18T15:23:00.000z",
+            "last_purchase": "2021-01-21T12:52:00.000z",
+            "last_email_open": "2021-05-22T14:02:00.000z",
+            "email": "john.doe@microsoft.com",
+            "phone": "+19995551234",
+            "age": 43,
+            "gender": "M",
+            "address": "Silence st., 5 apt 4",
+            "city": "New Springs",
+            "state": "CO",
+            "zip": "80013",
+            "preference_email": true,
+            "preference_push": true,
+            "preference_sms": true,
+            "preference_in_app": false,
+            "identity_resolution": {
+              "name": {
+                "percentage": 0.26,
+                "count": 52,
+                "data_sources": [
+                  [
+                    {
+                      "id": "585t749997acad4bac4373b",
+                      "name": "Netsuite",
+                      "type": "net-suite",
+                      "percentage": 0.26,
+                      "count": 52
+                    }
+                  ]
+                ],
+                "cooccurrences": [
+                  [
+                    {
+                      "identifier": "address",
+                      "count": 12,
+                      "percentage": 0.5
+                    }
+                  ]
+                ]
+              },
+              "address": {
+                "percentage": 0.26,
+                "count": 52,
+                "data_sources": [
+                  [
+                    {
+                      "id": "585t749997acad4bac4373b",
+                      "name": "Netsuite",
+                      "type": "net-suite",
+                      "percentage": 0.26,
+                      "count": 52
+                    }
+                  ]
+                ],
+                "cooccurrences": [
+                  [
+                    {
+                      "identifier": "address",
+                      "count": 12,
+                      "percentage": 0.5
+                    }
+                  ]
+                ]
+              },
+              "email": {
+                "percentage": 0.26,
+                "count": 52,
+                "data_sources": [
+                  [
+                    {
+                      "id": "585t749997acad4bac4373b",
+                      "name": "Netsuite",
+                      "type": "net-suite",
+                      "percentage": 0.26,
+                      "count": 52
+                    }
+                  ]
+                ],
+                "cooccurrences": [
+                  [
+                    {
+                      "identifier": "address",
+                      "count": 12,
+                      "percentage": 0.5
+                    }
+                  ]
+                ]
+              },
+              "phone": {
+                "percentage": 0.26,
+                "count": 52,
+                "data_sources": [
+                  [
+                    {
+                      "id": "585t749997acad4bac4373b",
+                      "name": "Netsuite",
+                      "type": "net-suite",
+                      "percentage": 0.26,
+                      "count": 52
+                    }
+                  ]
+                ],
+                "cooccurrences": [
+                  [
+                    {
+                      "identifier": "address",
+                      "count": 12,
+                      "percentage": 0.5
+                    }
+                  ]
+                ]
+              },
+              "cookie": {
+                "percentage": 0.26,
+                "count": 52,
+                "data_sources": [
+                  [
+                    {
+                      "id": "585t749997acad4bac4373b",
+                      "name": "Netsuite",
+                      "type": "net-suite",
+                      "percentage": 0.26,
+                      "count": 52
+                    }
+                  ]
+                ],
+                "cooccurrences": [
+                  [
+                    {
+                      "identifier": "address",
+                      "count": 12,
+                      "percentage": 0.5
+                    }
+                  ]
+                ]
+              }
+            },
+            "propensity_to_unsubscribe": 4,
+            "propensity_to_purchase": 6.5
+          },
+          "message": "ok"
+        },
+        "matchingRules": {
+          "$.body.body": {
+            "match": "type"
+          },
+          "$.body.body.id": {
+            "match": "type"
+          },
+          "$.body.body.first_name": {
+            "match": "type"
+          },
+          "$.body.body.last_name": {
+            "match": "type"
+          },
+          "$.body.body.match_confidence": {
+            "match": "type"
+          },
+          "$.body.body.since": {
+            "match": "type"
+          },
+          "$.body.body.ltv_actual": {
+            "match": "type"
+          },
+          "$.body.body.ltv_predicted": {
+            "match": "type"
+          },
+          "$.body.body.conversion_time": {
+            "match": "type"
+          },
+          "$.body.body.churn_rate": {
+            "match": "type"
+          },
+          "$.body.body.last_click": {
+            "match": "type"
+          },
+          "$.body.body.last_purchase": {
+            "match": "type"
+          },
+          "$.body.body.last_email_open": {
+            "match": "type"
+          },
+          "$.body.body.email": {
+            "match": "type"
+          },
+          "$.body.body.phone": {
+            "match": "type"
+          },
+          "$.body.body.age": {
+            "match": "type"
+          },
+          "$.body.body.gender": {
+            "match": "type"
+          },
+          "$.body.body.address": {
+            "match": "type"
+          },
+          "$.body.body.city": {
+            "match": "type"
+          },
+          "$.body.body.state": {
+            "match": "type"
+          },
+          "$.body.body.zip": {
+            "match": "type"
+          },
+          "$.body.body.preference_email": {
+            "match": "type"
+          },
+          "$.body.body.preference_push": {
+            "match": "type"
+          },
+          "$.body.body.preference_sms": {
+            "match": "type"
+          },
+          "$.body.body.preference_in_app": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.name": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.name.percentage": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.name.count": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.name.data_sources": {
+            "min": 1
+          },
+          "$.body.body.identity_resolution.name.data_sources[*].*": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.name.data_sources[*][0].id": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.name.data_sources[*][0].name": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.name.data_sources[*][0].type": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.name.data_sources[*][0].percentage": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.name.data_sources[*][0].count": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.name.cooccurrences": {
+            "min": 1
+          },
+          "$.body.body.identity_resolution.name.cooccurrences[*].*": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.name.cooccurrences[*][0].identifier": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.name.cooccurrences[*][0].count": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.name.cooccurrences[*][0].percentage": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.address": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.address.percentage": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.address.count": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.address.data_sources": {
+            "min": 1
+          },
+          "$.body.body.identity_resolution.address.data_sources[*].*": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.address.data_sources[*][0].id": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.address.data_sources[*][0].name": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.address.data_sources[*][0].type": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.address.data_sources[*][0].percentage": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.address.data_sources[*][0].count": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.address.cooccurrences": {
+            "min": 1
+          },
+          "$.body.body.identity_resolution.address.cooccurrences[*].*": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.address.cooccurrences[*][0].identifier": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.address.cooccurrences[*][0].count": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.address.cooccurrences[*][0].percentage": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.email": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.email.percentage": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.email.count": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.email.data_sources": {
+            "min": 1
+          },
+          "$.body.body.identity_resolution.email.data_sources[*].*": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.email.data_sources[*][0].id": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.email.data_sources[*][0].name": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.email.data_sources[*][0].type": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.email.data_sources[*][0].percentage": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.email.data_sources[*][0].count": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.email.cooccurrences": {
+            "min": 1
+          },
+          "$.body.body.identity_resolution.email.cooccurrences[*].*": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.email.cooccurrences[*][0].identifier": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.email.cooccurrences[*][0].count": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.email.cooccurrences[*][0].percentage": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.phone": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.phone.percentage": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.phone.count": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.phone.data_sources": {
+            "min": 1
+          },
+          "$.body.body.identity_resolution.phone.data_sources[*].*": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.phone.data_sources[*][0].id": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.phone.data_sources[*][0].name": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.phone.data_sources[*][0].type": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.phone.data_sources[*][0].percentage": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.phone.data_sources[*][0].count": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.phone.cooccurrences": {
+            "min": 1
+          },
+          "$.body.body.identity_resolution.phone.cooccurrences[*].*": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.phone.cooccurrences[*][0].identifier": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.phone.cooccurrences[*][0].count": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.phone.cooccurrences[*][0].percentage": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.cookie": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.cookie.percentage": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.cookie.count": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.cookie.data_sources": {
+            "min": 1
+          },
+          "$.body.body.identity_resolution.cookie.data_sources[*].*": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.cookie.data_sources[*][0].id": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.cookie.data_sources[*][0].name": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.cookie.data_sources[*][0].type": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.cookie.data_sources[*][0].percentage": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.cookie.data_sources[*][0].count": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.cookie.cooccurrences": {
+            "min": 1
+          },
+          "$.body.body.identity_resolution.cookie.cooccurrences[*].*": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.cookie.cooccurrences[*][0].identifier": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.cookie.cooccurrences[*][0].count": {
+            "match": "type"
+          },
+          "$.body.body.identity_resolution.cookie.cooccurrences[*][0].percentage": {
+            "match": "type"
+          },
+          "$.body.body.propensity_to_unsubscribe": {
+            "match": "type"
+          },
+          "$.body.body.propensity_to_purchase": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "A request for spending by month.",
+      "providerState": "Start date, end date, country, state filter passed.",
+      "request": {
+        "method": "POST",
+        "path": "/customer-profiles/insights/spending-by-month",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "filters": [
+            {
+              "section_aggregator": "ALL",
+              "section_filters": [
+                {
+                  "field": "country",
+                  "type": "equals",
+                  "value": "US"
+                },
+                {
+                  "field": "state",
+                  "type": "equals",
+                  "value": "HI"
+                }
+              ]
+            }
+          ],
+          "start_date": "2020-10-05",
+          "end_date": "2021-10-05"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "code": 200,
+          "body": [
+            {
+              "month": 10,
+              "year": 2020,
+              "avg_spent_men": 11.166666666666666,
+              "avg_spent_women": 32.86,
+              "avg_spent_other": 18.099999999999998,
+              "gender_men": 6,
+              "gender_women": 5,
+              "gender_other": 3
+            }
+          ],
+          "message": "ok"
+        },
+        "matchingRules": {
+          "$.body.body": {
+            "min": 1
+          },
+          "$.body.body[*].*": {
+            "match": "type"
+          },
+          "$.body.body[*].month": {
+            "match": "type"
+          },
+          "$.body.body[*].year": {
+            "match": "type"
+          },
+          "$.body.body[*].avg_spent_men": {
+            "match": "type"
+          },
+          "$.body.body[*].avg_spent_women": {
+            "match": "type"
+          },
+          "$.body.body[*].avg_spent_other": {
+            "match": "type"
+          },
+          "$.body.body[*].gender_men": {
+            "match": "type"
+          },
+          "$.body.body[*].gender_women": {
+            "match": "type"
+          },
+          "$.body.body[*].gender_other": {
+            "match": "type"
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}

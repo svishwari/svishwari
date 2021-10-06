@@ -397,6 +397,7 @@ def get_audience_insights(
                             "as": "delivery_platforms",
                         }
                     },
+                    {"$project": {"delivery_platforms.update_time": 0}},
                     {
                         "$unwind": {
                             "path": "$delivery_platforms",

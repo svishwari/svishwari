@@ -259,7 +259,10 @@ router.beforeEach(async (to, from, next) => {
 
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
-  if (requiresAuth && !(await Vue.prototype.$auth.isAuthenticated())) {
+  // TODO: HUS-1253
+  const isAuthenticated = await Vue.prototype.$auth.isAuthenticated()
+
+  if (requiresAuth && !isAuthenticated) {
     sessionStorage.setItem("appRedirect", to.fullPath)
     next({
       path: "/login",

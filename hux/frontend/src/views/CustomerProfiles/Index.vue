@@ -6,18 +6,24 @@
       </template>
       <template #right>
         <hux-button
+          v-if="!loading"
           class="mr-4 pa-3"
           is-custom-icon
           is-tile
           icon="customer-profiles"
           variant="white"
+          data-e2e="view-all-customers"
           @click="toggleProfilesDrawer()"
         >
           View all customers
         </hux-button>
       </template>
     </page-header>
-    <v-progress-linear :active="loading" :indeterminate="loading" />
+    <v-progress-linear
+      :active="loading"
+      :indeterminate="loading"
+      data-e2e="loader"
+    />
     <div v-if="!loading">
       <div class="customer-slide-group px-15 mt-6 mb-6 row-margin">
         <v-slide-group ref="wrapper" show-arrows>

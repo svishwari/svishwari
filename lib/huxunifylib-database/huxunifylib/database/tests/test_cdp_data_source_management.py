@@ -242,7 +242,6 @@ class TestCdpDataSourceManagement(unittest.TestCase):
             self.assertIn(c.NAME, data_source)
             self.assertIn(c.TYPE, data_source)
             self.assertIn(c.STATUS, data_source)
-            self.assertIn(c.CDP_DATA_SOURCE_FIELD_FEED_COUNT, data_source)
             self.assertIn(c.ADDED, data_source)
             self.assertTrue(c.ADDED)
 

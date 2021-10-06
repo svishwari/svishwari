@@ -148,12 +148,6 @@
       :toggle="showDeliveryHistoryDrawer"
       @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
     />
-    <hux-alert
-      v-model="flashAlert"
-      :type="alert.type"
-      :title="alert.title"
-      :message="alert.message"
-    />
 
     <confirm-modal
       v-model="showConfirmModal"
@@ -177,14 +171,12 @@
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
       @onCreate="onCreated()"
-      @onError="onError($event)"
     />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-import { handleError } from "@/utils"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import Status from "@/components/common/Status"
@@ -195,7 +187,6 @@ import SelectDestinationsDrawer from "./Configuration/Drawers/SelectDestinations
 import DestinationDataExtensionDrawer from "./Configuration/Drawers/DestinationDataExtensionDrawer.vue"
 import DeliveryHistoryDrawer from "@/views/Shared/Drawers/DeliveryHistoryDrawer.vue"
 import DeliveryOverview from "../../components/DeliveryOverview.vue"
-import HuxAlert from "../../components/common/HuxAlert.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
@@ -217,7 +208,6 @@ export default {
     DestinationDataExtensionDrawer,
     DeliveryHistoryDrawer,
     DeliveryOverview,
-    HuxAlert,
     ConfirmModal,
     EditDeliverySchedule,
     LookAlikeAudience,
@@ -233,12 +223,6 @@ export default {
       loading: false,
       loadingTab: false,
       loadingAudiences: false,
-      flashAlert: false,
-      alert: {
-        type: "success",
-        title: "YAY!",
-        message: "Successfully triggered delivery.",
-      },
       tabOption: 0,
       Tooltips: [
         { acronym: "CPM", description: "Cost per Thousand Impressions" },
@@ -317,6 +301,7 @@ export default {
       detachAudienceDestination: "engagements/detachAudienceDestination",
       getAudiencePerformanceById: "engagements/getAudiencePerformance",
       getEngagementById: "engagements/get",
+      setAlert: "alerts/setAlert",
     }),
     async refreshEntity() {
       this.loading = true
@@ -505,128 +490,95 @@ export default {
     },
     //#region Delivery Overview Region
     async triggerOverviewAction(event) {
-      try {
-        const engagementId = this.engagementId
-        switch (event.target.title.toLowerCase()) {
-          case "add a destination":
-            this.closeDrawers()
-            this.triggerSelectDestination(event.data.id)
-            break
+      const engagementId = this.engagementId
+      switch (event.target.title.toLowerCase()) {
+        case "add a destination":
+          this.closeDrawers()
+          this.triggerSelectDestination(event.data.id)
+          break
 
-          case "deliver now":
-            try {
-              await this.deliverAudience({
-                id: engagementId,
-                audienceId: event.data.id,
-              })
-              this.dataPendingMesssage(event, "audience")
-              this.refreshEntity()
-            } catch (error) {
-              this.dataErrorMesssage(event, "audience")
-              handleError(error)
-              throw error
-            }
-            break
+        case "deliver now":
+          await this.deliverAudience({
+            id: engagementId,
+            audienceId: event.data.id,
+          })
+          this.dataPendingMesssage(event, "audience")
+          this.refreshEntity()
+          break
 
-          case "remove audience":
-            this.showConfirmModal = true
-            this.confirmDialog.actionType = "remove-audience"
-            this.confirmDialog.title = `You are about to remove ${event.data.name}`
-            this.confirmDialog.btnText = "Yes, remove it"
-            this.confirmDialog.body =
-              "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement."
-            this.deleteActionData = event.data
-            break
-          default:
-            break
-        }
-      } catch (error) {
-        handleError(error)
-        throw error
+        case "remove audience":
+          this.showConfirmModal = true
+          this.confirmDialog.actionType = "remove-audience"
+          this.confirmDialog.title = `You are about to remove ${event.data.name}`
+          this.confirmDialog.btnText = "Yes, remove it"
+          this.confirmDialog.body =
+            "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement."
+          this.deleteActionData = event.data
+          break
+        default:
+          break
       }
     },
 
     async triggerOverviewDestinationAction(event) {
-      try {
-        const engagementId = this.engagementId
-        this.selectedAudienceId = event.parent.id
-        switch (event.target.title.toLowerCase()) {
-          case "deliver now":
-            try {
-              await this.deliverAudienceDestination({
-                id: engagementId,
-                audienceId: this.selectedAudienceId,
-                destinationId: event.data.id,
-              })
-              this.dataPendingMesssage(event, "destination")
-            } catch (error) {
-              this.dataErrorMesssage(event, "destination")
-              console.error(error)
-            }
-            break
-          case "edit delivery schedule":
-            this.confirmDialog.actionType = "edit-schedule"
-            this.confirmDialog.title =
-              "You are about to edit delivery schedule."
-            this.confirmDialog.btnText = "Yes, edit delivery schedule"
-            this.confirmDialog.body =
-              "This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
-            this.showConfirmModal = true
-            this.scheduleDestination = event.data
-            break
-          case "remove destination":
-            this.confirmDialog.actionType = "remove-destination"
-            this.confirmDialog.title = `Remove ${event.data.name} destination?`
-            this.confirmDialog.btnText = "Yes, remove it"
-            this.confirmDialog.body =
-              "You will not be deleting this destination; this destination will not be attached to this specific audience anymore."
-            this.deleteActionData = {
-              engagementId: this.engagementId,
-              audienceId: this.selectedAudienceId,
-              data: { id: event.data.id },
-            }
-            this.showConfirmModal = true
-            break
-          case "create lookalike":
-            this.openLookAlikeDrawer(event)
-            break
-          default:
-            break
-        }
-      } catch (error) {
-        handleError(error)
-        throw error
+      const engagementId = this.engagementId
+      this.selectedAudienceId = event.parent.id
+      switch (event.target.title.toLowerCase()) {
+        case "deliver now":
+          await this.deliverAudienceDestination({
+            id: engagementId,
+            audienceId: this.selectedAudienceId,
+            destinationId: event.data.id,
+          })
+          this.dataPendingMesssage(event, "destination")
+          break
+        case "edit delivery schedule":
+          this.confirmDialog.actionType = "edit-schedule"
+          this.confirmDialog.title = "You are about to edit delivery schedule."
+          this.confirmDialog.btnText = "Yes, edit delivery schedule"
+          this.confirmDialog.body =
+            "This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
+          this.showConfirmModal = true
+          this.scheduleDestination = event.data
+          break
+        case "remove destination":
+          this.confirmDialog.actionType = "remove-destination"
+          this.confirmDialog.title = `Remove ${event.data.name} destination?`
+          this.confirmDialog.btnText = "Yes, remove it"
+          this.confirmDialog.body =
+            "You will not be deleting this destination; this destination will not be attached to this specific audience anymore."
+          this.deleteActionData = {
+            engagementId: this.engagementId,
+            audienceId: this.selectedAudienceId,
+            data: { id: event.data.delivery_platform_id },
+          }
+          this.showConfirmModal = true
+          break
+        case "create lookalike":
+          this.openLookAlikeDrawer(event)
+          break
+        default:
+          break
       }
     },
 
     //Alert Message
     dataPendingMesssage(event, value) {
-      this.alert.type = "Pending"
-      this.alert.title = ""
       if (value == "audience") {
         const engagementName = this.engagementList.name
         const audienceName = event.data.name
-        this.alert.message = `Your audience '${audienceName}', has started delivering as part of the engagement '${engagementName}'.`
+        this.setAlert({
+          type: "pending",
+          message: `Your audience '${audienceName}', has started delivering as part of the engagement '${engagementName}'.`,
+        })
       } else if (value == "destination") {
         const audienceName = event.parent.name
         const destinationName = event.data.name
-        this.alert.message = `Your audience '${audienceName}', has started delivering to '${destinationName}'.`
+        this.setAlert({
+          type: "pending",
+          message: `Your audience '${audienceName}', has started delivering to '${destinationName}'.`,
+        })
       }
-      this.flashAlert = true
-    },
-    dataErrorMesssage(event, value) {
-      this.alert.type = "error"
-      this.alert.title = "OH NO!"
-      if (value == "audience") {
-        const engagementName = this.engagementList.name
-        const audienceName = event.data.name
-        this.alert.message = `Failed to schedule a delivery of your audience '${audienceName}', from '${engagementName}'.`
-      } else if (value == "destination") {
-        const audienceName = event.parent.name
-        const destinationName = event.data.name
-        this.alert.message = `Failed to schedule delivery of your audience '${audienceName}', to '${destinationName}'.`
-      }
-      this.flashAlert = true
     },
 
     //#endregion
@@ -644,14 +596,10 @@ export default {
     },
     onCreated() {
       this.lookalikeCreated = true
-      this.alert.message = "Lookalike created successfully"
-      this.flashAlert = true
-    },
-    onError(message) {
-      this.alert.type = "error"
-      this.alert.title = "OH NO!"
-      this.alert.message = message
-      this.flashAlert = true
+      this.setAlert({
+        type: "success",
+        message: "Lookalike created successfully",
+      })
     },
     editEngagement() {
       this.$router.push({
