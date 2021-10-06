@@ -655,7 +655,7 @@ def get_demographic_by_country(
     """
     filters = filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
     customer_count_by_state = get_customer_count_by_state(
-        token=token, filters=filters
+        token=token, filters=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
     )
     # start timer
     timer = time.perf_counter()
