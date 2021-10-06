@@ -435,7 +435,7 @@ class AudienceInsightsCountries(SwaggerView):
     # pylint: disable=no-self-use
     @validate_engagement_and_audience()
     @api_error_handler()
-    def get(self, audience_id: str) -> Tuple[list, int]:
+    def get(self, audience_id: ObjectId) -> Tuple[list, int]:
         """Retrieves country-level geographic customer insights for the audience.
 
         ---
@@ -443,7 +443,7 @@ class AudienceInsightsCountries(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            audience_id (str): Audience ID.
+            audience_id (ObjectId): Audience ID.
 
         Returns:
             Tuple[list, int]: list of spend and size data by country,
@@ -456,9 +456,6 @@ class AudienceInsightsCountries(SwaggerView):
         audience = orchestration_management.get_audience(
             get_db_client(), audience_id
         )
-
-        if not audience:
-            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         return (
             jsonify(
