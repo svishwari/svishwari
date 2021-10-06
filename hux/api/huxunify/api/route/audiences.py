@@ -33,6 +33,7 @@ from huxunify.api.route.decorators import (
     secured,
     get_user_name,
     api_error_handler,
+    validate_engagement_and_audience,
 )
 from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
@@ -432,6 +433,7 @@ class AudienceInsightsCountries(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
+    @validate_engagement_and_audience()
     @api_error_handler()
     def get(self, audience_id: str) -> Tuple[list, int]:
         """Retrieves country-level geographic customer insights for the audience.
@@ -452,7 +454,7 @@ class AudienceInsightsCountries(SwaggerView):
         token_response = get_token_from_request(request)
 
         audience = orchestration_management.get_audience(
-            get_db_client(), ObjectId(audience_id)
+            get_db_client(), audience_id
         )
 
         if not audience:
