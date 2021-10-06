@@ -144,6 +144,11 @@ class TestCustomersOverview(TestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/identity/id-count-by"
+            f"-day",
+            json=t_c.IDR_MATCHING_TRENDS_BY_DAY_DATA,
+        )
         self.request_mocker.start()
 
         response = self.test_client.get(
@@ -334,7 +339,10 @@ class TestCustomersOverview(TestCase):
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/"
             f"{api_c.DEMOGRAPHIC}",
-            data={api_c.START_DATE: start_date, api_c.END_DATE: end_date},
+            query_string={
+                api_c.START_DATE: start_date,
+                api_c.END_DATE: end_date,
+            },
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -704,7 +712,7 @@ class TestCustomersOverview(TestCase):
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/"
             f"{api_c.DEMOGRAPHIC}",
-            data={
+            query_string={
                 api_c.START_DATE: "2021-04-01",
                 api_c.END_DATE: "2021-08-01",
             },

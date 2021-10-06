@@ -17,6 +17,10 @@ from huxunifylib.database.engagement_management import (
     get_engagement,
     get_engagements_by_audience,
 )
+from huxunifylib.database.engagement_audience_management import (
+    set_engagement_audience_destination_schedule,
+    remove_engagement_audience_destination_schedule,
+)
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.orchestration_management import (
     get_audience,
@@ -27,6 +31,7 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+    get_user_name,
     validate_delivery_params,
     validate_destination,
 )
@@ -36,6 +41,9 @@ from huxunify.api.route.utils import (
 from huxunify.api.schema.orchestration import (
     EngagementDeliveryHistorySchema,
     AudienceDeliveryHistorySchema,
+)
+from huxunify.api.schema.destinations import (
+    DeliveryScheduleSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -505,11 +513,23 @@ class EngagementDeliverHistoryView(SwaggerView):
             "example": "60bfeaa3fa9ba04689906f7a",
         },
         {
-            "name": api_c.DESTINATIONS,
+            "name": api_c.DESTINATION,
             "in": "query",
-            "type": "string",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
             "description": "Destination Ids to be filtered.",
-            "example": "60b9601a6021710aa146df30,60b9601c6021710aa146df36",
+            "example": "60b9601a6021710aa146df30",
+            "required": False,
+        },
+        {
+            "name": api_c.AUDIENCE,
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
+            "description": "Audience Ids to be filtered.",
+            "example": "612808e511d8c67ac2427d18",
             "required": False,
         },
     ]
@@ -561,19 +581,22 @@ class EngagementDeliverHistoryView(SwaggerView):
                 "message": api_c.ENGAGEMENT_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
 
-        destination_ids = request.args.get(api_c.DESTINATIONS)
+        destination_ids = request.args.getlist(api_c.DESTINATION)
+        audience_ids = request.args.getlist(api_c.AUDIENCE)
 
         if destination_ids:
             destination_ids = [
-                ObjectId(destination)
-                for destination in destination_ids.replace(" ", "").split(",")
+                ObjectId(destination) for destination in destination_ids
             ]
 
+        if audience_ids:
+            audience_ids = [ObjectId(audience) for audience in audience_ids]
         delivery_jobs = (
             delivery_platform_management.get_delivery_jobs_using_metadata(
                 database,
                 engagement_id=engagement_id,
                 delivery_platform_ids=destination_ids,
+                audience_ids=audience_ids,
             )
         )
 
@@ -603,6 +626,13 @@ class EngagementDeliverHistoryView(SwaggerView):
                 and job.get(api_c.AUDIENCE_ID)
                 and job.get(db_c.DELIVERY_PLATFORM_ID)
             ):
+                # Ignore deliveries to destinations no longer attached to engagement audiences
+                if (
+                    job.get(db_c.DELIVERY_PLATFORM_ID)
+                    not in destination_dict.keys()
+                ):
+                    continue
+
                 # append the necessary schema to the response list.
                 delivery_history.append(
                     {
@@ -653,11 +683,23 @@ class AudienceDeliverHistoryView(SwaggerView):
             "example": "60bfeaa3fa9ba04689906f7a",
         },
         {
-            "name": api_c.DESTINATIONS,
+            "name": api_c.DESTINATION,
             "in": "query",
-            "type": "string",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
             "description": "Destination Ids to be filtered.",
-            "example": "60b9601a6021710aa146df30,60b9601c6021710aa146df36",
+            "example": "60b9601a6021710aa146df30",
+            "required": False,
+        },
+        {
+            "name": api_c.ENGAGEMENT,
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
+            "description": "Engagement Ids to be filtered.",
+            "example": "60b9601a6021710aa146df30",
             "required": False,
         },
     ]
@@ -705,12 +747,17 @@ class AudienceDeliverHistoryView(SwaggerView):
             logger.error("Audience with ID %s not found.", audience_id)
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
-        destination_ids = request.args.get(api_c.DESTINATIONS)
+        destination_ids = request.args.getlist(api_c.DESTINATION)
+        engagement_ids = request.args.getlist(api_c.ENGAGEMENT)
 
         if destination_ids:
             destination_ids = [
-                ObjectId(destination)
-                for destination in destination_ids.replace(" ", "").split(",")
+                ObjectId(destination) for destination in destination_ids
+            ]
+
+        if engagement_ids:
+            engagement_ids = [
+                ObjectId(engagement) for engagement in engagement_ids
             ]
 
         delivery_jobs = (
@@ -718,6 +765,7 @@ class AudienceDeliverHistoryView(SwaggerView):
                 database,
                 audience_id=audience_id,
                 delivery_platform_ids=destination_ids,
+                engagement_ids=engagement_ids,
             )
         )
 
@@ -768,3 +816,209 @@ class AudienceDeliverHistoryView(SwaggerView):
             ),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    delivery_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATION}/<destination_id>/{api_c.SCHEDULE}",
+    "EngagementDeliveryScheduleDestinationView",
+)
+class EngagementDeliveryScheduleDestinationView(SwaggerView):
+    """Engagement audience destination delivery schedule class."""
+
+    parameters = [
+        {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input delivery schedule body.",
+            "example": {
+                api_c.PERIODICIY: "Daily",
+                api_c.EVERY: 2,
+                api_c.HOUR: 11,
+                api_c.MINUTE: 15,
+                api_c.PERIOD: "PM",
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Result.",
+            "schema": {
+                "example": {"message": "Delivery scheduled updated."},
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to update the delivery schedule.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DELIVERY_TAG]
+
+    # pylint: disable=no-self-use
+    # pylint: disable=too-many-return-statements
+    @api_error_handler()
+    @validate_destination()
+    @validate_delivery_params
+    @get_user_name()
+    def post(
+        self,
+        engagement_id: ObjectId,
+        audience_id: ObjectId,
+        destination_id: ObjectId,
+        user_name: str,
+    ) -> Tuple[dict, int]:
+        """Sets the delivery schedule for one destination of an engagement audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (ObjectId): Engagement ID.
+            audience_id (ObjectId): Audience ID.
+            destination_id (ObjectId): Destination ID.
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Message indicating connection success/failure,
+                HTTP status code.
+        """
+
+        delivery_schedule = DeliveryScheduleSchema().load(
+            request.get_json(), partial=True
+        )
+
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
+
+        # validate that the destination ID is attached to the audience
+        valid_destination = False
+        for audience in engagement[db_c.AUDIENCES]:
+            for destination in audience[db_c.DESTINATIONS]:
+                if isinstance(
+                    destination, dict
+                ) and destination_id == destination.get(db_c.OBJECT_ID):
+                    valid_destination = True
+
+        if not valid_destination:
+            logger.error(
+                "Destination is not attached to the engagement %s  audience %s.",
+                engagement_id,
+                audience_id,
+            )
+            return {
+                "message": "Destination is not attached to the "
+                "engagement audience."
+            }, HTTPStatus.BAD_REQUEST
+
+        # set the delivery schedule for the engaged audience destination
+        # TODO - convert the schedule object into a CRON expression in another PR.
+        set_engagement_audience_destination_schedule(
+            database,
+            engagement_id,
+            audience_id,
+            destination_id,
+            delivery_schedule,
+            user_name,
+        )
+
+        # TODO schedule the actual JOB, in another PR for HUS-1148
+
+        return {
+            "message": "Successfully updated the delivery schedule."
+        }, HTTPStatus.OK
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @validate_destination()
+    @validate_delivery_params
+    @get_user_name()
+    def delete(
+        self,
+        engagement_id: ObjectId,
+        audience_id: ObjectId,
+        destination_id: ObjectId,
+        user_name: str,
+    ) -> Tuple[dict, int]:
+        """Sets the delivery schedule for one destination of an engagement audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (ObjectId): Engagement ID.
+            audience_id (ObjectId): Audience ID.
+            destination_id (ObjectId): Destination ID.
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Message indicating connection success/failure,
+                HTTP status code.
+        """
+
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
+
+        # validate that the destination ID is attached to the audience
+        valid_destination = False
+        for audience in engagement[db_c.AUDIENCES]:
+            for destination in audience[db_c.DESTINATIONS]:
+                if isinstance(
+                    destination, dict
+                ) and destination_id == destination.get(db_c.OBJECT_ID):
+                    valid_destination = True
+
+        if not valid_destination:
+            logger.error(
+                "Destination is not attached to the engagement %s  audience %s.",
+                engagement_id,
+                audience_id,
+            )
+            return {
+                "message": "Destination is not attached to the "
+                "engagement audience."
+            }, HTTPStatus.BAD_REQUEST
+
+        # set the delivery schedule for the engaged audience destination
+        remove_engagement_audience_destination_schedule(
+            database,
+            engagement_id,
+            audience_id,
+            destination_id,
+            user_name,
+        )
+
+        # TODO remove the scheduled JOB from AWS, in another PR for HUS-1148
+
+        return {
+            "message": "Successfully removed the delivery schedule."
+        }, HTTPStatus.OK

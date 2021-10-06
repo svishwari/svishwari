@@ -9,7 +9,7 @@ describe("Decisioning > models", () => {
     })
   })
 
-  it("should be able to view a list of models and dashboard", () => {
+  it("should be able to view a model's dashboard", () => {
     cy.get(selector.nav.models).click()
 
     cy.location("pathname").should("eq", route.models)
@@ -17,41 +17,33 @@ describe("Decisioning > models", () => {
     cy.get(selector.models.item).its("length").should("gt", 0)
 
     cy.get(selector.models.item).first().click()
-  })
 
-  it("view and validate overview", () => {
-    //validate overview by getting total no. of them
+    // should be able to view model overview
     cy.get(selector.models.performancemetric)
       .its("length")
       .as("overviewListCount")
+
     cy.get("@overviewListCount").then(() => {
       cy.get(selector.models.performancemetric).its("length").should("eq", 5)
     })
-  })
 
-  it("should be able to view and validate Drift and Feature chart", () => {
-    //validate Gender chart
+    // should be able to view and validate Drift and Feature chart
     cy.get(selector.models.driftchart).its("length").should("be.gt", 0)
     cy.get(selector.models.featurechart).its("length").should("be.gt", 0)
+
     // scroll down
     cy.scrollTo("bottom", { duration: 1000 })
-  })
-  it("should be able to hover over Feature chart", () => {
-    // mouse hover on income chart
+
+    // should be able to hover over Feature chart"
     cy.get(".bar")
       .first()
       .trigger("mouseover", { eventConstructor: "MouseEvent" })
-  })
 
-  it("validate feature and lift table", () => {
+    // validate feature and lift table
     cy.get(selector.models.lifttable).its("length").should("be.gt", 0)
     cy.get(selector.models.featuretable).its("length").should("be.gt", 0)
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000)
-  })
 
-  it("should be able to view version history list", () => {
-    //open version history drawer
+    // should be able to view version history list
     cy.get(selector.models.versionhistorybutton).click()
 
     //validate the history list

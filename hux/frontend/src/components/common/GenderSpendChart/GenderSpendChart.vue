@@ -5,29 +5,53 @@
       :chart-dimensions="chartDimensions"
       :y-value-data="yAxisData"
       :date-data="dateData"
-      @cordinates="getCordinates"
       @tooltipDisplay="toolTipDisplay"
     />
-
-    <line-area-chart-tooltip
+    <chart-tooltip
+      v-if="show"
       :position="{
-        x: tooltip.x,
-        y: tooltip.y,
+        x: currentData.xPosition,
+        y: currentData.yPosition,
       }"
-      :show-tooltip="show"
-      :source-input="currentData"
+      :tooltip-style="toolTipStyle"
     >
-    </line-area-chart-tooltip>
+      <template #content>
+        <div class="bar-hover">
+          <div class="date-font">
+            {{ currentData.date | date("MMM DD[,] YYYY") }}
+          </div>
+          <div>
+            <span class="append-circle color-women"></span>
+            <span class="font-size-tooltip">
+              {{ currentData.women_spend | currency }}
+            </span>
+          </div>
+          <div>
+            <span class="append-circle color-men"></span>
+            <span class="font-size-tooltip">
+              {{ currentData.men_spend | currency }}
+            </span>
+          </div>
+          <div>
+            <span class="append-circle color-other"></span>
+            <span class="font-size-tooltip">
+              {{ currentData.others_spend | currency }}
+            </span>
+          </div>
+        </div>
+      </template>
+    </chart-tooltip>
   </div>
 </template>
 
 <script>
-import LineAreaChartTooltip from "@/components/common/GenderSpendChart/LineAreaChartTooltip"
 import LineAreaChart from "@/components/common/GenderSpendChart/LineAreaChart"
+import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
+import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
 
 export default {
   name: "GenderSpendChart",
-  components: { LineAreaChart, LineAreaChartTooltip },
+  components: { LineAreaChart, ChartTooltip },
   props: {
     data: {
       type: Object,
@@ -37,10 +61,6 @@ export default {
   data() {
     return {
       show: false,
-      tooltip: {
-        x: 0,
-        y: 0,
-      },
       chartDimensions: {
         width: 0,
         height: 0,
@@ -49,6 +69,7 @@ export default {
       yAxisData: [],
       currentData: {},
       dateData: [],
+      toolTipStyle: TooltipConfiguration.genderSpendChart,
     }
   },
   computed: {
@@ -90,7 +111,6 @@ export default {
       areaChartData.forEach((element) => {
         this.dateData.push(new Date(element.date))
       })
-
       return areaChartData
     },
   },
@@ -114,11 +134,6 @@ export default {
         this.currentData = arg[1]
       }
     },
-
-    getCordinates(args) {
-      this.tooltip.x = args.x
-      this.tooltip.y = args.y
-    },
     sizeHandler() {
       if (this.$refs.genderSpendChart) {
         this.chartDimensions.width = this.$refs.genderSpendChart.clientWidth
@@ -130,14 +145,45 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.global-text-line {
-  display: inline-block;
-  font-style: normal;
-  font-size: $font-size-root;
-  line-height: 19px;
-}
 .container {
   height: 500px;
   padding: 0px !important;
+  position: relative;
+
+  .append-circle {
+    height: 12px;
+    width: 12px;
+    background-color: var(--v-white-base);
+    border-radius: 50%;
+    display: inline-block;
+    margin-top: 6px;
+    margin-right: 8px;
+  }
+  .color-women {
+    border: 1px solid rgba(0, 85, 135, 1);
+  }
+  .color-men {
+    border: 1px solid var(--v-primary-darken1);
+  }
+  .color-other {
+    border: 1px solid var(--v-primary-lighten7);
+  }
+  .hover-font {
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+  }
+  .font-size-tooltip {
+    @extend .hover-font;
+    color: var(--v-black-darken1);
+    position: absolute;
+    margin-top: 5px;
+  }
+  .date-font {
+    @extend .hover-font;
+    color: var(--v-naroBlack-base);
+  }
 }
 </style>

@@ -1544,6 +1544,10 @@ class TestDeliveryPlatform(unittest.TestCase):
             engagement_id,
             self.source_audience_doc[c.ID],
             self.delivery_platform_doc[c.ID],
+            audience_ids=[
+                self.source_audience_doc[c.ID],
+                self.audience_2_doc[c.ID],
+            ],
         )
 
         self.assertIsNotNone(delivery_jobs)

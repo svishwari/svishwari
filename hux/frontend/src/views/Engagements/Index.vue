@@ -65,6 +65,9 @@
                 :route-param="item['id']"
                 :data="item"
                 data-e2e="engagement-collection"
+                has-favorite
+                :is-favorite="isUserFavorite(item, 'engagements')"
+                @actionFavorite="handleActionFavorite(item, 'engagements')"
               >
                 <template #expand-icon>
                   <v-icon
@@ -313,9 +316,9 @@
                   <div v-if="header.value == 'last_delivered'">
                     <tooltip>
                       <template #label-content>
-                        <span data-e2e="last-delivered">{{
-                          item[header.value] | Date("relative") | Empty
-                        }}</span>
+                        <span data-e2e="last-delivered">
+                          {{ item[header.value] | Date("relative") | Empty }}
+                        </span>
                       </template>
                       <template #hover-content>
                         <div>
@@ -485,14 +488,8 @@
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
       @onCreate="onCreated()"
-      @onError="onError($event)"
     />
 
-    <hux-alert
-      v-model="flashAlert"
-      :type="alert.type"
-      :message="alert.message"
-    />
     <confirm-modal
       v-model="showAudienceRemoveConfirmation"
       :title="confirmDialog.title"
@@ -518,7 +515,6 @@ import Avatar from "../../components/common/Avatar.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Status from "../../components/common/Status.vue"
 import MenuCell from "../../components/common/huxTable/MenuCell.vue"
-import HuxAlert from "@/components/common/HuxAlert.vue"
 import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
 import Logo from "../../components/common/Logo.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
@@ -536,7 +532,6 @@ export default {
     Status,
     MenuCell,
     LookAlikeAudience,
-    HuxAlert,
     Logo,
     Tooltip,
     ConfirmModal,
@@ -552,11 +547,6 @@ export default {
         title: "Remove  audience?",
         btnText: "Yes, remove it",
         body: "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement.",
-      },
-      flashAlert: false,
-      alert: {
-        type: "success",
-        message: "",
       },
       breadcrumbItems: [
         {
@@ -635,6 +625,7 @@ export default {
     ...mapGetters({
       engagementData: "engagements/list",
       audiencesData: "audiences/audience",
+      userFavorites: "users/favorites",
     }),
     audience(id) {
       return this.audiencesData(id)
@@ -709,7 +700,24 @@ export default {
       updateAudienceList: "engagements/updateAudienceList",
       updateEngagement: "engagements/updateEngagement",
       detachAudience: "engagements/detachAudience",
+      setAlert: "alerts/setAlert",
+      markFavorite: "users/markFavorite",
+      clearFavorite: "users/clearFavorite",
     }),
+
+    isUserFavorite(entity, type) {
+      return (
+        this.userFavorites[type] && this.userFavorites[type].includes(entity.id)
+      )
+    },
+
+    handleActionFavorite(item, type) {
+      if (!this.isUserFavorite(item, type)) {
+        this.markFavorite({ id: item.id, type: type })
+      } else {
+        this.clearFavorite({ id: item.id, type: type })
+      }
+    },
     getAudienceHeaders(headers) {
       headers[0].width = "180px"
       return headers
@@ -782,17 +790,21 @@ export default {
       this.showLookAlikeDrawer = false
     },
     async onCreated() {
-      this.alert.message = `Your lookalike audience, ${name}, has been created successfully.`
-      this.flashAlert = true
-    },
-    onError(message) {
-      this.alert.type = "error"
-      this.alert.message = message
-      this.flashAlert = true
+      this.setAlert({
+        type: "success",
+        message: `Your lookalike audience, ${name}, has been created successfully.`,
+      })
     },
     getActionItems(engagement) {
+      let isFavorite = this.isUserFavorite(engagement, "audiences")
       let actionItems = [
-        { title: "Favorite", isDisabled: true },
+        {
+          title: isFavorite ? "Unfavorite" : "Favorite",
+          isDisabled: false,
+          onClick: () => {
+            this.handleActionFavorite(engagement, "engagements")
+          },
+        },
         // TODO: enable once features are available
         // { title: "Export", isDisabled: true },
         {

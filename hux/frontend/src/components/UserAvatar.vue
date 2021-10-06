@@ -60,8 +60,8 @@ export default {
 
   computed: {
     ...mapGetters({
-      firstName: "getFirstname",
-      lastName: "getLastName",
+      firstName: "users/getFirstname",
+      lastName: "users/getLastName",
     }),
     initials() {
       return this.firstName[0] + this.lastName[0]

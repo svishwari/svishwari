@@ -87,12 +87,7 @@ def bulk_write_data_sources(
         c.CDP_DATA_SOURCES_COLLECTION
     ]
 
-    _ = [
-        data_source.update(
-            {c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1, c.ADDED: True}
-        )
-        for data_source in data_sources
-    ]
+    _ = [data_source.update({c.ADDED: True}) for data_source in data_sources]
 
     try:
         data_source_ids = collection.insert_many(data_sources).inserted_ids

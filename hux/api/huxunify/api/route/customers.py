@@ -251,10 +251,11 @@ class IDROverview(SwaggerView):
             Tuple[dict, int]: dict of Customer data overview, HTTP status code.
         """
 
+        # default to five years lookup to find the event date range.
         start_date = request.args.get(
             api_c.START_DATE,
             datetime.strftime(
-                datetime.utcnow().date() - relativedelta(months=6),
+                datetime.utcnow().date() - relativedelta(years=5),
                 api_c.DEFAULT_DATE_FORMAT,
             ),
         )
@@ -268,13 +269,40 @@ class IDROverview(SwaggerView):
         Validation().validate_date_range(start_date, end_date)
 
         token_response = get_token_from_request(request)
+
+        # TODO - when the CDP endpoint for getting the max and min date rnge
+        #  is available, we will call that instead of iterating all events to get them.
+        # get IDR overview
+        idr_overview = get_idr_overview(
+            token_response[0], start_date, end_date
+        )
+
+        # get date range from IDR matching trends.
+        trend_data = get_idr_matching_trends(
+            token_response[0],
+            start_date,
+            end_date,
+        )
+
         return (
             IDROverviewWithDateRangeSchema().dump(
-                get_idr_overview(
-                    token_response[0],
-                    start_date,
-                    end_date,
-                )
+                {
+                    api_c.OVERVIEW: idr_overview,
+                    api_c.DATE_RANGE: {
+                        api_c.START_DATE: min(
+                            [x[api_c.DAY] for x in trend_data]
+                        )
+                        if trend_data
+                        else datetime.strptime(
+                            start_date, api_c.DEFAULT_DATE_FORMAT
+                        ),
+                        api_c.END_DATE: max([x[api_c.DAY] for x in trend_data])
+                        if trend_data
+                        else datetime.strptime(
+                            end_date, api_c.DEFAULT_DATE_FORMAT
+                        ),
+                    },
+                }
             ),
             HTTPStatus.OK,
         )
@@ -627,7 +655,24 @@ class CustomerGeoVisualView(SwaggerView):
 class CustomerDemoVisualView(SwaggerView):
     """Customers Profiles Demographic Insights class."""
 
-    parameters = [api_c.START_DATE_PARAMS, api_c.END_DATE_PARAMS]
+    parameters = [
+        {
+            "name": api_c.START_DATE,
+            "description": "Start date.",
+            "type": "string",
+            "in": "query",
+            "required": True,
+            "example": "05-01-2016",
+        },
+        {
+            "name": api_c.END_DATE,
+            "description": "End date.",
+            "type": "string",
+            "in": "query",
+            "required": True,
+            "example": "09-01-2019",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "schema": {
@@ -964,10 +1009,10 @@ class CustomersInsightsCountries(SwaggerView):
                 "type": "array",
                 "items": CustomersInsightsStatesSchema,
             },
-            "description": "Customer Insights by states.",
+            "description": "Customer Insights by countries.",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get Customer Insights by states."
+            "description": "Failed to get Customer Insights by countries."
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -984,7 +1029,7 @@ class CustomersInsightsCountries(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[list, int]: list of spend and size data by state,
+            Tuple[list, int]: list of spend and size data by country,
                 HTTP status code.
         """
 

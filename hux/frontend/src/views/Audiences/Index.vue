@@ -75,6 +75,9 @@
                 route-name="AudienceInsight"
                 :route-param="item['id']"
                 data-e2e="audiencename"
+                has-favorite
+                :is-favorite="isUserFavorite(item, 'audiences')"
+                @actionFavorite="handleActionFavorite(item, 'audiences')"
               />
             </div>
             <div v-if="header.value == 'status'" class="text-caption">
@@ -230,13 +233,6 @@
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
       @onToggle="(val) => (showLookAlikeDrawer = val)"
-      @onError="onError($event)"
-    />
-
-    <hux-alert
-      v-model="flashAlert"
-      :type="alert.type"
-      :message="alert.message"
     />
   </div>
 </template>
@@ -258,7 +254,6 @@ import Icon from "@/components/common/Icon.vue"
 import Status from "../../components/common/Status.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import Logo from "../../components/common/Logo.vue"
-import HuxAlert from "@/components/common/HuxAlert.vue"
 
 export default {
   name: "Audiences",
@@ -277,15 +272,9 @@ export default {
     Status,
     Tooltip,
     Logo,
-    HuxAlert,
   },
   data() {
     return {
-      flashAlert: false,
-      alert: {
-        type: "success",
-        message: "",
-      },
       breadcrumbItems: [
         {
           text: "Audiences",
@@ -350,6 +339,7 @@ export default {
   computed: {
     ...mapGetters({
       rowData: "audiences/list",
+      userFavorites: "users/favorites",
     }),
     audienceList() {
       let audienceValue = this.rowData
@@ -371,15 +361,36 @@ export default {
   methods: {
     ...mapActions({
       getAllAudiences: "audiences/getAll",
+      markFavorite: "users/markFavorite",
+      clearFavorite: "users/clearFavorite",
     }),
+
+    isUserFavorite(entity, type) {
+      return (
+        this.userFavorites[type] && this.userFavorites[type].includes(entity.id)
+      )
+    },
+    handleActionFavorite(item, type) {
+      if (!this.isUserFavorite(item, type)) {
+        this.markFavorite({ id: item.id, type: type })
+      } else {
+        this.clearFavorite({ id: item.id, type: type })
+      }
+    },
 
     getActionItems(audience) {
       // This assumes we cannot create a lookalike audience from a lookalike audience
       let isLookalikeableActive =
         audience.lookalikeable === "Active" && !audience.is_lookalike
-
+      let isFavorite = this.isUserFavorite(audience, "audiences")
       let actionItems = [
-        { title: "Favorite", isDisabled: true },
+        {
+          title: isFavorite ? "Unfavorite" : "Favorite",
+          isDisabled: false,
+          onClick: () => {
+            this.handleActionFavorite(audience, "audiences")
+          },
+        },
         { title: "Export", isDisabled: true },
         {
           title: "Edit audience",
@@ -434,11 +445,6 @@ export default {
     openLookAlikeDrawer(audience) {
       this.selectedAudience = audience
       this.showLookAlikeDrawer = true
-    },
-    onError(message) {
-      this.alert.type = "error"
-      this.alert.message = message
-      this.flashAlert = true
     },
   },
 }

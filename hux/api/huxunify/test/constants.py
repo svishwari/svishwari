@@ -56,10 +56,30 @@ CUSTOMER_PROFILE_API = f"{TEST_CONFIG.CDP_SERVICE}"
 
 HUX = "HUX"
 CDP_CUSTOMER_PROFILE = "CDP_CUSTOMER_PROFILE"
-CONTRACTS_FOLDER = "contracts"
+CDP_CONNECTIONS = "CDP_CONNECTIONS"
+CONTRACTS_DIR = "contracts"
+CDP_CUSTOMERS_CONTRACTS_DIR = "cdp_customers"
+CDP_CONNECTIONS_CONTRACTS_DIR = "cdp_connections"
+TECTON_CONTRACTS_DIR = "tecton"
 CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT = (
     "/customer-profiles/insights/count-by-state"
 )
+CDP_CUSTOMER_PROFILES_AUDIENCE_COUNT = "/customer-profiles/audience/count"
+CDP_CUSTOMER_PROFILE_BASE_ENDPOINT = "/customer-profiles/"
+CUSTOMER_PROFILE_COUNT_BY_DAY = "/customer-profiles/insights/count-by-day"
+CUSTOMER_PROFILE_SPENDING_BY_MONTH = (
+    "/customer-profiles/insights/spending-by-month"
+)
+CUSTOMER_PROFILE_CITY_LTVS = "/customer-profiles/insights/city-ltvs"
+CDP_CONNECTIONS_DATA_SOURCES_ENDPOINT = "/connections/datasources"
+CDP_CONNECTIONS_DATA_SOURCE_DATA_FEEDS_ENDPOINT = (
+    "/connections/{data_source_name}/data_feeds"
+)
+CDP_IDENTITY_DATA_FEEDS_ENDPOINT = "/identity/datafeeds"
+CDP_IDENTITY_DATA_FEEDS_FEED_ID_ENDPOINT = "/identity/datafeeds/{feed_id}"
+CDP_IDENTITY_ID_COUNT_BY_DAY_ENDPOINT = "/identity/id-count-by-day"
+
+AUDIENCE_STATE_FILTER = {"field": "state", "type": "equals", "value": "HI"}
 
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
@@ -766,11 +786,31 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
 
 DATASOURCES_RESPONSE = {
     "code": 200,
-    "message": "ok",
+    "message": "Data Sources Fetched successfully",
     "body": [
-        {"name": "dataSource", "label": "Data Source", "status": "Active"}
+        {
+            api_c.LABEL: "Data source 1",
+            api_c.NAME: "test_data_source_1",
+            api_c.STATUS: "Active",
+        },
+        {
+            api_c.LABEL: "Data source 2",
+            api_c.NAME: "test_data_source_2",
+            api_c.STATUS: "Active",
+        },
+        {
+            api_c.LABEL: "Data source 3",
+            api_c.NAME: "test_data_source_3",
+            api_c.STATUS: "Pending",
+        },
+        {
+            api_c.LABEL: "Data source 4",
+            api_c.NAME: "test_data_source_4",
+            api_c.STATUS: "Pending",
+        },
     ],
 }
+
 
 DATASOURCE_DATA_FEEDS_RESPONSE = {
     "code": 200,

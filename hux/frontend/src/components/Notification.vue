@@ -20,36 +20,39 @@
         </v-list-item-title>
       </v-list-item>
       <div class="notification-div">
-        <v-list-item
-          v-for="data in mostRecentNotifications"
-          :key="data.id"
-          data-e2e="notification-item"
-        >
-          <v-list-item-title
-            class="text-h6 black--text text--darken-4 list-main"
+        <span v-if="mostRecentNotifications.length > 0">
+          <v-list-item
+            v-for="data in mostRecentNotifications"
+            :key="data.id"
+            data-e2e="notification-item"
           >
-            <div class="d-flex text-caption">
-              <status
-                :status="data.notification_type"
-                :show-label="false"
-                :icon-size="17"
-              />
-              <tooltip>
-                <template #label-content>
-                  <span class="wrap-word">
-                    {{ data.description }}
-                  </span>
-                </template>
-                <template #hover-content>
-                  <span> {{ data.description }} </span>
-                </template>
-              </tooltip>
-            </div>
-            <div class="list-stamp">
-              <time-stamp :value="data.created" />
-            </div>
-          </v-list-item-title>
-        </v-list-item>
+            <v-list-item-title
+              class="text-h6 black--text text--darken-4 list-main"
+            >
+              <div class="d-flex text-caption">
+                <status
+                  :status="data.notification_type"
+                  :show-label="false"
+                  :icon-size="17"
+                />
+                <tooltip>
+                  <template #label-content>
+                    <span class="wrap-word">
+                      {{ data.description }}
+                    </span>
+                  </template>
+                  <template #hover-content>
+                    <span> {{ data.description }} </span>
+                  </template>
+                </tooltip>
+              </div>
+              <div class="list-stamp">
+                <time-stamp :value="data.created" />
+              </div>
+            </v-list-item-title>
+          </v-list-item>
+        </span>
+        <span v-else class="text-h6 no-data">No Data to show</span>
       </div>
       <v-list-item>
         <v-list-item-title>
@@ -171,5 +174,10 @@ export default {
   -webkit-box-orient: vertical !important;
   -webkit-line-clamp: 3 !important;
   overflow: hidden !important;
+}
+.no-data {
+  margin-left: 30%;
+  position: absolute;
+  margin-top: 22%;
 }
 </style>

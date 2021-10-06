@@ -198,7 +198,6 @@
           <avatar :name="item.fullName" />
         </template>
       </metric-card>
-
       <metric-card
         v-if="Object.keys(appliedFilters).length > 0"
         class="ma-2 audience-summary"
@@ -500,13 +499,6 @@
       </v-col>
     </v-row>
 
-    <hux-alert
-      v-model="flashAlert"
-      :type="alert.type"
-      :title="alert.title"
-      :message="alert.message"
-    />
-
     <confirm-modal
       v-model="showConfirmModal"
       :title="confirmDialog.title"
@@ -557,7 +549,6 @@
       :selected-audience="audience"
       @onBack="reloadAudienceData()"
       @onCreate="lookalikeCreated = true"
-      @onError="onError($event)"
     />
 
     <delivery-history-drawer
@@ -597,6 +588,7 @@
 // helpers
 import { generateColor, saveFile } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
+import filter from "lodash/filter"
 
 // common components
 import Avatar from "@/components/common/Avatar.vue"
@@ -604,7 +596,6 @@ import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import DeliveryOverview from "@/components/DeliveryOverview.vue"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
-import HuxAlert from "@/components/common/HuxAlert.vue"
 import Icon from "@/components/common/Icon.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart.vue"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
@@ -640,7 +631,6 @@ export default {
     DestinationDataExtensionDrawer,
     DoughnutChart,
     EditDeliverySchedule,
-    HuxAlert,
     Icon,
     IncomeChart,
     LookAlikeAudience,
@@ -708,16 +698,10 @@ export default {
       loading: false,
       loadingRelationships: false,
       loadingDemographics: true,
-      flashAlert: false,
       configurationData: configurationData,
-      alert: {
-        type: "success",
-        title: "YAY!",
-        message: "Successfully triggered delivery.",
-      },
       modelInitial: [
         { value: "propensity", icon: "model" },
-        { value: "lifetime", icon: "lifetime" },
+        { value: "ltv", icon: "lifetime" },
         { value: "churn", icon: "churn" },
       ],
       selectedEngagements: [],
@@ -757,6 +741,7 @@ export default {
     ...mapGetters({
       getAudience: "audiences/audience",
       demographicsData: "audiences/demographics",
+      ruleAttributes: "audiences/audiencesRules",
     }),
     audience() {
       return this.audienceData
@@ -901,37 +886,42 @@ export default {
     appliedFilters() {
       try {
         let _filters = {}
+        const attributeOptions = this.attributeOptions()
         if (this.audience && this.audience.filters) {
           this.audience.filters.forEach((section) => {
-            section.section_filters.forEach((filter) => {
+            section.section_filters.forEach((sectionFilter) => {
               const model = this.modelInitial.filter(
                 (model) =>
-                  typeof filter.field === "string" &&
-                  filter.field.includes(model.value)
+                  typeof sectionFilter.field === "string" &&
+                  sectionFilter.field.includes(model.value)
               )
+              // TODO for the nestd filter check
+              let ruleFilterObject = filter(attributeOptions, {
+                key: sectionFilter.field.toLowerCase(),
+              })
               const filterObj = {
-                name: this.$options.filters.TitleCase(filter.field),
-                key: filter.field,
+                name: ruleFilterObject[0]["name"],
+                key: sectionFilter.field,
               }
 
               filterObj.name = filterObj.name.replace(/_/gi, " ")
               if (model.length > 0) {
-                filterObj["hover"] = "Between " + filter.value.join("-")
+                filterObj["hover"] = "Between " + sectionFilter.value.join("-")
                 if (!_filters[model[0].icon]) _filters[model[0].icon] = {}
-                if (_filters[model[0].icon][filter.field])
-                  _filters[model[0].icon][filter.field]["hover"] +=
+                if (_filters[model[0].icon][sectionFilter.field])
+                  _filters[model[0].icon][sectionFilter.field]["hover"] +=
                     "<br/> " + filterObj.hover
-                else _filters[model[0].icon][filter.field] = filterObj
+                else _filters[model[0].icon][sectionFilter.field] = filterObj
               } else {
                 if (!_filters["general"]) _filters["general"] = {}
                 filterObj["hover"] =
-                  filter.type === "range"
-                    ? "Include " + filter.value.join("-")
-                    : filter.value
-                if (_filters["general"][filter.field])
-                  _filters["general"][filter.field]["hover"] +=
+                  sectionFilter.type === "range"
+                    ? "Include " + sectionFilter.value.join("-")
+                    : sectionFilter.value
+                if (_filters["general"][sectionFilter.field])
+                  _filters["general"][sectionFilter.field]["hover"] +=
                     "<br/> " + filterObj.hover
-                else _filters["general"][filter.field] = filterObj
+                else _filters["general"][sectionFilter.field] = filterObj
               }
             })
           })
@@ -965,8 +955,36 @@ export default {
       detachAudienceDestination: "engagements/detachAudienceDestination",
       getDemographics: "audiences/getDemographics",
       downloadAudienceData: "audiences/fetchAudienceData",
+      setAlert: "alerts/setAlert",
+      getAudiencesRules: "audiences/fetchConstants",
     }),
-
+    attributeOptions() {
+      const options = []
+      Object.values(this.ruleAttributes.rule_attributes).forEach((attr) => {
+        Object.keys(attr).forEach((optionKey) => {
+          if (
+            Object.values(attr[optionKey])
+              .map((o) => typeof o === "object" && !Array.isArray(o))
+              .includes(Boolean(true))
+          ) {
+            Object.keys(attr[optionKey]).forEach((att) => {
+              if (typeof attr[optionKey][att] === "object") {
+                options.push({
+                  key: att,
+                  name: attr[optionKey][att]["name"],
+                })
+              }
+            })
+          } else {
+            options.push({
+              key: optionKey,
+              name: attr[optionKey]["name"],
+            })
+          }
+        })
+      })
+      return options
+    },
     async fetchDemographics() {
       this.loadingDemographics = true
       await this.getDemographics(this.$route.params.id)
@@ -974,10 +992,10 @@ export default {
     },
     async initiateFileDownload(option) {
       const audienceName = this.audience.name
-      this.alert.type = "Pending"
-      this.alert.title = ""
-      this.alert.message = `Download for the '${audienceName}' with '${option.title}', has started in background, stay tuned.`
-      this.flashAlert = true
+      this.setAlert({
+        type: "pending",
+        message: `Download for the '${audienceName}' with '${option.title}', has started in background, stay tuned.`,
+      })
       const fileBlob = await this.downloadAudienceData({
         id: this.audienceId,
         type: option.type,
@@ -992,8 +1010,10 @@ export default {
     },
 
     async refreshEntity() {
+      this.loading = true
       this.$root.$emit("refresh-notifications")
       await this.loadAudienceInsights()
+      this.loading = false
     },
     async onConfirmAction() {
       this.showConfirmModal = false
@@ -1065,16 +1085,11 @@ export default {
           break
         }
         case "deliver all":
-          try {
-            await this.deliverAudience({
-              id: event.data.id,
-              audienceId: this.audienceId,
-            })
-            this.dataPendingMesssage(event, "engagement")
-          } catch (error) {
-            this.dataErrorMesssage(event, "engagement")
-            console.error(error)
-          }
+          await this.deliverAudience({
+            id: event.data.id,
+            audienceId: this.audienceId,
+          })
+          this.dataPendingMesssage(event, "engagement")
           break
         case "view delivery history":
           break
@@ -1101,17 +1116,12 @@ export default {
       try {
         switch (event.target.title.toLowerCase()) {
           case "deliver now":
-            try {
-              await this.deliverAudienceDestination({
-                id: event.parent.id,
-                audienceId: this.audienceId,
-                destinationId: event.data.id,
-              })
-              this.dataPendingMesssage(event, "destination")
-            } catch (error) {
-              this.dataErrorMesssage(event, "destination")
-              console.error(error)
-            }
+            await this.deliverAudienceDestination({
+              id: event.parent.id,
+              audienceId: this.audienceId,
+              destinationId: event.data.id,
+            })
+            this.dataPendingMesssage(event, "destination")
             break
           case "edit delivery schedule":
             this.confirmDialog.actionType = "edit-schedule"
@@ -1151,32 +1161,21 @@ export default {
 
     //Alert Message
     dataPendingMesssage(event, value) {
-      this.alert.type = "Pending"
-      this.alert.title = ""
       if (value == "engagement") {
         const engagementName = event.data.name
         const audienceName = this.audience.name
-        this.alert.message = `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`
+        this.setAlert({
+          type: "pending",
+          message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
+        })
       } else if (value == "destination") {
         const engagementName = event.parent.name
         const destinationName = event.data.name
-        this.alert.message = `Your engagement '${engagementName}', has started delivering to '${destinationName}'.`
+        this.setAlert({
+          type: "pending",
+          message: `Your engagement '${engagementName}', has started delivering to '${destinationName}'.`,
+        })
       }
-      this.flashAlert = true
-    },
-    dataErrorMesssage(event, value) {
-      this.alert.type = "error"
-      this.alert.title = "OH NO!"
-      if (value == "engagement") {
-        const engagementName = event.data.name
-        const audienceName = this.audience.name
-        this.alert.message = `Failed to schedule a delivery of your engagement '${engagementName}', from '${audienceName}'.`
-      } else if (value == "destination") {
-        const engagementName = event.parent.name
-        const destinationName = event.data.name
-        this.alert.message = `Failed to schedule delivery of your engagement '${engagementName}', to '${destinationName}'.`
-      }
-      this.flashAlert = true
     },
 
     // Drawer Section Starts
@@ -1265,6 +1264,7 @@ export default {
     async loadAudienceInsights() {
       this.loading = true
       this.refreshAudience = true
+      this.getAudiencesRules()
       await this.getAudienceById(this.$route.params.id)
       const _getAudience = this.getAudience(this.$route.params.id)
       if (_getAudience && this.refreshAudience) {
@@ -1285,12 +1285,6 @@ export default {
       this.getDestinations()
       this.refreshAudience = false
       this.loading = false
-    },
-    onError(message) {
-      this.alert.type = "error"
-      this.alert.title = "OH NO!"
-      this.alert.message = message
-      this.flashAlert = true
     },
     sizeHandler() {
       if (this.$refs.genderChart) {
