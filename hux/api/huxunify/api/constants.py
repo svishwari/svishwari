@@ -513,9 +513,6 @@ BSON_INVALID_ID = (
     f"12-byte input or a 24-character hex string"
 )
 MESSAGE = "message"
-START_DATE_GREATER_THAN_END_DATE = (
-    "Start date cannot be greater than end date."
-)
 FAILED_DEPENDENCY_ERROR_MESSAGE = (
     "Failed to obtain data from dependent API endpoint."
 )

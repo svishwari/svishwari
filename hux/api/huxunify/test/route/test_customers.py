@@ -1,6 +1,6 @@
 """Purpose of this file is to house all the customers api tests."""
-import string
 import json
+import string
 from unittest import TestCase
 from http import HTTPStatus
 
@@ -63,11 +63,13 @@ class TestCustomersOverview(TestCase):
     def test_get_customers(self):
         """Test get customers."""
 
+        hux_id = "HUX123456789012345"
+
         expected_response = {
             "code": 200,
             "body": [
                 {
-                    api_c.HUX_ID: "1531-2039-22",
+                    api_c.HUX_ID: hux_id,
                     api_c.FIRST_NAME: "Bertie",
                     api_c.LAST_NAME: "Fox",
                     api_c.MATCH_CONFIDENCE: 0.97,
@@ -91,13 +93,6 @@ class TestCustomersOverview(TestCase):
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
         data = response.json
-
-        with self.assertRaises(TypeError):
-            self.test_client.get(
-                f"{self.customers}?{api_c.QUERY_PARAMETER_BATCH_SIZE}=abc&"
-                f"{api_c.QUERY_PARAMETER_BATCH_NUMBER}=def",
-                headers=t_c.STANDARD_HEADERS,
-            )
 
         response = self.test_client.get(
             f"{self.customers}",
@@ -162,16 +157,14 @@ class TestCustomersOverview(TestCase):
         self.assertTrue(data[api_c.OVERVIEW][api_c.TOTAL_CUSTOMERS])
         self.assertTrue(data[api_c.OVERVIEW][api_c.TOTAL_KNOWN_IDS])
 
-    @given(customer_id=st.text(alphabet=string.ascii_letters))
-    def test_get_customer_by_id(self, customer_id: str):
+    def test_get_customer_by_id(self):
         """Test get customer by ID.
 
         Args:
             customer_id (str): HUX ID of a customer.
         """
 
-        if not customer_id:
-            return
+        customer_id = "HUX123456789012345"
 
         expected_response = {
             "code": 200,
@@ -391,16 +384,11 @@ class TestCustomersOverview(TestCase):
             t_c.validate_schema(MatchingTrendsSchema(), response.json, True)
         )
 
-    @given(customer_id=st.text(alphabet=string.ascii_letters))
-    def test_customer_events(self, customer_id: str):
-        """Test customer events for a hux-id.
+    def test_customer_events(self):
+        """Test customer events for a hux-id."""
 
-        Args:
-            customer_id (str): HUX ID of a customer.
-        """
+        hux_id = "HUX123456789012345"
 
-        if not customer_id:
-            return
         filter_attributes = {
             "start_date": "2021-01-01",
             "end_date": "2021-01-02",
@@ -408,21 +396,17 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{customer_id}/events",
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{hux_id}/events",
             json=t_c.CUSTOMER_EVENT_RESPONSE,
         )
         self.request_mocker.start()
 
         response = self.test_client.post(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{customer_id}/events",
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
             data=json.dumps(filter_attributes),
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(
-            t_c.CUSTOMER_EVENT_RESPONSE.get("body"), response.json
-        )
-
         self.assertTrue(
             t_c.validate_schema(CustomerEventsSchema(), response.json, True)
         )
@@ -542,7 +526,7 @@ class TestCustomersOverview(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+        self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
     def test_get_customers_dependency_failure(self) -> None:
         """Test get customers 424 dependency failure."""
@@ -562,24 +546,26 @@ class TestCustomersOverview(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+        self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
     def test_get_customer_by_id_dependency_failure(self) -> None:
         """Test get customer by ID 424 dependency failure."""
 
+        hux_id = "HUX123456789012345"
+
         self.request_mocker.stop()
         self.request_mocker.get(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/abc",
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{hux_id}",
             json={},
         )
         self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/abc",
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}",
             headers=t_c.AUTH_HEADER,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+        self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
     def test_get_idr_overview_dependency_failure(self) -> None:
         """Test get idr overview 424 dependency failure."""
@@ -596,10 +582,12 @@ class TestCustomersOverview(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+        self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
     def test_get_customer_events_dependency_failure(self) -> None:
         """Test get customer events 424 dependency failure."""
+
+        hux_id = "HUX123456789012345"
 
         filter_attributes = {
             "start_date": "2021-01-01",
@@ -608,18 +596,18 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/abc/events",
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{hux_id}/events",
             json={},
         )
         self.request_mocker.start()
 
         response = self.test_client.post(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/abc/events",
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
             data=json.dumps(filter_attributes),
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+        self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
     def test_get_customers_geo_dependency_failure(self) -> None:
         """Test get customer geographic 424 dependency failure."""
@@ -636,7 +624,7 @@ class TestCustomersOverview(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+        self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
     def test_customers_insights_countries_dependency_failure(self) -> None:
         """Test get customer insights countries 424 dependency failure."""
@@ -654,7 +642,7 @@ class TestCustomersOverview(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+        self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
     def test_total_customer_insights_dependency_failure(self) -> None:
         """Test get total customer insights 424 dependency failure."""
@@ -671,7 +659,7 @@ class TestCustomersOverview(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+        self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
     def test_customers_insights_cities_dependency_failure(self) -> None:
         """Test get customers insights cities 424 dependency failure."""
@@ -689,7 +677,7 @@ class TestCustomersOverview(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+        self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
     def test_get_customers_demographics_dependency_failure(self) -> None:
         """Test get customer demographics 424 dependency failure."""
@@ -719,4 +707,137 @@ class TestCustomersOverview(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.FAILED_DEPENDENCY)
+        self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
+
+    @given(hux_id=st.text(alphabet=string.ascii_letters))
+    def test_get_customer_profile_invalid_hux_id(self, hux_id: str):
+        """Test retrieving customer profile with an invalid hux ID.
+
+        Args:
+            hux_id (str): HUX ID.
+        """
+
+        if len(hux_id) == 0:
+            return
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    @given(hux_id=st.text(alphabet=string.ascii_letters))
+    def test_get_events_for_a_customer_invalid_hux_id(self, hux_id: str):
+        """Test retrieving customer events with an invalid hux ID.
+
+        Args:
+            hux_id (str): HUX ID.
+        """
+
+        if len(hux_id) == 0:
+            return
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    @given(batch_size=st.text(alphabet=string.ascii_letters))
+    def test_get_customer_overview_invalid_batch_size(self, batch_size: str):
+        """Test get customer list and provide an invalid batch size.
+
+        Args:
+            batch_size (str): HUX ID.
+        """
+
+        if len(batch_size) == 0:
+            return
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}?batch_size={batch_size}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    @given(batch_number=st.text(alphabet=string.ascii_letters))
+    def test_get_customer_overview_invalid_batch_number(
+        self, batch_number: str
+    ):
+        """Test get customer list and provide an invalid batch number.
+
+        Args:
+            batch_number (str): batch number of what should be served to the user
+        """
+
+        if len(batch_number) == 0:
+            return
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}?batch_number={batch_number}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    @given(batch_size=st.text(alphabet=string.ascii_letters))
+    def test_get_customer_insights_by_city_invalid_batch_size(
+        self, batch_size: str
+    ):
+        """Test get customer insights by city and provide an invalid batch size.
+
+        Args:
+            batch_size (str): Size of the batch that should be returned to the user.
+        """
+
+        if len(batch_size) == 0:
+            return
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{api_c.CITIES}?batch_size={batch_size}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    @given(batch_number=st.text(alphabet=string.ascii_letters))
+    def test_get_customer_insights_by_city_invalid_batch_number(
+        self, batch_number: str
+    ):
+        """Test get customer insights by city and provide an invalid batch size.
+
+        Args:
+            batch_number (str): batch number of what should be served to the user
+        """
+
+        if len(batch_number) == 0:
+            return
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}"
+            f"/{api_c.CITIES}?batch_number={batch_number}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    @given(datafeed_id=st.text(alphabet=string.ascii_letters))
+    def test_get_datafeed_invalid_datafeed_id(self, datafeed_id: str):
+        """Test get datafeed using an invalid datafeed ID.
+
+        Args:
+            datafeed_id (str): datafeed ID.
+        """
+
+        if len(datafeed_id) == 0:
+            return
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}/{datafeed_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)

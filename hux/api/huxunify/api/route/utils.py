@@ -1,5 +1,6 @@
 """Purpose of this file is to house route utilities"""
 from datetime import datetime
+import re
 from typing import Tuple, Union
 from http import HTTPStatus
 from bson import ObjectId
@@ -33,7 +34,6 @@ from huxunify.api.data_connectors.cdp_connection import (
     check_cdp_connections_api_connection,
 )
 from huxunify.api.exceptions import (
-    integration_api_exceptions as iae,
     unified_exceptions as ue,
 )
 from huxunify.api.prometheus import record_health_status_metric
@@ -326,47 +326,8 @@ def transform_fields_generic_file(
     return dataframe
 
 
-def check_end_date_greater_than_start_date(
-    start_date: str,
-    end_date: str,
-):
-    """Raises error if start date is greater than end date.
-
-    Args:
-        start_date (str): start date.
-        end_date (str): end date.
-
-    Raises:
-        FailedDateFilterIssue: Exception if start date is greater than
-            end date.
-    """
-
-    start_date_format = ""
-    end_date_format = ""
-
-    if start_date:
-        start_date_format = datetime.strptime(
-            start_date, constants.DEFAULT_DATE_FORMAT
-        )
-
-    if end_date:
-        end_date_format = datetime.strptime(
-            end_date, constants.DEFAULT_DATE_FORMAT
-        )
-
-    if (
-        start_date_format
-        and end_date_format
-        and start_date_format > end_date_format
-    ):
-        raise iae.FailedDateFilterIssue()
-
-
 class Validation:
     """Validation class for input parameters"""
-
-    def __init__(self):
-        pass
 
     @staticmethod
     def validate_integer(value: str) -> int:
@@ -447,13 +408,16 @@ class Validation:
         start_date: str,
         end_date: str,
         date_format: str = constants.DEFAULT_DATE_FORMAT,
-    ):
+    ) -> None:
         """Validates that a date range is valid
 
         Args:
             start_date (str): Input start date string.
             end_date (str): Input end date string.
             date_format (str): Date string format.
+
+        Returns:
+            None
 
         Raises:
             ValidationError: Error that is raised if input is invalid.
@@ -464,4 +428,26 @@ class Validation:
         end = Validation.validate_date(end_date, date_format)
 
         if start > end:
-            raise iae.FailedDateFilterIssue
+            raise ue.InputParamsValidationError(
+                message=f"The start date {start_date} cannot "
+                f"be greater than the end date {end_date}."
+            )
+
+    # pylint: disable=anomalous-backslash-in-string
+    @staticmethod
+    def validate_hux_id(hux_id: str) -> None:
+        """Validates the format of the HUX ID.
+
+        Args:
+            hux_id (str): Hux ID.
+
+        Returns:
+            None
+
+        Raises:
+            ValidationError: Error that is raised if input ID is invalid.
+
+        """
+
+        if not re.match("^HUX\d{15}$", hux_id):
+            raise ue.InputParamsValidationError(hux_id, "HUX ID")

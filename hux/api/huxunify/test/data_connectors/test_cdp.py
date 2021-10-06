@@ -51,22 +51,16 @@ class CDPTest(TestCase):
 
         self.request_mocker.stop()
 
-    @given(customer_id=st.text(alphabet=string.ascii_letters))
-    def test_get_customer(self, customer_id: str):
-        """Test get customer profiles.
-
-        Args:
-            customer_id (str): string for testing get customer.
-        """
+    def test_get_customer(self):
+        """Test get customer profiles."""
 
         # skip empty string from hypothesis
-        if not customer_id:
-            return
+        hux_id = "HUX123456789012345"
 
         expected_response = {
             "code": 200,
             "body": {
-                api_c.HUX_ID: customer_id,
+                api_c.HUX_ID: hux_id,
                 api_c.FIRST_NAME: "Bertie",
                 api_c.LAST_NAME: "Fox",
                 api_c.EMAIL: "fake@fake.com",
@@ -80,13 +74,13 @@ class CDPTest(TestCase):
 
         self.request_mocker.stop()
         self.request_mocker.get(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{customer_id}",
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{hux_id}",
             json=expected_response,
         )
         self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{customer_id}",
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}",
             headers=t_c.AUTH_HEADER,
         )
 
