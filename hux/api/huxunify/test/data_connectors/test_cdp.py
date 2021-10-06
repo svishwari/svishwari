@@ -198,7 +198,7 @@ class CDPTest(TestCase):
         customer_insights_by_country = get_demographic_by_country("")
 
         self.assertTrue(customer_insights_by_country)
-        self.assertEqual(len(customer_insights_by_country), len(countries))
+        self.assertEqual(len(countries), len(customer_insights_by_country))
         for record in customer_insights_by_country:
             self.assertIn(api_c.NAME, record)
             self.assertIn(record[api_c.NAME], countries)
@@ -246,18 +246,18 @@ class CDPTest(TestCase):
         self.assertTrue(customer_insights_by_country)
         self.assertIn(api_c.NAME, customer_insights_by_country[0])
         self.assertEqual(
-            customer_insights_by_country[0][api_c.NAME],
             expected_response[api_c.BODY][0][api_c.COUNTRY],
+            customer_insights_by_country[0][api_c.NAME],
         )
         self.assertIn(api_c.SIZE, customer_insights_by_country[0])
         self.assertEqual(
-            customer_insights_by_country[0][api_c.SIZE],
             expected_response[api_c.BODY][0][api_c.SIZE],
+            customer_insights_by_country[0][api_c.SIZE],
         )
         self.assertIn(api_c.AVG_LTV, customer_insights_by_country[0])
         self.assertEqual(
-            customer_insights_by_country[0][api_c.AVG_LTV],
             expected_response[api_c.BODY][0][api_c.AVG_LTV],
+            customer_insights_by_country[0][api_c.AVG_LTV],
         )
 
     def test_get_demographic_by_state(self) -> None:
