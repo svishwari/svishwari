@@ -49,7 +49,10 @@
         <span class="mr-2">
           <tooltip>
             <template #label-content>
-              <span class="font-weight-semi-bold black--text text--darken-4" data-e2e="created-metric">
+              <span
+                class="font-weight-semi-bold black--text text--darken-4"
+                data-e2e="created-metric"
+              >
                 {{ summaryCards[2].value }}
               </span>
             </template>

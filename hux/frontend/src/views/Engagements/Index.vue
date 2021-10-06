@@ -835,11 +835,12 @@ export default {
       })
     },
     setEngagementSelector(engagement) {
-      if (engagement["status"] == "Active" && engagement["audiences"].length > 0)
-      {
-      return "enagement-active"
-      } else
-      return "enagement-inactive"
+      if (
+        engagement["status"] == "Active" &&
+        engagement["audiences"].length > 0
+      ) {
+        return "enagement-active"
+      } else return "enagement-inactive"
     },
     getAudienceActionItems(audience, engagementId) {
       let audienceActionItems = [
