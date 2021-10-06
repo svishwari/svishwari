@@ -516,6 +516,9 @@ MESSAGE = "message"
 FAILED_DEPENDENCY_ERROR_MESSAGE = (
     "Failed to obtain data from dependent API endpoint."
 )
+EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE = (
+    "Returned empty object from dependent API endpoint."
+)
 
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
 INVALID_DELIVERY_SCHEDULE = "Delivery schedule is not valid."
@@ -736,10 +739,10 @@ MODEL_ID_PARAMS = [
     {
         "name": MODEL_ID,
         "description": "Model id",
-        "type": "string",
+        "type": "integer",
         "in": "path",
         "required": True,
-        "example": "1",
+        "example": 1,
     }
 ]
 PURCHASE = "purchase"

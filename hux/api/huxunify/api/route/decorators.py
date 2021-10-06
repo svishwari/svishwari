@@ -376,6 +376,18 @@ def api_error_handler(custom_message: dict = None) -> object:
                     "message": constants.DESTINATION_CONNECTION_FAILED
                 }, HTTPStatus.FAILED_DEPENDENCY
 
+            except iae.EmptyAPIResponseError as exc:
+                logger.error(
+                    "%s: %s while executing %s in module %s.",
+                    exc.__class__,
+                    exc.args[0] if exc.args else exc.exception_message,
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
+                return {
+                    "message": constants.EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE
+                }, HTTPStatus.NOT_FOUND
+
             except ue.InputParamsValidationError as exc:
                 logger.error(
                     "%s: %s Error encountered while executing %s in module %s.",

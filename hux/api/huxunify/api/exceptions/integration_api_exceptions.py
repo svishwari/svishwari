@@ -31,3 +31,12 @@ class FailedDeliveryPlatformDependencyError(IntegratedAPIEndpointException):
         "Failed to establish connection to delivery platform <{}>, "
         "returned status code <{}>."
     )
+
+
+class EmptyAPIResponseError(IntegratedAPIEndpointException):
+    """Exception for empty response from integrated APIs."""
+
+    exception_message = (
+        "Integrated API <{}> failure, returned status code "
+        "<{}>. Failed obtaining dependent data"
+    )
