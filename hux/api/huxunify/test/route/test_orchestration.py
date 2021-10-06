@@ -1014,3 +1014,24 @@ class OrchestrationRouteTest(TestCase):
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    def test_get_audience_with_not_delivered(self):
+        """Test get audience empty update_time for un-delivered engagements."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/{self.audiences[1][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        audience = response.json
+
+        for audience_engagement in audience[api_c.AUDIENCE_ENGAGEMENTS]:
+            for delivery in audience_engagement[api_c.DELIVERIES]:
+                if delivery[api_c.STATUS] != db_c.STATUS_DELIVERED:
+                    self.assertIsNone(delivery[db_c.UPDATE_TIME])
