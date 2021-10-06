@@ -16,9 +16,8 @@ describe("Orchestration > Engagement > Engagement Dashboard", () => {
     cy.get(selector.engagements).click()
     cy.location("pathname").should("eq", route.engagements)
 
-    //click over the engagement name that has active status with more than 1 audience and navigate to dashboard
+    // click over the engagement name that has active status with more than 1 audience and navigate to dashboard
     cy.get(selector.engagement.activeEngagement)
-    //  .find(selector.engagement.activeEngagement)
       .first()
       .find("a")
       .should("have.attr", "href")
@@ -28,13 +27,17 @@ describe("Orchestration > Engagement > Engagement Dashboard", () => {
 
     // it should be able to view the engagement dashboard overview
     cy.get(selector.engagement.deliveryScheduleMetric).should("exist")
-    cy.get(selector.engagement.updatedMetric).should("exist").and("contain", "ago by")
-    cy.get(selector.engagement.createdMetric).should("exist").and("contain", "ago by")
+    cy.get(selector.engagement.updatedMetric)
+      .should("exist")
+      .and("contain", "ago by")
+    cy.get(selector.engagement.createdMetric)
+      .should("exist")
+      .and("contain", "ago by")
 
     // it should be able to view the audiences
     cy.get(selector.engagement.engagementAudienceList)
-    .its("length")
-    .should("gt", 0)
+      .its("length")
+      .should("gt", 0)
 
     // it should be able to view the delivery history
     // Click on delivery history link and open drawer
@@ -49,7 +52,7 @@ describe("Orchestration > Engagement > Engagement Dashboard", () => {
     // it should be able to view the audience performance data for digital advertising
     cy.get(selector.engagement.adsData).its("length").should("gt", 0)
 
-     // it should be able to view the audience performance data for email marketing
+    // it should be able to view the audience performance data for email marketing
     cy.get(selector.engagement.emailMarketing).click()
     cy.get(selector.engagement.emailData).its("length").should("gt", 0)
   })
