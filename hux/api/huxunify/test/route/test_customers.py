@@ -1,10 +1,12 @@
 """Purpose of this file is to house all the customers api tests."""
 import json
+import string
 from unittest import TestCase
 from http import HTTPStatus
 
 import mongomock
 import requests_mock
+from hypothesis import given, strategies as st
 
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c
@@ -707,10 +709,16 @@ class TestCustomersOverview(TestCase):
 
         self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
-    def test_get_customer_profile_invalid_hux_id(self):
-        """Test retrieving customer profile with an invalid hux ID."""
+    @given(hux_id=st.text(alphabet=string.ascii_letters))
+    def test_get_customer_profile_invalid_hux_id(self, hux_id: str):
+        """Test retrieving customer profile with an invalid hux ID.
 
-        hux_id = "HUX12345678901234"
+        Args:
+            hux_id (str): HUX ID.
+        """
+
+        if len(hux_id) == 0:
+            return
 
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}",
@@ -719,10 +727,16 @@ class TestCustomersOverview(TestCase):
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-    def test_get_events_for_a_customer_invalid_hux_id(self):
-        """Test retrieving customer events with an invalid hux ID."""
+    @given(hux_id=st.text(alphabet=string.ascii_letters))
+    def test_get_events_for_a_customer_invalid_hux_id(self, hux_id: str):
+        """Test retrieving customer events with an invalid hux ID.
 
-        hux_id = "HUX12345678901234"
+        Args:
+            hux_id (str): HUX ID.
+        """
+
+        if len(hux_id) == 0:
+            return
 
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
@@ -731,50 +745,95 @@ class TestCustomersOverview(TestCase):
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-    def test_get_customer_overview_invalid_batch_size(self):
-        """Test get customer list and provide an invalid batch size."""
+    @given(batch_size=st.text(alphabet=string.ascii_letters))
+    def test_get_customer_overview_invalid_batch_size(self, batch_size: str):
+        """Test get customer list and provide an invalid batch size.
+
+        Args:
+            batch_size (str): HUX ID.
+        """
+
+        if len(batch_size) == 0:
+            return
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}?batch_size=abc",
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}?batch_size={batch_size}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-    def test_get_customer_overview_invalid_batch_number(self):
-        """Test get customer list and provide an invalid batch number."""
+    @given(batch_number=st.text(alphabet=string.ascii_letters))
+    def test_get_customer_overview_invalid_batch_number(
+        self, batch_number: str
+    ):
+        """Test get customer list and provide an invalid batch number.
+
+        Args:
+            batch_number (str): batch number of what should be served to the user
+        """
+
+        if len(batch_number) == 0:
+            return
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}?batch_number=abc",
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}?batch_number={batch_number}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-    def test_get_customer_insights_by_city_invalid_batch_size(self):
-        """Test get customer insights by city and provide an invalid batch size."""
+    @given(batch_size=st.text(alphabet=string.ascii_letters))
+    def test_get_customer_insights_by_city_invalid_batch_size(
+        self, batch_size: str
+    ):
+        """Test get customer insights by city and provide an invalid batch size.
+
+        Args:
+            batch_size (str): Size of the batch that should be returned to the user.
+        """
+
+        if len(batch_size) == 0:
+            return
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{api_c.CITIES}?batch_size=abc",
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{api_c.CITIES}?batch_size={batch_size}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-    def test_get_customer_insights_by_city_invalid_batch_number(self):
-        """Test get customer insights by city and provide an invalid batch size."""
+    @given(batch_number=st.text(alphabet=string.ascii_letters))
+    def test_get_customer_insights_by_city_invalid_batch_number(
+        self, batch_number: str
+    ):
+        """Test get customer insights by city and provide an invalid batch size.
+
+        Args:
+            batch_number (str): batch number of what should be served to the user
+        """
+
+        if len(batch_number) == 0:
+            return
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{api_c.CITIES}?batch_number=abc",
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}"
+            f"/{api_c.CITIES}?batch_number={batch_number}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-    def test_get_datafeed_invalid_datafeed_id(self):
-        """Test get datafeed using an invalid datafeed ID."""
+    @given(datafeed_id=st.text(alphabet=string.ascii_letters))
+    def test_get_datafeed_invalid_datafeed_id(self, datafeed_id: str):
+        """Test get datafeed using an invalid datafeed ID.
 
-        datafeed_id = "abc"
+        Args:
+            datafeed_id (str): datafeed ID.
+        """
+
+        if len(datafeed_id) == 0:
+            return
 
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}/{datafeed_id}",
