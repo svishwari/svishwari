@@ -14,6 +14,9 @@ const state = {
   },
 
   deliveries: {},
+
+  filteredDeliveries: [],
+
   campaignMappingOptions: {},
   campaignMappings: [],
 }
@@ -27,6 +30,8 @@ const getters = {
     const deliveries = state.deliveries[id]
     return deliveries ? Object.values(state.deliveries[id]) : []
   },
+
+  filteredDeliveries: (state) => state.filteredDeliveries,
 
   audiencePerformanceByAds: (state) => state.audiencePerformance.ads,
 
@@ -96,6 +101,10 @@ const mutations = {
   },
   SET_CAMPAIGNS(state, data) {
     Vue.set(state.campaignMappings, data.id, data.payload)
+  },
+
+  SET_FILTERED_DELIVERIES(state, deliveries) {
+    state.filteredDeliveries = deliveries
   },
 }
 
@@ -213,6 +222,16 @@ const actions = {
         resourceId: id,
         audienceId: audienceId,
       })
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getFilteredDeliveries({ commit }, data) {
+    try {
+      const response = await api.engagements.deliveries(data.id, data.query)
+      commit("SET_FILTERED_DELIVERIES", response.data || [])
     } catch (error) {
       handleError(error)
       throw error

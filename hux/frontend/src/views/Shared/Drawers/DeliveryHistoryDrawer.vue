@@ -10,6 +10,27 @@
     <template #default>
       <v-progress-linear :active="loading" :indeterminate="loading" />
 
+      <page-header header-height="40">
+        <template #left>
+          <v-icon
+            size="21"
+            class="cursor-pointer"
+            :class="
+              isFilterToggled ? 'primary--text text--darken-2' : 'black--text'
+            "
+            @click="isFilterToggled = !isFilterToggled"
+          >
+            mdi-filter-variant
+          </v-icon>
+        </template>
+      </page-header>
+      <hux-filter-bar
+        v-if="!loading"
+        v-show="isFilterToggled"
+        :filters="filters"
+        @onReset="resetFilters"
+      />
+
       <hux-data-table
         v-if="!loading"
         :columns="columns"
@@ -105,16 +126,22 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
+import PageHeader from "@/components/PageHeader"
+import HuxFilterBar from "@/components/common/FilterBar"
 import Drawer from "@/components/common/Drawer.vue"
 import Icon from "@/components/common/Icon.vue"
 import Logo from "@/components/common/Logo.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
+
+import { uniqBy } from "lodash"
 
 export default {
   name: "DeliveryHistoryDrawer",
 
   components: {
     HuxDataTable,
+    PageHeader,
+    HuxFilterBar,
     Drawer,
     Icon,
     Logo,
@@ -143,6 +170,12 @@ export default {
     return {
       localToggle: false,
       loading: false,
+      isFilterToggled: false,
+      filters: [],
+      items: [],
+      destinationQuery: "",
+      audienceQuery: "",
+      engagementQuery: "",
       nonCompliantMatchRatePlatforms: [
         "salesforce",
         "sendgrid",
@@ -177,11 +210,13 @@ export default {
   computed: {
     ...mapGetters({
       audienceDeliveries: "audiences/deliveries",
+      audienceFilteredDeliveries: "audiences/filteredDeliveries",
       engagementDeliveries: "engagements/deliveries",
+      engagementFilteredDeliveries: "engagements/filteredDeliveries",
       getDestination: "destinations/single",
     }),
 
-    items() {
+    allDeliveries() {
       if (this.audienceId) return this.audienceDeliveries(this.audienceId)
       else return this.engagementDeliveries(this.engagementId)
     },
@@ -194,6 +229,9 @@ export default {
 
     localToggle(value) {
       this.$emit("onToggle", value)
+      if (!value) {
+        this.isFilterToggled = value
+      }
     },
   },
 
@@ -222,16 +260,150 @@ export default {
   methods: {
     ...mapActions({
       getAudienceDeliveries: "audiences/getDeliveries",
+      getAudienceFilteredDeliveries: "audiences/getFilteredDeliveries",
       getEngagementDeliveries: "engagements/getDeliveries",
+      getEngagementFilteredDeliveries: "engagements/getFilteredDeliveries",
     }),
+
+    resetFilters() {
+      this.items = this.allDeliveries
+    },
 
     async fetchHistory() {
       this.loading = true
 
-      if (this.engagementId)
+      if (this.engagementId) {
         await this.getEngagementDeliveries(this.engagementId)
 
-      if (this.audienceId) await this.getAudienceDeliveries(this.audienceId)
+        let allAudiences = this.allDeliveries.map((each) => each.audience)
+        let allDestinations = this.allDeliveries.map((each) => each.destination)
+
+        let uniqueAudiences = uniqBy(allAudiences, "id")
+        let uniqueDestinations = uniqBy(allDestinations, "id")
+        this.filters = [
+          {
+            name: "Audience name",
+            data: uniqueAudiences,
+            value: [],
+            onSelect: async (value) => {
+              let audienceIds = ""
+              value.map((each, index) => {
+                if (index !== value.length - 1) {
+                  audienceIds += `engagement=${each.id}&`
+                } else {
+                  audienceIds += `engagement=${each.id}`
+                }
+              })
+
+              this.audienceQuery = audienceIds
+
+              let query = `${audienceIds}${
+                this.destinationQuery !== "" ? "&" : ""
+              }${this.destinationQuery}`
+
+              await this.getEngagementFilteredDeliveries({
+                id: this.engagementId,
+                query: query,
+              })
+              this.items = this.engagementFilteredDeliveries
+            },
+          },
+          {
+            name: "Destination",
+            data: uniqueDestinations,
+            value: [],
+            onSelect: async (value) => {
+              let destintaionIds = ""
+              value.map((each, index) => {
+                if (index !== value.length - 1) {
+                  destintaionIds += `destination=${each.id}&`
+                } else {
+                  destintaionIds += `destination=${each.id}`
+                }
+              })
+
+              this.destinationQuery = destintaionIds
+
+              let query = `${destintaionIds}${
+                this.audienceQuery !== "" ? "&" : ""
+              }${this.audienceQuery}`
+
+              await this.getEngagementFilteredDeliveries({
+                id: this.engagementId,
+                query: query,
+              })
+              this.items = this.engagementFilteredDeliveries
+            },
+          },
+        ]
+      }
+
+      if (this.audienceId) {
+        await this.getAudienceDeliveries(this.audienceId)
+        let allEngagements = this.allDeliveries.map((each) => each.engagement)
+        let allDestinations = this.allDeliveries.map((each) => each.destination)
+
+        let uniqueEngagements = uniqBy(allEngagements, "id")
+        let uniqueDestinations = uniqBy(allDestinations, "id")
+        this.filters = [
+          {
+            name: "Engagement name",
+            data: uniqueEngagements,
+            value: [],
+            onSelect: async (value) => {
+              let engagementIds = ""
+              value.map((each, index) => {
+                if (index !== value.length - 1) {
+                  engagementIds += `engagement=${each.id}&`
+                } else {
+                  engagementIds += `engagement=${each.id}`
+                }
+              })
+
+              this.engagementQuery = engagementIds
+
+              let query = `${engagementIds}${
+                this.destinationQuery !== "" ? "&" : ""
+              }${this.destinationQuery}`
+
+              await this.getAudienceFilteredDeliveries({
+                id: this.audienceId,
+                query: query,
+              })
+              this.items = this.audienceFilteredDeliveries
+            },
+          },
+          {
+            name: "Destination",
+            data: uniqueDestinations,
+            value: [],
+            onSelect: async (value) => {
+              let destintaionIds = ""
+              value.map((each, index) => {
+                if (index !== value.length - 1) {
+                  destintaionIds += `destination=${each.id}&`
+                } else {
+                  destintaionIds += `destination=${each.id}`
+                }
+              })
+
+              this.destinationQuery = destintaionIds
+
+              let query = `${destintaionIds}${
+                this.engagementQuery !== "" ? "&" : ""
+              }${this.engagementQuery}`
+
+              await this.getAudienceFilteredDeliveries({
+                id: this.audienceId,
+                query: query,
+              })
+              this.items = this.audienceFilteredDeliveries
+            },
+          },
+        ]
+      }
+
+      this.items = this.allDeliveries
 
       this.loading = false
     },

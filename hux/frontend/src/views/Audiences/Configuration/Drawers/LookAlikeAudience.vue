@@ -54,6 +54,7 @@
           <hux-drop-down-search
             v-model="lookalikeAudience.engagements"
             :toggle-drop-down="toggleDropDown"
+            :min-selection="1"
             :items="engagements"
             @onToggle="(val) => (toggleDropDown = val)"
           >
