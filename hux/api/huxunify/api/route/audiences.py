@@ -465,7 +465,11 @@ class AudienceInsightsCountries(SwaggerView):
                 CustomersInsightsCountriesSchema().dump(
                     get_demographic_by_country(
                         token_response[0],
-                        filters=audience.get(db_c.AUDIENCE_FILTERS),
+                        filters={
+                            api_c.AUDIENCE_FILTERS: audience.get(
+                                db_c.AUDIENCE_FILTERS
+                            )
+                        },
                     ),
                     many=True,
                 )
