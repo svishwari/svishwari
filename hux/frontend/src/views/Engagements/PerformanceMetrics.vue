@@ -56,7 +56,7 @@
           :campaign-data="audiencePerformanceAdsData"
           :engagement-id="engagementId"
           type="ads"
-          data-e2e="audience-performance"
+          data-e2e="ads-data"
           @onUpdateCampaignMappings="$emit('fetchMetrics', 'ads')"
         />
       </v-tab-item>

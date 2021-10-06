@@ -64,7 +64,7 @@
                 route-name="EngagementDashboard"
                 :route-param="item['id']"
                 :data="item"
-                data-e2e="engagement-list"
+                :data-e2e="setEngagementSelector(item)"
                 has-favorite
                 :is-favorite="isUserFavorite(item, 'engagements')"
                 @actionFavorite="handleActionFavorite(item, 'engagements')"
@@ -847,6 +847,13 @@ export default {
         name: "EngagementUpdate",
         params: { id: id },
       })
+    },
+    setEngagementSelector(engagement) {
+      if (engagement["status"] == "Active" && engagement["audiences"].length > 0)
+      {
+      return "enagement-active"
+      } else
+      return "enagement-inactive"
     },
     getAudienceActionItems(audience, engagementId) {
       let audienceActionItems = [

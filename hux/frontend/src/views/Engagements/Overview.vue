@@ -48,8 +48,8 @@
       <template v-if="summaryCards[2].subLabel" #subtitle-extended>
         <span class="mr-2">
           <tooltip>
-            <template #label-content data-e2e="created-metric">
-              <span class="font-weight-semi-bold black--text text--darken-4">
+            <template #label-content>
+              <span class="font-weight-semi-bold black--text text--darken-4" data-e2e="created-metric">
                 {{ summaryCards[2].value }}
               </span>
             </template>
