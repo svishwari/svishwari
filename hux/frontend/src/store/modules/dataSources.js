@@ -77,6 +77,17 @@ const actions = {
       throw error
     }
   },
+
+  async removeDataSource({ commit }, datasource) {
+    try {
+      await api.dataSources.remove(`datasources=${datasource.type}`)
+      datasource["is_added"] = false
+      commit("SET_ONE", datasource)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
 }
 
 export default {
