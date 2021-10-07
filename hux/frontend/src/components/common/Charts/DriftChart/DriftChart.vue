@@ -4,8 +4,8 @@
     <chart-tooltip
       v-if="showTooltip"
       :position="{
-        x: this.finalXCoordinate,
-        y: this.finalYCoordinate,
+        x: finalXCoordinate,
+        y: finalYCoordinate,
       }"
       :tooltip-style="toolTipStyle"
     >
