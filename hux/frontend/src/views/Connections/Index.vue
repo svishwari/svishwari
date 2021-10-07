@@ -144,7 +144,7 @@ export default {
 
     let that = this
 
-    this.$root.$on("same-route-Connections", function (path) {
+    this.$root.$on("same-route-Connections", function () {
       that.toggleDrawer()
     })
   },
