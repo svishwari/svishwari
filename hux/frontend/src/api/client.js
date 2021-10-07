@@ -151,8 +151,8 @@ client["engagements"].deliverAudienceDestination = (
   return http.post(endpoint, data)
 }
 
-client["engagements"].deliveries = (resourceId, data) => {
-  return http.get(`/engagements/${resourceId}/delivery-history`, data)
+client["engagements"].deliveries = (resourceId, query) => {
+  return http.get(`/engagements/${resourceId}/delivery-history?${query}`)
 }
 
 client["engagements"].fetchAudiencePerformance = (resourceId, data) => {
@@ -241,8 +241,8 @@ client["audiences"].deliver = (resourceId, data) => {
   return http.post(`/audiences/${resourceId}/deliver`, data)
 }
 
-client["audiences"].deliveries = (resourceId, data) => {
-  return http.get(`/audiences/${resourceId}/delivery-history`, data)
+client["audiences"].deliveries = (resourceId, query) => {
+  return http.get(`/audiences/${resourceId}/delivery-history?${query}`)
 }
 
 client["audiences"].geoCities = (resourceId, batchNumber, batchSize) => {

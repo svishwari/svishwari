@@ -206,7 +206,7 @@ export default {
         .style("fill", "transparent")
         .on("mousemove", (mouseEvent) => mousemove(mouseEvent))
         .on("mouseout", () => mouseout())
-      let bisectDate = d3Array.bisector((d) => d).left
+      let bisectDate = d3Array.bisector((d) => d).right
       let mouseout = () => {
         svg.selectAll(".hover-line-y").style("display", "none")
         svg.selectAll(".hover-circle").remove()
