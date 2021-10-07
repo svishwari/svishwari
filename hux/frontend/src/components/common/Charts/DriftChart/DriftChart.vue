@@ -3,13 +3,18 @@
     <div ref="hux-drift-chart"></div>
     <chart-tooltip
       v-if="showTooltip"
-      :coordinates="coordinates"
-      class="black--text text--darken-4"
+      :position="{
+        x: this.finalXCoordinate,
+        y: this.finalYCoordinate,
+      }"
+      :tooltip-style="toolTipStyle"
     >
-      <div class="text-caption">{{ tooltipValue }}</div>
-      <div class="text-caption">
-        {{ tooltipValueDate | Date("MM/DD/YYYY") | Empty }}
-      </div>
+      <template #content>
+        <div class="text-caption">{{ tooltipValue }}</div>
+        <div class="text-caption">
+          {{ tooltipValueDate | Date("MM/DD/YYYY") | Empty }}
+        </div>
+      </template>
     </chart-tooltip>
   </div>
 </template>
@@ -22,8 +27,8 @@ import * as d3Shape from "d3-shape"
 import * as d3Array from "d3-array"
 import * as d3TimeFormat from "d3-time-format"
 import * as d3Time from "d3-time"
-
-import ChartTooltip from "@/components/common/Charts/Tooltip/Tooltip.vue"
+import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
+import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
 
 export default {
   name: "DriftChart",
@@ -115,7 +120,9 @@ export default {
       tooltipValue: null,
       tooltipValueDate: null,
       showTooltip: false,
-      coordinates: null,
+      toolTipStyle: TooltipConfiguration.driftChart,
+      finalXCoordinate: "",
+      finalYCoordinate: "",
     }
   },
 
@@ -306,7 +313,6 @@ export default {
         .style("fill", "transparent")
         .on("mouseover", () => {
           this.showTooltip = false
-          this.coordinates = null
           this.tooltipValue = null
           this.tooltipValueDate = null
           tooltip.style("display", null)
@@ -315,7 +321,6 @@ export default {
         })
         .on("mouseout", () => {
           this.showTooltip = false
-          this.coordinates = null
           this.tooltipValue = null
           this.tooltipValueDate = null
           tooltip.style("display", "none")
@@ -331,35 +336,29 @@ export default {
         let d1 = data[i] || {}
         let d = x0 - d0.xAxisValue > d1.xAxisValue - x0 ? d1 : d0
 
-        let finalXCoordinate = xCoordinateFunction(d.xAxisValue)
-        let finalYCoordinate = yCoordinateFunction(d.yAxisValue)
+        this.finalXCoordinate = xCoordinateFunction(d.xAxisValue)
+        this.finalYCoordinate = yCoordinateFunction(d.yAxisValue)
 
         svg
           .selectAll(".hover-line-x")
           .attr("x1", this.margin.left)
           .attr("x2", width - this.margin.right)
-          .attr("y1", finalYCoordinate)
-          .attr("y2", finalYCoordinate)
+          .attr("y1", this.finalYCoordinate)
+          .attr("y2", this.finalYCoordinate)
 
         svg
           .selectAll(".hover-line-y")
-          .attr("x1", finalXCoordinate)
-          .attr("x2", finalXCoordinate)
+          .attr("x1", this.finalXCoordinate)
+          .attr("x2", this.finalXCoordinate)
           .attr("y1", this.margin.top)
           .attr("y2", height - this.margin.bottom)
 
         tooltip.attr(
           "transform",
-          `translate(${finalXCoordinate},${finalYCoordinate})`
+          `translate(${this.finalXCoordinate},${this.finalYCoordinate})`
         )
 
-        let parentPosition = mouseEvent.srcElement.getBoundingClientRect()
-
         this.showTooltip = true
-        this.coordinates = [
-          `${finalYCoordinate + parentPosition.y - this.margin.top - 25}px`,
-          `${finalXCoordinate + parentPosition.x - this.margin.left + 15}px`,
-        ]
         this.tooltipValue = d.yAxisValue
         this.tooltipValueDate = d.xAxisValue
       }
