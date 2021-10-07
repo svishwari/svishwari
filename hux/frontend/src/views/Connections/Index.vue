@@ -141,6 +141,14 @@ export default {
     if (this.$route.params.select) {
       this.drawer = true
     }
+
+    let that = this;
+
+    this.$root.$on("same-route", function(path){
+      if(path == "Connections"){
+        that.toggleDrawer()
+      }
+    })
   },
 
   methods: {
