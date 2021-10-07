@@ -83,7 +83,9 @@ class TestPrepopulateDatabase(TestCase):
         pd.insert_delivery_platforms(self.database, delivery_platforms)
 
         list_delivery_platforms = get_all_delivery_platforms(self.database)
-        list_delivery_platform_names = [x["name"] for x in list_delivery_platforms]
+        list_delivery_platform_names = [
+            x["name"] for x in list_delivery_platforms
+        ]
         _ = [
             self.assertIn(x["name"], list_delivery_platform_names)
             for x in delivery_platforms

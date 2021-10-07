@@ -345,11 +345,15 @@ def insert_data_sources(database: MongoClient, data_sources: list) -> None:
             source_type=data_source[c.DATA_SOURCE_TYPE],
             status=data_source[c.STATUS],
         )[c.ID]
-        logging.info("Added %s, %s.", data_source[c.DATA_SOURCE_NAME], result_id)
+        logging.info(
+            "Added %s, %s.", data_source[c.DATA_SOURCE_NAME], result_id
+        )
     logging.info("Prepopulate data sources complete.")
 
 
-def insert_delivery_platforms(database: MongoClient, delivery_platforms: list) -> None:
+def insert_delivery_platforms(
+    database: MongoClient, delivery_platforms: list
+) -> None:
     """Insertion of Delivery Platforms Collection.
 
     Args:

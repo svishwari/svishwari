@@ -16,7 +16,11 @@ def get_mongo_client() -> MongoClient:
 
     # Get details on MongoDB configuration.
     host = os.environ.get("MONGO_DB_HOST")
-    port = int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
+    port = (
+        int(os.environ["MONGO_DB_PORT"])
+        if "MONGO_DB_PORT" in os.environ
+        else None
+    )
     user_name = os.environ.get("MONGO_DB_USERNAME")
     password = os.environ.get("MONGO_DB_PASSWORD")
     use_ssl = host not in ["localhost", None]
