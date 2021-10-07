@@ -336,6 +336,7 @@ class UpdateEngagement(SwaggerView):
             "example": {
                 db_c.ENGAGEMENT_NAME: "My Engagement",
                 db_c.ENGAGEMENT_DESCRIPTION: "Engagement Description",
+                api_c.STATUS: api_c.STATUS_INACTIVE,
                 db_c.AUDIENCES: [
                     {
                         api_c.ID: "60ae035b6c5bf45da27f17d6",
