@@ -145,7 +145,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      batchAddDataSources: "dataSources/batchAdd",
+      batchUpdateDataSources: "dataSources/batchUpdate",
     }),
     onDataSourceClick: function (id) {
       if (this.selectedDataSourceIds.includes(id)) {
@@ -156,7 +156,7 @@ export default {
       }
     },
     addDataSources: function () {
-      this.batchAddDataSources({
+      this.batchUpdateDataSources({
         body: {
           is_added: true,
           status: "Pending",

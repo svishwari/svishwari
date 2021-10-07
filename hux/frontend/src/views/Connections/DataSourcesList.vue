@@ -120,7 +120,7 @@ export default {
 
   methods: {
     ...mapActions({
-      removeDataSource: "dataSources/removeDataSource",
+      batchUpdateDataSources: "dataSources/batchUpdate",
     }),
     openModal(dataSource) {
       this.selectedDataSource = dataSource
@@ -129,7 +129,13 @@ export default {
     },
 
     async confirmRemoval() {
-      await this.removeDataSource(this.selectedDataSource)
+      await this.batchUpdateDataSources({
+        body: {
+          is_added: false,
+        },
+        data_source_ids: [this.selectedDataSource.id],
+      })
+      this.confirmModal = false
     },
   },
 }

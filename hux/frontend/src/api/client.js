@@ -296,9 +296,6 @@ client["models"].modelFeatures = (id) => {
 client.dataSources.dataFeeds = (type) => {
   return http.get(`/data-sources/${type}/datafeeds`)
 }
-client.dataSources.remove = (query) => {
-  return http.delete(`/data-sources?${query}`)
-}
 //#endregion
 
 export default client

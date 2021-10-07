@@ -53,7 +53,7 @@ const actions = {
     }
   },
 
-  async batchAdd({ commit }, dataSources) {
+  async batchUpdate({ commit }, dataSources) {
     try {
       const response = await api.dataSources.batchUpdate(dataSources)
       response.data.forEach((each) => {
@@ -72,17 +72,6 @@ const actions = {
         items: response.data["datafeeds"],
         id: data.id,
       })
-    } catch (error) {
-      handleError(error)
-      throw error
-    }
-  },
-
-  async removeDataSource({ commit }, datasource) {
-    try {
-      await api.dataSources.remove(`datasources=${datasource.type}`)
-      datasource["is_added"] = false
-      commit("SET_ONE", datasource)
     } catch (error) {
       handleError(error)
       throw error
