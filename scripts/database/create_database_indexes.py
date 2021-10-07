@@ -80,15 +80,13 @@ index_constants = [
 
 
 def set_indexes(database: MongoClient, index_list: List) -> None:
-    """
-    Method to set indexes from list
-    Args:
-        database (MongoClient): MongoDB Client
-        index_list (list): List of Indexes
+    """Method to set indexes from list.
 
-    Returns:
-        None
+    Args:
+        database (MongoClient): MongoDB Client.
+        index_list (list): List of Indexes.
     """
+
     for item in index_list:
         database_name = item[0]
         collection_name = item[1]
@@ -106,17 +104,13 @@ def set_indexes(database: MongoClient, index_list: List) -> None:
 
 
 def add_unique_compound_index(database: MongoClient) -> None:
-    """
-    Method to add unique Compound index
-    Args:
-        database (MongoClient): MongoDB Client
+    """Method to add unique Compound index.
 
-    Returns:
-        None
+    Args:
+        database (MongoClient): MongoDB Client.
     """
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.INGESTED_DATA_COLLECTION
-    ]
+
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.INGESTED_DATA_COLLECTION]
 
     field_str = "%s.%s" % (c.INGESTED_DATA, c.S_TYPE_CUSTOMER_ID)
     collection.create_index(

@@ -1,4 +1,4 @@
-"""Purpose of this file is for housing pytest startup scripts"""
+"""Purpose of this file is for housing pytest startup scripts."""
 from os import getenv, environ
 from requests.exceptions import MissingSchema
 from _pytest.config import Config
@@ -23,7 +23,6 @@ def pytest_configure(config: Config):
 
     Args:
         config (Config): Existing pytest config.
-
     """
 
     try:

@@ -1,6 +1,5 @@
-"""
-purpose of this file is housing any shared scripts for the
-mongo stand-up scripts
+"""Purpose of this file is housing any shared scripts for the mongo stand-up
+scripts.
 """
 import os
 from pathlib import Path
@@ -8,19 +7,16 @@ from pymongo import MongoClient
 
 
 def get_mongo_client() -> MongoClient:
-    """Get Mongo Client directly
+    """Get Mongo Client directly.
 
-    Args:
     Returns:
-        MongoClient: A connected mongo client, pulling settings from the environment
+        MongoClient: A connected mongo client, pulling settings from the
+            environment.
     """
+
     # Get details on MongoDB configuration.
     host = os.environ.get("MONGO_DB_HOST")
-    port = (
-        int(os.environ["MONGO_DB_PORT"])
-        if "MONGO_DB_PORT" in os.environ
-        else None
-    )
+    port = int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
     user_name = os.environ.get("MONGO_DB_USERNAME")
     password = os.environ.get("MONGO_DB_PASSWORD")
     use_ssl = host not in ["localhost", None]

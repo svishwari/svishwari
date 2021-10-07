@@ -1,5 +1,4 @@
 """Database client tests."""
-
 from unittest import TestCase, mock
 import mongomock
 from huxunifylib.database import constants as c
@@ -8,15 +7,10 @@ import database.create_database_indexes as cdi
 
 
 class TestCreateDBIndexes(TestCase):
-    """Test the DB Indexes creation"""
+    """Test the DB Indexes creation."""
 
     def setUp(self):
-        """
-        TestCase Initial Setup
-
-        Returns:
-
-        """
+        """TestCase Initial Setup."""
 
         mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
         mongo_patch.start()
@@ -27,14 +21,8 @@ class TestCreateDBIndexes(TestCase):
         self.addCleanup(mock.patch.stopall)
 
     def test_set_indexes(self):
-        """
-        Unit Test for set Indexes
+        """Unit Test for set Indexes."""
 
-        Args:
-            Instance of TestCreateDBIndex
-        Returns:
-            None
-        """
         index_list = [
             (
                 c.DATA_MANAGEMENT_DATABASE,
@@ -54,14 +42,7 @@ class TestCreateDBIndexes(TestCase):
         self.assertTrue(const_collection.index_information())
 
     def test_add_unique_compound_index(self):
-        """
-        Unit Test for set Indexes
-
-        Args:
-            Instance of TestCreateDBIndex
-        Returns:
-            None
-        """
+        """Unit Test for set Indexes."""
 
         cdi.add_unique_compound_index(self.database)
         ing_collection = self.database[c.DATA_MANAGEMENT_DATABASE][

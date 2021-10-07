@@ -1,6 +1,4 @@
-"""
-database setup code for the huxunify package
-"""
+"""Database setup code for the huxunify package."""
 from setuptools import setup
 
 setup(
