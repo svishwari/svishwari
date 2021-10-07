@@ -46,15 +46,9 @@ class CDPTest(TestCase):
 
         self.addCleanup(mock.patch.stopall)
 
-    @given(customer_id=st.text(alphabet=string.ascii_letters))
-    def test_get_customer(self, customer_id: str):
-        """Test get customer profiles.
+    def test_get_customer(self):
+        """Test get customer profiles."""
 
-        Args:
-            customer_id (str): string for testing get customer.
-        """
-
-        # skip empty string from hypothesis
         hux_id = "HUX123456789012345"
 
         expected_response = {
