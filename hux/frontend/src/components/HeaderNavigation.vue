@@ -53,7 +53,7 @@ export default {
         this.$router.name == path ||
         this.$router.history.current.name == path
       ) {
-        this.$root.$emit('same-route', path);
+        this.$root.$emit(`same-route-${path}`);
       } else {
         this.$router.push({
           name: path,

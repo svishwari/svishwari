@@ -142,12 +142,10 @@ export default {
       this.drawer = true
     }
 
-    let that = this;
+    let that = this
 
-    this.$root.$on("same-route", function(path){
-      if(path == "Connections"){
-        that.toggleDrawer()
-      }
+    this.$root.$on("same-route-Connections", function (path) {
+      that.toggleDrawer()
     })
   },
 
