@@ -490,6 +490,18 @@ DESTINATION_SECRETS = {
         ],
     },
 }
+DESTINATION_PATCH_FIELDS = [
+    db_c.ADDED,
+    db_c.ENABLED,
+    db_c.DELETED,
+    db_c.IS_AD_PLATFORM,
+    db_c.DELIVERY_PLATFORM_STATUS,
+    db_c.NAME,
+    db_c.DELIVERY_PLATFORM_TYPE,
+]
+DESTINATION_INVALID_PATCH_MESSAGE = (
+    f"Acceptable fields are {DESTINATION_PATCH_FIELDS}."
+)
 
 # user preferences
 PREFERENCE_KEY = "preference_key"
