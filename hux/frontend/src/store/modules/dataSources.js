@@ -53,7 +53,7 @@ const actions = {
     }
   },
 
-  async batchAdd({ commit }, dataSources) {
+  async batchUpdate({ commit }, dataSources) {
     try {
       const response = await api.dataSources.batchUpdate(dataSources)
       response.data.forEach((each) => {

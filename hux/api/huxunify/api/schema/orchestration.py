@@ -147,6 +147,7 @@ class AudienceGetSchema(Schema):
     source_size = fields.Int()
     source_id = fields.String()
     match_rate = fields.Float(default=0)
+    favorite = fields.Boolean(default=False)
 
 
 class CityIncomeInsightsSchema(Schema):

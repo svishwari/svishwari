@@ -28,10 +28,34 @@
                 name: 'DataSourceListing',
                 params: { id: dataSource.id },
               }
-            : {}
+            : undefined
         "
       >
-        <status :status="dataSource.status" :icon-size="17" class="status" />
+        <div class="d-flex align-center">
+          <status
+            :status="dataSource.status"
+            :icon-size="17"
+            class="status"
+            :class="dataSource.status === 'Pending' ? 'mr-10' : 'mr-16'"
+          />
+          <v-menu left offset-y close-on-click>
+            <template #activator="{ on }">
+              <v-icon
+                v-if="dataSource.status === 'Pending'"
+                color="black darken-4"
+                v-on="on"
+              >
+                mdi-dots-vertical
+              </v-icon>
+            </template>
+            <div
+              class="black--text text-darken-4 cursor-pointer px-4 py-2 white"
+              @click="openModal(dataSource)"
+            >
+              Remove
+            </div>
+          </v-menu>
+        </div>
       </card-horizontal>
     </template>
 
@@ -44,13 +68,24 @@
         Begin by selecting the plus button above.
       </template>
     </empty-state-data>
+
+    <confirm-modal
+      v-model="confirmModal"
+      type="error"
+      :title="confirmTitle"
+      body="Are you sure you want to remove this pending data source?"
+      right-btn-text="Yes, remove it"
+      @onCancel="confirmModal = !confirmModal"
+      @onConfirm="confirmRemoval()"
+    />
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapGetters, mapActions } from "vuex"
 
 import CardHorizontal from "@/components/common/CardHorizontal"
+import ConfirmModal from "@/components/common/ConfirmModal"
 import Icon from "@/components/common/Icon"
 import Status from "@/components/common/Status"
 import EmptyStateData from "@/components/common/EmptyStateData"
@@ -58,11 +93,14 @@ import EmptyStateData from "@/components/common/EmptyStateData"
 export default {
   name: "DataSourcesList",
 
-  components: { EmptyStateData, CardHorizontal, Status, Icon },
+  components: { EmptyStateData, CardHorizontal, Status, Icon, ConfirmModal },
 
   data() {
     return {
       drawer: false,
+      selectedDataSource: {},
+      confirmModal: false,
+      confirmTitle: "",
     }
   },
 
@@ -77,6 +115,27 @@ export default {
 
     hasAddedDatasources() {
       return Boolean(this.addedDataSources && this.addedDataSources.length)
+    },
+  },
+
+  methods: {
+    ...mapActions({
+      batchUpdateDataSources: "dataSources/batchUpdate",
+    }),
+    openModal(dataSource) {
+      this.selectedDataSource = dataSource
+      this.confirmTitle = `You are about to remove ${dataSource.name}`
+      this.confirmModal = true
+    },
+
+    async confirmRemoval() {
+      await this.batchUpdateDataSources({
+        body: {
+          is_added: false,
+        },
+        data_source_ids: [this.selectedDataSource.id],
+      })
+      this.confirmModal = false
     },
   },
 }

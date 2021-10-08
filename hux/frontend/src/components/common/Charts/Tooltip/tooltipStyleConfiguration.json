@@ -48,10 +48,15 @@
     "top": "35px",
     "left": "30px"
   },
-  "driftChart": {
+  "featureChartScore": {
     "maxWidth": "70px",
-    "top": "-45px",
-    "left": "45px",
-    "padding": "5px"
+    "top": "-6px",
+    "left": "171px",
+    "padding": "7px 14px 12px 14px"
+  },
+  "driftChart": {
+    "top": "55px",
+    "left": "25px",
+    "padding": "6px 16px"
   }
 }
