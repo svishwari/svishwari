@@ -273,11 +273,15 @@ def group_gender_spending(gender_spending: list) -> dict:
         response(dict): Gender spending grouped by gender / month.
     """
 
-    date_parser = lambda x, y: datetime.strptime(f"1-{str(x)}-{str(y)}", "%d-%m-%Y")
+    date_parser = lambda x, y: datetime.strptime(
+        f"1-{str(x)}-{str(y)}", "%d-%m-%Y"
+    )
     return {
         constants.GENDER_WOMEN: [
             {
-                constants.DATE: date_parser(x[constants.MONTH], x[constants.YEAR]),
+                constants.DATE: date_parser(
+                    x[constants.MONTH], x[constants.YEAR]
+                ),
                 constants.LTV: round(x[constants.AVG_SPENT_WOMEN], 4)
                 if x[constants.AVG_SPENT_WOMEN]
                 else 0,
@@ -286,7 +290,9 @@ def group_gender_spending(gender_spending: list) -> dict:
         ],
         constants.GENDER_MEN: [
             {
-                constants.DATE: date_parser(x[constants.MONTH], x[constants.YEAR]),
+                constants.DATE: date_parser(
+                    x[constants.MONTH], x[constants.YEAR]
+                ),
                 constants.LTV: round(x[constants.AVG_SPENT_MEN], 4)
                 if x[constants.AVG_SPENT_MEN]
                 else 0,
@@ -295,7 +301,9 @@ def group_gender_spending(gender_spending: list) -> dict:
         ],
         constants.GENDER_OTHER: [
             {
-                constants.DATE: date_parser(x[constants.MONTH], x[constants.YEAR]),
+                constants.DATE: date_parser(
+                    x[constants.MONTH], x[constants.YEAR]
+                ),
                 constants.LTV: round(x[constants.AVG_SPENT_OTHER], 4)
                 if x[constants.AVG_SPENT_OTHER]
                 else 0,
@@ -452,7 +460,9 @@ def is_component_favorite(
     Returns:
         bool: If component is favorite or not.
     """
-    user_favorites = get_user(get_db_client(), okta_user_id).get(constants.FAVORITES)
+    user_favorites = get_user(get_db_client(), okta_user_id).get(
+        constants.FAVORITES
+    )
 
     if (component_name in db_c.FAVORITE_COMPONENTS) and (
         ObjectId(component_id) in user_favorites.get(component_name)

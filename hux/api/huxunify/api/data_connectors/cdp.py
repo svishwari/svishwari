@@ -151,7 +151,9 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
 
 
 # pylint: disable=unused-argument
-def get_idr_overview(token: str, start_date: str = None, end_date: str = None) -> dict:
+def get_idr_overview(
+    token: str, start_date: str = None, end_date: str = None
+) -> dict:
     """Fetch IDR overview data.
 
     Args:
@@ -189,7 +191,9 @@ def get_idr_overview(token: str, start_date: str = None, end_date: str = None) -
             response.status_code,
         )
 
-    logger.info("Successfully retrieved Customer Profile Insights from CDP API.")
+    logger.info(
+        "Successfully retrieved Customer Profile Insights from CDP API."
+    )
 
     return clean_cdm_fields(response.json()[api_c.BODY])
 
@@ -234,7 +238,9 @@ def get_customers_overview(
             response.status_code,
         )
 
-    logger.info("Successfully retrieved Customer Profile Insights from CDP API.")
+    logger.info(
+        "Successfully retrieved Customer Profile Insights from CDP API."
+    )
 
     # clean up cdm date fields in the response
     response_body = clean_cdm_fields(response.json()[api_c.BODY])
@@ -349,11 +355,15 @@ async def get_async_customers(
             try:
                 return await response.json(), str(audience_id)
             except aiohttp.client.ContentTypeError:
-                logger.error("CDM post request failed for audience id %s.", audience_id)
+                logger.error(
+                    "CDM post request failed for audience id %s.", audience_id
+                )
                 return {"code": 500}, str(audience_id)
 
 
-def fill_empty_customer_events(start_date: datetime, end_date: datetime) -> list:
+def fill_empty_customer_events(
+    start_date: datetime, end_date: datetime
+) -> list:
     """Fill empty events for dates between start_date and end_date.
 
     Args:
@@ -531,7 +541,9 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> list:
     ]
 
 
-def get_customer_count_by_state(token: str, filters: Optional[dict] = None) -> list:
+def get_customer_count_by_state(
+    token: str, filters: Optional[dict] = None
+) -> list:
     """Get demographic details of customers by state.
 
     Args:
@@ -574,7 +586,9 @@ def get_customer_count_by_state(token: str, filters: Optional[dict] = None) -> l
     return body
 
 
-def get_demographic_by_state(token: str, filters: Optional[dict] = None) -> list:
+def get_demographic_by_state(
+    token: str, filters: Optional[dict] = None
+) -> list:
     """Get demographic details of customers by state.
 
     Args:
@@ -597,7 +611,8 @@ def get_demographic_by_state(token: str, filters: Optional[dict] = None) -> list
         {
             api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
             api_c.POPULATION_PERCENTAGE: round(
-                x[api_c.SIZE] / sum([x[api_c.SIZE] for x in customer_count_by_state]),
+                x[api_c.SIZE]
+                / sum([x[api_c.SIZE] for x in customer_count_by_state]),
                 4,
             )
             if sum([x[api_c.SIZE] for x in customer_count_by_state]) != 0
@@ -620,7 +635,9 @@ def get_demographic_by_state(token: str, filters: Optional[dict] = None) -> list
 
 
 # pylint: disable=unused-argument
-def get_demographic_by_country(token: str, filters: Optional[dict] = None) -> list:
+def get_demographic_by_country(
+    token: str, filters: Optional[dict] = None
+) -> list:
     """Get demographic details of customers by country.
 
     Args:
@@ -657,12 +674,16 @@ def get_demographic_by_country(token: str, filters: Optional[dict] = None) -> li
         )
     # log execution time summary
     total_ticks = time.perf_counter() - timer
-    logger.info("Grouped customer count data by country in %0.4f seconds.", total_ticks)
+    logger.info(
+        "Grouped customer count data by country in %0.4f seconds.", total_ticks
+    )
 
     return customer_insights_by_country
 
 
-def get_customers_insights_count_by_day(token: str, date_filters: dict) -> dict:
+def get_customers_insights_count_by_day(
+    token: str, date_filters: dict
+) -> dict:
     """Fetch customer insights count by day data.
 
     Args:
@@ -702,7 +723,8 @@ def get_customers_insights_count_by_day(token: str, date_filters: dict) -> dict:
         )
 
     logger.info(
-        "Successfully retrieved customer insights count by day data from " "CDP API."
+        "Successfully retrieved customer insights count by day data from "
+        "CDP API."
     )
 
     response_body = response.json()[api_c.BODY]
@@ -782,7 +804,9 @@ def clean_cdm_gender_fields(response_body: dict) -> dict:
     ]
 
     # add each individual gender count from the response body into total_count
-    total_count = sum([response_body.get(gender[0]) or 0 for gender in gender_fields])
+    total_count = sum(
+        [response_body.get(gender[0]) or 0 for gender in gender_fields]
+    )
 
     # set the count values and the calculated individual gender average against
     # appropriate fields in the response body for each individual gender
@@ -818,7 +842,9 @@ def get_spending_by_gender(
         FailedAPIDependencyError: Integrated dependent API failure error.
     """
 
-    request_payload = filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+    request_payload = (
+        filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+    )
     request_payload[api_c.START_DATE] = start_date
     request_payload[api_c.END_DATE] = end_date
 
@@ -851,7 +877,9 @@ def get_spending_by_gender(
     )
 
 
-def add_missing_customer_count_by_day(response_body: list, date_filters: dict) -> list:
+def add_missing_customer_count_by_day(
+    response_body: list, date_filters: dict
+) -> list:
     """Add customer data for missing dates.
 
     Args:
@@ -876,7 +904,9 @@ def add_missing_customer_count_by_day(response_body: list, date_filters: dict) -
     for num_day in range(int((end_date - start_date).days) + 1):
         current_date = start_date + relativedelta(days=num_day)
 
-        if response_body and current_date == response_body[0].get(api_c.RECORDED):
+        if response_body and current_date == response_body[0].get(
+            api_c.RECORDED
+        ):
             customer_data_by_day.append(response_body.pop(0))
         else:
             customer_data_by_day.append(

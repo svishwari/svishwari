@@ -87,7 +87,9 @@ def map_model_response(response: dict) -> List[dict]:
     return models
 
 
-def map_model_version_history_response(response: dict, model_id: str) -> List[dict]:
+def map_model_version_history_response(
+    response: dict, model_id: str
+) -> List[dict]:
     """Map model version history response to a usable dict.
 
     Args:
@@ -335,7 +337,9 @@ def get_model_drift(model_id: int, model_type: str) -> List[ModelDriftSchema]:
 
         result_drift.append(
             {
-                constants.RUN_DATE: parser.parse(result[constants.FEATURES][1]),
+                constants.RUN_DATE: parser.parse(
+                    result[constants.FEATURES][1]
+                ),
                 constants.DRIFT: result[constants.FEATURES][0],
             }
         )
@@ -362,7 +366,10 @@ def get_model_lift_async(model_id: str) -> List[ModelLiftSchema]:
     # send all responses at once and wait until they are all done.
     responses = asyncio.get_event_loop().run_until_complete(
         asyncio.gather(
-            *(get_async_lift_bucket(model_id, bucket) for bucket in range(10, 101, 10))
+            *(
+                get_async_lift_bucket(model_id, bucket)
+                for bucket in range(10, 101, 10)
+            )
         )
     )
 
@@ -382,7 +389,9 @@ def get_model_lift_async(model_id: str) -> List[ModelLiftSchema]:
             continue
 
         # process lift data
-        latest_lift_data = response[0][constants.RESULTS][-1][constants.FEATURES]
+        latest_lift_data = response[0][constants.RESULTS][-1][
+            constants.FEATURES
+        ]
 
         result_lift.append(
             {
@@ -403,7 +412,9 @@ def get_model_lift_async(model_id: str) -> List[ModelLiftSchema]:
     return result_lift
 
 
-async def get_async_lift_bucket(model_id: str, bucket: int) -> Tuple[dict, int]:
+async def get_async_lift_bucket(
+    model_id: str, bucket: int
+) -> Tuple[dict, int]:
     """Asynchronously gets lift by bucket.
 
     Args:
@@ -439,11 +450,15 @@ async def get_async_lift_bucket(model_id: str, bucket: int) -> Tuple[dict, int]:
             try:
                 return await response.json(), bucket
             except aiohttp.client.ContentTypeError:
-                logger.error("Tecton post request failed for bucket: %s.", bucket)
+                logger.error(
+                    "Tecton post request failed for bucket: %s.", bucket
+                )
                 return {"code": 500}, bucket
 
 
-def get_model_features(model_id: int, model_version: str) -> List[FeatureSchema]:
+def get_model_features(
+    model_id: int, model_version: str
+) -> List[FeatureSchema]:
     """Get model features based on model id.
 
     Args:

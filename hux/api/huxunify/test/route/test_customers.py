@@ -52,7 +52,9 @@ class TestCustomersOverview(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         # setup the flask test client
         self.test_client = create_app().test_client()
@@ -138,7 +140,8 @@ class TestCustomersOverview(TestCase):
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/identity/id-count-by" f"-day",
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/identity/id-count-by"
+            f"-day",
             json=t_c.IDR_MATCHING_TRENDS_BY_DAY_DATA,
         )
         self.request_mocker.start()
@@ -252,7 +255,9 @@ class TestCustomersOverview(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual({}, DataFeedSchema().validate(response.json, many=True))
+        self.assertEqual(
+            {}, DataFeedSchema().validate(response.json, many=True)
+        )
         for datafeed in response.json:
             self.assertIn("num_records_processed", datafeed)
             self.assertIn("new_ids_generated", datafeed)
@@ -321,7 +326,8 @@ class TestCustomersOverview(TestCase):
         self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/" f"{api_c.DEMOGRAPHIC}",
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/"
+            f"{api_c.DEMOGRAPHIC}",
             query_string={
                 api_c.START_DATE: start_date,
                 api_c.END_DATE: end_date,
@@ -331,7 +337,9 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         self.assertTrue(
-            t_c.validate_schema(CustomerDemographicInsightsSchema(), response.json)
+            t_c.validate_schema(
+                CustomerDemographicInsightsSchema(), response.json
+            )
         )
         self.assertTrue(
             t_c.validate_schema(
@@ -356,7 +364,8 @@ class TestCustomersOverview(TestCase):
 
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/identity/id-count-by" f"-day",
+            f"{t_c.TEST_CONFIG.CDP_CONNECTION_SERVICE}/identity/id-count-by"
+            f"-day",
             json=t_c.IDR_MATCHING_TRENDS_BY_DAY_DATA,
         )
         self.request_mocker.start()
@@ -415,7 +424,9 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         self.assertTrue(
-            t_c.validate_schema(TotalCustomersInsightsSchema(), response.json, True)
+            t_c.validate_schema(
+                TotalCustomersInsightsSchema(), response.json, True
+            )
         )
 
     def test_customers_insights_cities_success(self) -> None:
@@ -683,7 +694,8 @@ class TestCustomersOverview(TestCase):
         self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/" f"{api_c.DEMOGRAPHIC}",
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/"
+            f"{api_c.DEMOGRAPHIC}",
             query_string={
                 api_c.START_DATE: "2021-04-01",
                 api_c.END_DATE: "2021-08-01",
@@ -748,7 +760,9 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     @given(batch_number=st.text(alphabet=string.ascii_letters))
-    def test_get_customer_overview_invalid_batch_number(self, batch_number: str):
+    def test_get_customer_overview_invalid_batch_number(
+        self, batch_number: str
+    ):
         """Test get customer list and provide an invalid batch number.
 
         Args:
@@ -766,7 +780,9 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     @given(batch_size=st.text(alphabet=string.ascii_letters))
-    def test_get_customer_insights_by_city_invalid_batch_size(self, batch_size: str):
+    def test_get_customer_insights_by_city_invalid_batch_size(
+        self, batch_size: str
+    ):
         """Test get customer insights by city and provide an invalid batch size.
 
         Args:

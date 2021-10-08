@@ -329,12 +329,18 @@ class DeleteCdpDataSources(SwaggerView):
                     )
                 }, HTTPStatus.OK
 
-            logger.error("Could not delete data sources - %s.", data_source_types)
+            logger.error(
+                "Could not delete data sources - %s.", data_source_types
+            )
             return {
-                "message": api_c.CANNOT_DELETE_DATASOURCES.format(data_source_types)
+                "message": api_c.CANNOT_DELETE_DATASOURCES.format(
+                    data_source_types
+                )
             }, HTTPStatus.INTERNAL_SERVER_ERROR
 
-        return {api_c.MESSAGE: api_c.EMPTY_OBJECT_ERROR_MESSAGE}, HTTPStatus.BAD_REQUEST
+        return {
+            api_c.MESSAGE: api_c.EMPTY_OBJECT_ERROR_MESSAGE
+        }, HTTPStatus.BAD_REQUEST
 
 
 @add_view_to_blueprint(
@@ -403,7 +409,9 @@ class BatchUpdateDataSources(SwaggerView):
 
         # validate data source ids
         data_source_ids = [
-            ObjectId(x) for x in data[api_c.CDP_DATA_SOURCE_IDS] if ObjectId.is_valid(x)
+            ObjectId(x)
+            for x in data[api_c.CDP_DATA_SOURCE_IDS]
+            if ObjectId.is_valid(x)
         ]
         if not data_source_ids or len(data_source_ids) != len(
             data[api_c.CDP_DATA_SOURCE_IDS]
@@ -444,7 +452,9 @@ class BatchUpdateDataSources(SwaggerView):
                 )
                 return (
                     jsonify(
-                        CdpDataSourceSchema().dump(updated_data_sources, many=True)
+                        CdpDataSourceSchema().dump(
+                            updated_data_sources, many=True
+                        )
                     ),
                     HTTPStatus.OK.value,
                 )
@@ -520,7 +530,9 @@ class GetDataSourceDatafeeds(SwaggerView):
 
         token_response = get_token_from_request(request)
 
-        data_source = get_data_source(get_db_client(), data_source_type=datasource_type)
+        data_source = get_data_source(
+            get_db_client(), data_source_type=datasource_type
+        )
 
         response = {
             api_c.NAME: data_source[db_c.NAME],

@@ -40,7 +40,9 @@ def check_cdp_connections_api_connection() -> Tuple[int, str]:
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
-        logger.error("CDP Connections Health Check failed with %s.", repr(exception))
+        logger.error(
+            "CDP Connections Health Check failed with %s.", repr(exception)
+        )
         record_health_status_metric(
             api_c.CDM_CONNECTION_SERVICE_CONNECTION_HEALTH, False
         )
@@ -66,7 +68,9 @@ def get_idr_data_feeds(token: str, start_date: str, end_date: str) -> list:
 
     # get config
     config = get_config()
-    logger.info("Retrieving data-feeds for within %s and %s.", start_date, end_date)
+    logger.info(
+        "Retrieving data-feeds for within %s and %s.", start_date, end_date
+    )
 
     response = requests.post(
         f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_IDENTITY_ENDPOINT}/"
@@ -133,7 +137,9 @@ def get_idr_data_feed_details(token: str, datafeed_id: int) -> dict:
 
     logger.info("Successfully retrieved identity data feed details.")
 
-    return {k: clean_cdm_fields(v) for k, v in response.json()[api_c.BODY].items()}
+    return {
+        k: clean_cdm_fields(v) for k, v in response.json()[api_c.BODY].items()
+    }
 
 
 def get_data_sources(token: str) -> list:
@@ -192,7 +198,9 @@ def get_data_source_data_feeds(token: str, data_source_type: str) -> list:
 
     config = get_config()
 
-    logger.info("Retrieving data-feeds for data source with type %s.", data_source_type)
+    logger.info(
+        "Retrieving data-feeds for data source with type %s.", data_source_type
+    )
 
     response = requests.get(
         f"{config.CDP_CONNECTION_SERVICE}/{api_c.CDM_CONNECTIONS_ENDPOINT}/"
@@ -213,20 +221,28 @@ def get_data_source_data_feeds(token: str, data_source_type: str) -> list:
             response.status_code,
         )
 
-    logger.info("Successfully retrieved %s data feed details.", data_source_type)
+    logger.info(
+        "Successfully retrieved %s data feed details.", data_source_type
+    )
 
     data_feeds = response.json()[api_c.BODY]
 
     for data_feed in data_feeds:
-        data_feed[api_c.PROCESSED_AT] = parse(data_feed.get(api_c.PROCESSED_AT))
+        data_feed[api_c.PROCESSED_AT] = parse(
+            data_feed.get(api_c.PROCESSED_AT)
+        )
         data_feed["records_processed_percentage"] = data_feed.get(
             "records_processed", 0
         ) / data_feed.get("records_received", 1)
-        data_feed["thirty_days_avg"] = data_feed.get("thirty_days_avg", 0) / 100
+        data_feed["thirty_days_avg"] = (
+            data_feed.get("thirty_days_avg", 0) / 100
+        )
     return data_feeds
 
 
-def get_idr_matching_trends(token: str, start_date: str, end_date: str) -> list:
+def get_idr_matching_trends(
+    token: str, start_date: str, end_date: str
+) -> list:
     """Retrieves IDR matching trends data YTD.
 
     Args:
@@ -248,7 +264,9 @@ def get_idr_matching_trends(token: str, start_date: str, end_date: str) -> list:
         else datetime.today() - timedelta(days=random.randint(100, 1000))
     ).strftime("%Y-%m-%d")
 
-    end_date = (parse(end_date) if end_date else datetime.today()).strftime("%Y-%m-%d")
+    end_date = (parse(end_date) if end_date else datetime.today()).strftime(
+        "%Y-%m-%d"
+    )
 
     filters = {api_c.START_DATE: start_date, api_c.END_DATE: end_date}
 

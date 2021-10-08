@@ -29,14 +29,18 @@ class AudienceDownloadsTest(TestCase):
     def setUp(self) -> None:
         """Setup tests."""
 
-        self.audiences_endpoint = f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}"
+        self.audiences_endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}"
+        )
 
         # init mongo patch initially
         mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         # mock get_db_client() in utils
         mock.patch(
@@ -64,7 +68,9 @@ class AudienceDownloadsTest(TestCase):
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
         self.request_mocker.get(
             t_c.CDM_HEALTHCHECK_CALL, json=t_c.CDM_HEALTHCHECK_RESPONSE
         )
@@ -181,14 +187,18 @@ class AudienceInsightsTest(TestCase):
     def setUp(self) -> None:
         """Setup tests."""
 
-        self.audiences_endpoint = f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}"
+        self.audiences_endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}"
+        )
 
         # init mongo patch initially
         mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         # mock get_db_client() in utils
         mock.patch(
@@ -211,7 +221,9 @@ class AudienceInsightsTest(TestCase):
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
         self.request_mocker.get(
             t_c.CDM_HEALTHCHECK_CALL, json=t_c.CDM_HEALTHCHECK_RESPONSE
         )
