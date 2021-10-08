@@ -472,4 +472,6 @@ def is_component_favorite(
     if (component_name in db_c.FAVORITE_COMPONENTS) and (
         ObjectId(component_id) in user_favorites.get(component_name)
     ):
+        return True
+
     return False
