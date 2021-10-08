@@ -44,9 +44,7 @@ class DecisioningTests(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.database = DatabaseClient("localhost", 27017, None, None).connect()
 
         # mock get_db_client()
         mock.patch(
@@ -72,9 +70,7 @@ class DecisioningTests(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(
-            t_c.validate_schema(ModelSchema(), response.json, True)
-        )
+        self.assertTrue(t_c.validate_schema(ModelSchema(), response.json, True))
 
         self.assertEqual(
             [x[api_c.NAME] for x in response.json],
@@ -108,14 +104,10 @@ class DecisioningTests(TestCase):
     @given(model_id=st.integers(min_value=100, max_value=1000))
     @settings(deadline=600)
     def test_get_model_version_history_failed(self, model_id: int):
-        """
-        Test get model version history failed
+        """Test get model version history failed.
 
         Args:
             model_id (int): Model Id.
-
-        Returns:
-            None
         """
 
         # mock the version history
@@ -147,9 +139,7 @@ class DecisioningTests(TestCase):
         get_model_version_mock = mock.patch(
             "huxunify.api.data_connectors.tecton.get_model_version_history"
         ).start()
-        get_model_version_mock.return_value = (
-            t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
-        )
+        get_model_version_mock.return_value = t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
 
         # mock the features response
         self.request_mocker.stop()

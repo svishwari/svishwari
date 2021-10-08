@@ -185,15 +185,16 @@ def get_friendly_delivered_time(delivered_time: datetime) -> str:
 def get_next_schedule(
     cron_expression: str, start_date: datetime
 ) -> Union[datetime, None]:
-    """
+    """Get the next schedule from the cron expression.
 
     Args:
-        cron_expression (str): Cron Expression of the schedule
-        start_date (datetime): Start Datetime
+        cron_expression (str): Cron Expression of the schedule.
+        start_date (datetime): Start Datetime.
 
     Returns:
-        next_schedule(datetime): Next Schedule datetime
+        next_schedule(datetime): Next Schedule datetime.
     """
+
     if isinstance(cron_expression, str) and isinstance(start_date, datetime):
         try:
             return croniter(cron_expression, start_date).get_next(datetime)
@@ -272,15 +273,11 @@ def group_gender_spending(gender_spending: list) -> dict:
         response(dict): Gender spending grouped by gender / month.
     """
 
-    date_parser = lambda x, y: datetime.strptime(
-        f"1-{str(x)}-{str(y)}", "%d-%m-%Y"
-    )
+    date_parser = lambda x, y: datetime.strptime(f"1-{str(x)}-{str(y)}", "%d-%m-%Y")
     return {
         constants.GENDER_WOMEN: [
             {
-                constants.DATE: date_parser(
-                    x[constants.MONTH], x[constants.YEAR]
-                ),
+                constants.DATE: date_parser(x[constants.MONTH], x[constants.YEAR]),
                 constants.LTV: round(x[constants.AVG_SPENT_WOMEN], 4)
                 if x[constants.AVG_SPENT_WOMEN]
                 else 0,
@@ -289,9 +286,7 @@ def group_gender_spending(gender_spending: list) -> dict:
         ],
         constants.GENDER_MEN: [
             {
-                constants.DATE: date_parser(
-                    x[constants.MONTH], x[constants.YEAR]
-                ),
+                constants.DATE: date_parser(x[constants.MONTH], x[constants.YEAR]),
                 constants.LTV: round(x[constants.AVG_SPENT_MEN], 4)
                 if x[constants.AVG_SPENT_MEN]
                 else 0,
@@ -300,9 +295,7 @@ def group_gender_spending(gender_spending: list) -> dict:
         ],
         constants.GENDER_OTHER: [
             {
-                constants.DATE: date_parser(
-                    x[constants.MONTH], x[constants.YEAR]
-                ),
+                constants.DATE: date_parser(x[constants.MONTH], x[constants.YEAR]),
                 constants.LTV: round(x[constants.AVG_SPENT_OTHER], 4)
                 if x[constants.AVG_SPENT_OTHER]
                 else 0,
@@ -341,9 +334,9 @@ class Validation:
             int: Result of the integer conversion.
 
         Raises:
-            ValidationError: Error that is raised if input is invalid.
-
+            InputParamsValidationError: Error that is raised if input is invalid.
         """
+
         # max_value added to protect snowflake/and other apps that
         # are not able to handle 32int+
         max_value = 2147483647
@@ -368,8 +361,8 @@ class Validation:
             bool: Result of the boolean conversion.
 
         Raises:
-            ValidationError: Error that is raised if input is invalid.
-
+            InputParamsValidationError: Error that is raised if input is
+                invalid.
         """
 
         if value.lower() == "true":
@@ -393,8 +386,8 @@ class Validation:
             datetime: datetime object for the string date passed in
 
         Raises:
-            ValidationError: Error that is raised if input is invalid.
-
+            InputParamsValidationError: Error that is raised if input is
+                invalid.
         """
 
         try:
@@ -417,12 +410,9 @@ class Validation:
             end_date (str): Input end date string.
             date_format (str): Date string format.
 
-        Returns:
-            None
-
         Raises:
-            ValidationError: Error that is raised if input is invalid.
-
+            InputParamsValidationError: Error that is raised if input is
+                invalid.
         """
 
         start = Validation.validate_date(start_date, date_format)
@@ -442,12 +432,9 @@ class Validation:
         Args:
             hux_id (str): Hux ID.
 
-        Returns:
-            None
-
         Raises:
-            ValidationError: Error that is raised if input ID is invalid.
-
+            InputParamsValidationError: Error that is raised if input ID is
+                invalid.
         """
 
         if not re.match("^HUX\d{15}$", hux_id):
@@ -465,9 +452,7 @@ def is_component_favorite(
     Returns:
         bool: If component is favorite or not.
     """
-    user_favorites = get_user(get_db_client(), okta_user_id).get(
-        constants.FAVORITES
-    )
+    user_favorites = get_user(get_db_client(), okta_user_id).get(constants.FAVORITES)
 
     if (component_name in db_c.FAVORITE_COMPONENTS) and (
         ObjectId(component_id) in user_favorites.get(component_name)

@@ -68,9 +68,7 @@ from huxunify.api.route.utils import (
 )
 
 # setup the orchestration blueprint
-orchestration_bp = Blueprint(
-    api_c.ORCHESTRATION_ENDPOINT, import_name=__name__
-)
+orchestration_bp = Blueprint(api_c.ORCHESTRATION_ENDPOINT, import_name=__name__)
 
 
 @orchestration_bp.before_request
@@ -81,9 +79,7 @@ def before_request():
     pass  # pylint: disable=unnecessary-pass
 
 
-def add_destinations(
-    database: MongoClient, destinations: list
-) -> Union[list, None]:
+def add_destinations(database: MongoClient, destinations: list) -> Union[list, None]:
     """Add destinations data using destination ids.
 
     Args:
@@ -96,15 +92,11 @@ def add_destinations(
 
     if destinations is not None:
         object_ids = [ObjectId(x.get(api_c.ID)) for x in destinations]
-        return destination_management.get_delivery_platforms_by_id(
-            database, object_ids
-        )
+        return destination_management.get_delivery_platforms_by_id(database, object_ids)
     return None
 
 
-@add_view_to_blueprint(
-    orchestration_bp, api_c.AUDIENCE_ENDPOINT, "AudienceView"
-)
+@add_view_to_blueprint(orchestration_bp, api_c.AUDIENCE_ENDPOINT, "AudienceView")
 class AudienceView(SwaggerView):
     """Audience view class."""
 
@@ -132,9 +124,7 @@ class AudienceView(SwaggerView):
             "description": "List of all Audiences.",
             "schema": {"type": "array", "items": AudienceGetSchema},
         },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get all Audiences."
-        },
+        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to get all Audiences."},
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
@@ -153,14 +143,11 @@ class AudienceView(SwaggerView):
 
         # get all audiences and deliveries
         database = get_db_client()
-        audiences = orchestration_management.get_all_audiences_and_deliveries(
-            database
-        )
+        audiences = orchestration_management.get_all_audiences_and_deliveries(database)
 
         # get all audiences because document DB does not allow for replaceRoot
         audience_dict = {
-            x[db_c.ID]: x
-            for x in orchestration_management.get_all_audiences(database)
+            x[db_c.ID]: x for x in orchestration_management.get_all_audiences(database)
         }
 
         # workaround because DocumentDB does not allow $replaceRoot
@@ -189,17 +176,13 @@ class AudienceView(SwaggerView):
         )
 
         # get unique destinations per audience across engagements
-        audience_destinations = eam.get_all_engagement_audience_destinations(
-            database
-        )
+        audience_destinations = eam.get_all_engagement_audience_destinations(database)
 
         # process each audience object
         for audience in audiences:
             # find the matched audience destinations
             matched_destinations = [
-                x
-                for x in audience_destinations
-                if x[db_c.ID] == audience[db_c.ID]
+                x for x in audience_destinations if x[db_c.ID] == audience[db_c.ID]
             ]
             # set the unique destinations
             audience[db_c.DESTINATIONS] = (
@@ -235,15 +218,15 @@ class AudienceView(SwaggerView):
         # as lookalike audiences can not be lookalikeable
         if not lookalikeable:
             # get all lookalikes and append to the audience list
-            lookalikes = destination_management.get_all_delivery_platform_lookalike_audiences(
-                database
+            lookalikes = (
+                destination_management.get_all_delivery_platform_lookalike_audiences(
+                    database
+                )
             )
 
             # get the facebook delivery platform for lookalikes
-            facebook_destination = (
-                destination_management.get_delivery_platform_by_type(
-                    database, db_c.DELIVERY_PLATFORM_FACEBOOK
-                )
+            facebook_destination = destination_management.get_delivery_platform_by_type(
+                database, db_c.DELIVERY_PLATFORM_FACEBOOK
             )
 
             # set the is_lookalike property to True so UI knows it is a lookalike.
@@ -254,9 +237,7 @@ class AudienceView(SwaggerView):
                 lookalike[db_c.STATUS] = lookalike.get(
                     db_c.STATUS, db_c.AUDIENCE_STATUS_ERROR
                 )
-                lookalike[db_c.AUDIENCE_LAST_DELIVERED] = lookalike[
-                    db_c.CREATE_TIME
-                ]
+                lookalike[db_c.AUDIENCE_LAST_DELIVERED] = lookalike[db_c.CREATE_TIME]
                 lookalike[db_c.DESTINATIONS] = (
                     [facebook_destination] if facebook_destination else []
                 )
@@ -268,9 +249,7 @@ class AudienceView(SwaggerView):
             # if lookalikeable is set to true, filter out the audiences
             # that are not lookalikeable.
             audiences = [
-                x
-                for x in audiences
-                if x[api_c.LOOKALIKEABLE] == api_c.STATUS_ACTIVE
+                x for x in audiences if x[api_c.LOOKALIKEABLE] == api_c.STATUS_ACTIVE
             ]
 
         return (
@@ -345,9 +324,7 @@ class AudienceGetView(SwaggerView):
             )
             if not lookalike:
                 logger.error("Audience with id %s not found.", audience_id)
-                return {
-                    "message": api_c.AUDIENCE_NOT_FOUND
-                }, HTTPStatus.NOT_FOUND
+                return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
             # grab the source audience ID of the lookalike
             audience = orchestration_management.get_audience(
@@ -360,9 +337,7 @@ class AudienceGetView(SwaggerView):
             # set original audience attributes for the lookalike.
             lookalike[api_c.SOURCE_NAME] = audience[db_c.NAME]
             lookalike[api_c.SOURCE_SIZE] = audience[db_c.SIZE]
-            lookalike[api_c.SOURCE_ID] = lookalike[
-                db_c.LOOKALIKE_SOURCE_AUD_ID
-            ]
+            lookalike[api_c.SOURCE_ID] = lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
 
             # TODO: HUS-837 change once we can generate real lookalikes from FB.
             lookalike[api_c.MATCH_RATE] = 0
@@ -413,13 +388,9 @@ class AudienceGetView(SwaggerView):
                     if not delivery.get(db_c.UPDATE_TIME):
                         delivery[db_c.UPDATE_TIME] = None
                     if engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
-                        delivery[
+                        delivery[db_c.ENGAGEMENT_DELIVERY_SCHEDULE] = engagement[
                             db_c.ENGAGEMENT_DELIVERY_SCHEDULE
-                        ] = engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
-                            api_c.SCHEDULE
-                        ][
-                            api_c.PERIODICIY
-                        ]
+                        ][api_c.SCHEDULE][api_c.PERIODICIY]
                         delivery[api_c.NEXT_DELIVERY] = get_next_schedule(
                             engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
                                 api_c.SCHEDULE_CRON
@@ -543,10 +514,8 @@ class AudienceInsightsGetView(SwaggerView):
         audience_id = ObjectId(audience_id)
 
         audience = orchestration_management.get_audience(database, audience_id)
-        lookalike = (
-            destination_management.get_delivery_platform_lookalike_audience(
-                database, audience_id
-            )
+        lookalike = destination_management.get_delivery_platform_lookalike_audience(
+            database, audience_id
         )
 
         if not audience and not lookalike:
@@ -575,14 +544,8 @@ class AudienceInsightsGetView(SwaggerView):
             api_c.SPEND: group_gender_spending(
                 get_spending_by_gender(
                     token_response[0],
-                    filters={
-                        api_c.AUDIENCE_FILTERS: audience[
-                            api_c.AUDIENCE_FILTERS
-                        ]
-                    },
-                    start_date=str(
-                        datetime.utcnow().date() - timedelta(days=180)
-                    ),
+                    filters={api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
+                    start_date=str(datetime.utcnow().date() - timedelta(days=180)),
                     end_date=str(datetime.utcnow().date()),
                 )
             ),
@@ -688,9 +651,7 @@ class AudiencePostView(SwaggerView):
                 # validate object id
                 # map to an object ID field
                 # validate the destination object exists.
-                destination[db_c.OBJECT_ID] = ObjectId(
-                    destination[db_c.OBJECT_ID]
-                )
+                destination[db_c.OBJECT_ID] = ObjectId(destination[db_c.OBJECT_ID])
 
                 if not destination_management.get_delivery_platform(
                     get_db_client(), destination[db_c.OBJECT_ID]
@@ -712,12 +673,8 @@ class AudiencePostView(SwaggerView):
                 engagement_id = ObjectId(engagement_id)
 
                 # validate the engagement object exists.
-                if not engagement_management.get_engagement(
-                    database, engagement_id
-                ):
-                    logger.error(
-                        "Engagement with ID %s does not exist.", engagement_id
-                    )
+                if not engagement_management.get_engagement(database, engagement_id):
+                    logger.error("Engagement with ID %s does not exist.", engagement_id)
                     return {
                         "message": f"Engagement with ID {engagement_id} "
                         f"does not exist."
@@ -871,9 +828,7 @@ class AudiencePutView(SwaggerView):
             for destination in body[api_c.DESTINATIONS]:
                 # map to an object ID field
                 # validate the destination object exists.
-                destination[db_c.OBJECT_ID] = ObjectId(
-                    destination[db_c.OBJECT_ID]
-                )
+                destination[db_c.OBJECT_ID] = ObjectId(destination[db_c.OBJECT_ID])
 
                 if not destination_management.get_delivery_platform(
                     get_db_client(), destination[db_c.OBJECT_ID]
@@ -1094,11 +1049,13 @@ class SetLookalikeAudience(SwaggerView):
         Returns:
             Tuple[dict, int]: lookalike audience configuration,
                 HTTP status code.
+
+        Raises:
+            FailedDeliveryPlatformDependencyError: Delivery Platform Dependency
+                error.
         """
 
-        body = LookalikeAudiencePostSchema().load(
-            request.get_json(), partial=True
-        )
+        body = LookalikeAudiencePostSchema().load(request.get_json(), partial=True)
         source_audience_id = body[api_c.AUDIENCE_ID]
         engagement_ids = body[api_c.ENGAGEMENT_IDS]
 
@@ -1133,9 +1090,7 @@ class SetLookalikeAudience(SwaggerView):
             {
                 db_c.DELIVERY_PLATFORM_ID: destination[db_c.ID],
                 db_c.AUDIENCE_ID: ObjectId(source_audience_id),
-                db_c.ENGAGEMENT_ID: {
-                    "$in": [ObjectId(x) for x in engagement_ids]
-                },
+                db_c.ENGAGEMENT_ID: {"$in": [ObjectId(x) for x in engagement_ids]},
                 db_c.STATUS: {
                     "$in": [
                         db_c.STATUS_SUCCEEDED,
@@ -1171,16 +1126,18 @@ class SetLookalikeAudience(SwaggerView):
             # )
 
             logger.info("Creating delivery platform lookalike audience.")
-            lookalike_audience = destination_management.create_delivery_platform_lookalike_audience(
-                database,
-                destination[db_c.ID],
-                ObjectId(body[api_c.AUDIENCE_ID]),
-                body[api_c.NAME],
-                body[api_c.AUDIENCE_SIZE_PERCENTAGE],
-                "US",
-                user_name,
-                0,  # TODO HUS-801 - set lookalike SIZE correctly.
-                status,
+            lookalike_audience = (
+                destination_management.create_delivery_platform_lookalike_audience(
+                    database,
+                    destination[db_c.ID],
+                    ObjectId(body[api_c.AUDIENCE_ID]),
+                    body[api_c.NAME],
+                    body[api_c.AUDIENCE_SIZE_PERCENTAGE],
+                    "US",
+                    user_name,
+                    0,  # TODO HUS-801 - set lookalike SIZE correctly.
+                    status,
+                )
             )
 
         except CustomAudienceDeliveryStatusError:
@@ -1205,9 +1162,7 @@ class SetLookalikeAudience(SwaggerView):
                     }
                 ],
             )
-        logger.info(
-            "Successfully created delivery platform lookalike audience."
-        )
+        logger.info("Successfully created delivery platform lookalike audience.")
         return (
             LookalikeAudienceGetSchema().dump(lookalike_audience),
             HTTPStatus.ACCEPTED,
@@ -1268,6 +1223,4 @@ class DeleteAudienceView(SwaggerView):
 
         if deleted:
             return {}, HTTPStatus.NO_CONTENT
-        return {
-            "message": "Internal Server Error."
-        }, HTTPStatus.INTERNAL_SERVER_ERROR
+        return {"message": "Internal Server Error."}, HTTPStatus.INTERNAL_SERVER_ERROR

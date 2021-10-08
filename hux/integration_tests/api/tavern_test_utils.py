@@ -1,5 +1,5 @@
 """Purpose of this file is to house external function utilities needed for
-tavern integration tests
+tavern integration tests.
 """
 from typing import Union
 from box import Box
@@ -127,9 +127,7 @@ def get_campaign_mapping_details(response: object) -> Union[Box, None]:
         )
 
 
-def get_destination_by_name(
-    response: object, **kwargs: dict
-) -> Union[Box, None]:
+def get_destination_by_name(response: object, **kwargs: dict) -> Union[Box, None]:
     """Purpose of this function is to get the specifically
     requested data source by name.
 

@@ -28,9 +28,7 @@ class LookalikeAudienceGetSchema(Schema):
         required=True,
         validate=validate_object_id,
     )
-    delivery_platform_id = fields.String(
-        required=True, validate=validate_object_id
-    )
+    delivery_platform_id = fields.String(required=True, validate=validate_object_id)
     audience_id = fields.String(required=True, validate=validate_object_id)
     name = fields.String(required=True)
     country = fields.String()
@@ -167,9 +165,7 @@ class AudienceInsightsGetSchema(Schema):
 
 
 class AudienceDestinationSchema(Schema):
-    """
-    Audience destination schema class
-    """
+    """Audience destination schema class"""
 
     id = fields.String(required=True, validate=validate_object_id)
     delivery_platform_config = fields.Dict(
@@ -182,9 +178,7 @@ class AudiencePutSchema(Schema):
     """Audience put schema class"""
 
     name = fields.String()
-    destinations = fields.List(
-        fields.Nested(AudienceDestinationSchema), required=False
-    )
+    destinations = fields.List(fields.Nested(AudienceDestinationSchema), required=False)
     engagement_ids = fields.List(fields.String())
     filters = fields.List(fields.Dict())
 
@@ -193,9 +187,7 @@ class AudiencePostSchema(AudiencePutSchema):
     """Audience post schema class"""
 
     name = fields.String(validate=must_not_be_blank)
-    destinations = fields.List(
-        fields.Nested(AudienceDestinationSchema), required=False
-    )
+    destinations = fields.List(fields.Nested(AudienceDestinationSchema), required=False)
     engagements = fields.List(fields.String(), required=True)
     filters = fields.List(fields.Dict())
 
@@ -289,10 +281,7 @@ def is_audience_lookalikeable(audience: dict) -> str:
     status = api_c.STATUS_DISABLED
     for delivery in deliveries:
         # check if delivered to facebook.
-        if (
-            delivery.get(db_c.DELIVERY_PLATFORM_TYPE)
-            == db_c.DELIVERY_PLATFORM_FACEBOOK
-        ):
+        if delivery.get(db_c.DELIVERY_PLATFORM_TYPE) == db_c.DELIVERY_PLATFORM_FACEBOOK:
             status = api_c.STATUS_INACTIVE
 
             # TODO - HUS-815
