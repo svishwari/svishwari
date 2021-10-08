@@ -2,15 +2,7 @@
   <v-menu :min-width="200" left offset-y close-on-click>
     <template #activator="{ on }">
       <span class="d-flex cursor-pointer" v-on="on">
-        <v-btn
-          class="mx-2 box-shadow-25"
-          data-e2e="notification-bell"
-          color="white"
-          fab
-          x-small
-        >
-          <v-icon color="primary"> mdi-bell-outline </v-icon>
-        </v-btn>
+        <icon data-e2e="notification-bell" class="mx-2 my-2" type="bell" :size="21" color="primary" />
       </span>
     </template>
     <v-list class="alert-menu-main">
@@ -76,6 +68,7 @@ import { orderBy } from "lodash"
 import Status from "./common/Status.vue"
 import Tooltip from "./common/Tooltip.vue"
 import TimeStamp from "./common/huxTable/TimeStamp.vue"
+import Icon from "@/components/common/Icon"
 
 export default {
   name: "Notification",
@@ -83,6 +76,7 @@ export default {
     Status,
     TimeStamp,
     Tooltip,
+    Icon,
   },
   data() {
     return {

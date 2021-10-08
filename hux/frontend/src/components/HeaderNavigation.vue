@@ -3,9 +3,7 @@
     <v-menu :min-width="200" left offset-y close-on-click>
       <template #activator="{ on }">
         <span class="d-flex cursor-pointer" data-e2e="addicon" v-on="on">
-          <v-btn class="mx-2 box-shadow-25" color="white" fab x-small>
-            <v-icon color="primary"> mdi-plus </v-icon>
-          </v-btn>
+          <icon class="mx-2 my-2" type="more" :size="21" color="primary" />
         </span>
       </template>
       <v-list>
@@ -31,11 +29,13 @@
 <script>
 import Notification from "../components/Notification.vue"
 import Help from "../components/Help.vue"
+import Icon from "@/components/common/Icon"
 export default {
   name: "HeaderNavigation",
   components: {
     Notification,
     Help,
+    Icon,
   },
   data() {
     return {

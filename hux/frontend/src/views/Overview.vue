@@ -17,6 +17,9 @@
           Learn More &gt;
         </a>
       </template>
+       <template #right>
+        <icon type="configuration" :size="45" color="neroBlack" />
+      </template>
     </page-header>
     <div v-if="configureOptions['configureHux']" class="quickAccessMenu">
       <h5 class="mb-3 text-h5">Configure Hux</h5>
@@ -66,6 +69,7 @@ import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import CardInfo from "@/components/common/CardInfo"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
+import Icon from "@/components/common/Icon"
 
 export default {
   name: "Overview",
@@ -73,6 +77,7 @@ export default {
     PageHeader,
     CardInfo,
     TotalCustomerChart,
+    Icon,
   },
   data() {
     return {

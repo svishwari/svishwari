@@ -261,7 +261,7 @@ export default {
           text: "Engagements",
           disabled: false,
           href: this.$router.resolve({ name: "Engagements" }).href,
-          icon: "engagements",
+          icon: "speaker_down",
         },
       ]
       if (this.engagementList) {

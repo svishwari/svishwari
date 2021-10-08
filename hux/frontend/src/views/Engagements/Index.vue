@@ -552,7 +552,7 @@ export default {
         {
           text: "Engagements",
           disabled: true,
-          icon: "engagements",
+          icon: "speaker_down",
         },
       ],
       loading: true,

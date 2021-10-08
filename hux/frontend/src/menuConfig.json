@@ -13,7 +13,7 @@
       "label": "Orchestration",
       "menu": [
         {
-          "icon": "engagements",
+          "icon": "speaker_up",
           "title": "Engagements",
           "link": {
             "name": "Engagements"
