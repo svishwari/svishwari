@@ -178,10 +178,11 @@ class NotificationStream(SwaggerView):
         def event_stream() -> Generator[Tuple[dict, int], None, None]:
             """Stream notifications with a generator.
 
-            Returns:
-                Generator[Tuple[dict, int], None, None]: Generator of notifications.
-
+            Yields:
+                Generator[Tuple[dict, int], None, None]: Generator of
+                    notifications.
             """
+
             i = 0
             while True:
                 # sleep each iteration, don't sleep first iteration

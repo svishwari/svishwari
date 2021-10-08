@@ -1094,6 +1094,10 @@ class SetLookalikeAudience(SwaggerView):
         Returns:
             Tuple[dict, int]: lookalike audience configuration,
                 HTTP status code.
+
+        Raises:
+            FailedDeliveryPlatformDependencyError: Delivery Platform Dependency
+                error.
         """
 
         body = LookalikeAudiencePostSchema().load(

@@ -158,11 +158,7 @@ class TestCustomersOverview(TestCase):
         self.assertTrue(data[api_c.OVERVIEW][api_c.TOTAL_KNOWN_IDS])
 
     def test_get_customer_by_id(self):
-        """Test get customer by ID.
-
-        Args:
-            customer_id (str): HUX ID of a customer.
-        """
+        """Test get customer by ID."""
 
         customer_id = "HUX123456789012345"
 

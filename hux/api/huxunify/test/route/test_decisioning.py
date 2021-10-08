@@ -108,14 +108,10 @@ class DecisioningTests(TestCase):
     @given(model_id=st.integers(min_value=100, max_value=1000))
     @settings(deadline=600)
     def test_get_model_version_history_failed(self, model_id: int):
-        """
-        Test get model version history failed
+        """Test get model version history failed.
 
         Args:
             model_id (int): Model Id.
-
-        Returns:
-            None
         """
 
         # mock the version history
