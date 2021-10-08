@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Union
 
 import pymongo
+from bson import ObjectId
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.constants as c
@@ -42,9 +43,7 @@ def create_notification(
         raise InvalidNotificationType(notification_type)
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     # get current time
     current_time = datetime.utcnow()
@@ -95,9 +94,7 @@ def get_notifications_batch(
     """
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     skips = batch_size * (batch_number - 1)
 
@@ -139,18 +136,14 @@ def get_notifications(
     """
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     try:
         return dict(
             total_records=collection.count_documents(query_filter),
             notifications=list(
                 collection.find(query_filter if query_filter else {}).sort(
-                    sort_order
-                    if sort_order
-                    else [("$natural", pymongo.ASCENDING)]
+                    sort_order if sort_order else [("$natural", pymongo.ASCENDING)]
                 )
             ),
         )
@@ -158,3 +151,42 @@ def get_notifications(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def delete_notification(
+    database: DatabaseClient,
+    notification_id: ObjectId,
+    hard_delete: bool = False,
+) -> bool:
+    """A function to delete an notification based on ID.
+
+    Args:
+        database (DatabaseClient): A database client.
+        notification_id (ObjectId): Object Id of the notification.
+        hard_delete (bool): hard deletes an notification if True.
+
+    Returns:
+        bool: Flag indicating successful operation.
+    """
+
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
+
+    try:
+        if hard_delete:
+            collection.delete_one({c.ID: notification_id})
+            return True
+        doc = collection.find_one_and_update(
+            {c.ID: notification_id},
+            {"$set": {c.DELETED: True}},
+            upsert=False,
+            new=True,
+        )
+        return doc[c.DELETED]
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False
