@@ -15,7 +15,9 @@ class TestOktaTokenGet(TestCase):
         self.assertEqual(PasswordType("empty").value, "empty")
 
     @requests_mock.Mocker()
-    def test_okta_oidc_setup(self, request_mocker: requests_mock.Mocker) -> None:
+    def test_okta_oidc_setup(
+        self, request_mocker: requests_mock.Mocker
+    ) -> None:
         """Test the password type class.
 
         Args:
