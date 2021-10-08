@@ -44,7 +44,8 @@ from huxunify.api.data_connectors.cdp import (
     get_city_ltvs,
 )
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
-from huxunify.api.data_connectors.okta import get_token_from_request
+from huxunify.api.data_connectors.okta import get_token_from_request, \
+    introspect_token
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
     FAILED_DEPENDENCY_424_RESPONSE,
@@ -61,6 +62,7 @@ from huxunify.api.route.utils import (
     group_gender_spending,
     Validation as validation,
     get_next_schedule,
+    is_component_favorite,
 )
 
 # setup the orchestration blueprint
@@ -164,7 +166,9 @@ class AudienceView(SwaggerView):
         _ = [x.update(audience_dict.get(x[db_c.ID])) for x in audiences]
 
         # # get customer sizes
-        # token_response = get_token_from_request(request)
+        token_response = get_token_from_request(request)
+        user_id = introspect_token(token_response[0]).get(
+            api_c.OKTA_USER_ID)
 
         # TODO - ENABLE AFTER WE HAVE A CACHING STRATEGY IN PLACE
         # customer_size_dict = get_customers_count_async(
@@ -222,6 +226,9 @@ class AudienceView(SwaggerView):
                 audience[api_c.AUDIENCE_LAST_DELIVERED] = None
 
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
+            audience[api_c.FAVORITE] = is_component_favorite(user_id,
+                                                             api_c.AUDIENCES,
+                                                             audience[db_c.ID])
 
         # fetch lookalike audiences if lookalikeable is set to false
         # as lookalike audiences can not be lookalikeable
@@ -322,6 +329,8 @@ class AudienceGetView(SwaggerView):
         """
 
         token_response = get_token_from_request(request)
+        user_id = introspect_token(token_response[0]).get(
+            api_c.OKTA_USER_ID)
 
         database = get_db_client()
 
@@ -465,6 +474,10 @@ class AudienceGetView(SwaggerView):
             database, {db_c.LOOKALIKE_SOURCE_AUD_ID: audience_id}
         )
         audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
+
+        audience[api_c.FAVORITE] = is_component_favorite(user_id,
+                                                         api_c.AUDIENCES,
+                                                         str(audience_id))
 
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),

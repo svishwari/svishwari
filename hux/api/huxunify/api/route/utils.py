@@ -21,6 +21,7 @@ from huxunifylib.database.cdp_data_source_management import (
 from huxunifylib.database import (
     constants as db_c,
 )
+from huxunifylib.database.user_management import get_user
 
 from huxunify.api.config import get_config
 from huxunify.api import constants
@@ -451,3 +452,26 @@ class Validation:
 
         if not re.match("^HUX\d{15}$", hux_id):
             raise ue.InputParamsValidationError(hux_id, "HUX ID")
+
+
+def is_component_favorite(okta_user_id: str, component_name: str,
+                          component_id: str) -> bool:
+    """Checks if component is in favorites of a user.
+    Args:
+        okta_user_id (str): Okta User ID.
+        component_name (str): Name of component in user favorite.
+        component_id (str): ID of the favorite component.
+    Returns:
+        bool: If component is favorite or not.
+    """
+    user_favorites = get_user(get_db_client(), okta_user_id).get(
+        constants.FAVORITES)
+
+    if component_name not in db_c.FAVORITE_COMPONENTS:
+        return False
+
+    if ObjectId(component_id) in user_favorites.get(component_name):
+        return True
+    return False
+
+

@@ -23,6 +23,9 @@ from huxunifylib.database.orchestration_management import (
     get_audience,
     get_audience_insights,
 )
+
+from huxunifylib.database.user_management import set_user, \
+    manage_user_favorites
 from huxunifylib.database.engagement_audience_management import (
     get_all_engagement_audience_destinations,
 )
@@ -232,6 +235,18 @@ class OrchestrationRouteTest(TestCase):
                 delivery_job[db_c.ID],
                 db_c.AUDIENCE_STATUS_DELIVERED,
             )
+
+        set_user(self.database,
+                 okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+                 email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL))
+
+        # Set an audience as favorite
+        manage_user_favorites(
+            self.database,
+            okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            component_name=api_c.AUDIENCES,
+            component_id=self.audiences[0][db_c.ID],
+        )
 
         # setup the flask test client
         self.test_client = create_app().test_client()
@@ -1035,3 +1050,37 @@ class OrchestrationRouteTest(TestCase):
             for delivery in audience_engagement[api_c.DELIVERIES]:
                 if delivery[api_c.STATUS] != db_c.STATUS_DELIVERED:
                     self.assertIsNone(delivery[db_c.UPDATE_TIME])
+
+    def test_get_audience_not_in_favorites(self):
+        """Test get audience not a favorite."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/{self.audiences[1][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        audience = response.json
+        self.assertFalse(audience.get(api_c.FAVORITE))
+
+    def test_get_audience_in_favorites(self):
+        """Test get audience which is a favorite."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        audience = response.json
+        self.assertTrue(audience.get(api_c.FAVORITE))
