@@ -660,6 +660,7 @@ AUTHENTICATION_TOKEN_TYPE_HINT = "token_type_hint"
 AUTHENTICATION_OKTA_CLIENT_ID = "OKTA-CLIENT-ID"
 AUTHENTICATION_OKTA_ISSUER = "OKTA-ISSUER"
 OKTA_USER_ID = "user_id"
+OKTA_UID = "uid"
 OKTA_ID_SUB = "sub"
 
 # Orchestration API fields
@@ -705,6 +706,7 @@ USER_NAME = "user_name"
 USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
+FAVORITES = "favorites"
 PROFILE = "profile"
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
