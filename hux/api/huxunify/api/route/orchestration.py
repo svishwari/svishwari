@@ -44,8 +44,10 @@ from huxunify.api.data_connectors.cdp import (
     get_city_ltvs,
 )
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
-from huxunify.api.data_connectors.okta import get_token_from_request, \
-    introspect_token
+from huxunify.api.data_connectors.okta import (
+    get_token_from_request,
+    introspect_token,
+)
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
     FAILED_DEPENDENCY_424_RESPONSE,
@@ -167,8 +169,7 @@ class AudienceView(SwaggerView):
 
         # # get customer sizes
         token_response = get_token_from_request(request)
-        user_id = introspect_token(token_response[0]).get(
-            api_c.OKTA_USER_ID)
+        user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
 
         # TODO - ENABLE AFTER WE HAVE A CACHING STRATEGY IN PLACE
         # customer_size_dict = get_customers_count_async(
@@ -226,9 +227,9 @@ class AudienceView(SwaggerView):
                 audience[api_c.AUDIENCE_LAST_DELIVERED] = None
 
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
-            audience[api_c.FAVORITE] = is_component_favorite(user_id,
-                                                             api_c.AUDIENCES,
-                                                             audience[db_c.ID])
+            audience[api_c.FAVORITE] = is_component_favorite(
+                user_id, api_c.AUDIENCES, audience[db_c.ID]
+            )
 
         # fetch lookalike audiences if lookalikeable is set to false
         # as lookalike audiences can not be lookalikeable
@@ -329,8 +330,7 @@ class AudienceGetView(SwaggerView):
         """
 
         token_response = get_token_from_request(request)
-        user_id = introspect_token(token_response[0]).get(
-            api_c.OKTA_USER_ID)
+        user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
 
         database = get_db_client()
 
@@ -475,9 +475,9 @@ class AudienceGetView(SwaggerView):
         )
         audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
-        audience[api_c.FAVORITE] = is_component_favorite(user_id,
-                                                         api_c.AUDIENCES,
-                                                         str(audience_id))
+        audience[api_c.FAVORITE] = is_component_favorite(
+            user_id, api_c.AUDIENCES, str(audience_id)
+        )
 
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),

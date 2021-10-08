@@ -24,8 +24,10 @@ from huxunifylib.database.orchestration_management import (
     get_audience_insights,
 )
 
-from huxunifylib.database.user_management import set_user, \
-    manage_user_favorites
+from huxunifylib.database.user_management import (
+    set_user,
+    manage_user_favorites,
+)
 from huxunifylib.database.engagement_audience_management import (
     get_all_engagement_audience_destinations,
 )
@@ -236,9 +238,11 @@ class OrchestrationRouteTest(TestCase):
                 db_c.AUDIENCE_STATUS_DELIVERED,
             )
 
-        set_user(self.database,
-                 okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
-                 email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL))
+        set_user(
+            self.database,
+            okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
+        )
 
         # Set an audience as favorite
         manage_user_favorites(

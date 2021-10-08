@@ -454,8 +454,9 @@ class Validation:
             raise ue.InputParamsValidationError(hux_id, "HUX ID")
 
 
-def is_component_favorite(okta_user_id: str, component_name: str,
-                          component_id: str) -> bool:
+def is_component_favorite(
+    okta_user_id: str, component_name: str, component_id: str
+) -> bool:
     """Checks if component is in favorites of a user.
     Args:
         okta_user_id (str): Okta User ID.
@@ -465,7 +466,8 @@ def is_component_favorite(okta_user_id: str, component_name: str,
         bool: If component is favorite or not.
     """
     user_favorites = get_user(get_db_client(), okta_user_id).get(
-        constants.FAVORITES)
+        constants.FAVORITES
+    )
 
     if component_name not in db_c.FAVORITE_COMPONENTS:
         return False
@@ -473,5 +475,3 @@ def is_component_favorite(okta_user_id: str, component_name: str,
     if ObjectId(component_id) in user_favorites.get(component_name):
         return True
     return False
-
-
