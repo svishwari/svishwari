@@ -142,10 +142,8 @@ export default {
       this.drawer = true
     }
 
-    let that = this
-
-    this.$root.$on("same-route-Connections", function () {
-      that.toggleDrawer()
+    this.$root.$on("same-route-Connections", () => {
+      this.toggleDrawer()
     })
   },
 
