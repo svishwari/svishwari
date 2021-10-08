@@ -1,5 +1,4 @@
-"""
-purpose of this file is for populating the following database documents
+"""Purpose of this file is for populating the following database documents
  - data sources
  - destinations (delivery platforms)
 """
@@ -312,13 +311,10 @@ delivery_platforms_constants = [
 
 
 def drop_collections(database: MongoClient) -> None:
-    """
-    Drop collections for writing.
-    Args:
-        database(MongoClient):Database Client
+    """Drop collections for writing.
 
-    Returns:
-        None
+    Args:
+        database (MongoClient): Database Client.
     """
 
     collections = [
@@ -330,14 +326,11 @@ def drop_collections(database: MongoClient) -> None:
 
 
 def insert_data_sources(database: MongoClient, data_sources: list) -> None:
-    """
-        Inserting Data Sources into Data Sources Collection
-    Args:
-        database (MongoClient): MongoDB Client
-        data_sources (List): List of Data Sources Object
+    """Inserting Data Sources into Data Sources Collection.
 
-    Returns:
-        None
+    Args:
+        database (MongoClient): MongoDB Client.
+        data_sources (List): List of Data Sources Object.
     """
 
     logging.info("Prepopulate data sources.")
@@ -361,15 +354,11 @@ def insert_data_sources(database: MongoClient, data_sources: list) -> None:
 def insert_delivery_platforms(
     database: MongoClient, delivery_platforms: list
 ) -> None:
-    """
-        Insertion of Delivery Platforms Collection
+    """Insertion of Delivery Platforms Collection.
 
     Args:
-        database (MongoClient): MongoDB Client
-        delivery_platforms (List): List of Delivery Platform Objects
-
-    Returns:
-
+        database (MongoClient): MongoDB Client.
+        delivery_platforms (List): List of Delivery Platform Objects.
     """
 
     logging.info("Prepopulate destinations.")

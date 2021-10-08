@@ -1,6 +1,4 @@
-"""
-Purpose of this file is to house the get okta token test.
-"""
+"""Purpose of this file is to house the get okta token test."""
 from unittest import TestCase
 
 import requests_mock
@@ -9,17 +7,10 @@ from get_okta_token import PasswordType, OktaOIDC
 
 
 class TestOktaTokenGet(TestCase):
-    """
-    Test OKTA token get.
-    """
+    """Test OKTA token get."""
 
     def test_password_type_cls(self) -> None:
-        """
-        Test the password type class.
-
-        Returns:
-
-        """
+        """Test the password type class."""
 
         self.assertEqual(PasswordType("empty").value, "empty")
 
@@ -27,14 +18,10 @@ class TestOktaTokenGet(TestCase):
     def test_okta_oidc_setup(
         self, request_mocker: requests_mock.Mocker
     ) -> None:
-        """
-        Test the password type class.
+        """Test the password type class.
 
         Args:
             request_mocker (Mocker): Request mock object.
-
-        Returns:
-
         """
 
         # setup the request mock post
