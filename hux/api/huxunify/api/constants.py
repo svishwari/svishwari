@@ -525,6 +525,9 @@ BSON_INVALID_ID = (
     f"12-byte input or a 24-character hex string"
 )
 MESSAGE = "message"
+FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE = (
+    "Failed connecting to dependent API."
+)
 FAILED_DEPENDENCY_ERROR_MESSAGE = (
     "Failed to obtain data from dependent API endpoint."
 )

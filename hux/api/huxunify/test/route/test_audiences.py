@@ -185,11 +185,7 @@ class AudienceInsightsTest(TestCase):
     """Tests for Audience Insights"""
 
     def setUp(self) -> None:
-        """
-
-        Returns:
-
-        """
+        """Setup tests."""
 
         self.audiences_endpoint = (
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}"

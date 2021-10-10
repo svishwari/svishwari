@@ -1,4 +1,5 @@
-"""Purpose of this file is for holding methods to query and pull data from CDP."""
+"""Purpose of this file is for holding methods to query and pull data from CDP.
+"""
 import time
 import asyncio
 from collections import defaultdict
@@ -37,11 +38,11 @@ DATETIME_FIELDS = [
 
 def check_cdm_api_connection() -> Tuple[bool, str]:
     """Validate the cdm api connection.
-    Args:
 
     Returns:
         tuple[bool, str]: Returns if the connection is valid, and the message.
     """
+
     # get config
     config = get_config()
 
@@ -65,16 +66,16 @@ def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
     """Retrieves customer profiles.
 
     Args:
-        batch_size (int): number of customer profiles to be returned in a batch
-        offset (int): Offset for customer profiles
+        batch_size (int): number of customer profiles to be returned in a
+            batch.
+        offset (int): Offset for customer profiles.
         token (str): OKTA JWT Token.
 
     Returns:
-        dict: dictionary containing the customer profile information
+        dict: dictionary containing the customer profile information.
 
     Raises:
         FailedAPIDependencyError: Integrated dependent API failure error.
-
     """
 
     # get config
@@ -114,11 +115,10 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
         hux_id (str): hux id for a customer.
 
     Returns:
-        dict: dictionary containing the customer profile information
+        dict: dictionary containing the customer profile information.
 
     Raises:
         FailedAPIDependencyError: Integrated dependent API failure error.
-
     """
 
     # get config
@@ -162,11 +162,10 @@ def get_idr_overview(
         end_date (str): End date.
 
     Returns:
-        dict: dictionary of overview data
+        dict: dictionary of overview data.
 
     Raises:
         FailedAPIDependencyError: Integrated dependent API failure error.
-
     """
 
     # TODO : Update to use idr insights api, with start/end date as query params.
@@ -207,15 +206,14 @@ def get_customers_overview(
 
     Args:
         token (str): OKTA JWT Token.
-        filters (Optional[dict]): filters to pass into
-            customers_overview endpoint.
+        filters (Optional[dict]): filters to pass into customers_overview
+            endpoint, default None.
 
     Returns:
-        dict: dictionary of overview data
+        dict: dictionary of overview data.
 
     Raises:
         FailedAPIDependencyError: Integrated dependent API failure error.
-
     """
 
     # get config
@@ -254,16 +252,16 @@ def get_customers_overview(
 def get_customers_count_async(
     token: str, audiences: list, default_size: int = 0
 ) -> dict:
-    """Retrieves audience size asynchronously
+    """Retrieves audience size asynchronously.
 
     Args:
         token (str): OKTA JWT Token.
         audiences (list): list of audience docs.
-        default_size (int): default size if the audience post fails. default is zero.
+        default_size (int): default size if the audience post fails, default
+            is zero.
 
     Returns:
         dict: Audience ObjectId to Size mapping dict.
-
     """
 
     # get the audience count URL.
@@ -331,7 +329,7 @@ def get_customers_count_async(
 async def get_async_customers(
     token: str, audience_id: ObjectId, audience_filters, url
 ) -> dict:
-    """asynchronously process getting audience size
+    """Asynchronously process getting audience size.
 
     Args:
         token (str): OKTA JWT Token.
@@ -369,11 +367,15 @@ def fill_empty_customer_events(
     """Fill empty events for dates between start_date and end_date.
 
     Args:
-        start_date (datetime): Start date between which dates, events need to be filled.
-        end_date (datetime): End date between which dates, events need to be filled.
+        start_date (datetime): Start date between which dates, events need to
+            be filled.
+        end_date (datetime): End date between which dates, events need to
+            be filled.
+
     Returns:
         list: Customer events with zero.
     """
+
     return [
         {
             api_c.DATE: start_date + timedelta(days=i),
@@ -401,9 +403,11 @@ def fill_customer_events_missing_dates(
         customer_events (list): Customer events in CDM API body.
         start_date (datetime): Start date in filter.
         end_date (datetime): End date in filter.
+
     Returns:
         list: Customer events including zeros for missing dates.
     """
+
     prev_date = start_date
     customer_events_dates_filled = []
     # fill empty events so that no date(day) is missing
@@ -452,8 +456,9 @@ def get_customer_events_data(
         hux_id (str): hux id for a customer.
         start_date_str (str): Start date string for sql query.
         end_date_str (str): End date string for sql query.
+
     Returns:
-        list: Customer events with respective counts
+        list: Customer events with respective counts.
 
     Raises:
         FailedAPIDependencyError: Integrated dependent API failure error.
@@ -502,8 +507,8 @@ def clean_cdm_fields(body: dict) -> dict:
 
     Returns:
         dict: dictionary of cleaned cdm body.
-
     """
+
     for date_field in DATETIME_FIELDS:
         if date_field not in body:
             continue
@@ -519,17 +524,17 @@ def clean_cdm_fields(body: dict) -> dict:
 
 
 def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> list:
-    """Get spending details of customer by cities
+    """Get spending details of customer by cities.
 
     Args:
         token (str): OKTA JWT Token.
-        filters (Optional[dict]): filters to pass into
-            customers_overview endpoint.
+        filters (Optional[dict]): filters to pass into customers_overview
+            endpoint.
 
     Returns:
-        list: list of income details of customers by cities
-
+        list: list of income details of customers by cities.
     """
+
     return [
         {api_c.NAME: x[api_c.CITY], api_c.LTV: round(x["avg_ltv"], 4)}
         for x in get_city_ltvs(token, filters=filters)
@@ -539,20 +544,20 @@ def get_spending_by_cities(token: str, filters: Optional[dict] = None) -> list:
 def get_customer_count_by_state(
     token: str, filters: Optional[dict] = None
 ) -> list:
-    """Get demographic details of customers by state
+    """Get demographic details of customers by state.
 
     Args:
         token (str): OKTA JWT Token.
-        filters (dict):  filters to pass into
-            count_by_state endpoint, default None
+        filters (dict):  filters to pass into count_by_state endpoint,
+            default None.
 
     Returns:
-        list: list of state demographic data
+        list: list of state demographic data.
 
     Raises:
         FailedAPIDependencyError: Integrated dependent API failure error.
-
     """
+
     # get config
     config = get_config()
     logger.info("Retrieving demographic insights by state.")
@@ -584,17 +589,17 @@ def get_customer_count_by_state(
 def get_demographic_by_state(
     token: str, filters: Optional[dict] = None
 ) -> list:
-    """Get demographic details of customers by state
+    """Get demographic details of customers by state.
 
     Args:
         token (str): OKTA JWT Token.
-        filters (dict):  filters to pass into
-            count_by_state endpoint, default None
+        filters (dict):  filters to pass into count_by_state endpoint,
+            default None.
 
     Returns:
-        list: list of demographic details by state
-
+        list: list of demographic details by state.
     """
+
     filters = (
         {api_c.AUDIENCE_FILTERS: filters}
         if filters
@@ -633,17 +638,17 @@ def get_demographic_by_state(
 def get_demographic_by_country(
     token: str, filters: Optional[dict] = None
 ) -> list:
-    """Get demographic details of customers by country
+    """Get demographic details of customers by country.
 
     Args:
         token (str): OKTA JWT Token.
-        filters (dict):  filters to pass into
-            count_by_state endpoint, default None
+        filters (dict):  filters to pass into count_by_state endpoint,
+            default None.
 
     Returns:
-        list: list of demographic details by country
-
+        list: list of demographic details by country.
     """
+
     customer_count_by_state = get_customer_count_by_state(
         token=token,
         filters=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
@@ -683,8 +688,8 @@ def get_customers_insights_count_by_day(
 
     Args:
         token (str): OKTA JWT Token.
-        date_filters (dict): filters to pass into
-            customer insights count by day endpoint.
+        date_filters (dict): filters to pass into customer insights count by
+            day endpoint.
 
     Returns:
         dict: dictionary of customer count data.
@@ -739,22 +744,21 @@ def get_city_ltvs(
     offset: int = 0,
     limit: int = api_c.DEFAULT_BATCH_SIZE,
 ) -> list:
-    """Get spending details of customers by city
+    """Get spending details of customers by city.
 
     Args:
         token (str): OKTA JWT Token.
-        filters (dict):  filters to pass into
-            city_ltvs endpoint
-        offset (int): offset
-        limit (int): limit
+        filters (dict):  filters to pass into city_ltvs endpoint.
+        offset (int): offset.
+        limit (int): limit.
 
     Returns:
-        list: list of spending details by cities
+        list: list of spending details by cities.
 
     Raises:
         FailedAPIDependencyError: Integrated dependent API failure error.
-
     """
+
     # get config
     config = get_config()
     logger.info("Retrieving spending insights by city.")
@@ -791,7 +795,6 @@ def clean_cdm_gender_fields(response_body: dict) -> dict:
 
     Returns:
         dict: dictionary of cleaned cdm response body.
-
     """
 
     gender_fields = [
@@ -824,17 +827,16 @@ def get_spending_by_gender(
     end_date: str,
     filters: Optional[dict] = None,
 ) -> List[Optional[dict]]:
-    """Get spending details of customer by gender
+    """Get spending details of customer by gender.
 
     Args:
         token (str): OKTA JWT Token.
-        start_date (str): String value of start date
-        end_date (str): String value of end date
-        filters (dict):  filters to pass into
-            spending-by-month endpoint
+        start_date (str): String value of start date.
+        end_date (str): String value of end date.
+        filters (dict):  filters to pass into spending-by-month endpoint.
 
     Returns:
-        list: list of spending details by gender
+        list: list of spending details by gender.
 
     Raises:
         FailedAPIDependencyError: Integrated dependent API failure error.
@@ -878,17 +880,16 @@ def get_spending_by_gender(
 def add_missing_customer_count_by_day(
     response_body: list, date_filters: dict
 ) -> list:
-    """Add customer data for missing dates
+    """Add customer data for missing dates.
 
     Args:
-        response_body (list): list of customer count data
-        date_filters (dict): start_date and end_date for which customer
-            data is being fetched
+        response_body (list): list of customer count data.
+        date_filters (dict): start_date and end_date for which customer data
+            is being fetched.
 
     Returns:
-        customer_data_by_day (list): customer count data
-            for all days within start_date and end_date
-
+        customer_data_by_day (list): customer count data for all days within
+            start_date and end_date.
     """
 
     customer_data_by_day = []
