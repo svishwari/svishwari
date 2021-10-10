@@ -184,6 +184,36 @@ class DestinationGetSchema(Schema):
     delivery_platform_config = fields.Nested(DataExtensionSchema)
 
 
+class DestinationPatchSchema(Schema):
+    """Destinations Patch schema class"""
+
+    type = fields.String(
+        attribute=api_c.DELIVERY_PLATFORM_TYPE,
+        example=db_c.DELIVERY_PLATFORM_SFMC,
+    )
+    name = fields.String(
+        attribute=api_c.DESTINATION_NAME,
+        example=db_c.DELIVERY_PLATFORM_SFMC.title(),
+    )
+    status = fields.String(
+        attribute=api_c.CONNECTION_STATUS,
+        validate=[
+            OneOf(
+                choices=[
+                    api_c.STATUS_NOT_DELIVERED,
+                    api_c.STATUS_DELIVERING,
+                    api_c.STATUS_DELIVERED,
+                    api_c.STATUS_DELIVERY_PAUSED,
+                    api_c.STATUS_ERROR,
+                ]
+            )
+        ],
+    )
+    added = fields.Bool(attribute="added")
+    enabled = fields.Bool(attribute="enabled")
+    ad_platform = fields.Bool(attribute=db_c.IS_AD_PLATFORM)
+
+
 class DestinationPutSchema(Schema):
     """Destination put schema class"""
 

@@ -34,6 +34,7 @@ from huxunify.api.data_connectors.aws import (
 )
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
+    DestinationPatchSchema,
     DestinationPutSchema,
     DestinationConstantsSchema,
     DestinationValidationSchema,
@@ -812,10 +813,10 @@ class DestinationDataExtPostView(SwaggerView):
 @add_view_to_blueprint(
     dest_bp,
     f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>",
-    "DestinationDataPatchView",
+    "DestinationPatchView",
 )
-class DestinationDataPatchView(SwaggerView):
-    """Destination Data Extension Post class."""
+class DestinationPatchView(SwaggerView):
+    """Destination Patch class."""
 
     parameters = [
         {
@@ -887,6 +888,9 @@ class DestinationDataPatchView(SwaggerView):
             return {
                 "message": api_c.DESTINATION_INVALID_PATCH_MESSAGE
             }, HTTPStatus.UNPROCESSABLE_ENTITY
+
+        # validate the schema first.
+        DestinationPatchSchema().validate(patch_dict)
 
         # update the document
         return (
