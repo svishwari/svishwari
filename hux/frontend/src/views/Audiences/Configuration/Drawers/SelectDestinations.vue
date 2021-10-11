@@ -4,11 +4,7 @@
       <div class="d-flex align-baseline">
         <h3 class="text-h3 pr-2 d-flex align-center">
           <!-- <logo type="map" /> -->
-          <icon
-            type="map"
-            :size="32"
-            class="mr-2"
-          />
+          <icon type="map" :size="32" class="mr-2" />
           <div class="pl-2 font-weight-light">Select a destination</div>
         </h3>
       </div>

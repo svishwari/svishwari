@@ -7,11 +7,7 @@
   >
     <template #header-left>
       <div class="d-flex">
-        <icon
-          type="clock"
-          :size="32"
-          class="mr-2"
-        />
+        <icon type="clock" :size="32" class="mr-2" />
         <h3 class="pl-1 text-h3 black--text text--darken-3">
           Edit delivery schedule
         </h3>

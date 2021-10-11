@@ -7,11 +7,7 @@
   >
     <template #header-left>
       <div class="d-flex align-center">
-        <icon
-          type="lookalike"
-          :size="32"
-          class="mr-2"
-        />
+        <icon type="lookalike" :size="32" class="mr-2" />
         <h3 class="text-h3">Create a lookalike audience in Facebook</h3>
       </div>
     </template>

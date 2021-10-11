@@ -2,7 +2,13 @@
   <v-menu :min-width="200" left offset-y close-on-click>
     <template #activator="{ on }">
       <span class="d-flex cursor-pointer" v-on="on">
-        <icon data-e2e="notification-bell" class="mx-2 my-2" type="bell-notification" :size="21" color="primary" />
+        <icon
+          data-e2e="notification-bell"
+          class="mx-2 my-2"
+          type="bell-notification"
+          :size="21"
+          color="primary"
+        />
       </span>
     </template>
     <v-list class="alert-menu-main">

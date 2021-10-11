@@ -17,7 +17,7 @@
           Learn More &gt;
         </a>
       </template>
-       <template #right>
+      <template #right>
         <icon type="configuration" :size="45" color="neroBlack" />
       </template>
     </page-header>

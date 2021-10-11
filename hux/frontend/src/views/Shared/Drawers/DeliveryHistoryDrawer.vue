@@ -3,11 +3,7 @@
     <template #header-left>
       <div class="d-flex align-center">
         <!-- <icon type="history" :size="20" color="black-darken4" class="mr-4" /> -->
-        <icon
-          type="clock"
-          :size="32"
-          class="mr-2"
-        />
+        <icon type="clock" :size="32" class="mr-2" />
         <h3 class="text-h3">Delivery history</h3>
       </div>
     </template>

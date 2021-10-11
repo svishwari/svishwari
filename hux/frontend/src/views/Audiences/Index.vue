@@ -198,9 +198,7 @@
           </td>
         </template>
       </hux-data-table>
-      <empty-page v-if="!isDataExists"
-        type="no-audience"
-        size="50">
+      <empty-page v-if="!isDataExists" type="no-audience" size="50">
         <template #title>Oops! There’s nothing here yet</template>
         <template #subtitle>
           You currently have no audiences created! You can create the

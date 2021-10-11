@@ -2,10 +2,7 @@
   <div class="empty-page d-flex justify-center align-center">
     <div class="text-center">
       <slot name="icon">
-        <icon
-          :type="type"
-          :size="size"
-        />
+        <icon :type="type" :size="size" />
       </slot>
       <h3 class="text-h3 my-4">
         <slot name="title"></slot>
@@ -21,7 +18,7 @@
 import Icon from "../../components/common/Icon"
 export default {
   name: "EmptyPage",
-  components: { 
+  components: {
     Icon,
   },
   props: {

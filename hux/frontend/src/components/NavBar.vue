@@ -5,7 +5,13 @@
         class="nav-back-burger"
         @click.stop="toggleSidebarMenu"
       >
-        <icon data-e2e="notification-bell" :class="{ 'rotate-icon-180': toggleMini }" type="hamburger" :size="21" color="neroBlack" />
+        <icon
+          data-e2e="notification-bell"
+          :class="{ 'rotate-icon-180': toggleMini }"
+          type="hamburger"
+          :size="21"
+          color="neroBlack"
+        />
       </v-app-bar-nav-icon>
       <v-spacer></v-spacer>
       <nav-bar-menu></nav-bar-menu>
