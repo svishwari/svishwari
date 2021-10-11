@@ -14,7 +14,9 @@ class NotificationManagementTest(TestCase):
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
         """Setup resources before each test"""
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
@@ -53,8 +55,12 @@ class NotificationManagementTest(TestCase):
             batch_number=1,
         )
 
-        self.assertCountEqual(self.notifications, notifications["notifications"])
-        self.assertEqual(len(self.notifications), notifications["total_records"])
+        self.assertCountEqual(
+            self.notifications, notifications["notifications"]
+        )
+        self.assertEqual(
+            len(self.notifications), notifications["total_records"]
+        )
 
     def test_get_notifications(self):
         """Test get all notifications with a filter."""

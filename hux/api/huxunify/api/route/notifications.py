@@ -29,7 +29,9 @@ from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 
 # setup the notifications blueprint
-notifications_bp = Blueprint(api_c.NOTIFICATIONS_ENDPOINT, import_name=__name__)
+notifications_bp = Blueprint(
+    api_c.NOTIFICATIONS_ENDPOINT, import_name=__name__
+)
 
 
 @notifications_bp.before_request
@@ -194,7 +196,9 @@ class NotificationStream(SwaggerView):
                 # get the previous time, take last minute.
                 previous_time = datetime.utcnow().replace(
                     tzinfo=timezone.utc
-                ) - timedelta(minutes=int(api_c.NOTIFICATION_STREAM_TIME_SECONDS / 60))
+                ) - timedelta(
+                    minutes=int(api_c.NOTIFICATION_STREAM_TIME_SECONDS / 60)
+                )
 
                 # dump the output notification list to the notification schema.
                 yield json.dumps(
@@ -202,7 +206,9 @@ class NotificationStream(SwaggerView):
                         notification_management.get_notifications(
                             get_db_client(),
                             {
-                                db_c.NOTIFICATION_FIELD_CREATED: {"$gt": previous_time},
+                                db_c.NOTIFICATION_FIELD_CREATED: {
+                                    "$gt": previous_time
+                                },
                                 db_c.TYPE: db_c.NOTIFICATION_TYPE_SUCCESS,
                                 db_c.NOTIFICATION_FIELD_DESCRIPTION: {
                                     "$regex": "^Successfully delivered audience"
@@ -252,7 +258,7 @@ class DeleteNotification(SwaggerView):
     @get_user_name()
     @api_error_handler()
     def delete(self, notification_id: ObjectId, user_name: str) -> Tuple[dict, int]:
-        """Deletes a notification.
+        """Deletes a notification by ID.
 
         ---
         security:
