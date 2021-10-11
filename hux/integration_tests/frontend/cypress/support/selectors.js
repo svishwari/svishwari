@@ -149,9 +149,7 @@ export default {
     help: "[data-e2e='help-dropdown']",
     contactus: "[data-e2e='contactus']",
     add: "[data-e2e='addicon']",
-    addButtonList: "[data-e2e= 'addiconList']",
   },
-  
   audience: {
     audiencelist: "[data-e2e='audiencelist']",
     audiencenameclick: "[data-e2e='audiencename']",

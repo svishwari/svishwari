@@ -2,6 +2,5 @@
   "chromeWebSecurity": false,
   "video": false,
   "viewportWidth": 1440,
-  "viewportHeight": 900,
-  "baseUrl": "http://localhost:8080/"
+  "viewportHeight": 900
 }
