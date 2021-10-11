@@ -106,6 +106,14 @@ JOB_START_TIME = "start_time"
 JOB_END_TIME = "end_time"
 JOB_ID = "ingestion_job_id"
 
+# category constants
+CATEGORY = "category"
+ADVERTISING = "Advertising"
+MARKETING = "Marketing"
+COMMERCE = "Commerce"
+ANALYTICS = "Analytics"
+SURVEY = "Survey"
+
 STATUS_PENDING = "Pending"
 STATUS_IN_PROGRESS = "In progress"
 STATUS_FAILED = "Failed"
@@ -241,7 +249,6 @@ SUPPORTED_DELIVERY_PLATFORMS = [
     DELIVERY_PLATFORM_QUALTRICS,
 ]
 IS_AD_PLATFORM = "is_ad_platform"
-AUDIENCE_NAME_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 LOOKALIKE = "lookalike"
 LOOKALIKE_AUD_NAME = "name"
