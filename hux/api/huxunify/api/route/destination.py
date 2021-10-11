@@ -1,5 +1,6 @@
 # pylint: disable=no-self-use
 """Paths for destinations API"""
+import datetime
 from http import HTTPStatus
 from typing import Tuple
 from flasgger import SwaggerView
@@ -33,6 +34,7 @@ from huxunify.api.data_connectors.aws import (
 )
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
+    DestinationPatchSchema,
     DestinationPutSchema,
     DestinationConstantsSchema,
     DestinationValidationSchema,
@@ -698,7 +700,7 @@ class DestinationDataExtPostView(SwaggerView):
             "name": "body",
             "in": "body",
             "type": "object",
-            "description": "Input Audience body.",
+            "description": "Input Destination body.",
             "example": {api_c.DATA_EXTENSION: "data_ext_name"},
         },
     ]
@@ -806,3 +808,104 @@ class DestinationDataExtPostView(SwaggerView):
         return {
             "message": api_c.DATA_EXTENSION_NOT_SUPPORTED
         }, HTTPStatus.BAD_REQUEST
+
+
+@add_view_to_blueprint(
+    dest_bp,
+    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>",
+    "DestinationPatchView",
+)
+class DestinationPatchView(SwaggerView):
+    """Destination Patch class."""
+
+    parameters = [
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Destination body.",
+            "example": {db_c.ENABLED: False},
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Destination updated.",
+            "schema": DestinationDataExtGetSchema,
+        },
+        HTTPStatus.UNPROCESSABLE_ENTITY.value: {
+            "description": "Failed to patch destination data.",
+            "schema": {
+                "example": {
+                    "message": api_c.DESTINATION_INVALID_PATCH_MESSAGE
+                },
+            },
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
+    # pylint: disable=unexpected-keyword-arg
+    # pylint: disable=too-many-return-statements
+    @api_error_handler()
+    @validate_destination()
+    @get_user_name()
+    def patch(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
+        """Updates a destination.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            destination_id (str): Destination ID.
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Destination doc, HTTP status code.
+        """
+
+        # get update fields
+        patch_dict = {
+            k: v
+            for k, v in (
+                request.get_json() if request.get_json() else {}
+            ).items()
+            if k in api_c.DESTINATION_PATCH_FIELDS
+        }
+
+        if not patch_dict:
+            logger.info("Could not patch destination.")
+            return {
+                "message": api_c.DESTINATION_INVALID_PATCH_MESSAGE
+            }, HTTPStatus.UNPROCESSABLE_ENTITY
+
+        # validate the schema first.
+        DestinationPatchSchema().validate(patch_dict)
+
+        # update the document
+        return (
+            DestinationGetSchema().dump(
+                destination_management.update_delivery_platform_doc(
+                    get_db_client(),
+                    destination_id,
+                    {
+                        **patch_dict,
+                        **{
+                            db_c.UPDATED_BY: user_name,
+                            db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                        },
+                    },
+                )
+            ),
+            HTTPStatus.OK,
+        )
