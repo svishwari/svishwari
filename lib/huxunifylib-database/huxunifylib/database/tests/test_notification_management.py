@@ -53,9 +53,9 @@ class NotificationManagementTest(TestCase):
         lower_bound = (
             current_time + relativedelta(months=1) - relativedelta(minutes=1)
         )
-        self.assertTrue(notification is not None)
-        self.assertTrue(notification[db_c.EXPIRE_AT] < upper_bound)
-        self.assertTrue(notification[db_c.EXPIRE_AT] > lower_bound)
+        self.assertIsNotNone(notification)
+        self.assertLess(notification[db_c.EXPIRE_AT], upper_bound)
+        self.assertGreater(notification[db_c.EXPIRE_AT], lower_bound)
 
     def test_create_notification_success(self):
         """Test creating a notification"""
@@ -67,14 +67,14 @@ class NotificationManagementTest(TestCase):
 
         current_time = datetime.utcnow()
         upper_bound = (
-            current_time + relativedelta(months=1) + relativedelta(minutes=1)
+            current_time + relativedelta(months=6) + relativedelta(minutes=1)
         )
         lower_bound = (
-            current_time + relativedelta(months=1) - relativedelta(minutes=1)
+            current_time + relativedelta(months=6) - relativedelta(minutes=1)
         )
-        self.assertTrue(notification is not None)
-        self.assertTrue(notification[db_c.EXPIRE_AT] < upper_bound)
-        self.assertTrue(notification[db_c.EXPIRE_AT] > lower_bound)
+        self.assertIsNotNone(notification)
+        self.assertLess(notification[db_c.EXPIRE_AT], upper_bound)
+        self.assertGreater(notification[db_c.EXPIRE_AT], lower_bound)
 
     def test_create_notification_critical(self):
         """Test creating a notification"""
@@ -86,14 +86,14 @@ class NotificationManagementTest(TestCase):
 
         current_time = datetime.utcnow()
         upper_bound = (
-            current_time + relativedelta(months=3) + relativedelta(minutes=1)
+            current_time + relativedelta(months=6) + relativedelta(minutes=1)
         )
         lower_bound = (
-            current_time + relativedelta(months=3) - relativedelta(minutes=1)
+            current_time + relativedelta(months=6) - relativedelta(minutes=1)
         )
-        self.assertTrue(notification is not None)
-        self.assertTrue(notification[db_c.EXPIRE_AT] < upper_bound)
-        self.assertTrue(notification[db_c.EXPIRE_AT] > lower_bound)
+        self.assertIsNotNone(notification)
+        self.assertLess(notification[db_c.EXPIRE_AT], upper_bound)
+        self.assertGreater(notification[db_c.EXPIRE_AT], lower_bound)
 
     def test_get_notifications_batch(self):
         """Test get all notifications via batch"""

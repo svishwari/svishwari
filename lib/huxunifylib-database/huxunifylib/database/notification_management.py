@@ -57,9 +57,9 @@ def create_notification(
     if notification_type == c.NOTIFICATION_TYPE_INFORMATIONAL:
         expire_time = current_time + relativedelta(months=1)
     elif notification_type == c.NOTIFICATION_TYPE_SUCCESS:
-        expire_time = current_time + relativedelta(months=1)
+        expire_time = current_time + relativedelta(months=6)
     elif notification_type == c.NOTIFICATION_TYPE_CRITICAL:
-        expire_time = current_time + relativedelta(months=3)
+        expire_time = current_time + relativedelta(months=6)
 
     doc = {
         c.EXPIRE_AT: expire_time,
