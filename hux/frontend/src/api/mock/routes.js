@@ -80,6 +80,13 @@ export const defineRoutes = (server) => {
 
     return schema.destinations.find(id).update({ is_added: true })
   })
+
+  server.patch("/destinations/:id", (schema, request) => {
+    const id = request.params.id
+
+    return schema.destinations.find(id).update({ is_added: false })
+  })
+
   server.get("/destinations/:destinationId/data-extensions")
   server.post(
     "/destinations/:destinationId/data-extensions",
