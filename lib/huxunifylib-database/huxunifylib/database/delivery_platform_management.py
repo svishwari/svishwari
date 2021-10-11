@@ -2521,3 +2521,38 @@ def get_most_recent_campaign_activity_by_delivery_job(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def update_delivery_platform_doc(
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    update_dict: dict,
+) -> Union[dict, None]:
+    """Update MongoDb document.
+
+    Args:
+        database (DatabaseClient): database client.
+        delivery_platform_id (ObjectId): MongoDB delivery platform ID.
+        update_dict (dict): updating dictionary.
+
+    Returns:
+        dict: updated document.
+    """
+
+    try:
+        return database[c.DATA_MANAGEMENT_DATABASE][
+            c.DELIVERY_PLATFORM_COLLECTION
+        ].find_one_and_update(
+            {c.ID: delivery_platform_id},
+            {"$set": update_dict},
+            upsert=False,
+            return_document=pymongo.ReturnDocument.AFTER,
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
