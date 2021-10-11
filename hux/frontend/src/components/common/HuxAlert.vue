@@ -69,9 +69,9 @@ export default {
 
     iconType(type) {
       const defaultIcons = {
-        success: "success",
-        error: "error",
-        feedback: "feedback",
+        success: "alert-success",
+        error: "alert-error",
+        feedback: "alert-feedback",
       }
       return defaultIcons[type] || "info_outlined"
     },

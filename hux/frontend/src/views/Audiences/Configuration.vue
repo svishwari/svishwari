@@ -342,8 +342,8 @@
 
       <confirm-modal
         v-model="showConfirmModal"
-        title="You are about to navigate away"
-        right-btn-text="Yes, navigate away"
+        title="You are about to leave the configuration process"
+        right-btn-text="Yes, leave configuration"
         body=" Are you sure you want to stop the configuration and go to another page? You will not be able to recover it and will need to start the process again."
         @onCancel="showConfirmModal = false"
         @onConfirm="navigateaway()"
