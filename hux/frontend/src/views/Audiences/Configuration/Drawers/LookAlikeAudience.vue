@@ -10,7 +10,6 @@
         <icon
           type="lookalike"
           :size="32"
-          color="primary-lighten8"
           class="mr-2"
         />
         <h3 class="text-h3">Create a lookalike audience in Facebook</h3>

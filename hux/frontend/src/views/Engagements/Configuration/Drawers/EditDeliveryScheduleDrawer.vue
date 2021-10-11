@@ -7,7 +7,11 @@
   >
     <template #header-left>
       <div class="d-flex">
-        <v-icon color="primary" size="27">mdi-clock-time-five-outline</v-icon>
+        <icon
+          type="clock"
+          :size="32"
+          class="mr-2"
+        />
         <h3 class="pl-1 text-h3 black--text text--darken-3">
           Edit delivery schedule
         </h3>
@@ -58,6 +62,7 @@ import CardHorizontal from "@/components/common/CardHorizontal.vue"
 import HuxButton from "@/components/common/huxButton.vue"
 import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
 import { deliverySchedule } from "@/utils"
+import Icon from "@/components/common/Icon.vue"
 
 export default {
   name: "EditDeliverySchedule",
@@ -67,6 +72,7 @@ export default {
     CardHorizontal,
     HuxButton,
     HuxSchedulePicker,
+    Icon,
   },
 
   props: {

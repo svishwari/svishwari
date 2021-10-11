@@ -452,8 +452,9 @@
     </hux-data-table>
 
     <v-row v-if="rowData.length == 0 && !loading" class="pt-3 pb-7 pl-3">
-      <empty-page>
-        <template #icon>mdi-alert-circle-outline</template>
+      <empty-page
+        type="no-engagement"
+        size="50">
         <template #title>Oops! There’s nothing here yet</template>
         <template #subtitle>
           Plan your engagement ahead of time. You can create the <br />
@@ -519,6 +520,7 @@ import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlike
 import Logo from "../../components/common/Logo.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import ConfirmModal from "../../components/common/ConfirmModal.vue"
+import Icon from "../../components/common/Icon"
 export default {
   name: "Engagements",
   components: {
@@ -535,6 +537,7 @@ export default {
     Logo,
     Tooltip,
     ConfirmModal,
+    Icon,
   },
   data() {
     return {

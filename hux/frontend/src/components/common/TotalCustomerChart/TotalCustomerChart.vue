@@ -23,11 +23,8 @@
           </div>
           <div class="value-container">
             <icon
-              type="name"
+              type="customer"
               :size="12"
-              :fill-opacity="0.5"
-              :color="colorCodes[currentData.index].base"
-              :variant="colorCodes[currentData.index].variant"
             />
             <span class="text-label">Total customers</span>
           </div>
@@ -36,10 +33,8 @@
           </div>
           <div class="value-container">
             <icon
-              type="name"
+              type="new-customer"
               :size="12"
-              :color="colorCodes[currentData.index].base"
-              :variant="colorCodes[currentData.index].variant"
             />
             <span class="text-label">New customers added</span>
             <div class="value-section">

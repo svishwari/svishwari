@@ -146,6 +146,7 @@
       :title="confirmDialog.title"
       :right-btn-text="confirmDialog.btnText"
       :body="confirmDialog.body"
+      :icon="confirmDialog.icon"
       @onCancel="showConfirmModal = false"
       @onConfirm="onConfirmAction()"
     />
@@ -525,6 +526,7 @@ export default {
           this.dataPendingMesssage(event, "destination")
           break
         case "edit delivery schedule":
+          this.confirmDialog.icon = "edit"
           this.confirmDialog.actionType = "edit-schedule"
           this.confirmDialog.title = "You are about to edit delivery schedule."
           this.confirmDialog.btnText = "Yes, edit delivery schedule"
