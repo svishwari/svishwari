@@ -1,5 +1,3 @@
-import { action } from "@storybook/addon-actions"
-
 import HuxButton from "../components/common/huxButton.vue"
 
 export default {
