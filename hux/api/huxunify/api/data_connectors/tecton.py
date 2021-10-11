@@ -223,7 +223,9 @@ def get_model_version_history(model_id: int) -> List[ModelVersionSchema]:
 
     Raises:
         FailedAPIDependencyError: Integrated dependent API failure error.
+        EmptyAPIResponseError: Response from integrated API call is empty.
     """
+
     # get config
     config = get_config()
 
@@ -277,7 +279,9 @@ def get_model_drift(model_id: int, model_type: str) -> List[ModelDriftSchema]:
 
     Raises:
         FailedAPIDependencyError: Integrated dependent API failure error.
+        EmptyAPIResponseError: Response from integrated API call is empty.
     """
+
     # get config
     config = get_config()
 
@@ -411,7 +415,7 @@ def get_model_lift_async(model_id: str) -> List[ModelLiftSchema]:
 async def get_async_lift_bucket(
     model_id: str, bucket: int
 ) -> Tuple[dict, int]:
-    """asynchronously gets lift by bucket
+    """Asynchronously gets lift by bucket.
 
     Args:
         model_id (str): model id.

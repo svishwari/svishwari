@@ -1,5 +1,5 @@
 """Purpose of this file is to house external function utilities needed for
-tavern integration tests
+tavern integration tests.
 """
 from typing import Union
 from box import Box

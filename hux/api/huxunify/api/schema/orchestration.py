@@ -167,9 +167,7 @@ class AudienceInsightsGetSchema(Schema):
 
 
 class AudienceDestinationSchema(Schema):
-    """
-    Audience destination schema class
-    """
+    """Audience destination schema class"""
 
     id = fields.String(required=True, validate=validate_object_id)
     delivery_platform_config = fields.Dict(

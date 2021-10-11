@@ -2,6 +2,8 @@
 from functools import wraps
 from typing import Any
 from http import HTTPStatus
+
+import requests
 from bson import ObjectId
 from bson.errors import InvalidId
 
@@ -397,6 +399,18 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {"message": exc.args[0]}, HTTPStatus.BAD_REQUEST
+
+            except requests.exceptions.ConnectionError as exc:
+                logger.error(
+                    "%s: Failed connecting to %s in %s in module %s.",
+                    exc.__class__,
+                    exc.request.url,
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
+                return {
+                    "message": constants.FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE
+                }, HTTPStatus.FAILED_DEPENDENCY
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.

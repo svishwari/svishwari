@@ -38,6 +38,7 @@
         sort-column="delivered"
         sort-desc="false"
         class="delivery-list"
+        data-e2e="delivery-list-items"
       >
         <template #row-item="{ item }">
           <td
