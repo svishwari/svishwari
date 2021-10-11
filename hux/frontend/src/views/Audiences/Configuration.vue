@@ -342,6 +342,7 @@
 
       <confirm-modal
         v-model="showConfirmModal"
+        icon="leave-config"
         title="You are about to leave the configuration process"
         right-btn-text="Yes, leave configuration"
         body=" Are you sure you want to stop the configuration and go to another page? You will not be able to recover it and will need to start the process again."
