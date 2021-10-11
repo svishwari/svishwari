@@ -51,4 +51,16 @@ describe("Tests data sources and destinations in connections", () => {
     cy.location("pathname").should("eq", route.connections)
     cy.get(selector.destinations).its("length").should("be.gt", 0)
   })
+
+  it("testing data management > connections > add data sources from navbar", () => {
+
+    //click on add button on nav bar header
+    cy.get(selector.navigation.add).click()
+
+    //open data source drawer
+    cy.get(selector.navigation.addButtonList).eq(1).click()
+
+    //validate the drawer is open
+    cy.get(selector.dataSourcesAdd).its("length").should("be.gt", 0)
+  })
 })
