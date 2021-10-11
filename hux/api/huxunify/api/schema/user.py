@@ -31,6 +31,8 @@ class UserSchema(Schema):
     display_name = Str(example="Joe M")
     first_name = Str()
     last_name = Str()
+    phone_number = Str()
+    access_level = Str()
     role = Str(required=True, validate=validate.OneOf(USER_ROLES))
     organization = Str()
     subscriptions = List(Str())

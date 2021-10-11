@@ -718,6 +718,8 @@ PARAMETER_STORE_ERROR_MSG = (
 # users
 USER_TAG = "user"
 USER_NAME = "user_name"
+USER_PHONE_NUMBER = "phone_number"
+USER_ACCESS_LEVEL = "access_level"
 USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
 FAVORITE = "favorite"

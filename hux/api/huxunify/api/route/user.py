@@ -1,11 +1,12 @@
 # pylint: disable=no-self-use
 """Paths for the User API"""
+import random
 from http import HTTPStatus
 from typing import Tuple
 
 from bson import ObjectId
 from connexion.exceptions import ProblemException
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
@@ -13,6 +14,7 @@ from huxunifylib.database import constants as db_constants
 from huxunifylib.database.user_management import (
     get_user,
     manage_user_favorites,
+    get_all_users,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.decorators import (
@@ -265,3 +267,53 @@ class DeleteUserFavorite(SwaggerView):
         return {
             "message": f"{component_id} not part of user favorites"
         }, HTTPStatus.OK
+
+
+@add_view_to_blueprint(
+    user_bp, api_c.USER_ENDPOINT, "UserView"
+)
+class UserView(SwaggerView):
+    """User view class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "List of all Users.",
+            "schema": {"type": "array", "items": UserSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get all Users."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
+        """Retrieves all users.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[list, int]: list of users, HTTP status code.
+        """
+
+        # get all users
+        users = get_all_users(get_db_client())
+
+        # generate random phone number and user access level
+        for user in users:
+            user[api_c.USER_PHONE_NUMBER] = "{}-{}-{}".format(
+                str(random.randint(100, 999)),
+                str(random.randint(100, 999)),
+                str(random.randint(1000, 9999)),
+            )
+            user[api_c.USER_ACCESS_LEVEL] = random.choice(
+                ["Edit", "View-only", "Admin"]
+            )
+
+        return (
+            jsonify(UserSchema().dump(users, many=True)),
+            HTTPStatus.OK.value,
+        )

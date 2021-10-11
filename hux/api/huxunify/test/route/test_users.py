@@ -216,3 +216,17 @@ class TestUserRoutes(TestCase):
         )
         t_c.validate_schema(UserSchema(), response.json)
         self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_get_all_users(self):
+        """Tests getting all users."""
+
+        endpoint = (
+            f"{t_c.BASE_ENDPOINT}" f"{api_c.USER_ENDPOINT}"
+        )
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        t_c.validate_schema(UserSchema(), response.json, True)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
