@@ -7,7 +7,9 @@
       <div class="px-15 modal-content">
         <icon type="exclamation_outline" :color="type" :size="44" />
         <div class="black--text text--darken-4 text-h3 py-3">{{ title }}</div>
-        <div class="black--text text--darken-4 text-h6 pb-10">{{ body }}</div>
+        <slot name="body">
+          <div class="black--text text--darken-4 text-h6 pb-10">{{ body }}</div>
+        </slot>
       </div>
       <div
         class="

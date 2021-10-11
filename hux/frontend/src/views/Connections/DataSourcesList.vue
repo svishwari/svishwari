@@ -21,7 +21,7 @@
         "
         hide-button
         data-e2e="dataSourcesList"
-        class="mb-3 pr-10 list"
+        class="mb-3 pr-7 list"
         :to="
           dataSource.status === 'Active'
             ? {
