@@ -33,7 +33,9 @@ class TestNotificationRoutes(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         # mock get db client from notifications
         mock.patch(
@@ -164,7 +166,9 @@ class TestNotificationRoutes(TestCase):
                 self.assertIn(db_c.NOTIFICATIONS_COLLECTION, notifications)
                 self.assertEqual(notifications[api_c.TOTAL], 1)
 
-                for notification in notifications[db_c.NOTIFICATIONS_COLLECTION]:
+                for notification in notifications[
+                    db_c.NOTIFICATIONS_COLLECTION
+                ]:
                     self.assertEqual(
                         notification[api_c.NOTIFICATION_TYPE],
                         db_c.NOTIFICATION_TYPE_SUCCESS.title(),

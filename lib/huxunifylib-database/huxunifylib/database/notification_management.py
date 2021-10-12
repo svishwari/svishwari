@@ -43,7 +43,9 @@ def create_notification(
         raise InvalidNotificationType(notification_type)
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.NOTIFICATIONS_COLLECTION
+    ]
 
     # get current time
     current_time = datetime.utcnow()
@@ -94,7 +96,9 @@ def get_notifications_batch(
     """
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.NOTIFICATIONS_COLLECTION
+    ]
 
     skips = batch_size * (batch_number - 1)
 
@@ -136,14 +140,18 @@ def get_notifications(
     """
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.NOTIFICATIONS_COLLECTION
+    ]
 
     try:
         return dict(
             total_records=collection.count_documents(query_filter),
             notifications=list(
                 collection.find(query_filter if query_filter else {}).sort(
-                    sort_order if sort_order else [("$natural", pymongo.ASCENDING)]
+                    sort_order
+                    if sort_order
+                    else [("$natural", pymongo.ASCENDING)]
                 )
             ),
         )
@@ -167,7 +175,9 @@ def get_notification(
 
     """
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.NOTIFICATIONS_COLLECTION
+    ]
 
     try:
         return collection.find_one({c.ID: notification_id})
