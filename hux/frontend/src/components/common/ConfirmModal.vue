@@ -5,7 +5,7 @@
     </template>
     <div class="white text-center pt-10">
       <div class="px-15 modal-content">
-        <icon type="exclamation_outline" :color="type" :size="44" />
+        <icon :type="icon" :size="44" />
         <div class="black--text text--darken-4 text-h3 py-3">{{ title }}</div>
         <slot name="body">
           <div class="black--text text--darken-4 text-h6 pb-10">{{ body }}</div>
@@ -58,6 +58,10 @@ export default {
   },
 
   props: {
+    icon: {
+      type: String,
+      required: false,
+    },
     type: {
       type: String,
       required: false,
@@ -79,7 +83,7 @@ export default {
     leftBtnText: {
       type: String,
       required: false,
-      default: "Cancel",
+      default: "Cancel & return",
     },
 
     rightBtnText: {

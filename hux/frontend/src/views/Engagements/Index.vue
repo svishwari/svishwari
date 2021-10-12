@@ -452,8 +452,7 @@
     </hux-data-table>
 
     <v-row v-if="rowData.length == 0 && !loading" class="pt-3 pb-7 pl-3">
-      <empty-page>
-        <template #icon>mdi-alert-circle-outline</template>
+      <empty-page type="no-engagement" size="50">
         <template #title>Oops! There’s nothing here yet</template>
         <template #subtitle>
           Plan your engagement ahead of time. You can create the <br />
@@ -552,7 +551,7 @@ export default {
         {
           text: "Engagements",
           disabled: true,
-          icon: "engagements",
+          icon: "speaker_down",
         },
       ],
       loading: true,
