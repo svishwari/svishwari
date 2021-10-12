@@ -393,6 +393,11 @@ export const defineRoutes = (server) => {
     return audienceCSVData
   })
 
+  server.delete("/engagements/:id", (schema, request) => {
+    const id = request.params.id
+    return schema.audiences.find(id)
+  })
+
   // models
   server.get("/models")
 
@@ -620,6 +625,11 @@ export const defineRoutes = (server) => {
 
   server.get("/audiences/:id/countries", (schema) => {
     return schema.geoCountries.all()
+  })
+
+  server.delete("/audiences/:id", (schema, request) => {
+    const id = request.params.id
+    return schema.audiences.find(id)
   })
 
   //lookalike audiences
