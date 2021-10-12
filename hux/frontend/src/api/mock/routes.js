@@ -395,9 +395,10 @@ export const defineRoutes = (server) => {
 
   server.del("/engagements/:id", (schema, request) => {
     const id = request.params.id
-    return (
-      "Engagement " + schema.engagements.find(id).name + " successfully deleted"
-    )
+    const engagement_deleted = schema.engagements.find(id)
+    const engagement_deleted_name = engagement_deleted.name
+    engagement_deleted.destroy()
+    return "Engagement " + engagement_deleted_name + " successfully deleted"
   })
 
   // models
@@ -631,9 +632,10 @@ export const defineRoutes = (server) => {
 
   server.del("/audiences/:id", (schema, request) => {
     const id = request.params.id
-    return (
-      "Audience " + schema.audiences.find(id).name + " successfully deleted"
-    )
+    const audience_deleted = schema.audiences.find(id)
+    const audience_deleted_name = audience_deleted.name
+    audience_deleted.destroy()
+    return "Audience " + audience_deleted_name + " successfully deleted"
   })
 
   //lookalike audiences
