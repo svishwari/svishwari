@@ -6,7 +6,6 @@
         @click.stop="toggleSidebarMenu"
       >
         <icon
-          data-e2e="notification-bell"
           :class="{ 'rotate-icon-180': toggleMini }"
           type="hamburger"
           :size="21"
