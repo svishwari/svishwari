@@ -6,6 +6,7 @@ from http import HTTPStatus
 from bson import ObjectId
 from croniter import croniter, CroniterNotAlphaError
 from pandas import DataFrame
+from dateutil.relativedelta import relativedelta
 
 from healthcheck import HealthCheck
 from decouple import config
@@ -470,3 +471,33 @@ def is_component_favorite(
         return True
 
     return False
+
+
+def get_start_end_dates(request: dict, delta: int) -> (datetime, datetime):
+    """Get date range.
+
+    Args:
+        request (dict) : Request object.
+        delta (int) : Time in months.
+
+    Returns:
+        start_date, end_date (Tuple): Date range.
+    """
+
+    start_date = (
+        request.args.get(constants.START_DATE)
+        if request and request.args.get(constants.START_DATE)
+        else datetime.strftime(
+            datetime.utcnow().date() - relativedelta(months=delta),
+            constants.DEFAULT_DATE_FORMAT,
+        )
+    )
+    end_date = (
+        request.args.get(constants.END_DATE)
+        if request and request.args.get(constants.END_DATE)
+        else datetime.strftime(
+            datetime.utcnow().date(),
+            constants.DEFAULT_DATE_FORMAT,
+        )
+    )
+    return start_date, end_date
