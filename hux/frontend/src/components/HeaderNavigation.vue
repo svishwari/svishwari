@@ -16,6 +16,7 @@
           v-for="link in dropdownLinks"
           :key="link.name"
           @click="routerRedirect(link.path)"
+          :data-e2e="link.name"
         >
           <v-list-item-title class="text-h6 black--text text--darken-4">
             {{ link.name }}
