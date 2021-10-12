@@ -22,6 +22,7 @@ from huxunifylib.database import (
     orchestration_management,
     constants as db_c,
     delivery_platform_management as destination_management,
+    notification_management,
 )
 import huxunifylib.database.db_exceptions as de
 
@@ -338,9 +339,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__qualname__,
                     in_function.__module__,
                 )
-                return {
-                    "message": constants.DUPLICATE_NAME
-                }, HTTPStatus.FORBIDDEN
+                return {"message": constants.DUPLICATE_NAME}, HTTPStatus.FORBIDDEN
 
             except CustomAudienceDeliveryStatusError as exc:
                 logger.error(
@@ -490,9 +489,7 @@ def validate_delivery_params(func) -> object:
                     func.__qualname__,
                     func.__module__,
                 )
-                return {
-                    "message": constants.ENGAGEMENT_NOT_FOUND
-                }, HTTPStatus.NOT_FOUND
+                return {"message": constants.ENGAGEMENT_NOT_FOUND}, HTTPStatus.NOT_FOUND
         # check if audience id exists
         audience_id = kwargs.get(constants.AUDIENCE_ID, None)
         if audience_id:
@@ -506,15 +503,11 @@ def validate_delivery_params(func) -> object:
                     func.__qualname__,
                     func.__module__,
                 )
-                return {
-                    "message": "Audience does not exist."
-                }, HTTPStatus.BAD_REQUEST
+                return {"message": "Audience does not exist."}, HTTPStatus.BAD_REQUEST
 
             if audience_id and engagement_id:
                 # validate that the audience is attached
-                audience_ids = [
-                    x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]
-                ]
+                audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
                 if ObjectId(audience_id) not in audience_ids:
                     logger.error(
                         "Audience %s is not attached to engagement %s while executing %s in %s.",
@@ -647,9 +640,7 @@ def validate_engagement_and_audience() -> object:
 
             if audience_id is not None:
                 audience_id = ObjectId(audience_id)
-                if not orchestration_management.get_audience(
-                    database, audience_id
-                ):
+                if not orchestration_management.get_audience(database, audience_id):
                     logger.error(
                         "Audience with audience ID %s not found.",
                         audience_id,
@@ -665,6 +656,67 @@ def validate_engagement_and_audience() -> object:
         # set tag so we can assert if a function is secured via this decorator
         decorator.__wrapped__ = in_function
 
+        return decorator
+
+    return wrapper
+
+
+def validate_notification(
+    check_if_notification_in_db: bool = True,
+) -> object:
+    """This decorator handles validation of notification objects.
+
+    Example: @validate_notification_wrapper()
+
+    Args:
+        check_if_notification_in_db (bool): Optional; If check_notification_exists
+            a check is performed to verify if notification exists in the db.
+
+    Returns:
+        Response (object): decorator.
+    """
+
+    def wrapper(in_function) -> object:
+        """Decorator for wrapping a function.
+
+        Args:
+            in_function (object): function object.
+
+        Returns:
+           Response (object): returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for handling notification validation.
+
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+
+            Returns:
+               Response (object): returns a decorated function object.
+            """
+
+            notification_id = ObjectId(kwargs.get("notification_id", None))
+
+            if check_if_notification_in_db:
+                if not notification_management.get_notification(
+                    get_db_client(), notification_id
+                ):
+                    logger.error(
+                        "Could not find notification with id %s.",
+                        notification_id,
+                    )
+                    return {
+                        "message": constants.NOTIFICATION_NOT_FOUND
+                    }, HTTPStatus.NOT_FOUND
+
+            kwargs["notification_id"] = notification_id
+
+            return in_function(*args, **kwargs)
+
+        decorator.__wrapped__ = in_function
         return decorator
 
     return wrapper

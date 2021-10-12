@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Union
 
 import pymongo
+from bson import ObjectId
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.constants as c
@@ -42,9 +43,7 @@ def create_notification(
         raise InvalidNotificationType(notification_type)
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     # get current time
     current_time = datetime.utcnow()
@@ -95,9 +94,7 @@ def get_notifications_batch(
     """
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     skips = batch_size * (batch_number - 1)
 
@@ -139,21 +136,41 @@ def get_notifications(
     """
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     try:
         return dict(
             total_records=collection.count_documents(query_filter),
             notifications=list(
                 collection.find(query_filter if query_filter else {}).sort(
-                    sort_order
-                    if sort_order
-                    else [("$natural", pymongo.ASCENDING)]
+                    sort_order if sort_order else [("$natural", pymongo.ASCENDING)]
                 )
             ),
         )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+def get_notification(
+    database: DatabaseClient, notification_id: ObjectId
+) -> Union[dict, None]:
+    """To get notification
+
+    Args:
+        database (DatabaseClient): MongoDB Database Client
+        notification_id: MongoDB Object Id
+
+    Returns:
+        Tuple[dict,None]:MongoDB Notification document else None
+
+    """
+    # get collection
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
+
+    try:
+        return collection.find_one({c.ID: notification_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

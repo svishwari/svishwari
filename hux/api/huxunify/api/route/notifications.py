@@ -15,20 +15,19 @@ from huxunifylib.database import (
     constants as db_c,
     notification_management,
 )
-from huxunify.api.schema.notifications import NotificationsSchema
+from huxunify.api.schema.notifications import NotificationsSchema, NotificationSchema
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+    validate_notification,
 )
 from huxunify.api.route.utils import get_db_client, Validation
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 
 # setup the notifications blueprint
-notifications_bp = Blueprint(
-    api_c.NOTIFICATIONS_ENDPOINT, import_name=__name__
-)
+notifications_bp = Blueprint(api_c.NOTIFICATIONS_ENDPOINT, import_name=__name__)
 
 
 @notifications_bp.before_request
@@ -194,9 +193,7 @@ class NotificationStream(SwaggerView):
                 # get the previous time, take last minute.
                 previous_time = datetime.utcnow().replace(
                     tzinfo=timezone.utc
-                ) - timedelta(
-                    minutes=int(api_c.NOTIFICATION_STREAM_TIME_SECONDS / 60)
-                )
+                ) - timedelta(minutes=int(api_c.NOTIFICATION_STREAM_TIME_SECONDS / 60))
 
                 # dump the output notification list to the notification schema.
                 yield json.dumps(
@@ -204,9 +201,7 @@ class NotificationStream(SwaggerView):
                         notification_management.get_notifications(
                             get_db_client(),
                             {
-                                db_c.NOTIFICATION_FIELD_CREATED: {
-                                    "$gt": previous_time
-                                },
+                                db_c.NOTIFICATION_FIELD_CREATED: {"$gt": previous_time},
                                 db_c.TYPE: db_c.NOTIFICATION_TYPE_SUCCESS,
                                 db_c.NOTIFICATION_FIELD_DESCRIPTION: {
                                     "$regex": "^Successfully delivered audience"
@@ -219,3 +214,54 @@ class NotificationStream(SwaggerView):
 
         # return the event stream response
         return Response(event_stream(), mimetype="text/event-stream")
+
+
+@add_view_to_blueprint(
+    notifications_bp,
+    f"/{api_c.NOTIFICATIONS_ENDPOINT}/<{api_c.NOTIFICATION_ID}>",
+    "NotificationSearch",
+)
+class NotificationSearch(SwaggerView):
+    """Notification search class."""
+
+    parameters = [
+        {
+            "name": api_c.NOTIFICATION_ID,
+            "in": "path",
+            "type": "string",
+            "description": "ObjectId of Notification",
+            "example": "614e14bdcc267d93d62f44f4",
+            "required": True,
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Notification Details",
+            "schema": NotificationSchema,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.NOTIFICATIONS_TAG]
+
+    @api_error_handler()
+    @validate_notification()
+    def get(self, notification_id: str) -> Tuple[dict, int]:
+        """Retrieves notification.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+        Args:
+            notification_id (str): Notification Id
+        Returns:
+            Tuple[dict, int] dict of notifications, HTTP status code.
+        """
+
+        return (
+            NotificationSchema().dump(
+                notification_management.get_notification(
+                    get_db_client(), notification_id=notification_id
+                )
+            ),
+            HTTPStatus.OK,
+        )
