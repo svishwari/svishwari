@@ -1,6 +1,7 @@
 <template>
   <v-card
     class="descriptive-card align-center text-center rounded-lg mr-10 mb-10"
+    :style="{ 'min-height': minHeight }"
     :class="{ 'in-active': disabled }"
   >
     <div v-if="$slots.top" class="pa-3 pb-0">
@@ -8,13 +9,15 @@
     </div>
 
     <div v-if="icon" class="d-flex justify-center pb-4">
-      <icon :type="icon" :size="60" color="primary" class="d-block" />
+      <div class="dot">
+        <icon :type="icon" :size="44" color="primary" class="d-block" />
+      </div>
     </div>
 
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="text-h4 px-3 pb-2 text-ellipsis d-block"
+          class="text-h4 px-3 pb-2 text-ellipsis d-block title"
           :class="disabled ? 'black--text text--darken-4' : 'primary--text'"
           data-e2e="card-title"
         >
@@ -29,7 +32,7 @@
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="text-caption px-3 text-ellipsis d-block"
+          class="text-caption px-3 d-block description"
           data-e2e="card-description"
         >
           {{ description }}
@@ -75,11 +78,25 @@ export default {
       required: false,
       default: "Descriptive text for the model item chosen above",
     },
-
+    type: {
+      type: String,
+      required: true,
+      default: "Models", 
+    },
     disabled: {
       type: Boolean,
       required: false,
       default: false,
+    },
+  },
+
+  computed: {
+    minHeight() {
+      if(this.type == 'Models'){
+        return '255px';
+      }else if(this.type == 'Modules'){
+        return '225px';
+      }
     },
   },
 }
@@ -90,7 +107,7 @@ export default {
   @extend .box-shadow-5;
   color: var(--v-black-darken4);
   font-weight: normal;
-  min-height: 255px;
+  // min-height: 255px;
   transition: box-shadow 0.2s;
   width: 255px;
 
@@ -102,6 +119,19 @@ export default {
     &:hover {
       @extend .box-shadow-5;
     }
+  }
+  .dot {
+    height: 60px;
+    width: 60px;
+    padding: 7px;
+    border-radius: 50%;
+    display: inline-block;
+    background-color: var(--v-white-base);
+    text-align: -webkit-center;
+    @extend .box-shadow-1;
+  }
+  .description {
+    min-height: 55px;
   }
 }
 </style>

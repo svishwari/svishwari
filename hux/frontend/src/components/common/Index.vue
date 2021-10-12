@@ -358,16 +358,23 @@
 
     <v-subheader> Descriptive Card </v-subheader>
     <descriptive-card
+      type="Models"
       icon="model-unsubscribe"
       title="Propensity to Unsubscribe"
       description="Propensity of a customer making a purchase after receiving an email."
     >
       <template slot="top">
-        <status status="Pending" collapsed class="d-flex" />
+        <status status="Pending" collapsed class="d-flex float-left" />
+        <v-icon
+          class="d-flex float-right"
+          v-bind="attrs"
+          color="primary"
+        >
+          mdi-dots-vertical
+        </v-icon>
       </template>
 
       <template slot="default">
-        <p class="text-caption black--text text--darken-1">Sarah Miller</p>
 
         <div class="d-flex justify-center mb-6">
           <card-stat label="Version" value="0.02" stat-class="border-0">
@@ -390,6 +397,23 @@
           </card-stat>
           <card-stat label="Last trained" value="2 hrs ago">12:45pm</card-stat>
         </div>
+      </template>
+    </descriptive-card>
+    <descriptive-card
+      type="Modules"
+      icon="model-unsubscribe"
+      title="Propensity to Unsubscribe"
+      description="This is THE Hux CDP. Once a customer data solution has been implemented, all data sources flow seamlessly into the ..."
+    >
+      <template slot="top">
+        <status status="Pending" collapsed class="d-flex float-left" />
+        <v-icon
+          class="d-flex float-right"
+          v-bind="attrs"
+          color="primary"
+        >
+          mdi-dots-vertical
+        </v-icon>
       </template>
     </descriptive-card>
 
