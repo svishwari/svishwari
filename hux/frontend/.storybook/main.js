@@ -3,7 +3,7 @@
 const VuetifyLoaderPlugin = require("vuetify-loader/lib/plugin")
 
 module.exports = {
-  stories: ["../src/**/*.stories.@(js|jsx|ts|tsx|mdx)"],
+  stories: ["../src/**/*.stories.js"],
 
   addons: ["@storybook/addon-essentials"],
 
