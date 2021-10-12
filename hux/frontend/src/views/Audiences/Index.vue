@@ -245,7 +245,7 @@
       @onConfirm="confirmRemoval()"
     >
       <template #body>
-        <div>Are you sure you want to delete this audience?</div>
+        <div>Are you sure you want to delete this audience&#63;</div>
         <div class="mb-6">
           By deleting this audience you will not be able to recover it and it
           may impact any associated engagements.

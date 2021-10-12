@@ -512,7 +512,7 @@
       @onConfirm="confirmRemoval()"
     >
       <template #body>
-        <div>Are you sure you want to delete this Engagement?</div>
+        <div>Are you sure you want to delete this Engagement&#63;</div>
         <div class="mb-6">
           By deleting this engagement you will not be able to recover it and it
           may impact any associated destinations.
