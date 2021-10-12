@@ -500,6 +500,24 @@
         removeAudience()
       "
     />
+
+    <confirm-modal
+      v-model="confirmModal"
+      type="error"
+      :title="confirmTitle"
+      right-btn-text="Yes, delete engagement"
+      left-btn-text="Nevermind!"
+      @onCancel="confirmModal = !confirmModal"
+      @onConfirm="confirmRemoval()"
+    >
+      <template #body>
+        <div>Are you sure you want to delete this Engagement&#63;</div>
+        <div class="mb-6">
+          By deleting this engagement you will not be able to recover it and it
+          may impact any associated destinations.
+        </div>
+      </template>
+    </confirm-modal>
   </div>
 </template>
 
@@ -537,6 +555,9 @@ export default {
   },
   data() {
     return {
+      confirmModal: false,
+      confirmTitle: "",
+      selectedEngagement: null,
       selectedAudience: null,
       showLookAlikeDrawer: false,
       showAudienceRemoveConfirmation: false,
@@ -702,7 +723,19 @@ export default {
       setAlert: "alerts/setAlert",
       markFavorite: "users/markFavorite",
       clearFavorite: "users/clearFavorite",
+      deleteEngagement: "engagements/remove",
     }),
+
+    openModal(engagement) {
+      this.selectedEngagement = engagement
+      this.confirmTitle = `You are about to delete ${engagement.name}`
+      this.confirmModal = true
+    },
+
+    async confirmRemoval() {
+      await this.deleteEngagement({ id: this.selectedEngagement.id })
+      this.confirmModal = false
+    },
 
     isUserFavorite(entity, type) {
       return (
@@ -822,7 +855,13 @@ export default {
             this.makeInactiveEngagement(value)
           },
         },
-        { title: "Delete engagement", isDisabled: true },
+        {
+          title: "Delete engagement",
+          isDisabled: false,
+          onClick: () => {
+            this.openModal(engagement)
+          },
+        },
       ]
 
       return actionItems
