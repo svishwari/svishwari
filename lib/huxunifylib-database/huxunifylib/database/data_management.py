@@ -1002,7 +1002,7 @@ def append_ingested_data(
     try:
         # Create a unique compound index on ingestion_job_id and nested field
         # ingested_data.customer_id
-        field_str = "%s.%s" % (c.INGESTED_DATA, c.S_TYPE_CUSTOMER_ID)
+        field_str = f"{c.INGESTED_DATA}.{c.S_TYPE_CUSTOMER_ID}"
         collection.create_index(
             [(field_str, pymongo.ASCENDING), (c.JOB_ID, pymongo.ASCENDING)],
             unique=True,
