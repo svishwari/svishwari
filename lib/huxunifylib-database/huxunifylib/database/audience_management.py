@@ -253,10 +253,7 @@ def get_audience(
             continue
 
         filter_type = item[c.AUDIENCE_FILTER_TYPE]
-        filter_field = "%s.%s" % (
-            c.INGESTED_DATA,
-            item[c.AUDIENCE_FILTER_FIELD],
-        )
+        filter_field = f"{c.INGESTED_DATA}.{item[c.AUDIENCE_FILTER_FIELD]}"
 
         filter_value = item[c.AUDIENCE_FILTER_VALUE]
 
