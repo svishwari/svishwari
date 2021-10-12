@@ -1,7 +1,7 @@
 import HuxButton from "../components/common/huxButton.vue"
 
 export default {
-  title: "Button",
+  title: "Components/Button",
 }
 
 export const withDefaults = () => ({
