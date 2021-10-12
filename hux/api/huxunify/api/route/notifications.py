@@ -7,6 +7,7 @@ from time import sleep
 from datetime import datetime, timedelta, timezone
 
 import pymongo
+from bson import ObjectId
 from flask import Blueprint, request, Response
 from flasgger import SwaggerView
 
@@ -23,7 +24,6 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
-    validate_notification,
 )
 from huxunify.api.route.utils import get_db_client, Validation
 from huxunify.api import constants as api_c
@@ -253,7 +253,6 @@ class NotificationSearch(SwaggerView):
     tags = [api_c.NOTIFICATIONS_TAG]
 
     @api_error_handler()
-    @validate_notification()
     def get(self, notification_id: str) -> Tuple[dict, int]:
         """Retrieves notification.
 
@@ -265,6 +264,17 @@ class NotificationSearch(SwaggerView):
         Returns:
             Tuple[dict, int] dict of notifications, HTTP status code.
         """
+        notification_id = ObjectId(notification_id)
+        if not notification_management.get_notification(
+            get_db_client(), notification_id
+        ):
+            logger.error(
+                "Could not find notification with id %s.",
+                notification_id,
+            )
+            return {
+                "message": api_c.NOTIFICATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         return (
             NotificationSchema().dump(

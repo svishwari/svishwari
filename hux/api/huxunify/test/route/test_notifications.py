@@ -112,6 +112,7 @@ class TestNotificationRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(NotificationSchema().validate(response.json))
 
     def test_get_notifications_default_params(self):
         """Test get notifications failure."""
