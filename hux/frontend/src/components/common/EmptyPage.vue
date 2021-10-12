@@ -29,6 +29,7 @@ export default {
     size: {
       type: String,
       required: false,
+      default: 24
     },
   },
 }
