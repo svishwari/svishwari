@@ -329,10 +329,8 @@ class TestDataManagement(unittest.TestCase):
 
         self.assertTrue(doc is not None)
 
-        expected_exc_msg = (
-            "Data source with ID <%s> is associated to an ingestion job and cannot be updated!"
-            % self.data_source_doc[c.ID]
-        )
+        expected_exc_msg = f"Data source with ID <{self.data_source_doc[c.ID]}> " \
+                           f"is associated to an ingestion job and cannot be updated!"
 
         try:
             doc = dm.update_data_source_format(
