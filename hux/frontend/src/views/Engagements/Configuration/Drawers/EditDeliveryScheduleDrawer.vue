@@ -116,11 +116,11 @@ export default {
     },
 
     deliverySchedule() {
-        for (let prop in this.deliverySchedule) {
-          this.schedule[prop] = this.deliverySchedule.hasOwnProperty(prop)
-            ? this.deliverySchedule[prop]
-            : this.schedule[prop]
-        }
+      for (let prop in this.deliverySchedule) {
+        this.schedule[prop] = this.deliverySchedule.hasOwnProperty(prop)
+          ? this.deliverySchedule[prop]
+          : this.schedule[prop]
+      }
     },
   },
 

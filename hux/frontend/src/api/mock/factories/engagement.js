@@ -59,7 +59,7 @@ const mockDailySchedule = () => {
     every: 2,
     hour: 5,
     minute: 15,
-    period: "AM"
+    period: "AM",
   }
 }
 
@@ -72,7 +72,7 @@ export const engagement = {
   delivery_schedule: () => ({
     start_date: faker.date.past(),
     end_date: faker.date.soon(),
-    schedule: mockDailySchedule()
+    schedule: mockDailySchedule(),
   }),
   audiences: () => mockAudiences(faker.datatype.number({ min: 2, max: 5 })),
   size: () => faker.datatype.number({ min: 10000000, max: 999999999 }),
