@@ -10,12 +10,20 @@
             <icon v-if="icon" :type="icon" :color="localIconColor" :size="42" />
           </slot>
           <slot name="title">
-            <div v-if="title" class="black--text text--darken-4 text-h3 py-3">
+            <div v-if="title" class="black--text text--darken-4 text-h3 pt-3">
               {{ title }}
             </div>
           </slot>
+          <slot name="sub-title">
+            <div
+              v-if="subTitle"
+              class="black--text text--darken-4 text-h3 mt-n2"
+            >
+              {{ subTitle }}
+            </div>
+          </slot>
           <slot name="body">
-            <div v-if="body" class="black--text text--darken-4 text-h6">
+            <div v-if="body" class="black--text text--darken-4 text-h6 pt-6">
               {{ body }}
             </div>
           </slot>
@@ -29,7 +37,7 @@
               is-tile
               @click="onCancel()"
             >
-              {{ leftBtnText }}
+              <span class="primary--text">{{ leftBtnText }}</span>
             </huxButton>
             <huxButton
               size="large"
@@ -80,6 +88,11 @@ export default {
       required: false,
     },
 
+    subTitle: {
+      type: String,
+      required: false,
+    },
+
     body: {
       type: String,
       required: false,
@@ -88,7 +101,7 @@ export default {
     leftBtnText: {
       type: String,
       required: false,
-      default: "Cancel & return",
+      default: "Nevermind!",
     },
 
     rightBtnText: {
@@ -156,7 +169,7 @@ export default {
   padding-top: 42px;
   .confirm-modal-footer {
     @extend .shadow;
-    margin-top: 24px;
+    margin-top: 36px;
     display: flex;
     justify-content: space-between;
     align-items: center;
