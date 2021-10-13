@@ -261,6 +261,7 @@ class NotificationSearch(SwaggerView):
             - Bearer: ["Authorization"]
         Args:
             notification_id (str): Notification Id
+        
         Returns:
             Tuple[dict, int] dict of notifications, HTTP status code.
         """
