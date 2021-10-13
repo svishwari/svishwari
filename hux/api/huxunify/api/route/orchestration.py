@@ -106,14 +106,14 @@ def add_destinations(
 
 
 async def get_audience_insights_async(
-    token: str, filters: dict, customers: list
+    token: str, filters: dict, customers_overview: dict
 ):
     """Fetch audience insights from CDM
 
     Args:
         token (str): OKTA JWT token.
         filters (dict): Audience filters.
-        customers (list): List of customer objects.
+        customers_overview (dict): Customer overview object.
 
     Returns:
         dict: Audience insights object.
@@ -144,8 +144,8 @@ async def get_audience_insights_async(
     audience_insights[api_c.SPEND] = group_gender_spending(responses[2])
     audience_insights[api_c.GENDER] = {
         gender: {
-            api_c.POPULATION_PERCENTAGE: customers.get(gender, 0),
-            api_c.SIZE: customers.get(f"{gender}_{api_c.COUNT}", 0),
+            api_c.POPULATION_PERCENTAGE: customers_overview.get(gender, 0),
+            api_c.SIZE: customers_overview.get(f"{gender}_{api_c.COUNT}", 0),
         }
         for gender in api_c.GENDERS
     }
@@ -609,20 +609,19 @@ class AudienceInsightsGetView(SwaggerView):
                 database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
             )
 
-        customers = get_customers_overview(
+        customers_overview = get_customers_overview(
             token_response[0],
             {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
         )
-        timer = time.perf_counter()
 
         audience_insights = asyncio.run(
             get_audience_insights_async(
-                token_response[0], audience[api_c.AUDIENCE_FILTERS], customers
+                token_response[0],
+                audience[api_c.AUDIENCE_FILTERS],
+                customers_overview,
             )
         )
 
-        total_ticks = time.perf_counter() - timer
-        logger.info("Total time taken: %0.4f seconds.", total_ticks)
         return (
             AudienceInsightsGetSchema(unknown=INCLUDE).dump(audience_insights),
             HTTPStatus.OK,
