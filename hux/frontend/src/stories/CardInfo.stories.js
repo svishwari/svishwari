@@ -1,18 +1,12 @@
 import CardInfo from "../components/common/CardInfo.vue"
 
 export default {
-  title: "Library/CardInfo",
-  component: CardInfo,
-  argTypes: {
-    title: { control: { type: "text" } },
-  },
+  title: "Card Info",
 }
 
-const Template = (args, { argTypes }) => ({
-  props: Object.keys(argTypes),
+export const withDefaults = () => ({
   components: { CardInfo },
-  template: `<card-info v-bind="$props">
-             </card-info>`,
+  template: `
+    <card-info></card-info>
+  `,
 })
-
-export const Default = Template.bind({})

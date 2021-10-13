@@ -34,7 +34,6 @@ export default {
     color: {
       type: String,
       required: false,
-      default: "primary",
     },
 
     variant: {

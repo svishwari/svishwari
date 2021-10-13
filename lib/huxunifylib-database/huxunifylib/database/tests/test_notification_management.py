@@ -1,5 +1,7 @@
 """Database client notification management tests"""
 from unittest import TestCase
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 import mongomock
 import pymongo
@@ -36,15 +38,62 @@ class NotificationManagementTest(TestCase):
             for notification in notifications
         ]
 
-    def test_create_notification(self):
+    def test_create_notification_informational(self):
+        """Test creating a notification"""
+        notification = nmg.create_notification(
+            database=self.database,
+            notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            description="Some Information",
+        )
+
+        current_time = datetime.utcnow()
+        upper_bound = (
+            current_time + relativedelta(months=1) + relativedelta(minutes=1)
+        )
+        lower_bound = (
+            current_time + relativedelta(months=1) - relativedelta(minutes=1)
+        )
+        self.assertIsNotNone(notification)
+        self.assertLess(notification[db_c.EXPIRE_AT], upper_bound)
+        self.assertGreater(notification[db_c.EXPIRE_AT], lower_bound)
+
+    def test_create_notification_success(self):
+        """Test creating a notification"""
+        notification = nmg.create_notification(
+            database=self.database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description="Some Information",
+        )
+
+        current_time = datetime.utcnow()
+        upper_bound = (
+            current_time + relativedelta(months=6) + relativedelta(minutes=1)
+        )
+        lower_bound = (
+            current_time + relativedelta(months=6) - relativedelta(minutes=1)
+        )
+        self.assertIsNotNone(notification)
+        self.assertLess(notification[db_c.EXPIRE_AT], upper_bound)
+        self.assertGreater(notification[db_c.EXPIRE_AT], lower_bound)
+
+    def test_create_notification_critical(self):
         """Test creating a notification"""
         notification = nmg.create_notification(
             database=self.database,
             notification_type=db_c.NOTIFICATION_TYPE_CRITICAL,
-            description="Delivery Failed",
+            description="Some Information",
         )
 
-        self.assertTrue(notification is not None)
+        current_time = datetime.utcnow()
+        upper_bound = (
+            current_time + relativedelta(months=6) + relativedelta(minutes=1)
+        )
+        lower_bound = (
+            current_time + relativedelta(months=6) - relativedelta(minutes=1)
+        )
+        self.assertIsNotNone(notification)
+        self.assertLess(notification[db_c.EXPIRE_AT], upper_bound)
+        self.assertGreater(notification[db_c.EXPIRE_AT], lower_bound)
 
     def test_get_notifications_batch(self):
         """Test get all notifications via batch"""
