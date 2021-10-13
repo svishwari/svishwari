@@ -1,30 +1,30 @@
 <template>
   <v-card
     class="descriptive-card align-center text-center rounded-lg mr-10 mb-10"
-    :style="{ 'min-height': minHeight, 'width' : disabled ? '255px' : '280px' }"
+    :style="{ 'min-height': minHeight, width: disabled ? '255px' : '280px' }"
     :class="{ 'in-active': disabled }"
   >
     <div v-if="$slots.top" class="pa-3 pb-0">
       <slot name="top" />
-        <v-menu close-on-click>
-          <template #activator="{ on }">
-            <v-icon
-              v-if="actionMenu"
-              class="d-flex float-right"
-              v-bind="attrs"
-              color="primary"
-              v-on="on"
-            >
-              mdi-dots-vertical
-            </v-icon>
-          </template>
-          <div class="black--text text-darken-4 cursor-pointer px-4 py-2 white">
-            Activate
-          </div>
-        </v-menu>
-        <div v-if="comingSoon" class="coming-soon d-flex float-right mt-n4">
-          Coming soon!
+      <v-menu close-on-click>
+        <template #activator="{ on }">
+          <v-icon
+            v-if="actionMenu"
+            class="d-flex float-right"
+            v-bind="attrs"
+            color="primary"
+            v-on="on"
+          >
+            mdi-dots-vertical
+          </v-icon>
+        </template>
+        <div class="black--text text-darken-4 cursor-pointer px-4 py-2 white">
+          Activate
         </div>
+      </v-menu>
+      <div v-if="comingSoon" class="coming-soon d-flex float-right mt-n4">
+        Coming soon!
+      </div>
     </div>
 
     <div v-if="icon" class="d-flex justify-center pb-4 mt-4">
@@ -38,7 +38,7 @@
         <div
           class="text-h4 px-3 pb-2 text-ellipsis d-block title text-h4"
           :class="disabled ? 'black--text text--darken-4' : 'primary--text'"
-          :style="{ 'padding-top' : !icon ? '56px' : null }"
+          :style="{ 'padding-top': !icon ? '56px' : null }"
           data-e2e="card-title"
         >
           {{ title }}
@@ -53,7 +53,7 @@
       <template #label-content>
         <div
           class="text-caption px-3 d-block description text-h6"
-          :style="{ 'padding-top' : !icon ? '22px' : null }"
+          :style="{ 'padding-top': !icon ? '22px' : null }"
           data-e2e="card-description"
         >
           {{ description }}
@@ -102,7 +102,7 @@ export default {
     type: {
       type: String,
       required: true,
-      default: "Models", 
+      default: "Models",
     },
     disabled: {
       type: Boolean,
@@ -123,10 +123,10 @@ export default {
 
   computed: {
     minHeight() {
-      if(this.type == 'Models'){
-        return '255px';
-      }else if(this.type == 'Modules'){
-        return '225px';
+      if (this.type == "Models") {
+        return "255px"
+      } else {
+        return "225px"
       }
     },
   },
@@ -155,7 +155,7 @@ export default {
       margin-top: -12px;
       position: absolute;
       right: 0;
-      background: #E2EAEC;
+      background: #e2eaec;
       border-radius: 0px 12px;
       padding: 4px;
     }
