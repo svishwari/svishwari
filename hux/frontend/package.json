@@ -14,8 +14,8 @@
     "style": "yarn prettier --check src/",
     "style:fix": "yarn prettier --write src/",
     "prepare": "cd ../../ && husky install hux/frontend/.husky",
-    "storybook:build": "vue-cli-service storybook:build",
-    "storybook:serve": "vue-cli-service storybook:serve -p 6006"
+    "storybook:build": "vue-cli-service storybook:build -c storybook/",
+    "storybook:serve": "vue-cli-service storybook:serve -p 6006 -c storybook/"
   },
   "dependencies": {
     "@okta/okta-signin-widget": "^4.2.3",
