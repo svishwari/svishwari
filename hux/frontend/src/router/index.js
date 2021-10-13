@@ -40,6 +40,16 @@ const routes = [
     },
   },
   {
+    path: "/configuration",
+    name: "Configuration",
+    component: () => import("@/views/Overview"),
+    meta: {
+      layout: "app",
+      title: "Configuration ",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/engagements",
     name: "Engagements",
     component: () => import("@/views/Engagements/Index"),

@@ -6,71 +6,15 @@
       "title": "Overview",
       "link": {
         "name": "Overview"
-      },
-      "size": 16
+      }
     },
     {
-      "label": "Orchestration",
-      "menu": [
-        {
-          "icon": "speaker_up",
-          "title": "Engagements",
-          "link": {
-            "name": "Engagements"
-          },
-          "size": 16
-        },
-        {
-          "icon": "audiences",
-          "title": "Audiences",
-          "link": {
-            "name": "Audiences"
-          },
-          "size": 18
-        }
-      ]
-    },
-    {
-      "label": "Decisioning",
-      "menu": [
-        {
-          "icon": "models",
-          "title": "Models",
-          "link": {
-            "name": "Models"
-          },
-          "size": 14
-        }
-      ]
-    },
-    {
-      "label": "Data Management",
-      "menu": [
-        {
-          "icon": "customer-profiles",
-          "title": "Customer Profiles",
-          "link": {
-            "name": "CustomerProfiles"
-          },
-          "size": 18
-        },
-        {
-          "icon": "identity-resolution",
-          "title": "Identity Resolution",
-          "link": {
-            "name": "IdentityResolution"
-          },
-          "size": 18
-        },
-        {
-          "icon": "connections",
-          "title": "Connections",
-          "link": {
-            "name": "Connections"
-          },
-          "size": 18
-        }
-      ]
+      "label": null,
+      "icon": "configuration",
+      "title": "Configuration",
+      "link": {
+        "name": "Configuration"
+      }
     }
   ]
 }

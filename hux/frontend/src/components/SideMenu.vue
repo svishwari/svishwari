@@ -6,30 +6,30 @@
     :mini-variant.sync="isMini"
     mini-variant-width="90"
     width="220"
-    class="side-nav-bar primary"
+    class="side-nav-bar"
   >
     <template #prepend>
       <img
         src="@/assets/images/logo.png"
-        alt="Hux"
+        alt="Hux Unified"
         width="55"
         height="55"
-        class="d-flex ma-4"
+        class="d-flex ma-6"
         data-e2e="click-outside"
       />
       <v-menu v-if="!isMini" open-on-hover offset-y>
         <template #activator="{ on }">
-          <div class="client" v-on="on">
-            <span>
-              {{ clientName }}
+          <div class="ml-6 primary-lighten4" v-on="on">
+            <span class="d-flex align-center">
+              <logo :type="client.logo" size="16" class="mr-2" />
+              {{ client.name }}
             </span>
-            <v-icon v-if="!isMini"> mdi-chevron-down </v-icon>
           </div>
         </template>
         <template #default>
           <div class="px-6 py-5 white">
             <v-icon color="primary"> mdi-information </v-icon>
-            <span class="pl-4 text-caption black--text text--darken-4">
+            <span class="pl-4 text-h6 black-base--text">
               This is where your future client accounts will be held.
             </span>
           </div>
@@ -37,16 +37,20 @@
       </v-menu>
     </template>
 
-    <v-list v-for="item in items" :key="item.title">
-      <div v-if="item.label" class="list-group">
-        <span v-if="!isMini">
+    <v-list
+      v-for="item in items"
+      :key="item.title"
+      color="var(-v--primary-base)"
+    >
+      <div v-if="item.label" class="list-group black-base--text">
+        <span v-if="!isMini" class="text-h6 black-base--text">
           {{ item.label }}
         </span>
       </div>
 
       <v-list-item
         v-if="!item.menu"
-        class="my-2"
+        class="pl-6 black-base--text mr-2"
         :to="item.link"
         :data-e2e="`nav-${item.icon}`"
       >
@@ -59,22 +63,24 @@
             v-if="item.title"
             :key="item.title"
             position-top
-            color="black"
+            color="black-base"
           >
             <template #label-content>
               <icon
                 :type="item.icon"
                 :size="iconSize"
-                color="white"
+                color="black-base"
                 class="mt-1"
               />
             </template>
             <template #hover-content>
-              {{ item.title }}
+              <span class="text-h6 error-base--text">
+                {{ item.title }}
+              </span>
             </template>
           </tooltip>
         </v-list-item-icon>
-        <v-list-item-title class="white--text">
+        <v-list-item-title class="black-base--text text-h6">
           {{ item.title }}
         </v-list-item-title>
       </v-list-item>
@@ -95,17 +101,19 @@
               v-if="menu.icon"
               :key="menu.title"
               position-top
-              color="black"
+              color="black-base"
             >
               <template #label-content>
-                <icon :type="menu.icon" :size="menu.size" color="white" />
+                <icon :type="menu.icon" :size="menu.size" color="black-base" />
               </template>
               <template #hover-content>
-                {{ menu.title }}
+                <span class="black-base--text text-h6">
+                  {{ menu.title }}
+                </span>
               </template>
             </tooltip>
           </v-list-item-icon>
-          <v-list-item-title class="white--text">
+          <v-list-item-title class="black-base--text text-h6">
             {{ menu.title }}
           </v-list-item-title>
         </v-list-item>
@@ -122,18 +130,22 @@
 import menuConfig from "@/menuConfig.json"
 import Icon from "@/components/common/Icon"
 import Tooltip from "@/components/common/Tooltip"
+import Logo from "@/components/common/Logo"
 
 export default {
   name: "SideMenu",
 
-  components: { Icon, Tooltip },
+  components: { Icon, Tooltip, Logo },
 
   props: {
     toggle: Boolean,
   },
 
   data: () => ({
-    clientName: "Demo Client",
+    client: {
+      name: "Pendleton",
+      logo: "pendleton",
+    },
     items: menuConfig.menu,
   }),
 
@@ -158,8 +170,8 @@ export default {
 
   .client {
     align-items: center;
-    background-color: var(--v-primary-darken1);
-    color: var(--v-white-base);
+    background-color: var(--v-primary-lighten4);
+    color: var(--v-black-base);
     cursor: default;
     display: flex;
     font-size: 0.93rem;
@@ -180,16 +192,23 @@ export default {
   .v-list-item__icon {
     margin-right: 0.5rem;
   }
-
-  .v-list-item__title {
-    font-size: 0.93rem;
-    font-weight: normal;
+  .v-list-item {
+    border-top-right-radius: 40px;
+    border-bottom-right-radius: 40px;
+    &:focus {
+      &::before {
+        opacity: 0;
+      }
+    }
   }
 
   .v-list-item--active {
+    background-color: var(--v-primary-lighten1);
+    border-left: solid 4px var(--v-primary-lighten6);
+    border-top-right-radius: 40px;
+    border-bottom-right-radius: 40px;
     &::before {
-      background-color: var(--v-primary-lighten4);
-      opacity: 0.2;
+      opacity: 0;
     }
   }
 
@@ -197,7 +216,6 @@ export default {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 
     span {
-      color: var(--v-white-base);
       display: flex;
       font-size: 0.93rem;
       font-weight: normal;
@@ -221,12 +239,12 @@ export default {
     bottom: 79.66%;
   }
   // Apply this css only if icon size is 14 otherwise icon size should be 18
-  .home-menu-icon {
-    svg {
-      top: 22.89%;
-      @extend .side-menu-icon;
-    }
-  }
+  // .home-menu-icon {
+  //   svg {
+  //     top: 22.89%;
+  //     @extend .side-menu-icon;
+  //   }
+  // }
   // Apply this css only if icon size is 14 otherwise icon size should be 18
   .menu-icon {
     svg {
