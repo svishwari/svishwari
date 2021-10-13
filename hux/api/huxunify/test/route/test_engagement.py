@@ -1108,8 +1108,8 @@ class TestEngagementRoutes(TestCase):
             self.assertIn(api_c.FAVORITE, engagement)
             self.assertIsNotNone(engagement[db_c.STATUS])
 
-    def test_get_engagement_by_id_valid_id_favorited(self):
-        """Test get engagement API with valid ID."""
+    def test_get_engagement_by_id_valid_id_favorite(self):
+        """Test get engagement API with valid ID which is a favorite."""
 
         engagement_id = self.engagement_ids[0]
         response = self.app.get(
@@ -1123,8 +1123,8 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(api_c.STATUS_INACTIVE, return_engagement[db_c.STATUS])
         self.assertTrue(return_engagement[api_c.FAVORITE])
 
-    def test_get_engagement_by_id_valid_id_not_favorited(self):
-        """Test get engagement API with valid ID."""
+    def test_get_engagement_by_id_valid_id_not_favorite(self):
+        """Test get engagement API with valid ID which is not a favorite."""
 
         engagement_id = self.engagement_ids[1]
         response = self.app.get(
