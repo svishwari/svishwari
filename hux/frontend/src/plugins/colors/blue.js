@@ -10,7 +10,10 @@ export default {
   medBlueD: "#0076A8",
   darkBlue: "#005587",
   blue: "#012169",
-  // Addional Chart Colors
+  // Additional Colors
+  aliceBlue: "#ecf4f9",
+  greyBlue: "#d5dce1",
+  dullBlue: "#b7cfd9",
   columbiaBlue: "#a0dcff",
   skyBlue: "#80d1ef",
   oceanBlue: "42EFFD",
