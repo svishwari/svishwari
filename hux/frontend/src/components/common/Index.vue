@@ -358,7 +358,8 @@
 
     <v-subheader> Descriptive Card </v-subheader>
     <descriptive-card
-      actionMenu="true"
+      :actionMenu="true"
+      :comingSoon="false"
       type="Models"
       icon="model-unsubscribe"
       title="Propensity to Unsubscribe"
@@ -394,7 +395,8 @@
       </template>
     </descriptive-card>
     <descriptive-card
-      actionMenu="true"
+      :actionMenu="true"
+      :comingSoon="false"
       type="Modules"
       icon="model-unsubscribe"
       title="Propensity to Unsubscribe"
@@ -405,16 +407,26 @@
       </template>
     </descriptive-card>
     <descriptive-card
-      disabled="true"
-      actionMenu="false"
+      :disabled="true"
+      :actionMenu="false"
+      :comingSoon="true"
       type="Modules"
       icon="model-unsubscribe"
       title="Propensity to Unsubscribe ojjihj"
-      description="This is THE Hux CDP. Once a customer data solution has been implemented, all data sources flow seamlessly into the ..."
+      description="This is THE Hux CDP. Once a customer data solution has been implemented..."
     >
       <template slot="top">
         <status status="Pending" collapsed class="d-flex float-left" />
       </template>
+    </descriptive-card>
+    <descriptive-card
+      :disabled="false"
+      :actionMenu="false"
+      :comingSoon="false"
+      type="Modules"
+      title="Propensity to Unsubscribe ojjihj"
+      description="This is THE Hux CDP. Once a customer data solution has been implemented..."
+    >
     </descriptive-card>
 
     <v-divider class="mt-10" />
