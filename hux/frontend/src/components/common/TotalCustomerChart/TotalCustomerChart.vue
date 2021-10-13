@@ -64,10 +64,10 @@ export default {
       isArcHover: false,
       isEmptyState: false,
       colorCodes: [
+        { base: "primary", variant: "darken2" },
+        { base: "primary", variant: "lighten9" },
         { base: "primary", variant: "lighten5" },
-        { base: "primary", variant: "lighten8" },
-        { base: "primary", variant: "darken3" },
-        { base: "teal", variant: "base" },
+        { base: "success", variant: "base" },
       ],
       currentData: {},
       sourceData: [],

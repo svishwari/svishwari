@@ -14,7 +14,7 @@
           height="15"
           icon
           outlined
-          color="teal"
+          color="success"
           class="dotted mr-2"
         />
         <icon
@@ -78,7 +78,7 @@ export default {
 
     iconColor(type) {
       const defaultIconColor = {
-        success: "teal",
+        success: "success",
         error: "error",
       }
       return defaultIconColor[type] || "primary"

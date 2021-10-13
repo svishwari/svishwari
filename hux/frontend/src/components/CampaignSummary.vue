@@ -26,7 +26,7 @@
               <span v-if="item.field.includes('|')">
                 <tooltip>
                   <template #label-content>
-                    <span class="font-weight-semi-bold">
+                    <span class="text--subtitle-1">
                       <span
                         v-if="numericColumns.includes(item.field.split('|')[0])"
                       >
@@ -47,7 +47,7 @@
                 &nbsp;&bull;&nbsp;
                 <tooltip>
                   <template #label-content>
-                    <span class="font-weight-semi-bold">
+                    <span class="text--subtitle-1">
                       <span
                         v-if="
                           percentileColumns.includes(item.field.split('|')[1])
@@ -96,7 +96,7 @@
               <span else>
                 <tooltip>
                   <template #label-content>
-                    <span class="font-weight-semi-bold">
+                    <span class="text--subtitle-1">
                       <span v-if="numericColumns.includes(item.field)">
                         {{ item.value | Numeric(true, false) }}
                       </span>

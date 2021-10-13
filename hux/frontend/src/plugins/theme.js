@@ -9,9 +9,9 @@ export default {
     lighten5: colors.chart4,
     lighten6: colors.blueD,
     lighten9: colors.chart3,
-    base: colors.chart2,
+    base: colors.darkBlue,
     darken1: colors.medBlueD,
-    darken2: colors.darkBlue,
+    darken2: colors.chart2,
     darken3: colors.blue,
   },
   black: {
@@ -22,18 +22,22 @@ export default {
     base: colors.darkD,
   },
   teal: {
-    lighten1: colors.lightTealD,
     lighten2: colors.tealD,
     lighten3: colors.lightGreenD,
     base: colors.greenD,
-    darken2: colors.teal6D,
-    darken3: colors.teal7D,
+  },
+  secondary: {
+    lighten1: colors.lightTealD,
+    base: colors.tealD,
+    darken1: colors.teal6D,
+    darken2: colors.teal7D,
   },
   yellow: {
     lighten1: colors.yellow5,
     base: colors.yellow,
-    darken1: colors.mustard,
   },
+  info: colors.mustard,
+  success: colors.greenD,
   warning: colors.warning,
   white: {
     base: colors.white,

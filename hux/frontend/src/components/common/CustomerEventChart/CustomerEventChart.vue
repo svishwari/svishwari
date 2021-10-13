@@ -63,7 +63,7 @@ export default {
     return {
       show: false,
       isArcHover: false,
-      colorCodes: ["columbiaBlue", "info", "pantoneBlue", "teal"],
+      colorCodes: ["columbiaBlue", "info", "pantoneBlue", "success"],
       sourceData: this.customersData,
       currentData: {},
       chartDimensions: {

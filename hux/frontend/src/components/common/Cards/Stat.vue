@@ -8,7 +8,11 @@
     open-on-hover
   >
     <template #activator="{ on }">
-      <div class="px-4 border-start border-zircon" :class="statClass" v-on="on">
+      <div
+        class="px-4 border-start border-black-lighten2"
+        :class="statClass"
+        v-on="on"
+      >
         <h4 class="text-h4 mb-0">{{ value }}</h4>
         <div class="text-caption black--text text--darken-1">{{ label }}</div>
       </div>
