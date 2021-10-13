@@ -53,8 +53,8 @@ def create_notification(
     current_time = datetime.utcnow()
 
     logging.warning(
-        "Use of username field being optional with a default value of "
-        "'unknown' will be deprecated in the future release."
+        "Use of username field being optional with default value of 'unknown'"
+        " in notification collection will be deprecated in the future release."
     )
 
     doc = {
