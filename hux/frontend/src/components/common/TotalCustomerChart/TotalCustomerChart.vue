@@ -67,7 +67,7 @@ export default {
         { base: "primary", variant: "lighten5" },
         { base: "primary", variant: "lighten8" },
         { base: "primary", variant: "darken3" },
-        { base: "success", variant: "base" },
+        { base: "teal", variant: "base" },
       ],
       currentData: {},
       sourceData: [],

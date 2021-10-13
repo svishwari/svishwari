@@ -116,7 +116,7 @@ export default {
 
 <style lang="scss" scoped>
 .card-horizontal-disabled {
-  border: 1px solid var(--v-zircon-base) !important;
+  border: 1px solid var(--v-black-lighten2) !important;
   background-color: var(--v-primary-lighten1) !important;
   @extend .box-shadow-none;
   .theme--light.v-btn.v-btn--disabled.v-btn--has-bg {

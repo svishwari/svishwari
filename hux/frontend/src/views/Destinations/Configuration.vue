@@ -153,7 +153,7 @@
             @click="onSelectDestination(destination.id)"
           />
 
-          <v-divider style="border-color: var(--v-zircon-base)" />
+          <v-divider style="border-color: var(--v-black-lighten2)" />
 
           <card-horizontal
             v-for="destination in disabledDestinations"
@@ -383,6 +383,6 @@ export default {
 
 <style lang="scss" scoped>
 .destination-auth-wrap {
-  border: 1px solid var(--v-zircon-base) !important;
+  border: 1px solid var(--v-black-lighten2) !important;
 }
 </style>

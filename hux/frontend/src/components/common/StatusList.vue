@@ -525,7 +525,7 @@ export default {
   min-width: 310px;
   max-width: 310px;
   background: var(--v-white-base);
-  border: 1px solid var(--v-zircon-base);
+  border: 1px solid var(--v-black-lighten2);
   box-sizing: border-box;
   border-radius: 12px !important;
   display: table;

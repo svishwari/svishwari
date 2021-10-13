@@ -408,7 +408,7 @@ export default {
   ::v-deep .v-tabs-bar {
     background: transparent !important;
     .v-tabs-bar__content {
-      border-bottom: 2px solid var(--v-zircon-base);
+      border-bottom: 2px solid var(--v-black-lighten2);
       display: flex;
       justify-content: space-between;
       .v-tabs-slider-wrapper {

@@ -400,7 +400,7 @@ export default {
 .model-dashboard-wrap {
   .model-dashboard__card {
     height: 80px;
-    border: 1px solid var(--v-zircon-base);
+    border: 1px solid var(--v-black-lighten2);
     border-radius: 12px;
   }
 }

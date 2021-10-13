@@ -23,9 +23,7 @@
             <span>
               {{ clientName }}
             </span>
-            <v-icon v-if="!isMini" color="rgba(255, 255, 255, 0.5)">
-              mdi-chevron-down
-            </v-icon>
+            <v-icon v-if="!isMini"> mdi-chevron-down </v-icon>
           </div>
         </template>
         <template #default>
@@ -39,11 +37,7 @@
       </v-menu>
     </template>
 
-    <v-list
-      v-for="item in items"
-      :key="item.title"
-      color="rgba(0, 85, 135, 0.9)"
-    >
+    <v-list v-for="item in items" :key="item.title">
       <div v-if="item.label" class="list-group">
         <span v-if="!isMini">
           {{ item.label }}
@@ -164,7 +158,7 @@ export default {
 
   .client {
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.25);
+    background-color: var(--v-primary-darken1);
     color: var(--v-white-base);
     cursor: default;
     display: flex;
@@ -194,8 +188,8 @@ export default {
 
   .v-list-item--active {
     &::before {
-      background-color: var(--v-white-base);
-      opacity: 0.1;
+      background-color: var(--v-primary-lighten4);
+      opacity: 0.2;
     }
   }
 

@@ -1,7 +1,7 @@
 <template>
   <div v-if="Statuses.Active.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
-      <v-icon color="success" class="mr-2" :size="iconSize">
+      <v-icon color="teal" class="mr-2" :size="iconSize">
         mdi-checkbox-blank-circle
       </v-icon>
       <span v-if="showLabel">{{ status | TitleCase }} </span>
@@ -9,7 +9,7 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon color="success" class="mr-2" :size="iconSize" v-on="on">
+        <v-icon color="teal" class="mr-2" :size="iconSize" v-on="on">
           mdi-checkbox-blank-circle
         </v-icon>
       </template>
@@ -21,7 +21,7 @@
         <span class="d-flex align-center">
           <v-icon
             v-if="showIconTooltip"
-            color="success"
+            color="teal"
             class="mr-2"
             :size="iconSize"
           >
@@ -35,7 +35,7 @@
 
   <div v-else-if="Statuses['Not Delivered'].includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
-      <v-icon color="primary lighten-5" class="mr-2" :size="iconSize">
+      <v-icon color="primary lighten4" class="mr-2" :size="iconSize">
         mdi-checkbox-blank-circle
       </v-icon>
       <span v-if="showLabel">{{ status }} </span>
@@ -44,7 +44,7 @@
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
         <v-icon
-          color="primary lighten-5"
+          color="primary lighten4"
           class="mr-2"
           :size="iconSize"
           v-on="on"
@@ -60,7 +60,7 @@
         <span class="d-flex align-center">
           <v-icon
             v-if="showIconTooltip"
-            color="primary lighten-5"
+            color="primary lighten4"
             class="mr-2"
             :size="iconSize"
           >
@@ -74,7 +74,7 @@
 
   <div v-else-if="Statuses.Inactive.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
-      <v-icon color="black lighten-3" class="mr-2" :size="iconSize">
+      <v-icon color="black-lighten-3" class="mr-2" :size="iconSize">
         mdi-checkbox-blank-circle
       </v-icon>
       <span v-if="showLabel">{{ status }} </span>
@@ -82,7 +82,7 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon color="black lighten-3" class="mr-2" :size="iconSize" v-on="on">
+        <v-icon color="black-lighten-3" class="mr-2" :size="iconSize" v-on="on">
           mdi-checkbox-blank-circle
         </v-icon>
       </template>
@@ -144,7 +144,7 @@
         height="15"
         icon
         outlined
-        color="success"
+        color="teal"
         class="dotted mr-2"
       />
       <span v-if="showLabel">
@@ -158,7 +158,7 @@
           height="15"
           icon
           outlined
-          color="success"
+          color="teal"
           class="dotted"
           style="margin-left: 1.5px"
           v-on="on"
@@ -176,7 +176,7 @@
             height="15"
             icon
             outlined
-            color="success"
+            color="teal"
             class="dotted mr-2"
           />
           {{ status | TitleCase }}
@@ -441,7 +441,7 @@ export default {
         Error: ["Error", "Failed", "Critical"],
         Pending: ["Pending", "Delivering"],
         Feedback: ["Feedback"],
-        Success: ["Success"],
+        Success: ["teal"],
         Informational: ["Informational"],
         Stopped: ["Stopped"],
         "Not Delivered": ["Not Delivered"],

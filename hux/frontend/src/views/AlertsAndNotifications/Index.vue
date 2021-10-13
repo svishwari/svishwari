@@ -113,7 +113,7 @@ export default {
         { name: "Data management" },
       ],
       alertTypeItems: [
-        { name: "Success", modelIcon: "Success" },
+        { name: "teal", modelIcon: "teal" },
         { name: "Critical", modelIcon: "Critical" },
         { name: "Feedback", modelIcon: "Feedback" },
         { name: "Informational", modelIcon: "Informational" },

@@ -599,7 +599,7 @@ export default {
     onCreated() {
       this.lookalikeCreated = true
       this.setAlert({
-        type: "success",
+        type: "teal",
         message: "Lookalike created successfully",
       })
     },
@@ -640,7 +640,7 @@ export default {
     }
     .summary-tab-wrap {
       .metric-card-wrapper {
-        border: 1px solid var(--v-zircon-base);
+        border: 1px solid var(--v-black-lighten2);
         box-sizing: border-box;
         border-radius: 12px;
         ::v-deep .v-list-item {

@@ -472,7 +472,7 @@ export default {
 .attribute-rule {
   ::v-deep .blank-section {
     background: var(--v-primary-lighten1);
-    border: 1px solid var(--v-zircon-base);
+    border: 1px solid var(--v-black-lighten2);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -583,7 +583,7 @@ export default {
     display: flex;
     .add-section {
       background: var(--v-primary-lighten1);
-      border: 1px solid var(--v-zircon-base);
+      border: 1px solid var(--v-black-lighten2);
       border-radius: 5px;
       display: flex;
       align-items: center;
@@ -594,7 +594,7 @@ export default {
     }
   }
   ::v-deep .condition-summary {
-    border: solid 1px var(--v-zircon-base);
+    border: solid 1px var(--v-black-lighten2);
     border-radius: 10px;
     background: var(--v-primary-lighten1);
     padding: 10px 15px;

@@ -746,7 +746,7 @@ export default {
   .summary-tab-wrap {
     flex-wrap: wrap;
     ::v-deep .metric-card-wrapper {
-      border: 1px solid var(--v-zircon-base);
+      border: 1px solid var(--v-black-lighten2);
       box-sizing: border-box;
       height: 75px;
       padding: 10px;

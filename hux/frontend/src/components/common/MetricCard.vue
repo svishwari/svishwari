@@ -112,7 +112,7 @@ export default {
 
 <style lang="scss" scoped>
 .metric-card-wrapper {
-  border: 1px solid var(--v-zircon-base);
+  border: 1px solid var(--v-black-lighten2);
   padding: 20px 15px;
   display: -webkit-box;
   display: -webkit-flex;

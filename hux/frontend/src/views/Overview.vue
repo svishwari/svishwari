@@ -161,7 +161,7 @@ export default {
     min-height: 265px;
     padding: 16px 30px 40px 30px;
     overflow-x: auto;
-    border: 1px solid var(--v-zircon-base);
+    border: 1px solid var(--v-black-lighten2);
     h5 {
       line-height: 19px;
       letter-spacing: 0.5px;

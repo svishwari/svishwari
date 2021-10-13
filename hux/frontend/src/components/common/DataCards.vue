@@ -178,14 +178,14 @@ export default {
   @extend .box-shadow-5;
 }
 .data-card-selected {
-  border: 1px solid var(--v-zircon-base) !important;
+  border: 1px solid var(--v-black-lighten2) !important;
   background-color: var(--v-primary-lighten1) !important;
   &:hover {
     @extend .box-shadow-25;
   }
 }
 .empty-card {
-  border: 1px solid var(--v-zircon-base) !important;
+  border: 1px solid var(--v-black-lighten2) !important;
   background: var(--v-primary-lighten1) !important;
 }
 
