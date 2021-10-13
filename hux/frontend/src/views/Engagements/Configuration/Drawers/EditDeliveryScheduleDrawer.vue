@@ -117,7 +117,7 @@ export default {
 
     deliverySchedule() {
       for (let prop in this.deliverySchedule) {
-        this.schedule[prop] = this.deliverySchedule.hasOwnProperty(prop)
+        this.schedule[prop] = (prop in deliverySchedule)
           ? this.deliverySchedule[prop]
           : this.schedule[prop]
       }
