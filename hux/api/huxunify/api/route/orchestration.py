@@ -118,7 +118,7 @@ async def get_audience_insights_async(
     Returns:
         dict: Audience insights object.
     """
-    audience_insights = dict()
+    audience_insights = {}
     async with aiohttp.ClientSession() as session:
         responses = await asyncio.gather(
             get_demographic_by_state_async(
