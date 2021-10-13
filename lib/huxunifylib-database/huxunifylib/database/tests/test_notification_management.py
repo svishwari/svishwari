@@ -16,7 +16,9 @@ class NotificationManagementTest(TestCase):
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
         """Setup resources before each test"""
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
@@ -45,8 +47,12 @@ class NotificationManagementTest(TestCase):
         )
 
         current_time = datetime.utcnow()
-        upper_bound = current_time + relativedelta(months=1) + relativedelta(minutes=1)
-        lower_bound = current_time + relativedelta(months=1) - relativedelta(minutes=1)
+        upper_bound = (
+            current_time + relativedelta(months=1) + relativedelta(minutes=1)
+        )
+        lower_bound = (
+            current_time + relativedelta(months=1) - relativedelta(minutes=1)
+        )
         self.assertIsNotNone(notification)
         self.assertLess(notification[db_c.EXPIRE_AT], upper_bound)
         self.assertGreater(notification[db_c.EXPIRE_AT], lower_bound)
@@ -60,8 +66,12 @@ class NotificationManagementTest(TestCase):
         )
 
         current_time = datetime.utcnow()
-        upper_bound = current_time + relativedelta(months=6) + relativedelta(minutes=1)
-        lower_bound = current_time + relativedelta(months=6) - relativedelta(minutes=1)
+        upper_bound = (
+            current_time + relativedelta(months=6) + relativedelta(minutes=1)
+        )
+        lower_bound = (
+            current_time + relativedelta(months=6) - relativedelta(minutes=1)
+        )
         self.assertIsNotNone(notification)
         self.assertLess(notification[db_c.EXPIRE_AT], upper_bound)
         self.assertGreater(notification[db_c.EXPIRE_AT], lower_bound)
@@ -75,8 +85,12 @@ class NotificationManagementTest(TestCase):
         )
 
         current_time = datetime.utcnow()
-        upper_bound = current_time + relativedelta(months=6) + relativedelta(minutes=1)
-        lower_bound = current_time + relativedelta(months=6) - relativedelta(minutes=1)
+        upper_bound = (
+            current_time + relativedelta(months=6) + relativedelta(minutes=1)
+        )
+        lower_bound = (
+            current_time + relativedelta(months=6) - relativedelta(minutes=1)
+        )
         self.assertIsNotNone(notification)
         self.assertLess(notification[db_c.EXPIRE_AT], upper_bound)
         self.assertGreater(notification[db_c.EXPIRE_AT], lower_bound)
@@ -90,8 +104,12 @@ class NotificationManagementTest(TestCase):
             batch_number=1,
         )
 
-        self.assertCountEqual(self.notifications, notifications["notifications"])
-        self.assertEqual(len(self.notifications), notifications["total_records"])
+        self.assertCountEqual(
+            self.notifications, notifications["notifications"]
+        )
+        self.assertEqual(
+            len(self.notifications), notifications["total_records"]
+        )
 
     def test_get_notifications(self):
         """Test get all notifications with a filter."""
@@ -113,7 +131,9 @@ class NotificationManagementTest(TestCase):
         )
         notification = nmg.get_notification(
             self.database,
-            notification_id=notifications[db_c.NOTIFICATIONS_COLLECTION][0][db_c.ID],
+            notification_id=notifications[db_c.NOTIFICATIONS_COLLECTION][0][
+                db_c.ID
+            ],
         )
         self.assertTrue(notification)
         self.assertEqual(
