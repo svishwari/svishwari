@@ -521,9 +521,10 @@ export default {
       if (this.value.schedule) {
         let deliverySchedule = this.value.schedule
         for (let prop in deliverySchedule) {
-          this.schedule[prop] = (prop in deliverySchedule) 
-            ? deliverySchedule[prop]
-            : this.schedule[prop]
+          this.schedule[prop] =
+            prop in deliverySchedule
+              ? deliverySchedule[prop]
+              : this.schedule[prop]
         }
       }
     },
