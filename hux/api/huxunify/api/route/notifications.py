@@ -262,14 +262,16 @@ class NotificationSearch(SwaggerView):
 
         Args:
             notification_id (str): Notification Id
-        
+
         Returns:
             Tuple[dict, int] dict of notifications, HTTP status code.
         """
         notification_id = ObjectId(notification_id)
-        if not notification_management.get_notification(
+        notification_detail = notification_management.get_notification(
             get_db_client(), notification_id
-        ):
+        )
+
+        if not notification_detail:
             logger.error(
                 "Could not find notification with id %s.",
                 notification_id,
@@ -279,10 +281,6 @@ class NotificationSearch(SwaggerView):
             }, HTTPStatus.NOT_FOUND
 
         return (
-            NotificationSchema().dump(
-                notification_management.get_notification(
-                    get_db_client(), notification_id=notification_id
-                )
-            ),
+            NotificationSchema().dump(notification_detail),
             HTTPStatus.OK,
         )
