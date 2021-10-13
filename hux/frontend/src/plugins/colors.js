@@ -9,7 +9,7 @@ export default {
   pills: "#B7CFD9",
   lightBlueD: "#A0DCFF",
   chart3: "#42EFFD",
-  chart4: "#40BAE8",
+  chart4: "#396286",
   blueD: "#00A3E0",
   chart2: "#0C9DDB",
   medBlueD: "#0076A8",
