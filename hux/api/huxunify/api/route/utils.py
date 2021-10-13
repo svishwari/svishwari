@@ -473,6 +473,15 @@ def is_component_favorite(
 
 
 def get_user_favorites(okta_user_id: str, component_name: str) -> list:
+    """Get user favorites for a component
+
+    Args:
+        okta_user_id (str): OKTA JWT token.
+        component_name (str): Name of component in user favorite.
+
+    Returns:
+        list: List of ids of favorite component
+    """
     user_favorites = get_user(get_db_client(), okta_user_id).get(
         constants.FAVORITES
     )
