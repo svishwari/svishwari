@@ -1,5 +1,6 @@
 """Purpose of this file is for holding methods to query and pull data from CDP.
 """
+# pylint:disable=too-many-lines
 import time
 import asyncio
 from collections import defaultdict
@@ -9,6 +10,7 @@ from datetime import datetime, timedelta
 import requests
 import aiohttp
 import async_timeout
+from aiohttp import ClientSession
 from bson import ObjectId
 from dateutil.parser import parse, ParserError
 from dateutil.relativedelta import relativedelta
@@ -581,9 +583,8 @@ def get_customer_count_by_state(
         )
 
     logger.info("Successfully retrieved state demographic insights.")
-    body = clean_cdm_fields(response.json()[api_c.BODY])
 
-    return body
+    return response.json()[api_c.BODY]
 
 
 def get_demographic_by_state(
@@ -920,3 +921,210 @@ def add_missing_customer_count_by_day(
             )
 
     return customer_data_by_day
+
+
+async def get_customer_count_by_state_async(
+    session: ClientSession, token: str, filters: Optional[dict] = None
+) -> list:
+    """Get demographic details of customers by state.
+
+    Args:
+        session (ClientSession): Async IO http client session.
+        token (str): OKTA JWT Token.
+        filters (dict):  filters to pass into count_by_state endpoint,
+            default None.
+
+    Returns:
+        list: list of state demographic data.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+    """
+
+    # get config
+    config = get_config()
+    logger.info("Retrieving demographic insights by state.")
+    # run the async post request
+    async with session.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+        json=filters if filters else {},
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    ) as response:
+        response_body = await response.json()
+        if response.status != 200 or api_c.BODY not in response_body:
+            logger.error(
+                "Failed to retrieve state demographic insights %s %s.",
+                response.status,
+                response.text,
+            )
+            raise iae.FailedAPIDependencyError(
+                f"{config.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+                response.status,
+            )
+
+        logger.info("Successfully retrieved state demographic insights.")
+
+        return response_body[api_c.BODY]
+
+
+async def get_demographic_by_state_async(
+    session: ClientSession, token: str, filters: Optional[dict] = None
+) -> list:
+    """Get demographic details of customers by state.
+
+    Args:
+        session (ClientSession): Async IO http client session.
+        token (str): OKTA JWT Token.
+        filters (dict):  filters to pass into count_by_state endpoint,
+            default None.
+
+    Returns:
+        list: list of demographic details by state.
+    """
+
+    filters = (
+        {api_c.AUDIENCE_FILTERS: filters}
+        if filters
+        else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+    )
+    customer_count_by_state = await get_customer_count_by_state_async(
+        session, token, filters
+    )
+    geographic_response = [
+        {
+            api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
+            api_c.POPULATION_PERCENTAGE: round(
+                x[api_c.SIZE]
+                / sum([x[api_c.SIZE] for x in customer_count_by_state]),
+                4,
+            )
+            if sum([x[api_c.SIZE] for x in customer_count_by_state]) != 0
+            else 0,
+            api_c.SIZE: x[api_c.SIZE],
+            api_c.GENDER_WOMEN: round(x[api_c.GENDER_WOMEN] / x[api_c.SIZE], 4)
+            if x[api_c.SIZE] != 0
+            else 0,
+            api_c.GENDER_MEN: round(x[api_c.GENDER_MEN] / x[api_c.SIZE], 4)
+            if x[api_c.SIZE] != 0
+            else 0,
+            api_c.GENDER_OTHER: round(x[api_c.GENDER_OTHER] / x[api_c.SIZE], 4)
+            if x[api_c.SIZE] != 0
+            else 0,
+            api_c.LTV: round(x.get(api_c.AVG_LTV, 0), 4),
+        }
+        for x in customer_count_by_state
+    ]
+    return geographic_response
+
+
+async def get_city_ltvs_async(
+    session: ClientSession,
+    token: str,
+    filters: Optional[dict] = None,
+    offset: int = 0,
+    limit: int = api_c.DEFAULT_BATCH_SIZE,
+) -> list:
+    """Get spending details of customers by city.
+
+    Args:
+        session (ClientSession): Async IO http client session.
+        token (str): OKTA JWT Token.
+        filters (dict):  filters to pass into city_ltvs endpoint.
+        offset (int): offset.
+        limit (int): limit.
+
+    Returns:
+        list: list of spending details by cities.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+    """
+
+    # get config
+    config = get_config()
+    logger.info("Retrieving spending insights by city.")
+    # run the async post request
+    async with session.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+        json=filters if filters else {},
+        params=dict(offset=offset, limit=limit),
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    ) as response:
+        response_body = await response.json()
+        if response.status != 200 or api_c.BODY not in response_body:
+            logger.error(
+                "Failed to retrieve city-level spending insights, %s %s.",
+                response.status,
+                response.text,
+            )
+            raise iae.FailedAPIDependencyError(
+                f"{config.CDP_SERVICE}/customer-profiles/insights/city-ltvs",
+                response.status,
+            )
+
+        logger.info("Successfully retrieved city-level demographic insights.")
+
+        return [clean_cdm_fields(data) for data in response_body[api_c.BODY]]
+
+
+async def get_spending_by_gender_async(
+    session: ClientSession,
+    token: str,
+    start_date: str,
+    end_date: str,
+    filters: Optional[dict] = None,
+) -> List[Optional[dict]]:
+    """Get spending details of customer by gender.
+
+    Args:
+        session (clientSession): Async IO http client session.
+        token (str): OKTA JWT Token.
+        start_date (str): String value of start date.
+        end_date (str): String value of end date.
+        filters (dict):  filters to pass into spending-by-month endpoint.
+
+    Returns:
+        list: list of spending details by gender.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+    """
+
+    request_payload = (
+        filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+    )
+    request_payload[api_c.START_DATE] = start_date
+    request_payload[api_c.END_DATE] = end_date
+
+    # get config
+    config = get_config()
+    logger.info("Retrieving spending insights by gender.")
+    # run the async post request
+    async with session.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+        json=request_payload,
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    ) as response:
+        response_body = await response.json()
+        if response.status != 200 or api_c.BODY not in response_body:
+            logger.error(
+                "Failed to retrieve state demographic insights, %s %s.",
+                response.status,
+                response.text,
+            )
+            raise iae.FailedAPIDependencyError(
+                f"{config.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+                response.status,
+            )
+
+        logger.info("Successfully retrieved state demographic insights.")
+        return sorted(
+            clean_cdm_fields(response_body[api_c.BODY]),
+            key=lambda x: (x[api_c.YEAR], x[api_c.MONTH]),
+        )

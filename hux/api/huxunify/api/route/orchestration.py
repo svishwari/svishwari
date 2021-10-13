@@ -1,8 +1,11 @@
 # pylint: disable=too-many-lines
 """Paths for Orchestration API"""
+import asyncio
+import time
 from http import HTTPStatus
 from typing import Tuple, Union
 from datetime import datetime, timedelta
+import aiohttp
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
@@ -39,9 +42,9 @@ from huxunify.api.schema.engagement import (
 )
 from huxunify.api.data_connectors.cdp import (
     get_customers_overview,
-    get_demographic_by_state,
-    get_spending_by_gender,
-    get_city_ltvs,
+    get_demographic_by_state_async,
+    get_city_ltvs_async,
+    get_spending_by_gender_async,
 )
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.okta import (
@@ -100,6 +103,53 @@ def add_destinations(
             database, object_ids
         )
     return None
+
+
+async def get_audience_insights_async(
+    token: str, filters: dict, customers: list
+):
+    """Fetch audience insights from CDM
+
+    Args:
+        token (str): OKTA JWT token.
+        filters (dict): Audience filters.
+        customers (list): List of customer objects.
+
+    Returns:
+        dict: Audience insights object.
+    """
+    audience_insights = dict()
+    async with aiohttp.ClientSession() as session:
+        responses = await asyncio.gather(
+            get_demographic_by_state_async(
+                session,
+                token,
+                filters,
+            ),
+            get_city_ltvs_async(
+                session,
+                token,
+                {api_c.AUDIENCE_FILTERS: filters},
+            ),
+            get_spending_by_gender_async(
+                session,
+                token,
+                filters={api_c.AUDIENCE_FILTERS: filters},
+                start_date=str(datetime.utcnow().date() - timedelta(days=180)),
+                end_date=str(datetime.utcnow().date()),
+            ),
+        )
+    audience_insights[api_c.DEMOGRAPHIC] = responses[0]
+    audience_insights[api_c.INCOME] = responses[1]
+    audience_insights[api_c.SPEND] = group_gender_spending(responses[2])
+    audience_insights[api_c.GENDER] = {
+        gender: {
+            api_c.POPULATION_PERCENTAGE: customers.get(gender, 0),
+            api_c.SIZE: customers.get(f"{gender}_{api_c.COUNT}", 0),
+        }
+        for gender in api_c.GENDERS
+    }
+    return audience_insights
 
 
 @add_view_to_blueprint(
@@ -563,38 +613,16 @@ class AudienceInsightsGetView(SwaggerView):
             token_response[0],
             {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
         )
-        audience_insights = {
-            api_c.DEMOGRAPHIC: get_demographic_by_state(
-                token_response[0],
-                audience[api_c.AUDIENCE_FILTERS],
-            ),
-            api_c.INCOME: get_city_ltvs(
-                token_response[0],
-                {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
-            ),
-            api_c.SPEND: group_gender_spending(
-                get_spending_by_gender(
-                    token_response[0],
-                    filters={
-                        api_c.AUDIENCE_FILTERS: audience[
-                            api_c.AUDIENCE_FILTERS
-                        ]
-                    },
-                    start_date=str(
-                        datetime.utcnow().date() - timedelta(days=180)
-                    ),
-                    end_date=str(datetime.utcnow().date()),
-                )
-            ),
-            api_c.GENDER: {
-                gender: {
-                    api_c.POPULATION_PERCENTAGE: customers.get(gender, 0),
-                    api_c.SIZE: customers.get(f"{gender}_{api_c.COUNT}", 0),
-                }
-                for gender in api_c.GENDERS
-            },
-        }
+        timer = time.perf_counter()
 
+        audience_insights = asyncio.run(
+            get_audience_insights_async(
+                token_response[0], audience[api_c.AUDIENCE_FILTERS], customers
+            )
+        )
+
+        total_ticks = time.perf_counter() - timer
+        logger.info("Total time taken: %0.4f seconds.", total_ticks)
         return (
             AudienceInsightsGetSchema(unknown=INCLUDE).dump(audience_insights),
             HTTPStatus.OK,
