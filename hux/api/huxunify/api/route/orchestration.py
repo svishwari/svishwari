@@ -1,7 +1,6 @@
 # pylint: disable=too-many-lines
 """Paths for Orchestration API"""
 import asyncio
-import time
 from http import HTTPStatus
 from typing import Tuple, Union
 from datetime import datetime, timedelta
