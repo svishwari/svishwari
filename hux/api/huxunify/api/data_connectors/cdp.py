@@ -606,7 +606,9 @@ def get_demographic_by_state(
         if filters
         else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
     )
-    customer_count_by_state = get_geographic_customers_data(get_customer_count_by_state(token, filters))
+    customer_count_by_state = get_geographic_customers_data(
+        get_customer_count_by_state(token, filters)
+    )
 
     return customer_count_by_state
 
@@ -1002,7 +1004,8 @@ async def get_demographic_by_state_async(
         else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
     )
     customer_count_by_state = get_geographic_customers_data(
-        await get_customer_count_by_state_async(session, token, filters))
+        await get_customer_count_by_state_async(session, token, filters)
+    )
 
     return customer_count_by_state
 
