@@ -1,13 +1,9 @@
-import { withDesign } from "storybook-addon-designs"
-
 import HuxButton from "./huxButton.vue"
 
 export default {
   component: HuxButton,
 
   title: "Components/Button",
-
-  decorators: [withDesign],
 
   argTypes: {
     default: {
