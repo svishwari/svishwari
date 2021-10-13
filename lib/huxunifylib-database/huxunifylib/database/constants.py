@@ -98,6 +98,7 @@ DATA_SOURCE_TYPE_THIRD_PARTY = 3
 JOB_STATUS = "status"
 STATUS_MESSAGE = "status_message"
 RECENT_INGESTION_JOB_STATUS = "recent_ingestion_job_status"
+EXPIRE_AT = "expireAt"
 CREATE_TIME = "create_time"
 UPDATE_TIME = "update_time"
 CREATED_BY = "created_by"
