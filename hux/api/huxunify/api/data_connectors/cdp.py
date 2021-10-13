@@ -606,11 +606,10 @@ def get_demographic_by_state(
         if filters
         else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
     )
-    customer_count_by_state = get_geographic_customers_data(
+
+    return get_geographic_customers_data(
         get_customer_count_by_state(token, filters)
     )
-
-    return customer_count_by_state
 
 
 # pylint: disable=unused-argument
@@ -809,7 +808,7 @@ def get_geographic_customers_data(customer_count_by_state: list) -> list:
     Returns:
         list: list of geographically aggregated data
     """
-    geographic_response = [
+    return [
         {
             api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
             api_c.POPULATION_PERCENTAGE: round(
@@ -833,7 +832,6 @@ def get_geographic_customers_data(customer_count_by_state: list) -> list:
         }
         for x in customer_count_by_state
     ]
-    return geographic_response
 
 
 def get_spending_by_gender(
@@ -1003,11 +1001,10 @@ async def get_demographic_by_state_async(
         if filters
         else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
     )
-    customer_count_by_state = get_geographic_customers_data(
+
+    return get_geographic_customers_data(
         await get_customer_count_by_state_async(session, token, filters)
     )
-
-    return customer_count_by_state
 
 
 async def get_city_ltvs_async(
