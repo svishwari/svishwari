@@ -168,7 +168,7 @@ export default {
   text-align: center;
   padding-top: 42px;
   .confirm-modal-footer {
-    @extend .shadow;
+    border-top: 1px solid var(--v-black-lighten3);
     margin-top: 36px;
     display: flex;
     justify-content: space-between;
