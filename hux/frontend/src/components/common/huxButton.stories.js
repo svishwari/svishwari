@@ -1,8 +1,14 @@
+import { withDesign } from "storybook-addon-designs"
+
 import HuxButton from "./huxButton.vue"
 
 export default {
   component: HuxButton,
+
   title: "Components/Button",
+
+  decorators: [withDesign],
+
   argTypes: {
     default: {
       control: {
@@ -11,6 +17,7 @@ export default {
     },
     variant: { control: "color" },
   },
+
   args: {
     variant: "primary",
     isTile: true,
@@ -31,3 +38,10 @@ const Template = (args, { argTypes }) => ({
 })
 
 export const Button = Template.bind({})
+
+Button.parameters = {
+  design: {
+    type: "figma",
+    url: "https://www.figma.com/file/nfrkMnYTxnjK5r2NTQqWb9/5.0-Release-06-21?node-id=1826%3A5",
+  },
+}
