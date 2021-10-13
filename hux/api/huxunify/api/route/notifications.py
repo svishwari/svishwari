@@ -259,6 +259,7 @@ class NotificationSearch(SwaggerView):
         ---
         security:
             - Bearer: ["Authorization"]
+
         Args:
             notification_id (str): Notification Id
         
