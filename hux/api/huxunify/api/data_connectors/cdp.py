@@ -606,33 +606,11 @@ def get_demographic_by_state(
         if filters
         else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
     )
-    customer_count_by_state = get_customer_count_by_state(token, filters)
+    customer_count_by_state = get_geographic_response(
+        get_customer_count_by_state(token, filters)
+    )
 
-    geographic_response = [
-        {
-            api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
-            api_c.POPULATION_PERCENTAGE: round(
-                x[api_c.SIZE]
-                / sum([x[api_c.SIZE] for x in customer_count_by_state]),
-                4,
-            )
-            if sum([x[api_c.SIZE] for x in customer_count_by_state]) != 0
-            else 0,
-            api_c.SIZE: x[api_c.SIZE],
-            api_c.GENDER_WOMEN: round(x[api_c.GENDER_WOMEN] / x[api_c.SIZE], 4)
-            if x[api_c.SIZE] != 0
-            else 0,
-            api_c.GENDER_MEN: round(x[api_c.GENDER_MEN] / x[api_c.SIZE], 4)
-            if x[api_c.SIZE] != 0
-            else 0,
-            api_c.GENDER_OTHER: round(x[api_c.GENDER_OTHER] / x[api_c.SIZE], 4)
-            if x[api_c.SIZE] != 0
-            else 0,
-            api_c.LTV: round(x.get(api_c.AVG_LTV, 0), 4),
-        }
-        for x in customer_count_by_state
-    ]
-    return geographic_response
+    return customer_count_by_state
 
 
 # pylint: disable=unused-argument
@@ -822,6 +800,34 @@ def clean_cdm_gender_fields(response_body: dict) -> dict:
     return response_body
 
 
+def get_geographic_response(customer_count_by_state):
+    geographic_response = [
+        {
+            api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
+            api_c.POPULATION_PERCENTAGE: round(
+                x[api_c.SIZE]
+                / sum([x[api_c.SIZE] for x in customer_count_by_state]),
+                4,
+            )
+            if sum([x[api_c.SIZE] for x in customer_count_by_state]) != 0
+            else 0,
+            api_c.SIZE: x[api_c.SIZE],
+            api_c.GENDER_WOMEN: round(x[api_c.GENDER_WOMEN] / x[api_c.SIZE], 4)
+            if x[api_c.SIZE] != 0
+            else 0,
+            api_c.GENDER_MEN: round(x[api_c.GENDER_MEN] / x[api_c.SIZE], 4)
+            if x[api_c.SIZE] != 0
+            else 0,
+            api_c.GENDER_OTHER: round(x[api_c.GENDER_OTHER] / x[api_c.SIZE], 4)
+            if x[api_c.SIZE] != 0
+            else 0,
+            api_c.LTV: round(x.get(api_c.AVG_LTV, 0), 4),
+        }
+        for x in customer_count_by_state
+    ]
+    return geographic_response
+
+
 def get_spending_by_gender(
     token: str,
     start_date: str,
@@ -989,34 +995,11 @@ async def get_demographic_by_state_async(
         if filters
         else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
     )
-    customer_count_by_state = await get_customer_count_by_state_async(
-        session, token, filters
+    customer_count_by_state = get_geographic_response(
+        await get_customer_count_by_state_async(session, token, filters)
     )
-    geographic_response = [
-        {
-            api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
-            api_c.POPULATION_PERCENTAGE: round(
-                x[api_c.SIZE]
-                / sum([x[api_c.SIZE] for x in customer_count_by_state]),
-                4,
-            )
-            if sum([x[api_c.SIZE] for x in customer_count_by_state]) != 0
-            else 0,
-            api_c.SIZE: x[api_c.SIZE],
-            api_c.GENDER_WOMEN: round(x[api_c.GENDER_WOMEN] / x[api_c.SIZE], 4)
-            if x[api_c.SIZE] != 0
-            else 0,
-            api_c.GENDER_MEN: round(x[api_c.GENDER_MEN] / x[api_c.SIZE], 4)
-            if x[api_c.SIZE] != 0
-            else 0,
-            api_c.GENDER_OTHER: round(x[api_c.GENDER_OTHER] / x[api_c.SIZE], 4)
-            if x[api_c.SIZE] != 0
-            else 0,
-            api_c.LTV: round(x.get(api_c.AVG_LTV, 0), 4),
-        }
-        for x in customer_count_by_state
-    ]
-    return geographic_response
+
+    return customer_count_by_state
 
 
 async def get_city_ltvs_async(
