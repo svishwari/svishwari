@@ -25,7 +25,10 @@ from huxunifylib.database.engagement_management import (
     get_engagements,
 )
 from huxunifylib.database.orchestration_management import create_audience
-from huxunifylib.database.user_management import set_user
+from huxunifylib.database.user_management import (
+    set_user,
+    manage_user_favorites,
+)
 from huxunifylib.connectors import FacebookConnector
 from huxunify.api.schema.engagement import DisplayAdsSummary, EmailSummary
 from huxunify.api import constants as api_c
@@ -493,7 +496,7 @@ class TestEngagementRoutes(TestCase):
         self.user_name = "felix hernandez"
         set_user(
             self.database,
-            "fake",
+            t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
             "felix_hernandez@fake.com",
             display_name=self.user_name,
         )
@@ -625,6 +628,13 @@ class TestEngagementRoutes(TestCase):
             str(set_engagement(self.database, **x)) for x in engagements
         ]
 
+        # set favorite engagement
+        _ = manage_user_favorites(
+            self.database,
+            t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            db_c.ENGAGEMENTS,
+            ObjectId(self.engagement_ids[0]),
+        )
         # set delivery platform
         self.delivery_platform = set_delivery_platform(
             self.database,
@@ -1095,9 +1105,10 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(len(engagements), len(expected_engagements))
         for engagement in engagements:
             self.assertEqual(self.user_name, engagement[db_c.CREATED_BY])
+            self.assertIn(api_c.FAVORITE, engagement)
             self.assertIsNotNone(engagement[db_c.STATUS])
 
-    def test_get_engagement_by_id_valid_id(self):
+    def test_get_engagement_by_id_valid_id_favorited(self):
         """Test get engagement API with valid ID."""
 
         engagement_id = self.engagement_ids[0]
@@ -1110,6 +1121,22 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(engagement_id, return_engagement[db_c.OBJECT_ID])
         self.assertEqual(self.user_name, return_engagement[db_c.CREATED_BY])
         self.assertEqual(api_c.STATUS_INACTIVE, return_engagement[db_c.STATUS])
+        self.assertTrue(return_engagement[api_c.FAVORITE])
+
+    def test_get_engagement_by_id_valid_id_not_favorited(self):
+        """Test get engagement API with valid ID."""
+
+        engagement_id = self.engagement_ids[1]
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        return_engagement = response.json
+        self.assertEqual(engagement_id, return_engagement[db_c.OBJECT_ID])
+        self.assertEqual(self.user_name, return_engagement[db_c.CREATED_BY])
+        self.assertEqual(api_c.STATUS_INACTIVE, return_engagement[db_c.STATUS])
+        self.assertFalse(return_engagement[api_c.FAVORITE])
 
     def test_get_engagement_by_id_invalid_id(self):
         """Test get engagements API with invalid ID."""
