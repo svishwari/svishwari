@@ -801,6 +801,14 @@ def clean_cdm_gender_fields(response_body: dict) -> dict:
 
 
 def get_geographic_response(customer_count_by_state):
+    """Aggregate customers data by states
+
+    Args:
+        customer_count_by_state (list): List of customer count data by state
+
+    Returns:
+        list: list of geographically aggregated data
+    """
     geographic_response = [
         {
             api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
