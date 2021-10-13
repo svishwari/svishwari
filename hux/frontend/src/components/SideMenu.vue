@@ -19,7 +19,7 @@
       />
       <v-menu v-if="!isMini" open-on-hover offset-y>
         <template #activator="{ on }">
-          <div class="ml-6 primary-lighten4" v-on="on">
+          <div class="pl-6 client py-4" v-on="on">
             <span class="d-flex align-center">
               <logo :type="client.logo" size="16" class="mr-2" />
               {{ client.name }}
@@ -163,22 +163,14 @@ export default {
 
 <style lang="scss" scoped>
 .side-nav-bar {
+  border-right: solid 1px var(--v-black-lighten3);
   @media (min-height: 900px) {
-    // background-image: url("../assets/images/nav-bg.png");
     background-position: bottom 30px center;
   }
 
   .client {
-    align-items: center;
-    background-color: var(--v-primary-lighten4);
+    background-color: rgba(160, 220, 255, 0.25);
     color: var(--v-black-base);
-    cursor: default;
-    display: flex;
-    font-size: 0.93rem;
-    line-height: 1.75rem;
-    font-weight: normal;
-    justify-content: space-between;
-    padding: 0.8rem 1.78rem;
   }
 
   .v-icon {
@@ -207,6 +199,7 @@ export default {
     border-left: solid 4px var(--v-primary-lighten6);
     border-top-right-radius: 40px;
     border-bottom-right-radius: 40px;
+    padding-left: 20px !important;
     &::before {
       opacity: 0;
     }
@@ -238,13 +231,6 @@ export default {
     right: 81.82%;
     bottom: 79.66%;
   }
-  // Apply this css only if icon size is 14 otherwise icon size should be 18
-  // .home-menu-icon {
-  //   svg {
-  //     top: 22.89%;
-  //     @extend .side-menu-icon;
-  //   }
-  // }
   // Apply this css only if icon size is 14 otherwise icon size should be 18
   .menu-icon {
     svg {
