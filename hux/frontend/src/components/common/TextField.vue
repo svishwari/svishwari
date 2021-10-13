@@ -1,9 +1,9 @@
 <template>
   <div class="text-field-hux">
     <label class="d-flex align-items-center mb-1">
-      <span class="black--text text--darken-4 text-caption">
+      <span class="black--text text--darken-4 text-h5">
         {{ labelText }}
-        <em v-if="!required" class="text-caption gray--text"> - optional</em>
+        <em v-if="!required" class="text-h6 gray--text"> - optional</em>
       </span>
       <tooltip v-if="helpText" position-top>
         <template #label-content>

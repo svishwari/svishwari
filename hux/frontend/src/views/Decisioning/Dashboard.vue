@@ -43,13 +43,13 @@
                   <template #label-content>
                     <div
                       v-if="key === 'current_version'"
-                      class="text-overline black--text text--darken-4"
+                      class="text-h1 black--text text--lighten-4"
                     >
                       {{ metric }}
                     </div>
                     <div
                       v-else
-                      class="text-overline"
+                      class="text-h1"
                       :class="metric < 0.01 ? 'error--text' : 'neroBlack--text'"
                     >
                       {{ metric.toFixed(2) }}
@@ -81,31 +81,31 @@
                 </tooltip>
                 <div
                   v-if="key === 'current_version'"
-                  class="text-caption black--text text--darken-1 pt-1"
+                  class="text-h5 black--text text--lighten-4 pt-1"
                 >
                   Current version
                 </div>
                 <div
                   v-else-if="key === 'rmse'"
-                  class="text-caption black--text text--darken-1 pt-1"
+                  class="text-h5 black--text text--lighten-4 pt-1"
                 >
                   RMSE
                 </div>
                 <div
                   v-else-if="key === 'auc'"
-                  class="text-caption black--text text--darken-1 pt-1"
+                  class="text-h5 black--text text--lighten-4 pt-1"
                 >
                   AUC
                 </div>
                 <div
                   v-else-if="key === 'recall'"
-                  class="text-caption black--text text--darken-1 pt-1"
+                  class="text-h5 black--text text--lighten-4 pt-1"
                 >
                   Recall
                 </div>
                 <div
                   v-else-if="key === 'precision'"
-                  class="text-caption black--text text--darken-1 pt-1"
+                  class="text-h5 black--text text--lighten-4 pt-1"
                 >
                   Precision
                 </div>

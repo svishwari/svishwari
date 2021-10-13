@@ -12,13 +12,10 @@
         class="mr-4 py-3"
       >
         <template #subtitle-extended>
-          <span
-            v-if="item.title === 'Target size'"
-            class="font-weight-semi-bold"
-          >
+          <span v-if="item.title === 'Target size'" class="text-subtitle-1">
             <tooltip>
               <template #label-content>
-                <span class="font-weight-semi-bold">
+                <span class="text-subtitle-1">
                   {{ item.subtitle | Numeric(false, false, true) }}
                 </span>
               </template>
@@ -30,7 +27,7 @@
 
           <span
             v-if="item.title === 'Delivery schedule'"
-            class="font-weight-semi-bold"
+            class="text-subtitle-1"
           >
             {{ item.subtitle }}
           </span>
@@ -47,10 +44,7 @@
                 <span>{{ destination.name }}</span>
               </template>
             </tooltip>
-            <span
-              v-if="!item.destinations.length"
-              class="font-weight-semi-bold"
-            >
+            <span v-if="!item.destinations.length" class="text-subtitle-1">
               0
             </span>
           </div>

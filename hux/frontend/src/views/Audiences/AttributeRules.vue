@@ -5,11 +5,11 @@
         v-if="enableTitle"
         :class="{
           'text-h5 black--text text--darken-4 mb-2 d-block': true,
-          'text-caption': applyCaptionStyle,
+          '': applyCaptionStyle,
         }"
       >
         Select attribute(s) -
-        <i class="text-caption black--text text--darken-1">optional</i>
+        <i class="text-h6 black--text text--darken-1">optional</i>
       </strong>
       <v-card v-if="rules.length == 0" tile elevation="0" class="blank-section">
         <div
@@ -33,7 +33,7 @@
             col-12
             pa-0
             black--text
-            text--darken-4 text-caption
+            text--darken-4 text-h5
           "
         >
           <span class="mr-2">Match</span>
@@ -115,8 +115,8 @@
           </v-col>
           <v-col md="2" class="pr-0 py-0 pl-5">
             <div class="condition-summary">
-              <span class="title text-caption">Size</span>
-              <span class="value text-h6 pt-1 text--subtitle-1">
+              <span class="title text-h5">Size</span>
+              <span class="value pt-1 text--subtitle-1">
                 <v-progress-circular
                   v-if="condition.awaitingSize"
                   :value="16"
@@ -131,10 +131,10 @@
         </v-col>
 
         <div v-if="index != lastIndex" class="col-12 seperator mt-5 mb-1">
-          <hr class="black-lighten2" />
+          <hr class="black lighten-2" />
           <v-chip
             small
-            class="mx-2 my-1 text--subtitle-1"
+            class="mx-2 my-1 text--h6"
             text-color="primary"
             color="primary lighten-4"
             :ripple="false"
@@ -158,7 +158,7 @@
         </v-col>
         <v-col md="2" class="pr-0 pl-5">
           <div class="condition-summary">
-            <span class="title text-caption">Result Size</span>
+            <span class="title text-h5">Result Size</span>
             <span class="value text-h6 pt-1 text--subtitle-1">
               <v-progress-circular
                 v-if="loadingOverAllSize"
