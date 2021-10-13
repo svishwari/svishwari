@@ -470,3 +470,11 @@ def is_component_favorite(
         return True
 
     return False
+
+
+def get_user_favorites(okta_user_id: str, component_name: str) -> list:
+    user_favorites = get_user(get_db_client(), okta_user_id).get(
+        constants.FAVORITES
+    )
+
+    return user_favorites.get(component_name, [])
