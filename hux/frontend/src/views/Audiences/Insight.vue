@@ -1148,6 +1148,7 @@ export default {
             this.confirmDialog.actionType = "remove-destination"
             this.confirmDialog.icon = "sad-face"
             this.confirmDialog.type = "error"
+            this.confirmDialog.subtitle = ""
             this.confirmDialog.title = `Remove ${event.data.name} destination?`
             this.confirmDialog.btnText = "Yes, remove it"
             this.confirmDialog.body =
