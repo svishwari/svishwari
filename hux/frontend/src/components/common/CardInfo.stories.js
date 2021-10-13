@@ -1,7 +1,8 @@
-import CardInfo from "../components/common/CardInfo.vue"
+import CardInfo from "./CardInfo.vue"
 
 export default {
-  title: "Card Info",
+  component: CardInfo,
+  title: "Components/CardInfo",
 }
 
 export const withDefaults = () => ({
