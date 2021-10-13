@@ -7,6 +7,11 @@ from unittest import TestCase, mock
 import mongomock
 import requests_mock
 
+from huxunifylib.connectors.connector_cdp import ConnectorCDP
+from huxunifylib.database import constants as db_c
+from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.orchestration_management import create_audience
+
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.schema.customers import (
@@ -16,10 +21,6 @@ from huxunify.api.schema.customers import (
 )
 from huxunify.app import create_app
 from huxunify.test import constants as t_c
-from huxunifylib.connectors.connector_cdp import ConnectorCDP
-from huxunifylib.database import constants as db_c
-from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.orchestration_management import create_audience
 
 
 class AudienceDownloadsTest(TestCase):
