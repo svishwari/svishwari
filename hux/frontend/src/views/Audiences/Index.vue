@@ -80,7 +80,7 @@
                 @actionFavorite="handleActionFavorite(item, 'audiences')"
               />
             </div>
-            <div v-if="header.value == 'status'" class="text-caption">
+            <div v-if="header.value == 'status'" class="text-h5">
               <status
                 :status="item[header.value]"
                 :show-label="true"

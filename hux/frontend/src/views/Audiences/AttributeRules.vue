@@ -116,7 +116,7 @@
           <v-col md="2" class="pr-0 py-0 pl-5">
             <div class="condition-summary">
               <span class="title text-caption">Size</span>
-              <span class="value text-h6 pt-1 font-weight-semi-bold">
+              <span class="value text-h6 pt-1 text--subtitle-1">
                 <v-progress-circular
                   v-if="condition.awaitingSize"
                   :value="16"
@@ -131,10 +131,10 @@
         </v-col>
 
         <div v-if="index != lastIndex" class="col-12 seperator mt-5 mb-1">
-          <hr class="zircon" />
+          <hr class="black-lighten2" />
           <v-chip
             small
-            class="mx-2 my-1 font-weight-semi-bold"
+            class="mx-2 my-1 text--subtitle-1"
             text-color="primary"
             color="primary lighten-4"
             :ripple="false"
@@ -159,7 +159,7 @@
         <v-col md="2" class="pr-0 pl-5">
           <div class="condition-summary">
             <span class="title text-caption">Result Size</span>
-            <span class="value text-h6 pt-1 font-weight-semi-bold">
+            <span class="value text-h6 pt-1 text--subtitle-1">
               <v-progress-circular
                 v-if="loadingOverAllSize"
                 :value="16"

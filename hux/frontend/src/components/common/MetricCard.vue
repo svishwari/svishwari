@@ -14,7 +14,7 @@
       <div class="flex-grow-1">
         <span
           v-if="!titleTooltip"
-          class="text-caption"
+          class="text-subtitle-2"
           :class="
             interactable ? 'primary--text ' : 'black--text text--darken-1 '
           "
@@ -40,12 +40,12 @@
         <slot name="extra-item"></slot>
 
         <div class="subtitle-slot">
-          <span class="font-weight-semi-bold">{{ subtitle }}</span>
+          <span class="text--subtitle-1">{{ subtitle }}</span>
           <slot name="subtitle-extended"></slot>
         </div>
       </div>
 
-      <v-icon v-if="icon" color="zircon" x-large> {{ icon }} </v-icon>
+      <v-icon v-if="icon" color="black-lighten2" x-large> {{ icon }} </v-icon>
 
       <slot name="short-name"></slot>
     </div>

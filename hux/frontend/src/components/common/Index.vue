@@ -170,7 +170,7 @@
     <huxButton
       icon="mdi-check"
       icon-position="left"
-      variant="teal"
+      variant="success"
       size="x-large"
       is-tile
       class="ma-2"

@@ -14,7 +14,7 @@
         </v-tab>
         <v-tab
           key="email"
-          class="text-h5"
+          class="text-subtitle-2"
           data-e2e="email-marketing"
           @click="$emit('fetchMetrics', 'email')"
         >
