@@ -7,6 +7,7 @@ describe("Cards", () => {
       const customProps = {
         icon: "model-unsubscribe",
         title: "Propensity to Unsubscribe",
+        type: "Models",
         description:
           "Propensity of a customer making a purchase after receiving an email.",
       }
@@ -21,6 +22,9 @@ describe("Cards", () => {
     })
 
     test("Displays custom slots", () => {
+      const customProps = {
+        type: "Modules",
+      }
       const customSlots = {
         default: "<p>Default content</p>",
         top: "<div>Top spot</div>",
@@ -28,6 +32,7 @@ describe("Cards", () => {
 
       const wrapper = shallowMount(DescriptiveCard, {
         slots: customSlots,
+        propsData: customProps,
       })
 
       expect(wrapper.find("p").exists()).toBe(true)

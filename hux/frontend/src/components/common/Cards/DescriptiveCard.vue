@@ -1,7 +1,7 @@
 <template>
   <v-card
     class="descriptive-card align-center text-center rounded-lg mr-10 mb-10"
-    :style="{ 'min-height': minHeight, width: disabled ? '255px' : '280px' }"
+    :style="{ 'height': minHeight, width: disabled ? '255px' : '280px' }"
     :class="{ 'in-active': disabled }"
   >
     <div v-if="$slots.top" class="pa-3 pb-0">

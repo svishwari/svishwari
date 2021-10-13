@@ -23,8 +23,11 @@
           :title="model.name"
           :description="model.description"
           :disabled="model.status !== 'Active'"
+          :action-menu="false"
+          :coming-soon="false"
+          type="Models"
           data-e2e="model-item"
-          class="mr-10 model-desc-card"
+          class="mr-10"
           @click.native="goToDashboard(model)"
         >
           <template slot="top">
@@ -32,18 +35,18 @@
               :icon-size="17"
               :status="model.status || ''"
               collapsed
-              class="d-flex"
+              class="d-flex float-left"
               data-e2e="model-status"
             />
           </template>
 
           <template slot="default">
-            <p
+            <!-- <p
               class="text-caption black--text text--darken-1 mt-4"
               data-e2e="model-owner"
             >
               {{ model.owner }}
-            </p>
+            </p> -->
 
             <div class="d-flex justify-center mb-6">
               <card-stat
@@ -156,9 +159,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.model-desc-card {
-  @extend .cursor-pointer;
-  width: 280px;
-  height: 280px;
-}
 </style>
