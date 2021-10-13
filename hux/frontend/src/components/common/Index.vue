@@ -135,18 +135,35 @@
 
     <v-subheader> Modal </v-subheader>
     <confirm-modal
-      v-model="modal"
+      v-model="errorModal"
       icon="sad-face"
       type="error"
       title="Action Word"
       sub-title="(i.e. Remove) ___________?"
       body="Are you sure you want to stop the configuration and go to another page? You will not be able to recover it but will need to start the process again."
-      @onCancel="toggleModal()"
-      @onConfirm="toggleModal()"
+      @onCancel="errorModal = !errorModal"
+      @onConfirm="errorModal = !errorModal"
     >
       <template #activator>
-        <huxButton size="large" class="ma-2" @click="modal = !modal">
-          Open modal
+        <huxButton size="large" class="ma-2" @click="errorModal = !errorModal">
+          Error modal
+        </huxButton>
+      </template>
+    </confirm-modal>
+
+    <confirm-modal
+      v-model="infoModal"
+      icon="edit"
+      type="primary"
+      title="Edit"
+      sub-title="<Audience>"
+      body="Are you sure you want to remove the <Audience>?"
+      @onCancel="infoModal = !infoModal"
+      @onConfirm="infoModal = !infoModal"
+    >
+      <template #activator>
+        <huxButton size="large" class="ma-2" @click="infoModal = !infoModal">
+          Info modal
         </huxButton>
       </template>
     </confirm-modal>
@@ -971,7 +988,8 @@ export default {
       ],
 
       drawer: false,
-      modal: false,
+      errorModal: false,
+      infoModal: false,
 
       overviewListItems: [
         { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
@@ -1294,9 +1312,6 @@ export default {
     },
     onEndDateSelect(val) {
       this.selectedEndDate = val
-    },
-    toggleModal() {
-      this.modal = !this.modal
     },
     getColorCode(name) {
       return generateColor(name, 30, 60) + " !important"

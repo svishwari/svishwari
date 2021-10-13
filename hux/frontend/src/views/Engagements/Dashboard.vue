@@ -253,6 +253,7 @@ export default {
       deleteActionData: {},
       confirmDialog: {
         title: "Remove  audience?",
+        icon: "sad-face",
         btnText: "Yes, remove it",
         body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
         actionType: "remove-audience",
