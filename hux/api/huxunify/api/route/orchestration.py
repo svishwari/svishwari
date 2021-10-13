@@ -44,6 +44,7 @@ from huxunify.api.data_connectors.cdp import (
     get_demographic_by_state_async,
     get_city_ltvs_async,
     get_spending_by_gender_async,
+    get_customers_overview_async,
 )
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.okta import (
@@ -104,20 +105,22 @@ def add_destinations(
     return None
 
 
-async def get_audience_insights_async(
-    token: str, filters: dict, customers_overview: dict
-):
+async def get_audience_insights_async(token: str, audience_filters: dict):
     """Fetch audience insights from CDM
 
     Args:
         token (str): OKTA JWT token.
-        filters (dict): Audience filters.
-        customers_overview (dict): Customer overview object.
+        audience_filters (dict): Audience filters.
 
     Returns:
         dict: Audience insights object.
     """
     audience_insights = {}
+    filters = (
+        {api_c.AUDIENCE_FILTERS: audience_filters}
+        if audience_filters
+        else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+    )
     async with aiohttp.ClientSession() as session:
         responses = await asyncio.gather(
             get_demographic_by_state_async(
@@ -128,19 +131,25 @@ async def get_audience_insights_async(
             get_city_ltvs_async(
                 session,
                 token,
-                {api_c.AUDIENCE_FILTERS: filters},
+                filters,
             ),
             get_spending_by_gender_async(
                 session,
                 token,
-                filters={api_c.AUDIENCE_FILTERS: filters},
+                filters=filters,
                 start_date=str(datetime.utcnow().date() - timedelta(days=180)),
                 end_date=str(datetime.utcnow().date()),
+            ),
+            get_customers_overview_async(
+                session,
+                token,
+                filters,
             ),
         )
     audience_insights[api_c.DEMOGRAPHIC] = responses[0]
     audience_insights[api_c.INCOME] = responses[1]
     audience_insights[api_c.SPEND] = group_gender_spending(responses[2])
+    customers_overview = responses[3]
     audience_insights[api_c.GENDER] = {
         gender: {
             api_c.POPULATION_PERCENTAGE: customers_overview.get(gender, 0),
@@ -608,16 +617,10 @@ class AudienceInsightsGetView(SwaggerView):
                 database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
             )
 
-        customers_overview = get_customers_overview(
-            token_response[0],
-            {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
-        )
-
         audience_insights = asyncio.run(
             get_audience_insights_async(
                 token_response[0],
                 audience[api_c.AUDIENCE_FILTERS],
-                customers_overview,
             )
         )
 
