@@ -28,9 +28,7 @@ const Template = (args, { argTypes }) => ({
   components: { HuxCardInfo },
   props: Object.keys(argTypes),
   template: `
-    <hux-card-info v-bind="$props" v-on="$props">
-      ${args.default}
-    </hux-card-info>
+    <hux-card-info v-bind="$props" v-on="$props" />
   `,
 })
 
