@@ -12,6 +12,7 @@ export default {
       },
     },
     variant: { control: "color" },
+    click: { action: "clicked" },
   },
 
   args: {

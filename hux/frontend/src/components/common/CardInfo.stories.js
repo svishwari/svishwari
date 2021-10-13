@@ -5,7 +5,9 @@ export default {
 
   title: "Components/Card Info",
 
-  argTypes: {},
+  argTypes: {
+    click: { action: "clicked" },
+  },
 
   args: {
     title: "Create an audience",
