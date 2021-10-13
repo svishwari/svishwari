@@ -606,9 +606,7 @@ def get_demographic_by_state(
         if filters
         else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
     )
-    customer_count_by_state = get_geographic_response(
-        get_customer_count_by_state(token, filters)
-    )
+    customer_count_by_state = get_geographic_customers_data(get_customer_count_by_state(token, filters))
 
     return customer_count_by_state
 
@@ -800,7 +798,7 @@ def clean_cdm_gender_fields(response_body: dict) -> dict:
     return response_body
 
 
-def get_geographic_response(customer_count_by_state):
+def get_geographic_customers_data(customer_count_by_state: list) -> list:
     """Aggregate customers data by states
 
     Args:
@@ -1003,9 +1001,8 @@ async def get_demographic_by_state_async(
         if filters
         else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
     )
-    customer_count_by_state = get_geographic_response(
-        await get_customer_count_by_state_async(session, token, filters)
-    )
+    customer_count_by_state = get_geographic_customers_data(
+        await get_customer_count_by_state_async(session, token, filters))
 
     return customer_count_by_state
 
