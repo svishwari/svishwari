@@ -6,6 +6,14 @@
   >
     <div v-if="$slots.top" class="pa-3 pb-0">
       <slot name="top" />
+        <v-icon
+          v-if="actionMenu"
+          class="d-flex float-right"
+          v-bind="attrs"
+          color="primary"
+        >
+          mdi-dots-vertical
+        </v-icon>
     </div>
 
     <div v-if="icon" class="d-flex justify-center pb-4">
@@ -84,6 +92,11 @@ export default {
       default: "Models", 
     },
     disabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    actionMenu: {
       type: Boolean,
       required: false,
       default: false,

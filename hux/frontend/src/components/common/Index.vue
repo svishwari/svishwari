@@ -358,6 +358,7 @@
 
     <v-subheader> Descriptive Card </v-subheader>
     <descriptive-card
+      actionMenu="true"
       type="Models"
       icon="model-unsubscribe"
       title="Propensity to Unsubscribe"
@@ -365,13 +366,6 @@
     >
       <template slot="top">
         <status status="Pending" collapsed class="d-flex float-left" />
-        <v-icon
-          class="d-flex float-right"
-          v-bind="attrs"
-          color="primary"
-        >
-          mdi-dots-vertical
-        </v-icon>
       </template>
 
       <template slot="default">
@@ -400,6 +394,7 @@
       </template>
     </descriptive-card>
     <descriptive-card
+      actionMenu="true"
       type="Modules"
       icon="model-unsubscribe"
       title="Propensity to Unsubscribe"
@@ -407,13 +402,18 @@
     >
       <template slot="top">
         <status status="Pending" collapsed class="d-flex float-left" />
-        <v-icon
-          class="d-flex float-right"
-          v-bind="attrs"
-          color="primary"
-        >
-          mdi-dots-vertical
-        </v-icon>
+      </template>
+    </descriptive-card>
+    <descriptive-card
+      disabled="true"
+      actionMenu="false"
+      type="Modules"
+      icon="model-unsubscribe"
+      title="Propensity to Unsubscribe ojjihj"
+      description="This is THE Hux CDP. Once a customer data solution has been implemented, all data sources flow seamlessly into the ..."
+    >
+      <template slot="top">
+        <status status="Pending" collapsed class="d-flex float-left" />
       </template>
     </descriptive-card>
 
