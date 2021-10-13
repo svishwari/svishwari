@@ -123,6 +123,7 @@ export default {
         description: this.engagementList.description, // at step - 1
         delivery_schedule: !this.engagementList.delivery_schedule ? 0 : 1, // at step - 2
         audiences: audiences, // at step - 3
+        schedule: this.engagementList.delivery_schedule ?  this.engagementList.delivery_schedule.schedule : {},
       }
       this.$set(this, "data", _engagementObject)
 

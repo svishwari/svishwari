@@ -516,6 +516,19 @@ export default {
     },
   },
 
+  watch: {
+    value() {
+      if (this.value.schedule) {
+        let deliverySchedule = this.value.schedule
+        for (let prop in deliverySchedule) {
+          this.schedule[prop] = deliverySchedule.hasOwnProperty(prop)
+            ? deliverySchedule[prop]
+            : this.schedule[prop]
+        }
+      }
+    },
+  },
+
   methods: {
     ...mapActions({
       addEngagement: "engagements/add",

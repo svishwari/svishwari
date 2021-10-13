@@ -91,6 +91,11 @@ export default {
       type: [String, Number],
       required: false,
     },
+
+    deliverySchedule: {
+      type: Object,
+      required: false,
+    },
   },
 
   data() {
@@ -108,6 +113,14 @@ export default {
 
     localToggle(value) {
       this.$emit("input", value)
+    },
+
+    deliverySchedule() {
+        for (let prop in this.deliverySchedule) {
+          this.schedule[prop] = this.deliverySchedule.hasOwnProperty(prop)
+            ? this.deliverySchedule[prop]
+            : this.schedule[prop]
+        }
     },
   },
 
