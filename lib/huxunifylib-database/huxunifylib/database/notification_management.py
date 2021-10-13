@@ -1,5 +1,6 @@
 """This module enables functionality related to notification management."""
 import logging
+import warnings
 from datetime import datetime
 from typing import Union
 
@@ -64,9 +65,10 @@ def create_notification(
     elif notification_type == c.NOTIFICATION_TYPE_CRITICAL:
         expire_time = current_time + relativedelta(months=6)
 
-    logging.warning(
-        "Use of username field being optional with default value of 'unknown'"
-        " in notification collection will be deprecated in the future release."
+    warnings.warn(
+        "Use of username field being optional with default value of unknown in"
+        " notification collection will be deprecated in the future release.",
+        DeprecationWarning,
     )
 
     doc = {
