@@ -1,4 +1,4 @@
-"""Database client notification management tests"""
+"""Database client notification management tests."""
 from unittest import TestCase
 
 import mongomock
@@ -9,11 +9,12 @@ from huxunifylib.database import notification_management as nmg
 
 
 class NotificationManagementTest(TestCase):
-    """Test notification management"""
+    """Test notification management."""
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
-        """Setup resources before each test"""
+        """Setup resources before each test."""
+
         self.database = DatabaseClient(
             "localhost", 27017, None, None
         ).connect()
@@ -37,7 +38,8 @@ class NotificationManagementTest(TestCase):
         ]
 
     def test_create_notification(self):
-        """Test creating a notification"""
+        """Test creating a notification."""
+
         notification = nmg.create_notification(
             database=self.database,
             notification_type=db_c.NOTIFICATION_TYPE_CRITICAL,
@@ -45,9 +47,23 @@ class NotificationManagementTest(TestCase):
         )
 
         self.assertTrue(notification is not None)
+        self.assertIn(db_c.ID, notification)
+        self.assertIn(db_c.NOTIFICATION_FIELD_CREATED, notification)
+        self.assertEqual(
+            db_c.NOTIFICATION_TYPE_CRITICAL,
+            notification[db_c.NOTIFICATION_FIELD_TYPE],
+        )
+        self.assertEqual(
+            "Delivery Failed",
+            notification[db_c.NOTIFICATION_FIELD_DESCRIPTION],
+        )
+        self.assertEqual(
+            "unknown", notification[db_c.NOTIFICATION_FIELD_USERNAME]
+        )
 
     def test_get_notifications_batch(self):
-        """Test get all notifications via batch"""
+        """Test get all notifications via batch."""
+
         notifications = nmg.get_notifications_batch(
             database=self.database,
             batch_size=10,
@@ -56,7 +72,7 @@ class NotificationManagementTest(TestCase):
         )
 
         self.assertCountEqual(
-            self.notifications, notifications["notifications"]
+            self.notifications, notifications[db_c.NOTIFICATIONS_COLLECTION]
         )
         self.assertEqual(
             len(self.notifications), notifications["total_records"]
@@ -64,6 +80,7 @@ class NotificationManagementTest(TestCase):
 
     def test_get_notifications(self):
         """Test get all notifications with a filter."""
+
         notifications = nmg.get_notifications(
             self.database, {db_c.TYPE: db_c.NOTIFICATION_TYPE_CRITICAL}
         )
@@ -71,6 +88,6 @@ class NotificationManagementTest(TestCase):
         self.assertTrue(notifications[db_c.NOTIFICATIONS_COLLECTION])
         self.assertEqual(1, len(notifications[db_c.NOTIFICATIONS_COLLECTION]))
         self.assertEqual(
-            notifications[db_c.NOTIFICATIONS_COLLECTION][0][db_c.TYPE],
             db_c.NOTIFICATION_TYPE_CRITICAL,
+            notifications[db_c.NOTIFICATIONS_COLLECTION][0][db_c.TYPE],
         )

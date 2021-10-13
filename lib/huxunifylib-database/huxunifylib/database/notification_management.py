@@ -20,6 +20,7 @@ def create_notification(
     notification_type: str,
     description: str,
     category: str = None,
+    username: str = "unknown",
 ) -> Union[dict, None]:
     """A function to create a new notification.
 
@@ -28,6 +29,8 @@ def create_notification(
         notification_type (str): type of notification to create.
         description (str): description of notification.
         category (str): category of notification.
+        username (str): username of user performing an action for which the
+            notification is created.
 
     Returns:
         Union[dict, None]: MongoDB document for a notification.
@@ -49,10 +52,16 @@ def create_notification(
     # get current time
     current_time = datetime.utcnow()
 
+    logging.warning(
+        "Use of username field being optional with a default value of "
+        "'unknown' will be deprecated in the future release."
+    )
+
     doc = {
         c.NOTIFICATION_FIELD_TYPE: notification_type,
         c.NOTIFICATION_FIELD_DESCRIPTION: description,
         c.NOTIFICATION_FIELD_CREATED: current_time,
+        c.NOTIFICATION_FIELD_USERNAME: username,
     }
 
     if category:
