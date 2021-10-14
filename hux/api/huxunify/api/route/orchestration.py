@@ -985,7 +985,7 @@ class AudienceRules(SwaggerView):
                         "name": "Predicted lifetime value",
                         "type": "range",
                         "min": 0,
-                        "max": 1100,
+                        "max": 998.80,
                         "steps": 20,
                     },
                     "propensity_to_purchase": {
@@ -1000,33 +1000,33 @@ class AudienceRules(SwaggerView):
                     "age": {
                         "name": "Age",
                         "type": "range",
-                        "min": 0,
-                        "max": 100,
+                        "min": 14,
+                        "max": 79,
                     },
                     "email": {"name": "Email", "type": "text"},
                     "gender": {
                         "name": "Gender",
                         "type": "text",  # text for 5.0, list for future
-                        "options": [],
+                        "options": ["female", "male", "other"],
                     },
                     "location": {
                         "name": "Location",
                         "country": {
                             "name": "Country",
                             "type": "text",  # text for 5.0, list for future
-                            "options": [],
+                            "options": ["US"],
                         },
                         "state": {
                             "name": "State",
                             "type": "text",  # text for 5.0, list for future
-                            "options": [],
+                            "options": list(api_c.STATE_NAMES.keys()),
                         },
                         "city": {
                             "name": "City",
                             "type": "text",  # text for 5.0, list for future
                             "options": [],
                         },
-                        "zip_code": {"name": "Zip code", "type": "text"},
+                        "zip_code": {"name": "Zip", "type": "text"},
                     },
                 },
             }
