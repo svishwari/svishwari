@@ -761,3 +761,33 @@ class TestDestinationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    def test_patch_destination(self):
+        """Test patch destination."""
+
+        # get destination ID
+        destination_id = self.destinations[0][db_c.ID]
+
+        # get from database
+        destination = destination_management.get_delivery_platform(
+            self.database, self.destinations[0][db_c.ID]
+        )
+
+        # validate enabled flag
+        self.assertFalse(destination.get(db_c.ENABLED))
+
+        # patch destination
+        self.assertTrue(
+            HTTPStatus.OK,
+            self.app.patch(
+                f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+                json={db_c.ENABLED: not destination.get(db_c.ENABLED)},
+                headers=t_c.STANDARD_HEADERS,
+            ).status_code,
+        )
+
+        # grab from database again and check update flag to True.
+        destination = destination_management.get_delivery_platform(
+            self.database, self.destinations[0][db_c.ID]
+        )
+        self.assertTrue(destination[db_c.ENABLED])

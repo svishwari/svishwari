@@ -80,6 +80,13 @@ export const defineRoutes = (server) => {
 
     return schema.destinations.find(id).update({ is_added: true })
   })
+
+  server.patch("/destinations/:id", (schema, request) => {
+    const id = request.params.id
+
+    return schema.destinations.find(id).update({ is_added: false })
+  })
+
   server.get("/destinations/:destinationId/data-extensions")
   server.post(
     "/destinations/:destinationId/data-extensions",
@@ -386,6 +393,14 @@ export const defineRoutes = (server) => {
     return audienceCSVData
   })
 
+  server.del("/engagements/:id", (schema, request) => {
+    const id = request.params.id
+    const engagement_deleted = schema.engagements.find(id)
+    const engagement_deleted_name = engagement_deleted.name
+    engagement_deleted.destroy()
+    return "Engagement " + engagement_deleted_name + " successfully deleted"
+  })
+
   // models
   server.get("/models")
 
@@ -613,6 +628,14 @@ export const defineRoutes = (server) => {
 
   server.get("/audiences/:id/countries", (schema) => {
     return schema.geoCountries.all()
+  })
+
+  server.del("/audiences/:id", (schema, request) => {
+    const id = request.params.id
+    const audience_deleted = schema.audiences.find(id)
+    const audience_deleted_name = audience_deleted.name
+    audience_deleted.destroy()
+    return "Audience " + audience_deleted_name + " successfully deleted"
   })
 
   //lookalike audiences

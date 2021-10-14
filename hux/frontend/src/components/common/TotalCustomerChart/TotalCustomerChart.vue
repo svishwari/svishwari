@@ -22,25 +22,14 @@
             {{ currentData.date | Date("MM/DD/YYYY") }}
           </div>
           <div class="value-container">
-            <icon
-              type="name"
-              :size="12"
-              :fill-opacity="0.5"
-              :color="colorCodes[currentData.index].base"
-              :variant="colorCodes[currentData.index].variant"
-            />
+            <icon type="customer" :size="12" />
             <span class="text-label">Total customers</span>
           </div>
           <div class="value-section">
             {{ currentData.totalCustomers | Numeric(true, false, false) }}
           </div>
           <div class="value-container">
-            <icon
-              type="name"
-              :size="12"
-              :color="colorCodes[currentData.index].base"
-              :variant="colorCodes[currentData.index].variant"
-            />
+            <icon type="new-customer" :size="12" />
             <span class="text-label">New customers added</span>
             <div class="value-section">
               {{ currentData.addedCustomers | Numeric(true, false, false) }}
