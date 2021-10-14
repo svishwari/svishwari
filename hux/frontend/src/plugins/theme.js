@@ -21,7 +21,7 @@ export default {
     lighten4: colors.lightGray,
     base: colors.darkD,
   },
-  teal: {
+  success: {
     lighten2: colors.tealD,
     lighten3: colors.lightGreenD,
     base: colors.greenD,
@@ -37,7 +37,7 @@ export default {
     base: colors.yellow,
   },
   info: colors.mustard,
-  success: colors.greenD,
+
   warning: colors.warning,
   white: {
     base: colors.white,

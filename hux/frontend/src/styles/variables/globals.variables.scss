@@ -28,7 +28,7 @@ $headings: (
     "size": 18px,
     "line-height": 24px !important,
     "weight": 300,
-    "letter-spacing": 0,
+    "letter-spacing": 0.1px,
   ),
   "body-1": (
     "size": 16px,
@@ -46,7 +46,7 @@ $headings: (
     "size": 12px,
     "line-height": 16px !important,
     "weight": 400,
-    "letter-spacing": 0,
+    "letter-spacing": 0.5px,
     "text-transform": "inherit",
   ),
   "subtitle-1": (
@@ -65,7 +65,7 @@ $headings: (
     "size": 16px,
     "line-height": 20px !important,
     "weight": 400,
-    "letter-spacing": 0.5px,
+    "letter-spacing": 0,
   ),
   "h5": (
     "size": 14px,
@@ -77,7 +77,7 @@ $headings: (
     "size": 14px,
     "line-height": 22px !important,
     "weight": 400,
-    "letter-spacing": 0px,
+    "letter-spacing": 0,
   ),
 );
 

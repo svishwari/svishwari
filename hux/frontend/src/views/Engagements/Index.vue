@@ -823,7 +823,7 @@ export default {
     },
     async onCreated() {
       this.setAlert({
-        type: "teal",
+        type: "success",
         message: `Your lookalike audience, ${name}, has been created successfully.`,
       })
     },

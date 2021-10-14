@@ -80,11 +80,9 @@
                   />
                 </v-col>
                 <v-col cols="8">
-                  <div
-                    class="mt-3 ml-15 text-caption black--text text--darken-4"
-                  >
+                  <div class="mt-3 ml-15 text-h5 black--text text--darken-4">
                     Add to an engagement -
-                    <i style="tilt">you must have at least one</i>
+                    <i style="text-h6">you must have at least one</i>
                     <div class="mt-2 d-flex align-center">
                       <span @click="openAttachEngagementsDrawer()">
                         <icon
