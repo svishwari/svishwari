@@ -2,16 +2,26 @@
   <v-menu v-model="menu" offset-y close-on-click>
     <template #activator="{ on }">
       <span
-        class="d-flex cursor-pointer mr-6"
+        class="d-flex cursor-pointer mr-6 d-flex align-center user-avatar"
         data-e2e="profile-dropdown"
         v-on="on"
       >
-        <v-btn color="primary" class="font-weight-bold" small outlined fab>
-          {{ initials }}
-        </v-btn>
-        <v-icon color="primary" :class="{ 'rotate-icon-180': menu }">
-          mdi-chevron-down
-        </v-icon>
+        <v-avatar
+          class="mr-2"
+          size="35"
+          color="white"
+          :class="{ 'menu-active': menu }"
+        >
+        </v-avatar>
+        <span class="text--subtitle-1 black--text">{{ initials }}</span>
+        <span class="ml-4">
+          <icon
+            type="chevron-down"
+            :size="14"
+            class="arrow-icon d-block"
+            :class="{ 'menu-active': menu }"
+          ></icon>
+        </span>
       </span>
     </template>
     <v-list>
@@ -48,9 +58,11 @@
 <script>
 import config from "@/config"
 import { mapGetters } from "vuex"
+import Icon from "./common/Icon.vue"
 
 export default {
   name: "UserAvatar",
+  components: { Icon },
   data() {
     return {
       changeDetailsLink: config.userDetails,
@@ -74,3 +86,21 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.user-avatar {
+  .v-avatar {
+    border: solid 1px var(--v-primary-base) !important;
+    &:hover,
+    &.menu-active {
+      border: solid 2px var(--v-success-base) !important;
+    }
+  }
+  .arrow-icon {
+    fill: var(--v-black-lighten4);
+    &:hover,
+    &.menu-active {
+      fill: var(--v-primary-base);
+    }
+  }
+}
+</style>

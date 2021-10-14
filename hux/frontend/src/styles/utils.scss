@@ -8,7 +8,7 @@
 }
 
 .font-weight-semi-bold {
-  font-weight: 600;
+  font-weight: 600 !important;
 }
 
 .rotate-icon-180 {
@@ -150,4 +150,13 @@
 
 .mw-100 {
   max-width: 100% !important;
+}
+
+.nav-icon {
+  fill: var(--v-black-lighten4);
+  color: var(--v-black-lighten4);
+  &:hover {
+    fill: var(--v-primary-lighten6);
+    color: var(--v-primary-lighten6);
+  }
 }

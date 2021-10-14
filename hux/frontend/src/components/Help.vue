@@ -2,7 +2,7 @@
   <v-menu :min-width="200" left offset-y close-on-click>
     <template #activator="{ on }">
       <span class="d-flex cursor-pointer" data-e2e="help-dropdown" v-on="on">
-        <icon class="mx-2 my-2" type="help" :size="21" color="primary" />
+        <icon class="mx-2 my-2 nav-icon" type="help" :size="21" />
       </span>
     </template>
     <v-list>

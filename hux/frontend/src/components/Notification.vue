@@ -4,17 +4,18 @@
       <span class="d-flex cursor-pointer" v-on="on">
         <icon
           data-e2e="notification-bell"
-          class="mx-2 my-2"
+          class="mx-2 my-2 nav-icon"
           type="bell-notification"
           :size="21"
-          color="primary"
         />
       </span>
     </template>
     <v-list class="alert-menu-main">
       <v-list-item>
-        <v-list-item-title class="font-weight-bold">
-          Most recent alerts
+        <v-list-item-title
+          class="font-weight-semi-bold text-h6 black--text text--lighten-4"
+        >
+          Unread alerts
         </v-list-item-title>
       </v-list-item>
       <div class="notification-div">
@@ -58,7 +59,7 @@
             :to="{
               name: 'AlertsAndNotifications',
             }"
-            class="text-h6 view-all text-decoration-none"
+            class="text-body-1 primary--text view-all text-decoration-none"
           >
             View all alerts
           </router-link>
