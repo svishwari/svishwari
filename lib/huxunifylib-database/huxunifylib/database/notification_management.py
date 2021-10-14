@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Union
 
 import pymongo
+from bson import ObjectId
 from dateutil.relativedelta import relativedelta
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
@@ -166,6 +167,32 @@ def get_notifications(
                 )
             ),
         )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+def get_notification(
+    database: DatabaseClient, notification_id: ObjectId
+) -> Union[dict, None]:
+    """To get notification
+
+    Args:
+        database (DatabaseClient): MongoDB Database Client
+        notification_id (ObjectId): MongoDB Object Id
+
+    Returns:
+        Tuple[dict,None]:MongoDB Notification document else None
+
+    """
+    # get collection
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.NOTIFICATIONS_COLLECTION
+    ]
+
+    try:
+        return collection.find_one({c.ID: notification_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

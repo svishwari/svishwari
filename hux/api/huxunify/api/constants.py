@@ -548,6 +548,7 @@ INVALID_BATCH_PARAMS = "Invalid Batch Number or Batch Size"
 
 AUDIENCE_NOT_FOUND = "Audience not found."
 DESTINATION_NOT_FOUND = "Destination not found."
+NOTIFICATION_NOT_FOUND = "Notification not found."
 ENGAGEMENT_NOT_FOUND = "Engagement not found."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported."
 SUCCESSFUL_DELIVERY_JOB_NOT_FOUND = "No successful delivery job found"
@@ -862,7 +863,6 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
     ]
 }
 
-
 # IDR Fields
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
@@ -1003,6 +1003,7 @@ DEFAULT_ALERT_SORT_ORDER = "descending"
 DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
+NOTIFICATION_ID = "notification_id"
 
 # health check prometheus metric constants
 MONGO_CONNECTION_HEALTH = "mongo_connection_health"

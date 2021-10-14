@@ -123,3 +123,20 @@ class NotificationManagementTest(TestCase):
             notifications[db_c.NOTIFICATIONS_COLLECTION][0][db_c.TYPE],
             db_c.NOTIFICATION_TYPE_CRITICAL,
         )
+
+    def test_get_notification(self):
+        """Test to get notification."""
+        notifications = nmg.get_notifications(
+            self.database, {db_c.TYPE: db_c.NOTIFICATION_TYPE_CRITICAL}
+        )
+        notification = nmg.get_notification(
+            self.database,
+            notification_id=notifications[db_c.NOTIFICATIONS_COLLECTION][0][
+                db_c.ID
+            ],
+        )
+        self.assertTrue(notification)
+        self.assertEqual(
+            notifications[db_c.NOTIFICATIONS_COLLECTION][0][db_c.TYPE],
+            notification[db_c.TYPE],
+        )
