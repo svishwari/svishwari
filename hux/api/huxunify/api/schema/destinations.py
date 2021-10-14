@@ -162,6 +162,7 @@ class DestinationGetSchema(Schema):
             )
         ],
     )
+    category = fields.String(attribute=db_c.CATEGORY, example=db_c.ADVERTISING)
     campaigns = fields.Int(
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
