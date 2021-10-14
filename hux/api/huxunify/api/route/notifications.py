@@ -32,9 +32,7 @@ from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 
 # setup the notifications blueprint
-notifications_bp = Blueprint(
-    api_c.NOTIFICATIONS_ENDPOINT, import_name=__name__
-)
+notifications_bp = Blueprint(api_c.NOTIFICATIONS_ENDPOINT, import_name=__name__)
 
 
 @notifications_bp.before_request
@@ -200,9 +198,7 @@ class NotificationStream(SwaggerView):
                 # get the previous time, take last minute.
                 previous_time = datetime.utcnow().replace(
                     tzinfo=timezone.utc
-                ) - timedelta(
-                    minutes=int(api_c.NOTIFICATION_STREAM_TIME_SECONDS / 60)
-                )
+                ) - timedelta(minutes=int(api_c.NOTIFICATION_STREAM_TIME_SECONDS / 60))
 
                 # dump the output notification list to the notification schema.
                 yield json.dumps(
@@ -210,9 +206,7 @@ class NotificationStream(SwaggerView):
                         notification_management.get_notifications(
                             get_db_client(),
                             {
-                                db_c.NOTIFICATION_FIELD_CREATED: {
-                                    "$gt": previous_time
-                                },
+                                db_c.NOTIFICATION_FIELD_CREATED: {"$gt": previous_time},
                                 db_c.TYPE: db_c.NOTIFICATION_TYPE_SUCCESS,
                                 db_c.NOTIFICATION_FIELD_DESCRIPTION: {
                                     "$regex": "^Successfully delivered audience"
@@ -275,9 +269,7 @@ class NotificationSearch(SwaggerView):
                 "Could not find notification with id %s.",
                 notification_id,
             )
-            return {
-                "message": api_c.NOTIFICATION_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            return {"message": api_c.NOTIFICATION_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         return (
             NotificationSchema().dump(notification),
