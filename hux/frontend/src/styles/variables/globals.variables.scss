@@ -6,79 +6,103 @@ $body-font-family: "Open Sans", sans-serif;
 $heading-font-family: $body-font-family;
 $font-size-root: 14px;
 $headings: (
-  "h1": (
-    "size": 36px,
-    "line-height": 40px !important,
-    "weight": 300,
-    "letter-spacing": 0,
-  ),
-  "h2": (
-    "size": 24px,
-    "line-height": 40px !important,
-    "weight": 300,
-    "letter-spacing": 0,
-  ),
-  "h3": (
-    "size": 18px,
-    "line-height": 25px !important,
-    "weight": 400,
-    "letter-spacing": 0,
-  ),
-  "h4": (
-    "size": 18px,
-    "line-height": 24px !important,
-    "weight": 300,
-    "letter-spacing": 0.1px,
-  ),
-  "body-1": (
-    "size": 16px,
-    "line-height": 22px !important,
-    "weight": 400,
-    "letter-spacing": 0,
-  ),
-  "body-2": (
-    "size": 14px,
-    "line-height": 16px !important,
-    "weight": 400,
-    "letter-spacing": 0,
-  ),
-  "button": (
-    "size": 12px,
-    "line-height": 16px !important,
-    "weight": 400,
-    "letter-spacing": 0.5px,
-    "text-transform": "inherit",
-  ),
-  "subtitle-1": (
-    "size": 16px,
-    "line-height": 22px !important,
-    "weight": 600,
-    "letter-spacing": 0,
-  ),
-  "subtitle-2": (
-    "size": 12px,
-    "line-height": 16px !important,
-    "weight": 600,
-    "letter-spacing": 0.2px,
-  ),
-  "caption": (
-    "size": 16px,
-    "line-height": 20px !important,
-    "weight": 400,
-    "letter-spacing": 0,
-  ),
-  "h5": (
-    "size": 14px,
-    "line-height": 16px !important,
-    "weight": 400 !important,
-    "letter-spacing": 0.2px,
-  ),
-  "h6": (
-    "size": 14px,
-    "line-height": 22px !important,
-    "weight": 400 !important,
-    "letter-spacing": 0,
-  ),
+  // H1 (Large) (Main Pages)
+  "h1":
+    (
+      "size": 36px,
+      "line-height": 40px !important,
+      "weight": 300,
+      "letter-spacing": 0,
+    ),
+  // H2 (Models & Drawers)
+  "h2":
+    (
+      "size": 24px,
+      "line-height": 40px !important,
+      "weight": 300,
+      "letter-spacing": 0,
+    ),
+  // H3 (Sm) (Sectionals)
+  "h3":
+    (
+      "size": 18px,
+      "line-height": 25px !important,
+      "weight": 400,
+      "letter-spacing": 0,
+    ),
+  // H4 (Card Headers)
+  "h4":
+    (
+      "size": 18px,
+      "line-height": 24px !important,
+      "weight": 300 !important,
+      "letter-spacing": 0.1px !important,
+    ),
+  // B1 (Reg)
+  "body-1":
+    (
+      "size": 16px,
+      "line-height": 22px !important,
+      "weight": 400 !important,
+      "letter-spacing": 0 !important,
+    ),
+  // B2 (Sm) - Hovers & Labels
+  "body-2":
+    (
+      "size": 14px,
+      "line-height": 16px !important,
+      "weight": 400 !important,
+      "letter-spacing": 0 !important,
+    ),
+  // Button Text
+  "button":
+    (
+      "size": 12px,
+      "line-height": 16px !important,
+      "weight": 400 !important,
+      "letter-spacing": 0.5px !important,
+      "text-transform": "inherit",
+    ),
+  // Metric #s
+  "subtitle-1":
+    (
+      "size": 16px,
+      "line-height": 22px !important,
+      "weight": 600 !important,
+      "letter-spacing": 0 !important,
+    ),
+  // Pill Text
+  "subtitle-2":
+    (
+      "size": 12px,
+      "line-height": 16px !important,
+      "weight": 600 !important,
+      "letter-spacing": 0.2px !important,
+    ),
+  // 'optional'
+  "caption":
+    (
+      "size": 16px,
+      "line-height": 20px !important,
+      "weight": 400 !important,
+      "letter-spacing": 0 !important,
+    ),
+  // Nav > Headers
+  "h5":
+    (
+      "size": 14px,
+      "line-height": 16px !important,
+      "weight": 400 !important,
+      "letter-spacing": 0.2px !important,
+    ),
+  // Nav > Menu item 1
+  "h6":
+    (
+      "size": 14px,
+      "line-height": 22px !important,
+      "weight": 400 !important,
+      "letter-spacing": 0 !important,
+    )
 );
 
 // App
