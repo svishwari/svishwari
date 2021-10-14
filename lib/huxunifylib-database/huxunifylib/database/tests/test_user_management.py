@@ -2,13 +2,18 @@
 
 import unittest
 import mongomock
-import huxunifylib.database.db_exceptions
+from hypothesis import given, strategies as st
+
 import huxunifylib.database.user_management as um
 import huxunifylib.database.orchestration_management as am
 import huxunifylib.database.engagement_management as em
 import huxunifylib.database.constants as c
 
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.db_exceptions import (
+    DuplicateName,
+    DuplicateFieldType,
+)
 
 
 class TestUserManagement(unittest.TestCase):
@@ -98,9 +103,7 @@ class TestUserManagement(unittest.TestCase):
             profile_photo=self.sample_user[c.USER_PROFILE_PHOTO],
         )
 
-        with self.assertRaises(
-            huxunifylib.database.db_exceptions.DuplicateName
-        ):
+        with self.assertRaises(DuplicateName):
             um.set_user(
                 database=self.database,
                 okta_id="hf7hr43f7hfr7h7",
@@ -128,6 +131,34 @@ class TestUserManagement(unittest.TestCase):
         user_docs = um.get_all_users(database=self.database)
 
         self.assertIsNotNone(user_docs)
+
+    @given(login_count=st.integers(min_value=0, max_value=9))
+    def test_update_user_success(self, login_count: int) -> None:
+        """Test update_user routine success.
+
+        Args:
+            login_count (int): login_count value to be updated in the user
+                record.
+        """
+
+        # set update_doc dict to update the user_doc
+        update_doc = {c.USER_LOGIN_COUNT: login_count + 1}
+        user_doc = um.update_user(
+            self.database, self.user_doc[c.OKTA_ID], update_doc
+        )
+
+        self.assertTrue(user_doc is not None)
+        self.assertIn(c.USER_LOGIN_COUNT, user_doc)
+        self.assertEqual(login_count + 1, user_doc[c.USER_LOGIN_COUNT])
+
+    def test_update_user_failure_disallowed_field(self) -> None:
+        """Test update_user routine failure with disallowed field."""
+
+        # set update_doc dict to update the user_doc
+        update_doc = {c.OKTA_ID: "jd63bsfd884bdsff7348"}
+
+        with self.assertRaises(DuplicateFieldType):
+            um.update_user(self.database, self.user_doc[c.OKTA_ID], update_doc)
 
     def test_delete_user(self) -> None:
         """Test delete_user routine."""

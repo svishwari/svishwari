@@ -86,7 +86,7 @@ export default {
     height: {
       type: String,
       required: false,
-      default: null,
+      default: "40",
     },
     iconType: {
       type: Boolean,
