@@ -240,12 +240,6 @@ export default {
     }
   }
 
-  // .side-menu-icon {
-  //   position: absolute;
-  //   left: 11.82%;
-  //   right: 81.82%;
-  //   bottom: 79.66%;
-  // }
   // Apply this css only if icon size is 14 otherwise icon size should be 18
   .menu-icon {
     svg {

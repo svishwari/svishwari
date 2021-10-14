@@ -1,5 +1,12 @@
 <template>
-  <div class="d-flex">
+  <div class="d-flex align-center">
+    <span class="text-h6 black--text text--lighten-4 mr-2">
+      Today,
+      {{ appLoadTime | Date("HH:mm A Z") }}
+    </span>
+    <span class="d-flex cursor-pointer" @click="$router.go()">
+      <icon type="refresh" :size="14" class="mx-2 my-2 nav-icon" />
+    </span>
     <v-menu :min-width="200" left offset-y close-on-click>
       <template #activator="{ on }">
         <span class="d-flex cursor-pointer" data-e2e="addicon" v-on="on">
@@ -45,6 +52,7 @@ export default {
         { name: "Audience", path: "AudienceConfiguration" },
         { name: "Engagement", path: "EngagementConfiguration" },
       ],
+      appLoadTime: new Date(),
     }
   },
   methods: {
@@ -72,6 +80,12 @@ export default {
     .v-list-item {
       min-height: 40px !important;
     }
+  }
+}
+.nav-icon {
+  fill: var(--v-black-lighten4);
+  &:hover {
+    fill: var(--v-primary-lighten6);
   }
 }
 </style>
