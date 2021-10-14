@@ -5,7 +5,7 @@
       <div class="d-flex">
         <v-tab
           key="displayAds"
-          class="pa-2 mr-3"
+          class="pa-2 mr-3 text-h5"
           color
           data-e2e="digital-advertising"
           @click="$emit('fetchMetrics', 'ads')"
@@ -14,7 +14,7 @@
         </v-tab>
         <v-tab
           key="email"
-          class="text-subtitle-2"
+          class="text-h5"
           data-e2e="email-marketing"
           @click="$emit('fetchMetrics', 'email')"
         >
@@ -414,8 +414,8 @@ export default {
       .v-tabs-slider-wrapper {
         width: 128px;
         .v-tabs-slider {
-          background-color: var(--v-primary-lighten8) !important;
-          border-color: var(--v-primary-lighten8) !important;
+          background-color: var(--v-primary-lighten6) !important;
+          border-color: var(--v-primary-lighten6) !important;
         }
       }
       .v-tab {
@@ -432,10 +432,10 @@ export default {
           }
         }
         &.v-tab--active {
-          color: var(--v-primary-lighten8) !important;
+          color: var(--v-primary-lighten6) !important;
           svg {
             path {
-              stroke: var(--v-primary-lighten8);
+              stroke: var(--v-primary-lighten6);
             }
           }
         }

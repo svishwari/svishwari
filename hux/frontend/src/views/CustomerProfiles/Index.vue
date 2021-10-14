@@ -40,7 +40,7 @@
                 <tooltip v-if="!item.toolTipText">
                   <template #label-content>
                     <span
-                      class="font-weight-semi-bold"
+                      class="text-subtitle-1 font-weight-semi-bold"
                       v-html="updatedTimeStamp"
                     >
                     </span>
@@ -51,7 +51,7 @@
                 </tooltip>
                 <tooltip v-if="item.toolTipText">
                   <template #label-content>
-                    <span class="font-weight-semi-bold">
+                    <span class="text-subtitle-1 font-weight-semi-bold">
                       <span v-if="item.value == 'percentage'">
                         {{
                           item.subtitle

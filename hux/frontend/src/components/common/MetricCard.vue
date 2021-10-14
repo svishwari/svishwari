@@ -14,7 +14,7 @@
       <div class="flex-grow-1">
         <span
           v-if="!titleTooltip"
-          class="text-h5 text--darken-2"
+          class="text-button text--darken-2"
           :class="
             interactable ? 'primary--text' : 'black--text text--darken-1 '
           "

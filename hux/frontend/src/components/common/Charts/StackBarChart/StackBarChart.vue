@@ -103,9 +103,10 @@ export default {
         } else if (color.variant == "lighten5") {
           barColorCodes.push(colors.primary[color.variant])
         } else {
-          barColorCodes.push(colors[color.base])
+          barColorCodes.push(colors[color.base][color.variant])
         }
       })
+      console.log(barColorCodes)
 
       let stack = d3Shape
         .stack()

@@ -150,7 +150,7 @@
                 </template>
                 <template #hover-content>
                   <div v-if="item[header.value] !== ''">
-                    <div class="neroBlack--text text-h5 mb-2">
+                    <div class="neroBlack--text text-button mb-2">
                       Delivered to:
                     </div>
                     <div
@@ -163,11 +163,11 @@
                           :type="destination.delivery_platform_type"
                           :size="18"
                         />
-                        <span class="ml-1 neroBlack--text text-h5">
+                        <span class="ml-1 neroBlack--text text-button">
                           {{ destination.name }}
                         </span>
                       </div>
-                      <div class="neroBlack--text text-h5">
+                      <div class="neroBlack--text text-button">
                         {{
                           destination.latest_delivery
                             ? destination.latest_delivery.update_time
@@ -322,7 +322,7 @@
                       </template>
                       <template #hover-content>
                         <div>
-                          <div class="neroBlack--text text-h5 mb-2">
+                          <div class="neroBlack--text text-button mb-2">
                             Delivered to:
                           </div>
                           <div
@@ -335,11 +335,11 @@
                                 :type="destination.delivery_platform_type"
                                 :size="18"
                               />
-                              <span class="ml-1 neroBlack--text text-h5">
+                              <span class="ml-1 neroBlack--text text-button">
                                 {{ destination.name }}
                               </span>
                             </div>
-                            <div class="neroBlack--text text-h5">
+                            <div class="neroBlack--text text-button">
                               {{
                                 destination.latest_delivery.update_time
                                   | Date
@@ -491,28 +491,43 @@
 
     <confirm-modal
       v-model="showAudienceRemoveConfirmation"
-      :title="confirmDialog.title"
-      :right-btn-text="confirmDialog.btnText"
-      :body="confirmDialog.body"
+      icon="modal-remove"
+      title="You are about to remove"
+      :sub-title="`${confirmSubtitle}`"
+      right-btn-text="Yes, remove audience"
       @onCancel="showAudienceRemoveConfirmation = false"
       @onConfirm="
         showAudienceRemoveConfirmation = false
         removeAudience()
       "
-    />
+    >
+      <template #body>
+        <div class="pt-6">
+          Are you sure you want to remove this audience from this engagement?
+        </div>
+        <div>
+          By removing this audience, it will not be deleted, but it will become
+          unattached from this engagement.
+        </div>
+      </template>
+    </confirm-modal>
 
     <confirm-modal
       v-model="confirmModal"
+      icon="sad-face"
       type="error"
-      :title="confirmTitle"
+      title="You are about to delete"
+      :sub-title="`${confirmSubtitle}`"
       right-btn-text="Yes, delete engagement"
       left-btn-text="Nevermind!"
       @onCancel="confirmModal = !confirmModal"
       @onConfirm="confirmRemoval()"
     >
       <template #body>
-        <div>Are you sure you want to delete this Engagement&#63;</div>
-        <div class="mb-6">
+        <div class="pt-6">
+          Are you sure you want to delete this Engagement&#63;
+        </div>
+        <div>
           By deleting this engagement you will not be able to recover it and it
           may impact any associated destinations.
         </div>
@@ -556,18 +571,13 @@ export default {
   data() {
     return {
       confirmModal: false,
-      confirmTitle: "",
+      confirmSubtitle: "",
       selectedEngagement: null,
       selectedAudience: null,
       showLookAlikeDrawer: false,
       showAudienceRemoveConfirmation: false,
       selectedEngagementId: "",
       selectedAudienceId: "",
-      confirmDialog: {
-        title: "Remove  audience?",
-        btnText: "Yes, remove it",
-        body: "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement.",
-      },
       breadcrumbItems: [
         {
           text: "Engagements",
@@ -728,7 +738,7 @@ export default {
 
     openModal(engagement) {
       this.selectedEngagement = engagement
-      this.confirmTitle = `You are about to delete ${engagement.name}`
+      this.confirmSubtitle = engagement.name
       this.confirmModal = true
     },
 
@@ -910,8 +920,8 @@ export default {
           isDisabled: false,
           onClick: (value) => {
             this.showAudienceRemoveConfirmation = true
+            this.confirmSubtitle = value.name
             this.selectedEngagementId = engagementId
-            this.confirmDialog.title = `You are about to remove ${value.name}?`
             this.selectedAudienceId = value.id
           },
         },

@@ -11,8 +11,14 @@
     :icon="iconType"
     @click="onClick"
   >
-    <icon v-if="isCustomIcon" class="mr-2" :type="icon" :size="24" />
-    <v-icon v-show="iconPosition == 'left'" dark class="mr-1">
+    <icon
+      v-if="isCustomIcon"
+      class="mr-2"
+      color="primary"
+      :type="icon"
+      :size="24"
+    />
+    <v-icon v-show="iconPosition == 'left'" dark class="mr-1" :color="variant">
       {{ icon }}
     </v-icon>
     <v-spacer> </v-spacer>
@@ -80,7 +86,7 @@ export default {
     height: {
       type: String,
       required: false,
-      default: null,
+      default: "40",
     },
     iconType: {
       type: Boolean,

@@ -14,7 +14,7 @@
         <slot name="default"></slot>
       </span>
     </template>
-    <div class="px-4 py-2 white text-h5">
+    <div class="px-4 py-2 white text-button">
       <slot name="hover-content"></slot>
       <slot name="tooltip"></slot>
     </div>

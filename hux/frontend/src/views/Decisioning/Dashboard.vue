@@ -43,14 +43,18 @@
                   <template #label-content>
                     <div
                       v-if="key === 'current_version'"
-                      class="text-h1 black--text text--lighten-4"
+                      class="text-h1 black--text font-weight-semi-bold"
                     >
                       {{ metric }}
                     </div>
                     <div
                       v-else
                       class="text-h1"
-                      :class="metric < 0.01 ? 'error--text' : 'neroBlack--text'"
+                      :class="
+                        metric < 0.01
+                          ? 'error--text'
+                          : 'black--text font-weight-semi-bold'
+                      "
                     >
                       {{ metric.toFixed(2) }}
                     </div>

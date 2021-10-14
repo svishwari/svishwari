@@ -5,7 +5,11 @@ const VuetifyLoaderPlugin = require("vuetify-loader/lib/plugin")
 module.exports = {
   stories: ["../src/**/*.stories.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
 
-  addons: ["@storybook/addon-essentials", "@storybook/addon-docs"],
+  addons: [
+    "@storybook/addon-essentials",
+    "storybook-addon-designs",
+    "@storybook/addon-docs",
+  ],
 
   webpackFinal: async (config) => {
     config.plugins.push(new VuetifyLoaderPlugin())

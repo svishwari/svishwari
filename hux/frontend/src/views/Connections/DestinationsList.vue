@@ -48,14 +48,18 @@
 
     <confirm-modal
       v-model="confirmModal"
+      icon="sad-face"
       type="error"
-      :title="confirmTitle"
+      title="You are about to remove"
+      :sub-title="`${selectedDestination.name}`"
       right-btn-text="Yes, remove it"
       @onCancel="confirmModal = !confirmModal"
       @onConfirm="confirmRemoval()"
     >
       <template #body>
-        <div>Are you sure you want to remove this destination?</div>
+        <div class="pt-4">
+          Are you sure you want to remove this destination?
+        </div>
         <div class="mb-4">
           By removing this destination you will be impacting
           <span class="error--text">ALL</span> audiences and engagements that
@@ -89,7 +93,6 @@ export default {
     return {
       selectedDestination: {},
       confirmModal: false,
-      confirmTitle: "",
     }
   },
 
@@ -113,7 +116,6 @@ export default {
     }),
     openModal(destination) {
       this.selectedDestination = destination
-      this.confirmTitle = `You are about to remove ${destination.name}`
       this.confirmModal = true
     },
     async confirmRemoval() {
