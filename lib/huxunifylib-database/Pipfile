@@ -9,6 +9,8 @@ pandas = "*"
 tenacity = "*"
 huxunifylib-database = {path = ".", editable = true}
 hypothesis = "*"
+python-dateutil = "*"
+types-python-dateutil = "*"
 
 [dev-packages]
 mongomock = "*"

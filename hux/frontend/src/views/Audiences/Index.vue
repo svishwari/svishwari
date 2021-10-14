@@ -235,15 +235,19 @@
 
     <confirm-modal
       v-model="confirmModal"
+      icon="sad-face"
       type="error"
-      :title="confirmTitle"
+      title="You are about to delete"
+      :sub-title="`${confirmSubtitle}`"
       right-btn-text="Yes, delete it"
       left-btn-text="Nevermind!"
       @onCancel="confirmModal = !confirmModal"
       @onConfirm="confirmRemoval()"
     >
       <template #body>
-        <div>Are you sure you want to delete this audience&#63;</div>
+        <div class="pt-6">
+          Are you sure you want to delete this audience&#63;
+        </div>
         <div class="mb-6">
           By deleting this audience you will not be able to recover it and it
           may impact any associated engagements.
@@ -353,7 +357,7 @@ export default {
       selectedAudience: null,
       showLookAlikeDrawer: false,
       confirmModal: false,
-      confirmTitle: "",
+      confirmSubtitle: "",
     }
   },
   computed: {
@@ -400,7 +404,7 @@ export default {
     },
     openModal(audience) {
       this.selectedAudience = audience
-      this.confirmTitle = `You are about to delete ${audience.name}`
+      this.confirmSubtitle = audience.name
       this.confirmModal = true
     },
     async confirmRemoval() {
