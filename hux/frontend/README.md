@@ -69,6 +69,41 @@ If there are style issues, run `yarn style:fix` to fix them.
 yarn serve:storybook
 ```
 
+## Dev
+
+To connect your localhost to the API in dev, do the following:
+
+1. Create a `.env.dev1` by copying the `.env.local` configuration.
+    ```sh
+    cp .env.local .env.dev1
+    ```
+2. Update the `VUE_APP_API_URL` in `.env.dev1` to the hostname for the API in dev
+    ```
+    // .env.dev1
+    ...
+    VUE_APP_API_URL = https://unified-api-dev.main.use1.hux-unified-dev1.in
+    ```
+
+3. Restart your local development server using the new configuration.
+    ```sh
+    yarn serve --mode dev1
+    ```
+    Note: `--mode` allows you to use a different env file for your local server.
+
+You will also need to create a `token.js` file to store your temporary dev access token.
+
+4. Create the token.js file in `src/api/mock/token.js`
+    ```sh
+    echo -e 'export const TOKEN_OVERRIDE = "paste"' > src/api/mock/token.js
+    ```
+
+5. Replace your token in `token.js` with the one generated in dev.
+
+You should now be able to open http://localhost:8080 and connect with the dev API.
+
+You can verify this in the Network tab in your browser and Mirage will console out
+with `Mirage: Passthrough request for <API request>`.
+
 ## Docker
 
 Test.

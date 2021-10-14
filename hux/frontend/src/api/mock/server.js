@@ -1,3 +1,4 @@
+
 import { belongsTo, createServer, Factory, hasMany, Model } from "miragejs"
 import config from "@/config"
 import AppSerializer from "./serializer"
@@ -98,6 +99,16 @@ export function makeServer({ environment = "development" } = {}) {
       this.namespace = config.apiBasePath
       this.timing = 1000
       defineRoutes(this)
+
+      this.passthrough((request) => {
+        // whenever we connect from local to the dev API, we'll' need to override
+        // the access token with one provided by dev in token.js
+        if (request.url.includes("dev1.in")) {
+          const { TOKEN_OVERRIDE } = require("./token.js")
+          request.requestHeaders["Authorization"] = `Bearer ${TOKEN_OVERRIDE}`
+        }
+        return request
+      })
 
       // pass requests to external APIs through
       this.passthrough(`${config.oktaUrl}/**`)
