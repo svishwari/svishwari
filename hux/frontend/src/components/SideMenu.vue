@@ -29,7 +29,7 @@
         <template #default>
           <div class="px-6 py-5 white">
             <v-icon color="primary"> mdi-information </v-icon>
-            <span class="pl-4 text-caption black--text text--darken-4">
+            <span class="pl-4 text-button black--text text--darken-4">
               This is where your future client accounts will be held.
             </span>
           </div>

@@ -181,7 +181,7 @@
               </span>
             </template>
             <template #hover-content>
-              <div class="d-flex flex-column text-caption">
+              <div class="d-flex flex-column text-button">
                 <span>Audience size</span>
                 <span class="pb-3">
                   {{ item.size | Numeric(true) | Empty }}
@@ -202,7 +202,7 @@
               </span>
             </template>
             <template #hover-content>
-              <div class="d-flex flex-column text-caption">
+              <div class="d-flex flex-column text-button">
                 <span>Audience size</span>
                 <span class="pb-3">{{ item.size | Numeric(true, false) }}</span>
                 <span>Match rate</span>

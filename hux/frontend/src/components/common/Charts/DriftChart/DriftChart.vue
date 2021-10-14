@@ -10,8 +10,8 @@
       :tooltip-style="toolTipStyle"
     >
       <template #content>
-        <div class="text-caption">{{ tooltipValue }}</div>
-        <div class="text-caption">
+        <div class="text-button">{{ tooltipValue }}</div>
+        <div class="text-button">
           {{ tooltipValueDate | Date("MM/DD/YYYY") | Empty }}
         </div>
       </template>

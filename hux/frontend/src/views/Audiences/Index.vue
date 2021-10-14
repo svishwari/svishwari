@@ -156,7 +156,7 @@
                 </template>
                 <template #hover-content>
                   <div>
-                    <div class="neroBlack--text text-caption mb-2">
+                    <div class="neroBlack--text text-button mb-2">
                       Delivered to:
                     </div>
                     <div
@@ -169,11 +169,11 @@
                           :type="deliveries.delivery_platform_type"
                           :size="18"
                         />
-                        <span class="ml-1 neroBlack--text text-caption">
+                        <span class="ml-1 neroBlack--text text-button">
                           {{ deliveries.delivery_platform_name }}
                         </span>
                       </div>
-                      <div class="neroBlack--text text-caption">
+                      <div class="neroBlack--text text-button">
                         {{ deliveries.last_delivered | Date | Empty }}
                       </div>
                     </div>
