@@ -1,6 +1,9 @@
 import Vue from "vue"
-import Vuetify from "vuetify/lib/framework"
+import Vuetify from "vuetify"
 import lightTheme from "./theme"
+
+// vuetify dependencies: mdi icon-font
+import "@mdi/font/css/materialdesignicons.css"
 
 Vue.use(Vuetify)
 

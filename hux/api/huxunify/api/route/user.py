@@ -16,6 +16,7 @@ from huxunifylib.database.user_management import (
     get_user,
     manage_user_favorites,
     get_all_users,
+    update_user,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.decorators import (
@@ -57,6 +58,9 @@ class UserProfile(SwaggerView):
             "description": "Retrieve Individual User profile",
             "schema": UserSchema,
         },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get user details from request."
+        },
         HTTPStatus.NOT_FOUND.value: {
             "schema": NotFoundError,
         },
@@ -80,23 +84,41 @@ class UserProfile(SwaggerView):
         """
 
         okta_id = introspect_token(get_token_from_request(request)[0]).get(
-            "user_id"
+            api_c.OKTA_USER_ID
         )
 
         try:
-            return (
-                UserSchema().dump(get_user(get_db_client(), okta_id)),
-                HTTPStatus.OK,
+            database = get_db_client()
+            user = get_user(database, okta_id)
+
+            # return NOT_FOUND if no corresponding user record is found in DB.
+            if user is None:
+                return {
+                    api_c.MESSAGE: api_c.USER_NOT_FOUND
+                }, HTTPStatus.NOT_FOUND
+
+            # update user record's login_count and update_time in DB and return
+            # the updated record.
+            user = update_user(
+                database,
+                okta_id=okta_id,
+                update_doc={
+                    db_constants.USER_LOGIN_COUNT: (
+                        user.get(db_constants.USER_LOGIN_COUNT, 0) + 1
+                    )
+                },
             )
 
+            return (
+                UserSchema().dump(user),
+                HTTPStatus.OK,
+            )
         except Exception as exc:
-
             logger.error(
                 "%s: %s.",
                 exc.__class__,
                 exc,
             )
-
             raise ProblemException(
                 status=int(HTTPStatus.BAD_REQUEST.value),
                 title=HTTPStatus.BAD_REQUEST.description,
@@ -158,7 +180,7 @@ class AddUserFavorite(SwaggerView):
         """
 
         okta_id = introspect_token(get_token_from_request(request)[0]).get(
-            "user_id"
+            api_c.OKTA_USER_ID
         )
 
         if component_name not in db_constants.FAVORITE_COMPONENTS:
@@ -241,7 +263,7 @@ class DeleteUserFavorite(SwaggerView):
         """
 
         okta_id = introspect_token(get_token_from_request(request)[0]).get(
-            "user_id"
+            api_c.OKTA_USER_ID
         )
 
         if component_name not in db_constants.FAVORITE_COMPONENTS:
@@ -270,9 +292,7 @@ class DeleteUserFavorite(SwaggerView):
         }, HTTPStatus.OK
 
 
-@add_view_to_blueprint(
-    user_bp, api_c.USER_ENDPOINT, "UserView"
-)
+@add_view_to_blueprint(user_bp, api_c.USER_ENDPOINT, "UserView")
 class UserView(SwaggerView):
     """User view class."""
 

@@ -3,7 +3,7 @@
 from flask_marshmallow import Schema
 from marshmallow.fields import Str, Int, validate, List, Nested, Dict
 
-from huxunifylib.database.constants import USER_ROLES
+from huxunifylib.database import constants as db_c
 from huxunify.api.schema.utils import validate_object_id
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 from huxunify.api import constants as api_c
@@ -33,11 +33,12 @@ class UserSchema(Schema):
     last_name = Str()
     phone_number = Str()
     access_level = Str()
-    role = Str(required=True, validate=validate.OneOf(USER_ROLES))
+    role = Str(required=True, validate=validate.OneOf(db_c.USER_ROLES))
     organization = Str()
     subscriptions = List(Str())
     dashboard_configuration = Dict()
     favorites = Nested(Favorites, required=True)
     profile_photo = Str()
-    login_count = Int()
+    login_count = Int(required=True, default=0, example=10)
+    last_login = DateTimeWithZ(required=True, attribute=db_c.UPDATE_TIME)
     modified = DateTimeWithZ(required=True)

@@ -101,6 +101,10 @@ const mutations = {
   SET_GEO_STATES(state, data) {
     state.geoStates = data
   },
+
+  REMOVE_AUDIENCE(state, id) {
+    Vue.delete(state.audiences, id)
+  },
 }
 
 const actions = {
@@ -233,6 +237,16 @@ const actions = {
       const response = await api.audiences.update(id, payload)
       commit("SET_ONE", response.data)
       return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async remove({ commit }, audience) {
+    try {
+      await api.audiences.remove(audience.id)
+      commit("REMOVE_AUDIENCE", audience.id)
     } catch (error) {
       handleError(error)
       throw error

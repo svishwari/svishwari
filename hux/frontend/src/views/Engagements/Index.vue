@@ -452,8 +452,7 @@
     </hux-data-table>
 
     <v-row v-if="rowData.length == 0 && !loading" class="pt-3 pb-7 pl-3">
-      <empty-page>
-        <template #icon>mdi-alert-circle-outline</template>
+      <empty-page type="no-engagement" size="50">
         <template #title>Oops! There’s nothing here yet</template>
         <template #subtitle>
           Plan your engagement ahead of time. You can create the <br />
@@ -492,15 +491,48 @@
 
     <confirm-modal
       v-model="showAudienceRemoveConfirmation"
-      :title="confirmDialog.title"
-      :right-btn-text="confirmDialog.btnText"
-      :body="confirmDialog.body"
+      icon="modal-remove"
+      title="You are about to remove"
+      :sub-title="`${confirmSubtitle}`"
+      right-btn-text="Yes, remove audience"
       @onCancel="showAudienceRemoveConfirmation = false"
       @onConfirm="
         showAudienceRemoveConfirmation = false
         removeAudience()
       "
-    />
+    >
+      <template #body>
+        <div class="pt-6">
+          Are you sure you want to remove this audience from this engagement?
+        </div>
+        <div>
+          By removing this audience, it will not be deleted, but it will become
+          unattached from this engagement.
+        </div>
+      </template>
+    </confirm-modal>
+
+    <confirm-modal
+      v-model="confirmModal"
+      icon="sad-face"
+      type="error"
+      title="You are about to delete"
+      :sub-title="`${confirmSubtitle}`"
+      right-btn-text="Yes, delete engagement"
+      left-btn-text="Nevermind!"
+      @onCancel="confirmModal = !confirmModal"
+      @onConfirm="confirmRemoval()"
+    >
+      <template #body>
+        <div class="pt-6">
+          Are you sure you want to delete this Engagement&#63;
+        </div>
+        <div>
+          By deleting this engagement you will not be able to recover it and it
+          may impact any associated destinations.
+        </div>
+      </template>
+    </confirm-modal>
   </div>
 </template>
 
@@ -538,21 +570,19 @@ export default {
   },
   data() {
     return {
+      confirmModal: false,
+      confirmSubtitle: "",
+      selectedEngagement: null,
       selectedAudience: null,
       showLookAlikeDrawer: false,
       showAudienceRemoveConfirmation: false,
       selectedEngagementId: "",
       selectedAudienceId: "",
-      confirmDialog: {
-        title: "Remove  audience?",
-        btnText: "Yes, remove it",
-        body: "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement.",
-      },
       breadcrumbItems: [
         {
           text: "Engagements",
           disabled: true,
-          icon: "engagements",
+          icon: "speaker_down",
         },
       ],
       loading: true,
@@ -703,7 +733,19 @@ export default {
       setAlert: "alerts/setAlert",
       markFavorite: "users/markFavorite",
       clearFavorite: "users/clearFavorite",
+      deleteEngagement: "engagements/remove",
     }),
+
+    openModal(engagement) {
+      this.selectedEngagement = engagement
+      this.confirmSubtitle = engagement.name
+      this.confirmModal = true
+    },
+
+    async confirmRemoval() {
+      await this.deleteEngagement({ id: this.selectedEngagement.id })
+      this.confirmModal = false
+    },
 
     isUserFavorite(entity, type) {
       return (
@@ -823,7 +865,13 @@ export default {
             this.makeInactiveEngagement(value)
           },
         },
-        { title: "Delete engagement", isDisabled: true },
+        {
+          title: "Delete engagement",
+          isDisabled: false,
+          onClick: () => {
+            this.openModal(engagement)
+          },
+        },
       ]
 
       return actionItems
@@ -872,8 +920,8 @@ export default {
           isDisabled: false,
           onClick: (value) => {
             this.showAudienceRemoveConfirmation = true
+            this.confirmSubtitle = value.name
             this.selectedEngagementId = engagementId
-            this.confirmDialog.title = `You are about to remove ${value.name}?`
             this.selectedAudienceId = value.id
           },
         },

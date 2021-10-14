@@ -154,6 +154,9 @@
       :title="confirmDialog.title"
       :right-btn-text="confirmDialog.btnText"
       :body="confirmDialog.body"
+      :type="confirmDialog.type"
+      :sub-title="confirmDialog.subtitle"
+      :icon="confirmDialog.icon"
       @onCancel="showConfirmModal = false"
       @onConfirm="onConfirmAction()"
     />
@@ -250,6 +253,7 @@ export default {
       deleteActionData: {},
       confirmDialog: {
         title: "Remove  audience?",
+        icon: "sad-face",
         btnText: "Yes, remove it",
         body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
         actionType: "remove-audience",
@@ -269,7 +273,7 @@ export default {
           text: "Engagements",
           disabled: false,
           href: this.$router.resolve({ name: "Engagements" }).href,
-          icon: "engagements",
+          icon: "speaker_down",
         },
       ]
       if (this.engagementList) {
@@ -509,8 +513,11 @@ export default {
         case "remove audience":
           this.showConfirmModal = true
           this.confirmDialog.actionType = "remove-audience"
-          this.confirmDialog.title = `You are about to remove ${event.data.name}`
-          this.confirmDialog.btnText = "Yes, remove it"
+          this.confirmDialog.title = "You are about to remove"
+          this.confirmDialog.icon = "modal-remove"
+          this.confirmDialog.type = "primary"
+          this.confirmDialog.subtitle = event.data.name
+          this.confirmDialog.btnText = "Yes, remove audience"
           this.confirmDialog.body =
             "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement."
           this.deleteActionData = event.data
@@ -533,6 +540,9 @@ export default {
           this.dataPendingMesssage(event, "destination")
           break
         case "edit delivery schedule":
+          this.confirmDialog.icon = "edit"
+          this.confirmDialog.type = "primary"
+          this.confirmDialog.subtitle = ""
           this.confirmDialog.actionType = "edit-schedule"
           this.confirmDialog.title = "You are about to edit delivery schedule."
           this.confirmDialog.btnText = "Yes, edit delivery schedule"
@@ -545,6 +555,9 @@ export default {
           this.confirmDialog.actionType = "remove-destination"
           this.confirmDialog.title = `Remove ${event.data.name} destination?`
           this.confirmDialog.btnText = "Yes, remove it"
+          this.confirmDialog.icon = "sad-face"
+          this.confirmDialog.subtitle = ""
+          this.confirmDialog.type = "error"
           this.confirmDialog.body =
             "You will not be deleting this destination; this destination will not be attached to this specific audience anymore."
           this.deleteActionData = {
