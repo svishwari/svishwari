@@ -15,6 +15,90 @@
       "link": {
         "name": "Configuration"
       }
+    },
+    {
+      "label": "Data Management",
+      "menu": [
+        {
+          "icon": "datasource",
+          "title": "Data Sources",
+          "link": {
+            "name": "Connections"
+          },
+          "size": 14
+        },
+        {
+          "icon": "identity-resolution",
+          "title": "Identity Resolution",
+          "link": {
+            "name": "IdentityResolution"
+          },
+          "size": 14
+        }
+      ]
+    },
+    {
+      "label": "Decisioning",
+      "menu": [
+        {
+          "icon": "models",
+          "title": "Models",
+          "link": {
+            "name": "Models"
+          },
+          "size": 14
+        }
+      ]
+    },
+    {
+      "label": "Customer Insights",
+      "menu": [
+        {
+          "icon": "customer-profiles",
+          "title": "All Customers",
+          "link": {
+            "name": "CustomerProfiles"
+          },
+          "size": 14
+        },
+        {
+          "icon": "playground",
+          "title": "Segment Playground",
+          "link": {
+            "name": "SegmentPlayground"
+          },
+          "size": 14
+        }
+      ]
+    },
+    {
+      "label": "Orchestration",
+      "menu": [
+        {
+          "icon": "destinations",
+          "title": "Destinations",
+          "link": {
+            "name": "DestinationConfiguration"
+          },
+          "size": 16
+        },
+        {
+          "icon": "audiences",
+          "title": "Audiences",
+          "link": {
+            "name": "Audiences"
+          },
+          "size": 18
+        },
+        {
+          "icon": "speaker_up",
+          "title": "Engagements",
+          "link": {
+            "name": "Engagements"
+          },
+          "size": 16
+        }
+      ]
     }
   ]
 }

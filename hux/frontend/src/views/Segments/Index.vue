@@ -18,9 +18,9 @@ export default {
     return {
       breadcrumbItems: [
         {
-          text: "Configurations",
+          text: "Segment Playground",
           disabled: true,
-          icon: "configuration",
+          icon: "playground",
         },
       ],
     }

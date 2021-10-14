@@ -12,15 +12,15 @@
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 export default {
-  name: "DataSources",
+  name: "IdentityResolution",
   components: { PageHeader, Breadcrumb },
   data() {
     return {
       breadcrumbItems: [
         {
-          text: "Configurations",
+          text: "Identity Resolution",
           disabled: true,
-          icon: "configuration",
+          icon: "identity-resolution",
         },
       ],
     }

@@ -18,9 +18,9 @@ export default {
     return {
       breadcrumbItems: [
         {
-          text: "Configurations",
+          text: "Data Sources",
           disabled: true,
-          icon: "configuration",
+          icon: "datasource",
         },
       ],
     }
