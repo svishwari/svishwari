@@ -11,22 +11,21 @@
         </div>
       </template>
       <template #right>
-        <v-icon
-          size="22"
-          color="primary"
-          class="icon-border pa-2 ma-1"
-          @click="refreshEntity()"
-        >
-          mdi-refresh
-        </v-icon>
-        <v-icon
-          size="22"
-          color="primary"
-          class="icon-border pa-2 ma-1"
-          @click="editEngagement()"
-        >
-          mdi-pencil
-        </v-icon>
+        <div class="d-flex align-center">
+          <icon
+            type="pencil"
+            :size="18"
+            class="cursor-pointer mr-7"
+            color="black-darken4"
+            @click.native="editEngagement()"
+          />
+          <icon
+            type="dots-vertical"
+            :size="18"
+            class="cursor-pointer mr-7"
+            color="black-darken4"
+          />
+        </div>
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />

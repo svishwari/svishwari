@@ -1,8 +1,22 @@
 <template>
   <div class="engagements-wrap">
-    <page-header :header-height-changes="'py-3'">
+    <page-header class="py-5" :header-height="110">
       <template #left>
-        <breadcrumb :items="breadcrumbItems" />
+        <div>
+          <breadcrumb :items="breadcrumbItems" />
+        </div>
+        <div class="text-subtitle-1 font-weight-regular">
+          Start making meaningful connections with current and future customers
+          by targeting your created (or new) audiences.
+        </div>
+      </template>
+      <template #right>
+        <icon
+          type="filter"
+          :size="22"
+          class="cursor-pointer"
+          color="black-darken4"
+        />
       </template>
     </page-header>
     <page-header class="top-bar" :header-height="71">
@@ -541,6 +555,7 @@ import { mapGetters, mapActions } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
+import Icon from "@/components/common/Icon"
 import huxButton from "@/components/common/huxButton"
 import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
 import Avatar from "../../components/common/Avatar.vue"
@@ -556,6 +571,7 @@ export default {
   components: {
     PageHeader,
     Breadcrumb,
+    Icon,
     huxButton,
     EmptyPage,
     HuxDataTable,
