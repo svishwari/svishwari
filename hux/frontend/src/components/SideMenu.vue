@@ -80,7 +80,7 @@
         </v-list-item-title>
       </v-list-item>
 
-      <div v-if="item.menu" class="pb-2">
+      <div v-if="item.menu">
         <v-list-item
           v-for="menu in item.menu"
           :key="menu.title"
@@ -195,6 +195,7 @@ export default {
     border-top-right-radius: 40px;
     border-bottom-right-radius: 40px;
     min-height: 40px;
+    max-height: 40px;
     svg {
       fill: var(--v-black-lighten4);
     }
