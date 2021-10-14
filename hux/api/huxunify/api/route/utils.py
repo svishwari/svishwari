@@ -481,7 +481,7 @@ def get_start_end_dates(request: dict, delta: int) -> (datetime, datetime):
         delta (int) : Time in months.
 
     Returns:
-        start_date, end_date (Tuple): Date range.
+        start_date, end_date (datetime, datetime): Date range.
     """
 
     start_date = (
