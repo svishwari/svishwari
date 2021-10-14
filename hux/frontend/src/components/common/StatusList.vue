@@ -552,12 +552,6 @@ export default {
       color: var(--v-black-darken4);
     }
   }
-  .empty-destinations {
-    .no-destinations {
-      font-size: 12px;
-      line-height: 16px;
-    }
-  }
   .v-list {
     .v-list-item {
       .icon-col {
@@ -571,13 +565,9 @@ export default {
       .size-col {
         min-width: 60px;
         max-width: 85px;
-        font-size: 12px;
-        line-height: 16px;
         color: var(--v--neroBlack-base);
       }
       .deliverdOn-col {
-        font-size: 12px;
-        line-height: 16px;
         color: var(--v-black-darken4);
         min-width: 60px;
       }
@@ -597,8 +587,6 @@ export default {
   .v-list-item {
     &.theme--light {
       min-height: 32px !important;
-      font-size: 14px;
-      line-height: 22px;
       color: var(--v-black-darken4);
       &.v-list-item--disabled {
         color: var(--v-black-lighten3);

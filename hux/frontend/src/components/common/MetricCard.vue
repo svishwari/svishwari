@@ -124,7 +124,6 @@ export default {
     cursor: default;
   }
   .item-headline {
-    font-size: 12px;
     color: var(--v-black-darken1) !important;
   }
   .v-list-item__title {

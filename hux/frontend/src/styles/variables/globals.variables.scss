@@ -4,16 +4,16 @@
 // Type
 $body-font-family: "Open Sans", sans-serif;
 $heading-font-family: $body-font-family;
+$border-radius-root: 12px;
 $font-size-root: 14px;
 $headings: (
   // H1 (Large) (Main Pages)
-  "h1":
-    (
+  "h1": (
       "size": 36px,
       "line-height": 40px,
       "weight": 300,
       "letter-spacing": 0,
-    ),
+  ),
   // H2 (Models & Drawers)
   "h2":
     (
@@ -107,7 +107,7 @@ $headings: (
 
 // App
 $material-light: (
-  "background": #ffffff,
+  "background": #f9fafb,
   "primary-text-percent": 1,
   "text-color": "#1e1e1e",
 );

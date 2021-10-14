@@ -752,8 +752,6 @@ export default {
       padding: 10px;
       margin-right: 5px !important;
       .text-caption {
-        font-size: 12px;
-        line-height: 16px;
         margin: 0 !important;
       }
       .font-weight-semi-bold {
