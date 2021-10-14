@@ -1061,7 +1061,7 @@ async def get_spending_by_gender_async(
     """Get spending details of customer by gender.
 
     Args:
-        session (clientSession): Async IO http client session.
+        session (ClientSession): Async IO http client session.
         token (str): OKTA JWT Token.
         start_date (str): String value of start date.
         end_date (str): String value of end date.
