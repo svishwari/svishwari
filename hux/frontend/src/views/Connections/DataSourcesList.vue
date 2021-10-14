@@ -71,8 +71,10 @@
 
     <confirm-modal
       v-model="confirmModal"
+      icon="sad-face"
       type="error"
-      :title="confirmTitle"
+      title="You are about to remove"
+      :sub-title="`${selectedDataSource.name}`"
       body="Are you sure you want to remove this pending data source?"
       right-btn-text="Yes, remove it"
       @onCancel="confirmModal = !confirmModal"
@@ -100,7 +102,6 @@ export default {
       drawer: false,
       selectedDataSource: {},
       confirmModal: false,
-      confirmTitle: "",
     }
   },
 
@@ -124,7 +125,6 @@ export default {
     }),
     openModal(dataSource) {
       this.selectedDataSource = dataSource
-      this.confirmTitle = `You are about to remove ${dataSource.name}`
       this.confirmModal = true
     },
 
