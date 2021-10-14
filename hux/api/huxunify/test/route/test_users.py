@@ -40,18 +40,14 @@ class TestUserRoutes(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.database = DatabaseClient("localhost", 27017, None, None).connect()
 
         mock.patch(
             "huxunify.api.route.user.get_db_client",
             return_value=self.database,
         ).start()
 
-        self.audience_id = create_audience(self.database, "Test Audience", [])[
-            db_c.ID
-        ]
+        self.audience_id = create_audience(self.database, "Test Audience", [])[db_c.ID]
         self.delivery_platform = set_delivery_platform(
             self.database,
             db_c.DELIVERY_PLATFORM_FACEBOOK,
@@ -80,7 +76,6 @@ class TestUserRoutes(TestCase):
         )
 
         # write a user to the database
-
         self.user_info = set_user(
             self.database,
             t_c.VALID_RESPONSE["uid"],
@@ -147,12 +142,9 @@ class TestUserRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
         expected_response_message = (
-            f"The ID <{invalid_audience_id}> does "
-            f"not exist in the database!"
+            f"The ID <{invalid_audience_id}> does " f"not exist in the database!"
         )
-        self.assertEqual(
-            response.json.get("message"), expected_response_message
-        )
+        self.assertEqual(response.json.get("message"), expected_response_message)
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
 
     def test_deleting_audience_from_favorite(self):
@@ -196,23 +188,60 @@ class TestUserRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        expected_response_message = (
-            f"{self.audience_id} not part of user " f"favorites"
-        )
-        self.assertEqual(
-            response.json.get("message"), expected_response_message
-        )
+        expected_response_message = f"{self.audience_id} not part of user " f"favorites"
+        self.assertEqual(response.json.get("message"), expected_response_message)
 
-    def test_get_user_profile(self):
-        """Tests getting user profile using Okta ID."""
+    def test_get_user_profile_success(self):
+        """Test success response of getting user profile using Okta ID."""
 
-        endpoint = (
-            f"{t_c.BASE_ENDPOINT}" f"{api_c.USER_ENDPOINT}/" f"{api_c.PROFILE}"
-        )
+        endpoint = f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.PROFILE}"
 
         response = self.app.get(
             endpoint,
             headers=t_c.STANDARD_HEADERS,
         )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
         t_c.validate_schema(UserSchema(), response.json)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_get_user_profile_bad_request_failure(self):
+        """Test 400 response of getting user profile using Okta ID."""
+
+        # mock invalid request for introspect call
+        request_mocker = requests_mock.Mocker()
+        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.INVALID_OKTA_RESPONSE)
+        request_mocker.start()
+
+        endpoint = f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.PROFILE}"
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_get_user_profile_not_found_failure(self):
+        """Test 404 response of getting user profile using Okta ID."""
+
+        incorrect_okta_response = {
+            "active": True,
+            "username": "john smith",
+            "uid": "12345678",
+        }
+
+        # mock incorrect request for introspect call so that the user is not
+        # present in mock DB
+        request_mocker = requests_mock.Mocker()
+        request_mocker.post(t_c.INTROSPECT_CALL, json=incorrect_okta_response)
+        request_mocker.start()
+
+        endpoint = f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.PROFILE}"
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual({api_c.MESSAGE: api_c.USER_NOT_FOUND}, response.json)
