@@ -738,7 +738,7 @@ export default {
 
     openModal(engagement) {
       this.selectedEngagement = engagement
-      this.confirmTitle = engagement.name
+      this.confirmSubtitle = engagement.name
       this.confirmModal = true
     },
 
