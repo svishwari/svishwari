@@ -15,7 +15,6 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
     cy.location("pathname").should("eq", route.customerProfiles)
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(5000)
 
     // click on view all customer profiles button
     cy.get(selector.customerProfile.viewAllCustomers).click()

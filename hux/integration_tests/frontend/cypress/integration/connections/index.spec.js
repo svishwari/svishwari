@@ -61,7 +61,6 @@ describe("Tests data sources and destinations in connections", () => {
           .contains("Yes, remove it")
           .eq(0)
           .click()
-        cy.wait(2000)
         cy.get(selector.datasources).then(($elem) => {
           if ($elem.length != dataSourceAddCount) {
             //add a data source
