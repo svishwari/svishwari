@@ -1,8 +1,10 @@
 # pylint: disable=too-many-lines
 """Paths for Orchestration API"""
+import asyncio
 from http import HTTPStatus
 from typing import Tuple, Union
 from datetime import datetime, timedelta
+import aiohttp
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
@@ -39,9 +41,10 @@ from huxunify.api.schema.engagement import (
 )
 from huxunify.api.data_connectors.cdp import (
     get_customers_overview,
-    get_demographic_by_state,
-    get_spending_by_gender,
-    get_city_ltvs,
+    get_demographic_by_state_async,
+    get_city_ltvs_async,
+    get_spending_by_gender_async,
+    get_customers_overview_async,
 )
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.okta import (
@@ -100,6 +103,61 @@ def add_destinations(
             database, object_ids
         )
     return None
+
+
+async def get_audience_insights_async(token: str, audience_filters: dict):
+    """Fetch audience insights from CDM
+
+    Args:
+        token (str): OKTA JWT token.
+        audience_filters (dict): Audience filters.
+
+    Returns:
+        dict: Audience insights object.
+    """
+    audience_insights = {}
+    filters = (
+        {api_c.AUDIENCE_FILTERS: audience_filters}
+        if audience_filters
+        else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+    )
+    async with aiohttp.ClientSession() as session:
+        responses = await asyncio.gather(
+            get_demographic_by_state_async(
+                session,
+                token,
+                filters,
+            ),
+            get_city_ltvs_async(
+                session,
+                token,
+                filters,
+            ),
+            get_spending_by_gender_async(
+                session,
+                token,
+                filters=filters,
+                start_date=str(datetime.utcnow().date() - timedelta(days=180)),
+                end_date=str(datetime.utcnow().date()),
+            ),
+            get_customers_overview_async(
+                session,
+                token,
+                filters,
+            ),
+        )
+    audience_insights[api_c.DEMOGRAPHIC] = responses[0]
+    audience_insights[api_c.INCOME] = responses[1]
+    audience_insights[api_c.SPEND] = group_gender_spending(responses[2])
+    customers_overview = responses[3]
+    audience_insights[api_c.GENDER] = {
+        gender: {
+            api_c.POPULATION_PERCENTAGE: customers_overview.get(gender, 0),
+            api_c.SIZE: customers_overview.get(f"{gender}_{api_c.COUNT}", 0),
+        }
+        for gender in api_c.GENDERS
+    }
+    return audience_insights
 
 
 @add_view_to_blueprint(
@@ -167,11 +225,12 @@ class AudienceView(SwaggerView):
         # do replace root by bringing the nested audience up a level.
         _ = [x.update(audience_dict.get(x[db_c.ID])) for x in audiences]
 
-        # # get customer sizes
+        # get user id
         token_response = get_token_from_request(request)
         user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
 
         # TODO - ENABLE AFTER WE HAVE A CACHING STRATEGY IN PLACE
+        # # get customer sizes
         # customer_size_dict = get_customers_count_async(
         #     token_response[0], audiences
         # )
@@ -559,41 +618,12 @@ class AudienceInsightsGetView(SwaggerView):
                 database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
             )
 
-        customers = get_customers_overview(
-            token_response[0],
-            {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
-        )
-        audience_insights = {
-            api_c.DEMOGRAPHIC: get_demographic_by_state(
+        audience_insights = asyncio.run(
+            get_audience_insights_async(
                 token_response[0],
                 audience[api_c.AUDIENCE_FILTERS],
-            ),
-            api_c.INCOME: get_city_ltvs(
-                token_response[0],
-                {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
-            ),
-            api_c.SPEND: group_gender_spending(
-                get_spending_by_gender(
-                    token_response[0],
-                    filters={
-                        api_c.AUDIENCE_FILTERS: audience[
-                            api_c.AUDIENCE_FILTERS
-                        ]
-                    },
-                    start_date=str(
-                        datetime.utcnow().date() - timedelta(days=180)
-                    ),
-                    end_date=str(datetime.utcnow().date()),
-                )
-            ),
-            api_c.GENDER: {
-                gender: {
-                    api_c.POPULATION_PERCENTAGE: customers.get(gender, 0),
-                    api_c.SIZE: customers.get(f"{gender}_{api_c.COUNT}", 0),
-                }
-                for gender in api_c.GENDERS
-            },
-        }
+            )
+        )
 
         return (
             AudienceInsightsGetSchema(unknown=INCLUDE).dump(audience_insights),
@@ -1094,6 +1124,10 @@ class SetLookalikeAudience(SwaggerView):
         Returns:
             Tuple[dict, int]: lookalike audience configuration,
                 HTTP status code.
+
+        Raises:
+            FailedDeliveryPlatformDependencyError: Delivery Platform Dependency
+                error.
         """
 
         body = LookalikeAudiencePostSchema().load(

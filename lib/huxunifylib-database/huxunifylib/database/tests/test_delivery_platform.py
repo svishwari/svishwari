@@ -371,6 +371,25 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertFalse([p for p in platforms if c.DELETED in p])
 
     @mongomock.patch(servers=(("localhost", 27017),))
+    def test_update_doc_delivery_platform(self):
+        """Test update doc delivery platform."""
+
+        # Get delivery platform
+        doc = dpm.get_delivery_platform(
+            self.database, self.delivery_platform_doc[c.ID]
+        )
+        # ensure enabled is False
+        self.assertFalse(doc.get(c.ENABLED))
+
+        # update enabled to True
+        doc = dpm.update_delivery_platform_doc(
+            self.database, doc[c.ID], {c.ENABLED: True}
+        )
+
+        # ensure enabled is True
+        self.assertTrue(doc.get(c.ENABLED))
+
+    @mongomock.patch(servers=(("localhost", 27017),))
     def test_connection_status(self):
         """Test connection status functions."""
 

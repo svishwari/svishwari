@@ -307,9 +307,6 @@ class DeleteCdpDataSources(SwaggerView):
         security:
             - Bearer: ["Authorization"]
 
-        Args:
-            datasources (str): Comma-separated data source types to be deleted.
-
         Returns:
             Tuple[str, int]: Message, HTTP status code.
         """

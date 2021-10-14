@@ -31,7 +31,13 @@ limit-inference-results=100
 
 # List of plugins (as comma separated values of python module names) to load,
 # usually to register additional checkers.
-load-plugins=
+load-plugins=pylint.extensions.docstyle, pylint.extensions.docparams
+
+# docstring warnings configuration
+accept-no-param-doc=no
+accept-no-return-doc=no
+accept-no-raise-doc=no
+accept-no-yields-doc=no
 
 # Pickle collected data for later comparisons.
 persistent=yes

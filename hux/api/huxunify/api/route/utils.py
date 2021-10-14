@@ -185,15 +185,16 @@ def get_friendly_delivered_time(delivered_time: datetime) -> str:
 def get_next_schedule(
     cron_expression: str, start_date: datetime
 ) -> Union[datetime, None]:
-    """
+    """Get the next schedule from the cron expression.
 
     Args:
-        cron_expression (str): Cron Expression of the schedule
-        start_date (datetime): Start Datetime
+        cron_expression (str): Cron Expression of the schedule.
+        start_date (datetime): Start Datetime.
 
     Returns:
-        next_schedule(datetime): Next Schedule datetime
+        next_schedule(datetime): Next Schedule datetime.
     """
+
     if isinstance(cron_expression, str) and isinstance(start_date, datetime):
         try:
             return croniter(cron_expression, start_date).get_next(datetime)
@@ -341,9 +342,9 @@ class Validation:
             int: Result of the integer conversion.
 
         Raises:
-            ValidationError: Error that is raised if input is invalid.
-
+            InputParamsValidationError: Error that is raised if input is invalid.
         """
+
         # max_value added to protect snowflake/and other apps that
         # are not able to handle 32int+
         max_value = 2147483647
@@ -368,8 +369,8 @@ class Validation:
             bool: Result of the boolean conversion.
 
         Raises:
-            ValidationError: Error that is raised if input is invalid.
-
+            InputParamsValidationError: Error that is raised if input is
+                invalid.
         """
 
         if value.lower() == "true":
@@ -393,8 +394,8 @@ class Validation:
             datetime: datetime object for the string date passed in
 
         Raises:
-            ValidationError: Error that is raised if input is invalid.
-
+            InputParamsValidationError: Error that is raised if input is
+                invalid.
         """
 
         try:
@@ -417,12 +418,9 @@ class Validation:
             end_date (str): Input end date string.
             date_format (str): Date string format.
 
-        Returns:
-            None
-
         Raises:
-            ValidationError: Error that is raised if input is invalid.
-
+            InputParamsValidationError: Error that is raised if input is
+                invalid.
         """
 
         start = Validation.validate_date(start_date, date_format)
@@ -442,12 +440,9 @@ class Validation:
         Args:
             hux_id (str): Hux ID.
 
-        Returns:
-            None
-
         Raises:
-            ValidationError: Error that is raised if input ID is invalid.
-
+            InputParamsValidationError: Error that is raised if input ID is
+                invalid.
         """
 
         if not re.match("^HUX\d{15}$", hux_id):
@@ -475,3 +470,20 @@ def is_component_favorite(
         return True
 
     return False
+
+
+def get_user_favorites(okta_user_id: str, component_name: str) -> list:
+    """Get user favorites for a component
+
+    Args:
+        okta_user_id (str): OKTA JWT token.
+        component_name (str): Name of component in user favorite.
+
+    Returns:
+        list: List of ids of favorite component
+    """
+    user_favorites = get_user(get_db_client(), okta_user_id).get(
+        constants.FAVORITES
+    )
+
+    return user_favorites.get(component_name, [])

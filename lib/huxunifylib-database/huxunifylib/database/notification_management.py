@@ -5,6 +5,7 @@ from typing import Union
 
 import pymongo
 from bson import ObjectId
+from dateutil.relativedelta import relativedelta
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.constants as c
@@ -47,10 +48,22 @@ def create_notification(
         c.NOTIFICATIONS_COLLECTION
     ]
 
+    collection.create_index(c.EXPIRE_AT, expireAfterSeconds=0)
+
     # get current time
     current_time = datetime.utcnow()
+    expire_time = current_time + relativedelta(months=3)
+
+    # 3 months for critical, 1 month for informational
+    if notification_type == c.NOTIFICATION_TYPE_INFORMATIONAL:
+        expire_time = current_time + relativedelta(months=1)
+    elif notification_type == c.NOTIFICATION_TYPE_SUCCESS:
+        expire_time = current_time + relativedelta(months=6)
+    elif notification_type == c.NOTIFICATION_TYPE_CRITICAL:
+        expire_time = current_time + relativedelta(months=6)
 
     doc = {
+        c.EXPIRE_AT: expire_time,
         c.NOTIFICATION_FIELD_TYPE: notification_type,
         c.NOTIFICATION_FIELD_DESCRIPTION: description,
         c.NOTIFICATION_FIELD_CREATED: current_time,
@@ -70,7 +83,6 @@ def create_notification(
     return None
 
 
-# TODO should this return a list of a dict that contains all the notifications?
 @retry(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
@@ -198,3 +210,29 @@ def delete_notification(
         logging.error(exc)
 
     return False
+
+
+def get_notification(
+    database: DatabaseClient, notification_id: ObjectId
+) -> Union[dict, None]:
+    """To get notification
+
+    Args:
+        database (DatabaseClient): MongoDB Database Client
+        notification_id (ObjectId): MongoDB Object Id
+
+    Returns:
+        Tuple[dict,None]:MongoDB Notification document else None
+
+    """
+    # get collection
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.NOTIFICATIONS_COLLECTION
+    ]
+
+    try:
+        return collection.find_one({c.ID: notification_id})
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None

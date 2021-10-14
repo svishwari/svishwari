@@ -106,6 +106,10 @@ const mutations = {
   SET_FILTERED_DELIVERIES(state, deliveries) {
     state.filteredDeliveries = deliveries
   },
+
+  REMOVE_ENGAGEMENT(state, id) {
+    Vue.delete(state.items, id)
+  },
 }
 
 const actions = {
@@ -201,6 +205,16 @@ const actions = {
         engagement.desciption
       )
       commit("SET_ONE", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async remove({ commit }, engagement) {
+    try {
+      await api.engagements.remove(engagement.id)
+      commit("REMOVE_ENGAGEMENT", engagement.id)
     } catch (error) {
       handleError(error)
       throw error

@@ -100,6 +100,19 @@ const actions = {
     }
   },
 
+  async remove({ commit }, destination) {
+    try {
+      const response = await api.destinations.remove(
+        destination.id,
+        destination.data
+      )
+      commit("SET_ONE", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async constants({ commit }) {
     try {
       const response = await api.destinations.constants()

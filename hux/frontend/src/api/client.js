@@ -88,6 +88,10 @@ client["destinations"].validate = (data) => {
   return http.post("/destinations/validate", data)
 }
 
+client["destinations"].remove = (id, data) => {
+  return http.patch(`/destinations/${id}`, data)
+}
+
 client["destinations"].dataExtensions = (resourceId) => {
   return http.get(`/destinations/${resourceId}/data-extensions`)
 }
@@ -201,6 +205,10 @@ client["engagements"].getCampaigns = ({
     `/engagements/${resourceId}/audience/${audienceId}/destination/${destinationId}/campaigns`
   )
 }
+
+client["engagements"].remove = (resourceId) => {
+  return http.delete(`/engagements/${resourceId}`)
+}
 //#endregion Engagement custom endpoints
 
 //#region Customer Identity endpoint(s)
@@ -257,6 +265,10 @@ client["audiences"].geoCountries = (resourceId) => {
 
 client["audiences"].geoStates = (resourceId) => {
   return http.get(`/audiences/${resourceId}/states`)
+}
+
+client["audiences"].remove = (resourceId) => {
+  return http.delete(`/audiences/${resourceId}`)
 }
 //#endregion
 
