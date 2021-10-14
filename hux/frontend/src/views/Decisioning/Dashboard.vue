@@ -8,13 +8,15 @@
         <template #right>
           <v-menu v-model="modalOptions" close-on-click offset-y left>
             <template #activator>
-              <icon
-                type="dots-vertical"
-                :size="18"
-                class="cursor-pointer mr-7"
-                color="black-darken4"
-                @click.native="modalOptions = !modalOptions"
-              />
+              <span data-e2e="model-dashboard-options">
+                <icon
+                  type="dots-vertical"
+                  :size="18"
+                  class="cursor-pointer mr-7"
+                  color="black-darken4"
+                  @click.native="modalOptions = !modalOptions"
+                />
+              </span>
             </template>
             <template #default>
               <div

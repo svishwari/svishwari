@@ -18,7 +18,7 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
     cy.wait(5000)
 
     // click on view all customer profiles button
-    cy.get(selector.customerProfile.viewAllCustomers).click()
+    cy.get(selector.customerProfile.customeroverview).eq(0).click()
 
     // select first customer in drawer
     cy.get(selector.customerProfile.customerID).first().click()
