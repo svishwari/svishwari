@@ -225,11 +225,12 @@ class AudienceView(SwaggerView):
         # do replace root by bringing the nested audience up a level.
         _ = [x.update(audience_dict.get(x[db_c.ID])) for x in audiences]
 
-        # # get customer sizes
+        # get user id
         token_response = get_token_from_request(request)
         user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
 
         # TODO - ENABLE AFTER WE HAVE A CACHING STRATEGY IN PLACE
+        # # get customer sizes
         # customer_size_dict = get_customers_count_async(
         #     token_response[0], audiences
         # )
