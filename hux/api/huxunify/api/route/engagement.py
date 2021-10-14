@@ -220,11 +220,10 @@ class IndividualEngagementSearch(SwaggerView):
         user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
         favorite_engagements = get_user_favorites(user_id, db_c.ENGAGEMENTS)
 
-        if (
+       engagement[api_c.FAVORITE] = (
             favorite_engagements
             and engagement.get(db_c.ID) in favorite_engagements
-        ):
-            engagement[api_c.FAVORITE] = True
+        )
 
         return (
             EngagementGetSchema().dump(engagement),
