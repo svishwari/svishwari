@@ -629,7 +629,7 @@ class TestEngagementRoutes(TestCase):
         ]
 
         # set favorite engagement
-        _ = manage_user_favorites(
+        manage_user_favorites(
             self.database,
             t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
             db_c.ENGAGEMENTS,
