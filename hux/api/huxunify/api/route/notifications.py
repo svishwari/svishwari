@@ -7,6 +7,7 @@ from time import sleep
 from datetime import datetime, timedelta, timezone
 
 import pymongo
+from bson import ObjectId
 from flask import Blueprint, request, Response
 from flasgger import SwaggerView
 
@@ -15,7 +16,10 @@ from huxunifylib.database import (
     constants as db_c,
     notification_management,
 )
-from huxunify.api.schema.notifications import NotificationsSchema
+from huxunify.api.schema.notifications import (
+    NotificationsSchema,
+    NotificationSchema,
+)
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
@@ -219,3 +223,64 @@ class NotificationStream(SwaggerView):
 
         # return the event stream response
         return Response(event_stream(), mimetype="text/event-stream")
+
+
+@add_view_to_blueprint(
+    notifications_bp,
+    f"/{api_c.NOTIFICATIONS_ENDPOINT}/<{api_c.NOTIFICATION_ID}>",
+    "NotificationSearch",
+)
+class NotificationSearch(SwaggerView):
+    """Notification search class."""
+
+    parameters = [
+        {
+            "name": api_c.NOTIFICATION_ID,
+            "in": "path",
+            "type": "string",
+            "description": "ObjectId of Notification",
+            "example": "614e14bdcc267d93d62f44f4",
+            "required": True,
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Notification Details",
+            "schema": NotificationSchema,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.NOTIFICATIONS_TAG]
+
+    @api_error_handler()
+    def get(self, notification_id: str) -> Tuple[dict, int]:
+        """Retrieves notification.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            notification_id (str): Notification Id
+
+        Returns:
+            Tuple[dict, int] dict of notifications, HTTP status code.
+        """
+        notification_id = ObjectId(notification_id)
+        notification = notification_management.get_notification(
+            get_db_client(), notification_id
+        )
+
+        if not notification:
+            logger.error(
+                "Could not find notification with id %s.",
+                notification_id,
+            )
+            return {
+                "message": api_c.NOTIFICATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
+        return (
+            NotificationSchema().dump(notification),
+            HTTPStatus.OK,
+        )
