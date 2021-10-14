@@ -38,6 +38,9 @@ export default {
   dataSourcesAdd: "[data-e2e='dataSourcesAddList']",
   connections: "a[href='/connections']",
   addDataSource: "[data-e2e='addDataSource']",
+  pendingDataSource: "[data-e2e='data-source-list-pending-button']",
+  pendingDataSourceRemove: "[data-e2e='data-source-list-pending-remove']",
+  removeDataSourceConfirmation: "[data-e2e='remove-data-source-confirmation']",
 
   //destinations
   destination: {
@@ -74,7 +77,8 @@ export default {
     addAudience: "[data-e2e='add-audience']",
     addDestination: "[data-e2e='add-destination']",
     selectAudience: "[data-e2e='audience-select-button']",
-    selectDestination: "[data-e2e='destination-select-button']",
+    selectDestination: "[data-e2e='destination-select-button-qualtrics']",
+    salesForceAddButton: "[data-e2e='destination-select-button-sfmc']",
     exitDrawer: "[data-e2e='click-outside']",
     exitDataExtensionDrawer: "[data-e2e='destination-added']",
     activeEngagement: "[data-e2e='enagement-active']",
@@ -96,6 +100,7 @@ export default {
       lastDeliveredColumn: "[data-e2e='last-delivered']",
       audienceTableExpand: "[data-e2e='expand-audience']",
     },
+    destinationRows: '[data-e2e="destination-rows"]',
   },
 
   //Customer Profiles
@@ -164,6 +169,18 @@ export default {
     incomeChart: "[data-e2e='income-chart']",
     genderSpendChart: "[data-e2e='gender-spend-chart']",
     genderChart: "[data-e2e='gender-chart']",
+    list: {
+      audienceTable: "[data-e2e='audience-table']",
+      audienceTableHeaders: "table thead tr",
+      lastDeliveredColumn: "[data-e2e='last-delivered']",
+    },
+    addAudiences: "a[href='/audiences/add']",
+    audienceName: "[data-e2e='audience-name']",
+    addEngagement: "[data-e2e='add-engagement']",
+    selectEngagement: "[data-e2e='engagement-list']",
+    addDestination: "[data-e2e='add-destination-audience']",
+    createAudience: "[data-e2e='create-audience']",
+    salesForceAddButton: "[data-e2e='destination-select-button-sfmc']",
   },
 
   customers: "a[href='/customers']",

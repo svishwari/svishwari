@@ -81,6 +81,7 @@
                   :is-added="isEngagementSelected(engagement)"
                   :enable-blue-background="isEngagementSelected(engagement)"
                   class="my-3 mb-4 mt-1"
+                  data-e2e="engagement-list"
                   @click="onEngagementClick(engagement)"
                 >
                   <v-menu open-on-hover offset-x offset-y :max-width="177">

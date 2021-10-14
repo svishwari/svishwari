@@ -52,10 +52,50 @@ describe("Tests data sources and destinations in connections", () => {
             .contains(/Active|Pending/)
         }
 
-        cy.get(".v-main").click()
-      } // else {
-      //   throw new Error("All Data Sources are already added!!!")
-      // }
+        cy.get(selector.engagement.exitDrawer).click()
+      } else {
+        cy.get(selector.pendingDataSource).eq(0).click()
+        cy.get(selector.pendingDataSourceRemove).eq(0).click()
+        cy.get(selector.removeDataSourceConfirmation)
+          .get("button")
+          .contains("Yes, remove it")
+          .eq(0)
+          .click()
+        cy.wait(2000)
+        cy.get(selector.datasources).then(($elem) => {
+          if ($elem.length != dataSourceAddCount) {
+            //add a data source
+            cy.get(selector.addDataSource).click()
+            cy.get(selector.dataSourcesAdd).each(($el) => {
+              if (!$el.attr("class").includes("v-card--disabled")) {
+                cy.wrap($el).click()
+                return false
+              }
+            })
+            cy.get("button").contains("Add 1 data source").click()
+            cy.location("pathname").should("eq", route.connections)
+
+            // TODO: improve waiting for the data source list to load
+            // eslint-disable-next-line cypress/no-unnecessary-waiting
+            cy.wait(1000)
+
+            //make sure that number of data sources have increased by 1
+            cy.get(selector.datasources)
+              .its("length")
+              .should("eq", $elem.length + 1)
+
+            //validate correct status on all added data sources
+            cy.get(selector.datasources).as("dataSourcesList")
+            for (let index = 0; index < $elem.length; index++) {
+              cy.get("@dataSourcesList")
+                .eq(index)
+                .contains(/Active|Pending/)
+            }
+
+            cy.get(selector.engagement.exitDrawer).click()
+          }
+        })
+      }
     })
   })
 
@@ -79,6 +119,6 @@ describe("Tests data sources and destinations in connections", () => {
     //validate the drawer is open
     cy.get(selector.dataSourcesAdd).its("length").should("be.gt", 0)
 
-    cy.get(".v-main").click()
+    cy.get(selector.engagement.exitDrawer).click()
   })
 })

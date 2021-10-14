@@ -1,7 +1,7 @@
 import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
-describe("Orchestration > Engagement > Create Engagement", () => {
+describe("Orchestration > Audience > Create Audience", () => {
   before(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
@@ -9,45 +9,41 @@ describe("Orchestration > Engagement > Create Engagement", () => {
     })
   })
 
-  it("should be able to configure a new engagement", () => {
-    // should be able to navigate to engagement and click on add engagement button
+  it("should be able to configure a new audience", () => {
+    // should be able to navigate to audience and click on add audience button
     // after login land in the overview page
     cy.location("pathname").should("eq", route.overview)
-    //click on engagement on side nav bar and route in engagement screen
-    cy.get(selector.engagements).click()
-    cy.location("pathname").should("eq", route.engagements)
-    //click on add engagement button
-    cy.get(selector.engagement.addEngagements).click()
+    //click on audience on side nav bar and route in audience screen
+    cy.get(selector.audiences).click()
+    cy.location("pathname").should("eq", route.audiences)
+    //click on add audience button
+    cy.get(selector.audience.addAudiences).click()
 
-    // should fill new engagement name and description
-    // add new engagement name
-    cy.get(selector.engagement.enagagementName).eq(0).type("Test Engagement")
-    // add new engagement description
-    cy.get(selector.engagement.enagagementDescription)
-      .eq(0)
-      .type("Engagement for E2E testing")
+    // should fill new audience name and description
+    // add new audience name
+    cy.get(selector.audience.audienceName).eq(0).type("Test Audience")
 
-    // should add audience to the engagement
+    // should add audience to the audience
     // Click on add audience icon
-    cy.get(selector.engagement.addAudience).click()
+    cy.get(selector.audience.addEngagement).click()
     // Select the first audience from the existing ones
-    cy.get(selector.engagement.selectAudience).eq(0).click()
+    cy.get(selector.audience.selectEngagement).eq(0).click()
     // Click on outside the close the add audience Drawer
     cy.get(selector.engagement.exitDrawer).click()
 
-    // should add destination to the engagement
+    // should add destination to the audience
     // Click on add audience icon
-    cy.get(selector.engagement.addDestination).click()
+    cy.get(selector.audience.addDestination).click()
     // Select the first destination from the existing ones
     cy.get(selector.engagement.selectDestination).eq(0).click()
     cy.get(selector.engagement.exitDrawer).click()
+    cy.get(selector.audience.createAudience).click()
   })
 
-  // TODO: temporarily skipping - HUS-1267
   it("should add destination data extensions and verify the configuration", () => {
     // TODO: add a check that it requires data extension name before proceeding
-    cy.get(selector.engagement.addDestination).click()
-    cy.get(selector.engagement.salesForceAddButton).click()
+    cy.get(selector.audience.addDestination).click()
+    cy.get(selector.audience.salesForceAddButton).click()
     // Add new data extension name
     cy.get(selector.engagement.dataExtensionName).eq(1).type("Testing")
     // Close the data extension drawer

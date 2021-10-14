@@ -39,6 +39,7 @@
         view-height="calc(100vh - 210px)"
         sort-column="update_time"
         sort-desc="false"
+        data-e2e="audience-table"
       >
         <template #row-item="{ item }">
           <td
