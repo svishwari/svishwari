@@ -9,7 +9,13 @@ from connexion import ProblemException
 import boto3
 import botocore
 from bson import ObjectId
-from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
+from huxunifylib.util.general.const import (
+    FacebookCredentials,
+    SFMCCredentials,
+    SendgridCredentials,
+    GoogleCredentials,
+    QualtricsCredentials,
+)
 
 import huxunifylib.database.constants as db_c
 from huxunify.api import constants as api_c
@@ -297,6 +303,49 @@ def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
                 api_c.FACEBOOK_ACCESS_TOKEN
             ],
         }
+    if destination_type in [
+            db_c.DELIVERY_PLATFORM_SENDGRID,
+            db_c.DELIVERY_PLATFORM_TWILIO,
+        ]:
+        return {
+            SendgridCredentials.SENDGRID_AUTH_TOKEN.name: auth[
+                api_c.SENDGRID_AUTH_TOKEN
+            ],
+        }
+    if destination_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
+        return {
+            QualtricsCredentials.QUALTRICS_API_TOKEN.name: auth[
+                api_c.QUALTRICS_API_TOKEN
+            ],
+            QualtricsCredentials.QUALTRICS_DATA_CENTER.name: auth[
+                api_c.QUALTRICS_DATA_CENTER
+            ],
+            QualtricsCredentials.QUALTRICS_OWNER_ID.name: auth[
+                api_c.QUALTRICS_OWNER_ID
+            ],
+            QualtricsCredentials.QUALTRICS_DIRECTORY_ID.name: auth[
+                api_c.QUALTRICS_DIRECTORY_ID
+            ],
+        }
+    if destination_type == db_c.DELIVERY_PLATFORM_GOOGLE:
+        return {
+            GoogleCredentials.GOOGLE_DEVELOPER_TOKEN.name: auth[
+                api_c.GOOGLE_DEVELOPER_TOKEN
+            ],
+            GoogleCredentials.GOOGLE_REFRESH_TOKEN.name: auth[
+                api_c.GOOGLE_REFRESH_TOKEN
+            ],
+            GoogleCredentials.GOOGLE_CLIENT_CUSTOMER_ID.name: auth[
+                api_c.GOOGLE_CLIENT_CUSTOMER_ID
+            ],
+            GoogleCredentials.GOOGLE_CLIENT_ID.name: auth[
+                api_c.GOOGLE_CLIENT_ID
+            ],
+            GoogleCredentials.GOOGLE_CLIENT_SECRET.name: auth[
+                api_c.GOOGLE_CLIENT_SECRET
+            ],
+        }
+
     return auth
 
 

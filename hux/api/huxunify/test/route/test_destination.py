@@ -8,7 +8,7 @@ import requests_mock
 import mongomock
 from bson import ObjectId
 
-from huxunifylib.connectors import FacebookConnector
+from huxunifylib.connectors import FacebookConnector, SFMCConnector
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import (
@@ -116,6 +116,58 @@ class TestDestinationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(len(self.destinations), len(response.json))
+
+    def test_get_all_destinations_with_refresh(self):
+        """Test get all destinations."""
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}?refresh_all=False",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(len(self.destinations), len(response.json))
+        self.assertEqual(response.json[0][db_c.STATUS], db_c.STATUS_PENDING)
+
+        destination_id = self.destinations[0][db_c.ID]
+
+        new_auth_details = {
+            "authentication_details": {
+                api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
+                api_c.FACEBOOK_APP_SECRET: "unified_fb_secret",
+                api_c.FACEBOOK_APP_ID: "2951925002021888",
+                api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
+            }
+        }
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            json=new_auth_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+
+        mock_facebook_connector = mock.patch.object(
+            FacebookConnector, "check_connection", return_value=False
+        )
+        mock_facebook_connector.start()
+        mock_sfmc_connector = mock.patch.object(
+            SFMCConnector, "check_connection", return_value=True
+        )
+        mock_sfmc_connector.start()
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}?refresh_all=True",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(len(self.destinations), len(response.json))
+        self.assertEqual(response.json[0][db_c.STATUS], db_c.STATUS_FAILED)
+        self.assertEqual(response.json[2][db_c.STATUS], db_c.STATUS_SUCCEEDED)
+
+        mock_facebook_connector.stop()
+        mock_sfmc_connector.stop()
 
     def test_get_destination_with_valid_id(self):
         """Test get destination with valid ID."""
