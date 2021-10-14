@@ -40,14 +40,18 @@ class TestUserRoutes(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         mock.patch(
             "huxunify.api.route.user.get_db_client",
             return_value=self.database,
         ).start()
 
-        self.audience_id = create_audience(self.database, "Test Audience", [])[db_c.ID]
+        self.audience_id = create_audience(self.database, "Test Audience", [])[
+            db_c.ID
+        ]
         self.delivery_platform = set_delivery_platform(
             self.database,
             db_c.DELIVERY_PLATFORM_FACEBOOK,
@@ -142,9 +146,12 @@ class TestUserRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
         expected_response_message = (
-            f"The ID <{invalid_audience_id}> does " f"not exist in the database!"
+            f"The ID <{invalid_audience_id}> does "
+            f"not exist in the database!"
         )
-        self.assertEqual(response.json.get("message"), expected_response_message)
+        self.assertEqual(
+            response.json.get("message"), expected_response_message
+        )
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
 
     def test_deleting_audience_from_favorite(self):
@@ -188,8 +195,12 @@ class TestUserRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        expected_response_message = f"{self.audience_id} not part of user " f"favorites"
-        self.assertEqual(response.json.get("message"), expected_response_message)
+        expected_response_message = (
+            f"{self.audience_id} not part of user " f"favorites"
+        )
+        self.assertEqual(
+            response.json.get("message"), expected_response_message
+        )
 
     def test_get_user_profile_success(self):
         """Test success response of getting user profile using Okta ID."""
@@ -209,7 +220,9 @@ class TestUserRoutes(TestCase):
 
         # mock invalid request for introspect call
         request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.INVALID_OKTA_RESPONSE)
+        request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.INVALID_OKTA_RESPONSE
+        )
         request_mocker.start()
 
         endpoint = f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.PROFILE}"

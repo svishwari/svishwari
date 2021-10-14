@@ -90,7 +90,9 @@ class UserProfile(SwaggerView):
 
             # return NOT_FOUND if no corresponding user record is found in DB.
             if user is None:
-                return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
+                return {
+                    api_c.MESSAGE: api_c.USER_NOT_FOUND
+                }, HTTPStatus.NOT_FOUND
 
             # update user record's login_count and update_time in DB and return
             # the updated record.
@@ -174,13 +176,17 @@ class AddUserFavorite(SwaggerView):
             Tuple[dict, int]: Configuration dict, HTTP status code.
         """
 
-        okta_id = introspect_token(get_token_from_request(request)[0]).get("user_id")
+        okta_id = introspect_token(get_token_from_request(request)[0]).get(
+            api_c.OKTA_USER_ID
+        )
 
         if component_name not in db_constants.FAVORITE_COMPONENTS:
             logger.error(
                 "Component name %s not in favorite components.", component_name
             )
-            return {"message": api_c.INVALID_COMPONENT_NAME}, HTTPStatus.BAD_REQUEST
+            return {
+                "message": api_c.INVALID_COMPONENT_NAME
+            }, HTTPStatus.BAD_REQUEST
 
         component_id = ObjectId(component_id)
 
@@ -193,7 +199,9 @@ class AddUserFavorite(SwaggerView):
         if user_details:
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.CREATED
 
-        return {"message": f"{str(component_id)} already in favorites."}, HTTPStatus.OK
+        return {
+            "message": f"{str(component_id)} already in favorites."
+        }, HTTPStatus.OK
 
 
 @add_view_to_blueprint(
@@ -234,7 +242,9 @@ class DeleteUserFavorite(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    def delete(self, component_name: str, component_id: str) -> Tuple[dict, int]:
+    def delete(
+        self, component_name: str, component_id: str
+    ) -> Tuple[dict, int]:
         """Deletes a user favorite.
 
         ---
@@ -249,13 +259,17 @@ class DeleteUserFavorite(SwaggerView):
             Tuple[dict, int]: Configuration dict, HTTP status code.
         """
 
-        okta_id = introspect_token(get_token_from_request(request)[0]).get("user_id")
+        okta_id = introspect_token(get_token_from_request(request)[0]).get(
+            api_c.OKTA_USER_ID
+        )
 
         if component_name not in db_constants.FAVORITE_COMPONENTS:
             logger.error(
                 "Component name %s not in favorite components.", component_name
             )
-            return {"message": api_c.INVALID_COMPONENT_NAME}, HTTPStatus.BAD_REQUEST
+            return {
+                "message": api_c.INVALID_COMPONENT_NAME
+            }, HTTPStatus.BAD_REQUEST
 
         user_details = manage_user_favorites(
             get_db_client(),
@@ -265,7 +279,11 @@ class DeleteUserFavorite(SwaggerView):
             delete_flag=True,
         )
         if user_details:
-            logger.info("Successfully deleted user favorite %s.", component_name)
+            logger.info(
+                "Successfully deleted user favorite %s.", component_name
+            )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK
 
-        return {"message": f"{component_id} not part of user favorites"}, HTTPStatus.OK
+        return {
+            "message": f"{component_id} not part of user favorites"
+        }, HTTPStatus.OK
