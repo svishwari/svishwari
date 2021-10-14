@@ -13,7 +13,6 @@ from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
 import huxunifylib.database.constants as db_c
-import huxunifylib.connectors.connector_exceptions as ce
 from huxunifylib.util.general.const import (
     FacebookCredentials,
     SFMCCredentials,
@@ -175,7 +174,7 @@ class DestinationsView(SwaggerView):
             "type": "boolean",
             "in": "query",
             "required": False,
-            "example": True,
+            "example": "False",
         }
     ]
 
@@ -208,7 +207,9 @@ class DestinationsView(SwaggerView):
         )
 
         refresh_all = request.args.get(
-            api_c.DESTINATION_REFRESH, False, type=lambda v: v.lower() == "true"
+            api_c.DESTINATION_REFRESH,
+            False,
+            type=lambda v: v.lower() == "true",
         )
         if refresh_all is True:
             for destination in destinations:
@@ -216,86 +217,69 @@ class DestinationsView(SwaggerView):
                     destination[api_c.DELIVERY_PLATFORM_TYPE]
                     == db_c.DELIVERY_PLATFORM_FACEBOOK
                 ):
-                    fb_connector = FacebookConnector(
+                    connector = FacebookConnector(
                         auth_details=get_auth_from_parameter_store(
                             destination[api_c.AUTHENTICATION_DETAILS],
                             destination[api_c.DELIVERY_PLATFORM_TYPE],
                         )
                     )
-                    destination[db_c.DELIVERY_PLATFORM_STATUS] = (
-                        db_c.STATUS_SUCCEEDED
-                        if fb_connector.check_connection()
-                        else db_c.STATUS_FAILED
-                    )
                 elif (
                     destination[api_c.DELIVERY_PLATFORM_TYPE]
                     == db_c.DELIVERY_PLATFORM_SFMC
                 ):
-                    sfmc_connector = SFMCConnector(
+                    connector = SFMCConnector(
                         auth_details=get_auth_from_parameter_store(
                             destination[api_c.AUTHENTICATION_DETAILS],
                             destination[api_c.DELIVERY_PLATFORM_TYPE],
                         ),
                         connect=False,
                     )
-                    destination[db_c.DELIVERY_PLATFORM_STATUS] = (
-                        db_c.STATUS_SUCCEEDED
-                        if sfmc_connector.check_connection()
-                        else db_c.STATUS_FAILED
-                    )
                 elif destination[api_c.DELIVERY_PLATFORM_TYPE] in [
                     db_c.DELIVERY_PLATFORM_SENDGRID,
                     db_c.DELIVERY_PLATFORM_TWILIO,
                 ]:
-                    try:
-                        SendgridConnector(
-                            auth_details=get_auth_from_parameter_store(
-                                destination[api_c.AUTHENTICATION_DETAILS],
-                                destination[api_c.DELIVERY_PLATFORM_TYPE],
-                            )
-                        )
-                        destination[
-                            db_c.DELIVERY_PLATFORM_STATUS
-                        ] = db_c.STATUS_SUCCEEDED
-                    except ce.AuthenticationFailed:
-                        destination[api_c.STATUS] = db_c.STATUS_FAILED
-                elif (
-                    destination[api_c.DELIVERY_PLATFORM_TYPE]
-                    == db_c.DELIVERY_PLATFORM_QUALTRICS
-                ):
-                    qualtrics_connector = QualtricsConnector(
+                    connector = SendgridConnector(
                         auth_details=get_auth_from_parameter_store(
                             destination[api_c.AUTHENTICATION_DETAILS],
                             destination[api_c.DELIVERY_PLATFORM_TYPE],
                         )
                     )
-                    destination[db_c.DELIVERY_PLATFORM_STATUS] = (
-                        db_c.STATUS_SUCCEEDED
-                        if qualtrics_connector.check_connection()
-                        else db_c.STATUS_FAILED
+                elif (
+                    destination[api_c.DELIVERY_PLATFORM_TYPE]
+                    == db_c.DELIVERY_PLATFORM_QUALTRICS
+                ):
+                    connector = QualtricsConnector(
+                        auth_details=get_auth_from_parameter_store(
+                            destination[api_c.AUTHENTICATION_DETAILS],
+                            destination[api_c.DELIVERY_PLATFORM_TYPE],
+                        )
                     )
                 elif (
                     destination[api_c.DELIVERY_PLATFORM_TYPE]
                     == db_c.DELIVERY_PLATFORM_GOOGLE
                 ):
-                    google_connector = GoogleConnector(
+                    connector = GoogleConnector(
                         auth_details=get_auth_from_parameter_store(
                             destination[api_c.AUTHENTICATION_DETAILS],
                             destination[api_c.DELIVERY_PLATFORM_TYPE],
                         )
                     )
-                    destination[db_c.DELIVERY_PLATFORM_STATUS] = (
-                        db_c.STATUS_SUCCEEDED
-                        if google_connector.check_connection()
-                        else db_c.STATUS_FAILED
-                    )
                 else:
                     continue
+
+                destination[db_c.DELIVERY_PLATFORM_STATUS] = (
+                    db_c.STATUS_SUCCEEDED
+                    if connector.check_connection()
+                    else db_c.STATUS_FAILED
+                )
+
                 destination_management.update_delivery_platform(
                     database=database,
                     delivery_platform_id=destination[db_c.ID],
                     name=destination[db_c.DELIVERY_PLATFORM_NAME],
-                    delivery_platform_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
+                    delivery_platform_type=destination[
+                        db_c.DELIVERY_PLATFORM_TYPE
+                    ],
                     status=destination[db_c.DELIVERY_PLATFORM_STATUS],
                 )
         return (
@@ -439,7 +423,7 @@ class DestinationPutView(SwaggerView):
                     added=is_added,
                     performance_de=performance_de,
                     user_name=user_name,
-                    status=db_c.STATUS_SUCCEEDED
+                    status=db_c.STATUS_SUCCEEDED,
                 )
             ),
             HTTPStatus.OK,
