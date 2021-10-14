@@ -3,6 +3,7 @@
 import random
 from http import HTTPStatus
 from typing import Tuple
+from faker import Faker
 
 from bson import ObjectId
 from connexion.exceptions import ProblemException
@@ -304,11 +305,7 @@ class UserView(SwaggerView):
 
         # generate random phone number and user access level
         for user in users:
-            user[api_c.USER_PHONE_NUMBER] = "{}-{}-{}".format(
-                str(random.randint(100, 999)),
-                str(random.randint(100, 999)),
-                str(random.randint(1000, 9999)),
-            )
+            user[api_c.USER_PHONE_NUMBER] = Faker().phone_number()
             user[api_c.USER_ACCESS_LEVEL] = random.choice(
                 ["Edit", "View-only", "Admin"]
             )
