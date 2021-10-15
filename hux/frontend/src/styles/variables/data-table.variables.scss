@@ -8,7 +8,7 @@ $data-table-mobile-row-header-font-weight: 400 !default;
 $data-table-row-header-font-weight: 400 !default;
 
 // Customizations
-$data-table-heading: map-get($headings, 'body-2') !default;
+$data-table-heading: map-get($headings, "body-2") !default;
 
 .v-data-table {
   > .v-data-table__wrapper {
@@ -20,9 +20,9 @@ $data-table-heading: map-get($headings, 'body-2') !default;
           > th {
             color: var(--v-black-lighten4) !important;
             font-size: map-get($data-table-heading, "size");
-            font-weight:  map-get($data-table-heading, "line-height");
-            font-weight:  map-get($data-table-heading, "weight");
-            font-weight:  map-get($data-table-heading, "letter-spacing");
+            line-height: map-get($data-table-heading, "line-height");
+            font-weight: map-get($data-table-heading, "weight");
+            letter-spacing: map-get($data-table-heading, "letter-spacing");
             white-space: nowrap;
           }
         }
