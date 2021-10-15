@@ -106,7 +106,6 @@ export default {
           barColorCodes.push(colors[color.base][color.variant])
         }
       })
-      console.log(barColorCodes)
 
       let stack = d3Shape
         .stack()
