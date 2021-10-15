@@ -80,6 +80,12 @@ class Config:
     CDP_SERVICE = config(api_c.CDP_SERVICE, default="")
     CDP_CONNECTION_SERVICE = config(api_c.CDP_CONNECTION_SERVICE, default="")
 
+    # setting to enable/disable downloading of empty audience file in
+    # /audiences/{audience_id}/{download_type} endpoint
+    RETURN_EMPTY_AUDIENCE_FILE = config(
+        api_c.RETURN_EMPTY_AUDIENCE_FILE, default=True, cast=bool
+    )
+
     # Preserve ordering in json
     JSON_SORT_KEYS = config(
         api_c.JSON_SORT_KEYS_CONST, default=False, cast=bool
@@ -105,6 +111,10 @@ class DevelopmentConfig(Config):
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
         api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
     }
+
+    RETURN_EMPTY_AUDIENCE_FILE = config(
+        api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
+    )
 
 
 class PyTestConfig(Config):
@@ -138,6 +148,10 @@ class PyTestConfig(Config):
     # CDP CONFIGURATION
     CDP_SERVICE = "https://fake.fake.com"
     CDP_CONNECTION_SERVICE = "https://fake.fake.com"
+
+    RETURN_EMPTY_AUDIENCE_FILE = config(
+        api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
+    )
 
 
 def load_env_vars(flask_env=config(api_c.FLASK_ENV, default="")) -> None:

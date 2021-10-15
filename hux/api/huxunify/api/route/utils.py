@@ -314,7 +314,7 @@ def group_gender_spending(gender_spending: list) -> dict:
     }
 
 
-def transform_fields_generic_file(
+def do_not_transform_fields(
     dataframe: DataFrame,
 ) -> DataFrame:
     """Returns the csv file data without any transformation.
