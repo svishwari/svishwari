@@ -259,6 +259,7 @@ def update_user(
         c.USER_PROFILE_PHOTO,
         c.USER_FAVORITES,
         c.USER_DASHBOARD_CONFIGURATION,
+        c.USER_LOGIN_COUNT,
     ]
 
     # validate allowed fields, any invalid returns, raise error

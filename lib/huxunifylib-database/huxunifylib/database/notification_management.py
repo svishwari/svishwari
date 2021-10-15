@@ -1,5 +1,6 @@
 """This module enables functionality related to notification management."""
 import logging
+import warnings
 from datetime import datetime
 from typing import Union
 
@@ -22,6 +23,7 @@ def create_notification(
     notification_type: str,
     description: str,
     category: str = None,
+    username: str = "unknown",
 ) -> Union[dict, None]:
     """A function to create a new notification.
 
@@ -30,6 +32,8 @@ def create_notification(
         notification_type (str): type of notification to create.
         description (str): description of notification.
         category (str): category of notification.
+        username (str): username of user performing an action for which the
+            notification is created.
 
     Returns:
         Union[dict, None]: MongoDB document for a notification.
@@ -62,12 +66,19 @@ def create_notification(
     elif notification_type == c.NOTIFICATION_TYPE_CRITICAL:
         expire_time = current_time + relativedelta(months=6)
 
+    warnings.warn(
+        "Use of username field being optional with default value of unknown in"
+        " notification collection will be deprecated in the future release.",
+        DeprecationWarning,
+    )
+
     doc = {
         c.EXPIRE_AT: expire_time,
         c.NOTIFICATION_FIELD_TYPE: notification_type,
         c.NOTIFICATION_FIELD_DESCRIPTION: description,
         c.NOTIFICATION_FIELD_CREATED: current_time,
         c.DELETED: False,
+        c.NOTIFICATION_FIELD_USERNAME: username,
     }
 
     if category:
