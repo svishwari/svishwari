@@ -34,7 +34,7 @@
             Reset delivery to default
           </span>
         </div>
-        <hux-schedule-picker v-model="schedule" />
+        <hux-schedule-picker v-model="localSchedule" />
       </div>
     </template>
 
@@ -92,7 +92,7 @@ export default {
       required: false,
     },
 
-    deliverySchedule: {
+    schedule: {
       type: Object,
       required: false,
     },
@@ -102,7 +102,7 @@ export default {
     return {
       loading: false,
       localToggle: false,
-      schedule: JSON.parse(JSON.stringify(deliverySchedule())),
+      localSchedule: JSON.parse(JSON.stringify(deliverySchedule())),
     }
   },
 
@@ -115,13 +115,10 @@ export default {
       this.$emit("input", value)
     },
 
-    deliverySchedule() {
-      for (let prop in this.deliverySchedule) {
-        this.schedule[prop] =
-          prop in this.deliverySchedule
-            ? this.deliverySchedule[prop]
-            : this.schedule[prop]
-      }
+    schedule() {
+      this.localSchedule = JSON.parse(
+        JSON.stringify(deliverySchedule(this.schedule))
+      )
     },
   },
 
@@ -136,7 +133,7 @@ export default {
     },
 
     resetSchedule() {
-      this.schedule = JSON.parse(JSON.stringify(deliverySchedule()))
+      this.localSchedule = JSON.parse(JSON.stringify(deliverySchedule()))
     },
   },
 }

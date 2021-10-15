@@ -163,7 +163,7 @@
 
     <edit-delivery-schedule
       v-model="editDeliveryDrawer"
-      :delivery-schedule="currentSchedule"
+      :schedule="currentSchedule"
       :audience-id="selectedAudienceId"
       :destination="scheduleDestination"
       :engagement-id="engagementId"

@@ -116,10 +116,11 @@ export function filterAudiencesByDestinations(audiences, destinations = []) {
 /**
  * Uses to initialize or reset while using hux-schedule-picker component
  *
+ * @param {object} schedule schedule
  * @returns {object} delivery schedule
  */
-export function deliverySchedule() {
-  return {
+export function deliverySchedule(schedule = {}) {
+  let defaultSchedule = {
     periodicity: "Daily",
     every: 1,
     hour: 12,
@@ -130,6 +131,13 @@ export function deliverySchedule() {
     monthlyDayDate: 1,
     days: ["Sunday"],
   }
+  if (schedule) {
+    for (let prop in schedule) {
+      defaultSchedule[prop] =
+        prop in schedule ? schedule[prop] : defaultSchedule[prop]
+    }
+  }
+  return defaultSchedule
 }
 
 /**

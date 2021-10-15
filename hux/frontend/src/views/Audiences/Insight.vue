@@ -1049,8 +1049,7 @@ export default {
     },
 
     /**
-     *
-     Formatting the values to the desired format using predefined application filters.
+     * Formatting the values to the desired format using predefined application filters.
      *
      * @param {object} item item
      * @param {string} item.title item's title
