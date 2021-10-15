@@ -910,7 +910,7 @@ class TotalCustomersGraphView(SwaggerView):
         # get auth token from request
         token_response = get_token_from_request(request)
 
-        start_date, end_date = get_start_end_dates(None, 9)
+        start_date, end_date = get_start_end_dates(request, 9)
         # create a dict for date_filters required by cdp endpoint
         date_filters = {
             api_c.START_DATE: start_date,
