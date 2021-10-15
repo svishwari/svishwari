@@ -561,6 +561,7 @@ DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE = (
     "Destination not attached to the engagement audience."
 )
 DELIVERY_JOBS_NOT_FOUND_TO_MAP = "No delivery jobs found to map."
+USER_NOT_FOUND = "User not found."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
