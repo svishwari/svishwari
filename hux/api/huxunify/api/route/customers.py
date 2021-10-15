@@ -4,7 +4,6 @@ from http import HTTPStatus
 from typing import Tuple, List
 from datetime import datetime
 
-from dateutil.relativedelta import relativedelta
 from faker import Faker
 
 from flask import Blueprint, request, jsonify
@@ -48,7 +47,7 @@ from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feed_details,
     get_idr_matching_trends,
 )
-from huxunify.api.route.utils import add_chart_legend
+from huxunify.api.route.utils import add_chart_legend, get_start_end_dates
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import (
     redact_fields,
@@ -253,20 +252,7 @@ class IDROverview(SwaggerView):
         token_response = get_token_from_request(request)
 
         # default to five years lookup to find the event date range.
-        start_date = request.args.get(
-            api_c.START_DATE,
-            datetime.strftime(
-                datetime.utcnow().date() - relativedelta(years=5),
-                api_c.DEFAULT_DATE_FORMAT,
-            ),
-        )
-        end_date = request.args.get(
-            api_c.END_DATE,
-            datetime.strftime(
-                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
-            ),
-        )
-
+        start_date, end_date = get_start_end_dates(request, 60)
         Validation.validate_date_range(start_date, end_date)
 
         token_response = get_token_from_request(request)
@@ -515,20 +501,7 @@ class IDRDataFeeds(SwaggerView):
 
         token_response = get_token_from_request(request)
 
-        start_date = request.args.get(
-            api_c.START_DATE,
-            datetime.strftime(
-                datetime.utcnow().date() - relativedelta(months=6),
-                api_c.DEFAULT_DATE_FORMAT,
-            ),
-        )
-        end_date = request.args.get(
-            api_c.END_DATE,
-            datetime.strftime(
-                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
-            ),
-        )
-
+        start_date, end_date = get_start_end_dates(request, 6)
         Validation.validate_date_range(start_date, end_date)
 
         return (
@@ -715,20 +688,7 @@ class CustomerDemoVisualView(SwaggerView):
 
         token_response = get_token_from_request(request)
 
-        start_date = request.args.get(
-            api_c.START_DATE,
-            datetime.strftime(
-                datetime.utcnow().date() - relativedelta(months=6),
-                api_c.DEFAULT_DATE_FORMAT,
-            ),
-        )
-        end_date = request.args.get(
-            api_c.END_DATE,
-            datetime.strftime(
-                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
-            ),
-        )
-
+        start_date, end_date = get_start_end_dates(request, 6)
         Validation.validate_date_range(start_date, end_date)
 
         # get customers overview data from CDP to set gender specific
@@ -813,20 +773,7 @@ class IDRMatchingTrends(SwaggerView):
         """
         token_response = get_token_from_request(request)
 
-        start_date = request.args.get(
-            api_c.START_DATE,
-            datetime.strftime(
-                datetime.utcnow().date() - relativedelta(months=6),
-                api_c.DEFAULT_DATE_FORMAT,
-            ),
-        )
-        end_date = request.args.get(
-            api_c.END_DATE,
-            datetime.strftime(
-                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
-            ),
-        )
-
+        start_date, end_date = get_start_end_dates(request, 6)
         Validation.validate_date_range(start_date, end_date)
 
         return (
@@ -909,20 +856,7 @@ class CustomerEvents(SwaggerView):
 
         Validation.validate_hux_id(hux_id)
 
-        start_date = request.args.get(
-            api_c.START_DATE,
-            datetime.strftime(
-                datetime.utcnow().date() - relativedelta(months=6),
-                api_c.DEFAULT_DATE_FORMAT,
-            ),
-        )
-        end_date = request.args.get(
-            api_c.END_DATE,
-            datetime.strftime(
-                datetime.utcnow().date(), api_c.DEFAULT_DATE_FORMAT
-            ),
-        )
-
+        start_date, end_date = get_start_end_dates(request, 6)
         Validation.validate_date_range(start_date, end_date)
 
         return (
@@ -976,16 +910,11 @@ class TotalCustomersGraphView(SwaggerView):
         # get auth token from request
         token_response = get_token_from_request(request)
 
+        start_date, end_date = get_start_end_dates(request, 9)
         # create a dict for date_filters required by cdp endpoint
-        last_date = datetime.utcnow().date() - relativedelta(months=9)
-        today = datetime.utcnow().date()
         date_filters = {
-            api_c.START_DATE: datetime.strftime(
-                last_date, api_c.DEFAULT_DATE_FORMAT
-            ),
-            api_c.END_DATE: datetime.strftime(
-                today, api_c.DEFAULT_DATE_FORMAT
-            ),
+            api_c.START_DATE: start_date,
+            api_c.END_DATE: end_date,
         }
 
         customers_insight_total = get_customers_insights_count_by_day(
