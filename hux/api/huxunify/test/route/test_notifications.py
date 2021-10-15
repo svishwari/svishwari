@@ -15,7 +15,7 @@ from huxunify.app import create_app
 
 
 class TestNotificationRoutes(TestCase):
-    """Test Notifications Tests."""
+    """Test Notifications class."""
 
     def setUp(self) -> None:
         """Setup resources before each test."""
@@ -175,3 +175,41 @@ class TestNotificationRoutes(TestCase):
                         db_c.NOTIFICATION_TYPE_SUCCESS.title(),
                     )
                 break
+
+    def test_delete_notification_valid_id(self):
+        """Test delete notification API with valid ID."""
+
+        notifcation_id = self.notifications[0][api_c.ID]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notifcation_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(notifcation_id, response.json[api_c.ID])
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notifcation_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notifcation_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+
+    def test_delete_notification_invalid_id(self):
+        """Test delete notification API with invalid ID."""
+
+        notifcation_id = "some_random_id"
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notifcation_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
