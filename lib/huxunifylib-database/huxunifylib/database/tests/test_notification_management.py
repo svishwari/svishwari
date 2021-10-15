@@ -132,7 +132,7 @@ class NotificationManagementTest(TestCase):
             description="Delivery Failed",
         )
 
-        self.assertTrue(notification is not None)
+        self.assertIsNotNone(notification)
 
         self.assertTrue(
             nmg.delete_notification(
@@ -143,7 +143,7 @@ class NotificationManagementTest(TestCase):
         notification = nmg.get_notification(
             self.database, notification[db_c.ID]
         )
-        self.assertTrue(notification is not None)
+        self.assertIsNone(notification)
 
     def test_hard_delete_notification(self):
         """Test hard deleting a notification"""
@@ -153,7 +153,7 @@ class NotificationManagementTest(TestCase):
             description="Delivery Failed",
         )
 
-        self.assertTrue(notification is not None)
+        self.assertIsNotNone(notification)
 
         self.assertTrue(
             nmg.delete_notification(
@@ -166,7 +166,7 @@ class NotificationManagementTest(TestCase):
         notification = nmg.get_notification(
             self.database, notification[db_c.ID]
         )
-        self.assertTrue(notification is None)
+        self.assertIsNone(notification)
 
     def test_get_notification(self):
         """Test to get notification."""
@@ -180,6 +180,7 @@ class NotificationManagementTest(TestCase):
             ],
         )
         self.assertTrue(notification)
+        self.assertFalse(notification[db_c.DELETED])
         self.assertEqual(
             notifications[db_c.NOTIFICATIONS_COLLECTION][0][db_c.TYPE],
             notification[db_c.TYPE],

@@ -67,6 +67,7 @@ def create_notification(
         c.NOTIFICATION_FIELD_TYPE: notification_type,
         c.NOTIFICATION_FIELD_DESCRIPTION: description,
         c.NOTIFICATION_FIELD_CREATED: current_time,
+        c.DELETED: False,
     }
 
     if category:
@@ -118,7 +119,7 @@ def get_notifications_batch(
         return dict(
             total_records=collection.count_documents({}),
             notifications=list(
-                collection.find()
+                collection.find({c.DELETED: False})
                 .sort([(c.NOTIFICATION_FIELD_CREATED, -1), (c.ID, sort_order)])
                 .skip(skips)
                 .limit(batch_size)
@@ -155,6 +156,8 @@ def get_notifications(
     collection = database[c.DATA_MANAGEMENT_DATABASE][
         c.NOTIFICATIONS_COLLECTION
     ]
+
+    query_filter[c.DELETED] = False
 
     try:
         return dict(
@@ -233,7 +236,7 @@ def get_notification(
     ]
 
     try:
-        return collection.find_one({c.ID: notification_id})
+        return collection.find_one({c.ID: notification_id, c.DELETED: False})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

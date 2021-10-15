@@ -336,10 +336,8 @@ class DeleteNotification(SwaggerView):
             Tuple[dict, int]: message, HTTP status code.
         """
 
-        database = get_db_client()
-
         if notification_management.delete_notification(
-            database, ObjectId(notification_id)
+            get_db_client(), ObjectId(notification_id)
         ):
             logger.info(
                 "Successfully deleted notification %s by user %s.",

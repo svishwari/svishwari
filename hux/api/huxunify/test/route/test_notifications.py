@@ -181,12 +181,26 @@ class TestNotificationRoutes(TestCase):
 
         notifcation_id = self.notifications[0][api_c.ID]
 
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notifcation_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(notifcation_id, response.json[api_c.ID])
+
         response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notifcation_id}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notifcation_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
 
     def test_delete_notification_invalid_id(self):
         """Test delete notification API with invalid ID."""
