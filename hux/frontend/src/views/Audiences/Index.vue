@@ -232,6 +232,28 @@
       :selected-audience="selectedAudience"
       @onToggle="(val) => (showLookAlikeDrawer = val)"
     />
+
+    <confirm-modal
+      v-model="confirmModal"
+      icon="sad-face"
+      type="error"
+      title="You are about to delete"
+      :sub-title="`${confirmSubtitle}`"
+      right-btn-text="Yes, delete it"
+      left-btn-text="Nevermind!"
+      @onCancel="confirmModal = !confirmModal"
+      @onConfirm="confirmRemoval()"
+    >
+      <template #body>
+        <div class="pt-6">
+          Are you sure you want to delete this audience&#63;
+        </div>
+        <div class="mb-6">
+          By deleting this audience you will not be able to recover it and it
+          may impact any associated engagements.
+        </div>
+      </template>
+    </confirm-modal>
   </div>
 </template>
 
@@ -252,6 +274,7 @@ import Icon from "@/components/common/Icon.vue"
 import Status from "../../components/common/Status.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import Logo from "../../components/common/Logo.vue"
+import ConfirmModal from "@/components/common/ConfirmModal"
 
 export default {
   name: "Audiences",
@@ -270,6 +293,7 @@ export default {
     Status,
     Tooltip,
     Logo,
+    ConfirmModal,
   },
   data() {
     return {
@@ -332,6 +356,8 @@ export default {
       loading: false,
       selectedAudience: null,
       showLookAlikeDrawer: false,
+      confirmModal: false,
+      confirmSubtitle: "",
     }
   },
   computed: {
@@ -361,6 +387,7 @@ export default {
       getAllAudiences: "audiences/getAll",
       markFavorite: "users/markFavorite",
       clearFavorite: "users/clearFavorite",
+      deleteAudience: "audiences/remove",
     }),
 
     isUserFavorite(entity, type) {
@@ -375,7 +402,15 @@ export default {
         this.clearFavorite({ id: item.id, type: type })
       }
     },
-
+    openModal(audience) {
+      this.selectedAudience = audience
+      this.confirmSubtitle = audience.name
+      this.confirmModal = true
+    },
+    async confirmRemoval() {
+      await this.deleteAudience({ id: this.selectedAudience.id })
+      this.confirmModal = false
+    },
     getActionItems(audience) {
       // This assumes we cannot create a lookalike audience from a lookalike audience
       let isLookalikeableActive =
@@ -410,7 +445,13 @@ export default {
             icon: "facebook",
           },
         },
-        { title: "Delete", isDisabled: true },
+        {
+          title: "Delete audience",
+          isDisabled: false,
+          onClick: () => {
+            this.openModal(audience)
+          },
+        },
       ]
 
       return actionItems

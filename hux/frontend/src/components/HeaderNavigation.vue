@@ -49,7 +49,17 @@ export default {
   },
   methods: {
     routerRedirect(path) {
-      this.$router.push({ name: path, params: { select: true } })
+      if (
+        this.$router.name == path ||
+        this.$router.history.current.name == path
+      ) {
+        this.$root.$emit(`same-route-${path}`)
+      } else {
+        this.$router.push({
+          name: path,
+          params: { select: true },
+        })
+      }
     },
   },
 }

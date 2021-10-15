@@ -501,7 +501,10 @@
 
     <confirm-modal
       v-model="showConfirmModal"
+      :type="confirmDialog.type"
+      :icon="confirmDialog.icon"
       :title="confirmDialog.title"
+      :sub-title="confirmDialog.subtitle"
       :right-btn-text="confirmDialog.btnText"
       :body="confirmDialog.body"
       @onCancel="showConfirmModal = false"
@@ -730,6 +733,9 @@ export default {
       },
       deleteActionData: {},
       confirmDialog: {
+        icon: "sad-face",
+        type: "error",
+        subtitle: "",
         title: "Remove  audience?",
         btnText: "Yes, remove it",
         body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
@@ -1093,7 +1099,10 @@ export default {
           break
         case "remove engagement": {
           this.confirmDialog.actionType = "remove-engagement"
-          this.confirmDialog.title = `You are about to remove ${event.data.name}`
+          this.confirmDialog.title = "You are about to remove"
+          this.confirmDialog.subtitle = event.data.name
+          this.confirmDialog.icon = "sad-face"
+          this.confirmDialog.type = "error"
           this.confirmDialog.btnText = "Yes, remove it"
           this.confirmDialog.body =
             "Are you sure you want to remove this engagement? By removing this engagement, it will not be deleted, but it will become unattached from this audience."
@@ -1125,6 +1134,8 @@ export default {
             this.confirmDialog.actionType = "edit-schedule"
             this.confirmDialog.title =
               "You are about to edit delivery schedule."
+            this.confirmDialog.icon = "edit"
+            this.confirmDialog.type = "primary"
             this.confirmDialog.btnText = "Yes, edit delivery schedule"
             this.confirmDialog.body =
               "This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
@@ -1135,6 +1146,9 @@ export default {
           case "remove destination":
             this.engagementId = event.parent.id
             this.confirmDialog.actionType = "remove-destination"
+            this.confirmDialog.icon = "sad-face"
+            this.confirmDialog.type = "error"
+            this.confirmDialog.subtitle = ""
             this.confirmDialog.title = `Remove ${event.data.name} destination?`
             this.confirmDialog.btnText = "Yes, remove it"
             this.confirmDialog.body =

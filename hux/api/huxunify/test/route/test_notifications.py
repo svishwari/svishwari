@@ -43,6 +43,12 @@ class TestNotificationRoutes(TestCase):
             return_value=self.database,
         ).start()
 
+        # mock get db client from decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
         notifications = [
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_SUCCESS,
@@ -95,6 +101,18 @@ class TestNotificationRoutes(TestCase):
         self.assertCountEqual(
             self.notifications, response.json[api_c.NOTIFICATIONS_TAG]
         )
+
+    def test_get_notification(self):
+        """Test get notification."""
+        notification_id = self.notifications[0][api_c.ID]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notification_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(NotificationSchema().validate(response.json))
 
     def test_get_notifications_default_params(self):
         """Test get notifications failure."""

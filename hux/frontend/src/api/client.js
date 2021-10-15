@@ -205,6 +205,10 @@ client["engagements"].getCampaigns = ({
     `/engagements/${resourceId}/audience/${audienceId}/destination/${destinationId}/campaigns`
   )
 }
+
+client["engagements"].remove = (resourceId) => {
+  return http.delete(`/engagements/${resourceId}`)
+}
 //#endregion Engagement custom endpoints
 
 //#region Customer Identity endpoint(s)
@@ -261,6 +265,10 @@ client["audiences"].geoCountries = (resourceId) => {
 
 client["audiences"].geoStates = (resourceId) => {
   return http.get(`/audiences/${resourceId}/states`)
+}
+
+client["audiences"].remove = (resourceId) => {
+  return http.delete(`/audiences/${resourceId}`)
 }
 //#endregion
 
