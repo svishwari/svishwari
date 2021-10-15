@@ -288,6 +288,7 @@ def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
             ],
             SFMCCredentials.SFMC_URL.value: auth[api_c.SFMC_REST_BASE_URI],
         }
+
     if destination_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
         return {
             FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
@@ -303,15 +304,17 @@ def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
                 api_c.FACEBOOK_ACCESS_TOKEN
             ],
         }
+
     if destination_type in [
-            db_c.DELIVERY_PLATFORM_SENDGRID,
-            db_c.DELIVERY_PLATFORM_TWILIO,
-        ]:
+        db_c.DELIVERY_PLATFORM_SENDGRID,
+        db_c.DELIVERY_PLATFORM_TWILIO,
+    ]:
         return {
             SendgridCredentials.SENDGRID_AUTH_TOKEN.name: auth[
                 api_c.SENDGRID_AUTH_TOKEN
             ],
         }
+
     if destination_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
         return {
             QualtricsCredentials.QUALTRICS_API_TOKEN.name: auth[
@@ -327,6 +330,7 @@ def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
                 api_c.QUALTRICS_DIRECTORY_ID
             ],
         }
+
     if destination_type == db_c.DELIVERY_PLATFORM_GOOGLE:
         return {
             GoogleCredentials.GOOGLE_DEVELOPER_TOKEN.name: auth[

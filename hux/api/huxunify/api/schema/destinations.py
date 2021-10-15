@@ -155,7 +155,7 @@ class DestinationGetSchema(Schema):
                 choices=[
                     db_c.STATUS_SUCCEEDED,
                     db_c.STATUS_PENDING,
-                    db_c.STATUS_FAILED
+                    db_c.STATUS_FAILED,
                 ]
             )
         ],

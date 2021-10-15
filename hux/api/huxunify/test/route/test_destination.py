@@ -118,7 +118,7 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(len(self.destinations), len(response.json))
 
     def test_get_all_destinations_with_refresh(self):
-        """Test get all destinations."""
+        """Test get all destinations with refresh."""
 
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}?refresh_all=False",
@@ -145,7 +145,6 @@ class TestDestinationRoutes(TestCase):
             json=new_auth_details,
             headers=t_c.STANDARD_HEADERS,
         )
-
 
         mock_facebook_connector = mock.patch.object(
             FacebookConnector, "check_connection", return_value=False
