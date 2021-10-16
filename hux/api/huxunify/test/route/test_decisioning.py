@@ -106,7 +106,7 @@ class DecisioningTests(TestCase):
 
     @given(model_id=st.integers(min_value=100, max_value=1000))
     @settings(deadline=600)
-    def test_get_model_version_history_failed(self, model_id: int):
+    def test_failure_get_model_version_history(self, model_id: int):
         """Test get model version history failed.
 
         Args:
@@ -133,7 +133,7 @@ class DecisioningTests(TestCase):
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     @settings(deadline=600)
-    def test_success_get_model_features(self, model_id: int) -> None:
+    def test_get_model_features_success(self, model_id: int) -> None:
         """Test get model features success.
 
         Args:
