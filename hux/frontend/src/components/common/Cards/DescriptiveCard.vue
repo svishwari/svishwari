@@ -168,7 +168,7 @@ export default {
     @extend .box-shadow-1;
   }
   .description {
-    min-height: 55px;
+    min-height: 36px;
   }
 }
 </style>

@@ -42,9 +42,9 @@
           </template>
 
           <template slot="default">
-            <p class="text-caption black--text text--darken-1 mt-4" data-e2e="model-owner">
+            <div class="text-caption black--text text--darken-1 mb-2" data-e2e="model-owner">
               {{ model.owner }}
-            </p>
+            </div>
             <div class="d-flex justify-center mb-6">
               <card-stat
                 label="Version"
