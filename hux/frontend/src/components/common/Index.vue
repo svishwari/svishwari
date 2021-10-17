@@ -360,7 +360,8 @@
     <descriptive-card
       :action-menu="true"
       :coming-soon="false"
-      type="Models"
+      width="280"
+      height="255"
       icon="model-unsubscribe"
       title="Propensity to Unsubscribe"
       description="Propensity of a customer making a purchase after receiving an email."
@@ -396,9 +397,10 @@
     <descriptive-card
       :action-menu="true"
       :coming-soon="false"
-      type="Modules"
+      width="280"
+      height="255"
       icon="model-unsubscribe"
-      title="Propensity to Unsubscribe"
+      title="Propensity to Unsubscribesss"
       description="This is THE Hux CDP. Once a customer data solution has been implemented, all data sources flow seamlessly into the ..."
     >
       <template slot="top">
@@ -409,7 +411,8 @@
       :disabled="true"
       :action-menu="false"
       :coming-soon="true"
-      type="Modules"
+      width="255"
+      height="225"
       icon="model-unsubscribe"
       title="Propensity to Unsubscribe ojjihj"
       description="This is THE Hux CDP. Once a customer data solution has been implemented..."
@@ -422,7 +425,8 @@
       :disabled="false"
       :action-menu="false"
       :coming-soon="false"
-      type="Modules"
+      width="280"
+      height="225"
       title="Propensity to Unsubscribe ojjihj"
       description="This is THE Hux CDP. Once a customer data solution has been implemented..."
     >

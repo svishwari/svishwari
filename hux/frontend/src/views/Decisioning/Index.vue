@@ -25,7 +25,8 @@
           :disabled="model.status !== 'Active'"
           :action-menu="false"
           :coming-soon="false"
-          type="Models"
+          height="255"
+          width="280"
           data-e2e="model-item"
           class="mr-10"
           @click.native="goToDashboard(model)"
@@ -41,13 +42,9 @@
           </template>
 
           <template slot="default">
-            <!-- <p
-              class="text-caption black--text text--darken-1 mt-4"
-              data-e2e="model-owner"
-            >
+            <p class="text-caption black--text text--darken-1 mt-4" data-e2e="model-owner">
               {{ model.owner }}
-            </p> -->
-
+            </p>
             <div class="d-flex justify-center mb-6">
               <card-stat
                 label="Version"

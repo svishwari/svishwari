@@ -1,8 +1,9 @@
 <template>
   <v-card
     class="descriptive-card align-center text-center rounded-lg mr-10 mb-10"
-    :style="{ height: minHeight, width: disabled ? '255px' : '280px' }"
     :class="{ 'in-active': disabled }"
+    :height="height"
+    :width="width"
   >
     <div v-if="$slots.top" class="pa-3 pb-0">
       <slot name="top" />
@@ -87,13 +88,11 @@ export default {
       type: String,
       required: false,
     },
-
     title: {
       type: String,
       required: false,
       default: "Model Name",
     },
-
     description: {
       type: String,
       required: false,
@@ -119,15 +118,13 @@ export default {
       required: false,
       default: false,
     },
-  },
-
-  computed: {
-    minHeight() {
-      if (this.type == "Models") {
-        return "255px"
-      } else {
-        return "225px"
-      }
+    height: {
+      type: [Number, String],
+      required: true,
+    },
+    width: {
+      type: [Number, String],
+      required: true,
     },
   },
 }
