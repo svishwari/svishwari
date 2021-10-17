@@ -98,11 +98,6 @@ export default {
       required: false,
       default: "Descriptive text for the model item chosen above",
     },
-    type: {
-      type: String,
-      required: true,
-      default: "Models",
-    },
     disabled: {
       type: Boolean,
       required: false,

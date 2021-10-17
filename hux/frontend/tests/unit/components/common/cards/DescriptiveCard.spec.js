@@ -7,9 +7,10 @@ describe("Cards", () => {
       const customProps = {
         icon: "model-unsubscribe",
         title: "Propensity to Unsubscribe",
-        type: "Models",
         description:
           "Propensity of a customer making a purchase after receiving an email.",
+        height: "255",
+        width: "280"
       }
 
       const wrapper = shallowMount(DescriptiveCard, {
@@ -23,7 +24,8 @@ describe("Cards", () => {
 
     test("Displays custom slots", () => {
       const customProps = {
-        type: "Modules",
+        height: "255",
+        width: "280"
       }
       const customSlots = {
         default: "<p>Default content</p>",
