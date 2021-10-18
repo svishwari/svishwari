@@ -24,9 +24,11 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+    get_user_name,
 )
 from huxunify.api.route.utils import get_db_client, Validation
 from huxunify.api import constants as api_c
+from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 
 # setup the notifications blueprint
@@ -255,14 +257,11 @@ class NotificationSearch(SwaggerView):
     @api_error_handler()
     def get(self, notification_id: str) -> Tuple[dict, int]:
         """Retrieves notification.
-
         ---
         security:
             - Bearer: ["Authorization"]
-
         Args:
             notification_id (str): Notification Id
-
         Returns:
             Tuple[dict, int] dict of notifications, HTTP status code.
         """
@@ -284,3 +283,71 @@ class NotificationSearch(SwaggerView):
             NotificationSchema().dump(notification),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    notifications_bp,
+    f"{api_c.NOTIFICATIONS_ENDPOINT}/<notification_id>",
+    "DeleteNotification",
+)
+class DeleteNotification(SwaggerView):
+    """Notification Delete Class."""
+
+    parameters = [
+        {
+            "name": api_c.NOTIFICATION_ID,
+            "description": "Notification ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        }
+    ]
+    responses = {
+        HTTPStatus.NO_CONTENT.value: {
+            "description": "Deleted Notification.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to delete the notification.",
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "schema": NotFoundError,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.NOTIFICATIONS_TAG]
+
+    @get_user_name()
+    @api_error_handler()
+    def delete(
+        self, notification_id: ObjectId, user_name: str
+    ) -> Tuple[dict, int]:
+        """Deletes a notification by ID.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            notification_id (ObjectId): Notification ID.
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: message, HTTP status code.
+        """
+
+        if notification_management.delete_notification(
+            get_db_client(), ObjectId(notification_id)
+        ):
+            logger.info(
+                "Successfully deleted notification %s by user %s.",
+                notification_id,
+                user_name,
+            )
+
+            return {}, HTTPStatus.NO_CONTENT
+
+        logger.info(
+            "Could not delete notification with ID %s.", notification_id
+        )
+        return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST

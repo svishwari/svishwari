@@ -60,12 +60,7 @@
               <span v-if="item.is_lookalike == true" class="mr-3">
                 <tooltip>
                   <template #label-content>
-                    <icon
-                      type="lookalike"
-                      :size="20"
-                      color="black-darken4"
-                      class="mr-2"
-                    />
+                    <icon type="lookalike" :size="24" />
                   </template>
                   <template #hover-content>Lookalike audience</template>
                 </tooltip>
