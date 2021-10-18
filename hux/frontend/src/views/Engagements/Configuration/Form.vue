@@ -444,9 +444,7 @@ export default {
         this.localSchedule &&
         this.localSchedule.periodicity == "Weekly"
       ) {
-        recurringConfig["day_of_week"] = this.localSchedule.days.map((item) => {
-          return item.substring(0, 3).toUpperCase()
-        })
+        recurringConfig["day_of_week"] = this.localSchedule.day_of_week
       } else if (
         this.localSchedule &&
         this.localSchedule.periodicity == "Monthly"

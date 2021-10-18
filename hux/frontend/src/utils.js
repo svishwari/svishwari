@@ -129,7 +129,7 @@ export function deliverySchedule(schedule = {}) {
     monthlyPeriod: "Day",
     monthlyDay: "Day",
     monthlyDayDate: 1,
-    days: ["Sunday"],
+    day_of_week: ["SUN"],
   }
   if (schedule) {
     for (let prop in schedule) {
@@ -138,6 +138,20 @@ export function deliverySchedule(schedule = {}) {
     }
   }
   return defaultSchedule
+}
+
+/**
+ * Uses to create abbr for day names with uppercase
+ *
+ * @param {string} dayname full name
+ * @returns {string} day name abbr i.e. SUN
+ */
+export function dayAbbreviation(dayname) {
+  let abbr = ""
+  if (dayname) {
+    abbr = dayname.substring(0, 3).toUpperCase()
+  }
+  return abbr
 }
 
 /**
