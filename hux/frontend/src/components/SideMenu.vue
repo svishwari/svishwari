@@ -237,7 +237,6 @@ export default {
   .menu-icon {
     svg {
       top: 32.89%;
-      // @extend .side-menu-icon;
     }
   }
 }
