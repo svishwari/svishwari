@@ -211,16 +211,25 @@ class DestinationsView(SwaggerView):
             False,
             type=lambda v: v.lower() == "true",
         )
-        if refresh_all is True:
-            connector_dict = {
-                db_c.DELIVERY_PLATFORM_FACEBOOK: FacebookConnector,
-                db_c.DELIVERY_PLATFORM_SFMC: SFMCConnector,
-                db_c.DELIVERY_PLATFORM_QUALTRICS: QualtricsConnector,
-                db_c.DELIVERY_PLATFORM_SENDGRID: SendgridConnector,
-                db_c.DELIVERY_PLATFORM_TWILIO: SendgridConnector,
-                db_c.DELIVERY_PLATFORM_GOOGLE: GoogleConnector,
-            }
-            for destination in destinations:
+
+        connector_dict = {
+            db_c.DELIVERY_PLATFORM_FACEBOOK: FacebookConnector,
+            db_c.DELIVERY_PLATFORM_SFMC: SFMCConnector,
+            db_c.DELIVERY_PLATFORM_QUALTRICS: QualtricsConnector,
+            db_c.DELIVERY_PLATFORM_SENDGRID: SendgridConnector,
+            db_c.DELIVERY_PLATFORM_TWILIO: SendgridConnector,
+            db_c.DELIVERY_PLATFORM_GOOGLE: GoogleConnector,
+        }
+
+        # Map db status values to api status values
+        status_mapping = {
+            db_c.STATUS_SUCCEEDED: api_c.STATUS_ACTIVE,
+            db_c.STATUS_PENDING: api_c.STATUS_PENDING,
+            db_c.STATUS_FAILED: api_c.STATUS_ERROR,
+        }
+
+        for destination in destinations:
+            if refresh_all is True:
                 if destination[api_c.DELIVERY_PLATFORM_TYPE] in connector_dict:
                     try:
                         connector_dict[
@@ -255,7 +264,9 @@ class DestinationsView(SwaggerView):
                         ],
                         status=destination[db_c.DELIVERY_PLATFORM_STATUS],
                     )
-
+            destination[db_c.DELIVERY_PLATFORM_STATUS] = status_mapping[
+                destination[db_c.DELIVERY_PLATFORM_STATUS]
+            ]
         return (
             jsonify(DestinationGetSchema().dump(destinations, many=True)),
             HTTPStatus.OK,

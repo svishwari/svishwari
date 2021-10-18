@@ -153,9 +153,9 @@ class DestinationGetSchema(Schema):
         validate=[
             OneOf(
                 choices=[
-                    db_c.STATUS_SUCCEEDED,
-                    db_c.STATUS_PENDING,
-                    db_c.STATUS_FAILED,
+                    api_c.STATUS_ACTIVE,
+                    api_c.STATUS_PENDING,
+                    api_c.STATUS_ERROR,
                 ]
             )
         ],
