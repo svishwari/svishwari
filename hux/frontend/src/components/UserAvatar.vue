@@ -1,5 +1,5 @@
 <template>
-  <v-menu v-model="menu" offset-y close-on-click>
+  <v-menu v-model="menu" offset-y close-on-click min-width="192">
     <template #activator="{ on }">
       <span
         class="d-flex cursor-pointer mr-6 d-flex align-center user-avatar"
@@ -13,7 +13,7 @@
           :class="{ 'menu-active': menu }"
         >
         </v-avatar>
-        <span class="text--subtitle-1 black--text">{{ initials }}</span>
+        <span class="text-subtitle-1 black--text">{{ initials }}</span>
         <span class="ml-4">
           <icon
             type="chevron-down"
@@ -24,32 +24,55 @@
         </span>
       </span>
     </template>
-    <v-list>
-      <v-list-item class="font-weight-bold">
-        <v-btn color="primary" class="font-weight-bold mr-2" small outlined fab>
-          {{ initials }}
-        </v-btn>
+    <v-list min-width="192px">
+      <v-list-item class="mb-4">
+        <v-avatar class="mr-2" size="45" color="primary"></v-avatar>
         <v-list-item-title
-          class="text-h6 black--text text--darken-4 font-weight-bold"
-          >{{ firstName }} {{ lastName }}</v-list-item-title
+          class="
+            black--text
+            text--lighten-4
+            font-weight-bold
+            d-flex
+            flex-column
+          "
         >
+          <span>{{ firstName }} {{ lastName }}</span>
+          <!-- TODO replace this with actual user role -->
+          <span class="user-role mt-1">HUX Data Specialist</span>
+        </v-list-item-title>
       </v-list-item>
-      <v-list-item>
-        <v-list-item-title>
+      <v-list-item class="mb-1" data-e2e="change_password">
+        <v-list-item-title class="text-body-1 black--text text--lighten-4">
           <a
-            class="text-decoration-none text-h6 black--text text--darken-4"
+            class="text-decoration-none black--text text--lighten-4"
             :href="changeDetailsLink"
             target="_blank"
             data-e2e="profile"
-            >My Hux Profile</a
+            height="32px"
           >
+            My Hux Profile
+          </a>
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item class="mb-1" data-e2e="change_password">
+        <v-list-item-title class="text-body-1 black--text text--lighten-4">
+          <a href="#" class="text-decoration-none black--text text--lighten-4">
+            Change Password
+          </a>
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item class="mb-1" data-e2e="change_username">
+        <v-list-item-title class="text-body-1 black--text text--lighten-4">
+          <a href="#" class="text-decoration-none black--text text--lighten-4">
+            Change Username
+          </a>
         </v-list-item-title>
       </v-list-item>
       <v-divider />
-      <v-list-item data-e2e="logout" @click="initiateLogout()">
-        <v-list-item-title class="text-h6 black--text text--darken-4"
-          >Logout</v-list-item-title
-        >
+      <v-list-item data-e2e="logout" class="mt-2" @click="initiateLogout()">
+        <v-list-item-title class="text-body-1 black--text text--lighten-4">
+          Logout
+        </v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
@@ -100,7 +123,21 @@ export default {
     &:hover,
     &.menu-active {
       fill: var(--v-primary-base);
+      stroke: var(--v-primary-base);
     }
+  }
+}
+.v-menu__content {
+  .user-role {
+    font-size: 10px;
+    line-height: 13.62px;
+    font-weight: normal;
+  }
+  .v-list-item {
+    &:first-child {
+      min-height: inherit;
+    }
+    min-height: 32px;
   }
 }
 </style>

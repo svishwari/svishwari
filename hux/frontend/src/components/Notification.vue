@@ -26,27 +26,36 @@
             data-e2e="notification-item"
           >
             <v-list-item-title
-              class="text-h6 black--text text--darken-4 list-main"
+              class="text-h6 black--text text--lighten-4 list-main"
             >
               <div class="d-flex text-caption">
                 <status
                   :status="data.notification_type"
                   :show-label="false"
-                  :icon-size="17"
+                  :icon-size="21"
                 />
-                <tooltip>
-                  <template #label-content>
-                    <span class="wrap-word">
-                      {{ data.description }}
-                    </span>
-                  </template>
-                  <template #hover-content>
-                    <span> {{ data.description }} </span>
-                  </template>
-                </tooltip>
-              </div>
-              <div class="list-stamp">
-                <time-stamp :value="data.created" />
+                <div class="d-flex flex-column">
+                  <tooltip>
+                    <template #label-content>
+                      <span
+                        class="
+                          wrap-word
+                          text-body-2
+                          black--text
+                          text--lighten-4
+                        "
+                      >
+                        {{ data.description }}
+                      </span>
+                    </template>
+                    <template #hover-content>
+                      <span> {{ data.description }} </span>
+                    </template>
+                  </tooltip>
+                  <div class="text-body-2 black--text text--lighten-4">
+                    <time-stamp :value="data.created" />
+                  </div>
+                </div>
               </div>
             </v-list-item-title>
           </v-list-item>

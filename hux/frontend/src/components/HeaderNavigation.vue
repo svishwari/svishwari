@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex align-center">
-    <span class="text-h6 black--text text--lighten-4 mr-2">
+    <span class="text--body-2 black--text text--lighten-4 mr-2">
       Today,
       {{ appLoadTime | Date("HH:mm A zzz") }}
     </span>
