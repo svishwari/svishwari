@@ -38,7 +38,9 @@ const Date = (value, format = "M/D/YYYY [at] h:mm A", noSuffix = false) => {
 
   if (format === "calendar") return date.calendar()
 
-  return dayjs(date).tz().format(format)
+  if (format === "local") return date.tz().format(format)
+
+  return date.format(format)
 }
 
 /**
