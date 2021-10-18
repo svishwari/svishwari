@@ -22,6 +22,7 @@ MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
 MONGO_DB_PASSWORD = "MONGO_DB_PASSWORD"
 OKTA_CLIENT_ID = "OKTA_CLIENT_ID"
 OKTA_ISSUER = "OKTA_ISSUER"
+RETURN_EMPTY_AUDIENCE_FILE = "RETURN_EMPTY_AUDIENCE_FILE"
 JSON_SORT_KEYS_CONST = "JSON_SORT_KEYS"
 CDP_SERVICE = "CDP_SERVICE"
 CDP_CONNECTION_SERVICE = "CDP_CONNECTION_SERVICE"
@@ -275,6 +276,46 @@ DOWNLOAD_TYPE = "download_type"
 GOOGLE_ADS = "google_ads"
 AMAZON_ADS = "amazon_ads"
 GENERIC_ADS = "generic_ads"
+GOOGLE_ADS_DEFAULT_COLUMNS = [
+    "Zip",
+    "Country",
+    "First Name",
+    "Phone",
+    "Last Name",
+    "Email",
+]
+AMAZON_ADS_DEFAULT_COLUMNS = [
+    "zip",
+    "first_name",
+    "phone",
+    "last_name",
+    "state",
+    "address",
+    "email",
+]
+GENERIC_ADS_DEFAULT_COLUMNS = [
+    "hux_id",
+    "address",
+    "address_hashed",
+    "city_hashed",
+    "country_code_hashed",
+    "date_of_birth_day_hashed",
+    "date_of_birth_month_hashed",
+    "date_of_birth_year_hashed",
+    "email_address",
+    "email_address_hashed",
+    "email_preference",
+    "first_name",
+    "first_name_hashed",
+    "first_name_initial_hashed",
+    "gender_hashed",
+    "last_name",
+    "last_name_hashed",
+    "mobile_device_id",
+    "phone_number_digits_only_hashed",
+    "postal_code_hashed",
+    "state_or_province_hashed",
+]
 
 # Facebook connector defines
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
@@ -720,6 +761,9 @@ PARAMETER_STORE_ERROR_MSG = (
 # users
 USER_TAG = "user"
 USER_NAME = "user_name"
+DISPLAY_NAME = "display_name"
+USER_PHONE_NUMBER = "phone_number"
+USER_ACCESS_LEVEL = "access_level"
 USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
@@ -845,6 +889,7 @@ CITIES_DEFAULT_BATCH_SIZE = 100
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
+NOTIFICATION_ID = "notification_id"
 NOTIFICATIONS_DESCRIPTION = "Notifications API"
 NOTIFICATIONS_ENDPOINT = "/notifications"
 NOTIFICATION_STREAM_TIME_SECONDS = 60
@@ -1082,7 +1127,7 @@ RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
 
-CUSTOMER_IDR_TEST_DATE = {
+CUSTOMER_IDR_TEST_DATA = {
     "name": {
         "data_sources": [
             {

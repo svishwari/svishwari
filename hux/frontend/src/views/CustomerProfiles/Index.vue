@@ -1,22 +1,14 @@
 <template>
   <div class="customer-dashboard-wrap">
-    <page-header class="background-border" :header-height-changes="'py-3'">
+    <page-header class="py-5" :header-height="110">
       <template #left>
-        <breadcrumb :items="items" />
-      </template>
-      <template #right>
-        <hux-button
-          v-if="!loading"
-          class="mr-4 pa-3"
-          is-custom-icon
-          is-tile
-          icon="customer-profiles"
-          variant="white"
-          data-e2e="view-all-customers"
-          @click="toggleProfilesDrawer()"
-        >
-          View all customers
-        </hux-button>
+        <div>
+          <breadcrumb :items="items" />
+        </div>
+        <div class="text-subtitle-1 font-weight-regular">
+          Hux’s omni-view of your entire customer base to help you better
+          understand how to create a personalized experience.
+        </div>
       </template>
     </page-header>
     <v-progress-linear
@@ -340,7 +332,6 @@ import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import Tooltip from "@/components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
-import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
 import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
 import GeoDrawer from "@/views/Shared/Drawers/GeoDrawer.vue"
@@ -361,7 +352,6 @@ export default {
     PageHeader,
     Breadcrumb,
     Tooltip,
-    huxButton,
     Icon,
     CustomerDetails,
     GeoDrawer,
@@ -484,7 +474,7 @@ export default {
       ],
       items: [
         {
-          text: "Customer Profiles",
+          text: "All Customers",
           disabled: true,
           href: "/customers",
           icon: "customer-profiles",

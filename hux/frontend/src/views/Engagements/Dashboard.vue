@@ -11,22 +11,21 @@
         </div>
       </template>
       <template #right>
-        <v-icon
-          size="22"
-          color="primary"
-          class="icon-border pa-2 ma-1"
-          @click="refreshEntity()"
-        >
-          mdi-refresh
-        </v-icon>
-        <v-icon
-          size="22"
-          color="primary"
-          class="icon-border pa-2 ma-1"
-          @click="editEngagement()"
-        >
-          mdi-pencil
-        </v-icon>
+        <div class="d-flex align-center">
+          <icon
+            type="pencil"
+            :size="18"
+            class="cursor-pointer mr-7"
+            color="black-darken4"
+            @click.native="editEngagement()"
+          />
+          <icon
+            type="dots-vertical"
+            :size="18"
+            class="cursor-pointer mr-7"
+            color="black-darken4"
+          />
+        </div>
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -66,7 +65,12 @@
                 class="d-flex align-center primary--text text-decoration-none"
                 @click="triggerSelectAudience()"
               >
-                <icon type="audiences" :size="16" class="mr-1" />
+                <icon
+                  type="audiences"
+                  color="primary"
+                  :size="16"
+                  class="mr-1"
+                />
                 Add an audience
               </v-btn>
               <v-btn
@@ -75,7 +79,7 @@
                 data-e2e="deliver-history"
                 @click="openDeliveryHistoryDrawer()"
               >
-                <icon type="history" :size="16" class="mr-1" />
+                <icon type="history" color="primary" :size="16" class="mr-1" />
                 Delivery history
               </v-btn>
             </div>

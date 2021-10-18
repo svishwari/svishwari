@@ -1,5 +1,6 @@
 """This module enables functionality related to notification management."""
 import logging
+import warnings
 from datetime import datetime
 from typing import Union
 
@@ -22,6 +23,7 @@ def create_notification(
     notification_type: str,
     description: str,
     category: str = None,
+    username: str = "unknown",
 ) -> Union[dict, None]:
     """A function to create a new notification.
 
@@ -30,6 +32,8 @@ def create_notification(
         notification_type (str): type of notification to create.
         description (str): description of notification.
         category (str): category of notification.
+        username (str): username of user performing an action for which the
+            notification is created.
 
     Returns:
         Union[dict, None]: MongoDB document for a notification.
@@ -62,11 +66,19 @@ def create_notification(
     elif notification_type == c.NOTIFICATION_TYPE_CRITICAL:
         expire_time = current_time + relativedelta(months=6)
 
+    warnings.warn(
+        "Use of username field being optional with default value of unknown in"
+        " notification collection will be deprecated in the future release.",
+        DeprecationWarning,
+    )
+
     doc = {
         c.EXPIRE_AT: expire_time,
         c.NOTIFICATION_FIELD_TYPE: notification_type,
         c.NOTIFICATION_FIELD_DESCRIPTION: description,
         c.NOTIFICATION_FIELD_CREATED: current_time,
+        c.DELETED: False,
+        c.NOTIFICATION_FIELD_USERNAME: username,
     }
 
     if category:
@@ -118,7 +130,7 @@ def get_notifications_batch(
         return dict(
             total_records=collection.count_documents({}),
             notifications=list(
-                collection.find()
+                collection.find({c.DELETED: False})
                 .sort([(c.NOTIFICATION_FIELD_CREATED, -1), (c.ID, sort_order)])
                 .skip(skips)
                 .limit(batch_size)
@@ -156,6 +168,8 @@ def get_notifications(
         c.NOTIFICATIONS_COLLECTION
     ]
 
+    query_filter[c.DELETED] = False
+
     try:
         return dict(
             total_records=collection.count_documents(query_filter),
@@ -171,6 +185,47 @@ def get_notifications(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def delete_notification(
+    database: DatabaseClient,
+    notification_id: ObjectId,
+    hard_delete: bool = False,
+) -> bool:
+    """A function to delete a notification using ID.
+
+    Args:
+        database (DatabaseClient): A database client.
+        notification_id (ObjectId): Object Id of the notification.
+        hard_delete (bool): hard deletes an notification if True.
+
+    Returns:
+        bool: Flag indicating successful operation.
+    """
+
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.NOTIFICATIONS_COLLECTION
+    ]
+
+    try:
+        if hard_delete:
+            collection.delete_one({c.ID: notification_id})
+            return True
+        doc = collection.find_one_and_update(
+            {c.ID: notification_id},
+            {"$set": {c.DELETED: True}},
+            upsert=False,
+            new=True,
+        )
+        return doc[c.DELETED]
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False
 
 
 def get_notification(
@@ -192,7 +247,7 @@ def get_notification(
     ]
 
     try:
-        return collection.find_one({c.ID: notification_id})
+        return collection.find_one({c.ID: notification_id, c.DELETED: False})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

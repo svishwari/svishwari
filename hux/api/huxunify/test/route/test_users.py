@@ -214,6 +214,29 @@ class TestUserRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         t_c.validate_schema(UserSchema(), response.json)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_get_all_users(self):
+        """Tests getting all users."""
+
+        endpoint = f"{t_c.BASE_ENDPOINT}" f"{api_c.USER_ENDPOINT}"
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        t_c.validate_schema(UserSchema(), response.json, True)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(1, len(response.json))
+        self.assertIsNotNone(response.json[0][api_c.DISPLAY_NAME])
+        self.assertIsNotNone(response.json[0][api_c.EMAIL])
+        self.assertIsNotNone(response.json[0][api_c.USER_PHONE_NUMBER])
+        self.assertIsNotNone(response.json[0][api_c.USER_ACCESS_LEVEL])
+        self.assertIn(
+            response.json[0][api_c.USER_ACCESS_LEVEL],
+            ["Edit", "View-only", "Admin"],
+        )
 
     def test_get_user_profile_bad_request_failure(self):
         """Test 400 response of getting user profile using Okta ID."""

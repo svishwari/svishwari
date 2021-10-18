@@ -17,7 +17,7 @@
           color="black"
           variant="darken4"
         />
-        <div class="text-h2" data-e2e="card-title">
+        <div v-if="title" class="text-h28" data-e2e="card-title">
           {{ title }}
         </div>
       </div>
