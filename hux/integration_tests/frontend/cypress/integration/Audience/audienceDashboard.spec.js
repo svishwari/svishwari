@@ -27,7 +27,6 @@ describe("audience dashboard test suite", () => {
   })
 
   it("should be able to validate Audiences History", () => {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.get(selector.audience.audiencehistory)
       .its("length")
       .as("overviewListCount")
