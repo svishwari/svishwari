@@ -249,23 +249,54 @@ class TectonTest(TestCase):
             },
         )
 
-    def test_list_features(self):
-        """Test list features for a model."""
+    @requests_mock.Mocker()
+    def test_get_model_features_success(self, request_mocker: Mocker) -> None:
+        """Test get features for a model.
 
-        # TODO - when available.
-        self.assertEqual(2 + 2, 4)
+        Args:
+            request_mocker (Mocker): request mocker object.
+        """
 
-    def test_performance_metrics(self):
-        """Test getting performance metrics for a model."""
+        # setup the request mock post
+        request_mocker.post(
+            self.config.TECTON_FEATURE_SERVICE,
+            text=json.dumps(
+                t_c.MOCKED_MODEL_PROPENSITY_FEATURES,
+                default=json_util.default,
+            ),
+            headers=self.config.TECTON_API_HEADERS,
+        )
 
-        # TODO - when available.
-        self.assertEqual(2 + 2, 4)
+        model_features = tecton.get_model_features(1, "21.7.30")
 
-    def test_feature_importance(self):
-        """Test getting feature importance for a model."""
+        self.assertTrue(model_features)
 
-        # TODO - when available.
-        self.assertEqual(2 + 2, 4)
+    @requests_mock.Mocker()
+    def test_get_model_features_negative_score_success(
+        self, request_mocker: Mocker
+    ) -> None:
+        """Test get features for a model.
+
+        Args:
+            request_mocker (Mocker): request mocker object.
+        """
+
+        # setup the request mock post
+        request_mocker.post(
+            self.config.TECTON_FEATURE_SERVICE,
+            text=json.dumps(
+                t_c.MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE,
+                default=json_util.default,
+            ),
+            headers=self.config.TECTON_API_HEADERS,
+        )
+
+        model_features = tecton.get_model_features(1, "21.7.30")
+
+        self.assertTrue(model_features)
+        self.assertTrue(
+            all((feature[constants.SCORE] < 0 for feature in model_features))
+        )
 
     def test_lift_chart(self):
         """Test getting lift charts for a model."""
@@ -359,7 +390,7 @@ class TectonTest(TestCase):
 
         Args:
             request_mocker (Mocker): request mocker object.
-            model_id (str): model ID value for request.
+            model_id (int): model ID value for request.
         """
 
         request_mocker.post(
@@ -376,8 +407,8 @@ class TectonTest(TestCase):
         model_id=st.integers(min_value=100, max_value=1000),
         model_type=st.text(alphabet=string.ascii_letters),
     )
-    def test_get_model_drift_raise_empty_responsedependency_error(
-        self, request_mocker: Mocker, model_id: str, model_type: str
+    def test_get_model_drift_raise_empty_response_dependency_error(
+        self, request_mocker: Mocker, model_id: int, model_type: str
     ) -> None:
         """Test get model drift raise empty response dependency error.
 
@@ -398,17 +429,17 @@ class TectonTest(TestCase):
 
     @requests_mock.Mocker()
     @given(
-        model_id=st.text(alphabet=string.ascii_letters),
+        model_id=st.integers(min_value=100, max_value=1000),
         model_version=st.text(alphabet=string.ascii_letters),
     )
     def test_get_model_features_raise_dependency_error(
-        self, request_mocker: Mocker, model_id: str, model_version: str
+        self, request_mocker: Mocker, model_id: int, model_version: str
     ) -> None:
         """Test get model features raise dependency error.
 
         Args:
             request_mocker (Mocker): request mocker object.
-            model_id (str): model ID value for request.
+            model_id (int): model ID value for request.
             model_version (str): model version value for request.
         """
 

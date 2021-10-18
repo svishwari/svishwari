@@ -598,6 +598,55 @@ MOCKED_MODEL_PROPENSITY_FEATURES = {
     ]
 }
 
+MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
+    api_c.RESULTS: [
+        {
+            api_c.FEATURES: [
+                "2021-07-28",
+                "1to2y-COGS-sum",
+                -1165.89062,
+                "Propensity to Unsubscribe",
+                api_c.UNSUBSCRIBE,
+                "21.7.28",
+            ],
+            api_c.JOIN_KEYS: ["21.7.28"],
+        },
+        {
+            api_c.FEATURES: [
+                "2021-07-29",
+                "1to2y-data_source-orders",
+                -880.273438,
+                "Propensity to Unsubscribe",
+                api_c.UNSUBSCRIBE,
+                "21.7.29",
+            ],
+            api_c.JOIN_KEYS: ["21.7.29"],
+        },
+        {
+            api_c.FEATURES: [
+                "2021-07-30",
+                "1to2y-ITEMQTY-avg",
+                -210.867187,
+                "Propensity to Unsubscribe",
+                api_c.UNSUBSCRIBE,
+                "21.7.30",
+            ],
+            api_c.JOIN_KEYS: ["21.7.30"],
+        },
+        {
+            api_c.FEATURES: [
+                "2021-07-31",
+                "1to2y-COGS-sum",
+                -364.695312,
+                "Propensity to Unsubscribe",
+                api_c.UNSUBSCRIBE,
+                "21.7.31",
+            ],
+            api_c.JOIN_KEYS: ["21.7.31"],
+        },
+    ]
+}
+
 CUSTOMER_INSIGHTS_COUNT_BY_DAY_RESPONSE = {
     "code": 200,
     "body": [
