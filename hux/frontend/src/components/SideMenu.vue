@@ -43,7 +43,7 @@
       color="var(-v--primary-base)"
     >
       <div v-if="item.label" class="list-group black--text">
-        <span v-if="!isMini" class="text-h5 black--text pl-6">
+        <span v-if="!isMini" class="text-h5 black--text text--lighten-4 pl-6">
           {{ item.label }}
         </span>
       </div>

@@ -50,16 +50,12 @@
       </v-list-item>
       <v-list-item class="mb-1" data-e2e="change_password">
         <v-list-item-title class="text-body-1 black--text">
-          <a href="#" class="text-decoration-none black--text">
-            Change Password
-          </a>
+          Change Password
         </v-list-item-title>
       </v-list-item>
       <v-list-item class="mb-1" data-e2e="change_username">
         <v-list-item-title class="text-body-1 black--text">
-          <a href="#" class="text-decoration-none black--text">
-            Change Username
-          </a>
+          Change Username
         </v-list-item-title>
       </v-list-item>
       <v-divider />
