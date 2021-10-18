@@ -300,7 +300,12 @@
                   data-e2e="delivery-history"
                   @click="openDeliveryHistoryDrawer()"
                 >
-                  <icon type="history" :size="14" class="mr-1" />
+                  <icon
+                    type="history"
+                    color="primary"
+                    :size="14"
+                    class="mr-1"
+                  />
                   Delivery history
                 </v-btn>
               </div>

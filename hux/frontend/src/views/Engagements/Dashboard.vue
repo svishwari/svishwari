@@ -65,7 +65,12 @@
                 class="d-flex align-center primary--text text-decoration-none"
                 @click="triggerSelectAudience()"
               >
-                <icon type="audiences" :size="16" class="mr-1" />
+                <icon
+                  type="audiences"
+                  color="primary"
+                  :size="16"
+                  class="mr-1"
+                />
                 Add an audience
               </v-btn>
               <v-btn
@@ -74,7 +79,7 @@
                 data-e2e="deliver-history"
                 @click="openDeliveryHistoryDrawer()"
               >
-                <icon type="history" :size="16" class="mr-1" />
+                <icon type="history" color="primary" :size="16" class="mr-1" />
                 Delivery history
               </v-btn>
             </div>
