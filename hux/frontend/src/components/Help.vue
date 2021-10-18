@@ -13,7 +13,7 @@
       </v-list-item>
       <v-list-item class="v-list-item--link" data-e2e="about_hux">
         <a href="#" class="text-body-1 black--text text-decoration-none">
-          About HUX
+          About Hux
         </a>
       </v-list-item>
       <v-list-item class="v-list-item--link" data-e2e="contactus">
