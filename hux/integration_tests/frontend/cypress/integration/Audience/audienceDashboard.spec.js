@@ -1,7 +1,7 @@
 import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
-describe("audience dashboard test suite", () => {
+describe("Orchestration > Audiences > Audience dashboard", () => {
   before(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
@@ -56,13 +56,13 @@ describe("audience dashboard test suite", () => {
     })
   })
 
-  // TODO: temporarily skipping - HUS-1267
+  
   it("should be able to view Map chart", () => {
     // validate top location & income chart
     cy.get(selector.audience.mapchart).should("exist")
   })
 
-  // TODO: temporarily skipping - HUS-1267
+  
   it("should be able to hover over bar of map chart", () => {
     // mouse hover on income chart
     cy.get(".geochart")
@@ -70,19 +70,19 @@ describe("audience dashboard test suite", () => {
       .trigger("mouseover", { eventConstructor: "MouseEvent" })
   })
 
-  // TODO: temporarily skipping - HUS-1267
+  
   it("map state list should have 1 or more states", () => {
     // validate no of state in list
     cy.get(selector.audience.mapStateList).its("length").should("be.gt", 0)
   })
 
-  // TODO: temporarily skipping - HUS-1267
+  
   it("should be able to view top location & income chart", () => {
     // validate top location & income chart
     cy.get(selector.audience.incomeChart).should("exist")
   })
 
-  // TODO: temporarily skipping - HUS-1267
+  
   it("should be able to hover over bar of top location & income chart", () => {
     // mouse hover on income chart
     cy.get(".bar")
@@ -90,13 +90,13 @@ describe("audience dashboard test suite", () => {
       .trigger("mouseover", { eventConstructor: "MouseEvent" })
   })
 
-  // TODO: temporarily skipping - HUS-1267
+  
   it("should be able to view Gender / monthly spending chart", () => {
     //validate Gender / monthly spending chart
     cy.get(selector.audience.genderSpendChart).should("exist")
   })
 
-  // TODO: temporarily skipping - HUS-1267
+  
   it("should be able to hover over bar of Gender / monthly spending chart", () => {
     // mouse hover on income chart
     cy.get(".dot")
@@ -104,13 +104,13 @@ describe("audience dashboard test suite", () => {
       .trigger("mouseover", { eventConstructor: "MouseEvent" })
   })
 
-  // TODO: temporarily skipping - HUS-1267
+  
   it("should be able to view Gender chart", () => {
     //validate Gender chart
     cy.get(selector.audience.genderChart).should("exist")
   })
 
-  // TODO: temporarily skipping - HUS-1267
+  
   it("should be able to hover over arc of gender chart", () => {
     // mouse hover on income chart
     cy.get(".arc")
@@ -118,7 +118,7 @@ describe("audience dashboard test suite", () => {
       .trigger("mouseover", { force: true, eventConstructor: "MouseEvent" })
   })
 
-  // TODO: temporarily skipping - HUS-1267
+  
   it("should be able to open and validate deliver history", () => {
     cy.get(selector.audience.deliveryhistory).click()
 

@@ -43,7 +43,7 @@ describe("Orchestration > Engagement > Create Engagement", () => {
     cy.get(selector.engagement.exitDrawer).click()
   })
 
-  // TODO: temporarily skipping - HUS-1267
+  
   it("should add destination data extensions and verify the configuration", () => {
     // TODO: add a check that it requires data extension name before proceeding
     cy.get(selector.engagement.addDestination).click()
