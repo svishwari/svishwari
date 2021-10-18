@@ -1,8 +1,22 @@
 <template>
   <div class="audiences-wrap white">
-    <page-header :header-height-changes="'py-3'">
-      <template slot="left">
-        <breadcrumb :items="breadcrumbItems" />
+    <page-header class="py-5" :header-height="110">
+      <template #left>
+        <div>
+          <breadcrumb :items="breadcrumbItems" />
+        </div>
+        <div class="text-subtitle-1 font-weight-regular">
+          Here are a list of audiences that you have saved and created from
+          segmenting your customer list in the Segment Playground.
+        </div>
+      </template>
+      <template #right>
+        <icon
+          type="filter"
+          :size="22"
+          class="cursor-pointer"
+          color="black-darken4"
+        />
       </template>
     </page-header>
     <page-header class="top-bar" :header-height="71">
@@ -39,6 +53,7 @@
         view-height="calc(100vh - 210px)"
         sort-column="update_time"
         sort-desc="false"
+        data-e2e="audience-table"
       >
         <template #row-item="{ item }">
           <td
@@ -59,12 +74,7 @@
               <span v-if="item.is_lookalike == true" class="mr-3">
                 <tooltip>
                   <template #label-content>
-                    <icon
-                      type="lookalike"
-                      :size="20"
-                      color="black-darken4"
-                      class="mr-2"
-                    />
+                    <icon type="lookalike" :size="20" class="mr-2" />
                   </template>
                   <template #hover-content>Lookalike audience</template>
                 </tooltip>
@@ -366,7 +376,7 @@ export default {
       userFavorites: "users/favorites",
     }),
     audienceList() {
-      let audienceValue = this.rowData
+      let audienceValue = JSON.parse(JSON.stringify(this.rowData))
       audienceValue.forEach((audience) => {
         audience.destinations.sort((a, b) => a.name.localeCompare(b.name))
       })

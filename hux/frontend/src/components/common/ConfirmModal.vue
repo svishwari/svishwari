@@ -10,20 +10,28 @@
             <icon v-if="icon" :type="icon" :color="localIconColor" :size="42" />
           </slot>
           <slot name="title">
-            <div v-if="title" class="black--text text--darken-4 text-h3 pt-3">
+            <div v-if="title" class="black--text text--darken-4 text-h2 pt-3">
               {{ title }}
             </div>
           </slot>
           <slot name="sub-title">
             <div
               v-if="subTitle"
-              class="black--text text--darken-4 text-h3 mt-n2"
+              class="black--text text--darken-4 text-h2 mt-n2"
             >
               {{ subTitle }}
             </div>
           </slot>
           <slot name="body">
-            <div v-if="body" class="black--text text--darken-4 text-h6 pt-6">
+            <div
+              v-if="body"
+              class="
+                black--text
+                text--darken-4 text-subtitle-1
+                pt-6
+                font-weight-regular
+              "
+            >
               {{ body }}
             </div>
           </slot>

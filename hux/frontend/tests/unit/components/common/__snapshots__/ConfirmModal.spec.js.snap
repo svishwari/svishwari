@@ -24,13 +24,18 @@ exports[`Tests Confirm Modal Confirm modal displays props content 1`] = `
   <div class="confirm-modal-wrapper">
     <div class="confirm-modal-body px-6">
       <icon-stub type="sad-face" size="42" color="primary" fillopacity="1"></icon-stub>
-      <div class="black--text text--darken-4 text-h3 pt-3">
+      <div class="black--text text--darken-4 text-h2 pt-3">
         Title prop
       </div>
-      <div class="black--text text--darken-4 text-h3 mt-n2">
+      <div class="black--text text--darken-4 text-h2 mt-n2">
         Subtitle prop
       </div>
-      <div class="black--text text--darken-4 text-h6 pt-6">
+      <div class="
+              black--text
+              text--darken-4 text-subtitle-1
+              pt-6
+              font-weight-regular
+            ">
         Body prop
       </div>
     </div>
