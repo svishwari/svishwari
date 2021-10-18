@@ -23,8 +23,6 @@ describe("Data Management > Connections > Destinations", () => {
     cy.get(selector.destination.addDestination).click()
     cy.location("pathname").should("eq", route.addDestinations)
 
-    
-
     /**
     //find a addable destination from the drawer
     cy.get(selector.destination.drawerToggle).click()

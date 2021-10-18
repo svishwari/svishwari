@@ -56,13 +56,11 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
     })
   })
 
-  
   it("should be able to view Map chart", () => {
     // validate top location & income chart
     cy.get(selector.audience.mapchart).should("exist")
   })
 
-  
   it("should be able to hover over bar of map chart", () => {
     // mouse hover on income chart
     cy.get(".geochart")
@@ -70,19 +68,16 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
       .trigger("mouseover", { eventConstructor: "MouseEvent" })
   })
 
-  
   it("map state list should have 1 or more states", () => {
     // validate no of state in list
     cy.get(selector.audience.mapStateList).its("length").should("be.gt", 0)
   })
 
-  
   it("should be able to view top location & income chart", () => {
     // validate top location & income chart
     cy.get(selector.audience.incomeChart).should("exist")
   })
 
-  
   it("should be able to hover over bar of top location & income chart", () => {
     // mouse hover on income chart
     cy.get(".bar")
@@ -90,13 +85,11 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
       .trigger("mouseover", { eventConstructor: "MouseEvent" })
   })
 
-  
   it("should be able to view Gender / monthly spending chart", () => {
     //validate Gender / monthly spending chart
     cy.get(selector.audience.genderSpendChart).should("exist")
   })
 
-  
   it("should be able to hover over bar of Gender / monthly spending chart", () => {
     // mouse hover on income chart
     cy.get(".dot")
@@ -104,13 +97,11 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
       .trigger("mouseover", { eventConstructor: "MouseEvent" })
   })
 
-  
   it("should be able to view Gender chart", () => {
     //validate Gender chart
     cy.get(selector.audience.genderChart).should("exist")
   })
 
-  
   it("should be able to hover over arc of gender chart", () => {
     // mouse hover on income chart
     cy.get(".arc")
@@ -118,7 +109,6 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
       .trigger("mouseover", { force: true, eventConstructor: "MouseEvent" })
   })
 
-  
   it("should be able to open and validate deliver history", () => {
     cy.get(selector.audience.deliveryhistory).click()
 
