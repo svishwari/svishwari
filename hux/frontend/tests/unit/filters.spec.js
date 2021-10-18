@@ -30,26 +30,26 @@ describe("Filters", () => {
       expect(filters.Date(testdate.format(), "relative")).toEqual("a month ago")
 
       testdate = dayjs().subtract(42, "minute")
-      expect(filters.Date(testdate.format(), "relative", false)).toEqual(
+      expect(filters.Date(testdate.format(), "relative", false, false)).toEqual(
         "42 minutes ago"
       )
-      expect(filters.Date(testdate.format(), "relative", true)).toEqual(
+      expect(filters.Date(testdate.format(), "relative", false, true)).toEqual(
         "42 minutes"
       )
 
       testdate = dayjs()
-      expect(filters.Date(testdate.format(), "relative", false)).toEqual(
+      expect(filters.Date(testdate.format(), "relative", false, false)).toEqual(
         "a few seconds ago"
       )
-      expect(filters.Date(testdate.format(), "relative", true)).toEqual(
+      expect(filters.Date(testdate.format(), "relative", false, true)).toEqual(
         "a few seconds"
       )
 
       testdate = dayjs().add(5, "day")
-      expect(filters.Date(testdate.format(), "relative", false)).toEqual(
+      expect(filters.Date(testdate.format(), "relative", false, false)).toEqual(
         "a few seconds ago"
       )
-      expect(filters.Date(testdate.format(), "relative", true)).toEqual(
+      expect(filters.Date(testdate.format(), "relative", false, true)).toEqual(
         "a few seconds"
       )
     })
@@ -139,6 +139,13 @@ describe("Filters", () => {
       nonPercentageValues.forEach((value) => {
         expect(filters.Percentage(value)).toEqual(value)
       })
+    })
+  })
+
+  describe("Abbreviation filter", () => {
+    it("should convert string to Abbreviation", () => {
+      expect(filters.Abbreviation("Eastern Standard Time")).toEqual("EST")
+      expect(filters.Abbreviation("Indian Standard Time")).toEqual("IST")
     })
   })
 
