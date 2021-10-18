@@ -274,11 +274,6 @@ export default {
   }
 }
 .footer-font {
-  font-family: Open Sans;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 12px;
-  line-height: 16px;
   color: var(--v-black-darken1);
 }
 </style>

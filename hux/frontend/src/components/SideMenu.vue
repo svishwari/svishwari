@@ -162,7 +162,7 @@ export default {
     color: var(--v-white-base);
     cursor: default;
     display: flex;
-    font-size: 0.93rem;
+    font-size: 14px;
     line-height: 1.75rem;
     font-weight: normal;
     justify-content: space-between;
@@ -182,7 +182,7 @@ export default {
   }
 
   .v-list-item__title {
-    font-size: 0.93rem;
+    font-size: 14px;
     font-weight: normal;
   }
 
@@ -199,7 +199,7 @@ export default {
     span {
       color: var(--v-white-base);
       display: flex;
-      font-size: 0.93rem;
+      font-size: 14px;
       font-weight: normal;
       opacity: 0.5;
       padding: 0.75rem 1rem;
@@ -209,8 +209,6 @@ export default {
 
   .nav-footer {
     color: var(--v-white-base);
-    font-size: 12px;
-    font-weight: normal;
     opacity: 0.5;
     padding: 1rem;
   }

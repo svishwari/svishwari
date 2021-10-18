@@ -522,36 +522,20 @@ export default {
   }
 }
 .title-font-size {
-  font-family: Open Sans;
-  font-style: normal;
-  font-weight: 300 !important;
-  font-size: 21px;
-  line-height: 25px;
   color: var(--v-black-darken4);
   justify-content: center;
 }
 .title-text {
-  font-family: Open Sans;
-  font-style: normal;
-  font-weight: normal;
   color: var(--v-black-darken1) !important;
-  font-size: 12px !important;
 }
 .table-text {
   color: var(--v-black-darken4);
-  font-size: 12px !important;
 }
 .card-heading {
-  font-size: 15px !important;
   color: var(--v-black-darken4);
-  font-weight: 400;
   height: 54px !important;
 }
 .sample-card-text {
-  font-size: 14px;
-  font-family: Open Sans;
-  font-style: normal;
-  font-weight: 600;
   color: var(--v-black-darken4) !important;
 }
 .icon-cursor {

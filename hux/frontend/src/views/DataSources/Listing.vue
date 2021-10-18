@@ -241,13 +241,6 @@ export default {
         @extend .text-ellipsis;
         max-width: 25ch;
       }
-      .data-feed-status {
-        span {
-          span {
-            font-size: 12px;
-          }
-        }
-      }
       .v-data-table-header {
         tr:first-child {
           th {

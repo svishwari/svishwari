@@ -190,10 +190,6 @@ export default {
   .title-wrap {
     display: flex;
     flex-direction: column;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 12px;
-    line-height: 16px;
     min-height: 64px;
     .heading {
       text-transform: uppercase;

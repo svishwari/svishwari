@@ -127,8 +127,6 @@ export default {
     font-weight: 400;
     line-height: 16px;
   }
-  font-family: inherit;
-  font-size: 12px;
   ::v-deep .ag-root-wrapper {
     border: none;
     border-top: solid 1px;
@@ -143,11 +141,6 @@ export default {
         height: 32px !important;
         max-height: 32px !important;
         min-height: 32px !important;
-        font-size: 12px;
-        font-family: inherit;
-        font-style: normal;
-        font-weight: 600;
-        line-height: 16px;
         background: transparent;
         border-color: var(--v-black-lighten3) !important;
         .ag-header-row {
@@ -179,9 +172,6 @@ export default {
         }
       }
       .ag-header-row {
-        font-weight: 400;
-        font-size: 12px;
-        line-height: 16px;
         color: var(--v-black-darken4);
         .ag-checkbox {
           .ag-input-wrapper {
