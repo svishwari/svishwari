@@ -2,7 +2,17 @@
   <div class="d-flex align-center">
     <span class="text--body-2 black--text mr-2">
       Today,
-      {{ appLoadTime | Date("HH:mm A zzz", (local = true)) }}
+      {{ appLoadTime | Date("HH:mm A", (local = true)) }}
+      <tooltip>
+        <template #label-content>
+          <span>{{
+            appLoadTime | Date("zzz", (local = true)) | Abbreviation
+          }}</span>
+        </template>
+        <template #hover-content>
+          {{ appLoadTime | Date("zzz") }}
+        </template>
+      </tooltip>
     </span>
     <v-icon size="16" class="mr-2 nav-icon" @click="$router.go()">
       mdi-refresh
@@ -41,12 +51,14 @@
 import Notification from "../components/Notification.vue"
 import Help from "../components/Help.vue"
 import Icon from "@/components/common/Icon"
+import Tooltip from "./common/Tooltip.vue"
 export default {
   name: "HeaderNavigation",
   components: {
     Notification,
     Help,
     Icon,
+    Tooltip,
   },
   data() {
     return {

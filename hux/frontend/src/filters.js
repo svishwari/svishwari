@@ -50,6 +50,16 @@ const Date = (
 }
 
 /**
+ * Formats a Abbreviation out of give text string.
+ *
+ * @param {string|*} value String eg. Eastern Standard Time
+ * @returns {string} Formatted string eg. EST
+ */
+const Abbreviation = (value) => {
+  return value.match(/[A-Z]/g).join("")
+}
+
+/**
  * Formats a datetime field to calendar relative date.
  * Converts date in calendar format like Yesterday, Today, Last Saturday for a week
  * else convert it into relative date like a month ago, a year ago
@@ -208,6 +218,7 @@ const DeliverySchedule = (value) => {
 export default {
   Date,
   DateRelative,
+  Abbreviation,
   Empty,
   Numeric,
   TitleCase,
