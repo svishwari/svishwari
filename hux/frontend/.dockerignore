@@ -1,4 +1,5 @@
 .env**
+token**
 *.log
 ci
 dist

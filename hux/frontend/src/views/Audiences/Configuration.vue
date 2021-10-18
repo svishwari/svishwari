@@ -74,6 +74,7 @@
                       pt-2
                       input-placeholder
                     "
+                    data-e2e="audience-name"
                     :rules="audienceNamesRules"
                     help-text="This audience will appear in the delivered destinations as the provided Audience name. In Facebook it will appear as the provided Audience name with the timestamp of delivery."
                     icon="mdi-information-outline"
@@ -86,7 +87,10 @@
                     Add to an engagement -
                     <i style="tilt">you must have at least one</i>
                     <div class="mt-2 d-flex align-center">
-                      <span @click="openAttachEngagementsDrawer()">
+                      <span
+                        data-e2e="add-engagement"
+                        @click="openAttachEngagementsDrawer()"
+                      >
                         <icon
                           class="add-icon cursor-pointer"
                           type="add"
@@ -167,7 +171,10 @@
               <v-row>
                 <v-col cols="12" class="pt-2">
                   <div class="d-flex align-center">
-                    <span @click="openSelectDestinationsDrawer()">
+                    <span
+                      data-e2e="add-destination-audience"
+                      @click="openSelectDestinationsDrawer()"
+                    >
                       <icon
                         class="add-icon cursor-pointer"
                         type="add"
@@ -306,6 +313,7 @@
               width="94"
               height="44"
               :is-disabled="!isAudienceFormValid"
+              data-e2e="create-audience"
               @click="createAudience()"
             >
               {{ !isEdit ? "Create" : "Update" }}
