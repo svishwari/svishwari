@@ -28,13 +28,7 @@
       <v-list-item class="mb-4">
         <v-avatar class="mr-2" size="45" color="primary"></v-avatar>
         <v-list-item-title
-          class="
-            black--text
-            text--lighten-4
-            font-weight-bold
-            d-flex
-            flex-column
-          "
+          class="black--text font-weight-bold d-flex flex-column"
         >
           <span>{{ firstName }} {{ lastName }}</span>
           <!-- TODO replace this with actual user role -->
@@ -42,9 +36,9 @@
         </v-list-item-title>
       </v-list-item>
       <v-list-item class="mb-1" data-e2e="change_password">
-        <v-list-item-title class="text-body-1 black--text text--lighten-4">
+        <v-list-item-title class="text-body-1 black--text">
           <a
-            class="text-decoration-none black--text text--lighten-4"
+            class="text-decoration-none black--text"
             :href="changeDetailsLink"
             target="_blank"
             data-e2e="profile"
@@ -55,22 +49,22 @@
         </v-list-item-title>
       </v-list-item>
       <v-list-item class="mb-1" data-e2e="change_password">
-        <v-list-item-title class="text-body-1 black--text text--lighten-4">
-          <a href="#" class="text-decoration-none black--text text--lighten-4">
+        <v-list-item-title class="text-body-1 black--text">
+          <a href="#" class="text-decoration-none black--text">
             Change Password
           </a>
         </v-list-item-title>
       </v-list-item>
       <v-list-item class="mb-1" data-e2e="change_username">
-        <v-list-item-title class="text-body-1 black--text text--lighten-4">
-          <a href="#" class="text-decoration-none black--text text--lighten-4">
+        <v-list-item-title class="text-body-1 black--text">
+          <a href="#" class="text-decoration-none black--text">
             Change Username
           </a>
         </v-list-item-title>
       </v-list-item>
       <v-divider />
       <v-list-item data-e2e="logout" class="mt-2" @click="initiateLogout()">
-        <v-list-item-title class="text-body-1 black--text text--lighten-4">
+        <v-list-item-title class="text-body-1 black--text">
           Logout
         </v-list-item-title>
       </v-list-item>

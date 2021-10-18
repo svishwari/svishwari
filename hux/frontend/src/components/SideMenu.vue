@@ -29,7 +29,7 @@
         <template #default>
           <div class="px-6 py-3 white">
             <v-icon color="primary"> mdi-information </v-icon>
-            <span class="pl-4 text-button black--text text--darken-4">
+            <span class="pl-4 text-button black--text">
               This is where your future client accounts will be held.
             </span>
           </div>
@@ -42,8 +42,8 @@
       :key="item.title"
       color="var(-v--primary-base)"
     >
-      <div v-if="item.label" class="list-group black--text text--lighten-4">
-        <span v-if="!isMini" class="text-h5 black--text text--lighten-4 pl-6">
+      <div v-if="item.label" class="list-group black--text">
+        <span v-if="!isMini" class="text-h5 black--text pl-6">
           {{ item.label }}
         </span>
       </div>
@@ -75,7 +75,7 @@
             </template>
           </tooltip>
         </v-list-item-icon>
-        <v-list-item-title class="black--text text--lighten-4 text-h6">
+        <v-list-item-title class="black--text text-h6">
           {{ item.title }}
         </v-list-item-title>
       </v-list-item>
@@ -97,19 +97,19 @@
               v-if="menu.icon"
               :key="menu.title"
               position-top
-              color="black-lighten4"
+              color="black"
             >
               <template #label-content>
                 <icon :type="menu.icon" :size="iconSize" class="mr-0" />
               </template>
               <template #hover-content>
-                <span class="black--text text--lighten-4 text-h6">
+                <span class="black--text text-h6">
                   {{ menu.title }}
                 </span>
               </template>
             </tooltip>
           </v-list-item-icon>
-          <v-list-item-title class="black--text text--lighten-4 text-h6">
+          <v-list-item-title class="black--text text-h6">
             {{ menu.title }}
           </v-list-item-title>
         </v-list-item>
@@ -247,6 +247,9 @@ export default {
       // @extend .side-menu-icon;
     }
   }
+}
+.nav-footer {
+  opacity: 0.8;
 }
 .v-menu__content {
   @extend .box-shadow-25;

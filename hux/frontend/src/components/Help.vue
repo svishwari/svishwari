@@ -7,30 +7,19 @@
     </template>
     <v-list>
       <v-list-item>
-        <v-list-item-title
-          class="font-weight-semi-bold text-h6 black--text text--lighten-4"
-        >
+        <v-list-item-title class="font-weight-semi-bold text-h6 black--text">
           Help
         </v-list-item-title>
       </v-list-item>
       <v-list-item class="v-list-item--link" data-e2e="about_hux">
-        <a
-          href="#"
-          class="text-body-1 black--text text--lighten-4 text-decoration-none"
-        >
+        <a href="#" class="text-body-1 black--text text-decoration-none">
           About HUX
         </a>
       </v-list-item>
       <v-list-item class="v-list-item--link" data-e2e="contactus">
         <a
           href="mailto:ushuxproductidea@deloitte.com"
-          class="
-            text-body-1
-            black--text
-            text--lighten-4
-            view-all
-            text-decoration-none
-          "
+          class="text-body-1 black--text view-all text-decoration-none"
         >
           Contact Us
         </a>

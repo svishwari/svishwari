@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex align-center">
-    <span class="text--body-2 black--text text--lighten-4 mr-2">
+    <span class="text--body-2 black--text mr-2">
       Today,
       {{ appLoadTime | Date("HH:mm A zzz") }}
     </span>
@@ -16,13 +16,7 @@
       <v-list>
         <v-list-item>
           <v-list-item-title
-            class="
-              font-weight-semi-bold
-              text-h6
-              black--text
-              text--lighten-4
-              mb-1
-            "
+            class="font-weight-semi-bold text-h6 black--text mb-1"
           >
             Add
           </v-list-item-title>
@@ -32,7 +26,7 @@
           :key="link.name"
           @click="routerRedirect(link.path)"
         >
-          <v-list-item-title class="text-body-1 black--text text--lighten-4">
+          <v-list-item-title class="text-body-1 black--text">
             {{ link.name }}
           </v-list-item-title>
         </v-list-item>

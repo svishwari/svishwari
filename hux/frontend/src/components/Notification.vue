@@ -12,9 +12,7 @@
     </template>
     <v-list class="alert-menu-main">
       <v-list-item>
-        <v-list-item-title
-          class="font-weight-semi-bold text-h6 black--text text--lighten-4"
-        >
+        <v-list-item-title class="font-weight-semi-bold text-h6 black--text">
           Unread alerts
         </v-list-item-title>
       </v-list-item>
@@ -25,9 +23,7 @@
             :key="data.id"
             data-e2e="notification-item"
           >
-            <v-list-item-title
-              class="text-h6 black--text text--lighten-4 list-main"
-            >
+            <v-list-item-title class="text-h6 black--text list-main">
               <div class="d-flex text-caption">
                 <status
                   :status="data.notification_type"
@@ -37,14 +33,7 @@
                 <div class="d-flex flex-column">
                   <tooltip>
                     <template #label-content>
-                      <span
-                        class="
-                          wrap-word
-                          text-body-2
-                          black--text
-                          text--lighten-4
-                        "
-                      >
+                      <span class="wrap-word text-body-2 black--text">
                         {{ data.description }}
                       </span>
                     </template>
@@ -52,7 +41,7 @@
                       <span> {{ data.description }} </span>
                     </template>
                   </tooltip>
-                  <div class="text-body-2 black--text text--lighten-4">
+                  <div class="text-body-2 black--text">
                     <time-stamp :value="data.created" />
                   </div>
                 </div>
