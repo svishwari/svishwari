@@ -2,7 +2,7 @@
   <div class="d-flex align-center">
     <span class="text--body-2 black--text mr-2">
       Today,
-      {{ appLoadTime | Date("HH:mm A zzz") }}
+      {{ appLoadTime | Date("HH:mm A zzz", (local = true)) }}
     </span>
     <v-icon size="16" class="mr-2 nav-icon" @click="$router.go()">
       mdi-refresh

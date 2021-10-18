@@ -117,16 +117,6 @@ const routes = [
       requiresAuth: true,
     },
   },
-  {
-    path: "/segments",
-    name: "SegmentPlayground",
-    component: () => import("@/views/Segments/Index"),
-    meta: {
-      layout: "app",
-      title: "Segment Playground",
-      requiresAuth: true,
-    },
-  },
   //#endregion
 
   //#region Orchestration

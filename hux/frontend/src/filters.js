@@ -19,10 +19,16 @@ dayjs.extend(advancedFormat)
  *
  * @param {string|*} value Datetime eg. 2021-03-17T13:29:49.351Z
  * @param {string} format Format eg. "MM/D/YYYY [at] hh:ss A"
+ * @param {string} local Format eg. true if true, it will use the local time zone if user.
  * @param {boolean} noSuffix Whether to include a suffix
  * @returns {string} Formatted date time string eg. 3/17/2021 at 1:29 PM
  */
-const Date = (value, format = "M/D/YYYY [at] h:mm A", noSuffix = false) => {
+const Date = (
+  value,
+  format = "M/D/YYYY [at] h:mm A",
+  local = false,
+  noSuffix = false
+) => {
   if (!value) return null
 
   let date = dayjs(value)
@@ -38,7 +44,7 @@ const Date = (value, format = "M/D/YYYY [at] h:mm A", noSuffix = false) => {
 
   if (format === "calendar") return date.calendar()
 
-  if (format === "local") return date.tz().format(format)
+  if (local) return date.tz().format(format)
 
   return date.format(format)
 }
