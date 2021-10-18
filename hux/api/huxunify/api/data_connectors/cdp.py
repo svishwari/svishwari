@@ -3,6 +3,7 @@
 # pylint:disable=too-many-lines
 import time
 import asyncio
+import random
 from collections import defaultdict
 from typing import Tuple, Optional, List
 from datetime import datetime, timedelta
@@ -931,7 +932,10 @@ def add_missing_customer_count_by_day(
                     else customer_data_by_day[-1][api_c.TOTAL_COUNT],
                 }
             )
-
+        # TODO: Fetch this data from CDP once it is ready
+        customer_data_by_day[-1][api_c.CUSTOMERS_LEFT] = random.randint(
+            -57000, 0
+        )
     return customer_data_by_day
 
 
