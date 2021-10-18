@@ -305,8 +305,8 @@
       :interactable="false">
       <template #subtitle-extended>
         <div class="font-weight-semi-bold black--text text--darken-4 mb-2">
-          <icon class="mr-1" type="up"  :size="8" />
-          <icon class="ml-1 mr-1" type="down" :size="8" />
+          <icon class="mr-1" type="stock-up"  :size="8" />
+          <icon class="ml-1 mr-1" type="stock-down" :size="8" />
           3/1/2021 • 9:42AM
         </div>
       </template>
