@@ -11,11 +11,17 @@
     @click="$emit('click')"
   >
     <div class="d-flex align-center justify-space-between w-100">
-      <div class="flex-grow-1" :class="{ 'align-center text-center': highLevel }">
+      <div
+        class="flex-grow-1"
+        :class="{ 'align-center text-center': highLevel }"
+      >
         <span
           v-if="!titleTooltip"
           class="text-caption"
-          :class="[interactable ? 'primary--text ' : 'black--text text--darken-1 ', highLevel ? 'highlevel-title' : '' ]"
+          :class="[
+            interactable ? 'primary--text ' : 'black--text text--darken-1 ',
+            highLevel ? 'highlevel-title' : '',
+          ]"
         >
           {{ title }}
         </span>
@@ -38,8 +44,15 @@
         <slot name="extra-item"></slot>
 
         <div class="subtitle-slot">
-          <span class="font-weight-semi-bold" :class="{ 'no-click': !interactable, 'flex-grow-1 align-center text-center highlevel-subtitle': highLevel }">
-                {{ subtitle }}
+          <span
+            class="font-weight-semi-bold"
+            :class="{
+              'no-click': !interactable,
+              'flex-grow-1 align-center text-center highlevel-subtitle':
+                highLevel,
+            }"
+          >
+            {{ subtitle }}
           </span>
           <slot name="subtitle-extended"></slot>
         </div>
@@ -159,8 +172,8 @@ export default {
   .highlevel-subtitle {
     font-size: 14px !important;
     line-height: 16px;
-    color: #4F4F4F;
-     color: var(--v-black-darken1) !important;
+    color: #4f4f4f;
+    color: var(--v-black-darken1) !important;
   }
 }
 </style>

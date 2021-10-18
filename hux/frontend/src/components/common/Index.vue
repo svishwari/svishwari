@@ -298,49 +298,51 @@
 
     <v-subheader>Metric Card</v-subheader>
 
-    <metric-card class="ma-4"
+    <metric-card
+      class="ma-4"
       title="Metric Title"
       :max-width="186"
       :height="75"
-      :interactable="false">
+      :interactable="false"
+    >
       <template #subtitle-extended>
         <div class="font-weight-semi-bold black--text text--darken-4 mb-2">
-          <icon class="mr-1" type="stock-up"  :size="8" />
+          <icon class="mr-1" type="stock-up" :size="8" />
           <icon class="ml-1 mr-1" type="stock-down" :size="8" />
           3/1/2021 • 9:42AM
         </div>
       </template>
     </metric-card>
 
-    <metric-card class="ma-4"
+    <metric-card
+      class="ma-4"
       title="Metric Title"
       :max-width="180"
       :height="75"
-      :interactable="false">
-      <template #subtitle-extended>
-        <div class="font-weight-semi-bold black--text text--darken-4 mb-2">
-          3/1/2021 • 9:42AM
-        </div>
-      </template>
-    </metric-card>
-
-    <metric-card class="ma-4"
-      title="Metric Title"
-      :max-width="180"
-      :height="75"
-      :interactable="true">
-      <template #subtitle-extended>
-        <div class="font-weight-semi-bold black--text text--darken-4 mb-2">
-          3/1/2021 • 9:42AM
-        </div>
-      </template>
-    </metric-card>
-
-    <metric-card class="ma-4"
-      title="Created on"
-      :max-width="180"
-      :height="75"
+      :interactable="false"
     >
+      <template #subtitle-extended>
+        <div class="font-weight-semi-bold black--text text--darken-4 mb-2">
+          3/1/2021 • 9:42AM
+        </div>
+      </template>
+    </metric-card>
+
+    <metric-card
+      class="ma-4"
+      title="Metric Title"
+      :max-width="180"
+      :height="75"
+      :interactable="true"
+    >
+      <template #subtitle-extended>
+        <div class="font-weight-semi-bold black--text text--darken-4 mb-2">
+          3/1/2021 • 9:42AM
+        </div>
+      </template>
+    </metric-card>
+
+    <metric-card class="ma-4" title="Created on" :max-width="180" :height="75">
       <template #subtitle-extended>
         <span class="mr-2">
           <tooltip>
@@ -349,9 +351,7 @@
                 4 hours ago by
               </span>
             </template>
-            <template #hover-content>
-              10/18/2021 at 8:37 AM
-            </template>
+            <template #hover-content> 10/18/2021 at 8:37 AM </template>
           </tooltip>
         </span>
         <span class="mt-n2">
@@ -360,11 +360,13 @@
       </template>
     </metric-card>
 
-    <metric-card class="ma-4"
+    <metric-card
+      class="ma-4"
       title="Description"
       :max-width="400"
       :height="75"
-      :interactable="false">
+      :interactable="false"
+    >
       <template #subtitle-extended>
         <div class="font-weight-semi-bold black--text text--darken-4 mb-2">
           this is where the description text...
@@ -372,13 +374,15 @@
       </template>
     </metric-card>
 
-    <metric-card class="ma-4"
+    <metric-card
+      class="ma-4"
       :max-width="128"
       :height="75"
       title="0.01"
       subtitle="AUC"
-      :highLevel="true"
-      :interactable="false">
+      :high-level="true"
+      :interactable="false"
+    >
     </metric-card>
 
     <v-divider class="mt-10" />
