@@ -22,7 +22,9 @@ describe("Orchestration > Audience > Create Audience", () => {
 
     // should fill new audience name and description
     // add new audience name
-    cy.get(selector.audience.audienceName).eq(0).type(randomText())
+    cy.get(selector.audience.audienceName)
+      .eq(0)
+      .type(`E2E test audience ( ${randomText()})`)
 
     // should add audience to the audience
     // Click on add audience icon
@@ -48,7 +50,9 @@ describe("Orchestration > Audience > Create Audience", () => {
       if ($body.find(selector.audience.salesForceAddButton).length > 0) {
         cy.get(selector.audience.salesForceAddButton).click()
         // Add new data extension name
-        cy.get(selector.engagement.dataExtensionName).eq(1).type(randomText())
+        cy.get(selector.engagement.dataExtensionName)
+          .eq(1)
+          .type(`New Data Extension`)
         // Close the data extension drawer
         cy.get(selector.engagement.exitDataExtensionDrawer).click()
         // eslint-disable-next-line cypress/no-unnecessary-waiting
