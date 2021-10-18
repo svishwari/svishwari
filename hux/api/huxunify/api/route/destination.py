@@ -212,76 +212,50 @@ class DestinationsView(SwaggerView):
             type=lambda v: v.lower() == "true",
         )
         if refresh_all is True:
+            connector_dict = {
+                db_c.DELIVERY_PLATFORM_FACEBOOK: FacebookConnector,
+                db_c.DELIVERY_PLATFORM_SFMC: SFMCConnector,
+                db_c.DELIVERY_PLATFORM_QUALTRICS: QualtricsConnector,
+                db_c.DELIVERY_PLATFORM_SENDGRID: SendgridConnector,
+                db_c.DELIVERY_PLATFORM_TWILIO: SendgridConnector,
+                db_c.DELIVERY_PLATFORM_GOOGLE: GoogleConnector,
+            }
             for destination in destinations:
-                if (
-                    destination[api_c.DELIVERY_PLATFORM_TYPE]
-                    == db_c.DELIVERY_PLATFORM_FACEBOOK
-                ):
-                    connector = FacebookConnector(
-                        auth_details=get_auth_from_parameter_store(
-                            destination[api_c.AUTHENTICATION_DETAILS],
+                if destination[api_c.DELIVERY_PLATFORM_TYPE] in connector_dict:
+                    try:
+                        connector_dict[
+                            destination[api_c.DELIVERY_PLATFORM_TYPE]
+                        ](
+                            auth_details=get_auth_from_parameter_store(
+                                destination[api_c.AUTHENTICATION_DETAILS],
+                                destination[api_c.DELIVERY_PLATFORM_TYPE],
+                            )
+                        )
+                        destination[
+                            db_c.DELIVERY_PLATFORM_STATUS
+                        ] = db_c.STATUS_SUCCEEDED
+                    # pylint: disable=broad-except
+                    except Exception as exception:
+                        logger.error(
+                            "%s: %s while connecting to destination %s.",
+                            exception.__class__,
+                            str(exception),
                             destination[api_c.DELIVERY_PLATFORM_TYPE],
                         )
-                    )
-                elif (
-                    destination[api_c.DELIVERY_PLATFORM_TYPE]
-                    == db_c.DELIVERY_PLATFORM_SFMC
-                ):
-                    connector = SFMCConnector(
-                        auth_details=get_auth_from_parameter_store(
-                            destination[api_c.AUTHENTICATION_DETAILS],
-                            destination[api_c.DELIVERY_PLATFORM_TYPE],
-                        ),
-                        connect=False,
-                    )
-                elif destination[api_c.DELIVERY_PLATFORM_TYPE] in [
-                    db_c.DELIVERY_PLATFORM_SENDGRID,
-                    db_c.DELIVERY_PLATFORM_TWILIO,
-                ]:
-                    connector = SendgridConnector(
-                        auth_details=get_auth_from_parameter_store(
-                            destination[api_c.AUTHENTICATION_DETAILS],
-                            destination[api_c.DELIVERY_PLATFORM_TYPE],
-                        )
-                    )
-                elif (
-                    destination[api_c.DELIVERY_PLATFORM_TYPE]
-                    == db_c.DELIVERY_PLATFORM_QUALTRICS
-                ):
-                    connector = QualtricsConnector(
-                        auth_details=get_auth_from_parameter_store(
-                            destination[api_c.AUTHENTICATION_DETAILS],
-                            destination[api_c.DELIVERY_PLATFORM_TYPE],
-                        )
-                    )
-                elif (
-                    destination[api_c.DELIVERY_PLATFORM_TYPE]
-                    == db_c.DELIVERY_PLATFORM_GOOGLE
-                ):
-                    connector = GoogleConnector(
-                        auth_details=get_auth_from_parameter_store(
-                            destination[api_c.AUTHENTICATION_DETAILS],
-                            destination[api_c.DELIVERY_PLATFORM_TYPE],
-                        )
-                    )
-                else:
-                    continue
+                        destination[
+                            db_c.DELIVERY_PLATFORM_STATUS
+                        ] = db_c.STATUS_FAILED
 
-                destination[db_c.DELIVERY_PLATFORM_STATUS] = (
-                    db_c.STATUS_SUCCEEDED
-                    if connector.check_connection()
-                    else db_c.STATUS_FAILED
-                )
+                    destination_management.update_delivery_platform(
+                        database=database,
+                        delivery_platform_id=destination[db_c.ID],
+                        name=destination[db_c.DELIVERY_PLATFORM_NAME],
+                        delivery_platform_type=destination[
+                            db_c.DELIVERY_PLATFORM_TYPE
+                        ],
+                        status=destination[db_c.DELIVERY_PLATFORM_STATUS],
+                    )
 
-                destination_management.update_delivery_platform(
-                    database=database,
-                    delivery_platform_id=destination[db_c.ID],
-                    name=destination[db_c.DELIVERY_PLATFORM_NAME],
-                    delivery_platform_type=destination[
-                        db_c.DELIVERY_PLATFORM_TYPE
-                    ],
-                    status=destination[db_c.DELIVERY_PLATFORM_STATUS],
-                )
         return (
             jsonify(DestinationGetSchema().dump(destinations, many=True)),
             HTTPStatus.OK,
