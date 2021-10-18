@@ -145,7 +145,7 @@ class TestDestinationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(len(self.destinations), len(response.json))
-        self.assertEqual(response.json[0][db_c.STATUS], db_c.STATUS_PENDING)
+        self.assertEqual(response.json[0][db_c.STATUS], api_c.STATUS_PENDING)
 
         destination_id = self.destinations[0][db_c.ID]
 
@@ -171,8 +171,8 @@ class TestDestinationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(len(self.destinations), len(response.json))
-        self.assertEqual(response.json[0][db_c.STATUS], db_c.STATUS_SUCCEEDED)
-        self.assertEqual(response.json[2][db_c.STATUS], db_c.STATUS_SUCCEEDED)
+        self.assertEqual(response.json[0][db_c.STATUS], api_c.STATUS_ACTIVE)
+        self.assertEqual(response.json[2][db_c.STATUS], api_c.STATUS_ACTIVE)
 
     def test_get_destination_with_valid_id(self):
         """Test get destination with valid ID."""

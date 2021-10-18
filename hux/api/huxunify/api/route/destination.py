@@ -229,7 +229,7 @@ class DestinationsView(SwaggerView):
         }
 
         for destination in destinations:
-            if refresh_all is True:
+            if refresh_all:
                 if destination[api_c.DELIVERY_PLATFORM_TYPE] in connector_dict:
                     try:
                         connector_dict[
