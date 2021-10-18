@@ -6,17 +6,28 @@
           <breadcrumb :items="breadcrumbItems" />
         </template>
         <template #right>
-          <hux-button
-            class="mr-4 pa-3"
-            is-custom-icon
-            is-tile
-            icon="history"
-            variant="white"
-            data-e2e="version-history-button"
-            @click="viewVersionHistory()"
-          >
-            Version history
-          </hux-button>
+          <v-menu v-model="modalOptions" close-on-click offset-y left>
+            <template #activator>
+              <span data-e2e="model-dashboard-options">
+                <icon
+                  type="dots-vertical"
+                  :size="18"
+                  class="cursor-pointer mr-7"
+                  color="black-darken4"
+                  @click.native="modalOptions = !modalOptions"
+                />
+              </span>
+            </template>
+            <template #default>
+              <div
+                class="px-4 py-2 white caption cursor-pointer"
+                data-e2e="version-history-button"
+                @click="viewVersionHistory()"
+              >
+                Version history
+              </div>
+            </template>
+          </v-menu>
         </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -227,7 +238,7 @@ import Tooltip from "@/components/common/Tooltip"
 import DriftChart from "@/components/common/Charts/DriftChart/DriftChart.vue"
 import FeaturesTable from "./FeaturesTable.vue"
 import FeatureChart from "@/components/common/featureChart/FeatureChart"
-import huxButton from "@/components/common/huxButton"
+import Icon from "@/components/common/Icon"
 import LiftChart from "@/components/common/LiftChart.vue"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
@@ -243,7 +254,7 @@ export default {
     LiftChart,
     Page,
     PageHeader,
-    huxButton,
+    Icon,
     VersionHistory,
     DriftChart,
     FeaturesTable,
@@ -252,6 +263,7 @@ export default {
     return {
       loading: false,
       loadingLift: true,
+      modalOptions: false,
       loadingModelFeatures: true,
       loadingDrift: true,
       featuresLoading: false,

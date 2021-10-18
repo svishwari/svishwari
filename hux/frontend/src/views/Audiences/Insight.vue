@@ -5,26 +5,29 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <v-icon size="22" color="primary" class="mr-2" @click="refreshEntity()">
-          mdi-refresh
-        </v-icon>
-
-        <v-icon size="22" color="black lighten-3" class="icon-border pa-2 ma-1">
-          mdi-plus-circle-multiple-outline
-        </v-icon>
-        <v-icon
-          size="22"
-          color="primary"
-          class="icon-border pa-2 ma-1"
-          @click="
-            $router.push({
-              name: 'AudienceUpdate',
-              params: { id: audienceId },
-            })
-          "
-        >
-          mdi-pencil
-        </v-icon>
+        <div class="d-flex align-center">
+          <icon
+            type="pencil"
+            :size="18"
+            class="cursor-pointer mr-7"
+            color="black-darken4"
+            @click.native="
+              $router.push({
+                name: 'AudienceUpdate',
+                params: { id: audienceId },
+              })
+            "
+          />
+          <icon
+            type="dots-vertical"
+            :size="18"
+            class="cursor-pointer mr-7"
+            color="black-darken4"
+          />
+        </div>
+      </template>
+      <!-- Keeping this in TODO until more updates -->
+      <!-- <template >
         <span class="position-relative">
           <v-menu :min-width="100" left offset-y close-on-click>
             <template #activator="{ on }">
@@ -83,7 +86,7 @@
             </template>
           </tooltip>
         </span>
-      </template>
+      </template> -->
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
@@ -625,7 +628,6 @@ import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
 import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import GeoDrawer from "@/views/Shared/Drawers/GeoDrawer.vue"
-import Logo from "../../components/common/Logo.vue"
 
 export default {
   name: "AudienceInsight",
@@ -653,7 +655,6 @@ export default {
     Tooltip,
     GenderSpendChart,
     GeoDrawer,
-    Logo,
   },
   data() {
     return {

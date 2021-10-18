@@ -44,6 +44,7 @@ describe("Decisioning > models", () => {
     cy.get(selector.models.featuretable).its("length").should("be.gt", 0)
 
     // should be able to view version history list
+    cy.get(selector.models.modelDashboardOptions).find("svg").click()
     cy.get(selector.models.versionhistorybutton).click()
 
     //validate the history list
