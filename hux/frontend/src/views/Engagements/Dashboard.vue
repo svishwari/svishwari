@@ -664,8 +664,6 @@ export default {
             padding-bottom: 15px;
             margin-left: -5px !important;
             .v-list-item__title {
-              font-size: 12px;
-              line-height: 16px;
               margin: 0 !important;
             }
             .v-list-item__subtitle {

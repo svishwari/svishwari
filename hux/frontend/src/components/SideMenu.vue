@@ -11,7 +11,7 @@
     <template #prepend>
       <img
         src="@/assets/images/logo.png"
-        alt="Hux Unified"
+        alt="Hux"
         width="55"
         height="55"
         class="d-flex ma-6"
@@ -23,14 +23,6 @@
             <span class="d-flex align-center">
               <logo :type="client.logo" :size="16" class="mr-2" />
               {{ client.name }}
-            </span>
-          </div>
-        </template>
-        <template #default>
-          <div class="px-6 py-3 white">
-            <v-icon color="primary"> mdi-information </v-icon>
-            <span class="pl-4 text-button black--text">
-              This is where your future client accounts will be held.
             </span>
           </div>
         </template>

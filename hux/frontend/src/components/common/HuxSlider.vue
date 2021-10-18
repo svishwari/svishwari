@@ -136,8 +136,6 @@ export default {
         background-color: inherit !important;
         color: var(--v-black-darken1);
         border: none !important;
-        font-size: 12px;
-        line-height: 16px;
       }
     }
   }

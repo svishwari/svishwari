@@ -133,7 +133,6 @@ export default {
 .list-stamp {
   margin-left: 25px;
   margin-top: 5px;
-  font-size: 11px;
 }
 .list-main {
   margin-bottom: 22px !important;
