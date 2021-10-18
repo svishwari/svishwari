@@ -1,5 +1,6 @@
 import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
+import { randomText } from "../../support/utils.js"
 
 describe("Orchestration > Audience > Create Audience", () => {
   before(() => {
@@ -21,7 +22,7 @@ describe("Orchestration > Audience > Create Audience", () => {
 
     // should fill new audience name and description
     // add new audience name
-    cy.get(selector.audience.audienceName).eq(0).type("Test Audience")
+    cy.get(selector.audience.audienceName).eq(0).type(randomText())
 
     // should add audience to the audience
     // Click on add audience icon
@@ -43,14 +44,18 @@ describe("Orchestration > Audience > Create Audience", () => {
   it("should add destination data extensions and verify the configuration", () => {
     // TODO: add a check that it requires data extension name before proceeding
     cy.get(selector.audience.addDestination).click()
-    cy.get(selector.audience.salesForceAddButton).click()
-    // Add new data extension name
-    cy.get(selector.engagement.dataExtensionName).eq(1).type("Testing")
-    // Close the data extension drawer
-    cy.get(selector.engagement.exitDataExtensionDrawer).click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000)
-    // Close the add destination drawer
-    cy.get(selector.engagement.exitDrawer).click()
+    cy.get("body").then(($body) => {
+      if ($body.find(selector.audience.salesForceAddButton).length > 0) {
+        cy.get(selector.audience.salesForceAddButton).click()
+        // Add new data extension name
+        cy.get(selector.engagement.dataExtensionName).eq(1).type(randomText())
+        // Close the data extension drawer
+        cy.get(selector.engagement.exitDataExtensionDrawer).click()
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(1000)
+        // Close the add destination drawer
+        cy.get(selector.engagement.exitDrawer).click()
+      }
+    })
   })
 })
