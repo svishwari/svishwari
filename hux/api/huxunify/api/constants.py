@@ -890,6 +890,7 @@ CITIES_DEFAULT_BATCH_SIZE = 100
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
+NOTIFICATION_ID = "notification_id"
 NOTIFICATIONS_DESCRIPTION = "Notifications API"
 NOTIFICATIONS_ENDPOINT = "/notifications"
 NOTIFICATION_STREAM_TIME_SECONDS = 60
@@ -1127,7 +1128,7 @@ RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
 
-CUSTOMER_IDR_TEST_DATE = {
+CUSTOMER_IDR_TEST_DATA = {
     "name": {
         "data_sources": [
             {

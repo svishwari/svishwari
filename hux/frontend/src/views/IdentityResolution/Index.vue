@@ -1,17 +1,31 @@
 <template>
   <page max-width="100%" class="idr-wrapper">
     <template #header>
-      <page-header header-height="70">
+      <page-header class="py-5" :header-height="110">
         <template #left>
-          <breadcrumb
-            :items="[
-              {
-                text: 'Identity Resolution',
-                disabled: true,
-                href: '/identity-resolution',
-                icon: 'identity-resolution',
-              },
-            ]"
+          <div>
+            <breadcrumb
+              :items="[
+                {
+                  text: 'Identity Resolution',
+                  disabled: true,
+                  href: '/identity-resolution',
+                  icon: 'identity-resolution',
+                },
+              ]"
+            />
+          </div>
+          <div class="text-subtitle-1 font-weight-regular">
+            Insights into the ingestion of all your customers’ data across your
+            data sources that build a cohesive view of each individual customer.
+          </div>
+        </template>
+        <template #right>
+          <icon
+            type="filter"
+            :size="22"
+            class="cursor-pointer"
+            color="black-darken4"
           />
         </template>
       </page-header>

@@ -1,15 +1,21 @@
 <template>
   <div>
-    <page-header data-e2e="models-header">
-      <template slot="left">
-        <breadcrumb
-          :items="[
-            {
-              text: $options.name,
-              icon: 'models',
-            },
-          ]"
-        />
+    <page-header data-e2e="models-header" :header-height="110">
+      <template #left>
+        <div>
+          <breadcrumb
+            :items="[
+              {
+                text: $options.name,
+                icon: 'models',
+              },
+            ]"
+          />
+        </div>
+        <div class="text-subtitle-1 font-weight-regular">
+          Begin to interpret, explore, and understand your data by digging into
+          your active models for an effective delivery experience.
+        </div>
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />

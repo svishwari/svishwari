@@ -61,6 +61,7 @@ export default {
     driftchart: "[data-e2e='drift-chart']",
     featurechart: "[data-e2e='feature-chart']",
     versionhistorybutton: "[data-e2e='version-history-button']",
+    modelDashboardOptions: "[data-e2e='model-dashboard-options']",
     versionhistory: "[data-e2e='version-history']",
   },
 

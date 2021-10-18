@@ -2,23 +2,22 @@
   <div class="overview-wrap">
     <page-header
       :title="`Welcome back, ${fullName}!`"
-      class="py-7"
+      class="py-4"
       header-height="auto"
       data-e2e="overview-header"
     >
-      <template slot="description">
-        Hux is here to help you make better, faster decisions to improve your
-        customer experiences.
+      <template #description>
+        <span class="text-subtitle-1 font-weight-regular">
+          Hux is here to help you make better, faster decisions to improve your
+          customer experiences.
+        </span>
         <a
-          class="text-decoration-none"
+          class="text-subtitle-1 font-weight-regular text-decoration-none"
           href="https://consulting.deloitteresources.com/offerings/customer-marketing/advertising-marketing-commerce/Pages/hux_marketing.aspx"
           target="_blank"
         >
           Learn More &gt;
         </a>
-      </template>
-      <template #right>
-        <icon type="configuration" :size="45" color="neroBlack" />
       </template>
     </page-header>
     <div v-if="configureOptions['configureHux']" class="quickAccessMenu">
@@ -69,7 +68,6 @@ import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import CardInfo from "@/components/common/CardInfo"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
-import Icon from "@/components/common/Icon"
 
 export default {
   name: "Overview",
@@ -77,7 +75,6 @@ export default {
     PageHeader,
     CardInfo,
     TotalCustomerChart,
-    Icon,
   },
   data() {
     return {
