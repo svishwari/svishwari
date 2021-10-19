@@ -987,17 +987,25 @@
 
     <v-subheader> Descriptive Card </v-subheader>
     <descriptive-card
+      :action-menu="true"
+      :coming-soon="false"
+      width="280"
+      height="255"
       icon="model-unsubscribe"
       title="Propensity to Unsubscribe"
       description="Propensity of a customer making a purchase after receiving an email."
     >
       <template slot="top">
-        <status status="Pending" collapsed class="d-flex" />
+        <status status="Pending" collapsed class="d-flex float-left" />
       </template>
 
       <template slot="default">
-        <p class="text-caption black--text text--darken-1">Sarah Miller</p>
-
+        <div
+          class="text-caption black--text text--darken-1 mb-2"
+          data-e2e="model-owner"
+        >
+          Owner Name
+        </div>
         <div class="d-flex justify-center mb-6">
           <card-stat label="Version" value="0.02" stat-class="border-0">
             <div class="mb-3">
@@ -1020,6 +1028,43 @@
           <card-stat label="Last trained" value="2 hrs ago">12:45pm</card-stat>
         </div>
       </template>
+    </descriptive-card>
+    <descriptive-card
+      :action-menu="true"
+      :coming-soon="false"
+      width="280"
+      height="255"
+      icon="model-unsubscribe"
+      title="Propensity to Unsubscribesss"
+      description="This is THE Hux CDP. Once a customer data solution has been implemented, all data sources flow seamlessly into the ..."
+    >
+      <template slot="top">
+        <status status="Pending" collapsed class="d-flex float-left" />
+      </template>
+    </descriptive-card>
+    <descriptive-card
+      :disabled="true"
+      :action-menu="false"
+      :coming-soon="true"
+      width="255"
+      height="225"
+      icon="model-unsubscribe"
+      title="Propensity to Unsubscribe ojjihj"
+      description="This is THE Hux CDP. Once a customer data solution has been implemented..."
+    >
+      <template slot="top">
+        <status status="Pending" collapsed class="d-flex float-left" />
+      </template>
+    </descriptive-card>
+    <descriptive-card
+      :disabled="false"
+      :action-menu="false"
+      :coming-soon="false"
+      width="280"
+      height="225"
+      title="Propensity to Unsubscribe ojjihj"
+      description="This is THE Hux CDP. Once a customer data solution has been implemented..."
+    >
     </descriptive-card>
 
     <v-divider class="mt-10" />
