@@ -47,7 +47,7 @@
 
           <template slot="default">
             <p
-              class="text-body-2 black--text text--lighten-4 mt-4"
+              class="text-body-2 black--text text--lighten-4"
               data-e2e="model-owner"
             >
               {{ model.owner }}

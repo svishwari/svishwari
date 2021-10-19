@@ -29,7 +29,7 @@
       </div>
     </div>
 
-    <div v-if="icon" class="d-flex justify-center pb-4 mt-2 mr-8">
+    <div v-if="icon" class="d-flex justify-center mt-2 mr-8">
       <div class="dot">
         <icon :type="icon" :size="44" color="primary" class="d-block" />
       </div>
