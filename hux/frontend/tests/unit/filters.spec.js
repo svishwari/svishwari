@@ -142,6 +142,13 @@ describe("Filters", () => {
     })
   })
 
+  describe("Abbreviation filter", () => {
+    it("should convert string to Abbreviation", () => {
+      expect(filters.Abbreviation("Eastern Standard Time")).toEqual("EST")
+      expect(filters.Abbreviation("Indian Standard Time")).toEqual("IST")
+    })
+  })
+
   describe("Empty filter", () => {
     it("should handle empty values with a placeholder", () => {
       const placeholder = "—"

@@ -15,10 +15,8 @@
       :tooltip-style="toolTipStyle"
     >
       <template #content>
-        <div class="bar-hover black--text text--darken-4">
-          <span class="feature-name">
-            {{ currentData.name }}
-          </span>
+        <div class="bar-hover black--text text--lighten-4">
+          <span class="feature-name"> {{ currentData.name }} </span>
           <span class="feature-description">
             {{ currentData.description }}
           </span>
@@ -95,7 +93,7 @@ export default {
   font-style: normal;
   font-size: 12px;
   line-height: 16px;
-  color: var(--v-black-darken2) !important;
+  color: var(--v-black-lighten4) !important;
 }
 .container {
   height: 650px;
