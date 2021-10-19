@@ -27,6 +27,11 @@ export default {
       required: false,
     },
 
+    stroke: {
+      type: String,
+      required: false,
+    },
+
     variant: {
       type: String,
       required: false,
@@ -34,6 +39,12 @@ export default {
     },
 
     fillOpacity: {
+      type: Number,
+      required: false,
+      default: 1,
+    },
+
+    strokeOpacity: {
       type: Number,
       required: false,
       default: 1,
@@ -54,7 +65,9 @@ export default {
       if (this.height) style.height = `${this.height}px`
       if (this.color) style.fill = `var(--v-${this.color}-${this.variant})`
       if (this.fillOpacity) style.fillOpacity = `${this.fillOpacity}`
-
+      if (this.stroke) style.stroke = `var(--v-${this.stroke}-${this.variant})`
+      if (this.strokeOpacity) style.strokeOpacity = `${this.strokeOpacity}`
+      
       return style
     },
   },

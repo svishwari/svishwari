@@ -93,7 +93,6 @@
                     </span>
                     <span v-if="item.title == 'Cities'">
                       Cities<br />
-                      USA:
                       {{
                         item.subtitle | Numeric(true, false, false) | Empty("-")
                       }}

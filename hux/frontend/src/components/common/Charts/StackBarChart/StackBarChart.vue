@@ -10,7 +10,6 @@ import * as d3Shape from "d3-shape"
 import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
-import * as d3Regression from "d3-regression"
 import * as d3Transition from "d3-transition"
 import colors from "../../../../plugins/theme"
 
@@ -84,8 +83,8 @@ export default {
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
       let barColorCodes = []
-      let rx = 10
-      let ry = 10
+      let rx = 3
+      let ry = 3
 
       let svg = d3Select
         .select(this.$refs.stackBarChart)
@@ -96,14 +95,14 @@ export default {
         .attr("transform", `translate(${margin.left},${margin.top})`)
 
       this.colorCodes.forEach((color) => {
-        if (color.variant == "darken2") {
+        if (color.variant == "lighten6") {
           barColorCodes.push(colors.primary[color.variant])
-        } else if (color.variant == "lighten9") {
+        } else if (color.variant == "darken1") {
           barColorCodes.push(colors.primary[color.variant])
-        } else if (color.variant == "lighten5") {
+        } else if (color.variant == "darken3") {
           barColorCodes.push(colors.primary[color.variant])
         } else {
-          barColorCodes.push(colors[color.base][color.variant])
+          barColorCodes.push(colors.success[color.variant])
         }
       })
 
@@ -125,7 +124,7 @@ export default {
         .scaleBand()
         .domain(d3Array.range(this.totalCustomerData.length))
         .range([0, w])
-        .paddingInner(0.33)
+        .paddingInner(0.22)
         .paddingOuter(0.11)
 
       let yScale = d3Scale
@@ -194,6 +193,19 @@ export default {
         .attr("stroke-opacity", "1")
         .style("font-size", "12px")
 
+      svg
+        .append("g")
+        .classed("yAxis-alternate", true)
+        .attr("transform", "translate(0, 0)")
+        .call(d3Axis.axisLeft(yScale).tickSize(-w).ticks(4).tickFormat(""))
+        .attr("stroke-width", "0.5")
+        .attr("stroke-opacity", "1")
+        .style("font-size", "12px")
+
+      d3Select
+        .selectAll(".yAxis-alternate .tick line")
+        .style("stroke", "#E2EAEC")
+
       let groups = bars
         .selectAll("g")
         .data(stackedValues)
@@ -208,15 +220,23 @@ export default {
           }
         })
 
-      d3Select.selectAll(".domain").style("stroke", "rgba(208, 208, 206, 1)")
-      d3Select.selectAll(".tick line").style("stroke", "rgba(208, 208, 206, 1)")
+      d3Select.selectAll(".domain").style("stroke", "#E2EAEC")
+      d3Select.selectAll(".tick line").style("stroke", "#E2EAEC")
       d3Select
         .selectAll(".xAxis-main .tick text")
         .attr("x", 10)
         .style("color", "#4F4F4F")
       d3Select.selectAll(".yAxis-main .tick text").style("color", "#4F4F4F")
       d3Select.selectAll(".xAxis-alternate .domain").style("stroke", "white")
+
       d3Select.selectAll(".xAxis-main .tick text").attr("x", 14)
+
+      svg
+        .append("line")
+        .attr("class", "hover-line-y")
+        .style("stroke", "#1E1E1E")
+        .style("stroke-width", 1)
+        .style("pointer-events", "none")
 
       let topRoundedRect = (x, y, width, height) => {
         height = height < 0 ? 0 : height
@@ -241,6 +261,7 @@ export default {
         .attr("height", 0)
         .attr("width", xScale.bandwidth() < 30 ? xScale.bandwidth() : 30)
         .attr("data", (d, i) => i)
+        .attr("dx", 10)
         .style("fill", (d) =>
           this.emptyState ? "transparent" : barColorCodes[d.data.index]
         )
@@ -258,62 +279,85 @@ export default {
           )
         )
 
-      let linearRegression = d3Regression
-        .regressionLinear()
-        .x((d) => d.barIndex)
-        .y((d) => d.total_customers)
-
-      let regLine = linearRegression(
-        this.totalCustomerData.filter((d) => d.total_customers != 0)
-      )
-
-      let max = d3Array.max(this.totalCustomerData, (d) => d.barIndex)
-      svg
-        .append("line")
-        .attr("class", "regression")
-        .style("stroke-dasharray", "6")
-        .style("stroke", this.emptyState ? "transparent" : "#86BC25")
-        .style("stroke-width", 1.5)
-        .attr("x1", xScale(0) + 9)
-        .attr("y1", yScale(regLine.a))
-        .attr("x2", xScale(max) + 14)
-        .attr("y2", yScale(regLine.b))
-
       let applyHoverEffects = (d, width) => {
         d3Select
           .select(d.srcElement)
           .attr("fill-opacity", (d) => barHoverIn(d.data, width))
       }
 
+      let hoverCircles = [
+        "foreGroundParentCicle",
+        "foreGroundChildCicle",
+        "backGroundParentCicle",
+        "backGroundChildCicle",
+      ]
+
       let removeHoverEffects = () => {
+        svg.selectAll(".hover-line-y").style("display", "none")
         d3Select.selectAll(".foreGroundBars").style("fill-opacity", "1")
-        d3Select
-          .select(this.$refs.stackBarChart)
-          .select(".removeableCircle")
-          .remove()
+        hoverCircles.forEach((circleName) => removeHoverCircle(circleName))
         this.tooltipDisplay(false)
       }
 
       let barHoverIn = (data, width) => {
-        svg
-          .append("circle")
-          .classed("removeableCircle", true)
-          .attr("cx", xScale(data.barIndex) + width / 2)
-          .attr("cy", yScale(data.total_customers))
-          .attr("r", 4)
-          .style("stroke", barColorCodes[data.index])
-          .style("stroke-opacity", "2")
-          .style("stroke-width", "2")
-          .style("fill", "white")
-          .style("pointer-events", "none")
         this.toolTip.xPosition = xScale(data.barIndex) + 40
         this.toolTip.yPosition = yScale(data.total_customers)
         this.toolTip.date = data.date
         this.toolTip.totalCustomers = data.total_customers
         this.toolTip.addedCustomers = data.new_customers_added
+        this.toolTip.leftCustomers = data.customers_left
         this.toolTip.index = data.index
         this.toolTip.isEndingBar = data.isEndingBar
         this.tooltipDisplay(true, this.toolTip)
+
+        svg
+          .selectAll(".hover-line-y")
+          .attr("x1", xScale(data.barIndex) + width / 2)
+          .attr("x2", xScale(data.barIndex) + width / 2)
+          .attr("y1", 0)
+          .attr("y2", h)
+          .style("display", "block")
+
+        addHoverCircle(
+          hoverCircles[0],
+          4,
+          data.barIndex,
+          data.total_customers,
+          width,
+          "white",
+          2,
+          1
+        )
+        addHoverCircle(
+          hoverCircles[1],
+          3,
+          data.barIndex,
+          data.total_customers,
+          width,
+          barColorCodes[data.index],
+          1,
+          0.5
+        )
+        addHoverCircle(
+          hoverCircles[2],
+          4,
+          data.barIndex,
+          data.new_customers_added,
+          width,
+          "white",
+          2,
+          1
+        )
+        addHoverCircle(
+          hoverCircles[3],
+          3,
+          data.barIndex,
+          data.new_customers_added,
+          width,
+          barColorCodes[data.index],
+          1,
+          1
+        )
       }
 
       let blinkLastBar = () => {
@@ -325,6 +369,36 @@ export default {
           .transition()
           .duration(500)
           .style("fill-opacity", "0.5")
+      }
+
+      let addHoverCircle = (
+        circleName,
+        circleRadius,
+        cX,
+        cY,
+        width,
+        strokeColor,
+        strokeWidth,
+        strokeOpacity
+      ) => {
+        svg
+          .append("circle")
+          .classed(circleName, true)
+          .attr("cx", xScale(cX) + width / 2)
+          .attr("cy", yScale(cY))
+          .attr("r", circleRadius)
+          .style("stroke", strokeColor)
+          .style("stroke-opacity", strokeOpacity)
+          .style("stroke-width", strokeWidth)
+          .style("fill", "white")
+          .style("pointer-events", "none")
+      }
+
+      let removeHoverCircle = (circleName) => {
+        d3Select
+          .select(this.$refs.stackBarChart)
+          .select(`.${circleName}`)
+          .remove()
       }
 
       this.lastBarAnimation = setInterval(blinkLastBar, 1000)
