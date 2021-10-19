@@ -58,7 +58,6 @@ COOKIE = "cookie"
 PROP = "prop"
 ICON = "icon"
 CREATED_BY = "created_by"
-CREATED_AT = "created_at"
 UPDATED_BY = "updated_by"
 MATCH_CONFIDENCE = "match_confidence"
 DELIVERIES = "deliveries"
@@ -1128,7 +1127,6 @@ THIRTY_DAYS_AVG = "thirty_days_avg"
 RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
-DEFAULT_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
 CUSTOMER_IDR_TEST_DATA = {
     "name": {
