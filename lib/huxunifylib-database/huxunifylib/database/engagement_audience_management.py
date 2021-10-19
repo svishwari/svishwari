@@ -92,7 +92,7 @@ def set_engagement_audience_destination_schedule(
     cron_expression: str,
     user_name: str,
     unset: bool = False,
-) -> list:
+) -> dict:
     """A function to set the destination cron expression.
 
     Args:
@@ -148,9 +148,16 @@ def set_engagement_audience_destination_schedule(
     if not change:
         return {}
 
-    return collection.replace_one(
+    # replace_one
+    collection.replace_one(
         {
             db_c.ID: engagement_id,
         },
         engagement_doc,
+    )
+
+    return collection.find_one(
+        {
+            db_c.ID: engagement_id,
+        }
     )
