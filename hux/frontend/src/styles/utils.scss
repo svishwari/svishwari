@@ -14,7 +14,7 @@
 }
 
 .font-weight-semi-bold {
-  font-weight: 600;
+  font-weight: 600 !important;
 }
 
 .rotate-icon-180 {
@@ -126,8 +126,8 @@
   border-width: 0;
 }
 
-.border-zircon {
-  border-color: #e2eaec !important;
+.separator {
+  border-color: var(--v-black-lighten2) !important;
 }
 
 .card-style {
@@ -140,7 +140,7 @@
 
 .card-shadow {
   @extend .box-shadow-none;
-  border: 1px solid var(--v-zircon-base) !important;
+  border: 1px solid var(--v-black-lighten2) !important;
   box-sizing: border-box !important;
   border-radius: 12px !important;
 }
@@ -156,4 +156,13 @@
 
 .mw-100 {
   max-width: 100% !important;
+}
+
+.nav-icon {
+  fill: var(--v-black-lighten4);
+  color: var(--v-black-lighten4);
+  &:hover {
+    fill: var(--v-primary-lighten6);
+    color: var(--v-primary-lighten6);
+  }
 }

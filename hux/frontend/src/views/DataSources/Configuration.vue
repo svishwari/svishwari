@@ -56,7 +56,7 @@
             @click="onDataSourceClick(dataSource.id)"
           />
 
-          <v-divider style="border-color: var(--v-zircon-base)" />
+          <v-divider style="border-color: var(--v-black-lighten2)" />
 
           <card-horizontal
             v-for="dataSource in disabledDataSources"

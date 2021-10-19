@@ -9,7 +9,7 @@
           :class="{ 'rotate-icon-180': toggleMini }"
           type="hamburger"
           :size="21"
-          color="neroBlack"
+          class="nav-icon"
         />
       </v-app-bar-nav-icon>
       <v-spacer></v-spacer>
@@ -36,14 +36,18 @@ export default {
   },
 }
 </script>
-<style lang="scss">
-.v-toolbar__content {
-  border-bottom: 1px solid rgb(208, 208, 206);
-  padding: 0 !important;
-}
-</style>
 <style lang="scss" scoped>
 .app-nav-bar {
+  ::v-deep .v-toolbar__content {
+    border-bottom: 1px solid rgb(208, 208, 206);
+    padding: 0 !important;
+  }
+  .nav-icon {
+    fill: var(--v-balck-lighten4);
+    &:hover {
+      fill: var(--v-primary-lighten6);
+    }
+  }
   button {
     &.v-app-bar__nav-icon {
       &.nav-back-burger {

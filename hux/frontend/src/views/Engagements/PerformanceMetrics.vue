@@ -5,7 +5,7 @@
       <div class="d-flex">
         <v-tab
           key="displayAds"
-          class="pa-2 mr-3"
+          class="pa-2 mr-3 text-h5"
           color
           data-e2e="digital-advertising"
           @click="$emit('fetchMetrics', 'ads')"
@@ -408,14 +408,14 @@ export default {
   ::v-deep .v-tabs-bar {
     background: transparent !important;
     .v-tabs-bar__content {
-      border-bottom: 2px solid var(--v-zircon-base);
+      border-bottom: 2px solid var(--v-black-lighten2);
       display: flex;
       justify-content: space-between;
       .v-tabs-slider-wrapper {
         width: 128px;
         .v-tabs-slider {
-          background-color: var(--v-primary-lighten8) !important;
-          border-color: var(--v-primary-lighten8) !important;
+          background-color: var(--v-primary-lighten6) !important;
+          border-color: var(--v-primary-lighten6) !important;
         }
       }
       .v-tab {
@@ -432,10 +432,10 @@ export default {
           }
         }
         &.v-tab--active {
-          color: var(--v-primary-lighten8) !important;
+          color: var(--v-primary-lighten6) !important;
           svg {
             path {
-              stroke: var(--v-primary-lighten8);
+              stroke: var(--v-primary-lighten6);
             }
           }
         }

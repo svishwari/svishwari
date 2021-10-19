@@ -56,7 +56,7 @@
             :data-e2e="data.e2e"
           >
             <v-card-text class="pl-3 pr-3 pb-3 pt-3 matrix-card">
-              <div class="text-caption black--text text--darken-1 pb-1">
+              <div class="text-button black--text text--darken-1 pb-1">
                 {{ data.title }}
                 <tooltip v-if="data.hoverTooltip" position-top>
                   <template #label-content>
@@ -98,7 +98,7 @@
             :data-e2e="data.e2e"
           >
             <v-card-text class="pl-3 pr-3 pb-3 pt-3 matrix-card">
-              <div class="title-text pb-1">
+              <div class="title-button pb-1">
                 {{ data.title }}
                 <tooltip v-if="data.hoverTooltip" position-top>
                   <template #label-content>
@@ -522,36 +522,20 @@ export default {
   }
 }
 .title-font-size {
-  font-family: Open Sans;
-  font-style: normal;
-  font-weight: 300 !important;
-  font-size: 21px;
-  line-height: 25px;
   color: var(--v-black-darken4);
   justify-content: center;
 }
 .title-text {
-  font-family: Open Sans;
-  font-style: normal;
-  font-weight: normal;
   color: var(--v-black-darken1) !important;
-  font-size: 12px !important;
 }
 .table-text {
   color: var(--v-black-darken4);
-  font-size: 12px !important;
 }
 .card-heading {
-  font-size: 15px !important;
   color: var(--v-black-darken4);
-  font-weight: 400;
   height: 54px !important;
 }
 .sample-card-text {
-  font-size: 14px;
-  font-family: Open Sans;
-  font-style: normal;
-  font-weight: 600;
   color: var(--v-black-darken4) !important;
 }
 .icon-cursor {

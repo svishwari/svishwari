@@ -17,7 +17,7 @@
           :ripple="false"
           elevation="0"
           :outlined="active"
-          color="zircon"
+          color="black lighten-2"
           class="mt-4"
         >
           <v-icon :color="active ? 'primary' : 'white'" x-large>
