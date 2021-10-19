@@ -149,7 +149,7 @@
               </span>
               <span v-else-if="item[header.value].length == 0">—</span>
             </div>
-            <div v-if="header.value == 'status'" class="text-caption">
+            <div v-if="header.value == 'status'" class="text-h5">
               <status
                 :status="item[header.value]"
                 :show-label="true"
@@ -164,7 +164,7 @@
                 </template>
                 <template #hover-content>
                   <div v-if="item[header.value] !== ''">
-                    <div class="neroBlack--text text-caption mb-2">
+                    <div class="neroBlack--text text-button mb-2">
                       Delivered to:
                     </div>
                     <div
@@ -177,11 +177,11 @@
                           :type="destination.delivery_platform_type"
                           :size="18"
                         />
-                        <span class="ml-1 neroBlack--text text-caption">
+                        <span class="ml-1 neroBlack--text text-button">
                           {{ destination.name }}
                         </span>
                       </div>
-                      <div class="neroBlack--text text-caption">
+                      <div class="neroBlack--text text-button">
                         {{
                           destination.latest_delivery
                             ? destination.latest_delivery.update_time
@@ -266,7 +266,7 @@
                       </template>
                     </menu-cell>
                   </div>
-                  <div v-if="header.value == 'status'" class="text-caption">
+                  <div v-if="header.value == 'status'" class="text-h5">
                     <div>
                       <status
                         :status="item[header.value]"
@@ -336,7 +336,7 @@
                       </template>
                       <template #hover-content>
                         <div>
-                          <div class="neroBlack--text text-caption mb-2">
+                          <div class="neroBlack--text text-button mb-2">
                             Delivered to:
                           </div>
                           <div
@@ -349,11 +349,11 @@
                                 :type="destination.delivery_platform_type"
                                 :size="18"
                               />
-                              <span class="ml-1 neroBlack--text text-caption">
+                              <span class="ml-1 neroBlack--text text-button">
                                 {{ destination.name }}
                               </span>
                             </div>
-                            <div class="neroBlack--text text-caption">
+                            <div class="neroBlack--text text-button">
                               {{
                                 destination.latest_delivery.update_time
                                   | Date
@@ -407,7 +407,7 @@
                       :key="header.value"
                       :style="{ width: header.width }"
                     >
-                      <div v-if="header.value == 'status'" class="text-caption">
+                      <div v-if="header.value == 'status'" class="text-h5">
                         <div>
                           <status
                             :status="item[header.value]"
@@ -516,10 +516,19 @@
       "
     >
       <template #body>
-        <div class="pt-6">
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
           Are you sure you want to remove this audience from this engagement?
         </div>
-        <div>
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
           By removing this audience, it will not be deleted, but it will become
           unattached from this engagement.
         </div>
@@ -538,10 +547,19 @@
       @onConfirm="confirmRemoval()"
     >
       <template #body>
-        <div class="pt-6">
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
           Are you sure you want to delete this Engagement&#63;
         </div>
-        <div>
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
           By deleting this engagement you will not be able to recover it and it
           may impact any associated destinations.
         </div>

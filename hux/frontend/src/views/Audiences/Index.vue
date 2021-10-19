@@ -90,7 +90,7 @@
                 @actionFavorite="handleActionFavorite(item, 'audiences')"
               />
             </div>
-            <div v-if="header.value == 'status'" class="text-caption">
+            <div v-if="header.value == 'status'" class="text-h5">
               <status
                 :status="item[header.value]"
                 :show-label="true"
@@ -166,7 +166,7 @@
                 </template>
                 <template #hover-content>
                   <div>
-                    <div class="neroBlack--text text-caption mb-2">
+                    <div class="neroBlack--text text-button mb-2">
                       Delivered to:
                     </div>
                     <div
@@ -179,11 +179,11 @@
                           :type="deliveries.delivery_platform_type"
                           :size="18"
                         />
-                        <span class="ml-1 neroBlack--text text-caption">
+                        <span class="ml-1 neroBlack--text text-button">
                           {{ deliveries.delivery_platform_name }}
                         </span>
                       </div>
-                      <div class="neroBlack--text text-caption">
+                      <div class="neroBlack--text text-button">
                         {{ deliveries.last_delivered | Date | Empty }}
                       </div>
                     </div>
@@ -255,10 +255,19 @@
       @onConfirm="confirmRemoval()"
     >
       <template #body>
-        <div class="pt-6">
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
           Are you sure you want to delete this audience&#63;
         </div>
-        <div class="mb-6">
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
           By deleting this audience you will not be able to recover it and it
           may impact any associated engagements.
         </div>
