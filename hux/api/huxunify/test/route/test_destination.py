@@ -682,14 +682,14 @@ class TestDestinationRoutes(TestCase):
             {
                 api_c.SFMC_DATA_EXTENSION_NAME: "extension_name",
                 api_c.SFMC_CUSTOMER_KEY: "id12345",
-                api_c.CREATED_AT: datetime.datetime.strptime(
+                "createdDate": datetime.datetime.strptime(
                     "2021-10-19 00:10:20.345", api_c.DEFAULT_DATETIME_FORMAT
                 ),
             },
             {
                 api_c.SFMC_DATA_EXTENSION_NAME: "data_extension_name",
                 api_c.SFMC_CUSTOMER_KEY: "id12345678",
-                api_c.CREATED_AT: datetime.datetime.strptime(
+                "createdDate": datetime.datetime.strptime(
                     "2021-10-09 00:10:20.345", api_c.DEFAULT_DATETIME_FORMAT
                 ),
             },
