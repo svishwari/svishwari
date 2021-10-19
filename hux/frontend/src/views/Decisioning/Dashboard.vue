@@ -46,7 +46,60 @@
               :key="key"
               data-e2e="performancemetric"
             >
-              <div
+
+            <metric-card v-if="key === 'recall' && metric > 0"
+              class="model-dashboard__card px-6 py-3 mr-2"
+              :max-width="122"
+              :height="80"
+              :title="metric"
+              subtitle="Recall"
+              :high-level="true"
+              :interactable="false"
+            >
+            </metric-card>
+            <metric-card v-if="key === 'current_version'"
+              class="model-dashboard__card px-6 py-3 mr-2"
+              :max-width="152"
+              :height="80"
+              :title="metric"
+              subtitle="Current version"
+              :high-level="true"
+              :interactable="false"
+            >
+            </metric-card>
+            <metric-card v-if="key === 'rmse' && metric > 0"
+              class="model-dashboard__card px-6 py-3 mr-2"
+              :max-width="122"
+              :height="80"
+              :title="metric"
+              subtitle="2"
+              :high-level="true"
+              :interactable="false"
+            >
+            </metric-card>
+            <metric-card v-if="key === 'auc' && metric > 0"
+              class="model-dashboard__card px-6 py-3 mr-2"
+              :max-width="122"
+              :height="80"
+              :title="metric"
+              subtitle="AUC"
+              :high-level="true"
+              :interactable="false"
+            >
+            </metric-card>
+            
+            <metric-card v-if="key === 'precision' && metric > 0"
+              class="model-dashboard__card px-6 py-3 mr-2"
+              :max-width="122"
+              :height="80"
+              :title="metric"
+              subtitle="Precision"
+              :high-level="true"
+              :interactable="false"
+            >
+            </metric-card>
+
+              <!-- <div
                 v-if="metric !== -1"
                 class="model-dashboard__card px-6 py-3 mr-2"
               >
@@ -124,7 +177,7 @@
                 >
                   Precision
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
         </v-col>
@@ -247,6 +300,7 @@ import LiftChart from "@/components/common/LiftChart.vue"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import VersionHistory from "./Drawers/VersionHistoryDrawer.vue"
+import MetricCard from "@/components/common/MetricCard"
 import { mapGetters, mapActions } from "vuex"
 
 export default {
@@ -262,6 +316,7 @@ export default {
     VersionHistory,
     DriftChart,
     FeaturesTable,
+    MetricCard,
   },
   data() {
     return {

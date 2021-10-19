@@ -17,7 +17,7 @@
       >
         <span
           v-if="!titleTooltip"
-          class="text-caption"
+          class="text-body-2"
           :class="[
             interactable ? 'primary--text ' : 'black--text text--darken-1 ',
             highLevel ? 'highlevel-title' : '',
@@ -45,7 +45,7 @@
 
         <div class="subtitle-slot">
           <span
-            class="font-weight-semi-bold"
+            class="text-body-1"
             :class="{
               'no-click': !interactable,
               'flex-grow-1 align-center text-center highlevel-subtitle':

@@ -306,7 +306,7 @@
       :interactable="false"
     >
       <template #subtitle-extended>
-        <div class="font-weight-semi-bold black--text text--darken-4 mb-2">
+        <div class="text-body-1 black--text text--darken-4 mb-2">
           <icon class="mr-1" type="stock-up" :size="8" />
           <icon class="ml-1 mr-1" type="stock-down" :size="8" />
           3/1/2021 • 9:42AM
@@ -322,7 +322,7 @@
       :interactable="false"
     >
       <template #subtitle-extended>
-        <div class="font-weight-semi-bold black--text text--darken-4 mb-2">
+        <div class="text-body-1 black--text text--darken-4 mb-2">
           3/1/2021 • 9:42AM
         </div>
       </template>
@@ -336,18 +336,18 @@
       :interactable="true"
     >
       <template #subtitle-extended>
-        <div class="font-weight-semi-bold black--text text--darken-4 mb-2">
+        <div class="text-body-1 black--text text--darken-4 mb-2">
           3/1/2021 • 9:42AM
         </div>
       </template>
     </metric-card>
 
-    <metric-card class="ma-4" title="Created on" :max-width="180" :height="75">
+    <metric-card class="ma-4" title="Created on" :max-width="186" :height="75">
       <template #subtitle-extended>
         <span class="mr-2">
           <tooltip>
             <template #label-content>
-              <span class="font-weight-semi-bold black--text text--darken-4">
+              <span class="text-body-1 black--text text--darken-4">
                 4 hours ago by
               </span>
             </template>
@@ -368,7 +368,7 @@
       :interactable="false"
     >
       <template #subtitle-extended>
-        <div class="font-weight-semi-bold black--text text--darken-4 mb-2">
+        <div class="text-body-1 black--text text--darken-4 mb-2">
           this is where the description text...
         </div>
       </template>
