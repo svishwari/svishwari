@@ -16,6 +16,14 @@ describe("Data Management > Connections > Destinations", () => {
     cy.get(selector.connections).eq(1).click()
     cy.location("pathname").should("eq", route.connections)
 
+    cy.get(selector.destination.removeDots).eq(0).click()
+    cy.get(selector.destination.destinationRemove).eq(0).click()
+    cy.get(selector.destination.destinationRemoveConfirm)
+      .get("button")
+      .contains("Nevermind!")
+      .eq(0)
+      .click()
+
     //validate destinations exist by getting total no. of them
     cy.get(selector.destinations).its("length").as("destinationsCount")
 

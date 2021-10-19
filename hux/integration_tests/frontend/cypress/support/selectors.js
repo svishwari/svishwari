@@ -50,6 +50,9 @@ export default {
     destinationConfigDetails: "[data-e2e='destinationConfigDetails']",
     validateDestination: "[data-e2e='validateDestination']",
     footer: "[data-e2e='footer']",
+    removeDots: "[data-e2e='destination-list-dots']",
+    destinationRemove: "[data-e2e='destination-list-remove']",
+    destinationRemoveConfirm: "[data-e2e='remove-destination-confirm']",
   },
 
   // decisioning
