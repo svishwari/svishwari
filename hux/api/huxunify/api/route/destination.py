@@ -729,8 +729,9 @@ class DestinationDataExtPostView(SwaggerView):
 
     # pylint: disable=too-many-return-statements
     @api_error_handler()
+    @get_user_name()
     @validate_destination()
-    def post(self, destination_id: str) -> Tuple[dict, int]:
+    def post(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
         """Creates a destination data extension.
 
         ---
@@ -739,6 +740,7 @@ class DestinationDataExtPostView(SwaggerView):
 
         Args:
             destination_id (str): Destination ID.
+            user_name (str): User name.
 
         Returns:
             Tuple[dict, int]: Data Extension ID, HTTP status code.
@@ -794,6 +796,7 @@ class DestinationDataExtPostView(SwaggerView):
                         f"by {get_user_name()}."
                     ),
                     api_c.DESTINATIONS_TAG,
+                    user_name,
                 )
             except AudienceAlreadyExists:
                 # TODO - this is a work around until ORCH-288 is done

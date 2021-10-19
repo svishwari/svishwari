@@ -116,6 +116,7 @@ class EngagementDeliverDestinationView(SwaggerView):
     # pylint: disable=no-self-use
     # pylint: disable=too-many-return-statements
     @api_error_handler()
+    @get_user_name()
     @validate_destination()
     @validate_delivery_params
     def post(
@@ -123,6 +124,7 @@ class EngagementDeliverDestinationView(SwaggerView):
         engagement_id: ObjectId,
         audience_id: ObjectId,
         destination_id: ObjectId,
+        user_name: str,
     ) -> Tuple[dict, int]:
         """Delivers one destination for an engagement audience.
 
@@ -134,6 +136,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
             destination_id (ObjectId): Destination ID.
+            user_name (str): User name.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -198,6 +201,7 @@ class EngagementDeliverDestinationView(SwaggerView):
                 f'"{target_destination[db_c.NAME]}".'
             ),
             api_c.DELIVERY_TAG,
+            user_name,
         )
         return {
             "message": f"Successfully created delivery job(s) "
@@ -252,9 +256,10 @@ class EngagementDeliverAudienceView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
+    @get_user_name()
     @validate_delivery_params
     def post(
-        self, engagement_id: ObjectId, audience_id: ObjectId
+        self, engagement_id: ObjectId, audience_id: ObjectId, user_name: str
     ) -> Tuple[dict, int]:
         """Delivers one audience for an engagement.
 
@@ -265,6 +270,7 @@ class EngagementDeliverAudienceView(SwaggerView):
         Args:
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
+            user_name (str): User name.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -305,6 +311,7 @@ class EngagementDeliverAudienceView(SwaggerView):
                 f'"{engagement[db_c.NAME]}" across platforms.'
             ),
             api_c.DELIVERY_TAG,
+            user_name,
         )
         return {
             "message": f"Successfully created delivery job(s) "
@@ -351,8 +358,11 @@ class EngagementDeliverView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
+    @get_user_name()
     @validate_delivery_params
-    def post(self, engagement_id: ObjectId) -> Tuple[dict, int]:
+    def post(
+        self, engagement_id: ObjectId, user_name: str
+    ) -> Tuple[dict, int]:
         """Delivers all audiences for an engagement.
 
         ---
@@ -361,6 +371,7 @@ class EngagementDeliverView(SwaggerView):
 
         Args:
             engagement_id (ObjectId): Engagement ID.
+            user_name (str): User name.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -392,6 +403,7 @@ class EngagementDeliverView(SwaggerView):
                 f'from engagement "{engagement[db_c.NAME]}".'
             ),
             api_c.DELIVERY_TAG,
+            user_name,
         )
         logger.info(
             "Successfully created delivery jobs %s.",
@@ -439,8 +451,9 @@ class AudienceDeliverView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
+    @get_user_name()
     @validate_delivery_params
-    def post(self, audience_id: ObjectId) -> Tuple[dict, int]:
+    def post(self, audience_id: ObjectId, user_name: str) -> Tuple[dict, int]:
         """Delivers an audience for all of the engagements it is part of.
 
         ---
@@ -449,6 +462,7 @@ class AudienceDeliverView(SwaggerView):
 
         Args:
             audience_id (ObjectId): Audience ID.
+            user_name (str): User name.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure, .
@@ -489,6 +503,7 @@ class AudienceDeliverView(SwaggerView):
                 f'"{audience[db_c.NAME]}".'
             ),
             api_c.DELIVERY_TAG,
+            user_name,
         )
         return {
             "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
