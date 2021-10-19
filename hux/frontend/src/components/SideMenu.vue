@@ -6,7 +6,7 @@
     :mini-variant.sync="isMini"
     mini-variant-width="90"
     width="220"
-    class="side-nav-bar primary"
+    class="side-nav-bar"
   >
     <template #prepend>
       <img
@@ -14,81 +14,75 @@
         alt="Hux"
         width="55"
         height="55"
-        class="d-flex ma-4"
+        class="d-flex ma-6"
         data-e2e="click-outside"
       />
       <v-menu v-if="!isMini" open-on-hover offset-y>
         <template #activator="{ on }">
-          <div class="client" v-on="on">
-            <span>
-              {{ clientName }}
-            </span>
-            <v-icon v-if="!isMini"> mdi-chevron-down </v-icon>
-          </div>
-        </template>
-        <template #default>
-          <div class="px-6 py-5 white">
-            <v-icon color="primary"> mdi-information </v-icon>
-            <span class="pl-4 text-button black--text text--darken-4">
-              This is where your future client accounts will be held.
+          <div class="pl-6 client py-4 mb-2" v-on="on">
+            <span class="d-flex align-center">
+              <logo :type="client.logo" :size="16" class="mr-2" />
+              {{ client.name }}
             </span>
           </div>
         </template>
       </v-menu>
     </template>
 
-    <v-list v-for="item in items" :key="item.title">
-      <div v-if="item.label" class="list-group">
-        <span v-if="!isMini">
+    <v-list
+      v-for="item in items"
+      :key="item.title"
+      color="var(-v--primary-base)"
+    >
+      <div v-if="item.label" class="list-group black--text">
+        <span v-if="!isMini" class="text-h5 black--text text--lighten-4 pl-6">
           {{ item.label }}
         </span>
       </div>
 
       <v-list-item
         v-if="!item.menu"
-        class="my-2"
+        class="pl-6 mr-2"
         :to="item.link"
         :data-e2e="`nav-${item.icon}`"
       >
         <v-list-item-icon
           v-if="item.icon"
-          class="my-3"
+          class="my-3 mr-0"
           :class="{ 'home-menu-icon': !isMini }"
         >
           <tooltip
             v-if="item.title"
             :key="item.title"
             position-top
-            color="black"
+            color="black-lighten4"
           >
             <template #label-content>
-              <icon
-                :type="item.icon"
-                :size="iconSize"
-                color="white"
-                class="mt-1"
-              />
+              <icon :type="item.icon" :size="iconSize" class="mr-0" />
             </template>
             <template #hover-content>
-              {{ item.title }}
+              <span class="text-h6 error-base--text">
+                {{ item.title }}
+              </span>
             </template>
           </tooltip>
         </v-list-item-icon>
-        <v-list-item-title class="white--text">
+        <v-list-item-title class="black--text text-h6">
           {{ item.title }}
         </v-list-item-title>
       </v-list-item>
 
-      <div v-if="item.menu" class="pb-2">
+      <div v-if="item.menu">
         <v-list-item
           v-for="menu in item.menu"
           :key="menu.title"
           :to="menu.link"
+          class="pl-6 mr-2"
           :data-e2e="`nav-${menu.icon}`"
         >
           <v-list-item-icon
             v-if="menu.icon"
-            class="my-3 ml-1"
+            class="my-3 mr-0"
             :class="{ 'menu-icon': !isMini }"
           >
             <tooltip
@@ -98,14 +92,16 @@
               color="black"
             >
               <template #label-content>
-                <icon :type="menu.icon" :size="menu.size" color="white" />
+                <icon :type="menu.icon" :size="iconSize" class="mr-0" />
               </template>
               <template #hover-content>
-                {{ menu.title }}
+                <span class="black--text text-h6">
+                  {{ menu.title }}
+                </span>
               </template>
             </tooltip>
           </v-list-item-icon>
-          <v-list-item-title class="white--text">
+          <v-list-item-title class="black--text text-h6">
             {{ menu.title }}
           </v-list-item-title>
         </v-list-item>
@@ -113,7 +109,18 @@
     </v-list>
 
     <template v-if="!isMini" #append>
-      <div class="nav-footer">Hux by Deloitte Digital</div>
+      <div
+        class="
+          nav-footer
+          primary--text
+          text--darken-1 text-body-2
+          pl-4
+          pr-3
+          pb-2
+        "
+      >
+        Hux by Deloitte Digital Release 6.0
+      </div>
     </template>
   </v-navigation-drawer>
 </template>
@@ -122,18 +129,23 @@
 import menuConfig from "@/menuConfig.json"
 import Icon from "@/components/common/Icon"
 import Tooltip from "@/components/common/Tooltip"
+import Logo from "@/components/common/Logo"
 
 export default {
   name: "SideMenu",
 
-  components: { Icon, Tooltip },
+  components: { Icon, Tooltip, Logo },
 
   props: {
     toggle: Boolean,
   },
 
   data: () => ({
-    clientName: "Demo Client",
+    // TODO: integrate with API endpoint for configuring this in the UI
+    client: {
+      name: "Pendleton",
+      logo: "pendleton",
+    },
     items: menuConfig.menu,
   }),
 
@@ -151,22 +163,14 @@ export default {
 
 <style lang="scss" scoped>
 .side-nav-bar {
+  border-right: solid 1px var(--v-black-lighten3);
   @media (min-height: 900px) {
-    // background-image: url("../assets/images/nav-bg.png");
     background-position: bottom 30px center;
   }
 
   .client {
-    align-items: center;
-    background-color: var(--v-primary-darken1);
-    color: var(--v-white-base);
-    cursor: default;
-    display: flex;
-    font-size: 14px;
-    line-height: 1.75rem;
-    font-weight: normal;
-    justify-content: space-between;
-    padding: 0.8rem 1.78rem;
+    background-color: rgba(160, 220, 255, 0.25);
+    color: var(--v-black-lighten4);
   }
 
   .v-icon {
@@ -180,58 +184,64 @@ export default {
   .v-list-item__icon {
     margin-right: 0.5rem;
   }
-
-  .v-list-item__title {
-    font-size: 14px;
-    font-weight: normal;
+  .v-list-item {
+    border-top-right-radius: 40px;
+    border-bottom-right-radius: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    svg {
+      fill: var(--v-black-lighten4);
+    }
+    &:hover {
+      &::before {
+        opacity: 0;
+      }
+    }
+    &:focus {
+      &::before {
+        opacity: 0;
+      }
+    }
   }
 
   .v-list-item--active {
+    background-color: var(--v-primary-lighten1);
+    border-left: solid 4px var(--v-primary-lighten6);
+    border-top-right-radius: 40px;
+    border-bottom-right-radius: 40px;
+    padding-left: 20px !important;
+
+    svg {
+      fill: var(--v-primary-lighten6) !important;
+    }
+    .v-list-item__title {
+      color: var(--v-primary-lighten6) !important;
+    }
     &::before {
-      background-color: var(--v-primary-lighten4);
-      opacity: 0.2;
+      opacity: 0;
     }
   }
 
   .list-group {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(226, 234, 236, 0.5);
 
     span {
-      color: var(--v-white-base);
-      display: flex;
-      font-size: 14px;
-      font-weight: normal;
-      opacity: 0.5;
-      padding: 0.75rem 1rem;
       text-transform: uppercase;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
     }
   }
 
-  .nav-footer {
-    color: var(--v-white-base);
-    opacity: 0.5;
-    padding: 1rem;
-  }
-  .side-menu-icon {
-    position: absolute;
-    left: 11.82%;
-    right: 81.82%;
-    bottom: 79.66%;
-  }
-  // Apply this css only if icon size is 14 otherwise icon size should be 18
-  .home-menu-icon {
-    svg {
-      top: 22.89%;
-      @extend .side-menu-icon;
-    }
-  }
   // Apply this css only if icon size is 14 otherwise icon size should be 18
   .menu-icon {
     svg {
       top: 32.89%;
-      @extend .side-menu-icon;
     }
   }
+}
+.nav-footer {
+  opacity: 0.8;
 }
 .v-menu__content {
   @extend .box-shadow-25;

@@ -4,17 +4,16 @@
       <span class="d-flex cursor-pointer" v-on="on">
         <icon
           data-e2e="notification-bell"
-          class="mx-2 my-2"
+          class="mx-2 my-2 nav-icon"
           type="bell-notification"
           :size="21"
-          color="primary"
         />
       </span>
     </template>
     <v-list class="alert-menu-main">
       <v-list-item>
-        <v-list-item-title class="font-weight-bold">
-          Most recent alerts
+        <v-list-item-title class="font-weight-semi-bold text-h6 black--text">
+          Unread alerts
         </v-list-item-title>
       </v-list-item>
       <div class="notification-div">
@@ -24,28 +23,28 @@
             :key="data.id"
             data-e2e="notification-item"
           >
-            <v-list-item-title
-              class="text-h6 black--text text--darken-4 list-main"
-            >
+            <v-list-item-title class="text-h6 black--text list-main">
               <div class="d-flex text-caption">
                 <status
                   :status="data.notification_type"
                   :show-label="false"
-                  :icon-size="17"
+                  :icon-size="21"
                 />
-                <tooltip>
-                  <template #label-content>
-                    <span class="wrap-word">
-                      {{ data.description }}
-                    </span>
-                  </template>
-                  <template #hover-content>
-                    <span> {{ data.description }} </span>
-                  </template>
-                </tooltip>
-              </div>
-              <div class="list-stamp">
-                <time-stamp :value="data.created" />
+                <div class="d-flex flex-column">
+                  <tooltip>
+                    <template #label-content>
+                      <span class="wrap-word text-body-2 black--text">
+                        {{ data.description }}
+                      </span>
+                    </template>
+                    <template #hover-content>
+                      <span> {{ data.description }} </span>
+                    </template>
+                  </tooltip>
+                  <div class="text-body-2 black--text">
+                    <time-stamp :value="data.created" />
+                  </div>
+                </div>
               </div>
             </v-list-item-title>
           </v-list-item>
@@ -58,7 +57,7 @@
             :to="{
               name: 'AlertsAndNotifications',
             }"
-            class="text-h6 view-all text-decoration-none"
+            class="text-body-1 primary--text view-all text-decoration-none"
           >
             View all alerts
           </router-link>

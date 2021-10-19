@@ -1,14 +1,35 @@
 <template>
-  <div class="d-flex">
+  <div class="d-flex align-center">
+    <span class="text--body-2 black--text mr-2">
+      Today,
+      {{ appLoadTime | Date("HH:mm A", (local = true)) }}
+      <tooltip>
+        <template #label-content>
+          <span>{{
+            appLoadTime | Date("zzz", (local = true)) | Abbreviation
+          }}</span>
+        </template>
+        <template #hover-content>
+          {{ appLoadTime | Date("zzz") }}
+        </template>
+      </tooltip>
+    </span>
+    <v-icon size="16" class="mr-2 nav-icon" @click="$router.go()">
+      mdi-refresh
+    </v-icon>
     <v-menu :min-width="200" left offset-y close-on-click>
       <template #activator="{ on }">
         <span class="d-flex cursor-pointer" data-e2e="addicon" v-on="on">
-          <icon class="mx-2 my-2" type="more" :size="21" color="primary" />
+          <icon class="mx-2 my-2 nav-icon" type="more" :size="21" />
         </span>
       </template>
       <v-list>
         <v-list-item>
-          <v-list-item-title class="font-weight-bold"> Add </v-list-item-title>
+          <v-list-item-title
+            class="font-weight-semi-bold text-h6 black--text mb-1"
+          >
+            Add
+          </v-list-item-title>
         </v-list-item>
         <v-list-item
           v-for="link in dropdownLinks"
@@ -16,7 +37,7 @@
           :data-e2e="link.name"
           @click="routerRedirect(link.path)"
         >
-          <v-list-item-title class="text-h6 black--text text--darken-4">
+          <v-list-item-title class="text-body-1 black--text">
             {{ link.name }}
           </v-list-item-title>
         </v-list-item>
@@ -31,12 +52,14 @@
 import Notification from "../components/Notification.vue"
 import Help from "../components/Help.vue"
 import Icon from "@/components/common/Icon"
+import Tooltip from "./common/Tooltip.vue"
 export default {
   name: "HeaderNavigation",
   components: {
     Notification,
     Help,
     Icon,
+    Tooltip,
   },
   data() {
     return {
@@ -46,6 +69,7 @@ export default {
         { name: "Audience", path: "AudienceConfiguration" },
         { name: "Engagement", path: "EngagementConfiguration" },
       ],
+      appLoadTime: new Date(),
     }
   },
   methods: {
@@ -71,7 +95,7 @@ export default {
   top: 64px !important;
   .v-list {
     .v-list-item {
-      min-height: 40px !important;
+      min-height: 32px !important;
     }
   }
 }
