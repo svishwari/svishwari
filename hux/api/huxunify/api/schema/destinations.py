@@ -157,6 +157,8 @@ class DestinationGetSchema(Schema):
                     api_c.STATUS_DELIVERING,
                     api_c.STATUS_DELIVERED,
                     api_c.STATUS_DELIVERY_PAUSED,
+                    api_c.STATUS_ACTIVE,
+                    api_c.STATUS_PENDING,
                     api_c.STATUS_ERROR,
                 ]
             )
