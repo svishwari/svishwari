@@ -4,7 +4,7 @@ exports[`Hux Alert Hux alert displays custom message for error type 1`] = `
 <div class="hux-alert">
   <v-card-stub loaderheight="4" tag="div" minheight="56" rounded="0" class="alert-card">
     <div class="hux-alert-container">
-      <icon-stub type="alert-error" size="15" color="error" variant="base" fillopacity="1" class="alert-icon mr-5"></icon-stub>
+      <icon-stub type="alert-error" size="15" color="error" variant="base" fillopacity="1" strokeopacity="1" class="alert-icon mr-5"></icon-stub>
       <div class="alert-title text-subtitle-1 error--text">
         OH NO!
       </div>
@@ -12,7 +12,7 @@ exports[`Hux Alert Hux alert displays custom message for error type 1`] = `
         This is a error message!
       </div>
     </div>
-    <icon-stub type="cross" size="14" color="primary" fillopacity="1" class="alert-icon cursor-pointer"></icon-stub>
+    <icon-stub type="cross" size="14" color="primary" fillopacity="1" strokeopacity="1" class="alert-icon cursor-pointer"></icon-stub>
   </v-card-stub>
 </div>
 `;

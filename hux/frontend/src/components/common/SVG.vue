@@ -67,7 +67,7 @@ export default {
       if (this.fillOpacity) style.fillOpacity = `${this.fillOpacity}`
       if (this.stroke) style.stroke = `var(--v-${this.stroke}-${this.variant})`
       if (this.strokeOpacity) style.strokeOpacity = `${this.strokeOpacity}`
-      
+
       return style
     },
   },
