@@ -1,5 +1,5 @@
 """Purpose of this file is to house all the destination api tests."""
-
+from datetime import datetime
 from unittest import TestCase, mock
 from unittest.mock import MagicMock, patch
 from http import HTTPStatus
@@ -116,6 +116,63 @@ class TestDestinationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(len(self.destinations), len(response.json))
+
+    # pylint: disable=unused-argument
+    @patch(
+        "huxunify.api.route.destination.FacebookConnector",
+        **{"return_value.raiseError.side_effect": Exception()},
+    )
+    @patch(
+        "huxunify.api.route.destination.SFMCConnector",
+        **{"return_value.raiseError.side_effect": Exception()},
+    )
+    def test_get_all_destinations_with_refresh(
+        self,
+        mock_facebook_connector: MagicMock,
+        mock_sfmc_connector: MagicMock,
+    ):
+        """Test get all destinations with refresh.
+
+        Args:
+            mock_facebook_connector (MagicMock): MagicMock of the Facebook Connector.
+            mock_sfmc_connector (MagicMock): MagicMock of the SFMC Connector.
+        """
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}?refresh_all=False",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(len(self.destinations), len(response.json))
+        self.assertEqual(response.json[0][db_c.STATUS], api_c.STATUS_PENDING)
+
+        destination_id = self.destinations[0][db_c.ID]
+
+        new_auth_details = {
+            "authentication_details": {
+                api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
+                api_c.FACEBOOK_APP_SECRET: "unified_fb_secret",
+                api_c.FACEBOOK_APP_ID: "2951925002021888",
+                api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
+            }
+        }
+
+        self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            json=new_auth_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}?refresh_all=True",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(len(self.destinations), len(response.json))
+        self.assertEqual(response.json[0][db_c.STATUS], api_c.STATUS_ACTIVE)
+        self.assertEqual(response.json[2][db_c.STATUS], api_c.STATUS_ACTIVE)
 
     def test_get_destination_with_valid_id(self):
         """Test get destination with valid ID."""
@@ -682,10 +739,16 @@ class TestDestinationRoutes(TestCase):
             {
                 api_c.SFMC_DATA_EXTENSION_NAME: "extension_name",
                 api_c.SFMC_CUSTOMER_KEY: "id12345",
+                "createdDate": datetime.strptime(
+                    "2021-10-19 00:10:20.345", "%Y-%m-%d %H:%M:%S.%f"
+                ),
             },
             {
                 api_c.SFMC_DATA_EXTENSION_NAME: "data_extension_name",
                 api_c.SFMC_CUSTOMER_KEY: "id12345678",
+                "createdDate": datetime.strptime(
+                    "2021-10-09 00:10:20.345", "%Y-%m-%d %H:%M:%S.%f"
+                ),
             },
         ]
         mock_sfmc_instance = mock_sfmc.return_value
@@ -704,6 +767,9 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(response.json[0][api_c.NAME], "data_extension_name")
         self.assertEqual(
             response.json[0][api_c.DATA_EXTENSION_ID], "id12345678"
+        )
+        self.assertEqual(
+            response.json[0][db_c.CREATE_TIME], "2021-10-09T00:10:20.345Z"
         )
 
     @mock.patch("huxunify.api.route.destination.SFMCConnector")

@@ -41,6 +41,7 @@ class CustomerSchemaTest(TestCase):
             api_c.DATE: "2021-04-01T00:00:00.000Z",
             api_c.TOTAL_CUSTOMERS: 105080,
             api_c.NEW_CUSTOMERS_ADDED: 4321,
+            api_c.CUSTOMERS_LEFT: -4321,
         }
 
         self.assertFalse(

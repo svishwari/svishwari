@@ -1,3 +1,7 @@
+/**
+ * Mock API server using Mirage.js - only included in src/main.js for local
+ * development and for unit testing and not for production builds.
+ */
 import { belongsTo, createServer, Factory, hasMany, Model } from "miragejs"
 import config from "@/config"
 import AppSerializer from "./serializer"
@@ -98,6 +102,16 @@ export function makeServer({ environment = "development" } = {}) {
       this.namespace = config.apiBasePath
       this.timing = 1000
       defineRoutes(this)
+
+      // whenever we connect from local to the dev API we will need to override
+      // the access token with one provided by dev in token.js
+      if (environment === "development" && config.apiUrl.includes("dev1.in")) {
+        this.passthrough((request) => {
+          const { TOKEN_OVERRIDE } = require("./token.js")
+          request.requestHeaders["Authorization"] = `Bearer ${TOKEN_OVERRIDE}`
+          return request
+        })
+      }
 
       // pass requests to external APIs through
       this.passthrough(`${config.oktaUrl}/**`)

@@ -51,7 +51,7 @@
             </template>
           </metric-card>
         </div>
-        <hr class="zircon mb-4" />
+        <hr class="black lighten-2 mb-4" />
         <div class="pt-1 pr-0">
           <attribute-rules
             :rules="attributeRules"

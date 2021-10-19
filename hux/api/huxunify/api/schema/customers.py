@@ -373,6 +373,9 @@ class TotalCustomersInsightsSchema(Schema):
     new_customers_added = Integer(
         required=True, attribute=api_c.DIFFERENCE_COUNT, example=5, default=0
     )
+    customers_left = Integer(
+        required=True, attribute=api_c.CUSTOMERS_LEFT, example=-5, default=0
+    )
 
 
 class CustomersInsightsCitiesSchema(Schema):
@@ -380,6 +383,7 @@ class CustomersInsightsCitiesSchema(Schema):
 
     city = Str(required=True, example="New York")
     state = Str(required=True, example="NY")
+    country = Str(required=True, example="US")
     size = Integer(
         attribute=api_c.CUSTOMER_COUNT, required=True, default=0, example=1234
     )
@@ -391,6 +395,7 @@ class CustomersInsightsCitiesSchema(Schema):
 class CustomersInsightsStatesSchema(Schema):
     """State-level geographic customer insights schema"""
 
+    country = Str(required=True, example="US")
     state = Str(attribute=api_c.NAME, required=True, example="New York")
     size = Integer(required=True, default=0, example=1234)
     spending = Float(

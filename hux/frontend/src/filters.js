@@ -4,9 +4,15 @@
 import dayjs from "dayjs"
 import calendar from "dayjs/plugin/calendar"
 import relativeTime from "dayjs/plugin/relativeTime"
+import utc from "dayjs/plugin/utc"
+import timezone from "dayjs/plugin/timezone"
+import advancedFormat from "dayjs/plugin/advancedFormat"
 
 dayjs.extend(calendar)
 dayjs.extend(relativeTime)
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(advancedFormat)
 
 /**
  * Formats a datetime field to human friendly date.
@@ -14,9 +20,15 @@ dayjs.extend(relativeTime)
  * @param {string|*} value Datetime eg. 2021-03-17T13:29:49.351Z
  * @param {string} format Format eg. "MM/D/YYYY [at] hh:ss A"
  * @param {boolean} noSuffix Whether to include a suffix
+ * @param {string} local local Local time eg. if true, it will use the local time zone of the user.
  * @returns {string} Formatted date time string eg. 3/17/2021 at 1:29 PM
  */
-const Date = (value, format = "M/D/YYYY [at] h:mm A", noSuffix = false) => {
+const Date = (
+  value,
+  format = "M/D/YYYY [at] h:mm A",
+  noSuffix = false,
+  local = false
+) => {
   if (!value) return null
 
   let date = dayjs(value)
@@ -32,7 +44,19 @@ const Date = (value, format = "M/D/YYYY [at] h:mm A", noSuffix = false) => {
 
   if (format === "calendar") return date.calendar()
 
+  if (local) return date.tz().format(format)
+
   return date.format(format)
+}
+
+/**
+ * Formats an abbreviation of a given string.
+ *
+ * @param {string|*} value String eg. Eastern Standard Time
+ * @returns {string} Formatted string eg. EST
+ */
+const Abbreviation = (value) => {
+  return value.match(/[A-Z]/g).join("")
 }
 
 /**
@@ -194,6 +218,7 @@ const DeliverySchedule = (value) => {
 export default {
   Date,
   DateRelative,
+  Abbreviation,
   Empty,
   Numeric,
   TitleCase,

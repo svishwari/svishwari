@@ -23,12 +23,17 @@
       >
         <v-menu left offset-y close-on-click>
           <template #activator="{ on }">
-            <v-icon color="black darken-4" v-on="on">
+            <v-icon
+              color="black darken-4"
+              data-e2e="destination-list-dots"
+              v-on="on"
+            >
               mdi-dots-vertical
             </v-icon>
           </template>
           <div
             class="black--text text-darken-4 cursor-pointer px-4 py-2 white"
+            data-e2e="destination-list-remove"
             @click="openModal(destination)"
           >
             Remove
@@ -53,14 +58,24 @@
       title="You are about to remove"
       :sub-title="`${selectedDestination.name}`"
       right-btn-text="Yes, remove it"
+      data-e2e="remove-destination-confirm"
       @onCancel="confirmModal = !confirmModal"
       @onConfirm="confirmRemoval()"
     >
       <template #body>
-        <div class="pt-4">
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
           Are you sure you want to remove this destination?
         </div>
-        <div class="mb-4">
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
           By removing this destination you will be impacting
           <span class="error--text">ALL</span> audiences and engagements that
           are being delivered to this destination and you will not be able to

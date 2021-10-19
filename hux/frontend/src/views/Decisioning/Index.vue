@@ -1,15 +1,21 @@
 <template>
   <div>
-    <page-header data-e2e="models-header">
-      <template slot="left">
-        <breadcrumb
-          :items="[
-            {
-              text: $options.name,
-              icon: 'models',
-            },
-          ]"
-        />
+    <page-header data-e2e="models-header" :header-height="110">
+      <template #left>
+        <div>
+          <breadcrumb
+            :items="[
+              {
+                text: $options.name,
+                icon: 'models',
+              },
+            ]"
+          />
+        </div>
+        <div class="text-subtitle-1 font-weight-regular">
+          Begin to interpret, explore, and understand your data by digging into
+          your active models for an effective delivery experience.
+        </div>
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -19,12 +25,14 @@
         <descriptive-card
           v-for="model in models"
           :key="model.id"
+          :action-menu="false"
+          :coming-soon="false"
+          width="280"
+          height="255"
           :icon="`model-${model.type || 'unsubscribe'}`"
           :title="model.name"
           :description="model.description"
-          :disabled="model.status !== 'Active'"
           data-e2e="model-item"
-          class="mr-10 model-desc-card"
           @click.native="goToDashboard(model)"
         >
           <template slot="top">
@@ -32,51 +40,55 @@
               :icon-size="17"
               :status="model.status || ''"
               collapsed
-              class="d-flex"
+              class="d-flex float-left"
               data-e2e="model-status"
             />
           </template>
 
           <template slot="default">
             <p
-              class="text-caption black--text text--darken-1 mt-4"
+              class="text-body-2 black--text text--lighten-4"
               data-e2e="model-owner"
             >
               {{ model.owner }}
             </p>
 
-            <div class="d-flex justify-center mb-6">
-              <card-stat
-                label="Version"
-                :value="model.latest_version | Empty"
-                stat-class="border-0"
-                data-e2e="model-version"
-              >
-                <div class="mb-3">
-                  Trained date<br />
+            <v-row no-gutters>
+              <v-col cols="5">
+                <card-stat
+                  label="Version"
+                  :value="model.latest_version | Empty"
+                  stat-class="border-0"
+                  data-e2e="model-version"
+                >
+                  <div class="mb-3">
+                    Trained date<br />
+                    {{ model.last_trained | Date | Empty }}
+                  </div>
+                  <div class="mb-3">
+                    Fulcrum date<br />
+                    {{ model.fulcrum_date | Date | Empty }}
+                  </div>
+                  <div class="mb-3">
+                    Lookback period (days)<br />
+                    {{ model.lookback_window }}
+                  </div>
+                  <div>
+                    Prediction period (days)<br />
+                    {{ model.prediction_window }}
+                  </div>
+                </card-stat>
+              </v-col>
+              <v-col cols="7">
+                <card-stat
+                  label="Last trained"
+                  :value="model.last_trained | Date('relative') | Empty"
+                  data-e2e="model-last-trained-date"
+                >
                   {{ model.last_trained | Date | Empty }}
-                </div>
-                <div class="mb-3">
-                  Fulcrum date<br />
-                  {{ model.fulcrum_date | Date | Empty }}
-                </div>
-                <div class="mb-3">
-                  Lookback period (days)<br />
-                  {{ model.lookback_window }}
-                </div>
-                <div>
-                  Prediction period (days)<br />
-                  {{ model.prediction_window }}
-                </div>
-              </card-stat>
-              <card-stat
-                label="Last trained"
-                :value="model.last_trained | Date('relative') | Empty"
-                data-e2e="model-last-trained-date"
-              >
-                {{ model.last_trained | Date | Empty }}
-              </card-stat>
-            </div>
+                </card-stat>
+              </v-col>
+            </v-row>
           </template>
         </descriptive-card>
       </template>
@@ -155,10 +167,4 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.model-desc-card {
-  @extend .cursor-pointer;
-  width: 280px;
-  height: 280px;
-}
-</style>
+<style lang="scss" scoped></style>

@@ -38,16 +38,17 @@ describe("Orchestration > Engagement > Create Engagement", () => {
     // should add destination to the engagement
     // Click on add audience icon
     cy.get(selector.engagement.addDestination).click()
-    // Select the first audience from the existing ones
+    // Select the first destination from the existing ones
     cy.get(selector.engagement.selectDestination).eq(0).click()
     cy.get(selector.engagement.exitDrawer).click()
   })
 
-  // TODO: temporarily skipping - HUS-1267
-  it.skip("should add destination data extensions and verify the configuration", () => {
+  it("should add destination data extensions and verify the configuration", () => {
     // TODO: add a check that it requires data extension name before proceeding
+    cy.get(selector.engagement.addDestination).click()
+    cy.get(selector.engagement.salesForceAddButton).click()
     // Add new data extension name
-    cy.get(selector.engagement.dataExtensionName).eq(0).type("Testing")
+    cy.get(selector.engagement.dataExtensionName).eq(1).type("Testing")
     // Close the data extension drawer
     cy.get(selector.engagement.exitDataExtensionDrawer).click()
     // eslint-disable-next-line cypress/no-unnecessary-waiting

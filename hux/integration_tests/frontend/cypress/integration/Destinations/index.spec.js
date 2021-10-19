@@ -16,14 +16,20 @@ describe("Data Management > Connections > Destinations", () => {
     cy.get(selector.connections).eq(0).click()
     cy.location("pathname").should("eq", route.connections)
 
+    cy.get(selector.destination.removeDots).eq(0).click()
+    cy.get(selector.destination.destinationRemove).eq(0).click()
+    cy.get(selector.destination.destinationRemoveConfirm)
+      .get("button")
+      .contains("Nevermind!")
+      .eq(0)
+      .click()
+
     //validate destinations exist by getting total no. of them
     cy.get(selector.destinations).its("length").as("destinationsCount")
 
     //click on plus-sign for adding a destination
     cy.get(selector.destination.addDestination).click()
     cy.location("pathname").should("eq", route.addDestinations)
-
-    // TODO: temporarily skipping - HUS-1267
 
     /**
     //find a addable destination from the drawer
