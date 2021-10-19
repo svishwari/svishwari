@@ -1,5 +1,5 @@
 """Purpose of this file is to house all the destination api tests."""
-
+from datetime import datetime
 from unittest import TestCase, mock
 from unittest.mock import MagicMock, patch
 from http import HTTPStatus
@@ -739,10 +739,16 @@ class TestDestinationRoutes(TestCase):
             {
                 api_c.SFMC_DATA_EXTENSION_NAME: "extension_name",
                 api_c.SFMC_CUSTOMER_KEY: "id12345",
+                "createdDate": datetime.strptime(
+                    "2021-10-19 00:10:20.345", "%Y-%m-%d %H:%M:%S.%f"
+                ),
             },
             {
                 api_c.SFMC_DATA_EXTENSION_NAME: "data_extension_name",
                 api_c.SFMC_CUSTOMER_KEY: "id12345678",
+                "createdDate": datetime.strptime(
+                    "2021-10-09 00:10:20.345", "%Y-%m-%d %H:%M:%S.%f"
+                ),
             },
         ]
         mock_sfmc_instance = mock_sfmc.return_value
@@ -761,6 +767,9 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(response.json[0][api_c.NAME], "data_extension_name")
         self.assertEqual(
             response.json[0][api_c.DATA_EXTENSION_ID], "id12345678"
+        )
+        self.assertEqual(
+            response.json[0][db_c.CREATE_TIME], "2021-10-09T00:10:20.345Z"
         )
 
     @mock.patch("huxunify.api.route.destination.SFMCConnector")

@@ -1,5 +1,6 @@
 # pylint: disable=no-self-use
 """Schemas for the Destinations API"""
+import datetime
 
 from flask_marshmallow import Schema
 from marshmallow import fields, pre_load, ValidationError
@@ -634,4 +635,9 @@ class DestinationDataExtGetSchema(Schema):
     name = fields.String(attribute="Name", example="data_extension_name")
     data_extension_id = fields.String(
         attribute="CustomerKey", example="data_extension_id"
+    )
+    create_time = DateTimeWithZ(
+        attribute="createdDate",
+        required=True,
+        default=datetime.datetime.utcnow(),
     )
