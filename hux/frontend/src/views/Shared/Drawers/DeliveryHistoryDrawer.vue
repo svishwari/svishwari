@@ -24,7 +24,8 @@
           </v-icon>
         </template>
       </page-header>
-      <hux-filter-bar
+
+      <hux-table-filters-bar
         v-if="!loading"
         v-show="isFilterToggled"
         :filters="filters"
@@ -127,8 +128,8 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
+import HuxTableFiltersBar from "@/components/common/TableFiltersBar"
 import PageHeader from "@/components/PageHeader"
-import HuxFilterBar from "@/components/common/FilterBar"
 import Drawer from "@/components/common/Drawer.vue"
 import Icon from "@/components/common/Icon.vue"
 import Logo from "@/components/common/Logo.vue"
@@ -141,8 +142,8 @@ export default {
 
   components: {
     HuxDataTable,
+    HuxTableFiltersBar,
     PageHeader,
-    HuxFilterBar,
     Drawer,
     Icon,
     Logo,
