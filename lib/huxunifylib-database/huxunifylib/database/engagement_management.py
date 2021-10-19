@@ -304,6 +304,12 @@ def get_engagements_summary(
                         "is_ad_platform": "$audiences.destinations.is_ad_platform",
                         "delivery_platform_type": "$audiences.destinations.delivery_platform_type",
                         "delivery_job_id": "$audiences.destinations.delivery_job_id",
+                        "delivery_schedule": {
+                            "$ifNull": [
+                                "$audiences.destinations.delivery_schedule",
+                                "",
+                            ]
+                        },
                         "latest_delivery": {
                             "update_time": "$audiences.destinations.latest_delivery.update_time",
                             "status": {
