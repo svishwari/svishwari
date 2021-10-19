@@ -157,7 +157,7 @@ export default {
     min-height: 265px;
     padding: 16px 30px 40px 30px;
     overflow-x: auto;
-    border: 1px solid var(--v-zircon-base);
+    border: 1px solid var(--v-black-lighten2);
     h5 {
       line-height: 19px;
       letter-spacing: 0.5px;
@@ -189,10 +189,6 @@ export default {
   .title-wrap {
     display: flex;
     flex-direction: column;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 12px;
-    line-height: 16px;
     min-height: 64px;
     .heading {
       text-transform: uppercase;

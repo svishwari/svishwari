@@ -23,15 +23,13 @@
             <span>
               {{ clientName }}
             </span>
-            <v-icon v-if="!isMini" color="rgba(255, 255, 255, 0.5)">
-              mdi-chevron-down
-            </v-icon>
+            <v-icon v-if="!isMini"> mdi-chevron-down </v-icon>
           </div>
         </template>
         <template #default>
           <div class="px-6 py-5 white">
             <v-icon color="primary"> mdi-information </v-icon>
-            <span class="pl-4 text-caption black--text text--darken-4">
+            <span class="pl-4 text-button black--text text--darken-4">
               This is where your future client accounts will be held.
             </span>
           </div>
@@ -39,11 +37,7 @@
       </v-menu>
     </template>
 
-    <v-list
-      v-for="item in items"
-      :key="item.title"
-      color="rgba(0, 85, 135, 0.9)"
-    >
+    <v-list v-for="item in items" :key="item.title">
       <div v-if="item.label" class="list-group">
         <span v-if="!isMini">
           {{ item.label }}
@@ -164,11 +158,11 @@ export default {
 
   .client {
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.25);
+    background-color: var(--v-primary-darken1);
     color: var(--v-white-base);
     cursor: default;
     display: flex;
-    font-size: 0.93rem;
+    font-size: 14px;
     line-height: 1.75rem;
     font-weight: normal;
     justify-content: space-between;
@@ -188,14 +182,14 @@ export default {
   }
 
   .v-list-item__title {
-    font-size: 0.93rem;
+    font-size: 14px;
     font-weight: normal;
   }
 
   .v-list-item--active {
     &::before {
-      background-color: var(--v-white-base);
-      opacity: 0.1;
+      background-color: var(--v-primary-lighten4);
+      opacity: 0.2;
     }
   }
 
@@ -205,7 +199,7 @@ export default {
     span {
       color: var(--v-white-base);
       display: flex;
-      font-size: 0.93rem;
+      font-size: 14px;
       font-weight: normal;
       opacity: 0.5;
       padding: 0.75rem 1rem;
@@ -215,8 +209,6 @@ export default {
 
   .nav-footer {
     color: var(--v-white-base);
-    font-size: 12px;
-    font-weight: normal;
     opacity: 0.5;
     padding: 1rem;
   }

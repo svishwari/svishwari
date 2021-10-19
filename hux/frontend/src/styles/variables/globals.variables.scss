@@ -4,81 +4,111 @@
 // Type
 $body-font-family: "Open Sans", sans-serif;
 $heading-font-family: $body-font-family;
+$border-radius-root: 12px;
 $font-size-root: 14px;
 $headings: (
-  "h1": (
-    "size": 36px,
-    "line-height": 1.2,
-    "weight": 300,
-    "letter-spacing": 0,
-  ),
-  "overline": (
-    "size": 30px,
-    "line-height": 1.2,
-    "weight": 600,
-    "letter-spacing": 0,
-  ),
-  "h2": (
-    "size": 24px,
-    "line-height": 40px,
-    "weight": 300,
-    "letter-spacing": 0,
-  ),
-  "h3": (
-    "size": 21px,
-    "line-height": 40px,
-    "weight": 300,
-    "letter-spacing": 0,
-  ),
-  "h4": (
-    "size": 18px,
-    "line-height": 24px,
-    "weight": 300,
-    "letter-spacing": 0,
-  ),
-  "h5": (
-    "size": 15px,
-    "line-height": 20px,
-    "weight": 400,
-    "letter-spacing": 0,
-  ),
-  "h6": (
-    "size": 14px,
-    "line-height": 22px,
-    "weight": 400,
-    "letter-spacing": 0,
-  ),
-  "body-2": (
-    "size": 12px,
-    "line-height": 16px,
-    "weight": 400,
-    "letter-spacing": 0,
-  ),
-  "caption": (
-    "size": 12px,
-    "line-height": 16px,
-    "weight": 400,
-    "letter-spacing": 0,
-  ),
-  "subtitle-2": (
-    "letter-spacing": 0,
-  ),
-  "subtitle-1": (
-    "size": 16px,
-    "letter-spacing": 0,
-    "weight": 800,
-  ),
-  "body-1": (
-    "letter-spacing": 0,
-  ),
-  "button": (
-    "letter-spacing": 0,
-  ),
+  // H1 (Large) (Main Pages)
+  "h1":
+    (
+      "size": 36px,
+      "line-height": 40px,
+      "weight": 300,
+      "letter-spacing": 0,
+    ),
+  // H2 (Models & Drawers)
+  "h2":
+    (
+      "size": 24px,
+      "line-height": 40px,
+      "weight": 300,
+      "letter-spacing": 0,
+    ),
+  // H3 (Sm) (Sectionals)
+  "h3":
+    (
+      "size": 18px,
+      "line-height": 25px,
+      "weight": 400,
+      "letter-spacing": 0,
+    ),
+  // H4 (Card Headers)
+  "h4":
+    (
+      "size": 18px,
+      "line-height": 24px,
+      "weight": 300,
+      "letter-spacing": 0.1px,
+    ),
+  // B1 (Reg)
+  "body-1":
+    (
+      "size": 16px,
+      "line-height": 22px,
+      "weight": 400,
+      "letter-spacing": 0,
+    ),
+  // B2 (Sm) - Hovers & Labels
+  "body-2":
+    (
+      "size": 14px,
+      "line-height": 16px,
+      "weight": 400,
+      "letter-spacing": 0,
+    ),
+  // Button Text
+  "button":
+    (
+      "size": 12px,
+      "line-height": 16px,
+      "weight": 400,
+      "letter-spacing": 0.5px,
+      "text-transform": "inherit",
+    ),
+  // Metric #s
+  "subtitle-1":
+    (
+      "size": 16px,
+      "line-height": 22px,
+      "weight": 600,
+      "letter-spacing": 0,
+    ),
+  // Pill Text
+  "subtitle-2":
+    (
+      "size": 12px,
+      "line-height": 16px,
+      "weight": 600,
+      "letter-spacing": 0.2px,
+    ),
+  // 'optional'
+  "caption":
+    (
+      "size": 16px,
+      "line-height": 20px,
+      "weight": 400,
+      "letter-spacing": 0,
+    ),
+  // Nav > Headers
+  "h5":
+    (
+      "size": 14px,
+      "line-height": 16px,
+      "weight": 400,
+      "letter-spacing": 0.2px,
+    ),
+  // Nav > Menu item 1
+  "h6":
+    (
+      "size": 14px,
+      "line-height": 22px,
+      "weight": 400,
+      "letter-spacing": 0,
+    )
 );
 
 // App
 $material-light: (
-  "background": #fafcfd,
+  "background": #f9fafb,
   "primary-text-percent": 1,
   "text-color": "#1e1e1e",
 );

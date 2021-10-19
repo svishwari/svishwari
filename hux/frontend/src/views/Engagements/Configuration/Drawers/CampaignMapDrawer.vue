@@ -11,7 +11,7 @@
     <template #default>
       <v-progress-linear :active="loading" :indeterminate="loading" />
       <div class="py-5 px-6">
-        <span class="text-caption black--text text--darken-4">
+        <span class="text-h5 black--text text--darken-4">
           To see KPI’s for Facebook, map to a Facebook campaign and select a
           delivery time.
         </span>
