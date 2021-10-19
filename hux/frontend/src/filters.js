@@ -19,15 +19,15 @@ dayjs.extend(advancedFormat)
  *
  * @param {string|*} value Datetime eg. 2021-03-17T13:29:49.351Z
  * @param {string} format Format eg. "MM/D/YYYY [at] hh:ss A"
- * @param {string} local Format eg. true if true, it will use the local time zone if user.
  * @param {boolean} noSuffix Whether to include a suffix
+ * @param {string} local local Local time eg. if true, it will use the local time zone of the user.
  * @returns {string} Formatted date time string eg. 3/17/2021 at 1:29 PM
  */
 const Date = (
   value,
   format = "M/D/YYYY [at] h:mm A",
-  local = false,
-  noSuffix = false
+  noSuffix = false,
+  local = false
 ) => {
   if (!value) return null
 
@@ -50,7 +50,7 @@ const Date = (
 }
 
 /**
- * Formats a Abbreviation out of give text string.
+ * Formats an abbreviation of a given string.
  *
  * @param {string|*} value String eg. Eastern Standard Time
  * @returns {string} Formatted string eg. EST
