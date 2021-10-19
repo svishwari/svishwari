@@ -20,7 +20,7 @@
       <v-menu v-if="!isMini" open-on-hover offset-y>
         <template #activator="{ on }">
           <div class="pl-6 client py-4 mb-2" v-on="on">
-            <span class="d-flex align-center">
+            <span class="d-flex align-center black--text">
               <logo :type="client.logo" :size="16" class="mr-2" />
               {{ client.name }}
             </span>
@@ -193,6 +193,12 @@ export default {
       fill: var(--v-black-lighten4);
     }
     &:hover {
+      svg {
+        fill: var(--v-primary-lighten6) !important;
+      }
+      .v-list-item__title {
+        color: var(--v-primary-lighten6) !important;
+      }
       &::before {
         opacity: 0;
       }

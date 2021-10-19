@@ -1,8 +1,12 @@
 <template>
   <v-menu :min-width="192" left offset-y close-on-click>
     <template #activator="{ on }">
-      <span class="d-flex cursor-pointer" data-e2e="help-dropdown" v-on="on">
-        <icon class="mx-2 my-2 nav-icon" type="help" :size="21" />
+      <span
+        class="d-flex cursor-pointer mr-4"
+        data-e2e="help-dropdown"
+        v-on="on"
+      >
+        <icon class="mx-2 my-2 nav-icon" type="help" :size="24" />
       </span>
     </template>
     <v-list>

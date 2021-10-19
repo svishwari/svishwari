@@ -1,6 +1,6 @@
 <template>
   <div class="app-nav-bar">
-    <v-app-bar app color="white" dark elevation="0" pa-0>
+    <v-app-bar app color="white" dark elevation="0" pa-0 height="70">
       <v-app-bar-nav-icon
         class="nav-back-burger"
         @click.stop="toggleSidebarMenu"

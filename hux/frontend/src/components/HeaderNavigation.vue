@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex align-center">
-    <span class="text--body-2 black--text mr-2">
+    <span class="text--body-2 black--text text--lighten-4 mr-9">
       Today,
       {{ appLoadTime | Date("HH:mm A", (local = true)) }}
       <tooltip>
@@ -19,8 +19,8 @@
     </v-icon>
     <v-menu :min-width="200" left offset-y close-on-click>
       <template #activator="{ on }">
-        <span class="d-flex cursor-pointer" data-e2e="addicon" v-on="on">
-          <icon class="mx-2 my-2 nav-icon" type="more" :size="21" />
+        <span class="d-flex cursor-pointer mr-4" data-e2e="addicon" v-on="on">
+          <icon class="mx-2 my-2 nav-icon" type="more" :size="24" />
         </span>
       </template>
       <v-list>
