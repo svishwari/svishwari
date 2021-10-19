@@ -1,11 +1,12 @@
 <template>
   <v-card
+    :outlined="disabled"
     class="descriptive-card align-center text-center rounded-lg mr-10 mb-10"
     :class="{ 'in-active': disabled }"
     :height="height"
     :width="width"
   >
-    <div v-if="$slots.top" class="pa-3 pb-0">
+    <div v-if="$slots.top" class="card-status pa-3 pb-0">
       <slot name="top" />
       <v-menu close-on-click>
         <template #activator="{ on }">
@@ -28,7 +29,7 @@
       </div>
     </div>
 
-    <div v-if="icon" class="d-flex justify-center pb-4 mt-4">
+    <div v-if="icon" class="d-flex justify-center pb-4 mt-2 mr-8">
       <div class="dot">
         <icon :type="icon" :size="44" color="primary" class="d-block" />
       </div>
@@ -131,6 +132,7 @@ export default {
   color: var(--v-black-darken4);
   font-weight: normal;
   transition: box-shadow 0.2s;
+  cursor: pointer;
 
   &:hover {
     @extend .box-shadow-3;
@@ -153,13 +155,8 @@ export default {
     }
   }
   .dot {
-    height: 60px;
-    width: 60px;
     padding: 7px;
     border-radius: 50%;
-    display: inline-block;
-    background-color: var(--v-white-base);
-    text-align: -webkit-center;
     @extend .box-shadow-1;
   }
   .description {

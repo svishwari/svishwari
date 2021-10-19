@@ -19,18 +19,16 @@
         <descriptive-card
           v-for="model in models"
           :key="model.id"
+          :action-menu="false"
+          :coming-soon="false"
+          width="280"
+          height="255"
           :icon="`model-${model.type || 'unsubscribe'}`"
           :title="model.name"
           :description="model.description"
-          :disabled="model.status !== 'Active'"
-          :action-menu="false"
-          :coming-soon="false"
-          height="255"
-          width="280"
           data-e2e="model-item"
-          class="mr-10"
           @click.native="goToDashboard(model)"
-        >
+          >
           <template slot="top">
             <status
               :icon-size="17"
@@ -48,38 +46,43 @@
             >
               {{ model.owner }}
             </div>
-            <div class="d-flex justify-center mb-6">
-              <card-stat
-                label="Version"
-                :value="model.latest_version | Empty"
-                stat-class="border-0"
-                data-e2e="model-version"
-              >
-                <div class="mb-3">
-                  Trained date<br />
+            
+            <v-row no-gutters>
+              <v-col cols="5">
+                <card-stat
+                  label="Version"
+                  :value="model.latest_version | Empty"
+                  stat-class="border-0"
+                  data-e2e="model-version"
+                >
+                  <div class="mb-3">
+                    Trained date<br />
+                    {{ model.last_trained | Date | Empty }}
+                  </div>
+                  <div class="mb-3">
+                    Fulcrum date<br />
+                    {{ model.fulcrum_date | Date | Empty }}
+                  </div>
+                  <div class="mb-3">
+                    Lookback period (days)<br />
+                    {{ model.lookback_window }}
+                  </div>
+                  <div>
+                    Prediction period (days)<br />
+                    {{ model.prediction_window }}
+                  </div>
+                </card-stat>
+              </v-col>
+              <v-col cols="7">
+                <card-stat
+                  label="Last trained"
+                  :value="model.last_trained | Date('relative') | Empty"
+                  data-e2e="model-last-trained-date"
+                >
                   {{ model.last_trained | Date | Empty }}
-                </div>
-                <div class="mb-3">
-                  Fulcrum date<br />
-                  {{ model.fulcrum_date | Date | Empty }}
-                </div>
-                <div class="mb-3">
-                  Lookback period (days)<br />
-                  {{ model.lookback_window }}
-                </div>
-                <div>
-                  Prediction period (days)<br />
-                  {{ model.prediction_window }}
-                </div>
-              </card-stat>
-              <card-stat
-                label="Last trained"
-                :value="model.last_trained | Date('relative') | Empty"
-                data-e2e="model-last-trained-date"
-              >
-                {{ model.last_trained | Date | Empty }}
-              </card-stat>
-            </div>
+                </card-stat>
+              </v-col>
+            </v-row>
           </template>
         </descriptive-card>
       </template>
