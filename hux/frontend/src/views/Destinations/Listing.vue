@@ -36,9 +36,9 @@
           class="text-decoration-none"
         >
           <huxButton
-                       variant="primary base"
-            iconColor="white"
-            iconVariant="base"
+            variant="primary base"
+            icon-color="white"
+            icon-variant="base"
             icon="plus"
             size="large"
             is-custom-icon

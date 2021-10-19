@@ -33,8 +33,8 @@
         >
           <huxButton
             variant="primary base"
-            iconColor="white"
-            iconVariant="base"
+            icon-color="white"
+            icon-variant="base"
             icon="plus"
             size="large"
             is-custom-icon
@@ -224,14 +224,14 @@
             append
           >
             <huxButton
-            variant="primary base"
-            iconColor="white"
-            iconVariant="base"
-            icon="plus"
-            size="large"
-            is-custom-icon
-            is-tile
-            class="ma-2 font-weight-regular caption"
+              variant="primary base"
+              icon-color="white"
+              icon-variant="base"
+              icon="plus"
+              size="large"
+              is-custom-icon
+              is-tile
+              class="ma-2 font-weight-regular caption"
             >
               Audience
             </huxButton>

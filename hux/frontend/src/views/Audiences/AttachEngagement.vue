@@ -34,8 +34,8 @@
                 <template #button>
                   <huxButton
                     variant="primary base"
-                    iconColor="white"
-                    iconVariant="base"
+                    icon-color="white"
+                    icon-variant="base"
                     icon="plus"
                     size="small"
                     is-custom-icon
@@ -54,16 +54,16 @@
                 required to have at least one selected.
               </h6>
               <huxButton
-                 variant="primary base"
-                    iconColor="white"
-                    iconVariant="base"
-                    icon="plus"
-                    size="small"
-                    is-custom-icon
-                    class="ma-2 caption"
-                    is-tile
- height="40"
-                 @click="goToAddNewEngagement()"
+                variant="primary base"
+                icon-color="white"
+                icon-variant="base"
+                icon="plus"
+                size="small"
+                is-custom-icon
+                class="ma-2 caption"
+                is-tile
+                height="40"
+                @click="goToAddNewEngagement()"
               >
                 New engagement
               </huxButton>

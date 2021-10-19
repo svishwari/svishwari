@@ -35,9 +35,9 @@
           class="text-decoration-none"
         >
           <huxButton
-           variant="primary base"
-            iconColor="white"
-            iconVariant="base"
+            variant="primary base"
+            icon-color="white"
+            icon-variant="base"
             icon="plus"
             size="small"
             is-custom-icon
@@ -53,14 +53,14 @@
         >
           <huxButton
             button-text="Data source"
-              variant="primary base"
-            iconColor="white"
-            iconVariant="base"
+            variant="primary base"
+            icon-color="white"
+            icon-variant="base"
             icon="plus"
             size="small"
             is-custom-icon
             is-tile
-         class="ma-2 text-h6 font-weight-regular"
+            class="ma-2 text-h6 font-weight-regular"
           >
             Data source
           </huxButton>

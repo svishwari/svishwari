@@ -20,13 +20,12 @@
           size="large"
           is-tile
           height="40"
-          iconSize="18"
+          icon-size="18"
           data-e2e="notification-return"
           @click="goBack()"
         >
           Return to previous page
         </huxButton>
-
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />

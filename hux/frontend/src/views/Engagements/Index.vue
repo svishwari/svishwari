@@ -33,15 +33,15 @@
           data-e2e="add-engagement"
         >
           <huxButton
-    variant="primary base"
-                    iconColor="white"
-                    iconVariant="base"
-                    icon="plus"
-                    size="large"
-                    is-custom-icon
-                    class="ma-2 font-weight-regular no-shadow mr-0 caption"
-                    is-tile
- height="40"
+            variant="primary base"
+            icon-color="white"
+            icon-variant="base"
+            icon="plus"
+            size="large"
+            is-custom-icon
+            class="ma-2 font-weight-regular no-shadow mr-0 caption"
+            is-tile
+            height="40"
           >
             Engagement
           </huxButton>
@@ -483,16 +483,15 @@
           >
             <huxButton
               button-text="Engagement"
-                  variant="primary base"
-                    iconColor="white"
-                    iconVariant="base"
-                    icon="plus"
-                    size="large"
-                    is-custom-icon
-                    class="ma-2 font-weight-regular caption"
-                    is-tile
- height="40"
-
+              variant="primary base"
+              icon-color="white"
+              icon-variant="base"
+              icon="plus"
+              size="large"
+              is-custom-icon
+              class="ma-2 font-weight-regular caption"
+              is-tile
+              height="40"
             >
               Engagement
             </huxButton>

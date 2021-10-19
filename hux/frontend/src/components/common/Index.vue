@@ -211,8 +211,8 @@
       <span class="pr-12">
         <huxButton
           variant="primary base"
-          iconColor="white"
-          iconVariant="base"
+          icon-color="white"
+          icon-variant="base"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -226,8 +226,8 @@
       <span class="pr-12">
         <huxButton
           variant="primary base"
-          iconColor="white"
-          iconVariant="base"
+          icon-color="white"
+          icon-variant="base"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -238,16 +238,15 @@
           CTA
         </huxButton>
         <huxButton
-            variant="primary base"
-          iconColor="white"
-          iconVariant="base"
+          variant="primary base"
+          icon-color="white"
+          icon-variant="base"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
           is-tile
           width="99"
           height="30"
-          
         >
           CTA
         </huxButton>
@@ -296,8 +295,8 @@
       <span class="pr-12">
         <huxButton
           variant="primary lighten-6"
-          iconColor="white"
-          iconVariant="base"
+          icon-color="white"
+          icon-variant="base"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -311,8 +310,8 @@
       <span class="pr-12">
         <huxButton
           variant="primary lighten-6"
-          iconColor="white"
-          iconVariant="base"
+          icon-color="white"
+          icon-variant="base"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -324,8 +323,8 @@
         </huxButton>
         <huxButton
           variant="primary lighten-6"
-          iconColor="white"
-          iconVariant="base"
+          icon-color="white"
+          icon-variant="base"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -380,8 +379,8 @@
       <span class="pr-12">
         <huxButton
           variant="black lighten-1"
-          iconColor="black"
-          iconVariant="lighten3"
+          icon-color="black"
+          icon-variant="lighten3"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -395,8 +394,8 @@
       <span class="pr-12">
         <huxButton
           variant="black lighten-1"
-          iconColor="black"
-          iconVariant="lighten3"
+          icon-color="black"
+          icon-variant="lighten3"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -404,12 +403,12 @@
           width="110"
           height="35"
         >
-           <span class="black--text text--lighten-3">CTA</span>
+          <span class="black--text text--lighten-3">CTA</span>
         </huxButton>
         <huxButton
           variant="black lighten-1"
-          iconColor="black"
-          iconVariant="lighten3"
+          icon-color="black"
+          icon-variant="lighten3"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -417,7 +416,7 @@
           width="99"
           height="30"
         >
-           <span class="black--text text--lighten-3">CTA</span>
+          <span class="black--text text--lighten-3">CTA</span>
         </huxButton>
         <huxButton
           variant="black lighten-1"
@@ -426,7 +425,7 @@
           width="79"
           height="40"
         >
-           <span class="black--text text--lighten-3">CTA</span>
+          <span class="black--text text--lighten-3">CTA</span>
         </huxButton>
       </span>
       <span class="pr-12">
@@ -437,7 +436,7 @@
           width="79"
           height="35"
         >
-           <span class="black--text text--lighten-3">CTA</span>
+          <span class="black--text text--lighten-3">CTA</span>
         </huxButton>
         <huxButton
           variant="black lighten-1"
@@ -446,7 +445,7 @@
           width="79"
           height="30"
         >
-           <span class="black--text text--lighten-3">CTA</span>
+          <span class="black--text text--lighten-3">CTA</span>
         </huxButton>
         <huxButton
           variant="black lighten-1"
@@ -455,7 +454,7 @@
           width="71"
           height="24"
         >
-           <span class="black--text text--lighten-3">CTA</span>
+          <span class="black--text text--lighten-3">CTA</span>
         </huxButton>
       </span>
     </div>
@@ -464,8 +463,8 @@
       <span class="pr-12">
         <huxButton
           variant="white"
-          iconColor="primary"
-          iconVariant="base"
+          icon-color="primary"
+          icon-variant="base"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -478,9 +477,9 @@
       </span>
       <span class="pr-12">
         <huxButton
-         variant="white"
-          iconColor="primary"
-          iconVariant="base"
+          variant="white"
+          icon-color="primary"
+          icon-variant="base"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -491,9 +490,9 @@
           <span class="primary--text">CTA</span>
         </huxButton>
         <huxButton
-         variant="white"
-          iconColor="primary"
-          iconVariant="base"
+          variant="white"
+          icon-color="primary"
+          icon-variant="base"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -503,15 +502,33 @@
         >
           <span class="primary--text">CTA</span>
         </huxButton>
-        <huxButton variant="white" class="ma-2 caption" is-tile width="79" height="40">
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="40"
+        >
           <span class="primary--text">CTA</span>
         </huxButton>
       </span>
       <span class="pr-12">
-        <huxButton variant="white" class="ma-2 caption" is-tile width="79" height="35">
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="35"
+        >
           <span class="primary--text">CTA</span>
         </huxButton>
-        <huxButton variant="white" class="ma-2 caption" is-tile width="79" height="30">
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="30"
+        >
           <span class="primary--text">CTA</span>
         </huxButton>
         <huxButton
@@ -530,8 +547,8 @@
       <span class="pr-12">
         <huxButton
           variant="white"
-          iconColor="primary"
-          iconVariant="lighten6"
+          icon-color="primary"
+          icon-variant="lighten6"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -545,8 +562,8 @@
       <span class="pr-12">
         <huxButton
           variant="white"
-          iconColor="primary"
-          iconVariant="lighten6"
+          icon-color="primary"
+          icon-variant="lighten6"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -554,12 +571,12 @@
           width="110"
           height="35"
         >
-         <span class="primary--text text--lighten-6">CTA</span>
+          <span class="primary--text text--lighten-6">CTA</span>
         </huxButton>
         <huxButton
-           variant="white"
-          iconColor="primary"
-          iconVariant="lighten6"
+          variant="white"
+          icon-color="primary"
+          icon-variant="lighten6"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -569,15 +586,33 @@
         >
           <span class="primary--text text--lighten-6">CTA</span>
         </huxButton>
-        <huxButton variant="white" class="ma-2 caption" is-tile width="79" height="40">
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="40"
+        >
           <span class="primary--text text--lighten-6">CTA</span>
         </huxButton>
       </span>
       <span class="pr-12">
-        <huxButton variant="white" class="ma-2 caption" is-tile width="79" height="35">
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="35"
+        >
           <span class="primary--text text--lighten-6">CTA</span>
         </huxButton>
-        <huxButton variant="white" class="ma-2 caption" is-tile width="79" height="30">
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="30"
+        >
           <span class="primary--text text--lighten-6">CTA</span>
         </huxButton>
         <huxButton
@@ -596,8 +631,8 @@
       <span class="pr-12">
         <huxButton
           variant="white"
-          iconColor="black"
-          iconVariant="lighten3"
+          icon-color="black"
+          icon-variant="lighten3"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -605,14 +640,14 @@
           width="100"
           height="40"
         >
-         <span class="black--text text--lighten-3">CTA</span>
+          <span class="black--text text--lighten-3">CTA</span>
         </huxButton>
       </span>
       <span class="pr-12">
         <huxButton
           variant="white"
-          iconColor="black"
-          iconVariant="lighten3"
+          icon-color="black"
+          icon-variant="lighten3"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -620,12 +655,12 @@
           width="110"
           height="35"
         >
-           <span class="black--text text--lighten-3">CTA</span>
+          <span class="black--text text--lighten-3">CTA</span>
         </huxButton>
         <huxButton
-           variant="white"
-          iconColor="black"
-          iconVariant="lighten3"
+          variant="white"
+          icon-color="black"
+          icon-variant="lighten3"
           icon="plus"
           is-custom-icon
           class="ma-2 caption"
@@ -633,18 +668,36 @@
           width="99"
           height="30"
         >
-           <span class="black--text text--lighten-3">CTA</span>
+          <span class="black--text text--lighten-3">CTA</span>
         </huxButton>
-        <huxButton variant="white" class="ma-2 caption" is-tile width="79" height="40">
-           <span class="black--text text--lighten-3">CTA</span>
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="40"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
         </huxButton>
       </span>
       <span class="pr-12">
-        <huxButton variant="white" class="ma-2 caption" is-tile width="79" height="35">
-           <span class="black--text text--lighten-3">CTA</span>
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="35"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
         </huxButton>
-        <huxButton variant="white" class="ma-2 caption" is-tile width="79" height="30">
-           <span class="black--text text--lighten-3">CTA</span>
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="30"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
         </huxButton>
         <huxButton
           variant="white"
@@ -653,7 +706,7 @@
           width="71"
           height="24"
         >
-           <span class="black--text text--lighten-3">CTA</span>
+          <span class="black--text text--lighten-3">CTA</span>
         </huxButton>
       </span>
     </div>
@@ -663,13 +716,13 @@
         <huxButton
           variant="success"
           icon="check-bold"
-           is-custom-icon
+          is-custom-icon
           size="x-large"
           is-tile
           class="ma-2 caption"
           width="134"
           height="40"
-          :iconSize="12"
+          :icon-size="12"
         >
           Success!
         </huxButton>
@@ -678,13 +731,13 @@
         <huxButton
           variant="primary base"
           icon="keyboard-return"
-           is-custom-icon
+          is-custom-icon
           class="ma-2 caption"
           size="large"
           is-tile
           width="214"
           height="40"
-          :iconSize="16"
+          :icon-size="16"
         >
           Back to Main Page
         </huxButton>
@@ -717,12 +770,11 @@
         width="102"
         height="40"
         size="large"
-         iconColor="white"
-          iconVariant="base"
+        icon-color="white"
+        icon-variant="base"
         icon="drawer-add-tick"
-         is-custom-icon
+        is-custom-icon
         class="ma-2 caption"
-        
       >
         Added
       </huxButton>
@@ -733,13 +785,13 @@
         height="40"
         size="large"
         icon="drawer-add-tick"
-         is-custom-icon
-         iconColor="black"
-          iconVariant="lighten3"
-        iconSize="15"
+        is-custom-icon
+        icon-color="black"
+        icon-variant="lighten3"
+        icon-size="15"
         class="ma-2 caption"
       >
-       <span class="black--text text--lighten-3">Added</span>
+        <span class="black--text text--lighten-3">Added</span>
       </huxButton>
       <huxButton
         variant="primary lighten-6"
@@ -747,21 +799,16 @@
         height="40"
         size="large"
         icon="drawer-add-tick"
-        iconColor="white"
-          iconVariant="base"
-         is-custom-icon
-        iconSize="15"
+        icon-color="white"
+        icon-variant="base"
+        is-custom-icon
+        icon-size="15"
         class="ma-2 caption"
       >
         Requested
       </huxButton>
 
-      <huxButton
-        variant="white"
-        width="112"
-        height="40"
-        class="ma-2 caption"
-      >
+      <huxButton variant="white" width="112" height="40" class="ma-2 caption">
         Request
       </huxButton>
     </div>
@@ -1905,6 +1952,6 @@ export default {
   width: 255px;
 }
 .linear-class {
-  background: linear-gradient(270deg,#43B02A, #00A3E0, #005587) !important
+  background: linear-gradient(270deg, #43b02a, #00a3e0, #005587) !important;
 }
 </style>
