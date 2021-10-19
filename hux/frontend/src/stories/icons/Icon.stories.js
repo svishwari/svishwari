@@ -51,7 +51,7 @@ export default {
         type: "select",
       },
     },
-    variant: {
+    varia: {
       defaultValue: "base",
       options: ["lighten1", "lighten2", "lighten3"],
       control: {
