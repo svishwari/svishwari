@@ -1,6 +1,4 @@
 """Purpose of this file is to house all tests related to decisioning."""
-
-
 import json
 from http import HTTPStatus
 from unittest import TestCase, mock
@@ -58,7 +56,7 @@ class DecisioningTests(TestCase):
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
         self.request_mocker.start()
 
-    def test_sucess_get_models(self):
+    def test_success_get_models(self):
         """Test get models from Tecton."""
 
         get_models_mock = mock.patch(
@@ -98,7 +96,8 @@ class DecisioningTests(TestCase):
         self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/{api_c.MODELS_VERSION_HISTORY}",
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
+            f"{api_c.MODELS_VERSION_HISTORY}",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -107,7 +106,7 @@ class DecisioningTests(TestCase):
 
     @given(model_id=st.integers(min_value=100, max_value=1000))
     @settings(deadline=600)
-    def test_get_model_version_history_failed(self, model_id: int):
+    def test_failure_get_model_version_history(self, model_id: int):
         """Test get model version history failed.
 
         Args:
@@ -123,7 +122,8 @@ class DecisioningTests(TestCase):
         self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/{api_c.MODELS_VERSION_HISTORY}",
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
+            f"{api_c.MODELS_VERSION_HISTORY}",
             headers=t_c.STANDARD_HEADERS,
         )
         if model_id in t_c.SUPPORTED_MODELS:
@@ -133,8 +133,8 @@ class DecisioningTests(TestCase):
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
     @settings(deadline=600)
-    def test_success_get_model_features(self, model_id: int) -> None:
-        """Test get model features
+    def test_get_model_features_success(self, model_id: int) -> None:
+        """Test get model features success.
 
         Args:
             model_id (int): Model ID.
@@ -156,9 +156,125 @@ class DecisioningTests(TestCase):
         self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/{api_c.FEATURES}",
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
+            f"{api_c.FEATURES}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(FeatureSchema(many=True).dump(response))
+        self.assertTrue(
+            t_c.validate_schema(FeatureSchema(), response.json, True)
+        )
+
+    @given(model_id=st.integers(min_value=1, max_value=2))
+    @settings(deadline=600)
+    def test_get_model_features_negative_score(self, model_id: int) -> None:
+        """Test get model features negative score in response.
+
+        Args:
+            model_id (int): Model ID.
+        """
+
+        get_model_version_mock = mock.patch(
+            "huxunify.api.data_connectors.tecton.get_model_version_history"
+        ).start()
+        get_model_version_mock.return_value = (
+            t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
+        )
+
+        # mock the features response
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
+            json=t_c.MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
+            f"{api_c.FEATURES}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(
+            t_c.validate_schema(FeatureSchema(), response.json, True)
+        )
+        self.assertTrue(
+            all((feature[api_c.SCORE] < 0 for feature in response.json))
+        )
+
+    @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
+    @settings(deadline=600)
+    def test_get_model_feature_importance_success(self, model_id: int) -> None:
+        """Test get model feature importance success.
+
+        Args:
+            model_id (int): Model ID.
+        """
+
+        get_model_version_mock = mock.patch(
+            "huxunify.api.data_connectors.tecton.get_model_version_history"
+        ).start()
+        get_model_version_mock.return_value = (
+            t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
+        )
+
+        # mock the features response
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
+            json=t_c.MOCKED_MODEL_PROPENSITY_FEATURES,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
+            f"{api_c.FEATURE_IMPORTANCE}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(
+            t_c.validate_schema(FeatureSchema(), response.json, True)
+        )
+
+    @given(model_id=st.integers(min_value=1, max_value=2))
+    @settings(deadline=600)
+    def test_get_model_feature_importance_negative_score(
+        self, model_id: int
+    ) -> None:
+        """Test get model feature importance negative score in response.
+
+        Args:
+            model_id (int): Model ID.
+        """
+
+        get_model_version_mock = mock.patch(
+            "huxunify.api.data_connectors.tecton.get_model_version_history"
+        ).start()
+        get_model_version_mock.return_value = (
+            t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
+        )
+
+        # mock the features response
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
+            json=t_c.MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_id}/"
+            f"{api_c.FEATURE_IMPORTANCE}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(
+            t_c.validate_schema(FeatureSchema(), response.json, True)
+        )
+        self.assertTrue(
+            all((feature[api_c.SCORE] < 0 for feature in response.json))
+        )

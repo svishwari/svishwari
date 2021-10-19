@@ -466,7 +466,7 @@ def get_model_features(
         model_version (str): model version.
 
     Returns:
-        List[FeatureSchema] List of model features.
+        List[FeatureSchema]: List of model features.
 
     Raises:
         FailedAPIDependencyError: Integrated dependent API failure error.
@@ -526,7 +526,12 @@ def get_model_features(
                         ]
                     ),
                     constants.POPULARITY: random.randint(1, 3),
-                    constants.SCORE: round(log10(float(feature[2])), 4),
+                    constants.SCORE: round(
+                        log10(float(feature[2]))
+                        if float(feature[2]) > 0
+                        else -log10(float(abs(feature[2]))),
+                        4,
+                    ),
                 }
             )
 

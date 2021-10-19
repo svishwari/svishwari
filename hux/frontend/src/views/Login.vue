@@ -134,22 +134,12 @@ export default {
             }
             .o-form-label {
               label {
-                font-family: Open Sans;
-                font-style: normal;
-                font-weight: normal;
-                font-size: 12px;
-                line-height: 16px;
                 color: var(--v-black-darken4);
               }
             }
             .o-form-input {
               &.o-form-has-errors {
                 .okta-form-input-error {
-                  font-family: Open Sans;
-                  font-style: normal;
-                  font-weight: normal;
-                  font-size: 12px;
-                  line-height: 16px;
                   padding-top: 4px;
                   padding-left: 0;
                 }

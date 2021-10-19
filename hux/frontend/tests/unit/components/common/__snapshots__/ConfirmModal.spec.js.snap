@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tests Confirm Modal Confirm modal displays icon content 1`] = `
+<v-dialog-stub opendelay="0" closedelay="0" value="true" contentclass="" maxwidth="none" origin="center center" retainfocus="true" transition="dialog-transition" width="600">
+  <div class="confirm-modal-wrapper">
+    <div class="confirm-modal-body px-6">
+      <svg-as-component-stub src="assets/icons/sad-face" width="42" height="42" color="primary" variant="base" fillopacity="1"></svg-as-component-stub>
+      <!---->
+      <!---->
+      <!---->
+    </div>
+    <div class="confirm-modal-footer">
+      <huxbutton-stub variant="white" istile="true" size="large" height="40" boxshadow="true"><span class="primary--text">Nevermind!</span></huxbutton-stub>
+      <huxbutton-stub variant="primary" istile="true" size="large" height="40" boxshadow="true">
+        Add
+      </huxbutton-stub>
+    </div>
+  </div>
+</v-dialog-stub>
+`;
+
+exports[`Tests Confirm Modal Confirm modal displays props content 1`] = `
+<v-dialog-stub opendelay="0" closedelay="0" value="true" contentclass="" maxwidth="none" origin="center center" retainfocus="true" transition="dialog-transition" width="600">
+  <div class="confirm-modal-wrapper">
+    <div class="confirm-modal-body px-6">
+      <icon-stub type="sad-face" size="42" color="primary" fillopacity="1"></icon-stub>
+      <div class="black--text text--darken-4 text-h2 pt-3">
+        Title prop
+      </div>
+      <div class="black--text text--darken-4 text-h2 mt-n2">
+        Subtitle prop
+      </div>
+      <div class="
+              black--text
+              text--darken-4 text-subtitle-1
+              pt-6
+              font-weight-regular
+            ">
+        Body prop
+      </div>
+    </div>
+    <div class="confirm-modal-footer">
+      <huxbutton-stub variant="white" istile="true" size="large" height="40" boxshadow="true"><span class="primary--text">Nevermind!</span></huxbutton-stub>
+      <huxbutton-stub variant="primary" istile="true" size="large" height="40" boxshadow="true">
+        Button prop
+      </huxbutton-stub>
+    </div>
+  </div>
+</v-dialog-stub>
+`;
+
+exports[`Tests Confirm Modal Confirm modal displays slots content 1`] = `
+<v-dialog-stub opendelay="0" closedelay="0" value="true" contentclass="" maxwidth="none" origin="center center" retainfocus="true" transition="dialog-transition" width="600">
+  <div class="confirm-modal-wrapper">
+    <div class="confirm-modal-body px-6">
+      <icon-stub type="sad-face" size="42" color="primary" fillopacity="1"></icon-stub>
+      <div>Title slot</div>
+      <div>This is a subtitle slot that displays below the title</div>
+      <div>Body slot</div>
+    </div>
+    <div class="confirm-modal-footer">
+      <div>This is a footer slot that displays at the bottom</div>
+    </div>
+  </div>
+</v-dialog-stub>
+`;

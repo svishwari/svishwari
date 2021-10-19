@@ -22,7 +22,7 @@
               :key="valueIndex"
               close
               small
-              class="mr-2 my-2 font-weight-semi-bold"
+              class="mr-2 my-2 text--subtitle-1"
               text-color="primary"
               color="primary lighten-4"
               close-icon="mdi-close"

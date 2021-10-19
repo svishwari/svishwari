@@ -6,6 +6,7 @@ from http import HTTPStatus
 from bson import ObjectId
 from croniter import croniter, CroniterNotAlphaError
 from pandas import DataFrame
+from dateutil.relativedelta import relativedelta
 
 from healthcheck import HealthCheck
 from decouple import config
@@ -313,7 +314,7 @@ def group_gender_spending(gender_spending: list) -> dict:
     }
 
 
-def transform_fields_generic_file(
+def do_not_transform_fields(
     dataframe: DataFrame,
 ) -> DataFrame:
     """Returns the csv file data without any transformation.
@@ -470,3 +471,50 @@ def is_component_favorite(
         return True
 
     return False
+
+
+def get_start_end_dates(request: dict, delta: int) -> (str, str):
+    """Get date range.
+
+    Args:
+        request (dict) : Request object.
+        delta (int) : Time in months.
+
+    Returns:
+        start_date, end_date (str, str): Date range.
+    """
+
+    start_date = (
+        request.args.get(constants.START_DATE)
+        if request and request.args.get(constants.START_DATE)
+        else datetime.strftime(
+            datetime.utcnow().date() - relativedelta(months=delta),
+            constants.DEFAULT_DATE_FORMAT,
+        )
+    )
+    end_date = (
+        request.args.get(constants.END_DATE)
+        if request and request.args.get(constants.END_DATE)
+        else datetime.strftime(
+            datetime.utcnow().date(),
+            constants.DEFAULT_DATE_FORMAT,
+        )
+    )
+    return start_date, end_date
+
+
+def get_user_favorites(okta_user_id: str, component_name: str) -> list:
+    """Get user favorites for a component
+
+    Args:
+        okta_user_id (str): OKTA JWT token.
+        component_name (str): Name of component in user favorite.
+
+    Returns:
+        list: List of ids of favorite component
+    """
+    user_favorites = get_user(get_db_client(), okta_user_id).get(
+        constants.FAVORITES
+    )
+
+    return user_favorites.get(component_name, [])

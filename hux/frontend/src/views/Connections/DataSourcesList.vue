@@ -43,6 +43,7 @@
               <v-icon
                 v-if="dataSource.status === 'Pending'"
                 color="black darken-4"
+                data-e2e="data-source-list-pending-button"
                 v-on="on"
               >
                 mdi-dots-vertical
@@ -50,6 +51,7 @@
             </template>
             <div
               class="black--text text-darken-4 cursor-pointer px-4 py-2 white"
+              data-e2e="data-source-list-pending-remove"
               @click="openModal(dataSource)"
             >
               Remove
@@ -71,10 +73,13 @@
 
     <confirm-modal
       v-model="confirmModal"
+      icon="sad-face"
       type="error"
-      :title="confirmTitle"
+      title="You are about to remove"
+      :sub-title="`${selectedDataSource.name}`"
       body="Are you sure you want to remove this pending data source?"
       right-btn-text="Yes, remove it"
+      data-e2e="remove-data-source-confirmation"
       @onCancel="confirmModal = !confirmModal"
       @onConfirm="confirmRemoval()"
     />
@@ -100,7 +105,6 @@ export default {
       drawer: false,
       selectedDataSource: {},
       confirmModal: false,
-      confirmTitle: "",
     }
   },
 
@@ -124,7 +128,6 @@ export default {
     }),
     openModal(dataSource) {
       this.selectedDataSource = dataSource
-      this.confirmTitle = `You are about to remove ${dataSource.name}`
       this.confirmModal = true
     },
 

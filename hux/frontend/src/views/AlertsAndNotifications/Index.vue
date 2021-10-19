@@ -104,7 +104,7 @@ export default {
         {
           text: "Alerts & Notifications",
           disabled: true,
-          icon: "notifications",
+          icon: "bell",
         },
       ],
       categoryItems: [

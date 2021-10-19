@@ -1,15 +1,21 @@
 <template>
   <div>
-    <page-header data-e2e="models-header">
-      <template slot="left">
-        <breadcrumb
-          :items="[
-            {
-              text: $options.name,
-              icon: 'models',
-            },
-          ]"
-        />
+    <page-header data-e2e="models-header" :header-height="110">
+      <template #left>
+        <div>
+          <breadcrumb
+            :items="[
+              {
+                text: $options.name,
+                icon: 'models',
+              },
+            ]"
+          />
+        </div>
+        <div class="text-subtitle-1 font-weight-regular">
+          Begin to interpret, explore, and understand your data by digging into
+          your active models for an effective delivery experience.
+        </div>
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -40,12 +46,12 @@
           </template>
 
           <template slot="default">
-            <div
-              class="text-caption black--text text--darken-1 mb-2"
+            <p
+              class="text-body-2 black--text text--lighten-4 mt-4"
               data-e2e="model-owner"
             >
               {{ model.owner }}
-            </div>
+            </p>
 
             <v-row no-gutters>
               <v-col cols="5">

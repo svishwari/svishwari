@@ -22,6 +22,7 @@ MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
 MONGO_DB_PASSWORD = "MONGO_DB_PASSWORD"
 OKTA_CLIENT_ID = "OKTA_CLIENT_ID"
 OKTA_ISSUER = "OKTA_ISSUER"
+RETURN_EMPTY_AUDIENCE_FILE = "RETURN_EMPTY_AUDIENCE_FILE"
 JSON_SORT_KEYS_CONST = "JSON_SORT_KEYS"
 CDP_SERVICE = "CDP_SERVICE"
 CDP_CONNECTION_SERVICE = "CDP_CONNECTION_SERVICE"
@@ -89,6 +90,7 @@ TOTAL_HOUSEHOLD_IDS = "total_household_ids"
 UPDATED = "updated"
 TOTAL_CUSTOMERS = "total_customers"
 NEW_CUSTOMERS_ADDED = "new_customers_added"
+CUSTOMERS_LEFT = "customers_left"
 TOTAL_COUNTRIES = "total_countries"
 TOTAL_COUNT = "total_count"
 TOTAL_STATES = "total_us_states"
@@ -275,6 +277,46 @@ DOWNLOAD_TYPE = "download_type"
 GOOGLE_ADS = "google_ads"
 AMAZON_ADS = "amazon_ads"
 GENERIC_ADS = "generic_ads"
+GOOGLE_ADS_DEFAULT_COLUMNS = [
+    "Zip",
+    "Country",
+    "First Name",
+    "Phone",
+    "Last Name",
+    "Email",
+]
+AMAZON_ADS_DEFAULT_COLUMNS = [
+    "zip",
+    "first_name",
+    "phone",
+    "last_name",
+    "state",
+    "address",
+    "email",
+]
+GENERIC_ADS_DEFAULT_COLUMNS = [
+    "hux_id",
+    "address",
+    "address_hashed",
+    "city_hashed",
+    "country_code_hashed",
+    "date_of_birth_day_hashed",
+    "date_of_birth_month_hashed",
+    "date_of_birth_year_hashed",
+    "email_address",
+    "email_address_hashed",
+    "email_preference",
+    "first_name",
+    "first_name_hashed",
+    "first_name_initial_hashed",
+    "gender_hashed",
+    "last_name",
+    "last_name_hashed",
+    "mobile_device_id",
+    "phone_number_digits_only_hashed",
+    "postal_code_hashed",
+    "state_or_province_hashed",
+]
 
 # Facebook connector defines
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
@@ -548,6 +590,7 @@ INVALID_BATCH_PARAMS = "Invalid Batch Number or Batch Size"
 
 AUDIENCE_NOT_FOUND = "Audience not found."
 DESTINATION_NOT_FOUND = "Destination not found."
+NOTIFICATION_NOT_FOUND = "Notification not found."
 ENGAGEMENT_NOT_FOUND = "Engagement not found."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported."
 SUCCESSFUL_DELIVERY_JOB_NOT_FOUND = "No successful delivery job found"
@@ -560,6 +603,7 @@ DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE = (
     "Destination not attached to the engagement audience."
 )
 DELIVERY_JOBS_NOT_FOUND_TO_MAP = "No delivery jobs found to map."
+USER_NOT_FOUND = "User not found."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -718,6 +762,9 @@ PARAMETER_STORE_ERROR_MSG = (
 # users
 USER_TAG = "user"
 USER_NAME = "user_name"
+DISPLAY_NAME = "display_name"
+USER_PHONE_NUMBER = "phone_number"
+USER_ACCESS_LEVEL = "access_level"
 USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
@@ -770,7 +817,7 @@ RECALL = "recall"
 CURRENT_VERSION = "current_version"
 PRECISION = "precision"
 PERFORMANCE_METRIC = "performance_metric"
-FEATURE_IMPORTANCE = "feature_importance"
+FEATURE_IMPORTANCE = "feature-importance"
 SCORE = "score"
 FEATURE_MODEL_HISTORY = "ui_metadata_model_history_service_mock"
 FEATURE_TOP_SERVICE = "ui_metadata_model_top_features_service_mock"
@@ -843,6 +890,7 @@ CITIES_DEFAULT_BATCH_SIZE = 100
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
+NOTIFICATION_ID = "notification_id"
 NOTIFICATIONS_DESCRIPTION = "Notifications API"
 NOTIFICATIONS_ENDPOINT = "/notifications"
 NOTIFICATION_STREAM_TIME_SECONDS = 60
@@ -861,7 +909,6 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
         }
     ]
 }
-
 
 # IDR Fields
 IDR_TAG = "idr"
@@ -1003,6 +1050,7 @@ DEFAULT_ALERT_SORT_ORDER = "descending"
 DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
+NOTIFICATION_ID = "notification_id"
 
 # health check prometheus metric constants
 MONGO_CONNECTION_HEALTH = "mongo_connection_health"
@@ -1080,7 +1128,7 @@ RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
 
-CUSTOMER_IDR_TEST_DATE = {
+CUSTOMER_IDR_TEST_DATA = {
     "name": {
         "data_sources": [
             {

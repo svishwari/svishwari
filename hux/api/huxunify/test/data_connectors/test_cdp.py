@@ -289,6 +289,10 @@ class CDPTest(TestCase):
                 api_c.STATE_NAMES.get(test_record[api_c.STATE]),
                 record[api_c.NAME],
             )
+            self.assertEqual(
+                test_record[api_c.COUNTRY],
+                record[api_c.COUNTRY],
+            )
 
     def test_get_city_ltvs(self) -> None:
         """Test get customers insights by city."""
@@ -312,6 +316,7 @@ class CDPTest(TestCase):
             test_record = t_c.CUSTOMERS_INSIGHTS_BY_CITIES_RESPONSE[
                 api_c.BODY
             ][i]
+            self.assertEqual(record[api_c.COUNTRY], test_record[api_c.COUNTRY])
             self.assertEqual(record[api_c.CITY], test_record[api_c.CITY])
             self.assertEqual(record[api_c.STATE], test_record[api_c.STATE])
             self.assertEqual(record[api_c.COUNTRY], test_record[api_c.COUNTRY])

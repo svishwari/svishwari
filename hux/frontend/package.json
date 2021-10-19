@@ -20,6 +20,7 @@
   "dependencies": {
     "@okta/okta-signin-widget": "^4.2.3",
     "@okta/okta-vue": "^2.0.0",
+    "@storybook/addon-docs": "^6.3.11",
     "@vue/composition-api": "^1.1.4",
     "ag-grid-community": "^25.1.0",
     "ag-grid-vue": "^25.1.0",
@@ -79,6 +80,7 @@
     "prettier": "^2.2.1",
     "sass": "~1.32.12",
     "sass-loader": "^10.0.0",
+    "storybook-addon-designs": "^6.2.0",
     "vue-cli-plugin-storybook": "^2.1.0",
     "vue-cli-plugin-vuetify": "^2.4.3",
     "vue-template-compiler": "^2.6.11",

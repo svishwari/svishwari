@@ -153,7 +153,7 @@
             @click="onSelectDestination(destination.id)"
           />
 
-          <v-divider style="border-color: var(--v-zircon-base)" />
+          <v-divider style="border-color: var(--v-black-lighten2)" />
 
           <card-horizontal
             v-for="destination in disabledDestinations"
@@ -173,8 +173,9 @@
     </drawer>
     <confirm-modal
       v-model="showConfirmModal"
-      title="You are about to navigate away"
-      right-btn-text="Yes, navigate away"
+      icon="leave-config"
+      title="You are about to leave the configuration process"
+      right-btn-text="Yes, leave configuration"
       body=" Are you sure you want to stop the configuration and go to another page? You will not be able to recover it and will need to start the process again."
       @onCancel="showConfirmModal = false"
       @onConfirm="navigateaway()"
@@ -382,6 +383,6 @@ export default {
 
 <style lang="scss" scoped>
 .destination-auth-wrap {
-  border: 1px solid var(--v-zircon-base) !important;
+  border: 1px solid var(--v-black-lighten2) !important;
 }
 </style>

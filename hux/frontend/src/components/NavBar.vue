@@ -5,9 +5,12 @@
         class="nav-back-burger"
         @click.stop="toggleSidebarMenu"
       >
-        <v-icon :class="{ 'rotate-icon-180': toggleMini }">
-          mdi-backburger
-        </v-icon>
+        <icon
+          :class="{ 'rotate-icon-180': toggleMini }"
+          type="hamburger"
+          :size="21"
+          class="nav-icon"
+        />
       </v-app-bar-nav-icon>
       <v-spacer></v-spacer>
       <nav-bar-menu></nav-bar-menu>
@@ -17,10 +20,11 @@
 
 <script>
 import NavBarMenu from "@/components/NavBarMenu"
+import Icon from "@/components/common/Icon"
 
 export default {
   name: "NavBar",
-  components: { NavBarMenu },
+  components: { NavBarMenu, Icon },
   data: () => ({
     toggleMini: false,
   }),
@@ -32,14 +36,18 @@ export default {
   },
 }
 </script>
-<style lang="scss">
-.v-toolbar__content {
-  border-bottom: 1px solid rgb(208, 208, 206);
-  padding: 0 !important;
-}
-</style>
 <style lang="scss" scoped>
 .app-nav-bar {
+  ::v-deep .v-toolbar__content {
+    border-bottom: 1px solid rgb(208, 208, 206);
+    padding: 0 !important;
+  }
+  .nav-icon {
+    fill: var(--v-balck-lighten4);
+    &:hover {
+      fill: var(--v-primary-lighten6);
+    }
+  }
   button {
     &.v-app-bar__nav-icon {
       &.nav-back-burger {

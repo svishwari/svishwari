@@ -11,6 +11,12 @@ const destinationSchema = () => {
     name: "Facebook",
     latest_delivery: {
       update_time: "2021-07-30T13:28:51.450Z",
+      next_delivery: "2021-08-12T14:23:11.250Z",
+      delivery_schedule: faker.random.arrayElement([
+        "Daily",
+        "Weekly",
+        "Monthly",
+      ]),
       status: faker.random.arrayElement([
         "Delivered",
         "Delivering",

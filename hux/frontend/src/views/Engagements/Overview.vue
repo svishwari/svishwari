@@ -6,10 +6,7 @@
       :height="75"
     >
       <template #subtitle-extended>
-        <div
-          class="font-weight-semi-bold black--text text--darken-4 mb-2"
-          data-e2e="delivery-schedule-metric"
-        >
+        <div class="mb-2" data-e2e="delivery-schedule-metric">
           {{ deliverySchedule }}
         </div>
       </template>
@@ -25,7 +22,7 @@
             <template #label-content>
               <span
                 data-e2e="updated-metric"
-                class="font-weight-semi-bold black--text text--darken-4"
+                class="black--text text--darken-4"
               >
                 {{ summaryCards[1].value }}
               </span>
@@ -50,7 +47,7 @@
           <tooltip>
             <template #label-content>
               <span
-                class="font-weight-semi-bold black--text text--darken-4"
+                class="black--text text--darken-4"
                 data-e2e="created-metric"
               >
                 {{ summaryCards[2].value }}
@@ -74,7 +71,9 @@
       :height="75"
     >
       <template #subtitle-extended>
-        {{ summaryCards[3].title }}
+        <span class="text--subtitle-1">
+          {{ summaryCards[3].title }}
+        </span>
       </template>
     </metric-card>
   </div>
