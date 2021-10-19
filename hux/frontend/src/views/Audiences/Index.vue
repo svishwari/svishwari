@@ -255,10 +255,19 @@
       @onConfirm="confirmRemoval()"
     >
       <template #body>
-        <div class="pt-6">
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
           Are you sure you want to delete this audience&#63;
         </div>
-        <div class="mb-6">
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
           By deleting this audience you will not be able to recover it and it
           may impact any associated engagements.
         </div>

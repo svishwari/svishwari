@@ -516,10 +516,19 @@
       "
     >
       <template #body>
-        <div class="pt-6">
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
           Are you sure you want to remove this audience from this engagement?
         </div>
-        <div>
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
           By removing this audience, it will not be deleted, but it will become
           unattached from this engagement.
         </div>
@@ -538,10 +547,19 @@
       @onConfirm="confirmRemoval()"
     >
       <template #body>
-        <div class="pt-6">
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
           Are you sure you want to delete this Engagement&#63;
         </div>
-        <div>
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
           By deleting this engagement you will not be able to recover it and it
           may impact any associated destinations.
         </div>
