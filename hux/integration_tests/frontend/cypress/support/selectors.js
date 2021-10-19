@@ -189,7 +189,7 @@ export default {
     newEngagementFirstName: "[data-e2e='new-engagement-name']",
     createNewEngagement: "[data-e2e='create-engagement-new']",
     cancelAudience: "[data-e2e='cancel-audience']",
-    removeAudience: "[data-e2e='remove-audience-confirmation']",
+    removeAudience: "[data-e2e='remove-audience-confirmation']"
   },
 
   customers: "a[href='/customers']",
