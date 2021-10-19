@@ -7,6 +7,33 @@
         <icon class="add-icon cursor-pointer" type="add" :size="27" />
       </span>
     </div>
+    <v-row >
+    <template v-if="hasAddedDatasources">
+
+       <descriptive-card
+          v-for="dataSource in addedDataSources"
+          :key="dataSource.id"
+           :icon="dataSource.type"
+           :iconColor="'white'"
+          :title="dataSource.name"
+          :description="''"
+          :disabled="dataSource.status !== 'Active'"
+         
+          class="mr-10 model-desc-card"
+          
+        >
+<template slot="top">
+            <status
+              :icon-size="18"
+              :status="dataSource.status || ''"
+              collapsed
+              class="d-flex"
+              data-e2e="model-status"
+            />
+          </template>
+       </descriptive-card>
+    </template>
+    </v-row>
 
     <template v-if="hasAddedDatasources">
       <card-horizontal
@@ -94,11 +121,12 @@ import ConfirmModal from "@/components/common/ConfirmModal"
 import Icon from "@/components/common/Icon"
 import Status from "@/components/common/Status"
 import EmptyStateData from "@/components/common/EmptyStateData"
+import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 
 export default {
   name: "DataSourcesList",
 
-  components: { EmptyStateData, CardHorizontal, Status, Icon, ConfirmModal },
+  components: { EmptyStateData, CardHorizontal, Status, Icon, ConfirmModal, DescriptiveCard },
 
   data() {
     return {

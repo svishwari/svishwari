@@ -3,23 +3,15 @@
     <div slot="header">
       <page-header>
         <template slot="left">
-          <div>
-            <breadcrumb :items="breadcrumbs" />
-          </div>
-          <div class="text-subtitle-1 font-weight-regular">
-            Insights into the consumer data that is collected from both online,
-            offline, and 3rd party channels.
-          </div>
+          <breadcrumb :items="breadcrumbs" />
         </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
     <div v-if="!loading">
       <v-row v-if="isConnectionStarted">
-        <v-col >
-          <data-sources-list
-            @onAddDatasource="toggleDrawer()"
-          ></data-sources-list>
+        <v-col cols="6">
+          <destinations-list></destinations-list>
         </v-col>
       </v-row>
       <div v-else class="empty-state-wrap text-center">
@@ -99,8 +91,8 @@ export default {
     return {
       breadcrumbs: [
         {
-          text: "Data Sources",
-          icon: "data-source",
+          text: "Connections",
+          icon: "connections",
         },
       ],
       drawer: false,

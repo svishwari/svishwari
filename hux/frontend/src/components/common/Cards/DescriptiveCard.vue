@@ -8,7 +8,7 @@
     </div>
 
     <div v-if="icon" class="d-flex justify-center pb-4">
-      <icon :type="icon" :size="60" color="primary" class="d-block" />
+      <icon :type="icon" :size="60" :color="iconColor" class="d-block" />
     </div>
 
     <tooltip nudge-right="100px" min-width="auto !important">
@@ -80,6 +80,11 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    iconColor: {
+      type: String,
+      required: false,
+      default: "Primary",
     },
   },
 }

@@ -78,7 +78,7 @@
           "icon": "destinations",
           "title": "Destinations",
           "link": {
-            "name": "Connections"
+            "name": "Destination"
           },
           "size": 16
         },
