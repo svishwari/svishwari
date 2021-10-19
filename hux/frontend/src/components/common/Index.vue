@@ -371,12 +371,12 @@
       </template>
 
       <template slot="default">
-         <div
-              class="text-caption black--text text--darken-1 mb-2"
-              data-e2e="model-owner"
-            >
-              Owner Name
-            </div>
+        <div
+          class="text-caption black--text text--darken-1 mb-2"
+          data-e2e="model-owner"
+        >
+          Owner Name
+        </div>
         <div class="d-flex justify-center mb-6">
           <card-stat label="Version" value="0.02" stat-class="border-0">
             <div class="mb-3">

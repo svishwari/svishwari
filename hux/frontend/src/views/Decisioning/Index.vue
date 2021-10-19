@@ -28,7 +28,7 @@
           :description="model.description"
           data-e2e="model-item"
           @click.native="goToDashboard(model)"
-          >
+        >
           <template slot="top">
             <status
               :icon-size="17"
@@ -46,7 +46,7 @@
             >
               {{ model.owner }}
             </div>
-            
+
             <v-row no-gutters>
               <v-col cols="5">
                 <card-stat
