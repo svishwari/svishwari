@@ -46,58 +46,127 @@
               :key="key"
               data-e2e="performancemetric"
             >
+              <metric-card
+                v-if="key === 'recall' && metric > 0"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :max-width="122"
+                :height="80"
+                :title="metric"
+                subtitle="Recall"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric }}
+                    </template>
+                    <template #hover-content>
+                      {{ metric | Empty }}
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
+              <metric-card
+                v-if="key === 'current_version'"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :max-width="152"
+                :height="80"
+                :title="metric"
+                subtitle="Current version"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric }}
+                    </template>
+                    <template #hover-content>
+                      <div class="mb-3">
+                        Trained date<br />
+                        {{ modelMetricDetails.last_trained | Date | Empty }}
+                      </div>
+                      <div class="mb-3">
+                        Fulcrum date<br />
+                        {{ modelMetricDetails.fulcrum_date | Date | Empty }}
+                      </div>
+                      <div class="mb-3">
+                        Lookback period (days)<br />
+                        {{ modelMetricDetails.lookback_window }}
+                      </div>
+                      <div>
+                        Prediction period (days)<br />
+                        {{ modelMetricDetails.prediction_window }}
+                      </div>
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
+              <metric-card
+                v-if="key === 'rmse' && metric > 0"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :max-width="122"
+                :height="80"
+                :title="metric"
+                subtitle="2"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric }}
+                    </template>
+                    <template #hover-content>
+                      {{ metric | Empty }}
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
+              <metric-card
+                v-if="key === 'auc' && metric > 0"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :max-width="122"
+                :height="80"
+                :title="metric"
+                subtitle="AUC"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric }}
+                    </template>
+                    <template #hover-content>
+                      {{ metric | Empty }}
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
 
-            <metric-card v-if="key === 'recall' && metric > 0"
-              class="model-dashboard__card px-6 py-3 mr-2"
-              :max-width="122"
-              :height="80"
-              :title="metric"
-              subtitle="Recall"
-              :high-level="true"
-              :interactable="false"
-            >
-            </metric-card>
-            <metric-card v-if="key === 'current_version'"
-              class="model-dashboard__card px-6 py-3 mr-2"
-              :max-width="152"
-              :height="80"
-              :title="metric"
-              subtitle="Current version"
-              :high-level="true"
-              :interactable="false"
-            >
-            </metric-card>
-            <metric-card v-if="key === 'rmse' && metric > 0"
-              class="model-dashboard__card px-6 py-3 mr-2"
-              :max-width="122"
-              :height="80"
-              :title="metric"
-              subtitle="2"
-              :high-level="true"
-              :interactable="false"
-            >
-            </metric-card>
-            <metric-card v-if="key === 'auc' && metric > 0"
-              class="model-dashboard__card px-6 py-3 mr-2"
-              :max-width="122"
-              :height="80"
-              :title="metric"
-              subtitle="AUC"
-              :high-level="true"
-              :interactable="false"
-            >
-            </metric-card>
-            
-            <metric-card v-if="key === 'precision' && metric > 0"
-              class="model-dashboard__card px-6 py-3 mr-2"
-              :max-width="122"
-              :height="80"
-              :title="metric"
-              subtitle="Precision"
-              :high-level="true"
-              :interactable="false"
-            >
-            </metric-card>
+              <metric-card
+                v-if="key === 'precision' && metric > 0"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :max-width="122"
+                :height="80"
+                :title="metric"
+                subtitle="Precision"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric }}
+                    </template>
+                    <template #hover-content>
+                      {{ metric | Empty }}
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
 
               <!-- <div
                 v-if="metric !== -1"

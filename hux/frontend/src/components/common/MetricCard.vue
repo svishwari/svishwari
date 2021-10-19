@@ -23,7 +23,12 @@
             highLevel ? 'highlevel-title' : '',
           ]"
         >
-          {{ title }}
+          <span v-if="highLevel">
+            <slot name="title"></slot>
+          </span>
+          <span v-else>
+            {{ title }}
+          </span>
         </span>
         <tooltip v-else>
           <template #label-content>
