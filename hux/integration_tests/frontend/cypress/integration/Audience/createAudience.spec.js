@@ -26,7 +26,7 @@ describe("Orchestration > Audience > Create Audience", () => {
       .eq(0)
       .type(`E2E test audience (${randomName()})`)
 
-    // should add audience to the audience
+    // should add the destination to the audience
     // Click on add audience icon
     cy.get(selector.audience.addEngagement).click()
     // eslint-disable-next-line cypress/no-unnecessary-waiting
