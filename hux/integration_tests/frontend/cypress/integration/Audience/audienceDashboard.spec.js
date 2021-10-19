@@ -18,7 +18,7 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
     cy.location("pathname").should("eq", route.audiences)
     cy.get(selector.audience.audiencelist).its("length").should("be.gt", 0)
     cy.get(selector.audience.audiencenameclick)
-      .eq(2)
+      .eq(0)
       .find("a")
       .should("have.attr", "href")
       .then((href) => {
