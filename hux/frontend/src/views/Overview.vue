@@ -2,8 +2,7 @@
   <div class="overview-wrap">
     <page-header
       :title="`Welcome back, ${fullName}!`"
-      class="py-4"
-      header-height="auto"
+      :header-height="110"
       data-e2e="overview-header"
     >
       <template #description>
