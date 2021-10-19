@@ -38,6 +38,7 @@ from huxunify.api.data_connectors.aws import (
 )
 from huxunify.api.data_connectors.courier import (
     map_destination_credentials_to_dict,
+    get_okta_test_user_creds,
     get_destination_config,
     get_audience_destination_pairs,
     toggle_event_driven_routers,
@@ -276,6 +277,28 @@ class CourierTest(TestCase):
 
         # test for a list length of one. the invalid data is removed from the return.
         self.assertEqual(len(delivery_route), 1)
+
+    def test_get_okta_test_user_creds(self):
+        """Test get_okta_test_user_creds"""
+
+        # get config
+        config = get_config()
+
+        # get okta credentials
+        self.assertTupleEqual(
+            get_okta_test_user_creds(config),
+            (
+                {
+                    api_c.OKTA_ISSUER: config.OKTA_ISSUER,
+                    api_c.OKTA_CLIENT_ID: config.OKTA_CLIENT_ID,
+                },
+                {
+                    api_c.OKTA_TEST_USER_NAME: api_c.UNIFIED_OKTA_TEST_USER_NAME,
+                    api_c.OKTA_TEST_USER_PW: api_c.UNIFIED_OKTA_TEST_USER_PW,
+                    api_c.OKTA_REDIRECT_URI: api_c.UNIFIED_OKTA_REDIRECT_URI,
+                },
+            ),
+        )
 
     def test_get_delivery_route_audience(self):
         """Test get delivery route with specific audience."""
