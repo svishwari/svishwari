@@ -21,6 +21,8 @@
           is-tile
           height="40"
           icon-size="18"
+          icon-color="white"
+          icon-variant="base"
           data-e2e="notification-return"
           @click="goBack()"
         >

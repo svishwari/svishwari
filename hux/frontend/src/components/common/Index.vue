@@ -720,6 +720,8 @@
           size="x-large"
           is-tile
           class="ma-2 caption"
+          icon-color="white"
+          icon-variant="base"
           width="134"
           height="40"
           :icon-size="12"
@@ -735,6 +737,8 @@
           class="ma-2 caption"
           size="large"
           is-tile
+          icon-color="white"
+          icon-variant="base"
           width="214"
           height="40"
           :icon-size="16"
