@@ -160,9 +160,7 @@ export default {
       }
 
       let applyNumericFilter = (value) =>
-        this.emptyState
-          ? "-"
-          : this.$options.filters.Numeric(value, true, false, true)
+        this.emptyState ? "-" : this.$options.filters.Numeric(value, true, true)
 
       svg
         .append("g")
@@ -266,7 +264,7 @@ export default {
           this.emptyState ? "transparent" : barColorCodes[d.data.index]
         )
         .on("mouseover", (d) => applyHoverEffects(d, xScale.bandwidth()))
-        .on("mouseout", () => removeHoverEffects())
+        .on("mouseout", (d) => removeHoverEffects(d))
         .transition()
         .duration(500)
         .delay((d, i) => i * 25)
@@ -280,19 +278,21 @@ export default {
         )
 
       let applyHoverEffects = (d, width) => {
-        d3Select
-          .select(d.srcElement)
-          .attr("fill-opacity", (d) => barHoverIn(d.data, width))
+        d3Select.select(d.srcElement).attr("fill-opacity", (d) => {
+          barHoverIn(d.data, width)
+          return 0.7
+        })
       }
 
       let hoverCircles = [
-        "foreGroundParentCicle",
-        "foreGroundChildCicle",
-        "backGroundParentCicle",
-        "backGroundChildCicle",
+        "foreGroundParentCircle",
+        "foreGroundChildCircle",
+        "backGroundParentCircle",
+        "backGroundChildCircle",
       ]
 
-      let removeHoverEffects = () => {
+      let removeHoverEffects = (d) => {
+        d3Select.select(d.srcElement).attr("fill-opacity", 0.5)
         svg.selectAll(".hover-line-y").style("display", "none")
         d3Select.selectAll(".foreGroundBars").style("fill-opacity", "1")
         hoverCircles.forEach((circleName) => removeHoverCircle(circleName))
@@ -320,7 +320,7 @@ export default {
 
         addHoverCircle(
           hoverCircles[0],
-          4,
+          5,
           data.barIndex,
           data.total_customers,
           width,
@@ -330,17 +330,17 @@ export default {
         )
         addHoverCircle(
           hoverCircles[1],
-          3,
+          4,
           data.barIndex,
           data.total_customers,
           width,
           barColorCodes[data.index],
-          1,
-          0.5
+          2,
+          0.7
         )
         addHoverCircle(
           hoverCircles[2],
-          4,
+          5,
           data.barIndex,
           data.new_customers_added,
           width,
@@ -350,12 +350,12 @@ export default {
         )
         addHoverCircle(
           hoverCircles[3],
-          3,
+          4,
           data.barIndex,
           data.new_customers_added,
           width,
           barColorCodes[data.index],
-          1,
+          2,
           1
         )
       }
