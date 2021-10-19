@@ -12,6 +12,7 @@
           color="white"
           :class="{ 'menu-active': menu }"
         >
+          <icon type="user_avatar" :size="35" />
         </v-avatar>
         <span class="text-subtitle-1 black--text">{{ initials }}</span>
         <span class="ml-4">
@@ -19,14 +20,16 @@
             type="chevron-down"
             :size="14"
             class="arrow-icon d-block"
-            :class="{ 'menu-active': menu }"
+            :class="{ 'menu-active rotate-icon-180': menu }"
           ></icon>
         </span>
       </span>
     </template>
     <v-list min-width="192px">
       <v-list-item class="mb-4">
-        <v-avatar class="mr-2" size="45" color="primary"></v-avatar>
+        <v-avatar class="mr-2" size="45">
+          <icon type="user_avatar" :size="45" color="white" />
+        </v-avatar>
         <v-list-item-title
           class="black--text font-weight-bold d-flex flex-column"
         >
@@ -102,18 +105,20 @@ export default {
 <style lang="scss" scoped>
 .user-avatar {
   .v-avatar {
-    border: solid 1px var(--v-primary-base) !important;
     &:hover,
     &.menu-active {
-      border: solid 2px var(--v-success-base) !important;
+      ::v-deep svg {
+        path:first-child {
+          fill: var(--v-success-base) !important;
+        }
+      }
     }
   }
   .arrow-icon {
     fill: var(--v-black-lighten4);
     &:hover,
     &.menu-active {
-      fill: var(--v-primary-base);
-      stroke: var(--v-primary-base);
+      fill: var(--v-primary-lighten6);
     }
   }
 }
