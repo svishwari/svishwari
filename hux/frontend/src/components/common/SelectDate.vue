@@ -1,22 +1,28 @@
 <template>
   <div class="d-flex">
-    <hux-select
-      v-model="month"
-      :items="monthOptions"
-      label="Select a month"
-      class="mx-1"
-      width="141"
-      @change="onChange('month', month)"
-    />
+    <div class="mx-1">
+      <label class="black--text text--darken-4"> {{ labelMonth }} </label>
 
-    <hux-select
-      v-model="year"
-      :items="yearOptions"
-      label="Select a year"
-      class="mx-1"
-      width="126"
-      @change="onChange('year', year)"
-    />
+      <hux-select
+        v-model="month"
+        :items="monthOptions"
+        label="Month"
+        width="130"
+        @change="onChange('month', month)"
+      />
+    </div>
+
+    <div class="mx-1">
+      <label class="black--text text--darken-4"> {{ labelYear }} </label>
+
+      <hux-select
+        v-model="year"
+        :items="yearOptions"
+        label="Year"
+        width="116"
+        @change="onChange('year', year)"
+      />
+    </div>
   </div>
 </template>
 
@@ -46,6 +52,18 @@ export default defineComponent({
     max: {
       type: [String],
       required: false,
+    },
+
+    labelMonth: {
+      type: String,
+      required: false,
+      default: "Month",
+    },
+
+    labelYear: {
+      type: String,
+      required: false,
+      default: "Year",
     },
   },
 

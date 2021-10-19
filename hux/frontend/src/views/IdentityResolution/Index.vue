@@ -1,7 +1,7 @@
 <template>
   <page max-width="100%" class="idr-wrapper">
     <template #header>
-      <page-header class="py-5" :header-height="110">
+      <page-header class="page-header py-5" :header-height="110">
         <template #left>
           <div>
             <breadcrumb
@@ -21,32 +21,31 @@
           </div>
         </template>
         <template #right>
-          <icon
-            type="filter"
-            :size="22"
-            class="cursor-pointer"
-            color="black-darken4"
-          />
+          <v-btn icon @click.native="isFilterToggled = !isFilterToggled">
+            <icon
+              type="filter"
+              :size="27"
+              :color="totalFiltersSelected > 0 ? 'primary' : 'black'"
+              :variant="totalFiltersSelected > 0 ? 'lighten6' : 'darken4'"
+            />
+            <v-badge
+              v-if="totalFiltersSelected > 0"
+              :content="totalFiltersSelected"
+              color="white"
+              offset-x="6"
+              offset-y="4"
+              light
+              bottom
+              overlap
+              bordered
+            />
+          </v-btn>
         </template>
       </page-header>
 
-      <page-header header-height="71">
-        <template #left>
-          <v-btn
-            icon
-            :color="isFilterToggled ? 'secondary' : 'black'"
-            class="ml-n2"
-            @click.native="isFilterToggled = !isFilterToggled"
-          >
-            <v-icon medium>mdi-filter-variant</v-icon>
-          </v-btn>
-          <v-btn disabled icon color="black" class="pl-6">
-            <v-icon medium>mdi-magnify</v-icon>
-          </v-btn>
-        </template>
-      </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
+
     <template>
       <div
         class="
@@ -173,22 +172,40 @@
         </div>
 
         <div class="ml-auto">
-          <hux-filters-drawer :is-toggled="isFilterToggled">
-            <hux-select-date
-              v-model="filterStartDate"
-              :min="minDate"
-              :max="filterEndDate"
-              @change="refreshData"
-            />
+          <hux-filters-drawer
+            :is-toggled="isFilterToggled"
+            :count="totalFiltersSelected"
+            @clear="resetFilters"
+            @apply="refreshData"
+          >
+            <hux-filter-panels>
+              <hux-filter-panel title="Time" :count="numFiltersSelected">
+                <hux-select-date
+                  v-model="filterStartDate"
+                  label-month="Start month"
+                  label-year="Start year"
+                  :min="minDate"
+                  :max="filterEndDate"
+                />
 
-            <icon class="mx-1" type="arrow" color="primary" :size="19" />
+                <div class="d-flex justify-center my-2">
+                  <icon
+                    class="rotate-icon-90"
+                    type="arrow"
+                    color="primary"
+                    :size="19"
+                  />
+                </div>
 
-            <hux-select-date
-              v-model="filterEndDate"
-              :min="filterStartDate"
-              :max="maxDate"
-              @change="refreshData"
-            />
+                <hux-select-date
+                  v-model="filterEndDate"
+                  label-month="End month"
+                  label-year="End year"
+                  :min="filterStartDate"
+                  :max="maxDate"
+                />
+              </hux-filter-panel>
+            </hux-filter-panels>
           </hux-filters-drawer>
         </div>
       </div>
@@ -204,6 +221,8 @@ import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import HuxFiltersDrawer from "@/components/common/FiltersDrawer"
+import HuxFilterPanels from "@/components/common/FilterPanels"
+import HuxFilterPanel from "@/components/common/FilterPanel"
 import HuxSelectDate from "@/components/common/SelectDate.vue"
 import Icon from "@/components/common/Icon"
 import MetricCard from "@/components/common/MetricCard"
@@ -220,6 +239,8 @@ export default {
     Breadcrumb,
     Icon,
     HuxFiltersDrawer,
+    HuxFilterPanels,
+    HuxFilterPanel,
     HuxSelectDate,
     MetricCard,
     PageHeader,
@@ -269,6 +290,20 @@ export default {
       }
     },
 
+    numFiltersSelected() {
+      if (
+        this.filterStartDate !== this.minDate ||
+        this.filterEndDate !== this.maxDate
+      ) {
+        return 1
+      }
+      return 0
+    },
+
+    totalFiltersSelected() {
+      return this.numFiltersSelected
+    },
+
     hasMatchingTrendsData() {
       return this.matchingTrends && this.matchingTrends.length
     },
@@ -316,6 +351,11 @@ export default {
       }
     },
 
+    resetFilters() {
+      this.filterStartDate = this.minDate
+      this.filterEndDate = this.maxDate
+    },
+
     async loadMatchingTrends() {
       this.loadingMatchingTrends = true
       await this.getMatchingTrends(this.selectedDateRange)
@@ -337,7 +377,23 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+$offset: 110px;
+$headerOffsetX: 220px + 32px;
+$headerOffsetY: 64px;
+
 .idr-wrapper {
+  padding-top: $offset;
+
+  // TODO: update app layout to include page headers
+  .page-header {
+    position: fixed;
+    top: $headerOffsetY;
+    left: 0;
+    right: 0;
+    padding-left: $headerOffsetX !important;
+    z-index: 3;
+  }
+
   ::v-deep .container {
     padding: 0 !important;
   }
