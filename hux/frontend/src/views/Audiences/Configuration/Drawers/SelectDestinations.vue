@@ -17,6 +17,7 @@
           :title="destination.name"
           :icon="destination.type"
           :is-added="isAdded(destination)"
+          :data-e2e="`destination-select-button-${destination.type}`"
           class="my-3"
           @click="add(destination)"
         />

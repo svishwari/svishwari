@@ -1,18 +1,25 @@
 <template>
-  <v-menu :min-width="200" left offset-y close-on-click>
+  <v-menu :min-width="192" left offset-y close-on-click>
     <template #activator="{ on }">
       <span class="d-flex cursor-pointer" data-e2e="help-dropdown" v-on="on">
-        <icon class="mx-2 my-2" type="help" :size="21" color="primary" />
+        <icon class="mx-2 my-2 nav-icon" type="help" :size="21" />
       </span>
     </template>
     <v-list>
       <v-list-item>
-        <v-list-item-title class="font-weight-bold"> Help </v-list-item-title>
+        <v-list-item-title class="font-weight-semi-bold text-h6 black--text">
+          Help
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item class="v-list-item--link" data-e2e="about_hux">
+        <a href="#" class="text-body-1 black--text text-decoration-none">
+          About Hux
+        </a>
       </v-list-item>
       <v-list-item class="v-list-item--link" data-e2e="contactus">
         <a
           href="mailto:ushuxproductidea@deloitte.com"
-          class="text-h6 view-all text-decoration-none"
+          class="text-body-1 black--text view-all text-decoration-none"
         >
           Contact Us
         </a>
@@ -41,8 +48,9 @@ export default {
   }
 }
 .view-all {
-  line-height: 22px;
-  color: var(--v-black-darken4) !important;
   @extend .cursor-pointer;
+}
+.topNavDropMenu {
+  width: 192px;
 }
 </style>

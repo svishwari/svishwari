@@ -14,7 +14,7 @@
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="text-h4 px-3 pb-2 text-ellipsis d-block"
+          class="text-h5 px-3 pb-2 text-ellipsis d-block"
           :class="disabled ? 'black--text text--darken-4' : 'primary--text'"
           data-e2e="card-title"
         >
@@ -22,21 +22,21 @@
         </div>
       </template>
       <template #hover-content>
-        <span class="black--text text--darken-4">{{ title }}</span>
+        <span class="black--text text--lighten-4">{{ title }}</span>
       </template>
     </tooltip>
 
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="text-caption px-3 text-ellipsis d-block"
+          class="text-h5 px-3 text-ellipsis d-block"
           data-e2e="card-description"
         >
           {{ description }}
         </div>
       </template>
       <template #hover-content>
-        <span class="black--text text--darken-4">{{ description }}</span>
+        <span class="black--text text--lighten-4">{{ description }}</span>
       </template>
     </tooltip>
 

@@ -22,7 +22,7 @@
             v-for="(col, index) in columns"
             :key="index"
             :style="{ width: col.width }"
-            class="text-body-1"
+            class="text-body-2"
           >
             <tooltip v-if="['city', 'country', 'state'].includes(col.value)">
               {{ item[col.value] }}
@@ -51,7 +51,7 @@
     </template>
 
     <template #footer-left>
-      <span class="black--text text--darken-1 text-caption">
+      <span class="black--text text--darken-1 text-button">
         {{ results | Numeric }} results
       </span>
     </template>

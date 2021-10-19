@@ -3,30 +3,37 @@
     {
       "label": null,
       "icon": "home",
-      "title": "Overview",
+      "title": "Home",
       "link": {
         "name": "Overview"
-      },
-      "size": 16
+      }
     },
     {
-      "label": "Orchestration",
+      "label": null,
+      "icon": "configuration",
+      "title": "Configuration",
+      "link": {
+        "name": "Configuration"
+      }
+    },
+    {
+      "label": "Data Management",
       "menu": [
         {
-          "icon": "speaker_up",
-          "title": "Engagements",
+          "icon": "datasource",
+          "title": "Data Sources",
           "link": {
-            "name": "Engagements"
+            "name": "Connections"
           },
-          "size": 16
+          "size": 14
         },
         {
-          "icon": "audiences",
-          "title": "Audiences",
+          "icon": "identity-resolution",
+          "title": "Identity Resolution",
           "link": {
-            "name": "Audiences"
+            "name": "IdentityResolution"
           },
-          "size": 18
+          "size": 14
         }
       ]
     },
@@ -44,31 +51,52 @@
       ]
     },
     {
-      "label": "Data Management",
+      "label": "Customer Insights",
       "menu": [
         {
           "icon": "customer-profiles",
-          "title": "Customer Profiles",
+          "title": "All Customers",
           "link": {
             "name": "CustomerProfiles"
           },
-          "size": 18
+          "size": 14
         },
         {
-          "icon": "identity-resolution",
-          "title": "Identity Resolution",
+          "icon": "playground",
+          "title": "Segment Playground",
           "link": {
-            "name": "IdentityResolution"
+            "name": "AudienceConfiguration"
           },
-          "size": 18
-        },
+          "size": 14
+        }
+      ]
+    },
+    {
+      "label": "Orchestration",
+      "menu": [
         {
-          "icon": "connections",
-          "title": "Connections",
+          "icon": "destinations",
+          "title": "Destinations",
           "link": {
             "name": "Connections"
           },
+          "size": 16
+        },
+        {
+          "icon": "audiences",
+          "title": "Audiences",
+          "link": {
+            "name": "Audiences"
+          },
           "size": 18
+        },
+        {
+          "icon": "speaker_up",
+          "title": "Engagements",
+          "link": {
+            "name": "Engagements"
+          },
+          "size": 16
         }
       ]
     }
