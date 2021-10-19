@@ -91,6 +91,7 @@ def set_engagement_audience_destination_schedule(
     destination_id: ObjectId,
     cron_expression: str,
     user_name: str,
+    unset: bool = False,
 ) -> dict:
     """A function to set the destination cron expression.
 
@@ -101,68 +102,62 @@ def set_engagement_audience_destination_schedule(
         destination_id (ObjectId): MongoDB ID of the destination.
         cron_expression (str): CRON expression of the delivery schedule.
         user_name (str): Name of the user updating the engagement.
-
+        unset (bool): Option to remove the cron expression object.
     Returns:
-        dict: updated engagement object
+        list: updated engagement objects
     """
 
-    return database[db_c.DATA_MANAGEMENT_DATABASE][
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION
-    ].find_one_and_update(
+    ]
+
+    # get the engagement doc
+    engagement_doc = collection.find_one(
         {
             db_c.ID: engagement_id,
             "audiences.id": audience_id,
             "audiences.destinations.id": destination_id,
-        },
+        }
+    )
+    if not engagement_doc:
+        return {}
+
+    # Workaround cause DocumentDB does not support nested DB updates.
+    change = False
+    for audience in engagement_doc.get(db_c.AUDIENCES, []):
+        if audience.get(db_c.OBJECT_ID) != audience_id:
+            continue
+
+        for destination in audience.get(db_c.DESTINATIONS, []):
+            if destination.get(db_c.OBJECT_ID) != destination_id:
+                continue
+
+            if unset:
+                destination.pop(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, None)
+            else:
+                # set the cron expression
+                destination[
+                    db_c.ENGAGEMENT_DELIVERY_SCHEDULE
+                ] = cron_expression
+
+            engagement_doc[db_c.UPDATE_TIME] = datetime.utcnow()
+            engagement_doc[db_c.UPDATED_BY] = user_name
+            change = True
+
+    # no changes, simply return.
+    if not change:
+        return {}
+
+    # replace_one
+    collection.replace_one(
         {
-            "$set": {
-                db_c.UPDATE_TIME: datetime.utcnow(),
-                db_c.UPDATED_BY: user_name,
-                f"audiences.0.destinations.0.{db_c.ENGAGEMENT_DELIVERY_SCHEDULE}": cron_expression,
-            },
+            db_c.ID: engagement_id,
         },
+        engagement_doc,
     )
 
-
-@retry(
-    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
-def remove_engagement_audience_destination_schedule(
-    database: DatabaseClient,
-    engagement_id: ObjectId,
-    audience_id: ObjectId,
-    destination_id: ObjectId,
-    user_name: str,
-) -> dict:
-    """A function to remove the destination cron expression.
-
-    Args:
-        database (DatabaseClient): A database client.
-        engagement_id (ObjectId): MongoDB ID of the engagement.
-        audience_id (ObjectId): MongoDB ID of the audience.
-        destination_id (ObjectId): MongoDB ID of the destination.
-        user_name (str): Name of the user updating the engagement.
-
-    Returns:
-        dict: updated engagement object.
-    """
-
-    return database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ].find_one_and_update(
+    return collection.find_one(
         {
             db_c.ID: engagement_id,
-            "audiences.id": audience_id,
-            "audiences.destinations.id": destination_id,
-        },
-        {
-            "$set": {
-                db_c.UPDATE_TIME: datetime.utcnow(),
-                db_c.UPDATED_BY: user_name,
-            },
-            "$unset": {
-                f"audiences.0.destinations.0.{db_c.ENGAGEMENT_DELIVERY_SCHEDULE}": 1
-            },
-        },
+        }
     )
