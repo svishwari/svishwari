@@ -32,10 +32,12 @@
           append
         >
           <huxButton
-            icon="mdi-plus"
-            icon-position="left"
-            variant="primary"
+            variant="primary base"
+            iconColor="white"
+            iconVariant="base"
+            icon="plus"
             size="large"
+            is-custom-icon
             is-tile
             class="ma-2 font-weight-regular no-shadow mr-0"
           >
@@ -222,12 +224,14 @@
             append
           >
             <huxButton
-              icon="mdi-plus"
-              icon-position="left"
-              variant="primary"
-              size="large"
-              is-tile
-              class="ma-2 font-weight-regular"
+            variant="primary base"
+            iconColor="white"
+            iconVariant="base"
+            icon="plus"
+            size="large"
+            is-custom-icon
+            is-tile
+            class="ma-2 font-weight-regular caption"
             >
               Audience
             </huxButton>

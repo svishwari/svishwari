@@ -33,13 +33,15 @@
           data-e2e="add-engagement"
         >
           <huxButton
-            button-text="Engagement"
-            icon="mdi-plus"
-            icon-position="left"
-            variant="primary"
-            size="large"
-            is-tile
-            class="ma-2 font-weight-regular no-shadow mr-0"
+    variant="primary base"
+                    iconColor="white"
+                    iconVariant="base"
+                    icon="plus"
+                    size="large"
+                    is-custom-icon
+                    class="ma-2 font-weight-regular no-shadow mr-0 caption"
+                    is-tile
+ height="40"
           >
             Engagement
           </huxButton>
@@ -481,12 +483,16 @@
           >
             <huxButton
               button-text="Engagement"
-              icon="mdi-plus"
-              icon-position="left"
-              variant="primary"
-              size="large"
-              is-tile
-              class="ma-2 font-weight-regular"
+                  variant="primary base"
+                    iconColor="white"
+                    iconVariant="base"
+                    icon="plus"
+                    size="large"
+                    is-custom-icon
+                    class="ma-2 font-weight-regular caption"
+                    is-tile
+ height="40"
+
             >
               Engagement
             </huxButton>
