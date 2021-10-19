@@ -25,14 +25,13 @@
         </span>
         <span
           v-if="optional"
-          class="text-caption pl-1"
+          class="text-h6 font-italic pl-1"
           :class="
             disabled
               ? 'black--text text--lighten-3'
               : 'black--text text--darken-4'
           "
-        >
-          <em>{{ optional }}</em>
+          >{{ optional }}
         </span>
       </div>
     </div>
@@ -87,8 +86,8 @@ $form-step-spacing: 16px;
 
 .form-step {
   .form-step__indicator {
-    color: var(--v-primary-lighten8);
-    border: 1px solid var(--v-primary-lighten8);
+    color: var(--v-primary-lighten6);
+    border: 1px solid var(--v-primary-lighten6);
     width: $form-step-spacing * 2;
     height: $form-step-spacing * 2;
     line-height: $form-step-spacing * 2;
@@ -102,15 +101,15 @@ $form-step-spacing: 16px;
 
   .form-step__content {
     margin-left: $form-step-spacing;
-    border-left: 1px dashed var(--v-primary-lighten8);
+    border-left: 1px dashed var(--v-primary-lighten6);
 
     &.form-step__content--inactive {
-      border-color: var(--v-black-lighten3);
+      border-color: var(--v-black-lighten6);
     }
   }
 
   &.form-step--inactive {
-    color: var(--v-black-lighten3);
+    color: var(--v-black-lighten1);
 
     .form-step__indicator {
       color: var(--v-black-lighten3);

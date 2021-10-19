@@ -26,7 +26,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .empty-card {
-  border: 1px solid var(--v-zircon-base);
+  border: 1px solid var(--v-black-lighten2);
   background: var(--v-white-base);
 }
 </style>

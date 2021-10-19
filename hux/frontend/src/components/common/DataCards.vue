@@ -16,7 +16,7 @@
         >
           <v-col v-for="field in fields" :key="field.label" :cols="field.col">
             <div class="px-4 py-2">
-              <span class="text-caption black--text text--darken-1">
+              <span class="text-subtitle-2 black--text text--darken-1">
                 {{ field.label }}
                 <v-btn
                   v-if="field.sortable"
@@ -178,14 +178,14 @@ export default {
   @extend .box-shadow-5;
 }
 .data-card-selected {
-  border: 1px solid var(--v-zircon-base) !important;
+  border: 1px solid var(--v-black-lighten2) !important;
   background-color: var(--v-primary-lighten1) !important;
   &:hover {
     @extend .box-shadow-25;
   }
 }
 .empty-card {
-  border: 1px solid var(--v-zircon-base) !important;
+  border: 1px solid var(--v-black-lighten2) !important;
   background: var(--v-primary-lighten1) !important;
 }
 

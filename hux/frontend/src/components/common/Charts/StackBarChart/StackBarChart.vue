@@ -96,14 +96,14 @@ export default {
         .attr("transform", `translate(${margin.left},${margin.top})`)
 
       this.colorCodes.forEach((color) => {
-        if (color.variant == "darken3") {
+        if (color.variant == "darken2") {
           barColorCodes.push(colors.primary[color.variant])
-        } else if (color.variant == "lighten8") {
+        } else if (color.variant == "lighten9") {
           barColorCodes.push(colors.primary[color.variant])
         } else if (color.variant == "lighten5") {
           barColorCodes.push(colors.primary[color.variant])
         } else {
-          barColorCodes.push(colors[color.base])
+          barColorCodes.push(colors[color.base][color.variant])
         }
       })
 

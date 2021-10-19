@@ -1,8 +1,22 @@
 <template>
   <div class="audiences-wrap white">
-    <page-header :header-height-changes="'py-3'">
-      <template slot="left">
-        <breadcrumb :items="breadcrumbItems" />
+    <page-header class="py-5" :header-height="110">
+      <template #left>
+        <div>
+          <breadcrumb :items="breadcrumbItems" />
+        </div>
+        <div class="text-subtitle-1 font-weight-regular">
+          Here are a list of audiences that you have saved and created from
+          segmenting your customer list in the Segment Playground.
+        </div>
+      </template>
+      <template #right>
+        <icon
+          type="filter"
+          :size="22"
+          class="cursor-pointer"
+          color="black-darken4"
+        />
       </template>
     </page-header>
     <page-header class="top-bar" :header-height="71">
@@ -39,6 +53,7 @@
         view-height="calc(100vh - 210px)"
         sort-column="update_time"
         sort-desc="false"
+        data-e2e="audience-table"
       >
         <template #row-item="{ item }">
           <td
@@ -59,7 +74,7 @@
               <span v-if="item.is_lookalike == true" class="mr-3">
                 <tooltip>
                   <template #label-content>
-                    <icon type="lookalike" :size="24" />
+                    <icon type="lookalike" :size="20" class="mr-2" />
                   </template>
                   <template #hover-content>Lookalike audience</template>
                 </tooltip>
@@ -75,7 +90,7 @@
                 @actionFavorite="handleActionFavorite(item, 'audiences')"
               />
             </div>
-            <div v-if="header.value == 'status'" class="text-caption">
+            <div v-if="header.value == 'status'" class="text-h5">
               <status
                 :status="item[header.value]"
                 :show-label="true"
@@ -151,7 +166,7 @@
                 </template>
                 <template #hover-content>
                   <div>
-                    <div class="neroBlack--text text-caption mb-2">
+                    <div class="neroBlack--text text-button mb-2">
                       Delivered to:
                     </div>
                     <div
@@ -164,11 +179,11 @@
                           :type="deliveries.delivery_platform_type"
                           :size="18"
                         />
-                        <span class="ml-1 neroBlack--text text-caption">
+                        <span class="ml-1 neroBlack--text text-button">
                           {{ deliveries.delivery_platform_name }}
                         </span>
                       </div>
-                      <div class="neroBlack--text text-caption">
+                      <div class="neroBlack--text text-button">
                         {{ deliveries.last_delivered | Date | Empty }}
                       </div>
                     </div>
@@ -240,10 +255,19 @@
       @onConfirm="confirmRemoval()"
     >
       <template #body>
-        <div class="pt-6">
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
           Are you sure you want to delete this audience&#63;
         </div>
-        <div class="mb-6">
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
           By deleting this audience you will not be able to recover it and it
           may impact any associated engagements.
         </div>
@@ -361,7 +385,7 @@ export default {
       userFavorites: "users/favorites",
     }),
     audienceList() {
-      let audienceValue = this.rowData
+      let audienceValue = JSON.parse(JSON.stringify(this.rowData))
       audienceValue.forEach((audience) => {
         audience.destinations.sort((a, b) => a.name.localeCompare(b.name))
       })

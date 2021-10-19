@@ -181,7 +181,7 @@
               </span>
             </template>
             <template #hover-content>
-              <div class="d-flex flex-column text-caption">
+              <div class="d-flex flex-column text-button">
                 <span>Audience size</span>
                 <span class="pb-3">
                   {{ item.size | Numeric(true) | Empty }}
@@ -202,7 +202,7 @@
               </span>
             </template>
             <template #hover-content>
-              <div class="d-flex flex-column text-caption">
+              <div class="d-flex flex-column text-button">
                 <span>Audience size</span>
                 <span class="pb-3">{{ item.size | Numeric(true, false) }}</span>
                 <span>Match rate</span>
@@ -227,16 +227,24 @@
         >
           <tooltip>
             <template #label-content>
-              {{ item.update_time | Date("relative") | Empty("-") }}
+              {{
+                item.latest_delivery.update_time | Date("relative") | Empty("-")
+              }}
             </template>
             <template #hover-content>
               <div class="py-2 white d-flex flex-column">
                 <span class="mb-1">Last delivered:</span>
-                <span>{{ item.update_time | Date | Empty("-") }}</span>
+                <span>{{
+                  item.latest_delivery.update_time | Date | Empty("-")
+                }}</span>
                 <span class="mt-2 mb-1">Next delivery:</span>
-                <span>{{ item.next_delivery | Date | Empty("-") }}</span>
+                <span>{{
+                  item.latest_delivery.next_delivery | Date | Empty("-")
+                }}</span>
                 <span class="mt-2 mb-1">Delivery schedule:</span>
-                <span>{{ item.delivery_schedule_type | Empty("-") }}</span>
+                <span>{{
+                  item.latest_delivery.delivery_schedule | Empty("-")
+                }}</span>
               </div>
             </template>
           </tooltip>
@@ -525,7 +533,7 @@ export default {
   min-width: 310px;
   max-width: 310px;
   background: var(--v-white-base);
-  border: 1px solid var(--v-zircon-base);
+  border: 1px solid var(--v-black-lighten2);
   box-sizing: border-box;
   border-radius: 12px !important;
   display: table;
@@ -552,12 +560,6 @@ export default {
       color: var(--v-black-darken4);
     }
   }
-  .empty-destinations {
-    .no-destinations {
-      font-size: 12px;
-      line-height: 16px;
-    }
-  }
   .v-list {
     .v-list-item {
       .icon-col {
@@ -571,13 +573,9 @@ export default {
       .size-col {
         min-width: 60px;
         max-width: 85px;
-        font-size: 12px;
-        line-height: 16px;
         color: var(--v--neroBlack-base);
       }
       .deliverdOn-col {
-        font-size: 12px;
-        line-height: 16px;
         color: var(--v-black-darken4);
         min-width: 60px;
       }
@@ -597,8 +595,6 @@ export default {
   .v-list-item {
     &.theme--light {
       min-height: 32px !important;
-      font-size: 14px;
-      line-height: 22px;
       color: var(--v-black-darken4);
       &.v-list-item--disabled {
         color: var(--v-black-lighten3);

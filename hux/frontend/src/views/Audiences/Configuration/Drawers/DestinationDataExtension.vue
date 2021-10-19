@@ -104,6 +104,7 @@
               "
               :rules="newExtensionRules"
               required
+              data-e2e="new-data-extension"
             />
           </div>
 
@@ -165,6 +166,7 @@
           height="40"
           class="ma-2"
           :is-disabled="isActive ? !isFormValid : !extension"
+          data-e2e="destination-added"
           @click="addDestination()"
         >
           Add

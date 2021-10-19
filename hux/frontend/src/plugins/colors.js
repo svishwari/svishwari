@@ -1,19 +1,21 @@
 import blue from "./colors/blue"
-import black from "./colors/black"
+import teal from "./colors/teal"
+import yellow from "./colors/yellow"
+import white from "./colors/white"
 
 export default {
   ...blue,
-  white: "#ffffff",
-  ...black,
-  red: "#da291c",
-  green: "#43b02a",
-  yellow: "#ffcd00",
-  zircon: "#e2eaec",
-  pinkLittleDark: "#f03bc8",
-  persianGreen: "#00abab",
-  cerulean: "#006699",
-  greenLight: "#86bc25",
-  pink: "#b54acf",
+  inactiveButton: "#ECECEC",
+  borderBase: "#E2EAEC",
+  linesHeavy: "#D0D0CE",
+  lightGray: "#4F4F4F",
+  darkD: "#1E1E1E",
+  ...teal,
+  ...yellow,
+  ...white,
+  info: "#E3E48D",
+  error: "#DA291C",
+  warning: "#ED8B00",
   gradientSliderColors: [
     "#ec5b54",
     "#f76d48",

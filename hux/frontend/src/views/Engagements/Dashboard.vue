@@ -11,22 +11,21 @@
         </div>
       </template>
       <template #right>
-        <v-icon
-          size="22"
-          color="primary"
-          class="icon-border pa-2 ma-1"
-          @click="refreshEntity()"
-        >
-          mdi-refresh
-        </v-icon>
-        <v-icon
-          size="22"
-          color="primary"
-          class="icon-border pa-2 ma-1"
-          @click="editEngagement()"
-        >
-          mdi-pencil
-        </v-icon>
+        <div class="d-flex align-center">
+          <icon
+            type="pencil"
+            :size="18"
+            class="cursor-pointer mr-7"
+            color="black-darken4"
+            @click.native="editEngagement()"
+          />
+          <icon
+            type="dots-vertical"
+            :size="18"
+            class="cursor-pointer mr-7"
+            color="black-darken4"
+          />
+        </div>
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -615,7 +614,7 @@ export default {
     onCreated() {
       this.lookalikeCreated = true
       this.setAlert({
-        type: "success",
+        type: "teal",
         message: "Lookalike created successfully",
       })
     },
@@ -656,7 +655,7 @@ export default {
     }
     .summary-tab-wrap {
       .metric-card-wrapper {
-        border: 1px solid var(--v-zircon-base);
+        border: 1px solid var(--v-black-lighten2);
         box-sizing: border-box;
         border-radius: 12px;
         ::v-deep .v-list-item {
@@ -665,8 +664,6 @@ export default {
             padding-bottom: 15px;
             margin-left: -5px !important;
             .v-list-item__title {
-              font-size: 12px;
-              line-height: 16px;
               margin: 0 !important;
             }
             .v-list-item__subtitle {
