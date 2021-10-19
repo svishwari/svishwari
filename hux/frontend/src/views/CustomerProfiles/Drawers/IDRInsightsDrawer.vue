@@ -13,7 +13,7 @@
       <hux-data-table
         :columns="columns"
         :data-items="idrItems"
-        :showHeader="false"
+        :show-header="false"
       >
         <template #row-item="{ item }">
           <td
@@ -45,7 +45,9 @@
                     }}
                   </span>
                   <span v-if="item.metricType == 'numeric'">
-                    {{ item[col.value] | Numeric(true, false, false) | Empty("-") }}
+                    {{
+                      item[col.value] | Numeric(true, false, false) | Empty("-")
+                    }}
                   </span>
                 </template>
               </tooltip>
@@ -74,7 +76,6 @@
 <script>
 import { mapGetters } from "vuex"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
-import PageHeader from "@/components/PageHeader"
 import Drawer from "@/components/common/Drawer.vue"
 import Icon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
@@ -84,7 +85,6 @@ export default {
 
   components: {
     HuxDataTable,
-    PageHeader,
     Drawer,
     Icon,
     Tooltip,
@@ -166,6 +166,12 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters({
+      overview: "customers/overview",
+    }),
+  },
+
   watch: {
     value: function () {
       this.localDrawer = this.value
@@ -177,12 +183,6 @@ export default {
 
   mounted() {
     this.mapIDRItems()
-  },
-
-  computed: {
-    ...mapGetters({
-      overview: "customers/overview",
-    }),
   },
 
   methods: {

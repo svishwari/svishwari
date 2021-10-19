@@ -125,8 +125,8 @@
                       </div>
                     </div>
                     <span
-                      class="mb-3"
                       v-if="item.title == 'Age range' || item.title == 'States'"
+                      class="mb-3"
                     >
                       {{ item.subtitle | Empty("-") }}
                     </span>
@@ -310,7 +310,7 @@
         :toggle="geoDrawer.states"
         @onToggle="(isToggled) => (geoDrawer.states = isToggled)"
       />
-      <IDRInsightsDrawer v-model="idrInsightsDrawer" />
+      <i-d-r-insights-drawer v-model="idrInsightsDrawer" />
     </div>
   </div>
 </template>
@@ -582,16 +582,10 @@ export default {
       this.overviewListItems[5].menData = this.overview.gender_men_count
       this.overviewListItems[5].womenData = this.overview.gender_women_count
       this.overviewListItems[5].otherData = this.overview.gender_other_count
-      
-      let menData = this.setValueOrEmpty(
-        this.overview.gender_men
-      )
-      let womenData = this.setValueOrEmpty(
-        this.overview.gender_women
-      )
-      let otherData = this.setValueOrEmpty(
-        this.overview.gender_other
-      )
+
+      let menData = this.setValueOrEmpty(this.overview.gender_men)
+      let womenData = this.setValueOrEmpty(this.overview.gender_women)
+      let otherData = this.setValueOrEmpty(this.overview.gender_other)
       return `M: ${menData}  W: ${womenData}  O: ${otherData}`
     },
     setValueOrEmpty(value) {
