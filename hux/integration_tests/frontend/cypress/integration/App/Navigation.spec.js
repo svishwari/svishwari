@@ -23,7 +23,7 @@ describe("View Navigation", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
     // once menu drop down get open click on the contact us menu
-    cy.get(selector.navigation.contactus).click()
+    // cy.get(selector.navigation.contactus).click()
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
 
@@ -53,7 +53,7 @@ describe("View Navigation", () => {
       .and("include", "okta.com")
 
     //click on audiences on side nav bar and route in audiences screen
-    cy.get(selector.connections).click()
+    cy.get(selector.connections).eq(0).click()
     cy.location("pathname").should("eq", route.connections)
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)

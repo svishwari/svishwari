@@ -70,11 +70,11 @@ describe("Orchestration > Audience > Create Audience", () => {
         cy.get(selector.engagement.exitDataExtensionDrawer).click()
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(1000)
-        // Close the add destination drawer
-        cy.get(selector.engagement.exitDrawer).click()
       }
     })
 
+    // Close the add destination drawer
+    cy.get(selector.engagement.exitDrawer).click()
     cy.get(selector.audience.createAudience).click()
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(5000)

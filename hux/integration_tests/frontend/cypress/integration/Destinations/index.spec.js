@@ -13,7 +13,7 @@ describe("Data Management > Connections > Destinations", () => {
     cy.location("pathname").should("eq", route.overview)
 
     //click on connections on side nav bar
-    cy.get(selector.connections).eq(0).click()
+    cy.get(selector.connections).eq(1).click()
     cy.location("pathname").should("eq", route.connections)
 
     //validate destinations exist by getting total no. of them

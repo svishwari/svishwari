@@ -52,6 +52,9 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
       cy.get(selector.audience.overview).its("length").should("be.gt", 0)
     })
 
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(5000)
+
     // should be able to view Map chart
     // validate top location & income chart
     cy.get(selector.audience.mapchart).should("exist")
