@@ -17,78 +17,33 @@
       data-e2e="loader"
     />
     <div v-if="!loading">
-      <div class="customer-slide-group px-15 mt-6 mb-6 row-margin">
-        <v-slide-group ref="wrapper" show-arrows>
-          <v-slide-item v-for="(item, index) in primaryItems" :key="index">
-            <metric-card
-              :key="item.title"
-              class="card-margin"
-              :grow="item.toolTipText ? 1 : 0"
-              :icon="item.icon"
-              :title="item.title"
-              data-e2e="overviewList"
-            >
-              <template #subtitle-extended>
-                <tooltip v-if="!item.toolTipText">
-                  <template #label-content>
-                    <span
-                      class="text-subtitle-1 font-weight-semi-bold"
-                      v-html="updatedTimeStamp"
-                    >
-                    </span>
-                  </template>
-                  <template #hover-content>
-                    {{ item.subtitle }}
-                  </template>
-                </tooltip>
-                <tooltip v-if="item.toolTipText">
-                  <template #label-content>
-                    <span class="text-subtitle-1 font-weight-semi-bold">
-                      <span v-if="item.value == 'percentage'">
-                        {{
-                          item.subtitle
-                            | Numeric(true, false, false, true)
-                            | Empty("-")
-                        }}
-                      </span>
-                      <span v-if="item.value == 'numeric'">
-                        {{ item.subtitle | Numeric(true, true) | Empty("-") }}
-                      </span>
-                    </span>
-                  </template>
-                  <template #hover-content>
-                    <span v-if="item.value == 'percentage'">
-                      {{
-                        item.subtitle
-                          | Numeric(true, false, false, true)
-                          | Empty("-")
-                      }}
-                    </span>
-                    <span v-else>
-                      {{
-                        item.subtitle | Numeric(true, false, false) | Empty("-")
-                      }}
-                    </span>
-                  </template>
-                </tooltip>
-              </template>
-              <template v-if="item.toolTipText" #extra-item>
-                <tooltip position-top>
-                  <template #label-content>
-                    <icon type="info" :size="12" />
-                  </template>
-                  <template #hover-content>
-                    {{ item.toolTipText }}
-                  </template>
-                </tooltip>
-              </template>
-            </metric-card>
-          </v-slide-item>
-        </v-slide-group>
-      </div>
-      <div v-if="overviewListItems" class="px-15 my-1">
+      <div v-if="overviewListItems" class="px-15 mt-6 my-1">
         <v-card class="rounded pa-5 box-shadow-5">
-          <h5 class="text-h5 mb-1">Customer overview</h5>
+          <div class="d-flex justify-space-between">
+            <h5 class="text-h5 mb-1">Customer overview</h5>
+            <v-btn
+              text
+              small
+              class="
+                d-flex
+                align-right
+                primary--text
+                text-decoration-none
+                pl-0
+                pr-0
+                idr-link
+              "
+              @click="toggleIDRInsightsDrawer()"
+            >
+              <icon
+                type="identity-resolution"
+                color="primary"
+                :size="16"
+                class="mr-1"
+              />
+              IDR Insights
+            </v-btn>
+          </div>
           <div class="row row-margin no-gutters">
             <metric-card
               v-for="item in overviewListItems"
@@ -96,11 +51,13 @@
               class="card-margin"
               :grow="item.toolTipText ? 2 : 1"
               :title="item.title"
-              :icon="item.icon"
               :interactable="item.action ? true : false"
               data-e2e="customeroverview"
               @click="item.action ? onClick(item.action) : ''"
             >
+              <template v-if="item.icon" #short-name>
+                <icon :type="item.icon" :size="40" />
+              </template>
               <template #subtitle-extended>
                 <tooltip>
                   <template #label-content>
@@ -124,22 +81,53 @@
                     </span>
                   </template>
                   <template #hover-content>
-                    <span v-if="item.value == 'percentage'">
-                      {{
-                        item.subtitle
-                          | Numeric(true, false, false, true)
-                          | Empty("-")
-                      }}
-                    </span>
-                    <span v-if="item.value == 'numeric'">
+                    <span v-if="item.title == 'Customers'">
+                      Customers<br />
                       {{
                         item.subtitle | Numeric(true, false, false) | Empty("-")
                       }}
                     </span>
-                    <span v-if="item.value == 'none'">
+                    <span v-if="item.title == 'Countries'">
+                      Countries<br />
                       {{ item.subtitle | Empty("-") }}
                     </span>
-                    <span v-if="item.value == ''">
+                    <span v-if="item.title == 'Cities'">
+                      Cities<br />
+                      USA:
+                      {{
+                        item.subtitle | Numeric(true, false, false) | Empty("-")
+                      }}
+                    </span>
+                    <div v-if="item.title == 'Gender'">
+                      <div class="mb-3">
+                        Men<br />
+                        {{
+                          item.menData
+                            | Numeric(true, false, false)
+                            | Empty("-")
+                        }}
+                      </div>
+                      <div class="mb-3">
+                        Women<br />
+                        {{
+                          item.womenData
+                            | Numeric(true, false, false)
+                            | Empty("-")
+                        }}
+                      </div>
+                      <div class="mb-3">
+                        Other<br />
+                        {{
+                          item.otherData
+                            | Numeric(true, false, false)
+                            | Empty("-")
+                        }}
+                      </div>
+                    </div>
+                    <span
+                      class="mb-3"
+                      v-if="item.title == 'Age range' || item.title == 'States'"
+                    >
                       {{ item.subtitle | Empty("-") }}
                     </span>
                   </template>
@@ -322,6 +310,7 @@
         :toggle="geoDrawer.states"
         @onToggle="(isToggled) => (geoDrawer.states = isToggled)"
       />
+      <IDRInsightsDrawer v-model="idrInsightsDrawer" />
     </div>
   </div>
 </template>
@@ -343,6 +332,7 @@ import mapSlider from "@/components/common/MapChart/mapSlider"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
+import IDRInsightsDrawer from "./Drawers/IDRInsightsDrawer"
 import dayjs from "dayjs"
 
 export default {
@@ -362,11 +352,13 @@ export default {
     mapSlider,
     DoughnutChart,
     TotalCustomerChart,
+    IDRInsightsDrawer,
   },
 
   data() {
     return {
       customerProfilesDrawer: false,
+      idrInsightsDrawer: false,
       loadingCustomerChart: false,
       configurationData: configurationData,
       geoDrawer: {
@@ -379,97 +371,44 @@ export default {
       timeFrameLabel: "last 9 months",
       overviewListItems: [
         {
-          title: "No. of customers",
+          title: "Customers",
           subtitle: "",
+          icon: "customer-no",
           toolTipText:
             "Total no. of unique hux ids generated to represent a customer.",
           value: "",
-          action: "toggleProfilesDrawer",
         },
         {
           title: "Countries",
           subtitle: "",
-          icon: "mdi-earth",
+          icon: "countries",
           value: "",
           action: "toggleCountriesDrawer",
         },
         {
-          title: "US States",
+          title: "States",
           subtitle: "",
-          icon: "mdi-map",
+          icon: "states",
+          toolTipText:
+            "US states or regions equivalent to US state-level , eg. counties, districts, departments, divisions, parishes, provinces etc.",
           value: "",
           action: "toggleStatesDrawer",
         },
         {
           title: "Cities",
           subtitle: "",
-          icon: "mdi-map-marker-radius",
+          icon: "cities",
           value: "",
           action: "toggleCitiesDrawer",
         },
-        { title: "Age", subtitle: "", icon: "mdi-cake-variant", value: "" },
-        { title: "Women", subtitle: "", icon: "mdi-gender-female", value: "" },
-        { title: "Men", subtitle: "", icon: "mdi-gender-male", value: "" },
+        { title: "Age range", subtitle: "", icon: "birth", value: "" },
         {
-          title: "Other",
-          subtitle: "",
-          icon: "mdi-gender-male-female",
-          value: "",
-        },
-      ],
-      primaryItems: [
-        {
-          title: "Total no. of records",
-          subtitle: "",
-          toolTipText: "Total number of input records across all data feeds.",
-          value: "",
-        },
-        {
-          title: "Match rate",
-          subtitle: "",
-          toolTipText:
-            "Percentage of input records that are consolidated into Hux IDs.",
-          value: "",
-        },
-        {
-          title: "Unique Hux IDs",
-          subtitle: "",
-          toolTipText:
-            "Total Hux IDs that represent an anonymous or known customer.",
-          value: "",
-        },
-        {
-          title: "Anonymous IDs",
-          subtitle: "",
-          toolTipText:
-            "IDs related to online visitors that have not logged in, typically identified by a browser cookie or device ID.",
-          value: "",
-        },
-        {
-          title: "Known IDs",
-          subtitle: "",
-          toolTipText:
-            "IDs related to profiles that contain PII from online or offline engagement: name, postal address, email address, and phone number.",
-          value: "",
-        },
-        {
-          title: "Individual IDs",
-          subtitle: "",
-          toolTipText:
-            "Represents a First Name, Last Name and Address combination, used to identify a customer that lives at an address.",
-          value: "",
-        },
-        {
-          title: "Household IDs",
-          subtitle: "",
-          toolTipText:
-            "Represents a Last Name and Address combination, used to identify family members that live at the same address.",
-          value: "",
-        },
-        {
-          title: "Updated",
+          title: "Gender",
           subtitle: "",
           value: "",
+          menData: "",
+          womenData: "",
+          otherData: "",
         },
       ],
       items: [
@@ -608,40 +547,7 @@ export default {
           this.overviewListItems[4].subtitle = "-"
         }
         this.overviewListItems[4].value = "none"
-        this.overviewListItems[5].subtitle = this.overview.gender_women
-        this.overviewListItems[5].value = "percentage"
-        this.overviewListItems[6].subtitle = this.overview.gender_men
-        this.overviewListItems[6].value = "percentage"
-        this.overviewListItems[7].subtitle = this.overview.gender_other
-        this.overviewListItems[7].value = "percentage"
-
-        this.primaryItems[0].subtitle = this.overview.total_records
-        this.primaryItems[0].value = "numeric"
-        this.primaryItems[1].subtitle = this.overview.match_rate
-        this.primaryItems[1].value = "percentage"
-        this.primaryItems[2].subtitle = this.overview.total_unique_ids
-        this.primaryItems[2].value = "numeric"
-        this.primaryItems[3].subtitle = this.overview.total_unknown_ids
-        this.primaryItems[3].value = "numeric"
-        this.primaryItems[4].subtitle = this.overview.total_known_ids
-        this.primaryItems[4].value = "numeric"
-        this.primaryItems[5].subtitle = this.overview.total_individual_ids
-        this.primaryItems[5].value = "numeric"
-        this.primaryItems[6].subtitle = this.overview.total_household_ids
-        this.primaryItems[6].value = "numeric"
-        this.primaryItems[7].subtitle = this.getUpdatedDateTime(
-          this.overview.updated
-        )
-      }
-    },
-    getUpdatedDateTime(value) {
-      if (value) {
-        let updatedValue = this.$options.filters.Date(value)
-        this.updatedTime = updatedValue.split(" at ")
-        this.updatedTime[0] = this.$options.filters.DateRelative(value)
-        return updatedValue
-      } else {
-        return "-"
+        this.overviewListItems[5].subtitle = this.mapGenderData()
       }
     },
     toggleProfilesDrawer() {
@@ -671,6 +577,30 @@ export default {
         this.genderChartDimensions.width = this.$refs.genderChart.clientWidth
         this.genderChartDimensions.height = 200
       }
+    },
+    mapGenderData() {
+      this.overviewListItems[5].menData = this.overview.gender_men_count
+      this.overviewListItems[5].womenData = this.overview.gender_women_count
+      this.overviewListItems[5].otherData = this.overview.gender_other_count
+      
+      let menData = this.setValueOrEmpty(
+        this.overview.gender_men
+      )
+      let womenData = this.setValueOrEmpty(
+        this.overview.gender_women
+      )
+      let otherData = this.setValueOrEmpty(
+        this.overview.gender_other
+      )
+      return `M: ${menData}  W: ${womenData}  O: ${otherData}`
+    },
+    setValueOrEmpty(value) {
+      return value != null
+        ? this.$options.filters.Numeric(value, true, false, false, true)
+        : this.$options.filters.Empty("-")
+    },
+    toggleIDRInsightsDrawer() {
+      this.idrInsightsDrawer = !this.idrInsightsDrawer
     },
   },
 }
@@ -717,6 +647,11 @@ export default {
     ::v-deep .v-icon--disabled.theme--light.v-icon {
       color: var(--v-black-lighten3) !important;
     }
+  }
+
+  .idr-link {
+    min-width: 0px;
+    margin-top: -5px;
   }
 }
 
