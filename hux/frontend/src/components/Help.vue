@@ -50,7 +50,4 @@ export default {
 .view-all {
   @extend .cursor-pointer;
 }
-.topNavDropMenu {
-  width: 192px;
-}
 </style>
