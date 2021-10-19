@@ -171,8 +171,10 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
 
 def get_okta_test_user_creds(config: Config) -> tuple:
     """Pass in SSM Store values for the OKTA test user params.
+
     Args:
         config (Config): Config object to get the current OKTA Issue/Client.
+
     Returns:
         dict: tuple: The credential tuple for (env, secrets).
     """
