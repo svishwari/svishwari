@@ -46,138 +46,152 @@
         </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
-
-      <hux-filters-bar :is-toggled="isFilterToggled">
-        <label class="black--text text--darken-4 mr-2">
-          Select timeframe:
-        </label>
-
-        <hux-select-date
-          v-model="filterStartDate"
-          :min="minDate"
-          :max="filterEndDate"
-          @change="refreshData"
-        />
-
-        <icon class="mx-1" type="arrow" color="primary" :size="19" />
-
-        <hux-select-date
-          v-model="filterEndDate"
-          :min="filterStartDate"
-          :max="maxDate"
-          @change="refreshData"
-        />
-      </hux-filters-bar>
     </template>
     <template>
-      <div v-if="!loadingOverview">
-        <v-slide-group ref="wrapper" class="idr-slide-group" show-arrows>
-          <v-slide-item v-for="(metric, index) in overview" :key="index">
-            <metric-card
-              :title="metric.title"
-              :min-width="170"
-              class="idr-metric-card"
-              data-e2e="overviewList"
-            >
-              <template #extra-item>
-                <tooltip position-top>
-                  <template #label-content>
-                    <icon type="info" :size="12" />
+      <div
+        class="
+          d-flex
+          flex-nowrap
+          align-stretch
+          flex-grow-1 flex-shrink-0
+          mw-100
+        "
+      >
+        <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100 pa-6">
+          <div v-if="!loadingOverview">
+            <v-slide-group ref="wrapper" class="idr-slide-group" show-arrows>
+              <v-slide-item v-for="(metric, index) in overview" :key="index">
+                <metric-card
+                  :title="metric.title"
+                  :min-width="170"
+                  class="idr-metric-card"
+                  data-e2e="overviewList"
+                >
+                  <template #extra-item>
+                    <tooltip position-top>
+                      <template #label-content>
+                        <icon type="info" :size="12" />
+                      </template>
+                      <template #hover-content>
+                        <v-sheet max-width="240px">
+                          {{ metric.description }}
+                        </v-sheet>
+                      </template>
+                    </tooltip>
                   </template>
-                  <template #hover-content>
-                    <v-sheet max-width="240px">
-                      {{ metric.description }}
-                    </v-sheet>
-                  </template>
-                </tooltip>
-              </template>
 
-              <template #subtitle-extended>
-                <tooltip>
-                  <template #label-content>
-                    <span class="font-weight-semi-bold">
-                      <template v-if="metric.format === 'numeric'">
-                        {{ metric.value | Numeric(true, true) | Empty }}
+                  <template #subtitle-extended>
+                    <tooltip>
+                      <template #label-content>
+                        <span class="font-weight-semi-bold">
+                          <template v-if="metric.format === 'numeric'">
+                            {{ metric.value | Numeric(true, true) | Empty }}
+                          </template>
+                          <template v-if="metric.format === 'percentage'">
+                            {{
+                              metric.value
+                                | Numeric(true, false, false, true)
+                                | Empty
+                            }}
+                          </template>
+                        </span>
                       </template>
-                      <template v-if="metric.format === 'percentage'">
-                        {{
-                          metric.value
-                            | Numeric(true, false, false, true)
-                            | Empty
-                        }}
+                      <template #hover-content>
+                        <template v-if="metric.format === 'numeric'">
+                          {{ metric.value | Numeric(true, false) | Empty }}
+                        </template>
+                        <template v-if="metric.format === 'percentage'">
+                          {{
+                            metric.value
+                              | Numeric(false, false, false, true)
+                              | Empty
+                          }}
+                        </template>
                       </template>
+                    </tooltip>
+                  </template>
+                </metric-card>
+              </v-slide-item>
+            </v-slide-group>
+          </div>
+
+          <v-row class="px-2 mt-0 mb-1">
+            <v-col md="12">
+              <v-card class="mt-3 rounded-lg box-shadow-5" min-height="400">
+                <v-progress-linear
+                  v-if="loadingMatchingTrends"
+                  :active="loadingMatchingTrends"
+                  :indeterminate="loadingMatchingTrends"
+                />
+
+                <v-card-title class="chart-style pb-8 pl-5 pt-5">
+                  <div class="mt-2">
+                    <span class="black--text text--darken-4 text-h5">
+                      ID Resolution matching trends
                     </span>
-                  </template>
-                  <template #hover-content>
-                    <template v-if="metric.format === 'numeric'">
-                      {{ metric.value | Numeric(true, false) | Empty }}
-                    </template>
-                    <template v-if="metric.format === 'percentage'">
-                      {{
-                        metric.value
-                          | Numeric(false, false, false, true)
-                          | Empty
-                      }}
-                    </template>
-                  </template>
-                </tooltip>
-              </template>
-            </metric-card>
-          </v-slide-item>
-        </v-slide-group>
-      </div>
-      <v-row class="px-2 mt-0 mb-1">
-        <v-col md="12">
-          <v-card class="mt-3 rounded-lg box-shadow-5" min-height="400">
-            <v-progress-linear
-              v-if="loadingMatchingTrends"
-              :active="loadingMatchingTrends"
-              :indeterminate="loadingMatchingTrends"
+                  </div>
+                </v-card-title>
+
+                <template v-if="!loadingMatchingTrends">
+                  <i-d-r-matching-trend
+                    v-if="hasMatchingTrendsData"
+                    :map-data="matchingTrends"
+                  />
+                  <div
+                    v-if="!hasMatchingTrendsData"
+                    class="overflow-hidden px-10"
+                  >
+                    <svg-as-component
+                      src="assets/images/MultiLineChartEmpty"
+                      class="d-flex"
+                    />
+                    <p class="text-caption d-flex align-center my-5">
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                        class="mr-2"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle cx="6" cy="6" r="6" fill="#d0d0ce" />
+                      </svg>
+                      no data available
+                    </p>
+                  </div>
+                </template>
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <data-feeds
+            :data="dataFeeds"
+            :is-loading="loadingDataFeeds"
+            class="mt-6 mx-2"
+            data-e2e="datafeedtable"
+          />
+        </div>
+
+        <div class="ml-auto">
+          <hux-filters-drawer :is-toggled="isFilterToggled">
+            <hux-select-date
+              v-model="filterStartDate"
+              :min="minDate"
+              :max="filterEndDate"
+              @change="refreshData"
             />
 
-            <v-card-title class="chart-style pb-8 pl-5 pt-5">
-              <div class="mt-2">
-                <span class="black--text text--darken-4 text-h5">
-                  ID Resolution matching trends
-                </span>
-              </div>
-            </v-card-title>
+            <icon class="mx-1" type="arrow" color="primary" :size="19" />
 
-            <template v-if="!loadingMatchingTrends">
-              <i-d-r-matching-trend
-                v-if="hasMatchingTrendsData"
-                :map-data="matchingTrends"
-              />
-              <div v-if="!hasMatchingTrendsData" class="overflow-hidden px-10">
-                <svg-as-component
-                  src="assets/images/MultiLineChartEmpty"
-                  class="d-flex"
-                />
-                <p class="text-caption d-flex align-center my-5">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 12 12"
-                    fill="none"
-                    class="mr-2"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle cx="6" cy="6" r="6" fill="#d0d0ce" />
-                  </svg>
-                  no data available
-                </p>
-              </div>
-            </template>
-          </v-card>
-        </v-col>
-      </v-row>
-
-      <data-feeds
-        :data="dataFeeds"
-        :is-loading="loadingDataFeeds"
-        class="mt-6 mx-2"
-        data-e2e="datafeedtable"
-      />
+            <hux-select-date
+              v-model="filterEndDate"
+              :min="filterStartDate"
+              :max="maxDate"
+              @change="refreshData"
+            />
+          </hux-filters-drawer>
+        </div>
+      </div>
     </template>
   </page>
 </template>
@@ -189,7 +203,7 @@ import { endOfMonth } from "@/utils"
 import Page from "@/components/Page.vue"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
-import HuxFiltersBar from "@/components/common/FiltersBar"
+import HuxFiltersDrawer from "@/components/common/FiltersDrawer"
 import HuxSelectDate from "@/components/common/SelectDate.vue"
 import Icon from "@/components/common/Icon"
 import MetricCard from "@/components/common/MetricCard"
@@ -205,7 +219,7 @@ export default {
     Page,
     Breadcrumb,
     Icon,
-    HuxFiltersBar,
+    HuxFiltersDrawer,
     HuxSelectDate,
     MetricCard,
     PageHeader,
@@ -324,6 +338,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 .idr-wrapper {
+  ::v-deep .container {
+    padding: 0 !important;
+  }
+
   .idr-slide-group {
     ::v-deep .v-slide-group__wrapper {
       overflow: auto !important;
