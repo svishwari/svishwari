@@ -301,14 +301,14 @@
     <metric-card
       class="ma-4"
       title="Metric Title"
-      :max-width="186"
+      :max-width="202"
       :height="75"
       :interactable="false"
     >
       <template #subtitle-extended>
         <div class="text-body-1 black--text text--darken-4 mb-2">
-          <icon class="mr-1" type="stock-up" :size="8" />
-          <icon class="ml-1 mr-1" type="stock-down" :size="8" />
+          <icon class="mr-1" type="stock-up" :size="8" color="success"/>
+          <icon class="ml-1 mr-1" type="stock-down" :size="8" color="error"/>
           3/1/2021 • 9:42AM
         </div>
       </template>
