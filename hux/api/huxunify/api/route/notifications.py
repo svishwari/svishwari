@@ -26,9 +26,7 @@ from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 
 # setup the notifications blueprint
-notifications_bp = Blueprint(
-    api_c.NOTIFICATIONS_ENDPOINT, import_name=__name__
-)
+notifications_bp = Blueprint(api_c.NOTIFICATIONS_ENDPOINT, import_name=__name__)
 
 
 @notifications_bp.before_request
@@ -73,6 +71,36 @@ class NotificationsSearch(SwaggerView):
             "required": False,
             "default": api_c.DEFAULT_BATCH_NUMBER,
         },
+        {
+            "name": api_c.QUERY_PARAMETER_NOTIFICATION_TYPES,
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Type of Notification",
+            "example": "10",
+            "required": False,
+            "default": "['critical','informational','success']",
+        },
+        {
+            "name": api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY,
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Type of Notification",
+            "example": "10",
+            "required": False,
+            "default": "All",
+        },
+        {
+            "name": api_c.QUERY_PARAMETER_USERS,
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Type of Notification",
+            "example": "10",
+            "required": False,
+            "default": "All",
+        },
     ]
     responses = {
         HTTPStatus.OK.value: {
@@ -112,7 +140,31 @@ class NotificationsSearch(SwaggerView):
                 str(api_c.DEFAULT_BATCH_NUMBER),
             )
         )
-
+        notification_types = request.args.get(
+            api_c.QUERY_PARAMETER_NOTIFICATION_TYPES, []
+        )
+        if notification_types:
+            notification_types = notification_types.split(",")
+            for notification_type in notification_types:
+                if notification_type not in db_c.NOTIFICATION_TYPES:
+                    logger.error("Invalid Notification Type")
+                    return {
+                        "message": "Invalid or incomplete arguments received"
+                    }, HTTPStatus.BAD_REQUEST
+        notification_categories = request.args.get(
+            api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY, []
+        )
+        if notification_categories:
+            notification_categories = notification_categories.split(",")
+            for notification_category in notification_categories:
+                if notification_category not in api_c.NOTIFICATION_CATEGORIES:
+                    logger.error("Invalid Notification Category")
+                    return {
+                        "message": "Invalid or incomplete arguments received"
+                    }, HTTPStatus.BAD_REQUEST
+        users = request.args.get(api_c.QUERY_PARAMETER_USERS, [])
+        if users:
+            users = users.split(",")
         if (
             batch_size is None
             or batch_number is None
@@ -139,6 +191,9 @@ class NotificationsSearch(SwaggerView):
                     batch_size=batch_size,
                     sort_order=sort_order,
                     batch_number=batch_number,
+                    notification_types=notification_types,
+                    notification_categories=notification_categories,
+                    users=users,
                 )
             ),
             HTTPStatus.OK,
@@ -194,9 +249,7 @@ class NotificationStream(SwaggerView):
                 # get the previous time, take last minute.
                 previous_time = datetime.utcnow().replace(
                     tzinfo=timezone.utc
-                ) - timedelta(
-                    minutes=int(api_c.NOTIFICATION_STREAM_TIME_SECONDS / 60)
-                )
+                ) - timedelta(minutes=int(api_c.NOTIFICATION_STREAM_TIME_SECONDS / 60))
 
                 # dump the output notification list to the notification schema.
                 yield json.dumps(
@@ -204,9 +257,7 @@ class NotificationStream(SwaggerView):
                         notification_management.get_notifications(
                             get_db_client(),
                             {
-                                db_c.NOTIFICATION_FIELD_CREATED: {
-                                    "$gt": previous_time
-                                },
+                                db_c.NOTIFICATION_FIELD_CREATED: {"$gt": previous_time},
                                 db_c.TYPE: db_c.NOTIFICATION_TYPE_SUCCESS,
                                 db_c.NOTIFICATION_FIELD_DESCRIPTION: {
                                     "$regex": "^Successfully delivered audience"

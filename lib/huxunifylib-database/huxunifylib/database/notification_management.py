@@ -1,7 +1,7 @@
 """This module enables functionality related to notification management."""
 import logging
 from datetime import datetime
-from typing import Union
+from typing import Union, List
 
 import pymongo
 from dateutil.relativedelta import relativedelta
@@ -43,9 +43,7 @@ def create_notification(
         raise InvalidNotificationType(notification_type)
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     collection.create_index(c.EXPIRE_AT, expireAfterSeconds=0)
 
@@ -91,10 +89,16 @@ def get_notifications_batch(
     batch_size: int,
     sort_order: int,
     batch_number: int,
+    notification_types: List[str],
+    notification_categories: List[str],
+    users: List[str],
 ) -> Union[dict, None]:
     """A function to get notifications per batch size.
 
     Args:
+        users(List[str]): List of User names
+        notification_categories(List[str]): List of Notification Categories
+        notification_types (List[str]): List of Type of Notifications
         database (DatabaseClient): A database client.
         batch_size (int): Number of notifications per batch.
         sort_order (int): dictate the order of the records that are returned.
@@ -107,17 +111,23 @@ def get_notifications_batch(
     """
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     skips = batch_size * (batch_number - 1)
-
+    query = dict()
+    if notification_types:
+        query.update({c.TYPE: {"$in": notification_types}})
+    if notification_categories:
+        query.update({c.NOTIFICATION_FIELD_CATEGORY: {"$in": notification_categories}})
+    if users:
+        query.update({c.NOTIFICATION_FIELD_USERNAME: {"$in": users}})
+    if query:
+        query = dict({"$and": [query]})
     try:
         return dict(
-            total_records=collection.count_documents({}),
+            total_records=collection.count_documents(query),
             notifications=list(
-                collection.find()
+                collection.find(query)
                 .sort([(c.NOTIFICATION_FIELD_CREATED, -1), (c.ID, sort_order)])
                 .skip(skips)
                 .limit(batch_size)
@@ -151,18 +161,14 @@ def get_notifications(
     """
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     try:
         return dict(
             total_records=collection.count_documents(query_filter),
             notifications=list(
                 collection.find(query_filter if query_filter else {}).sort(
-                    sort_order
-                    if sort_order
-                    else [("$natural", pymongo.ASCENDING)]
+                    sort_order if sort_order else [("$natural", pymongo.ASCENDING)]
                 )
             ),
         )
