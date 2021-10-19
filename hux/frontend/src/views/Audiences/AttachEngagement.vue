@@ -278,7 +278,7 @@
           height="40"
           width="146"
           :is-disabled="!newEngagementValid"
-          data-e2e= "create-engagement-new"
+          data-e2e="create-engagement-new"
           @click.native="addEngagement()"
         >
           Create &amp; add
