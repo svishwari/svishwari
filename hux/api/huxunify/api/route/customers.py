@@ -1126,7 +1126,7 @@ class CustomersInsightsCities(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.CUSTOMERS}/LTV",
+    f"/{api_c.CUSTOMERS_ENDPOINT}/LTV",
     "CustomersLTV",
 )
 class CustomersLTV(SwaggerView):
@@ -1188,7 +1188,7 @@ class CustomersLTV(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.CUSTOMERS}/propensity-to-purchase",
+    f"/{api_c.CUSTOMERS_ENDPOINT}/propensity-to-purchase",
     "CustomersPropensityToPurchase",
 )
 class CustomersPropensityToPurchase(SwaggerView):
@@ -1249,7 +1249,7 @@ class CustomersPropensityToPurchase(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.CUSTOMERS}/propensity-to-purchase",
+    f"/{api_c.CUSTOMERS_ENDPOINT}/propensity-to-purchase",
     "CustomersPropensityToUnsubscribe",
 )
 class CustomersPropensityToUnsubscribe(SwaggerView):
