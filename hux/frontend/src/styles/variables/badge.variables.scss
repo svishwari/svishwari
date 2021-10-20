@@ -1,7 +1,22 @@
 // Badge
 // https://vuetifyjs.com/en/api/v-badge/#sass-variables
 
-$badge-height: 12px;
-$badge-min-width: 12px;
-$badge-font-size: 10px;
+// Variables
+$badge-height: 16px;
+$badge-min-width: 16px;
+$badge-font-size: 14px;
 $badge-padding: 1px 0px 0px 0px;
+
+// Customizations
+.v-badge {
+  &.v-badge--bordered {
+    .v-badge__badge::after {
+      border: 1px solid var(--v-black-lighten3) !important;
+    }
+  }
+  .v-badge__badge {
+    &.white {
+      color: var(--v-black-base);
+    }
+  }
+}

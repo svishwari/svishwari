@@ -20,7 +20,7 @@
 import HuxDropDownSearch from "@/components/common/HuxDropDownSearch"
 
 export default {
-  name: "HuxFilter",
+  name: "HuxTableFilter",
 
   components: {
     HuxDropDownSearch,

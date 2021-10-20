@@ -71,7 +71,7 @@
     <div v-if="value.periodicity === 'Weekly'" class="mt-6">
       <div class="text-caption black--text mb-1">On</div>
       <v-btn
-        v-for="day in days"
+        v-for="day in day_of_week"
         :key="day.value"
         min-width="30"
         width="30"
@@ -180,6 +180,8 @@
   </div>
 </template>
 <script>
+import { dayAbbreviation } from "@/utils"
+
 export default {
   name: "HuxSchedulePicker",
 
@@ -210,7 +212,7 @@ export default {
         "Saturday",
       ],
       monthlyDayDateItems: Array.from({ length: 31 }, (_, i) => i + 1),
-      days: [
+      day_of_week: [
         {
           day: "S",
           value: "Sunday",
@@ -265,7 +267,7 @@ export default {
     },
 
     selectedDays() {
-      return this.days.filter((each) => this.isDaySelected(each))
+      return this.day_of_week.filter((each) => this.isDaySelected(each))
     },
 
     selectedDaysString() {
@@ -284,17 +286,17 @@ export default {
   methods: {
     toggleWeekDay(day) {
       if (this.isDaySelected(day)) {
-        if (this.value.days.length !== 1) {
-          let index = this.value.days.indexOf(day.value)
-          this.value.days.splice(index, 1)
+        if (this.value.day_of_week.length !== 1) {
+          let index = this.value.day_of_week.indexOf(dayAbbreviation(day.value))
+          this.value.day_of_week.splice(index, 1)
         }
       } else {
-        this.value.days.push(day.value)
+        this.value.day_of_week.push(dayAbbreviation(day.value))
       }
     },
 
     isDaySelected(day) {
-      return this.value.days.includes(day.value)
+      return this.value.day_of_week.includes(dayAbbreviation(day.value))
     },
   },
 }

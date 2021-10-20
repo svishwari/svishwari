@@ -1,8 +1,8 @@
 <template>
   <v-expand-transition>
-    <div class="hux-filter-bar-container">
+    <div class="hux-table-filter-bar-container">
       <div class="d-flex flex-wrap">
-        <hux-filter
+        <hux-table-filter
           v-for="(filter, i) in filters"
           :key="i"
           v-model="filter.value"
@@ -39,13 +39,13 @@
 </template>
 
 <script>
-import HuxFilter from "@/components/common/Filter"
+import HuxTableFilter from "@/components/common/TableFilter.vue"
 
 export default {
-  name: "HuxFilterBar",
+  name: "HuxTableFiltersBar",
 
   components: {
-    HuxFilter,
+    HuxTableFilter,
   },
 
   props: {
@@ -79,7 +79,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.hux-filter-bar-container {
+.hux-table-filter-bar-container {
   background: var(--v-primary-lighten2);
   padding: 8px 11px;
   border-bottom: 1px solid var(--v-black-lighten3);

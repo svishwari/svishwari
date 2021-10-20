@@ -1068,7 +1068,6 @@ class CustomersInsightsCities(SwaggerView):
         HTTPStatus.OK.value: {
             "schema": {
                 "type": "array",
-                "items": CustomersInsightsCitiesSchema,
             },
             "description": "Customer Insights by cities.",
         },
@@ -1083,7 +1082,7 @@ class CustomersInsightsCities(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     def get(self) -> Tuple[list, int]:
-        """Retrieves city-level geographic customer insights.
+        """Retrieves customer lifetime values.
 
         ---
         security:
