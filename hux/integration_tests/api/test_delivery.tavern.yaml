@@ -23,7 +23,6 @@ stages:
       headers:
         content-type: application/json
       json:
-        !anylist
         - id: !anystr
           name: !anystr
           description: !anything
@@ -87,7 +86,6 @@ stages:
       headers:
         content-type: application/json
       json:
-        !anylist
         - id: !anystr
           name: !anystr
           description: !anything
@@ -95,13 +93,13 @@ stages:
           updated_by: !anystr
           create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
           update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
-          audiences: !anylist
+          audiences:
             - id: !anystr
       save:
         $ext:
           function: tavern_test_utils:get_engagement_audience_destination_id
 
-  - name: test engagements/{engagement_id}/audience/{audience_id}/destination/{destination_id}/deliver
+  - name: test engagements/engagement_id/audience/audience_id/destination/destination_id/deliver
 
     request:
       url: "{host}/{version}/engagements/{engagement_id}/audience/{engagement_audience_id}/destination/{engagement_destination_id}/deliver"
@@ -156,7 +154,7 @@ stages:
         json:
           first_engagement: "[0]"
 
-  - name: test engagements/{engagement_id}/deliver
+  - name: test engagements/engagement_id/deliver
 
     request:
       url: "{host}/{version}/engagements/{first_engagement.id}/deliver"
@@ -206,7 +204,7 @@ stages:
         json:
           first_audience: "[0]"
 
-  - name: test audiences/{audience_id}/deliver
+  - name: test audiences/audience_id/deliver
 
     request:
       url: "{host}/{version}/audiences/{first_audience.id}/deliver"
@@ -262,7 +260,7 @@ stages:
         $ext:
           function: tavern_test_utils:get_engagement_audience_destination_id
 
-  - name: test engagements/{engagement_id}/audience/{audience_id}/deliver
+  - name: test engagements/engagement_id/audience/audience_id/deliver
     request:
       url: "{host}/{version}/engagements/{engagement_id}/audience/{engagement_audience_id}/deliver"
       method: POST

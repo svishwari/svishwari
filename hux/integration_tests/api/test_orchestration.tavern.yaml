@@ -41,7 +41,7 @@ stages:
               name: !anystr
               type: !anystr
               min: !anyint
-              max: !anyint
+              max: !anyfloat
               steps: !anyint
             propensity_to_purchase:
               name: !anystr
@@ -101,14 +101,18 @@ stages:
       headers:
         content-type: application/json
         Authorization: "Bearer {token}"
-      json:
-        lookalikeable: "false"
-        deliveries: "2"
+      params:
+        lookalikeable: false
+        deliveries: 2
 
     response:
       status_code: 200
       headers:
         content-type: application/json
+      json:
+        - id: !anystr
+          destinations:
+            - id: !anystr
 
 
 ---
@@ -136,15 +140,15 @@ stages:
       headers:
         content-type: application/json
       json:
-        !anylist
         - id: !anystr
           name: !anystr
           type: !anystr
           status: !anystr
-          category: !anystr
-          feed_count: !anyint
           is_enabled: !anybool
           is_added: !anybool
+          create_time: !anystr
+          is_ad_platform: !anybool
+          update_time: !anystr
       save:
         $ext:
           function: tavern_test_utils:get_destination_by_name
@@ -216,9 +220,11 @@ stages:
     response:
       strict: false
       # TODO HUS-1164 change this to 404 when the code has been changed
-      status_code: 500
+      status_code: 404
       headers:
         content-type: application/json
+      json:
+        message: !re_search "Audience not found."
 
   - name: Test retrieving state-level insights for an audience that does not exist
 
@@ -232,9 +238,11 @@ stages:
 
     response:
       # TODO HUS-1164 change this to 404 when the code has been changed
-      status_code: 500
+      status_code: 404
       headers:
         content-type: application/json
+      json:
+        message: !re_search "Audience not found."
 
   - name: Test retrieving audience insights for an audience that does not exist
 
@@ -263,9 +271,11 @@ stages:
 
     response:
       # TODO HUS-1164 change this to 404 when the code has been changed
-      status_code: 400
+      status_code: 404
       headers:
         content-type: application/json
+      json:
+        message: !re_search "Audience not found."
 
 
 ---
@@ -318,7 +328,7 @@ stages:
         content-type: application/json
         Authorization: "Bearer {token}"
       json:
-        name: "TAVERN_TEST_AUDIENCE"
+        name: "TAVERN_TEST_AUDIENCE_UPDATED"
         destinations:
           - id: "{destination.id}"
             delivery_platform_config:
@@ -345,7 +355,7 @@ stages:
 
     response:
       strict: false
-      status_code: 201
+      status_code: 200
       headers:
         content-type: application/json
 
