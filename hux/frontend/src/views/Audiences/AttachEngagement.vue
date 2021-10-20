@@ -33,12 +33,14 @@
                 </template>
                 <template #button>
                   <huxButton
-                    icon="mdi-plus"
-                    icon-position="left"
-                    variant="primary"
+                    variant="primary base"
+                    icon-color="white"
+                    icon-variant="base"
+                    icon="plus"
                     size="small"
-                    :is-tile="true"
-                    class="ma-2"
+                    is-custom-icon
+                    class="ma-2 caption"
+                    is-tile
                     data-e2e="first-engagement-create"
                     @click="goToStep2()"
                   >
@@ -53,10 +55,14 @@
                 required to have at least one selected.
               </h6>
               <huxButton
-                icon="mdi-plus"
-                icon-position="left"
-                variant="primary"
-                :is-tile="true"
+                variant="primary base"
+                icon-color="white"
+                icon-variant="base"
+                icon="plus"
+                size="small"
+                is-custom-icon
+                class="ma-2 caption"
+                is-tile
                 height="40"
                 @click="goToAddNewEngagement()"
               >
