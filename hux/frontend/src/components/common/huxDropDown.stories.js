@@ -87,4 +87,4 @@ const Template = (args, { argTypes }) => ({
   `,
 })
 
-export const Basic = Template.bind({})
+export const Select = Template.bind({})
