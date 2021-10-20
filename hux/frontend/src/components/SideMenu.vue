@@ -34,7 +34,7 @@
       :key="item.title"
       color="var(-v--primary-base)"
     >
-      <div v-if="item.label" class="list-group black--text">
+      <div v-if="item.label" class="list-group black--text mt-2">
         <span v-if="!isMini" class="text-h5 black--text text--lighten-4 pl-6">
           {{ item.label }}
         </span>
@@ -48,7 +48,7 @@
       >
         <v-list-item-icon
           v-if="item.icon"
-          class="my-3 mr-0"
+          class="mr-0"
           :class="{ 'home-menu-icon': !isMini }"
         >
           <tooltip
