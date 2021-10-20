@@ -46,14 +46,18 @@ describe("Orchestration > Engagement > Create Engagement", () => {
   it("should add destination data extensions and verify the configuration", () => {
     // TODO: add a check that it requires data extension name before proceeding
     cy.get(selector.engagement.addDestination).click()
-    cy.get(selector.engagement.salesForceAddButton).click()
-    // Add new data extension name
-    cy.get(selector.engagement.dataExtensionName).eq(1).type("Testing")
-    // Close the data extension drawer
-    cy.get(selector.engagement.exitDataExtensionDrawer).click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000)
-    // Close the add destination drawer
-    cy.get(selector.engagement.exitDrawer).click()
+    cy.get("body").then(($body) => {
+      if ($body.find(selector.engagement.salesForceAddButton).length > 0) {
+        cy.get(selector.engagement.salesForceAddButton).click()
+        // Add new data extension name
+        cy.get(selector.engagement.dataExtensionName).eq(1).type("Testing")
+        // Close the data extension drawer
+        cy.get(selector.engagement.exitDataExtensionDrawer).click()
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(1000)
+        // Close the add destination drawer
+        cy.get(selector.engagement.exitDrawer).click()
+      }
+    })
   })
 })

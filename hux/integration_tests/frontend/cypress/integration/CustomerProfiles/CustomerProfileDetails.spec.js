@@ -14,6 +14,9 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
     cy.get(selector.customerProfile.customers).click()
     cy.location("pathname").should("eq", route.customerProfiles)
 
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(5000)
+
     // click on view all customer profiles button
     cy.get(selector.customerProfile.customeroverview).eq(0).click()
 
@@ -22,6 +25,9 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
 
     // TODO: remove the need to re-login
     // cy.reLogin()
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(5000)
 
     // should validate customer length card
     cy.get(selector.customerProfile.customerlength).should("exist")
