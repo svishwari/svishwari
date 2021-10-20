@@ -18,7 +18,7 @@ describe("Orchestration > Audience > Create Audience", () => {
     cy.get(selector.audiences).click()
     cy.location("pathname").should("eq", route.audiences)
     //click on add audience button
-    cy.get(selector.audience.addAudiences).click()
+    cy.get(selector.audience.addAudiences).eq(1).click()
 
     // should fill new audience name and description
     // add new audience name
