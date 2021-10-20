@@ -19,7 +19,6 @@ from huxunifylib.database.engagement_management import (
 )
 from huxunifylib.database.engagement_audience_management import (
     set_engagement_audience_destination_schedule,
-    remove_engagement_audience_destination_schedule,
 )
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.orchestration_management import (
@@ -1009,14 +1008,15 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # set the delivery schedule for the engaged audience destination
-        remove_engagement_audience_destination_schedule(
+        set_engagement_audience_destination_schedule(
             database,
             engagement_id,
             audience_id,
             destination_id,
+            None,
             user_name,
+            unset=True,
         )
-
         # TODO remove the scheduled JOB from AWS, in another PR for HUS-1148
 
         return {

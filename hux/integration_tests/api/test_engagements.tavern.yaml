@@ -164,11 +164,9 @@ stages:
     # ...and the expected response code and body
     response:
       strict: false
-      status_code: 200
+      status_code: 204
       headers:
         content-type: application/json
-      json:
-        message: !anystr
 
   - name: confirm that this engagement has been deleted
 
@@ -187,4 +185,4 @@ stages:
       headers:
         content-type: application/json
       json:
-        message: Not found
+        message: !re_search "Engagement not found."

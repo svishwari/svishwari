@@ -463,6 +463,7 @@ class EngagementAudienceDestinationSchema(Schema):
     delivery_job_id = fields.String()
     delivery_platform_config = fields.Nested(EngagementDataExtensionSchema)
     delivery_platform_type = fields.String()
+    delivery_schedule = fields.Dict()
     latest_delivery = fields.Nested(LatestDeliverySchema)
 
 
@@ -521,6 +522,7 @@ class EngagementGetSchema(Schema):
     created_by = fields.String(attribute=db_c.CREATED_BY)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
+    favorite = fields.Boolean(required=False, default=False)
 
     # pylint: disable=unused-argument
     # pylint: disable=no-self-use

@@ -26,7 +26,7 @@
               <span v-if="item.field.includes('|')">
                 <tooltip>
                   <template #label-content>
-                    <span class="font-weight-semi-bold">
+                    <span class="text--subtitle-1 font-weight-semi-bold">
                       <span
                         v-if="numericColumns.includes(item.field.split('|')[0])"
                       >
@@ -47,7 +47,7 @@
                 &nbsp;&bull;&nbsp;
                 <tooltip>
                   <template #label-content>
-                    <span class="font-weight-semi-bold">
+                    <span class="text--subtitle-1 font-weight-semi-bold">
                       <span
                         v-if="
                           percentileColumns.includes(item.field.split('|')[1])
@@ -96,7 +96,7 @@
               <span else>
                 <tooltip>
                   <template #label-content>
-                    <span class="font-weight-semi-bold">
+                    <span class="text--subtitle-1">
                       <span v-if="numericColumns.includes(item.field)">
                         {{ item.value | Numeric(true, false) }}
                       </span>
@@ -746,14 +746,12 @@ export default {
   .summary-tab-wrap {
     flex-wrap: wrap;
     ::v-deep .metric-card-wrapper {
-      border: 1px solid var(--v-zircon-base);
+      border: 1px solid var(--v-black-lighten2);
       box-sizing: border-box;
       height: 75px;
       padding: 10px;
       margin-right: 5px !important;
       .text-caption {
-        font-size: 12px;
-        line-height: 16px;
         margin: 0 !important;
       }
       .font-weight-semi-bold {

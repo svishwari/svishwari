@@ -251,18 +251,8 @@ export default {
         height: 32px !important;
         th {
           height: 32px !important;
-          font-size: 12px;
-          font-family: inherit;
-          font-style: normal;
-          font-weight: 400;
-          line-height: 8px;
           padding-top: 0px;
           padding-bottom: 0px;
-          color: var(--v-black-darken4) !important;
-          i {
-            font-size: 16px !important;
-            color: #00a3e0 !important;
-          }
         }
       }
     }

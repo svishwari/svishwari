@@ -13,6 +13,7 @@ from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
 from huxunifylib.connectors import FacebookConnector
+
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.engagement_management import (
@@ -35,6 +36,19 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform_lookalike_audience,
 )
 
+from huxunify.api.data_connectors.okta import (
+    get_token_from_request,
+    introspect_token,
+)
+from huxunify.api.data_connectors.aws import (
+    get_auth_from_parameter_store,
+)
+from huxunify.api.data_connectors.scheduler import generate_cron
+from huxunify.api.data_connectors.courier import toggle_event_driven_routers
+from huxunify.api.data_connectors.performance_metrics import (
+    get_performance_metrics,
+    generate_metrics_file,
+)
 from huxunify.api.schema.engagement import (
     EngagementPostSchema,
     EngagementGetSchema,
@@ -50,6 +64,7 @@ from huxunify.api.schema.engagement import (
     EngagementPutSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
+from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
@@ -60,18 +75,9 @@ from huxunify.api.route.decorators import (
 )
 from huxunify.api.route.utils import (
     get_db_client,
+    get_user_favorites,
 )
-from huxunify.api.data_connectors.courier import toggle_event_driven_routers
-from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.performance_metrics import (
-    get_performance_metrics,
-    generate_metrics_file,
-)
-from huxunify.api.data_connectors.aws import (
-    get_auth_from_parameter_store,
-)
-from huxunify.api.data_connectors.scheduler import generate_cron
 
 engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 
@@ -118,6 +124,18 @@ class EngagementSearch(SwaggerView):
 
         # weight the engagement status
         engagements = weighted_engagement_status(engagements)
+
+        # get user id
+        token_response = get_token_from_request(request)
+        user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
+        favorite_engagements = get_user_favorites(user_id, db_c.ENGAGEMENTS)
+
+        if favorite_engagements:
+            _ = [
+                engagement.update({api_c.FAVORITE: True})
+                for engagement in engagements
+                if engagement.get(db_c.ID) in favorite_engagements
+            ]
 
         return (
             jsonify(EngagementGetSchema().dump(engagements, many=True)),
@@ -195,10 +213,20 @@ class IndividualEngagementSearch(SwaggerView):
                         )
 
         # weight the engagement status
-        engagements = weighted_engagement_status(engagements)[0]
+        engagement = weighted_engagement_status(engagements)[0]
+
+        # get user id
+        token_response = get_token_from_request(request)
+        user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
+        favorite_engagements = get_user_favorites(user_id, db_c.ENGAGEMENTS)
+
+        engagement[api_c.FAVORITE] = (
+            favorite_engagements
+            and engagement.get(db_c.ID) in favorite_engagements
+        )
 
         return (
-            EngagementGetSchema().dump(engagements),
+            EngagementGetSchema().dump(engagement),
             HTTPStatus.OK,
         )
 

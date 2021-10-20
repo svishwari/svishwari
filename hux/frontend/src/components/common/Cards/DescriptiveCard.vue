@@ -1,42 +1,68 @@
 <template>
   <v-card
+    :outlined="disabled"
     class="descriptive-card align-center text-center rounded-lg mr-10 mb-10"
     :class="{ 'in-active': disabled }"
+    :height="height"
+    :width="width"
   >
-    <div v-if="$slots.top" class="pa-3 pb-0">
+    <div v-if="$slots.top" class="card-status pa-3 pb-0">
       <slot name="top" />
+      <v-menu close-on-click>
+        <template #activator="{ on }">
+          <v-icon
+            v-if="actionMenu"
+            class="d-flex float-right"
+            v-bind="attrs"
+            color="primary"
+            v-on="on"
+          >
+            mdi-dots-vertical
+          </v-icon>
+        </template>
+        <div class="black--text text-darken-4 cursor-pointer px-4 py-2 white">
+          Activate
+        </div>
+      </v-menu>
+      <div v-if="comingSoon" class="coming-soon d-flex float-right mt-n4">
+        Coming soon!
+      </div>
     </div>
 
-    <div v-if="icon" class="d-flex justify-center pb-4">
-      <icon :type="icon" :size="60" color="primary" class="d-block" />
+    <div v-if="icon" class="d-flex justify-center mt-2 mr-8">
+      <div class="dot">
+        <icon :type="icon" :size="44" color="primary" class="d-block" />
+      </div>
     </div>
 
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="text-h4 px-3 pb-2 text-ellipsis d-block"
+          class="text-h4 px-3 pb-2 text-ellipsis d-block title text-h4"
           :class="disabled ? 'black--text text--darken-4' : 'primary--text'"
+          :style="{ 'padding-top': !icon ? '56px' : null }"
           data-e2e="card-title"
         >
           {{ title }}
         </div>
       </template>
       <template #hover-content>
-        <span class="black--text text--darken-4">{{ title }}</span>
+        <span class="black--text text--lighten-4">{{ title }}</span>
       </template>
     </tooltip>
 
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="text-caption px-3 text-ellipsis d-block"
+          class="text-caption px-3 d-block description text-h6"
+          :style="{ 'padding-top': !icon ? '22px' : null }"
           data-e2e="card-description"
         >
           {{ description }}
         </div>
       </template>
       <template #hover-content>
-        <span class="black--text text--darken-4">{{ description }}</span>
+        <span class="black--text text--lighten-4">{{ description }}</span>
       </template>
     </tooltip>
 
@@ -63,23 +89,38 @@ export default {
       type: String,
       required: false,
     },
-
     title: {
       type: String,
       required: false,
       default: "Model Name",
     },
-
     description: {
       type: String,
       required: false,
       default: "Descriptive text for the model item chosen above",
     },
-
     disabled: {
       type: Boolean,
       required: false,
       default: false,
+    },
+    actionMenu: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    comingSoon: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    height: {
+      type: [Number, String],
+      required: true,
+    },
+    width: {
+      type: [Number, String],
+      required: true,
     },
   },
 }
@@ -90,18 +131,36 @@ export default {
   @extend .box-shadow-5;
   color: var(--v-black-darken4);
   font-weight: normal;
-  min-height: 255px;
   transition: box-shadow 0.2s;
-  width: 255px;
+  cursor: pointer;
 
   &:hover {
     @extend .box-shadow-3;
   }
   &.in-active {
     cursor: default;
+    background-color: var(--v-primary-lighten1);
     &:hover {
       @extend .box-shadow-5;
     }
+    .coming-soon {
+      width: 104px;
+      height: 28px;
+      margin-top: -12px;
+      position: absolute;
+      right: 0;
+      background: #e2eaec;
+      border-radius: 0px 12px;
+      padding: 4px;
+    }
+  }
+  .dot {
+    padding: 7px;
+    border-radius: 50%;
+    @extend .box-shadow-1;
+  }
+  .description {
+    min-height: 36px;
   }
 }
 </style>

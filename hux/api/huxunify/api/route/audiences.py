@@ -3,6 +3,8 @@ from datetime import datetime
 from http import HTTPStatus
 from pathlib import Path
 from typing import Tuple
+
+import pandas as pd
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, Response, request, jsonify
@@ -46,7 +48,7 @@ from huxunify.api.schema.utils import (
 )
 from huxunify.api.route.utils import (
     get_db_client,
-    transform_fields_generic_file,
+    do_not_transform_fields,
     logger,
     Validation,
 )
@@ -100,7 +102,7 @@ class AudienceDownload(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
-    # pylint: disable=no-self-use
+    # pylint: disable=no-self-use, too-many-locals
     @api_error_handler()
     @get_user_name()
     def get(
@@ -122,10 +124,20 @@ class AudienceDownload(SwaggerView):
         """
 
         download_types = {
-            api_c.GOOGLE_ADS: transform_fields_google_file,
-            api_c.AMAZON_ADS: transform_fields_amazon_file,
-            api_c.GENERIC_ADS: transform_fields_generic_file,
+            api_c.GOOGLE_ADS: (
+                transform_fields_google_file,
+                api_c.GOOGLE_ADS_DEFAULT_COLUMNS,
+            ),
+            api_c.AMAZON_ADS: (
+                transform_fields_amazon_file,
+                api_c.AMAZON_ADS_DEFAULT_COLUMNS,
+            ),
+            api_c.GENERIC_ADS: (
+                do_not_transform_fields,
+                api_c.GENERIC_ADS_DEFAULT_COLUMNS,
+            ),
         }
+
         if not download_types.get(download_type):
             return {
                 "message": "Invalid download type or download type not supported"
@@ -139,20 +151,47 @@ class AudienceDownload(SwaggerView):
         if not audience:
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
-        cdp = connector_cdp.ConnectorCDP(get_config().CDP_SERVICE)
-        data_batches = cdp.read_batches(
-            location_details={
-                api_c.AUDIENCE_FILTERS: audience.get(api_c.AUDIENCE_FILTERS),
-            },
-            batch_size=int(api_c.CUSTOMERS_DEFAULT_BATCH_SIZE),
-        )
+        # set transform function based on download type in request
+        transform_function = download_types.get(download_type)[0]
+
+        # get environment config
+        config = get_config()
+
+        if config.RETURN_EMPTY_AUDIENCE_FILE:
+            logger.info(
+                "%s config set to %s, will generate empty %s type audience file.",
+                api_c.RETURN_EMPTY_AUDIENCE_FILE,
+                config.RETURN_EMPTY_AUDIENCE_FILE,
+                download_type,
+            )
+            data_batches = [
+                pd.DataFrame(columns=download_types.get(download_type)[1])
+            ]
+            # change transform function to not transform any fields if config
+            # is set to download empty audience file
+            transform_function = do_not_transform_fields
+        else:
+            logger.info(
+                "%s config set to %s, will generate %s type audience file with content.",
+                api_c.RETURN_EMPTY_AUDIENCE_FILE,
+                config.RETURN_EMPTY_AUDIENCE_FILE,
+                download_type,
+            )
+            cdp = connector_cdp.ConnectorCDP(config.CDP_SERVICE)
+            data_batches = cdp.read_batches(
+                location_details={
+                    api_c.AUDIENCE_FILTERS: audience.get(
+                        api_c.AUDIENCE_FILTERS
+                    ),
+                },
+                batch_size=int(api_c.CUSTOMERS_DEFAULT_BATCH_SIZE),
+            )
 
         audience_file_name = (
             f"{datetime.now().strftime('%m%d%Y%H%M%S')}"
             f"_{audience_id}_{download_type}.csv"
         )
 
-        transform_function = download_types.get(download_type)
         with open(
             audience_file_name, "w", newline="", encoding="utf-8"
         ) as csvfile:
@@ -166,11 +205,11 @@ class AudienceDownload(SwaggerView):
         logger.info(
             "Uploading generated %s audience file to %s S3 bucket",
             audience_file_name,
-            get_config().S3_DATASET_BUCKET,
+            config.S3_DATASET_BUCKET,
         )
         if upload_file(
             file_name=audience_file_name,
-            bucket=get_config().S3_DATASET_BUCKET,
+            bucket=config.S3_DATASET_BUCKET,
             object_name=audience_file_name,
             user_name=user_name,
             file_type=api_c.AUDIENCE,

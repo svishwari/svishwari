@@ -7,6 +7,7 @@ from time import sleep
 from datetime import datetime, timedelta, timezone
 
 import pymongo
+from bson import ObjectId
 from flask import Blueprint, request, Response
 from flasgger import SwaggerView
 
@@ -15,14 +16,19 @@ from huxunifylib.database import (
     constants as db_c,
     notification_management,
 )
-from huxunify.api.schema.notifications import NotificationsSchema
+from huxunify.api.schema.notifications import (
+    NotificationsSchema,
+    NotificationSchema,
+)
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+    get_user_name,
 )
 from huxunify.api.route.utils import get_db_client, Validation
 from huxunify.api import constants as api_c
+from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 
 # setup the notifications blueprint
@@ -270,3 +276,129 @@ class NotificationStream(SwaggerView):
 
         # return the event stream response
         return Response(event_stream(), mimetype="text/event-stream")
+
+
+@add_view_to_blueprint(
+    notifications_bp,
+    f"/{api_c.NOTIFICATIONS_ENDPOINT}/<{api_c.NOTIFICATION_ID}>",
+    "NotificationSearch",
+)
+class NotificationSearch(SwaggerView):
+    """Notification search class."""
+
+    parameters = [
+        {
+            "name": api_c.NOTIFICATION_ID,
+            "in": "path",
+            "type": "string",
+            "description": "ObjectId of Notification",
+            "example": "614e14bdcc267d93d62f44f4",
+            "required": True,
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Notification Details",
+            "schema": NotificationSchema,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.NOTIFICATIONS_TAG]
+
+    @api_error_handler()
+    def get(self, notification_id: str) -> Tuple[dict, int]:
+        """Retrieves notification.
+        ---
+        security:
+            - Bearer: ["Authorization"]
+        Args:
+            notification_id (str): Notification Id
+        Returns:
+            Tuple[dict, int] dict of notifications, HTTP status code.
+        """
+        notification_id = ObjectId(notification_id)
+        notification = notification_management.get_notification(
+            get_db_client(), notification_id
+        )
+
+        if not notification:
+            logger.error(
+                "Could not find notification with id %s.",
+                notification_id,
+            )
+            return {
+                "message": api_c.NOTIFICATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
+        return (
+            NotificationSchema().dump(notification),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    notifications_bp,
+    f"{api_c.NOTIFICATIONS_ENDPOINT}/<notification_id>",
+    "DeleteNotification",
+)
+class DeleteNotification(SwaggerView):
+    """Notification Delete Class."""
+
+    parameters = [
+        {
+            "name": api_c.NOTIFICATION_ID,
+            "description": "Notification ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        }
+    ]
+    responses = {
+        HTTPStatus.NO_CONTENT.value: {
+            "description": "Deleted Notification.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to delete the notification.",
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "schema": NotFoundError,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.NOTIFICATIONS_TAG]
+
+    @get_user_name()
+    @api_error_handler()
+    def delete(
+        self, notification_id: ObjectId, user_name: str
+    ) -> Tuple[dict, int]:
+        """Deletes a notification by ID.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            notification_id (ObjectId): Notification ID.
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: message, HTTP status code.
+        """
+
+        if notification_management.delete_notification(
+            get_db_client(), ObjectId(notification_id)
+        ):
+            logger.info(
+                "Successfully deleted notification %s by user %s.",
+                notification_id,
+                user_name,
+            )
+
+            return {}, HTTPStatus.NO_CONTENT
+
+        logger.info(
+            "Could not delete notification with ID %s.", notification_id
+        )
+        return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST

@@ -22,6 +22,7 @@ MONGO_DB_USERNAME = "MONGO_DB_USERNAME"
 MONGO_DB_PASSWORD = "MONGO_DB_PASSWORD"
 OKTA_CLIENT_ID = "OKTA_CLIENT_ID"
 OKTA_ISSUER = "OKTA_ISSUER"
+RETURN_EMPTY_AUDIENCE_FILE = "RETURN_EMPTY_AUDIENCE_FILE"
 JSON_SORT_KEYS_CONST = "JSON_SORT_KEYS"
 CDP_SERVICE = "CDP_SERVICE"
 CDP_CONNECTION_SERVICE = "CDP_CONNECTION_SERVICE"
@@ -33,6 +34,11 @@ AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
 AUDIENCE_ROUTER_JOB_QUEUE_CONST = "AUDIENCE-ROUTER-JOB-QUEUE"
 CDPR_EVENT_CONST = "CDPR-EVENT"
 FLDR_EVENT_CONST = "FLDR-EVENT"
+
+# ORCH ROUTER PARAMS FOR OKTA
+UNIFIED_OKTA_REDIRECT_URI = "unified_okta_redirect_uri"
+UNIFIED_OKTA_TEST_USER_NAME = "unified_okta_test_user_name"
+UNIFIED_OKTA_TEST_USER_PW = "unified_okta_test_user_pw"
 
 # general defines
 ID = "id"
@@ -57,16 +63,13 @@ COOKIE = "cookie"
 PROP = "prop"
 ICON = "icon"
 CREATED_BY = "created_by"
-UPDATED_BY = "updated_by"
 MATCH_CONFIDENCE = "match_confidence"
 DELIVERIES = "deliveries"
 DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
 DATE_RANGE = "date_range"
 HUX_ID = "hux_id"
-TOP_FEATURES = "top_features"
 LIMIT = "limit"
-OFFSET = "offset"
 SOURCE_NAME = "source_name"
 SOURCE_SIZE = "source_size"
 SOURCE_ID = "source_id"
@@ -92,6 +95,7 @@ TOTAL_HOUSEHOLD_IDS = "total_household_ids"
 UPDATED = "updated"
 TOTAL_CUSTOMERS = "total_customers"
 NEW_CUSTOMERS_ADDED = "new_customers_added"
+CUSTOMERS_LEFT = "customers_left"
 TOTAL_COUNTRIES = "total_countries"
 TOTAL_COUNT = "total_count"
 TOTAL_STATES = "total_us_states"
@@ -225,7 +229,6 @@ AWS_BATCH_NAME = "batch"
 AWS_S3_NAME = "s3"
 
 AWS_BUCKET = "Bucket"
-AWS_KEY = "Key"
 AWS_TARGET_ID = "Id"
 AWS_TARGET_ARN = "Arn"
 AWS_TARGET_ROLE_ARN = "RoleArn"
@@ -239,7 +242,6 @@ ENABLED = "enabled"
 DISABLED = "disabled"
 SIZE = "size"
 IS_ADDED = "is_added"
-UNKNOWN = "unknown"
 DAY = "day"
 
 STATUS_NOT_DELIVERED = "Not Delivered"
@@ -278,6 +280,46 @@ DOWNLOAD_TYPE = "download_type"
 GOOGLE_ADS = "google_ads"
 AMAZON_ADS = "amazon_ads"
 GENERIC_ADS = "generic_ads"
+GOOGLE_ADS_DEFAULT_COLUMNS = [
+    "Zip",
+    "Country",
+    "First Name",
+    "Phone",
+    "Last Name",
+    "Email",
+]
+AMAZON_ADS_DEFAULT_COLUMNS = [
+    "zip",
+    "first_name",
+    "phone",
+    "last_name",
+    "state",
+    "address",
+    "email",
+]
+GENERIC_ADS_DEFAULT_COLUMNS = [
+    "hux_id",
+    "address",
+    "address_hashed",
+    "city_hashed",
+    "country_code_hashed",
+    "date_of_birth_day_hashed",
+    "date_of_birth_month_hashed",
+    "date_of_birth_year_hashed",
+    "email_address",
+    "email_address_hashed",
+    "email_preference",
+    "first_name",
+    "first_name_hashed",
+    "first_name_initial_hashed",
+    "gender_hashed",
+    "last_name",
+    "last_name_hashed",
+    "mobile_device_id",
+    "phone_number_digits_only_hashed",
+    "postal_code_hashed",
+    "state_or_province_hashed",
+]
 
 # Facebook connector defines
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
@@ -292,8 +334,6 @@ SFMC_ACCOUNT_ID = "sfmc_account_id"
 SFMC_AUTH_BASE_URI = "sfmc_auth_base_uri"
 SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
 SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
-SFMC_PERFORMANCE_EXT_NAME = "sfmc_performance_ext_name"
-SFMC_PERFORMANCE_EXT_VALUES = "sfmc_performance_ext_values"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS = "perf_data_extensions"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "perf_data_extension"
 SFMC_DATA_EXTENSION_NAME = "Name"
@@ -502,23 +542,15 @@ DESTINATION_PATCH_FIELDS = [
     db_c.NAME,
     db_c.DELIVERY_PLATFORM_TYPE,
 ]
-DESTINATION_INVALID_PATCH_MESSAGE = f"Acceptable fields are {DESTINATION_PATCH_FIELDS}."
-
-# user preferences
-PREFERENCE_KEY = "preference_key"
-PREFERENCE_KEY_DESCRIPTION = "the preference key you want to store."
-PREFERENCE_VALUE = "preference_value"
-PREFERENCE_VALUE_DESCRIPTION = "the value of the preference."
-PREFERENCE_BODY_DESCRIPTION = "Input preference body."
-FAVORITE_BODY_DESCRIPTION = "Input favorite component body."
+DESTINATION_INVALID_PATCH_MESSAGE = (
+    f"Acceptable fields are {DESTINATION_PATCH_FIELDS}."
+)
 
 ONLY_ADDED = "only_added"
 DELETE_DATASOURCES_SUCCESS = "Successfully deleted data source(s) - {}."
 
 # error messages
 CANNOT_DELETE_DATASOURCES = "Error deleting data source(s) - {}."
-CANNOT_DELETE_DESTINATIONS = "Error deleting destination(s)."
-CANNOT_UPDATE_DESTINATIONS = "Error updating destination."
 INVALID_DESTINATION_AUTH = "Invalid authentication details entered."
 AUTH401_ERROR_MESSAGE = "Access token is missing or invalid."
 BSON_INVALID_ID = (
@@ -526,16 +558,21 @@ BSON_INVALID_ID = (
     f"12-byte input or a 24-character hex string"
 )
 MESSAGE = "message"
-FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE = "Failed connecting to dependent API."
-FAILED_DEPENDENCY_ERROR_MESSAGE = "Failed to obtain data from dependent API endpoint."
+FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE = (
+    "Failed connecting to dependent API."
+)
+FAILED_DEPENDENCY_ERROR_MESSAGE = (
+    "Failed to obtain data from dependent API endpoint."
+)
 EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE = (
     "Returned empty object from dependent API endpoint."
 )
 
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
-INVALID_DELIVERY_SCHEDULE = "Delivery schedule is not valid."
 DUPLICATE_NAME = "Name already exists."
-PERFORMANCE_METRIC_DE_NOT_ASSIGNED = "Performance metrics data extension not assigned."
+PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
+    "Performance metrics data extension not assigned."
+)
 INVALID_AUTH_DETAILS = "Invalid authentication details."
 INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."
@@ -543,20 +580,23 @@ INVALID_BATCH_PARAMS = "Invalid Batch Number or Batch Size"
 
 AUDIENCE_NOT_FOUND = "Audience not found."
 DESTINATION_NOT_FOUND = "Destination not found."
+NOTIFICATION_NOT_FOUND = "Notification not found."
 ENGAGEMENT_NOT_FOUND = "Engagement not found."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported."
 SUCCESSFUL_DELIVERY_JOB_NOT_FOUND = "No successful delivery job found"
 ZERO_AUDIENCE_SIZE = "Sum of Audience(s) is zero"
 ENGAGEMENT_NO_AUDIENCES = "Engagement has no audiences."
-AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT = "Audience not attached to the engagement."
+AUDIENCE_NOT_ATTACHED_TO_ENGAGEMENT = (
+    "Audience not attached to the engagement."
+)
 DESTINATION_NOT_ATTACHED_ENGAGEMENT_AUDIENCE = (
     "Destination not attached to the engagement audience."
 )
 DELIVERY_JOBS_NOT_FOUND_TO_MAP = "No delivery jobs found to map."
+USER_NOT_FOUND = "User not found."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
-DESTINATIONS_DESCRIPTION = "Destinations API"
 DESTINATIONS_ENDPOINT = "/destinations"
 DESTINATION_ID = "destination_id"
 DESTINATION = "destination"
@@ -569,6 +609,7 @@ DESTINATION_CAMPAIGN_COUNT = "campaign_count"
 LATEST_DELIVERY = "latest_delivery"
 CONNECTION_STATUS = "connection_status"
 AUTHENTICATION_DETAILS = "authentication_details"
+DESTINATION_REFRESH = "refresh_all"
 DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
 DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
 DESTINATION_CONNECTION_FAILED = "Destination connection failed."
@@ -577,24 +618,20 @@ INVALID_COMPONENT_NAME = "Invalid component name."
 DATA_EXTENSIONS = "data-extensions"
 DATA_EXTENSION = "data_extension"
 DATA_EXTENSION_ID = "data_extension_id"
-DATA_EXTENSION_FAILED = "Unable to retrieve destination data extension."
 DATA_EXTENSION_NOT_SUPPORTED = "Data extension not supported"
 
 # Engagement fields
 ENGAGEMENT = "engagement"
 ENGAGEMENT_ID = "engagement_id"
 ENGAGEMENT_IDS = "engagement_ids"
-ENGAGEMENT_NAME = "engagement_name"
 ENGAGEMENT_ENDPOINT = "/engagements"
 ENGAGEMENT_TAG = "engagements"
 DELIVERY_TAG = "delivery"
 DELIVER = "deliver"
 DELIVERY_HISTORY = "delivery-history"
 CAMPAIGNS = "campaigns"
-CAMPAIGN_ID = "campaign_id"
 AD_SET_ID = "ad_set_id"
 AD_SET_NAME = "ad_set_name"
-DELIVERY_MOMENT = "delivery_moment"
 DELIVERY_JOB_ID = "delivery_job_id"
 AUDIENCE_PERFORMANCE = "audience-performance"
 AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
@@ -630,7 +667,6 @@ EMAIL_METRICS = [
     "unsubscribe_rate",
 ]
 SUMMARY = "summary"
-IS_MAPPED = "is_mapped"
 DELIVERED = "delivered"
 UNSUBSCRIBE = "unsubscribe"
 SPEND = "spend"
@@ -645,28 +681,15 @@ ENGAGEMENT_ID_PARAMS = [
     }
 ]
 # CDP Data Source Constants
-CDP_DATA_SOURCE_NAME = "name"
-CDP_DATA_SOURCE_CATEGORY = "category"
 CDP_DATA_SOURCE_DESCRIPTION = "CDP data source body"
-CDP_DATA_SOURCE_FEED_COUNT = "feed_count"
-CDP_DATA_SOURCE_ADDED = "is_added"
-CDP_DATA_SOURCE_ENABLED = "is_enabled"
-
-CDP_DATA_SOURCE_NAME_DESCRIPTION = "Name of the CDP data source"
-CDP_DATA_SOURCE_CATEGORY_DESCRIPTION = "Category of the CDP data source"
 
 # Authentication API fields
-AUTHENTICATION_TAG = "authenticate"
-AUTHENTICATION_DESCRIPTION = "Authentication API"
-AUTHENTICATION_ENDPOINT = "/authenticate"
-AUTHENTICATION_TOKEN = "access_token"
-CANNOT_AUTHENTICATE_USER = "Error authenticating user."
-
 AUTHENTICATION_TOKEN = "token"
 AUTHENTICATION_ACCESS_TOKEN = "access_token"
 AUTHENTICATION_TOKEN_TYPE_HINT = "token_type_hint"
-AUTHENTICATION_OKTA_CLIENT_ID = "OKTA-CLIENT-ID"
-AUTHENTICATION_OKTA_ISSUER = "OKTA-ISSUER"
+OKTA_TEST_USER_NAME = "OKTA_TEST_USER_NAME"
+OKTA_TEST_USER_PW = "OKTA_TEST_USER_PW"
+OKTA_REDIRECT_URI = "OKTA_REDIRECT_URI"
 OKTA_USER_ID = "user_id"
 OKTA_UID = "uid"
 OKTA_ID_SUB = "sub"
@@ -679,7 +702,6 @@ ORCHESTRATION_TAG = "orchestration"
 AUDIENCE = "audience"
 AUDIENCE_ID = "audience_id"
 AUDIENCE_IDS = "audience_ids"
-SOURCE_AUDIENCE_ID = "source_audience_id"
 AUDIENCE_NAME = "name"
 AUDIENCE_FILTERS = "filters"
 AUDIENCE_SECTION_AGGREGATOR = "section_aggregator"
@@ -691,11 +713,8 @@ AUDIENCE_FILTER_TYPE = "type"
 AUDIENCE_FILTER_VALUE = "value"
 AUDIENCE_LAST_DELIVERED = "last_delivered"
 AUDIENCE_ENGAGEMENTS = "engagements"
-AUDIENCE_SIZE = "audience_size"
 AUDIENCE_SIZE_PERCENTAGE = "audience_size_percentage"
-AUDIENCE_STATUS = "audience_status"
 AUDIENCE_ROUTER_STUB_TEST = "AUDIENCE_ROUTER_STUB_TEST"
-AUDIENCE_ROUTER_STUB_VALUE = "1"
 AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
 AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
 LOOKALIKE_AUDIENCES = "lookalike_audiences"
@@ -705,45 +724,30 @@ IS_LOOKALIKE = "is_lookalike"
 
 PARAM_STORE_PREFIX = "unified"
 PARAMETER_STORE_ERROR_MSG = (
-    "An error occurred while attempting to" " store secrets in the parameter store."
+    "An error occurred while attempting to"
+    " store secrets in the parameter store."
 )
+
 # users
 USER_TAG = "user"
 USER_NAME = "user_name"
+DISPLAY_NAME = "display_name"
+USER_PHONE_NUMBER = "phone_number"
+USER_ACCESS_LEVEL = "access_level"
 USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
 FAVORITES = "favorites"
 PROFILE = "profile"
+
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
 MODELS_TAG = "model"
-MODELS_DESCRIPTION = "MODEL API"
 MODELS_ENDPOINT = "/models"
 MODELS_VERSION_HISTORY = "version-history"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
 MODEL_ID = "model_id"
-MODEL_NAME_PARAMS = [
-    {
-        "name": MODEL_NAME,
-        "description": "Model name.",
-        "type": "string",
-        "in": "path",
-        "required": True,
-        "example": "churn",
-    },
-]
-MODEL_TYPE_PARAMS = [
-    {
-        "name": MODEL_TYPE,
-        "description": "Model type",
-        "type": "string",
-        "in": "path",
-        "required": True,
-        "example": "ltv",
-    }
-]
 MODEL_ID_PARAMS = [
     {
         "name": MODEL_ID,
@@ -762,7 +766,7 @@ RECALL = "recall"
 CURRENT_VERSION = "current_version"
 PRECISION = "precision"
 PERFORMANCE_METRIC = "performance_metric"
-FEATURE_IMPORTANCE = "feature_importance"
+FEATURE_IMPORTANCE = "feature-importance"
 SCORE = "score"
 FEATURE_MODEL_HISTORY = "ui_metadata_model_history_service_mock"
 FEATURE_TOP_SERVICE = "ui_metadata_model_top_features_service_mock"
@@ -790,7 +794,6 @@ LAST_TRAINED = "last_trained"
 LOOKBACK_WINDOW = "lookback_window"
 PREDICTION_WINDOW = "prediction_window"
 PAST_VERSION_COUNT = "past_version_count"
-LIFT_DATA = "lift_data"
 FEATURE_SERVICE = "feature_service"
 DATA_SOURCE = "data_source"
 POPULARITY = "popularity"
@@ -810,22 +813,15 @@ CLASSIFICATION_MODELS = [UNSUBSCRIBE, PURCHASE]
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
-CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 CDP_DATA_SOURCE_IDS = "data_source_ids"
 CDP_DATA_SOURCE_TYPE = "datasource_type"
 
-# Monitoring
-METRICS = "metrics"
-METRICS_ENDPOINT = "/metrics"
-
 # Customers
-CUSTOMER_ID = "customer_id"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_TAG = "customers"
 CUSTOMERS_INSIGHTS = "customers-insights"
 GEOGRAPHICAL = "geo"
-CUSTOMERS_DESCRIPTION = "Customers API"
 CUSTOMERS_API_HEADER_KEY = "x-api-key"
 CUSTOMERS_DEFAULT_BATCH_SIZE = 1000
 CUSTOMER_COUNT = "customer_count"
@@ -835,9 +831,10 @@ CITIES_DEFAULT_BATCH_SIZE = 100
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
-NOTIFICATIONS_DESCRIPTION = "Notifications API"
+NOTIFICATION_ID = "notification_id"
 NOTIFICATIONS_ENDPOINT = "/notifications"
 NOTIFICATION_STREAM_TIME_SECONDS = 60
+
 NOTIFICATION_CATEGORIES = [
     "engagements",
     "delivery",
@@ -855,7 +852,9 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
     "filters": [
         {
             "section_aggregator": "ALL",
-            "section_filters": [{"field": "country", "type": "equals", "value": "US"}],
+            "section_filters": [
+                {"field": "country", "type": "equals", "value": "US"}
+            ],
         }
     ]
 }
@@ -864,27 +863,6 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
 DATA_FEEDS = "data_feeds"
-DATA_FEED = "datafeed"
-INPUT_RECORDS = "input_records"
-OUTPUT_RECORDS = "output_records"
-EMPTY_RECORDS = "empty_records"
-INDIVIDUAL_ID_MATCH = "individual_id_match"
-HOUSEHOLD_ID_MATCH = "household_id_match"
-COMPANY_ID_MATCH = "company_id_match"
-ADDRESS_ID_MATCH = "address_id_match"
-DB_READS = "db_reads"
-DB_WRITES = "db_writes"
-FILENAME = "filename"
-NEW_INDIVIDUAL_IDS = "new_individual_ids"
-NEW_HOUSEHOLD_IDS = "new_household_ids"
-NEW_COMPANY_IDS = "new_company_ids"
-NEW_ADDRESS_IDS = "new_address_ids"
-PROCESS_TIME = "process_time"
-DATE_TIME = "date_time"
-DIGITAL_IDS_ADDED = "digital_ids_added"
-DIGITAL_IDS_MERGED = "digital_ids_merged"
-MERGE_RATE = "merge_rate"
-RECORDS_SOURCE = "records_source"
 TIMESTAMP = "timestamp"
 STITCHED = "stitched"
 PINNING = "pinning"
@@ -896,25 +874,12 @@ KNOWN_IDS = "known_ids"
 UNIQUE_HUX_IDS = "unique_hux_ids"
 ANONYMOUS_IDS = "anonymous_ids"
 
-KNOWN_IDS_MIN_COUNT = 50000
-KNOWN_IDS_MAX_COUNT = 79000
-KNOWN_IDS_LAMBDA = 1.6
-
-UNIQUE_HUX_IDS_MIN_COUNT = 100000
-UNIQUE_HUX_IDS_MAX_COUNT = 156000
-UNIQUE_HUX_IDS_LAMBDA = 1.5
-
-ANONYMOUS_IDS_MIN_COUNT = 79000
-ANONYMOUS_IDS_MAX_COUNT = 120000
-ANONYMOUS_IDS_LAMBDA = 5
-
 # IDR Data feeds
 DATAFEED_ID = "datafeed_id"
 DATAFEED_DATA_SOURCE_TYPE = "datasource_name"
 DATAFEED_DATA_SOURCE_NAME = "datasource_label"
 DATAFEED_NEW_IDS_COUNT = "new_ids_generated"
 DATAFEED_RECORDS_PROCESSED_COUNT = "total_rec_processed"
-DATAFEED_LAST_RUN_DATE = "timestamp"
 PINNING_TIMESTAMP = "pinning_timestamp"
 STITCHED_TIMESTAMP = "stitched_timestamp"
 
@@ -942,64 +907,12 @@ CUSTOMER_PROFILE_REDACTED_FIELDS = [
     ZIP,
 ]
 
-MOCK_CUSTOMER_PROFILE_RESPONSE = {
-    "id": "1531-2039-22",
-    "first_name": "Bertie",
-    "last_name": "Fox",
-    "match_confidence": 0.96666666661,
-    "since": "2020-02-20T20:02:02.202000Z",
-    "ltv_actual": 60.22,
-    "ltv_predicted": 59.55,
-    "conversion_time": "2020-02-20T20:02:02.202000Z",
-    "churn_rate": 5,
-    "last_click": "2020-02-20T20:02:02.202000Z",
-    "last_purchase": "2020-02-20T20:02:02.202000Z",
-    "last_email_open": "2020-02-20T20:02:02.202000Z",
-    "email": "bertiefox@mail.com",
-    "phone": "(555)555-1231",
-    "age": 53,
-    "gender": "Female",
-    "address": "4364 Pursglove Court",
-    "city": "Dayton",
-    "state": "Ohio",
-    "zip": "45402-1317",
-    "preference_email": False,
-    "preference_push": False,
-    "preference_sms": False,
-    "preference_in_app": False,
-    "identity_resolution": {
-        "name": {
-            "percentage": "0.26",
-            "data_sources": [
-                {
-                    "id": "585t749997acad4bac4373b",
-                    "name": "Adobe Experience",
-                    "type": "adobe-experience",
-                    "percentage": 0.49,
-                },
-                {
-                    "id": "685t749997acad4bac4373b",
-                    "name": "Google Analytics",
-                    "type": "google-analytics",
-                    "percentage": 0.51,
-                },
-            ],
-        },
-        "address": {"percentage": 0.2, "data_sources": []},
-        "email": {"percentage": 0.34, "data_sources": []},
-        "phone": {"percentage": 0.1, "data_sources": []},
-        "cookie": {"percentage": 0.1, "data_sources": []},
-    },
-    "propensity_to_unsubscribe": 1,
-    "propensity_to_purchase": 0,
-}
-
 # Alerts Fields
 DEFAULT_BATCH_SIZE = 5
-DEFAULT_ALERT_SORT_ORDER = "descending"
 DEFAULT_BATCH_NUMBER = 1
 
 NOTIFICATION_TYPE = "notification_type"
+NOTIFICATION_ID = "notification_id"
 
 # health check prometheus metric constants
 MONGO_CONNECTION_HEALTH = "mongo_connection_health"
@@ -1008,7 +921,9 @@ OKTA_CONNECTION_HEALTH = "okta_connection_health"
 AWS_SSM_CONNECTION_HEALTH = "aws_ssm_connection_health"
 AWS_BATCH_CONNECTION_HEALTH = "aws_batch_connection_health"
 CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
-CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = "cdm_connection_service_connection_health"
+CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
+    "cdm_connection_service_connection_health"
+)
 
 # CDM API constants
 CDM_CONNECTIONS_ENDPOINT = "connections"
@@ -1075,7 +990,7 @@ RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
 
-CUSTOMER_IDR_TEST_DATE = {
+CUSTOMER_IDR_TEST_DATA = {
     "name": {
         "data_sources": [
             {
