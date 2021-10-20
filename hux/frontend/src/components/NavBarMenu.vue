@@ -41,8 +41,7 @@ export default {
     &.v-divider--vertical {
       border: 0;
       border-left: 1px solid var(--v-black-lighten3);
-      margin-right: 9px;
-      margin-left: 9px;
+      margin-right: 16px;
     }
   }
 }
