@@ -46,7 +46,7 @@ describe("Tests Audience", () => {
 
   it("check if menu options are working", () => {
     cy.get(selector.audience.audiencenameclick)
-      .eq(2)
+      .eq(0)
       .find("button")
       .eq(1)
       .click({ force: true })
@@ -55,12 +55,12 @@ describe("Tests Audience", () => {
 
   it("check if favourite option is working", () => {
     cy.get(selector.audience.audiencenameclick)
-      .eq(2)
+      .eq(0)
       .find("button")
       .eq(0)
       .click({ force: true })
     cy.get(selector.audience.audiencenameclick)
-      .eq(2)
+      .eq(0)
       .find("button")
       .eq(0)
       .should("have.class", "mr-3 fixed-icon")

@@ -296,6 +296,7 @@
               is-tile
               width="94"
               height="40"
+              data-e2e="cancel-audience"
               @click.native="
                 flagForModal = true
                 $router.go(-1)

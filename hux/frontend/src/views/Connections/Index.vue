@@ -35,13 +35,14 @@
           class="text-decoration-none"
         >
           <huxButton
-            icon="mdi-plus"
-            icon-position="left"
-            variant="primary"
+            variant="primary base"
+            icon-color="white"
+            icon-variant="base"
+            icon="plus"
             size="small"
-            icon-size="small"
-            :is-tile="true"
-            class="ma-2 text-h6 font-weight-regular"
+            is-custom-icon
+            is-tile
+            class="ma-2 caption font-weight-regular"
           >
             Destination
           </huxButton>
@@ -52,11 +53,13 @@
         >
           <huxButton
             button-text="Data source"
-            icon="mdi-plus"
-            icon-position="left"
-            variant="primary"
+            variant="primary base"
+            icon-color="white"
+            icon-variant="base"
+            icon="plus"
             size="small"
-            :is-tile="true"
+            is-custom-icon
+            is-tile
             class="ma-2 text-h6 font-weight-regular"
           >
             Data source
