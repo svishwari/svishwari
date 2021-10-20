@@ -205,7 +205,617 @@
     <huxButton variant="white" is-tile enable-loading class="ma-2">
       Loader
     </huxButton>
+    <v-divider class="mt-10" />
+    <v-subheader> New Updated Button </v-subheader>
+    <div>
+      <span class="pr-12">
+        <huxButton
+          variant="primary base"
+          icon-color="white"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="100"
+          height="40"
+        >
+          CTA
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="primary base"
+          icon-color="white"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="110"
+          height="35"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary base"
+          icon-color="white"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="99"
+          height="30"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary base"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="40"
+        >
+          CTA
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="primary base"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="35"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary base"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="30"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary base"
+          class="ma-2 subtitle-2"
+          is-tile
+          width="71"
+          height="24"
+        >
+          CTA
+        </huxButton>
+      </span>
+    </div>
 
+    <div>
+      <span class="pr-12">
+        <huxButton
+          variant="primary lighten-6"
+          icon-color="white"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="100"
+          height="40"
+        >
+          CTA
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="primary lighten-6"
+          icon-color="white"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="110"
+          height="35"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary lighten-6"
+          icon-color="white"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="99"
+          height="30"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary lighten-6"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="40"
+        >
+          CTA
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="primary lighten-6"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="35"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary lighten-6"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="30"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary lighten-6"
+          class="ma-2 subtitle-2"
+          is-tile
+          width="71"
+          height="24"
+        >
+          CTA
+        </huxButton>
+      </span>
+    </div>
+
+    <div>
+      <span class="pr-12">
+        <huxButton
+          variant="black lighten-1"
+          icon-color="black"
+          icon-variant="lighten3"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="100"
+          height="40"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="black lighten-1"
+          icon-color="black"
+          icon-variant="lighten3"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="110"
+          height="35"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="black lighten-1"
+          icon-color="black"
+          icon-variant="lighten3"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="99"
+          height="30"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="black lighten-1"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="40"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="black lighten-1"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="35"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="black lighten-1"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="30"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="black lighten-1"
+          class="ma-2 subtitle-2"
+          is-tile
+          width="71"
+          height="24"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+      </span>
+    </div>
+
+    <div>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          icon-color="primary"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="100"
+          height="40"
+        >
+          <span class="primary--text">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          icon-color="primary"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="110"
+          height="35"
+        >
+          <span class="primary--text">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          icon-color="primary"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="99"
+          height="30"
+        >
+          <span class="primary--text">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="40"
+        >
+          <span class="primary--text">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="35"
+        >
+          <span class="primary--text">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="30"
+        >
+          <span class="primary--text">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 subtitle-2"
+          is-tile
+          width="71"
+          height="24"
+        >
+          <span class="primary--text">CTA</span>
+        </huxButton>
+      </span>
+    </div>
+
+    <div>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          icon-color="primary"
+          icon-variant="lighten6"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="100"
+          height="40"
+        >
+          <span class="primary--text text--lighten-6">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          icon-color="primary"
+          icon-variant="lighten6"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="110"
+          height="35"
+        >
+          <span class="primary--text text--lighten-6">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          icon-color="primary"
+          icon-variant="lighten6"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="99"
+          height="30"
+        >
+          <span class="primary--text text--lighten-6">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="40"
+        >
+          <span class="primary--text text--lighten-6">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="35"
+        >
+          <span class="primary--text text--lighten-6">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="30"
+        >
+          <span class="primary--text text--lighten-6">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 subtitle-2"
+          is-tile
+          width="71"
+          height="24"
+        >
+          <span class="primary--text text--lighten-6">CTA</span>
+        </huxButton>
+      </span>
+    </div>
+
+    <div>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          icon-color="black"
+          icon-variant="lighten3"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="100"
+          height="40"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          icon-color="black"
+          icon-variant="lighten3"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="110"
+          height="35"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          icon-color="black"
+          icon-variant="lighten3"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="99"
+          height="30"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="40"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="35"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="30"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 subtitle-2"
+          is-tile
+          width="71"
+          height="24"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+      </span>
+    </div>
+
+    <div>
+      <span class="pr-3">
+        <huxButton
+          variant="success"
+          icon="check-bold"
+          is-custom-icon
+          size="x-large"
+          is-tile
+          class="ma-2 caption"
+          icon-color="white"
+          icon-variant="base"
+          width="134"
+          height="40"
+          :icon-size="12"
+        >
+          Success!
+        </huxButton>
+      </span>
+      <span class="pr-2">
+        <huxButton
+          variant="primary base"
+          icon="keyboard-return"
+          is-custom-icon
+          class="ma-2 caption"
+          size="large"
+          is-tile
+          icon-color="white"
+          icon-variant="base"
+          width="214"
+          height="40"
+          :icon-size="16"
+        >
+          Back to Main Page
+        </huxButton>
+      </span>
+      <span class="pr-3">
+        <huxButton
+          class="ma-2 linear-class caption"
+          is-tile
+          width="79"
+          height="40"
+        >
+          CTA
+        </huxButton>
+      </span>
+    </div>
+
+    <v-subheader> Drawer/Add </v-subheader>
+    <div>
+      <huxButton
+        size="x-small"
+        variant="white"
+        width="79"
+        height="40"
+        class="ma-2 caption"
+      >
+        Add
+      </huxButton>
+      <huxButton
+        variant="primary lighten-6"
+        width="102"
+        height="40"
+        size="large"
+        icon-color="white"
+        icon-variant="base"
+        icon="drawer-add-tick"
+        is-custom-icon
+        class="ma-2 caption"
+      >
+        Added
+      </huxButton>
+
+      <huxButton
+        variant="black lighten-1"
+        width="102"
+        height="40"
+        size="large"
+        icon="drawer-add-tick"
+        is-custom-icon
+        icon-color="black"
+        icon-variant="lighten3"
+        icon-size="15"
+        class="ma-2 caption"
+      >
+        <span class="black--text text--lighten-3">Added</span>
+      </huxButton>
+      <huxButton
+        variant="primary lighten-6"
+        width="128"
+        height="40"
+        size="large"
+        icon="drawer-add-tick"
+        icon-color="white"
+        icon-variant="base"
+        is-custom-icon
+        icon-size="15"
+        class="ma-2 caption"
+      >
+        Requested
+      </huxButton>
+
+      <huxButton variant="white" width="112" height="40" class="ma-2 caption">
+        Request
+      </huxButton>
+    </div>
     <v-divider class="mt-10" />
 
     <v-subheader> Select Dropdown </v-subheader>
@@ -1470,5 +2080,8 @@ export default {
 }
 .gender-chart {
   width: 255px;
+}
+.linear-class {
+  background: linear-gradient(270deg, #43b02a, #00a3e0, #005587) !important;
 }
 </style>
