@@ -158,7 +158,6 @@ export default {
       let applyNumericFilter = (value) =>
         this.emptyState ? "-" : this.$options.filters.Numeric(value, true, true)
 
-
       svg
         .append("g")
         .classed("xAxis-main", true)
