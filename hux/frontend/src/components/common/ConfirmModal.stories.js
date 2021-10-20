@@ -32,6 +32,7 @@ export default {
     rightBtnText: { control: { type: "text" } },
     leftBtnText: { control: { type: "text" } },
     onConfirm: { action: "Confirmed" },
+    onCancel: { action: "Cancelled" },
   },
 
   args: {
@@ -70,7 +71,6 @@ const Template = (args, { argTypes }) => ({
       @onCancel="openModal = !openModal"
       @onConfirm="openModal = !openModal"
     >
-    <template #body>${args.body}</template>
     
     </confirm-modal>
     <hux-button @click="openModal = true"> Open Modal</hux-button>
@@ -78,22 +78,16 @@ const Template = (args, { argTypes }) => ({
 })
 
 export const BasicModal = Template.bind({})
-export const Template1 = Template.bind({})
-Template1.args = {
-  body: `<div
-          class="
-            black--text
-            text--darken-4 text-subtitle-1
-            pt-6
-            font-weight-regular
-          "
-        >
-          Are you sure you want to delete this audience&#63;
-        </div>
-        <div
-          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
-        >
-          By deleting this audience you will not be able to recover it and it
-          may impact any associated engagements.
-        </div>`,
+export const InfoModal = Template.bind({})
+InfoModal.args = {
+  body: "Are you sure you want to delete this audience? By deleting this audience you will not be able to recover it and it may impact any associated engagements.",
+}
+
+export const ErrorModal = Template.bind({})
+ErrorModal.args = {
+  icon: "sad-face",
+  type: "error",
+  title: "Action Word",
+  subTitle: "(i.e. Remove) ___________?",
+  body: "Are you sure you want to stop the configuration and go to another page? You will not be able to recover it but will need to start the process again.",
 }
