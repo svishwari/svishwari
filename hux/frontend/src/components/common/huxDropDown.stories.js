@@ -81,9 +81,9 @@ const Template = (args, { argTypes }) => ({
 
   template: `
     <hux-dropdown
-      v-bind="$props" v-on="$props"
+      v-bind="$props" 
+      v-on="$props"
       @on-select="onSelectMenuItem"
-
     />
   `,
 })

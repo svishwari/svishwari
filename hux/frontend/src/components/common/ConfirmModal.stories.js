@@ -70,10 +70,8 @@ const Template = (args, { argTypes }) => ({
       v-on="$props"
       @onCancel="openModal = !openModal"
       @onConfirm="openModal = !openModal"
-    >
-    
-    </confirm-modal>
-    <hux-button @click="openModal = true"> Open Modal</hux-button>
+    />
+      <hux-button @click="openModal = true"> Open Modal</hux-button>
     </div>`,
 })
 
