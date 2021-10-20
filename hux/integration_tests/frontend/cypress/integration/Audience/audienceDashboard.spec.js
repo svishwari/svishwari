@@ -99,7 +99,7 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
       .last()
       .trigger("mouseover", { force: true, eventConstructor: "MouseEvent" })
 
-    // should be able to open and validate deliver history
+    // should be able to open and validate delivery history
     cy.get(selector.audience.deliveryhistory).click()
 
     cy.get(selector.audience.deliveryhistorydrawer)

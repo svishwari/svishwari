@@ -107,10 +107,8 @@ export function makeServer({ environment = "development" } = {}) {
       // the access token with one provided by dev in token.js
       if (environment === "development" && config.apiUrl.includes("dev1.in")) {
         this.passthrough((request) => {
-          // if (request.url.includes("dev1.in")) {
           const { TOKEN_OVERRIDE } = require("./token.js")
           request.requestHeaders["Authorization"] = `Bearer ${TOKEN_OVERRIDE}`
-          // }
           return request
         })
       }

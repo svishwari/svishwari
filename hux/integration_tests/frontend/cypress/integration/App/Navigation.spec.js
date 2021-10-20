@@ -23,6 +23,7 @@ describe("View Navigation", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
     // once menu drop down get open click on the contact us menu
+    // TODO: look into failing assertion when opening the mailto link
     // cy.get(selector.navigation.contactus).click()
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
