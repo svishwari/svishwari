@@ -206,6 +206,7 @@ delivery_platforms_constants = [
     {
         c.DELIVERY_PLATFORM_NAME: "Salesforce Marketing Cloud",
         c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_SFMC,
+        c.CATEGORY: c.MARKETING,
         c.STATUS: c.ACTIVE,
         c.ENABLED: True,
         c.ADDED: False,
@@ -214,6 +215,7 @@ delivery_platforms_constants = [
     {
         c.DELIVERY_PLATFORM_NAME: "Facebook",
         c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_FACEBOOK,
+        c.CATEGORY: c.ADVERTISING,
         c.STATUS: c.ACTIVE,
         c.ENABLED: True,
         c.ADDED: False,
@@ -222,6 +224,7 @@ delivery_platforms_constants = [
     {
         c.DELIVERY_PLATFORM_NAME: "Google Ads",
         c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_GOOGLE,
+        c.CATEGORY: c.ADVERTISING,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
@@ -230,6 +233,7 @@ delivery_platforms_constants = [
     {
         c.DELIVERY_PLATFORM_NAME: "Amazon Advertising",
         c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_AMAZON,
+        c.CATEGORY: c.ADVERTISING,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
@@ -238,6 +242,7 @@ delivery_platforms_constants = [
     {
         c.DELIVERY_PLATFORM_NAME: "Adobe Experience",
         c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_ADOBE,
+        c.CATEGORY: c.MARKETING,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
@@ -246,6 +251,7 @@ delivery_platforms_constants = [
     {
         c.DELIVERY_PLATFORM_NAME: "Sendgrid by Twilio",
         c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_SENDGRID,
+        c.CATEGORY: c.MARKETING,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
@@ -254,6 +260,7 @@ delivery_platforms_constants = [
     {
         c.DELIVERY_PLATFORM_NAME: "SAP",
         c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_SAP,
+        c.CATEGORY: c.COMMERCE,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
@@ -262,14 +269,7 @@ delivery_platforms_constants = [
     {
         c.DELIVERY_PLATFORM_NAME: "Qualtrics",
         c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_QUALTRICS,
-        c.STATUS: c.PENDING,
-        c.ENABLED: False,
-        c.ADDED: False,
-        c.IS_AD_PLATFORM: False,
-    },
-    {
-        c.DELIVERY_PLATFORM_NAME: "Litmus",
-        c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_LITMUS,
+        c.CATEGORY: c.SURVEY,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
@@ -278,6 +278,7 @@ delivery_platforms_constants = [
     {
         c.DELIVERY_PLATFORM_NAME: "Fullstory",
         c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_FULLSTORY,
+        c.CATEGORY: c.ANALYTICS,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
@@ -286,6 +287,7 @@ delivery_platforms_constants = [
     {
         c.DELIVERY_PLATFORM_NAME: "QuantumMetric",
         c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_QUANTUMMETRIC,
+        c.CATEGORY: c.ANALYTICS,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
@@ -294,14 +296,7 @@ delivery_platforms_constants = [
     {
         c.DELIVERY_PLATFORM_NAME: "Medallia",
         c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_MEDALLIA,
-        c.STATUS: c.PENDING,
-        c.ENABLED: False,
-        c.ADDED: False,
-        c.IS_AD_PLATFORM: False,
-    },
-    {
-        c.DELIVERY_PLATFORM_NAME: "Mailchimp",
-        c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_MAILCHIMP,
+        c.CATEGORY: c.SURVEY,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,

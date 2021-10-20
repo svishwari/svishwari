@@ -67,6 +67,8 @@ def get_engagement_audience_destination_id(
 
     for json in response.json():
         for audience in json["audiences"]:
+            if "name" not in audience:
+                continue
             for destination in audience["destinations"]:
                 return Box(
                     {
@@ -118,13 +120,13 @@ def get_campaign_mapping_details(response: object) -> Union[Box, None]:
         Box: campaign, delivery_job
     """
 
-    for json in response.json():
-        return Box(
-            {
-                "campaign": json["campaigns"][0],
-                "delivery_job": json["delivery_jobs"][0],
-            }
-        )
+    json = response.json()
+    return Box(
+        {
+            "campaign": json["campaigns"][0],
+            "delivery_job": json["delivery_jobs"][0],
+        }
+    )
 
 
 def get_destination_by_name(

@@ -574,6 +574,7 @@ def update_delivery_platform(
     deleted: bool = None,
     performance_de: dict = None,
     is_ad_platform: bool = None,
+    status: str = None,
 ) -> Union[dict, None]:
     """A function to update delivery platform configuration.
 
@@ -591,6 +592,7 @@ def update_delivery_platform(
         deleted (bool): if the delivery platform is deleted (soft-delete).
         performance_de (dict): Performance Data Extension for only SFMC.
         is_ad_platform (bool): If the delivery platform is an AD platform.
+        status (str): Connection status
 
     Returns:
         Union[dict, None]: Updated delivery platform configuration.
@@ -641,7 +643,9 @@ def update_delivery_platform(
 
     if added is not None:
         update_doc[c.ADDED] = added
-        update_doc[c.DELIVERY_PLATFORM_STATUS] = c.STATUS_SUCCEEDED
+
+    if status is not None:
+        update_doc[c.DELIVERY_PLATFORM_STATUS] = status
 
     if enabled is not None:
         update_doc[c.ENABLED] = enabled

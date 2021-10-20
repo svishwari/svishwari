@@ -1,65 +1,43 @@
 <template>
   <div class="list-wrapper">
-    <!-- <div class="d-flex align-end mb-4">
-      <icon type="destinations" :size="20" color="black-darken4" />
-      <h5 class="text-h4 ml-2 mt-1">Destinations</h5>
-      <router-link
-        :to="{ name: 'DestinationConfiguration' }"
-        class="text-decoration-none"
-        data-e2e="addDestination"
-      >
-        <icon class="add-icon cursor-pointer" type="add" :size="27" />
-      </router-link>
-    </div> -->
-     <v-row >
-    <template v-if="hasAddedDestinations">
-<descriptive-card
-         v-for="destination in addedDestinations"
-           :key="destination.id"
-           :icon="destination.type"
-           :iconColor="'white'"
+    <v-row v-if="hasAddedDestinations">
+      <template>
+        <descriptive-card
+          v-for="destination in addedDestinations"
+          :key="destination.id"
+          :icon="destination.type"
+          :iconColor="'white'"
           :title="destination.name"
           :description="''"
-          :disabled="destination.status !== 'Active'"
+          :disabled="destination.status !== 'Succeeded'"
+          :action-menu="true"
+          :coming-soon="false"
+          height="225"
+          width="255"
           class="mr-10 model-desc-card"
         >
-<template slot="top">
+          <template slot="top">
             <status
               :icon-size="18"
               :status="destination.status || ''"
               collapsed
-              class="d-flex"
+              class="d-flex float-left"
               data-e2e="model-status"
             />
           </template>
-       </descriptive-card>
-    </template>
-     </v-row>
-    <template v-if="hasAddedDestinations">
-      <card-horizontal
-        v-for="destination in addedDestinations"
-        :key="destination.id"
-        :title="destination.name"
-        :icon="destination.type"
-        hide-button
-        data-e2e="destinationsList"
-        class="mb-3 list pr-7"
-      >
-        <v-menu left offset-y close-on-click>
-          <template #activator="{ on }">
-            <v-icon color="black darken-4" v-on="on">
-              mdi-dots-vertical
-            </v-icon>
+          <template slot="menu-item">
+            <v-list class="list-wrapper list-padding">
+              <v-list-item-group>
+                <v-list-item @click="openModal(destination)">
+                  <v-list-item-title> Remove </v-list-item-title>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
           </template>
-          <div
-            class="black--text text-darken-4 cursor-pointer px-4 py-2 white"
-            @click="openModal(destination)"
-          >
-            Remove
-          </div>
-        </v-menu>
-      </card-horizontal>
-    </template>
+        </descriptive-card>
+      </template>
+    </v-row>
+
     <empty-state-data v-else>
       <template #icon> mdi-alert-circle-outline </template>
       <template #title> Oops! There’s nothing here yet </template>
@@ -77,6 +55,7 @@
       title="You are about to remove"
       :sub-title="`${selectedDestination.name}`"
       right-btn-text="Yes, remove it"
+      data-e2e="remove-destination-confirm"
       @onCancel="confirmModal = !confirmModal"
       @onConfirm="confirmRemoval()"
     >
@@ -112,6 +91,7 @@ import ConfirmModal from "@/components/common/ConfirmModal"
 import EmptyStateData from "@/components/common/EmptyStateData"
 import Icon from "@/components/common/Icon"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
+import Status from "@/components/common/Status"
 
 export default {
   name: "DestinationsList",
@@ -121,7 +101,8 @@ export default {
     ConfirmModal,
     EmptyStateData,
     Icon,
-    DescriptiveCard
+    DescriptiveCard,
+    Status,
   },
 
   data() {
@@ -178,5 +159,8 @@ export default {
       cursor: auto;
     }
   }
+}
+.list-padding {
+  padding: 0px !important;
 }
 </style>

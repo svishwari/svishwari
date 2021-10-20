@@ -162,6 +162,7 @@ export default {
           text: "30 day avg",
           value: "thirty_days_avg",
           width: "100",
+          hoverTooltip: "The value indicates the average % of records processed in the past 30 days"
         },
         {
           text: "Last processed",
@@ -198,10 +199,10 @@ export default {
     breadcrumbItems() {
       return [
         {
-          text: "Connections",
+          text: "Data Sources",
           disabled: false,
-          href: this.$router.resolve({ name: "Connections" }).href,
-          icon: "connections",
+          href: this.$router.resolve({ name: "DataSources" }).href,
+          icon: "data-source",
         },
         {
           text: this.selectedDataSource.name,

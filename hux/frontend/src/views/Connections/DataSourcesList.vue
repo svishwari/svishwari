@@ -1,99 +1,64 @@
 <template>
   <div class="list-wrapper">
-    <!-- <div class="d-flex align-end mb-4">
-      <icon type="data-sources-list" :size="20" color="black-darken4" />
-      <h5 class="text-h4 ml-2 mt-1">Data Sources</h5>
-      <span data-e2e="addDataSource" @click="$emit('onAddDatasource')">
-        <icon class="add-icon cursor-pointer" type="add" :size="27" />
-      </span>
-    </div> -->
-    <v-row >
-    <template v-if="hasAddedDatasources">
-
-       <descriptive-card
+    <v-row v-if="hasAddedDatasources">
+      <template>
+        <descriptive-card
           v-for="dataSource in addedDataSources"
           :key="dataSource.id"
-           :icon="dataSource.type"
+          :icon="dataSource.type"
           :title="dataSource.name"
           :description="''"
           :disabled="dataSource.status !== 'Active'"
-           :action-menu="true"
-            :coming-soon="false"
+          :action-menu="dataSource.status !== 'Active' ? true : false"
+          :coming-soon="false"
+          :dotOption="'Remove'"
           class="mr-10 model-desc-card"
-            :to="
-          dataSource.status === 'Active'
-            ? {
-                name: 'DataSourceListing',
-                params: { id: dataSource.id },
-              }
-            : undefined
-        "
+          height="225"
+          width="255"
+          :to="
+            dataSource.status === 'Active'
+              ? {
+                  name: 'DataSourceListing',
+                  params: { id: dataSource.id },
+                }
+              : undefined
+          "
         >
-<template slot="top">
+          <template slot="top">
             <status
               :icon-size="18"
-              :status="dataSource.status || ''"
+              :status="
+                dataSource.status === 'Pending'
+                  ? 'Requested'
+                  : dataSource.status || ''
+              "
               collapsed
-              class="d-flex"
+              class="d-flex float-left"
               data-e2e="model-status"
             />
           </template>
-       </descriptive-card>
-    </template>
-    </v-row>
+          <template slot="menu-item">
+            <v-list class="list-wrapper list-padding">
+              <v-list-item-group>
+                <v-list-item @click="openModal(dataSource)">
+                  <v-list-item-title> Remove </v-list-item-title>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </template>
 
-    <template v-if="hasAddedDatasources">
-      <card-horizontal
-        v-for="dataSource in addedDataSources"
-        :key="dataSource.id"
-        :title="dataSource.name"
-        :icon="dataSource.type"
-        :class="
-          dataSource.status === 'Active'
-            ? 'data-source-list-active'
-            : 'data-source-list-pending'
-        "
-        hide-button
-        data-e2e="dataSourcesList"
-        class="mb-3 pr-7 list"
-        :to="
-          dataSource.status === 'Active'
-            ? {
-                name: 'DataSourceListing',
-                params: { id: dataSource.id },
-              }
-            : undefined
-        "
-      >
-        <div class="d-flex align-center">
-          <status
-            :status="dataSource.status"
-            :icon-size="17"
-            class="status"
-            :class="dataSource.status === 'Pending' ? 'mr-10' : 'mr-16'"
-          />
-          <v-menu left offset-y close-on-click>
-            <template #activator="{ on }">
-              <v-icon
-                v-if="dataSource.status === 'Pending'"
-                color="black darken-4"
-                data-e2e="data-source-list-pending-button"
-                v-on="on"
-              >
-                mdi-dots-vertical
-              </v-icon>
-            </template>
-            <div
-              class="black--text text-darken-4 cursor-pointer px-4 py-2 white"
-              data-e2e="data-source-list-pending-remove"
-              @click="openModal(dataSource)"
+          <template slot="default">
+            <div>5</div>
+            <p
+              class="text-body-2 black--text text--lighten-4"
+              data-e2e="model-owner"
             >
-              Remove
-            </div>
-          </v-menu>
-        </div>
-      </card-horizontal>
-    </template>
+              No. of feeds
+            </p>
+          </template>
+        </descriptive-card>
+      </template>
+    </v-row>
 
     <empty-state-data v-else>
       <template #icon> mdi-alert-circle-outline </template>
@@ -133,7 +98,14 @@ import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 export default {
   name: "DataSourcesList",
 
-  components: { EmptyStateData, CardHorizontal, Status, Icon, ConfirmModal, DescriptiveCard },
+  components: {
+    EmptyStateData,
+    CardHorizontal,
+    Status,
+    Icon,
+    ConfirmModal,
+    DescriptiveCard,
+  },
 
   data() {
     return {
@@ -203,5 +175,8 @@ export default {
   .data-source-list-pending {
     @extend .cursor-default;
   }
+}
+.list-padding {
+  padding: 0px !important;
 }
 </style>

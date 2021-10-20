@@ -297,16 +297,93 @@
     <v-divider class="mt-10" />
 
     <v-subheader>Metric Card</v-subheader>
+
     <metric-card
-      v-for="(item, i) in overviewListItems"
-      :key="i"
       class="ma-4"
-      :max-width="200"
-      :title="item.title"
-      :subtitle="item.subtitle"
-      :icon="item.icon"
-      :active="true"
-    ></metric-card>
+      title="Metric Title"
+      :max-width="202"
+      :height="75"
+      :interactable="false"
+    >
+      <template #subtitle-extended>
+        <div class="text-body-1 black--text text--darken-4 mb-2">
+          <icon class="mr-1" type="stock-up" :size="8" color="success" />
+          <icon class="ml-1 mr-1" type="stock-down" :size="8" color="error" />
+          3/1/2021 • 9:42AM
+        </div>
+      </template>
+    </metric-card>
+
+    <metric-card
+      class="ma-4"
+      title="Metric Title"
+      :max-width="180"
+      :height="75"
+      :interactable="false"
+    >
+      <template #subtitle-extended>
+        <div class="text-body-1 black--text text--darken-4 mb-2">
+          3/1/2021 • 9:42AM
+        </div>
+      </template>
+    </metric-card>
+
+    <metric-card
+      class="ma-4"
+      title="Metric Title"
+      :max-width="180"
+      :height="75"
+      :interactable="true"
+    >
+      <template #subtitle-extended>
+        <div class="text-body-1 black--text text--darken-4 mb-2">
+          3/1/2021 • 9:42AM
+        </div>
+      </template>
+    </metric-card>
+
+    <metric-card class="ma-4" title="Created on" :max-width="186" :height="75">
+      <template #subtitle-extended>
+        <span class="mr-2">
+          <tooltip>
+            <template #label-content>
+              <span class="text-body-1 black--text text--darken-4">
+                4 hours ago by
+              </span>
+            </template>
+            <template #hover-content> 10/18/2021 at 8:37 AM </template>
+          </tooltip>
+        </span>
+        <span class="mt-n2">
+          <avatar name="Sarah Huxley" />
+        </span>
+      </template>
+    </metric-card>
+
+    <metric-card
+      class="ma-4"
+      title="Description"
+      :max-width="400"
+      :height="75"
+      :interactable="false"
+    >
+      <template #subtitle-extended>
+        <div class="text-body-1 black--text text--darken-4 mb-2">
+          this is where the description text...
+        </div>
+      </template>
+    </metric-card>
+
+    <metric-card
+      class="ma-4"
+      :max-width="128"
+      :height="75"
+      title="0.01"
+      subtitle="AUC"
+      :high-level="true"
+      :interactable="false"
+    >
+    </metric-card>
 
     <v-divider class="mt-10" />
 
@@ -377,17 +454,25 @@
 
     <v-subheader> Descriptive Card </v-subheader>
     <descriptive-card
+      :action-menu="true"
+      :coming-soon="false"
+      width="280"
+      height="255"
       icon="model-unsubscribe"
       title="Propensity to Unsubscribe"
       description="Propensity of a customer making a purchase after receiving an email."
     >
       <template slot="top">
-        <status status="Pending" collapsed class="d-flex" />
+        <status status="Pending" collapsed class="d-flex float-left" />
       </template>
 
       <template slot="default">
-        <p class="text-caption black--text text--darken-1">Sarah Miller</p>
-
+        <div
+          class="text-caption black--text text--darken-1 mb-2"
+          data-e2e="model-owner"
+        >
+          Owner Name
+        </div>
         <div class="d-flex justify-center mb-6">
           <card-stat label="Version" value="0.02" stat-class="border-0">
             <div class="mb-3">
@@ -410,6 +495,52 @@
           <card-stat label="Last trained" value="2 hrs ago">12:45pm</card-stat>
         </div>
       </template>
+      <template slot="menu-item">
+        <v-list class="list-wrapper">
+          <v-list-item-group>
+            <v-list-item>
+              <v-list-item-title> Activate </v-list-item-title>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </template>
+    </descriptive-card>
+    <descriptive-card
+      :action-menu="true"
+      :coming-soon="false"
+      width="280"
+      height="255"
+      icon="model-unsubscribe"
+      title="Propensity to Unsubscribesss"
+      description="This is THE Hux CDP. Once a customer data solution has been implemented, all data sources flow seamlessly into the ..."
+    >
+      <template slot="top">
+        <status status="Pending" collapsed class="d-flex float-left" />
+      </template>
+    </descriptive-card>
+    <descriptive-card
+      :disabled="true"
+      :action-menu="false"
+      :coming-soon="true"
+      width="255"
+      height="225"
+      icon="model-unsubscribe"
+      title="Propensity to Unsubscribe ojjihj"
+      description="This is THE Hux CDP. Once a customer data solution has been implemented..."
+    >
+      <template slot="top">
+        <status status="Pending" collapsed class="d-flex float-left" />
+      </template>
+    </descriptive-card>
+    <descriptive-card
+      :disabled="false"
+      :action-menu="false"
+      :coming-soon="false"
+      width="280"
+      height="225"
+      title="Propensity to Unsubscribe ojjihj"
+      description="This is THE Hux CDP. Once a customer data solution has been implemented..."
+    >
     </descriptive-card>
 
     <v-divider class="mt-10" />
@@ -678,6 +809,8 @@ import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
 import demographicsData from "@/api/mock/fixtures/demographicData.js"
+import Tooltip from "@/components/common/Tooltip.vue"
+import Avatar from "@/components/common/Avatar"
 
 export default {
   name: "Components",
@@ -709,6 +842,8 @@ export default {
     HuxStartDate,
     HuxEndDate,
     DoughnutChart,
+    Tooltip,
+    Avatar,
   },
   data() {
     return {

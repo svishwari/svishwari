@@ -29,7 +29,7 @@
             height="40"
             class="ma-2 font-weight-regular no-shadow mr-0 caption"
             data-e2e="addDataSource"
-            @click="$emit('onAddDatasource')"
+            @click="toggleDrawer()"
           >
             Request a data source
           </huxButton>

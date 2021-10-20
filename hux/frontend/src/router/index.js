@@ -202,12 +202,12 @@ const routes = [
   },
 
   {
-    path: "/connections",
-    name: "Connections",
+    path: "/dataSources",
+    name: "DataSources",
     component: () => import("@/views/Connections/Index"),
     meta: {
       layout: "app",
-      title: "Connections",
+      title: "Data Sources",
       requiresAuth: true,
     },
   },
