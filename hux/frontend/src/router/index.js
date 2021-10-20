@@ -213,12 +213,12 @@ const routes = [
   },
 
     {
-    path: "/destination",
-    name: "Destination",
+    path: "/destinations",
+    name: "Destinations",
     component: () => import("@/views/Connections/DestinationIndex"),
     meta: {
       layout: "app",
-      title: "Destination",
+      title: "Destinations",
       requiresAuth: true,
     },
   },

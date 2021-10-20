@@ -1,6 +1,6 @@
 <template>
   <div class="list-wrapper">
-    <div class="d-flex align-end mb-4">
+    <!-- <div class="d-flex align-end mb-4">
       <icon type="destinations" :size="20" color="black-darken4" />
       <h5 class="text-h4 ml-2 mt-1">Destinations</h5>
       <router-link
@@ -10,7 +10,31 @@
       >
         <icon class="add-icon cursor-pointer" type="add" :size="27" />
       </router-link>
-    </div>
+    </div> -->
+     <v-row >
+    <template v-if="hasAddedDestinations">
+<descriptive-card
+         v-for="destination in addedDestinations"
+           :key="destination.id"
+           :icon="destination.type"
+           :iconColor="'white'"
+          :title="destination.name"
+          :description="''"
+          :disabled="destination.status !== 'Active'"
+          class="mr-10 model-desc-card"
+        >
+<template slot="top">
+            <status
+              :icon-size="18"
+              :status="destination.status || ''"
+              collapsed
+              class="d-flex"
+              data-e2e="model-status"
+            />
+          </template>
+       </descriptive-card>
+    </template>
+     </v-row>
     <template v-if="hasAddedDestinations">
       <card-horizontal
         v-for="destination in addedDestinations"
@@ -87,6 +111,7 @@ import CardHorizontal from "@/components/common/CardHorizontal"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import EmptyStateData from "@/components/common/EmptyStateData"
 import Icon from "@/components/common/Icon"
+import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 
 export default {
   name: "DestinationsList",
@@ -96,6 +121,7 @@ export default {
     ConfirmModal,
     EmptyStateData,
     Icon,
+    DescriptiveCard
   },
 
   data() {

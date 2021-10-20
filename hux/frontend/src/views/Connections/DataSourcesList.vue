@@ -1,12 +1,12 @@
 <template>
   <div class="list-wrapper">
-    <div class="d-flex align-end mb-4">
+    <!-- <div class="d-flex align-end mb-4">
       <icon type="data-sources-list" :size="20" color="black-darken4" />
       <h5 class="text-h4 ml-2 mt-1">Data Sources</h5>
       <span data-e2e="addDataSource" @click="$emit('onAddDatasource')">
         <icon class="add-icon cursor-pointer" type="add" :size="27" />
       </span>
-    </div>
+    </div> -->
     <v-row >
     <template v-if="hasAddedDatasources">
 
@@ -14,13 +14,20 @@
           v-for="dataSource in addedDataSources"
           :key="dataSource.id"
            :icon="dataSource.type"
-           :iconColor="'white'"
           :title="dataSource.name"
           :description="''"
           :disabled="dataSource.status !== 'Active'"
-         
+           :action-menu="true"
+            :coming-soon="false"
           class="mr-10 model-desc-card"
-          
+            :to="
+          dataSource.status === 'Active'
+            ? {
+                name: 'DataSourceListing',
+                params: { id: dataSource.id },
+              }
+            : undefined
+        "
         >
 <template slot="top">
             <status

@@ -12,11 +12,35 @@
           </div>
         </template>
       </page-header>
+
+      <page-header header-height="71">
+        <template #left>
+          <v-btn disabled icon color="black">
+            <v-icon medium>mdi-magnify</v-icon>
+          </v-btn>
+        </template>
+
+        <template #right>
+          <huxButton
+            button-text="Request a data source"
+            variant="primary"
+            size="large"
+            is-tile
+            height="40"
+            class="ma-2 font-weight-regular no-shadow mr-0 caption"
+            data-e2e="addDataSource"
+            @click="$emit('onAddDatasource')"
+          >
+            Request a data source
+          </huxButton>
+        </template>
+      </page-header>
+
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
     <div v-if="!loading">
       <v-row v-if="isConnectionStarted">
-        <v-col >
+        <v-col>
           <data-sources-list
             @onAddDatasource="toggleDrawer()"
           ></data-sources-list>
@@ -50,7 +74,7 @@
           </huxButton>
         </router-link>
         <router-link
-          :to="{ name: 'Connections', params: { select: true } }"
+          :to="{ name: 'DataSources', params: { select: true } }"
           class="text-decoration-none"
         >
           <huxButton
@@ -83,7 +107,7 @@ import huxButton from "@/components/common/huxButton"
 import DataSourceConfiguration from "@/views/DataSources/Configuration"
 
 export default {
-  name: "Connections",
+  name: "DataSources",
 
   components: {
     DataSourcesList,

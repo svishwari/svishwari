@@ -3,14 +3,45 @@
     <div slot="header">
       <page-header>
         <template slot="left">
-          <breadcrumb :items="breadcrumbs" />
+          <div>
+            <breadcrumb :items="breadcrumbs" />
+          </div>
+          <div class="text-subtitle-1 font-weight-regular">
+            Decide where your valuable data should go for optimum results.
+          </div>
+        </template>
+      </page-header>
+      <page-header header-height="71">
+        <template #left>
+          <v-btn disabled icon color="black">
+            <v-icon medium>mdi-magnify</v-icon>
+          </v-btn>
+        </template>
+
+        <template #right>
+          <router-link
+            :to="{ name: 'DestinationConfiguration' }"
+            class="text-decoration-none"
+            data-e2e="addDestination"
+          >
+            <huxButton
+              button-text="Add a destination"
+              variant="primary"
+              size="large"
+              is-tile
+              height="40"
+              class="ma-2 font-weight-regular no-shadow mr-0 caption"
+            >
+              Add a destination
+            </huxButton>
+          </router-link>
         </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
     <div v-if="!loading">
       <v-row v-if="isConnectionStarted">
-        <v-col cols="6">
+        <v-col>
           <destinations-list></destinations-list>
         </v-col>
       </v-row>
@@ -25,7 +56,7 @@
           <br />
           Begin by selecting a button below.
         </div>
-        <router-link
+        <!-- <router-link
           :to="{ name: 'DestinationConfiguration' }"
           class="text-decoration-none"
         >
@@ -40,8 +71,8 @@
           >
             Destination
           </huxButton>
-        </router-link>
-        <router-link
+        </router-link> -->
+        <!-- <router-link
           :to="{ name: 'Connections', params: { select: true } }"
           class="text-decoration-none"
         >
@@ -56,7 +87,7 @@
           >
             Data source
           </huxButton>
-        </router-link>
+        </router-link> -->
       </div>
     </div>
     <data-source-configuration v-model="drawer" />
@@ -75,7 +106,7 @@ import huxButton from "@/components/common/huxButton"
 import DataSourceConfiguration from "@/views/DataSources/Configuration"
 
 export default {
-  name: "Connections",
+  name: "Destinations",
 
   components: {
     DataSourcesList,
@@ -91,8 +122,8 @@ export default {
     return {
       breadcrumbs: [
         {
-          text: "Connections",
-          icon: "connections",
+          text: "Destinations",
+          icon: "destinations",
         },
       ],
       drawer: false,
