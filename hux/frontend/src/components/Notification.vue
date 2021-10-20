@@ -1,12 +1,12 @@
 <template>
   <v-menu :min-width="200" left offset-y close-on-click>
     <template #activator="{ on }">
-      <span class="d-flex cursor-pointer" v-on="on">
+      <span class="d-flex cursor-pointer mr-4" v-on="on">
         <icon
           data-e2e="notification-bell"
           class="mx-2 my-2 nav-icon"
           type="bell-notification"
-          :size="21"
+          :size="24"
         />
       </span>
     </template>
