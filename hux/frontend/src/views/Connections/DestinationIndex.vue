@@ -56,38 +56,6 @@
           <br />
           Begin by selecting a button below.
         </div>
-        <!-- <router-link
-          :to="{ name: 'DestinationConfiguration' }"
-          class="text-decoration-none"
-        >
-          <huxButton
-            icon="mdi-plus"
-            icon-position="left"
-            variant="primary"
-            size="small"
-            icon-size="small"
-            :is-tile="true"
-            class="ma-2 text-h6 font-weight-regular"
-          >
-            Destination
-          </huxButton>
-        </router-link> -->
-        <!-- <router-link
-          :to="{ name: 'Connections', params: { select: true } }"
-          class="text-decoration-none"
-        >
-          <huxButton
-            button-text="Data source"
-            icon="mdi-plus"
-            icon-position="left"
-            variant="primary"
-            size="small"
-            :is-tile="true"
-            class="ma-2 text-h6 font-weight-regular"
-          >
-            Data source
-          </huxButton>
-        </router-link> -->
       </div>
     </div>
     <data-source-configuration v-model="drawer" />
