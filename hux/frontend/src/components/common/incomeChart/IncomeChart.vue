@@ -70,14 +70,9 @@ export default {
       ],
     }
   },
-  created() {
-    window.addEventListener("resize", this.sizeHandler)
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.sizeHandler)
-  },
   mounted() {
     this.sizeHandler()
+    new ResizeObserver(this.sizeHandler).observe(this.$refs.incomeChart)
   },
   methods: {
     toolTipDisplay(...arg) {

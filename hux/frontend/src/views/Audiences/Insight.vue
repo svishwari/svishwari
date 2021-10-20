@@ -944,16 +944,13 @@ export default {
       }
     },
   },
-  created() {
-    window.addEventListener("resize", this.sizeHandler)
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.sizeHandler)
-  },
   async mounted() {
     this.sizeHandler()
     await this.loadAudienceInsights()
     this.fetchDemographics()
+    if (this.$refs.genderChart) {
+    new ResizeObserver(this.sizeHandler).observe(this.$refs.genderChart)
+    }
   },
   methods: {
     ...mapActions({
