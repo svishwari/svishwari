@@ -240,6 +240,12 @@ export default {
   }
 
   // Apply this css only if icon size is 14 otherwise icon size should be 18
+  .home-menu-icon {
+    svg {
+      top: 30%;
+      position: absolute;
+    }
+  }
   .menu-icon {
     svg {
       top: 32.89%;
