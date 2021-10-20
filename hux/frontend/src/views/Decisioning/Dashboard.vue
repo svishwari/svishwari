@@ -46,32 +46,43 @@
               :key="key"
               data-e2e="performancemetric"
             >
-              <div
-                v-if="metric !== -1"
+              <metric-card
+                v-if="key === 'recall' && metric > 0"
                 class="model-dashboard__card px-6 py-3 mr-2"
+                :max-width="122"
+                :height="80"
+                :title="metric"
+                subtitle="Recall"
+                :high-level="true"
+                :interactable="false"
               >
-                <tooltip>
-                  <template #label-content>
-                    <div
-                      v-if="key === 'current_version'"
-                      class="text-h1 black--text font-weight-semi-bold"
-                    >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
                       {{ metric }}
-                    </div>
-                    <div
-                      v-else
-                      class="text-h1"
-                      :class="
-                        metric < 0.01
-                          ? 'error--text'
-                          : 'black--text font-weight-semi-bold'
-                      "
-                    >
-                      {{ metric.toFixed(2) }}
-                    </div>
-                  </template>
-                  <template #hover-content>
-                    <div v-if="key === 'current_version'">
+                    </template>
+                    <template #hover-content>
+                      {{ metric | Empty }}
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
+              <metric-card
+                v-if="key === 'current_version'"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :max-width="152"
+                :height="80"
+                :title="metric"
+                subtitle="Current version"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric }}
+                    </template>
+                    <template #hover-content>
                       <div class="mb-3">
                         Trained date<br />
                         {{ modelMetricDetails.last_trained | Date | Empty }}
@@ -88,43 +99,74 @@
                         Prediction period (days)<br />
                         {{ modelMetricDetails.prediction_window }}
                       </div>
-                    </div>
-                    <div v-else>
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
+              <metric-card
+                v-if="key === 'rmse' && metric > 0"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :max-width="122"
+                :height="80"
+                :title="metric"
+                subtitle="2"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric }}
+                    </template>
+                    <template #hover-content>
                       {{ metric | Empty }}
-                    </div>
-                  </template>
-                </tooltip>
-                <div
-                  v-if="key === 'current_version'"
-                  class="text-h5 black--text text--lighten-4 pt-1"
-                >
-                  Current version
-                </div>
-                <div
-                  v-else-if="key === 'rmse'"
-                  class="text-h5 black--text text--lighten-4 pt-1"
-                >
-                  RMSE
-                </div>
-                <div
-                  v-else-if="key === 'auc'"
-                  class="text-h5 black--text text--lighten-4 pt-1"
-                >
-                  AUC
-                </div>
-                <div
-                  v-else-if="key === 'recall'"
-                  class="text-h5 black--text text--lighten-4 pt-1"
-                >
-                  Recall
-                </div>
-                <div
-                  v-else-if="key === 'precision'"
-                  class="text-h5 black--text text--lighten-4 pt-1"
-                >
-                  Precision
-                </div>
-              </div>
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
+              <metric-card
+                v-if="key === 'auc' && metric > 0"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :max-width="122"
+                :height="80"
+                :title="metric"
+                subtitle="AUC"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric }}
+                    </template>
+                    <template #hover-content>
+                      {{ metric | Empty }}
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
+
+              <metric-card
+                v-if="key === 'precision' && metric > 0"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :max-width="122"
+                :height="80"
+                :title="metric"
+                subtitle="Precision"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric }}
+                    </template>
+                    <template #hover-content>
+                      {{ metric | Empty }}
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
             </div>
           </div>
         </v-col>
@@ -247,6 +289,7 @@ import LiftChart from "@/components/common/LiftChart.vue"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import VersionHistory from "./Drawers/VersionHistoryDrawer.vue"
+import MetricCard from "@/components/common/MetricCard"
 import { mapGetters, mapActions } from "vuex"
 
 export default {
@@ -262,6 +305,7 @@ export default {
     VersionHistory,
     DriftChart,
     FeaturesTable,
+    MetricCard,
   },
   data() {
     return {
