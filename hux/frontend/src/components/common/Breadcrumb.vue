@@ -15,7 +15,7 @@
         </div>
         <span
           :class="{
-            'black--text text--darken-4': item.disabled,
+            'black--text': item.disabled,
             'pl-1 text-h28': true,
           }"
         >

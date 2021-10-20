@@ -5,7 +5,7 @@
       :header-height="110"
       data-e2e="overview-header"
     >
-      <template #description>
+      <template #left>
         <span class="text-subtitle-1 font-weight-regular">
           Hux is here to help you make better, faster decisions to improve your
           customer experiences.
