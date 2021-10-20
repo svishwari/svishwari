@@ -949,7 +949,7 @@ export default {
     await this.loadAudienceInsights()
     this.fetchDemographics()
     if (this.$refs.genderChart) {
-    new ResizeObserver(this.sizeHandler).observe(this.$refs.genderChart)
+      new ResizeObserver(this.sizeHandler).observe(this.$refs.genderChart)
     }
   },
   methods: {
