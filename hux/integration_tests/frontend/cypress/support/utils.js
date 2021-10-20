@@ -1,11 +1,7 @@
-// function to create random text
-export const randomText = () => {
-  var text = ""
-  var possible =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+import faker from "faker"
 
-  for (var i = 0; i < 10; i++)
-    text += possible.charAt(Math.floor(Math.random() * possible.length))
-
-  return text
+// function to create random name
+export const randomName = () => {
+  let randomName = faker.name.findName()
+  return randomName
 }

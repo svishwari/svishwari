@@ -13,13 +13,16 @@
 
       <template #right>
         <huxButton
-          button-text="Return to previous page"
-          icon="mdi-keyboard-return"
-          icon-position="left"
-          variant="primary"
+          variant="primary base"
+          icon="keyboard-return"
+          is-custom-icon
+          class="ma-2 caption no-shadow mr-0"
           size="large"
           is-tile
-          class="ma-2 font-weight-regular no-shadow mr-0"
+          height="40"
+          icon-size="18"
+          icon-color="white"
+          icon-variant="base"
           data-e2e="notification-return"
           @click="goBack()"
         >

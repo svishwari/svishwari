@@ -20,7 +20,7 @@
       <v-menu v-if="!isMini" open-on-hover offset-y>
         <template #activator="{ on }">
           <div class="pl-6 client py-4 mb-2" v-on="on">
-            <span class="d-flex align-center">
+            <span class="d-flex align-center black--text">
               <logo :type="client.logo" :size="16" class="mr-2" />
               {{ client.name }}
             </span>
@@ -34,7 +34,7 @@
       :key="item.title"
       color="var(-v--primary-base)"
     >
-      <div v-if="item.label" class="list-group black--text">
+      <div v-if="item.label" class="list-group black--text mt-2">
         <span v-if="!isMini" class="text-h5 black--text text--lighten-4 pl-6">
           {{ item.label }}
         </span>
@@ -48,7 +48,7 @@
       >
         <v-list-item-icon
           v-if="item.icon"
-          class="my-3 mr-0"
+          class="mr-0"
           :class="{ 'home-menu-icon': !isMini }"
         >
           <tooltip
@@ -193,6 +193,12 @@ export default {
       fill: var(--v-black-lighten4);
     }
     &:hover {
+      svg {
+        fill: var(--v-primary-lighten6) !important;
+      }
+      .v-list-item__title {
+        color: var(--v-primary-lighten6) !important;
+      }
       &::before {
         opacity: 0;
       }
@@ -234,6 +240,12 @@ export default {
   }
 
   // Apply this css only if icon size is 14 otherwise icon size should be 18
+  .home-menu-icon {
+    svg {
+      top: 30%;
+      position: absolute;
+    }
+  }
   .menu-icon {
     svg {
       top: 32.89%;

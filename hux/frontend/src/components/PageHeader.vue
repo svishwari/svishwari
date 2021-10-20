@@ -17,14 +17,16 @@
           color="black"
           variant="darken4"
         />
-        <div v-if="title" class="text-h28" data-e2e="card-title">
+        <div v-if="title" class="text-h28 black--text" data-e2e="card-title">
           {{ title }}
         </div>
       </div>
       <div v-if="$slots.description" class="mt-2">
         <slot name="description"></slot>
       </div>
-      <slot name="left"></slot>
+      <div v-if="$slots.left" class="black--text">
+        <slot name="left"></slot>
+      </div>
     </div>
     <div class="page-header--right">
       <slot name="right"></slot>
