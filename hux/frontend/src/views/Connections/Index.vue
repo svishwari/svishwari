@@ -99,7 +99,6 @@
 import { mapGetters, mapActions } from "vuex"
 
 import DataSourcesList from "./DataSourcesList"
-import DestinationsList from "./DestinationsList"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
@@ -111,7 +110,6 @@ export default {
 
   components: {
     DataSourcesList,
-    DestinationsList,
     Page,
     PageHeader,
     Breadcrumb,

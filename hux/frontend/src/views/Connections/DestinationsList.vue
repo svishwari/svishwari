@@ -6,7 +6,7 @@
           v-for="destination in addedDestinations"
           :key="destination.id"
           :icon="destination.type"
-          :iconColor="'white'"
+          :icon-color="'white'"
           :title="destination.name"
           :description="''"
           :disabled="destination.status !== 'Succeeded'"
@@ -86,10 +86,8 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 
-import CardHorizontal from "@/components/common/CardHorizontal"
 import ConfirmModal from "@/components/common/ConfirmModal"
 import EmptyStateData from "@/components/common/EmptyStateData"
-import Icon from "@/components/common/Icon"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import Status from "@/components/common/Status"
 
@@ -97,10 +95,8 @@ export default {
   name: "DestinationsList",
 
   components: {
-    CardHorizontal,
     ConfirmModal,
     EmptyStateData,
-    Icon,
     DescriptiveCard,
     Status,
   },

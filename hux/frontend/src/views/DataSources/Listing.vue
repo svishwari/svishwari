@@ -162,7 +162,8 @@ export default {
           text: "30 day avg",
           value: "thirty_days_avg",
           width: "100",
-          hoverTooltip: "The value indicates the average % of records processed in the past 30 days"
+          hoverTooltip:
+            "The value indicates the average % of records processed in the past 30 days",
         },
         {
           text: "Last processed",

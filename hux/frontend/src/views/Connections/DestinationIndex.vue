@@ -97,7 +97,6 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 
-import DataSourcesList from "./DataSourcesList"
 import DestinationsList from "./DestinationsList"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
@@ -109,7 +108,6 @@ export default {
   name: "Destinations",
 
   components: {
-    DataSourcesList,
     DestinationsList,
     Page,
     PageHeader,

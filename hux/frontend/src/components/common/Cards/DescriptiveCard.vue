@@ -123,7 +123,7 @@ export default {
       type: [Number, String],
       required: true,
     },
-        to: {
+    to: {
       type: Object,
       required: false,
       default: () => {},

@@ -11,7 +11,7 @@
           :disabled="dataSource.status !== 'Active'"
           :action-menu="dataSource.status !== 'Active' ? true : false"
           :coming-soon="false"
-          :dotOption="'Remove'"
+          :dot-option="'Remove'"
           class="mr-10 model-desc-card"
           height="225"
           width="255"
@@ -88,9 +88,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 
-import CardHorizontal from "@/components/common/CardHorizontal"
 import ConfirmModal from "@/components/common/ConfirmModal"
-import Icon from "@/components/common/Icon"
 import Status from "@/components/common/Status"
 import EmptyStateData from "@/components/common/EmptyStateData"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
@@ -100,9 +98,7 @@ export default {
 
   components: {
     EmptyStateData,
-    CardHorizontal,
     Status,
-    Icon,
     ConfirmModal,
     DescriptiveCard,
   },

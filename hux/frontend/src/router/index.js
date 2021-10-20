@@ -212,7 +212,7 @@ const routes = [
     },
   },
 
-    {
+  {
     path: "/destinations",
     name: "Destinations",
     component: () => import("@/views/Connections/DestinationIndex"),
