@@ -115,7 +115,7 @@ export default {
     }
   }
   .arrow-icon {
-    fill: var(--v-black-lighten4);
+    fill: var(--v-black-base);
     &:hover,
     &.menu-active {
       fill: var(--v-primary-lighten6);

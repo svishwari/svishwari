@@ -48,7 +48,7 @@
           </template>
 
           <template slot="default">
-            <div>5</div>
+            <div>-</div>
             <p
               class="text-body-2 black--text text--lighten-4"
               data-e2e="model-owner"
