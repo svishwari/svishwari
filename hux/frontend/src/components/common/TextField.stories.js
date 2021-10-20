@@ -16,15 +16,15 @@ export default {
   },
 
   args: {
-    labelText: "Add Account ID",
+    labelText: "Engagement name",
     icon: "mdi-alert-circle-outline",
-    placeholderText: "Account name",
+    placeholderText: "Name of Engagement",
   },
 
   parameters: {
     design: {
       type: "figma",
-      url: "https://www.figma.com/file/nfrkMnYTxnjK5r2NTQqWb9/5.0-Release-06-21?node-id=1826%3A5",
+      url: "https://www.figma.com/file/4qNDv9mcu1ZWZkZxO3fVpP/6.0-Release?node-id=1840%3A3573",
     },
   },
 }

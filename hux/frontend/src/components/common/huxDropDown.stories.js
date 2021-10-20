@@ -63,6 +63,7 @@ export default {
   parameters: {
     design: {
       type: "figma",
+      url: "https://www.figma.com/file/4qNDv9mcu1ZWZkZxO3fVpP/6.0-Release?node-id=1927%3A11902",
     },
   },
 }

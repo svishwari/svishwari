@@ -39,8 +39,8 @@ export default {
     icon: "sad-face",
     iconColor: "warning",
     type: "warning",
-    title: "You are about to delete",
-    subTitle: "My Audience 1",
+    title: "You are about to delete [Audience Name]",
+    subTitle: "Are you sure you want to delete this audience?",
     rightBtnText: "Yes, delete it",
     leftBtnText: "Nevermind!",
     body: "",
@@ -49,7 +49,7 @@ export default {
   parameters: {
     design: {
       type: "figma",
-      url: "",
+      url: "https://www.figma.com/file/4qNDv9mcu1ZWZkZxO3fVpP/6.0-Release?node-id=6852%3A108904",
     },
   },
 }
