@@ -174,5 +174,4 @@ export default {
     @extend .cursor-default;
   }
 }
-
 </style>
