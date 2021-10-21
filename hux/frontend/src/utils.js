@@ -155,6 +155,33 @@ export function dayAbbreviation(dayname) {
 }
 
 /**
+ * Uses to create full name from abbr
+ *
+ * @param {string} dayname abr name
+ * @returns {string} day full name i.e. Sunday
+ */
+export function abbrDayToFullName(dayname) {
+  switch (dayname.toLowerCase()) {
+    case "mon":
+      return "Monday"
+    case "tue":
+      return "Tuesday"
+    case "wed":
+      return "Wednesday"
+    case "thu":
+      return "Thursday"
+    case "fri":
+      return "Friday"
+    case "sat":
+      return "Saturday"
+    case "sun":
+      return "Sunday"
+    default:
+      return ""
+  }
+}
+
+/**
  * Get a list of months names.
  *
  * @param {object} config configuration for list of months

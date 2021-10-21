@@ -56,7 +56,7 @@
             :data-e2e="data.e2e"
           >
             <v-card-text class="pl-3 pr-3 pb-3 pt-3 matrix-card">
-              <div class="text-button black--text text--darken-1 pb-1">
+              <div class="text-body-2 black--text text--darken-1 pb-1">
                 {{ data.title }}
                 <tooltip v-if="data.hoverTooltip" position-top>
                   <template #label-content>

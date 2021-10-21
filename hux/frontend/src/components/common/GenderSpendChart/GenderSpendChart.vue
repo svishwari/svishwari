@@ -17,18 +17,18 @@
     >
       <template #content>
         <div class="bar-hover">
-          <div class="date-font text-button">
+          <div class="date-font text-body-2">
             {{ currentData.date | date("MMM DD[,] YYYY") }}
           </div>
           <div>
             <span class="append-circle color-women"></span>
-            <span class="font-size-tooltip text-button">
+            <span class="font-size-tooltip text-body-2">
               {{ currentData.women_spend | currency }}
             </span>
           </div>
           <div>
             <span class="append-circle color-men"></span>
-            <span class="font-size-tooltip text-button">
+            <span class="font-size-tooltip text-body-2">
               {{ currentData.men_spend | currency }}
             </span>
           </div>

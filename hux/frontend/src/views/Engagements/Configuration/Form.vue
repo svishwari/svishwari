@@ -125,7 +125,12 @@
         </v-row>
 
         <v-row class="delivery-schedule mt-5">
-          <hux-schedule-picker v-if="isRecurring" v-model="localSchedule" />
+          <hux-schedule-picker
+            v-if="isRecurring"
+            v-model="localSchedule"
+            :start-date="selectedStartDate"
+            :end-date="selectedEndDate"
+          />
         </v-row>
       </form-step>
 

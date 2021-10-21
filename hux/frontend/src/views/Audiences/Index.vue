@@ -168,7 +168,7 @@
                 </template>
                 <template #hover-content>
                   <div>
-                    <div class="neroBlack--text text-button mb-2">
+                    <div class="neroBlack--text text-body-2 mb-2">
                       Delivered to:
                     </div>
                     <div
@@ -181,11 +181,11 @@
                           :type="deliveries.delivery_platform_type"
                           :size="18"
                         />
-                        <span class="ml-1 neroBlack--text text-button">
+                        <span class="ml-1 neroBlack--text text-body-2">
                           {{ deliveries.delivery_platform_name }}
                         </span>
                       </div>
-                      <div class="neroBlack--text text-button">
+                      <div class="neroBlack--text text-body-2">
                         {{ deliveries.last_delivered | Date | Empty }}
                       </div>
                     </div>

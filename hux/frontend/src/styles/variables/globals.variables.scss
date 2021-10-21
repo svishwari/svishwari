@@ -4,14 +4,13 @@
 // Type
 $body-font-family: "Open Sans", sans-serif;
 $heading-font-family: $body-font-family;
-$border-radius-root: 12px;
 $font-size-root: 14px;
 $headings: (
   // H1 (Large) (Main Pages)
   "h1":
     (
       "size": 36px,
-      "line-height": 40px !important,
+      "line-height": 40px,
       "weight": 300,
       "letter-spacing": 0,
     ),
@@ -19,7 +18,7 @@ $headings: (
   "h2":
     (
       "size": 24px,
-      "line-height": 40px !important,
+      "line-height": 40px,
       "weight": 300,
       "letter-spacing": 0,
     ),
@@ -27,7 +26,7 @@ $headings: (
   "h3":
     (
       "size": 18px,
-      "line-height": 25px !important,
+      "line-height": 25px,
       "weight": 400,
       "letter-spacing": 0,
     ),
@@ -35,86 +34,87 @@ $headings: (
   "h4":
     (
       "size": 18px,
-      "line-height": 24px !important,
+      "line-height": 24px,
       "weight": 300,
-      "letter-spacing": 0.1px !important,
+      "letter-spacing": 0.1px,
     ),
   // B1 (Reg)
   "body-1":
     (
       "size": 16px,
-      "line-height": 22px !important,
+      "line-height": 22px,
       "weight": 400,
-      "letter-spacing": 0 !important,
+      "letter-spacing": 0,
     ),
   // B2 (Sm) - Hovers & Labels
   "body-2":
     (
       "size": 14px,
-      "line-height": 16px !important,
+      "line-height": 16px,
       "weight": 400,
       "letter-spacing": 0,
     ),
   // Button Text
   "button":
     (
-      "size": 12px,
-      "line-height": 16px !important,
+      "size": 16px,
+      "line-height": 20px,
       "weight": 400,
-      "letter-spacing": 0.5px !important,
+      "letter-spacing": 0.5px,
       "text-transform": "inherit",
     ),
   // Metric #s
   "subtitle-1":
     (
       "size": 16px,
-      "line-height": 22px !important,
+      "line-height": 22px,
       "weight": 600,
-      "letter-spacing": 0 !important,
+      "letter-spacing": 0,
     ),
   // Pill Text
   "subtitle-2":
     (
       "size": 12px,
-      "line-height": 16px !important,
+      "line-height": 16px,
       "weight": 600,
-      "letter-spacing": 0.2px !important,
+      "letter-spacing": 0.2px,
     ),
   // 'optional'
   "caption":
     (
       "size": 16px,
-      "line-height": 20px !important,
+      "line-height": 20px,
       "weight": 400,
-      "letter-spacing": 0 !important,
+      "letter-spacing": 0,
     ),
   // Nav > Headers
   "h5":
     (
       "size": 14px,
-      "line-height": 16px !important,
+      "line-height": 16px,
       "weight": 400,
-      "letter-spacing": 0.2px !important,
+      "letter-spacing": 0.2px,
     ),
   // Nav > Menu item 1
   "h6":
     (
       "size": 14px,
-      "line-height": 22px !important,
+      "line-height": 22px,
       "weight": 400,
-      "letter-spacing": 0 !important,
+      "letter-spacing": 0,
     )
 );
 
 // App
+// https://github.com/vuetifyjs/vuetify/blob/master/packages/vuetify/src/styles/settings/_light.scss
 $material-light: (
-  "background": #f9fafb,
-  "primary-text-percent": 1,
-  "text-color": "#1e1e1e",
+  "background": var(--v-primary-lighten1),
+  "text": (
+    "primary": var(--v-black-base),
+  ),
 );
 
 $border-radius-root: 4px;
-
 $rounded: (
   0: 0,
   null: $border-radius-root,
