@@ -169,7 +169,7 @@ export default {
             .tickFormat(convertCalendarFormat)
             .tickPadding(15)
         )
-        .style("font-size", "12px")
+        .style("font-size", "14px")
 
       svg
         .append("g")
@@ -178,7 +178,7 @@ export default {
         .call(d3Axis.axisLeft(yScale).ticks(4).tickFormat(applyNumericFilter))
         .attr("stroke-width", "1")
         .attr("stroke-opacity", "1")
-        .style("font-size", "12px")
+        .style("font-size", "14px")
 
       svg
         .append("g")
@@ -216,7 +216,7 @@ export default {
         .attr("x", 10)
         .style("color", "#4F4F4F")
       d3Select.selectAll(".yAxis-main .tick text").style("color", "#4F4F4F")
-      d3Select.selectAll(".xAxis-main .tick text").attr("x", 14)
+      d3Select.selectAll(".xAxis-main .tick text").attr("x", 16)
 
       svg
         .append("line")
@@ -245,8 +245,8 @@ export default {
         .attr("width", xScale.bandwidth() < 30 ? xScale.bandwidth() : 30)
         .attr("x", (d, i) => xScale(i))
         .attr("y", (d) => yScale(d[1]))
-        .attr("rx", 4)
-        .attr("ry", 4)
+        .attr("rx", 2)
+        .attr("ry", 2)
         .attr("d", (d) => d)
 
       let applyHoverEffects = (d, width) => {
