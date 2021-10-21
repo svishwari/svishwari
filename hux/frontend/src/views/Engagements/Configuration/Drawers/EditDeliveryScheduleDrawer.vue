@@ -118,10 +118,13 @@ export default {
             recurringConfig["hour"] = this.localSchedule.hour
             recurringConfig["minute"] = this.localSchedule.minute
             recurringConfig["period"] = this.localSchedule.period
+            break
           case "Weekly":
             recurringConfig["day_of_week"] = this.localSchedule.day_of_week
+            break
           case "Monthly":
             recurringConfig["day_of_month"] = this.localSchedule.monthlyDayDate
+            break
           default:
             recurringConfig
         }
