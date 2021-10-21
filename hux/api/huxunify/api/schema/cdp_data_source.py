@@ -121,7 +121,7 @@ class CdpDataSourceDataFeedSchema(Schema):
     """Data source data feed schema"""
 
     name = fields.Str()
-    datasource_type = fields.Str(example=db_c.CDP_DATA_SOURCE_BLUECORE)
+    datasource_type = fields.Str(example=db_c.DATA_SOURCE_PLATFORM_BLUECORE)
     records_received = fields.Int(example=345612)
     records_processed = fields.Int(example=345612)
     records_processed_percentage = fields.Float(

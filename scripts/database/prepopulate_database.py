@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.INFO)
 data_sources_constants = [
     {
         c.DATA_SOURCE_NAME: "Bluecore",
-        c.DATA_SOURCE_TYPE: c.CDP_DATA_SOURCE_BLUECORE,
+        c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_BLUECORE,
         c.CATEGORY: c.CATEGORY_ECOMMERCE,
         c.STATUS: c.ACTIVE,
         c.ENABLED: True,
@@ -66,8 +66,8 @@ data_sources_constants = [
         c.ADDED: False,
     },
     {
-        c.DATA_SOURCE_NAME: "Apache Sparks",
-        c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_APACHE_SPARKS,
+        c.DATA_SOURCE_NAME: "Apache Spark",
+        c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_APACHE_SPARK,
         c.CATEGORY: c.CATEGORY_BIG_DATA,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
@@ -275,7 +275,7 @@ data_sources_constants = [
     },
     {
         c.DATA_SOURCE_NAME: "Microsoft Advertising",
-        c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_MICROSOFT_ADVERTISING,
+        c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_MICROSOFT_ADS,
         c.CATEGORY: c.CATEGORY_MARKETING,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
@@ -307,7 +307,7 @@ data_sources_constants = [
     },
     {
         c.DATA_SOURCE_NAME: "Google Cloud Storage",
-        c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_GOOGLE_CLOUD_STOARGE,
+        c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_GOOGLE_CLOUD_STORAGE,
         c.CATEGORY: c.CATEGORY_OBJECT_STORAGE,
         c.STATUS: c.PENDING,
         c.ENABLED: False,

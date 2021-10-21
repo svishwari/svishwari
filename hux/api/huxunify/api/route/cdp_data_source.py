@@ -493,7 +493,7 @@ class GetDataSourceDatafeeds(SwaggerView):
             "in": "path",
             "type": "string",
             "description": "Data source type",
-            "example": db_c.CDP_DATA_SOURCE_BLUECORE,
+            "example": db_c.DATA_SOURCE_PLATFORM_BLUECORE,
         }
     ]
     responses = {

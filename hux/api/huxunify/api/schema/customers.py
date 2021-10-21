@@ -176,7 +176,7 @@ class DataFeedSchema(Schema):
     )
     data_source_name = Str(
         attribute=api_c.DATAFEED_DATA_SOURCE_NAME,
-        example=db_c.CDP_DATA_SOURCE_BLUECORE.title(),
+        example=db_c.DATA_SOURCE_PLATFORM_BLUECORE.title(),
     )
     new_ids_generated = Integer(example=21)
     num_records_processed = Integer(
