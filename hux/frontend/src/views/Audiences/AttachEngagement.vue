@@ -260,7 +260,11 @@
                   </div>
                 </v-row>
                 <v-row v-if="isRecurring" class="delivery-schedule ml-0 mt-6">
-                  <hux-schedule-picker v-model="schedule" />
+                  <hux-schedule-picker
+                    v-model="schedule"
+                    :start-date="selectedStartDate"
+                    :end-date="selectedEndDate"
+                  />
                 </v-row>
               </v-form>
             </div>
