@@ -80,6 +80,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - id: !anystr
           name: !anystr
           description: !anything
@@ -209,5 +210,5 @@ stages:
           ad_set_id: !anystr
           delivery_job_id: !anystr
           create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
-      
+
 
