@@ -469,11 +469,15 @@
                       <div v-if="header.value == 'delivery_schedule'">
                         <tooltip>
                           <template #label-content>
-                            {{ item[header.value].periodicity || "-" }}
+                            {{
+                              item[header.value]
+                                ? item[header.value].periodicity
+                                : "-"
+                            }}
                           </template>
                           <template #hover-content>
                             <hux-delivery-text
-                              v-if="item[header.value].periodicity"
+                              v-if="item[header.value]"
                               :schedule="item[header.value]"
                               type="destination"
                             />
