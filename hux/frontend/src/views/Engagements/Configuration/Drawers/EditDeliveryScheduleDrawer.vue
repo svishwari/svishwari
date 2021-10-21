@@ -112,20 +112,19 @@ export default {
       const recurringConfig = {}
       recurringConfig["every"] = this.localSchedule.every
       recurringConfig["periodicity"] = this.localSchedule.periodicity
-      if (this.localSchedule && this.localSchedule.periodicity == "Daily") {
-        recurringConfig["hour"] = this.localSchedule.hour
-        recurringConfig["minute"] = this.localSchedule.minute
-        recurringConfig["period"] = this.localSchedule.period
-      } else if (
-        this.localSchedule &&
-        this.localSchedule.periodicity == "Weekly"
-      ) {
-        recurringConfig["day_of_week"] = this.localSchedule.day_of_week
-      } else if (
-        this.localSchedule &&
-        this.localSchedule.periodicity == "Monthly"
-      ) {
-        recurringConfig["day_of_month"] = this.localSchedule.monthlyDayDate
+      if (this.localSchedule) {
+        switch (this.localSchedule.periodicity) {
+          case "Daily":
+            recurringConfig["hour"] = this.localSchedule.hour
+            recurringConfig["minute"] = this.localSchedule.minute
+            recurringConfig["period"] = this.localSchedule.period
+          case "Weekly":
+            recurringConfig["day_of_week"] = this.localSchedule.day_of_week
+          case "Monthly":
+            recurringConfig["day_of_month"] = this.localSchedule.monthlyDayDate
+          default:
+            recurringConfig
+        }
       }
       return recurringConfig
     },
