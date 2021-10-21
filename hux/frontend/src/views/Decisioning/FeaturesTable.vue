@@ -24,7 +24,7 @@
           </tooltip>
         </template>
 
-        <div v-else-if="col.value === 'status'" class="text-button">
+        <div v-else-if="col.value === 'status'" class="text-body-2">
           <status
             :status="item[col.value]"
             :show-label="true"

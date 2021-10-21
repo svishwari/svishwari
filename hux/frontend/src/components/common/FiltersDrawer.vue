@@ -36,8 +36,14 @@
 
         <div class="footer mt-auto">
           <slot name="footer">
-            <v-btn tile color="primary" class="ml-auto" @click="$emit('apply')">
-              Apply
+            <v-btn
+              tile
+              color="primary"
+              class="text-button ml-auto"
+              width="134"
+              @click="$emit('apply')"
+            >
+              Apply filter
             </v-btn>
           </slot>
         </div>
@@ -69,7 +75,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 $footerHeight: 80px;
 $headerHeight: 40px;
-$offset: 170px;
+$offset: 180px;
 $padding: 20px;
 $width: 300px;
 
