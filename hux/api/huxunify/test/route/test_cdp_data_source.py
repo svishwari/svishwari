@@ -181,14 +181,14 @@ class CdpDataSourcesTest(TestCase):
                 api_c.TYPE: "test_data_source_type_1",
                 api_c.STATUS: api_c.STATUS_ACTIVE,
                 db_c.CATEGORY: db_c.CATEGORY_API,
-                db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1
+                db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
             },
             {
                 api_c.NAME: "Test Data Source 2",
                 api_c.TYPE: "test_data_source_type_2",
                 api_c.STATUS: api_c.STATUS_PENDING,
                 db_c.CATEGORY: db_c.CATEGORY_CRM,
-                db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1
+                db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
             },
         ]
 

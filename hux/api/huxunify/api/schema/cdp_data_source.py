@@ -43,7 +43,7 @@ class CdpDataSourcePostSchema(Schema):
             )
         ],
         default=None,
-        allow_none=True
+        allow_none=True,
     )
     feed_count = fields.Int(required=False, default=None)
 
@@ -82,7 +82,7 @@ class CdpDataSourceSchema(Schema):
             )
         ],
         default=None,
-        allow_none=True
+        allow_none=True,
     )
     feed_count = fields.Int(required=False, default=None, allow_none=True)
     status = fields.Str(
@@ -142,7 +142,7 @@ class CdpConnectionsDataSourceSchema(Schema):
             )
         ],
         default=None,
-        allow_none=True
+        allow_none=True,
     )
     feed_count = fields.Int(required=False, default=None, allow_none=True)
 
