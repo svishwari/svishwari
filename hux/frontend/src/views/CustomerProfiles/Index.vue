@@ -480,12 +480,6 @@ export default {
       return []
     },
   },
-  created() {
-    window.addEventListener("resize", this.sizeHandler)
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.sizeHandler)
-  },
 
   async mounted() {
     this.loading = true
@@ -496,6 +490,9 @@ export default {
     this.fetchGeoOverview()
     this.fetchDemographics()
     this.loading = false
+    if (this.$refs.genderChart) {
+      new ResizeObserver(this.sizeHandler).observe(this.$refs.genderChart)
+    }
   },
 
   methods: {
