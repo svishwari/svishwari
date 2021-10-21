@@ -97,15 +97,9 @@ export default {
       return this.configurationData.default_metric.key
     },
   },
-  created() {
-    window.addEventListener("resize", this.sizeHandler)
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.sizeHandler)
-  },
   mounted() {
-    this.chartDimensions.width = this.$refs.chartBox.clientWidth
-    this.chartDimensions.height = this.$refs.chartBox.clientHeight
+    this.sizeHandler()
+    new ResizeObserver(this.sizeHandler).observe(this.$refs.chartBox)
   },
   methods: {
     toolTipDisplay(...arg) {
@@ -115,8 +109,10 @@ export default {
       }
     },
     sizeHandler() {
-      this.chartDimensions.width = this.$refs.chartBox.clientWidth
-      this.chartDimensions.height = this.$refs.chartBox.clientHeight
+      if (this.$refs.chartBox) {
+        this.chartDimensions.width = this.$refs.chartBox.clientWidth
+        this.chartDimensions.height = this.$refs.chartBox.clientHeight
+      }
     },
     getCordinates(args) {
       this.tooltip.x = args.x

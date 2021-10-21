@@ -197,7 +197,33 @@
               </tooltip>
             </div>
             <div v-if="header.value == 'delivery_schedule'">
-              {{ item[header.value] | DeliverySchedule }}
+              <tooltip :max-width="280">
+                <template #label-content>
+                  {{ item[header.value] | DeliverySchedule }}
+                </template>
+                <template #hover-content>
+                  <span v-if="!item[header.value] || item[header.value] === {}">
+                    This engagement was delivered manually on
+                    {{
+                      item["last_delivered"]
+                        | Date("MMM D, YYYY [at] h:mm A")
+                        | Empty
+                    }}
+                  </span>
+                  <hux-delivery-text
+                    v-else
+                    :schedule="
+                      item[header.value] ? item[header.value].schedule : {}
+                    "
+                    :start-date="
+                      item[header.value] ? item[header.value].start_date : ''
+                    "
+                    :end-date="
+                      item[header.value] ? item[header.value].end_date : ''
+                    "
+                  />
+                </template>
+              </tooltip>
             </div>
             <div
               v-if="
@@ -368,7 +394,10 @@
                     </tooltip>
                   </div>
                   <div v-if="header.value == 'delivery_schedule'">
-                    {{ item[header.value] | DeliverySchedule }}
+                    <tooltip>
+                      <template #label-content> - </template>
+                      <template #hover-content> - </template>
+                    </tooltip>
                   </div>
                   <div
                     v-if="
@@ -438,7 +467,23 @@
                         <time-stamp :value="item[header.value]" />
                       </div>
                       <div v-if="header.value == 'delivery_schedule'">
-                        {{ item[header.value] | DeliverySchedule }}
+                        <tooltip>
+                          <template #label-content>
+                            {{
+                              item[header.value]
+                                ? item[header.value].periodicity
+                                : "-"
+                            }}
+                          </template>
+                          <template #hover-content>
+                            <hux-delivery-text
+                              v-if="item[header.value]"
+                              :schedule="item[header.value]"
+                              type="destination"
+                            />
+                            <span v-else>-</span>
+                          </template>
+                        </tooltip>
                       </div>
                       <div
                         v-if="
@@ -589,6 +634,7 @@ import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlike
 import Logo from "../../components/common/Logo.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import ConfirmModal from "../../components/common/ConfirmModal.vue"
+import HuxDeliveryText from "../../components/common/DatePicker/HuxDeliveryText.vue"
 export default {
   name: "Engagements",
   components: {
@@ -606,6 +652,7 @@ export default {
     Logo,
     Tooltip,
     ConfirmModal,
+    HuxDeliveryText,
   },
   data() {
     return {
