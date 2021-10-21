@@ -27,11 +27,12 @@ stages:
       headers:
         content-type: application/json
       json:
-        !anylist
         - id: !anystr
           type: !anystr
           name: !anystr
           status: !anystr
+          category: !anything
+          feed_count: !anyint
           is_added: !anybool
 
 ---
@@ -63,10 +64,11 @@ stages:
       headers:
         content-type: application/json
       json:
-        !anylist
         - type: !anystr
           name: !anystr
           status: !anystr
+          category: !anything
+          feed_count: !anyint
           is_added: !anybool
 
 ---
@@ -98,11 +100,12 @@ stages:
       headers:
         content-type: application/json
       json:
-        !anylist
         - id: !anystr
           type: !anystr
           name: !anystr
           status: !anystr
+          category: !anything
+          feed_count: !anyint
           is_added: !anybool
       save:
         json:
@@ -129,6 +132,8 @@ stages:
         type: !anystr
         name: !anystr
         status: !anystr
+        category: !anything
+        feed_count: !anyint
         is_added: !anybool
 
 ---
@@ -183,6 +188,8 @@ stages:
         - name: "tavern"
           type: "test"
           status: "Active"
+          category: "API"
+          feed_count: 1
 
     # ...and the expected response code and body
     response:
@@ -195,6 +202,8 @@ stages:
           name: !anystr
           status: !anystr
           type: !anystr
+          category: !anything
+          feed_count: !anyint
           is_added: !anybool
       save:
         json:
@@ -250,11 +259,12 @@ stages:
       headers:
         content-type: application/json
       json:
-        !anylist
         - id: !anystr
           type: !anystr
           name: !anystr
           status: !anystr
+          category: !anything
+          feed_count: !anyint
           is_added: !anybool
       save:
         json:
@@ -283,11 +293,12 @@ stages:
       headers:
         content-type: application/json
       json:
-        !anylist
         - id: !anystr
           type: !anystr
           name: !anystr
           status: !anystr
+          category: !anything
+          feed_count: !anyint
           is_added: !anybool
 
 ---
