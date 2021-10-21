@@ -115,15 +115,9 @@ export default {
     },
   },
 
-  created() {
-    this.modificationData
-    window.addEventListener("resize", this.sizeHandler)
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.sizeHandler)
-  },
   mounted() {
     this.sizeHandler()
+    new ResizeObserver(this.sizeHandler).observe(this.$refs.genderSpendChart)
     this.modificationData
   },
 

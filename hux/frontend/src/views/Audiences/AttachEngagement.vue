@@ -41,6 +41,7 @@
                     is-custom-icon
                     class="ma-2 caption"
                     is-tile
+                    data-e2e="first-engagement-create"
                     @click="goToStep2()"
                   >
                     New engagement
@@ -136,6 +137,7 @@
                   placeholder="Give this engagement a name"
                   height="40"
                   :rules="newEngagementRules"
+                  data-e2e="new-engagement-name"
                   required
                 />
                 <text-field
@@ -282,6 +284,7 @@
           height="40"
           width="146"
           :is-disabled="!newEngagementValid"
+          data-e2e="create-engagement-new"
           @click.native="addEngagement()"
         >
           Create &amp; add

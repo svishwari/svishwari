@@ -255,6 +255,7 @@
       :sub-title="`${confirmSubtitle}`"
       right-btn-text="Yes, delete it"
       left-btn-text="Nevermind!"
+      data-e2e="remove-audience-confirmation"
       @onCancel="confirmModal = !confirmModal"
       @onConfirm="confirmRemoval()"
     >
