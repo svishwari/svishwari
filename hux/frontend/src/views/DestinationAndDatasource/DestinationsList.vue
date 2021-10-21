@@ -12,7 +12,7 @@
           :disabled="destination.status !== 'Succeeded'"
           :action-menu="true"
           :coming-soon="false"
-          :logoOption="true"
+          :logo-option="true"
           height="225"
           width="255"
           class="mr-10 model-desc-card"
@@ -157,5 +157,4 @@ export default {
     }
   }
 }
-
 </style>

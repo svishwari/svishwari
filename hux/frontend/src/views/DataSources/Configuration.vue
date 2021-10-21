@@ -53,6 +53,7 @@
             :is-already-added="dataSource.is_added"
             class="my-3"
             data-e2e="dataSourcesAddList"
+            :requested-button="dataSource.status !== 'Active' ? true : false"
             @click="onDataSourceClick(dataSource.id)"
           />
 
@@ -70,6 +71,7 @@
             :is-available="dataSource.is_enabled"
             :is-already-added="dataSource.is_added"
             class="my-3"
+            :button-text="true"
             hide-button
           >
             <span class="font-weight-light letter-spacing-sm"

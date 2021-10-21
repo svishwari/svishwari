@@ -32,8 +32,20 @@
 
     <div v-if="icon" class="d-flex justify-center mt-2 mr-8">
       <div class="dot">
-         <logo v-if="logoOption" :type="icon" :size="44" :color="iconColor" class="d-block"/>
-        <icon v-else :type="icon" :size="44" :color="iconColor" class="d-block" />
+        <logo
+          v-if="logoOption"
+          :type="icon"
+          :size="44"
+          :color="iconColor"
+          class="d-block"
+        />
+        <icon
+          v-else
+          :type="icon"
+          :size="44"
+          :color="iconColor"
+          class="d-block"
+        />
       </div>
     </div>
 
@@ -85,7 +97,7 @@ export default {
   components: {
     Icon,
     Tooltip,
-    Logo
+    Logo,
   },
 
   props: {
@@ -137,15 +149,15 @@ export default {
       default: "Activate",
     },
     logoOption: {
-       type: Boolean,
+      type: Boolean,
       required: false,
       default: false,
-    }, 
+    },
     iconColor: {
-       type: String,
+      type: String,
       required: false,
       default: "Primary",
-    }
+    },
   },
 }
 </script>
