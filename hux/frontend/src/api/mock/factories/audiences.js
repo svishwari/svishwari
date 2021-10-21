@@ -35,6 +35,13 @@ const engagementData = () => {
         next_delivery: "2021-07-28T15:38:42.629Z",
         delivery_schedule_type: "Daily",
         match_rate: faker.datatype.number({ min: 0, max: 1, precision: 0.001 }),
+        schedule: {
+          periodicity: "Daily",
+          every: 2,
+          hour: 12,
+          minute: 10,
+          period: "PM",
+        },
       },
     ],
   }

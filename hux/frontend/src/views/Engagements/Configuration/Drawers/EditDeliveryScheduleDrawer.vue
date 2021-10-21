@@ -59,6 +59,7 @@ import HuxButton from "@/components/common/huxButton.vue"
 import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
 import { deliverySchedule } from "@/utils"
 import Icon from "@/components/common/Icon.vue"
+import { mapActions } from "vuex"
 
 export default {
   name: "EditDeliverySchedule",
@@ -106,8 +107,33 @@ export default {
     }
   },
 
+computed: {
+  scheduleConfig() {
+ const recurringConfig = {}
+      recurringConfig["every"] = this.localSchedule.every
+      recurringConfig["periodicity"] = this.localSchedule.periodicity
+       if (this.localSchedule && this.localSchedule.periodicity == "Daily") {
+        recurringConfig["hour"] = this.localSchedule.hour
+        recurringConfig["minute"] = this.localSchedule.minute
+        recurringConfig["period"] = this.localSchedule.period
+      } else if (
+        this.localSchedule &&
+        this.localSchedule.periodicity == "Weekly"
+      ) {
+        recurringConfig["day_of_week"] = this.localSchedule.day_of_week
+      } else if (
+        this.localSchedule &&
+        this.localSchedule.periodicity == "Monthly"
+      ) {
+        recurringConfig["day_of_month"] = this.localSchedule.monthlyDayDate
+      }
+      return recurringConfig;
+ },
+},
+
   watch: {
     value(value) {
+       console.log("data", this.audienceId, this.engagementId, this.destination)
       this.localToggle = value
     },
 
@@ -123,13 +149,25 @@ export default {
   },
 
   methods: {
+      ...mapActions({
+      scheduleDelivery: "engagements/deliverySchedule",
+    }),
     reset() {
       this.localToggle = false
       this.resetSchedule()
     },
 
-    onUpdate() {
+    async onUpdate() {
+       const requestPayload = {
+        id: this.engagementId,
+        audienceId: this.audienceId,
+        destinationId: this.destination.id,
+        recurringConfig: this.scheduleConfig,
+      }
+     
       this.$emit("onUpdate")
+      await this.scheduleDelivery(requestPayload)
+      this.localToggle = false
     },
 
     resetSchedule() {
