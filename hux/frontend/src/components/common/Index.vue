@@ -1105,7 +1105,7 @@
           <card-stat label="Last trained" value="2 hrs ago">12:45pm</card-stat>
         </div>
       </template>
-      <template slot="menu-item">
+      <template slot="action-menu-options">
         <v-list class="list-wrapper">
           <v-list-item-group>
             <v-list-item>

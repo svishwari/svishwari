@@ -40,7 +40,7 @@
             />
           </template>
           <template slot="action-menu-options">
-            <v-list class="list-wrapper list-padding">
+            <v-list class="list-wrapper pa-0">
               <v-list-item-group>
                 <v-list-item @click="openModal(dataSource)">
                   <v-list-item-title> Remove </v-list-item-title>
@@ -174,7 +174,5 @@ export default {
     @extend .cursor-default;
   }
 }
-.list-padding {
-  padding: 0px !important;
-}
+
 </style>

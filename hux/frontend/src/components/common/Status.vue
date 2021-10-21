@@ -150,7 +150,7 @@
           icon
           outlined
           color="success"
-          class="dotted hover-button"
+          class="dotted hover-button-margin"
           v-on="on"
         />
       </template>
@@ -194,8 +194,7 @@
           icon
           outlined
           color="primary lighten-6"
-          class="dotted"
-          style="margin-left: 1.5px"
+          class="dotted hover-button-margin"
           v-on="on"
         />
       </template>
@@ -498,7 +497,7 @@ export default {
     }
   }
 }
-.hover-button {
+.hover-button-margin {
   margin-left: 1.5px !important;
 }
 </style>
