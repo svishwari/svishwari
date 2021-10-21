@@ -28,7 +28,6 @@ stages:
         paths: !anydict
         definitions: !anydict
         schemes:
-          - "http"
           - "https"
         securityDefinitions:
           Bearer:
