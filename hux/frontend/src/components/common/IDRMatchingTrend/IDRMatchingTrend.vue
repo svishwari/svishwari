@@ -88,13 +88,12 @@ export default {
     }
   },
   mounted() {
-    this.sizeHandler()
-  },
-  created() {
-    window.addEventListener("resize", this.sizeHandler)
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.sizeHandler)
+    new ResizeObserver(() => {
+      if (this.$refs.trendsChart) {
+        this.chartDimensions.width = this.$refs.trendsChart.clientWidth
+        this.chartDimensions.height = 300
+      }
+    }).observe(this.$refs.trendsChart)
   },
   methods: {
     toolTipDisplay(...arg) {
@@ -106,12 +105,6 @@ export default {
     getCordinates(args) {
       this.tooltip.x = args.x
       this.tooltip.y = args.y
-    },
-    sizeHandler() {
-      if (this.$refs.trendsChart) {
-        this.chartDimensions.width = this.$refs.trendsChart.clientWidth
-        this.chartDimensions.height = 300
-      }
     },
   },
 }

@@ -107,12 +107,7 @@ export default {
   mounted() {
     this.sizeHandler()
     this.processSourceData()
-  },
-  created() {
-    window.addEventListener("resize", this.sizeHandler)
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.sizeHandler)
+    new ResizeObserver(this.sizeHandler).observe(this.$refs.totalCustomerChart)
   },
   methods: {
     toolTipDisplay(...arg) {

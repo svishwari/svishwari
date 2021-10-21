@@ -32,10 +32,12 @@
           append
         >
           <huxButton
-            icon="mdi-plus"
-            icon-position="left"
-            variant="primary"
+            variant="primary base"
+            icon-color="white"
+            icon-variant="base"
+            icon="plus"
             size="large"
+            is-custom-icon
             is-tile
             class="ma-2 font-weight-regular no-shadow mr-0"
           >
@@ -222,12 +224,14 @@
             append
           >
             <huxButton
-              icon="mdi-plus"
-              icon-position="left"
-              variant="primary"
+              variant="primary base"
+              icon-color="white"
+              icon-variant="base"
+              icon="plus"
               size="large"
+              is-custom-icon
               is-tile
-              class="ma-2 font-weight-regular"
+              class="ma-2 font-weight-regular caption"
             >
               Audience
             </huxButton>
@@ -251,6 +255,7 @@
       :sub-title="`${confirmSubtitle}`"
       right-btn-text="Yes, delete it"
       left-btn-text="Nevermind!"
+      data-e2e="remove-audience-confirmation"
       @onCancel="confirmModal = !confirmModal"
       @onConfirm="confirmRemoval()"
     >
