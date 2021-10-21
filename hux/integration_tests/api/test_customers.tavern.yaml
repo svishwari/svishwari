@@ -104,13 +104,14 @@ stages:
     response:
       status_code: 200
       json:
+        !anylist
         - data_source_type: !anystr
-        - last_run: !anystr
-        - datafeed_name: !anystr
-        - match_rate: !anyfloat
-        - datafeed_id: !anystr
-        - new_ids_generated: !anyint
-        - num_records_processed: !anyint
+          last_run: !anystr
+          datafeed_name: !anystr
+          match_rate: !anyfloat
+          datafeed_id: !anystr
+          new_ids_generated: !anyint
+          num_records_processed: !anyint
       headers:
         content-type: application/json
 
@@ -136,39 +137,29 @@ stages:
       strict: false
       status_code: 200
       json:
-        "total_unknown_ids": !anyint
-        "min_ltv_predicted": !anyfloat
-        "updated": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
-        "gender_men": !anyfloat
-        "total_cities": !anyint
-        "total_known_ids": !anyint
-        "max_ltv_predicted": !anyfloat
-        "total_countries": !anyint
-        "min_age": !anyint
-        "avg_age" : !anyint
-        "total_us_states": !anyint
-        "gender_other": !anyfloat
-        "max_ltv_actual": !anyfloat
-        "total_individual_ids": !anyint
-        "min_ltv_actual": !anyfloat
-        "gender_women": !anyfloat
-        "total_customers": !anyint
-        "total_unique_ids": !anyint
-        "match_rate": !anyfloat
-        "total_records": !anyint
-        "total_household_ids": !anyint
-        "max_age": !anyint
+        "date_range":
+          "start_date": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          "end_date": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "overview":
+          "total_household_ids": !anyint
+          "total_unknown_ids": !anyint
+          "total_known_ids": !anyint
+          "total_customers": !anyint
+          "total_records": !anyint
+          "match_rate": !anyfloat
+          "total_unique_ids": !anyint
+          "total_individual_ids": !anyint
       headers:
         content-type: application/json
 
 ---
-test_name: Test customers
+test_name: Test get all customers
 
 includes:
   - !include common.yaml
 
 stages:
-  - name: test customers
+  - name: test get all customers
 
     # Define the request to be made...
     request:
@@ -210,48 +201,69 @@ stages:
       strict: false
       status_code: 200
       json:
-        "hux_id": "{first_customer.hux_id}"
-        "ltv_predicted": !anyfloat
-        "churn_rate": !anyfloat
-        "last_email_open": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
-        "propensity_to_unsubscribe": !anyfloat
-        "address": "++REDACTED++"
-        "gender": "++REDACTED++"
-        "ltv_actual": !anyfloat
-        "last_name": "{first_customer.last_name}"
-        "email": "++REDACTED++"
-        "zip": "++REDACTED++"
-        "state": "++REDACTED++"
-        "since": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
-        "preference_push": !anybool
-        "last_click": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
-        "preference_email": !anybool
-        "preference_in_app": !anybool
-        "match_confidence": !anyfloat
-        "conversion_time": !anyfloat
-        "age": "++REDACTED++"
-        "last_purchase": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
-        "city": "++REDACTED++"
-        "propensity_to_purchase": !anyfloat
-        "phone": "++REDACTED++"
-        "first_name": "{first_customer.first_name}"
-        "preference_sms": !anybool
+        "contact_preferences":
+          "preference_push": !anybool
+          "preference_email": !anybool
+          "preference_in_app": !anybool
+          "preference_sms": !anybool
+        "overview":
+          "last_email_open": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          "match_confidence": !anyfloat
+          "last_purchase": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          "first_name": "{first_customer.first_name}"
+          "last_name": "{first_customer.last_name}"
+          "ltv_actual": !anyfloat
+          "churn_rate": !anyfloat
+          "since": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          "ltv_predicted": !anyfloat
+          "hux_id": "{first_customer.hux_id}"
+          "conversion_time": !anyfloat
+          "last_click": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "insights":
+          "address": "++REDACTED++"
+          "gender": "++REDACTED++"
+          "email": "++REDACTED++"
+          "zip": "++REDACTED++"
+          "state": "++REDACTED++"
+          "age": "++REDACTED++"
+          "city": "++REDACTED++"
+          "phone": "++REDACTED++"
         "identity_resolution":
           "email":
+            "icon": !anystr
+            "prop": !anystr
+            "count": !anyint
             "percentage": !anyfloat
             "data_sources": !anylist
+            "cooccurrences": !anylist
           "name":
+            "icon": !anystr
+            "prop": !anystr
+            "count": !anyint
             "percentage": !anyfloat
             "data_sources": !anylist
+            "cooccurrences": !anylist
           "cookie":
+            "icon": !anystr
+            "prop": !anystr
+            "count": !anyint
             "percentage": !anyfloat
             "data_sources": !anylist
+            "cooccurrences": !anylist
           "phone":
+            "icon": !anystr
+            "prop": !anystr
+            "count": !anyint
             "percentage": !anyfloat
             "data_sources": !anylist
+            "cooccurrences": !anylist
           "address":
+            "icon": !anystr
+            "prop": !anystr
+            "count": !anyint
             "percentage": !anyfloat
             "data_sources": !anylist
+            "cooccurrences": !anylist
       headers:
         content-type: application/json
 
