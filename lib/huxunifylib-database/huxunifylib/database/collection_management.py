@@ -23,13 +23,16 @@ def create_document(
     username: str = "unknown",
 ) -> Union[dict, None]:
     """A function to create a new document.
+
     Args:
         database (DatabaseClient): A database client.
         collection (str): Collection name.
         new_doc (dict): Document to be created.
         username (str): Username.
+
     Returns:
         Union[dict, None]: MongoDB document for a collection.
+
     Raises:
         InvalidValueException: Error if the passed in document value
             is not valid.
@@ -84,14 +87,17 @@ def update_document(
     username: str = "unknown",
 ) -> Union[dict, None]:
     """A function to update a document.
+
     Args:
         database (DatabaseClient): A database client.
         collection (str): Collection name.
         document_id (str): Document ID of a doc.
         update_doc (dict): Dict of key values to update.
         username (str): Username.
+
     Returns:
         Union[dict, None]: Updated MongoDB document for a document.
+
     Raises:
         InvalidValueException: Error if a key that is passed in update_doc dict is
             not part of the allowed fields list.
@@ -134,10 +140,12 @@ def get_document(
     document_id: ObjectId,
 ) -> Union[dict, None]:
     """Get document by ID
+
     Args:
         database (DatabaseClient): MongoDB Database Client
         collection (str): Collection name.
         document_id (ObjectId): MongoDB Object Id
+
     Returns:
         Tuple[dict,None]:MongoDB collection document else None
     """
@@ -167,6 +175,7 @@ def get_documents(
     batch_number: int = 1,
 ) -> Union[dict, None]:
     """A function to get documents from a collection.
+
     Args:
         database (DatabaseClient): A database client.
         collection (str): Collection name.
@@ -174,6 +183,7 @@ def get_documents(
         sort_order (Tuple[str, int]): Mongo sort order.
         batch_size (int): Number of documents per batch.
         batch_number (int): Number of which batch should be returned.
+
     Returns:
         Union[dict, None]: Collection documents with total count.
     """
@@ -218,12 +228,14 @@ def delete_document(
     username: str = "unknown",
 ) -> bool:
     """A function to delete a document using ID.
+
     Args:
         database (DatabaseClient): A database client.
         collection (str): Collection name.
         document_id (ObjectId): Object Id of the document.
         hard_delete (bool): hard deletes an document if True.
         username (str): Username.
+
     Returns:
         bool: Flag indicating successful operation.
     """
