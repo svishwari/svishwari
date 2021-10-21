@@ -11,6 +11,8 @@
           :disabled="dataSource.status !== 'Active'"
           :action-menu="dataSource.status !== 'Active' ? true : false"
           :coming-soon="false"
+          :iconColor="true"
+           :logoOption="true"
           :dot-option="'Remove'"
           class="mr-10 model-desc-card"
           height="225"
@@ -37,7 +39,7 @@
               data-e2e="model-status"
             />
           </template>
-          <template slot="menu-item">
+          <template slot="action-menu-options">
             <v-list class="list-wrapper list-padding">
               <v-list-item-group>
                 <v-list-item @click="openModal(dataSource)">

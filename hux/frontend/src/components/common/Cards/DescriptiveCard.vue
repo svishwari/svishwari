@@ -22,7 +22,7 @@
           </v-icon>
         </template>
         <div class="black--text text-darken-4 cursor-pointer white">
-          <slot name="menu-item"></slot>
+          <slot name="action-menu-options"></slot>
         </div>
       </v-menu>
       <div v-if="comingSoon" class="coming-soon d-flex float-right mt-n4">
@@ -32,7 +32,8 @@
 
     <div v-if="icon" class="d-flex justify-center mt-2 mr-8">
       <div class="dot">
-        <icon :type="icon" :size="44" color="white" class="d-block" />
+         <logo v-if="logoOption" :type="icon" :size="44" :color="iconColor" class="d-block"/>
+        <icon v-else :type="icon" :size="44" :color="iconColor" class="d-block" />
       </div>
     </div>
 
@@ -76,6 +77,7 @@
 <script>
 import Icon from "@/components/common/Icon"
 import Tooltip from "@/components/common/Tooltip"
+import Logo from "@/components/common/Logo"
 
 export default {
   name: "DescriptiveCard",
@@ -83,6 +85,7 @@ export default {
   components: {
     Icon,
     Tooltip,
+    Logo
   },
 
   props: {
@@ -133,6 +136,16 @@ export default {
       required: false,
       default: "Activate",
     },
+    logoOption: {
+       type: Boolean,
+      required: false,
+      default: false,
+    }, 
+    iconColor: {
+       type: String,
+      required: false,
+      default: "Primary",
+    }
   },
 }
 </script>

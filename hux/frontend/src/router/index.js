@@ -204,7 +204,7 @@ const routes = [
   {
     path: "/dataSources",
     name: "DataSources",
-    component: () => import("@/views/Connections/Index"),
+    component: () => import("@/views/DestinationAndDatasource/Index"),
     meta: {
       layout: "app",
       title: "Data Sources",
@@ -215,7 +215,7 @@ const routes = [
   {
     path: "/destinations",
     name: "Destinations",
-    component: () => import("@/views/Connections/DestinationIndex"),
+    component: () => import("@/views/DestinationAndDatasource/DestinationIndex"),
     meta: {
       layout: "app",
       title: "Destinations",

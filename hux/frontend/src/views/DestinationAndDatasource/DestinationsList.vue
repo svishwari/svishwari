@@ -12,6 +12,7 @@
           :disabled="destination.status !== 'Succeeded'"
           :action-menu="true"
           :coming-soon="false"
+          :logoOption="true"
           height="225"
           width="255"
           class="mr-10 model-desc-card"
@@ -25,8 +26,8 @@
               data-e2e="model-status"
             />
           </template>
-          <template slot="menu-item">
-            <v-list class="list-wrapper list-padding">
+          <template slot="action-menu-options">
+            <v-list class="list-wrapper pa-0">
               <v-list-item-group>
                 <v-list-item @click="openModal(destination)">
                   <v-list-item-title> Remove </v-list-item-title>
@@ -156,7 +157,5 @@ export default {
     }
   }
 }
-.list-padding {
-  padding: 0px !important;
-}
+
 </style>
