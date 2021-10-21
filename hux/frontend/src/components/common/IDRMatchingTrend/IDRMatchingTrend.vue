@@ -88,8 +88,12 @@ export default {
     }
   },
   mounted() {
-    this.sizeHandler()
-    new ResizeObserver(this.sizeHandler).observe(this.$refs.trendsChart)
+    new ResizeObserver(() => {
+      if (this.$refs.trendsChart) {
+        this.chartDimensions.width = this.$refs.trendsChart.clientWidth
+        this.chartDimensions.height = 300
+      }
+    }).observe(this.$refs.trendsChart)
   },
   methods: {
     toolTipDisplay(...arg) {
@@ -101,12 +105,6 @@ export default {
     getCordinates(args) {
       this.tooltip.x = args.x
       this.tooltip.y = args.y
-    },
-    sizeHandler() {
-      if (this.$refs.trendsChart) {
-        this.chartDimensions.width = this.$refs.trendsChart.clientWidth
-        this.chartDimensions.height = 300
-      }
     },
   },
 }

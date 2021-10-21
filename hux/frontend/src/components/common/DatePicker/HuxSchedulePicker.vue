@@ -133,38 +133,12 @@
       </div>
     </div>
 
-    <div class="black--text text--darken-1 pt-4 text-caption">
-      Delivery takes place
-      <span class="black--text text--darken-4">
-        [every
-        {{ value.every !== 1 ? value.every : "" }}
-        {{ timeFrame }}{{ value.every !== 1 ? "s" : "" }}]
-      </span>
-      <span v-if="value.periodicity !== 'Daily'">on </span>
-      <span
-        v-if="value.periodicity === 'Weekly'"
-        class="black--text text--darken-4"
-      >
-        <span v-if="selectedDaysString !== '[]'">
-          {{ selectedDaysString }}
-        </span>
-      </span>
-      <span
-        v-if="value.periodicity === 'Monthly'"
-        class="black--text text--darken-4"
-      >
-        <span v-if="value.monthlyPeriod === 'Day'">
-          [Day {{ value.monthlyDayDate }}]
-        </span>
-        <span v-else>
-          [the {{ value.monthlyPeriod }} {{ value.monthlyDay }}]
-        </span>
-      </span>
-      starting at
-      <span class="black--text text--darken-4">
-        [{{ value.hour }}:{{ value.minute }}{{ value.period }}]
-      </span>
-    </div>
+    <hux-delivery-text
+      :schedule="value"
+      :start-date="startDate"
+      :end-date="endDate"
+      class="pt-4"
+    />
 
     <div
       v-if="
@@ -181,13 +155,26 @@
 </template>
 <script>
 import { dayAbbreviation } from "@/utils"
+import HuxDeliveryText from "@/components/common/DatePicker/HuxDeliveryText"
 
 export default {
   name: "HuxSchedulePicker",
 
+  components: {
+    HuxDeliveryText,
+  },
+
   props: {
     value: {
       type: Object,
+      required: false,
+    },
+    startDate: {
+      type: String,
+      required: false,
+    },
+    endDate: {
+      type: String,
       required: false,
     },
   },
