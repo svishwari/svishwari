@@ -299,9 +299,7 @@ export default {
     this.loading = true
     this.engagementId = this.getRouteId
     await this.loadEngagement(this.getRouteId)
-    this.currentSchedule = this.engagementList.delivery_schedule
-      ? this.engagementList.delivery_schedule.schedule
-      : {}
+    this.currentSchedule = this.engagementList.delivery_schedule?.schedule
     this.loading = false
   },
   methods: {

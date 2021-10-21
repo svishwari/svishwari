@@ -16,6 +16,9 @@ describe("Data management > Customer Profiles", () => {
     cy.get(selector.customerProfile.customers).click()
     cy.location("pathname").should("eq", route.customerProfiles)
 
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+
     // should be able to view overview of customer profiles"
     cy.get(selector.customerProfile.overview)
       .its("length")
@@ -34,6 +37,9 @@ describe("Data management > Customer Profiles", () => {
         .its("length")
         .should("eq", 8)
     })
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(5000)
 
     // should be able to check if valid response for total customers has received"
     cy.get(selector.customerProfile.chart).its("length").should("gt", 0)

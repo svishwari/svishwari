@@ -83,8 +83,6 @@ export default {
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
       let barColorCodes = []
-      let rx = 3
-      let ry = 3
 
       let svg = d3Select
         .select(this.$refs.stackBarChart)
@@ -138,8 +136,6 @@ export default {
         .range([h, 0])
         .nice(4)
 
-      let bars = svg.append("g").attr("class", "bars")
-
       let hideInitialTick =
         this.totalCustomerData.filter(
           (bar) => bar.index == 0 && bar.barIndex < 5
@@ -161,13 +157,6 @@ export default {
 
       let applyNumericFilter = (value) =>
         this.emptyState ? "-" : this.$options.filters.Numeric(value, true, true)
-
-      svg
-        .append("g")
-        .classed("xAxis-alternate", true)
-        .attr("transform", "translate(0," + 255 + ")")
-        .call(d3Axis.axisBottom(xScale).tickSize(0).tickFormat(""))
-        .style("stroke-width", 40)
 
       svg
         .append("g")
@@ -204,6 +193,8 @@ export default {
         .selectAll(".yAxis-alternate .tick line")
         .style("stroke", "#E2EAEC")
 
+      let bars = svg.append("g").attr("class", "bars")
+
       let groups = bars
         .selectAll("g")
         .data(stackedValues)
@@ -225,8 +216,6 @@ export default {
         .attr("x", 10)
         .style("color", "#4F4F4F")
       d3Select.selectAll(".yAxis-main .tick text").style("color", "#4F4F4F")
-      d3Select.selectAll(".xAxis-alternate .domain").style("stroke", "white")
-
       d3Select.selectAll(".xAxis-main .tick text").attr("x", 14)
 
       svg
@@ -236,46 +225,29 @@ export default {
         .style("stroke-width", 1)
         .style("pointer-events", "none")
 
-      let topRoundedRect = (x, y, width, height) => {
-        height = height < 0 ? 0 : height
-        return `M${x},${y + ry}
-        a${rx},${ry} 0 0 1 ${rx},${-ry}
-        h${width - 2 * rx}
-        a${rx},${ry} 0 0 1 ${rx},${ry}
-        v${height - ry}
-        h${-width}Z`
-      }
-
       groups
         .selectAll("bar")
         .data((d) => d)
         .enter()
-        .append("path")
+        .append("rect")
         .attr("class", (d, i) => {
           if (i == this.totalCustomerData.length - 1) {
             return "active-bar"
           }
         })
-        .attr("height", 0)
-        .attr("width", xScale.bandwidth() < 30 ? xScale.bandwidth() : 30)
         .attr("data", (d, i) => i)
-        .attr("dx", 10)
         .style("fill", (d) =>
           this.emptyState ? "transparent" : barColorCodes[d.data.index]
         )
         .on("mouseover", (d) => applyHoverEffects(d, xScale.bandwidth()))
         .on("mouseout", (d) => removeHoverEffects(d))
-        .transition()
-        .duration(500)
-        .delay((d, i) => i * 25)
-        .attr("d", (d, i) =>
-          topRoundedRect(
-            xScale(i),
-            yScale(d[1]),
-            xScale.bandwidth() < 30 ? xScale.bandwidth() : 30,
-            yScale(d[0]) - yScale(d[1])
-          )
-        )
+        .attr("height", (d) => yScale(d[0]) - yScale(d[1]))
+        .attr("width", xScale.bandwidth() < 30 ? xScale.bandwidth() : 30)
+        .attr("x", (d, i) => xScale(i))
+        .attr("y", (d) => yScale(d[1]))
+        .attr("rx", 4)
+        .attr("ry", 4)
+        .attr("d", (d) => d)
 
       let applyHoverEffects = (d, width) => {
         d3Select.select(d.srcElement).attr("fill-opacity", (d) => {
