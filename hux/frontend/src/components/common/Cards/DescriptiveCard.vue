@@ -155,7 +155,9 @@ export default {
     }
   }
   .dot {
-    padding: 7px;
+    width: 60px;
+    height: 60px;
+    padding: 8px;
     border-radius: 50%;
     @extend .box-shadow-1;
   }

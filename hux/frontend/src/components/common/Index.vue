@@ -1078,7 +1078,7 @@
 
       <template slot="default">
         <div
-          class="text-caption black--text text--darken-1 mb-2"
+          class="text-caption black--text text--lighten-4 mb-2"
           data-e2e="model-owner"
         >
           Owner Name

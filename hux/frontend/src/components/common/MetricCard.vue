@@ -19,7 +19,7 @@
           v-if="!titleTooltip"
           class="text-body-2"
           :class="[
-            interactable ? 'primary--text ' : 'black--text text--darken-1 ',
+            interactable ? 'primary--text ' : 'black--text text--lighten-4 ',
             highLevel ? 'highlevel-title' : '',
           ]"
         >

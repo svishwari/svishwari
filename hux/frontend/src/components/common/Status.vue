@@ -145,8 +145,8 @@
     <v-menu v-else bottom offset-y offset-x open-on-hover>
       <template #activator="{ on }">
         <v-btn
-          width="15"
-          height="15"
+          width="18"
+          height="18"
           icon
           outlined
           color="success"
