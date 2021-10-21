@@ -779,6 +779,7 @@
         icon="drawer-add-tick"
         is-custom-icon
         class="ma-2 caption"
+        iconClass="ml-0 mr-1"
       >
         Added
       </huxButton>
@@ -794,6 +795,7 @@
         icon-variant="lighten3"
         icon-size="15"
         class="ma-2 caption"
+        iconClass="ml-0 mr-1"
       >
         <span class="black--text text--lighten-3">Added</span>
       </huxButton>
@@ -808,6 +810,7 @@
         is-custom-icon
         icon-size="15"
         class="ma-2 caption"
+        iconClass="ml-0 mr-1"
       >
         Requested
       </huxButton>

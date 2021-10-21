@@ -13,7 +13,7 @@
   >
     <icon
       v-if="isCustomIcon"
-      class="ml-2 mr-2"
+      :class="iconClass"
       :color="iconColor"
       :variant="iconVariant"
       :type="icon"
@@ -119,6 +119,11 @@ export default {
       required: false,
       default: 14,
     },
+    iconClass: {
+      type: String,
+      required: false,
+      default: "ml-2 mr-2"
+    }
   },
   data() {
     return {
