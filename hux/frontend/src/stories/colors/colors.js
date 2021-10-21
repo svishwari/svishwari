@@ -1,4 +1,4 @@
-export const colors = {
+export default {
   generic: [
     {
       title: "Lines & Borders (Light)",
@@ -23,12 +23,12 @@ export const colors = {
     {
       title: "White",
       hex: "#FFFFFF",
-      class: "white",
+      class: "white-base",
     },
     {
       title: "Yellow",
       hex: "#FFCD00",
-      class: "yellow",
+      class: "yellow-base",
     },
     {
       title: "5% Yellow",
@@ -61,13 +61,13 @@ export const colors = {
   text: [
     {
       title: "Dark Blue (Blue 5) Clickable",
-      hex: "#005587",
+      hex: "#0C9DDB",
       class: "primary-darken2",
     },
     {
       title: "Dark - D",
       hex: "#1E1E1E",
-      class: "black",
+      class: "black-base",
     },
     {
       title: "Light Gray - D",
@@ -79,19 +79,19 @@ export const colors = {
     {
       title: "Error",
       hex: "#DA291C",
-      class: "error",
+      class: "error-base",
     },
     {
       title: "Warning",
       hex: "#ED8B00",
-      class: "warning",
+      class: "warning-base",
     },
   ],
   secondary: [
     {
       title: "Green Green 3",
       hex: "#43B02A",
-      class: "teal",
+      class: "success-base",
     },
     {
       title: "Blue D (Active)",
@@ -103,22 +103,22 @@ export const colors = {
     {
       title: "Light Teal D",
       hex: "#9DD4CF",
-      class: "teal-lighten1",
+      class: "secondary-lighten1",
     },
     {
       title: "Light Green D",
       hex: "#86BC25",
-      class: "teal-lighten3",
+      class: "success-lighten3",
     },
     {
       title: "Green D",
       hex: "#43B02A",
-      class: "teal",
+      class: "success-base",
     },
     {
       title: "Mustard Yellow D",
       hex: "#E3E48D",
-      class: "yellow-darken1",
+      class: "info-base",
     },
     {
       title: "Light Blue D",
@@ -133,37 +133,37 @@ export const colors = {
     {
       title: "Teal D",
       hex: "#00ABAB",
-      class: "teal-lighten2",
+      class: "success-lighten2",
     },
     {
       title: "Teal 6 D",
       hex: "#007680",
-      class: "teal-darken2",
+      class: "secondary-darken1",
     },
     {
       title: "Teal 7 D",
       hex: "#004F59",
-      class: "teal-darken3",
+      class: "secondary-darken2",
     },
     {
       title: "Red D",
       hex: "#DA291C",
-      class: "error",
+      class: "error-base",
     },
   ],
   charts: [
     {
-      title: "1",
+      title: "Chart 1",
       hex: "#005587",
+      class: "primary-base",
+    },
+    {
+      title: "Chart 2",
+      hex: "#0C9DDB",
       class: "primary-darken2",
     },
     {
-      title: "2",
-      hex: "#0C9DDB",
-      class: "primary",
-    },
-    {
-      title: "3",
+      title: "Chart 3",
       hex: "#42EFFD",
       class: "primary-lighten9",
     },
