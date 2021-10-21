@@ -17,6 +17,7 @@ TYPE = "type"
 OBJECT_ID = "id"
 CONFIGURATION = "configuration"
 SIZE = "size"
+DOCUMENTS = "documents"
 
 # general fields
 AGE = "age"
@@ -42,6 +43,7 @@ PERFORMANCE_METRICS_COLLECTION = "performance_metrics"
 CAMPAIGN_ACTIVITY_COLLECTION = "campaign_activity"
 USER_COLLECTION = "users"
 NOTIFICATIONS_COLLECTION = "notifications"
+CONFIGURATIONS_COLLECTION = "configurations"
 CACHE_COLLECTION = "cache"
 AUDIENCE_AUDIT_COLLECTION = "audit_logs"
 
@@ -106,14 +108,6 @@ UPDATED_BY = "updated_by"
 JOB_START_TIME = "start_time"
 JOB_END_TIME = "end_time"
 JOB_ID = "ingestion_job_id"
-
-# category constants
-CATEGORY = "category"
-ADVERTISING = "Advertising"
-MARKETING = "Marketing"
-COMMERCE = "Commerce"
-ANALYTICS = "Analytics"
-SURVEY = "Survey"
 
 STATUS_PENDING = "Pending"
 STATUS_IN_PROGRESS = "In progress"
@@ -250,6 +244,7 @@ SUPPORTED_DELIVERY_PLATFORMS = [
     DELIVERY_PLATFORM_QUALTRICS,
 ]
 IS_AD_PLATFORM = "is_ad_platform"
+AUDIENCE_NAME_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 LOOKALIKE = "lookalike"
 LOOKALIKE_AUD_NAME = "name"
@@ -339,6 +334,21 @@ NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 NOTIFICATION_QUERY_PARAMETER_SORT_ORDER = "sort_order"
 NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
 
+# Configuration constants
+
+CONFIGURATION_FIELD_NAME = "name"
+CONFIGURATION_FIELD_ICON = "icon"
+CONFIGURATION_FIELD_TYPE = "type"
+CONFIGURATION_FIELD_DESCRIPTION = "description"
+CONFIGURATION_FIELD_STATUS = "status"
+CONFIGURATION_FIELD_ENABLED = "enabled"
+CONFIGURATION_FIELD_ROADMAP = "roadmap"
+CONFIGURATION_FIELD_USERNAME = "username"
+CONFIGURATION_FIELD_CREATED_BY = "created_by"
+CONFIGURATION_FIELD_CREATED_TIME = "created_time"
+CONFIGURATION_FIELD_UPDATED_BY = "updated_by"
+CONFIGURATION_FIELD_UPDATED_TIME = "updated_time"
+
 # Audience constants
 AUDIENCE_FILTER_CONSTANTS = "audience_filter_constants"
 AGE_FILTER = "age_filter"
@@ -376,3 +386,23 @@ DOWNLOAD_TIME = "download_time"
 FILE_NAME = "file_name"
 USER_NAME = "user_name"
 DOWNLOAD_TYPE = "download_type"
+
+
+# Required Fields per collection
+REQUIRED_FIELDS = {
+    CONFIGURATIONS_COLLECTION: [
+        CONFIGURATION_FIELD_TYPE,
+    ]
+}
+
+# Allowed Fields per collection
+ALLOWED_FIELDS = {
+    CONFIGURATIONS_COLLECTION: [
+        CONFIGURATION_FIELD_NAME,
+        CONFIGURATION_FIELD_ICON,
+        CONFIGURATION_FIELD_TYPE,
+        CONFIGURATION_FIELD_DESCRIPTION,
+        CONFIGURATION_FIELD_STATUS,
+        CONFIGURATION_FIELD_ENABLED,
+    ]
+}
