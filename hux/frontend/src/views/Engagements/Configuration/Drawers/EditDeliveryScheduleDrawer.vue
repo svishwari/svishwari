@@ -133,7 +133,6 @@ computed: {
 
   watch: {
     value(value) {
-       console.log("data", this.audienceId, this.engagementId, this.destination)
       this.localToggle = value
     },
 
