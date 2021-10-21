@@ -112,6 +112,8 @@ class CdpDataSourcesTest(TestCase):
             )
         )
         for data_source in response.json:
+            self.assertIn(db_c.CATEGORY, data_source)
+            self.assertIn(db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT, data_source)
             if data_source in self.data_sources:
                 self.assertTrue(data_source[api_c.IS_ADDED])
                 self.assertIn(api_c.ID, data_source)
@@ -141,6 +143,8 @@ class CdpDataSourcesTest(TestCase):
             )
         )
         for data_source in response.json:
+            self.assertIn(db_c.CATEGORY, data_source)
+            self.assertIn(db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT, data_source)
             if data_source in self.data_sources:
                 self.assertTrue(data_source[api_c.IS_ADDED])
                 self.assertIn(api_c.ID, data_source)
@@ -176,11 +180,15 @@ class CdpDataSourcesTest(TestCase):
                 api_c.NAME: "Test Data Source 1",
                 api_c.TYPE: "test_data_source_type_1",
                 api_c.STATUS: api_c.STATUS_ACTIVE,
+                db_c.CATEGORY: db_c.CATEGORY_API,
+                db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1
             },
             {
                 api_c.NAME: "Test Data Source 2",
                 api_c.TYPE: "test_data_source_type_2",
                 api_c.STATUS: api_c.STATUS_PENDING,
+                db_c.CATEGORY: db_c.CATEGORY_CRM,
+                db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1
             },
         ]
 
@@ -202,6 +210,8 @@ class CdpDataSourcesTest(TestCase):
             self.assertIn(api_c.NAME, data_source)
             self.assertIn(api_c.TYPE, data_source)
             self.assertIn(api_c.STATUS, data_source)
+            self.assertIn(db_c.CATEGORY, data_source)
+            self.assertIn(db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT, data_source)
             self.assertIn(api_c.IS_ADDED, data_source)
             self.assertTrue(api_c.IS_ADDED)
 

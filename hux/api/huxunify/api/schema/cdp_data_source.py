@@ -42,6 +42,8 @@ class CdpDataSourcePostSchema(Schema):
                 ]
             )
         ],
+        default=None,
+        allow_none=True
     )
     feed_count = fields.Int(required=False, default=None)
 
@@ -79,8 +81,10 @@ class CdpDataSourceSchema(Schema):
                 ]
             )
         ],
+        default=None,
+        allow_none=True
     )
-    feed_count = fields.Int(required=False, default=None)
+    feed_count = fields.Int(required=False, default=None, allow_none=True)
     status = fields.Str(
         required=True,
         validate=[
@@ -115,6 +119,32 @@ class CdpConnectionsDataSourceSchema(Schema):
             )
         ],
     )
+    category = fields.Str(
+        required=False,
+        validate=[
+            OneOf(
+                choices=[
+                    db_c.CATEGORY_API,
+                    db_c.CATEGORY_BIG_DATA,
+                    db_c.CATEGORY_CRM,
+                    db_c.CATEGORY_CUSTOMER_SERVICE,
+                    db_c.CATEGORY_DATA_FILE_STORAGE,
+                    db_c.CATEGORY_DATABASES,
+                    db_c.CATEGORY_DATA_VISUALIZATION,
+                    db_c.CATEGORY_ECOMMERCE,
+                    db_c.CATEGORY_MARKETING,
+                    db_c.CATEGORY_OBJECT_STORAGE,
+                    db_c.CATEGORY_FILES,
+                    db_c.CATEGORY_FINANCE,
+                    db_c.CATEGORY_PRODUCTIVITY,
+                    db_c.CATEGORY_SOCIAL_MEDIA,
+                ]
+            )
+        ],
+        default=None,
+        allow_none=True
+    )
+    feed_count = fields.Int(required=False, default=None, allow_none=True)
 
 
 class CdpDataSourceDataFeedSchema(Schema):
