@@ -177,7 +177,6 @@ const actions = {
     }
   },
 
-  
   async add({ commit }, engagement) {
     try {
       const payload = {

@@ -107,12 +107,12 @@ export default {
     }
   },
 
-computed: {
-  scheduleConfig() {
- const recurringConfig = {}
+  computed: {
+    scheduleConfig() {
+      const recurringConfig = {}
       recurringConfig["every"] = this.localSchedule.every
       recurringConfig["periodicity"] = this.localSchedule.periodicity
-       if (this.localSchedule && this.localSchedule.periodicity == "Daily") {
+      if (this.localSchedule && this.localSchedule.periodicity == "Daily") {
         recurringConfig["hour"] = this.localSchedule.hour
         recurringConfig["minute"] = this.localSchedule.minute
         recurringConfig["period"] = this.localSchedule.period
@@ -127,9 +127,9 @@ computed: {
       ) {
         recurringConfig["day_of_month"] = this.localSchedule.monthlyDayDate
       }
-      return recurringConfig;
- },
-},
+      return recurringConfig
+    },
+  },
 
   watch: {
     value(value) {
@@ -148,7 +148,7 @@ computed: {
   },
 
   methods: {
-      ...mapActions({
+    ...mapActions({
       scheduleDelivery: "engagements/deliverySchedule",
     }),
     reset() {
@@ -157,13 +157,13 @@ computed: {
     },
 
     async onUpdate() {
-       const requestPayload = {
+      const requestPayload = {
         id: this.engagementId,
         audienceId: this.audienceId,
         destinationId: this.destination.id,
         recurringConfig: this.scheduleConfig,
       }
-     
+
       this.$emit("onUpdate")
       await this.scheduleDelivery(requestPayload)
       this.localToggle = false
