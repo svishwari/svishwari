@@ -34,9 +34,12 @@ def create_document(
         Union[dict, None]: MongoDB document for a collection.
 
     Raises:
-        InvalidValueException: Error if the passed in document value
+        InvalidValueException: Error if the passed in value
             is not valid.
     """
+
+    if collection not in c.ALLOWED_COLLECTIONS:
+        raise de.InvalidValueException("Collection not supported")
 
     # get collection
     coll = database[c.DATA_MANAGEMENT_DATABASE][collection]
@@ -103,6 +106,9 @@ def update_document(
             not part of the allowed fields list.
     """
 
+    if collection not in c.ALLOWED_COLLECTIONS:
+        raise de.InvalidValueException("Collection not supported")
+
     # validate input id
     if not document_id or not update_doc or not isinstance(update_doc, dict):
         return None
@@ -148,7 +154,15 @@ def get_document(
 
     Returns:
         Tuple[dict,None]:MongoDB collection document else None
+
+    Raises:
+        InvalidValueException: Error if the passed in value
+            is not valid.
     """
+
+    if collection not in c.ALLOWED_COLLECTIONS:
+        raise de.InvalidValueException("Collection not supported")
+
     # get collection
     coll = database[c.DATA_MANAGEMENT_DATABASE][collection]
 
@@ -186,7 +200,14 @@ def get_documents(
 
     Returns:
         Union[dict, None]: Collection documents with total count.
+
+    Raises:
+        InvalidValueException: Error if the passed in value
+            is not valid.
     """
+
+    if collection not in c.ALLOWED_COLLECTIONS:
+        raise de.InvalidValueException("Collection not supported")
 
     # get collection
     coll = database[c.DATA_MANAGEMENT_DATABASE][collection]
@@ -238,7 +259,14 @@ def delete_document(
 
     Returns:
         bool: Flag indicating successful operation.
+
+    Raises:
+        InvalidValueException: Error if the passed in value
+            is not valid.
     """
+
+    if collection not in c.ALLOWED_COLLECTIONS:
+        raise de.InvalidValueException("Collection not supported")
 
     coll = database[c.DATA_MANAGEMENT_DATABASE][collection]
 
