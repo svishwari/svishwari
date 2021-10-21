@@ -129,7 +129,7 @@ def update_document(
 
     try:
         return coll.find_one_and_update(
-            {c.OKTA_ID: document_id},
+            {c.ID: document_id},
             {"$set": update_doc},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
@@ -167,9 +167,7 @@ def get_document(
     coll = database[c.DATA_MANAGEMENT_DATABASE][collection]
 
     try:
-        return coll.find_one(
-            {c.ID: document_id, c.DELETED: False, c.ENABLED: True}
-        )
+        return coll.find_one({c.ID: document_id, c.DELETED: False})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -215,7 +213,6 @@ def get_documents(
     skips = batch_size * (batch_number - 1)
     query_filter = query_filter if query_filter else {}
     query_filter[c.DELETED] = False
-    query_filter[c.ENABLED] = True
 
     try:
         return dict(
