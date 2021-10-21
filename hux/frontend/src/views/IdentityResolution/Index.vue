@@ -116,7 +116,10 @@
 
           <v-row class="px-2 mt-0 mb-1">
             <v-col md="12">
-              <v-card class="mt-3 rounded-lg box-shadow-5" min-height="400">
+              <v-card
+                class="mt-3 rounded-lg box-shadow-5 overflow-hidden"
+                min-height="400"
+              >
                 <v-progress-linear
                   v-if="loadingMatchingTrends"
                   :active="loadingMatchingTrends"
@@ -379,7 +382,7 @@ export default {
 <style lang="scss" scoped>
 $offset: 110px;
 $headerOffsetX: 220px + 32px;
-$headerOffsetY: 64px;
+$headerOffsetY: 70px;
 
 .idr-wrapper {
   padding-top: $offset;
