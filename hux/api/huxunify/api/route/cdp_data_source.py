@@ -125,6 +125,17 @@ class DataSourceSearch(SwaggerView):
                 ]
             )
 
+        _ = [
+            data_source.update(
+                {
+                    db_c.CATEGORY: api_c.CDP_DATA_SOURCE_CATEGORY_MAP.get(
+                        data_source[api_c.TYPE]
+                    )
+                }
+            )
+            for data_source in data_sources
+        ]
+
         return (
             jsonify(CdpDataSourceSchema().dump(data_sources, many=True)),
             HTTPStatus.OK,
