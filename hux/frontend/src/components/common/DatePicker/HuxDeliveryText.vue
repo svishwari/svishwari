@@ -80,7 +80,6 @@ export default {
           string += " and " + abbrDayToFullName(day)
         }
       })
-      string += ""
       return string
     },
   },
