@@ -51,7 +51,7 @@
     </template>
 
     <template #footer-left>
-      <span class="black--text text--darken-1 text-button">
+      <span class="black--text text--darken-1 text-body-2">
         {{ results | Numeric }} results
       </span>
     </template>

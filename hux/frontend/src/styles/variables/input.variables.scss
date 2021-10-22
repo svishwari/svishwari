@@ -1,5 +1,5 @@
 // Input
 // https://vuetifyjs.com/en/api/v-input/#sass-variables
 
-$input-font-size: $font-size-root;
-$label-font-size: $font-size-root;
+$input-font-size: map-get($headings, "body-1", "size") !default;
+$label-font-size: map-get($headings, "body-2", "size") !default;
