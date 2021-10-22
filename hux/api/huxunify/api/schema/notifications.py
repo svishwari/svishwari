@@ -49,6 +49,11 @@ class NotificationSchema(Schema):
         required=True,
         example=api_c.DELIVERY_TAG,
     )
+    username = Str(
+        attribute="username",
+        required=True,
+        allow_none=False,
+    )
 
     @post_dump
     # pylint: disable=unused-argument

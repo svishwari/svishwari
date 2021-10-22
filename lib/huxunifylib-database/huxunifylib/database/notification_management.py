@@ -48,9 +48,7 @@ def create_notification(
         raise InvalidNotificationType(notification_type)
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     collection.create_index(c.EXPIRE_AT, expireAfterSeconds=0)
 
@@ -107,10 +105,14 @@ def get_notifications_batch(
     notification_types: List[str],
     notification_categories: List[str],
     users: List[str],
+    start_date: datetime,
+    end_date: datetime,
 ) -> Union[dict, None]:
     """A function to get notifications per batch size.
 
     Args:
+        end_date(datetime): End Date
+        start_date(datetime): Start Date
         users(List[str]): List of User names
         notification_categories(List[str]): List of Notification Categories
         notification_types (List[str]): List of Type of Notifications
@@ -126,18 +128,20 @@ def get_notifications_batch(
     """
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     skips = batch_size * (batch_number - 1)
-    query = dict({c.DELETED:False})
+    query = dict({c.DELETED: False})
     if notification_types:
         query.update({c.TYPE: {"$in": notification_types}})
     if notification_categories:
         query.update({c.NOTIFICATION_FIELD_CATEGORY: {"$in": notification_categories}})
     if users:
         query.update({c.NOTIFICATION_FIELD_USERNAME: {"$in": users}})
+    if start_date and end_date:
+        query.update(
+            {c.NOTIFICATION_FIELD_CREATED: {"$gte": start_date, "$lte": end_date}}
+        )
     if query:
         query = dict({"$and": [query]})
     try:
@@ -178,9 +182,7 @@ def get_notifications(
     """
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     query_filter[c.DELETED] = False
 
@@ -189,9 +191,7 @@ def get_notifications(
             total_records=collection.count_documents(query_filter),
             notifications=list(
                 collection.find(query_filter if query_filter else {}).sort(
-                    sort_order
-                    if sort_order
-                    else [("$natural", pymongo.ASCENDING)]
+                    sort_order if sort_order else [("$natural", pymongo.ASCENDING)]
                 )
             ),
         )
@@ -221,9 +221,7 @@ def delete_notification(
         bool: Flag indicating successful operation.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     try:
         if hard_delete:
@@ -256,9 +254,7 @@ def get_notification(
 
     """
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     try:
         return collection.find_one({c.ID: notification_id, c.DELETED: False})

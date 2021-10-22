@@ -85,7 +85,7 @@ class NotificationsSearch(SwaggerView):
             "description": "Type of Notification",
             "example": "10",
             "required": False,
-            "default": "['critical','informational','success']",
+            "default": [],
         },
         {
             "name": api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY,
@@ -95,7 +95,7 @@ class NotificationsSearch(SwaggerView):
             "description": "Type of Notification",
             "example": "10",
             "required": False,
-            "default": "All",
+            "default": [],
         },
         {
             "name": api_c.QUERY_PARAMETER_USERS,
@@ -105,7 +105,23 @@ class NotificationsSearch(SwaggerView):
             "description": "Type of Notification",
             "example": "10",
             "required": False,
-            "default": "All",
+            "default": [],
+        },
+        {
+            "name": api_c.START_DATE,
+            "in": "query",
+            "type": "string",
+            "description": "Start Date",
+            "example": "2021-04-10",
+            "required": False,
+        },
+        {
+            "name": api_c.END_DATE,
+            "in": "query",
+            "type": "string",
+            "description": "Start Date",
+            "example": "2021-04-10",
+            "required": False,
         },
     ]
     responses = {
@@ -171,6 +187,12 @@ class NotificationsSearch(SwaggerView):
         users = request.args.get(api_c.QUERY_PARAMETER_USERS, [])
         if users:
             users = users.split(",")
+        start_date = request.args.get(api_c.START_DATE, "")
+        end_date = request.args.get(api_c.END_DATE, "")
+        if start_date and end_date:
+            Validation.validate_date_range(start_date, end_date)
+            start_date = Validation.validate_date(start_date)
+            end_date = Validation.validate_date(end_date)
         if (
             batch_size is None
             or batch_number is None
@@ -200,6 +222,8 @@ class NotificationsSearch(SwaggerView):
                     notification_types=notification_types,
                     notification_categories=notification_categories,
                     users=users,
+                    start_date=start_date,
+                    end_date=end_date,
                 )
             ),
             HTTPStatus.OK,
@@ -326,9 +350,7 @@ class NotificationSearch(SwaggerView):
                 "Could not find notification with id %s.",
                 notification_id,
             )
-            return {
-                "message": api_c.NOTIFICATION_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            return {"message": api_c.NOTIFICATION_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         return (
             NotificationSchema().dump(notification),
@@ -370,9 +392,7 @@ class DeleteNotification(SwaggerView):
 
     @get_user_name()
     @api_error_handler()
-    def delete(
-        self, notification_id: ObjectId, user_name: str
-    ) -> Tuple[dict, int]:
+    def delete(self, notification_id: ObjectId, user_name: str) -> Tuple[dict, int]:
         """Deletes a notification by ID.
 
         ---
@@ -398,7 +418,5 @@ class DeleteNotification(SwaggerView):
 
             return {}, HTTPStatus.NO_CONTENT
 
-        logger.info(
-            "Could not delete notification with ID %s.", notification_id
-        )
+        logger.info("Could not delete notification with ID %s.", notification_id)
         return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST
