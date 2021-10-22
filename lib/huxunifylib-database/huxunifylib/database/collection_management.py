@@ -102,8 +102,8 @@ def update_document(
         Union[dict, None]: Updated MongoDB document for a document.
 
     Raises:
-        InvalidValueException: Error if a key that is passed in update_doc dict is
-            not part of the allowed fields list.
+        InvalidValueException: Error if the passed in value
+            is not valid.
     """
 
     if collection not in c.ALLOWED_COLLECTIONS:
