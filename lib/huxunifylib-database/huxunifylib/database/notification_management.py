@@ -2,7 +2,7 @@
 import logging
 import warnings
 from datetime import datetime
-from typing import Union, List
+from typing import Union, List, Any, Dict
 
 import pymongo
 from bson import ObjectId
@@ -135,7 +135,7 @@ def get_notifications_batch(
     ]
 
     skips = batch_size * (batch_number - 1)
-    query = dict({c.DELETED: False})
+    query = dict({c.DELETED: False})  # type: Dict[str,Any]
     if notification_types:
         query.update({c.TYPE: {"$in": notification_types}})
     if notification_categories:
