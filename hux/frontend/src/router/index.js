@@ -215,8 +215,7 @@ const routes = [
   {
     path: "/destinations",
     name: "Destinations",
-    component: () =>
-      import("@/views/Destinations/Index"),
+    component: () => import("@/views/Destinations/Index"),
     meta: {
       layout: "app",
       title: "Destinations",

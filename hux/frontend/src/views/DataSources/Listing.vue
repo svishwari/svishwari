@@ -21,7 +21,11 @@
               class="black--text text--darken-4 text-h6"
             >
               <status
-                :status="item[column.value] === 'Pending' ? 'Requested' : item[column.value]"
+                :status="
+                  item[column.value] === 'Pending'
+                    ? 'Requested'
+                    : item[column.value]
+                "
                 :show-label="true"
                 class="data-feed-status d-flex"
                 :icon-size="15"
@@ -270,5 +274,4 @@ export default {
     }
   }
 }
-
 </style>
