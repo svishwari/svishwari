@@ -33,13 +33,15 @@
           data-e2e="add-engagement"
         >
           <huxButton
-            button-text="Engagement"
-            icon="mdi-plus"
-            icon-position="left"
-            variant="primary"
+            variant="primary base"
+            icon-color="white"
+            icon-variant="base"
+            icon="plus"
             size="large"
+            is-custom-icon
+            class="ma-2 font-weight-regular no-shadow mr-0 caption"
             is-tile
-            class="ma-2 font-weight-regular no-shadow mr-0"
+            height="40"
           >
             Engagement
           </huxButton>
@@ -164,7 +166,7 @@
                 </template>
                 <template #hover-content>
                   <div v-if="item[header.value] !== ''">
-                    <div class="neroBlack--text text-button mb-2">
+                    <div class="neroBlack--text text-body-2 mb-2">
                       Delivered to:
                     </div>
                     <div
@@ -177,11 +179,11 @@
                           :type="destination.delivery_platform_type"
                           :size="18"
                         />
-                        <span class="ml-1 neroBlack--text text-button">
+                        <span class="ml-1 neroBlack--text text-body-2">
                           {{ destination.name }}
                         </span>
                       </div>
-                      <div class="neroBlack--text text-button">
+                      <div class="neroBlack--text text-body-2">
                         {{
                           destination.latest_delivery
                             ? destination.latest_delivery.update_time
@@ -195,7 +197,33 @@
               </tooltip>
             </div>
             <div v-if="header.value == 'delivery_schedule'">
-              {{ item[header.value] | DeliverySchedule }}
+              <tooltip :max-width="280">
+                <template #label-content>
+                  {{ item[header.value] | DeliverySchedule }}
+                </template>
+                <template #hover-content>
+                  <span v-if="!item[header.value] || item[header.value] === {}">
+                    This engagement was delivered manually on
+                    {{
+                      item["last_delivered"]
+                        | Date("MMM D, YYYY [at] h:mm A")
+                        | Empty
+                    }}
+                  </span>
+                  <hux-delivery-text
+                    v-else
+                    :schedule="
+                      item[header.value] ? item[header.value].schedule : {}
+                    "
+                    :start-date="
+                      item[header.value] ? item[header.value].start_date : ''
+                    "
+                    :end-date="
+                      item[header.value] ? item[header.value].end_date : ''
+                    "
+                  />
+                </template>
+              </tooltip>
             </div>
             <div
               v-if="
@@ -336,7 +364,7 @@
                       </template>
                       <template #hover-content>
                         <div>
-                          <div class="neroBlack--text text-button mb-2">
+                          <div class="neroBlack--text text-body-2 mb-2">
                             Delivered to:
                           </div>
                           <div
@@ -349,11 +377,11 @@
                                 :type="destination.delivery_platform_type"
                                 :size="18"
                               />
-                              <span class="ml-1 neroBlack--text text-button">
+                              <span class="ml-1 neroBlack--text text-body-2">
                                 {{ destination.name }}
                               </span>
                             </div>
-                            <div class="neroBlack--text text-button">
+                            <div class="neroBlack--text text-body-2">
                               {{
                                 destination.latest_delivery.update_time
                                   | Date
@@ -366,7 +394,10 @@
                     </tooltip>
                   </div>
                   <div v-if="header.value == 'delivery_schedule'">
-                    {{ item[header.value] | DeliverySchedule }}
+                    <tooltip>
+                      <template #label-content> - </template>
+                      <template #hover-content> - </template>
+                    </tooltip>
                   </div>
                   <div
                     v-if="
@@ -436,7 +467,23 @@
                         <time-stamp :value="item[header.value]" />
                       </div>
                       <div v-if="header.value == 'delivery_schedule'">
-                        {{ item[header.value] | DeliverySchedule }}
+                        <tooltip>
+                          <template #label-content>
+                            {{
+                              item[header.value]
+                                ? item[header.value].periodicity
+                                : "-"
+                            }}
+                          </template>
+                          <template #hover-content>
+                            <hux-delivery-text
+                              v-if="item[header.value]"
+                              :schedule="item[header.value]"
+                              type="destination"
+                            />
+                            <span v-else>-</span>
+                          </template>
+                        </tooltip>
                       </div>
                       <div
                         v-if="
@@ -481,12 +528,15 @@
           >
             <huxButton
               button-text="Engagement"
-              icon="mdi-plus"
-              icon-position="left"
-              variant="primary"
+              variant="primary base"
+              icon-color="white"
+              icon-variant="base"
+              icon="plus"
               size="large"
+              is-custom-icon
+              class="ma-2 font-weight-regular caption"
               is-tile
-              class="ma-2 font-weight-regular"
+              height="40"
             >
               Engagement
             </huxButton>
@@ -584,6 +634,7 @@ import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlike
 import Logo from "../../components/common/Logo.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import ConfirmModal from "../../components/common/ConfirmModal.vue"
+import HuxDeliveryText from "../../components/common/DatePicker/HuxDeliveryText.vue"
 export default {
   name: "Engagements",
   components: {
@@ -601,6 +652,7 @@ export default {
     Logo,
     Tooltip,
     ConfirmModal,
+    HuxDeliveryText,
   },
   data() {
     return {

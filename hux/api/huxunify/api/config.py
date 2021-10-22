@@ -44,8 +44,8 @@ class Config:
     }
 
     # OKTA CONFIGURATION
-    OKTA_CLIENT_ID = config("OKTA_CLIENT_ID", default="")
-    OKTA_ISSUER = config("OKTA_ISSUER", default="")
+    OKTA_CLIENT_ID = config(api_c.OKTA_CLIENT_ID, default="")
+    OKTA_ISSUER = config(api_c.OKTA_ISSUER, default="")
 
     # TECTON
     TECTON_API_KEY = config(api_c.TECTON_API_KEY, default="")

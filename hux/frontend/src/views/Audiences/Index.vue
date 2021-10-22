@@ -32,10 +32,12 @@
           append
         >
           <huxButton
-            icon="mdi-plus"
-            icon-position="left"
-            variant="primary"
+            variant="primary base"
+            icon-color="white"
+            icon-variant="base"
+            icon="plus"
             size="large"
+            is-custom-icon
             is-tile
             class="ma-2 font-weight-regular no-shadow mr-0"
           >
@@ -166,7 +168,7 @@
                 </template>
                 <template #hover-content>
                   <div>
-                    <div class="neroBlack--text text-button mb-2">
+                    <div class="neroBlack--text text-body-2 mb-2">
                       Delivered to:
                     </div>
                     <div
@@ -179,11 +181,11 @@
                           :type="deliveries.delivery_platform_type"
                           :size="18"
                         />
-                        <span class="ml-1 neroBlack--text text-button">
+                        <span class="ml-1 neroBlack--text text-body-2">
                           {{ deliveries.delivery_platform_name }}
                         </span>
                       </div>
-                      <div class="neroBlack--text text-button">
+                      <div class="neroBlack--text text-body-2">
                         {{ deliveries.last_delivered | Date | Empty }}
                       </div>
                     </div>
@@ -222,12 +224,14 @@
             append
           >
             <huxButton
-              icon="mdi-plus"
-              icon-position="left"
-              variant="primary"
+              variant="primary base"
+              icon-color="white"
+              icon-variant="base"
+              icon="plus"
               size="large"
+              is-custom-icon
               is-tile
-              class="ma-2 font-weight-regular"
+              class="ma-2 font-weight-regular caption"
             >
               Audience
             </huxButton>
@@ -251,6 +255,7 @@
       :sub-title="`${confirmSubtitle}`"
       right-btn-text="Yes, delete it"
       left-btn-text="Nevermind!"
+      data-e2e="remove-audience-confirmation"
       @onCancel="confirmModal = !confirmModal"
       @onConfirm="confirmRemoval()"
     >

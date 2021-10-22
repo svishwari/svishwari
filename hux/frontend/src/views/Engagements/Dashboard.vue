@@ -167,6 +167,7 @@
 
     <edit-delivery-schedule
       v-model="editDeliveryDrawer"
+      :schedule="currentSchedule"
       :audience-id="selectedAudienceId"
       :destination="scheduleDestination"
       :engagement-id="engagementId"
@@ -222,6 +223,7 @@ export default {
   data() {
     return {
       engagementList: {},
+      currentSchedule: {},
       selectedAudience: null,
       showLookAlikeDrawer: false,
       engagementId: "",
@@ -297,6 +299,7 @@ export default {
     this.loading = true
     this.engagementId = this.getRouteId
     await this.loadEngagement(this.getRouteId)
+    this.currentSchedule = this.engagementList.delivery_schedule?.schedule
     this.loading = false
   },
   methods: {

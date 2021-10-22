@@ -156,12 +156,14 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         )
 
         # now remove it
-        eam.remove_engagement_audience_destination_schedule(
+        eam.set_engagement_audience_destination_schedule(
             self.database,
             engagement_id,
             audience_id,
             destination_id,
+            cron_expression,
             "joe smith",
+            unset=True,
         )
 
         # grab the engagement again

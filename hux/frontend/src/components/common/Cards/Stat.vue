@@ -10,7 +10,7 @@
     <template #activator="{ on }">
       <div class="px-4 border-start separator" :class="statClass" v-on="on">
         <h6 class="text-h6 mb-0">{{ value }}</h6>
-        <div class="text-button black--text text--lighten-4">{{ label }}</div>
+        <div class="text-body-2 black--text text--lighten-4">{{ label }}</div>
       </div>
     </template>
     <div v-if="$slots.default" class="px-4 py-3 text-caption white">

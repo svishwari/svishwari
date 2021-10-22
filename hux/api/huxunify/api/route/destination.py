@@ -167,6 +167,17 @@ class DestinationGetView(SwaggerView):
 class DestinationsView(SwaggerView):
     """Destinations view class."""
 
+    parameters = [
+        {
+            "name": api_c.DESTINATION_REFRESH,
+            "description": "Refresh all.",
+            "type": "boolean",
+            "in": "query",
+            "required": False,
+            "example": "False",
+        }
+    ]
+
     responses = {
         HTTPStatus.OK.value: {
             "description": "List of all destinations",
@@ -190,10 +201,72 @@ class DestinationsView(SwaggerView):
         Returns:
             Tuple[list, int]: list of destinations, HTTP status code.
         """
-
+        database = get_db_client()
         destinations = destination_management.get_all_delivery_platforms(
-            get_db_client()
+            database
         )
+
+        refresh_all = request.args.get(
+            api_c.DESTINATION_REFRESH,
+            False,
+            type=lambda v: v.lower() == "true",
+        )
+
+        connector_dict = {
+            db_c.DELIVERY_PLATFORM_FACEBOOK: FacebookConnector,
+            db_c.DELIVERY_PLATFORM_SFMC: SFMCConnector,
+            db_c.DELIVERY_PLATFORM_QUALTRICS: QualtricsConnector,
+            db_c.DELIVERY_PLATFORM_SENDGRID: SendgridConnector,
+            db_c.DELIVERY_PLATFORM_TWILIO: SendgridConnector,
+            db_c.DELIVERY_PLATFORM_GOOGLE: GoogleConnector,
+        }
+
+        # Map db status values to api status values
+        status_mapping = {
+            db_c.STATUS_SUCCEEDED: api_c.STATUS_ACTIVE,
+            db_c.STATUS_PENDING: api_c.STATUS_PENDING,
+            db_c.STATUS_FAILED: api_c.STATUS_ERROR,
+        }
+
+        for destination in destinations:
+            if refresh_all:
+                if destination[api_c.DELIVERY_PLATFORM_TYPE] in connector_dict:
+                    try:
+                        connector_dict[
+                            destination[api_c.DELIVERY_PLATFORM_TYPE]
+                        ](
+                            auth_details=get_auth_from_parameter_store(
+                                destination[api_c.AUTHENTICATION_DETAILS],
+                                destination[api_c.DELIVERY_PLATFORM_TYPE],
+                            )
+                        )
+                        destination[
+                            db_c.DELIVERY_PLATFORM_STATUS
+                        ] = db_c.STATUS_SUCCEEDED
+                    # pylint: disable=broad-except
+                    except Exception as exception:
+                        logger.error(
+                            "%s: %s while connecting to destination %s.",
+                            exception.__class__,
+                            str(exception),
+                            destination[api_c.DELIVERY_PLATFORM_TYPE],
+                        )
+                        destination[
+                            db_c.DELIVERY_PLATFORM_STATUS
+                        ] = db_c.STATUS_FAILED
+
+                    destination_management.update_delivery_platform(
+                        database=database,
+                        delivery_platform_id=destination[db_c.ID],
+                        name=destination[db_c.DELIVERY_PLATFORM_NAME],
+                        delivery_platform_type=destination[
+                            db_c.DELIVERY_PLATFORM_TYPE
+                        ],
+                        status=destination[db_c.DELIVERY_PLATFORM_STATUS],
+                    )
+            destination[db_c.DELIVERY_PLATFORM_STATUS] = status_mapping[
+                destination[db_c.DELIVERY_PLATFORM_STATUS]
+            ]
         return (
             jsonify(DestinationGetSchema().dump(destinations, many=True)),
             HTTPStatus.OK,
@@ -335,6 +408,7 @@ class DestinationPutView(SwaggerView):
                     added=is_added,
                     performance_de=performance_de,
                     user_name=user_name,
+                    status=db_c.STATUS_SUCCEEDED,
                 )
             ),
             HTTPStatus.OK,

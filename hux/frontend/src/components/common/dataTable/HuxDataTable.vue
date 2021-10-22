@@ -131,9 +131,9 @@ export default {
       default: "name",
     },
     sortDesc: {
-      type: String,
+      type: [Boolean, String],
       required: false,
-      default: "false",
+      default: false,
     },
     disableSort: {
       type: Boolean,

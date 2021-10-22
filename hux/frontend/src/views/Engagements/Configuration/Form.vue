@@ -125,7 +125,12 @@
         </v-row>
 
         <v-row class="delivery-schedule mt-5">
-          <hux-schedule-picker v-if="isRecurring" v-model="schedule" />
+          <hux-schedule-picker
+            v-if="isRecurring"
+            v-model="localSchedule"
+            :start-date="selectedStartDate"
+            :end-date="selectedEndDate"
+          />
         </v-row>
       </form-step>
 
@@ -410,7 +415,7 @@ export default {
       selectedEndDate: "Select date",
       disableEndDate: true,
       errorMessages: [],
-      schedule: JSON.parse(JSON.stringify(deliverySchedule())),
+      localSchedule: JSON.parse(JSON.stringify(deliverySchedule())),
       endMinDate: new Date(
         new Date().getTime() - new Date().getTimezoneOffset() * 60000
       ).toISOString(),
@@ -434,18 +439,22 @@ export default {
 
     payload() {
       const recurringConfig = {}
-      recurringConfig["every"] = this.schedule.every
-      recurringConfig["periodicity"] = this.schedule.periodicity
-      if (this.schedule && this.schedule.periodicity == "Daily") {
-        recurringConfig["hour"] = this.schedule.hour
-        recurringConfig["minute"] = this.schedule.minute
-        recurringConfig["period"] = this.schedule.period
-      } else if (this.schedule && this.schedule.periodicity == "Weekly") {
-        recurringConfig["day_of_week"] = this.schedule.days.map((item) => {
-          return item.substring(0, 3).toUpperCase()
-        })
-      } else if (this.schedule && this.schedule.periodicity == "Monthly") {
-        recurringConfig["day_of_month"] = this.schedule.monthlyDayDate
+      recurringConfig["every"] = this.localSchedule.every
+      recurringConfig["periodicity"] = this.localSchedule.periodicity
+      if (this.localSchedule && this.localSchedule.periodicity == "Daily") {
+        recurringConfig["hour"] = this.localSchedule.hour
+        recurringConfig["minute"] = this.localSchedule.minute
+        recurringConfig["period"] = this.localSchedule.period
+      } else if (
+        this.localSchedule &&
+        this.localSchedule.periodicity == "Weekly"
+      ) {
+        recurringConfig["day_of_week"] = this.localSchedule.day_of_week
+      } else if (
+        this.localSchedule &&
+        this.localSchedule.periodicity == "Monthly"
+      ) {
+        recurringConfig["day_of_month"] = this.localSchedule.monthlyDayDate
       }
 
       const requestPayload = {
@@ -516,6 +525,16 @@ export default {
     },
   },
 
+  watch: {
+    value() {
+      if (this.value.schedule) {
+        this.localSchedule = JSON.parse(
+          JSON.stringify(deliverySchedule(this.value.schedule))
+        )
+      }
+    },
+  },
+
   methods: {
     ...mapActions({
       addEngagement: "engagements/add",
@@ -524,7 +543,7 @@ export default {
     }),
 
     resetSchedule() {
-      this.schedule = JSON.parse(JSON.stringify(deliverySchedule()))
+      this.localSchedule = JSON.parse(JSON.stringify(deliverySchedule()))
     },
 
     changeSchedule() {

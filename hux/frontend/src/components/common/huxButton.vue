@@ -13,10 +13,11 @@
   >
     <icon
       v-if="isCustomIcon"
-      class="mr-2"
-      color="primary"
+      :class="iconClass"
+      :color="iconColor"
+      :variant="iconVariant"
       :type="icon"
-      :size="24"
+      :size="iconSize"
     />
     <v-icon v-show="iconPosition == 'left'" dark class="mr-1">
       {{ icon }}
@@ -102,6 +103,26 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    iconColor: {
+      type: String,
+      required: false,
+      default: "primary",
+    },
+    iconVariant: {
+      type: String,
+      required: false,
+      default: "base",
+    },
+    iconSize: {
+      type: Number,
+      required: false,
+      default: 14,
+    },
+    iconClass: {
+      type: String,
+      required: false,
+      default: "ml-2 mr-2",
     },
   },
   data() {

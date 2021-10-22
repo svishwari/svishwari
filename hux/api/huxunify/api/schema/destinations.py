@@ -1,5 +1,6 @@
 # pylint: disable=no-self-use
 """Schemas for the Destinations API"""
+import datetime
 
 from flask_marshmallow import Schema
 from marshmallow import fields, pre_load, ValidationError
@@ -157,11 +158,14 @@ class DestinationGetSchema(Schema):
                     api_c.STATUS_DELIVERING,
                     api_c.STATUS_DELIVERED,
                     api_c.STATUS_DELIVERY_PAUSED,
+                    api_c.STATUS_ACTIVE,
+                    api_c.STATUS_PENDING,
                     api_c.STATUS_ERROR,
                 ]
             )
         ],
     )
+    category = fields.String(attribute=db_c.CATEGORY, example=db_c.ADVERTISING)
     campaigns = fields.Int(
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
@@ -632,4 +636,9 @@ class DestinationDataExtGetSchema(Schema):
     name = fields.String(attribute="Name", example="data_extension_name")
     data_extension_id = fields.String(
         attribute="CustomerKey", example="data_extension_id"
+    )
+    create_time = DateTimeWithZ(
+        attribute="createdDate",
+        required=True,
+        default=datetime.datetime.utcnow(),
     )

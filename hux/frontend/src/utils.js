@@ -116,10 +116,11 @@ export function filterAudiencesByDestinations(audiences, destinations = []) {
 /**
  * Uses to initialize or reset while using hux-schedule-picker component
  *
+ * @param {object} schedule schedule
  * @returns {object} delivery schedule
  */
-export function deliverySchedule() {
-  return {
+export function deliverySchedule(schedule = {}) {
+  let defaultSchedule = {
     periodicity: "Daily",
     every: 1,
     hour: 12,
@@ -128,7 +129,55 @@ export function deliverySchedule() {
     monthlyPeriod: "Day",
     monthlyDay: "Day",
     monthlyDayDate: 1,
-    days: ["Sunday"],
+    day_of_week: ["SUN"],
+  }
+  if (schedule) {
+    for (let prop in schedule) {
+      defaultSchedule[prop] =
+        prop in schedule ? schedule[prop] : defaultSchedule[prop]
+    }
+  }
+  return defaultSchedule
+}
+
+/**
+ * Uses to create abbr for day names with uppercase
+ *
+ * @param {string} dayname full name
+ * @returns {string} day name abbr i.e. SUN
+ */
+export function dayAbbreviation(dayname) {
+  let abbr = ""
+  if (dayname) {
+    abbr = dayname.substring(0, 3).toUpperCase()
+  }
+  return abbr
+}
+
+/**
+ * Uses to create full name from abbr
+ *
+ * @param {string} dayname abr name
+ * @returns {string} day full name i.e. Sunday
+ */
+export function abbrDayToFullName(dayname) {
+  switch (dayname.toLowerCase()) {
+    case "mon":
+      return "Monday"
+    case "tue":
+      return "Tuesday"
+    case "wed":
+      return "Wednesday"
+    case "thu":
+      return "Thursday"
+    case "fri":
+      return "Friday"
+    case "sat":
+      return "Saturday"
+    case "sun":
+      return "Sunday"
+    default:
+      return ""
   }
 }
 

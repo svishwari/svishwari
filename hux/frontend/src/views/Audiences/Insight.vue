@@ -96,7 +96,7 @@
         class="rounded-lg card-info-wrapper ma-2 card-shadow no-background"
       >
         <v-card-text>
-          <div class="text-button black--text text--darken-1">
+          <div class="text-body-2 black--text text--darken-1">
             Original size
             <tooltip position-top>
               <template #label-content>
@@ -237,7 +237,7 @@
                     />
                   </template>
                   <template #hover-content>
-                    <span class="text-button black--text text--darken-4">
+                    <span class="text-body-2 black--text text--darken-4">
                       <div class="mb-2">
                         {{ appliedFilters[filterKey][filter].name }}
                       </div>
@@ -944,16 +944,13 @@ export default {
       }
     },
   },
-  created() {
-    window.addEventListener("resize", this.sizeHandler)
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.sizeHandler)
-  },
   async mounted() {
     this.sizeHandler()
     await this.loadAudienceInsights()
     this.fetchDemographics()
+    if (this.$refs.genderChart) {
+      new ResizeObserver(this.sizeHandler).observe(this.$refs.genderChart)
+    }
   },
   methods: {
     ...mapActions({
@@ -1059,7 +1056,7 @@ export default {
      *
      * @param {object} item item
      * @param {string} item.title item's title
-     * @returns {string} formatted value
+     * @returns {number | string } formatted value
      */
     getFormattedValue(item) {
       switch (item.title) {

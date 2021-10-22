@@ -99,7 +99,7 @@ describe("Tests data sources and destinations in connections", () => {
   })
 
   it("testing data management > connections > destinations", () => {
-    cy.get(selector.connections).eq(0).click()
+    cy.get(selector.connections).eq(1).click()
     cy.location("pathname").should("eq", route.connections)
     cy.get(selector.destinations).its("length").should("be.gt", 0)
   })

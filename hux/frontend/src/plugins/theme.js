@@ -36,7 +36,7 @@ export default {
     lighten1: colors.yellow5,
     base: colors.yellow,
   },
-  info: colors.mustard,
+  info: colors.info,
 
   warning: colors.warning,
   white: {

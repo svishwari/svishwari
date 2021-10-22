@@ -50,6 +50,9 @@ export default {
     destinationConfigDetails: "[data-e2e='destinationConfigDetails']",
     validateDestination: "[data-e2e='validateDestination']",
     footer: "[data-e2e='footer']",
+    removeDots: "[data-e2e='destination-list-dots']",
+    destinationRemove: "[data-e2e='destination-list-remove']",
+    destinationRemoveConfirm: "[data-e2e='remove-destination-confirm']",
   },
 
   // decisioning
@@ -182,6 +185,11 @@ export default {
     addDestination: "[data-e2e='add-destination-audience']",
     createAudience: "[data-e2e='create-audience']",
     salesForceAddButton: "[data-e2e='destination-select-button-sfmc']",
+    newEngagementFirst: "[data-e2e='first-engagement-create']",
+    newEngagementFirstName: "[data-e2e='new-engagement-name']",
+    createNewEngagement: "[data-e2e='create-engagement-new']",
+    cancelAudience: "[data-e2e='cancel-audience']",
+    removeAudience: "[data-e2e='remove-audience-confirmation']",
   },
 
   customers: "a[href='/customers']",

@@ -176,7 +176,7 @@ export default {
     selectAudience: {
       get() {
         const aud = this.audiences.filter(
-          (aud) => aud.id === this.selectedAudience.id
+          (aud) => aud.id === this.selectedAudience?.id
         )
         return aud.length > 0 ? aud[0] : {}
       },
