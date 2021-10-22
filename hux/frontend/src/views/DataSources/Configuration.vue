@@ -123,7 +123,7 @@ export default {
     },
     dataSourcesBtnText() {
       let count = this.selectedDataSourceIds.length
-      return `Add ${count} data source${count > 1 ? "s" : ""}`
+      return `Request ${count} data source${count > 1 ? "s" : ""}`
     },
 
     enabledDataSources() {

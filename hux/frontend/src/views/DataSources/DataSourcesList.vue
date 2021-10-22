@@ -39,7 +39,7 @@
               data-e2e="model-status"
             />
           </template>
-          <template slot="action-menu-options">
+          <template slot="action-menu-options" style="margin-top:20px !important">
             <v-list class="list-wrapper pa-0">
               <v-list-item-group>
                 <v-list-item @click="openModal(dataSource)">
@@ -174,4 +174,7 @@ export default {
     @extend .cursor-default;
   }
 }
+// ::v-deep.v-menu__content {
+//   margin-top: 22px !important;
+// }
 </style>

@@ -20,7 +20,7 @@
           <template slot="top">
             <status
               :icon-size="18"
-              :status="destination.status || ''"
+              :status="destination.status === 'Succeeded' ? 'Active' : destination.status || ''"
               collapsed
               class="d-flex float-left"
               data-e2e="model-status"
