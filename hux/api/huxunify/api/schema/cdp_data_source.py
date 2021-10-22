@@ -22,26 +22,7 @@ class CdpDataSourcePostSchema(Schema):
     )
     category = fields.Str(
         required=True,
-        validate=[
-            OneOf(
-                choices=[
-                    db_c.CATEGORY_API,
-                    db_c.CATEGORY_BIG_DATA,
-                    db_c.CATEGORY_CRM,
-                    db_c.CATEGORY_CUSTOMER_SERVICE,
-                    db_c.CATEGORY_DATA_FILE_STORAGE,
-                    db_c.CATEGORY_DATABASES,
-                    db_c.CATEGORY_DATA_VISUALIZATION,
-                    db_c.CATEGORY_ECOMMERCE,
-                    db_c.CATEGORY_MARKETING,
-                    db_c.CATEGORY_OBJECT_STORAGE,
-                    db_c.CATEGORY_FILES,
-                    db_c.CATEGORY_FINANCE,
-                    db_c.CATEGORY_PRODUCTIVITY,
-                    db_c.CATEGORY_SOCIAL_MEDIA,
-                ]
-            )
-        ],
+        validate=OneOf(choices=api_c.CDP_DATA_SOURCE_CATEGORIES),
         default=None,
         allow_none=True,
     )
@@ -61,26 +42,7 @@ class CdpDataSourceSchema(Schema):
     type = fields.Str(required=True)
     category = fields.Str(
         required=True,
-        validate=[
-            OneOf(
-                choices=[
-                    db_c.CATEGORY_API,
-                    db_c.CATEGORY_BIG_DATA,
-                    db_c.CATEGORY_CRM,
-                    db_c.CATEGORY_CUSTOMER_SERVICE,
-                    db_c.CATEGORY_DATA_FILE_STORAGE,
-                    db_c.CATEGORY_DATABASES,
-                    db_c.CATEGORY_DATA_VISUALIZATION,
-                    db_c.CATEGORY_ECOMMERCE,
-                    db_c.CATEGORY_MARKETING,
-                    db_c.CATEGORY_OBJECT_STORAGE,
-                    db_c.CATEGORY_FILES,
-                    db_c.CATEGORY_FINANCE,
-                    db_c.CATEGORY_PRODUCTIVITY,
-                    db_c.CATEGORY_SOCIAL_MEDIA,
-                ]
-            )
-        ],
+        validate=OneOf(choices=api_c.CDP_DATA_SOURCE_CATEGORIES),
         default=None,
         allow_none=True,
     )
@@ -121,26 +83,7 @@ class CdpConnectionsDataSourceSchema(Schema):
     )
     category = fields.Str(
         required=False,
-        validate=[
-            OneOf(
-                choices=[
-                    db_c.CATEGORY_API,
-                    db_c.CATEGORY_BIG_DATA,
-                    db_c.CATEGORY_CRM,
-                    db_c.CATEGORY_CUSTOMER_SERVICE,
-                    db_c.CATEGORY_DATA_FILE_STORAGE,
-                    db_c.CATEGORY_DATABASES,
-                    db_c.CATEGORY_DATA_VISUALIZATION,
-                    db_c.CATEGORY_ECOMMERCE,
-                    db_c.CATEGORY_MARKETING,
-                    db_c.CATEGORY_OBJECT_STORAGE,
-                    db_c.CATEGORY_FILES,
-                    db_c.CATEGORY_FINANCE,
-                    db_c.CATEGORY_PRODUCTIVITY,
-                    db_c.CATEGORY_SOCIAL_MEDIA,
-                ]
-            )
-        ],
+        validate=OneOf(choices=api_c.CDP_DATA_SOURCE_CATEGORIES),
         default=None,
         allow_none=True,
     )
