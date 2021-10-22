@@ -263,6 +263,13 @@ export const defineRoutes = (server) => {
   )
 
   server.post(
+    "/engagements/:id/audience/:audienceId/destination/:destinationId/schedule",
+    () => {
+      return { message: "Successfully updated delivery schedule" }
+    }
+  )
+
+  server.post(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/deliver",
     () => {
       return { message: "Successfully created delivery jobs" }
