@@ -366,7 +366,7 @@ export default {
         }
         await this.addDestination(data)
         this.flagForModal = true
-        this.$router.push({ name: "Connections" })
+        this.$router.push({ name: "Destinations" })
       } catch (error) {
         console.error(error)
       }
@@ -375,7 +375,7 @@ export default {
     cancel() {
       // TODO: need to add modal that confirms to leave configuration
       this.flagForModal = true
-      this.$router.push({ name: "Connections" })
+      this.$router.push({ name: "Destinations" })
     },
   },
 }
