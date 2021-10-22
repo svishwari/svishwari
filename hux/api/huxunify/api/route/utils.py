@@ -5,6 +5,7 @@ from typing import Tuple, Union
 from http import HTTPStatus
 from bson import ObjectId
 from croniter import croniter, CroniterNotAlphaError
+from flask import Request
 from pandas import DataFrame
 from dateutil.relativedelta import relativedelta
 
@@ -20,14 +21,30 @@ from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
 from huxunifylib.database import (
+    delivery_platform_management as destination_management,
+)
+from huxunifylib.database import (
     constants as db_c,
 )
 from huxunifylib.database.user_management import get_user
 
+from huxunify.api.schema.destinations import (
+    DestinationGetSchema,
+    GoogleAdsAuthCredsSchema,
+    QualtricsAuthCredsSchema,
+    SendgridAuthCredsSchema,
+    FacebookAuthCredsSchema,
+    SFMCAuthCredsSchema,
+    DestinationPutSchema,
+)
 from huxunify.api.config import get_config
 from huxunify.api import constants
 from huxunify.api.data_connectors.tecton import check_tecton_connection
-from huxunify.api.data_connectors.aws import check_aws_ssm, check_aws_batch
+from huxunify.api.data_connectors.aws import (
+    check_aws_ssm,
+    check_aws_batch,
+    parameter_store,
+)
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
 )
@@ -518,3 +535,91 @@ def get_user_favorites(okta_user_id: str, component_name: str) -> list:
     )
 
     return user_favorites.get(component_name, [])
+
+
+# TODO Method to be moved back into a single endpoint once the UI
+#  begins using the set-authentication endpoint
+#  UI ticket: HUS-1390
+#  remove extra endpoint ticket: HUS-1391
+def set_destination_auth_details(
+    request: Request, destination_id: str, user_name: str
+) -> Tuple[dict, int]:
+    """Set the authentication details for a destination.
+
+    Args:
+        request (Request): flask request object.
+        destination_id (str): Destination ID.
+        user_name (str): user_name extracted from Okta.
+
+    Returns:
+        Tuple[dict, int]: Destination doc, HTTP status code.
+
+    """
+
+    # load into the schema object
+    body = DestinationPutSchema().load(request.get_json(), partial=True)
+
+    # grab the auth details
+    auth_details = body.get(constants.AUTHENTICATION_DETAILS)
+    performance_de = None
+    authentication_parameters = None
+    database = get_db_client()
+
+    # check if destination exists
+    destination = destination_management.get_delivery_platform(
+        database, destination_id
+    )
+    platform_type = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
+    if platform_type == db_c.DELIVERY_PLATFORM_SFMC:
+        SFMCAuthCredsSchema().load(auth_details)
+        performance_de = body.get(
+            constants.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
+        )
+        if not performance_de:
+            logger.error("%s", constants.PERFORMANCE_METRIC_DE_NOT_ASSIGNED[0])
+            return (
+                {"message": constants.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
+                HTTPStatus.BAD_REQUEST,
+            )
+    elif platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
+        FacebookAuthCredsSchema().load(auth_details)
+    elif platform_type in [
+        db_c.DELIVERY_PLATFORM_SENDGRID,
+        db_c.DELIVERY_PLATFORM_TWILIO,
+    ]:
+        SendgridAuthCredsSchema().load(auth_details)
+    elif platform_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
+        QualtricsAuthCredsSchema().load(auth_details)
+    elif platform_type == db_c.DELIVERY_PLATFORM_GOOGLE:
+        GoogleAdsAuthCredsSchema().load(auth_details)
+
+    if auth_details:
+        # store the secrets for the updated authentication details
+        authentication_parameters = (
+            parameter_store.set_destination_authentication_secrets(
+                authentication_details=auth_details,
+                is_updated=True,
+                destination_id=destination_id,
+                destination_type=platform_type,
+            )
+        )
+        is_added = True
+
+    return (
+        DestinationGetSchema().dump(
+            destination_management.update_delivery_platform(
+                database=database,
+                delivery_platform_id=destination_id,
+                delivery_platform_type=destination[
+                    db_c.DELIVERY_PLATFORM_TYPE
+                ],
+                name=destination[db_c.DELIVERY_PLATFORM_NAME],
+                authentication_details=authentication_parameters,
+                added=is_added,
+                performance_de=performance_de,
+                user_name=user_name,
+                status=db_c.STATUS_SUCCEEDED,
+            )
+        ),
+        HTTPStatus.OK,
+    )
