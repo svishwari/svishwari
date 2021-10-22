@@ -376,6 +376,7 @@ export default {
           toolTipText:
             "Total no. of unique hux ids generated to represent a customer.",
           value: "",
+          action: "toggleProfilesDrawer",
         },
         {
           title: "Countries",
