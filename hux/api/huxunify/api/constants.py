@@ -240,6 +240,7 @@ DISABLED = "disabled"
 SIZE = "size"
 IS_ADDED = "is_added"
 DAY = "day"
+REQUESTED = "requested"
 
 STATUS_NOT_DELIVERED = "Not Delivered"
 STATUS_DELIVERED = "Delivered"
@@ -744,6 +745,7 @@ MODELS_ENDPOINT = "/models"
 MODELS_VERSION_HISTORY = "version-history"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
+TYPE_MODEL = "model"
 MODEL_ID = "model_id"
 MODEL_ID_PARAMS = [
     {

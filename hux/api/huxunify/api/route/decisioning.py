@@ -4,17 +4,24 @@ from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Tuple, List
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flasgger import SwaggerView
+from huxunifylib.util.general.logging import logger
 from huxunifylib.database.cache_management import (
     create_cache_entry,
     get_cache_entry,
 )
+from huxunifylib.database import (
+    collection_management,
+    notification_management,
+)
+from huxunifylib.database import constants as db_c
 
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+    get_user_name,
 )
 from huxunify.api.route.utils import get_db_client, Validation
 from huxunify.api.schema.model import (
@@ -24,6 +31,7 @@ from huxunify.api.schema.model import (
     ModelLiftSchema,
     ModelDashboardSchema,
     FeatureSchema,
+    ModelRequestPOSTSchema,
 )
 from huxunify.api.data_connectors import tecton
 from huxunify.api.schema.utils import (
@@ -48,6 +56,19 @@ def before_request():
 class ModelsView(SwaggerView):
     """Models Class."""
 
+    parameters = [
+        {
+            "name": api_c.STATUS,
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
+            "description": "Model status.",
+            "example": "Requested",
+            "required": False,
+        }
+    ]
+
     responses = {
         HTTPStatus.OK.value: {
             "description": "List of models.",
@@ -62,16 +83,15 @@ class ModelsView(SwaggerView):
     @api_error_handler()
     def get(self) -> Tuple[List[dict], int]:
         """Retrieves all models.
-
         ---
         security:
             - Bearer: ["Authorization"]
-
         Returns:
             Tuple[List[dict], int]: list containing dict of models,
                 HTTP status code.
         """
 
+        status = request.args.getlist(api_c.STATUS)
         purchase_model = {
             api_c.TYPE: "purchase",
             api_c.FULCRUM_DATE: datetime(2021, 6, 26),
@@ -89,11 +109,115 @@ class ModelsView(SwaggerView):
         }
         all_models = tecton.get_models()
         all_models.append(purchase_model)
+
+        config_models = collection_management.get_documents(
+            get_db_client(),
+            db_c.CONFIGURATIONS_COLLECTION,
+            {db_c.TYPE: api_c.TYPE_MODEL},
+        )
+        if config_models[db_c.DOCUMENTS]:
+            for model in all_models:
+                matched_model = next(
+                    (
+                        item
+                        for item in config_models[db_c.DOCUMENTS]
+                        if item[api_c.NAME] == model[api_c.NAME]
+                    ),
+                    None,
+                )
+                if matched_model is not None:
+                    model[api_c.STATUS] = matched_model[api_c.STATUS]
+
+        if status:
+            all_models = [
+                model for model in all_models if model[api_c.STATUS] in status
+            ]
+
+        all_models.sort(key=lambda x: x[api_c.NAME])
+
         all_models.sort(key=lambda x: x[api_c.NAME])
         return (
             jsonify(ModelSchema(many=True).dump(all_models)),
             HTTPStatus.OK.value,
         )
+
+
+@add_view_to_blueprint(model_bp, api_c.MODELS_ENDPOINT, "SetModelStatus")
+class SetModelStatus(SwaggerView):
+    """Class to request a model."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Model request body.",
+            "example": {
+                api_c.TYPE: "purchase",
+                api_c.NAME: "Propensity to Purchase",
+                api_c.ID: 3,
+                api_c.STATUS: api_c.REQUESTED,
+            },
+        }
+    ]
+
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "schema": {
+                "example": {api_c.MESSAGE: api_c.OPERATION_SUCCESS},
+            },
+            "description": "Successfully requested the model.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to request the model.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.MODELS_TAG]
+
+    @api_error_handler()
+    @get_user_name()
+    def post(self, user_name: str) -> Tuple[dict, int]:
+        """Request a model.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Model Requested, HTTP status code.
+        """
+
+        body = ModelRequestPOSTSchema().load(request.get_json())
+
+        database = get_db_client()
+        collection_management.create_document(
+            database=database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            new_doc=body,
+            username=user_name,
+        )
+
+        notification_management.create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f'Model requested "{body[db_c.NAME]}" '
+                f"by {user_name}."
+            ),
+            api_c.MODELS_TAG,
+        )
+
+        logger.info(
+            "Successfully requested model %s.", body.get(db_c.NAME)
+        )
+
+        return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.CREATED
 
 
 @add_view_to_blueprint(
