@@ -149,6 +149,10 @@ class AudienceDownloadsTest(TestCase):
             return_value=True,
         ).start()
 
+        mock.patch.object(
+            ConnectorCDP, "fetch_okta_token", return_value=t_c.TEST_AUTH_TOKEN
+        ).start()
+
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/{api_c.AMAZON_ADS}",
@@ -173,6 +177,11 @@ class AudienceDownloadsTest(TestCase):
             "_connect",
             return_value=True,
         ).start()
+
+        mock.patch.object(
+            ConnectorCDP, "fetch_okta_token", return_value=t_c.TEST_AUTH_TOKEN
+        ).start()
+
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/{api_c.GENERIC_ADS}",

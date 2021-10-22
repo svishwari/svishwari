@@ -28,7 +28,7 @@ requests= {version="2.25.1", index="pypi"}
 flask-cors = {version="3.0.10", index="pypi"}
 py-healthcheck = {version="1.10.1", index="pypi"}
 huxunifylib-database = {path="../../lib/huxunifylib-database", editable=true}
-huxunifylib-util = {version="==0.1.30", index="jfrog"}
+huxunifylib-util = {version="*", index="jfrog"}
 huxunifylib-connectors = {version="*", index="jfrog"}
 faker = {version="*", index="pypi"}
 croniter = {version="*", index="pypi"}
