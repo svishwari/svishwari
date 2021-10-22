@@ -82,6 +82,14 @@ data_sources_constants = [
         c.ADDED: False,
     },
     {
+        c.DATA_SOURCE_NAME: "Oracle",
+        c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_ORACLE_CRM,
+        c.CATEGORY: c.CATEGORY_CRM,
+        c.STATUS: c.PENDING,
+        c.ENABLED: False,
+        c.ADDED: False,
+    },
+    {
         c.DATA_SOURCE_NAME: "Salesforce",
         c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_SALESFORCE,
         c.CATEGORY: c.CATEGORY_CRM,
@@ -154,7 +162,7 @@ data_sources_constants = [
         c.ADDED: False,
     },
     {
-        c.DATA_SOURCE_NAME: "Google Big Query",
+        c.DATA_SOURCE_NAME: "Google BigQuery",
         c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_BIG_QUERY,
         c.CATEGORY: c.CATEGORY_DATABASES,
         c.STATUS: c.PENDING,
@@ -178,7 +186,7 @@ data_sources_constants = [
         c.ADDED: False,
     },
     {
-        c.DATA_SOURCE_NAME: "Microsoft Azure SQL",
+        c.DATA_SOURCE_NAME: "Microsoft Azure SQL DB",
         c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_AZURESQL,
         c.CATEGORY: c.CATEGORY_DATABASES,
         c.STATUS: c.PENDING,
@@ -202,6 +210,14 @@ data_sources_constants = [
         c.ADDED: False,
     },
     {
+        c.DATA_SOURCE_NAME: "Oracle DB",
+        c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_ORACLE_DB,
+        c.CATEGORY: c.CATEGORY_DATABASES,
+        c.STATUS: c.PENDING,
+        c.ENABLED: False,
+        c.ADDED: False,
+    },
+    {
         c.DATA_SOURCE_NAME: "Tableau",
         c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_TABLEAU,
         c.CATEGORY: c.CATEGORY_DATA_VISUALIZATION,
@@ -212,7 +228,7 @@ data_sources_constants = [
     {
         c.DATA_SOURCE_NAME: "Google Analytics",
         c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_GOOGLE_ANALYTICS,
-        c.CATEGORY: c.CATEGORY_CUSTOMER_SERVICE,
+        c.CATEGORY: c.CATEGORY_INTERNET,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
@@ -220,7 +236,7 @@ data_sources_constants = [
     {
         c.DATA_SOURCE_NAME: "HTTP",
         c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_HTTP,
-        c.CATEGORY: c.CATEGORY_CUSTOMER_SERVICE,
+        c.CATEGORY: c.CATEGORY_INTERNET,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
@@ -228,7 +244,7 @@ data_sources_constants = [
     {
         c.DATA_SOURCE_NAME: "Microsoft Bing",
         c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_BING,
-        c.CATEGORY: c.CATEGORY_CUSTOMER_SERVICE,
+        c.CATEGORY: c.CATEGORY_INTERNET,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
@@ -378,7 +394,7 @@ data_sources_constants = [
         c.ADDED: False,
     },
     {
-        c.DATA_SOURCE_NAME: "InsightIQ",
+        c.DATA_SOURCE_NAME: "Insight IQ",
         c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_INSIGHTIQ,
         c.CATEGORY: c.CATEGORY_PRODUCTIVITY,
         c.STATUS: c.PENDING,
@@ -426,7 +442,7 @@ data_sources_constants = [
         c.ADDED: False,
     },
     {
-        c.DATA_SOURCE_NAME: "Sendgrid by Twilio",
+        c.DATA_SOURCE_NAME: "SendGrid by Twilio",
         c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_SENDGRID,
         c.CATEGORY: c.CATEGORY_PRODUCTIVITY,
         c.STATUS: c.PENDING,
@@ -505,27 +521,22 @@ data_sources_constants = [
         c.ENABLED: False,
         c.ADDED: False,
     },
-    # {
-    #     c.DATA_SOURCE_NAME: "Adobe Experience",
-    #     c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_ADOBE,
-    #     c.STATUS: c.PENDING,
-    #     c.ENABLED: False,
-    #     c.ADDED: False,
-    # },
-    # {
-    #     c.DATA_SOURCE_NAME: "Amazon Advertising",
-    #     c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_AMAZONADS,
-    #     c.STATUS: c.PENDING,
-    #     c.ENABLED: False,
-    #     c.ADDED: False,
-    # },
-    # {
-    #     c.DATA_SOURCE_NAME: "GA360",
-    #     c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_GA360,
-    #     c.STATUS: c.PENDING,
-    #     c.ENABLED: False,
-    #     c.ADDED: False,
-    # },
+    {
+        c.DATA_SOURCE_NAME: "Adobe Experience",
+        c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_ADOBE,
+        c.CATEGORY: c.CATEGORY_MARKETING,
+        c.STATUS: c.PENDING,
+        c.ENABLED: False,
+        c.ADDED: False,
+    },
+    {
+        c.DATA_SOURCE_NAME: "Amazon Advertising",
+        c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_AMAZONADS,
+        c.CATEGORY: c.CATEGORY_MARKETING,
+        c.STATUS: c.PENDING,
+        c.ENABLED: False,
+        c.ADDED: False,
+    },
 ]
 
 # Delivery Platforms List
