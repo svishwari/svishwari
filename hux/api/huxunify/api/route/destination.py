@@ -324,7 +324,7 @@ class DestinationAuthenticationPostView(SwaggerView):
     @validate_destination()
     @get_user_name()
     def put(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
-        """Updates a destination.
+        """Sets a destination's authentication details.
 
         ---
         security:
