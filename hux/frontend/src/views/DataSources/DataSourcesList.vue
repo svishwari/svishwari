@@ -9,7 +9,7 @@
           :title="dataSource.name"
           :description="''"
           :disabled="dataSource.status !== 'Active'"
-          :action-menu="dataSource.status !== 'Active' ? true : false"
+          :action-menu="dataSource.status !== 'Active'"
           :coming-soon="false"
           :icon-color="true"
           :logo-option="true"
@@ -174,7 +174,4 @@ export default {
     @extend .cursor-default;
   }
 }
-// ::v-deep.v-menu__content {
-//   margin-top: 22px !important;
-// }
 </style>

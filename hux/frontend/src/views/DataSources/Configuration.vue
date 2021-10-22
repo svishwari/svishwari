@@ -53,7 +53,7 @@
             :is-already-added="dataSource.is_added"
             class="my-3"
             data-e2e="dataSourcesAddList"
-            :requested-button="dataSource.status !== 'Active' ? true : false"
+            :requested-button="dataSource.status !== 'Active'"
             @click="onDataSourceClick(dataSource.id)"
           />
 
