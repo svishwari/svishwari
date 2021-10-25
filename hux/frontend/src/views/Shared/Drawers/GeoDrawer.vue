@@ -245,7 +245,7 @@ export default {
             {
               value: "country",
               text: "Country",
-              width: "60%",
+              width: "50%",
             },
             ...this.defaultColumns,
           ]
