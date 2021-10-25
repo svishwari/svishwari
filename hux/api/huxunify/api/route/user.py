@@ -1,5 +1,6 @@
 # pylint: disable=no-self-use
 """Paths for the User API"""
+import datetime
 import random
 from http import HTTPStatus
 from typing import Tuple
@@ -23,11 +24,12 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+    get_user_name,
 )
 from huxunify.api.route.utils import (
     get_db_client,
 )
-from huxunify.api.schema.user import UserSchema
+from huxunify.api.schema.user import UserSchema, UserPatchSchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.okta import (
@@ -333,4 +335,91 @@ class UserView(SwaggerView):
         return (
             jsonify(UserSchema().dump(users, many=True)),
             HTTPStatus.OK.value,
+        )
+
+
+@add_view_to_blueprint(
+    user_bp,
+    f"{api_c.USER_ENDPOINT}/<destination_id>",
+    "UserPatchView",
+)
+class UserPatchView(SwaggerView):
+    """Destination Patch class."""
+
+    parameters = [
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Destination body.",
+            "example": {db_constants.ENABLED: False},
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "User updated.",
+            "schema": UserSchema,
+        },
+        HTTPStatus.UNPROCESSABLE_ENTITY.value: {
+            "description": "Failed to patch user data.",
+            "schema": {
+                "example": {
+                    "message": api_c.DESTINATION_INVALID_PATCH_MESSAGE
+                },
+            },
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
+    # pylint: disable=unexpected-keyword-arg
+    # pylint: disable=too-many-return-statements
+    @api_error_handler()
+    @get_user_name()
+    def patch(self, user_name: str) -> Tuple[dict, int]:
+        """Updates a destination.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: User doc, HTTP status code.
+        """
+
+        okta_id = introspect_token(get_token_from_request(request)[0]).get(
+            api_c.OKTA_USER_ID
+        )
+
+        UserPatchSchema.validate(request.get_json())
+
+        # update the document
+        return (
+            UserSchema().dump(
+                update_user(
+                    get_db_client(),
+                    okta_id,
+                    {
+                        **request.get_json(),
+                        **{
+                            db_constants.UPDATED_BY: user_name,
+                            db_constants.UPDATE_TIME: datetime.datetime.utcnow(),
+                        },
+                    },
+                )
+            ),
+            HTTPStatus.OK,
         )

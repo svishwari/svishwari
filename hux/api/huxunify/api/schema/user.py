@@ -42,3 +42,13 @@ class UserSchema(Schema):
     login_count = Int(required=True, default=0, example=10)
     last_login = DateTimeWithZ(required=True, attribute=db_c.UPDATE_TIME)
     modified = DateTimeWithZ(required=True)
+
+
+class UserPatchSchema(Schema):
+    """User patch schema"""
+
+    role = Str(required=False) # Should this be editable?
+    organization = Str(required=False) # Should this be editable?
+    subscription = List(Str(), default=[], required=False)
+    profile_photo = Str(required=False) # is this going to be editable from our portal?
+    dashboard_configuration = Dict(required=False) # should this be editable from this endpoint and does it have a schema?

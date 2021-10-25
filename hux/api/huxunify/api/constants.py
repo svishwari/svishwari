@@ -737,6 +737,19 @@ FAVORITE = "favorite"
 FAVORITES = "favorites"
 PROFILE = "profile"
 
+USER_PATCH_FIELDS = [
+    db_c.ADDED,
+    db_c.ENABLED,
+    db_c.DELETED,
+    db_c.IS_AD_PLATFORM,
+    db_c.DELIVERY_PLATFORM_STATUS,
+    db_c.NAME,
+    db_c.DELIVERY_PLATFORM_TYPE,
+]
+USER_INVALID_PATCH_MESSAGE = (
+    f"Acceptable fields are {USER_PATCH_FIELDS}."
+)
+
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
 MODELS_TAG = "model"
