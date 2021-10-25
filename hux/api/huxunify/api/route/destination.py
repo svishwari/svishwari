@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use,too-many-lines
 """Paths for destinations API"""
 import datetime
 from http import HTTPStatus
