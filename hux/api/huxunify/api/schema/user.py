@@ -44,6 +44,7 @@ class UserSchema(Schema):
     modified = DateTimeWithZ(required=True)
 
 
+# TODO discuss exactly which fields need to be here
 class UserPatchSchema(Schema):
     """User patch schema"""
 
