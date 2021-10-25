@@ -779,6 +779,7 @@
         icon="drawer-add-tick"
         is-custom-icon
         class="ma-2 caption"
+        icon-class="ml-0 mr-1"
       >
         Added
       </huxButton>
@@ -794,6 +795,7 @@
         icon-variant="lighten3"
         icon-size="15"
         class="ma-2 caption"
+        icon-class="ml-0 mr-1"
       >
         <span class="black--text text--lighten-3">Added</span>
       </huxButton>
@@ -808,6 +810,7 @@
         is-custom-icon
         icon-size="15"
         class="ma-2 caption"
+        icon-class="ml-0 mr-1"
       >
         Requested
       </huxButton>
@@ -1104,6 +1107,15 @@
           </card-stat>
           <card-stat label="Last trained" value="2 hrs ago">12:45pm</card-stat>
         </div>
+      </template>
+      <template slot="action-menu-options">
+        <v-list class="list-wrapper">
+          <v-list-item-group>
+            <v-list-item>
+              <v-list-item-title> Activate </v-list-item-title>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
       </template>
     </descriptive-card>
     <descriptive-card

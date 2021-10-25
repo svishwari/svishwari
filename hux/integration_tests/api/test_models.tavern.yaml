@@ -32,6 +32,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - last_trained: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
           lookback_window: !anyint
           type: !anystr
@@ -80,6 +81,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - data_source: !anything
           score: !anyfloat
           status: !anystr
@@ -108,6 +110,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - trained_date: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
           lookback_window: !anyint
           status: !anystr
@@ -138,13 +141,13 @@ stages:
       json:
         model_type: !anystr
         description: !anystr
+        model_name: !anystr
         performance_metric:
           rmse: !anyfloat
           auc: !anyfloat
           precision: !anyfloat
           recall: !anyfloat
           current_version: !anystr
-        model_name: !anystr
 
   - name: Test model features API
 
@@ -163,6 +166,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - data_source: !anystr
           score: !anyfloat
           status: !anystr
