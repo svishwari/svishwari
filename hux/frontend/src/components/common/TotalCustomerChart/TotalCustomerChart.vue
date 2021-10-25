@@ -41,7 +41,7 @@
             <span class="text-label">New customers added</span>
           </div>
           <div class="value-section">
-              {{ currentData.addedCustomers | Numeric(true, false, false) }}
+            {{ currentData.addedCustomers | Numeric(true, false, false) }}
           </div>
           <div class="value-container">
             <icon
@@ -54,8 +54,8 @@
             <span class="text-label">Customers left</span>
           </div>
           <div class="value-section">
-              <span v-if="currentData.leftCustomers > 0">-</span>
-              {{ currentData.leftCustomers | Numeric(true, false, false) }}
+            <span v-if="currentData.leftCustomers > 0">-</span>
+            {{ currentData.leftCustomers | Numeric(true, false, false) }}
           </div>
           <div class="date-section">
             {{ currentData.date | Date("MMM DD, YYYY") }}
@@ -273,7 +273,7 @@ export default {
   .value-section {
     @extend .global-heading;
     margin-left: 24px;
-    margin-bottom: 10px
+    margin-bottom: 10px;
   }
   .date-section {
     @extend .global-heading;
