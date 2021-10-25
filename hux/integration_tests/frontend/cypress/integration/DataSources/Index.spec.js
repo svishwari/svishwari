@@ -1,7 +1,7 @@
 import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
-describe("Tests data sources and destinations in connections", () => {
+describe("Data Management > Data Sources", () => {
   before(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
@@ -9,12 +9,13 @@ describe("Tests data sources and destinations in connections", () => {
     })
   })
 
-  it("testing data management > connections > data sources", () => {
+  // TODO in HUS-1373 after HUS-1230 is merged
+  it.skip("should be able to manage data sources", () => {
     cy.location("pathname").should("eq", route.overview)
 
     // click on connections on side nav bar
-    cy.get(selector.connections).eq(0).click()
-    cy.location("pathname").should("eq", route.connections)
+    cy.get(selector.nav.dataSources).click()
+    cy.location("pathname").should("eq", route.dataSources)
 
     // validate data sources exist by getting total no. of them
     let dataSourceAddCount = 0
@@ -98,13 +99,8 @@ describe("Tests data sources and destinations in connections", () => {
     })
   })
 
-  it("testing data management > connections > destinations", () => {
-    cy.get(selector.connections).eq(1).click()
-    cy.location("pathname").should("eq", route.connections)
-    cy.get(selector.destinations).its("length").should("be.gt", 0)
-  })
-
-  it("testing data management > connections > add data sources from navbar", () => {
+  // TODO in HUS-1373 after HUS-1230 is merged
+  it.skip("should be able to quick-add a data source from the top nav", () => {
     cy.get(selector.connections).eq(0).click()
     cy.location("pathname").should("eq", route.connections)
 

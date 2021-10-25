@@ -1,7 +1,7 @@
 import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
-describe("View Navigation", () => {
+describe("Navigation", () => {
   before(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
@@ -9,7 +9,7 @@ describe("View Navigation", () => {
     })
   })
 
-  it("should be able to view the navigation and navigate to sections", () => {
+  it("should be able to navigate to all sections", () => {
     // home
     cy.get(selector.nav.home).click()
     cy.location("pathname").should("eq", route.overview)
