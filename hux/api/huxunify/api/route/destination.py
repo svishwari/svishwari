@@ -744,7 +744,8 @@ class DestinationDataExtView(SwaggerView):
             jsonify(
                 sorted(
                     DestinationDataExtGetSchema().dump(ext_list, many=True),
-                    key=lambda i: i[api_c.NAME].lower(),
+                    key=lambda i: i[db_c.CREATE_TIME],
+                    reverse=True
                 )
             ),
             HTTPStatus.OK,
