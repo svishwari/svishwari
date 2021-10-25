@@ -13,18 +13,14 @@
     <template #default>
       <hux-data-table
         v-if="!loading"
+        id="geoDrawerTable"
         :columns="columns"
         :data-items="items"
         :sort-column="sortColumn"
         :data-e2e="`geo-drawer-table-${geoLevel}`"
       >
         <template #row-item="{ item }">
-          <td
-            v-for="(col, index) in columns"
-            :key="index"
-            :style="{ width: col.width }"
-            class="text-body-2"
-          >
+          <td v-for="(col, index) in columns" :key="index" class="text-body-2">
             <tooltip v-if="['city', 'country', 'state'].includes(col.value)">
               {{ item[col.value] }}
               <template #tooltip> {{ item[col.value] }} </template>
@@ -110,28 +106,14 @@ export default {
       batchSize: 100,
       batchNumber: 1,
       columns: [],
-      defaultColumnsWithCountry: [
-        {
-          value: "size",
-          text: "Size",
-          width: "20%",
-        },
-        {
-          value: "spending",
-          text: "Spending $",
-          width: "20%",
-        },
-      ],
       defaultColumns: [
         {
           value: "size",
           text: "Size",
-          width: "25%",
         },
         {
           value: "spending",
           text: "Spending $",
-          width: "25%",
         },
       ],
       sortColumn: "state",
@@ -206,38 +188,23 @@ export default {
       await this.refreshData()
       switch (this.geoLevel) {
         case "cities":
-          this.columns = isMultiValColumn(this.geoCities, "country")
-            ? [
-                {
-                  value: "city",
-                  text: "City",
-                  width: "25%",
-                },
-                {
-                  value: "state",
-                  text: "State",
-                  width: "15%",
-                },
-                {
-                  value: "country",
-                  text: "Country",
-                  width: "20%",
-                },
-                ...this.defaultColumnsWithCountry,
-              ]
-            : [
-                {
-                  value: "city",
-                  text: "City",
-                  width: "35%",
-                },
-                {
-                  value: "state",
-                  text: "State",
-                  width: "25%",
-                },
-                ...this.defaultColumns,
-              ]
+          this.columns = [
+            {
+              value: "city",
+              text: "City",
+            },
+            {
+              value: "state",
+              text: "State",
+            },
+            ...this.defaultColumns,
+          ]
+          if (isMultiValColumn(this.geoCities, "country")) {
+            this.columns.splice(2, 0, {
+              value: "country",
+              text: "Country",
+            })
+          }
           this.sortColumn = "city"
           break
         case "countries":
@@ -245,35 +212,25 @@ export default {
             {
               value: "country",
               text: "Country",
-              width: "50%",
             },
             ...this.defaultColumns,
           ]
           this.sortColumn = "country"
           break
         case "states":
-          this.columns = isMultiValColumn(this.geoStates, "country")
-            ? [
-                {
-                  value: "state",
-                  text: "State",
-                  width: "30%",
-                },
-                {
-                  value: "country",
-                  text: "Country",
-                  width: "30%",
-                },
-                ...this.defaultColumnsWithCountry,
-              ]
-            : [
-                {
-                  value: "state",
-                  text: "State",
-                  width: "60%",
-                },
-                ...this.defaultColumns,
-              ]
+          this.columns = [
+            {
+              value: "state",
+              text: "State",
+            },
+            ...this.defaultColumns,
+          ]
+          if (isMultiValColumn(this.geoStates, "country")) {
+            this.columns.splice(1, 0, {
+              value: "country",
+              text: "Country",
+            })
+          }
           this.sortColumn = "state"
           break
       }
@@ -343,3 +300,10 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.hux-data-table {
+  ::v-deep table {
+    table-layout: auto !important;
+  }
+}
+</style>

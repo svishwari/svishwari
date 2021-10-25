@@ -19,14 +19,6 @@ describe("Data management > Customer Profiles", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
 
-    // should be able to view overview of customer profiles"
-    // cy.get(selector.customerProfile.overview)
-    //   .its("length")
-    //   .as("overviewListCount")
-    // cy.get("@overviewListCount").then(() => {
-    //   cy.get(selector.customerProfile.overview).its("length").should("eq", 8)
-    // })
-
     // should be able to view customer overview of customer profiles"
     cy.get(selector.customerProfile.customeroverview)
       .its("length")

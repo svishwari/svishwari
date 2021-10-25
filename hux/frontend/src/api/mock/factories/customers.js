@@ -171,14 +171,14 @@ export const geoCity = {
   state: () => faker.address.stateAbbr(),
   size: () => faker.datatype.number(1000),
   spending: () => faker.datatype.number(10000),
-  country: () => faker.address.country(),
+  country: () => faker.random.arrayElement(["US", "CA"]),
 }
 
 /**
  * Country-level geographic insights schema
  */
 export const geoCountry = {
-  country: () => faker.address.country(),
+  country: () => faker.random.arrayElement(["US", "CA"]),
   size: () => faker.datatype.number(100000),
   spending: () => faker.datatype.number(1000000),
 }
@@ -190,5 +190,5 @@ export const geoState = {
   state: () => faker.address.state(),
   size: () => faker.datatype.number(10000),
   spending: () => faker.datatype.number(100000),
-  country: () => faker.address.country(),
+  country: () => faker.random.arrayElement(["US", "CA"]),
 }
