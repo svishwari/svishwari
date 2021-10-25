@@ -171,6 +171,7 @@ export const geoCity = {
   state: () => faker.address.stateAbbr(),
   size: () => faker.datatype.number(1000),
   spending: () => faker.datatype.number(10000),
+  country: () => faker.address.country(),
 }
 
 /**
@@ -189,4 +190,5 @@ export const geoState = {
   state: () => faker.address.state(),
   size: () => faker.datatype.number(10000),
   spending: () => faker.datatype.number(100000),
+  country: () => faker.address.country(),
 }

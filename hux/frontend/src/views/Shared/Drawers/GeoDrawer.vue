@@ -16,6 +16,7 @@
         :columns="columns"
         :data-items="items"
         :sort-column="sortColumn"
+        :data-e2e="`geo-drawer-table-${geoLevel}`"
       >
         <template #row-item="{ item }">
           <td
@@ -64,6 +65,7 @@ import Drawer from "@/components/common/Drawer.vue"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Observer from "@/components/common/Observer.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
+import { isMultiValColumn } from "../../../utils"
 
 export default {
   name: "GeoDrawer",
@@ -108,6 +110,18 @@ export default {
       batchSize: 100,
       batchNumber: 1,
       columns: [],
+      defaultColumnsWithCountry: [
+        {
+          value: "size",
+          text: "Size",
+          width: "20%",
+        },
+        {
+          value: "spending",
+          text: "Spending $",
+          width: "20%",
+        },
+      ],
       defaultColumns: [
         {
           value: "size",
@@ -187,21 +201,43 @@ export default {
 
   async updated() {
     if (this.toggle) {
+      this.loading = true
+      this.batchNumber = 1
+      await this.refreshData()
       switch (this.geoLevel) {
         case "cities":
-          this.columns = [
-            {
-              value: "city",
-              text: "City",
-              width: "30%",
-            },
-            {
-              value: "state",
-              text: "State",
-              width: "20%",
-            },
-            ...this.defaultColumns,
-          ]
+          this.columns = isMultiValColumn(this.geoCities, "country")
+            ? [
+                {
+                  value: "city",
+                  text: "City",
+                  width: "25%",
+                },
+                {
+                  value: "state",
+                  text: "State",
+                  width: "15%",
+                },
+                {
+                  value: "country",
+                  text: "Country",
+                  width: "20%",
+                },
+                ...this.defaultColumnsWithCountry,
+              ]
+            : [
+                {
+                  value: "city",
+                  text: "City",
+                  width: "35%",
+                },
+                {
+                  value: "state",
+                  text: "State",
+                  width: "25%",
+                },
+                ...this.defaultColumns,
+              ]
           this.sortColumn = "city"
           break
         case "countries":
@@ -209,27 +245,38 @@ export default {
             {
               value: "country",
               text: "Country",
-              width: "50%",
+              width: "60%",
             },
             ...this.defaultColumns,
           ]
           this.sortColumn = "country"
           break
         case "states":
-          this.columns = [
-            {
-              value: "state",
-              text: "State",
-              width: "50%",
-            },
-            ...this.defaultColumns,
-          ]
+          this.columns = isMultiValColumn(this.geoStates, "country")
+            ? [
+                {
+                  value: "state",
+                  text: "State",
+                  width: "30%",
+                },
+                {
+                  value: "country",
+                  text: "Country",
+                  width: "30%",
+                },
+                ...this.defaultColumnsWithCountry,
+              ]
+            : [
+                {
+                  value: "state",
+                  text: "State",
+                  width: "60%",
+                },
+                ...this.defaultColumns,
+              ]
           this.sortColumn = "state"
           break
       }
-      this.loading = true
-      this.batchNumber = 1
-      await this.refreshData()
       this.loading = false
       this.enableLazyLoad = true
     } else {
