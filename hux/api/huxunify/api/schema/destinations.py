@@ -169,11 +169,17 @@ class DestinationGetSchema(Schema):
     campaigns = fields.Int(
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
-    perf_data_extension = fields.Dict(
-        attribute=db_c.PERFORMANCE_METRICS_DATA_EXTENSION,
+    configuration = fields.Dict(
+        attribute=db_c.CONFIGURATION,
         example={
-            api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
-            api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
+            db_c.PERFORMANCE_METRICS_DATA_EXTENSION: {
+                api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
+                api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
+            },
+            db_c.CAMPAIGN_ACTIVITY_DATA_EXTENSION: {
+                api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
+                api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
+            },
         },
         required=False,
         allow_none=True,
@@ -222,11 +228,17 @@ class DestinationPutSchema(Schema):
     """Destination put schema class"""
 
     authentication_details = fields.Field()
-    perf_data_extension = fields.Dict(
-        attribute=api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION,
+    configuration = fields.Dict(
+        attribute=db_c.CONFIGURATION,
         example={
-            api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
-            api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
+            db_c.PERFORMANCE_METRICS_DATA_EXTENSION: {
+                api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
+                api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
+            },
+            db_c.CAMPAIGN_ACTIVITY_DATA_EXTENSION: {
+                api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
+                api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
+            },
         },
         required=False,
         allow_none=True,
