@@ -12,11 +12,11 @@ describe("Tests data sources and destinations in connections", () => {
   it("testing data management > connections > data sources", () => {
     cy.location("pathname").should("eq", route.overview)
 
-    //click on connections on side nav bar
+    // click on connections on side nav bar
     cy.get(selector.connections).eq(0).click()
     cy.location("pathname").should("eq", route.connections)
 
-    //validate data sources exist by getting total no. of them
+    // validate data sources exist by getting total no. of them
     let dataSourceAddCount = 0
     cy.get(selector.dataSourcesAdd).then(($ele) => {
       dataSourceAddCount = $ele.length
@@ -24,7 +24,7 @@ describe("Tests data sources and destinations in connections", () => {
 
     cy.get(selector.datasources).then(($elem) => {
       if ($elem.length != dataSourceAddCount) {
-        //add a data source
+        // add a data source
         cy.get(selector.addDataSource).click()
         cy.get(selector.dataSourcesAdd).each(($el) => {
           if (!$el.attr("class").includes("v-card--disabled")) {
@@ -39,12 +39,12 @@ describe("Tests data sources and destinations in connections", () => {
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(1000)
 
-        //make sure that number of data sources have increased by 1
+        // make sure that number of data sources have increased by 1
         cy.get(selector.datasources)
           .its("length")
           .should("eq", $elem.length + 1)
 
-        //validate correct status on all added data sources
+        // validate correct status on all added data sources
         cy.get(selector.datasources).as("dataSourcesList")
         for (let index = 0; index < $elem.length; index++) {
           cy.get("@dataSourcesList")
@@ -108,14 +108,14 @@ describe("Tests data sources and destinations in connections", () => {
     cy.get(selector.connections).eq(0).click()
     cy.location("pathname").should("eq", route.connections)
 
-    //click on add button on nav bar header
+    // click on add button on nav bar header
     cy.get(selector.datasources).should("exist")
-    cy.get(selector.navigation.add).eq(0).click()
+    cy.get(selector.topNav.add).eq(0).click()
 
-    //open data source drawer
-    cy.get(selector.navigation.dataSourceButton).eq(0).click()
+    // open data source drawer
+    cy.get(selector.topNav.dataSourceButton).eq(0).click()
 
-    //validate the drawer is open
+    // validate the drawer is open
     cy.get(selector.dataSourcesAdd).its("length").should("be.gt", 0)
 
     cy.get(selector.engagement.exitDrawer).click()

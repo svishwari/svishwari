@@ -13,7 +13,7 @@ describe("Orchestration > Engagement > Engagement Dashboard", () => {
     // after login land in the overview page
     cy.location("pathname").should("eq", route.overview)
     // click on engagement on side nav bar and route in engagement screen
-    cy.get(selector.engagements).click()
+    cy.get(selector.nav.engagements).click()
     cy.location("pathname").should("eq", route.engagements)
 
     // click over the engagement name that has active status with more than 1 audience and navigate to dashboard

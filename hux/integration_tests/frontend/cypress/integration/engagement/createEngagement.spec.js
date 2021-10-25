@@ -14,7 +14,7 @@ describe("Orchestration > Engagement > Create Engagement", () => {
     // after login land in the overview page
     cy.location("pathname").should("eq", route.overview)
     //click on engagement on side nav bar and route in engagement screen
-    cy.get(selector.engagements).click()
+    cy.get(selector.nav.engagements).click()
     cy.location("pathname").should("eq", route.engagements)
     //click on add engagement button
     cy.get(selector.engagement.addEngagements).click()
