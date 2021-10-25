@@ -1,22 +1,49 @@
 <template>
   <page max-width="100%">
     <div slot="header">
-      <page-header>
+      <page-header header-height="110" class="mt-n2">
         <template slot="left">
-          <breadcrumb :items="breadcrumbs" />
+          <div>
+            <breadcrumb :items="breadcrumbs" />
+          </div>
+          <div class="text-subtitle-1 font-weight-regular mt-1">
+            Insights into the consumer data that is collected from both online,
+            offline, and 3rd party channels.
+          </div>
         </template>
       </page-header>
+
+      <page-header header-height="71">
+        <template #left>
+          <v-btn disabled icon color="black">
+            <v-icon medium>mdi-magnify</v-icon>
+          </v-btn>
+        </template>
+
+        <template #right>
+          <huxButton
+            button-text="Request a data source"
+            variant="primary"
+            size="large"
+            is-tile
+            height="40"
+            class="ma-2 font-weight-regular no-shadow mr-0 caption"
+            data-e2e="addDataSource"
+            @click="toggleDrawer()"
+          >
+            Request a data source
+          </huxButton>
+        </template>
+      </page-header>
+
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
     <div v-if="!loading">
       <v-row v-if="isConnectionStarted">
-        <v-col cols="6">
+        <v-col>
           <data-sources-list
             @onAddDatasource="toggleDrawer()"
           ></data-sources-list>
-        </v-col>
-        <v-col cols="6">
-          <destinations-list></destinations-list>
         </v-col>
       </v-row>
       <div v-else class="empty-state-wrap text-center">
@@ -48,7 +75,7 @@
           </huxButton>
         </router-link>
         <router-link
-          :to="{ name: 'Connections', params: { select: true } }"
+          :to="{ name: 'DataSources', params: { select: true } }"
           class="text-decoration-none"
         >
           <huxButton
@@ -75,7 +102,6 @@
 import { mapGetters, mapActions } from "vuex"
 
 import DataSourcesList from "./DataSourcesList"
-import DestinationsList from "./DestinationsList"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
@@ -83,11 +109,10 @@ import huxButton from "@/components/common/huxButton"
 import DataSourceConfiguration from "@/views/DataSources/Configuration"
 
 export default {
-  name: "Connections",
+  name: "DataSources",
 
   components: {
     DataSourcesList,
-    DestinationsList,
     Page,
     PageHeader,
     Breadcrumb,
@@ -99,8 +124,8 @@ export default {
     return {
       breadcrumbs: [
         {
-          text: "Connections",
-          icon: "connections",
+          text: "Data Sources",
+          icon: "data-source",
         },
       ],
       drawer: false,
