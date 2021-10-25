@@ -13,8 +13,8 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
     // after login land in the overview page
     cy.location("pathname").should("eq", route.overview)
 
-    //click on engagement on side nav bar and route in engagement screen
-    cy.get(selector.audiences).click()
+    // click on engagement on side nav bar and route in engagement screen
+    cy.get(selector.nav.audiences).click()
     cy.location("pathname").should("eq", route.audiences)
     cy.get(selector.audience.audiencelist).its("length").should("be.gt", 0)
     cy.get(selector.audience.audiencenameclick)

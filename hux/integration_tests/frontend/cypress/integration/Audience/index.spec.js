@@ -14,7 +14,7 @@ describe("Tests Audience", () => {
     cy.location("pathname").should("eq", route.overview)
 
     //click on engagement on side nav bar and route in engagement screen
-    cy.get(selector.audiences).click()
+    cy.get(selector.nav.audiences).click()
     cy.location("pathname").should("eq", route.audiences)
   })
 
