@@ -13,7 +13,6 @@
     <template #default>
       <hux-data-table
         v-if="!loading"
-        id="geoDrawerTable"
         :columns="columns"
         :data-items="items"
         :sort-column="sortColumn"
@@ -61,7 +60,7 @@ import Drawer from "@/components/common/Drawer.vue"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Observer from "@/components/common/Observer.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
-import { isMultiValColumn } from "../../../utils"
+import { arrayHasFieldWithMultipleValues } from "../../../utils"
 
 export default {
   name: "GeoDrawer",
@@ -199,7 +198,7 @@ export default {
             },
             ...this.defaultColumns,
           ]
-          if (isMultiValColumn(this.geoCities, "country")) {
+          if (arrayHasFieldWithMultipleValues(this.geoCities, "country")) {
             this.columns.splice(2, 0, {
               value: "country",
               text: "Country",
@@ -225,7 +224,7 @@ export default {
             },
             ...this.defaultColumns,
           ]
-          if (isMultiValColumn(this.geoStates, "country")) {
+          if (arrayHasFieldWithMultipleValues(this.geoStates, "country")) {
             this.columns.splice(1, 0, {
               value: "country",
               text: "Country",
