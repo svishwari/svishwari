@@ -61,6 +61,7 @@
       :sub-title="`${selectedDestination.name}`"
       right-btn-text="Yes, remove it"
       data-e2e="remove-destination-confirm"
+      :is-disabled="!enableConfirm"
       @onCancel="confirmModal = !confirmModal"
       @onConfirm="confirmRemoval()"
     >
@@ -82,6 +83,24 @@
           <span class="error--text">ALL</span> audiences and engagements that
           are being delivered to this destination and you will not be able to
           recover its impact.
+        </div>
+        <div>
+          <span
+            class="
+              black--text
+              text--darken-4 text-subtitle-1
+              font-weight-regular
+            "
+          >
+            For safety reasons please confirm the deletion of the destination:
+          </span>
+          <v-text-field
+            v-model="removeDestinationText"
+            placeholder='Type "confirm" to remove this destination'
+            height="40"
+            data-e2e="remove-destination-text"
+            @onChange="enableConfirmButton()"
+          />
         </div>
       </template>
     </confirm-modal>
@@ -110,6 +129,8 @@ export default {
     return {
       selectedDestination: {},
       confirmModal: false,
+      removeDestinationText: "",
+      enableConfirm: false,
     }
   },
 
@@ -143,6 +164,9 @@ export default {
         },
       })
       this.confirmModal = false
+    },
+    enableConfirmButton() {
+      this.enableConfirm = this.removeDestinationText == "confirm"
     },
   },
 }

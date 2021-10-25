@@ -52,6 +52,7 @@
               :variant="type"
               height="40"
               is-tile
+              :isDisabled="isDisabled"
               @click="onConfirm()"
             >
               {{ rightBtnText }}
@@ -128,6 +129,12 @@ export default {
       type: Number,
       required: false,
       default: 600,
+    },
+
+    isDisabled: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 
