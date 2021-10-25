@@ -17,11 +17,11 @@
       :tooltip-style="toolTipStyle"
     >
       <template #content>
-        <div class="black--text text--darken-4 caption">
+        <div class="text-body-2 black--text text--darken-4 caption">
           <div class="value-container">
             <icon
               type="customer"
-              :size="12"
+              :size="20"
               :stroke-opacity="0.5"
               :stroke="colorCodes[currentData.index].base"
               :variant="colorCodes[currentData.index].variant"
@@ -34,28 +34,28 @@
           <div class="value-container">
             <icon
               type="customer"
-              :size="12"
+              :size="20"
               :stroke="colorCodes[currentData.index].base"
               :variant="colorCodes[currentData.index].variant"
             />
             <span class="text-label">New customers added</span>
-            <div class="value-section">
+          </div>
+          <div class="value-section">
               {{ currentData.addedCustomers | Numeric(true, false, false) }}
-            </div>
           </div>
           <div class="value-container">
             <icon
               type="customer"
-              :size="12"
+              :size="20"
               :stroke-opacity="0.5"
               stroke="black"
               variant="lighten4"
             />
             <span class="text-label">Customers left</span>
-            <div class="value-section">
+          </div>
+          <div class="value-section">
               <span v-if="currentData.leftCustomers > 0">-</span>
               {{ currentData.leftCustomers | Numeric(true, false, false) }}
-            </div>
           </div>
           <div class="date-section">
             {{ currentData.date | Date("MMM DD, YYYY") }}
@@ -252,16 +252,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.global-text-line {
-  display: inline-block;
-  font-style: normal;
-  font-size: $font-size-root;
-  line-height: 19px;
-}
 .global-heading {
   font-style: normal;
-  font-size: 12px;
-  line-height: 19px;
 }
 .container-chart {
   position: relative;
@@ -269,14 +261,19 @@ export default {
   padding: 0px !important;
   .value-container {
     margin-top: 2px;
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
     @extend .global-heading;
     .text-label {
-      margin-left: 8px !important;
+      margin-left: 4px !important;
     }
   }
   .value-section {
     @extend .global-heading;
-    margin-left: 21px;
+    margin-left: 24px;
+    margin-bottom: 10px
   }
   .date-section {
     @extend .global-heading;

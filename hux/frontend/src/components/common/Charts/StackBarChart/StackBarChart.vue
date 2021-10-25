@@ -79,7 +79,7 @@ export default {
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
-      let margin = { top: 15, right: 45, bottom: 100, left: 68 }
+      let margin = { top: 15, right: 30, bottom: 100, left: 68 }
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
       let barColorCodes = []
@@ -252,7 +252,7 @@ export default {
       let applyHoverEffects = (d, width) => {
         d3Select.select(d.srcElement).attr("fill-opacity", (d) => {
           barHoverIn(d.data, width)
-          return 0.7
+          return 0.9
         })
       }
 
