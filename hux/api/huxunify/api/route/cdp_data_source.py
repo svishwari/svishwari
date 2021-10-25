@@ -273,7 +273,7 @@ class CreateCdpDataSources(SwaggerView):
         if data_sources is not None:
             logger.info(
                 "Successfully created the the %s data source(s).",
-                {[data_source[api_c.NAME] for data_source in new_data_sources]}
+                [data_source[api_c.NAME] for data_source in new_data_sources]
             )
             create_notification(
                 database,
@@ -285,7 +285,7 @@ class CreateCdpDataSources(SwaggerView):
         else:
             logger.info(
                 "Failed to create the %s data source(s).",
-                {[data_source[api_c.NAME] for data_source in new_data_sources]}
+                [data_source[api_c.NAME] for data_source in new_data_sources]
             )
             create_notification(
                 database,
