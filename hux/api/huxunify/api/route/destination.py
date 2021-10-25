@@ -3,6 +3,8 @@
 import datetime
 from http import HTTPStatus
 from typing import Tuple
+
+from bson import ObjectId
 from flasgger import SwaggerView
 from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError
@@ -323,7 +325,9 @@ class DestinationAuthenticationPostView(SwaggerView):
     )
     @validate_destination()
     @get_user_name()
-    def put(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
+    def put(
+        self, destination_id: ObjectId, user_name: str
+    ) -> Tuple[dict, int]:
         """Sets a destination's authentication details.
 
         ---
@@ -331,7 +335,7 @@ class DestinationAuthenticationPostView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            destination_id (str): Destination ID.
+            destination_id (ObjectId): Destination ID.
             user_name (str): user_name extracted from Okta.
 
         Returns:
@@ -399,7 +403,9 @@ class DestinationPutView(SwaggerView):
     )
     @validate_destination()
     @get_user_name()
-    def put(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
+    def put(
+        self, destination_id: ObjectId, user_name: str
+    ) -> Tuple[dict, int]:
         """Updates a destination.
 
         ---
@@ -407,7 +413,7 @@ class DestinationPutView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            destination_id (str): Destination ID.
+            destination_id (ObjectId): Destination ID.
             user_name (str): user_name extracted from Okta.
 
         Returns:

@@ -219,6 +219,7 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
+    # TODO HUS-1391 Remove this test
     def test_update_destination(self):
         """Test update destination."""
 
@@ -241,6 +242,7 @@ class TestDestinationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    # TODO HUS-1391 Remove this test
     def test_update_destination_where_destination_not_found(self):
         """Test update destination where no destination is found."""
 
@@ -263,10 +265,77 @@ class TestDestinationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
 
+    # TODO HUS-1391 Remove this test
     def test_update_destination_invalid_object_id(self):
         """Test update destination where invalid ID given."""
 
-        destination_id = "asdfg1234"
+        destination_id = t_c.INVALID_ID
+
+        new_auth_details = {
+            "authentication_details": {
+                "access_token": "MkU3Ojgwm",
+                "app_secret": "717bdOQqZO99",
+                "app_id": "2951925002021888",
+                "ad_account_id": "111333777",
+            }
+        }
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            json=new_auth_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_update_destination_auth_details(self):
+        """Test update destination."""
+
+        destination_id = self.destinations[0][db_c.ID]
+
+        new_auth_details = {
+            "authentication_details": {
+                api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
+                api_c.FACEBOOK_APP_SECRET: "unified_fb_secret",
+                api_c.FACEBOOK_APP_ID: "2951925002021888",
+                api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
+            }
+        }
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            json=new_auth_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_update_destination_auth_details_where_destination_not_found(self):
+        """Test update destination where no destination is found."""
+
+        destination_id = ObjectId()
+
+        new_auth_details = {
+            "authentication_details": {
+                "access_token": "MkU3Ojgwm",
+                "app_secret": "717bdOQqZO99",
+                "app_id": "2951925002021888",
+                "ad_account_id": "111333777",
+            }
+        }
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            json=new_auth_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+
+    def test_update_destination_auth_details_invalid_object_id(self):
+        """Test update destination where invalid ID given."""
+
+        destination_id = t_c.INVALID_ID
 
         new_auth_details = {
             "authentication_details": {

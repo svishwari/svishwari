@@ -542,7 +542,7 @@ def get_user_favorites(okta_user_id: str, component_name: str) -> list:
 #  UI ticket: HUS-1390
 #  remove extra endpoint ticket: HUS-1391
 def set_destination_auth_details(
-    request: Request, destination_id: str, user_name: str
+    request: Request, destination_id: ObjectId, user_name: str
 ) -> Tuple[dict, int]:
     """Set the authentication details for a destination.
 
