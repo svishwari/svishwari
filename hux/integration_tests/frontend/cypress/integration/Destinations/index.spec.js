@@ -1,7 +1,7 @@
 import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
-describe("Data Management > Connections > Destinations", () => {
+describe("Orchestration > Destinations", () => {
   before(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
@@ -9,7 +9,8 @@ describe("Data Management > Connections > Destinations", () => {
     })
   })
 
-  it("should be able to view a list of destinations already added and attempt to add another destination", () => {
+  // TODO in HUS-1373 after HUS-1230 is merged
+  it.skip("should be able to manage destinations", () => {
     cy.location("pathname").should("eq", route.overview)
 
     //click on connections on side nav bar
