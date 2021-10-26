@@ -137,7 +137,6 @@ export default {
   //Customer Profiles
   customerProfile: {
     customers: "a[href='/customers']",
-    overview: "[data-e2e='overviewList']",
     customeroverview: "[data-e2e='customeroverview']",
     chart: "[data-e2e='overview-chart']",
     mapchart: "[data-e2e='map-chart']",
@@ -159,6 +158,13 @@ export default {
     chord: "[data-e2e='chord']",
     loader: "[data-e2e='loader']",
     viewAllCustomers: "[data-e2e='view-all-customers']",
+    list: {
+      geoDrawerTableCountry: "[data-e2e='geo-drawer-table-countries']",
+      geoDrawerTableState: "[data-e2e='geo-drawer-table-states']",
+      geoDrawerTableCity: "[data-e2e='geo-drawer-table-cities']",
+      geoDrawerTableHeaders: "table thead tr",
+      geoDrawerTableItems: "table tbody tr",
+    },
   },
 
   //IDR

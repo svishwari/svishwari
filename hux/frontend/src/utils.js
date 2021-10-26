@@ -272,3 +272,15 @@ export function saveFile(response) {
   link.click()
   URL.revokeObjectURL(link.href)
 }
+
+/**
+ * Return true if column has multiple values.
+ *
+ * @param {object[]} data - response data as an array of objects
+ * @param {string} field - field name
+ * @returns {boolean} true if column has multiple values else false
+ */
+export function arrayHasFieldWithMultipleValues(data, field) {
+  let colData = data.map((x) => x[field])
+  return Boolean(new Set(colData).size > 1)
+}
