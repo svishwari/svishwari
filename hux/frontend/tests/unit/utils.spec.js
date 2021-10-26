@@ -82,7 +82,7 @@ describe("Utils", () => {
   })
 
   describe("Array contains multiple values in a field", () => {
-    it("Should provide ture if the field containd multiple values else false", () => {
+    it("Should return true if the array contains multiple values", () => {
       const data = [
         {
           state: "Alabama",
