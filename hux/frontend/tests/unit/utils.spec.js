@@ -102,7 +102,7 @@ describe("Utils", () => {
         },
       ]
 
-      const negetiveDataUndefined = [
+      const negativeDataUndefined = [
         {
           state: "Alabama",
         },
@@ -112,7 +112,7 @@ describe("Utils", () => {
         },
       ]
 
-      const negetiveDataNull = [
+      const negativeDataNull = [
         {
           state: "Alabama",
           country: "US",
@@ -123,7 +123,7 @@ describe("Utils", () => {
         },
       ]
 
-      const negetiveDataNullUndefined = [
+      const negativeDataNullUndefined = [
         {
           state: "Alabama",
           country: "US",
@@ -149,23 +149,23 @@ describe("Utils", () => {
       const actualUndefined = arrayHasFieldWithMultipleValues(data, "city")
       expect(actualUndefined).toEqual(expectedUndefined)
 
-      const expectedNegetiveUndefined = true
-      const actualNegetiveUndefined = arrayHasFieldWithMultipleValues(
-        negetiveDataUndefined,
+      const expectedNegativeUndefined = true
+      const actualNegativeUndefined = arrayHasFieldWithMultipleValues(
+        negativeDataUndefined,
         "country"
       )
-      expect(actualNegetiveUndefined).toEqual(expectedNegetiveUndefined)
+      expect(actualNegativeUndefined).toEqual(expectedNegativeUndefined)
 
       const expectedNull = true
       const actualNull = arrayHasFieldWithMultipleValues(
-        negetiveDataNull,
+        negativeDataNull,
         "country"
       )
       expect(actualNull).toEqual(expectedNull)
 
       const expectedNullUndefined = true
       const actualNullUndefined = arrayHasFieldWithMultipleValues(
-        negetiveDataNullUndefined,
+        negativeDataNullUndefined,
         "country"
       )
       expect(actualNullUndefined).toEqual(expectedNullUndefined)
