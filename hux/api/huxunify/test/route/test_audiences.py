@@ -114,14 +114,18 @@ class AudienceDownloadsTest(TestCase):
         # mock read_batches() in ConnectorCDP class to a return a test generator
         mock.patch.object(
             ConnectorCDP,
-            "read_batches",
-            return_value=t_c.dataframe_generator(),
+            "read_batch",
+            return_value=t_c.dataframe_method(),
         ).start()
 
         mock.patch.object(
             ConnectorCDP,
             "_connect",
             return_value=True,
+        ).start()
+
+        mock.patch.object(
+            ConnectorCDP, "fetch_okta_token", return_value=t_c.TEST_AUTH_TOKEN
         ).start()
 
         response = self.test_client.get(
@@ -139,8 +143,8 @@ class AudienceDownloadsTest(TestCase):
         # mock read_batches() in ConnectorCDP class to a return a test generator
         mock.patch.object(
             ConnectorCDP,
-            "read_batches",
-            return_value=t_c.dataframe_generator(),
+            "read_batch",
+            return_value=t_c.dataframe_method(),
         ).start()
 
         mock.patch.object(
@@ -168,8 +172,8 @@ class AudienceDownloadsTest(TestCase):
         # mock read_batches() in ConnectorCDP class to a return a test generator
         mock.patch.object(
             ConnectorCDP,
-            "read_batches",
-            return_value=t_c.dataframe_generator(),
+            "read_batch",
+            return_value=t_c.dataframe_method(),
         ).start()
 
         mock.patch.object(
