@@ -572,7 +572,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
             display_name=user_info[constants.NAME],
         )
 
-        # return NOT_FOUND if user is still none.
+        # return NOT_FOUND if user is still none
         if user is None:
             logger.info(
                 "User not found in DB even after trying to create one."
