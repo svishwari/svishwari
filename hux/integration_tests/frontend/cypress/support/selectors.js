@@ -2,7 +2,7 @@
  * Selectors for DOM elements in the application.
  */
 export default {
-  home: {
+  app: {
     signin: "[data-e2e='signin']",
   },
 

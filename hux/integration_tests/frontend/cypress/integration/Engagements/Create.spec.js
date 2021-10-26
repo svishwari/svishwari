@@ -10,9 +10,7 @@ describe("Orchestration > Engagement > Create Engagement", () => {
   })
 
   it("should be able to configure a new engagement", () => {
-    // should be able to navigate to engagement and click on add engagement button
-    // after login land in the overview page
-    cy.location("pathname").should("eq", route.overview)
+    cy.location("pathname").should("eq", route.home)
     //click on engagement on side nav bar and route in engagement screen
     cy.get(selector.nav.engagements).click()
     cy.location("pathname").should("eq", route.engagements)

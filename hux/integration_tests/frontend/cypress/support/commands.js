@@ -13,10 +13,10 @@ import selector from "./selectors.js"
 
 Cypress.Commands.add("signin", ({ email, password }) => {
   // opens the app
-  cy.visit(route.home)
+  cy.visit(route.index)
 
   // clicks the signin button
-  cy.get(selector.home.signin).click()
+  cy.get(selector.app.signin).click()
 
   // we should now be on the login page
   cy.location("pathname").should("eq", route.login)

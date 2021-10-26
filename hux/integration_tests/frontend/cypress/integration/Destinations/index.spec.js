@@ -11,7 +11,7 @@ describe("Orchestration > Destinations", () => {
 
   // TODO in HUS-1373 after HUS-1230 is merged
   it.skip("should be able to manage destinations", () => {
-    cy.location("pathname").should("eq", route.overview)
+    cy.location("pathname").should("eq", route.home)
 
     //click on connections on side nav bar
     cy.get(selector.nav.destinations).click()

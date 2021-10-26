@@ -1,11 +1,218 @@
 <template>
-  <div></div>
+  <div class="overview-wrap">
+    <page-header
+      :title="`Welcome back, ${fullName}!`"
+      :header-height="110"
+      data-e2e="overview-header"
+    >
+      <template #left>
+        <span class="text-subtitle-1 font-weight-regular">
+          Hux is here to help you make better, faster decisions to improve your
+          customer experiences.
+        </span>
+        <a
+          class="text-subtitle-1 font-weight-regular text-decoration-none"
+          href="https://consulting.deloitteresources.com/offerings/customer-marketing/advertising-marketing-commerce/Pages/hux_marketing.aspx"
+          target="_blank"
+        >
+          Learn More &gt;
+        </a>
+      </template>
+    </page-header>
+    <div v-if="configureOptions['configureHux']" class="quickAccessMenu">
+      <h5 class="mb-3 text-h5">Configure Hux</h5>
+      <div class="card-wrap d-flex" data-e2e="configuration-list">
+        <card-info
+          v-for="(item, i) in configureHuxOptions"
+          :key="i"
+          :title="item.title"
+          :description="item.description"
+          :active="item.active"
+          :to="item.route"
+          data-e2e="configuration-item"
+        ></card-info>
+      </div>
+    </div>
+    <v-row class="px-8 mt-2">
+      <v-col md="12">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="367">
+          <v-card-title class="chart-style pb-2 pl-6 pt-5">
+            <div class="mt-2">
+              <span class="black--text text--darken-4 text-h3">
+                Total customers
+                <span class="text-body-1 time-frame">
+                  ({{ timeFrameLabel }})
+                </span>
+              </span>
+            </div>
+          </v-card-title>
+          <v-progress-linear
+            v-if="loadingCustomerChart"
+            :active="loadingCustomerChart"
+            :indeterminate="loadingCustomerChart"
+          />
+          <total-customer-chart
+            v-if="!loadingCustomerChart"
+            :customers-data="totalCustomers"
+            data-e2e="overview-chart"
+          />
+        </v-card>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex"
+import CardInfo from "@/components/common/CardInfo"
+import PageHeader from "@/components/PageHeader"
+import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
+
 export default {
   name: "Home",
+
+  components: {
+    CardInfo,
+    PageHeader,
+    TotalCustomerChart,
+  },
+
+  data() {
+    return {
+      loadingCustomerChart: false,
+      timeFrameLabel: "last 9 months",
+      configureOptions: {
+        configureHux: true,
+        activeCustomers: true,
+        currentEngagements: true,
+        upcomingEngagements: true,
+        dataManagement: false,
+      },
+      configureHuxOptions: [
+        {
+          title: "Connect data source",
+          description:
+            "Connect your data sources to enable data unification in a single location.",
+          route: {
+            name: "DataSources",
+            params: { select: true },
+          },
+          active: true,
+        },
+        {
+          title: "Add a destination",
+          description:
+            "Select the destinations you wish to deliver your audiences and/or engagements to.",
+          route: {
+            name: "DestinationConfiguration",
+            query: { select: true },
+          },
+          active: true,
+        },
+        {
+          title: "Create an audience",
+          description:
+            "Create audiences by segmenting your customer list based on who you wish to target.",
+          route: { name: "AudienceConfiguration" },
+          active: true,
+        },
+        {
+          title: "Create an engagement",
+          description:
+            "Select your audiences and destinations where you wish to run campaigns on.",
+          route: { name: "EngagementConfiguration" },
+          active: true,
+        },
+      ],
+    }
+  },
+
+  computed: {
+    ...mapGetters({
+      totalCustomers: "customers/totalCustomers",
+      firstName: "users/getFirstname",
+      lastName: "users/getLastName",
+    }),
+
+    fullName() {
+      return `${this.firstName} ${this.lastName}`
+    },
+  },
+
+  mounted() {
+    this.fetchTotalCustomers()
+  },
+
+  methods: {
+    ...mapActions({
+      getTotalCustomers: "customers/getTotalCustomers",
+    }),
+    async fetchTotalCustomers() {
+      this.loadingCustomerChart = true
+      await this.getTotalCustomers()
+      this.loadingCustomerChart = false
+    },
+  },
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.overview-wrap {
+  .quickAccessMenu {
+    background: var(--v-primary-lighten2);
+    min-height: 265px;
+    padding: 16px 30px 40px 30px;
+    overflow-x: auto;
+    border: 1px solid var(--v-black-lighten2);
+    h5 {
+      line-height: 19px;
+      letter-spacing: 0.5px;
+      color: var(--v-black-darken4);
+    }
+    .card-wrap {
+      .v-card {
+        margin-right: 15px;
+        @extend .box-shadow-5;
+        &.v-card--disabled {
+          background: var(--v-primary-lighten1);
+        }
+        &:hover {
+          @extend .box-shadow-3;
+        }
+      }
+    }
+  }
+  .time-frame {
+    color: var(--v-black-lighten4) !important;
+  }
+}
+.drop-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 19px 18px 19px 25px;
+  min-height: inherit;
+  .title-wrap {
+    display: flex;
+    flex-direction: column;
+    min-height: 64px;
+    .heading {
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      color: var(--v-primary-base);
+    }
+    .description {
+      color: inherit;
+    }
+  }
+  .v-input {
+    margin: 0;
+    .v-input__control {
+      background: var(--v-error-base);
+      .v-messages {
+        display: none !important;
+      }
+    }
+  }
+}
+</style>

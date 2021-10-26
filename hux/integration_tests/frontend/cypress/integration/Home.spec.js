@@ -1,7 +1,7 @@
-import route from "../../support/routes.js"
-import selector from "../../support/selectors.js"
+import route from "../support/routes.js"
+import selector from "../support/selectors.js"
 
-describe("View Overview", () => {
+describe("Home", () => {
   before(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
@@ -9,9 +9,9 @@ describe("View Overview", () => {
     })
   })
 
-  it("should be able to login into UI and view welcome banner", () => {
+  it("should have a welcome banner", () => {
     let currentUser = {}
-    cy.location("pathname").should("eq", route.overview)
+    cy.location("pathname").should("eq", route.home)
     cy.window().then((window) => {
       currentUser = JSON.parse(window.localStorage.getItem("vuex")).users
         .userProfile
@@ -63,8 +63,7 @@ describe("View Overview", () => {
     })
   })
 
-  it("should be able to check if valid response for total customers has received", () => {
-    //validate Total Customer response
+  it("should have a total customers chart", () => {
     cy.get(selector.overview.chart).its("length").should("gt", 0)
   })
 })

@@ -30,12 +30,12 @@ const routes = [
     },
   },
   {
-    path: "/overview",
-    name: "Overview",
-    component: () => import("@/views/Overview"),
+    path: "/home",
+    name: "Home",
+    component: () => import("@/views/Home.vue"),
     meta: {
       layout: "app",
-      title: "Overview ",
+      title: "Home ",
       requiresAuth: true,
     },
   },
