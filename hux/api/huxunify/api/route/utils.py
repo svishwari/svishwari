@@ -1,10 +1,9 @@
 """Purpose of this file is to house route utilities"""
 from datetime import datetime
 import re
-from typing import Tuple, Union
+from typing import Tuple
 from http import HTTPStatus
 from bson import ObjectId
-from croniter import croniter, CroniterNotAlphaError
 from pandas import DataFrame
 from dateutil.relativedelta import relativedelta
 
@@ -22,7 +21,8 @@ from huxunifylib.database.cdp_data_source_management import (
 from huxunifylib.database import (
     constants as db_c,
 )
-from huxunifylib.database.user_management import get_user
+from huxunifylib.database.user_management import get_user, get_all_users
+from huxunifylib.database.client import DatabaseClient
 
 from huxunify.api.config import get_config
 from huxunify.api import constants
@@ -181,27 +181,6 @@ def get_friendly_delivered_time(delivered_time: datetime) -> str:
         return str(int(delivered / 60)) + " minutes ago"
     else:
         return str(int(delivered)) + " seconds ago"
-
-
-def get_next_schedule(
-    cron_expression: str, start_date: datetime
-) -> Union[datetime, None]:
-    """Get the next schedule from the cron expression.
-
-    Args:
-        cron_expression (str): Cron Expression of the schedule.
-        start_date (datetime): Start Datetime.
-
-    Returns:
-        next_schedule(datetime): Next Schedule datetime.
-    """
-
-    if isinstance(cron_expression, str) and isinstance(start_date, datetime):
-        try:
-            return croniter(cron_expression, start_date).get_next(datetime)
-        except CroniterNotAlphaError:
-            logger.error("Encountered cron expression error, returning None")
-    return None
 
 
 def update_metrics(
@@ -503,18 +482,22 @@ def get_start_end_dates(request: dict, delta: int) -> (str, str):
     return start_date, end_date
 
 
-def get_user_favorites(okta_user_id: str, component_name: str) -> list:
+def get_user_favorites(
+    database: DatabaseClient, user_name: str, component_name: str
+) -> list:
     """Get user favorites for a component
 
     Args:
-        okta_user_id (str): OKTA JWT token.
+        database (DatabaseClient): A database client.
+        user_name (str): Name of the user.
         component_name (str): Name of component in user favorite.
 
     Returns:
         list: List of ids of favorite component
     """
-    user_favorites = get_user(get_db_client(), okta_user_id).get(
-        constants.FAVORITES
-    )
+    user = get_all_users(database, {db_c.USER_DISPLAY_NAME: user_name})
+    if not user:
+        return []
 
-    return user_favorites.get(component_name, [])
+    # take the first one,
+    return user[0].get(constants.FAVORITES, {}).get(component_name, [])
