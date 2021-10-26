@@ -13,7 +13,7 @@ describe("Data Management > Connections > Destinations", () => {
     cy.location("pathname").should("eq", route.overview)
 
     //click on connections on side nav bar
-    cy.get(selector.destinationsLink).click()
+    cy.get(selector.nav.destinations).click()
     cy.location("pathname").should("eq", route.destinations)
 
     //validate destinations exist by getting total no. of them
@@ -27,6 +27,12 @@ describe("Data Management > Connections > Destinations", () => {
         if (
           $modalBody.find(selector.destination.removeDestinationText).length > 0
         ) {
+          cy.get(selector.destination.destinationRemoveConfirmFooter)
+            .get("button")
+            .contains("Yes, remove it")
+            .eq(0)
+            .contains("v-btn--disabled")
+
           cy.get(selector.destination.removeDestinationText)
             .eq(1)
             .type("confirm")
@@ -37,7 +43,7 @@ describe("Data Management > Connections > Destinations", () => {
       .get("button")
       .contains("Yes, remove it")
       .eq(0)
-      .click()
+      .should("not.contain", "v-btn--disabled")
 
     //click on plus-sign for adding a destination
     cy.get(selector.destination.addDestination).click()

@@ -22,6 +22,7 @@ export default {
   // navigation
   nav: {
     models: "[data-e2e='nav-models']",
+    destinations: "a[href='/destinations']",
   },
 
   // overview
@@ -41,7 +42,6 @@ export default {
   pendingDataSource: "[data-e2e='data-source-list-pending-button']",
   pendingDataSourceRemove: "[data-e2e='data-source-list-pending-remove']",
   removeDataSourceConfirmation: "[data-e2e='remove-data-source-confirmation']",
-  destinationsLink: "a[href='/destinations']",
 
   //destinations
   destination: {

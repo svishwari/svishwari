@@ -79,7 +79,12 @@
             font-weight-regular
           "
         >
-          {{ titleForSelectedDestination }}
+          <template v-if="selectedDestination.status === 'Pending'">
+            Are you sure you want to remove this pending destination?
+          </template>
+          <template v-else>
+            Are you sure you want to remove this destination?
+          </template>
         </div>
         <div
           v-if="selectedDestination.status == 'Succeeded'"
@@ -146,12 +151,6 @@ export default {
     hasAddedDestinations() {
       return Boolean(this.addedDestinations && this.addedDestinations.length)
     },
-
-    titleForSelectedDestination() {
-      return this.selectedDestination.status == "Pending"
-        ? "Are you sure you want to remove this pending destination?"
-        : "Are you sure you want to remove this destination?"
-    },
   },
 
   methods: {
@@ -172,7 +171,7 @@ export default {
       this.confirmModal = false
     },
     enableConfirmButton(val) {
-      this.enableConfirm = val == "confirm"
+      this.enableConfirm = /confirm/i.test(val)
     },
   },
 }
