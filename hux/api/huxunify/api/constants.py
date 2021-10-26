@@ -77,6 +77,9 @@ SOURCE_ID = "source_id"
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
 QUERY_PARAMETER_SORT_ORDER = "sort_order"
+QUERY_PARAMETER_NOTIFICATION_TYPES = "notification_types"
+QUERY_PARAMETER_NOTIFICATION_CATEGORY = "category"
+QUERY_PARAMETER_USERS = "users"
 
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
@@ -916,6 +919,18 @@ NOTIFICATIONS_TAG = "notifications"
 NOTIFICATION_ID = "notification_id"
 NOTIFICATIONS_ENDPOINT = "/notifications"
 NOTIFICATION_STREAM_TIME_SECONDS = 60
+
+NOTIFICATION_CATEGORIES = [
+    "engagements",
+    "delivery",
+    "orchestration",
+    "destinations",
+    "data_sources",
+    "customers",
+    "models",
+]
+# AWS BATCH
+BATCH_SIZE = "batch_size"
 
 # TODO HUS-363 remove once we can pass empty filters to CDP.
 CUSTOMER_OVERVIEW_DEFAULT_FILTER = {

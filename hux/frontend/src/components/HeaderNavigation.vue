@@ -64,7 +64,7 @@ export default {
   data() {
     return {
       dropdownLinks: [
-        { name: "Data Source", path: "Connections" },
+        { name: "Data Source", path: "DataSources" },
         { name: "Destination", path: "DestinationConfiguration" },
         { name: "Audience", path: "AudienceConfiguration" },
         { name: "Engagement", path: "EngagementConfiguration" },

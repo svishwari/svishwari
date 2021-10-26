@@ -202,12 +202,23 @@ const routes = [
   },
 
   {
-    path: "/connections",
-    name: "Connections",
-    component: () => import("@/views/Connections/Index"),
+    path: "/data-sources",
+    name: "DataSources",
+    component: () => import("@/views/DataSources/Index"),
     meta: {
       layout: "app",
-      title: "Connections",
+      title: "Data Sources",
+      requiresAuth: true,
+    },
+  },
+
+  {
+    path: "/destinations",
+    name: "Destinations",
+    component: () => import("@/views/Destinations/Index"),
+    meta: {
+      layout: "app",
+      title: "Destinations",
       requiresAuth: true,
     },
   },

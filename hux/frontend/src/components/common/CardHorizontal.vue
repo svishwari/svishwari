@@ -37,7 +37,10 @@
             isAlreadyAdded ? 'black--text text--lighten-4' : '',
           ]"
         >
-          {{ isAdded ? "Added" : "Add" }}
+          <span v-if="requestedButton">
+            {{ isAdded ? "Requested" : "Request" }}
+          </span>
+          <span v-else>{{ isAdded ? "Added" : "Add" }} </span>
         </span>
       </huxButton>
     </div>
@@ -99,6 +102,11 @@ export default {
       type: Object,
       required: false,
       default: () => {},
+    },
+    requestedButton: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 
