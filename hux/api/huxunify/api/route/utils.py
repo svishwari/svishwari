@@ -22,7 +22,7 @@ from huxunifylib.database.cdp_data_source_management import (
 from huxunifylib.database import (
     constants as db_c,
 )
-from huxunifylib.database.user_management import get_user
+from huxunifylib.database.user_management import get_user, set_user
 
 from huxunify.api.config import get_config
 from huxunify.api import constants
@@ -30,6 +30,7 @@ from huxunify.api.data_connectors.tecton import check_tecton_connection
 from huxunify.api.data_connectors.aws import check_aws_ssm, check_aws_batch
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
+    get_user_info,
 )
 from huxunify.api.data_connectors.cdp import check_cdm_api_connection
 from huxunify.api.data_connectors.cdp_connection import (
@@ -274,15 +275,11 @@ def group_gender_spending(gender_spending: list) -> dict:
         response(dict): Gender spending grouped by gender / month.
     """
 
-    date_parser = lambda x, y: datetime.strptime(
-        f"1-{str(x)}-{str(y)}", "%d-%m-%Y"
-    )
+    date_parser = lambda x, y: datetime.strptime(f"1-{str(x)}-{str(y)}", "%d-%m-%Y")
     return {
         constants.GENDER_WOMEN: [
             {
-                constants.DATE: date_parser(
-                    x[constants.MONTH], x[constants.YEAR]
-                ),
+                constants.DATE: date_parser(x[constants.MONTH], x[constants.YEAR]),
                 constants.LTV: round(x[constants.AVG_SPENT_WOMEN], 4)
                 if x[constants.AVG_SPENT_WOMEN]
                 else 0,
@@ -291,9 +288,7 @@ def group_gender_spending(gender_spending: list) -> dict:
         ],
         constants.GENDER_MEN: [
             {
-                constants.DATE: date_parser(
-                    x[constants.MONTH], x[constants.YEAR]
-                ),
+                constants.DATE: date_parser(x[constants.MONTH], x[constants.YEAR]),
                 constants.LTV: round(x[constants.AVG_SPENT_MEN], 4)
                 if x[constants.AVG_SPENT_MEN]
                 else 0,
@@ -302,9 +297,7 @@ def group_gender_spending(gender_spending: list) -> dict:
         ],
         constants.GENDER_OTHER: [
             {
-                constants.DATE: date_parser(
-                    x[constants.MONTH], x[constants.YEAR]
-                ),
+                constants.DATE: date_parser(x[constants.MONTH], x[constants.YEAR]),
                 constants.LTV: round(x[constants.AVG_SPENT_OTHER], 4)
                 if x[constants.AVG_SPENT_OTHER]
                 else 0,
@@ -461,9 +454,7 @@ def is_component_favorite(
     Returns:
         bool: If component is favorite or not.
     """
-    user_favorites = get_user(get_db_client(), okta_user_id).get(
-        constants.FAVORITES
-    )
+    user_favorites = get_user(get_db_client(), okta_user_id).get(constants.FAVORITES)
 
     if (component_name in db_c.FAVORITE_COMPONENTS) and (
         ObjectId(component_id) in user_favorites.get(component_name)
@@ -513,8 +504,61 @@ def get_user_favorites(okta_user_id: str, component_name: str) -> list:
     Returns:
         list: List of ids of favorite component
     """
-    user_favorites = get_user(get_db_client(), okta_user_id).get(
-        constants.FAVORITES
-    )
+    user_favorites = get_user(get_db_client(), okta_user_id).get(constants.FAVORITES)
 
     return user_favorites.get(component_name, [])
+
+
+def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
+    """Get the corresponding user matching the okta access token from the DB.
+    Create/Set a new user in DB if an user matching the valid okta access token
+    is not currently present in the DB.
+
+    Args:
+        access_token (str): OKTA JWT token.
+
+    Returns:
+        Union[dict, Tuple[dict, int]]: Either a valid user dict or a tuple of
+            response message along with the corresponding HTTP status code.
+    """
+
+    # set of keys required from user_info
+    required_keys = {
+        constants.OKTA_ID_SUB,
+        constants.EMAIL,
+        constants.NAME,
+    }
+
+    # get the user information
+    logger.info("Getting user info from OKTA.")
+    user_info = get_user_info(access_token)
+    logger.info("Successfully got user info from OKTA.")
+
+    # checking if required keys are present in user_info
+    if not required_keys.issubset(user_info.keys()):
+        logger.info("Failure. Required keys not present in user_info dict.")
+        return {"message": constants.AUTH401_ERROR_MESSAGE}, HTTPStatus.UNAUTHORIZED
+
+    logger.info("Successfully validated required_keys are present in user_info.")
+
+    # check if the user is in the database
+    database = get_db_client()
+    user = get_user(database, user_info[constants.OKTA_ID_SUB])
+
+    if user is None:
+        # since a valid okta_id is extracted from the okta issuer, use the user
+        # info and create a new user if no corresponding user record matching
+        # the okta_id is found in DB
+        user = set_user(
+            database=database,
+            okta_id=user_info[constants.OKTA_ID_SUB],
+            email_address=user_info[constants.EMAIL],
+            display_name=user_info[constants.NAME],
+        )
+
+        # return NOT_FOUND if user is still none
+        if user is None:
+            logger.info("User not found in DB even after trying to create one.")
+            return {constants.MESSAGE: constants.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
+
+    return user
