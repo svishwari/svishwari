@@ -168,7 +168,7 @@ class TestNotificationRoutes(TestCase):
             for line in stream.iter_encoded():
                 self.assertTrue(line)
 
-                # load the response into a list of notifications.
+                # load the response into a list of notifications
                 notifications = json.loads(line)
                 self.assertIn(db_c.NOTIFICATIONS_COLLECTION, notifications)
                 self.assertEqual(notifications[api_c.TOTAL], 1)
