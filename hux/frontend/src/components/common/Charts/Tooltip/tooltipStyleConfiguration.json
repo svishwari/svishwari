@@ -20,7 +20,7 @@
     "padding": "10px"
   },
   "totalCustomerChart": {
-    "maxWidth": "172px",
+    "maxWidth": "200px",
     "top": "-45px",
     "left": "45px",
     "padding": "8px"
