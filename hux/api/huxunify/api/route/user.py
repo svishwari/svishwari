@@ -404,22 +404,22 @@ class UserPatchView(SwaggerView):
             api_c.OKTA_USER_ID
         )
 
-        UserPatchSchema.validate(request.get_json())
+        body = UserPatchSchema().load(request.get_json())
+
+        updated_user = update_user(
+            get_db_client(),
+            okta_id,
+            {
+                **body,
+                **{
+                    db_constants.UPDATED_BY: user_name,
+                    db_constants.UPDATE_TIME: datetime.datetime.utcnow(),
+                },
+            },
+        )
 
         # update the document
         return (
-            UserSchema().dump(
-                update_user(
-                    get_db_client(),
-                    okta_id,
-                    {
-                        **request.get_json(),
-                        **{
-                            db_constants.UPDATED_BY: user_name,
-                            db_constants.UPDATE_TIME: datetime.datetime.utcnow(),
-                        },
-                    },
-                )
-            ),
+            UserSchema().dump(updated_user),
             HTTPStatus.OK,
         )
