@@ -79,6 +79,7 @@ def get_batch_customers(
         location_details (dict): Audience filters to be passed.
         batch_size (int, Optional): Batch size to be fetched.
         offset (int, Optional): Offset of the batch to be fetched.
+
     Returns:
         pd.DataFrame: Data frame of batch information.
     """
@@ -103,6 +104,7 @@ def get_audience_data_async(
         actual_size (int): Actual size of the audience.
         location_details (dict): Audience filters to be passed.
         batch_size (int, Optional): Size of batch to be retrieved.
+
     Returns:
         list: List of each batch's data.
     """
