@@ -94,7 +94,7 @@ class NotificationsSearch(SwaggerView):
             "in": "query",
             "type": "array",
             "items": {"type": "string"},
-            "description": "Type of Notification",
+            "description": "Type of Notification Category",
             "example": "10",
             "required": False,
             "default": [],
@@ -104,7 +104,7 @@ class NotificationsSearch(SwaggerView):
             "in": "query",
             "type": "array",
             "items": {"type": "string"},
-            "description": "Type of Notification",
+            "description": "Users Filter",
             "example": "10",
             "required": False,
             "default": [],
@@ -121,7 +121,7 @@ class NotificationsSearch(SwaggerView):
             "name": api_c.END_DATE,
             "in": "query",
             "type": "string",
-            "description": "Start Date",
+            "description": "End Date",
             "example": "2021-04-10",
             "required": False,
         },
@@ -167,25 +167,23 @@ class NotificationsSearch(SwaggerView):
         notification_types = request.args.get(
             api_c.QUERY_PARAMETER_NOTIFICATION_TYPES, []
         )
-        if notification_types:
-            notification_types = notification_types.split(",")
-            for notification_type in notification_types:
-                if notification_type not in db_c.NOTIFICATION_TYPES:
-                    logger.error("Invalid Notification Type")
-                    return {
-                        "message": "Invalid or incomplete arguments received"
-                    }, HTTPStatus.BAD_REQUEST
+        if notification_types and not set(
+            notification_types.split(",")
+        ).issubset(set(db_c.NOTIFICATION_TYPES)):
+            logger.error("Invalid Notification Type")
+            return {
+                "message": "Invalid or incomplete arguments received"
+            }, HTTPStatus.BAD_REQUEST
         notification_categories = request.args.get(
             api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY, []
         )
-        if notification_categories:
-            notification_categories = notification_categories.split(",")
-            for notification_category in notification_categories:
-                if notification_category not in api_c.NOTIFICATION_CATEGORIES:
-                    logger.error("Invalid Notification Category")
-                    return {
-                        "message": "Invalid or incomplete arguments received"
-                    }, HTTPStatus.BAD_REQUEST
+        if notification_categories and not set(
+            notification_categories.split(",")
+        ).issubset(set(api_c.NOTIFICATION_CATEGORIES)):
+            logger.error("Invalid Notification Category")
+            return {
+                "message": "Invalid or incomplete arguments received"
+            }, HTTPStatus.BAD_REQUEST
         users = request.args.get(api_c.QUERY_PARAMETER_USERS, [])
         if users:
             users = users.split(",")
