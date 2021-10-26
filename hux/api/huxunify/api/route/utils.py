@@ -4,7 +4,6 @@ import re
 from typing import Tuple, Union
 from http import HTTPStatus
 from bson import ObjectId
-from croniter import croniter, CroniterNotAlphaError
 from pandas import DataFrame
 from dateutil.relativedelta import relativedelta
 
@@ -22,7 +21,8 @@ from huxunifylib.database.cdp_data_source_management import (
 from huxunifylib.database import (
     constants as db_c,
 )
-from huxunifylib.database.user_management import get_user, set_user
+from huxunifylib.database.user_management import get_user, get_all_users, set_user
+from huxunifylib.database.client import DatabaseClient
 
 from huxunify.api.config import get_config
 from huxunify.api import constants
@@ -184,27 +184,6 @@ def get_friendly_delivered_time(delivered_time: datetime) -> str:
         return str(int(delivered)) + " seconds ago"
 
 
-def get_next_schedule(
-    cron_expression: str, start_date: datetime
-) -> Union[datetime, None]:
-    """Get the next schedule from the cron expression.
-
-    Args:
-        cron_expression (str): Cron Expression of the schedule.
-        start_date (datetime): Start Datetime.
-
-    Returns:
-        next_schedule(datetime): Next Schedule datetime.
-    """
-
-    if isinstance(cron_expression, str) and isinstance(start_date, datetime):
-        try:
-            return croniter(cron_expression, start_date).get_next(datetime)
-        except CroniterNotAlphaError:
-            logger.error("Encountered cron expression error, returning None")
-    return None
-
-
 def update_metrics(
     target_id: ObjectId,
     name: str,
@@ -275,15 +254,11 @@ def group_gender_spending(gender_spending: list) -> dict:
         response(dict): Gender spending grouped by gender / month.
     """
 
-    date_parser = lambda x, y: datetime.strptime(
-        f"1-{str(x)}-{str(y)}", "%d-%m-%Y"
-    )
+    date_parser = lambda x, y: datetime.strptime(f"1-{str(x)}-{str(y)}", "%d-%m-%Y")
     return {
         constants.GENDER_WOMEN: [
             {
-                constants.DATE: date_parser(
-                    x[constants.MONTH], x[constants.YEAR]
-                ),
+                constants.DATE: date_parser(x[constants.MONTH], x[constants.YEAR]),
                 constants.LTV: round(x[constants.AVG_SPENT_WOMEN], 4)
                 if x[constants.AVG_SPENT_WOMEN]
                 else 0,
@@ -292,9 +267,7 @@ def group_gender_spending(gender_spending: list) -> dict:
         ],
         constants.GENDER_MEN: [
             {
-                constants.DATE: date_parser(
-                    x[constants.MONTH], x[constants.YEAR]
-                ),
+                constants.DATE: date_parser(x[constants.MONTH], x[constants.YEAR]),
                 constants.LTV: round(x[constants.AVG_SPENT_MEN], 4)
                 if x[constants.AVG_SPENT_MEN]
                 else 0,
@@ -303,9 +276,7 @@ def group_gender_spending(gender_spending: list) -> dict:
         ],
         constants.GENDER_OTHER: [
             {
-                constants.DATE: date_parser(
-                    x[constants.MONTH], x[constants.YEAR]
-                ),
+                constants.DATE: date_parser(x[constants.MONTH], x[constants.YEAR]),
                 constants.LTV: round(x[constants.AVG_SPENT_OTHER], 4)
                 if x[constants.AVG_SPENT_OTHER]
                 else 0,
@@ -462,9 +433,7 @@ def is_component_favorite(
     Returns:
         bool: If component is favorite or not.
     """
-    user_favorites = get_user(get_db_client(), okta_user_id).get(
-        constants.FAVORITES
-    )
+    user_favorites = get_user(get_db_client(), okta_user_id).get(constants.FAVORITES)
 
     if (component_name in db_c.FAVORITE_COMPONENTS) and (
         ObjectId(component_id) in user_favorites.get(component_name)
@@ -504,21 +473,25 @@ def get_start_end_dates(request: dict, delta: int) -> (str, str):
     return start_date, end_date
 
 
-def get_user_favorites(okta_user_id: str, component_name: str) -> list:
+def get_user_favorites(
+    database: DatabaseClient, user_name: str, component_name: str
+) -> list:
     """Get user favorites for a component
 
     Args:
-        okta_user_id (str): OKTA JWT token.
+        database (DatabaseClient): A database client.
+        user_name (str): Name of the user.
         component_name (str): Name of component in user favorite.
 
     Returns:
         list: List of ids of favorite component
     """
-    user_favorites = get_user(get_db_client(), okta_user_id).get(
-        constants.FAVORITES
-    )
+    user = get_all_users(database, {db_c.USER_DISPLAY_NAME: user_name})
+    if not user:
+        return []
 
-    return user_favorites.get(component_name, [])
+    # take the first one,
+    return user[0].get(constants.FAVORITES, {}).get(component_name, [])
 
 
 def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
@@ -549,13 +522,9 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
     # checking if required keys are present in user_info
     if not required_keys.issubset(user_info.keys()):
         logger.info("Failure. Required keys not present in user_info dict.")
-        return {
-            "message": constants.AUTH401_ERROR_MESSAGE
-        }, HTTPStatus.UNAUTHORIZED
+        return {"message": constants.AUTH401_ERROR_MESSAGE}, HTTPStatus.UNAUTHORIZED
 
-    logger.info(
-        "Successfully validated required_keys are present in user_info."
-    )
+    logger.info("Successfully validated required_keys are present in user_info.")
 
     # check if the user is in the database
     database = get_db_client()
@@ -574,11 +543,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
 
         # return NOT_FOUND if user is still none
         if user is None:
-            logger.info(
-                "User not found in DB even after trying to create one."
-            )
-            return {
-                constants.MESSAGE: constants.USER_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            logger.info("User not found in DB even after trying to create one.")
+            return {constants.MESSAGE: constants.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
     return user
