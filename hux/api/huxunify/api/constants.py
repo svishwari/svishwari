@@ -568,15 +568,8 @@ EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE = (
 
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
 DUPLICATE_NAME = "Name already exists."
-SFMC_CONFIG_MISSING = "SFMC missing data extension details"
 SAME_PERFORMANCE_CAMPAIGN_ERROR = (
     "Performance metric and Campaign activity cannot be same"
-)
-PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
-    "Performance metrics data extension not assigned."
-)
-CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED = (
-    "Campaign activity data extension not assigned."
 )
 INVALID_AUTH_DETAILS = "Invalid authentication details."
 INVALID_AUTH_HEADER = "Authorization header is invalid."

@@ -20,6 +20,15 @@ class DataExtensionSchema(Schema):
     data_extension_name = fields.String()
 
 
+class DestinationDataExtSchema(Schema):
+    """Destination data extension schema class"""
+
+    name = fields.String(example="data_extension_name")
+    data_extension_id = fields.String(
+        example="data_extension_id"
+    )
+
+
 class DeliveryScheduleDailySchema(Schema):
     """Delivery Schedule Daily schema class"""
 
@@ -132,6 +141,13 @@ class DeliveryScheduleSchema(Schema):
         return data
 
 
+class DestinationDataExtConfigSchema(Schema):
+    """Destination data extension configuration schema class"""
+
+    perf_data_extension = fields.Nested(DestinationDataExtSchema)
+    campaign_activity_data_extension = fields.Nested(DestinationDataExtSchema)
+
+
 class DestinationGetSchema(Schema):
     """Destinations get schema class"""
 
@@ -170,17 +186,7 @@ class DestinationGetSchema(Schema):
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
     configuration = fields.Dict(
-        attribute=db_c.CONFIGURATION,
-        example={
-            db_c.PERFORMANCE_METRICS_DATA_EXTENSION: {
-                api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
-                api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
-            },
-            db_c.CAMPAIGN_ACTIVITY_DATA_EXTENSION: {
-                api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
-                api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
-            },
-        },
+        fields.Nested(DestinationDataExtConfigSchema),
         required=False,
         allow_none=True,
     )
@@ -228,21 +234,7 @@ class DestinationPutSchema(Schema):
     """Destination put schema class"""
 
     authentication_details = fields.Field()
-    configuration = fields.Dict(
-        attribute=db_c.CONFIGURATION,
-        example={
-            db_c.PERFORMANCE_METRICS_DATA_EXTENSION: {
-                api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
-                api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
-            },
-            db_c.CAMPAIGN_ACTIVITY_DATA_EXTENSION: {
-                api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
-                api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
-            },
-        },
-        required=False,
-        allow_none=True,
-    )
+    configuration = fields.Dict(fields.Nested(DestinationDataExtConfigSchema))
 
 
 class DestinationValidationSchema(Schema):
@@ -640,7 +632,6 @@ class DestinationDataExtPostSchema(Schema):
 
     data_extension = fields.String()
     type = fields.String()
-
 
 class DestinationDataExtGetSchema(Schema):
     """Destination data extension get schema class"""
