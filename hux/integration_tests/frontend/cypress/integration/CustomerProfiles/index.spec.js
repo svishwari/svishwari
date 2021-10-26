@@ -19,14 +19,6 @@ describe("Data management > Customer Profiles", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
 
-    // should be able to view overview of customer profiles"
-    cy.get(selector.customerProfile.overview)
-      .its("length")
-      .as("overviewListCount")
-    cy.get("@overviewListCount").then(() => {
-      cy.get(selector.customerProfile.overview).its("length").should("eq", 8)
-    })
-
     // should be able to view customer overview of customer profiles"
     cy.get(selector.customerProfile.customeroverview)
       .its("length")
@@ -35,24 +27,96 @@ describe("Data management > Customer Profiles", () => {
     cy.get("@customeroverviewListCount").then(() => {
       cy.get(selector.customerProfile.customeroverview)
         .its("length")
-        .should("eq", 8)
+        .should("eq", 6)
     })
 
+    // Verifying the table columns names of the Country Drawer
+    const tableHeadersCountry = ["Country", "Size", "Spending $"]
+
+    cy.get(selector.customerProfile.customeroverview).eq(1).click()
+
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(5000)
+    cy.wait(1000)
+
+    cy.get(selector.customerProfile.list.geoDrawerTableCountry)
+      .find(selector.customerProfile.list.geoDrawerTableHeaders)
+      .children()
+      .each(($elm, i) => {
+        expect($elm.text()).equal(tableHeadersCountry[i])
+      })
+
+    cy.get(selector.customerProfile.list.geoDrawerTableCountry)
+      .find(selector.customerProfile.list.geoDrawerTableItems)
+      .children()
+      .its("length")
+      .should("be.gt", 0)
+
+    cy.get(selector.engagement.exitDrawer).click()
+
+    // Verifying the table columns names of the State Drawer
+    const tableHeadersState = ["State", "Country", "Size", "Spending $"]
+
+    cy.get(selector.customerProfile.customeroverview).eq(2).click()
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+
+    cy.get(selector.customerProfile.list.geoDrawerTableState)
+      .find(selector.customerProfile.list.geoDrawerTableHeaders)
+      .children()
+      .each(($elm, i) => {
+        expect($elm.text()).equal(tableHeadersState[i])
+      })
+
+    cy.get(selector.customerProfile.list.geoDrawerTableState)
+      .find(selector.customerProfile.list.geoDrawerTableItems)
+      .children()
+      .its("length")
+      .should("be.gt", 0)
+
+    cy.get(selector.engagement.exitDrawer).click()
+
+    // Verifying the table columns names of the Cities Drawer
+    const tableHeadersCities = [
+      "City",
+      "State",
+      "Country",
+      "Size",
+      "Spending $",
+    ]
+
+    cy.get(selector.customerProfile.customeroverview).eq(3).click()
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+
+    cy.get(selector.customerProfile.list.geoDrawerTableCity)
+      .find(selector.customerProfile.list.geoDrawerTableHeaders)
+      .children()
+      .each(($elm, i) => {
+        expect($elm.text()).equal(tableHeadersCities[i])
+      })
+
+    cy.get(selector.customerProfile.list.geoDrawerTableCity)
+      .find(selector.customerProfile.list.geoDrawerTableItems)
+      .children()
+      .its("length")
+      .should("be.gt", 0)
+
+    cy.get(selector.engagement.exitDrawer).click()
 
     // should be able to check if valid response for total customers has received"
     cy.get(selector.customerProfile.chart).its("length").should("gt", 0)
 
     // should be able to hover over state"
-    cy.get(".state")
+    cy.get(".geochart")
       .first()
       .trigger("mouseover", { eventConstructor: "MouseEvent" })
 
     // map state list should have a list of states"
     cy.get(selector.customerProfile.mapStateList)
       .its("length")
-      .should("gte", 51)
+      .should("be.gt", 0)
 
     // should be able to view top location & income chart"
     // validate top location & income chart

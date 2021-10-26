@@ -16,14 +16,10 @@
         :columns="columns"
         :data-items="items"
         :sort-column="sortColumn"
+        :data-e2e="`geo-drawer-table-${geoLevel}`"
       >
         <template #row-item="{ item }">
-          <td
-            v-for="(col, index) in columns"
-            :key="index"
-            :style="{ width: col.width }"
-            class="text-body-2"
-          >
+          <td v-for="(col, index) in columns" :key="index" class="text-body-2">
             <tooltip v-if="['city', 'country', 'state'].includes(col.value)">
               {{ item[col.value] }}
               <template #tooltip> {{ item[col.value] }} </template>
@@ -64,6 +60,7 @@ import Drawer from "@/components/common/Drawer.vue"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Observer from "@/components/common/Observer.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
+import { arrayHasFieldWithMultipleValues } from "../../../utils"
 
 export default {
   name: "GeoDrawer",
@@ -112,12 +109,10 @@ export default {
         {
           value: "size",
           text: "Size",
-          width: "25%",
         },
         {
           value: "spending",
           text: "Spending $",
-          width: "25%",
         },
       ],
       sortColumn: "state",
@@ -187,21 +182,28 @@ export default {
 
   async updated() {
     if (this.toggle) {
+      this.loading = true
+      this.batchNumber = 1
+      await this.refreshData()
       switch (this.geoLevel) {
         case "cities":
           this.columns = [
             {
               value: "city",
               text: "City",
-              width: "30%",
             },
             {
               value: "state",
               text: "State",
-              width: "20%",
             },
             ...this.defaultColumns,
           ]
+          if (arrayHasFieldWithMultipleValues(this.geoCities, "country")) {
+            this.columns.splice(2, 0, {
+              value: "country",
+              text: "Country",
+            })
+          }
           this.sortColumn = "city"
           break
         case "countries":
@@ -209,7 +211,6 @@ export default {
             {
               value: "country",
               text: "Country",
-              width: "50%",
             },
             ...this.defaultColumns,
           ]
@@ -220,16 +221,18 @@ export default {
             {
               value: "state",
               text: "State",
-              width: "50%",
             },
             ...this.defaultColumns,
           ]
+          if (arrayHasFieldWithMultipleValues(this.geoStates, "country")) {
+            this.columns.splice(1, 0, {
+              value: "country",
+              text: "Country",
+            })
+          }
           this.sortColumn = "state"
           break
       }
-      this.loading = true
-      this.batchNumber = 1
-      await this.refreshData()
       this.loading = false
       this.enableLazyLoad = true
     } else {
@@ -296,3 +299,10 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.hux-data-table {
+  ::v-deep table {
+    table-layout: auto !important;
+  }
+}
+</style>
