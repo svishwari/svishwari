@@ -4,7 +4,7 @@ from datetime import datetime
 from http import HTTPStatus
 from itertools import repeat
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Union
 
 import pandas as pd
 from flasgger import SwaggerView
@@ -94,7 +94,7 @@ def get_audience_data_async(
     actual_size: int,
     location_details: dict,
     batch_size: int = api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
-) -> list:
+) -> Union[list, None]:
     """Creates a list of tasks, this is useful for asynchronous batch wise
     calls to a task.
 
