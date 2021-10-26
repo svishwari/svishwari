@@ -71,7 +71,7 @@ def get_batch_customers(
     location_details: dict,
     batch_size: int = api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
     offset: int = 0,
-) -> pd.DataFrame:
+) -> Union[pd.DataFrame, None]:
     """Fetch audience batch using connector asynchronously.
 
     Args:
@@ -94,7 +94,7 @@ def get_audience_data_async(
     actual_size: int,
     location_details: dict,
     batch_size: int = api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
-) -> Union[list, None]:
+) -> list:
     """Creates a list of tasks, this is useful for asynchronous batch wise
     calls to a task.
 
