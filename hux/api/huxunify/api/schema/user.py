@@ -44,12 +44,9 @@ class UserSchema(Schema):
     modified = DateTimeWithZ(required=True)
 
 
-# TODO discuss exactly which fields need to be here
 class UserPatchSchema(Schema):
     """User patch schema"""
 
-    role = Str(required=False) # Should this be editable?
-    organization = Str(required=False) # Should this be editable?
-    subscription = List(Str(), default=[], required=False)
-    profile_photo = Str(required=False) # is this going to be editable from our portal?
-    dashboard_configuration = Dict(required=False) # should this be editable from this endpoint and does it have a schema?
+    role = Str(required=False)
+    display_name = Str(required=False)
+    dashboard_configuration = Dict(required=False)
