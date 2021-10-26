@@ -635,4 +635,6 @@ class DestinationDataExtGetSchema(Schema):
     data_extension_id = fields.String(
         attribute="CustomerKey", example="data_extension_id"
     )
-    create_time = DateTimeWithZ(attribute="createdDate", required=True)
+    create_time = DateTimeWithZ(
+        attribute="createdDate", required=False, default=None, allow_none=True
+    )
