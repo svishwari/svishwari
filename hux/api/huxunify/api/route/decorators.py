@@ -181,7 +181,7 @@ def get_user_name() -> object:
             logger.info("Getting okta access token from request.")
             token_response = get_token_from_request(request)
 
-            # if not 200, return response.
+            # if not 200, return response
             if token_response[1] != 200:
                 logger.info("Failure. Okta token response code is not 200.")
                 return token_response
