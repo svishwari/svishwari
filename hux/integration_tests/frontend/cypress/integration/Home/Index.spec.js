@@ -32,7 +32,7 @@ describe("View Overview", () => {
       expect($overview.eq(0).find(selector.card.description)).to.contain(
         "Connect your data sources to enable data unification in a single location.",
       )
-      expect($overview.eq(0).prop("href")).to.contain(route.connections)
+      expect($overview.eq(0).prop("href")).to.contain(route.dataSources)
 
       // Add Destination action
       expect($overview.eq(1).find(selector.card.title)).to.contain(

@@ -1,6 +1,6 @@
 import route from "../../support/routes.js"
 
-describe("Tests user sign in", () => {
+describe("Login", () => {
   before(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
@@ -8,7 +8,7 @@ describe("Tests user sign in", () => {
     })
   })
 
-  it("should be able to view the overview", () => {
+  it("should be able to login and view the overview", () => {
     cy.location("pathname").should("eq", route.overview)
   })
 })
