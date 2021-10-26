@@ -275,11 +275,15 @@ def group_gender_spending(gender_spending: list) -> dict:
         response(dict): Gender spending grouped by gender / month.
     """
 
-    date_parser = lambda x, y: datetime.strptime(f"1-{str(x)}-{str(y)}", "%d-%m-%Y")
+    date_parser = lambda x, y: datetime.strptime(
+        f"1-{str(x)}-{str(y)}", "%d-%m-%Y"
+    )
     return {
         constants.GENDER_WOMEN: [
             {
-                constants.DATE: date_parser(x[constants.MONTH], x[constants.YEAR]),
+                constants.DATE: date_parser(
+                    x[constants.MONTH], x[constants.YEAR]
+                ),
                 constants.LTV: round(x[constants.AVG_SPENT_WOMEN], 4)
                 if x[constants.AVG_SPENT_WOMEN]
                 else 0,
@@ -288,7 +292,9 @@ def group_gender_spending(gender_spending: list) -> dict:
         ],
         constants.GENDER_MEN: [
             {
-                constants.DATE: date_parser(x[constants.MONTH], x[constants.YEAR]),
+                constants.DATE: date_parser(
+                    x[constants.MONTH], x[constants.YEAR]
+                ),
                 constants.LTV: round(x[constants.AVG_SPENT_MEN], 4)
                 if x[constants.AVG_SPENT_MEN]
                 else 0,
@@ -297,7 +303,9 @@ def group_gender_spending(gender_spending: list) -> dict:
         ],
         constants.GENDER_OTHER: [
             {
-                constants.DATE: date_parser(x[constants.MONTH], x[constants.YEAR]),
+                constants.DATE: date_parser(
+                    x[constants.MONTH], x[constants.YEAR]
+                ),
                 constants.LTV: round(x[constants.AVG_SPENT_OTHER], 4)
                 if x[constants.AVG_SPENT_OTHER]
                 else 0,
@@ -454,7 +462,9 @@ def is_component_favorite(
     Returns:
         bool: If component is favorite or not.
     """
-    user_favorites = get_user(get_db_client(), okta_user_id).get(constants.FAVORITES)
+    user_favorites = get_user(get_db_client(), okta_user_id).get(
+        constants.FAVORITES
+    )
 
     if (component_name in db_c.FAVORITE_COMPONENTS) and (
         ObjectId(component_id) in user_favorites.get(component_name)
@@ -504,7 +514,9 @@ def get_user_favorites(okta_user_id: str, component_name: str) -> list:
     Returns:
         list: List of ids of favorite component
     """
-    user_favorites = get_user(get_db_client(), okta_user_id).get(constants.FAVORITES)
+    user_favorites = get_user(get_db_client(), okta_user_id).get(
+        constants.FAVORITES
+    )
 
     return user_favorites.get(component_name, [])
 
@@ -537,9 +549,13 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
     # checking if required keys are present in user_info
     if not required_keys.issubset(user_info.keys()):
         logger.info("Failure. Required keys not present in user_info dict.")
-        return {"message": constants.AUTH401_ERROR_MESSAGE}, HTTPStatus.UNAUTHORIZED
+        return {
+            "message": constants.AUTH401_ERROR_MESSAGE
+        }, HTTPStatus.UNAUTHORIZED
 
-    logger.info("Successfully validated required_keys are present in user_info.")
+    logger.info(
+        "Successfully validated required_keys are present in user_info."
+    )
 
     # check if the user is in the database
     database = get_db_client()
@@ -556,9 +572,13 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
             display_name=user_info[constants.NAME],
         )
 
-        # return NOT_FOUND if user is still none
+        # return NOT_FOUND if user is still none.
         if user is None:
-            logger.info("User not found in DB even after trying to create one.")
-            return {constants.MESSAGE: constants.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            logger.info(
+                "User not found in DB even after trying to create one."
+            )
+            return {
+                constants.MESSAGE: constants.USER_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
     return user
