@@ -33,7 +33,7 @@
           </div>
           <div class="value-container">
             <icon
-              type="customer"
+              type="new-customer"
               :size="20"
               :stroke="colorCodes[currentData.index].base"
               :variant="colorCodes[currentData.index].variant"
@@ -45,7 +45,7 @@
           </div>
           <div class="value-container">
             <icon
-              type="customer"
+              type="left-customer"
               :size="20"
               :stroke-opacity="0.5"
               stroke="black"
