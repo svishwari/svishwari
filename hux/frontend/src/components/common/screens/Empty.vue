@@ -12,29 +12,19 @@
       <div class="text-body-2 my-3">
         {{ subtitle }}
       </div>
-      <hux-button
-        variant="primary"
-        is-tile
-        width="224"
-        height="40"
-        class="text-button my-4"
-      >
-        Request a data source
-      </hux-button>
+      <slot name="button"></slot>
     </div>
   </div>
 </template>
 
 <script>
 import Icon from "@/components/common/Icon"
-import HuxButton from "@/components/common/huxButton"
 
 export default {
   name: "Empty",
 
   components: {
     Icon,
-    HuxButton,
   },
 
   props: {
@@ -85,7 +75,7 @@ export default {
     top: 200px;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 100;
+    z-index: 2;
   }
   .box {
     width: 125px;

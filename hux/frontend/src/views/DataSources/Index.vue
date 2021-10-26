@@ -53,6 +53,18 @@
         title="No data sources to show"
         subtitle="The list of data sources will appear here once they have been added."
       >
+        <template #button>
+          <hux-button
+            variant="primary"
+            is-tile
+            width="224"
+            height="40"
+            class="text-button my-4"
+            @click="toggleDrawer()"
+          >
+            Request a data sources
+          </hux-button>
+        </template>
       </empty>
     </div>
     <data-source-configuration v-model="drawer" />
