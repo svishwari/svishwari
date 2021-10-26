@@ -1,7 +1,9 @@
 # pylint: disable=too-many-lines
 """Purpose of this file is to house all the engagement API tests."""
 from unittest import TestCase, mock
+from unittest.mock import MagicMock
 from http import HTTPStatus
+
 import requests_mock
 import mongomock
 
@@ -31,6 +33,7 @@ class TestUserRoutes(TestCase):
         # mock request for introspect call
         request_mocker = requests_mock.Mocker()
         request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         request_mocker.start()
 
         self.app = create_app().test_client()
@@ -46,6 +49,18 @@ class TestUserRoutes(TestCase):
 
         mock.patch(
             "huxunify.api.route.user.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() for the userinfo decorator.
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() for the userinfo utils.
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
         ).start()
 
@@ -281,3 +296,30 @@ class TestUserRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual({api_c.MESSAGE: api_c.USER_NOT_FOUND}, response.json)
+
+    @mock.patch("huxunify.api.route.user.JiraConnection")
+    def test_create_jira_issue(self, mock_jira: MagicMock):
+        """Test jira issue creation.
+
+        Args:
+            mock_jira (MagicMock): magic mock of JiraConnection
+        """
+
+        mock_jira_instance = mock_jira.return_value
+        mock_jira_instance.check_jira_connection.return_value = True
+        mock_jira_instance.create_jira_issue.return_value = 1
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.CONTACT_US}",
+            json={
+                api_c.TYPE: "Bug",
+                api_c.SUMMARY: "Test creation of JIRA ticket",
+                api_c.DESCRIPTION: "",
+            },
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(
+            {api_c.MESSAGE: "Issue reported successfully !"}, response.json
+        )

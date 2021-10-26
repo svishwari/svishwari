@@ -2,6 +2,7 @@
 
 from flask_marshmallow import Schema
 from marshmallow.fields import Str, Int, validate, List, Nested, Dict
+from marshmallow.validate import OneOf
 
 from huxunifylib.database import constants as db_c
 from huxunify.api.schema.utils import validate_object_id
@@ -42,3 +43,11 @@ class UserSchema(Schema):
     login_count = Int(required=True, default=0, example=10)
     last_login = DateTimeWithZ(required=True, attribute=db_c.UPDATE_TIME)
     modified = DateTimeWithZ(required=True)
+
+
+class ContactUsBugReportingSchema(Schema):
+    """Bug reporting schema"""
+
+    type = Str(required=True, validate=OneOf([api_c.BUG]))
+    summary = Str(required=True)
+    description = Str(required=False)

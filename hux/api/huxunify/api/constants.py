@@ -40,6 +40,14 @@ UNIFIED_OKTA_REDIRECT_URI = "unified_okta_redirect_uri"
 UNIFIED_OKTA_TEST_USER_NAME = "unified_okta_test_user_name"
 UNIFIED_OKTA_TEST_USER_PW = "unified_okta_test_user_pw"
 
+# JIRA
+JIRA_SERVER = "jira_server"
+UNIFIED_JIRA_SERVER = "unified_jira_server"
+JIRA_API_KEY = "jira_api_key"
+UNIFIED_JIRA_API_KEY = "unified_jira_api_key"
+JIRA_PROJECT_KEY = "JIRA_PROJECT_KEY"
+BUG = "Bug"
+
 # general defines
 ID = "id"
 NAME = "name"
@@ -681,6 +689,7 @@ ENGAGEMENT_ID_PARAMS = [
 CDP_DATA_SOURCE_DESCRIPTION = "CDP data source body"
 
 # Authentication API fields
+AUTHORIZATION = "Authorization"
 AUTHENTICATION_TOKEN = "token"
 AUTHENTICATION_ACCESS_TOKEN = "access_token"
 AUTHENTICATION_TOKEN_TYPE_HINT = "token_type_hint"
@@ -736,6 +745,11 @@ USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
 FAVORITES = "favorites"
 PROFILE = "profile"
+CONTACT_US = "contact-us"
+
+# adhoc
+ADHOC_ENDPOINT = "/adhoc"
+ADHOC_TAG = "adhoc"
 
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API

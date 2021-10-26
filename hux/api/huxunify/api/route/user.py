@@ -11,7 +11,9 @@ from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
+
 from huxunifylib.database import constants as db_constants
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.user_management import (
     get_user,
     manage_user_favorites,
@@ -23,17 +25,19 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+    get_user_name,
 )
 from huxunify.api.route.utils import (
     get_db_client,
 )
-from huxunify.api.schema.user import UserSchema
+from huxunify.api.schema.user import UserSchema, ContactUsBugReportingSchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
     introspect_token,
 )
+from huxunify.api.data_connectors.jira import JiraConnection
 
 # setup the cdm blueprint
 user_bp = Blueprint(api_c.USER_ENDPOINT, import_name=__name__)
@@ -334,3 +338,76 @@ class UserView(SwaggerView):
             jsonify(UserSchema().dump(users, many=True)),
             HTTPStatus.OK.value,
         )
+
+
+@add_view_to_blueprint(
+    user_bp, f"{api_c.USER_ENDPOINT}/{api_c.CONTACT_US}", "ContactUs"
+)
+class ContactUs(SwaggerView):
+    """Contact Us Bug Creation Class."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Details of the feedback",
+            "example": [
+                {
+                    api_c.TYPE: api_c.BUG,
+                    api_c.SUMMARY: "Audience and Engagement Dashboard not loading",
+                    api_c.DESCRIPTION: "Description of the issue.",
+                }
+            ],
+            "required": True,
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Issue reported successfully.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to report issue."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    # @api_error_handler()
+    @get_user_name()
+    def post(self, user_name: str) -> Tuple[dict, int]:
+        """Retrieves a user profile.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: dict of message, HTTP status code.
+
+        Raises:
+            ProblemException: Any exception raised during endpoint execution.
+        """
+        issue_details = ContactUsBugReportingSchema().load(request.get_json())
+
+        jira_connection = JiraConnection()
+        if jira_connection.check_jira_connection():
+            new_issue_key = jira_connection.create_jira_issue(**issue_details)
+
+            create_notification(
+                database=get_db_client(),
+                notification_type=db_constants.NOTIFICATION_TYPE_INFORMATIONAL,
+                description=f"{user_name} created a new issue {new_issue_key} in JIRA",
+                username=user_name,
+            )
+            return {
+                api_c.MESSAGE: "Issue reported successfully !"
+            }, HTTPStatus.OK
+
+        return {
+            api_c.MESSAGE: api_c.FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE
+        }, HTTPStatus.FAILED_DEPENDENCY

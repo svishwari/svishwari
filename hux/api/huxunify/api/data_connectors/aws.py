@@ -353,6 +353,19 @@ def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
     return auth
 
 
+def get_jira_auth_from_parameter_store() -> dict:
+    """Get JIRA credentials from parameter store
+
+    Returns:
+        dict: Jira api access credentials
+
+    """
+    jira_server = parameter_store.get_store_value(api_c.UNIFIED_JIRA_SERVER)
+    jira_api_key = parameter_store.get_store_value(api_c.UNIFIED_JIRA_API_KEY)
+
+    return {api_c.JIRA_SERVER: jira_server, api_c.JIRA_API_KEY: jira_api_key}
+
+
 def set_cloud_watch_rule(
     rule_name: str,
     schedule_expression: str,
