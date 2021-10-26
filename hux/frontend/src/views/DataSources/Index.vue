@@ -13,7 +13,7 @@
         </template>
       </page-header>
 
-      <page-header header-height="71" v-if="isConnectionStarted">
+      <page-header v-if="isConnectionStarted" header-height="71">
         <template #left>
           <v-btn disabled icon color="black">
             <v-icon medium>mdi-magnify</v-icon>
@@ -46,12 +46,13 @@
           ></data-sources-list>
         </v-col>
       </v-row>
-      <empty v-else
-      iconType="destinations-null"
-      :iconSize="50"
-      title="Data sources are currently unavailable"
-      subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
-      > 
+      <empty
+        v-else
+        icon-type="destinations-null"
+        :icon-size="50"
+        title="No data sources to show"
+        subtitle="The list of data sources will appear here once they have been added."
+      >
       </empty>
     </div>
     <data-source-configuration v-model="drawer" />
@@ -148,5 +149,4 @@ export default {
   },
 }
 </script>
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

@@ -1,8 +1,13 @@
 <template>
-  <div class="empty-state-wrap" ref="emptyState">
-    <div class="box" v-for="index in boxCount" :key="index"></div>
+  <div ref="emptyState" class="empty-state-wrap">
+    <div v-for="index in boxCount" :key="index" class="box"></div>
     <div class="text-center">
-      <icon :type="iconType" :size="iconSize" color="primary" variant="lighten6" />
+      <icon
+        :type="iconType"
+        :size="iconSize"
+        color="primary"
+        variant="lighten6"
+      />
       <div class="text-h2">{{ title }}</div>
       <div class="text-body-2 my-3">
         {{ subtitle }}
