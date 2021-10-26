@@ -34,13 +34,14 @@ export default {
 
   // connections
   datasources: "[data-e2e='dataSourcesList']",
-  destinations: "[data-e2e='destinationsList']",
+  destinations: "[data-e2e='destination-list']",
   dataSourcesAdd: "[data-e2e='dataSourcesAddList']",
   connections: "a[href='/connections']",
   addDataSource: "[data-e2e='addDataSource']",
   pendingDataSource: "[data-e2e='data-source-list-pending-button']",
   pendingDataSourceRemove: "[data-e2e='data-source-list-pending-remove']",
   removeDataSourceConfirmation: "[data-e2e='remove-data-source-confirmation']",
+  destinationsLink: "a[href='/destinations']",
 
   //destinations
   destination: {
@@ -50,9 +51,10 @@ export default {
     destinationConfigDetails: "[data-e2e='destinationConfigDetails']",
     validateDestination: "[data-e2e='validateDestination']",
     footer: "[data-e2e='footer']",
-    removeDots: "[data-e2e='destination-list-dots']",
     destinationRemove: "[data-e2e='destination-list-remove']",
-    destinationRemoveConfirm: "[data-e2e='remove-destination-confirm']",
+    destinationRemoveConfirmFooter: ".confirm-modal-footer",
+    destinationRemoveConfirmBody: ".confirm-modal-body",
+    removeDestinationText: "[data-e2e='remove-destination-text']",
   },
 
   // decisioning

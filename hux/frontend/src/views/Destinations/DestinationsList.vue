@@ -16,6 +16,7 @@
           height="225"
           width="255"
           class="mr-10 model-desc-card"
+          data-e2e="destination-list"
         >
           <template slot="top">
             <status
@@ -34,7 +35,9 @@
             <v-list class="list-wrapper pa-0">
               <v-list-item-group>
                 <v-list-item @click="openModal(destination)">
-                  <v-list-item-title> Remove </v-list-item-title>
+                  <v-list-item-title data-e2e="destination-list-remove">
+                    Remove
+                  </v-list-item-title>
                 </v-list-item>
               </v-list-item-group>
             </v-list>
@@ -61,7 +64,9 @@
       :sub-title="`${selectedDestination.name}`"
       right-btn-text="Yes, remove it"
       data-e2e="remove-destination-confirm"
-      :is-disabled="!enableConfirm"
+      :is-disabled="
+        selectedDestination.status != 'Pending' ? !enableConfirm : false
+      "
       @onCancel="confirmModal = !confirmModal"
       @onConfirm="confirmRemoval()"
     >
@@ -74,9 +79,10 @@
             font-weight-regular
           "
         >
-          Are you sure you want to remove this destination?
+          {{ titleForSelectedDestination }}
         </div>
         <div
+          v-if="selectedDestination.status == 'Succeeded'"
           class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
         >
           By removing this destination you will be impacting
@@ -84,22 +90,15 @@
           are being delivered to this destination and you will not be able to
           recover its impact.
         </div>
-        <div>
-          <span
-            class="
-              black--text
-              text--darken-4 text-subtitle-1
-              font-weight-regular
-            "
-          >
-            For safety reasons please confirm the deletion of the destination:
-          </span>
-          <v-text-field
-            v-model="removeDestinationText"
+        <br />
+        <div v-if="selectedDestination.status == 'Succeeded'">
+          <text-field
+            label-text="For safety reasons please confirm the deletion of the destination:"
             placeholder='Type "confirm" to remove this destination'
             height="40"
             data-e2e="remove-destination-text"
-            @onChange="enableConfirmButton()"
+            required
+            @input="enableConfirmButton($event)"
           />
         </div>
       </template>
@@ -114,6 +113,7 @@ import ConfirmModal from "@/components/common/ConfirmModal"
 import EmptyStateData from "@/components/common/EmptyStateData"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import Status from "@/components/common/Status"
+import TextField from "@/components/common/TextField"
 
 export default {
   name: "DestinationsList",
@@ -123,13 +123,13 @@ export default {
     EmptyStateData,
     DescriptiveCard,
     Status,
+    TextField,
   },
 
   data() {
     return {
       selectedDestination: {},
       confirmModal: false,
-      removeDestinationText: "",
       enableConfirm: false,
     }
   },
@@ -145,6 +145,12 @@ export default {
 
     hasAddedDestinations() {
       return Boolean(this.addedDestinations && this.addedDestinations.length)
+    },
+
+    titleForSelectedDestination() {
+      return this.selectedDestination.status == "Pending"
+        ? "Are you sure you want to remove this pending destination?"
+        : "Are you sure you want to remove this destination?"
     },
   },
 
@@ -165,8 +171,8 @@ export default {
       })
       this.confirmModal = false
     },
-    enableConfirmButton() {
-      this.enableConfirm = this.removeDestinationText == "confirm"
+    enableConfirmButton(val) {
+      this.enableConfirm = val == "confirm"
     },
   },
 }

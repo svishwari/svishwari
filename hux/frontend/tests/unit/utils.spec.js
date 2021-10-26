@@ -1,4 +1,5 @@
 import { listOfMonths, listOfYears, endOfMonth } from "@/utils"
+import { arrayHasFieldWithMultipleValues } from "../../src/utils"
 
 describe("Utils", () => {
   describe("List of months", () => {
@@ -73,6 +74,36 @@ describe("Utils", () => {
       const expected = "2020-02-29"
       const actual = endOfMonth("2020-02-01")
       expect(actual).toEqual(expected)
+    })
+  })
+
+  describe("Array contains multiple values in a field", () => {
+    it("Should provide ture if the field containd multiple values else false", () => {
+      const data = [
+        {
+          state: "Alabama",
+          country: "CA",
+        },
+        {
+          state: "Alabama",
+          country: "US",
+        },
+        {
+          state: "Alabama",
+          country: "CA",
+        },
+        {
+          state: "Alabama",
+          country: "US",
+        },
+      ]
+      const expectedCountry = true
+      const actualCountry = arrayHasFieldWithMultipleValues(data, "country")
+      expect(actualCountry).toEqual(expectedCountry)
+
+      const expectedState = false
+      const actualState = arrayHasFieldWithMultipleValues(data, "state")
+      expect(actualState).toEqual(expectedState)
     })
   })
 })

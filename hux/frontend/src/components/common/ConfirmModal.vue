@@ -52,7 +52,7 @@
               :variant="type"
               height="40"
               is-tile
-              :isDisabled="isDisabled"
+              :is-disabled="isDisabled"
               @click="onConfirm()"
             >
               {{ rightBtnText }}
