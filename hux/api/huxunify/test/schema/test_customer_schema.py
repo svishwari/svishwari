@@ -26,8 +26,8 @@ class CustomerSchemaTest(TestCase):
         doc = dict(
             datafeed_id="1",
             datafeed_name="Really_long_Feed_Name_106",
-            data_source_type=db_c.CDP_DATA_SOURCE_BLUECORE,
-            data_source_name=db_c.CDP_DATA_SOURCE_BLUECORE.title(),
+            data_source_type=db_c.DATA_SOURCE_PLATFORM_BLUECORE,
+            data_source_name=db_c.DATA_SOURCE_PLATFORM_BLUECORE.title(),
             new_ids_generated=21,
             num_records_processed=2000000,
             match_rate=0.98,
