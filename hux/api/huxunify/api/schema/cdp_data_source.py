@@ -22,8 +22,10 @@ class CdpDataSourcePostSchema(Schema):
     )
     category = fields.Str(
         required=True,
-        validate=OneOf(choices=api_c.CDP_DATA_SOURCE_CATEGORIES),
-        default=None,
+        validate=OneOf(
+            choices=api_c.CDP_DATA_SOURCE_CATEGORIES + [db_c.CATEGORY_UNKNOWN]
+        ),
+        default=db_c.CATEGORY_UNKNOWN,
         allow_none=True,
     )
     feed_count = fields.Int(required=False, default=None)
@@ -85,8 +87,10 @@ class CdpConnectionsDataSourceSchema(Schema):
     )
     category = fields.Str(
         required=False,
-        validate=OneOf(choices=api_c.CDP_DATA_SOURCE_CATEGORIES),
-        default=None,
+        validate=OneOf(
+            choices=api_c.CDP_DATA_SOURCE_CATEGORIES + [db_c.CATEGORY_UNKNOWN]
+        ),
+        default=db_c.CATEGORY_UNKNOWN,
         allow_none=True,
     )
     feed_count = fields.Int(required=False, default=None, allow_none=True)
