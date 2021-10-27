@@ -35,7 +35,8 @@ def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
     """
     # get random data based on marshmallow type
     return {
-        field: SPEC_TYPE_LOOKUP[type(val)] for field, val in schema_obj().fields.items()
+        field: SPEC_TYPE_LOOKUP[type(val)]
+        for field, val in schema_obj().fields.items()
     }
 
 
@@ -112,7 +113,9 @@ class FailedDependency424Schema(Schema):
     """Failed Dependency schema."""
 
     code = Int(name="code", example=424)
-    message = Str(name="message", example=api_c.FAILED_DEPENDENCY_ERROR_MESSAGE)
+    message = Str(
+        name="message", example=api_c.FAILED_DEPENDENCY_ERROR_MESSAGE
+    )
 
 
 FAILED_DEPENDENCY_424_RESPONSE = {
@@ -127,7 +130,9 @@ class EmptyResponseDependencySchema(Schema):
     """Empty Response Dependency schema."""
 
     code = Int(name="code", example=404)
-    message = Str(name="message", example=api_c.EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE)
+    message = Str(
+        name="message", example=api_c.EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE
+    )
 
 
 EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE = {
