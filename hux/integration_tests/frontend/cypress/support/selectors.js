@@ -63,7 +63,7 @@ export default {
 
   // data sources
   datasources: "[data-e2e='dataSourcesList']",
-  destinations: "[data-e2e='destination-list']",
+  destinations: "[data-e2e='destinationsList']",
   dataSourcesAdd: "[data-e2e='dataSourcesAddList']",
   addDataSource: "[data-e2e='addDataSource']",
   pendingDataSource: "[data-e2e='data-source-list-pending-button']",
@@ -78,10 +78,9 @@ export default {
     destinationConfigDetails: "[data-e2e='destinationConfigDetails']",
     validateDestination: "[data-e2e='validateDestination']",
     footer: "[data-e2e='footer']",
+    removeDots: "[data-e2e='destination-list-dots']",
     destinationRemove: "[data-e2e='destination-list-remove']",
-    destinationRemoveConfirmFooter: ".confirm-modal-footer",
-    destinationRemoveConfirmBody: ".confirm-modal-body",
-    removeDestinationText: "[data-e2e='remove-destination-text']",
+    destinationRemoveConfirm: "[data-e2e='remove-destination-confirm']",
   },
 
   // decisioning

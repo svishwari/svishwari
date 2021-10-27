@@ -295,4 +295,6 @@ class TestUserRoutes(TestCase):
 
     def test_get_user_favorites_user_does_not_exist(self):
         """Test getting user favorites with a user that does not exist."""
-        self.assertFalse(get_user_favorites(self.database, None, db_c.ENGAGEMENTS))
+        self.assertFalse(
+            get_user_favorites(self.database, None, db_c.ENGAGEMENTS)
+        )

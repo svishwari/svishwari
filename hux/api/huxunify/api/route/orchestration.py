@@ -54,7 +54,6 @@ from huxunify.api.data_connectors.okta import (
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
     FAILED_DEPENDENCY_424_RESPONSE,
-    get_next_schedule,
 )
 import huxunify.api.constants as api_c
 from huxunify.api.route.decorators import (
@@ -67,6 +66,7 @@ from huxunify.api.route.utils import (
     get_db_client,
     group_gender_spending,
     Validation as validation,
+    get_next_schedule,
     is_component_favorite,
 )
 
