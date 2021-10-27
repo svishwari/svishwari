@@ -1,7 +1,7 @@
 import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
-describe("View Navigation", () => {
+describe("Navigation", () => {
   before(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
@@ -9,60 +9,63 @@ describe("View Navigation", () => {
     })
   })
 
-  it("should be able to view navigation", () => {
-    // after login land in the overview page
+  it("should be able to navigate to all sections", () => {
+    // home
+    cy.get(selector.nav.home).click()
     cy.location("pathname").should("eq", route.overview)
 
-    //click on engagement on side nav bar and route in engagement screen
-    cy.get(selector.engagements).click()
-    cy.location("pathname").should("eq", route.engagements)
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000)
-    // from the header click on the help icon
-    cy.get(selector.navigation.help).click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(500)
-    // once menu drop down get open click on the contact us menu
-    // TODO: look into failing assertion when opening the mailto link
-    // cy.get(selector.navigation.contactus).click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(500)
+    // configuration
+    cy.get(selector.nav.configuration).click()
+    cy.location("pathname").should("eq", route.configuration)
 
-    //click on audiences on side nav bar and route in audiences screen
-    cy.get(selector.audiences).click()
-    cy.location("pathname").should("eq", route.audiences)
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000)
+    // data sources
+    cy.get(selector.nav.dataSources).click()
+    cy.location("pathname").should("eq", route.dataSources)
 
-    // from the header click on the add icon
-    cy.get(selector.navigation.add).click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(500)
+    // identity resolution
+    cy.get(selector.nav.identityResolution).click()
+    cy.location("pathname").should("eq", route.identityResolution)
 
-    //click on models on side nav bar and route in models screen
-    cy.get(selector.models.models).click()
+    // models
+    cy.get(selector.nav.models).click()
     cy.location("pathname").should("eq", route.models)
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000)
-    // click on the profile drop menu
-    cy.get(selector.navigation.profiledropdown).click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(500)
-    // select the profile option
-    cy.get(selector.navigation.profile)
+
+    // customer profiles
+    cy.get(selector.nav.customerProfiles).click()
+    cy.location("pathname").should("eq", route.customerProfiles)
+
+    // segment playground
+    cy.get(selector.nav.segmentPlayground).should("exist")
+
+    // destinations
+    cy.get(selector.nav.destinations).click()
+    cy.location("pathname").should("eq", route.destinations)
+
+    // audiences
+    cy.get(selector.nav.audiences).click()
+    cy.location("pathname").should("eq", route.audiences)
+
+    // engagements
+    cy.get(selector.nav.engagements).click()
+    cy.location("pathname").should("eq", route.engagements)
+
+    // help
+    cy.get(selector.topNav.help).click()
+
+    // contact us
+    cy.get(selector.topNav.contactus)
+      .find("a")
+      .should("have.attr", "href")
+      .and("include", "mailto")
+
+    // quick add: data source, destination, audience, engagement
+    cy.get(selector.topNav.add).click()
+
+    // user profile: my profile, logout
+    cy.get(selector.topNav.profiledropdown).click()
+    cy.get(selector.topNav.profile)
       .should("have.attr", "href")
       .and("include", "okta.com")
-
-    //click on audiences on side nav bar and route in audiences screen
-    cy.get(selector.connections).eq(0).click()
-    cy.location("pathname").should("eq", route.connections)
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000)
-    // click on the profile drop menu
-    cy.get(selector.navigation.profiledropdown).click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(500)
-    // select the profile option
-    cy.get(selector.navigation.logout).click()
+    cy.get(selector.topNav.logout).click()
   })
 })

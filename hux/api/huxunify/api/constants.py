@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 """This module contains connector defines."""
+import os
 import random
 
 from huxunifylib.database import constants as db_c
@@ -77,6 +78,9 @@ SOURCE_ID = "source_id"
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
 QUERY_PARAMETER_SORT_ORDER = "sort_order"
+QUERY_PARAMETER_NOTIFICATION_TYPES = "notification_types"
+QUERY_PARAMETER_NOTIFICATION_CATEGORY = "category"
+QUERY_PARAMETER_USERS = "users"
 
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
@@ -120,7 +124,6 @@ CONTACT_PREFERENCES = "contact_preferences"
 IDENTITY_RESOLUTION = "identity_resolution"
 POPULATION_PERCENTAGE = "population_percentage"
 INCOME = "income"
-CDP_SERVICE_URL = "CDP_SERVICE_URL"
 COUNT = "count"
 AVG_SPENT_WOMEN = "avg_spent_women"
 AVG_SPENT_MEN = "avg_spent_men"
@@ -823,6 +826,8 @@ CUSTOMERS_API_HEADER_KEY = "x-api-key"
 CUSTOMERS_DEFAULT_BATCH_SIZE = 1000
 CUSTOMER_COUNT = "customer_count"
 
+MAX_WORKERS_THREAD_POOL = os.cpu_count() * 1 + 1
+
 # Demographic
 CITIES_DEFAULT_BATCH_SIZE = 100
 
@@ -831,6 +836,18 @@ NOTIFICATIONS_TAG = "notifications"
 NOTIFICATION_ID = "notification_id"
 NOTIFICATIONS_ENDPOINT = "/notifications"
 NOTIFICATION_STREAM_TIME_SECONDS = 60
+
+NOTIFICATION_CATEGORIES = [
+    "engagements",
+    "delivery",
+    "orchestration",
+    "destinations",
+    "data_sources",
+    "customers",
+    "models",
+]
+# AWS BATCH
+BATCH_SIZE = "batch_size"
 
 # TODO HUS-363 remove once we can pass empty filters to CDP.
 CUSTOMER_OVERVIEW_DEFAULT_FILTER = {

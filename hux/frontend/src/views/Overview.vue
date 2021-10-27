@@ -35,12 +35,12 @@
     </div>
     <v-row class="px-8 mt-2">
       <v-col md="12">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="367">
+          <v-card-title class="chart-style pb-2 pl-6 pt-5">
             <div class="mt-2">
-              <span class="black--text text--darken-4 text-h5">
+              <span class="black--text text--darken-4 text-h3">
                 Total customers
-                <span class="text-body-2 time-frame">
+                <span class="text-body-1 time-frame">
                   ({{ timeFrameLabel }})
                 </span>
               </span>
@@ -92,7 +92,7 @@ export default {
           description:
             "Connect your data sources to enable data unification in a single location.",
           route: {
-            name: "Connections",
+            name: "DataSources",
             params: { select: true },
           },
           active: true,
@@ -177,7 +177,7 @@ export default {
     }
   }
   .time-frame {
-    color: var(--v-gray-base) !important;
+    color: var(--v-black-lighten4) !important;
   }
 }
 .drop-wrap {

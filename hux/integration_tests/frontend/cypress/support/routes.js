@@ -11,21 +11,23 @@ export default {
   home: "/",
   login: "/login",
   overview: "/overview",
+  configuration: "/configuration",
+  notifications: "/notifications",
 
-  // orchestration
-  engagements: "/engagements",
-  audiences: "/audiences",
+  // data management
+  dataSources: "/data-sources",
+  identityResolution: "/identity-resolution",
 
   // decisioning
   models: "/models",
 
-  // data Management
+  // customer insights
   customerProfiles: "/customers",
-  identityResolution: "/identity-resolution",
-  connections: "/connections",
+  segmentPlayground: "/audiences/add",
+
+  // orchestration
   destinations: "/destinations",
   addDestinations: "/destinations/add",
-
-  //notification
-  notifications: "/notifications",
+  audiences: "/audiences",
+  engagements: "/engagements",
 }

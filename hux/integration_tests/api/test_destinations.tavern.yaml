@@ -439,8 +439,6 @@ stages:
       status_code: 400
       headers:
         content-type: application/json
-      json:
-        message: !re_search "not valid"
 
 ---
 test_name: Test destinations put/update destination success
@@ -550,5 +548,3 @@ stages:
       status_code: 400
       headers:
         content-type: application/json
-      json:
-        message: !re_search "not valid"

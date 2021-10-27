@@ -122,13 +122,11 @@
 
     <drawer v-model="drawer">
       <template #header-left>
-        <div class="d-flex align-baseline">
-          <h5 class="text-h3 pr-2 black--text text--darken-4">
+        <div class="d-flex align-center">
+          <icon type="map" :size="32" class="mr-3" />
+          <h2 class="text-h2 pr-2 black--text text--lighten-4">
             Select a destination
-          </h5>
-          <span class="text-caption black--text text--darken-1"
-            >(select one)</span
-          >
+          </h2>
         </div>
       </template>
       <template #footer-left>
@@ -139,35 +137,55 @@
         </div>
       </template>
       <template #default>
-        <div class="ma-3 font-weight-light">
-          <card-horizontal
-            v-for="destination in enabledDestinations"
-            :key="destination.id"
-            :title="destination.name"
-            :icon="destination.type"
-            :is-added="destination.is_added || isSelected(destination.id)"
-            :is-available="destination.is_enabled"
-            :is-already-added="destination.is_added"
-            class="my-3"
-            data-e2e="destinationsDrawer"
-            @click="onSelectDestination(destination.id)"
+        <div class="ma-3 font-weight-light px-6">
+          <div
+            v-for="(value, category, index) in groupByCategory(
+              enabledDestinations
+            )"
+            :key="`active-${index}`"
+          >
+            <span class="d-block text--body-2 mb-2 mt-6">{{ category }}</span>
+            <card-horizontal
+              v-for="destination in value"
+              :key="destination.id"
+              :title="destination.name"
+              :icon="destination.type"
+              :is-added="destination.is_added || isSelected(destination.id)"
+              :is-available="destination.is_enabled"
+              :is-already-added="destination.is_added"
+              class="mb-2"
+              data-e2e="destinationsDrawer"
+              @click="onSelectDestination(destination.id)"
+            />
+          </div>
+
+          <v-divider
+            style="border-color: var(--v-black-lighten2)"
+            class="my-8"
           />
 
-          <v-divider style="border-color: var(--v-black-lighten2)" />
-
-          <card-horizontal
-            v-for="destination in disabledDestinations"
-            :key="destination.id"
-            :title="destination.name"
-            :icon="destination.type"
-            :is-added="destination.is_added || isSelected(destination.id)"
-            hide-button
-            :is-available="destination.is_enabled"
-            :is-already-added="destination.is_added"
-            class="my-3"
+          <div
+            v-for="(value, category, index) in groupByCategory(
+              disabledDestinations
+            )"
+            :key="`nonActive-${index}`"
           >
-            <i class="font-weight-light letter-spacing-sm">Coming soon</i>
-          </card-horizontal>
+            <span class="d-block text--body-2 mb-2 mt-6">{{ category }}</span>
+            <!-- TODO update the isAddeed with the right logic to fetch the ones already requested -->
+            <card-horizontal
+              v-for="destination in value"
+              :key="destination.id"
+              :title="destination.name"
+              :icon="destination.type"
+              :is-added="requestedDestinations.includes(destination.id)"
+              requested-button
+              :is-available="destination.is_enabled"
+              :is-already-added="destination.is_added"
+              class="my-3"
+              data-e2e="requestDestinationDrawer"
+              @click="onRequestDestination(destination.id)"
+            />
+          </div>
         </div>
       </template>
     </drawer>
@@ -185,6 +203,9 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+
+import { groupBy } from "@/utils"
+
 import Page from "@/components/Page"
 import Drawer from "@/components/common/Drawer"
 import CardHorizontal from "@/components/common/CardHorizontal"
@@ -195,6 +216,7 @@ import TextField from "@/components/common/TextField"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
 
 import SFMC from "./Configuration/SFMC.vue"
+import Icon from "../../components/common/Icon.vue"
 
 export default {
   name: "ConfigureDestination",
@@ -209,14 +231,15 @@ export default {
     Logo,
     SFMC,
     ConfirmModal,
+    Icon,
   },
-
   data() {
     return {
       loading: false,
       drawer: false,
       selectedDestinationId: null,
       authenticationDetails: {},
+      requestedDestinations: [],
       isValidated: false,
       isValidating: false,
       validationError: null,
@@ -323,11 +346,27 @@ export default {
       return this.selectedDestination && this.selectedDestination.id === id
     },
 
+    groupByCategory(list) {
+      return groupBy(list, "category")
+    },
+
     onSelectDestination(id) {
       this.selectedDestinationId = id
       this.reset()
       this.authenticationDetails = {}
       this.drawer = false
+    },
+
+    // TODO Need to implement the requesting destination integration with API.
+    onRequestDestination(id) {
+      if (this.requestedDestinations.includes(id)) {
+        this.requestedDestinations.splice(
+          this.requestedDestinations.indexOf(id),
+          1
+        )
+      } else {
+        this.requestedDestinations.push(id)
+      }
     },
 
     reset() {
@@ -366,7 +405,7 @@ export default {
         }
         await this.addDestination(data)
         this.flagForModal = true
-        this.$router.push({ name: "Connections" })
+        this.$router.push({ name: "Destinations" })
       } catch (error) {
         console.error(error)
       }
@@ -375,7 +414,7 @@ export default {
     cancel() {
       // TODO: need to add modal that confirms to leave configuration
       this.flagForModal = true
-      this.$router.push({ name: "Connections" })
+      this.$router.push({ name: "Destinations" })
     },
   },
 }

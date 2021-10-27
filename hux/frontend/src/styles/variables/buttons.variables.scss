@@ -13,9 +13,24 @@ $btn-font-sizes: (
 );
 $btn-letter-spacing: 0;
 $btn-text-transform: none;
+$btn-sizes: (
+  "x-small": 20,
+  "small": 35,
+  "default": 40,
+  "large": 45,
+  "x-large": 50,
+);
 $btn-active-opacity: 0.05;
 
 // Customizations
 .v-btn--text {
   padding: 0 !important;
+}
+
+.v-btn.v-btn--disabled.v-btn--has-bg {
+  background-color: var(--v-black-lighten1) !important;
+  color: var(--v-black-lighten3) !important;
+}
+.v-btn.v-btn--disabled .v-icon {
+  color: inherit !important;
 }

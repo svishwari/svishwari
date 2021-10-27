@@ -155,6 +155,33 @@ export function dayAbbreviation(dayname) {
 }
 
 /**
+ * Uses to create full name from abbr
+ *
+ * @param {string} dayname abr name
+ * @returns {string} day full name i.e. Sunday
+ */
+export function abbrDayToFullName(dayname) {
+  switch (dayname.toLowerCase()) {
+    case "mon":
+      return "Monday"
+    case "tue":
+      return "Tuesday"
+    case "wed":
+      return "Wednesday"
+    case "thu":
+      return "Thursday"
+    case "fri":
+      return "Friday"
+    case "sat":
+      return "Saturday"
+    case "sun":
+      return "Sunday"
+    default:
+      return ""
+  }
+}
+
+/**
  * Get a list of months names.
  *
  * @param {object} config configuration for list of months
@@ -244,4 +271,33 @@ export function saveFile(response) {
   link.download = fileName
   link.click()
   URL.revokeObjectURL(link.href)
+}
+
+/**
+ * Return true if column has multiple values.
+ *
+ * @param {object[]} data - response data as an array of objects
+ * @param {string} field - field name
+ * @returns {boolean} true if column has multiple values else false
+ */
+export function arrayHasFieldWithMultipleValues(data, field) {
+  let colData = data.map((x) => x[field])
+  return Boolean(new Set(colData).size > 1)
+}
+
+/**
+ * Returns the list of objects in array as a group by Key
+ *
+ * @param {object[]} array - array of objects
+ * @param {string} key - the group by key
+ * @returns {object} - Returns the object with grouped by key and unique values
+ */
+export function groupBy(array, key) {
+  array = array.map((obj) => ({ ...obj, category: obj["category"] || "Other" }))
+  return array.reduce((hash, obj) => {
+    if (obj[key] === undefined) return hash
+    return Object.assign(hash, {
+      [obj[key]]: (hash[obj[key]] || []).concat(obj),
+    })
+  }, {})
 }

@@ -149,9 +149,9 @@
       <v-row class="px-15 mt-2">
         <v-col md="12">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
-            <v-card-title class="pb-2 pl-5 pt-5">
+            <v-card-title class="pb-2 pl-6 pt-5">
               <div class="mt-2">
-                <span class="black--text text--darken-4 text-h5">
+                <span class="black--text text--darken-4 text-h3">
                   Total customers
                   <span class="text-body-2 time-frame">
                     ({{ timeFrameLabel }})
@@ -376,6 +376,7 @@ export default {
           toolTipText:
             "Total no. of unique hux ids generated to represent a customer.",
           value: "",
+          action: "toggleProfilesDrawer",
         },
         {
           title: "Countries",
@@ -616,7 +617,7 @@ export default {
 }
 
 .time-frame {
-  color: var(--v-gray-base) !important;
+  color: var(--v-black-lighten4) !important;
 }
 
 .customer-dashboard-wrap {
