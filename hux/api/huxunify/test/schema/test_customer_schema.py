@@ -49,7 +49,9 @@ class CustomerSchemaTest(TestCase):
             api_c.CUSTOMERS_LEFT: -4321,
         }
 
-        self.assertFalse(TotalCustomersInsightsSchema().validate(customer_count_doc))
+        self.assertFalse(
+            TotalCustomersInsightsSchema().validate(customer_count_doc)
+        )
 
     def test_customers_insights_countries_schema(self) -> None:
         """Test CustomersInsightsCountriesSchema."""
@@ -61,7 +63,9 @@ class CustomerSchemaTest(TestCase):
         }
 
         self.assertFalse(
-            CustomersInsightsCountriesSchema().validate(customers_insight_country)
+            CustomersInsightsCountriesSchema().validate(
+                customers_insight_country
+            )
         )
 
     def test_customers_insights_states_schema(self) -> None:
