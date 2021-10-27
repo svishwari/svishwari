@@ -19,7 +19,8 @@ export default {
 
   args: {
     title: "No data sources to show",
-    subtitle: "The list of data sources will appear here once they have been added.",
+    subtitle:
+      "The list of data sources will appear here once they have been added.",
     iconType: "destinations-null",
     iconSize: 50,
   },

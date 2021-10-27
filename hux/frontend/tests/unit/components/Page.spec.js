@@ -1,8 +1,5 @@
 import Page from "@/components/Page"
 import { shallowMount } from "@vue/test-utils"
-import Vuetify from "vuetify"
-
-const vuetify = new Vuetify()
 
 describe("Page", () => {
   test("Should have content in header slot", async () => {

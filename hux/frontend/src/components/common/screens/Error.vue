@@ -30,7 +30,7 @@ export default {
     iconType: {
       type: String,
       required: true,
-      default: 'destinations-null',
+      default: "destinations-null",
     },
     iconSize: {
       type: Number,
