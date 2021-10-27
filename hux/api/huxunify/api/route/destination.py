@@ -1,7 +1,7 @@
 # pylint: disable=no-self-use,too-many-lines
 """Paths for destinations API"""
 import datetime
-import json
+from dateutil.parser import parse
 from http import HTTPStatus
 from typing import Tuple
 from flasgger import SwaggerView
@@ -326,11 +326,11 @@ class DestinationPutView(SwaggerView):
 
     # pylint: disable=unexpected-keyword-arg
     # pylint: disable=too-many-return-statements
-    # @api_error_handler(
-    #     custom_message={
-    #         ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}
-    #     }
-    # )
+    @api_error_handler(
+        custom_message={
+            ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}
+        }
+    )
     @validate_destination()
     @get_user_name()
     def put(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
@@ -366,10 +366,39 @@ class DestinationPutView(SwaggerView):
         if platform_type == db_c.DELIVERY_PLATFORM_SFMC:
             SFMCAuthCredsSchema().load(auth_details)
             sfmc_config = body.get(db_c.CONFIGURATION)
-            DestinationDataExtConfigSchema().load(sfmc_config)
-            if sfmc_config.get(
+            if not sfmc_config:
+                logger.error("%s", api_c.SFMC_CONFIGURATION_MISSING)
+                return (
+                    {"message": api_c.SFMC_CONFIGURATION_MISSING},
+                    HTTPStatus.BAD_REQUEST,
+                )
+
+            performance_de = sfmc_config.get(
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
-            ) == sfmc_config.get(api_c.SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION):
+            )
+            if not performance_de:
+                logger.error("%s", api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED)
+                return (
+                    {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
+                    HTTPStatus.BAD_REQUEST,
+                )
+            campaign_de = sfmc_config.get(
+                api_c.SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION
+            )
+            if not campaign_de:
+                logger.error("%s", api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED)
+                return (
+                    {"message": api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED},
+                    HTTPStatus.BAD_REQUEST,
+                )
+            performance_de[api_c.CREATE_TIME] = parse(
+                performance_de.get(api_c.CREATE_TIME)
+            )
+            campaign_de[api_c.CREATE_TIME] = parse(
+                campaign_de.get(api_c.CREATE_TIME)
+            )
+            DestinationDataExtConfigSchema().load(sfmc_config)
+            if performance_de == campaign_de:
                 logger.error("%s", api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR)
                 return (
                     {"message": api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR},

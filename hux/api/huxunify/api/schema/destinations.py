@@ -24,9 +24,8 @@ class DestinationDataExtSchema(Schema):
     """Destination data extension schema class"""
 
     name = fields.String(example="data_extension_name")
-    data_extension_id = fields.String(
-        example="data_extension_id"
-    )
+    data_extension_id = fields.String(example="data_extension_id")
+    create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
 
 
 class DeliveryScheduleDailySchema(Schema):
@@ -144,8 +143,12 @@ class DeliveryScheduleSchema(Schema):
 class DestinationDataExtConfigSchema(Schema):
     """Destination data extension configuration schema class"""
 
-    perf_data_extension = fields.Nested(DestinationDataExtSchema)
-    campaign_activity_data_extension = fields.Nested(DestinationDataExtSchema)
+    performance_metrics_data_extension = fields.Nested(
+        DestinationDataExtSchema, required=True
+    )
+    campaign_activity_data_extension = fields.Nested(
+        DestinationDataExtSchema, required=True
+    )
 
 
 class DestinationGetSchema(Schema):
@@ -185,10 +188,8 @@ class DestinationGetSchema(Schema):
     campaigns = fields.Int(
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
-    configuration = fields.Dict(
-        fields.Nested(DestinationDataExtConfigSchema),
-        required=False,
-        allow_none=True,
+    configuration = fields.Nested(
+        DestinationDataExtConfigSchema, required=False, allow_none=True
     )
     is_added = fields.Bool(attribute="added")
     is_enabled = fields.Bool(attribute="enabled")
@@ -234,7 +235,9 @@ class DestinationPutSchema(Schema):
     """Destination put schema class"""
 
     authentication_details = fields.Field()
-    configuration = fields.Dict(fields.Nested(DestinationDataExtConfigSchema))
+    configuration = fields.Nested(
+        DestinationDataExtConfigSchema, required=False
+    )
 
 
 class DestinationValidationSchema(Schema):
@@ -632,6 +635,7 @@ class DestinationDataExtPostSchema(Schema):
 
     data_extension = fields.String()
     type = fields.String()
+
 
 class DestinationDataExtGetSchema(Schema):
     """Destination data extension get schema class"""
