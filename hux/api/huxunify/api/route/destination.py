@@ -27,6 +27,7 @@ from huxunifylib.connectors import (
     GoogleConnector,
     QualtricsConnector,
     AudienceAlreadyExists,
+    AuthenticationFailed,
 )
 from huxunify.api.data_connectors.aws import (
     parameter_store,
@@ -711,30 +712,27 @@ class DestinationDataExtView(SwaggerView):
                 "message": api_c.DESTINATION_AUTHENTICATION_FAILED
             }, HTTPStatus.BAD_REQUEST
 
-        ext_list = []
-
         if (
             destination[api_c.DELIVERY_PLATFORM_TYPE]
             == db_c.DELIVERY_PLATFORM_SFMC
         ):
-            sfmc_connector = SFMCConnector(
-                auth_details=get_auth_from_parameter_store(
-                    destination[api_c.AUTHENTICATION_DETAILS],
-                    destination[api_c.DELIVERY_PLATFORM_TYPE],
+            try:
+                sfmc_connector = SFMCConnector(
+                    auth_details=get_auth_from_parameter_store(
+                        destination[api_c.AUTHENTICATION_DETAILS],
+                        destination[api_c.DELIVERY_PLATFORM_TYPE],
+                    )
                 )
-            )
-            if not sfmc_connector.check_connection():
-                logger.info("Could not validate SFMC successfully.")
+                ext_list = sfmc_connector.get_list_of_data_extensions()
+                logger.info(
+                    "Found %s data extensions for %s.",
+                    len(ext_list),
+                    destination_id,
+                )
+            except AuthenticationFailed:
                 return {
                     "message": api_c.DESTINATION_AUTHENTICATION_FAILED
                 }, HTTPStatus.FORBIDDEN
-
-            ext_list = sfmc_connector.get_list_of_data_extensions()
-            logger.info(
-                "Found %s data extensions for %s.",
-                len(ext_list),
-                destination_id,
-            )
 
         else:
             logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
@@ -746,7 +744,8 @@ class DestinationDataExtView(SwaggerView):
             jsonify(
                 sorted(
                     DestinationDataExtGetSchema().dump(ext_list, many=True),
-                    key=lambda i: i[api_c.NAME].lower(),
+                    key=lambda i: i[db_c.CREATE_TIME],
+                    reverse=True,
                 )
             ),
             HTTPStatus.OK,
