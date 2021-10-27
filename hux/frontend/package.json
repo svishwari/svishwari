@@ -14,7 +14,7 @@
     "style": "yarn prettier --check src/",
     "style:fix": "yarn prettier --write src/",
     "prepare": "cd ../../ && husky install hux/frontend/.husky",
-    "storybook:build": "vue-cli-service storybook:build -c storybook/",
+    "storybook:build": "vue-cli-service storybook:build -c storybook/ -o ./dist/design/",
     "storybook:serve": "vue-cli-service storybook:serve -p 6006 -c storybook/"
   },
   "dependencies": {
