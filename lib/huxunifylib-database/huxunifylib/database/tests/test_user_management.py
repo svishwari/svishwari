@@ -25,7 +25,9 @@ class TestUserManagement(unittest.TestCase):
         mongo_patch.start()
 
         # Connect
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
@@ -157,7 +159,9 @@ class TestUserManagement(unittest.TestCase):
 
         # set update_doc dict to update the user_doc
         update_doc = {c.USER_LOGIN_COUNT: login_count + 1}
-        user_doc = um.update_user(self.database, self.user_doc[c.OKTA_ID], update_doc)
+        user_doc = um.update_user(
+            self.database, self.user_doc[c.OKTA_ID], update_doc
+        )
 
         self.assertIsNotNone(user_doc)
         self.assertIn(c.USER_LOGIN_COUNT, user_doc)
@@ -216,7 +220,9 @@ class TestUserManagement(unittest.TestCase):
             self.assertTrue(update_doc[c.USER_FAVORITES][component])
 
             # test to ensure the ID we added exists
-            self.assertTrue(component_id in update_doc[c.USER_FAVORITES][component])
+            self.assertTrue(
+                component_id in update_doc[c.USER_FAVORITES][component]
+            )
 
     def test_delete_favorite(self) -> None:
         """Test function for deleting via manage_user_favorites routine"""
@@ -268,7 +274,9 @@ class TestUserManagement(unittest.TestCase):
             self.assertTrue(update_doc[c.USER_FAVORITES][component])
 
             # test to ensure the ID we added exists
-            self.assertTrue(component_id in update_doc[c.USER_FAVORITES][component])
+            self.assertTrue(
+                component_id in update_doc[c.USER_FAVORITES][component]
+            )
 
             # test to ensure the ID we added exists, only once!
             self.assertEqual(
@@ -333,4 +341,6 @@ class TestUserManagement(unittest.TestCase):
         )
 
         # test pinned value key does not exist
-        self.assertNotIn(pinned_key, updated_doc[c.USER_DASHBOARD_CONFIGURATION])
+        self.assertNotIn(
+            pinned_key, updated_doc[c.USER_DASHBOARD_CONFIGURATION]
+        )
