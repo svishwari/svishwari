@@ -107,7 +107,7 @@ export default [
     create_time: "2021-06-03T23:05:00.305Z",
     update_time: "2021-09-23T19:10:20.794Z",
     updated_by: "Moaz Mansour",
-    status: "Active",
+    status: "Error",
   },
   {
     name: "Google Ads",
@@ -133,7 +133,7 @@ export default [
     create_time: "2021-06-03T23:04:59.828Z",
     update_time: "2021-10-01T11:18:51.750Z",
     updated_by: "Mohit Bansal",
-    status: "Active",
+    status: "Error",
   },
   {
     name: "Facebook",
