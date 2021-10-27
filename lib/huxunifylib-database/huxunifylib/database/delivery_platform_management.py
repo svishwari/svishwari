@@ -573,6 +573,7 @@ def update_delivery_platform(
     enabled: bool = None,
     deleted: bool = None,
     performance_de: dict = None,
+    campaign_de: dict = None,
     is_ad_platform: bool = None,
     status: str = None,
 ) -> Union[dict, None]:
@@ -591,6 +592,7 @@ def update_delivery_platform(
         enabled (bool): if the delivery platform is enabled.
         deleted (bool): if the delivery platform is deleted (soft-delete).
         performance_de (dict): Performance Data Extension for only SFMC.
+        campaign_de (dict): Campaign Data Extension for only SFMC.
         is_ad_platform (bool): If the delivery platform is an AD platform.
         status (str): Connection status
 
@@ -639,7 +641,10 @@ def update_delivery_platform(
         cur_doc is not None
         and cur_doc[c.DELIVERY_PLATFORM_TYPE] == c.DELIVERY_PLATFORM_SFMC
     ):
-        update_doc[c.PERFORMANCE_METRICS_DATA_EXTENSION] = performance_de
+        update_doc[c.CONFIGURATION] = {
+            c.PERFORMANCE_METRICS_DATA_EXTENSION: performance_de,
+            c.CAMPAIGN_ACTIVITY_DATA_EXTENSION: campaign_de,
+        }
 
     if added is not None:
         update_doc[c.ADDED] = added

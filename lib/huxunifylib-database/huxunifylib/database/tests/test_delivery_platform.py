@@ -536,6 +536,11 @@ class TestDeliveryPlatform(unittest.TestCase):
             c.DELIVERY_PLATFORM_SFMC_DATA_EXT_ID: "ED-26787B1792F6",
         }
 
+        campaign_data_extension = {
+            c.DELIVERY_PLATFORM_SFMC_DATA_EXT_NAME: "HUX Campaign Ext",
+            c.DELIVERY_PLATFORM_SFMC_DATA_EXT_ID: "CE-123456789012",
+        }
+
         dpm.update_delivery_platform(
             database=self.database,
             delivery_platform_id=self.delivery_platform_doc_sfmc[c.ID],
@@ -543,6 +548,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             delivery_platform_type=c.DELIVERY_PLATFORM_SFMC,
             added=True,
             performance_de=performance_data_extension,
+            campaign_de=campaign_data_extension,
         )
 
         get_doc = dpm.get_delivery_platform(
@@ -550,11 +556,20 @@ class TestDeliveryPlatform(unittest.TestCase):
             delivery_platform_id=self.delivery_platform_doc_sfmc[c.ID],
         )
 
-        self.assertTrue(get_doc[c.PERFORMANCE_METRICS_DATA_EXTENSION])
+        self.assertTrue(
+            get_doc[c.CONFIGURATION][c.PERFORMANCE_METRICS_DATA_EXTENSION]
+        )
+        self.assertTrue(
+            get_doc[c.CONFIGURATION][c.CAMPAIGN_ACTIVITY_DATA_EXTENSION]
+        )
 
         self.assertEqual(
-            get_doc[c.PERFORMANCE_METRICS_DATA_EXTENSION],
+            get_doc[c.CONFIGURATION][c.PERFORMANCE_METRICS_DATA_EXTENSION],
             performance_data_extension,
+        )
+        self.assertEqual(
+            get_doc[c.CONFIGURATION][c.CAMPAIGN_ACTIVITY_DATA_EXTENSION],
+            campaign_data_extension,
         )
 
     @mongomock.patch(servers=(("localhost", 27017),))
