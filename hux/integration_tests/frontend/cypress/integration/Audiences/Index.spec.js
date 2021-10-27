@@ -1,7 +1,7 @@
 import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
-describe("Tests Audience", () => {
+describe("Orchestration > Audiences", () => {
   before(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
@@ -9,17 +9,16 @@ describe("Tests Audience", () => {
     })
   })
 
-  it("should be able to navigate to Audiences", () => {
-    // after login land in the overview page
+  it("should be able to manage audiences", () => {
+    // should navigate to audiences
     cy.location("pathname").should("eq", route.overview)
-
-    //click on engagement on side nav bar and route in engagement screen
-    cy.get(selector.audiences).click()
+    cy.get(selector.nav.audiences).click()
     cy.location("pathname").should("eq", route.audiences)
-  })
 
-  // Verifying the table columns names of the Engagement table
-  it("verify the columns of the audiences list", () => {
+    // should be able to view table of audiences
+    cy.get(selector.audience.audiencelist).its("length").should("be.gt", 0)
+
+    // should verify the columns of the audiences table
     const tableHeaders = [
       "Audience name",
       "Status",
@@ -38,22 +37,16 @@ describe("Tests Audience", () => {
       .each(($elm, i) => {
         expect($elm.text()).equal(tableHeaders[i])
       })
-  })
 
-  it("should be able to view Audiences List", () => {
-    cy.get(selector.audience.audiencelist).its("length").should("be.gt", 0)
-  })
-
-  it("check if menu options are working", () => {
+    // should check if audience menu options are working
     cy.get(selector.audience.audiencenameclick)
       .eq(0)
       .find("button")
       .eq(1)
       .click({ force: true })
     cy.get(".v-menu__content").should("exist")
-  })
 
-  it("check if favourite option is working", () => {
+    // should validate favourite an audience option is working
     cy.get(selector.audience.audiencenameclick)
       .eq(0)
       .find("button")

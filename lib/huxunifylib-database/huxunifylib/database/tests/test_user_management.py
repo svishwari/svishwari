@@ -132,6 +132,22 @@ class TestUserManagement(unittest.TestCase):
 
         self.assertIsNotNone(user_docs)
 
+    def test_get_users_filter_and_projection(self) -> None:
+        """Test get_all_users routine."""
+
+        user_docs = um.get_all_users(
+            self.database,
+            {c.USER_DISPLAY_NAME: self.user_doc[c.USER_DISPLAY_NAME]},
+        )
+
+        self.assertTrue(user_docs)
+        # check length of one
+        self.assertEqual(1, len(user_docs))
+        self.assertEqual(
+            self.user_doc[c.USER_DISPLAY_NAME],
+            user_docs[0][c.USER_DISPLAY_NAME],
+        )
+
     @given(login_count=st.integers(min_value=0, max_value=9))
     def test_update_user_success(self, login_count: int) -> None:
         """Test update_user routine success.

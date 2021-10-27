@@ -318,3 +318,102 @@ stages:
           "new_address_ids": !anyint
       headers:
         content-type: application/json
+
+---
+test_name: Test customers insights countries
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test country level geographic customers insights
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers-insights/countries"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        !anylist
+        - size: !anyint
+          revenue: !anyfloat
+          country: !anystr
+      headers:
+        content-type: application/json
+
+---
+test_name: Test customers insights states
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test state level geographic customers insights
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers-insights/states"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        !anylist
+        - size: !anyint
+          revenue: !anyfloat
+          state: !anystr
+          country: !anystr
+      headers:
+        content-type: application/json
+
+---
+test_name: Test customers insights cities
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test city level geographic customers insights
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers-insights/cities?batch_size=10&batch_number=1"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        !anylist
+        - size: !anyint
+          revenue: !anyfloat
+          city: !anystr
+          state: !anystr
+          country: !anystr
+      headers:
+        content-type: application/json

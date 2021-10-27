@@ -1043,6 +1043,8 @@ DAILY_SCHEDULE_INVALID = {
 BATCH_NUMBER_BAD_PARAM = "12a"
 BATCH_SIZE_BAD_PARAM = "100@"
 
+REVENUE = "revenue"
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False

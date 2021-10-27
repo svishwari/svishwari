@@ -15,7 +15,7 @@ describe("Orchestration > Audience > Create Audience", () => {
     // after login land in the overview page
     cy.location("pathname").should("eq", route.overview)
     //click on audience on side nav bar and route in audience screen
-    cy.get(selector.audiences).click()
+    cy.get(selector.nav.audiences).click()
     cy.location("pathname").should("eq", route.audiences)
     //click on add audience button
     cy.get(selector.audience.addAudiences).eq(1).click()
@@ -80,7 +80,7 @@ describe("Orchestration > Audience > Create Audience", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(5000)
     cy.location("pathname").should("contain", "insight")
-    cy.get(selector.audiences).eq(0).click()
+    cy.get(selector.nav.audiences).eq(0).click()
     // delete created audience
     cy.location("pathname").should("eq", route.audiences)
     cy.get(selector.audience.audiencelist).its("length").should("be.gt", 0)
