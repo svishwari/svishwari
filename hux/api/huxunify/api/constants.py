@@ -48,7 +48,7 @@ UNIFIED_JIRA_SERVER = "unified_jira_server"
 JIRA_API_KEY = "jira_api_key"
 UNIFIED_JIRA_API_KEY = "unified_jira_api_key"
 KEY = "key"
-BUG = "Bug"
+TICKET_TYPE_BUG = "Bug"
 
 # general defines
 ID = "id"

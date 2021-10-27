@@ -46,18 +46,18 @@ class UserSchema(Schema):
 
 
 class TicketSchema(Schema):
-    """Bug ticket schema"""
+    """Ticket schema"""
 
-    type = Str(required=True, validate=OneOf([api_c.BUG]))
+    type = Str(required=True, validate=OneOf([api_c.TICKET_TYPE_BUG]))
     summary = Str(required=True)
     description = Str(required=False)
 
 
 class TicketGetSchema(Schema):
-    """Bug ticket get schema"""
+    """Ticket get schema"""
 
     id = Int(example=1)
     key = Str(example="ABC-123")
-    type = Str(example="Bug")
+    type = Str(example=api_c.TICKET_TYPE_BUG)
     summary = Str(example="Audience and Engagement Dashboard not loading")
     description = Str(example="Description of the issue.")
