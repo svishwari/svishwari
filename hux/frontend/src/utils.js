@@ -272,3 +272,32 @@ export function saveFile(response) {
   link.click()
   URL.revokeObjectURL(link.href)
 }
+
+/**
+ * Return true if column has multiple values.
+ *
+ * @param {object[]} data - response data as an array of objects
+ * @param {string} field - field name
+ * @returns {boolean} true if column has multiple values else false
+ */
+export function arrayHasFieldWithMultipleValues(data, field) {
+  let colData = data.map((x) => x[field])
+  return Boolean(new Set(colData).size > 1)
+}
+
+/**
+ * Returns the list of objects in array as a group by Key
+ *
+ * @param {object[]} array - array of objects
+ * @param {string} key - the group by key
+ * @returns {object} - Returns the object with grouped by key and unique values
+ */
+export function groupBy(array, key) {
+  array = array.map((obj) => ({ ...obj, category: obj["category"] || "Other" }))
+  return array.reduce((hash, obj) => {
+    if (obj[key] === undefined) return hash
+    return Object.assign(hash, {
+      [obj[key]]: (hash[obj[key]] || []).concat(obj),
+    })
+  }, {})
+}

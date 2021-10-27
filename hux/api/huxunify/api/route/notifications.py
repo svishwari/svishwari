@@ -79,6 +79,52 @@ class NotificationsSearch(SwaggerView):
             "required": False,
             "default": api_c.DEFAULT_BATCH_NUMBER,
         },
+        {
+            "name": api_c.QUERY_PARAMETER_NOTIFICATION_TYPES,
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Type of Notification",
+            "example": "10",
+            "required": False,
+            "default": [],
+        },
+        {
+            "name": api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY,
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Type of Notification Category",
+            "example": "10",
+            "required": False,
+            "default": [],
+        },
+        {
+            "name": api_c.QUERY_PARAMETER_USERS,
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Users Filter",
+            "example": "10",
+            "required": False,
+            "default": [],
+        },
+        {
+            "name": api_c.START_DATE,
+            "in": "query",
+            "type": "string",
+            "description": "Start Date",
+            "example": "2021-04-10",
+            "required": False,
+        },
+        {
+            "name": api_c.END_DATE,
+            "in": "query",
+            "type": "string",
+            "description": "End Date",
+            "example": "2021-04-10",
+            "required": False,
+        },
     ]
     responses = {
         HTTPStatus.OK.value: {
@@ -118,7 +164,35 @@ class NotificationsSearch(SwaggerView):
                 str(api_c.DEFAULT_BATCH_NUMBER),
             )
         )
-
+        notification_types = request.args.get(
+            api_c.QUERY_PARAMETER_NOTIFICATION_TYPES, []
+        )
+        if notification_types and not set(
+            notification_types.split(",")
+        ).issubset(set(db_c.NOTIFICATION_TYPES)):
+            logger.error("Invalid Notification Type")
+            return {
+                "message": "Invalid or incomplete arguments received"
+            }, HTTPStatus.BAD_REQUEST
+        notification_categories = request.args.get(
+            api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY, []
+        )
+        if notification_categories and not set(
+            notification_categories.split(",")
+        ).issubset(set(api_c.NOTIFICATION_CATEGORIES)):
+            logger.error("Invalid Notification Category")
+            return {
+                "message": "Invalid or incomplete arguments received"
+            }, HTTPStatus.BAD_REQUEST
+        users = request.args.get(api_c.QUERY_PARAMETER_USERS, [])
+        if users:
+            users = users.split(",")
+        start_date = request.args.get(api_c.START_DATE, "")
+        end_date = request.args.get(api_c.END_DATE, "")
+        if start_date and end_date:
+            Validation.validate_date_range(start_date, end_date)
+            start_date = Validation.validate_date(start_date)
+            end_date = Validation.validate_date(end_date)
         if (
             batch_size is None
             or batch_number is None
@@ -145,6 +219,11 @@ class NotificationsSearch(SwaggerView):
                     batch_size=batch_size,
                     sort_order=sort_order,
                     batch_number=batch_number,
+                    notification_types=notification_types,
+                    notification_categories=notification_categories,
+                    users=users,
+                    start_date=start_date,
+                    end_date=end_date,
                 )
             ),
             HTTPStatus.OK,

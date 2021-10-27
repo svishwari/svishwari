@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use,too-many-lines
 """Paths for destinations API"""
 import datetime
 from http import HTTPStatus
@@ -27,6 +27,7 @@ from huxunifylib.connectors import (
     GoogleConnector,
     QualtricsConnector,
     AudienceAlreadyExists,
+    AuthenticationFailed,
 )
 from huxunify.api.data_connectors.aws import (
     parameter_store,
@@ -36,6 +37,7 @@ from huxunify.api.schema.destinations import (
     DestinationGetSchema,
     DestinationPatchSchema,
     DestinationPutSchema,
+    DestinationDataExtConfigSchema,
     DestinationConstantsSchema,
     DestinationValidationSchema,
     DestinationDataExtPostSchema,
@@ -352,6 +354,7 @@ class DestinationPutView(SwaggerView):
         # grab the auth details
         auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
         performance_de = None
+        campaign_de = None
         authentication_parameters = None
         database = get_db_client()
 
@@ -362,13 +365,37 @@ class DestinationPutView(SwaggerView):
         platform_type = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
         if platform_type == db_c.DELIVERY_PLATFORM_SFMC:
             SFMCAuthCredsSchema().load(auth_details)
-            performance_de = body.get(
+            sfmc_config = body.get(db_c.CONFIGURATION)
+            if not sfmc_config or not isinstance(sfmc_config, dict):
+                logger.error("%s", api_c.SFMC_CONFIGURATION_MISSING)
+                return (
+                    {"message": api_c.SFMC_CONFIGURATION_MISSING},
+                    HTTPStatus.BAD_REQUEST,
+                )
+
+            performance_de = sfmc_config.get(
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
             )
             if not performance_de:
-                logger.error("%s", api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED[0])
+                logger.error("%s", api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED)
                 return (
                     {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
+                    HTTPStatus.BAD_REQUEST,
+                )
+            campaign_de = sfmc_config.get(
+                api_c.SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION
+            )
+            if not campaign_de:
+                logger.error("%s", api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED)
+                return (
+                    {"message": api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED},
+                    HTTPStatus.BAD_REQUEST,
+                )
+            DestinationDataExtConfigSchema().load(sfmc_config)
+            if performance_de == campaign_de:
+                logger.error("%s", api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR)
+                return (
+                    {"message": api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR},
                     HTTPStatus.BAD_REQUEST,
                 )
         elif platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
@@ -407,6 +434,7 @@ class DestinationPutView(SwaggerView):
                     authentication_details=authentication_parameters,
                     added=is_added,
                     performance_de=performance_de,
+                    campaign_de=campaign_de,
                     user_name=user_name,
                     status=db_c.STATUS_SUCCEEDED,
                 )
@@ -711,30 +739,27 @@ class DestinationDataExtView(SwaggerView):
                 "message": api_c.DESTINATION_AUTHENTICATION_FAILED
             }, HTTPStatus.BAD_REQUEST
 
-        ext_list = []
-
         if (
             destination[api_c.DELIVERY_PLATFORM_TYPE]
             == db_c.DELIVERY_PLATFORM_SFMC
         ):
-            sfmc_connector = SFMCConnector(
-                auth_details=get_auth_from_parameter_store(
-                    destination[api_c.AUTHENTICATION_DETAILS],
-                    destination[api_c.DELIVERY_PLATFORM_TYPE],
+            try:
+                sfmc_connector = SFMCConnector(
+                    auth_details=get_auth_from_parameter_store(
+                        destination[api_c.AUTHENTICATION_DETAILS],
+                        destination[api_c.DELIVERY_PLATFORM_TYPE],
+                    )
                 )
-            )
-            if not sfmc_connector.check_connection():
-                logger.info("Could not validate SFMC successfully.")
+                ext_list = sfmc_connector.get_list_of_data_extensions()
+                logger.info(
+                    "Found %s data extensions for %s.",
+                    len(ext_list),
+                    destination_id,
+                )
+            except AuthenticationFailed:
                 return {
                     "message": api_c.DESTINATION_AUTHENTICATION_FAILED
                 }, HTTPStatus.FORBIDDEN
-
-            ext_list = sfmc_connector.get_list_of_data_extensions()
-            logger.info(
-                "Found %s data extensions for %s.",
-                len(ext_list),
-                destination_id,
-            )
 
         else:
             logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
@@ -746,7 +771,8 @@ class DestinationDataExtView(SwaggerView):
             jsonify(
                 sorted(
                     DestinationDataExtGetSchema().dump(ext_list, many=True),
-                    key=lambda i: i[api_c.NAME].lower(),
+                    key=lambda i: i[db_c.CREATE_TIME],
+                    reverse=True,
                 )
             ),
             HTTPStatus.OK,

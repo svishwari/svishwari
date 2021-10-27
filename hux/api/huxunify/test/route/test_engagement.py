@@ -493,11 +493,11 @@ class TestEngagementRoutes(TestCase):
         self.addCleanup(mock.patch.stopall)
 
         # write a user to the database
-        self.user_name = "felix hernandez"
-        set_user(
+        self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME)
+        self.user_doc = set_user(
             self.database,
             t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
-            "felix_hernandez@fake.com",
+            t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
             display_name=self.user_name,
         )
 
@@ -631,7 +631,7 @@ class TestEngagementRoutes(TestCase):
         # set favorite engagement
         manage_user_favorites(
             self.database,
-            t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            self.user_doc[db_c.OKTA_ID],
             db_c.ENGAGEMENTS,
             ObjectId(self.engagement_ids[0]),
         )
@@ -1111,6 +1111,7 @@ class TestEngagementRoutes(TestCase):
     def test_get_engagement_by_id_valid_id_favorite(self):
         """Test get engagement API with valid ID which is a favorite."""
 
+        # set user favorite
         engagement_id = self.engagement_ids[0]
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
