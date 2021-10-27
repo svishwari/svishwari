@@ -176,7 +176,7 @@ $drawer-data-table-padding: 9px 25px;
 .drawer-header {
   ::v-deep > .v-toolbar__content {
     height: $drawer-header-height !important;
-    border-bottom: 1px solid #d0d0ce;
+    border-bottom: 1px solid var(--v-black-lighten3);
   }
 }
 .drawer-footer {

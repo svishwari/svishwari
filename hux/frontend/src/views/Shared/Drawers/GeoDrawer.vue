@@ -2,8 +2,7 @@
   <drawer v-model="localToggle" content-padding="pa-0">
     <template #header-left>
       <div class="d-flex align-center">
-        <icon :type="title.icon" size="32" />
-        &nbsp;&nbsp;
+        <icon :type="title.icon" size="32" class="mr-2" />
         <h3 class="text-h2">
           {{ title.name }}
           <sup>

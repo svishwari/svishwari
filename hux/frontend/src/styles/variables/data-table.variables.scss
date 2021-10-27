@@ -26,7 +26,7 @@ $data-table-heading: map-get($headings, "body-2") !default;
             white-space: nowrap;
 
             i {
-              font-size: 14px !important;
+              font-size: map-get($data-table-heading, "size") !important;
               color: var(--v-primary-lighten6) !important;
             }
           }
