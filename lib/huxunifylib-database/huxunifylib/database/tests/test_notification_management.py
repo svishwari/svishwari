@@ -149,6 +149,11 @@ class NotificationManagementTest(TestCase):
             batch_size=10,
             sort_order=pymongo.DESCENDING,
             batch_number=1,
+            notification_types=[],
+            notification_categories=[],
+            users=[],
+            start_date="",
+            end_date="",
         )
 
         self.assertCountEqual(
