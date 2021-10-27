@@ -1093,7 +1093,7 @@ class CustomersInsightsCities(SwaggerView):
             Tuple[list, int]: list of spend and size by city, HTTP status code.
         """
 
-        # get auth token from request.
+        # get auth token from request
         token_response = get_token_from_request(request)
 
         batch_size = Validation.validate_integer(
