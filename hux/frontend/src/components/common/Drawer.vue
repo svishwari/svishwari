@@ -60,7 +60,6 @@
 <script>
 export default {
   name: "Drawer",
-
   props: {
     toRight: {
       type: Boolean,
@@ -113,7 +112,6 @@ export default {
     contentHeaderPadding: {
       type: String,
       required: false,
-      // default: "px-6",
     },
   },
 
@@ -178,7 +176,7 @@ $drawer-data-table-padding: 9px 25px;
 .drawer-header {
   ::v-deep > .v-toolbar__content {
     height: $drawer-header-height !important;
-    border-bottom: 7px solid #d0d0ce;
+    border-bottom: 1px solid #d0d0ce;
   }
 }
 .drawer-footer {
