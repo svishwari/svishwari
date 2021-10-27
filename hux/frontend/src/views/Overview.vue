@@ -92,7 +92,7 @@ export default {
           description:
             "Connect your data sources to enable data unification in a single location.",
           route: {
-            name: "Connections",
+            name: "DataSources",
             params: { select: true },
           },
           active: true,

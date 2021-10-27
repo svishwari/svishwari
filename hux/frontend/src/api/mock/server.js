@@ -104,11 +104,11 @@ export function makeServer({ environment = "development" } = {}) {
       defineRoutes(this)
 
       // whenever we connect from local to the dev API we will need to override
-      // the access token with one provided by dev in token.js
+      // the access token with one provided by dev in token.txt
       if (environment === "development" && config.apiUrl.includes("dev1.in")) {
         this.passthrough((request) => {
           if (request.url.includes("dev1.in")) {
-            const { TOKEN_OVERRIDE } = require("./token.js")
+            const TOKEN_OVERRIDE = require("./token.txt")["default"]
             request.requestHeaders["Authorization"] = `Bearer ${TOKEN_OVERRIDE}`
           }
           return request
