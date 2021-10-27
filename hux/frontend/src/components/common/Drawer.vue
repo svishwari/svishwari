@@ -9,7 +9,11 @@
     hide-overlay
     temporary
   >
-    <v-toolbar width="100%" class="drawer-header box-shadow-25">
+    <v-toolbar
+      width="100%"
+      class="drawer-header no-shadow border-bottom"
+      height="70"
+    >
       <v-toolbar-title :class="contentHeaderPadding">
         <slot name="header-left"></slot>
         <slot name="header-right"></slot>
