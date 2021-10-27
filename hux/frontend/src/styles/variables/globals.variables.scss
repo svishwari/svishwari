@@ -135,3 +135,6 @@ $rounded: (
 .cursor-default {
   cursor: default !important;
 }
+.border-bottom {
+  border-bottom: solid 1px var(--v-black-lighten3);
+}
