@@ -25,7 +25,6 @@ class DestinationDataExtSchema(Schema):
 
     name = fields.String(example="data_extension_name")
     data_extension_id = fields.String(example="data_extension_id")
-    create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
 
 
 class DeliveryScheduleDailySchema(Schema):

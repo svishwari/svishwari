@@ -1,7 +1,6 @@
 # pylint: disable=no-self-use,too-many-lines
 """Paths for destinations API"""
 import datetime
-from dateutil.parser import parse
 from http import HTTPStatus
 from typing import Tuple
 from flasgger import SwaggerView
@@ -391,12 +390,6 @@ class DestinationPutView(SwaggerView):
                     {"message": api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED},
                     HTTPStatus.BAD_REQUEST,
                 )
-            performance_de[api_c.CREATE_TIME] = parse(
-                performance_de.get(api_c.CREATE_TIME)
-            )
-            campaign_de[api_c.CREATE_TIME] = parse(
-                campaign_de.get(api_c.CREATE_TIME)
-            )
             DestinationDataExtConfigSchema().load(sfmc_config)
             if performance_de == campaign_de:
                 logger.error("%s", api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR)
