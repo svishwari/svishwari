@@ -257,7 +257,7 @@ class IDROverview(SwaggerView):
 
         token_response = get_token_from_request(request)
 
-        # TODO - when the CDP endpoint for getting the max and min date rnge
+        # TODO - when the CDP endpoint for getting the max and min date range
         #  is available, we will call that instead of iterating all events to get them.
         # get IDR overview
         idr_overview = get_idr_overview(
@@ -1068,6 +1068,7 @@ class CustomersInsightsCities(SwaggerView):
         HTTPStatus.OK.value: {
             "schema": {
                 "type": "array",
+                "items": CustomersInsightsCitiesSchema,
             },
             "description": "Customer Insights by cities.",
         },

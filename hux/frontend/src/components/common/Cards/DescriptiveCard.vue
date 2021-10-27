@@ -5,11 +5,12 @@
     :class="{ 'in-active': disabled }"
     :height="height"
     :width="width"
+    :to="to"
   >
     <div v-if="$slots.top" class="card-status pa-3 pb-0">
       <slot name="top" />
       <v-menu close-on-click>
-        <template #activator="{ on }">
+        <template #activator="{ on, attrs }">
           <v-icon
             v-if="actionMenu"
             class="d-flex float-right"
@@ -20,8 +21,8 @@
             mdi-dots-vertical
           </v-icon>
         </template>
-        <div class="black--text text-darken-4 cursor-pointer px-4 py-2 white">
-          Activate
+        <div class="black--text text-darken-4 cursor-pointer white">
+          <slot name="action-menu-options"></slot>
         </div>
       </v-menu>
       <div v-if="comingSoon" class="coming-soon d-flex float-right mt-n4">
@@ -31,14 +32,27 @@
 
     <div v-if="icon" class="d-flex justify-center mt-2 mr-8">
       <div class="dot">
-        <icon :type="icon" :size="44" color="primary" class="d-block" />
+        <logo
+          v-if="logoOption"
+          :type="icon"
+          :size="44"
+          :color="iconColor"
+          class="d-block"
+        />
+        <icon
+          v-else
+          :type="icon"
+          :size="44"
+          :color="iconColor"
+          class="d-block"
+        />
       </div>
     </div>
 
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="text-h4 px-3 pb-2 text-ellipsis d-block title text-h4"
+          class="text-h4 px-3 pb-2 pt-2 text-ellipsis d-block title text-h4"
           :class="disabled ? 'black--text text--darken-4' : 'primary--text'"
           :style="{ 'padding-top': !icon ? '56px' : null }"
           data-e2e="card-title"
@@ -75,6 +89,7 @@
 <script>
 import Icon from "@/components/common/Icon"
 import Tooltip from "@/components/common/Tooltip"
+import Logo from "@/components/common/Logo"
 
 export default {
   name: "DescriptiveCard",
@@ -82,6 +97,7 @@ export default {
   components: {
     Icon,
     Tooltip,
+    Logo,
   },
 
   props: {
@@ -121,6 +137,26 @@ export default {
     width: {
       type: [Number, String],
       required: true,
+    },
+    to: {
+      type: Object,
+      required: false,
+      default: () => {},
+    },
+    dotOption: {
+      type: String,
+      required: false,
+      default: "Activate",
+    },
+    logoOption: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    iconColor: {
+      type: String,
+      required: false,
+      default: "Primary",
     },
   },
 }

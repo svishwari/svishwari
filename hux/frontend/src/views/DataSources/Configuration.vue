@@ -53,6 +53,7 @@
             :is-already-added="dataSource.is_added"
             class="my-3"
             data-e2e="dataSourcesAddList"
+            :requested-button="dataSource.status !== 'Active'"
             @click="onDataSourceClick(dataSource.id)"
           />
 
@@ -70,6 +71,7 @@
             :is-available="dataSource.is_enabled"
             :is-already-added="dataSource.is_added"
             class="my-3"
+            :button-text="true"
             hide-button
           >
             <span class="font-weight-light letter-spacing-sm"
@@ -121,7 +123,7 @@ export default {
     },
     dataSourcesBtnText() {
       let count = this.selectedDataSourceIds.length
-      return `Add ${count} data source${count > 1 ? "s" : ""}`
+      return `Request ${count} data source${count > 1 ? "s" : ""}`
     },
 
     enabledDataSources() {

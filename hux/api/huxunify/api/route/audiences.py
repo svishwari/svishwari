@@ -1,8 +1,10 @@
 """Paths for Orchestration API"""
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from http import HTTPStatus
+from itertools import repeat
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Union
 
 import pandas as pd
 from flasgger import SwaggerView
@@ -62,6 +64,76 @@ audience_bp = Blueprint(api_c.AUDIENCE_ENDPOINT, import_name=__name__)
 def before_request():
     """Protect all of the audiences endpoints."""
     pass  # pylint: disable=unnecessary-pass
+
+
+def get_batch_customers(
+    cdp_connector: connector_cdp,
+    location_details: dict,
+    batch_size: int = api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
+    offset: int = 0,
+) -> Union[pd.DataFrame, None]:
+    """Fetch audience batch using connector asynchronously.
+
+    Args:
+        cdp_connector (connector_cdp): Instance of CDP connector.
+        location_details (dict): Audience filters to be passed.
+        batch_size (int, Optional): Batch size to be fetched.
+        offset (int, Optional): Offset of the batch to be fetched.
+
+    Returns:
+        pd.DataFrame: Data frame of batch information.
+    """
+    return cdp_connector.read_batch(
+        location_details=location_details,
+        batch_size=batch_size,
+        offset=offset,
+    )
+
+
+def get_audience_data_async(
+    cdp_connector: connector_cdp,
+    actual_size: int,
+    location_details: dict,
+    batch_size: int = api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
+) -> list:
+    """Creates a list of tasks, this is useful for asynchronous batch wise
+    calls to a task.
+
+    Args:
+        cdp_connector (connector_cdp): Instance of CDP connector.
+        actual_size (int): Actual size of the audience.
+        location_details (dict): Audience filters to be passed.
+        batch_size (int, Optional): Size of batch to be retrieved.
+
+    Returns:
+        list: List of each batch's data.
+    """
+    offset = 0
+    if actual_size <= batch_size:
+        return [
+            get_batch_customers(
+                cdp_connector, location_details, actual_size, offset
+            )
+        ]
+    batch_sizes = []
+    offsets = []
+    while offset + batch_size <= actual_size:
+        batch_sizes.append(batch_size)
+        offsets.append(offset)
+        offset += batch_size
+    if actual_size % batch_size != 0:
+        batch_sizes.append(batch_size)
+        offsets.append(offset)
+    with ThreadPoolExecutor(
+        max_workers=api_c.MAX_WORKERS_THREAD_POOL
+    ) as executor:
+        return executor.map(
+            get_batch_customers,
+            repeat(cdp_connector),
+            repeat(location_details),
+            batch_sizes,
+            offsets,
+        )
 
 
 @add_view_to_blueprint(
@@ -138,6 +210,8 @@ class AudienceDownload(SwaggerView):
             ),
         }
 
+        token_response = get_token_from_request(request)
+
         if not download_types.get(download_type):
             return {
                 "message": "Invalid download type or download type not supported"
@@ -177,14 +251,17 @@ class AudienceDownload(SwaggerView):
                 config.RETURN_EMPTY_AUDIENCE_FILE,
                 download_type,
             )
-            cdp = connector_cdp.ConnectorCDP(config.CDP_SERVICE)
-            data_batches = cdp.read_batches(
+            cdp = connector_cdp.ConnectorCDP(access_token=token_response[0])
+
+            data_batches = get_audience_data_async(
+                cdp,
+                audience.get(api_c.SIZE),
+                batch_size=api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
                 location_details={
                     api_c.AUDIENCE_FILTERS: audience.get(
                         api_c.AUDIENCE_FILTERS
-                    ),
+                    )
                 },
-                batch_size=int(api_c.CUSTOMERS_DEFAULT_BATCH_SIZE),
             )
 
         audience_file_name = (

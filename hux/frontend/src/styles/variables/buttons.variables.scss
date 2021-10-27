@@ -26,3 +26,11 @@ $btn-active-opacity: 0.05;
 .v-btn--text {
   padding: 0 !important;
 }
+
+.v-btn.v-btn--disabled.v-btn--has-bg {
+  background-color: var(--v-black-lighten1) !important;
+  color: var(--v-black-lighten3) !important;
+}
+.v-btn.v-btn--disabled .v-icon {
+  color: inherit !important;
+}

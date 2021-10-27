@@ -46,13 +46,14 @@ class NotificationSchema(Schema):
                 ]
             )
         ],
-        required=False,
+        required=True,
         example=api_c.DELIVERY_TAG,
     )
     username = Str(
         attribute="username",
         required=True,
         example="Username",
+        allow_none=False,
     )
 
     @post_dump

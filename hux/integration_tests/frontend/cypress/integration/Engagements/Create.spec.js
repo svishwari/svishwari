@@ -14,7 +14,7 @@ describe("Orchestration > Engagement > Create Engagement", () => {
     // after login land in the overview page
     cy.location("pathname").should("eq", route.overview)
     //click on engagement on side nav bar and route in engagement screen
-    cy.get(selector.engagements).click()
+    cy.get(selector.nav.engagements).click()
     cy.location("pathname").should("eq", route.engagements)
     //click on add engagement button
     cy.get(selector.engagement.addEngagements).click()
@@ -43,8 +43,8 @@ describe("Orchestration > Engagement > Create Engagement", () => {
     cy.get(selector.engagement.exitDrawer).click()
   })
 
-  it("should add destination data extensions and verify the configuration", () => {
-    // TODO: add a check that it requires data extension name before proceeding
+  // TODO in HUS-1373 - add a check that it requires data extension name before proceeding
+  it.skip("should add destination data extensions and verify the configuration", () => {
     cy.get(selector.engagement.addDestination).click()
     cy.get("body").then(($body) => {
       if ($body.find(selector.engagement.salesForceAddButton).length > 0) {

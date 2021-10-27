@@ -1,7 +1,5 @@
 # pylint: disable=no-self-use
 """Schemas for the Destinations API"""
-import datetime
-
 from flask_marshmallow import Schema
 from marshmallow import fields, pre_load, ValidationError
 from marshmallow.validate import OneOf, Range, Equal
@@ -18,6 +16,13 @@ class DataExtensionSchema(Schema):
     """Engagement Audience Destination Data Extension Schema"""
 
     data_extension_name = fields.String()
+
+
+class DestinationDataExtSchema(Schema):
+    """Destination data extension schema class"""
+
+    name = fields.String(example="data_extension_name")
+    data_extension_id = fields.String(example="data_extension_id")
 
 
 class DeliveryScheduleDailySchema(Schema):
@@ -132,6 +137,17 @@ class DeliveryScheduleSchema(Schema):
         return data
 
 
+class DestinationDataExtConfigSchema(Schema):
+    """Destination data extension configuration schema class"""
+
+    performance_metrics_data_extension = fields.Nested(
+        DestinationDataExtSchema, required=True
+    )
+    campaign_activity_data_extension = fields.Nested(
+        DestinationDataExtSchema, required=True
+    )
+
+
 class DestinationGetSchema(Schema):
     """Destinations get schema class"""
 
@@ -169,14 +185,8 @@ class DestinationGetSchema(Schema):
     campaigns = fields.Int(
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
-    perf_data_extension = fields.Dict(
-        attribute=db_c.PERFORMANCE_METRICS_DATA_EXTENSION,
-        example={
-            api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
-            api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
-        },
-        required=False,
-        allow_none=True,
+    configuration = fields.Nested(
+        DestinationDataExtConfigSchema, required=False, allow_none=True
     )
     is_added = fields.Bool(attribute="added")
     is_enabled = fields.Bool(attribute="enabled")
@@ -222,14 +232,8 @@ class DestinationPutSchema(Schema):
     """Destination put schema class"""
 
     authentication_details = fields.Field()
-    perf_data_extension = fields.Dict(
-        attribute=api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION,
-        example={
-            api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
-            api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
-        },
-        required=False,
-        allow_none=True,
+    configuration = fields.Nested(
+        DestinationDataExtConfigSchema, required=False
     )
 
 
@@ -638,7 +642,5 @@ class DestinationDataExtGetSchema(Schema):
         attribute="CustomerKey", example="data_extension_id"
     )
     create_time = DateTimeWithZ(
-        attribute="createdDate",
-        required=True,
-        default=datetime.datetime.utcnow(),
+        attribute="createdDate", required=False, default=None, allow_none=True
     )
