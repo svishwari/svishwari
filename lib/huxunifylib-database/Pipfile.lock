@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "37f2fe2ed130f1a63193aede53ec3e4d39e35c9e7b152ac78fc46b21f20d6e2a"
+            "sha256": "3eacc7bf7fc5f2c5fbbe39cc1b471b9d154383a0eb1d2f9bd22d045d0dab42ac"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -11,11 +11,6 @@
             {
                 "name": "pypi",
                 "url": "https://pypi.python.org/simple",
-                "verify_ssl": true
-            },
-            {
-                "name": "jfrog",
-                "url": "$ARTIFACTORY_PYTHON_READ",
                 "verify_ssl": true
             }
         ]
@@ -32,14 +27,6 @@
         "huxunifylib-database": {
             "editable": true,
             "path": "."
-        },
-        "huxunifylib-util": {
-            "hashes": [
-                "sha256:6e91f2fddbc405a6482cbc678b721bfb8fe0971158a92a9d066652fb49f79413",
-                "sha256:87bb2a4a44767accd390e3fa43412171adcd21c3c82b740491675b20610140fe"
-            ],
-            "index": "jfrog",
-            "version": "==0.1.34"
         },
         "hypothesis": {
             "hashes": [
@@ -114,13 +101,6 @@
             ],
             "index": "pypi",
             "version": "==1.3.4"
-        },
-        "phonenumbers": {
-            "hashes": [
-                "sha256:16c8f6d682ab5be550af2f4a2f81f0a90c8743e37babc7465edcefc106d0a1eb",
-                "sha256:f426d419aabf6366c27ef1193918cc55217ef0e8be8f09cbf0667131037ca229"
-            ],
-            "version": "==8.12.35"
         },
         "pymongo": {
             "hashes": [
@@ -280,15 +260,6 @@
             ],
             "index": "pypi",
             "version": "==2.8.2"
-        },
-        "typing-extensions": {
-            "hashes": [
-                "sha256:49f75d16ff11f1cd258e1b988ccff82a3ca5570217d7ad8c5f48205dd99a677e",
-                "sha256:d8226d10bc02a29bcc81df19a26e56a9647f8b0a6d4a83924139f4a8b01f17b7",
-                "sha256:f1d25edafde516b146ecd0613dabcc61409817af4766fbbcfb8d1ad4ec441a34"
-            ],
-            "index": "pypi",
-            "version": "==3.10.0.2"
         }
     },
     "develop": {
@@ -347,6 +318,14 @@
             ],
             "markers": "python_version >= '3.6'",
             "version": "==8.0.3"
+        },
+        "colorama": {
+            "hashes": [
+                "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b",
+                "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"
+            ],
+            "markers": "sys_platform == 'win32' and sys_platform == 'win32' and platform_system == 'Windows'",
+            "version": "==0.4.4"
         },
         "dparse": {
             "hashes": [
@@ -649,11 +628,11 @@
         },
         "tomli": {
             "hashes": [
-                "sha256:c6ce0015eb38820eaf32b5db832dbc26deb3dd427bd5f6556cf0acac2c214fee",
-                "sha256:f04066f68f5554911363063a30b108d2b5a5b1a010aa8b6132af78489fe3aade"
+                "sha256:8dd0e9524d6f386271a36b41dbf6c57d8e32fd96fd22b6584679dc569d20899f",
+                "sha256:a5b75cb6f3968abb47af1b40c1819dc519ea82bcc065776a866e8d74c5ca9442"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==1.2.2"
+            "version": "==1.2.1"
         },
         "typed-ast": {
             "hashes": [

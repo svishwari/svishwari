@@ -3,21 +3,14 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-[[source]]
-url = "$ARTIFACTORY_PYTHON_READ"
-verify_ssl = true
-name = "jfrog"
-
 [packages]
 pymongo = "*"
 pandas = "*"
 tenacity = "*"
 huxunifylib-database = {path = ".", editable = true}
-huxunifylib-util = {version="*", index="jfrog"}
 hypothesis = "*"
 python-dateutil = "*"
 types-python-dateutil = "*"
-typing-extensions = "*"
 
 [dev-packages]
 mongomock = "*"

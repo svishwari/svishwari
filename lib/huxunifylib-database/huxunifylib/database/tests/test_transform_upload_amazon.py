@@ -7,7 +7,7 @@ from pandas._testing import assert_frame_equal
 
 import huxunifylib.database.constants as dc
 from huxunifylib.database.transform import transform_dataframe as td
-from huxunifylib.util.general.const import HuxAdvException
+from huxunifylib.database.db_exceptions import HuxAdvException
 
 
 class TestUploadFieldsAmazon(unittest.TestCase):

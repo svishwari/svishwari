@@ -9,8 +9,7 @@ from huxunifylib.database.transform.const import (
     FILE_UPLOAD_GOOGLE_FIELD_MAP,
     FILE_UPLOAD_AMAZON_FIELD_MAP,
 )
-
-from huxunifylib.util.general.const import HuxAdvException
+from huxunifylib.database.db_exceptions import HuxAdvException
 
 
 def _get_full_match_columns_by_type(
