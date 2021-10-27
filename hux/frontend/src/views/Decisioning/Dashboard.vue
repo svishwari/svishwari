@@ -409,6 +409,7 @@ export default {
     window.addEventListener("resize", this.sizeHandler)
   },
   destroyed() {
+    this.$store.dispatch("models/clearModelValues")
     window.removeEventListener("resize", this.sizeHandler)
   },
 
