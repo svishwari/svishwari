@@ -643,7 +643,7 @@ def update_delivery_platform(
     ):
         update_doc[c.CONFIGURATION] = {
             c.PERFORMANCE_METRICS_DATA_EXTENSION: performance_de,
-            c.CAMPAIGN_ACTIVITY_DATA_EXTENSION: campaign_de
+            c.CAMPAIGN_ACTIVITY_DATA_EXTENSION: campaign_de,
         }
 
     if added is not None:
