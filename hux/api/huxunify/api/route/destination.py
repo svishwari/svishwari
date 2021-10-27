@@ -366,7 +366,7 @@ class DestinationPutView(SwaggerView):
         if platform_type == db_c.DELIVERY_PLATFORM_SFMC:
             SFMCAuthCredsSchema().load(auth_details)
             sfmc_config = body.get(db_c.CONFIGURATION)
-            if not sfmc_config:
+            if not sfmc_config or not isinstance(sfmc_config, dict):
                 logger.error("%s", api_c.SFMC_CONFIGURATION_MISSING)
                 return (
                     {"message": api_c.SFMC_CONFIGURATION_MISSING},
