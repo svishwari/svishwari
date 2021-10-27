@@ -3,7 +3,7 @@
 
 // Variables
 $data-table-regular-header-height: 32px !default;
-$data-table-regular-row-height: 32px !default;
+$data-table-regular-row-height: 40px !default;
 $data-table-mobile-row-header-font-weight: 400 !default;
 $data-table-row-header-font-weight: 400 !default;
 
@@ -24,6 +24,11 @@ $data-table-heading: map-get($headings, "body-2") !default;
             font-weight: map-get($data-table-heading, "weight");
             letter-spacing: map-get($data-table-heading, "letter-spacing");
             white-space: nowrap;
+
+            i {
+              font-size: 14px !important;
+              color: var(--v-primary-lighten6) !important;
+            }
           }
         }
       }

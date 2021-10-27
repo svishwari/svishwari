@@ -109,7 +109,7 @@ export default {
     contentHeaderPadding: {
       type: String,
       required: false,
-      default: "px-6",
+      // default: "px-6",
     },
   },
 
@@ -164,7 +164,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$drawer-header-height: 64px;
+$drawer-header-height: 70px;
 $drawer-footer-height: 80px;
 $drawer-data-table-padding: 9px 25px;
 
@@ -174,6 +174,7 @@ $drawer-data-table-padding: 9px 25px;
 .drawer-header {
   ::v-deep > .v-toolbar__content {
     height: $drawer-header-height !important;
+    border-bottom: 7px solid #d0d0ce;
   }
 }
 .drawer-footer {
