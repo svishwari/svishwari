@@ -2,5 +2,9 @@
   "chromeWebSecurity": false,
   "video": false,
   "viewportWidth": 1440,
-  "viewportHeight": 900
+  "viewportHeight": 900,
+  "env": {
+    "USER_EMAIL": "rahul.g2510@outlook.com",
+    "USER_PASSWORD": "L0nd0n@2906"
+  }
 }
