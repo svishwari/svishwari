@@ -21,11 +21,7 @@
           <template slot="top">
             <status
               :icon-size="18"
-              :status="
-                destination.status === 'Active'
-                  ? 'Active'
-                  : destination.status || ''
-              "
+              :status="destination.status"
               collapsed
               class="d-flex float-left"
               data-e2e="model-status"
@@ -65,7 +61,7 @@
       right-btn-text="Yes, remove it"
       data-e2e="remove-destination-confirm"
       :is-disabled="
-        selectedDestination.status != 'Pending' ? !enableConfirm : false
+        selectedDestination.status != 'Requested' ? !enableConfirm : false
       "
       @onCancel="confirmModal = !confirmModal"
       @onConfirm="confirmRemoval()"
@@ -79,7 +75,7 @@
             font-weight-regular
           "
         >
-          <template v-if="selectedDestination.status === 'Pending'">
+          <template v-if="selectedDestination.status === 'Requested'">
             Are you sure you want to remove this pending destination?
           </template>
           <template v-else>
