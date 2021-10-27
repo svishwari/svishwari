@@ -8,7 +8,7 @@ export default [
     is_ad_platform: true,
     create_time: "2021-06-03T23:04:59.356Z",
     update_time: "2021-06-03T23:04:59.356Z",
-    status: "Pending",
+    status: "Requested",
   },
   {
     name: "Adobe Experience",
@@ -19,7 +19,7 @@ export default [
     is_ad_platform: false,
     create_time: "2021-06-03T23:04:59.592Z",
     update_time: "2021-06-03T23:04:59.592Z",
-    status: "Pending",
+    status: "Requested",
   },
   {
     name: "SAP",
@@ -30,7 +30,7 @@ export default [
     is_ad_platform: false,
     create_time: "2021-06-03T23:05:00.068Z",
     update_time: "2021-06-03T23:05:00.068Z",
-    status: "Pending",
+    status: "Requested",
   },
   {
     name: "Litmus",
@@ -41,7 +41,7 @@ export default [
     is_ad_platform: false,
     create_time: "2021-06-03T23:05:00.544Z",
     update_time: "2021-06-03T23:05:00.544Z",
-    status: "Pending",
+    status: "Requested",
   },
   {
     name: "Fullstory",
@@ -52,7 +52,7 @@ export default [
     is_ad_platform: false,
     create_time: "2021-06-03T23:05:00.779Z",
     update_time: "2021-06-03T23:05:00.779Z",
-    status: "Pending",
+    status: "Requested",
   },
   {
     name: "QuantumMetric",
@@ -63,7 +63,7 @@ export default [
     is_ad_platform: false,
     create_time: "2021-06-03T23:05:01.018Z",
     update_time: "2021-06-03T23:05:01.018Z",
-    status: "Pending",
+    status: "Requested",
   },
   {
     name: "Medallia",
@@ -74,7 +74,7 @@ export default [
     is_ad_platform: false,
     create_time: "2021-06-03T23:05:01.253Z",
     update_time: "2021-06-03T23:05:01.253Z",
-    status: "Pending",
+    status: "Requested",
   },
   {
     name: "Mailchimp",
@@ -85,7 +85,7 @@ export default [
     is_ad_platform: false,
     create_time: "2021-06-03T23:05:01.492Z",
     update_time: "2021-06-03T23:05:01.492Z",
-    status: "Pending",
+    status: "Requested",
   },
   {
     name: "Qualtrics",
@@ -97,7 +97,7 @@ export default [
     create_time: "2021-06-03T23:05:00.305Z",
     update_time: "2021-09-23T19:10:20.794Z",
     updated_by: "Moaz Mansour",
-    status: "Succeeded",
+    status: "Requested",
   },
   {
     name: "Google Ads",
@@ -109,7 +109,7 @@ export default [
     create_time: "2021-06-03T23:04:59.119Z",
     update_time: "2021-09-28T13:01:13.950Z",
     updated_by: "test user",
-    status: "Succeeded",
+    status: "Active",
   },
   {
     name: "SendGrid by Twilio",
@@ -121,7 +121,7 @@ export default [
     create_time: "2021-06-03T23:04:59.828Z",
     update_time: "2021-10-01T11:18:51.750Z",
     updated_by: "Mohit Bansal",
-    status: "Succeeded",
+    status: "Active",
   },
   {
     name: "Facebook",
@@ -133,7 +133,7 @@ export default [
     create_time: "2021-06-03T23:04:58.882Z",
     update_time: "2021-10-01T18:17:56.227Z",
     updated_by: "Moaz Mansour",
-    status: "Succeeded",
+    status: "Active",
   },
   {
     name: "Salesforce Marketing Cloud",
@@ -149,6 +149,6 @@ export default [
     create_time: "2021-06-03T23:04:58.633Z",
     update_time: "2021-09-23T19:01:16.897Z",
     updated_by: "Rahul Goel",
-    status: "Succeeded",
+    status: "Active",
   },
 ]
