@@ -10,7 +10,7 @@
     <div v-if="$slots.top" class="card-status pa-3 pb-0">
       <slot name="top" />
       <v-menu close-on-click>
-        <template #activator="{ on }">
+        <template #activator="{ on, attrs }">
           <v-icon
             v-if="actionMenu"
             class="d-flex float-right"

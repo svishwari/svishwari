@@ -2,8 +2,8 @@
 
 exports[`Drawer Drawer calls function on close 1`] = `
 <v-navigation-drawer-stub app="true" mobilebreakpoint="1264" hideoverlay="true" floating="true" height="100vh" minivariantwidth="56" right="true" src="" tag="nav" temporary="true" width="600" style="transition-duration: 0.5s;">
-  <v-toolbar-stub width="100%" tag="header" extensionheight="48" src="" class="drawer-header box-shadow-25">
-    <v-toolbar-title-stub> </v-toolbar-title-stub>
+  <v-toolbar-stub height="70" width="100%" tag="header" extensionheight="48" src="" class="drawer-header no-shadow border-bottom">
+    <v-toolbar-title-stub class="px-6"> </v-toolbar-title-stub>
     <!---->
   </v-toolbar-stub>
   <v-progress-linear-stub color="primary" value="0" buffervalue="100" height="4"></v-progress-linear-stub>
