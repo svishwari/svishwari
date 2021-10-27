@@ -24,7 +24,7 @@ const mutations = {
   },
 
   SET_ONE(state, item) {
-    Vue.set(state.items, item)
+    Vue.set(state.items,item.id, item)
   },
 
   SET_TOTAL(state, item) {
@@ -62,9 +62,9 @@ const actions = {
     }
   },
 
-  async get({ commit }, id) {
+  async getById({ commit }, id) {
     try {
-      const response = await api.notifications.find(id)
+      const response = await api.notifications.getSingleNotification(id)
       commit("SET_ONE", response.data)
     } catch (error) {
       handleError(error)
