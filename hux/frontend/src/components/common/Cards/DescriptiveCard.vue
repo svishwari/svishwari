@@ -163,6 +163,10 @@ export default {
   }
   .description {
     min-height: 36px;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+    overflow: hidden !important;
+    display: -webkit-box !important;
   }
 }
 </style>
