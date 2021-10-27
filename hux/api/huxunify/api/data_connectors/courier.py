@@ -444,7 +444,7 @@ def get_destination_config(
         MongoDBCredentials.MONGO_DB_PORT.name: str(config.MONGO_DB_PORT),
         MongoDBCredentials.MONGO_DB_USERNAME.name: config.MONGO_DB_USERNAME,
         MongoDBCredentials.MONGO_SSL_CERT.name: api_const.AUDIENCE_ROUTER_CERT_PATH,
-        api_const.CDP_SERVICE_URL: config.CDP_SERVICE,
+        api_const.CDP_SERVICE: config.CDP_SERVICE,
         **ds_env_dict,
         **okta_env_dict,
     }
