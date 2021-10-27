@@ -22,6 +22,23 @@ describe("Home", () => {
   })
 
   it("should have a total customers chart", () => {
-    cy.get(selector.home.totalCustomersChart).its("length").should("gt", 0)
+    cy.get(selector.home.totalCustomersChart)
+      .its("length")
+      .should("gt", 0)
+  })
+
+  it("should have the latest alerts and notifications", () => {
+    cy.get(selector.home.latestNotifications).should("exist")
+
+    cy.get(selector.home.latestNotifications).find("table tr")
+      .its("length")
+      .should("gt", 1)
+
+    cy.get(selector.home.latestNotifications).find("h3")
+      .contains("Latest alerts")
+
+    cy.get(selector.home.allNotificationsLink)
+      .should("have.attr", "href")
+      .and("include", route.notifications)
   })
 })

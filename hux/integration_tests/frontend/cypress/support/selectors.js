@@ -57,6 +57,8 @@ export default {
   home: {
     welcomeBanner: "[data-e2e='welcome-banner']",
     totalCustomersChart: "[data-e2e='total-customers-chart']",
+    latestNotifications: "[data-e2e='latest-notifications']",
+    allNotificationsLink: "[data-e2e='all-notifications-link']",
   },
 
   // data sources
