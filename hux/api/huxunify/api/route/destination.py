@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use,too-many-lines
 """Paths for destinations API"""
 import datetime
 from http import HTTPStatus
@@ -37,6 +37,7 @@ from huxunify.api.schema.destinations import (
     DestinationGetSchema,
     DestinationPatchSchema,
     DestinationPutSchema,
+    DestinationDataExtConfigSchema,
     DestinationConstantsSchema,
     DestinationValidationSchema,
     DestinationDataExtPostSchema,
@@ -353,6 +354,7 @@ class DestinationPutView(SwaggerView):
         # grab the auth details
         auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
         performance_de = None
+        campaign_de = None
         authentication_parameters = None
         database = get_db_client()
 
@@ -363,13 +365,37 @@ class DestinationPutView(SwaggerView):
         platform_type = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
         if platform_type == db_c.DELIVERY_PLATFORM_SFMC:
             SFMCAuthCredsSchema().load(auth_details)
-            performance_de = body.get(
+            sfmc_config = body.get(db_c.CONFIGURATION)
+            if not sfmc_config or not isinstance(sfmc_config, dict):
+                logger.error("%s", api_c.SFMC_CONFIGURATION_MISSING)
+                return (
+                    {"message": api_c.SFMC_CONFIGURATION_MISSING},
+                    HTTPStatus.BAD_REQUEST,
+                )
+
+            performance_de = sfmc_config.get(
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
             )
             if not performance_de:
-                logger.error("%s", api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED[0])
+                logger.error("%s", api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED)
                 return (
                     {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
+                    HTTPStatus.BAD_REQUEST,
+                )
+            campaign_de = sfmc_config.get(
+                api_c.SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION
+            )
+            if not campaign_de:
+                logger.error("%s", api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED)
+                return (
+                    {"message": api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED},
+                    HTTPStatus.BAD_REQUEST,
+                )
+            DestinationDataExtConfigSchema().load(sfmc_config)
+            if performance_de == campaign_de:
+                logger.error("%s", api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR)
+                return (
+                    {"message": api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR},
                     HTTPStatus.BAD_REQUEST,
                 )
         elif platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
@@ -408,6 +434,7 @@ class DestinationPutView(SwaggerView):
                     authentication_details=authentication_parameters,
                     added=is_added,
                     performance_de=performance_de,
+                    campaign_de=campaign_de,
                     user_name=user_name,
                     status=db_c.STATUS_SUCCEEDED,
                 )
