@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 """This module contains connector defines."""
+import os
 import random
 
 from huxunifylib.database import constants as db_c
@@ -123,7 +124,6 @@ CONTACT_PREFERENCES = "contact_preferences"
 IDENTITY_RESOLUTION = "identity_resolution"
 POPULATION_PERCENTAGE = "population_percentage"
 INCOME = "income"
-CDP_SERVICE_URL = "CDP_SERVICE_URL"
 COUNT = "count"
 AVG_SPENT_WOMEN = "avg_spent_women"
 AVG_SPENT_MEN = "avg_spent_men"
@@ -825,6 +825,8 @@ GEOGRAPHICAL = "geo"
 CUSTOMERS_API_HEADER_KEY = "x-api-key"
 CUSTOMERS_DEFAULT_BATCH_SIZE = 1000
 CUSTOMER_COUNT = "customer_count"
+
+MAX_WORKERS_THREAD_POOL = os.cpu_count() * 1 + 1
 
 # Demographic
 CITIES_DEFAULT_BATCH_SIZE = 100
