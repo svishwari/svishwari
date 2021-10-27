@@ -1068,6 +1068,7 @@ class CustomersInsightsCities(SwaggerView):
         HTTPStatus.OK.value: {
             "schema": {
                 "type": "array",
+                "items": CustomersInsightsCitiesSchema,
             },
             "description": "Customer Insights by cities.",
         },
