@@ -1043,6 +1043,8 @@ DAILY_SCHEDULE_INVALID = {
 BATCH_NUMBER_BAD_PARAM = "12a"
 BATCH_SIZE_BAD_PARAM = "100@"
 
+REVENUE = "revenue"
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False
@@ -1076,3 +1078,15 @@ def dataframe_generator() -> Generator[pd.DataFrame, None, None]:
     """
 
     yield pd.DataFrame(CUSTOMER_PROFILE_AUDIENCES_RESPONSE.get(api_c.BODY))
+
+
+def dataframe_method() -> pd.DataFrame:
+    """Method returning data batch from CDP API service.
+
+    Args:
+
+
+    Returns:
+        pd.DataFrame: Data batch.
+    """
+    return pd.DataFrame(CUSTOMER_PROFILE_AUDIENCES_RESPONSE.get(api_c.BODY))

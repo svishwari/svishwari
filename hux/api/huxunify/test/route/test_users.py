@@ -19,6 +19,7 @@ from huxunifylib.database.user_management import set_user
 from huxunify.app import create_app
 
 from huxunify.api import constants as api_c
+from huxunify.api.route.utils import get_user_favorites
 from huxunify.api.schema.user import UserSchema
 
 import huxunify.test.constants as t_c
@@ -296,6 +297,22 @@ class TestUserRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual({api_c.MESSAGE: api_c.USER_NOT_FOUND}, response.json)
+
+    def test_get_user_favorites(self):
+        """Test getting user favorites"""
+        self.assertFalse(
+            get_user_favorites(
+                self.database,
+                self.user_info[db_c.USER_DISPLAY_NAME],
+                db_c.ENGAGEMENTS,
+            )
+        )
+
+    def test_get_user_favorites_user_does_not_exist(self):
+        """Test getting user favorites with a user that does not exist."""
+        self.assertFalse(
+            get_user_favorites(self.database, None, db_c.ENGAGEMENTS)
+        )
 
     @mock.patch("huxunify.api.route.user.JiraConnection")
     def test_create_jira_issue(self, mock_jira: MagicMock):
