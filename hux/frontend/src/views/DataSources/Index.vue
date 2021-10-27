@@ -79,7 +79,7 @@ import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
-import HuxEmpty from "@/components/common/screens/HuxEmpty"
+import HuxEmpty from "@/components/common/screens/Empty"
 import DataSourceConfiguration from "@/views/DataSources/Configuration"
 
 export default {

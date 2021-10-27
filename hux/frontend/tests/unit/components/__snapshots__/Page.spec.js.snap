@@ -1,12 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Page Page displays a default 1`] = `
-<div>
-  <div>Header slot</div>
-  <div class="container"></div>
-</div>
-`;
-
 exports[`Page Should have content in footer slot 1`] = `
 <div>
   <div class="container"></div>

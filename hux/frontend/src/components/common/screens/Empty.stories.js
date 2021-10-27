@@ -1,4 +1,4 @@
-import HuxEmpty from "./HuxEmpty.vue"
+import HuxEmpty from "./Empty.vue"
 import HuxButton from "../huxButton.vue"
 import AllIcons from "@/stories/icons/Icons"
 

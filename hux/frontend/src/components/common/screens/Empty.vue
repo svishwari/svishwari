@@ -21,7 +21,7 @@
 import Icon from "@/components/common/Icon"
 
 export default {
-  name: "HuxEmpty",
+  name: "Empty",
 
   components: {
     Icon,
