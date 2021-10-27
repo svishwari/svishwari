@@ -129,7 +129,7 @@ class DataSourceSearch(SwaggerView):
             data_source.update(
                 {
                     db_c.CATEGORY: api_c.CDP_DATA_SOURCE_CATEGORY_MAP.get(
-                        data_source[api_c.TYPE]
+                        data_source[api_c.TYPE], db_c.CATEGORY_UNKNOWN
                     )
                 }
             )
