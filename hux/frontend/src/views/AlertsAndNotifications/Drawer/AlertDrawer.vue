@@ -6,12 +6,12 @@
   >
     <template #header-left>
       <div
-        class="d-flex align-center"
         v-if="
           notificationData &&
           notificationData.notification_type &&
           notificationData.id
         "
+        class="d-flex align-center"
       >
         <icon
           :type="
@@ -24,17 +24,17 @@
           :variant="getIconVariant(notificationData.notification_type)"
           class="d-block mr-2"
         />
-        <h3
-          class="text-h2 ml-1 black--text text--darken-4"
-        >
+        <h3 class="text-h2 ml-1 black--text text--darken-4">
           Alert ID: {{ notificationData.id }}
         </h3>
       </div>
     </template>
     <template #default>
-      <v-progress-linear :active="loading" :indeterminate="loading" />
-      <div class="pl-7 pt-1 pr-5" v-if="notificationData && notificationContent">
-        <div class="mt-5" v-for="data in notificationContent" :key="data.id">
+      <div
+        v-if="notificationData && notificationContent"
+        class="pl-7 pt-1 pr-5"
+      >
+        <div v-for="data in notificationContent" :key="data.id" class="mt-5">
           <div class="text-body-1 black--text font-weight-semi-bold">
             {{ data.title }}
           </div>
@@ -68,12 +68,11 @@ export default {
     alertId: {
       type: String,
       required: false,
-      default: false,
+      default: "",
     },
   },
   data() {
     return {
-      loading: true,
       localDrawer: this.value,
     }
   },
@@ -85,7 +84,6 @@ export default {
 
     notificationData() {
       let notification = this.getSingleNotification(this.alertId)
-      this.loading = false
       return notification
     },
 
@@ -116,6 +114,7 @@ export default {
           },
         ]
       }
+      return []
     },
   },
 
@@ -153,4 +152,3 @@ export default {
   },
 }
 </script>
-

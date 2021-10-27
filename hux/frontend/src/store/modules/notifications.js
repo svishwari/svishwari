@@ -24,7 +24,7 @@ const mutations = {
   },
 
   SET_ONE(state, item) {
-    Vue.set(state.items,item.id, item)
+    Vue.set(state.items, item.id, item)
   },
 
   SET_TOTAL(state, item) {

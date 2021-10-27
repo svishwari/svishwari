@@ -4,7 +4,7 @@
       <template slot="left">
         <breadcrumb :items="breadcrumbItems" />
       </template>
-       <template #right>
+      <template #right>
         <icon
           type="filter"
           :size="22"
@@ -42,7 +42,7 @@
       <hux-data-table
         :columns="columnDefs"
         :data-items="notificationData"
-        sort-column="id"
+        sort-column="created"
         sort-desc
       >
         <template #row-item="{ item }">
@@ -67,14 +67,19 @@
               {{ item[header.value] }}
             </div>
 
-            <div class="d-flex" v-if="header.value == 'notification_type'">
+            <div v-if="header.value == 'notification_type'" class="d-flex">
               <icon
-                :type="item['notification_type'] === 'Success' ? 'success_new' : item['notification_type']"
+                :type="
+                  item['notification_type'] === 'Success'
+                    ? 'success_new'
+                    : item['notification_type']
+                "
                 :size="18"
                 :color="getIconColor(item['notification_type'])"
                 :variant="getVariantColor(item['notification_type'])"
                 class="d-block mr-1"
-              /> {{item['notification_type']}}
+              />
+              {{ item["notification_type"] }}
             </div>
 
             <tooltip v-if="header.value == 'description'" position-top>
@@ -108,7 +113,6 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
 import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
-import Status from "../../components/common/Status.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Observer from "@/components/common/Observer"
 import AlertDrawer from "./Drawer/AlertDrawer"
@@ -122,7 +126,6 @@ export default {
     huxButton,
     HuxDataTable,
     TimeStamp,
-    Status,
     Tooltip,
     Observer,
     AlertDrawer,
@@ -242,21 +245,19 @@ export default {
       )
     },
     getIconColor(value) {
-      if(value) {
-      return value === "Success"
-        ? "success"
-        : value === "Critical"
-        ? "error"
-        : "primary"
+      if (value) {
+        return value === "Success"
+          ? "success"
+          : value === "Critical"
+          ? "error"
+          : "primary"
       }
     },
     getVariantColor(value) {
-        if(value) {
-          return value === "Informational"
-        ? "lighten6"
-        : "base"
-      } 
-    }
+      if (value) {
+        return value === "Informational" ? "lighten6" : "base"
+      }
+    },
   },
 }
 </script>
