@@ -46,7 +46,7 @@
           ></data-sources-list>
         </v-col>
       </v-row>
-      <empty
+      <hux-empty
         v-else
         icon-type="destinations-null"
         :icon-size="50"
@@ -65,7 +65,7 @@
             Request a data sources
           </hux-button>
         </template>
-      </empty>
+      </hux-empty>
     </div>
     <data-source-configuration v-model="drawer" />
   </page>
@@ -79,7 +79,7 @@ import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
-import empty from "@/components/common/screens/Empty"
+import HuxEmpty from "@/components/common/screens/HuxEmpty"
 import DataSourceConfiguration from "@/views/DataSources/Configuration"
 
 export default {
@@ -92,7 +92,7 @@ export default {
     Breadcrumb,
     huxButton,
     DataSourceConfiguration,
-    empty,
+    HuxEmpty,
   },
 
   data() {

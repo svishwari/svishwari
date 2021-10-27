@@ -21,7 +21,7 @@
 import Icon from "@/components/common/Icon"
 
 export default {
-  name: "Empty",
+  name: "HuxEmpty",
 
   components: {
     Icon,
@@ -39,6 +39,7 @@ export default {
     iconType: {
       type: String,
       required: true,
+      default: 'destinations-null',
     },
     iconSize: {
       type: Number,
