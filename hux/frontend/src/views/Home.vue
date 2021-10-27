@@ -90,7 +90,7 @@
                     :to="{ name: 'AlertsAndNotifications' }"
                     class="text-body-1 text-decoration-none"
                   >
-                    {{ item[header.value] }}
+                    {{ item[header.value] | Shorten }}
                   </router-link>
                 </template>
 
@@ -171,17 +171,17 @@ export default {
         {
           text: "Alert ID",
           value: "id",
-          width: "15%",
+          width: "110px",
         },
         {
           text: "Category",
           value: "category",
-          width: "12%",
+          width: "160px",
         },
         {
           text: "Type",
           value: "notification_type",
-          width: "15%",
+          width: "160px",
         },
         {
           text: "Description",
@@ -191,7 +191,7 @@ export default {
         {
           text: "Time",
           value: "created",
-          width: "15%",
+          width: "180px",
         },
       ],
     }
