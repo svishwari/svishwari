@@ -188,8 +188,7 @@ class CustomerPostOverview(SwaggerView):
         customers = get_customers_overview(token_response[0], request.json)
 
         customers = {
-            overview_key: customers.get(overview_key) or 0
-            for overview_key in customers
+            overview_key: customers.get(overview_key) or 0 for overview_key in customers
         }
 
         return (
@@ -260,9 +259,7 @@ class IDROverview(SwaggerView):
         # TODO - when the CDP endpoint for getting the max and min date rnge
         #  is available, we will call that instead of iterating all events to get them.
         # get IDR overview
-        idr_overview = get_idr_overview(
-            token_response[0], start_date, end_date
-        )
+        idr_overview = get_idr_overview(token_response[0], start_date, end_date)
 
         # get date range from IDR matching trends.
         trend_data = get_idr_matching_trends(
@@ -276,18 +273,12 @@ class IDROverview(SwaggerView):
                 {
                     api_c.OVERVIEW: idr_overview,
                     api_c.DATE_RANGE: {
-                        api_c.START_DATE: min(
-                            [x[api_c.DAY] for x in trend_data]
-                        )
+                        api_c.START_DATE: min([x[api_c.DAY] for x in trend_data])
                         if trend_data
-                        else datetime.strptime(
-                            start_date, api_c.DEFAULT_DATE_FORMAT
-                        ),
+                        else datetime.strptime(start_date, api_c.DEFAULT_DATE_FORMAT),
                         api_c.END_DATE: max([x[api_c.DAY] for x in trend_data])
                         if trend_data
-                        else datetime.strptime(
-                            end_date, api_c.DEFAULT_DATE_FORMAT
-                        ),
+                        else datetime.strptime(end_date, api_c.DEFAULT_DATE_FORMAT),
                     },
                 }
             ),
@@ -326,9 +317,7 @@ class CustomersListview(SwaggerView):
             "schema": CustomersSchema,
             "description": "Customers list.",
         },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get customers."
-        },
+        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to get customers."},
     }
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
@@ -477,9 +466,7 @@ class IDRDataFeeds(SwaggerView):
             "schema": {"type": "array", "items": DataFeedSchema},
             "description": "Identity Resolution Data Feeds",
         },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get IDR Data Feeds."
-        },
+        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to get IDR Data Feeds."},
     }
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
@@ -603,9 +590,7 @@ class CustomerGeoVisualView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler(
-        custom_message={
-            ZeroDivisionError: {"message": api_c.ZERO_AUDIENCE_SIZE}
-        }
+        custom_message={ZeroDivisionError: {"message": api_c.ZERO_AUDIENCE_SIZE}}
     )
     def get(self) -> Tuple[list, int]:
         """Retrieves a Customer profiles geographical insights.
@@ -1068,6 +1053,7 @@ class CustomersInsightsCities(SwaggerView):
         HTTPStatus.OK.value: {
             "schema": {
                 "type": "array",
+                "items": CustomersInsightsCitiesSchema,
             },
             "description": "Customer Insights by cities.",
         },

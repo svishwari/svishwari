@@ -14,19 +14,37 @@ describe("Orchestration > Destinations", () => {
     cy.location("pathname").should("eq", route.overview)
 
     //click on connections on side nav bar
-    cy.get(selector.connections).eq(1).click()
-    cy.location("pathname").should("eq", route.connections)
-
-    cy.get(selector.destination.removeDots).eq(0).click()
-    cy.get(selector.destination.destinationRemove).eq(0).click()
-    cy.get(selector.destination.destinationRemoveConfirm)
-      .get("button")
-      .contains("Nevermind!")
-      .eq(0)
-      .click()
+    cy.get(selector.nav.destinations).click()
+    cy.location("pathname").should("eq", route.destinations)
 
     //validate destinations exist by getting total no. of them
-    cy.get(selector.destinations).its("length").as("destinationsCount")
+    cy.get(selector.destinations).its("length").should("be.gt", 0)
+
+    cy.get(selector.destinations).eq(0).get(".mdi-dots-vertical").eq(0).click()
+
+    cy.get(selector.destination.destinationRemove).eq(0).click()
+    cy.get(selector.destination.destinationRemoveConfirmBody).then(
+      ($modalBody) => {
+        if (
+          $modalBody.find(selector.destination.removeDestinationText).length > 0
+        ) {
+          cy.get(selector.destination.destinationRemoveConfirmFooter)
+            .get("button")
+            .contains("Yes, remove it")
+            .eq(0)
+            .contains("v-btn--disabled")
+
+          cy.get(selector.destination.removeDestinationText)
+            .eq(1)
+            .type("confirm")
+        }
+      },
+    )
+    cy.get(selector.destination.destinationRemoveConfirmFooter)
+      .get("button")
+      .contains("Yes, remove it")
+      .eq(0)
+      .should("not.contain", "v-btn--disabled")
 
     //click on plus-sign for adding a destination
     cy.get(selector.destination.addDestination).click()

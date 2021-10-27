@@ -7,8 +7,11 @@ from flask_marshmallow import Schema
 from marshmallow import fields, validate, pre_load, post_dump
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
-from huxunify.api.route.utils import get_next_schedule
-from huxunify.api.schema.utils import must_not_be_blank, validate_object_id
+from huxunify.api.schema.utils import (
+    must_not_be_blank,
+    validate_object_id,
+    get_next_schedule,
+)
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 from huxunify.api.schema.destinations import DeliveryScheduleSchema
 
@@ -259,9 +262,7 @@ class DispAdIndividualAudienceSummary(DisplayAdsSummary):
 
     name = fields.String()
     id = fields.String()
-    destinations = fields.List(
-        fields.Nested(DispAdIndividualDestinationSummary)
-    )
+    destinations = fields.List(fields.Nested(DispAdIndividualDestinationSummary))
 
 
 class AudiencePerformanceDisplayAdsSchema(Schema):
@@ -273,9 +274,7 @@ class AudiencePerformanceDisplayAdsSchema(Schema):
         ordered = True
 
     summary = fields.Nested(DisplayAdsSummary)
-    audience_performance = fields.List(
-        fields.Nested(DispAdIndividualAudienceSummary)
-    )
+    audience_performance = fields.List(fields.Nested(DispAdIndividualAudienceSummary))
 
 
 class EmailSummary(Schema):
@@ -326,9 +325,7 @@ class EmailIndividualAudienceSummary(EmailSummary):
 
     name = fields.String()
     id = fields.String()
-    destinations = fields.List(
-        fields.Nested(EmailIndividualDestinationSummary)
-    )
+    destinations = fields.List(fields.Nested(EmailIndividualDestinationSummary))
 
 
 class AudiencePerformanceEmailSchema(Schema):
@@ -340,9 +337,7 @@ class AudiencePerformanceEmailSchema(Schema):
         ordered = True
 
     summary = fields.Nested(EmailSummary)
-    audience_performance = fields.List(
-        fields.Nested(EmailIndividualAudienceSummary)
-    )
+    audience_performance = fields.List(fields.Nested(EmailIndividualAudienceSummary))
 
 
 class FacebookCampaignSchema(Schema):
@@ -475,9 +470,7 @@ class EngagementAudienceSchema(Schema):
     status = fields.String()
     is_lookalike = fields.Boolean(default=False)
     size = fields.Integer(default=0)
-    destinations = fields.Nested(
-        EngagementAudienceDestinationSchema, many=True
-    )
+    destinations = fields.Nested(EngagementAudienceDestinationSchema, many=True)
     create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME)
     created_by = fields.String(attribute=db_c.CREATED_BY)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
@@ -637,9 +630,9 @@ def weighted_engagement_status(engagements: list) -> list:
                         engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE)
                         .get(api_c.SCHEDULE)
                         .get(api_c.PERIODICIY)
-                        if engagement.get(
-                            db_c.ENGAGEMENT_DELIVERY_SCHEDULE
-                        ).get(api_c.SCHEDULE)
+                        if engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE).get(
+                            api_c.SCHEDULE
+                        )
                         else None
                     )
 
@@ -699,19 +692,11 @@ def weighted_engagement_status(engagements: list) -> list:
             engagement[api_c.STATUS] = api_c.STATUS_DELIVERING
         elif engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
             if (
-                engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(
-                    api_c.START_DATE
-                )
-                and engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(
-                    api_c.END_DATE
-                )
-                and engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
-                    api_c.START_DATE
-                ]
+                engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(api_c.START_DATE)
+                and engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(api_c.END_DATE)
+                and engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][api_c.START_DATE]
                 <= datetime.now()
-                <= engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
-                    api_c.END_DATE
-                ]
+                <= engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][api_c.END_DATE]
             ):
                 engagement[api_c.STATUS] = api_c.STATUS_ACTIVE
             else:
@@ -719,8 +704,7 @@ def weighted_engagement_status(engagements: list) -> list:
         elif api_c.STATUS_NOT_DELIVERED in status_values:
             engagement[api_c.STATUS] = api_c.STATUS_INACTIVE
         elif all(
-            status_value == api_c.STATUS_DELIVERED
-            for status_value in status_values
+            status_value == api_c.STATUS_DELIVERED for status_value in status_values
         ):
             engagement[api_c.STATUS] = api_c.STATUS_ACTIVE
         else:
@@ -755,8 +739,4 @@ def weight_delivery_status(engagements: list) -> str:
     status_ranks.sort(key=lambda x: x[api_c.WEIGHT])
 
     # take the first item in the sorted list, and grab the status
-    return (
-        status_ranks[0][api_c.STATUS]
-        if status_ranks
-        else api_c.STATUS_NOT_DELIVERED
-    )
+    return status_ranks[0][api_c.STATUS] if status_ranks else api_c.STATUS_NOT_DELIVERED

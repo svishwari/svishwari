@@ -101,9 +101,7 @@ class CustomerProfileSchema(Schema):
 
     overview = Nested(CustomerProfileOverviewSchema, required=True)
     insights = Nested(CustomerProfileInsightsSchema, required=True)
-    contact_preferences = Nested(
-        CustomerProfileContactPreferencesSchema, required=True
-    )
+    contact_preferences = Nested(CustomerProfileContactPreferencesSchema, required=True)
     identity_resolution = Nested(IdentityResolution, required=True)
 
 
@@ -171,9 +169,7 @@ class DataFeedSchema(Schema):
     """Customer Datafeed Schema"""
 
     datafeed_id = Integer(attribute=api_c.ID, example=1)
-    datafeed_name = Str(
-        attribute=api_c.NAME, example="Really_long_Feed_Name_106"
-    )
+    datafeed_name = Str(attribute=api_c.NAME, example="Really_long_Feed_Name_106")
     data_source_name = Str(
         attribute=api_c.DATAFEED_DATA_SOURCE_NAME,
         example=db_c.CDP_DATA_SOURCE_BLUECORE.title(),
@@ -208,9 +204,7 @@ class DataFeedPinning(Schema):
     new_company_ids = Integer(required=True, example=1)
     new_address_ids = Integer(required=True, example=1)
     process_time = Float(required=True, example=6.43)
-    pinning_timestamp = DateTimeWithZ(
-        required=True, example="2021-08-05T14:44:42.694Z"
-    )
+    pinning_timestamp = DateTimeWithZ(required=True, example="2021-08-05T14:44:42.694Z")
 
 
 class DataFeedStitched(Schema):
@@ -367,9 +361,7 @@ class TotalCustomersInsightsSchema(Schema):
         ordered = True
 
     date = DateTimeWithZ(required=True, attribute=api_c.RECORDED)
-    total_customers = Integer(
-        required=True, attribute=api_c.TOTAL_COUNT, example=5
-    )
+    total_customers = Integer(required=True, attribute=api_c.TOTAL_COUNT, example=5)
     new_customers_added = Integer(
         required=True, attribute=api_c.DIFFERENCE_COUNT, example=5, default=0
     )
@@ -379,7 +371,7 @@ class TotalCustomersInsightsSchema(Schema):
 
 
 class CustomersInsightsCitiesSchema(Schema):
-    """City-level geographic customer insights schema"""
+    """City level geographic customer insights schema."""
 
     city = Str(required=True, example="New York")
     state = Str(required=True, example="NY")
@@ -387,27 +379,25 @@ class CustomersInsightsCitiesSchema(Schema):
     size = Integer(
         attribute=api_c.CUSTOMER_COUNT, required=True, default=0, example=1234
     )
-    spending = Float(
+    revenue = Float(
         attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.231
     )
 
 
 class CustomersInsightsStatesSchema(Schema):
-    """State-level geographic customer insights schema"""
+    """State level geographic customer insights schema."""
 
     country = Str(required=True, example="US")
     state = Str(attribute=api_c.NAME, required=True, example="New York")
     size = Integer(required=True, default=0, example=1234)
-    spending = Float(
-        attribute=api_c.LTV, required=True, default=0.0, example=123.2345
-    )
+    revenue = Float(attribute=api_c.LTV, required=True, default=0.0, example=123.2345)
 
 
 class CustomersInsightsCountriesSchema(Schema):
-    """State-level geographic customer insights schema"""
+    """Country level geographic customer insights schema."""
 
     country = Str(attribute=api_c.NAME, required=True, example="US")
     size = Integer(required=True, default=0, example=1234)
-    spending = Float(
+    revenue = Float(
         attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.2345
     )

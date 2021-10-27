@@ -9,7 +9,12 @@ from huxunify.api.schema.customers import (
     CustomerOverviewSchema,
     DataFeedSchema,
     TotalCustomersInsightsSchema,
+    CustomersInsightsCountriesSchema,
+    CustomersInsightsStatesSchema,
+    CustomersInsightsCitiesSchema,
 )
+
+import huxunify.test.constants as t_c
 
 
 class CustomerSchemaTest(TestCase):
@@ -44,8 +49,48 @@ class CustomerSchemaTest(TestCase):
             api_c.CUSTOMERS_LEFT: -4321,
         }
 
+        self.assertFalse(TotalCustomersInsightsSchema().validate(customer_count_doc))
+
+    def test_customers_insights_countries_schema(self) -> None:
+        """Test CustomersInsightsCountriesSchema."""
+
+        customers_insight_country = {
+            api_c.COUNTRY: "US",
+            api_c.SIZE: 1234,
+            t_c.REVENUE: 123.2345,
+        }
+
         self.assertFalse(
-            TotalCustomersInsightsSchema().validate(customer_count_doc)
+            CustomersInsightsCountriesSchema().validate(customers_insight_country)
+        )
+
+    def test_customers_insights_states_schema(self) -> None:
+        """Test CustomersInsightsStatesSchema."""
+
+        customers_insight_state = {
+            api_c.STATE: "New York",
+            api_c.COUNTRY: "US",
+            api_c.SIZE: 1234,
+            t_c.REVENUE: 123.2345,
+        }
+
+        self.assertFalse(
+            CustomersInsightsStatesSchema().validate(customers_insight_state)
+        )
+
+    def test_customers_insights_cities_schema(self) -> None:
+        """Test CustomersInsightsCitiesSchema."""
+
+        customers_insight_city = {
+            api_c.CITY: "New York",
+            api_c.STATE: "NY",
+            api_c.COUNTRY: "US",
+            api_c.SIZE: 1234,
+            t_c.REVENUE: 123.2345,
+        }
+
+        self.assertFalse(
+            CustomersInsightsCitiesSchema().validate(customers_insight_city)
         )
 
     def test_customers_overview_schema(self) -> None:
