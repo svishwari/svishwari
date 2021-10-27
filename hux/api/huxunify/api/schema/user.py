@@ -45,9 +45,19 @@ class UserSchema(Schema):
     modified = DateTimeWithZ(required=True)
 
 
-class ContactUsBugReportingSchema(Schema):
-    """Bug reporting schema"""
+class TicketSchema(Schema):
+    """Bug ticket schema"""
 
     type = Str(required=True, validate=OneOf([api_c.BUG]))
     summary = Str(required=True)
     description = Str(required=False)
+
+
+class TicketGetSchema(Schema):
+    """Bug ticket get schema"""
+
+    id = Int(example=1)
+    key = Str(example="ABC-123")
+    type = Str(example="Bug")
+    summary = Str(example="Audience and Engagement Dashboard not loading")
+    description = Str(example="Description of the issue.")

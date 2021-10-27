@@ -322,21 +322,23 @@ class TestUserRoutes(TestCase):
             mock_jira (MagicMock): magic mock of JiraConnection
         """
 
+        reported_issue = {
+            api_c.TYPE: "Bug",
+            api_c.SUMMARY: "Test creation of JIRA ticket",
+            api_c.DESCRIPTION: "",
+        }
+        expected_response = reported_issue.copy()
+        expected_response.update({api_c.ID: 1234, api_c.KEY: "ABC-123"})
+
         mock_jira_instance = mock_jira.return_value
         mock_jira_instance.check_jira_connection.return_value = True
-        mock_jira_instance.create_jira_issue.return_value = 1
+        mock_jira_instance.create_jira_issue.return_value = expected_response
 
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.CONTACT_US}",
-            json={
-                api_c.TYPE: "Bug",
-                api_c.SUMMARY: "Test creation of JIRA ticket",
-                api_c.DESCRIPTION: "",
-            },
+            json=reported_issue,
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(
-            {api_c.MESSAGE: "Issue reported successfully !"}, response.json
-        )
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertDictEqual(expected_response, response.json)

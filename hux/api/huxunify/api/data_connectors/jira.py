@@ -65,4 +65,10 @@ class JiraConnection:
         }
         new_issue = self.jira_client.create_issue(fields=issue_dict)
 
-        return new_issue.key
+        return {
+            api_c.ID: new_issue.id,
+            api_c.KEY: new_issue.key,
+            api_c.TYPE: new_issue.fields.issuetype,
+            api_c.SUMMARY: new_issue.fields.summary,
+            api_c.DESCRIPTION: new_issue.fields.description,
+        }
