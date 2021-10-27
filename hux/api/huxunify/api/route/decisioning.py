@@ -177,6 +177,7 @@ class SetModelStatus(SwaggerView):
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
+    # pylint: disable=no-self-use
     @api_error_handler()
     @get_user_name()
     def post(self, user_name: str) -> Tuple[dict, int]:
