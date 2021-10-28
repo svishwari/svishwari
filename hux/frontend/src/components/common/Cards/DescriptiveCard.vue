@@ -1,7 +1,14 @@
 <template>
   <v-card
     :outlined="disabled"
-    class="descriptive-card align-center text-center rounded-lg mr-10 mb-10"
+    class="
+      descriptive-card
+      align-center
+      text-center
+      rounded-lg
+      card-space
+      mb-10
+    "
     :class="{ 'in-active': disabled }"
     :height="height"
     :width="width"
@@ -204,5 +211,8 @@ export default {
     overflow: hidden !important;
     display: -webkit-box !important;
   }
+}
+.card-space {
+  margin-right: 24px !important;
 }
 </style>
