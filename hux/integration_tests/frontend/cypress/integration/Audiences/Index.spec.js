@@ -1,18 +1,17 @@
-import route from "../../support/routes.js"
-import selector from "../../support/selectors.js"
+import route from "../../support/routes"
+import selector from "../../support/selectors"
 
 describe("Orchestration > Audiences", () => {
-  before(() => {
+  beforeEach(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
       password: Cypress.env("USER_PASSWORD"),
     })
+    cy.visit(route.audiences)
   })
 
   it("should be able to manage audiences", () => {
     // should navigate to audiences
-    cy.location("pathname").should("eq", route.home)
-    cy.get(selector.nav.audiences).click()
     cy.location("pathname").should("eq", route.audiences)
 
     // should be able to view table of audiences

@@ -1,19 +1,16 @@
-import route from "../../support/routes.js"
-import selector from "../../support/selectors.js"
+import route from "../../support/routes"
+import selector from "../../support/selectors"
 
 describe("Orchestration > Audiences > Audience dashboard", () => {
-  before(() => {
+  beforeEach(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
       password: Cypress.env("USER_PASSWORD"),
     })
+    cy.visit(route.audiences)
   })
 
   it("should be able to view Audiences List and Dashboard", () => {
-    cy.location("pathname").should("eq", route.home)
-
-    // click on engagement on side nav bar and route in engagement screen
-    cy.get(selector.nav.audiences).click()
     cy.location("pathname").should("eq", route.audiences)
     cy.get(selector.audience.audiencelist).its("length").should("be.gt", 0)
     cy.get(selector.audience.audiencenameclick)

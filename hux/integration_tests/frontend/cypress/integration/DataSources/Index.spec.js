@@ -1,20 +1,17 @@
-import route from "../../support/routes.js"
-import selector from "../../support/selectors.js"
+import route from "../../support/routes"
+import selector from "../../support/selectors"
 
 describe("Data Management > Data Sources", () => {
-  before(() => {
+  beforeEach(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
       password: Cypress.env("USER_PASSWORD"),
     })
+    cy.visit(route.dataSources)
   })
 
   // TODO in HUS-1373 after HUS-1230 is merged
   it.skip("should be able to manage data sources", () => {
-    cy.location("pathname").should("eq", route.home)
-
-    // click on connections on side nav bar
-    cy.get(selector.nav.dataSources).click()
     cy.location("pathname").should("eq", route.dataSources)
 
     // validate data sources exist by getting total no. of them

@@ -110,7 +110,7 @@ export default {
     addAudience: "[data-e2e='add-audience']",
     addDestination: "[data-e2e='add-destination']",
     selectAudience: "[data-e2e='audience-select-button']",
-    selectDestination: "[data-e2e='destination-select-button-qualtrics']",
+    selectDestination: "[data-e2e='destination-select-button-facebook']",
     salesForceAddButton: "[data-e2e='destination-select-button-sfmc']",
     exitDrawer: "[data-e2e='click-outside']",
     exitDataExtensionDrawer: "[data-e2e='destination-added']",

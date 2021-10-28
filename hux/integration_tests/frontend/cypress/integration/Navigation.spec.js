@@ -1,12 +1,13 @@
-import route from "../../support/routes.js"
-import selector from "../../support/selectors.js"
+import route from "../support/routes.js"
+import selector from "../support/selectors.js"
 
 describe("Navigation", () => {
-  before(() => {
+  beforeEach(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
       password: Cypress.env("USER_PASSWORD"),
     })
+    cy.visit(route.home)
   })
 
   it("should be able to navigate to all sections", () => {

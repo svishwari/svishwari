@@ -2,18 +2,15 @@ import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
 describe("Data management > Identity resolution", () => {
-  before(() => {
+  beforeEach(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
       password: Cypress.env("USER_PASSWORD"),
     })
+    cy.visit(route.identityResolution)
   })
 
   it("should have an Overview, Matching trends and Data feeds table with Last run drawer", () => {
-    cy.location("pathname").should("eq", route.home)
-
-    // click on identity resolution on side nav bar
-    cy.get(selector.idr.identityResolution).click()
     cy.location("pathname").should("eq", route.identityResolution)
 
     // validate overview exist by getting total no. of them

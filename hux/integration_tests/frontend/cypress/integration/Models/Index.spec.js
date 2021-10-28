@@ -2,16 +2,15 @@ import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
 describe("View models", () => {
-  before(() => {
+  beforeEach(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
       password: Cypress.env("USER_PASSWORD"),
     })
+    cy.visit(route.models)
   })
 
   it("should be able to view a list of models", () => {
-    cy.get(selector.nav.models).click()
-
     cy.location("pathname").should("eq", route.models)
 
     cy.get(selector.models.item).its("length").should("gt", 0)
