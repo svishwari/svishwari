@@ -135,7 +135,4 @@ export default {
     @extend .box-shadow-25;
   }
 }
-.card-horizontal-title {
-  color: var(--v-neroBlack-base);
-}
 </style>
