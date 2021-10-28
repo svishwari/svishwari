@@ -1,7 +1,14 @@
 <template>
   <v-card
     :outlined="disabled"
-    class="descriptive-card align-center text-center rounded-lg card-space mb-10"
+    class="
+      descriptive-card
+      align-center
+      text-center
+      rounded-lg
+      card-space
+      mb-10
+    "
     :class="{ 'in-active': disabled }"
     :height="height"
     :width="width"

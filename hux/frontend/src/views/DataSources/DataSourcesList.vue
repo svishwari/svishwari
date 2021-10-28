@@ -176,5 +176,5 @@ export default {
 }
 ::v-deep.descriptive-card.in-active {
   box-shadow: none !important;
-} 
+}
 </style>
