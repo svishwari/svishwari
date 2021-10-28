@@ -1,4 +1,4 @@
-import route from "../../support/routes.js"
+import route from "../support/routes.js"
 
 describe("Login", () => {
   before(() => {

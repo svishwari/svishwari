@@ -178,11 +178,11 @@ export default {
     pinning: "[data-e2e='Pinning']",
     stitched: "[data-e2e='Stitched']",
   },
-  //notification
+  // notification
   notification: {
     notificationicon: "[data-e2e='notification-bell']",
     notificationReturnButton: "[data-e2e='notification-return']",
-    notifications: "a[href='/notifications']",
+    viewAllNotifications: "[data-e2e='notifications-view-all']",
     notificationlistmenu: "[data-e2e='notification-item']",
   },
   audience: {

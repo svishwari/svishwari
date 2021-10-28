@@ -1,5 +1,5 @@
-import route from "../../support/routes.js"
-import selector from "../../support/selectors.js"
+import route from "../support/routes.js"
+import selector from "../support/selectors.js"
 
 describe("Navigation", () => {
   before(() => {

@@ -13,11 +13,11 @@ describe("Orchestration > Destinations", () => {
   it("should be able to manage destinations", () => {
     cy.location("pathname").should("eq", route.home)
 
-    //click on connections on side nav bar
+    // click on connections on side nav bar
     cy.get(selector.nav.destinations).click()
     cy.location("pathname").should("eq", route.destinations)
 
-    //validate destinations exist by getting total no. of them
+    // validate destinations exist by getting total no. of them
     cy.get(selector.destinations).its("length").should("be.gt", 0)
 
     cy.get(selector.destinations).eq(0).get(".mdi-dots-vertical").eq(0).click()
@@ -31,8 +31,7 @@ describe("Orchestration > Destinations", () => {
           cy.get(selector.destination.destinationRemoveConfirmFooter)
             .get("button")
             .contains("Yes, remove it")
-            .eq(0)
-            .contains("v-btn--disabled")
+            .should("exist")
 
           cy.get(selector.destination.removeDestinationText)
             .eq(1)
@@ -52,11 +51,11 @@ describe("Orchestration > Destinations", () => {
       .eq(0)
       .click()
 
-    //click on plus-sign for adding a destination
+    // click on plus-sign for adding a destination
     cy.get(selector.destination.addDestination).click()
     cy.location("pathname").should("eq", route.addDestinations)
 
-    //find a addable destination from the drawer
+    // find a addable destination from the drawer
     cy.get(selector.destination.drawerToggle).click()
     cy.get(selector.destination.destinationsList)
       .contains("Add")
@@ -65,27 +64,23 @@ describe("Orchestration > Destinations", () => {
     cy.get("@addableDestinations")
       .its("length")
       .then((addableDestinations) => {
+        //if a destination can be added, try to add it
         if (addableDestinations > 0) {
-          //if a destination can be added
-
           cy.get("@addableDestinations").eq(0).click()
 
-          //configure destination details
+          // configure destination details
           cy.get(selector.destination.destinationConfigDetails)
             .get("input")
             .each(($el) => {
               cy.wrap($el).type("123456")
             })
           cy.get(selector.destination.validateDestination).click()
-          cy.get(selector.destination.validateDestination).contains("Success")
-
-          //Click on Add and return button
-          cy.get(selector.destination.footer).contains("return").click()
+          cy.get(selector.destination.footer).contains("Cancel").click()
           cy.location("pathname").should("eq", route.destinations)
         }
       })
 
-    //click on plus-sign for requesting a destination
+    // click on plus-sign for requesting a destination
     cy.get(selector.destination.addDestination).click()
     cy.location("pathname").should("eq", route.addDestinations)
 
