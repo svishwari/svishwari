@@ -272,26 +272,36 @@ class CreateCdpDataSources(SwaggerView):
 
         if data_sources is not None:
             logger.info(
-                "Successfully created the the %s data source(s).",
-                [data_source[api_c.NAME] for data_source in new_data_sources],
+                "Successfully created the %s data source(s).",
+                ", ".join(
+                    [
+                        data_source[api_c.NAME]
+                        for data_source in new_data_sources
+                    ]
+                ),
             )
             create_notification(
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 f"{user_name} created the following CDP Data Sources: "
-                f"{[data_source[api_c.NAME] for data_source in data_sources]}",
+                f"{'. '.join([data_source[api_c.NAME] for data_source in new_data_sources])}",
                 api_c.CDP_DATA_SOURCES_TAG,
             )
         else:
             logger.info(
                 "Failed to create the %s data source(s).",
-                [data_source[api_c.NAME] for data_source in new_data_sources],
+                ", ".join(
+                    [
+                        data_source[api_c.NAME]
+                        for data_source in new_data_sources
+                    ]
+                ),
             )
             create_notification(
                 database,
                 db_c.NOTIFICATION_TYPE_CRITICAL,
                 f"Failed to create the following CDP Data Sources: "
-                f"{[data_source[api_c.NAME] for data_source in new_data_sources]}",
+                f"{'. '.join([data_source[api_c.NAME] for data_source in new_data_sources])}",
                 api_c.CDP_DATA_SOURCES_TAG,
             )
 
