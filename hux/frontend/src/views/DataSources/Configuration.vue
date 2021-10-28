@@ -2,15 +2,11 @@
   <div class="add-data-source--wrap">
     <drawer v-model="localDrawer" @onClose="closeAddDataSource">
       <template #header-left>
-          <breadcrumb :items="breadcrumbs" />
+        <breadcrumb :items="breadcrumbs" />
       </template>
       <template #footer-left>
         <div class="d-flex align-baseline">
-          <div
-            class="body-2 pl-4"
-          >
-            {{ dataSources.length }} results
-          </div>
+          <div class="body-2 pl-4">{{ dataSources.length }} results</div>
         </div>
       </template>
       <template #footer-right>
@@ -53,13 +49,16 @@
             />
           </div>
 
-          <v-divider class="mb-2" style="border-color: var(--v-black-lighten2)" />
-          <div 
-            class="ma-3 mt-5"
+          <v-divider
+            class="mb-2"
+            style="border-color: var(--v-black-lighten2)"
+          />
+          <div
             v-for="(item, key) in dataSourcesGroupedSorted"
             :key="key"
+            class="ma-3 mt-5"
           >
-            <div class="body-2">{{key}}</div>
+            <div class="body-2">{{ key }}</div>
             <card-horizontal
               v-for="dataSource in item"
               :key="dataSource.id"
@@ -73,7 +72,7 @@
               :is-already-added="dataSource.is_added"
               class="my-3 body-1"
               :requested-button="dataSource.status !== 'Active'"
-            @click="onDataSourceClick(dataSource.id)"
+              @click="onDataSourceClick(dataSource.id)"
             />
           </div>
         </div>
@@ -110,7 +109,6 @@ export default {
     return {
       localDrawer: this.value,
       selectedDataSourceIds: [],
-      totalCategories: 0,
       breadcrumbs: [
         {
           text: "Select a data source to request",
@@ -134,46 +132,52 @@ export default {
     },
 
     enabledDataSources() {
-      const activeEnabled = this.dataSources.filter((each) => each.is_added && each.status==='Active').sort(function(a, b) {
-          var textA = a.name.toUpperCase();
-          var textB = b.name.toUpperCase();
-          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      const activeEnabled = this.dataSources
+        .filter((each) => each.is_added && each.status === "Active")
+        .sort(function (a, b) {
+          var textA = a.name.toUpperCase()
+          var textB = b.name.toUpperCase()
+          return textA < textB ? -1 : textA > textB ? 1 : 0
         })
 
-      const notActiveEnabled = this.dataSources.filter((each) => each.is_added && each.status!=='Active').sort(function(a, b) {
-          var textA = a.name.toUpperCase();
-          var textB = b.name.toUpperCase();
-          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      const notActiveEnabled = this.dataSources
+        .filter((each) => each.is_added && each.status !== "Active")
+        .sort(function (a, b) {
+          var textA = a.name.toUpperCase()
+          var textB = b.name.toUpperCase()
+          return textA < textB ? -1 : textA > textB ? 1 : 0
         })
       return [...activeEnabled, ...notActiveEnabled]
     },
 
     dataSourcesGroupedSorted() {
-      const oldresult = this.dataSources.reduce(function (dataSourceObject, dataSource) {
-        if(!dataSource.is_added){
-        dataSourceObject[dataSource.category] = dataSourceObject[dataSource.category] || []
-        dataSourceObject[dataSource.category].push(dataSource)
+      const oldresult = this.dataSources.reduce(function (
+        dataSourceObject,
+        dataSource
+      ) {
+        if (!dataSource.is_added) {
+          dataSourceObject[dataSource.category] =
+            dataSourceObject[dataSource.category] || []
+          dataSourceObject[dataSource.category].push(dataSource)
         }
         return dataSourceObject
-      }, Object.create(null))
+      },
+      Object.create(null))
 
-      const result = Object.keys(oldresult).sort().reduce(
-        (obj, key) => { 
-          obj[key] = oldresult[key]; 
-          return obj;
-        }, 
-        {}
-      );
+      const result = Object.keys(oldresult)
+        .sort()
+        .reduce((obj, key) => {
+          obj[key] = oldresult[key]
+          return obj
+        }, {})
 
-      Object.values(result).forEach(val => {
-        val.sort(function(a, b) {
-          var textA = a.name.toUpperCase();
-          var textB = b.name.toUpperCase();
-          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      Object.values(result).forEach((val) => {
+        val.sort(function (a, b) {
+          var textA = a.name.toUpperCase()
+          var textB = b.name.toUpperCase()
+          return textA < textB ? -1 : textA > textB ? 1 : 0
         })
       })
-
-      this.totalCategories = Object.keys(result).length
       return result
     },
   },
@@ -219,7 +223,7 @@ export default {
 </script>
 
 <style lang="scss">
-.v-application .px-6{
+.v-application .px-6 {
   padding-left: 8px !important;
 }
 </style>

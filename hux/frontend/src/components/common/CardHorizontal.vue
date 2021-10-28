@@ -13,9 +13,7 @@
   >
     <div v-if="icon || title" class="d-flex align-center">
       <logo :type="icon" />
-      <div
-        class="pl-2 body-1"
-      >
+      <div class="pl-2 body-1">
         {{ title }}
       </div>
     </div>
