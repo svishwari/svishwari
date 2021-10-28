@@ -191,12 +191,18 @@ export default {
     }
   }
   .dot {
-    padding: 7px;
+    width: 60px;
+    height: 60px;
+    padding: 8px;
     border-radius: 50%;
     @extend .box-shadow-1;
   }
   .description {
     min-height: 36px;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+    overflow: hidden !important;
+    display: -webkit-box !important;
   }
 }
 </style>
