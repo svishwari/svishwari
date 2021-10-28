@@ -39,7 +39,8 @@ from huxunify.api.schema.destinations import (
     SendgridAuthCredsSchema,
     FacebookAuthCredsSchema,
     SFMCAuthCredsSchema,
-    DestinationPutSchema, DestinationDataExtConfigSchema,
+    DestinationPutSchema,
+    DestinationDataExtConfigSchema,
 )
 from huxunify.api.config import get_config
 from huxunify.api import constants
