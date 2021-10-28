@@ -2,7 +2,7 @@
 <style type="text/css">
 	.qualtricsGradient{fill:url(#qualtricsGradient);}
 </style>
-<circle cx="50" cy="50" r="50" fill="white" stroke="#D0D0CE"/>
+<circle cx="50" cy="50" r="50" fill="white" stroke="#E2EAEC"/>
 <linearGradient id="qualtricsGradient" gradientUnits="userSpaceOnUse" x1="-446.5663" y1="537.3601" x2="-445.5363" y2="535.9864" gradientTransform="matrix(63.533 0 0 -34.431 28392.2578 18530.3965)">
   <stop  offset="0" style="stop-color:#21DBAA"/>
   <stop  offset="7.200000e-02" style="stop-color:#17D0BC"/>

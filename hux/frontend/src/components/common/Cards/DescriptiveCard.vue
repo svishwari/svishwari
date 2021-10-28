@@ -60,7 +60,11 @@
       <template #label-content>
         <div
           class="text-h4 px-3 pb-1 pt-2 text-ellipsis d-block title text-h4"
-          :class="disabled ? 'black--text text--darken-4' : 'primary--text'"
+          :class="
+            disabled
+              ? 'black--text text--darken-4'
+              : 'black--text text--lighten-5'
+          "
           :style="{ 'padding-top': !icon ? '56px' : null }"
           data-e2e="card-title"
         >
@@ -203,6 +207,7 @@ export default {
     padding: 8px;
     border-radius: 50%;
     @extend .box-shadow-1;
+    background: var(--v-white-base);
   }
   .description {
     min-height: 36px;
