@@ -17,6 +17,7 @@ TYPE = "type"
 OBJECT_ID = "id"
 CONFIGURATION = "configuration"
 SIZE = "size"
+DOCUMENTS = "documents"
 
 # general fields
 AGE = "age"
@@ -42,6 +43,7 @@ PERFORMANCE_METRICS_COLLECTION = "performance_metrics"
 CAMPAIGN_ACTIVITY_COLLECTION = "campaign_activity"
 USER_COLLECTION = "users"
 NOTIFICATIONS_COLLECTION = "notifications"
+CONFIGURATIONS_COLLECTION = "configurations"
 CACHE_COLLECTION = "cache"
 AUDIENCE_AUDIT_COLLECTION = "audit_logs"
 
@@ -398,6 +400,15 @@ NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 NOTIFICATION_QUERY_PARAMETER_SORT_ORDER = "sort_order"
 NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
 
+# Configuration constants
+
+CONFIGURATION_FIELD_NAME = "name"
+CONFIGURATION_FIELD_ICON = "icon"
+CONFIGURATION_FIELD_TYPE = "type"
+CONFIGURATION_FIELD_DESCRIPTION = "description"
+CONFIGURATION_FIELD_STATUS = "status"
+CONFIGURATION_FIELD_ENABLED = "enabled"
+
 # Audience constants
 AUDIENCE_FILTER_CONSTANTS = "audience_filter_constants"
 AGE_FILTER = "age_filter"
@@ -435,3 +446,28 @@ DOWNLOAD_TIME = "download_time"
 FILE_NAME = "file_name"
 USER_NAME = "user_name"
 DOWNLOAD_TYPE = "download_type"
+
+
+# Required Fields per collection
+REQUIRED_FIELDS = {
+    CONFIGURATIONS_COLLECTION: [
+        CONFIGURATION_FIELD_TYPE,
+    ]
+}
+
+# Allowed Fields per collection
+ALLOWED_FIELDS = {
+    CONFIGURATIONS_COLLECTION: [
+        CONFIGURATION_FIELD_NAME,
+        CONFIGURATION_FIELD_ICON,
+        CONFIGURATION_FIELD_TYPE,
+        CONFIGURATION_FIELD_DESCRIPTION,
+        CONFIGURATION_FIELD_STATUS,
+        CONFIGURATION_FIELD_ENABLED,
+    ]
+}
+
+# Allowed collections
+ALLOWED_COLLECTIONS = [
+    CONFIGURATIONS_COLLECTION,
+]

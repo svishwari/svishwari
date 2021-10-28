@@ -177,4 +177,25 @@ describe("Filters", () => {
       expect(filters.Empty(null, "N/A")).toEqual("N/A")
     })
   })
+
+  describe("Shorten filter", () => {
+    it("should shorten a lengthy string to the last 5 characters by default", () => {
+      expect(filters.Shorten("60b960176021710aa141ab2c")).toEqual("1ab2c")
+    })
+
+    it("should shorten the string to the first 5 characters", () => {
+      const options = { position: "first" }
+      expect(filters.Shorten("superintend", options)).toEqual("super")
+    })
+
+    it("should shorten the string to a number of characters", () => {
+      const options = { numCharacters: 3 }
+      expect(filters.Shorten("superintend", options)).toEqual("end")
+    })
+
+    it("should shorten the string and append an ellipsis", () => {
+      const options = { ellipsis: true }
+      expect(filters.Shorten("Lengthy sentence", options)).toEqual("tence...")
+    })
+  })
 })

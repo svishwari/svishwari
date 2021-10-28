@@ -74,6 +74,7 @@ LIMIT = "limit"
 SOURCE_NAME = "source_name"
 SOURCE_SIZE = "source_size"
 SOURCE_ID = "source_id"
+CREATE_TIME = "create_time"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -124,7 +125,6 @@ CONTACT_PREFERENCES = "contact_preferences"
 IDENTITY_RESOLUTION = "identity_resolution"
 POPULATION_PERCENTAGE = "population_percentage"
 INCOME = "income"
-CDP_SERVICE_URL = "CDP_SERVICE_URL"
 COUNT = "count"
 AVG_SPENT_WOMEN = "avg_spent_women"
 AVG_SPENT_MEN = "avg_spent_men"
@@ -336,7 +336,8 @@ SFMC_AUTH_BASE_URI = "sfmc_auth_base_uri"
 SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
 SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS = "perf_data_extensions"
-SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "perf_data_extension"
+SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "performance_metrics_data_extension"
+SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION = "campaign_activity_data_extension"
 SFMC_DATA_EXTENSION_NAME = "Name"
 SFMC_CUSTOMER_KEY = "CustomerKey"
 
@@ -571,8 +572,15 @@ EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE = (
 
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
 DUPLICATE_NAME = "Name already exists."
+SFMC_CONFIGURATION_MISSING = "SFMC data extension config object missing."
 PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
     "Performance metrics data extension not assigned."
+)
+CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED = (
+    "Campaign activity data extension not assigned."
+)
+SAME_PERFORMANCE_CAMPAIGN_ERROR = (
+    "Performance metric and Campaign activity cannot be same"
 )
 INVALID_AUTH_DETAILS = "Invalid authentication details."
 INVALID_AUTH_HEADER = "Authorization header is invalid."

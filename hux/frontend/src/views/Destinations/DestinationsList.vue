@@ -9,7 +9,7 @@
           :icon-color="'white'"
           :title="destination.name"
           :description="''"
-          :disabled="destination.status !== 'Succeeded'"
+          :disabled="destination.status !== 'Active'"
           :action-menu="true"
           :coming-soon="false"
           :logo-option="true"
@@ -21,11 +21,7 @@
           <template slot="top">
             <status
               :icon-size="18"
-              :status="
-                destination.status === 'Succeeded'
-                  ? 'Active'
-                  : destination.status || ''
-              "
+              :status="destination.status"
               collapsed
               class="d-flex float-left"
               data-e2e="model-status"
@@ -65,7 +61,7 @@
       right-btn-text="Yes, remove it"
       data-e2e="remove-destination-confirm"
       :is-disabled="
-        selectedDestination.status != 'Pending' ? !enableConfirm : false
+        selectedDestination.status !== 'Requested' ? !enableConfirm : false
       "
       @onCancel="confirmModal = !confirmModal"
       @onConfirm="confirmRemoval()"
@@ -79,7 +75,7 @@
             font-weight-regular
           "
         >
-          <template v-if="selectedDestination.status === 'Pending'">
+          <template v-if="selectedDestination.status === 'Requested'">
             Are you sure you want to remove this pending destination?
           </template>
           <template v-else>
@@ -87,7 +83,7 @@
           </template>
         </div>
         <div
-          v-if="selectedDestination.status == 'Succeeded'"
+          v-if="selectedDestination.status !== 'Requested'"
           class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
         >
           By removing this destination you will be impacting
@@ -96,7 +92,7 @@
           recover its impact.
         </div>
         <br />
-        <div v-if="selectedDestination.status == 'Succeeded'">
+        <div v-if="selectedDestination.status !== 'Requested'">
           <text-field
             label-text="For safety reasons please confirm the deletion of the destination:"
             placeholder='Type "confirm" to remove this destination'
@@ -189,5 +185,8 @@ export default {
       cursor: auto;
     }
   }
+}
+::v-deep.descriptive-card.in-active {
+  box-shadow: none !important;
 }
 </style>

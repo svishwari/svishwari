@@ -9,8 +9,7 @@ describe("Orchestration > Engagements", () => {
     })
   })
   it("should be able to navigate to Engagements", () => {
-    // after login land in the overview page
-    cy.location("pathname").should("eq", route.overview)
+    cy.location("pathname").should("eq", route.home)
 
     //click on engagement on side nav bar and route in engagement screen
     cy.get(selector.nav.engagements).click()

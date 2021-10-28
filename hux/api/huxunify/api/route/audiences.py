@@ -210,6 +210,8 @@ class AudienceDownload(SwaggerView):
             ),
         }
 
+        token_response = get_token_from_request(request)
+
         if not download_types.get(download_type):
             return {
                 "message": "Invalid download type or download type not supported"
@@ -249,7 +251,7 @@ class AudienceDownload(SwaggerView):
                 config.RETURN_EMPTY_AUDIENCE_FILE,
                 download_type,
             )
-            cdp = connector_cdp.ConnectorCDP(config.CDP_SERVICE)
+            cdp = connector_cdp.ConnectorCDP(access_token=token_response[0])
 
             data_batches = get_audience_data_async(
                 cdp,
@@ -310,6 +312,7 @@ class AudienceDownload(SwaggerView):
             f"{user_name} downloaded the audience, {audience[db_c.NAME]}"
             f" with format {download_type}.",
             api_c.ORCHESTRATION_TAG,
+            user_name,
         )
 
         return (
