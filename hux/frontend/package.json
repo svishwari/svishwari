@@ -14,7 +14,7 @@
     "style": "yarn prettier --check src/",
     "style:fix": "yarn prettier --write src/",
     "prepare": "cd ../../ && husky install hux/frontend/.husky",
-    "storybook:build": "vue-cli-service storybook:build -c storybook/",
+    "storybook:build": "vue-cli-service storybook:build -c storybook/ -o ./dist/design/",
     "storybook:serve": "vue-cli-service storybook:serve -p 6006 -c storybook/"
   },
   "dependencies": {
@@ -40,7 +40,6 @@
     "d3-transition": "^3.0.1",
     "dayjs": "^1.10.6",
     "lodash": "^4.17.21",
-    "ngprogress": "^1.1.3",
     "topojson": "^3.0.2",
     "vue": "^2.6.14",
     "vue-property-decorator": "^8.5.1",

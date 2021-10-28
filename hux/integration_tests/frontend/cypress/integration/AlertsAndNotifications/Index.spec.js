@@ -24,9 +24,9 @@ describe("Notifications", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
     // view all link should be visible
-    cy.get(selector.notification.notifications).should("be.visible")
+    cy.get(selector.notification.viewAllNotifications).should("be.visible")
     // click on the view all link
-    cy.get(selector.notification.notifications).eq(0).click()
+    cy.get(selector.notification.viewAllNotifications).click()
     // route in notification screen
     cy.location("pathname").should("eq", route.notifications)
     // scroll down for lazy loading
