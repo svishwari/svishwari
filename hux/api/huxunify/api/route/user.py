@@ -357,23 +357,18 @@ class UserView(SwaggerView):
     "UserPatchView",
 )
 class UserPatchView(SwaggerView):
-    """Destination Patch class."""
+    """User Patch class."""
 
     parameters = [
-        {
-            "name": api_c.DESTINATION_ID,
-            "description": "Destination ID.",
-            "type": "string",
-            "in": "path",
-            "required": "true",
-            "example": "5f5f7262997acad4bac4373b",
-        },
         {
             "name": "body",
             "in": "body",
             "type": "object",
-            "description": "Input Destination body.",
-            "example": {db_constants.ENABLED: False},
+            "description": "Input user body.",
+            "example": {
+                db_constants.USER_ROLE: "admin",
+                db_constants.USER_DISPLAY_NAME: "new_display_name"
+            },
         },
     ]
 
@@ -382,25 +377,23 @@ class UserPatchView(SwaggerView):
             "description": "User updated.",
             "schema": UserSchema,
         },
-        HTTPStatus.UNPROCESSABLE_ENTITY.value: {
-            "description": "Failed to patch user data.",
-            "schema": {
-                "example": {
-                    "message": api_c.DESTINATION_INVALID_PATCH_MESSAGE
-                },
-            },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Invalid data received.",
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": "User not found.",
         },
     }
 
     responses.update(AUTH401_RESPONSE)
-    tags = [api_c.DESTINATIONS_TAG]
+    tags = [api_c.USER_TAG]
 
     # pylint: disable=unexpected-keyword-arg
     # pylint: disable=too-many-return-statements
     @api_error_handler()
     @get_user_name()
     def patch(self, user_name: str) -> Tuple[dict, int]:
-        """Updates a destination.
+        """Updates a user.
 
         ---
         security:
