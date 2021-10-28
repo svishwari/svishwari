@@ -270,7 +270,7 @@ class CreateCdpDataSources(SwaggerView):
             database=database, data_sources=new_data_sources
         )
 
-        if data_sources is not None:
+        if data_sources:
             logger.info(
                 "Successfully created the %s data source(s).",
                 ", ".join(
