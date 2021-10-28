@@ -11,6 +11,8 @@ class HuxAdvException(Exception):
 
         super().__init__(
             self.exception_message.format(*args)
+            if args and self.exception_message
+            else args[0]
             if args
             else self.exception_message
         )

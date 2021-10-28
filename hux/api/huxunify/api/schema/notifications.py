@@ -52,6 +52,7 @@ class NotificationSchema(Schema):
     username = Str(
         attribute="username",
         required=True,
+        example="Username",
         allow_none=False,
     )
 

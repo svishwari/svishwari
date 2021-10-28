@@ -61,7 +61,7 @@
       right-btn-text="Yes, remove it"
       data-e2e="remove-destination-confirm"
       :is-disabled="
-        selectedDestination.status != 'Requested' ? !enableConfirm : false
+        selectedDestination.status !== 'Requested' ? !enableConfirm : false
       "
       @onCancel="confirmModal = !confirmModal"
       @onConfirm="confirmRemoval()"
@@ -83,7 +83,7 @@
           </template>
         </div>
         <div
-          v-if="selectedDestination.status == 'Active'"
+          v-if="selectedDestination.status !== 'Requested'"
           class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
         >
           By removing this destination you will be impacting
@@ -92,7 +92,7 @@
           recover its impact.
         </div>
         <br />
-        <div v-if="selectedDestination.status == 'Active'">
+        <div v-if="selectedDestination.status !== 'Requested'">
           <text-field
             label-text="For safety reasons please confirm the deletion of the destination:"
             placeholder='Type "confirm" to remove this destination'

@@ -125,6 +125,17 @@ class DataSourceSearch(SwaggerView):
                 ]
             )
 
+        _ = [
+            data_source.update(
+                {
+                    db_c.CATEGORY: api_c.CDP_DATA_SOURCE_CATEGORY_MAP.get(
+                        data_source[api_c.TYPE], db_c.CATEGORY_UNKNOWN
+                    )
+                }
+            )
+            for data_source in data_sources
+        ]
+
         return (
             jsonify(CdpDataSourceSchema().dump(data_sources, many=True)),
             HTTPStatus.OK,
@@ -493,7 +504,7 @@ class GetDataSourceDatafeeds(SwaggerView):
             "in": "path",
             "type": "string",
             "description": "Data source type",
-            "example": db_c.CDP_DATA_SOURCE_BLUECORE,
+            "example": db_c.DATA_SOURCE_PLATFORM_BLUECORE,
         }
     ]
     responses = {

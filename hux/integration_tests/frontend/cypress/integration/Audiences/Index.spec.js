@@ -11,7 +11,7 @@ describe("Orchestration > Audiences", () => {
 
   it("should be able to manage audiences", () => {
     // should navigate to audiences
-    cy.location("pathname").should("eq", route.overview)
+    cy.location("pathname").should("eq", route.home)
     cy.get(selector.nav.audiences).click()
     cy.location("pathname").should("eq", route.audiences)
 

@@ -10,7 +10,7 @@ describe("Data management > Identity resolution", () => {
   })
 
   it("should have an Overview, Matching trends and Data feeds table with Last run drawer", () => {
-    cy.location("pathname").should("eq", route.overview)
+    cy.location("pathname").should("eq", route.home)
 
     // click on identity resolution on side nav bar
     cy.get(selector.idr.identityResolution).click()
