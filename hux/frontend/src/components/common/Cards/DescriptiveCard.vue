@@ -52,7 +52,7 @@
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="text-h4 px-3 pb-2 pt-2 text-ellipsis d-block title text-h4"
+          class="text-h4 px-3 pb-1 pt-2 text-ellipsis d-block title text-h4"
           :class="disabled ? 'black--text text--darken-4' : 'primary--text'"
           :style="{ 'padding-top': !icon ? '56px' : null }"
           data-e2e="card-title"
