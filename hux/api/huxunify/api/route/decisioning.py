@@ -114,9 +114,9 @@ class ModelsView(SwaggerView):
         config_models = collection_management.get_documents(
             get_db_client(),
             db_c.CONFIGURATIONS_COLLECTION,
-            {db_c.TYPE: api_c.TYPE_MODEL},
+            {db_c.TYPE: api_c.MODELS_TAG},
         )
-        if config_models[db_c.DOCUMENTS]:
+        if config_models.get(db_c.DOCUMENTS):
             for model in all_models:
                 matched_model = next(
                     (
@@ -136,7 +136,6 @@ class ModelsView(SwaggerView):
 
         all_models.sort(key=lambda x: x[api_c.NAME])
 
-        all_models.sort(key=lambda x: x[api_c.NAME])
         return (
             jsonify(ModelSchema(many=True).dump(all_models)),
             HTTPStatus.OK.value,

@@ -107,7 +107,7 @@ class DecisioningTests(TestCase):
             t_c.validate_schema(ModelSchema(), response.json, True)
         )
 
-        self.assertEqual(
+        self.assertListEqual(
             [x[api_c.NAME] for x in response.json],
             ["Model1", "Model2"],
         )
@@ -149,7 +149,7 @@ class DecisioningTests(TestCase):
             t_c.validate_schema(ModelSchema(), response.json, True)
         )
 
-        self.assertEqual(
+        self.assertListEqual(
             [x[api_c.NAME] for x in response.json],
             ["Model1"],
         )

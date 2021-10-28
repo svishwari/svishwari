@@ -828,7 +828,6 @@ MODELS_ENDPOINT = "/models"
 MODELS_VERSION_HISTORY = "version-history"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
-TYPE_MODEL = "model"
 MODEL_ID = "model_id"
 MODEL_ID_PARAMS = [
     {
