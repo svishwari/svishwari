@@ -1,7 +1,7 @@
 import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
-describe("View notification", () => {
+describe("Notifications", () => {
   before(() => {
     cy.signin({
       email: Cypress.env("USER_EMAIL"),
@@ -10,8 +10,8 @@ describe("View notification", () => {
   })
 
   it("should be able to view a list of notifications", () => {
-    //after login land in overview page
-    cy.location("pathname").should("eq", route.overview)
+    cy.location("pathname").should("eq", route.home)
+
     //notification bell icon should be visible
     cy.get(selector.notification.notificationicon).should("be.visible")
     //click on the bell button

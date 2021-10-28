@@ -12,7 +12,7 @@ describe("Navigation", () => {
   it("should be able to navigate to all sections", () => {
     // home
     cy.get(selector.nav.home).click()
-    cy.location("pathname").should("eq", route.overview)
+    cy.location("pathname").should("eq", route.home)
 
     // configuration
     cy.get(selector.nav.configuration).click()

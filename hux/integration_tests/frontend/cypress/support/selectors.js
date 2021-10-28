@@ -2,7 +2,7 @@
  * Selectors for DOM elements in the application.
  */
 export default {
-  home: {
+  app: {
     signin: "[data-e2e='signin']",
   },
 
@@ -53,12 +53,12 @@ export default {
     dataSourceButton: "[data-e2e='Data Source']",
   },
 
-  // overview
-  overview: {
-    header: "[data-e2e='overview-header']",
-    list: "[data-e2e='configuration-list']",
-    item: "[data-e2e='configuration-item']",
-    chart: "[data-e2e='overview-chart']",
+  // home
+  home: {
+    welcomeBanner: "[data-e2e='welcome-banner']",
+    totalCustomersChart: "[data-e2e='total-customers-chart']",
+    latestNotifications: "[data-e2e='latest-notifications']",
+    allNotificationsLink: "[data-e2e='all-notifications-link']",
   },
 
   // data sources

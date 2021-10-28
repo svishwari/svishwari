@@ -8,9 +8,9 @@ export default {
   oktaSignOutRedirectURI: "/login",
 
   // app
-  home: "/",
+  index: "/",
   login: "/login",
-  overview: "/overview",
+  home: "/home",
   configuration: "/configuration",
   notifications: "/notifications",
 

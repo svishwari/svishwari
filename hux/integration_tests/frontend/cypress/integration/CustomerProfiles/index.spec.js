@@ -10,7 +10,7 @@ describe("Data management > Customer Profiles", () => {
   })
 
   it("should have an Overview, Total customers, Geographic and Demographic charts", () => {
-    cy.location("pathname").should("eq", route.overview)
+    cy.location("pathname").should("eq", route.home)
 
     // click on customer profiles on side nav bar
     cy.get(selector.customerProfile.customers).click()
