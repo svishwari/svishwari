@@ -242,12 +242,12 @@ class DecisioningTests(TestCase):
     @given(model_id=st.integers(min_value=1, max_value=2))
     @settings(deadline=600)
     def test_get_model_feature_importance_negative_score(
-        self, model_id: str
+        self, model_id: int
     ) -> None:
         """Test get model feature importance negative score in response.
 
         Args:
-            model_id (str): Model ID.
+            model_id (int): Model ID.
         """
 
         get_model_version_mock = mock.patch(
