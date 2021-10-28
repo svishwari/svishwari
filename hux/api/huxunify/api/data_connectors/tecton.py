@@ -212,7 +212,7 @@ def get_models() -> List[dict]:
     return map_model_response(response)
 
 
-def get_model_version_history(model_id: int) -> List[ModelVersionSchema]:
+def get_model_version_history(model_id: str) -> List[ModelVersionSchema]:
     """Get model version history based on id.
 
     Args:
@@ -267,11 +267,11 @@ def get_model_version_history(model_id: int) -> List[ModelVersionSchema]:
 
 
 # pylint: disable=unused-argument
-def get_model_drift(model_id: int, model_type: str) -> List[ModelDriftSchema]:
+def get_model_drift(model_id: str, model_type: str) -> List[ModelDriftSchema]:
     """Get model drift based on model_id and model_type.
 
     Args:
-        model_id (int): Model id.
+        model_id (str): Model id.
         model_type (str): model type.
 
     Returns:
@@ -457,12 +457,12 @@ async def get_async_lift_bucket(
 
 
 def get_model_features(
-    model_id: int, model_version: str
+    model_id: str, model_version: str
 ) -> List[FeatureSchema]:
     """Get model features based on model id.
 
     Args:
-        model_id (int): Model id.
+        model_id (str): Model id.
         model_version (str): model version.
 
     Returns:
@@ -550,12 +550,12 @@ def get_model_features(
 
 
 def get_model_performance_metrics(
-    model_id: int, model_type: str, model_version: str
+    model_id: str, model_type: str, model_version: str
 ) -> dict:
     """Get model performance metrics based on model ID.
 
     Args:
-        model_id (int): Model id.
+        model_id (str): Model id.
         model_type (str): Model type.
         model_version (str): Model version.
 

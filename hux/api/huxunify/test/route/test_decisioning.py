@@ -80,11 +80,11 @@ class DecisioningTests(TestCase):
         )
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
-    def test_get_model_version_history_success(self, model_id: int):
+    def test_get_model_version_history_success(self, model_id: str):
         """Test get model version history
 
         Args:
-            model_id (int): Model ID.
+            model_id (str): Model ID.
         """
 
         # mock the version history
@@ -242,12 +242,12 @@ class DecisioningTests(TestCase):
     @given(model_id=st.integers(min_value=1, max_value=2))
     @settings(deadline=600)
     def test_get_model_feature_importance_negative_score(
-        self, model_id: int
+        self, model_id: str
     ) -> None:
         """Test get model feature importance negative score in response.
 
         Args:
-            model_id (int): Model ID.
+            model_id (str): Model ID.
         """
 
         get_model_version_mock = mock.patch(
