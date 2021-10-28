@@ -337,10 +337,10 @@ class UserView(SwaggerView):
             HTTPStatus.OK.value,
         )
 
-
+# HUS-1320 need to allow user to edit other users via RBAC
 @add_view_to_blueprint(
     user_bp,
-    f"{api_c.USER_ENDPOINT}/<destination_id>",
+    f"{api_c.USER_ENDPOINT}",
     "UserPatchView",
 )
 class UserPatchView(SwaggerView):
@@ -400,16 +400,20 @@ class UserPatchView(SwaggerView):
             Tuple[dict, int]: User doc, HTTP status code.
         """
 
-        okta_id = introspect_token(get_token_from_request(request)[0]).get(
-            api_c.OKTA_USER_ID
-        )
+        database = get_db_client()
+
+        user = get_all_users(database, {db_constants.USER_DISPLAY_NAME: user_name})
+        if not user:
+            return {
+                api_c.MESSAGE: api_c.USER_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         body = UserPatchSchema().load(request.get_json())
 
         updated_user = update_user(
-            get_db_client(),
-            okta_id,
-            {
+            database,
+            okta_id=user[db_constants.OKTA_ID],
+            update_doc={
                 **body,
                 **{
                     db_constants.UPDATED_BY: user_name,

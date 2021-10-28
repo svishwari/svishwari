@@ -316,7 +316,14 @@ def api_error_handler(custom_message: dict = None) -> object:
                     "message": "Error connecting to Facebook"
                 }, HTTPStatus.BAD_REQUEST
 
-            except ValueError:
+            except ValueError as value_error:
+                logger.error(
+                    "%s: %s Error encountered while executing %s in module %s.",
+                    value_error.__class__,
+                    value_error.args[0],
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
                 return {
                     "message": custom_message
                     if custom_message
