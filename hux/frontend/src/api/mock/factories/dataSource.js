@@ -13,12 +13,13 @@ export default {
 
   feed_count: () => faker.datatype.number({ min: 1, max: 20 }),
 
-  category: () => faker.random.arrayElement([
-    "Internet",
-    "Productivity",
-    "Marketing",
-    "Databases",
-  ]),
+  category: () =>
+    faker.random.arrayElement([
+      "Internet",
+      "Productivity",
+      "Marketing",
+      "Databases",
+    ]),
 }
 
 /**
