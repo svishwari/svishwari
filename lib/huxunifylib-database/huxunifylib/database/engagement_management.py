@@ -907,7 +907,7 @@ def remove_destination_from_engagement_audience(
             if destination.get(db_c.OBJECT_ID) != destination_id:
                 continue
 
-            audience[db_c.DESTINATIONS].pop(i)
+            del audience[db_c.DESTINATIONS][i]
 
             engagement_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
             engagement_doc[db_c.UPDATED_BY] = user_name
