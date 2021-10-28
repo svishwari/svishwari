@@ -57,6 +57,7 @@
             :to="{
               name: 'AlertsAndNotifications',
             }"
+            data-e2e="notifications-view-all"
             class="text-body-1 primary--text view-all text-decoration-none"
           >
             View all alerts

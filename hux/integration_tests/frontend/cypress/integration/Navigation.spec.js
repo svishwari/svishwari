@@ -1,5 +1,5 @@
-import route from "../../support/routes.js"
-import selector from "../../support/selectors.js"
+import route from "../support/routes.js"
+import selector from "../support/selectors.js"
 
 describe("Navigation", () => {
   before(() => {
@@ -9,7 +9,7 @@ describe("Navigation", () => {
     })
   })
 
-  it("should be able to navigate to all sections", () => {
+  it.only("should be able to navigate to all sections", () => {
     // home
     cy.get(selector.nav.home).click()
     cy.location("pathname").should("eq", route.home)
