@@ -7,7 +7,7 @@
           :key="dataSource.id"
           :icon="dataSource.type"
           :title="dataSource.name"
-          :description="''"
+          :description="dataSource.category"
           :disabled="dataSource.status !== 'Active'"
           :action-menu="dataSource.status !== 'Active'"
           :coming-soon="false"
@@ -50,7 +50,7 @@
           </template>
 
           <template slot="default">
-            <div>-</div>
+            <div>{{ dataSource.feed_count ? dataSource.feed_count : "-" }}</div>
             <p
               class="text-body-2 black--text text--lighten-4"
               data-e2e="model-owner"
