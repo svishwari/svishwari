@@ -833,10 +833,10 @@ MODEL_ID_PARAMS = [
     {
         "name": MODEL_ID,
         "description": "Model id",
-        "type": "integer",
+        "type": "string",
         "in": "path",
         "required": True,
-        "example": 1,
+        "example": "1",
     }
 ]
 PURCHASE = "purchase"

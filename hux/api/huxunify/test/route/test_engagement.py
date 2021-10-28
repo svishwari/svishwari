@@ -1694,16 +1694,29 @@ class TestEngagementRoutes(TestCase):
 
         destination_to_remove = {api_c.ID: str(self.destinations[0][db_c.ID])}
 
-        response = self.app.post(
+        response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
             f"{api_c.AUDIENCE}/{str(audience_id)}/destinations",
             json=destination_to_remove,
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(
-            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+    def test_remove_invalid_destination_from_engagement_audience(self):
+        """Test remove invalid destination from engagement audience."""
+
+        engagement_id = self.engagement_ids[0]
+        audience_id = self.audiences[1][db_c.ID]
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.AUDIENCE}/{str(audience_id)}/destinations",
+            json={},
+            headers=t_c.STANDARD_HEADERS,
         )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
 
     def test_set_engagement_flight_schedule(self):
         """Test setting an engagement flight schedule."""

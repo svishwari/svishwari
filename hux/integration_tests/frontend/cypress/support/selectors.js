@@ -2,7 +2,7 @@
  * Selectors for DOM elements in the application.
  */
 export default {
-  home: {
+  app: {
     signin: "[data-e2e='signin']",
   },
 
@@ -53,12 +53,12 @@ export default {
     dataSourceButton: "[data-e2e='Data Source']",
   },
 
-  // overview
-  overview: {
-    header: "[data-e2e='overview-header']",
-    list: "[data-e2e='configuration-list']",
-    item: "[data-e2e='configuration-item']",
-    chart: "[data-e2e='overview-chart']",
+  // home
+  home: {
+    welcomeBanner: "[data-e2e='welcome-banner']",
+    totalCustomersChart: "[data-e2e='total-customers-chart']",
+    latestNotifications: "[data-e2e='latest-notifications']",
+    allNotificationsLink: "[data-e2e='all-notifications-link']",
   },
 
   // data sources
@@ -110,7 +110,7 @@ export default {
     addAudience: "[data-e2e='add-audience']",
     addDestination: "[data-e2e='add-destination']",
     selectAudience: "[data-e2e='audience-select-button']",
-    selectDestination: "[data-e2e='destination-select-button-qualtrics']",
+    selectDestination: "[data-e2e='destination-select-button-facebook']",
     salesForceAddButton: "[data-e2e='destination-select-button-sfmc']",
     exitDrawer: "[data-e2e='click-outside']",
     exitDataExtensionDrawer: "[data-e2e='destination-added']",
@@ -178,11 +178,11 @@ export default {
     pinning: "[data-e2e='Pinning']",
     stitched: "[data-e2e='Stitched']",
   },
-  //notification
+  // notification
   notification: {
     notificationicon: "[data-e2e='notification-bell']",
     notificationReturnButton: "[data-e2e='notification-return']",
-    notifications: "a[href='/notifications']",
+    viewAllNotifications: "[data-e2e='notifications-view-all']",
     notificationlistmenu: "[data-e2e='notification-item']",
   },
   audience: {

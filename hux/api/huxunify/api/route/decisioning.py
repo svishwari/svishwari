@@ -238,7 +238,7 @@ class ModelVersionView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, model_id: int) -> Tuple[List[dict], int]:
+    def get(self, model_id: str) -> Tuple[List[dict], int]:
         """Retrieves model version history.
 
         ---
@@ -246,7 +246,7 @@ class ModelVersionView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            model_id (int): Model ID.
+            model_id (str): Model ID.
 
         Returns:
             Tuple[List[dict], int]: List containing dict of model versions,
@@ -316,7 +316,7 @@ class ModelOverview(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, model_id: int) -> Tuple[dict, int]:
+    def get(self, model_id: str) -> Tuple[dict, int]:
         """Retrieves model overview.
 
         ---
@@ -324,15 +324,15 @@ class ModelOverview(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            model_id (int): Model ID.
+            model_id (str): Model ID.
 
         Returns:
             Tuple[dict, int]: dict of model features, HTTP status code.
         """
-        model_id = Validation.validate_integer(model_id)
+
         # TODO Remove once Propensity to Purchase model data is being served
         #  from tecton.
-        if model_id == 3:
+        if model_id == "3":
             overview_data = api_c.PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB
         else:
             # get model information
@@ -391,7 +391,7 @@ class ModelDriftView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, model_id: int) -> Tuple[List[dict], int]:
+    def get(self, model_id: str) -> Tuple[List[dict], int]:
         """Retrieves model drift details.
 
         ---
@@ -399,16 +399,16 @@ class ModelDriftView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            model_id (int): Model ID.
+            model_id (str): Model ID.
 
         Returns:
             Tuple[List[dict], int]: List containing dict of model drift,
                 HTTP status code.
         """
-        model_id = Validation.validate_integer(model_id)
+
         # TODO Remove once Propensity to Purchase data is being served
         # from tecton
-        if model_id == 3:
+        if model_id == "3":
             drift_data = [
                 {
                     api_c.DRIFT: round(uniform(0.8, 1), 2),
@@ -472,7 +472,7 @@ class ModelFeaturesView(SwaggerView):
     @api_error_handler()
     def get(
         self,
-        model_id: int,
+        model_id: str,
         model_version: str = None,
     ) -> Tuple[List[dict], int]:
         """Retrieves model features.
@@ -482,7 +482,7 @@ class ModelFeaturesView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            model_id (int): Model ID.
+            model_id (str): Model ID.
             model_version (str): Model Version.
 
         Returns:
@@ -494,7 +494,7 @@ class ModelFeaturesView(SwaggerView):
         #  available and can be fetched from Tecton
         # intercept to check if the model_id is for propensity_to_purchase
         # to set features with stub data
-        if model_id == 3:
+        if model_id == "3":
             features = api_c.PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB
         else:
             # only use the latest version if model version is None.
@@ -576,7 +576,7 @@ class ModelImportanceFeaturesView(SwaggerView):
     @api_error_handler()
     def get(
         self,
-        model_id: int,
+        model_id: str,
         model_version: str = None,
         limit: int = 20,
     ) -> Tuple[List[dict], int]:
@@ -587,7 +587,7 @@ class ModelImportanceFeaturesView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            model_id (int): Model ID.
+            model_id (str): Model ID.
             model_version (str): Model Version.
             limit (int): Limit of features to return, default is 20.
 
@@ -595,7 +595,7 @@ class ModelImportanceFeaturesView(SwaggerView):
             Tuple[List[dict], int]: List containing dict of model features,
                 HTTP status code.
         """
-        model_id = Validation.validate_integer(model_id)
+
         # only use the latest version if model version is None.
         if model_version is None:
             # get latest version first
@@ -656,7 +656,7 @@ class ModelLiftView(SwaggerView):
     @api_error_handler()
     def get(
         self,
-        model_id: int,
+        model_id: str,
     ) -> Tuple[List[dict], int]:
         """Retrieves model lift data.
 
@@ -665,16 +665,16 @@ class ModelLiftView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            model_id (int): Model ID
+            model_id (str): Model ID
 
         Returns:
             Tuple[List[dict], int]: List containing a dict of model lift data,
                 HTTP status code.
         """
-        model_id = Validation.validate_integer(model_id)
+
         # TODO Remove once Tecton serves lift data for model id 3
 
-        if model_id == 3:
+        if model_id == "3":
             lift_data = [
                 {
                     api_c.PREDICTED_RATE: uniform(0.01, 0.3),

@@ -2,23 +2,12 @@ import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
 describe("Orchestration > Engagement > Create Engagement", () => {
-  before(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+  beforeEach(() => {
+    cy.signin()
+    cy.visit(route.addEngagement)
   })
 
   it("should be able to configure a new engagement", () => {
-    // should be able to navigate to engagement and click on add engagement button
-    // after login land in the overview page
-    cy.location("pathname").should("eq", route.overview)
-    //click on engagement on side nav bar and route in engagement screen
-    cy.get(selector.nav.engagements).click()
-    cy.location("pathname").should("eq", route.engagements)
-    //click on add engagement button
-    cy.get(selector.engagement.addEngagements).click()
-
     // should fill new engagement name and description
     // add new engagement name
     cy.get(selector.engagement.enagagementName).eq(0).type("Test Engagement")

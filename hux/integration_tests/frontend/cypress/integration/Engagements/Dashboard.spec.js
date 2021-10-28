@@ -2,19 +2,13 @@ import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
 describe("Orchestration > Engagement > Engagement Dashboard", () => {
-  before(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+  beforeEach(() => {
+    cy.signin()
+    cy.visit(route.engagements)
   })
 
   // TODO in HUS-1373 - expected to find element but never found it
   it.skip("should be able to view an engagement's dashboard", () => {
-    // after login land in the overview page
-    cy.location("pathname").should("eq", route.overview)
-    // click on engagement on side nav bar and route in engagement screen
-    cy.get(selector.nav.engagements).click()
     cy.location("pathname").should("eq", route.engagements)
 
     // click over the engagement name that has active status with more than 1 audience and navigate to dashboard
