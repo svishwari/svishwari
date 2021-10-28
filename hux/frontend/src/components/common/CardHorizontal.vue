@@ -14,7 +14,7 @@
     <div v-if="icon || title" class="d-flex align-center">
       <logo :type="icon" />
       <div
-        class="card-horizontal-title pl-2 text-h6 black--text text--darken-4"
+        class="pl-2 body-1"
       >
         {{ title }}
       </div>
