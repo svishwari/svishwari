@@ -59,6 +59,15 @@ import huxunify.api.constants as api_c
 # setup the destination blueprint
 dest_bp = Blueprint(api_c.DESTINATIONS_ENDPOINT, import_name=__name__)
 
+facebook_auth_example = {
+    api_c.AUTHENTICATION_DETAILS: {
+        api_c.FACEBOOK_ACCESS_TOKEN: "ABCD",
+        api_c.FACEBOOK_APP_SECRET: "1234",
+        api_c.FACEBOOK_APP_ID: "1234",
+        api_c.FACEBOOK_AD_ACCOUNT_ID: "1234",
+    },
+}
+
 
 @dest_bp.before_request
 @secured()
@@ -291,14 +300,7 @@ class DestinationAuthenticationPostView(SwaggerView):
             "in": "body",
             "description": "Destination Object.",
             "type": "object",
-            "example": {
-                api_c.AUTHENTICATION_DETAILS: {
-                    api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
-                    api_c.FACEBOOK_APP_SECRET: "717bdOQqZO99",
-                    api_c.FACEBOOK_APP_ID: "2951925002021888",
-                    api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
-                },
-            },
+            "example": facebook_auth_example,
         },
     ]
 
@@ -367,14 +369,7 @@ class DestinationPutView(SwaggerView):
             "in": "body",
             "description": "Destination Object.",
             "type": "object",
-            "example": {
-                api_c.AUTHENTICATION_DETAILS: {
-                    api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
-                    api_c.FACEBOOK_APP_SECRET: "717bdOQqZO99",
-                    api_c.FACEBOOK_APP_ID: "2951925002021888",
-                    api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
-                },
-            },
+            "example": facebook_auth_example,
         },
     ]
 
@@ -475,15 +470,7 @@ class DestinationValidatePostView(SwaggerView):
             "in": "body",
             "type": "object",
             "description": "Validate destination body.",
-            "example": {
-                api_c.DESTINATION_TYPE: "facebook",
-                api_c.AUTHENTICATION_DETAILS: {
-                    api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
-                    api_c.FACEBOOK_APP_SECRET: "717bdOQqZO99",
-                    api_c.FACEBOOK_APP_ID: "2951925002021888",
-                    api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
-                },
-            },
+            "example": facebook_auth_example,
         },
     ]
 
