@@ -1,17 +1,13 @@
-import route from "../../support/routes.js"
-import selector from "../../support/selectors.js"
+import route from "../../support/routes"
+import selector from "../../support/selectors"
 
 describe("Data management > Customer Profiles > Customer Profiles Dashboard", () => {
-  before(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+  beforeEach(() => {
+    cy.signin()
+    cy.visit(route.customerProfiles)
   })
 
   it("should be able to navigate to customer profiles", () => {
-    //click on customer profiles on side nav bar
-    cy.get(selector.customerProfile.customers).click()
     cy.location("pathname").should("eq", route.customerProfiles)
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting

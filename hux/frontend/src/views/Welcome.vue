@@ -11,7 +11,7 @@
       </span>
       <h2>All Together, Entirely</h2>
       <v-btn
-        :to="{ name: 'Overview' }"
+        :to="{ name: 'Home' }"
         data-e2e="signin"
         elevation="2"
         small
@@ -60,7 +60,11 @@ export default {
         const redirect = sessionStorage.getItem("appRedirect")
         sessionStorage.removeItem("appRedirect")
         this.$store.dispatch("users/getUserProfile")
-        this.$router.replace(redirect || "/overview")
+        this.$router.replace(
+          redirect || {
+            name: "Home",
+          }
+        )
       } else {
         this.$store.dispatch("users/setUserProfile", {})
         this.$store.dispatch("users/setUserToken", {})

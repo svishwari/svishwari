@@ -17,6 +17,7 @@ from huxunifylib.database.user_management import set_user
 from huxunify.app import create_app
 
 from huxunify.api import constants as api_c
+from huxunify.api.route.utils import get_user_favorites
 from huxunify.api.schema.user import UserSchema
 
 import huxunify.test.constants as t_c
@@ -54,6 +55,12 @@ class TestUserRoutes(TestCase):
         # mock get_db_client() in decorators
         mock.patch(
             "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get db client from utils
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
         ).start()
 
@@ -222,7 +229,6 @@ class TestUserRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         t_c.validate_schema(UserSchema(), response.json)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_get_all_users(self):
         """Tests getting all users."""
@@ -278,7 +284,13 @@ class TestUserRoutes(TestCase):
         # present in mock DB
         request_mocker = requests_mock.Mocker()
         request_mocker.post(t_c.INTROSPECT_CALL, json=incorrect_okta_response)
+        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         request_mocker.start()
+
+        mock.patch(
+            "huxunify.api.route.utils.set_user",
+            return_value=None,
+        ).start()
 
         endpoint = f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.PROFILE}"
 
@@ -327,3 +339,19 @@ class TestUserRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_get_user_favorites(self):
+        """Test getting user favorites"""
+        self.assertFalse(
+            get_user_favorites(
+                self.database,
+                self.user_info[db_c.USER_DISPLAY_NAME],
+                db_c.ENGAGEMENTS,
+            )
+        )
+
+    def test_get_user_favorites_user_does_not_exist(self):
+        """Test getting user favorites with a user that does not exist."""
+        self.assertFalse(
+            get_user_favorites(self.database, None, db_c.ENGAGEMENTS)
+        )

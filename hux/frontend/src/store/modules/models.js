@@ -144,6 +144,14 @@ const actions = {
       throw error
     }
   },
+
+  clearModelValues({ commit }) {
+    commit("SET_DRIFT", [])
+    commit("SET_LIFT", [])
+    commit("SET_MODAL_FEATURE", [])
+    commit("SET_FEATURES", [])
+    commit("SET_OVERVIEW", {})
+  },
 }
 
 export default {

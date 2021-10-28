@@ -13,7 +13,7 @@
         </template>
       </page-header>
 
-      <page-header header-height="71">
+      <page-header v-if="isConnectionStarted" header-height="71">
         <template #left>
           <v-btn disabled icon color="black">
             <v-icon medium>mdi-magnify</v-icon>
@@ -46,53 +46,26 @@
           ></data-sources-list>
         </v-col>
       </v-row>
-      <div v-else class="empty-state-wrap text-center">
-        <v-icon color="primary lighten-8" x-large>
-          mdi-alert-circle-outline
-        </v-icon>
-        <div class="text-h3">Oops! There’s nothing here yet</div>
-        <div class="font-weight-regular text-h6 my-2">
-          To create a connection, you need to add a destination or a data
-          source!
-          <br />
-          Begin by selecting a button below.
-        </div>
-        <router-link
-          :to="{ name: 'DestinationConfiguration' }"
-          class="text-decoration-none"
-        >
-          <huxButton
-            variant="primary base"
-            icon-color="white"
-            icon-variant="base"
-            icon="plus"
-            size="small"
-            is-custom-icon
+      <hux-empty
+        v-else
+        icon-type="destinations-null"
+        :icon-size="50"
+        title="No data sources to show"
+        subtitle="The list of data sources will appear here once they have been added."
+      >
+        <template #button>
+          <hux-button
+            variant="primary"
             is-tile
-            class="ma-2 caption font-weight-regular"
+            width="224"
+            height="40"
+            class="text-button my-4"
+            @click="toggleDrawer()"
           >
-            Destination
-          </huxButton>
-        </router-link>
-        <router-link
-          :to="{ name: 'DataSources', params: { select: true } }"
-          class="text-decoration-none"
-        >
-          <huxButton
-            button-text="Data source"
-            variant="primary base"
-            icon-color="white"
-            icon-variant="base"
-            icon="plus"
-            size="small"
-            is-custom-icon
-            is-tile
-            class="ma-2 text-h6 font-weight-regular"
-          >
-            Data source
-          </huxButton>
-        </router-link>
-      </div>
+            Request a data sources
+          </hux-button>
+        </template>
+      </hux-empty>
     </div>
     <data-source-configuration v-model="drawer" />
   </page>
@@ -106,6 +79,7 @@ import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
+import HuxEmpty from "@/components/common/screens/Empty"
 import DataSourceConfiguration from "@/views/DataSources/Configuration"
 
 export default {
@@ -118,6 +92,7 @@ export default {
     Breadcrumb,
     huxButton,
     DataSourceConfiguration,
+    HuxEmpty,
   },
 
   data() {
@@ -186,9 +161,4 @@ export default {
   },
 }
 </script>
-
-<style lang="scss" scoped>
-.empty-state-wrap {
-  padding-top: 160px;
-}
-</style>
+<style lang="scss" scoped></style>

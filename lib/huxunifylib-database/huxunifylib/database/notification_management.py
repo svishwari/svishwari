@@ -2,7 +2,7 @@
 import logging
 import warnings
 from datetime import datetime
-from typing import Union
+from typing import Union, List, Any, Dict
 
 import pymongo
 from bson import ObjectId
@@ -104,10 +104,20 @@ def get_notifications_batch(
     batch_size: int,
     sort_order: int,
     batch_number: int,
+    notification_types: List[str],
+    notification_categories: List[str],
+    users: List[str],
+    start_date: datetime,
+    end_date: datetime,
 ) -> Union[dict, None]:
     """A function to get notifications per batch size.
 
     Args:
+        end_date(datetime): End Date
+        start_date(datetime): Start Date
+        users(List[str]): List of User names
+        notification_categories(List[str]): List of Notification Categories
+        notification_types (List[str]): List of Type of Notifications
         database (DatabaseClient): A database client.
         batch_size (int): Number of notifications per batch.
         sort_order (int): dictate the order of the records that are returned.
@@ -125,12 +135,31 @@ def get_notifications_batch(
     ]
 
     skips = batch_size * (batch_number - 1)
-
+    query = dict({c.DELETED: False})  # type: Dict[str,Any]
+    if notification_types:
+        query.update({c.TYPE: {"$in": notification_types}})
+    if notification_categories:
+        query.update(
+            {c.NOTIFICATION_FIELD_CATEGORY: {"$in": notification_categories}}
+        )
+    if users:
+        query.update({c.NOTIFICATION_FIELD_USERNAME: {"$in": users}})
+    if start_date and end_date:
+        query.update(
+            {
+                c.NOTIFICATION_FIELD_CREATED: {
+                    "$gte": start_date,
+                    "$lte": end_date,
+                }
+            }
+        )
+    if query:
+        query = dict({"$and": [query]})
     try:
         return dict(
-            total_records=collection.count_documents({}),
+            total_records=collection.count_documents(query),
             notifications=list(
-                collection.find({c.DELETED: False})
+                collection.find(query)
                 .sort([(c.NOTIFICATION_FIELD_CREATED, -1), (c.ID, sort_order)])
                 .skip(skips)
                 .limit(batch_size)

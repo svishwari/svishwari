@@ -16,6 +16,7 @@ from huxunifylib.database import (
 )
 import huxunify.test.constants as t_c
 from huxunify.api.data_connectors.aws import parameter_store
+from huxunify.api.schema.destinations import DestinationDataExtGetSchema
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
 
@@ -756,6 +757,11 @@ class TestDestinationRoutes(TestCase):
             return_value
         )
 
+        expected_response = sorted(
+            DestinationDataExtGetSchema().dump(return_value, many=True),
+            key=lambda i: i[db_c.CREATE_TIME],
+            reverse=True,
+        )
         destination_id = self.destinations[2][db_c.ID]
 
         response = self.app.get(
@@ -764,13 +770,18 @@ class TestDestinationRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(response.json[0][api_c.NAME], "data_extension_name")
-        self.assertEqual(
-            response.json[0][api_c.DATA_EXTENSION_ID], "id12345678"
-        )
-        self.assertEqual(
-            response.json[0][db_c.CREATE_TIME], "2021-10-09T00:10:20.345Z"
-        )
+        for idx, data_extension in enumerate(response.json):
+            self.assertEqual(
+                data_extension[api_c.NAME], expected_response[idx][api_c.NAME]
+            )
+            self.assertEqual(
+                data_extension[api_c.DATA_EXTENSION_ID],
+                expected_response[idx][api_c.DATA_EXTENSION_ID],
+            )
+            self.assertEqual(
+                data_extension[db_c.CREATE_TIME],
+                expected_response[idx][db_c.CREATE_TIME],
+            )
 
     @mock.patch("huxunify.api.route.destination.SFMCConnector")
     def test_retrieve_empty_destination_data_extensions(

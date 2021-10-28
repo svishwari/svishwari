@@ -4,7 +4,6 @@ import re
 from typing import Tuple, Union
 from http import HTTPStatus
 from bson import ObjectId
-from croniter import croniter, CroniterNotAlphaError
 from pandas import DataFrame
 from dateutil.relativedelta import relativedelta
 
@@ -22,7 +21,12 @@ from huxunifylib.database.cdp_data_source_management import (
 from huxunifylib.database import (
     constants as db_c,
 )
-from huxunifylib.database.user_management import get_user
+from huxunifylib.database.user_management import (
+    get_user,
+    get_all_users,
+    set_user,
+)
+from huxunifylib.database.client import DatabaseClient
 
 from huxunify.api.config import get_config
 from huxunify.api import constants
@@ -30,6 +34,7 @@ from huxunify.api.data_connectors.tecton import check_tecton_connection
 from huxunify.api.data_connectors.aws import check_aws_ssm, check_aws_batch
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
+    get_user_info,
 )
 from huxunify.api.data_connectors.cdp import check_cdm_api_connection
 from huxunify.api.data_connectors.cdp_connection import (
@@ -181,27 +186,6 @@ def get_friendly_delivered_time(delivered_time: datetime) -> str:
         return str(int(delivered / 60)) + " minutes ago"
     else:
         return str(int(delivered)) + " seconds ago"
-
-
-def get_next_schedule(
-    cron_expression: str, start_date: datetime
-) -> Union[datetime, None]:
-    """Get the next schedule from the cron expression.
-
-    Args:
-        cron_expression (str): Cron Expression of the schedule.
-        start_date (datetime): Start Datetime.
-
-    Returns:
-        next_schedule(datetime): Next Schedule datetime.
-    """
-
-    if isinstance(cron_expression, str) and isinstance(start_date, datetime):
-        try:
-            return croniter(cron_expression, start_date).get_next(datetime)
-        except CroniterNotAlphaError:
-            logger.error("Encountered cron expression error, returning None")
-    return None
 
 
 def update_metrics(
@@ -503,18 +487,85 @@ def get_start_end_dates(request: dict, delta: int) -> (str, str):
     return start_date, end_date
 
 
-def get_user_favorites(okta_user_id: str, component_name: str) -> list:
+def get_user_favorites(
+    database: DatabaseClient, user_name: str, component_name: str
+) -> list:
     """Get user favorites for a component
 
     Args:
-        okta_user_id (str): OKTA JWT token.
+        database (DatabaseClient): A database client.
+        user_name (str): Name of the user.
         component_name (str): Name of component in user favorite.
 
     Returns:
         list: List of ids of favorite component
     """
-    user_favorites = get_user(get_db_client(), okta_user_id).get(
-        constants.FAVORITES
+    user = get_all_users(database, {db_c.USER_DISPLAY_NAME: user_name})
+    if not user:
+        return []
+
+    # take the first one,
+    return user[0].get(constants.FAVORITES, {}).get(component_name, [])
+
+
+def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
+    """Get the corresponding user matching the okta access token from the DB.
+    Create/Set a new user in DB if an user matching the valid okta access token
+    is not currently present in the DB.
+
+    Args:
+        access_token (str): OKTA JWT token.
+
+    Returns:
+        Union[dict, Tuple[dict, int]]: Either a valid user dict or a tuple of
+            response message along with the corresponding HTTP status code.
+    """
+
+    # set of keys required from user_info
+    required_keys = {
+        constants.OKTA_ID_SUB,
+        constants.EMAIL,
+        constants.NAME,
+    }
+
+    # get the user information
+    logger.info("Getting user info from OKTA.")
+    user_info = get_user_info(access_token)
+    logger.info("Successfully got user info from OKTA.")
+
+    # checking if required keys are present in user_info
+    if not required_keys.issubset(user_info.keys()):
+        logger.info("Failure. Required keys not present in user_info dict.")
+        return {
+            "message": constants.AUTH401_ERROR_MESSAGE
+        }, HTTPStatus.UNAUTHORIZED
+
+    logger.info(
+        "Successfully validated required_keys are present in user_info."
     )
 
-    return user_favorites.get(component_name, [])
+    # check if the user is in the database
+    database = get_db_client()
+    user = get_user(database, user_info[constants.OKTA_ID_SUB])
+
+    if user is None:
+        # since a valid okta_id is extracted from the okta issuer, use the user
+        # info and create a new user if no corresponding user record matching
+        # the okta_id is found in DB
+        user = set_user(
+            database=database,
+            okta_id=user_info[constants.OKTA_ID_SUB],
+            email_address=user_info[constants.EMAIL],
+            display_name=user_info[constants.NAME],
+        )
+
+        # return NOT_FOUND if user is still none
+        if user is None:
+            logger.info(
+                "User not found in DB even after trying to create one."
+            )
+            return {
+                constants.MESSAGE: constants.USER_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
+    return user

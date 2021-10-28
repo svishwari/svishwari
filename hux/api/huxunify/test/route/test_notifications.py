@@ -49,6 +49,12 @@ class TestNotificationRoutes(TestCase):
             return_value=self.database,
         ).start()
 
+        # mock get db client from utils
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
         notifications = [
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_SUCCESS,
@@ -64,6 +70,7 @@ class TestNotificationRoutes(TestCase):
                 "notification_type": db_c.NOTIFICATION_TYPE_CRITICAL,
                 "description": "description 3",
                 "category": api_c.ORCHESTRATION_TAG,
+                "username": "random_user_name",
             },
         ]
 
@@ -113,6 +120,20 @@ class TestNotificationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(NotificationSchema().validate(response.json))
+
+    def test_get_notification_with_username(self):
+        """Test get notification."""
+        notification_id = self.notifications[0][api_c.ID]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notification_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIn(
+            response.json["username"], ["random_user_name", "unknown"]
+        )
 
     def test_get_notifications_default_params(self):
         """Test get notifications failure."""

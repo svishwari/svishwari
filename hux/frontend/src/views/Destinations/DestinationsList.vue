@@ -1,6 +1,6 @@
 <template>
   <div class="list-wrapper">
-    <v-row v-if="hasAddedDestinations">
+    <v-row v-if="hasAddedDestinations" class="pa-3">
       <template>
         <descriptive-card
           v-for="destination in addedDestinations"
@@ -8,23 +8,20 @@
           :icon="destination.type"
           :icon-color="'white'"
           :title="destination.name"
-          :description="''"
-          :disabled="destination.status !== 'Succeeded'"
+          :description="destination.category"
+          :disabled="destination.status !== 'Active'"
           :action-menu="true"
           :coming-soon="false"
           :logo-option="true"
           height="225"
           width="255"
           class="mr-10 model-desc-card"
+          data-e2e="destination-list"
         >
           <template slot="top">
             <status
               :icon-size="18"
-              :status="
-                destination.status === 'Succeeded'
-                  ? 'Active'
-                  : destination.status || ''
-              "
+              :status="destination.status"
               collapsed
               class="d-flex float-left"
               data-e2e="model-status"
@@ -34,7 +31,9 @@
             <v-list class="list-wrapper pa-0">
               <v-list-item-group>
                 <v-list-item @click="openModal(destination)">
-                  <v-list-item-title> Remove </v-list-item-title>
+                  <v-list-item-title data-e2e="destination-list-remove">
+                    Remove
+                  </v-list-item-title>
                 </v-list-item>
               </v-list-item-group>
             </v-list>
@@ -61,6 +60,9 @@
       :sub-title="`${selectedDestination.name}`"
       right-btn-text="Yes, remove it"
       data-e2e="remove-destination-confirm"
+      :is-disabled="
+        selectedDestination.status !== 'Requested' ? !enableConfirm : false
+      "
       @onCancel="confirmModal = !confirmModal"
       @onConfirm="confirmRemoval()"
     >
@@ -73,15 +75,32 @@
             font-weight-regular
           "
         >
-          Are you sure you want to remove this destination?
+          <template v-if="selectedDestination.status === 'Requested'">
+            Are you sure you want to remove this pending destination?
+          </template>
+          <template v-else>
+            Are you sure you want to remove this destination?
+          </template>
         </div>
         <div
+          v-if="selectedDestination.status !== 'Requested'"
           class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
         >
           By removing this destination you will be impacting
           <span class="error--text">ALL</span> audiences and engagements that
           are being delivered to this destination and you will not be able to
           recover its impact.
+        </div>
+        <br />
+        <div v-if="selectedDestination.status !== 'Requested'">
+          <text-field
+            label-text="For safety reasons please confirm the deletion of the destination:"
+            placeholder='Type "confirm" to remove this destination'
+            height="40"
+            data-e2e="remove-destination-text"
+            required
+            @input="enableConfirmButton($event)"
+          />
         </div>
       </template>
     </confirm-modal>
@@ -95,6 +114,7 @@ import ConfirmModal from "@/components/common/ConfirmModal"
 import EmptyStateData from "@/components/common/EmptyStateData"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import Status from "@/components/common/Status"
+import TextField from "@/components/common/TextField"
 
 export default {
   name: "DestinationsList",
@@ -104,12 +124,14 @@ export default {
     EmptyStateData,
     DescriptiveCard,
     Status,
+    TextField,
   },
 
   data() {
     return {
       selectedDestination: {},
       confirmModal: false,
+      enableConfirm: false,
     }
   },
 
@@ -144,6 +166,9 @@ export default {
       })
       this.confirmModal = false
     },
+    enableConfirmButton(val) {
+      this.enableConfirm = /confirm/i.test(val)
+    },
   },
 }
 </script>
@@ -160,5 +185,8 @@ export default {
       cursor: auto;
     }
   }
+}
+::v-deep.descriptive-card.in-active {
+  box-shadow: none !important;
 }
 </style>

@@ -14,7 +14,6 @@ from flasgger import SwaggerView
 from huxunifylib.util.general.logging import logger
 from huxunifylib.database import constants as db_constants
 from huxunifylib.database.user_management import (
-    get_user,
     manage_user_favorites,
     get_all_users,
     update_user,
@@ -28,6 +27,7 @@ from huxunify.api.route.decorators import (
 )
 from huxunify.api.route.utils import (
     get_db_client,
+    get_user_from_db,
 )
 from huxunify.api.schema.user import UserSchema, UserPatchSchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -85,28 +85,40 @@ class UserProfile(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
 
-        okta_id = introspect_token(get_token_from_request(request)[0]).get(
-            api_c.OKTA_USER_ID
-        )
-
         try:
-            database = get_db_client()
-            user = get_user(database, okta_id)
+            # get access token from request and set it to a variable for it to
+            # be used in subsequent requests
+            access_token = get_token_from_request(request)[0]
 
-            # return NOT_FOUND if no corresponding user record is found in DB.
-            if user is None:
+            okta_id = introspect_token(access_token).get(
+                api_c.OKTA_USER_ID, None
+            )
+
+            # return unauthorized response if no valid okta_id is fetched by
+            # introspecting the access_token
+            if okta_id is None:
                 return {
-                    api_c.MESSAGE: api_c.USER_NOT_FOUND
-                }, HTTPStatus.NOT_FOUND
+                    "message": api_c.AUTH401_ERROR_MESSAGE
+                }, HTTPStatus.UNAUTHORIZED
+
+            # get the user info and the corresponding user document from db
+            # from the access_token
+            user_response = get_user_from_db(access_token)
+
+            # if the user_response object is of type tuple, then return it as
+            # such since a failure must have occurred while fetching user data
+            # from db
+            if isinstance(user_response, tuple):
+                return user_response
 
             # update user record's login_count and update_time in DB and return
-            # the updated record.
+            # the updated record
             user = update_user(
-                database,
+                get_db_client(),
                 okta_id=okta_id,
                 update_doc={
                     db_constants.USER_LOGIN_COUNT: (
-                        user.get(db_constants.USER_LOGIN_COUNT, 0) + 1
+                        user_response.get(db_constants.USER_LOGIN_COUNT, 0) + 1
                     )
                 },
             )
@@ -337,6 +349,7 @@ class UserView(SwaggerView):
             HTTPStatus.OK.value,
         )
 
+
 # HUS-1320 need to allow user to edit other users via RBAC
 @add_view_to_blueprint(
     user_bp,
@@ -402,17 +415,20 @@ class UserPatchView(SwaggerView):
 
         database = get_db_client()
 
-        user = get_all_users(database, {db_constants.USER_DISPLAY_NAME: user_name})
-        if not user:
-            return {
-                api_c.MESSAGE: api_c.USER_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
-
         body = UserPatchSchema().load(request.get_json())
+
+        if not body:
+            return {api_c.MESSAGE: "No body provided."}, HTTPStatus.BAD_REQUEST
+
+        user = get_all_users(
+            database, {db_constants.USER_DISPLAY_NAME: user_name}
+        )
+        if not user:
+            return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         updated_user = update_user(
             database,
-            okta_id=user[db_constants.OKTA_ID],
+            okta_id=user[0][db_constants.OKTA_ID],
             update_doc={
                 **body,
                 **{

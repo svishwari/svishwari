@@ -114,14 +114,18 @@ class EngagementDeliverDestinationView(SwaggerView):
 
     # pylint: disable=no-self-use
     # pylint: disable=too-many-return-statements
+    # If using validate delivery_params and get_user_name,
+    # ensure validate_delivery_params is called first
     @api_error_handler()
     @validate_destination()
     @validate_delivery_params
+    @get_user_name()
     def post(
         self,
         engagement_id: ObjectId,
         audience_id: ObjectId,
         destination_id: ObjectId,
+        user_name: str,
     ) -> Tuple[dict, int]:
         """Delivers one destination for an engagement audience.
 
@@ -133,6 +137,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
             destination_id (ObjectId): Destination ID.
+            user_name (str): User name.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -188,15 +193,16 @@ class EngagementDeliverDestinationView(SwaggerView):
         )
         # create notification
         create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            (
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=(
                 f"Successfully scheduled a delivery of audience "
                 f'"{target_audience[db_c.NAME]}" from engagement '
                 f'"{engagement[db_c.NAME]}" to destination '
                 f'"{target_destination[db_c.NAME]}".'
             ),
-            api_c.DELIVERY_TAG,
+            category=api_c.DELIVERY_TAG,
+            username=user_name,
         )
         return {
             "message": f"Successfully created delivery job(s) "
@@ -252,8 +258,9 @@ class EngagementDeliverAudienceView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
+    @get_user_name()
     def post(
-        self, engagement_id: ObjectId, audience_id: ObjectId
+        self, engagement_id: ObjectId, audience_id: ObjectId, user_name: str
     ) -> Tuple[dict, int]:
         """Delivers one audience for an engagement.
 
@@ -264,6 +271,7 @@ class EngagementDeliverAudienceView(SwaggerView):
         Args:
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
+            user_name (str): User name.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -296,14 +304,15 @@ class EngagementDeliverAudienceView(SwaggerView):
             ",".join(delivery_job_ids),
         )
         create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            (
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=(
                 f"Successfully scheduled a delivery of "
                 f'audience "{audience[db_c.NAME]}" from engagement '
                 f'"{engagement[db_c.NAME]}" across platforms.'
             ),
-            api_c.DELIVERY_TAG,
+            category=api_c.DELIVERY_TAG,
+            username=user_name,
         )
         return {
             "message": f"Successfully created delivery job(s) "
@@ -351,7 +360,10 @@ class EngagementDeliverView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
-    def post(self, engagement_id: ObjectId) -> Tuple[dict, int]:
+    @get_user_name()
+    def post(
+        self, engagement_id: ObjectId, user_name: str
+    ) -> Tuple[dict, int]:
         """Delivers all audiences for an engagement.
 
         ---
@@ -360,6 +372,7 @@ class EngagementDeliverView(SwaggerView):
 
         Args:
             engagement_id (ObjectId): Engagement ID.
+            user_name (str): User name.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -384,13 +397,14 @@ class EngagementDeliverView(SwaggerView):
             )
         # create notification
         create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            (
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=(
                 f"Successfully scheduled a delivery of all audiences "
                 f'from engagement "{engagement[db_c.NAME]}".'
             ),
-            api_c.DELIVERY_TAG,
+            category=api_c.DELIVERY_TAG,
+            username=user_name,
         )
         logger.info(
             "Successfully created delivery jobs %s.",
@@ -436,10 +450,10 @@ class AudienceDeliverView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DELIVERY_TAG]
 
-    # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
-    def post(self, audience_id: ObjectId) -> Tuple[dict, int]:
+    @get_user_name()
+    def post(self, audience_id: ObjectId, user_name: str) -> Tuple[dict, int]:
         """Delivers an audience for all of the engagements it is part of.
 
         ---
@@ -448,6 +462,7 @@ class AudienceDeliverView(SwaggerView):
 
         Args:
             audience_id (ObjectId): Audience ID.
+            user_name (str): User name.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure, .
@@ -481,17 +496,20 @@ class AudienceDeliverView(SwaggerView):
             ",".join(delivery_job_ids),
         )
         create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            (
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=(
                 f"Successfully scheduled a delivery of audience "
                 f'"{audience[db_c.NAME]}".'
             ),
-            api_c.DELIVERY_TAG,
+            category=api_c.DELIVERY_TAG,
+            username=user_name,
         )
         return {
             "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
         }, HTTPStatus.OK
+
+    # pylint: disable=no-self-use
 
 
 @add_view_to_blueprint(

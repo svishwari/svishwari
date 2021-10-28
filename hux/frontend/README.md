@@ -90,14 +90,14 @@ To connect your localhost to the API in dev, do the following:
     ```
     Note: `--mode` allows you to use a different env file for your local server.
 
-You will also need to create a `token.js` file to store your temporary dev access token.
+You will also need to create a `token.txt` file to store your temporary dev access token.
 
-4. Create the token.js file in `src/api/mock/token.js`
+4. Create the token.txt file in `src/api/mock/token.txt`
     ```sh
-    echo -e 'export const TOKEN_OVERRIDE = "paste"' > src/api/mock/token.js
+    echo -e 'REPLACE_WITH_TOKEN' > src/api/mock/token.txt
     ```
 
-5. Replace your token in `token.js` with the one generated in dev.
+5. Replace your token in `token.txt` with the one generated in dev.
 
 You should now be able to open http://localhost:8080 and connect with the dev API.
 
@@ -117,7 +117,13 @@ docker run -it hux-ui-dev yarn test:unit
 Build.
 
 ```sh
-docker build --target serve --build-arg API_URL="http://unified-api-dev.main.use1.hux-unified-dev1.in" --build-arg OKTA_ISSUER="https://dev-631073.okta.com" --build-arg OKTA_CLIENT_ID="0oa2wbure49NQsL7a4x7" -t hux-ui .
+docker build --target build --build-arg API_URL="https://unified-api-dev.main.use1.hux-unified-dev1.in" --build-arg OKTA_ISSUER="https://dev-631073.okta.com" --build-arg OKTA_CLIENT_ID="0oa2wbure49NQsL7a4x7" -t hux-ui .
+```
+
+Build with Storybook (dev only).
+
+```sh
+docker build --target build --build-arg API_URL="https://unified-api-dev.main.use1.hux-unified-dev1.in" --build-arg OKTA_ISSUER="https://dev-631073.okta.com" --build-arg OKTA_CLIENT_ID="0oa2wbure49NQsL7a4x7" --build-arg BUILD_STORYBOOK="true" -t hux-ui .
 ```
 
 Run.

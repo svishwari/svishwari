@@ -22,12 +22,14 @@ WORKDIR /app
 ARG OKTA_ISSUER
 ARG OKTA_CLIENT_ID
 ARG API_URL
+ARG BUILD_STORYBOOK
 RUN echo -e "VUE_APP_OKTA_ISSUER=$OKTA_ISSUER" \
     "\nVUE_APP_OKTA_CLIENT_ID=$OKTA_CLIENT_ID" \
     "\nVUE_APP_API_URL=$API_URL" \ > .env
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . /app
 RUN yarn build
+RUN if [ "$BUILD_STORYBOOK" = "true" ] ; then yarn storybook:build ; fi
 
 # release
 FROM huxhub.repo.mgnt.in/nginx:alpine as release
