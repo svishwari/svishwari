@@ -39,7 +39,7 @@ from huxunify.api.schema.destinations import (
     SendgridAuthCredsSchema,
     FacebookAuthCredsSchema,
     SFMCAuthCredsSchema,
-    DestinationPutSchema,
+    DestinationPutSchema, DestinationDataExtConfigSchema,
 )
 from huxunify.api.config import get_config
 from huxunify.api import constants
@@ -611,7 +611,7 @@ def set_destination_auth_details(
     body = DestinationPutSchema().load(request.get_json(), partial=True)
 
     # grab the auth details
-    auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
+    auth_details = body.get(constants.AUTHENTICATION_DETAILS)
     performance_de = None
     campaign_de = None
     authentication_parameters = None
@@ -626,35 +626,35 @@ def set_destination_auth_details(
         SFMCAuthCredsSchema().load(auth_details)
         sfmc_config = body.get(db_c.CONFIGURATION)
         if not sfmc_config or not isinstance(sfmc_config, dict):
-            logger.error("%s", api_c.SFMC_CONFIGURATION_MISSING)
+            logger.error("%s", constants.SFMC_CONFIGURATION_MISSING)
             return (
-                {"message": api_c.SFMC_CONFIGURATION_MISSING},
+                {"message": constants.SFMC_CONFIGURATION_MISSING},
                 HTTPStatus.BAD_REQUEST,
             )
 
         performance_de = sfmc_config.get(
-            api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
+            constants.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
         )
         if not performance_de:
-            logger.error("%s", api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED)
+            logger.error("%s", constants.PERFORMANCE_METRIC_DE_NOT_ASSIGNED)
             return (
-                {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
+                {"message": constants.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
                 HTTPStatus.BAD_REQUEST,
             )
         campaign_de = sfmc_config.get(
-            api_c.SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION
+            constants.SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION
         )
         if not campaign_de:
-            logger.error("%s", api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED)
+            logger.error("%s", constants.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED)
             return (
-                {"message": api_c.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED},
+                {"message": constants.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED},
                 HTTPStatus.BAD_REQUEST,
             )
         DestinationDataExtConfigSchema().load(sfmc_config)
         if performance_de == campaign_de:
-            logger.error("%s", api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR)
+            logger.error("%s", constants.SAME_PERFORMANCE_CAMPAIGN_ERROR)
             return (
-                {"message": api_c.SAME_PERFORMANCE_CAMPAIGN_ERROR},
+                {"message": constants.SAME_PERFORMANCE_CAMPAIGN_ERROR},
                 HTTPStatus.BAD_REQUEST,
             )
     elif platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
