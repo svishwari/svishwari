@@ -1,4 +1,5 @@
-"""Purpose of this script is for housing the decision routes for the API"""
+"""Purpose of this script is for housing the
+decision routes for the API"""
 from random import uniform, randint
 from datetime import datetime, timedelta
 from http import HTTPStatus
@@ -207,16 +208,11 @@ class SetModelStatus(SwaggerView):
         notification_management.create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
-            (
-                f'Model requested "{body[db_c.NAME]}" '
-                f"by {user_name}."
-            ),
+            (f'Model requested "{body[db_c.NAME]}" ' f"by {user_name}."),
             api_c.MODELS_TAG,
         )
 
-        logger.info(
-            "Successfully requested model %s.", body.get(db_c.NAME)
-        )
+        logger.info("Successfully requested model %s.", body.get(db_c.NAME))
 
         return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.CREATED
 
@@ -258,14 +254,15 @@ class ModelVersionView(SwaggerView):
                 HTTP status code.
         """
         model_id = Validation.validate_integer(model_id)
-        # TODO Remove once Propensity to Purchase info can be retrieved from tecton
+        # TODO Remove once Propensity to Purchase info
+        #  can be retrieved from tecton
         if model_id == 3:
             version_history = [
                 {
                     api_c.ID: model_id,
                     api_c.LAST_TRAINED: datetime(2021, 6, 24 + i),
-                    api_c.DESCRIPTION: "Propensity of a customer making a purchase"
-                    " after receiving an email.",
+                    api_c.DESCRIPTION: "Propensity of a customer making "
+                    "a purchase after receiving an email.",
                     api_c.FULCRUM_DATE: datetime(2021, 6, 24 + i),
                     api_c.LOOKBACK_WINDOW: 90,
                     api_c.NAME: "Propensity to Purchase",
@@ -453,7 +450,8 @@ class ModelFeaturesView(SwaggerView):
         api_c.MODEL_ID_PARAMS[0],
         {
             "name": api_c.VERSION,
-            "description": "Model version, if not provided, it will take the latest.",
+            "description": "Model version, if not provided, "
+            "it will take the latest.",
             "type": "str",
             "in": "path",
             "required": False,
@@ -493,7 +491,8 @@ class ModelFeaturesView(SwaggerView):
                 HTTP status code.
         """
         model_id = Validation.validate_integer(model_id)
-        # TODO: Remove once this model data becomes available and can be fetched from Tecton
+        # TODO: Remove once this model data becomes
+        #  available and can be fetched from Tecton
         # intercept to check if the model_id is for propensity_to_purchase
         # to set features with stub data
         if model_id == 3:
@@ -504,7 +503,8 @@ class ModelFeaturesView(SwaggerView):
                 # get latest version first
                 model_version = tecton.get_model_version_history(model_id)
 
-                # check if there is a model version we can grab, if so take the last one (latest).
+                # check if there is a model version we can grab,
+                # if so take the last one (latest).
                 model_version = (
                     model_version[-1].get(api_c.CURRENT_VERSION)
                     if model_version
@@ -520,7 +520,8 @@ class ModelFeaturesView(SwaggerView):
             # if no cache, grab from Tecton and cache after.
             if not features:
                 features = tecton.get_model_features(model_id, model_version)
-                # create cache entry in db only if features fetched from Tecton is not empty
+                # create cache entry in db only if features
+                # fetched from Tecton is not empty
                 if features:
                     create_cache_entry(
                         database,
@@ -546,7 +547,8 @@ class ModelImportanceFeaturesView(SwaggerView):
         api_c.MODEL_ID_PARAMS[0],
         {
             "name": api_c.VERSION,
-            "description": "Model version, if not provided, it will take the latest.",
+            "description": "Model version, if not provided, "
+            "it will take the latest.",
             "type": "str",
             "in": "path",
             "required": False,
@@ -600,7 +602,8 @@ class ModelImportanceFeaturesView(SwaggerView):
             # get latest version first
             model_version = tecton.get_model_version_history(model_id)
 
-            # check if there is a model version we can grab, if so take the last one (latest).
+            # check if there is a model version we can grab,
+            # if so take the last one (latest).
             model_version = (
                 model_version[-1].get(api_c.CURRENT_VERSION)
                 if model_version
