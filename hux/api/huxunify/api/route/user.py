@@ -366,8 +366,8 @@ class UserPatchView(SwaggerView):
             "type": "object",
             "description": "Input user body.",
             "example": {
-                db_constants.USER_ROLE: "admin",
-                db_constants.USER_DISPLAY_NAME: "new_display_name"
+                db_constants.USER_ROLE: "viewer",
+                db_constants.USER_DISPLAY_NAME: "new_display_name",
             },
         },
     ]
