@@ -49,6 +49,12 @@ class TestNotificationRoutes(TestCase):
             return_value=self.database,
         ).start()
 
+        # mock get db client from utils
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
         notifications = [
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_SUCCESS,

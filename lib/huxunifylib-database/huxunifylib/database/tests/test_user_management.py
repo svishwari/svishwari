@@ -86,7 +86,7 @@ class TestUserManagement(unittest.TestCase):
             profile_photo=self.sample_user[c.USER_PROFILE_PHOTO],
         )
 
-        self.assertTrue(user_doc is not None)
+        self.assertIsNotNone(user_doc)
 
     def test_duplicate_set_user(self) -> None:
         """Test duplicate set_user routine based on okta id."""
@@ -120,7 +120,7 @@ class TestUserManagement(unittest.TestCase):
 
         user_doc = um.get_user(self.database, self.user_doc[c.OKTA_ID])
 
-        self.assertTrue(user_doc is not None)
+        self.assertIsNotNone(user_doc)
         self.assertEqual(
             user_doc[c.USER_DISPLAY_NAME], self.user_doc[c.USER_DISPLAY_NAME]
         )
@@ -163,7 +163,7 @@ class TestUserManagement(unittest.TestCase):
             self.database, self.user_doc[c.OKTA_ID], update_doc
         )
 
-        self.assertTrue(user_doc is not None)
+        self.assertIsNotNone(user_doc)
         self.assertIn(c.USER_LOGIN_COUNT, user_doc)
         self.assertEqual(login_count + 1, user_doc[c.USER_LOGIN_COUNT])
 
