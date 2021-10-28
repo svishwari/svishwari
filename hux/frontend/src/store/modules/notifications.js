@@ -64,7 +64,7 @@ const actions = {
 
   async getById({ commit }, id) {
     try {
-      const response = await api.notifications.getSingleNotification(id)
+      const response = await api.notifications.find(id)
       commit("SET_ONE", response.data)
     } catch (error) {
       handleError(error)

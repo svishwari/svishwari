@@ -99,7 +99,7 @@
         </template>
       </hux-data-table>
     </v-row>
-    <alert-drawer v-model="alertDrawer" :alert-id="alertId" />
+    <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
     <v-divider v-if="enableLazyLoad" class="hr-devider"></v-divider>
     <v-progress-linear v-if="enableLazyLoad" active indeterminate />
     <observer v-if="notifications.length" @intersect="intersected"></observer>
@@ -189,7 +189,7 @@ export default {
         batchNumber: 1,
         isLazyLoad: false,
       },
-      alertId: null,
+      notificationId: null,
     }
   },
   computed: {
@@ -222,9 +222,9 @@ export default {
     goBack() {
       this.$router.go(-1)
     },
-    async toggleProfilesDrawer(alertid) {
-      this.alertId = alertid
-      await this.getNotificationByID(alertid)
+    async toggleProfilesDrawer(notificationId) {
+      this.notificationId = notificationId
+      await this.getNotificationByID(notificationId)
       this.alertDrawer = !this.alertDrawer
     },
     intersected() {

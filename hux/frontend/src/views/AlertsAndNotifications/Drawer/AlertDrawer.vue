@@ -65,7 +65,7 @@ export default {
       required: true,
       default: false,
     },
-    alertId: {
+    notificationId: {
       type: String,
       required: false,
       default: "",
@@ -83,8 +83,7 @@ export default {
     }),
 
     notificationData() {
-      let notification = this.getSingleNotification(this.alertId)
-      return notification
+      return this.getSingleNotification(this.notificationId)
     },
 
     notificationContent() {

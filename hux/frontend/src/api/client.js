@@ -289,7 +289,7 @@ client["notifications"].getNotifications = (batchSize, batchNumber) => {
   )
 }
 
-client["notifications"].getSingleNotification = (notification_id) => {
+client["notifications"].find = (notification_id) => {
   return http.get(`/notifications/${notification_id}`)
 }
 

@@ -9,5 +9,5 @@ export const notification = {
     `New engagement named "${faker.address.state()}" created by "${faker.name.findName()}".`,
   notification_type: () => "Success",
   category: () => "Orchestration",
-  username: () => `User ${faker.datatype.number({ min: 1, max: 10000 })}`,
+  username: () => faker.name.findName(),
 }
