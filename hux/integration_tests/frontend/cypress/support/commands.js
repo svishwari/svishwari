@@ -11,8 +11,8 @@
 import route from "./routes.js"
 import selector from "./selectors.js"
 
-Cypress.Commands.add("signin", ({ email, password }) => {
-  cy.session([email, password], () => {
+Cypress.Commands.add("signin", () => {
+  cy.session([], () => {
     // opens the app
     cy.visit(route.index)
 
@@ -23,9 +23,9 @@ Cypress.Commands.add("signin", ({ email, password }) => {
     cy.location("pathname").should("eq", route.login)
 
     // fill in the form
-    cy.get(selector.login.email).type(email, { log: false })
+    cy.get(selector.login.email).type(Cypress.env("USER_EMAIL"), { log: false })
 
-    cy.get(selector.login.password).type(password, {
+    cy.get(selector.login.password).type(Cypress.env("USER_PASSWORD"), {
       log: false,
     })
 

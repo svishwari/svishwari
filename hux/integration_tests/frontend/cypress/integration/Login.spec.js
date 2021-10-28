@@ -2,10 +2,7 @@ import route from "../support/routes.js"
 
 describe("Login", () => {
   beforeEach(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+    cy.signin()
     cy.visit(route.home)
   })
 

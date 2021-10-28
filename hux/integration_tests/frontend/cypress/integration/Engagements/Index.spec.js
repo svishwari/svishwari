@@ -3,10 +3,7 @@ import selector from "../../support/selectors.js"
 
 describe("Orchestration > Engagements", () => {
   beforeEach(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+    cy.signin()
     cy.visit(route.engagements)
   })
   it("should be able to navigate to Engagements", () => {

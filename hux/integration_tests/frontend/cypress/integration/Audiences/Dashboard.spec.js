@@ -3,10 +3,7 @@ import selector from "../../support/selectors"
 
 describe("Orchestration > Audiences > Audience dashboard", () => {
   beforeEach(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+    cy.signin()
     cy.visit(route.audiences)
   })
 

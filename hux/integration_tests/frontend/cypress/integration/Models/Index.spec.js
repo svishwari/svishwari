@@ -3,10 +3,7 @@ import selector from "../../support/selectors.js"
 
 describe("View models", () => {
   beforeEach(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+    cy.signin()
     cy.visit(route.models)
   })
 

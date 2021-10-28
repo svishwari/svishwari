@@ -4,10 +4,7 @@ import selector from "../../support/selectors"
 
 describe("Orchestration > Audience > Create Audience", () => {
   beforeEach(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+    cy.signin()
     cy.visit(route.audiences)
   })
 
