@@ -2,16 +2,14 @@ import route from "../support/routes.js"
 import selector from "../support/selectors.js"
 
 describe("Home", () => {
-  before(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+  beforeEach(() => {
+    cy.signin()
+    cy.visit(route.home)
   })
 
   it("should have a welcome banner", () => {
     let currentUser = {}
-    cy.location("pathname").should("eq", route.home)
+
     cy.window().then((window) => {
       currentUser = JSON.parse(window.localStorage.getItem("vuex")).users
         .userProfile

@@ -11,54 +11,42 @@
 import route from "./routes.js"
 import selector from "./selectors.js"
 
-Cypress.Commands.add("signin", ({ email, password }) => {
-  // opens the app
-  cy.visit(route.index)
+Cypress.Commands.add("signin", () => {
+  cy.session([], () => {
+    // opens the app
+    cy.visit(route.index)
 
-  // clicks the signin button
-  cy.get(selector.app.signin).click()
+    // clicks the signin button
+    cy.get(selector.app.signin).click()
 
-  // we should now be on the login page
-  cy.location("pathname").should("eq", route.login)
+    // we should now be on the login page
+    cy.location("pathname").should("eq", route.login)
 
-  // fill in the form
-  cy.get(selector.login.email).type(email, { log: false })
+    // fill in the form
+    cy.get(selector.login.email).type(Cypress.env("USER_EMAIL"), { log: false })
 
-  cy.get(selector.login.password).type(password, {
-    log: false,
-  })
-
-  cy.get(selector.login.remember).click()
-
-  // submit the form
-  cy.get(selector.login.submit).click()
-
-  // TODO: add MFA related authentication if needed
-
-  // we should no longer be on the login page
-  cy.location("pathname", { timeout: 10000 })
-    .should("not.eq", route.login)
-    .then(() => {
-      // okta does its authentication...
-      // once its done, we should be redirected back to the app
-      cy.location("pathname").should("eq", route.oktaSignInRedirectURI)
+    cy.get(selector.login.password).type(Cypress.env("USER_PASSWORD"), {
+      log: false,
     })
-})
 
-Cypress.Commands.add("reLogin", () => {
-  const email = Cypress.env("USER_EMAIL")
-  const password = Cypress.env("USER_PASSWORD")
+    cy.get(selector.login.remember).click()
 
-  cy.location("pathname").should("eq", route.login)
+    // submit the form
+    cy.get(selector.login.submit).click()
 
-  cy.get(selector.login.email).type(email, { log: false })
+    // TODO: add MFA related authentication if needed
 
-  cy.get(selector.login.password).type(password, {
-    log: false,
+    // we should no longer be on the login page
+    cy.location("pathname", { timeout: 10000 })
+      .should("not.eq", route.login)
+      .then(() => {
+        // okta does its authentication...
+        // once its done, we should be redirected back to the app
+        cy.location("pathname").should("eq", route.oktaSignInRedirectURI)
+
+        // wait for token to be set
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(5000)
+      })
   })
-
-  cy.get(selector.login.remember).click()
-
-  // submit the form
-  cy.get(selector.login.submit).click()
 })
