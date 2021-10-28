@@ -5,7 +5,7 @@
       "icon": "home",
       "title": "Home",
       "link": {
-        "name": "Overview"
+        "name": "Home"
       }
     },
     {
@@ -23,7 +23,7 @@
           "icon": "datasource",
           "title": "Data Sources",
           "link": {
-            "name": "Connections"
+            "name": "DataSources"
           },
           "size": 14
         },
@@ -78,7 +78,7 @@
           "icon": "destinations",
           "title": "Destinations",
           "link": {
-            "name": "Connections"
+            "name": "Destinations"
           },
           "size": 16
         },

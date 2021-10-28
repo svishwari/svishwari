@@ -35,11 +35,6 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     get_delivery_platform_lookalike_audience,
 )
-
-from huxunify.api.data_connectors.okta import (
-    get_token_from_request,
-    introspect_token,
-)
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
 )
@@ -108,27 +103,32 @@ class EngagementSearch(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
-    def get(self) -> Tuple[dict, int]:
+    @get_user_name()
+    def get(self, user_name: str) -> Tuple[dict, int]:
         """Retrieves all engagements.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
+        Args:
+            user_name (str): user_name extracted from Okta.
+
         Returns:
             Tuple[dict, int]: dict of engagements, HTTP status code.
         """
 
         # get the engagement summary
-        engagements = get_engagements_summary(get_db_client())
+        database = get_db_client()
+        engagements = get_engagements_summary(database)
 
         # weight the engagement status
         engagements = weighted_engagement_status(engagements)
 
         # get user id
-        token_response = get_token_from_request(request)
-        user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
-        favorite_engagements = get_user_favorites(user_id, db_c.ENGAGEMENTS)
+        favorite_engagements = get_user_favorites(
+            database, user_name, db_c.ENGAGEMENTS
+        )
 
         if favorite_engagements:
             _ = [
@@ -174,8 +174,9 @@ class IndividualEngagementSearch(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
+    @get_user_name()
     @validate_engagement_and_audience()
-    def get(self, engagement_id: ObjectId) -> Tuple[dict, int]:
+    def get(self, engagement_id: ObjectId, user_name: str) -> Tuple[dict, int]:
         """Retrieves an engagement.
 
         ---
@@ -184,13 +185,15 @@ class IndividualEngagementSearch(SwaggerView):
 
         Args:
             engagement_id (ObjectId): ID of the engagement.
+            user_name (str): user_name extracted from Okta.
 
         Returns:
             Tuple[dict, int]: dict of the engagement, HTTP status code.
         """
 
         # get the engagement summary
-        engagements = get_engagements_summary(get_db_client(), [engagement_id])
+        database = get_db_client()
+        engagements = get_engagements_summary(database, [engagement_id])
 
         if not engagements:
             logger.error(
@@ -216,9 +219,9 @@ class IndividualEngagementSearch(SwaggerView):
         engagement = weighted_engagement_status(engagements)[0]
 
         # get user id
-        token_response = get_token_from_request(request)
-        user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
-        favorite_engagements = get_user_favorites(user_id, db_c.ENGAGEMENTS)
+        favorite_engagements = get_user_favorites(
+            database, user_name, db_c.ENGAGEMENTS
+        )
 
         engagement[api_c.FAVORITE] = (
             favorite_engagements
@@ -332,6 +335,7 @@ class SetEngagement(SwaggerView):
                 f"created by {user_name}."
             ),
             api_c.ENGAGEMENT_TAG,
+            user_name,
         )
         return (
             EngagementGetSchema().dump(engagement),
@@ -457,6 +461,7 @@ class UpdateEngagement(SwaggerView):
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
             f'Engagement "{engagement[db_c.NAME]}" updated by {user_name}.',
             api_c.ENGAGEMENT_TAG,
+            user_name,
         )
         return (
             EngagementGetSchema().dump(engagement),
@@ -529,6 +534,7 @@ class DeleteEngagement(SwaggerView):
                     f"deleted by {user_name}."
                 ),
                 api_c.ENGAGEMENT_TAG,
+                user_name,
             )
             logger.info("Successfully deleted engagement %s.", engagement_id)
 
@@ -667,6 +673,7 @@ class AddAudienceEngagement(SwaggerView):
                     f'"{engagement[db_c.NAME]}" by {user_name}.'
                 ),
                 api_c.ENGAGEMENT_TAG,
+                user_name,
             )
 
         # toggle routers since the engagement was updated.
@@ -790,6 +797,7 @@ class DeleteAudienceEngagement(SwaggerView):
                     f'"{engagement[db_c.NAME]}" by {user_name}.'
                 ),
                 api_c.ENGAGEMENT_TAG,
+                user_name,
             )
 
         # toggle routers since the engagement was updated.
@@ -931,6 +939,7 @@ class AddDestinationEngagedAudience(SwaggerView):
                 f'"{engagement[db_c.NAME]}" by {user_name}'
             ),
             api_c.ENGAGEMENT_TAG,
+            user_name,
         )
 
         # toggle routers since the engagement was updated.
@@ -1072,6 +1081,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
                 f'"{engagement[db_c.NAME]}" by {user_name}'
             ),
             api_c.ENGAGEMENT_TAG,
+            user_name,
         )
 
         # toggle routers since the engagement was updated.

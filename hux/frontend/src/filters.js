@@ -97,6 +97,39 @@ const Empty = (value, placeholder = "—") => {
   return value
 }
 
+/**
+ * Shortens a string.
+ *
+ * @param {*} value String to shorten eg. "60b960176021710aa141ab2c"
+ * @param {object} options Configuration options for shorten filter
+ * @param {string} options.numCharacters Number of characters to truncate to eg. 5
+ * @param {string} options.position Shorten to the first or last characters eg. "last"
+ * @param {boolean} options.ellipsis Whether to append an ellipsis eg. false
+ * @returns {string} Truncated string eg. "1ab2c"
+ */
+const Shorten = (value, options = {}) => {
+  let val = value || ""
+  const { numCharacters = 5, position = "last", ellipsis = false } = options
+
+  if (String(val).length > numCharacters) {
+    let start = 0
+    let end = numCharacters
+
+    if (position === "last") {
+      start = val.length - numCharacters
+      end = val.length
+    }
+
+    val = val.substring(start, end)
+  }
+
+  if (ellipsis) {
+    val = val + "..."
+  }
+
+  return val
+}
+
 const Numeric = (
   value,
   round = false,
@@ -220,6 +253,7 @@ export default {
   DateRelative,
   Abbreviation,
   Empty,
+  Shorten,
   Numeric,
   TitleCase,
   shortName,

@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use,too-many-lines
 """Paths for destinations API"""
 import datetime
 from http import HTTPStatus
@@ -29,6 +29,7 @@ from huxunifylib.connectors import (
     GoogleConnector,
     QualtricsConnector,
     AudienceAlreadyExists,
+    AuthenticationFailed,
 )
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
@@ -706,30 +707,27 @@ class DestinationDataExtView(SwaggerView):
                 "message": api_c.DESTINATION_AUTHENTICATION_FAILED
             }, HTTPStatus.BAD_REQUEST
 
-        ext_list = []
-
         if (
             destination[api_c.DELIVERY_PLATFORM_TYPE]
             == db_c.DELIVERY_PLATFORM_SFMC
         ):
-            sfmc_connector = SFMCConnector(
-                auth_details=get_auth_from_parameter_store(
-                    destination[api_c.AUTHENTICATION_DETAILS],
-                    destination[api_c.DELIVERY_PLATFORM_TYPE],
+            try:
+                sfmc_connector = SFMCConnector(
+                    auth_details=get_auth_from_parameter_store(
+                        destination[api_c.AUTHENTICATION_DETAILS],
+                        destination[api_c.DELIVERY_PLATFORM_TYPE],
+                    )
                 )
-            )
-            if not sfmc_connector.check_connection():
-                logger.info("Could not validate SFMC successfully.")
+                ext_list = sfmc_connector.get_list_of_data_extensions()
+                logger.info(
+                    "Found %s data extensions for %s.",
+                    len(ext_list),
+                    destination_id,
+                )
+            except AuthenticationFailed:
                 return {
                     "message": api_c.DESTINATION_AUTHENTICATION_FAILED
                 }, HTTPStatus.FORBIDDEN
-
-            ext_list = sfmc_connector.get_list_of_data_extensions()
-            logger.info(
-                "Found %s data extensions for %s.",
-                len(ext_list),
-                destination_id,
-            )
 
         else:
             logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
@@ -741,7 +739,8 @@ class DestinationDataExtView(SwaggerView):
             jsonify(
                 sorted(
                     DestinationDataExtGetSchema().dump(ext_list, many=True),
-                    key=lambda i: i[api_c.NAME].lower(),
+                    key=lambda i: i[db_c.CREATE_TIME],
+                    reverse=True,
                 )
             ),
             HTTPStatus.OK,
@@ -798,8 +797,9 @@ class DestinationDataExtPostView(SwaggerView):
 
     # pylint: disable=too-many-return-statements
     @api_error_handler()
+    @get_user_name()
     @validate_destination()
-    def post(self, destination_id: str) -> Tuple[dict, int]:
+    def post(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
         """Creates a destination data extension.
 
         ---
@@ -808,6 +808,7 @@ class DestinationDataExtPostView(SwaggerView):
 
         Args:
             destination_id (str): Destination ID.
+            user_name (str): User name.
 
         Returns:
             Tuple[dict, int]: Data Extension ID, HTTP status code.
@@ -863,6 +864,7 @@ class DestinationDataExtPostView(SwaggerView):
                         f"by {get_user_name()}."
                     ),
                     api_c.DESTINATIONS_TAG,
+                    user_name,
                 )
             except AudienceAlreadyExists:
                 # TODO - this is a work around until ORCH-288 is done

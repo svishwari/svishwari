@@ -147,6 +147,16 @@ client["engagements"].deliverAudience = ({ resourceId, audienceId }, data) => {
   return http.post(endpoint, data)
 }
 
+client["engagements"].deliverySchedule = ({
+  id,
+  audienceId,
+  destinationId,
+  recurringConfig,
+}) => {
+  const endpoint = `/engagements/${id}/audience/${audienceId}/destination/${destinationId}/schedule`
+  return http.post(endpoint, recurringConfig)
+}
+
 client["engagements"].deliverAudienceDestination = (
   { resourceId, audienceId, destinationId },
   data

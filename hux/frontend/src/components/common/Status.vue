@@ -145,16 +145,60 @@
     <v-menu v-else bottom offset-y offset-x open-on-hover>
       <template #activator="{ on }">
         <v-btn
+          width="18"
+          height="18"
+          icon
+          outlined
+          color="success"
+          class="dotted hover-button-margin"
+          v-on="on"
+        />
+      </template>
+      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column text-h5">
+        <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
+        <span class="d-flex align-center">
+          <v-btn
+            v-if="showIconTooltip"
+            width="15"
+            height="15"
+            icon
+            outlined
+            color="success"
+            class="dotted mr-2"
+          />
+          {{ status | TitleCase }}
+        </span>
+      </div>
+    </v-menu>
+  </div>
+
+  <div v-else-if="Statuses.Requested.includes(status)">
+    <span v-if="!collapsed" class="d-flex align-center">
+      <v-btn
+        width="15"
+        height="15"
+        icon
+        outlined
+        color="primary lighten-6"
+        class="dotted mr-2"
+      />
+      <span v-if="showLabel">
+        {{ status | TitleCase }}
+      </span>
+    </span>
+    <v-menu v-else bottom offset-y offset-x open-on-hover>
+      <template #activator="{ on }">
+        <v-btn
           width="15"
           height="15"
           icon
           outlined
-          color="success"
-          class="dotted"
-          style="margin-left: 1.5px"
+          color="primary lighten-6"
+          class="dotted hover-button-margin"
           v-on="on"
         />
       </template>
+
       <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column text-h5">
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
@@ -414,6 +458,7 @@ export default {
         Success: ["Success"],
         Informational: ["Informational"],
         Stopped: ["Stopped"],
+        Requested: ["Requested"],
         "Not Delivered": ["Not Delivered"],
       },
     }
@@ -451,5 +496,8 @@ export default {
       }
     }
   }
+}
+.hover-button-margin {
+  margin-left: 1.5px !important;
 }
 </style>

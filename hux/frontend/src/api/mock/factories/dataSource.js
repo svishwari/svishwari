@@ -10,6 +10,16 @@ export default {
   is_added: false,
 
   status: "Pending",
+
+  feed_count: () => faker.datatype.number({ min: 1, max: 20 }),
+
+  category: () =>
+    faker.random.arrayElement([
+      "Internet",
+      "Productivity",
+      "Marketing",
+      "Databases",
+    ]),
 }
 
 /**

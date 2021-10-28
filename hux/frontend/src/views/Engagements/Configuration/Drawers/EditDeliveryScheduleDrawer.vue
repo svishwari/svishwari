@@ -59,6 +59,7 @@ import HuxButton from "@/components/common/huxButton.vue"
 import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
 import { deliverySchedule } from "@/utils"
 import Icon from "@/components/common/Icon.vue"
+import { mapActions } from "vuex"
 
 export default {
   name: "EditDeliverySchedule",
@@ -106,6 +107,32 @@ export default {
     }
   },
 
+  computed: {
+    scheduleConfig() {
+      const recurringConfig = {}
+      recurringConfig["every"] = this.localSchedule.every
+      recurringConfig["periodicity"] = this.localSchedule.periodicity
+      if (this.localSchedule) {
+        switch (this.localSchedule.periodicity) {
+          case "Daily":
+            recurringConfig["hour"] = this.localSchedule.hour
+            recurringConfig["minute"] = this.localSchedule.minute
+            recurringConfig["period"] = this.localSchedule.period
+            break
+          case "Weekly":
+            recurringConfig["day_of_week"] = this.localSchedule.day_of_week
+            break
+          case "Monthly":
+            recurringConfig["day_of_month"] = this.localSchedule.monthlyDayDate
+            break
+          default:
+            recurringConfig
+        }
+      }
+      return recurringConfig
+    },
+  },
+
   watch: {
     value(value) {
       this.localToggle = value
@@ -123,13 +150,25 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      scheduleDelivery: "engagements/deliverySchedule",
+    }),
     reset() {
       this.localToggle = false
       this.resetSchedule()
     },
 
-    onUpdate() {
+    async onUpdate() {
+      const requestPayload = {
+        id: this.engagementId,
+        audienceId: this.audienceId,
+        destinationId: this.destination.id,
+        recurringConfig: this.scheduleConfig,
+      }
+
       this.$emit("onUpdate")
+      await this.scheduleDelivery(requestPayload)
+      this.localToggle = false
     },
 
     resetSchedule() {

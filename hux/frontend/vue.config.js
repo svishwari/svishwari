@@ -19,6 +19,10 @@ module.exports = {
           test: /\.svg$/,
           loader: "vue-svg-loader",
         },
+        {
+          test: /\.txt$/,
+          use: "raw-loader",
+        },
       ],
     },
   },

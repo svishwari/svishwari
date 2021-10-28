@@ -167,6 +167,16 @@ const actions = {
     }
   },
 
+  async deliverySchedule(_, requestPayload) {
+    try {
+      const payload = requestPayload
+      await api.engagements.deliverySchedule(payload)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async add({ commit }, engagement) {
     try {
       const payload = {

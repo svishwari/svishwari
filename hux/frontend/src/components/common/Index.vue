@@ -1081,7 +1081,7 @@
 
       <template slot="default">
         <div
-          class="text-caption black--text text--darken-1 mb-2"
+          class="text-caption black--text text--lighten-4 mb-2"
           data-e2e="model-owner"
         >
           Owner Name
@@ -1107,6 +1107,15 @@
           </card-stat>
           <card-stat label="Last trained" value="2 hrs ago">12:45pm</card-stat>
         </div>
+      </template>
+      <template slot="action-menu-options">
+        <v-list class="list-wrapper">
+          <v-list-item-group>
+            <v-list-item>
+              <v-list-item-title> Activate </v-list-item-title>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
       </template>
     </descriptive-card>
     <descriptive-card
