@@ -6,9 +6,6 @@ import filters from "@/filters"
 import router from "./router"
 import store from "./store"
 
-// Styles
-import "ngprogress/ngProgress.css"
-
 // Layouts
 import AppLayout from "@/layouts/AppLayout"
 import DefaultLayout from "@/layouts/DefaultLayout"
