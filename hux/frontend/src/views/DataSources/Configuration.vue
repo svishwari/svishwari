@@ -222,8 +222,4 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.v-application .px-6 {
-  padding-left: 8px !important;
-}
-</style>
+<style lang="scss"></style>
