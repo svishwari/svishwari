@@ -1042,10 +1042,10 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         if not request.get_json():
-            logger.error("Destination not provided")
+            logger.error("Destination not provided.")
             return {
                 "message": api_c.DESTINATION_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            }, HTTPStatus.BAD_REQUEST
 
         destination = DestinationEngagedAudienceSchema().load(
             request.get_json(), partial=True
