@@ -912,6 +912,7 @@ def remove_destination_from_engagement_audience(
             engagement_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
             engagement_doc[db_c.UPDATED_BY] = user_name
             change = True
+            break
 
     # no changes, simply return.
     if not change:
