@@ -8,7 +8,7 @@ describe("Login", () => {
     })
   })
 
-  it("should be able to login and view the overview", () => {
-    cy.location("pathname").should("eq", route.overview)
+  it("should be able to login and view the home", () => {
+    cy.location("pathname").should("eq", route.home)
   })
 })

@@ -335,6 +335,7 @@ class SetEngagement(SwaggerView):
                 f"created by {user_name}."
             ),
             api_c.ENGAGEMENT_TAG,
+            user_name,
         )
         return (
             EngagementGetSchema().dump(engagement),
@@ -460,6 +461,7 @@ class UpdateEngagement(SwaggerView):
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
             f'Engagement "{engagement[db_c.NAME]}" updated by {user_name}.',
             api_c.ENGAGEMENT_TAG,
+            user_name,
         )
         return (
             EngagementGetSchema().dump(engagement),
@@ -532,6 +534,7 @@ class DeleteEngagement(SwaggerView):
                     f"deleted by {user_name}."
                 ),
                 api_c.ENGAGEMENT_TAG,
+                user_name,
             )
             logger.info("Successfully deleted engagement %s.", engagement_id)
 
@@ -670,6 +673,7 @@ class AddAudienceEngagement(SwaggerView):
                     f'"{engagement[db_c.NAME]}" by {user_name}.'
                 ),
                 api_c.ENGAGEMENT_TAG,
+                user_name,
             )
 
         # toggle routers since the engagement was updated.
@@ -793,6 +797,7 @@ class DeleteAudienceEngagement(SwaggerView):
                     f'"{engagement[db_c.NAME]}" by {user_name}.'
                 ),
                 api_c.ENGAGEMENT_TAG,
+                user_name,
             )
 
         # toggle routers since the engagement was updated.
@@ -934,6 +939,7 @@ class AddDestinationEngagedAudience(SwaggerView):
                 f'"{engagement[db_c.NAME]}" by {user_name}'
             ),
             api_c.ENGAGEMENT_TAG,
+            user_name,
         )
 
         # toggle routers since the engagement was updated.
@@ -1075,6 +1081,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
                 f'"{engagement[db_c.NAME]}" by {user_name}'
             ),
             api_c.ENGAGEMENT_TAG,
+            user_name,
         )
 
         # toggle routers since the engagement was updated.

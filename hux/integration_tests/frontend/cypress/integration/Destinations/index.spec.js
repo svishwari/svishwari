@@ -10,8 +10,8 @@ describe("Orchestration > Destinations", () => {
   })
 
   // TODO in HUS-1373 after HUS-1230 is merged
-  it.skip("should be able to manage destinations", () => {
-    cy.location("pathname").should("eq", route.overview)
+  it("should be able to manage destinations", () => {
+    cy.location("pathname").should("eq", route.home)
 
     //click on connections on side nav bar
     cy.get(selector.nav.destinations).click()
@@ -46,11 +46,16 @@ describe("Orchestration > Destinations", () => {
       .eq(0)
       .should("not.contain", "v-btn--disabled")
 
+    cy.get(selector.destination.destinationRemoveConfirmFooter)
+      .get("button")
+      .contains("Nevermind!")
+      .eq(0)
+      .click()
+
     //click on plus-sign for adding a destination
     cy.get(selector.destination.addDestination).click()
     cy.location("pathname").should("eq", route.addDestinations)
 
-    /**
     //find a addable destination from the drawer
     cy.get(selector.destination.drawerToggle).click()
     cy.get(selector.destination.destinationsList)
@@ -76,26 +81,25 @@ describe("Orchestration > Destinations", () => {
 
           //Click on Add and return button
           cy.get(selector.destination.footer).contains("return").click()
-          cy.location("pathname").should("eq", route.connections)
-
-          //verify if number of destinations incremented by 1
-          cy.get("@destinationsCount").then((destinationsCount) => {
-            cy.get(selector.destinations)
-              .its("length")
-              .should("eq", destinationsCount + 1)
-          })
-        } else {
-          //if no destination can be added, cancel adding a destination
-          cy.get(selector.destination.footer).contains("Cancel").click()
-
-          //verify no change in number of destinations
-          cy.get("@destinationsCount").then((destinationsCount) => {
-            cy.get(selector.destinations)
-              .its("length")
-              .should("eq", destinationsCount)
-          })
+          cy.location("pathname").should("eq", route.destinations)
         }
       })
-    */
+
+    //click on plus-sign for requesting a destination
+    cy.get(selector.destination.addDestination).click()
+    cy.location("pathname").should("eq", route.addDestinations)
+
+    cy.get(selector.destination.drawerToggle).click()
+    cy.get(selector.destination.requestableDestinationsList)
+      .contains("Request")
+      .as("requestableDestinations")
+
+    cy.get("@requestableDestinations")
+      .its("length")
+      .then((requestableDestinations) => {
+        if (requestableDestinations > 0) {
+          cy.get("@requestableDestinations").eq(0).click().contains("Requested")
+        }
+      })
   })
 })

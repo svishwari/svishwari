@@ -20,6 +20,15 @@ class CdpDataSourcePostSchema(Schema):
         validate=OneOf(choices=[api_c.STATUS_ACTIVE, api_c.STATUS_PENDING]),
         default=api_c.STATUS_PENDING,
     )
+    category = fields.Str(
+        required=True,
+        validate=OneOf(
+            choices=api_c.CDP_DATA_SOURCE_CATEGORIES + [db_c.CATEGORY_UNKNOWN]
+        ),
+        default=db_c.CATEGORY_UNKNOWN,
+        allow_none=True,
+    )
+    feed_count = fields.Int(required=False, default=None)
 
 
 class CdpDataSourceSchema(Schema):
@@ -33,6 +42,15 @@ class CdpDataSourceSchema(Schema):
     )
     name = fields.Str(required=True)
     type = fields.Str(required=True)
+    category = fields.Str(
+        required=True,
+        validate=OneOf(
+            choices=api_c.CDP_DATA_SOURCE_CATEGORIES + [db_c.CATEGORY_UNKNOWN]
+        ),
+        default=db_c.CATEGORY_UNKNOWN,
+        allow_none=True,
+    )
+    feed_count = fields.Int(required=False, default=None, allow_none=True)
     status = fields.Str(
         required=True,
         validate=[
@@ -45,9 +63,9 @@ class CdpDataSourceSchema(Schema):
         ],
         default=api_c.STATUS_ACTIVE,
     )
-    is_added = fields.Bool(required=False, attribute="added", default=False)
+    is_added = fields.Bool(required=False, attribute=db_c.ADDED, default=False)
     is_enabled = fields.Bool(
-        required=False, attribute="enabled", default=False
+        required=False, attribute=db_c.ENABLED, default=False
     )
 
 
@@ -67,13 +85,22 @@ class CdpConnectionsDataSourceSchema(Schema):
             )
         ],
     )
+    category = fields.Str(
+        required=False,
+        validate=OneOf(
+            choices=api_c.CDP_DATA_SOURCE_CATEGORIES + [db_c.CATEGORY_UNKNOWN]
+        ),
+        default=db_c.CATEGORY_UNKNOWN,
+        allow_none=True,
+    )
+    feed_count = fields.Int(required=False, default=None, allow_none=True)
 
 
 class CdpDataSourceDataFeedSchema(Schema):
     """Data source data feed schema"""
 
     name = fields.Str()
-    datasource_type = fields.Str(example=db_c.CDP_DATA_SOURCE_BLUECORE)
+    datasource_type = fields.Str(example=db_c.DATA_SOURCE_PLATFORM_BLUECORE)
     records_received = fields.Int(example=345612)
     records_processed = fields.Int(example=345612)
     records_processed_percentage = fields.Float(

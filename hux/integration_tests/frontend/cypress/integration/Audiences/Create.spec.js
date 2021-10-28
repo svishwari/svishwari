@@ -11,9 +11,7 @@ describe("Orchestration > Audience > Create Audience", () => {
   })
 
   it("should be able to configure a new audience", () => {
-    // should be able to navigate to audience and click on add audience button
-    // after login land in the overview page
-    cy.location("pathname").should("eq", route.overview)
+    cy.location("pathname").should("eq", route.home)
     //click on audience on side nav bar and route in audience screen
     cy.get(selector.nav.audiences).click()
     cy.location("pathname").should("eq", route.audiences)
