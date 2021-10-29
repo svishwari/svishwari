@@ -8,7 +8,7 @@
     </v-card-title>
     <v-card-text class="title-text px-0">
       <v-simple-table>
-        <template v-slot:default>
+        <template #default>
           <tbody>
             <tr v-for="pref in prefrerences" :key="pref.id">
               <td class="text-body-1 black--text text--lighten-4 pl-6">
@@ -70,5 +70,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss" scoped></style>

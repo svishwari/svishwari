@@ -1,4 +1,3 @@
-hux
 <template>
   <div>
     <page-header data-e2e="models-header" :header-height="110">

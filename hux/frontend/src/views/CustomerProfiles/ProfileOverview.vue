@@ -9,9 +9,9 @@
       >
         <v-card-text class="py-3 px-4 d-flex flex-column">
           <span class="d-flex align-baseline mb-1">
-            <span class="text-body-2 black--text text--lighten-4 mr-2"
-              >First</span
-            >
+            <span class="text-body-2 black--text text--lighten-4 mr-2">
+              First
+            </span>
             <tooltip>
               <template #label-content>
                 <span class="text-subtitle-1 text-elipsis black--text">
@@ -173,9 +173,6 @@ export default {
   .card-info-wrapper {
     margin-right: 12px;
   }
-}
-.no-background {
-  background: none !important;
 }
 .max-char {
   width: 15ch;
