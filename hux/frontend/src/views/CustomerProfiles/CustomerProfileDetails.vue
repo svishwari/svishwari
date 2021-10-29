@@ -11,7 +11,9 @@
       <profile-overview :profile="customerProfile['overview']" />
       <v-row class="table-card">
         <v-col cols="6" class="pb-0">
-          <identifiable-insights :insights="customerProfile['insights']" />
+          <profile-identifiable-insights
+            :insights="customerProfile['insights']"
+          />
         </v-col>
         <v-col class="pb-0 customCol">
           <contact-preferences
@@ -19,7 +21,7 @@
           />
         </v-col>
         <v-col class="matix-card-space pb-0">
-          <invidual-identity
+          <individual-identity
             :insights="customerProfile['identity_resolution']"
           />
         </v-col>
@@ -57,9 +59,9 @@ import CustomerEventChart from "@/components/common/CustomerEventChart/CustomerE
 import CustomerData from "@/api/mock/fixtures/totalCustomersData.js"
 import CustomerEventData from "@/api/mock/fixtures/customerEventData.js"
 import ProfileOverview from "./ProfileOverview.vue"
-import IdentifiableInsights from "./IdentifiableInsights.vue"
+import ProfileIdentifiableInsights from "./ProfileIdentifiableInsights.vue"
 import ContactPreferences from "./ContactPreferences.vue"
-import InvidualIdentity from "./InvidualIdentity.vue"
+import IndividualIdentity from "./IndividualIdentity.vue"
 
 export default {
   name: "CustomerProfileDetails",
@@ -68,9 +70,9 @@ export default {
     Breadcrumb,
     CustomerEventChart,
     ProfileOverview,
-    IdentifiableInsights,
+    ProfileIdentifiableInsights,
     ContactPreferences,
-    InvidualIdentity,
+    IndividualIdentity,
   },
   data() {
     return {
@@ -118,10 +120,6 @@ export default {
     customerProfile() {
       return this.customer(this.$route.params.id)
     },
-
-    customerIdentityResolution() {
-      return this.customerProfile["identity_resolution"]
-    },
   },
 
   async mounted() {
@@ -136,12 +134,6 @@ export default {
       getCustomer: "customers/get",
       getEvents: "customers/getCustomerEvents",
     }),
-    formattedDate(value) {
-      if (value) {
-        return this.$options.filters.Date(value, "relative")
-      }
-      return "-"
-    },
     async getCustomerEvent() {
       this.loadingCustomerEvents = true
       await this.getEvents(this.id)

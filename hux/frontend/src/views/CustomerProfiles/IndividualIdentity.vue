@@ -27,7 +27,7 @@ import IdentityChart from "../../components/common/identityChart/IdentityChart.v
 import Tooltip from "../../components/common/Tooltip.vue"
 
 export default {
-  name: "InvidualIdentity",
+  name: "IndividualIdentity",
   components: { IdentityChart, Tooltip, Icon },
   props: {
     insights: {

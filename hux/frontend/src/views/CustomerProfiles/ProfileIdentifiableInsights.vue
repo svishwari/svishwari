@@ -75,7 +75,7 @@
 import Icon from "../../components/common/Icon.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 export default {
-  name: "IdentifiableInformation",
+  name: "ProfileIdentifiableInsights",
   components: { Tooltip, Icon },
   props: {
     insights: {
