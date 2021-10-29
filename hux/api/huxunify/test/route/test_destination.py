@@ -35,6 +35,14 @@ class TestDestinationRoutes(TestCase):
         request_mocker.start()
 
         self.app = create_app().test_client()
+        self.new_auth_details = {
+            api_c.AUTHENTICATION_DETAILS: {
+                api_c.FACEBOOK_ACCESS_TOKEN: "fake_fake",
+                api_c.FACEBOOK_APP_SECRET: "fake",
+                api_c.FACEBOOK_APP_ID: "1234",
+                api_c.FACEBOOK_AD_ACCOUNT_ID: "12345678",
+            }
+        }
 
         # init mongo patch initially
         mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
@@ -150,18 +158,9 @@ class TestDestinationRoutes(TestCase):
 
         destination_id = self.destinations[0][db_c.ID]
 
-        new_auth_details = {
-            "authentication_details": {
-                api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
-                api_c.FACEBOOK_APP_SECRET: "unified_fb_secret",
-                api_c.FACEBOOK_APP_ID: "2951925002021888",
-                api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
-            }
-        }
-
         self.app.put(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
-            json=new_auth_details,
+            json=self.new_auth_details,
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -226,18 +225,9 @@ class TestDestinationRoutes(TestCase):
 
         destination_id = self.destinations[0][db_c.ID]
 
-        new_auth_details = {
-            "authentication_details": {
-                api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
-                api_c.FACEBOOK_APP_SECRET: "unified_fb_secret",
-                api_c.FACEBOOK_APP_ID: "2951925002021888",
-                api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
-            }
-        }
-
         response = self.app.put(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
-            json=new_auth_details,
+            json=self.new_auth_details,
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -249,18 +239,9 @@ class TestDestinationRoutes(TestCase):
 
         destination_id = ObjectId()
 
-        new_auth_details = {
-            "authentication_details": {
-                "access_token": "MkU3Ojgwm",
-                "app_secret": "717bdOQqZO99",
-                "app_id": "2951925002021888",
-                "ad_account_id": "111333777",
-            }
-        }
-
         response = self.app.put(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
-            json=new_auth_details,
+            json=self.new_auth_details,
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -272,18 +253,9 @@ class TestDestinationRoutes(TestCase):
 
         destination_id = t_c.INVALID_ID
 
-        new_auth_details = {
-            "authentication_details": {
-                "access_token": "MkU3Ojgwm",
-                "app_secret": "717bdOQqZO99",
-                "app_id": "2951925002021888",
-                "ad_account_id": "111333777",
-            }
-        }
-
         response = self.app.put(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
-            json=new_auth_details,
+            json=self.new_auth_details,
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -294,18 +266,9 @@ class TestDestinationRoutes(TestCase):
 
         destination_id = self.destinations[0][db_c.ID]
 
-        new_auth_details = {
-            "authentication_details": {
-                api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
-                api_c.FACEBOOK_APP_SECRET: "unified_fb_secret",
-                api_c.FACEBOOK_APP_ID: "2951925002021888",
-                api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
-            }
-        }
-
         response = self.app.put(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
-            json=new_auth_details,
+            json=self.new_auth_details,
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -316,18 +279,9 @@ class TestDestinationRoutes(TestCase):
 
         destination_id = ObjectId()
 
-        new_auth_details = {
-            "authentication_details": {
-                "access_token": "MkU3Ojgwm",
-                "app_secret": "717bdOQqZO99",
-                "app_id": "2951925002021888",
-                "ad_account_id": "111333777",
-            }
-        }
-
         response = self.app.put(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
-            json=new_auth_details,
+            json=self.new_auth_details,
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -338,18 +292,9 @@ class TestDestinationRoutes(TestCase):
 
         destination_id = t_c.INVALID_ID
 
-        new_auth_details = {
-            "authentication_details": {
-                "access_token": "MkU3Ojgwm",
-                "app_secret": "717bdOQqZO99",
-                "app_id": "2951925002021888",
-                "ad_account_id": "111333777",
-            }
-        }
-
         response = self.app.put(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
-            json=new_auth_details,
+            json=self.new_auth_details,
             headers=t_c.STANDARD_HEADERS,
         )
 
