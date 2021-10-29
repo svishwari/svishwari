@@ -205,7 +205,7 @@ def get_audience(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_audiences(
-    database: DatabaseClient, include_users: bool = False, filters=None
+    database: DatabaseClient, include_users: bool = False, filters: dict = None
 ) -> Union[list, None]:
     """A function to get all existing audiences.
 
