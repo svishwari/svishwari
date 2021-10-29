@@ -803,18 +803,6 @@ LOOKALIKEABLE = "lookalikeable"
 IS_LOOKALIKE = "is_lookalike"
 WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
-AUDIENCES_ATTRIBUTES_FILTER = [
-    "propensity_to_purchase",
-    "propensity_to_unsubscribe",
-    "predicted_lifetime_value",
-    AGE,
-    EMAIL,
-    GENDER,
-    COUNTRY,
-    STATE,
-    CITY,
-    ZIP,
-]
 
 PARAM_STORE_PREFIX = "unified"
 PARAMETER_STORE_ERROR_MSG = (

@@ -259,14 +259,6 @@ class AudienceView(SwaggerView):
         # set the attribute_list to filter_dict only if it is populated and
         # validation is successful
         if attribute_list:
-            if not set(attribute_list).issubset(
-                set(api_c.AUDIENCES_ATTRIBUTES_FILTER)
-            ):
-                logger.error("Invalid attributes in request")
-                return {
-                    api_c.MESSAGE: "Invalid or incomplete arguments received"
-                }, HTTPStatus.BAD_REQUEST
-
             filter_dict[api_c.ATTRIBUTE] = attribute_list
 
         database = get_db_client()
