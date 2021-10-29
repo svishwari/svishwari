@@ -16,8 +16,8 @@ export default {
   dullBlue: "#b7cfd9",
   columbiaBlue: "#a0dcff",
   skyBlue: "#80d1ef",
-  oceanBlue: "42EFFD",
-  royalBlue: "0C9DDB",
+  oceanBlue: "#42EFFD",
+  royalBlue: "#0C9DDB",
   pantoneBlue: "#0076A8",
   tealBlue: "#396286",
 }

@@ -1,3 +1,16 @@
-<svg width="100%" height="100%" viewBox="0 0 0 0" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <!-- HUS-1335 -->
+<svg width="100%" height="100%" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="13" cy="13" r="12.5" fill="white" stroke="#E2EAEC"/>
+<g clip-path="url(#dropbox0)">
+<mask id="dropbox1" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="-2" width="26" height="27">
+<circle cx="13" cy="11.5586" r="12.5" fill="white" stroke="#D0D0CE"/>
+</mask>
+<g mask="url(#dropbox1)">
+<path d="M8.6662 5.78125L12.9999 8.54179L8.6662 11.3023L4.33325 8.54179L8.6662 5.78125ZM17.3332 5.78125L21.6666 8.54205L17.3332 11.3028L12.9999 8.54205L17.3332 5.78125ZM4.33325 14.0634L8.6662 11.3028L12.9999 14.0634L8.6662 16.8239L4.33325 14.0634ZM17.3332 11.3028L21.6665 14.0636L17.3332 16.8244L12.9999 14.0636L17.3332 11.3028ZM8.66657 17.7501L13.0003 14.9896L17.3332 17.7501L13.0003 20.5106L8.66657 17.7501Z" fill="#0061FF"/>
+</g>
+</g>
+<defs>
+<clipPath id="dropbox0">
+<rect width="18.7778" height="18.7778" fill="white" transform="translate(4.33325 2.89062)"/>
+</clipPath>
+</defs>
 </svg>
