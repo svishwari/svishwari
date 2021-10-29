@@ -193,7 +193,7 @@ class AudienceView(SwaggerView):
         },
         {
             "name": api_c.WORKED_BY,
-            "description": "Only return audiences worked by the user",
+            "description": "Only return audiences worked on by the user",
             "in": "query",
             "type": "boolean",
             "required": False,
