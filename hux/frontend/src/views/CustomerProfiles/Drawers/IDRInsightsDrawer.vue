@@ -59,7 +59,7 @@
               {{ item[col.value] }}
               <tooltip v-if="item.toolTipText" position-top>
                 <template #label-content>
-                  <icon type="info" :size="12" />
+                  <icon type="info" :size="12" color="primary" variant="base" />
                 </template>
                 <template #hover-content>
                   {{ item.toolTipText }}

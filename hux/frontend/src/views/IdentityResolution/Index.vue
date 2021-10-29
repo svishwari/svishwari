@@ -69,7 +69,12 @@
                   <template #extra-item>
                     <tooltip position-top>
                       <template #label-content>
-                        <icon type="info" :size="12" />
+                        <icon
+                          type="info"
+                          :size="12"
+                          color="primary"
+                          variant="base"
+                        />
                       </template>
                       <template #hover-content>
                         <v-sheet max-width="240px">

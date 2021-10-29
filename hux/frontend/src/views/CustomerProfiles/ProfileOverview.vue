@@ -65,6 +65,8 @@
                   type="info"
                   :size="12"
                   class="mb-1"
+                  color="primary"
+                  variant="base"
                 />
               </template>
               <template #hover-content>
