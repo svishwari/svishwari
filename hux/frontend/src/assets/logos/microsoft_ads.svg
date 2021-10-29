@@ -1,3 +1,14 @@
-<svg width="100%" height="100%" viewBox="0 0 0 0" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <!-- HUS-1335 -->
+<svg width="100%" height="100%" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="13" cy="13" r="12.5" fill="white" stroke="#E2EAEC"/>
+<g clip-path="url(#microsoft_ads0)">
+<path d="M12.5487 5.77734H5.77783V12.5482H12.5487V5.77734Z" fill="#F05125"/>
+<path d="M20.2222 5.77734H13.4514V12.5482H20.2222V5.77734Z" fill="#7FBB42"/>
+<path d="M20.2222 13.4492H13.4514V20.2201H20.2222V13.4492Z" fill="#FDB813"/>
+<path d="M12.5487 13.4492H5.77783V20.2201H12.5487V13.4492Z" fill="#32A0DA"/>
+</g>
+<defs>
+<clipPath id="microsoft_ads0">
+<rect width="14.4444" height="14.4444" fill="white" transform="translate(5.77783 5.77734)"/>
+</clipPath>
+</defs>
 </svg>
