@@ -21,7 +21,6 @@ from huxunifylib.database import (
     delivery_platform_management as destination_management,
     orchestration_management,
     engagement_management,
-    data_management,
     engagement_audience_management as eam,
 )
 import huxunifylib.database.constants as db_c
@@ -993,9 +992,14 @@ class AudienceRules(SwaggerView):
             Tuple[dict, int]: dict of audience rules, HTTP status code.
         """
 
-        rules_constants = data_management.get_constant(
-            get_db_client(), db_c.AUDIENCE_FILTER_CONSTANTS
-        )
+        rules_constants = {
+            "text_operators": {
+                "contains": "Contains",
+                "does_not_contain": "Does not contain",
+                "equals": "Equals",
+                "does_not_equal": "Does not equal",
+            }
+        }
 
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically
@@ -1128,7 +1132,6 @@ class AudienceRules(SwaggerView):
             }
         }
 
-        rules_constants = rules_constants["value"]
         rules_constants.update(rules_from_cdm)
 
         return rules_constants, HTTPStatus.OK.value

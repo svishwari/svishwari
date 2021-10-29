@@ -1,20 +1,14 @@
-import route from "../../support/routes.js"
-import selector from "../../support/selectors.js"
+import route from "../../support/routes"
+import selector from "../../support/selectors"
 
 describe("Orchestration > Destinations", () => {
-  before(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+  beforeEach(() => {
+    cy.signin()
+    cy.visit(route.destinations)
   })
 
   // TODO in HUS-1373 after HUS-1230 is merged
   it("should be able to manage destinations", () => {
-    cy.location("pathname").should("eq", route.home)
-
-    // click on connections on side nav bar
-    cy.get(selector.nav.destinations).click()
     cy.location("pathname").should("eq", route.destinations)
 
     // validate destinations exist by getting total no. of them
@@ -29,7 +23,7 @@ describe("Orchestration > Destinations", () => {
           $modalBody.find(selector.destination.removeDestinationText).length > 0
         ) {
           cy.get(selector.destination.destinationRemoveConfirmFooter)
-            .get("button")
+            .find("button")
             .contains("Yes, remove it")
             .should("exist")
 
@@ -40,13 +34,13 @@ describe("Orchestration > Destinations", () => {
       },
     )
     cy.get(selector.destination.destinationRemoveConfirmFooter)
-      .get("button")
+      .find("button")
       .contains("Yes, remove it")
       .eq(0)
       .should("not.contain", "v-btn--disabled")
 
     cy.get(selector.destination.destinationRemoveConfirmFooter)
-      .get("button")
+      .find("button")
       .contains("Nevermind!")
       .eq(0)
       .click()

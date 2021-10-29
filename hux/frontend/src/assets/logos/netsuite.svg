@@ -1,14 +1,7 @@
 <svg width="100%" height="100%" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="13" cy="13" r="12.5" fill="white"/>
-<circle cx="13" cy="13" r="12.5" stroke="#D0D0CE"/>
-<circle cx="13" cy="13" r="12.5" stroke="black" stroke-opacity="0.2"/>
-<g clip-path="url(#netsuite0)">
-<path d="M5.71436 9.43489H8.85949V17.2345H10.4254V20.2823H5.71436V9.43489ZM20.2722 16.6111H17.1271V8.81148H15.5611V5.76367H20.2722V16.6111Z" fill="#BACCDB"/>
-<path d="M4.9845 5.01367H14.9242V13.9216L11.1022 8.78186H4.9845V5.01367ZM20.9888 21.0423H11.0492V12.1344L14.8711 17.2741H20.9888" fill="#125580"/>
-</g>
-<defs>
-<clipPath id="netsuite0">
-<rect width="16" height="16" fill="white" transform="translate(5 5)"/>
-</clipPath>
-</defs>
+<circle cx="13" cy="13" r="12.5" fill="white" stroke="#E2EAEC"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M5 5H14.9697V13.8919L11.0872 8.76437H5" fill="#00467F"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M11.0659 12.1445C12.3602 13.8121 13.6027 15.5342 14.8826 17.2168H21.0027V20.9867H11.0659" fill="#00467F"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M15.5938 8.75219V5.76562H20.2992V16.5614H17.1736V8.75219" fill="#B9C7D4"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M8.8657 10.2031V17.9488C9.35987 17.9488 9.90024 17.9488 10.4122 17.9488V20.9989H5.73975V10.2031" fill="#B9C7D4"/>
 </svg>
