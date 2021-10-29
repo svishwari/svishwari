@@ -3,8 +3,8 @@
     v-model="localDrawer"
     :content-padding="'pa-0'"
     :content-header-padding="'px-3'"
-    :expandedWidth="'300'"
-    :width="'300'"
+    :expandedWidth="300"
+    :width="300"
   >
     <template #header-left>
       <span class="text-h2 black--text"> Filter (0) </span>

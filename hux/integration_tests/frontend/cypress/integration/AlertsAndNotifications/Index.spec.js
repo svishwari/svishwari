@@ -1,12 +1,10 @@
-import route from "../../support/routes.js"
-import selector from "../../support/selectors.js"
+import route from "../../support/routes"
+import selector from "../../support/selectors"
 
 describe("Notifications", () => {
-  before(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+  beforeEach(() => {
+    cy.signin()
+    cy.visit(route.home)
   })
 
   it("should be able to view a list of notifications", () => {
@@ -23,9 +21,9 @@ describe("Notifications", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
     // view all link should be visible
-    cy.get(selector.notification.notifications).should("be.visible")
+    cy.get(selector.notification.viewAllNotifications).should("be.visible")
     // click on the view all link
-    cy.get(selector.notification.notifications).click()
+    cy.get(selector.notification.viewAllNotifications).click()
     // route in notification screen
     cy.location("pathname").should("eq", route.notifications)
     // scroll down for lazy loading

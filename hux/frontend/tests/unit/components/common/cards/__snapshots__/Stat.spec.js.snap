@@ -3,8 +3,8 @@
 exports[`Cards Card Stat Displays with custom properties 1`] = `
 <div class="v-menu">
   <div class="px-4 border-start separator">
-    <h6 class="text-h6 mb-0">2 hrs ago</h6>
-    <div class="text-body-2 black--text text--lighten-4">Last trained</div>
+    <h3 class="mb-0 text-h3 black--text">2 hrs ago</h3>
+    <div class="black--text text--lighten-4 text-body-2">Last trained</div>
   </div>
   <!---->
 </div>

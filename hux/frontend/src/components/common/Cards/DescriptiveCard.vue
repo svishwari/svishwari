@@ -1,7 +1,14 @@
 <template>
   <v-card
     :outlined="disabled"
-    class="descriptive-card align-center text-center rounded-lg mr-10 mb-10"
+    class="
+      descriptive-card
+      align-center
+      text-center
+      rounded-lg
+      card-space
+      mb-10
+    "
     :class="{ 'in-active': disabled }"
     :height="height"
     :width="width"
@@ -52,8 +59,12 @@
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="text-h4 px-3 pb-2 pt-2 text-ellipsis d-block title text-h4"
-          :class="disabled ? 'black--text text--darken-4' : 'primary--text'"
+          class="text-h4 px-3 pb-1 pt-2 text-ellipsis d-block title text-h4"
+          :class="
+            disabled
+              ? 'black--text text--darken-4'
+              : 'black--text text--lighten-5'
+          "
           :style="{ 'padding-top': !icon ? '56px' : null }"
           data-e2e="card-title"
         >
@@ -191,12 +202,22 @@ export default {
     }
   }
   .dot {
-    padding: 7px;
+    width: 60px;
+    height: 60px;
+    padding: 8px;
     border-radius: 50%;
     @extend .box-shadow-1;
+    background: var(--v-white-base);
   }
   .description {
     min-height: 36px;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+    overflow: hidden !important;
+    display: -webkit-box !important;
   }
+}
+.card-space {
+  margin-right: 24px !important;
 }
 </style>
