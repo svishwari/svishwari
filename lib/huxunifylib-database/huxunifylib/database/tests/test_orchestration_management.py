@@ -534,7 +534,7 @@ class TestAudienceManagement(unittest.TestCase):
                 )
 
     def test_get_all_audiences_with_deliveries_filters(self):
-        """Test get_all_audiences with deliveries."""
+        """Test get_all_audiences with deliveries and filters."""
 
         # Set delivery platform
         delivery_platform_doc = dpm.set_delivery_platform(
