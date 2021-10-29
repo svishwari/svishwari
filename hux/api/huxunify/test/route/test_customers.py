@@ -17,7 +17,7 @@ from huxunify.api.schema.customers import (
     DataFeedSchema,
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
-    CustomersInsightsCountriesSchema,
+    CustomersInsightsCountriesSchema, CustomerRevenueInsightsSchema,
 )
 from huxunify.api.schema.customers import (
     CustomerGeoVisualSchema,
@@ -426,6 +426,28 @@ class TestCustomersOverview(TestCase):
         self.assertTrue(
             t_c.validate_schema(
                 TotalCustomersInsightsSchema(), response.json, True
+            )
+        )
+
+    def test_customer_revenue_insights_success(self) -> None:
+        """Test get customer revenue insights success response."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+            json=t_c.MOCKED_GENDER_SPENDING,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.REVENUE}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(
+                CustomerRevenueInsightsSchema(), response.json, True
             )
         )
 

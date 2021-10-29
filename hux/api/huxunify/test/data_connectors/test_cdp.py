@@ -11,6 +11,7 @@ from huxunify.api import constants as api_c
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
 )
+from huxunify.api.schema.customers import CustomerRevenueInsightsSchema
 from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.cdp import (
     clean_cdm_fields,
@@ -27,10 +28,11 @@ from huxunify.api.data_connectors.cdp import (
     get_demographic_by_country,
     get_customers_insights_count_by_day,
     get_spending_by_gender,
+    get_revenue_by_day,
 )
 from huxunify.app import create_app
 
-
+# pylint: disable=too-many-public-methods
 class CDPTest(TestCase):
     """Test CDP API endpoint methods."""
 
@@ -564,6 +566,27 @@ class CDPTest(TestCase):
                 start_date=start_date,
                 end_date=end_date,
             )
+
+    def test_get_revenue_by_day(self) -> None:
+        """Test get customer revenue by day."""
+        start_date = datetime.utcnow().date() - relativedelta(month=6)
+        end_date = datetime.utcnow().date()
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+            json=t_c.MOCKED_GENDER_SPENDING,
+        )
+        self.request_mocker.start()
+
+        revenue_by_day = CustomerRevenueInsightsSchema().dump(get_revenue_by_day(
+            token=t_c.TEST_AUTH_TOKEN,
+            start_date=datetime.strftime(
+                start_date, api_c.DEFAULT_DATE_FORMAT
+            ),
+            end_date=datetime.strftime(end_date, api_c.DEFAULT_DATE_FORMAT),
+        ), many=True)
+
+        self.assertTrue(t_c.validate_schema(CustomerRevenueInsightsSchema(), revenue_by_day, True))
 
 
 class CdpFieldTests(TestCase):
