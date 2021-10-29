@@ -221,7 +221,7 @@ def get_all_audiences(
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.AUDIENCES_COLLECTION]
 
-    if filters is None or not filters:
+    if not filters:
         find_filters = {c.DELETED: False}
     else:
         find_filters = {}

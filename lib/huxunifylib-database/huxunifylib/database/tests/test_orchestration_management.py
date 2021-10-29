@@ -408,7 +408,7 @@ class TestAudienceManagement(unittest.TestCase):
         )
 
         # No favorite set yet.
-        self.assertEqual(len(filtered_audiences), 0)
+        self.assertFalse(filtered_audiences)
 
         # Adding audience to favorites.
         manage_user_favorites(
@@ -432,7 +432,7 @@ class TestAudienceManagement(unittest.TestCase):
         filtered_audiences = am.get_all_audiences(
             self.database, filters=filters
         )
-        self.assertEqual(len(filtered_audiences), 0)
+        self.assertFalse(filtered_audiences)
 
     def test_get_all_audiences_with_users(self):
         """Test get_all_audiences with users."""
