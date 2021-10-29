@@ -59,7 +59,7 @@
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="text-h4 px-3 pb-1 pt-2 text-ellipsis d-block title text-h4"
+          class="text-h4 px-5 pb-1 pt-2 text-ellipsis d-block title text-h4"
           :class="
             disabled
               ? 'black--text text--darken-4'
