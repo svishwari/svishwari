@@ -549,12 +549,14 @@ export default {
         border-radius: 12px 12px 0px 0px;
       }
       tr {
+        &:hover {
+          background: var(--v-primary-lighten2) !important;
+        }
         td:nth-child(1) {
           position: sticky;
           top: 0;
           left: 0;
           z-index: 8;
-          background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
         }
       }
@@ -564,7 +566,6 @@ export default {
       tr {
         td {
           font-size: 14px;
-          height: 63px;
         }
       }
       tbody {

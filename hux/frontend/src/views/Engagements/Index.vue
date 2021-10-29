@@ -1079,7 +1079,6 @@ export default {
     }
     ::v-deep table {
       tr {
-        height: 64px;
         &:hover {
           background: var(--v-primary-lighten2) !important;
         }
@@ -1108,7 +1107,6 @@ export default {
         &:hover {
           background: var(--v-primary-lighten2) !important;
         }
-        height: 64px;
         td {
           font-size: 14px !important;
           line-height: 22px;
@@ -1118,7 +1116,6 @@ export default {
           position: sticky;
           top: 0;
           left: 0;
-          background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
           .menu-cell-wrapper > div {
             a.text-decoration-none {
