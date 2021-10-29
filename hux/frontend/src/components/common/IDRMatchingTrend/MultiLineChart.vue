@@ -65,7 +65,7 @@ export default {
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
       let dataKey = ["unique_hux_ids", "anonymous_ids", "known_ids"]
-      let colorCodes = ["#347DAC", "#4F4F4F", "#42EFFD"]
+      let colorCodes = ["#005587", "#0C9DDB", "#42EFFD"]
       let ids = [
         { label: "Unique Hux IDs", xValue: 0 },
         { label: "Anonymous IDs", xValue: 122 },
@@ -73,7 +73,7 @@ export default {
       ]
       let color = d3Scale
         .scaleOrdinal()
-        .range(["#347DAC", "#75787B", "#42EFFD"])
+        .range(["#005587", "#0C9DDB", "#42EFFD"])
       let svg = d3Select
         .select(this.$refs.multiLineChart)
         .append("svg")
@@ -283,11 +283,10 @@ export default {
         .attr("cx", 9)
         .attr("cy", 9)
         .attr("r", 6)
-        .attr("stroke", function (d) {
+        .attr("fill", function (d) {
           return color(d.label)
         })
         .attr("stroke-width", 2)
-        .style("fill", "white")
 
       legend
         .append("text")

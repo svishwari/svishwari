@@ -15,13 +15,28 @@
     outlined
     single-line
     :style="`max-width: ${width}px`"
-  />
+  >
+    <template slot="item" slot-scope="data">
+      <icon
+        type="check-icon"
+        size="12"
+        class="mr-2"
+        :color="data.attrs.inputValue ? 'primary' : ''"
+      />
+      {{ data.item }}
+    </template>
+  </v-select>
 </template>
 
 <script>
 import { defineComponent, computed } from "@vue/composition-api"
+import Icon from "@/components/common/Icon.vue"
 
 export default defineComponent({
+  components: {
+    Icon,
+  },
+
   props: {
     value: {
       type: [String, Number, Boolean],

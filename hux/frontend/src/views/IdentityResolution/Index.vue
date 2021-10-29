@@ -128,8 +128,32 @@
 
                 <v-card-title class="chart-style pb-8 pl-5 pt-5">
                   <div class="mt-2">
-                    <span class="black--text text--darken-4 text-h5">
+                    <span class="black--text text--darken-4 text-h3">
                       ID Resolution matching trends
+                    </span>
+                    <span
+                      v-if="
+                        responseTimeFrame &&
+                        responseTimeFrame.start_date &&
+                        responseTimeFrame.end_date
+                      "
+                      class="black--text text--darken-4 text-body-1"
+                    >
+                      (
+                      {{
+                        this.$options.filters.Date(
+                          responseTimeFrame["start_date"],
+                          "MMMM YYYY"
+                        )
+                      }}
+                      -
+                      {{
+                        this.$options.filters.Date(
+                          responseTimeFrame["end_date"],
+                          "MMMM YYYY"
+                        )
+                      }}
+                      )
                     </span>
                   </div>
                 </v-card-title>
@@ -270,6 +294,7 @@ export default {
       timeFrame: "identity/timeFrame",
       dataFeeds: "identity/dataFeeds",
       matchingTrends: "identity/matchingTrends",
+      responseTimeFrame: "identity/responseTimeFrame",
     }),
 
     minDate() {

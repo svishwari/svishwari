@@ -18,20 +18,11 @@
       <template #content>
         <div class="neroBlack--text caption">
           <div class="value-section">
-            <div class="date-font">
-              {{ currentData.date | Date("MMM DD[,] YYYY") }}
-            </div>
-            <div>
-              <span class="append-circle color-known-ids" />
-              <span class="font-size-tooltip">
-                {{
-                  currentData.known_ids | Numeric(false, false, true) | Empty
-                }}
-              </span>
-            </div>
             <div>
               <span class="append-circle color-unique-hux-ids" />
               <span class="font-size-tooltip">
+                Unique Hux IDs
+                <br />
                 {{
                   currentData.unique_hux_ids
                     | Numeric(false, false, true)
@@ -40,8 +31,20 @@
               </span>
             </div>
             <div>
+              <span class="append-circle color-known-ids" />
+              <span class="font-size-tooltip">
+                Known IDs
+                <br />
+                {{
+                  currentData.known_ids | Numeric(false, false, true) | Empty
+                }}
+              </span>
+            </div>
+            <div>
               <span class="append-circle color-anonymous-ids" />
               <span class="font-size-tooltip">
+                Anonymous IDs
+                <br />
                 {{
                   currentData.anonymous_ids
                     | Numeric(false, false, true)
@@ -78,7 +81,7 @@ export default {
         x: 0,
         y: 0,
       },
-      colorCodes: ["#42EFFD", "#347DAC", "#75787B"],
+      colorCodes: ["#005587", "#42EFFD", "#0C9DDB"],
       toolTipStyle: TooltipConfiguration.idrMatchingTrendChart,
       currentData: {},
       chartDimensions: {
@@ -141,20 +144,18 @@ export default {
   .append-circle {
     height: 12px;
     width: 12px;
-    background-color: var(--v-white-base);
     border-radius: 50%;
     display: inline-block;
     margin-top: 6px;
-    margin-right: 8px;
   }
   .color-known-ids {
-    border: 2px solid #42effd;
+    background-color: #42effd;
   }
   .color-anonymous-ids {
-    border: 2px solid #75787b;
+    background-color: #0c9ddb;
   }
   .color-unique-hux-ids {
-    border: 2px solid #347dac;
+    background-color: #005587;
   }
 }
 </style>
