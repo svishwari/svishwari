@@ -17,7 +17,8 @@ from huxunify.api.schema.customers import (
     DataFeedSchema,
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
-    CustomersInsightsCountriesSchema, CustomerRevenueInsightsSchema,
+    CustomersInsightsCountriesSchema,
+    CustomerRevenueInsightsSchema,
 )
 from huxunify.api.schema.customers import (
     CustomerGeoVisualSchema,

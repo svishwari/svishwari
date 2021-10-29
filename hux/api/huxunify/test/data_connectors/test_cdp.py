@@ -578,15 +578,24 @@ class CDPTest(TestCase):
         )
         self.request_mocker.start()
 
-        revenue_by_day = CustomerRevenueInsightsSchema().dump(get_revenue_by_day(
-            token=t_c.TEST_AUTH_TOKEN,
-            start_date=datetime.strftime(
-                start_date, api_c.DEFAULT_DATE_FORMAT
+        revenue_by_day = CustomerRevenueInsightsSchema().dump(
+            get_revenue_by_day(
+                token=t_c.TEST_AUTH_TOKEN,
+                start_date=datetime.strftime(
+                    start_date, api_c.DEFAULT_DATE_FORMAT
+                ),
+                end_date=datetime.strftime(
+                    end_date, api_c.DEFAULT_DATE_FORMAT
+                ),
             ),
-            end_date=datetime.strftime(end_date, api_c.DEFAULT_DATE_FORMAT),
-        ), many=True)
+            many=True,
+        )
 
-        self.assertTrue(t_c.validate_schema(CustomerRevenueInsightsSchema(), revenue_by_day, True))
+        self.assertTrue(
+            t_c.validate_schema(
+                CustomerRevenueInsightsSchema(), revenue_by_day, True
+            )
+        )
 
 
 class CdpFieldTests(TestCase):

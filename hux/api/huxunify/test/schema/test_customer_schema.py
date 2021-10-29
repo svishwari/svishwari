@@ -11,7 +11,8 @@ from huxunify.api.schema.customers import (
     TotalCustomersInsightsSchema,
     CustomersInsightsCountriesSchema,
     CustomersInsightsStatesSchema,
-    CustomersInsightsCitiesSchema, CustomerRevenueInsightsSchema,
+    CustomersInsightsCitiesSchema,
+    CustomerRevenueInsightsSchema,
 )
 
 import huxunify.test.constants as t_c
@@ -58,7 +59,7 @@ class CustomerSchemaTest(TestCase):
 
         customer_count_doc = {
             api_c.DATE: "2021-04-01T00:00:00.000Z",
-            api_c.REVENUE: 123.43
+            api_c.REVENUE: 123.43,
         }
 
         self.assertFalse(
