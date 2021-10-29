@@ -19,22 +19,9 @@
           />
         </v-col>
         <v-col class="matix-card-space pb-0">
-          <v-card class="rounded-lg box-shadow-5" height="247" data-e2e="chord">
-            <v-card-title class="card-heading chart-style py-5 pl-6 d-flex">
-              <h3 class="text-h3">Individual Identity</h3>
-              <tooltip position-top>
-                <template #label-content>
-                  <icon type="info" :size="10" />
-                </template>
-                <template #hover-content>
-                  Most recent co-occurence between identifiers
-                </template>
-              </tooltip>
-            </v-card-title>
-            <identity-chart
-              :chart-data="customerIdentityResolution"
-            ></identity-chart>
-          </v-card>
+          <invidual-identity
+            :insights="customerProfile['identity_resolution']"
+          />
         </v-col>
       </v-row>
 
@@ -73,8 +60,9 @@ import CustomerEventChart from "@/components/common/CustomerEventChart/CustomerE
 import CustomerData from "@/api/mock/fixtures/totalCustomersData.js"
 import CustomerEventData from "@/api/mock/fixtures/customerEventData.js"
 import ProfileOverview from "./ProfileOverview.vue"
-import IdentifiableInsights from "./identifiableInsights.vue"
+import IdentifiableInsights from "./IdentifiableInsights.vue"
 import ContactPreferences from "./ContactPreferences.vue"
+import InvidualIdentity from "./InvidualIdentity.vue"
 
 export default {
   name: "CustomerProfileDetails",
@@ -88,6 +76,7 @@ export default {
     ProfileOverview,
     IdentifiableInsights,
     ContactPreferences,
+    InvidualIdentity,
   },
   data() {
     return {
@@ -138,38 +127,6 @@ export default {
 
     customerIdentityResolution() {
       return this.customerProfile["identity_resolution"]
-    },
-
-    customerContactPreferences() {
-      const contactPreferences = this.customerProfile["contact_preferences"]
-      return [
-        {
-          id: 1,
-          title: "Email",
-          value: contactPreferences["preference_email"],
-          subLabel: null,
-        },
-        {
-          id: 2,
-          title: "Push",
-          value: contactPreferences["preference_push"],
-          width: "19%",
-          minWidth: "164px",
-        },
-        {
-          id: 3,
-          title: "SMS",
-          value: contactPreferences["preference_sms"],
-          width: "19%",
-          minWidth: "164px",
-        },
-        {
-          id: 4,
-          title: "In-App",
-          value: contactPreferences["preference_in_app"],
-          subLabel: null,
-        },
-      ]
     },
   },
 
