@@ -229,7 +229,7 @@ def get_all_audiences(
             user_collection = am_db[c.USER_COLLECTION]
             user_fav_info = user_collection.find_one(
                 {c.USER_DISPLAY_NAME: filters.get(c.USER_FAVORITES, "")},
-                {c.USER_FAVORITES + "." + c.AUDIENCES: 1, c.ID: 0},
+                {f"{c.USER_FAVORITES}.{c.AUDIENCES}": 1, c.ID: 0},
             )
             favorite_audiences = []
             if user_fav_info:
@@ -607,7 +607,7 @@ def get_all_audiences_and_deliveries(
             user_collection = am_db[c.USER_COLLECTION]
             user_fav_info = user_collection.find_one(
                 {c.USER_DISPLAY_NAME: filters.get(c.USER_FAVORITES, "")},
-                {c.USER_FAVORITES + "." + c.AUDIENCES: 1, c.ID: 0},
+                {f"{c.USER_FAVORITES}.{c.AUDIENCES}": 1, c.ID: 0},
             )
             favorite_audiences = []
             if user_fav_info:
