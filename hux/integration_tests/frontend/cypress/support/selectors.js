@@ -110,7 +110,7 @@ export default {
     addAudience: "[data-e2e='add-audience']",
     addDestination: "[data-e2e='add-destination']",
     selectAudience: "[data-e2e='audience-select-button']",
-    selectDestination: "[data-e2e='destination-select-button-qualtrics']",
+    selectDestination: "[data-e2e='destination-select-button-facebook']",
     salesForceAddButton: "[data-e2e='destination-select-button-sfmc']",
     exitDrawer: "[data-e2e='click-outside']",
     exitDataExtensionDrawer: "[data-e2e='destination-added']",
@@ -178,11 +178,11 @@ export default {
     pinning: "[data-e2e='Pinning']",
     stitched: "[data-e2e='Stitched']",
   },
-  //notification
+  // notification
   notification: {
     notificationicon: "[data-e2e='notification-bell']",
     notificationReturnButton: "[data-e2e='notification-return']",
-    notifications: "a[href='/notifications']",
+    viewAllNotifications: "[data-e2e='notifications-view-all']",
     notificationlistmenu: "[data-e2e='notification-item']",
   },
   audience: {

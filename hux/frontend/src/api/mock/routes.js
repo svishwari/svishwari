@@ -528,7 +528,11 @@ export const defineRoutes = (server) => {
     }
     return notifications
   })
-
+  server.get("/notifications/:notification_id", (schema, request) => {
+    const id = request.params.notification_id
+    let singleNotification = schema.notifications.find(id)
+    return singleNotification
+  })
   // audiences
   server.get("/audiences")
 

@@ -1,6 +1,6 @@
 <template>
   <div class="list-wrapper">
-    <v-row v-if="hasAddedDestinations">
+    <v-row v-if="hasAddedDestinations" class="pa-3">
       <template>
         <descriptive-card
           v-for="destination in addedDestinations"
@@ -8,8 +8,8 @@
           :icon="destination.type"
           :icon-color="'white'"
           :title="destination.name"
-          :description="''"
-          :disabled="destination.status !== 'Active'"
+          :description="destination.category"
+          :disabled="destination.status === 'Pending'"
           :action-menu="true"
           :coming-soon="false"
           :logo-option="true"

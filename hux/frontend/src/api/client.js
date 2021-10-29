@@ -288,6 +288,11 @@ client["notifications"].getNotifications = (batchSize, batchNumber) => {
     `/notifications?batch_size=${batchSize}&batch_number=${batchNumber}`
   )
 }
+
+client["notifications"].find = (notification_id) => {
+  return http.get(`/notifications/${notification_id}`)
+}
+
 //#endregion
 
 client["models"].overview = (id) => {

@@ -1,9 +1,10 @@
 """Purpose of this file is to house route utilities"""
 from datetime import datetime
 import re
-from typing import Tuple
+from typing import Tuple, Union
 from http import HTTPStatus
 from bson import ObjectId
+from flask import Request
 from pandas import DataFrame
 from dateutil.relativedelta import relativedelta
 
@@ -19,17 +20,39 @@ from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
 from huxunifylib.database import (
+    delivery_platform_management as destination_management,
+)
+from huxunifylib.database import (
     constants as db_c,
 )
-from huxunifylib.database.user_management import get_user, get_all_users
+from huxunifylib.database.user_management import (
+    get_user,
+    get_all_users,
+    set_user,
+)
 from huxunifylib.database.client import DatabaseClient
 
+from huxunify.api.schema.destinations import (
+    DestinationGetSchema,
+    GoogleAdsAuthCredsSchema,
+    QualtricsAuthCredsSchema,
+    SendgridAuthCredsSchema,
+    FacebookAuthCredsSchema,
+    SFMCAuthCredsSchema,
+    DestinationPutSchema,
+    DestinationDataExtConfigSchema,
+)
 from huxunify.api.config import get_config
 from huxunify.api import constants
 from huxunify.api.data_connectors.tecton import check_tecton_connection
-from huxunify.api.data_connectors.aws import check_aws_ssm, check_aws_batch
+from huxunify.api.data_connectors.aws import (
+    check_aws_ssm,
+    check_aws_batch,
+    parameter_store,
+)
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
+    get_user_info,
 )
 from huxunify.api.data_connectors.cdp import check_cdm_api_connection
 from huxunify.api.data_connectors.cdp_connection import (
@@ -501,3 +524,180 @@ def get_user_favorites(
 
     # take the first one,
     return user[0].get(constants.FAVORITES, {}).get(component_name, [])
+
+
+def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
+    """Get the corresponding user matching the okta access token from the DB.
+    Create/Set a new user in DB if an user matching the valid okta access token
+    is not currently present in the DB.
+
+    Args:
+        access_token (str): OKTA JWT token.
+
+    Returns:
+        Union[dict, Tuple[dict, int]]: Either a valid user dict or a tuple of
+            response message along with the corresponding HTTP status code.
+    """
+
+    # set of keys required from user_info
+    required_keys = {
+        constants.OKTA_ID_SUB,
+        constants.EMAIL,
+        constants.NAME,
+    }
+
+    # get the user information
+    logger.info("Getting user info from OKTA.")
+    user_info = get_user_info(access_token)
+    logger.info("Successfully got user info from OKTA.")
+
+    # checking if required keys are present in user_info
+    if not required_keys.issubset(user_info.keys()):
+        logger.info("Failure. Required keys not present in user_info dict.")
+        return {
+            "message": constants.AUTH401_ERROR_MESSAGE
+        }, HTTPStatus.UNAUTHORIZED
+
+    logger.info(
+        "Successfully validated required_keys are present in user_info."
+    )
+
+    # check if the user is in the database
+    database = get_db_client()
+    user = get_user(database, user_info[constants.OKTA_ID_SUB])
+
+    if user is None:
+        # since a valid okta_id is extracted from the okta issuer, use the user
+        # info and create a new user if no corresponding user record matching
+        # the okta_id is found in DB
+        user = set_user(
+            database=database,
+            okta_id=user_info[constants.OKTA_ID_SUB],
+            email_address=user_info[constants.EMAIL],
+            display_name=user_info[constants.NAME],
+        )
+
+        # return NOT_FOUND if user is still none
+        if user is None:
+            logger.info(
+                "User not found in DB even after trying to create one."
+            )
+            return {
+                constants.MESSAGE: constants.USER_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
+    return user
+
+
+# TODO Method to be moved back into a single endpoint once the UI
+#  begins using the set-authentication endpoint
+#  UI ticket: HUS-1390
+#  remove extra endpoint ticket: HUS-1391
+def set_destination_auth_details(
+    request: Request, destination_id: ObjectId, user_name: str
+) -> Tuple[dict, int]:
+    """Set the authentication details for a destination.
+
+    Args:
+        request (Request): flask request object.
+        destination_id (str): Destination ID.
+        user_name (str): user_name extracted from Okta.
+
+    Returns:
+        Tuple[dict, int]: Destination doc, HTTP status code.
+
+    """
+
+    # load into the schema object
+    body = DestinationPutSchema().load(request.get_json(), partial=True)
+
+    # grab the auth details
+    auth_details = body.get(constants.AUTHENTICATION_DETAILS)
+    performance_de = None
+    campaign_de = None
+    authentication_parameters = None
+    database = get_db_client()
+
+    # check if destination exists
+    destination = destination_management.get_delivery_platform(
+        database, destination_id
+    )
+    platform_type = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
+    if platform_type == db_c.DELIVERY_PLATFORM_SFMC:
+        SFMCAuthCredsSchema().load(auth_details)
+        sfmc_config = body.get(db_c.CONFIGURATION)
+        if not sfmc_config or not isinstance(sfmc_config, dict):
+            logger.error("%s", constants.SFMC_CONFIGURATION_MISSING)
+            return (
+                {"message": constants.SFMC_CONFIGURATION_MISSING},
+                HTTPStatus.BAD_REQUEST,
+            )
+
+        performance_de = sfmc_config.get(
+            constants.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
+        )
+        if not performance_de:
+            logger.error("%s", constants.PERFORMANCE_METRIC_DE_NOT_ASSIGNED)
+            return (
+                {"message": constants.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
+                HTTPStatus.BAD_REQUEST,
+            )
+        campaign_de = sfmc_config.get(
+            constants.SFMC_CAMPAIGN_ACTIVITY_DATA_EXTENSION
+        )
+        if not campaign_de:
+            logger.error("%s", constants.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED)
+            return (
+                {"message": constants.CAMPAIGN_ACTIVITY_DE_NOT_ASSIGNED},
+                HTTPStatus.BAD_REQUEST,
+            )
+        DestinationDataExtConfigSchema().load(sfmc_config)
+        if performance_de == campaign_de:
+            logger.error("%s", constants.SAME_PERFORMANCE_CAMPAIGN_ERROR)
+            return (
+                {"message": constants.SAME_PERFORMANCE_CAMPAIGN_ERROR},
+                HTTPStatus.BAD_REQUEST,
+            )
+    elif platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
+        FacebookAuthCredsSchema().load(auth_details)
+    elif platform_type in [
+        db_c.DELIVERY_PLATFORM_SENDGRID,
+        db_c.DELIVERY_PLATFORM_TWILIO,
+    ]:
+        SendgridAuthCredsSchema().load(auth_details)
+    elif platform_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
+        QualtricsAuthCredsSchema().load(auth_details)
+    elif platform_type == db_c.DELIVERY_PLATFORM_GOOGLE:
+        GoogleAdsAuthCredsSchema().load(auth_details)
+
+    if auth_details:
+        # store the secrets for the updated authentication details
+        authentication_parameters = (
+            parameter_store.set_destination_authentication_secrets(
+                authentication_details=auth_details,
+                is_updated=True,
+                destination_id=destination_id,
+                destination_type=platform_type,
+            )
+        )
+        is_added = True
+
+    return (
+        DestinationGetSchema().dump(
+            destination_management.update_delivery_platform(
+                database=database,
+                delivery_platform_id=destination_id,
+                delivery_platform_type=destination[
+                    db_c.DELIVERY_PLATFORM_TYPE
+                ],
+                name=destination[db_c.DELIVERY_PLATFORM_NAME],
+                authentication_details=authentication_parameters,
+                added=is_added,
+                performance_de=performance_de,
+                campaign_de=campaign_de,
+                user_name=user_name,
+                status=db_c.STATUS_SUCCEEDED,
+            )
+        ),
+        HTTPStatus.OK,
+    )

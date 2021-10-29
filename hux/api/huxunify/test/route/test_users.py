@@ -32,6 +32,7 @@ class TestUserRoutes(TestCase):
         # mock request for introspect call
         request_mocker = requests_mock.Mocker()
         request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         request_mocker.start()
 
         self.app = create_app().test_client()
@@ -45,8 +46,15 @@ class TestUserRoutes(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
+        # mock get db client from user
         mock.patch(
             "huxunify.api.route.user.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get db client from utils
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
         ).start()
 
@@ -215,7 +223,6 @@ class TestUserRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         t_c.validate_schema(UserSchema(), response.json)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_get_all_users(self):
         """Tests getting all users."""
@@ -271,7 +278,13 @@ class TestUserRoutes(TestCase):
         # present in mock DB
         request_mocker = requests_mock.Mocker()
         request_mocker.post(t_c.INTROSPECT_CALL, json=incorrect_okta_response)
+        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         request_mocker.start()
+
+        mock.patch(
+            "huxunify.api.route.utils.set_user",
+            return_value=None,
+        ).start()
 
         endpoint = f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.PROFILE}"
 

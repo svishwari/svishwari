@@ -107,7 +107,7 @@ export default [
     create_time: "2021-06-03T23:05:00.305Z",
     update_time: "2021-09-23T19:10:20.794Z",
     updated_by: "Moaz Mansour",
-    status: "Requested",
+    status: "Active",
   },
   {
     name: "Google Ads",

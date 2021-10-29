@@ -2,16 +2,12 @@ import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
 describe("Decisioning > models", () => {
-  before(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+  beforeEach(() => {
+    cy.signin()
+    cy.visit(route.models)
   })
 
   it("should be able to view a model's dashboard", () => {
-    cy.get(selector.nav.models).click()
-
     cy.location("pathname").should("eq", route.models)
 
     cy.get(selector.models.item).its("length").should("gt", 0)

@@ -30,4 +30,5 @@ export default {
   addDestinations: "/destinations/add",
   audiences: "/audiences",
   engagements: "/engagements",
+  addEngagement: "/engagements/add",
 }
