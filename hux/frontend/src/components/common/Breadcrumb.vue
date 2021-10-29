@@ -16,7 +16,7 @@
         <span
           :class="{
             'black--text': item.disabled,
-            'pl-1 text-h28': true,
+            'pl-1 text-h1': true,
           }"
         >
           {{ item.text }}
