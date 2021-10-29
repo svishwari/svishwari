@@ -53,9 +53,6 @@
 import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
-import Tooltip from "@/components/common/Tooltip.vue"
-import Icon from "@/components/common/Icon"
-import IdentityChart from "@/components/common/identityChart/IdentityChart"
 import CustomerEventChart from "@/components/common/CustomerEventChart/CustomerEventChart"
 import CustomerData from "@/api/mock/fixtures/totalCustomersData.js"
 import CustomerEventData from "@/api/mock/fixtures/customerEventData.js"
@@ -69,9 +66,6 @@ export default {
   components: {
     PageHeader,
     Breadcrumb,
-    Tooltip,
-    Icon,
-    IdentityChart,
     CustomerEventChart,
     ProfileOverview,
     IdentifiableInsights,
