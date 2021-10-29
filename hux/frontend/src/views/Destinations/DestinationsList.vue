@@ -9,7 +9,7 @@
           :icon-color="'white'"
           :title="destination.name"
           :description="destination.category"
-          :disabled="destination.status !== 'Active'"
+          :disabled="destination.status === 'Pending'"
           :action-menu="true"
           :coming-soon="false"
           :logo-option="true"
