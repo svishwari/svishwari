@@ -950,13 +950,19 @@ def get_revenue_by_day(
 
     spending_by_day = []
 
-    for month_data in spending_by_month:
+    for i, month_data in enumerate(spending_by_month):
         spending_by_day.append(
             {
                 api_c.DATE: datetime(
                     year=month_data[api_c.YEAR],
                     month=month_data[api_c.MONTH],
-                    day=1,
+                    day=int(
+                        datetime.strptime(
+                            start_date, api_c.DEFAULT_DATE_FORMAT
+                        ).day
+                    )
+                    if i == 0
+                    else 1,
                 ),
                 api_c.LTV: (
                     (
@@ -978,6 +984,10 @@ def get_revenue_by_day(
                     + month_data[api_c.GENDER_OTHER]
                 ),
             }
+        )
+        spending_by_day[-1][api_c.REVENUE] = round(
+            (spending_by_day[-1][api_c.LTV] * random.choice([0.8, 1.0, 1.2])),
+            2,
         )
 
     return add_missing_revenue_data_by_day(
@@ -1017,6 +1027,9 @@ def add_missing_revenue_data_by_day(
                     api_c.LTV: spending_by_day[0].get(api_c.LTV)
                     if spending_by_day
                     else revenue_data_by_day[-1][api_c.LTV],
+                    api_c.REVENUE: spending_by_day[0].get(api_c.REVENUE)
+                    if spending_by_day
+                    else revenue_data_by_day[-1][api_c.REVENUE],
                 }
             )
     return revenue_data_by_day

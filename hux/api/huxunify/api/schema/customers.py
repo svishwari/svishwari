@@ -382,7 +382,8 @@ class CustomerRevenueInsightsSchema(Schema):
     """Revenue customer insights schema"""
 
     date = DateTimeWithZ(required=True)
-    revenue = Float(required=True, attribute=api_c.LTV)
+    spend = Float(required=True, attribute=api_c.LTV)
+    revenue = Float(required=True)
 
 
 class CustomersInsightsCitiesSchema(Schema):
