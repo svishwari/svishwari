@@ -237,6 +237,7 @@ AWS_SSM_NAME = "ssm"
 AWS_EVENTS_NAME = "events"
 AWS_BATCH_NAME = "batch"
 AWS_S3_NAME = "s3"
+AWS_SSM_PARAM_NOT_FOUND_ERROR_MESSAGE = "Required parameter(s) not found."
 
 AWS_BUCKET = "Bucket"
 AWS_TARGET_ID = "Id"

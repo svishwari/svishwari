@@ -1,6 +1,6 @@
 """Purpose of this file is for holding methods to query and push data to JIRA
 """
-from jira import JIRA
+from jira import JIRA, JIRAError
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.aws import get_jira_auth_from_parameter_store
@@ -30,7 +30,10 @@ class JiraConnection:
             bool: True/False specifying if connection to JIRA is established
 
         """
-        return self.get_project_details() is not None
+        try:
+            return self.get_project_details() is not None
+        except JIRAError:
+            return False
 
     def get_project_details(self) -> dict:
         """Fetch details of a JIRA project

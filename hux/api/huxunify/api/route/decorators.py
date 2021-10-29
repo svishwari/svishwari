@@ -391,6 +391,18 @@ def api_error_handler(custom_message: dict = None) -> object:
                     "message": constants.FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE
                 }, HTTPStatus.FAILED_DEPENDENCY
 
+            except iae.FailedSSMDependencyError as exc:
+                logger.error(
+                    "%s: %s Error encountered while executing %s in module %s.",
+                    exc.__class__,
+                    exc.args[0] if exc.args else exc.exception_message,
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
+                return {
+                    "message": constants.AWS_SSM_PARAM_NOT_FOUND_ERROR_MESSAGE
+                }, HTTPStatus.FAILED_DEPENDENCY
+
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.
                 logger.error(
