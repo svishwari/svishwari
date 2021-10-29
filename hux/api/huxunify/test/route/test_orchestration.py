@@ -124,7 +124,7 @@ class OrchestrationRouteTest(TestCase):
                 },
             },
         ]
-        self.user_name = "Joe Smithers"
+        self.user_name = "dave smith"
         self.destinations = []
         for destination in destinations:
             self.destinations.append(
@@ -139,9 +139,9 @@ class OrchestrationRouteTest(TestCase):
                         api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
                         api_c.AUDIENCE_SECTION_FILTERS: [
                             {
-                                api_c.AUDIENCE_FILTER_FIELD: "filter_field",
-                                api_c.AUDIENCE_FILTER_TYPE: "type",
-                                api_c.AUDIENCE_FILTER_VALUE: "value",
+                                api_c.AUDIENCE_FILTER_FIELD: api_c.GENDER,
+                                api_c.AUDIENCE_FILTER_TYPE: api_c.TYPE,
+                                api_c.AUDIENCE_FILTER_VALUE: "male",
                             }
                         ],
                     }
@@ -158,9 +158,9 @@ class OrchestrationRouteTest(TestCase):
                         api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
                         api_c.AUDIENCE_SECTION_FILTERS: [
                             {
-                                api_c.AUDIENCE_FILTER_FIELD: "filter_field",
-                                api_c.AUDIENCE_FILTER_TYPE: "type",
-                                api_c.AUDIENCE_FILTER_VALUE: "value",
+                                api_c.AUDIENCE_FILTER_FIELD: api_c.GENDER,
+                                api_c.AUDIENCE_FILTER_TYPE: api_c.TYPE,
+                                api_c.AUDIENCE_FILTER_VALUE: "female",
                             }
                         ],
                     }
@@ -1075,3 +1075,36 @@ class OrchestrationRouteTest(TestCase):
         )
         audience = response.json
         self.assertTrue(audience.get(api_c.FAVORITE))
+
+    def test_get_audiences_with_valid_filters(self):
+        """Test get all audiences with valid filters."""
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}?{api_c.FAVORITES}=True&"
+            f"{api_c.WORKED_BY}=True&{api_c.ATTRIBUTE}={api_c.GENDER}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        audiences = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(audiences)
+        # TODO: Uncomment once the DB function is ready is merged
+        # self.assertEqual(1, len(audiences))
+        self.assertEqual(
+            str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID]
+        )
+
+    def test_get_audiences_with_invalid_filters(self):
+        """Test get all audiences with invalid filters."""
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}?{api_c.FAVORITES}=True&"
+            f"{api_c.ATTRIBUTE}={api_c.AGE}&{api_c.ATTRIBUTE}=abcd",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(
+            {api_c.MESSAGE: "Invalid or incomplete arguments received"},
+            response.json,
+        )
