@@ -43,6 +43,8 @@
                 type="info"
                 :size="12"
                 class="ml-1"
+                color="primary"
+                variant="base"
               />
             </template>
             <template #hover-content>

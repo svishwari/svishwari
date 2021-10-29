@@ -8,7 +8,13 @@
           <sup>
             <tooltip v-if="title.toolTipText" position-top>
               <template #label-content>
-                <icon v-if="title.toolTipText" type="info" :size="12" />
+                <icon
+                  v-if="title.toolTipText"
+                  type="info"
+                  :size="12"
+                  color="primary"
+                  variant="base"
+                />
               </template>
               <template #hover-content>
                 {{ title.toolTipText }}
