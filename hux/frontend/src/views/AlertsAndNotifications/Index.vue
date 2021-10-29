@@ -4,10 +4,20 @@
       <template slot="left">
         <breadcrumb :items="breadcrumbItems" />
       </template>
+      <template #right>
+        <!-- <v-btn icon> -->
+        <icon
+          type="filter"
+          :size="22"
+          class="cursor-pointer"
+          color="black-darken4"
+          @click.native="toggleProfilesDrawer()"
+        />
+         <!-- </v-btn> -->
+      </template>
     </page-header>
     <page-header class="top-bar mb-3" :header-height="71">
       <template #left>
-        <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
         <v-icon medium color="black lighten-3" class="pl-4">mdi-magnify</v-icon>
       </template>
 
@@ -30,7 +40,28 @@
         </huxButton>
       </template>
     </page-header>
+      <alert-filter-drawer v-model="isFilterToggled"  />
     <v-progress-linear :active="loading" :indeterminate="loading" />
+           
+          <!-- <hux-filters-drawer
+            :is-toggled="isFilterToggled"
+            :count="3"
+          >
+            <hux-filter-panels>
+              <hux-filter-panel title="Alert type">
+                hello all
+              </hux-filter-panel>
+              <hux-filter-panel title="Category">
+                hello all
+              </hux-filter-panel>
+              <hux-filter-panel title="Time">
+                hello all
+              </hux-filter-panel>
+              <hux-filter-panel title="User">
+                hello all
+              </hux-filter-panel>
+            </hux-filter-panels>
+          </hux-filters-drawer> -->
     <v-row v-if="!loading" class="pb-7 pl-3 white">
       <hux-data-table
         :columns="columnDefs"
@@ -88,7 +119,11 @@ import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Status from "../../components/common/Status.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Observer from "@/components/common/Observer"
-
+import Icon from "@/components/common/Icon"
+import HuxFiltersDrawer from "@/components/common/FiltersDrawer"
+import HuxFilterPanels from "@/components/common/FilterPanels"
+import HuxFilterPanel from "@/components/common/FilterPanel"
+import AlertFilterDrawer from "./AlertFilter"
 export default {
   name: "AlertsAndNotifications",
   components: {
@@ -100,6 +135,11 @@ export default {
     Status,
     Tooltip,
     Observer,
+    Icon,
+   HuxFilterPanels,
+    HuxFilterPanel,
+    HuxFiltersDrawer,
+    AlertFilterDrawer
   },
   data() {
     return {
@@ -148,6 +188,7 @@ export default {
         batchNumber: 1,
         isLazyLoad: false,
       },
+       isFilterToggled: false,
     }
   },
   computed: {
@@ -191,6 +232,12 @@ export default {
         this.totalNotifications / this.batchDetails.batchSize
       )
     },
+     toggleProfilesDrawer() {
+       console.log("hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",!this.isFilterToggled)
+      //  debugger
+       this.isFilterToggled = !this.isFilterToggled
+        // console.log("hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii", this.isFilterToggled)
+     }
   },
 }
 </script>
