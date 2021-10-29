@@ -312,6 +312,7 @@ class AudienceDownload(SwaggerView):
             f"{user_name} downloaded the audience, {audience[db_c.NAME]}"
             f" with format {download_type}.",
             api_c.ORCHESTRATION_TAG,
+            user_name,
         )
 
         return (

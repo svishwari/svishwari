@@ -113,6 +113,7 @@ steps:
       - API_URL=${{API_URL}}
       - OKTA_CLIENT_ID=${{OKTA_CLIENT_ID}}
       - OKTA_ISSUER=${{OKTA_ISSUER}}
+      - BUILD_STORYBOOK=${{BUILD_STORYBOOK}}
 
   publish_to_artifactory:
     stage: artifactory

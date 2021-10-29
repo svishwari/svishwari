@@ -1,0 +1,53 @@
+<svg width="100%" height="100%" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="13" cy="13" r="12.5" fill="white" stroke="#E2EAEC"/>
+<mask id="microsoft_dynamics0" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="26" height="26">
+<circle cx="13" cy="13" r="12.5" fill="white" stroke="#D0D0CE"/>
+</mask>
+<g mask="url(#microsoft_dynamics0)">
+</g>
+<g clip-path="url(#microsoft_dynamics1)">
+<mask id="microsoft_dynamics2" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="6" y="4" width="14" height="18">
+<path d="M19.1389 9.93739C19.1389 9.17434 18.6592 8.49367 17.9406 8.23702L7.46512 4.49581C6.99479 4.32783 6.5 4.67652 6.5 5.17596V10.8644C6.5 11.1696 6.69188 11.4419 6.97932 11.5445L11.6738 13.2211C12.1441 13.3891 12.6389 13.0404 12.6389 12.541V9.27471C12.6389 9.02241 12.8911 8.84786 13.1272 8.93673L14.3582 9.4C15.0619 9.66482 15.5278 10.338 15.5278 11.0899V12.5122L10.2244 14.45C9.93949 14.5541 9.75 14.8251 9.75 15.1284V20.8127C9.75 21.3144 10.2489 21.6633 10.7201 21.4911L17.953 18.8483C18.6652 18.5881 19.1389 17.9106 19.1389 17.1524L19.1389 9.93739Z" fill="white"/>
+</mask>
+<g mask="url(#microsoft_dynamics2)">
+<path d="M6.5 4.15234L19.1389 8.6662V14.8637C19.1389 15.3631 18.6442 15.7118 18.1738 15.5439L15.5278 14.5992V11.09C15.5278 10.3378 15.0614 9.6644 14.3573 9.39983L13.127 8.93759C12.8909 8.84888 12.6389 9.02341 12.6389 9.27563V13.567L6.5 11.3746V4.15234Z" fill="url(#paint0_linear_10119:34211)"/>
+<g filter="url(#microsoft_dynamics3)">
+<path d="M19.1389 10.0039C19.1389 10.7621 18.6652 11.4409 17.953 11.7011L9.75 14.6984V21.9206L19.1389 18.49V10.0039Z" fill="black" fill-opacity="0.24"/>
+</g>
+<g filter="url(#microsoft_dynamics4)">
+<path d="M19.1389 10.293C19.1389 11.0512 18.6652 11.73 17.953 11.9902L9.75 14.9874V22.2096L19.1389 18.7791V10.293Z" fill="black" fill-opacity="0.32"/>
+</g>
+<path d="M19.1389 9.92969C19.1389 10.6879 18.6652 11.3667 17.953 11.6269L9.75 14.6241V21.8464L19.1389 18.4158V9.92969Z" fill="url(#paint1_linear_10119:34211)"/>
+<path opacity="0.5" d="M19.1389 9.92969C19.1389 10.6879 18.6652 11.3667 17.953 11.6269L9.75 14.6241V21.8464L19.1389 18.4158V9.92969Z" fill="url(#paint2_linear_10119:34211)"/>
+<path opacity="0.5" d="M15.528 12.5156L12.6375 13.5731L12.6375 17.8086C12.6375 18.0609 12.8897 18.2354 13.1258 18.1465L14.3585 17.6825C15.0621 17.4176 15.528 16.7445 15.528 15.9927V12.5156Z" fill="#B0ADFF"/>
+</g>
+</g>
+<defs>
+<filter id="microsoft_dynamics3" x="8.95" y="9.20391" width="10.9889" height="13.518" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="0.4" result="effect1_foregroundBlur_10119:34211"/>
+</filter>
+<filter id="microsoft_dynamics4" x="1.75" y="2.29297" width="25.3889" height="27.918" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="4" result="effect1_foregroundBlur_10119:34211"/>
+</filter>
+<linearGradient id="paint0_linear_10119:34211" x1="11.2026" y1="4.15234" x2="14.5633" y2="12.9496" gradientUnits="userSpaceOnUse">
+<stop stop-color="#0B53CE"/>
+<stop offset="1" stop-color="#7252AA"/>
+</linearGradient>
+<linearGradient id="paint1_linear_10119:34211" x1="15.9138" y1="21.213" x2="15.9138" y2="10.7269" gradientUnits="userSpaceOnUse">
+<stop stop-color="#2266E3"/>
+<stop offset="1" stop-color="#AE7FE2"/>
+</linearGradient>
+<linearGradient id="paint2_linear_10119:34211" x1="19.1389" y1="14.5855" x2="15.5416" y2="14.5855" gradientUnits="userSpaceOnUse">
+<stop stop-color="#94B9FF"/>
+<stop offset="0.287843" stop-color="#94B9FF" stop-opacity="0.523646"/>
+<stop offset="1" stop-color="#538FFF" stop-opacity="0"/>
+</linearGradient>
+<clipPath id="microsoft_dynamics1">
+<rect width="17.3333" height="17.3333" fill="white" transform="translate(4.33325 4.33203)"/>
+</clipPath>
+</defs>
+</svg>

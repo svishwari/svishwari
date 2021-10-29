@@ -1,5 +1,5 @@
 <svg width="100%" height="100%" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<circle cx="13" cy="13" r="12.5" fill="white" stroke="#D0D0CE"/>
+<circle cx="13" cy="13" r="12.5" fill="white" stroke="#E2EAEC"/>
 <rect x="6" y="5" width="15.424" height="16" fill="url(#patternMSAzureSQL)"/>
 <defs>
 <pattern id="patternMSAzureSQL" patternContentUnits="objectBoundingBox" width="1" height="1">
