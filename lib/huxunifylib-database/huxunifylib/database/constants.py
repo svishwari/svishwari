@@ -257,7 +257,10 @@ MAX_AUDIENCE_SIZE_FOR_HASHED_FILE_DOWNLOAD = (
 AUDIENCE_FILTER_AGGREGATOR_ANY = "any"
 AUDIENCE_FILTER_AGGREGATOR_ALL = "all"
 AUDIENCE_CUSTOMER_LIST = "customer_list"
-
+ATTRIBUTES = "attributes"
+ATTRIBUTE = "attribute"
+ATTRIBUTE_FILTER_FIELD = "filters.section_filters.field"
+WORKED_BY = "worked_by"
 # Audience types
 CUSTOM_AUDIENCE = "custom_audience"
 CUSTOM_AUDIENCE_STR = "Custom Audience"

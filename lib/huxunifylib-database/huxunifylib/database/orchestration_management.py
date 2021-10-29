@@ -205,20 +205,49 @@ def get_audience(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_audiences(
-    database: DatabaseClient, include_users: bool = False
+    database: DatabaseClient, include_users: bool = False, filters=None
 ) -> Union[list, None]:
     """A function to get all existing audiences.
 
     Args:
         database (DatabaseClient): A database client.
         include_users (bool): Flag to include users.
+        filters (dict, Optional): A dict of filters to be applied on the
+        audience.
 
     Returns:
         Union[list, None]: A list of all audiences.
     """
-
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.AUDIENCES_COLLECTION]
+
+    if filters is None:
+        find_filters = {c.DELETED: False}
+    else:
+        find_filters = {}
+        if filters.get(c.USER_FAVORITES):
+            user_collection = am_db[c.USER_COLLECTION]
+            user_fav_info = user_collection.find_one(
+                {c.USER_DISPLAY_NAME: filters.get(c.USER_FAVORITES, "")},
+                {c.USER_FAVORITES + "." + c.AUDIENCES: 1, c.ID: 0},
+            )
+            favorite_audiences = []
+            if user_fav_info:
+                favorite_audiences = user_fav_info.get(c.USER_FAVORITES).get(
+                    c.AUDIENCES, []
+                )
+            find_filters[c.ID] = {"$in": favorite_audiences}
+
+        if filters.get(c.WORKED_BY):
+            find_filters["$or"] = [
+                {c.CREATED_BY: filters.get(c.WORKED_BY)},
+                {c.UPDATED_BY: filters.get(c.WORKED_BY)},
+            ]
+        if filters.get(c.ATTRIBUTE):
+            find_filters["$and"] = [
+                {c.ATTRIBUTE_FILTER_FIELD: attribute}
+                for attribute in filters.get(c.ATTRIBUTE)
+            ]
 
     # Get audience configurations and add to list
     try:
@@ -231,7 +260,7 @@ def get_all_audiences(
                 )
             )
 
-        return list(collection.find({c.DELETED: False}, {c.DELETED: 0}))
+        return list(collection.find(find_filters, {c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -509,11 +538,14 @@ def get_audience_insights(
 )
 def get_all_audiences_and_deliveries(
     database: DatabaseClient,
+    filters: dict = None,
 ) -> Union[list, None]:
     """A function to get all audiences and their latest deliveries.
 
     Args:
         database (DatabaseClient): A database client.
+        filters (dict, Optional): A dict of filters to be applied on the
+        audience.
 
     Returns:
         Union[list, None]:  A list of engagements with delivery information for
@@ -522,62 +554,102 @@ def get_all_audiences_and_deliveries(
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.AUDIENCES_COLLECTION]
+    pipeline = [
+        {
+            "$lookup": {
+                "from": "delivery_jobs",
+                "localField": "_id",
+                "foreignField": "audience_id",
+                "as": "delivery_jobs",
+            }
+        },
+        {
+            "$unwind": {
+                "path": "$delivery_jobs",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        {
+            "$lookup": {
+                "from": "delivery_platforms",
+                "localField": "delivery_jobs.delivery_platform_id",
+                "foreignField": "_id",
+                "as": "delivery",
+            }
+        },
+        {
+            "$unwind": {
+                "path": "$delivery",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        {
+            "$addFields": {
+                "delivery_jobs.delivery_platform_name" "": "$delivery.name",
+                "delivery_jobs.delivery_platform_type"
+                "": "$delivery.delivery_platform_type",
+            }
+        },
+        {"$sort": {"_id": 1, "delivery_job.update_time": -1}},
+        {
+            "$group": {
+                "_id": "$_id",
+                "deliveries": {"$push": "$delivery_jobs"},
+                "last_delivered": {"$last": "$delivery_jobs.update_time"},
+            }
+        },
+        {"$project": {"deliveries.deleted": 0}},
+    ]
+    stage_count_in_pipeline = 0
+    if filters:
+        # Check if favorites present in filter
+        if filters.get(c.USER_FAVORITES):
+            user_collection = am_db[c.USER_COLLECTION]
+            user_fav_info = user_collection.find_one(
+                {c.USER_DISPLAY_NAME: filters.get(c.USER_FAVORITES, "")},
+                {c.USER_FAVORITES + "." + c.AUDIENCES: 1, c.ID: 0},
+            )
+            favorite_audiences = []
+            if user_fav_info:
+                favorite_audiences = user_fav_info.get(c.USER_FAVORITES).get(
+                    c.AUDIENCES, []
+                )
+
+            pipeline.insert(
+                stage_count_in_pipeline,
+                {"$match": {c.ID: {"$in": favorite_audiences}}},
+            )
+            stage_count_in_pipeline += 1
+
+        if filters.get(c.WORKED_BY):
+            pipeline.insert(
+                stage_count_in_pipeline,
+                {
+                    "$match": {
+                        "$or": [
+                            {c.CREATED_BY: filters.get(c.WORKED_BY)},
+                            {c.UPDATED_BY: filters.get(c.WORKED_BY)},
+                        ]
+                    }
+                },
+            )
+            stage_count_in_pipeline += 1
+        if filters.get(c.ATTRIBUTE):
+            pipeline.insert(
+                stage_count_in_pipeline,
+                {
+                    "$match": {
+                        "$and": [
+                            {c.ATTRIBUTE_FILTER_FIELD: attribute}
+                            for attribute in filters.get(c.ATTRIBUTE)
+                        ]
+                    }
+                },
+            )
 
     # use the audience pipeline to aggregate and join all the delivery data
     try:
-        return list(
-            collection.aggregate(
-                [
-                    {
-                        "$lookup": {
-                            "from": "delivery_jobs",
-                            "localField": "_id",
-                            "foreignField": "audience_id",
-                            "as": "delivery_jobs",
-                        }
-                    },
-                    {
-                        "$unwind": {
-                            "path": "$delivery_jobs",
-                            "preserveNullAndEmptyArrays": True,
-                        }
-                    },
-                    {
-                        "$lookup": {
-                            "from": "delivery_platforms",
-                            "localField": "delivery_jobs.delivery_platform_id",
-                            "foreignField": "_id",
-                            "as": "delivery",
-                        }
-                    },
-                    {
-                        "$unwind": {
-                            "path": "$delivery",
-                            "preserveNullAndEmptyArrays": True,
-                        }
-                    },
-                    {
-                        "$addFields": {
-                            "delivery_jobs.delivery_platform_name"
-                            "": "$delivery.name",
-                            "delivery_jobs.delivery_platform_type"
-                            "": "$delivery.delivery_platform_type",
-                        }
-                    },
-                    {"$sort": {"_id": 1, "delivery_job.update_time": -1}},
-                    {
-                        "$group": {
-                            "_id": "$_id",
-                            "deliveries": {"$push": "$delivery_jobs"},
-                            "last_delivered": {
-                                "$last": "$delivery_jobs.update_time"
-                            },
-                        }
-                    },
-                    {"$project": {"deliveries.deleted": 0}},
-                ]
-            )
-        )
+        return list(collection.aggregate(pipeline))
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
