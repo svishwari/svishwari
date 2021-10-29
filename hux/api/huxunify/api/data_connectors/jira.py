@@ -53,6 +53,7 @@ class JiraConnection:
             issue_type (str): Type of issue
             summary (str): Summary of issue
             description (str): Description of issue
+
         Returns:
             dict: Object of new issue created
         """

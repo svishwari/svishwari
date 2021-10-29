@@ -323,7 +323,7 @@ class TestUserRoutes(TestCase):
         """
 
         reported_issue = {
-            api_c.TYPE: "Bug",
+            api_c.TYPE: api_c.TICKET_TYPE_BUG,
             api_c.SUMMARY: "Test creation of JIRA ticket",
             api_c.DESCRIPTION: "",
         }
