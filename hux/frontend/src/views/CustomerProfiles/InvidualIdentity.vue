@@ -4,7 +4,7 @@
       <h3 class="text-h3">Individual Identity</h3>
       <tooltip position-top>
         <template #label-content>
-          <icon type="info" :size="10" />
+          <icon type="info" :size="10" class="mb-1 ml-1"/>
         </template>
         <template #hover-content>
           Most recent co-occurence between identifiers

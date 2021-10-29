@@ -9,7 +9,7 @@
       >
         <v-card-text class="py-3 px-4 d-flex flex-column">
           <span class="d-flex align-baseline mb-1">
-            <span class="text-body-2 mr-2">First</span>
+            <span class="text-body-2 black--text text--lighten-4 mr-2">First</span>
             <tooltip>
               <template #label-content>
                 <span class="text-subtitle-1 text-elipsis black--text">
@@ -22,7 +22,7 @@
             </tooltip>
           </span>
           <span class="d-flex align-baseline">
-            <span class="text-body-2 mr-2">Last</span>
+            <span class="text-body-2 black--text text--lighten-4 mr-2">Last</span>
             <tooltip>
               <template #label-content>
                 <span
@@ -56,7 +56,7 @@
             {{ data.title }}
             <tooltip v-if="data.hoverTooltip" position-top>
               <template #label-content>
-                <icon v-if="data.hoverTooltip" type="info" :size="12" />
+                <icon v-if="data.hoverTooltip" type="info" :size="12" class="mb-1"/>
               </template>
               <template #hover-content>
                 {{ data.hoverTooltip }}

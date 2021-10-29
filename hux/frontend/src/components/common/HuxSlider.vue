@@ -22,7 +22,7 @@
     >
       <template #append>
         <span
-          class="slider-value-display text-subtitle-1"
+          class="slider-value-display black--text text-subtitle-1"
           v-text="currentValue + '%'"
         ></span>
       </template>
