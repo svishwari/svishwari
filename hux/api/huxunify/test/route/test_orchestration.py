@@ -242,6 +242,7 @@ class OrchestrationRouteTest(TestCase):
             self.database,
             okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
             email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
+            display_name="dave smith",
         )
 
         # Set an audience as favorite
@@ -1088,8 +1089,7 @@ class OrchestrationRouteTest(TestCase):
         audiences = response.json
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(audiences)
-        # TODO: Uncomment once the DB function is ready is merged
-        # self.assertEqual(1, len(audiences))
+        self.assertEqual(1, len(audiences))
         self.assertEqual(
             str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID]
         )

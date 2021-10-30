@@ -263,17 +263,17 @@ class AudienceView(SwaggerView):
 
         database = get_db_client()
 
-        # TODO: Call the below function with filter_dict arg once the DB
-        #  function is ready is merged
         # get all audiences and deliveries
         audiences = orchestration_management.get_all_audiences_and_deliveries(
-            database
+            database=database, filters=filter_dict
         )
 
         # get all audiences because document DB does not allow for replaceRoot
         audience_dict = {
             x[db_c.ID]: x
-            for x in orchestration_management.get_all_audiences(database)
+            for x in orchestration_management.get_all_audiences(
+                database=database, filters=filter_dict
+            )
         }
 
         # workaround because DocumentDB does not allow $replaceRoot
