@@ -115,4 +115,3 @@ class ModelRequestPOSTSchema(Schema):
         ],
         required=True,
     )
-    type = Str(required=True)

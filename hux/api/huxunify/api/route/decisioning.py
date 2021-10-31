@@ -84,9 +84,11 @@ class ModelsView(SwaggerView):
     @api_error_handler()
     def get(self) -> Tuple[List[dict], int]:
         """Retrieves all models.
+
         ---
         security:
             - Bearer: ["Authorization"]
+
         Returns:
             Tuple[List[dict], int]: list containing dict of models,
                 HTTP status code.
@@ -195,8 +197,10 @@ class SetModelStatus(SwaggerView):
         """
 
         body = ModelRequestPOSTSchema().load(request.get_json())
-
         database = get_db_client()
+
+        # set type of configuration as model
+        body[api_c.TYPE] = api_c.MODELS_TAG
         collection_management.create_document(
             database=database,
             collection=db_c.CONFIGURATIONS_COLLECTION,
@@ -207,7 +211,7 @@ class SetModelStatus(SwaggerView):
         notification_management.create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
-            (f'Model requested "{body[db_c.NAME]}" ' f"by {user_name}."),
+            f'Model requested "{body[db_c.NAME]}" ' f"by {user_name}.",
             api_c.MODELS_TAG,
         )
 
