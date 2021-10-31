@@ -128,7 +128,6 @@ class DecisioningTests(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
         status_request = {
-            api_c.TYPE: "model",
             api_c.STATUS: api_c.REQUESTED,
             api_c.ID: response.json[0][api_c.ID],
             api_c.NAME: response.json[0][api_c.NAME],
