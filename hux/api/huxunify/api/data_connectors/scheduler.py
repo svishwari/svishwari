@@ -14,14 +14,6 @@ schedule = {
 
 # TODO Modify this module as Class Based in upcoming implementation.
 
-cron_exp = {
-    "minute": "*",
-    "hour": "*",
-    "day_of_month": "*",
-    "month": "*",
-    "day_of_week": "*",
-}
-
 
 def generate_cron(schedule: dict) -> str:
     """To generate cron expression based on the schedule object
@@ -31,6 +23,13 @@ def generate_cron(schedule: dict) -> str:
     Returns:
         str: cron expression
     """
+    cron_exp = {
+        "minute": "*",
+        "hour": "*",
+        "day_of_month": "*",
+        "month": "*",
+        "day_of_week": "*",
+    }
 
     cron_exp["minute"] = schedule.get("minute", "*")
     if schedule.get("period") == "AM":
@@ -58,4 +57,9 @@ def generate_cron(schedule: dict) -> str:
             cron_exp[
                 "day_of_month"
             ] = f"{cron_exp['day_of_month']}/{schedule['every']}"
+
+    if schedule["periodicity"] == "Monthly":
+
+        if schedule["every"] > 1:
+            cron_exp["month"] = f"{cron_exp['month']}/{schedule['every']}"
     return " ".join([str(val) for val in cron_exp.values()])
