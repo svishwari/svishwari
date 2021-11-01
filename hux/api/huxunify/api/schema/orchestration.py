@@ -67,7 +67,10 @@ class DeliveriesSchema(Schema):
     size = fields.Integer(attribute=db_c.DELIVERY_PLATFORM_AUD_SIZE, default=0)
     match_rate = fields.Float(default=0, example=0.21)
     delivery_platform_type = fields.String()
+    delivery_platform_id = fields.String()
     is_ad_platform = fields.Bool(attribute=api_c.IS_AD_PLATFORM)
+    delivery_schedule = fields.String()
+    next_delivery = DateTimeWithZ()
 
 
 class EngagementDeliverySchema(EngagementGetSchema):
@@ -144,6 +147,7 @@ class AudienceGetSchema(Schema):
     source_size = fields.Int()
     source_id = fields.String()
     match_rate = fields.Float(default=0)
+    favorite = fields.Boolean(default=False)
 
 
 class CityIncomeInsightsSchema(Schema):
@@ -162,25 +166,25 @@ class AudienceInsightsGetSchema(Schema):
     gender = fields.Nested(CustomerGenderInsightsSchema)
 
 
-class AudiencePutSchema(Schema):
-    """Audience put schema class"""
-
-    name = fields.String()
-    destinations = fields.List(fields.Dict())
-    engagement_ids = fields.List(fields.String())
-    filters = fields.List(fields.Dict())
-
-
 class AudienceDestinationSchema(Schema):
-    """
-    Audience destination schema class
-    """
+    """Audience destination schema class"""
 
-    id = fields.String(required=True)
+    id = fields.String(required=True, validate=validate_object_id)
     delivery_platform_config = fields.Dict(
         required=False,
         example={db_c.DATA_EXTENSION_NAME: "Data Extension Name"},
     )
+
+
+class AudiencePutSchema(Schema):
+    """Audience put schema class"""
+
+    name = fields.String()
+    destinations = fields.List(
+        fields.Nested(AudienceDestinationSchema), required=False
+    )
+    engagement_ids = fields.List(fields.String())
+    filters = fields.List(fields.Dict())
 
 
 class AudiencePostSchema(AudiencePutSchema):

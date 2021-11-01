@@ -7,12 +7,7 @@
   >
     <template #header-left>
       <div class="d-flex align-center">
-        <icon
-          type="lookalike"
-          :size="32"
-          color="primary-lighten8"
-          class="mr-2"
-        />
+        <icon type="lookalike" :size="32" class="mr-2" />
         <h3 class="text-h3">Create a lookalike audience in Facebook</h3>
       </div>
     </template>
@@ -54,6 +49,7 @@
           <hux-drop-down-search
             v-model="lookalikeAudience.engagements"
             :toggle-drop-down="toggleDropDown"
+            :min-selection="1"
             :items="engagements"
             @onToggle="(val) => (toggleDropDown = val)"
           >
@@ -180,7 +176,7 @@ export default {
     selectAudience: {
       get() {
         const aud = this.audiences.filter(
-          (aud) => aud.id === this.selectedAudience.id
+          (aud) => aud.id === this.selectedAudience?.id
         )
         return aud.length > 0 ? aud[0] : {}
       },
@@ -243,12 +239,8 @@ export default {
         audience_size_percentage: this.lookalikeAudience.value,
         engagement_ids: engagementIds,
       }
-      try {
-        await this.createLookalikeAudience(payload)
-        this.$emit("onCreate")
-      } catch (error) {
-        this.$emit("onError", error.response.data.message)
-      }
+      await this.createLookalikeAudience(payload)
+      this.$emit("onCreate")
       this.onBack()
     },
 

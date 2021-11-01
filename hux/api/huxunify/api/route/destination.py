@@ -1,7 +1,10 @@
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use,too-many-lines
 """Paths for destinations API"""
+import datetime
 from http import HTTPStatus
 from typing import Tuple
+
+from bson import ObjectId
 from flasgger import SwaggerView
 from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError
@@ -26,23 +29,18 @@ from huxunifylib.connectors import (
     GoogleConnector,
     QualtricsConnector,
     AudienceAlreadyExists,
+    AuthenticationFailed,
 )
 from huxunify.api.data_connectors.aws import (
-    parameter_store,
     get_auth_from_parameter_store,
 )
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
-    DestinationPutSchema,
+    DestinationPatchSchema,
     DestinationConstantsSchema,
     DestinationValidationSchema,
     DestinationDataExtPostSchema,
     DestinationDataExtGetSchema,
-    SFMCAuthCredsSchema,
-    FacebookAuthCredsSchema,
-    SendgridAuthCredsSchema,
-    GoogleAdsAuthCredsSchema,
-    QualtricsAuthCredsSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.route.decorators import (
@@ -54,12 +52,22 @@ from huxunify.api.route.decorators import (
 )
 from huxunify.api.route.utils import (
     get_db_client,
+    set_destination_auth_details,
 )
 import huxunify.api.constants as api_c
 
 
 # setup the destination blueprint
 dest_bp = Blueprint(api_c.DESTINATIONS_ENDPOINT, import_name=__name__)
+
+facebook_auth_example = {
+    api_c.AUTHENTICATION_DETAILS: {
+        api_c.FACEBOOK_ACCESS_TOKEN: "ABCD",
+        api_c.FACEBOOK_APP_SECRET: "1234",
+        api_c.FACEBOOK_APP_ID: "1234",
+        api_c.FACEBOOK_AD_ACCOUNT_ID: "1234",
+    },
+}
 
 
 @dest_bp.before_request
@@ -165,6 +173,17 @@ class DestinationGetView(SwaggerView):
 class DestinationsView(SwaggerView):
     """Destinations view class."""
 
+    parameters = [
+        {
+            "name": api_c.DESTINATION_REFRESH,
+            "description": "Refresh all.",
+            "type": "boolean",
+            "in": "query",
+            "required": False,
+            "example": "False",
+        }
+    ]
+
     responses = {
         HTTPStatus.OK.value: {
             "description": "List of all destinations",
@@ -188,14 +207,145 @@ class DestinationsView(SwaggerView):
         Returns:
             Tuple[list, int]: list of destinations, HTTP status code.
         """
-
+        database = get_db_client()
         destinations = destination_management.get_all_delivery_platforms(
-            get_db_client()
+            database
         )
+
+        refresh_all = request.args.get(
+            api_c.DESTINATION_REFRESH,
+            False,
+            type=lambda v: v.lower() == "true",
+        )
+
+        connector_dict = {
+            db_c.DELIVERY_PLATFORM_FACEBOOK: FacebookConnector,
+            db_c.DELIVERY_PLATFORM_SFMC: SFMCConnector,
+            db_c.DELIVERY_PLATFORM_QUALTRICS: QualtricsConnector,
+            db_c.DELIVERY_PLATFORM_SENDGRID: SendgridConnector,
+            db_c.DELIVERY_PLATFORM_TWILIO: SendgridConnector,
+            db_c.DELIVERY_PLATFORM_GOOGLE: GoogleConnector,
+        }
+
+        # Map db status values to api status values
+        status_mapping = {
+            db_c.STATUS_SUCCEEDED: api_c.STATUS_ACTIVE,
+            db_c.STATUS_PENDING: api_c.STATUS_PENDING,
+            db_c.STATUS_FAILED: api_c.STATUS_ERROR,
+        }
+
+        for destination in destinations:
+            if refresh_all:
+                if destination[api_c.DELIVERY_PLATFORM_TYPE] in connector_dict:
+                    try:
+                        connector_dict[
+                            destination[api_c.DELIVERY_PLATFORM_TYPE]
+                        ](
+                            auth_details=get_auth_from_parameter_store(
+                                destination[api_c.AUTHENTICATION_DETAILS],
+                                destination[api_c.DELIVERY_PLATFORM_TYPE],
+                            )
+                        )
+                        destination[
+                            db_c.DELIVERY_PLATFORM_STATUS
+                        ] = db_c.STATUS_SUCCEEDED
+                    # pylint: disable=broad-except
+                    except Exception as exception:
+                        logger.error(
+                            "%s: %s while connecting to destination %s.",
+                            exception.__class__,
+                            str(exception),
+                            destination[api_c.DELIVERY_PLATFORM_TYPE],
+                        )
+                        destination[
+                            db_c.DELIVERY_PLATFORM_STATUS
+                        ] = db_c.STATUS_FAILED
+
+                    destination_management.update_delivery_platform(
+                        database=database,
+                        delivery_platform_id=destination[db_c.ID],
+                        name=destination[db_c.DELIVERY_PLATFORM_NAME],
+                        delivery_platform_type=destination[
+                            db_c.DELIVERY_PLATFORM_TYPE
+                        ],
+                        status=destination[db_c.DELIVERY_PLATFORM_STATUS],
+                    )
+            destination[db_c.DELIVERY_PLATFORM_STATUS] = status_mapping[
+                destination[db_c.DELIVERY_PLATFORM_STATUS]
+            ]
         return (
             jsonify(DestinationGetSchema().dump(destinations, many=True)),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    dest_bp,
+    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>/authentication",
+    "DestinationAuthenticationPostView",
+)
+class DestinationAuthenticationPostView(SwaggerView):
+    """Destination Authentication post view class."""
+
+    parameters = [
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "description": "Destination Object.",
+            "type": "object",
+            "example": facebook_auth_example,
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": DestinationGetSchema,
+            "description": "Updated destination.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to update the authentication details of the destination.",
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.DESTINATION_NOT_FOUND
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
+    @api_error_handler(
+        custom_message={
+            ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}
+        }
+    )
+    @validate_destination()
+    @get_user_name()
+    def put(
+        self, destination_id: ObjectId, user_name: str
+    ) -> Tuple[dict, int]:
+        """Sets a destination's authentication details.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            destination_id (ObjectId): Destination ID.
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Destination doc, HTTP status code.
+        """
+
+        return set_destination_auth_details(request, destination_id, user_name)
 
 
 @add_view_to_blueprint(
@@ -220,14 +370,7 @@ class DestinationPutView(SwaggerView):
             "in": "body",
             "description": "Destination Object.",
             "type": "object",
-            "example": {
-                api_c.AUTHENTICATION_DETAILS: {
-                    api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
-                    api_c.FACEBOOK_APP_SECRET: "717bdOQqZO99",
-                    api_c.FACEBOOK_APP_ID: "2951925002021888",
-                    api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
-                },
-            },
+            "example": facebook_auth_example,
         },
     ]
 
@@ -256,7 +399,9 @@ class DestinationPutView(SwaggerView):
     )
     @validate_destination()
     @get_user_name()
-    def put(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
+    def put(
+        self, destination_id: ObjectId, user_name: str
+    ) -> Tuple[dict, int]:
         """Updates a destination.
 
         ---
@@ -264,79 +409,14 @@ class DestinationPutView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            destination_id (str): Destination ID.
+            destination_id (ObjectId): Destination ID.
             user_name (str): user_name extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Destination doc, HTTP status code.
         """
 
-        # load into the schema object
-        body = DestinationPutSchema().load(request.get_json(), partial=True)
-
-        # grab the auth details
-        auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
-        performance_de = None
-        authentication_parameters = None
-        database = get_db_client()
-
-        # check if destination exists
-        destination = destination_management.get_delivery_platform(
-            database, destination_id
-        )
-        platform_type = destination.get(db_c.DELIVERY_PLATFORM_TYPE)
-        if platform_type == db_c.DELIVERY_PLATFORM_SFMC:
-            SFMCAuthCredsSchema().load(auth_details)
-            performance_de = body.get(
-                api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
-            )
-            if not performance_de:
-                logger.error("%s", api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED[0])
-                return (
-                    {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
-                    HTTPStatus.BAD_REQUEST,
-                )
-        elif platform_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
-            FacebookAuthCredsSchema().load(auth_details)
-        elif platform_type in [
-            db_c.DELIVERY_PLATFORM_SENDGRID,
-            db_c.DELIVERY_PLATFORM_TWILIO,
-        ]:
-            SendgridAuthCredsSchema().load(auth_details)
-        elif platform_type == db_c.DELIVERY_PLATFORM_QUALTRICS:
-            QualtricsAuthCredsSchema().load(auth_details)
-        elif platform_type == db_c.DELIVERY_PLATFORM_GOOGLE:
-            GoogleAdsAuthCredsSchema().load(auth_details)
-
-        if auth_details:
-            # store the secrets for the updated authentication details
-            authentication_parameters = (
-                parameter_store.set_destination_authentication_secrets(
-                    authentication_details=auth_details,
-                    is_updated=True,
-                    destination_id=destination_id,
-                    destination_type=platform_type,
-                )
-            )
-            is_added = True
-
-        return (
-            DestinationGetSchema().dump(
-                destination_management.update_delivery_platform(
-                    database=database,
-                    delivery_platform_id=destination_id,
-                    delivery_platform_type=destination[
-                        db_c.DELIVERY_PLATFORM_TYPE
-                    ],
-                    name=destination[db_c.DELIVERY_PLATFORM_NAME],
-                    authentication_details=authentication_parameters,
-                    added=is_added,
-                    performance_de=performance_de,
-                    user_name=user_name,
-                )
-            ),
-            HTTPStatus.OK,
-        )
+        return set_destination_auth_details(request, destination_id, user_name)
 
 
 @add_view_to_blueprint(
@@ -391,15 +471,7 @@ class DestinationValidatePostView(SwaggerView):
             "in": "body",
             "type": "object",
             "description": "Validate destination body.",
-            "example": {
-                api_c.DESTINATION_TYPE: "facebook",
-                api_c.AUTHENTICATION_DETAILS: {
-                    api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
-                    api_c.FACEBOOK_APP_SECRET: "717bdOQqZO99",
-                    api_c.FACEBOOK_APP_ID: "2951925002021888",
-                    api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
-                },
-            },
+            "example": facebook_auth_example,
         },
     ]
 
@@ -635,30 +707,27 @@ class DestinationDataExtView(SwaggerView):
                 "message": api_c.DESTINATION_AUTHENTICATION_FAILED
             }, HTTPStatus.BAD_REQUEST
 
-        ext_list = []
-
         if (
             destination[api_c.DELIVERY_PLATFORM_TYPE]
             == db_c.DELIVERY_PLATFORM_SFMC
         ):
-            sfmc_connector = SFMCConnector(
-                auth_details=get_auth_from_parameter_store(
-                    destination[api_c.AUTHENTICATION_DETAILS],
-                    destination[api_c.DELIVERY_PLATFORM_TYPE],
+            try:
+                sfmc_connector = SFMCConnector(
+                    auth_details=get_auth_from_parameter_store(
+                        destination[api_c.AUTHENTICATION_DETAILS],
+                        destination[api_c.DELIVERY_PLATFORM_TYPE],
+                    )
                 )
-            )
-            if not sfmc_connector.check_connection():
-                logger.info("Could not validate SFMC successfully.")
+                ext_list = sfmc_connector.get_list_of_data_extensions()
+                logger.info(
+                    "Found %s data extensions for %s.",
+                    len(ext_list),
+                    destination_id,
+                )
+            except AuthenticationFailed:
                 return {
                     "message": api_c.DESTINATION_AUTHENTICATION_FAILED
                 }, HTTPStatus.FORBIDDEN
-
-            ext_list = sfmc_connector.get_list_of_data_extensions()
-            logger.info(
-                "Found %s data extensions for %s.",
-                len(ext_list),
-                destination_id,
-            )
 
         else:
             logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
@@ -670,7 +739,8 @@ class DestinationDataExtView(SwaggerView):
             jsonify(
                 sorted(
                     DestinationDataExtGetSchema().dump(ext_list, many=True),
-                    key=lambda i: i[api_c.NAME].lower(),
+                    key=lambda i: i[db_c.CREATE_TIME],
+                    reverse=True,
                 )
             ),
             HTTPStatus.OK,
@@ -698,7 +768,7 @@ class DestinationDataExtPostView(SwaggerView):
             "name": "body",
             "in": "body",
             "type": "object",
-            "description": "Input Audience body.",
+            "description": "Input Destination body.",
             "example": {api_c.DATA_EXTENSION: "data_ext_name"},
         },
     ]
@@ -727,8 +797,9 @@ class DestinationDataExtPostView(SwaggerView):
 
     # pylint: disable=too-many-return-statements
     @api_error_handler()
+    @get_user_name()
     @validate_destination()
-    def post(self, destination_id: str) -> Tuple[dict, int]:
+    def post(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
         """Creates a destination data extension.
 
         ---
@@ -737,6 +808,7 @@ class DestinationDataExtPostView(SwaggerView):
 
         Args:
             destination_id (str): Destination ID.
+            user_name (str): User name.
 
         Returns:
             Tuple[dict, int]: Data Extension ID, HTTP status code.
@@ -792,6 +864,7 @@ class DestinationDataExtPostView(SwaggerView):
                         f"by {get_user_name()}."
                     ),
                     api_c.DESTINATIONS_TAG,
+                    user_name,
                 )
             except AudienceAlreadyExists:
                 # TODO - this is a work around until ORCH-288 is done
@@ -806,3 +879,104 @@ class DestinationDataExtPostView(SwaggerView):
         return {
             "message": api_c.DATA_EXTENSION_NOT_SUPPORTED
         }, HTTPStatus.BAD_REQUEST
+
+
+@add_view_to_blueprint(
+    dest_bp,
+    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>",
+    "DestinationPatchView",
+)
+class DestinationPatchView(SwaggerView):
+    """Destination Patch class."""
+
+    parameters = [
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Destination body.",
+            "example": {db_c.ENABLED: False},
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Destination updated.",
+            "schema": DestinationDataExtGetSchema,
+        },
+        HTTPStatus.UNPROCESSABLE_ENTITY.value: {
+            "description": "Failed to patch destination data.",
+            "schema": {
+                "example": {
+                    "message": api_c.DESTINATION_INVALID_PATCH_MESSAGE
+                },
+            },
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
+    # pylint: disable=unexpected-keyword-arg
+    # pylint: disable=too-many-return-statements
+    @api_error_handler()
+    @validate_destination()
+    @get_user_name()
+    def patch(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
+        """Updates a destination.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            destination_id (str): Destination ID.
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Destination doc, HTTP status code.
+        """
+
+        # get update fields
+        patch_dict = {
+            k: v
+            for k, v in (
+                request.get_json() if request.get_json() else {}
+            ).items()
+            if k in api_c.DESTINATION_PATCH_FIELDS
+        }
+
+        if not patch_dict:
+            logger.info("Could not patch destination.")
+            return {
+                "message": api_c.DESTINATION_INVALID_PATCH_MESSAGE
+            }, HTTPStatus.UNPROCESSABLE_ENTITY
+
+        # validate the schema first.
+        DestinationPatchSchema().validate(patch_dict)
+
+        # update the document
+        return (
+            DestinationGetSchema().dump(
+                destination_management.update_delivery_platform_doc(
+                    get_db_client(),
+                    destination_id,
+                    {
+                        **patch_dict,
+                        **{
+                            db_c.UPDATED_BY: user_name,
+                            db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                        },
+                    },
+                )
+            ),
+            HTTPStatus.OK,
+        )

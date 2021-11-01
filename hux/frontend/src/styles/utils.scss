@@ -7,8 +7,14 @@
   @extend .background-border;
 }
 
+.text-h28 {
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 40px;
+}
+
 .font-weight-semi-bold {
-  font-weight: 600;
+  font-weight: 600 !important;
 }
 
 .rotate-icon-180 {
@@ -61,6 +67,9 @@
 
 .box-shadow-3 {
   box-shadow: 0px 0px 10px 2px rgba(117, 123, 123, 0.3) !important;
+}
+.box-shadow-1 {
+  box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.1) !important;
 }
 .box-shadow-plain {
   box-shadow: 0px 1px 0px #d0d0ce !important;
@@ -120,8 +129,8 @@
   border-width: 0;
 }
 
-.border-zircon {
-  border-color: #e2eaec !important;
+.separator {
+  border-color: var(--v-black-lighten2) !important;
 }
 
 .card-style {
@@ -134,7 +143,7 @@
 
 .card-shadow {
   @extend .box-shadow-none;
-  border: 1px solid var(--v-zircon-base) !important;
+  border: 1px solid var(--v-black-lighten2) !important;
   box-sizing: border-box !important;
   border-radius: 12px !important;
 }
@@ -150,4 +159,17 @@
 
 .mw-100 {
   max-width: 100% !important;
+}
+
+.nav-icon {
+  fill: var(--v-black-lighten4);
+  color: var(--v-black-lighten4);
+  &:hover {
+    fill: var(--v-primary-lighten6);
+    color: var(--v-primary-lighten6);
+  }
+}
+
+.no-background {
+  background: none !important;
 }

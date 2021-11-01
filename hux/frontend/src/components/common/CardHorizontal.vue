@@ -6,24 +6,25 @@
       'box-shadow-5': !isDisabledOrDeselectable,
     }"
     :disabled="isDisabled"
-    :color="isDisabledOrDeselectable ? 'primary lighten-1' : 'white'"
+    :color="isDisabledOrDeselectable ? '' : 'white'"
     :to="to"
     height="60"
     @click="$emit('click')"
   >
     <div v-if="icon || title" class="d-flex align-center">
       <logo :type="icon" />
-      <div
-        class="card-horizontal-title pl-2 text-h6 black--text text--darken-4"
-      >
+      <div class="pl-2 body-1">
         {{ title }}
       </div>
     </div>
     <slot></slot>
-    <div v-if="isAvailable && !hideButton">
-      <huxButton
+    <div v-if="!hideButton">
+      <hux-button
         :is-outlined="!isAdded"
-        :variant="isAdded ? 'primary lighten-8' : 'primary'"
+        :variant="isAdded ? 'primary lighten-6' : 'black lighten-3'"
+        :icon-color="isAdded ? 'white' : 'white'"
+        :icon-variant="isAdded ? 'lighten3' : 'base'"
+        :icon-size="12"
         :icon="isAdded ? 'mdi-check' : null"
         size="large"
         :is-disabled="isAlreadyAdded"
@@ -33,13 +34,18 @@
       >
         <span
           :class="[
-            isAdded ? 'white--text' : 'primary--text',
-            isAlreadyAdded ? 'black--text text--darken-1' : '',
+            isAdded ? 'white--text' : 'black--text text--lighten4',
+            isAlreadyAdded ? 'black--text text--lighten-3' : '',
           ]"
         >
-          {{ isAdded ? "Added" : "Add" }}
+          <span v-if="requestedButton" class="text-button">
+            {{ isAdded ? "Requested" : "Request" }}
+          </span>
+          <span v-else class="text-button"
+            >{{ isAdded ? "Added" : "Add" }}
+          </span>
         </span>
-      </huxButton>
+      </hux-button>
     </div>
   </v-card>
 </template>
@@ -100,11 +106,16 @@ export default {
       required: false,
       default: () => {},
     },
+    requestedButton: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 
   computed: {
     isDisabled: function () {
-      return this.isAlreadyAdded || !this.isAvailable
+      return this.isAlreadyAdded
     },
 
     isDisabledOrDeselectable: function () {
@@ -116,17 +127,12 @@ export default {
 
 <style lang="scss" scoped>
 .card-horizontal-disabled {
-  border: 1px solid var(--v-zircon-base) !important;
+  border: 1px solid var(--v-black-lighten2) !important;
   background-color: var(--v-primary-lighten1) !important;
+  border-radius: 4px;
   @extend .box-shadow-none;
-  .theme--light.v-btn.v-btn--disabled.v-btn--has-bg {
-    background-color: var(--v-black-lighten2) !important;
-  }
   &:hover {
     @extend .box-shadow-25;
   }
-}
-.card-horizontal-title {
-  color: var(--v-neroBlack-base);
 }
 </style>

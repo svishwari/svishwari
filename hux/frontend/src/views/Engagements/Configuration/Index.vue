@@ -20,8 +20,9 @@
 
     <confirm-modal
       v-model="showConfirmModal"
-      title="You are about to navigate away"
-      right-btn-text="Yes, navigate away"
+      icon="leave-config"
+      title="You are about to leave the configuration process"
+      right-btn-text="Yes, leave configuration"
       body=" Are you sure you want to stop the configuration and go to another page? You will not be able to recover it and will need to start the process again."
       @onCancel="showConfirmModal = false"
       @onConfirm="navigateaway()"
@@ -122,6 +123,9 @@ export default {
         description: this.engagementList.description, // at step - 1
         delivery_schedule: !this.engagementList.delivery_schedule ? 0 : 1, // at step - 2
         audiences: audiences, // at step - 3
+        schedule: this.engagementList.delivery_schedule
+          ? this.engagementList.delivery_schedule.schedule
+          : {},
       }
       this.$set(this, "data", _engagementObject)
 

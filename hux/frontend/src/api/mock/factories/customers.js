@@ -140,6 +140,9 @@ export const customersOverview = {
   gender_men: 0.67621,
   gender_other: 0,
   gender_women: 0.30828,
+  gender_men_count: 16016452,
+  gender_women_count: 7171545,
+  gender_other_count: 0,
   match_rate: 0.5972,
   max_age: 35,
   max_ltv_actual: 90.4685,
@@ -168,13 +171,14 @@ export const geoCity = {
   state: () => faker.address.stateAbbr(),
   size: () => faker.datatype.number(1000),
   spending: () => faker.datatype.number(10000),
+  country: () => faker.random.arrayElement(["US", "CA"]),
 }
 
 /**
  * Country-level geographic insights schema
  */
 export const geoCountry = {
-  country: () => faker.address.country(),
+  country: () => faker.random.arrayElement(["US", "CA"]),
   size: () => faker.datatype.number(100000),
   spending: () => faker.datatype.number(1000000),
 }
@@ -186,4 +190,5 @@ export const geoState = {
   state: () => faker.address.state(),
   size: () => faker.datatype.number(10000),
   spending: () => faker.datatype.number(100000),
+  country: () => faker.random.arrayElement(["US", "CA"]),
 }

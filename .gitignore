@@ -38,4 +38,7 @@ docs/build/*
 # IDE
 .vscode/
 .idea/
+
+# Tests
 /lib/huxunifylib-database/huxunifylib/database/tests/.hypothesis/
+/hux/api/huxunify/test/contract_testing/pact-mock-service.log

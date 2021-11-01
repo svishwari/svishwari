@@ -1,8 +1,22 @@
 <template>
   <div class="engagements-wrap">
-    <page-header :header-height-changes="'py-3'">
+    <page-header class="py-5" :header-height="110">
       <template #left>
-        <breadcrumb :items="breadcrumbItems" />
+        <div>
+          <breadcrumb :items="breadcrumbItems" />
+        </div>
+        <div class="text-subtitle-1 font-weight-regular">
+          Start making meaningful connections with current and future customers
+          by targeting your created (or new) audiences.
+        </div>
+      </template>
+      <template #right>
+        <icon
+          type="filter"
+          :size="22"
+          class="cursor-pointer"
+          color="black-darken4"
+        />
       </template>
     </page-header>
     <page-header class="top-bar" :header-height="71">
@@ -19,13 +33,15 @@
           data-e2e="add-engagement"
         >
           <huxButton
-            button-text="Engagement"
-            icon="mdi-plus"
-            icon-position="left"
-            variant="primary"
+            variant="primary base"
+            icon-color="white"
+            icon-variant="base"
+            icon="plus"
             size="large"
+            is-custom-icon
+            class="ma-2 font-weight-regular no-shadow mr-0 caption"
             is-tile
-            class="ma-2 font-weight-regular no-shadow mr-0"
+            height="40"
           >
             Engagement
           </huxButton>
@@ -64,7 +80,7 @@
                 route-name="EngagementDashboard"
                 :route-param="item['id']"
                 :data="item"
-                data-e2e="engagement-collection"
+                :data-e2e="setEngagementSelector(item)"
                 has-favorite
                 :is-favorite="isUserFavorite(item, 'engagements')"
                 @actionFavorite="handleActionFavorite(item, 'engagements')"
@@ -135,7 +151,7 @@
               </span>
               <span v-else-if="item[header.value].length == 0">—</span>
             </div>
-            <div v-if="header.value == 'status'" class="text-caption">
+            <div v-if="header.value == 'status'" class="text-h5">
               <status
                 :status="item[header.value]"
                 :show-label="true"
@@ -150,7 +166,7 @@
                 </template>
                 <template #hover-content>
                   <div v-if="item[header.value] !== ''">
-                    <div class="neroBlack--text text-caption mb-2">
+                    <div class="neroBlack--text text-body-2 mb-2">
                       Delivered to:
                     </div>
                     <div
@@ -163,11 +179,11 @@
                           :type="destination.delivery_platform_type"
                           :size="18"
                         />
-                        <span class="ml-1 neroBlack--text text-caption">
+                        <span class="ml-1 neroBlack--text text-body-2">
                           {{ destination.name }}
                         </span>
                       </div>
-                      <div class="neroBlack--text text-caption">
+                      <div class="neroBlack--text text-body-2">
                         {{
                           destination.latest_delivery
                             ? destination.latest_delivery.update_time
@@ -181,7 +197,33 @@
               </tooltip>
             </div>
             <div v-if="header.value == 'delivery_schedule'">
-              {{ item[header.value] | DeliverySchedule }}
+              <tooltip :max-width="280">
+                <template #label-content>
+                  {{ item[header.value] | DeliverySchedule }}
+                </template>
+                <template #hover-content>
+                  <span v-if="!item[header.value] || item[header.value] === {}">
+                    This engagement was delivered manually on
+                    {{
+                      item["last_delivered"]
+                        | Date("MMM D, YYYY [at] h:mm A")
+                        | Empty
+                    }}
+                  </span>
+                  <hux-delivery-text
+                    v-else
+                    :schedule="
+                      item[header.value] ? item[header.value].schedule : {}
+                    "
+                    :start-date="
+                      item[header.value] ? item[header.value].start_date : ''
+                    "
+                    :end-date="
+                      item[header.value] ? item[header.value].end_date : ''
+                    "
+                  />
+                </template>
+              </tooltip>
             </div>
             <div
               v-if="
@@ -252,7 +294,7 @@
                       </template>
                     </menu-cell>
                   </div>
-                  <div v-if="header.value == 'status'" class="text-caption">
+                  <div v-if="header.value == 'status'" class="text-h5">
                     <div>
                       <status
                         :status="item[header.value]"
@@ -322,7 +364,7 @@
                       </template>
                       <template #hover-content>
                         <div>
-                          <div class="neroBlack--text text-caption mb-2">
+                          <div class="neroBlack--text text-body-2 mb-2">
                             Delivered to:
                           </div>
                           <div
@@ -335,11 +377,11 @@
                                 :type="destination.delivery_platform_type"
                                 :size="18"
                               />
-                              <span class="ml-1 neroBlack--text text-caption">
+                              <span class="ml-1 neroBlack--text text-body-2">
                                 {{ destination.name }}
                               </span>
                             </div>
-                            <div class="neroBlack--text text-caption">
+                            <div class="neroBlack--text text-body-2">
                               {{
                                 destination.latest_delivery.update_time
                                   | Date
@@ -352,7 +394,10 @@
                     </tooltip>
                   </div>
                   <div v-if="header.value == 'delivery_schedule'">
-                    {{ item[header.value] | DeliverySchedule }}
+                    <tooltip>
+                      <template #label-content> - </template>
+                      <template #hover-content> - </template>
+                    </tooltip>
                   </div>
                   <div
                     v-if="
@@ -393,7 +438,7 @@
                       :key="header.value"
                       :style="{ width: header.width }"
                     >
-                      <div v-if="header.value == 'status'" class="text-caption">
+                      <div v-if="header.value == 'status'" class="text-h5">
                         <div>
                           <status
                             :status="item[header.value]"
@@ -422,7 +467,23 @@
                         <time-stamp :value="item[header.value]" />
                       </div>
                       <div v-if="header.value == 'delivery_schedule'">
-                        {{ item[header.value] | DeliverySchedule }}
+                        <tooltip>
+                          <template #label-content>
+                            {{
+                              item[header.value]
+                                ? item[header.value].periodicity
+                                : "-"
+                            }}
+                          </template>
+                          <template #hover-content>
+                            <hux-delivery-text
+                              v-if="item[header.value]"
+                              :schedule="item[header.value]"
+                              type="destination"
+                            />
+                            <span v-else>-</span>
+                          </template>
+                        </tooltip>
                       </div>
                       <div
                         v-if="
@@ -452,8 +513,7 @@
     </hux-data-table>
 
     <v-row v-if="rowData.length == 0 && !loading" class="pt-3 pb-7 pl-3">
-      <empty-page>
-        <template #icon>mdi-alert-circle-outline</template>
+      <empty-page type="no-engagement" size="50">
         <template #title>Oops! There’s nothing here yet</template>
         <template #subtitle>
           Plan your engagement ahead of time. You can create the <br />
@@ -468,12 +528,15 @@
           >
             <huxButton
               button-text="Engagement"
-              icon="mdi-plus"
-              icon-position="left"
-              variant="primary"
+              variant="primary base"
+              icon-color="white"
+              icon-variant="base"
+              icon="plus"
               size="large"
+              is-custom-icon
+              class="ma-2 font-weight-regular caption"
               is-tile
-              class="ma-2 font-weight-regular"
+              height="40"
             >
               Engagement
             </huxButton>
@@ -488,25 +551,70 @@
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
       @onCreate="onCreated()"
-      @onError="onError($event)"
     />
 
-    <hux-alert
-      v-model="flashAlert"
-      :type="alert.type"
-      :message="alert.message"
-    />
     <confirm-modal
       v-model="showAudienceRemoveConfirmation"
-      :title="confirmDialog.title"
-      :right-btn-text="confirmDialog.btnText"
-      :body="confirmDialog.body"
+      icon="modal-remove"
+      title="You are about to remove"
+      :sub-title="`${confirmSubtitle}`"
+      right-btn-text="Yes, remove audience"
       @onCancel="showAudienceRemoveConfirmation = false"
       @onConfirm="
         showAudienceRemoveConfirmation = false
         removeAudience()
       "
-    />
+    >
+      <template #body>
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
+          Are you sure you want to remove this audience from this engagement?
+        </div>
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
+          By removing this audience, it will not be deleted, but it will become
+          unattached from this engagement.
+        </div>
+      </template>
+    </confirm-modal>
+
+    <confirm-modal
+      v-model="confirmModal"
+      icon="sad-face"
+      type="error"
+      title="You are about to delete"
+      :sub-title="`${confirmSubtitle}`"
+      right-btn-text="Yes, delete engagement"
+      left-btn-text="Nevermind!"
+      @onCancel="confirmModal = !confirmModal"
+      @onConfirm="confirmRemoval()"
+    >
+      <template #body>
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
+          Are you sure you want to delete this Engagement&#63;
+        </div>
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
+          By deleting this engagement you will not be able to recover it and it
+          may impact any associated destinations.
+        </div>
+      </template>
+    </confirm-modal>
   </div>
 </template>
 
@@ -515,22 +623,24 @@ import { mapGetters, mapActions } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
+import Icon from "@/components/common/Icon"
 import huxButton from "@/components/common/huxButton"
 import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
 import Avatar from "../../components/common/Avatar.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Status from "../../components/common/Status.vue"
 import MenuCell from "../../components/common/huxTable/MenuCell.vue"
-import HuxAlert from "@/components/common/HuxAlert.vue"
 import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
 import Logo from "../../components/common/Logo.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import ConfirmModal from "../../components/common/ConfirmModal.vue"
+import HuxDeliveryText from "../../components/common/DatePicker/HuxDeliveryText.vue"
 export default {
   name: "Engagements",
   components: {
     PageHeader,
     Breadcrumb,
+    Icon,
     huxButton,
     EmptyPage,
     HuxDataTable,
@@ -539,33 +649,26 @@ export default {
     Status,
     MenuCell,
     LookAlikeAudience,
-    HuxAlert,
     Logo,
     Tooltip,
     ConfirmModal,
+    HuxDeliveryText,
   },
   data() {
     return {
+      confirmModal: false,
+      confirmSubtitle: "",
+      selectedEngagement: null,
       selectedAudience: null,
       showLookAlikeDrawer: false,
       showAudienceRemoveConfirmation: false,
       selectedEngagementId: "",
       selectedAudienceId: "",
-      confirmDialog: {
-        title: "Remove  audience?",
-        btnText: "Yes, remove it",
-        body: "Are you sure you want to remove this audience? By removing this audience, it will not be deleted, but it will become unattached from this engagement.",
-      },
-      flashAlert: false,
-      alert: {
-        type: "success",
-        message: "",
-      },
       breadcrumbItems: [
         {
           text: "Engagements",
           disabled: true,
-          icon: "engagements",
+          icon: "speaker_down",
         },
       ],
       loading: true,
@@ -713,9 +816,22 @@ export default {
       updateAudienceList: "engagements/updateAudienceList",
       updateEngagement: "engagements/updateEngagement",
       detachAudience: "engagements/detachAudience",
+      setAlert: "alerts/setAlert",
       markFavorite: "users/markFavorite",
       clearFavorite: "users/clearFavorite",
+      deleteEngagement: "engagements/remove",
     }),
+
+    openModal(engagement) {
+      this.selectedEngagement = engagement
+      this.confirmSubtitle = engagement.name
+      this.confirmModal = true
+    },
+
+    async confirmRemoval() {
+      await this.deleteEngagement({ id: this.selectedEngagement.id })
+      this.confirmModal = false
+    },
 
     isUserFavorite(entity, type) {
       return (
@@ -802,13 +918,10 @@ export default {
       this.showLookAlikeDrawer = false
     },
     async onCreated() {
-      this.alert.message = `Your lookalike audience, ${name}, has been created successfully.`
-      this.flashAlert = true
-    },
-    onError(message) {
-      this.alert.type = "error"
-      this.alert.message = message
-      this.flashAlert = true
+      this.setAlert({
+        type: "success",
+        message: `Your lookalike audience, ${name}, has been created successfully.`,
+      })
     },
     getActionItems(engagement) {
       let isFavorite = this.isUserFavorite(engagement, "audiences")
@@ -838,7 +951,13 @@ export default {
             this.makeInactiveEngagement(value)
           },
         },
-        { title: "Delete engagement", isDisabled: true },
+        {
+          title: "Delete engagement",
+          isDisabled: false,
+          onClick: () => {
+            this.openModal(engagement)
+          },
+        },
       ]
 
       return actionItems
@@ -848,6 +967,14 @@ export default {
         name: "EngagementUpdate",
         params: { id: id },
       })
+    },
+    setEngagementSelector(engagement) {
+      if (
+        engagement["status"] == "Active" &&
+        engagement["audiences"].length > 0
+      ) {
+        return "enagement-active"
+      } else return "enagement-inactive"
     },
     getAudienceActionItems(audience, engagementId) {
       let audienceActionItems = [
@@ -879,8 +1006,8 @@ export default {
           isDisabled: false,
           onClick: (value) => {
             this.showAudienceRemoveConfirmation = true
+            this.confirmSubtitle = value.name
             this.selectedEngagementId = engagementId
-            this.confirmDialog.title = `You are about to remove ${value.name}?`
             this.selectedAudienceId = value.id
           },
         },

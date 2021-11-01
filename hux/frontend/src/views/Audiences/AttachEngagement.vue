@@ -33,12 +33,15 @@
                 </template>
                 <template #button>
                   <huxButton
-                    icon="mdi-plus"
-                    icon-position="left"
-                    variant="primary"
+                    variant="primary base"
+                    icon-color="white"
+                    icon-variant="base"
+                    icon="plus"
                     size="small"
-                    :is-tile="true"
-                    class="ma-2"
+                    is-custom-icon
+                    class="ma-2 caption"
+                    is-tile
+                    data-e2e="first-engagement-create"
                     @click="goToStep2()"
                   >
                     New engagement
@@ -52,10 +55,14 @@
                 required to have at least one selected.
               </h6>
               <huxButton
-                icon="mdi-plus"
-                icon-position="left"
-                variant="primary"
-                :is-tile="true"
+                variant="primary base"
+                icon-color="white"
+                icon-variant="base"
+                icon="plus"
+                size="small"
+                is-custom-icon
+                class="ma-2 caption"
+                is-tile
                 height="40"
                 @click="goToAddNewEngagement()"
               >
@@ -81,6 +88,7 @@
                   :is-added="isEngagementSelected(engagement)"
                   :enable-blue-background="isEngagementSelected(engagement)"
                   class="my-3 mb-4 mt-1"
+                  data-e2e="engagement-list"
                   @click="onEngagementClick(engagement)"
                 >
                   <v-menu open-on-hover offset-x offset-y :max-width="177">
@@ -129,6 +137,7 @@
                   placeholder="Give this engagement a name"
                   height="40"
                   :rules="newEngagementRules"
+                  data-e2e="new-engagement-name"
                   required
                 />
                 <text-field
@@ -259,7 +268,11 @@
                   </div>
                 </v-row>
                 <v-row v-if="isRecurring" class="delivery-schedule ml-0 mt-6">
-                  <hux-schedule-picker v-model="schedule" />
+                  <hux-schedule-picker
+                    v-model="schedule"
+                    :start-date="selectedStartDate"
+                    :end-date="selectedEndDate"
+                  />
                 </v-row>
               </v-form>
             </div>
@@ -275,6 +288,7 @@
           height="40"
           width="146"
           :is-disabled="!newEngagementValid"
+          data-e2e="create-engagement-new"
           @click.native="addEngagement()"
         >
           Create &amp; add

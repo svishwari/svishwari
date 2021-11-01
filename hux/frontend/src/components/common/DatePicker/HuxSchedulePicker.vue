@@ -71,7 +71,7 @@
     <div v-if="value.periodicity === 'Weekly'" class="mt-6">
       <div class="text-caption black--text mb-1">On</div>
       <v-btn
-        v-for="day in days"
+        v-for="day in day_of_week"
         :key="day.value"
         min-width="30"
         width="30"
@@ -133,38 +133,12 @@
       </div>
     </div>
 
-    <div class="black--text text--darken-1 pt-4 text-caption">
-      Delivery takes place
-      <span class="black--text text--darken-4">
-        [every
-        {{ value.every !== 1 ? value.every : "" }}
-        {{ timeFrame }}{{ value.every !== 1 ? "s" : "" }}]
-      </span>
-      <span v-if="value.periodicity !== 'Daily'">on </span>
-      <span
-        v-if="value.periodicity === 'Weekly'"
-        class="black--text text--darken-4"
-      >
-        <span v-if="selectedDaysString !== '[]'">
-          {{ selectedDaysString }}
-        </span>
-      </span>
-      <span
-        v-if="value.periodicity === 'Monthly'"
-        class="black--text text--darken-4"
-      >
-        <span v-if="value.monthlyPeriod === 'Day'">
-          [Day {{ value.monthlyDayDate }}]
-        </span>
-        <span v-else>
-          [the {{ value.monthlyPeriod }} {{ value.monthlyDay }}]
-        </span>
-      </span>
-      starting at
-      <span class="black--text text--darken-4">
-        [{{ value.hour }}:{{ value.minute }}{{ value.period }}]
-      </span>
-    </div>
+    <hux-delivery-text
+      :schedule="value"
+      :start-date="startDate"
+      :end-date="endDate"
+      class="pt-4"
+    />
 
     <div
       v-if="
@@ -180,12 +154,27 @@
   </div>
 </template>
 <script>
+import { dayAbbreviation } from "@/utils"
+import HuxDeliveryText from "@/components/common/DatePicker/HuxDeliveryText"
+
 export default {
   name: "HuxSchedulePicker",
+
+  components: {
+    HuxDeliveryText,
+  },
 
   props: {
     value: {
       type: Object,
+      required: false,
+    },
+    startDate: {
+      type: String,
+      required: false,
+    },
+    endDate: {
+      type: String,
       required: false,
     },
   },
@@ -210,7 +199,7 @@ export default {
         "Saturday",
       ],
       monthlyDayDateItems: Array.from({ length: 31 }, (_, i) => i + 1),
-      days: [
+      day_of_week: [
         {
           day: "S",
           value: "Sunday",
@@ -265,7 +254,7 @@ export default {
     },
 
     selectedDays() {
-      return this.days.filter((each) => this.isDaySelected(each))
+      return this.day_of_week.filter((each) => this.isDaySelected(each))
     },
 
     selectedDaysString() {
@@ -284,17 +273,17 @@ export default {
   methods: {
     toggleWeekDay(day) {
       if (this.isDaySelected(day)) {
-        if (this.value.days.length !== 1) {
-          let index = this.value.days.indexOf(day.value)
-          this.value.days.splice(index, 1)
+        if (this.value.day_of_week.length !== 1) {
+          let index = this.value.day_of_week.indexOf(dayAbbreviation(day.value))
+          this.value.day_of_week.splice(index, 1)
         }
       } else {
-        this.value.days.push(day.value)
+        this.value.day_of_week.push(dayAbbreviation(day.value))
       }
     },
 
     isDaySelected(day) {
-      return this.value.days.includes(day.value)
+      return this.value.day_of_week.includes(dayAbbreviation(day.value))
     },
   },
 }

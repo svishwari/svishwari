@@ -6,6 +6,8 @@
     :color="color"
     :variant="variant"
     :fill-opacity="fillOpacity"
+    :stroke="stroke"
+    :stroke-opacity="strokeOpacity"
   />
 </template>
 
@@ -34,7 +36,6 @@ export default {
     color: {
       type: String,
       required: false,
-      default: "primary",
     },
 
     variant: {
@@ -42,7 +43,18 @@ export default {
       required: false,
     },
 
+    stroke: {
+      type: String,
+      required: false,
+    },
+
     fillOpacity: {
+      type: Number,
+      required: false,
+      default: 1,
+    },
+
+    strokeOpacity: {
       type: Number,
       required: false,
       default: 1,

@@ -7,18 +7,20 @@
           class="chart-section"
           @mouseover="getCordinates($event)"
         ></div>
-        <v-card
+        <chart-tooltip
           v-if="showScoreTip"
-          tile
-          :style="{
-            transform: `translate(${scoreTip.xPosition}px, ${scoreTip.yPosition}px)`,
+          :position="{
+            x: scoreTip.xPosition,
+            y: scoreTip.yPosition,
           }"
-          class="mx-auto score-tooltip-style"
+          :tooltip-style="toolTipStyle"
         >
-          <div class="black--text text--darken-4 caption">
-            {{ scoreTip.score }}
-          </div>
-        </v-card>
+          <template #content>
+            <div class="black--text text--darken-4 caption">
+              {{ scoreTip.score }}
+            </div>
+          </template>
+        </chart-tooltip>
       </div>
     </div>
   </div>
@@ -29,9 +31,12 @@ import * as d3Select from "d3-selection"
 import * as d3Axis from "d3-axis"
 import * as d3Scale from "d3-scale"
 import * as d3Array from "d3-array"
+import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
+import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
 
 export default {
   name: "HorizontalBarChart",
+  components: { ChartTooltip },
   props: {
     value: {
       type: Array,
@@ -65,6 +70,7 @@ export default {
         y: 0,
       },
       margin: { top: 5, right: 50, bottom: 75, left: 150 },
+      toolTipStyle: TooltipConfiguration.featureChartScore,
     }
   },
 
@@ -267,18 +273,6 @@ export default {
     position: relative;
     .chart-section {
       margin-bottom: -20px;
-    }
-    .score-tooltip-style {
-      @extend .box-shadow-3;
-      border-radius: 0px;
-      padding: 7px 14px 12px 14px;
-      max-width: 70px;
-      height: 30px;
-      z-index: 1;
-      border-radius: 0px !important;
-      position: absolute;
-      left: 171px;
-      top: -6px;
     }
   }
 }

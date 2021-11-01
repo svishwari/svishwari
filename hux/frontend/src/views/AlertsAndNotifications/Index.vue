@@ -4,22 +4,32 @@
       <template slot="left">
         <breadcrumb :items="breadcrumbItems" />
       </template>
+      <template #right>
+        <icon
+          type="filter"
+          :size="22"
+          class="cursor-pointer"
+          color="black-darken4"
+        />
+      </template>
     </page-header>
     <page-header class="top-bar mb-3" :header-height="71">
       <template #left>
-        <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
-        <v-icon medium color="black lighten-3" class="pl-4">mdi-magnify</v-icon>
+        <v-icon medium color="black lighten-3">mdi-magnify</v-icon>
       </template>
 
       <template #right>
         <huxButton
-          button-text="Return to previous page"
-          icon="mdi-keyboard-return"
-          icon-position="left"
-          variant="primary"
+          variant="primary base"
+          icon="keyboard-return"
+          is-custom-icon
+          class="ma-2 text-button no-shadow mr-0"
           size="large"
           is-tile
-          class="ma-2 font-weight-regular no-shadow mr-0"
+          :height="'40'"
+          :icon-size="18"
+          icon-color="white"
+          icon-variant="base"
           data-e2e="notification-return"
           @click="goBack()"
         >
@@ -31,7 +41,7 @@
     <v-row v-if="!loading" class="pb-7 pl-3 white">
       <hux-data-table
         :columns="columnDefs"
-        :data-items="notifications"
+        :data-items="notificationData"
         sort-column="created"
         sort-desc
       >
@@ -47,28 +57,49 @@
             class="col-overflow"
             :style="{ width: header.width, left: 0 }"
           >
-            <div v-if="header.value == 'created'">
-              <time-stamp :value="item['created']" />
+            <div v-if="header.value == 'id'">
+              <a @click="toggleProfilesDrawer(item[header.value])"
+                >{{ item[header.value] }}
+              </a>
             </div>
-            <div v-if="header.value == 'notification_type'">
-              <status
-                :status="item['notification_type']"
-                :show-label="true"
-                :icon-size="17"
+
+            <div v-if="header.value == 'category'">
+              {{ item[header.value] }}
+            </div>
+
+            <div v-if="header.value == 'notification_type'" class="d-flex">
+              <icon
+                :type="
+                  item['notification_type'] === 'Success'
+                    ? 'success_new'
+                    : item['notification_type']
+                "
+                :size="18"
+                :color="getIconColor(item['notification_type'])"
+                :variant="getVariantColor(item['notification_type'])"
+                class="d-block mr-1"
               />
+              {{ item["notification_type"] }}
             </div>
+
             <tooltip v-if="header.value == 'description'" position-top>
               <template #label-content>
                 <span>{{ item[header.value] }}</span>
               </template>
               <template #hover-content>
+                <div class="text--body-1 pb-2">Description</div>
                 {{ item[header.value] }}
               </template>
             </tooltip>
+
+            <div v-if="header.value == 'created'">
+              <time-stamp :value="item['created']" />
+            </div>
           </td>
         </template>
       </hux-data-table>
     </v-row>
+    <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
     <v-divider v-if="enableLazyLoad" class="hr-devider"></v-divider>
     <v-progress-linear v-if="enableLazyLoad" active indeterminate />
     <observer v-if="notifications.length" @intersect="intersected"></observer>
@@ -82,9 +113,10 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
 import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
-import Status from "../../components/common/Status.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Observer from "@/components/common/Observer"
+import AlertDrawer from "./Drawer/AlertDrawer"
+import Icon from "@/components/common/Icon"
 
 export default {
   name: "AlertsAndNotifications",
@@ -94,9 +126,10 @@ export default {
     huxButton,
     HuxDataTable,
     TimeStamp,
-    Status,
     Tooltip,
     Observer,
+    AlertDrawer,
+    Icon,
   },
   data() {
     return {
@@ -104,9 +137,10 @@ export default {
         {
           text: "Alerts & Notifications",
           disabled: true,
-          icon: "notifications",
+          icon: "bell",
         },
       ],
+      alertDrawer: false,
       categoryItems: [
         { name: "Orchestration" },
         { name: "Decisioning" },
@@ -120,8 +154,13 @@ export default {
       ],
       columnDefs: [
         {
-          text: "Time",
-          value: "created",
+          text: "Alert ID",
+          value: "id",
+          width: "260",
+        },
+        {
+          text: "Category",
+          value: "category",
           width: "180px",
         },
         {
@@ -130,9 +169,14 @@ export default {
           width: "180px",
         },
         {
-          text: "Description",
+          text: "Brief Description",
           value: "description",
           width: "auto",
+        },
+        {
+          text: "Time",
+          value: "created",
+          width: "220px",
         },
       ],
       sortColumn: "created",
@@ -145,6 +189,7 @@ export default {
         batchNumber: 1,
         isLazyLoad: false,
       },
+      notificationId: null,
     }
   },
   computed: {
@@ -152,6 +197,11 @@ export default {
       notifications: "notifications/list",
       totalNotifications: "notifications/total",
     }),
+
+    notificationData() {
+      let sortedNotificaitonList = this.notifications
+      return sortedNotificaitonList.sort((a, b) => a.id - b.id)
+    },
   },
 
   async mounted() {
@@ -167,9 +217,15 @@ export default {
   methods: {
     ...mapActions({
       getAllNotifications: "notifications/getAll",
+      getNotificationByID: "notifications/getById",
     }),
     goBack() {
       this.$router.go(-1)
+    },
+    async toggleProfilesDrawer(notificationId) {
+      this.notificationId = notificationId
+      await this.getNotificationByID(notificationId)
+      this.alertDrawer = !this.alertDrawer
     },
     intersected() {
       if (this.batchDetails.batchNumber <= this.lastBatch) {
@@ -187,6 +243,20 @@ export default {
       this.lastBatch = Math.ceil(
         this.totalNotifications / this.batchDetails.batchSize
       )
+    },
+    getIconColor(value) {
+      if (value) {
+        return value === "Success"
+          ? "success"
+          : value === "Critical"
+          ? "error"
+          : "primary"
+      }
+    },
+    getVariantColor(value) {
+      if (value) {
+        return value === "Informational" ? "lighten6" : "base"
+      }
     },
   },
 }

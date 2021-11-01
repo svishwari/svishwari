@@ -1,8 +1,10 @@
 # pylint: disable=too-many-lines
 """Paths for Orchestration API"""
+import asyncio
 from http import HTTPStatus
 from typing import Tuple, Union
 from datetime import datetime, timedelta
+import aiohttp
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
@@ -19,7 +21,6 @@ from huxunifylib.database import (
     delivery_platform_management as destination_management,
     orchestration_management,
     engagement_management,
-    data_management,
     engagement_audience_management as eam,
 )
 import huxunifylib.database.constants as db_c
@@ -33,22 +34,26 @@ from huxunify.api.schema.orchestration import (
     LookalikeAudiencePostSchema,
     LookalikeAudienceGetSchema,
     is_audience_lookalikeable,
-    AudienceDestinationSchema,
 )
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
 )
 from huxunify.api.data_connectors.cdp import (
     get_customers_overview,
-    get_demographic_by_state,
-    get_spending_by_gender,
-    get_city_ltvs,
+    get_demographic_by_state_async,
+    get_city_ltvs_async,
+    get_spending_by_gender_async,
+    get_customers_overview_async,
 )
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
-from huxunify.api.data_connectors.okta import get_token_from_request
+from huxunify.api.data_connectors.okta import (
+    get_token_from_request,
+    introspect_token,
+)
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
     FAILED_DEPENDENCY_424_RESPONSE,
+    get_next_schedule,
 )
 import huxunify.api.constants as api_c
 from huxunify.api.route.decorators import (
@@ -61,6 +66,7 @@ from huxunify.api.route.utils import (
     get_db_client,
     group_gender_spending,
     Validation as validation,
+    is_component_favorite,
 )
 
 # setup the orchestration blueprint
@@ -96,6 +102,61 @@ def add_destinations(
             database, object_ids
         )
     return None
+
+
+async def get_audience_insights_async(token: str, audience_filters: dict):
+    """Fetch audience insights from CDM
+
+    Args:
+        token (str): OKTA JWT token.
+        audience_filters (dict): Audience filters.
+
+    Returns:
+        dict: Audience insights object.
+    """
+    audience_insights = {}
+    filters = (
+        {api_c.AUDIENCE_FILTERS: audience_filters}
+        if audience_filters
+        else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+    )
+    async with aiohttp.ClientSession() as session:
+        responses = await asyncio.gather(
+            get_demographic_by_state_async(
+                session,
+                token,
+                filters,
+            ),
+            get_city_ltvs_async(
+                session,
+                token,
+                filters,
+            ),
+            get_spending_by_gender_async(
+                session,
+                token,
+                filters=filters,
+                start_date=str(datetime.utcnow().date() - timedelta(days=180)),
+                end_date=str(datetime.utcnow().date()),
+            ),
+            get_customers_overview_async(
+                session,
+                token,
+                filters,
+            ),
+        )
+    audience_insights[api_c.DEMOGRAPHIC] = responses[0]
+    audience_insights[api_c.INCOME] = responses[1]
+    audience_insights[api_c.SPEND] = group_gender_spending(responses[2])
+    customers_overview = responses[3]
+    audience_insights[api_c.GENDER] = {
+        gender: {
+            api_c.POPULATION_PERCENTAGE: customers_overview.get(gender, 0),
+            api_c.SIZE: customers_overview.get(f"{gender}_{api_c.COUNT}", 0),
+        }
+        for gender in api_c.GENDERS
+    }
+    return audience_insights
 
 
 @add_view_to_blueprint(
@@ -163,10 +224,12 @@ class AudienceView(SwaggerView):
         # do replace root by bringing the nested audience up a level.
         _ = [x.update(audience_dict.get(x[db_c.ID])) for x in audiences]
 
-        # # get customer sizes
-        # token_response = get_token_from_request(request)
+        # get user id
+        token_response = get_token_from_request(request)
+        user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
 
         # TODO - ENABLE AFTER WE HAVE A CACHING STRATEGY IN PLACE
+        # # get customer sizes
         # customer_size_dict = get_customers_count_async(
         #     token_response[0], audiences
         # )
@@ -222,6 +285,9 @@ class AudienceView(SwaggerView):
                 audience[api_c.AUDIENCE_LAST_DELIVERED] = None
 
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
+            audience[api_c.FAVORITE] = is_component_favorite(
+                user_id, api_c.AUDIENCES, audience[db_c.ID]
+            )
 
         # fetch lookalike audiences if lookalikeable is set to false
         # as lookalike audiences can not be lookalikeable
@@ -322,6 +388,7 @@ class AudienceGetView(SwaggerView):
         """
 
         token_response = get_token_from_request(request)
+        user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
 
         database = get_db_client()
 
@@ -400,6 +467,25 @@ class AudienceGetView(SwaggerView):
                         and not audience.get(api_c.IS_LOOKALIKE, False)
                         else None
                     )
+                    # Update time field can be missing if no deliveries.
+                    if not delivery.get(db_c.UPDATE_TIME):
+                        delivery[db_c.UPDATE_TIME] = None
+                    if engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
+                        delivery[
+                            db_c.ENGAGEMENT_DELIVERY_SCHEDULE
+                        ] = engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                            api_c.SCHEDULE
+                        ][
+                            api_c.PERIODICIY
+                        ]
+                        delivery[api_c.NEXT_DELIVERY] = get_next_schedule(
+                            engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                                api_c.SCHEDULE_CRON
+                            ],
+                            engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE][
+                                api_c.START_DATE
+                            ],
+                        )
 
             # set the weighted status for the engagement based on deliveries
             engagement[api_c.STATUS] = weight_delivery_status(engagement)
@@ -446,6 +532,10 @@ class AudienceGetView(SwaggerView):
             database, {db_c.LOOKALIKE_SOURCE_AUD_ID: audience_id}
         )
         audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
+
+        audience[api_c.FAVORITE] = is_component_favorite(
+            user_id, api_c.AUDIENCES, str(audience_id)
+        )
 
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
@@ -509,59 +599,30 @@ class AudienceInsightsGetView(SwaggerView):
 
         # get the audience
         audience_id = ObjectId(audience_id)
-        audience = orchestration_management.get_audience(database, audience_id)
 
-        if not audience:
-            # check if lookalike
-            lookalike = destination_management.get_delivery_platform_lookalike_audience(
+        audience = orchestration_management.get_audience(database, audience_id)
+        lookalike = (
+            destination_management.get_delivery_platform_lookalike_audience(
                 database, audience_id
             )
-            if not lookalike:
-                logger.error("Audience with id %s not found.", audience_id)
-                return {
-                    "message": api_c.AUDIENCE_NOT_FOUND
-                }, HTTPStatus.NOT_FOUND
+        )
 
+        if not audience and not lookalike:
+            logger.error("Audience with id %s not found.", audience_id)
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+
+        if not audience and lookalike:
             # grab the source audience ID of the lookalike
             audience = orchestration_management.get_audience(
                 database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
             )
 
-        customers = get_customers_overview(
-            token_response[0],
-            {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
-        )
-        audience_insights = {
-            api_c.DEMOGRAPHIC: get_demographic_by_state(
+        audience_insights = asyncio.run(
+            get_audience_insights_async(
                 token_response[0],
                 audience[api_c.AUDIENCE_FILTERS],
-            ),
-            api_c.INCOME: get_city_ltvs(
-                token_response[0],
-                {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
-            ),
-            api_c.SPEND: group_gender_spending(
-                get_spending_by_gender(
-                    token_response[0],
-                    filters={
-                        api_c.AUDIENCE_FILTERS: audience[
-                            api_c.AUDIENCE_FILTERS
-                        ]
-                    },
-                    start_date=str(
-                        datetime.utcnow().date() - timedelta(days=180)
-                    ),
-                    end_date=str(datetime.utcnow().date()),
-                )
-            ),
-            api_c.GENDER: {
-                gender: {
-                    api_c.POPULATION_PERCENTAGE: customers.get(gender, 0),
-                    api_c.SIZE: customers.get(f"{gender}_{api_c.COUNT}", 0),
-                }
-                for gender in api_c.GENDERS
-            },
-        }
+            )
+        )
 
         return (
             AudienceInsightsGetSchema(unknown=INCLUDE).dump(audience_insights),
@@ -650,12 +711,9 @@ class AudiencePostView(SwaggerView):
 
         # validate destinations
         database = get_db_client()
-        destinations = []
         if db_c.DESTINATIONS in body:
             # validate list of dict objects
-            for destination in AudienceDestinationSchema().load(
-                body[db_c.DESTINATIONS], many=True
-            ):
+            for destination in body[api_c.DESTINATIONS]:
                 # validate object id
                 # map to an object ID field
                 # validate the destination object exists.
@@ -673,7 +731,6 @@ class AudiencePostView(SwaggerView):
                     return {
                         "message": api_c.DESTINATION_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
-                destinations.append(destination)
 
         engagement_ids = []
         if api_c.AUDIENCE_ENGAGEMENTS in body:
@@ -707,7 +764,7 @@ class AudiencePostView(SwaggerView):
             database=database,
             name=body[api_c.AUDIENCE_NAME],
             audience_filters=body.get(api_c.AUDIENCE_FILTERS),
-            destination_ids=destinations,
+            destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user_name,
             size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
         )
@@ -732,7 +789,7 @@ class AudiencePostView(SwaggerView):
                 [
                     {
                         db_c.OBJECT_ID: audience_doc[db_c.ID],
-                        db_c.DESTINATIONS: destinations,
+                        db_c.DESTINATIONS: body.get(api_c.DESTINATIONS),
                     }
                 ],
             )
@@ -835,14 +892,35 @@ class AudiencePutView(SwaggerView):
 
         # load into the schema object
         body = AudiencePutSchema().load(request.get_json(), partial=True)
-
         database = get_db_client()
+
+        # validate destinations
+        if db_c.DESTINATIONS in body:
+            # validate list of dict objects
+            for destination in body[api_c.DESTINATIONS]:
+                # map to an object ID field
+                # validate the destination object exists.
+                destination[db_c.OBJECT_ID] = ObjectId(
+                    destination[db_c.OBJECT_ID]
+                )
+
+                if not destination_management.get_delivery_platform(
+                    get_db_client(), destination[db_c.OBJECT_ID]
+                ):
+                    logger.error(
+                        "Could not find destination with id %s.",
+                        destination[db_c.OBJECT_ID],
+                    )
+                    return {
+                        "message": api_c.DESTINATION_NOT_FOUND
+                    }, HTTPStatus.NOT_FOUND
+
         audience_doc = orchestration_management.update_audience(
             database=database,
             audience_id=ObjectId(audience_id),
             name=body.get(api_c.AUDIENCE_NAME),
             audience_filters=body.get(api_c.AUDIENCE_FILTERS),
-            destination_ids=body.get(api_c.DESTINATIONS_TAG),
+            destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user_name,
         )
 
@@ -914,9 +992,14 @@ class AudienceRules(SwaggerView):
             Tuple[dict, int]: dict of audience rules, HTTP status code.
         """
 
-        rules_constants = data_management.get_constant(
-            get_db_client(), db_c.AUDIENCE_FILTER_CONSTANTS
-        )
+        rules_constants = {
+            "text_operators": {
+                "contains": "Contains",
+                "does_not_contain": "Does not contain",
+                "equals": "Equals",
+                "does_not_equal": "Does not equal",
+            }
+        }
 
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically
@@ -931,13 +1014,57 @@ class AudienceRules(SwaggerView):
                         "min": 0.0,
                         "max": 1.0,
                         "steps": 0.05,
+                        "values": [
+                            (0.024946739301654024, 11427),
+                            (0.07496427927927932, 11322),
+                            (0.12516851755300673, 11508),
+                            (0.17490722222222196, 11340),
+                            (0.22475237305041784, 11028),
+                            (0.27479887395267527, 10861),
+                            (0.32463341819221986, 10488),
+                            (0.3748012142488386, 9685),
+                            (0.424857603462838, 9472),
+                            (0.4748600344076149, 8719),
+                            (0.5247584942372063, 8069),
+                            (0.5748950945245762, 7141),
+                            (0.6248180486698927, 6616),
+                            (0.6742800016897607, 5918),
+                            (0.7240552640642912, 5226),
+                            (0.7748771045863732, 4666),
+                            (0.8245333194000475, 4067),
+                            (0.8741182097701148, 3480),
+                            (0.9238849161073824, 2980),
+                            (0.9741102931596075, 2456),
+                        ],
                     },
                     "ltv_predicted": {
                         "name": "Predicted lifetime value",
                         "type": "range",
                         "min": 0,
-                        "max": 1100,
+                        "max": 998.80,
                         "steps": 20,
+                        "values": [
+                            (25.01266121420892, 20466),
+                            (74.90030921605447, 19708),
+                            (124.93400516206559, 18727),
+                            (174.636775834374, 17618),
+                            (224.50257155855883, 15540),
+                            (274.4192853530467, 14035),
+                            (324.5557537562226, 11650),
+                            (374.0836229319332, 9608),
+                            (424.08129865033845, 7676),
+                            (474.0542931632165, 6035),
+                            (523.573803219089, 4610),
+                            (573.6697460367739, 3535),
+                            (623.295952316871, 2430),
+                            (674.0507447610822, 1737),
+                            (722.9281163886425, 1127),
+                            (773.0364963285016, 828),
+                            (823.8157326407769, 515),
+                            (872.0919142507652, 327),
+                            (922.9545223902437, 205),
+                            (975.5857619444447, 108),
+                        ],
                     },
                     "propensity_to_purchase": {
                         "name": "Propensity to purchase",
@@ -945,45 +1072,66 @@ class AudienceRules(SwaggerView):
                         "min": 0.0,
                         "max": 1.0,
                         "steps": 0.05,
+                        "values": [
+                            (0.02537854973094943, 11522),
+                            (0.07478697708351197, 11651),
+                            (0.1248279331496129, 11249),
+                            (0.1747714344852409, 11112),
+                            (0.2249300773782431, 10985),
+                            (0.2748524565641576, 10763),
+                            (0.32492868003913766, 10220),
+                            (0.3745931779533858, 9997),
+                            (0.42461185061435747, 9278),
+                            (0.4747488547963946, 8767),
+                            (0.5245381213163091, 8144),
+                            (0.5748252185124849, 7368),
+                            (0.6245615267403664, 6694),
+                            (0.6745955099966098, 5902),
+                            (0.7241630427350405, 5265),
+                            (0.7744812744022826, 4559),
+                            (0.824692568267536, 3977),
+                            (0.8744300917431203, 3379),
+                            (0.9241139159001297, 3044),
+                            (0.9740590406189552, 2585),
+                        ],
                     },
                 },
                 "general": {
                     "age": {
                         "name": "Age",
                         "type": "range",
-                        "min": 0,
-                        "max": 100,
+                        "min": 14,
+                        "max": 79,
                     },
                     "email": {"name": "Email", "type": "text"},
                     "gender": {
                         "name": "Gender",
                         "type": "text",  # text for 5.0, list for future
-                        "options": [],
+                        "options": ["female", "male", "other"],
                     },
                     "location": {
                         "name": "Location",
                         "country": {
                             "name": "Country",
                             "type": "text",  # text for 5.0, list for future
-                            "options": [],
+                            "options": ["US"],
                         },
                         "state": {
                             "name": "State",
                             "type": "text",  # text for 5.0, list for future
-                            "options": [],
+                            "options": list(api_c.STATE_NAMES.keys()),
                         },
                         "city": {
                             "name": "City",
                             "type": "text",  # text for 5.0, list for future
                             "options": [],
                         },
-                        "zip_code": {"name": "Zip code", "type": "text"},
+                        "zip_code": {"name": "Zip", "type": "text"},
                     },
                 },
             }
         }
 
-        rules_constants = rules_constants["value"]
         rules_constants.update(rules_from_cdm)
 
         return rules_constants, HTTPStatus.OK.value
@@ -1045,6 +1193,10 @@ class SetLookalikeAudience(SwaggerView):
         Returns:
             Tuple[dict, int]: lookalike audience configuration,
                 HTTP status code.
+
+        Raises:
+            FailedDeliveryPlatformDependencyError: Delivery Platform Dependency
+                error.
         """
 
         body = LookalikeAudiencePostSchema().load(

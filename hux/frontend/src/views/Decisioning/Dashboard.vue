@@ -6,17 +6,28 @@
           <breadcrumb :items="breadcrumbItems" />
         </template>
         <template #right>
-          <hux-button
-            class="mr-4 pa-3"
-            is-custom-icon
-            is-tile
-            icon="history"
-            variant="white"
-            data-e2e="version-history-button"
-            @click="viewVersionHistory()"
-          >
-            Version history
-          </hux-button>
+          <v-menu v-model="modalOptions" close-on-click offset-y left>
+            <template #activator>
+              <span data-e2e="model-dashboard-options">
+                <icon
+                  type="dots-vertical"
+                  :size="18"
+                  class="cursor-pointer mr-7"
+                  color="black-darken4"
+                  @click.native="modalOptions = !modalOptions"
+                />
+              </span>
+            </template>
+            <template #default>
+              <div
+                class="px-4 py-2 white caption cursor-pointer"
+                data-e2e="version-history-button"
+                @click="viewVersionHistory()"
+              >
+                Version history
+              </div>
+            </template>
+          </v-menu>
         </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -35,28 +46,43 @@
               :key="key"
               data-e2e="performancemetric"
             >
-              <div
-                v-if="metric !== -1"
+              <metric-card
+                v-if="key === 'recall' && metric > 0"
                 class="model-dashboard__card px-6 py-3 mr-2"
+                :max-width="122"
+                :height="80"
+                :title="metric"
+                subtitle="Recall"
+                :high-level="true"
+                :interactable="false"
               >
-                <tooltip>
-                  <template #label-content>
-                    <div
-                      v-if="key === 'current_version'"
-                      class="text-overline black--text text--darken-4"
-                    >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
                       {{ metric }}
-                    </div>
-                    <div
-                      v-else
-                      class="text-overline"
-                      :class="metric < 0.01 ? 'error--text' : 'neroBlack--text'"
-                    >
-                      {{ metric.toFixed(2) }}
-                    </div>
-                  </template>
-                  <template #hover-content>
-                    <div v-if="key === 'current_version'">
+                    </template>
+                    <template #hover-content>
+                      {{ metric | Empty }}
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
+              <metric-card
+                v-if="key === 'current_version'"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :max-width="152"
+                :height="80"
+                :title="metric"
+                subtitle="Current version"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric }}
+                    </template>
+                    <template #hover-content>
                       <div class="mb-3">
                         Trained date<br />
                         {{ modelMetricDetails.last_trained | Date | Empty }}
@@ -73,43 +99,74 @@
                         Prediction period (days)<br />
                         {{ modelMetricDetails.prediction_window }}
                       </div>
-                    </div>
-                    <div v-else>
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
+              <metric-card
+                v-if="key === 'rmse' && metric > 0"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :max-width="122"
+                :height="80"
+                :title="metric"
+                subtitle="2"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric }}
+                    </template>
+                    <template #hover-content>
                       {{ metric | Empty }}
-                    </div>
-                  </template>
-                </tooltip>
-                <div
-                  v-if="key === 'current_version'"
-                  class="text-caption black--text text--darken-1 pt-1"
-                >
-                  Current version
-                </div>
-                <div
-                  v-else-if="key === 'rmse'"
-                  class="text-caption black--text text--darken-1 pt-1"
-                >
-                  RMSE
-                </div>
-                <div
-                  v-else-if="key === 'auc'"
-                  class="text-caption black--text text--darken-1 pt-1"
-                >
-                  AUC
-                </div>
-                <div
-                  v-else-if="key === 'recall'"
-                  class="text-caption black--text text--darken-1 pt-1"
-                >
-                  Recall
-                </div>
-                <div
-                  v-else-if="key === 'precision'"
-                  class="text-caption black--text text--darken-1 pt-1"
-                >
-                  Precision
-                </div>
-              </div>
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
+              <metric-card
+                v-if="key === 'auc' && metric > 0"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :max-width="122"
+                :height="80"
+                :title="metric"
+                subtitle="AUC"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric }}
+                    </template>
+                    <template #hover-content>
+                      {{ metric | Empty }}
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
+
+              <metric-card
+                v-if="key === 'precision' && metric > 0"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :max-width="122"
+                :height="80"
+                :title="metric"
+                subtitle="Precision"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric }}
+                    </template>
+                    <template #hover-content>
+                      {{ metric | Empty }}
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
             </div>
           </div>
         </v-col>
@@ -227,11 +284,12 @@ import Tooltip from "@/components/common/Tooltip"
 import DriftChart from "@/components/common/Charts/DriftChart/DriftChart.vue"
 import FeaturesTable from "./FeaturesTable.vue"
 import FeatureChart from "@/components/common/featureChart/FeatureChart"
-import huxButton from "@/components/common/huxButton"
+import Icon from "@/components/common/Icon"
 import LiftChart from "@/components/common/LiftChart.vue"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import VersionHistory from "./Drawers/VersionHistoryDrawer.vue"
+import MetricCard from "@/components/common/MetricCard"
 import { mapGetters, mapActions } from "vuex"
 
 export default {
@@ -243,15 +301,17 @@ export default {
     LiftChart,
     Page,
     PageHeader,
-    huxButton,
+    Icon,
     VersionHistory,
     DriftChart,
     FeaturesTable,
+    MetricCard,
   },
   data() {
     return {
       loading: false,
       loadingLift: true,
+      modalOptions: false,
       loadingModelFeatures: true,
       loadingDrift: true,
       featuresLoading: false,
@@ -349,6 +409,7 @@ export default {
     window.addEventListener("resize", this.sizeHandler)
   },
   destroyed() {
+    this.$store.dispatch("models/clearModelValues")
     window.removeEventListener("resize", this.sizeHandler)
   },
 
@@ -400,7 +461,7 @@ export default {
 .model-dashboard-wrap {
   .model-dashboard__card {
     height: 80px;
-    border: 1px solid var(--v-zircon-base);
+    border: 1px solid var(--v-black-lighten2);
     border-radius: 12px;
   }
 }

@@ -17,6 +17,9 @@ from huxunifylib.database.engagement_management import (
     get_engagement,
     get_engagements_by_audience,
 )
+from huxunifylib.database.engagement_audience_management import (
+    set_engagement_audience_destination_schedule,
+)
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.orchestration_management import (
     get_audience,
@@ -27,6 +30,7 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+    get_user_name,
     validate_delivery_params,
     validate_destination,
 )
@@ -36,6 +40,9 @@ from huxunify.api.route.utils import (
 from huxunify.api.schema.orchestration import (
     EngagementDeliveryHistorySchema,
     AudienceDeliveryHistorySchema,
+)
+from huxunify.api.schema.destinations import (
+    DeliveryScheduleSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -107,14 +114,18 @@ class EngagementDeliverDestinationView(SwaggerView):
 
     # pylint: disable=no-self-use
     # pylint: disable=too-many-return-statements
+    # If using validate delivery_params and get_user_name,
+    # ensure validate_delivery_params is called first
     @api_error_handler()
     @validate_destination()
     @validate_delivery_params
+    @get_user_name()
     def post(
         self,
         engagement_id: ObjectId,
         audience_id: ObjectId,
         destination_id: ObjectId,
+        user_name: str,
     ) -> Tuple[dict, int]:
         """Delivers one destination for an engagement audience.
 
@@ -126,6 +137,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
             destination_id (ObjectId): Destination ID.
+            user_name (str): User name.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -181,15 +193,16 @@ class EngagementDeliverDestinationView(SwaggerView):
         )
         # create notification
         create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            (
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=(
                 f"Successfully scheduled a delivery of audience "
                 f'"{target_audience[db_c.NAME]}" from engagement '
                 f'"{engagement[db_c.NAME]}" to destination '
                 f'"{target_destination[db_c.NAME]}".'
             ),
-            api_c.DELIVERY_TAG,
+            category=api_c.DELIVERY_TAG,
+            username=user_name,
         )
         return {
             "message": f"Successfully created delivery job(s) "
@@ -245,8 +258,9 @@ class EngagementDeliverAudienceView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
+    @get_user_name()
     def post(
-        self, engagement_id: ObjectId, audience_id: ObjectId
+        self, engagement_id: ObjectId, audience_id: ObjectId, user_name: str
     ) -> Tuple[dict, int]:
         """Delivers one audience for an engagement.
 
@@ -257,6 +271,7 @@ class EngagementDeliverAudienceView(SwaggerView):
         Args:
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
+            user_name (str): User name.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -289,14 +304,15 @@ class EngagementDeliverAudienceView(SwaggerView):
             ",".join(delivery_job_ids),
         )
         create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            (
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=(
                 f"Successfully scheduled a delivery of "
                 f'audience "{audience[db_c.NAME]}" from engagement '
                 f'"{engagement[db_c.NAME]}" across platforms.'
             ),
-            api_c.DELIVERY_TAG,
+            category=api_c.DELIVERY_TAG,
+            username=user_name,
         )
         return {
             "message": f"Successfully created delivery job(s) "
@@ -344,7 +360,10 @@ class EngagementDeliverView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
-    def post(self, engagement_id: ObjectId) -> Tuple[dict, int]:
+    @get_user_name()
+    def post(
+        self, engagement_id: ObjectId, user_name: str
+    ) -> Tuple[dict, int]:
         """Delivers all audiences for an engagement.
 
         ---
@@ -353,6 +372,7 @@ class EngagementDeliverView(SwaggerView):
 
         Args:
             engagement_id (ObjectId): Engagement ID.
+            user_name (str): User name.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -377,13 +397,14 @@ class EngagementDeliverView(SwaggerView):
             )
         # create notification
         create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            (
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=(
                 f"Successfully scheduled a delivery of all audiences "
                 f'from engagement "{engagement[db_c.NAME]}".'
             ),
-            api_c.DELIVERY_TAG,
+            category=api_c.DELIVERY_TAG,
+            username=user_name,
         )
         logger.info(
             "Successfully created delivery jobs %s.",
@@ -429,10 +450,10 @@ class AudienceDeliverView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DELIVERY_TAG]
 
-    # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
-    def post(self, audience_id: ObjectId) -> Tuple[dict, int]:
+    @get_user_name()
+    def post(self, audience_id: ObjectId, user_name: str) -> Tuple[dict, int]:
         """Delivers an audience for all of the engagements it is part of.
 
         ---
@@ -441,6 +462,7 @@ class AudienceDeliverView(SwaggerView):
 
         Args:
             audience_id (ObjectId): Audience ID.
+            user_name (str): User name.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure, .
@@ -474,17 +496,20 @@ class AudienceDeliverView(SwaggerView):
             ",".join(delivery_job_ids),
         )
         create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            (
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=(
                 f"Successfully scheduled a delivery of audience "
                 f'"{audience[db_c.NAME]}".'
             ),
-            api_c.DELIVERY_TAG,
+            category=api_c.DELIVERY_TAG,
+            username=user_name,
         )
         return {
             "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
         }, HTTPStatus.OK
+
+    # pylint: disable=no-self-use
 
 
 @add_view_to_blueprint(
@@ -618,6 +643,13 @@ class EngagementDeliverHistoryView(SwaggerView):
                 and job.get(api_c.AUDIENCE_ID)
                 and job.get(db_c.DELIVERY_PLATFORM_ID)
             ):
+                # Ignore deliveries to destinations no longer attached to engagement audiences
+                if (
+                    job.get(db_c.DELIVERY_PLATFORM_ID)
+                    not in destination_dict.keys()
+                ):
+                    continue
+
                 # append the necessary schema to the response list.
                 delivery_history.append(
                     {
@@ -801,3 +833,210 @@ class AudienceDeliverHistoryView(SwaggerView):
             ),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    delivery_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATION}/<destination_id>/{api_c.SCHEDULE}",
+    "EngagementDeliveryScheduleDestinationView",
+)
+class EngagementDeliveryScheduleDestinationView(SwaggerView):
+    """Engagement audience destination delivery schedule class."""
+
+    parameters = [
+        {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input delivery schedule body.",
+            "example": {
+                api_c.PERIODICIY: "Daily",
+                api_c.EVERY: 2,
+                api_c.HOUR: 11,
+                api_c.MINUTE: 15,
+                api_c.PERIOD: "PM",
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Result.",
+            "schema": {
+                "example": {"message": "Delivery scheduled updated."},
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to update the delivery schedule.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DELIVERY_TAG]
+
+    # pylint: disable=no-self-use
+    # pylint: disable=too-many-return-statements
+    @api_error_handler()
+    @validate_destination()
+    @validate_delivery_params
+    @get_user_name()
+    def post(
+        self,
+        engagement_id: ObjectId,
+        audience_id: ObjectId,
+        destination_id: ObjectId,
+        user_name: str,
+    ) -> Tuple[dict, int]:
+        """Sets the delivery schedule for one destination of an engagement audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (ObjectId): Engagement ID.
+            audience_id (ObjectId): Audience ID.
+            destination_id (ObjectId): Destination ID.
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Message indicating connection success/failure,
+                HTTP status code.
+        """
+
+        delivery_schedule = DeliveryScheduleSchema().load(
+            request.get_json(), partial=True
+        )
+
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
+
+        # validate that the destination ID is attached to the audience
+        valid_destination = False
+        for audience in engagement[db_c.AUDIENCES]:
+            for destination in audience[db_c.DESTINATIONS]:
+                if isinstance(
+                    destination, dict
+                ) and destination_id == destination.get(db_c.OBJECT_ID):
+                    valid_destination = True
+
+        if not valid_destination:
+            logger.error(
+                "Destination is not attached to the engagement %s  audience %s.",
+                engagement_id,
+                audience_id,
+            )
+            return {
+                "message": "Destination is not attached to the "
+                "engagement audience."
+            }, HTTPStatus.BAD_REQUEST
+
+        # set the delivery schedule for the engaged audience destination
+        # TODO - convert the schedule object into a CRON expression in another PR.
+        set_engagement_audience_destination_schedule(
+            database,
+            engagement_id,
+            audience_id,
+            destination_id,
+            delivery_schedule,
+            user_name,
+        )
+
+        # TODO schedule the actual JOB, in another PR for HUS-1148
+
+        return {
+            "message": "Successfully updated the delivery schedule."
+        }, HTTPStatus.OK
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @validate_destination()
+    @validate_delivery_params
+    @get_user_name()
+    def delete(
+        self,
+        engagement_id: ObjectId,
+        audience_id: ObjectId,
+        destination_id: ObjectId,
+        user_name: str,
+    ) -> Tuple[dict, int]:
+        """Sets the delivery schedule for one destination of an engagement audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (ObjectId): Engagement ID.
+            audience_id (ObjectId): Audience ID.
+            destination_id (ObjectId): Destination ID.
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Message indicating connection success/failure,
+                HTTP status code.
+        """
+
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
+
+        # validate that the destination ID is attached to the audience
+        valid_destination = False
+        for audience in engagement[db_c.AUDIENCES]:
+            for destination in audience[db_c.DESTINATIONS]:
+                if isinstance(
+                    destination, dict
+                ) and destination_id == destination.get(db_c.OBJECT_ID):
+                    valid_destination = True
+
+        if not valid_destination:
+            logger.error(
+                "Destination is not attached to the engagement %s  audience %s.",
+                engagement_id,
+                audience_id,
+            )
+            return {
+                "message": "Destination is not attached to the "
+                "engagement audience."
+            }, HTTPStatus.BAD_REQUEST
+
+        # set the delivery schedule for the engaged audience destination
+        set_engagement_audience_destination_schedule(
+            database,
+            engagement_id,
+            audience_id,
+            destination_id,
+            None,
+            user_name,
+            unset=True,
+        )
+        # TODO remove the scheduled JOB from AWS, in another PR for HUS-1148
+
+        return {
+            "message": "Successfully removed the delivery schedule."
+        }, HTTPStatus.OK

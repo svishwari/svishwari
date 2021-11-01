@@ -1,5 +1,4 @@
-"""
-Purpose of this file is for getting an okta access token.
+"""Purpose of this file is for getting an okta access token.
 https://developer.okta.com/docs/reference/api/authn/
 """
 import re
@@ -13,9 +12,7 @@ import pyperclip
 
 
 class PasswordType:
-    """
-    Class for handling the password type in argparse.
-    """
+    """Class for handling the password type in argparse."""
 
     DEFAULT = "Prompt if not specified"
 
@@ -24,23 +21,24 @@ class PasswordType:
 
         Args:
             value (str): argparse password value.
-
-        Returns:
-
         """
+
         if value == self.DEFAULT:
             value = getpass("Okta Password: ")
         self.value = value
 
-    def __str__(self):
-        """Get string value of password."""
+    def __str__(self) -> str:
+        """Get string value of password.
+
+        Returns:
+            value (str): argparse password value.
+        """
+
         return self.value
 
 
 class OktaOIDC:
-    """
-    purpose of this class is for housing okta OIDC workflows.
-    """
+    """Purpose of this class is for housing okta OIDC workflows."""
 
     HEADERS = {
         "content-type": "application/json",
@@ -65,10 +63,8 @@ class OktaOIDC:
             client_id (str): client id for okta.
             scopes (str): user auth scopes.
             redirect_uri (str): redirect uri after auth.
-
-        Returns:
-
         """
+
         self.org_url = org_url
         self.user = user
         self.password = pw
@@ -79,8 +75,6 @@ class OktaOIDC:
 
     def get_session_token(self) -> str:
         """Get the session token.
-
-        Args:
 
         Returns:
             str: session token from request.

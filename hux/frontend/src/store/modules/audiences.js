@@ -20,6 +20,8 @@ const state = {
 
   deliveries: {},
 
+  filteredDeliveries: [],
+
   demographics: {},
 
   geoCities: [],
@@ -42,6 +44,8 @@ const getters = {
     const deliveries = state.deliveries[id]
     return deliveries ? Object.values(state.deliveries[id]) : []
   },
+
+  filteredDeliveries: (state) => state.filteredDeliveries,
 
   demographics: (state) => state.demographics,
 
@@ -74,6 +78,10 @@ const mutations = {
     Vue.set(state.deliveries, id, deliveries)
   },
 
+  SET_FILTERED_DELIVERIES(state, deliveries) {
+    state.filteredDeliveries = deliveries
+  },
+
   SET_DEMOGRAPHICS(state, data) {
     state.demographics = data
   },
@@ -92,6 +100,10 @@ const mutations = {
 
   SET_GEO_STATES(state, data) {
     state.geoStates = data
+  },
+
+  REMOVE_AUDIENCE(state, id) {
+    Vue.delete(state.audiences, id)
   },
 }
 
@@ -231,6 +243,16 @@ const actions = {
     }
   },
 
+  async remove({ commit }, audience) {
+    try {
+      await api.audiences.remove(audience.id)
+      commit("REMOVE_AUDIENCE", audience.id)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async addLookalike({ commit }, payload) {
     try {
       const response = await api.lookalike.create(payload)
@@ -270,6 +292,16 @@ const actions = {
         id: id,
         deliveries: response.data,
       })
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getFilteredDeliveries({ commit }, data) {
+    try {
+      const response = await api.audiences.deliveries(data.id, data.query)
+      commit("SET_FILTERED_DELIVERIES", response.data || [])
     } catch (error) {
       handleError(error)
       throw error

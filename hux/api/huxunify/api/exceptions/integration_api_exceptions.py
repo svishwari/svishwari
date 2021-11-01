@@ -1,5 +1,4 @@
 """This module is for exceptions raised from Integrated APIs."""
-from huxunify.api import constants
 
 
 class IntegratedAPIEndpointException(Exception):
@@ -34,7 +33,10 @@ class FailedDeliveryPlatformDependencyError(IntegratedAPIEndpointException):
     )
 
 
-class FailedDateFilterIssue(IntegratedAPIEndpointException):
-    """Exception for date filter failure."""
+class EmptyAPIResponseError(IntegratedAPIEndpointException):
+    """Exception for empty response from integrated APIs."""
 
-    exception_message = constants.START_DATE_GREATER_THAN_END_DATE
+    exception_message = (
+        "Integrated API <{}> failure, returned status code "
+        "<{}>. Failed obtaining dependent data"
+    )

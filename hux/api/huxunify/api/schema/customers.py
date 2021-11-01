@@ -176,7 +176,7 @@ class DataFeedSchema(Schema):
     )
     data_source_name = Str(
         attribute=api_c.DATAFEED_DATA_SOURCE_NAME,
-        example=db_c.CDP_DATA_SOURCE_BLUECORE.title(),
+        example=db_c.DATA_SOURCE_PLATFORM_BLUECORE.title(),
     )
     new_ids_generated = Integer(example=21)
     num_records_processed = Integer(
@@ -373,38 +373,41 @@ class TotalCustomersInsightsSchema(Schema):
     new_customers_added = Integer(
         required=True, attribute=api_c.DIFFERENCE_COUNT, example=5, default=0
     )
+    customers_left = Integer(
+        required=True, attribute=api_c.CUSTOMERS_LEFT, example=-5, default=0
+    )
 
 
 class CustomersInsightsCitiesSchema(Schema):
-    """City-level geographic customer insights schema"""
+    """City level geographic customer insights schema."""
 
     city = Str(required=True, example="New York")
     state = Str(required=True, example="NY")
+    country = Str(required=True, example="US")
     size = Integer(
         attribute=api_c.CUSTOMER_COUNT, required=True, default=0, example=1234
     )
-    spending = Float(
+    revenue = Float(
         attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.231
     )
 
 
 class CustomersInsightsStatesSchema(Schema):
-    """State-level geographic customer insights schema"""
+    """State level geographic customer insights schema."""
 
+    country = Str(required=True, example="US")
     state = Str(attribute=api_c.NAME, required=True, example="New York")
     size = Integer(required=True, default=0, example=1234)
-    spending = Float(
+    revenue = Float(
         attribute=api_c.LTV, required=True, default=0.0, example=123.2345
     )
 
 
 class CustomersInsightsCountriesSchema(Schema):
-    """State-level geographic customer insights schema"""
+    """Country level geographic customer insights schema."""
 
-    country = Str(
-        attribute=api_c.NAME, required=True, example="United States of America"
-    )
+    country = Str(attribute=api_c.NAME, required=True, example="US")
     size = Integer(required=True, default=0, example=1234)
-    spending = Float(
+    revenue = Float(
         attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.2345
     )

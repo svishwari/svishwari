@@ -1,5 +1,5 @@
 """Purpose of this file is to house all the destination api tests."""
-
+from datetime import datetime
 from unittest import TestCase, mock
 from unittest.mock import MagicMock, patch
 from http import HTTPStatus
@@ -16,6 +16,7 @@ from huxunifylib.database import (
 )
 import huxunify.test.constants as t_c
 from huxunify.api.data_connectors.aws import parameter_store
+from huxunify.api.schema.destinations import DestinationDataExtGetSchema
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
 
@@ -34,6 +35,14 @@ class TestDestinationRoutes(TestCase):
         request_mocker.start()
 
         self.app = create_app().test_client()
+        self.new_auth_details = {
+            api_c.AUTHENTICATION_DETAILS: {
+                api_c.FACEBOOK_ACCESS_TOKEN: "fake_fake",
+                api_c.FACEBOOK_APP_SECRET: "fake",
+                api_c.FACEBOOK_APP_ID: "1234",
+                api_c.FACEBOOK_AD_ACCOUNT_ID: "12345678",
+            }
+        }
 
         # init mongo patch initially
         mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
@@ -117,6 +126,54 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(len(self.destinations), len(response.json))
 
+    # pylint: disable=unused-argument
+    @patch(
+        "huxunify.api.route.destination.FacebookConnector",
+        **{"return_value.raiseError.side_effect": Exception()},
+    )
+    @patch(
+        "huxunify.api.route.destination.SFMCConnector",
+        **{"return_value.raiseError.side_effect": Exception()},
+    )
+    def test_get_all_destinations_with_refresh(
+        self,
+        mock_facebook_connector: MagicMock,
+        mock_sfmc_connector: MagicMock,
+    ):
+        """Test get all destinations with refresh.
+
+        Args:
+            mock_facebook_connector (MagicMock): MagicMock of the Facebook Connector.
+            mock_sfmc_connector (MagicMock): MagicMock of the SFMC Connector.
+        """
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}?refresh_all=False",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(len(self.destinations), len(response.json))
+        self.assertEqual(response.json[0][db_c.STATUS], api_c.STATUS_PENDING)
+
+        destination_id = self.destinations[0][db_c.ID]
+
+        self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            json=self.new_auth_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}?refresh_all=True",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(len(self.destinations), len(response.json))
+        self.assertEqual(response.json[0][db_c.STATUS], api_c.STATUS_ACTIVE)
+        self.assertEqual(response.json[2][db_c.STATUS], api_c.STATUS_ACTIVE)
+
     def test_get_destination_with_valid_id(self):
         """Test get destination with valid ID."""
 
@@ -162,67 +219,82 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
+    # TODO HUS-1391 Remove this test
     def test_update_destination(self):
         """Test update destination."""
 
         destination_id = self.destinations[0][db_c.ID]
 
-        new_auth_details = {
-            "authentication_details": {
-                api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
-                api_c.FACEBOOK_APP_SECRET: "unified_fb_secret",
-                api_c.FACEBOOK_APP_ID: "2951925002021888",
-                api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
-            }
-        }
-
         response = self.app.put(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
-            json=new_auth_details,
+            json=self.new_auth_details,
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+    # TODO HUS-1391 Remove this test
     def test_update_destination_where_destination_not_found(self):
         """Test update destination where no destination is found."""
 
         destination_id = ObjectId()
 
-        new_auth_details = {
-            "authentication_details": {
-                "access_token": "MkU3Ojgwm",
-                "app_secret": "717bdOQqZO99",
-                "app_id": "2951925002021888",
-                "ad_account_id": "111333777",
-            }
-        }
-
         response = self.app.put(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
-            json=new_auth_details,
+            json=self.new_auth_details,
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
 
+    # TODO HUS-1391 Remove this test
     def test_update_destination_invalid_object_id(self):
         """Test update destination where invalid ID given."""
 
-        destination_id = "asdfg1234"
-
-        new_auth_details = {
-            "authentication_details": {
-                "access_token": "MkU3Ojgwm",
-                "app_secret": "717bdOQqZO99",
-                "app_id": "2951925002021888",
-                "ad_account_id": "111333777",
-            }
-        }
+        destination_id = t_c.INVALID_ID
 
         response = self.app.put(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
-            json=new_auth_details,
+            json=self.new_auth_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_update_destination_auth_details(self):
+        """Test update destination."""
+
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            json=self.new_auth_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_update_destination_auth_details_where_destination_not_found(self):
+        """Test update destination where no destination is found."""
+
+        destination_id = ObjectId()
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            json=self.new_auth_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+
+    def test_update_destination_auth_details_invalid_object_id(self):
+        """Test update destination where invalid ID given."""
+
+        destination_id = t_c.INVALID_ID
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            json=self.new_auth_details,
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -682,10 +754,16 @@ class TestDestinationRoutes(TestCase):
             {
                 api_c.SFMC_DATA_EXTENSION_NAME: "extension_name",
                 api_c.SFMC_CUSTOMER_KEY: "id12345",
+                "createdDate": datetime.strptime(
+                    "2021-10-19 00:10:20.345", "%Y-%m-%d %H:%M:%S.%f"
+                ),
             },
             {
                 api_c.SFMC_DATA_EXTENSION_NAME: "data_extension_name",
                 api_c.SFMC_CUSTOMER_KEY: "id12345678",
+                "createdDate": datetime.strptime(
+                    "2021-10-09 00:10:20.345", "%Y-%m-%d %H:%M:%S.%f"
+                ),
             },
         ]
         mock_sfmc_instance = mock_sfmc.return_value
@@ -693,6 +771,11 @@ class TestDestinationRoutes(TestCase):
             return_value
         )
 
+        expected_response = sorted(
+            DestinationDataExtGetSchema().dump(return_value, many=True),
+            key=lambda i: i[db_c.CREATE_TIME],
+            reverse=True,
+        )
         destination_id = self.destinations[2][db_c.ID]
 
         response = self.app.get(
@@ -701,10 +784,18 @@ class TestDestinationRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(response.json[0][api_c.NAME], "data_extension_name")
-        self.assertEqual(
-            response.json[0][api_c.DATA_EXTENSION_ID], "id12345678"
-        )
+        for idx, data_extension in enumerate(response.json):
+            self.assertEqual(
+                data_extension[api_c.NAME], expected_response[idx][api_c.NAME]
+            )
+            self.assertEqual(
+                data_extension[api_c.DATA_EXTENSION_ID],
+                expected_response[idx][api_c.DATA_EXTENSION_ID],
+            )
+            self.assertEqual(
+                data_extension[db_c.CREATE_TIME],
+                expected_response[idx][db_c.CREATE_TIME],
+            )
 
     @mock.patch("huxunify.api.route.destination.SFMCConnector")
     def test_retrieve_empty_destination_data_extensions(
@@ -761,3 +852,33 @@ class TestDestinationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    def test_patch_destination(self):
+        """Test patch destination."""
+
+        # get destination ID
+        destination_id = self.destinations[0][db_c.ID]
+
+        # get from database
+        destination = destination_management.get_delivery_platform(
+            self.database, self.destinations[0][db_c.ID]
+        )
+
+        # validate enabled flag
+        self.assertFalse(destination.get(db_c.ENABLED))
+
+        # patch destination
+        self.assertTrue(
+            HTTPStatus.OK,
+            self.app.patch(
+                f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+                json={db_c.ENABLED: not destination.get(db_c.ENABLED)},
+                headers=t_c.STANDARD_HEADERS,
+            ).status_code,
+        )
+
+        # grab from database again and check update flag to True.
+        destination = destination_management.get_delivery_platform(
+            self.database, self.destinations[0][db_c.ID]
+        )
+        self.assertTrue(destination[db_c.ENABLED])

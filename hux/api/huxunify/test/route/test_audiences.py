@@ -1,4 +1,5 @@
 """Purpose of this file is to house audience related tests."""
+import csv
 from datetime import datetime
 from http import HTTPStatus
 from unittest import TestCase, mock
@@ -12,13 +13,13 @@ from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.orchestration_management import create_audience
 
 from huxunify.api import constants as api_c
+from huxunify.api.config import get_config
 from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
+    CustomersInsightsCountriesSchema,
 )
-
 from huxunify.app import create_app
-
 from huxunify.test import constants as t_c
 
 
@@ -40,6 +41,8 @@ class AudienceDownloadsTest(TestCase):
         self.database = DatabaseClient(
             "localhost", 27017, None, None
         ).connect()
+
+        self.config = get_config(api_c.TEST_MODE)
 
         # mock get_db_client() in utils
         mock.patch(
@@ -111,14 +114,18 @@ class AudienceDownloadsTest(TestCase):
         # mock read_batches() in ConnectorCDP class to a return a test generator
         mock.patch.object(
             ConnectorCDP,
-            "read_batches",
-            return_value=t_c.dataframe_generator(),
+            "read_batch",
+            return_value=t_c.dataframe_method(),
         ).start()
 
         mock.patch.object(
             ConnectorCDP,
             "_connect",
             return_value=True,
+        ).start()
+
+        mock.patch.object(
+            ConnectorCDP, "fetch_okta_token", return_value=t_c.TEST_AUTH_TOKEN
         ).start()
 
         response = self.test_client.get(
@@ -128,7 +135,7 @@ class AudienceDownloadsTest(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(response.content_type, "application/csv")
+        self.assertEqual("application/csv", response.content_type)
 
     def test_download_amazon_ads(self) -> None:
         """Test to check download amazon_ads customers hashed data."""
@@ -136,14 +143,18 @@ class AudienceDownloadsTest(TestCase):
         # mock read_batches() in ConnectorCDP class to a return a test generator
         mock.patch.object(
             ConnectorCDP,
-            "read_batches",
-            return_value=t_c.dataframe_generator(),
+            "read_batch",
+            return_value=t_c.dataframe_method(),
         ).start()
 
         mock.patch.object(
             ConnectorCDP,
             "_connect",
             return_value=True,
+        ).start()
+
+        mock.patch.object(
+            ConnectorCDP, "fetch_okta_token", return_value=t_c.TEST_AUTH_TOKEN
         ).start()
 
         response = self.test_client.get(
@@ -153,16 +164,16 @@ class AudienceDownloadsTest(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(response.content_type, "application/csv")
+        self.assertEqual("application/csv", response.content_type)
 
-    def test_download_generic(self) -> None:
+    def test_download_generic_ads(self) -> None:
         """Test to check download generic customers both hashed and PII data."""
 
         # mock read_batches() in ConnectorCDP class to a return a test generator
         mock.patch.object(
             ConnectorCDP,
-            "read_batches",
-            return_value=t_c.dataframe_generator(),
+            "read_batch",
+            return_value=t_c.dataframe_method(),
         ).start()
 
         mock.patch.object(
@@ -170,6 +181,11 @@ class AudienceDownloadsTest(TestCase):
             "_connect",
             return_value=True,
         ).start()
+
+        mock.patch.object(
+            ConnectorCDP, "fetch_okta_token", return_value=t_c.TEST_AUTH_TOKEN
+        ).start()
+
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
             f"{self.audience[db_c.ID]}/{api_c.GENERIC_ADS}",
@@ -177,7 +193,147 @@ class AudienceDownloadsTest(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(response.content_type, "application/csv")
+        self.assertEqual("application/csv", response.content_type)
+
+    def test_download_empty_google_ads(self) -> None:
+        """Test to check download empty google_ads audience file."""
+
+        # mock config to change the RETURN_EMPTY_AUDIENCE_FILE config value to
+        # True since pytest mode's default value for this config is False
+        self.config.RETURN_EMPTY_AUDIENCE_FILE = True
+        mock.patch(
+            "huxunify.api.config.get_config",
+            return_value=self.config,
+        ).start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
+            f"{self.audience[db_c.ID]}/{api_c.GOOGLE_ADS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual("application/csv", response.content_type)
+        row_count = len(
+            list(csv.reader(response.data.decode("utf-8").splitlines()))
+        )
+        self.assertEqual(1, row_count)
+
+    def test_download_empty_amazon_ads(self) -> None:
+        """Test to check download empty amazon_ads audience file."""
+
+        # mock config to change the RETURN_EMPTY_AUDIENCE_FILE config value to
+        # True since pytest mode's default value for this config is False
+        self.config.RETURN_EMPTY_AUDIENCE_FILE = True
+        mock.patch(
+            "huxunify.api.config.get_config",
+            return_value=self.config,
+        ).start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
+            f"{self.audience[db_c.ID]}/{api_c.AMAZON_ADS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual("application/csv", response.content_type)
+        row_count = len(
+            list(csv.reader(response.data.decode("utf-8").splitlines()))
+        )
+        self.assertEqual(1, row_count)
+
+    def test_download_empty_generic_ads(self) -> None:
+        """Test to check download empty generic_ads audience file."""
+
+        # mock config to change the RETURN_EMPTY_AUDIENCE_FILE config value to
+        # True since pytest mode's default value for this config is False
+        self.config.RETURN_EMPTY_AUDIENCE_FILE = True
+        mock.patch(
+            "huxunify.api.config.get_config",
+            return_value=self.config,
+        ).start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
+            f"{self.audience[db_c.ID]}/{api_c.GENERIC_ADS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual("application/csv", response.content_type)
+        row_count = len(
+            list(csv.reader(response.data.decode("utf-8").splitlines()))
+        )
+        self.assertEqual(1, row_count)
+
+
+class AudienceInsightsTest(TestCase):
+    """Tests for Audience Insights"""
+
+    def setUp(self) -> None:
+        """Setup tests."""
+
+        self.audiences_endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}"
+        )
+
+        # init mongo patch initially
+        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
+        mongo_patch.start()
+
+        # setup the mock DB client
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
+
+        # mock get_db_client() in utils
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() in decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() in audiences
+        mock.patch(
+            "huxunify.api.route.audiences.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock request for introspect call
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.get(
+            t_c.CDM_HEALTHCHECK_CALL, json=t_c.CDM_HEALTHCHECK_RESPONSE
+        )
+        self.request_mocker.start()
+
+        # stop all mocks in cleanup
+        self.addCleanup(mock.patch.stopall)
+
+        # setup the flask test client
+        self.test_client = create_app().test_client()
+
+        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
+
+        self.user_name = "Joe Smithers"
+
+        # create audience first
+        audience = {
+            db_c.AUDIENCE_NAME: "Test Audience",
+            "audience_filters": [],
+            api_c.USER_NAME: self.user_name,
+            api_c.DESTINATION_IDS: [],
+        }
+        self.audience = create_audience(self.database, **audience)
 
     def test_audience_insights_cities_success(self) -> None:
         """Test get audience insights by cities."""
@@ -225,6 +381,32 @@ class AudienceDownloadsTest(TestCase):
         self.assertTrue(
             t_c.validate_schema(
                 CustomersInsightsStatesSchema(),
+                response.json,
+                True,
+            )
+        )
+
+    def test_customers_insights_countries_success(self) -> None:
+        """Test get customers insights by countries."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.CUSTOMER_PROFILE_API}/customer-profiles/insights/count-by-state",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/"
+            f"{self.audience[db_c.ID]}/{api_c.COUNTRIES}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(
+                CustomersInsightsCountriesSchema(),
                 response.json,
                 True,
             )

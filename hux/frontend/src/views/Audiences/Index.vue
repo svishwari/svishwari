@@ -1,8 +1,22 @@
 <template>
   <div class="audiences-wrap white">
-    <page-header :header-height-changes="'py-3'">
-      <template slot="left">
-        <breadcrumb :items="breadcrumbItems" />
+    <page-header class="py-5" :header-height="110">
+      <template #left>
+        <div>
+          <breadcrumb :items="breadcrumbItems" />
+        </div>
+        <div class="text-subtitle-1 font-weight-regular">
+          Here are a list of audiences that you have saved and created from
+          segmenting your customer list in the Segment Playground.
+        </div>
+      </template>
+      <template #right>
+        <icon
+          type="filter"
+          :size="22"
+          class="cursor-pointer"
+          color="black-darken4"
+        />
       </template>
     </page-header>
     <page-header class="top-bar" :header-height="71">
@@ -18,10 +32,12 @@
           append
         >
           <huxButton
-            icon="mdi-plus"
-            icon-position="left"
-            variant="primary"
+            variant="primary base"
+            icon-color="white"
+            icon-variant="base"
+            icon="plus"
             size="large"
+            is-custom-icon
             is-tile
             class="ma-2 font-weight-regular no-shadow mr-0"
           >
@@ -39,6 +55,7 @@
         view-height="calc(100vh - 210px)"
         sort-column="update_time"
         sort-desc="false"
+        data-e2e="audience-table"
       >
         <template #row-item="{ item }">
           <td
@@ -59,12 +76,7 @@
               <span v-if="item.is_lookalike == true" class="mr-3">
                 <tooltip>
                   <template #label-content>
-                    <icon
-                      type="lookalike"
-                      :size="20"
-                      color="black-darken4"
-                      class="mr-2"
-                    />
+                    <icon type="lookalike" :size="20" class="mr-2" />
                   </template>
                   <template #hover-content>Lookalike audience</template>
                 </tooltip>
@@ -80,7 +92,7 @@
                 @actionFavorite="handleActionFavorite(item, 'audiences')"
               />
             </div>
-            <div v-if="header.value == 'status'" class="text-caption">
+            <div v-if="header.value == 'status'" class="text-h5">
               <status
                 :status="item[header.value]"
                 :show-label="true"
@@ -156,7 +168,7 @@
                 </template>
                 <template #hover-content>
                   <div>
-                    <div class="neroBlack--text text-caption mb-2">
+                    <div class="neroBlack--text text-body-2 mb-2">
                       Delivered to:
                     </div>
                     <div
@@ -169,11 +181,11 @@
                           :type="deliveries.delivery_platform_type"
                           :size="18"
                         />
-                        <span class="ml-1 neroBlack--text text-caption">
+                        <span class="ml-1 neroBlack--text text-body-2">
                           {{ deliveries.delivery_platform_name }}
                         </span>
                       </div>
-                      <div class="neroBlack--text text-caption">
+                      <div class="neroBlack--text text-body-2">
                         {{ deliveries.last_delivered | Date | Empty }}
                       </div>
                     </div>
@@ -198,9 +210,7 @@
           </td>
         </template>
       </hux-data-table>
-
-      <empty-page v-if="!isDataExists">
-        <template #icon>mdi-alert-circle-outline</template>
+      <empty-page v-if="!isDataExists" type="no-audience" size="50">
         <template #title>Oops! There’s nothing here yet</template>
         <template #subtitle>
           You currently have no audiences created! You can create the
@@ -214,12 +224,14 @@
             append
           >
             <huxButton
-              icon="mdi-plus"
-              icon-position="left"
-              variant="primary"
+              variant="primary base"
+              icon-color="white"
+              icon-variant="base"
+              icon="plus"
               size="large"
+              is-custom-icon
               is-tile
-              class="ma-2 font-weight-regular"
+              class="ma-2 font-weight-regular caption"
             >
               Audience
             </huxButton>
@@ -233,14 +245,39 @@
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
       @onToggle="(val) => (showLookAlikeDrawer = val)"
-      @onError="onError($event)"
     />
 
-    <hux-alert
-      v-model="flashAlert"
-      :type="alert.type"
-      :message="alert.message"
-    />
+    <confirm-modal
+      v-model="confirmModal"
+      icon="sad-face"
+      type="error"
+      title="You are about to delete"
+      :sub-title="`${confirmSubtitle}`"
+      right-btn-text="Yes, delete it"
+      left-btn-text="Nevermind!"
+      data-e2e="remove-audience-confirmation"
+      @onCancel="confirmModal = !confirmModal"
+      @onConfirm="confirmRemoval()"
+    >
+      <template #body>
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
+          Are you sure you want to delete this audience&#63;
+        </div>
+        <div
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
+          By deleting this audience you will not be able to recover it and it
+          may impact any associated engagements.
+        </div>
+      </template>
+    </confirm-modal>
   </div>
 </template>
 
@@ -261,7 +298,7 @@ import Icon from "@/components/common/Icon.vue"
 import Status from "../../components/common/Status.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import Logo from "../../components/common/Logo.vue"
-import HuxAlert from "@/components/common/HuxAlert.vue"
+import ConfirmModal from "@/components/common/ConfirmModal"
 
 export default {
   name: "Audiences",
@@ -280,15 +317,10 @@ export default {
     Status,
     Tooltip,
     Logo,
-    HuxAlert,
+    ConfirmModal,
   },
   data() {
     return {
-      flashAlert: false,
-      alert: {
-        type: "success",
-        message: "",
-      },
       breadcrumbItems: [
         {
           text: "Audiences",
@@ -348,6 +380,8 @@ export default {
       loading: false,
       selectedAudience: null,
       showLookAlikeDrawer: false,
+      confirmModal: false,
+      confirmSubtitle: "",
     }
   },
   computed: {
@@ -356,7 +390,7 @@ export default {
       userFavorites: "users/favorites",
     }),
     audienceList() {
-      let audienceValue = this.rowData
+      let audienceValue = JSON.parse(JSON.stringify(this.rowData))
       audienceValue.forEach((audience) => {
         audience.destinations.sort((a, b) => a.name.localeCompare(b.name))
       })
@@ -377,6 +411,7 @@ export default {
       getAllAudiences: "audiences/getAll",
       markFavorite: "users/markFavorite",
       clearFavorite: "users/clearFavorite",
+      deleteAudience: "audiences/remove",
     }),
 
     isUserFavorite(entity, type) {
@@ -391,7 +426,15 @@ export default {
         this.clearFavorite({ id: item.id, type: type })
       }
     },
-
+    openModal(audience) {
+      this.selectedAudience = audience
+      this.confirmSubtitle = audience.name
+      this.confirmModal = true
+    },
+    async confirmRemoval() {
+      await this.deleteAudience({ id: this.selectedAudience.id })
+      this.confirmModal = false
+    },
     getActionItems(audience) {
       // This assumes we cannot create a lookalike audience from a lookalike audience
       let isLookalikeableActive =
@@ -426,7 +469,13 @@ export default {
             icon: "facebook",
           },
         },
-        { title: "Delete", isDisabled: true },
+        {
+          title: "Delete audience",
+          isDisabled: false,
+          onClick: () => {
+            this.openModal(audience)
+          },
+        },
       ]
 
       return actionItems
@@ -459,11 +508,6 @@ export default {
     openLookAlikeDrawer(audience) {
       this.selectedAudience = audience
       this.showLookAlikeDrawer = true
-    },
-    onError(message) {
-      this.alert.type = "error"
-      this.alert.message = message
-      this.flashAlert = true
     },
   },
 }

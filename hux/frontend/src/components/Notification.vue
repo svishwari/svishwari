@@ -1,22 +1,19 @@
 <template>
   <v-menu :min-width="200" left offset-y close-on-click>
     <template #activator="{ on }">
-      <span class="d-flex cursor-pointer" v-on="on">
-        <v-btn
-          class="mx-2 box-shadow-25"
+      <span class="d-flex cursor-pointer mr-4" v-on="on">
+        <icon
           data-e2e="notification-bell"
-          color="white"
-          fab
-          x-small
-        >
-          <v-icon color="primary"> mdi-bell-outline </v-icon>
-        </v-btn>
+          class="mx-2 my-2 nav-icon"
+          type="bell-notification"
+          :size="24"
+        />
       </span>
     </template>
     <v-list class="alert-menu-main">
       <v-list-item>
-        <v-list-item-title class="font-weight-bold">
-          Most recent alerts
+        <v-list-item-title class="font-weight-semi-bold text-h6 black--text">
+          Unread alerts
         </v-list-item-title>
       </v-list-item>
       <div class="notification-div">
@@ -26,28 +23,28 @@
             :key="data.id"
             data-e2e="notification-item"
           >
-            <v-list-item-title
-              class="text-h6 black--text text--darken-4 list-main"
-            >
+            <v-list-item-title class="text-h6 black--text list-main">
               <div class="d-flex text-caption">
                 <status
                   :status="data.notification_type"
                   :show-label="false"
-                  :icon-size="17"
+                  :icon-size="21"
                 />
-                <tooltip>
-                  <template #label-content>
-                    <span class="wrap-word">
-                      {{ data.description }}
-                    </span>
-                  </template>
-                  <template #hover-content>
-                    <span> {{ data.description }} </span>
-                  </template>
-                </tooltip>
-              </div>
-              <div class="list-stamp">
-                <time-stamp :value="data.created" />
+                <div class="d-flex flex-column">
+                  <tooltip>
+                    <template #label-content>
+                      <span class="wrap-word text-body-2 black--text">
+                        {{ data.description }}
+                      </span>
+                    </template>
+                    <template #hover-content>
+                      <span> {{ data.description }} </span>
+                    </template>
+                  </tooltip>
+                  <div class="text-body-2 black--text">
+                    <time-stamp :value="data.created" />
+                  </div>
+                </div>
               </div>
             </v-list-item-title>
           </v-list-item>
@@ -60,7 +57,8 @@
             :to="{
               name: 'AlertsAndNotifications',
             }"
-            class="text-h6 view-all text-decoration-none"
+            data-e2e="notifications-view-all"
+            class="text-body-1 primary--text view-all text-decoration-none"
           >
             View all alerts
           </router-link>
@@ -76,6 +74,7 @@ import { orderBy } from "lodash"
 import Status from "./common/Status.vue"
 import Tooltip from "./common/Tooltip.vue"
 import TimeStamp from "./common/huxTable/TimeStamp.vue"
+import Icon from "@/components/common/Icon"
 
 export default {
   name: "Notification",
@@ -83,6 +82,7 @@ export default {
     Status,
     TimeStamp,
     Tooltip,
+    Icon,
   },
   data() {
     return {
@@ -134,7 +134,6 @@ export default {
 .list-stamp {
   margin-left: 25px;
   margin-top: 5px;
-  font-size: 11px;
 }
 .list-main {
   margin-bottom: 22px !important;

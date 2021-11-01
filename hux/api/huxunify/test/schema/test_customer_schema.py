@@ -9,7 +9,12 @@ from huxunify.api.schema.customers import (
     CustomerOverviewSchema,
     DataFeedSchema,
     TotalCustomersInsightsSchema,
+    CustomersInsightsCountriesSchema,
+    CustomersInsightsStatesSchema,
+    CustomersInsightsCitiesSchema,
 )
+
+import huxunify.test.constants as t_c
 
 
 class CustomerSchemaTest(TestCase):
@@ -21,8 +26,8 @@ class CustomerSchemaTest(TestCase):
         doc = dict(
             datafeed_id="1",
             datafeed_name="Really_long_Feed_Name_106",
-            data_source_type=db_c.CDP_DATA_SOURCE_BLUECORE,
-            data_source_name=db_c.CDP_DATA_SOURCE_BLUECORE.title(),
+            data_source_type=db_c.DATA_SOURCE_PLATFORM_BLUECORE,
+            data_source_name=db_c.DATA_SOURCE_PLATFORM_BLUECORE.title(),
             new_ids_generated=21,
             num_records_processed=2000000,
             match_rate=0.98,
@@ -41,10 +46,55 @@ class CustomerSchemaTest(TestCase):
             api_c.DATE: "2021-04-01T00:00:00.000Z",
             api_c.TOTAL_CUSTOMERS: 105080,
             api_c.NEW_CUSTOMERS_ADDED: 4321,
+            api_c.CUSTOMERS_LEFT: -4321,
         }
 
         self.assertFalse(
             TotalCustomersInsightsSchema().validate(customer_count_doc)
+        )
+
+    def test_customers_insights_countries_schema(self) -> None:
+        """Test CustomersInsightsCountriesSchema."""
+
+        customers_insight_country = {
+            api_c.COUNTRY: "US",
+            api_c.SIZE: 1234,
+            t_c.REVENUE: 123.2345,
+        }
+
+        self.assertFalse(
+            CustomersInsightsCountriesSchema().validate(
+                customers_insight_country
+            )
+        )
+
+    def test_customers_insights_states_schema(self) -> None:
+        """Test CustomersInsightsStatesSchema."""
+
+        customers_insight_state = {
+            api_c.STATE: "New York",
+            api_c.COUNTRY: "US",
+            api_c.SIZE: 1234,
+            t_c.REVENUE: 123.2345,
+        }
+
+        self.assertFalse(
+            CustomersInsightsStatesSchema().validate(customers_insight_state)
+        )
+
+    def test_customers_insights_cities_schema(self) -> None:
+        """Test CustomersInsightsCitiesSchema."""
+
+        customers_insight_city = {
+            api_c.CITY: "New York",
+            api_c.STATE: "NY",
+            api_c.COUNTRY: "US",
+            api_c.SIZE: 1234,
+            t_c.REVENUE: 123.2345,
+        }
+
+        self.assertFalse(
+            CustomersInsightsCitiesSchema().validate(customers_insight_city)
         )
 
     def test_customers_overview_schema(self) -> None:

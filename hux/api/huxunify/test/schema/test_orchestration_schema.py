@@ -99,6 +99,7 @@ class OrchestrationSchemaTest(TestCase):
     def test_match_rate_audience_get_schema(self) -> None:
         """Test audience get schema match_rate."""
 
+        destination_id = str(bson.ObjectId())
         audience = {
             api_c.ID: "5f5f7262997acad4bac4384a",
             db_c.NAME: "Audience 1",
@@ -114,12 +115,14 @@ class OrchestrationSchemaTest(TestCase):
                             db_c.NAME: "Delivery 1",
                             db_c.SIZE: 1000,
                             api_c.MATCH_RATE: 0,
+                            db_c.DELIVERY_PLATFORM_ID: destination_id,
                         },
                         {
                             api_c.ID: "5f5f7262997acad4bac4384d",
                             db_c.NAME: "Delivery 2",
                             db_c.SIZE: 1000,
                             api_c.MATCH_RATE: 0,
+                            db_c.DELIVERY_PLATFORM_ID: destination_id,
                         },
                     ],
                 }
@@ -142,6 +145,14 @@ class OrchestrationSchemaTest(TestCase):
         deliveries = schema[db_c.ENGAGEMENTS_COLLECTION][0][db_c.DELIVERIES]
         self.assertGreaterEqual(deliveries[0][api_c.MATCH_RATE], 0)
         self.assertGreaterEqual(deliveries[1][api_c.MATCH_RATE], 0)
+
+        # test to ensure all deliveries are the same and they are set.
+        self.assertTrue(
+            all(
+                [x[db_c.DELIVERY_PLATFORM_ID] for x in deliveries]
+                + [destination_id]
+            )
+        )
 
     def test_engagement_delivery_history_schema(self) -> None:
         """Test engagement delivery history schema."""

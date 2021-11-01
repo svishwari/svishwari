@@ -4,9 +4,15 @@
 import dayjs from "dayjs"
 import calendar from "dayjs/plugin/calendar"
 import relativeTime from "dayjs/plugin/relativeTime"
+import utc from "dayjs/plugin/utc"
+import timezone from "dayjs/plugin/timezone"
+import advancedFormat from "dayjs/plugin/advancedFormat"
 
 dayjs.extend(calendar)
 dayjs.extend(relativeTime)
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(advancedFormat)
 
 /**
  * Formats a datetime field to human friendly date.
@@ -14,9 +20,15 @@ dayjs.extend(relativeTime)
  * @param {string|*} value Datetime eg. 2021-03-17T13:29:49.351Z
  * @param {string} format Format eg. "MM/D/YYYY [at] hh:ss A"
  * @param {boolean} noSuffix Whether to include a suffix
+ * @param {string} local local Local time eg. if true, it will use the local time zone of the user.
  * @returns {string} Formatted date time string eg. 3/17/2021 at 1:29 PM
  */
-const Date = (value, format = "M/D/YYYY [at] h:mm A", noSuffix = false) => {
+const Date = (
+  value,
+  format = "M/D/YYYY [at] h:mm A",
+  noSuffix = false,
+  local = false
+) => {
   if (!value) return null
 
   let date = dayjs(value)
@@ -32,7 +44,19 @@ const Date = (value, format = "M/D/YYYY [at] h:mm A", noSuffix = false) => {
 
   if (format === "calendar") return date.calendar()
 
+  if (local) return date.tz().format(format)
+
   return date.format(format)
+}
+
+/**
+ * Formats an abbreviation of a given string.
+ *
+ * @param {string|*} value String eg. Eastern Standard Time
+ * @returns {string} Formatted string eg. EST
+ */
+const Abbreviation = (value) => {
+  return value.match(/[A-Z]/g).join("")
 }
 
 /**
@@ -71,6 +95,39 @@ const Empty = (value, placeholder = "—") => {
     return placeholder
   }
   return value
+}
+
+/**
+ * Shortens a string.
+ *
+ * @param {*} value String to shorten eg. "60b960176021710aa141ab2c"
+ * @param {object} options Configuration options for shorten filter
+ * @param {string} options.numCharacters Number of characters to truncate to eg. 5
+ * @param {string} options.position Shorten to the first or last characters eg. "last"
+ * @param {boolean} options.ellipsis Whether to append an ellipsis eg. false
+ * @returns {string} Truncated string eg. "1ab2c"
+ */
+const Shorten = (value, options = {}) => {
+  let val = value || ""
+  const { numCharacters = 5, position = "last", ellipsis = false } = options
+
+  if (String(val).length > numCharacters) {
+    let start = 0
+    let end = numCharacters
+
+    if (position === "last") {
+      start = val.length - numCharacters
+      end = val.length
+    }
+
+    val = val.substring(start, end)
+  }
+
+  if (ellipsis) {
+    val = val + "..."
+  }
+
+  return val
 }
 
 const Numeric = (
@@ -194,7 +251,9 @@ const DeliverySchedule = (value) => {
 export default {
   Date,
   DateRelative,
+  Abbreviation,
   Empty,
+  Shorten,
   Numeric,
   TitleCase,
   shortName,

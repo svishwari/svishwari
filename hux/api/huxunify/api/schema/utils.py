@@ -1,6 +1,6 @@
 """Purpose of this file is to house schema utilities"""
 import uuid
-from typing import AnyStr
+from typing import AnyStr, Union
 from http import HTTPStatus
 from datetime import datetime, timedelta
 import random
@@ -8,7 +8,9 @@ from bson import ObjectId
 from flask_marshmallow import Schema
 from marshmallow import ValidationError
 from marshmallow.fields import Boolean, DateTime, Int, Str, Float
+from croniter import croniter, CroniterNotAlphaError
 from huxunifylib.database import constants as db_c
+from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
 
 # get random data back based on marshmallow field type
@@ -124,6 +126,23 @@ FAILED_DEPENDENCY_424_RESPONSE = {
 }
 
 
+class EmptyResponseDependencySchema(Schema):
+    """Empty Response Dependency schema."""
+
+    code = Int(name="code", example=404)
+    message = Str(
+        name="message", example=api_c.EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE
+    )
+
+
+EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE = {
+    HTTPStatus.NOT_FOUND.value: {
+        "schema": EmptyResponseDependencySchema,
+        "description": api_c.FAILED_DEPENDENCY_ERROR_MESSAGE,
+    },
+}
+
+
 def redact_fields(data: dict, redacted_fields: list) -> dict:
     """Function is meant to redact fields that a customer is not allowed to see
 
@@ -140,6 +159,27 @@ def redact_fields(data: dict, redacted_fields: list) -> dict:
             data[field] = api_c.REDACTED
 
     return data
+
+
+def get_next_schedule(
+    cron_expression: str, start_date: datetime
+) -> Union[datetime, None]:
+    """Get the next schedule from the cron expression.
+
+    Args:
+        cron_expression (str): Cron Expression of the schedule.
+        start_date (datetime): Start Datetime.
+
+    Returns:
+        next_schedule(datetime): Next Schedule datetime.
+    """
+
+    if isinstance(cron_expression, str) and isinstance(start_date, datetime):
+        try:
+            return croniter(cron_expression, start_date).get_next(datetime)
+        except CroniterNotAlphaError:
+            logger.error("Encountered cron expression error, returning None")
+    return None
 
 
 if __name__ == "__main__":

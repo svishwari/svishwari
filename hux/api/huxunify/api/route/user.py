@@ -1,18 +1,21 @@
 # pylint: disable=no-self-use
 """Paths for the User API"""
+import random
 from http import HTTPStatus
 from typing import Tuple
+from faker import Faker
 
 from bson import ObjectId
 from connexion.exceptions import ProblemException
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
 from huxunifylib.database import constants as db_constants
 from huxunifylib.database.user_management import (
-    get_user,
     manage_user_favorites,
+    get_all_users,
+    update_user,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.decorators import (
@@ -22,6 +25,7 @@ from huxunify.api.route.decorators import (
 )
 from huxunify.api.route.utils import (
     get_db_client,
+    get_user_from_db,
 )
 from huxunify.api.schema.user import UserSchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -54,6 +58,9 @@ class UserProfile(SwaggerView):
             "description": "Retrieve Individual User profile",
             "schema": UserSchema,
         },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get user details from request."
+        },
         HTTPStatus.NOT_FOUND.value: {
             "schema": NotFoundError,
         },
@@ -76,24 +83,54 @@ class UserProfile(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
 
-        okta_id = introspect_token(get_token_from_request(request)[0]).get(
-            "user_id"
-        )
-
         try:
-            return (
-                UserSchema().dump(get_user(get_db_client(), okta_id)),
-                HTTPStatus.OK,
+            # get access token from request and set it to a variable for it to
+            # be used in subsequent requests
+            access_token = get_token_from_request(request)[0]
+
+            okta_id = introspect_token(access_token).get(
+                api_c.OKTA_USER_ID, None
             )
 
-        except Exception as exc:
+            # return unauthorized response if no valid okta_id is fetched by
+            # introspecting the access_token
+            if okta_id is None:
+                return {
+                    "message": api_c.AUTH401_ERROR_MESSAGE
+                }, HTTPStatus.UNAUTHORIZED
 
+            # get the user info and the corresponding user document from db
+            # from the access_token
+            user_response = get_user_from_db(access_token)
+
+            # if the user_response object is of type tuple, then return it as
+            # such since a failure must have occurred while fetching user data
+            # from db
+            if isinstance(user_response, tuple):
+                return user_response
+
+            # update user record's login_count and update_time in DB and return
+            # the updated record
+            user = update_user(
+                get_db_client(),
+                okta_id=okta_id,
+                update_doc={
+                    db_constants.USER_LOGIN_COUNT: (
+                        user_response.get(db_constants.USER_LOGIN_COUNT, 0) + 1
+                    )
+                },
+            )
+
+            return (
+                UserSchema().dump(user),
+                HTTPStatus.OK,
+            )
+        except Exception as exc:
             logger.error(
                 "%s: %s.",
                 exc.__class__,
                 exc,
             )
-
             raise ProblemException(
                 status=int(HTTPStatus.BAD_REQUEST.value),
                 title=HTTPStatus.BAD_REQUEST.description,
@@ -155,7 +192,7 @@ class AddUserFavorite(SwaggerView):
         """
 
         okta_id = introspect_token(get_token_from_request(request)[0]).get(
-            "user_id"
+            api_c.OKTA_USER_ID
         )
 
         if component_name not in db_constants.FAVORITE_COMPONENTS:
@@ -238,7 +275,7 @@ class DeleteUserFavorite(SwaggerView):
         """
 
         okta_id = introspect_token(get_token_from_request(request)[0]).get(
-            "user_id"
+            api_c.OKTA_USER_ID
         )
 
         if component_name not in db_constants.FAVORITE_COMPONENTS:
@@ -265,3 +302,47 @@ class DeleteUserFavorite(SwaggerView):
         return {
             "message": f"{component_id} not part of user favorites"
         }, HTTPStatus.OK
+
+
+@add_view_to_blueprint(user_bp, api_c.USER_ENDPOINT, "UserView")
+class UserView(SwaggerView):
+    """User view class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "List of all Users.",
+            "schema": {"type": "array", "items": UserSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get all Users."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
+        """Retrieves all users.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[list, int]: list of users, HTTP status code.
+        """
+
+        # get all users
+        users = get_all_users(get_db_client())
+
+        # generate random phone number and user access level
+        for user in users:
+            user[api_c.USER_PHONE_NUMBER] = Faker().phone_number()
+            user[api_c.USER_ACCESS_LEVEL] = random.choice(
+                ["Edit", "View-only", "Admin"]
+            )
+
+        return (
+            jsonify(UserSchema().dump(users, many=True)),
+            HTTPStatus.OK.value,
+        )

@@ -17,6 +17,7 @@ from huxunifylib.database.user_management import set_user
 from huxunify.app import create_app
 
 from huxunify.api import constants as api_c
+from huxunify.api.route.utils import get_user_favorites
 from huxunify.api.schema.user import UserSchema
 
 import huxunify.test.constants as t_c
@@ -31,6 +32,7 @@ class TestUserRoutes(TestCase):
         # mock request for introspect call
         request_mocker = requests_mock.Mocker()
         request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         request_mocker.start()
 
         self.app = create_app().test_client()
@@ -44,8 +46,15 @@ class TestUserRoutes(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
+        # mock get db client from user
         mock.patch(
             "huxunify.api.route.user.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get db client from utils
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
         ).start()
 
@@ -80,7 +89,6 @@ class TestUserRoutes(TestCase):
         )
 
         # write a user to the database
-
         self.user_info = set_user(
             self.database,
             t_c.VALID_RESPONSE["uid"],
@@ -203,16 +211,103 @@ class TestUserRoutes(TestCase):
             response.json.get("message"), expected_response_message
         )
 
-    def test_get_user_profile(self):
-        """Tests getting user profile using Okta ID."""
+    def test_get_user_profile_success(self):
+        """Test success response of getting user profile using Okta ID."""
 
-        endpoint = (
-            f"{t_c.BASE_ENDPOINT}" f"{api_c.USER_ENDPOINT}/" f"{api_c.PROFILE}"
-        )
+        endpoint = f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.PROFILE}"
 
         response = self.app.get(
             endpoint,
             headers=t_c.STANDARD_HEADERS,
         )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
         t_c.validate_schema(UserSchema(), response.json)
+
+    def test_get_all_users(self):
+        """Tests getting all users."""
+
+        endpoint = f"{t_c.BASE_ENDPOINT}" f"{api_c.USER_ENDPOINT}"
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        t_c.validate_schema(UserSchema(), response.json, True)
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(1, len(response.json))
+        self.assertIsNotNone(response.json[0][api_c.DISPLAY_NAME])
+        self.assertIsNotNone(response.json[0][api_c.EMAIL])
+        self.assertIsNotNone(response.json[0][api_c.USER_PHONE_NUMBER])
+        self.assertIsNotNone(response.json[0][api_c.USER_ACCESS_LEVEL])
+        self.assertIn(
+            response.json[0][api_c.USER_ACCESS_LEVEL],
+            ["Edit", "View-only", "Admin"],
+        )
+
+    def test_get_user_profile_bad_request_failure(self):
+        """Test 400 response of getting user profile using Okta ID."""
+
+        # mock invalid request for introspect call
+        request_mocker = requests_mock.Mocker()
+        request_mocker.post(
+            t_c.INTROSPECT_CALL, json=t_c.INVALID_OKTA_RESPONSE
+        )
+        request_mocker.start()
+
+        endpoint = f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.PROFILE}"
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_get_user_profile_not_found_failure(self):
+        """Test 404 response of getting user profile using Okta ID."""
+
+        incorrect_okta_response = {
+            "active": True,
+            "username": "john smith",
+            "uid": "12345678",
+        }
+
+        # mock incorrect request for introspect call so that the user is not
+        # present in mock DB
+        request_mocker = requests_mock.Mocker()
+        request_mocker.post(t_c.INTROSPECT_CALL, json=incorrect_okta_response)
+        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
+        request_mocker.start()
+
+        mock.patch(
+            "huxunify.api.route.utils.set_user",
+            return_value=None,
+        ).start()
+
+        endpoint = f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.PROFILE}"
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual({api_c.MESSAGE: api_c.USER_NOT_FOUND}, response.json)
+
+    def test_get_user_favorites(self):
+        """Test getting user favorites"""
+        self.assertFalse(
+            get_user_favorites(
+                self.database,
+                self.user_info[db_c.USER_DISPLAY_NAME],
+                db_c.ENGAGEMENTS,
+            )
+        )
+
+    def test_get_user_favorites_user_does_not_exist(self):
+        """Test getting user favorites with a user that does not exist."""
+        self.assertFalse(
+            get_user_favorites(self.database, None, db_c.ENGAGEMENTS)
+        )

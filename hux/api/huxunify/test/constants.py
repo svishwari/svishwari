@@ -56,10 +56,30 @@ CUSTOMER_PROFILE_API = f"{TEST_CONFIG.CDP_SERVICE}"
 
 HUX = "HUX"
 CDP_CUSTOMER_PROFILE = "CDP_CUSTOMER_PROFILE"
-CONTRACTS_FOLDER = "contracts"
+CDP_CONNECTIONS = "CDP_CONNECTIONS"
+CONTRACTS_DIR = "contracts"
+CDP_CUSTOMERS_CONTRACTS_DIR = "cdp_customers"
+CDP_CONNECTIONS_CONTRACTS_DIR = "cdp_connections"
+TECTON_CONTRACTS_DIR = "tecton"
 CUSTOMER_PROFILE_COUNT_BY_STATE_ENDPOINT = (
     "/customer-profiles/insights/count-by-state"
 )
+CDP_CUSTOMER_PROFILES_AUDIENCE_COUNT = "/customer-profiles/audience/count"
+CDP_CUSTOMER_PROFILE_BASE_ENDPOINT = "/customer-profiles/"
+CUSTOMER_PROFILE_COUNT_BY_DAY = "/customer-profiles/insights/count-by-day"
+CUSTOMER_PROFILE_SPENDING_BY_MONTH = (
+    "/customer-profiles/insights/spending-by-month"
+)
+CUSTOMER_PROFILE_CITY_LTVS = "/customer-profiles/insights/city-ltvs"
+CDP_CONNECTIONS_DATA_SOURCES_ENDPOINT = "/connections/datasources"
+CDP_CONNECTIONS_DATA_SOURCE_DATA_FEEDS_ENDPOINT = (
+    "/connections/{data_source_name}/data_feeds"
+)
+CDP_IDENTITY_DATA_FEEDS_ENDPOINT = "/identity/datafeeds"
+CDP_IDENTITY_DATA_FEEDS_FEED_ID_ENDPOINT = "/identity/datafeeds/{feed_id}"
+CDP_IDENTITY_ID_COUNT_BY_DAY_ENDPOINT = "/identity/id-count-by-day"
+
+AUDIENCE_STATE_FILTER = {"field": "state", "type": "equals", "value": "HI"}
 
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
@@ -151,7 +171,7 @@ CUSTOMER_GEO_RESPONSE = [
 
 MOCKED_MODEL_RESPONSE = [
     {
-        api_c.ID: 1,
+        api_c.ID: "1",
         api_c.NAME: "Model1",
         api_c.DESCRIPTION: "Test Model",
         api_c.STATUS: api_c.OPERATION_SUCCESS.lower(),
@@ -165,7 +185,7 @@ MOCKED_MODEL_RESPONSE = [
         api_c.TYPE: "test",
     },
     {
-        api_c.ID: 2,
+        api_c.ID: "2",
         api_c.NAME: "Model2",
         api_c.DESCRIPTION: "Test Model",
         api_c.STATUS: api_c.OPERATION_SUCCESS.lower(),
@@ -181,7 +201,7 @@ MOCKED_MODEL_RESPONSE = [
 ]
 
 SUPPORTED_MODELS = {
-    2: {
+    "2": {
         api_c.MODEL_TYPE: api_c.LTV,
         api_c.NAME: "Lifetime value",
         api_c.DESCRIPTION: "Predicts the lifetime value of a customer based on models",
@@ -191,7 +211,7 @@ SUPPORTED_MODELS = {
         api_c.PRECISION: -1,
         api_c.RECALL: -1,
     },
-    1: {
+    "1": {
         api_c.MODEL_TYPE: api_c.UNSUBSCRIBE,
         api_c.NAME: "Propensity to Unsubscribe",
         api_c.DESCRIPTION: "Predicts how likely a customer will unsubscribe from an email list",
@@ -201,7 +221,7 @@ SUPPORTED_MODELS = {
         api_c.PRECISION: 0.82,
         api_c.RECALL: 0.65,
     },
-    3: {
+    "3": {
         api_c.MODEL_TYPE: api_c.PURCHASE,
         api_c.NAME: "Propensity to Purchase",
         api_c.DESCRIPTION: "Propensity of a customer making purchase after receiving an email ",
@@ -578,6 +598,55 @@ MOCKED_MODEL_PROPENSITY_FEATURES = {
     ]
 }
 
+MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
+    api_c.RESULTS: [
+        {
+            api_c.FEATURES: [
+                "2021-07-28",
+                "1to2y-COGS-sum",
+                -1165.89062,
+                "Propensity to Unsubscribe",
+                api_c.UNSUBSCRIBE,
+                "21.7.28",
+            ],
+            api_c.JOIN_KEYS: ["21.7.28"],
+        },
+        {
+            api_c.FEATURES: [
+                "2021-07-29",
+                "1to2y-data_source-orders",
+                -880.273438,
+                "Propensity to Unsubscribe",
+                api_c.UNSUBSCRIBE,
+                "21.7.29",
+            ],
+            api_c.JOIN_KEYS: ["21.7.29"],
+        },
+        {
+            api_c.FEATURES: [
+                "2021-07-30",
+                "1to2y-ITEMQTY-avg",
+                -210.867187,
+                "Propensity to Unsubscribe",
+                api_c.UNSUBSCRIBE,
+                "21.7.30",
+            ],
+            api_c.JOIN_KEYS: ["21.7.30"],
+        },
+        {
+            api_c.FEATURES: [
+                "2021-07-31",
+                "1to2y-COGS-sum",
+                -364.695312,
+                "Propensity to Unsubscribe",
+                api_c.UNSUBSCRIBE,
+                "21.7.31",
+            ],
+            api_c.JOIN_KEYS: ["21.7.31"],
+        },
+    ]
+}
+
 CUSTOMER_INSIGHTS_COUNT_BY_DAY_RESPONSE = {
     "code": 200,
     "body": [
@@ -766,11 +835,31 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
 
 DATASOURCES_RESPONSE = {
     "code": 200,
-    "message": "ok",
+    "message": "Data Sources Fetched successfully",
     "body": [
-        {"name": "dataSource", "label": "Data Source", "status": "Active"}
+        {
+            api_c.LABEL: "Data source 1",
+            api_c.NAME: "test_data_source_1",
+            api_c.STATUS: "Active",
+        },
+        {
+            api_c.LABEL: "Data source 2",
+            api_c.NAME: "test_data_source_2",
+            api_c.STATUS: "Active",
+        },
+        {
+            api_c.LABEL: "Data source 3",
+            api_c.NAME: "test_data_source_3",
+            api_c.STATUS: "Pending",
+        },
+        {
+            api_c.LABEL: "Data source 4",
+            api_c.NAME: "test_data_source_4",
+            api_c.STATUS: "Pending",
+        },
     ],
 }
+
 
 DATASOURCE_DATA_FEEDS_RESPONSE = {
     "code": 200,
@@ -954,6 +1043,8 @@ DAILY_SCHEDULE_INVALID = {
 BATCH_NUMBER_BAD_PARAM = "12a"
 BATCH_SIZE_BAD_PARAM = "100@"
 
+REVENUE = "revenue"
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False
@@ -987,3 +1078,15 @@ def dataframe_generator() -> Generator[pd.DataFrame, None, None]:
     """
 
     yield pd.DataFrame(CUSTOMER_PROFILE_AUDIENCES_RESPONSE.get(api_c.BODY))
+
+
+def dataframe_method() -> pd.DataFrame:
+    """Method returning data batch from CDP API service.
+
+    Args:
+
+
+    Returns:
+        pd.DataFrame: Data batch.
+    """
+    return pd.DataFrame(CUSTOMER_PROFILE_AUDIENCES_RESPONSE.get(api_c.BODY))

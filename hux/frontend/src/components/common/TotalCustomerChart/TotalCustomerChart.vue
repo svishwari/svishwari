@@ -17,16 +17,13 @@
       :tooltip-style="toolTipStyle"
     >
       <template #content>
-        <div class="black--text text--darken-4 caption">
-          <div class="value-section">
-            {{ currentData.date | Date("MM/DD/YYYY") }}
-          </div>
+        <div class="text-body-2 black--text text--darken-4 caption">
           <div class="value-container">
             <icon
-              type="name"
-              :size="12"
-              :fill-opacity="0.5"
-              :color="colorCodes[currentData.index].base"
+              type="customer"
+              :size="20"
+              :stroke-opacity="0.5"
+              :stroke="colorCodes[currentData.index].base"
               :variant="colorCodes[currentData.index].variant"
             />
             <span class="text-label">Total customers</span>
@@ -36,15 +33,32 @@
           </div>
           <div class="value-container">
             <icon
-              type="name"
-              :size="12"
-              :color="colorCodes[currentData.index].base"
+              type="new-customer"
+              :size="20"
+              :stroke="colorCodes[currentData.index].base"
               :variant="colorCodes[currentData.index].variant"
             />
             <span class="text-label">New customers added</span>
-            <div class="value-section">
-              {{ currentData.addedCustomers | Numeric(true, false, false) }}
-            </div>
+          </div>
+          <div class="value-section">
+            {{ currentData.addedCustomers | Numeric(true, false, false) }}
+          </div>
+          <div class="value-container">
+            <icon
+              type="left-customer"
+              :size="20"
+              :stroke-opacity="0.5"
+              stroke="black"
+              variant="lighten4"
+            />
+            <span class="text-label">Customers left</span>
+          </div>
+          <div class="value-section">
+            <span v-if="currentData.leftCustomers > 0">-</span>
+            {{ currentData.leftCustomers | Numeric(true, false, false) }}
+          </div>
+          <div class="date-section">
+            {{ currentData.date | Date("MMM DD, YYYY") }}
           </div>
         </div>
       </template>
@@ -75,8 +89,8 @@ export default {
       isArcHover: false,
       isEmptyState: false,
       colorCodes: [
-        { base: "primary", variant: "lighten5" },
-        { base: "primary", variant: "lighten8" },
+        { base: "primary", variant: "lighten6" },
+        { base: "primary", variant: "darken1" },
         { base: "primary", variant: "darken3" },
         { base: "success", variant: "base" },
       ],
@@ -93,12 +107,7 @@ export default {
   mounted() {
     this.sizeHandler()
     this.processSourceData()
-  },
-  created() {
-    window.addEventListener("resize", this.sizeHandler)
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.sizeHandler)
+    new ResizeObserver(this.sizeHandler).observe(this.$refs.totalCustomerChart)
   },
   methods: {
     toolTipDisplay(...arg) {
@@ -108,7 +117,6 @@ export default {
         this.toolTipStyle.left = this.currentData.isEndingBar
           ? "-130px"
           : "45px"
-        console.log(this.toolTipStyle)
       }
     },
     sizeHandler() {
@@ -210,6 +218,10 @@ export default {
             lastWeekEndingData == 0
               ? weekData.reduce((sum, d) => sum + d.new_customers_added, 0)
               : currentWeekEndingData - lastWeekEndingData,
+          customers_left:
+            currentWeekEndingData < lastWeekEndingData
+              ? lastWeekEndingData - currentWeekEndingData
+              : 0,
           index: index == weeklyAggData.length - 1 ? 3 : initialIndex,
           barIndex: index,
           isEndingBar: index > weeklyAggData.length - 5,
@@ -240,16 +252,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.global-text-line {
-  display: inline-block;
-  font-style: normal;
-  font-size: $font-size-root;
-  line-height: 19px;
-}
 .global-heading {
   font-style: normal;
-  font-size: 12px;
-  line-height: 19px;
 }
 .container-chart {
   position: relative;
@@ -257,14 +261,23 @@ export default {
   padding: 0px !important;
   .value-container {
     margin-top: 2px;
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
     @extend .global-heading;
     .text-label {
-      margin-left: 8px !important;
+      margin-left: 4px !important;
     }
   }
   .value-section {
     @extend .global-heading;
-    margin-left: 21px;
+    margin-left: 24px;
+    margin-bottom: 10px;
+  }
+  .date-section {
+    @extend .global-heading;
+    color: var(--v-black-lighten4) !important;
   }
 }
 </style>

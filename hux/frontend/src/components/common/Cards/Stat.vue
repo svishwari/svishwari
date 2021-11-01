@@ -8,9 +8,9 @@
     open-on-hover
   >
     <template #activator="{ on }">
-      <div class="px-4 border-start border-zircon" :class="statClass" v-on="on">
-        <h4 class="text-h4 mb-0">{{ value }}</h4>
-        <div class="text-caption black--text text--darken-1">{{ label }}</div>
+      <div class="px-4 border-start separator" :class="statClass" v-on="on">
+        <h3 class="mb-0 text-h3 black--text">{{ value }}</h3>
+        <div class="black--text text--lighten-4 text-body-2">{{ label }}</div>
       </div>
     </template>
     <div v-if="$slots.default" class="px-4 py-3 text-caption white">

@@ -43,6 +43,8 @@
                 type="info"
                 :size="12"
                 class="ml-1"
+                color="primary"
+                variant="base"
               />
             </template>
             <template #hover-content>
@@ -131,9 +133,9 @@ export default {
       default: "name",
     },
     sortDesc: {
-      type: String,
+      type: [Boolean, String],
       required: false,
-      default: "false",
+      default: false,
     },
     disableSort: {
       type: Boolean,
@@ -251,18 +253,8 @@ export default {
         height: 32px !important;
         th {
           height: 32px !important;
-          font-size: 12px;
-          font-family: inherit;
-          font-style: normal;
-          font-weight: 400;
-          line-height: 8px;
           padding-top: 0px;
           padding-bottom: 0px;
-          color: var(--v-black-darken4) !important;
-          i {
-            font-size: 16px !important;
-            color: #00a3e0 !important;
-          }
         }
       }
     }

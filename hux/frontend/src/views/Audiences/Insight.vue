@@ -5,26 +5,29 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <v-icon size="22" color="primary" class="mr-2" @click="refreshEntity()">
-          mdi-refresh
-        </v-icon>
-
-        <v-icon size="22" color="black lighten-3" class="icon-border pa-2 ma-1">
-          mdi-plus-circle-multiple-outline
-        </v-icon>
-        <v-icon
-          size="22"
-          color="primary"
-          class="icon-border pa-2 ma-1"
-          @click="
-            $router.push({
-              name: 'AudienceUpdate',
-              params: { id: audienceId },
-            })
-          "
-        >
-          mdi-pencil
-        </v-icon>
+        <div class="d-flex align-center">
+          <icon
+            type="pencil"
+            :size="18"
+            class="cursor-pointer mr-7"
+            color="black-darken4"
+            @click.native="
+              $router.push({
+                name: 'AudienceUpdate',
+                params: { id: audienceId },
+              })
+            "
+          />
+          <icon
+            type="dots-vertical"
+            :size="18"
+            class="cursor-pointer mr-7"
+            color="black-darken4"
+          />
+        </div>
+      </template>
+      <!-- Keeping this in TODO until more updates -->
+      <!-- <template >
         <span class="position-relative">
           <v-menu :min-width="100" left offset-y close-on-click>
             <template #activator="{ on }">
@@ -83,7 +86,7 @@
             </template>
           </tooltip>
         </span>
-      </template>
+      </template> -->
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
@@ -93,7 +96,7 @@
         class="rounded-lg card-info-wrapper ma-2 card-shadow no-background"
       >
         <v-card-text>
-          <div class="text-caption black--text text--darken-1">
+          <div class="text-body-2 black--text text--darken-1">
             Original size
             <tooltip position-top>
               <template #label-content>
@@ -234,7 +237,7 @@
                     />
                   </template>
                   <template #hover-content>
-                    <span class="text-caption black--text text--darken-4">
+                    <span class="text-body-2 black--text text--darken-4">
                       <div class="mb-2">
                         {{ appliedFilters[filterKey][filter].name }}
                       </div>
@@ -297,7 +300,12 @@
                   data-e2e="delivery-history"
                   @click="openDeliveryHistoryDrawer()"
                 >
-                  <icon type="history" :size="14" class="mr-1" />
+                  <icon
+                    type="history"
+                    color="primary"
+                    :size="14"
+                    class="mr-1"
+                  />
                   Delivery history
                 </v-btn>
               </div>
@@ -499,16 +507,12 @@
       </v-col>
     </v-row>
 
-    <hux-alert
-      v-model="flashAlert"
-      :type="alert.type"
-      :title="alert.title"
-      :message="alert.message"
-    />
-
     <confirm-modal
       v-model="showConfirmModal"
+      :type="confirmDialog.type"
+      :icon="confirmDialog.icon"
       :title="confirmDialog.title"
+      :sub-title="confirmDialog.subtitle"
       :right-btn-text="confirmDialog.btnText"
       :body="confirmDialog.body"
       @onCancel="showConfirmModal = false"
@@ -556,7 +560,6 @@
       :selected-audience="audience"
       @onBack="reloadAudienceData()"
       @onCreate="lookalikeCreated = true"
-      @onError="onError($event)"
     />
 
     <delivery-history-drawer
@@ -604,7 +607,6 @@ import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import DeliveryOverview from "@/components/DeliveryOverview.vue"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
-import HuxAlert from "@/components/common/HuxAlert.vue"
 import Icon from "@/components/common/Icon.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart.vue"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
@@ -626,7 +628,6 @@ import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
 import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import GeoDrawer from "@/views/Shared/Drawers/GeoDrawer.vue"
-import Logo from "../../components/common/Logo.vue"
 
 export default {
   name: "AudienceInsight",
@@ -640,7 +641,6 @@ export default {
     DestinationDataExtensionDrawer,
     DoughnutChart,
     EditDeliverySchedule,
-    HuxAlert,
     Icon,
     IncomeChart,
     LookAlikeAudience,
@@ -655,7 +655,6 @@ export default {
     Tooltip,
     GenderSpendChart,
     GeoDrawer,
-    Logo,
   },
   data() {
     return {
@@ -708,13 +707,7 @@ export default {
       loading: false,
       loadingRelationships: false,
       loadingDemographics: true,
-      flashAlert: false,
       configurationData: configurationData,
-      alert: {
-        type: "success",
-        title: "YAY!",
-        message: "Successfully triggered delivery.",
-      },
       modelInitial: [
         { value: "propensity", icon: "model" },
         { value: "ltv", icon: "lifetime" },
@@ -746,6 +739,9 @@ export default {
       },
       deleteActionData: {},
       confirmDialog: {
+        icon: "sad-face",
+        type: "error",
+        subtitle: "",
         title: "Remove  audience?",
         btnText: "Yes, remove it",
         body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
@@ -948,16 +944,13 @@ export default {
       }
     },
   },
-  created() {
-    window.addEventListener("resize", this.sizeHandler)
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.sizeHandler)
-  },
   async mounted() {
     this.sizeHandler()
     await this.loadAudienceInsights()
     this.fetchDemographics()
+    if (this.$refs.genderChart) {
+      new ResizeObserver(this.sizeHandler).observe(this.$refs.genderChart)
+    }
   },
   methods: {
     ...mapActions({
@@ -971,6 +964,7 @@ export default {
       detachAudienceDestination: "engagements/detachAudienceDestination",
       getDemographics: "audiences/getDemographics",
       downloadAudienceData: "audiences/fetchAudienceData",
+      setAlert: "alerts/setAlert",
       getAudiencesRules: "audiences/fetchConstants",
     }),
     attributeOptions() {
@@ -1007,10 +1001,10 @@ export default {
     },
     async initiateFileDownload(option) {
       const audienceName = this.audience.name
-      this.alert.type = "Pending"
-      this.alert.title = ""
-      this.alert.message = `Download for the '${audienceName}' with '${option.title}', has started in background, stay tuned.`
-      this.flashAlert = true
+      this.setAlert({
+        type: "pending",
+        message: `Download for the '${audienceName}' with '${option.title}', has started in background, stay tuned.`,
+      })
       const fileBlob = await this.downloadAudienceData({
         id: this.audienceId,
         type: option.type,
@@ -1058,13 +1052,11 @@ export default {
     },
 
     /**
-     *
-     
-     Formatting the values to the desired format using predefined application filters.
+     * Formatting the values to the desired format using predefined application filters.
      *
      * @param {object} item item
      * @param {string} item.title item's title
-     * @returns {string} formatted value
+     * @returns {number | string } formatted value
      */
     getFormattedValue(item) {
       switch (item.title) {
@@ -1100,23 +1092,20 @@ export default {
           break
         }
         case "deliver all":
-          try {
-            await this.deliverAudience({
-              id: event.data.id,
-              audienceId: this.audienceId,
-            })
-            this.dataPendingMesssage(event, "engagement")
-            this.refreshEntity()
-          } catch (error) {
-            this.dataErrorMesssage(event, "engagement")
-            console.error(error)
-          }
+          await this.deliverAudience({
+            id: event.data.id,
+            audienceId: this.audienceId,
+          })
+          this.dataPendingMesssage(event, "engagement")
           break
         case "view delivery history":
           break
         case "remove engagement": {
           this.confirmDialog.actionType = "remove-engagement"
-          this.confirmDialog.title = `You are about to remove ${event.data.name}`
+          this.confirmDialog.title = "You are about to remove"
+          this.confirmDialog.subtitle = event.data.name
+          this.confirmDialog.icon = "sad-face"
+          this.confirmDialog.type = "error"
           this.confirmDialog.btnText = "Yes, remove it"
           this.confirmDialog.body =
             "Are you sure you want to remove this engagement? By removing this engagement, it will not be deleted, but it will become unattached from this audience."
@@ -1137,22 +1126,19 @@ export default {
       try {
         switch (event.target.title.toLowerCase()) {
           case "deliver now":
-            try {
-              await this.deliverAudienceDestination({
-                id: event.parent.id,
-                audienceId: this.audienceId,
-                destinationId: event.data.id,
-              })
-              this.dataPendingMesssage(event, "destination")
-            } catch (error) {
-              this.dataErrorMesssage(event, "destination")
-              console.error(error)
-            }
+            await this.deliverAudienceDestination({
+              id: event.parent.id,
+              audienceId: this.audienceId,
+              destinationId: event.data.id,
+            })
+            this.dataPendingMesssage(event, "destination")
             break
           case "edit delivery schedule":
             this.confirmDialog.actionType = "edit-schedule"
             this.confirmDialog.title =
               "You are about to edit delivery schedule."
+            this.confirmDialog.icon = "edit"
+            this.confirmDialog.type = "primary"
             this.confirmDialog.btnText = "Yes, edit delivery schedule"
             this.confirmDialog.body =
               "This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
@@ -1163,6 +1149,9 @@ export default {
           case "remove destination":
             this.engagementId = event.parent.id
             this.confirmDialog.actionType = "remove-destination"
+            this.confirmDialog.icon = "sad-face"
+            this.confirmDialog.type = "error"
+            this.confirmDialog.subtitle = ""
             this.confirmDialog.title = `Remove ${event.data.name} destination?`
             this.confirmDialog.btnText = "Yes, remove it"
             this.confirmDialog.body =
@@ -1187,32 +1176,21 @@ export default {
 
     //Alert Message
     dataPendingMesssage(event, value) {
-      this.alert.type = "Pending"
-      this.alert.title = ""
       if (value == "engagement") {
         const engagementName = event.data.name
         const audienceName = this.audience.name
-        this.alert.message = `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`
+        this.setAlert({
+          type: "pending",
+          message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
+        })
       } else if (value == "destination") {
         const engagementName = event.parent.name
         const destinationName = event.data.name
-        this.alert.message = `Your engagement '${engagementName}', has started delivering to '${destinationName}'.`
+        this.setAlert({
+          type: "pending",
+          message: `Your engagement '${engagementName}', has started delivering to '${destinationName}'.`,
+        })
       }
-      this.flashAlert = true
-    },
-    dataErrorMesssage(event, value) {
-      this.alert.type = "error"
-      this.alert.title = "OH NO!"
-      if (value == "engagement") {
-        const engagementName = event.data.name
-        const audienceName = this.audience.name
-        this.alert.message = `Failed to schedule a delivery of your engagement '${engagementName}', from '${audienceName}'.`
-      } else if (value == "destination") {
-        const engagementName = event.parent.name
-        const destinationName = event.data.name
-        this.alert.message = `Failed to schedule delivery of your engagement '${engagementName}', to '${destinationName}'.`
-      }
-      this.flashAlert = true
     },
 
     // Drawer Section Starts
@@ -1322,12 +1300,6 @@ export default {
       this.getDestinations()
       this.refreshAudience = false
       this.loading = false
-    },
-    onError(message) {
-      this.alert.type = "error"
-      this.alert.title = "OH NO!"
-      this.alert.message = message
-      this.flashAlert = true
     },
     sizeHandler() {
       if (this.$refs.genderChart) {

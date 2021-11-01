@@ -2,8 +2,9 @@
   <drawer v-model="localToggle" :loading="loading">
     <template #header-left>
       <div class="d-flex align-baseline">
-        <h3 class="text-h3 font-weight-light pr-2">
-          Select a destination to add
+        <h3 class="text-h3 pr-2 d-flex align-center">
+          <icon type="map" :size="32" class="mr-2" />
+          <div class="pl-2 font-weight-light">Select a destination</div>
         </h3>
       </div>
     </template>
@@ -16,6 +17,7 @@
           :title="destination.name"
           :icon="destination.type"
           :is-added="isAdded(destination)"
+          :data-e2e="`destination-select-button-${destination.type}`"
           class="my-3"
           @click="add(destination)"
         />
@@ -37,6 +39,7 @@ import { mapGetters, mapActions } from "vuex"
 
 import Drawer from "@/components/common/Drawer"
 import CardHorizontal from "@/components/common/CardHorizontal"
+import Icon from "@/components/common/Icon"
 
 export default {
   name: "SelectDestinationsDrawer",
@@ -44,6 +47,7 @@ export default {
   components: {
     Drawer,
     CardHorizontal,
+    Icon,
   },
 
   props: {

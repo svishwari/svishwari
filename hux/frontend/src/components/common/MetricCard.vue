@@ -11,20 +11,29 @@
     @click="$emit('click')"
   >
     <div class="d-flex align-center justify-space-between w-100">
-      <div class="flex-grow-1">
+      <div
+        class="flex-grow-1"
+        :class="{ 'align-center text-center': highLevel }"
+      >
         <span
           v-if="!titleTooltip"
-          class="text-caption"
-          :class="
-            interactable ? 'primary--text ' : 'black--text text--darken-1 '
-          "
+          class="text-body-2"
+          :class="[
+            interactable ? 'primary--text ' : 'black--text text--lighten-4 ',
+            highLevel ? 'highlevel-title' : '',
+          ]"
         >
-          {{ title }}
+          <span v-if="highLevel">
+            <slot name="title"></slot>
+          </span>
+          <span v-else>
+            {{ title }}
+          </span>
         </span>
         <tooltip v-else>
           <template #label-content>
             <span
-              class="text-caption"
+              class="text-h5"
               :class="
                 interactable ? 'primary--text ' : 'black--text text--darken-1 '
               "
@@ -40,12 +49,21 @@
         <slot name="extra-item"></slot>
 
         <div class="subtitle-slot">
-          <span class="font-weight-semi-bold">{{ subtitle }}</span>
+          <span
+            class="text-body-1"
+            :class="{
+              'no-click': !interactable,
+              'flex-grow-1 align-center text-center highlevel-subtitle':
+                highLevel,
+            }"
+          >
+            {{ subtitle }}
+          </span>
           <slot name="subtitle-extended"></slot>
         </div>
       </div>
 
-      <v-icon v-if="icon" color="zircon" x-large> {{ icon }} </v-icon>
+      <v-icon v-if="icon" color="black lighten-2" x-large> {{ icon }} </v-icon>
 
       <slot name="short-name"></slot>
     </div>
@@ -106,13 +124,18 @@ export default {
       required: false,
       default: 75,
     },
+    highLevel: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
 .metric-card-wrapper {
-  border: 1px solid var(--v-zircon-base);
+  border: 1px solid var(--v-black-lighten2);
   padding: 20px 15px;
   display: -webkit-box;
   display: -webkit-flex;
@@ -124,7 +147,6 @@ export default {
     cursor: default;
   }
   .item-headline {
-    font-size: 12px;
     color: var(--v-black-darken1) !important;
   }
   .v-list-item__title {
@@ -144,6 +166,18 @@ export default {
     .subtitle-slot {
       display: flex;
     }
+  }
+  .highlevel-title {
+    font-weight: 300;
+    font-size: 28px !important;
+    line-height: 40px;
+    color: var(--v-black-darken4) !important;
+  }
+  .highlevel-subtitle {
+    font-size: 14px !important;
+    line-height: 16px;
+    color: #4f4f4f;
+    color: var(--v-black-darken1) !important;
   }
 }
 </style>

@@ -13,6 +13,7 @@
     </template>
     <template #default>
       <v-text-field
+        v-if="isSearchEnabled"
         v-model="searchText"
         color="neroBlack"
         class="search-field-container"
@@ -55,10 +56,22 @@ export default {
       required: true,
     },
 
-    toggletoggleDropDown: {
+    toggleDropDown: {
       type: Boolean,
       required: false,
       default: false,
+    },
+
+    isSearchEnabled: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+
+    minSelection: {
+      type: Number,
+      required: false,
+      default: 0,
     },
   },
 
@@ -95,12 +108,13 @@ export default {
     toggleItem(item) {
       let itemIndex = this.isItemAdded(item)
       if (itemIndex !== -1) {
-        if (this.value.length !== 1) {
+        if (this.value.length !== this.minSelection) {
           this.value.splice(itemIndex, 1)
         }
       } else {
         this.value.push(item)
       }
+      this.$emit("onValueChange")
     },
 
     isItemAdded(item) {

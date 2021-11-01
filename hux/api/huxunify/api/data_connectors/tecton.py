@@ -223,7 +223,9 @@ def get_model_version_history(model_id: str) -> List[ModelVersionSchema]:
 
     Raises:
         FailedAPIDependencyError: Integrated dependent API failure error.
+        EmptyAPIResponseError: Response from integrated API call is empty.
     """
+
     # get config
     config = get_config()
 
@@ -241,12 +243,17 @@ def get_model_version_history(model_id: str) -> List[ModelVersionSchema]:
         headers=config.TECTON_API_HEADERS,
     )
 
-    if response.status_code != 200 or constants.RESULTS not in response.json():
+    if constants.RESULTS not in response.json():
         logger.error(
             "Unable to retrieve model version history, %s %s.",
             response.status_code,
             response.text,
         )
+        if response.status_code == 200:
+            raise iae.EmptyAPIResponseError(
+                f"{config.TECTON_FEATURE_SERVICE} returned empty object",
+                response.status_code,
+            )
         raise iae.FailedAPIDependencyError(
             f"{config.TECTON_FEATURE_SERVICE} : in_function={get_model_version_history.__name__}",
             response.status_code,
@@ -264,15 +271,17 @@ def get_model_drift(model_id: str, model_type: str) -> List[ModelDriftSchema]:
     """Get model drift based on model_id and model_type.
 
     Args:
-        model_id (str): model id.
-        model_type (int): model type.
+        model_id (str): Model id.
+        model_type (str): model type.
 
     Returns:
         List[DriftSchema] List of model drift.
 
     Raises:
         FailedAPIDependencyError: Integrated dependent API failure error.
+        EmptyAPIResponseError: Response from integrated API call is empty.
     """
+
     # get config
     config = get_config()
 
@@ -305,12 +314,17 @@ def get_model_drift(model_id: str, model_type: str) -> List[ModelDriftSchema]:
         total_ticks,
     )
 
-    if response.status_code != 200 or constants.RESULTS not in response.json():
+    if constants.RESULTS not in response.json():
         logger.error(
             "Unable to retrieve model drift, %s %s.",
             response.status_code,
             response.text,
         )
+        if response.status_code == 200:
+            raise iae.EmptyAPIResponseError(
+                f"{config.TECTON_FEATURE_SERVICE} returned empty object",
+                response.status_code,
+            )
         raise iae.FailedAPIDependencyError(
             f"{config.TECTON_FEATURE_SERVICE} : in_function={get_model_drift.__name__}",
             response.status_code,
@@ -401,7 +415,7 @@ def get_model_lift_async(model_id: str) -> List[ModelLiftSchema]:
 async def get_async_lift_bucket(
     model_id: str, bucket: int
 ) -> Tuple[dict, int]:
-    """asynchronously gets lift by bucket
+    """Asynchronously gets lift by bucket.
 
     Args:
         model_id (str): model id.
@@ -448,11 +462,11 @@ def get_model_features(
     """Get model features based on model id.
 
     Args:
-        model_id (str): model id.
+        model_id (str): Model id.
         model_version (str): model version.
 
     Returns:
-        List[FeatureSchema] List of model features.
+        List[FeatureSchema]: List of model features.
 
     Raises:
         FailedAPIDependencyError: Integrated dependent API failure error.
@@ -512,7 +526,12 @@ def get_model_features(
                         ]
                     ),
                     constants.POPULARITY: random.randint(1, 3),
-                    constants.SCORE: round(log10(float(feature[2])), 4),
+                    constants.SCORE: round(
+                        log10(float(feature[2]))
+                        if float(feature[2]) > 0
+                        else -log10(float(abs(feature[2]))),
+                        4,
+                    ),
                 }
             )
 

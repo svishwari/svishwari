@@ -7,16 +7,18 @@
         <slot />
       </v-container>
     </v-main>
+    <hux-alert />
   </v-app>
 </template>
 
 <script>
 import NavBar from "@/components/NavBar"
 import SideMenu from "@/components/SideMenu"
+import HuxAlert from "@/components/common/HuxAlert.vue"
 
 export default {
   name: "AppLayout",
-  components: { SideMenu, NavBar },
+  components: { SideMenu, NavBar, HuxAlert },
   data: () => ({
     toggleMini: false,
   }),

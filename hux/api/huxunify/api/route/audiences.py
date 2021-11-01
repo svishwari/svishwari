@@ -1,8 +1,12 @@
 """Paths for Orchestration API"""
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from http import HTTPStatus
+from itertools import repeat
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Union
+
+import pandas as pd
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, Response, request, jsonify
@@ -25,6 +29,7 @@ from huxunify.api.data_connectors.aws import upload_file
 from huxunify.api.data_connectors.cdp import (
     get_city_ltvs,
     get_demographic_by_state,
+    get_demographic_by_country,
 )
 from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunify.api.route.decorators import (
@@ -32,10 +37,12 @@ from huxunify.api.route.decorators import (
     secured,
     get_user_name,
     api_error_handler,
+    validate_engagement_and_audience,
 )
 from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
+    CustomersInsightsCountriesSchema,
 )
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
@@ -43,8 +50,9 @@ from huxunify.api.schema.utils import (
 )
 from huxunify.api.route.utils import (
     get_db_client,
-    transform_fields_generic_file,
+    do_not_transform_fields,
     logger,
+    Validation,
 )
 
 # setup the audiences blueprint
@@ -56,6 +64,76 @@ audience_bp = Blueprint(api_c.AUDIENCE_ENDPOINT, import_name=__name__)
 def before_request():
     """Protect all of the audiences endpoints."""
     pass  # pylint: disable=unnecessary-pass
+
+
+def get_batch_customers(
+    cdp_connector: connector_cdp,
+    location_details: dict,
+    batch_size: int = api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
+    offset: int = 0,
+) -> Union[pd.DataFrame, None]:
+    """Fetch audience batch using connector asynchronously.
+
+    Args:
+        cdp_connector (connector_cdp): Instance of CDP connector.
+        location_details (dict): Audience filters to be passed.
+        batch_size (int, Optional): Batch size to be fetched.
+        offset (int, Optional): Offset of the batch to be fetched.
+
+    Returns:
+        pd.DataFrame: Data frame of batch information.
+    """
+    return cdp_connector.read_batch(
+        location_details=location_details,
+        batch_size=batch_size,
+        offset=offset,
+    )
+
+
+def get_audience_data_async(
+    cdp_connector: connector_cdp,
+    actual_size: int,
+    location_details: dict,
+    batch_size: int = api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
+) -> list:
+    """Creates a list of tasks, this is useful for asynchronous batch wise
+    calls to a task.
+
+    Args:
+        cdp_connector (connector_cdp): Instance of CDP connector.
+        actual_size (int): Actual size of the audience.
+        location_details (dict): Audience filters to be passed.
+        batch_size (int, Optional): Size of batch to be retrieved.
+
+    Returns:
+        list: List of each batch's data.
+    """
+    offset = 0
+    if actual_size <= batch_size:
+        return [
+            get_batch_customers(
+                cdp_connector, location_details, actual_size, offset
+            )
+        ]
+    batch_sizes = []
+    offsets = []
+    while offset + batch_size <= actual_size:
+        batch_sizes.append(batch_size)
+        offsets.append(offset)
+        offset += batch_size
+    if actual_size % batch_size != 0:
+        batch_sizes.append(batch_size)
+        offsets.append(offset)
+    with ThreadPoolExecutor(
+        max_workers=api_c.MAX_WORKERS_THREAD_POOL
+    ) as executor:
+        return executor.map(
+            get_batch_customers,
+            repeat(cdp_connector),
+            repeat(location_details),
+            batch_sizes,
+            offsets,
+        )
 
 
 @add_view_to_blueprint(
@@ -96,7 +174,7 @@ class AudienceDownload(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
-    # pylint: disable=no-self-use
+    # pylint: disable=no-self-use, too-many-locals
     @api_error_handler()
     @get_user_name()
     def get(
@@ -118,12 +196,26 @@ class AudienceDownload(SwaggerView):
         """
 
         download_types = {
-            api_c.GOOGLE_ADS: transform_fields_google_file,
-            api_c.AMAZON_ADS: transform_fields_amazon_file,
-            api_c.GENERIC_ADS: transform_fields_generic_file,
+            api_c.GOOGLE_ADS: (
+                transform_fields_google_file,
+                api_c.GOOGLE_ADS_DEFAULT_COLUMNS,
+            ),
+            api_c.AMAZON_ADS: (
+                transform_fields_amazon_file,
+                api_c.AMAZON_ADS_DEFAULT_COLUMNS,
+            ),
+            api_c.GENERIC_ADS: (
+                do_not_transform_fields,
+                api_c.GENERIC_ADS_DEFAULT_COLUMNS,
+            ),
         }
+
+        token_response = get_token_from_request(request)
+
         if not download_types.get(download_type):
-            return {"message": "Invalid download type"}, HTTPStatus.BAD_REQUEST
+            return {
+                "message": "Invalid download type or download type not supported"
+            }, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
         audience = orchestration_management.get_audience(
@@ -131,24 +223,52 @@ class AudienceDownload(SwaggerView):
         )
 
         if not audience:
-            return {
-                "message": api_c.AUDIENCE_NOT_FOUND
-            }, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
-        cdp = connector_cdp.ConnectorCDP(get_config().CDP_SERVICE)
-        data_batches = cdp.read_batches(
-            location_details={
-                api_c.AUDIENCE_FILTERS: audience.get(api_c.AUDIENCE_FILTERS),
-            },
-            batch_size=int(api_c.CUSTOMERS_DEFAULT_BATCH_SIZE),
-        )
+        # set transform function based on download type in request
+        transform_function = download_types.get(download_type)[0]
+
+        # get environment config
+        config = get_config()
+
+        if config.RETURN_EMPTY_AUDIENCE_FILE:
+            logger.info(
+                "%s config set to %s, will generate empty %s type audience file.",
+                api_c.RETURN_EMPTY_AUDIENCE_FILE,
+                config.RETURN_EMPTY_AUDIENCE_FILE,
+                download_type,
+            )
+            data_batches = [
+                pd.DataFrame(columns=download_types.get(download_type)[1])
+            ]
+            # change transform function to not transform any fields if config
+            # is set to download empty audience file
+            transform_function = do_not_transform_fields
+        else:
+            logger.info(
+                "%s config set to %s, will generate %s type audience file with content.",
+                api_c.RETURN_EMPTY_AUDIENCE_FILE,
+                config.RETURN_EMPTY_AUDIENCE_FILE,
+                download_type,
+            )
+            cdp = connector_cdp.ConnectorCDP(access_token=token_response[0])
+
+            data_batches = get_audience_data_async(
+                cdp,
+                audience.get(api_c.SIZE),
+                batch_size=api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
+                location_details={
+                    api_c.AUDIENCE_FILTERS: audience.get(
+                        api_c.AUDIENCE_FILTERS
+                    )
+                },
+            )
 
         audience_file_name = (
             f"{datetime.now().strftime('%m%d%Y%H%M%S')}"
             f"_{audience_id}_{download_type}.csv"
         )
 
-        transform_function = download_types.get(download_type)
         with open(
             audience_file_name, "w", newline="", encoding="utf-8"
         ) as csvfile:
@@ -162,11 +282,11 @@ class AudienceDownload(SwaggerView):
         logger.info(
             "Uploading generated %s audience file to %s S3 bucket",
             audience_file_name,
-            get_config().S3_DATASET_BUCKET,
+            config.S3_DATASET_BUCKET,
         )
         if upload_file(
             file_name=audience_file_name,
-            bucket=get_config().S3_DATASET_BUCKET,
+            bucket=config.S3_DATASET_BUCKET,
             object_name=audience_file_name,
             user_name=user_name,
             file_type=api_c.AUDIENCE,
@@ -192,6 +312,7 @@ class AudienceDownload(SwaggerView):
             f"{user_name} downloaded the audience, {audience[db_c.NAME]}"
             f" with format {download_type}.",
             api_c.ORCHESTRATION_TAG,
+            user_name,
         )
 
         return (
@@ -244,7 +365,7 @@ class AudienceInsightsStates(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     def get(self, audience_id: str) -> Tuple[list, int]:
-        """Retrieves state-level geographic audience insights.
+        """Retrieves state-level geographic customer insights for the audience.
 
         ---
         security:
@@ -264,6 +385,9 @@ class AudienceInsightsStates(SwaggerView):
         audience = orchestration_management.get_audience(
             get_db_client(), ObjectId(audience_id)
         )
+
+        if not audience:
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         return (
             jsonify(
@@ -308,7 +432,7 @@ class AudienceInsightsCities(SwaggerView):
         {
             "name": api_c.QUERY_PARAMETER_BATCH_NUMBER,
             "in": "query",
-            "type": "string",
+            "type": "integer",
             "description": "Number of which batch of cities should be returned.",
             "example": "10",
             "required": False,
@@ -349,16 +473,25 @@ class AudienceInsightsCities(SwaggerView):
         # get auth token from request
         token_response = get_token_from_request(request)
 
-        batch_size = request.args.get(
-            api_c.QUERY_PARAMETER_BATCH_SIZE, api_c.CITIES_DEFAULT_BATCH_SIZE
+        batch_size = Validation.validate_integer(
+            request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_SIZE,
+                str(api_c.CITIES_DEFAULT_BATCH_SIZE),
+            )
         )
-        batch_number = request.args.get(
-            api_c.QUERY_PARAMETER_BATCH_NUMBER, api_c.DEFAULT_BATCH_NUMBER
+        batch_number = Validation.validate_integer(
+            request.args.get(
+                api_c.QUERY_PARAMETER_BATCH_NUMBER,
+                str(api_c.DEFAULT_BATCH_NUMBER),
+            )
         )
 
         audience = orchestration_management.get_audience(
             get_db_client(), ObjectId(audience_id)
         )
+
+        if not audience:
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         filters = (
             {api_c.AUDIENCE_FILTERS: audience.get(db_c.AUDIENCE_FILTERS)}
@@ -374,6 +507,83 @@ class AudienceInsightsCities(SwaggerView):
                         filters=filters,
                         offset=int(batch_size) * (int(batch_number) - 1),
                         limit=int(batch_size),
+                    ),
+                    many=True,
+                )
+            ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    audience_bp,
+    f"/{api_c.AUDIENCE_ENDPOINT}/<audience_id>/{api_c.COUNTRIES}",
+    "AudienceInsightsCountries",
+)
+class AudienceInsightsCountries(SwaggerView):
+    """Audience insights by countries."""
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "612cd8eb6a9815be11cd6006",
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "array",
+                "items": CustomersInsightsCountriesSchema,
+            },
+            "description": "Audience Insights by countries.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Audience Insights by countries."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use
+    @validate_engagement_and_audience()
+    @api_error_handler()
+    def get(self, audience_id: ObjectId) -> Tuple[list, int]:
+        """Retrieves country-level geographic customer insights for the audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (ObjectId): Audience ID.
+
+        Returns:
+            Tuple[list, int]: list of spend and size data by country,
+                HTTP status code.
+        """
+
+        # get auth token from request
+        token_response = get_token_from_request(request)
+
+        audience = orchestration_management.get_audience(
+            get_db_client(), audience_id
+        )
+
+        return (
+            jsonify(
+                CustomersInsightsCountriesSchema().dump(
+                    get_demographic_by_country(
+                        token_response[0],
+                        filters={
+                            api_c.AUDIENCE_FILTERS: audience.get(
+                                db_c.AUDIENCE_FILTERS
+                            )
+                        },
                     ),
                     many=True,
                 )

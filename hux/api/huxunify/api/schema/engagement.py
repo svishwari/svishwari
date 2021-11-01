@@ -7,7 +7,11 @@ from flask_marshmallow import Schema
 from marshmallow import fields, validate, pre_load, post_dump
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
-from huxunify.api.schema.utils import must_not_be_blank, validate_object_id
+from huxunify.api.schema.utils import (
+    must_not_be_blank,
+    validate_object_id,
+    get_next_schedule,
+)
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 from huxunify.api.schema.destinations import DeliveryScheduleSchema
 
@@ -450,6 +454,8 @@ class LatestDeliverySchema(Schema):
     update_time = DateTimeWithZ()
     size = fields.Int(default=0)
     match_rate = fields.Float(default=0, example=0.21)
+    next_delivery = DateTimeWithZ()
+    delivery_schedule = fields.String()
 
 
 class EngagementAudienceDestinationSchema(Schema):
@@ -460,6 +466,7 @@ class EngagementAudienceDestinationSchema(Schema):
     delivery_job_id = fields.String()
     delivery_platform_config = fields.Nested(EngagementDataExtensionSchema)
     delivery_platform_type = fields.String()
+    delivery_schedule = fields.Dict()
     latest_delivery = fields.Nested(LatestDeliverySchema)
 
 
@@ -518,6 +525,7 @@ class EngagementGetSchema(Schema):
     created_by = fields.String(attribute=db_c.CREATED_BY)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
+    favorite = fields.Boolean(required=False, default=False)
 
     # pylint: disable=unused-argument
     # pylint: disable=no-self-use
@@ -625,7 +633,29 @@ def weighted_engagement_status(engagements: list) -> list:
                     status = api_c.STATUS_ERROR
 
                 destination[api_c.LATEST_DELIVERY][api_c.STATUS] = status
+                if engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
+                    destination[api_c.LATEST_DELIVERY][
+                        db_c.ENGAGEMENT_DELIVERY_SCHEDULE
+                    ] = (
+                        engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE)
+                        .get(api_c.SCHEDULE)
+                        .get(api_c.PERIODICIY)
+                        if engagement.get(
+                            db_c.ENGAGEMENT_DELIVERY_SCHEDULE
+                        ).get(api_c.SCHEDULE)
+                        else None
+                    )
 
+                    destination[api_c.LATEST_DELIVERY][
+                        api_c.NEXT_DELIVERY
+                    ] = get_next_schedule(
+                        engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(
+                            api_c.SCHEDULE_CRON
+                        ),
+                        engagement[db_c.ENGAGEMENT_DELIVERY_SCHEDULE].get(
+                            api_c.START_DATE
+                        ),
+                    )
                 status_rank = {
                     api_c.STATUS: status,
                     api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(status, 0),

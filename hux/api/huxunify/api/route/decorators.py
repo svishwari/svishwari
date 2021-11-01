@@ -2,6 +2,8 @@
 from functools import wraps
 from typing import Any
 from http import HTTPStatus
+
+import requests
 from bson import ObjectId
 from bson.errors import InvalidId
 
@@ -14,7 +16,6 @@ from huxunifylib.util.general.logging import logger
 from huxunifylib.connectors import (
     CustomAudienceDeliveryStatusError,
 )
-from huxunifylib.database.user_management import get_user, set_user
 from huxunifylib.database.engagement_management import get_engagement
 from huxunifylib.database import (
     orchestration_management,
@@ -23,12 +24,11 @@ from huxunifylib.database import (
 )
 import huxunifylib.database.db_exceptions as de
 
-from huxunify.api.route.utils import get_db_client
+from huxunify.api.route.utils import get_db_client, get_user_from_db
 from huxunify.api import constants
 from huxunify.api.data_connectors.okta import (
     introspect_token,
     get_token_from_request,
-    get_user_info,
 )
 from huxunify.api.exceptions import (
     integration_api_exceptions as iae,
@@ -172,51 +172,32 @@ def get_user_name() -> object:
             """
 
             # override if flag set locally
-
-            # set of keys required from userinfo
-            required_keys = {
-                constants.OKTA_ID_SUB,
-                constants.EMAIL,
-                constants.NAME,
-            }
-
             if config("TEST_AUTH_OVERRIDE", cast=bool, default=False):
-                # return a default user id
+                # return a default user name
                 kwargs[constants.USER_NAME] = "test user"
                 return in_function(*args, **kwargs)
 
-            # get the auth token
-            logger.info("Getting user info from OKTA.")
+            # get the access token
+            logger.info("Getting okta access token from request.")
             token_response = get_token_from_request(request)
 
-            # if not 200, return response.
+            # if not 200, return response
             if token_response[1] != 200:
+                logger.info("Failure. Okta token response code is not 200.")
                 return token_response
 
-            # get the user information
-            user_info = get_user_info(token_response[0])
+            # get the user info and the corresponding user document from db
+            # from the access_token
+            user_response = get_user_from_db(token_response[0])
 
-            # checking if required keys are present in user_info
-            if not required_keys.issubset(user_info.keys()):
-                return {
-                    "message": constants.AUTH401_ERROR_MESSAGE
-                }, HTTPStatus.UNAUTHORIZED
+            # if the user_response object is of type tuple, then return it as
+            # such since a failure must have occurred while fetching user data
+            # from db
+            if isinstance(user_response, tuple):
+                return user_response
 
-            logger.info("Successfully got user info from OKTA.")
-            # check if the user is in the database
-            database = get_db_client()
-            user = get_user(database, user_info[constants.OKTA_ID_SUB])
-            # return found user, or create one and return it.
-            kwargs[constants.USER_NAME] = (
-                user[db_c.USER_DISPLAY_NAME]
-                if user
-                else set_user(
-                    database,
-                    user_info[constants.OKTA_ID_SUB],
-                    user_info[constants.EMAIL],
-                    display_name=user_info[constants.NAME],
-                )[db_c.USER_DISPLAY_NAME]
-            )
+            # return found user
+            kwargs[constants.USER_NAME] = user_response[db_c.USER_DISPLAY_NAME]
 
             return in_function(*args, **kwargs)
 
@@ -376,12 +357,17 @@ def api_error_handler(custom_message: dict = None) -> object:
                     "message": constants.DESTINATION_CONNECTION_FAILED
                 }, HTTPStatus.FAILED_DEPENDENCY
 
-            except iae.FailedDateFilterIssue as exc:
+            except iae.EmptyAPIResponseError as exc:
+                logger.error(
+                    "%s: %s while executing %s in module %s.",
+                    exc.__class__,
+                    exc.args[0] if exc.args else exc.exception_message,
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
                 return {
-                    "message": custom_message
-                    if custom_message
-                    else exc.exception_message
-                }, HTTPStatus.BAD_REQUEST.value
+                    "message": constants.EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE
+                }, HTTPStatus.NOT_FOUND
 
             except ue.InputParamsValidationError as exc:
                 logger.error(
@@ -392,6 +378,18 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {"message": exc.args[0]}, HTTPStatus.BAD_REQUEST
+
+            except requests.exceptions.ConnectionError as exc:
+                logger.error(
+                    "%s: Failed connecting to %s in %s in module %s.",
+                    exc.__class__,
+                    exc.request.url,
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
+                return {
+                    "message": constants.FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE
+                }, HTTPStatus.FAILED_DEPENDENCY
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.

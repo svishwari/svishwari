@@ -5,8 +5,9 @@
       <div class="d-flex">
         <v-tab
           key="displayAds"
-          class="pa-2 mr-3"
+          class="pa-2 mr-3 text-h5"
           color
+          data-e2e="digital-advertising"
           @click="$emit('fetchMetrics', 'ads')"
         >
           Digital Advertising
@@ -14,6 +15,7 @@
         <v-tab
           key="email"
           class="text-h5"
+          data-e2e="email-marketing"
           @click="$emit('fetchMetrics', 'email')"
         >
           Email Marketing
@@ -54,6 +56,7 @@
           :campaign-data="audiencePerformanceAdsData"
           :engagement-id="engagementId"
           type="ads"
+          data-e2e="ads-data"
           @onUpdateCampaignMappings="$emit('fetchMetrics', 'ads')"
         />
       </v-tab-item>
@@ -66,15 +69,10 @@
           :summary="emailSummary"
           :campaign-data="emailDataData"
           type="email"
+          data-e2e="email-data"
         />
       </v-tab-item>
     </v-tabs-items>
-    <hux-alert
-      v-model="flashAlert"
-      :type="alert.type"
-      :title="alert.title"
-      :message="alert.message"
-    />
   </div>
 </template>
 
@@ -82,7 +80,6 @@
 import { saveFile } from "@/utils"
 import { mapActions } from "vuex"
 import CampaignSummary from "../../components/CampaignSummary.vue"
-import HuxAlert from "../../components/common/HuxAlert.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
@@ -90,7 +87,6 @@ export default {
   components: {
     CampaignSummary,
     Tooltip,
-    HuxAlert,
   },
   props: {
     adData: {
@@ -115,12 +111,6 @@ export default {
   },
   data() {
     return {
-      flashAlert: false,
-      alert: {
-        type: "success",
-        title: "YAY!",
-        message: "Downloading...",
-      },
       tabOption: 0,
       myIconColor: "primary",
       tooltipValue:
@@ -360,13 +350,14 @@ export default {
   methods: {
     ...mapActions({
       downloadAudienceMetrics: "engagements/fetchAudienceMetrics",
+      setAlert: "alerts/setAlert",
     }),
     async initiateMetricsDownload() {
-      this.alert.type = "Pending"
-      this.alert.title = ""
-      this.alert.message =
-        "The download has started. Please be patient while it finishes."
-      this.flashAlert = true
+      this.setAlert({
+        type: "pending",
+        message:
+          "The download has started. Please be patient while it finishes.",
+      })
       const fileBlob = await this.downloadAudienceMetrics({
         id: this.engagementId,
       })
@@ -417,14 +408,14 @@ export default {
   ::v-deep .v-tabs-bar {
     background: transparent !important;
     .v-tabs-bar__content {
-      border-bottom: 2px solid var(--v-zircon-base);
+      border-bottom: 2px solid var(--v-black-lighten2);
       display: flex;
       justify-content: space-between;
       .v-tabs-slider-wrapper {
         width: 128px;
         .v-tabs-slider {
-          background-color: var(--v-primary-lighten8) !important;
-          border-color: var(--v-primary-lighten8) !important;
+          background-color: var(--v-primary-lighten6) !important;
+          border-color: var(--v-primary-lighten6) !important;
         }
       }
       .v-tab {
@@ -441,10 +432,10 @@ export default {
           }
         }
         &.v-tab--active {
-          color: var(--v-primary-lighten8) !important;
+          color: var(--v-primary-lighten6) !important;
           svg {
             path {
-              stroke: var(--v-primary-lighten8);
+              stroke: var(--v-primary-lighten6);
             }
           }
         }

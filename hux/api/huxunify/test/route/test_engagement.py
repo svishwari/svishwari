@@ -25,7 +25,10 @@ from huxunifylib.database.engagement_management import (
     get_engagements,
 )
 from huxunifylib.database.orchestration_management import create_audience
-from huxunifylib.database.user_management import set_user
+from huxunifylib.database.user_management import (
+    set_user,
+    manage_user_favorites,
+)
 from huxunifylib.connectors import FacebookConnector
 from huxunify.api.schema.engagement import DisplayAdsSummary, EmailSummary
 from huxunify.api import constants as api_c
@@ -490,11 +493,11 @@ class TestEngagementRoutes(TestCase):
         self.addCleanup(mock.patch.stopall)
 
         # write a user to the database
-        self.user_name = "felix hernandez"
-        set_user(
+        self.user_name = t_c.VALID_USER_RESPONSE.get(api_c.NAME)
+        self.user_doc = set_user(
             self.database,
-            "fake",
-            "felix_hernandez@fake.com",
+            t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
             display_name=self.user_name,
         )
 
@@ -625,6 +628,13 @@ class TestEngagementRoutes(TestCase):
             str(set_engagement(self.database, **x)) for x in engagements
         ]
 
+        # set favorite engagement
+        manage_user_favorites(
+            self.database,
+            self.user_doc[db_c.OKTA_ID],
+            db_c.ENGAGEMENTS,
+            ObjectId(self.engagement_ids[0]),
+        )
         # set delivery platform
         self.delivery_platform = set_delivery_platform(
             self.database,
@@ -1095,11 +1105,13 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(len(engagements), len(expected_engagements))
         for engagement in engagements:
             self.assertEqual(self.user_name, engagement[db_c.CREATED_BY])
+            self.assertIn(api_c.FAVORITE, engagement)
             self.assertIsNotNone(engagement[db_c.STATUS])
 
-    def test_get_engagement_by_id_valid_id(self):
-        """Test get engagement API with valid ID."""
+    def test_get_engagement_by_id_valid_id_favorite(self):
+        """Test get engagement API with valid ID which is a favorite."""
 
+        # set user favorite
         engagement_id = self.engagement_ids[0]
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
@@ -1110,6 +1122,22 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(engagement_id, return_engagement[db_c.OBJECT_ID])
         self.assertEqual(self.user_name, return_engagement[db_c.CREATED_BY])
         self.assertEqual(api_c.STATUS_INACTIVE, return_engagement[db_c.STATUS])
+        self.assertTrue(return_engagement[api_c.FAVORITE])
+
+    def test_get_engagement_by_id_valid_id_not_favorite(self):
+        """Test get engagement API with valid ID which is not a favorite."""
+
+        engagement_id = self.engagement_ids[1]
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        return_engagement = response.json
+        self.assertEqual(engagement_id, return_engagement[db_c.OBJECT_ID])
+        self.assertEqual(self.user_name, return_engagement[db_c.CREATED_BY])
+        self.assertEqual(api_c.STATUS_INACTIVE, return_engagement[db_c.STATUS])
+        self.assertFalse(return_engagement[api_c.FAVORITE])
 
     def test_get_engagement_by_id_invalid_id(self):
         """Test get engagements API with invalid ID."""
@@ -1666,16 +1694,29 @@ class TestEngagementRoutes(TestCase):
 
         destination_to_remove = {api_c.ID: str(self.destinations[0][db_c.ID])}
 
-        response = self.app.post(
+        response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
             f"{api_c.AUDIENCE}/{str(audience_id)}/destinations",
             json=destination_to_remove,
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(
-            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+    def test_remove_invalid_destination_from_engagement_audience(self):
+        """Test remove invalid destination from engagement audience."""
+
+        engagement_id = self.engagement_ids[0]
+        audience_id = self.audiences[1][db_c.ID]
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.AUDIENCE}/{str(audience_id)}/destinations",
+            json={},
+            headers=t_c.STANDARD_HEADERS,
         )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
 
     def test_set_engagement_flight_schedule(self):
         """Test setting an engagement flight schedule."""

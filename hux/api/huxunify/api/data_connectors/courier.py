@@ -27,7 +27,7 @@ from huxunifylib.util.general.const import (
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_const
-from huxunify.api.config import get_config
+from huxunify.api.config import get_config, Config
 from huxunify.api.data_connectors.aws import (
     set_cloud_watch_rule,
     put_rule_targets_aws_batch,
@@ -167,6 +167,29 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         )
 
     return env_dict, secret_dict
+
+
+def get_okta_test_user_creds(config: Config) -> tuple:
+    """Pass in SSM Store values for the OKTA test user params.
+
+    Args:
+        config (Config): Config object to get the current OKTA Issue/Client.
+
+    Returns:
+        dict: tuple: The credential tuple for (env, secrets).
+    """
+
+    # only return the constant names, they are used in the Audience Router
+    # to retrieve the actual secrets from AWS SSM
+
+    return {
+        api_const.OKTA_ISSUER: config.OKTA_ISSUER,
+        api_const.OKTA_CLIENT_ID: config.OKTA_CLIENT_ID,
+    }, {
+        api_const.OKTA_TEST_USER_NAME: api_const.UNIFIED_OKTA_TEST_USER_NAME,
+        api_const.OKTA_TEST_USER_PW: api_const.UNIFIED_OKTA_TEST_USER_PW,
+        api_const.OKTA_REDIRECT_URI: api_const.UNIFIED_OKTA_REDIRECT_URI,
+    }
 
 
 # pylint: disable=too-many-instance-attributes,too-many-arguments
@@ -393,6 +416,9 @@ def get_destination_config(
         delivery_platform
     )
 
+    # get okta constant names used by audience router to communicate to CDM API.
+    okta_env_dict, okta_secret_dict = get_okta_test_user_creds(config)
+
     # update the engagement latest delivery job
     try:
         add_delivery_job(
@@ -418,14 +444,16 @@ def get_destination_config(
         MongoDBCredentials.MONGO_DB_PORT.name: str(config.MONGO_DB_PORT),
         MongoDBCredentials.MONGO_DB_USERNAME.name: config.MONGO_DB_USERNAME,
         MongoDBCredentials.MONGO_SSL_CERT.name: api_const.AUDIENCE_ROUTER_CERT_PATH,
-        api_const.CDP_SERVICE_URL: config.CDP_SERVICE,
+        api_const.CDP_SERVICE: config.CDP_SERVICE,
         **ds_env_dict,
+        **okta_env_dict,
     }
 
     # setup the secrets dict
     secret_dict = {
         MongoDBCredentials.MONGO_DB_PASSWORD.name: api_const.AUDIENCE_ROUTER_MONGO_PASSWORD_FROM,
         **ds_secret_dict,
+        **okta_secret_dict,
     }
 
     return DestinationBatchJob(

@@ -5,10 +5,17 @@
         <div
           v-for="item in chartLegendsData"
           :key="item.id"
-          class="legend-section mt-3"
+          class="legend-section mb-2"
         >
-          <icon :type="item.icon" :size="12" color="primary" />
-          <span>{{ item.prop }}</span>
+          <icon
+            :type="item.icon"
+            :size="13"
+            :color="item.color"
+            :variant="item.variant"
+          />
+          <span class="text--body-2 ml-1 black--text text--lighten-4">{{
+            item.prop
+          }}</span>
         </div>
       </div>
       <div ref="chordsChart" class="chart-svg">
@@ -32,7 +39,9 @@
               <icon
                 v-if="currentData.icon"
                 :type="currentData.icon"
-                :size="12"
+                :size="13"
+                :color="getIconInfo(currentData.icon)['color']"
+                :variant="getIconInfo(currentData.icon)['variant']"
               />
               <span class="prop-name">{{ currentData.name }}</span>
               <div
@@ -49,16 +58,18 @@
               <icon
                 v-if="currentData.sourceIcon"
                 :type="currentData.sourceIcon"
-                :size="12"
-                color="primary"
+                :color="getIconInfo(currentData.sourceIcon)['color']"
+                :variant="getIconInfo(currentData.sourceIcon)['variant']"
+                :size="13"
               />
               <span class="prop-name">{{ currentData.sourceName }}</span>
               <span class="pipe"></span>
               <icon
                 v-if="currentData.targetIcon"
                 :type="currentData.targetIcon"
-                :size="12"
-                color="primary"
+                :size="13"
+                :color="getIconInfo(currentData.targetIcon)['color']"
+                :variant="getIconInfo(currentData.targetIcon)['variant']"
               />
               <span class="prop-name">{{ currentData.targetName }}</span>
               <span class="text-line">
@@ -93,14 +104,19 @@ export default {
   data() {
     return {
       // TODO provide actual color code as per Icon colors
-      colorCodes: ["#005587", "#da291c", "#00a3e0", "#43b02a", "#efa34c"],
+      colorCodes: ["#0076A8", "#42EFFD", "#00A3E0", "#43B02A", "#E3E48D"],
       // TODO Extracting it from the actual IDR data
       chartLegendsData: [
-        { prop: "Name", icon: "name", color: "#005587" },
-        { prop: "Address", icon: "address", color: "#da291c" },
-        { prop: "Email", icon: "email", color: "#00a3e0" },
-        { prop: "Phone", icon: "phone", color: "#43b02a" },
-        { prop: "Cookie", icon: "cookie", color: "#efa34c" },
+        { prop: "Name", icon: "name", color: "primary", variant: "darken1" },
+        {
+          prop: "Address",
+          icon: "address",
+          color: "primary",
+          variant: "darken4",
+        },
+        { prop: "Email", icon: "email", color: "primary", variant: "base" },
+        { prop: "Phone", icon: "phone", color: "success", variant: "base" },
+        { prop: "Cookie", icon: "cookie", color: "info", variant: "base" },
       ],
       show: false,
       isArcHover: false,
@@ -146,16 +162,15 @@ export default {
     this.generateChartGroups()
     this.transformData()
     this.sizeHandler()
-  },
-  created() {
-    window.addEventListener("resize", this.sizeHandler)
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.sizeHandler)
+    new ResizeObserver(this.sizeHandler).observe(this.$refs.chordsChart)
   },
   methods: {
     generateChartGroups() {
       this.groupNames = Object.keys(this.chartData)
+    },
+
+    getIconInfo(iconType) {
+      return this.chartLegendsData.filter((leg) => leg.icon === iconType)[0]
     },
 
     toolTipDisplay(...arg) {
@@ -173,7 +188,7 @@ export default {
     sizeHandler() {
       if (this.$refs.chordsChart) {
         this.chartDimensions.width = this.$refs.chordsChart.clientWidth
-        this.chartDimensions.height = 200
+        this.chartDimensions.height = 190
       }
     },
 
@@ -288,13 +303,6 @@ export default {
       flex: 1 0 32%;
       padding-left: 5px;
       .legend-section {
-        max-width: 100px;
-        span {
-          margin-left: 8px;
-          font-size: 12px;
-          line-height: 16px;
-          color: var(--v-black-darken1) !important;
-        }
       }
     }
     .chart-svg {

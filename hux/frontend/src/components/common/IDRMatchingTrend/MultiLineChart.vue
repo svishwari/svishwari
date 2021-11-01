@@ -12,6 +12,7 @@ import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
 import * as d3TimeFormat from "d3-time-format"
+import colors from "@/plugins/colors.js"
 
 export default {
   name: "MultiLineChart",
@@ -65,7 +66,7 @@ export default {
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
       let dataKey = ["unique_hux_ids", "anonymous_ids", "known_ids"]
-      let colorCodes = ["#347DAC", "#4F4F4F", "#42EFFD"]
+      let colorCodes = [colors.darkBlue, colors.chart2, colors.chart3]
       let ids = [
         { label: "Unique Hux IDs", xValue: 0 },
         { label: "Anonymous IDs", xValue: 122 },
@@ -73,7 +74,7 @@ export default {
       ]
       let color = d3Scale
         .scaleOrdinal()
-        .range(["#347DAC", "#75787B", "#42EFFD"])
+        .range([colors.darkBlue, colors.chart2, colors.chart3])
       let svg = d3Select
         .select(this.$refs.multiLineChart)
         .append("svg")
@@ -206,7 +207,7 @@ export default {
         .style("fill", "transparent")
         .on("mousemove", (mouseEvent) => mousemove(mouseEvent))
         .on("mouseout", () => mouseout())
-      let bisectDate = d3Array.bisector((d) => d).left
+      let bisectDate = d3Array.bisector((d) => d).right
       let mouseout = () => {
         svg.selectAll(".hover-line-y").style("display", "none")
         svg.selectAll(".hover-circle").remove()
@@ -283,11 +284,10 @@ export default {
         .attr("cx", 9)
         .attr("cy", 9)
         .attr("r", 6)
-        .attr("stroke", function (d) {
+        .attr("fill", function (d) {
           return color(d.label)
         })
         .attr("stroke-width", 2)
-        .style("fill", "white")
 
       legend
         .append("text")

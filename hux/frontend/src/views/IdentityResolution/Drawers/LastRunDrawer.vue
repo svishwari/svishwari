@@ -40,7 +40,7 @@
                   v-for="(col, index) in columns"
                   :key="index"
                   :style="{ width: col.width }"
-                  class="text-body-1"
+                  class="text-body-2"
                 >
                   <template v-if="col.value === 'result'">
                     <template v-if="resultAsPercentage.includes(item.metric)">

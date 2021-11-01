@@ -1,6 +1,5 @@
 # pylint: disable=no-self-use
 """Schemas for the Destinations API"""
-
 from flask_marshmallow import Schema
 from marshmallow import fields, pre_load, ValidationError
 from marshmallow.validate import OneOf, Range, Equal
@@ -17,6 +16,13 @@ class DataExtensionSchema(Schema):
     """Engagement Audience Destination Data Extension Schema"""
 
     data_extension_name = fields.String()
+
+
+class DestinationDataExtSchema(Schema):
+    """Destination data extension schema class"""
+
+    name = fields.String(example="data_extension_name")
+    data_extension_id = fields.String(example="data_extension_id")
 
 
 class DeliveryScheduleDailySchema(Schema):
@@ -131,6 +137,17 @@ class DeliveryScheduleSchema(Schema):
         return data
 
 
+class DestinationDataExtConfigSchema(Schema):
+    """Destination data extension configuration schema class"""
+
+    performance_metrics_data_extension = fields.Nested(
+        DestinationDataExtSchema, required=True
+    )
+    campaign_activity_data_extension = fields.Nested(
+        DestinationDataExtSchema, required=True
+    )
+
+
 class DestinationGetSchema(Schema):
     """Destinations get schema class"""
 
@@ -157,22 +174,19 @@ class DestinationGetSchema(Schema):
                     api_c.STATUS_DELIVERING,
                     api_c.STATUS_DELIVERED,
                     api_c.STATUS_DELIVERY_PAUSED,
+                    api_c.STATUS_ACTIVE,
+                    api_c.STATUS_PENDING,
                     api_c.STATUS_ERROR,
                 ]
             )
         ],
     )
+    category = fields.String(attribute=db_c.CATEGORY, example=db_c.ADVERTISING)
     campaigns = fields.Int(
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
-    perf_data_extension = fields.Dict(
-        attribute=db_c.PERFORMANCE_METRICS_DATA_EXTENSION,
-        example={
-            api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
-            api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
-        },
-        required=False,
-        allow_none=True,
+    configuration = fields.Nested(
+        DestinationDataExtConfigSchema, required=False, allow_none=True
     )
     is_added = fields.Bool(attribute="added")
     is_enabled = fields.Bool(attribute="enabled")
@@ -184,18 +198,42 @@ class DestinationGetSchema(Schema):
     delivery_platform_config = fields.Nested(DataExtensionSchema)
 
 
+class DestinationPatchSchema(Schema):
+    """Destinations Patch schema class"""
+
+    type = fields.String(
+        attribute=api_c.DELIVERY_PLATFORM_TYPE,
+        example=db_c.DELIVERY_PLATFORM_SFMC,
+    )
+    name = fields.String(
+        attribute=api_c.DESTINATION_NAME,
+        example=db_c.DELIVERY_PLATFORM_SFMC.title(),
+    )
+    status = fields.String(
+        attribute=api_c.CONNECTION_STATUS,
+        validate=[
+            OneOf(
+                choices=[
+                    api_c.STATUS_NOT_DELIVERED,
+                    api_c.STATUS_DELIVERING,
+                    api_c.STATUS_DELIVERED,
+                    api_c.STATUS_DELIVERY_PAUSED,
+                    api_c.STATUS_ERROR,
+                ]
+            )
+        ],
+    )
+    added = fields.Bool(attribute="added")
+    enabled = fields.Bool(attribute="enabled")
+    ad_platform = fields.Bool(attribute=db_c.IS_AD_PLATFORM)
+
+
 class DestinationPutSchema(Schema):
     """Destination put schema class"""
 
     authentication_details = fields.Field()
-    perf_data_extension = fields.Dict(
-        attribute=api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION,
-        example={
-            api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
-            api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
-        },
-        required=False,
-        allow_none=True,
+    configuration = fields.Nested(
+        DestinationDataExtConfigSchema, required=False
     )
 
 
@@ -602,4 +640,7 @@ class DestinationDataExtGetSchema(Schema):
     name = fields.String(attribute="Name", example="data_extension_name")
     data_extension_id = fields.String(
         attribute="CustomerKey", example="data_extension_id"
+    )
+    create_time = DateTimeWithZ(
+        attribute="createdDate", required=False, default=None, allow_none=True
     )

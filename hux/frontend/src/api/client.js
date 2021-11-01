@@ -88,6 +88,14 @@ client["destinations"].validate = (data) => {
   return http.post("/destinations/validate", data)
 }
 
+client["destinations"].authenticate = (destinationId, data) => {
+  return http.put(`/destinations/${destinationId}/authentication`, data)
+}
+
+client["destinations"].remove = (id, data) => {
+  return http.patch(`/destinations/${id}`, data)
+}
+
 client["destinations"].dataExtensions = (resourceId) => {
   return http.get(`/destinations/${resourceId}/data-extensions`)
 }
@@ -143,6 +151,16 @@ client["engagements"].deliverAudience = ({ resourceId, audienceId }, data) => {
   return http.post(endpoint, data)
 }
 
+client["engagements"].deliverySchedule = ({
+  id,
+  audienceId,
+  destinationId,
+  recurringConfig,
+}) => {
+  const endpoint = `/engagements/${id}/audience/${audienceId}/destination/${destinationId}/schedule`
+  return http.post(endpoint, recurringConfig)
+}
+
 client["engagements"].deliverAudienceDestination = (
   { resourceId, audienceId, destinationId },
   data
@@ -151,8 +169,8 @@ client["engagements"].deliverAudienceDestination = (
   return http.post(endpoint, data)
 }
 
-client["engagements"].deliveries = (resourceId, data) => {
-  return http.get(`/engagements/${resourceId}/delivery-history`, data)
+client["engagements"].deliveries = (resourceId, query) => {
+  return http.get(`/engagements/${resourceId}/delivery-history?${query}`)
 }
 
 client["engagements"].fetchAudiencePerformance = (resourceId, data) => {
@@ -201,6 +219,10 @@ client["engagements"].getCampaigns = ({
     `/engagements/${resourceId}/audience/${audienceId}/destination/${destinationId}/campaigns`
   )
 }
+
+client["engagements"].remove = (resourceId) => {
+  return http.delete(`/engagements/${resourceId}`)
+}
 //#endregion Engagement custom endpoints
 
 //#region Customer Identity endpoint(s)
@@ -241,8 +263,8 @@ client["audiences"].deliver = (resourceId, data) => {
   return http.post(`/audiences/${resourceId}/deliver`, data)
 }
 
-client["audiences"].deliveries = (resourceId, data) => {
-  return http.get(`/audiences/${resourceId}/delivery-history`, data)
+client["audiences"].deliveries = (resourceId, query) => {
+  return http.get(`/audiences/${resourceId}/delivery-history?${query}`)
 }
 
 client["audiences"].geoCities = (resourceId, batchNumber, batchSize) => {
@@ -258,6 +280,10 @@ client["audiences"].geoCountries = (resourceId) => {
 client["audiences"].geoStates = (resourceId) => {
   return http.get(`/audiences/${resourceId}/states`)
 }
+
+client["audiences"].remove = (resourceId) => {
+  return http.delete(`/audiences/${resourceId}`)
+}
 //#endregion
 
 //#region Notifications
@@ -266,6 +292,11 @@ client["notifications"].getNotifications = (batchSize, batchNumber) => {
     `/notifications?batch_size=${batchSize}&batch_number=${batchNumber}`
   )
 }
+
+client["notifications"].find = (notification_id) => {
+  return http.get(`/notifications/${notification_id}`)
+}
+
 //#endregion
 
 client["models"].overview = (id) => {

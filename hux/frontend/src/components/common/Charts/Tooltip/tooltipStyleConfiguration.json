@@ -20,10 +20,10 @@
     "padding": "10px"
   },
   "totalCustomerChart": {
-    "maxWidth": "172px",
+    "maxWidth": "200px",
     "top": "-45px",
     "left": "45px",
-    "padding": "8px 8px 15px 8px"
+    "padding": "8px"
   },
   "identityChart": {
     "maxWidth": "213px",
@@ -48,10 +48,15 @@
     "top": "35px",
     "left": "30px"
   },
-  "driftChart": {
+  "featureChartScore": {
     "maxWidth": "70px",
-    "top": "-45px",
-    "left": "45px",
-    "padding": "5px"
+    "top": "-6px",
+    "left": "171px",
+    "padding": "7px 14px 12px 14px"
+  },
+  "driftChart": {
+    "top": "55px",
+    "left": "25px",
+    "padding": "6px 16px"
   }
 }

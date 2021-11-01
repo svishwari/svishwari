@@ -7,7 +7,7 @@ import mongomock
 import requests_mock
 
 from huxunifylib.connectors import FacebookConnector
-from huxunifylib.database import data_management, constants as db_c
+from huxunifylib.database import constants as db_c
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
     set_delivery_job,
@@ -22,6 +22,11 @@ from huxunifylib.database.orchestration_management import (
     create_audience,
     get_audience,
     get_audience_insights,
+)
+
+from huxunifylib.database.user_management import (
+    set_user,
+    manage_user_favorites,
 )
 from huxunifylib.database.engagement_audience_management import (
     get_all_engagement_audience_destinations,
@@ -233,24 +238,25 @@ class OrchestrationRouteTest(TestCase):
                 db_c.AUDIENCE_STATUS_DELIVERED,
             )
 
+        set_user(
+            self.database,
+            okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
+        )
+
+        # Set an audience as favorite
+        manage_user_favorites(
+            self.database,
+            okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            component_name=api_c.AUDIENCES,
+            component_id=self.audiences[0][db_c.ID],
+        )
+
         # setup the flask test client
         self.test_client = create_app().test_client()
 
     def test_get_audience_rules_success(self):
         """Test the get audience rules route success."""
-
-        data_management.set_constant(
-            self.database,
-            db_c.AUDIENCE_FILTER_CONSTANTS,
-            {
-                "text_operators": {
-                    "contains": "Contains",
-                    "does_not_contain": "Does not contain",
-                    "does_not_equal": "Does not equal",
-                    "equals": "Equals",
-                }
-            },
-        )
 
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/rules", headers=t_c.STANDARD_HEADERS
@@ -611,6 +617,9 @@ class OrchestrationRouteTest(TestCase):
                     for x in audience[api_c.DELIVERIES]
                 )
             )
+            self.assertIn(db_c.DELIVERIES, audience)
+            for delivery in audience[db_c.DELIVERIES]:
+                self.assertIn(db_c.DELIVERY_PLATFORM_ID, delivery)
 
     def test_get_audience_does_not_exist(self):
         """Test get audience that does not exist."""
@@ -1011,3 +1020,58 @@ class OrchestrationRouteTest(TestCase):
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    def test_get_audience_with_not_delivered(self):
+        """Test get audience empty update_time for un-delivered engagements."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/{self.audiences[1][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        audience = response.json
+
+        for audience_engagement in audience[api_c.AUDIENCE_ENGAGEMENTS]:
+            for delivery in audience_engagement[api_c.DELIVERIES]:
+                if delivery[api_c.STATUS] != db_c.STATUS_DELIVERED:
+                    self.assertIsNone(delivery[db_c.UPDATE_TIME])
+
+    def test_get_audience_not_in_favorites(self):
+        """Test get audience not a favorite."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/{self.audiences[1][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        audience = response.json
+        self.assertFalse(audience.get(api_c.FAVORITE))
+
+    def test_get_audience_in_favorites(self):
+        """Test get audience which is a favorite."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        audience = response.json
+        self.assertTrue(audience.get(api_c.FAVORITE))

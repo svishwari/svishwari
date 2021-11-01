@@ -1,0 +1,11 @@
+<svg width="100%" height="100%" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="13" cy="13" r="12.5" fill="white" stroke="#E2EAEC"/>
+<g clip-path="url(#marketo0)">
+<path d="M20.4208 18.1369V6.74028L15.9941 4.33203V21.6654L20.4208 18.1369ZM10.3664 5.83868L13.9333 6.89493V17.8799L10.3664 19.438V5.83868ZM8.30593 8.07955L5.58893 7.64161L5.57593 17.4802L8.30593 16.7589V8.07955Z" fill="#5C4C9F"/>
+</g>
+<defs>
+<clipPath id="marketo0">
+<rect width="17.3333" height="17.3333" fill="white" transform="translate(4.33325 4.33203)"/>
+</clipPath>
+</defs>
+</svg>

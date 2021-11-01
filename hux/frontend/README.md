@@ -69,6 +69,41 @@ If there are style issues, run `yarn style:fix` to fix them.
 yarn serve:storybook
 ```
 
+## Dev
+
+To connect your localhost to the API in dev, do the following:
+
+1. Create a `.env.dev1` by copying the `.env.local` configuration.
+    ```sh
+    cp .env.local .env.dev1
+    ```
+2. Update the `VUE_APP_API_URL` in `.env.dev1` to the hostname for the API in dev
+    ```
+    // .env.dev1
+    ...
+    VUE_APP_API_URL = https://unified-api-dev.main.use1.hux-unified-dev1.in
+    ```
+
+3. Restart your local development server using the new configuration.
+    ```sh
+    yarn serve --mode dev1
+    ```
+    Note: `--mode` allows you to use a different env file for your local server.
+
+You will also need to create a `token.txt` file to store your temporary dev access token.
+
+4. Create the token.txt file in `src/api/mock/token.txt`
+    ```sh
+    echo -e 'REPLACE_WITH_TOKEN' > src/api/mock/token.txt
+    ```
+
+5. Replace your token in `token.txt` with the one generated in dev.
+
+You should now be able to open http://localhost:8080 and connect with the dev API.
+
+You can verify this in the Network tab in your browser and Mirage will console out
+with `Mirage: Passthrough request for <API request>`.
+
 ## Docker
 
 Test.
@@ -82,7 +117,13 @@ docker run -it hux-ui-dev yarn test:unit
 Build.
 
 ```sh
-docker build --target serve --build-arg API_URL="http://unified-api-dev.main.use1.hux-unified-dev1.in" --build-arg OKTA_ISSUER="https://dev-631073.okta.com" --build-arg OKTA_CLIENT_ID="0oa2wbure49NQsL7a4x7" -t hux-ui .
+docker build --target build --build-arg API_URL="https://unified-api-dev.main.use1.hux-unified-dev1.in" --build-arg OKTA_ISSUER="https://dev-631073.okta.com" --build-arg OKTA_CLIENT_ID="0oa2wbure49NQsL7a4x7" -t hux-ui .
+```
+
+Build with Storybook (dev only).
+
+```sh
+docker build --target build --build-arg API_URL="https://unified-api-dev.main.use1.hux-unified-dev1.in" --build-arg OKTA_ISSUER="https://dev-631073.okta.com" --build-arg OKTA_CLIENT_ID="0oa2wbure49NQsL7a4x7" --build-arg BUILD_STORYBOOK="true" -t hux-ui .
 ```
 
 Run.

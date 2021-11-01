@@ -34,7 +34,7 @@
             <template #subtitle-extended>
               <tooltip>
                 <template #label-content>
-                  <span class="font-weight-semi-bold">
+                  <span class="text--subtitle-1">
                     {{ getFormattedValue(item) | Empty }}
                   </span>
                 </template>
@@ -74,19 +74,21 @@
                       pt-2
                       input-placeholder
                     "
+                    data-e2e="audience-name"
                     :rules="audienceNamesRules"
                     help-text="This audience will appear in the delivered destinations as the provided Audience name. In Facebook it will appear as the provided Audience name with the timestamp of delivery."
                     icon="mdi-information-outline"
                   />
                 </v-col>
                 <v-col cols="8">
-                  <div
-                    class="mt-3 ml-15 text-caption black--text text--darken-4"
-                  >
+                  <div class="mt-3 ml-15 text-h5 black--text text--darken-4">
                     Add to an engagement -
-                    <i style="tilt">you must have at least one</i>
+                    <i style="text-h6">you must have at least one</i>
                     <div class="mt-2 d-flex align-center">
-                      <span @click="openAttachEngagementsDrawer()">
+                      <span
+                        data-e2e="add-engagement"
+                        @click="openAttachEngagementsDrawer()"
+                      >
                         <icon
                           class="add-icon cursor-pointer"
                           type="add"
@@ -167,7 +169,10 @@
               <v-row>
                 <v-col cols="12" class="pt-2">
                   <div class="d-flex align-center">
-                    <span @click="openSelectDestinationsDrawer()">
+                    <span
+                      data-e2e="add-destination-audience"
+                      @click="openSelectDestinationsDrawer()"
+                    >
                       <icon
                         class="add-icon cursor-pointer"
                         type="add"
@@ -291,6 +296,7 @@
               is-tile
               width="94"
               height="40"
+              data-e2e="cancel-audience"
               @click.native="
                 flagForModal = true
                 $router.go(-1)
@@ -306,6 +312,7 @@
               width="94"
               height="44"
               :is-disabled="!isAudienceFormValid"
+              data-e2e="create-audience"
               @click="createAudience()"
             >
               {{ !isEdit ? "Create" : "Update" }}
@@ -342,8 +349,9 @@
 
       <confirm-modal
         v-model="showConfirmModal"
-        title="You are about to navigate away"
-        right-btn-text="Yes, navigate away"
+        icon="leave-config"
+        title="You are about to leave the configuration process"
+        right-btn-text="Yes, leave configuration"
         body=" Are you sure you want to stop the configuration and go to another page? You will not be able to recover it and will need to start the process again."
         @onCancel="showConfirmModal = false"
         @onConfirm="navigateaway()"

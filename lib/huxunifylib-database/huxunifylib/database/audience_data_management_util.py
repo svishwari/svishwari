@@ -238,8 +238,8 @@ def validate_data_source_fields(fields: list) -> None:
     """
 
     types_dict: dict = {
-        "special_type_dict": dict(),
-        "field_mapping_dict": dict(),
+        "special_type_dict": {},
+        "field_mapping_dict": {},
     }
 
     for field_item in fields:

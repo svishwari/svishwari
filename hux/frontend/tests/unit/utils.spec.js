@@ -1,4 +1,9 @@
-import { listOfMonths, listOfYears, endOfMonth } from "@/utils"
+import {
+  listOfMonths,
+  listOfYears,
+  endOfMonth,
+  arrayHasFieldWithMultipleValues,
+} from "@/utils"
 
 describe("Utils", () => {
   describe("List of months", () => {
@@ -73,6 +78,97 @@ describe("Utils", () => {
       const expected = "2020-02-29"
       const actual = endOfMonth("2020-02-01")
       expect(actual).toEqual(expected)
+    })
+  })
+
+  describe("Array contains multiple values in a field", () => {
+    it("Should return true if the array contains multiple values", () => {
+      const data = [
+        {
+          state: "Alabama",
+          country: "CA",
+        },
+        {
+          state: "Alabama",
+          country: "US",
+        },
+        {
+          state: "Alabama",
+          country: "CA",
+        },
+        {
+          state: "Alabama",
+          country: "US",
+        },
+      ]
+
+      const negativeDataUndefined = [
+        {
+          state: "Alabama",
+        },
+        {
+          state: "Alabama",
+          country: "US",
+        },
+      ]
+
+      const negativeDataNull = [
+        {
+          state: "Alabama",
+          country: "US",
+        },
+        {
+          state: "Alabama",
+          country: null,
+        },
+      ]
+
+      const negativeDataNullUndefined = [
+        {
+          state: "Alabama",
+          country: "US",
+        },
+        {
+          state: "Alabama",
+          country: null,
+        },
+        {
+          state: "Alabama",
+        },
+      ]
+
+      const expectedCountry = true
+      const actualCountry = arrayHasFieldWithMultipleValues(data, "country")
+      expect(actualCountry).toEqual(expectedCountry)
+
+      const expectedState = false
+      const actualState = arrayHasFieldWithMultipleValues(data, "state")
+      expect(actualState).toEqual(expectedState)
+
+      const expectedUndefined = false
+      const actualUndefined = arrayHasFieldWithMultipleValues(data, "city")
+      expect(actualUndefined).toEqual(expectedUndefined)
+
+      const expectedNegativeUndefined = true
+      const actualNegativeUndefined = arrayHasFieldWithMultipleValues(
+        negativeDataUndefined,
+        "country"
+      )
+      expect(actualNegativeUndefined).toEqual(expectedNegativeUndefined)
+
+      const expectedNull = true
+      const actualNull = arrayHasFieldWithMultipleValues(
+        negativeDataNull,
+        "country"
+      )
+      expect(actualNull).toEqual(expectedNull)
+
+      const expectedNullUndefined = true
+      const actualNullUndefined = arrayHasFieldWithMultipleValues(
+        negativeDataNullUndefined,
+        "country"
+      )
+      expect(actualNullUndefined).toEqual(expectedNullUndefined)
     })
   })
 })

@@ -304,6 +304,12 @@ def get_engagements_summary(
                         "is_ad_platform": "$audiences.destinations.is_ad_platform",
                         "delivery_platform_type": "$audiences.destinations.delivery_platform_type",
                         "delivery_job_id": "$audiences.destinations.delivery_job_id",
+                        "delivery_schedule": {
+                            "$ifNull": [
+                                "$audiences.destinations.delivery_schedule",
+                                "",
+                            ]
+                        },
                         "latest_delivery": {
                             "update_time": "$audiences.destinations.latest_delivery.update_time",
                             "status": {
@@ -877,20 +883,53 @@ def remove_destination_from_engagement_audience(
     """
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.AUDIENCES_COLLECTION
+        db_c.ENGAGEMENTS_COLLECTION
     ]
 
-    return collection.find_one_and_update(
-        {db_c.ID: engagement_id, "audiences.id": audience_id},
+    # workaround due to limitation in DocumentDB
+    engagement_doc = collection.find_one(
         {
-            "$set": {
-                db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-                db_c.UPDATED_BY: user_name,
-            },
-            "$pull": {
-                "audiences.$.destinations": {db_c.OBJECT_ID: destination_id}
-            },
+            db_c.ID: engagement_id,
+            "audiences.id": audience_id,
+            "audiences.destinations.id": destination_id,
+        }
+    )
+    if not engagement_doc:
+        return {}
+
+    # Workaround cause DocumentDB does not support nested DB updates.
+    change = False
+    for audience in engagement_doc.get(db_c.AUDIENCES, []):
+        if audience.get(db_c.OBJECT_ID) != audience_id:
+            continue
+
+        for i, destination in enumerate(audience.get(db_c.DESTINATIONS, [])):
+            if destination.get(db_c.OBJECT_ID) != destination_id:
+                continue
+
+            del audience[db_c.DESTINATIONS][i]
+
+            engagement_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
+            engagement_doc[db_c.UPDATED_BY] = user_name
+            change = True
+            break
+
+    # no changes, simply return.
+    if not change:
+        return {}
+
+    # replace_one
+    collection.replace_one(
+        {
+            db_c.ID: engagement_id,
         },
+        engagement_doc,
+    )
+
+    return collection.find_one(
+        {
+            db_c.ID: engagement_id,
+        }
     )
 
 

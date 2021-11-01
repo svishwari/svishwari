@@ -371,6 +371,25 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertFalse([p for p in platforms if c.DELETED in p])
 
     @mongomock.patch(servers=(("localhost", 27017),))
+    def test_update_doc_delivery_platform(self):
+        """Test update doc delivery platform."""
+
+        # Get delivery platform
+        doc = dpm.get_delivery_platform(
+            self.database, self.delivery_platform_doc[c.ID]
+        )
+        # ensure enabled is False
+        self.assertFalse(doc.get(c.ENABLED))
+
+        # update enabled to True
+        doc = dpm.update_delivery_platform_doc(
+            self.database, doc[c.ID], {c.ENABLED: True}
+        )
+
+        # ensure enabled is True
+        self.assertTrue(doc.get(c.ENABLED))
+
+    @mongomock.patch(servers=(("localhost", 27017),))
     def test_connection_status(self):
         """Test connection status functions."""
 
@@ -517,6 +536,11 @@ class TestDeliveryPlatform(unittest.TestCase):
             c.DELIVERY_PLATFORM_SFMC_DATA_EXT_ID: "ED-26787B1792F6",
         }
 
+        campaign_data_extension = {
+            c.DELIVERY_PLATFORM_SFMC_DATA_EXT_NAME: "HUX Campaign Ext",
+            c.DELIVERY_PLATFORM_SFMC_DATA_EXT_ID: "CE-123456789012",
+        }
+
         dpm.update_delivery_platform(
             database=self.database,
             delivery_platform_id=self.delivery_platform_doc_sfmc[c.ID],
@@ -524,6 +548,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             delivery_platform_type=c.DELIVERY_PLATFORM_SFMC,
             added=True,
             performance_de=performance_data_extension,
+            campaign_de=campaign_data_extension,
         )
 
         get_doc = dpm.get_delivery_platform(
@@ -531,11 +556,20 @@ class TestDeliveryPlatform(unittest.TestCase):
             delivery_platform_id=self.delivery_platform_doc_sfmc[c.ID],
         )
 
-        self.assertTrue(get_doc[c.PERFORMANCE_METRICS_DATA_EXTENSION])
+        self.assertTrue(
+            get_doc[c.CONFIGURATION][c.PERFORMANCE_METRICS_DATA_EXTENSION]
+        )
+        self.assertTrue(
+            get_doc[c.CONFIGURATION][c.CAMPAIGN_ACTIVITY_DATA_EXTENSION]
+        )
 
         self.assertEqual(
-            get_doc[c.PERFORMANCE_METRICS_DATA_EXTENSION],
+            get_doc[c.CONFIGURATION][c.PERFORMANCE_METRICS_DATA_EXTENSION],
             performance_data_extension,
+        )
+        self.assertEqual(
+            get_doc[c.CONFIGURATION][c.CAMPAIGN_ACTIVITY_DATA_EXTENSION],
+            campaign_data_extension,
         )
 
     @mongomock.patch(servers=(("localhost", 27017),))

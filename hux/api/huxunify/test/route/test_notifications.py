@@ -15,7 +15,7 @@ from huxunify.app import create_app
 
 
 class TestNotificationRoutes(TestCase):
-    """Test Notifications Tests."""
+    """Test Notifications class."""
 
     def setUp(self) -> None:
         """Setup resources before each test."""
@@ -43,6 +43,18 @@ class TestNotificationRoutes(TestCase):
             return_value=self.database,
         ).start()
 
+        # mock get db client from decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get db client from utils
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
         notifications = [
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_SUCCESS,
@@ -58,6 +70,7 @@ class TestNotificationRoutes(TestCase):
                 "notification_type": db_c.NOTIFICATION_TYPE_CRITICAL,
                 "description": "description 3",
                 "category": api_c.ORCHESTRATION_TAG,
+                "username": "random_user_name",
             },
         ]
 
@@ -94,6 +107,32 @@ class TestNotificationRoutes(TestCase):
         self.assertEqual(len(self.notifications), response.json[api_c.TOTAL])
         self.assertCountEqual(
             self.notifications, response.json[api_c.NOTIFICATIONS_TAG]
+        )
+
+    def test_get_notification(self):
+        """Test get notification."""
+        notification_id = self.notifications[0][api_c.ID]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notification_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(NotificationSchema().validate(response.json))
+
+    def test_get_notification_with_username(self):
+        """Test get notification."""
+        notification_id = self.notifications[0][api_c.ID]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notification_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIn(
+            response.json["username"], ["random_user_name", "unknown"]
         )
 
     def test_get_notifications_default_params(self):
@@ -157,3 +196,41 @@ class TestNotificationRoutes(TestCase):
                         db_c.NOTIFICATION_TYPE_SUCCESS.title(),
                     )
                 break
+
+    def test_delete_notification_valid_id(self):
+        """Test delete notification API with valid ID."""
+
+        notifcation_id = self.notifications[0][api_c.ID]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notifcation_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(notifcation_id, response.json[api_c.ID])
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notifcation_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notifcation_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+
+    def test_delete_notification_invalid_id(self):
+        """Test delete notification API with invalid ID."""
+
+        notifcation_id = "some_random_id"
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}/{notifcation_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)

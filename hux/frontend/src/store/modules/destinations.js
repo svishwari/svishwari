@@ -73,12 +73,10 @@ const actions = {
       const body = {
         authentication_details: destination.authentication_details,
       }
-      if (
-        Object.prototype.hasOwnProperty.call(destination, "perf_data_extension")
-      ) {
-        body.perf_data_extension = destination.perf_data_extension
+      if (Object.prototype.hasOwnProperty.call(destination, "configuration")) {
+        body.configuration = destination.configuration
       }
-      const response = await api.destinations.update(destination.id, body)
+      const response = await api.destinations.authenticate(destination.id, body)
       commit("SET_ONE", response.data)
     } catch (error) {
       handleError(error)
@@ -94,6 +92,19 @@ const actions = {
       }
       const response = await api.destinations.validate(body)
       return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async remove({ commit }, destination) {
+    try {
+      const response = await api.destinations.remove(
+        destination.id,
+        destination.data
+      )
+      commit("SET_ONE", response.data)
     } catch (error) {
       handleError(error)
       throw error

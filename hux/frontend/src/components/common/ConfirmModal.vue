@@ -3,44 +3,64 @@
     <template #activator="{ on, attrs }">
       <slot name="activator" v-bind="attrs" v-on="on"></slot>
     </template>
-    <div class="white text-center pt-10">
-      <div class="px-15 modal-content">
-        <icon type="exclamation_outline" :color="type" :size="44" />
-        <div class="black--text text--darken-4 text-h3 py-3">{{ title }}</div>
-        <div class="black--text text--darken-4 text-h6 pb-10">{{ body }}</div>
+    <template #default>
+      <div class="confirm-modal-wrapper">
+        <div class="confirm-modal-body px-6">
+          <slot name="icon">
+            <icon v-if="icon" :type="icon" :color="localIconColor" :size="42" />
+          </slot>
+          <slot name="title">
+            <div v-if="title" class="black--text text--darken-4 text-h2 pt-3">
+              {{ title }}
+            </div>
+          </slot>
+          <slot name="sub-title">
+            <div
+              v-if="subTitle"
+              class="black--text text--darken-4 text-h2 mt-n2"
+            >
+              {{ subTitle }}
+            </div>
+          </slot>
+          <slot name="body">
+            <div
+              v-if="body"
+              class="
+                black--text
+                text--darken-4 text-subtitle-1
+                pt-6
+                font-weight-regular
+              "
+            >
+              {{ body }}
+            </div>
+          </slot>
+        </div>
+        <div class="confirm-modal-footer">
+          <slot name="footer">
+            <huxButton
+              size="large"
+              variant="white"
+              height="40"
+              is-tile
+              @click="onCancel()"
+            >
+              <span class="primary--text">{{ leftBtnText }}</span>
+            </huxButton>
+            <huxButton
+              size="large"
+              :variant="type"
+              height="40"
+              is-tile
+              :is-disabled="isDisabled"
+              @click="onConfirm()"
+            >
+              {{ rightBtnText }}
+            </huxButton>
+          </slot>
+        </div>
       </div>
-      <div
-        class="
-          modal-footer
-          primary
-          lighten-1
-          d-flex
-          justify-space-between
-          align-center
-          px-10
-          py-5
-        "
-      >
-        <huxButton
-          size="large"
-          variant="white"
-          height="40"
-          is-tile
-          @click="onCancel()"
-        >
-          {{ leftBtnText }}
-        </huxButton>
-        <huxButton
-          size="large"
-          :variant="type"
-          height="40"
-          is-tile
-          @click="onConfirm()"
-        >
-          {{ rightBtnText }}
-        </huxButton>
-      </div>
-    </div>
+    </template>
   </v-dialog>
 </template>
 
@@ -56,6 +76,16 @@ export default {
   },
 
   props: {
+    icon: {
+      type: String,
+      required: true,
+    },
+
+    iconColor: {
+      type: String,
+      required: false,
+    },
+
     type: {
       type: String,
       required: false,
@@ -65,19 +95,22 @@ export default {
     title: {
       type: String,
       required: false,
-      default: "title",
+    },
+
+    subTitle: {
+      type: String,
+      required: false,
     },
 
     body: {
       type: String,
       required: false,
-      default: "body",
     },
 
     leftBtnText: {
       type: String,
       required: false,
-      default: "Cancel",
+      default: "Nevermind!",
     },
 
     rightBtnText: {
@@ -97,12 +130,27 @@ export default {
       required: false,
       default: 600,
     },
+
+    isDisabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 
   data() {
     return {
       localModal: this.value,
     }
+  },
+
+  computed: {
+    localIconColor() {
+      if (this.iconColor) {
+        return this.iconColor
+      }
+      return this.type
+    },
   },
 
   watch: {
@@ -130,7 +178,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.modal-footer {
-  box-shadow: 0px -0.5px 5px 1px rgba(0, 0, 0, 0.15);
+.confirm-modal-wrapper {
+  background: var(--v-white-base);
+  text-align: center;
+  padding-top: 42px;
+  .confirm-modal-footer {
+    border-top: 1px solid var(--v-black-lighten3);
+    margin-top: 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background: var(--v-primary-lighten1);
+  }
 }
 </style>

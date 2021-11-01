@@ -7,6 +7,7 @@ from time import sleep
 from datetime import datetime, timedelta, timezone
 
 import pymongo
+from bson import ObjectId
 from flask import Blueprint, request, Response
 from flasgger import SwaggerView
 
@@ -15,14 +16,19 @@ from huxunifylib.database import (
     constants as db_c,
     notification_management,
 )
-from huxunify.api.schema.notifications import NotificationsSchema
+from huxunify.api.schema.notifications import (
+    NotificationsSchema,
+    NotificationSchema,
+)
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+    get_user_name,
 )
 from huxunify.api.route.utils import get_db_client, Validation
 from huxunify.api import constants as api_c
+from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 
 # setup the notifications blueprint
@@ -73,6 +79,52 @@ class NotificationsSearch(SwaggerView):
             "required": False,
             "default": api_c.DEFAULT_BATCH_NUMBER,
         },
+        {
+            "name": api_c.QUERY_PARAMETER_NOTIFICATION_TYPES,
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Type of Notification",
+            "example": "10",
+            "required": False,
+            "default": [],
+        },
+        {
+            "name": api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY,
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Type of Notification Category",
+            "example": "10",
+            "required": False,
+            "default": [],
+        },
+        {
+            "name": api_c.QUERY_PARAMETER_USERS,
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Users Filter",
+            "example": "10",
+            "required": False,
+            "default": [],
+        },
+        {
+            "name": api_c.START_DATE,
+            "in": "query",
+            "type": "string",
+            "description": "Start Date",
+            "example": "2021-04-10",
+            "required": False,
+        },
+        {
+            "name": api_c.END_DATE,
+            "in": "query",
+            "type": "string",
+            "description": "End Date",
+            "example": "2021-04-10",
+            "required": False,
+        },
     ]
     responses = {
         HTTPStatus.OK.value: {
@@ -112,7 +164,35 @@ class NotificationsSearch(SwaggerView):
                 str(api_c.DEFAULT_BATCH_NUMBER),
             )
         )
-
+        notification_types = request.args.get(
+            api_c.QUERY_PARAMETER_NOTIFICATION_TYPES, []
+        )
+        if notification_types and not set(
+            notification_types.split(",")
+        ).issubset(set(db_c.NOTIFICATION_TYPES)):
+            logger.error("Invalid Notification Type")
+            return {
+                "message": "Invalid or incomplete arguments received"
+            }, HTTPStatus.BAD_REQUEST
+        notification_categories = request.args.get(
+            api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY, []
+        )
+        if notification_categories and not set(
+            notification_categories.split(",")
+        ).issubset(set(api_c.NOTIFICATION_CATEGORIES)):
+            logger.error("Invalid Notification Category")
+            return {
+                "message": "Invalid or incomplete arguments received"
+            }, HTTPStatus.BAD_REQUEST
+        users = request.args.get(api_c.QUERY_PARAMETER_USERS, [])
+        if users:
+            users = users.split(",")
+        start_date = request.args.get(api_c.START_DATE, "")
+        end_date = request.args.get(api_c.END_DATE, "")
+        if start_date and end_date:
+            Validation.validate_date_range(start_date, end_date)
+            start_date = Validation.validate_date(start_date)
+            end_date = Validation.validate_date(end_date)
         if (
             batch_size is None
             or batch_number is None
@@ -139,6 +219,11 @@ class NotificationsSearch(SwaggerView):
                     batch_size=batch_size,
                     sort_order=sort_order,
                     batch_number=batch_number,
+                    notification_types=notification_types,
+                    notification_categories=notification_categories,
+                    users=users,
+                    start_date=start_date,
+                    end_date=end_date,
                 )
             ),
             HTTPStatus.OK,
@@ -178,10 +263,11 @@ class NotificationStream(SwaggerView):
         def event_stream() -> Generator[Tuple[dict, int], None, None]:
             """Stream notifications with a generator.
 
-            Returns:
-                Generator[Tuple[dict, int], None, None]: Generator of notifications.
-
+            Yields:
+                Generator[Tuple[dict, int], None, None]: Generator of
+                    notifications.
             """
+
             i = 0
             while True:
                 # sleep each iteration, don't sleep first iteration
@@ -218,3 +304,129 @@ class NotificationStream(SwaggerView):
 
         # return the event stream response
         return Response(event_stream(), mimetype="text/event-stream")
+
+
+@add_view_to_blueprint(
+    notifications_bp,
+    f"/{api_c.NOTIFICATIONS_ENDPOINT}/<{api_c.NOTIFICATION_ID}>",
+    "NotificationSearch",
+)
+class NotificationSearch(SwaggerView):
+    """Notification search class."""
+
+    parameters = [
+        {
+            "name": api_c.NOTIFICATION_ID,
+            "in": "path",
+            "type": "string",
+            "description": "ObjectId of Notification",
+            "example": "614e14bdcc267d93d62f44f4",
+            "required": True,
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Notification Details",
+            "schema": NotificationSchema,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.NOTIFICATIONS_TAG]
+
+    @api_error_handler()
+    def get(self, notification_id: str) -> Tuple[dict, int]:
+        """Retrieves notification.
+        ---
+        security:
+            - Bearer: ["Authorization"]
+        Args:
+            notification_id (str): Notification Id
+        Returns:
+            Tuple[dict, int] dict of notifications, HTTP status code.
+        """
+        notification_id = ObjectId(notification_id)
+        notification = notification_management.get_notification(
+            get_db_client(), notification_id
+        )
+
+        if not notification:
+            logger.error(
+                "Could not find notification with id %s.",
+                notification_id,
+            )
+            return {
+                "message": api_c.NOTIFICATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
+        return (
+            NotificationSchema().dump(notification),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    notifications_bp,
+    f"{api_c.NOTIFICATIONS_ENDPOINT}/<notification_id>",
+    "DeleteNotification",
+)
+class DeleteNotification(SwaggerView):
+    """Notification Delete Class."""
+
+    parameters = [
+        {
+            "name": api_c.NOTIFICATION_ID,
+            "description": "Notification ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        }
+    ]
+    responses = {
+        HTTPStatus.NO_CONTENT.value: {
+            "description": "Deleted Notification.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to delete the notification.",
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "schema": NotFoundError,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.NOTIFICATIONS_TAG]
+
+    @get_user_name()
+    @api_error_handler()
+    def delete(
+        self, notification_id: ObjectId, user_name: str
+    ) -> Tuple[dict, int]:
+        """Deletes a notification by ID.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            notification_id (ObjectId): Notification ID.
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: message, HTTP status code.
+        """
+
+        if notification_management.delete_notification(
+            get_db_client(), ObjectId(notification_id)
+        ):
+            logger.info(
+                "Successfully deleted notification %s by user %s.",
+                notification_id,
+                user_name,
+            )
+
+            return {}, HTTPStatus.NO_CONTENT
+
+        logger.info(
+            "Could not delete notification with ID %s.", notification_id
+        )
+        return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST

@@ -135,30 +135,38 @@
 
     <v-subheader> Modal </v-subheader>
     <confirm-modal
-      v-model="modal"
-      type="primary"
-      title="Action Word (i.e. Remove) ___________?"
+      v-model="errorModal"
+      icon="sad-face"
+      type="error"
+      title="Action Word"
+      sub-title="(i.e. Remove) ___________?"
       body="Are you sure you want to stop the configuration and go to another page? You will not be able to recover it but will need to start the process again."
-      @onCancel="toggleModal()"
-      @onConfirm="toggleModal()"
+      @onCancel="errorModal = !errorModal"
+      @onConfirm="errorModal = !errorModal"
     >
       <template #activator>
-        <huxButton size="large" class="ma-2" @click="modal = !modal">
-          Open modal
+        <huxButton size="large" class="ma-2" @click="errorModal = !errorModal">
+          Error modal
         </huxButton>
       </template>
     </confirm-modal>
 
-    <v-divider class="mt-10" />
-
-    <v-subheader> Alert </v-subheader>
-    <v-btn @click="alert = !alert">Toogle alert</v-btn>
-    <hux-alert
-      v-model="alert"
-      type="success"
-      title="YAY!"
-      message="This is a success message! It will disappear in 5 seconds on its own."
-    />
+    <confirm-modal
+      v-model="infoModal"
+      icon="edit"
+      type="primary"
+      title="Edit"
+      sub-title="<Audience>"
+      body="Are you sure you want to remove the <Audience>?"
+      @onCancel="infoModal = !infoModal"
+      @onConfirm="infoModal = !infoModal"
+    >
+      <template #activator>
+        <huxButton size="large" class="ma-2" @click="infoModal = !infoModal">
+          Info modal
+        </huxButton>
+      </template>
+    </confirm-modal>
 
     <v-divider class="mt-10" />
 
@@ -197,7 +205,620 @@
     <huxButton variant="white" is-tile enable-loading class="ma-2">
       Loader
     </huxButton>
+    <v-divider class="mt-10" />
+    <v-subheader> New Updated Button </v-subheader>
+    <div>
+      <span class="pr-12">
+        <huxButton
+          variant="primary base"
+          icon-color="white"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="100"
+          height="40"
+        >
+          CTA
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="primary base"
+          icon-color="white"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="110"
+          height="35"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary base"
+          icon-color="white"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="99"
+          height="30"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary base"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="40"
+        >
+          CTA
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="primary base"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="35"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary base"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="30"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary base"
+          class="ma-2 subtitle-2"
+          is-tile
+          width="71"
+          height="24"
+        >
+          CTA
+        </huxButton>
+      </span>
+    </div>
 
+    <div>
+      <span class="pr-12">
+        <huxButton
+          variant="primary lighten-6"
+          icon-color="white"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="100"
+          height="40"
+        >
+          CTA
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="primary lighten-6"
+          icon-color="white"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="110"
+          height="35"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary lighten-6"
+          icon-color="white"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="99"
+          height="30"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary lighten-6"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="40"
+        >
+          CTA
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="primary lighten-6"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="35"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary lighten-6"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="30"
+        >
+          CTA
+        </huxButton>
+        <huxButton
+          variant="primary lighten-6"
+          class="ma-2 subtitle-2"
+          is-tile
+          width="71"
+          height="24"
+        >
+          CTA
+        </huxButton>
+      </span>
+    </div>
+
+    <div>
+      <span class="pr-12">
+        <huxButton
+          variant="black lighten-1"
+          icon-color="black"
+          icon-variant="lighten3"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="100"
+          height="40"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="black lighten-1"
+          icon-color="black"
+          icon-variant="lighten3"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="110"
+          height="35"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="black lighten-1"
+          icon-color="black"
+          icon-variant="lighten3"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="99"
+          height="30"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="black lighten-1"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="40"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="black lighten-1"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="35"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="black lighten-1"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="30"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="black lighten-1"
+          class="ma-2 subtitle-2"
+          is-tile
+          width="71"
+          height="24"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+      </span>
+    </div>
+
+    <div>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          icon-color="primary"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="100"
+          height="40"
+        >
+          <span class="primary--text">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          icon-color="primary"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="110"
+          height="35"
+        >
+          <span class="primary--text">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          icon-color="primary"
+          icon-variant="base"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="99"
+          height="30"
+        >
+          <span class="primary--text">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="40"
+        >
+          <span class="primary--text">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="35"
+        >
+          <span class="primary--text">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="30"
+        >
+          <span class="primary--text">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 subtitle-2"
+          is-tile
+          width="71"
+          height="24"
+        >
+          <span class="primary--text">CTA</span>
+        </huxButton>
+      </span>
+    </div>
+
+    <div>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          icon-color="primary"
+          icon-variant="lighten6"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="100"
+          height="40"
+        >
+          <span class="primary--text text--lighten-6">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          icon-color="primary"
+          icon-variant="lighten6"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="110"
+          height="35"
+        >
+          <span class="primary--text text--lighten-6">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          icon-color="primary"
+          icon-variant="lighten6"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="99"
+          height="30"
+        >
+          <span class="primary--text text--lighten-6">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="40"
+        >
+          <span class="primary--text text--lighten-6">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="35"
+        >
+          <span class="primary--text text--lighten-6">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="30"
+        >
+          <span class="primary--text text--lighten-6">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 subtitle-2"
+          is-tile
+          width="71"
+          height="24"
+        >
+          <span class="primary--text text--lighten-6">CTA</span>
+        </huxButton>
+      </span>
+    </div>
+
+    <div>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          icon-color="black"
+          icon-variant="lighten3"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="100"
+          height="40"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          icon-color="black"
+          icon-variant="lighten3"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="110"
+          height="35"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          icon-color="black"
+          icon-variant="lighten3"
+          icon="plus"
+          is-custom-icon
+          class="ma-2 caption"
+          is-tile
+          width="99"
+          height="30"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="40"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+      </span>
+      <span class="pr-12">
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="35"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 caption"
+          is-tile
+          width="79"
+          height="30"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+        <huxButton
+          variant="white"
+          class="ma-2 subtitle-2"
+          is-tile
+          width="71"
+          height="24"
+        >
+          <span class="black--text text--lighten-3">CTA</span>
+        </huxButton>
+      </span>
+    </div>
+
+    <div>
+      <span class="pr-3">
+        <huxButton
+          variant="success"
+          icon="check-bold"
+          is-custom-icon
+          size="x-large"
+          is-tile
+          class="ma-2 caption"
+          icon-color="white"
+          icon-variant="base"
+          width="134"
+          height="40"
+          :icon-size="12"
+        >
+          Success!
+        </huxButton>
+      </span>
+      <span class="pr-2">
+        <huxButton
+          variant="primary base"
+          icon="keyboard-return"
+          is-custom-icon
+          class="ma-2 caption"
+          size="large"
+          is-tile
+          icon-color="white"
+          icon-variant="base"
+          width="214"
+          height="40"
+          :icon-size="16"
+        >
+          Back to Main Page
+        </huxButton>
+      </span>
+      <span class="pr-3">
+        <huxButton
+          class="ma-2 linear-class caption"
+          is-tile
+          width="79"
+          height="40"
+        >
+          CTA
+        </huxButton>
+      </span>
+    </div>
+
+    <v-subheader> Drawer/Add </v-subheader>
+    <div>
+      <huxButton
+        size="x-small"
+        variant="white"
+        width="79"
+        height="40"
+        class="ma-2 caption"
+      >
+        Add
+      </huxButton>
+      <huxButton
+        variant="primary lighten-6"
+        width="102"
+        height="40"
+        size="large"
+        icon-color="white"
+        icon-variant="base"
+        icon="drawer-add-tick"
+        is-custom-icon
+        class="ma-2 caption"
+        icon-class="ml-0 mr-1"
+      >
+        Added
+      </huxButton>
+
+      <huxButton
+        variant="black lighten-1"
+        width="102"
+        height="40"
+        size="large"
+        icon="drawer-add-tick"
+        is-custom-icon
+        icon-color="black"
+        icon-variant="lighten3"
+        icon-size="15"
+        class="ma-2 caption"
+        icon-class="ml-0 mr-1"
+      >
+        <span class="black--text text--lighten-3">Added</span>
+      </huxButton>
+      <huxButton
+        variant="primary lighten-6"
+        width="128"
+        height="40"
+        size="large"
+        icon="drawer-add-tick"
+        icon-color="white"
+        icon-variant="base"
+        is-custom-icon
+        icon-size="15"
+        class="ma-2 caption"
+        icon-class="ml-0 mr-1"
+      >
+        Requested
+      </huxButton>
+
+      <huxButton variant="white" width="112" height="40" class="ma-2 caption">
+        Request
+      </huxButton>
+    </div>
     <v-divider class="mt-10" />
 
     <v-subheader> Select Dropdown </v-subheader>
@@ -289,16 +910,93 @@
     <v-divider class="mt-10" />
 
     <v-subheader>Metric Card</v-subheader>
+
     <metric-card
-      v-for="(item, i) in overviewListItems"
-      :key="i"
       class="ma-4"
-      :max-width="200"
-      :title="item.title"
-      :subtitle="item.subtitle"
-      :icon="item.icon"
-      :active="true"
-    ></metric-card>
+      title="Metric Title"
+      :max-width="202"
+      :height="75"
+      :interactable="false"
+    >
+      <template #subtitle-extended>
+        <div class="text-body-1 black--text text--darken-4 mb-2">
+          <icon class="mr-1" type="stock-up" :size="8" color="success" />
+          <icon class="ml-1 mr-1" type="stock-down" :size="8" color="error" />
+          3/1/2021 • 9:42AM
+        </div>
+      </template>
+    </metric-card>
+
+    <metric-card
+      class="ma-4"
+      title="Metric Title"
+      :max-width="180"
+      :height="75"
+      :interactable="false"
+    >
+      <template #subtitle-extended>
+        <div class="text-body-1 black--text text--darken-4 mb-2">
+          3/1/2021 • 9:42AM
+        </div>
+      </template>
+    </metric-card>
+
+    <metric-card
+      class="ma-4"
+      title="Metric Title"
+      :max-width="180"
+      :height="75"
+      :interactable="true"
+    >
+      <template #subtitle-extended>
+        <div class="text-body-1 black--text text--darken-4 mb-2">
+          3/1/2021 • 9:42AM
+        </div>
+      </template>
+    </metric-card>
+
+    <metric-card class="ma-4" title="Created on" :max-width="186" :height="75">
+      <template #subtitle-extended>
+        <span class="mr-2">
+          <tooltip>
+            <template #label-content>
+              <span class="text-body-1 black--text text--darken-4">
+                4 hours ago by
+              </span>
+            </template>
+            <template #hover-content> 10/18/2021 at 8:37 AM </template>
+          </tooltip>
+        </span>
+        <span class="mt-n2">
+          <avatar name="Sarah Huxley" />
+        </span>
+      </template>
+    </metric-card>
+
+    <metric-card
+      class="ma-4"
+      title="Description"
+      :max-width="400"
+      :height="75"
+      :interactable="false"
+    >
+      <template #subtitle-extended>
+        <div class="text-body-1 black--text text--darken-4 mb-2">
+          this is where the description text...
+        </div>
+      </template>
+    </metric-card>
+
+    <metric-card
+      class="ma-4"
+      :max-width="128"
+      :height="75"
+      title="0.01"
+      subtitle="AUC"
+      :high-level="true"
+      :interactable="false"
+    >
+    </metric-card>
 
     <v-divider class="mt-10" />
 
@@ -369,17 +1067,25 @@
 
     <v-subheader> Descriptive Card </v-subheader>
     <descriptive-card
+      :action-menu="true"
+      :coming-soon="false"
+      width="280"
+      height="255"
       icon="model-unsubscribe"
       title="Propensity to Unsubscribe"
       description="Propensity of a customer making a purchase after receiving an email."
     >
       <template slot="top">
-        <status status="Pending" collapsed class="d-flex" />
+        <status status="Pending" collapsed class="d-flex float-left" />
       </template>
 
       <template slot="default">
-        <p class="text-caption black--text text--darken-1">Sarah Miller</p>
-
+        <div
+          class="text-caption black--text text--lighten-4 mb-2"
+          data-e2e="model-owner"
+        >
+          Owner Name
+        </div>
         <div class="d-flex justify-center mb-6">
           <card-stat label="Version" value="0.02" stat-class="border-0">
             <div class="mb-3">
@@ -402,6 +1108,52 @@
           <card-stat label="Last trained" value="2 hrs ago">12:45pm</card-stat>
         </div>
       </template>
+      <template slot="action-menu-options">
+        <v-list class="list-wrapper">
+          <v-list-item-group>
+            <v-list-item>
+              <v-list-item-title> Activate </v-list-item-title>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </template>
+    </descriptive-card>
+    <descriptive-card
+      :action-menu="true"
+      :coming-soon="false"
+      width="280"
+      height="255"
+      icon="model-unsubscribe"
+      title="Propensity to Unsubscribesss"
+      description="This is THE Hux CDP. Once a customer data solution has been implemented, all data sources flow seamlessly into the ..."
+    >
+      <template slot="top">
+        <status status="Pending" collapsed class="d-flex float-left" />
+      </template>
+    </descriptive-card>
+    <descriptive-card
+      :disabled="true"
+      :action-menu="false"
+      :coming-soon="true"
+      width="255"
+      height="225"
+      icon="model-unsubscribe"
+      title="Propensity to Unsubscribe ojjihj"
+      description="This is THE Hux CDP. Once a customer data solution has been implemented..."
+    >
+      <template slot="top">
+        <status status="Pending" collapsed class="d-flex float-left" />
+      </template>
+    </descriptive-card>
+    <descriptive-card
+      :disabled="false"
+      :action-menu="false"
+      :coming-soon="false"
+      width="280"
+      height="225"
+      title="Propensity to Unsubscribe ojjihj"
+      description="This is THE Hux CDP. Once a customer data solution has been implemented..."
+    >
     </descriptive-card>
 
     <v-divider class="mt-10" />
@@ -643,7 +1395,6 @@
 <script>
 import CardInfo from "@/components/common/CardInfo"
 import ConfirmModal from "@/components/common/ConfirmModal"
-import HuxAlert from "@/components/common/HuxAlert"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import TextField from "@/components/common/TextField"
 import HuxTable from "@/components/common/huxTable.vue"
@@ -671,13 +1422,14 @@ import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
 import demographicsData from "@/api/mock/fixtures/demographicData.js"
+import Tooltip from "@/components/common/Tooltip.vue"
+import Avatar from "@/components/common/Avatar"
 
 export default {
   name: "Components",
   components: {
     CardInfo,
     ConfirmModal,
-    HuxAlert,
     Breadcrumb,
     TextField,
     huxButton,
@@ -703,6 +1455,8 @@ export default {
     HuxStartDate,
     HuxEndDate,
     DoughnutChart,
+    Tooltip,
+    Avatar,
   },
   data() {
     return {
@@ -982,8 +1736,8 @@ export default {
       ],
 
       drawer: false,
-      modal: false,
-      alert: false,
+      errorModal: false,
+      infoModal: false,
 
       overviewListItems: [
         { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
@@ -1307,9 +2061,6 @@ export default {
     onEndDateSelect(val) {
       this.selectedEndDate = val
     },
-    toggleModal() {
-      this.modal = !this.modal
-    },
     getColorCode(name) {
       return generateColor(name, 30, 60) + " !important"
     },
@@ -1341,5 +2092,8 @@ export default {
 }
 .gender-chart {
   width: 255px;
+}
+.linear-class {
+  background: linear-gradient(270deg, #43b02a, #00a3e0, #005587) !important;
 }
 </style>

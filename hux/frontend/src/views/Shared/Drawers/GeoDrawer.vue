@@ -2,7 +2,26 @@
   <drawer v-model="localToggle" content-padding="pa-0">
     <template #header-left>
       <div class="d-flex align-center">
-        <h3 class="text-h3">{{ title }}</h3>
+        <icon :type="title.icon" size="32" class="mr-2" />
+        <h3 class="text-h2">
+          {{ title.name }}
+          <sup>
+            <tooltip v-if="title.toolTipText" position-top>
+              <template #label-content>
+                <icon
+                  v-if="title.toolTipText"
+                  type="info"
+                  :size="12"
+                  color="primary"
+                  variant="base"
+                />
+              </template>
+              <template #hover-content>
+                {{ title.toolTipText }}
+              </template>
+            </tooltip>
+          </sup>
+        </h3>
       </div>
     </template>
 
@@ -16,14 +35,10 @@
         :columns="columns"
         :data-items="items"
         :sort-column="sortColumn"
+        :data-e2e="`geo-drawer-table-${geoLevel}`"
       >
         <template #row-item="{ item }">
-          <td
-            v-for="(col, index) in columns"
-            :key="index"
-            :style="{ width: col.width }"
-            class="text-body-1"
-          >
+          <td v-for="(col, index) in columns" :key="index" class="text-body-1">
             <tooltip v-if="['city', 'country', 'state'].includes(col.value)">
               {{ item[col.value] }}
               <template #tooltip> {{ item[col.value] }} </template>
@@ -34,7 +49,7 @@
                 {{ item[col.value] | Numeric(true) }}
               </template>
             </tooltip>
-            <tooltip v-if="col.value === 'spending'">
+            <tooltip v-if="col.value === 'revenue'">
               {{ item[col.value] | Currency }}
               <template #tooltip>
                 {{ item[col.value] | Currency }}
@@ -51,7 +66,7 @@
     </template>
 
     <template #footer-left>
-      <span class="black--text text--darken-1 text-caption">
+      <span class="black--text text--darken-1 text-body-2">
         {{ results | Numeric }} results
       </span>
     </template>
@@ -64,6 +79,8 @@ import Drawer from "@/components/common/Drawer.vue"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Observer from "@/components/common/Observer.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
+import { arrayHasFieldWithMultipleValues } from "../../../utils"
+import Icon from "@/components/common/Icon.vue"
 
 export default {
   name: "GeoDrawer",
@@ -73,6 +90,7 @@ export default {
     HuxDataTable,
     Observer,
     Tooltip,
+    Icon,
   },
 
   props: {
@@ -112,12 +130,10 @@ export default {
         {
           value: "size",
           text: "Size",
-          width: "25%",
         },
         {
-          value: "spending",
-          text: "Spending $",
-          width: "25%",
+          value: "revenue",
+          text: "Revenue",
         },
       ],
       sortColumn: "state",
@@ -168,9 +184,14 @@ export default {
 
     title() {
       return {
-        countries: "Countries",
-        states: "US States",
-        cities: "Cities",
+        countries: { name: "Countries", icon: "country" },
+        states: {
+          name: "States",
+          icon: "state",
+          toolTipText:
+            "US states or regions equivalent to US state-level , eg. counties, districts, departments, divisions, parishes, provinces etc.",
+        },
+        cities: { name: "Cities", icon: "city" },
       }[this.geoLevel]
     },
   },
@@ -187,21 +208,30 @@ export default {
 
   async updated() {
     if (this.toggle) {
+      this.loading = true
+      this.batchNumber = 1
+      await this.refreshData()
       switch (this.geoLevel) {
         case "cities":
           this.columns = [
             {
               value: "city",
               text: "City",
-              width: "30%",
             },
             {
               value: "state",
               text: "State",
-              width: "20%",
+              hoverTooltip:
+                "US states or regions equivalent to US state-level , eg. counties, districts, departments, divisions, parishes, provinces etc.",
             },
             ...this.defaultColumns,
           ]
+          if (arrayHasFieldWithMultipleValues(this.geoCities, "country")) {
+            this.columns.splice(2, 0, {
+              value: "country",
+              text: "Country",
+            })
+          }
           this.sortColumn = "city"
           break
         case "countries":
@@ -209,7 +239,6 @@ export default {
             {
               value: "country",
               text: "Country",
-              width: "50%",
             },
             ...this.defaultColumns,
           ]
@@ -220,16 +249,18 @@ export default {
             {
               value: "state",
               text: "State",
-              width: "50%",
             },
             ...this.defaultColumns,
           ]
+          if (arrayHasFieldWithMultipleValues(this.geoStates, "country")) {
+            this.columns.splice(1, 0, {
+              value: "country",
+              text: "Country",
+            })
+          }
           this.sortColumn = "state"
           break
       }
-      this.loading = true
-      this.batchNumber = 1
-      await this.refreshData()
       this.loading = false
       this.enableLazyLoad = true
     } else {
@@ -296,3 +327,10 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.hux-data-table {
+  ::v-deep table {
+    table-layout: auto !important;
+  }
+}
+</style>

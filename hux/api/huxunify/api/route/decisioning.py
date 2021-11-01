@@ -16,9 +16,7 @@ from huxunify.api.route.decorators import (
     secured,
     api_error_handler,
 )
-from huxunify.api.route.utils import (
-    get_db_client,
-)
+from huxunify.api.route.utils import get_db_client
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
@@ -31,6 +29,7 @@ from huxunify.api.data_connectors import tecton
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
     FAILED_DEPENDENCY_424_RESPONSE,
+    EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE,
 )
 from huxunify.api import constants as api_c
 
@@ -114,6 +113,7 @@ class ModelVersionView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    responses.update(EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
@@ -190,6 +190,7 @@ class ModelOverview(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    responses.update(EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
@@ -264,11 +265,12 @@ class ModelDriftView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    responses.update(EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, model_id: int) -> Tuple[List[dict], int]:
+    def get(self, model_id: str) -> Tuple[List[dict], int]:
         """Retrieves model drift details.
 
         ---
@@ -341,6 +343,7 @@ class ModelFeaturesView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    responses.update(EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
@@ -526,7 +529,7 @@ class ModelLiftView(SwaggerView):
     @api_error_handler()
     def get(
         self,
-        model_id: int,
+        model_id: str,
     ) -> Tuple[List[dict], int]:
         """Retrieves model lift data.
 
@@ -542,7 +545,8 @@ class ModelLiftView(SwaggerView):
                 HTTP status code.
         """
 
-        # retrieves lift data
+        # TODO Remove once Tecton serves lift data for model id 3
+
         if model_id == "3":
             lift_data = [
                 {

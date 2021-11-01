@@ -13,6 +13,7 @@ from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
 from huxunifylib.connectors import FacebookConnector
+
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.engagement_management import (
@@ -34,7 +35,15 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     get_delivery_platform_lookalike_audience,
 )
-
+from huxunify.api.data_connectors.aws import (
+    get_auth_from_parameter_store,
+)
+from huxunify.api.data_connectors.scheduler import generate_cron
+from huxunify.api.data_connectors.courier import toggle_event_driven_routers
+from huxunify.api.data_connectors.performance_metrics import (
+    get_performance_metrics,
+    generate_metrics_file,
+)
 from huxunify.api.schema.engagement import (
     EngagementPostSchema,
     EngagementGetSchema,
@@ -50,6 +59,7 @@ from huxunify.api.schema.engagement import (
     EngagementPutSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
+from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
@@ -60,18 +70,9 @@ from huxunify.api.route.decorators import (
 )
 from huxunify.api.route.utils import (
     get_db_client,
+    get_user_favorites,
 )
-from huxunify.api.data_connectors.courier import toggle_event_driven_routers
-from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.performance_metrics import (
-    get_performance_metrics,
-    generate_metrics_file,
-)
-from huxunify.api.data_connectors.aws import (
-    get_auth_from_parameter_store,
-)
-from huxunify.api.data_connectors.scheduler import generate_cron
 
 engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 
@@ -102,22 +103,39 @@ class EngagementSearch(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
-    def get(self) -> Tuple[dict, int]:
+    @get_user_name()
+    def get(self, user_name: str) -> Tuple[dict, int]:
         """Retrieves all engagements.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
+        Args:
+            user_name (str): user_name extracted from Okta.
+
         Returns:
             Tuple[dict, int]: dict of engagements, HTTP status code.
         """
 
         # get the engagement summary
-        engagements = get_engagements_summary(get_db_client())
+        database = get_db_client()
+        engagements = get_engagements_summary(database)
 
         # weight the engagement status
         engagements = weighted_engagement_status(engagements)
+
+        # get user id
+        favorite_engagements = get_user_favorites(
+            database, user_name, db_c.ENGAGEMENTS
+        )
+
+        if favorite_engagements:
+            _ = [
+                engagement.update({api_c.FAVORITE: True})
+                for engagement in engagements
+                if engagement.get(db_c.ID) in favorite_engagements
+            ]
 
         return (
             jsonify(EngagementGetSchema().dump(engagements, many=True)),
@@ -156,8 +174,9 @@ class IndividualEngagementSearch(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
+    @get_user_name()
     @validate_engagement_and_audience()
-    def get(self, engagement_id: ObjectId) -> Tuple[dict, int]:
+    def get(self, engagement_id: ObjectId, user_name: str) -> Tuple[dict, int]:
         """Retrieves an engagement.
 
         ---
@@ -166,13 +185,15 @@ class IndividualEngagementSearch(SwaggerView):
 
         Args:
             engagement_id (ObjectId): ID of the engagement.
+            user_name (str): user_name extracted from Okta.
 
         Returns:
             Tuple[dict, int]: dict of the engagement, HTTP status code.
         """
 
         # get the engagement summary
-        engagements = get_engagements_summary(get_db_client(), [engagement_id])
+        database = get_db_client()
+        engagements = get_engagements_summary(database, [engagement_id])
 
         if not engagements:
             logger.error(
@@ -195,10 +216,20 @@ class IndividualEngagementSearch(SwaggerView):
                         )
 
         # weight the engagement status
-        engagements = weighted_engagement_status(engagements)[0]
+        engagement = weighted_engagement_status(engagements)[0]
+
+        # get user id
+        favorite_engagements = get_user_favorites(
+            database, user_name, db_c.ENGAGEMENTS
+        )
+
+        engagement[api_c.FAVORITE] = (
+            favorite_engagements
+            and engagement.get(db_c.ID) in favorite_engagements
+        )
 
         return (
-            EngagementGetSchema().dump(engagements),
+            EngagementGetSchema().dump(engagement),
             HTTPStatus.OK,
         )
 
@@ -304,6 +335,7 @@ class SetEngagement(SwaggerView):
                 f"created by {user_name}."
             ),
             api_c.ENGAGEMENT_TAG,
+            user_name,
         )
         return (
             EngagementGetSchema().dump(engagement),
@@ -336,6 +368,7 @@ class UpdateEngagement(SwaggerView):
             "example": {
                 db_c.ENGAGEMENT_NAME: "My Engagement",
                 db_c.ENGAGEMENT_DESCRIPTION: "Engagement Description",
+                api_c.STATUS: api_c.STATUS_INACTIVE,
                 db_c.AUDIENCES: [
                     {
                         api_c.ID: "60ae035b6c5bf45da27f17d6",
@@ -428,6 +461,7 @@ class UpdateEngagement(SwaggerView):
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
             f'Engagement "{engagement[db_c.NAME]}" updated by {user_name}.',
             api_c.ENGAGEMENT_TAG,
+            user_name,
         )
         return (
             EngagementGetSchema().dump(engagement),
@@ -500,6 +534,7 @@ class DeleteEngagement(SwaggerView):
                     f"deleted by {user_name}."
                 ),
                 api_c.ENGAGEMENT_TAG,
+                user_name,
             )
             logger.info("Successfully deleted engagement %s.", engagement_id)
 
@@ -638,6 +673,7 @@ class AddAudienceEngagement(SwaggerView):
                     f'"{engagement[db_c.NAME]}" by {user_name}.'
                 ),
                 api_c.ENGAGEMENT_TAG,
+                user_name,
             )
 
         # toggle routers since the engagement was updated.
@@ -761,6 +797,7 @@ class DeleteAudienceEngagement(SwaggerView):
                     f'"{engagement[db_c.NAME]}" by {user_name}.'
                 ),
                 api_c.ENGAGEMENT_TAG,
+                user_name,
             )
 
         # toggle routers since the engagement was updated.
@@ -902,6 +939,7 @@ class AddDestinationEngagedAudience(SwaggerView):
                 f'"{engagement[db_c.NAME]}" by {user_name}'
             ),
             api_c.ENGAGEMENT_TAG,
+            user_name,
         )
 
         # toggle routers since the engagement was updated.
@@ -953,9 +991,9 @@ class RemoveDestinationEngagedAudience(SwaggerView):
     ]
 
     responses = {
-        HTTPStatus.CREATED.value: {
+        HTTPStatus.NO_CONTENT.value: {
             "schema": EngagementGetSchema,
-            "description": "Destination added to Engagement Audience.",
+            "description": "Destination Removed from the Engagement Audience.",
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to create the engagement.",
@@ -1003,6 +1041,12 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             logger.error("Audience not found for audience ID %s.", audience_id)
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
+        if not request.get_json():
+            logger.error("Destination not provided.")
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.BAD_REQUEST
+
         destination = DestinationEngagedAudienceSchema().load(
             request.get_json(), partial=True
         )
@@ -1014,9 +1058,9 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             logger.error(
                 "Could not find destination with id %s.", destination_id
             )
-            return {
-                "message": api_c.DESTINATION_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            # set the destination name to remove as unknown, still allow for the destination
+            # to be removed from the engagement audience.
+            destination_to_remove = {api_c.NAME: "Unknown"}
 
         remove_destination_from_engagement_audience(
             database,
@@ -1043,6 +1087,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
                 f'"{engagement[db_c.NAME]}" by {user_name}'
             ),
             api_c.ENGAGEMENT_TAG,
+            user_name,
         )
 
         # toggle routers since the engagement was updated.

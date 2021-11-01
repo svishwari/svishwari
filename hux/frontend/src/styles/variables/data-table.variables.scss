@@ -1,0 +1,37 @@
+// Data tables
+// https://vuetifyjs.com/en/api/v-data-table/#sass
+
+// Variables
+$data-table-regular-header-height: 32px !default;
+$data-table-regular-row-height: 40px !default;
+$data-table-mobile-row-header-font-weight: 400 !default;
+$data-table-row-header-font-weight: 400 !default;
+
+// Customizations
+$data-table-heading: map-get($headings, "body-2") !default;
+
+.v-data-table {
+  > .v-data-table__wrapper {
+    > table {
+      > tbody,
+      > thead,
+      > tfoot {
+        > tr {
+          > th {
+            color: var(--v-black-lighten4) !important;
+            font-size: map-get($data-table-heading, "size");
+            line-height: map-get($data-table-heading, "line-height");
+            font-weight: map-get($data-table-heading, "weight");
+            letter-spacing: map-get($data-table-heading, "letter-spacing");
+            white-space: nowrap;
+
+            i {
+              font-size: map-get($data-table-heading, "size") !important;
+              color: var(--v-primary-lighten6) !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}

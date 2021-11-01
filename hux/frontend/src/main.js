@@ -6,10 +6,6 @@ import filters from "@/filters"
 import router from "./router"
 import store from "./store"
 
-// Styles
-import "@mdi/font/css/materialdesignicons.css"
-import "ngprogress/ngProgress.css"
-
 // Layouts
 import AppLayout from "@/layouts/AppLayout"
 import DefaultLayout from "@/layouts/DefaultLayout"

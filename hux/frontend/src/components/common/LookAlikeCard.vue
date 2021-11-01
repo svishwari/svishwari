@@ -168,9 +168,6 @@ export default {
 
   .cell {
     padding-left: 18px !important;
-    font-weight: normal;
-    font-size: 12px !important;
-    line-height: 16px;
     display: inline-block;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -185,11 +182,9 @@ export default {
     font-style: normal;
     font-weight: normal;
     color: var(--v-black-darken1) !important;
-    font-size: 12px !important;
   }
   .table-text {
     color: var(--v-black-darken4);
-    font-size: 12px !important;
   }
 
   .card-heading {
@@ -200,11 +195,7 @@ export default {
   }
 
   .title-text {
-    font-family: Open Sans;
-    font-style: normal;
-    font-weight: normal;
     color: var(--v-black-darken1) !important;
-    font-size: 12px !important;
     padding: 0px !important;
 
     ::v-deep .v-list-item {

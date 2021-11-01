@@ -20,6 +20,15 @@ class CdpDataSourcePostSchema(Schema):
         validate=OneOf(choices=[api_c.STATUS_ACTIVE, api_c.STATUS_PENDING]),
         default=api_c.STATUS_PENDING,
     )
+    category = fields.Str(
+        required=True,
+        validate=OneOf(
+            choices=api_c.CDP_DATA_SOURCE_CATEGORIES + [db_c.CATEGORY_UNKNOWN]
+        ),
+        default=db_c.CATEGORY_UNKNOWN,
+        allow_none=True,
+    )
+    feed_count = fields.Int(required=False, default=None)
 
 
 class CdpDataSourceSchema(Schema):
@@ -28,12 +37,20 @@ class CdpDataSourceSchema(Schema):
     id = fields.Str(
         attribute=db_c.ID,
         example="5f5f7262997acad4bac4373b",
-        required=True,
+        required=False,
         validate=validate_object_id,
     )
     name = fields.Str(required=True)
-    category = fields.Str(required=False, default="")
-    feed_count = fields.Int(required=False, default=1)
+    type = fields.Str(required=True)
+    category = fields.Str(
+        required=True,
+        validate=OneOf(
+            choices=api_c.CDP_DATA_SOURCE_CATEGORIES + [db_c.CATEGORY_UNKNOWN]
+        ),
+        default=db_c.CATEGORY_UNKNOWN,
+        allow_none=True,
+    )
+    feed_count = fields.Int(required=False, default=None, allow_none=True)
     status = fields.Str(
         required=True,
         validate=[
@@ -46,18 +63,44 @@ class CdpDataSourceSchema(Schema):
         ],
         default=api_c.STATUS_ACTIVE,
     )
-    is_added = fields.Bool(required=False, attribute="added", default=False)
+    is_added = fields.Bool(required=False, attribute=db_c.ADDED, default=False)
     is_enabled = fields.Bool(
-        required=False, attribute="enabled"
-    )  # TODO Remove in HUS-1109
-    type = fields.Str()
+        required=False, attribute=db_c.ENABLED, default=False
+    )
+
+
+class CdpConnectionsDataSourceSchema(Schema):
+    """CDP connections data source get schema"""
+
+    label = fields.Str(attribute=api_c.NAME, required=True)
+    name = fields.Str(attribute=api_c.TYPE, required=True)
+    status = fields.Str(
+        required=True,
+        validate=[
+            OneOf(
+                choices=[
+                    api_c.STATUS_ACTIVE,
+                    api_c.STATUS_PENDING,
+                ]
+            )
+        ],
+    )
+    category = fields.Str(
+        required=False,
+        validate=OneOf(
+            choices=api_c.CDP_DATA_SOURCE_CATEGORIES + [db_c.CATEGORY_UNKNOWN]
+        ),
+        default=db_c.CATEGORY_UNKNOWN,
+        allow_none=True,
+    )
+    feed_count = fields.Int(required=False, default=None, allow_none=True)
 
 
 class CdpDataSourceDataFeedSchema(Schema):
     """Data source data feed schema"""
 
     name = fields.Str()
-    datasource_type = fields.Str(example=db_c.CDP_DATA_SOURCE_BLUECORE)
+    datasource_type = fields.Str(example=db_c.DATA_SOURCE_PLATFORM_BLUECORE)
     records_received = fields.Int(example=345612)
     records_processed = fields.Int(example=345612)
     records_processed_percentage = fields.Float(
