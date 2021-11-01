@@ -388,8 +388,6 @@ class UserPatchView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.USER_TAG]
 
-    # pylint: disable=unexpected-keyword-arg
-    # pylint: disable=too-many-return-statements
     @api_error_handler()
     @get_user_name()
     def patch(self, user_name: str) -> Tuple[dict, int]:
@@ -406,12 +404,12 @@ class UserPatchView(SwaggerView):
             Tuple[dict, int]: User doc, HTTP status code.
         """
 
-        database = get_db_client()
-
         body = UserPatchSchema().load(request.get_json())
 
         if not body:
             return {api_c.MESSAGE: "No body provided."}, HTTPStatus.BAD_REQUEST
+
+        database = get_db_client()
 
         user = get_all_users(
             database, {db_constants.USER_DISPLAY_NAME: user_name}
