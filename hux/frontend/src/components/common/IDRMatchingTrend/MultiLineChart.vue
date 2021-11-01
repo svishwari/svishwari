@@ -12,6 +12,7 @@ import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
 import * as d3TimeFormat from "d3-time-format"
+import colors from "@/plugins/colors.js"
 
 export default {
   name: "MultiLineChart",
@@ -65,7 +66,7 @@ export default {
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
       let dataKey = ["unique_hux_ids", "anonymous_ids", "known_ids"]
-      let colorCodes = ["#005587", "#0C9DDB", "#42EFFD"]
+      let colorCodes = [colors.darkBlue, colors.chart2, colors.chart3]
       let ids = [
         { label: "Unique Hux IDs", xValue: 0 },
         { label: "Anonymous IDs", xValue: 122 },
@@ -73,7 +74,7 @@ export default {
       ]
       let color = d3Scale
         .scaleOrdinal()
-        .range(["#005587", "#0C9DDB", "#42EFFD"])
+        .range([colors.darkBlue, colors.chart2, colors.chart3])
       let svg = d3Select
         .select(this.$refs.multiLineChart)
         .append("svg")

@@ -19,7 +19,7 @@
         <div class="neroBlack--text caption">
           <div class="value-section">
             <div>
-              <span class="append-circle color-unique-hux-ids" />
+              <span class="append-circle color-primary-base" />
               <span class="font-size-tooltip">
                 Unique Hux IDs
                 <br />
@@ -31,7 +31,7 @@
               </span>
             </div>
             <div>
-              <span class="append-circle color-known-ids" />
+              <span class="append-circle color-primary-lighten9" />
               <span class="font-size-tooltip">
                 Known IDs
                 <br />
@@ -41,7 +41,7 @@
               </span>
             </div>
             <div>
-              <span class="append-circle color-anonymous-ids" />
+              <span class="append-circle color-primary-darken2" />
               <span class="font-size-tooltip">
                 Anonymous IDs
                 <br />
@@ -63,6 +63,7 @@
 import MultiLineChart from "@/components/common/IDRMatchingTrend/MultiLineChart.vue"
 import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
 import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
+import colors from "@/plugins/colors.js"
 
 export default {
   name: "IDRMatchingTrend",
@@ -81,7 +82,7 @@ export default {
         x: 0,
         y: 0,
       },
-      colorCodes: ["#005587", "#42EFFD", "#0C9DDB"],
+      colorCodes: [colors.darkBlue, colors.chart3, colors.chart2],
       toolTipStyle: TooltipConfiguration.idrMatchingTrendChart,
       currentData: {},
       chartDimensions: {
@@ -148,14 +149,14 @@ export default {
     display: inline-block;
     margin-top: 6px;
   }
-  .color-known-ids {
-    background-color: #42effd;
+  .color-primary-lighten9 {
+    background-color: var(--v-primary-lighten9);
   }
-  .color-anonymous-ids {
-    background-color: #0c9ddb;
+  .color-primary-darken2 {
+    background-color: var(--v-primary-darken2);
   }
-  .color-unique-hux-ids {
-    background-color: #005587;
+  .color-primary-base {
+    background-color: var(--v-primary-base);
   }
 }
 </style>
