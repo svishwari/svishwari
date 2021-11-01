@@ -247,7 +247,7 @@ export default {
       rules: {
         required: (value) => !!value || "This is a required field",
       },
-      selectedDataExtension: null,
+      selectedDataExtension: {},
       dataExtensions: [],
       showConfirmModal: false,
       navigateTo: false,
@@ -292,7 +292,7 @@ export default {
 
     isFullyConfigured() {
       return this.isSalesforceSelected
-        ? this.selectedDataExtension !== null
+        ? this.selectedDataExtension.performance_metrics_data_extension
         : this.isValidated
     },
   },
@@ -371,7 +371,7 @@ export default {
 
     reset() {
       this.isValidated = false
-      this.selectedDataExtension = null
+      this.selectedDataExtension = {}
     },
 
     async validate() {
@@ -401,7 +401,7 @@ export default {
           authentication_details: this.authenticationDetails,
         }
         if (this.isSalesforceSelected) {
-          data.perf_data_extension = this.selectedDataExtension
+          data.configuration = this.selectedDataExtension
         }
         await this.addDestination(data)
         this.flagForModal = true

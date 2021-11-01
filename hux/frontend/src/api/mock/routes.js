@@ -75,10 +75,13 @@ export const defineRoutes = (server) => {
   server.get("/destinations")
   server.get("/destinations/:id")
 
-  server.put("/destinations/:id", (schema, request) => {
+  server.put("/destinations/:id/authentication", (schema, request) => {
     const id = request.params.id
+    const requestData = JSON.parse(request.requestBody)
 
-    return schema.destinations.find(id).update({ is_added: true })
+    return schema.destinations
+      .find(id)
+      .update({ is_added: true, configuration: requestData.configuration })
   })
 
   server.patch("/destinations/:id", (schema, request) => {
