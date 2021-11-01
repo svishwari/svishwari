@@ -8,7 +8,13 @@
           <sup>
             <tooltip v-if="title.toolTipText" position-top>
               <template #label-content>
-                <icon v-if="title.toolTipText" type="info" :size="12" />
+                <icon
+                  v-if="title.toolTipText"
+                  type="info"
+                  :size="12"
+                  color="primary"
+                  variant="base"
+                />
               </template>
               <template #hover-content>
                 {{ title.toolTipText }}
@@ -43,7 +49,7 @@
                 {{ item[col.value] | Numeric(true) }}
               </template>
             </tooltip>
-            <tooltip v-if="col.value === 'spending'">
+            <tooltip v-if="col.value === 'revenue'">
               {{ item[col.value] | Currency }}
               <template #tooltip>
                 {{ item[col.value] | Currency }}

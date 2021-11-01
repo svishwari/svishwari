@@ -84,6 +84,7 @@ export const destinationsDataExtensions = () => {
     dataExtensions.push({
       name: faker.company.companyName(),
       data_extension_id: faker.datatype.uuid(),
+      create_time: faker.date.past(),
     })
   }
   return dataExtensions

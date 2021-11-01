@@ -1,5 +1,5 @@
 <svg width="100%" height="100%" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<circle cx="25" cy="25" r="24.5" fill="white" stroke="#D0D0CE"/>
+<circle cx="25" cy="25" r="24.5" fill="white" stroke="#E2EAEC"/>
 <path d="M6 14L26.0556 2L44 14V36L26.0556 47L6 36V14Z" fill="url(#patternAdobe)"/>
 <defs>
 <pattern id="patternAdobe" patternContentUnits="objectBoundingBox" width="1" height="1">
