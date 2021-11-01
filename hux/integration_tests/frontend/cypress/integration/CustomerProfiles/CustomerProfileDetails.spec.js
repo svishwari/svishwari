@@ -28,19 +28,11 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
     // should validate customer length card
     cy.get(selector.customerProfile.customerlength).should("exist")
 
-    // should have (Match Confidence, Life-Time Value, Conversion Time card)
+    // should have (Match Confidence, Conversion Time card, Last click, Last purchase date)
     cy.get(selector.customerProfile.matchConfidence).should("exist")
-    cy.get(selector.customerProfile.lifeTimeValue).should("exist")
     cy.get(selector.customerProfile.conversionTime).should("exist")
-
-    // should have (Churn score, Last click, Last purchase date) card
-    cy.get(selector.customerProfile.churnScore).should("exist")
     cy.get(selector.customerProfile.lastClick).should("exist")
     cy.get(selector.customerProfile.lastPurchaseDate).should("exist")
-
-    // should have (Last open, Customer Insights date) card
-    cy.get(selector.customerProfile.lastOpen).should("exist")
-    cy.get(selector.customerProfile.customerInsights).should("exist")
 
     // should ++REDACTED++ value in customer insights table
     cy.get("table").contains("td", "++REDACTED++")

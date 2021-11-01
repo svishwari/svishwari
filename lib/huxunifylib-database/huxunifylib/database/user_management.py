@@ -261,6 +261,8 @@ def update_user(
         c.USER_FAVORITES,
         c.USER_DASHBOARD_CONFIGURATION,
         c.USER_LOGIN_COUNT,
+        c.UPDATE_TIME,
+        c.UPDATED_BY,
     ]
 
     # validate allowed fields, any invalid returns, raise error

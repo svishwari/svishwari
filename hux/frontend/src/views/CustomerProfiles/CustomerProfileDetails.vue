@@ -9,7 +9,7 @@
 
     <div v-if="!loading && customerProfile" class="pa-7">
       <profile-overview :profile="customerProfile['overview']" />
-      <v-row class="table-card">
+      <v-row class="table-card mb-3">
         <v-col cols="6" class="pb-0">
           <profile-identifiable-insights
             :insights="customerProfile['insights']"
@@ -167,9 +167,6 @@ export default {
 .details-card {
   position: relative;
   margin-top: -93px;
-}
-.table-card {
-  height: 284px;
 }
 .card-height {
   height: 155px !important;

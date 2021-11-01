@@ -1,5 +1,5 @@
 <template>
-  <v-row class="d-flex pb-2">
+  <v-row class="d-flex pb-0">
     <v-col class="mr-3 pr-0">
       <v-card
         class="rounded-lg card-info-wrapper box-shadow-5"
