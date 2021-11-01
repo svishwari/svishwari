@@ -41,7 +41,7 @@ steps:
 
   build_image:
     stage: "docker"
-    title: "Building Docker Image for Unified API"
+    title: "Building Docker Image"
     type: "build"
     image_name: '${{BUILD_NAME}}'
     working_directory: '${{CF_REPO_NAME}}/${{API_LOAD_TEST_PATH}}'
@@ -50,7 +50,7 @@ steps:
 
   PublishToArtifactory:
     stage: artifactory
-    title: Publish Unified API Image to JFrog Artifactory
+    title: Publish artifact & codefresh build to JFrog Artifactory
     type: deloittehux/jfrog-docker-publish
     arguments:
       BUILD_NAME: '${{BUILD_NAME}}'
