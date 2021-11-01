@@ -31,6 +31,7 @@ class TestCdpDataSourceManagement(unittest.TestCase):
             c.CDP_DATA_SOURCE_FIELD_CATEGORY: "Web Events",
             c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
             c.CDP_DATA_SOURCE_FIELD_STATUS: c.CDP_DATA_SOURCE_STATUS_ACTIVE,
+            c.DATA_SOURCE_TYPE: "Marketing",
         }
 
         # set a sample data source
@@ -38,6 +39,7 @@ class TestCdpDataSourceManagement(unittest.TestCase):
             database=self.database,
             name=self.sample_data_source[c.CDP_DATA_SOURCE_FIELD_NAME],
             category=self.sample_data_source[c.CDP_DATA_SOURCE_FIELD_CATEGORY],
+            source_type=self.sample_data_source[c.DATA_SOURCE_TYPE],
         )
 
     def test_create_data_source(self) -> None:
@@ -63,6 +65,14 @@ class TestCdpDataSourceManagement(unittest.TestCase):
             self.database, self.data_source_doc[c.ID]
         )
 
+        self.assertTrue(data_source_doc is not None)
+        self.assertEqual(
+            data_source_doc[c.CDP_DATA_SOURCE_FIELD_NAME],
+            self.data_source_doc[c.CDP_DATA_SOURCE_FIELD_NAME],
+        )
+        data_source_doc = dsmgmt.get_data_source(
+            self.database, data_source_type=self.data_source_doc[c.TYPE]
+        )
         self.assertTrue(data_source_doc is not None)
         self.assertEqual(
             data_source_doc[c.CDP_DATA_SOURCE_FIELD_NAME],
