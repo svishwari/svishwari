@@ -79,7 +79,14 @@
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="text-caption px-3 d-block description text-h6"
+          class="
+            px-3
+            d-block
+            description
+            text-body-2
+            black--text
+            text--lighten-4
+          "
           :style="{ 'padding-top': !icon ? '22px' : null }"
           data-e2e="card-description"
         >
