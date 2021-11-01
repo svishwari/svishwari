@@ -13,8 +13,8 @@
       </page-header>
       <page-header header-height="71">
         <template #left>
-          <v-btn disabled icon color="black">
-            <v-icon medium>mdi-magnify</v-icon>
+          <v-btn disabled icon>
+            <icon type="search" size="20" color="black" variant="lighten3" />
           </v-btn>
         </template>
 
@@ -71,6 +71,7 @@ import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
 import DataSourceConfiguration from "@/views/DataSources/Configuration"
+import Icon from "../../components/common/Icon.vue"
 
 export default {
   name: "Destinations",
@@ -82,6 +83,7 @@ export default {
     Breadcrumb,
     huxButton,
     DataSourceConfiguration,
+    Icon,
   },
 
   data() {
