@@ -315,10 +315,16 @@
                     >
                       {{ item[header.value] }}
                     </router-link>
-                    <div v-if="header.value == 'last_name'" class="cell text-h6">
+                    <div
+                      v-if="header.value == 'last_name'"
+                      class="cell text-h6"
+                    >
                       <span v-if="item.last_name">{{ item.last_name }} </span>
                     </div>
-                    <div v-if="header.value == 'first_name'" class="cell text-h6">
+                    <div
+                      v-if="header.value == 'first_name'"
+                      class="cell text-h6"
+                    >
                       <span v-if="item.first_name"> {{ item.first_name }}</span>
                     </div>
                     <div v-if="header.value == 'match_confidence'">
@@ -737,7 +743,7 @@ export default {
     content: none;
   }
   ::v-deep .metric-card-wrapper .v-icon::before {
-      font-size: 30px;
+    font-size: 30px;
   }
 
   .customer-slide-group {
