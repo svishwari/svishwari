@@ -1,7 +1,9 @@
 """Purpose of this file is for storing the tests of cache_management.py"""
 import unittest
+from unittest import mock
 
 import mongomock
+import pymongo.errors
 from huxunifylib.database.cache_management import (
     create_cache_entry,
     get_cache_entry,
@@ -36,3 +38,14 @@ class TestCacheManagement(unittest.TestCase):
         create_cache_entry(self.database, cache_key, cache_value)
         get_cache = get_cache_entry(self.database, cache_key)
         self.assertTrue(get_cache)
+
+        mock.patch(
+            "huxunifylib.database.cache_management.create_cache_entry",
+            side_effect=pymongo.errors.OperationFailure,
+        ).start()
+        self.assertRaises(
+            pymongo.errors.OperationFailure,
+            create_cache_entry(self.database, cache_key, cache_value),
+        )
+
+        mock.patch.stopall()
