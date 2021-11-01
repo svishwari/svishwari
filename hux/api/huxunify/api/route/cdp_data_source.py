@@ -391,7 +391,7 @@ class DeleteCdpDataSources(SwaggerView):
             create_notification(
                 database,
                 db_c.NOTIFICATION_TYPE_CRITICAL,
-                f"Failed to delete the following CDP Data Sources Types: "
+                f"Failed to delete the following CDP Data Sources: "
                 f"{data_source_types}",
                 api_c.CDP_DATA_SOURCES_TAG,
             )
