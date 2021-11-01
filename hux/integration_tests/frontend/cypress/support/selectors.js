@@ -140,6 +140,7 @@ export default {
   customerProfile: {
     customers: "a[href='/customers']",
     customeroverview: "[data-e2e='customeroverview']",
+    customerListTab: "[data-e2e='customer-list-tab']",
     chart: "[data-e2e='overview-chart']",
     mapchart: "[data-e2e='map-chart']",
     mapStateList: "[data-e2e='map-state-list']",

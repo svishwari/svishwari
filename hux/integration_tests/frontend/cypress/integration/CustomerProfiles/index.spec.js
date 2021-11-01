@@ -115,27 +115,30 @@ describe("Data management > Customer Profiles", () => {
       .its("length")
       .should("be.gt", 0)
 
+
+    // Imp - All the below charts have been eliminated
+
     // should be able to view top location & income chart"
     // validate top location & income chart
-    cy.get(selector.customerProfile.incomeChart).its("length").should("gt", 0)
+    // cy.get(selector.customerProfile.incomeChart).its("length").should("gt", 0)
 
     // should be able to hover over bar of top location & income chart"
     // mouse hover on income chart
-    cy.get(".bar")
-      .first()
-      .trigger("mouseover", { eventConstructor: "MouseEvent" })
+    // cy.get(".bar")
+    //   .first()
+    //   .trigger("mouseover", { eventConstructor: "MouseEvent" })
 
     // should be able to view Gender / monthly spending chart"
-    cy.get(selector.customerProfile.genderSpendChart)
-      .its("length")
-      .should("gt", 0)
+    // cy.get(selector.customerProfile.genderSpendChart)
+    //   .its("length")
+    //   .should("gt", 0)
 
     // should be able to view Gender chart"
-    cy.get(selector.customerProfile.genderChart).its("length").should("gt", 0)
+    // cy.get(selector.customerProfile.genderChart).its("length").should("gt", 0)
 
     // should be able to hover over arc of gender chart"
-    cy.get(".arc")
-      .first()
-      .trigger("mouseover", { force: true, eventConstructor: "MouseEvent" })
+    // cy.get(".arc")
+    //   .first()
+    //   .trigger("mouseover", { force: true, eventConstructor: "MouseEvent" })
   })
 })

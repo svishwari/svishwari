@@ -158,16 +158,16 @@
               key="overview"
               class="pa-2 mr-3 text-h5"
               color
-              data-e2e="overview"
-              @click="showOverview"
+              data-e2e="overview-tab"
+              @click="loadCustomersList=false"
             >
               Overview
             </v-tab>
             <v-tab
               key="customerList"
               class="text-h5"
-              data-e2e="customer-list"
-              @click="showCustomerList"
+              data-e2e="customer-list-tab"
+              @click="loadCustomersList=true"
             >
               Customer list
             </v-tab>
@@ -288,59 +288,7 @@
           </v-tab-item>
           <v-tab-item key="customerList">
             <v-card class="mt-3 pa-4 rounded-lg box-shadow-5">
-              <v-progress-linear
-                :active="loadingCustomersList"
-                :indeterminate="loadingCustomersList"
-              />
-              <hux-data-table
-                :columns="columnDefs"
-                :sort-column="'hux_id'"
-                :data-items="customers"
-              >
-                <template #row-item="{ item }">
-                  <td
-                    v-for="header in columnDefs"
-                    :key="header.value"
-                    :style="{ width: header.width }"
-                  >
-                    <router-link
-                      v-if="header.value == 'hux_id'"
-                      :to="{
-                        name: 'CustomerProfileDetails',
-                        params: { id: item[header.value] },
-                      }"
-                      data-e2e="customerID"
-                      class="cell text-h6"
-                      append
-                    >
-                      {{ item[header.value] }}
-                    </router-link>
-                    <div
-                      v-if="header.value == 'last_name'"
-                      class="cell text-h6"
-                    >
-                      <span v-if="item.last_name">{{ item.last_name }} </span>
-                    </div>
-                    <div
-                      v-if="header.value == 'first_name'"
-                      class="cell text-h6"
-                    >
-                      <span v-if="item.first_name"> {{ item.first_name }}</span>
-                    </div>
-                    <div v-if="header.value == 'match_confidence'">
-                      <hux-slider
-                        :is-range-slider="false"
-                        :value="item[header.value]"
-                        class="match-confidence"
-                      ></hux-slider>
-                    </div>
-                  </td>
-                </template>
-              </hux-data-table>
-              <observer
-                v-if="customers.length"
-                @intersect="intersected"
-              ></observer>
+              <customer-list v-if="loadCustomersList" />
             </v-card>
           </v-tab-item>
         </v-tabs-items>
@@ -384,10 +332,7 @@ import mapSlider from "@/components/common/MapChart/mapSlider"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import IDRInsightsDrawer from "./Drawers/IDRInsightsDrawer"
-import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
-import HuxSlider from "@/components/common/HuxSlider"
-import Observer from "@/components/common/Observer"
-import dayjs from "dayjs"
+import CustomerList from "./CustomerList"
 
 export default {
   name: "CustomerProfiles",
@@ -404,9 +349,7 @@ export default {
     mapSlider,
     TotalCustomerChart,
     IDRInsightsDrawer,
-    HuxDataTable,
-    HuxSlider,
-    Observer,
+    CustomerList,
   },
 
   data() {
@@ -489,6 +432,7 @@ export default {
       tabOption: 0,
       showOverviewTab: true,
       enableLazyLoad: false,
+      loadCustomersList: false,
       localDrawer: this.value,
       batchCount: 1,
       columnDefs: [
@@ -530,51 +474,6 @@ export default {
       demographicsData: "customers/demographics",
       customersList: "customers/list",
     }),
-    updatedTimeStamp() {
-      if (this.updatedTime.length !== 0) {
-        return (
-          this.updatedTime[0] + "<span> &bull; </span>" + this.updatedTime[1]
-        )
-      } else {
-        return "-"
-      }
-    },
-
-    customers() {
-      let sortedCustomerList = this.customersList
-      return sortedCustomerList.sort((a, b) => a.id - b.id)
-    },
-
-    genderChartData() {
-      if (
-        this.demographicsData.gender &&
-        (this.demographicsData.gender.gender_men ||
-          this.demographicsData.gender.gender_women ||
-          this.demographicsData.gender.gender_other)
-      ) {
-        return [
-          {
-            label: "Men",
-            population_percentage:
-              this.demographicsData.gender.gender_men.population_percentage,
-            size: this.demographicsData.gender.gender_men.size,
-          },
-          {
-            label: "Women",
-            population_percentage:
-              this.demographicsData.gender.gender_women.population_percentage,
-            size: this.demographicsData.gender.gender_women.size,
-          },
-          {
-            label: "Other",
-            population_percentage:
-              this.demographicsData.gender.gender_other.population_percentage,
-            size: this.demographicsData.gender.gender_other.size,
-          },
-        ]
-      }
-      return []
-    },
   },
 
   async mounted() {
@@ -583,7 +482,6 @@ export default {
     this.mapOverviewData()
     this.fetchTotalCustomers()
     this.fetchGeoOverview()
-    this.fetchDemographics()
     this.loading = false
   },
 
@@ -596,33 +494,10 @@ export default {
       getCustomers: "customers/getAll",
     }),
 
-    async showCustomerList() {
-      this.loadingCustomersList = true
-      await this.fetchCustomerByBatch()
-      this.calculateLastBatch()
-      this.loadingCustomersList = false
-      this.enableLazyLoad = true
-    },
-
-    showOverview() {
-      this.batchDetails.batchNumber = 1
-      this.batchDetails.isLazyLoad = false
-      this.enableLazyLoad = false
-    },
-
     async fetchGeoOverview() {
       this.loadingGeoOverview = true
       await this.getGeoOverview()
       this.loadingGeoOverview = false
-    },
-
-    async fetchDemographics() {
-      this.loadingDemographics = true
-      await this.getDemographics({
-        start_date: dayjs().subtract(6, "months").format("YYYY-MM-DD"),
-        end_date: dayjs().format("YYYY-MM-DD"),
-      })
-      this.loadingDemographics = false
     },
 
     async fetchTotalCustomers() {
@@ -656,9 +531,11 @@ export default {
     toggleProfilesDrawer() {
       this.customerProfilesDrawer = !this.customerProfilesDrawer
     },
+
     toggleGeoDrawer(geoLevel = "states") {
       this.geoDrawer[geoLevel] = !this.geoDrawer[geoLevel]
     },
+
     onClick(action) {
       switch (action) {
         case "toggleProfilesDrawer":
@@ -685,31 +562,15 @@ export default {
       let otherData = this.setValueOrEmpty(this.overview.gender_other)
       return `M: ${menData}  W: ${womenData}  O: ${otherData}`
     },
+
     setValueOrEmpty(value) {
       return value != null
         ? this.$options.filters.Numeric(value, true, false, false, true)
         : this.$options.filters.Empty("-")
     },
+
     toggleIDRInsightsDrawer() {
       this.idrInsightsDrawer = !this.idrInsightsDrawer
-    },
-
-    async fetchCustomerByBatch() {
-      await this.getCustomers(this.batchDetails)
-      this.batchDetails.batchNumber++
-    },
-    intersected() {
-      if (this.batchDetails.batchNumber <= this.lastBatch) {
-        this.batchDetails.isLazyLoad = true
-        this.fetchCustomerByBatch()
-      } else {
-        this.enableLazyLoad = false
-      }
-    },
-    calculateLastBatch() {
-      this.lastBatch = Math.ceil(
-        this.overview.total_customers / this.batchDetails.batchSize
-      )
     },
   },
 }
@@ -761,97 +622,6 @@ export default {
   .idr-link {
     min-width: 0px;
     margin-top: -5px;
-  }
-
-  .v-tabs {
-    ::v-deep .v-tabs-bar {
-      background: transparent !important;
-      .v-tabs-bar__content {
-        border-bottom: 2px solid var(--v-black-lighten2);
-        display: flex;
-        justify-content: space-between;
-        .v-tabs-slider-wrapper {
-          width: 128px;
-          .v-tabs-slider {
-            background-color: var(--v-primary-lighten6) !important;
-            border-color: var(--v-primary-lighten6) !important;
-          }
-        }
-        .v-tab {
-          text-transform: inherit;
-          padding: 8px;
-          color: var(--v-primary-base) !important;
-          font-size: 15px !important;
-          line-height: 20px;
-          letter-spacing: inherit;
-          svg {
-            fill: transparent !important;
-            path {
-              stroke: var(--v-primary-base);
-            }
-          }
-          &.v-tab--active {
-            color: var(--v-primary-lighten6) !important;
-            svg {
-              path {
-                stroke: var(--v-primary-lighten6);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  .v-tabs-items {
-    overflow: inherit;
-    background-color: transparent !important;
-    .v-window-item--active {
-      background: transparent;
-    }
-
-    .hux-data-table {
-      margin-top: 1px;
-    }
-    ::v-deep .v-sheet .theme--light .v-toolbar {
-      background: var(--v-primary-lighten2);
-    }
-    ::v-deep .hux-data-table {
-      .v-data-table {
-        .v-data-table-header {
-          tr {
-            height: 40px !important;
-          }
-          th {
-            background: var(--v-primary-lighten2);
-          }
-        }
-        > .v-data-table__wrapper {
-          > table {
-            > tbody > tr > td {
-              padding-top: 0;
-              padding-bottom: 0;
-            }
-          }
-        }
-        .match-confidence {
-          .slider-value-display {
-            margin-top: 16px;
-            width: 33px;
-          }
-          .v-slider__track-container {
-            margin-top: 12px !important;
-          }
-          .v-slider__thumb-container {
-            margin-top: 12px !important;
-          }
-        }
-      }
-      .cell {
-        display: inline-block;
-        max-width: 100%;
-        text-decoration: none;
-      }
-    }
   }
 }
 

@@ -1,7 +1,7 @@
 <template>
   <div ref="totalCustomerChart" class="container-chart">
     <stack-bar-chart
-      v-model="sourceData"
+      v-model="chartSourceData"
       :bar-group-change-index="barGroupChangeIndex"
       :color-codes="colorCodes"
       :chart-dimensions="chartDimensions"
@@ -101,6 +101,7 @@ export default {
         { base: "success", variant: "base" },
       ],
       currentData: {},
+      chartSourceData: {},
       sourceData: [],
       barGroupChangeIndex: [],
       chartDimensions: {
@@ -237,6 +238,11 @@ export default {
 
         lastWeekEndingData = currentWeekEndingData
       })
+
+      this.chartSourceData = {
+        sourceData: this.sourceData,
+        monthsDuration: this.monthsDuration
+      }
     },
 
     // Setting week's last day count in case of no records
