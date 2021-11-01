@@ -359,12 +359,10 @@ class DeleteCdpDataSources(SwaggerView):
         Returns:
             Tuple[str, int]: Message, HTTP status code.
         """
-
-        database = get_db_client()
-
         data_source_types = request.args.get(api_c.DATASOURCES)
 
         if data_source_types:
+            database = get_db_client()
             success_flag = bulk_delete_data_sources(
                 database, data_source_types.replace(" ", "").split(",")
             )
