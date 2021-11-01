@@ -310,15 +310,15 @@
                         params: { id: item[header.value] },
                       }"
                       data-e2e="customerID"
-                      class="cell"
+                      class="cell text-h6"
                       append
                     >
                       {{ item[header.value] }}
                     </router-link>
-                    <div v-if="header.value == 'last_name'" class="cell">
+                    <div v-if="header.value == 'last_name'" class="cell text-h6">
                       <span v-if="item.last_name">{{ item.last_name }} </span>
                     </div>
-                    <div v-if="header.value == 'first_name'" class="cell">
+                    <div v-if="header.value == 'first_name'" class="cell text-h6">
                       <span v-if="item.first_name"> {{ item.first_name }}</span>
                     </div>
                     <div v-if="header.value == 'match_confidence'">
@@ -737,7 +737,7 @@ export default {
     content: none;
   }
   ::v-deep .metric-card-wrapper .v-icon::before {
-    //  font-size: 30px;
+      font-size: 30px;
   }
 
   .customer-slide-group {
@@ -844,16 +844,9 @@ export default {
         }
       }
       .cell {
-        font-family: Open Sans;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 14px !important;
-        line-height: 22px;
         display: inline-block;
         max-width: 100%;
-        overflow: hidden;
         text-decoration: none;
-        text-overflow: ellipsis;
       }
     }
   }
