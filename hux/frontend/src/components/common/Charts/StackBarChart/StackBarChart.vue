@@ -43,6 +43,11 @@ export default {
       type: Array,
       required: true,
     },
+    monthsDuration: {
+      type: Number,
+      required: false,
+      default: 6,
+    },
   },
   data() {
     return {
@@ -216,7 +221,11 @@ export default {
         .attr("x", 10)
         .style("color", "#4F4F4F")
       d3Select.selectAll(".yAxis-main .tick text").style("color", "#4F4F4F")
-      d3Select.selectAll(".xAxis-main .tick text").attr("x", 16)
+      if (this.monthsDuration == 6) {
+        d3Select.selectAll(".xAxis-main .tick text").attr("x", 20)
+      } else {
+        d3Select.selectAll(".xAxis-main .tick text").attr("x", 16)
+      }
 
       svg
         .append("line")

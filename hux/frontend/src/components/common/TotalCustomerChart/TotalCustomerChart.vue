@@ -6,6 +6,7 @@
       :color-codes="colorCodes"
       :chart-dimensions="chartDimensions"
       :empty-state="isEmptyState"
+      :months-duration="monthsDuration"
       @tooltipDisplay="toolTipDisplay"
     />
     <chart-tooltip
@@ -82,6 +83,11 @@ export default {
       type: Array,
       required: true,
     },
+    monthsDuration: {
+      type: Number,
+      required: false,
+      default: 6,
+    },
   },
   data() {
     return {
@@ -114,9 +120,11 @@ export default {
       this.show = arg[0]
       if (this.show) {
         this.currentData = arg[1]
-        this.toolTipStyle.left = this.currentData.isEndingBar
-          ? "-130px"
-          : "45px"
+        if (this.monthsDuration != 6) {
+          this.toolTipStyle.left = this.currentData.isEndingBar
+            ? "-150px"
+            : "45px"
+        }
       }
     },
     sizeHandler() {
@@ -135,7 +143,7 @@ export default {
       let startingDate = new Date()
 
       // Getting date with 9 months date range
-      startingDate.setMonth(startingDate.getMonth() - 9)
+      startingDate.setMonth(startingDate.getMonth() - this.monthsDuration)
 
       // Creating a date collection between current and starting date
       let dateCollection = []

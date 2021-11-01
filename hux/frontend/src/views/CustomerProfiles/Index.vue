@@ -145,151 +145,190 @@
             </metric-card>
           </div>
         </v-card>
-      </div>
-      <v-row class="px-15 mt-2">
-        <v-col md="12">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
-            <v-card-title class="pb-2 pl-6 pt-5">
-              <div class="mt-2">
-                <span class="black--text text--darken-4 text-h3">
-                  Total customers
-                  <span class="text-body-2 time-frame">
-                    ({{ timeFrameLabel }})
-                  </span>
-                </span>
-              </div>
-            </v-card-title>
-            <v-progress-linear
-              v-if="loadingCustomerChart"
-              :active="loadingCustomerChart"
-              :indeterminate="loadingCustomerChart"
-            />
-            <total-customer-chart
-              v-if="!loadingCustomerChart"
-              :customers-data="totalCustomers"
-              data-e2e="overview-chart"
-            />
-          </v-card>
-        </v-col>
-      </v-row>
-      <v-row class="px-15 mt-2">
-        <v-col md="7">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-            <v-card-title class="pb-2 pl-5 pt-5">
-              <div class="mt-2">
-                <span class="black--text text--darken-4 text-h5">
-                  Demographic Overview
-                </span>
-              </div>
-            </v-card-title>
-            <v-progress-linear
-              v-if="loadingGeoOverview"
-              :active="loadingGeoOverview"
-              :indeterminate="loadingGeoOverview"
-            />
-            <map-chart
-              v-if="!loadingGeoOverview"
-              :map-data="customersGeoOverview"
-              :configuration-data="configurationData"
-              data-e2e="map-chart"
-            />
-            <map-slider
-              v-if="!loadingGeoOverview"
-              :map-data="customersGeoOverview"
-              :configuration-data="configurationData"
-            />
-          </v-card>
-        </v-col>
-        <v-col md="5">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-            <v-card-title class="pb-2 pl-5 pt-5">
-              <div class="mt-2">
-                <span class="black--text text--darken-4 text-h5">
-                  United States
-                </span>
-              </div>
-            </v-card-title>
-            <v-divider class="ml-5 mr-8 mt-0 mb-1" />
-            <v-progress-linear
-              v-if="loadingGeoOverview"
-              :active="loadingGeoOverview"
-              :indeterminate="loadingGeoOverview"
-            />
-            <map-state-list
-              v-if="!loadingGeoOverview"
-              :map-data="customersGeoOverview"
-              :configuration-data="configurationData"
-            />
-          </v-card>
-        </v-col>
-      </v-row>
-      <v-row class="px-15 mt-2">
-        <v-col md="3">
-          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
-            <v-progress-linear
-              v-if="loadingDemographics"
-              :active="loadingDemographics"
-              :indeterminate="loadingDemographics"
-            />
-            <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
-              <div class="mt-2">
-                <span class="black--text text--darken-4 text-h5">
-                  Top location &amp; Income
-                </span>
-              </div>
-            </v-card-title>
-            <income-chart
-              v-if="!loadingDemographics"
-              :data="demographicsData.income"
-              data-e2e="income-chart"
-            />
-          </v-card>
-        </v-col>
-        <v-col md="6">
-          <v-card class="mt-3 genderSpend rounded-lg box-shadow-5" height="290">
-            <v-progress-linear
-              v-if="loadingDemographics"
-              :active="loadingDemographics"
-              :indeterminate="loadingDemographics"
-            />
-            <v-card-title v-if="!loadingDemographics" class="pb-0 pl-2 pt-5">
-              <div class="mt-1 pl-5">
-                <span class="black--text text--darken-4 text-h5">
-                  Gender &sol; monthly spending
-                </span>
-                <span class="text-body-2 time-frame">(last 6 months)</span>
-              </div>
-            </v-card-title>
-            <gender-spend-chart
-              v-if="!loadingDemographics"
-              :data="demographicsData.spend"
-              data-e2e="gender-spend-chart"
-            />
-          </v-card>
-        </v-col>
-        <v-col md="3">
-          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
-            <v-progress-linear
-              v-if="loadingDemographics"
-              :active="loadingDemographics"
-              :indeterminate="loadingDemographics"
-            />
-            <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
-              <div class="mt-2">
-                <span class="black--text text--darken-4 text-h5"> Gender </span>
-              </div>
-            </v-card-title>
-            <div v-if="!loadingDemographics" ref="genderChart">
-              <doughnut-chart
-                :chart-dimensions="genderChartDimensions"
-                :data="genderChartData"
-                label="Gender"
-                data-e2e="gender-chart"
+
+        <v-tabs v-model="tabOption" class="mt-8">
+          <v-tabs-slider color="primary"></v-tabs-slider>
+          <div class="d-flex">
+            <v-tab
+              key="overview"
+              class="pa-2 mr-3 text-h5"
+              color
+              data-e2e="overview"
+              @click="showOverview"
+            >
+              Overview
+            </v-tab>
+            <v-tab
+              key="customerList"
+              class="text-h5"
+              data-e2e="customer-list"
+              @click="showCustomerList"
+            >
+              Customer list
+            </v-tab>
+          </div>
+        </v-tabs>
+        <v-tabs-items v-model="tabOption" class="mt-2">
+          <v-tab-item key="overview">
+            <v-row class="mt-2">
+              <v-col md="6">
+                <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+                  <v-card-title class="pb-2 pl-6 pt-5">
+                    <div class="mt-2">
+                      <span class="black--text text--darken-4 text-h3">
+                        Total customers
+                        <span class="text-body-2 time-frame">
+                          ({{ timeFrameLabel }})
+                        </span>
+                      </span>
+                    </div>
+                  </v-card-title>
+                  <v-progress-linear
+                    v-if="loadingCustomerChart"
+                    :active="loadingCustomerChart"
+                    :indeterminate="loadingCustomerChart"
+                  />
+                  <total-customer-chart
+                    v-if="!loadingCustomerChart"
+                    :customers-data="totalCustomers"
+                    data-e2e="overview-chart"
+                  />
+                </v-card>
+              </v-col>
+              <v-col md="6">
+                <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+                  <v-card-title class="pb-2 pl-6 pt-5">
+                    <div class="mt-2">
+                      <tooltip position-top>
+                        <template #label-content>
+                          <span class="black--text text--darken-4 text-h3">
+                            Revenue
+                            <span class="text-body-2 time-frame">
+                              ({{ timeFrameLabel }})
+                            </span>
+                          </span>
+                          <icon type="info" :size="12" />
+                        </template>
+                        <template #hover-content>
+                          Revenue is calculated as the average sales price
+                          multiplied by the number of units sold.
+                        </template>
+                      </tooltip>
+                    </div>
+                  </v-card-title>
+                  <v-progress-linear
+                    v-if="loadingCustomerChart"
+                    :active="loadingCustomerChart"
+                    :indeterminate="loadingCustomerChart"
+                  />
+                </v-card>
+              </v-col>
+            </v-row>
+            <v-row class="mt-2 mb-4">
+              <v-col md="7">
+                <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+                  <v-card-title class="pb-2 pl-5 pt-5">
+                    <div class="mt-2">
+                      <span class="black--text text--darken-4 text-h3">
+                        USA
+                      </span>
+                    </div>
+                  </v-card-title>
+                  <v-progress-linear
+                    v-if="loadingGeoOverview"
+                    :active="loadingGeoOverview"
+                    :indeterminate="loadingGeoOverview"
+                  />
+                  <map-chart
+                    v-if="!loadingGeoOverview"
+                    :map-data="customersGeoOverview"
+                    :configuration-data="configurationData"
+                    data-e2e="map-chart"
+                  />
+                  <map-slider
+                    v-if="!loadingGeoOverview"
+                    :map-data="customersGeoOverview"
+                    :configuration-data="configurationData"
+                  />
+                </v-card>
+              </v-col>
+              <v-col md="5">
+                <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+                  <v-card-title class="pb-2 pl-5 pt-5">
+                    <div class="mt-2">
+                      <span class="black--text text--darken-4 text-h5">
+                        United States
+                      </span>
+                    </div>
+                  </v-card-title>
+                  <v-divider class="ml-5 mr-8 mt-0 mb-1" />
+                  <v-progress-linear
+                    v-if="loadingGeoOverview"
+                    :active="loadingGeoOverview"
+                    :indeterminate="loadingGeoOverview"
+                  />
+                  <map-state-list
+                    v-if="!loadingGeoOverview"
+                    :map-data="customersGeoOverview"
+                    :configuration-data="configurationData"
+                  />
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-tab-item>
+          <v-tab-item key="customerList">
+            <v-card class="mt-3 pa-4 rounded-lg box-shadow-5">
+              <v-progress-linear
+                :active="loadingCustomersList"
+                :indeterminate="loadingCustomersList"
               />
-            </div>
-          </v-card>
-        </v-col>
-      </v-row>
+              <hux-data-table
+                :columns="columnDefs"
+                :sort-column="'hux_id'"
+                :data-items="customers"
+              >
+                <template #row-item="{ item }">
+                  <td
+                    v-for="header in columnDefs"
+                    :key="header.value"
+                    :style="{ width: header.width }"
+                  >
+                    <router-link
+                      v-if="header.value == 'hux_id'"
+                      :to="{
+                        name: 'CustomerProfileDetails',
+                        params: { id: item[header.value] },
+                      }"
+                      data-e2e="customerID"
+                      class="cell"
+                      append
+                    >
+                      {{ item[header.value] }}
+                    </router-link>
+                    <div v-if="header.value == 'last_name'" class="cell">
+                      <span v-if="item.last_name">{{ item.last_name }} </span>
+                    </div>
+                    <div v-if="header.value == 'first_name'" class="cell">
+                      <span v-if="item.first_name"> {{ item.first_name }}</span>
+                    </div>
+                    <div v-if="header.value == 'match_confidence'">
+                      <hux-slider
+                        :is-range-slider="false"
+                        :value="item[header.value]"
+                        class="match-confidence"
+                      ></hux-slider>
+                    </div>
+                  </td>
+                </template>
+              </hux-data-table>
+              <observer
+                v-if="customers.length"
+                @intersect="intersected"
+              ></observer>
+            </v-card>
+          </v-tab-item>
+        </v-tabs-items>
+      </div>
       <customer-details v-model="customerProfilesDrawer" />
       <geo-drawer
         geo-level="cities"
@@ -323,15 +362,15 @@ import MetricCard from "@/components/common/MetricCard"
 import Icon from "@/components/common/Icon"
 import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
 import GeoDrawer from "@/views/Shared/Drawers/GeoDrawer.vue"
-import IncomeChart from "@/components/common/incomeChart/IncomeChart"
-import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import MapChart from "@/components/common/MapChart/MapChart"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import mapSlider from "@/components/common/MapChart/mapSlider"
-import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import IDRInsightsDrawer from "./Drawers/IDRInsightsDrawer"
+import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
+import HuxSlider from "@/components/common/HuxSlider"
+import Observer from "@/components/common/Observer"
 import dayjs from "dayjs"
 
 export default {
@@ -344,20 +383,21 @@ export default {
     Icon,
     CustomerDetails,
     GeoDrawer,
-    IncomeChart,
-    GenderSpendChart,
     MapChart,
     MapStateList,
     mapSlider,
-    DoughnutChart,
     TotalCustomerChart,
     IDRInsightsDrawer,
+    HuxDataTable,
+    HuxSlider,
+    Observer,
   },
 
   data() {
     return {
       customerProfilesDrawer: false,
       idrInsightsDrawer: false,
+      loadingCustomersList: false,
       loadingCustomerChart: false,
       configurationData: configurationData,
       geoDrawer: {
@@ -367,7 +407,7 @@ export default {
       },
       loadingGeoOverview: false,
       loadingDemographics: true,
-      timeFrameLabel: "last 9 months",
+      timeFrameLabel: "last 6 months",
       overviewListItems: [
         {
           title: "Customers",
@@ -430,6 +470,39 @@ export default {
         width: 269,
         height: 200,
       },
+      tabOption: 0,
+      showOverviewTab: true,
+      enableLazyLoad: false,
+      localDrawer: this.value,
+      batchCount: 1,
+      columnDefs: [
+        {
+          text: "Hux ID",
+          value: "hux_id",
+          width: "auto",
+        },
+        {
+          text: "Last name",
+          value: "last_name",
+          width: "auto",
+        },
+        {
+          text: "First name",
+          value: "first_name",
+          width: "auto",
+        },
+        {
+          text: "Match confidence",
+          value: "match_confidence",
+          width: "250px",
+        },
+      ],
+      lastBatch: 0,
+      batchDetails: {
+        batchSize: 100,
+        batchNumber: 1,
+        isLazyLoad: false,
+      },
     }
   },
   computed: {
@@ -439,6 +512,7 @@ export default {
       totalCustomers: "customers/totalCustomers",
       customersGeoOverview: "customers/geoOverview",
       demographicsData: "customers/demographics",
+      customersList: "customers/list",
     }),
     updatedTimeStamp() {
       if (this.updatedTime.length !== 0) {
@@ -448,6 +522,11 @@ export default {
       } else {
         return "-"
       }
+    },
+
+    customers() {
+      let sortedCustomerList = this.customersList
+      return sortedCustomerList.sort((a, b) => a.id - b.id)
     },
 
     genderChartData() {
@@ -484,16 +563,12 @@ export default {
 
   async mounted() {
     this.loading = true
-    this.sizeHandler()
     await this.getOverview()
     this.mapOverviewData()
     this.fetchTotalCustomers()
     this.fetchGeoOverview()
     this.fetchDemographics()
     this.loading = false
-    if (this.$refs.genderChart) {
-      new ResizeObserver(this.sizeHandler).observe(this.$refs.genderChart)
-    }
   },
 
   methods: {
@@ -502,7 +577,22 @@ export default {
       getTotalCustomers: "customers/getTotalCustomers",
       getGeoOverview: "customers/getGeoOverview",
       getDemographics: "customers/getDemographics",
+      getCustomers: "customers/getAll",
     }),
+
+    async showCustomerList() {
+      this.loadingCustomersList = true
+      await this.fetchCustomerByBatch()
+      this.calculateLastBatch()
+      this.loadingCustomersList = false
+      this.enableLazyLoad = true
+    },
+
+    showOverview() {
+      this.batchDetails.batchNumber = 1
+      this.batchDetails.isLazyLoad = false
+      this.enableLazyLoad = false
+    },
 
     async fetchGeoOverview() {
       this.loadingGeoOverview = true
@@ -569,12 +659,6 @@ export default {
           break
       }
     },
-    sizeHandler() {
-      if (this.$refs.genderChart) {
-        this.genderChartDimensions.width = this.$refs.genderChart.clientWidth
-        this.genderChartDimensions.height = 200
-      }
-    },
     mapGenderData() {
       this.overviewListItems[5].menData = this.overview.gender_men_count
       this.overviewListItems[5].womenData = this.overview.gender_women_count
@@ -592,6 +676,24 @@ export default {
     },
     toggleIDRInsightsDrawer() {
       this.idrInsightsDrawer = !this.idrInsightsDrawer
+    },
+
+    async fetchCustomerByBatch() {
+      await this.getCustomers(this.batchDetails)
+      this.batchDetails.batchNumber++
+    },
+    intersected() {
+      if (this.batchDetails.batchNumber <= this.lastBatch) {
+        this.batchDetails.isLazyLoad = true
+        this.fetchCustomerByBatch()
+      } else {
+        this.enableLazyLoad = false
+      }
+    },
+    calculateLastBatch() {
+      this.lastBatch = Math.ceil(
+        this.overview.total_customers / this.batchDetails.batchSize
+      )
     },
   },
 }
@@ -625,7 +727,7 @@ export default {
     content: none;
   }
   ::v-deep .metric-card-wrapper .v-icon::before {
-    font-size: 30px;
+    //  font-size: 30px;
   }
 
   .customer-slide-group {
@@ -644,13 +746,111 @@ export default {
     min-width: 0px;
     margin-top: -5px;
   }
+
+  .v-tabs {
+    ::v-deep .v-tabs-bar {
+      background: transparent !important;
+      .v-tabs-bar__content {
+        border-bottom: 2px solid var(--v-black-lighten2);
+        display: flex;
+        justify-content: space-between;
+        .v-tabs-slider-wrapper {
+          width: 128px;
+          .v-tabs-slider {
+            background-color: var(--v-primary-lighten6) !important;
+            border-color: var(--v-primary-lighten6) !important;
+          }
+        }
+        .v-tab {
+          text-transform: inherit;
+          padding: 8px;
+          color: var(--v-primary-base) !important;
+          font-size: 15px !important;
+          line-height: 20px;
+          letter-spacing: inherit;
+          svg {
+            fill: transparent !important;
+            path {
+              stroke: var(--v-primary-base);
+            }
+          }
+          &.v-tab--active {
+            color: var(--v-primary-lighten6) !important;
+            svg {
+              path {
+                stroke: var(--v-primary-lighten6);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .v-tabs-items {
+    overflow: inherit;
+    background-color: transparent !important;
+    .v-window-item--active {
+      background: transparent;
+    }
+
+    .hux-data-table {
+      margin-top: 1px;
+    }
+    ::v-deep .v-sheet .theme--light .v-toolbar {
+      background: var(--v-primary-lighten2);
+    }
+    ::v-deep .theme--light.v-sheet {
+      box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
+    }
+    ::v-deep .hux-data-table {
+      .v-data-table {
+        .v-data-table-header {
+          tr {
+            height: 40px !important;
+          }
+          th {
+            background: var(--v-primary-lighten2);
+          }
+        }
+        > .v-data-table__wrapper {
+          > table {
+            > tbody > tr > td {
+              padding-top: 0;
+              padding-bottom: 0;
+            }
+          }
+        }
+        .match-confidence {
+          .slider-value-display {
+            margin-top: 16px;
+            width: 33px;
+          }
+          .v-slider__track-container {
+            margin-top: 12px !important;
+          }
+          .v-slider__thumb-container {
+            margin-top: 12px !important;
+          }
+        }
+      }
+      .cell {
+        font-family: Open Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px !important;
+        line-height: 22px;
+        display: inline-block;
+        max-width: 100%;
+        overflow: hidden;
+        text-decoration: none;
+        text-overflow: ellipsis;
+      }
+    }
+  }
 }
 
 .icon-border {
   cursor: default !important;
-}
-::v-deep .genderSpend .container {
-  margin-top: 8px !important;
 }
 .color-last-month {
   color: var(--v-grey-base) !important;
