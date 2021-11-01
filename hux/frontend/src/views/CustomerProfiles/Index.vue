@@ -135,7 +135,12 @@
               <template v-if="item.toolTipText" #extra-item>
                 <tooltip position-top>
                   <template #label-content>
-                    <icon type="info" :size="12" color="primary" variant="base" />
+                    <icon
+                      type="info"
+                      :size="12"
+                      color="primary"
+                      variant="base"
+                    />
                   </template>
                   <template #hover-content>
                     {{ item.toolTipText }}
@@ -207,7 +212,12 @@
                               ({{ timeFrameLabel }})
                             </span>
                           </span>
-                           <icon type="info" :size="12" color="primary" variant="base" />
+                          <icon
+                            type="info"
+                            :size="12"
+                            color="primary"
+                            variant="base"
+                          />
                         </template>
                         <template #hover-content>
                           Revenue is calculated as the average sales price
