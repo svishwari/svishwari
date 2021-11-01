@@ -815,9 +815,6 @@ export default {
     ::v-deep .v-sheet .theme--light .v-toolbar {
       background: var(--v-primary-lighten2);
     }
-    ::v-deep .theme--light.v-sheet {
-      box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
-    }
     ::v-deep .hux-data-table {
       .v-data-table {
         .v-data-table-header {
