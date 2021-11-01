@@ -48,8 +48,8 @@ export default {
   },
   data() {
     return {
-      width: 220,
-      height: 250,
+      width: 190,
+      height: 190,
       radius: 0,
       top: 50,
       left: 60,
