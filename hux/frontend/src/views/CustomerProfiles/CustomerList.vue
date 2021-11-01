@@ -51,13 +51,11 @@
 import { mapActions, mapGetters } from "vuex"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import HuxSlider from "@/components/common/HuxSlider"
-import Tooltip from "@/components/common/Tooltip"
 import Observer from "@/components/common/Observer"
 
 export default {
   name: "CustomerList",
   components: {
-    Tooltip,
     HuxDataTable,
     HuxSlider,
     Observer,
@@ -137,7 +135,7 @@ export default {
         this.enableLazyLoad = false
       }
     },
-    
+
     calculateLastBatch() {
       this.lastBatch = Math.ceil(
         this.customerOverview.total_customers / this.batchDetails.batchSize

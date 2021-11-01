@@ -241,7 +241,7 @@ export default {
 
       this.chartSourceData = {
         sourceData: this.sourceData,
-        monthsDuration: this.monthsDuration
+        monthsDuration: this.monthsDuration,
       }
     },
 

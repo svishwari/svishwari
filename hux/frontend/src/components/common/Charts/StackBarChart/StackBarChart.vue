@@ -109,7 +109,6 @@ export default {
         .stack()
         .keys(["total_customers", "new_customers_added"])
 
-
       let stackedValues = stack(this.totalCustomerData)
       d3Transition.transition()
 

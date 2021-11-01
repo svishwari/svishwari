@@ -159,7 +159,7 @@
               class="pa-2 mr-3 text-h5"
               color
               data-e2e="overview-tab"
-              @click="loadCustomersList=false"
+              @click="loadCustomersList = false"
             >
               Overview
             </v-tab>
@@ -167,7 +167,7 @@
               key="customerList"
               class="text-h5"
               data-e2e="customer-list-tab"
-              @click="loadCustomersList=true"
+              @click="loadCustomersList = true"
             >
               Customer list
             </v-tab>
