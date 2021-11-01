@@ -24,7 +24,7 @@ from huxunify.api.route.decorators import (
     api_error_handler,
     get_user_name,
 )
-from huxunify.api.route.utils import get_db_client, Validation
+from huxunify.api.route.utils import get_db_client
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
@@ -256,10 +256,10 @@ class ModelVersionView(SwaggerView):
             Tuple[List[dict], int]: List containing dict of model versions,
                 HTTP status code.
         """
-        model_id = Validation.validate_integer(model_id)
+
         # TODO Remove once Propensity to Purchase info
         #  can be retrieved from tecton
-        if model_id == 3:
+        if model_id == "3":
             version_history = [
                 {
                     api_c.ID: model_id,
@@ -493,7 +493,7 @@ class ModelFeaturesView(SwaggerView):
             Tuple[List[dict], int]: List containing dict of model features,
                 HTTP status code.
         """
-        model_id = Validation.validate_integer(model_id)
+
         # TODO: Remove once this model data becomes
         #  available and can be fetched from Tecton
         # intercept to check if the model_id is for propensity_to_purchase
