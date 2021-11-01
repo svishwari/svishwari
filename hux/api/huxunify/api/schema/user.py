@@ -1,7 +1,7 @@
 """Schemas for the User API"""
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Int, validate, List, Nested, Dict
+from marshmallow.fields import Str, Int, validate, List, Nested, Dict, Bool
 
 from huxunifylib.database import constants as db_c
 from huxunify.api.schema.utils import validate_object_id
@@ -34,6 +34,7 @@ class UserSchema(Schema):
     phone_number = Str()
     access_level = Str()
     role = Str(required=True, validate=validate.OneOf(db_c.USER_ROLES))
+    pii_access = Bool(default=False)
     organization = Str()
     subscriptions = List(Str())
     dashboard_configuration = Dict()
@@ -50,3 +51,4 @@ class UserPatchSchema(Schema):
     role = Str(required=False)
     display_name = Str(required=False)
     dashboard_configuration = Dict(required=False)
+    pii_access = Bool(required=False)
