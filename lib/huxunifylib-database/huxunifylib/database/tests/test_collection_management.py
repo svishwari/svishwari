@@ -6,6 +6,7 @@ from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import constants as db_c
 from huxunifylib.database import collection_management as dmg
 import huxunifylib.database.db_exceptions as de
+from huxunifylib.database.collection_management import update_document
 
 
 class ConfigurationCollectionManagementTest(TestCase):
@@ -77,6 +78,23 @@ class ConfigurationCollectionManagementTest(TestCase):
 
         self.assertIsNotNone(configuration)
         self.assertEqual("test_user", configuration[db_c.CREATED_BY])
+
+    def test_update_document(self):
+        """Test update document"""
+        update_doc = {
+            "type": "model",
+            "name": "Tecton model 1",
+            "status": "Active",
+            "enabled": True,
+        }
+        updated_doc = update_document(
+            self.database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            document_id=self.configurations[0]["_id"],
+            update_doc=update_doc,
+        )
+        self.assertTrue(updated_doc)
+        self.assertEqual(updated_doc["status"], update_doc["status"])
 
     def test_get_documents_configuration(self):
         """Test get all configurations via batch."""
