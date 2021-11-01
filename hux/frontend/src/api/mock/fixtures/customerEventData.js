@@ -1,5 +1,18 @@
 export default [
   {
+    date: "2021-03-15T00:00:00.000Z",
+    total_event_count: 3,
+    event_type_counts: {
+      abandoned_cart: 1,
+      viewed_cart: 0,
+      customer_login: 1,
+      viewed_checkout: 0,
+      viewed_sale_item: 0,
+      item_purchased: 0,
+      trait_computed: 1,
+    },
+  },
+  {
     date: "2021-07-15T00:00:00.000Z",
     total_event_count: 3,
     event_type_counts: {
