@@ -289,7 +289,7 @@ class CreateCdpDataSources(SwaggerView):
             )
         else:
             logger.info(
-                "Failed to create the %s data source(s).",
+                "Failed to create %s data source(s).",
                 ", ".join(
                     [
                         data_source[api_c.NAME]
