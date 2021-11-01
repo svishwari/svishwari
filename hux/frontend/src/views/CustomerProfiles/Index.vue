@@ -293,7 +293,6 @@
           </v-tab-item>
         </v-tabs-items>
       </div>
-      <customer-details v-model="customerProfilesDrawer" />
       <geo-drawer
         geo-level="cities"
         :results="overview.total_cities"
@@ -324,7 +323,6 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 import Tooltip from "@/components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
 import Icon from "@/components/common/Icon"
-import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
 import GeoDrawer from "@/views/Shared/Drawers/GeoDrawer.vue"
 import MapChart from "@/components/common/MapChart/MapChart"
 import MapStateList from "@/components/common/MapChart/MapStateList"
@@ -342,7 +340,6 @@ export default {
     Breadcrumb,
     Tooltip,
     Icon,
-    CustomerDetails,
     GeoDrawer,
     MapChart,
     MapStateList,
@@ -354,9 +351,7 @@ export default {
 
   data() {
     return {
-      customerProfilesDrawer: false,
       idrInsightsDrawer: false,
-      loadingCustomersList: false,
       loadingCustomerChart: false,
       configurationData: configurationData,
       geoDrawer: {
@@ -375,7 +370,6 @@ export default {
           toolTipText:
             "Total no. of unique hux ids generated to represent a customer.",
           value: "",
-          action: "toggleProfilesDrawer",
         },
         {
           title: "Countries",
@@ -472,7 +466,6 @@ export default {
       totalCustomers: "customers/totalCustomers",
       customersGeoOverview: "customers/geoOverview",
       demographicsData: "customers/demographics",
-      customersList: "customers/list",
     }),
   },
 
@@ -491,7 +484,6 @@ export default {
       getTotalCustomers: "customers/getTotalCustomers",
       getGeoOverview: "customers/getGeoOverview",
       getDemographics: "customers/getDemographics",
-      getCustomers: "customers/getAll",
     }),
 
     async fetchGeoOverview() {
@@ -528,9 +520,6 @@ export default {
         this.overviewListItems[5].subtitle = this.mapGenderData()
       }
     },
-    toggleProfilesDrawer() {
-      this.customerProfilesDrawer = !this.customerProfilesDrawer
-    },
 
     toggleGeoDrawer(geoLevel = "states") {
       this.geoDrawer[geoLevel] = !this.geoDrawer[geoLevel]
@@ -538,9 +527,6 @@ export default {
 
     onClick(action) {
       switch (action) {
-        case "toggleProfilesDrawer":
-          this.toggleProfilesDrawer()
-          break
         case "toggleCitiesDrawer":
           this.toggleGeoDrawer("cities")
           break
