@@ -638,6 +638,7 @@ DATA_EXTENSIONS = "data-extensions"
 DATA_EXTENSION = "data_extension"
 DATA_EXTENSION_ID = "data_extension_id"
 DATA_EXTENSION_NOT_SUPPORTED = "Data extension not supported"
+GENERIC_DESTINATION = "generic_destination"
 
 # Engagement fields
 ENGAGEMENT = "engagement"

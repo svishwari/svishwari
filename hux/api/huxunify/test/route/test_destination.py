@@ -126,6 +126,43 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(len(self.destinations), len(response.json))
 
+    def test_request_existing_destination_invalid_id(self):
+        """Test request existing destinations with invalid id."""
+
+        existing_destination_request = {
+            api_c.ID: "id",
+            api_c.NAME: "Adobe",
+            api_c.CONTACT_EMAIL: "test_email@gmail.com",
+            api_c.CLIENT_REQUEST: True,
+            api_c.CLIENT_ACCOUNT: True,
+            api_c.USE_CASE: "Testing",
+        }
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=existing_destination_request,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_request_new_destination(self):
+        """Test request new destinations."""
+
+        new_destination_request = {
+            api_c.NAME: "My custom destination",
+            api_c.CONTACT_EMAIL: "test_email@gmail.com",
+            api_c.CLIENT_REQUEST: True,
+            api_c.CLIENT_ACCOUNT: True,
+            api_c.USE_CASE: "Testing",
+        }
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=new_destination_request,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
     # pylint: disable=unused-argument
     @patch(
         "huxunify.api.route.destination.FacebookConnector",

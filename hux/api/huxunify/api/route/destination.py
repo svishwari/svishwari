@@ -1111,7 +1111,7 @@ class DestinationsPostView(SwaggerView):
 
         destination = destination_management.set_delivery_platform(
             database,
-            delivery_platform_type=name,
+            delivery_platform_type=api_c.GENERIC_DESTINATION,
             name=name,
             user_name=user_name,
             status=api_c.STATUS_REQUESTED,

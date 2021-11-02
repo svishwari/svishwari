@@ -62,7 +62,7 @@ def set_delivery_platform(
         is_ad_platform (bool): If the delivery platform is an AD platform.
         contact_email (str): Contact email for newly requested destination.
         client_request (bool): If client requested the destination.
-        client_account (bool): If client already has an account on the 
+        client_account (bool): If client already has an account on the
             destination requested.
         use_case (str): Use case for the destination.
 
@@ -90,7 +90,6 @@ def set_delivery_platform(
     if exists_flag:
         raise de.DuplicateName(name)
 
-
     # Get current time
     curr_time = datetime.datetime.utcnow()
 
@@ -111,13 +110,12 @@ def set_delivery_platform(
 
     if configuration is not None:
         doc[c.CONFIGURATION] = configuration
-    
+
     if contact_email is not None:
         doc[c.CONTACT_EMAIL] = contact_email
         doc[c.CLIENT_REQUEST] = client_request
         doc[c.CLIENT_ACCOUNT] = client_account
         doc[c.USE_CASE] = use_case
-
 
     # Add user name only if it is available
     if user_name:
