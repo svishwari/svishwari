@@ -75,6 +75,10 @@ SOURCE_NAME = "source_name"
 SOURCE_SIZE = "source_size"
 SOURCE_ID = "source_id"
 CREATE_TIME = "create_time"
+CONTACT_EMAIL = "contact_email"
+CLIENT_REQUEST = "client_request"
+CLIENT_ACCOUNT = "client_account"
+USE_CASE = "use_case"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -258,6 +262,7 @@ STATUS_PENDING = "Pending"
 STATUS_ERROR = "Error"
 STATUS_PAUSED = "Paused"
 STATUS_STOPPED = "Stopped"
+STATUS_REQUESTED = "Requested"
 
 # used for weighting the rollup status for engagement deliveries
 # 0 being the highest.
@@ -544,6 +549,10 @@ DESTINATION_PATCH_FIELDS = [
     db_c.DELIVERY_PLATFORM_STATUS,
     db_c.NAME,
     db_c.DELIVERY_PLATFORM_TYPE,
+    db_c.CONTACT_EMAIL,
+    db_c.CLIENT_REQUEST,
+    db_c.CLIENT_ACCOUNT,
+    db_c.USE_CASE,
 ]
 DESTINATION_INVALID_PATCH_MESSAGE = (
     f"Acceptable fields are {DESTINATION_PATCH_FIELDS}."

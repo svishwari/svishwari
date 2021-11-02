@@ -980,3 +980,153 @@ class DestinationPatchView(SwaggerView):
             ),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    dest_bp, api_c.DESTINATIONS_ENDPOINT, "DestinationsPostView"
+)
+class DestinationsPostView(SwaggerView):
+    """Destinations Post view class."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Destination body.",
+            "example": {db_c.NAME: "New destination"},
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "New/Update Destination.",
+            "schema": DestinationGetSchema,
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.DESTINATION_NOT_FOUND,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
+    @api_error_handler()
+    @get_user_name()
+    def post(self, user_name: str) -> Tuple[list, int]:
+        """Creates/Updates a new destination.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Destination doc, HTTP status code.
+        """
+        body = request.get_json()
+        destination_id = body.get(api_c.ID)
+        database = get_db_client()
+
+        if destination_id:
+            destination_id = ObjectId(destination_id)
+            # Check if destination already exists in the DB
+            if not destination_management.get_delivery_platform(
+                database, destination_id
+            ):
+                logger.error(
+                    "Could not find destination with id %s.",
+                    destination_id,
+                )
+                return {
+                    "message": api_c.DESTINATION_NOT_FOUND
+                }, HTTPStatus.NOT_FOUND
+
+            patch_dict = {
+                k: v
+                for k, v in (
+                    request.get_json() if request.get_json() else {}
+                ).items()
+                if k in api_c.DESTINATION_PATCH_FIELDS
+            }
+
+            if not patch_dict:
+                logger.info("Could not patch destination.")
+                return {
+                    "message": api_c.DESTINATION_INVALID_PATCH_MESSAGE
+                }, HTTPStatus.UNPROCESSABLE_ENTITY
+
+            # validate the schema first.
+            DestinationPatchSchema().validate(patch_dict)
+
+            patch_dict[api_c.STATUS] = api_c.STATUS_REQUESTED
+
+            # update the document
+            return (
+                DestinationGetSchema().dump(
+                    destination_management.update_delivery_platform_doc(
+                        database,
+                        destination_id,
+                        {
+                            **patch_dict,
+                            **{
+                                db_c.UPDATED_BY: user_name,
+                                db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                            },
+                        },
+                    )
+                ),
+                HTTPStatus.OK,
+            )
+
+        name = body.get(api_c.NAME)
+        contact_email = body.get(api_c.CONTACT_EMAIL)
+        client_request = body.get(api_c.CLIENT_REQUEST)
+        client_account = body.get(api_c.CLIENT_ACCOUNT)
+
+        DestinationPatchSchema().validate(
+            {
+                name,
+                contact_email,
+                client_request,
+                client_account,
+            }
+        )
+
+        if not name:
+            logger.info("Missing required name field.")
+            return {
+                "message": "Missing required name field.",
+            }, HTTPStatus.UNPROCESSABLE_ENTITY
+
+        if not contact_email:
+            logger.info("Missing required contact email field.")
+            return {
+                "message": "Missing required contact email field.",
+            }, HTTPStatus.UNPROCESSABLE_ENTITY
+
+        if not client_request:
+            logger.info("Missing required client request field.")
+            return {
+                "message": "Missing required client request field.",
+            }, HTTPStatus.UNPROCESSABLE_ENTITY
+
+        if not client_account:
+            logger.info("Missing required client account field.")
+            return {
+                "message": "Missing required client account field.",
+            }, HTTPStatus.UNPROCESSABLE_ENTITY
+
+        destination_management.set_delivery_platform(
+            database,
+            delivery_platform_type=name,
+            name=name,
+            user_name=user_name,
+            status=api_c.STATUS_REQUESTED,
+            enabled=True,
+            contact_email=contact_email,
+            client_request=client_request,
+            client_account=client_account,
+            use_case=body.get(api_c.USE_CASE),
+        )

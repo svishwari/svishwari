@@ -315,6 +315,10 @@ SUPPORTED_DELIVERY_PLATFORMS = [
     DELIVERY_PLATFORM_QUALTRICS,
 ]
 IS_AD_PLATFORM = "is_ad_platform"
+CONTACT_EMAIL = "contact_email"
+CLIENT_REQUEST = "client_request"
+CLIENT_ACCOUNT = "client_account"
+USE_CASE = "use_case"
 
 LOOKALIKE = "lookalike"
 LOOKALIKE_AUD_NAME = "name"
