@@ -244,6 +244,7 @@ DISABLED = "disabled"
 SIZE = "size"
 IS_ADDED = "is_added"
 DAY = "day"
+REQUESTED = "requested"
 
 STATUS_NOT_DELIVERED = "Not Delivered"
 STATUS_DELIVERED = "Delivered"

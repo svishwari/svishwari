@@ -42,3 +42,11 @@ class UserSchema(Schema):
     login_count = Int(required=True, default=0, example=10)
     last_login = DateTimeWithZ(required=True, attribute=db_c.UPDATE_TIME)
     modified = DateTimeWithZ(required=True)
+
+
+class UserPatchSchema(Schema):
+    """User patch schema"""
+
+    role = Str(required=False)
+    display_name = Str(required=False)
+    dashboard_configuration = Dict(required=False)
