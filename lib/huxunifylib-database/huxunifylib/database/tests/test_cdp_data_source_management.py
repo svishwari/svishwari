@@ -73,7 +73,7 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         data_source_doc = dsmgmt.get_data_source(
             self.database, data_source_type=self.data_source_doc[c.TYPE]
         )
-        self.assertTrue(data_source_doc is not None)
+        self.assertIsNotNone(data_source_doc)
         self.assertEqual(
             data_source_doc[c.CDP_DATA_SOURCE_FIELD_NAME],
             self.data_source_doc[c.CDP_DATA_SOURCE_FIELD_NAME],

@@ -40,13 +40,9 @@ class TestCacheManagement(unittest.TestCase):
         get_cache = get_cache_entry(self.database, cache_key)
         self.assertTrue(get_cache)
 
-        mock.patch(
-            "huxunifylib.database.cache_management.create_cache_entry",
-            side_effect=pymongo.errors.OperationFailure,
-        ).start()
         self.assertRaises(
             pymongo.errors.OperationFailure,
-            create_cache_entry(self.database, cache_key, cache_value),
+            create_cache_entry(self.database, "asdfb", cache_value),
         )
 
         mock.patch.stopall()

@@ -90,11 +90,11 @@ class ConfigurationCollectionManagementTest(TestCase):
         updated_doc = update_document(
             self.database,
             collection=db_c.CONFIGURATIONS_COLLECTION,
-            document_id=self.configurations[0]["_id"],
+            document_id=self.configurations[0][db_c.ID],
             update_doc=update_doc,
         )
         self.assertTrue(updated_doc)
-        self.assertEqual(updated_doc["status"], update_doc["status"])
+        self.assertEqual(updated_doc[db_c.STATUS], update_doc[db_c.STATUS])
 
     def test_get_documents_configuration(self):
         """Test get all configurations via batch."""
