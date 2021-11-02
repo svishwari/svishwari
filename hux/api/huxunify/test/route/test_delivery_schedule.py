@@ -1,5 +1,5 @@
-"""Purpose of this file is to house all the delivery API tests."""
-
+"""Purpose of this file is to house all the delivery schedule API tests."""
+from random import sample
 from unittest import TestCase, mock
 from http import HTTPStatus
 import requests_mock
@@ -283,6 +283,240 @@ class TestDeliveryRoutes(TestCase):
         # take the first destination
         destination = audience.get(db_c.DESTINATIONS)[0]
         self.assertIn(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, destination)
+        self.assertDictEqual(
+            destination[db_c.ENGAGEMENT_DELIVERY_SCHEDULE], delivery_schedule
+        )
+
+    @given(
+        weeks=st.integers(min_value=1, max_value=4),
+        hours=st.integers(min_value=1, max_value=12),
+        minutes=st.integers(min_value=0, max_value=45),
+        meridiem=st.sampled_from([api_c.AM, api_c.PM]),
+        day_of_week=st.integers(min_value=1, max_value=7),
+    )
+    def test_set_delivery_schedule_weekly(
+        self,
+        weeks: int,
+        hours: int,
+        minutes: int,
+        meridiem: str,
+        day_of_week: int,
+    ):
+        """Test setting weekly delivery schedule(s).
+
+        Args:
+            weeks (int): Day of delivery.
+            hours (int): Hour of delivery.
+            minutes (int): Minute of delivery.
+            meridiem (str): Meridiem of delivery.
+            day_of_week (int): Day of the week.
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.start()
+
+        delivery_schedule = {
+            api_c.PERIODICIY: "Weekly",
+            # sample twice to force an in place shuffle.
+            api_c.DAY_OF_WEEK: sample(
+                sample(api_c.DAY_LIST, day_of_week), day_of_week
+            ),
+            api_c.EVERY: weeks,
+            api_c.HOUR: hours,
+            api_c.MINUTE: minutes,
+            api_c.PERIOD: meridiem,
+        }
+
+        self.assertEqual(
+            HTTPStatus.OK,
+            self.app.post(
+                (
+                    f"{t_c.BASE_ENDPOINT}"
+                    f"{api_c.ENGAGEMENT_ENDPOINT}/{self.engagement_ids[0]}/"
+                    f"{api_c.AUDIENCE}/{self.audiences[0][db_c.ID]}/"
+                    f"{api_c.DESTINATION}/{self.destinations[0][db_c.ID]}/"
+                    f"{api_c.SCHEDULE}"
+                ),
+                json=delivery_schedule,
+                headers=t_c.STANDARD_HEADERS,
+            ).status_code,
+        )
+
+        # validate the schedule was actually set.
+        engagement = get_engagement(
+            self.database, ObjectId(self.engagement_ids[0])
+        )
+        self.assertIn(db_c.AUDIENCES, engagement)
+
+        # take the first audience
+        audience = engagement.get(db_c.AUDIENCES)[0]
+        self.assertIn(db_c.DESTINATIONS, audience)
+
+        # take the first destination
+        destination = audience.get(db_c.DESTINATIONS)[0]
+        self.assertIn(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, destination)
+        self.assertDictEqual(
+            destination[db_c.ENGAGEMENT_DELIVERY_SCHEDULE], delivery_schedule
+        )
+
+    @given(
+        months=st.integers(min_value=1, max_value=12),
+        hours=st.integers(min_value=1, max_value=12),
+        minutes=st.integers(min_value=0, max_value=45),
+        meridiem=st.sampled_from([api_c.AM, api_c.PM]),
+        days=st.integers(min_value=1, max_value=31),
+    )
+    def test_set_delivery_schedule_monthly_day(
+        self,
+        months: int,
+        hours: int,
+        minutes: int,
+        meridiem: str,
+        days: int,
+    ):
+        """Test setting monthly delivery schedule(s) for days.
+
+        Args:
+            months (int): Day of delivery.
+            hours (int): Hour of delivery.
+            minutes (int): Minute of delivery.
+            meridiem (str): Meridiem of delivery.
+            days (int): Day of the week.
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.start()
+
+        delivery_schedule = {
+            api_c.PERIODICIY: "Monthly",
+            api_c.EVERY: months,
+            api_c.HOUR: hours,
+            api_c.MINUTE: minutes,
+            api_c.PERIOD: meridiem,
+            api_c.MONTHLY_PERIOD_ITEMS: ["Day"],
+            api_c.DAY_OF_MONTH: [days],
+        }
+
+        self.assertEqual(
+            HTTPStatus.OK,
+            self.app.post(
+                (
+                    f"{t_c.BASE_ENDPOINT}"
+                    f"{api_c.ENGAGEMENT_ENDPOINT}/{self.engagement_ids[0]}/"
+                    f"{api_c.AUDIENCE}/{self.audiences[0][db_c.ID]}/"
+                    f"{api_c.DESTINATION}/{self.destinations[0][db_c.ID]}/"
+                    f"{api_c.SCHEDULE}"
+                ),
+                json=delivery_schedule,
+                headers=t_c.STANDARD_HEADERS,
+            ).status_code,
+        )
+
+        # validate the schedule was actually set.
+        engagement = get_engagement(
+            self.database, ObjectId(self.engagement_ids[0])
+        )
+        self.assertIn(db_c.AUDIENCES, engagement)
+
+        # take the first audience
+        audience = engagement.get(db_c.AUDIENCES)[0]
+        self.assertIn(db_c.DESTINATIONS, audience)
+
+        # take the first destination
+        destination = audience.get(db_c.DESTINATIONS)[0]
+        self.assertIn(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, destination)
+
+        # convert day of month to string.
+        delivery_schedule[api_c.DAY_OF_MONTH] = [
+            str(x) for x in delivery_schedule[api_c.DAY_OF_MONTH]
+        ]
+        self.assertDictEqual(
+            destination[db_c.ENGAGEMENT_DELIVERY_SCHEDULE], delivery_schedule
+        )
+
+    @given(
+        months=st.integers(min_value=1, max_value=12),
+        hours=st.integers(min_value=1, max_value=12),
+        minutes=st.integers(min_value=0, max_value=45),
+        meridiem=st.sampled_from([api_c.AM, api_c.PM]),
+        monthly_period=st.sampled_from(api_c.MONTHLY_PERIOD_LIST),
+        days=st.sampled_from(api_c.DAY_OF_MONTH_NAME_LIST),
+    )
+    def test_set_delivery_schedule_monthly_day_name(
+        self,
+        months: int,
+        hours: int,
+        minutes: int,
+        meridiem: str,
+        monthly_period: str,
+        days: str,
+    ):
+        """Test setting monthly delivery schedule(s) for day names.
+
+        Args:
+            months (int): Day of delivery.
+            hours (int): Hour of delivery.
+            minutes (int): Minute of delivery.
+            meridiem (str): Meridiem of delivery.
+            monthly_period (str): Monthly period.
+            days (str): String Day of the month.
+        """
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.start()
+
+        delivery_schedule = {
+            api_c.PERIODICIY: "Monthly",
+            api_c.EVERY: months,
+            api_c.HOUR: hours,
+            api_c.MINUTE: minutes,
+            api_c.PERIOD: meridiem,
+            api_c.MONTHLY_PERIOD_ITEMS: [monthly_period],
+            api_c.DAY_OF_MONTH: [days],
+        }
+
+        self.assertEqual(
+            HTTPStatus.OK,
+            self.app.post(
+                (
+                    f"{t_c.BASE_ENDPOINT}"
+                    f"{api_c.ENGAGEMENT_ENDPOINT}/{self.engagement_ids[0]}/"
+                    f"{api_c.AUDIENCE}/{self.audiences[0][db_c.ID]}/"
+                    f"{api_c.DESTINATION}/{self.destinations[0][db_c.ID]}/"
+                    f"{api_c.SCHEDULE}"
+                ),
+                json=delivery_schedule,
+                headers=t_c.STANDARD_HEADERS,
+            ).status_code,
+        )
+
+        # validate the schedule was actually set.
+        engagement = get_engagement(
+            self.database, ObjectId(self.engagement_ids[0])
+        )
+        self.assertIn(db_c.AUDIENCES, engagement)
+
+        # take the first audience
+        audience = engagement.get(db_c.AUDIENCES)[0]
+        self.assertIn(db_c.DESTINATIONS, audience)
+
+        # take the first destination
+        destination = audience.get(db_c.DESTINATIONS)[0]
+        self.assertIn(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, destination)
+
+        # convert day of month to string.
+        delivery_schedule[api_c.DAY_OF_MONTH] = [
+            str(x) for x in delivery_schedule[api_c.DAY_OF_MONTH]
+        ]
         self.assertDictEqual(
             destination[db_c.ENGAGEMENT_DELIVERY_SCHEDULE], delivery_schedule
         )
