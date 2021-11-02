@@ -244,6 +244,7 @@ DISABLED = "disabled"
 SIZE = "size"
 IS_ADDED = "is_added"
 DAY = "day"
+REQUESTED = "requested"
 
 STATUS_NOT_DELIVERED = "Not Delivered"
 STATUS_DELIVERED = "Delivered"
@@ -801,6 +802,8 @@ LOOKALIKE_AUDIENCES = "lookalike_audiences"
 LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 LOOKALIKEABLE = "lookalikeable"
 IS_LOOKALIKE = "is_lookalike"
+WORKED_BY = "worked_by"
+ATTRIBUTE = "attribute"
 
 PARAM_STORE_PREFIX = "unified"
 PARAMETER_STORE_ERROR_MSG = (
@@ -848,19 +851,19 @@ PRECISION = "precision"
 PERFORMANCE_METRIC = "performance_metric"
 FEATURE_IMPORTANCE = "feature-importance"
 SCORE = "score"
-FEATURE_MODEL_HISTORY = "ui_metadata_model_history_service_mock"
-FEATURE_TOP_SERVICE = "ui_metadata_model_top_features_service_mock"
-FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service_mock"
+FEATURE_MODEL_HISTORY = "ui_metadata_model_history_service"
+FEATURE_TOP_SERVICE = "ui_metadata_model_top_features_service"
+FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service"
 FEATURE_DRIFT_REGRESSION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_regression_service_mock"
+    "ui_metadata_model_metrics_regression_service"
 )
 FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_classification_service_mock"
+    "ui_metadata_model_metrics_classification_service"
 )
 
 MODEL_LIST_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_models_service_mock",
+        "feature_service_name": "ui_metadata_models_service",
         "join_key_map": {"model_metadata_client": "HUS"},
     }
 }

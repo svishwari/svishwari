@@ -2,6 +2,7 @@
 
 from flask_marshmallow import Schema
 from marshmallow.fields import Str, Int, Float, Nested
+from marshmallow.validate import OneOf
 
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 from huxunify.api import constants as c
@@ -97,3 +98,20 @@ class ModelDashboardSchema(Schema):
     model_name = Str()
     description = Str()
     performance_metric = Nested(PerformanceMetricSchema)
+
+
+class ModelRequestPOSTSchema(Schema):
+    """Model Request Post Schema"""
+
+    id = Str(required=True)
+    name = Str(required=True)
+    status = Str(
+        validate=[
+            OneOf(
+                choices=[
+                    c.REQUESTED,
+                ]
+            )
+        ],
+        required=True,
+    )

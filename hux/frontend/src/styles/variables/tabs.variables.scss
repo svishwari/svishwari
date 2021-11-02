@@ -1,0 +1,53 @@
+// V -Tabs
+// https://vuetifyjs.com/en/api/v-tabs/#sass
+
+// Variables
+$tabs-bar-background-color: transparent !important;
+$tab-font-size: 15px !important;
+
+// Customizations
+.v-tabs {
+  .v-tabs-bar {
+    background: transparent !important;
+    .v-tabs-bar__content {
+      border-bottom: 2px solid var(--v-black-lighten2);
+      display: flex;
+      justify-content: space-between;
+      .v-tabs-slider-wrapper {
+        width: 128px;
+        .v-tabs-slider {
+          background-color: var(--v-primary-lighten6) !important;
+          border-color: var(--v-primary-lighten6) !important;
+        }
+      }
+      .v-tab {
+        text-transform: inherit;
+        padding: 8px;
+        color: var(--v-primary-base) !important;
+        line-height: 20px;
+        letter-spacing: inherit;
+        svg {
+          fill: transparent !important;
+          path {
+            stroke: var(--v-primary-base);
+          }
+        }
+        &.v-tab--active {
+          color: var(--v-primary-lighten6) !important;
+          svg {
+            path {
+              stroke: var(--v-primary-lighten6);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+.v-tabs-items {
+  overflow: inherit;
+  background-color: transparent !important;
+  .v-window-item--active {
+    background: transparent;
+  }
+}
