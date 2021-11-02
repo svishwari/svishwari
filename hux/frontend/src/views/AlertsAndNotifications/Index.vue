@@ -40,26 +40,6 @@
     </page-header>
       <alert-filter-drawer v-model="isFilterToggled"  />
     <v-progress-linear :active="loading" :indeterminate="loading" />
-           
-          <!-- <hux-filters-drawer
-            :is-toggled="isFilterToggled"
-            :count="3"
-          >
-            <hux-filter-panels>
-              <hux-filter-panel title="Alert type">
-                hello all
-              </hux-filter-panel>
-              <hux-filter-panel title="Category">
-                hello all
-              </hux-filter-panel>
-              <hux-filter-panel title="Time">
-                hello all
-              </hux-filter-panel>
-              <hux-filter-panel title="User">
-                hello all
-              </hux-filter-panel>
-            </hux-filter-panels>
-          </hux-filters-drawer> -->
     <v-row v-if="!loading" class="pb-7 pl-3 white">
       <hux-data-table
         :columns="columnDefs"
@@ -276,10 +256,7 @@ export default {
       )
     },
      toggleFilterDrawer() {
-       console.log("hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",!this.isFilterToggled)
-      //  debugger
        this.isFilterToggled = !this.isFilterToggled
-        // console.log("hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii", this.isFilterToggled)
      },
     getIconColor(value) {
       if (value) {
