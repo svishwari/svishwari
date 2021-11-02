@@ -541,10 +541,6 @@ def get_model_features(
             response.status_code,
             response.text,
         )
-        raise iae.FailedAPIDependencyError(
-            f"{config.TECTON_FEATURE_SERVICE} : in_function={get_model_features.__name__}",
-            response.status_code,
-        )
 
     return result_features
 
