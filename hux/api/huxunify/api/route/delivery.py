@@ -69,9 +69,6 @@ def before_request() -> Tuple[dict, int]:
             "message": api_c.DISABLE_DELIVERY_MSG
         }, HTTPStatus.PARTIAL_CONTENT
 
-    # pylint: disable=unnecessary-pass
-    pass
-
 
 @add_view_to_blueprint(
     delivery_bp,
