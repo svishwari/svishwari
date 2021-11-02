@@ -611,31 +611,41 @@ class ModelImportanceFeaturesView(SwaggerView):
                 HTTP status code.
         """
 
-        # only use the latest version if model version is None.
-        if model_version is None:
-            # get latest version first
-            model_version = tecton.get_model_version_history(model_id)
-
-            # check if there is a model version we can grab,
-            # if so take the last one (latest).
-            model_version = (
-                model_version[-1].get(api_c.CURRENT_VERSION)
-                if model_version
-                else ""
-            )
-
         # check cache first
         database = get_db_client()
-        features = get_cache_entry(
-            database, f"features.{model_id}.{model_version}"
-        )
 
-        # if no cache, grab from Tecton and cache after.
-        if not features:
-            features = tecton.get_model_features(model_id, model_version)
-            create_cache_entry(
-                database, f"features.{model_id}.{model_version}", features
+        model_versions = tecton.get_model_version_history(model_id)
+
+        # check if user submitted a version, return only the returned version.
+        if model_version:
+            model_versions = [
+                x
+                for x in model_versions
+                if x.get(api_c.CURRENT_VERSION) == model_version
+            ]
+
+        # take the latest model version that have features available.
+        features = {}
+        for version in reversed(model_versions):
+            # check if an entry in the cache
+            features = get_cache_entry(
+                database,
+                f"features.{model_id}.{version[api_c.CURRENT_VERSION]}",
             )
+            if features:
+                break
+
+            features = tecton.get_model_features(
+                model_id, version[api_c.CURRENT_VERSION]
+            )
+            if features:
+                # cache and break
+                create_cache_entry(
+                    database,
+                    f"features.{model_id}.{version[api_c.CURRENT_VERSION]}",
+                    features,
+                )
+                break
 
         # sort the top features before serving them out
         features.sort(key=lambda x: x[api_c.SCORE], reverse=True)
