@@ -131,12 +131,14 @@
       </empty-page>
     </v-row>
     <v-row
-      v-if="notificationData.length > 0 && notificationData.length <= 0 && !loading"
+      v-if="
+        notificationData.length > 0 && notificationData.length <= 0 && !loading
+      "
       class="d-flex justify-center align-center"
     >
       <error
-        iconType="error-on-screens"
-        :iconSize="50"
+        icon-type="error-on-screens"
+        :icon-size="50"
         title="Alerts &amp; notifications is currently unavailable"
         subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
       >
