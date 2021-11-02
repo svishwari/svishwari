@@ -34,9 +34,7 @@ from huxunify.api.route.decorators import (
     validate_delivery_params,
     validate_destination,
 )
-from huxunify.api.route.utils import (
-    get_db_client,
-)
+from huxunify.api.route.utils import get_db_client, get_config
 from huxunify.api.schema.orchestration import (
     EngagementDeliveryHistorySchema,
     AudienceDeliveryHistorySchema,
@@ -56,9 +54,23 @@ delivery_bp = Blueprint("/", import_name=__name__)
 
 @delivery_bp.before_request
 @secured()
-def before_request():
-    """Protect all of the engagement endpoints."""
-    pass  # pylint: disable=unnecessary-pass
+# pylint: disable=inconsistent-return-statements
+def before_request() -> Tuple[dict, int]:
+    """Protect all of the engagement endpoints.
+
+    Returns:
+        Tuple[dict, int]: Message indicating connection success/failure,
+            HTTP status code.
+    """
+
+    # check if deliveries are enabled.
+    if get_config().DISABLE_DELIVERIES:
+        return {
+            "message": api_c.DISABLE_DELIVERY_MSG
+        }, HTTPStatus.PARTIAL_CONTENT
+
+    # pylint: disable=unnecessary-pass
+    pass
 
 
 @add_view_to_blueprint(
