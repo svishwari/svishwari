@@ -30,7 +30,7 @@ monthly_schedule = {
     "hour": 11,
     "minute": 15,
     "period": "PM",
-    "day_of_month": "1",
+    "day_of_month": ["1", "2"],
     "month": "*",
     "day_of_week": "*",
 }
@@ -45,4 +45,4 @@ class SchedulerTest(unittest.TestCase):
         self.assertEqual("15 23 ? * sun,mon *", generate_cron(weekly_schedule))
         self.assertEqual("15 23 */2 * ? *", generate_cron(daily_schedule))
 
-        self.assertEqual("15 23 1 */2 ? *", generate_cron(monthly_schedule))
+        self.assertEqual("15 23 1,2 */2 ? *", generate_cron(monthly_schedule))
