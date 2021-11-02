@@ -162,7 +162,7 @@ def redact_fields(data: dict, redacted_fields: list) -> dict:
 
 
 def get_next_schedule(
-        cron_expression: str, start_date: datetime
+    cron_expression: str, start_date: datetime
 ) -> Union[datetime, None]:
     """Get the next schedule from the cron expression.
 
@@ -175,9 +175,11 @@ def get_next_schedule(
     """
 
     if isinstance(cron_expression, str) and isinstance(start_date, datetime):
-        cron_expression=cron_expression.replace("?", "*")
+        cron_expression = cron_expression.replace("?", "*")
         try:
-            return croniter(cron_expression[:-2], start_date).get_next(datetime)
+            return croniter(cron_expression[:-2], start_date).get_next(
+                datetime
+            )
         except CroniterNotAlphaError:
             logger.error("Encountered cron expression error, returning None")
     return None
