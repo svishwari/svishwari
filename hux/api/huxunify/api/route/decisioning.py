@@ -1,5 +1,6 @@
 """Purpose of this script is for housing the
 decision routes for the API"""
+import pathlib
 from random import uniform, randint
 from datetime import datetime, timedelta
 from http import HTTPStatus
@@ -24,7 +25,7 @@ from huxunify.api.route.decorators import (
     api_error_handler,
     get_user_name,
 )
-from huxunify.api.route.utils import get_db_client
+from huxunify.api.route.utils import get_db_client, read_csv_shap_data
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
@@ -40,6 +41,7 @@ from huxunify.api.schema.utils import (
     FAILED_DEPENDENCY_424_RESPONSE,
     EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE,
 )
+import huxunify.api.stubbed_data as stubbed_data
 from huxunify.api import constants as api_c
 
 # setup the models blueprint
@@ -336,6 +338,7 @@ class ModelOverview(SwaggerView):
 
         # TODO Remove once Propensity to Purchase model data is being served
         #  from tecton.
+        shap_data = {}
         if model_id == "3":
             overview_data = api_c.PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB
         else:
@@ -345,6 +348,18 @@ class ModelOverview(SwaggerView):
             # if model versions not found, return not found.
             if not model_versions:
                 return {}, HTTPStatus.NOT_FOUND
+
+            stub_shap_data_directory = pathlib.Path(stubbed_data.__file__).parent
+            if model_id == "1":
+                shap_data = read_csv_shap_data(
+                    f"{stub_shap_data_directory}/shap_data.csv",
+                    api_c.MODEL_ONE_SHAP_DATA,
+                )
+            elif model_id == "2":
+                shap_data = read_csv_shap_data(
+                    f"{stub_shap_data_directory}/shap_data.csv",
+                    api_c.MODEL_TWO_SHAP_DATA,
+                )
 
             # take the latest model
             latest_model = model_versions[-1]
@@ -361,6 +376,7 @@ class ModelOverview(SwaggerView):
                     latest_model[api_c.TYPE],
                     latest_model[api_c.CURRENT_VERSION],
                 ),
+                api_c.MODEL_SHAP_DATA: shap_data,
             }
 
         # dump schema and return to client.
