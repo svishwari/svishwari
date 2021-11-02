@@ -1010,6 +1010,7 @@ class DestinationsPostView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
+    # pylint: disable=too-many-return-statements
     @api_error_handler()
     @get_user_name()
     def post(self, user_name: str) -> Tuple[list, int]:
@@ -1062,21 +1063,32 @@ class DestinationsPostView(SwaggerView):
 
             patch_dict[api_c.STATUS] = api_c.STATUS_REQUESTED
 
+            destination = destination_management.update_delivery_platform_doc(
+                database,
+                destination_id,
+                {
+                    **patch_dict,
+                    **{
+                        db_c.UPDATED_BY: user_name,
+                        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    },
+                },
+            )
+
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f"{user_name} succesfully requested"
+                    f' "{destination[db_c.NAME]}" destination.'
+                ),
+                api_c.DESTINATION,
+                user_name,
+            )
+
             # update the document
             return (
-                DestinationGetSchema().dump(
-                    destination_management.update_delivery_platform_doc(
-                        database,
-                        destination_id,
-                        {
-                            **patch_dict,
-                            **{
-                                db_c.UPDATED_BY: user_name,
-                                db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-                            },
-                        },
-                    )
-                ),
+                DestinationGetSchema().dump(destination),
                 HTTPStatus.OK,
             )
 
@@ -1118,7 +1130,7 @@ class DestinationsPostView(SwaggerView):
                 "message": "Missing required client account field.",
             }, HTTPStatus.UNPROCESSABLE_ENTITY
 
-        destination_management.set_delivery_platform(
+        destination = destination_management.set_delivery_platform(
             database,
             delivery_platform_type=name,
             name=name,
@@ -1129,4 +1141,20 @@ class DestinationsPostView(SwaggerView):
             client_request=client_request,
             client_account=client_account,
             use_case=body.get(api_c.USE_CASE),
+        )
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f"{user_name} succesfully requested"
+                f' "{destination[db_c.NAME]}" destination.'
+            ),
+            api_c.DESTINATION,
+            user_name,
+        )
+
+        return (
+            DestinationGetSchema().dump(destination),
+            HTTPStatus.OK,
         )
