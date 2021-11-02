@@ -175,8 +175,11 @@ def get_next_schedule(
     """
 
     if isinstance(cron_expression, str) and isinstance(start_date, datetime):
+        cron_expression = cron_expression.replace("?", "*")
         try:
-            return croniter(cron_expression, start_date).get_next(datetime)
+            return croniter(cron_expression[:-2], start_date).get_next(
+                datetime
+            )
         except CroniterNotAlphaError:
             logger.error("Encountered cron expression error, returning None")
     return None
