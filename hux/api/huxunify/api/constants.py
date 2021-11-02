@@ -146,7 +146,7 @@ PM = "PM"
 PERIODICIY = "periodicity"
 MONTHLY_PERIOD_LIST = ["Day", "First", "Second", "Third", "Fourth", "Last"]
 DAY_LIST = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
-DAY_OF_MONTH_LIST = [str(x) for x in range(1, 31)] + [
+DAY_OF_MONTH_NAME_LIST = [
     "Day",
     "Weekend",
     "Weekend day",
@@ -158,6 +158,7 @@ DAY_OF_MONTH_LIST = [str(x) for x in range(1, 31)] + [
     "Friday",
     "Saturday",
 ]
+DAY_OF_MONTH_LIST = [str(x) for x in range(1, 32)] + DAY_OF_MONTH_NAME_LIST
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
