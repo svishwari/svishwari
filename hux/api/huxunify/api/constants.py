@@ -841,6 +841,8 @@ MODEL_ID_PARAMS = [
         "example": "1",
     }
 ]
+MODEL_STATUS_MAPPING = {"success": STATUS_ACTIVE, "pending": STATUS_PENDING}
+
 PURCHASE = "purchase"
 LTV = "ltv"
 RMSE = "rmse"
