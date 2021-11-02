@@ -432,10 +432,10 @@ class TectonTest(TestCase):
         model_id=st.integers(min_value=100, max_value=1000),
         model_version=st.text(alphabet=string.ascii_letters),
     )
-    def test_get_model_features_raise_dependency_error(
+    def test_get_model_features_no_data_available(
         self, request_mocker: Mocker, model_id: int, model_version: str
     ) -> None:
-        """Test get model features raise dependency error.
+        """Test get model features when there is no data available.
 
         Args:
             request_mocker (Mocker): request mocker object.
@@ -448,8 +448,4 @@ class TectonTest(TestCase):
             text=json.dumps({}),
             headers=self.config.TECTON_API_HEADERS,
         )
-
-        with self.assertRaises(FailedAPIDependencyError):
-            tecton.get_model_features(
-                model_id=model_id, model_version=model_version
-            )
+        self.assertFalse(tecton.get_model_features(model_id, model_version))

@@ -43,6 +43,7 @@
           <hux-total-customer-chart
             v-if="!loadingTotalCustomers"
             :customers-data="totalCustomers"
+            :months-duration="9"
             data-e2e="total-customers-chart"
           />
         </v-card>

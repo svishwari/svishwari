@@ -18,6 +18,7 @@ from huxunifylib.database.cdp_data_source_management import (
     bulk_write_data_sources,
     bulk_delete_data_sources,
 )
+from huxunifylib.database.notification_management import create_notification
 
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.cdp_connection import (
@@ -30,6 +31,7 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+    get_user_name,
 )
 from huxunify.api.route.utils import (
     get_db_client,
@@ -255,26 +257,69 @@ class CreateCdpDataSources(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @api_error_handler()
-    def post(self) -> Tuple[list, int]:
+    @get_user_name()
+    def post(self, user_name: str) -> Tuple[list, int]:
         """Creates new CDP data sources.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
+        Args:
+            user_name (str): user_name extracted from Okta.
+
         Returns:
             Tuple[list, int]: List of CDP Data sources created, HTTP status code.
         """
 
+        database = get_db_client()
+        new_data_sources = CdpDataSourcePostSchema().load(
+            request.get_json(), many=True
+        )
+
+        data_sources = bulk_write_data_sources(
+            database=database, data_sources=new_data_sources
+        )
+
+        if data_sources:
+            logger.info(
+                "Successfully created %s data source(s).",
+                ", ".join(
+                    [
+                        data_source[api_c.NAME]
+                        for data_source in new_data_sources
+                    ]
+                ),
+            )
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                f"{user_name} created the following CDP Data Sources: "
+                f"{'. '.join([data_source[api_c.NAME] for data_source in new_data_sources])}",
+                api_c.CDP_DATA_SOURCES_TAG,
+            )
+        else:
+            logger.info(
+                "Failed to create %s data source(s).",
+                ", ".join(
+                    [
+                        data_source[api_c.NAME]
+                        for data_source in new_data_sources
+                    ]
+                ),
+            )
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_CRITICAL,
+                f"Failed to create the following CDP Data Sources: "
+                f"{'. '.join([data_source[api_c.NAME] for data_source in new_data_sources])}",
+                api_c.CDP_DATA_SOURCES_TAG,
+            )
+
         return (
             jsonify(
                 CdpDataSourceSchema().dump(
-                    bulk_write_data_sources(
-                        database=get_db_client(),
-                        data_sources=CdpDataSourcePostSchema().load(
-                            request.get_json(), many=True
-                        ),
-                    ),
+                    data_sources,
                     many=True,
                 )
             ),
@@ -311,28 +356,39 @@ class DeleteCdpDataSources(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @api_error_handler()
-    def delete(self) -> Tuple[dict, int]:
+    @get_user_name()
+    def delete(self, user_name: str) -> Tuple[dict, int]:
         """Deletes CDP data sources.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
+        Args:
+            user_name (str): user_name extracted from Okta.
+
         Returns:
             Tuple[str, int]: Message, HTTP status code.
         """
-
         data_source_types = request.args.get(api_c.DATASOURCES)
 
         if data_source_types:
+            database = get_db_client()
             success_flag = bulk_delete_data_sources(
-                get_db_client(), data_source_types.replace(" ", "").split(",")
+                database, data_source_types.replace(" ", "").split(",")
             )
 
             if success_flag:
                 logger.info(
                     "Successfully deleted data sources - %s.",
                     data_source_types,
+                )
+                create_notification(
+                    database,
+                    db_c.NOTIFICATION_TYPE_SUCCESS,
+                    f"{user_name} deleted the following CDP Data Sources: "
+                    f"{data_source_types}",
+                    api_c.CDP_DATA_SOURCES_TAG,
                 )
                 return {
                     "message": api_c.DELETE_DATASOURCES_SUCCESS.format(
@@ -342,6 +398,13 @@ class DeleteCdpDataSources(SwaggerView):
 
             logger.error(
                 "Could not delete data sources - %s.", data_source_types
+            )
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_CRITICAL,
+                f"Failed to delete the following CDP Data Sources: "
+                f"{data_source_types}",
+                api_c.CDP_DATA_SOURCES_TAG,
             )
             return {
                 "message": api_c.CANNOT_DELETE_DATASOURCES.format(
