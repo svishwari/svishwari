@@ -41,14 +41,14 @@
               />
             </v-card-title> -->
             <v-card-title class="pa-6">
-            <h3 class="text-h3 black--text text--darken-4">
-              Customer events
-              <span class="text-body-1 black--text text--lighten-4">
-                (All time)
-              </span>
-            </h3>
-          </v-card-title>
-          <v-progress-linear
+              <h3 class="text-h3 black--text text--darken-4">
+                Customer events
+                <span class="text-body-1 black--text text--lighten-4">
+                  (All time)
+                </span>
+              </h3>
+            </v-card-title>
+            <v-progress-linear
               v-if="loadingCustomerChart"
               :active="loadingCustomerChart"
               :indeterminate="loadingCustomerChart"

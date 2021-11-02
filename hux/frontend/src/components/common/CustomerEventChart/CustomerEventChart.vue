@@ -16,14 +16,9 @@
       :tooltip-style="toolTipStyle"
     >
       <template #content>
-        <!-- <div class="neroBlack--text caption">
-          <div class="value-section">
-            <div>{{ currentData.day }}</div>
-            <div>
-              {{ currentData.month }} {{ currentData.date | Date("DD, YYYY") }}
-            </div>
-          </div>
-          <div class="item_count">
+        <div class="text-body-2 black--text text--darken-4 caption">
+          <div class="item_count text-h5">
+            <span class="dots"></span>
             {{ currentData.total_event_count }}
             <span v-if="currentData.total_event_count > 1">Events</span>
             <span v-else>Event</span>
@@ -38,10 +33,13 @@
               class="event-list"
             >
               <icon :type="event.event_name" :size="16" />
-              <span class="text-label">{{ event.label_name }}</span>
+              <span class="text-label">{{ event.label_name }} (1)</span>
             </div>
           </div>
-        </div> -->
+          <div class="date-section">
+            {{ currentData.date | Date("MMM DD, YYYY") }}
+          </div>
+        </div>
       </template>
     </chart-tooltip>
   </div>
@@ -54,6 +52,7 @@ import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
 import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
 import { timeFormat } from "d3-time-format"
 import { nest } from "d3-collection"
+import customerEventsList from "./customerEventList.js"
 
 export default {
   name: "CustomerEventChart",
@@ -77,36 +76,7 @@ export default {
         height: 0,
       },
       toolTipStyle: TooltipConfiguration.customerEventChart,
-      eventsLabels: [
-        {
-          label_name: "Abandoned cart",
-          event_name: "abandoned_cart",
-        },
-        {
-          label_name: "Customer login",
-          event_name: "customer_login",
-        },
-        {
-          label_name: "Trait computed",
-          event_name: "trait_computed",
-        },
-        {
-          label_name: "Viewed cart",
-          event_name: "viewed_cart",
-        },
-        {
-          label_name: "Viewed checkout",
-          event_name: "viewed_checkout",
-        },
-        {
-          label_name: "Viewed sale item",
-          event_name: "viewed_sale_item",
-        },
-        {
-          label_name: "Item purchased",
-          event_name: "item_purchased",
-        },
-      ],
+      eventsLabels: customerEventsList,
     }
   },
   mounted() {
@@ -123,11 +93,6 @@ export default {
           .filter(([k, v]) => (v > 0 ? k : ""))
           .forEach((data) => eventsOnly.push(data[0]))
         this.currentData = arg[1]
-        let date = new Date(this.currentData.date)
-        this.currentData.day = date.toLocaleString("en-us", { weekday: "long" })
-        this.currentData.month = date.toLocaleString("default", {
-          month: "long",
-        })
         this.currentData.eventsCollection = eventsOnly
       }
     },
@@ -146,7 +111,7 @@ export default {
       let endingDate = new Date()
       let startingDate = new Date()
 
-      // Getting date with 6 months date range
+      // Getting date with 9 months date range
       startingDate.setMonth(startingDate.getMonth() - 9)
 
       // Creating a date collection between current and starting date
@@ -166,11 +131,9 @@ export default {
         customerEventData.push({
           date: date,
           total_event_count: 0,
-          event_type_counts: {}
+          event_type_counts: {},
         })
       })
-
-      debugger
 
       // Checking the empty state
       this.isEmptyState = this.customersData.length == 0
@@ -182,8 +145,8 @@ export default {
             this.dateFormatter(element.date) == this.dateFormatter(data.date)
         )
         if (dateMapper) {
-          data.total_event_count = dateMapper.total_event_count,
-          data.event_type_counts = dateMapper.event_type_counts
+          ;(data.total_event_count = dateMapper.total_event_count),
+            (data.event_type_counts = dateMapper.event_type_counts)
         }
       })
 
@@ -227,15 +190,10 @@ export default {
 
         this.sourceData.push({
           date: weekLastDate,
-          total_event_count: weekData.reduce((sum, d) => sum + d.total_event_count, 0),
-          // new_customers_added:
-          //   lastWeekEndingData == 0
-          //     ? weekData.reduce((sum, d) => sum + d.new_customers_added, 0)
-          //     : currentWeekEndingData - lastWeekEndingData,
-          // customers_left:
-          //   currentWeekEndingData < lastWeekEndingData
-          //     ? lastWeekEndingData - currentWeekEndingData
-          //     : 0,
+          total_event_count: weekData.reduce(
+            (sum, d) => sum + d.total_event_count,
+            0
+          ),
           index: index == weeklyAggData.length - 1 ? 3 : initialIndex,
           barIndex: index,
           isEndingBar: index > weeklyAggData.length - 5,
@@ -274,8 +232,7 @@ export default {
 }
 .global-heading {
   font-style: normal;
-  font-size: 12px;
-  line-height: 19px;
+  color: var(--v-black-base) !important;
 }
 .container-chart {
   position: relative;
@@ -284,14 +241,15 @@ export default {
 
   .value-container {
     margin-top: 2px;
+    margin-bottom: 10px;
     @extend .global-heading;
     .event-list {
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      margin-bottom: 8px !important;
+      margin-bottom: 6px !important;
       .text-label {
-        margin-left: 7px !important;
+        margin-left: 3px !important;
         flex: 1 0 50%;
       }
     }
@@ -299,10 +257,22 @@ export default {
   .value-section {
     @extend .global-heading;
   }
+  .date-section {
+    @extend .global-heading;
+    color: var(--v-black-lighten4) !important;
+  }
   .item_count {
     margin-top: 5px;
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: 8px;
+    .dots {
+      margin-left: 4px;
+      margin-right: -1px;
+      height: 10px;
+      width: 10px;
+      border-radius: 50%;
+      background-color: var(--v-secondary-lighten1) !important;
+      display: inline-block;
+    }
   }
 }
 </style>

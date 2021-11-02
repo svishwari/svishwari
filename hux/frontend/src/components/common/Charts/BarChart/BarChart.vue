@@ -48,6 +48,15 @@ export default {
         index: 0,
         date: "",
         total_event_count: 0,
+        event_type_counts: {
+          abandoned_cart: 1,
+          view_content: 1,
+          user_login: 1,
+          viewed_checkout: 1,
+          complete_registration: 1,
+          initiate_checkout: 1,
+          trait: 1,
+        },
       },
     }
   },
@@ -80,9 +89,7 @@ export default {
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`)
 
-      let stack = d3Shape
-        .stack()
-        .keys(["total_event_count"])
+      let stack = d3Shape.stack().keys(["total_event_count"])
 
       let stackedValues = stack(this.customerEventData)
 
@@ -205,9 +212,7 @@ export default {
         .enter()
         .append("rect")
         .attr("data", (d, i) => i)
-        .style("fill", (d) =>
-          this.emptyState ? "transparent" : "#9DD4CF"
-        )
+        .style("fill", this.emptyState ? "transparent" : "#9DD4CF")
         .on("mouseover", (d) => applyHoverEffects(d, xScale.bandwidth()))
         .on("mouseout", (d) => removeHoverEffects(d))
         .attr("height", (d) => yScale(d[0]) - yScale(d[1]))
@@ -225,10 +230,7 @@ export default {
         })
       }
 
-      let hoverCircles = [
-        "foreGroundParentCircle",
-        "foreGroundChildCircle",
-      ]
+      let hoverCircles = ["foreGroundParentCircle", "foreGroundChildCircle"]
 
       let removeHoverEffects = (d) => {
         d3Select.select(d.srcElement).attr("fill-opacity", 0.5)
@@ -238,11 +240,10 @@ export default {
       }
 
       let barHoverIn = (data, width) => {
-        this.toolTip.xPosition = xScale(data.barIndex) + 40
+        this.toolTip.xPosition = xScale(data.barIndex) + 30
         this.toolTip.yPosition = yScale(data.total_event_count)
         this.toolTip.date = data.date
-        this.toolTip.totalCustomers = data.total_customers
-        this.toolTip.addedCustomers = data.new_customers_added
+        this.toolTip.total_event_count = data.total_event_count
         this.toolTip.index = data.index
         this.toolTip.isEndingBar = data.isEndingBar
         this.tooltipDisplay(true, this.toolTip)
@@ -295,14 +296,11 @@ export default {
       }
 
       let removeHoverCircle = (circleName) => {
-        d3Select
-          .select(this.$refs.barChart)
-          .select(`.${circleName}`)
-          .remove()
+        d3Select.select(this.$refs.barChart).select(`.${circleName}`).remove()
       }
     },
-    tooltipDisplay(showTip, customersData) {
-      this.$emit("tooltipDisplay", showTip, customersData)
+    tooltipDisplay(showTip, eventsData) {
+      this.$emit("tooltipDisplay", showTip, eventsData)
     },
   },
 }
@@ -318,4 +316,3 @@ export default {
   }
 }
 </style>
-
