@@ -984,7 +984,7 @@ class DestinationPatchView(SwaggerView):
 
 
 @add_view_to_blueprint(
-    dest_bp, api_c.DESTINATIONS_ENDPOINT, "DestinationsPostView"
+    dest_bp, f"{api_c.DESTINATIONS_ENDPOINT}/request", "DestinationsPostView"
 )
 class DestinationsPostView(SwaggerView):
     """Destinations Post view class."""
@@ -1028,6 +1028,10 @@ class DestinationsPostView(SwaggerView):
             Tuple[dict, int]: Destination doc, HTTP status code.
         """
         body = request.get_json()
+        if not body:
+            logger.error("No data provided.")
+            return {"message": "No data provided"}, HTTPStatus.BAD_REQUEST
+
         destination_id = body.get(api_c.ID)
         database = get_db_client()
 
@@ -1045,7 +1049,7 @@ class DestinationsPostView(SwaggerView):
                     "message": api_c.DESTINATION_NOT_FOUND
                 }, HTTPStatus.NOT_FOUND
 
-            patch_dict = {
+            post_dict = {
                 k: v
                 for k, v in (
                     request.get_json() if request.get_json() else {}
@@ -1053,22 +1057,22 @@ class DestinationsPostView(SwaggerView):
                 if k in api_c.DESTINATION_PATCH_FIELDS
             }
 
-            if not patch_dict:
-                logger.info("Could not patch destination.")
+            if not post_dict:
+                logger.info("Could not update destination.")
                 return {
                     "message": api_c.DESTINATION_INVALID_PATCH_MESSAGE
-                }, HTTPStatus.UNPROCESSABLE_ENTITY
+                }, HTTPStatus.BAD_REQUEST
 
             # validate the schema first.
-            DestinationPatchSchema().validate(patch_dict)
+            DestinationPatchSchema().validate(post_dict)
 
-            patch_dict[api_c.STATUS] = api_c.STATUS_REQUESTED
+            post_dict[api_c.STATUS] = api_c.STATUS_REQUESTED
 
             destination = destination_management.update_delivery_platform_doc(
                 database,
                 destination_id,
                 {
-                    **patch_dict,
+                    **post_dict,
                     **{
                         db_c.UPDATED_BY: user_name,
                         db_c.UPDATE_TIME: datetime.datetime.utcnow(),

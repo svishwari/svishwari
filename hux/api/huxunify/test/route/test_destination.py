@@ -138,7 +138,7 @@ class TestDestinationRoutes(TestCase):
             api_c.USE_CASE: "Testing",
         }
         response = self.app.post(
-            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}",
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/request",
             headers=t_c.STANDARD_HEADERS,
             json=existing_destination_request,
         )
@@ -156,7 +156,7 @@ class TestDestinationRoutes(TestCase):
             api_c.USE_CASE: "Testing",
         }
         response = self.app.post(
-            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}",
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/request",
             headers=t_c.STANDARD_HEADERS,
             json=new_destination_request,
         )
