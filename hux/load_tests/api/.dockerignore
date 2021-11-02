@@ -1,0 +1,24 @@
+*.md
+.git
+.gitignore
+
+docs/*
+
+**/.tox
+**/.idea
+**/.pytest_cache
+**/.DS_Store
+**/.codegen_lib/*
+
+__pycache__
+dist
+node_modules
+*.log
+*.csv
+
+# environments
+.venv
+venv
+.env**
+env.**
+**secrets**

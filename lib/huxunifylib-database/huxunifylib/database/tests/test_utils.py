@@ -320,9 +320,21 @@ class TestUtils(unittest.TestCase):
 
         self.assertTrue(success_flag)
 
+        failure_flag = delete_util.delete_ingestion_job(
+            database, "abac12351342cd"
+        )
+
+        self.assertFalse(failure_flag)
+
         success_flag = delete_util.delete_data_source(database, data_source_id)
 
         self.assertTrue(success_flag)
+
+        failure_flag = delete_util.delete_data_source(
+            database, "abac12351342cd"
+        )
+
+        self.assertFalse(failure_flag)
 
         success_flag = delete_util.delete_lookalike_audience(
             database,
@@ -331,9 +343,22 @@ class TestUtils(unittest.TestCase):
 
         self.assertTrue(success_flag)
 
+        false_flag = delete_util.delete_lookalike_audience(
+            database,
+            "abac12351342cd",
+        )
+
+        self.assertFalse(false_flag)
+
         success_flag = delete_util.delete_delivery_job(database, delivery_id)
 
         self.assertTrue(success_flag)
+
+        false_flag = delete_util.delete_delivery_job(
+            database, "abac12351342cd"
+        )
+
+        self.assertFalse(false_flag)
 
         success_flag = delete_util.delete_delivery_job(database, delivery_id_2)
 
@@ -345,6 +370,13 @@ class TestUtils(unittest.TestCase):
         )
 
         self.assertTrue(success_flag)
+
+        false_flag = delete_util.delete_delivery_platform(
+            database,
+            "abac12351342cd",
+        )
+
+        self.assertFalse(false_flag)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_delete_lookalike_audiences_bulk(self):

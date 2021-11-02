@@ -140,6 +140,7 @@ export default {
   customerProfile: {
     customers: "a[href='/customers']",
     customeroverview: "[data-e2e='customeroverview']",
+    customerListTab: "[data-e2e='customer-list-tab']",
     chart: "[data-e2e='overview-chart']",
     mapchart: "[data-e2e='map-chart']",
     mapStateList: "[data-e2e='map-state-list']",
@@ -149,9 +150,7 @@ export default {
     customerID: "[data-e2e='customerID']",
     customerlength: "[data-e2e='customer-length']",
     matchConfidence: "[data-e2e='match-confidence']",
-    lifeTimeValue: "[data-e2e='life-time-value']",
     conversionTime: "[data-e2e='conversion-time']",
-    churnScore: "[data-e2e='churn-score']",
     lastClick: "[data-e2e='last-click']",
     lastPurchaseDate: "[data-e2e='last-purchase-date']",
     lastOpen: "[data-e2e='last-open']",

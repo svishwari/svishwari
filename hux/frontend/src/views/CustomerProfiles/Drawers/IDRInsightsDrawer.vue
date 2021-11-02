@@ -237,4 +237,8 @@ export default {
 .header-break {
   border-bottom: 1px solid var(--v-black-lighten2) !important;
 }
+
+::v-deep .v-toolbar__title {
+  padding-left: 10px !important;
+}
 </style>
