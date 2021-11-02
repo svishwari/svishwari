@@ -90,12 +90,16 @@ class UserProfile(SwaggerView):
             # be used in subsequent requests
             access_token = get_token_from_request(request)[0]
 
-            okta_id = introspect_token(access_token).get(api_c.OKTA_USER_ID, None)
+            okta_id = introspect_token(access_token).get(
+                api_c.OKTA_USER_ID, None
+            )
 
             # return unauthorized response if no valid okta_id is fetched by
             # introspecting the access_token
             if okta_id is None:
-                return {"message": api_c.AUTH401_ERROR_MESSAGE}, HTTPStatus.UNAUTHORIZED
+                return {
+                    "message": api_c.AUTH401_ERROR_MESSAGE
+                }, HTTPStatus.UNAUTHORIZED
 
             # get the user info and the corresponding user document from db
             # from the access_token
@@ -197,7 +201,9 @@ class AddUserFavorite(SwaggerView):
             logger.error(
                 "Component name %s not in favorite components.", component_name
             )
-            return {"message": api_c.INVALID_COMPONENT_NAME}, HTTPStatus.BAD_REQUEST
+            return {
+                "message": api_c.INVALID_COMPONENT_NAME
+            }, HTTPStatus.BAD_REQUEST
 
         component_id = ObjectId(component_id)
 
@@ -210,7 +216,9 @@ class AddUserFavorite(SwaggerView):
         if user_details:
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.CREATED
 
-        return {"message": f"{str(component_id)} already in favorites."}, HTTPStatus.OK
+        return {
+            "message": f"{str(component_id)} already in favorites."
+        }, HTTPStatus.OK
 
 
 @add_view_to_blueprint(
@@ -251,7 +259,9 @@ class DeleteUserFavorite(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    def delete(self, component_name: str, component_id: str) -> Tuple[dict, int]:
+    def delete(
+        self, component_name: str, component_id: str
+    ) -> Tuple[dict, int]:
         """Deletes a user favorite.
 
         ---
@@ -274,7 +284,9 @@ class DeleteUserFavorite(SwaggerView):
             logger.error(
                 "Component name %s not in favorite components.", component_name
             )
-            return {"message": api_c.INVALID_COMPONENT_NAME}, HTTPStatus.BAD_REQUEST
+            return {
+                "message": api_c.INVALID_COMPONENT_NAME
+            }, HTTPStatus.BAD_REQUEST
 
         user_details = manage_user_favorites(
             get_db_client(),
@@ -284,10 +296,14 @@ class DeleteUserFavorite(SwaggerView):
             delete_flag=True,
         )
         if user_details:
-            logger.info("Successfully deleted user favorite %s.", component_name)
+            logger.info(
+                "Successfully deleted user favorite %s.", component_name
+            )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK
 
-        return {"message": f"{component_id} not part of user favorites"}, HTTPStatus.OK
+        return {
+            "message": f"{component_id} not part of user favorites"
+        }, HTTPStatus.OK
 
 
 @add_view_to_blueprint(user_bp, api_c.USER_ENDPOINT, "UserView")
@@ -299,7 +315,9 @@ class UserView(SwaggerView):
             "description": "List of all Users.",
             "schema": {"type": "array", "items": UserSchema},
         },
-        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to get all Users."},
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get all Users."
+        },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.USER_TAG]
@@ -393,7 +411,9 @@ class UserPatchView(SwaggerView):
 
         database = get_db_client()
 
-        user = get_all_users(database, {db_constants.USER_DISPLAY_NAME: user_name})
+        user = get_all_users(
+            database, {db_constants.USER_DISPLAY_NAME: user_name}
+        )
         if not user:
             return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
