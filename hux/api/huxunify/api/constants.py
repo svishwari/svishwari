@@ -35,6 +35,8 @@ AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
 AUDIENCE_ROUTER_JOB_QUEUE_CONST = "AUDIENCE-ROUTER-JOB-QUEUE"
 CDPR_EVENT_CONST = "CDPR-EVENT"
 FLDR_EVENT_CONST = "FLDR-EVENT"
+DISABLE_DELIVERIES = "DISABLE_DELIVERIES"
+DISABLE_DELIVERY_MSG = "Deliveries are disabled."
 
 # ORCH ROUTER PARAMS FOR OKTA
 UNIFIED_OKTA_REDIRECT_URI = "unified_okta_redirect_uri"
@@ -159,7 +161,6 @@ DAY_OF_MONTH_NAME_LIST = [
     "Saturday",
 ]
 DAY_OF_MONTH_LIST = [str(x) for x in range(1, 32)] + DAY_OF_MONTH_NAME_LIST
-
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
@@ -843,6 +844,12 @@ MODEL_ID_PARAMS = [
         "example": "1",
     }
 ]
+MODEL_STATUS_MAPPING = {
+    "success": STATUS_ACTIVE,
+    "pending": STATUS_PENDING,
+    "active": STATUS_ACTIVE,
+}
+
 PURCHASE = "purchase"
 LTV = "ltv"
 RMSE = "rmse"
