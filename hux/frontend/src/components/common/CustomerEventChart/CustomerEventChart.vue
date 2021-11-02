@@ -227,7 +227,7 @@ export default {
 
         this.sourceData.push({
           date: weekLastDate,
-          total_event_count: currentWeekEndingData,
+          total_event_count: weekData.reduce((sum, d) => sum + d.total_event_count, 0),
           // new_customers_added:
           //   lastWeekEndingData == 0
           //     ? weekData.reduce((sum, d) => sum + d.new_customers_added, 0)
