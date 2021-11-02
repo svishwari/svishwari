@@ -232,6 +232,7 @@ class DestinationsView(SwaggerView):
             db_c.STATUS_SUCCEEDED: api_c.STATUS_ACTIVE,
             db_c.STATUS_PENDING: api_c.STATUS_PENDING,
             db_c.STATUS_FAILED: api_c.STATUS_ERROR,
+            db_c.STATUS_REQUESTED: api_c.STATUS_REQUESTED,
         }
 
         for destination in destinations:
@@ -1079,7 +1080,7 @@ class DestinationsPostView(SwaggerView):
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 (
-                    f"{user_name} succesfully requested"
+                    f"{user_name} successfully requested"
                     f' "{destination[db_c.NAME]}" destination.'
                 ),
                 api_c.DESTINATION,
@@ -1096,39 +1097,17 @@ class DestinationsPostView(SwaggerView):
         contact_email = body.get(api_c.CONTACT_EMAIL)
         client_request = body.get(api_c.CLIENT_REQUEST)
         client_account = body.get(api_c.CLIENT_ACCOUNT)
+        use_case = body.get(api_c.USE_CASE)
 
-        DestinationPatchSchema().validate(
+        DestinationPatchSchema().load(
             {
-                name,
-                contact_email,
-                client_request,
-                client_account,
+                api_c.NAME: name,
+                api_c.CONTACT_EMAIL: contact_email,
+                api_c.CLIENT_REQUEST: client_request,
+                api_c.CLIENT_ACCOUNT: client_account,
+                api_c.USE_CASE: use_case,
             }
         )
-
-        if not name:
-            logger.info("Missing required name field.")
-            return {
-                "message": "Missing required name field.",
-            }, HTTPStatus.UNPROCESSABLE_ENTITY
-
-        if not contact_email:
-            logger.info("Missing required contact email field.")
-            return {
-                "message": "Missing required contact email field.",
-            }, HTTPStatus.UNPROCESSABLE_ENTITY
-
-        if not client_request:
-            logger.info("Missing required client request field.")
-            return {
-                "message": "Missing required client request field.",
-            }, HTTPStatus.UNPROCESSABLE_ENTITY
-
-        if not client_account:
-            logger.info("Missing required client account field.")
-            return {
-                "message": "Missing required client account field.",
-            }, HTTPStatus.UNPROCESSABLE_ENTITY
 
         destination = destination_management.set_delivery_platform(
             database,
@@ -1140,14 +1119,14 @@ class DestinationsPostView(SwaggerView):
             contact_email=contact_email,
             client_request=client_request,
             client_account=client_account,
-            use_case=body.get(api_c.USE_CASE),
+            use_case=use_case,
         )
 
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
-                f"{user_name} succesfully requested"
+                f"{user_name} successfully requested"
                 f' "{destination[db_c.NAME]}" destination.'
             ),
             api_c.DESTINATION,

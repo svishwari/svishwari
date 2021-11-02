@@ -179,6 +179,7 @@ ANALYTICS = "Analytics"
 SURVEY = "Survey"
 
 STATUS_PENDING = "Pending"
+STATUS_REQUESTED = "Requested"
 STATUS_IN_PROGRESS = "In progress"
 STATUS_FAILED = "Failed"
 STATUS_SUCCEEDED = "Succeeded"

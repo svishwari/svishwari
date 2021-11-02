@@ -177,6 +177,7 @@ class DestinationGetSchema(Schema):
                     api_c.STATUS_ACTIVE,
                     api_c.STATUS_PENDING,
                     api_c.STATUS_ERROR,
+                    api_c.STATUS_REQUESTED,
                 ]
             )
         ],
@@ -199,7 +200,7 @@ class DestinationGetSchema(Schema):
     contact_email = fields.Email(required=False)
     client_request = fields.Bool(required=False)
     client_account = fields.Bool(required=False)
-    use_case = fields.String(required=False)
+    use_case = fields.String(required=False, allow_none=True)
 
 
 class DestinationPatchSchema(Schema):
@@ -223,6 +224,7 @@ class DestinationPatchSchema(Schema):
                     api_c.STATUS_DELIVERED,
                     api_c.STATUS_DELIVERY_PAUSED,
                     api_c.STATUS_ERROR,
+                    api_c.STATUS_REQUESTED,
                 ]
             )
         ],
@@ -233,7 +235,7 @@ class DestinationPatchSchema(Schema):
     contact_email = fields.Email(required=False)
     client_request = fields.Bool(required=False)
     client_account = fields.Bool(required=False)
-    use_case = fields.String(required=False)
+    use_case = fields.String(required=False, allow_none=True)
 
 
 class DestinationPutSchema(Schema):
