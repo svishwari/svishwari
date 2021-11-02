@@ -13,7 +13,10 @@
     <v-list class="alert-menu-main">
       <v-list-item>
         <v-list-item-title class="font-weight-semi-bold text-h6 black--text">
-          Unread alerts
+          <span v-if="mostRecentNotifications.length > 0"
+            >Unread alerts
+          </span>
+          <span v-else>No unread alerts </span>
         </v-list-item-title>
       </v-list-item>
       <div class="notification-div">
@@ -49,7 +52,6 @@
             </v-list-item-title>
           </v-list-item>
         </span>
-        <span v-else class="text-h6 no-data">No Data to show</span>
       </div>
       <v-list-item>
         <v-list-item-title>
@@ -98,17 +100,17 @@ export default {
       notifications: "notifications/list",
     }),
     mostRecentNotifications() {
-      return orderBy(this.notifications, "created", "desc").slice(
-        0,
-        this.batchDetails.batchSize
-      )
+        return orderBy(this.notifications, "created", "desc").slice(
+          0,
+          this.batchDetails.batchSize
+        )
     },
   },
   async mounted() {
-    this.$root.$on("refresh-notifications", async () => {
+      this.$root.$on("refresh-notifications", async () => {
+        await this.getAllNotifications(this.batchDetails)
+      })
       await this.getAllNotifications(this.batchDetails)
-    })
-    await this.getAllNotifications(this.batchDetails)
   },
   methods: {
     ...mapActions({

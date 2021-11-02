@@ -1,6 +1,6 @@
 <template>
   <div class="list-wrapper">
-    <v-row v-if="hasAddedDestinations" class="pa-3">
+    <v-row v-if="hasAddedDestinations">
       <template>
         <descriptive-card
           v-for="destination in addedDestinations"
