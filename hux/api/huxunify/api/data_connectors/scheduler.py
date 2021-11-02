@@ -28,7 +28,8 @@ def generate_cron(schedule: dict) -> str:
         "hour": "*",
         "day_of_month": "*",
         "month": "*",
-        "day_of_week": "*",
+        "day_of_week": "?",
+        "year": "*"
     }
 
     cron_exp["minute"] = schedule.get("minute", "*")
@@ -43,13 +44,11 @@ def generate_cron(schedule: dict) -> str:
     cron_exp["month"] = schedule.get("month", "*")
 
     if schedule["periodicity"] == "Weekly":
+        cron_exp["day_of_month"] = "?"
+
+        cron_exp["day_of_week"] = ",".join(schedule.get("day_of_week"))
         if schedule["every"] > 1:
-            # TODO Implement every x weeks
-            pass
-        if schedule.get("day_of_week")[0] == "Weekend":
-            cron_exp["day_of_week"] = ",".join(["SAT", "SUN"])
-        else:
-            cron_exp["day_of_week"] = ",".join(schedule.get("day_of_week"))
+            cron_exp["day_of_week"] = f"{cron_exp['day_of_week']}#{schedule['every']}"
 
     if schedule["periodicity"] == "Daily":
         cron_exp["day_of_month"] = "*"

@@ -557,7 +557,7 @@ INVALID_DESTINATION_AUTH = "Invalid authentication details entered."
 AUTH401_ERROR_MESSAGE = "Access token is missing or invalid."
 BSON_INVALID_ID = (
     lambda invalid_id: f"'{invalid_id}' is not a valid ObjectId, it must be a "
-    f"12-byte input or a 24-character hex string"
+                       f"12-byte input or a 24-character hex string"
 )
 MESSAGE = "message"
 FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE = (
@@ -1059,7 +1059,7 @@ PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB = {
         CURRENT_VERSION: "22.8.32",
     },
     DESCRIPTION: "Predicts the propensity of a customer to make a purchase "
-    "after receiving an email.",
+                 "after receiving an email.",
     MODEL_TYPE: "purchase",
 }
 
