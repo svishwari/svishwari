@@ -9,7 +9,7 @@
           :icon-color="'white'"
           :title="destination.name"
           :description="destination.category"
-          :disabled="destination.status === 'Pending'"
+          :disabled="['Pending', 'Requested'].includes(destination.status)"
           :action-menu="true"
           :coming-soon="false"
           :logo-option="true"
@@ -75,12 +75,11 @@
             font-weight-regular
           "
         >
+          Are you sure you want to remove this
           <template v-if="selectedDestination.status === 'Requested'">
-            Are you sure you want to remove this pending destination?
+            pending
           </template>
-          <template v-else>
-            Are you sure you want to remove this destination?
-          </template>
+          destination?
         </div>
         <div
           v-if="selectedDestination.status !== 'Requested'"
@@ -155,10 +154,12 @@ export default {
     ...mapActions({
       removeDestination: "destinations/remove",
     }),
+
     openModal(destination) {
       this.selectedDestination = destination
       this.confirmModal = true
     },
+
     async confirmRemoval() {
       await this.removeDestination({
         id: this.selectedDestination.id,
@@ -169,6 +170,7 @@ export default {
       this.confirmModal = false
       this.inputText = null
     },
+
     enableConfirmButton(val) {
       this.inputText = val
       this.enableConfirm = /confirm/i.test(val)

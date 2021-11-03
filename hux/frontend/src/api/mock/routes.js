@@ -79,9 +79,11 @@ export const defineRoutes = (server) => {
     const id = request.params.id
     const requestData = JSON.parse(request.requestBody)
 
-    return schema.destinations
-      .find(id)
-      .update({ is_added: true, configuration: requestData.configuration })
+    return schema.destinations.find(id).update({
+      is_added: true,
+      status: "Active",
+      configuration: requestData.configuration,
+    })
   })
 
   server.patch("/destinations/:id", (schema, request) => {
@@ -117,6 +119,23 @@ export const defineRoutes = (server) => {
       body.perf_data_extensions = destinationsDataExtensions()
     }
     return new Response(code, headers, body)
+  })
+
+  server.post("/destinations/request", (schema, request) => {
+    const requestDetails = JSON.parse(request.requestBody)
+    const { id } = requestDetails
+    if (id) {
+      return schema.destinations.find(id).update({ is_added: true })
+    } else {
+      const attrs = {
+        ...requestDetails,
+        type: "generic_destination",
+        category: "Other",
+        status: "Requested",
+        is_added: true,
+      }
+      return server.create("destination", attrs)
+    }
   })
 
   server.get("/destinations/constants", () => destinationsConstants)

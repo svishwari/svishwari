@@ -1,7 +1,7 @@
 <template>
   <page max-width="100%">
     <div slot="header">
-      <page-header header-height="110" class="mt-n2">
+      <page-header header-height="110">
         <template slot="left">
           <div>
             <breadcrumb :items="breadcrumbs" />
@@ -14,7 +14,7 @@
       <page-header header-height="71">
         <template #left>
           <v-btn disabled icon>
-            <icon type="search" size="20" color="black" variant="lighten3" />
+            <icon type="search" :size="20" color="black" variant="lighten3" />
           </v-btn>
         </template>
 

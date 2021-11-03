@@ -88,6 +88,10 @@ client["destinations"].validate = (data) => {
   return http.post("/destinations/validate", data)
 }
 
+client["destinations"].request = (data) => {
+  return http.post("/destinations/request", data)
+}
+
 client["destinations"].authenticate = (destinationId, data) => {
   return http.put(`/destinations/${destinationId}/authentication`, data)
 }
