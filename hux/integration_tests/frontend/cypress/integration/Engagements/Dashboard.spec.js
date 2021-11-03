@@ -8,7 +8,7 @@ describe("Orchestration > Engagement > Engagement Dashboard", () => {
   })
 
   // TODO in HUS-1373 - expected to find element but never found it
-  it.skip("should be able to view an engagement's dashboard", () => {
+  it("should be able to view an engagement's dashboard", () => {
     cy.location("pathname").should("eq", route.engagements)
 
     // click over the engagement name that has active status with more than 1 audience and navigate to dashboard
