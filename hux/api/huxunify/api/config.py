@@ -24,6 +24,9 @@ class Config:
     # AWS_CONFIG
     AWS_REGION = config(api_c.AWS_REGION, default="")
     S3_DATASET_BUCKET = config(api_c.AWS_S3_BUCKET_CONST, default="")
+    DISABLE_DELIVERIES = config(
+        api_c.DISABLE_DELIVERIES, default=False, cast=bool
+    )
 
     # MONGO CONFIG
     MONGO_DB_HOST = config(api_c.MONGO_DB_HOST, default="localhost")

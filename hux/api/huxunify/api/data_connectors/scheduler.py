@@ -14,14 +14,6 @@ schedule = {
 
 # TODO Modify this module as Class Based in upcoming implementation.
 
-cron_exp = {
-    "minute": "*",
-    "hour": "*",
-    "day_of_month": "*",
-    "month": "*",
-    "day_of_week": "*",
-}
-
 
 def generate_cron(schedule: dict) -> str:
     """To generate cron expression based on the schedule object
@@ -31,6 +23,14 @@ def generate_cron(schedule: dict) -> str:
     Returns:
         str: cron expression
     """
+    cron_exp = {
+        "minute": "*",
+        "hour": "*",
+        "day_of_month": "*",
+        "month": "*",
+        "day_of_week": "?",
+        "year": "*",
+    }
 
     cron_exp["minute"] = schedule.get("minute", "*")
     if schedule.get("period") == "AM":
@@ -40,17 +40,17 @@ def generate_cron(schedule: dict) -> str:
     else:
         if schedule.get("hour"):
             cron_exp["hour"] = schedule.get("hour") + 12
-    cron_exp["day_of_month"] = schedule.get("day_of_month", "*")
+
     cron_exp["month"] = schedule.get("month", "*")
 
     if schedule["periodicity"] == "Weekly":
+        cron_exp["day_of_month"] = "?"
+
+        cron_exp["day_of_week"] = ",".join(schedule.get("day_of_week"))
         if schedule["every"] > 1:
-            # TODO Implement every x weeks
-            pass
-        if schedule.get("day_of_week")[0] == "Weekend":
-            cron_exp["day_of_week"] = ",".join(["SAT", "SUN"])
-        else:
-            cron_exp["day_of_week"] = ",".join(schedule.get("day_of_week"))
+            cron_exp[
+                "day_of_week"
+            ] = f"{cron_exp['day_of_week']}#{schedule['every']}"
 
     if schedule["periodicity"] == "Daily":
         cron_exp["day_of_month"] = "*"
@@ -58,4 +58,9 @@ def generate_cron(schedule: dict) -> str:
             cron_exp[
                 "day_of_month"
             ] = f"{cron_exp['day_of_month']}/{schedule['every']}"
+
+    if schedule["periodicity"] == "Monthly":
+        cron_exp["day_of_month"] = ",".join(schedule.get("day_of_month"))
+        if schedule["every"] > 1:
+            cron_exp["month"] = f"{cron_exp['month']}/{schedule['every']}"
     return " ".join([str(val) for val in cron_exp.values()])
