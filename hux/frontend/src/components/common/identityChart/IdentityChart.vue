@@ -5,7 +5,7 @@
         <div
           v-for="item in chartLegendsData"
           :key="item.id"
-          class="legend-section mt-3"
+          class="legend-section mb-2"
         >
           <icon
             :type="item.icon"
@@ -152,8 +152,8 @@ export default {
       chartMatrix: [],
       groupNames: [],
       chartDimensions: {
-        width: 138,
-        height: 138,
+        width: 0,
+        height: 0,
       },
       toolTipStyle: TooltipConfiguration.identityChart,
     }
@@ -188,7 +188,7 @@ export default {
     sizeHandler() {
       if (this.$refs.chordsChart) {
         this.chartDimensions.width = this.$refs.chordsChart.clientWidth
-        this.chartDimensions.height = 100
+        this.chartDimensions.height = 190
       }
     },
 

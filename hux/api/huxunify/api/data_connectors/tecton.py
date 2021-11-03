@@ -77,7 +77,9 @@ def map_model_response(response: dict) -> List[dict]:
             constants.NAME: feature[4],
             constants.TYPE: str(feature[5]).lower(),
             constants.OWNER: feature[6],
-            constants.STATUS: feature[8],
+            constants.STATUS: constants.MODEL_STATUS_MAPPING.get(
+                feature[8], constants.STATUS_PENDING
+            ),
             constants.LATEST_VERSION: feature[9],
             constants.PREDICTION_WINDOW: int(feature[3]),
             constants.PAST_VERSION_COUNT: 0,
@@ -540,10 +542,6 @@ def get_model_features(
             "Unable to retrieve model features, %s %s.",
             response.status_code,
             response.text,
-        )
-        raise iae.FailedAPIDependencyError(
-            f"{config.TECTON_FEATURE_SERVICE} : in_function={get_model_features.__name__}",
-            response.status_code,
         )
 
     return result_features

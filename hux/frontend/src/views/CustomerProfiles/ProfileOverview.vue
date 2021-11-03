@@ -1,5 +1,5 @@
 <template>
-  <v-row class="d-flex pb-2">
+  <v-row class="d-flex pb-0">
     <v-col class="mr-3 pr-0">
       <v-card
         class="rounded-lg card-info-wrapper box-shadow-5"
@@ -79,11 +79,18 @@
             :is-range-slider="false"
             :value="data.value"
           ></hux-slider>
-          <span v-else class="black--text text-subtitle-1">
-            <template v-if="data.format === 'date-relative'">
-              {{ data.value | Date("relative", true) | Empty }}
+          <tooltip v-else>
+            <template #label-content>
+              <span class="black--text text-subtitle-1">
+                <template v-if="data.format === 'date-relative'">
+                  {{ data.value | Date("relative", true) | Empty }}
+                </template>
+              </span>
             </template>
-          </span>
+            <template #hover-content>
+              {{ data.value | Date | Empty }}
+            </template>
+          </tooltip>
         </v-card-text>
       </v-card>
     </v-col>

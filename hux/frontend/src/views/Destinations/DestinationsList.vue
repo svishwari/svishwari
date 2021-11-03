@@ -1,6 +1,6 @@
 <template>
   <div class="list-wrapper">
-    <v-row v-if="hasAddedDestinations" class="pa-3">
+    <v-row v-if="hasAddedDestinations">
       <template>
         <descriptive-card
           v-for="destination in addedDestinations"
@@ -63,7 +63,7 @@
       :is-disabled="
         selectedDestination.status !== 'Requested' ? !enableConfirm : false
       "
-      @onCancel="confirmModal = !confirmModal"
+      @onCancel="cancelRemoval()"
       @onConfirm="confirmRemoval()"
     >
       <template #body>
@@ -99,6 +99,7 @@
             height="40"
             data-e2e="remove-destination-text"
             required
+            :value="inputText"
             @input="enableConfirmButton($event)"
           />
         </div>
@@ -132,6 +133,7 @@ export default {
       selectedDestination: {},
       confirmModal: false,
       enableConfirm: false,
+      inputText: null,
     }
   },
 
@@ -165,9 +167,16 @@ export default {
         },
       })
       this.confirmModal = false
+      this.inputText = null
     },
     enableConfirmButton(val) {
+      this.inputText = val
       this.enableConfirm = /confirm/i.test(val)
+    },
+    cancelRemoval() {
+      this.confirmModal = !this.confirmModal
+      this.inputText = null
+      this.enableConfirm = false
     },
   },
 }

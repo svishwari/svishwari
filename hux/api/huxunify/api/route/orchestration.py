@@ -182,6 +182,34 @@ class AudienceView(SwaggerView):
             "required": False,
             "default": api_c.DEFAULT_AUDIENCE_DELIVERY_COUNT,
         },
+        {
+            "name": api_c.FAVORITES,
+            "description": "Only return audiences favorited by the user",
+            "in": "query",
+            "type": "boolean",
+            "required": False,
+            "default": False,
+            "example": "False",
+        },
+        {
+            "name": api_c.WORKED_BY,
+            "description": "Only return audiences worked on by the user",
+            "in": "query",
+            "type": "boolean",
+            "required": False,
+            "default": False,
+            "example": "False",
+        },
+        {
+            "name": api_c.ATTRIBUTE,
+            "description": "Only return audiences matching the attributes",
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
+            "required": False,
+            "example": "age",
+        },
     ]
 
     responses = {
@@ -197,27 +225,55 @@ class AudienceView(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     @api_error_handler()
-    def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
+    @get_user_name()
+    # pylint: disable=no-self-use,too-many-locals
+    def get(self, user_name: str) -> Tuple[list, int]:
         """Retrieves all audiences.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
+        Args:
+            user_name (str): user_name extracted from Okta.
+
         Returns:
             Tuple[list, int]: list of audience, HTTP status code.
         """
 
-        # get all audiences and deliveries
+        # read the optional request args and set the required filter_dict to
+        # query the DB.
+        filter_dict = {}
+
+        if request.args.get(api_c.FAVORITES) and validation.validate_bool(
+            request.args.get(api_c.FAVORITES)
+        ):
+            filter_dict[api_c.FAVORITES] = user_name
+
+        if request.args.get(api_c.WORKED_BY) and validation.validate_bool(
+            request.args.get(api_c.WORKED_BY)
+        ):
+            filter_dict[api_c.WORKED_BY] = user_name
+
+        attribute_list = request.args.getlist(api_c.ATTRIBUTE)
+        # set the attribute_list to filter_dict only if it is populated and
+        # validation is successful
+        if attribute_list:
+            filter_dict[api_c.ATTRIBUTE] = attribute_list
+
         database = get_db_client()
+
+        # get all audiences and deliveries
         audiences = orchestration_management.get_all_audiences_and_deliveries(
-            database
+            database=database, filters=filter_dict
         )
 
         # get all audiences because document DB does not allow for replaceRoot
         audience_dict = {
             x[db_c.ID]: x
-            for x in orchestration_management.get_all_audiences(database)
+            for x in orchestration_management.get_all_audiences(
+                database=database, filters=filter_dict
+            )
         }
 
         # workaround because DocumentDB does not allow $replaceRoot

@@ -122,7 +122,7 @@
           <v-row class="px-2 mt-0 mb-1">
             <v-col md="12">
               <v-card
-                class="mt-3 rounded-lg box-shadow-5 overflow-hidden"
+                class="mt-2 rounded-lg box-shadow-5 overflow-hidden"
                 min-height="400"
               >
                 <v-progress-linear
@@ -133,8 +133,32 @@
 
                 <v-card-title class="chart-style pb-8 pl-5 pt-5">
                   <div class="mt-2">
-                    <span class="black--text text--darken-4 text-h5">
+                    <span class="black--text text--darken-4 text-h3">
                       ID Resolution matching trends
+                    </span>
+                    <span
+                      v-if="
+                        responseTimeFrame &&
+                        responseTimeFrame.start_date &&
+                        responseTimeFrame.end_date
+                      "
+                      class="black--text text--darken-4 text-body-1"
+                    >
+                      (
+                      {{
+                        this.$options.filters.Date(
+                          responseTimeFrame["start_date"],
+                          "MMMM YYYY"
+                        )
+                      }}
+                      -
+                      {{
+                        this.$options.filters.Date(
+                          responseTimeFrame["end_date"],
+                          "MMMM YYYY"
+                        )
+                      }}
+                      )
                     </span>
                   </div>
                 </v-card-title>
@@ -174,7 +198,7 @@
           <data-feeds
             :data="dataFeeds"
             :is-loading="loadingDataFeeds"
-            class="mt-6 mx-2"
+            class="mt-3 mx-2"
             data-e2e="datafeedtable"
           />
         </div>
@@ -275,6 +299,7 @@ export default {
       timeFrame: "identity/timeFrame",
       dataFeeds: "identity/dataFeeds",
       matchingTrends: "identity/matchingTrends",
+      responseTimeFrame: "identity/responseTimeFrame",
     }),
 
     minDate() {
@@ -419,7 +444,7 @@ $headerOffsetY: 70px;
   }
 
   .idr-metric-card {
-    margin: 6px !important;
+    margin: 4px !important;
   }
 }
 </style>

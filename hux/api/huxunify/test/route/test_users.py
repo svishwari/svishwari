@@ -48,9 +48,15 @@ class TestUserRoutes(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
-        # mock get db client from user
+        # mock get_db_client() in users
         mock.patch(
             "huxunify.api.route.user.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() in decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
             return_value=self.database,
         ).start()
 
@@ -303,6 +309,40 @@ class TestUserRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual({api_c.MESSAGE: api_c.USER_NOT_FOUND}, response.json)
+
+    def test_update_user(self):
+        """Test successfully updating a user"""
+        role = "admin"
+        display_name = "NEW_DISPLAY_NAME"
+
+        update_body = {
+            db_c.USER_ROLE: role,
+            db_c.USER_DISPLAY_NAME: display_name,
+        }
+
+        response = self.app.patch(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=update_body,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(role, response.json[db_c.USER_ROLE])
+        self.assertEqual(display_name, response.json[db_c.USER_DISPLAY_NAME])
+
+    def test_update_user_invalid_update_body(self):
+        """Test successfully updating a user"""
+        role = "admin"
+        display_name = "NEW_DISPLAY_NAME"
+
+        update_body = {"bad_field": role, db_c.USER_DISPLAY_NAME: display_name}
+
+        response = self.app.patch(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=update_body,
+        )
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_get_user_favorites(self):
         """Test getting user favorites"""

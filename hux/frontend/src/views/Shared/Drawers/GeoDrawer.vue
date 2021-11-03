@@ -2,7 +2,7 @@
   <drawer v-model="localToggle" content-padding="pa-0">
     <template #header-left>
       <div class="d-flex align-center">
-        <icon :type="title.icon" size="32" class="mr-2" />
+        <icon :type="title.icon" :size="32" class="mr-2" />
         <h3 class="text-h2">
           {{ title.name }}
           <sup>
@@ -49,7 +49,7 @@
                 {{ item[col.value] | Numeric(true) }}
               </template>
             </tooltip>
-            <tooltip v-if="col.value === 'spending'">
+            <tooltip v-if="col.value === 'revenue'">
               {{ item[col.value] | Currency }}
               <template #tooltip>
                 {{ item[col.value] | Currency }}

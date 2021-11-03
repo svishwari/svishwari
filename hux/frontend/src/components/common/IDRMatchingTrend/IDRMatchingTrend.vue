@@ -18,20 +18,11 @@
       <template #content>
         <div class="neroBlack--text caption">
           <div class="value-section">
-            <div class="date-font">
-              {{ currentData.date | Date("MMM DD[,] YYYY") }}
-            </div>
             <div>
-              <span class="append-circle color-known-ids" />
+              <span class="append-circle color-primary-base" />
               <span class="font-size-tooltip">
-                {{
-                  currentData.known_ids | Numeric(false, false, true) | Empty
-                }}
-              </span>
-            </div>
-            <div>
-              <span class="append-circle color-unique-hux-ids" />
-              <span class="font-size-tooltip">
+                Unique Hux IDs
+                <br />
                 {{
                   currentData.unique_hux_ids
                     | Numeric(false, false, true)
@@ -40,8 +31,20 @@
               </span>
             </div>
             <div>
-              <span class="append-circle color-anonymous-ids" />
+              <span class="append-circle color-primary-lighten9" />
               <span class="font-size-tooltip">
+                Known IDs
+                <br />
+                {{
+                  currentData.known_ids | Numeric(false, false, true) | Empty
+                }}
+              </span>
+            </div>
+            <div>
+              <span class="append-circle color-primary-darken2" />
+              <span class="font-size-tooltip">
+                Anonymous IDs
+                <br />
                 {{
                   currentData.anonymous_ids
                     | Numeric(false, false, true)
@@ -60,6 +63,7 @@
 import MultiLineChart from "@/components/common/IDRMatchingTrend/MultiLineChart.vue"
 import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
 import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
+import colors from "@/plugins/colors.js"
 
 export default {
   name: "IDRMatchingTrend",
@@ -78,7 +82,7 @@ export default {
         x: 0,
         y: 0,
       },
-      colorCodes: ["#42EFFD", "#347DAC", "#75787B"],
+      colorCodes: [colors.darkBlue, colors.chart3, colors.chart2],
       toolTipStyle: TooltipConfiguration.idrMatchingTrendChart,
       currentData: {},
       chartDimensions: {
@@ -141,20 +145,18 @@ export default {
   .append-circle {
     height: 12px;
     width: 12px;
-    background-color: var(--v-white-base);
     border-radius: 50%;
     display: inline-block;
     margin-top: 6px;
-    margin-right: 8px;
   }
-  .color-known-ids {
-    border: 2px solid #42effd;
+  .color-primary-lighten9 {
+    background-color: var(--v-primary-lighten9);
   }
-  .color-anonymous-ids {
-    border: 2px solid #75787b;
+  .color-primary-darken2 {
+    background-color: var(--v-primary-darken2);
   }
-  .color-unique-hux-ids {
-    border: 2px solid #347dac;
+  .color-primary-base {
+    background-color: var(--v-primary-base);
   }
 }
 </style>

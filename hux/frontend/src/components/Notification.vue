@@ -13,7 +13,8 @@
     <v-list class="alert-menu-main">
       <v-list-item>
         <v-list-item-title class="font-weight-semi-bold text-h6 black--text">
-          Unread alerts
+          <span v-if="mostRecentNotifications.length > 0">Unread alerts </span>
+          <span v-else>No unread alerts </span>
         </v-list-item-title>
       </v-list-item>
       <div class="notification-div">
@@ -49,7 +50,6 @@
             </v-list-item-title>
           </v-list-item>
         </span>
-        <span v-else class="text-h6 no-data">No Data to show</span>
       </div>
       <v-list-item>
         <v-list-item-title>

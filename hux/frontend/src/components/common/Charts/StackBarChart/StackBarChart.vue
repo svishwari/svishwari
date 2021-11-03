@@ -17,7 +17,7 @@ export default {
   name: "StackBarChart",
   props: {
     value: {
-      type: Array,
+      type: Object,
       required: true,
     },
     colorCodes: {
@@ -48,7 +48,7 @@ export default {
     return {
       lastBarAnimation: "",
       chartWidth: "",
-      totalCustomerData: this.value,
+      totalCustomerData: {},
       toolTip: {
         xPosition: 0,
         yPosition: 0,
@@ -76,6 +76,7 @@ export default {
   methods: {
     async initiateStackBarChart() {
       await this.value
+      this.totalCustomerData = this.value.sourceData
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
@@ -148,6 +149,9 @@ export default {
         if (tickDate && tickDate.index == 0 && hideInitialTick) {
           return ""
         }
+        if (tickDate && tickDate.index == this.totalCustomerData.length - 1) {
+          return ""
+        }
         return tickDate
           ? this.emptyState
             ? "date"
@@ -216,7 +220,11 @@ export default {
         .attr("x", 10)
         .style("color", "#4F4F4F")
       d3Select.selectAll(".yAxis-main .tick text").style("color", "#4F4F4F")
-      d3Select.selectAll(".xAxis-main .tick text").attr("x", 16)
+      if (this.value.monthsDuration == 6) {
+        d3Select.selectAll(".xAxis-main .tick text").attr("x", 20)
+      } else {
+        d3Select.selectAll(".xAxis-main .tick text").attr("x", 16)
+      }
 
       svg
         .append("line")
