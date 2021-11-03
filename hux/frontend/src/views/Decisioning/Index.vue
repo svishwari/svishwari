@@ -92,17 +92,25 @@
           </template>
         </descriptive-card>
       </template>
-
-      <template v-else>
-        <empty-page>
-          <template #icon> mdi-alert-circle-outline </template>
-          <template #title> Oops! There’s nothing here yet </template>
-          <template #subtitle>
-            Our team is still working hard activating your models. But they
-            should be up and running soon! Please be patient in the meantime!
-          </template>
-        </empty-page>
-      </template>
+      <hux-empty
+        v-else
+        icon-type="destinations-null"
+        :icon-size="50"
+        title="No data sources to show"
+        subtitle="The list of data sources will appear here once they have been added."
+      >
+        <template #button>
+          <hux-button
+            variant="primary"
+            is-tile
+            width="224"
+            height="40"
+            class="text-button my-4"
+          >
+            Request a data sources
+          </hux-button>
+        </template>
+      </hux-empty>
     </v-row>
   </div>
 </template>
@@ -112,9 +120,10 @@ import { mapGetters, mapActions } from "vuex"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import CardStat from "@/components/common/Cards/Stat"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
-import EmptyPage from "@/components/common/EmptyPage"
+import HuxEmpty from "@/components/common/screens/Empty"
 import PageHeader from "@/components/PageHeader"
 import Status from "@/components/common/Status"
+import huxButton from "@/components/common/huxButton"
 
 export default {
   name: "Models",
@@ -123,9 +132,10 @@ export default {
     Breadcrumb,
     CardStat,
     DescriptiveCard,
-    EmptyPage,
+    HuxEmpty,
     PageHeader,
     Status,
+    huxButton,
   },
 
   data() {
