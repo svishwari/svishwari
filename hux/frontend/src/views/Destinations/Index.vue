@@ -40,11 +40,7 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
     <div v-if="!loading">
-      <v-row v-if="isConnectionStarted">
-        <v-col>
-          <destinations-list></destinations-list>
-        </v-col>
-      </v-row>
+      <destinations-list v-if="isConnectionStarted" />
       <div v-else class="empty-state-wrap text-center">
         <v-icon color="primary lighten-8" x-large>
           mdi-alert-circle-outline
