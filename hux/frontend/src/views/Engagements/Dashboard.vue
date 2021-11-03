@@ -171,6 +171,7 @@
       :audience-id="selectedAudienceId"
       :destination="scheduleDestination"
       :engagement-id="engagementId"
+      @onUpdate="refreshEntity()"
     />
 
     <look-alike-audience
@@ -328,6 +329,7 @@ export default {
       this.showConfirmModal = false
       switch (this.confirmDialog.actionType) {
         case "edit-schedule":
+          debugger
           this.editDeliveryDrawer = true
           break
         case "remove-audience":
@@ -557,6 +559,7 @@ export default {
             "This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
           this.showConfirmModal = true
           this.scheduleDestination = event.data
+          this.currentSchedule = event.data["delivery_schedule"]
           break
         case "remove destination":
           this.confirmDialog.actionType = "remove-destination"
@@ -570,7 +573,7 @@ export default {
           this.deleteActionData = {
             engagementId: this.engagementId,
             audienceId: this.selectedAudienceId,
-            data: { id: event.data.delivery_platform_id },
+            data: { id: event.data.id },
           }
           this.showConfirmModal = true
           break
@@ -612,6 +615,7 @@ export default {
       this.showLookAlikeDrawer = true
     },
     async reloadAudienceData() {
+      this.refreshEntity()
       this.showLookAlikeDrawer = false
     },
     onCreated() {

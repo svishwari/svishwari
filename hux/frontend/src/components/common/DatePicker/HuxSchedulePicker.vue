@@ -44,7 +44,7 @@
       </span>
       <span class="pr-2">
         <v-select
-          v-model="value.minute"
+          v-model="minute"
           :items="minItems"
           :menu-props="menuProps"
           dense
@@ -121,7 +121,7 @@
         />
         <v-select
           v-else
-          v-model="value.monthlyDayDate"
+          v-model="monthlyDayDate"
           :items="monthlyDayDateItems"
           :menu-props="menuProps"
           dense
@@ -243,6 +243,25 @@ export default {
         : this.value.periodicity === "Weekly"
         ? Array.from({ length: 4 }, (_, i) => i + 1)
         : Array.from({ length: 12 }, (_, i) => i + 1)
+    },
+    monthlyDayDate: {
+      get() {
+        return parseInt(
+          this.value && this.value.day_of_month ? this.value.day_of_month[0] : 1
+        )
+      },
+      set(value) {
+        this.value.monthlyDayDate = value
+      },
+    },
+    minute: {
+      get() {
+        if (this.value && this.value.minute === 0) return "00"
+        return this.value.minute
+      },
+      set(value) {
+        this.value.minute = value
+      },
     },
 
     timeFrame() {
