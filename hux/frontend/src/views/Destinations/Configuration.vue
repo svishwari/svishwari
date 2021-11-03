@@ -146,7 +146,7 @@
           >
             <span class="d-block text--body-2 mb-2 mt-6">{{ category }}</span>
             <card-horizontal
-              v-for="destination in sortListByField(value, 'name')"
+              v-for="destination in value"
               :key="destination.id"
               :title="destination.name"
               :icon="destination.type"
@@ -173,7 +173,7 @@
             <span class="d-block text--body-2 mb-2 mt-6">{{ category }}</span>
             <!-- TODO update the isAddeed with the right logic to fetch the ones already requested -->
             <card-horizontal
-              v-for="destination in sortListByField(value, 'name')"
+              v-for="destination in value"
               :key="destination.id"
               :title="destination.name"
               :icon="destination.type"
@@ -204,7 +204,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 
-import { groupBy, sortList } from "@/utils"
+import { groupBy } from "@/utils"
 
 import Page from "@/components/Page"
 import Drawer from "@/components/common/Drawer"
@@ -217,6 +217,8 @@ import ConfirmModal from "@/components/common/ConfirmModal.vue"
 
 import SFMC from "./Configuration/SFMC.vue"
 import Icon from "../../components/common/Icon.vue"
+
+import sortBy from "lodash/sortBy"
 
 export default {
   name: "ConfigureDestination",
@@ -347,11 +349,7 @@ export default {
     },
 
     groupByCategory(list) {
-      return groupBy(sortList(list, "category"), "category")
-    },
-
-    sortListByField(list, field) {
-      return sortList(list, field)
+      return groupBy(sortBy(list, ["category", "name"]), "category")
     },
 
     onSelectDestination(id) {
