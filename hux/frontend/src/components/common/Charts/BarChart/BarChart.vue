@@ -200,6 +200,8 @@ export default {
         .style("stroke", "#1E1E1E")
         .style("stroke-width", 1)
         .style("pointer-events", "none")
+      
+      let barWidth = xScale.bandwidth() < 30 ? xScale.bandwidth() : 30
 
       groups
         .selectAll("bar")
@@ -208,19 +210,19 @@ export default {
         .append("rect")
         .attr("data", (d, i) => i)
         .style("fill", this.emptyState ? "transparent" : "#9DD4CF")
-        .on("mouseover", (d) => applyHoverEffects(d, xScale.bandwidth()))
+        .on("mouseover", (d) => applyHoverEffects(d))
         .on("mouseout", (d) => removeHoverEffects(d))
         .attr("height", (d) => yScale(d[0]) - yScale(d[1]))
-        .attr("width", xScale.bandwidth() < 30 ? xScale.bandwidth() : 30)
+        .attr("width", barWidth)
         .attr("x", (d, i) => xScale(i))
         .attr("y", (d) => yScale(d[1]))
         .attr("rx", 2)
         .attr("ry", 2)
         .attr("d", (d) => d)
 
-      let applyHoverEffects = (d, width) => {
+      let applyHoverEffects = (d) => {
         d3Select.select(d.srcElement).attr("fill-opacity", (d) => {
-          barHoverIn(d.data, width)
+          barHoverIn(d.data)
           return 1
         })
       }
@@ -234,8 +236,8 @@ export default {
         this.tooltipDisplay(false)
       }
 
-      let barHoverIn = (data, width) => {
-        this.toolTip.xPosition = xScale(data.barIndex) + 30
+      let barHoverIn = (data) => {
+        this.toolTip.xPosition = xScale(data.barIndex) + 40
         this.toolTip.yPosition = yScale(data.total_event_count)
         this.toolTip.date = data.date
         this.toolTip.total_event_count = data.total_event_count
@@ -246,8 +248,8 @@ export default {
 
         svg
           .selectAll(".hover-line-y")
-          .attr("x1", xScale(data.barIndex) + width / 2)
-          .attr("x2", xScale(data.barIndex) + width / 2)
+          .attr("x1", xScale(data.barIndex) + barWidth / 2)
+          .attr("x2", xScale(data.barIndex) + barWidth / 2)
           .attr("y1", 0)
           .attr("y2", h)
           .style("display", "block")
@@ -257,7 +259,6 @@ export default {
           5,
           data.barIndex,
           data.total_event_count,
-          width,
           "white"
         )
         addHoverCircle(
@@ -265,7 +266,6 @@ export default {
           4,
           data.barIndex,
           data.total_event_count,
-          width,
           "#9DD4CF"
         )
       }
@@ -275,13 +275,12 @@ export default {
         circleRadius,
         cX,
         cY,
-        width,
         strokeColor
       ) => {
         svg
           .append("circle")
           .classed(circleName, true)
-          .attr("cx", xScale(cX) + width / 2)
+          .attr("cx", xScale(cX) + barWidth / 2)
           .attr("cy", yScale(cY))
           .attr("r", circleRadius)
           .style("stroke", strokeColor)

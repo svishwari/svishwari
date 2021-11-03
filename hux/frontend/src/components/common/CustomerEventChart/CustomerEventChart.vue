@@ -92,6 +92,9 @@ export default {
     toolTipDisplay(...arg) {
       this.show = arg[0]
       if (this.show) {
+        this.toolTipStyle.left = this.currentData.isEndingBar
+            ? "-160px"
+            : "56px"
         this.eventsData = []
         Object.entries(arg[1].event_type_counts)
           .filter(([k, v]) => (v > 0 ? k : ""))
@@ -120,16 +123,11 @@ export default {
     processSourceData() {
       let initialIndex = 0
       let customerEventData = []
-      let endingDate = new Date()
-      let startingDate = new Date()
-
-      // Getting date with 6 months date range
-      startingDate.setMonth(startingDate.getMonth() - 6)
 
       // Creating a date collection between current and starting date
       let dateCollection = []
-      let start = new Date(this.dateFormatter(startingDate))
-      let end = new Date(this.dateFormatter(endingDate))
+      let start = new Date(this.dateFormatter(this.customersData[0].date))
+      let end = new Date(this.dateFormatter(this.customersData[this.customersData.length - 1].date))
       let newend = end.setDate(end.getDate())
       end = new Date(newend)
       while (start < end) {
@@ -209,7 +207,7 @@ export default {
           event_type_counts: this.getEventsAggregation(weekData),
           index: index == weeklyAggData.length - 1 ? 3 : initialIndex,
           barIndex: index,
-          isEndingBar: index > weeklyAggData.length - 5,
+          isEndingBar: index > weeklyAggData.length - 4,
         })
 
         lastWeekEndingData = currentWeekEndingData
@@ -226,11 +224,11 @@ export default {
     },
 
     getEventSumbyKey([...events]) {
-      return events.reduce((a, b) => {
-        for (let k in b) {
-          if (k in b) a[k] = (a[k] || 0) + b[k]
+      return events.reduce((event1, event2) => {
+        for (let key in event2) {
+          if (key in event2) event1[key] = (event1[key] || 0) + event2[key]
         }
-        return a
+        return event1
       }, {})
     },
 
