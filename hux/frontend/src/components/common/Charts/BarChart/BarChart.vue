@@ -200,7 +200,7 @@ export default {
         .style("stroke", "#1E1E1E")
         .style("stroke-width", 1)
         .style("pointer-events", "none")
-      
+
       let barWidth = xScale.bandwidth() < 30 ? xScale.bandwidth() : 30
 
       groups
@@ -270,13 +270,7 @@ export default {
         )
       }
 
-      let addHoverCircle = (
-        circleName,
-        circleRadius,
-        cX,
-        cY,
-        strokeColor
-      ) => {
+      let addHoverCircle = (circleName, circleRadius, cX, cY, strokeColor) => {
         svg
           .append("circle")
           .classed(circleName, true)

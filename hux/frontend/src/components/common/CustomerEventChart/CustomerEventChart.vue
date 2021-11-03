@@ -93,8 +93,8 @@ export default {
       this.show = arg[0]
       if (this.show) {
         this.toolTipStyle.left = this.currentData.isEndingBar
-            ? "-160px"
-            : "56px"
+          ? "-160px"
+          : "56px"
         this.eventsData = []
         Object.entries(arg[1].event_type_counts)
           .filter(([k, v]) => (v > 0 ? k : ""))
@@ -127,7 +127,11 @@ export default {
       // Creating a date collection between current and starting date
       let dateCollection = []
       let start = new Date(this.dateFormatter(this.customersData[0].date))
-      let end = new Date(this.dateFormatter(this.customersData[this.customersData.length - 1].date))
+      let end = new Date(
+        this.dateFormatter(
+          this.customersData[this.customersData.length - 1].date
+        )
+      )
       let newend = end.setDate(end.getDate())
       end = new Date(newend)
       while (start < end) {
