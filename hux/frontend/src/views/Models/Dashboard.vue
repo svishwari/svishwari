@@ -59,9 +59,9 @@
                 <template #title>
                   <tooltip>
                     <template #label-content>
-                      {{ metric }}
+                      {{ metric | Numeric }}
                     </template>
-                    <template #hover-content>
+                    <template #tooltip>
                       {{ metric | Empty }}
                     </template>
                   </tooltip>
@@ -116,7 +116,7 @@
                 <template #title>
                   <tooltip>
                     <template #label-content>
-                      {{ metric }}
+                      {{ metric | Numeric }}
                     </template>
                     <template #hover-content>
                       {{ metric | Empty }}
@@ -137,7 +137,7 @@
                 <template #title>
                   <tooltip>
                     <template #label-content>
-                      {{ metric }}
+                      {{ metric | Numeric }}
                     </template>
                     <template #hover-content>
                       {{ metric | Empty }}
@@ -159,7 +159,7 @@
                 <template #title>
                   <tooltip>
                     <template #label-content>
-                      {{ metric }}
+                      {{ metric | Numeric }}
                     </template>
                     <template #hover-content>
                       {{ metric | Empty }}
