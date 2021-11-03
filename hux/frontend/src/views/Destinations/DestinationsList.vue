@@ -109,6 +109,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import sortBy from "lodash/sortBy"
 
 import ConfirmModal from "@/components/common/ConfirmModal"
 import EmptyStateData from "@/components/common/EmptyStateData"
@@ -142,7 +143,9 @@ export default {
     }),
 
     addedDestinations() {
-      return this.destinations.filter((destination) => destination.is_added)
+      return sortBy(this.destinations, ["status", "name"]).filter(
+        (destination) => destination.is_added
+      )
     },
 
     hasAddedDestinations() {
@@ -175,6 +178,7 @@ export default {
       this.inputText = val
       this.enableConfirm = /confirm/i.test(val)
     },
+
     cancelRemoval() {
       this.confirmModal = !this.confirmModal
       this.inputText = null

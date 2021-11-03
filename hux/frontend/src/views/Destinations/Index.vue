@@ -65,7 +65,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 
-import DestinationsList from "./DestinationsList"
+import DestinationsList from "./DestinationsList.vue"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
