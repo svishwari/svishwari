@@ -349,7 +349,9 @@ class ModelOverview(SwaggerView):
             if not model_versions:
                 return {}, HTTPStatus.NOT_FOUND
 
-            stub_shap_data_directory = pathlib.Path(stubbed_data.__file__).parent
+            stub_shap_data_directory = pathlib.Path(
+                stubbed_data.__file__
+            ).parent
             if model_id == "1":
                 shap_data = read_csv_shap_data(
                     f"{stub_shap_data_directory}/shap_data.csv",
