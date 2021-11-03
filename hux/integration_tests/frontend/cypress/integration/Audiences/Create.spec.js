@@ -1,7 +1,6 @@
 import route from "../../support/routes"
 import selector from "../../support/selectors"
 import { randomName } from "../../support/utils"
-// import { randomName } from "../../support/utils.js"
 
 describe("Orchestration > Audience > Create Audience", () => {
   beforeEach(() => {
