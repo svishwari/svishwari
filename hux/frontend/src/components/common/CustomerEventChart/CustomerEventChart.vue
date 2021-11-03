@@ -217,16 +217,18 @@ export default {
     },
 
     getEventsAggregation(currentWeek) {
-      let allCurrentWeekEvents = currentWeek.filter((data) => data.total_event_count !== 0).map(
-        (data) => data.event_type_counts
-      )
-      return (allCurrentWeekEvents.length > 0) ? this.getEventSumbyKey(allCurrentWeekEvents): {}
+      let allCurrentWeekEvents = currentWeek
+        .filter((data) => data.total_event_count !== 0)
+        .map((data) => data.event_type_counts)
+      return allCurrentWeekEvents.length > 0
+        ? this.getEventSumbyKey(allCurrentWeekEvents)
+        : {}
     },
 
     getEventSumbyKey([...events]) {
       return events.reduce((a, b) => {
         for (let k in b) {
-          if (b.hasOwnProperty(k)) a[k] = (a[k] || 0) + b[k]
+          if (k in b) a[k] = (a[k] || 0) + b[k]
         }
         return a
       }, {})
