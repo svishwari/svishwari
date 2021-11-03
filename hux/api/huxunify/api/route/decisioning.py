@@ -41,7 +41,7 @@ from huxunify.api.schema.utils import (
     FAILED_DEPENDENCY_424_RESPONSE,
     EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE,
 )
-import huxunify.api.stubbed_data as stubbed_data
+from huxunify.api import stubbed_data
 from huxunify.api import constants as api_c
 
 # setup the models blueprint

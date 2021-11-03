@@ -703,7 +703,7 @@ def set_destination_auth_details(
         HTTPStatus.OK,
     )
 
-
+# pylint: disable=unspecified-encoding
 def read_csv_shap_data(file_path: str, features: list = None) -> dict:
     """Read in CSV data into a dict
 
