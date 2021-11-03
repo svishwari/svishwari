@@ -396,6 +396,8 @@ import TextField from "@/components/common/TextField"
 
 import SFMC from "./Configuration/SFMC.vue"
 
+import sortBy from "lodash/sortBy"
+
 export default {
   name: "ConfigureDestination",
 
@@ -554,7 +556,7 @@ export default {
     },
 
     groupByCategory(list) {
-      return groupBy(list, "category")
+      return groupBy(sortBy(list, ["category", "name"]), "category")
     },
 
     onAddDestination(id) {

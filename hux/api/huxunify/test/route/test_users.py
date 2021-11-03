@@ -334,7 +334,6 @@ class TestUserRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
             json=update_body,
         )
-
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_get_user_favorites(self):

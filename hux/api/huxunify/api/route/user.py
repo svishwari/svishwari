@@ -417,6 +417,8 @@ class UserPatchView(SwaggerView):
         if not user:
             return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
+        # TODO Access Control Based on Roles
+
         updated_user = update_user(
             database,
             okta_id=user[0][db_constants.OKTA_ID],

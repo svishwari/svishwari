@@ -8,7 +8,7 @@ from bson import ObjectId
 from flask_marshmallow import Schema
 from marshmallow import ValidationError
 from marshmallow.fields import Boolean, DateTime, Int, Str, Float
-from croniter import croniter, CroniterNotAlphaError
+from croniter import croniter, CroniterNotAlphaError, CroniterBadCronError
 from huxunifylib.database import constants as db_c
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
@@ -182,6 +182,9 @@ def get_next_schedule(
             )
         except CroniterNotAlphaError:
             logger.error("Encountered cron expression error, returning None")
+
+        except CroniterBadCronError:
+            logger.error("Bad Cron Expression error, returning None")
     return None
 
 

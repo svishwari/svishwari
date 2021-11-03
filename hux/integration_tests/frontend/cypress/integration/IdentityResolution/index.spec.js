@@ -10,6 +10,9 @@ describe("Data management > Identity resolution", () => {
   it("should have an Overview, Matching trends and Data feeds table with Last run drawer", () => {
     cy.location("pathname").should("eq", route.identityResolution)
 
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+
     // validate overview exist by getting total no. of them
     cy.get(selector.idr.overview).its("length").as("overviewListCount")
     cy.get("@overviewListCount").then((overviewListCount) => {
