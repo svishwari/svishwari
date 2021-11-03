@@ -146,7 +146,7 @@
           >
             <span class="d-block text--body-2 mb-2 mt-6">{{ category }}</span>
             <card-horizontal
-              v-for="destination in value"
+              v-for="destination in compare(value, 'name')"
               :key="destination.id"
               :title="destination.name"
               :icon="destination.type"
@@ -173,7 +173,7 @@
             <span class="d-block text--body-2 mb-2 mt-6">{{ category }}</span>
             <!-- TODO update the isAddeed with the right logic to fetch the ones already requested -->
             <card-horizontal
-              v-for="destination in value"
+              v-for="destination in compare(value, 'name')"
               :key="destination.id"
               :title="destination.name"
               :icon="destination.type"
@@ -347,7 +347,20 @@ export default {
     },
 
     groupByCategory(list) {
-      return groupBy(list, "category")
+      return groupBy(this.compare(list, "category"), "category")
+    },
+
+    compare(list, field) {
+      let sortedList = list.sort((a, b) => {
+        if (a[field] < b[field]) {
+          return -1
+        }
+        if (a[field] > b[field]) {
+          return 1
+        }
+        return 0
+      })
+      return sortedList
     },
 
     onSelectDestination(id) {
