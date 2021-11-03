@@ -33,7 +33,11 @@
               class="event-list"
             >
               <icon :type="event.event_name" :size="16" />
-              <span class="text-label">{{ event.label_name }} (1)</span>
+              <span class="text-label"
+                >{{ event.label_name }} ({{
+                  eventCount(event.event_name)
+                }})</span
+              >
             </div>
           </div>
           <div class="date-section">
@@ -67,9 +71,9 @@ export default {
     return {
       show: false,
       isEmptyState: false,
-      colorCodes: ["columbiaBlue", "info", "pantoneBlue", "success"],
       sourceData: [],
       barGroupChangeIndex: [],
+      eventsData: [],
       currentData: {},
       chartDimensions: {
         width: 0,
@@ -88,12 +92,14 @@ export default {
     toolTipDisplay(...arg) {
       this.show = arg[0]
       if (this.show) {
-        let eventsOnly = []
+        this.eventsData = []
         Object.entries(arg[1].event_type_counts)
           .filter(([k, v]) => (v > 0 ? k : ""))
-          .forEach((data) => eventsOnly.push(data[0]))
+          .forEach((data) => this.eventsData.push(data))
         this.currentData = arg[1]
-        this.currentData.eventsCollection = eventsOnly
+        this.currentData.eventsCollection = this.eventsData.map(
+          (data) => data[0]
+        )
       }
     },
     sizeHandler() {
@@ -101,6 +107,12 @@ export default {
         this.chartDimensions.width = this.$refs.customerEventChart.clientWidth
         this.chartDimensions.height = 350
       }
+    },
+    eventCount(eventName) {
+      let eventCounts = this.eventsData.filter(
+        (data) => data[0] === eventName
+      )[0]
+      return eventCounts[1]
     },
     dateFormatter(value) {
       return this.$options.filters.Date(value, "MM/DD/YYYY")
@@ -111,8 +123,8 @@ export default {
       let endingDate = new Date()
       let startingDate = new Date()
 
-      // Getting date with 9 months date range
-      startingDate.setMonth(startingDate.getMonth() - 9)
+      // Getting date with 6 months date range
+      startingDate.setMonth(startingDate.getMonth() - 6)
 
       // Creating a date collection between current and starting date
       let dateCollection = []
@@ -194,6 +206,7 @@ export default {
             (sum, d) => sum + d.total_event_count,
             0
           ),
+          event_type_counts: this.getEventsAggregation(weekData),
           index: index == weeklyAggData.length - 1 ? 3 : initialIndex,
           barIndex: index,
           isEndingBar: index > weeklyAggData.length - 5,
@@ -201,6 +214,22 @@ export default {
 
         lastWeekEndingData = currentWeekEndingData
       })
+    },
+
+    getEventsAggregation(currentWeek) {
+      let allCurrentWeekEvents = currentWeek.filter((data) => data.total_event_count !== 0).map(
+        (data) => data.event_type_counts
+      )
+      return (allCurrentWeekEvents.length > 0) ? this.getEventSumbyKey(allCurrentWeekEvents): {}
+    },
+
+    getEventSumbyKey([...events]) {
+      return events.reduce((a, b) => {
+        for (let k in b) {
+          if (b.hasOwnProperty(k)) a[k] = (a[k] || 0) + b[k]
+        }
+        return a
+      }, {})
     },
 
     // Setting week's last day count in case of no records

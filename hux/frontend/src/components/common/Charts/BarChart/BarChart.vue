@@ -48,15 +48,7 @@ export default {
         index: 0,
         date: "",
         total_event_count: 0,
-        event_type_counts: {
-          abandoned_cart: 1,
-          view_content: 1,
-          user_login: 1,
-          viewed_checkout: 1,
-          complete_registration: 1,
-          initiate_checkout: 1,
-          trait: 1,
-        },
+        event_type_counts: {},
       },
     }
   },
@@ -128,6 +120,9 @@ export default {
           (bar) => bar.index == value
         )
         if (tickDate && tickDate.index == 0 && hideInitialTick) {
+          return ""
+        }
+        if (tickDate && tickDate.index == this.customerEventData.length - 1) {
           return ""
         }
         return tickDate
@@ -244,6 +239,7 @@ export default {
         this.toolTip.yPosition = yScale(data.total_event_count)
         this.toolTip.date = data.date
         this.toolTip.total_event_count = data.total_event_count
+        this.toolTip.event_type_counts = data.event_type_counts
         this.toolTip.index = data.index
         this.toolTip.isEndingBar = data.isEndingBar
         this.tooltipDisplay(true, this.toolTip)
