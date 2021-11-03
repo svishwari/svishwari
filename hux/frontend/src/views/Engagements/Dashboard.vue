@@ -329,7 +329,6 @@ export default {
       this.showConfirmModal = false
       switch (this.confirmDialog.actionType) {
         case "edit-schedule":
-          debugger
           this.editDeliveryDrawer = true
           break
         case "remove-audience":
