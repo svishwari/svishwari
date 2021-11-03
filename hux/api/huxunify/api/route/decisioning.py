@@ -349,19 +349,15 @@ class ModelOverview(SwaggerView):
             if not model_versions:
                 return {}, HTTPStatus.NOT_FOUND
 
-            stub_shap_data_directory = pathlib.Path(
-                stubbed_data.__file__
-            ).parent
-            if model_id == "1":
-                shap_data = read_csv_shap_data(
-                    f"{stub_shap_data_directory}/shap_data.csv",
-                    api_c.MODEL_ONE_SHAP_DATA,
-                )
-            elif model_id == "2":
-                shap_data = read_csv_shap_data(
-                    f"{stub_shap_data_directory}/shap_data.csv",
-                    api_c.MODEL_TWO_SHAP_DATA,
-                )
+            stub_shap_data = (
+                pathlib.Path(stubbed_data.__file__).parent / "shap_data.csv"
+            )
+            shap_data = read_csv_shap_data(
+                str(stub_shap_data),
+                api_c.MODEL_ONE_SHAP_DATA
+                if model_id == "17e1565dbd2821adaf88fd26658744aba9419a6f"
+                else api_c.MODEL_TWO_SHAP_DATA,
+            )
 
             # take the latest model version that have features available.
             performance_metric = {}
