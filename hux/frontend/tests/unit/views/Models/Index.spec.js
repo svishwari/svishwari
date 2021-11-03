@@ -1,5 +1,5 @@
 //File to be tested
-import Index from "@/views/Decisioning/Index.vue"
+import Index from "@/views/Models/Index.vue"
 //Test utils
 import { shallowMount, createLocalVue } from "@vue/test-utils"
 //Dependencies
