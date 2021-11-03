@@ -24,8 +24,6 @@ describe("Data management > Customer Profiles", () => {
         .should("eq", 6)
     })
 
-    // TODO in HUS-1373 - API in dev does not always return country
-
     // Verifying the table columns names of the Country Drawer
     const tableHeadersCountry = ["Country", "Size", "Revenue"]
 

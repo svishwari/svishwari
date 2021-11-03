@@ -7,7 +7,6 @@ describe("Orchestration > Engagement > Engagement Dashboard", () => {
     cy.visit(route.engagements)
   })
 
-  // TODO in HUS-1373 - expected to find element but never found it
   it("should be able to view an engagement's dashboard", () => {
     cy.location("pathname").should("eq", route.engagements)
 
