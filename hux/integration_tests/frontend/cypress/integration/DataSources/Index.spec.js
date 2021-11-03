@@ -11,10 +11,7 @@ describe("Data Management > Data Sources", () => {
     cy.location("pathname").should("eq", route.dataSources)
 
     // validate data sources exist by getting total no. of them
-    let dataSourceAddCount = 0
-    cy.get(selector.dataSourcesAdd).then(($ele) => {
-      dataSourceAddCount = $ele.length
-    })
+    cy.get(selector.dataSourcesAdd).its("length").should("be.gt", 0)
 
     cy.get(selector.datasources).then(($elem) => {
       // add a data source
