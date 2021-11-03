@@ -35,6 +35,8 @@ AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
 AUDIENCE_ROUTER_JOB_QUEUE_CONST = "AUDIENCE-ROUTER-JOB-QUEUE"
 CDPR_EVENT_CONST = "CDPR-EVENT"
 FLDR_EVENT_CONST = "FLDR-EVENT"
+DISABLE_DELIVERIES = "DISABLE_DELIVERIES"
+DISABLE_DELIVERY_MSG = "Deliveries are disabled."
 
 # ORCH ROUTER PARAMS FOR OKTA
 UNIFIED_OKTA_REDIRECT_URI = "unified_okta_redirect_uri"
@@ -146,7 +148,7 @@ PM = "PM"
 PERIODICIY = "periodicity"
 MONTHLY_PERIOD_LIST = ["Day", "First", "Second", "Third", "Fourth", "Last"]
 DAY_LIST = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
-DAY_OF_MONTH_LIST = [str(x) for x in range(1, 31)] + [
+DAY_OF_MONTH_NAME_LIST = [
     "Day",
     "Weekend",
     "Weekend day",
@@ -158,6 +160,7 @@ DAY_OF_MONTH_LIST = [str(x) for x in range(1, 31)] + [
     "Friday",
     "Saturday",
 ]
+DAY_OF_MONTH_LIST = [str(x) for x in range(1, 32)] + DAY_OF_MONTH_NAME_LIST
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
@@ -817,6 +820,7 @@ USER_NAME = "user_name"
 DISPLAY_NAME = "display_name"
 USER_PHONE_NUMBER = "phone_number"
 USER_ACCESS_LEVEL = "access_level"
+USER_PII_ACCESS = "pii_access"
 USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
@@ -844,6 +848,12 @@ MODEL_ID_PARAMS = [
         "example": "1",
     }
 ]
+MODEL_STATUS_MAPPING = {
+    "success": STATUS_ACTIVE,
+    "pending": STATUS_PENDING,
+    "active": STATUS_ACTIVE,
+}
+
 PURCHASE = "purchase"
 LTV = "ltv"
 RMSE = "rmse"
@@ -854,19 +864,19 @@ PRECISION = "precision"
 PERFORMANCE_METRIC = "performance_metric"
 FEATURE_IMPORTANCE = "feature-importance"
 SCORE = "score"
-FEATURE_MODEL_HISTORY = "ui_metadata_model_history_service_mock"
-FEATURE_TOP_SERVICE = "ui_metadata_model_top_features_service_mock"
-FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service_mock"
+FEATURE_MODEL_HISTORY = "ui_metadata_model_history_service"
+FEATURE_TOP_SERVICE = "ui_metadata_model_top_features_service"
+FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service"
 FEATURE_DRIFT_REGRESSION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_regression_service_mock"
+    "ui_metadata_model_metrics_regression_service"
 )
 FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_classification_service_mock"
+    "ui_metadata_model_metrics_classification_service"
 )
 
 MODEL_LIST_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_models_service_mock",
+        "feature_service_name": "ui_metadata_models_service",
         "join_key_map": {"model_metadata_client": "HUS"},
     }
 }

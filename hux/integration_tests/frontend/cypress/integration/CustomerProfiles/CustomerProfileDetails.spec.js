@@ -13,10 +13,10 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(5000)
 
-    // click on view all customer profiles button
-    cy.get(selector.customerProfile.customeroverview).eq(0).click()
+    // click on customer list tab
+    cy.get(selector.customerProfile.customerListTab).click()
 
-    // select first customer in drawer
+    // select first customer in list
     cy.get(selector.customerProfile.customerID).first().click()
 
     // TODO: remove the need to re-login

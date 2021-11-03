@@ -81,6 +81,12 @@ class TestModelRoutes(TestCase):
         )
         self.request_mocker.start()
 
+        # mock get_db_client() in utils
+        mock.patch(
+            "huxunify.api.route.decisioning.get_db_client",
+            return_value=self.database,
+        ).start()
+
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,

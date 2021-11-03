@@ -122,7 +122,7 @@
           <v-row class="px-2 mt-0 mb-1">
             <v-col md="12">
               <v-card
-                class="mt-3 rounded-lg box-shadow-5 overflow-hidden"
+                class="mt-2 rounded-lg box-shadow-5 overflow-hidden"
                 min-height="400"
               >
                 <v-progress-linear
@@ -198,7 +198,7 @@
           <data-feeds
             :data="dataFeeds"
             :is-loading="loadingDataFeeds"
-            class="mt-6 mx-2"
+            class="mt-3 mx-2"
             data-e2e="datafeedtable"
           />
         </div>
@@ -444,7 +444,7 @@ $headerOffsetY: 70px;
   }
 
   .idr-metric-card {
-    margin: 6px !important;
+    margin: 4px !important;
   }
 }
 </style>
