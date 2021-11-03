@@ -35,8 +35,13 @@
     <template v-if="!loading" #default>
       <v-row>
         <v-col col="6">
-          <div class="model-dashboard__card px-6 py-5">
-            {{ model.description }}
+          <div class="model-dashboard__card pa-4">
+            <label class="black--text text--lighten-4 ma-0">
+              Description
+            </label>
+            <p class="text-body-1 ma-0">
+              {{ model.description }}
+            </p>
           </div>
         </v-col>
         <v-col col="6">
