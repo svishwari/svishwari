@@ -46,6 +46,7 @@ UNIFIED_OKTA_TEST_USER_PW = "unified_okta_test_user_pw"
 
 # JIRA
 JIRA_SERVER = "jira_server"
+ISSUE_TYPE = "issue_type"
 UNIFIED_JIRA_SERVER = "unified_jira_server"
 JIRA_API_KEY = "jira_api_key"
 UNIFIED_JIRA_API_KEY = "unified_jira_api_key"
@@ -838,10 +839,6 @@ FAVORITE = "favorite"
 FAVORITES = "favorites"
 PROFILE = "profile"
 CONTACT_US = "contact-us"
-
-# adhoc
-ADHOC_ENDPOINT = "/adhoc"
-ADHOC_TAG = "adhoc"
 
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API

@@ -458,9 +458,9 @@ class CreateTicket(SwaggerView):
             "type": "object",
             "description": "Details of the feedback/bug to be reported",
             "example": {
-                api_c.TYPE: api_c.TICKET_TYPE_BUG,
-                api_c.SUMMARY: "Audience and Engagement Dashboard not loading",
-                api_c.DESCRIPTION: "Description of the issue.",
+                api_c.ISSUE_TYPE: api_c.TICKET_TYPE_BUG,
+                api_c.SUMMARY: "Summary",
+                api_c.DESCRIPTION: "Description",
             },
         }
     ]
