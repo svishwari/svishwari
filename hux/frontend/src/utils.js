@@ -301,3 +301,23 @@ export function groupBy(array, key) {
     })
   }, {})
 }
+
+/**
+ * Returns the list of objects in array as a group by Key
+ *
+ * @param {object[]} list - array of objects
+ * @param {string} field - the group by key
+ * @returns {object} - Returns the object with grouped by key and unique values
+ */
+export function sortList(list, field) {
+  let sortedList = list.sort((a, b) => {
+    if (a[field] < b[field]) {
+      return -1
+    }
+    if (a[field] > b[field]) {
+      return 1
+    }
+    return 0
+  })
+  return sortedList
+}
