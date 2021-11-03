@@ -145,7 +145,7 @@ export default {
       this.drawer = true
     }
 
-    this.$root.$on("same-route-Connections", () => {
+    this.$root.$on("same-route-DataSources", () => {
       this.toggleDrawer()
     })
   },

@@ -72,6 +72,7 @@
               :is-already-added="dataSource.is_added"
               class="my-3 body-1"
               :requested-button="dataSource.status !== 'Active'"
+              data-e2e="dataSourcesRequestList"
               @click="onDataSourceClick(dataSource.id)"
             />
           </div>
