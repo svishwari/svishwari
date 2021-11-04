@@ -29,17 +29,20 @@
 
       <v-row class="mt-0">
         <v-col md="12" class="pt-0 pr-1">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
-              <div class="mt-2">
-                <span class="neroBlack--text text-h5"> Customer events </span>
-              </div>
-              <v-progress-linear
-                v-if="loadingCustomerEvents"
-                :active="loadingCustomerEvents"
-                :indeterminate="loadingCustomerEvents"
-              />
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="370">
+            <v-card-title class="pa-6">
+              <h3 class="text-h3 black--text text--darken-4">
+                Customer events
+                <span class="text-body-1 black--text text--lighten-4">
+                  (All time)
+                </span>
+              </h3>
             </v-card-title>
+            <v-progress-linear
+              v-if="loadingCustomerEvents"
+              :active="loadingCustomerEvents"
+              :indeterminate="loadingCustomerEvents"
+            />
             <customer-event-chart
               v-if="!loadingCustomerEvents"
               :customers-data="events"

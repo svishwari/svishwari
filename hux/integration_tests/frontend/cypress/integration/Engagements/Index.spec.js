@@ -25,6 +25,9 @@ describe("Orchestration > Engagements", () => {
       "Created by",
     ]
 
+    //eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+
     cy.get(selector.engagement.list.engagementTable)
       .find(selector.engagement.list.engagementTableHeaders)
       .children()
