@@ -744,7 +744,6 @@ class TestCustomersOverview(TestCase):
         )
         self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
-
     @given(hux_id=st.text(alphabet=string.ascii_letters))
     def test_get_customer_profile_invalid_hux_id(self, hux_id: str):
         """Test retrieving customer profile with an invalid hux ID.
