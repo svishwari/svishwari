@@ -280,17 +280,6 @@ class ModelVersionView(SwaggerView):
         else:
             version_history = tecton.get_model_version_history(model_id)
 
-        # sort by version
-        if version_history:
-            version_history.sort(
-                key=lambda s: [
-                    int(u)
-                    for u in s.get(api_c.CURRENT_VERSION).split(".")
-                    if s.get(api_c.CURRENT_VERSION)
-                ],
-                reverse=True,
-            )
-
         return (
             jsonify(ModelVersionSchema(many=True).dump(version_history)),
             HTTPStatus.OK.value,
@@ -347,17 +336,7 @@ class ModelOverview(SwaggerView):
                 return {}, HTTPStatus.NOT_FOUND
 
             # take the latest model version that have features available.
-            performance_metric = {}
-            latest_model = model_versions[-1]
-
-            for latest_model in reversed(model_versions):
-                performance_metric = tecton.get_model_performance_metrics(
-                    model_id,
-                    latest_model[api_c.TYPE],
-                    latest_model[api_c.CURRENT_VERSION],
-                )
-                if performance_metric:
-                    break
+            latest_model = model_versions[0]
 
             # generate the output
             overview_data = {
@@ -365,7 +344,11 @@ class ModelOverview(SwaggerView):
                 api_c.MODEL_TYPE: latest_model[api_c.TYPE],
                 api_c.MODEL_NAME: latest_model[api_c.NAME],
                 api_c.DESCRIPTION: latest_model[api_c.DESCRIPTION],
-                api_c.PERFORMANCE_METRIC: performance_metric,
+                api_c.PERFORMANCE_METRIC: tecton.get_model_performance_metrics(
+                    model_id,
+                    latest_model[api_c.TYPE],
+                    latest_model[api_c.CURRENT_VERSION],
+                ),
             }
 
         # dump schema and return to client.
@@ -434,7 +417,7 @@ class ModelDriftView(SwaggerView):
                 return {}, HTTPStatus.NOT_FOUND
 
             # take the latest model
-            latest_model = model_versions[-1]
+            latest_model = model_versions[0]
 
             drift_data = tecton.get_model_drift(
                 model_id, latest_model[api_c.TYPE]
@@ -505,43 +488,36 @@ class ModelFeaturesView(SwaggerView):
         # to set features with stub data
         if model_id == "3":
             features = api_c.PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB
-
         else:
+            # only use the latest version if model version is None.
+            if model_version is None:
+                # get latest version first
+                model_version = tecton.get_model_version_history(model_id)
+                # check if there is a model version we can grab.
+                # if so take the first one (latest).
+                model_version = (
+                    model_version[0].get(api_c.CURRENT_VERSION)
+                    if model_version
+                    else ""
+                )
+
             # check cache first
             database = get_db_client()
+            features = get_cache_entry(
+                database, f"features.{model_id}.{model_version}"
+            )
 
-            model_versions = tecton.get_model_version_history(model_id)
+            # if no cache, grab from Tecton and cache after.
+            if not features:
+                features = tecton.get_model_features(model_id, model_version)
 
-            # check if user submitted a version, return only the returned version.
-            if model_version:
-                model_versions = [
-                    x
-                    for x in model_versions
-                    if x.get(api_c.CURRENT_VERSION) == model_version
-                ]
-
-            # take the latest model version that have features available.
-            features = {}
-            for version in reversed(model_versions):
-                # check if an entry in the cache
-                features = get_cache_entry(
-                    database,
-                    f"features.{model_id}.{version[api_c.CURRENT_VERSION]}",
-                )
+                # create cache entry in db only if features fetched from Tecton is not empty
                 if features:
-                    break
-
-                features = tecton.get_model_features(
-                    model_id, version[api_c.CURRENT_VERSION]
-                )
-                if features:
-                    # cache and break
                     create_cache_entry(
                         database,
-                        f"features.{model_id}.{version[api_c.CURRENT_VERSION]}",
+                        f"features.{model_id}.{model_version}",
                         features,
                     )
-                    break
 
         return (
             jsonify(FeatureSchema(many=True).dump(features)),
@@ -611,41 +587,31 @@ class ModelImportanceFeaturesView(SwaggerView):
                 HTTP status code.
         """
 
+        # only use the latest version if model version is None.
+        if model_version is None:
+            # get latest version first
+            model_version = tecton.get_model_version_history(model_id)
+
+            # check if there is a model version we can grab,
+            # if so take the last one (latest).
+            model_version = (
+                model_version[0].get(api_c.CURRENT_VERSION)
+                if model_version
+                else ""
+            )
+
         # check cache first
         database = get_db_client()
+        features = get_cache_entry(
+            database, f"features.{model_id}.{model_version}"
+        )
 
-        model_versions = tecton.get_model_version_history(model_id)
-
-        # check if user submitted a version, return only the returned version.
-        if model_version:
-            model_versions = [
-                x
-                for x in model_versions
-                if x.get(api_c.CURRENT_VERSION) == model_version
-            ]
-
-        # take the latest model version that have features available.
-        features = {}
-        for version in reversed(model_versions):
-            # check if an entry in the cache
-            features = get_cache_entry(
-                database,
-                f"features.{model_id}.{version[api_c.CURRENT_VERSION]}",
+        # if no cache, grab from Tecton and cache after.
+        if not features:
+            features = tecton.get_model_features(model_id, model_version)
+            create_cache_entry(
+                database, f"features.{model_id}.{model_version}", features
             )
-            if features:
-                break
-
-            features = tecton.get_model_features(
-                model_id, version[api_c.CURRENT_VERSION]
-            )
-            if features:
-                # cache and break
-                create_cache_entry(
-                    database,
-                    f"features.{model_id}.{version[api_c.CURRENT_VERSION]}",
-                    features,
-                )
-                break
 
         # sort the top features before serving them out
         features.sort(key=lambda x: x[api_c.SCORE], reverse=True)

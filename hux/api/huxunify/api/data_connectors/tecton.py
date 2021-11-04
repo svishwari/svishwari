@@ -73,7 +73,7 @@ def map_model_response(response: dict) -> List[dict]:
             constants.LAST_TRAINED: parser.parse(feature[0]),
             constants.DESCRIPTION: feature[1],
             constants.FULCRUM_DATE: parser.parse(feature[2]),
-            constants.LOOKBACK_WINDOW: int(feature[3]),
+            constants.LOOKBACK_WINDOW: 7,
             constants.NAME: feature[4],
             constants.TYPE: str(feature[5]).lower(),
             constants.OWNER: feature[6],
@@ -112,7 +112,7 @@ def map_model_version_history_response(
             constants.LAST_TRAINED: parser.parse(feature[0]),
             constants.DESCRIPTION: feature[1],
             constants.FULCRUM_DATE: parser.parse(feature[2]),
-            constants.LOOKBACK_WINDOW: int(feature[3]),
+            constants.LOOKBACK_WINDOW: 7,
             constants.NAME: feature[5],
             constants.TYPE: str(feature[6]).lower(),
             constants.OWNER: feature[7],
@@ -121,6 +121,9 @@ def map_model_version_history_response(
             constants.PREDICTION_WINDOW: int(feature[3]),
         }
         models.append(model)
+
+    # sort the models based on the last trained date.
+    models.sort(key=lambda x: x[constants.LAST_TRAINED], reverse=True)
 
     return models
 
@@ -332,19 +335,34 @@ def get_model_drift(model_id: str, model_type: str) -> List[ModelDriftSchema]:
             response.status_code,
         )
 
+    # get version history
+    models = get_model_version_history(model_id)
+
     result_drift = []
     for result in response.json().get(constants.RESULTS, []):
         if not result:
             continue
 
+        # look up run date from model version
+        run_dates = [
+            m[constants.LAST_TRAINED]
+            for m in models
+            if m[constants.CURRENT_VERSION] == result[constants.FEATURES][4]
+        ]
+
         result_drift.append(
             {
-                constants.RUN_DATE: parser.parse(
-                    result[constants.FEATURES][1]
-                ),
+                # check if model version matched, otherwise parse the created date.
+                constants.RUN_DATE: run_dates[0]
+                if run_dates
+                else parser.parse(result[constants.FEATURES][1]),
                 constants.DRIFT: result[constants.FEATURES][0],
             }
         )
+
+    # sort the results by time
+    if result_drift:
+        result_drift.sort(key=lambda x: x[constants.RUN_DATE])
 
     return result_drift
 
@@ -520,13 +538,7 @@ def get_model_features(
                     constants.CREATED_BY: random.choice(
                         ["Susan Miller", "Jack Miller"]
                     ),
-                    constants.STATUS: random.choice(
-                        [
-                            constants.STATUS_PENDING,
-                            constants.STATUS_ACTIVE,
-                            constants.STATUS_STOPPED,
-                        ]
-                    ),
+                    constants.STATUS: constants.STATUS_ACTIVE,
                     constants.POPULARITY: random.randint(1, 3),
                     constants.SCORE: round(
                         log10(float(feature[2]))
