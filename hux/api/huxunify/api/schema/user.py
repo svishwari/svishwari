@@ -68,6 +68,6 @@ class TicketGetSchema(Schema):
 
     id = Int(example=1)
     key = Str(example="ABC-123")
-    type = Str(example=api_c.TICKET_TYPE_BUG)
+    issue_type = Str(example=api_c.TICKET_TYPE_BUG)
     summary = Str(example="Audience and Engagement Dashboard not loading")
     description = Str(example="Description of the issue.")

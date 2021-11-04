@@ -369,10 +369,11 @@ class TestUserRoutes(TestCase):
         """
 
         reported_issue = {
-            api_c.TYPE: api_c.TICKET_TYPE_BUG,
+            api_c.ISSUE_TYPE: api_c.TICKET_TYPE_BUG,
             api_c.SUMMARY: "Test creation of JIRA ticket",
             api_c.DESCRIPTION: "",
         }
+
         expected_response = reported_issue.copy()
         expected_response.update({api_c.ID: 1234, api_c.KEY: "ABC-123"})
 
