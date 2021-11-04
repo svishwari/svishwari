@@ -1,7 +1,7 @@
 """Purpose of this file is to house all the customers api tests."""
 import json
 import string
-from unittest import TestCase
+from unittest import TestCase, mock
 from http import HTTPStatus
 
 import mongomock
@@ -56,6 +56,11 @@ class TestCustomersOverview(TestCase):
         self.database = DatabaseClient(
             "localhost", 27017, None, None
         ).connect()
+
+        mock.patch(
+            "huxunify.api.route.customers.get_db_client",
+            return_value=self.database,
+        ).start()
 
         # setup the flask test client
         self.test_client = create_app().test_client()
