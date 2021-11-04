@@ -13,9 +13,7 @@
   >
     <div v-if="icon || title" class="d-flex align-center">
       <logo :type="icon" />
-      <div
-        class="card-horizontal-title pl-2 text-h6 black--text text--darken-4"
-      >
+      <div class="pl-2 body-1">
         {{ title }}
       </div>
     </div>
@@ -136,8 +134,5 @@ export default {
   &:hover {
     @extend .box-shadow-25;
   }
-}
-.card-horizontal-title {
-  color: var(--v-neroBlack-base);
 }
 </style>

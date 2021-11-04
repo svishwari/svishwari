@@ -124,6 +124,10 @@ class DeliveryScheduleSchema(Schema):
         if data.get(api_c.PERIODICIY) == api_c.DAILY:
             DeliveryScheduleDailySchema().validate(api_c.DAILY)
         elif data.get(api_c.PERIODICIY) == api_c.MONTHLY:
+            # convert list of integers to string.
+            data[api_c.DAY_OF_MONTH] = [
+                str(x) for x in data.get(api_c.DAY_OF_MONTH, [])
+            ]
             DeliveryScheduleMonthlySchema().validate(api_c.MONTHLY)
         elif data.get(api_c.PERIODICIY) == api_c.WEEKLY:
             DeliveryScheduleWeeklySchema().validate(api_c.WEEKLY)

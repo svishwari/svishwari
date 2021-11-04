@@ -2,17 +2,11 @@ import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
 describe("Orchestration > Engagements", () => {
-  before(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+  beforeEach(() => {
+    cy.signin()
+    cy.visit(route.engagements)
   })
   it("should be able to navigate to Engagements", () => {
-    cy.location("pathname").should("eq", route.home)
-
-    //click on engagement on side nav bar and route in engagement screen
-    cy.get(selector.nav.engagements).click()
     cy.location("pathname").should("eq", route.engagements)
   })
 
@@ -31,6 +25,9 @@ describe("Orchestration > Engagements", () => {
       "Created by",
     ]
 
+    //eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+
     cy.get(selector.engagement.list.engagementTable)
       .find(selector.engagement.list.engagementTableHeaders)
       .children()
@@ -40,7 +37,7 @@ describe("Orchestration > Engagements", () => {
   })
 
   // Verifying the expand feature of the table.
-  it("should be able to expand the second engagement", () => {
+  it("should be able to expand the last engagement", () => {
     cy.get(selector.engagement.list.engagementTable)
       .get(selector.engagement.list.engagementTableExpand)
       .last()
@@ -53,6 +50,10 @@ describe("Orchestration > Engagements", () => {
 
   // Verifying the hover of the last delivered column of the audience table.
   it("should have hover on the last delivered column of audience table", () => {
+    cy.get(selector.engagement.list.engagementTable)
+      .get(selector.engagement.list.engagementTableExpand)
+      .last()
+      .click()
     cy.get(selector.engagement.list.engagementTable)
       .find(selector.engagement.list.audienceTable)
       .scrollIntoView({
@@ -71,6 +72,10 @@ describe("Orchestration > Engagements", () => {
 
   // Verifying the expand feature of the audience table.
   it("should have ability to expand the destinations under an audience table", () => {
+    cy.get(selector.engagement.list.engagementTable)
+      .get(selector.engagement.list.engagementTableExpand)
+      .last()
+      .click()
     cy.get(selector.engagement.list.engagementTable)
       .find(selector.engagement.list.audienceTable)
       .find(selector.engagement.list.audienceTableExpand)

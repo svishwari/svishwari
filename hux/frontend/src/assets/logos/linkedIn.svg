@@ -1,3 +1,16 @@
-<svg width="100%" height="100%" viewBox="0 0 0 0" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <!-- HUS-1335 -->
+<svg width="100%" height="100%" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="9" cy="9" r="8.5" fill="white" stroke="#E2EAEC"/>
+<g clip-path="url(#linkedin0)">
+<path d="M8.99998 -0.000976562C4.0294 -0.000976562 0 4.02842 0 8.99901C0 13.9696 4.0294 17.999 8.99998 17.999C13.9706 17.999 18 13.9696 18 8.99901C18 4.02842 13.9705 -0.000976562 8.99998 -0.000976562ZM6.59877 13.3501H4.62273V6.96607H6.59877V13.3501ZM5.60133 6.13004C4.95598 6.13004 4.43281 5.6026 4.43281 4.95208C4.43281 4.30148 4.95605 3.77408 5.60133 3.77408C6.24661 3.77408 6.76979 4.30148 6.76979 4.95208C6.76982 5.60264 6.24665 6.13004 5.60133 6.13004V6.13004ZM14.004 13.3501H12.0375V9.99901C12.0375 9.07991 11.6884 8.56685 10.9616 8.56685C10.1707 8.56685 9.75747 9.1012 9.75747 9.99901V13.3501H7.86222V6.96607H9.75747V7.82589C9.75747 7.82589 10.3276 6.77134 11.6812 6.77134C13.0349 6.77134 14.004 7.5979 14.004 9.30782L14.004 13.3501V13.3501Z" fill="url(#linkedin1)"/>
+<circle cx="9" cy="9" r="8.5" stroke="#E2EAEC"/>
+</g>
+<defs>
+<linearGradient id="linkedin1" x1="2.63603" y1="2.63505" x2="15.3639" y2="15.363" gradientUnits="userSpaceOnUse">
+<stop stop-color="#2489BE"/>
+<stop offset="1" stop-color="#0575B3"/>
+</linearGradient>
+<clipPath id="linkedin0">
+<rect width="18" height="18" fill="white"/>
+</clipPath>
+</defs>
 </svg>

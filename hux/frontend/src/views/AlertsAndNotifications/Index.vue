@@ -4,11 +4,18 @@
       <template slot="left">
         <breadcrumb :items="breadcrumbItems" />
       </template>
+      <template #right>
+        <icon
+          type="filter"
+          :size="22"
+          class="cursor-pointer"
+          color="black-darken4"
+        />
+      </template>
     </page-header>
     <page-header class="top-bar mb-3" :header-height="71">
       <template #left>
-        <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
-        <v-icon medium color="black lighten-3" class="pl-4">mdi-magnify</v-icon>
+        <v-icon medium color="black lighten-3">mdi-magnify</v-icon>
       </template>
 
       <template #right>
@@ -16,11 +23,11 @@
           variant="primary base"
           icon="keyboard-return"
           is-custom-icon
-          class="ma-2 caption no-shadow mr-0"
+          class="ma-2 text-button no-shadow mr-0"
           size="large"
           is-tile
-          height="40"
-          icon-size="18"
+          :height="'40'"
+          :icon-size="18"
           icon-color="white"
           icon-variant="base"
           data-e2e="notification-return"
@@ -31,10 +38,13 @@
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row v-if="!loading" class="pb-7 pl-3 white">
+    <v-row
+      v-if="notificationData.length > 0 && !loading"
+      class="pb-7 pl-3 white"
+    >
       <hux-data-table
         :columns="columnDefs"
-        :data-items="notifications"
+        :data-items="notificationData"
         sort-column="created"
         sort-desc
       >
@@ -50,28 +60,91 @@
             class="col-overflow"
             :style="{ width: header.width, left: 0 }"
           >
-            <div v-if="header.value == 'created'">
-              <time-stamp :value="item['created']" />
+            <div v-if="header.value == 'id'">
+              <a @click="toggleProfilesDrawer(item[header.value])"
+                >{{ item[header.value] }}
+              </a>
             </div>
-            <div v-if="header.value == 'notification_type'">
-              <status
-                :status="item['notification_type']"
-                :show-label="true"
-                :icon-size="17"
+
+            <div v-if="header.value == 'category'">
+              {{ item[header.value] }}
+            </div>
+
+            <div v-if="header.value == 'notification_type'" class="d-flex">
+              <icon
+                :type="
+                  item['notification_type'] === 'Success'
+                    ? 'success_new'
+                    : item['notification_type']
+                "
+                :size="18"
+                :color="getIconColor(item['notification_type'])"
+                :variant="getVariantColor(item['notification_type'])"
+                class="d-block mr-1"
               />
+              {{ item["notification_type"] }}
             </div>
+
             <tooltip v-if="header.value == 'description'" position-top>
               <template #label-content>
                 <span>{{ item[header.value] }}</span>
               </template>
               <template #hover-content>
+                <div class="text--body-1 pb-2">Description</div>
                 {{ item[header.value] }}
               </template>
             </tooltip>
+
+            <div v-if="header.value == 'created'">
+              <time-stamp :value="item['created']" />
+            </div>
           </td>
         </template>
       </hux-data-table>
     </v-row>
+    <v-row
+      v-if="notificationData.length == 0 && !loading"
+      class="background-empty"
+    >
+      <empty-page type="no-alerts" :size="50">
+        <template #title>
+          <div class="title-no-notification">No alerts yet</div></template
+        >
+        <template #subtitle>
+          <div class="des-no-notification">
+            Currently there are no alerts available.<br />
+            Check back later or change your filters.
+          </div>
+        </template>
+        <template #button>
+          <huxButton
+            button-text="Clear filters"
+            variant="primary base"
+            size="large"
+            class="ma-2 font-weight-regular text-button"
+            is-tile
+            :height="'40'"
+          >
+            Clear filters
+          </huxButton>
+        </template>
+      </empty-page>
+    </v-row>
+    <v-row
+      v-if="
+        notificationData.length > 0 && notificationData.length <= 0 && !loading
+      "
+      class="d-flex justify-center align-center"
+    >
+      <error
+        icon-type="error-on-screens"
+        :icon-size="50"
+        title="Alerts &amp; notifications is currently unavailable"
+        subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+      >
+      </error>
+    </v-row>
+    <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
     <v-divider v-if="enableLazyLoad" class="hr-devider"></v-divider>
     <v-progress-linear v-if="enableLazyLoad" active indeterminate />
     <observer v-if="notifications.length" @intersect="intersected"></observer>
@@ -85,9 +158,12 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
 import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
-import Status from "../../components/common/Status.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Observer from "@/components/common/Observer"
+import AlertDrawer from "./Drawer/AlertDrawer"
+import Icon from "@/components/common/Icon"
+import EmptyPage from "@/components/common/EmptyPage"
+import Error from "@/components/common/screens/Error"
 
 export default {
   name: "AlertsAndNotifications",
@@ -97,9 +173,12 @@ export default {
     huxButton,
     HuxDataTable,
     TimeStamp,
-    Status,
     Tooltip,
     Observer,
+    AlertDrawer,
+    Icon,
+    EmptyPage,
+    Error,
   },
   data() {
     return {
@@ -110,6 +189,7 @@ export default {
           icon: "bell",
         },
       ],
+      alertDrawer: false,
       categoryItems: [
         { name: "Orchestration" },
         { name: "Decisioning" },
@@ -123,8 +203,13 @@ export default {
       ],
       columnDefs: [
         {
-          text: "Time",
-          value: "created",
+          text: "Alert ID",
+          value: "id",
+          width: "260",
+        },
+        {
+          text: "Category",
+          value: "category",
           width: "180px",
         },
         {
@@ -133,9 +218,14 @@ export default {
           width: "180px",
         },
         {
-          text: "Description",
+          text: "Brief Description",
           value: "description",
           width: "auto",
+        },
+        {
+          text: "Time",
+          value: "created",
+          width: "220px",
         },
       ],
       sortColumn: "created",
@@ -148,6 +238,7 @@ export default {
         batchNumber: 1,
         isLazyLoad: false,
       },
+      notificationId: null,
     }
   },
   computed: {
@@ -155,6 +246,11 @@ export default {
       notifications: "notifications/list",
       totalNotifications: "notifications/total",
     }),
+
+    notificationData() {
+      let sortedNotificaitonList = this.notifications
+      return sortedNotificaitonList.sort((a, b) => a.id - b.id)
+    },
   },
 
   async mounted() {
@@ -170,9 +266,15 @@ export default {
   methods: {
     ...mapActions({
       getAllNotifications: "notifications/getAll",
+      getNotificationByID: "notifications/getById",
     }),
     goBack() {
       this.$router.go(-1)
+    },
+    async toggleProfilesDrawer(notificationId) {
+      this.notificationId = notificationId
+      await this.getNotificationByID(notificationId)
+      this.alertDrawer = !this.alertDrawer
     },
     intersected() {
       if (this.batchDetails.batchNumber <= this.lastBatch) {
@@ -190,6 +292,20 @@ export default {
       this.lastBatch = Math.ceil(
         this.totalNotifications / this.batchDetails.batchSize
       )
+    },
+    getIconColor(value) {
+      if (value) {
+        return value === "Success"
+          ? "success"
+          : value === "Critical"
+          ? "error"
+          : "primary"
+      }
+    },
+    getVariantColor(value) {
+      if (value) {
+        return value === "Informational" ? "lighten6" : "base"
+      }
     },
   },
 }
@@ -285,5 +401,26 @@ export default {
 }
 .hr-devider {
   margin-top: -27px !important;
+}
+.background-empty {
+  background-image: url("../../assets/images/no-alert-frame.png");
+  background-position: center;
+}
+
+//to overwrite the classes
+
+.title-no-notification {
+  font-size: 24px !important;
+  line-height: 34px !important;
+  font-weight: 300 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
+}
+.des-no-notification {
+  font-size: 14px !important;
+  line-height: 16px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
 }
 </style>

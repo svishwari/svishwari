@@ -88,6 +88,10 @@ client["destinations"].validate = (data) => {
   return http.post("/destinations/validate", data)
 }
 
+client["destinations"].authenticate = (destinationId, data) => {
+  return http.put(`/destinations/${destinationId}/authentication`, data)
+}
+
 client["destinations"].remove = (id, data) => {
   return http.patch(`/destinations/${id}`, data)
 }
@@ -288,6 +292,11 @@ client["notifications"].getNotifications = (batchSize, batchNumber) => {
     `/notifications?batch_size=${batchSize}&batch_number=${batchNumber}`
   )
 }
+
+client["notifications"].find = (notification_id) => {
+  return http.get(`/notifications/${notification_id}`)
+}
+
 //#endregion
 
 client["models"].overview = (id) => {

@@ -1,18 +1,14 @@
-import route from "../../support/routes.js"
-import selector from "../../support/selectors.js"
+import route from "../../support/routes"
+import selector from "../../support/selectors"
 
 describe("Orchestration > Audiences", () => {
-  before(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+  beforeEach(() => {
+    cy.signin()
+    cy.visit(route.audiences)
   })
 
   it("should be able to manage audiences", () => {
     // should navigate to audiences
-    cy.location("pathname").should("eq", route.home)
-    cy.get(selector.nav.audiences).click()
     cy.location("pathname").should("eq", route.audiences)
 
     // should be able to view table of audiences
@@ -57,5 +53,25 @@ describe("Orchestration > Audiences", () => {
       .find("button")
       .eq(0)
       .should("have.class", "mr-3 fixed-icon")
+  })
+
+  it("should delete the created audience", () => {
+    // delete created audience
+    cy.location("pathname").should("eq", route.audiences)
+    cy.get(selector.audience.audiencelist).its("length").should("be.gt", 0)
+    cy.get(selector.audience.audiencenameclick)
+      .eq(0)
+      .find("button")
+      .eq(1)
+      .click({ force: true })
+    cy.get(".v-menu__content").should("exist")
+
+    cy.contains("Delete audience").eq(0).click()
+
+    cy.get(selector.audience.removeAudience)
+      .get("button")
+      .contains("Yes, delete it")
+      .eq(0)
+      .click()
   })
 })

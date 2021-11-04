@@ -2,19 +2,16 @@ import route from "../../support/routes.js"
 import selector from "../../support/selectors.js"
 
 describe("Data management > Identity resolution", () => {
-  before(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+  beforeEach(() => {
+    cy.signin()
+    cy.visit(route.identityResolution)
   })
 
   it("should have an Overview, Matching trends and Data feeds table with Last run drawer", () => {
-    cy.location("pathname").should("eq", route.home)
-
-    // click on identity resolution on side nav bar
-    cy.get(selector.idr.identityResolution).click()
     cy.location("pathname").should("eq", route.identityResolution)
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
 
     // validate overview exist by getting total no. of them
     cy.get(selector.idr.overview).its("length").as("overviewListCount")

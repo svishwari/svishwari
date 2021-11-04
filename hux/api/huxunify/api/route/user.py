@@ -1,5 +1,6 @@
 # pylint: disable=no-self-use
 """Paths for the User API"""
+import datetime
 import random
 from http import HTTPStatus
 from typing import Tuple
@@ -22,12 +23,13 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+    get_user_name,
 )
 from huxunify.api.route.utils import (
     get_db_client,
     get_user_from_db,
 )
-from huxunify.api.schema.user import UserSchema
+from huxunify.api.schema.user import UserSchema, UserPatchSchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.okta import (
@@ -345,4 +347,92 @@ class UserView(SwaggerView):
         return (
             jsonify(UserSchema().dump(users, many=True)),
             HTTPStatus.OK.value,
+        )
+
+
+# HUS-1320 need to allow user to edit other users via RBAC
+@add_view_to_blueprint(
+    user_bp,
+    f"{api_c.USER_ENDPOINT}",
+    "UserPatchView",
+)
+class UserPatchView(SwaggerView):
+    """User Patch class."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input user body.",
+            "example": {
+                db_constants.USER_ROLE: "viewer",
+                db_constants.USER_DISPLAY_NAME: "new_display_name",
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "User updated.",
+            "schema": UserSchema,
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Invalid data received.",
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": "User not found.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    @get_user_name()
+    def patch(self, user_name: str) -> Tuple[dict, int]:
+        """Updates a user.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: User doc, HTTP status code.
+        """
+
+        body = UserPatchSchema().load(request.get_json())
+
+        if not body:
+            return {api_c.MESSAGE: "No body provided."}, HTTPStatus.BAD_REQUEST
+
+        database = get_db_client()
+
+        user = get_all_users(
+            database, {db_constants.USER_DISPLAY_NAME: user_name}
+        )
+        if not user:
+            return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
+
+        # TODO Access Control Based on Roles
+
+        updated_user = update_user(
+            database,
+            okta_id=user[0][db_constants.OKTA_ID],
+            update_doc={
+                **body,
+                **{
+                    db_constants.UPDATED_BY: user_name,
+                    db_constants.UPDATE_TIME: datetime.datetime.utcnow(),
+                },
+            },
+        )
+
+        # update the document
+        return (
+            UserSchema().dump(updated_user),
+            HTTPStatus.OK,
         )

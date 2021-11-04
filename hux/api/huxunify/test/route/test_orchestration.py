@@ -7,7 +7,7 @@ import mongomock
 import requests_mock
 
 from huxunifylib.connectors import FacebookConnector
-from huxunifylib.database import data_management, constants as db_c
+from huxunifylib.database import constants as db_c
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
     set_delivery_job,
@@ -124,7 +124,7 @@ class OrchestrationRouteTest(TestCase):
                 },
             },
         ]
-        self.user_name = "Joe Smithers"
+        self.user_name = "dave smith"
         self.destinations = []
         for destination in destinations:
             self.destinations.append(
@@ -139,9 +139,9 @@ class OrchestrationRouteTest(TestCase):
                         api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
                         api_c.AUDIENCE_SECTION_FILTERS: [
                             {
-                                api_c.AUDIENCE_FILTER_FIELD: "filter_field",
-                                api_c.AUDIENCE_FILTER_TYPE: "type",
-                                api_c.AUDIENCE_FILTER_VALUE: "value",
+                                api_c.AUDIENCE_FILTER_FIELD: api_c.GENDER,
+                                api_c.AUDIENCE_FILTER_TYPE: api_c.TYPE,
+                                api_c.AUDIENCE_FILTER_VALUE: "male",
                             }
                         ],
                     }
@@ -158,9 +158,9 @@ class OrchestrationRouteTest(TestCase):
                         api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
                         api_c.AUDIENCE_SECTION_FILTERS: [
                             {
-                                api_c.AUDIENCE_FILTER_FIELD: "filter_field",
-                                api_c.AUDIENCE_FILTER_TYPE: "type",
-                                api_c.AUDIENCE_FILTER_VALUE: "value",
+                                api_c.AUDIENCE_FILTER_FIELD: api_c.GENDER,
+                                api_c.AUDIENCE_FILTER_TYPE: api_c.TYPE,
+                                api_c.AUDIENCE_FILTER_VALUE: "female",
                             }
                         ],
                     }
@@ -242,6 +242,7 @@ class OrchestrationRouteTest(TestCase):
             self.database,
             okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
             email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
+            display_name="dave smith",
         )
 
         # Set an audience as favorite
@@ -257,19 +258,6 @@ class OrchestrationRouteTest(TestCase):
 
     def test_get_audience_rules_success(self):
         """Test the get audience rules route success."""
-
-        data_management.set_constant(
-            self.database,
-            db_c.AUDIENCE_FILTER_CONSTANTS,
-            {
-                "text_operators": {
-                    "contains": "Contains",
-                    "does_not_contain": "Does not contain",
-                    "does_not_equal": "Does not equal",
-                    "equals": "Equals",
-                }
-            },
-        )
 
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/rules", headers=t_c.STANDARD_HEADERS
@@ -1088,3 +1076,20 @@ class OrchestrationRouteTest(TestCase):
         )
         audience = response.json
         self.assertTrue(audience.get(api_c.FAVORITE))
+
+    def test_get_audiences_with_valid_filters(self):
+        """Test get all audiences with valid filters."""
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}?{api_c.FAVORITES}=True&"
+            f"{api_c.WORKED_BY}=True&{api_c.ATTRIBUTE}={api_c.GENDER}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        audiences = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(audiences)
+        self.assertEqual(1, len(audiences))
+        self.assertEqual(
+            str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID]
+        )

@@ -916,17 +916,18 @@ class TestEngagementManagement(unittest.TestCase):
             self.user_name,
         )
 
-        # due to mocking issues certain queries do not work
-        # but have been verified on a real database
-        # Due to that issue this return will be None when the DB is mocked
-        with self.assertRaises(pymongo.errors.WriteError):
-            em.remove_destination_from_engagement_audience(
-                self.database,
-                engagement_id,
-                audience_one[c.ID],
-                self.destinations[0][c.ID],
-                self.user_name,
-            )
+        updated_engagement = em.remove_destination_from_engagement_audience(
+            self.database,
+            engagement_id,
+            audience_one[c.ID],
+            self.destinations[0][c.ID],
+            self.user_name,
+        )
+
+        # validate destination was removed
+        self.assertTrue(updated_engagement)
+        for audience in updated_engagement[c.AUDIENCES]:
+            self.assertFalse(audience[c.DESTINATIONS])
 
     def test_check_active_engagement_deliveries(self) -> None:
         """Test check_active_engagement_deliveries routine"""

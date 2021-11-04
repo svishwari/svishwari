@@ -1419,6 +1419,56 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
+    def test_update_engagement_delivery_schedule(self):
+        """Test update an engagement's delivery schedule."""
+        engagement_delivery_schedule = {api_c.SCHEDULE: t_c.SCHEDULES[0]}
+
+        engagement = {
+            db_c.AUDIENCES: [
+                {
+                    db_c.OBJECT_ID: str(self.audiences[0][db_c.ID]),
+                    db_c.DESTINATIONS: [
+                        {db_c.OBJECT_ID: str(self.destinations[0][db_c.ID])},
+                    ],
+                }
+            ],
+            db_c.ENGAGEMENT_DESCRIPTION: "Test Engagement Description",
+            db_c.ENGAGEMENT_NAME: self.faker.first_name(),
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE: engagement_delivery_schedule,
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}",
+            data=json.dumps(engagement),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        old_delivery_schedule_cron = response.json.get(
+            api_c.DELIVERY_SCHEDULE
+        ).get(api_c.SCHEDULE_CRON)
+
+        engagement_id = response.json.get(api_c.ID)
+        update_doc = response.json
+
+        update_doc[api_c.DELIVERY_SCHEDULE][api_c.SCHEDULE] = t_c.SCHEDULES[1]
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            json=update_doc,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        new_delivery_schedule_cron = response.json.get(
+            api_c.DELIVERY_SCHEDULE
+        ).get(api_c.SCHEDULE_CRON)
+
+        # Ensure the cron expressions are not equal.
+        self.assertNotEqual(
+            old_delivery_schedule_cron, new_delivery_schedule_cron
+        )
+
     def test_add_audience_to_engagement(self):
         """Test add audience to engagement."""
 
@@ -1694,16 +1744,29 @@ class TestEngagementRoutes(TestCase):
 
         destination_to_remove = {api_c.ID: str(self.destinations[0][db_c.ID])}
 
-        response = self.app.post(
+        response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
             f"{api_c.AUDIENCE}/{str(audience_id)}/destinations",
             json=destination_to_remove,
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(
-            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+    def test_remove_invalid_destination_from_engagement_audience(self):
+        """Test remove invalid destination from engagement audience."""
+
+        engagement_id = self.engagement_ids[0]
+        audience_id = self.audiences[1][db_c.ID]
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.AUDIENCE}/{str(audience_id)}/destinations",
+            json={},
+            headers=t_c.STANDARD_HEADERS,
         )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
 
     def test_set_engagement_flight_schedule(self):
         """Test setting an engagement flight schedule."""

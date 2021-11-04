@@ -72,11 +72,11 @@ const routes = [
   },
   //#endregion
 
-  //#region Decisioning
+  //#region Models
   {
     path: "/models",
     name: "Models",
-    component: () => import("@/views/Decisioning/Index"),
+    component: () => import("@/views/Models/Index"),
     meta: {
       layout: "app",
       title: "Models",
@@ -86,10 +86,10 @@ const routes = [
   {
     path: "/models/:id/overview",
     name: "ModelDashboard",
-    component: () => import("@/views/Decisioning/Dashboard"),
+    component: () => import("@/views/Models/Dashboard"),
     meta: {
       layout: "app",
-      title: "Models",
+      title: "Model Dashboard",
       requiresAuth: true,
     },
   },

@@ -32,6 +32,5 @@ Run the database create scripts
 cd ../../../hux-unified/scripts/database
 wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
 python create_database_indexes.py
-python set_database_constants.py
 python prepopulate_database.py
 ```
