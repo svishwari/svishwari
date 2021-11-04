@@ -8,7 +8,11 @@ from faker import Faker
 
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
-
+from huxunifylib.database.cache_management import (
+    create_cache_entry,
+    get_cache_entry,
+)
+from huxunify.api.route.utils import get_db_client
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
     DataFeedSchema,
@@ -114,12 +118,25 @@ class CustomerOverview(SwaggerView):
             Tuple[dict, int]: dict of Customer data overview, HTTP status code.
         """
 
-        # TODO - resolve post demo, set unique IDs as total customers.
-        token_response = get_token_from_request(request)
-        customers = get_customers_overview(token_response[0])
+        # check if cache entry
+        database = get_db_client()
+        customer_overview = get_cache_entry(
+            database,
+            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",
+        )
+        if not customer_overview:
+            token_response = get_token_from_request(request)
+            customer_overview = get_customers_overview(token_response[0])
+
+            # cache
+            create_cache_entry(
+                database,
+                f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",
+                customer_overview,
+            )
 
         return (
-            CustomerOverviewSchema().dump(customers),
+            CustomerOverviewSchema().dump(customer_overview),
             HTTPStatus.OK,
         )
 
@@ -257,21 +274,40 @@ class IDROverview(SwaggerView):
         start_date, end_date = get_start_end_dates(request, 60)
         Validation.validate_date_range(start_date, end_date)
 
-        token_response = get_token_from_request(request)
-
-        # TODO - when the CDP endpoint for getting the max and min date range
-        #  is available, we will call that instead of iterating all events to get them.
-        # get IDR overview
-        idr_overview = get_idr_overview(
-            token_response[0], start_date, end_date
+        # check if cache entry
+        database = get_db_client()
+        idr_overviews = get_cache_entry(
+            database,
+            f"{api_c.IDR_TAG}.{start_date}.{end_date}",
         )
+        if not idr_overviews:
+            token_response = get_token_from_request(request)
 
-        # get date range from IDR matching trends.
-        trend_data = get_idr_matching_trends(
-            token_response[0],
-            start_date,
-            end_date,
-        )
+            # TODO - when the CDP endpoint for getting the max and min date range
+            #  is available, we will call that instead of iterating all events to get them.
+            # get IDR overview
+            idr_overview = get_idr_overview(
+                token_response[0], start_date, end_date
+            )
+
+            # get date range from IDR matching trends.
+            trend_data = get_idr_matching_trends(
+                token_response[0],
+                start_date,
+                end_date,
+            )
+            # cache
+            create_cache_entry(
+                database,
+                f"{api_c.IDR_TAG}.{start_date}.{end_date}",
+                {
+                    api_c.OVERVIEW: idr_overview,
+                    api_c.MATCHING_TRENDS: trend_data,
+                },
+            )
+        else:
+            idr_overview = idr_overviews.get(api_c.OVERVIEW)
+            trend_data = idr_overview.get(api_c.MATCHING_TRENDS)
 
         return (
             IDROverviewWithDateRangeSchema().dump(
