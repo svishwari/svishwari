@@ -892,6 +892,149 @@ def get_spending_by_gender(
     )
 
 
+def get_revenue_by_day(
+    token: str,
+    start_date: str,
+    end_date: str,
+    filters: Optional[dict] = None,
+) -> List[Optional[dict]]:
+    """Get revenue details of customer.
+
+    Args:
+        token (str): OKTA JWT Token.
+        start_date (str): String value of start date.
+        end_date (str): String value of end date.
+        filters (dict):  filters to pass into spending-by-month endpoint.
+
+    Returns:
+        list: list of spending details by gender.
+
+    Raises:
+        FailedAPIDependencyError: Integrated dependent API failure error.
+    """
+
+    request_payload = (
+        filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER
+    )
+    request_payload[api_c.START_DATE] = start_date
+    request_payload[api_c.END_DATE] = end_date
+
+    # get config
+    config = get_config()
+    logger.info("Retrieving spending by month.")
+
+    # TODO: Update the API call to CDM with correct endpoint when available
+    response = requests.post(
+        f"{config.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+        json=request_payload,
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
+    )
+    if response.status_code != 200 or api_c.BODY not in response.json():
+        logger.error(
+            "Failed to retrieve spending insights by month, %s %s.",
+            response.status_code,
+            response.text,
+        )
+        raise iae.FailedAPIDependencyError(
+            f"{config.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+            response.status_code,
+        )
+
+    logger.info("Successfully retrieved spending insights by month.")
+    spending_by_month = sorted(
+        clean_cdm_fields(response.json()[api_c.BODY]),
+        key=lambda x: (x[api_c.YEAR], x[api_c.MONTH]),
+    )
+
+    spending_by_day = []
+
+    for i, month_data in enumerate(spending_by_month):
+        spending_by_day.append(
+            {
+                api_c.DATE: datetime(
+                    year=month_data[api_c.YEAR],
+                    month=month_data[api_c.MONTH],
+                    day=int(
+                        datetime.strptime(
+                            start_date, api_c.DEFAULT_DATE_FORMAT
+                        ).day
+                    )
+                    if i == 0
+                    else 1,
+                ),
+                api_c.LTV: (
+                    (
+                        month_data[api_c.AVG_SPENT_MEN]
+                        * month_data[api_c.GENDER_MEN]
+                    )
+                    + (
+                        month_data[api_c.AVG_SPENT_WOMEN]
+                        * month_data[api_c.GENDER_WOMEN]
+                    )
+                    + (
+                        month_data[api_c.AVG_SPENT_OTHER]
+                        * month_data[api_c.GENDER_OTHER]
+                    )
+                )
+                / (
+                    month_data[api_c.GENDER_MEN]
+                    + month_data[api_c.GENDER_WOMEN]
+                    + month_data[api_c.GENDER_OTHER]
+                ),
+            }
+        )
+        spending_by_day[-1][api_c.REVENUE] = round(
+            (spending_by_day[-1][api_c.LTV] * random.choice([0.8, 1.0, 1.2])),
+            2,
+        )
+
+    return add_missing_revenue_data_by_day(
+        spending_by_day, start_date, end_date
+    )
+
+
+def add_missing_revenue_data_by_day(
+    spending_by_day: list, start_date: str, end_date: str
+) -> list:
+    """Add revenue data for missing dates.
+
+    Args:
+        spending_by_day (list): list of revenue data.
+        start_date (dict): start_date from which revenue data is being fetched
+        end_date (dict): end_date to which revenue data is being fetched
+
+    Returns:
+        list: list of revenue data for all days from start_date to end_date
+    """
+    revenue_data_by_day = []
+
+    start_date = datetime.strptime(start_date, api_c.DEFAULT_DATE_FORMAT)
+    end_date = datetime.strptime(end_date, api_c.DEFAULT_DATE_FORMAT)
+
+    for num_day in range(int((end_date - start_date).days) + 1):
+        current_date = start_date + relativedelta(days=num_day)
+
+        if spending_by_day and current_date == spending_by_day[0].get(
+            api_c.DATE
+        ):
+            revenue_data_by_day.append(spending_by_day.pop(0))
+        else:
+            revenue_data_by_day.append(
+                {
+                    api_c.DATE: current_date,
+                    api_c.LTV: spending_by_day[0].get(api_c.LTV)
+                    if spending_by_day
+                    else revenue_data_by_day[-1][api_c.LTV],
+                    api_c.REVENUE: spending_by_day[0].get(api_c.REVENUE)
+                    if spending_by_day
+                    else revenue_data_by_day[-1][api_c.REVENUE],
+                }
+            )
+    return revenue_data_by_day
+
+
 def add_missing_customer_count_by_day(
     response_body: list, date_filters: dict
 ) -> list:

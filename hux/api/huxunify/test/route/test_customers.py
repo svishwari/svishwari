@@ -18,6 +18,7 @@ from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
     CustomersInsightsCountriesSchema,
+    CustomerRevenueInsightsSchema,
 )
 from huxunify.api.schema.customers import (
     CustomerGeoVisualSchema,
@@ -429,6 +430,28 @@ class TestCustomersOverview(TestCase):
             )
         )
 
+    def test_customer_revenue_insights_success(self) -> None:
+        """Test get customer revenue insights success response."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+            json=t_c.MOCKED_GENDER_SPENDING,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.REVENUE}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(
+                CustomerRevenueInsightsSchema(), response.json, True
+            )
+        )
+
     def test_customers_insights_cities_success(self) -> None:
         """Test get customers insights by cities."""
 
@@ -703,6 +726,22 @@ class TestCustomersOverview(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
+        self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
+
+    def test_customer_revenue_insights_dependency_failure(self) -> None:
+        """Test get customer revenue insights dependency failure."""
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+            json={},
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.REVENUE}",
+            headers=t_c.STANDARD_HEADERS,
+        )
         self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
     @given(hux_id=st.text(alphabet=string.ascii_letters))
