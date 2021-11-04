@@ -46,10 +46,8 @@ UNIFIED_OKTA_TEST_USER_PW = "unified_okta_test_user_pw"
 
 # JIRA
 JIRA_SERVER = "jira_server"
-ISSUE_TYPE = "issue_type"
-UNIFIED_JIRA_SERVER = "unified_jira_server"
 JIRA_API_KEY = "jira_api_key"
-UNIFIED_JIRA_API_KEY = "unified_jira_api_key"
+ISSUE_TYPE = "issue_type"
 KEY = "key"
 TICKET_TYPE_BUG = "Bug"
 

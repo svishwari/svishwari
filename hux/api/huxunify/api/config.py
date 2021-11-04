@@ -60,6 +60,8 @@ class Config:
 
     # JIRA
     JIRA_PROJECT_KEY = config(api_c.JIRA_PROJECT_KEY, default="")
+    JIRA_API_KEY = config(api_c.JIRA_API_KEY, default="")
+    JIRA_SERVER = config(api_c.JIRA_SERVER, default="")
 
     # audience router config
     AUDIENCE_ROUTER_JOB_ROLE_ARN = config(

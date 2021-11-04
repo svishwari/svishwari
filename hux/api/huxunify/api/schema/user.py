@@ -58,7 +58,7 @@ class UserPatchSchema(Schema):
 class TicketSchema(Schema):
     """Ticket schema"""
 
-    type = Str(required=True, validate=OneOf([api_c.TICKET_TYPE_BUG]))
+    issue_type = Str(required=True, validate=OneOf([api_c.TICKET_TYPE_BUG]))
     summary = Str(required=True)
     description = Str(required=False)
 

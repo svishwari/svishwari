@@ -3,7 +3,6 @@
 from jira import JIRA, JIRAError
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
-from huxunify.api.data_connectors.aws import get_jira_auth_from_parameter_store
 
 
 class JiraConnection:
@@ -11,17 +10,19 @@ class JiraConnection:
 
     def __init__(self):
         """Initialize Jira Connection"""
+        config = get_config()
 
-        jira_creds = get_jira_auth_from_parameter_store()
-        headers = JIRA.DEFAULT_OPTIONS["headers"].copy()
-        headers[
-            api_c.AUTHORIZATION
-        ] = f"Bearer {jira_creds.get(api_c.JIRA_API_KEY)}"
+        # get JIRA client
         self.jira_client = JIRA(
-            server=jira_creds.get(api_c.JIRA_SERVER),
-            options={"headers": headers},
+            server=config.JIRA_SERVER,
+            options={
+                "headers": {
+                    **JIRA.DEFAULT_OPTIONS["headers"],
+                    api_c.AUTHORIZATION: f"Bearer {config.JIRA_API_KEY}",
+                }
+            },
         )
-        self.project_key = get_config().JIRA_PROJECT_KEY
+        self.project_key = config.JIRA_PROJECT_KEY
 
     def check_jira_connection(self) -> bool:
         """Check JIRA connections status
