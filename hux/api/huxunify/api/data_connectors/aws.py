@@ -5,7 +5,6 @@ from typing import Tuple
 from enum import Enum
 from http import HTTPStatus
 
-from botocore.exceptions import ClientError
 from connexion import ProblemException
 import boto3
 import botocore
@@ -21,10 +20,6 @@ from huxunifylib.util.general.const import (
 import huxunifylib.database.constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api import config
-from huxunify.api.exceptions.integration_api_exceptions import (
-    FailedSSMDependencyError,
-    IntegratedAPIEndpointException,
-)
 from huxunify.api.prometheus import record_health_status_metric
 
 
@@ -356,31 +351,6 @@ def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
         }
 
     return auth
-
-
-def get_jira_auth_from_parameter_store() -> dict:
-    """Get JIRA credentials from parameter store
-
-    Returns:
-        dict: Jira api access credentials
-
-    Raises:
-        FailedSSMDependencyError: Raised if parameter not found in param store
-    """
-    try:
-        return {
-            api_c.JIRA_SERVER: parameter_store.get_store_value(
-                api_c.UNIFIED_JIRA_SERVER
-            ),
-            api_c.JIRA_API_KEY: parameter_store.get_store_value(
-                api_c.UNIFIED_JIRA_API_KEY
-            ),
-        }
-    except ClientError as exc:
-        raise FailedSSMDependencyError(
-            exc.response["Error"]["Code"],
-            exc.response["ResponseMetadata"]["HTTPStatusCode"],
-        ) from IntegratedAPIEndpointException
 
 
 def set_cloud_watch_rule(
