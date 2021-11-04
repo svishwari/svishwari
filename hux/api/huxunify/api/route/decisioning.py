@@ -420,7 +420,7 @@ class ModelDriftView(SwaggerView):
             latest_model = model_versions[0]
 
             drift_data = tecton.get_model_drift(
-                model_id, latest_model[api_c.TYPE]
+                model_id, latest_model[api_c.TYPE], model_versions
             )
 
         return (

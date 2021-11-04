@@ -272,12 +272,15 @@ def get_model_version_history(model_id: str) -> List[ModelVersionSchema]:
 
 
 # pylint: disable=unused-argument
-def get_model_drift(model_id: str, model_type: str) -> List[ModelDriftSchema]:
+def get_model_drift(
+    model_id: str, model_type: str, models: list
+) -> List[ModelDriftSchema]:
     """Get model drift based on model_id and model_type.
 
     Args:
         model_id (str): Model id.
         model_type (str): model type.
+        models (list): list of model versions.
 
     Returns:
         List[DriftSchema] List of model drift.
@@ -334,9 +337,6 @@ def get_model_drift(model_id: str, model_type: str) -> List[ModelDriftSchema]:
             f"{config.TECTON_FEATURE_SERVICE} : in_function={get_model_drift.__name__}",
             response.status_code,
         )
-
-    # get version history
-    models = get_model_version_history(model_id)
 
     result_drift = []
     for result in response.json().get(constants.RESULTS, []):
