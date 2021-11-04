@@ -12,7 +12,6 @@ from huxunifylib.database.cache_management import (
     create_cache_entry,
     get_cache_entry,
 )
-from huxunify.api.route.utils import get_db_client
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
     DataFeedSchema,
@@ -53,7 +52,11 @@ from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feed_details,
     get_idr_matching_trends,
 )
-from huxunify.api.route.utils import add_chart_legend, get_start_end_dates
+from huxunify.api.route.utils import (
+    add_chart_legend,
+    get_start_end_dates,
+    get_db_client,
+)
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import (
     redact_fields,
