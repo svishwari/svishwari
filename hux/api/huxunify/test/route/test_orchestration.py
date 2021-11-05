@@ -990,7 +990,6 @@ class OrchestrationRouteTest(TestCase):
                 if delivery.get(api_c.IS_AD_PLATFORM):
                     self.assertIsNone(delivery.get(api_c.MATCH_RATE))
 
-    # JIM
     def test_delete_audience(self) -> None:
         """Test delete audience API with valid ID."""
 
