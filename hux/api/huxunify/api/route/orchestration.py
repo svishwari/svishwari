@@ -1407,7 +1407,8 @@ class DeleteAudienceView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def delete(self, audience_id: str) -> Tuple[dict, int]:
+    @get_user_name()
+    def delete(self, audience_id: str, user_name: str) -> Tuple[dict, int]:
         """Deletes an audience.
 
         ---
@@ -1416,17 +1417,47 @@ class DeleteAudienceView(SwaggerView):
 
         Args:
             audience_id (str): ID of the audience to be deleted.
+            user_name (str): user_name extracted from Okta.
 
         Returns:
             Tuple[dict, int]: response dict, HTTP status code.
         """
 
-        deleted = orchestration_management.delete_audience(
-            get_db_client(), ObjectId(audience_id)
+        database = get_db_client()
+
+        deleted_audience = orchestration_management.delete_audience(
+            database, ObjectId(audience_id)
         )
 
-        if deleted:
-            return {}, HTTPStatus.NO_CONTENT
-        return {
-            "message": "Internal Server Error."
-        }, HTTPStatus.INTERNAL_SERVER_ERROR
+        if not deleted_audience:
+            logger.info(
+                "Failed to delete audience %s by user %s.",
+                audience_id,
+                user_name,
+            )
+            return {
+                api_c.MESSAGE: api_c.OPERATION_FAILED
+            }, HTTPStatus.INTERNAL_SERVER_ERROR
+
+        delete_audience_from_engagements = (
+            engagement_management.remove_audience_from_all_engagements(
+                database, ObjectId(audience_id), user_name
+            )
+        )
+
+        if not delete_audience_from_engagements:
+            logger.info(
+                "Failed to delete audience %s from engagements by user %s.",
+                audience_id,
+                user_name,
+            )
+            return {
+                api_c.MESSAGE: api_c.OPERATION_FAILED
+            }, HTTPStatus.INTERNAL_SERVER_ERROR
+
+        logger.info(
+            "Successfully deleted audience %s by user %s.",
+            audience_id,
+            user_name,
+        )
+        return {api_c.MESSAGE: {}}, HTTPStatus.NO_CONTENT
