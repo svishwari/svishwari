@@ -406,7 +406,7 @@ export default {
       ],
       items: [
         {
-          text: "All Customers",
+          text: "Customer Profiles",
           disabled: true,
           href: "/customers",
           icon: "customer-profiles",

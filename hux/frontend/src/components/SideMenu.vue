@@ -30,7 +30,7 @@
     </template>
 
     <v-list
-      v-for="item in items"
+      v-for="item in displayedMenuItems"
       :key="item.title"
       color="var(-v--primary-base)"
     >
@@ -156,6 +156,17 @@ export default {
 
     iconSize() {
       return this.isMini ? 21 : 14
+    },
+
+    displayedMenuItems() {
+      return this.items.filter((x) => {
+        if (x.menu && x.display) {
+          x.menu = x.menu.filter((y) => y.display)
+          return true
+        } else {
+          return x.display
+        }
+      })
     },
   },
 }
