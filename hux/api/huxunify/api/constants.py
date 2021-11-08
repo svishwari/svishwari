@@ -811,8 +811,8 @@ ATTRIBUTE = "attribute"
 
 PARAM_STORE_PREFIX = "unified"
 PARAMETER_STORE_ERROR_MSG = (
-    "An error occurred while attempting to "
-    "store secrets in the parameter store."
+    "An error occurred while attempting to"
+    " store secrets in the parameter store."
 )
 
 # users
