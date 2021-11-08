@@ -66,7 +66,7 @@
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
             }"
-            :style="{ minWidth: header.width, left: 0 }"
+            :style="{ minWidth: header.width, left: 0  }"
           >
             <div
               v-if="header.value == 'name'"
@@ -541,7 +541,7 @@ export default {
         th:nth-child(1) {
           position: sticky;
           left: 0;
-          z-index: 9;
+          // z-index: 9;
           border-right: thin solid rgba(0, 0, 0, 0.12);
           overflow-y: visible;
           overflow-x: visible;
@@ -549,16 +549,26 @@ export default {
         border-radius: 12px 12px 0px 0px;
       }
       tr {
-        &:hover {
-          background: var(--v-primary-lighten2) !important;
-        }
         td:nth-child(1) {
           position: sticky;
           top: 0;
           left: 0;
-          z-index: 8;
           border-right: thin solid rgba(0, 0, 0, 0.12);
         }
+        &:hover {
+          background: var(--v-primary-lighten2) !important;
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+        }
+        td.fixed-column {
+          // z-index: 1 !important;
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+          &:hover {
+            z-index: 1 !important;
+            background: var(--v-primary-lighten2) !important;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+          }
+        }
+        
       }
     }
 
