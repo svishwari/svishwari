@@ -368,7 +368,7 @@ class TestAudienceManagement(unittest.TestCase):
 
     def test_get_all_audiences_filter(self):
         """Test get_all_audiences with filters."""
-        am.create_audience(
+        audience_1 = am.create_audience(
             self.database,
             "Audience1",
             self.audience_filters,
@@ -401,38 +401,12 @@ class TestAudienceManagement(unittest.TestCase):
             self.sample_user.get(c.USER_DISPLAY_NAME),
         )
 
-        # Favorite filter.
-        filters = {c.USER_FAVORITES: self.sample_user.get(c.USER_DISPLAY_NAME)}
+        # List of audience_ids
+        filters = {c.ATTRIBUTE: [c.AGE, c.S_TYPE_CITY]}
         filtered_audiences = am.get_all_audiences(
-            self.database, filters=filters
+            self.database, filters=filters, audience_ids=[audience_1.get(c.ID)]
         )
-
-        # No favorite set yet.
-        self.assertFalse(filtered_audiences)
-
-        # Adding audience to favorites.
-        manage_user_favorites(
-            self.database,
-            self.sample_user[c.OKTA_ID],
-            c.AUDIENCES,
-            audience_by_user1[c.ID],
-        )
-        filtered_audiences = am.get_all_audiences(
-            self.database, filters=filters
-        )
-
-        self.assertEqual(len(filtered_audiences), 1)
-
-        # Check with multiple filters
-        filters = {
-            c.USER_FAVORITES: self.user_name,
-            c.WORKED_BY: self.user_name,
-            c.ATTRIBUTE: [c.AGE, c.S_TYPE_CITY],
-        }
-        filtered_audiences = am.get_all_audiences(
-            self.database, filters=filters
-        )
-        self.assertFalse(filtered_audiences)
+        self.assertEqual(filtered_audiences[0][c.ID], audience_1.get(c.ID))
 
     def test_get_all_audiences_with_users(self):
         """Test get_all_audiences with users."""
@@ -574,17 +548,8 @@ class TestAudienceManagement(unittest.TestCase):
             # store the audience obj
             audiences.append(audience_doc)
 
-        # Set first audience as favorite
-        manage_user_favorites(
-            self.database,
-            self.sample_user[c.OKTA_ID],
-            c.AUDIENCES,
-            audiences[0][c.ID],
-        )
-
-        # Favorite and worked by filters.
+        # Worked by filters.
         filters = {
-            c.USER_FAVORITES: self.sample_user.get(c.USER_DISPLAY_NAME),
             c.WORKED_BY: self.sample_user.get(c.USER_DISPLAY_NAME),
         }
         audiences_filtered = am.get_all_audiences_and_deliveries(
@@ -598,6 +563,13 @@ class TestAudienceManagement(unittest.TestCase):
         }
         audiences_filtered = am.get_all_audiences_and_deliveries(
             self.database, filters=filters
+        )
+        self.assertEqual(len(audiences_filtered), 2)
+
+        # List of audience IDs
+        audiences_filtered = am.get_all_audiences_and_deliveries(
+            self.database,
+            audience_ids=[audiences[0].get(c.ID), audiences[1].get(c.ID)],
         )
         self.assertEqual(len(audiences_filtered), 2)
 
