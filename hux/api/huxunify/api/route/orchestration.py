@@ -250,7 +250,6 @@ class AudienceView(SwaggerView):
         if request.args.get(api_c.FAVORITES) and validation.validate_bool(
             request.args.get(api_c.FAVORITES)
         ):
-            filter_dict[api_c.FAVORITES] = user_name
             favorite_audiences = get_user_favorites(
                 get_db_client(), user_name, api_c.AUDIENCES
             )
