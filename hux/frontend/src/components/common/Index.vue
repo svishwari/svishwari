@@ -1083,8 +1083,7 @@
         <div
           class="text-caption black--text text--lighten-4 mb-2"
           data-e2e="model-owner"
-        >
-        </div>
+        ></div>
         <div class="d-flex justify-center mb-6">
           <card-stat label="Version" value="0.02" stat-class="border-0">
             <div class="mb-3">
