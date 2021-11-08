@@ -63,7 +63,7 @@
           :class="
             disabled
               ? 'black--text text--darken-4'
-              : 'black--text text--lighten-5'
+              : 'primary--text'
           "
           :style="{ 'padding-top': !icon ? '56px' : null }"
           data-e2e="card-title"
@@ -85,7 +85,6 @@
             description
             text-body-2
             black--text
-            text--lighten-4
           "
           :style="{ 'padding-top': !icon ? '22px' : null }"
           data-e2e="card-description"

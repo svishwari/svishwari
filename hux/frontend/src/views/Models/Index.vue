@@ -25,7 +25,7 @@
         <descriptive-card
           v-for="model in models"
           :key="model.id"
-          :action-menu="false"
+          :action-menu="model.status !== 'Active'"
           :coming-soon="false"
           width="280"
           height="255"
@@ -51,7 +51,7 @@
               class="text-body-2 black--text text--lighten-4"
               data-e2e="model-owner"
             >
-              {{ model.owner }}
+              
             </p>
 
             <v-row no-gutters>
@@ -90,6 +90,15 @@
                 </card-stat>
               </v-col>
             </v-row>
+          </template>
+          <template slot="action-menu-options">
+            <v-list class="list-wrapper">
+              <v-list-item-group>
+                <v-list-item>
+                  <v-list-item-title> Remove </v-list-item-title>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
           </template>
         </descriptive-card>
       </template>

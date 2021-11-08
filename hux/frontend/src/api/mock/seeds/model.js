@@ -1,25 +1,30 @@
 export default [
   {
-    name: "Lifetime Value",
+    name: "Predicted lifetime value",
     status: "Active",
     type: "ltv",
-    id: "2",
-    description: "Predict the lifetime value of a customer.",
+    id: "1",
+    description: "Predicts the lifetime value of a customer based on models.",
   },
   {
-    name: "Propensity to Purchase",
-    status: "Pending",
+    name: "Propensity to purchase",
+    status: "Active",
     type: "purchase",
-    id: "3",
-    description:
-      "Propensity of a customer making a purchase after receiving an email.",
+    id: "2",
+    description: "Propensity of a customer making a purchase after receivin...",
   },
   {
-    name: "Propensity to Unsubscribe",
+    name: "Propensity to unsubscribe",
     status: "Active",
     type: "unsubscribe",
-    id: "1",
-    description:
-      "Predicts the propensity of a customer to unsubscribe from an email list.",
+    id: "3",
+    description: "Propensity of a customer unsubscribing to emails.",
+  },
+  {
+    name: "Churn",
+    status: "Requested",
+    type: "unsubscribe",
+    id: "4",
+    description: "Rating forecast for change in customer numbers.",
   },
 ]
