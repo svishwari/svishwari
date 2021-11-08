@@ -40,3 +40,9 @@ class EmptyAPIResponseError(IntegratedAPIEndpointException):
         "Integrated API <{}> failure, returned status code "
         "<{}>. Failed obtaining dependent data"
     )
+
+
+class FailedSSMDependencyError(IntegratedAPIEndpointException):
+    """Exception for dependency failure for AWS SSM parameter store."""
+
+    exception_message = "Raised <{}> error, returned status code <{}>."

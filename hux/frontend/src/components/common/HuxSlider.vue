@@ -22,10 +22,7 @@
     >
       <template #append>
         <span
-          class="slider-value-display"
-          :style="{
-            color: currentColor,
-          }"
+          class="slider-value-display black--text text-subtitle-1"
           v-text="currentValue + '%'"
         ></span>
       </template>
@@ -141,13 +138,21 @@ export default {
   }
 }
 .hux-score-slider {
+  ::v-deep .v-input__control {
+    .v-input__slot {
+      margin: 0;
+    }
+    .v-messages {
+      display: none;
+    }
+  }
   margin-left: 10px;
   margin-right: 10px;
 
   .slider-value-display {
-    width: 28px;
     height: 16px;
-    margin-top: 4px;
+    margin-top: -3px;
+    margin-left: 3px;
   }
 
   ::v-deep .v-slider__thumb {
@@ -165,6 +170,8 @@ export default {
 
   ::v-deep .v-slider--horizontal {
     margin-left: 0px;
+    margin: 0;
+    min-height: 28px;
 
     .v-slider__track-container {
       width: 101%;

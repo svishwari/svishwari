@@ -257,7 +257,9 @@ MAX_AUDIENCE_SIZE_FOR_HASHED_FILE_DOWNLOAD = (
 AUDIENCE_FILTER_AGGREGATOR_ANY = "any"
 AUDIENCE_FILTER_AGGREGATOR_ALL = "all"
 AUDIENCE_CUSTOMER_LIST = "customer_list"
-
+ATTRIBUTE = "attribute"
+ATTRIBUTE_FILTER_FIELD = "filters.section_filters.field"
+WORKED_BY = "worked_by"
 # Audience types
 CUSTOM_AUDIENCE = "custom_audience"
 CUSTOM_AUDIENCE_STR = "Custom Audience"
@@ -336,6 +338,7 @@ USER_ROLE_VIEWER = "viewer"
 USER_ROLES = [USER_ROLE_ADMIN, USER_ROLE_EDITOR, USER_ROLE_VIEWER]
 COMPONENT_ID = "component_id"
 COMPONENT_NAME = "component_name"
+USER_PII_ACCESS = "pii_access"
 
 CAMPAIGNS = "campaigns"
 DESTINATIONS = "destinations"
@@ -458,6 +461,7 @@ REQUIRED_FIELDS = {
 # Allowed Fields per collection
 ALLOWED_FIELDS = {
     CONFIGURATIONS_COLLECTION: [
+        OBJECT_ID,
         CONFIGURATION_FIELD_NAME,
         CONFIGURATION_FIELD_ICON,
         CONFIGURATION_FIELD_TYPE,

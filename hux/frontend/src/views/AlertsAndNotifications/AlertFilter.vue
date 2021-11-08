@@ -3,7 +3,7 @@
     v-model="localDrawer"
     :content-padding="'pa-0'"
     :content-header-padding="'px-3'"
-    :expandedWidth="300"
+    :expanded-width="300"
     :width="300"
   >
     <template #header-left>
@@ -17,11 +17,11 @@
         <hux-filter-panel title="Alert type" :count="selctedAlertType.length">
           <v-checkbox
             v-for="data in alertType"
-            multiple
             :key="data.id"
+            v-model="selctedAlertType"
+            multiple
             color="#00a3e0"
             class="text--base-1"
-            v-model="selctedAlertType"
             :label="data.title"
             :value="data.title"
           ></v-checkbox>
@@ -29,9 +29,9 @@
         <hux-filter-panel title="Category" :count="selctedCategory.length">
           <v-checkbox
             v-for="data in category"
-            multiple
             :key="data.id"
             v-model="selctedCategory"
+            multiple
             color="#00a3e0"
             :label="data.title"
             :value="data.title"
@@ -51,9 +51,9 @@
         <hux-filter-panel title="User" :count="selctedUsers.length">
           <v-checkbox
             v-for="data in users"
-            multiple
             :key="data.id"
             v-model="selctedUsers"
+            multiple
             color="#00a3e0"
             :label="data.title"
             :value="data.title"
@@ -78,14 +78,14 @@
 <script>
 // import { mapGetters } from "vuex"
 import Drawer from "@/components/common/Drawer"
-import Icon from "@/components/common/Icon"
+// import Icon from "@/components/common/Icon"
 import HuxFilterPanels from "@/components/common/FilterPanels"
 import HuxFilterPanel from "@/components/common/FilterPanel"
 export default {
   name: "AlertFilterDrawer",
   components: {
     Drawer,
-    Icon,
+    // Icon,
     HuxFilterPanels,
     HuxFilterPanel,
   },

@@ -38,9 +38,12 @@
         </huxButton>
       </template>
     </page-header>
-      <alert-filter-drawer v-model="isFilterToggled"  />
+    <alert-filter-drawer v-model="isFilterToggled" />
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row v-if="!loading" class="pb-7 pl-3 white">
+    <v-row
+      v-if="notificationData.length > 0 && !loading"
+      class="pb-7 pl-3 white"
+    >
       <hux-data-table
         :columns="columnDefs"
         :data-items="notificationData"
@@ -101,6 +104,48 @@
         </template>
       </hux-data-table>
     </v-row>
+    <v-row
+      v-if="notificationData.length == 0 && !loading"
+      class="background-empty"
+    >
+      <empty-page type="no-alerts" :size="50">
+        <template #title>
+          <div class="title-no-notification">No alerts yet</div></template
+        >
+        <template #subtitle>
+          <div class="des-no-notification">
+            Currently there are no alerts available.<br />
+            Check back later or change your filters.
+          </div>
+        </template>
+        <template #button>
+          <huxButton
+            button-text="Clear filters"
+            variant="primary base"
+            size="large"
+            class="ma-2 font-weight-regular text-button"
+            is-tile
+            :height="'40'"
+          >
+            Clear filters
+          </huxButton>
+        </template>
+      </empty-page>
+    </v-row>
+    <v-row
+      v-if="
+        notificationData.length > 0 && notificationData.length <= 0 && !loading
+      "
+      class="d-flex justify-center align-center"
+    >
+      <error
+        icon-type="error-on-screens"
+        :icon-size="50"
+        title="Alerts &amp; notifications is currently unavailable"
+        subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+      >
+      </error>
+    </v-row>
     <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
     <v-divider v-if="enableLazyLoad" class="hr-devider"></v-divider>
     <v-progress-linear v-if="enableLazyLoad" active indeterminate />
@@ -118,11 +163,13 @@ import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Observer from "@/components/common/Observer"
 import Icon from "@/components/common/Icon"
-import HuxFiltersDrawer from "@/components/common/FiltersDrawer"
-import HuxFilterPanels from "@/components/common/FilterPanels"
-import HuxFilterPanel from "@/components/common/FilterPanel"
+// import HuxFiltersDrawer from "@/components/common/FiltersDrawer"
+// import HuxFilterPanels from "@/components/common/FilterPanels"
+// import HuxFilterPanel from "@/components/common/FilterPanel"
 import AlertFilterDrawer from "./AlertFilter"
 import AlertDrawer from "./Drawer/AlertDrawer"
+import EmptyPage from "@/components/common/EmptyPage"
+import Error from "@/components/common/screens/Error"
 
 export default {
   name: "AlertsAndNotifications",
@@ -135,11 +182,13 @@ export default {
     Tooltip,
     Observer,
     Icon,
-   HuxFilterPanels,
-    HuxFilterPanel,
-    HuxFiltersDrawer,
+    // HuxFilterPanels,
+    // HuxFilterPanel,
+    // HuxFiltersDrawer,
     AlertFilterDrawer,
     AlertDrawer,
+    EmptyPage,
+    Error,
   },
   data() {
     return {
@@ -199,7 +248,7 @@ export default {
         batchNumber: 1,
         isLazyLoad: false,
       },
-       isFilterToggled: false,
+      isFilterToggled: false,
       notificationId: null,
     }
   },
@@ -255,9 +304,9 @@ export default {
         this.totalNotifications / this.batchDetails.batchSize
       )
     },
-     toggleFilterDrawer() {
-       this.isFilterToggled = !this.isFilterToggled
-     },
+    toggleFilterDrawer() {
+      this.isFilterToggled = !this.isFilterToggled
+    },
     getIconColor(value) {
       if (value) {
         return value === "Success"
@@ -366,5 +415,26 @@ export default {
 }
 .hr-devider {
   margin-top: -27px !important;
+}
+.background-empty {
+  background-image: url("../../assets/images/no-alert-frame.png");
+  background-position: center;
+}
+
+//to overwrite the classes
+
+.title-no-notification {
+  font-size: 24px !important;
+  line-height: 34px !important;
+  font-weight: 300 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
+}
+.des-no-notification {
+  font-size: 14px !important;
+  line-height: 16px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
 }
 </style>

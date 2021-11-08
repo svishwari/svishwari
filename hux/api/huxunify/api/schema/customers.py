@@ -378,6 +378,14 @@ class TotalCustomersInsightsSchema(Schema):
     )
 
 
+class CustomerRevenueInsightsSchema(Schema):
+    """Revenue customer insights schema"""
+
+    date = DateTimeWithZ(required=True)
+    spend = Float(required=True, attribute=api_c.LTV)
+    revenue = Float(required=True)
+
+
 class CustomersInsightsCitiesSchema(Schema):
     """City level geographic customer insights schema."""
 

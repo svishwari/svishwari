@@ -7,7 +7,6 @@ describe("Orchestration > Destinations", () => {
     cy.visit(route.destinations)
   })
 
-  // TODO in HUS-1373 after HUS-1230 is merged
   it("should be able to manage destinations", () => {
     cy.location("pathname").should("eq", route.destinations)
 

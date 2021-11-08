@@ -50,9 +50,23 @@ class CdpDataSourcesTest(TestCase):
             return_value=self.database,
         ).start()
 
+        # mock get_db_client() in decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
         self.request_mocker.start()
 
         # stop all mocks in cleanup
@@ -73,7 +87,7 @@ class CdpDataSourcesTest(TestCase):
             many=True,
         )
 
-    def test_get_data_source_by_id_valid_id(self):
+    def test_get_data_source_by_id(self):
         """Test get data source by id from DB."""
 
         valid_response = self.data_sources[0]

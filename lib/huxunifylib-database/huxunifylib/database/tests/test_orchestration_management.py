@@ -7,6 +7,10 @@ from bson import ObjectId
 
 import huxunifylib.database.orchestration_management as am
 import huxunifylib.database.delivery_platform_management as dpm
+from huxunifylib.database.user_management import (
+    set_user,
+    manage_user_favorites,
+)
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.db_exceptions as de
@@ -64,6 +68,17 @@ class TestAudienceManagement(unittest.TestCase):
         ]
         self.destination_ids = ["destination_id1", "destination_id2"]
         self.audience_doc = None
+
+        self.sample_user = {
+            c.OKTA_ID: "00ub0oNGTSWTBKOLGLNR",
+            c.S_TYPE_EMAIL: "user1@deloitte.com",
+            c.USER_ORGANIZATION: "deloitte",
+            c.USER_DISPLAY_NAME: "User1",
+            c.USER_ROLE: c.USER_ROLE_ADMIN,
+            c.USER_PROFILE_PHOTO: "https://s3/unififed/3.png",
+        }
+
+        set_user(self.database, **self.sample_user)
 
     def _setup_audience(self) -> list:
         """Setup audience
@@ -351,6 +366,74 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertEqual(audiences[0][c.AUDIENCE_NAME], "Audience1")
         self.assertEqual(audiences[1][c.AUDIENCE_NAME], "Audience2")
 
+    def test_get_all_audiences_filter(self):
+        """Test get_all_audiences with filters."""
+        am.create_audience(
+            self.database,
+            "Audience1",
+            self.audience_filters,
+            user_name=self.user_name,
+            size=1450,
+        )
+
+        audience_by_user1 = am.create_audience(
+            self.database,
+            "User1 Audience",
+            [],
+            user_name=self.sample_user.get(c.USER_DISPLAY_NAME),
+            size=1500,
+        )
+
+        # Attribute filters.
+        filters = {c.ATTRIBUTE: [c.AGE, c.S_TYPE_CITY]}
+        filtered_audiences = am.get_all_audiences(
+            self.database, filters=filters
+        )
+        self.assertEqual(len(filtered_audiences), 1)
+
+        # Worked by filter.
+        filters = {c.WORKED_BY: self.sample_user.get(c.USER_DISPLAY_NAME)}
+        filtered_audiences = am.get_all_audiences(
+            self.database, filters=filters
+        )
+        self.assertEqual(
+            filtered_audiences[0][c.CREATED_BY],
+            self.sample_user.get(c.USER_DISPLAY_NAME),
+        )
+
+        # Favorite filter.
+        filters = {c.USER_FAVORITES: self.sample_user.get(c.USER_DISPLAY_NAME)}
+        filtered_audiences = am.get_all_audiences(
+            self.database, filters=filters
+        )
+
+        # No favorite set yet.
+        self.assertFalse(filtered_audiences)
+
+        # Adding audience to favorites.
+        manage_user_favorites(
+            self.database,
+            self.sample_user[c.OKTA_ID],
+            c.AUDIENCES,
+            audience_by_user1[c.ID],
+        )
+        filtered_audiences = am.get_all_audiences(
+            self.database, filters=filters
+        )
+
+        self.assertEqual(len(filtered_audiences), 1)
+
+        # Check with multiple filters
+        filters = {
+            c.USER_FAVORITES: self.user_name,
+            c.WORKED_BY: self.user_name,
+            c.ATTRIBUTE: [c.AGE, c.S_TYPE_CITY],
+        }
+        filtered_audiences = am.get_all_audiences(
+            self.database, filters=filters
+        )
+        self.assertFalse(filtered_audiences)
+
     def test_get_all_audiences_with_users(self):
         """Test get_all_audiences with users."""
 
@@ -449,6 +532,74 @@ class TestAudienceManagement(unittest.TestCase):
                 self.assertEqual(
                     delivery[c.STATUS], c.AUDIENCE_STATUS_DELIVERING
                 )
+
+    def test_get_all_audiences_with_deliveries_filters(self):
+        """Test get_all_audiences with deliveries and filters."""
+
+        # Set delivery platform
+        delivery_platform_doc = dpm.set_delivery_platform(
+            self.database,
+            c.DELIVERY_PLATFORM_FACEBOOK,
+            c.DELIVERY_PLATFORM_FACEBOOK.lower(),
+            {
+                "facebook_access_token": "path1",
+                "facebook_app_secret": "path2",
+                "facebook_app_id": "path3",
+                "facebook_ad_account_id": "path4",
+            },
+        )
+
+        # set connection status
+        dpm.set_connection_status(
+            self.database, delivery_platform_doc[c.ID], c.STATUS_SUCCEEDED
+        )
+
+        audiences = []
+        for i in range(2):
+            audience_doc = am.create_audience(
+                self.database,
+                f"My Audience-{i}",
+                self.audience_filters,
+                user_name=self.sample_user.get(c.USER_DISPLAY_NAME),
+                size=i * 1000,
+            )
+            # create delivery job
+            dpm.set_delivery_job(
+                self.database,
+                audience_doc[c.ID],
+                delivery_platform_doc[c.ID],
+                [],
+            )
+
+            # store the audience obj
+            audiences.append(audience_doc)
+
+        # Set first audience as favorite
+        manage_user_favorites(
+            self.database,
+            self.sample_user[c.OKTA_ID],
+            c.AUDIENCES,
+            audiences[0][c.ID],
+        )
+
+        # Favorite and worked by filters.
+        filters = {
+            c.USER_FAVORITES: self.sample_user.get(c.USER_DISPLAY_NAME),
+            c.WORKED_BY: self.sample_user.get(c.USER_DISPLAY_NAME),
+        }
+        audiences_filtered = am.get_all_audiences_and_deliveries(
+            self.database, filters=filters
+        )
+        self.assertEqual(audiences_filtered[0][c.ID], audiences[0][c.ID])
+
+        # Attribute filters.
+        filters = {
+            c.ATTRIBUTE: [c.AGE, c.S_TYPE_CITY],
+        }
+        audiences_filtered = am.get_all_audiences_and_deliveries(
+            self.database, filters=filters
+        )
+        self.assertEqual(len(audiences_filtered), 2)
 
     def test_delete_audience(self):
         """Test delete an audience"""

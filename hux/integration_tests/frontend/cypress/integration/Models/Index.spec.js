@@ -14,10 +14,10 @@ describe("View models", () => {
 
     cy.get(selector.models.item).should(($models) => {
       expect($models.eq(0).find(selector.card.title)).to.contain(
-        "Lifetime Value",
+        "Pendleton Unsubscribe Model",
       )
       expect($models.eq(0).find(selector.card.description)).to.contain(
-        "Predict the lifetime value of a customer",
+        "Predicts the propensity of a customer to unsubscribe",
       )
 
       expect($models.eq(1).find(selector.card.title)).to.contain(

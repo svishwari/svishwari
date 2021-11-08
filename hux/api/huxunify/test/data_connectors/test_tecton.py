@@ -232,14 +232,14 @@ class TectonTest(TestCase):
 
         # test the last model
         self.assertDictEqual(
-            models[-1],
+            models[0],
             {
                 "id": 1,
                 "last_trained": datetime(2021, 7, 31, 0, 0),
                 "description": "Propensity of a customer unsubscribing "
                 "after receiving an email.",
                 "fulcrum_date": datetime(2021, 7, 17, 0, 0),
-                "lookback_window": 90,
+                "lookback_window": 7,
                 "name": "Propensity to Unsubscribe",
                 "type": "unsubscribe",
                 "owner": "Susan Miller",
@@ -335,6 +335,18 @@ class TectonTest(TestCase):
             request_mocker (Mocker): request mocker object.
         """
 
+        # setup the request mock post for version history
+        request_mocker.post(
+            self.config.TECTON_FEATURE_SERVICE,
+            text=json.dumps(
+                t_c.MOCKED_MODEL_VERSION_HISTORY,
+                default=json_util.default,
+            ),
+            headers=self.config.TECTON_API_HEADERS,
+        )
+
+        models = tecton.get_model_version_history(2)
+
         # setup the request mock post
         request_mocker.post(
             self.config.TECTON_FEATURE_SERVICE,
@@ -345,10 +357,10 @@ class TectonTest(TestCase):
             headers=self.config.TECTON_API_HEADERS,
         )
 
-        drift_data = tecton.get_model_drift(2, constants.LTV)
+        drift_data = tecton.get_model_drift(2, constants.LTV, models)
 
         # test that it was actually called and only once
-        self.assertEqual(request_mocker.call_count, 1)
+        self.assertEqual(request_mocker.call_count, 2)
         self.assertTrue(request_mocker.called)
 
         self.assertTrue(drift_data)
@@ -425,17 +437,19 @@ class TectonTest(TestCase):
         )
 
         with self.assertRaises(EmptyAPIResponseError):
-            tecton.get_model_drift(model_id=model_id, model_type=model_type)
+            tecton.get_model_drift(
+                model_id=model_id, model_type=model_type, models=[]
+            )
 
     @requests_mock.Mocker()
     @given(
         model_id=st.integers(min_value=100, max_value=1000),
         model_version=st.text(alphabet=string.ascii_letters),
     )
-    def test_get_model_features_raise_dependency_error(
+    def test_get_model_features_no_data_available(
         self, request_mocker: Mocker, model_id: int, model_version: str
     ) -> None:
-        """Test get model features raise dependency error.
+        """Test get model features when there is no data available.
 
         Args:
             request_mocker (Mocker): request mocker object.
@@ -448,8 +462,4 @@ class TectonTest(TestCase):
             text=json.dumps({}),
             headers=self.config.TECTON_API_HEADERS,
         )
-
-        with self.assertRaises(FailedAPIDependencyError):
-            tecton.get_model_features(
-                model_id=model_id, model_version=model_version
-            )
+        self.assertFalse(tecton.get_model_features(model_id, model_version))

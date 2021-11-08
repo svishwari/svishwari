@@ -1,4 +1,5 @@
 """File for decorators used in the API routes"""
+# pylint: disable=too-many-statements
 from functools import wraps
 from typing import Any
 from http import HTTPStatus
@@ -295,7 +296,14 @@ def api_error_handler(custom_message: dict = None) -> object:
                     "message": "Error connecting to Facebook"
                 }, HTTPStatus.BAD_REQUEST
 
-            except ValueError:
+            except ValueError as value_error:
+                logger.error(
+                    "%s: %s Error encountered while executing %s in module %s.",
+                    value_error.__class__,
+                    value_error.args[0],
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
                 return {
                     "message": custom_message
                     if custom_message
@@ -389,6 +397,18 @@ def api_error_handler(custom_message: dict = None) -> object:
                 )
                 return {
                     "message": constants.FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE
+                }, HTTPStatus.FAILED_DEPENDENCY
+
+            except iae.FailedSSMDependencyError as exc:
+                logger.error(
+                    "%s: %s Error encountered while executing %s in module %s.",
+                    exc.__class__,
+                    exc.args[0] if exc.args else exc.exception_message,
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
+                return {
+                    "message": constants.AWS_SSM_PARAM_NOT_FOUND_ERROR_MESSAGE
                 }, HTTPStatus.FAILED_DEPENDENCY
 
             except Exception as exc:  # pylint: disable=broad-except

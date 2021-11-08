@@ -1,7 +1,9 @@
 # pylint: disable=too-many-lines
 """Purpose of this file is to house all the engagement API tests."""
 from unittest import TestCase, mock
+from unittest.mock import MagicMock
 from http import HTTPStatus
+
 import requests_mock
 import mongomock
 
@@ -46,15 +48,27 @@ class TestUserRoutes(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
-        # mock get db client from user
+        # mock get_db_client() in users
         mock.patch(
             "huxunify.api.route.user.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() in decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
             return_value=self.database,
         ).start()
 
         # mock get db client from utils
         mock.patch(
             "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() for the userinfo decorator.
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
             return_value=self.database,
         ).start()
 
@@ -296,6 +310,40 @@ class TestUserRoutes(TestCase):
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual({api_c.MESSAGE: api_c.USER_NOT_FOUND}, response.json)
 
+    def test_update_user(self):
+        """Test successfully updating a user"""
+        role = "admin"
+        display_name = "NEW_DISPLAY_NAME"
+
+        update_body = {
+            db_c.USER_ROLE: role,
+            db_c.USER_DISPLAY_NAME: display_name,
+        }
+
+        response = self.app.patch(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=update_body,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(role, response.json[db_c.USER_ROLE])
+        self.assertEqual(display_name, response.json[db_c.USER_DISPLAY_NAME])
+
+    def test_update_user_invalid_update_body(self):
+        """Test successfully updating a user"""
+        role = "admin"
+        display_name = "NEW_DISPLAY_NAME"
+
+        update_body = {"bad_field": role, db_c.USER_DISPLAY_NAME: display_name}
+
+        response = self.app.patch(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=update_body,
+        )
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
     def test_get_user_favorites(self):
         """Test getting user favorites"""
         self.assertFalse(
@@ -311,3 +359,33 @@ class TestUserRoutes(TestCase):
         self.assertFalse(
             get_user_favorites(self.database, None, db_c.ENGAGEMENTS)
         )
+
+    @mock.patch("huxunify.api.route.user.JiraConnection")
+    def test_create_jira_issue(self, mock_jira: MagicMock):
+        """Test jira issue creation.
+
+        Args:
+            mock_jira (MagicMock): magic mock of JiraConnection
+        """
+
+        reported_issue = {
+            api_c.ISSUE_TYPE: api_c.TICKET_TYPE_BUG,
+            api_c.SUMMARY: "Test creation of JIRA ticket",
+            api_c.DESCRIPTION: "",
+        }
+
+        expected_response = reported_issue.copy()
+        expected_response.update({api_c.ID: 1234, api_c.KEY: "ABC-123"})
+
+        mock_jira_instance = mock_jira.return_value
+        mock_jira_instance.check_jira_connection.return_value = True
+        mock_jira_instance.create_jira_issue.return_value = expected_response
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}/{api_c.CONTACT_US}",
+            json=reported_issue,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertDictEqual(expected_response, response.json)
