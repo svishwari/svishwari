@@ -1159,7 +1159,7 @@ export default {
             this.deleteActionData = {
               engagementId: this.engagementId,
               audienceId: this.audienceId,
-              data: { id: event.data.id },
+              data: { id: event.data.delivery_platform_id },
             }
             this.showConfirmModal = true
             break
