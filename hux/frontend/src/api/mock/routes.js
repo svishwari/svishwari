@@ -536,6 +536,12 @@ export const defineRoutes = (server) => {
     let singleNotification = schema.notifications.find(id)
     return singleNotification
   })
+
+  server.get("/users", (schema) => {
+    return schema.users.all()
+  })
+
+
   // audiences
   server.get("/audiences")
 

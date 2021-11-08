@@ -297,6 +297,10 @@ client["notifications"].find = (notification_id) => {
   return http.get(`/notifications/${notification_id}`)
 }
 
+client["notifications"].getAllUsers = () => {
+  return http.get("/users")
+}
+
 //#endregion
 
 client["models"].overview = (id) => {

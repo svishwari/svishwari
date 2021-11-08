@@ -38,7 +38,7 @@
         </huxButton>
       </template>
     </page-header>
-    <alert-filter-drawer v-model="isFilterToggled" />
+    <alert-filter-drawer v-model="isFilterToggled" :users="getNotificationUsers"/>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <v-row
       v-if="notificationData.length > 0 && !loading"
@@ -163,9 +163,6 @@ import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Observer from "@/components/common/Observer"
 import Icon from "@/components/common/Icon"
-// import HuxFiltersDrawer from "@/components/common/FiltersDrawer"
-// import HuxFilterPanels from "@/components/common/FilterPanels"
-// import HuxFilterPanel from "@/components/common/FilterPanel"
 import AlertFilterDrawer from "./AlertFilter"
 import AlertDrawer from "./Drawer/AlertDrawer"
 import EmptyPage from "@/components/common/EmptyPage"
@@ -182,9 +179,6 @@ export default {
     Tooltip,
     Observer,
     Icon,
-    // HuxFilterPanels,
-    // HuxFilterPanel,
-    // HuxFiltersDrawer,
     AlertFilterDrawer,
     AlertDrawer,
     EmptyPage,
@@ -256,11 +250,15 @@ export default {
     ...mapGetters({
       notifications: "notifications/list",
       totalNotifications: "notifications/total",
+      getUsers: "notifications/uersList",
     }),
 
     notificationData() {
       let sortedNotificaitonList = this.notifications
       return sortedNotificaitonList.sort((a, b) => a.id - b.id)
+    },
+    getNotificationUsers() {
+      return this.getUsers
     },
   },
 
@@ -268,6 +266,7 @@ export default {
     this.loading = true
     await this.fetchNotificationsByBatch()
     this.calculateLastBatch()
+    this.getUserData()
     this.loading = false
     this.enableLazyLoad = true
     if (this.notifications.length === 0) {
@@ -278,6 +277,7 @@ export default {
     ...mapActions({
       getAllNotifications: "notifications/getAll",
       getNotificationByID: "notifications/getById",
+      getUsersNoti: "notifications/getAllUsers",
     }),
     goBack() {
       this.$router.go(-1)
@@ -298,6 +298,9 @@ export default {
     async fetchNotificationsByBatch() {
       await this.getAllNotifications(this.batchDetails)
       this.batchDetails.batchNumber++
+    },
+    async getUserData() {
+      await this.getUsersNoti()
     },
     calculateLastBatch() {
       this.lastBatch = Math.ceil(

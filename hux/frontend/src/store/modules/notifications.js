@@ -6,10 +6,13 @@ const namespaced = true
 
 const state = {
   items: {},
+  users: {}
 }
 
 const getters = {
   list: (state) => Object.values(state.items),
+
+  uersList: (state) => Object.values(state.users),
 
   single: (state) => (id) => state.items[id],
 
@@ -22,6 +25,12 @@ const mutations = {
       Vue.set(state.items, item.id, item)
     })
   },
+  SET_ALL_USERS(state, items) {
+    items.forEach((item) => {
+      Vue.set(state.users, item.id, item)
+    })
+  },
+
 
   SET_ONE(state, item) {
     Vue.set(state.items, item.id, item)
@@ -66,6 +75,15 @@ const actions = {
     try {
       const response = await api.notifications.find(id)
       commit("SET_ONE", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async getAllUsers({ commit }) {
+    try {
+      const response = await api.users.all()
+      commit("SET_ALL_USERS", response.data)
     } catch (error) {
       handleError(error)
       throw error

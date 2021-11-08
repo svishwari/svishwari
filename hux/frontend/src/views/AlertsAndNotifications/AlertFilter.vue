@@ -7,11 +7,19 @@
     :width="300"
   >
     <template #header-left>
-      <span class="text-h2 black--text"> Filter (0) </span>
+      <span class="text-h2 black--text"> Filter ({{ filterLength }}) </span>
     </template>
     <template #header-right>
-      <span class="text---body-2 primary--text"> Clear </span></template
-    >
+      <v-btn
+        plain
+        :color="filterLength > 0 ? 'primary base' : 'black lighten3'"
+        :disabled="filterLength > 0 ? false : true"
+        class="text-button float-right"
+      >
+        Clear
+      </v-btn>
+    </template>
+
     <template #default>
       <hux-filter-panels>
         <hux-filter-panel title="Alert type" :count="selctedAlertType.length">
@@ -50,16 +58,19 @@
         </hux-filter-panel>
         <hux-filter-panel title="User" :count="selctedUsers.length">
           <v-checkbox
-            v-for="data in users"
+            v-for="data in usersData"
             :key="data.id"
             v-model="selctedUsers"
             multiple
             color="#00a3e0"
-            :label="data.title"
-            :value="data.title"
+            :label="data.display_name"
+            :value="data.display_name"
           ></v-checkbox>
         </hux-filter-panel>
       </hux-filter-panels>
+    </template>
+    <template #footer-left>
+      <v-btn tile color="white" class="text-button ml-auto"> Cancel </v-btn>
     </template>
     <template #footer-right>
       <v-btn
@@ -94,6 +105,11 @@ export default {
       type: Boolean,
       required: true,
       default: false,
+    },
+    users: {
+      type: Array,
+      required: false,
+      default: [],
     },
   },
   data() {
@@ -173,32 +189,7 @@ export default {
           title: "Last 6 months",
         },
       ],
-      users: [
-        {
-          id: 1,
-          title: "user 1",
-        },
-        {
-          id: 2,
-          title: "user 2",
-        },
-        {
-          id: 3,
-          title: "user 3",
-        },
-        {
-          id: 4,
-          title: "user 4",
-        },
-        {
-          id: 5,
-          title: "user 5",
-        },
-        {
-          id: 6,
-          title: "user 6",
-        },
-      ],
+      usersData: this.users,
       selctedAlertType: [],
       selctedCategory: [],
       selectedTimeType: "Last week",
@@ -206,7 +197,15 @@ export default {
       selectedTimeCount: 1,
     }
   },
-  computed: {},
+  computed: {
+    filterLength() {
+      let alert = this.selctedAlertType.length > 0 ? 1 : 0
+      let category = this.selctedCategory.length > 0 ? 1 : 0
+      let time = 1
+      let users = this.selctedUsers.length > 0 ? 1 : 0
+      return alert + category + time + users
+    },
+  },
   watch: {
     value: function () {
       this.localDrawer = this.value
@@ -216,12 +215,37 @@ export default {
     },
   },
   methods: {
+    getTime(value) {
+        let today_date = new Date()
+      return new Date(
+        today_date.getFullYear(),
+        today_date.getMonth(),
+        today_date.getDate() - value
+      )
+    },
     apply() {
-      let first_date = new Date()
-      if (this.selectedTimeType === "Last week") {
-        // let last_date =
+      let getTime;
+      switch (this.selectedTimeType) {
+        case "Today":
+          getTime = this.getTime(0)
+          break
+        case "Last week":
+          getTime = this.getTime(7)
+          break
+        case "Last month":
+          getTime = this.getTime(30)
+          break
+        case "Last 3 months":
+          getTime = this.getTime(90)
+          break
+        case "Last 6 months":
+          this.getTime(180)
+          break
+        default:
+          this.getTime(7)
+          break
       }
-      console.log("value", first_date)
+      console.log("getTime", getTime)
     },
   },
 }
