@@ -174,6 +174,10 @@ class NotificationsSearch(SwaggerView):
             return {
                 "message": "Invalid or incomplete arguments received"
             }, HTTPStatus.BAD_REQUEST
+        notification_types = (
+            notification_types.split(",") if notification_types else []
+        )
+
         notification_categories = request.args.get(
             api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY, []
         )
@@ -184,6 +188,12 @@ class NotificationsSearch(SwaggerView):
             return {
                 "message": "Invalid or incomplete arguments received"
             }, HTTPStatus.BAD_REQUEST
+
+        notification_categories = (
+            notification_categories.split(",")
+            if notification_categories
+            else []
+        )
         users = request.args.get(api_c.QUERY_PARAMETER_USERS, [])
         if users:
             users = users.split(",")
