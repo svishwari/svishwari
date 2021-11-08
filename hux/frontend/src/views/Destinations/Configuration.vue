@@ -218,6 +218,8 @@ import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import SFMC from "./Configuration/SFMC.vue"
 import Icon from "../../components/common/Icon.vue"
 
+import sortBy from "lodash/sortBy"
+
 export default {
   name: "ConfigureDestination",
 
@@ -347,7 +349,7 @@ export default {
     },
 
     groupByCategory(list) {
-      return groupBy(list, "category")
+      return groupBy(sortBy(list, ["category", "name"]), "category")
     },
 
     onSelectDestination(id) {

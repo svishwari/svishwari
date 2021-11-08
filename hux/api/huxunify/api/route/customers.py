@@ -22,6 +22,7 @@ from huxunify.api.schema.customers import (
     CustomersInsightsStatesSchema,
     CustomersInsightsCitiesSchema,
     CustomersInsightsCountriesSchema,
+    CustomerRevenueInsightsSchema,
 )
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
@@ -41,6 +42,7 @@ from huxunify.api.data_connectors.cdp import (
     get_city_ltvs,
     get_spending_by_gender,
     get_demographic_by_country,
+    get_revenue_by_day,
 )
 from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feeds,
@@ -925,6 +927,64 @@ class TotalCustomersGraphView(SwaggerView):
             jsonify(
                 TotalCustomersInsightsSchema().dump(
                     customers_insight_total,
+                    many=True,
+                )
+            ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.REVENUE}",
+    "CustomersRevenueInsightsGraphView",
+)
+class CustomersRevenueInsightsGraphView(SwaggerView):
+    """Customer revenue insights graph view class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "array",
+                "items": CustomerRevenueInsightsSchema,
+            },
+            "description": "Customer Revenue Insights .",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Customer Revenue Insights."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(self) -> Tuple[list, int]:
+        """Retrieves customer revenue insights.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[list, int]: list of revenue details by date,
+                HTTP status code.
+        """
+
+        # get auth token from request
+        token_response = get_token_from_request(request)
+
+        start_date, end_date = get_start_end_dates(request, 6)
+
+        customers_revenue_insight = get_revenue_by_day(
+            token_response[0], start_date, end_date
+        )
+
+        return (
+            jsonify(
+                CustomerRevenueInsightsSchema().dump(
+                    customers_revenue_insight,
                     many=True,
                 )
             ),

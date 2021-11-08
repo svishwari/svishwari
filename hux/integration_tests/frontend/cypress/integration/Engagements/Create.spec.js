@@ -30,10 +30,8 @@ describe("Orchestration > Engagement > Create Engagement", () => {
     // Select the first destination from the existing ones
     cy.get(selector.engagement.selectDestination).eq(0).click()
     cy.get(selector.engagement.exitDrawer).click()
-  })
 
-  // TODO in HUS-1373 - add a check that it requires data extension name before proceeding
-  it.skip("should add destination data extensions and verify the configuration", () => {
+    // add a check that it requires data extension name before proceeding
     cy.get(selector.engagement.addDestination).click()
     cy.get("body").then(($body) => {
       if ($body.find(selector.engagement.salesForceAddButton).length > 0) {
@@ -48,5 +46,8 @@ describe("Orchestration > Engagement > Create Engagement", () => {
         cy.get(selector.engagement.exitDrawer).click()
       }
     })
+
+    // create engagement
+    cy.get(selector.engagement.createEngagement).click()
   })
 })
