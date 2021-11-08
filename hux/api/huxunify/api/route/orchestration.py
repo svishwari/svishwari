@@ -225,6 +225,7 @@ class AudienceView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
+    @api_error_handler()
     @get_user_name()
     # pylint: disable=no-self-use,too-many-locals
     def get(self, user_name: str) -> Tuple[list, int]:
