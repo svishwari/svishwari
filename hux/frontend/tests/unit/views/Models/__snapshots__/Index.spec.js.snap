@@ -6,7 +6,7 @@ exports[`Listing of models Models store successfully filled 1`] = `
   <v-progress-linear-stub color="primary" value="0" buffervalue="100" height="4"></v-progress-linear-stub>
   <v-row-stub tag="div" data-e2e="models-list" class="pa-14">
     <descriptive-card-stub icon="model-ltv" title="Lifetime Value" description="Predict the lifetime value of a customer." height="255" width="280" dotoption="Activate" iconcolor="Primary" data-e2e="model-item"><template></template> <template></template></descriptive-card-stub>
-    <descriptive-card-stub icon="model-purchase" title="Propensity to Purchase" description="Propensity of a customer making a purchase after receiving an email." disabled="true" height="255" width="280" dotoption="Activate" iconcolor="Primary" data-e2e="model-item"><template></template> <template></template></descriptive-card-stub>
+    <descriptive-card-stub icon="model-purchase" title="Propensity to Purchase" description="Propensity of a customer making a purchase after receiving an email." height="255" width="280" dotoption="Activate" iconcolor="Primary" data-e2e="model-item"><template></template> <template></template></descriptive-card-stub>
     <descriptive-card-stub icon="model-unsubscribe" title="Propensity to Unsubscribe" description="Predicts the propensity of a customer to unsubscribe from an email list." height="255" width="280" dotoption="Activate" iconcolor="Primary" data-e2e="model-item"><template></template> <template></template></descriptive-card-stub>
   </v-row-stub>
 </div>
