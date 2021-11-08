@@ -50,7 +50,7 @@
 
         <div class="subtitle-slot">
           <span
-            class="text-body-1"
+            class="text-caption"
             :class="{
               'no-click': !interactable,
               'flex-grow-1 align-center text-center highlevel-subtitle':
