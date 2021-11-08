@@ -2,6 +2,8 @@ import route from "../../support/routes"
 import selector from "../../support/selectors"
 import { randomName } from "../../support/utils"
 
+let randomAudienceName = randomName()
+
 describe("Orchestration > Audience > Create Audience", () => {
   beforeEach(() => {
     cy.signin()
@@ -17,7 +19,7 @@ describe("Orchestration > Audience > Create Audience", () => {
     // add new audience name
     cy.get(selector.audience.audienceName)
       .eq(0)
-      .type(`E2E test audience ${randomName()}`)
+      .type(`E2E test audience ${randomAudienceName}`)
 
     // should add the destination to the audience
     // Click on add audience icon
@@ -33,7 +35,7 @@ describe("Orchestration > Audience > Create Audience", () => {
         cy.get(selector.audience.newEngagementFirst).click()
         cy.get(selector.audience.newEngagementFirstName)
           .eq(0)
-          .type(`E2E test engagement ${randomName()}`)
+          .type(`E2E test engagement ${randomAudienceName}`)
         cy.get(selector.audience.createNewEngagement).click()
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(1000)
@@ -58,7 +60,7 @@ describe("Orchestration > Audience > Create Audience", () => {
         // Add new data extension name
         cy.get(selector.engagement.dataExtensionName)
           .eq(1)
-          .type("New Data Extension Text")
+          .type(`New Data Extension Text ${randomAudienceName}`)
         // Close the data extension drawer
         cy.get(selector.engagement.exitDataExtensionDrawer).click()
         // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -72,9 +74,30 @@ describe("Orchestration > Audience > Create Audience", () => {
     // TODO: skipping creating an audience until local miragejs issue is resolved
     cy.get(selector.audience.createAudience).click()
     //eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000)
+    cy.wait(10000)
     cy.location("pathname").should("contain", "insight")
-    cy.visit(route.audiences)
-    // cy.get(selector.nav.audiences).eq(0).click()
+  })
+
+  // This test case is written to delete an audience created above
+  it("should be able to delete a newly added audience", () => {
+    //eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+
+    cy.get(".menu-cell-wrapper").each(($el) => {
+      if ($el.text().includes(`E2E test audience ${randomAudienceName}`)) {
+        // Make the vertical dots visible
+        cy.wrap($el)
+          .find("span.action-icon")
+          .invoke("attr", "style", "display: block")
+          .find("button")
+          .invoke("attr", "aria-expanded", "true")
+          .click({force: true})
+
+        cy.contains("Delete audience").click()
+        cy.contains("Yes, delete it").click()
+        //eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(2000)
+      }
+    })
   })
 })
