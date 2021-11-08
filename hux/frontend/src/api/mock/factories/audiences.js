@@ -27,6 +27,7 @@ const engagementData = () => {
     deliveries: [
       {
         id: "7",
+        delivery_platform_id: "7",
         name: "Facebook",
         delivery_platform_type: "facebook",
         size: 20901,
@@ -95,12 +96,14 @@ export const audience = {
   deliveries: [
     {
       delivery_platform_type: "sendgrid",
+      delivery_platform_id: "2",
       status: "Delivered",
       last_delivered: faker.date.recent(),
       delivery_platform_name: "Sendgrid by Twilio",
     },
     {
       delivery_platform_type: "facebook",
+      delivery_platform_id: "7",
       status: "Delivered",
       last_delivered: faker.date.recent(),
       delivery_platform_name: "Facebook",
