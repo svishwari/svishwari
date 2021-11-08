@@ -91,7 +91,7 @@ describe("Orchestration > Audience > Create Audience", () => {
           .invoke("attr", "style", "display: block")
           .find("button")
           .invoke("attr", "aria-expanded", "true")
-          .click({force: true})
+          .click({ force: true })
 
         cy.contains("Delete audience").click()
         cy.contains("Yes, delete it").click()
