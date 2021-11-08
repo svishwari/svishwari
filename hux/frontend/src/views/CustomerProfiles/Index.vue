@@ -204,32 +204,36 @@
                 <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
                   <v-card-title class="pb-2 pl-6 pt-5">
                     <div class="mt-2">
+                       <span class="black--text text--darken-4 text-h3">
+                            Total customer spend
+                          </span>
                       <tooltip position-top>
                         <template #label-content>
-                          <span class="black--text text--darken-4 text-h3">
-                            Revenue
-                            <span class="text-body-2 time-frame">
-                              ({{ timeFrameLabel }})
-                            </span>
-                          </span>
                           <icon
                             type="info"
-                            :size="12"
+                            :size="8"
                             color="primary"
                             variant="base"
                           />
                         </template>
                         <template #hover-content>
-                          Revenue is calculated as the average sales price
-                          multiplied by the number of units sold.
+                          Total order value for all customers (known and anyonymous) over time.
                         </template>
                       </tooltip>
+                                                <span class="text-body-2 time-frame">
+                              ({{ timeFrameLabel }})
+                            </span>
                     </div>
                   </v-card-title>
                   <v-progress-linear
                     v-if="loadingCustomerChart"
                     :active="loadingCustomerChart"
                     :indeterminate="loadingCustomerChart"
+                  />
+                  <total-customer-spend-chart
+                    v-if="!loadingCustomerChart"
+                    :customers-data="totalCustomers"
+                    data-e2e="overview-chart"
                   />
                 </v-card>
               </v-col>
@@ -328,6 +332,7 @@ import MapChart from "@/components/common/MapChart/MapChart"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
+import TotalCustomerSpendChart from "@/components/common/TotalCustomerSpend/TotalCustomerSpendChart"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import IDRInsightsDrawer from "./Drawers/IDRInsightsDrawer"
 import CustomerList from "./CustomerList"
@@ -345,6 +350,7 @@ export default {
     MapStateList,
     mapSlider,
     TotalCustomerChart,
+    TotalCustomerSpendChart,
     IDRInsightsDrawer,
     CustomerList,
   },
