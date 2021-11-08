@@ -1105,7 +1105,7 @@ export default {
       .v-data-table-header {
         th:nth-child(1) {
           left: 0;
-          z-index: 9;
+          // z-index: 9;
           border-right: thin solid rgba(0, 0, 0, 0.12);
           overflow-y: visible;
           overflow-x: visible;
@@ -1115,6 +1115,7 @@ export default {
       tr {
         &:hover {
           background: var(--v-primary-lighten2) !important;
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
         }
         td {
           font-size: 14px !important;

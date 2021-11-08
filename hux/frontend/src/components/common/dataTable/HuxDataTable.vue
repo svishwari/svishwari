@@ -14,7 +14,6 @@
         fixed-header
         hide-default-footer
         must-sort
-        single-select
         :disable-sort="disableSort"
       >
         <!-- table headers -->
