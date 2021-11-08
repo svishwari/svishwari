@@ -1039,6 +1039,7 @@ export default {
         default:
           break
       }
+      await this.loadAudienceInsights()
     },
 
     getAgeString(min_age, max_age) {
@@ -1274,7 +1275,6 @@ export default {
           data: payload,
         })
       }
-      await this.loadAudienceInsights()
     },
     async loadAudienceInsights() {
       this.loading = true
