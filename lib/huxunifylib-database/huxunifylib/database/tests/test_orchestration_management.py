@@ -7,10 +7,7 @@ from bson import ObjectId
 
 import huxunifylib.database.orchestration_management as am
 import huxunifylib.database.delivery_platform_management as dpm
-from huxunifylib.database.user_management import (
-    set_user,
-    manage_user_favorites,
-)
+from huxunifylib.database.user_management import set_user
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.db_exceptions as de
@@ -376,7 +373,7 @@ class TestAudienceManagement(unittest.TestCase):
             size=1450,
         )
 
-        audience_by_user1 = am.create_audience(
+        am.create_audience(
             self.database,
             "User1 Audience",
             [],
