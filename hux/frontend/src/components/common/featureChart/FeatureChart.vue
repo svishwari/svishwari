@@ -82,7 +82,6 @@ export default {
         this.chartDimensions.width = this.$refs.chartBox.clientWidth
       }
     },
-
   },
 }
 </script>
