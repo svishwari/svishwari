@@ -1152,10 +1152,12 @@ class TestEngagementManagement(unittest.TestCase):
             self.database, audiences[0][c.ID], self.user_name
         )
 
-        new_eng0 = em.get_engagement(self.database, engagements[0])
-        new_eng1 = em.get_engagement(self.database, engagements[1])
-        new_eng2 = em.get_engagement(self.database, engagements[2])
-
-        self.assertEqual(1, len(new_eng0[c.AUDIENCES]))
-        self.assertEqual(2, len(new_eng1[c.AUDIENCES]))
-        self.assertEqual(3, len(new_eng2[c.AUDIENCES]))
+        for engagement in engagements:
+            new_eng = em.get_engagement(self.database, engagement)
+            self.assertFalse(
+                list(
+                    x
+                    for x in new_eng[c.AUDIENCES]
+                    if x[c.OBJECT_ID] == audiences[0][c.ID]
+                )
+            )

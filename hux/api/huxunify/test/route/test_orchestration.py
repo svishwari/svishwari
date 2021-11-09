@@ -990,7 +990,6 @@ class OrchestrationRouteTest(TestCase):
                 if delivery.get(api_c.IS_AD_PLATFORM):
                     self.assertIsNone(delivery.get(api_c.MATCH_RATE))
 
-    # JIM
     def test_delete_audience(self) -> None:
         """Test delete audience API with valid ID."""
 
@@ -1079,19 +1078,22 @@ class OrchestrationRouteTest(TestCase):
             self.database, audiences[0][db_c.ID], self.user_name
         )
 
-        new_eng0 = get_engagement(self.database, engagements[0])
-        new_eng1 = get_engagement(self.database, engagements[1])
-        new_eng2 = get_engagement(self.database, engagements[2])
-
         response = self.test_client.delete(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
-        self.assertEqual(1, len(new_eng0[api_c.AUDIENCES]))
-        self.assertEqual(2, len(new_eng1[api_c.AUDIENCES]))
-        self.assertEqual(3, len(new_eng2[api_c.AUDIENCES]))
+
+        for engagement in engagements:
+            new_eng = get_engagement(self.database, engagement)
+            self.assertFalse(
+                list(
+                    x
+                    for x in new_eng[api_c.AUDIENCES]
+                    if x[db_c.OBJECT_ID] == audiences[0][db_c.ID]
+                )
+            )
 
     def test_delete_audience_where_audience_does_not_exist(self) -> None:
         """Test delete audience API with valid ID but the object does not exist"""
