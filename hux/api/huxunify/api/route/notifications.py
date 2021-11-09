@@ -165,8 +165,10 @@ class NotificationsSearch(SwaggerView):
         notification_types = request.args.get(
             api_c.QUERY_PARAMETER_NOTIFICATION_TYPES, []
         )
-        notification_types = list(
-            map(lambda x: x.lower(), notification_types.split(","))
+        notification_types = (
+            list(map(lambda x: x.lower(), notification_types.split(",")))
+            if notification_types
+            else []
         )
         if notification_types and not set(notification_types).issubset(
             set(db_c.NOTIFICATION_TYPES)
@@ -179,8 +181,10 @@ class NotificationsSearch(SwaggerView):
         notification_categories = request.args.get(
             api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY, []
         )
-        notification_categories = list(
-            map(lambda x: x.lower(), notification_categories.split(","))
+        notification_categories = (
+            list(map(lambda x: x.lower(), notification_categories.split(",")))
+            if notification_types
+            else []
         )
         if notification_categories and not set(notification_categories).issubset(
             set(api_c.NOTIFICATION_CATEGORIES)
