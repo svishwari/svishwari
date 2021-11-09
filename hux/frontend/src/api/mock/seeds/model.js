@@ -23,7 +23,7 @@ export default [
   {
     name: "Churn",
     status: "Requested",
-    type: "unsubscribe",
+    type: "churn",
     id: "4",
     description: "Rating forecast for change in customer numbers.",
   },
