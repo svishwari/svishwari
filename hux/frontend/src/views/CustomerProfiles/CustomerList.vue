@@ -22,17 +22,20 @@
               params: { id: item[header.value] },
             }"
             data-e2e="customerID"
-            class="cell text-body-1 mt-1"
+            class="cell text-ellipsis text-body-1 mt-1"
             append
           >
             {{ item[header.value] }}
           </router-link>
-          <div v-if="header.value == 'last_name'" class="cell text-body-1 mt-1">
+          <div
+            v-if="header.value == 'last_name'"
+            class="cell text-ellipsis text-body-1 mt-1"
+          >
             <span v-if="item.last_name">{{ item.last_name }} </span>
           </div>
           <div
             v-if="header.value == 'first_name'"
-            class="cell text-body-1 mt-1"
+            class="cell text-ellipsis text-body-1 mt-1"
           >
             <span v-if="item.first_name"> {{ item.first_name }}</span>
           </div>
@@ -95,7 +98,7 @@ export default {
       ],
       lastBatch: 0,
       batchDetails: {
-        batchSize: 50,
+        batchSize: 100,
         batchNumber: 1,
         isLazyLoad: false,
       },
@@ -190,12 +193,8 @@ export default {
     }
   }
   .cell {
-    display: inline-block;
     max-width: 100%;
     text-decoration: none;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 }
 ::v-deep .hux-data-table .table-overflow {
