@@ -50,7 +50,7 @@
 
         <div class="subtitle-slot">
           <span
-            class="text-body-1"
+            class="text-caption"
             :class="{
               'no-click': !interactable,
               'flex-grow-1 align-center text-center highlevel-subtitle':
@@ -145,6 +145,10 @@ export default {
     cursor: default;
     background-color: transparent;
     cursor: default;
+    &::before {
+      background: var(--v-primary-lighten1) !important;
+      border-radius: 10px;
+    }
   }
   .item-headline {
     color: var(--v-black-darken1) !important;
