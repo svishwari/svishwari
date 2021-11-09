@@ -38,7 +38,7 @@
         >
           <template slot="top">
             <status
-              :icon-size="17"
+              :icon-size="18"
               :status="model.status || ''"
               collapsed
               class="d-flex float-left"
@@ -46,7 +46,7 @@
             />
           </template>
 
-          <template slot="default">
+          <template slot="default" v-if="model.status == 'Active'">
             <p
               class="text-body-2 black--text text--lighten-4"
               data-e2e="model-owner"

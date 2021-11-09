@@ -7,7 +7,7 @@
       text-center
       rounded-lg
       card-space
-      mb-10
+      mb-6
     "
     :class="{ 'in-active': disabled }"
     :height="height"
