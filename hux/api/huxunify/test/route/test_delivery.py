@@ -332,11 +332,11 @@ class TestDeliveryRoutes(TestCase):
         engagement_id = self.engagement_ids[0]
         destination_id = self.destinations[0][db_c.ID]
 
-        # get the delivery platform
+        # get the delivery platform, set failed status and patch it.
         destination = get_delivery_platform(self.database, destination_id)
-        destination[db_c.STATUS] = db_c.STATUS_FAILED
+        destination[db_c.DELIVERY_PLATFORM_STATUS] = db_c.STATUS_FAILED
 
-        # temporarily patch
+        # temporarily patch the response to simulate a failed status.
         patch = mock.patch(
             "huxunify.api.data_connectors.courier.get_delivery_platform",
             return_value=destination,
