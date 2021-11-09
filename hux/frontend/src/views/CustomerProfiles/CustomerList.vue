@@ -22,27 +22,32 @@
               params: { id: item[header.value] },
             }"
             data-e2e="customerID"
-            class="cell text-h6"
+            class="cell text-body-1 mt-1"
             append
           >
             {{ item[header.value] }}
           </router-link>
-          <div v-if="header.value == 'last_name'" class="cell text-h6">
+          <div v-if="header.value == 'last_name'" class="cell text-body-1 mt-1">
             <span v-if="item.last_name">{{ item.last_name }} </span>
           </div>
-          <div v-if="header.value == 'first_name'" class="cell text-h6">
+          <div
+            v-if="header.value == 'first_name'"
+            class="cell text-body-1 mt-1"
+          >
             <span v-if="item.first_name"> {{ item.first_name }}</span>
           </div>
           <div v-if="header.value == 'match_confidence'">
             <hux-slider
               :is-range-slider="false"
               :value="item[header.value]"
+              :sliderTextColor="true"
               class="match-confidence"
             ></hux-slider>
           </div>
         </td>
       </template>
     </hux-data-table>
+    <v-progress-linear v-if="enableLazyLoad" active indeterminate />
     <observer v-if="customers.length" @intersect="intersected"></observer>
   </div>
 </template>
@@ -85,12 +90,12 @@ export default {
         {
           text: "Match confidence",
           value: "match_confidence",
-          width: "250px",
+          width: "280px",
         },
       ],
       lastBatch: 0,
       batchDetails: {
-        batchSize: 100,
+        batchSize: 50,
         batchNumber: 1,
         isLazyLoad: false,
       },
@@ -156,7 +161,7 @@ export default {
   .v-data-table {
     .v-data-table-header {
       tr {
-        height: 40px !important;
+        height: 32px !important;
       }
       th {
         background: var(--v-primary-lighten2);
@@ -167,6 +172,7 @@ export default {
         > tbody > tr > td {
           padding-top: 0;
           padding-bottom: 0;
+          height: 50px !important;
         }
       }
     }
@@ -187,6 +193,23 @@ export default {
     display: inline-block;
     max-width: 100%;
     text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
+}
+::v-deep .hux-data-table .table-overflow {
+  overflow-x: inherit !important;
+}
+::v-deep .hux-data-table .v-data-table .match-confidence .slider-value-display {
+  margin-top: 1px !important;
+  width: 45px !important;
+  margin-left: 10px !important;
+}
+::v-deep .hux-score-slider .v-slider--horizontal {
+  min-height: 7px !important;
+}
+::v-deep .v-application--is-ltr .v-input__append-outer {
+  margin-left: 16px !important;
 }
 </style>
