@@ -10,6 +10,7 @@ import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
+    get_delivery_platform,
     set_delivery_job,
     set_delivery_job_status,
 )
@@ -305,6 +306,12 @@ class TestDeliveryRoutes(TestCase):
         engagement_id = self.engagement_ids[0]
         destination_id = self.destinations[0][db_c.ID]
 
+        # mock get db client from decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
         response = self.app.post(
             (
                 f"{t_c.BASE_ENDPOINT}"
@@ -317,6 +324,38 @@ class TestDeliveryRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_delivery_destination_with_a_bad_connection(self):
+        """Test delivery of a destination with a bad connection."""
+
+        audience_id = self.audiences[0][db_c.ID]
+        engagement_id = self.engagement_ids[0]
+        destination_id = self.destinations[0][db_c.ID]
+
+        # get the delivery platform
+        destination = get_delivery_platform(self.database, destination_id)
+        destination[db_c.STATUS] = db_c.STATUS_FAILED
+
+        # temporarily patch
+        patch = mock.patch(
+            "huxunify.api.data_connectors.courier.get_delivery_platform",
+            return_value=destination,
+        )
+        patch.start()
+
+        response = self.app.post(
+            (
+                f"{t_c.BASE_ENDPOINT}"
+                f"{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/"
+                f"{api_c.DELIVER}"
+            ),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        patch.stop()
+        self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
     def test_deliver_destination_for_non_existent_engagement(self):
         """Test delivery of a destination for a non-existent engagement."""
