@@ -145,6 +145,10 @@ export default {
     cursor: default;
     background-color: transparent;
     cursor: default;
+    &::before {
+      background: var(--v-primary-lighten1) !important;
+      border-radius: 10px;
+    }
   }
   .item-headline {
     color: var(--v-black-darken1) !important;
