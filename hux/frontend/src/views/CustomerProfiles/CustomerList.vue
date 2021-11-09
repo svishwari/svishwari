@@ -40,7 +40,7 @@
             <hux-slider
               :is-range-slider="false"
               :value="item[header.value]"
-              :sliderTextColor="true"
+              :slider-text-color="true"
               class="match-confidence"
             ></hux-slider>
           </div>

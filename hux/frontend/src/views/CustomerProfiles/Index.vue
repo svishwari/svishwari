@@ -620,8 +620,6 @@ export default {
 }
 
 ::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
-  
-color: var(--v-black-lighten4) !important;
-  
+  color: var(--v-black-lighten4) !important;
 }
 </style>
