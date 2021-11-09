@@ -32,14 +32,14 @@
                 pl-0
                 pr-0
                 idr-link
-                text--base-1
+                text-body-1
               "
               @click="toggleIDRInsightsDrawer()"
             >
               <icon
                 type="identity-resolution"
                 color="primary"
-                :size="16"
+                :size="18"
                 class="mr-1"
               />
               IDR Insights
