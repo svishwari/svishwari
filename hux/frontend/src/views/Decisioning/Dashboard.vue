@@ -36,7 +36,7 @@
       <v-row>
         <v-col col="6">
           <div class="model-dashboard__card px-6 py-5">
-            {{ model.description }}
+            {{ model.description | Empty }}
           </div>
         </v-col>
         <v-col col="6">
@@ -59,7 +59,7 @@
                 <template #title>
                   <tooltip>
                     <template #label-content>
-                      {{ metric }}
+                      {{ metric | Empty }}
                     </template>
                     <template #hover-content>
                       {{ metric | Empty }}
@@ -80,7 +80,7 @@
                 <template #title>
                   <tooltip>
                     <template #label-content>
-                      {{ metric }}
+                      {{ metric | Empty }}
                     </template>
                     <template #hover-content>
                       <div class="mb-3">
@@ -116,7 +116,7 @@
                 <template #title>
                   <tooltip>
                     <template #label-content>
-                      {{ metric }}
+                      {{ metric | Empty }}
                     </template>
                     <template #hover-content>
                       {{ metric | Empty }}
@@ -137,7 +137,7 @@
                 <template #title>
                   <tooltip>
                     <template #label-content>
-                      {{ metric }}
+                      {{ metric | Empty }}
                     </template>
                     <template #hover-content>
                       {{ metric | Empty }}
@@ -159,7 +159,7 @@
                 <template #title>
                   <tooltip>
                     <template #label-content>
-                      {{ metric }}
+                      {{ metric | Empty }}
                     </template>
                     <template #hover-content>
                       {{ metric | Empty }}
@@ -173,15 +173,15 @@
       </v-row>
       <v-row class="pt-0">
         <v-col md="6" class="pt-0">
-          <v-card class="mt-2 rounded-lg box-shadow-5" height="662">
+          <v-card class="mt-2 rounded-lg box-shadow-5" height="modelfeatures?280:662">
             <v-progress-linear
               :active="featuresLoading"
               :indeterminate="featuresLoading"
             />
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <!-- <v-card-title class="chart-style pb-2 pl-5 pt-5">
               <div class="mt-2">
                 <span
-                  v-if="modelFeatures"
+                  v-if="modelFeatures!==[]"
                   class="black--text text--darken-4 text-h5"
                 >
                   Top
@@ -194,7 +194,22 @@
               v-if="!featuresLoading"
               :feature-data="modelFeatures"
               data-e2e="feature-chart"
-            />
+            /> -->
+            <v-row
+              class="background-empty"
+            >
+              <empty-page type="model-features-empty" :size="50">
+                <template #title>
+                  <div class="title-no-notification">No data to show</div></template
+                >
+                <template #subtitle>
+                  <div class="des-no-notification">
+                    Top 20 features chart will appear here once LTV model finishes uploading. <br />
+                    Please check back later.
+                  </div>
+                </template>
+              </empty-page>
+            </v-row>
           </v-card>
         </v-col>
         <v-col md="6" class="pt-0">
@@ -290,6 +305,8 @@ import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import VersionHistory from "./Drawers/VersionHistoryDrawer.vue"
 import MetricCard from "@/components/common/MetricCard"
+import EmptyPage from "@/components/common/EmptyPage"
+import Error from "@/components/common/screens/Error"
 import { mapGetters, mapActions } from "vuex"
 
 export default {
@@ -306,6 +323,8 @@ export default {
     DriftChart,
     FeaturesTable,
     MetricCard,
+    EmptyPage,
+    Error,
   },
   data() {
     return {
@@ -464,5 +483,27 @@ export default {
     border: 1px solid var(--v-black-lighten2);
     border-radius: 12px;
   }
+}
+
+.background-empty {
+  background-image: url("../../assets/images/no-barchart-frame.png");
+  background-position: center;
+}
+
+//to overwrite the classes
+
+.title-no-notification {
+  font-size: 24px !important;
+  line-height: 34px !important;
+  font-weight: 300 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
+}
+.des-no-notification {
+  font-size: 14px !important;
+  line-height: 16px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
 }
 </style>

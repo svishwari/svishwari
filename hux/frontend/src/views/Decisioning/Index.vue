@@ -94,10 +94,10 @@
       </template>
       <hux-empty
         v-else
-        icon-type="destinations-null"
+        icon-type="models"
         :icon-size="50"
-        title="No data sources to show"
-        subtitle="The list of data sources will appear here once they have been added."
+        title="No models to show"
+        subtitle="Models will appear here once they are added or requested."
       >
         <template #button>
           <hux-button
@@ -107,10 +107,19 @@
             height="40"
             class="text-button my-4"
           >
-            Request a data sources
+            Request a model
           </hux-button>
         </template>
       </hux-empty>
+    </v-row>
+    <v-row class="pa-14" v-else>
+      <error
+          icon-type="error-on-screens"
+          :icon-size="50"
+          title="Models are currently unavailable"
+          subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+        >
+      </error>
     </v-row>
   </div>
 </template>
@@ -121,6 +130,7 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 import CardStat from "@/components/common/Cards/Stat"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import HuxEmpty from "@/components/common/screens/Empty"
+import Error from "@/components/common/screens/Error"
 import PageHeader from "@/components/PageHeader"
 import Status from "@/components/common/Status"
 import huxButton from "@/components/common/huxButton"
@@ -133,6 +143,7 @@ export default {
     CardStat,
     DescriptiveCard,
     HuxEmpty,
+    Error,
     PageHeader,
     Status,
     huxButton,
