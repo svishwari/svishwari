@@ -20,7 +20,7 @@
   "dependencies": {
     "@okta/okta-signin-widget": "^4.2.3",
     "@okta/okta-vue": "^2.0.0",
-    "@storybook/addon-docs": "^6.3.11",
+    "@storybook/addon-docs": "^6.3.12",
     "@vue/composition-api": "^1.2.4",
     "ag-grid-community": "^25.1.0",
     "ag-grid-vue": "^25.1.0",
