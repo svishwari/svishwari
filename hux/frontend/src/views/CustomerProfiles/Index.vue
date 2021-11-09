@@ -20,7 +20,7 @@
       <div v-if="overviewListItems" class="px-15 mt-6 my-1">
         <v-card class="rounded pa-5 box-shadow-5">
           <div class="d-flex justify-space-between">
-            <h5 class="text-h5 mb-1">Customer overview</h5>
+            <h5 class="text-h3 mb-1">Customer overview</h5>
             <v-btn
               text
               small
@@ -32,13 +32,14 @@
                 pl-0
                 pr-0
                 idr-link
+                text-body-1
               "
               @click="toggleIDRInsightsDrawer()"
             >
               <icon
                 type="identity-resolution"
                 color="primary"
-                :size="16"
+                :size="18"
                 class="mr-1"
               />
               IDR Insights
@@ -156,7 +157,7 @@
           <div class="d-flex">
             <v-tab
               key="overview"
-              class="pa-2 mr-3 text-h5"
+              class="pa-2 mr-3 text-h3"
               color
               data-e2e="overview-tab"
               @click="loadCustomersList = false"
@@ -165,7 +166,7 @@
             </v-tab>
             <v-tab
               key="customerList"
-              class="text-h5"
+              class="text-h3"
               data-e2e="customer-list-tab"
               @click="loadCustomersList = true"
             >
@@ -287,7 +288,7 @@
             </v-row>
           </v-tab-item>
           <v-tab-item key="customerList">
-            <v-card class="mt-3 pa-4 rounded-lg box-shadow-5">
+            <v-card class="mt-3 pa-6 rounded-lg box-shadow-5">
               <customer-list v-if="loadCustomersList" />
             </v-card>
           </v-tab-item>
@@ -616,5 +617,9 @@ export default {
 }
 .color-last-month {
   color: var(--v-grey-base) !important;
+}
+
+::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
+  color: var(--v-black-lighten4) !important;
 }
 </style>

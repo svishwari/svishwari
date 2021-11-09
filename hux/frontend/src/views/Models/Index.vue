@@ -33,6 +33,7 @@
           :title="model.name"
           :description="model.description"
           data-e2e="model-item"
+          :disabled="model.status !== 'Active'"
           @click.native="goToDashboard(model)"
         >
           <template slot="top">
