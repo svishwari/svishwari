@@ -914,15 +914,15 @@
     <metric-card
       class="ma-4"
       title="Metric Title"
-      :max-width="202"
+      :max-width="203"
       :height="75"
       :interactable="false"
     >
       <template #subtitle-extended>
-        <div class="text-body-1 black--text text--darken-4 mb-2">
+        <div class="text-subtitle-1 black--text text--darken-4 mb-2">
           <icon class="mr-1" type="stock-up" :size="8" color="success" />
           <icon class="ml-1 mr-1" type="stock-down" :size="8" color="error" />
-          3/1/2021 • 9:42AM
+          3/1/21 • 9:42AM
         </div>
       </template>
     </metric-card>
@@ -935,8 +935,8 @@
       :interactable="false"
     >
       <template #subtitle-extended>
-        <div class="text-body-1 black--text text--darken-4 mb-2">
-          3/1/2021 • 9:42AM
+        <div class="text-subtitle-1 black--text text--darken-4 mb-2">
+          3/1/21 • 9:42AM
         </div>
       </template>
     </metric-card>
@@ -949,22 +949,22 @@
       :interactable="true"
     >
       <template #subtitle-extended>
-        <div class="text-body-1 black--text text--darken-4 mb-2">
-          3/1/2021 • 9:42AM
+        <div class="text-subtitle-1 black--text text--darken-4 mb-2">
+          3/1/21 • 9:42AM
         </div>
       </template>
     </metric-card>
 
-    <metric-card class="ma-4" title="Created on" :max-width="186" :height="75">
+    <metric-card class="ma-4" title="Created on" :max-width="200" :height="75">
       <template #subtitle-extended>
         <span class="mr-2">
           <tooltip>
             <template #label-content>
-              <span class="text-body-1 black--text text--darken-4">
+              <span class="text-subtitle-1 black--text text--darken-4">
                 4 hours ago by
               </span>
             </template>
-            <template #hover-content> 10/18/2021 at 8:37 AM </template>
+            <template #hover-content> 10/18/21 at 8:37 AM </template>
           </tooltip>
         </span>
         <span class="mt-n2">
@@ -1083,9 +1083,7 @@
         <div
           class="text-caption black--text text--lighten-4 mb-2"
           data-e2e="model-owner"
-        >
-          Owner Name
-        </div>
+        ></div>
         <div class="d-flex justify-center mb-6">
           <card-stat label="Version" value="0.02" stat-class="border-0">
             <div class="mb-3">
