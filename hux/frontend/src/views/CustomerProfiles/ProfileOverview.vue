@@ -14,7 +14,7 @@
             </span>
             <tooltip>
               <template #label-content>
-                <span class="text-subtitle-1 text-elipsis black--text">
+                <span class="text-subtitle-1 text-ellipsis black--text">
                   {{ profile["first_name"] }}
                 </span>
               </template>
