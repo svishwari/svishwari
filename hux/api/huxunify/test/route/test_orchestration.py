@@ -995,7 +995,6 @@ class OrchestrationRouteTest(TestCase):
 
         # create an multiple audiences
         audiences = []
-        engagements = []
 
         for i in range(4):
             audiences.append(
@@ -1009,7 +1008,7 @@ class OrchestrationRouteTest(TestCase):
                 )
             )
 
-        engagements.append(
+        engagements = [
             set_engagement(
                 self.database,
                 "ENG0",
@@ -1025,10 +1024,7 @@ class OrchestrationRouteTest(TestCase):
                     },
                 ],
                 self.user_name,
-            )
-        )
-
-        engagements.append(
+            ),
             set_engagement(
                 self.database,
                 "ENG1",
@@ -1044,10 +1040,7 @@ class OrchestrationRouteTest(TestCase):
                     },
                 ],
                 self.user_name,
-            )
-        )
-
-        engagements.append(
+            ),
             set_engagement(
                 self.database,
                 "ENG2",
@@ -1071,8 +1064,8 @@ class OrchestrationRouteTest(TestCase):
                     },
                 ],
                 self.user_name,
-            )
-        )
+            ),
+        ]
 
         remove_audience_from_all_engagements(
             self.database, audiences[0][db_c.ID], self.user_name
