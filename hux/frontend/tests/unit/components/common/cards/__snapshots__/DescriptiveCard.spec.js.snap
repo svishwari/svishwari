@@ -1,14 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Cards Descriptive Card Displays custom properties 1`] = `
-<v-card-stub loaderheight="4" tag="div" height="255" width="280" class="
-    descriptive-card
-    align-center
-    text-center
-    rounded-lg
-    card-space
-    mb-10
-  ">
+<v-card-stub loaderheight="4" tag="div" height="255" width="280" class="descriptive-card align-center text-center rounded-lg card-space mb-6">
   <!---->
   <div class="d-flex justify-center mt-2 mr-8">
     <div class="dot">
@@ -22,14 +15,7 @@ exports[`Cards Descriptive Card Displays custom properties 1`] = `
 `;
 
 exports[`Cards Descriptive Card Displays custom slots 1`] = `
-<v-card-stub loaderheight="4" tag="div" height="255" width="280" class="
-    descriptive-card
-    align-center
-    text-center
-    rounded-lg
-    card-space
-    mb-10
-  ">
+<v-card-stub loaderheight="4" tag="div" height="255" width="280" class="descriptive-card align-center text-center rounded-lg card-space mb-6">
   <div class="card-status pa-3 pb-0">
     <div>Top spot</div>
     <v-menu-stub opendelay="0" closedelay="0" contentclass="" maxwidth="auto" nudgebottom="0" nudgeleft="0" nudgeright="0" nudgetop="0" nudgewidth="0" openonclick="true" closeonclick="true" closeoncontentclick="true" maxheight="auto" origin="top left" transition="v-menu-transition">
