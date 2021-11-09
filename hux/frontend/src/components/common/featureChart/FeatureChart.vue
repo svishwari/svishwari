@@ -61,8 +61,8 @@ export default {
     },
   },
   mounted() {
-    this.chartDimensions.width = this.$refs.chartBox.clientWidth
-    this.chartDimensions.height = this.$refs.chartBox.clientHeight
+    this.sizeHandler()
+    new ResizeObserver(this.sizeHandler).observe(this.$refs.chartBox)
   },
   methods: {
     toolTipDisplay(...arg) {
@@ -76,6 +76,13 @@ export default {
       this.tooltip.x = args.x
       this.tooltip.y = args.y
     },
+
+    sizeHandler() {
+      if (this.$refs.chartBox) {
+        this.chartDimensions.width = this.$refs.chartBox.clientWidth
+      }
+    },
+
   },
 }
 </script>
