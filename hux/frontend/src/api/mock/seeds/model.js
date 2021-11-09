@@ -8,7 +8,7 @@ export default [
   },
   {
     name: "Propensity to Purchase",
-    status: "Pending",
+    status: "Active",
     type: "purchase",
     id: "3",
     description:

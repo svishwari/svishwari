@@ -87,12 +87,13 @@
               >
                 <template v-if="header.value == 'id'">
                   <!-- TODO: HUS-1305 integrate open drawer on alerts page -->
-                  <router-link
-                    :to="{ name: 'AlertsAndNotifications' }"
+                  <a
+                    href="javascript:void(0)"
                     class="text-body-1 text-decoration-none"
+                    @click="openAlertDrawer(item[header.value])"
                   >
                     {{ item[header.value] | Shorten }}
-                  </router-link>
+                  </a>
                 </template>
 
                 <template v-if="header.value == 'category'">
@@ -137,6 +138,7 @@
         </v-card>
       </v-col>
     </v-row>
+    <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
   </hux-page>
 </template>
 
@@ -150,6 +152,7 @@ import HuxTimeStamp from "@/components/common/huxTable/TimeStamp.vue"
 import HuxTooltip from "@/components/common/Tooltip.vue"
 import HuxStatus from "@/components/common/Status.vue"
 import HuxTotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart.vue"
+import AlertDrawer from "./AlertsAndNotifications/Drawer/AlertDrawer.vue"
 
 export default {
   name: "Home",
@@ -162,6 +165,7 @@ export default {
     HuxTooltip,
     HuxStatus,
     HuxTotalCustomerChart,
+    AlertDrawer,
   },
 
   data() {
@@ -195,6 +199,8 @@ export default {
           width: "180px",
         },
       ],
+      alertDrawer: false,
+      notificationId: null,
     }
   },
 
@@ -239,6 +245,11 @@ export default {
         batchNumber: 1,
       })
       this.loadingNotifications = false
+    },
+
+    openAlertDrawer(id) {
+      this.alertDrawer = true
+      this.notificationId = id
     },
   },
 }
