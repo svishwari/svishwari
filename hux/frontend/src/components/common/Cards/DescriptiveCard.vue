@@ -1,14 +1,7 @@
 <template>
   <v-card
     :outlined="disabled"
-    class="
-      descriptive-card
-      align-center
-      text-center
-      rounded-lg
-      card-space
-      mb-6
-    "
+    class="descriptive-card align-center text-center rounded-lg card-space mb-6"
     :class="{ 'in-active': disabled }"
     :height="height"
     :width="width"
@@ -60,11 +53,7 @@
       <template #label-content>
         <div
           class="text-h4 px-6 pb-1 pt-2 text-ellipsis d-block title text-h4"
-          :class="
-            disabled
-              ? 'black--text text--darken-4'
-              : 'primary--text'
-          "
+          :class="disabled ? 'black--text text--darken-4' : 'primary--text'"
           :style="{ 'padding-top': !icon ? '56px' : null }"
           data-e2e="card-title"
         >
@@ -79,13 +68,7 @@
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="
-            px-3
-            d-block
-            description
-            text-body-2
-            black--text
-          "
+          class="px-3 d-block description text-body-2 black--text"
           :style="{ 'padding-top': !icon ? '22px' : null }"
           data-e2e="card-description"
         >

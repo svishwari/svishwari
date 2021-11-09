@@ -46,13 +46,11 @@
             />
           </template>
 
-          <template slot="default" v-if="model.status == 'Active'">
+          <template v-if="model.status == 'Active'" slot="default">
             <p
               class="text-body-2 black--text text--lighten-4"
               data-e2e="model-owner"
-            >
-              
-            </p>
+            ></p>
 
             <v-row no-gutters>
               <v-col cols="5">
