@@ -5,6 +5,7 @@
         v-model="mapChartData"
         :chart-dimensions="chartDimensions"
         :configuration-data="configurationData"
+        :disable-hover-effects="disableHoverEffects"
         @cordinates="getCordinates"
         @tooltipDisplay="toolTipDisplay"
       />
@@ -74,6 +75,11 @@ export default {
     configurationData: {
       type: Object,
       required: true,
+    },
+    disableHoverEffects: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   data() {

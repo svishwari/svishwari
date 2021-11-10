@@ -35,6 +35,11 @@ export default {
       type: Object,
       required: true,
     },
+    disableHoverEffects: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
   data() {
     return {
@@ -147,6 +152,7 @@ export default {
         .attr("class", "geochart")
 
       let applyHoverChanges = (d) => {
+        if (!disableHoverEffects) {
         svg
           .selectAll("path")
           .style("stroke", "#4F4F4F")
@@ -157,6 +163,7 @@ export default {
           .attr("fill-opacity", (d) => emitStateData(d))
           .style("stroke", "#1E1E1E")
           .style("stroke-width", "1")
+        }
       }
 
       let emitStateData = (d) => {
@@ -167,6 +174,7 @@ export default {
       }
 
       let removeHoverChanges = () => {
+         if (!disableHoverEffects) {
         svg
           .selectAll("path")
           .style("stroke", "#1E1E1E")
@@ -174,6 +182,7 @@ export default {
           .style("fill", (d) => applyValueColor(d.properties))
           .attr("fill-opacity", "1")
         this.tooltipDisplay(false)
+          }
       }
     },
 
