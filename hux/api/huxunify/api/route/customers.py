@@ -213,7 +213,9 @@ class CustomerPostOverview(SwaggerView):
             overview_key: customers.get(overview_key) or 0
             for overview_key in customers
         }
-
+        customers[api_c.GEOGRAPHICAL] = get_demographic_by_state(
+            token_response[0], request.json["filters"]
+        )
         return (
             CustomerOverviewSchema().dump(customers),
             HTTPStatus.OK,
