@@ -32,14 +32,14 @@
                 pl-0
                 pr-0
                 idr-link
-                body-1
+                text-body-1
               "
               @click="toggleIDRInsightsDrawer()"
             >
               <icon
                 type="identity-resolution"
                 color="primary"
-                :size="20"
+                :size="18"
                 class="mr-1"
               />
               IDR Insights
@@ -280,7 +280,7 @@
             </v-row>
           </v-tab-item>
           <v-tab-item key="customerList">
-            <v-card class="mt-3 pa-4 rounded-lg box-shadow-5">
+            <v-card class="mt-3 pa-6 rounded-lg box-shadow-5">
               <customer-list v-if="loadCustomersList" />
             </v-card>
           </v-tab-item>
@@ -402,7 +402,7 @@ export default {
       ],
       items: [
         {
-          text: "All Customers",
+          text: "Customer Profiles",
           disabled: true,
           href: "/customers",
           icon: "customer-profiles",
@@ -621,5 +621,9 @@ export default {
 }
 .color-last-month {
   color: var(--v-grey-base) !important;
+}
+
+::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
+  color: var(--v-black-lighten4) !important;
 }
 </style>

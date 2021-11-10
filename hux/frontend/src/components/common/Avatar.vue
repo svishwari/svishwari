@@ -2,7 +2,7 @@
   <tooltip>
     <template #label-content>
       <span
-        class="blue-grey d-flex align-center justify-center"
+        class="blue-grey d-flex align-center justify-center text-subtitle-1"
         :style="{ 'border-color': getColorCode(localName) }"
       >
         {{ localName | shortName }}
@@ -54,7 +54,6 @@ export default {
   border-width: 2px;
   border-style: solid;
   border-radius: 50%;
-  font-size: 14px;
   width: 35px;
   height: 35px;
   line-height: 22px;
