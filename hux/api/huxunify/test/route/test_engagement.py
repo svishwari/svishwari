@@ -1732,10 +1732,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        # TODO this is done due to restrictions in Mongo DB, will be fixed in: HUS-1545
-        self.assertEqual(
-            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
-        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_remove_destination_from_engagement_audience(self):
         """Test remove destination from engagement audience."""
