@@ -219,48 +219,6 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-    # TODO HUS-1391 Remove this test
-    def test_update_destination(self):
-        """Test update destination."""
-
-        destination_id = self.destinations[0][db_c.ID]
-
-        response = self.app.put(
-            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
-            json=self.new_auth_details,
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-
-    # TODO HUS-1391 Remove this test
-    def test_update_destination_where_destination_not_found(self):
-        """Test update destination where no destination is found."""
-
-        destination_id = ObjectId()
-
-        response = self.app.put(
-            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
-            json=self.new_auth_details,
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
-
-    # TODO HUS-1391 Remove this test
-    def test_update_destination_invalid_object_id(self):
-        """Test update destination where invalid ID given."""
-
-        destination_id = t_c.INVALID_ID
-
-        response = self.app.put(
-            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
-            json=self.new_auth_details,
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
-
     def test_update_destination_auth_details(self):
         """Test update destination."""
 
