@@ -35,11 +35,10 @@
 import LineAreaChart from "@/components/common/Charts/LineAreaChart/LineAreaChart.vue"
 import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
 import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
-import Icon from "@/components/common/Icon"
 
 export default {
   name: "TotalCustomerSpendChart",
-  components: { LineAreaChart, ChartTooltip, Icon },
+  components: { LineAreaChart, ChartTooltip },
   props: {
     customerSpendData: {
       type: Array,
