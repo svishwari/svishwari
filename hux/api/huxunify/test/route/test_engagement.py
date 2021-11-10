@@ -1732,8 +1732,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        print(response.json)
-
+        # TODO this is done due to restrictions in Mongo DB, will be fixed in: HUS-1545
         self.assertEqual(
             HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
         )

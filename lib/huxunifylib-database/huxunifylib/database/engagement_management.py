@@ -845,6 +845,7 @@ def append_destination_to_engagement_audience(
         db_c.ENGAGEMENTS_COLLECTION
     ]
 
+    # TODO fix logic here in HUS-1545
     return collection.find_one_and_update(
         {db_c.ID: engagement_id, "audiences.id": audience_id},
         {
