@@ -61,6 +61,17 @@ def create_document(
     if any(key_check):
         raise de.InvalidValueException(",".join(key_check))
 
+    # Make sure the data is unique
+    doc_check = {}
+    for key in c.REQUIRED_FIELDS[collection]:
+        doc_check[key] = new_doc[key]
+
+    try:
+        if collection.find_one(doc_check):
+            raise de.DuplicateDocument(doc_check)
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
     new_doc[c.CREATE_TIME] = datetime.utcnow()
     new_doc[c.CREATED_BY] = username
     new_doc[c.DELETED] = False
