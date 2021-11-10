@@ -150,16 +150,6 @@ export default {
     &:hover {
       @extend .box-shadow-5;
     }
-    .coming-soon {
-      width: 104px;
-      height: 28px;
-      margin-top: -12px;
-      position: absolute;
-      right: 0;
-      background: #e2eaec;
-      border-radius: 0px 12px;
-      padding: 4px;
-    }
   }
   .dot {
     width: 60px;

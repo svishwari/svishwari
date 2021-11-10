@@ -185,7 +185,6 @@ export default {
   padding-top: 42px;
   .confirm-modal-footer {
     border-top: 1px solid var(--v-black-lighten3);
-    margin-top: 36px;
     display: flow-root;
     justify-content: space-between;
     align-items: center;
