@@ -159,7 +159,8 @@ class TestDestinationRoutes(TestCase):
         destination_id = self.destinations[0][db_c.ID]
 
         self.app.put(
-            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}"
+            f"/{destination_id}/{api_c.AUTHENTICATION}",
             json=self.new_auth_details,
             headers=t_c.STANDARD_HEADERS,
         )
@@ -225,7 +226,8 @@ class TestDestinationRoutes(TestCase):
         destination_id = self.destinations[0][db_c.ID]
 
         response = self.app.put(
-            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}"
+            f"/{destination_id}/{api_c.AUTHENTICATION}",
             json=self.new_auth_details,
             headers=t_c.STANDARD_HEADERS,
         )
@@ -238,7 +240,8 @@ class TestDestinationRoutes(TestCase):
         destination_id = ObjectId()
 
         response = self.app.put(
-            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}"
+            f"/{destination_id}/{api_c.AUTHENTICATION}",
             json=self.new_auth_details,
             headers=t_c.STANDARD_HEADERS,
         )
@@ -251,7 +254,8 @@ class TestDestinationRoutes(TestCase):
         destination_id = t_c.INVALID_ID
 
         response = self.app.put(
-            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}"
+            f"/{destination_id}/{api_c.AUTHENTICATION}",
             json=self.new_auth_details,
             headers=t_c.STANDARD_HEADERS,
         )
