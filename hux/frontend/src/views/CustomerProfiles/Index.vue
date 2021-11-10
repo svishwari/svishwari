@@ -228,53 +228,46 @@
               </v-col>
             </v-row>
             <v-row class="mt-2 mb-4">
-              <v-col md="7">
+              <v-col md="12">
                 <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-                  <v-card-title class="pb-2 pl-5 pt-5">
-                    <div class="mt-2">
-                      <span class="black--text text--darken-4 text-h3">
-                        USA
-                      </span>
-                    </div>
-                  </v-card-title>
-                  <v-progress-linear
-                    v-if="loadingGeoOverview"
-                    :active="loadingGeoOverview"
-                    :indeterminate="loadingGeoOverview"
-                  />
-                  <map-chart
-                    v-if="!loadingGeoOverview"
-                    :map-data="customersGeoOverview"
-                    :configuration-data="configurationData"
-                    data-e2e="map-chart"
-                  />
-                  <map-slider
-                    v-if="!loadingGeoOverview"
-                    :map-data="customersGeoOverview"
-                    :configuration-data="configurationData"
-                  />
-                </v-card>
-              </v-col>
-              <v-col md="5">
-                <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-                  <v-card-title class="pb-2 pl-5 pt-5">
-                    <div class="mt-2">
-                      <span class="black--text text--darken-4 text-h5">
-                        United States
-                      </span>
-                    </div>
-                  </v-card-title>
-                  <v-divider class="ml-5 mr-8 mt-0 mb-1" />
-                  <v-progress-linear
-                    v-if="loadingGeoOverview"
-                    :active="loadingGeoOverview"
-                    :indeterminate="loadingGeoOverview"
-                  />
-                  <map-state-list
-                    v-if="!loadingGeoOverview"
-                    :map-data="customersGeoOverview"
-                    :configuration-data="configurationData"
-                  />
+                  <v-row>
+                    <v-col md="7">
+                      <v-progress-linear
+                        v-if="loadingGeoOverview"
+                        :active="loadingGeoOverview"
+                        :indeterminate="loadingGeoOverview"
+                      />
+                      <v-card-title class="pb-2 pl-5 pt-2">
+                        <div class="mt-2">
+                          <span class="black--text text--darken-4 text-h3">
+                            USA
+                          </span>
+                        </div>
+                      </v-card-title>
+                      <map-chart
+                        v-if="!loadingGeoOverview"
+                        :map-data="customersGeoOverview"
+                        :configuration-data="configurationData"
+                        data-e2e="map-chart"
+                      />
+
+                      <map-slider
+                        v-if="!loadingGeoOverview"
+                        :map-data="customersGeoOverview"
+                        :configuration-data="configurationData"
+                      />
+                    </v-col>
+                    <v-divider vertical class="combined-list" />
+                    <v-col md="5 pt-0 pl-1">
+                      <div class="overflow-y-auto combined-list">
+                        <map-state-list
+                          v-if="!loadingGeoOverview"
+                          :map-data="customersGeoOverview"
+                          :configuration-data="configurationData"
+                        />
+                      </div>
+                    </v-col>
+                  </v-row>
                 </v-card>
               </v-col>
             </v-row>
@@ -598,6 +591,10 @@ export default {
     font-size: 30px;
   }
 
+  .combined-list {
+    max-height: 386px;
+  }
+
   .customer-slide-group {
     ::v-deep .v-slide-group__wrapper {
       overflow: auto !important;
@@ -625,5 +622,20 @@ export default {
 
 ::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
   color: var(--v-black-lighten4) !important;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--v-white-base);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--v-black-lighten3);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--v-black-lighten3);
 }
 </style>
