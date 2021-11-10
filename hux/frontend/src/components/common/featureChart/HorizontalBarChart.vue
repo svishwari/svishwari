@@ -81,29 +81,27 @@ export default {
   },
 
   watch: {
-    value: function () {
-      d3Select.select(this.$refs.huxChart).select("svg").remove()
-      this.initiateHorizontalBarChart()
-    },
-    chartDimensions: function () {
-      this.chartWidth = this.chartDimensions.width + "px"
-      this.width =
-        this.chartDimensions.width == 0 ? 560 : this.chartDimensions.width
+    chartDimensions: {
+      handler() {
+        d3Select.select(this.$refs.huxChart).selectAll("svg").remove()
+        this.initiateHorizontalBarChart()
+      },
+      immediate: false,
+      deep: true,
     },
   },
 
   mounted() {
     this.chartWidth = this.chartDimensions.width + "px"
-    this.initiateHorizontalBarChart()
   },
   methods: {
     async initiateHorizontalBarChart() {
       await this.chartDimensions
       let currentWidth = this.chartDimensions.width
-      this.width = currentWidth == 0 ? 560 : currentWidth
+      this.width = currentWidth
 
       this.width = this.width - this.margin.left - this.margin.right
-      this.height = this.height - this.margin.top - this.margin.bottom
+      this.height = 520
 
       let svg = d3Select
         .select(this.$refs.huxChart)

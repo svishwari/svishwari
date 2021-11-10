@@ -43,6 +43,14 @@ UNIFIED_OKTA_REDIRECT_URI = "unified_okta_redirect_uri"
 UNIFIED_OKTA_TEST_USER_NAME = "unified_okta_test_user_name"
 UNIFIED_OKTA_TEST_USER_PW = "unified_okta_test_user_pw"
 
+# JIRA
+JIRA_PROJECT_KEY = "JIRA_PROJECT_KEY"
+JIRA_SERVER = "JIRA_SERVER"
+JIRA_API_KEY = "JIRA_API_KEY"
+ISSUE_TYPE = "issue_type"
+KEY = "key"
+TICKET_TYPE_BUG = "Bug"
+
 # general defines
 ID = "id"
 NAME = "name"
@@ -131,6 +139,7 @@ COUNT = "count"
 AVG_SPENT_WOMEN = "avg_spent_women"
 AVG_SPENT_MEN = "avg_spent_men"
 AVG_SPENT_OTHER = "avg_spent_other"
+REVENUE = "revenue"
 YEAR = "year"
 MONTH = "month"
 MINUTE = "minute"
@@ -231,6 +240,7 @@ AWS_SSM_NAME = "ssm"
 AWS_EVENTS_NAME = "events"
 AWS_BATCH_NAME = "batch"
 AWS_S3_NAME = "s3"
+AWS_SSM_PARAM_NOT_FOUND_ERROR_MESSAGE = "Required parameter(s) not found."
 
 AWS_BUCKET = "Bucket"
 AWS_TARGET_ID = "Id"
@@ -650,6 +660,7 @@ AUDIENCE_PERFORMANCE = "audience-performance"
 AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
 DISPLAY_ADS = "display-ads"
 IS_AD_PLATFORM = "is_ad_platform"
+MY_ENGAGEMENTS = "my_engagements"
 
 DISPLAY_ADS_METRICS = [
     "spend",
@@ -768,6 +779,7 @@ CDP_DATA_SOURCE_CATEGORY_MAP = {
 CDP_DATA_SOURCE_CATEGORIES = list(set(CDP_DATA_SOURCE_CATEGORY_MAP.values()))
 
 # Authentication API fields
+AUTHORIZATION = "Authorization"
 AUTHENTICATION_TOKEN = "token"
 AUTHENTICATION_ACCESS_TOKEN = "access_token"
 AUTHENTICATION_TOKEN_TYPE_HINT = "token_type_hint"
@@ -826,6 +838,7 @@ USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
 FAVORITES = "favorites"
 PROFILE = "profile"
+CONTACT_US = "contact-us"
 
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
@@ -980,7 +993,7 @@ NOTIFICATION_CATEGORIES = [
     "delivery",
     "orchestration",
     "destinations",
-    "data_sources",
+    "datasources",
     "customers",
     "models",
 ]
