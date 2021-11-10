@@ -9,9 +9,10 @@
       card-space
       mb-10
     "
-    :class="[ disabled ? 'in-active' : '', 
-             interactable ? 'interactable' : 'non-interactable'
-            ]"
+    :class="[
+      disabled ? 'in-active' : '',
+      interactable ? 'interactable' : 'non-interactable',
+    ]"
     :height="height"
     :width="width"
     :to="to"
@@ -62,7 +63,7 @@
       <template #label-content>
         <div
           class="text-h4 px-6 pb-1 pt-2 text-ellipsis d-block title text-h4"
-          :class="(disabled || !interactable ) ? 'black--text' : 'primary--text'"
+          :class="disabled || !interactable ? 'black--text' : 'primary--text'"
           :style="{ 'padding-top': !icon ? '56px' : null }"
           data-e2e="card-title"
         >
@@ -182,7 +183,7 @@ export default {
   color: var(--v-black-darken4);
   font-weight: normal;
   transition: box-shadow 0.2s;
-  
+
   &.interactable {
     cursor: pointer;
   }
