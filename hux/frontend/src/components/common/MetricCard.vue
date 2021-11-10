@@ -141,6 +141,9 @@ export default {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  &::before {
+    border-radius: 10px;
+  }
   &.no-click {
     cursor: default;
     background-color: transparent;

@@ -1,4 +1,5 @@
 """This module enables functionality related to engagement management."""
+# pylint: disable=too-many-lines
 
 import logging
 import datetime
@@ -103,13 +104,16 @@ def set_engagement(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_engagements_summary(
-    database: DatabaseClient, engagement_ids: list = None
+    database: DatabaseClient,
+    engagement_ids: list = None,
+    query_filter: Union[dict, None] = None,
 ) -> Union[list, None]:
     """A function to get all engagements summary with all nested lookups.
 
     Args:
         database (DatabaseClient): A database client.
         engagement_ids (list): Optional engagement id filter list.
+        query_filter (Union[dict, None]): Mongo filter Query.
 
     Returns:
         Union[list, None]: List of all engagement documents.
@@ -122,6 +126,13 @@ def get_engagements_summary(
     match_statement = {db_c.DELETED: False}
     if engagement_ids:
         match_statement[db_c.ID] = {"$in": engagement_ids}
+
+    if query_filter:
+        if db_c.WORKED_BY in query_filter:
+            match_statement["$or"] = [
+                {db_c.CREATED_BY: query_filter.get(db_c.WORKED_BY)},
+                {db_c.UPDATED_BY: query_filter.get(db_c.WORKED_BY)},
+            ]
 
     pipeline = [
         # filter out the deleted engagements
