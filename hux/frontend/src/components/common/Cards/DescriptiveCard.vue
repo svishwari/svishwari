@@ -1,14 +1,7 @@
 <template>
   <v-card
     :outlined="disabled"
-    class="
-      descriptive-card
-      align-center
-      text-center
-      rounded-lg
-      card-space
-      mb-10
-    "
+    class="descriptive-card align-center text-center rounded-lg card-space mb-6"
     :class="{ 'in-active': disabled }"
     :height="height"
     :width="width"
@@ -42,14 +35,14 @@
         <logo
           v-if="logoOption"
           :type="icon"
-          :size="44"
+          :size="32"
           :color="iconColor"
           class="d-block"
         />
         <icon
           v-else
           :type="icon"
-          :size="44"
+          :size="32"
           :color="iconColor"
           class="d-block"
         />
@@ -200,10 +193,11 @@ export default {
   .dot {
     width: 60px;
     height: 60px;
-    padding: 8px;
     border-radius: 50%;
     @extend .box-shadow-1;
     background: var(--v-white-base);
+    text-align: -webkit-center;
+    padding: 14px;
   }
   .description {
     min-height: 36px;
