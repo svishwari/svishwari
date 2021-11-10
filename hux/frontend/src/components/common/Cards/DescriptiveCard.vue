@@ -181,6 +181,7 @@ export default {
     @extend .box-shadow-3;
   }
   &.in-active {
+    @extend .box-shadow-none;
     cursor: default;
     background-color: var(--v-primary-lighten1);
     &:hover {

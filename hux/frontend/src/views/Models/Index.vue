@@ -38,7 +38,7 @@
         >
           <template slot="top">
             <status
-              :icon-size="17"
+              :icon-size="18"
               :status="model.status || ''"
               collapsed
               class="d-flex float-left"
