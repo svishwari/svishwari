@@ -1,46 +1,45 @@
 <template>
-  <div class="list-wrapper">
-    <v-row v-if="hasAddedDestinations">
-      <template>
-        <descriptive-card
-          v-for="destination in addedDestinations"
-          :key="destination.id"
-          :icon="destination.type"
-          :icon-color="'white'"
-          :title="destination.name"
-          :description="destination.category"
-          :disabled="destination.status === 'Pending'"
-          :action-menu="true"
-          :coming-soon="false"
-          :logo-option="true"
-          height="225"
-          width="255"
-          class="mr-10 model-desc-card"
-          data-e2e="destination-list"
-        >
-          <template slot="top">
-            <status
-              :icon-size="18"
-              :status="destination.status"
-              collapsed
-              class="d-flex float-left"
-              data-e2e="model-status"
-            />
-          </template>
-          <template slot="action-menu-options">
-            <v-list class="list-wrapper pa-0">
-              <v-list-item-group>
-                <v-list-item @click="openModal(destination)">
-                  <v-list-item-title data-e2e="destination-list-remove">
-                    Remove
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </template>
-        </descriptive-card>
-      </template>
-    </v-row>
+  <div class="list-wrapper d-flex justify-start align-start flex-wrap">
+    <template v-if="hasAddedDestinations">
+      <descriptive-card
+        v-for="destination in addedDestinations"
+        :key="destination.id"
+        :icon="destination.type"
+        :icon-color="'white'"
+        :title="destination.name"
+        :description="destination.category"
+        :disabled="['Pending', 'Requested'].includes(destination.status)"
+        :action-menu="true"
+        :coming-soon="false"
+        :logo-option="true"
+        :interactable="false"
+        height="225"
+        width="255"
+        class="mr-12 model-desc-card"
+        data-e2e="destination-list"
+      >
+        <template slot="top">
+          <status
+            :icon-size="18"
+            :status="destination.status"
+            collapsed
+            class="d-flex float-left"
+            data-e2e="model-status"
+          />
+        </template>
+        <template slot="action-menu-options">
+          <v-list class="list-wrapper pa-0">
+            <v-list-item-group>
+              <v-list-item @click="openModal(destination)">
+                <v-list-item-title data-e2e="destination-list-remove">
+                  Remove
+                </v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </template>
+      </descriptive-card>
+    </template>
 
     <empty-state-data v-else>
       <template #icon> mdi-alert-circle-outline </template>
@@ -75,12 +74,11 @@
             font-weight-regular
           "
         >
+          Are you sure you want to remove this
           <template v-if="selectedDestination.status === 'Requested'">
-            Are you sure you want to remove this pending destination?
+            pending
           </template>
-          <template v-else>
-            Are you sure you want to remove this destination?
-          </template>
+          destination?
         </div>
         <div
           v-if="selectedDestination.status !== 'Requested'"
@@ -110,6 +108,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import sortBy from "lodash/sortBy"
 
 import ConfirmModal from "@/components/common/ConfirmModal"
 import EmptyStateData from "@/components/common/EmptyStateData"
@@ -143,7 +142,9 @@ export default {
     }),
 
     addedDestinations() {
-      return this.destinations.filter((destination) => destination.is_added)
+      return sortBy(this.destinations, ["status", "name"]).filter(
+        (destination) => destination.is_added
+      )
     },
 
     hasAddedDestinations() {
@@ -155,10 +156,12 @@ export default {
     ...mapActions({
       removeDestination: "destinations/remove",
     }),
+
     openModal(destination) {
       this.selectedDestination = destination
       this.confirmModal = true
     },
+
     async confirmRemoval() {
       await this.removeDestination({
         id: this.selectedDestination.id,
@@ -169,10 +172,12 @@ export default {
       this.confirmModal = false
       this.inputText = null
     },
+
     enableConfirmButton(val) {
       this.inputText = val
       this.enableConfirm = /confirm/i.test(val)
     },
+
     cancelRemoval() {
       this.confirmModal = !this.confirmModal
       this.inputText = null
