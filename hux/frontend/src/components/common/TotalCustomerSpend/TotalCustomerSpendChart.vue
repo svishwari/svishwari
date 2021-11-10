@@ -1,7 +1,7 @@
 <template>
   <div ref="totalCustomerSpendChart" class="container-chart">
     <line-area-chart
-      v-model="spendData"
+      v-model="sourceData"
       :chart-dimensions="chartDimensions"
       @tooltipDisplay="toolTipDisplay"
     />
@@ -14,50 +14,18 @@
       :tooltip-style="toolTipStyle"
     >
       <template #content>
-        <!-- <div class="text-body-2 black--text text--darken-4 caption">
-          <div class="value-container">
-            <icon
-              type="customer"
-              :size="20"
-              :stroke-opacity="0.5"
-              :stroke="colorCodes[currentData.index].base"
-              :variant="colorCodes[currentData.index].variant"
-            />
-            <span class="text-label">Total customers</span>
-          </div>
-          <div class="value-section">
-            {{ currentData.totalCustomers | Numeric(true, false, false) }}
+        <div class="text-body-2 black--text text--darken-4 caption">
+          <div class="spend-count mb-1 text-h5">
+            <span class="dots"></span>
+            <span>Total customer spend</span>
           </div>
           <div class="value-container">
-            <icon
-              type="new-customer"
-              :size="20"
-              :stroke="colorCodes[currentData.index].base"
-              :variant="colorCodes[currentData.index].variant"
-            />
-            <span class="text-label">New customers added</span>
-          </div>
-          <div class="value-section">
-            {{ currentData.addedCustomers | Numeric(true, false, false) }}
-          </div>
-          <div class="value-container">
-            <icon
-              type="left-customer"
-              :size="20"
-              :stroke-opacity="0.5"
-              stroke="black"
-              variant="lighten4"
-            />
-            <span class="text-label">Customers left</span>
-          </div>
-          <div class="value-section">
-            <span v-if="currentData.leftCustomers > 0">-</span>
-            {{ currentData.leftCustomers | Numeric(true, false, false) }}
+            ${{ currentData.spend | Numeric(true, false, false) }}
           </div>
           <div class="date-section">
             {{ currentData.date | Date("MMM DD, YYYY") }}
           </div>
-        </div> -->
+        </div>
       </template>
     </chart-tooltip>
   </div>
@@ -73,7 +41,7 @@ export default {
   name: "TotalCustomerSpendChart",
   components: { LineAreaChart, ChartTooltip, Icon },
   props: {
-    customersData: {
+    customerSpendData: {
       type: Array,
       required: true,
     },
@@ -82,44 +50,19 @@ export default {
     return {
       show: false,
       currentData: {},
-      chartSourceData: {},
-      sourceData: [],
+      sourceData: this.customerSpendData,
       chartDimensions: {
         width: 0,
         height: 0,
       },
-      toolTipStyle: TooltipConfiguration.totalCustomerChart,
-      spendData: [
-        {
-          date: "2021-05-08T09:04:38.371Z",
-          spend: 35000,
-        },
-        {
-          date: "2021-06-08T09:04:38.371Z",
-          spend: 70000,
-        },
-        {
-          date: "2021-07-08T09:04:38.371Z",
-          spend: 50000,
-        },
-        {
-          date: "2021-08-08T09:04:38.371Z",
-          spend: 80000,
-        },
-        {
-          date: "2021-09-08T09:04:38.371Z",
-          spend: 60000,
-        },
-        {
-          date: "2021-10-08T09:04:38.371Z",
-          spend: 95000,
-        },
-      ],
+      toolTipStyle: TooltipConfiguration.totalCustomerSpendChart,
     }
   },
   mounted() {
+    new ResizeObserver(this.sizeHandler).observe(
+      this.$refs.totalCustomerSpendChart
+    )
     this.sizeHandler()
-    new ResizeObserver(this.sizeHandler).observe(this.$refs.totalCustomerSpendChart)
   },
   methods: {
     toolTipDisplay(...arg) {
@@ -129,8 +72,9 @@ export default {
       }
     },
     sizeHandler() {
-      if (this.$refs.totalCustomerChart) {
-        this.chartDimensions.width = this.$refs.totalCustomerSpendChart.clientWidth
+      if (this.$refs.totalCustomerSpendChart) {
+        this.chartDimensions.width =
+          this.$refs.totalCustomerSpendChart.clientWidth
         this.chartDimensions.height = 350
       }
     },
@@ -141,6 +85,8 @@ export default {
 <style lang="scss" scoped>
 .global-heading {
   font-style: normal;
+  color: var(--v-black-base) !important;
+  margin-bottom: 4px;
 }
 .container-chart {
   position: relative;
@@ -165,6 +111,16 @@ export default {
   .date-section {
     @extend .global-heading;
     color: var(--v-black-lighten4) !important;
+  }
+  .spend-count {
+    .dots {
+      margin-right: 4px;
+      height: 10px;
+      width: 10px;
+      border-radius: 50%;
+      background-color: var(--v-primary-darken2) !important;
+      display: inline-block;
+    }
   }
 }
 </style>

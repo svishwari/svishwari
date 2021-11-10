@@ -1,237 +1,195 @@
 <template>
-  <div class="main-container">
-    <div
-      ref="huxChart"
-      class="chart-section"
-      @mouseover="getCordinates($event)"
-    ></div>
+  <div class="chart-container" :style="{ maxWidth: chartWidth }">
+    <div ref="lineAreaChart" class="chart-section"></div>
   </div>
 </template>
 
 <script>
+import * as d3Axis from "d3-axis"
 import * as d3Shape from "d3-shape"
 import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
-import * as d3Axis from "d3-axis"
 import * as d3TimeFormat from "d3-time-format"
+import * as d3Transition from "d3-transition"
 
 export default {
   name: "LineAreaChart",
   props: {
     value: {
       type: Array,
-      required: false,
-    },
-    yValueData: {
-      type: Array,
-      required: false,
-    },
-    dateData: {
-      type: Array,
-      required: false,
+      required: true,
     },
     chartDimensions: {
       type: Object,
       required: false,
       default() {
         return {
-          width: 0,
-          height: 0,
+          width: 600,
+          height: 350,
         }
       },
     },
   },
   data() {
     return {
+      data: this.value,
       chartWidth: "",
-      width: 355,
-      height: 180,
-      show: false,
-      tooltip: {
-        x: 0,
-        y: 0,
+      toolTip: {
+        xPosition: 0,
+        yPosition: 0,
+        date: "",
+        spend: 0,
       },
-      areaChartData: this.value,
-      legendsData: [
-        { color: "rgba(0, 85, 135, 1)", text: "Women" },
-        { color: "rgba(12, 157, 219, 1)", text: "Men" },
-        { color: "rgba(66, 239, 253, 1)", text: "Other" },
-      ],
     }
   },
+
   watch: {
     chartDimensions: {
       handler() {
-        d3Select.select(this.$refs.huxChart).selectAll("svg").remove()
-        this.initiateAreaChart()
+        d3Select.select(this.$refs.lineAreaChart).selectAll("svg").remove()
+        this.initiatelineAreaChart()
       },
       immediate: false,
       deep: true,
     },
   },
   methods: {
-    async initiateAreaChart() {
-      await this.areaChartData
+    async initiatelineAreaChart() {
+      await this.value
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       this.height = this.chartDimensions.height
-      let margin = {}
-      margin = { top: 10, bottom: 20, left: 60, right: 40 }
-      let colorCodes = [
-        "rgba(0, 85, 135, 1)",
-        "rgba(12, 157, 219, 1)",
-        "rgba(66, 239, 253, 1)",
-      ]
-      if (this.areaChartData.length === 0) {
-        this.legendsData = [
-          { color: "rgba(208, 208, 206, 1)", text: "no data available" },
-        ]
-        margin = { top: 10, bottom: 20, left: 40, right: 40 }
-        colorCodes = ["rgba(208, 208, 206, 1)"]
-      }
+      let margin = { top: 15, right: 45, bottom: 100, left: 60 }
+      let w = this.chartDimensions.width - margin.left - margin.right
+      let h = this.chartDimensions.height - margin.top - margin.bottom
+
+      d3Select.select(this.$refs.lineAreaChart).selectAll("svg").remove()
 
       let svg = d3Select
-        .select(this.$refs.huxChart)
+        .select(this.$refs.lineAreaChart)
         .append("svg")
-        .attr("width", this.width)
-        .attr("height", this.height)
-
-      let strokeWidth = 1.5
-
-      let chart = svg
+        .classed("main-svg", true)
+        .attr("width", this.width + margin.left + margin.right)
+        .attr("height", this.height + margin.top + margin.bottom)
         .append("g")
-        .attr("transform", `translate(${margin.left},10)`)
+        .attr("transform", `translate(${margin.left},${margin.top})`)
 
-      let width =
-        +svg.attr("width") - margin.left - margin.right - strokeWidth * 2
-      let height = +svg.attr("height") - margin.top - margin.bottom
-
-      let grp = chart
-        .append("g")
-        .attr("transform", `translate(-${margin.left - strokeWidth},0)`)
-
-      let stack = d3Shape
-        .stack()
-        .keys(["women_spend", "men_spend", "others_spend"])
-      let stackedValues = stack(this.areaChartData)
-      let stackedData = []
-
-      stackedValues.forEach((layer) => {
-        let currentStack = []
-        layer.forEach((d, i) => {
-          d[1] = d[1] - d[0]
-          d[0] = 0
-          currentStack.push({
-            values: d,
-            date: new Date(this.areaChartData[i].date),
-          })
-        })
-
-        stackedData.push(currentStack)
-      })
+      let dateFormatter = (value) =>
+        this.$options.filters.Date(value, "MM/DD/YYYY")
 
       let appendyAxisFormat = (text) =>
-        `$${this.$options.filters.Numeric(text, false, true, false)}`
-
-      let yScale = d3Scale
-        .scaleLinear()
-        .range([height, 0])
-        .domain([0, d3Array.max(this.yValueData, (d) => d)])
-        .nice(4)
+        `${this.$options.filters.Numeric(text, false, true, false)}`
 
       let xScale = d3Scale
         .scaleTime()
+        .rangeRound([0, w])
         .domain(
-          d3Array.extent(this.dateData, function (d) {
-            return d
-          })
+          d3Array.extent(this.data, (d) => new Date(dateFormatter(d.date)))
         )
-        .range([0, width])
 
-      let area = d3Shape
-        .area()
-        .x((dataPoint) => xScale(dataPoint.date))
-        .y0((dataPoint) => yScale(dataPoint.values[0]))
-        .y1((dataPoint) => yScale(dataPoint.values[1]))
+      let yScale = d3Scale
+        .scaleLinear()
+        .rangeRound([h, 0])
+        .domain([0, d3Array.max(this.data, (d) => d.spend)])
+        .nice(5)
 
-      let series = grp
-        .selectAll(".series")
-        .data(stackedData)
-        .enter()
+      svg
         .append("g")
-        .attr("class", "series")
-
-      series
-        .append("path")
-        .attr("transform", `translate(${margin.left},0)`)
-        .style("fill", (d, i) => colorCodes[i])
-        .attr("stroke-width", 2)
-        .attr("fill-opacity", 0.2)
-        .attr("d", (d) => area(d))
-
-      let lineStock = d3Shape
-        .line()
-        .x((dataPoint) => xScale(dataPoint.date))
-        .y((dataPoint) => yScale(dataPoint.values[1]))
-
-      series
-        .append("path")
-        .attr("transform", `translate(${margin.left},0)`)
-        .attr("class", "line")
-        .style("stroke", (d, i) => colorCodes[i])
-        .attr("stroke-width", 2)
-        .style("fill", "none")
-        .attr("d", (d) => lineStock(d))
-
-      chart
-        .append("g")
-        .attr("transform", `translate(0,${height})`)
-        .attr("fill", "#4f4f4f")
-        .classed("xAxis", true)
+        .classed("xAlternateAxis", true)
+        .attr("transform", `translate(0,${h})`)
         .call(
           d3Axis
             .axisBottom(xScale)
-            .ticks(this.areaChartData.length)
-            .tickFormat(d3TimeFormat.timeFormat("%m/%d/%y"))
-            .tickValues(
-              this.dateData.map(function (d) {
-                return d
-              })
-            )
+            .tickSize(10)
+            .ticks(6)
+            .tickPadding(15)
+            .tickFormat("")
         )
-        .call((g) => g.selectAll(".tick line").attr("stroke", "#ECECEC"))
-        .call((g) => g.selectAll("path").attr("stroke", "#ECECEC"))
-        .style("font-size", 12)
+        .style("font-size", "14px")
 
-      chart
+      svg
         .append("g")
+        .classed("yAlternateAxis", true)
         .attr("transform", "translate(0, 0)")
-        .attr("fill", "#4f4f4f")
-        .classed("yAxis", true)
-        .call(d3Axis.axisLeft(yScale).ticks(4).tickFormat(appendyAxisFormat))
-        .call((g) => g.selectAll(".tick line").attr("stroke", "#ECECEC"))
-        .call((g) => g.selectAll("path").attr("stroke", "#ECECEC"))
-        .style("font-size", 12)
+        .call(d3Axis.axisLeft(yScale).tickSize(6).ticks(5).tickFormat(""))
+        .attr("stroke-width", "1")
+        .attr("stroke-opacity", "1")
+        .style("font-size", "12px")
 
+      svg
+        .append("g")
+        .classed("xAxis", true)
+        .attr("transform", `translate(0,${h})`)
+        .call(
+          d3Axis
+            .axisBottom(xScale)
+            .tickSize(-h)
+            .ticks(6)
+            .tickPadding(15)
+            .tickFormat(d3TimeFormat.timeFormat("%m/%Y"))
+        )
+        .style("font-size", "14px")
+
+      svg
+        .append("g")
+        .classed("yAxis", true)
+        .attr("transform", "translate(0, 0)")
+        .call(
+          d3Axis
+            .axisLeft(yScale)
+            .tickSize(-w)
+            .ticks(5)
+            .tickPadding(15)
+            .tickFormat(appendyAxisFormat)
+        )
+        .attr("stroke-width", "1")
+        .attr("stroke-opacity", "1")
+        .style("font-size", "14px")
+
+      d3Select.selectAll(".domain").style("stroke", "#E2EAEC")
+      d3Select.selectAll(".tick line").style("stroke", "#E2EAEC")
       d3Select
         .selectAll(".xAxis .tick text")
-        .attr("x", 0)
-        .attr("y", 11)
+        .attr("x", 10)
         .style("color", "#4F4F4F")
-
       d3Select.selectAll(".yAxis .tick text").style("color", "#4F4F4F")
-      svg
-        .append("rect")
-        .attr("width", width)
-        .attr("transform", `translate(${margin.left},${margin.top})`)
-        .attr("height", height)
-        .style("stroke", "transparent")
-        .style("fill", "transparent")
-        .on("mousemove", (mouseEvent) => mousemove(mouseEvent))
-        .on("mouseout", () => mouseout())
+      d3Select
+        .selectAll(".yAlternateAxis .tick line")
+        .style("stroke", "#E2EAEC")
+      d3Select
+        .selectAll(".xAlternateAxis .tick line")
+        .style("stroke", "#E2EAEC")
 
-      let bisectDate = d3Array.bisector((d) => d).left
+      d3Transition.transition()
+
+      let lineTrace = (value) => {
+        return d3Shape
+          .line()
+          .x(value ? 0 : (d) => xScale(new Date(dateFormatter(d.date))))
+          .y(value ? h : (d) => yScale(d.spend))
+      }
+
+      svg
+        .append("path")
+        .datum(this.data)
+        .attr("class", "line")
+        .style("stroke", "#0C9DDB")
+        .style("stroke-width", 3)
+        .style("fill", "transparent")
+        .attr("d", lineTrace())
+
+      svg
+        .selectAll("bar")
+        .data(this.data)
+        .enter()
+        .append("circle")
+        .attr("class", "dot")
+        .attr("r", 4)
+        .attr("cx", (d) => xScale(new Date(dateFormatter(d.date))))
+        .attr("cy", (d) => yScale(d.spend))
+        .style("fill", "transparent")
+        .attr("stroke", "transparent")
 
       svg
         .append("line")
@@ -239,100 +197,99 @@ export default {
         .style("stroke", "#1E1E1E")
         .style("stroke-width", 1)
 
+      svg
+        .append("rect")
+        .attr("width", w)
+        .attr("height", h)
+        .style("stroke", "transparent")
+        .style("fill", "transparent")
+        .on("mousemove", (mouseEvent) => mousemove(mouseEvent))
+        .on("mouseout", () => mouseout())
+
+      let bisectDate = d3Array.bisector((d) => d).right
+
       let mouseout = () => {
         svg.selectAll(".hover-line-y").style("display", "none")
-        svg.selectAll(".hover-circle").remove()
+        svg.selectAll(".parent-hover-circle").remove()
+        svg.selectAll(".child-hover-circle").remove()
         this.tooltipDisplay(false)
       }
 
       let mousemove = (mouseEvent) => {
-        svg.selectAll(".hover-circle").remove()
+        svg.selectAll(".parent-hover-circle").remove()
+        svg.selectAll(".child-hover-circle").remove()
         this.tooltipDisplay(false)
-        if (this.areaChartData.length !== 0) {
-          let data = this.dateData
-          let x0 = xScale.invert(d3Select.pointer(mouseEvent)[0])
 
-          let i = bisectDate(data, x0, 1)
-          let d0 = data[i - 1]
-          let d1 = data[i] || {}
-          let d = x0 - d0 > d1 - x0 ? d1 : d0
-          let finalXCoordinate = xScale(d) + margin.left
-          let dateD = this.$options.filters.Date(d, "DD/MM/YY")
-          let yData
-          let dataToolTip = this.areaChartData.find(
-            (element) =>
-              this.$options.filters.Date(new Date(element.date), "DD/MM/YY") ==
-              dateD
-          )
+        let data = this.data.map((d) => dateFormatter(d.date))
+        let x0 = dateFormatter(xScale.invert(d3Select.pointer(mouseEvent)[0]))
 
-          svg
-            .selectAll(".hover-line-y")
-            .attr("x1", finalXCoordinate)
-            .attr("x2", finalXCoordinate)
-            .attr("y1", margin.top)
-            .attr("y2", height + margin.top)
-            .style("display", "block")
+        let i = bisectDate(data, x0, 1)
+        let d0 = data[i - 1]
+        let d1 = data[i] || {}
+        let d = x0 - d0 > d1 - x0 ? d1 : d0
+        let dateD = dateFormatter(d)
+        let finalXCoordinate = xScale(new Date(dateD))
+        let yData = {}
+        let dataToolTip = this.data.find(
+          (element) => dateFormatter(element.date) == dateD
+        )
 
-          svg.selectAll(".dot").each(function () {
-            if (this.getAttribute("cx") == finalXCoordinate) {
-              let yPosition = this.getAttribute("cy")
-              yData = yPosition
-              svg
-                .append("circle")
-                .classed("hover-circle", true)
-                .attr("cx", finalXCoordinate)
-                .attr("cy", yPosition)
-                .attr("r", 5.5)
-                .style("stroke", this.getAttribute("addData"))
-                .style("stroke-opacity", "1")
-                .style("fill", "white")
-                .style("pointer-events", "none")
-            }
-          })
-          dataToolTip.xPosition = finalXCoordinate + 8
-          dataToolTip.yPosition = yData
-          this.tooltipDisplay(true, dataToolTip)
-        }
-      }
+        svg
+          .selectAll(".hover-line-y")
+          .attr("x1", finalXCoordinate)
+          .attr("x2", finalXCoordinate)
+          .attr("y1", 0)
+          .attr("y2", h)
+          .style("display", "block")
 
-      stackedValues.forEach(function (layer, index) {
-        layer.forEach((points) => {
-          svg
-            .append("circle")
-            .attr("class", "dot")
-            .attr("r", 2.5)
-            .attr("cx", () => xScale(new Date(points.data.date)) + margin.left)
-            .attr("cy", () => yScale(points[1]) + margin.top)
-            .attr("data", () => points.data)
-            .attr("addData", colorCodes[index])
-            .style("fill", "transparent")
-            .attr("stroke", "transparent")
+        svg.selectAll(".dot").each(function () {
+          if (this.getAttribute("cx") == finalXCoordinate) {
+            let yPosition = this.getAttribute("cy")
+            yData = yPosition
+            svg
+              .append("circle")
+              .classed("parent-hover-circle", true)
+              .attr("cx", finalXCoordinate)
+              .attr("cy", yPosition)
+              .attr("r", 9)
+              .style("stroke", "white")
+              .style("stroke-opacity", "1")
+              .style("stroke-width", 1)
+              .style("fill", "white")
+              .style("pointer-events", "none")
+
+            svg
+              .append("circle")
+              .classed("child-hover-circle", true)
+              .attr("cx", finalXCoordinate)
+              .attr("cy", yPosition)
+              .attr("r", 7)
+              .style("stroke", "#0C9DDB")
+              .style("stroke-opacity", "1")
+              .style("stroke-width", 2)
+              .style("fill", "white")
+              .style("pointer-events", "none")
+          }
         })
-      })
+        dataToolTip.xPosition = finalXCoordinate
+        dataToolTip.yPosition = yData
+        this.tooltipDisplay(true, dataToolTip)
+      }
     },
-    getCordinates(event) {
-      this.tooltip.x = event.offsetX
-      this.tooltip.y = event.offsetY - 150
-      this.$emit("cordinates", this.tooltip)
-    },
-    tooltipDisplay(showTip, spendData) {
-      this.$emit("tooltipDisplay", showTip, spendData)
+    tooltipDisplay(showTip, eventsData) {
+      this.$emit("tooltipDisplay", showTip, eventsData)
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.main-container {
-  margin-bottom: 40px;
-  max-width: 450px;
-  min-height: 120px;
-  height: 325px;
+.chart-container {
+  height: 252px;
+  position: relative;
+
   .chart-section {
     margin-bottom: -20px;
-  }
-  .legend-style {
-    margin-top: 35px;
   }
 }
 </style>

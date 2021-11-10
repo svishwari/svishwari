@@ -115,7 +115,14 @@ describe("Data management > Customer Profiles", () => {
     cy.get(selector.engagement.exitDrawer).click()
 
     // should be able to check if valid response for total customers has received"
-    cy.get(selector.customerProfile.chart).its("length").should("gt", 0)
+    cy.get(selector.customerProfile.totalCustomerchart)
+      .its("length")
+      .should("gt", 0)
+
+    // should be able to check if valid response for customers spend has received"
+    cy.get(selector.customerProfile.customerSpendchart)
+      .its("length")
+      .should("gt", 0)
 
     // should be able to hover over state"
     cy.get(".geochart")
