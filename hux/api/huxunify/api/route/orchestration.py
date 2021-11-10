@@ -1061,9 +1061,9 @@ class AudienceRules(SwaggerView):
         rules_constants = {
             "text_operators": {
                 "contains": "Contains",
-                "does_not_contain": "Does not contain",
+                "not_contains": "Does not contain",
                 "equals": "Equals",
-                "does_not_equal": "Does not equal",
+                "not_equals": "Does not equal",
             }
         }
 
