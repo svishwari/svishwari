@@ -1069,6 +1069,7 @@
     <descriptive-card
       :action-menu="true"
       :coming-soon="false"
+      :interactable="true"
       width="280"
       height="255"
       icon="model-unsubscribe"
@@ -1119,6 +1120,7 @@
     <descriptive-card
       :action-menu="true"
       :coming-soon="false"
+      :interactable="true"
       width="280"
       height="255"
       icon="model-unsubscribe"
@@ -1133,6 +1135,7 @@
       :disabled="true"
       :action-menu="false"
       :coming-soon="true"
+      :interactable="false"
       width="255"
       height="225"
       icon="model-unsubscribe"
