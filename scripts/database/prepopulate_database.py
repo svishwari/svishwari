@@ -2,6 +2,7 @@
  - data sources
  - destinations (delivery platforms)
 """
+# pylint: disable=too-many-lines
 import logging
 import huxunifylib.database.constants as c
 from huxunifylib.database.cdp_data_source_management import create_data_source
@@ -770,8 +771,8 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "module",
         c.CONFIGURATION_FIELD_DESCRIPTION: "Monitor data quality "
-                                           "throughout ingestion and create a peristent"
-                                           " identifier and profile for every customer",
+        "throughout ingestion and create a peristent"
+        " identifier and profile for every customer",
         c.CONFIGURATION_FIELD_STATUS: "active",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -781,8 +782,8 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "module",
         c.CONFIGURATION_FIELD_DESCRIPTION: "Track performance of "
-                                           "decisioning models and reveal actionable"
-                                           " customer insights.",
+        "decisioning models and reveal actionable"
+        " customer insights.",
         c.CONFIGURATION_FIELD_STATUS: "active",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -792,8 +793,8 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "module",
         c.CONFIGURATION_FIELD_DESCRIPTION: "A 360 degree view of each customer, "
-                                           "understanding not only their needs and "
-                                           "preferences, but also the person behind the data.",
+        "understanding not only their needs and "
+        "preferences, but also the person behind the data.",
         c.CONFIGURATION_FIELD_STATUS: "active",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -803,8 +804,8 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "module",
         c.CONFIGURATION_FIELD_DESCRIPTION: "Seamlessly route audiences to"
-                                           " an activation channel of choice to deliver a personalized"
-                                           " experience for existing and new customers.",
+        " an activation channel of choice to deliver a personalized"
+        " experience for existing and new customers.",
         c.CONFIGURATION_FIELD_STATUS: "active",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -814,7 +815,7 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "module",
         c.CONFIGURATION_FIELD_DESCRIPTION: "Content allows you to present"
-                                           " visitors with unique experiences tailored to their needs.",
+        " visitors with unique experiences tailored to their needs.",
         c.CONFIGURATION_FIELD_STATUS: "pending",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -824,7 +825,7 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "module",
         c.CONFIGURATION_FIELD_DESCRIPTION: "Find out why your audiences think"
-                                           " what they think, behave as they behave and feel what they feel.",
+        " what they think, behave as they behave and feel what they feel.",
         c.CONFIGURATION_FIELD_STATUS: "pending",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -834,7 +835,7 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "business_solution",
         c.CONFIGURATION_FIELD_DESCRIPTION: "Lorem ipsum dolor sit amet, "
-                                           "consectetur adipiscing elit ut aliquam.",
+        "consectetur adipiscing elit ut aliquam.",
         c.CONFIGURATION_FIELD_STATUS: "pending",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -844,7 +845,7 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "business_solution",
         c.CONFIGURATION_FIELD_DESCRIPTION: "Lorem ipsum dolor sit amet, "
-                                           "consectetur adipiscing elit ut aliquam.",
+        "consectetur adipiscing elit ut aliquam.",
         c.CONFIGURATION_FIELD_STATUS: "pending",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -854,8 +855,8 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "business_solution",
         c.CONFIGURATION_FIELD_DESCRIPTION: "Ensure emails land in the right inbox "
-                                           "by providing insights on all aspects of a "
-                                           "successful marketing strategy from beginning to end.",
+        "by providing insights on all aspects of a "
+        "successful marketing strategy from beginning to end.",
         c.CONFIGURATION_FIELD_STATUS: "pending",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -865,8 +866,8 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "business_solution",
         c.CONFIGURATION_FIELD_DESCRIPTION: "Brings voice of the customer "
-                                           "to make improvements to your customer "
-                                           "experience at an individual and macro level.",
+        "to make improvements to your customer "
+        "experience at an individual and macro level.",
         c.CONFIGURATION_FIELD_STATUS: "pending",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -876,8 +877,8 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "business_solution",
         c.CONFIGURATION_FIELD_DESCRIPTION: "Enrich your customer profiles"
-                                           " with this collections of data sources at"
-                                           " the individual level enabling an enhanced customer experience.",
+        " with this collections of data sources at"
+        " the individual level enabling an enhanced customer experience.",
         c.CONFIGURATION_FIELD_STATUS: "pending",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -887,7 +888,7 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "business_solution",
         c.CONFIGURATION_FIELD_DESCRIPTION: "These capabilities were folded "
-                                           "into the segmentation engine, as was Hux Audience.",
+        "into the segmentation engine, as was Hux Audience.",
         c.CONFIGURATION_FIELD_STATUS: "pending",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -897,8 +898,8 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "business_solution",
         c.CONFIGURATION_FIELD_DESCRIPTION: "Enables brands to gain visibility, "
-                                           "monitor and  engage with their customers "
-                                           "based on AI – generated experienced based metrics.",
+        "monitor and  engage with their customers "
+        "based on AI – generated experienced based metrics.",
         c.CONFIGURATION_FIELD_STATUS: "pending",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -908,8 +909,8 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "business_solution",
         c.CONFIGURATION_FIELD_DESCRIPTION: "Leverages search data to optimize"
-                                           " the creation, placement, and timing of online "
-                                           "content to increase customer acquisition.",
+        " the creation, placement, and timing of online "
+        "content to increase customer acquisition.",
         c.CONFIGURATION_FIELD_STATUS: "pending",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -918,9 +919,9 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_NAME: "Cognitive spark",
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "business_solution",
-        c.CONFIGURATION_FIELD_DESCRIPTION: "A modular cloud-based product "
-                                           "designed to enable brands and portfolios "
-                                           "to make AI powered decisions at scale.",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "A modular cloud-based product"
+        " designed to enable brands and portfolios "
+        "to make AI powered decisions at scale.",
         c.CONFIGURATION_FIELD_STATUS: "pending",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,

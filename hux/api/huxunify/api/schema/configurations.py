@@ -3,8 +3,8 @@
 from flask_marshmallow import Schema
 from marshmallow.fields import Str, Boolean
 
-from huxunify.api.schema.custom_schemas import DateTimeWithZ
 from huxunifylib.database import constants as c
+from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
 class ConfigurationsSchema(Schema):
