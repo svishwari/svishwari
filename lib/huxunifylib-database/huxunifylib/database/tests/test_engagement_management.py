@@ -14,6 +14,7 @@ from huxunifylib.database import (
     engagement_audience_management as eam,
 )
 
+
 # pylint: disable=R0904
 class TestEngagementManagement(unittest.TestCase):
     """Test engagement management module."""
@@ -673,7 +674,7 @@ class TestEngagementManagement(unittest.TestCase):
             )
 
     def test_get_engagements_summary(self) -> None:
-        """Test get_engagements routine"""
+        """Test get_engagements_summary routine"""
 
         # create another audience
         audience = om.create_audience(
@@ -759,8 +760,8 @@ class TestEngagementManagement(unittest.TestCase):
                     self.assertIn(c.NAME, destination)
                     self.assertIn(c.OBJECT_ID, destination)
 
-    def test_get_engagement_summary(self) -> None:
-        """Test get_engagement_summary routine"""
+    def test_get_engagements_summary_engagement_ids(self) -> None:
+        """Test get_engagements_summary from a list of engagement_ids."""
 
         # create another audience
         audience = om.create_audience(
@@ -772,7 +773,7 @@ class TestEngagementManagement(unittest.TestCase):
             size=1609,
         )
 
-        # an audience with two destinations
+        # an engagement with two audiences
         new_engagement = {
             c.ENGAGEMENT_NAME: "Autumn 2024",
             c.ENGAGEMENT_DESCRIPTION: "high ltv for Autumn 2024",
@@ -783,7 +784,7 @@ class TestEngagementManagement(unittest.TestCase):
                     c.DESTINATIONS: [
                         {
                             c.OBJECT_ID: self.destinations[0][c.ID],
-                            c.DELIVERY_PLATFORM_CONTACT_LIST: "random_extension",
+                            c.DELIVERY_PLATFORM_CONTACT_LIST: "test_extension",
                             c.STATUS: c.STATUS_PENDING,
                         },
                         {
@@ -826,6 +827,104 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIn(c.NAME, engagement)
         self.assertIn(c.ENGAGEMENT_DESCRIPTION, engagement)
         self.assertIn(c.CREATED_BY, engagement)
+        self.assertIn(c.UPDATED_BY, engagement)
+        self.assertIn(c.CREATE_TIME, engagement)
+        self.assertIn(c.UPDATE_TIME, engagement)
+        self.assertIn(c.AUDIENCES, engagement)
+        self.assertEqual(
+            engagement[c.SIZE], audience[c.SIZE] + self.audience[c.SIZE]
+        )
+
+        for audience in engagement[c.AUDIENCES]:
+            self.assertIn(c.NAME, audience)
+            self.assertIn(c.DESTINATIONS, audience)
+            self.assertIn(c.OBJECT_ID, audience)
+            self.assertIn(c.SIZE, audience)
+            if not audience[c.DESTINATIONS]:
+                continue
+            for destination in audience[c.DESTINATIONS]:
+                self.assertIn(c.NAME, destination)
+                self.assertIn(c.OBJECT_ID, destination)
+
+    def test_get_engagements_summary_filter_query(self) -> None:
+        """Test get_engagements_summary from a list of engagement_ids based on
+        a filter query."""
+
+        # create another audience
+        audience = om.create_audience(
+            self.database,
+            "audience_group",
+            [],
+            [],
+            user_name=self.user_name,
+            size=1609,
+        )
+
+        # an engagement with two audiences
+        new_engagement = {
+            c.ENGAGEMENT_NAME: "Autumn 2024",
+            c.ENGAGEMENT_DESCRIPTION: "high ltv for Autumn 2024",
+            c.AUDIENCES: [
+                {
+                    c.OBJECT_ID: audience[c.ID],
+                    c.SIZE: audience[c.SIZE],
+                    c.DESTINATIONS: [
+                        {
+                            c.OBJECT_ID: self.destinations[0][c.ID],
+                            c.DELIVERY_PLATFORM_CONTACT_LIST: "test_extension",
+                            c.STATUS: c.STATUS_PENDING,
+                        },
+                        {
+                            c.OBJECT_ID: self.destinations[1][c.ID],
+                            c.STATUS: c.STATUS_SUCCEEDED,
+                        },
+                    ],
+                },
+                {
+                    c.OBJECT_ID: self.audience[c.ID],
+                    c.SIZE: audience[c.SIZE],
+                    c.DESTINATIONS: [
+                        {
+                            c.OBJECT_ID: self.destinations[1][c.ID],
+                            c.STATUS: c.STATUS_SUCCEEDED,
+                        }
+                    ],
+                },
+            ],
+        }
+
+        engagement_id = em.set_engagement(
+            self.database,
+            new_engagement[c.ENGAGEMENT_NAME],
+            new_engagement[c.ENGAGEMENT_DESCRIPTION],
+            new_engagement[c.AUDIENCES],
+            "test user",
+        )
+
+        em.set_engagement(
+            self.database,
+            "Sample Test Engagement name",
+            "Sample Test Engagement description",
+            [{c.OBJECT_ID: self.audience[c.ID], c.DESTINATIONS: []}],
+            self.user_name,
+        )
+
+        query_filter = {c.WORKED_BY: "test user"}
+
+        engagement_docs = em.get_engagements_summary(
+            self.database, [engagement_id], query_filter
+        )
+
+        # ensure length of grouped engagements is equal to one
+        self.assertEqual(len(engagement_docs), 1)
+        engagement = engagement_docs[0]
+
+        # test the grouped engagements for existence of key fields
+        self.assertIn(c.ID, engagement)
+        self.assertIn(c.NAME, engagement)
+        self.assertIn(c.ENGAGEMENT_DESCRIPTION, engagement)
+        self.assertIn(c.CREATED_BY, engagement)
+        self.assertEqual("test user", engagement[c.CREATED_BY])
         self.assertIn(c.UPDATED_BY, engagement)
         self.assertIn(c.CREATE_TIME, engagement)
         self.assertIn(c.UPDATE_TIME, engagement)

@@ -13,6 +13,7 @@
           :action-menu="true"
           :coming-soon="false"
           :logo-option="true"
+          :interactable="false"
           height="225"
           width="255"
           class="mr-10 model-desc-card"

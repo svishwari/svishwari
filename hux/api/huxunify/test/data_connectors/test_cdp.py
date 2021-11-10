@@ -4,9 +4,12 @@ import string
 from unittest import TestCase, mock
 from http import HTTPStatus
 import requests_mock
+import mongomock
 from dateutil.relativedelta import relativedelta
 from hypothesis import given, strategies as st
 
+import huxunifylib.database.constants as db_c
+from huxunifylib.database.client import DatabaseClient
 from huxunify.api import constants as api_c
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
@@ -46,6 +49,21 @@ class CDPTest(TestCase):
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
         self.request_mocker.start()
 
+        # setup the mock DB client
+        # init mongo patch initially
+        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
+        mongo_patch.start()
+
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
+
+        mock.patch(
+            "huxunify.api.route.customers.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
         self.addCleanup(mock.patch.stopall)
 
     def test_get_customer(self):
