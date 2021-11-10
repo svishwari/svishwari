@@ -32,9 +32,33 @@
               variant="white"
               height="40"
               is-tile
+              :style="{ float: 'left' }"
+              class="mr-2"
               @click="onCancel()"
             >
-              <span class="primary--text">{{ leftBtnText }}</span>
+              <span class="primary--text">{{ cancelBtnText }}</span>
+            </huxButton>
+            <huxButton
+              v-if="showBack"
+              size="large"
+              variant="white"
+              height="40"
+              is-tile
+              :style="{ float: 'left' }"
+              @click="onBack()"
+            >
+              <span class="primary--text">{{ backBtnText }}</span>
+            </huxButton>
+            <huxButton
+              v-if="showConfirm"
+              size="large"
+              variant="primary"
+              height="40"
+              is-tile
+              :style="{ float: 'right' }"
+              @click="onSubmit()"
+            >
+              <span>{{ confirmBtnText }}</span>
             </huxButton>
           </slot>
         </div>
@@ -63,10 +87,22 @@ export default {
       required: false,
     },
 
-    leftBtnText: {
+    cancelBtnText: {
       type: String,
       required: false,
       default: "Cancel",
+    },
+
+    backBtnText: {
+      type: String,
+      required: false,
+      default: "Back",
+    },
+
+    confirmBtnText: {
+      type: String,
+      required: false,
+      default: "Submit",
     },
 
     value: {
@@ -78,10 +114,22 @@ export default {
     width: {
       type: Number,
       required: false,
-      default: 900,
+      default: 909,
     },
 
     isDisabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    showBack: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    showConfirm: {
       type: Boolean,
       required: false,
       default: false,
@@ -120,6 +168,12 @@ export default {
     onCancel: function () {
       this.$emit("onCancel")
     },
+    onBack: function () {
+      this.$emit("onBack")
+    },
+    onSubmit: function () {
+      this.$emit("onSubmit")
+    },
   },
 }
 </script>
@@ -132,7 +186,7 @@ export default {
   .confirm-modal-footer {
     border-top: 1px solid var(--v-black-lighten3);
     margin-top: 36px;
-    display: flex;
+    display: flow-root;
     justify-content: space-between;
     align-items: center;
     padding: 20px 40px;

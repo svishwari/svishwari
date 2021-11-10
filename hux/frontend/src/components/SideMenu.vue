@@ -143,8 +143,8 @@ export default {
   data: () => ({
     // TODO: integrate with API endpoint for configuring this in the UI
     client: {
-      name: "Pendleton",
-      logo: "pendleton",
+      name: "Client",
+      logo: "client",
     },
     items: menuConfig.menu,
   }),
