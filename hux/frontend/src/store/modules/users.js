@@ -8,6 +8,7 @@ const state = {
   userProfile: {
     firstName: null,
     lastName: null,
+    email: null,
     token: null,
     idToken: null,
   },
@@ -33,6 +34,7 @@ const mutations = {
       state.userProfile.idToken = null
     }
   },
+
   setApplicationUserProfile(state, userProfile) {
     Vue.set(state, "userProfile", { ...state.userProfile, ...userProfile })
   },
@@ -64,6 +66,7 @@ const actions = {
       throw error
     }
   },
+
   async clearFavorite({ dispatch }, { id, type }) {
     try {
       await api.users.clearFavorite(id, type)
@@ -87,6 +90,8 @@ const getters = {
   getLastName: (state) => {
     return state.userProfile.lastName
   },
+
+  getEmailAddress: (state) => state.userProfile.email,
 }
 export default {
   namespaced,
