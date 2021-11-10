@@ -1261,7 +1261,7 @@ class SetLookalikeAudience(SwaggerView):
                 HTTP status code.
 
         Raises:
-            FailedDeliveryPlatformDependencyError: Delivery Platform Dependency
+            FailedDestinationDependencyError: Destination Dependency
                 error.
         """
 
@@ -1293,7 +1293,7 @@ class SetLookalikeAudience(SwaggerView):
 
         if not destination_connector.check_connection():
             logger.error("Facebook authentication failed.")
-            raise iae.FailedDeliveryPlatformDependencyError(
+            raise iae.FailedDestinationDependencyError(
                 destination[api_c.NAME], HTTPStatus.FAILED_DEPENDENCY
             )
 
