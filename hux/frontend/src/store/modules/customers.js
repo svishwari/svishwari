@@ -14,6 +14,8 @@ const state = {
 
   totalCustomers: [],
 
+  totalCustomerSpend: [],
+
   geoOverview: [],
 
   geoCities: [],
@@ -37,6 +39,8 @@ const getters = {
   insights: (state) => state.insights,
 
   totalCustomers: (state) => state.totalCustomers,
+
+  totalCustomerSpend: (state) => state.totalCustomerSpend,
 
   geoOverview: (state) => state.geoOverview,
 
@@ -92,6 +96,10 @@ const mutations = {
 
   SET_TOTAL_CUSTOMERS(state, data) {
     state.totalCustomers = data
+  },
+
+  SET_TOTAL_CUSTOMER_SPEND(state, data) {
+    state.totalCustomerSpend = data
   },
 
   SET_DEMOGRAPHICS(state, data) {
@@ -185,6 +193,16 @@ const actions = {
     try {
       const response = await api.customers.totalCustomers()
       commit("SET_TOTAL_CUSTOMERS", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getCustomerSpend({ commit }) {
+    try {
+      const response = await api.customers.getCustomerSpend()
+      commit("SET_TOTAL_CUSTOMER_SPEND", response.data)
     } catch (error) {
       handleError(error)
       throw error

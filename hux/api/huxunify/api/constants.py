@@ -43,6 +43,14 @@ UNIFIED_OKTA_REDIRECT_URI = "unified_okta_redirect_uri"
 UNIFIED_OKTA_TEST_USER_NAME = "unified_okta_test_user_name"
 UNIFIED_OKTA_TEST_USER_PW = "unified_okta_test_user_pw"
 
+# JIRA
+JIRA_PROJECT_KEY = "JIRA_PROJECT_KEY"
+JIRA_SERVER = "JIRA_SERVER"
+JIRA_API_KEY = "JIRA_API_KEY"
+ISSUE_TYPE = "issue_type"
+KEY = "key"
+TICKET_TYPE_BUG = "Bug"
+
 # general defines
 ID = "id"
 NAME = "name"
@@ -131,6 +139,7 @@ COUNT = "count"
 AVG_SPENT_WOMEN = "avg_spent_women"
 AVG_SPENT_MEN = "avg_spent_men"
 AVG_SPENT_OTHER = "avg_spent_other"
+REVENUE = "revenue"
 YEAR = "year"
 MONTH = "month"
 MINUTE = "minute"
@@ -231,6 +240,7 @@ AWS_SSM_NAME = "ssm"
 AWS_EVENTS_NAME = "events"
 AWS_BATCH_NAME = "batch"
 AWS_S3_NAME = "s3"
+AWS_SSM_PARAM_NOT_FOUND_ERROR_MESSAGE = "Required parameter(s) not found."
 
 AWS_BUCKET = "Bucket"
 AWS_TARGET_ID = "Id"
@@ -650,6 +660,7 @@ AUDIENCE_PERFORMANCE = "audience-performance"
 AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
 DISPLAY_ADS = "display-ads"
 IS_AD_PLATFORM = "is_ad_platform"
+MY_ENGAGEMENTS = "my_engagements"
 
 DISPLAY_ADS_METRICS = [
     "spend",
@@ -768,6 +779,7 @@ CDP_DATA_SOURCE_CATEGORY_MAP = {
 CDP_DATA_SOURCE_CATEGORIES = list(set(CDP_DATA_SOURCE_CATEGORY_MAP.values()))
 
 # Authentication API fields
+AUTHORIZATION = "Authorization"
 AUTHENTICATION_TOKEN = "token"
 AUTHENTICATION_ACCESS_TOKEN = "access_token"
 AUTHENTICATION_TOKEN_TYPE_HINT = "token_type_hint"
@@ -826,6 +838,7 @@ USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
 FAVORITES = "favorites"
 PROFILE = "profile"
+CONTACT_US = "contact-us"
 
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
@@ -835,6 +848,51 @@ MODELS_VERSION_HISTORY = "version-history"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
 MODEL_ID = "model_id"
+MODEL_SHAP_DATA = "shap_data"
+MODEL_ONE_SHAP_DATA = [
+    "dow-pe_u_dow-count",
+    "duration_days-order-min",
+    "dow-u_wd-weekday",
+    "dow-pe_u_wd-weekday",
+    "1to2y-quantity-cnt",
+    "1to2y-data_source-transactions",
+    "1to2y-price-max",
+    "1to2y-price-sum",
+    "1to2y-price-avg",
+    "1to2y-price-cnt",
+    "1to2y-positive-order",
+    "1to2y-type-transaction",
+    "1to2y-quantity-max",
+    "1to2y-quantity-sum",
+    "1to2y-quantity-avg",
+    "dow-pe_u_dow-thursday",
+    "dow-u_dow-thursday",
+    "8to12m-data_source-transactions",
+    "8to12m-price-max",
+    "8to12m-price-sum",
+]
+MODEL_TWO_SHAP_DATA = [
+    "8to12m-price-min",
+    "8to12m-price-avg",
+    "8to12m-price-cnt",
+    "8to12m-type-transaction",
+    "8to12m-positive-order",
+    "8to12m-quantity-max",
+    "8to12m-quantity-sum",
+    "8to12m-quantity-avg",
+    "dow-pe_u_dow-tuesday",
+    "dow-u_dow-tuesday",
+    "1to2y-description-red",
+    "dow-u_dow-wednesday",
+    "dow-pe_u_dow-wednesday",
+    "4m-quantity-cnt",
+    "4m-price-avg",
+    "4m-price-sum",
+    "4m-price-max",
+    "4m-price-cnt",
+    "4m-price-min",
+    "1to2y-description-set",
+]
 MODEL_ID_PARAMS = [
     {
         "name": MODEL_ID,
@@ -935,7 +993,7 @@ NOTIFICATION_CATEGORIES = [
     "delivery",
     "orchestration",
     "destinations",
-    "data_sources",
+    "datasources",
     "customers",
     "models",
 ]

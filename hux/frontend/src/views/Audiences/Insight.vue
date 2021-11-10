@@ -1039,6 +1039,7 @@ export default {
         default:
           break
       }
+      await this.loadAudienceInsights()
     },
 
     getAgeString(min_age, max_age) {
@@ -1159,7 +1160,7 @@ export default {
             this.deleteActionData = {
               engagementId: this.engagementId,
               audienceId: this.audienceId,
-              data: { id: event.data.id },
+              data: { id: event.data.delivery_platform_id },
             }
             this.showConfirmModal = true
             break
@@ -1274,7 +1275,6 @@ export default {
           data: payload,
         })
       }
-      await this.loadAudienceInsights()
     },
     async loadAudienceInsights() {
       this.loading = true

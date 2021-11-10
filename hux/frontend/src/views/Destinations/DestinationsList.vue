@@ -12,6 +12,7 @@
         :action-menu="true"
         :coming-soon="false"
         :logo-option="true"
+        :interactable="false"
         height="225"
         width="255"
         class="mr-12 model-desc-card"

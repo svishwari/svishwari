@@ -19,6 +19,7 @@ import mapData from "@/components/common/MapChart/mapData.js"
 import demographicsData from "@/api/mock/fixtures/demographicData.js"
 import customerEventData from "@/api/mock/fixtures/customerEventData.js"
 import totalCustomersData from "./fixtures/totalCustomersData.js"
+import totalCustomerSpendData from "./fixtures/totalCustomerSpendData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
 
@@ -489,6 +490,8 @@ export const defineRoutes = (server) => {
   server.get("/customers-insights/demo", () => demographicsData)
 
   server.get("/customers-insights/total", () => totalCustomersData)
+
+  server.get("/customers-insights/revenue", () => totalCustomerSpendData)
 
   server.get("/customers-insights/cities", (schema, request) => {
     let batchNumber = request.queryParams["batch_number"] || 1

@@ -22,6 +22,15 @@
     >
       <template #append>
         <span
+          v-if="sliderTextColor"
+          class="slider-value-display text-subtitle-1"
+          :style="{
+            color: currentColor,
+          }"
+          v-text="currentValue + '%'"
+        ></span>
+        <span
+          v-else
           class="slider-value-display black--text text-subtitle-1"
           v-text="currentValue + '%'"
         ></span>
@@ -59,6 +68,11 @@ export default {
     isRangeSlider: {
       type: Boolean,
       required: true,
+      default: false,
+    },
+    sliderTextColor: {
+      type: Boolean,
+      required: false,
       default: false,
     },
   },
