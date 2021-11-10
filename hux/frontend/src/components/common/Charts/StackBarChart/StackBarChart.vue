@@ -155,7 +155,10 @@ export default {
         return tickDate
           ? this.emptyState
             ? "date"
-            : this.$options.filters.Date(tickDate.date, "MM[/01/]YY")
+            : this.$options.filters.Date(
+                tickDate.date,
+                this.value.monthsDuration == 6 ? "MM[/]YYYY" : "MM[/01/]YY"
+              )
           : ""
       }
 
@@ -221,7 +224,7 @@ export default {
         .style("color", "#4F4F4F")
       d3Select.selectAll(".yAxis-main .tick text").style("color", "#4F4F4F")
       if (this.value.monthsDuration == 6) {
-        d3Select.selectAll(".xAxis-main .tick text").attr("x", 20)
+        d3Select.selectAll(".xAxis-main .tick text").attr("x", 18)
       } else {
         d3Select.selectAll(".xAxis-main .tick text").attr("x", 16)
       }

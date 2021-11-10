@@ -993,7 +993,7 @@ NOTIFICATION_CATEGORIES = [
     "delivery",
     "orchestration",
     "destinations",
-    "data_sources",
+    "datasources",
     "customers",
     "models",
 ]

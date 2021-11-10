@@ -23,7 +23,7 @@
             <h5 class="text-h3 mb-1">Customer overview</h5>
             <v-btn
               text
-              small
+              min-width="80"
               class="
                 d-flex
                 align-right
@@ -82,41 +82,38 @@
                     </span>
                   </template>
                   <template #hover-content>
-                    <span v-if="item.title == 'Customers'">
-                      Customers<br />
+                    <div
+                      v-if="
+                        item.title == 'Customers' ||
+                        item.title == 'Countries' ||
+                        item.title == 'States' ||
+                        item.title == 'Cities'
+                      "
+                    >
+                      <div class="mb-1">{{ item.title }}</div>
                       {{
                         item.subtitle | Numeric(true, false, false) | Empty("-")
                       }}
-                    </span>
-                    <span v-if="item.title == 'Countries'">
-                      Countries<br />
-                      {{ item.subtitle | Empty("-") }}
-                    </span>
-                    <span v-if="item.title == 'Cities'">
-                      Cities<br />
-                      {{
-                        item.subtitle | Numeric(true, false, false) | Empty("-")
-                      }}
-                    </span>
+                    </div>
                     <div v-if="item.title == 'Gender'">
-                      <div class="mb-3">
-                        Men<br />
+                      <div class="mb-2">
+                        <div class="mb-2">Men</div>
                         {{
                           item.menData
                             | Numeric(true, false, false)
                             | Empty("-")
                         }}
                       </div>
-                      <div class="mb-3">
-                        Women<br />
+                      <div class="mb-2">
+                        <div class="mb-2">Women</div>
                         {{
                           item.womenData
                             | Numeric(true, false, false)
                             | Empty("-")
                         }}
                       </div>
-                      <div class="mb-3">
-                        Other<br />
+                      <div>
+                        <div class="mb-2">Other</div>
                         {{
                           item.otherData
                             | Numeric(true, false, false)
@@ -124,10 +121,7 @@
                         }}
                       </div>
                     </div>
-                    <span
-                      v-if="item.title == 'Age range' || item.title == 'States'"
-                      class="mb-3"
-                    >
+                    <span v-if="item.title == 'Age range'" class="mb-3">
                       {{ item.subtitle | Empty("-") }}
                     </span>
                   </template>
@@ -180,14 +174,10 @@
               <v-col md="6">
                 <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
                   <v-card-title class="pb-2 pl-6 pt-5">
-                    <div class="mt-2">
-                      <span class="black--text text--darken-4 text-h3">
-                        Total customers
-                        <span class="text-body-2 time-frame">
-                          ({{ timeFrameLabel }})
-                        </span>
-                      </span>
-                    </div>
+                    <h3 class="text-h3">Total customers</h3>
+                    <span class="text-body-1 time-frame">
+                      &nbsp;({{ timeFrameLabel }})
+                    </span>
                   </v-card-title>
                   <v-progress-linear
                     v-if="loadingCustomerChart"
@@ -197,40 +187,42 @@
                   <total-customer-chart
                     v-if="!loadingCustomerChart"
                     :customers-data="totalCustomers"
-                    data-e2e="overview-chart"
+                    data-e2e="total-customer-chart"
                   />
                 </v-card>
               </v-col>
               <v-col md="6">
                 <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
                   <v-card-title class="pb-2 pl-6 pt-5">
-                    <div class="mt-2">
-                      <tooltip position-top>
-                        <template #label-content>
-                          <span class="black--text text--darken-4 text-h3">
-                            Revenue
-                            <span class="text-body-2 time-frame">
-                              ({{ timeFrameLabel }})
-                            </span>
-                          </span>
-                          <icon
-                            type="info"
-                            :size="12"
-                            color="primary"
-                            variant="base"
-                          />
-                        </template>
-                        <template #hover-content>
-                          Revenue is calculated as the average sales price
-                          multiplied by the number of units sold.
-                        </template>
-                      </tooltip>
-                    </div>
+                    <h3 class="text-h3">Total customer spend</h3>
+                    <tooltip position-top>
+                      <template #label-content>
+                        <icon
+                          type="info"
+                          :size="12"
+                          class="mb-1 ml-1"
+                          color="primary"
+                          variant="base"
+                        />
+                      </template>
+                      <template #hover-content>
+                        Total order value for all customers (known and
+                        anyonymous) over time.
+                      </template>
+                    </tooltip>
+                    <span class="text-body-1 time-frame">
+                      &nbsp;({{ timeFrameLabel }})
+                    </span>
                   </v-card-title>
                   <v-progress-linear
-                    v-if="loadingCustomerChart"
-                    :active="loadingCustomerChart"
-                    :indeterminate="loadingCustomerChart"
+                    v-if="loadingSpendChart"
+                    :active="loadingSpendChart"
+                    :indeterminate="loadingSpendChart"
+                  />
+                  <total-customer-spend-chart
+                    v-if="!loadingSpendChart"
+                    :customer-spend-data="totalCustomerSpend"
+                    data-e2e="customer-spend-chart"
                   />
                 </v-card>
               </v-col>
@@ -329,6 +321,7 @@ import MapChart from "@/components/common/MapChart/MapChart"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
+import TotalCustomerSpendChart from "@/components/common/TotalCustomerSpend/TotalCustomerSpendChart"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import IDRInsightsDrawer from "./Drawers/IDRInsightsDrawer"
 import CustomerList from "./CustomerList"
@@ -346,6 +339,7 @@ export default {
     MapStateList,
     mapSlider,
     TotalCustomerChart,
+    TotalCustomerSpendChart,
     IDRInsightsDrawer,
     CustomerList,
   },
@@ -354,6 +348,7 @@ export default {
     return {
       idrInsightsDrawer: false,
       loadingCustomerChart: false,
+      loadingSpendChart: false,
       configurationData: configurationData,
       geoDrawer: {
         cities: false,
@@ -465,6 +460,7 @@ export default {
       overview: "customers/overview",
       customersInsights: "customers/insights",
       totalCustomers: "customers/totalCustomers",
+      totalCustomerSpend: "customers/totalCustomerSpend",
       customersGeoOverview: "customers/geoOverview",
       demographicsData: "customers/demographics",
     }),
@@ -475,6 +471,7 @@ export default {
     await this.getOverview()
     this.mapOverviewData()
     this.fetchTotalCustomers()
+    this.fetchCustomerSpend()
     this.fetchGeoOverview()
     this.loading = false
   },
@@ -484,6 +481,7 @@ export default {
       getOverview: "customers/getOverview",
       getTotalCustomers: "customers/getTotalCustomers",
       getGeoOverview: "customers/getGeoOverview",
+      getCustomerSpend: "customers/getCustomerSpend",
       getDemographics: "customers/getDemographics",
     }),
 
@@ -497,6 +495,12 @@ export default {
       this.loadingCustomerChart = true
       await this.getTotalCustomers()
       this.loadingCustomerChart = false
+    },
+
+    async fetchCustomerSpend() {
+      this.loadingSpendChart = true
+      await this.getCustomerSpend()
+      this.loadingSpendChart = false
     },
 
     // TODO: refactor this and move this logic to a getter in the store
