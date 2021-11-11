@@ -39,7 +39,7 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
     <div v-if="!loading">
-      <v-row v-if="isConnectionStarted">
+      <v-row v-if="isConnectionStarted" class="ma-0 pa-2" >
         <v-col>
           <data-sources-list
             @onAddDatasource="toggleDrawer()"
