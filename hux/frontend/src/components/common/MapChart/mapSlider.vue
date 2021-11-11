@@ -7,13 +7,13 @@
   >
     <template #append>
       <span
-        class="slider-value-display font-weight-semi-bold"
+        class="slider-value-display text-body-2 font-weight-semi-bold"
         v-text="minValue"
       ></span>
     </template>
     <template #prepend>
       <span
-        class="slider-value-display font-weight-semi-bold"
+        class="slider-value-display text-body-2 font-weight-semi-bold"
         v-text="maxValue"
       ></span>
     </template>

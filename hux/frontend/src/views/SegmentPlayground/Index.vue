@@ -15,18 +15,20 @@
     <div>
       <v-row>
         <v-col class="col-8 attribute-div"></v-col>
-        <v-col class="col-4 overview-div">
+        <v-col class="col-4 overview-div pr-6">
           <v-card
-            class="map-card-wrapper mt-3 rounded-lg box-shadow-5"
+            class="map-card-wrapper mt-3 rounded-lg card-shadow"
             height="311"
+            v-if="!hideMap"
           >
           </v-card>
           <v-card
-            class="map-card-wrapper mt-3 rounded-lg box-shadow-5"
+            class="map-card-wrapper mt-3 rounded-lg card-shadow"
             height="311"
+            v-if="!hideMap"
           >
-            <div class="d-flex justify-space-between pb-2 pl-5">
-              <h5 class="text-h3 mb-1">USA</h5>
+            <div class="d-flex justify-space-between">
+              <h5 class="text-h3 mt-2">USA</h5>
               <div>
                 <v-btn text small min-width="30" @click="showMapView = true">
                   <icon type="world" color="primary" :size="32" class="mr-1" />
@@ -90,6 +92,7 @@ export default {
       ],
       loadingOverview: false,
       showMapView: true,
+      hideMap: true,
       configurationData: configurationData,
     }
   },
@@ -129,7 +132,7 @@ export default {
         }
       }
       ::v-deep .hux-map-slider {
-        margin-top: -10px;
+        margin-top: -30px;
       }
     }
   }
