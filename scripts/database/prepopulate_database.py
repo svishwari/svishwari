@@ -854,8 +854,8 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_NAME: "Email deliverability",
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "business_solution",
-        c.CONFIGURATION_FIELD_DESCRIPTION: "Ensure emails land in the right inbox "
-        "by providing insights on all aspects of a "
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Ensure emails land in the right "
+        "inbox by providing insights on all aspects of a "
         "successful marketing strategy from beginning to end.",
         c.CONFIGURATION_FIELD_STATUS: "pending",
         c.CONFIGURATION_FIELD_ENABLED: True,
@@ -897,8 +897,8 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_NAME: "Trust ID",
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "business_solution",
-        c.CONFIGURATION_FIELD_DESCRIPTION: "Enables brands to gain visibility, "
-        "monitor and  engage with their customers "
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Enables brands to gain "
+        "visibility, monitor and  engage with their customers "
         "based on AI – generated experienced based metrics.",
         c.CONFIGURATION_FIELD_STATUS: "pending",
         c.CONFIGURATION_FIELD_ENABLED: True,
@@ -966,7 +966,11 @@ def insert_data_sources(
             source_type=data_source[c.DATA_SOURCE_TYPE],
             status=data_source[c.STATUS],
         )[c.ID]
-        logging.info("Added %s, %s.", data_source[c.DATA_SOURCE_NAME], result_id)
+        logging.info(
+            "Added %s, %s.",
+            data_source[c.DATA_SOURCE_NAME],
+            result_id
+        )
     logging.info("Prepopulate data sources complete.")
 
 
@@ -1015,7 +1019,7 @@ def insert_configurations(
         result_id = create_document(
             database,
             c.CONFIGURATIONS_COLLECTION,
-            **configuration,
+            configuration,
         )[c.ID]
         logging.info(
             "Added %s, %s.",
@@ -1028,7 +1032,6 @@ def insert_configurations(
 if __name__ == "__main__":
     # Initiate Data Base client
     db_client = get_mongo_client()
-    drop_collections(db_client)
     insert_data_sources(db_client, data_sources_constants)
     insert_delivery_platforms(db_client, delivery_platforms_constants)
     insert_configurations(db_client, configurations_constants)

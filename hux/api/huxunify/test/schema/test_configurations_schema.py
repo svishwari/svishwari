@@ -24,5 +24,5 @@ class ConfigurationsSchemaTest(TestCase):
         res = ConfigurationsSchema().dump(doc)
 
         self.assertEqual(
-            res["name"], doc[db_c.NAME]
+            res[db_c.NAME], doc[db_c.NAME]
         )

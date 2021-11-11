@@ -30,7 +30,6 @@ configurations_bp = Blueprint(
     api_c.CONFIGURATIONS_ENDPOINT, import_name=__name__
 )
 
-
 @configurations_bp.before_request
 @secured()
 def before_request():
@@ -52,7 +51,7 @@ class ConfigurationsSearch(SwaggerView):
             "type": "array",
             "items": {"type": "string"},
             "collectionFormat": "multi",
-            "description": "Model status.",
+            "description": "Configuration status.",
             "example": "Requested",
             "required": False,
         }
@@ -83,10 +82,20 @@ class ConfigurationsSearch(SwaggerView):
         """
 
         status = request.args.getlist(api_c.STATUS)
+        query_filter = {
+            db_c.CONFIGURATION_FIELD_TYPE: {
+                "$in": [
+                    db_c.CONFIGURATION_TYPE_BUSINESS_SOLUTION,
+                    db_c.CONFIGURATION_TYPE_MODULE,
+                ]
+            }
+        }
+        if status:
+            query_filter[db_c.STATUS] = {"$in": status}
         config_models = collection_management.get_documents(
             get_db_client(),
             db_c.CONFIGURATIONS_COLLECTION,
-            query_filter={db_c.STATUS: {"$in": status}} if status else {},
+            query_filter=query_filter,
         )
 
         return (
