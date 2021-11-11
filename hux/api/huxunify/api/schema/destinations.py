@@ -181,7 +181,7 @@ class DestinationGetSchema(Schema):
                     api_c.STATUS_ACTIVE,
                     api_c.STATUS_PENDING,
                     api_c.STATUS_ERROR,
-                    api_c.STATUS_REQUESTED,
+                    api_c.REQUESTED,
                 ]
             )
         ],
@@ -224,7 +224,7 @@ class DestinationPatchSchema(Schema):
                     api_c.STATUS_DELIVERED,
                     api_c.STATUS_DELIVERY_PAUSED,
                     api_c.STATUS_ERROR,
-                    api_c.STATUS_REQUESTED,
+                    api_c.REQUESTED,
                 ]
             )
         ],

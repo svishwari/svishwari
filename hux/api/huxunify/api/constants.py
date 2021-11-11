@@ -276,7 +276,6 @@ STATUS_PENDING = "Pending"
 STATUS_ERROR = "Error"
 STATUS_PAUSED = "Paused"
 STATUS_STOPPED = "Stopped"
-STATUS_REQUESTED = "Requested"
 
 # used for weighting the rollup status for engagement deliveries
 # 0 being the highest.

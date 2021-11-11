@@ -13,6 +13,7 @@ from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
+    collection_management,
 )
 import huxunify.test.constants as t_c
 from huxunify.api.data_connectors.aws import parameter_store
@@ -145,8 +146,19 @@ class TestDestinationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-    def test_request_new_destination(self):
-        """Test request new destinations."""
+    @mock.patch(
+        "huxunify.api.route.destination.JiraConnection.create_jira_issue"
+    )
+    @mock.patch("huxunify.api.route.destination.JiraConnection.__init__")
+    def test_request_new_destination(
+        self, jira_class_init, jira_create_issue_mock
+    ):
+        """Test request new destinations.
+
+        Args:
+            jira_class_init (MagicMock): Mock creating jira class.
+            jira_create_issue_mock (MagicMock): Mock creating jira issue.
+        """
 
         new_destination_request = {
             api_c.NAME: "My custom destination",
@@ -155,6 +167,10 @@ class TestDestinationRoutes(TestCase):
             api_c.CLIENT_ACCOUNT: True,
             api_c.USE_CASE: "Testing",
         }
+
+        jira_class_init.return_value = None
+        jira_create_issue_mock.return_value = {db_c.CONSTANT_KEY: ""}
+
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/request",
             headers=t_c.STANDARD_HEADERS,
@@ -162,6 +178,29 @@ class TestDestinationRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        # test value is in the data base.
+        destinations = collection_management.get_documents(
+            self.database,
+            db_c.DELIVERY_PLATFORM_COLLECTION,
+            {
+                db_c.NAME: {
+                    "$regex": new_destination_request[db_c.NAME],
+                    "$options": "i",
+                }
+            },
+            batch_size=1,
+        )
+
+        # check list was returned
+        self.assertTrue(destinations[db_c.DOCUMENTS])
+        # check length of list
+        self.assertEqual(1, len(destinations[db_c.DOCUMENTS]))
+        # check status is equal to requested
+        self.assertEqual(
+            db_c.STATUS_REQUESTED,
+            destinations[db_c.DOCUMENTS][0][db_c.DELIVERY_PLATFORM_STATUS],
+        )
 
     # pylint: disable=unused-argument
     @patch(
