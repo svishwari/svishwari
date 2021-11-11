@@ -575,6 +575,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
     return user
 
 
+# pylint: disable=unspecified-encoding
 def read_csv_shap_data(file_path: str, features: list = None) -> dict:
     """Read in CSV data into a dict
 
