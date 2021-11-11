@@ -16,53 +16,42 @@
       <v-row>
         <v-col class="col-8 attribute-div"></v-col>
         <v-col class="col-4 overview-div">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="386"> </v-card>
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-            <div class="d-flex justify-space-between pb-2 pl-5 pt-5">
-            <h5 class="text-h3 mb-1">USA</h5>
-            <div>
-            <v-btn
-              text
-              small
-              @click="showMapView()"
-            >
-              <icon
-                type="world"
-                color="primary"
-                :size="32"
-                class="mr-1"
-              />
-            </v-btn>
-              <v-btn
-              text
-              small
-              @click="showListView()"
-            >
-              <icon
-                type="list"
-                color="primary"
-                :size="32"
-                class="mr-1"
-              />
-            </v-btn>
+          <v-card
+            class="map-card-wrapper mt-3 rounded-lg box-shadow-5"
+            height="311"
+          >
+          </v-card>
+          <v-card
+            class="map-card-wrapper mt-3 rounded-lg box-shadow-5"
+            height="311"
+          >
+            <div class="d-flex justify-space-between pb-2 pl-5">
+              <h5 class="text-h3 mb-1">USA</h5>
+              <div>
+                <v-btn text small min-width="30" @click="showMapView = true">
+                  <icon type="world" color="primary" :size="32" class="mr-1" />
+                </v-btn>
+                <v-btn text small min-width="30" @click="showMapView = false">
+                  <icon type="list" color="primary" :size="32" class="mr-1" />
+                </v-btn>
+              </div>
             </div>
-          </div>
-            
+
             <v-progress-linear
-              v-if="loadingGeoOverview"
-              :active="loadingGeoOverview"
-              :indeterminate="loadingGeoOverview"
+              v-if="loadingOverview"
+              :active="loadingOverview"
+              :indeterminate="loadingOverview"
             />
             <map-chart
-              v-if="!loadingGeoOverview"
-              :map-data="customersGeoOverview"
+              v-if="!loadingOverview"
+              :map-data="overview.geo"
               :configuration-data="configurationData"
               :disable-hover-effects="true"
               data-e2e="map-chart"
             />
             <map-slider
-              v-if="!loadingGeoOverview"
-              :map-data="customersGeoOverview"
+              v-if="!loadingOverview"
+              :map-data="overview.geo"
               :configuration-data="configurationData"
             />
           </v-card>
@@ -99,48 +88,50 @@ export default {
           icon: "playground",
         },
       ],
-      loadingGeoOverview: false,
+      loadingOverview: false,
+      showMapView: true,
       configurationData: configurationData,
     }
   },
   computed: {
     ...mapGetters({
-      customersGeoOverview: "customers/geoOverview",
+      overview: "customers/overview",
     }),
-
-    showMapView() {
-      
-    }
   },
 
-  mounted() {
-    this.fetchGeoOverview()
+  async mounted() {
+    this.loadingOverview = true
+    await this.getOverview()
+    this.loadingOverview = false
   },
+
   methods: {
     ...mapActions({
-      getGeoOverview: "customers/getGeoOverview",
+      getOverview: "customers/getOverview",
     }),
-
-    async fetchGeoOverview() {
-      this.loadingGeoOverview = true
-      await this.getGeoOverview()
-      this.loadingGeoOverview = false
-    },
-
-    showMapView() {
-    },
-
-    showListView() {
-    }
   },
 }
 </script>
 <style lang="scss" scoped>
 .playground-wrap {
-  background: white;
+  background: var(--v-white-base) !important;
   .attribute-div {
     border-right: 1px solid var(--v-black-lighten3);
     height: 100vh;
+  }
+  .overview-div {
+    .map-card-wrapper {
+      border: 1px solid var(--v-black-lighten2);
+      padding: 20px 15px;
+      ::v-deep .map-chart {
+        svg {
+          height: 230px;
+        }
+      }
+      ::v-deep .hux-map-slider {
+        margin-top: -10px;
+      }
+    }
   }
 }
 </style>
