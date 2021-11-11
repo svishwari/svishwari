@@ -17,15 +17,15 @@
         <v-col class="col-8 attribute-div"></v-col>
         <v-col class="col-4 overview-div pr-6">
           <v-card
+            v-if="!hideMap"
             class="map-card-wrapper mt-3 rounded-lg card-shadow"
             height="311"
-            v-if="!hideMap"
           >
           </v-card>
           <v-card
+            v-if="!hideMap"
             class="map-card-wrapper mt-3 rounded-lg card-shadow"
             height="311"
-            v-if="!hideMap"
           >
             <div class="d-flex justify-space-between">
               <h5 class="text-h3 mt-2">USA</h5>
