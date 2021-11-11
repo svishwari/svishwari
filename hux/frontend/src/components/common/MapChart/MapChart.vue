@@ -24,7 +24,7 @@
             <div
               v-for="metric in configurationData.tooltip_metrics"
               :key="metric.label"
-              class="sub-props pt-4"
+              class="sub-props mt-2 body-2"
             >
               <span v-if="metric.is_Combined_Metric" class="subprop-name mr-2"
                 >{{ metric.label }}
@@ -35,7 +35,7 @@
               <span v-if="metric.is_Combined_Metric" class="value ml-1">
                 <span v-for="(value, index) in metric.key" :key="value">
                   {{ applyFilter(currentData[value], metric.format) }}
-                  <span v-if="index !== metric.key.length - 1">|</span>
+                  <span v-if="index !== metric.key.length - 1">-</span>
                 </span>
               </span>
               <span v-if="!metric.is_Combined_Metric" class="value ml-1">
@@ -139,19 +139,10 @@ export default {
 
 <style lang="scss" scoped>
 .global-heading {
-  @extend .font-weight-semi-bold;
-  font-style: normal;
-  font-size: $font-size-root;
-  line-height: 19px;
   padding-left: 2px;
 }
-
 .global-text-line {
   display: inline-block;
-  font-weight: normal;
-  font-style: normal;
-  font-size: 12px;
-  line-height: 16px;
 }
 .container {
   position: relative;
@@ -164,7 +155,7 @@ export default {
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      height: 30px;
+      height: 15px;
       .subprop-name {
         @extend .global-text-line;
         flex: 0 0 40%;

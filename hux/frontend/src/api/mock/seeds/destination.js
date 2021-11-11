@@ -15,7 +15,7 @@ export default [
   {
     category: "Marketing",
     updated_by: "Henrik Rypkema",
-    status: "Active",
+    status: "Pending",
     is_ad_platform: false,
     is_enabled: true,
     type: "sendgrid",
@@ -114,7 +114,7 @@ export default [
   {
     category: "Marketing",
     updated_by: "test user",
-    status: "Pending",
+    status: "Requested",
     is_ad_platform: false,
     is_enabled: false,
     type: "adobe-experience",
@@ -122,7 +122,7 @@ export default [
     name: "Adobe Experience",
     create_time: "2021-06-03T23:04:59.592Z",
     update_time: "2021-10-08T15:47:57.730Z",
-    is_added: false,
+    is_added: true,
   },
   {
     category: "Advertising",

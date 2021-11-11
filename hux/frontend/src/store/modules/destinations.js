@@ -84,6 +84,16 @@ const actions = {
     }
   },
 
+  async request({ commit }, requestDetails) {
+    try {
+      const response = await api.destinations.request(requestDetails)
+      commit("SET_ONE", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async validate(_, destination) {
     try {
       const body = {
