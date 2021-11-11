@@ -242,6 +242,19 @@ class DestinationPatchSchema(Schema):
     use_case = fields.String(required=False, allow_none=True)
 
 
+class DestinationRequestSchema(Schema):
+    """Destinations Request schema class"""
+
+    name = fields.String(
+        attribute=api_c.DESTINATION_NAME,
+        example="Salesforce Marketing Cloud",
+    )
+    contact_email = fields.Email(required=False, default=False)
+    client_request = fields.Bool(required=False, default=False)
+    client_account = fields.Bool(required=False, default=False)
+    use_case = fields.String(required=False, allow_none=True)
+
+
 class DestinationPutSchema(Schema):
     """Destination put schema class"""
 

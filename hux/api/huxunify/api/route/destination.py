@@ -14,6 +14,7 @@ from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
+from huxunifylib.database.collection_management import get_documents
 import huxunifylib.database.constants as db_c
 from huxunifylib.util.general.const import (
     FacebookCredentials,
@@ -34,6 +35,7 @@ from huxunifylib.connectors import (
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
 )
+from huxunify.api.data_connectors.jira import JiraConnection
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
     DestinationPatchSchema,
@@ -41,6 +43,7 @@ from huxunify.api.schema.destinations import (
     DestinationValidationSchema,
     DestinationDataExtPostSchema,
     DestinationDataExtGetSchema,
+    DestinationRequestSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.route.decorators import (
@@ -984,24 +987,26 @@ class DestinationPatchView(SwaggerView):
 
 
 @add_view_to_blueprint(
-    dest_bp, f"{api_c.DESTINATIONS_ENDPOINT}/request", "DestinationsPostView"
+    dest_bp,
+    f"{api_c.DESTINATIONS_ENDPOINT}/request",
+    "DestinationsRequestView",
 )
-class DestinationsPostView(SwaggerView):
-    """Destinations Post view class."""
+class DestinationsRequestView(SwaggerView):
+    """Destinations Request view class."""
 
     parameters = [
         {
             "name": "body",
             "in": "body",
-            "type": "object",
+            "schema": {"id": "DestinationRequestSchema"},
             "description": "Input Destination body.",
-            "example": {db_c.NAME: "New destination"},
+            "example": DestinationRequestSchema,
         },
     ]
 
     responses = {
         HTTPStatus.OK.value: {
-            "description": "New/Update Destination.",
+            "description": "Destination.",
             "schema": DestinationGetSchema,
         },
         HTTPStatus.NOT_FOUND.value: {
@@ -1015,7 +1020,7 @@ class DestinationsPostView(SwaggerView):
     @api_error_handler()
     @get_user_name()
     def post(self, user_name: str) -> Tuple[list, int]:
-        """Creates/Updates a new destination.
+        """Requests an unsupported destination.
 
         ---
         security:
@@ -1027,104 +1032,57 @@ class DestinationsPostView(SwaggerView):
         Returns:
             Tuple[dict, int]: Destination doc, HTTP status code.
         """
-        body = request.get_json()
-        if not body:
-            logger.error("No data provided.")
-            return {"message": "No data provided"}, HTTPStatus.BAD_REQUEST
 
-        destination_id = body.get(api_c.ID)
+        request_schema = DestinationRequestSchema().load(
+            request.get_json(), partial=True
+        )
+
+        # check if destination name already exists
         database = get_db_client()
+        destinations = get_documents(
+            database,
+            db_c.DELIVERY_PLATFORM_COLLECTION,
+            {
+                db_c.NAME: {
+                    "$regex": request_schema[db_c.NAME],
+                    "$options": "i",
+                }
+            },
+            batch_size=1,
+        )
 
-        if destination_id:
-            destination_id = ObjectId(destination_id)
-            # Check if destination already exists in the DB
-            if not destination_management.get_delivery_platform(
-                database, destination_id
-            ):
-                logger.error(
-                    "Could not find destination with id %s.",
-                    destination_id,
-                )
+        # check if any found documents
+        destinations = destinations.get(db_c.DOCUMENTS, [])
+
+        # check if it was requested
+        if destinations:
+            destination = destinations[0]
+            if destination.get(db_c.DELIVERY_PLATFORM_STATUS) in [
+                db_c.STATUS_REQUESTED,
+                db_c.STATUS_FAILED,
+                db_c.STATUS_SUCCEEDED,
+            ]:
+                # return already requested, return 200, with message.
                 return {
-                    "message": api_c.DESTINATION_NOT_FOUND
-                }, HTTPStatus.NOT_FOUND
-
-            post_dict = {
-                k: v
-                for k, v in (
-                    request.get_json() if request.get_json() else {}
-                ).items()
-                if k in api_c.DESTINATION_PATCH_FIELDS
-            }
-
-            if not post_dict:
-                logger.info("Could not update destination.")
-                return {
-                    "message": api_c.DESTINATION_INVALID_PATCH_MESSAGE
-                }, HTTPStatus.BAD_REQUEST
-
-            # validate the schema first.
-            DestinationPatchSchema().validate(post_dict)
-
-            post_dict[api_c.STATUS] = api_c.STATUS_REQUESTED
-
+                    "message": "Destination already present."
+                }, HTTPStatus.OK
+            # otherwise set the status to requested
             destination = destination_management.update_delivery_platform_doc(
                 database,
-                destination_id,
-                {
-                    **post_dict,
-                    **{
-                        db_c.UPDATED_BY: user_name,
-                        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-                    },
-                },
+                destination[db_c.ID],
+                {db_c.DELIVERY_PLATFORM_STATUS: db_c.STATUS_REQUESTED},
             )
-
-            create_notification(
+        else:
+            # create a destination object and set the status to requested.
+            destination = destination_management.set_delivery_platform(
                 database,
-                db_c.NOTIFICATION_TYPE_SUCCESS,
-                (
-                    f"{user_name} successfully requested"
-                    f' "{destination[db_c.NAME]}" destination.'
-                ),
-                api_c.DESTINATION,
+                api_c.GENERIC_DESTINATION,
+                request_schema[api_c.NAME],
                 user_name,
+                db_c.STATUS_REQUESTED,
+                True,
+                True,
             )
-
-            # update the document
-            return (
-                DestinationGetSchema().dump(destination),
-                HTTPStatus.OK,
-            )
-
-        name = body.get(api_c.NAME)
-        contact_email = body.get(api_c.CONTACT_EMAIL)
-        client_request = body.get(api_c.CLIENT_REQUEST)
-        client_account = body.get(api_c.CLIENT_ACCOUNT)
-        use_case = body.get(api_c.USE_CASE)
-
-        DestinationPatchSchema().load(
-            {
-                api_c.NAME: name,
-                api_c.CONTACT_EMAIL: contact_email,
-                api_c.CLIENT_REQUEST: client_request,
-                api_c.CLIENT_ACCOUNT: client_account,
-                api_c.USE_CASE: use_case,
-            }
-        )
-
-        destination = destination_management.set_delivery_platform(
-            database,
-            delivery_platform_type=api_c.GENERIC_DESTINATION,
-            name=name,
-            user_name=user_name,
-            status=api_c.STATUS_REQUESTED,
-            enabled=True,
-            contact_email=contact_email,
-            client_request=client_request,
-            client_account=client_account,
-            use_case=use_case,
-        )
 
         create_notification(
             database,
@@ -1136,6 +1094,22 @@ class DestinationsPostView(SwaggerView):
             api_c.DESTINATION,
             user_name,
         )
+
+        if not destinations:
+            # create JIRA ticket for the request.
+            new_issue = JiraConnection().create_jira_issue(
+                api_c.TASK,
+                f"Requested Destination '{request_schema[api_c.NAME]}'.",
+                request_schema,
+            )
+            create_notification(
+                database=database,
+                notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+                description=f"{user_name} created a new issue "
+                f"{new_issue.get(api_c.KEY)} in JIRA",
+                category=api_c.TASK,
+                username=user_name,
+            )
 
         return (
             DestinationGetSchema().dump(destination),
