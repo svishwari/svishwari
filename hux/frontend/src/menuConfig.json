@@ -73,7 +73,7 @@
           "icon": "playground",
           "title": "Segment Playground",
           "link": {
-            "name": "AudienceConfiguration"
+            "name": "SegmentPlayground"
           },
           "size": 14,
           "display": false
