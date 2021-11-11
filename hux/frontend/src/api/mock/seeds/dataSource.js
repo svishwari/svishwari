@@ -211,7 +211,7 @@ export default [
   },
   {
     is_enabled: false,
-    name: "Amazon S3",
+    name: "AWS S3",
     is_added: false,
     id: "60b960176021710aa146df1d",
     status: "Pending",
