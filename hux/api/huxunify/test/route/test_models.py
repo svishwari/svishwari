@@ -93,7 +93,7 @@ class TestModelRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(3, len(response.json))
+        self.assertEqual(22, len(response.json))
 
     def test_retrieve_version_history_for_model(self):
         """Test get version history for a model from Tecton."""

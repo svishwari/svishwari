@@ -57,8 +57,8 @@ class ConfigurationCollectionManagementTest(TestCase):
             collection=db_c.CONFIGURATIONS_COLLECTION,
             new_doc={
                 "type": "model",
-                "name": "Tecton model 1",
-                "status": "Requested",
+                "name": "Tecton model 2",
+                "status": "Requested"
             },
         )
 
@@ -70,10 +70,10 @@ class ConfigurationCollectionManagementTest(TestCase):
             collection=db_c.CONFIGURATIONS_COLLECTION,
             new_doc={
                 "type": "model",
-                "name": "Tecton model 1",
-                "status": "Requested",
+                "name": "Tecton model 3",
+                "status": "Requested"
             },
-            username="test_user",
+            username="test_user"
         )
 
         self.assertIsNotNone(configuration)
@@ -147,7 +147,7 @@ class ConfigurationCollectionManagementTest(TestCase):
             collection=db_c.CONFIGURATIONS_COLLECTION,
             new_doc={
                 "type": "model",
-                "name": "Tecton model 1",
+                "name": "Tecton model 2",
                 "status": "Requested",
             },
         )
@@ -178,7 +178,7 @@ class ConfigurationCollectionManagementTest(TestCase):
             collection=db_c.CONFIGURATIONS_COLLECTION,
             new_doc={
                 "type": "model",
-                "name": "Tecton model 1",
+                "name": "Tecton model 2",
                 "status": "Requested",
             },
         )

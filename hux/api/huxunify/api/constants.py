@@ -693,6 +693,7 @@ EMAIL_METRICS = [
 SUMMARY = "summary"
 DELIVERED = "delivered"
 UNSUBSCRIBE = "unsubscribe"
+UNCATEGORIZED = "uncategorized"
 SPEND = "spend"
 ENGAGEMENT_ID_PARAMS = [
     {
@@ -1357,7 +1358,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Propensity to Purchase",
         DESCRIPTION: "Propensity to Purchase.",
-        ID: 1,
+        ID: "f76a5e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1365,7 +1366,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Propensity to Unsubscribe",
         DESCRIPTION: "Propensity to Unsubscribe.",
-        ID: 2,
+        ID: "a54d7e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1373,7 +1374,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Propensity to Open",
         DESCRIPTION: "Propensity to open",
-        ID: 3,
+        ID: "5df65e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1381,7 +1382,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Propensity to Click",
         DESCRIPTION: "Propensity to click.",
-        ID: 4,
+        ID: "aa789e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1389,7 +1390,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Email content optimization",
         DESCRIPTION: "Email content optimization.",
-        ID: 5,
+        ID: "99e45e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1397,7 +1398,7 @@ MODELS_STUB = [
         TYPE: "prediction",
         NAME: "Customer lifetime value",
         DESCRIPTION: "Customer lifetime value.",
-        ID: 6,
+        ID: "cc768e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1405,7 +1406,7 @@ MODELS_STUB = [
         TYPE: "prediction",
         NAME: "Predicted sales per customer",
         DESCRIPTION: "Predicted sales per customer.",
-        ID: 7,
+        ID: "bba67e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1413,7 +1414,7 @@ MODELS_STUB = [
         TYPE: "prediction",
         NAME: "Predicted sales per store",
         DESCRIPTION: "Predicted sales per store.",
-        ID: 8,
+        ID: "a45b7e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1421,7 +1422,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Capability propensity",
         DESCRIPTION: "Capability propensity.",
-        ID: 9,
+        ID: "bc123e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1429,7 +1430,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Capability trust propensity",
         DESCRIPTION: "Capability trust propensity.",
-        ID: 10,
+        ID: "a15d8e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1437,7 +1438,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Humanity propensity",
         DESCRIPTION: "Humanity propensity.",
-        ID: 11,
+        ID: "bd732e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1445,7 +1446,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Hux TrustID propensity",
         DESCRIPTION: "Hux TrustID propensity.",
-        ID: 12,
+        ID: "cce14e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1453,7 +1454,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "NBA learning algorithm",
         DESCRIPTION: "NBA learning algorithm.",
-        ID: 13,
+        ID: "98acee0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1461,7 +1462,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Reliability propensity",
         DESCRIPTION: "Reliability propensity.",
-        ID: 14,
+        ID: "99d12e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1469,7 +1470,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Transparency propensity",
         DESCRIPTION: "Transparency propensity.",
-        ID: 15,
+        ID: "bed54e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1477,7 +1478,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Churn",
         DESCRIPTION: "Churn.",
-        ID: 16,
+        ID: "11d54e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1485,7 +1486,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Propensity to purchase product category",
         DESCRIPTION: "Propensity to purchase product category.",
-        ID: 17,
+        ID: "88ee4e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1493,7 +1494,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Propensity to visit product category",
         DESCRIPTION: "Propensity to visit product category.",
-        ID: 18,
+        ID: "aab41e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1501,7 +1502,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Propensity to visit website",
         DESCRIPTION: "Propensity to visit website.",
-        ID: 19,
+        ID: "99a78e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
@@ -1509,7 +1510,7 @@ MODELS_STUB = [
         TYPE: "propensity",
         NAME: "Segmentation",
         DESCRIPTION: "Segmentation.",
-        ID: 20,
+        ID: "abe41e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
 ]

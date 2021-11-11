@@ -98,6 +98,10 @@ class ModelsView(SwaggerView):
 
         status = request.args.getlist(api_c.STATUS)
         all_models = tecton.get_models()
+        for model in all_models:
+            if api_c.CATEGORY not in model:
+                model[api_c.CATEGORY] = api_c.UNCATEGORIZED
+
         all_models.extend(api_c.MODELS_STUB)
 
         config_models = collection_management.get_documents(

@@ -139,6 +139,11 @@ class DecisioningTests(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
+        get_models_mock = mock.patch(
+            "huxunify.api.data_connectors.tecton.get_models"
+        ).start()
+        get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
+
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}?{api_c.STATUS}={api_c.REQUESTED}",
             headers=t_c.STANDARD_HEADERS,

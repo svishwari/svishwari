@@ -67,7 +67,7 @@ def create_document(
         doc_check[key] = new_doc[key]
 
     try:
-        if collection.find_one(doc_check):
+        if coll.find_one(doc_check):
             raise de.DuplicateDocument(doc_check)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
