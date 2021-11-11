@@ -238,6 +238,17 @@ export default {
     }
   }
 }
+::v-deep.descriptive-card {
+  &.non-interactable {
+    cursor: default;
+    &:hover {
+      @extend .box-shadow-5;
+    }
+  }
+  .description {
+    color: var(--v-black-lighten4) !important;
+  }
+}
 ::v-deep.descriptive-card.in-active {
   box-shadow: none !important;
 }
