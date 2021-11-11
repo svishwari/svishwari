@@ -132,7 +132,6 @@
                 class="text-body-1 py-4 mw-100 text-truncate"
               >
                 <template v-if="header.value == 'id'">
-                  <!-- TODO: HUS-1305 integrate open drawer on alerts page -->
                   <a
                     href="javascript:void(0)"
                     class="text-body-1 text-decoration-none"
