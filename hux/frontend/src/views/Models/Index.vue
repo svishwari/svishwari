@@ -25,7 +25,7 @@
         <descriptive-card
           v-for="model in models"
           :key="model.id"
-          :action-menu="model.status !== 'Active'"
+          :action-menu="false"
           :coming-soon="false"
           width="280"
           height="255"
@@ -38,7 +38,7 @@
         >
           <template slot="top">
             <status
-              :icon-size="18"
+              :icon-size="17"
               :status="model.status || ''"
               collapsed
               class="d-flex float-left"
@@ -46,8 +46,15 @@
             />
           </template>
 
-          <template v-if="model.status == 'Active'" slot="default">
-            <v-row no-gutters class="mt-4">
+          <template slot="default">
+            <p
+              class="text-body-2 black--text text--lighten-4"
+              data-e2e="model-owner"
+            >
+              {{ model.owner }}
+            </p>
+
+            <v-row no-gutters>
               <v-col cols="5">
                 <card-stat
                   label="Version"
@@ -84,19 +91,10 @@
               </v-col>
             </v-row>
           </template>
-          <template slot="action-menu-options">
-            <v-list class="list-wrapper">
-              <v-list-item-group>
-                <v-list-item>
-                  <v-list-item-title> Remove </v-list-item-title>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </template>
         </descriptive-card>
       </template>
       <hux-empty
-        v-else
+        v-else-if="!hasModels && !showError"
         icon-type="models"
         :icon-size="50"
         title="No models to show"
@@ -114,9 +112,8 @@
           </hux-button>
         </template>
       </hux-empty>
-    </v-row>
-    <v-row class="pa-14" v-else>
       <error
+          v-else
           icon-type="error-on-screens"
           :icon-size="50"
           title="Models are currently unavailable"
@@ -155,6 +152,7 @@ export default {
   data() {
     return {
       loading: false,
+      showError: false,
     }
   },
 
@@ -165,12 +163,17 @@ export default {
 
     hasModels() {
       return this.models.length ? Object.entries(this.models[0]).length : false
+      console.log(this.models)
     },
   },
 
   async mounted() {
     this.loading = true
+    try{
     await this.getModels()
+    } catch (error) {
+      this.showError=true
+    }
     this.loading = false
   },
 

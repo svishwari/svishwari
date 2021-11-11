@@ -42,16 +42,42 @@
         </descriptive-card>
       </template>
     </v-row>
-
-    <empty-state-data v-else>
-      <template #icon> mdi-alert-circle-outline </template>
-      <template #title> Oops! There’s nothing here yet </template>
-      <template #subtitle>
-        To create a connection, you need to select a destination!
-        <br />
-        Begin by selecting the plus button above.
-      </template>
-    </empty-state-data>
+    <v-row v-else class="pa-4">
+    <hux-empty
+        v-if="!showError"
+        icon-type="destinations-null"
+        :icon-size="50"
+        title="No destinations to show"
+        subtitle="Destinations will appear here once you add them."
+      >
+        <template #button>
+          <router-link
+            :to="{ name: 'DestinationConfiguration' }"
+            class="text-decoration-none"
+            data-e2e="addDestination"
+          >
+            <huxButton
+              button-text="Add a destination"
+              variant="primary"
+              size="large"
+              is-tile
+              height="40"
+              class="ma-2 font-weight-regular no-shadow mr-0 caption"
+            >
+              Add a destination
+            </huxButton>
+          </router-link>
+        </template>
+      </hux-empty>
+      <error
+          v-else
+          icon-type="error-on-screens"
+          :icon-size="50"
+          title="Destinations are currently unavailable"
+          subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+        >
+      </error>
+    </v-row>
 
     <confirm-modal
       v-model="confirmModal"
@@ -117,6 +143,9 @@ import EmptyStateData from "@/components/common/EmptyStateData"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import Status from "@/components/common/Status"
 import TextField from "@/components/common/TextField"
+import HuxEmpty from "@/components/common/screens/Empty"
+import Error from "@/components/common/screens/Error"
+import huxButton from "@/components/common/huxButton"
 
 export default {
   name: "DestinationsList",
@@ -127,6 +156,16 @@ export default {
     DescriptiveCard,
     Status,
     TextField,
+    HuxEmpty,
+    Error,
+    huxButton,
+  },
+
+  props: {
+    showError: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   data() {
