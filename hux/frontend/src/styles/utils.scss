@@ -7,12 +7,6 @@
   @extend .background-border;
 }
 
-.text-h28 {
-  font-size: 28px;
-  font-weight: 300;
-  line-height: 40px;
-}
-
 .font-weight-semi-bold {
   font-weight: 600 !important;
 }
@@ -105,6 +99,11 @@
   box-shadow: 0px -0.5px 5px 1px rgba(0, 0, 0, 0.15) !important;
 }
 
+.border-all {
+  border-style: solid;
+  border-width: 1px;
+}
+
 .border-start {
   border-left-style: solid;
   border-left-width: 1px;
@@ -129,7 +128,11 @@
   border-width: 0;
 }
 
-.separator {
+.v-application .separator {
+  border-color: var(--v-black-lighten2) !important;
+}
+
+.v-application .black--border.border--lighten-2 {
   border-color: var(--v-black-lighten2) !important;
 }
 
@@ -159,6 +162,10 @@
 
 .mw-100 {
   max-width: 100% !important;
+}
+
+.minh-100 {
+  min-height: 100vh;
 }
 
 .nav-icon {

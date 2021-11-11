@@ -20,7 +20,7 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <v-row v-if="!loading" class="pa-14" data-e2e="models-list">
+    <v-row v-if="!loading" class="ma-0 pa-8" data-e2e="models-list">
       <template v-if="hasModels">
         <descriptive-card
           v-for="model in models"
@@ -34,6 +34,7 @@
           :description="model.description"
           data-e2e="model-item"
           :disabled="model.status !== 'Active'"
+          :interactable="model.status == 'Active' ? true : false"
           @click.native="goToDashboard(model)"
         >
           <template slot="top">
@@ -85,7 +86,7 @@
             </v-row>
           </template>
           <template slot="action-menu-options">
-            <v-list class="list-wrapper">
+            <v-list class="list-wrapper ma-0 pa-0">
               <v-list-item-group>
                 <v-list-item>
                   <v-list-item-title> Remove </v-list-item-title>

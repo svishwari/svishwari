@@ -175,7 +175,7 @@ export default {
         > tbody > tr > td {
           padding-top: 0;
           padding-bottom: 0;
-          height: 50px !important;
+          height: 60px !important;
         }
       }
     }
@@ -210,5 +210,11 @@ export default {
 }
 ::v-deep .v-application--is-ltr .v-input__append-outer {
   margin-left: 16px !important;
+}
+::v-deep .hux-data-table .v-data-table .v-data-table-header th:first-child {
+  border-top-left-radius: 12px !important;
+}
+::v-deep .hux-data-table .v-data-table .v-data-table-header th:last-child {
+  border-top-right-radius: 12px !important;
 }
 </style>
