@@ -169,9 +169,6 @@ export default {
       th {
         background: var(--v-primary-lighten2);
       }
-      th:first {
-        background: red !important;
-      }
     }
     > .v-data-table__wrapper {
       > table {
