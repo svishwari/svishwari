@@ -11,7 +11,10 @@
           </div>
         </template>
       </page-header>
-      <page-header v-if="areDestinationsAvailable || showError" header-height="71">
+      <page-header
+        v-if="areDestinationsAvailable || showError"
+        header-height="71"
+      >
         <template #left>
           <v-btn disabled icon>
             <icon type="search" :size="20" color="black" variant="lighten3" />
@@ -44,7 +47,7 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
     <div v-if="!loading">
-      <destinations-list v-if="isConnectionStarted" :showError="showError"/>
+      <destinations-list v-if="isConnectionStarted" :show-error="showError" />
       <div v-else class="empty-state-wrap text-center">
         <v-icon color="primary lighten-8" x-large>
           mdi-alert-circle-outline
@@ -121,7 +124,7 @@ export default {
         (each) => each.is_added
       )
       return availableDestinations.length > 0
-    }
+    },
   },
 
   watch: {
@@ -137,9 +140,9 @@ export default {
   async mounted() {
     this.loading = true
     await this.getDataSources()
-    try{
-    await this.getDestinations()
-    }catch(error){
+    try {
+      await this.getDestinations()
+    } catch (error) {
       this.showError = true
     }
     this.loading = false

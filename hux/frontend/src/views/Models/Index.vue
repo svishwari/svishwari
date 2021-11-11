@@ -105,7 +105,7 @@
       </template>
       <hux-empty
         v-else-if="!hasModels && !showError"
-        icon-type="models"
+        icon-type="models-empty"
         :icon-size="50"
         title="No models to show"
         subtitle="Models will appear here once they are added or requested."
@@ -123,12 +123,12 @@
         </template>
       </hux-empty>
       <error
-          v-else
-          icon-type="error-on-screens"
-          :icon-size="50"
-          title="Models are currently unavailable"
-          subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
-        >
+        v-else
+        icon-type="error-on-screens"
+        :icon-size="50"
+        title="Models are currently unavailable"
+        subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+      >
       </error>
     </v-row>
   </div>
@@ -173,16 +173,15 @@ export default {
 
     hasModels() {
       return this.models.length ? Object.entries(this.models[0]).length : false
-      console.log(this.models)
     },
   },
 
   async mounted() {
     this.loading = true
-    try{
-    await this.getModels()
+    try {
+      await this.getModels()
     } catch (error) {
-      this.showError=true
+      this.showError = true
     }
     this.loading = false
   },

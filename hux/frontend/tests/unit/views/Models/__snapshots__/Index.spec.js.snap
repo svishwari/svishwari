@@ -8,9 +8,7 @@ exports[`Listing of models Models store successfully filled 1`] = `
     <descriptive-card-stub icon="model-ltv" title="Predicted lifetime value" description="Predicts the lifetime value of a customer based on models." height="255" width="280" dotoption="Activate" iconcolor="Primary" interactable="true" data-e2e="model-item"><template></template> <template></template> <template></template></descriptive-card-stub>
     <descriptive-card-stub icon="model-purchase" title="Propensity to purchase" description="Propensity of a customer making a purchase after receivin..." height="255" width="280" dotoption="Activate" iconcolor="Primary" interactable="true" data-e2e="model-item"><template></template> <template></template> <template></template></descriptive-card-stub>
     <descriptive-card-stub icon="model-unsubscribe" title="Propensity to unsubscribe" description="Propensity of a customer unsubscribing to emails." height="255" width="280" dotoption="Activate" iconcolor="Primary" interactable="true" data-e2e="model-item"><template></template> <template></template> <template></template></descriptive-card-stub>
-    <descriptive-card-stub icon="model-churn" title="Churn" description="Rating forecast for change in customer numbers." disabled="true" actionmenu="true" height="255" width="280" dotoption="Activate" iconcolor="Primary" data-e2e="model-item"><template></template>
-      <!----> <template></template>
-    </descriptive-card-stub>
+    <descriptive-card-stub icon="model-churn" title="Churn" description="Rating forecast for change in customer numbers." disabled="true" height="255" width="280" dotoption="Activate" iconcolor="Primary" data-e2e="model-item"><template></template> <template></template> <template></template></descriptive-card-stub>
   </v-row-stub>
 </div>
 `;

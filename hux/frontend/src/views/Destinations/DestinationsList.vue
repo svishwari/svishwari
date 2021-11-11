@@ -69,12 +69,12 @@
         </template>
       </hux-empty>
       <error
-          v-else
-          icon-type="error-on-screens"
-          :icon-size="50"
-          title="Destinations are currently unavailable"
-          subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
-        >
+        v-else
+        icon-type="error-on-screens"
+        :icon-size="50"
+        title="Destinations are currently unavailable"
+        subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+      >
       </error>
     </v-row>
 

@@ -57,8 +57,10 @@ export default {
   },
 
   mounted() {
-    this.width = this.$refs.emptyState && this.$refs.emptyState.parentElement.clientWidth
-    this.height = this.$refs.emptyState && this.$refs.emptyState.parentElement.clientHeight
+    this.width =
+      this.$refs.emptyState && this.$refs.emptyState.parentElement.clientWidth
+    this.height =
+      this.$refs.emptyState && this.$refs.emptyState.parentElement.clientHeight
     this.boxCount = Math.round((this.width * this.height) / (125 * 125))
   },
 }
