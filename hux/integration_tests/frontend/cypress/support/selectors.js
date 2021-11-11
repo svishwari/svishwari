@@ -65,10 +65,11 @@ export default {
   datasources: "[data-e2e='dataSourcesList']",
   destinations: "[data-e2e='destination-list']",
   dataSourcesAdd: "[data-e2e='dataSourcesAddList']",
+  dataSourcesRequest: "[data-e2e='dataSourcesRequestList']",
   addDataSource: "[data-e2e='addDataSource']",
-  pendingDataSource: "[data-e2e='data-source-list-pending-button']",
-  pendingDataSourceRemove: "[data-e2e='data-source-list-pending-remove']",
+  pendingDataSourceRemove: "[data-e2e='data-source-list-Pending-remove']",
   removeDataSourceConfirmation: "[data-e2e='remove-data-source-confirmation']",
+  pendingStatus: "[data-e2e='model-status-Pending']",
 
   //destinations
   destination: {
@@ -134,6 +135,7 @@ export default {
       audienceTableExpand: "[data-e2e='expand-audience']",
     },
     destinationRows: '[data-e2e="destination-rows"]',
+    createEngagement: '[data-e2e="create-engagement"]',
   },
 
   //Customer Profiles
@@ -141,7 +143,8 @@ export default {
     customers: "a[href='/customers']",
     customeroverview: "[data-e2e='customeroverview']",
     customerListTab: "[data-e2e='customer-list-tab']",
-    chart: "[data-e2e='overview-chart']",
+    totalCustomerchart: "[data-e2e='total-customer-chart']",
+    customerSpendchart: "[data-e2e='customer-spend-chart']",
     mapchart: "[data-e2e='map-chart']",
     mapStateList: "[data-e2e='map-state-list']",
     incomeChart: "[data-e2e='income-chart']",

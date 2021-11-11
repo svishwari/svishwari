@@ -205,7 +205,10 @@ def get_audience(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_audiences(
-    database: DatabaseClient, include_users: bool = False, filters: dict = None
+    database: DatabaseClient,
+    include_users: bool = False,
+    filters: dict = None,
+    audience_ids: list = None,
 ) -> Union[list, None]:
     """A function to get all existing audiences.
 
@@ -214,6 +217,7 @@ def get_all_audiences(
         include_users (bool): Flag to include users.
         filters (dict, Optional): A dict of filters to be applied on the
         audience.
+        audience_ids (list, Optional): A list of audience IDs.
 
     Returns:
         Union[list, None]: A list of all audiences.
@@ -225,19 +229,6 @@ def get_all_audiences(
         find_filters = {c.DELETED: False}
     else:
         find_filters = {}
-        if filters.get(c.USER_FAVORITES):
-            user_collection = am_db[c.USER_COLLECTION]
-            user_fav_info = user_collection.find_one(
-                {c.USER_DISPLAY_NAME: filters.get(c.USER_FAVORITES, "")},
-                {f"{c.USER_FAVORITES}.{c.AUDIENCES}": 1, c.ID: 0},
-            )
-            favorite_audiences = []
-            if user_fav_info:
-                favorite_audiences = user_fav_info.get(c.USER_FAVORITES).get(
-                    c.AUDIENCES, []
-                )
-            find_filters[c.ID] = {"$in": favorite_audiences}
-
         if filters.get(c.WORKED_BY):
             find_filters["$or"] = [
                 {c.CREATED_BY: filters.get(c.WORKED_BY)},
@@ -248,6 +239,9 @@ def get_all_audiences(
                 {c.ATTRIBUTE_FILTER_FIELD: attribute}
                 for attribute in filters.get(c.ATTRIBUTE)
             ]
+
+    if audience_ids is not None:
+        find_filters[c.ID] = {"$in": audience_ids}
 
     # Get audience configurations and add to list
     try:
@@ -539,6 +533,7 @@ def get_audience_insights(
 def get_all_audiences_and_deliveries(
     database: DatabaseClient,
     filters: dict = None,
+    audience_ids: list = None,
 ) -> Union[list, None]:
     """A function to get all audiences and their latest deliveries.
 
@@ -546,6 +541,7 @@ def get_all_audiences_and_deliveries(
         database (DatabaseClient): A database client.
         filters (dict, Optional): A dict of filters to be applied on the
         audience.
+        audience_ids (list, Optional): A list of audience ids.
 
     Returns:
         Union[list, None]:  A list of engagements with delivery information for
@@ -601,26 +597,15 @@ def get_all_audiences_and_deliveries(
         {"$project": {"deliveries.deleted": 0}},
     ]
     stage_count_in_pipeline = 0
+
+    if audience_ids is not None:
+        pipeline.insert(
+            stage_count_in_pipeline,
+            {"$match": {c.ID: {"$in": audience_ids}}},
+        )
+    stage_count_in_pipeline += 1
+
     if filters:
-        # Check if favorites present in filter
-        if filters.get(c.USER_FAVORITES):
-            user_collection = am_db[c.USER_COLLECTION]
-            user_fav_info = user_collection.find_one(
-                {c.USER_DISPLAY_NAME: filters.get(c.USER_FAVORITES, "")},
-                {f"{c.USER_FAVORITES}.{c.AUDIENCES}": 1, c.ID: 0},
-            )
-            favorite_audiences = []
-            if user_fav_info:
-                favorite_audiences = user_fav_info.get(c.USER_FAVORITES).get(
-                    c.AUDIENCES, []
-                )
-
-            pipeline.insert(
-                stage_count_in_pipeline,
-                {"$match": {c.ID: {"$in": favorite_audiences}}},
-            )
-            stage_count_in_pipeline += 1
-
         if filters.get(c.WORKED_BY):
             pipeline.insert(
                 stage_count_in_pipeline,

@@ -67,6 +67,10 @@ client["customers"].totalCustomers = () => {
   return http.get("/customers-insights/total")
 }
 
+client["customers"].getCustomerSpend = () => {
+  return http.get("/customers-insights/revenue")
+}
+
 client["customers"].events = (huxId) => {
   const emptyDateFilter = {}
   return http.post(`/customers/${huxId}/events`, emptyDateFilter)
@@ -86,6 +90,10 @@ client["customers"].getCustomers = (batchSize, batchNumber) => {
 //#region Destinations endpoints
 client["destinations"].validate = (data) => {
   return http.post("/destinations/validate", data)
+}
+
+client["destinations"].request = (data) => {
+  return http.post("/destinations/request", data)
 }
 
 client["destinations"].authenticate = (destinationId, data) => {

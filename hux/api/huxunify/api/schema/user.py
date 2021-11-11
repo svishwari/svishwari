@@ -1,7 +1,8 @@
 """Schemas for the User API"""
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Int, validate, List, Nested, Dict
+from marshmallow.fields import Str, Int, validate, List, Nested, Dict, Bool
+from marshmallow.validate import OneOf
 
 from huxunifylib.database import constants as db_c
 from huxunify.api.schema.utils import validate_object_id
@@ -34,6 +35,7 @@ class UserSchema(Schema):
     phone_number = Str()
     access_level = Str()
     role = Str(required=True, validate=validate.OneOf(db_c.USER_ROLES))
+    pii_access = Bool(default=False)
     organization = Str()
     subscriptions = List(Str())
     dashboard_configuration = Dict()
@@ -50,3 +52,22 @@ class UserPatchSchema(Schema):
     role = Str(required=False)
     display_name = Str(required=False)
     dashboard_configuration = Dict(required=False)
+    pii_access = Bool(required=False)
+
+
+class TicketSchema(Schema):
+    """Ticket schema"""
+
+    issue_type = Str(required=True, validate=OneOf([api_c.TICKET_TYPE_BUG]))
+    summary = Str(required=True)
+    description = Str(required=False)
+
+
+class TicketGetSchema(Schema):
+    """Ticket get schema"""
+
+    id = Int(example=1)
+    key = Str(example="ABC-123")
+    issue_type = Str(example=api_c.TICKET_TYPE_BUG)
+    summary = Str(example="Audience and Engagement Dashboard not loading")
+    description = Str(example="Description of the issue.")

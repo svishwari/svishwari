@@ -33,6 +33,9 @@ from huxunify.api.data_connectors.aws import (
     put_rule_targets_aws_batch,
     CloudWatchState,
 )
+from huxunify.api.exceptions.integration_api_exceptions import (
+    FailedDestinationDependencyError,
+)
 
 
 def map_destination_credentials_to_dict(destination: dict) -> tuple:
@@ -392,7 +395,27 @@ def get_destination_config(
 
     Returns:
         DestinationBatchJob: Destination batch job object.
+
+    Raises:
+        FailedDestinationDependencyError: Failed to connect to a destination.
     """
+
+    delivery_platform = get_delivery_platform(
+        database,
+        destination[db_const.OBJECT_ID],
+    )
+
+    # validate destination status first.
+    if (
+        delivery_platform.get(db_const.DELIVERY_PLATFORM_STATUS)
+        != db_const.STATUS_SUCCEEDED
+    ):
+        logger.error(
+            "%s authentication failed.", delivery_platform.get(db_const.NAME)
+        )
+        raise FailedDestinationDependencyError(
+            delivery_platform[api_const.NAME], HTTPStatus.FAILED_DEPENDENCY
+        )
 
     audience_delivery_job = set_delivery_job(
         database,
@@ -401,11 +424,6 @@ def get_destination_config(
         [],
         engagement_id,
         destination.get(db_const.DELIVERY_PLATFORM_CONFIG),
-    )
-
-    delivery_platform = get_delivery_platform(
-        database,
-        destination[db_const.OBJECT_ID],
     )
 
     # get the configuration values

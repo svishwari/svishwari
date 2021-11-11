@@ -635,6 +635,7 @@ class TestEngagementRoutes(TestCase):
             db_c.ENGAGEMENTS,
             ObjectId(self.engagement_ids[0]),
         )
+
         # set delivery platform
         self.delivery_platform = set_delivery_platform(
             self.database,
@@ -1108,6 +1109,23 @@ class TestEngagementRoutes(TestCase):
             self.assertIn(api_c.FAVORITE, engagement)
             self.assertIsNotNone(engagement[db_c.STATUS])
 
+    def test_get_engagements_with_valid_filters(self):
+        """Test get all engagements API with valid filters."""
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}?"
+            f"{api_c.FAVORITES}=True&{api_c.MY_ENGAGEMENTS}=True",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        fetched_engagements = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(fetched_engagements)
+        self.assertEqual(1, len(fetched_engagements))
+        self.assertEqual(
+            str(self.engagement_ids[0]), fetched_engagements[0][api_c.ID]
+        )
+
     def test_get_engagement_by_id_valid_id_favorite(self):
         """Test get engagement API with valid ID which is a favorite."""
 
@@ -1418,6 +1436,56 @@ class TestEngagementRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    def test_update_engagement_delivery_schedule(self):
+        """Test update an engagement's delivery schedule."""
+        engagement_delivery_schedule = {api_c.SCHEDULE: t_c.SCHEDULES[0]}
+
+        engagement = {
+            db_c.AUDIENCES: [
+                {
+                    db_c.OBJECT_ID: str(self.audiences[0][db_c.ID]),
+                    db_c.DESTINATIONS: [
+                        {db_c.OBJECT_ID: str(self.destinations[0][db_c.ID])},
+                    ],
+                }
+            ],
+            db_c.ENGAGEMENT_DESCRIPTION: "Test Engagement Description",
+            db_c.ENGAGEMENT_NAME: self.faker.first_name(),
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE: engagement_delivery_schedule,
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}",
+            data=json.dumps(engagement),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        old_delivery_schedule_cron = response.json.get(
+            api_c.DELIVERY_SCHEDULE
+        ).get(api_c.SCHEDULE_CRON)
+
+        engagement_id = response.json.get(api_c.ID)
+        update_doc = response.json
+
+        update_doc[api_c.DELIVERY_SCHEDULE][api_c.SCHEDULE] = t_c.SCHEDULES[1]
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            json=update_doc,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        new_delivery_schedule_cron = response.json.get(
+            api_c.DELIVERY_SCHEDULE
+        ).get(api_c.SCHEDULE_CRON)
+
+        # Ensure the cron expressions are not equal.
+        self.assertNotEqual(
+            old_delivery_schedule_cron, new_delivery_schedule_cron
+        )
 
     def test_add_audience_to_engagement(self):
         """Test add audience to engagement."""
