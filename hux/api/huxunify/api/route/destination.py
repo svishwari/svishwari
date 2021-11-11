@@ -235,7 +235,7 @@ class DestinationsView(SwaggerView):
             db_c.STATUS_SUCCEEDED: api_c.STATUS_ACTIVE,
             db_c.STATUS_PENDING: api_c.STATUS_PENDING,
             db_c.STATUS_FAILED: api_c.STATUS_ERROR,
-            db_c.STATUS_REQUESTED: api_c.STATUS_REQUESTED,
+            db_c.STATUS_REQUESTED: api_c.REQUESTED,
         }
 
         for destination in destinations:
