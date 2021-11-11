@@ -10,6 +10,7 @@
           :description="dataSource.category"
           :disabled="dataSource.status !== 'Active'"
           :action-menu="dataSource.status !== 'Active'"
+          :interactable="true"
           :coming-soon="false"
           :icon-color="true"
           :logo-option="true"
@@ -176,6 +177,17 @@ export default {
   }
   .data-source-list-pending {
     @extend .cursor-default;
+  }
+}
+::v-deep.descriptive-card {
+  &.non-interactable {
+    cursor: default;
+    &:hover {
+      @extend .box-shadow-5;
+    }
+  }
+  .description {
+    color: var(--v-black-lighten4) !important;
   }
 }
 ::v-deep.descriptive-card.in-active {
