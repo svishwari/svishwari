@@ -201,10 +201,6 @@ class DestinationGetSchema(Schema):
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
     delivery_platform_config = fields.Nested(DataExtensionSchema)
-    contact_email = fields.Email(required=False)
-    client_request = fields.Bool(required=False)
-    client_account = fields.Bool(required=False)
-    use_case = fields.String(required=False, allow_none=True)
 
 
 class DestinationPatchSchema(Schema):
@@ -236,10 +232,6 @@ class DestinationPatchSchema(Schema):
     added = fields.Bool(attribute="added")
     enabled = fields.Bool(attribute="enabled")
     ad_platform = fields.Bool(attribute=db_c.IS_AD_PLATFORM)
-    contact_email = fields.Email(required=False)
-    client_request = fields.Bool(required=False)
-    client_account = fields.Bool(required=False)
-    use_case = fields.String(required=False, allow_none=True)
 
 
 class DestinationRequestSchema(Schema):
