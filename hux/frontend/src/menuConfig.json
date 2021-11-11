@@ -70,16 +70,25 @@
       "label": "Customer Insights",
       "menu": [
         {
-          "icon": "playground",
-          "title": "Segment Playground",
+          "icon": "customer-profiles",
+          "title": "Customer Profiles",
           "link": {
-            "name": "AudienceConfiguration"
+            "name": "CustomerProfiles"
           },
           "size": 14,
           "display": false
+        },
+        {
+          "icon": "playground",
+          "title": "Segment Playground",
+          "link": {
+            "name": "SegmentPlayground"
+          },
+          "size": 14,
+          "display": true
         }
       ],
-      "display": false
+      "display": true
     },
     {
       "label": "Orchestration",

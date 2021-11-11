@@ -117,6 +117,16 @@ const routes = [
       requiresAuth: true,
     },
   },
+  {
+    path: "/segment-playground",
+    name: "SegmentPlayground",
+    component: () => import("@/views/Segmentation/Index.vue"),
+    meta: {
+      layout: "app",
+      title: "Segment Playground",
+      requiresAuth: true,
+    },
+  },
   //#endregion
 
   //#region Orchestration
