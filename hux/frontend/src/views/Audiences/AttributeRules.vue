@@ -75,16 +75,34 @@
                     required
                     @blur="triggerSizing(condition)"
                   />
-                  <hux-slider
+                  <div
                     v-if="condition.attribute && !isText(condition)"
-                    v-model="condition.range"
-                    :read-only="false"
-                    :min="condition.attribute.min"
-                    :max="condition.attribute.max"
-                    :step="condition.attribute.steps"
-                    is-range-slider
-                    @onFinalValue="triggerSizing(condition)"
-                  />
+                    ref="hux-density-slider"
+                    class="range-attribute-container pt-6"
+                  >
+                    <hux-density-chart
+                      :id="condition.id"
+                      :data="condition.attribute.values"
+                      :chart-dimensions="chartDimensions"
+                      :min="condition.attribute.min"
+                      :max="condition.attribute.max"
+                      :step="condition.attribute.steps"
+                      :range="condition.range"
+                      class="mx-2"
+                    />
+                    <hux-slider
+                      v-model="condition.range"
+                      :read-only="false"
+                      :min="condition.attribute.min"
+                      :max="condition.attribute.max"
+                      :step="condition.attribute.steps"
+                      :custom-label="
+                        (val) => sliderLabel(condition.attribute, val)
+                      "
+                      is-range-slider
+                      @onFinalValue="triggerSizing(condition)"
+                    />
+                  </div>
                 </div>
                 <div
                   class="
@@ -180,6 +198,7 @@
 import { mapGetters, mapActions } from "vuex"
 import HuxDropdown from "../../components/common/HuxDropdown.vue"
 import HuxSlider from "../../components/common/HuxSlider.vue"
+import HuxDensityChart from "@/components/common/Charts/DensityChart/HuxDensityChart"
 import HuxSwitch from "../../components/common/Switch.vue"
 import TextField from "../../components/common/TextField.vue"
 import Icon from "@/components/common/Icon"
@@ -207,6 +226,7 @@ export default {
     HuxSwitch,
     HuxDropdown,
     HuxSlider,
+    HuxDensityChart,
     Icon,
   },
   props: {
@@ -230,6 +250,10 @@ export default {
     return {
       loadingOverAllSize: false,
       overAllSize: 0,
+      chartDimensions: {
+        width: 0,
+        height: 0,
+      },
     }
   },
   computed: {
@@ -242,14 +266,42 @@ export default {
     },
   },
   async mounted() {
+    this.sizeHandler()
+    this.chartDimensions.height = 26
     await this.getAudiencesRules()
     this.updateSizes()
   },
+
+  created() {
+    window.addEventListener("resize", this.sizeHandler)
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.sizeHandler)
+  },
+
+  updated() {
+    this.sizeHandler()
+  },
+
   methods: {
     ...mapActions({
       getRealtimeSize: "audiences/fetchFilterSize",
       getAudiencesRules: "audiences/fetchConstants",
     }),
+    sliderLabel(attribute, value) {
+      if (attribute.key === "ltv_predicted") {
+        return `$${value}`
+      }
+      return value
+    },
+    sizeHandler() {
+      if (this.$refs["hux-density-slider"]) {
+        if (this.$refs["hux-density-slider"][0]) {
+          this.chartDimensions.width =
+            this.$refs["hux-density-slider"][0].clientWidth
+        }
+      }
+    },
     isText(condition) {
       return condition.attribute ? condition.attribute.type === "text" : false
     },
@@ -517,6 +569,9 @@ export default {
           display: flex;
           align-items: center;
           width: 100%;
+          .range-attribute-container {
+            width: 100%;
+          }
           .hux-dropdown {
             .v-btn__content {
               color: var(--v-black-darken1);
