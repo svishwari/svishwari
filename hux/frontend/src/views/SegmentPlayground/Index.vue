@@ -17,13 +17,11 @@
         <v-col class="col-8 attribute-div"></v-col>
         <v-col class="col-4 overview-div pr-6">
           <v-card
-            v-if="!hideMap"
             class="map-card-wrapper mt-3 rounded-lg card-shadow"
             height="311"
           >
           </v-card>
           <v-card
-            v-if="!hideMap"
             class="map-card-wrapper mt-3 rounded-lg card-shadow"
             height="311"
           >
@@ -92,7 +90,6 @@ export default {
       ],
       loadingOverview: false,
       showMapView: true,
-      hideMap: true,
       configurationData: configurationData,
     }
   },
