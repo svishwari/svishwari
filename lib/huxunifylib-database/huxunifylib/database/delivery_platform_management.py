@@ -37,10 +37,7 @@ def set_delivery_platform(
     user_name: str = None,
     configuration: dict = None,
     is_ad_platform: bool = False,
-    contact_email: str = None,
-    client_request: bool = False,
-    client_account: bool = False,
-    use_case: str = None,
+    category: str = c.CATEGORY_UNKNOWN,
 ) -> Union[dict, None]:
     """A function to create a delivery platform.
 
@@ -60,11 +57,7 @@ def set_delivery_platform(
         configuration (dict): A dictionary consisting of any platform
             specific configurations.
         is_ad_platform (bool): If the delivery platform is an AD platform.
-        contact_email (str): Contact email for newly requested destination.
-        client_request (bool): If client requested the destination.
-        client_account (bool): If client already has an account on the
-            destination requested.
-        use_case (str): Use case for the destination.
+        category (str): Categoruy of the delivery platform.
 
     Returns:
         Union[dict, None]: MongoDB audience doc.
@@ -104,18 +97,13 @@ def set_delivery_platform(
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
         c.IS_AD_PLATFORM: is_ad_platform,
+        c.CATEGORY: category,
     }
     if authentication_details is not None:
         doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
 
     if configuration is not None:
         doc[c.CONFIGURATION] = configuration
-
-    if contact_email is not None:
-        doc[c.CONTACT_EMAIL] = contact_email
-        doc[c.CLIENT_REQUEST] = client_request
-        doc[c.CLIENT_ACCOUNT] = client_account
-        doc[c.USE_CASE] = use_case
 
     # Add user name only if it is available
     if user_name:
