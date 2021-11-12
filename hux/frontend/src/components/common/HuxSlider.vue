@@ -9,7 +9,14 @@
       :step="step"
       thumb-label="always"
       @end="onFinalValue"
-    ></v-range-slider>
+    >
+      <!-- eslint-disable vue/no-template-shadow -->
+      <template v-if="customLabel" v-slot:thumb-label="{ value }">
+        <span class="black--text text--lighten-4">
+          {{ customLabel(value) }}
+        </span>
+      </template>
+    </v-range-slider>
     <v-slider
       v-else
       v-model="currentValue"
@@ -48,6 +55,10 @@ export default {
     value: {
       type: [Number, Array],
       required: true,
+    },
+    customLabel: {
+      type: Function,
+      required: false,
     },
     min: {
       type: Number,
@@ -125,28 +136,29 @@ export default {
         height: 4px;
       }
       .lighten-3 {
-        background-color: rgba(157, 212, 207, 0.25) !important;
+        background-color: var(--v-secondary-lighten3) !important;
       }
       .theme--light {
         .v-slider__track-fill {
-          background-color: rgba(0, 171, 171, 0.55) !important;
+          background-color: var(--v-secondary-lighten1) !important;
         }
       }
       .v-slider__thumb {
         width: 16px;
         height: 16px;
         background-color: var(--v-white-base) !important;
-        border: 1px solid rgba(0, 171, 171, 0.55);
+        border: 1px solid var(--v-secondary-lighten1) !important;
         box-sizing: border-box;
         box-shadow: 0px 1px 5px rgb(0 0 0 / 15%);
         border-radius: 100px;
-        border-color: rgba(0, 171, 171, 0.55) !important;
+        border-color: var(--v-secondary-lighten1) !important;
       }
       .v-slider__thumb-label {
         transform: translateY(35px) translateX(-50%) rotate(45deg) !important;
         background-color: inherit !important;
         color: var(--v-black-darken1);
         border: none !important;
+        font-size: 12px;
       }
     }
   }

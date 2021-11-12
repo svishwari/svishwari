@@ -5,4 +5,5 @@ export default {
   greenD: "#43B02A",
   teal6D: "#007680",
   teal7D: "#004F59",
+  tealAquaSquezze: "#E6F4F3",
 }
