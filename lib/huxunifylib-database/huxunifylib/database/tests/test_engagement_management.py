@@ -988,7 +988,7 @@ class TestEngagementManagement(unittest.TestCase):
             self.user_name,
         )
 
-        self.assertTrue(destination_to_add in new_eng[c.AUDIENCES])
+        self.assertIn(destination_to_add, new_eng[c.AUDIENCES])
 
     def test_remove_destination_from_engagement_audience(self):
         """Test removing a destination from an engagement audience"""
