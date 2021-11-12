@@ -1052,7 +1052,9 @@ class DestinationsRequestView(SwaggerView):
         )
 
         # check if any found documents
-        destinations = destinations.get(db_c.DOCUMENTS, [])
+        destinations = (
+            destinations.get(db_c.DOCUMENTS, []) if destinations else []
+        )
 
         # check if it was requested
         if destinations:
