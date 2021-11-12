@@ -10,14 +10,14 @@
           attributes that you want to explore.
         </div>
       </template>
-      <template #right> </template>
+      <template #right> <tips-menu /></template>
     </page-header>
     <div>
       <v-row>
         <v-col class="col-8 attribute-div"></v-col>
         <v-col class="col-4 overview-div pr-6">
           <v-card
-            class="map-card-wrapper mt-3 rounded-lg card-shadow"
+            class="map-card-wrapper mt-7 rounded-lg card-shadow"
             height="311"
           >
           </v-card>
@@ -65,6 +65,7 @@
 import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
+import TipsMenu from "./TipsMenu"
 import MapChart from "@/components/common/MapChart/MapChart"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import Icon from "@/components/common/Icon"
@@ -75,6 +76,7 @@ export default {
   components: {
     PageHeader,
     Breadcrumb,
+    TipsMenu,
     MapChart,
     mapSlider,
     Icon,

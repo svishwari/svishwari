@@ -1,6 +1,5 @@
 """This module enables functionality related to engagement management."""
 # pylint: disable=too-many-lines
-
 import logging
 import datetime
 from typing import Union
@@ -1002,3 +1001,49 @@ def check_active_engagement_deliveries(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def remove_audience_from_all_engagements(
+    database: DatabaseClient, audience_id: ObjectId, user_name: str
+) -> bool:
+    """Remove an audience from all engagement objects
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        user_name (str): Name of the user removing the destination from the
+            audience.
+
+    Returns:
+        bool: Boolean flag indicating if the audience has been removed from all engagements.
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
+
+    try:
+        collection.update_many(
+            filter={f"{db_c.AUDIENCES}.{db_c.OBJECT_ID}": audience_id},
+            update={
+                "$pull": {
+                    f"{db_c.AUDIENCES}": {
+                        db_c.OBJECT_ID: {"$in": [audience_id]}
+                    }
+                },
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    db_c.UPDATED_BY: user_name,
+                },
+            },
+        )
+
+        return True
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False

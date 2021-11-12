@@ -1186,3 +1186,77 @@ class TestEngagementManagement(unittest.TestCase):
             ]
             self.assertTrue(matched_destinations)
             self.assertEqual(destination, matched_destinations[0])
+
+    def test_remove_audience_from_all_engagements(self) -> None:
+        """Test removing an audience from all engagements"""
+
+        # create an multiple audiences
+        audiences = []
+        engagements = []
+
+        for i in range(4):
+            audiences.append(
+                om.create_audience(
+                    self.database,
+                    f"audience{i}",
+                    [],
+                    [],
+                    self.user_name,
+                    100 + i,
+                )
+            )
+
+        engagements.append(
+            em.set_engagement(
+                self.database,
+                "ENG0",
+                "Engagement 0",
+                [
+                    {c.OBJECT_ID: audiences[0][c.ID], c.DESTINATIONS: []},
+                    {c.OBJECT_ID: audiences[1][c.ID], c.DESTINATIONS: []},
+                ],
+                self.user_name,
+            )
+        )
+
+        engagements.append(
+            em.set_engagement(
+                self.database,
+                "ENG1",
+                "Engagement 1",
+                [
+                    {c.OBJECT_ID: audiences[2][c.ID], c.DESTINATIONS: []},
+                    {c.OBJECT_ID: audiences[3][c.ID], c.DESTINATIONS: []},
+                ],
+                self.user_name,
+            )
+        )
+
+        engagements.append(
+            em.set_engagement(
+                self.database,
+                "ENG2",
+                "Engagement 2",
+                [
+                    {c.OBJECT_ID: audiences[0][c.ID], c.DESTINATIONS: []},
+                    {c.OBJECT_ID: audiences[1][c.ID], c.DESTINATIONS: []},
+                    {c.OBJECT_ID: audiences[2][c.ID], c.DESTINATIONS: []},
+                    {c.OBJECT_ID: audiences[3][c.ID], c.DESTINATIONS: []},
+                ],
+                self.user_name,
+            )
+        )
+
+        em.remove_audience_from_all_engagements(
+            self.database, audiences[0][c.ID], self.user_name
+        )
+
+        for engagement in engagements:
+            new_eng = em.get_engagement(self.database, engagement)
+            self.assertFalse(
+                list(
+                    x
+                    for x in new_eng[c.AUDIENCES]
+                    if x[c.OBJECT_ID] == audiences[0][c.ID]
+                )
+            )
