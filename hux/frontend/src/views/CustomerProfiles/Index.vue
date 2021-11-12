@@ -170,7 +170,7 @@
         </v-tabs>
         <v-tabs-items v-model="tabOption" class="mt-2">
           <v-tab-item key="overview">
-            <v-row class="mt-2">
+            <v-row>
               <v-col md="6">
                 <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
                   <v-card-title class="pb-2 pl-6 pt-5">

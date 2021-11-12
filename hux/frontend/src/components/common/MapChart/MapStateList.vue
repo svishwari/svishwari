@@ -10,12 +10,13 @@
         <td
           v-for="header in columnDefs"
           :key="header.value"
+          class="text-body-2"
           :style="{ width: header.width }"
         >
-          <div v-if="header.value == defaultMetric" class="cell text-h6">
+          <div v-if="header.value == defaultMetric" class="text-body-1">
             <span v-if="item[defaultMetric]">{{ item[defaultMetric] }} </span>
           </div>
-          <div v-if="header.value == customMetric" class="cell text-h6">
+          <div v-if="header.value == customMetric" class="text-body-1">
             <tooltip>
               <template #label-content>
                 {{
@@ -36,7 +37,7 @@
               </template>
             </tooltip>
           </div>
-          <div v-if="header.value == primaryMetric">
+          <div v-if="header.value == primaryMetric" class="text-body-1">
             <tooltip>
               <template #label-content>
                 {{
@@ -46,7 +47,7 @@
                 }}
               </template>
               <template #hover-content>
-                <div class="mb-1">Population %</div>
+                <div class="mb-1">Population</div>
                 {{ item.size | Numeric(true, false, false) | Empty("-") }}
               </template>
             </tooltip>
