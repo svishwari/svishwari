@@ -20,7 +20,7 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <v-row v-if="!loading" class="ma-0 pa-4" data-e2e="models-list">
+    <v-row v-if="!loading" class="ma-0 pa-8" data-e2e="models-list">
       <template v-if="hasModels">
         <descriptive-card
           v-for="model in models"

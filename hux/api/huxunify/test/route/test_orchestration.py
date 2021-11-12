@@ -17,6 +17,7 @@ from huxunifylib.database.engagement_management import (
     set_engagement,
     get_engagement,
     get_engagements_by_audience,
+    remove_audience_from_all_engagements,
 )
 from huxunifylib.database.orchestration_management import (
     create_audience,
@@ -992,12 +993,100 @@ class OrchestrationRouteTest(TestCase):
     def test_delete_audience(self) -> None:
         """Test delete audience API with valid ID."""
 
+        # create an multiple audiences
+        audiences = []
+
+        for i in range(4):
+            audiences.append(
+                create_audience(
+                    self.database,
+                    f"audience{i}",
+                    [],
+                    [],
+                    self.user_name,
+                    100 + i,
+                )
+            )
+
+        engagements = [
+            set_engagement(
+                self.database,
+                "ENG0",
+                "Engagement 0",
+                [
+                    {
+                        db_c.OBJECT_ID: audiences[0][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                    {
+                        db_c.OBJECT_ID: audiences[1][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                ],
+                self.user_name,
+            ),
+            set_engagement(
+                self.database,
+                "ENG1",
+                "Engagement 1",
+                [
+                    {
+                        db_c.OBJECT_ID: audiences[2][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                    {
+                        db_c.OBJECT_ID: audiences[3][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                ],
+                self.user_name,
+            ),
+            set_engagement(
+                self.database,
+                "ENG2",
+                "Engagement 2",
+                [
+                    {
+                        db_c.OBJECT_ID: audiences[0][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                    {
+                        db_c.OBJECT_ID: audiences[1][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                    {
+                        db_c.OBJECT_ID: audiences[2][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                    {
+                        db_c.OBJECT_ID: audiences[3][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                ],
+                self.user_name,
+            ),
+        ]
+
+        remove_audience_from_all_engagements(
+            self.database, audiences[0][db_c.ID], self.user_name
+        )
+
         response = self.test_client.delete(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+        for engagement in engagements:
+            new_eng = get_engagement(self.database, engagement)
+            self.assertFalse(
+                list(
+                    x
+                    for x in new_eng[api_c.AUDIENCES]
+                    if x[db_c.OBJECT_ID] == audiences[0][db_c.ID]
+                )
+            )
 
     def test_delete_audience_where_audience_does_not_exist(self) -> None:
         """Test delete audience API with valid ID but the object does not exist"""
