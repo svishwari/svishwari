@@ -10,7 +10,7 @@
           attributes that you want to explore.
         </div>
       </template>
-      <template #right> </template>
+      <template #right> <tips-menu /></template>
     </page-header>
     <div>
       <v-row>
@@ -24,12 +24,14 @@
 <script>
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
+import TipsMenu from "./TipsMenu"
 
 export default {
   name: "SegmentPlayground",
   components: {
     PageHeader,
     Breadcrumb,
+    TipsMenu,
   },
   data() {
     return {
