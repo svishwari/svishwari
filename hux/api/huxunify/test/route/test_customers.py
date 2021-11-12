@@ -213,13 +213,15 @@ class TestCustomersOverview(TestCase):
         """Test get customer over by attributes."""
 
         filter_attributes = {
-            "filters": {
-                "section_aggregator": "ALL",
-                "section_filters": [
-                    {"field": "max_age", "type": "equals", "value": 87},
-                    {"field": "min_age", "type": "equals", "value": 25},
-                ],
-            }
+            "filters": [
+                {
+                    "section_aggregator": "ALL",
+                    "section_filters": [
+                        {"field": "max_age", "type": "equals", "value": 87},
+                        {"field": "min_age", "type": "equals", "value": 25},
+                    ],
+                }
+            ]
         }
 
         self.request_mocker.stop()
@@ -247,6 +249,39 @@ class TestCustomersOverview(TestCase):
         self.assertGreaterEqual(data[api_c.GENDER_MEN_COUNT], 0)
         self.assertGreaterEqual(data[api_c.GENDER_WOMEN_COUNT], 0)
         self.assertGreaterEqual(data[api_c.GENDER_OTHER_COUNT], 0)
+
+    def test_post_customer_overview_invalid_filters(self) -> None:
+        """Test get customer overview with invalid filters."""
+
+        filter_attributes = {
+            "filters": [
+                {
+                    "section_aggregator": "ALL",
+                    "section_filters": [
+                        {"value": ""},
+                    ],
+                }
+            ]
+        }
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.post(
+            f"{self.customers}/{api_c.OVERVIEW}",
+            data=json.dumps(filter_attributes),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_get_idr_data_feeds(self):
         """Test get IDR Datafeeds."""

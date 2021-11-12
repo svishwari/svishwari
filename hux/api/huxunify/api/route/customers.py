@@ -193,7 +193,7 @@ class CustomerPostOverview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
+    # @api_error_handler()
     def post(self) -> Tuple[dict, int]:
         """Retrieves the overview of customer data with the requested filters applied.
 
@@ -205,6 +205,17 @@ class CustomerPostOverview(SwaggerView):
             Tuple[dict, int]: dict of Customer data overview, HTTP status code.
         """
 
+        # filter out any invalid filters.
+        if any(
+            y
+            for x in request.json.get(api_c.AUDIENCE_FILTERS, [])
+            for y in x.get(api_c.AUDIENCE_SECTION_FILTERS, [])
+            if y == {api_c.AUDIENCE_FILTER_VALUE: ""}
+        ):
+            return {
+                api_c.MESSAGE: "Invalid filter passed in."
+            }, HTTPStatus.BAD_REQUEST
+
         # TODO - cdm to return single field
         token_response = get_token_from_request(request)
         customers = get_customers_overview(token_response[0], request.json)
@@ -213,9 +224,7 @@ class CustomerPostOverview(SwaggerView):
             overview_key: customers.get(overview_key) or 0
             for overview_key in customers
         }
-        customers[api_c.GEOGRAPHICAL] = get_demographic_by_state(
-            token_response[0], request.json[api_c.AUDIENCE_FILTERS]
-        )
+
         return (
             CustomerOverviewSchema().dump(customers),
             HTTPStatus.OK,
