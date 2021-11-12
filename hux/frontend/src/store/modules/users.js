@@ -1,6 +1,7 @@
 import Vue from "vue"
 import api from "@/api/client"
 import { handleError } from "@/utils"
+import { handleSuccess } from "../../utils"
 
 const namespaced = true
 
@@ -11,6 +12,7 @@ const state = {
     email: null,
     token: null,
     idToken: null,
+    bugsReported: [],
   },
 }
 
@@ -37,6 +39,13 @@ const mutations = {
 
   setApplicationUserProfile(state, userProfile) {
     Vue.set(state, "userProfile", { ...state.userProfile, ...userProfile })
+  },
+
+  setReportedBugs(state, bugsObj) {
+    Vue.set(state, "userProfile", {
+      ...state.userProfile,
+      bugsReported: bugsObj,
+    })
   },
 }
 
@@ -72,6 +81,23 @@ const actions = {
       await api.users.clearFavorite(id, type)
       dispatch("getUserProfile")
     } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async contactUs({ commit }, data) {
+    try {
+      let res = await api.users.contactUs(data)
+      if (res) {
+        handleSuccess(
+          `Bug Submitted Successfully with JIRA ID: ${res.data.key}`,
+          res.status
+        )
+      }
+      commit("setReportedBugs", res.data)
+    } catch (error) {
+      console.log(error)
       handleError(error)
       throw error
     }
