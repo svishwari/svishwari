@@ -78,15 +78,16 @@
                   <div
                     v-if="condition.attribute && !isText(condition)"
                     ref="hux-density-slider"
-                    class="range-attribute-container pt-6"
+                    class="range-attribute-container"
+                    :class="condition.attribute.values ? 'pt-6' : ''"
                   >
                     <hux-density-chart
+                      v-if="condition.attribute.values"
                       :id="condition.id"
                       :data="condition.attribute.values"
                       :chart-dimensions="chartDimensions"
                       :min="condition.attribute.min"
                       :max="condition.attribute.max"
-                      :step="condition.attribute.steps"
                       :range="condition.range"
                       class="mx-2"
                     />
@@ -98,6 +99,9 @@
                       :step="condition.attribute.steps"
                       :custom-label="
                         (val) => sliderLabel(condition.attribute, val)
+                      "
+                      :class="
+                        condition.attribute.values ? 'density-slider' : ''
                       "
                       is-range-slider
                       @onFinalValue="triggerSizing(condition)"
@@ -571,6 +575,10 @@ export default {
           width: 100%;
           .range-attribute-container {
             width: 100%;
+            .density-slider {
+              position: relative;
+              top: -20px;
+            }
           }
           .hux-dropdown {
             .v-btn__content {

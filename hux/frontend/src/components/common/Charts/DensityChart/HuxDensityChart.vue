@@ -28,11 +28,6 @@ export default {
       type: [Number, String],
       required: true,
     },
-    step: {
-      type: [Number, String],
-      required: false,
-      default: 1,
-    },
     id: {
       type: String,
       required: true,
@@ -120,25 +115,25 @@ export default {
 
       linearGradient
         .append("stop")
-        .attr("offset", Number((this.range[0] / this.max).toFixed(2)))
+        .attr("offset", Number(this.range[0] / this.max))
         .style("stop-color", "#E6F4F3")
         .style("stop-opacity", "1.0")
 
       linearGradient
         .append("stop")
-        .attr("offset", Number((this.range[0] / this.max).toFixed(2)))
+        .attr("offset", Number(this.range[0] / this.max))
         .style("stop-color", "#9DD4CF")
         .style("stop-opacity", "1.0")
 
       linearGradient
         .append("stop")
-        .attr("offset", Number((this.range[1] / this.max).toFixed(2)))
+        .attr("offset", Number(this.range[1] / this.max))
         .style("stop-color", "#9DD4CF")
         .style("stop-opacity", "1.0")
 
       linearGradient
         .append("stop")
-        .attr("offset", Number((this.range[1] / this.max).toFixed(2)))
+        .attr("offset", Number(this.range[1] / this.max))
         .style("stop-color", "#E6F4F3")
         .style("stop-opacity", "1.0")
 
@@ -151,6 +146,7 @@ export default {
           "d",
           d3Shape
             .area()
+            .curve(d3Shape.curveBasis)
             .x(function (d) {
               return xCoordinateFunction(d[0])
             })

@@ -116,15 +116,13 @@ export default {
 
 <style lang="scss" scoped>
 .hux-range-slider {
-  position: relative;
-  top: -20px;
   ::v-deep .v-input__control {
     .v-input__slot {
       .v-slider__track-container {
         height: 4px;
       }
       .lighten-3 {
-        background-color: #e6f4f3 !important;
+        background-color: var(--v-secondary-lighten3) !important;
       }
       .theme--light {
         .v-slider__track-fill {
