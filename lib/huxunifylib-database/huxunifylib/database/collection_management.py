@@ -36,6 +36,7 @@ def create_document(
     Raises:
         InvalidValueException: Error if the passed in value
             is not valid.
+        DuplicateDocumentException: Error if the document is duplicate.
     """
 
     if collection not in c.ALLOWED_COLLECTIONS:
