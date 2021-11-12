@@ -161,7 +161,7 @@ export default {
         .append("g")
         .classed("yAxis-alternate", true)
         .attr("transform", "translate(0, 0)")
-        .call(d3Axis.axisLeft(yScale).tickSize(-w).ticks(4).tickFormat(""))
+        .call(d3Axis.axisLeft(yScale).tickSize(-w).ticks(5).tickFormat(""))
         .attr("stroke-width", "0.5")
         .attr("stroke-opacity", "1")
         .style("font-size", "12px")

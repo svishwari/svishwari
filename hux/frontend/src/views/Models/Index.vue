@@ -20,12 +20,12 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <v-row v-if="!loading" class="pa-14" data-e2e="models-list">
+    <v-row v-if="!loading" class="ma-0 pa-8" data-e2e="models-list">
       <template v-if="hasModels">
         <descriptive-card
           v-for="model in models"
           :key="model.id"
-          :action-menu="false"
+          :action-menu="model.status !== 'Active'"
           :coming-soon="false"
           width="280"
           height="255"
@@ -34,11 +34,12 @@
           :description="model.description"
           data-e2e="model-item"
           :disabled="model.status !== 'Active'"
+          :interactable="model.status == 'Active' ? true : false"
           @click.native="goToDashboard(model)"
         >
           <template slot="top">
             <status
-              :icon-size="17"
+              :icon-size="18"
               :status="model.status || ''"
               collapsed
               class="d-flex float-left"
@@ -46,15 +47,8 @@
             />
           </template>
 
-          <template slot="default">
-            <p
-              class="text-body-2 black--text text--lighten-4"
-              data-e2e="model-owner"
-            >
-              {{ model.owner }}
-            </p>
-
-            <v-row no-gutters>
+          <template v-if="model.status == 'Active'" slot="default">
+            <v-row no-gutters class="mt-4">
               <v-col cols="5">
                 <card-stat
                   label="Version"
@@ -90,6 +84,15 @@
                 </card-stat>
               </v-col>
             </v-row>
+          </template>
+          <template slot="action-menu-options">
+            <v-list class="list-wrapper ma-0 pa-0">
+              <v-list-item-group>
+                <v-list-item>
+                  <v-list-item-title> Remove </v-list-item-title>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
           </template>
         </descriptive-card>
       </template>

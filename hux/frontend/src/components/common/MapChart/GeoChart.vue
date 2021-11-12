@@ -1,6 +1,10 @@
 <template>
   <div class="chart-container" :style="{ maxWidth: chartWidth }">
-    <div ref="huxChart" @mouseover="getCordinates($event)"></div>
+    <div
+      ref="huxChart"
+      class="map-chart"
+      @mouseover="getCordinates($event)"
+    ></div>
   </div>
 </template>
 
@@ -34,6 +38,11 @@ export default {
     configurationData: {
       type: Object,
       required: true,
+    },
+    disableHoverEffects: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   data() {
@@ -147,16 +156,18 @@ export default {
         .attr("class", "geochart")
 
       let applyHoverChanges = (d) => {
-        svg
-          .selectAll("path")
-          .style("stroke", "#4F4F4F")
-          .attr("fill-opacity", "0.4")
-          .style("stroke-width", "0.2")
-        d3Select
-          .select(d.srcElement)
-          .attr("fill-opacity", (d) => emitStateData(d))
-          .style("stroke", "#1E1E1E")
-          .style("stroke-width", "1")
+        if (!this.disableHoverEffects) {
+          svg
+            .selectAll("path")
+            .style("stroke", "#4F4F4F")
+            .attr("fill-opacity", "0.4")
+            .style("stroke-width", "0.2")
+          d3Select
+            .select(d.srcElement)
+            .attr("fill-opacity", (d) => emitStateData(d))
+            .style("stroke", "#1E1E1E")
+            .style("stroke-width", "1")
+        }
       }
 
       let emitStateData = (d) => {
@@ -167,13 +178,15 @@ export default {
       }
 
       let removeHoverChanges = () => {
-        svg
-          .selectAll("path")
-          .style("stroke", "#1E1E1E")
-          .style("stroke-width", "0.5")
-          .style("fill", (d) => applyValueColor(d.properties))
-          .attr("fill-opacity", "1")
-        this.tooltipDisplay(false)
+        if (!this.disableHoverEffects) {
+          svg
+            .selectAll("path")
+            .style("stroke", "#1E1E1E")
+            .style("stroke-width", "0.5")
+            .style("fill", (d) => applyValueColor(d.properties))
+            .attr("fill-opacity", "1")
+          this.tooltipDisplay(false)
+        }
       }
     },
 

@@ -417,19 +417,12 @@
         </v-card>
       </v-col>
       <v-col md="5">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+        <v-card class="mt-3 rounded-lg box-shadow-5 overflow-auto" height="386">
           <v-progress-linear
             v-if="loadingDemographics"
             :active="loadingDemographics"
             :indeterminate="loadingDemographics"
           />
-          <v-card-title class="pb-2 pl-5 pt-5">
-            <div class="mt-2">
-              <span class="black--text text--darken-4 text-h5">
-                United States
-              </span>
-            </div>
-          </v-card-title>
           <v-divider class="ml-5 mr-8 mt-0 mb-1" />
           <map-state-list
             v-if="!loadingDemographics"
@@ -1039,6 +1032,7 @@ export default {
         default:
           break
       }
+      await this.loadAudienceInsights()
     },
 
     getAgeString(min_age, max_age) {
@@ -1159,7 +1153,7 @@ export default {
             this.deleteActionData = {
               engagementId: this.engagementId,
               audienceId: this.audienceId,
-              data: { id: event.data.id },
+              data: { id: event.data.delivery_platform_id },
             }
             this.showConfirmModal = true
             break
@@ -1274,7 +1268,6 @@ export default {
           data: payload,
         })
       }
-      await this.loadAudienceInsights()
     },
     async loadAudienceInsights() {
       this.loading = true

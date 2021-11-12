@@ -1,5 +1,5 @@
 """This module enables functionality related to engagement management."""
-
+# pylint: disable=too-many-lines
 import logging
 import datetime
 from typing import Union
@@ -103,13 +103,16 @@ def set_engagement(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_engagements_summary(
-    database: DatabaseClient, engagement_ids: list = None
+    database: DatabaseClient,
+    engagement_ids: list = None,
+    query_filter: Union[dict, None] = None,
 ) -> Union[list, None]:
     """A function to get all engagements summary with all nested lookups.
 
     Args:
         database (DatabaseClient): A database client.
         engagement_ids (list): Optional engagement id filter list.
+        query_filter (Union[dict, None]): Mongo filter Query.
 
     Returns:
         Union[list, None]: List of all engagement documents.
@@ -122,6 +125,13 @@ def get_engagements_summary(
     match_statement = {db_c.DELETED: False}
     if engagement_ids:
         match_statement[db_c.ID] = {"$in": engagement_ids}
+
+    if query_filter:
+        if db_c.WORKED_BY in query_filter:
+            match_statement["$or"] = [
+                {db_c.CREATED_BY: query_filter.get(db_c.WORKED_BY)},
+                {db_c.UPDATED_BY: query_filter.get(db_c.WORKED_BY)},
+            ]
 
     pipeline = [
         # filter out the deleted engagements
@@ -991,3 +1001,49 @@ def check_active_engagement_deliveries(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def remove_audience_from_all_engagements(
+    database: DatabaseClient, audience_id: ObjectId, user_name: str
+) -> bool:
+    """Remove an audience from all engagement objects
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        user_name (str): Name of the user removing the destination from the
+            audience.
+
+    Returns:
+        bool: Boolean flag indicating if the audience has been removed from all engagements.
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
+
+    try:
+        collection.update_many(
+            filter={f"{db_c.AUDIENCES}.{db_c.OBJECT_ID}": audience_id},
+            update={
+                "$pull": {
+                    f"{db_c.AUDIENCES}": {
+                        db_c.OBJECT_ID: {"$in": [audience_id]}
+                    }
+                },
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    db_c.UPDATED_BY: user_name,
+                },
+            },
+        )
+
+        return True
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False

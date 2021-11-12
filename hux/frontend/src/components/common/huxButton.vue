@@ -5,7 +5,7 @@
     :outlined="isOutlined"
     :tile="isTile"
     :color="variant"
-    :class="[buttonSize, { 'box-shadow-25': boxShadow }]"
+    :class="[buttonSize, { 'box-shadow-25': boxShadow }, 'text-button']"
     :width="width"
     :height="height"
     :icon="iconType"

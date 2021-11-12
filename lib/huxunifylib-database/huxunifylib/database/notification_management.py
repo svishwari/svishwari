@@ -1,7 +1,7 @@
 """This module enables functionality related to notification management."""
 import logging
 import warnings
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Union, List, Any, Dict
 
 import pymongo
@@ -145,6 +145,9 @@ def get_notifications_batch(
     if users:
         query.update({c.NOTIFICATION_FIELD_USERNAME: {"$in": users}})
     if start_date and end_date:
+        if start_date == end_date:
+            end_date = end_date + timedelta(days=1) - relativedelta(seconds=1)
+
         query.update(
             {
                 c.NOTIFICATION_FIELD_CREATED: {
