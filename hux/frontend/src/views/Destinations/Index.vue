@@ -120,10 +120,7 @@ export default {
     },
 
     areDestinationsAvailable() {
-      const availableDestinations = this.destinations.filter(
-        (each) => each.is_added
-      )
-      return availableDestinations.length > 0
+      return this.destinations.some((each) => each.is_added)
     },
   },
 
