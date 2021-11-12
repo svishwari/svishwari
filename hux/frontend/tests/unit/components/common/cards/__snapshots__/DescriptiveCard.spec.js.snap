@@ -8,11 +8,11 @@ exports[`Cards Descriptive Card Displays custom properties 1`] = `
     rounded-lg
     card-space
     mb-10
-  ">
+   non-interactable">
   <!---->
   <div class="d-flex justify-center mt-2 mr-8">
     <div class="dot">
-      <icon-stub type="model-unsubscribe" size="44" color="Primary" fillopacity="1" strokeopacity="1" class="d-block"></icon-stub>
+      <icon-stub type="model-unsubscribe" size="32" color="Primary" fillopacity="1" strokeopacity="1" class="d-block"></icon-stub>
     </div>
   </div>
   <tooltip-stub contentclass="" maxwidth="auto" minwidth="auto !important" nudgeright="100px"></tooltip-stub>
@@ -29,7 +29,7 @@ exports[`Cards Descriptive Card Displays custom slots 1`] = `
     rounded-lg
     card-space
     mb-10
-  ">
+   non-interactable">
   <div class="card-status pa-3 pb-0">
     <div>Top spot</div>
     <v-menu-stub opendelay="0" closedelay="0" contentclass="" maxwidth="auto" nudgebottom="0" nudgeleft="0" nudgeright="0" nudgetop="0" nudgewidth="0" openonclick="true" closeonclick="true" closeoncontentclick="true" maxheight="auto" origin="top left" transition="v-menu-transition">

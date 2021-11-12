@@ -24,11 +24,11 @@ class FailedAPIDependencyError(IntegratedAPIEndpointException):
     )
 
 
-class FailedDeliveryPlatformDependencyError(IntegratedAPIEndpointException):
-    """Exception for dependency failure for delivery platform APIs."""
+class FailedDestinationDependencyError(IntegratedAPIEndpointException):
+    """Exception for dependency failure for destination platform APIs."""
 
     exception_message = (
-        "Failed to establish connection to delivery platform <{}>, "
+        "Failed to establish connection to destination <{}>, "
         "returned status code <{}>."
     )
 

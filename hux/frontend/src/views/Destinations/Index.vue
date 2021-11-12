@@ -1,7 +1,7 @@
 <template>
   <page max-width="100%">
     <div slot="header">
-      <page-header header-height="110" class="mt-n2">
+      <page-header header-height="110">
         <template slot="left">
           <div>
             <breadcrumb :items="breadcrumbs" />
@@ -14,7 +14,7 @@
       <page-header header-height="71">
         <template #left>
           <v-btn disabled icon>
-            <icon type="search" size="20" color="black" variant="lighten3" />
+            <icon type="search" :size="20" color="black" variant="lighten3" />
           </v-btn>
         </template>
 
@@ -40,11 +40,7 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
     <div v-if="!loading">
-      <v-row v-if="isConnectionStarted">
-        <v-col>
-          <destinations-list></destinations-list>
-        </v-col>
-      </v-row>
+      <destinations-list v-if="isConnectionStarted" />
       <div v-else class="empty-state-wrap text-center">
         <v-icon color="primary lighten-8" x-large>
           mdi-alert-circle-outline
@@ -65,7 +61,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 
-import DestinationsList from "./DestinationsList"
+import DestinationsList from "./DestinationsList.vue"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"

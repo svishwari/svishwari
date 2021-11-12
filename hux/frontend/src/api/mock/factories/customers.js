@@ -1,5 +1,6 @@
 import faker from "faker"
 import { startCase } from "lodash"
+import mapData from "@/components/common/MapChart/mapData.js"
 
 const REDACTED = "++REDACTED++"
 
@@ -161,6 +162,7 @@ export const customersOverview = {
   total_unknown_ids: 0,
   total_us_states: 52,
   updated: faker.date.recent(7),
+  geo: mapData,
 }
 
 /**

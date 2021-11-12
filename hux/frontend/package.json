@@ -20,7 +20,7 @@
   "dependencies": {
     "@okta/okta-signin-widget": "^4.2.3",
     "@okta/okta-vue": "^2.0.0",
-    "@storybook/addon-docs": "^6.3.11",
+    "@storybook/addon-docs": "^6.3.12",
     "@vue/composition-api": "^1.2.4",
     "ag-grid-community": "^25.1.0",
     "ag-grid-vue": "^25.1.0",
@@ -38,16 +38,16 @@
     "d3-shape": "^3.0.1",
     "d3-time": "^3.0.0",
     "d3-transition": "^3.0.1",
-    "dayjs": "^1.10.6",
+    "dayjs": "^1.10.7",
     "lodash": "^4.17.21",
     "topojson": "^3.0.2",
     "vue": "^2.6.14",
     "vue-property-decorator": "^8.5.1",
     "vue-router": "^3.2.0",
     "vue-svg-loader": "^0.16.0",
-    "vuetify": "^2.5.9",
+    "vuetify": "^2.5.10",
     "vuex": "^3.4.0",
-    "vuex-persistedstate": "3.2.0"
+    "vuex-persistedstate": "3.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.15.5",

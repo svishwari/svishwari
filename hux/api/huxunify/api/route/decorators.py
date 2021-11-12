@@ -353,17 +353,20 @@ def api_error_handler(custom_message: dict = None) -> object:
                     "message": constants.FAILED_DEPENDENCY_ERROR_MESSAGE
                 }, HTTPStatus.FAILED_DEPENDENCY
 
-            except iae.FailedDeliveryPlatformDependencyError as exc:
+            except iae.FailedDestinationDependencyError as exc:
+                error_message = (
+                    exc.args[0]
+                    if exc.args
+                    else constants.DESTINATION_CONNECTION_FAILED
+                )
                 logger.error(
                     "%s: %s Error encountered while executing %s in module %s.",
                     exc.__class__,
-                    exc.args[0] if exc.args else exc.exception_message,
+                    error_message,
                     in_function.__qualname__,
                     in_function.__module__,
                 )
-                return {
-                    "message": constants.DESTINATION_CONNECTION_FAILED
-                }, HTTPStatus.FAILED_DEPENDENCY
+                return {"message": error_message}, HTTPStatus.FAILED_DEPENDENCY
 
             except iae.EmptyAPIResponseError as exc:
                 logger.error(
