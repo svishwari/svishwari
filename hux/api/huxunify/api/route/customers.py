@@ -193,7 +193,7 @@ class CustomerPostOverview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     def post(self) -> Tuple[dict, int]:
         """Retrieves the overview of customer data with the requested filters applied.
 
