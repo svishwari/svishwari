@@ -7,9 +7,10 @@
       :data-items="stateListData"
     >
       <template #row-item="{ item }">
-        <td class="text-body-2"
+        <td
           v-for="header in columnDefs"
           :key="header.value"
+          class="text-body-2"
           :style="{ width: header.width }"
         >
           <div v-if="header.value == defaultMetric" class="text-body-1">

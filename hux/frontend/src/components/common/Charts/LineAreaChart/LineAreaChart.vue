@@ -100,7 +100,7 @@ export default {
 
       stackArea(this.data).forEach((layer) => {
         let currentStack = []
-        layer.forEach((d, i) => {
+        layer.forEach((d) => {
           d[1] = d[1] - d[0]
           d[0] = 0
           currentStack.push({
