@@ -1,4 +1,4 @@
-"""Purpose of this file is to test the configurations schemas."""
+"""Purpose of this file is to test the configuration schemas."""
 from unittest import TestCase
 from bson import ObjectId
 
@@ -23,6 +23,4 @@ class ConfigurationsSchemaTest(TestCase):
 
         res = ConfigurationsSchema().dump(doc)
 
-        self.assertEqual(
-            res[db_c.NAME], doc[db_c.NAME]
-        )
+        self.assertEqual(res[db_c.NAME], doc[db_c.NAME])

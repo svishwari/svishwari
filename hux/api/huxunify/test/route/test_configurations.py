@@ -88,7 +88,9 @@ class ConfigurationsTests(TestCase):
         for configuration in configurations:
             self.configurations.append(
                 cmg.create_document(
-                    self.database, db_c.CONFIGURATIONS_COLLECTION, configuration
+                    self.database,
+                    db_c.CONFIGURATIONS_COLLECTION,
+                    configuration,
                 )
             )
 
@@ -116,7 +118,8 @@ class ConfigurationsTests(TestCase):
         """Test get models from Tecton with status."""
 
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.CONFIGURATIONS_ENDPOINT}?{api_c.STATUS}=active",
+            f"{t_c.BASE_ENDPOINT}"
+            f"{api_c.CONFIGURATIONS_ENDPOINT}?{api_c.STATUS}=active",
             headers=t_c.STANDARD_HEADERS,
         )
 

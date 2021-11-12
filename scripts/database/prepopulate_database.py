@@ -792,8 +792,8 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_NAME: "Customer Insights",
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "module",
-        c.CONFIGURATION_FIELD_DESCRIPTION: "A 360 degree view of each customer, "
-        "understanding not only their needs and "
+        c.CONFIGURATION_FIELD_DESCRIPTION: "A 360 degree view of "
+        "each customer, understanding not only their needs and "
         "preferences, but also the person behind the data.",
         c.CONFIGURATION_FIELD_STATUS: "active",
         c.CONFIGURATION_FIELD_ENABLED: True,
@@ -824,8 +824,9 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_NAME: "Measurement",
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "module",
-        c.CONFIGURATION_FIELD_DESCRIPTION: "Find out why your audiences think"
-        " what they think, behave as they behave and feel what they feel.",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Find out why your audiences"
+        " think what they think, behave as they "
+        "behave and feel what they feel.",
         c.CONFIGURATION_FIELD_STATUS: "pending",
         c.CONFIGURATION_FIELD_ENABLED: True,
         c.CONFIGURATION_FIELD_ROADMAP: False,
@@ -908,8 +909,8 @@ configurations_constants = [
         c.CONFIGURATION_FIELD_NAME: "Search AI",
         c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
         c.CONFIGURATION_FIELD_TYPE: "business_solution",
-        c.CONFIGURATION_FIELD_DESCRIPTION: "Leverages search data to optimize"
-        " the creation, placement, and timing of online "
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Leverages search data to"
+        " optimize the creation, placement, and timing of online "
         "content to increase customer acquisition.",
         c.CONFIGURATION_FIELD_STATUS: "pending",
         c.CONFIGURATION_FIELD_ENABLED: True,
@@ -944,9 +945,7 @@ def drop_collections(database: MongoClient) -> None:
         database[c.DATA_MANAGEMENT_DATABASE][collection].drop()
 
 
-def insert_data_sources(
-        database: MongoClient, data_sources: list
-) -> None:
+def insert_data_sources(database: MongoClient, data_sources: list) -> None:
     """Inserting Data Sources into Data Sources Collection.
 
     Args:
@@ -967,15 +966,13 @@ def insert_data_sources(
             status=data_source[c.STATUS],
         )[c.ID]
         logging.info(
-            "Added %s, %s.",
-            data_source[c.DATA_SOURCE_NAME],
-            result_id
+            "Added %s, %s.", data_source[c.DATA_SOURCE_NAME], result_id
         )
     logging.info("Prepopulate data sources complete.")
 
 
 def insert_delivery_platforms(
-        database: MongoClient, delivery_platforms: list
+    database: MongoClient, delivery_platforms: list
 ) -> None:
     """Insertion of Delivery Platforms Collection.
 
@@ -1003,9 +1000,7 @@ def insert_delivery_platforms(
     logging.info("Prepopulate destinations complete.")
 
 
-def insert_configurations(
-        database: MongoClient, configurations: list
-) -> None:
+def insert_configurations(database: MongoClient, configurations: list) -> None:
     """Insert data into configurations Collection.
 
     Args:

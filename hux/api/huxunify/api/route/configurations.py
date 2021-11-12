@@ -30,6 +30,7 @@ configurations_bp = Blueprint(
     api_c.CONFIGURATIONS_ENDPOINT, import_name=__name__
 )
 
+
 @configurations_bp.before_request
 @secured()
 def before_request():
@@ -39,7 +40,9 @@ def before_request():
 
 
 @add_view_to_blueprint(
-    configurations_bp, f"/{api_c.CONFIGURATIONS_ENDPOINT}", "ConfigurationsSearch"
+    configurations_bp,
+    f"/{api_c.CONFIGURATIONS_ENDPOINT}",
+    "ConfigurationsSearch",
 )
 class ConfigurationsSearch(SwaggerView):
     """Configurations search class."""
@@ -100,7 +103,9 @@ class ConfigurationsSearch(SwaggerView):
 
         return (
             jsonify(
-                ConfigurationsSchema(many=True).dump(config_models[db_c.DOCUMENTS])
+                ConfigurationsSchema(many=True).dump(
+                    config_models[db_c.DOCUMENTS]
+                )
             ),
             HTTPStatus.OK.value,
         )
