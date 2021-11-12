@@ -1086,6 +1086,13 @@ class DestinationsRequestView(SwaggerView):
                 True,
             )
 
+            # create JIRA ticket for the request.
+            JiraConnection().create_jira_issue(
+                api_c.TASK,
+                f"Requested Destination '{destination_request[api_c.NAME]}'.",
+                destination_request,
+            )
+
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
@@ -1096,22 +1103,6 @@ class DestinationsRequestView(SwaggerView):
             api_c.DESTINATION,
             user_name,
         )
-
-        if not destinations:
-            # create JIRA ticket for the request.
-            new_issue = JiraConnection().create_jira_issue(
-                api_c.TASK,
-                f"Requested Destination '{destination_request[api_c.NAME]}'.",
-                destination_request,
-            )
-            create_notification(
-                database=database,
-                notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-                description=f"{user_name} created a new issue "
-                f"{new_issue.get(api_c.KEY)} in JIRA",
-                category=api_c.TASK,
-                username=user_name,
-            )
 
         return (
             DestinationGetSchema().dump(destination),
