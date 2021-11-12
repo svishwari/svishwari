@@ -5,6 +5,7 @@ import mongomock
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import constants as db_c
 from huxunifylib.database import collection_management as dmg
+import huxunifylib.database.db_exceptions as de
 from huxunifylib.database.collection_management import update_document
 
 
@@ -128,6 +129,16 @@ class ConfigurationCollectionManagementTest(TestCase):
             configurations[db_c.DOCUMENTS][0][db_c.TYPE],
             configuration[db_c.TYPE],
         )
+
+    def test_get_document_collection_not_exists(self):
+        """Test to get configuration."""
+
+        with self.assertRaises(de.InvalidValueException) as context:
+            dmg.get_documents(
+                self.database,
+                collection="invalid_collection",
+            )
+        self.assertIsNotNone(context.exception)
 
     def test_delete_document_configuration(self):
         """Test deleting a configuration"""

@@ -204,6 +204,9 @@ def get_documents(
             is not valid.
     """
 
+    if collection not in c.ALLOWED_COLLECTIONS:
+        raise de.InvalidValueException("Collection not supported")
+
     # get collection
     coll = database[c.DATA_MANAGEMENT_DATABASE][collection]
 
