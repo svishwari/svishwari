@@ -70,7 +70,9 @@ def create_app() -> Flask:
 
     # setup the flask app
     flask_app = Flask(__name__)
-    flask_app.testing = flask_app.env == constants.TEST_MODE
+
+    flask_app.testing = flask_app.env in [constants.TEST_MODE,
+                        constants.TEST_MODE_UNITTEST]
 
     # setup CORS
     CORS(flask_app)

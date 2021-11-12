@@ -222,6 +222,6 @@ def get_config(
 
     if flask_env == api_c.DEVELOPMENT_MODE:
         return DevelopmentConfig
-    if flask_env == api_c.TEST_MODE:
+    if flask_env in [api_c.TEST_MODE, api_c.TEST_MODE_UNITTEST]:
         return PyTestConfig
     return Config
