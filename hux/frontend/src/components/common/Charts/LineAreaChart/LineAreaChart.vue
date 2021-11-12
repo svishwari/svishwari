@@ -79,7 +79,7 @@ export default {
         this.$options.filters.Date(value, "MM/DD/YYYY")
 
       let appendyAxisFormat = (text) =>
-        `${this.$options.filters.Numeric(text, false, true, false)}`
+        `$${this.$options.filters.Numeric(text, false, true, false)}`
 
       let xScale = d3Scale
         .scaleTime()
@@ -93,6 +93,23 @@ export default {
         .rangeRound([h, 0])
         .domain([0, d3Array.max(this.data, (d) => d.spend)])
         .nice(5)
+
+      let stackArea = d3Shape.stack().keys(["spend"])
+
+      let areaData = []
+
+      stackArea(this.data).forEach((layer) => {
+        let currentStack = []
+        layer.forEach((d) => {
+          d[1] = d[1] - d[0]
+          d[0] = 0
+          currentStack.push({
+            values: d,
+            date: new Date(dateFormatter(d.data.date)),
+          })
+        })
+        areaData.push(currentStack)
+      })
 
       svg
         .append("g")
@@ -170,6 +187,22 @@ export default {
           .y(value ? h : (d) => yScale(d.spend))
       }
 
+      let area = d3Shape
+        .area()
+        .x((dataPoint) => xScale(new Date(dateFormatter(dataPoint.date))))
+        .y0((dataPoint) => yScale(dataPoint.values[0]))
+        .y1((dataPoint) => yScale(dataPoint.values[1]))
+
+      svg
+        .selectAll(".area")
+        .data(areaData)
+        .enter()
+        .append("path")
+        .style("fill", "#0C9DDB")
+        .attr("stroke-width", 2)
+        .attr("fill-opacity", 0.2)
+        .attr("d", (d) => area(d))
+
       svg
         .append("path")
         .datum(this.data)
@@ -180,7 +213,7 @@ export default {
         .attr("d", lineTrace())
 
       svg
-        .selectAll("bar")
+        .selectAll("area")
         .data(this.data)
         .enter()
         .append("circle")

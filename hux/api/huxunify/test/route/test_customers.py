@@ -227,6 +227,10 @@ class TestCustomersOverview(TestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
+        )
         self.request_mocker.start()
 
         response = self.test_client.post(
