@@ -1,0 +1,11 @@
+// Textarea
+// https://vuetifyjs.com/en/api/v-textarea/#sass-variables
+
+// Customizations
+.v-textarea {
+  > .v-input__control {
+    > .v-input__slot {
+      border: 1px solid var(--v-black-lighten2) !important;
+    }
+  }
+}

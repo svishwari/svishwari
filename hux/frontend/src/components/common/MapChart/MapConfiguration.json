@@ -9,6 +9,11 @@
     "label": "Population Percentage",
     "format": "percentage"
   },
+  "custom_metric": {
+    "key": "avg_spend",
+    "label": "Avg. spend",
+    "format": "numeric"
+  },
   "tooltip_metrics": [
     {
       "key": "size",
@@ -17,16 +22,34 @@
       "is_Combined_Metric": false
     },
     {
-      "key": ["gender_women", "gender_men", "gender_other"],
-      "label": "W/M/O",
+      "key": "gender_women",
+      "label": "Female",
       "format": "percentage",
+      "is_Combined_Metric": false
+    },
+    {
+      "key": "gender_men",
+      "label": "Male",
+      "format": "percentage",
+      "is_Combined_Metric": false
+    },
+    {
+      "key": "gender_other",
+      "label": "Other",
+      "format": "percentage",
+      "is_Combined_Metric": false
+    },
+    {
+      "key": ["min_age", "max_age"],
+      "label": "Age range",
+      "format": "numeric",
       "is_Combined_Metric": true
     },
     {
-      "key": "ltv",
-      "label": "Avg. Actual LTV",
+      "key": ["min_ltv", "max_ltv"],
+      "label": "Avg. spend",
       "format": "currency",
-      "is_Combined_Metric": false
+      "is_Combined_Metric": true
     }
   ]
 }

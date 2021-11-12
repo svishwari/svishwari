@@ -167,33 +167,34 @@ class NotificationsSearch(SwaggerView):
         notification_types = request.args.get(
             api_c.QUERY_PARAMETER_NOTIFICATION_TYPES, []
         )
-        if notification_types and not set(
-            notification_types.split(",")
-        ).issubset(set(db_c.NOTIFICATION_TYPES)):
+        notification_types = (
+            list(map(lambda x: x.lower(), notification_types.split(",")))
+            if notification_types
+            else []
+        )
+        if notification_types and not set(notification_types).issubset(
+            set(db_c.NOTIFICATION_TYPES)
+        ):
             logger.error("Invalid Notification Type")
             return {
                 "message": "Invalid or incomplete arguments received"
             }, HTTPStatus.BAD_REQUEST
-        notification_types = (
-            notification_types.split(",") if notification_types else []
-        )
 
         notification_categories = request.args.get(
             api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY, []
         )
+        notification_categories = (
+            list(map(lambda x: x.lower(), notification_categories.split(",")))
+            if notification_types
+            else []
+        )
         if notification_categories and not set(
-            notification_categories.split(",")
+            notification_categories
         ).issubset(set(api_c.NOTIFICATION_CATEGORIES)):
             logger.error("Invalid Notification Category")
             return {
                 "message": "Invalid or incomplete arguments received"
             }, HTTPStatus.BAD_REQUEST
-
-        notification_categories = (
-            notification_categories.split(",")
-            if notification_categories
-            else []
-        )
         users = request.args.get(api_c.QUERY_PARAMETER_USERS, [])
         if users:
             users = users.split(",")

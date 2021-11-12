@@ -3,6 +3,9 @@
 from jira import JIRA, JIRAError
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
+from huxunify.api.exceptions.integration_api_exceptions import (
+    FailedAPIDependencyError,
+)
 
 
 class JiraConnection:
@@ -60,20 +63,32 @@ class JiraConnection:
 
         Returns:
             dict: Object of new issue created
+
+        Raises:
+            FailedAPIDependencyError: Any exception raised during endpoint execution.
         """
-        issue_dict = {
-            "project": {api_c.ID: self.get_project_details().get(api_c.ID)},
-            "components": [{api_c.NAME: self.project_key}],
-            "issuetype": {api_c.NAME: issue_type},
-            "summary": summary,
-            "description": description,
-        }
-        new_issue = self.jira_client.create_issue(fields=issue_dict)
+
+        try:
+            new_issue = self.jira_client.create_issue(
+                {
+                    "project": {api_c.KEY: self.project_key},
+                    "components": [{api_c.NAME: self.project_key}],
+                    "issuetype": {api_c.NAME: issue_type},
+                    "summary": summary,
+                    "description": description,
+                },
+                False,
+            )
+        except JIRAError as jira_error:
+            raise FailedAPIDependencyError(
+                "Failed to connect to JIRA.",
+                jira_error.status_code,
+            ) from jira_error
 
         return {
             api_c.ID: new_issue.id,
             api_c.KEY: new_issue.key,
-            api_c.TYPE: new_issue.fields.issuetype,
-            api_c.SUMMARY: new_issue.fields.summary,
-            api_c.DESCRIPTION: new_issue.fields.description,
+            api_c.TYPE: issue_type,
+            api_c.SUMMARY: summary,
+            api_c.DESCRIPTION: description,
         }

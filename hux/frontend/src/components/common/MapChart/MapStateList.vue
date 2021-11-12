@@ -1,27 +1,73 @@
 <template>
   <div class="list-container">
-    <div v-if="mapChartData.length != 0" class="content-style pl-6 pr-4 pb-4">
-      <div
-        v-for="item in mapChartData"
-        :key="item[defaultMetric]"
-        class="sub-props pt-4"
-        data-e2e="map-state-list"
-      >
-        <span class="subprop-name">{{ item[defaultMetric] }}</span>
-        <span class="value ml-2 font-weight-semi-bold">
-          {{ applyFilter(item[primaryMetric.key], primaryMetric.format) }}
-        </span>
-      </div>
-    </div>
-    <div v-else class="content-style pl-6 pr-4 pb-4 mt-3 global-text-line">
-      No data is available. Come back at another time.
-    </div>
+    <hux-data-table
+      :columns="columnDefs"
+      :sort-column="customMetric"
+      :sort-desc="true"
+      :data-items="stateListData"
+    >
+      <template #row-item="{ item }">
+        <td
+          v-for="header in columnDefs"
+          :key="header.value"
+          class="text-body-2"
+          :style="{ width: header.width }"
+        >
+          <div v-if="header.value == defaultMetric" class="text-body-1">
+            <span v-if="item[defaultMetric]">{{ item[defaultMetric] }} </span>
+          </div>
+          <div v-if="header.value == customMetric" class="text-body-1">
+            <tooltip>
+              <template #label-content>
+                {{
+                  item[customMetric]
+                    | Numeric(true, true)
+                    | Currency
+                    | Empty("-")
+                }}
+              </template>
+              <template #hover-content>
+                <div class="mb-1">Avg. spend</div>
+                {{
+                  item[customMetric]
+                    | Numeric(true, false, false)
+                    | Currency
+                    | Empty("-")
+                }}
+              </template>
+            </tooltip>
+          </div>
+          <div v-if="header.value == primaryMetric" class="text-body-1">
+            <tooltip>
+              <template #label-content>
+                {{
+                  item[primaryMetric]
+                    | Numeric(true, false, false, true)
+                    | Empty("-")
+                }}
+              </template>
+              <template #hover-content>
+                <div class="mb-1">Population</div>
+                {{ item.size | Numeric(true, false, false) | Empty("-") }}
+              </template>
+            </tooltip>
+          </div>
+        </td>
+      </template>
+    </hux-data-table>
   </div>
 </template>
 
 <script>
+import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+
 export default {
   name: "MapStateList",
+  components: {
+    HuxDataTable,
+    Tooltip,
+  },
   props: {
     mapData: {
       type: Array,
@@ -35,27 +81,48 @@ export default {
   data() {
     return {
       mapChartData: [],
+      stateListData: [],
+      columnDefs: [
+        {
+          text: "State",
+          value: "name",
+          width: "40%",
+        },
+        {
+          text: "Avg. spend",
+          value: "avg_spend",
+          width: "30%",
+          hoverTooltip:
+            "Average order value for all customers (known and anyonymous) for all time.",
+        },
+        {
+          text: "Population %",
+          value: "population_percentage",
+          width: "30%",
+        },
+      ],
     }
   },
   computed: {
     primaryMetric() {
-      return this.configurationData.primary_metric
+      return this.configurationData.primary_metric.key
     },
     defaultMetric() {
       return this.configurationData.default_metric.key
     },
+    customMetric() {
+      return this.configurationData.custom_metric.key
+    },
   },
   mounted() {
-    this.sortStateData()
+    this.processStateListData()
   },
   methods: {
-    sortStateData() {
-      this.mapChartData = JSON.parse(JSON.stringify(this.mapData))
-      if (this.mapChartData) {
-        this.mapChartData.sort(
-          (a, b) => b[this.primaryMetric.key] - a[this.primaryMetric.key]
-        )
-      }
+    processStateListData() {
+      this.stateListData = JSON.parse(JSON.stringify(this.mapData))
+      this.stateListData.forEach((element) => {
+        element.avg_spend = (element.min_ltv + element.max_ltv) / 2
+      })
     },
     applyFilter(value, filter) {
       switch (filter) {
@@ -83,6 +150,20 @@ export default {
 .list-container {
   max-height: 550px;
   min-height: 20px;
+
+  ::v-deep .hux-data-table {
+    margin-top: -3px;
+    .v-data-table {
+      .v-data-table-header {
+        tr {
+          height: 40px !important;
+        }
+        th {
+          background: var(--v-primary-lighten1);
+        }
+      }
+    }
+  }
   .content-style {
     padding-top: 0px !important;
     min-height: 100px;
@@ -105,20 +186,6 @@ export default {
         text-align: left;
       }
     }
-  }
-  ::-webkit-scrollbar {
-    width: 5px;
-  }
-  ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px var(--v-white-base);
-    border-radius: 10px;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: var(--v-black-lighten3);
-    border-radius: 5px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--v-black-lighten3);
   }
 }
 </style>
