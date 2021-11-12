@@ -1033,7 +1033,7 @@ class DestinationsRequestView(SwaggerView):
             Tuple[dict, int]: Destination doc, HTTP status code.
         """
 
-        request_schema = DestinationRequestSchema().load(
+        destination_request = DestinationRequestSchema().load(
             request.get_json(), partial=True
         )
 
@@ -1044,7 +1044,7 @@ class DestinationsRequestView(SwaggerView):
             db_c.DELIVERY_PLATFORM_COLLECTION,
             {
                 db_c.NAME: {
-                    "$regex": request_schema[db_c.NAME],
+                    "$regex": destination_request[db_c.NAME],
                     "$options": "i",
                 }
             },
@@ -1077,7 +1077,7 @@ class DestinationsRequestView(SwaggerView):
             destination = destination_management.set_delivery_platform(
                 database,
                 api_c.GENERIC_DESTINATION,
-                request_schema[api_c.NAME],
+                destination_request[api_c.NAME],
                 user_name,
                 db_c.STATUS_REQUESTED,
                 True,
@@ -1099,8 +1099,8 @@ class DestinationsRequestView(SwaggerView):
             # create JIRA ticket for the request.
             new_issue = JiraConnection().create_jira_issue(
                 api_c.TASK,
-                f"Requested Destination '{request_schema[api_c.NAME]}'.",
-                request_schema,
+                f"Requested Destination '{destination_request[api_c.NAME]}'.",
+                destination_request,
             )
             create_notification(
                 database=database,
