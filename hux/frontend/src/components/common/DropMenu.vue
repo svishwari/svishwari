@@ -22,12 +22,8 @@
 </template>
 
 <script>
-import Icon from "@/components/common/Icon"
 export default {
   name: "DropMenu",
-  components: {
-    Icon,
-  },
   props: {
     minWidth: {
       type: Number,

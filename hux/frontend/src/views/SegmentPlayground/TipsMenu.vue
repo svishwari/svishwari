@@ -17,10 +17,10 @@
           <span class="header-text ml-2">
             Segment Playground user guide &nbsp; &nbsp;
             <span class="icon-header-left">
-              <span @click="all" v-if="!headerIcon">
+              <span v-if="!headerIcon" @click="all">
                 <icon :type="'side-arrow'" :size="11" color="black" />
               </span>
-              <span @click="none" v-else>
+              <span v-else @click="none">
                 <icon
                   :type="'down-arrow'"
                   :size="11"
@@ -34,7 +34,7 @@
       </template>
       <template #menuBody>
         <div>
-          <v-expansion-panels multiple v-model="panel">
+          <v-expansion-panels v-model="panel" multiple>
             <v-expansion-panel v-for="(data, i) in panelListItems" :key="i">
               <v-expansion-panel-header>
                 <template v-slot:actions>
@@ -53,12 +53,12 @@
                 </span>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <div v-html="data.text" class="text-body-1"></div>
+                <div class="text-body-1" v-html="data.text"></div>
                 <br />
                 <div
-                  v-html="data.textPart"
-                  class="text-body-1"
                   v-if="data.textPart"
+                  class="text-body-1"
+                  v-html="data.textPart"
                 ></div>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -70,8 +70,6 @@
 </template>
 
 <script>
-import HuxFilterPanels from "@/components/common/FilterPanels"
-import HuxFilterPanel from "@/components/common/FilterPanel"
 import Icon from "@/components/common/Icon"
 import DropMenu from "@/components/common/DropMenu"
 
@@ -79,8 +77,6 @@ export default {
   name: "TipsMenu",
   components: {
     Icon,
-    HuxFilterPanels,
-    HuxFilterPanel,
     DropMenu,
   },
   data() {

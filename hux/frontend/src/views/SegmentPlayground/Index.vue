@@ -17,7 +17,7 @@
         <v-col class="col-8 attribute-div"></v-col>
         <v-col class="col-4 overview-div pr-6">
           <v-card
-            class="map-card-wrapper mt-3 rounded-lg card-shadow"
+            class="map-card-wrapper mt-7 rounded-lg card-shadow"
             height="311"
           >
           </v-card>
