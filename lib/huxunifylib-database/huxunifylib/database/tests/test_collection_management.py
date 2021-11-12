@@ -58,7 +58,7 @@ class ConfigurationCollectionManagementTest(TestCase):
             new_doc={
                 "type": "model",
                 "name": "Tecton model 2",
-                "status": "Requested"
+                "status": "Requested",
             },
         )
 
@@ -71,9 +71,9 @@ class ConfigurationCollectionManagementTest(TestCase):
             new_doc={
                 "type": "model",
                 "name": "Tecton model 3",
-                "status": "Requested"
+                "status": "Requested",
             },
-            username="test_user"
+            username="test_user",
         )
 
         self.assertIsNotNone(configuration)
