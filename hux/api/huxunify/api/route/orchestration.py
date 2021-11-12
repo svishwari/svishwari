@@ -1166,7 +1166,7 @@ class AudienceRules(SwaggerView):
                     "age": {
                         "name": "Age",
                         "type": "range",
-                        "min": 18,
+                        "min": 14,
                         "max": 79,
                     },
                     "email": {"name": "Email", "type": "text"},
