@@ -5,7 +5,7 @@ from marshmallow.fields import Str, Int, Float, Nested, Dict
 from marshmallow.validate import OneOf
 
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
-from huxunify.api import constants as c
+from huxunify.api import constants as api_c
 
 
 class ModelSchema(Schema):
@@ -32,8 +32,8 @@ class ModelVersionSchema(Schema):
     name = Str(required=True)
     description = Str()
     status = Str()
-    version = Str(attribute=c.CURRENT_VERSION)
-    trained_date = DateTimeWithZ(attribute=c.LAST_TRAINED)
+    version = Str(attribute=api_c.CURRENT_VERSION)
+    trained_date = DateTimeWithZ(attribute=api_c.LAST_TRAINED)
     owner = Str()
     lookback_window = Int()
     prediction_window = Int()
@@ -110,7 +110,7 @@ class ModelRequestPOSTSchema(Schema):
         validate=[
             OneOf(
                 choices=[
-                    c.REQUESTED,
+                    api_c.REQUESTED,
                 ]
             )
         ],
