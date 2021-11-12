@@ -14,7 +14,6 @@ from huxunifylib.database.user_management import (
     set_user,
 )
 import huxunify.test.constants as t_c
-from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api.schema.configurations import ConfigurationsSchema
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
@@ -46,14 +45,6 @@ class ConfigurationsTests(TestCase):
         mock.patch(
             "huxunify.api.route.configurations.get_db_client",
             return_value=self.database,
-        ).start()
-
-        # mock parameter store store secret
-        mock.patch.object(parameter_store, "store_secret").start()
-
-        # mock parameter store get store value
-        mock.patch.object(
-            parameter_store, "get_store_value", return_value="secret"
         ).start()
 
         # write a user to the database
