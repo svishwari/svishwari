@@ -475,7 +475,7 @@ class ModelFeaturesView(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
+    # @api_error_handler()
     def get(
         self,
         model_id: str,

@@ -525,6 +525,17 @@ def get_model_features(
             if x["joinKeys"][0] == model_version
         ]
         for feature in features:
+            # get score.
+            score = 0
+            try:
+                score = (
+                    log10(float(feature[2]))
+                    if float(feature[2]) > 0
+                    else -log10(float(abs(feature[2])))
+                )
+            except ValueError:
+                pass
+
             # TODO - HUS-910, remove the random string values below once Tecton is returning them.
             result_features.append(
                 {
@@ -540,12 +551,7 @@ def get_model_features(
                     ),
                     constants.STATUS: constants.STATUS_ACTIVE,
                     constants.POPULARITY: random.randint(1, 3),
-                    constants.SCORE: round(
-                        log10(float(feature[2]))
-                        if float(feature[2]) > 0
-                        else -log10(float(abs(feature[2]))),
-                        4,
-                    ),
+                    constants.SCORE: round(score, 4),
                 }
             )
 
