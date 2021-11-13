@@ -16,6 +16,8 @@ from huxunifylib.connectors import (
     CustomAudienceDeliveryStatusError,
     FacebookConnector,
 )
+
+from huxunifylib.database.delete_util import delete_lookalike_audience
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -467,27 +469,18 @@ class AudienceGetView(SwaggerView):
             lookalike = destination_management.get_delivery_platform_lookalike_audience(
                 database, audience_id
             )
+
             if not lookalike:
                 logger.error("Audience with id %s not found.", audience_id)
                 return {
                     "message": api_c.AUDIENCE_NOT_FOUND
                 }, HTTPStatus.NOT_FOUND
 
-            # grab the source audience ID of the lookalike
-            audience = orchestration_management.get_audience(
-                database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
-            )
-            # set the filters from the audience object
-            lookalike[db_c.AUDIENCE_FILTERS] = audience[db_c.AUDIENCE_FILTERS]
             lookalike[api_c.IS_LOOKALIKE] = True
-
-            # set original audience attributes for the lookalike.
-            lookalike[api_c.SOURCE_NAME] = audience[db_c.NAME]
-            lookalike[api_c.SOURCE_SIZE] = audience[db_c.SIZE]
-            lookalike[api_c.SOURCE_ID] = lookalike[
-                db_c.LOOKALIKE_SOURCE_AUD_ID
+            # set source audience attribute filters for the lookalike
+            lookalike[db_c.AUDIENCE_FILTERS] = lookalike[
+                db_c.LOOKALIKE_SOURCE_AUD_FILTERS
             ]
-
             # TODO: HUS-837 change once we can generate real lookalikes from FB.
             lookalike[api_c.MATCH_RATE] = 0
 
@@ -592,11 +585,18 @@ class AudienceGetView(SwaggerView):
         # Add insights, size.
         audience[api_c.AUDIENCE_INSIGHTS] = customers
         audience[api_c.SIZE] = customers.get(api_c.TOTAL_CUSTOMERS, 0)
-        audience[
-            api_c.LOOKALIKE_AUDIENCES
-        ] = destination_management.get_all_delivery_platform_lookalike_audiences(
-            database, {db_c.LOOKALIKE_SOURCE_AUD_ID: audience_id}
+
+        # query DB and populate lookalike audiences in audience dict only if
+        # the audience is not a lookalike audience since lookalike audience
+        # cannot have lookalike audiences of its own
+        audience[api_c.LOOKALIKE_AUDIENCES] = (
+            destination_management.get_all_delivery_platform_lookalike_audiences(
+                database, {db_c.LOOKALIKE_SOURCE_AUD_ID: audience_id}
+            )
+            if not audience.get(api_c.IS_LOOKALIKE, False)
+            else []
         )
+
         audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
         audience[api_c.FAVORITE] = is_component_favorite(
@@ -1231,7 +1231,7 @@ class SetLookalikeAudience(SwaggerView):
     ]
 
     responses = {
-        HTTPStatus.CREATED.value: {
+        HTTPStatus.ACCEPTED.value: {
             "schema": LookalikeAudienceGetSchema,
             "description": "Successfully created lookalike audience.",
         },
@@ -1343,7 +1343,7 @@ class SetLookalikeAudience(SwaggerView):
             lookalike_audience = destination_management.create_delivery_platform_lookalike_audience(
                 database,
                 destination[db_c.ID],
-                ObjectId(body[api_c.AUDIENCE_ID]),
+                source_audience,
                 body[api_c.NAME],
                 body[api_c.AUDIENCE_SIZE_PERCENTAGE],
                 "US",
@@ -1435,19 +1435,29 @@ class DeleteAudienceView(SwaggerView):
 
         database = get_db_client()
 
+        # attempt to delete the audience from audiences collection first
         deleted_audience = orchestration_management.delete_audience(
             database, ObjectId(audience_id)
         )
 
+        # attempt to delete the audience from lookalike_audiences collection
+        # if audience not found in audiences collection
         if not deleted_audience:
-            logger.info(
-                "Failed to delete audience %s by user %s.",
-                audience_id,
-                user_name,
+            deleted_audience = delete_lookalike_audience(
+                database, ObjectId(audience_id), soft_delete=False
             )
-            return {
-                api_c.MESSAGE: api_c.OPERATION_FAILED
-            }, HTTPStatus.INTERNAL_SERVER_ERROR
+
+            # return failure if no document is deleted from either audiences
+            # or lookalike_audiences collection
+            if not deleted_audience:
+                logger.info(
+                    "Failed to delete audience %s by user %s.",
+                    audience_id,
+                    user_name,
+                )
+                return {
+                    api_c.MESSAGE: api_c.OPERATION_FAILED
+                }, HTTPStatus.INTERNAL_SERVER_ERROR
 
         delete_audience_from_engagements = (
             engagement_management.remove_audience_from_all_engagements(
@@ -1470,4 +1480,12 @@ class DeleteAudienceView(SwaggerView):
             audience_id,
             user_name,
         )
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            f"Audience {audience_id} successfully deleted by {user_name}.",
+            api_c.ORCHESTRATION_TAG,
+        )
+
         return {api_c.MESSAGE: {}}, HTTPStatus.NO_CONTENT
