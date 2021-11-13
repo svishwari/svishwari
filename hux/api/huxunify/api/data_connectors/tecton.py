@@ -73,14 +73,14 @@ def map_model_response(response: dict) -> List[dict]:
             constants.LAST_TRAINED: parser.parse(feature[0]),
             constants.DESCRIPTION: feature[1],
             constants.FULCRUM_DATE: parser.parse(feature[2]),
-            constants.LOOKBACK_WINDOW: 7,
+            constants.LOOKBACK_WINDOW: int(feature[8]),
             constants.NAME: feature[4],
             constants.TYPE: str(feature[5]).lower(),
             constants.OWNER: feature[6],
             constants.STATUS: constants.MODEL_STATUS_MAPPING.get(
-                feature[8], constants.STATUS_PENDING
+                feature[9], constants.STATUS_PENDING
             ),
-            constants.LATEST_VERSION: feature[9],
+            constants.LATEST_VERSION: feature[10],
             constants.PREDICTION_WINDOW: int(feature[3]),
             constants.PAST_VERSION_COUNT: 0,
         }
