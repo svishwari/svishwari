@@ -11,7 +11,10 @@
           </div>
         </template>
       </page-header>
-      <page-header header-height="71">
+      <page-header
+        v-if="areDestinationsAvailable || showError"
+        header-height="71"
+      >
         <template #left>
           <v-btn disabled icon>
             <icon type="search" :size="20" color="black" variant="lighten3" />
@@ -20,6 +23,7 @@
 
         <template #right>
           <router-link
+            v-if="!showError"
             :to="{ name: 'DestinationConfiguration' }"
             class="text-decoration-none"
             data-e2e="addDestination"
@@ -35,12 +39,15 @@
               Add a destination
             </huxButton>
           </router-link>
+          <huxButton v-else variant="white" is-tile is-disabled class="ma-2">
+            Add a destination
+          </huxButton>
         </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
     <div v-if="!loading">
-      <destinations-list v-if="isConnectionStarted" />
+      <destinations-list v-if="isConnectionStarted" :show-error="showError" />
       <div v-else class="empty-state-wrap text-center">
         <v-icon color="primary lighten-8" x-large>
           mdi-alert-circle-outline
@@ -92,6 +99,7 @@ export default {
       ],
       drawer: false,
       loading: false,
+      showError: false,
     }
   },
 
@@ -110,6 +118,10 @@ export default {
       )
       return availableDataSources.length > 0 || availableDestinations.length > 0
     },
+
+    areDestinationsAvailable() {
+      return this.destinations.some((each) => each.is_added)
+    },
   },
 
   watch: {
@@ -125,7 +137,11 @@ export default {
   async mounted() {
     this.loading = true
     await this.getDataSources()
-    await this.getDestinations()
+    try {
+      await this.getDestinations()
+    } catch (error) {
+      this.showError = true
+    }
     this.loading = false
 
     if (this.$route.params.select) {
