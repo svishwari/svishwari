@@ -20,7 +20,7 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <v-row v-if="!loading" class="pa-14" data-e2e="models-list">
+    <v-row v-if="!loading" class="ma-0 pa-8" data-e2e="models-list">
       <template v-if="hasModels">
         <descriptive-card
           v-for="model in models"
@@ -34,6 +34,7 @@
           :description="model.description"
           data-e2e="model-item"
           :disabled="model.status !== 'Active'"
+          :interactable="model.status == 'Active' ? true : false"
           @click.native="goToDashboard(model)"
         >
           <template slot="top">
@@ -91,19 +92,44 @@
               </v-col>
             </v-row>
           </template>
+          <template slot="action-menu-options">
+            <v-list class="list-wrapper ma-0 pa-0">
+              <v-list-item-group>
+                <v-list-item>
+                  <v-list-item-title> Remove </v-list-item-title>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </template>
         </descriptive-card>
       </template>
-
-      <template v-else>
-        <empty-page>
-          <template #icon> mdi-alert-circle-outline </template>
-          <template #title> Oops! There’s nothing here yet </template>
-          <template #subtitle>
-            Our team is still working hard activating your models. But they
-            should be up and running soon! Please be patient in the meantime!
-          </template>
-        </empty-page>
-      </template>
+      <hux-empty
+        v-else-if="!hasModels && !showError"
+        icon-type="models-empty"
+        :icon-size="50"
+        title="No models to show"
+        subtitle="Models will appear here once they are added or requested."
+      >
+        <template #button>
+          <hux-button
+            variant="primary"
+            is-tile
+            width="224"
+            height="40"
+            class="text-button my-4"
+          >
+            Request a model
+          </hux-button>
+        </template>
+      </hux-empty>
+      <error
+        v-else
+        icon-type="error-on-screens"
+        :icon-size="50"
+        title="Models are currently unavailable"
+        subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+      >
+      </error>
     </v-row>
   </div>
 </template>
@@ -113,9 +139,11 @@ import { mapGetters, mapActions } from "vuex"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import CardStat from "@/components/common/Cards/Stat"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
-import EmptyPage from "@/components/common/EmptyPage"
+import HuxEmpty from "@/components/common/screens/Empty"
+import Error from "@/components/common/screens/Error"
 import PageHeader from "@/components/PageHeader"
 import Status from "@/components/common/Status"
+import huxButton from "@/components/common/huxButton"
 
 export default {
   name: "Models",
@@ -124,14 +152,17 @@ export default {
     Breadcrumb,
     CardStat,
     DescriptiveCard,
-    EmptyPage,
+    HuxEmpty,
+    Error,
     PageHeader,
     Status,
+    huxButton,
   },
 
   data() {
     return {
       loading: false,
+      showError: false,
     }
   },
 
@@ -147,7 +178,11 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.getModels()
+    try {
+      await this.getModels()
+    } catch (error) {
+      this.showError = true
+    }
     this.loading = false
   },
 

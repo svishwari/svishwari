@@ -33,6 +33,9 @@ client["users"].markFavorite = (resourceId, entityType) => {
 client["users"].clearFavorite = (resourceId, entityType) => {
   return http.delete(`users/${entityType}/${resourceId}/favorite`)
 }
+client["users"].contactUs = (data) => {
+  return http.post("users/contact-us", data)
+}
 //#endregion
 
 //#region Customers
@@ -67,6 +70,10 @@ client["customers"].totalCustomers = () => {
   return http.get("/customers-insights/total")
 }
 
+client["customers"].getCustomerSpend = () => {
+  return http.get("/customers-insights/revenue")
+}
+
 client["customers"].events = (huxId) => {
   const emptyDateFilter = {}
   return http.post(`/customers/${huxId}/events`, emptyDateFilter)
@@ -86,6 +93,10 @@ client["customers"].getCustomers = (batchSize, batchNumber) => {
 //#region Destinations endpoints
 client["destinations"].validate = (data) => {
   return http.post("/destinations/validate", data)
+}
+
+client["destinations"].request = (data) => {
+  return http.post("/destinations/request", data)
 }
 
 client["destinations"].authenticate = (destinationId, data) => {

@@ -418,9 +418,16 @@ class UserPatchView(SwaggerView):
 
         database = get_db_client()
 
-        user = get_all_users(
-            database, {db_constants.USER_DISPLAY_NAME: user_name}
-        )
+        if api_c.ID in body:
+            user = get_all_users(
+                database, {db_constants.ID: ObjectId(body.get(api_c.ID))}
+            )
+            del body[api_c.ID]
+        else:
+            user = get_all_users(
+                database, {db_constants.USER_DISPLAY_NAME: user_name}
+            )
+
         if not user:
             return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
@@ -496,22 +503,16 @@ class CreateTicket(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
         issue_details = TicketSchema().load(request.get_json())
+        new_issue = JiraConnection().create_jira_issue(**issue_details)
 
-        jira_connection = JiraConnection()
-        if jira_connection.check_jira_connection():
-            new_issue = jira_connection.create_jira_issue(**issue_details)
-
-            create_notification(
-                database=get_db_client(),
-                notification_type=db_constants.NOTIFICATION_TYPE_INFORMATIONAL,
-                description=f"{user_name} created a new issue {new_issue.get(api_c.KEY)} in JIRA",
-                username=user_name,
-            )
-            return (
-                TicketGetSchema().dump(new_issue),
-                HTTPStatus.CREATED,
-            )
-
-        return {
-            api_c.MESSAGE: api_c.FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE
-        }, HTTPStatus.FAILED_DEPENDENCY
+        create_notification(
+            database=get_db_client(),
+            notification_type=db_constants.NOTIFICATION_TYPE_INFORMATIONAL,
+            description=f"{user_name} created a new issue {new_issue.get(api_c.KEY)} in JIRA",
+            category=api_c.TICKET_TYPE_BUG,
+            username=user_name,
+        )
+        return (
+            TicketGetSchema().dump(new_issue),
+            HTTPStatus.CREATED,
+        )

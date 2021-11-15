@@ -11,6 +11,10 @@ Following Mongo ENV Settings are Set
   - MONGO_DB_PASSWORD
   - MONGO_SSL_CERT_PATH
 
+## Set up
+If we are setting up from scratch,
+make sure to drop all existing collections
+
 ## Instructions
 Build the huxunifylib-database package first
 ```

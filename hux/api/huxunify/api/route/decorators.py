@@ -9,7 +9,6 @@ from bson import ObjectId
 from bson.errors import InvalidId
 
 import facebook_business.exceptions
-from decouple import config
 from flask import request
 from marshmallow import ValidationError
 
@@ -35,6 +34,7 @@ from huxunify.api.exceptions import (
     integration_api_exceptions as iae,
     unified_exceptions as ue,
 )
+from huxunify.api.config import get_config
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
@@ -112,9 +112,8 @@ def secured() -> object:
             Returns:
                Response (object): returns a decorated function object.
             """
-
             # override if flag set locally
-            if config("TEST_AUTH_OVERRIDE", cast=bool, default=False):
+            if get_config().TEST_AUTH_OVERRIDE:
                 return in_function(*args, **kwargs)
 
             # allow preflight options through
@@ -173,8 +172,8 @@ def get_user_name() -> object:
             """
 
             # override if flag set locally
-            if config("TEST_AUTH_OVERRIDE", cast=bool, default=False):
-                # return a default user name
+            if get_config().TEST_AUTH_OVERRIDE:
+                # Return a default user name.
                 kwargs[constants.USER_NAME] = "test user"
                 return in_function(*args, **kwargs)
 
@@ -353,17 +352,20 @@ def api_error_handler(custom_message: dict = None) -> object:
                     "message": constants.FAILED_DEPENDENCY_ERROR_MESSAGE
                 }, HTTPStatus.FAILED_DEPENDENCY
 
-            except iae.FailedDeliveryPlatformDependencyError as exc:
+            except iae.FailedDestinationDependencyError as exc:
+                error_message = (
+                    exc.args[0]
+                    if exc.args
+                    else constants.DESTINATION_CONNECTION_FAILED
+                )
                 logger.error(
                     "%s: %s Error encountered while executing %s in module %s.",
                     exc.__class__,
-                    exc.args[0] if exc.args else exc.exception_message,
+                    error_message,
                     in_function.__qualname__,
                     in_function.__module__,
                 )
-                return {
-                    "message": constants.DESTINATION_CONNECTION_FAILED
-                }, HTTPStatus.FAILED_DEPENDENCY
+                return {"message": error_message}, HTTPStatus.FAILED_DEPENDENCY
 
             except iae.EmptyAPIResponseError as exc:
                 logger.error(

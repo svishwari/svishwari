@@ -635,6 +635,7 @@ class TestEngagementRoutes(TestCase):
             db_c.ENGAGEMENTS,
             ObjectId(self.engagement_ids[0]),
         )
+
         # set delivery platform
         self.delivery_platform = set_delivery_platform(
             self.database,
@@ -1107,6 +1108,23 @@ class TestEngagementRoutes(TestCase):
             self.assertEqual(self.user_name, engagement[db_c.CREATED_BY])
             self.assertIn(api_c.FAVORITE, engagement)
             self.assertIsNotNone(engagement[db_c.STATUS])
+
+    def test_get_engagements_with_valid_filters(self):
+        """Test get all engagements API with valid filters."""
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}?"
+            f"{api_c.FAVORITES}=True&{api_c.MY_ENGAGEMENTS}=True",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        fetched_engagements = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(fetched_engagements)
+        self.assertEqual(1, len(fetched_engagements))
+        self.assertEqual(
+            str(self.engagement_ids[0]), fetched_engagements[0][api_c.ID]
+        )
 
     def test_get_engagement_by_id_valid_id_favorite(self):
         """Test get engagement API with valid ID which is a favorite."""
@@ -1611,6 +1629,24 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(HTTPStatus.CREATED, add_audience_response.status_code)
 
         delete_audience = {"audience_ids": [str(new_audience_id)]}
+
+        delete_audience_response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/{api_c.AUDIENCES}",
+            json=delete_audience,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(
+            HTTPStatus.NO_CONTENT, delete_audience_response.status_code
+        )
+
+    def test_delete_audience_from_engagement_audience_not_found(self):
+        """Test delete audience from engagement where the
+        audience is not in the audience collection.
+        """
+
+        engagement_id = self.engagement_ids[0]
+
+        delete_audience = {"audience_ids": [str(ObjectId())]}
 
         delete_audience_response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/{api_c.AUDIENCES}",

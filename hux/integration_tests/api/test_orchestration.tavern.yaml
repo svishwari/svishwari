@@ -26,9 +26,9 @@ stages:
       json:
         text_operators:
           contains: "Contains"
-          does_not_contain: "Does not contain"
+          not_contains: "Does not contain"
           equals: "Equals"
-          does_not_equal: "Does not equal"
+          not_equals: "Does not equal"
         rule_attributes:
           model_scores:
             propensity_to_unsubscribe:
@@ -393,6 +393,11 @@ stages:
     response:
       strict: false
       status_code: 200
+      json:
+        - size: !anyint
+          revenue: !anyfloat
+          state: !anystr
+          country: !anystr
       headers:
         content-type: application/json
 
@@ -410,11 +415,11 @@ stages:
       strict: false
       status_code: 200
       json:
-        !anylist
         - size: !anyint
           revenue: !anyfloat
           state: !anystr
           country: !anystr
+          city: !anystr
       headers:
         content-type: application/json
 
@@ -431,12 +436,37 @@ stages:
     response:
       status_code: 200
       json:
-        !anylist
-        - size: !anyint
-          revenue: !anyfloat
-          city: !anystr
-          state: !anystr
-          country: !anystr
+        demo:
+          - name: !anystr
+            population_percentage: !anyfloat
+            size: !anyint
+            gender_women: !anyfloat
+            gender_men: !anyfloat
+            gender_other: !anyfloat
+            ltv: !anyfloat
+        income:
+          - name: !anystr
+            ltv: !anyfloat
+        spend:
+          gender_women:
+            - date: !anystr
+              ltv: !anyfloat
+          gender_men:
+            - date: !anystr
+              ltv: !anyfloat
+          gender_other:
+            - date: !anystr
+              ltv: !anyfloat
+        gender:
+          gender_women:
+            population_percentage: !anyfloat
+            size: !anyint
+          gender_men:
+            population_percentage: !anyfloat
+            size: !anyint
+          gender_other:
+            population_percentage: !anyfloat
+            size: !anyint
       headers:
         content-type: application/json
 
@@ -462,6 +492,7 @@ stages:
         content-type: application/json
       json:
         name: "TAVERN_TEST_AUDIENCE_UPDATED"
+        id: "{audience_id}"
 
   - name: Delete the new audience
       # Define the request to be made...

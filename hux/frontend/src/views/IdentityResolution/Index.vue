@@ -54,6 +54,7 @@
           align-stretch
           flex-grow-1 flex-shrink-0
           mw-100
+          minh-100
         "
       >
         <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100 pa-6">

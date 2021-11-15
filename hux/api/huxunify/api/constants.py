@@ -49,6 +49,7 @@ JIRA_SERVER = "JIRA_SERVER"
 JIRA_API_KEY = "JIRA_API_KEY"
 ISSUE_TYPE = "issue_type"
 KEY = "key"
+TASK = "task"
 TICKET_TYPE_BUG = "Bug"
 
 # general defines
@@ -86,6 +87,10 @@ SOURCE_NAME = "source_name"
 SOURCE_SIZE = "source_size"
 SOURCE_ID = "source_id"
 CREATE_TIME = "create_time"
+CONTACT_EMAIL = "contact_email"
+CLIENT_REQUEST = "client_request"
+CLIENT_ACCOUNT = "client_account"
+USE_CASE = "use_case"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -558,6 +563,10 @@ DESTINATION_PATCH_FIELDS = [
     db_c.DELIVERY_PLATFORM_STATUS,
     db_c.NAME,
     db_c.DELIVERY_PLATFORM_TYPE,
+    db_c.CONTACT_EMAIL,
+    db_c.CLIENT_REQUEST,
+    db_c.CLIENT_ACCOUNT,
+    db_c.USE_CASE,
 ]
 DESTINATION_INVALID_PATCH_MESSAGE = (
     f"Acceptable fields are {DESTINATION_PATCH_FIELDS}."
@@ -632,6 +641,7 @@ DESTINATION_NAME = "name"
 DESTINATION_CAMPAIGN_COUNT = "campaign_count"
 LATEST_DELIVERY = "latest_delivery"
 CONNECTION_STATUS = "connection_status"
+AUTHENTICATION = "authentication"
 AUTHENTICATION_DETAILS = "authentication_details"
 DESTINATION_REFRESH = "refresh_all"
 DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
@@ -643,6 +653,7 @@ DATA_EXTENSIONS = "data-extensions"
 DATA_EXTENSION = "data_extension"
 DATA_EXTENSION_ID = "data_extension_id"
 DATA_EXTENSION_NOT_SUPPORTED = "Data extension not supported"
+GENERIC_DESTINATION = "generic_destination"
 
 # Engagement fields
 ENGAGEMENT = "engagement"
@@ -661,6 +672,7 @@ AUDIENCE_PERFORMANCE = "audience-performance"
 AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
 DISPLAY_ADS = "display-ads"
 IS_AD_PLATFORM = "is_ad_platform"
+MY_ENGAGEMENTS = "my_engagements"
 
 DISPLAY_ADS_METRICS = [
     "spend",
@@ -994,7 +1006,7 @@ NOTIFICATION_CATEGORIES = [
     "delivery",
     "orchestration",
     "destinations",
-    "data_sources",
+    "datasources",
     "customers",
     "models",
 ]
@@ -1514,3 +1526,8 @@ MODELS_STUB = [
         STATUS: STATUS_PENDING,
     },
 ]
+
+# Configurations
+CONFIGURATIONS_TAG = "configurations"
+CONFIGURATION_ID = "configuration_id"
+CONFIGURATIONS_ENDPOINT = "/configurations"

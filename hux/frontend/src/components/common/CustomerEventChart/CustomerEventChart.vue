@@ -257,19 +257,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.global-text-line {
-  display: inline-block;
-  font-style: normal;
-  font-size: $font-size-root;
-  line-height: 19px;
-}
 .global-heading {
   font-style: normal;
   color: var(--v-black-base) !important;
 }
 .container-chart {
   position: relative;
-  height: 650px;
   padding: 0px !important;
 
   .value-container {

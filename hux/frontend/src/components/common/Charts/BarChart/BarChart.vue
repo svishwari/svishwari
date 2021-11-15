@@ -72,12 +72,13 @@ export default {
       let margin = { top: 15, right: 30, bottom: 100, left: 68 }
       let w = this.chartDimensions.width - margin.left - margin.right
       let h = this.chartDimensions.height - margin.top - margin.bottom
+      let chartHeight = this.height - 35
 
       let svg = d3Select
         .select(this.$refs.barChart)
         .append("svg")
         .attr("width", this.width + margin.left + margin.right)
-        .attr("height", this.height + margin.top + margin.bottom)
+        .attr("height", chartHeight)
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`)
 
@@ -161,7 +162,7 @@ export default {
         .append("g")
         .classed("yAxis-alternate", true)
         .attr("transform", "translate(0, 0)")
-        .call(d3Axis.axisLeft(yScale).tickSize(-w).ticks(4).tickFormat(""))
+        .call(d3Axis.axisLeft(yScale).tickSize(-w).ticks(5).tickFormat(""))
         .attr("stroke-width", "0.5")
         .attr("stroke-opacity", "1")
         .style("font-size", "12px")

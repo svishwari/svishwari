@@ -1,6 +1,6 @@
 import Vue from "vue"
 import api from "@/api/client"
-import { handleError } from "@/utils"
+import { handleError, handleSuccess } from "@/utils"
 
 const namespaced = true
 
@@ -8,8 +8,10 @@ const state = {
   userProfile: {
     firstName: null,
     lastName: null,
+    email: null,
     token: null,
     idToken: null,
+    bugsReported: [],
   },
 }
 
@@ -33,6 +35,7 @@ const mutations = {
       state.userProfile.idToken = null
     }
   },
+
   setApplicationUserProfile(state, userProfile) {
     Vue.set(state, "userProfile", { ...state.userProfile, ...userProfile })
   },
@@ -64,11 +67,28 @@ const actions = {
       throw error
     }
   },
+
   async clearFavorite({ dispatch }, { id, type }) {
     try {
       await api.users.clearFavorite(id, type)
       dispatch("getUserProfile")
     } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async contactUs(_, data) {
+    try {
+      let res = await api.users.contactUs(data)
+      if (res) {
+        handleSuccess(
+          `Bug Submitted Successfully with JIRA ID: ${res.data.key}`,
+          res.status
+        )
+      }
+    } catch (error) {
+      console.log(error)
       handleError(error)
       throw error
     }
@@ -87,6 +107,8 @@ const getters = {
   getLastName: (state) => {
     return state.userProfile.lastName
   },
+
+  getEmailAddress: (state) => state.userProfile.email,
 }
 export default {
   namespaced,

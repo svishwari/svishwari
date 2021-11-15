@@ -67,6 +67,7 @@ from huxunify.api.route.utils import (
     group_gender_spending,
     Validation as validation,
     is_component_favorite,
+    get_user_favorites,
 )
 
 # setup the orchestration blueprint
@@ -244,11 +245,14 @@ class AudienceView(SwaggerView):
         # read the optional request args and set the required filter_dict to
         # query the DB.
         filter_dict = {}
+        favorite_audiences = None
 
         if request.args.get(api_c.FAVORITES) and validation.validate_bool(
             request.args.get(api_c.FAVORITES)
         ):
-            filter_dict[api_c.FAVORITES] = user_name
+            favorite_audiences = get_user_favorites(
+                get_db_client(), user_name, api_c.AUDIENCES
+            )
 
         if request.args.get(api_c.WORKED_BY) and validation.validate_bool(
             request.args.get(api_c.WORKED_BY)
@@ -265,24 +269,24 @@ class AudienceView(SwaggerView):
 
         # get all audiences and deliveries
         audiences = orchestration_management.get_all_audiences_and_deliveries(
-            database=database, filters=filter_dict
+            database=database,
+            filters=filter_dict,
+            audience_ids=favorite_audiences,
         )
 
         # get all audiences because document DB does not allow for replaceRoot
         audience_dict = {
             x[db_c.ID]: x
             for x in orchestration_management.get_all_audiences(
-                database=database, filters=filter_dict
+                database=database,
+                filters=filter_dict,
+                audience_ids=favorite_audiences,
             )
         }
 
         # workaround because DocumentDB does not allow $replaceRoot
         # do replace root by bringing the nested audience up a level.
         _ = [x.update(audience_dict.get(x[db_c.ID])) for x in audiences]
-
-        # get user id
-        token_response = get_token_from_request(request)
-        user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
 
         # TODO - ENABLE AFTER WE HAVE A CACHING STRATEGY IN PLACE
         # # get customer sizes
@@ -306,6 +310,12 @@ class AudienceView(SwaggerView):
         audience_destinations = eam.get_all_engagement_audience_destinations(
             database
         )
+
+        # Check if favourite audiences is not set
+        if favorite_audiences is None:
+            favorite_audiences = get_user_favorites(
+                get_db_client(), user_name, api_c.AUDIENCES
+            )
 
         # process each audience object
         for audience in audiences:
@@ -341,8 +351,8 @@ class AudienceView(SwaggerView):
                 audience[api_c.AUDIENCE_LAST_DELIVERED] = None
 
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
-            audience[api_c.FAVORITE] = is_component_favorite(
-                user_id, api_c.AUDIENCES, audience[db_c.ID]
+            audience[api_c.FAVORITE] = bool(
+                audience[db_c.ID] in favorite_audiences
             )
 
         # fetch lookalike audiences if lookalikeable is set to false
@@ -1051,9 +1061,9 @@ class AudienceRules(SwaggerView):
         rules_constants = {
             "text_operators": {
                 "contains": "Contains",
-                "does_not_contain": "Does not contain",
+                "not_contains": "Does not contain",
                 "equals": "Equals",
-                "does_not_equal": "Does not equal",
+                "not_equals": "Does not equal",
             }
         }
 
@@ -1156,7 +1166,7 @@ class AudienceRules(SwaggerView):
                     "age": {
                         "name": "Age",
                         "type": "range",
-                        "min": 14,
+                        "min": 18,
                         "max": 79,
                     },
                     "email": {"name": "Email", "type": "text"},
@@ -1251,7 +1261,7 @@ class SetLookalikeAudience(SwaggerView):
                 HTTP status code.
 
         Raises:
-            FailedDeliveryPlatformDependencyError: Delivery Platform Dependency
+            FailedDestinationDependencyError: Destination Dependency
                 error.
         """
 
@@ -1283,7 +1293,7 @@ class SetLookalikeAudience(SwaggerView):
 
         if not destination_connector.check_connection():
             logger.error("Facebook authentication failed.")
-            raise iae.FailedDeliveryPlatformDependencyError(
+            raise iae.FailedDestinationDependencyError(
                 destination[api_c.NAME], HTTPStatus.FAILED_DEPENDENCY
             )
 
@@ -1407,7 +1417,8 @@ class DeleteAudienceView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def delete(self, audience_id: str) -> Tuple[dict, int]:
+    @get_user_name()
+    def delete(self, audience_id: str, user_name: str) -> Tuple[dict, int]:
         """Deletes an audience.
 
         ---
@@ -1416,17 +1427,47 @@ class DeleteAudienceView(SwaggerView):
 
         Args:
             audience_id (str): ID of the audience to be deleted.
+            user_name (str): user_name extracted from Okta.
 
         Returns:
             Tuple[dict, int]: response dict, HTTP status code.
         """
 
-        deleted = orchestration_management.delete_audience(
-            get_db_client(), ObjectId(audience_id)
+        database = get_db_client()
+
+        deleted_audience = orchestration_management.delete_audience(
+            database, ObjectId(audience_id)
         )
 
-        if deleted:
-            return {}, HTTPStatus.NO_CONTENT
-        return {
-            "message": "Internal Server Error."
-        }, HTTPStatus.INTERNAL_SERVER_ERROR
+        if not deleted_audience:
+            logger.info(
+                "Failed to delete audience %s by user %s.",
+                audience_id,
+                user_name,
+            )
+            return {
+                api_c.MESSAGE: api_c.OPERATION_FAILED
+            }, HTTPStatus.INTERNAL_SERVER_ERROR
+
+        delete_audience_from_engagements = (
+            engagement_management.remove_audience_from_all_engagements(
+                database, ObjectId(audience_id), user_name
+            )
+        )
+
+        if not delete_audience_from_engagements:
+            logger.info(
+                "Failed to delete audience %s from engagements by user %s.",
+                audience_id,
+                user_name,
+            )
+            return {
+                api_c.MESSAGE: api_c.OPERATION_FAILED
+            }, HTTPStatus.INTERNAL_SERVER_ERROR
+
+        logger.info(
+            "Successfully deleted audience %s by user %s.",
+            audience_id,
+            user_name,
+        )
+        return {api_c.MESSAGE: {}}, HTTPStatus.NO_CONTENT
