@@ -214,10 +214,13 @@ def get_user_name() -> object:
     return wrapper
 
 
-def requires_access_level() -> object:
+def requires_access_levels(access_levels: list = None) -> object:
     """Purpose of this decorator is for validating access levels for requests.
 
     Example: @requires_access_level()
+
+    Args:
+        access_levels (list): list of access levels.
 
     Returns:
         Response (object): decorator
@@ -274,6 +277,10 @@ def requires_access_level() -> object:
             # from db
             if isinstance(user, tuple):
                 return user
+
+            # check access level
+            if not access_levels:
+                pass
 
             # return found user
             kwargs[constants.USER] = user
