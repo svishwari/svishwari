@@ -15,6 +15,7 @@ class DatabaseClient:
         username: Optional[str] = None,
         password: Optional[str] = None,
         ssl_cert_path: Optional[str] = None,
+        ssl_flag: Optional[bool] = None,
     ) -> None:
         """Initialize a DatabaseClient object.
 
@@ -27,6 +28,9 @@ class DatabaseClient:
                 authentication (optional).
             ssl_cert_path (Optional(str)): SSL Certificate path for
                 connecting to MongoDB (optional).
+            ssl_flag (Optional(str)): SSL flag for database
+                connecting to MongoDB (optional).
+
         """
 
         self._host = host
@@ -39,6 +43,7 @@ class DatabaseClient:
             else False
         )
         self._ssl_cert_path = ssl_cert_path
+        self._use_ssl_flag = ssl_flag
 
     @property
     def host(self) -> Union[str, list]:
@@ -82,6 +87,11 @@ class DatabaseClient:
 
         return self._ssl_cert_path
 
+    @property
+    def ssl_flag(self):
+        """Union[bool, None]: SSL flag used when authenticating the client."""
+        return self._use_ssl_flag
+
     def connect(self) -> pymongo.MongoClient:
         """Connect to the database.
 
@@ -103,4 +113,6 @@ class DatabaseClient:
         if self._use_ssl:
             mongo_args["ssl"] = True
             mongo_args["ssl_ca_certs"] = self._ssl_cert_path
+        elif self._use_ssl_flag:
+            mongo_args["ssl"] = True
         return pymongo.MongoClient(**mongo_args)
