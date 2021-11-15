@@ -40,7 +40,7 @@
   "totalCustomerSpendChart": {
     "maxWidth": "200px",
     "top": "-32px",
-    "left": "84px",
+    "left": "70px",
     "padding": "6px 8px 8px 8px"
   },
   "idrMatchingTrendChart": {

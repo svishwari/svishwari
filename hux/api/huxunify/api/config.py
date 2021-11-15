@@ -145,6 +145,11 @@ class PyTestConfig(Config):
     OKTA_CLIENT_ID = "test-client-id"
     OKTA_ISSUER = "https://fake.fake"
 
+    # JIRA
+    JIRA_PROJECT_KEY = "fake-jira-project"
+    JIRA_API_KEY = "fake-jira-key"
+    JIRA_SERVER = "https://fake.fake.jira.fake"
+
     # TECTON CONFIGURATION
     TECTON_API_KEY = "fake-key"
     TECTON_API = "https://fake.fake.com"
