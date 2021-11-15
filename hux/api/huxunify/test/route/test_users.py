@@ -330,6 +330,27 @@ class TestUserRoutes(TestCase):
         self.assertEqual(role, response.json[db_c.USER_ROLE])
         self.assertEqual(display_name, response.json[db_c.USER_DISPLAY_NAME])
 
+    def test_update_different_user(self):
+        """Test successfully updating a different user"""
+        role = "admin"
+        display_name = "NEW_DISPLAY_NAME"
+
+        update_body = {
+            api_c.ID: str(self.user_info[db_c.ID]),
+            db_c.USER_ROLE: role,
+            db_c.USER_DISPLAY_NAME: display_name,
+        }
+
+        response = self.app.patch(
+            f"{t_c.BASE_ENDPOINT}{api_c.USER_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json=update_body,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(role, response.json[db_c.USER_ROLE])
+        self.assertEqual(display_name, response.json[db_c.USER_DISPLAY_NAME])
+
     def test_update_user_invalid_update_body(self):
         """Test successfully updating a user"""
         role = "admin"

@@ -36,7 +36,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .empty-page {
-  min-height: 75vh;
+  max-height: 75vh;
+  min-height: 100%;
   min-width: 100%;
 
   > div {

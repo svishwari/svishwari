@@ -54,24 +54,4 @@ describe("Orchestration > Audiences", () => {
       .eq(0)
       .should("have.class", "mr-3 fixed-icon")
   })
-
-  it("should delete the created audience", () => {
-    // delete created audience
-    cy.location("pathname").should("eq", route.audiences)
-    cy.get(selector.audience.audiencelist).its("length").should("be.gt", 0)
-    cy.get(selector.audience.audiencenameclick)
-      .eq(0)
-      .find("button")
-      .eq(1)
-      .click({ force: true })
-    cy.get(".v-menu__content").should("exist")
-
-    cy.contains("Delete audience").eq(0).click()
-
-    cy.get(selector.audience.removeAudience)
-      .get("button")
-      .contains("Yes, delete it")
-      .eq(0)
-      .click()
-  })
 })
