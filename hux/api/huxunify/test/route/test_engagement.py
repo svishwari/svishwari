@@ -1763,14 +1763,12 @@ class TestEngagementRoutes(TestCase):
 
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
-            f"{api_c.AUDIENCE}/{str(audience_id)}/destinations",
+            f"{api_c.AUDIENCE}/{str(audience_id)}/{api_c.DESTINATIONS}",
             json={db_c.OBJECT_ID: str(destination[db_c.ID])},
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(
-            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
-        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_remove_destination_from_engagement_audience(self):
         """Test remove destination from engagement audience."""
