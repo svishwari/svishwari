@@ -296,7 +296,7 @@ class RemoveRequestedModel(SwaggerView):
         notification_management.create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
-            f'Requested model "{model_id}" removed ' f"by {user_name}.",
+            f'Requested model "{model_id}" removed by {user_name}.',
             api_c.MODELS_TAG,
         )
 
