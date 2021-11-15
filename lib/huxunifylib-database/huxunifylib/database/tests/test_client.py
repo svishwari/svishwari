@@ -41,7 +41,7 @@ class TestClient(unittest.TestCase):
         client = DatabaseClient(host, port, username, password, ssl_path)
 
         # verify the setup
-        self.assertTrue(client is not None)
+        self.assertIsNotNone(client)
         self.assertEqual(client.host, host)
         self.assertEqual(client.port, port)
         self.assertEqual(client.ssl_cert_path, ssl_path)
@@ -67,7 +67,7 @@ class TestClient(unittest.TestCase):
         )
 
         # verify the setup
-        self.assertTrue(client is not None)
+        self.assertIsNotNone(client)
         self.assertEqual(client.host, host)
         self.assertEqual(client.port, port)
         self.assertEqual(client.ssl_flag, ssl_flag)
