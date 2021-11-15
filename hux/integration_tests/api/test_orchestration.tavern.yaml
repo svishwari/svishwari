@@ -304,11 +304,6 @@ includes:
   - !include common.yaml
 
 stages:
-#  - name: Get timestamp
-#    response:
-#      save:
-#        $ext:
-#          function: tavern_test_utils:get_timestamp
 
   - name: Get destinations and save facebook destination object
 
@@ -340,6 +335,27 @@ stages:
           extra_kwargs:
             destination_name: "Facebook"
 
+  # This is the step to get the timestamp
+  # A request needs to be made in order to run one of the functions
+  # validation is removed since it was done in the previous step and to improve readability
+  - name: Get timestamp
+
+    request:
+      url: "{host}/{version}/destinations"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      save:
+        $ext:
+          function: tavern_test_utils:get_timestamp
+
   - name: Create the new audience
 
     # Define the request to be made...
@@ -350,7 +366,7 @@ stages:
         content-type: application/json
         Authorization: "Bearer {token}"
       json:
-        name: "TAVERN_TEST_AUDIENCE_UPDATED" # _{timestamp}
+        name: "TAVERN_TEST_AUDIENCE_{timestamp}"
         destinations:
           - id: "{destination.id}"
             delivery_platform_config:

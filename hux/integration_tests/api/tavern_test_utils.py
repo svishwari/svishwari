@@ -152,7 +152,8 @@ def get_destination_by_name(
     return None
 
 
-def get_timestamp() -> Union[Box, None]:
+# pylint: disable=unused-argument
+def get_timestamp(response: object) -> Union[Box, None]:
     """ Purpose of this function is to get a timestamp string
 
     Returns:
@@ -160,6 +161,6 @@ def get_timestamp() -> Union[Box, None]:
 
     """
 
-    timestamp = datetime.now().strftime("%d-%b-%Y--(%H:%M:%S.%f)")
+    timestamp = datetime.now().strftime("%d-%b-%Y-%H:%M:%S.%f")
 
     return Box({"timestamp": timestamp})

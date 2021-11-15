@@ -15,11 +15,11 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: get audience id to create new engagement
+  - name: Get audience id to create new engagement
 
     # Define the request to be made...
     request:
-      url: "{host}/{version}/audiences?deliveries=2"
+      url: "{host}/{version}/audiences"
       method: GET
       headers:
         content-type: application/json
@@ -38,6 +38,20 @@ stages:
       save:
         $ext:
           function: tavern_test_utils:get_audience_id
+
+  - name: Get timestamp
+
+    request:
+      url: "{host}/{version}/engagements"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      save:
+        $ext:
+          function: tavern_test_utils:get_timestamp
     
   - name: create a new engagement
 
@@ -49,8 +63,8 @@ stages:
         content-type: application/json
         Authorization: "Bearer {token}"
       json:
-        name: Test Engagement 1
-        description: Test Description 1
+        name: "TAVERN_TEST_ENGAGEMENT_{timestamp}"
+        description: "Tavern Test Engagement"
         audiences:
           - id: "{engagement_audience_id}"
             destinations:
