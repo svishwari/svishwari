@@ -13,6 +13,7 @@ from huxunifylib.database.delivery_platform_management import (
     set_delivery_job,
     set_delivery_job_status,
     create_delivery_platform_lookalike_audience,
+    get_delivery_platform_lookalike_audience,
 )
 from huxunifylib.database.engagement_management import (
     set_engagement,
@@ -1204,6 +1205,10 @@ class OrchestrationRouteTest(TestCase):
         )
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        # validate audience is deleted in db
+        self.assertIsNone(
+            get_audience(self.database, self.audiences[0][db_c.ID])
+        )
 
         for engagement in engagements:
             new_eng = get_engagement(self.database, engagement)
@@ -1247,6 +1252,12 @@ class OrchestrationRouteTest(TestCase):
         )
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        # validate lookalike audience is deleted in db
+        self.assertIsNone(
+            get_delivery_platform_lookalike_audience(
+                self.database, lookalike_audience[db_c.ID]
+            )
+        )
 
     def test_delete_audience_where_audience_does_not_exist(self) -> None:
         """Test delete audience API with valid ID but the object does not
