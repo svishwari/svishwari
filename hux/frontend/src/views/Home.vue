@@ -22,7 +22,9 @@
       </hux-page-header>
     </template>
 
-    <v-row>
+    <v-row
+      :class="totalCustomers.length == 0 ? 'margin-2px-top-3px-bottom' : ''"
+    >
       <v-col>
         <v-card
           class="rounded-lg box-shadow-5"
@@ -374,5 +376,10 @@ export default {
 .notifications-table-frame {
   background-image: url("../assets/images/no-lift-chart-frame.png");
   background-position: center;
+}
+
+.margin-2px-top-3px-bottom {
+  margin-top: 2px;
+  margin-bottom: 3px;
 }
 </style>
