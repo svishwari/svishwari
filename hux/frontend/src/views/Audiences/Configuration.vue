@@ -492,16 +492,19 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.getOverview()
-    this.mapCDMOverview(this.overview)
-    if (this.$route.name === "AudienceUpdate") {
-      this.audienceId = this.$route.params.id
-      this.isEdit = true
-      await this.getAudienceById(this.audienceId)
-      const data = this.getAudience(this.audienceId)
-      this.mapAudienceData(data)
+    try {
+      await this.getOverview()
+      this.mapCDMOverview(this.overview)
+      if (this.$route.name === "AudienceUpdate") {
+        this.audienceId = this.$route.params.id
+        this.isEdit = true
+        await this.getAudienceById(this.audienceId)
+        const data = this.getAudience(this.audienceId)
+        this.mapAudienceData(data)
+      }
+    } finally {
+      this.loading = false
     }
-    this.loading = false
   },
 
   methods: {

@@ -180,8 +180,11 @@ export default {
 
     async fetchDependencies() {
       this.loading = true
-      await this.getDestinations()
-      this.loading = false
+      try {
+        await this.getDestinations()
+      } finally {
+        this.loading = false
+      }
     },
   },
 }

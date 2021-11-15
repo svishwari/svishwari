@@ -235,7 +235,7 @@ client["engagements"].remove = (resourceId) => {
 
 //#region Customer Identity endpoint(s)
 client["idr"].overview = (params) => {
-  return http.get("/idr/overview", { params: params })
+  return http.get("/idr/overview", { timeout: 0, params: params })
 }
 
 client["idr"].datafeeds = (params) => {
