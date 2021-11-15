@@ -31,6 +31,7 @@ MOCK_MODEL_RESPONSE = {
                 "unsubscribe",
                 "Susan Miller",
                 "smiller@xyz.com",
+                "7",
                 "success",
                 "0.2.4",
             ],
@@ -46,6 +47,7 @@ MOCK_MODEL_RESPONSE = {
                 "ltv",
                 "John Smith",
                 "jsmith@xyz.com",
+                "7",
                 "success",
                 "0.4.5",
             ],
@@ -109,9 +111,7 @@ class TectonTest(TestCase):
             headers=self.config.TECTON_API_HEADERS,
         )
 
-        model = tecton.get_model_performance_metrics(
-            2, api_c.LTV, "21.7.30"
-        )
+        model = tecton.get_model_performance_metrics(2, api_c.LTV, "21.7.30")
 
         # test that it was actually called and only once
         self.assertEqual(request_mocker.call_count, 1)

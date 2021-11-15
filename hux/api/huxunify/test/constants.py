@@ -644,6 +644,17 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
             ],
             api_c.JOIN_KEYS: ["21.7.31"],
         },
+        {
+            api_c.FEATURES: [
+                "2021-07-31",
+                "1to2y-COGS-sum",
+                "not a number",
+                "Propensity to Unsubscribe",
+                api_c.UNSUBSCRIBE,
+                "21.7.31",
+            ],
+            api_c.JOIN_KEYS: ["21.7.31"],
+        },
     ]
 }
 

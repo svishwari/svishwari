@@ -35,6 +35,22 @@ export function handleError(error) {
 }
 
 /**
+ * Handles an Success Message.
+ *
+ * @param {string} message
+ * eslint-disable-next-line jsdoc/require-returns-check
+ * @param {number} status
+ * eslint-disable-next-line jsdoc/require-returns-check
+ */
+export function handleSuccess(message, status) {
+  store.dispatch("alerts/setAlert", {
+    message: message,
+    code: status,
+    type: "success",
+  })
+}
+
+/**
  * Get color HEX code
  *
  * @param {*} str string to generate color from

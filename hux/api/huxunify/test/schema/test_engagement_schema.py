@@ -53,9 +53,34 @@ class EngagementSchemaTest(TestCase):
         doc = {
             api_c.NAME: "Engagement 1",
             api_c.DESCRIPTION: "Engagement 1 description",
+            api_c.AUDIENCES: [
+                {
+                    db_c.OBJECT_ID: str(ObjectId()),
+                    db_c.DESTINATIONS: [
+                        {
+                            db_c.OBJECT_ID: str(ObjectId()),
+                            db_c.DELIVERY_JOB_ID: str(ObjectId()),
+                        }
+                    ],
+                }
+            ],
         }
 
-        assert EngagementPutSchema().validate(doc) == {}
+        # ensure schema validates correctly
+        self.assertFalse(EngagementPutSchema().validate(doc))
+
+        # ensure each of the following fields are type ObjectId
+        engagement = EngagementPutSchema().load(doc)
+
+        for audience in engagement[db_c.AUDIENCES]:
+            # check audience id
+            self.assertIsInstance(audience[db_c.OBJECT_ID], ObjectId)
+            for destination in audience[db_c.DESTINATIONS]:
+                # test destination id and delivery job id
+                self.assertIsInstance(destination[db_c.OBJECT_ID], ObjectId)
+                self.assertIsInstance(
+                    destination[db_c.DELIVERY_JOB_ID], ObjectId
+                )
 
     def test_unsuccessful_engagement_get_schema_bad_name(self) -> None:
         """Test unsuccessful EngagementGetSchema."""
