@@ -98,6 +98,24 @@ class ModelsView(SwaggerView):
 
         status = request.args.getlist(api_c.STATUS)
         all_models = tecton.get_models()
+
+        purchase_model = {
+            api_c.TYPE: "purchase",
+            api_c.FULCRUM_DATE: datetime(2021, 6, 26),
+            api_c.PAST_VERSION_COUNT: 0,
+            api_c.LAST_TRAINED: datetime(2021, 6, 26),
+            api_c.LOOKBACK_WINDOW: 365,
+            api_c.NAME: "Propensity to Purchase",
+            api_c.DESCRIPTION: "Propensity of a customer making a purchase "
+            "after receiving an email.",
+            api_c.LATEST_VERSION: "",
+            api_c.PREDICTION_WINDOW: 365,
+            api_c.ID: 3,
+            api_c.OWNER: "Susan Miller",
+            api_c.STATUS: api_c.STATUS_PENDING,
+        }
+        all_models.append(purchase_model)
+
         for model in all_models:
             if api_c.CATEGORY not in model:
                 model[api_c.CATEGORY] = api_c.UNCATEGORIZED
