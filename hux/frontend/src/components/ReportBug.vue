@@ -19,8 +19,7 @@
         class="px-13"
         height="40"
         required
-        :value="inputText"
-        @input="enableConfirmButton($event)"
+        @change="setBugSubject($event)"
       />
       <text-field
         label-text="Bug Summary"
@@ -28,8 +27,7 @@
         class="px-13 bug-summary"
         height="206"
         required
-        :value="inputText"
-        @input="enableConfirmButton($event)"
+        @change="setBugSummary($event)"
       />
     </div>
   </div>
@@ -47,7 +45,23 @@ export default {
   data() {
     return {
       inputText: null,
+      bugObject: {
+        issue_type: "Bug",
+        summary: "",
+        description: "",
+      },
     }
+  },
+
+  methods: {
+    setBugSubject(inputText) {
+      this.bugObject.summary = inputText
+      this.$emit("setBugDetails", this.bugObject)
+    },
+    setBugSummary(inputText) {
+      this.bugObject.description = inputText
+      this.$emit("setBugDetails", this.bugObject)
+    },
   },
 }
 </script>

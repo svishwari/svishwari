@@ -9,7 +9,7 @@ const profile = ls.users?.userProfile || {
  * User Schema
  */
 export const user = {
-  email: faker.internet.email(),
+  email: profile.email,
   display_name: profile.firstName,
   first_name: profile.firstName,
   last_name: profile.lastName,

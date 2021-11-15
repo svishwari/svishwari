@@ -417,19 +417,12 @@
         </v-card>
       </v-col>
       <v-col md="5">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+        <v-card class="mt-3 rounded-lg box-shadow-5 overflow-auto" height="386">
           <v-progress-linear
             v-if="loadingDemographics"
             :active="loadingDemographics"
             :indeterminate="loadingDemographics"
           />
-          <v-card-title class="pb-2 pl-5 pt-5">
-            <div class="mt-2">
-              <span class="black--text text--darken-4 text-h5">
-                United States
-              </span>
-            </div>
-          </v-card-title>
           <v-divider class="ml-5 mr-8 mt-0 mb-1" />
           <map-state-list
             v-if="!loadingDemographics"

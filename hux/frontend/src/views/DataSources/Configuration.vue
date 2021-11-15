@@ -156,7 +156,7 @@ export default {
         dataSourceObject,
         dataSource
       ) {
-        if (!dataSource.is_added) {
+        if (!dataSource.is_added && dataSource.id) {
           dataSourceObject[dataSource.category] =
             dataSourceObject[dataSource.category] || []
           dataSourceObject[dataSource.category].push(dataSource)

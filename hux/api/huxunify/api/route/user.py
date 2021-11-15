@@ -418,9 +418,16 @@ class UserPatchView(SwaggerView):
 
         database = get_db_client()
 
-        user = get_all_users(
-            database, {db_constants.USER_DISPLAY_NAME: user_name}
-        )
+        if api_c.ID in body:
+            user = get_all_users(
+                database, {db_constants.ID: ObjectId(body.get(api_c.ID))}
+            )
+            del body[api_c.ID]
+        else:
+            user = get_all_users(
+                database, {db_constants.USER_DISPLAY_NAME: user_name}
+            )
+
         if not user:
             return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
 

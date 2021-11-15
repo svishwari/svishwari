@@ -1,6 +1,7 @@
 <template>
   <div class="list-container">
     <hux-data-table
+      view-height="calc(100vh - 340px)"
       :columns="columnDefs"
       :sort-column="customMetric"
       :sort-desc="true"
@@ -10,12 +11,13 @@
         <td
           v-for="header in columnDefs"
           :key="header.value"
+          class="text-body-2"
           :style="{ width: header.width }"
         >
-          <div v-if="header.value == defaultMetric" class="cell text-h6">
+          <div v-if="header.value == defaultMetric" class="text-body-1">
             <span v-if="item[defaultMetric]">{{ item[defaultMetric] }} </span>
           </div>
-          <div v-if="header.value == customMetric" class="cell text-h6">
+          <div v-if="header.value == customMetric" class="text-body-1">
             <tooltip>
               <template #label-content>
                 {{
@@ -36,7 +38,7 @@
               </template>
             </tooltip>
           </div>
-          <div v-if="header.value == primaryMetric">
+          <div v-if="header.value == primaryMetric" class="text-body-1">
             <tooltip>
               <template #label-content>
                 {{
@@ -46,7 +48,7 @@
                 }}
               </template>
               <template #hover-content>
-                <div class="mb-1">Population %</div>
+                <div class="mb-1">Population</div>
                 {{ item.size | Numeric(true, false, false) | Empty("-") }}
               </template>
             </tooltip>
@@ -152,6 +154,17 @@ export default {
 
   ::v-deep .hux-data-table {
     margin-top: -3px;
+    ::v-deep table {
+      .v-data-table-header {
+        th:nth-child(1) {
+          position: sticky;
+          left: 0;
+          z-index: 9;
+          overflow-y: visible;
+          overflow-x: visible;
+        }
+      }
+    }
     .v-data-table {
       .v-data-table-header {
         tr {

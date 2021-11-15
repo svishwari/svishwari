@@ -49,6 +49,7 @@ class UserSchema(Schema):
 class UserPatchSchema(Schema):
     """User patch schema"""
 
+    id = Str(validate=validate_object_id)
     role = Str(required=False)
     display_name = Str(required=False)
     dashboard_configuration = Dict(required=False)
