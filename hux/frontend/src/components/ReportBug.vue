@@ -19,7 +19,7 @@
         class="px-13"
         height="40"
         required
-        @input="setBugSubject($event)"
+        @change="setBugSubject($event)"
       />
       <text-field
         label-text="Bug Summary"
@@ -27,7 +27,7 @@
         class="px-13 bug-summary"
         height="206"
         required
-        @input="setBugSummary($event)"
+        @change="setBugSummary($event)"
       />
     </div>
   </div>
