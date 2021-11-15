@@ -32,6 +32,7 @@ export default {
     base: colors.tealD,
     darken1: colors.teal6D,
     darken2: colors.teal7D,
+    lighten3: colors.tealAquaSquezze,
   },
   yellow: {
     lighten1: colors.yellow5,
