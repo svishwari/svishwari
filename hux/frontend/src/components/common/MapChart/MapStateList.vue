@@ -154,7 +154,7 @@ export default {
 
   ::v-deep .hux-data-table {
     margin-top: -3px;
-      ::v-deep table {
+    ::v-deep table {
       .v-data-table-header {
         th:nth-child(1) {
           position: sticky;
