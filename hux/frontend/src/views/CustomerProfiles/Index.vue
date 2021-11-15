@@ -611,20 +611,8 @@ export default {
     min-width: 0px;
     margin-top: -5px;
   }
-}
 
-.icon-border {
-  cursor: default !important;
-}
-.color-last-month {
-  color: var(--v-grey-base) !important;
-}
-
-::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
-  color: var(--v-black-lighten4) !important;
-}
-
-::-webkit-scrollbar {
+  ::-webkit-scrollbar {
   width: 5px;
 }
 ::-webkit-scrollbar-track {
@@ -638,4 +626,18 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--v-black-lighten3);
 }
+}
+
+.icon-border {
+  cursor: default !important;
+}
+.color-last-month {
+  color: var(--v-grey-base) !important;
+}
+
+::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
+  color: var(--v-black-lighten4) !important;
+}
+
+
 </style>

@@ -1,6 +1,7 @@
 <template>
   <div class="list-container">
     <hux-data-table
+      view-height="calc(100vh - 340px)"
       :columns="columnDefs"
       :sort-column="customMetric"
       :sort-desc="true"
@@ -153,6 +154,17 @@ export default {
 
   ::v-deep .hux-data-table {
     margin-top: -3px;
+      ::v-deep table {
+      .v-data-table-header {
+        th:nth-child(1) {
+          position: sticky;
+          left: 0;
+          z-index: 9;
+          overflow-y: visible;
+          overflow-x: visible;
+        }
+      }
+    }
     .v-data-table {
       .v-data-table-header {
         tr {
