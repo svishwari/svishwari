@@ -6,7 +6,10 @@ from unittest import TestCase, mock
 import mongomock
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.collection_management import create_document
+from huxunifylib.database.collection_management import (
+    create_document,
+    get_document,
+)
 from hypothesis import given, settings, strategies as st
 
 import requests_mock
@@ -184,6 +187,46 @@ class DecisioningTests(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(
             {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, response.json
+        )
+
+        updated_doc = get_document(
+            database=self.database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            document_id=doc[db_c.ID],
+            include_deleted=True,
+        )
+
+        self.assertTrue(updated_doc[db_c.DELETED])
+
+    @given(model_id=st.integers())
+    def test_remove_model_failure_invalid_model_id(self, model_id: int):
+        """Test removing requested models from Unified DB with invalid model id.
+
+        Args:
+            model_id (int): Model Id
+        """
+
+        # API call to delete the requested model
+        response = self.test_client.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
+            query_string={api_c.MODEL_ID: model_id},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_remove_model_failure_no_params(self):
+        """Test removing requested models from Unified DB."""
+
+        # API call to delete the requested model
+        response = self.test_client.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(
+            {api_c.MESSAGE: api_c.EMPTY_OBJECT_ERROR_MESSAGE}, response.json
         )
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))

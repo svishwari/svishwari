@@ -238,6 +238,7 @@ class RemoveRequestedModel(SwaggerView):
             "in": "query",
             "type": "string",
             "description": "Model ID.",
+            "required": True,
             "example": "61928a4dce8aa67b888826f5",
         }
     ]
@@ -277,12 +278,17 @@ class RemoveRequestedModel(SwaggerView):
 
         database = get_db_client()
 
-        model_id = request.args.get(api_c.MODEL_ID)
+        if not request.args:
+            return {
+                api_c.MESSAGE: api_c.EMPTY_OBJECT_ERROR_MESSAGE
+            }, HTTPStatus.BAD_REQUEST
+
+        model_id = ObjectId(request.args.get(api_c.MODEL_ID))
 
         collection_management.delete_document(
             database=database,
             collection=db_c.CONFIGURATIONS_COLLECTION,
-            document_id=ObjectId(model_id),
+            document_id=model_id,
             hard_delete=False,
             username=user_name,
         )
