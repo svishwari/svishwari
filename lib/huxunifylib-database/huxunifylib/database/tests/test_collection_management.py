@@ -174,7 +174,7 @@ class ConfigurationCollectionManagementTest(TestCase):
             self.database,
             collection=db_c.CONFIGURATIONS_COLLECTION,
             document_id=new_doc[db_c.ID],
-            include_deleted=True
+            include_deleted=True,
         )
         self.assertTrue(updated_doc[db_c.DELETED])
 
