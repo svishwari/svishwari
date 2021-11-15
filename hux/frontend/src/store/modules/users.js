@@ -40,13 +40,6 @@ const mutations = {
   setApplicationUserProfile(state, userProfile) {
     Vue.set(state, "userProfile", { ...state.userProfile, ...userProfile })
   },
-
-  setReportedBugs(state, bugsObj) {
-    Vue.set(state, "userProfile", {
-      ...state.userProfile,
-      bugsReported: bugsObj,
-    })
-  },
 }
 
 const actions = {
@@ -86,7 +79,7 @@ const actions = {
     }
   },
 
-  async contactUs({ commit }, data) {
+  async contactUs(_, data) {
     try {
       let res = await api.users.contactUs(data)
       if (res) {
@@ -95,7 +88,6 @@ const actions = {
           res.status
         )
       }
-      commit("setReportedBugs", res.data)
     } catch (error) {
       console.log(error)
       handleError(error)
