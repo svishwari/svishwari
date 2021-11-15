@@ -325,9 +325,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__qualname__,
                     in_function.__module__,
                 )
-                return {
-                    "message": api_c.DUPLICATE_NAME
-                }, HTTPStatus.FORBIDDEN
+                return {"message": api_c.DUPLICATE_NAME}, HTTPStatus.FORBIDDEN
 
             except CustomAudienceDeliveryStatusError as exc:
                 logger.error(

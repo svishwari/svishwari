@@ -87,15 +87,9 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         == db_const.DELIVERY_PLATFORM_SFMC
     ):
         env_dict = {
-            SFMCCredentials.SFMC_CLIENT_ID.name: auth[
-                api_c.SFMC_CLIENT_ID
-            ],
-            SFMCCredentials.SFMC_AUTH_URL.name: auth[
-                api_c.SFMC_AUTH_BASE_URI
-            ],
-            SFMCCredentials.SFMC_ACCOUNT_ID.name: auth[
-                api_c.SFMC_ACCOUNT_ID
-            ],
+            SFMCCredentials.SFMC_CLIENT_ID.name: auth[api_c.SFMC_CLIENT_ID],
+            SFMCCredentials.SFMC_AUTH_URL.name: auth[api_c.SFMC_AUTH_BASE_URI],
+            SFMCCredentials.SFMC_ACCOUNT_ID.name: auth[api_c.SFMC_ACCOUNT_ID],
             SFMCCredentials.SFMC_SOAP_ENDPOINT.name: auth[
                 api_c.SFMC_SOAP_BASE_URI
             ],
