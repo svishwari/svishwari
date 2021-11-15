@@ -37,6 +37,7 @@ def set_delivery_platform(
     user_name: str = None,
     configuration: dict = None,
     is_ad_platform: bool = False,
+    category: str = c.CATEGORY_UNKNOWN,
 ) -> Union[dict, None]:
     """A function to create a delivery platform.
 
@@ -56,6 +57,7 @@ def set_delivery_platform(
         configuration (dict): A dictionary consisting of any platform
             specific configurations.
         is_ad_platform (bool): If the delivery platform is an AD platform.
+        category (str): Categoruy of the delivery platform.
 
     Returns:
         Union[dict, None]: MongoDB audience doc.
@@ -81,11 +83,6 @@ def set_delivery_platform(
     if exists_flag:
         raise de.DuplicateName(name)
 
-    if delivery_platform_type.upper() not in [
-        x.upper() for x in c.SUPPORTED_DELIVERY_PLATFORMS
-    ]:
-        raise de.UnknownDeliveryPlatformType(delivery_platform_type)
-
     # Get current time
     curr_time = datetime.datetime.utcnow()
 
@@ -100,6 +97,7 @@ def set_delivery_platform(
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
         c.IS_AD_PLATFORM: is_ad_platform,
+        c.CATEGORY: category,
     }
     if authentication_details is not None:
         doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details

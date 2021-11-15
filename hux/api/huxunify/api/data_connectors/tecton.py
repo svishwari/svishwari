@@ -73,14 +73,14 @@ def map_model_response(response: dict) -> List[dict]:
             constants.LAST_TRAINED: parser.parse(feature[0]),
             constants.DESCRIPTION: feature[1],
             constants.FULCRUM_DATE: parser.parse(feature[2]),
-            constants.LOOKBACK_WINDOW: 7,
+            constants.LOOKBACK_WINDOW: int(feature[8]),
             constants.NAME: feature[4],
             constants.TYPE: str(feature[5]).lower(),
             constants.OWNER: feature[6],
             constants.STATUS: constants.MODEL_STATUS_MAPPING.get(
-                feature[8], constants.STATUS_PENDING
+                feature[9], constants.STATUS_PENDING
             ),
-            constants.LATEST_VERSION: feature[9],
+            constants.LATEST_VERSION: feature[10],
             constants.PREDICTION_WINDOW: int(feature[3]),
             constants.PAST_VERSION_COUNT: 0,
         }
@@ -525,6 +525,17 @@ def get_model_features(
             if x["joinKeys"][0] == model_version
         ]
         for feature in features:
+            # get score.
+            score = 0
+            try:
+                score = (
+                    log10(float(feature[2]))
+                    if float(feature[2]) > 0
+                    else -log10(float(abs(feature[2])))
+                )
+            except ValueError:
+                pass
+
             # TODO - HUS-910, remove the random string values below once Tecton is returning them.
             result_features.append(
                 {
@@ -540,12 +551,7 @@ def get_model_features(
                     ),
                     constants.STATUS: constants.STATUS_ACTIVE,
                     constants.POPULARITY: random.randint(1, 3),
-                    constants.SCORE: round(
-                        log10(float(feature[2]))
-                        if float(feature[2]) > 0
-                        else -log10(float(abs(feature[2]))),
-                        4,
-                    ),
+                    constants.SCORE: round(score, 4),
                 }
             )
 
