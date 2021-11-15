@@ -32,7 +32,10 @@ from huxunify.api.route.decorators import (
     secured,
     api_error_handler,
 )
-from huxunify.api.data_connectors.okta import get_token_from_request
+from huxunify.api.data_connectors.okta import (
+    get_token_from_request,
+    introspect_token,
+)
 from huxunify.api.data_connectors.cdp import (
     get_customer_profiles,
     get_customer_profile,
@@ -56,6 +59,7 @@ from huxunify.api.route.utils import (
     add_chart_legend,
     get_start_end_dates,
     get_db_client,
+    get_user_from_db,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import (
@@ -432,7 +436,15 @@ class CustomerProfileSearch(SwaggerView):
             "in": "path",
             "required": True,
             "example": "HUX123456789012345",
-        }
+        },
+        {
+            "name": api_c.REDACT_FIELD,
+            "description": "Redact Field",
+            "type": "boolean",
+            "in": "query",
+            "required": False,
+            "example": "True",
+        },
     ]
     responses = {
         HTTPStatus.OK.value: {
@@ -464,14 +476,27 @@ class CustomerProfileSearch(SwaggerView):
             Tuple[dict, int]: dict of customer profile, HTTP status code.
         """
         token_response = get_token_from_request(request)
-
-        Validation.validate_hux_id(hux_id)
-
-        redacted_data = redact_fields(
-            get_customer_profile(token_response[0], hux_id),
-            api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
+        redact = Validation.validate_bool(
+            request.args.get(api_c.REDACT_FIELD, "True")
         )
+        Validation.validate_hux_id(hux_id)
+        access_token = get_token_from_request(request)[0]
+        okta_id = introspect_token(access_token).get(api_c.OKTA_USER_ID, None)
+        if not okta_id:
+            return {"message": "Access Denied"}, HTTPStatus.UNAUTHORIZED
+        user_doc = get_user_from_db(access_token)
+        if not user_doc[api_c.USER_PII_ACCESS] and not redact:
+            return {
+                "message": "Access Denied for PII Access"
+            }, HTTPStatus.UNAUTHORIZED
 
+        if not redact:
+            redacted_data = get_customer_profile(token_response[0], hux_id)
+        else:
+            redacted_data = redact_fields(
+                get_customer_profile(token_response[0], hux_id),
+                api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
+            )
         idr_data = api_c.CUSTOMER_IDR_TEST_DATA
         # TODO : Fetch IDR data from CDP once it is ready
         # api_c.IDENTITY_RESOLUTION: redacted_data[api_c.IDENTITY_RESOLUTION]
