@@ -99,6 +99,8 @@ class Config:
         api_c.JSON_SORT_KEYS_CONST, default=False, cast=bool
     )
 
+    TEST_AUTH_OVERRIDE = False
+
 
 class ProductionConfig(Config):
     """Production Config Object."""
@@ -123,6 +125,7 @@ class DevelopmentConfig(Config):
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
     )
+    TEST_AUTH_OVERRIDE = True
 
 
 class PyTestConfig(Config):
@@ -165,6 +168,7 @@ class PyTestConfig(Config):
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
     )
+    TEST_AUTH_OVERRIDE = False
 
 
 def load_env_vars(flask_env=config(api_c.FLASK_ENV, default="")) -> None:
