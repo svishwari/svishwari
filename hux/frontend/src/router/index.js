@@ -120,7 +120,7 @@ const routes = [
   {
     path: "/segment-playground",
     name: "SegmentPlayground",
-    component: () => import("@/views/Segmentation/Index.vue"),
+    component: () => import("@/views/SegmentPlayground/Index.vue"),
     meta: {
       layout: "app",
       title: "Segment Playground",
@@ -250,16 +250,6 @@ const routes = [
     meta: {
       layout: "app",
       title: "Alerts and Notifications",
-      requiresAuth: true,
-    },
-  },
-  {
-    path: "/segment-playground",
-    name: "SegmentPlayground",
-    component: () => import("@/views/SegmentPlayground/Index"),
-    meta: {
-      layout: "app",
-      title: "Segment Playground",
       requiresAuth: true,
     },
   },

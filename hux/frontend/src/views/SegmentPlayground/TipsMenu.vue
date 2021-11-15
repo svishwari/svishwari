@@ -142,6 +142,7 @@ export default {
 }
 .drop-menu-div {
   width: 353 !important;
+  z-index: 1;
 }
 .circle-append {
   height: 56px;

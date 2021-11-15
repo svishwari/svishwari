@@ -1,98 +1,94 @@
 <template>
-  <div class="playground-wrap">
-    <page-header :header-height-changes="'py-3'" :header-height="110">
+  <div>
+    <page-header header-height="110" class="mt-n2" help-icon>
       <template slot="left">
-        <div class="mt-n3">
-          <breadcrumb :items="breadcrumbItems" />
+        <div>
+          <breadcrumb :items="breadcrumbs" />
         </div>
         <div class="text-subtitle-1 font-weight-regular mt-1">
           Get immediate insights by segmenting your customer list based on
           attributes that you want to explore.
         </div>
       </template>
-      <template #right> <tips-menu /></template>
+      <template #right> <tips-menu /> </template>
     </page-header>
-    <div>
-      <v-row>
-        <v-col class="col-8 attribute-div"></v-col>
-        <v-col class="col-4 overview-div pr-6">
-          <v-card
-            class="map-card-wrapper mt-7 rounded-lg card-shadow"
-            height="311"
-          >
-          </v-card>
-          <v-card
-            class="map-card-wrapper mt-3 rounded-lg card-shadow"
-            height="311"
-          >
-            <div class="d-flex justify-space-between">
-              <h5 class="text-h3 mt-2">USA</h5>
-              <div>
-                <v-btn text small min-width="30" @click="showMapView = true">
-                  <icon type="world" color="primary" :size="32" class="mr-1" />
-                </v-btn>
-                <v-btn text small min-width="30" @click="showMapView = false">
-                  <icon type="list" color="primary" :size="32" class="mr-1" />
-                </v-btn>
-              </div>
-            </div>
-
-            <v-progress-linear
-              v-if="loadingOverview"
-              :active="loadingOverview"
-              :indeterminate="loadingOverview"
-            />
-            <map-chart
-              v-if="!loadingOverview"
-              :map-data="overview.geo"
-              :configuration-data="configurationData"
-              :disable-hover-effects="true"
-              data-e2e="map-chart"
-            />
-            <map-slider
-              v-if="!loadingOverview"
-              :map-data="overview.geo"
-              :configuration-data="configurationData"
-            />
-          </v-card>
+    <v-progress-linear :active="loading" :indeterminate="loading" />
+    <page
+      max-width="100%"
+      padding="0 24px"
+      class="white segmentation playground-wrap"
+    >
+      <v-row class="ma-0">
+        <v-col class="col-8 pl-0 pr-6 py-6 attributes">
+          <attribute-rules
+            ref="filters"
+            :rules="attributeRules"
+            @loadingOverAllSize="(data) => updateLoad(data)"
+          />
+        </v-col>
+        <v-col class="col-4 overviews px-6 py-6">
+          <overview
+            :data="overview"
+            :loading="overviewLoading"
+            :last-refreshed="overviewLoadingStamp"
+            class="mb-3"
+          />
+          <geography :data="overview" :loading="overviewLoading" />
         </v-col>
       </v-row>
-    </div>
+      <hux-footer
+        v-if="!loading"
+        slot="footer"
+        data-e2e="footer"
+        max-width="100%"
+      >
+        <template #right>
+          <hux-button size="large" is-tile variant="primary base">
+            Save this segment as an audience
+          </hux-button>
+        </template>
+      </hux-footer>
+    </page>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-import PageHeader from "@/components/PageHeader"
-import Breadcrumb from "@/components/common/Breadcrumb"
-import TipsMenu from "./TipsMenu"
-import MapChart from "@/components/common/MapChart/MapChart"
-import mapSlider from "@/components/common/MapChart/mapSlider"
-import Icon from "@/components/common/Icon"
-import configurationData from "@/components/common/MapChart/MapConfiguration.json"
+import Breadcrumb from "../../components/common/Breadcrumb.vue"
+import HuxButton from "../../components/common/huxButton.vue"
+import HuxFooter from "../../components/common/HuxFooter.vue"
+import Page from "../../components/Page.vue"
+import PageHeader from "../../components/PageHeader.vue"
+import AttributeRules from "./AttributeRules.vue"
+import TipsMenu from "./TipsMenu.vue"
+import Geography from "./Geography.vue"
+import Overview from "./Overview.vue"
 
 export default {
   name: "SegmentPlayground",
   components: {
+    Page,
     PageHeader,
     Breadcrumb,
+    HuxFooter,
+    HuxButton,
+    AttributeRules,
+    Overview,
+    Geography,
     TipsMenu,
-    MapChart,
-    mapSlider,
-    Icon,
   },
   data() {
     return {
-      breadcrumbItems: [
+      breadcrumbs: [
         {
           text: "Segment Playground",
-          disabled: true,
           icon: "playground",
         },
       ],
-      loadingOverview: false,
-      showMapView: true,
-      configurationData: configurationData,
+      loading: false,
+      attributeRules: [],
+      overviewLoading: false,
+      overviewLoadingStamp: new Date(),
     }
   },
   computed: {
@@ -100,40 +96,34 @@ export default {
       overview: "customers/overview",
     }),
   },
-
   async mounted() {
     this.loadingOverview = true
     await this.getOverview()
     this.loadingOverview = false
   },
-
   methods: {
     ...mapActions({
       getOverview: "customers/getOverview",
     }),
+    updateLoad(data) {
+      this.overviewLoading = data
+      if (!data) this.overviewLoadingStamp = new Date()
+    },
   },
 }
 </script>
+
 <style lang="scss" scoped>
 .playground-wrap {
-  background: var(--v-white-base) !important;
-  .attribute-div {
-    border-right: 1px solid var(--v-black-lighten3);
-    height: 100vh;
+  .attributes {
+    flex: 0 0 66.639344262295082%;
+    width: 66.639344262295082%;
   }
-  .overview-div {
-    .map-card-wrapper {
-      border: 1px solid var(--v-black-lighten2);
-      padding: 20px 15px;
-      ::v-deep .map-chart {
-        svg {
-          height: 230px;
-        }
-      }
-      ::v-deep .hux-map-slider {
-        margin-top: -30px;
-      }
-    }
+  .overviews {
+    flex: 0 0 33.360655737704918%;
+    width: 33.360655737704918%;
+    @extend .border-start;
+    border-color: var(--v-black-lighten3);
   }
 }
 </style>
