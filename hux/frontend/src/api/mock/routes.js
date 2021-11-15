@@ -52,6 +52,17 @@ export const defineRoutes = (server) => {
     )
     return new Response(code, headers, body)
   })
+  server.post("users/contact-us", () => {
+    const code = 201
+    const headers = {}
+    const body = {
+      description: "test summary",
+      id: 116331,
+      key: "HUS-1553",
+      summary: "test",
+    }
+    return new Response(code, headers, body)
+  })
 
   // data sources
   server.get("/data-sources")
