@@ -1639,6 +1639,24 @@ class TestEngagementRoutes(TestCase):
             HTTPStatus.NO_CONTENT, delete_audience_response.status_code
         )
 
+    def test_delete_audience_from_engagement_audience_not_found(self):
+        """Test delete audience from engagement where the
+        audience is not in the audience collection.
+        """
+
+        engagement_id = self.engagement_ids[0]
+
+        delete_audience = {"audience_ids": [str(ObjectId())]}
+
+        delete_audience_response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/{api_c.AUDIENCES}",
+            json=delete_audience,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(
+            HTTPStatus.NO_CONTENT, delete_audience_response.status_code
+        )
+
     def test_delete_audience_from_engagement_invalid_engagement_id(self):
         """Test delete audience from engagement with an invalid engagement ID."""
 
