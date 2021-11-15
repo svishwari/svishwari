@@ -28,7 +28,7 @@ class DatabaseClient:
                 authentication (optional).
             ssl_cert_path (Optional(str)): SSL Certificate path for
                 connecting to MongoDB (optional).
-            ssl_flag (Optional(str)): SSL flag for database
+            ssl_flag (Optional(bool)): SSL flag for database
                 connecting to MongoDB (optional).
 
         """
