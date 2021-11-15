@@ -172,8 +172,8 @@ def get_user_name() -> object:
             """
 
             # override if flag set locally
-            if get_config().TEST_AUTH_OVERRIDE:                # return a
-                # default user name
+            if get_config().TEST_AUTH_OVERRIDE:
+                # Return a default user name.
                 kwargs[constants.USER_NAME] = "test user"
                 return in_function(*args, **kwargs)
 
