@@ -623,6 +623,21 @@ export default {
     min-width: 0px;
     margin-top: -5px;
   }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px var(--v-white-base);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--v-black-lighten3);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--v-black-lighten3);
+  }
 }
 
 .icon-border {
@@ -634,20 +649,5 @@ export default {
 
 ::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
   color: var(--v-black-lighten4) !important;
-}
-
-::-webkit-scrollbar {
-  width: 5px;
-}
-::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px var(--v-white-base);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--v-black-lighten3);
-  border-radius: 5px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--v-black-lighten3);
 }
 </style>

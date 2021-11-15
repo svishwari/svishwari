@@ -33,6 +33,9 @@ client["users"].markFavorite = (resourceId, entityType) => {
 client["users"].clearFavorite = (resourceId, entityType) => {
   return http.delete(`users/${entityType}/${resourceId}/favorite`)
 }
+client["users"].contactUs = (data) => {
+  return http.post("users/contact-us", data)
+}
 //#endregion
 
 //#region Customers
