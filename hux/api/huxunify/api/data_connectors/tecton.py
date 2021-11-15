@@ -81,7 +81,7 @@ def map_model_response(response: dict) -> List[dict]:
             api_c.STATUS: api_c.MODEL_STATUS_MAPPING.get(
                 feature[8], api_c.STATUS_PENDING
             ),
-            api_c.LATEST_VERSION: feature[9],
+            api_c.LATEST_VERSION: feature[10],
             api_c.PREDICTION_WINDOW: int(feature[3]),
             api_c.PAST_VERSION_COUNT: 0,
         }
