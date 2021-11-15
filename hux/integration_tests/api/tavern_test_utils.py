@@ -1,6 +1,7 @@
 """Purpose of this file is to house external function utilities needed for
 tavern integration tests.
 """
+from datetime import datetime
 from typing import Union
 from box import Box
 
@@ -149,3 +150,16 @@ def get_destination_by_name(
         if destination["name"] == destination_name:
             return Box({"destination": destination})
     return None
+
+
+def get_timestamp() -> Union[Box, None]:
+    """ Purpose of this function is to get a timestamp string
+
+    Returns:
+        Box: timestamp in the format: DD-MMM-YYYY (HH:MM::SS.MICROS)
+
+    """
+
+    timestamp = datetime.now().strftime("%d-%b-%Y--(%H:%M:%S.%f)")
+
+    return Box({"timestamp": timestamp})

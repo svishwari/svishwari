@@ -304,6 +304,12 @@ includes:
   - !include common.yaml
 
 stages:
+#  - name: Get timestamp
+#    response:
+#      save:
+#        $ext:
+#          function: tavern_test_utils:get_timestamp
+
   - name: Get destinations and save facebook destination object
 
     request:
@@ -344,7 +350,7 @@ stages:
         content-type: application/json
         Authorization: "Bearer {token}"
       json:
-        name: "TAVERN_TEST_AUDIENCE_UPDATED"
+        name: "TAVERN_TEST_AUDIENCE_UPDATED" # _{timestamp}
         destinations:
           - id: "{destination.id}"
             delivery_platform_config:
