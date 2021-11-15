@@ -8,7 +8,7 @@ from requests_mock import Mocker
 from bson import json_util
 from hypothesis import given, strategies as st
 
-from huxunify.api import constants
+from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors import tecton
 from huxunify.api.exceptions.integration_api_exceptions import (
@@ -88,11 +88,11 @@ class TectonTest(TestCase):
 
         # test correct payload sent
         self.assertDictEqual(
-            request_mocker.last_request.json(), constants.MODEL_LIST_PAYLOAD
+            request_mocker.last_request.json(), api_c.MODEL_LIST_PAYLOAD
         )
 
-        self.assertEqual(models[0][constants.LATEST_VERSION], "0.2.4")
-        self.assertEqual(models[0][constants.PAST_VERSION_COUNT], 0)
+        self.assertEqual(models[0][api_c.LATEST_VERSION], "0.2.4")
+        self.assertEqual(models[0][api_c.PAST_VERSION_COUNT], 0)
 
     @requests_mock.Mocker()
     def test_map_model_performance_response_ltv(self, request_mocker: Mocker):
@@ -111,9 +111,7 @@ class TectonTest(TestCase):
             headers=self.config.TECTON_API_HEADERS,
         )
 
-        model = tecton.get_model_performance_metrics(
-            2, constants.LTV, "21.7.30"
-        )
+        model = tecton.get_model_performance_metrics(2, api_c.LTV, "21.7.30")
 
         # test that it was actually called and only once
         self.assertEqual(request_mocker.call_count, 1)
@@ -126,12 +124,12 @@ class TectonTest(TestCase):
         self.assertDictEqual(
             model,
             {
-                constants.ID: 2,
-                constants.RMSE: 215.5,
-                constants.AUC: -1,
-                constants.PRECISION: -1,
-                constants.RECALL: -1,
-                constants.CURRENT_VERSION: "21.7.30",
+                api_c.ID: 2,
+                api_c.RMSE: 215.5,
+                api_c.AUC: -1,
+                api_c.PRECISION: -1,
+                api_c.RECALL: -1,
+                api_c.CURRENT_VERSION: "21.7.30",
             },
         )
 
@@ -156,7 +154,7 @@ class TectonTest(TestCase):
         )
 
         model = tecton.get_model_performance_metrics(
-            1, constants.UNSUBSCRIBE, "21.7.31"
+            1, api_c.UNSUBSCRIBE, "21.7.31"
         )
 
         # test that it was actually called and only once
@@ -171,12 +169,12 @@ class TectonTest(TestCase):
         self.assertDictEqual(
             model,
             {
-                constants.ID: 1,
-                constants.RMSE: -1,
-                constants.AUC: 0.85,
-                constants.PRECISION: 0.71,
-                constants.RECALL: 0.58,
-                constants.CURRENT_VERSION: "21.7.31",
+                api_c.ID: 1,
+                api_c.RMSE: -1,
+                api_c.AUC: 0.85,
+                api_c.PRECISION: 0.71,
+                api_c.RECALL: 0.58,
+                api_c.CURRENT_VERSION: "21.7.31",
             },
         )
 
@@ -202,7 +200,7 @@ class TectonTest(TestCase):
 
         self.assertFalse(
             tecton.get_model_performance_metrics(
-                1, constants.UNSUBSCRIBE, "21.7.31"
+                1, api_c.UNSUBSCRIBE, "21.7.31"
             )
         )
 
@@ -297,7 +295,7 @@ class TectonTest(TestCase):
 
         self.assertTrue(model_features)
         self.assertTrue(
-            all((feature[constants.SCORE] < 0 for feature in model_features))
+            all((feature[api_c.SCORE] < 0 for feature in model_features))
         )
 
     def test_lift_chart(self):
@@ -317,15 +315,15 @@ class TectonTest(TestCase):
         self.assertDictEqual(
             lift_data[-1],
             {
-                constants.BUCKET: 100,
-                constants.ACTUAL_VALUE: 2602,
-                constants.ACTUAL_LIFT: 1,
-                constants.PREDICTED_LIFT: 1.0000000895,
-                constants.PREDICTED_VALUE: 2726.7827,
-                constants.PROFILE_COUNT: 95369,
-                constants.ACTUAL_RATE: 0.0272834988,
-                constants.PREDICTED_RATE: 0.0285919189,
-                constants.PROFILE_SIZE_PERCENT: 0,
+                api_c.BUCKET: 100,
+                api_c.ACTUAL_VALUE: 2602,
+                api_c.ACTUAL_LIFT: 1,
+                api_c.PREDICTED_LIFT: 1.0000000895,
+                api_c.PREDICTED_VALUE: 2726.7827,
+                api_c.PROFILE_COUNT: 95369,
+                api_c.ACTUAL_RATE: 0.0272834988,
+                api_c.PREDICTED_RATE: 0.0285919189,
+                api_c.PROFILE_SIZE_PERCENT: 0,
             },
         )
 
@@ -359,7 +357,7 @@ class TectonTest(TestCase):
             headers=self.config.TECTON_API_HEADERS,
         )
 
-        drift_data = tecton.get_model_drift(2, constants.LTV, models)
+        drift_data = tecton.get_model_drift(2, api_c.LTV, models)
 
         # test that it was actually called and only once
         self.assertEqual(request_mocker.call_count, 2)
@@ -371,8 +369,8 @@ class TectonTest(TestCase):
         self.assertDictEqual(
             drift_data[-1],
             {
-                constants.DRIFT: 215.5,
-                constants.RUN_DATE: datetime(2021, 7, 30, 0, 0),
+                api_c.DRIFT: 215.5,
+                api_c.RUN_DATE: datetime(2021, 7, 30, 0, 0),
             },
         )
 

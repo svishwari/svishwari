@@ -11,7 +11,8 @@ from huxunify.api.route.utils import (
     update_metrics,
     Validation,
 )
-from huxunify.api import constants
+
+from huxunify.api import constants as api_c
 
 
 class TestRouteUtils(TestCase):
@@ -41,11 +42,11 @@ class TestRouteUtils(TestCase):
 
         target_id = ObjectId()
         perf_metric = update_metrics(
-            target_id, "test_name", [], [], constants.DISPLAY_ADS
+            target_id, "test_name", [], [], api_c.DISPLAY_ADS
         )
 
-        self.assertEqual(str(target_id), perf_metric.get(constants.ID))
-        self.assertEqual("test_name", perf_metric.get(constants.NAME))
+        self.assertEqual(str(target_id), perf_metric.get(api_c.ID))
+        self.assertEqual("test_name", perf_metric.get(api_c.NAME))
 
     def test_validate_integer(self):
         """Tests the Validation class static method validate_integer."""
