@@ -1,7 +1,7 @@
 import Vue from "vue"
 import api from "@/api/client"
 import { handleError } from "@/utils"
-import { handleSuccess } from "../../utils"
+import { handleSuccess } from "@/utils"
 
 const namespaced = true
 
