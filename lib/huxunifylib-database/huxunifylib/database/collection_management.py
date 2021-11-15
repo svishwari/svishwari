@@ -171,7 +171,7 @@ def get_document(
 
     query = {c.ID: document_id}
     if not include_deleted:
-        query[c.DELETED]: False
+        query[c.DELETED] = False
 
     try:
         return coll.find_one(query)
