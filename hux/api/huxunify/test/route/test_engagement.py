@@ -653,7 +653,7 @@ class TestEngagementRoutes(TestCase):
         self.lookalike_audience = create_delivery_platform_lookalike_audience(
             self.database,
             self.delivery_platform[db_c.ID],
-            self.audiences[0][db_c.ID],
+            self.audiences[0],
             "My lookalike audience 1",
             0.01,
             "US",

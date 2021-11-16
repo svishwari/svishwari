@@ -693,7 +693,7 @@ def update_delivery_platform(
 def create_delivery_platform_lookalike_audience(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
-    source_audience_id: ObjectId,
+    source_audience: dict,
     name: str,
     audience_size_percentage: float,
     country: str = None,
@@ -706,7 +706,7 @@ def create_delivery_platform_lookalike_audience(
     Args:
         database (DatabaseClient): A database client.
         delivery_platform_id (ObjectId): The Mongo ID of delivery platform.
-        source_audience_id (ObjectId): The Mongo ID of source audience.
+        source_audience (dict): The source audience.
         name (str): Name of the lookalike audience.
         audience_size_percentage (float): Size percentage of the lookalike
             audience.
@@ -733,6 +733,9 @@ def create_delivery_platform_lookalike_audience(
     if get_delivery_platform(database, delivery_platform_id) is None:
         raise de.InvalidID(delivery_platform_id)
 
+    # set the source_audience_id from source_audience
+    source_audience_id = source_audience[c.ID]
+
     # Validate source audience id
     if am.get_audience_config(database, source_audience_id) is None:
         raise de.InvalidID(source_audience_id)
@@ -754,6 +757,11 @@ def create_delivery_platform_lookalike_audience(
         c.DELIVERY_PLATFORM_ID: delivery_platform_id,
         c.LOOKALIKE_SOURCE_AUD_ID: source_audience_id,
         c.LOOKALIKE_AUD_NAME: name,
+        c.LOOKALIKE_SOURCE_AUD_NAME: source_audience.get(c.NAME, ""),
+        c.LOOKALIKE_SOURCE_AUD_SIZE: source_audience.get(c.SIZE, 0),
+        c.LOOKALIKE_SOURCE_AUD_FILTERS: source_audience.get(
+            c.AUDIENCE_FILTERS, []
+        ),
         c.LOOKALIKE_AUD_COUNTRY: country,
         c.LOOKALIKE_AUD_SIZE_PERCENTAGE: audience_size_percentage,
         c.DELETED: False,

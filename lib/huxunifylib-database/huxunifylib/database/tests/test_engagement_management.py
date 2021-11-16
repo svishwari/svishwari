@@ -474,7 +474,7 @@ class TestEngagementManagement(unittest.TestCase):
         lookalike_audience = dpm.create_delivery_platform_lookalike_audience(
             self.database,
             delivery_platform_id,
-            source_audience_id,
+            source_audience,
             "LA Audience",
             0.55,
         )
