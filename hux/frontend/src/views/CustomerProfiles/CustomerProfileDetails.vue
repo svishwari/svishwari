@@ -127,9 +127,12 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.getCustomer(this.id)
-    this.getCustomerEvent()
-    this.loading = false
+    try {
+      await this.getCustomer(this.id)
+      this.getCustomerEvent()
+    } finally {
+      this.loading = false
+    }
   },
 
   methods: {
@@ -139,8 +142,11 @@ export default {
     }),
     async getCustomerEvent() {
       this.loadingCustomerEvents = true
-      await this.getEvents(this.id)
-      this.loadingCustomerEvents = false
+      try {
+        await this.getEvents(this.id)
+      } finally {
+        this.loadingCustomerEvents = false
+      }
     },
   },
 }

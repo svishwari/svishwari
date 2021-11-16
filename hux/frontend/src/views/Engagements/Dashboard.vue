@@ -299,9 +299,12 @@ export default {
   async mounted() {
     this.loading = true
     this.engagementId = this.getRouteId
-    await this.loadEngagement(this.getRouteId)
-    this.currentSchedule = this.engagementList.delivery_schedule?.schedule
-    this.loading = false
+    try {
+      await this.loadEngagement(this.getRouteId)
+    } finally {
+      this.currentSchedule = this.engagementList.delivery_schedule?.schedule
+      this.loading = false
+    }
   },
   methods: {
     ...mapActions({
@@ -318,8 +321,11 @@ export default {
     async refreshEntity() {
       this.loading = true
       this.$root.$emit("refresh-notifications")
-      await this.loadEngagement(this.engagementId)
-      this.loading = false
+      try {
+        await this.loadEngagement(this.engagementId)
+      } finally {
+        this.loading = false
+      }
       this.$forceUpdate()
       this.$nextTick(() => {
         this.$forceUpdate()
@@ -378,75 +384,93 @@ export default {
     async triggerAttachDestination(event) {
       this.loadingAudiences = true
       const payload = event.destination
-      await this.attachAudienceDestination({
-        engagementId: this.engagementId,
-        audienceId: this.selectedAudienceId,
-        data: payload,
-      })
-      await this.loadEngagement(this.engagementId)
+      try {
+        await this.attachAudienceDestination({
+          engagementId: this.engagementId,
+          audienceId: this.selectedAudienceId,
+          data: payload,
+        })
+        await this.loadEngagement(this.engagementId)
+      } catch (error) {
+        this.loadingAudiences = false
+      }
     },
     async triggerAttachAudiences(audiences) {
       this.loadingAudiences = true
-      if (Object.keys(audiences.added).length > 0) {
-        const addPayload = {
-          audiences: Object.values(audiences.added).map((aud) => ({
-            id: aud.id,
-            destinations: [],
-          })),
+      try {
+        if (Object.keys(audiences.added).length > 0) {
+          const addPayload = {
+            audiences: Object.values(audiences.added).map((aud) => ({
+              id: aud.id,
+              destinations: [],
+            })),
+          }
+          await this.attachAudience({
+            engagementId: this.engagementId,
+            data: addPayload,
+          })
         }
-        await this.attachAudience({
-          engagementId: this.engagementId,
-          data: addPayload,
-        })
-      }
-      if (Object.keys(audiences.removed).length > 0) {
-        if (process.env.NODE_ENV === "development") {
-          for (const aud of Object.values(audiences.removed)) {
-            const removePayload = { audience_ids: [] }
-            removePayload.audience_ids.push(aud.id)
+        if (Object.keys(audiences.removed).length > 0) {
+          if (process.env.NODE_ENV === "development") {
+            for (const aud of Object.values(audiences.removed)) {
+              const removePayload = { audience_ids: [] }
+              removePayload.audience_ids.push(aud.id)
+              await this.detachAudience({
+                engagementId: this.engagementId,
+                data: removePayload,
+              })
+            }
+          } else {
+            const removePayload = {
+              audience_ids: Object.values(audiences.removed).map(
+                (aud) => aud.id
+              ),
+            }
+
             await this.detachAudience({
               engagementId: this.engagementId,
               data: removePayload,
             })
           }
-        } else {
-          const removePayload = {
-            audience_ids: Object.values(audiences.removed).map((aud) => aud.id),
-          }
-
-          await this.detachAudience({
-            engagementId: this.engagementId,
-            data: removePayload,
-          })
         }
+        await this.loadEngagement(this.engagementId)
+      } catch (error) {
+        this.loadingAudiences = false
       }
-      await this.loadEngagement(this.engagementId)
     },
     async triggerAttachAudience(aud) {
       this.loadingAudiences = true
-      const payload = { audiences: [] }
-      payload.audiences.push({
-        id: aud.id,
-        destinations:
-          aud.destinations.map((dest) => ({
-            id: dest.id,
-          })) || [],
-      })
-      await this.attachAudience({
-        engagementId: this.engagementId,
-        data: payload,
-      })
-      await this.loadEngagement(this.engagementId)
+      try {
+        const payload = { audiences: [] }
+        payload.audiences.push({
+          id: aud.id,
+          destinations:
+            aud.destinations.map((dest) => ({
+              id: dest.id,
+            })) || [],
+        })
+        await this.attachAudience({
+          engagementId: this.engagementId,
+          data: payload,
+        })
+        await this.loadEngagement(this.engagementId)
+      } catch (error) {
+        this.loadingAudiences = false
+      }
     },
     async triggerDetachAudiences(aud) {
       this.loadingAudiences = true
-      const payload = { audience_ids: [] }
-      payload.audience_ids.push(aud.id)
-      await this.detachAudience({
-        engagementId: this.engagementId,
-        data: payload,
-      })
-      await this.loadEngagement(this.engagementId)
+      try {
+        const payload = { audience_ids: [] }
+        payload.audience_ids.push(aud.id)
+        await this.detachAudience({
+          engagementId: this.engagementId,
+          data: payload,
+        })
+        await this.loadEngagement(this.engagementId)
+      } catch (error) {
+        this.loadingAudiences = false
+      }
     },
     // Drawer Section Ends
     fetchKey(obj, key) {
@@ -460,11 +484,14 @@ export default {
     },
     async fetchCampaignPerformanceDetails(type) {
       this.loadingTab = true
-      await this.getAudiencePerformanceById({
-        type: type,
-        id: this.engagementList.id,
-      })
-      this.loadingTab = false
+      try {
+        await this.getAudiencePerformanceById({
+          type: type,
+          id: this.engagementList.id,
+        })
+      } finally {
+        this.loadingTab = false
+      }
     },
     getTooltip(summaryCard) {
       const acronymObject = this.Tooltips.filter(

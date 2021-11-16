@@ -989,8 +989,11 @@ export default {
     },
     async fetchDemographics() {
       this.loadingDemographics = true
-      await this.getDemographics(this.$route.params.id)
-      this.loadingDemographics = false
+      try {
+        await this.getDemographics(this.$route.params.id)
+      } finally {
+        this.loadingDemographics = false
+      }
     },
     async initiateFileDownload(option) {
       const audienceName = this.audience.name
@@ -1014,8 +1017,11 @@ export default {
     async refreshEntity() {
       this.loading = true
       this.$root.$emit("refresh-notifications")
-      await this.loadAudienceInsights()
-      this.loading = false
+      try {
+        await this.loadAudienceInsights()
+      } finally {
+        this.loading = false
+      }
     },
     async onConfirmAction() {
       this.showConfirmModal = false
@@ -1272,27 +1278,30 @@ export default {
     async loadAudienceInsights() {
       this.loading = true
       this.refreshAudience = true
-      this.getAudiencesRules()
-      await this.getAudienceById(this.$route.params.id)
-      const _getAudience = this.getAudience(this.$route.params.id)
-      if (_getAudience && this.refreshAudience) {
-        this.audienceData = JSON.parse(JSON.stringify(_getAudience))
+      try {
+        this.getAudiencesRules()
+        await this.getAudienceById(this.$route.params.id)
+        const _getAudience = this.getAudience(this.$route.params.id)
+        if (_getAudience && this.refreshAudience) {
+          this.audienceData = JSON.parse(JSON.stringify(_getAudience))
+        }
+        if (this.audience && this.audience.is_lookalike) {
+          this.audienceHistory = this.audience.audienceHistory.filter(
+            (e) => e.title == "Created"
+          )
+        } else {
+          this.audienceHistory = this.audience.audienceHistory
+        }
+        this.relatedEngagements = this.audience.engagements
+        this.lookalikeAudiences = this.audience.lookalike_audiences
+        this.isLookalikable = this.audience.lookalikeable
+        this.is_lookalike = this.audience.is_lookalike
+        this.items[1].text = this.audience.name
+        this.getDestinations()
+      } finally {
+        this.refreshAudience = false
+        this.loading = false
       }
-      if (this.audience && this.audience.is_lookalike) {
-        this.audienceHistory = this.audience.audienceHistory.filter(
-          (e) => e.title == "Created"
-        )
-      } else {
-        this.audienceHistory = this.audience.audienceHistory
-      }
-      this.relatedEngagements = this.audience.engagements
-      this.lookalikeAudiences = this.audience.lookalike_audiences
-      this.isLookalikable = this.audience.lookalikeable
-      this.is_lookalike = this.audience.is_lookalike
-      this.items[1].text = this.audience.name
-      this.getDestinations()
-      this.refreshAudience = false
-      this.loading = false
     },
     sizeHandler() {
       if (this.$refs.genderChart) {
