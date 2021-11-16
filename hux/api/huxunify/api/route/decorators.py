@@ -238,7 +238,7 @@ def requires_access_levels(access_levels: list) -> object:
 
         @wraps(in_function)
         def decorator(*args, **kwargs) -> object:
-            """Decorator for  validating access level and returning a
+            """Decorator for validating access level and returning a
             user object.
 
             Args:

@@ -24,6 +24,7 @@ from huxunify.api.data_connectors.okta import (
     get_user_info,
     get_token_from_request,
 )
+from huxunify.test import constants as t_c
 
 
 VALID_RESPONSE = {
@@ -453,7 +454,7 @@ class OktaTest(TestCase):
         request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
 
         with Flask("valid_test").test_request_context(
-            "/", headers={"Authorization": "Bearer 12345678"}
+            "/", headers=t_c.AUTH_HEADER
         ):
 
             @requires_access_levels([constants.VIEWER_LEVEL])
@@ -489,7 +490,7 @@ class OktaTest(TestCase):
         request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
 
         with Flask("valid_test").test_request_context(
-            "/", headers={"Authorization": "Bearer 12345678"}
+            "/", headers=t_c.AUTH_HEADER
         ):
 
             @requires_access_levels(
@@ -540,7 +541,7 @@ class OktaTest(TestCase):
         mock_user_patch.start()
 
         with Flask("valid_test").test_request_context(
-            "/", headers={"Authorization": "Bearer 12345678"}
+            "/", headers=t_c.AUTH_HEADER
         ):
 
             @requires_access_levels([constants.ADMIN_LEVEL])
@@ -580,7 +581,7 @@ class OktaTest(TestCase):
         )
 
         with Flask("valid_test").test_request_context(
-            "/", headers={"Authorization": "Bearer 12345678"}
+            "/", headers=t_c.AUTH_HEADER
         ):
 
             @requires_access_levels([])
