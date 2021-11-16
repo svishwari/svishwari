@@ -31,6 +31,7 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+    get_user_name,
 )
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
@@ -59,7 +60,7 @@ from huxunify.api.route.utils import (
     add_chart_legend,
     get_start_end_dates,
     get_db_client,
-    get_user_from_db,
+    get_user_doc,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import (
@@ -462,7 +463,8 @@ class CustomerProfileSearch(SwaggerView):
     # pylint: disable=no-self-use
     # pylint: disable=unused-argument
     @api_error_handler()
-    def get(self, hux_id: str) -> Tuple[dict, int]:
+    @get_user_name()
+    def get(self, hux_id: str, user_name: str) -> Tuple[dict, int]:
         """Retrieves a customer profile.
 
         ---
@@ -470,6 +472,7 @@ class CustomerProfileSearch(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
+            user_name (str): User Name
             hux_id (str): ID of the customer.
 
         Returns:
@@ -484,7 +487,7 @@ class CustomerProfileSearch(SwaggerView):
         okta_id = introspect_token(access_token).get(api_c.OKTA_USER_ID, None)
         if not okta_id:
             return {"message": "Access Denied"}, HTTPStatus.UNAUTHORIZED
-        user_doc = get_user_from_db(access_token)
+        user_doc = get_user_doc(user_name)
         if not user_doc[api_c.USER_PII_ACCESS] and not redact:
             return {
                 "message": "Access Denied for PII Access"

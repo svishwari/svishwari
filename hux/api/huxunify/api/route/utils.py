@@ -512,6 +512,26 @@ def get_user_favorites(
     return user[0].get(constants.FAVORITES, {}).get(component_name, [])
 
 
+def get_user_doc(database: DatabaseClient, user_name: str) -> dict:
+    """Get user doc based on user_name
+
+    Args:
+        database (DatabaseClient): A database client.
+        user_name (str): Name of the user.
+
+
+    Returns:
+        dict: User doc
+    """
+
+    user = get_all_users(database, {db_c.USER_DISPLAY_NAME: user_name})
+    if not user:
+        return []
+
+    # take the first one,
+    return user[0]
+
+
 def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
     """Get the corresponding user matching the okta access token from the DB.
     Create/Set a new user in DB if an user matching the valid okta access token
