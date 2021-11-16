@@ -4,45 +4,48 @@
       <h3 class="text-h2">Events</h3>
     </template>
     <template #footer-left>
-        <div class="d-flex align-baseline">
-          <div class="body-2 pl-4">{{ events.length }} results</div>
-        </div>
+      <div class="d-flex align-baseline">
+        <div class="body-2 pl-4">{{ events.length }} results</div>
+      </div>
     </template>
 
     <template #default>
       <div class="header-break"></div>
       <v-progress-linear :active="loading" :indeterminate="loading" />
       <hux-data-table
-            :columns="tableColumns"
-            :data-items="events"
-            class="notifications-table"
-            sort-column="date"
-            sort-desc
+        :columns="tableColumns"
+        :data-items="events"
+        class="notifications-table"
+        sort-column="date"
+        sort-desc
+      >
+        <template #row-item="{ item }">
+          <td
+            v-for="header in tableColumns"
+            :key="header.value"
+            class="text-body-1 py-2 mw-100 text-truncate"
+            data-e2e="customerEventRow"
           >
-            <template #row-item="{ item }">
-              <td
-                v-for="header in tableColumns"
-                :key="header.value"
-                class="text-body-1 py-2 mw-100 text-truncate"
-                data-e2e="customerEventRow"
-              >
-                <template v-if="header.value == 'event_type'" class="d-flex align-center">
-                  <icon
-                  :type="item[header.value]"
-                  color="primary"
-                  :size="24"
-                  class="mr-1"
-                  />
-                  <span class="position-event-center">
-                  {{ humanize(item[header.value]) }}
-                  </span>
-                </template>
-                <template v-if="header.value == 'date'">
-                  {{ item[header.value] | Date("MM/DD/YYYY")}}
-                </template>
-              </td>
+            <template
+              v-if="header.value == 'event_type'"
+              class="d-flex align-center"
+            >
+              <icon
+                :type="item[header.value]"
+                color="primary"
+                :size="24"
+                class="mr-1"
+              />
+              <span class="position-event-center">
+                {{ humanize(item[header.value]) }}
+              </span>
             </template>
-          </hux-data-table>
+            <template v-if="header.value == 'date'">
+              {{ item[header.value] | Date("MM/DD/YYYY") }}
+            </template>
+          </td>
+        </template>
+      </hux-data-table>
     </template>
   </drawer>
 </template>
@@ -66,7 +69,6 @@ export default {
     events: {
       type: Object,
       required: true,
-      default: [],
     },
     value: {
       type: Boolean,
@@ -95,11 +97,6 @@ export default {
     }
   },
 
-  computed: {
-    ...mapGetters({
-    }),
-  },
-
   watch: {
     value: function () {
       this.localDrawer = this.value
@@ -109,15 +106,12 @@ export default {
     },
   },
 
-  mounted() {
-  },
-
   methods: {
     humanize(str) {
-      str=_.capitalize(str)
-      const frags = _.split(str,'_')
-      return _.join(frags,' ')
-    }
+      str = _.capitalize(str)
+      const frags = _.split(str, "_")
+      return _.join(frags, " ")
+    },
   },
 }
 </script>
@@ -161,5 +155,4 @@ export default {
 ::v-deep .v-toolbar__title {
   padding-left: 10px !important;
 }
-
 </style>

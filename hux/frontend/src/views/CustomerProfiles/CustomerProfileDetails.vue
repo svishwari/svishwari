@@ -38,28 +38,28 @@
                 </span>
               </h3>
               <v-btn
-              text
-              min-width="80"
-              class="
-                d-flex
-                align-right
-                primary--text
-                text-decoration-none
-                pl-0
-                pr-0
-                idr-link
-                text-body-1
-              "
-              @click="toggleCustomerEventsDrawer()"
-              data-e2e="eventsDrawerButton"
+                text
+                min-width="80"
+                class="
+                  d-flex
+                  align-right
+                  primary--text
+                  text-decoration-none
+                  pl-0
+                  pr-0
+                  idr-link
+                  text-body-1
+                "
+                data-e2e="eventsDrawerButton"
+                @click="toggleCustomerEventsDrawer()"
               >
-              <icon
-                type="events-drawer"
-                color="primary"
-                :size="18"
-                class="mr-1"
-              />
-              Event Details
+                <icon
+                  type="events-drawer"
+                  color="primary"
+                  :size="18"
+                  class="mr-1"
+                />
+                Event Details
               </v-btn>
             </v-card-title>
             <v-progress-linear
@@ -74,7 +74,10 @@
           </v-card>
         </v-col>
       </v-row>
-      <customer-events-drawer v-model="customerEventsDrawer" :events="eventsForTable"/>
+      <customer-events-drawer
+        v-model="customerEventsDrawer"
+        :events="eventsForTable"
+      />
     </div>
   </div>
 </template>
@@ -155,25 +158,24 @@ export default {
     },
 
     eventsForTable() {
-      return this.events.reduce(function (
-        eventObject,
-        event
-      ) {
-          let index=0
-          let temp=[]
-          const event_type_count = event["event_type_counts"]
-            Object.keys(event_type_count).forEach((key) => {
-              for(index=0;index<event_type_count[key];index++){
-                temp.push({"event_type":key,"date":event["date"]})
-              }
-          })
-          temp = _.sortBy(temp, 
-          [function(o) { return o.event_type; }]);
-        eventObject=eventObject.concat(temp)
+      return this.events.reduce(function (eventObject, event) {
+        let index = 0
+        let temp = []
+        const event_type_count = event["event_type_counts"]
+        Object.keys(event_type_count).forEach((key) => {
+          for (index = 0; index < event_type_count[key]; index++) {
+            temp.push({ event_type: key, date: event["date"] })
+          }
+        })
+        temp = _.sortBy(temp, [
+          function (o) {
+            return o.event_type
+          },
+        ])
+        eventObject = eventObject.concat(temp)
         return eventObject
-      },
-      [])
-    }
+      }, [])
+    },
   },
 
   async mounted() {
@@ -203,9 +205,9 @@ export default {
       this.customerEventsDrawer = !this.customerEventsDrawer
     },
     humanize(str) {
-        var frags = str.split('_');
-        frags[0] = frags[0].charAt(0).toUpperCase() + frags[0].slice(1);
-        return frags.join(' ');
+      var frags = str.split("_")
+      frags[0] = frags[0].charAt(0).toUpperCase() + frags[0].slice(1)
+      return frags.join(" ")
     },
   },
 }
