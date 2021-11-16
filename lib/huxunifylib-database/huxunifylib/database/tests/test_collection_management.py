@@ -104,8 +104,8 @@ class ConfigurationCollectionManagementTest(TestCase):
             collection=db_c.CONFIGURATIONS_COLLECTION,
         )
 
-        self.assertCountEqual(
-            self.configurations, configurations[db_c.DOCUMENTS]
+        self.assertEqual(
+            len(self.configurations), len(configurations[db_c.DOCUMENTS])
         )
 
         self.assertEqual(

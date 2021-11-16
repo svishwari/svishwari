@@ -368,6 +368,12 @@ class AudienceView(SwaggerView):
                 request.args.get(api_c.FAVORITES)
             ):
                 query_filter[db_c.ID] = {"$in": favorite_lookalike_audiences}
+
+            if request.args.get(api_c.WORKED_BY) and validation.validate_bool(
+                request.args.get(api_c.WORKED_BY)
+            ):
+                query_filter[api_c.WORKED_BY] = user_name
+
             lookalikes = cm.get_documents(
                 database,
                 db_c.LOOKALIKE_AUDIENCE_COLLECTION,

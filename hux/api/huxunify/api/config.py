@@ -125,7 +125,7 @@ class DevelopmentConfig(Config):
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
     )
-    TEST_AUTH_OVERRIDE = True
+    TEST_AUTH_OVERRIDE = False
 
 
 class PyTestConfig(Config):
