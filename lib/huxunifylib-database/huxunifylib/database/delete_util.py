@@ -69,12 +69,15 @@ def get_docs_bulk(
 def delete_lookalike_audience(
     database: DatabaseClient,
     lookalike_audience_id: ObjectId,
+    soft_delete: bool = True,
 ) -> bool:
-    """A function to soft delete a delivery platform lookalike audience.
+    """A function to soft or hard delete a lookalike audience.
 
     Args:
         database (DatabaseClient): A database client.
         lookalike_audience_id (ObjectId): The Mongo ID of lookalike audience.
+        soft_delete (bool): Flag indicating if the document has to be either
+            soft or hard deleted from lookalike_audiences collection.
 
     Returns:
         bool: A flag indicating successful deletion.
@@ -83,16 +86,24 @@ def delete_lookalike_audience(
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
 
-    update_doc = {c.DELETED: True}
-
     try:
-        if collection.find_one_and_update(
-            {c.ID: lookalike_audience_id},
-            {"$set": update_doc},
-            upsert=False,
-            return_document=pymongo.ReturnDocument.AFTER,
-        ):
-            return True
+        if soft_delete:
+            update_doc = {c.DELETED: True}
+
+            if collection.find_one_and_update(
+                {c.ID: lookalike_audience_id},
+                {"$set": update_doc},
+                upsert=False,
+                return_document=pymongo.ReturnDocument.AFTER,
+            ):
+                return True
+        else:
+            return (
+                collection.delete_one(
+                    {c.ID: lookalike_audience_id}
+                ).deleted_count
+                > 0
+            )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

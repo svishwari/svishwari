@@ -99,7 +99,9 @@ class Config:
         api_c.JSON_SORT_KEYS_CONST, default=False, cast=bool
     )
 
-    TEST_AUTH_OVERRIDE = False
+    TEST_AUTH_OVERRIDE = config(
+        api_c.TEST_AUTH_OVERRIDE, default=False, cast=bool
+    )
 
 
 class ProductionConfig(Config):

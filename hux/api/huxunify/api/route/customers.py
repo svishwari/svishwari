@@ -130,6 +130,10 @@ class CustomerOverview(SwaggerView):
         if not customer_overview:
             token_response = get_token_from_request(request)
             customer_overview = get_customers_overview(token_response[0])
+            customer_overview[api_c.GEOGRAPHICAL] = get_demographic_by_state(
+                token_response[0],
+                api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER[api_c.AUDIENCE_FILTERS],
+            )
 
             # cache
             create_cache_entry(
