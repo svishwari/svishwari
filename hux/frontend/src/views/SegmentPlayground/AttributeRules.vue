@@ -192,7 +192,12 @@
           :ripple="false"
           @click.native="addNewSection()"
         >
-          +
+          <tooltip>
+            <template #label-content> + </template>
+            <template #hover-content>
+              <span class="text-body-2"> Add a new section </span>
+            </template>
+          </tooltip>
         </v-chip>
       </div>
     </v-col>
@@ -208,6 +213,7 @@ import HuxSwitch from "../../components/common/Switch.vue"
 import TextField from "../../components/common/TextField.vue"
 import Icon from "@/components/common/Icon"
 import HuxAutocomplete from "../../components/common/HuxAutocomplete.vue"
+import Tooltip from "../../components/common/Tooltip.vue"
 
 const NEW_RULE_SECTION = {
   id: "",
@@ -235,6 +241,7 @@ export default {
     HuxDensityChart,
     Icon,
     HuxAutocomplete,
+    Tooltip,
   },
   props: {
     rules: {
@@ -625,7 +632,7 @@ export default {
           .v-text-field {
             .v-input__slot {
               min-height: inherit;
-              height: 32px;
+              height: 40px;
               border: solid 1px var(--v-black-lighten3) !important;
               border-radius: 0;
               margin-bottom: 0;
