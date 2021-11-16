@@ -1252,6 +1252,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(
             str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID]
         )
+        self.assertEqual(audiences[0][db_c.CREATED_BY], self.user_name)
         self.assertEqual(
             str(self.lookalike_audience_doc[db_c.ID]), audiences[2][api_c.ID]
         )
