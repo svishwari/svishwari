@@ -60,6 +60,7 @@
                 subtitle="Created On"
                 :high-level="true"
                 :interactable="false"
+                :title-above="true"
               >
                 <template #title>
                   <tooltip>
@@ -81,6 +82,7 @@
                 subtitle="2"
                 :high-level="true"
                 :interactable="false"
+                :title-above="true"
               >
                 <template #title>
                   <tooltip>
@@ -102,6 +104,7 @@
                 subtitle="AUC"
                 :high-level="true"
                 :interactable="false"
+                :title-above="true"
               >
                 <template #title>
                   <tooltip>
@@ -123,6 +126,7 @@
                 subtitle="Precision"
                 :high-level="true"
                 :interactable="false"
+                :title-above="true"
               >
                 <template #title>
                   <tooltip>
@@ -144,6 +148,7 @@
                 subtitle="Recall"
                 :high-level="true"
                 :interactable="false"
+                :title-above="true"
               >
                 <template #title>
                   <tooltip>
@@ -165,6 +170,7 @@
                 subtitle="Current version"
                 :high-level="true"
                 :interactable="false"
+                :title-above="true"
               >
                 <template #title>
                   <tooltip>
