@@ -54,7 +54,7 @@
               <metric-card
                 v-if="key === 'created_on'"
                 class="model-dashboard__card px-6 py-3 mr-2"
-                :width="180"
+                :min-width="180"
                 :height="80"
                 :title="metric"
                 subtitle="Created On"
@@ -75,7 +75,7 @@
               <metric-card
                 v-if="key === 'rmse' && metric > 0"
                 class="model-dashboard__card px-6 py-3 mr-2"
-                :width="122"
+                :min-width="122"
                 :height="80"
                 :title="metric"
                 subtitle="2"
@@ -96,7 +96,7 @@
               <metric-card
                 v-if="key === 'auc' && metric > 0"
                 class="model-dashboard__card px-6 py-3 mr-2"
-                :width="122"
+                :min-width="122"
                 :height="80"
                 :title="metric"
                 subtitle="AUC"
@@ -117,7 +117,7 @@
               <metric-card
                 v-if="key === 'precision' && metric > 0"
                 class="model-dashboard__card px-6 py-3 mr-2"
-                :width="122"
+                :min-width="122"
                 :height="80"
                 :title="metric"
                 subtitle="Precision"
@@ -138,7 +138,7 @@
               <metric-card
                 v-if="key === 'recall' && metric > 0"
                 class="model-dashboard__card px-6 py-3 mr-2"
-                :width="122"
+                :min-width="122"
                 :height="80"
                 :title="metric"
                 subtitle="Recall"
@@ -159,7 +159,7 @@
               <metric-card
                 v-if="key === 'current_version'"
                 class="model-dashboard__card px-6 py-3 mr-2"
-                :width="152"
+                :min-width="152"
                 :height="80"
                 :title="metric"
                 subtitle="Current version"
