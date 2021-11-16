@@ -457,7 +457,7 @@ class OktaTest(TestCase):
             "/", headers=t_c.AUTH_HEADER
         ):
 
-            @requires_access_levels([constants.VIEWER_LEVEL])
+            @requires_access_levels([api_c.VIEWER_LEVEL])
             def demo_endpoint(user: dict):
                 """Demo endpoint.
 
@@ -493,9 +493,7 @@ class OktaTest(TestCase):
             "/", headers=t_c.AUTH_HEADER
         ):
 
-            @requires_access_levels(
-                [constants.ADMIN_LEVEL, constants.EDITOR_LEVEL]
-            )
+            @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
             def demo_endpoint(user: dict):
                 """Demo endpoint.
 
@@ -510,7 +508,7 @@ class OktaTest(TestCase):
 
             # pylint: disable=no-value-for-parameter
             self.assertTupleEqual(
-                (constants.INVALID_AUTH, HTTPStatus.UNAUTHORIZED),
+                (api_c.INVALID_AUTH, HTTPStatus.UNAUTHORIZED),
                 demo_endpoint(),
             )
 
@@ -544,7 +542,7 @@ class OktaTest(TestCase):
             "/", headers=t_c.AUTH_HEADER
         ):
 
-            @requires_access_levels([constants.ADMIN_LEVEL])
+            @requires_access_levels([api_c.ADMIN_LEVEL])
             def demo_endpoint(user: dict = None):
                 """Demo endpoint.
 
@@ -576,7 +574,7 @@ class OktaTest(TestCase):
             self.user_info_call,
             json={
                 **VALID_USER_RESPONSE,
-                db_c.USER_ROLE: constants.ADMIN_LEVEL.role,
+                db_c.USER_ROLE: api_c.ADMIN_LEVEL.role,
             },
         )
 
@@ -599,6 +597,6 @@ class OktaTest(TestCase):
 
             # pylint: disable=no-value-for-parameter
             self.assertTupleEqual(
-                (constants.INVALID_AUTH, HTTPStatus.UNAUTHORIZED),
+                (api_c.INVALID_AUTH, HTTPStatus.UNAUTHORIZED),
                 demo_endpoint(),
             )

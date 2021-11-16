@@ -249,12 +249,12 @@ def requires_access_levels(access_levels: list) -> object:
             """
 
             # override if flag set locally
-            if config("TEST_AUTH_OVERRIDE", cast=bool, default=False):
+            if get_config().TEST_AUTH_OVERRIDE:
                 # return a default user name
-                kwargs[constants.USER] = {
-                    constants.NAME: getpass.getuser(),
-                    constants.USER_ACCESS_LEVEL: db_c.USER_ROLE_ADMIN,
-                    constants.USER_PII_ACCESS: True,
+                kwargs[api_c.USER] = {
+                    api_c.NAME: getpass.getuser(),
+                    api_c.USER_ACCESS_LEVEL: db_c.USER_ROLE_ADMIN,
+                    api_c.USER_PII_ACCESS: True,
                 }
                 return in_function(*args, **kwargs)
 
@@ -277,15 +277,15 @@ def requires_access_levels(access_levels: list) -> object:
                 return user
 
             # check access level
-            access_level = constants.AccessLevel(user.get(db_c.USER_ROLE))
+            access_level = api_c.AccessLevel(user.get(db_c.USER_ROLE))
             if access_level not in access_levels:
                 logger.info(
                     "User has an invalid access level to access this resource."
                 )
-                return constants.INVALID_AUTH, HTTPStatus.UNAUTHORIZED
+                return api_c.INVALID_AUTH, HTTPStatus.UNAUTHORIZED
 
             # return found user
-            kwargs[constants.USER] = user
+            kwargs[api_c.USER] = user
 
             return in_function(*args, **kwargs)
 
