@@ -246,6 +246,12 @@ export default {
           break
       }
       console.log("getTime", getTime)
+       this.$emit("onSectionAction", {
+        getTime: this.$options.filters.Date(getTime, "YYYY-MM-DD"),
+        selctedAlertType: this.selctedAlertType,
+        selctedCategory: this.selctedCategory,
+        selctedUsers: this.selctedUsers,
+      })
     },
   },
 }

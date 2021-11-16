@@ -38,7 +38,11 @@
         </huxButton>
       </template>
     </page-header>
-    <alert-filter-drawer v-model="isFilterToggled" :users="getNotificationUsers"/>
+    <alert-filter-drawer
+      v-model="isFilterToggled"
+      :users="getNotificationUsers"
+      @onSectionAction="alertfunction"
+    />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <v-row
       v-if="notificationData.length > 0 && !loading"
@@ -237,11 +241,7 @@ export default {
       loading: false,
       enableLazyLoad: false,
       lastBatch: 0,
-      batchDetails: {
-        batchSize: 25,
-        batchNumber: 1,
-        isLazyLoad: false,
-      },
+      batchDetails: {},
       isFilterToggled: false,
       notificationId: null,
     }
@@ -264,6 +264,7 @@ export default {
 
   async mounted() {
     this.loading = true
+    this.setDefaultDate()
     await this.fetchNotificationsByBatch()
     this.calculateLastBatch()
     this.getUserData()
@@ -290,6 +291,7 @@ export default {
     intersected() {
       if (this.batchDetails.batchNumber <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
+        this.setDefaultDate()
         this.fetchNotificationsByBatch()
       } else {
         this.enableLazyLoad = false
@@ -323,6 +325,28 @@ export default {
       if (value) {
         return value === "Informational" ? "lighten6" : "base"
       }
+    },
+    setDefaultDate() {
+      let today_date = new Date()
+      let getStartDate = new Date(
+        today_date.getFullYear(),
+        today_date.getMonth(),
+        today_date.getDate() - 7
+      )
+       let getEndDate = new Date(
+        today_date.getFullYear(),
+        today_date.getMonth(),
+        today_date.getDate() - 7
+      )
+      this.batchDetails.start_date = this.$options.filters.Date(getStartDate, "YYYY-MM-DD")
+      this.batchDetails.end_date = this.$options.filters.Date(getEndDate, "YYYY-MM-DD")
+      this.batchDetails.batchSize = 25
+      this.batchDetails.batchNumber = 1
+      this.batchDetails.isLazyLoad = false
+    },
+    alertfunction(value) {
+      console.log("data", value)
+      // this.fetchNotificationsByBatch()
     },
   },
 }
