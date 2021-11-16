@@ -259,11 +259,12 @@
                     </v-col>
                     <v-divider vertical class="combined-list" />
                     <v-col md="5 pt-0 pl-1">
-                      <div class="overflow-y-auto combined-list">
+                      <div class="combined-list">
                         <map-state-list
                           v-if="!loadingGeoOverview"
                           :map-data="customersGeoOverview"
                           :configuration-data="configurationData"
+                          :height="386"
                         />
                       </div>
                     </v-col>
