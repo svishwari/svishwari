@@ -54,6 +54,7 @@
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Drawer from "@/components/common/Drawer.vue"
 import Icon from "@/components/common/Icon.vue"
+import { capitalize, split, join } from "lodash"
 
 export default {
   name: "CustomerEventsDrawer",
@@ -107,9 +108,9 @@ export default {
 
   methods: {
     humanize(str) {
-      str = _.capitalize(str)
-      const frags = _.split(str, "_")
-      return _.join(frags, " ")
+      str = capitalize(str)
+      const frags = split(str, "_")
+      return join(frags, " ")
     },
   },
 }

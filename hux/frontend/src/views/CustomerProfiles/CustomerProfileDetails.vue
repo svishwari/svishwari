@@ -95,6 +95,7 @@ import ContactPreferences from "./ContactPreferences.vue"
 import IndividualIdentity from "./IndividualIdentity.vue"
 import CustomerEventsDrawer from "./Drawers/CustomerEventsDrawer"
 import Icon from "@/components/common/Icon"
+import { sortBy } from "lodash"
 
 export default {
   name: "CustomerProfileDetails",
@@ -167,7 +168,7 @@ export default {
             temp.push({ event_type: key, date: event["date"] })
           }
         })
-        temp = _.sortBy(temp, [
+        temp = sortBy(temp, [
           function (o) {
             return o.event_type
           },
