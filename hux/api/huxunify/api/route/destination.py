@@ -994,10 +994,12 @@ class DestinationPatchView(SwaggerView):
 
         # validate the schema first.
         DestinationPatchSchema().validate(patch_dict)
+        
+        database = get_db_client()
 
         updated_destination = (
             destination_management.update_delivery_platform_doc(
-                get_db_client(),
+                database,
                 destination_id,
                 {
                     **patch_dict,
@@ -1009,7 +1011,7 @@ class DestinationPatchView(SwaggerView):
             )
         )
 
-        database = get_db_client()
+        
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
