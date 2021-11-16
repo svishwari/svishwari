@@ -26,7 +26,7 @@ from huxunifylib.util.general.const import (
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
 from huxunifylib.util.general.logging import logger
-from huxunify.api import constants as api_const
+from huxunify.api import constants as api_c
 from huxunify.api.config import get_config, Config
 from huxunify.api.data_connectors.aws import (
     set_cloud_watch_rule,
@@ -67,18 +67,18 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
     ):
         env_dict = {
             FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
-                api_const.FACEBOOK_AD_ACCOUNT_ID
+                api_c.FACEBOOK_AD_ACCOUNT_ID
             ],
             FacebookCredentials.FACEBOOK_APP_ID.name: auth[
-                api_const.FACEBOOK_APP_ID
+                api_c.FACEBOOK_APP_ID
             ],
         }
         secret_dict = {
             FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: auth[
-                api_const.FACEBOOK_ACCESS_TOKEN
+                api_c.FACEBOOK_ACCESS_TOKEN
             ],
             FacebookCredentials.FACEBOOK_APP_SECRET.name: auth[
-                api_const.FACEBOOK_APP_SECRET
+                api_c.FACEBOOK_APP_SECRET
             ],
         }
 
@@ -87,24 +87,18 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         == db_const.DELIVERY_PLATFORM_SFMC
     ):
         env_dict = {
-            SFMCCredentials.SFMC_CLIENT_ID.name: auth[
-                api_const.SFMC_CLIENT_ID
-            ],
-            SFMCCredentials.SFMC_AUTH_URL.name: auth[
-                api_const.SFMC_AUTH_BASE_URI
-            ],
-            SFMCCredentials.SFMC_ACCOUNT_ID.name: auth[
-                api_const.SFMC_ACCOUNT_ID
-            ],
+            SFMCCredentials.SFMC_CLIENT_ID.name: auth[api_c.SFMC_CLIENT_ID],
+            SFMCCredentials.SFMC_AUTH_URL.name: auth[api_c.SFMC_AUTH_BASE_URI],
+            SFMCCredentials.SFMC_ACCOUNT_ID.name: auth[api_c.SFMC_ACCOUNT_ID],
             SFMCCredentials.SFMC_SOAP_ENDPOINT.name: auth[
-                api_const.SFMC_SOAP_BASE_URI
+                api_c.SFMC_SOAP_BASE_URI
             ],
-            SFMCCredentials.SFMC_URL.name: auth[api_const.SFMC_REST_BASE_URI],
+            SFMCCredentials.SFMC_URL.name: auth[api_c.SFMC_REST_BASE_URI],
         }
 
         secret_dict = {
             SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[
-                api_const.SFMC_CLIENT_SECRET
+                api_c.SFMC_CLIENT_SECRET
             ]
         }
     elif destination[db_const.DELIVERY_PLATFORM_TYPE] in [
@@ -114,7 +108,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         env_dict = {}
         secret_dict = {
             SendgridCredentials.SENDGRID_AUTH_TOKEN.name: auth[
-                api_const.SENDGRID_AUTH_TOKEN
+                api_c.SENDGRID_AUTH_TOKEN
             ]
         }
 
@@ -124,19 +118,19 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
     ):
         env_dict = {
             QualtricsCredentials.QUALTRICS_DATA_CENTER.name: auth[
-                api_const.QUALTRICS_DATA_CENTER
+                api_c.QUALTRICS_DATA_CENTER
             ],
             QualtricsCredentials.QUALTRICS_OWNER_ID.name: auth[
-                api_const.QUALTRICS_OWNER_ID
+                api_c.QUALTRICS_OWNER_ID
             ],
             QualtricsCredentials.QUALTRICS_DIRECTORY_ID.name: auth[
-                api_const.QUALTRICS_DIRECTORY_ID
+                api_c.QUALTRICS_DIRECTORY_ID
             ],
         }
 
         secret_dict = {
             QualtricsCredentials.QUALTRICS_API_TOKEN.name: auth[
-                api_const.QUALTRICS_API_TOKEN
+                api_c.QUALTRICS_API_TOKEN
             ]
         }
 
@@ -146,22 +140,22 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
     ):
         env_dict = {
             GoogleCredentials.GOOGLE_CLIENT_CUSTOMER_ID.name: auth[
-                api_const.GOOGLE_CLIENT_CUSTOMER_ID
+                api_c.GOOGLE_CLIENT_CUSTOMER_ID
             ],
         }
 
         secret_dict = {
             GoogleCredentials.GOOGLE_DEVELOPER_TOKEN.name: auth[
-                api_const.GOOGLE_DEVELOPER_TOKEN
+                api_c.GOOGLE_DEVELOPER_TOKEN
             ],
             GoogleCredentials.GOOGLE_CLIENT_ID.name: auth[
-                api_const.GOOGLE_CLIENT_ID
+                api_c.GOOGLE_CLIENT_ID
             ],
             GoogleCredentials.GOOGLE_REFRESH_TOKEN.name: auth[
-                api_const.GOOGLE_REFRESH_TOKEN
+                api_c.GOOGLE_REFRESH_TOKEN
             ],
             GoogleCredentials.GOOGLE_CLIENT_SECRET.name: auth[
-                api_const.GOOGLE_CLIENT_SECRET
+                api_c.GOOGLE_CLIENT_SECRET
             ],
         }
     else:
@@ -186,12 +180,12 @@ def get_okta_test_user_creds(config: Config) -> tuple:
     # to retrieve the actual secrets from AWS SSM
 
     return {
-        api_const.OKTA_ISSUER: config.OKTA_ISSUER,
-        api_const.OKTA_CLIENT_ID: config.OKTA_CLIENT_ID,
+        api_c.OKTA_ISSUER: config.OKTA_ISSUER,
+        api_c.OKTA_CLIENT_ID: config.OKTA_CLIENT_ID,
     }, {
-        api_const.OKTA_TEST_USER_NAME: api_const.UNIFIED_OKTA_TEST_USER_NAME,
-        api_const.OKTA_TEST_USER_PW: api_const.UNIFIED_OKTA_TEST_USER_PW,
-        api_const.OKTA_REDIRECT_URI: api_const.UNIFIED_OKTA_REDIRECT_URI,
+        api_c.OKTA_TEST_USER_NAME: api_c.UNIFIED_OKTA_TEST_USER_NAME,
+        api_c.OKTA_TEST_USER_PW: api_c.UNIFIED_OKTA_TEST_USER_PW,
+        api_c.OKTA_REDIRECT_URI: api_c.UNIFIED_OKTA_REDIRECT_URI,
     }
 
 
@@ -293,7 +287,7 @@ class DestinationBatchJob:
 
         # check if engagement has a delivery flight schedule set
         if not (
-            engagement_doc and engagement_doc.get(api_const.DELIVERY_SCHEDULE)
+            engagement_doc and engagement_doc.get(api_c.DELIVERY_SCHEDULE)
         ):
             logger.warning(
                 "Delivery schedule is not set for %s.",
@@ -358,7 +352,7 @@ class DestinationBatchJob:
         # Submit the AWS batch job
         response_batch_submit = self.aws_batch_connector.submit_job()
 
-        status = api_const.STATUS_DELIVERING
+        status = api_c.STATUS_DELIVERING
         if (
             response_batch_submit["ResponseMetadata"]["HTTPStatusCode"]
             != HTTPStatus.OK.value
@@ -414,7 +408,7 @@ def get_destination_config(
             "%s authentication failed.", delivery_platform.get(db_const.NAME)
         )
         raise FailedDestinationDependencyError(
-            delivery_platform[api_const.NAME], HTTPStatus.FAILED_DEPENDENCY
+            delivery_platform[api_c.NAME], HTTPStatus.FAILED_DEPENDENCY
         )
 
     audience_delivery_job = set_delivery_job(
@@ -461,15 +455,15 @@ def get_destination_config(
         MongoDBCredentials.MONGO_DB_HOST.name: config.MONGO_DB_HOST,
         MongoDBCredentials.MONGO_DB_PORT.name: str(config.MONGO_DB_PORT),
         MongoDBCredentials.MONGO_DB_USERNAME.name: config.MONGO_DB_USERNAME,
-        MongoDBCredentials.MONGO_SSL_CERT.name: api_const.AUDIENCE_ROUTER_CERT_PATH,
-        api_const.CDP_SERVICE: config.CDP_SERVICE,
+        MongoDBCredentials.MONGO_SSL_CERT.name: api_c.AUDIENCE_ROUTER_CERT_PATH,
+        api_c.CDP_SERVICE: config.CDP_SERVICE,
         **ds_env_dict,
         **okta_env_dict,
     }
 
     # setup the secrets dict
     secret_dict = {
-        MongoDBCredentials.MONGO_DB_PASSWORD.name: api_const.AUDIENCE_ROUTER_MONGO_PASSWORD_FROM,
+        MongoDBCredentials.MONGO_DB_PASSWORD.name: api_c.AUDIENCE_ROUTER_MONGO_PASSWORD_FROM,
         **ds_secret_dict,
         **okta_secret_dict,
     }

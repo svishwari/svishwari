@@ -1,6 +1,6 @@
 import Vue from "vue"
 import api from "@/api/client"
-import { handleError } from "@/utils"
+import { handleError, handleSuccess } from "@/utils"
 
 const namespaced = true
 
@@ -11,6 +11,7 @@ const state = {
     email: null,
     token: null,
     idToken: null,
+    bugsReported: [],
   },
 }
 
@@ -72,6 +73,22 @@ const actions = {
       await api.users.clearFavorite(id, type)
       dispatch("getUserProfile")
     } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async contactUs(_, data) {
+    try {
+      let res = await api.users.contactUs(data)
+      if (res) {
+        handleSuccess(
+          `Bug Submitted Successfully with JIRA ID: ${res.data.key}`,
+          res.status
+        )
+      }
+    } catch (error) {
+      console.log(error)
       handleError(error)
       throw error
     }

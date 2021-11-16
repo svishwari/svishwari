@@ -9,6 +9,7 @@ from huxunify.api.route.customers import customers_bp
 from huxunify.api.route.engagement import engagement_bp
 from huxunify.api.route.delivery import delivery_bp
 from huxunify.api.route.audiences import audience_bp
+from huxunify.api.route.configurations import configurations_bp
 
 ROUTES = [
     dest_bp,
@@ -21,4 +22,5 @@ ROUTES = [
     engagement_bp,
     delivery_bp,
     audience_bp,
+    configurations_bp,
 ]

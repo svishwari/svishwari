@@ -13,7 +13,7 @@ from hypothesis import given, strategies as st
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import constants as db_c
 from huxunify.api.config import get_config
-from huxunify.api import constants
+from huxunify.api import constants as api_c
 from huxunify.api.data_connectors import okta
 from huxunify.api.route.decorators import (
     secured,
@@ -43,14 +43,14 @@ VALID_RESPONSE = {
 }
 
 VALID_USER_RESPONSE = {
-    constants.OKTA_ID_SUB: "8548bfh8d",
-    constants.EMAIL: "davesmith@fake.com",
-    constants.NAME: "dave smith",
+    api_c.OKTA_ID_SUB: "8548bfh8d",
+    api_c.EMAIL: "davesmith@fake.com",
+    api_c.NAME: "dave smith",
 }
 
 # response missing some fields
 INVALID_USER_RESPONSE = {
-    constants.EMAIL: "davesmith@fake.com",
+    api_c.EMAIL: "davesmith@fake.com",
 }
 
 INVALID_RESPONSE = {"active": False}
@@ -148,7 +148,7 @@ class OktaTest(TestCase):
     def test_secured_decorator_invalid_header(self):
         """Test secured decorator with an invalid header."""
 
-        invalid_header = (constants.INVALID_AUTH_HEADER, 401)
+        invalid_header = (api_c.INVALID_AUTH_HEADER, 401)
         with Flask("invalid_test").test_request_context("/"):
 
             @secured()
@@ -166,7 +166,7 @@ class OktaTest(TestCase):
     def test_secured_decorator_valid_header_none_token(self):
         """Test secured decorator with a valid header, None token."""
 
-        invalid_header = (constants.INVALID_AUTH_HEADER, 401)
+        invalid_header = (api_c.INVALID_AUTH_HEADER, 401)
         with Flask("invalid_test").test_request_context(
             "/", headers={"Authorization": None}
         ):
@@ -186,7 +186,7 @@ class OktaTest(TestCase):
     def test_secured_decorator_misspelled_bearer(self):
         """Test secured decorator with a misspelled bearer."""
 
-        invalid_header = (constants.INVALID_AUTH_HEADER, 401)
+        invalid_header = (api_c.INVALID_AUTH_HEADER, 401)
         with Flask("invalid_test").test_request_context(
             "/", headers={"Authorization": "Bearerr "}
         ):
@@ -213,7 +213,7 @@ class OktaTest(TestCase):
 
         request_mocker.post(self.introspect_call, json=INVALID_RESPONSE)
 
-        invalid_header = (constants.INVALID_AUTH, 400)
+        invalid_header = (api_c.INVALID_AUTH, 400)
         with Flask("invalid_token").test_request_context(
             "/", headers={"Authorization": "Bearer 123456789"}
         ):
@@ -293,7 +293,7 @@ class OktaTest(TestCase):
     def test_secured_decorator_get_user_id_invalid_header(self):
         """Test secured decorator with an invalid header to get_user_id."""
 
-        invalid_header = (constants.INVALID_AUTH_HEADER, 401)
+        invalid_header = (api_c.INVALID_AUTH_HEADER, 401)
         with Flask("invalid_test").test_request_context("/"):
 
             @get_user_name()
