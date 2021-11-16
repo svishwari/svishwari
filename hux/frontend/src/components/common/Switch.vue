@@ -65,13 +65,13 @@ export default {
         width: 61px;
         height: 24px;
         background: var(--v-white-base);
-        border: 1px solid var(--v-primary-lighten8);
+        border: 1px solid var(--v-primary-lighten6);
         box-sizing: border-box;
         border-radius: 21px;
         opacity: inherit;
       }
       .v-input--switch__thumb {
-        background: var(--v-primary-lighten8);
+        background: var(--v-primary-lighten6);
         border: 1px solid var(--v-white-base);
         box-sizing: border-box;
         width: 20px;
@@ -82,12 +82,12 @@ export default {
     }
     .v-label {
       position: absolute !important;
-      font-weight: 600;
-      font-size: 12px;
+      font-weight: 400;
+      font-size: 14px;
       line-height: 16px;
       top: 3px !important;
       left: 25px !important;
-      color: var(--v-primary-lighten8);
+      color: var(--v-primary-lighten6);
     }
   }
   &.v-input--is-dirty {
@@ -107,8 +107,8 @@ export default {
       .v-label {
         position: absolute !important;
         font-style: normal;
-        font-weight: 600;
-        font-size: 12px;
+        font-weight: 400;
+        font-size: 14px;
         line-height: 16px;
         top: 3px !important;
         left: 3px !important;

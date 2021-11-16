@@ -370,7 +370,7 @@ import TextField from "@/components/common/TextField"
 import FormSteps from "@/components/common/FormSteps"
 import FormStep from "@/components/common/FormStep"
 import LookAlikeSlider from "@/components/common/LookAlikeSlider"
-import AttributeRules from "./AttributeRules.vue"
+import AttributeRules from "@/views/SegmentPlayground/AttributeRules.vue"
 import AttachEngagement from "@/views/Audiences/AttachEngagement"
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations"
 import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension"
@@ -492,16 +492,19 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.getOverview()
-    this.mapCDMOverview(this.overview)
-    if (this.$route.name === "AudienceUpdate") {
-      this.audienceId = this.$route.params.id
-      this.isEdit = true
-      await this.getAudienceById(this.audienceId)
-      const data = this.getAudience(this.audienceId)
-      this.mapAudienceData(data)
+    try {
+      await this.getOverview()
+      this.mapCDMOverview(this.overview)
+      if (this.$route.name === "AudienceUpdate") {
+        this.audienceId = this.$route.params.id
+        this.isEdit = true
+        await this.getAudienceById(this.audienceId)
+        const data = this.getAudience(this.audienceId)
+        this.mapAudienceData(data)
+      }
+    } finally {
+      this.loading = false
     }
-    this.loading = false
   },
 
   methods: {

@@ -600,15 +600,18 @@ export default {
     this.loading = true
     this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     this.chartDimensions.height = 520
-    if (!this.modelDetails(this.$route.params.id)) {
-      await this.getModels()
+    try {
+      if (!this.modelDetails(this.$route.params.id)) {
+        await this.getModels()
+      }
+      await this.getOverview(this.$route.params.id)
+    } finally {
+      this.fetchLift()
+      this.fetchDrift()
+      this.loading = false
+      this.fetchFeatures()
+      this.fetchModelFeatures() // Fetch data for Model feature table.
     }
-    await this.getOverview(this.$route.params.id)
-    this.fetchLift()
-    this.fetchDrift()
-    this.loading = false
-    this.fetchFeatures()
-    this.fetchModelFeatures() // Fetch data for Model feature table.
   },
 
   created() {

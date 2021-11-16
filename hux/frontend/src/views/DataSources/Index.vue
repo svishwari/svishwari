@@ -137,9 +137,12 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.getDataSources()
-    await this.getDestinations()
-    this.loading = false
+    try {
+      await this.getDataSources()
+      await this.getDestinations()
+    } finally {
+      this.loading = false
+    }
 
     if (this.$route.params.select) {
       this.drawer = true

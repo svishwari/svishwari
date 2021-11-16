@@ -1,35 +1,23 @@
 <template>
   <span class="d-flex cursor-pointer mr-4 icon-bulb">
-    <drop-menu :min-midth="300" :max-width="353" class="drop-menu-div">
+    <drop-menu
+      :min-midth="300"
+      :max-width="353"
+      :close-on-click="false"
+      class="drop-menu-div"
+    >
       <template #menuActivator="activatorVal">
-        <div class="circle-append">
-          <span v-if="!activatorVal.activatorVal">
-            <icon :type="'FAB-bulb'" :size="30" />
-          </span>
-          <span v-else><icon type="FAB-close" :size="20" /></span>
-        </div>
+        <span v-if="!activatorVal.activatorVal">
+          <icon :type="'FAB_circle_bulb'" :size="56" />
+        </span>
+        <span v-else><icon type="FAB_circle_cross" :size="56" /></span>
       </template>
       <template #menuHeader>
-        <div class="header-menu text-body-1 pt-5 pb-5 pr-4 pl-4">
+        <div class="header-menu d-flex text-body-1 pt-5 pb-5 pr-4 pl-4">
           <span>
-            <icon type="FAB-bulb" :size="22" />
+            <icon type="FAB-bulb" :size="24" />
           </span>
-          <span class="header-text ml-2">
-            Segment Playground user guide &nbsp; &nbsp;
-            <span class="icon-header-left">
-              <span v-if="!headerIcon" @click="all">
-                <icon :type="'side-arrow'" :size="11" color="black" />
-              </span>
-              <span v-else @click="none">
-                <icon
-                  :type="'down-arrow'"
-                  :size="11"
-                  :color="'black'"
-                  :variant="'base'"
-                />
-              </span>
-            </span>
-          </span>
+          <span class="ml-2 mt-1"> Segment Playground user guide </span>
         </div>
       </template>
       <template #menuBody>
@@ -83,12 +71,11 @@ export default {
     return {
       panelIndex: false,
       panel: [],
-      headerIcon: false,
       panelListItems: [
         {
           id: 1,
-          title: "What is Segment playground?",
-          text: "<b>Segment playground </b>allows you to explore and segment your full customer list and enables you to see real time insights.",
+          title: "What is Segment Playground?",
+          text: "<b>Segment Playground </b>allows you to explore and segment your full customer list and enables you to see real time insights.",
           textPart: "",
         },
         {
@@ -99,7 +86,7 @@ export default {
         },
         {
           id: 3,
-          title: "How do I use segment playground?",
+          title: "How do I use Segment Playground?",
           text: "First click <b>+ Attribute,</b> then select what characteristic you would like to segment your customer list. As you add attributes, the insights on the right hand will update accordingly.",
           textPart:
             "If you want to save this segment as an audience, click on <b >Save this segment as an audience.</b> By doing so you will not only save this segment as an audience, but you will also have the ability to deliver this audience to a 3rd party platform when you are ready OR add it to an engagement.",
@@ -121,19 +108,6 @@ export default {
       ],
     }
   },
-  methods: {
-    all() {
-      this.headerIcon = false
-      this.panel = [...Array(this.panelListItems.length).keys()].map(
-        (k, i) => i
-      )
-      this.headerIcon = true
-    },
-    none() {
-      this.panel = []
-      this.headerIcon = false
-    },
-  },
 }
 </script>
 <style lang="scss" scoped>
@@ -142,15 +116,7 @@ export default {
 }
 .drop-menu-div {
   width: 353 !important;
-}
-.circle-append {
-  height: 56px;
-  width: 56px;
-  border-radius: 40px;
-  background: #ffffff;
-  padding-top: 15px;
-  box-shadow: 0px -1px 7px rgba(188, 186, 186, 0.25),
-    0px 1px 5px rgba(188, 186, 186, 0.25);
+  z-index: 1;
 }
 .header-menu {
   background: #fffcf2;
@@ -174,12 +140,31 @@ export default {
 }
 ::v-deep .v-expansion-panel-header {
   padding: 10px 16px !important;
+  border-top-left-radius: 0px !important;
+  border-top-right-radius: 0px !important;
+}
+::v-deep .v-expansion-panels {
+  border-radius: 0px !important;
+}
+:v-deep
+  .v-expansion-panels:not(.v-expansion-panels--accordion):not(.v-expansion-panels--tile)
+  > .v-expansion-panel--active
+  + .v-expansion-panel {
+  border-top-left-radius: 0px !important;
+  border-top-right-radius: 0px !important;
 }
 ::v-deep .v-expansion-panel-content__wrap {
   padding: 0 16px 8px !important;
+  border-bottom: 1px solid var(--v-black-lighten2) !important;
 }
 ::v-deep .v-expansion-panel--active:not(:first-child),
 .v-expansion-panel--active + .v-expansion-panel {
   margin-top: 0px !important;
+}
+::v-deep .v-application--is-ltr .v-expansion-panel-header {
+  height: 45px !important;
+}
+::v-deep .v-expansion-panel--active > .v-expansion-panel-header {
+  border-top: 1px solid var(--v-black-lighten2) !important;
 }
 </style>
