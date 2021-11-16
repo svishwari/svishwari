@@ -133,7 +133,7 @@ def secured() -> object:
             if introspect_token(token_response[0]):
                 return in_function(*args, **kwargs)
 
-            return {api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.UNAUTHORIZED
+            return {api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.BAD_REQUEST
 
         # set tag so we can assert if a function is secured via this decorator
         decorator.__wrapped__ = in_function

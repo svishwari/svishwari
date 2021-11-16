@@ -227,7 +227,7 @@ class OktaTest(TestCase):
                 return True
 
             self.assertEqual(
-                ({api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.UNAUTHORIZED),
+                ({api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.BAD_REQUEST),
                 demo_endpoint(),
             )
 
