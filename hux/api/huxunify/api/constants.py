@@ -2,6 +2,7 @@
 """This module contains connector defines."""
 import os
 import random
+from collections import namedtuple
 
 from huxunifylib.database import constants as db_c
 
@@ -13,6 +14,7 @@ TEST_AUTH_OVERRIDE = "TEST_AUTH_OVERRIDE"
 SSM_INIT_LOAD_DELIMITER = "||"
 HOST = "host"
 PORT = "port"
+USER = "user"
 USERNAME = "username"
 PASSWORD = "password"
 SSL_CERT_PATH = "ssl_cert_path"
@@ -800,6 +802,14 @@ OKTA_REDIRECT_URI = "OKTA_REDIRECT_URI"
 OKTA_USER_ID = "user_id"
 OKTA_UID = "uid"
 OKTA_ID_SUB = "sub"
+
+# define access levels for RBAC
+AccessLevel = namedtuple(
+    "AccessLevel", db_c.USER_ROLE, defaults=(db_c.USER_ROLE_VIEWER,)
+)
+ADMIN_LEVEL = AccessLevel(db_c.USER_ROLE_ADMIN)
+EDITOR_LEVEL = AccessLevel(db_c.USER_ROLE_EDITOR)
+VIEWER_LEVEL = AccessLevel(db_c.USER_ROLE_VIEWER)
 
 # Orchestration API fields
 ORCHESTRATION_ENDPOINT = "/orchestration"
