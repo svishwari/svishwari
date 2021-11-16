@@ -1,8 +1,8 @@
 <template>
   <div class="list-container">
     <hux-data-table
-      view-height="calc(100vh - 340px)"
       :columns="columnDefs"
+      :height="height"
       :sort-column="customMetric"
       :sort-desc="true"
       :data-items="stateListData"
@@ -77,6 +77,10 @@ export default {
     configurationData: {
       type: Object,
       required: true,
+    },
+    height: {
+      type: Number,
+      required: false,
     },
   },
   data() {
