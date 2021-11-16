@@ -51,8 +51,8 @@
       <img
         src="@/assets/images/USA.png"
         alt="Hux"
-        width="548"
-        height="290"
+        :width="chartDimensions.width"
+        :height="chartDimensions.height"
         class="d-flex ma-4"
       />
     </span>

@@ -4,6 +4,7 @@
     :class="{ 'no-click': !interactable }"
     :style="{ 'flex-grow': grow }"
     :max-width="maxWidth"
+    :width="minWidth"
     :height="height"
     :disabled="!active"
     elevation="0"
@@ -30,21 +31,33 @@
             {{ title }}
           </span>
         </span>
-        <tooltip v-else>
-          <template #label-content>
-            <span
-              class="text-h5"
-              :class="
-                interactable ? 'primary--text ' : 'black--text text--darken-1 '
-              "
-            >
-              {{ title }}
-            </span>
-          </template>
-          <template #hover-content>
-            {{ titleTooltip }}
-          </template>
-        </tooltip>
+        <div
+          v-else
+          class="
+            d-flex
+            align-center
+            text-body-2
+            black--text
+            text--lighten-4
+            pb-1
+          "
+        >
+          {{ title }}
+          <tooltip position-top :max-width="tooltipWidth">
+            <template #label-content>
+              <icon
+                type="info"
+                :size="12"
+                class="ml-1 mb-1"
+                color="primary"
+                variant="base"
+              />
+            </template>
+            <template #hover-content>
+              {{ titleTooltip }}
+            </template>
+          </tooltip>
+        </div>
 
         <slot name="extra-item"></slot>
 
@@ -71,10 +84,11 @@
 </template>
 
 <script>
+import Icon from "./Icon.vue"
 import Tooltip from "./Tooltip.vue"
 export default {
   name: "MetricCard",
-  components: { Tooltip },
+  components: { Tooltip, Icon },
 
   props: {
     icon: {
@@ -109,6 +123,12 @@ export default {
       required: false,
     },
 
+    tooltipWidth: {
+      type: Number,
+      required: false,
+      default: 232,
+    },
+
     grow: {
       type: Number,
       required: false,
@@ -116,6 +136,10 @@ export default {
     },
 
     maxWidth: {
+      type: [String, Number],
+      required: false,
+    },
+    minWidth: {
       type: [String, Number],
       required: false,
     },

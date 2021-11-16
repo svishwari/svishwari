@@ -1,13 +1,5 @@
 <template>
-  <v-footer
-    class="page-footer shadow"
-    app
-    paddless
-    fixed
-    height="80"
-    inset
-    color="primary lighten-1"
-  >
+  <v-footer class="page-footer" app paddless fixed height="80" inset>
     <div
       class="page-footer-container d-flex justify-space-between align-center"
       :style="{ 'max-width': maxWidth }"
@@ -37,7 +29,12 @@ export default {
 
 <style lang="scss" scoped>
 .page-footer {
-  padding: 20px 60px;
+  padding: 20px 32px;
+  border-color: var(--v-black-lighten3) !important;
+  background-color: var(--v-primary-lighten1) !important;
+  box-sizing: inherit;
+  @extend .border-top;
+  @extend .box-shadow-none;
 
   .page-footer-container {
     width: 100%;

@@ -1,44 +1,11 @@
 const attributeRules = {
+  text_operators: {
+    contains: "Contains",
+    not_contains: "Does not contain",
+    equals: "Equals",
+    not_equals: "Does not equal",
+  },
   rule_attributes: {
-    general: {
-      age: {
-        max: 100,
-        min: 0,
-        name: "Age",
-        type: "range",
-      },
-      email: {
-        name: "Email",
-        type: "text",
-      },
-      gender: {
-        name: "Gender",
-        options: [],
-        type: "text",
-      },
-      location: {
-        city: {
-          name: "City",
-          options: [],
-          type: "text",
-        },
-        country: {
-          name: "Country",
-          options: [],
-          type: "text",
-        },
-        name: "Location",
-        state: {
-          name: "State",
-          options: [],
-          type: "text",
-        },
-        zip_code: {
-          name: "Zip code",
-          type: "text",
-        },
-      },
-    },
     model_scores: {
       propensity_to_unsubscribe: {
         name: "Propensity to unsubscribe",
@@ -128,12 +95,143 @@ const attributeRules = {
         ],
       },
     },
-  },
-  text_operators: {
-    contains: "Contains",
-    does_not_contain: "Does not contain",
-    does_not_equal: "Does not equal",
-    equals: "Equals",
+    general: {
+      age: {
+        name: "Age",
+        type: "range",
+        min: 18,
+        max: 79,
+      },
+      email: {
+        name: "Email",
+        type: "list",
+        options: [
+          {
+            "fake.com": "fake.com",
+          },
+        ],
+      },
+      gender: {
+        name: "Gender",
+        type: "list",
+        options: [
+          {
+            female: "Female",
+          },
+          {
+            male: "Male",
+          },
+          {
+            other: "Other",
+          },
+        ],
+      },
+      location: {
+        name: "Location",
+        country: {
+          name: "Country",
+          type: "list",
+          options: [
+            {
+              US: "USA",
+            },
+          ],
+        },
+        state: {
+          name: "State",
+          type: "list",
+          options: [
+            {
+              AL: "Alabama",
+            },
+            {
+              AK: "Alaska",
+            },
+            {
+              AZ: "Arizona",
+            },
+            {
+              AR: "Arkansas",
+            },
+            {
+              CA: "California",
+            },
+            {
+              CO: "Colorado",
+            },
+            {
+              CT: "Connecticut",
+            },
+            {
+              DE: "Delaware",
+            },
+            {
+              DC: "District of Columbia",
+            },
+          ],
+        },
+        city: {
+          name: "City",
+          type: "list",
+          options: [
+            {
+              "Fort Lauderdale": "Fort Lauderdale, FL USA",
+            },
+            {
+              "River Forest": "River Forest, IL USA",
+            },
+            {
+              "Poplar Grove": "Poplar Grove, IL USA",
+            },
+            {
+              Claxton: "Claxton, GA USA",
+            },
+            {
+              Fremont: "Fremont, MI USA",
+            },
+            {
+              Philadelphia: "Philadelphia, PA USA",
+            },
+          ],
+        },
+        zip_code: {
+          name: "Zip",
+          type: "list",
+          options: [
+            {
+              33332: "33332, Fort Lauderdale FL",
+            },
+            {
+              60305: "60305, River Forest IL",
+            },
+            {
+              61065: "61065, Poplar Grove IL",
+            },
+            {
+              30417: "30417, Claxton GA",
+            },
+            {
+              49412: "49412, Fremont MI",
+            },
+            {
+              19129: "19129, Philadelphia PA",
+            },
+            {
+              81506: "81506, Grand Junction CO",
+            },
+            {
+              70445: "70445, Lacombe LA",
+            },
+            {
+              70665: "70665, Sulphur LA",
+            },
+            {
+              93646: "93646, Orange Cove CA",
+            },
+          ],
+        },
+      },
+    },
   },
 }
 export default attributeRules
