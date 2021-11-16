@@ -101,6 +101,8 @@ class ModelsView(SwaggerView):
         """
 
         status = request.args.getlist(api_c.STATUS)
+        all_models = tecton.get_models()
+
         purchase_model = {
             api_c.TYPE: "purchase",
             api_c.FULCRUM_DATE: datetime(2021, 6, 26),
@@ -116,8 +118,13 @@ class ModelsView(SwaggerView):
             api_c.OWNER: "Susan Miller",
             api_c.STATUS: api_c.STATUS_PENDING,
         }
-        all_models = tecton.get_models()
         all_models.append(purchase_model)
+
+        for model in all_models:
+            if api_c.CATEGORY not in model:
+                model[api_c.CATEGORY] = api_c.UNCATEGORIZED
+
+        all_models.extend(api_c.MODELS_STUB)
 
         config_models = collection_management.get_documents(
             get_db_client(),

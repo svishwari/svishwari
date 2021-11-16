@@ -1,13 +1,13 @@
 <template>
   <div class="d-flex align-center">
-    <span class="text--body-2 black--text text--lighten-4 mr-2">
+    <span class="text-body-2 black--text text--lighten-4 mr-2">
       Today,
-      {{ appLoadTime | Date("HH:mm A", (local = true)) }}
+      {{ appLoadTime | Date("hh:mm A", (local = true)) }}
       <tooltip>
         <template #label-content>
-          <span>{{
-            appLoadTime | Date("zzz", (local = true)) | Abbreviation
-          }}</span>
+          <span>
+            {{ appLoadTime | Date("zzz", (local = true)) | Abbreviation }}
+          </span>
         </template>
         <template #hover-content>
           {{ appLoadTime | Date("zzz") }}

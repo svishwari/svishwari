@@ -13,6 +13,7 @@ from huxunifylib.database.delivery_platform_management import (
     set_delivery_job,
     set_delivery_job_status,
     create_delivery_platform_lookalike_audience,
+    get_delivery_platform_lookalike_audience,
 )
 from huxunifylib.database.engagement_management import (
     set_engagement,
@@ -24,6 +25,7 @@ from huxunifylib.database.orchestration_management import (
     create_audience,
     get_audience,
     get_audience_insights,
+    delete_audience,
 )
 
 from huxunifylib.database.user_management import (
@@ -645,6 +647,131 @@ class OrchestrationRouteTest(TestCase):
             for delivery in audience[db_c.DELIVERIES]:
                 self.assertIn(db_c.DELIVERY_PLATFORM_ID, delivery)
 
+    def test_get_lookalike_audience(self):
+        """Test get audience for a lookalike audience."""
+
+        # create a lookalike audience
+        lookalike_audience = create_delivery_platform_lookalike_audience(
+            self.database,
+            self.destinations[0][db_c.ID],
+            self.audiences[0],
+            "My lookalike audience 1",
+            0.01,
+            "US",
+            self.user_name,
+        )
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/{lookalike_audience[db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        audience = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(audience)
+        self.assertEqual(
+            str(lookalike_audience[db_c.ID]), audience[db_c.OBJECT_ID]
+        )
+        self.assertEqual(lookalike_audience[api_c.NAME], audience[api_c.NAME])
+        self.assertEqual(self.user_name, audience[db_c.CREATED_BY])
+        self.assertTrue(audience[api_c.IS_LOOKALIKE])
+        self.assertEqual(
+            str(self.audiences[0][db_c.ID]), audience[t_c.SOURCE_ID]
+        )
+        self.assertEqual(
+            self.audiences[0][api_c.NAME], audience[t_c.SOURCE_NAME]
+        )
+        self.assertEqual(
+            self.audiences[0][api_c.SIZE], audience[t_c.SOURCE_SIZE]
+        )
+        self.assertListEqual(
+            self.audiences[0][api_c.AUDIENCE_FILTERS],
+            audience[api_c.AUDIENCE_FILTERS],
+        )
+
+    def test_get_lookalike_audience_source_audience_does_not_exist(self):
+        """Test get audience for a lookalike audience where the source
+        audience does not exist."""
+
+        audience_doc = {
+            db_c.AUDIENCE_NAME: "Test Source Audience 1",
+            "audience_filters": [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.GENDER,
+                            api_c.AUDIENCE_FILTER_TYPE: api_c.TYPE,
+                            api_c.AUDIENCE_FILTER_VALUE: "female",
+                        }
+                    ],
+                }
+            ],
+            api_c.USER_NAME: self.user_name,
+            api_c.SIZE: 100,
+        }
+
+        source_audience = create_audience(self.database, **audience_doc)
+
+        # create a lookalike audience
+        lookalike_audience = create_delivery_platform_lookalike_audience(
+            self.database,
+            self.destinations[0][db_c.ID],
+            source_audience,
+            "My lookalike audience 2",
+            0.01,
+            "US",
+            self.user_name,
+        )
+
+        # delete the source audience from mock database
+        deleted_audience = delete_audience(
+            self.database, source_audience[db_c.ID]
+        )
+        self.assertTrue(deleted_audience)
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/{lookalike_audience[db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        audience = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(audience)
+        self.assertEqual(
+            str(lookalike_audience[db_c.ID]), audience[db_c.OBJECT_ID]
+        )
+        self.assertEqual(lookalike_audience[api_c.NAME], audience[api_c.NAME])
+        self.assertEqual(self.user_name, audience[db_c.CREATED_BY])
+        self.assertTrue(audience[api_c.IS_LOOKALIKE])
+        self.assertEqual(
+            str(source_audience[db_c.ID]), audience[t_c.SOURCE_ID]
+        )
+        self.assertEqual(
+            source_audience[api_c.NAME], audience[t_c.SOURCE_NAME]
+        )
+        self.assertEqual(
+            source_audience[api_c.SIZE], audience[t_c.SOURCE_SIZE]
+        )
+        self.assertListEqual(
+            source_audience[api_c.AUDIENCE_FILTERS],
+            audience[api_c.AUDIENCE_FILTERS],
+        )
+
     def test_get_audience_does_not_exist(self):
         """Test get audience that does not exist."""
 
@@ -861,14 +988,14 @@ class OrchestrationRouteTest(TestCase):
         )
         self.assertEqual(lookalike_audience[api_c.SIZE], 3329)
         self.assertEqual(
-            lookalike_audience[api_c.SOURCE_SIZE], self.audiences[0][db_c.SIZE]
+            lookalike_audience[t_c.SOURCE_SIZE], self.audiences[0][db_c.SIZE]
         )
         self.assertEqual(
-            lookalike_audience[api_c.SOURCE_NAME], self.audiences[0][db_c.NAME]
+            lookalike_audience[t_c.SOURCE_NAME], self.audiences[0][db_c.NAME]
         )
         self.assertGreaterEqual(lookalike_audience[api_c.MATCH_RATE], 0)
         self.assertEqual(
-            lookalike_audience[api_c.SOURCE_ID],
+            lookalike_audience[t_c.SOURCE_ID],
             str(self.audiences[0][db_c.ID]),
         )
         self.assertTrue(lookalike_audience[api_c.IS_LOOKALIKE])
@@ -1025,7 +1152,7 @@ class OrchestrationRouteTest(TestCase):
     def test_delete_audience(self) -> None:
         """Test delete audience API with valid ID."""
 
-        # create an multiple audiences
+        # create multiple audiences
         audiences = []
 
         for i in range(4):
@@ -1109,6 +1236,10 @@ class OrchestrationRouteTest(TestCase):
         )
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        # validate audience is deleted in db
+        self.assertIsNone(
+            get_audience(self.database, self.audiences[0][db_c.ID])
+        )
 
         for engagement in engagements:
             new_eng = get_engagement(self.database, engagement)
@@ -1120,15 +1251,60 @@ class OrchestrationRouteTest(TestCase):
                 )
             )
 
+    def test_delete_lookalike_audience(self) -> None:
+        """Test delete audience API for valid lookalike audience."""
+
+        # create a lookalike audience
+        lookalike_audience = create_delivery_platform_lookalike_audience(
+            self.database,
+            self.destinations[0][db_c.ID],
+            self.audiences[0],
+            "My lookalike audience 0",
+            0.01,
+            "US",
+        )
+
+        set_engagement(
+            self.database,
+            "ENG0",
+            "Engagement 0",
+            [
+                {
+                    db_c.OBJECT_ID: lookalike_audience[db_c.ID],
+                    api_c.DESTINATIONS: [],
+                },
+            ],
+            self.user_name,
+        )
+
+        response = self.test_client.delete(
+            f"{self.audience_api_endpoint}/{lookalike_audience[db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        # validate lookalike audience is deleted in db
+        self.assertIsNone(
+            get_delivery_platform_lookalike_audience(
+                self.database, lookalike_audience[db_c.ID]
+            )
+        )
+
     def test_delete_audience_where_audience_does_not_exist(self) -> None:
-        """Test delete audience API with valid ID but the object does not exist"""
+        """Test delete audience API with valid ID but the object does not
+        exist."""
 
         response = self.test_client.delete(
             f"{self.audience_api_endpoint}/{str(ObjectId())}",
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        self.assertEqual(
+            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+        )
+        self.assertEqual(
+            {api_c.MESSAGE: api_c.OPERATION_FAILED}, response.json
+        )
 
     def test_delete_audience_with_invalid_id(self) -> None:
         """Test delete audience API with invalid ID."""

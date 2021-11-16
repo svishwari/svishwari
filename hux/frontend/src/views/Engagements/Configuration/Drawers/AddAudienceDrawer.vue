@@ -84,7 +84,7 @@ import { mapGetters, mapActions } from "vuex"
 import Drawer from "@/components/common/Drawer.vue"
 import TextField from "@/components/common/TextField"
 import MetricCard from "@/components/common/MetricCard"
-import AttributeRules from "@/views/Audiences/AttributeRules"
+import AttributeRules from "@/views/SegmentPlayground/AttributeRules.vue"
 import Tooltip from "@/components/common/Tooltip"
 
 export default {

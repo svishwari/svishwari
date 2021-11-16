@@ -275,9 +275,10 @@ const actions = {
     }
   },
 
-  async fetchFilterSize(_, filter) {
+  async fetchFilterSize({ commit }, filter) {
     try {
       const response = await api.customers.getOverview(filter)
+      commit("customers/SET_OVERVIEW", response.data, { root: true })
       return response.data
     } catch (error) {
       handleError(error)

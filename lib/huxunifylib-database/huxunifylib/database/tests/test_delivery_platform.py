@@ -118,7 +118,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             dpm.create_delivery_platform_lookalike_audience(
                 self.database,
                 self.delivery_platform_doc[c.ID],
-                self.source_audience_doc[c.ID],
+                self.source_audience_doc,
                 "Lookalike audience",
                 0.01,
                 "US",
@@ -818,7 +818,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         doc = dpm.create_delivery_platform_lookalike_audience(
             self.database,
             delivery_platform_id,
-            source_audience_id,
+            self.source_audience_doc,
             "Lookalike audience new",
             0.01,
             "US",
@@ -849,7 +849,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         doc = dpm.create_delivery_platform_lookalike_audience(
             self.database,
             delivery_platform_id,
-            source_audience_id,
+            self.source_audience_doc,
             "Lookalike audience new 2",
             0.01,
             "US",
@@ -876,7 +876,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         doc = dpm.create_delivery_platform_lookalike_audience(
             self.database,
             delivery_platform_id,
-            source_audience_id,
+            self.source_audience_doc,
             "Lookalike audience added",
             0.05,
             "US",
@@ -901,7 +901,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         doc = dpm.create_delivery_platform_lookalike_audience(
             self.database,
             self.delivery_platform_doc[c.ID],
-            self.source_audience_doc[c.ID],
+            self.source_audience_doc,
             "My Lookalike audience",
             0.01,
             "US",
@@ -922,7 +922,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         doc = dpm.create_delivery_platform_lookalike_audience(
             self.database,
             self.delivery_platform_doc[c.ID],
-            self.source_audience_doc[c.ID],
+            self.source_audience_doc,
             "New lookalike audience",
             0.01,
             "US",
@@ -1237,7 +1237,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         lookalike_audience = dpm.create_delivery_platform_lookalike_audience(
             self.database,
             delivery_platform_id,
-            source_audience_id,
+            self.source_audience_doc,
             "Lookalike audience new",
             0.01,
             "US",
@@ -1250,7 +1250,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             dpm.create_delivery_platform_lookalike_audience(
                 self.database,
                 delivery_platform_id,
-                source_audience_id,
+                self.source_audience_doc,
                 "Lookalike audience added",
                 0.05,
                 "US",

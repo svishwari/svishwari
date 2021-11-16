@@ -135,7 +135,7 @@
               :step="3"
               label="Select destination(s)"
               optional="- Optional"
-              :border="!isLookAlikeCreateable ? 'inactive' : ''"
+              border="inactive"
               class="black--text text--darken-4 step-3"
             >
               <template slot="label">
@@ -205,83 +205,6 @@
                         </div>
                       </template>
                     </tooltip>
-                  </div>
-                </v-col>
-              </v-row>
-            </form-step>
-
-            <form-step
-              v-if="isLookAlikeCreateable"
-              :step="4"
-              label="Create a lookalike audience"
-              :optional="
-                !isLookAlikeCreateable
-                  ? '- Enabled if Facebook is added as a destination'
-                  : ''
-              "
-              class="black--text text--darken-4"
-            >
-              <div v-if="isLookAlikeCreateable" class="dark--text">
-                Would you like to create a lookalike audience from this
-                audience? This will create a one-off new audience in Facebook
-                when this<br />
-                audience is first delivered.
-              </div>
-              <v-row v-if="isLookAlikeCreateable">
-                <v-col col="12">
-                  <v-radio-group v-model="isLookAlikeNeeeded" column mandatory>
-                    <v-radio
-                      :value="0"
-                      color="primary darken-3"
-                      class="pb-3"
-                      :ripple="false"
-                    >
-                      <template #label>
-                        <span class="black--text text--darken-4"
-                          >Nope! Not interested</span
-                        >
-                      </template>
-                    </v-radio>
-                    <v-radio
-                      :value="1"
-                      color="primary darken-3"
-                      :ripple="false"
-                    >
-                      <template #label>
-                        <span class="black--text text--darken-4">
-                          Auto-create a lookalike based on this audience
-                        </span>
-                      </template>
-                    </v-radio>
-                  </v-radio-group>
-                </v-col>
-              </v-row>
-              <v-row
-                v-if="isLookAlikeCreateable && isLookAlikeNeeeded"
-                class="mt-0"
-              >
-                <v-col col="6" class="pr-14">
-                  <text-field
-                    v-model="lookalikeAudience.name"
-                    placeholder-text="What is the name for this new lookalike audience?"
-                    height="40"
-                    label-text="Lookalike audience name"
-                    background-color="white"
-                    required
-                    class="text-caption black--text text--darken-4"
-                  />
-                </v-col>
-                <v-col col="6" class="pr-14">
-                  <div class="black--text text--darken-4 text-caption">
-                    Audience reach
-                  </div>
-                  <look-alike-slider v-model="lookalikeAudience.value" />
-                  <div class="gray--text text-caption pt-4">
-                    Audience reach ranges from 1% to 10% of the combined
-                    population of your selected locations. A 1% lookalike
-                    consists of the people most similar to your lookalike
-                    source. Increasing the percentage creates a bigger, broader
-                    audience.
                   </div>
                 </v-col>
               </v-row>
@@ -369,8 +292,7 @@ import huxButton from "@/components/common/huxButton"
 import TextField from "@/components/common/TextField"
 import FormSteps from "@/components/common/FormSteps"
 import FormStep from "@/components/common/FormStep"
-import LookAlikeSlider from "@/components/common/LookAlikeSlider"
-import AttributeRules from "./AttributeRules.vue"
+import AttributeRules from "@/views/SegmentPlayground/AttributeRules.vue"
 import AttachEngagement from "@/views/Audiences/AttachEngagement"
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations"
 import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension"
@@ -389,7 +311,6 @@ export default {
     TextField,
     FormSteps,
     FormStep,
-    LookAlikeSlider,
     AttributeRules,
     Logo,
     AttachEngagement,
@@ -434,12 +355,6 @@ export default {
       hoverItem: "",
       loading: false,
       addDestinationFormValid: false,
-      // TODO: API integration HUS-649
-      isLookAlikeNeeeded: 0,
-      lookalikeAudience: {
-        name: null,
-        value: 5,
-      },
       showConfirmModal: false,
       navigateTo: false,
       flagForModal: false,
@@ -460,13 +375,6 @@ export default {
 
     isMinEngagementSelected() {
       return this.selectedEngagements.length > 1
-    },
-
-    isLookAlikeCreateable() {
-      return (
-        this.selectedDestinations.filter((each) => each.type === "facebook")
-          .length > 0
-      )
     },
 
     isAudienceFormValid() {

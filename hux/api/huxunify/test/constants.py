@@ -81,6 +81,10 @@ CDP_IDENTITY_ID_COUNT_BY_DAY_ENDPOINT = "/identity/id-count-by-day"
 
 AUDIENCE_STATE_FILTER = {"field": "state", "type": "equals", "value": "HI"}
 
+SOURCE_NAME = "source_name"
+SOURCE_SIZE = "source_size"
+SOURCE_ID = "source_id"
+
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
     "status": "success",

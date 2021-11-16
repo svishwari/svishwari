@@ -343,6 +343,9 @@ LOOKALIKE_AUD_NAME = "name"
 LOOKALIKE_AUD_SIZE_PERCENTAGE = "audience_size_percentage"
 LOOKALIKE_AUD_COUNTRY = "country"
 LOOKALIKE_SOURCE_AUD_ID = "source_audience_id"
+LOOKALIKE_SOURCE_AUD_NAME = "source_audience_name"
+LOOKALIKE_SOURCE_AUD_SIZE = "source_audience_size"
+LOOKALIKE_SOURCE_AUD_FILTERS = "source_audience_filters"
 
 USER_ROLE = "role"
 USER_ID = "user_id"
@@ -477,12 +480,13 @@ DOWNLOAD_TYPE = "download_type"
 
 
 # Required Fields per collection
+
 REQUIRED_FIELDS = {
     CONFIGURATIONS_COLLECTION: [
+        CONFIGURATION_FIELD_NAME,
         CONFIGURATION_FIELD_TYPE,
     ]
 }
-
 # Allowed Fields per collection
 ALLOWED_FIELDS = {
     CONFIGURATIONS_COLLECTION: [
