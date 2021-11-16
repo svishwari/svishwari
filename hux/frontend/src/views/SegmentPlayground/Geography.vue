@@ -25,6 +25,7 @@
           v-if="!loading"
           :map-data="data.geo"
           :configuration-data="configurationData"
+          :disable-hover-effects="true"
           data-e2e="map-chart"
         />
         <map-slider

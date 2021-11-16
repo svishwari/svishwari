@@ -4,8 +4,9 @@
     :items="localItems"
     item-value="value"
     item-text="text"
+    append-icon="mdi-chevron-down"
     solo
-    :height="32"
+    :height="40"
   ></v-autocomplete>
 </template>
 
@@ -55,4 +56,8 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+::v-deep .v-input__control {
+  min-height: auto !important;
+}
+</style>

@@ -169,7 +169,7 @@
             </div>
           </div>
         </div>
-        <div v-if="index != lastIndex" class="col-12 seperator mt-5 mb-1">
+        <div v-if="index != lastIndex" class="col-12 seperator mt-5 mb-1 px-0">
           <hr class="black lighten-2" />
           <v-chip
             small
