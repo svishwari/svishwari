@@ -133,7 +133,7 @@ def secured() -> object:
             if introspect_token(token_response[0]):
                 return in_function(*args, **kwargs)
 
-            return api_c.INVALID_AUTH, 400
+            return {api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.UNAUTHORIZED
 
         # set tag so we can assert if a function is secured via this decorator
         decorator.__wrapped__ = in_function
@@ -282,7 +282,9 @@ def requires_access_levels(access_levels: list) -> object:
                 logger.info(
                     "User has an invalid access level to access this resource."
                 )
-                return api_c.INVALID_AUTH, HTTPStatus.UNAUTHORIZED
+                return {
+                    api_c.MESSAGE: api_c.INVALID_AUTH
+                }, HTTPStatus.UNAUTHORIZED
 
             # return found user
             kwargs[api_c.USER] = user

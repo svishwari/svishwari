@@ -212,8 +212,6 @@ class OktaTest(TestCase):
         """
 
         request_mocker.post(self.introspect_call, json=INVALID_RESPONSE)
-
-        invalid_header = (api_c.INVALID_AUTH, 400)
         with Flask("invalid_token").test_request_context(
             "/", headers={"Authorization": "Bearer 123456789"}
         ):
@@ -228,7 +226,10 @@ class OktaTest(TestCase):
 
                 return True
 
-            self.assertEqual(invalid_header, demo_endpoint())
+            self.assertEqual(
+                ({api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.UNAUTHORIZED),
+                demo_endpoint(),
+            )
 
     @requests_mock.Mocker()
     def test_secured_decorator_valid_token(self, request_mocker: Mocker):
@@ -242,7 +243,7 @@ class OktaTest(TestCase):
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
         with Flask("valid_test").test_request_context(
-            "/", headers={"Authorization": "Bearer 12345678"}
+            "/", headers=t_c.AUTH_HEADER
         ):
 
             @secured()
@@ -322,7 +323,7 @@ class OktaTest(TestCase):
         request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
 
         with Flask("valid_test").test_request_context(
-            "/", headers={"Authorization": "Bearer 12345678"}
+            "/", headers=t_c.AUTH_HEADER
         ):
 
             @get_user_name()
@@ -508,7 +509,7 @@ class OktaTest(TestCase):
 
             # pylint: disable=no-value-for-parameter
             self.assertTupleEqual(
-                (api_c.INVALID_AUTH, HTTPStatus.UNAUTHORIZED),
+                ({api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.UNAUTHORIZED),
                 demo_endpoint(),
             )
 
@@ -597,6 +598,6 @@ class OktaTest(TestCase):
 
             # pylint: disable=no-value-for-parameter
             self.assertTupleEqual(
-                (api_c.INVALID_AUTH, HTTPStatus.UNAUTHORIZED),
+                ({api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.UNAUTHORIZED),
                 demo_endpoint(),
             )
