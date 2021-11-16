@@ -53,27 +53,27 @@ export default {
         },
         { text: "Profiles", value: "profile_count", width: "117px" },
         {
-          text: `Rate ${this.suffix}<div class='pt-2'>(predicted)</div>`,
+          text: `Rate ${this.suffix}<span class='pt-2'>(predicted)</span>`,
           value: "predicted_rate",
           width: "117px",
         },
         {
-          text: `Rate ${this.suffix}<div class='pt-2'>(actual)</div>`,
+          text: `Rate ${this.suffix}<span class='pt-2'>(actual)</span>`,
           value: "actual_rate",
           width: "117px",
         },
         {
-          text: "Lift <div class='pt-2'>(predicted)</div>",
+          text: "Lift <span class='pt-2'>(predicted)</span>",
           value: "predicted_lift",
           width: "117px",
         },
         {
-          text: "Lift <div class='pt-2'>(actual)</div>",
+          text: "Lift <span class='pt-2'>(actual)</span>",
           value: "actual_lift",
           width: "117px",
         },
         {
-          text: "Size %<div class='pt-2'>(profiles)</div>",
+          text: "Size % <span class='pt-2'>(profiles)</span>",
           value: "profile_size_percent",
           width: "117px",
         },

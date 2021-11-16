@@ -51,7 +51,7 @@
   },
   "featureChart": {
     "maxWidth": "230px",
-    "top": "35px",
+    "top": "-6px",
     "left": "30px"
   },
   "featureChartScore": {
