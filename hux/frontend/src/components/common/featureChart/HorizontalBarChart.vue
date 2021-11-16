@@ -129,7 +129,7 @@ export default {
         .attr("stroke-opacity", "0.3")
         .selectAll("text")
         .attr("fill", "#4f4f4f")
-        .style("font-size", "12px")
+        .style("font-size", "14px")
 
       svg
         .append("g")
@@ -140,7 +140,7 @@ export default {
         })
         .selectAll("text")
         .attr("fill", "#4f4f4f")
-        .style("font-size", "12px")
+        .style("font-size", "14px")
         .style("text-anchor", "end")
         .on("mouseover", (d) => featureLabelHover(d.srcElement))
         .on("mouseout", () => this.tooltipDisplay(false))

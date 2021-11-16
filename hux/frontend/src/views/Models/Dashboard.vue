@@ -288,7 +288,7 @@
               >
                 RMSE
               </span>
-              <span v-else class="black--text text--darken-1"> AUC </span>
+              <span v-else class="black--text text--lighten-4"> AUC </span>
             </div>
             <div ref="decisioning-drift">
               <drift-chart
