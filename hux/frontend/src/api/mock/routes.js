@@ -135,9 +135,10 @@ export const defineRoutes = (server) => {
 
   server.post("/destinations/request", (schema, request) => {
     const requestDetails = JSON.parse(request.requestBody)
-    const { id } = requestDetails
-    if (id) {
-      return schema.destinations.find(id).update({ is_added: true })
+    const { name } = requestDetails
+    const existingDestination = schema.destinations.findBy({ name: name })
+    if (existingDestination) {
+      return existingDestination.update({ is_added: true, status: "Requested" })
     } else {
       const attrs = {
         ...requestDetails,
