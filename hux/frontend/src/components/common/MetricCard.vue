@@ -12,25 +12,13 @@
     @click="$emit('click')"
   >
     <div class="d-flex align-center justify-space-between w-100">
-      <div class="flex-grow-1" :class="{ 'align-center': highLevel }">
-        <div class="subtitle-slot">
-          <span
-            class="text-caption"
-            :class="{
-              'no-click': !interactable,
-              'flex-grow-1 align-center highlevel-subtitle': highLevel,
-            }"
-          >
-            {{ subtitle }}
-          </span>
-          <slot name="subtitle-extended"></slot>
-        </div>
-
-        <slot name="extra-item"></slot>
-
+      <div
+        class="flex-grow-1"
+        :class="{ 'align-center text-center': highLevel }"
+      >
         <span
           v-if="!titleTooltip"
-          class="text-subtitle-1"
+          class="text-body-2"
           :class="[
             interactable ? 'primary--text ' : 'black--text text--lighten-4 ',
             highLevel ? 'highlevel-title' : '',
@@ -70,6 +58,22 @@
             </template>
           </tooltip>
         </div>
+
+        <slot name="extra-item"></slot>
+
+        <div class="subtitle-slot">
+          <span
+            class="text-caption"
+            :class="{
+              'no-click': !interactable,
+              'flex-grow-1 align-center text-center highlevel-subtitle':
+                highLevel,
+            }"
+          >
+            {{ subtitle }}
+          </span>
+          <slot name="subtitle-extended"></slot>
+        </div>
       </div>
 
       <v-icon v-if="icon" color="black lighten-2" x-large> {{ icon }} </v-icon>
@@ -82,7 +86,6 @@
 <script>
 import Icon from "./Icon.vue"
 import Tooltip from "./Tooltip.vue"
-
 export default {
   name: "MetricCard",
   components: { Tooltip, Icon },
@@ -157,7 +160,7 @@ export default {
 <style lang="scss" scoped>
 .metric-card-wrapper {
   border: 1px solid var(--v-black-lighten2);
-  padding: 20px 16px !important;
+  padding: 20px 15px;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -196,7 +199,9 @@ export default {
     }
   }
   .highlevel-title {
-    line-height: 30px;
+    font-weight: 300;
+    font-size: 28px !important;
+    line-height: 40px;
     color: var(--v-black-darken4) !important;
   }
   .highlevel-subtitle {
