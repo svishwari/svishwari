@@ -81,7 +81,7 @@ stages:
         content-type: application/json
 
 ---
-test_name: Test idr datafeeds
+test_name: Test idr get datafeeds and individual datafeed
 
 strict:
   - json:list_any_order
@@ -104,14 +104,59 @@ stages:
     response:
       status_code: 200
       json:
-        !anylist
         - data_source_type: !anystr
           last_run: !anystr
           datafeed_name: !anystr
           match_rate: !anyfloat
-          datafeed_id: !anystr
+          datafeed_id: !anyint
           new_ids_generated: !anyint
           num_records_processed: !anyint
+      headers:
+        content-type: application/json
+      save:
+        json:
+          first_data_feed: "[0]"
+
+
+  - name: test idr/datafeeds/<individual datafeed id>
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/idr/datafeeds/{first_data_feed.datafeed_id}"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "stitched":
+          "digital_ids_merged": !anyint
+          "stitched_timestamp": !anystr
+          "merge_rate": !anyfloat
+          "match_rate": !anyfloat
+          "digital_ids_added": !anyint
+          "records_source": !anystr
+        "pinning":
+          "output_records": !anyint
+          "household_id_match": !anyint
+          "db_reads": !anyint
+          "filename": !anystr
+          "process_time": !anyfloat
+          "db_writes": !anyint
+          "new_individual_ids": !anyint
+          "pinning_timestamp": !anystr
+          "new_household_ids": !anyint
+          "input_records": !anyint
+          "new_company_ids": !anyint
+          "new_address_ids": !anyint
+          "empty_records": !anyint
+          "company_id_match": !anyint
+          "address_id_match": !anyint
+          "individual_id_match": !anyint
       headers:
         content-type: application/json
 
@@ -268,58 +313,7 @@ stages:
         content-type: application/json
 
 ---
-test_name: Test datafeeds get
 
-strict:
-  - json:list_any_order
-
-includes:
-  - !include common.yaml
-
-stages:
-  - name: test datafeeds get
-
-    # Define the request to be made...
-    request:
-      url: "{host}/{version}/idr/datafeeds/1234"
-      method: GET
-      headers:
-        content-type: application/json
-        Authorization: "Bearer {token}"
-
-    # ...and the expected response code and body
-    response:
-      strict: false
-      status_code: 200
-      json:
-        "stitched":
-          "digital_ids_added": !anyint
-          "digital_ids_merged": !anyint
-          "time_stamp": !anystr
-          "records_source": !anystr
-          "match_rate": !anyfloat
-          "merge_rate": !anyfloat
-        "pinning":
-          "db_reads": !anyint
-          "household_id_match": !anyint
-          "filename": !anystr
-          "date_time": !anystr
-          "new_company_ids": !anyint
-          "db_writes": !anyint
-          "individual_id_match": !anyint
-          "address_id_match": !anyint
-          "new_individual_ids": !anyint
-          "new_household_ids": !anyint
-          "process_time": !anyfloat
-          "company_id_match": !anyint
-          "input_records": !anyint
-          "empty_records": !anyint
-          "output_records": !anyint
-          "new_address_ids": !anyint
-      headers:
-        content-type: application/json
-
----
 test_name: Test customers insights countries
 
 strict:
