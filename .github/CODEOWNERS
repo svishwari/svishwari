@@ -3,8 +3,8 @@ hux/frontend/ @Abdullah-Azad @henrikr @mohitbans @rahgoel @sach9993 @svishwari @
 
 # api processes
 hux/api/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @henrikr @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @mohitbans
-hux/integration_tests/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @henrikr @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @mohitban
-hux/api/load_tests/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @henrikr @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @mohitban
+hux/integration_tests/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @henrikr @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @mohitbans
+hux/api/load_tests/ @dcl-deloitte @jimcmahon @panch-mukesh @rajkcon1 @henrikr @soumya-pb @risheek-deloitte @skondalraj-deloitte @sameerksingh1236 @mohitbans
 
 # CI/CD processes
 *codefresh.yml @pfleetwood1 @JyotiSingh7 @dcl-deloitte @henrikr
