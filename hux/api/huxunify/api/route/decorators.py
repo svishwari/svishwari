@@ -214,7 +214,7 @@ def get_user_name() -> object:
     return wrapper
 
 
-def requires_access_levels(access_levels: list = None) -> object:
+def requires_access_levels(access_levels: list) -> object:
     """Purpose of this decorator is for validating access levels for requests.
 
     Example: @requires_access_level()
@@ -265,7 +265,6 @@ def requires_access_levels(access_levels: list = None) -> object:
 
             # if not 200, return response
             if token_response[1] != 200:
-                logger.info("Failure. Okta token response code is not 200.")
                 return token_response
 
             # get the user info and the corresponding user document from db
@@ -279,8 +278,12 @@ def requires_access_levels(access_levels: list = None) -> object:
                 return user
 
             # check access level
-            if not access_levels:
-                pass
+            access_level = constants.AccessLevel(user.get(db_c.USER_ROLE))
+            if access_level not in access_levels:
+                logger.info(
+                    "User has an invalid access level to access this resource."
+                )
+                return constants.INVALID_AUTH, HTTPStatus.UNAUTHORIZED
 
             # return found user
             kwargs[constants.USER] = user
