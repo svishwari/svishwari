@@ -98,8 +98,11 @@ export default {
   },
   async mounted() {
     this.loadingOverview = true
-    await this.getOverview()
-    this.loadingOverview = false
+    try {
+      await this.getOverview()
+    } finally {
+      this.loadingOverview = false
+    }
   },
   methods: {
     ...mapActions({
