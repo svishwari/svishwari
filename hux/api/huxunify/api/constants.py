@@ -67,6 +67,7 @@ EMAIL = "email"
 PHONE = "phone"
 AGE = "age"
 GENDER = "gender"
+CATEGORY = "category"
 ADDRESS = "address"
 CITY = "city"
 STATE = "state"
@@ -704,6 +705,7 @@ EMAIL_METRICS = [
 SUMMARY = "summary"
 DELIVERED = "delivered"
 UNSUBSCRIBE = "unsubscribe"
+UNCATEGORIZED = "uncategorized"
 SPEND = "spend"
 ENGAGEMENT_ID_PARAMS = [
     {
@@ -1362,6 +1364,168 @@ CUSTOMER_IDR_TEST_DATA = {
     },
 }
 
+MODELS_STUB = [
+    {
+        CATEGORY: "Email",
+        TYPE: "propensity",
+        NAME: "Propensity to Purchase",
+        DESCRIPTION: "Propensity to Purchase.",
+        ID: "f76a5e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Email",
+        TYPE: "propensity",
+        NAME: "Propensity to Unsubscribe",
+        DESCRIPTION: "Propensity to Unsubscribe.",
+        ID: "a54d7e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Email",
+        TYPE: "propensity",
+        NAME: "Propensity to Open",
+        DESCRIPTION: "Propensity to open",
+        ID: "5df65e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Email",
+        TYPE: "propensity",
+        NAME: "Propensity to Click",
+        DESCRIPTION: "Propensity to click.",
+        ID: "aa789e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Email",
+        TYPE: "propensity",
+        NAME: "Email content optimization",
+        DESCRIPTION: "Email content optimization.",
+        ID: "99e45e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Sales forecasting",
+        TYPE: "prediction",
+        NAME: "Customer lifetime value",
+        DESCRIPTION: "Customer lifetime value.",
+        ID: "cc768e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Sales forecasting",
+        TYPE: "prediction",
+        NAME: "Predicted sales per customer",
+        DESCRIPTION: "Predicted sales per customer.",
+        ID: "bba67e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Sales forecasting",
+        TYPE: "prediction",
+        NAME: "Predicted sales per store",
+        DESCRIPTION: "Predicted sales per store.",
+        ID: "a45b7e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Capability propensity",
+        DESCRIPTION: "Capability propensity.",
+        ID: "bc123e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Capability trust propensity",
+        DESCRIPTION: "Capability trust propensity.",
+        ID: "a15d8e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Humanity propensity",
+        DESCRIPTION: "Humanity propensity.",
+        ID: "bd732e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Hux TrustID propensity",
+        DESCRIPTION: "Hux TrustID propensity.",
+        ID: "cce14e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "NBA learning algorithm",
+        DESCRIPTION: "NBA learning algorithm.",
+        ID: "98acee0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Reliability propensity",
+        DESCRIPTION: "Reliability propensity.",
+        ID: "99d12e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Transparency propensity",
+        DESCRIPTION: "Transparency propensity.",
+        ID: "bed54e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Retention",
+        TYPE: "propensity",
+        NAME: "Churn",
+        DESCRIPTION: "Churn.",
+        ID: "11d54e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Web",
+        TYPE: "propensity",
+        NAME: "Propensity to purchase product category",
+        DESCRIPTION: "Propensity to purchase product category.",
+        ID: "88ee4e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Web",
+        TYPE: "propensity",
+        NAME: "Propensity to visit product category",
+        DESCRIPTION: "Propensity to visit product category.",
+        ID: "aab41e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Web",
+        TYPE: "propensity",
+        NAME: "Propensity to visit website",
+        DESCRIPTION: "Propensity to visit website.",
+        ID: "99a78e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Uncategorized",
+        TYPE: "propensity",
+        NAME: "Segmentation",
+        DESCRIPTION: "Segmentation.",
+        ID: "abe41e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+]
 
 # Configurations
 CONFIGURATIONS_TAG = "configurations"

@@ -120,43 +120,24 @@ class DecisioningTests(TestCase):
     def test_success_request_model(self):
         """Test requesting a model."""
 
-        get_models_mock = mock.patch(
-            "huxunify.api.data_connectors.tecton.get_models"
-        ).start()
-        get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
-
-        response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-
         status_request = {
             api_c.STATUS: api_c.REQUESTED,
-            api_c.ID: response.json[0][api_c.ID],
-            api_c.NAME: response.json[0][api_c.NAME],
+            api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
+            api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
         }
 
-        self.test_client.post(
+        response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
             data=json.dumps(status_request),
             headers=t_c.STANDARD_HEADERS,
         )
 
-        response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}?{api_c.STATUS}={api_c.REQUESTED}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(
-            t_c.validate_schema(ModelSchema(), response.json, True)
-        )
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
-        self.assertListEqual(
-            [x[api_c.NAME] for x in response.json],
-            ["Model1"],
-        )
+        get_models_mock = mock.patch(
+            "huxunify.api.data_connectors.tecton.get_models"
+        ).start()
+        get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
     def test_remove_model_success(self):
         """Test removing requested models from Unified DB."""

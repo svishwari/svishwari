@@ -477,12 +477,13 @@ DOWNLOAD_TYPE = "download_type"
 
 
 # Required Fields per collection
+
 REQUIRED_FIELDS = {
     CONFIGURATIONS_COLLECTION: [
+        CONFIGURATION_FIELD_NAME,
         CONFIGURATION_FIELD_TYPE,
     ]
 }
-
 # Allowed Fields per collection
 ALLOWED_FIELDS = {
     CONFIGURATIONS_COLLECTION: [
