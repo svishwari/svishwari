@@ -10,9 +10,10 @@
       :tooltip-style="toolTipStyle"
     >
       <template #content>
+        <div class="text-body-2"><span class="dot mr-1"></span>{{ title }}</div>
         <div class="text-body-2">{{ tooltipValue }}</div>
-        <div class="text-body-2">
-          {{ tooltipValueDate | Date("MM/DD/YYYY") | Empty }}
+        <div class="text-body-2 text--lighten-4">
+          {{ tooltipValueDate | Date("MMM DD, YYYY") | Empty }}
         </div>
       </template>
     </chart-tooltip>
@@ -113,6 +114,11 @@ export default {
         }
       },
     },
+    title: {
+      type: String,
+      required: false,
+      default: "Drift AUC",
+    },
   },
 
   data() {
@@ -175,6 +181,13 @@ export default {
         .line()
         .x((d) => xCoordinateFunction(d.xAxisValue))
         .y((d) => yCoordinateFunction(d.yAxisValue))
+
+      // function to map coordinates to line area
+      var area = d3Shape
+        .area()
+        .x((d) => xCoordinateFunction(d.xAxisValue))
+        .y0(height - this.margin.bottom)
+        .y1((d) => yCoordinateFunction(d.yAxisValue))
 
       // generates x-axis
       let xAxis = null
@@ -257,6 +270,14 @@ export default {
         .attr("stroke-linejoin", "round")
         .attr("stroke-linecap", "round")
         .attr("d", line)
+
+      // fill area under line
+      svg
+        .append("path")
+        .datum(this.value)
+        .attr("d", area)
+        .style("opacity", 0.15)
+        .style("fill", this.lineColor)
 
       // enables x-axis and y-axis lines
       if (!this.enableAxisLines) {
@@ -366,3 +387,12 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.dot {
+  height: 12px;
+  width: 12px;
+  background-color: var(--v-primary-darken2);
+  border-radius: 50%;
+  display: inline-block;
+}
+</style>
