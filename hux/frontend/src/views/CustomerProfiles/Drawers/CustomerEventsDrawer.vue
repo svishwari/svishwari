@@ -51,7 +51,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Drawer from "@/components/common/Drawer.vue"
 import Icon from "@/components/common/Icon.vue"
