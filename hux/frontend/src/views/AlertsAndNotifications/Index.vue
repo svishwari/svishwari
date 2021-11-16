@@ -291,7 +291,6 @@ export default {
     intersected() {
       if (this.batchDetails.batchNumber <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
-        this.setDefaultDate()
         this.fetchNotificationsByBatch()
       } else {
         this.enableLazyLoad = false
