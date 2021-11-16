@@ -144,6 +144,7 @@ def get_document(
     database: DatabaseClient,
     collection: str,
     document_id: ObjectId,
+    include_deleted: bool = False,
 ) -> Union[dict, None]:
     """Get document by ID
 
@@ -151,6 +152,8 @@ def get_document(
         database (DatabaseClient): MongoDB Database Client
         collection (str): Collection name.
         document_id (ObjectId): MongoDB Object Id
+        include_deleted (bool): Flag to specify whether to fetch deleted docs,
+            defaults to False
 
     Returns:
         Tuple[dict,None]:MongoDB collection document else None
@@ -166,8 +169,12 @@ def get_document(
     # get collection
     coll = database[c.DATA_MANAGEMENT_DATABASE][collection]
 
+    query = {c.ID: document_id}
+    if not include_deleted:
+        query[c.DELETED] = False
+
     try:
-        return coll.find_one({c.ID: document_id, c.DELETED: False})
+        return coll.find_one(query)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -277,7 +284,7 @@ def delete_document(
                 "$set": {
                     c.DELETED: True,
                     c.UPDATED_BY: username,
-                    c.UPDATE_TIME: datetime.now(),
+                    c.UPDATE_TIME: datetime.utcnow(),
                 }
             },
             upsert=False,

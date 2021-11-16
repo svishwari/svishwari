@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Tuple, List
 
+from bson import ObjectId
 from flask import Blueprint, jsonify, request
 from flasgger import SwaggerView
 from huxunifylib.util.general.logging import logger
@@ -25,7 +26,10 @@ from huxunify.api.route.decorators import (
     api_error_handler,
     get_user_name,
 )
-from huxunify.api.route.utils import get_db_client, read_csv_shap_data
+from huxunify.api.route.utils import (
+    get_db_client,
+    read_csv_shap_data,
+)
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
@@ -220,6 +224,85 @@ class SetModelStatus(SwaggerView):
         logger.info("Successfully requested model %s.", body.get(db_c.NAME))
 
         return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.CREATED
+
+
+@add_view_to_blueprint(
+    model_bp, f"{api_c.MODELS_ENDPOINT}", "RemoveRequestedModel"
+)
+class RemoveRequestedModel(SwaggerView):
+    """Class to remove a requested model."""
+
+    parameters = [
+        {
+            "name": api_c.MODEL_ID,
+            "in": "query",
+            "type": "string",
+            "description": "Model ID.",
+            "required": True,
+            "example": "61928a4dce8aa67b888826f5",
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "example": {api_c.MESSAGE: api_c.OPERATION_SUCCESS},
+            },
+            "description": "Successfully removed the requested model.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to remove the requested model.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.MODELS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @get_user_name()
+    def delete(self, user_name: str) -> Tuple[dict, int]:
+        """Remove a requested model.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Model Removed, HTTP status code.
+        """
+
+        database = get_db_client()
+
+        if not request.args:
+            return {
+                api_c.MESSAGE: api_c.EMPTY_OBJECT_ERROR_MESSAGE
+            }, HTTPStatus.BAD_REQUEST
+
+        model_id = ObjectId(request.args.get(api_c.MODEL_ID))
+
+        collection_management.delete_document(
+            database=database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            document_id=model_id,
+            hard_delete=False,
+            username=user_name,
+        )
+
+        notification_management.create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            f'Requested model "{model_id}" removed by {user_name}.',
+            api_c.MODELS_TAG,
+        )
+
+        logger.info("Successfully removed model %s.", model_id)
+
+        return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.OK
 
 
 @add_view_to_blueprint(

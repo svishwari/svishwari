@@ -856,15 +856,34 @@ def append_destination_to_engagement_audience(
         db_c.ENGAGEMENTS_COLLECTION
     ]
 
-    return collection.find_one_and_update(
-        {db_c.ID: engagement_id, "audiences.id": audience_id},
+    # workaround due to limitation in DocumentDB
+    engagement_doc = collection.find_one(
         {
-            "$set": {
-                db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-                db_c.UPDATED_BY: user_name,
-            },
-            "$push": {"audiences.$.destinations": destination},
+            db_c.ID: engagement_id,
+            "audiences.id": audience_id,
+        }
+    )
+
+    if not engagement_doc:
+        return {}
+
+    audiences = engagement_doc.get(db_c.AUDIENCES, [])
+    audiences.append(destination)
+    engagement_doc[db_c.AUDIENCES] = audiences
+    engagement_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
+    engagement_doc[db_c.UPDATED_BY] = user_name
+
+    collection.replace_one(
+        {
+            db_c.ID: engagement_id,
         },
+        engagement_doc,
+    )
+
+    return collection.find_one(
+        {
+            db_c.ID: engagement_id,
+        }
     )
 
 

@@ -142,7 +142,7 @@ class ConfigurationCollectionManagementTest(TestCase):
 
     def test_delete_document_configuration(self):
         """Test deleting a configuration"""
-        configuration = dmg.create_document(
+        new_doc = dmg.create_document(
             database=self.database,
             collection=db_c.CONFIGURATIONS_COLLECTION,
             new_doc={
@@ -152,13 +152,13 @@ class ConfigurationCollectionManagementTest(TestCase):
             },
         )
 
-        self.assertIsNotNone(configuration)
+        self.assertIsNotNone(new_doc)
 
         self.assertTrue(
             dmg.delete_document(
                 database=self.database,
                 collection=db_c.CONFIGURATIONS_COLLECTION,
-                document_id=configuration[db_c.ID],
+                document_id=new_doc[db_c.ID],
                 hard_delete=False,
             )
         )
@@ -166,9 +166,17 @@ class ConfigurationCollectionManagementTest(TestCase):
         configuration = dmg.get_document(
             self.database,
             collection=db_c.CONFIGURATIONS_COLLECTION,
-            document_id=configuration[db_c.ID],
+            document_id=new_doc[db_c.ID],
         )
         self.assertIsNone(configuration)
+
+        updated_doc = dmg.get_document(
+            self.database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            document_id=new_doc[db_c.ID],
+            include_deleted=True,
+        )
+        self.assertTrue(updated_doc[db_c.DELETED])
 
     def test_hard_delete_configuration(self):
         """Test deleting a configuration"""
