@@ -160,8 +160,11 @@ export default {
 
     async fetchDataFeedReport() {
       this.loading = true
-      await this.getDataFeedReport(this.dataFeedId)
-      this.loading = false
+      try {
+        await this.getDataFeedReport(this.dataFeedId)
+      } finally {
+        this.loading = false
+      }
     },
   },
 }

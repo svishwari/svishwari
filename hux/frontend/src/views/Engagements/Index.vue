@@ -806,8 +806,11 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.getAllEngagements()
-    this.loading = false
+    try {
+      await this.getAllEngagements()
+    } finally {
+      this.loading = false
+    }
   },
 
   methods: {
@@ -854,12 +857,15 @@ export default {
       this.loading = true
       const removePayload = { audience_ids: [] }
       removePayload.audience_ids.push(this.selectedAudienceId)
-      await this.detachAudience({
-        engagementId: this.selectedEngagementId,
-        data: removePayload,
-      })
-      await this.getAllEngagements()
-      this.loading = false
+      try {
+        await this.detachAudience({
+          engagementId: this.selectedEngagementId,
+          data: removePayload,
+        })
+        await this.getAllEngagements()
+      } finally {
+        this.loading = false
+      }
     },
     getOverallDestinations(engagementDestinations) {
       let destinations = [...engagementDestinations]
@@ -907,11 +913,14 @@ export default {
       const payload = { id: value.id, data: inactiveEngagementPayload }
       await this.updateEngagement(payload)
       this.loading = true
-      await this.getAllEngagements()
-      this.rowData = this.engagementData.sort((a, b) =>
-        a.name > b.name ? 1 : -1
-      )
-      this.loading = false
+      try {
+        await this.getAllEngagements()
+      } finally {
+        this.rowData = this.engagementData.sort((a, b) =>
+          a.name > b.name ? 1 : -1
+        )
+        this.loading = false
+      }
     },
 
     reloadAudienceData() {

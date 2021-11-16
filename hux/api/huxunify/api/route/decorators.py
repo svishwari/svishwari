@@ -25,7 +25,7 @@ from huxunifylib.database import (
 import huxunifylib.database.db_exceptions as de
 
 from huxunify.api.route.utils import get_db_client, get_user_from_db
-from huxunify.api import constants
+from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.okta import (
     introspect_token,
     get_token_from_request,
@@ -131,7 +131,7 @@ def secured() -> object:
             if introspect_token(token_response[0]):
                 return in_function(*args, **kwargs)
 
-            return constants.INVALID_AUTH, 400
+            return api_c.INVALID_AUTH, 400
 
         # set tag so we can assert if a function is secured via this decorator
         decorator.__wrapped__ = in_function
@@ -174,7 +174,7 @@ def get_user_name() -> object:
             # override if flag set locally
             if get_config().TEST_AUTH_OVERRIDE:
                 # Return a default user name.
-                kwargs[constants.USER_NAME] = "test user"
+                kwargs[api_c.USER_NAME] = "test user"
                 return in_function(*args, **kwargs)
 
             # get the access token
@@ -197,7 +197,7 @@ def get_user_name() -> object:
                 return user_response
 
             # return found user
-            kwargs[constants.USER_NAME] = user_response[db_c.USER_DISPLAY_NAME]
+            kwargs[api_c.USER_NAME] = user_response[db_c.USER_DISPLAY_NAME]
 
             return in_function(*args, **kwargs)
 
@@ -324,9 +324,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__qualname__,
                     in_function.__module__,
                 )
-                return {
-                    "message": constants.DUPLICATE_NAME
-                }, HTTPStatus.FORBIDDEN
+                return {"message": api_c.DUPLICATE_NAME}, HTTPStatus.FORBIDDEN
 
             except CustomAudienceDeliveryStatusError as exc:
                 logger.error(
@@ -349,14 +347,14 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {
-                    "message": constants.FAILED_DEPENDENCY_ERROR_MESSAGE
+                    "message": api_c.FAILED_DEPENDENCY_ERROR_MESSAGE
                 }, HTTPStatus.FAILED_DEPENDENCY
 
             except iae.FailedDestinationDependencyError as exc:
                 error_message = (
                     exc.args[0]
                     if exc.args
-                    else constants.DESTINATION_CONNECTION_FAILED
+                    else api_c.DESTINATION_CONNECTION_FAILED
                 )
                 logger.error(
                     "%s: %s Error encountered while executing %s in module %s.",
@@ -376,7 +374,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {
-                    "message": constants.EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE
+                    "message": api_c.EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE
                 }, HTTPStatus.NOT_FOUND
 
             except ue.InputParamsValidationError as exc:
@@ -398,7 +396,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {
-                    "message": constants.FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE
+                    "message": api_c.FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE
                 }, HTTPStatus.FAILED_DEPENDENCY
 
             except iae.FailedSSMDependencyError as exc:
@@ -410,7 +408,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {
-                    "message": constants.AWS_SSM_PARAM_NOT_FOUND_ERROR_MESSAGE
+                    "message": api_c.AWS_SSM_PARAM_NOT_FOUND_ERROR_MESSAGE
                 }, HTTPStatus.FAILED_DEPENDENCY
 
             except Exception as exc:  # pylint: disable=broad-except
@@ -471,7 +469,7 @@ def validate_delivery_params(func) -> object:
 
         database = get_db_client()
         # check if engagement id exists
-        engagement_id = kwargs.get(constants.ENGAGEMENT_ID, None)
+        engagement_id = kwargs.get(api_c.ENGAGEMENT_ID, None)
         if engagement_id:
             engagement = get_engagement(database, ObjectId(engagement_id))
             if engagement:
@@ -492,10 +490,10 @@ def validate_delivery_params(func) -> object:
                     func.__module__,
                 )
                 return {
-                    "message": constants.ENGAGEMENT_NOT_FOUND
+                    "message": api_c.ENGAGEMENT_NOT_FOUND
                 }, HTTPStatus.NOT_FOUND
         # check if audience id exists
-        audience_id = kwargs.get(constants.AUDIENCE_ID, None)
+        audience_id = kwargs.get(api_c.AUDIENCE_ID, None)
         if audience_id:
             # check if audience id exists
             audience = orchestration_management.get_audience(
@@ -581,7 +579,7 @@ def validate_destination(
                         destination_id,
                     )
                     return {
-                        "message": constants.DESTINATION_NOT_FOUND
+                        "message": api_c.DESTINATION_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
 
             kwargs["destination_id"] = destination_id
@@ -628,7 +626,7 @@ def validate_engagement_and_audience() -> object:
             database = get_db_client()
 
             # engagement validation
-            engagement_id = kwargs.get(constants.ENGAGEMENT_ID, None)
+            engagement_id = kwargs.get(api_c.ENGAGEMENT_ID, None)
 
             if engagement_id is not None:
                 engagement_id = ObjectId(engagement_id)
@@ -638,13 +636,13 @@ def validate_engagement_and_audience() -> object:
                         engagement_id,
                     )
                     return {
-                        constants.MESSAGE: constants.ENGAGEMENT_NOT_FOUND
+                        api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
 
-                kwargs[constants.ENGAGEMENT_ID] = engagement_id
+                kwargs[api_c.ENGAGEMENT_ID] = engagement_id
 
             # audience validation
-            audience_id = kwargs.get(constants.AUDIENCE_ID, None)
+            audience_id = kwargs.get(api_c.AUDIENCE_ID, None)
 
             if audience_id is not None:
                 audience_id = ObjectId(audience_id)
@@ -656,10 +654,10 @@ def validate_engagement_and_audience() -> object:
                         audience_id,
                     )
                     return {
-                        constants.MESSAGE: constants.AUDIENCE_NOT_FOUND
+                        api_c.MESSAGE: api_c.AUDIENCE_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
 
-                kwargs[constants.AUDIENCE_ID] = audience_id
+                kwargs[api_c.AUDIENCE_ID] = audience_id
 
             return in_function(*args, **kwargs)
 

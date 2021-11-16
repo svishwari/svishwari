@@ -12,7 +12,7 @@
     >
       <!-- eslint-disable vue/no-template-shadow -->
       <template v-if="customLabel" v-slot:thumb-label="{ value }">
-        <span class="black--text text--lighten-4">
+        <span class="text-subtitle-2 black--text text--lighten-4">
           {{ customLabel(value) }}
         </span>
       </template>
@@ -152,6 +152,9 @@ export default {
         box-shadow: 0px 1px 5px rgb(0 0 0 / 15%);
         border-radius: 100px;
         border-color: var(--v-secondary-lighten1) !important;
+        &:before {
+          content: none;
+        }
       }
       .v-slider__thumb-label {
         transform: translateY(35px) translateX(-50%) rotate(45deg) !important;
@@ -189,8 +192,7 @@ export default {
     appearance: none;
 
     &:before {
-      left: -10px;
-      top: -10px;
+      content: none;
     }
   }
 

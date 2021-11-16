@@ -352,11 +352,14 @@ export default {
   },
 
   async mounted() {
-    await this.refreshData()
-    this.setFilters({
-      startDate: this.timeFrame["start_date"],
-      endDate: this.timeFrame["end_date"],
-    })
+    try {
+      await this.refreshData()
+    } finally {
+      this.setFilters({
+        startDate: this.timeFrame["start_date"],
+        endDate: this.timeFrame["end_date"],
+      })
+    }
   },
 
   methods: {
@@ -370,9 +373,12 @@ export default {
       this.loadingMatchingTrends = true
       this.loadingDataFeeds = true
       this.loadingOverview = true
-      await this.loadOverview()
-      this.loadDataFeeds()
-      this.loadMatchingTrends()
+      try {
+        await this.loadOverview()
+      } finally {
+        this.loadDataFeeds()
+        this.loadMatchingTrends()
+      }
     },
 
     setFilters({ startDate, endDate }) {
@@ -392,20 +398,29 @@ export default {
 
     async loadMatchingTrends() {
       this.loadingMatchingTrends = true
-      await this.getMatchingTrends(this.selectedDateRange)
-      this.loadingMatchingTrends = false
+      try {
+        await this.getMatchingTrends(this.selectedDateRange)
+      } finally {
+        this.loadingMatchingTrends = false
+      }
     },
 
     async loadDataFeeds() {
       this.loadingDataFeeds = true
-      await this.getDataFeeds(this.selectedDateRange)
-      this.loadingDataFeeds = false
+      try {
+        await this.getDataFeeds(this.selectedDateRange)
+      } finally {
+        this.loadingDataFeeds = false
+      }
     },
 
     async loadOverview() {
       this.loadingOverview = true
-      await this.getOverview(this.selectedDateRange)
-      this.loadingOverview = false
+      try {
+        await this.getOverview(this.selectedDateRange)
+      } finally {
+        this.loadingOverview = false
+      }
     },
   },
 }

@@ -119,10 +119,15 @@ export default {
 
   async mounted() {
     this.loadingCustomersList = true
-    await this.fetchCustomerByBatch()
-    this.calculateLastBatch()
+    let nolazyLoad = false
+    try {
+      await this.fetchCustomerByBatch()
+      this.calculateLastBatch()
+    } catch (error) {
+      nolazyLoad = true
+    }
     this.loadingCustomersList = false
-    this.enableLazyLoad = true
+    this.enableLazyLoad = !nolazyLoad
   },
 
   methods: {
