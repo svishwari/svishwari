@@ -54,6 +54,7 @@
           align-stretch
           flex-grow-1 flex-shrink-0
           mw-100
+          minh-100
         "
       >
         <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100 pa-6">
@@ -69,7 +70,12 @@
                   <template #extra-item>
                     <tooltip position-top>
                       <template #label-content>
-                        <icon type="info" :size="12" />
+                        <icon
+                          type="info"
+                          :size="12"
+                          color="primary"
+                          variant="base"
+                        />
                       </template>
                       <template #hover-content>
                         <v-sheet max-width="240px">
@@ -117,7 +123,7 @@
           <v-row class="px-2 mt-0 mb-1">
             <v-col md="12">
               <v-card
-                class="mt-3 rounded-lg box-shadow-5 overflow-hidden"
+                class="mt-2 rounded-lg box-shadow-5 overflow-hidden"
                 min-height="400"
               >
                 <v-progress-linear
@@ -128,8 +134,32 @@
 
                 <v-card-title class="chart-style pb-8 pl-5 pt-5">
                   <div class="mt-2">
-                    <span class="black--text text--darken-4 text-h5">
+                    <span class="black--text text--darken-4 text-h3">
                       ID Resolution matching trends
+                    </span>
+                    <span
+                      v-if="
+                        responseTimeFrame &&
+                        responseTimeFrame.start_date &&
+                        responseTimeFrame.end_date
+                      "
+                      class="black--text text--darken-4 text-body-1"
+                    >
+                      (
+                      {{
+                        this.$options.filters.Date(
+                          responseTimeFrame["start_date"],
+                          "MMMM YYYY"
+                        )
+                      }}
+                      -
+                      {{
+                        this.$options.filters.Date(
+                          responseTimeFrame["end_date"],
+                          "MMMM YYYY"
+                        )
+                      }}
+                      )
                     </span>
                   </div>
                 </v-card-title>
@@ -169,7 +199,7 @@
           <data-feeds
             :data="dataFeeds"
             :is-loading="loadingDataFeeds"
-            class="mt-6 mx-2"
+            class="mt-3 mx-2"
             data-e2e="datafeedtable"
           />
         </div>
@@ -270,6 +300,7 @@ export default {
       timeFrame: "identity/timeFrame",
       dataFeeds: "identity/dataFeeds",
       matchingTrends: "identity/matchingTrends",
+      responseTimeFrame: "identity/responseTimeFrame",
     }),
 
     minDate() {
@@ -321,11 +352,14 @@ export default {
   },
 
   async mounted() {
-    await this.refreshData()
-    this.setFilters({
-      startDate: this.timeFrame["start_date"],
-      endDate: this.timeFrame["end_date"],
-    })
+    try {
+      await this.refreshData()
+    } finally {
+      this.setFilters({
+        startDate: this.timeFrame["start_date"],
+        endDate: this.timeFrame["end_date"],
+      })
+    }
   },
 
   methods: {
@@ -339,9 +373,12 @@ export default {
       this.loadingMatchingTrends = true
       this.loadingDataFeeds = true
       this.loadingOverview = true
-      await this.loadOverview()
-      this.loadDataFeeds()
-      this.loadMatchingTrends()
+      try {
+        await this.loadOverview()
+      } finally {
+        this.loadDataFeeds()
+        this.loadMatchingTrends()
+      }
     },
 
     setFilters({ startDate, endDate }) {
@@ -361,20 +398,29 @@ export default {
 
     async loadMatchingTrends() {
       this.loadingMatchingTrends = true
-      await this.getMatchingTrends(this.selectedDateRange)
-      this.loadingMatchingTrends = false
+      try {
+        await this.getMatchingTrends(this.selectedDateRange)
+      } finally {
+        this.loadingMatchingTrends = false
+      }
     },
 
     async loadDataFeeds() {
       this.loadingDataFeeds = true
-      await this.getDataFeeds(this.selectedDateRange)
-      this.loadingDataFeeds = false
+      try {
+        await this.getDataFeeds(this.selectedDateRange)
+      } finally {
+        this.loadingDataFeeds = false
+      }
     },
 
     async loadOverview() {
       this.loadingOverview = true
-      await this.getOverview(this.selectedDateRange)
-      this.loadingOverview = false
+      try {
+        await this.getOverview(this.selectedDateRange)
+      } finally {
+        this.loadingOverview = false
+      }
     },
   },
 }
@@ -414,7 +460,7 @@ $headerOffsetY: 70px;
   }
 
   .idr-metric-card {
-    margin: 6px !important;
+    margin: 4px !important;
   }
 }
 </style>

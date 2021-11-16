@@ -347,8 +347,18 @@ cd hux-unified/hux/api
 # add current directory to python path
 PYTHONPATH=$PYTHONPATH:`pwd`
 
-# run the unittest
+# run the unit tests with unittest
+# set FLASK_ENV environment variable
+# Windows
+set FLASK_ENV=pytest
+# Mac/Linux
+export FLASK_ENV=pytest
+# run tests
 python -m unittest
+
+# run the unit tests with pytest
+# run tests
+python -m pytest
 ```
 
 ## Database

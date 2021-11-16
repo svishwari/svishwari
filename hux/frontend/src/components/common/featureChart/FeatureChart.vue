@@ -15,11 +15,17 @@
       :tooltip-style="toolTipStyle"
     >
       <template #content>
-        <div class="bar-hover black--text text--lighten-4">
-          <span class="feature-name"> {{ currentData.name }} </span>
-          <span class="feature-description">
+        <div class="bar-hover">
+          <div class="text-body-2 black--text">Feature</div>
+          <div class="text-body-2 black--text">
+            <span class="dot"></span> {{ currentData.name }}
+          </div>
+          <div class="text-body-2 black--text">
+            {{ currentData.score }}
+          </div>
+          <div class="text-body-2 black--text text--lighten-4">
             {{ currentData.description }}
-          </span>
+          </div>
         </div>
       </template>
     </chart-tooltip>
@@ -61,8 +67,8 @@ export default {
     },
   },
   mounted() {
-    this.chartDimensions.width = this.$refs.chartBox.clientWidth
-    this.chartDimensions.height = this.$refs.chartBox.clientHeight
+    this.sizeHandler()
+    new ResizeObserver(this.sizeHandler).observe(this.$refs.chartBox)
   },
   methods: {
     toolTipDisplay(...arg) {
@@ -76,6 +82,12 @@ export default {
       this.tooltip.x = args.x
       this.tooltip.y = args.y
     },
+
+    sizeHandler() {
+      if (this.$refs.chartBox) {
+        this.chartDimensions.width = this.$refs.chartBox.clientWidth
+      }
+    },
   },
 }
 </script>
@@ -87,27 +99,19 @@ export default {
   font-size: $font-size-root;
   line-height: 19px;
 }
-.global-text-format {
-  display: inline-block;
-  font-weight: normal;
-  font-style: normal;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--v-black-lighten4) !important;
-}
 .container {
   height: 650px;
   padding: 0px !important;
   position: relative;
   .bar-hover {
     padding: 7px 20px 20px 20px;
-    .feature-name {
-      @extend .global-text-format;
-    }
-    .feature-description {
-      @extend .global-text-format;
-      margin-top: 8px;
-    }
   }
+}
+.dot {
+  height: 12px;
+  width: 12px;
+  background-color: var(--v-primary-darken2);
+  border-radius: 50%;
+  display: inline-block;
 }
 </style>

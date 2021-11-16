@@ -220,14 +220,17 @@ export default {
 
   async mounted() {
     this.loading = true
-    if (!this.selectedDataSource) {
-      await this.getDataSource(this.dataSourceId)
+    try {
+      if (!this.selectedDataSource) {
+        await this.getDataSource(this.dataSourceId)
+      }
+      await this.getDataFeeds({
+        id: this.selectedDataSource.id,
+        type: this.selectedDataSource.type,
+      })
+    } finally {
+      this.loading = false
     }
-    await this.getDataFeeds({
-      id: this.selectedDataSource.id,
-      type: this.selectedDataSource.type,
-    })
-    this.loading = false
   },
 
   methods: {

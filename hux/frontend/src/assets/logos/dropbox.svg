@@ -1,0 +1,16 @@
+<svg width="100%" height="100%" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="9" cy="9" r="8.5" fill="white" stroke="#E2EAEC"/>
+<g clip-path="url(#dropbox0)">
+<mask id="dropbox1" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="-1" width="18" height="18">
+<circle cx="9" cy="8" r="8.5" fill="white" stroke="#D0D0CE"/>
+</mask>
+<g mask="url(#dropbox1)">
+<path d="M5.99973 4L8.99998 5.91115L5.99973 7.82229L3 5.91115L5.99973 4ZM12 4L15 5.91132L12 7.82264L8.99998 5.91132L12 4ZM3 9.73379L5.99973 7.82264L8.99998 9.73379L5.99973 11.6449L3 9.73379ZM12 7.82264L15 9.73395L12 11.6453L8.99998 9.73395L12 7.82264ZM5.99999 12.2861L9.00023 10.375L12 12.2861L9.00023 14.1973L5.99999 12.2861Z" fill="#0061FF"/>
+</g>
+</g>
+<defs>
+<clipPath id="dropbox0">
+<rect width="13" height="13" fill="white" transform="translate(3 2)"/>
+</clipPath>
+</defs>
+</svg>

@@ -65,10 +65,11 @@ export default {
   datasources: "[data-e2e='dataSourcesList']",
   destinations: "[data-e2e='destination-list']",
   dataSourcesAdd: "[data-e2e='dataSourcesAddList']",
+  dataSourcesRequest: "[data-e2e='dataSourcesRequestList']",
   addDataSource: "[data-e2e='addDataSource']",
-  pendingDataSource: "[data-e2e='data-source-list-pending-button']",
-  pendingDataSourceRemove: "[data-e2e='data-source-list-pending-remove']",
+  pendingDataSourceRemove: "[data-e2e='data-source-list-Pending-remove']",
   removeDataSourceConfirmation: "[data-e2e='remove-data-source-confirmation']",
+  pendingStatus: "[data-e2e='model-status-Pending']",
 
   //destinations
   destination: {
@@ -110,7 +111,7 @@ export default {
     addAudience: "[data-e2e='add-audience']",
     addDestination: "[data-e2e='add-destination']",
     selectAudience: "[data-e2e='audience-select-button']",
-    selectDestination: "[data-e2e='destination-select-button-qualtrics']",
+    selectDestination: "[data-e2e='destination-select-button-facebook']",
     salesForceAddButton: "[data-e2e='destination-select-button-sfmc']",
     exitDrawer: "[data-e2e='click-outside']",
     exitDataExtensionDrawer: "[data-e2e='destination-added']",
@@ -134,13 +135,16 @@ export default {
       audienceTableExpand: "[data-e2e='expand-audience']",
     },
     destinationRows: '[data-e2e="destination-rows"]',
+    createEngagement: '[data-e2e="create-engagement"]',
   },
 
   //Customer Profiles
   customerProfile: {
     customers: "a[href='/customers']",
     customeroverview: "[data-e2e='customeroverview']",
-    chart: "[data-e2e='overview-chart']",
+    customerListTab: "[data-e2e='customer-list-tab']",
+    totalCustomerchart: "[data-e2e='total-customer-chart']",
+    customerSpendchart: "[data-e2e='customer-spend-chart']",
     mapchart: "[data-e2e='map-chart']",
     mapStateList: "[data-e2e='map-state-list']",
     incomeChart: "[data-e2e='income-chart']",
@@ -149,9 +153,7 @@ export default {
     customerID: "[data-e2e='customerID']",
     customerlength: "[data-e2e='customer-length']",
     matchConfidence: "[data-e2e='match-confidence']",
-    lifeTimeValue: "[data-e2e='life-time-value']",
     conversionTime: "[data-e2e='conversion-time']",
-    churnScore: "[data-e2e='churn-score']",
     lastClick: "[data-e2e='last-click']",
     lastPurchaseDate: "[data-e2e='last-purchase-date']",
     lastOpen: "[data-e2e='last-open']",
@@ -178,11 +180,11 @@ export default {
     pinning: "[data-e2e='Pinning']",
     stitched: "[data-e2e='Stitched']",
   },
-  //notification
+  // notification
   notification: {
     notificationicon: "[data-e2e='notification-bell']",
     notificationReturnButton: "[data-e2e='notification-return']",
-    notifications: "a[href='/notifications']",
+    viewAllNotifications: "[data-e2e='notifications-view-all']",
     notificationlistmenu: "[data-e2e='notification-item']",
   },
   audience: {

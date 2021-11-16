@@ -4,6 +4,7 @@
     :class="{ 'no-click': !interactable }"
     :style="{ 'flex-grow': grow }"
     :max-width="maxWidth"
+    :width="minWidth"
     :height="height"
     :disabled="!active"
     elevation="0"
@@ -11,13 +12,25 @@
     @click="$emit('click')"
   >
     <div class="d-flex align-center justify-space-between w-100">
-      <div
-        class="flex-grow-1"
-        :class="{ 'align-center text-center': highLevel }"
-      >
+      <div class="flex-grow-1" :class="{ 'align-center': highLevel }">
+        <div class="subtitle-slot">
+          <span
+            class="text-caption"
+            :class="{
+              'no-click': !interactable,
+              'flex-grow-1 align-center highlevel-subtitle': highLevel,
+            }"
+          >
+            {{ subtitle }}
+          </span>
+          <slot name="subtitle-extended"></slot>
+        </div>
+
+        <slot name="extra-item"></slot>
+
         <span
           v-if="!titleTooltip"
-          class="text-body-2"
+          class="text-subtitle-1"
           :class="[
             interactable ? 'primary--text ' : 'black--text text--lighten-4 ',
             highLevel ? 'highlevel-title' : '',
@@ -30,36 +43,32 @@
             {{ title }}
           </span>
         </span>
-        <tooltip v-else>
-          <template #label-content>
-            <span
-              class="text-h5"
-              :class="
-                interactable ? 'primary--text ' : 'black--text text--darken-1 '
-              "
-            >
-              {{ title }}
-            </span>
-          </template>
-          <template #hover-content>
-            {{ titleTooltip }}
-          </template>
-        </tooltip>
-
-        <slot name="extra-item"></slot>
-
-        <div class="subtitle-slot">
-          <span
-            class="text-body-1"
-            :class="{
-              'no-click': !interactable,
-              'flex-grow-1 align-center text-center highlevel-subtitle':
-                highLevel,
-            }"
-          >
-            {{ subtitle }}
-          </span>
-          <slot name="subtitle-extended"></slot>
+        <div
+          v-else
+          class="
+            d-flex
+            align-center
+            text-body-2
+            black--text
+            text--lighten-4
+            pb-1
+          "
+        >
+          {{ title }}
+          <tooltip position-top :max-width="tooltipWidth">
+            <template #label-content>
+              <icon
+                type="info"
+                :size="12"
+                class="ml-1 mb-1"
+                color="primary"
+                variant="base"
+              />
+            </template>
+            <template #hover-content>
+              {{ titleTooltip }}
+            </template>
+          </tooltip>
         </div>
       </div>
 
@@ -71,10 +80,12 @@
 </template>
 
 <script>
+import Icon from "./Icon.vue"
 import Tooltip from "./Tooltip.vue"
+
 export default {
   name: "MetricCard",
-  components: { Tooltip },
+  components: { Tooltip, Icon },
 
   props: {
     icon: {
@@ -109,6 +120,12 @@ export default {
       required: false,
     },
 
+    tooltipWidth: {
+      type: Number,
+      required: false,
+      default: 232,
+    },
+
     grow: {
       type: Number,
       required: false,
@@ -116,6 +133,10 @@ export default {
     },
 
     maxWidth: {
+      type: [String, Number],
+      required: false,
+    },
+    minWidth: {
       type: [String, Number],
       required: false,
     },
@@ -136,15 +157,22 @@ export default {
 <style lang="scss" scoped>
 .metric-card-wrapper {
   border: 1px solid var(--v-black-lighten2);
-  padding: 20px 15px;
+  padding: 20px 16px !important;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  &::before {
+    border-radius: 10px;
+  }
   &.no-click {
     cursor: default;
     background-color: transparent;
     cursor: default;
+    &::before {
+      background: var(--v-primary-lighten1) !important;
+      border-radius: 10px;
+    }
   }
   .item-headline {
     color: var(--v-black-darken1) !important;
@@ -168,9 +196,7 @@ export default {
     }
   }
   .highlevel-title {
-    font-weight: 300;
-    font-size: 28px !important;
-    line-height: 40px;
+    line-height: 30px;
     color: var(--v-black-darken4) !important;
   }
   .highlevel-subtitle {

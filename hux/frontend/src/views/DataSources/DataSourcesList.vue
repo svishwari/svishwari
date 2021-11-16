@@ -10,6 +10,7 @@
           :description="dataSource.category"
           :disabled="dataSource.status !== 'Active'"
           :action-menu="dataSource.status !== 'Active'"
+          :interactable="true"
           :coming-soon="false"
           :icon-color="true"
           :logo-option="true"
@@ -17,6 +18,7 @@
           class="mr-10 model-desc-card"
           height="225"
           width="255"
+          data-e2e="dataSourcesList"
           :to="
             dataSource.status === 'Active'
               ? {
@@ -36,13 +38,16 @@
               "
               collapsed
               class="d-flex float-left"
-              data-e2e="model-status"
+              :data-e2e="`model-status-${dataSource.status}`"
             />
           </template>
           <template slot="action-menu-options">
             <v-list class="list-wrapper pa-0">
               <v-list-item-group>
-                <v-list-item @click="openModal(dataSource)">
+                <v-list-item
+                  :data-e2e="`data-source-list-${dataSource.status}-remove`"
+                  @click="openModal(dataSource)"
+                >
                   <v-list-item-title> Remove </v-list-item-title>
                 </v-list-item>
               </v-list-item-group>
@@ -172,6 +177,17 @@ export default {
   }
   .data-source-list-pending {
     @extend .cursor-default;
+  }
+}
+::v-deep.descriptive-card {
+  &.non-interactable {
+    cursor: default;
+    &:hover {
+      @extend .box-shadow-5;
+    }
+  }
+  .description {
+    color: var(--v-black-lighten4) !important;
   }
 }
 ::v-deep.descriptive-card.in-active {

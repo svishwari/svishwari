@@ -107,6 +107,14 @@ class CustomerProfileSchema(Schema):
     identity_resolution = Nested(IdentityResolution, required=True)
 
 
+class CustomerStateSchema(Schema):
+    """Customer Overview State Schema"""
+
+    name = Str(required=True)
+    population_percentage = Float(required=True)
+    size = Integer(required=True)
+
+
 class CustomerOverviewSchema(Schema):
     """Customer Profile Overview Schema"""
 
@@ -135,6 +143,7 @@ class CustomerOverviewSchema(Schema):
     max_ltv_predicted = Float(required=True)
     min_ltv_actual = Float(required=True)
     max_ltv_actual = Float(required=True)
+    geo = List(Nested(CustomerStateSchema))
 
 
 class IDROverviewSchema(Schema):
@@ -376,6 +385,14 @@ class TotalCustomersInsightsSchema(Schema):
     customers_left = Integer(
         required=True, attribute=api_c.CUSTOMERS_LEFT, example=-5, default=0
     )
+
+
+class CustomerRevenueInsightsSchema(Schema):
+    """Revenue customer insights schema"""
+
+    date = DateTimeWithZ(required=True)
+    spend = Float(required=True, attribute=api_c.LTV)
+    revenue = Float(required=True)
 
 
 class CustomersInsightsCitiesSchema(Schema):

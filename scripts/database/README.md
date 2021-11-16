@@ -11,6 +11,10 @@ Following Mongo ENV Settings are Set
   - MONGO_DB_PASSWORD
   - MONGO_SSL_CERT_PATH
 
+## Set up
+If we are setting up from scratch,
+make sure to drop all existing collections
+
 ## Instructions
 Build the huxunifylib-database package first
 ```
@@ -32,6 +36,5 @@ Run the database create scripts
 cd ../../../hux-unified/scripts/database
 wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
 python create_database_indexes.py
-python set_database_constants.py
 python prepopulate_database.py
 ```

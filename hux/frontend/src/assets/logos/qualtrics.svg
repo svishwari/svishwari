@@ -1,20 +1,14 @@
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve">
-<style type="text/css">
-	.qualtricsGradient{fill:url(#qualtricsGradient);}
-</style>
-<circle cx="50" cy="50" r="50" fill="white" stroke="#E2EAEC"/>
-<linearGradient id="qualtricsGradient" gradientUnits="userSpaceOnUse" x1="-446.5663" y1="537.3601" x2="-445.5363" y2="535.9864" gradientTransform="matrix(63.533 0 0 -34.431 28392.2578 18530.3965)">
-  <stop  offset="0" style="stop-color:#21DBAA"/>
-  <stop  offset="7.200000e-02" style="stop-color:#17D0BC"/>
-  <stop  offset="0.227" style="stop-color:#06BBE1"/>
-  <stop  offset="0.309" style="stop-color:#00B4EF"/>
-  <stop  offset="0.387" style="stop-color:#01A7EC"/>
-  <stop  offset="0.529" style="stop-color:#0487E4"/>
-  <stop  offset="0.646" style="stop-color:#0768DD"/>
-  <stop  offset="1" style="stop-color:#5F1AE5"/>
+<svg width="100%" height="100%" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="9" cy="9" r="8.5" fill="white" stroke="#E2EAEC"/>
+<path d="M12.7227 5.63741L11.3708 10.6006H11.3588L9.91114 5.63741H6.70477L5.60406 7.65993L4.44355 5.63741H2.81644L4.70676 8.81388L2.625 12.375H4.12051L5.44854 10.0175L6.82441 12.375H9.28901V7.69715H9.30097C9.33687 7.89568 9.37277 8.05698 9.39669 8.20588C9.42062 8.35478 9.45651 8.47886 9.48044 8.59053C9.50436 8.71462 9.54026 8.82628 9.57616 8.92555C9.61205 9.02481 9.64793 9.1489 9.67186 9.27298L10.6409 12.3626H11.9092L12.8782 9.27298C12.95 9.02482 13.0218 8.78906 13.0816 8.5533C13.1534 8.29273 13.2013 8.03217 13.2372 7.7716H13.2491V12.375H14.625V5.625L12.7227 5.63741ZM6.32191 8.82628L8.02082 5.91038V11.6926L6.32191 8.82628Z" fill="url(#paint0_linear_7596:125142)"/>
+<defs>
+<linearGradient id="paint0_linear_7596:125142" x1="4.2163" y1="5.69504" x2="8.30463" y2="15.4647" gradientUnits="userSpaceOnUse">
+<stop offset="0.042" stop-color="#21DBAA"/>
+<stop offset="0.358" stop-color="#00B4EF"/>
+<stop offset="0.433" stop-color="#01A7EC"/>
+<stop offset="0.568" stop-color="#0487E4"/>
+<stop offset="0.68" stop-color="#0768DD"/>
+<stop offset="0.965" stop-color="#5F1AE5"/>
 </linearGradient>
-<path style="fill:url(#qualtricsGradient);" d="M77.1,28.2l-9,31.9H68
-  l-9.7-31.9H37.2l-7.3,13l-7.8-13H11.2l12.6,20.4L10,71.5h10.3l8.8-15.1l9.2,15.1h16.3V41.6h0.1c0.2,1.3,0.4,2.3,0.6,3.2
-  c0.2,0.9,0.4,1.7,0.6,2.5c0.2,0.8,0.4,1.5,0.6,2.2s0.4,1.4,0.7,2.2l6.4,19.8h8.6l6.3-19.8c0.5-1.6,0.9-3.1,1.3-4.6
-  c0.4-1.6,0.8-3.3,1-5H81v29.4h9V28.2H77.1z M34.4,48.6l11.3-18.7v37L34.4,48.6z"/>
+</defs>
 </svg>

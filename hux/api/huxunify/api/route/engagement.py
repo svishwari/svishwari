@@ -71,6 +71,7 @@ from huxunify.api.route.decorators import (
 from huxunify.api.route.utils import (
     get_db_client,
     get_user_favorites,
+    Validation as validation,
 )
 from huxunify.api import constants as api_c
 
@@ -92,7 +93,27 @@ def before_request():
 class EngagementSearch(SwaggerView):
     """Engagement Search Class."""
 
-    parameters = []
+    parameters = [
+        {
+            "name": api_c.FAVORITES,
+            "description": "Only return engagements favorited by the user",
+            "in": "query",
+            "type": "boolean",
+            "required": False,
+            "default": False,
+            "example": "False",
+        },
+        {
+            "name": api_c.MY_ENGAGEMENTS,
+            "description": "Only return engagements worked on by the user",
+            "in": "query",
+            "type": "boolean",
+            "required": False,
+            "default": False,
+            "example": "False",
+        },
+    ]
+
     responses = {
         HTTPStatus.OK.value: {
             "description": "List of engagements.",
@@ -118,17 +139,33 @@ class EngagementSearch(SwaggerView):
             Tuple[dict, int]: dict of engagements, HTTP status code.
         """
 
-        # get the engagement summary
         database = get_db_client()
-        engagements = get_engagements_summary(database)
-
-        # weight the engagement status
-        engagements = weighted_engagement_status(engagements)
-
-        # get user id
+        # get user favorite engagements
         favorite_engagements = get_user_favorites(
             database, user_name, db_c.ENGAGEMENTS
         )
+
+        # read the optional request args and set the required query_filter to
+        # query the DB.
+        query_filter = {}
+
+        if request.args.get(api_c.MY_ENGAGEMENTS) and validation.validate_bool(
+            request.args.get(api_c.MY_ENGAGEMENTS)
+        ):
+            query_filter[api_c.WORKED_BY] = user_name
+
+        # get the engagement summary
+        engagements = get_engagements_summary(
+            database=database,
+            engagement_ids=favorite_engagements
+            if request.args.get(api_c.FAVORITES)
+            and validation.validate_bool(request.args.get(api_c.FAVORITES))
+            else None,
+            query_filter=query_filter,
+        )
+
+        # weight the engagement status
+        engagements = weighted_engagement_status(engagements)
 
         if favorite_engagements:
             _ = [
@@ -765,16 +802,10 @@ class DeleteAudienceEngagement(SwaggerView):
                 audience = get_delivery_platform_lookalike_audience(
                     database, ObjectId(audience_id)
                 )
-                if audience is None:
-                    logger.error(
-                        "Audience with ID %s does not exist.",
-                        audience_id,
-                    )
-                    return {
-                        api_c.MESSAGE: f"Audience with ID {audience_id} does"
-                        f" not exist."
-                    }, HTTPStatus.NOT_FOUND
-            audience_names.append(audience[db_c.NAME])
+
+            audience_names.append(
+                audience[db_c.NAME] if audience else f"{audience_id}"
+            )
 
         remove_audiences_from_engagement(
             database,
@@ -1040,6 +1071,12 @@ class RemoveDestinationEngagedAudience(SwaggerView):
         if not audience:
             logger.error("Audience not found for audience ID %s.", audience_id)
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+
+        if not request.get_json():
+            logger.error("Destination not provided.")
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.BAD_REQUEST
 
         destination = DestinationEngagedAudienceSchema().load(
             request.get_json(), partial=True

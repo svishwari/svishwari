@@ -6,13 +6,24 @@ import faker from "faker"
 export const destination = {
   name: "Facebook",
   type: "facebook",
+  status: "Active",
+  category: "Advertising",
+
   is_enabled: false,
   is_added: false,
+
   create_time: () => faker.date.recent(),
   created_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
   update_time: () => faker.date.recent(),
   updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
+
   engagements: () => faker.datatype.number({ min: 0, max: 10 }),
+
+  // request destination fields
+  contact_email: null,
+  client_request: null,
+  client_account: null,
+  use_case: null,
 }
 
 /**
@@ -56,6 +67,15 @@ export const destinationsConstants = {
     }),
   },
 
+  sendgrid: {
+    sendgrid_auth_token: {
+      name: "Auth Token",
+      type: "password",
+      required: true,
+      description: null,
+    },
+  },
+
   sfmc: {
     sfmc_account_id: field({ name: "Account ID" }),
     sfmc_auth_base_uri: field({ name: "Auth Base URI" }),
@@ -84,6 +104,7 @@ export const destinationsDataExtensions = () => {
     dataExtensions.push({
       name: faker.company.companyName(),
       data_extension_id: faker.datatype.uuid(),
+      create_time: faker.date.past(),
     })
   }
   return dataExtensions

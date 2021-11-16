@@ -87,6 +87,14 @@ npm test -- --config baseUrl=https://unified-ui-dev.main.use1.hux-unified-dev1.i
 
 These will run the tests locally against the dedicated environment in dev.
 
+## Run Cypress tests on particular module
+
+To run the cypress E2E tests on particular module/section, please refer to the below.
+
+```sh
+yarn test --config baseUrl=http://localhost:8080 --spec 'cypress/integration/<module>/*.*'
+```
+
 **Note**:
 
 Tests are also built and run with CI/CD pipelines, with any merge to main.

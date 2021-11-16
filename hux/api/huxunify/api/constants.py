@@ -9,6 +9,7 @@ TEST_MODE = "pytest"
 DEVELOPMENT_MODE = "development"
 PRODUCTION_MODE = "production"
 FLASK_ENV = "FLASK_ENV"
+TEST_AUTH_OVERRIDE = "TEST_AUTH_OVERRIDE"
 SSM_INIT_LOAD_DELIMITER = "||"
 HOST = "host"
 PORT = "port"
@@ -35,11 +36,22 @@ AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
 AUDIENCE_ROUTER_JOB_QUEUE_CONST = "AUDIENCE-ROUTER-JOB-QUEUE"
 CDPR_EVENT_CONST = "CDPR-EVENT"
 FLDR_EVENT_CONST = "FLDR-EVENT"
+DISABLE_DELIVERIES = "DISABLE_DELIVERIES"
+DISABLE_DELIVERY_MSG = "Deliveries are disabled."
 
 # ORCH ROUTER PARAMS FOR OKTA
 UNIFIED_OKTA_REDIRECT_URI = "unified_okta_redirect_uri"
 UNIFIED_OKTA_TEST_USER_NAME = "unified_okta_test_user_name"
 UNIFIED_OKTA_TEST_USER_PW = "unified_okta_test_user_pw"
+
+# JIRA
+JIRA_PROJECT_KEY = "JIRA_PROJECT_KEY"
+JIRA_SERVER = "JIRA_SERVER"
+JIRA_API_KEY = "JIRA_API_KEY"
+ISSUE_TYPE = "issue_type"
+KEY = "key"
+TASK = "task"
+TICKET_TYPE_BUG = "Bug"
 
 # general defines
 ID = "id"
@@ -56,6 +68,7 @@ EMAIL = "email"
 PHONE = "phone"
 AGE = "age"
 GENDER = "gender"
+CATEGORY = "category"
 ADDRESS = "address"
 CITY = "city"
 STATE = "state"
@@ -75,6 +88,10 @@ SOURCE_NAME = "source_name"
 SOURCE_SIZE = "source_size"
 SOURCE_ID = "source_id"
 CREATE_TIME = "create_time"
+CONTACT_EMAIL = "contact_email"
+CLIENT_REQUEST = "client_request"
+CLIENT_ACCOUNT = "client_account"
+USE_CASE = "use_case"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -129,6 +146,7 @@ COUNT = "count"
 AVG_SPENT_WOMEN = "avg_spent_women"
 AVG_SPENT_MEN = "avg_spent_men"
 AVG_SPENT_OTHER = "avg_spent_other"
+REVENUE = "revenue"
 YEAR = "year"
 MONTH = "month"
 MINUTE = "minute"
@@ -146,7 +164,7 @@ PM = "PM"
 PERIODICIY = "periodicity"
 MONTHLY_PERIOD_LIST = ["Day", "First", "Second", "Third", "Fourth", "Last"]
 DAY_LIST = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
-DAY_OF_MONTH_LIST = [str(x) for x in range(1, 31)] + [
+DAY_OF_MONTH_NAME_LIST = [
     "Day",
     "Weekend",
     "Weekend day",
@@ -158,6 +176,7 @@ DAY_OF_MONTH_LIST = [str(x) for x in range(1, 31)] + [
     "Friday",
     "Saturday",
 ]
+DAY_OF_MONTH_LIST = [str(x) for x in range(1, 32)] + DAY_OF_MONTH_NAME_LIST
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
@@ -228,6 +247,7 @@ AWS_SSM_NAME = "ssm"
 AWS_EVENTS_NAME = "events"
 AWS_BATCH_NAME = "batch"
 AWS_S3_NAME = "s3"
+AWS_SSM_PARAM_NOT_FOUND_ERROR_MESSAGE = "Required parameter(s) not found."
 
 AWS_BUCKET = "Bucket"
 AWS_TARGET_ID = "Id"
@@ -244,6 +264,7 @@ DISABLED = "disabled"
 SIZE = "size"
 IS_ADDED = "is_added"
 DAY = "day"
+REQUESTED = "requested"
 
 STATUS_NOT_DELIVERED = "Not Delivered"
 STATUS_DELIVERED = "Delivered"
@@ -543,6 +564,10 @@ DESTINATION_PATCH_FIELDS = [
     db_c.DELIVERY_PLATFORM_STATUS,
     db_c.NAME,
     db_c.DELIVERY_PLATFORM_TYPE,
+    db_c.CONTACT_EMAIL,
+    db_c.CLIENT_REQUEST,
+    db_c.CLIENT_ACCOUNT,
+    db_c.USE_CASE,
 ]
 DESTINATION_INVALID_PATCH_MESSAGE = (
     f"Acceptable fields are {DESTINATION_PATCH_FIELDS}."
@@ -617,6 +642,7 @@ DESTINATION_NAME = "name"
 DESTINATION_CAMPAIGN_COUNT = "campaign_count"
 LATEST_DELIVERY = "latest_delivery"
 CONNECTION_STATUS = "connection_status"
+AUTHENTICATION = "authentication"
 AUTHENTICATION_DETAILS = "authentication_details"
 DESTINATION_REFRESH = "refresh_all"
 DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
@@ -628,6 +654,7 @@ DATA_EXTENSIONS = "data-extensions"
 DATA_EXTENSION = "data_extension"
 DATA_EXTENSION_ID = "data_extension_id"
 DATA_EXTENSION_NOT_SUPPORTED = "Data extension not supported"
+GENERIC_DESTINATION = "generic_destination"
 
 # Engagement fields
 ENGAGEMENT = "engagement"
@@ -646,6 +673,7 @@ AUDIENCE_PERFORMANCE = "audience-performance"
 AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
 DISPLAY_ADS = "display-ads"
 IS_AD_PLATFORM = "is_ad_platform"
+MY_ENGAGEMENTS = "my_engagements"
 
 DISPLAY_ADS_METRICS = [
     "spend",
@@ -678,6 +706,7 @@ EMAIL_METRICS = [
 SUMMARY = "summary"
 DELIVERED = "delivered"
 UNSUBSCRIBE = "unsubscribe"
+UNCATEGORIZED = "uncategorized"
 SPEND = "spend"
 ENGAGEMENT_ID_PARAMS = [
     {
@@ -764,6 +793,7 @@ CDP_DATA_SOURCE_CATEGORY_MAP = {
 CDP_DATA_SOURCE_CATEGORIES = list(set(CDP_DATA_SOURCE_CATEGORY_MAP.values()))
 
 # Authentication API fields
+AUTHORIZATION = "Authorization"
 AUTHENTICATION_TOKEN = "token"
 AUTHENTICATION_ACCESS_TOKEN = "access_token"
 AUTHENTICATION_TOKEN_TYPE_HINT = "token_type_hint"
@@ -801,6 +831,8 @@ LOOKALIKE_AUDIENCES = "lookalike_audiences"
 LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 LOOKALIKEABLE = "lookalikeable"
 IS_LOOKALIKE = "is_lookalike"
+WORKED_BY = "worked_by"
+ATTRIBUTE = "attribute"
 
 PARAM_STORE_PREFIX = "unified"
 PARAMETER_STORE_ERROR_MSG = (
@@ -814,11 +846,13 @@ USER_NAME = "user_name"
 DISPLAY_NAME = "display_name"
 USER_PHONE_NUMBER = "phone_number"
 USER_ACCESS_LEVEL = "access_level"
+USER_PII_ACCESS = "pii_access"
 USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
 FAVORITE = "favorite"
 FAVORITES = "favorites"
 PROFILE = "profile"
+CONTACT_US = "contact-us"
 
 # Models
 # TODO: Remove relevant constants from here once integrated with Tecton API
@@ -828,16 +862,67 @@ MODELS_VERSION_HISTORY = "version-history"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
 MODEL_ID = "model_id"
+MODEL_SHAP_DATA = "shap_data"
+MODEL_ONE_SHAP_DATA = [
+    "dow-pe_u_dow-count",
+    "duration_days-order-min",
+    "dow-u_wd-weekday",
+    "dow-pe_u_wd-weekday",
+    "1to2y-quantity-cnt",
+    "1to2y-data_source-transactions",
+    "1to2y-price-max",
+    "1to2y-price-sum",
+    "1to2y-price-avg",
+    "1to2y-price-cnt",
+    "1to2y-positive-order",
+    "1to2y-type-transaction",
+    "1to2y-quantity-max",
+    "1to2y-quantity-sum",
+    "1to2y-quantity-avg",
+    "dow-pe_u_dow-thursday",
+    "dow-u_dow-thursday",
+    "8to12m-data_source-transactions",
+    "8to12m-price-max",
+    "8to12m-price-sum",
+]
+MODEL_TWO_SHAP_DATA = [
+    "8to12m-price-min",
+    "8to12m-price-avg",
+    "8to12m-price-cnt",
+    "8to12m-type-transaction",
+    "8to12m-positive-order",
+    "8to12m-quantity-max",
+    "8to12m-quantity-sum",
+    "8to12m-quantity-avg",
+    "dow-pe_u_dow-tuesday",
+    "dow-u_dow-tuesday",
+    "1to2y-description-red",
+    "dow-u_dow-wednesday",
+    "dow-pe_u_dow-wednesday",
+    "4m-quantity-cnt",
+    "4m-price-avg",
+    "4m-price-sum",
+    "4m-price-max",
+    "4m-price-cnt",
+    "4m-price-min",
+    "1to2y-description-set",
+]
 MODEL_ID_PARAMS = [
     {
         "name": MODEL_ID,
         "description": "Model id",
-        "type": "integer",
+        "type": "string",
         "in": "path",
         "required": True,
-        "example": 1,
+        "example": "1",
     }
 ]
+MODEL_STATUS_MAPPING = {
+    "success": STATUS_ACTIVE,
+    "pending": STATUS_PENDING,
+    "active": STATUS_ACTIVE,
+}
+
 PURCHASE = "purchase"
 LTV = "ltv"
 RMSE = "rmse"
@@ -848,19 +933,19 @@ PRECISION = "precision"
 PERFORMANCE_METRIC = "performance_metric"
 FEATURE_IMPORTANCE = "feature-importance"
 SCORE = "score"
-FEATURE_MODEL_HISTORY = "ui_metadata_model_history_service_mock"
-FEATURE_TOP_SERVICE = "ui_metadata_model_top_features_service_mock"
-FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service_mock"
+FEATURE_MODEL_HISTORY = "ui_metadata_model_history_service"
+FEATURE_TOP_SERVICE = "ui_metadata_model_top_features_service"
+FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service"
 FEATURE_DRIFT_REGRESSION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_regression_service_mock"
+    "ui_metadata_model_metrics_regression_service"
 )
 FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_classification_service_mock"
+    "ui_metadata_model_metrics_classification_service"
 )
 
 MODEL_LIST_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_models_service_mock",
+        "feature_service_name": "ui_metadata_models_service",
         "join_key_map": {"model_metadata_client": "HUS"},
     }
 }
@@ -922,7 +1007,7 @@ NOTIFICATION_CATEGORIES = [
     "delivery",
     "orchestration",
     "destinations",
-    "data_sources",
+    "datasources",
     "customers",
     "models",
 ]
@@ -1279,3 +1364,171 @@ CUSTOMER_IDR_TEST_DATA = {
         "count": 11,
     },
 }
+
+MODELS_STUB = [
+    {
+        CATEGORY: "Email",
+        TYPE: "propensity",
+        NAME: "Propensity to Purchase",
+        DESCRIPTION: "Propensity to Purchase.",
+        ID: "f76a5e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Email",
+        TYPE: "propensity",
+        NAME: "Propensity to Unsubscribe",
+        DESCRIPTION: "Propensity to Unsubscribe.",
+        ID: "a54d7e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Email",
+        TYPE: "propensity",
+        NAME: "Propensity to Open",
+        DESCRIPTION: "Propensity to open",
+        ID: "5df65e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Email",
+        TYPE: "propensity",
+        NAME: "Propensity to Click",
+        DESCRIPTION: "Propensity to click.",
+        ID: "aa789e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Email",
+        TYPE: "propensity",
+        NAME: "Email content optimization",
+        DESCRIPTION: "Email content optimization.",
+        ID: "99e45e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Sales forecasting",
+        TYPE: "prediction",
+        NAME: "Customer lifetime value",
+        DESCRIPTION: "Customer lifetime value.",
+        ID: "cc768e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Sales forecasting",
+        TYPE: "prediction",
+        NAME: "Predicted sales per customer",
+        DESCRIPTION: "Predicted sales per customer.",
+        ID: "bba67e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Sales forecasting",
+        TYPE: "prediction",
+        NAME: "Predicted sales per store",
+        DESCRIPTION: "Predicted sales per store.",
+        ID: "a45b7e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Capability propensity",
+        DESCRIPTION: "Capability propensity.",
+        ID: "bc123e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Capability trust propensity",
+        DESCRIPTION: "Capability trust propensity.",
+        ID: "a15d8e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Humanity propensity",
+        DESCRIPTION: "Humanity propensity.",
+        ID: "bd732e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Hux TrustID propensity",
+        DESCRIPTION: "Hux TrustID propensity.",
+        ID: "cce14e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "NBA learning algorithm",
+        DESCRIPTION: "NBA learning algorithm.",
+        ID: "98acee0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Reliability propensity",
+        DESCRIPTION: "Reliability propensity.",
+        ID: "99d12e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Transparency propensity",
+        DESCRIPTION: "Transparency propensity.",
+        ID: "bed54e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Retention",
+        TYPE: "propensity",
+        NAME: "Churn",
+        DESCRIPTION: "Churn.",
+        ID: "11d54e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Web",
+        TYPE: "propensity",
+        NAME: "Propensity to purchase product category",
+        DESCRIPTION: "Propensity to purchase product category.",
+        ID: "88ee4e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Web",
+        TYPE: "propensity",
+        NAME: "Propensity to visit product category",
+        DESCRIPTION: "Propensity to visit product category.",
+        ID: "aab41e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Web",
+        TYPE: "propensity",
+        NAME: "Propensity to visit website",
+        DESCRIPTION: "Propensity to visit website.",
+        ID: "99a78e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Uncategorized",
+        TYPE: "propensity",
+        NAME: "Segmentation",
+        DESCRIPTION: "Segmentation.",
+        ID: "abe41e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+]
+
+# Configurations
+CONFIGURATIONS_TAG = "configurations"
+CONFIGURATION_ID = "configuration_id"
+CONFIGURATIONS_ENDPOINT = "/configurations"

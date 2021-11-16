@@ -417,19 +417,12 @@
         </v-card>
       </v-col>
       <v-col md="5">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+        <v-card class="mt-3 rounded-lg box-shadow-5 overflow-auto" height="386">
           <v-progress-linear
             v-if="loadingDemographics"
             :active="loadingDemographics"
             :indeterminate="loadingDemographics"
           />
-          <v-card-title class="pb-2 pl-5 pt-5">
-            <div class="mt-2">
-              <span class="black--text text--darken-4 text-h5">
-                United States
-              </span>
-            </div>
-          </v-card-title>
           <v-divider class="ml-5 mr-8 mt-0 mb-1" />
           <map-state-list
             v-if="!loadingDemographics"
@@ -996,8 +989,11 @@ export default {
     },
     async fetchDemographics() {
       this.loadingDemographics = true
-      await this.getDemographics(this.$route.params.id)
-      this.loadingDemographics = false
+      try {
+        await this.getDemographics(this.$route.params.id)
+      } finally {
+        this.loadingDemographics = false
+      }
     },
     async initiateFileDownload(option) {
       const audienceName = this.audience.name
@@ -1021,8 +1017,11 @@ export default {
     async refreshEntity() {
       this.loading = true
       this.$root.$emit("refresh-notifications")
-      await this.loadAudienceInsights()
-      this.loading = false
+      try {
+        await this.loadAudienceInsights()
+      } finally {
+        this.loading = false
+      }
     },
     async onConfirmAction() {
       this.showConfirmModal = false
@@ -1039,6 +1038,7 @@ export default {
         default:
           break
       }
+      await this.loadAudienceInsights()
     },
 
     getAgeString(min_age, max_age) {
@@ -1159,7 +1159,7 @@ export default {
             this.deleteActionData = {
               engagementId: this.engagementId,
               audienceId: this.audienceId,
-              data: { id: event.data.id },
+              data: { id: event.data.delivery_platform_id },
             }
             this.showConfirmModal = true
             break
@@ -1274,32 +1274,34 @@ export default {
           data: payload,
         })
       }
-      await this.loadAudienceInsights()
     },
     async loadAudienceInsights() {
       this.loading = true
       this.refreshAudience = true
-      this.getAudiencesRules()
-      await this.getAudienceById(this.$route.params.id)
-      const _getAudience = this.getAudience(this.$route.params.id)
-      if (_getAudience && this.refreshAudience) {
-        this.audienceData = JSON.parse(JSON.stringify(_getAudience))
+      try {
+        this.getAudiencesRules()
+        await this.getAudienceById(this.$route.params.id)
+        const _getAudience = this.getAudience(this.$route.params.id)
+        if (_getAudience && this.refreshAudience) {
+          this.audienceData = JSON.parse(JSON.stringify(_getAudience))
+        }
+        if (this.audience && this.audience.is_lookalike) {
+          this.audienceHistory = this.audience.audienceHistory.filter(
+            (e) => e.title == "Created"
+          )
+        } else {
+          this.audienceHistory = this.audience.audienceHistory
+        }
+        this.relatedEngagements = this.audience.engagements
+        this.lookalikeAudiences = this.audience.lookalike_audiences
+        this.isLookalikable = this.audience.lookalikeable
+        this.is_lookalike = this.audience.is_lookalike
+        this.items[1].text = this.audience.name
+        this.getDestinations()
+      } finally {
+        this.refreshAudience = false
+        this.loading = false
       }
-      if (this.audience && this.audience.is_lookalike) {
-        this.audienceHistory = this.audience.audienceHistory.filter(
-          (e) => e.title == "Created"
-        )
-      } else {
-        this.audienceHistory = this.audience.audienceHistory
-      }
-      this.relatedEngagements = this.audience.engagements
-      this.lookalikeAudiences = this.audience.lookalike_audiences
-      this.isLookalikable = this.audience.lookalikeable
-      this.is_lookalike = this.audience.is_lookalike
-      this.items[1].text = this.audience.name
-      this.getDestinations()
-      this.refreshAudience = false
-      this.loading = false
     },
     sizeHandler() {
       if (this.$refs.genderChart) {

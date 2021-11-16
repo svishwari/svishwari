@@ -19,6 +19,7 @@ import mapData from "@/components/common/MapChart/mapData.js"
 import demographicsData from "@/api/mock/fixtures/demographicData.js"
 import customerEventData from "@/api/mock/fixtures/customerEventData.js"
 import totalCustomersData from "./fixtures/totalCustomersData.js"
+import totalCustomerSpendData from "./fixtures/totalCustomerSpendData.js"
 import { driftData } from "@/api/mock/factories/driftData.js"
 import idrMatchingTrends from "@/api/mock/fixtures/idrMatchingTrendData.js"
 
@@ -51,6 +52,17 @@ export const defineRoutes = (server) => {
     )
     return new Response(code, headers, body)
   })
+  server.post("users/contact-us", () => {
+    const code = 201
+    const headers = {}
+    const body = {
+      description: "test summary",
+      id: 116331,
+      key: "HUS-1553",
+      summary: "test",
+    }
+    return new Response(code, headers, body)
+  })
 
   // data sources
   server.get("/data-sources")
@@ -75,10 +87,15 @@ export const defineRoutes = (server) => {
   server.get("/destinations")
   server.get("/destinations/:id")
 
-  server.put("/destinations/:id", (schema, request) => {
+  server.put("/destinations/:id/authentication", (schema, request) => {
     const id = request.params.id
+    const requestData = JSON.parse(request.requestBody)
 
-    return schema.destinations.find(id).update({ is_added: true })
+    return schema.destinations.find(id).update({
+      is_added: true,
+      status: "Active",
+      configuration: requestData.configuration,
+    })
   })
 
   server.patch("/destinations/:id", (schema, request) => {
@@ -114,6 +131,24 @@ export const defineRoutes = (server) => {
       body.perf_data_extensions = destinationsDataExtensions()
     }
     return new Response(code, headers, body)
+  })
+
+  server.post("/destinations/request", (schema, request) => {
+    const requestDetails = JSON.parse(request.requestBody)
+    const { name } = requestDetails
+    const existingDestination = schema.destinations.findBy({ name: name })
+    if (existingDestination) {
+      return existingDestination.update({ is_added: true, status: "Requested" })
+    } else {
+      const attrs = {
+        ...requestDetails,
+        type: "generic_destination",
+        category: "Other",
+        status: "Requested",
+        is_added: true,
+      }
+      return server.create("destination", attrs)
+    }
   })
 
   server.get("/destinations/constants", () => destinationsConstants)
@@ -415,11 +450,11 @@ export const defineRoutes = (server) => {
     const id = request.params.id
     const data = schema.models.find(id)
     data.attrs.performance_metric = {
-      recall: 0.65,
-      current_version: "3.1.2",
       rmse: -1,
       auc: 0.79,
       precision: 0.82,
+      recall: 0.65,
+      current_version: "3.1.2",
     }
     data.attrs.model_name = data.attrs.name
     data.attrs.model_type = data.attrs.type
@@ -467,6 +502,8 @@ export const defineRoutes = (server) => {
   server.get("/customers-insights/demo", () => demographicsData)
 
   server.get("/customers-insights/total", () => totalCustomersData)
+
+  server.get("/customers-insights/revenue", () => totalCustomerSpendData)
 
   server.get("/customers-insights/cities", (schema, request) => {
     let batchNumber = request.queryParams["batch_number"] || 1
@@ -528,7 +565,11 @@ export const defineRoutes = (server) => {
     }
     return notifications
   })
-
+  server.get("/notifications/:notification_id", (schema, request) => {
+    const id = request.params.notification_id
+    let singleNotification = schema.notifications.find(id)
+    return singleNotification
+  })
   // audiences
   server.get("/audiences")
 

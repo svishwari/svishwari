@@ -46,5 +46,6 @@ export default {
   background-color: var(--v-white-base);
   min-height: 280px;
   padding: 75px 0px 75px 0px;
+  min-width: 100%;
 }
 </style>

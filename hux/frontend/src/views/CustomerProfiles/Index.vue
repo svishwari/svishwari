@@ -20,10 +20,10 @@
       <div v-if="overviewListItems" class="px-15 mt-6 my-1">
         <v-card class="rounded pa-5 box-shadow-5">
           <div class="d-flex justify-space-between">
-            <h5 class="text-h5 mb-1">Customer overview</h5>
+            <h5 class="text-h3 mb-1">Customer overview</h5>
             <v-btn
               text
-              small
+              min-width="80"
               class="
                 d-flex
                 align-right
@@ -32,13 +32,14 @@
                 pl-0
                 pr-0
                 idr-link
+                text-body-1
               "
               @click="toggleIDRInsightsDrawer()"
             >
               <icon
                 type="identity-resolution"
                 color="primary"
-                :size="16"
+                :size="18"
                 class="mr-1"
               />
               IDR Insights
@@ -81,41 +82,38 @@
                     </span>
                   </template>
                   <template #hover-content>
-                    <span v-if="item.title == 'Customers'">
-                      Customers<br />
+                    <div
+                      v-if="
+                        item.title == 'Customers' ||
+                        item.title == 'Countries' ||
+                        item.title == 'States' ||
+                        item.title == 'Cities'
+                      "
+                    >
+                      <div class="mb-1">{{ item.title }}</div>
                       {{
                         item.subtitle | Numeric(true, false, false) | Empty("-")
                       }}
-                    </span>
-                    <span v-if="item.title == 'Countries'">
-                      Countries<br />
-                      {{ item.subtitle | Empty("-") }}
-                    </span>
-                    <span v-if="item.title == 'Cities'">
-                      Cities<br />
-                      {{
-                        item.subtitle | Numeric(true, false, false) | Empty("-")
-                      }}
-                    </span>
+                    </div>
                     <div v-if="item.title == 'Gender'">
-                      <div class="mb-3">
-                        Men<br />
+                      <div class="mb-2">
+                        <div class="mb-2">Men</div>
                         {{
                           item.menData
                             | Numeric(true, false, false)
                             | Empty("-")
                         }}
                       </div>
-                      <div class="mb-3">
-                        Women<br />
+                      <div class="mb-2">
+                        <div class="mb-2">Women</div>
                         {{
                           item.womenData
                             | Numeric(true, false, false)
                             | Empty("-")
                         }}
                       </div>
-                      <div class="mb-3">
-                        Other<br />
+                      <div>
+                        <div class="mb-2">Other</div>
                         {{
                           item.otherData
                             | Numeric(true, false, false)
@@ -123,10 +121,7 @@
                         }}
                       </div>
                     </div>
-                    <span
-                      v-if="item.title == 'Age range' || item.title == 'States'"
-                      class="mb-3"
-                    >
+                    <span v-if="item.title == 'Age range'" class="mb-3">
                       {{ item.subtitle | Empty("-") }}
                     </span>
                   </template>
@@ -135,7 +130,12 @@
               <template v-if="item.toolTipText" #extra-item>
                 <tooltip position-top>
                   <template #label-content>
-                    <icon type="info" :size="12" />
+                    <icon
+                      type="info"
+                      :size="12"
+                      color="primary"
+                      variant="base"
+                    />
                   </template>
                   <template #hover-content>
                     {{ item.toolTipText }}
@@ -145,152 +145,141 @@
             </metric-card>
           </div>
         </v-card>
+
+        <v-tabs v-model="tabOption" class="mt-8">
+          <v-tabs-slider color="primary"></v-tabs-slider>
+          <div class="d-flex">
+            <v-tab
+              key="overview"
+              class="pa-2 mr-3 text-h3"
+              color
+              data-e2e="overview-tab"
+              @click="loadCustomersList = false"
+            >
+              Overview
+            </v-tab>
+            <v-tab
+              key="customerList"
+              class="text-h3"
+              data-e2e="customer-list-tab"
+              @click="loadCustomersList = true"
+            >
+              Customer list
+            </v-tab>
+          </div>
+        </v-tabs>
+        <v-tabs-items v-model="tabOption" class="mt-2">
+          <v-tab-item key="overview">
+            <v-row>
+              <v-col md="6">
+                <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+                  <v-card-title class="pb-2 pl-6 pt-5">
+                    <h3 class="text-h3">Total customers</h3>
+                    <span class="text-body-1 time-frame">
+                      &nbsp;({{ timeFrameLabel }})
+                    </span>
+                  </v-card-title>
+                  <v-progress-linear
+                    v-if="loadingCustomerChart"
+                    :active="loadingCustomerChart"
+                    :indeterminate="loadingCustomerChart"
+                  />
+                  <total-customer-chart
+                    v-if="!loadingCustomerChart"
+                    :customers-data="totalCustomers"
+                    data-e2e="total-customer-chart"
+                  />
+                </v-card>
+              </v-col>
+              <v-col md="6">
+                <v-card class="mt-3 rounded-lg box-shadow-5" height="365">
+                  <v-card-title class="pb-2 pl-6 pt-5">
+                    <h3 class="text-h3">Total customer spend</h3>
+                    <tooltip position-top>
+                      <template #label-content>
+                        <icon
+                          type="info"
+                          :size="12"
+                          class="mb-1 ml-1"
+                          color="primary"
+                          variant="base"
+                        />
+                      </template>
+                      <template #hover-content>
+                        Total order value for all customers (known and
+                        anyonymous) over time.
+                      </template>
+                    </tooltip>
+                    <span class="text-body-1 time-frame">
+                      &nbsp;({{ timeFrameLabel }})
+                    </span>
+                  </v-card-title>
+                  <v-progress-linear
+                    v-if="loadingSpendChart"
+                    :active="loadingSpendChart"
+                    :indeterminate="loadingSpendChart"
+                  />
+                  <total-customer-spend-chart
+                    v-if="!loadingSpendChart"
+                    :customer-spend-data="totalCustomerSpend"
+                    data-e2e="customer-spend-chart"
+                  />
+                </v-card>
+              </v-col>
+            </v-row>
+            <v-row class="mt-2 mb-4">
+              <v-col md="12">
+                <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+                  <v-row>
+                    <v-col md="7">
+                      <v-progress-linear
+                        v-if="loadingGeoOverview"
+                        :active="loadingGeoOverview"
+                        :indeterminate="loadingGeoOverview"
+                      />
+                      <v-card-title class="pb-2 pl-5 pt-2">
+                        <div class="mt-2">
+                          <span class="black--text text--darken-4 text-h3">
+                            USA
+                          </span>
+                        </div>
+                      </v-card-title>
+                      <map-chart
+                        v-if="!loadingGeoOverview"
+                        :map-data="customersGeoOverview"
+                        :configuration-data="configurationData"
+                        data-e2e="map-chart"
+                      />
+
+                      <map-slider
+                        v-if="!loadingGeoOverview"
+                        :map-data="customersGeoOverview"
+                        :configuration-data="configurationData"
+                      />
+                    </v-col>
+                    <v-divider vertical class="combined-list" />
+                    <v-col md="5 pt-0 pl-1">
+                      <div class="combined-list">
+                        <map-state-list
+                          v-if="!loadingGeoOverview"
+                          :map-data="customersGeoOverview"
+                          :configuration-data="configurationData"
+                          :height="386"
+                        />
+                      </div>
+                    </v-col>
+                  </v-row>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-tab-item>
+          <v-tab-item key="customerList">
+            <v-card class="mt-3 pa-6 rounded-lg box-shadow-5">
+              <customer-list v-if="loadCustomersList" />
+            </v-card>
+          </v-tab-item>
+        </v-tabs-items>
       </div>
-      <v-row class="px-15 mt-2">
-        <v-col md="12">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="350">
-            <v-card-title class="pb-2 pl-6 pt-5">
-              <div class="mt-2">
-                <span class="black--text text--darken-4 text-h3">
-                  Total customers
-                  <span class="text-body-2 time-frame">
-                    ({{ timeFrameLabel }})
-                  </span>
-                </span>
-              </div>
-            </v-card-title>
-            <v-progress-linear
-              v-if="loadingCustomerChart"
-              :active="loadingCustomerChart"
-              :indeterminate="loadingCustomerChart"
-            />
-            <total-customer-chart
-              v-if="!loadingCustomerChart"
-              :customers-data="totalCustomers"
-              data-e2e="overview-chart"
-            />
-          </v-card>
-        </v-col>
-      </v-row>
-      <v-row class="px-15 mt-2">
-        <v-col md="7">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-            <v-card-title class="pb-2 pl-5 pt-5">
-              <div class="mt-2">
-                <span class="black--text text--darken-4 text-h5">
-                  Demographic Overview
-                </span>
-              </div>
-            </v-card-title>
-            <v-progress-linear
-              v-if="loadingGeoOverview"
-              :active="loadingGeoOverview"
-              :indeterminate="loadingGeoOverview"
-            />
-            <map-chart
-              v-if="!loadingGeoOverview"
-              :map-data="customersGeoOverview"
-              :configuration-data="configurationData"
-              data-e2e="map-chart"
-            />
-            <map-slider
-              v-if="!loadingGeoOverview"
-              :map-data="customersGeoOverview"
-              :configuration-data="configurationData"
-            />
-          </v-card>
-        </v-col>
-        <v-col md="5">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-            <v-card-title class="pb-2 pl-5 pt-5">
-              <div class="mt-2">
-                <span class="black--text text--darken-4 text-h5">
-                  United States
-                </span>
-              </div>
-            </v-card-title>
-            <v-divider class="ml-5 mr-8 mt-0 mb-1" />
-            <v-progress-linear
-              v-if="loadingGeoOverview"
-              :active="loadingGeoOverview"
-              :indeterminate="loadingGeoOverview"
-            />
-            <map-state-list
-              v-if="!loadingGeoOverview"
-              :map-data="customersGeoOverview"
-              :configuration-data="configurationData"
-            />
-          </v-card>
-        </v-col>
-      </v-row>
-      <v-row class="px-15 mt-2">
-        <v-col md="3">
-          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
-            <v-progress-linear
-              v-if="loadingDemographics"
-              :active="loadingDemographics"
-              :indeterminate="loadingDemographics"
-            />
-            <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
-              <div class="mt-2">
-                <span class="black--text text--darken-4 text-h5">
-                  Top location &amp; Income
-                </span>
-              </div>
-            </v-card-title>
-            <income-chart
-              v-if="!loadingDemographics"
-              :data="demographicsData.income"
-              data-e2e="income-chart"
-            />
-          </v-card>
-        </v-col>
-        <v-col md="6">
-          <v-card class="mt-3 genderSpend rounded-lg box-shadow-5" height="290">
-            <v-progress-linear
-              v-if="loadingDemographics"
-              :active="loadingDemographics"
-              :indeterminate="loadingDemographics"
-            />
-            <v-card-title v-if="!loadingDemographics" class="pb-0 pl-2 pt-5">
-              <div class="mt-1 pl-5">
-                <span class="black--text text--darken-4 text-h5">
-                  Gender &sol; monthly spending
-                </span>
-                <span class="text-body-2 time-frame">(last 6 months)</span>
-              </div>
-            </v-card-title>
-            <gender-spend-chart
-              v-if="!loadingDemographics"
-              :data="demographicsData.spend"
-              data-e2e="gender-spend-chart"
-            />
-          </v-card>
-        </v-col>
-        <v-col md="3">
-          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="290">
-            <v-progress-linear
-              v-if="loadingDemographics"
-              :active="loadingDemographics"
-              :indeterminate="loadingDemographics"
-            />
-            <v-card-title v-if="!loadingDemographics" class="pb-0 pl-5 pt-5">
-              <div class="mt-2">
-                <span class="black--text text--darken-4 text-h5"> Gender </span>
-              </div>
-            </v-card-title>
-            <div v-if="!loadingDemographics" ref="genderChart">
-              <doughnut-chart
-                :chart-dimensions="genderChartDimensions"
-                :data="genderChartData"
-                label="Gender"
-                data-e2e="gender-chart"
-              />
-            </div>
-          </v-card>
-        </v-col>
-      </v-row>
-      <customer-details v-model="customerProfilesDrawer" />
       <geo-drawer
         geo-level="cities"
         :results="overview.total_cities"
@@ -321,18 +310,15 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 import Tooltip from "@/components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
 import Icon from "@/components/common/Icon"
-import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
 import GeoDrawer from "@/views/Shared/Drawers/GeoDrawer.vue"
-import IncomeChart from "@/components/common/incomeChart/IncomeChart"
-import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import MapChart from "@/components/common/MapChart/MapChart"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import mapSlider from "@/components/common/MapChart/mapSlider"
-import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
 import TotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart"
+import TotalCustomerSpendChart from "@/components/common/TotalCustomerSpend/TotalCustomerSpendChart"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import IDRInsightsDrawer from "./Drawers/IDRInsightsDrawer"
-import dayjs from "dayjs"
+import CustomerList from "./CustomerList"
 
 export default {
   name: "CustomerProfiles",
@@ -342,23 +328,21 @@ export default {
     Breadcrumb,
     Tooltip,
     Icon,
-    CustomerDetails,
     GeoDrawer,
-    IncomeChart,
-    GenderSpendChart,
     MapChart,
     MapStateList,
     mapSlider,
-    DoughnutChart,
     TotalCustomerChart,
+    TotalCustomerSpendChart,
     IDRInsightsDrawer,
+    CustomerList,
   },
 
   data() {
     return {
-      customerProfilesDrawer: false,
       idrInsightsDrawer: false,
       loadingCustomerChart: false,
+      loadingSpendChart: false,
       configurationData: configurationData,
       geoDrawer: {
         cities: false,
@@ -367,7 +351,7 @@ export default {
       },
       loadingGeoOverview: false,
       loadingDemographics: true,
-      timeFrameLabel: "last 9 months",
+      timeFrameLabel: "last 6 months",
       overviewListItems: [
         {
           title: "Customers",
@@ -376,7 +360,6 @@ export default {
           toolTipText:
             "Total no. of unique hux ids generated to represent a customer.",
           value: "",
-          action: "toggleProfilesDrawer",
         },
         {
           title: "Countries",
@@ -413,7 +396,7 @@ export default {
       ],
       items: [
         {
-          text: "All Customers",
+          text: "Customer Profiles",
           disabled: true,
           href: "/customers",
           icon: "customer-profiles",
@@ -430,6 +413,40 @@ export default {
         width: 269,
         height: 200,
       },
+      tabOption: 0,
+      showOverviewTab: true,
+      enableLazyLoad: false,
+      loadCustomersList: false,
+      localDrawer: this.value,
+      batchCount: 1,
+      columnDefs: [
+        {
+          text: "Hux ID",
+          value: "hux_id",
+          width: "auto",
+        },
+        {
+          text: "Last name",
+          value: "last_name",
+          width: "auto",
+        },
+        {
+          text: "First name",
+          value: "first_name",
+          width: "auto",
+        },
+        {
+          text: "Match confidence",
+          value: "match_confidence",
+          width: "250px",
+        },
+      ],
+      lastBatch: 0,
+      batchDetails: {
+        batchSize: 100,
+        batchNumber: 1,
+        isLazyLoad: false,
+      },
     }
   },
   computed: {
@@ -437,62 +454,22 @@ export default {
       overview: "customers/overview",
       customersInsights: "customers/insights",
       totalCustomers: "customers/totalCustomers",
+      totalCustomerSpend: "customers/totalCustomerSpend",
       customersGeoOverview: "customers/geoOverview",
       demographicsData: "customers/demographics",
     }),
-    updatedTimeStamp() {
-      if (this.updatedTime.length !== 0) {
-        return (
-          this.updatedTime[0] + "<span> &bull; </span>" + this.updatedTime[1]
-        )
-      } else {
-        return "-"
-      }
-    },
-
-    genderChartData() {
-      if (
-        this.demographicsData.gender &&
-        (this.demographicsData.gender.gender_men ||
-          this.demographicsData.gender.gender_women ||
-          this.demographicsData.gender.gender_other)
-      ) {
-        return [
-          {
-            label: "Men",
-            population_percentage:
-              this.demographicsData.gender.gender_men.population_percentage,
-            size: this.demographicsData.gender.gender_men.size,
-          },
-          {
-            label: "Women",
-            population_percentage:
-              this.demographicsData.gender.gender_women.population_percentage,
-            size: this.demographicsData.gender.gender_women.size,
-          },
-          {
-            label: "Other",
-            population_percentage:
-              this.demographicsData.gender.gender_other.population_percentage,
-            size: this.demographicsData.gender.gender_other.size,
-          },
-        ]
-      }
-      return []
-    },
   },
 
   async mounted() {
     this.loading = true
-    this.sizeHandler()
-    await this.getOverview()
-    this.mapOverviewData()
-    this.fetchTotalCustomers()
-    this.fetchGeoOverview()
-    this.fetchDemographics()
-    this.loading = false
-    if (this.$refs.genderChart) {
-      new ResizeObserver(this.sizeHandler).observe(this.$refs.genderChart)
+    try {
+      await this.getOverview()
+      this.mapOverviewData()
+      this.fetchTotalCustomers()
+      this.fetchCustomerSpend()
+      this.fetchGeoOverview()
+    } finally {
+      this.loading = false
     }
   },
 
@@ -501,28 +478,35 @@ export default {
       getOverview: "customers/getOverview",
       getTotalCustomers: "customers/getTotalCustomers",
       getGeoOverview: "customers/getGeoOverview",
+      getCustomerSpend: "customers/getCustomerSpend",
       getDemographics: "customers/getDemographics",
     }),
 
     async fetchGeoOverview() {
       this.loadingGeoOverview = true
-      await this.getGeoOverview()
-      this.loadingGeoOverview = false
-    },
-
-    async fetchDemographics() {
-      this.loadingDemographics = true
-      await this.getDemographics({
-        start_date: dayjs().subtract(6, "months").format("YYYY-MM-DD"),
-        end_date: dayjs().format("YYYY-MM-DD"),
-      })
-      this.loadingDemographics = false
+      try {
+        await this.getGeoOverview()
+      } finally {
+        this.loadingGeoOverview = false
+      }
     },
 
     async fetchTotalCustomers() {
       this.loadingCustomerChart = true
-      await this.getTotalCustomers()
-      this.loadingCustomerChart = false
+      try {
+        await this.getTotalCustomers()
+      } finally {
+        this.loadingCustomerChart = false
+      }
+    },
+
+    async fetchCustomerSpend() {
+      this.loadingSpendChart = true
+      try {
+        await this.getCustomerSpend()
+      } finally {
+        this.loadingSpendChart = false
+      }
     },
 
     // TODO: refactor this and move this logic to a getter in the store
@@ -547,17 +531,13 @@ export default {
         this.overviewListItems[5].subtitle = this.mapGenderData()
       }
     },
-    toggleProfilesDrawer() {
-      this.customerProfilesDrawer = !this.customerProfilesDrawer
-    },
+
     toggleGeoDrawer(geoLevel = "states") {
       this.geoDrawer[geoLevel] = !this.geoDrawer[geoLevel]
     },
+
     onClick(action) {
       switch (action) {
-        case "toggleProfilesDrawer":
-          this.toggleProfilesDrawer()
-          break
         case "toggleCitiesDrawer":
           this.toggleGeoDrawer("cities")
           break
@@ -567,12 +547,6 @@ export default {
         case "toggleStatesDrawer":
           this.toggleGeoDrawer("states")
           break
-      }
-    },
-    sizeHandler() {
-      if (this.$refs.genderChart) {
-        this.genderChartDimensions.width = this.$refs.genderChart.clientWidth
-        this.genderChartDimensions.height = 200
       }
     },
     mapGenderData() {
@@ -585,11 +559,13 @@ export default {
       let otherData = this.setValueOrEmpty(this.overview.gender_other)
       return `M: ${menData}  W: ${womenData}  O: ${otherData}`
     },
+
     setValueOrEmpty(value) {
       return value != null
         ? this.$options.filters.Numeric(value, true, false, false, true)
         : this.$options.filters.Empty("-")
     },
+
     toggleIDRInsightsDrawer() {
       this.idrInsightsDrawer = !this.idrInsightsDrawer
     },
@@ -628,6 +604,10 @@ export default {
     font-size: 30px;
   }
 
+  .combined-list {
+    max-height: 386px;
+  }
+
   .customer-slide-group {
     ::v-deep .v-slide-group__wrapper {
       overflow: auto !important;
@@ -644,15 +624,31 @@ export default {
     min-width: 0px;
     margin-top: -5px;
   }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px var(--v-white-base);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--v-black-lighten3);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--v-black-lighten3);
+  }
 }
 
 .icon-border {
   cursor: default !important;
 }
-::v-deep .genderSpend .container {
-  margin-top: 8px !important;
-}
 .color-last-month {
   color: var(--v-grey-base) !important;
+}
+
+::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
+  color: var(--v-black-lighten4) !important;
 }
 </style>

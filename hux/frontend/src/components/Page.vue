@@ -1,7 +1,7 @@
 <template>
   <div>
     <slot name="header" />
-    <div class="container" :style="{ 'max-width': maxWidth }">
+    <div class="container" :style="{ 'max-width': maxWidth, padding: padding }">
       <slot />
     </div>
     <slot name="footer" />
@@ -14,6 +14,10 @@ export default {
 
   props: {
     maxWidth: {
+      type: String,
+      required: false,
+    },
+    padding: {
       type: String,
       required: false,
     },

@@ -13,7 +13,6 @@ import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.utils import name_exists
 
-
 USER_LOOKUP_PIPELINE = [
     # lookup the created by user to the user collection
     {
@@ -66,6 +65,7 @@ def set_user(
     subscriptions: list = None,
     display_name: str = "",
     profile_photo: str = "",
+    pii_access: bool = False,
 ) -> Union[dict, None]:
     """A function to set a user.
 
@@ -81,6 +81,7 @@ def set_user(
             email address.
         profile_photo (str): a profile photo url for the user, defaults to an
             empty string.
+        pii_access (bool): PII Access, defaults to False
 
     Returns:
         Union[dict, None]: MongoDB document for a user.
@@ -122,6 +123,7 @@ def set_user(
             c.ENGAGEMENTS: [],
         },
         c.USER_DASHBOARD_CONFIGURATION: {},
+        c.USER_PII_ACCESS: pii_access,
     }
 
     # validate okta
@@ -261,6 +263,9 @@ def update_user(
         c.USER_FAVORITES,
         c.USER_DASHBOARD_CONFIGURATION,
         c.USER_LOGIN_COUNT,
+        c.UPDATE_TIME,
+        c.UPDATED_BY,
+        c.USER_PII_ACCESS,
     ]
 
     # validate allowed fields, any invalid returns, raise error

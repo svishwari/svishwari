@@ -32,10 +32,16 @@
     "left": "-210px"
   },
   "customerEventChart": {
-    "maxWidth": "172px",
-    "top": "-130px",
+    "maxWidth": "200px",
+    "top": "-100px",
     "left": "56px",
     "padding": "8px 8px 15px 8px"
+  },
+  "totalCustomerSpendChart": {
+    "maxWidth": "200px",
+    "top": "-32px",
+    "left": "70px",
+    "padding": "6px 8px 8px 8px"
   },
   "idrMatchingTrendChart": {
     "maxWidth": "172px",
@@ -45,7 +51,7 @@
   },
   "featureChart": {
     "maxWidth": "230px",
-    "top": "35px",
+    "top": "-6px",
     "left": "30px"
   },
   "featureChartScore": {

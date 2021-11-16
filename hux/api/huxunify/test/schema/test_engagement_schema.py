@@ -53,9 +53,34 @@ class EngagementSchemaTest(TestCase):
         doc = {
             api_c.NAME: "Engagement 1",
             api_c.DESCRIPTION: "Engagement 1 description",
+            api_c.AUDIENCES: [
+                {
+                    db_c.OBJECT_ID: str(ObjectId()),
+                    db_c.DESTINATIONS: [
+                        {
+                            db_c.OBJECT_ID: str(ObjectId()),
+                            db_c.DELIVERY_JOB_ID: str(ObjectId()),
+                        }
+                    ],
+                }
+            ],
         }
 
-        assert EngagementPutSchema().validate(doc) == {}
+        # ensure schema validates correctly
+        self.assertFalse(EngagementPutSchema().validate(doc))
+
+        # ensure each of the following fields are type ObjectId
+        engagement = EngagementPutSchema().load(doc)
+
+        for audience in engagement[db_c.AUDIENCES]:
+            # check audience id
+            self.assertIsInstance(audience[db_c.OBJECT_ID], ObjectId)
+            for destination in audience[db_c.DESTINATIONS]:
+                # test destination id and delivery job id
+                self.assertIsInstance(destination[db_c.OBJECT_ID], ObjectId)
+                self.assertIsInstance(
+                    destination[db_c.DELIVERY_JOB_ID], ObjectId
+                )
 
     def test_unsuccessful_engagement_get_schema_bad_name(self) -> None:
         """Test unsuccessful EngagementGetSchema."""
@@ -272,10 +297,10 @@ class EngagementSchemaTest(TestCase):
                     api_c.EVERY: 3,
                     api_c.MINUTE: 15,
                     api_c.PERIODICIY: "Daily",
-                    api_c.HOUR: 12,
+                    api_c.HOUR: 11,
                     api_c.PERIOD: "PM",
                 },
-                api_c.SCHEDULE_CRON: "15 23 */3 * *",
+                api_c.SCHEDULE_CRON: "15 23 */3 * ? *",
             },
         }
 
@@ -290,10 +315,10 @@ class EngagementSchemaTest(TestCase):
                 api_c.EVERY: 3,
                 api_c.MINUTE: 15,
                 api_c.PERIODICIY: "Daily",
-                api_c.HOUR: 12,
+                api_c.HOUR: 11,
                 api_c.PERIOD: "PM",
             },
-            api_c.SCHEDULE_CRON: "15 23 */3 * *",
+            api_c.SCHEDULE_CRON: "15 23 */3 * ? *",
         }
         weighted = weighted_engagement_status([engagement])[0]
         self.assertEqual(weighted[api_c.STATUS], api_c.STATUS_INACTIVE)
@@ -306,10 +331,10 @@ class EngagementSchemaTest(TestCase):
                 api_c.EVERY: 3,
                 api_c.MINUTE: 15,
                 api_c.PERIODICIY: "Daily",
-                api_c.HOUR: 12,
+                api_c.HOUR: 11,
                 api_c.PERIOD: "PM",
             },
-            api_c.SCHEDULE_CRON: "15 23 */3 * *",
+            api_c.SCHEDULE_CRON: "15 23 */3 * ? *",
         }
         weighted = weighted_engagement_status([engagement])[0]
         self.assertEqual(weighted[api_c.STATUS], api_c.STATUS_INACTIVE)

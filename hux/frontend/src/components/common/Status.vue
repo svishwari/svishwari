@@ -145,8 +145,8 @@
     <v-menu v-else bottom offset-y offset-x open-on-hover>
       <template #activator="{ on }">
         <v-btn
-          width="18"
-          height="18"
+          width="15"
+          height="15"
           icon
           outlined
           color="success"
@@ -219,16 +219,16 @@
 
   <div v-else-if="Statuses.Error.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
-      <v-icon color="red" class="mr-2" :size="iconSize">
-        mdi-information
+      <v-icon color="error" class="mr-2" :size="iconSize" v-on="on">
+        mdi-checkbox-blank-circle
       </v-icon>
       <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon color="red" class="mr-2" :size="iconSize" v-on="on">
-          mdi-information
+        <v-icon color="error" class="mr-2" :size="iconSize" v-on="on">
+          mdi-checkbox-blank-circle
         </v-icon>
       </template>
       <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column text-h5">

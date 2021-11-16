@@ -1,22 +1,35 @@
-"""Purpose of this script is for housing the decision routes for the API"""
+"""Purpose of this script is for housing the
+decision routes for the API"""
+import pathlib
 from random import uniform, randint
 from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Tuple, List
 
-from flask import Blueprint, jsonify
+from bson import ObjectId
+from flask import Blueprint, jsonify, request
 from flasgger import SwaggerView
+from huxunifylib.util.general.logging import logger
 from huxunifylib.database.cache_management import (
     create_cache_entry,
     get_cache_entry,
 )
+from huxunifylib.database import (
+    collection_management,
+    notification_management,
+)
+from huxunifylib.database import constants as db_c
 
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+    get_user_name,
 )
-from huxunify.api.route.utils import get_db_client, Validation
+from huxunify.api.route.utils import (
+    get_db_client,
+    read_csv_shap_data,
+)
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
@@ -24,6 +37,7 @@ from huxunify.api.schema.model import (
     ModelLiftSchema,
     ModelDashboardSchema,
     FeatureSchema,
+    ModelRequestPOSTSchema,
 )
 from huxunify.api.data_connectors import tecton
 from huxunify.api.schema.utils import (
@@ -31,6 +45,7 @@ from huxunify.api.schema.utils import (
     FAILED_DEPENDENCY_424_RESPONSE,
     EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE,
 )
+from huxunify.api import stubbed_data
 from huxunify.api import constants as api_c
 
 # setup the models blueprint
@@ -47,6 +62,19 @@ def before_request():
 @add_view_to_blueprint(model_bp, api_c.MODELS_ENDPOINT, "ModelsView")
 class ModelsView(SwaggerView):
     """Models Class."""
+
+    parameters = [
+        {
+            "name": api_c.STATUS,
+            "in": "query",
+            "type": "array",
+            "items": {"type": "string"},
+            "collectionFormat": "multi",
+            "description": "Model status.",
+            "example": "Requested",
+            "required": False,
+        }
+    ]
 
     responses = {
         HTTPStatus.OK.value: {
@@ -72,6 +100,9 @@ class ModelsView(SwaggerView):
                 HTTP status code.
         """
 
+        status = request.args.getlist(api_c.STATUS)
+        all_models = tecton.get_models()
+
         purchase_model = {
             api_c.TYPE: "purchase",
             api_c.FULCRUM_DATE: datetime(2021, 6, 26),
@@ -87,13 +118,198 @@ class ModelsView(SwaggerView):
             api_c.OWNER: "Susan Miller",
             api_c.STATUS: api_c.STATUS_PENDING,
         }
-        all_models = tecton.get_models()
         all_models.append(purchase_model)
+
+        for model in all_models:
+            if api_c.CATEGORY not in model:
+                model[api_c.CATEGORY] = api_c.UNCATEGORIZED
+
+        all_models.extend(api_c.MODELS_STUB)
+
+        config_models = collection_management.get_documents(
+            get_db_client(),
+            db_c.CONFIGURATIONS_COLLECTION,
+            {db_c.TYPE: api_c.MODELS_TAG},
+        )
+        if config_models.get(db_c.DOCUMENTS):
+            for model in all_models:
+                matched_model = next(
+                    (
+                        item
+                        for item in config_models[db_c.DOCUMENTS]
+                        if item[api_c.NAME] == model[api_c.NAME]
+                    ),
+                    None,
+                )
+                if matched_model is not None:
+                    model[api_c.STATUS] = matched_model[api_c.STATUS]
+
+        if status:
+            all_models = [
+                model for model in all_models if model[api_c.STATUS] in status
+            ]
+
         all_models.sort(key=lambda x: x[api_c.NAME])
+
         return (
             jsonify(ModelSchema(many=True).dump(all_models)),
             HTTPStatus.OK.value,
         )
+
+
+@add_view_to_blueprint(model_bp, api_c.MODELS_ENDPOINT, "SetModelStatus")
+class SetModelStatus(SwaggerView):
+    """Class to request a model."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Model request body.",
+            "example": {
+                api_c.TYPE: "purchase",
+                api_c.NAME: "Propensity to Purchase",
+                api_c.ID: 3,
+                api_c.STATUS: api_c.REQUESTED,
+            },
+        }
+    ]
+
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "schema": {
+                "example": {api_c.MESSAGE: api_c.OPERATION_SUCCESS},
+            },
+            "description": "Successfully requested the model.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to request the model.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.MODELS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @get_user_name()
+    def post(self, user_name: str) -> Tuple[dict, int]:
+        """Request a model.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Model Requested, HTTP status code.
+        """
+
+        body = ModelRequestPOSTSchema().load(request.get_json())
+        database = get_db_client()
+
+        # set type of configuration as model
+        body[api_c.TYPE] = api_c.MODELS_TAG
+        collection_management.create_document(
+            database=database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            new_doc=body,
+            username=user_name,
+        )
+
+        notification_management.create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            f'Model requested "{body[db_c.NAME]}" ' f"by {user_name}.",
+            api_c.MODELS_TAG,
+        )
+
+        logger.info("Successfully requested model %s.", body.get(db_c.NAME))
+
+        return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.CREATED
+
+
+@add_view_to_blueprint(
+    model_bp, f"{api_c.MODELS_ENDPOINT}", "RemoveRequestedModel"
+)
+class RemoveRequestedModel(SwaggerView):
+    """Class to remove a requested model."""
+
+    parameters = [
+        {
+            "name": api_c.MODEL_ID,
+            "in": "query",
+            "type": "string",
+            "description": "Model ID.",
+            "required": True,
+            "example": "61928a4dce8aa67b888826f5",
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "example": {api_c.MESSAGE: api_c.OPERATION_SUCCESS},
+            },
+            "description": "Successfully removed the requested model.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to remove the requested model.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.MODELS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @get_user_name()
+    def delete(self, user_name: str) -> Tuple[dict, int]:
+        """Remove a requested model.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Model Removed, HTTP status code.
+        """
+
+        database = get_db_client()
+
+        if not request.args:
+            return {
+                api_c.MESSAGE: api_c.EMPTY_OBJECT_ERROR_MESSAGE
+            }, HTTPStatus.BAD_REQUEST
+
+        model_id = ObjectId(request.args.get(api_c.MODEL_ID))
+
+        collection_management.delete_document(
+            database=database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            document_id=model_id,
+            hard_delete=False,
+            username=user_name,
+        )
+
+        notification_management.create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            f'Requested model "{model_id}" removed by {user_name}.',
+            api_c.MODELS_TAG,
+        )
+
+        logger.info("Successfully removed model %s.", model_id)
+
+        return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.OK
 
 
 @add_view_to_blueprint(
@@ -118,7 +334,7 @@ class ModelVersionView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, model_id: int) -> Tuple[List[dict], int]:
+    def get(self, model_id: str) -> Tuple[List[dict], int]:
         """Retrieves model version history.
 
         ---
@@ -126,21 +342,22 @@ class ModelVersionView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            model_id (int): Model ID.
+            model_id (str): Model ID.
 
         Returns:
             Tuple[List[dict], int]: List containing dict of model versions,
                 HTTP status code.
         """
-        model_id = Validation.validate_integer(model_id)
-        # TODO Remove once Propensity to Purchase info can be retrieved from tecton
-        if model_id == 3:
+
+        # TODO Remove once Propensity to Purchase info
+        #  can be retrieved from tecton
+        if model_id == "3":
             version_history = [
                 {
                     api_c.ID: model_id,
                     api_c.LAST_TRAINED: datetime(2021, 6, 24 + i),
-                    api_c.DESCRIPTION: "Propensity of a customer making a purchase"
-                    " after receiving an email.",
+                    api_c.DESCRIPTION: "Propensity of a customer making "
+                    "a purchase after receiving an email.",
                     api_c.FULCRUM_DATE: datetime(2021, 6, 24 + i),
                     api_c.LOOKBACK_WINDOW: 90,
                     api_c.NAME: "Propensity to Purchase",
@@ -154,17 +371,6 @@ class ModelVersionView(SwaggerView):
 
         else:
             version_history = tecton.get_model_version_history(model_id)
-
-        # sort by version
-        if version_history:
-            version_history.sort(
-                key=lambda s: [
-                    int(u)
-                    for u in s.get(api_c.CURRENT_VERSION).split(".")
-                    if s.get(api_c.CURRENT_VERSION)
-                ],
-                reverse=True,
-            )
 
         return (
             jsonify(ModelVersionSchema(many=True).dump(version_history)),
@@ -195,7 +401,7 @@ class ModelOverview(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, model_id: int) -> Tuple[dict, int]:
+    def get(self, model_id: str) -> Tuple[dict, int]:
         """Retrieves model overview.
 
         ---
@@ -203,15 +409,16 @@ class ModelOverview(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            model_id (int): Model ID.
+            model_id (str): Model ID.
 
         Returns:
             Tuple[dict, int]: dict of model features, HTTP status code.
         """
-        model_id = Validation.validate_integer(model_id)
+
         # TODO Remove once Propensity to Purchase model data is being served
         #  from tecton.
-        if model_id == 3:
+        shap_data = {}
+        if model_id == "3":
             overview_data = api_c.PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB
         else:
             # get model information
@@ -221,8 +428,18 @@ class ModelOverview(SwaggerView):
             if not model_versions:
                 return {}, HTTPStatus.NOT_FOUND
 
-            # take the latest model
-            latest_model = model_versions[-1]
+            stub_shap_data = (
+                pathlib.Path(stubbed_data.__file__).parent / "shap_data.csv"
+            )
+            shap_data = read_csv_shap_data(
+                str(stub_shap_data),
+                api_c.MODEL_ONE_SHAP_DATA
+                if model_id == "17e1565dbd2821adaf88fd26658744aba9419a6f"
+                else api_c.MODEL_TWO_SHAP_DATA,
+            )
+
+            # take the latest model version that have features available.
+            latest_model = model_versions[0]
 
             # generate the output
             overview_data = {
@@ -230,7 +447,7 @@ class ModelOverview(SwaggerView):
                 api_c.MODEL_TYPE: latest_model[api_c.TYPE],
                 api_c.MODEL_NAME: latest_model[api_c.NAME],
                 api_c.DESCRIPTION: latest_model[api_c.DESCRIPTION],
-                # get the performance metrics for a given model
+                api_c.MODEL_SHAP_DATA: shap_data,
                 api_c.PERFORMANCE_METRIC: tecton.get_model_performance_metrics(
                     model_id,
                     latest_model[api_c.TYPE],
@@ -270,7 +487,7 @@ class ModelDriftView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, model_id: int) -> Tuple[List[dict], int]:
+    def get(self, model_id: str) -> Tuple[List[dict], int]:
         """Retrieves model drift details.
 
         ---
@@ -278,16 +495,16 @@ class ModelDriftView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            model_id (int): Model ID.
+            model_id (str): Model ID.
 
         Returns:
             Tuple[List[dict], int]: List containing dict of model drift,
                 HTTP status code.
         """
-        model_id = Validation.validate_integer(model_id)
+
         # TODO Remove once Propensity to Purchase data is being served
         # from tecton
-        if model_id == 3:
+        if model_id == "3":
             drift_data = [
                 {
                     api_c.DRIFT: round(uniform(0.8, 1), 2),
@@ -304,10 +521,10 @@ class ModelDriftView(SwaggerView):
                 return {}, HTTPStatus.NOT_FOUND
 
             # take the latest model
-            latest_model = model_versions[-1]
+            latest_model = model_versions[0]
 
             drift_data = tecton.get_model_drift(
-                model_id, latest_model[api_c.TYPE]
+                model_id, latest_model[api_c.TYPE], model_versions
             )
 
         return (
@@ -328,7 +545,8 @@ class ModelFeaturesView(SwaggerView):
         api_c.MODEL_ID_PARAMS[0],
         {
             "name": api_c.VERSION,
-            "description": "Model version, if not provided, it will take the latest.",
+            "description": "Model version, if not provided, "
+            "it will take the latest.",
             "type": "str",
             "in": "path",
             "required": False,
@@ -350,7 +568,7 @@ class ModelFeaturesView(SwaggerView):
     @api_error_handler()
     def get(
         self,
-        model_id: int,
+        model_id: str,
         model_version: str = None,
     ) -> Tuple[List[dict], int]:
         """Retrieves model features.
@@ -360,28 +578,29 @@ class ModelFeaturesView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            model_id (int): Model ID.
+            model_id (str): Model ID.
             model_version (str): Model Version.
 
         Returns:
             Tuple[List[dict], int]: List containing dict of model features,
                 HTTP status code.
         """
-        model_id = Validation.validate_integer(model_id)
-        # TODO: Remove once this model data becomes available and can be fetched from Tecton
+
+        # TODO: Remove once this model data becomes
+        #  available and can be fetched from Tecton
         # intercept to check if the model_id is for propensity_to_purchase
         # to set features with stub data
-        if model_id == 3:
+        if model_id == "3":
             features = api_c.PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB
         else:
             # only use the latest version if model version is None.
             if model_version is None:
                 # get latest version first
                 model_version = tecton.get_model_version_history(model_id)
-
-                # check if there is a model version we can grab, if so take the last one (latest).
+                # check if there is a model version we can grab.
+                # if so take the first one (latest).
                 model_version = (
-                    model_version[-1].get(api_c.CURRENT_VERSION)
+                    model_version[0].get(api_c.CURRENT_VERSION)
                     if model_version
                     else ""
                 )
@@ -395,6 +614,7 @@ class ModelFeaturesView(SwaggerView):
             # if no cache, grab from Tecton and cache after.
             if not features:
                 features = tecton.get_model_features(model_id, model_version)
+
                 # create cache entry in db only if features fetched from Tecton is not empty
                 if features:
                     create_cache_entry(
@@ -421,7 +641,8 @@ class ModelImportanceFeaturesView(SwaggerView):
         api_c.MODEL_ID_PARAMS[0],
         {
             "name": api_c.VERSION,
-            "description": "Model version, if not provided, it will take the latest.",
+            "description": "Model version, if not provided, "
+            "it will take the latest.",
             "type": "str",
             "in": "path",
             "required": False,
@@ -450,7 +671,7 @@ class ModelImportanceFeaturesView(SwaggerView):
     @api_error_handler()
     def get(
         self,
-        model_id: int,
+        model_id: str,
         model_version: str = None,
         limit: int = 20,
     ) -> Tuple[List[dict], int]:
@@ -461,7 +682,7 @@ class ModelImportanceFeaturesView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            model_id (int): Model ID.
+            model_id (str): Model ID.
             model_version (str): Model Version.
             limit (int): Limit of features to return, default is 20.
 
@@ -469,15 +690,16 @@ class ModelImportanceFeaturesView(SwaggerView):
             Tuple[List[dict], int]: List containing dict of model features,
                 HTTP status code.
         """
-        model_id = Validation.validate_integer(model_id)
+
         # only use the latest version if model version is None.
         if model_version is None:
             # get latest version first
             model_version = tecton.get_model_version_history(model_id)
 
-            # check if there is a model version we can grab, if so take the last one (latest).
+            # check if there is a model version we can grab,
+            # if so take the last one (latest).
             model_version = (
-                model_version[-1].get(api_c.CURRENT_VERSION)
+                model_version[0].get(api_c.CURRENT_VERSION)
                 if model_version
                 else ""
             )
@@ -529,7 +751,7 @@ class ModelLiftView(SwaggerView):
     @api_error_handler()
     def get(
         self,
-        model_id: int,
+        model_id: str,
     ) -> Tuple[List[dict], int]:
         """Retrieves model lift data.
 
@@ -538,16 +760,16 @@ class ModelLiftView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            model_id (int): Model ID
+            model_id (str): Model ID
 
         Returns:
             Tuple[List[dict], int]: List containing a dict of model lift data,
                 HTTP status code.
         """
-        model_id = Validation.validate_integer(model_id)
+
         # TODO Remove once Tecton serves lift data for model id 3
 
-        if model_id == 3:
+        if model_id == "3":
             lift_data = [
                 {
                     api_c.PREDICTED_RATE: uniform(0.01, 0.3),

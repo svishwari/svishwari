@@ -7,7 +7,7 @@ import mongomock
 import requests_mock
 
 from huxunifylib.connectors import FacebookConnector
-from huxunifylib.database import data_management, constants as db_c
+from huxunifylib.database import constants as db_c
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
     set_delivery_job,
@@ -17,6 +17,7 @@ from huxunifylib.database.engagement_management import (
     set_engagement,
     get_engagement,
     get_engagements_by_audience,
+    remove_audience_from_all_engagements,
 )
 from huxunifylib.database.orchestration_management import (
     create_audience,
@@ -124,7 +125,7 @@ class OrchestrationRouteTest(TestCase):
                 },
             },
         ]
-        self.user_name = "Joe Smithers"
+        self.user_name = "dave smith"
         self.destinations = []
         for destination in destinations:
             self.destinations.append(
@@ -139,9 +140,9 @@ class OrchestrationRouteTest(TestCase):
                         api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
                         api_c.AUDIENCE_SECTION_FILTERS: [
                             {
-                                api_c.AUDIENCE_FILTER_FIELD: "filter_field",
-                                api_c.AUDIENCE_FILTER_TYPE: "type",
-                                api_c.AUDIENCE_FILTER_VALUE: "value",
+                                api_c.AUDIENCE_FILTER_FIELD: api_c.GENDER,
+                                api_c.AUDIENCE_FILTER_TYPE: api_c.TYPE,
+                                api_c.AUDIENCE_FILTER_VALUE: "male",
                             }
                         ],
                     }
@@ -158,9 +159,9 @@ class OrchestrationRouteTest(TestCase):
                         api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
                         api_c.AUDIENCE_SECTION_FILTERS: [
                             {
-                                api_c.AUDIENCE_FILTER_FIELD: "filter_field",
-                                api_c.AUDIENCE_FILTER_TYPE: "type",
-                                api_c.AUDIENCE_FILTER_VALUE: "value",
+                                api_c.AUDIENCE_FILTER_FIELD: api_c.GENDER,
+                                api_c.AUDIENCE_FILTER_TYPE: api_c.TYPE,
+                                api_c.AUDIENCE_FILTER_VALUE: "female",
                             }
                         ],
                     }
@@ -242,6 +243,7 @@ class OrchestrationRouteTest(TestCase):
             self.database,
             okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
             email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
+            display_name="dave smith",
         )
 
         # Set an audience as favorite
@@ -257,19 +259,6 @@ class OrchestrationRouteTest(TestCase):
 
     def test_get_audience_rules_success(self):
         """Test the get audience rules route success."""
-
-        data_management.set_constant(
-            self.database,
-            db_c.AUDIENCE_FILTER_CONSTANTS,
-            {
-                "text_operators": {
-                    "contains": "Contains",
-                    "does_not_contain": "Does not contain",
-                    "does_not_equal": "Does not equal",
-                    "equals": "Equals",
-                }
-            },
-        )
 
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/rules", headers=t_c.STANDARD_HEADERS
@@ -1004,12 +993,100 @@ class OrchestrationRouteTest(TestCase):
     def test_delete_audience(self) -> None:
         """Test delete audience API with valid ID."""
 
+        # create an multiple audiences
+        audiences = []
+
+        for i in range(4):
+            audiences.append(
+                create_audience(
+                    self.database,
+                    f"audience{i}",
+                    [],
+                    [],
+                    self.user_name,
+                    100 + i,
+                )
+            )
+
+        engagements = [
+            set_engagement(
+                self.database,
+                "ENG0",
+                "Engagement 0",
+                [
+                    {
+                        db_c.OBJECT_ID: audiences[0][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                    {
+                        db_c.OBJECT_ID: audiences[1][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                ],
+                self.user_name,
+            ),
+            set_engagement(
+                self.database,
+                "ENG1",
+                "Engagement 1",
+                [
+                    {
+                        db_c.OBJECT_ID: audiences[2][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                    {
+                        db_c.OBJECT_ID: audiences[3][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                ],
+                self.user_name,
+            ),
+            set_engagement(
+                self.database,
+                "ENG2",
+                "Engagement 2",
+                [
+                    {
+                        db_c.OBJECT_ID: audiences[0][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                    {
+                        db_c.OBJECT_ID: audiences[1][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                    {
+                        db_c.OBJECT_ID: audiences[2][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                    {
+                        db_c.OBJECT_ID: audiences[3][db_c.ID],
+                        api_c.DESTINATIONS: [],
+                    },
+                ],
+                self.user_name,
+            ),
+        ]
+
+        remove_audience_from_all_engagements(
+            self.database, audiences[0][db_c.ID], self.user_name
+        )
+
         response = self.test_client.delete(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+        for engagement in engagements:
+            new_eng = get_engagement(self.database, engagement)
+            self.assertFalse(
+                list(
+                    x
+                    for x in new_eng[api_c.AUDIENCES]
+                    if x[db_c.OBJECT_ID] == audiences[0][db_c.ID]
+                )
+            )
 
     def test_delete_audience_where_audience_does_not_exist(self) -> None:
         """Test delete audience API with valid ID but the object does not exist"""
@@ -1088,3 +1165,20 @@ class OrchestrationRouteTest(TestCase):
         )
         audience = response.json
         self.assertTrue(audience.get(api_c.FAVORITE))
+
+    def test_get_audiences_with_valid_filters(self):
+        """Test get all audiences with valid filters."""
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}?{api_c.FAVORITES}=True&"
+            f"{api_c.WORKED_BY}=True&{api_c.ATTRIBUTE}={api_c.GENDER}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        audiences = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(audiences)
+        self.assertEqual(1, len(audiences))
+        self.assertEqual(
+            str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID]
+        )

@@ -7,13 +7,13 @@
   >
     <template #append>
       <span
-        class="slider-value-display font-weight-semi-bold"
+        class="slider-value-display text-body-2 font-weight-semi-bold"
         v-text="minValue"
       ></span>
     </template>
     <template #prepend>
       <span
-        class="slider-value-display font-weight-semi-bold"
+        class="slider-value-display text-body-2 font-weight-semi-bold"
         v-text="maxValue"
       ></span>
     </template>
@@ -98,7 +98,7 @@ export default {
       transform: translateY(-50%);
       background: linear-gradient(
         0.25turn,
-        var(--v-primary-darken4),
+        var(--v-primary-lighten5),
         var(--v-white-base)
       );
       border: 1px solid rgba(0, 124, 176, 0.2);

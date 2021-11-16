@@ -8,7 +8,8 @@ from flask_cors import CORS
 from huxunify.api.config import load_env_vars
 from huxunify.api.prometheus import monitor_app
 from huxunify.api.route import ROUTES
-from huxunify.api import constants
+
+from huxunify.api import constants as api_c
 from huxunify.api.route.utils import get_health_check
 
 
@@ -42,11 +43,11 @@ def configure_flask(flask_app: Flask) -> None:
 
     # setup the environment config
     try:
-        if flask_app.config["ENV"] == constants.PRODUCTION_MODE:
+        if flask_app.config["ENV"] == api_c.PRODUCTION_MODE:
             flask_app.config.from_object(
                 "huxunify.api.config.ProductionConfig"
             )
-        elif flask_app.config["ENV"] == constants.DEVELOPMENT_MODE:
+        elif flask_app.config["ENV"] == api_c.DEVELOPMENT_MODE:
             flask_app.config.from_object(
                 "huxunify.api.config.DevelopmentConfig"
             )
@@ -70,7 +71,7 @@ def create_app() -> Flask:
 
     # setup the flask app
     flask_app = Flask(__name__)
-    flask_app.testing = flask_app.env == constants.TEST_MODE
+    flask_app.testing = flask_app.env == api_c.TEST_MODE
 
     # setup CORS
     CORS(flask_app)
@@ -83,8 +84,8 @@ def create_app() -> Flask:
     # add health check URLs
     # pylint: disable=unnecessary-lambda
     flask_app.add_url_rule(
-        constants.HEALTH_CHECK_ENDPOINT,
-        constants.HEALTH_CHECK,
+        api_c.HEALTH_CHECK_ENDPOINT,
+        api_c.HEALTH_CHECK,
         view_func=lambda: get_health_check().run(),
     )
 
@@ -95,7 +96,7 @@ def create_app() -> Flask:
     configure_flask(flask_app)
 
     # monitor flask setup
-    if flask_app.env != constants.TEST_MODE:
+    if flask_app.env != api_c.TEST_MODE:
         monitor_app(flask_app)
 
     return flask_app

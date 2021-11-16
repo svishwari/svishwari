@@ -24,11 +24,11 @@ class FailedAPIDependencyError(IntegratedAPIEndpointException):
     )
 
 
-class FailedDeliveryPlatformDependencyError(IntegratedAPIEndpointException):
-    """Exception for dependency failure for delivery platform APIs."""
+class FailedDestinationDependencyError(IntegratedAPIEndpointException):
+    """Exception for dependency failure for destination platform APIs."""
 
     exception_message = (
-        "Failed to establish connection to delivery platform <{}>, "
+        "Failed to establish connection to destination <{}>, "
         "returned status code <{}>."
     )
 
@@ -40,3 +40,9 @@ class EmptyAPIResponseError(IntegratedAPIEndpointException):
         "Integrated API <{}> failure, returned status code "
         "<{}>. Failed obtaining dependent data"
     )
+
+
+class FailedSSMDependencyError(IntegratedAPIEndpointException):
+    """Exception for dependency failure for AWS SSM parameter store."""
+
+    exception_message = "Raised <{}> error, returned status code <{}>."

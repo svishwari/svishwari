@@ -1,6 +1,7 @@
 """Purpose of this file is to house route utilities"""
 from datetime import datetime
 import re
+import csv
 from typing import Tuple, Union
 from http import HTTPStatus
 from bson import ObjectId
@@ -31,7 +32,10 @@ from huxunifylib.database.client import DatabaseClient
 from huxunify.api.config import get_config
 from huxunify.api import constants
 from huxunify.api.data_connectors.tecton import check_tecton_connection
-from huxunify.api.data_connectors.aws import check_aws_ssm, check_aws_batch
+from huxunify.api.data_connectors.aws import (
+    check_aws_ssm,
+    check_aws_batch,
+)
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
     get_user_info,
@@ -569,3 +573,39 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
             }, HTTPStatus.NOT_FOUND
 
     return user
+
+
+# pylint: disable=unspecified-encoding
+def read_csv_shap_data(file_path: str, features: list = None) -> dict:
+    """Read in CSV data into a dict
+
+    Args:
+        file_path (str): relative file path of the csv file
+        features (list): string list of the features to be returned.
+        If none is passed, all features are returned
+
+    Returns:
+        dict: data placed into a dict where the keys are the column names
+
+    """
+
+    data = {}
+    index = {}
+
+    # load in the necessary data
+    with open(file_path, "r") as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=",")
+        column_names = next(csv_reader)
+
+        if not features:
+            features = column_names
+
+        for feature in features:
+            index[feature] = column_names.index(feature)
+            data[feature] = []
+
+        for row in csv_reader:
+            for feature in features:
+                data[feature].append(row[index[feature]])
+
+    return data

@@ -4,13 +4,17 @@ import string
 from unittest import TestCase, mock
 from http import HTTPStatus
 import requests_mock
+import mongomock
 from dateutil.relativedelta import relativedelta
 from hypothesis import given, strategies as st
 
+import huxunifylib.database.constants as db_c
+from huxunifylib.database.client import DatabaseClient
 from huxunify.api import constants as api_c
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
 )
+from huxunify.api.schema.customers import CustomerRevenueInsightsSchema
 from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.cdp import (
     clean_cdm_fields,
@@ -27,10 +31,11 @@ from huxunify.api.data_connectors.cdp import (
     get_demographic_by_country,
     get_customers_insights_count_by_day,
     get_spending_by_gender,
+    get_revenue_by_day,
 )
 from huxunify.app import create_app
 
-
+# pylint: disable=too-many-public-methods
 class CDPTest(TestCase):
     """Test CDP API endpoint methods."""
 
@@ -44,6 +49,21 @@ class CDPTest(TestCase):
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
         self.request_mocker.start()
 
+        # setup the mock DB client
+        # init mongo patch initially
+        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
+        mongo_patch.start()
+
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
+
+        mock.patch(
+            "huxunify.api.route.customers.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
         self.addCleanup(mock.patch.stopall)
 
     def test_get_customer(self):
@@ -330,6 +350,10 @@ class CDPTest(TestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/count-by-state",
+            json=t_c.CUSTOMERS_INSIGHTS_BY_STATES_RESPONSE,
+        )
         self.request_mocker.start()
 
         response = self.test_client.get(
@@ -564,6 +588,36 @@ class CDPTest(TestCase):
                 start_date=start_date,
                 end_date=end_date,
             )
+
+    def test_get_revenue_by_day(self) -> None:
+        """Test get customer revenue by day."""
+        start_date = datetime.utcnow().date() - relativedelta(month=6)
+        end_date = datetime.utcnow().date()
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights/spending-by-month",
+            json=t_c.MOCKED_GENDER_SPENDING,
+        )
+        self.request_mocker.start()
+
+        revenue_by_day = CustomerRevenueInsightsSchema().dump(
+            get_revenue_by_day(
+                token=t_c.TEST_AUTH_TOKEN,
+                start_date=datetime.strftime(
+                    start_date, api_c.DEFAULT_DATE_FORMAT
+                ),
+                end_date=datetime.strftime(
+                    end_date, api_c.DEFAULT_DATE_FORMAT
+                ),
+            ),
+            many=True,
+        )
+
+        self.assertTrue(
+            t_c.validate_schema(
+                CustomerRevenueInsightsSchema(), revenue_by_day, True
+            )
+        )
 
 
 class CdpFieldTests(TestCase):

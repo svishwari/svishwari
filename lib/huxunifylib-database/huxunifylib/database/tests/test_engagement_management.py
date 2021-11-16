@@ -2,7 +2,6 @@
 # pylint: disable=too-many-lines
 import unittest
 import mongomock
-import pymongo
 from bson import ObjectId
 import huxunifylib.database.engagement_management as em
 import huxunifylib.database.constants as c
@@ -14,6 +13,7 @@ from huxunifylib.database import (
     orchestration_management as om,
     engagement_audience_management as eam,
 )
+
 
 # pylint: disable=R0904
 class TestEngagementManagement(unittest.TestCase):
@@ -674,7 +674,7 @@ class TestEngagementManagement(unittest.TestCase):
             )
 
     def test_get_engagements_summary(self) -> None:
-        """Test get_engagements routine"""
+        """Test get_engagements_summary routine"""
 
         # create another audience
         audience = om.create_audience(
@@ -760,8 +760,8 @@ class TestEngagementManagement(unittest.TestCase):
                     self.assertIn(c.NAME, destination)
                     self.assertIn(c.OBJECT_ID, destination)
 
-    def test_get_engagement_summary(self) -> None:
-        """Test get_engagement_summary routine"""
+    def test_get_engagements_summary_engagement_ids(self) -> None:
+        """Test get_engagements_summary from a list of engagement_ids."""
 
         # create another audience
         audience = om.create_audience(
@@ -773,7 +773,7 @@ class TestEngagementManagement(unittest.TestCase):
             size=1609,
         )
 
-        # an audience with two destinations
+        # an engagement with two audiences
         new_engagement = {
             c.ENGAGEMENT_NAME: "Autumn 2024",
             c.ENGAGEMENT_DESCRIPTION: "high ltv for Autumn 2024",
@@ -784,7 +784,7 @@ class TestEngagementManagement(unittest.TestCase):
                     c.DESTINATIONS: [
                         {
                             c.OBJECT_ID: self.destinations[0][c.ID],
-                            c.DELIVERY_PLATFORM_CONTACT_LIST: "random_extension",
+                            c.DELIVERY_PLATFORM_CONTACT_LIST: "test_extension",
                             c.STATUS: c.STATUS_PENDING,
                         },
                         {
@@ -846,6 +846,104 @@ class TestEngagementManagement(unittest.TestCase):
                 self.assertIn(c.NAME, destination)
                 self.assertIn(c.OBJECT_ID, destination)
 
+    def test_get_engagements_summary_filter_query(self) -> None:
+        """Test get_engagements_summary from a list of engagement_ids based on
+        a filter query."""
+
+        # create another audience
+        audience = om.create_audience(
+            self.database,
+            "audience_group",
+            [],
+            [],
+            user_name=self.user_name,
+            size=1609,
+        )
+
+        # an engagement with two audiences
+        new_engagement = {
+            c.ENGAGEMENT_NAME: "Autumn 2024",
+            c.ENGAGEMENT_DESCRIPTION: "high ltv for Autumn 2024",
+            c.AUDIENCES: [
+                {
+                    c.OBJECT_ID: audience[c.ID],
+                    c.SIZE: audience[c.SIZE],
+                    c.DESTINATIONS: [
+                        {
+                            c.OBJECT_ID: self.destinations[0][c.ID],
+                            c.DELIVERY_PLATFORM_CONTACT_LIST: "test_extension",
+                            c.STATUS: c.STATUS_PENDING,
+                        },
+                        {
+                            c.OBJECT_ID: self.destinations[1][c.ID],
+                            c.STATUS: c.STATUS_SUCCEEDED,
+                        },
+                    ],
+                },
+                {
+                    c.OBJECT_ID: self.audience[c.ID],
+                    c.SIZE: audience[c.SIZE],
+                    c.DESTINATIONS: [
+                        {
+                            c.OBJECT_ID: self.destinations[1][c.ID],
+                            c.STATUS: c.STATUS_SUCCEEDED,
+                        }
+                    ],
+                },
+            ],
+        }
+
+        engagement_id = em.set_engagement(
+            self.database,
+            new_engagement[c.ENGAGEMENT_NAME],
+            new_engagement[c.ENGAGEMENT_DESCRIPTION],
+            new_engagement[c.AUDIENCES],
+            "test user",
+        )
+
+        em.set_engagement(
+            self.database,
+            "Sample Test Engagement name",
+            "Sample Test Engagement description",
+            [{c.OBJECT_ID: self.audience[c.ID], c.DESTINATIONS: []}],
+            self.user_name,
+        )
+
+        query_filter = {c.WORKED_BY: "test user"}
+
+        engagement_docs = em.get_engagements_summary(
+            self.database, [engagement_id], query_filter
+        )
+
+        # ensure length of grouped engagements is equal to one
+        self.assertEqual(len(engagement_docs), 1)
+        engagement = engagement_docs[0]
+
+        # test the grouped engagements for existence of key fields
+        self.assertIn(c.ID, engagement)
+        self.assertIn(c.NAME, engagement)
+        self.assertIn(c.ENGAGEMENT_DESCRIPTION, engagement)
+        self.assertIn(c.CREATED_BY, engagement)
+        self.assertEqual("test user", engagement[c.CREATED_BY])
+        self.assertIn(c.UPDATED_BY, engagement)
+        self.assertIn(c.CREATE_TIME, engagement)
+        self.assertIn(c.UPDATE_TIME, engagement)
+        self.assertIn(c.AUDIENCES, engagement)
+        self.assertEqual(
+            engagement[c.SIZE], audience[c.SIZE] + self.audience[c.SIZE]
+        )
+
+        for audience in engagement[c.AUDIENCES]:
+            self.assertIn(c.NAME, audience)
+            self.assertIn(c.DESTINATIONS, audience)
+            self.assertIn(c.OBJECT_ID, audience)
+            self.assertIn(c.SIZE, audience)
+            if not audience[c.DESTINATIONS]:
+                continue
+            for destination in audience[c.DESTINATIONS]:
+                self.assertIn(c.NAME, destination)
+                self.assertIn(c.OBJECT_ID, destination)
+
     def test_append_destination_to_engagement_audience(self):
         """Test appending a destination to an engagement audience"""
 
@@ -853,7 +951,10 @@ class TestEngagementManagement(unittest.TestCase):
             self.database, c.DELIVERY_PLATFORM_FACEBOOK
         )
 
-        destination_to_add = {c.OBJECT_ID: destination[c.ID]}
+        destination_to_add = {
+            c.OBJECT_ID: destination[c.ID],
+            c.DESTINATIONS: [],
+        }
 
         audience_one = om.create_audience(
             self.database, "Audience1", [], [], self.user_name, 201
@@ -879,16 +980,15 @@ class TestEngagementManagement(unittest.TestCase):
             self.user_name,
         )
 
-        # due to mocking issues certain queries do not work
-        # but have been verified on a real database
-        with self.assertRaises(pymongo.errors.WriteError):
-            em.append_destination_to_engagement_audience(
-                self.database,
-                engagement_id,
-                audience_one[c.ID],
-                destination_to_add,
-                self.user_name,
-            )
+        new_eng = em.append_destination_to_engagement_audience(
+            self.database,
+            engagement_id,
+            audience_one[c.ID],
+            destination_to_add,
+            self.user_name,
+        )
+
+        self.assertIn(destination_to_add, new_eng[c.AUDIENCES])
 
     def test_remove_destination_from_engagement_audience(self):
         """Test removing a destination from an engagement audience"""
@@ -916,17 +1016,18 @@ class TestEngagementManagement(unittest.TestCase):
             self.user_name,
         )
 
-        # due to mocking issues certain queries do not work
-        # but have been verified on a real database
-        # Due to that issue this return will be None when the DB is mocked
-        with self.assertRaises(pymongo.errors.WriteError):
-            em.remove_destination_from_engagement_audience(
-                self.database,
-                engagement_id,
-                audience_one[c.ID],
-                self.destinations[0][c.ID],
-                self.user_name,
-            )
+        updated_engagement = em.remove_destination_from_engagement_audience(
+            self.database,
+            engagement_id,
+            audience_one[c.ID],
+            self.destinations[0][c.ID],
+            self.user_name,
+        )
+
+        # validate destination was removed
+        self.assertTrue(updated_engagement)
+        for audience in updated_engagement[c.AUDIENCES]:
+            self.assertFalse(audience[c.DESTINATIONS])
 
     def test_check_active_engagement_deliveries(self) -> None:
         """Test check_active_engagement_deliveries routine"""
@@ -1086,3 +1187,77 @@ class TestEngagementManagement(unittest.TestCase):
             ]
             self.assertTrue(matched_destinations)
             self.assertEqual(destination, matched_destinations[0])
+
+    def test_remove_audience_from_all_engagements(self) -> None:
+        """Test removing an audience from all engagements"""
+
+        # create an multiple audiences
+        audiences = []
+        engagements = []
+
+        for i in range(4):
+            audiences.append(
+                om.create_audience(
+                    self.database,
+                    f"audience{i}",
+                    [],
+                    [],
+                    self.user_name,
+                    100 + i,
+                )
+            )
+
+        engagements.append(
+            em.set_engagement(
+                self.database,
+                "ENG0",
+                "Engagement 0",
+                [
+                    {c.OBJECT_ID: audiences[0][c.ID], c.DESTINATIONS: []},
+                    {c.OBJECT_ID: audiences[1][c.ID], c.DESTINATIONS: []},
+                ],
+                self.user_name,
+            )
+        )
+
+        engagements.append(
+            em.set_engagement(
+                self.database,
+                "ENG1",
+                "Engagement 1",
+                [
+                    {c.OBJECT_ID: audiences[2][c.ID], c.DESTINATIONS: []},
+                    {c.OBJECT_ID: audiences[3][c.ID], c.DESTINATIONS: []},
+                ],
+                self.user_name,
+            )
+        )
+
+        engagements.append(
+            em.set_engagement(
+                self.database,
+                "ENG2",
+                "Engagement 2",
+                [
+                    {c.OBJECT_ID: audiences[0][c.ID], c.DESTINATIONS: []},
+                    {c.OBJECT_ID: audiences[1][c.ID], c.DESTINATIONS: []},
+                    {c.OBJECT_ID: audiences[2][c.ID], c.DESTINATIONS: []},
+                    {c.OBJECT_ID: audiences[3][c.ID], c.DESTINATIONS: []},
+                ],
+                self.user_name,
+            )
+        )
+
+        em.remove_audience_from_all_engagements(
+            self.database, audiences[0][c.ID], self.user_name
+        )
+
+        for engagement in engagements:
+            new_eng = em.get_engagement(self.database, engagement)
+            self.assertFalse(
+                list(
+                    x
+                    for x in new_eng[c.AUDIENCES]
+                    if x[c.OBJECT_ID] == audiences[0][c.ID]
+                )
+            )

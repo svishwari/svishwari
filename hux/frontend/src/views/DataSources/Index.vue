@@ -39,7 +39,7 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
     <div v-if="!loading">
-      <v-row v-if="isConnectionStarted">
+      <v-row v-if="isConnectionStarted" class="ma-0 pa-2">
         <v-col>
           <data-sources-list
             @onAddDatasource="toggleDrawer()"
@@ -137,15 +137,18 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.getDataSources()
-    await this.getDestinations()
-    this.loading = false
+    try {
+      await this.getDataSources()
+      await this.getDestinations()
+    } finally {
+      this.loading = false
+    }
 
     if (this.$route.params.select) {
       this.drawer = true
     }
 
-    this.$root.$on("same-route-Connections", () => {
+    this.$root.$on("same-route-DataSources", () => {
       this.toggleDrawer()
     })
   },

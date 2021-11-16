@@ -24,6 +24,9 @@ class Config:
     # AWS_CONFIG
     AWS_REGION = config(api_c.AWS_REGION, default="")
     S3_DATASET_BUCKET = config(api_c.AWS_S3_BUCKET_CONST, default="")
+    DISABLE_DELIVERIES = config(
+        api_c.DISABLE_DELIVERIES, default=False, cast=bool
+    )
 
     # MONGO CONFIG
     MONGO_DB_HOST = config(api_c.MONGO_DB_HOST, default="localhost")
@@ -54,6 +57,11 @@ class Config:
         "Authorization": f"Tecton-key {TECTON_API_KEY}",
     }
     TECTON_FEATURE_SERVICE = f"{TECTON_API}/feature-service/query-features"
+
+    # JIRA
+    JIRA_PROJECT_KEY = config(api_c.JIRA_PROJECT_KEY, default="")
+    JIRA_API_KEY = config(api_c.JIRA_API_KEY, default="")
+    JIRA_SERVER = config(api_c.JIRA_SERVER, default="")
 
     # audience router config
     AUDIENCE_ROUTER_JOB_ROLE_ARN = config(
@@ -91,6 +99,10 @@ class Config:
         api_c.JSON_SORT_KEYS_CONST, default=False, cast=bool
     )
 
+    TEST_AUTH_OVERRIDE = config(
+        api_c.TEST_AUTH_OVERRIDE, default=False, cast=bool
+    )
+
 
 class ProductionConfig(Config):
     """Production Config Object."""
@@ -115,6 +127,7 @@ class DevelopmentConfig(Config):
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
     )
+    TEST_AUTH_OVERRIDE = False
 
 
 class PyTestConfig(Config):
@@ -137,6 +150,11 @@ class PyTestConfig(Config):
     OKTA_CLIENT_ID = "test-client-id"
     OKTA_ISSUER = "https://fake.fake"
 
+    # JIRA
+    JIRA_PROJECT_KEY = "fake-jira-project"
+    JIRA_API_KEY = "fake-jira-key"
+    JIRA_SERVER = "https://fake.fake.jira.fake"
+
     # TECTON CONFIGURATION
     TECTON_API_KEY = "fake-key"
     TECTON_API = "https://fake.fake.com"
@@ -152,6 +170,7 @@ class PyTestConfig(Config):
     RETURN_EMPTY_AUDIENCE_FILE = config(
         api_c.RETURN_EMPTY_AUDIENCE_FILE, default=False, cast=bool
     )
+    TEST_AUTH_OVERRIDE = False
 
 
 def load_env_vars(flask_env=config(api_c.FLASK_ENV, default="")) -> None:

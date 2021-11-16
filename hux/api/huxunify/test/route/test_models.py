@@ -23,6 +23,7 @@ MOCK_MODEL_RESPONSE = {
                 "unsubscribe",
                 "Susan Miller",
                 "smiller@xyz.com",
+                "7",
                 "success",
                 "0.2.4",
             ],
@@ -38,6 +39,7 @@ MOCK_MODEL_RESPONSE = {
                 "ltv",
                 "John Smith",
                 "jsmith@xyz.com",
+                "7",
                 "success",
                 "0.4.5",
             ],
@@ -81,13 +83,19 @@ class TestModelRoutes(TestCase):
         )
         self.request_mocker.start()
 
+        # mock get_db_client() in utils
+        mock.patch(
+            "huxunify.api.route.decisioning.get_db_client",
+            return_value=self.database,
+        ).start()
+
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(3, len(response.json))
+        self.assertEqual(23, len(response.json))
 
     def test_retrieve_version_history_for_model(self):
         """Test get version history for a model from Tecton."""

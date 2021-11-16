@@ -8,7 +8,7 @@ from requests_mock import Mocker
 from bson import json_util
 from hypothesis import given, strategies as st
 
-from huxunify.api import constants
+from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors import tecton
 from huxunify.api.exceptions.integration_api_exceptions import (
@@ -31,6 +31,7 @@ MOCK_MODEL_RESPONSE = {
                 "unsubscribe",
                 "Susan Miller",
                 "smiller@xyz.com",
+                "7",
                 "success",
                 "0.2.4",
             ],
@@ -46,6 +47,7 @@ MOCK_MODEL_RESPONSE = {
                 "ltv",
                 "John Smith",
                 "jsmith@xyz.com",
+                "7",
                 "success",
                 "0.4.5",
             ],
@@ -86,11 +88,11 @@ class TectonTest(TestCase):
 
         # test correct payload sent
         self.assertDictEqual(
-            request_mocker.last_request.json(), constants.MODEL_LIST_PAYLOAD
+            request_mocker.last_request.json(), api_c.MODEL_LIST_PAYLOAD
         )
 
-        self.assertEqual(models[0][constants.LATEST_VERSION], "0.2.4")
-        self.assertEqual(models[0][constants.PAST_VERSION_COUNT], 0)
+        self.assertEqual(models[0][api_c.LATEST_VERSION], "0.2.4")
+        self.assertEqual(models[0][api_c.PAST_VERSION_COUNT], 0)
 
     @requests_mock.Mocker()
     def test_map_model_performance_response_ltv(self, request_mocker: Mocker):
@@ -109,9 +111,7 @@ class TectonTest(TestCase):
             headers=self.config.TECTON_API_HEADERS,
         )
 
-        model = tecton.get_model_performance_metrics(
-            2, constants.LTV, "21.7.30"
-        )
+        model = tecton.get_model_performance_metrics(2, api_c.LTV, "21.7.30")
 
         # test that it was actually called and only once
         self.assertEqual(request_mocker.call_count, 1)
@@ -124,12 +124,12 @@ class TectonTest(TestCase):
         self.assertDictEqual(
             model,
             {
-                constants.ID: 2,
-                constants.RMSE: 215.5,
-                constants.AUC: -1,
-                constants.PRECISION: -1,
-                constants.RECALL: -1,
-                constants.CURRENT_VERSION: "21.7.30",
+                api_c.ID: 2,
+                api_c.RMSE: 215.5,
+                api_c.AUC: -1,
+                api_c.PRECISION: -1,
+                api_c.RECALL: -1,
+                api_c.CURRENT_VERSION: "21.7.30",
             },
         )
 
@@ -154,7 +154,7 @@ class TectonTest(TestCase):
         )
 
         model = tecton.get_model_performance_metrics(
-            1, constants.UNSUBSCRIBE, "21.7.31"
+            1, api_c.UNSUBSCRIBE, "21.7.31"
         )
 
         # test that it was actually called and only once
@@ -169,12 +169,12 @@ class TectonTest(TestCase):
         self.assertDictEqual(
             model,
             {
-                constants.ID: 1,
-                constants.RMSE: -1,
-                constants.AUC: 0.85,
-                constants.PRECISION: 0.71,
-                constants.RECALL: 0.58,
-                constants.CURRENT_VERSION: "21.7.31",
+                api_c.ID: 1,
+                api_c.RMSE: -1,
+                api_c.AUC: 0.85,
+                api_c.PRECISION: 0.71,
+                api_c.RECALL: 0.58,
+                api_c.CURRENT_VERSION: "21.7.31",
             },
         )
 
@@ -200,7 +200,7 @@ class TectonTest(TestCase):
 
         self.assertFalse(
             tecton.get_model_performance_metrics(
-                1, constants.UNSUBSCRIBE, "21.7.31"
+                1, api_c.UNSUBSCRIBE, "21.7.31"
             )
         )
 
@@ -232,14 +232,14 @@ class TectonTest(TestCase):
 
         # test the last model
         self.assertDictEqual(
-            models[-1],
+            models[0],
             {
                 "id": 1,
                 "last_trained": datetime(2021, 7, 31, 0, 0),
                 "description": "Propensity of a customer unsubscribing "
                 "after receiving an email.",
                 "fulcrum_date": datetime(2021, 7, 17, 0, 0),
-                "lookback_window": 90,
+                "lookback_window": 7,
                 "name": "Propensity to Unsubscribe",
                 "type": "unsubscribe",
                 "owner": "Susan Miller",
@@ -295,7 +295,7 @@ class TectonTest(TestCase):
 
         self.assertTrue(model_features)
         self.assertTrue(
-            all((feature[constants.SCORE] < 0 for feature in model_features))
+            all((feature[api_c.SCORE] < 0 for feature in model_features))
         )
 
     def test_lift_chart(self):
@@ -315,15 +315,15 @@ class TectonTest(TestCase):
         self.assertDictEqual(
             lift_data[-1],
             {
-                constants.BUCKET: 100,
-                constants.ACTUAL_VALUE: 2602,
-                constants.ACTUAL_LIFT: 1,
-                constants.PREDICTED_LIFT: 1.0000000895,
-                constants.PREDICTED_VALUE: 2726.7827,
-                constants.PROFILE_COUNT: 95369,
-                constants.ACTUAL_RATE: 0.0272834988,
-                constants.PREDICTED_RATE: 0.0285919189,
-                constants.PROFILE_SIZE_PERCENT: 0,
+                api_c.BUCKET: 100,
+                api_c.ACTUAL_VALUE: 2602,
+                api_c.ACTUAL_LIFT: 1,
+                api_c.PREDICTED_LIFT: 1.0000000895,
+                api_c.PREDICTED_VALUE: 2726.7827,
+                api_c.PROFILE_COUNT: 95369,
+                api_c.ACTUAL_RATE: 0.0272834988,
+                api_c.PREDICTED_RATE: 0.0285919189,
+                api_c.PROFILE_SIZE_PERCENT: 0,
             },
         )
 
@@ -335,6 +335,18 @@ class TectonTest(TestCase):
             request_mocker (Mocker): request mocker object.
         """
 
+        # setup the request mock post for version history
+        request_mocker.post(
+            self.config.TECTON_FEATURE_SERVICE,
+            text=json.dumps(
+                t_c.MOCKED_MODEL_VERSION_HISTORY,
+                default=json_util.default,
+            ),
+            headers=self.config.TECTON_API_HEADERS,
+        )
+
+        models = tecton.get_model_version_history(2)
+
         # setup the request mock post
         request_mocker.post(
             self.config.TECTON_FEATURE_SERVICE,
@@ -345,10 +357,10 @@ class TectonTest(TestCase):
             headers=self.config.TECTON_API_HEADERS,
         )
 
-        drift_data = tecton.get_model_drift(2, constants.LTV)
+        drift_data = tecton.get_model_drift(2, api_c.LTV, models)
 
         # test that it was actually called and only once
-        self.assertEqual(request_mocker.call_count, 1)
+        self.assertEqual(request_mocker.call_count, 2)
         self.assertTrue(request_mocker.called)
 
         self.assertTrue(drift_data)
@@ -357,8 +369,8 @@ class TectonTest(TestCase):
         self.assertDictEqual(
             drift_data[-1],
             {
-                constants.DRIFT: 215.5,
-                constants.RUN_DATE: datetime(2021, 7, 30, 0, 0),
+                api_c.DRIFT: 215.5,
+                api_c.RUN_DATE: datetime(2021, 7, 30, 0, 0),
             },
         )
 
@@ -425,17 +437,19 @@ class TectonTest(TestCase):
         )
 
         with self.assertRaises(EmptyAPIResponseError):
-            tecton.get_model_drift(model_id=model_id, model_type=model_type)
+            tecton.get_model_drift(
+                model_id=model_id, model_type=model_type, models=[]
+            )
 
     @requests_mock.Mocker()
     @given(
         model_id=st.integers(min_value=100, max_value=1000),
         model_version=st.text(alphabet=string.ascii_letters),
     )
-    def test_get_model_features_raise_dependency_error(
+    def test_get_model_features_no_data_available(
         self, request_mocker: Mocker, model_id: int, model_version: str
     ) -> None:
-        """Test get model features raise dependency error.
+        """Test get model features when there is no data available.
 
         Args:
             request_mocker (Mocker): request mocker object.
@@ -448,8 +462,4 @@ class TectonTest(TestCase):
             text=json.dumps({}),
             headers=self.config.TECTON_API_HEADERS,
         )
-
-        with self.assertRaises(FailedAPIDependencyError):
-            tecton.get_model_features(
-                model_id=model_id, model_version=model_version
-            )
+        self.assertFalse(tecton.get_model_features(model_id, model_version))

@@ -1,19 +1,13 @@
-import route from "../../support/routes.js"
-import selector from "../../support/selectors.js"
+import route from "../../support/routes"
+import selector from "../../support/selectors"
 
 describe("Orchestration > Audiences > Audience dashboard", () => {
-  before(() => {
-    cy.signin({
-      email: Cypress.env("USER_EMAIL"),
-      password: Cypress.env("USER_PASSWORD"),
-    })
+  beforeEach(() => {
+    cy.signin()
+    cy.visit(route.audiences)
   })
 
   it("should be able to view Audiences List and Dashboard", () => {
-    cy.location("pathname").should("eq", route.home)
-
-    // click on engagement on side nav bar and route in engagement screen
-    cy.get(selector.nav.audiences).click()
     cy.location("pathname").should("eq", route.audiences)
     cy.get(selector.audience.audiencelist).its("length").should("be.gt", 0)
     cy.get(selector.audience.audiencenameclick)
@@ -33,8 +27,6 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
       cy.get(selector.audience.audiencehistory).its("length").should("be.gt", 0)
     })
 
-    // TODO in HUS-1373 - skipped as audience (6177feb7b49e4773d5f67379) does not have engagements
-    /*
     // should be able to validate engagements and delivery
     cy.get(selector.audience.engagementdelivery)
       .its("length")
@@ -45,7 +37,6 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
         .its("length")
         .should("be.gt", 0)
     })
-    */
 
     // should be able to validate Audiences Overview
     cy.get(selector.audience.overview).its("length").as("overviewListCount")
@@ -101,8 +92,6 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
       .last()
       .trigger("mouseover", { force: true, eventConstructor: "MouseEvent" })
 
-    // TODO in HUS-1373 - skipped as audience (6177feb7b49e4773d5f67379) does not have delivery history
-    /*
     // should be able to open and validate delivery history
     cy.get(selector.audience.deliveryhistory).click()
 
@@ -115,6 +104,5 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
         .its("length")
         .should("be.gt", 0)
     })
-    */
   })
 })

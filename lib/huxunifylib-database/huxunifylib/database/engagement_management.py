@@ -1,5 +1,5 @@
 """This module enables functionality related to engagement management."""
-
+# pylint: disable=too-many-lines
 import logging
 import datetime
 from typing import Union
@@ -63,13 +63,14 @@ def set_engagement(
     ):
         raise de.DuplicateName(name)
 
+    current_time = datetime.datetime.utcnow()
     doc = {
         db_c.ENGAGEMENT_NAME: name,
         db_c.ENGAGEMENT_DESCRIPTION: description,
-        db_c.CREATE_TIME: datetime.datetime.utcnow(),
+        db_c.CREATE_TIME: current_time,
         db_c.CREATED_BY: user_name,
-        db_c.UPDATED_BY: "",
-        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+        db_c.UPDATED_BY: user_name,
+        db_c.UPDATE_TIME: current_time,
         db_c.DELETED: deleted,
         db_c.STATUS: "Active",
         db_c.AUDIENCES: [
@@ -102,13 +103,16 @@ def set_engagement(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_engagements_summary(
-    database: DatabaseClient, engagement_ids: list = None
+    database: DatabaseClient,
+    engagement_ids: list = None,
+    query_filter: Union[dict, None] = None,
 ) -> Union[list, None]:
     """A function to get all engagements summary with all nested lookups.
 
     Args:
         database (DatabaseClient): A database client.
         engagement_ids (list): Optional engagement id filter list.
+        query_filter (Union[dict, None]): Mongo filter Query.
 
     Returns:
         Union[list, None]: List of all engagement documents.
@@ -121,6 +125,13 @@ def get_engagements_summary(
     match_statement = {db_c.DELETED: False}
     if engagement_ids:
         match_statement[db_c.ID] = {"$in": engagement_ids}
+
+    if query_filter:
+        if db_c.WORKED_BY in query_filter:
+            match_statement["$or"] = [
+                {db_c.CREATED_BY: query_filter.get(db_c.WORKED_BY)},
+                {db_c.UPDATED_BY: query_filter.get(db_c.WORKED_BY)},
+            ]
 
     pipeline = [
         # filter out the deleted engagements
@@ -845,15 +856,34 @@ def append_destination_to_engagement_audience(
         db_c.ENGAGEMENTS_COLLECTION
     ]
 
-    return collection.find_one_and_update(
-        {db_c.ID: engagement_id, "audiences.id": audience_id},
+    # workaround due to limitation in DocumentDB
+    engagement_doc = collection.find_one(
         {
-            "$set": {
-                db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-                db_c.UPDATED_BY: user_name,
-            },
-            "$push": {"audiences.$.destinations": destination},
+            db_c.ID: engagement_id,
+            "audiences.id": audience_id,
+        }
+    )
+
+    if not engagement_doc:
+        return {}
+
+    audiences = engagement_doc.get(db_c.AUDIENCES, [])
+    audiences.append(destination)
+    engagement_doc[db_c.AUDIENCES] = audiences
+    engagement_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
+    engagement_doc[db_c.UPDATED_BY] = user_name
+
+    collection.replace_one(
+        {
+            db_c.ID: engagement_id,
         },
+        engagement_doc,
+    )
+
+    return collection.find_one(
+        {
+            db_c.ID: engagement_id,
+        }
     )
 
 
@@ -886,17 +916,50 @@ def remove_destination_from_engagement_audience(
         db_c.ENGAGEMENTS_COLLECTION
     ]
 
-    return collection.find_one_and_update(
-        {db_c.ID: engagement_id, "audiences.id": audience_id},
+    # workaround due to limitation in DocumentDB
+    engagement_doc = collection.find_one(
         {
-            "$set": {
-                db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-                db_c.UPDATED_BY: user_name,
-            },
-            "$pull": {
-                "audiences.$.destinations": {db_c.OBJECT_ID: destination_id}
-            },
+            db_c.ID: engagement_id,
+            "audiences.id": audience_id,
+            "audiences.destinations.id": destination_id,
+        }
+    )
+    if not engagement_doc:
+        return {}
+
+    # Workaround cause DocumentDB does not support nested DB updates.
+    change = False
+    for audience in engagement_doc.get(db_c.AUDIENCES, []):
+        if audience.get(db_c.OBJECT_ID) != audience_id:
+            continue
+
+        for i, destination in enumerate(audience.get(db_c.DESTINATIONS, [])):
+            if destination.get(db_c.OBJECT_ID) != destination_id:
+                continue
+
+            del audience[db_c.DESTINATIONS][i]
+
+            engagement_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
+            engagement_doc[db_c.UPDATED_BY] = user_name
+            change = True
+            break
+
+    # no changes, simply return.
+    if not change:
+        return {}
+
+    # replace_one
+    collection.replace_one(
+        {
+            db_c.ID: engagement_id,
         },
+        engagement_doc,
+    )
+
+    return collection.find_one(
+        {
+            db_c.ID: engagement_id,
+        }
     )
 
 
@@ -957,3 +1020,49 @@ def check_active_engagement_deliveries(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def remove_audience_from_all_engagements(
+    database: DatabaseClient, audience_id: ObjectId, user_name: str
+) -> bool:
+    """Remove an audience from all engagement objects
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        user_name (str): Name of the user removing the destination from the
+            audience.
+
+    Returns:
+        bool: Boolean flag indicating if the audience has been removed from all engagements.
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
+
+    try:
+        collection.update_many(
+            filter={f"{db_c.AUDIENCES}.{db_c.OBJECT_ID}": audience_id},
+            update={
+                "$pull": {
+                    f"{db_c.AUDIENCES}": {
+                        db_c.OBJECT_ID: {"$in": [audience_id]}
+                    }
+                },
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    db_c.UPDATED_BY: user_name,
+                },
+            },
+        )
+
+        return True
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False

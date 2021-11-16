@@ -1,7 +1,7 @@
 <template>
   <page max-width="100%">
     <div slot="header">
-      <page-header header-height="110" class="mt-n2">
+      <page-header header-height="110">
         <template slot="left">
           <div>
             <breadcrumb :items="breadcrumbs" />
@@ -11,15 +11,19 @@
           </div>
         </template>
       </page-header>
-      <page-header header-height="71">
+      <page-header
+        v-if="areDestinationsAvailable || showError"
+        header-height="71"
+      >
         <template #left>
-          <v-btn disabled icon color="black">
-            <v-icon medium>mdi-magnify</v-icon>
+          <v-btn disabled icon>
+            <icon type="search" :size="20" color="black" variant="lighten3" />
           </v-btn>
         </template>
 
         <template #right>
           <router-link
+            v-if="!showError"
             :to="{ name: 'DestinationConfiguration' }"
             class="text-decoration-none"
             data-e2e="addDestination"
@@ -35,16 +39,15 @@
               Add a destination
             </huxButton>
           </router-link>
+          <huxButton v-else variant="white" is-tile is-disabled class="ma-2">
+            Add a destination
+          </huxButton>
         </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
     <div v-if="!loading">
-      <v-row v-if="isConnectionStarted">
-        <v-col>
-          <destinations-list></destinations-list>
-        </v-col>
-      </v-row>
+      <destinations-list v-if="isConnectionStarted" :show-error="showError" />
       <div v-else class="empty-state-wrap text-center">
         <v-icon color="primary lighten-8" x-large>
           mdi-alert-circle-outline
@@ -65,12 +68,13 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 
-import DestinationsList from "./DestinationsList"
+import DestinationsList from "./DestinationsList.vue"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
 import DataSourceConfiguration from "@/views/DataSources/Configuration"
+import Icon from "../../components/common/Icon.vue"
 
 export default {
   name: "Destinations",
@@ -82,6 +86,7 @@ export default {
     Breadcrumb,
     huxButton,
     DataSourceConfiguration,
+    Icon,
   },
 
   data() {
@@ -94,6 +99,7 @@ export default {
       ],
       drawer: false,
       loading: false,
+      showError: false,
     }
   },
 
@@ -112,6 +118,10 @@ export default {
       )
       return availableDataSources.length > 0 || availableDestinations.length > 0
     },
+
+    areDestinationsAvailable() {
+      return this.destinations.some((each) => each.is_added)
+    },
   },
 
   watch: {
@@ -127,7 +137,11 @@ export default {
   async mounted() {
     this.loading = true
     await this.getDataSources()
-    await this.getDestinations()
+    try {
+      await this.getDestinations()
+    } catch (error) {
+      this.showError = true
+    }
     this.loading = false
 
     if (this.$route.params.select) {

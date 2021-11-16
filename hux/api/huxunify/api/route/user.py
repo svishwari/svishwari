@@ -1,5 +1,6 @@
 # pylint: disable=no-self-use
 """Paths for the User API"""
+import datetime
 import random
 from http import HTTPStatus
 from typing import Tuple
@@ -12,6 +13,7 @@ from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
 from huxunifylib.database import constants as db_constants
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.user_management import (
     manage_user_favorites,
     get_all_users,
@@ -22,18 +24,25 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+    get_user_name,
 )
 from huxunify.api.route.utils import (
     get_db_client,
     get_user_from_db,
 )
-from huxunify.api.schema.user import UserSchema
+from huxunify.api.schema.user import (
+    UserSchema,
+    UserPatchSchema,
+    TicketSchema,
+    TicketGetSchema,
+)
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
     introspect_token,
 )
+from huxunify.api.data_connectors.jira import JiraConnection
 
 # setup the cdm blueprint
 user_bp = Blueprint(api_c.USER_ENDPOINT, import_name=__name__)
@@ -345,4 +354,165 @@ class UserView(SwaggerView):
         return (
             jsonify(UserSchema().dump(users, many=True)),
             HTTPStatus.OK.value,
+        )
+
+
+# HUS-1320 need to allow user to edit other users via RBAC
+@add_view_to_blueprint(
+    user_bp,
+    f"{api_c.USER_ENDPOINT}",
+    "UserPatchView",
+)
+class UserPatchView(SwaggerView):
+    """User Patch class."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input user body.",
+            "example": {
+                db_constants.USER_ROLE: "viewer",
+                db_constants.USER_DISPLAY_NAME: "new_display_name",
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "User updated.",
+            "schema": UserSchema,
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Invalid data received.",
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": "User not found.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    @get_user_name()
+    def patch(self, user_name: str) -> Tuple[dict, int]:
+        """Updates a user.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: User doc, HTTP status code.
+        """
+
+        body = UserPatchSchema().load(request.get_json())
+
+        if not body:
+            return {api_c.MESSAGE: "No body provided."}, HTTPStatus.BAD_REQUEST
+
+        database = get_db_client()
+
+        if api_c.ID in body:
+            user = get_all_users(
+                database, {db_constants.ID: ObjectId(body.get(api_c.ID))}
+            )
+            del body[api_c.ID]
+        else:
+            user = get_all_users(
+                database, {db_constants.USER_DISPLAY_NAME: user_name}
+            )
+
+        if not user:
+            return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
+
+        # TODO Access Control Based on Roles
+
+        updated_user = update_user(
+            database,
+            okta_id=user[0][db_constants.OKTA_ID],
+            update_doc={
+                **body,
+                **{
+                    db_constants.UPDATED_BY: user_name,
+                    db_constants.UPDATE_TIME: datetime.datetime.utcnow(),
+                },
+            },
+        )
+
+        # update the document
+        return (
+            UserSchema().dump(updated_user),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    user_bp, f"{api_c.USER_ENDPOINT}/{api_c.CONTACT_US}", "CreateTicket"
+)
+class CreateTicket(SwaggerView):
+    """Ticket creation class."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Details of the feedback/bug to be reported",
+            "example": {
+                api_c.ISSUE_TYPE: api_c.TICKET_TYPE_BUG,
+                api_c.SUMMARY: "Summary",
+                api_c.DESCRIPTION: "Description",
+            },
+        }
+    ]
+
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "schema": TicketGetSchema,
+            "description": "Details of ticket created in JIRA.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to report issue."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.USER_TAG]
+
+    @api_error_handler()
+    @get_user_name()
+    def post(self, user_name: str) -> Tuple[dict, int]:
+        """Create a ticket in JIRA
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: dict of message, HTTP status code.
+
+        Raises:
+            ProblemException: Any exception raised during endpoint execution.
+        """
+        issue_details = TicketSchema().load(request.get_json())
+        new_issue = JiraConnection().create_jira_issue(**issue_details)
+
+        create_notification(
+            database=get_db_client(),
+            notification_type=db_constants.NOTIFICATION_TYPE_INFORMATIONAL,
+            description=f"{user_name} created a new issue {new_issue.get(api_c.KEY)} in JIRA",
+            category=api_c.TICKET_TYPE_BUG,
+            username=user_name,
+        )
+        return (
+            TicketGetSchema().dump(new_issue),
+            HTTPStatus.CREATED,
         )

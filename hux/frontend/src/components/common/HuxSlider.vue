@@ -9,7 +9,14 @@
       :step="step"
       thumb-label="always"
       @end="onFinalValue"
-    ></v-range-slider>
+    >
+      <!-- eslint-disable vue/no-template-shadow -->
+      <template v-if="customLabel" v-slot:thumb-label="{ value }">
+        <span class="text-subtitle-2 black--text text--lighten-4">
+          {{ customLabel(value) }}
+        </span>
+      </template>
+    </v-range-slider>
     <v-slider
       v-else
       v-model="currentValue"
@@ -22,10 +29,16 @@
     >
       <template #append>
         <span
-          class="slider-value-display"
+          v-if="sliderTextColor"
+          class="slider-value-display text-subtitle-1"
           :style="{
             color: currentColor,
           }"
+          v-text="currentValue + '%'"
+        ></span>
+        <span
+          v-else
+          class="slider-value-display black--text text-subtitle-1"
           v-text="currentValue + '%'"
         ></span>
       </template>
@@ -42,6 +55,10 @@ export default {
     value: {
       type: [Number, Array],
       required: true,
+    },
+    customLabel: {
+      type: Function,
+      required: false,
     },
     min: {
       type: Number,
@@ -62,6 +79,11 @@ export default {
     isRangeSlider: {
       type: Boolean,
       required: true,
+      default: false,
+    },
+    sliderTextColor: {
+      type: Boolean,
+      required: false,
       default: false,
     },
   },
@@ -114,40 +136,52 @@ export default {
         height: 4px;
       }
       .lighten-3 {
-        background-color: rgba(157, 212, 207, 0.25) !important;
+        background-color: var(--v-secondary-lighten3) !important;
       }
       .theme--light {
         .v-slider__track-fill {
-          background-color: rgba(0, 171, 171, 0.55) !important;
+          background-color: var(--v-secondary-lighten1) !important;
         }
       }
       .v-slider__thumb {
         width: 16px;
         height: 16px;
         background-color: var(--v-white-base) !important;
-        border: 1px solid rgba(0, 171, 171, 0.55);
+        border: 1px solid var(--v-secondary-lighten1) !important;
         box-sizing: border-box;
         box-shadow: 0px 1px 5px rgb(0 0 0 / 15%);
         border-radius: 100px;
-        border-color: rgba(0, 171, 171, 0.55) !important;
+        border-color: var(--v-secondary-lighten1) !important;
+        &:before {
+          content: none;
+        }
       }
       .v-slider__thumb-label {
         transform: translateY(35px) translateX(-50%) rotate(45deg) !important;
         background-color: inherit !important;
         color: var(--v-black-darken1);
         border: none !important;
+        font-size: 12px;
       }
     }
   }
 }
 .hux-score-slider {
+  ::v-deep .v-input__control {
+    .v-input__slot {
+      margin: 0;
+    }
+    .v-messages {
+      display: none;
+    }
+  }
   margin-left: 10px;
   margin-right: 10px;
 
   .slider-value-display {
-    width: 28px;
     height: 16px;
-    margin-top: 4px;
+    margin-top: -3px;
+    margin-left: 3px;
   }
 
   ::v-deep .v-slider__thumb {
@@ -158,13 +192,14 @@ export default {
     appearance: none;
 
     &:before {
-      left: -10px;
-      top: -10px;
+      content: none;
     }
   }
 
   ::v-deep .v-slider--horizontal {
     margin-left: 0px;
+    margin: 0;
+    min-height: 28px;
 
     .v-slider__track-container {
       width: 101%;

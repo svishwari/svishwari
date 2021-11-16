@@ -2,13 +2,19 @@
   <drawer v-model="localToggle" content-padding="pa-0">
     <template #header-left>
       <div class="d-flex align-center">
-        <icon :type="title.icon" size="32" class="mr-2" />
+        <icon :type="title.icon" :size="32" class="mr-2" />
         <h3 class="text-h2">
           {{ title.name }}
           <sup>
             <tooltip v-if="title.toolTipText" position-top>
               <template #label-content>
-                <icon v-if="title.toolTipText" type="info" :size="12" />
+                <icon
+                  v-if="title.toolTipText"
+                  type="info"
+                  :size="12"
+                  color="primary"
+                  variant="base"
+                />
               </template>
               <template #hover-content>
                 {{ title.toolTipText }}
@@ -43,7 +49,7 @@
                 {{ item[col.value] | Numeric(true) }}
               </template>
             </tooltip>
-            <tooltip v-if="col.value === 'spending'">
+            <tooltip v-if="col.value === 'revenue'">
               {{ item[col.value] | Currency }}
               <template #tooltip>
                 {{ item[col.value] | Currency }}
@@ -204,59 +210,64 @@ export default {
     if (this.toggle) {
       this.loading = true
       this.batchNumber = 1
-      await this.refreshData()
-      switch (this.geoLevel) {
-        case "cities":
-          this.columns = [
-            {
-              value: "city",
-              text: "City",
-            },
-            {
-              value: "state",
-              text: "State",
-              hoverTooltip:
-                "US states or regions equivalent to US state-level , eg. counties, districts, departments, divisions, parishes, provinces etc.",
-            },
-            ...this.defaultColumns,
-          ]
-          if (arrayHasFieldWithMultipleValues(this.geoCities, "country")) {
-            this.columns.splice(2, 0, {
-              value: "country",
-              text: "Country",
-            })
-          }
-          this.sortColumn = "city"
-          break
-        case "countries":
-          this.columns = [
-            {
-              value: "country",
-              text: "Country",
-            },
-            ...this.defaultColumns,
-          ]
-          this.sortColumn = "country"
-          break
-        case "states":
-          this.columns = [
-            {
-              value: "state",
-              text: "State",
-            },
-            ...this.defaultColumns,
-          ]
-          if (arrayHasFieldWithMultipleValues(this.geoStates, "country")) {
-            this.columns.splice(1, 0, {
-              value: "country",
-              text: "Country",
-            })
-          }
-          this.sortColumn = "state"
-          break
+      try {
+        await this.refreshData()
+        switch (this.geoLevel) {
+          case "cities":
+            this.columns = [
+              {
+                value: "city",
+                text: "City",
+              },
+              {
+                value: "state",
+                text: "State",
+                hoverTooltip:
+                  "US states or regions equivalent to US state-level , eg. counties, districts, departments, divisions, parishes, provinces etc.",
+              },
+              ...this.defaultColumns,
+            ]
+            if (arrayHasFieldWithMultipleValues(this.geoCities, "country")) {
+              this.columns.splice(2, 0, {
+                value: "country",
+                text: "Country",
+              })
+            }
+            this.sortColumn = "city"
+            break
+          case "countries":
+            this.columns = [
+              {
+                value: "country",
+                text: "Country",
+              },
+              ...this.defaultColumns,
+            ]
+            this.sortColumn = "country"
+            break
+          case "states":
+            this.columns = [
+              {
+                value: "state",
+                text: "State",
+              },
+              ...this.defaultColumns,
+            ]
+            if (arrayHasFieldWithMultipleValues(this.geoStates, "country")) {
+              this.columns.splice(1, 0, {
+                value: "country",
+                text: "Country",
+              })
+            }
+            this.sortColumn = "state"
+            break
+        }
+      } catch (error) {
+        this.enableLazyLoad = false
+      } finally {
+        this.loading = false
+        this.enableLazyLoad = true
       }
-      this.loading = false
-      this.enableLazyLoad = true
     } else {
       this.enableLazyLoad = false
     }
@@ -275,7 +286,11 @@ export default {
     async onLazyLoad() {
       if (this.lastBatch > 1 && this.batchNumber <= this.lastBatch) {
         this.batchNumber++
-        await this.refreshData()
+        try {
+          await this.refreshData()
+        } catch (error) {
+          this.enableLazyLoad = false
+        }
       } else {
         this.enableLazyLoad = false
       }

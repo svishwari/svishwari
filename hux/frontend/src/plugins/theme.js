@@ -13,6 +13,7 @@ export default {
     darken1: colors.medBlueD,
     darken2: colors.chart2,
     darken3: colors.blue,
+    darken4: colors.oceanBlue,
   },
   black: {
     lighten1: colors.inactiveButton,
@@ -31,6 +32,7 @@ export default {
     base: colors.tealD,
     darken1: colors.teal6D,
     darken2: colors.teal7D,
+    lighten3: colors.tealAquaSquezze,
   },
   yellow: {
     lighten1: colors.yellow5,

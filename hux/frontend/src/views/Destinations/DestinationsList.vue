@@ -1,56 +1,82 @@
 <template>
-  <div class="list-wrapper">
-    <v-row v-if="hasAddedDestinations" class="pa-3">
-      <template>
-        <descriptive-card
-          v-for="destination in addedDestinations"
-          :key="destination.id"
-          :icon="destination.type"
-          :icon-color="'white'"
-          :title="destination.name"
-          :description="destination.category"
-          :disabled="destination.status !== 'Active'"
-          :action-menu="true"
-          :coming-soon="false"
-          :logo-option="true"
-          height="225"
-          width="255"
-          class="mr-10 model-desc-card"
-          data-e2e="destination-list"
-        >
-          <template slot="top">
-            <status
-              :icon-size="18"
-              :status="destination.status"
-              collapsed
-              class="d-flex float-left"
-              data-e2e="model-status"
-            />
-          </template>
-          <template slot="action-menu-options">
-            <v-list class="list-wrapper pa-0">
-              <v-list-item-group>
-                <v-list-item @click="openModal(destination)">
-                  <v-list-item-title data-e2e="destination-list-remove">
-                    Remove
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </template>
-        </descriptive-card>
-      </template>
-    </v-row>
+  <div class="list-wrapper d-flex justify-start align-start flex-wrap">
+    <template v-if="hasAddedDestinations">
+      <descriptive-card
+        v-for="destination in addedDestinations"
+        :key="destination.id"
+        :icon="destination.type"
+        :icon-color="'white'"
+        :title="destination.name"
+        :description="destination.category"
+        :disabled="['Pending', 'Requested'].includes(destination.status)"
+        :action-menu="true"
+        :coming-soon="false"
+        :logo-option="true"
+        :interactable="false"
+        height="225"
+        width="255"
+        class="mr-12 model-desc-card"
+        data-e2e="destination-list"
+      >
+        <template slot="top">
+          <status
+            :icon-size="18"
+            :status="destination.status"
+            collapsed
+            class="d-flex float-left"
+            data-e2e="model-status"
+          />
+        </template>
+        <template slot="action-menu-options">
+          <v-list class="list-wrapper pa-0">
+            <v-list-item-group>
+              <v-list-item @click="openModal(destination)">
+                <v-list-item-title data-e2e="destination-list-remove">
+                  Remove
+                </v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </template>
+      </descriptive-card>
+    </template>
 
-    <empty-state-data v-else>
-      <template #icon> mdi-alert-circle-outline </template>
-      <template #title> Oops! There’s nothing here yet </template>
-      <template #subtitle>
-        To create a connection, you need to select a destination!
-        <br />
-        Begin by selecting the plus button above.
-      </template>
-    </empty-state-data>
+    <v-row v-else class="pa-4">
+      <hux-empty
+        v-if="!showError"
+        icon-type="destinations-null"
+        :icon-size="50"
+        title="No destinations to show"
+        subtitle="Destinations will appear here once you add them."
+      >
+        <template #button>
+          <router-link
+            :to="{ name: 'DestinationConfiguration' }"
+            class="text-decoration-none"
+            data-e2e="addDestination"
+          >
+            <huxButton
+              button-text="Add a destination"
+              variant="primary"
+              size="large"
+              is-tile
+              height="40"
+              class="ma-2 font-weight-regular no-shadow mr-0 caption"
+            >
+              Add a destination
+            </huxButton>
+          </router-link>
+        </template>
+      </hux-empty>
+      <error
+        v-else
+        icon-type="error-on-screens"
+        :icon-size="50"
+        title="Destinations are currently unavailable"
+        subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+      >
+      </error>
+    </v-row>
 
     <confirm-modal
       v-model="confirmModal"
@@ -63,7 +89,7 @@
       :is-disabled="
         selectedDestination.status !== 'Requested' ? !enableConfirm : false
       "
-      @onCancel="confirmModal = !confirmModal"
+      @onCancel="cancelRemoval()"
       @onConfirm="confirmRemoval()"
     >
       <template #body>
@@ -75,12 +101,11 @@
             font-weight-regular
           "
         >
+          Are you sure you want to remove this
           <template v-if="selectedDestination.status === 'Requested'">
-            Are you sure you want to remove this pending destination?
+            pending
           </template>
-          <template v-else>
-            Are you sure you want to remove this destination?
-          </template>
+          destination?
         </div>
         <div
           v-if="selectedDestination.status !== 'Requested'"
@@ -99,6 +124,7 @@
             height="40"
             data-e2e="remove-destination-text"
             required
+            :value="inputText"
             @input="enableConfirmButton($event)"
           />
         </div>
@@ -109,22 +135,34 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import sortBy from "lodash/sortBy"
 
 import ConfirmModal from "@/components/common/ConfirmModal"
-import EmptyStateData from "@/components/common/EmptyStateData"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import Status from "@/components/common/Status"
 import TextField from "@/components/common/TextField"
+import HuxEmpty from "@/components/common/screens/Empty"
+import Error from "@/components/common/screens/Error"
+import huxButton from "@/components/common/huxButton"
 
 export default {
   name: "DestinationsList",
 
   components: {
     ConfirmModal,
-    EmptyStateData,
     DescriptiveCard,
     Status,
     TextField,
+    HuxEmpty,
+    Error,
+    huxButton,
+  },
+
+  props: {
+    showError: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   data() {
@@ -132,6 +170,7 @@ export default {
       selectedDestination: {},
       confirmModal: false,
       enableConfirm: false,
+      inputText: null,
     }
   },
 
@@ -141,7 +180,9 @@ export default {
     }),
 
     addedDestinations() {
-      return this.destinations.filter((destination) => destination.is_added)
+      return sortBy(this.destinations, ["status", "name"]).filter(
+        (destination) => destination.is_added
+      )
     },
 
     hasAddedDestinations() {
@@ -153,10 +194,12 @@ export default {
     ...mapActions({
       removeDestination: "destinations/remove",
     }),
+
     openModal(destination) {
       this.selectedDestination = destination
       this.confirmModal = true
     },
+
     async confirmRemoval() {
       await this.removeDestination({
         id: this.selectedDestination.id,
@@ -165,9 +208,18 @@ export default {
         },
       })
       this.confirmModal = false
+      this.inputText = null
     },
+
     enableConfirmButton(val) {
+      this.inputText = val
       this.enableConfirm = /confirm/i.test(val)
+    },
+
+    cancelRemoval() {
+      this.confirmModal = !this.confirmModal
+      this.inputText = null
+      this.enableConfirm = false
     },
   },
 }
@@ -184,6 +236,17 @@ export default {
     &:hover {
       cursor: auto;
     }
+  }
+}
+::v-deep.descriptive-card {
+  &.non-interactable {
+    cursor: default;
+    &:hover {
+      @extend .box-shadow-5;
+    }
+  }
+  .description {
+    color: var(--v-black-lighten4) !important;
   }
 }
 ::v-deep.descriptive-card.in-active {

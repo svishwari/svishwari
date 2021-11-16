@@ -9,7 +9,10 @@
       card-space
       mb-10
     "
-    :class="{ 'in-active': disabled }"
+    :class="[
+      disabled ? 'in-active' : '',
+      interactable ? 'interactable' : 'non-interactable',
+    ]"
     :height="height"
     :width="width"
     :to="to"
@@ -42,14 +45,14 @@
         <logo
           v-if="logoOption"
           :type="icon"
-          :size="44"
+          :size="32"
           :color="iconColor"
           class="d-block"
         />
         <icon
           v-else
           :type="icon"
-          :size="44"
+          :size="32"
           :color="iconColor"
           class="d-block"
         />
@@ -59,12 +62,8 @@
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="text-h4 px-3 pb-1 pt-2 text-ellipsis d-block title text-h4"
-          :class="
-            disabled
-              ? 'black--text text--darken-4'
-              : 'black--text text--lighten-5'
-          "
+          class="text-h4 px-6 pb-1 pt-2 text-ellipsis d-block title text-h4"
+          :class="disabled || !interactable ? 'black--text' : 'primary--text'"
           :style="{ 'padding-top': !icon ? '56px' : null }"
           data-e2e="card-title"
         >
@@ -79,7 +78,7 @@
     <tooltip nudge-right="100px" min-width="auto !important">
       <template #label-content>
         <div
-          class="text-caption px-3 d-block description text-h6"
+          class="px-3 d-block description text-body-2 black--text"
           :style="{ 'padding-top': !icon ? '22px' : null }"
           data-e2e="card-description"
         >
@@ -169,6 +168,11 @@ export default {
       required: false,
       default: "Primary",
     },
+    interactable: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 }
 </script>
@@ -179,12 +183,23 @@ export default {
   color: var(--v-black-darken4);
   font-weight: normal;
   transition: box-shadow 0.2s;
-  cursor: pointer;
+
+  &.interactable {
+    cursor: pointer;
+  }
+
+  &.non-interactable {
+    cursor: default;
+    &:hover {
+      @extend .box-shadow-none;
+    }
+  }
 
   &:hover {
     @extend .box-shadow-3;
   }
   &.in-active {
+    @extend .box-shadow-none;
     cursor: default;
     background-color: var(--v-primary-lighten1);
     &:hover {
@@ -204,10 +219,11 @@ export default {
   .dot {
     width: 60px;
     height: 60px;
-    padding: 8px;
     border-radius: 50%;
     @extend .box-shadow-1;
     background: var(--v-white-base);
+    text-align: -webkit-center;
+    padding: 14px;
   }
   .description {
     min-height: 36px;

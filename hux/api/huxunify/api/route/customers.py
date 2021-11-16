@@ -8,7 +8,10 @@ from faker import Faker
 
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
-
+from huxunifylib.database.cache_management import (
+    create_cache_entry,
+    get_cache_entry,
+)
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
     DataFeedSchema,
@@ -22,6 +25,7 @@ from huxunify.api.schema.customers import (
     CustomersInsightsStatesSchema,
     CustomersInsightsCitiesSchema,
     CustomersInsightsCountriesSchema,
+    CustomerRevenueInsightsSchema,
 )
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
@@ -41,13 +45,18 @@ from huxunify.api.data_connectors.cdp import (
     get_city_ltvs,
     get_spending_by_gender,
     get_demographic_by_country,
+    get_revenue_by_day,
 )
 from huxunify.api.data_connectors.cdp_connection import (
     get_idr_data_feeds,
     get_idr_data_feed_details,
     get_idr_matching_trends,
 )
-from huxunify.api.route.utils import add_chart_legend, get_start_end_dates
+from huxunify.api.route.utils import (
+    add_chart_legend,
+    get_start_end_dates,
+    get_db_client,
+)
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import (
     redact_fields,
@@ -112,12 +121,29 @@ class CustomerOverview(SwaggerView):
             Tuple[dict, int]: dict of Customer data overview, HTTP status code.
         """
 
-        # TODO - resolve post demo, set unique IDs as total customers.
-        token_response = get_token_from_request(request)
-        customers = get_customers_overview(token_response[0])
+        # check if cache entry
+        database = get_db_client()
+        customer_overview = get_cache_entry(
+            database,
+            f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",
+        )
+        if not customer_overview:
+            token_response = get_token_from_request(request)
+            customer_overview = get_customers_overview(token_response[0])
+            customer_overview[api_c.GEOGRAPHICAL] = get_demographic_by_state(
+                token_response[0],
+                api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER[api_c.AUDIENCE_FILTERS],
+            )
+
+            # cache
+            create_cache_entry(
+                database,
+                f"{api_c.CUSTOMERS_ENDPOINT}.{api_c.OVERVIEW}",
+                customer_overview,
+            )
 
         return (
-            CustomerOverviewSchema().dump(customers),
+            CustomerOverviewSchema().dump(customer_overview),
             HTTPStatus.OK,
         )
 
@@ -183,10 +209,24 @@ class CustomerPostOverview(SwaggerView):
             Tuple[dict, int]: dict of Customer data overview, HTTP status code.
         """
 
+        # filter out any invalid filters.
+        if any(
+            y
+            for x in request.json.get(api_c.AUDIENCE_FILTERS, [])
+            for y in x.get(api_c.AUDIENCE_SECTION_FILTERS, [])
+            if y == {api_c.AUDIENCE_FILTER_VALUE: ""}
+        ):
+            return {
+                api_c.MESSAGE: "Invalid filter passed in."
+            }, HTTPStatus.BAD_REQUEST
+
         # TODO - cdm to return single field
         token_response = get_token_from_request(request)
         customers = get_customers_overview(token_response[0], request.json)
 
+        customers[api_c.GEOGRAPHICAL] = get_demographic_by_state(
+            token_response[0], request.json[api_c.AUDIENCE_FILTERS]
+        )
         customers = {
             overview_key: customers.get(overview_key) or 0
             for overview_key in customers
@@ -255,21 +295,40 @@ class IDROverview(SwaggerView):
         start_date, end_date = get_start_end_dates(request, 60)
         Validation.validate_date_range(start_date, end_date)
 
-        token_response = get_token_from_request(request)
-
-        # TODO - when the CDP endpoint for getting the max and min date range
-        #  is available, we will call that instead of iterating all events to get them.
-        # get IDR overview
-        idr_overview = get_idr_overview(
-            token_response[0], start_date, end_date
+        # check if cache entry
+        database = get_db_client()
+        idr_overviews = get_cache_entry(
+            database,
+            f"{api_c.IDR_TAG}.{start_date}.{end_date}",
         )
+        if not idr_overviews:
+            token_response = get_token_from_request(request)
 
-        # get date range from IDR matching trends.
-        trend_data = get_idr_matching_trends(
-            token_response[0],
-            start_date,
-            end_date,
-        )
+            # TODO - when the CDP endpoint for getting the max and min date range
+            #  is available, we will call that instead of iterating all events to get them.
+            # get IDR overview
+            idr_overview = get_idr_overview(
+                token_response[0], start_date, end_date
+            )
+
+            # get date range from IDR matching trends.
+            trend_data = get_idr_matching_trends(
+                token_response[0],
+                start_date,
+                end_date,
+            )
+            # cache
+            create_cache_entry(
+                database,
+                f"{api_c.IDR_TAG}.{start_date}.{end_date}",
+                {
+                    api_c.OVERVIEW: idr_overview,
+                    api_c.MATCHING_TRENDS: trend_data,
+                },
+            )
+        else:
+            idr_overview = idr_overviews.get(api_c.OVERVIEW)
+            trend_data = idr_overview.get(api_c.MATCHING_TRENDS)
 
         return (
             IDROverviewWithDateRangeSchema().dump(
@@ -925,6 +984,64 @@ class TotalCustomersGraphView(SwaggerView):
             jsonify(
                 TotalCustomersInsightsSchema().dump(
                     customers_insight_total,
+                    many=True,
+                )
+            ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.REVENUE}",
+    "CustomersRevenueInsightsGraphView",
+)
+class CustomersRevenueInsightsGraphView(SwaggerView):
+    """Customer revenue insights graph view class."""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "array",
+                "items": CustomerRevenueInsightsSchema,
+            },
+            "description": "Customer Revenue Insights .",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Customer Revenue Insights."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(self) -> Tuple[list, int]:
+        """Retrieves customer revenue insights.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[list, int]: list of revenue details by date,
+                HTTP status code.
+        """
+
+        # get auth token from request
+        token_response = get_token_from_request(request)
+
+        start_date, end_date = get_start_end_dates(request, 6)
+
+        customers_revenue_insight = get_revenue_by_day(
+            token_response[0], start_date, end_date
+        )
+
+        return (
+            jsonify(
+                CustomerRevenueInsightsSchema().dump(
+                    customers_revenue_insight,
                     many=True,
                 )
             ),

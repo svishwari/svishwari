@@ -102,6 +102,10 @@ const getters = {
     })
   },
 
+  responseTimeFrame: (state) => {
+    return state.overview.date_range
+  },
+
   timeFrame: (state) => state.timeFrame,
 
   dataFeeds: (state) => Object.values(state.dataFeeds),

@@ -6,7 +6,8 @@
       "title": "Home",
       "link": {
         "name": "Home"
-      }
+      },
+      "display": true
     },
     {
       "label": null,
@@ -14,7 +15,8 @@
       "title": "Configuration",
       "link": {
         "name": "Configuration"
-      }
+      },
+      "display": false
     },
     {
       "label": "Data Management",
@@ -25,7 +27,8 @@
           "link": {
             "name": "DataSources"
           },
-          "size": 14
+          "size": 14,
+          "display": true
         },
         {
           "icon": "identity-resolution",
@@ -33,9 +36,20 @@
           "link": {
             "name": "IdentityResolution"
           },
-          "size": 14
+          "size": 14,
+          "display": true
+        },
+        {
+          "icon": "customer-profiles",
+          "title": "Customer Profiles",
+          "link": {
+            "name": "CustomerProfiles"
+          },
+          "size": 14,
+          "display": true
         }
-      ]
+      ],
+      "display": true
     },
     {
       "label": "Decisioning",
@@ -46,30 +60,35 @@
           "link": {
             "name": "Models"
           },
-          "size": 14
+          "size": 14,
+          "display": true
         }
-      ]
+      ],
+      "display": true
     },
     {
       "label": "Customer Insights",
       "menu": [
         {
           "icon": "customer-profiles",
-          "title": "All Customers",
+          "title": "Customer Profiles",
           "link": {
             "name": "CustomerProfiles"
           },
-          "size": 14
+          "size": 14,
+          "display": false
         },
         {
           "icon": "playground",
           "title": "Segment Playground",
           "link": {
-            "name": "AudienceConfiguration"
+            "name": "SegmentPlayground"
           },
-          "size": 14
+          "size": 14,
+          "display": true
         }
-      ]
+      ],
+      "display": true
     },
     {
       "label": "Orchestration",
@@ -80,7 +99,8 @@
           "link": {
             "name": "Destinations"
           },
-          "size": 16
+          "size": 16,
+          "display": true
         },
         {
           "icon": "audiences",
@@ -88,7 +108,8 @@
           "link": {
             "name": "Audiences"
           },
-          "size": 18
+          "size": 18,
+          "display": true
         },
         {
           "icon": "speaker_up",
@@ -96,9 +117,11 @@
           "link": {
             "name": "Engagements"
           },
-          "size": 16
+          "size": 16,
+          "display": true
         }
-      ]
+      ],
+      "display": true
     }
   ]
 }
