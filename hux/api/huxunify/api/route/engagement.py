@@ -802,16 +802,10 @@ class DeleteAudienceEngagement(SwaggerView):
                 audience = get_delivery_platform_lookalike_audience(
                     database, ObjectId(audience_id)
                 )
-                if audience is None:
-                    logger.error(
-                        "Audience with ID %s does not exist.",
-                        audience_id,
-                    )
-                    return {
-                        api_c.MESSAGE: f"Audience with ID {audience_id} does"
-                        f" not exist."
-                    }, HTTPStatus.NOT_FOUND
-            audience_names.append(audience[db_c.NAME])
+
+            audience_names.append(
+                audience[db_c.NAME] if audience else f"{audience_id}"
+            )
 
         remove_audiences_from_engagement(
             database,

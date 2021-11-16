@@ -1361,3 +1361,9 @@ CUSTOMER_IDR_TEST_DATA = {
         "count": 11,
     },
 }
+
+
+# Configurations
+CONFIGURATIONS_TAG = "configurations"
+CONFIGURATION_ID = "configuration_id"
+CONFIGURATIONS_ENDPOINT = "/configurations"
