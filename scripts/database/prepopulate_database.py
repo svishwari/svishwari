@@ -2,11 +2,15 @@
  - data sources
  - destinations (delivery platforms)
 """
+# pylint: disable=too-many-lines
 import logging
 import huxunifylib.database.constants as c
 from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
+)
+from huxunifylib.database.collection_management import (
+    create_document,
 )
 from pymongo import MongoClient
 
@@ -760,6 +764,172 @@ delivery_platforms_constants = [
 ]
 
 
+# Configurations List
+configurations_constants = [
+    {
+        c.CONFIGURATION_FIELD_NAME: "Data Management",
+        c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        c.CONFIGURATION_FIELD_TYPE: "module",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Monitor data quality "
+        "throughout ingestion and create a peristent"
+        " identifier and profile for every customer",
+        c.CONFIGURATION_FIELD_STATUS: "active",
+        c.CONFIGURATION_FIELD_ENABLED: True,
+        c.CONFIGURATION_FIELD_ROADMAP: False,
+    },
+    {
+        c.CONFIGURATION_FIELD_NAME: "Decisioning",
+        c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        c.CONFIGURATION_FIELD_TYPE: "module",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Track performance of "
+        "decisioning models and reveal actionable"
+        " customer insights.",
+        c.CONFIGURATION_FIELD_STATUS: "active",
+        c.CONFIGURATION_FIELD_ENABLED: True,
+        c.CONFIGURATION_FIELD_ROADMAP: False,
+    },
+    {
+        c.CONFIGURATION_FIELD_NAME: "Customer Insights",
+        c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        c.CONFIGURATION_FIELD_TYPE: "module",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "A 360 degree view of "
+        "each customer, understanding not only their needs and "
+        "preferences, but also the person behind the data.",
+        c.CONFIGURATION_FIELD_STATUS: "active",
+        c.CONFIGURATION_FIELD_ENABLED: True,
+        c.CONFIGURATION_FIELD_ROADMAP: False,
+    },
+    {
+        c.CONFIGURATION_FIELD_NAME: "Orchestration",
+        c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        c.CONFIGURATION_FIELD_TYPE: "module",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Seamlessly route audiences to"
+        " an activation channel of choice to deliver a personalized"
+        " experience for existing and new customers.",
+        c.CONFIGURATION_FIELD_STATUS: "active",
+        c.CONFIGURATION_FIELD_ENABLED: True,
+        c.CONFIGURATION_FIELD_ROADMAP: False,
+    },
+    {
+        c.CONFIGURATION_FIELD_NAME: "Content",
+        c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        c.CONFIGURATION_FIELD_TYPE: "module",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Content allows you to present"
+        " visitors with unique experiences tailored to their needs.",
+        c.CONFIGURATION_FIELD_STATUS: "pending",
+        c.CONFIGURATION_FIELD_ENABLED: True,
+        c.CONFIGURATION_FIELD_ROADMAP: False,
+    },
+    {
+        c.CONFIGURATION_FIELD_NAME: "Measurement",
+        c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        c.CONFIGURATION_FIELD_TYPE: "module",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Find out why your audiences"
+        " think what they think, behave as they "
+        "behave and feel what they feel.",
+        c.CONFIGURATION_FIELD_STATUS: "pending",
+        c.CONFIGURATION_FIELD_ENABLED: True,
+        c.CONFIGURATION_FIELD_ROADMAP: False,
+    },
+    {
+        c.CONFIGURATION_FIELD_NAME: "Commerce personal",
+        c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        c.CONFIGURATION_FIELD_TYPE: "business_solution",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Lorem ipsum dolor sit amet, "
+        "consectetur adipiscing elit ut aliquam.",
+        c.CONFIGURATION_FIELD_STATUS: "pending",
+        c.CONFIGURATION_FIELD_ENABLED: True,
+        c.CONFIGURATION_FIELD_ROADMAP: False,
+    },
+    {
+        c.CONFIGURATION_FIELD_NAME: "Digital Giant",
+        c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        c.CONFIGURATION_FIELD_TYPE: "business_solution",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Lorem ipsum dolor sit amet, "
+        "consectetur adipiscing elit ut aliquam.",
+        c.CONFIGURATION_FIELD_STATUS: "pending",
+        c.CONFIGURATION_FIELD_ENABLED: True,
+        c.CONFIGURATION_FIELD_ROADMAP: False,
+    },
+    {
+        c.CONFIGURATION_FIELD_NAME: "Email deliverability",
+        c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        c.CONFIGURATION_FIELD_TYPE: "business_solution",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Ensure emails land in the right "
+        "inbox by providing insights on all aspects of a "
+        "successful marketing strategy from beginning to end.",
+        c.CONFIGURATION_FIELD_STATUS: "pending",
+        c.CONFIGURATION_FIELD_ENABLED: True,
+        c.CONFIGURATION_FIELD_ROADMAP: False,
+    },
+    {
+        c.CONFIGURATION_FIELD_NAME: "Experience data platform",
+        c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        c.CONFIGURATION_FIELD_TYPE: "business_solution",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Brings voice of the customer "
+        "to make improvements to your customer "
+        "experience at an individual and macro level.",
+        c.CONFIGURATION_FIELD_STATUS: "pending",
+        c.CONFIGURATION_FIELD_ENABLED: True,
+        c.CONFIGURATION_FIELD_ROADMAP: False,
+    },
+    {
+        c.CONFIGURATION_FIELD_NAME: "Insight IQ",
+        c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        c.CONFIGURATION_FIELD_TYPE: "business_solution",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Enrich your customer profiles"
+        " with this collections of data sources at"
+        " the individual level enabling an enhanced customer experience.",
+        c.CONFIGURATION_FIELD_STATUS: "pending",
+        c.CONFIGURATION_FIELD_ENABLED: True,
+        c.CONFIGURATION_FIELD_ROADMAP: False,
+    },
+    {
+        c.CONFIGURATION_FIELD_NAME: "Intelligent marketing",
+        c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        c.CONFIGURATION_FIELD_TYPE: "business_solution",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "These capabilities were folded "
+        "into the segmentation engine, as was Hux Audience.",
+        c.CONFIGURATION_FIELD_STATUS: "pending",
+        c.CONFIGURATION_FIELD_ENABLED: True,
+        c.CONFIGURATION_FIELD_ROADMAP: False,
+    },
+    {
+        c.CONFIGURATION_FIELD_NAME: "Trust ID",
+        c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        c.CONFIGURATION_FIELD_TYPE: "business_solution",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Enables brands to gain "
+        "visibility, monitor and  engage with their customers "
+        "based on AI – generated experienced based metrics.",
+        c.CONFIGURATION_FIELD_STATUS: "pending",
+        c.CONFIGURATION_FIELD_ENABLED: True,
+        c.CONFIGURATION_FIELD_ROADMAP: False,
+    },
+    {
+        c.CONFIGURATION_FIELD_NAME: "Search AI",
+        c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        c.CONFIGURATION_FIELD_TYPE: "business_solution",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "Leverages search data to"
+        " optimize the creation, placement, and timing of online "
+        "content to increase customer acquisition.",
+        c.CONFIGURATION_FIELD_STATUS: "pending",
+        c.CONFIGURATION_FIELD_ENABLED: True,
+        c.CONFIGURATION_FIELD_ROADMAP: False,
+    },
+    {
+        c.CONFIGURATION_FIELD_NAME: "Cognitive spark",
+        c.CONFIGURATION_FIELD_ICON: "datamgmg.ico",
+        c.CONFIGURATION_FIELD_TYPE: "business_solution",
+        c.CONFIGURATION_FIELD_DESCRIPTION: "A modular cloud-based product"
+        " designed to enable brands and portfolios "
+        "to make AI powered decisions at scale.",
+        c.CONFIGURATION_FIELD_STATUS: "pending",
+        c.CONFIGURATION_FIELD_ENABLED: True,
+        c.CONFIGURATION_FIELD_ROADMAP: False,
+    },
+]
+
+
 def drop_collections(database: MongoClient) -> None:
     """Drop collections for writing.
 
@@ -830,10 +1000,34 @@ def insert_delivery_platforms(
     logging.info("Prepopulate destinations complete.")
 
 
+def insert_configurations(database: MongoClient, configurations: list) -> None:
+    """Insert data into configurations Collection.
+
+    Args:
+        database (MongoClient): MongoDB Client.
+        configurations (List): List of Configuration Objects.
+    """
+
+    logging.info("Prepopulate configurations.")
+
+    for configuration in configurations:
+        result_id = create_document(
+            database,
+            c.CONFIGURATIONS_COLLECTION,
+            configuration,
+        )[c.ID]
+        logging.info(
+            "Added %s, %s.",
+            configuration[c.NAME],
+            result_id,
+        )
+    logging.info("Prepopulated configurations.")
+
+
 if __name__ == "__main__":
     # Initiate Data Base client
     db_client = get_mongo_client()
-    drop_collections(db_client)
     insert_data_sources(db_client, data_sources_constants)
     insert_delivery_platforms(db_client, delivery_platforms_constants)
+    insert_configurations(db_client, configurations_constants)
     logging.info("Prepopulate complete.")

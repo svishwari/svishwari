@@ -995,21 +995,36 @@ class DestinationPatchView(SwaggerView):
         # validate the schema first.
         DestinationPatchSchema().validate(patch_dict)
 
+        database = get_db_client()
+
+        updated_destination = (
+            destination_management.update_delivery_platform_doc(
+                database,
+                destination_id,
+                {
+                    **patch_dict,
+                    **{
+                        db_c.UPDATED_BY: user_name,
+                        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    },
+                },
+            )
+        )
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f"{user_name} successfully updated"
+                f' "{updated_destination[db_c.NAME]}" destination.'
+            ),
+            api_c.DESTINATION,
+            user_name,
+        )
+
         # update the document
         return (
-            DestinationGetSchema().dump(
-                destination_management.update_delivery_platform_doc(
-                    get_db_client(),
-                    destination_id,
-                    {
-                        **patch_dict,
-                        **{
-                            db_c.UPDATED_BY: user_name,
-                            db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-                        },
-                    },
-                )
-            ),
+            DestinationGetSchema().dump(updated_destination),
             HTTPStatus.OK,
         )
 
@@ -1100,18 +1115,21 @@ class DestinationsRequestView(SwaggerView):
             destination = destination_management.update_delivery_platform_doc(
                 database,
                 destination[db_c.ID],
-                {db_c.DELIVERY_PLATFORM_STATUS: db_c.STATUS_REQUESTED},
+                {
+                    db_c.DELIVERY_PLATFORM_STATUS: db_c.STATUS_REQUESTED,
+                    db_c.ADDED: True,
+                },
             )
         else:
             # create a destination object and set the status to requested.
             destination = destination_management.set_delivery_platform(
-                database,
-                api_c.GENERIC_DESTINATION,
-                destination_request[api_c.NAME],
-                user_name,
-                db_c.STATUS_REQUESTED,
-                True,
-                True,
+                database=database,
+                delivery_platform_type=api_c.GENERIC_DESTINATION,
+                name=destination_request[api_c.NAME],
+                user_name=user_name,
+                status=db_c.STATUS_REQUESTED,
+                enabled=False,
+                added=True,
             )
 
             # create JIRA ticket for the request.
