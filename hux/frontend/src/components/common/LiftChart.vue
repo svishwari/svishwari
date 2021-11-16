@@ -6,7 +6,7 @@
         :key="header.value"
         :class="{ 'liftchart-bucket': header.value === 'bucket' }"
       >
-        <div class="black--text text--darken-4 text-h6">
+        <div class="black--text text-body-1">
           {{ item[header.value].toLocaleString() }}
         </div>
       </td>

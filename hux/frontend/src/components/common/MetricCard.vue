@@ -87,10 +87,10 @@
       <div class="flex-grow-1" :class="{ 'align-center': highLevel }">
         <div class="subtitle-slot">
           <span
-            class="text-body-2"
+            class="text-body-2 black--text text--lighten-4"
             :class="{
               'no-click': !interactable,
-              'flex-grow-1 align-center highlevel-subtitle': highLevel,
+              'flex-grow-1 align-center': highLevel,
             }"
           >
             {{ subtitle }}
@@ -267,7 +267,6 @@ export default {
   }
   .highlevel-title-above {
     line-height: 30px;
-    color: var(--v-black-darken4) !important;
   }
 }
 </style>

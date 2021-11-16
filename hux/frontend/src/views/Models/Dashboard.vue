@@ -36,7 +36,7 @@
       <v-row>
         <v-col col="6">
           <div class="model-dashboard__card pa-4">
-            <label class="black--text text--lighten-4 ma-0">
+            <label class="text-body-2 black--text text--lighten-4 ma-0">
               Description
             </label>
             <p class="text-body-1 ma-0">

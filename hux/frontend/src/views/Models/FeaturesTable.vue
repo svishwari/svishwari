@@ -9,7 +9,7 @@
       <td
         v-for="col in columns"
         :key="col.value"
-        class="black--text text--darken-4 text-h6"
+        class="black--text text-body-1"
       >
         <template v-if="col.value === 'name'">
           <tooltip>
