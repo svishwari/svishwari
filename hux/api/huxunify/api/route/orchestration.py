@@ -22,6 +22,7 @@ from huxunifylib.database import (
     orchestration_management,
     engagement_management,
     engagement_audience_management as eam,
+    collection_management as cm,
 )
 import huxunifylib.database.constants as db_c
 
@@ -246,6 +247,9 @@ class AudienceView(SwaggerView):
         # query the DB.
         filter_dict = {}
         favorite_audiences = None
+        favorite_lookalike_audiences = get_user_favorites(
+            get_db_client(), user_name, api_c.LOOKALIKE
+        )
 
         if request.args.get(api_c.FAVORITES) and validation.validate_bool(
             request.args.get(api_c.FAVORITES)
@@ -359,9 +363,17 @@ class AudienceView(SwaggerView):
         # as lookalike audiences can not be lookalikeable
         if not lookalikeable:
             # get all lookalikes and append to the audience list
-            lookalikes = destination_management.get_all_delivery_platform_lookalike_audiences(
-                database
-            )
+            query_filter = {db_c.DELETED: False}
+            if request.args.get(api_c.FAVORITES) and validation.validate_bool(
+                request.args.get(api_c.FAVORITES)
+            ):
+                query_filter[db_c.ID] = {"$in": favorite_lookalike_audiences}
+            lookalikes = cm.get_documents(
+                database,
+                db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+                query_filter,
+                {db_c.DELETED: 0},
+            )[db_c.DOCUMENTS]
 
             # get the facebook delivery platform for lookalikes
             facebook_destination = (
@@ -383,6 +395,9 @@ class AudienceView(SwaggerView):
                 ]
                 lookalike[db_c.DESTINATIONS] = (
                     [facebook_destination] if facebook_destination else []
+                )
+                lookalike[api_c.FAVORITE] = bool(
+                    lookalike[db_c.ID] in favorite_lookalike_audiences
                 )
 
             # combine the two lists and serve.

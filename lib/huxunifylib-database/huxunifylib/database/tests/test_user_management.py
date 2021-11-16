@@ -7,6 +7,7 @@ from hypothesis import given, strategies as st
 import huxunifylib.database.user_management as um
 import huxunifylib.database.orchestration_management as am
 import huxunifylib.database.engagement_management as em
+import huxunifylib.database.delivery_platform_management as dpm
 import huxunifylib.database.constants as c
 
 from huxunifylib.database.client import DatabaseClient
@@ -54,7 +55,33 @@ class TestUserManagement(unittest.TestCase):
             profile_photo=self.sample_user[c.USER_PROFILE_PHOTO],
         )
 
+        self.auth_details_facebook = {
+            "facebook_access_token": "path1",
+            "facebook_app_secret": "path2",
+            "facebook_app_id": "path3",
+            "facebook_ad_account_id": "path4",
+        }
+
+        self.delivery_platform_doc = dpm.set_delivery_platform(
+            self.database,
+            c.DELIVERY_PLATFORM_FACEBOOK,
+            "My delivery platform for Facebook",
+            self.auth_details_facebook,
+        )
+
         self.audience = am.create_audience(self.database, "Test Audience", [])
+        self.lookalike_audience_doc = (
+            dpm.create_delivery_platform_lookalike_audience(
+                self.database,
+                self.delivery_platform_doc[c.ID],
+                self.audience[c.ID],
+                "Lookalike audience",
+                0.01,
+                "US",
+                "Kam Chancellor",
+                31,
+            )
+        )
 
         # setting id to set engagement
         self.audience[c.OBJECT_ID] = self.audience[c.ID]
@@ -69,6 +96,7 @@ class TestUserManagement(unittest.TestCase):
         self.component_ids = {
             c.ENGAGEMENTS: self.engagement_id,
             c.AUDIENCES: self.audience[c.OBJECT_ID],
+            c.LOOKALIKE: self.lookalike_audience_doc[c.ID],
         }
 
     def test_set_user(self) -> None:

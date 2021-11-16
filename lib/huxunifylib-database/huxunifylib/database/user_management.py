@@ -332,6 +332,7 @@ def manage_user_favorites(
     component_collection = {
         c.ENGAGEMENTS: c.ENGAGEMENTS_COLLECTION,
         c.AUDIENCES: c.AUDIENCES_COLLECTION,
+        c.LOOKALIKE: c.LOOKALIKE_AUDIENCE_COLLECTION
     }
 
     # TODO - validate input component ID if it exists
