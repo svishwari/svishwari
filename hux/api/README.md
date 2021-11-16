@@ -341,6 +341,9 @@ def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
 
 ### Testing
 ```
+# cd to the hux/api folder
+cd hux-unified/hux/api
+
 # add current directory to python path
 PYTHONPATH=$PYTHONPATH:`pwd`
 
