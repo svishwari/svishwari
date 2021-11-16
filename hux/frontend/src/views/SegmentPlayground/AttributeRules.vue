@@ -68,24 +68,33 @@
                     label="Select attribute"
                     @on-select="onSelect('attribute', condition, $event)"
                   />
-                  {{ getOptionType(condition) }}
                   <hux-dropdown
-                    v-if="isText(condition)"
+                    v-if="isTextORSelect(condition)"
                     label="Select operator"
                     :items="operatorOptions(condition)"
                     :selected="condition.operator"
                     @on-select="onSelect('operator', condition, $event)"
                   />
                   <text-field
-                    v-if="condition.operator && isText(condition)"
+                    v-if="
+                      condition.operator && condition.attribute.type === 'text'
+                    "
                     v-model="condition.text"
                     class="item-text-field"
                     :placeholder="getPlaceHolderText(condition)"
                     required
                     @blur="triggerSizing(condition)"
                   />
+                  <hux-autocomplete
+                    v-if="
+                      condition.operator && condition.attribute.type === 'list'
+                    "
+                    v-model="condition.text"
+                    :options="condition.options"
+                    @change="triggerSizing(condition)"
+                  />
                   <div
-                    v-if="condition.attribute && !isText(condition)"
+                    v-if="condition.attribute && !isTextORSelect(condition)"
                     ref="hux-density-slider"
                     class="range-attribute-container"
                     :class="condition.attribute.values ? 'pt-6' : ''"
@@ -198,6 +207,7 @@ import HuxDensityChart from "@/components/common/Charts/DensityChart/HuxDensityC
 import HuxSwitch from "../../components/common/Switch.vue"
 import TextField from "../../components/common/TextField.vue"
 import Icon from "@/components/common/Icon"
+import HuxAutocomplete from "../../components/common/HuxAutocomplete.vue"
 
 const NEW_RULE_SECTION = {
   id: "",
@@ -224,6 +234,7 @@ export default {
     HuxSlider,
     HuxDensityChart,
     Icon,
+    HuxAutocomplete,
   },
   props: {
     rules: {
@@ -298,21 +309,12 @@ export default {
         }
       }
     },
-    isText(condition) {
-      return condition.attribute ? condition.attribute.type === "text" : false
-    },
-    getOptionType(condition) {
-      if (!condition.attribute) return false
-      switch (condition.attribute.type) {
-        case "text":
-          return "textfield"
-        case "list":
-          debugger
-          return "select"
 
-        default:
-          break
-      }
+    isTextORSelect(condition) {
+      return condition.attribute
+        ? condition.attribute.type === "text" ||
+            condition.attribute.type === "list"
+        : false
     },
     /**
      * This attributeOptions is transforming the API attributeRules into the Options Array
@@ -364,7 +366,7 @@ export default {
     },
     operatorOptions(condition) {
       // Filter out only two options (equals and does_not_equals) for attribute type 'gender'
-      if (condition.attribute.key === "gender") {
+      if (condition.attribute.type === "list") {
         return Object.keys(this.ruleAttributes.text_operators)
           .map((key) => {
             if (key.includes("equal")) {
@@ -627,6 +629,7 @@ export default {
               border: solid 1px var(--v-black-lighten3) !important;
               border-radius: 0;
               margin-bottom: 0;
+              box-shadow: inherit;
               fieldset {
                 border: 0;
               }
