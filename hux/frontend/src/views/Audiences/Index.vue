@@ -66,7 +66,7 @@
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
             }"
-            :style="{ minWidth: header.width, left: 0  }"
+            :style="{ minWidth: header.width, left: 0 }"
           >
             <div
               v-if="header.value == 'name'"
@@ -559,6 +559,14 @@ export default {
           border-right: thin solid rgba(0, 0, 0, 0.12);
         }
         &:hover {
+          td:nth-child(1) {
+            z-index: 1 !important;
+            background: var(--v-primary-lighten2) !important;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+            .menu-cell-wrapper .action-icon {
+              display: initial;
+            }
+          }
           background: var(--v-primary-lighten2) !important;
           box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
         }
@@ -571,7 +579,6 @@ export default {
             box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
           }
         }
-        
       }
     }
 

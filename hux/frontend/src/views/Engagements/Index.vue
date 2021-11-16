@@ -1116,6 +1116,9 @@ export default {
         &:hover {
           background: var(--v-primary-lighten2) !important;
           box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+          .menu-cell-wrapper .action-icon {
+            display: initial;
+          }
         }
         td {
           font-size: 14px !important;
