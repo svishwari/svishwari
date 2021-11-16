@@ -243,19 +243,20 @@ class AudienceView(SwaggerView):
             Tuple[list, int]: list of audience, HTTP status code.
         """
 
+        database = get_db_client()
         # read the optional request args and set the required filter_dict to
         # query the DB.
         filter_dict = {}
         favorite_audiences = None
         favorite_lookalike_audiences = get_user_favorites(
-            get_db_client(), user_name, api_c.LOOKALIKE
+            database, user_name, api_c.LOOKALIKE
         )
 
         if request.args.get(api_c.FAVORITES) and validation.validate_bool(
             request.args.get(api_c.FAVORITES)
         ):
             favorite_audiences = get_user_favorites(
-                get_db_client(), user_name, api_c.AUDIENCES
+                database, user_name, api_c.AUDIENCES
             )
 
         if request.args.get(api_c.WORKED_BY) and validation.validate_bool(
@@ -268,8 +269,6 @@ class AudienceView(SwaggerView):
         # validation is successful
         if attribute_list:
             filter_dict[api_c.ATTRIBUTE] = attribute_list
-
-        database = get_db_client()
 
         # get all audiences and deliveries
         audiences = orchestration_management.get_all_audiences_and_deliveries(
@@ -318,7 +317,7 @@ class AudienceView(SwaggerView):
         # Check if favourite audiences is not set
         if favorite_audiences is None:
             favorite_audiences = get_user_favorites(
-                get_db_client(), user_name, api_c.AUDIENCES
+                database, user_name, api_c.AUDIENCES
             )
 
         # process each audience object
@@ -372,14 +371,26 @@ class AudienceView(SwaggerView):
             if request.args.get(api_c.WORKED_BY) and validation.validate_bool(
                 request.args.get(api_c.WORKED_BY)
             ):
-                query_filter[api_c.WORKED_BY] = user_name
+                query_filter.update(
+                    {
+                        "$or": [
+                            {db_c.CREATED_BY: user_name},
+                            {db_c.UPDATED_BY: user_name},
+                        ]
+                    }
+                )
 
             lookalikes = cm.get_documents(
                 database,
                 db_c.LOOKALIKE_AUDIENCE_COLLECTION,
                 query_filter,
                 {db_c.DELETED: 0},
-            )[db_c.DOCUMENTS]
+            )
+            lookalikes = (
+                []
+                if lookalikes is None
+                else lookalikes.get(db_c.DOCUMENTS, [])
+            )
 
             # get the facebook delivery platform for lookalikes
             facebook_destination = (

@@ -108,6 +108,20 @@ class ConfigurationCollectionManagementTest(TestCase):
             len(self.configurations), len(configurations[db_c.DOCUMENTS])
         )
 
+        for configuration in configurations[db_c.DOCUMENTS]:
+            self.assertIn(
+                configuration[db_c.TYPE],
+                [x[db_c.TYPE] for x in self.configurations],
+            )
+            self.assertIn(
+                configuration[db_c.NAME],
+                [x[db_c.NAME] for x in self.configurations],
+            )
+            self.assertIn(
+                configuration[db_c.ID],
+                [x[db_c.ID] for x in self.configurations],
+            )
+
         self.assertEqual(
             len(self.configurations), configurations["total_records"]
         )

@@ -1210,9 +1210,12 @@ class OrchestrationRouteTest(TestCase):
         audiences = response.json
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(audiences)
-        self.assertEqual(1, len(audiences))
+        self.assertEqual(2, len(audiences))
         self.assertEqual(
             str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID]
+        )
+        self.assertEqual(
+            str(self.lookalike_audience_doc[db_c.ID]), audiences[1][api_c.ID]
         )
 
     def test_get_lookalike_audiences_with_valid_filters(self):
@@ -1232,4 +1235,23 @@ class OrchestrationRouteTest(TestCase):
         )
         self.assertEqual(
             str(self.lookalike_audience_doc[db_c.ID]), audiences[1][api_c.ID]
+        )
+
+    def test_get_worked_by_audiences_with_valid_filters(self):
+        """Test get all audiences with valid filters."""
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}?{api_c.WORKED_BY}=True",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        audiences = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(audiences)
+        self.assertEqual(3, len(audiences))
+        self.assertEqual(
+            str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID]
+        )
+        self.assertEqual(
+            str(self.lookalike_audience_doc[db_c.ID]), audiences[2][api_c.ID]
         )
