@@ -51,6 +51,7 @@
                 text-body-1
               "
               @click="toggleCustomerEventsDrawer()"
+              data-e2e="eventsDrawerButton"
               >
               <icon
                 type="events-drawer"

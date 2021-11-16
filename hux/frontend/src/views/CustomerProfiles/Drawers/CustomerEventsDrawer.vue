@@ -24,6 +24,7 @@
                 v-for="header in tableColumns"
                 :key="header.value"
                 class="text-body-1 py-2 mw-100 text-truncate"
+                data-e2e="customerEventRow"
               >
                 <template v-if="header.value == 'event_type'" class="d-flex align-center">
                   <icon

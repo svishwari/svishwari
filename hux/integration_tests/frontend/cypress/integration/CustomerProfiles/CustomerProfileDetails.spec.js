@@ -48,5 +48,9 @@ describe("Data management > Customer Profiles > Customer Profiles Dashboard", ()
 
     // should validate chord card
     cy.get(selector.customerProfile.chord).should("exist")
+
+    //should validate customer events drawer
+    cy.get(selector.customerProfile.eventsDrawerButton).click()
+    cy.get(selector.customerProfile.customerEventRow).should("exist")
   })
 })
