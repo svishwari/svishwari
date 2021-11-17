@@ -205,6 +205,7 @@ export default {
         id: this.selectedDestination.id,
         data: {
           added: false,
+          connection_status: "Pending",
         },
       })
       this.confirmModal = false

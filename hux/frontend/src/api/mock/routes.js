@@ -101,7 +101,9 @@ export const defineRoutes = (server) => {
   server.patch("/destinations/:id", (schema, request) => {
     const id = request.params.id
 
-    return schema.destinations.find(id).update({ is_added: false })
+    return schema.destinations
+      .find(id)
+      .update({ is_added: false, status: "Pending" })
   })
 
   server.get("/destinations/:destinationId/data-extensions")
