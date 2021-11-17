@@ -338,7 +338,6 @@ stages:
       strict: false
       status_code: 200
       json:
-        !anylist
         - size: !anyint
           revenue: !anyfloat
           country: !anystr
@@ -370,7 +369,6 @@ stages:
       strict: false
       status_code: 200
       json:
-        !anylist
         - size: !anyint
           revenue: !anyfloat
           state: !anystr
@@ -403,11 +401,213 @@ stages:
       strict: false
       status_code: 200
       json:
-        !anylist
         - size: !anyint
           revenue: !anyfloat
           city: !anystr
           state: !anystr
           country: !anystr
+      headers:
+        content-type: application/json
+
+---
+test_name: Test IDR macthing trends
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test idr matching trends
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/idr/matching-trends"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        - known_ids: !anyint
+          anonymous_ids: !anyint
+          unique_hux_ids: !anyint
+          date: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+      headers:
+        content-type: application/json
+
+---
+test_name: Test customer events
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test get all customers
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "total_customers": !anyint
+        "customers": !anylist
+        - "hux_id": !anystr
+        - "first_name": !anystr
+        - "last_name": !anystr
+        - "match_confidence": !anyfloat
+      save:
+        json:
+          first_customer: customers[0]
+      headers:
+        content-type: application/json
+
+  - name: test customer events
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers/{first_customer.hux_id}/events"
+      method: POST
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        - date: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          total_event_count: !anyint
+          event_type_counts:
+            abandoned_cart: !anyint
+            viewed_cart: !anyint
+            customer_login: !anyint
+            viewed_checkout: !anyint
+            viewed_sale_item: !anyint
+            item_purchased: !anyint
+            trait_computed: !anyint
+      headers:
+        content-type: application/json
+
+
+---
+test_name: Test customer insights revenue
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test get customers-insights/revenue
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers-insights/revenue"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        - date: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          revenue: !anyfloat
+          spend: !anyfloat
+      save:
+        json:
+          first_customer: customers[0]
+      headers:
+        content-type: application/json
+
+---
+test_name: Test customer insights total
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test get customers-insights/total
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers-insights/total"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        - date: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          total_customers: !anyint
+          new_customers_added: !anyint
+          customers_left: !anyint
+      headers:
+        content-type: application/json
+
+---
+test_name: Test customer insights demo
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test get customers-insights/demo
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers-insights/demo"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        gender:
+          gender_men:
+            size: !anyint
+            population_percentage: !anyfloat
+          gender_women:
+            size: !anyint
+            population_percentage: !anyfloat
+          gender_other:
+            size: !anyint
+            population_percentage: !anyfloat
+        spend:
+          gender_men: !anylist
+          gender_women: !anylist
+        income:
+          - ltv: !anyfloat
+            name: !anystr
       headers:
         content-type: application/json
