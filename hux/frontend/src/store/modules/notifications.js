@@ -12,7 +12,7 @@ const state = {
 const getters = {
   list: (state) => Object.values(state.items),
 
-  uersList: (state) => Object.values(state.users),
+  userList: (state) => Object.values(state.users),
 
   single: (state) => (id) => state.items[id],
 
@@ -26,6 +26,7 @@ const mutations = {
     })
   },
   SET_ALL_USERS(state, items) {
+    state.users = {}
     items.forEach((item) => {
       Vue.set(state.users, item.id, item)
     })

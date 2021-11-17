@@ -250,7 +250,7 @@ export default {
     ...mapGetters({
       notifications: "notifications/list",
       totalNotifications: "notifications/total",
-      getUsers: "notifications/uersList",
+      getUsers: "notifications/userList",
     }),
 
     notificationData() {
@@ -258,13 +258,13 @@ export default {
       return sortedNotificaitonList.sort((a, b) => a.id - b.id)
     },
     getNotificationUsers() {
-      return this.getUsers.length != 0 ? this.getUsers : []
+      return this.getUsers
     },
   },
 
   async mounted() {
     this.loading = true
-    this.getUserData()
+    await this.getUserData()
     try {
       this.setDefaultData()
       await this.fetchNotificationsByBatch()
@@ -333,9 +333,8 @@ export default {
       this.batchDetails.batchNumber = 1
       this.batchDetails.isLazyLoad = false
     },
-    alertfunction(value) {
-      //TODO
-      console.log("data", value)
+    alertfunction() {
+      //TODO: Apply Filter API Integration
     },
   },
 }

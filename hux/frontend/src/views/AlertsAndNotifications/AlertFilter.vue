@@ -59,7 +59,7 @@
         </hux-filter-panel>
         <hux-filter-panel title="User" :count="selctedUsers.length">
           <v-checkbox
-            v-for="data in usersData"
+            v-for="data in users"
             :key="data.id"
             v-model="selctedUsers"
             multiple
@@ -194,7 +194,6 @@ export default {
           title: "Last 6 months",
         },
       ],
-      usersData: this.users,
       selctedAlertType: [],
       selctedCategory: [],
       selectedTimeType: "Last week",
@@ -202,6 +201,7 @@ export default {
       selectedTimeCount: 1,
     }
   },
+
   computed: {
     filterLength() {
       let alert = this.selctedAlertType.length > 0 ? 1 : 0
