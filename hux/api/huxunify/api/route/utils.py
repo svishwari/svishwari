@@ -621,7 +621,7 @@ def read_stub_cityzip_data(file_path: str) -> list:
     Returns:
         list: City & Zip data list
     """
-    with open(file_path, "r", delimiter=",") as csv_file:
+    with open(file_path, "r") as csv_file:
         data = list(csv.reader(csv_file))
 
     return data[1:]
