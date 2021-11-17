@@ -107,7 +107,7 @@
             </v-row>
           </template>
           <template slot="action-menu-options">
-            <v-list class="list-wrapper">
+            <v-list class="list-wrapper pa-0">
               <v-list-item-group>
                 <v-list-item @click="removeModel(model)">
                   <v-list-item-title> Remove </v-list-item-title>
