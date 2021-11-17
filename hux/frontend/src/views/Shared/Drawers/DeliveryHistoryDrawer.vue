@@ -273,141 +273,146 @@ export default {
 
     async fetchHistory() {
       this.loading = true
+      try {
+        if (this.engagementId) {
+          await this.getEngagementDeliveries(this.engagementId)
 
-      if (this.engagementId) {
-        await this.getEngagementDeliveries(this.engagementId)
+          let allAudiences = this.allDeliveries.map((each) => each.audience)
+          let allDestinations = this.allDeliveries.map(
+            (each) => each.destination
+          )
 
-        let allAudiences = this.allDeliveries.map((each) => each.audience)
-        let allDestinations = this.allDeliveries.map((each) => each.destination)
+          let uniqueAudiences = uniqBy(allAudiences, "id")
+          let uniqueDestinations = uniqBy(allDestinations, "id")
+          this.filters = [
+            {
+              name: "Audience name",
+              data: uniqueAudiences,
+              value: [],
+              onSelect: async (value) => {
+                let audienceIds = ""
+                value.map((each, index) => {
+                  if (index !== value.length - 1) {
+                    audienceIds += `engagement=${each.id}&`
+                  } else {
+                    audienceIds += `engagement=${each.id}`
+                  }
+                })
 
-        let uniqueAudiences = uniqBy(allAudiences, "id")
-        let uniqueDestinations = uniqBy(allDestinations, "id")
-        this.filters = [
-          {
-            name: "Audience name",
-            data: uniqueAudiences,
-            value: [],
-            onSelect: async (value) => {
-              let audienceIds = ""
-              value.map((each, index) => {
-                if (index !== value.length - 1) {
-                  audienceIds += `engagement=${each.id}&`
-                } else {
-                  audienceIds += `engagement=${each.id}`
-                }
-              })
+                this.audienceQuery = audienceIds
 
-              this.audienceQuery = audienceIds
+                let query = `${audienceIds}${
+                  this.destinationQuery !== "" ? "&" : ""
+                }${this.destinationQuery}`
 
-              let query = `${audienceIds}${
-                this.destinationQuery !== "" ? "&" : ""
-              }${this.destinationQuery}`
-
-              await this.getEngagementFilteredDeliveries({
-                id: this.engagementId,
-                query: query,
-              })
-              this.items = this.engagementFilteredDeliveries
+                await this.getEngagementFilteredDeliveries({
+                  id: this.engagementId,
+                  query: query,
+                })
+                this.items = this.engagementFilteredDeliveries
+              },
             },
-          },
-          {
-            name: "Destination",
-            data: uniqueDestinations,
-            value: [],
-            onSelect: async (value) => {
-              let destintaionIds = ""
-              value.map((each, index) => {
-                if (index !== value.length - 1) {
-                  destintaionIds += `destination=${each.id}&`
-                } else {
-                  destintaionIds += `destination=${each.id}`
-                }
-              })
+            {
+              name: "Destination",
+              data: uniqueDestinations,
+              value: [],
+              onSelect: async (value) => {
+                let destintaionIds = ""
+                value.map((each, index) => {
+                  if (index !== value.length - 1) {
+                    destintaionIds += `destination=${each.id}&`
+                  } else {
+                    destintaionIds += `destination=${each.id}`
+                  }
+                })
 
-              this.destinationQuery = destintaionIds
+                this.destinationQuery = destintaionIds
 
-              let query = `${destintaionIds}${
-                this.audienceQuery !== "" ? "&" : ""
-              }${this.audienceQuery}`
+                let query = `${destintaionIds}${
+                  this.audienceQuery !== "" ? "&" : ""
+                }${this.audienceQuery}`
 
-              await this.getEngagementFilteredDeliveries({
-                id: this.engagementId,
-                query: query,
-              })
-              this.items = this.engagementFilteredDeliveries
+                await this.getEngagementFilteredDeliveries({
+                  id: this.engagementId,
+                  query: query,
+                })
+                this.items = this.engagementFilteredDeliveries
+              },
             },
-          },
-        ]
+          ]
+        }
+
+        if (this.audienceId) {
+          await this.getAudienceDeliveries(this.audienceId)
+          let allEngagements = this.allDeliveries.map((each) => each.engagement)
+          let allDestinations = this.allDeliveries.map(
+            (each) => each.destination
+          )
+
+          let uniqueEngagements = uniqBy(allEngagements, "id")
+          let uniqueDestinations = uniqBy(allDestinations, "id")
+          this.filters = [
+            {
+              name: "Engagement name",
+              data: uniqueEngagements,
+              value: [],
+              onSelect: async (value) => {
+                let engagementIds = ""
+                value.map((each, index) => {
+                  if (index !== value.length - 1) {
+                    engagementIds += `engagement=${each.id}&`
+                  } else {
+                    engagementIds += `engagement=${each.id}`
+                  }
+                })
+
+                this.engagementQuery = engagementIds
+
+                let query = `${engagementIds}${
+                  this.destinationQuery !== "" ? "&" : ""
+                }${this.destinationQuery}`
+
+                await this.getAudienceFilteredDeliveries({
+                  id: this.audienceId,
+                  query: query,
+                })
+                this.items = this.audienceFilteredDeliveries
+              },
+            },
+            {
+              name: "Destination",
+              data: uniqueDestinations,
+              value: [],
+              onSelect: async (value) => {
+                let destintaionIds = ""
+                value.map((each, index) => {
+                  if (index !== value.length - 1) {
+                    destintaionIds += `destination=${each.id}&`
+                  } else {
+                    destintaionIds += `destination=${each.id}`
+                  }
+                })
+
+                this.destinationQuery = destintaionIds
+
+                let query = `${destintaionIds}${
+                  this.engagementQuery !== "" ? "&" : ""
+                }${this.engagementQuery}`
+
+                await this.getAudienceFilteredDeliveries({
+                  id: this.audienceId,
+                  query: query,
+                })
+                this.items = this.audienceFilteredDeliveries
+              },
+            },
+          ]
+        }
+
+        this.items = this.allDeliveries
+      } finally {
+        this.loading = false
       }
-
-      if (this.audienceId) {
-        await this.getAudienceDeliveries(this.audienceId)
-        let allEngagements = this.allDeliveries.map((each) => each.engagement)
-        let allDestinations = this.allDeliveries.map((each) => each.destination)
-
-        let uniqueEngagements = uniqBy(allEngagements, "id")
-        let uniqueDestinations = uniqBy(allDestinations, "id")
-        this.filters = [
-          {
-            name: "Engagement name",
-            data: uniqueEngagements,
-            value: [],
-            onSelect: async (value) => {
-              let engagementIds = ""
-              value.map((each, index) => {
-                if (index !== value.length - 1) {
-                  engagementIds += `engagement=${each.id}&`
-                } else {
-                  engagementIds += `engagement=${each.id}`
-                }
-              })
-
-              this.engagementQuery = engagementIds
-
-              let query = `${engagementIds}${
-                this.destinationQuery !== "" ? "&" : ""
-              }${this.destinationQuery}`
-
-              await this.getAudienceFilteredDeliveries({
-                id: this.audienceId,
-                query: query,
-              })
-              this.items = this.audienceFilteredDeliveries
-            },
-          },
-          {
-            name: "Destination",
-            data: uniqueDestinations,
-            value: [],
-            onSelect: async (value) => {
-              let destintaionIds = ""
-              value.map((each, index) => {
-                if (index !== value.length - 1) {
-                  destintaionIds += `destination=${each.id}&`
-                } else {
-                  destintaionIds += `destination=${each.id}`
-                }
-              })
-
-              this.destinationQuery = destintaionIds
-
-              let query = `${destintaionIds}${
-                this.engagementQuery !== "" ? "&" : ""
-              }${this.engagementQuery}`
-
-              await this.getAudienceFilteredDeliveries({
-                id: this.audienceId,
-                query: query,
-              })
-              this.items = this.audienceFilteredDeliveries
-            },
-          },
-        ]
-      }
-
-      this.items = this.allDeliveries
-
-      this.loading = false
     },
   },
 }

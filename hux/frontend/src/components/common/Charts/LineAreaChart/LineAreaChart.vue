@@ -79,7 +79,7 @@ export default {
         this.$options.filters.Date(value, "MM/DD/YYYY")
 
       let appendyAxisFormat = (text) =>
-        `${this.$options.filters.Numeric(text, false, true, false)}`
+        `$${this.$options.filters.Numeric(text, false, true, false)}`
 
       let xScale = d3Scale
         .scaleTime()

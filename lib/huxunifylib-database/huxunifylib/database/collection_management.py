@@ -36,6 +36,7 @@ def create_document(
     Raises:
         InvalidValueException: Error if the passed in value
             is not valid.
+        DuplicateDocument: Error if the document is duplicate
     """
 
     if collection not in c.ALLOWED_COLLECTIONS:
@@ -60,6 +61,17 @@ def create_document(
     ]
     if any(key_check):
         raise de.InvalidValueException(",".join(key_check))
+
+    # Make sure the data is unique
+    doc_check = {}
+    for key in c.REQUIRED_FIELDS[collection]:
+        doc_check[key] = new_doc[key]
+
+    try:
+        if coll.find_one(doc_check):
+            raise de.DuplicateDocument(doc_check)
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
 
     new_doc[c.CREATE_TIME] = datetime.utcnow()
     new_doc[c.CREATED_BY] = username
@@ -144,6 +156,7 @@ def get_document(
     database: DatabaseClient,
     collection: str,
     document_id: ObjectId,
+    include_deleted: bool = False,
 ) -> Union[dict, None]:
     """Get document by ID
 
@@ -151,6 +164,8 @@ def get_document(
         database (DatabaseClient): MongoDB Database Client
         collection (str): Collection name.
         document_id (ObjectId): MongoDB Object Id
+        include_deleted (bool): Flag to specify whether to fetch deleted docs,
+            defaults to False
 
     Returns:
         Tuple[dict,None]:MongoDB collection document else None
@@ -166,8 +181,12 @@ def get_document(
     # get collection
     coll = database[c.DATA_MANAGEMENT_DATABASE][collection]
 
+    query = {c.ID: document_id}
+    if not include_deleted:
+        query[c.DELETED] = False
+
     try:
-        return coll.find_one({c.ID: document_id, c.DELETED: False})
+        return coll.find_one(query)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -277,7 +296,7 @@ def delete_document(
                 "$set": {
                     c.DELETED: True,
                     c.UPDATED_BY: username,
-                    c.UPDATE_TIME: datetime.now(),
+                    c.UPDATE_TIME: datetime.utcnow(),
                 }
             },
             upsert=False,

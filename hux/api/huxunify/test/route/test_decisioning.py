@@ -4,7 +4,12 @@ from http import HTTPStatus
 from unittest import TestCase, mock
 
 import mongomock
+from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.collection_management import (
+    create_document,
+    get_document,
+)
 from hypothesis import given, settings, strategies as st
 
 import requests_mock
@@ -113,44 +118,96 @@ class DecisioningTests(TestCase):
         )
 
     def test_success_request_model(self):
-        """Test get models from Tecton with status."""
+        """Test requesting a model."""
+
+        status_request = {
+            api_c.STATUS: api_c.REQUESTED,
+            api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
+            api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
+        }
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
+            data=json.dumps(status_request),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
         get_models_mock = mock.patch(
             "huxunify.api.data_connectors.tecton.get_models"
         ).start()
         get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
-        response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
-            headers=t_c.STANDARD_HEADERS,
-        )
+    def test_remove_model_success(self):
+        """Test removing requested models from Unified DB."""
 
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-
+        # Request model to delete later
         status_request = {
             api_c.STATUS: api_c.REQUESTED,
-            api_c.ID: response.json[0][api_c.ID],
-            api_c.NAME: response.json[0][api_c.NAME],
+            api_c.ID: 1,
+            api_c.NAME: "Test Requested Model",
+            api_c.TYPE: "test",
         }
 
-        self.test_client.post(
+        # Add a document for the requested model in Unified DB
+        doc = create_document(
+            database=self.database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            new_doc=status_request,
+            username="Test User",
+        )
+
+        # API call to delete the requested model
+        response = self.test_client.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
-            data=json.dumps(status_request),
+            query_string={api_c.MODEL_ID: str(doc[db_c.ID])},
             headers=t_c.STANDARD_HEADERS,
         )
 
-        response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}?{api_c.STATUS}={api_c.REQUESTED}",
-            headers=t_c.STANDARD_HEADERS,
-        )
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(
-            t_c.validate_schema(ModelSchema(), response.json, True)
+        self.assertEqual(
+            {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, response.json
         )
 
-        self.assertListEqual(
-            [x[api_c.NAME] for x in response.json],
-            ["Model1"],
+        updated_doc = get_document(
+            database=self.database,
+            collection=db_c.CONFIGURATIONS_COLLECTION,
+            document_id=doc[db_c.ID],
+            include_deleted=True,
+        )
+
+        self.assertTrue(updated_doc[db_c.DELETED])
+
+    @given(model_id=st.integers())
+    def test_remove_model_failure_invalid_model_id(self, model_id: int):
+        """Test removing requested models from Unified DB with invalid model id.
+
+        Args:
+            model_id (int): Model Id
+        """
+
+        # API call to delete the requested model
+        response = self.test_client.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
+            query_string={api_c.MODEL_ID: model_id},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_remove_model_failure_no_params(self):
+        """Test removing requested models from Unified DB."""
+
+        # API call to delete the requested model
+        response = self.test_client.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(
+            {api_c.MESSAGE: api_c.EMPTY_OBJECT_ERROR_MESSAGE}, response.json
         )
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))

@@ -181,6 +181,7 @@ class DestinationGetSchema(Schema):
                     api_c.STATUS_ACTIVE,
                     api_c.STATUS_PENDING,
                     api_c.STATUS_ERROR,
+                    api_c.REQUESTED,
                 ]
             )
         ],
@@ -223,6 +224,7 @@ class DestinationPatchSchema(Schema):
                     api_c.STATUS_DELIVERED,
                     api_c.STATUS_DELIVERY_PAUSED,
                     api_c.STATUS_ERROR,
+                    api_c.REQUESTED,
                 ]
             )
         ],
@@ -230,6 +232,19 @@ class DestinationPatchSchema(Schema):
     added = fields.Bool(attribute="added")
     enabled = fields.Bool(attribute="enabled")
     ad_platform = fields.Bool(attribute=db_c.IS_AD_PLATFORM)
+
+
+class DestinationRequestSchema(Schema):
+    """Destinations Request schema class"""
+
+    name = fields.String(
+        attribute=api_c.DESTINATION_NAME,
+        example="Salesforce Marketing Cloud",
+    )
+    contact_email = fields.Email(required=False, default=False)
+    client_request = fields.Bool(required=False, default=False)
+    client_account = fields.Bool(required=False, default=False)
+    use_case = fields.String(required=False, allow_none=True)
 
 
 class DestinationPutSchema(Schema):

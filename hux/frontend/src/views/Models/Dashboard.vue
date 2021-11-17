@@ -40,7 +40,7 @@
               Description
             </label>
             <p class="text-body-1 ma-0">
-              {{ model.description }}
+              {{ model.description | Empty }}
             </p>
           </div>
         </v-col>
@@ -85,7 +85,7 @@
                 <template #title>
                   <tooltip>
                     <template #label-content>
-                      {{ metric }}
+                      {{ metric | Empty }}
                     </template>
                     <template #hover-content>
                       <div class="mb-3">
@@ -178,17 +178,20 @@
       </v-row>
       <v-row class="pt-0">
         <v-col md="6" class="pt-0">
-          <v-card class="mt-2 rounded-lg box-shadow-5" height="662">
+          <v-card
+            class="mt-2 rounded-lg box-shadow-5"
+            :height="modelFeatures.length == 0 ? 280 : 662"
+          >
             <v-progress-linear
               :active="featuresLoading"
               :indeterminate="featuresLoading"
             />
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <v-card-title
+              v-if="modelFeatures.length != 0"
+              class="chart-style pb-2 pl-5 pt-5"
+            >
               <div class="mt-2">
-                <span
-                  v-if="modelFeatures"
-                  class="black--text text--darken-4 text-h5"
-                >
+                <span class="black--text text--darken-4 text-h5">
                   Top
                   {{ modelFeatures.length }}
                   feature importance
@@ -196,20 +199,65 @@
               </div>
             </v-card-title>
             <feature-chart
-              v-if="!featuresLoading"
+              v-if="!featuresLoading && modelFeatures.length != 0"
               :feature-data="modelFeatures"
               data-e2e="feature-chart"
             />
+            <v-row
+              v-else-if="!featuresLoading && modelFeatures.length == 0"
+              class="model-features-frame py-14"
+            >
+              <empty-page
+                v-if="modelFeatures.length == 0 && !modelFeaturesErrorState"
+                type="model-features-empty"
+                :size="50"
+              >
+                <template #title>
+                  <div class="title-no-notification">No data to show</div>
+                </template>
+                <template #subtitle>
+                  <div class="des-no-notification">
+                    Top 20 features chart will appear here once
+                    {{ modelMetricDetails.name }} finishes uploading. <br />
+                    Please check back later.
+                  </div>
+                </template>
+              </empty-page>
+              <empty-page
+                v-else-if="modelFeaturesErrorState"
+                class="title-no-notification"
+                type="error-on-screens"
+                :size="50"
+              >
+                <template #title>
+                  <div class="title-no-notification">
+                    Top 20 features chart is currently unavailable
+                  </div>
+                </template>
+                <template #subtitle>
+                  <div class="des-no-notification">
+                    Our team is working hard to fix it. Please be patient.<br />Thank
+                    you!
+                  </div>
+                </template>
+              </empty-page>
+            </v-row>
           </v-card>
         </v-col>
-        <v-col md="6" class="pt-0">
-          <v-card class="rounded-lg px-4 box-shadow-5 mt-2" height="662">
+        <v-col md="6" :class="driftChartData.length == 0 ? 'pt-3' : 'pt-0'">
+          <v-card
+            class="rounded-lg px-4 box-shadow-5 mt-2"
+            :height="driftChartData.length == 0 ? 280 : 662"
+          >
             <v-progress-linear
               v-if="loadingDrift"
               :active="loadingDrift"
               :indeterminate="loadingDrift"
             />
-            <div class="pt-5 pl-2 pb-10 black--text text--darken-4 text-h5">
+            <div
+              v-if="driftChartData.length != 0"
+              class="pt-5 pl-2 pb-10 black--text text--darken-4 text-h5"
+            >
               Drift
               <span
                 v-if="
@@ -224,15 +272,57 @@
             </div>
             <div ref="decisioning-drift">
               <drift-chart
-                v-if="!loadingDrift"
+                v-if="!loadingDrift && driftChartData.length != 0"
                 v-model="driftChartData"
                 :chart-dimensions="chartDimensions"
                 x-axis-format="%m/%d"
                 :enable-grid="[true, true]"
                 data-e2e="drift-chart"
               />
+              <v-row
+                v-else-if="!loadingDrift && driftChartData.length == 0"
+                class="drift-chart-frame py-14"
+              >
+                <empty-page
+                  v-if="!driftChartErrorState"
+                  type="drift-chart-empty"
+                  :size="50"
+                >
+                  <template #title>
+                    <div class="title-no-notification">No data to show</div>
+                  </template>
+                  <template #subtitle>
+                    <div class="des-no-notification">
+                      Drift chart will appear here once
+                      {{ modelMetricDetails.name }} finishes uploading. <br />
+                      Please check back later.
+                    </div>
+                  </template>
+                </empty-page>
+                <empty-page
+                  v-else
+                  class="title-no-notification"
+                  type="error-on-screens"
+                  :size="50"
+                >
+                  <template #title>
+                    <div class="title-no-notification">
+                      Drift chart is currently unavailable
+                    </div>
+                  </template>
+                  <template #subtitle>
+                    <div class="des-no-notification">
+                      Our team is working hard to fix it. Please be patient.<br />Thank
+                      you!
+                    </div>
+                  </template>
+                </empty-page>
+              </v-row>
             </div>
-            <div class="py-5 text-center black--text text--darken-4 text-h6">
+            <div
+              v-if="driftChartData.length != 0"
+              class="py-5 text-center black--text text--darken-4 text-h6"
+            >
               Date
             </div>
           </v-card>
@@ -241,7 +331,10 @@
       <v-row>
         <v-col col="12">
           <v-card class="rounded-lg box-shadow-5 px-6 py-5">
-            <div class="black--text text--darken-4 text-h5 pb-4">
+            <div
+              v-if="lift.length != 0"
+              class="black--text text--darken-4 text-h5 pb-4"
+            >
               Lift chart
             </div>
             <v-progress-linear
@@ -250,21 +343,62 @@
               :indeterminate="loadingLift"
             />
             <lift-chart
-              v-else
+              v-else-if="!loadingLift && lift.length != 0"
               :data="lift"
               :rmse="model.performance_metric['rmse']"
               data-e2e="table-lift"
             />
+            <v-row
+              v-else-if="!loadingLift && lift.length == 0"
+              class="lift-chart-frame py-14"
+            >
+              <empty-page
+                v-if="!liftErrorState"
+                type="lift-table-empty"
+                :size="50"
+              >
+                <template #title>
+                  <div class="title-no-notification">No data to show</div>
+                </template>
+                <template #subtitle>
+                  <div class="des-no-notification">
+                    Lift chart table will appear here once
+                    {{ modelMetricDetails.name }} finishes uploading.
+                  </div>
+                </template>
+              </empty-page>
+              <empty-page
+                v-else
+                class="title-no-notification"
+                type="error-on-screens"
+                :size="50"
+              >
+                <template #title>
+                  <div class="title-no-notification">
+                    Lift table is currently unavailable
+                  </div>
+                </template>
+                <template #subtitle>
+                  <div class="des-no-notification">
+                    Our team is working hard to fix it. Please be patient and
+                    try again soon!
+                  </div>
+                </template>
+              </empty-page>
+            </v-row>
           </v-card>
         </v-col>
       </v-row>
-      <v-row v-if="dashboardFeatureSize">
+      <v-row>
         <v-col col="12">
           <v-card
             class="rounded-lg box-shadow-5 px-6 py-5"
             data-e2e="table-feature"
           >
-            <div class="black--text text--darken-4 text-h5 pb-4">
+            <div
+              v-if="dashboardFeatureSize"
+              class="black--text text--darken-4 text-h5 pb-4"
+            >
               Features ({{ dashboardFeatureSize }})
             </div>
             <v-progress-linear
@@ -272,7 +406,48 @@
               :active="loadingModelFeatures"
               :indeterminate="loadingModelFeatures"
             />
-            <features-table v-else :data="dashboardFeature" />
+            <features-table
+              v-else-if="!loadingModelFeatures && dashboardFeatureSize != 0"
+              :data="dashboardFeature"
+            />
+            <v-row
+              v-else-if="!loadingModelFeatures && dashboardFeatureSize == 0"
+              class="lift-chart-frame py-14"
+            >
+              <empty-page
+                v-if="!featuresErrorState"
+                type="lift-table-empty"
+                :size="50"
+              >
+                <template #title>
+                  <div class="title-no-notification">No data to show</div>
+                </template>
+                <template #subtitle>
+                  <div class="des-no-notification">
+                    Features table will appear here once
+                    {{ modelMetricDetails.name }} finishes uploading.
+                  </div>
+                </template>
+              </empty-page>
+              <empty-page
+                v-else
+                class="title-no-notification"
+                type="error-on-screens"
+                :size="50"
+              >
+                <template #title>
+                  <div class="title-no-notification">
+                    Features table is currently unavailable
+                  </div>
+                </template>
+                <template #subtitle>
+                  <div class="des-no-notification">
+                    Our team is working hard to fix it. Please be patient and
+                    try again soon!
+                  </div>
+                </template>
+              </empty-page>
+            </v-row>
           </v-card>
         </v-col>
       </v-row>
@@ -295,6 +470,7 @@ import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import VersionHistory from "./Drawers/VersionHistoryDrawer.vue"
 import MetricCard from "@/components/common/MetricCard"
+import EmptyPage from "@/components/common/EmptyPage"
 import { mapGetters, mapActions } from "vuex"
 
 export default {
@@ -311,6 +487,7 @@ export default {
     DriftChart,
     FeaturesTable,
     MetricCard,
+    EmptyPage,
   },
   data() {
     return {
@@ -325,6 +502,10 @@ export default {
         width: 0,
         height: 0,
       },
+      modelFeaturesErrorState: false,
+      driftChartErrorState: false,
+      liftErrorState: false,
+      featuresErrorState: false,
     }
   },
 
@@ -399,15 +580,18 @@ export default {
     this.loading = true
     this.chartDimensions.width = this.$refs["decisioning-drift"].clientWidth
     this.chartDimensions.height = 520
-    if (!this.modelDetails(this.$route.params.id)) {
-      await this.getModels()
+    try {
+      if (!this.modelDetails(this.$route.params.id)) {
+        await this.getModels()
+      }
+      await this.getOverview(this.$route.params.id)
+    } finally {
+      this.fetchLift()
+      this.fetchDrift()
+      this.loading = false
+      this.fetchFeatures()
+      this.fetchModelFeatures() // Fetch data for Model feature table.
     }
-    await this.getOverview(this.$route.params.id)
-    this.fetchLift()
-    this.fetchDrift()
-    this.loading = false
-    this.fetchFeatures()
-    this.fetchModelFeatures() // Fetch data for Model feature table.
   },
 
   created() {
@@ -435,12 +619,20 @@ export default {
     }),
     async fetchLift() {
       this.loadingLift = true
-      await this.getLift(this.$route.params.id)
+      try {
+        await this.getLift(this.$route.params.id)
+      } catch (error) {
+        this.liftErrorState = true
+      }
       this.loadingLift = false
     },
     async fetchDrift() {
       this.loadingDrift = true
-      await this.getDrift(this.$route.params.id)
+      try {
+        await this.getDrift(this.$route.params.id)
+      } catch (error) {
+        this.driftChartErrorState = true
+      }
       this.loadingDrift = false
     },
     viewVersionHistory() {
@@ -448,7 +640,12 @@ export default {
     },
     async fetchFeatures() {
       this.featuresLoading = true
-      await this.getFeatures(this.$route.params.id)
+      try {
+        await this.getFeatures(this.$route.params.id)
+      } catch (error) {
+        this.modelFeaturesErrorState = true
+        console.log("error found")
+      }
       this.featuresLoading = false
     },
     sizeHandler() {
@@ -456,7 +653,11 @@ export default {
     },
     async fetchModelFeatures() {
       this.loadingModelFeatures = true
-      await this.getModelFeatures(this.$route.params.id)
+      try {
+        await this.getModelFeatures(this.$route.params.id)
+      } catch (error) {
+        this.featuresErrorState = true
+      }
       this.loadingModelFeatures = false
     },
   },
@@ -469,5 +670,39 @@ export default {
     border: 1px solid var(--v-black-lighten2);
     border-radius: 12px;
   }
+}
+
+.model-features-frame {
+  background-image: url("../../assets/images/no-barchart-frame.png");
+  background-position: center;
+}
+
+.drift-chart-frame {
+  background-image: url("../../assets/images/no-drift-chart-frame.png");
+  background-position: center;
+}
+
+.lift-chart-frame {
+  background-image: url("../../assets/images/no-lift-chart-frame.png");
+  background-position: center;
+}
+//to overwrite the classes
+
+.title-no-notification {
+  font-size: 24px !important;
+  line-height: 34px !important;
+  font-weight: 300 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
+}
+.des-no-notification {
+  font-size: 14px !important;
+  line-height: 16px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  color: var(--v-black-base);
+}
+.pre-formatted {
+  white-space: pre;
 }
 </style>

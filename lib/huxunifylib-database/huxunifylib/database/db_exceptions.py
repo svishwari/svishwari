@@ -26,6 +26,14 @@ class DuplicateName(HuxAdvException):
     )
 
 
+class DuplicateDocument(HuxAdvException):
+    """Exception for duplicate documents."""
+
+    exception_message = (
+        "The document <{}> already exists. The creation/update failed."
+    )
+
+
 class InvalidName(HuxAdvException):
     """Exception for invalid names."""
 

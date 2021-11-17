@@ -90,12 +90,15 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.getAudiences()
-    await this.getDestinations()
-    if (this.$route.name === "EngagementUpdate") {
-      await this.loadEngagement(this.$route.params.id)
+    try {
+      await this.getAudiences()
+      await this.getDestinations()
+      if (this.$route.name === "EngagementUpdate") {
+        await this.loadEngagement(this.$route.params.id)
+      }
+    } finally {
+      this.loading = false
     }
-    this.loading = false
   },
 
   methods: {

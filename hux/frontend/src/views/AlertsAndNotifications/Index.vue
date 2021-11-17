@@ -258,20 +258,23 @@ export default {
       return sortedNotificaitonList.sort((a, b) => a.id - b.id)
     },
     getNotificationUsers() {
-      return this.getUsers
+      return this.getUsers.length != 0 ? this.getUsers : []
     },
   },
 
   async mounted() {
     this.loading = true
-    this.setDefaultDate()
-    await this.fetchNotificationsByBatch()
-    this.calculateLastBatch()
     this.getUserData()
-    this.loading = false
-    this.enableLazyLoad = true
-    if (this.notifications.length === 0) {
-      this.enableLazyLoad = false
+    try {
+      this.setDefaultData()
+      await this.fetchNotificationsByBatch()
+      this.calculateLastBatch()
+    } finally {
+      this.loading = false
+      this.enableLazyLoad = true
+      if (this.notifications.length === 0) {
+        this.enableLazyLoad = false
+      }
     }
   },
   methods: {
@@ -325,27 +328,14 @@ export default {
         return value === "Informational" ? "lighten6" : "base"
       }
     },
-    setDefaultDate() {
-      let today_date = new Date()
-      let getStartDate = new Date(
-        today_date.getFullYear(),
-        today_date.getMonth(),
-        today_date.getDate() - 7
-      )
-       let getEndDate = new Date(
-        today_date.getFullYear(),
-        today_date.getMonth(),
-        today_date.getDate() - 7
-      )
-      this.batchDetails.start_date = this.$options.filters.Date(getStartDate, "YYYY-MM-DD")
-      this.batchDetails.end_date = this.$options.filters.Date(getEndDate, "YYYY-MM-DD")
+    setDefaultData() {
       this.batchDetails.batchSize = 25
       this.batchDetails.batchNumber = 1
       this.batchDetails.isLazyLoad = false
     },
     alertfunction(value) {
+      //TODO
       console.log("data", value)
-      // this.fetchNotificationsByBatch()
     },
   },
 }
