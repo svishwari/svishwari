@@ -18,19 +18,40 @@
         </div>
       </template>
     </page-header>
+    <page-header v-if="hasModels" header-height="71">
+      <template #left>
+        <v-btn disabled icon color="black">
+          <icon type="search" :size="20" color="black" variant="lighten3" />
+        </v-btn>
+      </template>
+      <template #right>
+        <huxButton
+          variant="primary"
+          size="large"
+          is-tile
+          height="40"
+          class="ma-2 font-weight-regular no-shadow mr-0 caption"
+          data-e2e="addDataSource"
+          @click="toggleDrawer()"
+        >
+          Request a model
+        </huxButton>
+      </template>
+    </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <v-row v-if="!loading" class="ma-0 pa-8" data-e2e="models-list">
+    <v-row v-if="!loading" class="pa-14" data-e2e="models-list">
       <template v-if="hasModels">
         <descriptive-card
-          v-for="model in models"
+          v-for="model in addedModels"
           :key="model.id"
-          :action-menu="false"
+          :action-menu="model.status !== 'Active'"
           :coming-soon="false"
           width="280"
           height="255"
           :icon="`model-${model.type || 'unsubscribe'}`"
           :title="model.name"
+          :logo-option="true"
           :description="model.description"
           data-e2e="model-item"
           :disabled="model.status !== 'Active'"
@@ -39,23 +60,16 @@
         >
           <template slot="top">
             <status
-              :icon-size="17"
+              :icon-size="18"
               :status="model.status || ''"
               collapsed
               class="d-flex float-left"
-              data-e2e="model-status"
+              :data-e2e="`model-status-${model.status}`"
             />
           </template>
 
-          <template slot="default">
-            <p
-              class="text-body-2 black--text text--lighten-4"
-              data-e2e="model-owner"
-            >
-              {{ model.owner }}
-            </p>
-
-            <v-row no-gutters>
+          <template v-if="model.status == 'Active'" slot="default">
+            <v-row no-gutters class="mt-4">
               <v-col cols="5">
                 <card-stat
                   label="Version"
@@ -93,9 +107,9 @@
             </v-row>
           </template>
           <template slot="action-menu-options">
-            <v-list class="list-wrapper ma-0 pa-0">
+            <v-list class="list-wrapper">
               <v-list-item-group>
-                <v-list-item>
+                <v-list-item @click="removeModel(model)">
                   <v-list-item-title> Remove </v-list-item-title>
                 </v-list-item>
               </v-list-item-group>
@@ -103,34 +117,46 @@
           </template>
         </descriptive-card>
       </template>
-      <hux-empty
-        v-else-if="!hasModels && !showError"
-        icon-type="models-empty"
-        :icon-size="50"
-        title="No models to show"
-        subtitle="Models will appear here once they are added or requested."
-      >
-        <template #button>
-          <hux-button
-            variant="primary"
-            is-tile
-            width="224"
-            height="40"
-            class="text-button my-4"
-          >
-            Request a model
-          </hux-button>
-        </template>
-      </hux-empty>
-      <error
-        v-else
-        icon-type="error-on-screens"
-        :icon-size="50"
-        title="Models are currently unavailable"
-        subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
-      >
-      </error>
+
+      <template v-else>
+        <empty-page>
+          <template #icon> mdi-alert-circle-outline </template>
+          <template #title> Oops! There’s nothing here yet </template>
+          <template #subtitle>
+            Our team is still working hard activating your models. But they
+            should be up and running soon! Please be patient in the meantime!
+          </template>
+        </empty-page>
+      </template>
     </v-row>
+
+    <confirm-modal
+      v-model="confirmModal"
+      icon="sad-face"
+      type="error"
+      title="You are about to remove"
+      :sub-title="`${selectedModal && selectedModal.name}`"
+      right-btn-text="Yes, remove it"
+      left-btn-text="Nevermind!"
+      data-e2e="remove-modal-confirmation"
+      @onCancel="confirmModal = !confirmModal"
+      @onConfirm="confirmRemoval()"
+    >
+      <template #body>
+        <div
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
+          Are you sure you want to remove this requested model&#63;
+        </div>
+      </template>
+    </confirm-modal>
+
+    <model-configuration v-model="drawer" />
   </div>
 </template>
 
@@ -139,11 +165,13 @@ import { mapGetters, mapActions } from "vuex"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import CardStat from "@/components/common/Cards/Stat"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
-import HuxEmpty from "@/components/common/screens/Empty"
-import Error from "@/components/common/screens/Error"
+import EmptyPage from "@/components/common/EmptyPage"
 import PageHeader from "@/components/PageHeader"
 import Status from "@/components/common/Status"
 import huxButton from "@/components/common/huxButton"
+import Icon from "../../components/common/Icon.vue"
+import ConfirmModal from "@/components/common/ConfirmModal"
+import ModelConfiguration from "@/views/Models/Drawers/Configuration"
 
 export default {
   name: "Models",
@@ -152,17 +180,21 @@ export default {
     Breadcrumb,
     CardStat,
     DescriptiveCard,
-    HuxEmpty,
-    Error,
+    EmptyPage,
     PageHeader,
     Status,
     huxButton,
+    Icon,
+    ConfirmModal,
+    ModelConfiguration,
   },
 
   data() {
     return {
       loading: false,
-      showError: false,
+      drawer: false,
+      confirmModal: false,
+      selectedModal: null,
     }
   },
 
@@ -174,21 +206,23 @@ export default {
     hasModels() {
       return this.models.length ? Object.entries(this.models[0]).length : false
     },
+    addedModels() {
+      return this.models.filter((model) =>
+        ["Active", "Requested"].includes(model.status)
+      )
+    },
   },
 
   async mounted() {
     this.loading = true
-    try {
-      await this.getModels()
-    } catch (error) {
-      this.showError = true
-    }
+    await this.getModels()
     this.loading = false
   },
 
   methods: {
     ...mapActions({
       getModels: "models/getAll",
+      deleteModal: "models/remove",
     }),
 
     goToDashboard(model) {
@@ -198,6 +232,17 @@ export default {
           params: { id: model.id },
         })
       }
+    },
+    toggleDrawer() {
+      this.drawer = !this.drawer
+    },
+    removeModel(modal) {
+      this.selectedModal = modal
+      this.confirmModal = true
+    },
+    confirmRemoval() {
+      this.deleteModal(this.selectedModal)
+      this.confirmModal = false
     },
   },
 }

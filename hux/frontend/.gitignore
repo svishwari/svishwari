@@ -29,3 +29,5 @@ coverage/
 
 # Ignore snapshots for views
 tests/unit/views/**__snapshots**
+
+.DS_Store

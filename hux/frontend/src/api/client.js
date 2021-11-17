@@ -334,6 +334,10 @@ client["models"].modelFeatures = (id) => {
   return http.get(`/models/${id}/features`)
 }
 
+client["models"].remove = (model) => {
+  return http.delete(`/models/${model.id}`)
+}
+
 //#region Data sources
 client.dataSources.dataFeeds = (type) => {
   return http.get(`/data-sources/${type}/datafeeds`)

@@ -445,6 +445,10 @@ export const defineRoutes = (server) => {
 
   // models
   server.get("/models")
+  server.post("/models", (schema, request) => {
+    let attrs = JSON.parse(request.requestBody)
+    return schema.models.create(attrs)
+  })
 
   server.get("/models/:id/overview", (schema, request) => {
     const id = request.params.id
@@ -480,6 +484,21 @@ export const defineRoutes = (server) => {
     const id = request.params.id
     const model = schema.models.find(id)
     return model.attrs.model_feature
+  })
+
+  server.patch("/models", (schema, request) => {
+    const requestData = JSON.parse(request.requestBody)
+    return schema.models.find(requestData.models_ids).update(requestData.body)
+  })
+
+  server.del("/models/:id", (schema, request) => {
+    const code = 200
+    const headers = {}
+    const id = request.params.id
+    const model = schema.models.find(id)
+    model.destroy()
+    const body = { message: "SUCCESS" }
+    return new Response(code, headers, body)
   })
 
   // customers
