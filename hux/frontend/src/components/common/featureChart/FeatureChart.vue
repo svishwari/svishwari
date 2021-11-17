@@ -100,7 +100,7 @@ export default {
   line-height: 19px;
 }
 .container {
-  height: 650px;
+  height: 548px;
   padding: 0px !important;
   position: relative;
   .bar-hover {
