@@ -18,7 +18,7 @@
         </div>
       </template>
     </page-header>
-    <page-header v-if="hasModels" header-height="71">
+    <page-header v-if="addedModels.length > 0" header-height="71">
       <template #left>
         <v-btn disabled icon color="black">
           <icon type="search" :size="20" color="black" variant="lighten3" />
@@ -41,7 +41,7 @@
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
     <v-row v-if="!loading" class="pa-14" data-e2e="models-list">
-      <template v-if="hasModels">
+      <template v-if="addedModels.length > 0">
         <descriptive-card
           v-for="model in addedModels"
           :key="model.id"
@@ -117,17 +117,34 @@
           </template>
         </descriptive-card>
       </template>
-
-      <template v-else>
-        <empty-page>
-          <template #icon> mdi-alert-circle-outline </template>
-          <template #title> Oops! There’s nothing here yet </template>
-          <template #subtitle>
-            Our team is still working hard activating your models. But they
-            should be up and running soon! Please be patient in the meantime!
-          </template>
-        </empty-page>
-      </template>
+      <hux-empty
+        v-else-if="addedModels.length == 0 && !showError"
+        icon-type="models-empty"
+        :icon-size="50"
+        title="No models to show"
+        subtitle="Models will appear here once they are added or requested."
+      >
+        <template #button>
+          <hux-button
+            variant="primary"
+            is-tile
+            width="224"
+            height="40"
+            class="text-button my-4"
+            @click="toggleDrawer()"
+          >
+            Request a model
+          </hux-button>
+        </template>
+      </hux-empty>
+      <error
+        v-else
+        icon-type="error-on-screens"
+        :icon-size="50"
+        title="Models are currently unavailable"
+        subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+      >
+      </error>
     </v-row>
 
     <confirm-modal
@@ -165,7 +182,8 @@ import { mapGetters, mapActions } from "vuex"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import CardStat from "@/components/common/Cards/Stat"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
-import EmptyPage from "@/components/common/EmptyPage"
+import HuxEmpty from "@/components/common/screens/Empty"
+import Error from "@/components/common/screens/Error"
 import PageHeader from "@/components/PageHeader"
 import Status from "@/components/common/Status"
 import huxButton from "@/components/common/huxButton"
@@ -180,7 +198,8 @@ export default {
     Breadcrumb,
     CardStat,
     DescriptiveCard,
-    EmptyPage,
+    HuxEmpty,
+    Error,
     PageHeader,
     Status,
     huxButton,
@@ -192,6 +211,7 @@ export default {
   data() {
     return {
       loading: false,
+      showError: false,
       drawer: false,
       confirmModal: false,
       selectedModal: null,
@@ -215,7 +235,11 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.getModels()
+    try {
+      await this.getModels()
+    } catch (error) {
+      this.showError = true
+    }
     this.loading = false
   },
 
