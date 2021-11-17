@@ -159,7 +159,7 @@ export default {
     },
 
     eventsForTable() {
-      return this.events.reduce(function (eventObject, event) {
+      return this.events.reduce((eventObject, event) => {
         let index = 0
         let temp = []
         const event_type_count = event["event_type_counts"]
@@ -168,12 +168,7 @@ export default {
             temp.push({ event_type: key, date: event["date"] })
           }
         })
-        temp = sortBy(temp, [
-          function (o) {
-            return o.event_type
-          },
-        ])
-        eventObject = eventObject.concat(temp)
+        eventObject = eventObject.concat(sortBy(temp, [(o) => o.event_type]))
         return eventObject
       }, [])
     },
@@ -204,11 +199,6 @@ export default {
     },
     toggleCustomerEventsDrawer() {
       this.customerEventsDrawer = !this.customerEventsDrawer
-    },
-    humanize(str) {
-      var frags = str.split("_")
-      frags[0] = frags[0].charAt(0).toUpperCase() + frags[0].slice(1)
-      return frags.join(" ")
     },
   },
 }

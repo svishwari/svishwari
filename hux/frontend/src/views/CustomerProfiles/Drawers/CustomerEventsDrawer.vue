@@ -37,7 +37,7 @@
                 class="mr-1"
               />
               <span class="position-event-center">
-                {{ humanize(item[header.value]) }}
+                {{ event_underscore_remove(item[header.value]) }}
               </span>
             </template>
             <template v-if="header.value == 'date'">
@@ -107,10 +107,8 @@ export default {
   },
 
   methods: {
-    humanize(str) {
-      str = capitalize(str)
-      const frags = split(str, "_")
-      return join(frags, " ")
+    event_underscore_remove(str) {
+      return join(split(capitalize(str), "_"), " ")
     },
   },
 }
