@@ -83,7 +83,7 @@ export default {
       this.width = currentWidth
 
       this.width = this.width - this.margin.left - this.margin.right
-      this.height = 520
+      this.height = 515
 
       let svg = d3Select
         .select(this.$refs.huxChart)
@@ -168,19 +168,19 @@ export default {
             .attr("stroke-opacity", "0.3")
         )
 
-      svg
-        .append("text")
-        .attr(
-          "transform",
-          "translate(" +
-            this.width / 2 +
-            " ," +
-            (this.height + this.margin.top + 30) +
-            ")"
-        )
-        .style("text-anchor", "middle")
-        .attr("fill", "#4f4f4f")
-        .text("Score")
+      // svg
+      //   .append("text")
+      //   .attr(
+      //     "transform",
+      //     "translate(" +
+      //       this.width / 2 +
+      //       " ," +
+      //       (this.height + this.margin.top + 30) +
+      //       ")"
+      //   )
+      //   .style("text-anchor", "middle")
+      //   .attr("fill", "#4f4f4f")
+      //   .text("Score")
 
       svg
         .selectAll("myRect")

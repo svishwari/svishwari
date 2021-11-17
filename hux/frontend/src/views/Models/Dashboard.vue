@@ -268,6 +268,12 @@
                 </template>
               </empty-page>
             </v-row>
+            <div
+              v-if="modelFeatures.length != 0"
+              class="pt-2 pb-6 text-center black--text text-body-1"
+            >
+              Score
+            </div>
           </v-card>
         </v-col>
         <v-col md="6" :class="driftChartData.length == 0 ? 'pt-3' : 'pt-0'">
@@ -347,7 +353,7 @@
             </div>
             <div
               v-if="driftChartData.length != 0"
-              class="py-5 text-center black--text text--darken-4 text-h6"
+              class="pt-2 pb-6 text-center black--text text-body-1"
             >
               Date
             </div>
