@@ -13,6 +13,7 @@
           :key="header.value"
           class="text-body-2"
           :style="{ width: header.width }"
+          data-e2e="map-state-list"
         >
           <div v-if="header.value == defaultMetric" class="text-body-1">
             <span v-if="item[defaultMetric]">{{ item[defaultMetric] }} </span>

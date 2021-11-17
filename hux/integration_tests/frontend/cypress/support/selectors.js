@@ -75,7 +75,7 @@ export default {
   destination: {
     drawerToggle: "[data-e2e='drawerToggle']",
     addDestination: "[data-e2e='addDestination']",
-    destinationsList: "[tabindex='0'][data-e2e='destinationsDrawer']",
+    destinationsList: "[data-e2e='destinationsDrawer']",
     requestableDestinationsList: "[data-e2e='requestDestinationDrawer']",
     destinationConfigDetails: "[data-e2e='destinationConfigDetails']",
     validateDestination: "[data-e2e='validateDestination']",
@@ -84,6 +84,7 @@ export default {
     destinationRemoveConfirmFooter: ".confirm-modal-footer",
     destinationRemoveConfirmBody: ".confirm-modal-body",
     removeDestinationText: "[data-e2e='remove-destination-text']",
+    cancelRequestDestination: "[data-e2e='cancel-destination-request']",
   },
 
   // decisioning

@@ -63,7 +63,7 @@ describe("Orchestration > Engagement > Create Engagement", () => {
     cy.visit(route.engagements)
 
     //eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000)
+    cy.wait(5000)
 
     cy.get(".menu-cell-wrapper").each(($el) => {
       if ($el.text().includes(`Test Engagement ${engagementName}`)) {

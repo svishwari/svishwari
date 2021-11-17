@@ -254,6 +254,7 @@
           variant="white"
           size="large"
           :is-tile="true"
+          data-e2e="cancel-destination-request"
           @click="cancel()"
         >
           <span class="primary--text">Cancel</span>

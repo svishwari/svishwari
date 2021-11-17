@@ -20,6 +20,8 @@ describe("Home", () => {
   })
 
   it("should have a total customers chart", () => {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(5000)
     cy.get(selector.home.totalCustomersChart).its("length").should("gt", 0)
   })
 
