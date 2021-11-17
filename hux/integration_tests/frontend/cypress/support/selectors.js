@@ -169,8 +169,8 @@ export default {
       geoDrawerTableHeaders: "table thead tr",
       geoDrawerTableItems: "table tbody tr",
     },
-    eventsDrawerButton:"[data-e2e='eventsDrawerButton']",
-    customerEventRow:"[data-e2e='customerEventRow']"
+    eventsDrawerButton: "[data-e2e='eventsDrawerButton']",
+    customerEventRow: "[data-e2e='customerEventRow']",
   },
 
   //IDR
