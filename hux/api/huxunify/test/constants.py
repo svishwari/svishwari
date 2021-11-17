@@ -43,6 +43,13 @@ VALID_USER_RESPONSE = {
     api_c.NAME: "dave smith",
     api_c.USER_PII_ACCESS: True,
 }
+OKTA_ID = "okta_id"
+VALID_DB_USER_RESPONSE = {
+    OKTA_ID: "8548bfh8d",
+    api_c.EMAIL: "davesmith@fake.com",
+    api_c.DISPLAY_NAME: "dave smith",
+    api_c.USER_PII_ACCESS: True,
+}
 # response missing some fields
 INVALID_USER_RESPONSE = {
     api_c.EMAIL: "davesmith@fake.com",
