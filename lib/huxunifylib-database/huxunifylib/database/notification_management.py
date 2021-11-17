@@ -52,7 +52,7 @@ def create_notification(
         c.NOTIFICATIONS_COLLECTION
     ]
 
-    collection.create_index([(c.TS, pymongo.ASCENDING)], expireAfterSeconds=10)
+    collection.create_index([(c.TS, pymongo.ASCENDING)], expireAfterSeconds=0)
 
     # get current time
     current_time = datetime.utcnow()
