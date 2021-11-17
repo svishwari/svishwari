@@ -59,9 +59,11 @@ describe("Orchestration > Destinations", () => {
       .then((addableDestinations) => {
         //if a destination can be added, try to add it
         if (addableDestinations > 0) {
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(2000)
           cy.get("@addableDestinations").eq(0).click()
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(5000)
+          cy.wait(2000)
 
           // configure destination details
           cy.get(selector.destination.destinationConfigDetails)
