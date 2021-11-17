@@ -51,7 +51,7 @@ describe("Orchestration > Destinations", () => {
     // find a addable destination from the drawer
     cy.get(selector.destination.drawerToggle).click()
     cy.get(selector.destination.destinationsList)
-      .contains("Add")
+      .contains(/\bAdd\b/g)
       .as("addableDestinations")
 
     cy.get("@addableDestinations")
@@ -60,12 +60,16 @@ describe("Orchestration > Destinations", () => {
         //if a destination can be added, try to add it
         if (addableDestinations > 0) {
           cy.get("@addableDestinations").eq(0).click()
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(5000)
 
           // configure destination details
           cy.get(selector.destination.destinationConfigDetails)
             .get("input")
-            .each(($el) => {
-              cy.wrap($el).type("123456")
+            .each(($el, index) => {
+              if (index < 5) {
+                cy.wrap($el).type("123456")
+              }
             })
           cy.get(selector.destination.validateDestination).click()
           cy.get(selector.destination.footer).contains("Cancel").click()
@@ -79,14 +83,16 @@ describe("Orchestration > Destinations", () => {
 
     cy.get(selector.destination.drawerToggle).click()
     cy.get(selector.destination.requestableDestinationsList)
-      .contains("Request")
+      .contains(/\bRequest\b/g)
       .as("requestableDestinations")
 
     cy.get("@requestableDestinations")
       .its("length")
       .then((requestableDestinations) => {
         if (requestableDestinations > 0) {
-          cy.get("@requestableDestinations").eq(0).click().contains("Requested")
+          cy.get("@requestableDestinations").eq(0).click()
+          cy.get(selector.destination.cancelRequestDestination).click()
+          cy.location("pathname").should("eq", route.destinations)
         }
       })
   })
