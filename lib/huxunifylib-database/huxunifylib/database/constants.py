@@ -181,6 +181,7 @@ ANALYTICS = "Analytics"
 SURVEY = "Survey"
 
 STATUS_PENDING = "Pending"
+STATUS_REQUESTED = "Requested"
 STATUS_IN_PROGRESS = "In progress"
 STATUS_FAILED = "Failed"
 STATUS_SUCCEEDED = "Succeeded"
@@ -332,12 +333,19 @@ SUPPORTED_DELIVERY_PLATFORMS = [
     DELIVERY_PLATFORM_QUALTRICS,
 ]
 IS_AD_PLATFORM = "is_ad_platform"
+CONTACT_EMAIL = "contact_email"
+CLIENT_REQUEST = "client_request"
+CLIENT_ACCOUNT = "client_account"
+USE_CASE = "use_case"
 
 LOOKALIKE = "lookalike"
 LOOKALIKE_AUD_NAME = "name"
 LOOKALIKE_AUD_SIZE_PERCENTAGE = "audience_size_percentage"
 LOOKALIKE_AUD_COUNTRY = "country"
 LOOKALIKE_SOURCE_AUD_ID = "source_audience_id"
+LOOKALIKE_SOURCE_AUD_NAME = "source_audience_name"
+LOOKALIKE_SOURCE_AUD_SIZE = "source_audience_size"
+LOOKALIKE_SOURCE_AUD_FILTERS = "source_audience_filters"
 
 USER_ROLE = "role"
 USER_ID = "user_id"
@@ -428,6 +436,9 @@ CONFIGURATION_FIELD_TYPE = "type"
 CONFIGURATION_FIELD_DESCRIPTION = "description"
 CONFIGURATION_FIELD_STATUS = "status"
 CONFIGURATION_FIELD_ENABLED = "enabled"
+CONFIGURATION_FIELD_ROADMAP = "roadmap"
+CONFIGURATION_TYPE_MODULE = "module"
+CONFIGURATION_TYPE_BUSINESS_SOLUTION = "business_solution"
 
 # Audience constants
 AUDIENCE_FILTER_CONSTANTS = "audience_filter_constants"
@@ -469,12 +480,13 @@ DOWNLOAD_TYPE = "download_type"
 
 
 # Required Fields per collection
+
 REQUIRED_FIELDS = {
     CONFIGURATIONS_COLLECTION: [
+        CONFIGURATION_FIELD_NAME,
         CONFIGURATION_FIELD_TYPE,
     ]
 }
-
 # Allowed Fields per collection
 ALLOWED_FIELDS = {
     CONFIGURATIONS_COLLECTION: [
@@ -485,10 +497,12 @@ ALLOWED_FIELDS = {
         CONFIGURATION_FIELD_DESCRIPTION,
         CONFIGURATION_FIELD_STATUS,
         CONFIGURATION_FIELD_ENABLED,
+        CONFIGURATION_FIELD_ROADMAP,
     ]
 }
 
 # Allowed collections
 ALLOWED_COLLECTIONS = [
     CONFIGURATIONS_COLLECTION,
+    DELIVERY_PLATFORM_COLLECTION,
 ]

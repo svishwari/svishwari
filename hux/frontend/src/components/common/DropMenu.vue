@@ -3,6 +3,7 @@
     <v-menu
       v-model="menu"
       :close-on-content-click="false"
+      :close-on-click="closeOnClick"
       :min-width="200"
       :max-width="365"
       offset-y
@@ -35,6 +36,11 @@ export default {
       required: false,
       default: 400,
     },
+    closeOnClick: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data() {
     return {
@@ -43,3 +49,8 @@ export default {
   },
 }
 </script>
+<style scoped>
+::v-deep.v-menu__content {
+  z-index: 0 !important;
+}
+</style>

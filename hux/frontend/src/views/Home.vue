@@ -22,10 +22,15 @@
       </hux-page-header>
     </template>
 
-    <v-row>
+    <v-row
+      :class="totalCustomers.length == 0 ? 'margin-2px-top-3px-bottom' : ''"
+    >
       <v-col>
-        <v-card class="rounded-lg box-shadow-5" height="367">
-          <v-card-title class="pa-6">
+        <v-card
+          class="rounded-lg box-shadow-5"
+          :height="totalCustomers.length == 0 ? 280 : 367"
+        >
+          <v-card-title v-if="totalCustomers.length != 0" class="pa-6">
             <h3 class="text-h3 black--text text--darken-4">
               Total customers
               <span class="text-body-1 black--text text--lighten-4">
@@ -41,19 +46,62 @@
           />
 
           <hux-total-customer-chart
-            v-if="!loadingTotalCustomers"
+            v-if="!loadingTotalCustomers && totalCustomers.length != 0"
             :customers-data="totalCustomers"
             :months-duration="9"
             data-e2e="total-customers-chart"
           />
+
+          <v-row
+            v-if="!loadingTotalCustomers && totalCustomers.length == 0"
+            class="total-customers-chart-frame py-14"
+          >
+            <empty-page
+              v-if="!totalCustomersChartErrorState"
+              type="model-features-empty"
+              :size="50"
+            >
+              <template #title>
+                <div class="title-no-notification">No data to show</div>
+              </template>
+              <template #subtitle>
+                <div class="des-no-notification">
+                  Total customer chart will appear here once Customer data is
+                  available.
+                </div>
+              </template>
+            </empty-page>
+            <empty-page
+              v-else
+              class="title-no-notification"
+              type="error-on-screens"
+              :size="50"
+            >
+              <template #title>
+                <div class="title-no-notification">
+                  Total customer chart is currently unavailable
+                </div>
+              </template>
+              <template #subtitle>
+                <div class="des-no-notification">
+                  Our team is working hard to fix it. Please be patient and try
+                  again soon!
+                </div>
+              </template>
+            </empty-page>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
 
     <v-row>
       <v-col>
-        <v-card class="rounded-lg box-shadow-5" data-e2e="latest-notifications">
-          <v-card-title class="pa-6">
+        <v-card
+          class="rounded-lg box-shadow-5"
+          data-e2e="latest-notifications"
+          :height="numNotifications == 0 ? 280 : auto"
+        >
+          <v-card-title v-if="numNotifications != 0" class="pa-6">
             <h3 class="text-h3 black--text text--darken-4">
               Latest alerts
               <span
@@ -72,7 +120,7 @@
           />
 
           <hux-data-table
-            v-if="!loadingNotifications"
+            v-if="!loadingNotifications && numNotifications != 0"
             :columns="tableColumns"
             :data-items="notifications"
             class="notifications-table"
@@ -125,7 +173,46 @@
             </template>
           </hux-data-table>
 
-          <v-card-actions class="pa-6">
+          <v-row
+            v-if="!loadingNotifications && numNotifications == 0"
+            class="notifications-table-frame py-14"
+          >
+            <empty-page
+              v-if="!notificationsTableErrorState"
+              type="lift-table-empty"
+              :size="50"
+            >
+              <template #title>
+                <div class="title-no-notification">No data to show</div>
+              </template>
+              <template #subtitle>
+                <div class="des-no-notification">
+                  Latest alerts table will appear here once you start getting
+                  alerts.
+                </div>
+              </template>
+            </empty-page>
+            <empty-page
+              v-else
+              class="title-no-notification"
+              type="error-on-screens"
+              :size="50"
+            >
+              <template #title>
+                <div class="title-no-notification">
+                  Latest alerts table is currently unavailable
+                </div>
+              </template>
+              <template #subtitle>
+                <div class="des-no-notification">
+                  Our team is working hard to fix it. Please be patient and try
+                  again soon!
+                </div>
+              </template>
+            </empty-page>
+          </v-row>
+
+          <v-card-actions v-if="numNotifications != 0" class="pa-6">
             <router-link
               :to="{ name: 'AlertsAndNotifications' }"
               class="text-body-1 text-decoration-none"
@@ -152,6 +239,7 @@ import HuxTooltip from "@/components/common/Tooltip.vue"
 import HuxStatus from "@/components/common/Status.vue"
 import HuxTotalCustomerChart from "@/components/common/TotalCustomerChart/TotalCustomerChart.vue"
 import AlertDrawer from "./AlertsAndNotifications/Drawer/AlertDrawer.vue"
+import EmptyPage from "@/components/common/EmptyPage"
 
 export default {
   name: "Home",
@@ -165,6 +253,7 @@ export default {
     HuxStatus,
     HuxTotalCustomerChart,
     AlertDrawer,
+    EmptyPage,
   },
 
   data() {
@@ -200,6 +289,8 @@ export default {
       ],
       alertDrawer: false,
       notificationId: null,
+      totalCustomersChartErrorState: false,
+      notificationsTableErrorState: false,
     }
   },
 
@@ -233,16 +324,24 @@ export default {
 
     async loadTotalCustomers() {
       this.loadingTotalCustomers = true
-      await this.getTotalCustomers()
+      try {
+        await this.getTotalCustomers()
+      } catch (error) {
+        this.totalCustomersChartErrorState = true
+      }
       this.loadingTotalCustomers = false
     },
 
     async loadNotifications() {
       this.loadingNotifications = true
-      await this.getAllNotifications({
-        batchSize: 5,
-        batchNumber: 1,
-      })
+      try {
+        await this.getAllNotifications({
+          batchSize: 5,
+          batchNumber: 1,
+        })
+      } catch (error) {
+        this.notificationsTableErrorState = true
+      }
       this.loadingNotifications = false
     },
 
@@ -267,5 +366,20 @@ export default {
       height: 60px !important;
     }
   }
+}
+
+.total-customers-chart-frame {
+  background-image: url("../assets/images/no-customers-chart-frame.png");
+  background-position: center;
+}
+
+.notifications-table-frame {
+  background-image: url("../assets/images/no-lift-chart-frame.png");
+  background-position: center;
+}
+
+.margin-2px-top-3px-bottom {
+  margin-top: 2px;
+  margin-bottom: 3px;
 }
 </style>

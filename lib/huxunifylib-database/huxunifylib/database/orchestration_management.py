@@ -363,8 +363,7 @@ def delete_audience(
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
 
     try:
-        collection.delete_one({c.ID: audience_id})
-        return True
+        return collection.delete_one({c.ID: audience_id}).deleted_count > 0
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

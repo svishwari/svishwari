@@ -2,6 +2,7 @@
 """This module contains connector defines."""
 import os
 import random
+from collections import namedtuple
 
 from huxunifylib.database import constants as db_c
 
@@ -9,9 +10,11 @@ TEST_MODE = "pytest"
 DEVELOPMENT_MODE = "development"
 PRODUCTION_MODE = "production"
 FLASK_ENV = "FLASK_ENV"
+TEST_AUTH_OVERRIDE = "TEST_AUTH_OVERRIDE"
 SSM_INIT_LOAD_DELIMITER = "||"
 HOST = "host"
 PORT = "port"
+USER = "user"
 USERNAME = "username"
 PASSWORD = "password"
 SSL_CERT_PATH = "ssl_cert_path"
@@ -49,6 +52,7 @@ JIRA_SERVER = "JIRA_SERVER"
 JIRA_API_KEY = "JIRA_API_KEY"
 ISSUE_TYPE = "issue_type"
 KEY = "key"
+TASK = "task"
 TICKET_TYPE_BUG = "Bug"
 
 # general defines
@@ -66,6 +70,7 @@ EMAIL = "email"
 PHONE = "phone"
 AGE = "age"
 GENDER = "gender"
+CATEGORY = "category"
 ADDRESS = "address"
 CITY = "city"
 STATE = "state"
@@ -82,10 +87,11 @@ DATE_RANGE = "date_range"
 HUX_ID = "hux_id"
 REDACT_FIELD = "redact"
 LIMIT = "limit"
-SOURCE_NAME = "source_name"
-SOURCE_SIZE = "source_size"
-SOURCE_ID = "source_id"
 CREATE_TIME = "create_time"
+CONTACT_EMAIL = "contact_email"
+CLIENT_REQUEST = "client_request"
+CLIENT_ACCOUNT = "client_account"
+USE_CASE = "use_case"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -558,6 +564,10 @@ DESTINATION_PATCH_FIELDS = [
     db_c.DELIVERY_PLATFORM_STATUS,
     db_c.NAME,
     db_c.DELIVERY_PLATFORM_TYPE,
+    db_c.CONTACT_EMAIL,
+    db_c.CLIENT_REQUEST,
+    db_c.CLIENT_ACCOUNT,
+    db_c.USE_CASE,
 ]
 DESTINATION_INVALID_PATCH_MESSAGE = (
     f"Acceptable fields are {DESTINATION_PATCH_FIELDS}."
@@ -644,6 +654,7 @@ DATA_EXTENSIONS = "data-extensions"
 DATA_EXTENSION = "data_extension"
 DATA_EXTENSION_ID = "data_extension_id"
 DATA_EXTENSION_NOT_SUPPORTED = "Data extension not supported"
+GENERIC_DESTINATION = "generic_destination"
 
 # Engagement fields
 ENGAGEMENT = "engagement"
@@ -695,6 +706,7 @@ EMAIL_METRICS = [
 SUMMARY = "summary"
 DELIVERED = "delivered"
 UNSUBSCRIBE = "unsubscribe"
+UNCATEGORIZED = "uncategorized"
 SPEND = "spend"
 ENGAGEMENT_ID_PARAMS = [
     {
@@ -791,6 +803,14 @@ OKTA_REDIRECT_URI = "OKTA_REDIRECT_URI"
 OKTA_USER_ID = "user_id"
 OKTA_UID = "uid"
 OKTA_ID_SUB = "sub"
+
+# define access levels for RBAC
+AccessLevel = namedtuple(
+    "AccessLevel", db_c.USER_ROLE, defaults=(db_c.USER_ROLE_VIEWER,)
+)
+ADMIN_LEVEL = AccessLevel(db_c.USER_ROLE_ADMIN)
+EDITOR_LEVEL = AccessLevel(db_c.USER_ROLE_EDITOR)
+VIEWER_LEVEL = AccessLevel(db_c.USER_ROLE_VIEWER)
 
 # Orchestration API fields
 ORCHESTRATION_ENDPOINT = "/orchestration"
@@ -1352,3 +1372,171 @@ CUSTOMER_IDR_TEST_DATA = {
         "count": 11,
     },
 }
+
+MODELS_STUB = [
+    {
+        CATEGORY: "Email",
+        TYPE: "propensity",
+        NAME: "Propensity to Purchase",
+        DESCRIPTION: "Propensity to Purchase.",
+        ID: "f76a5e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Email",
+        TYPE: "propensity",
+        NAME: "Propensity to Unsubscribe",
+        DESCRIPTION: "Propensity to Unsubscribe.",
+        ID: "a54d7e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Email",
+        TYPE: "propensity",
+        NAME: "Propensity to Open",
+        DESCRIPTION: "Propensity to open",
+        ID: "5df65e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Email",
+        TYPE: "propensity",
+        NAME: "Propensity to Click",
+        DESCRIPTION: "Propensity to click.",
+        ID: "aa789e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Email",
+        TYPE: "propensity",
+        NAME: "Email content optimization",
+        DESCRIPTION: "Email content optimization.",
+        ID: "99e45e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Sales forecasting",
+        TYPE: "prediction",
+        NAME: "Customer lifetime value",
+        DESCRIPTION: "Customer lifetime value.",
+        ID: "cc768e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Sales forecasting",
+        TYPE: "prediction",
+        NAME: "Predicted sales per customer",
+        DESCRIPTION: "Predicted sales per customer.",
+        ID: "bba67e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Sales forecasting",
+        TYPE: "prediction",
+        NAME: "Predicted sales per store",
+        DESCRIPTION: "Predicted sales per store.",
+        ID: "a45b7e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Capability propensity",
+        DESCRIPTION: "Capability propensity.",
+        ID: "bc123e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Capability trust propensity",
+        DESCRIPTION: "Capability trust propensity.",
+        ID: "a15d8e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Humanity propensity",
+        DESCRIPTION: "Humanity propensity.",
+        ID: "bd732e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Hux TrustID propensity",
+        DESCRIPTION: "Hux TrustID propensity.",
+        ID: "cce14e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "NBA learning algorithm",
+        DESCRIPTION: "NBA learning algorithm.",
+        ID: "98acee0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Reliability propensity",
+        DESCRIPTION: "Reliability propensity.",
+        ID: "99d12e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Hux TrustID",
+        TYPE: "propensity",
+        NAME: "Transparency propensity",
+        DESCRIPTION: "Transparency propensity.",
+        ID: "bed54e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Retention",
+        TYPE: "propensity",
+        NAME: "Churn",
+        DESCRIPTION: "Churn.",
+        ID: "11d54e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Web",
+        TYPE: "propensity",
+        NAME: "Propensity to purchase product category",
+        DESCRIPTION: "Propensity to purchase product category.",
+        ID: "88ee4e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Web",
+        TYPE: "propensity",
+        NAME: "Propensity to visit product category",
+        DESCRIPTION: "Propensity to visit product category.",
+        ID: "aab41e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Web",
+        TYPE: "propensity",
+        NAME: "Propensity to visit website",
+        DESCRIPTION: "Propensity to visit website.",
+        ID: "99a78e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+    {
+        CATEGORY: "Uncategorized",
+        TYPE: "propensity",
+        NAME: "Segmentation",
+        DESCRIPTION: "Segmentation.",
+        ID: "abe41e0bd7edaad4c36bec4a3682f02d36441fe1",
+        STATUS: STATUS_PENDING,
+    },
+]
+
+# Configurations
+CONFIGURATIONS_TAG = "configurations"
+CONFIGURATION_ID = "configuration_id"
+CONFIGURATIONS_ENDPOINT = "/configurations"

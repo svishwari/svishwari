@@ -14,6 +14,7 @@ from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
+from huxunifylib.database.collection_management import get_documents
 import huxunifylib.database.constants as db_c
 from huxunifylib.util.general.const import (
     FacebookCredentials,
@@ -35,6 +36,7 @@ from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
     parameter_store,
 )
+from huxunify.api.data_connectors.jira import JiraConnection
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
     DestinationPatchSchema,
@@ -42,6 +44,7 @@ from huxunify.api.schema.destinations import (
     DestinationValidationSchema,
     DestinationDataExtPostSchema,
     DestinationDataExtGetSchema,
+    DestinationRequestSchema,
     SFMCAuthCredsSchema,
     DestinationDataExtConfigSchema,
     FacebookAuthCredsSchema,
@@ -239,6 +242,7 @@ class DestinationsView(SwaggerView):
             db_c.STATUS_SUCCEEDED: api_c.STATUS_ACTIVE,
             db_c.STATUS_PENDING: api_c.STATUS_PENDING,
             db_c.STATUS_FAILED: api_c.STATUS_ERROR,
+            db_c.STATUS_REQUESTED: api_c.REQUESTED,
         }
 
         for destination in destinations:
@@ -991,20 +995,162 @@ class DestinationPatchView(SwaggerView):
         # validate the schema first.
         DestinationPatchSchema().validate(patch_dict)
 
+        database = get_db_client()
+
+        updated_destination = (
+            destination_management.update_delivery_platform_doc(
+                database,
+                destination_id,
+                {
+                    **patch_dict,
+                    **{
+                        db_c.UPDATED_BY: user_name,
+                        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    },
+                },
+            )
+        )
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f"{user_name} successfully updated"
+                f' "{updated_destination[db_c.NAME]}" destination.'
+            ),
+            api_c.DESTINATION,
+            user_name,
+        )
+
         # update the document
         return (
-            DestinationGetSchema().dump(
-                destination_management.update_delivery_platform_doc(
-                    get_db_client(),
-                    destination_id,
-                    {
-                        **patch_dict,
-                        **{
-                            db_c.UPDATED_BY: user_name,
-                            db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-                        },
-                    },
-                )
+            DestinationGetSchema().dump(updated_destination),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    dest_bp,
+    f"{api_c.DESTINATIONS_ENDPOINT}/request",
+    "DestinationsRequestView",
+)
+class DestinationsRequestView(SwaggerView):
+    """Destinations Request view class."""
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "schema": {"id": "DestinationRequestSchema"},
+            "description": "Input Destination body.",
+            "example": DestinationRequestSchema,
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Destination.",
+            "schema": DestinationGetSchema,
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.DESTINATION_NOT_FOUND,
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
+    # pylint: disable=too-many-return-statements
+    @api_error_handler()
+    @get_user_name()
+    def post(self, user_name: str) -> Tuple[list, int]:
+        """Requests an unsupported destination.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Destination doc, HTTP status code.
+        """
+
+        destination_request = DestinationRequestSchema().load(
+            request.get_json(), partial=True
+        )
+
+        # check if destination name already exists
+        database = get_db_client()
+        destinations = get_documents(
+            database,
+            db_c.DELIVERY_PLATFORM_COLLECTION,
+            {
+                db_c.NAME: {
+                    "$regex": destination_request[db_c.NAME],
+                    "$options": "i",
+                }
+            },
+            batch_size=1,
+        )
+
+        # check if any found documents
+        destinations = (
+            destinations.get(db_c.DOCUMENTS, []) if destinations else []
+        )
+
+        # check if it was requested
+        if destinations:
+            destination = destinations[0]
+            if destination.get(db_c.DELIVERY_PLATFORM_STATUS) in [
+                db_c.STATUS_REQUESTED,
+                db_c.STATUS_FAILED,
+                db_c.STATUS_SUCCEEDED,
+            ]:
+                # return already requested, return 200, with message.
+                return {
+                    "message": "Destination already present."
+                }, HTTPStatus.OK
+            # otherwise set the status to requested
+            destination = destination_management.update_delivery_platform_doc(
+                database,
+                destination[db_c.ID],
+                {
+                    db_c.DELIVERY_PLATFORM_STATUS: db_c.STATUS_REQUESTED,
+                    db_c.ADDED: True,
+                },
+            )
+        else:
+            # create a destination object and set the status to requested.
+            destination = destination_management.set_delivery_platform(
+                database=database,
+                delivery_platform_type=api_c.GENERIC_DESTINATION,
+                name=destination_request[api_c.NAME],
+                user_name=user_name,
+                status=db_c.STATUS_REQUESTED,
+                enabled=False,
+                added=True,
+            )
+
+            # create JIRA ticket for the request.
+            JiraConnection().create_jira_issue(
+                api_c.TASK,
+                f"Requested Destination '{destination_request[api_c.NAME]}'.",
+                destination_request,
+            )
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f"{user_name} successfully requested"
+                f' "{destination[db_c.NAME]}" destination.'
             ),
+            api_c.DESTINATION,
+            user_name,
+        )
+
+        return (
+            DestinationGetSchema().dump(destination),
             HTTPStatus.OK,
         )

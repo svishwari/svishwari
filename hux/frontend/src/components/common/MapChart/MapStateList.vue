@@ -2,6 +2,7 @@
   <div class="list-container">
     <hux-data-table
       :columns="columnDefs"
+      :height="height"
       :sort-column="customMetric"
       :sort-desc="true"
       :data-items="stateListData"
@@ -76,6 +77,10 @@ export default {
     configurationData: {
       type: Object,
       required: true,
+    },
+    height: {
+      type: Number,
+      required: false,
     },
   },
   data() {
@@ -153,6 +158,17 @@ export default {
 
   ::v-deep .hux-data-table {
     margin-top: -3px;
+    ::v-deep table {
+      .v-data-table-header {
+        th:nth-child(1) {
+          position: sticky;
+          left: 0;
+          z-index: 9;
+          overflow-y: visible;
+          overflow-x: visible;
+        }
+      }
+    }
     .v-data-table {
       .v-data-table-header {
         tr {

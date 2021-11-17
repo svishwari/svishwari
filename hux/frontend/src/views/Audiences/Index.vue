@@ -403,8 +403,11 @@ export default {
   },
   async mounted() {
     this.loading = true
-    await this.getAllAudiences()
-    this.loading = false
+    try {
+      await this.getAllAudiences()
+    } finally {
+      this.loading = false
+    }
   },
   methods: {
     ...mapActions({

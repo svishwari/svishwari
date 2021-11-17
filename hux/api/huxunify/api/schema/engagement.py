@@ -135,6 +135,12 @@ class EngagementPutSchema(Schema):
                 audience[api_c.ID] = ObjectId(audience[api_c.ID])
                 for destination in audience[api_c.DESTINATIONS]:
                     destination[api_c.ID] = ObjectId(destination[api_c.ID])
+
+                    # check if there is a delivery job id to convert.
+                    if db_c.DELIVERY_JOB_ID in destination:
+                        destination[db_c.DELIVERY_JOB_ID] = ObjectId(
+                            destination[db_c.DELIVERY_JOB_ID]
+                        )
         return data
 
 

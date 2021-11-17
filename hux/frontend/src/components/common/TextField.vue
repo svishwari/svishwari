@@ -38,6 +38,7 @@
       @input="input($event)"
       @click:append="$emit('clickAppend')"
       @blur="$emit('blur', TextFieldValue)"
+      @change="$emit('change', $event)"
     >
     </v-text-field>
   </div>

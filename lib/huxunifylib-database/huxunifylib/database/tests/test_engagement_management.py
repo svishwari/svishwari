@@ -2,7 +2,6 @@
 # pylint: disable=too-many-lines
 import unittest
 import mongomock
-import pymongo
 from bson import ObjectId
 import huxunifylib.database.engagement_management as em
 import huxunifylib.database.constants as c
@@ -475,7 +474,7 @@ class TestEngagementManagement(unittest.TestCase):
         lookalike_audience = dpm.create_delivery_platform_lookalike_audience(
             self.database,
             delivery_platform_id,
-            source_audience_id,
+            source_audience,
             "LA Audience",
             0.55,
         )
@@ -952,7 +951,9 @@ class TestEngagementManagement(unittest.TestCase):
             self.database, c.DELIVERY_PLATFORM_FACEBOOK
         )
 
-        destination_to_add = {c.OBJECT_ID: destination[c.ID]}
+        destination_to_add = {
+            c.OBJECT_ID: destination[c.ID],
+        }
 
         audience_one = om.create_audience(
             self.database, "Audience1", [], [], self.user_name, 201
@@ -978,16 +979,17 @@ class TestEngagementManagement(unittest.TestCase):
             self.user_name,
         )
 
-        # due to mocking issues certain queries do not work
-        # but have been verified on a real database
-        with self.assertRaises(pymongo.errors.WriteError):
-            em.append_destination_to_engagement_audience(
-                self.database,
-                engagement_id,
-                audience_one[c.ID],
-                destination_to_add,
-                self.user_name,
-            )
+        new_eng = em.append_destination_to_engagement_audience(
+            self.database,
+            engagement_id,
+            audience_one[c.ID],
+            destination_to_add,
+            self.user_name,
+        )
+
+        self.assertListEqual(
+            [destination_to_add], new_eng[c.AUDIENCES][0][c.DESTINATIONS]
+        )
 
     def test_remove_destination_from_engagement_audience(self):
         """Test removing a destination from an engagement audience"""

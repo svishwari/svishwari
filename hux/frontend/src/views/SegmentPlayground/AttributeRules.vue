@@ -11,16 +11,25 @@
         Select attribute(s) -
         <i class="text-h6 black--text text--darken-1">optional</i>
       </strong>
-      <v-card v-if="rules.length == 0" tile elevation="0" class="blank-section">
+      <v-card
+        v-if="rules.length == 0"
+        tile
+        elevation="0"
+        class="blank-section pa-6"
+      >
         <div
-          class="black--text text--darken-1 font-weight-normal new-attribute"
+          class="
+            text-body-1
+            primary--text
+            new-attribute
+            d-flex
+            align-center
+            cursor-pointer
+          "
+          @click="addNewSection()"
         >
-          <span @click="addNewSection()">
-            <icon class="add-icon cursor-pointer" type="add" :size="41" />
-          </span>
-          <span class="ml-4 no-attribute">
-            You have not added any attributes, yet.
-          </span>
+          <icon type="plus" color="primary" :size="11" class="mr-2" />
+          New attribute
         </div>
       </v-card>
     </v-col>
@@ -33,7 +42,7 @@
             col-12
             pa-0
             black--text
-            text--darken-4 text-h5
+            text--darken-4 text-body-2
           "
         >
           <span class="mr-2">Match</span>
@@ -47,13 +56,12 @@
         <v-col
           v-for="(condition, ixcondition) in rule.conditions"
           :key="condition.id"
-          col="12"
-          class="rule-section pa-0 mb-2"
+          class="rule-section pa-0 mb-2 d-flex"
         >
-          <v-col md="10" class="pa-0">
+          <div class="pa-0 pr-2 flex-fill">
             <div class="condition-card">
-              <div class="condition-container pl-2">
-                <div class="condition-items col-10 pa-0">
+              <div class="condition-container pl-2 d-fles pr-6">
+                <div class="condition-items pr-5">
                   <hux-dropdown
                     :selected="condition.attribute"
                     :items="attributeOptions()"
@@ -61,22 +69,32 @@
                     @on-select="onSelect('attribute', condition, $event)"
                   />
                   <hux-dropdown
-                    v-if="isText(condition)"
+                    v-if="isTextORSelect(condition)"
                     label="Select operator"
                     :items="operatorOptions(condition)"
                     :selected="condition.operator"
                     @on-select="onSelect('operator', condition, $event)"
                   />
                   <text-field
-                    v-if="condition.operator && isText(condition)"
+                    v-if="
+                      condition.operator && condition.attribute.type === 'text'
+                    "
                     v-model="condition.text"
                     class="item-text-field"
                     :placeholder="getPlaceHolderText(condition)"
                     required
                     @blur="triggerSizing(condition)"
                   />
+                  <hux-autocomplete
+                    v-if="
+                      condition.operator && condition.attribute.type === 'list'
+                    "
+                    v-model="condition.text"
+                    :options="condition.options"
+                    @change="triggerSizing(condition)"
+                  />
                   <div
-                    v-if="condition.attribute && !isText(condition)"
+                    v-if="condition.attribute && !isTextORSelect(condition)"
                     ref="hux-density-slider"
                     class="range-attribute-container"
                     :class="condition.attribute.values ? 'pt-6' : ''"
@@ -109,90 +127,78 @@
                   </div>
                 </div>
                 <div
-                  class="
-                    condition-actions
-                    col-2
-                    pa-0
-                    d-flex
-                    align-center
-                    justify-end
-                  "
+                  class="condition-actions pa-0 cursor-pointer"
+                  @click="removeCondition(rule, ixcondition)"
                 >
-                  <icon
-                    class="add-icon cursor-pointer"
-                    type="add"
-                    :size="24"
-                    @click.native="addNewCondition(rule.id)"
-                  />
-
-                  <v-icon
-                    color="primary"
-                    @click="removeCondition(rule, ixcondition)"
-                  >
-                    mdi-delete-outline
-                  </v-icon>
+                  <icon type="trash" :size="18" color="black" />
                 </div>
               </div>
             </div>
-          </v-col>
-          <v-col md="2" class="pr-0 py-0 pl-5">
+          </div>
+          <div class="pr-0 py-0 flex-right">
             <div class="condition-summary">
-              <span class="title text-h5">Size</span>
-              <span class="value pt-1 text--subtitle-1">
-                <v-progress-circular
-                  v-if="condition.awaitingSize"
-                  :value="16"
-                  indeterminate
-                />
-                <span v-if="!condition.awaitingSize">
-                  {{ condition.size | Numeric(false, false, true) }}
-                </span>
+              <span class="title text-h5">Rule Size</span>
+              <span v-if="condition.awaitingSize" class="pt-2">
+                <v-progress-linear indeterminate buffer-value="0" stream />
+              </span>
+              <span v-else class="value text-h6 pt-1 text-subtitle-1">
+                {{ condition.size | Numeric(false, false, true) }}
               </span>
             </div>
-          </v-col>
+          </div>
         </v-col>
-
-        <div v-if="index != lastIndex" class="col-12 seperator mt-5 mb-1">
+        <div class="add-wrap">
+          <div class="pa-0 pt-2 flex-fill">
+            <div
+              class="add-section pa-5 cursor-pointer text-body-1 primary--text"
+              @click="addNewCondition(rule.id)"
+            >
+              <icon type="plus" color="primary" :size="11" class="mr-2" />
+              New attribute
+            </div>
+          </div>
+          <div class="pr-0 pt-2 pl-2 flex-right">
+            <div class="condition-summary">
+              <span class="title text-h5">Size</span>
+              <span v-if="loadingOverAllSize" class="pt-2">
+                <v-progress-linear indeterminate buffer-value="0" stream />
+              </span>
+              <span v-else class="value text-h6 pt-1 text-subtitle-1">
+                {{ overAllSize | Numeric(false, false, true) }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div v-if="index != lastIndex" class="col-12 seperator mt-5 mb-1 px-0">
           <hr class="black lighten-2" />
           <v-chip
             small
-            class="mx-2 my-1 text--h6"
+            class="mx-2 my-1 text-body-2"
             text-color="primary"
-            color="primary lighten-4"
+            color="primary lighten-3"
             :ripple="false"
           >
             OR
           </v-chip>
         </div>
       </div>
-      <div class="add-section-wrap">
-        <v-col md="10" class="pa-0 pt-3">
-          <div class="add-section pa-5">
-            <span @click="addNewSection()">
-              <icon
-                class="add-icon cursor-pointer mt-1"
-                type="add"
-                :size="30"
-              />
-            </span>
-            <span class="primary--text pl-1 add-new">New section</span>
-          </div>
-        </v-col>
-        <v-col md="2" class="pr-0 pl-5">
-          <div class="condition-summary">
-            <span class="title text-h5">Result Size</span>
-            <span class="value text-h6 pt-1 text--subtitle-1">
-              <v-progress-circular
-                v-if="loadingOverAllSize"
-                :value="16"
-                indeterminate
-              />
-              <span v-else>
-                {{ overAllSize | Numeric(false, false, true) }}
-              </span>
-            </span>
-          </div>
-        </v-col>
+      <div class="col-12 seperator mt-5 mb-1">
+        <hr class="black lighten-2" />
+        <v-chip
+          small
+          class="mx-2 my-1 text-body-1 cursor-pointer"
+          text-color="primary"
+          color="black lighten-2"
+          :ripple="false"
+          @click.native="addNewSection()"
+        >
+          <tooltip>
+            <template #label-content> + </template>
+            <template #hover-content>
+              <span class="text-body-2"> Add a new section </span>
+            </template>
+          </tooltip>
+        </v-chip>
       </div>
     </v-col>
   </v-col>
@@ -206,6 +212,8 @@ import HuxDensityChart from "@/components/common/Charts/DensityChart/HuxDensityC
 import HuxSwitch from "../../components/common/Switch.vue"
 import TextField from "../../components/common/TextField.vue"
 import Icon from "@/components/common/Icon"
+import HuxAutocomplete from "../../components/common/HuxAutocomplete.vue"
+import Tooltip from "../../components/common/Tooltip.vue"
 
 const NEW_RULE_SECTION = {
   id: "",
@@ -232,6 +240,8 @@ export default {
     HuxSlider,
     HuxDensityChart,
     Icon,
+    HuxAutocomplete,
+    Tooltip,
   },
   props: {
     rules: {
@@ -306,8 +316,12 @@ export default {
         }
       }
     },
-    isText(condition) {
-      return condition.attribute ? condition.attribute.type === "text" : false
+
+    isTextORSelect(condition) {
+      return condition.attribute
+        ? condition.attribute.type === "text" ||
+            condition.attribute.type === "list"
+        : false
     },
     /**
      * This attributeOptions is transforming the API attributeRules into the Options Array
@@ -322,7 +336,6 @@ export default {
     attributeOptions() {
       if (this.ruleAttributes.rule_attributes) {
         const options = []
-
         const masterAttributes = this.ruleAttributes.rule_attributes
         Object.keys(masterAttributes).forEach((groupKey) => {
           const _group_items = []
@@ -360,7 +373,7 @@ export default {
     },
     operatorOptions(condition) {
       // Filter out only two options (equals and does_not_equals) for attribute type 'gender'
-      if (condition.attribute.key === "gender") {
+      if (condition.attribute.type === "list") {
         return Object.keys(this.ruleAttributes.text_operators)
           .map((key) => {
             if (key.includes("equal")) {
@@ -430,6 +443,7 @@ export default {
     },
 
     async getOverallSize() {
+      this.$emit("loadingOverAllSize", true)
       this.loadingOverAllSize = true
       let filterJSON = {
         filters: [],
@@ -463,9 +477,11 @@ export default {
         let data = await this.getRealtimeSize(filterJSON)
         this.$emit("updateOverview", data)
         this.overAllSize = data.total_customers
+        this.$emit("loadingOverAllSize", false)
         this.loadingOverAllSize = false
       } catch (error) {
         this.overAllSize = 0
+        this.$emit("loadingOverAllSize", false)
         this.loadingOverAllSize = false
       }
     },
@@ -475,6 +491,8 @@ export default {
       if (type === "attribute") {
         condition.operator = ""
         condition.text = ""
+        condition.type = condition.attribute.type
+        condition.options = condition.attribute.options
         condition.range = [condition.attribute.min, condition.attribute.max]
         condition.awaitingSize = false
         condition.outputSummary = 0
@@ -533,14 +551,12 @@ export default {
     justify-content: space-between;
     align-items: center;
     border-radius: 5px !important;
-    padding: 14px 16px;
-    .new-attribute {
-      display: flex;
-      height: 39px;
-      .no-attribute {
-        margin-top: 8px;
-      }
-    }
+  }
+  .flex-fill {
+    flex: 1 0;
+  }
+  .flex-right {
+    flex: 0 1;
   }
   ::v-deep .seperator {
     position: relative;
@@ -558,8 +574,8 @@ export default {
     .condition-card {
       background: var(--v-white-base);
       border: 1px solid var(--v-primary-lighten1);
-      box-shadow: 0px 3px 8px var(--v-black-lighten3);
-      border-left: solid 10px var(--v-primary-lighten2);
+      box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.1);
+      border-left: solid 10px var(--v-primary-lighten6);
       display: flex;
       align-items: center;
       height: 60px;
@@ -573,6 +589,7 @@ export default {
           display: flex;
           align-items: center;
           width: 100%;
+          flex: 1 0;
           .range-attribute-container {
             width: 100%;
             .density-slider {
@@ -615,10 +632,11 @@ export default {
           .v-text-field {
             .v-input__slot {
               min-height: inherit;
-              height: 32px;
+              height: 40px;
               border: solid 1px var(--v-black-lighten3) !important;
               border-radius: 0;
               margin-bottom: 0;
+              box-shadow: inherit;
               fieldset {
                 border: 0;
               }
@@ -634,7 +652,7 @@ export default {
           }
         }
         .condition-actions {
-          text-align: end;
+          flex: 0 1;
         }
       }
     }
@@ -642,7 +660,7 @@ export default {
       background: var(--v-white-base);
     }
   }
-  ::v-deep .add-section-wrap {
+  ::v-deep .add-wrap {
     display: flex;
     .add-section {
       background: var(--v-primary-lighten1);
@@ -669,7 +687,8 @@ export default {
     .value {
       line-height: 19px;
     }
-    width: 130px;
+    width: 97px;
+    height: 60px;
   }
 }
 </style>

@@ -51,7 +51,7 @@
         ></contact-us-options>
       </template>
       <template v-else #body>
-        <report-bug></report-bug>
+        <report-bug @setBugDetails="setBugDetails"></report-bug>
       </template>
     </modal>
   </div>
@@ -62,6 +62,7 @@ import Icon from "@/components/common/Icon"
 import Modal from "@/components/common/Modal"
 import ContactUsOptions from "./ContactUsOptions.vue"
 import ReportBug from "./ReportBug.vue"
+import { mapActions } from "vuex"
 
 export default {
   name: "Help",
@@ -76,10 +77,15 @@ export default {
     return {
       dailog: false,
       reportBug: false,
+      bugDetails: {},
     }
   },
 
   methods: {
+    ...mapActions({
+      contactUs: "users/contactUs",
+      setAlert: "alerts/setAlert",
+    }),
     openModal() {
       this.dailog = true
     },
@@ -90,21 +96,28 @@ export default {
     back() {
       this.reportBug = false
     },
-    submit() {
+    async submit() {
+      await this.contactUs(this.bugDetails)
       this.dailog = false
       this.reportBug = false
     },
     executeCardFunction(buttonType) {
-      if (buttonType == "Email us") {
-        this.sendEmail()
-        this.dailog = false
-      } else if (buttonType == "Report a bug") {
+      let emailLink = "mailto:ushuxproductidea@deloitte.com"
+      let generalSurvey =
+        "https://deloittesurvey.deloitte.com/Community/se/3FC11B267AFCA9B6"
+
+      if (buttonType == "Report a bug") {
         this.reportBug = true
+      } else if (buttonType == "Email us") {
+        window.open(emailLink)
+        this.dailog = false
+      } else {
+        window.open(generalSurvey)
+        this.dailog = false
       }
     },
-    sendEmail() {
-      let link = "mailto:ushuxproductidea@deloitte.com"
-      window.open(link)
+    setBugDetails(bugObj) {
+      this.bugDetails = bugObj
     },
   },
 }

@@ -52,6 +52,17 @@ export const defineRoutes = (server) => {
     )
     return new Response(code, headers, body)
   })
+  server.post("users/contact-us", () => {
+    const code = 201
+    const headers = {}
+    const body = {
+      description: "test summary",
+      id: 116331,
+      key: "HUS-1553",
+      summary: "test",
+    }
+    return new Response(code, headers, body)
+  })
 
   // data sources
   server.get("/data-sources")
@@ -124,9 +135,10 @@ export const defineRoutes = (server) => {
 
   server.post("/destinations/request", (schema, request) => {
     const requestDetails = JSON.parse(request.requestBody)
-    const { id } = requestDetails
-    if (id) {
-      return schema.destinations.find(id).update({ is_added: true })
+    const { name } = requestDetails
+    const existingDestination = schema.destinations.findBy({ name: name })
+    if (existingDestination) {
+      return existingDestination.update({ is_added: true, status: "Requested" })
     } else {
       const attrs = {
         ...requestDetails,
@@ -438,11 +450,11 @@ export const defineRoutes = (server) => {
     const id = request.params.id
     const data = schema.models.find(id)
     data.attrs.performance_metric = {
-      recall: 0.65,
-      current_version: "3.1.2",
       rmse: -1,
       auc: 0.79,
       precision: 0.82,
+      recall: 0.65,
+      current_version: "3.1.2",
     }
     data.attrs.model_name = data.attrs.name
     data.attrs.model_type = data.attrs.type

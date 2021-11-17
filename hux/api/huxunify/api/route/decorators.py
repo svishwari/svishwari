@@ -1,5 +1,7 @@
 """File for decorators used in the API routes"""
 # pylint: disable=too-many-statements
+import warnings
+import getpass
 from functools import wraps
 from typing import Any
 from http import HTTPStatus
@@ -9,7 +11,6 @@ from bson import ObjectId
 from bson.errors import InvalidId
 
 import facebook_business.exceptions
-from decouple import config
 from flask import request
 from marshmallow import ValidationError
 
@@ -26,7 +27,7 @@ from huxunifylib.database import (
 import huxunifylib.database.db_exceptions as de
 
 from huxunify.api.route.utils import get_db_client, get_user_from_db
-from huxunify.api import constants
+from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.okta import (
     introspect_token,
     get_token_from_request,
@@ -35,6 +36,7 @@ from huxunify.api.exceptions import (
     integration_api_exceptions as iae,
     unified_exceptions as ue,
 )
+from huxunify.api.config import get_config
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
@@ -112,9 +114,8 @@ def secured() -> object:
             Returns:
                Response (object): returns a decorated function object.
             """
-
             # override if flag set locally
-            if config("TEST_AUTH_OVERRIDE", cast=bool, default=False):
+            if get_config().TEST_AUTH_OVERRIDE:
                 return in_function(*args, **kwargs)
 
             # allow preflight options through
@@ -132,7 +133,7 @@ def secured() -> object:
             if introspect_token(token_response[0]):
                 return in_function(*args, **kwargs)
 
-            return constants.INVALID_AUTH, 400
+            return {api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.BAD_REQUEST
 
         # set tag so we can assert if a function is secured via this decorator
         decorator.__wrapped__ = in_function
@@ -160,6 +161,11 @@ def get_user_name() -> object:
            Response (object): returns a wrapped decorated function object.
         """
 
+        warnings.warn(
+            "This function is being deprecated for requires_access_level().",
+            DeprecationWarning,
+        )
+
         @wraps(in_function)
         def decorator(*args, **kwargs) -> object:
             """Decorator for extracting the user_name.
@@ -173,9 +179,9 @@ def get_user_name() -> object:
             """
 
             # override if flag set locally
-            if config("TEST_AUTH_OVERRIDE", cast=bool, default=False):
-                # return a default user name
-                kwargs[constants.USER_NAME] = "test user"
+            if get_config().TEST_AUTH_OVERRIDE:
+                # Return a default user name.
+                kwargs[api_c.USER_NAME] = "test user"
                 return in_function(*args, **kwargs)
 
             # get the access token
@@ -198,7 +204,90 @@ def get_user_name() -> object:
                 return user_response
 
             # return found user
-            kwargs[constants.USER_NAME] = user_response[db_c.USER_DISPLAY_NAME]
+            kwargs[api_c.USER_NAME] = user_response[db_c.USER_DISPLAY_NAME]
+
+            return in_function(*args, **kwargs)
+
+        return decorator
+
+    return wrapper
+
+
+def requires_access_levels(access_levels: list) -> object:
+    """Purpose of this decorator is for validating access levels for requests.
+
+    Example: @requires_access_level()
+
+    Args:
+        access_levels (list): list of access levels.
+
+    Returns:
+        Response (object): decorator
+    """
+
+    def wrapper(in_function) -> object:
+        """Decorator for wrapping a function.
+
+        Args:
+            in_function (object): function object.
+
+        Returns:
+           Response (object): returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for validating access level and returning a
+            user object.
+
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+
+            Returns:
+               Response (object): returns a decorated function object.
+            """
+
+            # override if flag set locally
+            if get_config().TEST_AUTH_OVERRIDE:
+                # return a default user name
+                kwargs[api_c.USER] = {
+                    api_c.NAME: getpass.getuser(),
+                    api_c.USER_ACCESS_LEVEL: db_c.USER_ROLE_ADMIN,
+                    api_c.USER_PII_ACCESS: True,
+                }
+                return in_function(*args, **kwargs)
+
+            # get the access token
+            logger.info("Getting okta access token from request.")
+            token_response = get_token_from_request(request)
+
+            # if not 200, return response
+            if token_response[1] != 200:
+                return token_response
+
+            # get the user info and the corresponding user document from db
+            # from the access_token
+            user = get_user_from_db(token_response[0])
+
+            # if the user_response object is of type tuple, then return it as
+            # such since a failure must have occurred while fetching user data
+            # from db
+            if isinstance(user, tuple):
+                return user
+
+            # check access level
+            access_level = api_c.AccessLevel(user.get(db_c.USER_ROLE))
+            if access_level not in access_levels:
+                logger.info(
+                    "User has an invalid access level to access this resource."
+                )
+                return {
+                    api_c.MESSAGE: api_c.INVALID_AUTH
+                }, HTTPStatus.UNAUTHORIZED
+
+            # return found user
+            kwargs[api_c.USER] = user
 
             return in_function(*args, **kwargs)
 
@@ -325,9 +414,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__qualname__,
                     in_function.__module__,
                 )
-                return {
-                    "message": constants.DUPLICATE_NAME
-                }, HTTPStatus.FORBIDDEN
+                return {"message": api_c.DUPLICATE_NAME}, HTTPStatus.FORBIDDEN
 
             except CustomAudienceDeliveryStatusError as exc:
                 logger.error(
@@ -350,14 +437,14 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {
-                    "message": constants.FAILED_DEPENDENCY_ERROR_MESSAGE
+                    "message": api_c.FAILED_DEPENDENCY_ERROR_MESSAGE
                 }, HTTPStatus.FAILED_DEPENDENCY
 
             except iae.FailedDestinationDependencyError as exc:
                 error_message = (
                     exc.args[0]
                     if exc.args
-                    else constants.DESTINATION_CONNECTION_FAILED
+                    else api_c.DESTINATION_CONNECTION_FAILED
                 )
                 logger.error(
                     "%s: %s Error encountered while executing %s in module %s.",
@@ -377,7 +464,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {
-                    "message": constants.EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE
+                    "message": api_c.EMPTY_RESPONSE_DEPENDENCY_ERROR_MESSAGE
                 }, HTTPStatus.NOT_FOUND
 
             except ue.InputParamsValidationError as exc:
@@ -399,7 +486,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {
-                    "message": constants.FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE
+                    "message": api_c.FAILED_DEPENDENCY_CONNECTION_ERROR_MESSAGE
                 }, HTTPStatus.FAILED_DEPENDENCY
 
             except iae.FailedSSMDependencyError as exc:
@@ -411,7 +498,7 @@ def api_error_handler(custom_message: dict = None) -> object:
                     in_function.__module__,
                 )
                 return {
-                    "message": constants.AWS_SSM_PARAM_NOT_FOUND_ERROR_MESSAGE
+                    "message": api_c.AWS_SSM_PARAM_NOT_FOUND_ERROR_MESSAGE
                 }, HTTPStatus.FAILED_DEPENDENCY
 
             except Exception as exc:  # pylint: disable=broad-except
@@ -472,7 +559,7 @@ def validate_delivery_params(func) -> object:
 
         database = get_db_client()
         # check if engagement id exists
-        engagement_id = kwargs.get(constants.ENGAGEMENT_ID, None)
+        engagement_id = kwargs.get(api_c.ENGAGEMENT_ID, None)
         if engagement_id:
             engagement = get_engagement(database, ObjectId(engagement_id))
             if engagement:
@@ -493,10 +580,10 @@ def validate_delivery_params(func) -> object:
                     func.__module__,
                 )
                 return {
-                    "message": constants.ENGAGEMENT_NOT_FOUND
+                    "message": api_c.ENGAGEMENT_NOT_FOUND
                 }, HTTPStatus.NOT_FOUND
         # check if audience id exists
-        audience_id = kwargs.get(constants.AUDIENCE_ID, None)
+        audience_id = kwargs.get(api_c.AUDIENCE_ID, None)
         if audience_id:
             # check if audience id exists
             audience = orchestration_management.get_audience(
@@ -582,7 +669,7 @@ def validate_destination(
                         destination_id,
                     )
                     return {
-                        "message": constants.DESTINATION_NOT_FOUND
+                        "message": api_c.DESTINATION_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
 
             kwargs["destination_id"] = destination_id
@@ -629,7 +716,7 @@ def validate_engagement_and_audience() -> object:
             database = get_db_client()
 
             # engagement validation
-            engagement_id = kwargs.get(constants.ENGAGEMENT_ID, None)
+            engagement_id = kwargs.get(api_c.ENGAGEMENT_ID, None)
 
             if engagement_id is not None:
                 engagement_id = ObjectId(engagement_id)
@@ -639,13 +726,13 @@ def validate_engagement_and_audience() -> object:
                         engagement_id,
                     )
                     return {
-                        constants.MESSAGE: constants.ENGAGEMENT_NOT_FOUND
+                        api_c.MESSAGE: api_c.ENGAGEMENT_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
 
-                kwargs[constants.ENGAGEMENT_ID] = engagement_id
+                kwargs[api_c.ENGAGEMENT_ID] = engagement_id
 
             # audience validation
-            audience_id = kwargs.get(constants.AUDIENCE_ID, None)
+            audience_id = kwargs.get(api_c.AUDIENCE_ID, None)
 
             if audience_id is not None:
                 audience_id = ObjectId(audience_id)
@@ -657,10 +744,10 @@ def validate_engagement_and_audience() -> object:
                         audience_id,
                     )
                     return {
-                        constants.MESSAGE: constants.AUDIENCE_NOT_FOUND
+                        api_c.MESSAGE: api_c.AUDIENCE_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
 
-                kwargs[constants.AUDIENCE_ID] = audience_id
+                kwargs[api_c.AUDIENCE_ID] = audience_id
 
             return in_function(*args, **kwargs)
 

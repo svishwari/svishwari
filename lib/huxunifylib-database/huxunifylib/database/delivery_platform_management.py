@@ -37,6 +37,7 @@ def set_delivery_platform(
     user_name: str = None,
     configuration: dict = None,
     is_ad_platform: bool = False,
+    category: str = c.CATEGORY_UNKNOWN,
 ) -> Union[dict, None]:
     """A function to create a delivery platform.
 
@@ -56,6 +57,7 @@ def set_delivery_platform(
         configuration (dict): A dictionary consisting of any platform
             specific configurations.
         is_ad_platform (bool): If the delivery platform is an AD platform.
+        category (str): Categoruy of the delivery platform.
 
     Returns:
         Union[dict, None]: MongoDB audience doc.
@@ -81,11 +83,6 @@ def set_delivery_platform(
     if exists_flag:
         raise de.DuplicateName(name)
 
-    if delivery_platform_type.upper() not in [
-        x.upper() for x in c.SUPPORTED_DELIVERY_PLATFORMS
-    ]:
-        raise de.UnknownDeliveryPlatformType(delivery_platform_type)
-
     # Get current time
     curr_time = datetime.datetime.utcnow()
 
@@ -100,6 +97,7 @@ def set_delivery_platform(
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
         c.IS_AD_PLATFORM: is_ad_platform,
+        c.CATEGORY: category,
     }
     if authentication_details is not None:
         doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
@@ -695,7 +693,7 @@ def update_delivery_platform(
 def create_delivery_platform_lookalike_audience(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
-    source_audience_id: ObjectId,
+    source_audience: dict,
     name: str,
     audience_size_percentage: float,
     country: str = None,
@@ -708,7 +706,7 @@ def create_delivery_platform_lookalike_audience(
     Args:
         database (DatabaseClient): A database client.
         delivery_platform_id (ObjectId): The Mongo ID of delivery platform.
-        source_audience_id (ObjectId): The Mongo ID of source audience.
+        source_audience (dict): The source audience.
         name (str): Name of the lookalike audience.
         audience_size_percentage (float): Size percentage of the lookalike
             audience.
@@ -735,6 +733,9 @@ def create_delivery_platform_lookalike_audience(
     if get_delivery_platform(database, delivery_platform_id) is None:
         raise de.InvalidID(delivery_platform_id)
 
+    # set the source_audience_id from source_audience
+    source_audience_id = source_audience[c.ID]
+
     # Validate source audience id
     if am.get_audience_config(database, source_audience_id) is None:
         raise de.InvalidID(source_audience_id)
@@ -756,6 +757,11 @@ def create_delivery_platform_lookalike_audience(
         c.DELIVERY_PLATFORM_ID: delivery_platform_id,
         c.LOOKALIKE_SOURCE_AUD_ID: source_audience_id,
         c.LOOKALIKE_AUD_NAME: name,
+        c.LOOKALIKE_SOURCE_AUD_NAME: source_audience.get(c.NAME, ""),
+        c.LOOKALIKE_SOURCE_AUD_SIZE: source_audience.get(c.SIZE, 0),
+        c.LOOKALIKE_SOURCE_AUD_FILTERS: source_audience.get(
+            c.AUDIENCE_FILTERS, []
+        ),
         c.LOOKALIKE_AUD_COUNTRY: country,
         c.LOOKALIKE_AUD_SIZE_PERCENTAGE: audience_size_percentage,
         c.DELETED: False,

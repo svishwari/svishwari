@@ -255,12 +255,15 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.fetchNotificationsByBatch()
-    this.calculateLastBatch()
-    this.loading = false
-    this.enableLazyLoad = true
-    if (this.notifications.length === 0) {
-      this.enableLazyLoad = false
+    try {
+      await this.fetchNotificationsByBatch()
+      this.calculateLastBatch()
+    } finally {
+      this.loading = false
+      this.enableLazyLoad = true
+      if (this.notifications.length === 0) {
+        this.enableLazyLoad = false
+      }
     }
   },
   methods: {

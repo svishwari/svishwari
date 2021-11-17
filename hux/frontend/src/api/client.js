@@ -33,6 +33,9 @@ client["users"].markFavorite = (resourceId, entityType) => {
 client["users"].clearFavorite = (resourceId, entityType) => {
   return http.delete(`users/${entityType}/${resourceId}/favorite`)
 }
+client["users"].contactUs = (data) => {
+  return http.post("users/contact-us", data)
+}
 //#endregion
 
 //#region Customers
@@ -235,7 +238,7 @@ client["engagements"].remove = (resourceId) => {
 
 //#region Customer Identity endpoint(s)
 client["idr"].overview = (params) => {
-  return http.get("/idr/overview", { params: params })
+  return http.get("/idr/overview", { timeout: 0, params: params })
 }
 
 client["idr"].datafeeds = (params) => {

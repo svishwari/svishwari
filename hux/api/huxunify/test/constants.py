@@ -82,6 +82,10 @@ CDP_IDENTITY_ID_COUNT_BY_DAY_ENDPOINT = "/identity/id-count-by-day"
 
 AUDIENCE_STATE_FILTER = {"field": "state", "type": "equals", "value": "HI"}
 
+SOURCE_NAME = "source_name"
+SOURCE_SIZE = "source_size"
+SOURCE_ID = "source_id"
+
 CDM_HEALTHCHECK_RESPONSE = {
     "code": 200,
     "status": "success",
@@ -639,6 +643,17 @@ MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE = {
                 "2021-07-31",
                 "1to2y-COGS-sum",
                 -364.695312,
+                "Propensity to Unsubscribe",
+                api_c.UNSUBSCRIBE,
+                "21.7.31",
+            ],
+            api_c.JOIN_KEYS: ["21.7.31"],
+        },
+        {
+            api_c.FEATURES: [
+                "2021-07-31",
+                "1to2y-COGS-sum",
+                "not a number",
                 "Propensity to Unsubscribe",
                 api_c.UNSUBSCRIBE,
                 "21.7.31",

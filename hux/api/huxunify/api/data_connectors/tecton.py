@@ -16,7 +16,8 @@ from huxunifylib.util.general.logging import logger
 
 from huxunify.api.config import get_config
 from huxunify.api.exceptions import integration_api_exceptions as iae
-from huxunify.api import constants
+
+from huxunify.api import constants as api_c
 from huxunify.api.schema.model import (
     ModelVersionSchema,
     FeatureSchema,
@@ -42,15 +43,15 @@ def check_tecton_connection() -> Tuple[bool, str]:
     try:
         response = requests.post(
             config.TECTON_FEATURE_SERVICE,
-            dumps(constants.MODEL_LIST_PAYLOAD),
+            dumps(api_c.MODEL_LIST_PAYLOAD),
             headers=config.TECTON_API_HEADERS,
         )
-        record_health_status_metric(constants.TECTON_CONNECTION_HEALTH, True)
+        record_health_status_metric(api_c.TECTON_CONNECTION_HEALTH, True)
         return response.status_code, "Tecton available."
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
-        record_health_status_metric(constants.TECTON_CONNECTION_HEALTH, False)
+        record_health_status_metric(api_c.TECTON_CONNECTION_HEALTH, False)
         return False, getattr(exception, "message", repr(exception))
 
 
@@ -65,24 +66,24 @@ def map_model_response(response: dict) -> List[dict]:
 
     models = []
 
-    for meta_data in response.json()[constants.RESULTS]:
+    for meta_data in response.json()[api_c.RESULTS]:
         # get model metadata from tecton
-        feature = meta_data[constants.FEATURES]
+        feature = meta_data[api_c.FEATURES]
         model = {
-            constants.ID: meta_data[constants.JOIN_KEYS][0],
-            constants.LAST_TRAINED: parser.parse(feature[0]),
-            constants.DESCRIPTION: feature[1],
-            constants.FULCRUM_DATE: parser.parse(feature[2]),
-            constants.LOOKBACK_WINDOW: 7,
-            constants.NAME: feature[4],
-            constants.TYPE: str(feature[5]).lower(),
-            constants.OWNER: feature[6],
-            constants.STATUS: constants.MODEL_STATUS_MAPPING.get(
-                feature[8], constants.STATUS_PENDING
+            api_c.ID: meta_data[api_c.JOIN_KEYS][0],
+            api_c.LAST_TRAINED: parser.parse(feature[0]),
+            api_c.DESCRIPTION: feature[1],
+            api_c.FULCRUM_DATE: parser.parse(feature[2]),
+            api_c.LOOKBACK_WINDOW: int(feature[8]),
+            api_c.NAME: feature[4],
+            api_c.TYPE: str(feature[5]).lower(),
+            api_c.OWNER: feature[6],
+            api_c.STATUS: api_c.MODEL_STATUS_MAPPING.get(
+                feature[9], api_c.STATUS_PENDING
             ),
-            constants.LATEST_VERSION: feature[9],
-            constants.PREDICTION_WINDOW: int(feature[3]),
-            constants.PAST_VERSION_COUNT: 0,
+            api_c.LATEST_VERSION: feature[10],
+            api_c.PREDICTION_WINDOW: int(feature[3]),
+            api_c.PAST_VERSION_COUNT: 0,
         }
         models.append(model)
 
@@ -104,26 +105,26 @@ def map_model_version_history_response(
 
     models = []
 
-    for meta_data in response.json()[constants.RESULTS]:
+    for meta_data in response.json()[api_c.RESULTS]:
         # get model metadata from tecton
-        feature = meta_data[constants.FEATURES]
+        feature = meta_data[api_c.FEATURES]
         model = {
-            constants.ID: model_id,
-            constants.LAST_TRAINED: parser.parse(feature[0]),
-            constants.DESCRIPTION: feature[1],
-            constants.FULCRUM_DATE: parser.parse(feature[2]),
-            constants.LOOKBACK_WINDOW: 7,
-            constants.NAME: feature[5],
-            constants.TYPE: str(feature[6]).lower(),
-            constants.OWNER: feature[7],
-            constants.STATUS: feature[9],
-            constants.CURRENT_VERSION: meta_data[constants.JOIN_KEYS][0],
-            constants.PREDICTION_WINDOW: int(feature[3]),
+            api_c.ID: model_id,
+            api_c.LAST_TRAINED: parser.parse(feature[0]),
+            api_c.DESCRIPTION: feature[1],
+            api_c.FULCRUM_DATE: parser.parse(feature[2]),
+            api_c.LOOKBACK_WINDOW: 7,
+            api_c.NAME: feature[5],
+            api_c.TYPE: str(feature[6]).lower(),
+            api_c.OWNER: feature[7],
+            api_c.STATUS: feature[9],
+            api_c.CURRENT_VERSION: meta_data[api_c.JOIN_KEYS][0],
+            api_c.PREDICTION_WINDOW: int(feature[3]),
         }
         models.append(model)
 
     # sort the models based on the last trained date.
-    models.sort(key=lambda x: x[constants.LAST_TRAINED], reverse=True)
+    models.sort(key=lambda x: x[api_c.LAST_TRAINED], reverse=True)
 
     return models
 
@@ -148,12 +149,12 @@ def map_model_performance_response(
         dict: A cleaned model performance dict.
     """
 
-    if response.status_code != 200 or constants.RESULTS not in response.json():
+    if response.status_code != 200 or api_c.RESULTS not in response.json():
         return {}
 
-    for meta_data in response.json()[constants.RESULTS]:
+    for meta_data in response.json()[api_c.RESULTS]:
         # get model metadata from tecton
-        feature = meta_data[constants.FEATURES]
+        feature = meta_data[api_c.FEATURES]
 
         # get version based on model type and skip if not the provided version.
         if feature[4] != model_version:
@@ -161,20 +162,20 @@ def map_model_performance_response(
 
         # grab the metrics based on model type and return.
         return {
-            constants.ID: model_id,
-            constants.RMSE: float(feature[0])
-            if model_type in constants.REGRESSION_MODELS
+            api_c.ID: model_id,
+            api_c.RMSE: float(feature[0])
+            if model_type in api_c.REGRESSION_MODELS
             else metric_default_value,
-            constants.AUC: float(feature[0])
-            if model_type in constants.CLASSIFICATION_MODELS
+            api_c.AUC: float(feature[0])
+            if model_type in api_c.CLASSIFICATION_MODELS
             else metric_default_value,
-            constants.PRECISION: float(feature[5])
-            if model_type in constants.CLASSIFICATION_MODELS
+            api_c.PRECISION: float(feature[5])
+            if model_type in api_c.CLASSIFICATION_MODELS
             else metric_default_value,
-            constants.RECALL: float(feature[6])
-            if model_type in constants.CLASSIFICATION_MODELS
+            api_c.RECALL: float(feature[6])
+            if model_type in api_c.CLASSIFICATION_MODELS
             else metric_default_value,
-            constants.CURRENT_VERSION: model_version,
+            api_c.CURRENT_VERSION: model_version,
         }
 
     # nothing found, return an empty dict.
@@ -199,11 +200,11 @@ def get_models() -> List[dict]:
     # submit the post request to get the models
     response = requests.post(
         config.TECTON_FEATURE_SERVICE,
-        dumps(constants.MODEL_LIST_PAYLOAD),
+        dumps(api_c.MODEL_LIST_PAYLOAD),
         headers=config.TECTON_API_HEADERS,
     )
 
-    if response.status_code != 200 or constants.RESULTS not in response.json():
+    if response.status_code != 200 or api_c.RESULTS not in response.json():
         logger.error(
             "Unable to retrieve models, %s %s.",
             response.status_code,
@@ -237,7 +238,7 @@ def get_model_version_history(model_id: str) -> List[ModelVersionSchema]:
     # payload
     payload = {
         "params": {
-            "feature_service_name": constants.FEATURE_MODEL_HISTORY,
+            "feature_service_name": api_c.FEATURE_MODEL_HISTORY,
             "join_key_map": {"model_id": f"{model_id}"},
         }
     }
@@ -248,7 +249,7 @@ def get_model_version_history(model_id: str) -> List[ModelVersionSchema]:
         headers=config.TECTON_API_HEADERS,
     )
 
-    if constants.RESULTS not in response.json():
+    if api_c.RESULTS not in response.json():
         logger.error(
             "Unable to retrieve model version history, %s %s.",
             response.status_code,
@@ -293,16 +294,16 @@ def get_model_drift(
     # get config
     config = get_config()
 
-    if model_type in constants.CLASSIFICATION_MODELS:
-        service_name = constants.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE
+    if model_type in api_c.CLASSIFICATION_MODELS:
+        service_name = api_c.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE
     else:
-        service_name = constants.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE
+        service_name = api_c.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE
 
     # payload
     payload = {
         "params": {
             "feature_service_name": service_name,
-            "join_key_map": {constants.MODEL_ID: f"{model_id}"},
+            "join_key_map": {api_c.MODEL_ID: f"{model_id}"},
         }
     }
 
@@ -322,7 +323,7 @@ def get_model_drift(
         total_ticks,
     )
 
-    if constants.RESULTS not in response.json():
+    if api_c.RESULTS not in response.json():
         logger.error(
             "Unable to retrieve model drift, %s %s.",
             response.status_code,
@@ -339,30 +340,30 @@ def get_model_drift(
         )
 
     result_drift = []
-    for result in response.json().get(constants.RESULTS, []):
+    for result in response.json().get(api_c.RESULTS, []):
         if not result:
             continue
 
         # look up run date from model version
         run_dates = [
-            m[constants.LAST_TRAINED]
+            m[api_c.LAST_TRAINED]
             for m in models
-            if m[constants.CURRENT_VERSION] == result[constants.FEATURES][4]
+            if m[api_c.CURRENT_VERSION] == result[api_c.FEATURES][4]
         ]
 
         result_drift.append(
             {
                 # check if model version matched, otherwise parse the created date.
-                constants.RUN_DATE: run_dates[0]
+                api_c.RUN_DATE: run_dates[0]
                 if run_dates
-                else parser.parse(result[constants.FEATURES][1]),
-                constants.DRIFT: result[constants.FEATURES][0],
+                else parser.parse(result[api_c.FEATURES][1]),
+                api_c.DRIFT: result[api_c.FEATURES][0],
             }
         )
 
     # sort the results by time
     if result_drift:
-        result_drift.sort(key=lambda x: x[constants.RUN_DATE])
+        result_drift.sort(key=lambda x: x[api_c.RUN_DATE])
 
     return result_drift
 
@@ -409,21 +410,19 @@ def get_model_lift_async(model_id: str) -> List[ModelLiftSchema]:
             continue
 
         # process lift data
-        latest_lift_data = response[0][constants.RESULTS][-1][
-            constants.FEATURES
-        ]
+        latest_lift_data = response[0][api_c.RESULTS][-1][api_c.FEATURES]
 
         result_lift.append(
             {
-                constants.BUCKET: response[1],
-                constants.ACTUAL_VALUE: latest_lift_data[0],
-                constants.ACTUAL_LIFT: latest_lift_data[2],
-                constants.PREDICTED_LIFT: latest_lift_data[3],
-                constants.PREDICTED_VALUE: latest_lift_data[8],
-                constants.PROFILE_COUNT: int(latest_lift_data[9]),
-                constants.ACTUAL_RATE: latest_lift_data[10],
-                constants.PREDICTED_RATE: latest_lift_data[11],
-                constants.PROFILE_SIZE_PERCENT: latest_lift_data[13] * 100
+                api_c.BUCKET: response[1],
+                api_c.ACTUAL_VALUE: latest_lift_data[0],
+                api_c.ACTUAL_LIFT: latest_lift_data[2],
+                api_c.PREDICTED_LIFT: latest_lift_data[3],
+                api_c.PREDICTED_VALUE: latest_lift_data[8],
+                api_c.PROFILE_COUNT: int(latest_lift_data[9]),
+                api_c.ACTUAL_RATE: latest_lift_data[10],
+                api_c.PREDICTED_RATE: latest_lift_data[11],
+                api_c.PROFILE_SIZE_PERCENT: latest_lift_data[13] * 100
                 if latest_lift_data[13]
                 else 0,
             }
@@ -450,10 +449,10 @@ async def get_async_lift_bucket(
 
     payload = {
         "params": {
-            "feature_service_name": constants.FEATURE_LIFT_MODEL_SERVICE,
+            "feature_service_name": api_c.FEATURE_LIFT_MODEL_SERVICE,
             "join_key_map": {
-                constants.MODEL_ID: str(model_id),
-                constants.BUCKET: str(bucket),
+                api_c.MODEL_ID: str(model_id),
+                api_c.BUCKET: str(bucket),
             },
         }
     }
@@ -501,7 +500,7 @@ def get_model_features(
     for i in range(200):
         payload = {
             "params": {
-                "feature_service_name": constants.FEATURE_TOP_SERVICE,
+                "feature_service_name": api_c.FEATURE_TOP_SERVICE,
                 "join_key_map": {"model_id": f"{model_id}", "rank": str(i)},
             }
         }
@@ -515,37 +514,43 @@ def get_model_features(
         if response.status_code != 200:
             break
 
-        if constants.RESULTS not in response.json():
+        if api_c.RESULTS not in response.json():
             break
 
         # grab the features and match model version.
         features = [
-            x[constants.FEATURES]
-            for x in response.json()[constants.RESULTS]
+            x[api_c.FEATURES]
+            for x in response.json()[api_c.RESULTS]
             if x["joinKeys"][0] == model_version
         ]
         for feature in features:
+            # get score.
+            score = 0
+            try:
+                score = (
+                    log10(float(feature[2]))
+                    if float(feature[2]) > 0
+                    else -log10(float(abs(feature[2])))
+                )
+            except ValueError:
+                pass
+
             # TODO - HUS-910, remove the random string values below once Tecton is returning them.
             result_features.append(
                 {
-                    constants.ID: model_id,
-                    constants.VERSION: model_version,
-                    constants.NAME: feature[1],
-                    constants.FEATURE_SERVICE: feature[4],
-                    constants.DATA_SOURCE: random.choice(
+                    api_c.ID: model_id,
+                    api_c.VERSION: model_version,
+                    api_c.NAME: feature[1],
+                    api_c.FEATURE_SERVICE: feature[4],
+                    api_c.DATA_SOURCE: random.choice(
                         ["Buyers", "Retail", "Promotion", "Email", "Ecommerce"]
                     ),
-                    constants.CREATED_BY: random.choice(
+                    api_c.CREATED_BY: random.choice(
                         ["Susan Miller", "Jack Miller"]
                     ),
-                    constants.STATUS: constants.STATUS_ACTIVE,
-                    constants.POPULARITY: random.randint(1, 3),
-                    constants.SCORE: round(
-                        log10(float(feature[2]))
-                        if float(feature[2]) > 0
-                        else -log10(float(abs(feature[2]))),
-                        4,
-                    ),
+                    api_c.STATUS: api_c.STATUS_ACTIVE,
+                    api_c.POPULARITY: random.randint(1, 3),
+                    api_c.SCORE: round(score, 4),
                 }
             )
 
@@ -577,11 +582,11 @@ def get_model_performance_metrics(
     config = get_config()
 
     # regression models calculate RMSE
-    if model_type in constants.REGRESSION_MODELS:
-        service_name = constants.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE
+    if model_type in api_c.REGRESSION_MODELS:
+        service_name = api_c.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE
     # classification models calculate AUC, Precision, Recall
-    elif model_type in constants.CLASSIFICATION_MODELS:
-        service_name = constants.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE
+    elif model_type in api_c.CLASSIFICATION_MODELS:
+        service_name = api_c.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE
     else:
         logger.warning("Model type not supported '%s'.", model_type)
 

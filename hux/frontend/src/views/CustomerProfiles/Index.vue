@@ -259,11 +259,12 @@
                     </v-col>
                     <v-divider vertical class="combined-list" />
                     <v-col md="5 pt-0 pl-1">
-                      <div class="overflow-y-auto combined-list">
+                      <div class="combined-list">
                         <map-state-list
                           v-if="!loadingGeoOverview"
                           :map-data="customersGeoOverview"
                           :configuration-data="configurationData"
+                          :height="386"
                         />
                       </div>
                     </v-col>
@@ -461,12 +462,15 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.getOverview()
-    this.mapOverviewData()
-    this.fetchTotalCustomers()
-    this.fetchCustomerSpend()
-    this.fetchGeoOverview()
-    this.loading = false
+    try {
+      await this.getOverview()
+      this.mapOverviewData()
+      this.fetchTotalCustomers()
+      this.fetchCustomerSpend()
+      this.fetchGeoOverview()
+    } finally {
+      this.loading = false
+    }
   },
 
   methods: {
@@ -480,20 +484,29 @@ export default {
 
     async fetchGeoOverview() {
       this.loadingGeoOverview = true
-      await this.getGeoOverview()
-      this.loadingGeoOverview = false
+      try {
+        await this.getGeoOverview()
+      } finally {
+        this.loadingGeoOverview = false
+      }
     },
 
     async fetchTotalCustomers() {
       this.loadingCustomerChart = true
-      await this.getTotalCustomers()
-      this.loadingCustomerChart = false
+      try {
+        await this.getTotalCustomers()
+      } finally {
+        this.loadingCustomerChart = false
+      }
     },
 
     async fetchCustomerSpend() {
       this.loadingSpendChart = true
-      await this.getCustomerSpend()
-      this.loadingSpendChart = false
+      try {
+        await this.getCustomerSpend()
+      } finally {
+        this.loadingSpendChart = false
+      }
     },
 
     // TODO: refactor this and move this logic to a getter in the store
@@ -611,6 +624,21 @@ export default {
     min-width: 0px;
     margin-top: -5px;
   }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px var(--v-white-base);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--v-black-lighten3);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--v-black-lighten3);
+  }
 }
 
 .icon-border {
@@ -622,20 +650,5 @@ export default {
 
 ::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
   color: var(--v-black-lighten4) !important;
-}
-
-::-webkit-scrollbar {
-  width: 5px;
-}
-::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px var(--v-white-base);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--v-black-lighten3);
-  border-radius: 5px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--v-black-lighten3);
 }
 </style>
