@@ -168,20 +168,6 @@ export default {
             .attr("stroke-opacity", "0.3")
         )
 
-      // svg
-      //   .append("text")
-      //   .attr(
-      //     "transform",
-      //     "translate(" +
-      //       this.width / 2 +
-      //       " ," +
-      //       (this.height + this.margin.top + 30) +
-      //       ")"
-      //   )
-      //   .style("text-anchor", "middle")
-      //   .attr("fill", "#4f4f4f")
-      //   .text("Score")
-
       svg
         .selectAll("myRect")
         .data(this.chartData)
