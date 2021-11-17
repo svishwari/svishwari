@@ -39,9 +39,7 @@ describe("Navigation", () => {
     cy.location("pathname").should("eq", route.customerProfiles)
 
     // segment playground
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000)
-    cy.get(selector.nav.segmentPlayground).should("exist")
+    // cy.get(selector.nav.segmentPlayground).should("exist")
 
     // destinations
     // eslint-disable-next-line cypress/no-unnecessary-waiting

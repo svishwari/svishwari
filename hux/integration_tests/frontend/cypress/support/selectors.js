@@ -100,6 +100,8 @@ export default {
     versionhistorybutton: "[data-e2e='version-history-button']",
     modelDashboardOptions: "[data-e2e='model-dashboard-options']",
     versionhistory: "[data-e2e='version-history']",
+    status: "[data-e2e='model-status']",
+    activeStatus: "[data-e2e='model-status-Active']",
   },
 
   // engagements
@@ -170,6 +172,8 @@ export default {
       geoDrawerTableHeaders: "table thead tr",
       geoDrawerTableItems: "table tbody tr",
     },
+    eventsDrawerButton: "[data-e2e='eventsDrawerButton']",
+    customerEventRow: "[data-e2e='customerEventRow']",
   },
 
   //IDR

@@ -308,6 +308,10 @@ client["notifications"].find = (notification_id) => {
   return http.get(`/notifications/${notification_id}`)
 }
 
+client["notifications"].getAllUsers = () => {
+  return http.get("/users")
+}
+
 //#endregion
 
 client["models"].overview = (id) => {
@@ -332,6 +336,10 @@ client["models"].drift = (id) => {
 
 client["models"].modelFeatures = (id) => {
   return http.get(`/models/${id}/features`)
+}
+
+client["models"].remove = (model) => {
+  return http.delete(`/models/${model.id}`)
 }
 
 //#region Data sources

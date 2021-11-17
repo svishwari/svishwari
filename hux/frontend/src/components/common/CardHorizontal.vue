@@ -39,7 +39,7 @@
           ]"
         >
           <span v-if="requestedButton" class="text-button">
-            {{ isAdded ? "Requested" : "Request" }}
+            {{ isModelRequested || isAdded ? "Requested" : "Request" }}
           </span>
           <span v-else class="text-button"
             >{{ isAdded ? "Added" : "Add" }}
@@ -107,6 +107,11 @@ export default {
       default: () => {},
     },
     requestedButton: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    isModelRequested: {
       type: Boolean,
       required: false,
       default: false,
