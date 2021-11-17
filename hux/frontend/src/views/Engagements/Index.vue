@@ -90,6 +90,7 @@
                     v-if="item.audiences.length > 0"
                     :class="{ 'normal-icon': isExpanded }"
                     data-e2e="expand-engagement"
+                    color="primary"
                     @click="expandFunc(!isExpanded)"
                   >
                     mdi-chevron-right
@@ -283,14 +284,24 @@
                       }"
                     >
                       <template #expand-icon>
-                        <v-icon
+                        <span
                           v-if="item.destinations.length > 0"
-                          :class="{ 'normal-icon': isExpanded }"
                           data-e2e="expand-audience"
                           @click="expandFunc(!isExpanded)"
                         >
-                          mdi-chevron-right
-                        </v-icon>
+                          <icon
+                            type="expand-arrow"
+                            :size="14"
+                            color="primary"
+                            class="
+                              cursor-pointer
+                              mdi-chevron-right
+                              mx-2
+                              d-inline-block
+                            "
+                            :class="{ 'normal-icon': isExpanded }"
+                          />
+                        </span>
                       </template>
                     </menu-cell>
                   </div>
@@ -1038,7 +1049,12 @@ export default {
   background: var(--v-white-base);
   ::v-deep .menu-cell-wrapper {
     .action-icon {
-      display: none;
+      .fav-action {
+        display: none;
+      }
+      .more-action {
+        display: none;
+      }
     }
     .mdi-chevron-right,
     .mdi-dots-vertical {
@@ -1116,8 +1132,15 @@ export default {
         &:hover {
           background: var(--v-primary-lighten2) !important;
           box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
-          .menu-cell-wrapper .action-icon {
-            display: initial;
+          .menu-cell-wrapper {
+            .action-icon {
+              .fav-action {
+                display: block;
+              }
+              .more-action {
+                display: block;
+              }
+            }
           }
         }
         td {

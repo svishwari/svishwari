@@ -518,7 +518,12 @@ export default {
 <style lang="scss" scoped>
 .audiences-wrap {
   ::v-deep .menu-cell-wrapper .action-icon {
-    display: none;
+    .fav-action {
+      display: none;
+    }
+    .more-action {
+      display: none;
+    }
   }
   .top-bar {
     margin-top: 1px;
@@ -564,7 +569,12 @@ export default {
             background: var(--v-primary-lighten2) !important;
             box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
             .menu-cell-wrapper .action-icon {
-              display: initial;
+              .fav-action {
+                display: block;
+              }
+              .more-action {
+                display: block;
+              }
             }
           }
           background: var(--v-primary-lighten2) !important;
