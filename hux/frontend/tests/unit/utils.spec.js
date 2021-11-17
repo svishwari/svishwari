@@ -176,20 +176,19 @@ describe("Utils", () => {
   describe("sortByName", () => {
     it("Should sort data based on key provided", () => {
       const data = {
-        'purchase': [
+        purchase: [
           {
             id: 1,
-            name: "Propensity to open"
+            name: "Propensity to open",
           },
           {
             id: 2,
-            name: "Churn"
+            name: "Churn",
           },
-        ]
+        ],
       }
-      sortByName(data, 'name')
-      expect(data['purchase'][0].id).toEqual(2)
+      sortByName(data, "name")
+      expect(data["purchase"][0].id).toEqual(2)
     })
   })
-  
 })
