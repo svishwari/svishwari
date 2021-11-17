@@ -3,6 +3,7 @@ import {
   listOfYears,
   endOfMonth,
   arrayHasFieldWithMultipleValues,
+  sortByName,
 } from "@/utils"
 
 describe("Utils", () => {
@@ -171,4 +172,24 @@ describe("Utils", () => {
       expect(actualNullUndefined).toEqual(expectedNullUndefined)
     })
   })
+
+  describe("sortByName", () => {
+    it("Should sort data based on key provided", () => {
+      const data = {
+        'purchase': [
+          {
+            id: 1,
+            name: "Propensity to open"
+          },
+          {
+            id: 2,
+            name: "Churn"
+          },
+        ]
+      }
+      sortByName(data, 'name')
+      expect(data['purchase'][0].id).toEqual(2)
+    })
+  })
+  
 })
