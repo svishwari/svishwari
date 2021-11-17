@@ -1073,7 +1073,7 @@ class AudienceRules(SwaggerView):
             pathlib.Path(stubbed_data.__file__).parent / "cityzip_data.csv"
         )
 
-        stub_cityzip_data = read_stub_city_zip_data(stub_city_zip_file)
+        stub_city_zip_data = read_stub_city_zip_data(stub_city_zip_file)
 
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically
@@ -1211,7 +1211,7 @@ class AudienceRules(SwaggerView):
                             "type": "list",  # text for 5.0, list for future
                             "options": [
                                 {x[1]: f"{x[1]}, {x[2]} USA"}
-                                for x in stub_cityzip_data
+                                for x in stub_city_zip_data
                             ],
                         },
                         "zip_code": {
@@ -1219,7 +1219,7 @@ class AudienceRules(SwaggerView):
                             "type": "list",
                             "options": [
                                 {x[0]: f"{x[0]}, {x[1]} {x[2]}"}
-                                for x in stub_cityzip_data
+                                for x in stub_city_zip_data
                             ],
                         },
                     },
