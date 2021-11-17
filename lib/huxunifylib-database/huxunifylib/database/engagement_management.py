@@ -868,13 +868,13 @@ def append_destination_to_engagement_audience(
         return {}
 
     updated = False
-    for i, audience in enumerate(engagement_doc.get(db_c.AUDIENCES, [])):
+    for i, audience in enumerate(engagement_doc.get(db_c.AUDIENCES)):
         # match audience
         if audience.get(db_c.OBJECT_ID) == audience_id:
             # append destinations to the matched audience
             engagement_doc[db_c.AUDIENCES][i][
                 db_c.DESTINATIONS
-            ] = audience.get(db_c.DESTINATIONS, []) + [destination]
+            ] = audience.get(db_c.DESTINATIONS) + [destination]
             updated = True
 
     # only update if the destination was added.
@@ -890,7 +890,8 @@ def append_destination_to_engagement_audience(
         )
     else:
         logging.error(
-            "No matching engagement/audience to append the destination %s.",
+            "There was no matching engagement or audience for appending "
+            "destination %s.",
             destination.get(db_c.OBJECT_ID),
         )
         return {}
