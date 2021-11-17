@@ -14,7 +14,8 @@
         plain
         :color="filterLength > 0 ? 'primary base' : 'black lighten3'"
         :disabled="filterLength > 0 ? false : true"
-        class="text-button float-right"
+        class="text-button float-right clear-btn"
+        @click="clearFilter()"
       >
         Clear
       </v-btn>
@@ -70,7 +71,14 @@
       </hux-filter-panels>
     </template>
     <template #footer-left>
-      <v-btn tile color="white" class="text-button ml-auto"> Cancel </v-btn>
+      <v-btn
+        tile
+        color="white"
+        class="text-button ml-auto"
+        @click="localDrawer = false"
+      >
+        Cancel
+      </v-btn>
     </template>
     <template #footer-right>
       <v-btn
@@ -78,6 +86,7 @@
         color="primary"
         class="text-button ml-auto"
         width="134"
+        disabled
         @click="apply()"
       >
         Apply filter
@@ -87,16 +96,13 @@
 </template>
 
 <script>
-// import { mapGetters } from "vuex"
 import Drawer from "@/components/common/Drawer"
-// import Icon from "@/components/common/Icon"
 import HuxFilterPanels from "@/components/common/FilterPanels"
 import HuxFilterPanel from "@/components/common/FilterPanel"
 export default {
   name: "AlertFilterDrawer",
   components: {
     Drawer,
-    // Icon,
     HuxFilterPanels,
     HuxFilterPanel,
   },
@@ -109,7 +115,6 @@ export default {
     users: {
       type: Array,
       required: false,
-      default: [],
     },
   },
   data() {
@@ -216,15 +221,21 @@ export default {
   },
   methods: {
     getTime(value) {
-        let today_date = new Date()
+      let today_date = new Date()
       return new Date(
         today_date.getFullYear(),
         today_date.getMonth(),
         today_date.getDate() - value
       )
     },
+    clearFilter() {
+      this.selctedAlertType = []
+      this.selctedCategory = []
+      this.selectedTimeType = "Last week"
+      this.selctedUsers = []
+    },
     apply() {
-      let getTime;
+      let getTime
       switch (this.selectedTimeType) {
         case "Today":
           getTime = this.getTime(0)
@@ -245,8 +256,7 @@ export default {
           this.getTime(7)
           break
       }
-      console.log("getTime", getTime)
-       this.$emit("onSectionAction", {
+      this.$emit("onSectionAction", {
         getTime: this.$options.filters.Date(getTime, "YYYY-MM-DD"),
         selctedAlertType: this.selctedAlertType,
         selctedCategory: this.selctedCategory,
@@ -270,5 +280,8 @@ export default {
 ::v-deep.theme--light .v-messages {
   min-height: 6px !important;
   color: var(--v-black-base);
+}
+.clear-btn {
+  padding-left: 7rem !important;
 }
 </style>

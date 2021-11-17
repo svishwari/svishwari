@@ -6,7 +6,7 @@ const namespaced = true
 
 const state = {
   items: {},
-  users: {}
+  users: {},
 }
 
 const getters = {
@@ -30,7 +30,6 @@ const mutations = {
       Vue.set(state.users, item.id, item)
     })
   },
-
 
   SET_ONE(state, item) {
     Vue.set(state.items, item.id, item)

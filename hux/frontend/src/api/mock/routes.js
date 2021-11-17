@@ -574,7 +574,6 @@ export const defineRoutes = (server) => {
     return schema.users.all()
   })
 
-
   // audiences
   server.get("/audiences")
 
