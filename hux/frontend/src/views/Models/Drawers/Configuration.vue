@@ -76,6 +76,7 @@ import Drawer from "@/components/common/Drawer"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import { mapGetters, mapActions } from "vuex"
+import { sortByName } from "../../../utils"
 export default {
   name: "ModelConfiguration",
 
@@ -135,13 +136,7 @@ export default {
           return obj
         }, {})
 
-      Object.values(result).forEach((val) => {
-        val.sort(function (a, b) {
-          var textA = a.name.toUpperCase()
-          var textB = b.name.toUpperCase()
-          return textA < textB ? -1 : textA > textB ? 1 : 0
-        })
-      })
+      sortByName(result, "name")
       return result
     },
 
@@ -161,13 +156,7 @@ export default {
           return obj
         }, {})
 
-      Object.values(result).forEach((val) => {
-        val.sort(function (a, b) {
-          var textA = a.name.toUpperCase()
-          var textB = b.name.toUpperCase()
-          return textA < textB ? -1 : textA > textB ? 1 : 0
-        })
-      })
+      sortByName(result, "name")
       return result
     },
   },
