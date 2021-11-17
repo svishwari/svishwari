@@ -483,17 +483,15 @@ class CustomerProfileSearch(SwaggerView):
             request.args.get(api_c.REDACT_FIELD, "True")
         )
         Validation.validate_hux_id(hux_id)
-        access_token = get_token_from_request(request)[0]
-        okta_id = introspect_token(access_token).get(api_c.OKTA_USER_ID, None)
+        okta_id = introspect_token(token_response[0]).get(
+            api_c.OKTA_USER_ID, None
+        )
         if not okta_id:
             return {"message": "Access Denied"}, HTTPStatus.UNAUTHORIZED
-        user_doc = get_user_doc(user_name)
-        if not user_doc[api_c.USER_PII_ACCESS] and not redact:
-            return {
-                "message": "Access Denied for PII Access"
-            }, HTTPStatus.UNAUTHORIZED
 
-        if not redact:
+        user_doc = get_user_doc(get_db_client(), user_name)
+
+        if user_doc[api_c.USER_PII_ACCESS] and not redact:
             redacted_data = get_customer_profile(token_response[0], hux_id)
         else:
             redacted_data = redact_fields(
@@ -511,6 +509,7 @@ class CustomerProfileSearch(SwaggerView):
                     api_c.INSIGHTS: redacted_data,
                     api_c.CONTACT_PREFERENCES: redacted_data,
                     api_c.IDENTITY_RESOLUTION: add_chart_legend(idr_data),
+                    api_c.USER_PII_ACCESS: user_doc[api_c.USER_PII_ACCESS],
                 }
             ),
             HTTPStatus.OK.value,

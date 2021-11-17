@@ -65,7 +65,7 @@ class CDPTest(TestCase):
         ).start()
 
         mock.patch(
-            "huxunify.api.route.customers.get_user_from_db",
+            "huxunify.api.route.customers.get_user_doc",
             return_value=t_c.VALID_USER_RESPONSE,
         ).start()
 
@@ -98,6 +98,11 @@ class CDPTest(TestCase):
             json=expected_response,
         )
         self.request_mocker.start()
+
+        # mock.patch(
+        #     "huxunify.api.route.customers.introspect_token",
+        #     return_value=t_c.VALID_RESPONSE,
+        # ).start()
 
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}",
