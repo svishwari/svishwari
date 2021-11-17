@@ -317,3 +317,19 @@ export function groupBy(array, key) {
     })
   }, {})
 }
+
+/**
+ * Returns the list of objects in sorted
+ *
+ * @param {object} data - object with each key having array
+ * @param {string} key - the group by key
+ */
+export function sortByName(data, key) {
+  Object.values(data).forEach((val) => {
+    val.sort(function (a, b) {
+      var textA = a[key].toUpperCase()
+      var textB = b[key].toUpperCase()
+      return textA < textB ? -1 : textA > textB ? 1 : 0
+    })
+  })
+}

@@ -9,30 +9,22 @@ describe("View models", () => {
 
   it("should be able to view a list of models", () => {
     cy.location("pathname").should("eq", route.models)
-
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
     cy.get(selector.models.item).its("length").should("gt", 0)
 
-    cy.get(selector.models.item).should(($models) => {
-      expect($models.eq(0).find(selector.card.title)).to.contain(
-        "Pendleton Unsubscribe Model",
-      )
-      expect($models.eq(0).find(selector.card.description)).to.contain(
-        "Predicts the propensity of a customer to unsubscribe",
-      )
-
-      expect($models.eq(1).find(selector.card.title)).to.contain(
-        "Propensity to Purchase",
-      )
-      expect($models.eq(1).find(selector.card.description)).to.contain(
-        "Propensity of a customer making a purchase after receiving an email",
-      )
-
-      expect($models.eq(2).find(selector.card.title)).to.contain(
-        "Propensity to Unsubscribe",
-      )
-      expect($models.eq(2).find(selector.card.description)).to.contain(
-        "Predicts the propensity of a customer to unsubscribe from an email list",
-      )
+    cy.get(selector.models.item).each(($models) => {
+      cy.wrap($models)
+        .get(selector.models.activeStatus)
+        .children()
+        .eq(0)
+        .should("satisfy", ($el) => {
+          const classList = Array.from($el[0].classList)
+          return (
+            classList.includes("success--text") ||
+            classList.includes("primary--text")
+          ) // passes
+        })
     })
   })
 })

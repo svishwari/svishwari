@@ -72,6 +72,12 @@ const mutations = {
   SET_LIFT(state, data) {
     state.lift = data
   },
+  SET_ONE(state, item) {
+    Vue.set(state.items, `_${item.id}`, item)
+  },
+  REMOVE_MODEL(state, id) {
+    Vue.delete(state.items, `_${id}`)
+  },
 }
 
 const actions = {
@@ -151,6 +157,39 @@ const actions = {
     commit("SET_MODAL_FEATURE", [])
     commit("SET_FEATURES", [])
     commit("SET_OVERVIEW", {})
+  },
+
+  async batchUpdate({ commit }, dataSources) {
+    try {
+      const response = await api.models.batchUpdate(dataSources)
+      response.data.forEach((each) => {
+        commit("SET_ONE", each)
+      })
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async add({ commit }, model) {
+    try {
+      const response = await api.models.create(model)
+      commit("SET_ONE", response.data)
+      return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async remove({ commit }, model) {
+    try {
+      const response = await api.models.remove(model)
+      commit("REMOVE_MODEL", model.id)
+      return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
   },
 }
 

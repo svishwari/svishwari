@@ -9,7 +9,7 @@
   >
     <template #activator="{ on }">
       <div class="px-4 border-start separator" :class="statClass" v-on="on">
-        <div class="text-h3 mb-0 black--text">{{ value }}</div>
+        <div class="text-h4 black--text">{{ value }}</div>
         <div class="black--text text--lighten-4">{{ label }}</div>
       </div>
     </template>

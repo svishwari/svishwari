@@ -42,3 +42,5 @@ docs/build/*
 # Tests
 /lib/huxunifylib-database/huxunifylib/database/tests/.hypothesis/
 /hux/api/huxunify/test/contract_testing/pact-mock-service.log
+
+.DS_Store

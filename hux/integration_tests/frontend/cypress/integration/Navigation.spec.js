@@ -13,8 +13,8 @@ describe("Navigation", () => {
     cy.location("pathname").should("eq", route.home)
 
     // configuration
-    cy.get(selector.nav.configuration).click()
-    cy.location("pathname").should("eq", route.configuration)
+    // cy.get(selector.nav.configuration).click()
+    // cy.location("pathname").should("eq", route.configuration)
 
     // data sources
     cy.get(selector.nav.dataSources).click()
@@ -33,7 +33,7 @@ describe("Navigation", () => {
     cy.location("pathname").should("eq", route.customerProfiles)
 
     // segment playground
-    cy.get(selector.nav.segmentPlayground).should("exist")
+    // cy.get(selector.nav.segmentPlayground).should("exist")
 
     // destinations
     cy.get(selector.nav.destinations).click()

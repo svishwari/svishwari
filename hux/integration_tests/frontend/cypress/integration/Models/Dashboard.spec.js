@@ -12,7 +12,7 @@ describe("Decisioning > models", () => {
 
     cy.get(selector.models.item).its("length").should("gt", 0)
 
-    cy.get(selector.models.item).first().click()
+    cy.get(selector.models.activeStatus).eq(0).click()
 
     // should be able to view model overview
     cy.get(selector.models.performancemetric)
