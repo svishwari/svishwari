@@ -10,7 +10,7 @@
           :description="dataSource.category"
           :disabled="dataSource.status !== 'Active'"
           :action-menu="dataSource.status !== 'Active'"
-          :interactable="true"
+          :interactable="dataSource.status == 'Active' ? true : false"
           :coming-soon="false"
           :icon-color="true"
           :logo-option="true"
@@ -171,28 +171,5 @@ export default {
       }
     }
   }
-  .data-source-list-active {
-    @extend .cursor-pointer;
-    ::v-deep .card-horizontal-title {
-      color: var(--v-primary-base) !important;
-    }
-  }
-  .data-source-list-pending {
-    @extend .cursor-default;
-  }
-}
-::v-deep.descriptive-card {
-  &.non-interactable {
-    cursor: default;
-    &:hover {
-      @extend .box-shadow-5;
-    }
-  }
-  .description {
-    color: var(--v-black-lighten4) !important;
-  }
-}
-::v-deep.descriptive-card.in-active {
-  box-shadow: none !important;
 }
 </style>
