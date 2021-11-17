@@ -181,7 +181,7 @@ class OrchestrationRouteTest(TestCase):
             create_delivery_platform_lookalike_audience(
                 self.database,
                 self.destinations[0][db_c.ID],
-                self.audiences[0][db_c.ID],
+                self.audiences[0],
                 "Lookalike audience",
                 0.01,
                 "US",

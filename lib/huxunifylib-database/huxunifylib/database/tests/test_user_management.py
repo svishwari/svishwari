@@ -75,7 +75,7 @@ class TestUserManagement(unittest.TestCase):
             dpm.create_delivery_platform_lookalike_audience(
                 self.database,
                 self.delivery_platform_doc[c.ID],
-                self.audience[c.ID],
+                self.audience,
                 "Lookalike audience",
                 0.01,
                 "US",
@@ -164,6 +164,7 @@ class TestUserManagement(unittest.TestCase):
     def test_get_users_filter_and_projection(self) -> None:
         """Test get_all_users routine."""
 
+        # pylint: disable=too-many-function-args
         user_docs = um.get_all_users(
             self.database,
             {c.USER_DISPLAY_NAME: self.user_doc[c.USER_DISPLAY_NAME]},
