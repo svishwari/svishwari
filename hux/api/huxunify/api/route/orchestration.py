@@ -70,7 +70,7 @@ from huxunify.api.route.utils import (
     Validation as validation,
     is_component_favorite,
     get_user_favorites,
-    read_stub_cityzip_data,
+    read_stub_city_zip_data,
 )
 
 # setup the orchestration blueprint
@@ -1073,7 +1073,7 @@ class AudienceRules(SwaggerView):
             pathlib.Path(stubbed_data.__file__).parent / "cityzip_data.csv"
         )
 
-        stub_cityzip_data = read_stub_cityzip_data(stub_city_zip_file)
+        stub_cityzip_data = read_stub_city_zip_data(stub_city_zip_file)
 
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically

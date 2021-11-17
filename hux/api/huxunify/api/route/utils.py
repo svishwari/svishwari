@@ -612,7 +612,7 @@ def read_csv_shap_data(file_path: str, features: list = None) -> dict:
 
 
 # pylint: disable=unspecified-encoding
-def read_stub_cityzip_data(file_path: str) -> list:
+def read_stub_city_zip_data(file_path: str) -> list:
     """Read in City & Zip Data CSV into a dict
 
     Args:

@@ -260,6 +260,10 @@ class OrchestrationRouteTest(TestCase):
     def test_get_audience_rules_success(self):
         """Test the get audience rules route success."""
 
+        mock.patch(
+            "huxunify.api.orchestration.read_stub_city_zip_data",
+            return_value=t_c.CITY_ZIP_STUB_DATA,
+        )
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/rules", headers=t_c.STANDARD_HEADERS
         )
