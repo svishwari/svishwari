@@ -13,7 +13,7 @@
       <v-btn
         plain
         :color="filterLength > 0 ? 'primary base' : 'black lighten3'"
-        :disabled="filterLength > 0 ? false : true"
+        :disabled="!filterLength > 0"
         class="text-button float-right clear-btn"
         @click="clearFilter()"
       >
@@ -204,10 +204,10 @@ export default {
 
   computed: {
     filterLength() {
-      let alert = this.selctedAlertType.length > 0 ? 1 : 0
-      let category = this.selctedCategory.length > 0 ? 1 : 0
+      let alert = this.initializeValue(this.selctedAlertType)
+      let category = this.initializeValue(this.selctedCategory)
       let time = 1
-      let users = this.selctedUsers.length > 0 ? 1 : 0
+      let users = this.initializeValue(this.selctedUsers)
       return alert + category + time + users
     },
   },
@@ -227,6 +227,9 @@ export default {
         today_date.getMonth(),
         today_date.getDate() - value
       )
+    },
+    initializeValue(value) {
+      return value.length > 0 ? 1 : 0
     },
     clearFilter() {
       this.selctedAlertType = []
