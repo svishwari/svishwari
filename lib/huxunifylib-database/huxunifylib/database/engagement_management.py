@@ -867,18 +867,34 @@ def append_destination_to_engagement_audience(
     if not engagement_doc:
         return {}
 
-    audiences = engagement_doc.get(db_c.AUDIENCES, [])
-    audiences.append(destination)
-    engagement_doc[db_c.AUDIENCES] = audiences
-    engagement_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
-    engagement_doc[db_c.UPDATED_BY] = user_name
+    updated = False
+    for i, audience in enumerate(engagement_doc.get(db_c.AUDIENCES)):
+        # match audience
+        if audience.get(db_c.OBJECT_ID) == audience_id:
+            # append destinations to the matched audience
+            engagement_doc[db_c.AUDIENCES][i][
+                db_c.DESTINATIONS
+            ] = audience.get(db_c.DESTINATIONS) + [destination]
+            updated = True
 
-    collection.replace_one(
-        {
-            db_c.ID: engagement_id,
-        },
-        engagement_doc,
-    )
+    # only update if the destination was added.
+    if updated:
+        engagement_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
+        engagement_doc[db_c.UPDATED_BY] = user_name
+
+        collection.replace_one(
+            {
+                db_c.ID: engagement_id,
+            },
+            engagement_doc,
+        )
+    else:
+        logging.error(
+            "There was no matching engagement or audience for appending "
+            "destination %s.",
+            destination.get(db_c.OBJECT_ID),
+        )
+        return {}
 
     return collection.find_one(
         {
