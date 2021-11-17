@@ -953,7 +953,6 @@ class TestEngagementManagement(unittest.TestCase):
 
         destination_to_add = {
             c.OBJECT_ID: destination[c.ID],
-            c.DESTINATIONS: [],
         }
 
         audience_one = om.create_audience(
@@ -988,7 +987,9 @@ class TestEngagementManagement(unittest.TestCase):
             self.user_name,
         )
 
-        self.assertIn(destination_to_add, new_eng[c.AUDIENCES])
+        self.assertListEqual(
+            [destination_to_add], new_eng[c.AUDIENCES][0][c.DESTINATIONS]
+        )
 
     def test_remove_destination_from_engagement_audience(self):
         """Test removing a destination from an engagement audience"""
