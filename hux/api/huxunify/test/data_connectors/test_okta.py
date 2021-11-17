@@ -1,6 +1,8 @@
 """Purpose of this file is to house all the okta tests."""
+# pylint: disable=too-many-public-methods
 import unittest
 import json
+from http import HTTPStatus
 from unittest import TestCase
 import requests_mock
 import mongomock
@@ -9,14 +11,20 @@ from flask import Flask
 from bson import json_util
 from hypothesis import given, strategies as st
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database import constants as db_c
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors import okta
-from huxunify.api.route.decorators import secured, get_user_name
+from huxunify.api.route.decorators import (
+    secured,
+    get_user_name,
+    requires_access_levels,
+)
 from huxunify.api.data_connectors.okta import (
     get_user_info,
     get_token_from_request,
 )
+from huxunify.test import constants as t_c
 
 
 VALID_RESPONSE = {
@@ -204,8 +212,6 @@ class OktaTest(TestCase):
         """
 
         request_mocker.post(self.introspect_call, json=INVALID_RESPONSE)
-
-        invalid_header = (api_c.INVALID_AUTH, 400)
         with Flask("invalid_token").test_request_context(
             "/", headers={"Authorization": "Bearer 123456789"}
         ):
@@ -220,7 +226,10 @@ class OktaTest(TestCase):
 
                 return True
 
-            self.assertEqual(invalid_header, demo_endpoint())
+            self.assertEqual(
+                ({api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.BAD_REQUEST),
+                demo_endpoint(),
+            )
 
     @requests_mock.Mocker()
     def test_secured_decorator_valid_token(self, request_mocker: Mocker):
@@ -234,7 +243,7 @@ class OktaTest(TestCase):
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
         with Flask("valid_test").test_request_context(
-            "/", headers={"Authorization": "Bearer 12345678"}
+            "/", headers=t_c.AUTH_HEADER
         ):
 
             @secured()
@@ -314,7 +323,7 @@ class OktaTest(TestCase):
         request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
 
         with Flask("valid_test").test_request_context(
-            "/", headers={"Authorization": "Bearer 12345678"}
+            "/", headers=t_c.AUTH_HEADER
         ):
 
             @get_user_name()
@@ -432,3 +441,163 @@ class OktaTest(TestCase):
         response = get_user_info("access_token")
         # check if all valid keys exists
         self.assertNotEqual(response.keys(), VALID_USER_RESPONSE.keys())
+
+    @requests_mock.Mocker()
+    def test_access_level_decorator_viewer(self, request_mocker: Mocker):
+        """Test access level decorator viewer.
+
+        Args:
+            request_mocker (Mocker): Request mock object.
+        """
+
+        # setup the request mock post
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
+
+        with Flask("valid_test").test_request_context(
+            "/", headers=t_c.AUTH_HEADER
+        ):
+
+            @requires_access_levels([api_c.VIEWER_LEVEL])
+            def demo_endpoint(user: dict):
+                """Demo endpoint.
+
+                Args:
+                    user (dict): User object dictionary.
+
+                Returns:
+                    bool: True.
+                """
+
+                return user
+
+            # pylint: disable=no-value-for-parameter
+            user_object = demo_endpoint()
+            self.assertTrue(user_object)
+            self.assertTrue(db_c.USER_ROLE_VIEWER, user_object[db_c.USER_ROLE])
+
+    @requests_mock.Mocker()
+    def test_access_level_decorator_restrict_viewer(
+        self, request_mocker: Mocker
+    ):
+        """Test access level decorator with admin and editor restrictions.
+
+        Args:
+            request_mocker (Mocker): Request mock object.
+        """
+
+        # setup the request mock post
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
+
+        with Flask("valid_test").test_request_context(
+            "/", headers=t_c.AUTH_HEADER
+        ):
+
+            @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
+            def demo_endpoint(user: dict):
+                """Demo endpoint.
+
+                Args:
+                    user (dict): User object dictionary.
+
+                Returns:
+                    bool: True.
+                """
+
+                return user
+
+            # pylint: disable=no-value-for-parameter
+            self.assertTupleEqual(
+                ({api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.UNAUTHORIZED),
+                demo_endpoint(),
+            )
+
+    @requests_mock.Mocker()
+    def test_access_level_decorator_admin(self, request_mocker: Mocker):
+        """Test access level decorator with admin.
+
+        Args:
+            request_mocker (Mocker): Request mock object.
+        """
+
+        # setup the request mock post
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        demo_user = {"okta_id": "8548bfh8d", "role": db_c.USER_ROLE_ADMIN}
+
+        # set user to ADMIN
+        request_mocker.get(
+            self.user_info_call,
+            json=VALID_USER_RESPONSE,
+        )
+
+        # mock the user response from DB
+        mock_user_patch = unittest.mock.patch(
+            "huxunify.api.route.utils.get_user",
+            return_value=demo_user,
+        )
+        mock_user_patch.start()
+
+        with Flask("valid_test").test_request_context(
+            "/", headers=t_c.AUTH_HEADER
+        ):
+
+            @requires_access_levels([api_c.ADMIN_LEVEL])
+            def demo_endpoint(user: dict = None):
+                """Demo endpoint.
+
+                Args:
+                    user (dict): User object dictionary.
+
+                Returns:
+                    bool: True.
+                """
+
+                return user
+
+            # pylint: disable=no-value-for-parameter
+            self.assertDictEqual(demo_user, demo_endpoint())
+
+    @requests_mock.Mocker()
+    def test_access_level_decorator_no_role_set(self, request_mocker: Mocker):
+        """Test access level decorator with no role set.
+
+        Args:
+            request_mocker (Mocker): Request mock object.
+        """
+
+        # setup the request mock post
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        # set user to ADMIN
+        request_mocker.get(
+            self.user_info_call,
+            json={
+                **VALID_USER_RESPONSE,
+                db_c.USER_ROLE: api_c.ADMIN_LEVEL.role,
+            },
+        )
+
+        with Flask("valid_test").test_request_context(
+            "/", headers=t_c.AUTH_HEADER
+        ):
+
+            @requires_access_levels([])
+            def demo_endpoint(user: dict):
+                """Demo endpoint.
+
+                Args:
+                    user (dict): User object dictionary.
+
+                Returns:
+                    bool: True.
+                """
+
+                return user
+
+            # pylint: disable=no-value-for-parameter
+            self.assertTupleEqual(
+                ({api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.UNAUTHORIZED),
+                demo_endpoint(),
+            )

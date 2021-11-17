@@ -7,20 +7,6 @@
           class="chart-section"
           @mouseover="getCordinates($event)"
         ></div>
-        <chart-tooltip
-          v-if="showScoreTip"
-          :position="{
-            x: scoreTip.xPosition,
-            y: scoreTip.yPosition,
-          }"
-          :tooltip-style="toolTipStyle"
-        >
-          <template #content>
-            <div class="black--text text--darken-4 caption">
-              {{ scoreTip.score }}
-            </div>
-          </template>
-        </chart-tooltip>
       </div>
     </div>
   </div>
@@ -31,12 +17,9 @@ import * as d3Select from "d3-selection"
 import * as d3Axis from "d3-axis"
 import * as d3Scale from "d3-scale"
 import * as d3Array from "d3-array"
-import ChartTooltip from "@/components/common/Charts/Tooltip/ChartTooltip.vue"
-import TooltipConfiguration from "@/components/common/Charts/Tooltip/tooltipStyleConfiguration.json"
 
 export default {
   name: "HorizontalBarChart",
-  components: { ChartTooltip },
   props: {
     value: {
       type: Array,
@@ -70,7 +53,6 @@ export default {
         y: 0,
       },
       margin: { top: 5, right: 50, bottom: 75, left: 150 },
-      toolTipStyle: TooltipConfiguration.featureChartScore,
     }
   },
 
@@ -241,7 +223,7 @@ export default {
           .classed("removeableCircle", true)
           .attr("cx", this.scoreTip.xPosition)
           .attr("cy", this.scoreTip.yPosition)
-          .attr("r", 4)
+          .attr("r", 7)
           .style("stroke", "#00A3E0")
           .style("stroke-opacity", "1")
           .style("fill", "white")

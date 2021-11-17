@@ -1,5 +1,7 @@
 """File for decorators used in the API routes"""
 # pylint: disable=too-many-statements
+import warnings
+import getpass
 from functools import wraps
 from typing import Any
 from http import HTTPStatus
@@ -131,7 +133,7 @@ def secured() -> object:
             if introspect_token(token_response[0]):
                 return in_function(*args, **kwargs)
 
-            return api_c.INVALID_AUTH, 400
+            return {api_c.MESSAGE: api_c.INVALID_AUTH}, HTTPStatus.BAD_REQUEST
 
         # set tag so we can assert if a function is secured via this decorator
         decorator.__wrapped__ = in_function
@@ -158,6 +160,11 @@ def get_user_name() -> object:
         Returns:
            Response (object): returns a wrapped decorated function object.
         """
+
+        warnings.warn(
+            "This function is being deprecated for requires_access_level().",
+            DeprecationWarning,
+        )
 
         @wraps(in_function)
         def decorator(*args, **kwargs) -> object:
@@ -198,6 +205,89 @@ def get_user_name() -> object:
 
             # return found user
             kwargs[api_c.USER_NAME] = user_response[db_c.USER_DISPLAY_NAME]
+
+            return in_function(*args, **kwargs)
+
+        return decorator
+
+    return wrapper
+
+
+def requires_access_levels(access_levels: list) -> object:
+    """Purpose of this decorator is for validating access levels for requests.
+
+    Example: @requires_access_level()
+
+    Args:
+        access_levels (list): list of access levels.
+
+    Returns:
+        Response (object): decorator
+    """
+
+    def wrapper(in_function) -> object:
+        """Decorator for wrapping a function.
+
+        Args:
+            in_function (object): function object.
+
+        Returns:
+           Response (object): returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for validating access level and returning a
+            user object.
+
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+
+            Returns:
+               Response (object): returns a decorated function object.
+            """
+
+            # override if flag set locally
+            if get_config().TEST_AUTH_OVERRIDE:
+                # return a default user name
+                kwargs[api_c.USER] = {
+                    api_c.NAME: getpass.getuser(),
+                    api_c.USER_ACCESS_LEVEL: db_c.USER_ROLE_ADMIN,
+                    api_c.USER_PII_ACCESS: True,
+                }
+                return in_function(*args, **kwargs)
+
+            # get the access token
+            logger.info("Getting okta access token from request.")
+            token_response = get_token_from_request(request)
+
+            # if not 200, return response
+            if token_response[1] != 200:
+                return token_response
+
+            # get the user info and the corresponding user document from db
+            # from the access_token
+            user = get_user_from_db(token_response[0])
+
+            # if the user_response object is of type tuple, then return it as
+            # such since a failure must have occurred while fetching user data
+            # from db
+            if isinstance(user, tuple):
+                return user
+
+            # check access level
+            access_level = api_c.AccessLevel(user.get(db_c.USER_ROLE))
+            if access_level not in access_levels:
+                logger.info(
+                    "User has an invalid access level to access this resource."
+                )
+                return {
+                    api_c.MESSAGE: api_c.INVALID_AUTH
+                }, HTTPStatus.UNAUTHORIZED
+
+            # return found user
+            kwargs[api_c.USER] = user
 
             return in_function(*args, **kwargs)
 

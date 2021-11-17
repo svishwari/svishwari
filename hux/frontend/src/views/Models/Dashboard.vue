@@ -52,9 +52,93 @@
               data-e2e="performancemetric"
             >
               <metric-card
+                v-if="key === 'created_on'"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :min-width="180"
+                :height="80"
+                :title="metric"
+                subtitle="Created On"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric | Numeric }}
+                    </template>
+                    <template #hover-content>
+                      {{ metric | Empty }}
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
+              <metric-card
+                v-if="key === 'rmse' && metric > 0"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :min-width="122"
+                :height="80"
+                :title="metric"
+                subtitle="2"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric | Numeric }}
+                    </template>
+                    <template #hover-content>
+                      {{ metric | Empty }}
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
+              <metric-card
+                v-if="key === 'auc' && metric > 0"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :min-width="122"
+                :height="80"
+                :title="metric"
+                subtitle="AUC"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric | Numeric }}
+                    </template>
+                    <template #hover-content>
+                      {{ metric | Empty }}
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
+              <metric-card
+                v-if="key === 'precision' && metric > 0"
+                class="model-dashboard__card px-6 py-3 mr-2"
+                :min-width="122"
+                :height="80"
+                :title="metric"
+                subtitle="Precision"
+                :high-level="true"
+                :interactable="false"
+              >
+                <template #title>
+                  <tooltip>
+                    <template #label-content>
+                      {{ metric | Numeric }}
+                    </template>
+                    <template #hover-content>
+                      {{ metric | Empty }}
+                    </template>
+                  </tooltip>
+                </template>
+              </metric-card>
+              <metric-card
                 v-if="key === 'recall' && metric > 0"
                 class="model-dashboard__card px-6 py-3 mr-2"
-                :max-width="122"
+                :min-width="122"
                 :height="80"
                 :title="metric"
                 subtitle="Recall"
@@ -75,7 +159,7 @@
               <metric-card
                 v-if="key === 'current_version'"
                 class="model-dashboard__card px-6 py-3 mr-2"
-                :max-width="152"
+                :min-width="152"
                 :height="80"
                 :title="metric"
                 subtitle="Current version"
@@ -108,70 +192,6 @@
                   </tooltip>
                 </template>
               </metric-card>
-              <metric-card
-                v-if="key === 'rmse' && metric > 0"
-                class="model-dashboard__card px-6 py-3 mr-2"
-                :max-width="122"
-                :height="80"
-                :title="metric"
-                subtitle="2"
-                :high-level="true"
-                :interactable="false"
-              >
-                <template #title>
-                  <tooltip>
-                    <template #label-content>
-                      {{ metric | Numeric }}
-                    </template>
-                    <template #hover-content>
-                      {{ metric | Empty }}
-                    </template>
-                  </tooltip>
-                </template>
-              </metric-card>
-              <metric-card
-                v-if="key === 'auc' && metric > 0"
-                class="model-dashboard__card px-6 py-3 mr-2"
-                :max-width="122"
-                :height="80"
-                :title="metric"
-                subtitle="AUC"
-                :high-level="true"
-                :interactable="false"
-              >
-                <template #title>
-                  <tooltip>
-                    <template #label-content>
-                      {{ metric | Numeric }}
-                    </template>
-                    <template #hover-content>
-                      {{ metric | Empty }}
-                    </template>
-                  </tooltip>
-                </template>
-              </metric-card>
-
-              <metric-card
-                v-if="key === 'precision' && metric > 0"
-                class="model-dashboard__card px-6 py-3 mr-2"
-                :max-width="122"
-                :height="80"
-                :title="metric"
-                subtitle="Precision"
-                :high-level="true"
-                :interactable="false"
-              >
-                <template #title>
-                  <tooltip>
-                    <template #label-content>
-                      {{ metric | Numeric }}
-                    </template>
-                    <template #hover-content>
-                      {{ metric | Empty }}
-                    </template>
-                  </tooltip>
-                </template>
-              </metric-card>
             </div>
           </div>
         </v-col>
@@ -191,7 +211,7 @@
               class="chart-style pb-2 pl-5 pt-5"
             >
               <div class="mt-2">
-                <span class="black--text text--darken-4 text-h5">
+                <span class="black--text text--darken-4 text-h3">
                   Top
                   {{ modelFeatures.length }}
                   feature importance
@@ -256,7 +276,7 @@
             />
             <div
               v-if="driftChartData.length != 0"
-              class="pt-5 pl-2 pb-10 black--text text--darken-4 text-h5"
+              class="pt-5 pl-2 pb-10 black--text text--darken-4 text-h3"
             >
               Drift
               <span
@@ -333,7 +353,7 @@
           <v-card class="rounded-lg box-shadow-5 px-6 py-5">
             <div
               v-if="lift.length != 0"
-              class="black--text text--darken-4 text-h5 pb-4"
+              class="black--text text--darken-4 text-h3 pb-4"
             >
               Lift chart
             </div>
@@ -397,7 +417,7 @@
           >
             <div
               v-if="dashboardFeatureSize"
-              class="black--text text--darken-4 text-h5 pb-4"
+              class="black--text text--darken-4 text-h3 pb-4"
             >
               Features ({{ dashboardFeatureSize }})
             </div>

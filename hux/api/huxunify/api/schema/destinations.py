@@ -181,7 +181,7 @@ class DestinationGetSchema(Schema):
                     api_c.STATUS_ACTIVE,
                     api_c.STATUS_PENDING,
                     api_c.STATUS_ERROR,
-                    api_c.REQUESTED,
+                    api_c.STATUS_REQUESTED,
                 ]
             )
         ],

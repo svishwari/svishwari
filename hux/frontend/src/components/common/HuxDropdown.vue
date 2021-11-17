@@ -13,7 +13,7 @@
       <template #activator="{ on }">
         <v-list-item
           v-if="isSubMenu"
-          class="d-flex justify-space-between pr-1"
+          class="d-flex justify-space-between pr-1 text-body-1"
           v-on="on"
         >
           {{ label }}
@@ -28,7 +28,7 @@
           icon=" mdi-chevron-down"
           icon-position="right"
           tile
-          class="ma-2 main-button pr-1"
+          class="ma-2 main-button pr-1 text-body-1"
           @click="openMenu = true"
         >
           {{ isSubMenu ? item.name : optionSelected["name"] || label }}
@@ -138,8 +138,9 @@ export default {
     box-shadow: none !important;
     background-color: var(--v-white-base) !important;
     background: var(--v-white-base) !important;
-    font-size: 14px;
-    line-height: 22px;
+    font-size: 16px !important;
+    line-height: 22px !important;
+    font-weight: 400 !important;
     width: auto !important;
     min-width: 200px;
     color: var(--v-black-darken4);
@@ -169,7 +170,7 @@ export default {
   }
   .group_title {
     text-transform: uppercase;
-    color: var(--v-black-darken1);
+    color: var(--v-black-lighten4);
   }
 }
 </style>

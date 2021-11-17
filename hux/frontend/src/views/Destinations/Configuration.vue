@@ -634,7 +634,6 @@ export default {
         let requestedDestination = {}
         if (this.selectedDestination) {
           requestedDestination = {
-            id: this.selectedDestination.id,
             name: this.selectedDestination.name,
           }
         }
