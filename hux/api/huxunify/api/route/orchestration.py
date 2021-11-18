@@ -1527,7 +1527,7 @@ class DeleteAudienceView(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
-            f"Audience {audience_id} successfully deleted by {user_name}.",
+            f'Audience "{audience_id}" successfully deleted by {user_name}.',
             api_c.ORCHESTRATION_TAG,
         )
 

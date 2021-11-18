@@ -508,7 +508,7 @@ class CreateTicket(SwaggerView):
         create_notification(
             database=get_db_client(),
             notification_type=db_constants.NOTIFICATION_TYPE_INFORMATIONAL,
-            description=f"{user_name} created a new issue {new_issue.get(api_c.KEY)} in JIRA",
+            description=f"{user_name} created a new issue {new_issue.get(api_c.KEY)} in JIRA.",
             category=api_c.TICKET_TYPE_BUG,
             username=user_name,
         )

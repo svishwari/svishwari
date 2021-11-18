@@ -967,7 +967,7 @@ class AddDestinationEngagedAudience(SwaggerView):
             (
                 f'Destination "{destination_to_attach[db_c.NAME]}" added to '
                 f'audience "{audience[db_c.NAME]}" from engagement '
-                f'"{engagement[db_c.NAME]}" by {user_name}'
+                f'"{engagement[db_c.NAME]}" by {user_name}.'
             ),
             api_c.ENGAGEMENT_TAG,
             user_name,
@@ -1115,7 +1115,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             (
                 f'Destination "{destination_to_remove[db_c.NAME]}" removed from audience '
                 f'"{audience[db_c.NAME]}" from engagement '
-                f'"{engagement[db_c.NAME]}" by {user_name}'
+                f'"{engagement[db_c.NAME]}" by {user_name}.'
             ),
             api_c.ENGAGEMENT_TAG,
             user_name,

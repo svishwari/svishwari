@@ -983,7 +983,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
                 f"Successfully updated the delivery schedule"
                 f' for destination "{destination_id}"'
                 f' from audience "{audience_id}"'
-                f' in engagement "{engagement_id}"'
+                f' in engagement "{engagement_id}".'
             ),
             api_c.DELIVERY_TAG,
             user_name,
@@ -1066,7 +1066,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
                 f"Successfully removed the delivery schedule"
                 f' for destination "{destination_id}"'
                 f' from audience "{audience_id}"'
-                f' in engagement "{engagement_id}"'
+                f' in engagement "{engagement_id}".'
             ),
             api_c.DELIVERY_TAG,
             user_name,
