@@ -488,17 +488,15 @@ class CustomerProfileSearch(SwaggerView):
             api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
         )
 
-        idr_data = api_c.CUSTOMER_IDR_TEST_DATA
-        # TODO : Fetch IDR data from CDP once it is ready
-        # api_c.IDENTITY_RESOLUTION: redacted_data[api_c.IDENTITY_RESOLUTION]
-
         return (
             CustomerProfileSchema().dump(
                 {
                     api_c.OVERVIEW: redacted_data,
                     api_c.INSIGHTS: redacted_data,
                     api_c.CONTACT_PREFERENCES: redacted_data,
-                    api_c.IDENTITY_RESOLUTION: add_chart_legend(idr_data),
+                    api_c.IDENTITY_RESOLUTION: add_chart_legend(
+                        redacted_data.get(api_c.IDENTITY_RESOLUTION, {})
+                    ),
                 }
             ),
             HTTPStatus.OK.value,
