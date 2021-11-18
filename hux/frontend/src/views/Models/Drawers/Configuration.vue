@@ -177,7 +177,6 @@ export default {
     }),
     async onModelClick(model) {
       const payload = {
-        type: model.type,
         name: model.name,
         id: model.id,
         status: "Requested",
