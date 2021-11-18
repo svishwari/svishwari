@@ -222,6 +222,7 @@ export default {
     tbody {
       tr {
         td {
+          height: 40px !important;
           &:first-child {
             padding: 9px 10px 9px 25px !important;
           }
