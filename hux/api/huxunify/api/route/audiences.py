@@ -309,7 +309,7 @@ class AudienceDownload(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            f"{user_name} downloaded the audience, {audience[db_c.NAME]}"
+            f'{user_name} downloaded the audience, "{audience[db_c.NAME]}"'
             f" with format {download_type}.",
             api_c.ORCHESTRATION_TAG,
             user_name,
