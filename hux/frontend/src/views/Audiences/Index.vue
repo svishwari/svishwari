@@ -92,12 +92,12 @@
                 @actionFavorite="handleActionFavorite(item, 'audiences')"
               />
             </div>
-            <div v-if="header.value == 'status'" class="text-h5">
+            <div v-if="header.value == 'status'">
               <status
                 :status="item[header.value]"
                 :show-label="true"
                 class="d-flex"
-                :icon-size="17"
+                :icon-size="18"
               />
             </div>
             <div v-if="header.value == 'size'">
@@ -339,12 +339,14 @@ export default {
         {
           text: "Status",
           value: "status",
-          width: "160px",
+          width: "200px",
         },
         {
           text: "Size",
           value: "size",
-          width: "112px",
+          width: "179px",
+          hoverTooltip: "Current number of customers who fit the selected attributes.",
+          tooltipWidth: 231,
         },
         {
           text: "Destinations",
@@ -354,27 +356,27 @@ export default {
         {
           text: "Last delivered",
           value: "last_delivered",
-          width: "162",
+          width: "170",
         },
         {
           text: "Last updated",
           value: "update_time",
-          width: "154",
+          width: "180",
         },
         {
           text: "Last updated by",
           value: "updated_by",
-          width: "148",
+          width: "181",
         },
         {
           text: "Created",
           value: "create_time",
-          width: "154",
+          width: "182",
         },
         {
           text: "Created by",
           value: "created_by",
-          width: "148",
+          width: "182",
         },
       ],
       loading: false,
@@ -549,7 +551,7 @@ export default {
         th:nth-child(1) {
           position: sticky;
           left: 0;
-          // z-index: 9;
+          z-index: 3;
           border-right: thin solid rgba(0, 0, 0, 0.12);
           overflow-y: visible;
           overflow-x: visible;
@@ -581,10 +583,10 @@ export default {
           box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
         }
         td.fixed-column {
-          // z-index: 1 !important;
+          z-index: 1 !important;
           box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
           &:hover {
-            z-index: 1 !important;
+            z-index: 2 !important;
             background: var(--v-primary-lighten2) !important;
             box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
           }
@@ -595,7 +597,7 @@ export default {
     table {
       tr {
         td {
-          font-size: 14px;
+          font-size: 16px;
         }
       }
       tbody {
