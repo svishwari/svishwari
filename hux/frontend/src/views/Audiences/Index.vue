@@ -345,7 +345,8 @@ export default {
           text: "Size",
           value: "size",
           width: "179px",
-          hoverTooltip: "Current number of customers who fit the selected attributes.",
+          hoverTooltip:
+            "Current number of customers who fit the selected attributes.",
           tooltipWidth: 231,
         },
         {
