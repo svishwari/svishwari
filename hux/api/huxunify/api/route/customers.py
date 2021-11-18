@@ -31,11 +31,10 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
-    get_user_name,
+    requires_access_levels,
 )
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
-    introspect_token,
 )
 from huxunify.api.data_connectors.cdp import (
     get_customer_profiles,
@@ -60,7 +59,6 @@ from huxunify.api.route.utils import (
     add_chart_legend,
     get_start_end_dates,
     get_db_client,
-    get_user_doc,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import (
@@ -479,8 +477,10 @@ class CustomerProfileSearch(SwaggerView):
     # pylint: disable=no-self-use
     # pylint: disable=unused-argument
     @api_error_handler()
-    @get_user_name()
-    def get(self, hux_id: str, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels(
+        [api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL, api_c.VIEWER_LEVEL]
+    )
+    def get(self, hux_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves a customer profile.
 
         ---
@@ -488,7 +488,7 @@ class CustomerProfileSearch(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): User Name
+            user (dict): User doc
             hux_id (str): ID of the customer.
 
         Returns:
@@ -499,15 +499,15 @@ class CustomerProfileSearch(SwaggerView):
             request.args.get(api_c.REDACT_FIELD, "True")
         )
         Validation.validate_hux_id(hux_id)
-        okta_id = introspect_token(token_response[0]).get(
-            api_c.OKTA_USER_ID, None
-        )
-        if not okta_id:
-            return {"message": "Access Denied"}, HTTPStatus.UNAUTHORIZED
+        # okta_id = introspect_token(token_response[0]).get(
+        #     api_c.OKTA_USER_ID, None
+        # )
+        # if not okta_id:
+        #     return {"message": "Access Denied"}, HTTPStatus.UNAUTHORIZED
 
-        user_doc = get_user_doc(get_db_client(), user_name)
+        # user_doc = get_user_doc(get_db_client(), user_name)
 
-        if user_doc[api_c.USER_PII_ACCESS] and not redact:
+        if user[api_c.USER_PII_ACCESS] and not redact:
             redacted_data = get_customer_profile(token_response[0], hux_id)
         else:
             redacted_data = redact_fields(
@@ -525,7 +525,7 @@ class CustomerProfileSearch(SwaggerView):
                     api_c.INSIGHTS: redacted_data,
                     api_c.CONTACT_PREFERENCES: redacted_data,
                     api_c.IDENTITY_RESOLUTION: add_chart_legend(idr_data),
-                    api_c.USER_PII_ACCESS: user_doc[api_c.USER_PII_ACCESS],
+                    api_c.USER_PII_ACCESS: user[api_c.USER_PII_ACCESS],
                 }
             ),
             HTTPStatus.OK.value,
