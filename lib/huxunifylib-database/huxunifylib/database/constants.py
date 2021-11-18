@@ -164,6 +164,7 @@ JOB_STATUS = "status"
 STATUS_MESSAGE = "status_message"
 RECENT_INGESTION_JOB_STATUS = "recent_ingestion_job_status"
 EXPIRE_AT = "expireAt"
+TS = "_ts"
 CREATE_TIME = "create_time"
 UPDATE_TIME = "update_time"
 CREATED_BY = "created_by"
@@ -343,6 +344,9 @@ LOOKALIKE_AUD_NAME = "name"
 LOOKALIKE_AUD_SIZE_PERCENTAGE = "audience_size_percentage"
 LOOKALIKE_AUD_COUNTRY = "country"
 LOOKALIKE_SOURCE_AUD_ID = "source_audience_id"
+LOOKALIKE_SOURCE_AUD_NAME = "source_audience_name"
+LOOKALIKE_SOURCE_AUD_SIZE = "source_audience_size"
+LOOKALIKE_SOURCE_AUD_FILTERS = "source_audience_filters"
 
 USER_ROLE = "role"
 USER_ID = "user_id"
@@ -366,7 +370,7 @@ CAMPAIGNS = "campaigns"
 DESTINATIONS = "destinations"
 AUDIENCES = "audiences"
 ENGAGEMENTS = "engagements"
-FAVORITE_COMPONENTS = [AUDIENCES, ENGAGEMENTS]
+FAVORITE_COMPONENTS = [AUDIENCES, ENGAGEMENTS, LOOKALIKE]
 
 DELIVERY_JOB_ID = "delivery_job_id"
 DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID = "delivery_platform_generic_campaign_id"
@@ -502,4 +506,5 @@ ALLOWED_FIELDS = {
 ALLOWED_COLLECTIONS = [
     CONFIGURATIONS_COLLECTION,
     DELIVERY_PLATFORM_COLLECTION,
+    LOOKALIKE_AUDIENCE_COLLECTION,
 ]

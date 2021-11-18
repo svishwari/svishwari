@@ -36,7 +36,7 @@
       <v-row>
         <v-col col="6">
           <div class="model-dashboard__card pa-4">
-            <label class="black--text text--lighten-4 ma-0">
+            <label class="text-body-2 black--text text--lighten-4 ma-0">
               Description
             </label>
             <p class="text-body-1 ma-0">
@@ -60,6 +60,7 @@
                 subtitle="Created On"
                 :high-level="true"
                 :interactable="false"
+                :title-above="true"
               >
                 <template #title>
                   <tooltip>
@@ -81,6 +82,7 @@
                 subtitle="2"
                 :high-level="true"
                 :interactable="false"
+                :title-above="true"
               >
                 <template #title>
                   <tooltip>
@@ -102,6 +104,7 @@
                 subtitle="AUC"
                 :high-level="true"
                 :interactable="false"
+                :title-above="true"
               >
                 <template #title>
                   <tooltip>
@@ -123,6 +126,7 @@
                 subtitle="Precision"
                 :high-level="true"
                 :interactable="false"
+                :title-above="true"
               >
                 <template #title>
                   <tooltip>
@@ -144,6 +148,7 @@
                 subtitle="Recall"
                 :high-level="true"
                 :interactable="false"
+                :title-above="true"
               >
                 <template #title>
                   <tooltip>
@@ -165,6 +170,7 @@
                 subtitle="Current version"
                 :high-level="true"
                 :interactable="false"
+                :title-above="true"
               >
                 <template #title>
                   <tooltip>
@@ -262,6 +268,12 @@
                 </template>
               </empty-page>
             </v-row>
+            <div
+              v-if="modelFeatures.length != 0"
+              class="pt-2 pb-6 text-center black--text text-body-1"
+            >
+              Score
+            </div>
           </v-card>
         </v-col>
         <v-col md="6" :class="driftChartData.length == 0 ? 'pt-3' : 'pt-0'">
@@ -288,7 +300,7 @@
               >
                 RMSE
               </span>
-              <span v-else class="black--text text--darken-1"> AUC </span>
+              <span v-else class="black--text text--lighten-4"> AUC </span>
             </div>
             <div ref="decisioning-drift">
               <drift-chart
@@ -341,7 +353,7 @@
             </div>
             <div
               v-if="driftChartData.length != 0"
-              class="py-5 text-center black--text text--darken-4 text-h6"
+              class="pt-2 pb-6 text-center black--text text-body-1"
             >
               Date
             </div>

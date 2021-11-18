@@ -2,6 +2,7 @@
 """This module contains connector defines."""
 import os
 import random
+from collections import namedtuple
 
 from huxunifylib.database import constants as db_c
 
@@ -13,6 +14,7 @@ TEST_AUTH_OVERRIDE = "TEST_AUTH_OVERRIDE"
 SSM_INIT_LOAD_DELIMITER = "||"
 HOST = "host"
 PORT = "port"
+USER = "user"
 USERNAME = "username"
 PASSWORD = "password"
 SSL_CERT_PATH = "ssl_cert_path"
@@ -84,9 +86,6 @@ OVERVIEW = "overview"
 DATE_RANGE = "date_range"
 HUX_ID = "hux_id"
 LIMIT = "limit"
-SOURCE_NAME = "source_name"
-SOURCE_SIZE = "source_size"
-SOURCE_ID = "source_id"
 CREATE_TIME = "create_time"
 CONTACT_EMAIL = "contact_email"
 CLIENT_REQUEST = "client_request"
@@ -275,6 +274,7 @@ STATUS_INACTIVE = "Inactive"
 STATUS_DISABLED = "Disabled"
 STATUS_DRAFT = "Draft"
 STATUS_PENDING = "Pending"
+STATUS_REQUESTED = "Requested"
 STATUS_ERROR = "Error"
 STATUS_PAUSED = "Paused"
 STATUS_STOPPED = "Stopped"
@@ -804,6 +804,14 @@ OKTA_USER_ID = "user_id"
 OKTA_UID = "uid"
 OKTA_ID_SUB = "sub"
 
+# define access levels for RBAC
+AccessLevel = namedtuple(
+    "AccessLevel", db_c.USER_ROLE, defaults=(db_c.USER_ROLE_VIEWER,)
+)
+ADMIN_LEVEL = AccessLevel(db_c.USER_ROLE_ADMIN)
+EDITOR_LEVEL = AccessLevel(db_c.USER_ROLE_EDITOR)
+VIEWER_LEVEL = AccessLevel(db_c.USER_ROLE_VIEWER)
+
 # Orchestration API fields
 ORCHESTRATION_ENDPOINT = "/orchestration"
 AUDIENCE_ENDPOINT = "/audiences"
@@ -831,6 +839,7 @@ LOOKALIKE_AUDIENCES = "lookalike_audiences"
 LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 LOOKALIKEABLE = "lookalikeable"
 IS_LOOKALIKE = "is_lookalike"
+LOOKALIKE = "lookalike"
 WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
 

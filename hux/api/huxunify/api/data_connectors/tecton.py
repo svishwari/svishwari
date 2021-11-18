@@ -74,12 +74,12 @@ def map_model_response(response: dict) -> List[dict]:
             api_c.LAST_TRAINED: parser.parse(feature[0]),
             api_c.DESCRIPTION: feature[1],
             api_c.FULCRUM_DATE: parser.parse(feature[2]),
-            api_c.LOOKBACK_WINDOW: 7,
+            api_c.LOOKBACK_WINDOW: int(feature[8]),
             api_c.NAME: feature[4],
             api_c.TYPE: str(feature[5]).lower(),
             api_c.OWNER: feature[6],
             api_c.STATUS: api_c.MODEL_STATUS_MAPPING.get(
-                feature[8], api_c.STATUS_PENDING
+                feature[9], api_c.STATUS_PENDING
             ),
             api_c.LATEST_VERSION: feature[10],
             api_c.PREDICTION_WINDOW: int(feature[3]),

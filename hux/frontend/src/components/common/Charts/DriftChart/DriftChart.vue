@@ -198,7 +198,7 @@ export default {
         xAxis = svg
           .append("g")
           .attr("transform", `translate(0,${height - this.margin.bottom})`)
-          .style("font-size", 12)
+          .style("font-size", 14)
           .call(
             d3Axis
               .axisBottom(xCoordinateFunction)
@@ -211,7 +211,7 @@ export default {
         xAxis = svg
           .append("g")
           .attr("transform", `translate(0,${height - this.margin.bottom})`)
-          .style("font-size", 12)
+          .style("font-size", 14)
           .call(
             d3Axis
               .axisBottom(xCoordinateFunction)
@@ -224,7 +224,7 @@ export default {
         xAxis = svg
           .append("g")
           .attr("transform", `translate(0,${height - this.margin.bottom})`)
-          .style("font-size", 12)
+          .style("font-size", 14)
           .call(
             d3Axis
               .axisBottom(xCoordinateFunction)
@@ -239,7 +239,7 @@ export default {
       let yAxis = svg
         .append("g")
         .attr("transform", `translate(${this.margin.left},0)`)
-        .style("font-size", 12)
+        .style("font-size", 14)
         .call(
           d3Axis
             .axisLeft(yCoordinateFunction)

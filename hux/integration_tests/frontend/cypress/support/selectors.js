@@ -75,7 +75,7 @@ export default {
   destination: {
     drawerToggle: "[data-e2e='drawerToggle']",
     addDestination: "[data-e2e='addDestination']",
-    destinationsList: "[tabindex='0'][data-e2e='destinationsDrawer']",
+    destinationsList: "[data-e2e='destinationsDrawer']",
     requestableDestinationsList: "[data-e2e='requestDestinationDrawer']",
     destinationConfigDetails: "[data-e2e='destinationConfigDetails']",
     validateDestination: "[data-e2e='validateDestination']",
@@ -84,6 +84,7 @@ export default {
     destinationRemoveConfirmFooter: ".confirm-modal-footer",
     destinationRemoveConfirmBody: ".confirm-modal-body",
     removeDestinationText: "[data-e2e='remove-destination-text']",
+    cancelRequestDestination: "[data-e2e='cancel-destination-request']",
   },
 
   // decisioning
@@ -99,6 +100,8 @@ export default {
     versionhistorybutton: "[data-e2e='version-history-button']",
     modelDashboardOptions: "[data-e2e='model-dashboard-options']",
     versionhistory: "[data-e2e='version-history']",
+    status: "[data-e2e='model-status']",
+    activeStatus: "[data-e2e='model-status-Active']",
   },
 
   // engagements
@@ -169,6 +172,8 @@ export default {
       geoDrawerTableHeaders: "table thead tr",
       geoDrawerTableItems: "table tbody tr",
     },
+    eventsDrawerButton: "[data-e2e='eventsDrawerButton']",
+    customerEventRow: "[data-e2e='customerEventRow']",
   },
 
   //IDR

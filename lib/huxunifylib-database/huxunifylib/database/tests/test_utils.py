@@ -129,7 +129,7 @@ class TestUtils(unittest.TestCase):
         self.lookalike_doc_1 = dpm.create_delivery_platform_lookalike_audience(
             self.database,
             self.delivery_platform_doc_1[c.ID],
-            self.audience_doc_1[c.ID],
+            self.audience_doc_1,
             "My lookalike audience 1",
             0.01,
             "US",
@@ -138,7 +138,7 @@ class TestUtils(unittest.TestCase):
         self.lookalike_doc_2 = dpm.create_delivery_platform_lookalike_audience(
             self.database,
             self.delivery_platform_doc_2[c.ID],
-            self.audience_doc_2[c.ID],
+            self.audience_doc_2,
             "My lookalike audience 2",
             0.01,
             "US",
@@ -267,7 +267,7 @@ class TestUtils(unittest.TestCase):
         doc = dpm.create_delivery_platform_lookalike_audience(
             database,
             delivery_platform_id,
-            audience_id,
+            audience_doc,
             "My lookalike audience",
             0.01,
             "US",

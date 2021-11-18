@@ -10,6 +10,7 @@
           :size="22"
           class="cursor-pointer"
           color="black-darken4"
+          @click.native="toggleFilterDrawer()"
         />
       </template>
     </page-header>
@@ -37,6 +38,11 @@
         </huxButton>
       </template>
     </page-header>
+    <alert-filter-drawer
+      v-model="isFilterToggled"
+      :users="getNotificationUsers"
+      @onSectionAction="alertfunction"
+    />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <v-row
       v-if="notificationData.length > 0 && !loading"
@@ -61,7 +67,7 @@
             :style="{ width: header.width, left: 0 }"
           >
             <div v-if="header.value == 'id'">
-              <a @click="toggleProfilesDrawer(item[header.value])"
+              <a @click="toggleDrawer(item[header.value])"
                 >{{ item[header.value] }}
               </a>
             </div>
@@ -160,8 +166,9 @@ import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Observer from "@/components/common/Observer"
-import AlertDrawer from "./Drawer/AlertDrawer"
 import Icon from "@/components/common/Icon"
+import AlertFilterDrawer from "./AlertFilter"
+import AlertDrawer from "./Drawer/AlertDrawer"
 import EmptyPage from "@/components/common/EmptyPage"
 import Error from "@/components/common/screens/Error"
 
@@ -175,8 +182,9 @@ export default {
     TimeStamp,
     Tooltip,
     Observer,
-    AlertDrawer,
     Icon,
+    AlertFilterDrawer,
+    AlertDrawer,
     EmptyPage,
     Error,
   },
@@ -233,11 +241,8 @@ export default {
       loading: false,
       enableLazyLoad: false,
       lastBatch: 0,
-      batchDetails: {
-        batchSize: 25,
-        batchNumber: 1,
-        isLazyLoad: false,
-      },
+      batchDetails: {},
+      isFilterToggled: false,
       notificationId: null,
     }
   },
@@ -245,17 +250,23 @@ export default {
     ...mapGetters({
       notifications: "notifications/list",
       totalNotifications: "notifications/total",
+      getUsers: "notifications/userList",
     }),
 
     notificationData() {
       let sortedNotificaitonList = this.notifications
       return sortedNotificaitonList.sort((a, b) => a.id - b.id)
     },
+    getNotificationUsers() {
+      return this.getUsers
+    },
   },
 
   async mounted() {
     this.loading = true
+    await this.getUserData()
     try {
+      this.setDefaultData()
       await this.fetchNotificationsByBatch()
       this.calculateLastBatch()
     } finally {
@@ -270,11 +281,12 @@ export default {
     ...mapActions({
       getAllNotifications: "notifications/getAll",
       getNotificationByID: "notifications/getById",
+      getUsersNoti: "notifications/getAllUsers",
     }),
     goBack() {
       this.$router.go(-1)
     },
-    async toggleProfilesDrawer(notificationId) {
+    async toggleDrawer(notificationId) {
       this.notificationId = notificationId
       await this.getNotificationByID(notificationId)
       this.alertDrawer = !this.alertDrawer
@@ -291,10 +303,16 @@ export default {
       await this.getAllNotifications(this.batchDetails)
       this.batchDetails.batchNumber++
     },
+    async getUserData() {
+      await this.getUsersNoti()
+    },
     calculateLastBatch() {
       this.lastBatch = Math.ceil(
         this.totalNotifications / this.batchDetails.batchSize
       )
+    },
+    toggleFilterDrawer() {
+      this.isFilterToggled = !this.isFilterToggled
     },
     getIconColor(value) {
       if (value) {
@@ -309,6 +327,14 @@ export default {
       if (value) {
         return value === "Informational" ? "lighten6" : "base"
       }
+    },
+    setDefaultData() {
+      this.batchDetails.batchSize = 25
+      this.batchDetails.batchNumber = 1
+      this.batchDetails.isLazyLoad = false
+    },
+    alertfunction() {
+      //TODO: Apply Filter API Integration
     },
   },
 }

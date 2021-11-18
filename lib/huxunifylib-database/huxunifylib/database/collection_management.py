@@ -201,6 +201,7 @@ def get_documents(
     database: DatabaseClient,
     collection: str,
     query_filter: Union[dict, None] = None,
+    projection: Union[dict, None] = None,
     sort_order: Union[dict, None] = None,
     batch_size: int = 100,
     batch_number: int = 1,
@@ -210,7 +211,9 @@ def get_documents(
     Args:
         database (DatabaseClient): A database client.
         collection (str): Collection name.
-        query_filter (Union[list[Tuple], None]): Mongo filter Query.
+        query_filter (Union[dict[Tuple], None]): Mongo filter Query.
+        projection (Union[dict[Tuple], None]): Dict that specifies
+        which fields to return or not return. .
         sort_order (Tuple[str, int]): Mongo sort order.
         batch_size (int): Number of documents per batch.
         batch_number (int): Number of which batch should be returned.
@@ -230,14 +233,20 @@ def get_documents(
     coll = database[c.DATA_MANAGEMENT_DATABASE][collection]
 
     skips = batch_size * (batch_number - 1)
+
     query_filter = query_filter if query_filter else {}
-    query_filter[c.DELETED] = False
+    if c.DELETED not in query_filter:
+        query_filter[c.DELETED] = False
+
+    projection = projection if projection else {}
+    if c.DELETED not in projection:
+        projection[c.DELETED] = 0
 
     try:
         return dict(
             total_records=coll.count_documents(query_filter),
             documents=list(
-                coll.find(query_filter)
+                coll.find(query_filter, projection)
                 .sort(
                     sort_order
                     if sort_order
