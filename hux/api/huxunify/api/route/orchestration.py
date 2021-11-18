@@ -1409,6 +1409,17 @@ class SetLookalikeAudience(SwaggerView):
         logger.info(
             "Successfully created delivery platform lookalike audience."
         )
+
+        # add notification
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f"New lookalike audience named "
+                f'"{lookalike_audience[db_c.NAME]}" added by {user_name}.'
+            ),
+            api_c.ORCHESTRATION_TAG,
+        )
         return (
             LookalikeAudienceGetSchema().dump(lookalike_audience),
             HTTPStatus.ACCEPTED,

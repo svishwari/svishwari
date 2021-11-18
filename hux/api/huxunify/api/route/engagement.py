@@ -1211,11 +1211,13 @@ class UpdateCampaignsForAudience(SwaggerView):
     @api_error_handler()
     @validate_engagement_and_audience()
     @validate_destination()
+    @get_user_name()
     def put(
         self,
         engagement_id: ObjectId,
         audience_id: ObjectId,
         destination_id: ObjectId,
+        user_name: str,
     ) -> Tuple[dict, int]:
         """Updates campaigns for an engagement audience.
 
@@ -1227,6 +1229,7 @@ class UpdateCampaignsForAudience(SwaggerView):
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
             destination_id (ObjectId): Destination ID.
+            user_name (str): user_name extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -1365,6 +1368,18 @@ class UpdateCampaignsForAudience(SwaggerView):
             "Successfully attached campaigns to engagement %s audience %s.",
             engagement_id,
             audience_id,
+        )
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                "Successfully attached campaigns to engagement %s audience %s.",
+                engagement_id,
+                audience_id,
+            ),
+            api_c.ENGAGEMENT_TAG,
+            user_name,
         )
 
         # toggle routers since the engagement was updated.

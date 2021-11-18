@@ -976,6 +976,19 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
             user_name,
         )
 
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f"Successfully updated the delivery schedule"
+                f' for destination "{destination_id}"'
+                f' from audience "{audience_id}"'
+                f' in engagement "{engagement_id}"'
+            ),
+            api_c.DELIVERY_TAG,
+            user_name,
+        )
+
         # TODO schedule the actual JOB, in another PR for HUS-1148
 
         return {
@@ -1045,6 +1058,19 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
             unset=True,
         )
         # TODO remove the scheduled JOB from AWS, in another PR for HUS-1148
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f"Successfully removed the delivery schedule"
+                f' for destination "{destination_id}"'
+                f' from audience "{audience_id}"'
+                f' in engagement "{engagement_id}"'
+            ),
+            api_c.DELIVERY_TAG,
+            user_name,
+        )
 
         return {
             "message": "Successfully removed the delivery schedule."

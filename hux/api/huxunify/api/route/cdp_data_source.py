@@ -521,8 +521,18 @@ class BatchUpdateDataSources(SwaggerView):
                     for data_source_id in data_source_ids
                 ]
                 logger.info(
-                    "Successfully update data sources with data source IDs %s.",
+                    "Successfully updated data sources with data source IDs %s.",
                     ",".join([str(x) for x in data_source_ids]),
+                )
+
+                create_notification(
+                    database,
+                    db_c.NOTIFICATION_TYPE_SUCCESS,
+                    (
+                        "Successfully updated data sources with data source IDs %s.",
+                        ",".join([str(x) for x in data_source_ids]),
+                    ),
+                    api_c.CDP_DATA_SOURCES_TAG,
                 )
                 return (
                     jsonify(
