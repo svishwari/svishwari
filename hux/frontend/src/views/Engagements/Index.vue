@@ -86,15 +86,24 @@
                 @actionFavorite="handleActionFavorite(item, 'engagements')"
               >
                 <template #expand-icon>
-                  <v-icon
+                  <span
                     v-if="item.audiences.length > 0"
-                    :class="{ 'normal-icon': isExpanded }"
                     data-e2e="expand-engagement"
-                    color="primary"
                     @click="expandFunc(!isExpanded)"
                   >
-                    mdi-chevron-right
-                  </v-icon>
+                    <icon
+                      type="expand-arrow"
+                      :size="14"
+                      color="primary"
+                      class="
+                        cursor-pointer
+                        mdi-chevron-right
+                        mx-2
+                        d-inline-block
+                      "
+                      :class="{ 'normal-icon': isExpanded }"
+                    />
+                  </span>
                 </template>
               </menu-cell>
             </div>
@@ -152,7 +161,7 @@
               </span>
               <span v-else-if="item[header.value].length == 0">—</span>
             </div>
-            <div v-if="header.value == 'status'" class="text-h5">
+            <div v-if="header.value == 'status'" >
               <status
                 :status="item[header.value]"
                 :show-label="true"
@@ -1112,7 +1121,7 @@ export default {
           color: var(--v-black-darken4);
         }
         td:nth-child(1) {
-          font-size: 14px !important;
+          font-size: 16px !important;
         }
       }
       .expanded-row {
@@ -1121,7 +1130,7 @@ export default {
       .v-data-table-header {
         th:nth-child(1) {
           left: 0;
-          // z-index: 9;
+          z-index: 3;
           border-right: thin solid rgba(0, 0, 0, 0.12);
           overflow-y: visible;
           overflow-x: visible;
@@ -1144,7 +1153,7 @@ export default {
           }
         }
         td {
-          font-size: 14px !important;
+          font-size: 16px !important;
           line-height: 22px;
           color: var(--v-black-darken4);
         }
@@ -1153,6 +1162,7 @@ export default {
           top: 0;
           left: 0;
           border-right: thin solid rgba(0, 0, 0, 0.12);
+          background-color: white;
           .menu-cell-wrapper > div {
             a.text-decoration-none {
               .ellipsis {
