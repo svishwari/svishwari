@@ -107,13 +107,9 @@
             </v-row>
           </template>
           <template slot="action-menu-options">
-            <v-list class="list-wrapper pa-0">
-              <v-list-item-group>
-                <v-list-item @click="removeModel(model)">
-                  <v-list-item-title> Remove </v-list-item-title>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
+            <div class="action-remove pl-4 pt-1" @click="removeModel(model)">
+              <span class="d-flex align-center"> Remove </span>
+            </div>
           </template>
         </descriptive-card>
       </template>
