@@ -161,7 +161,7 @@
               </span>
               <span v-else-if="item[header.value].length == 0">—</span>
             </div>
-            <div v-if="header.value == 'status'" >
+            <div v-if="header.value == 'status'">
               <status
                 :status="item[header.value]"
                 :show-label="true"
