@@ -11,7 +11,10 @@
     :ripple="interactable"
     @click="$emit('click')"
   >
-    <div class="d-flex align-center justify-space-between w-100">
+    <div
+      v-if="!titleAbove"
+      class="d-flex align-center justify-space-between w-100"
+    >
       <div
         class="flex-grow-1"
         :class="{ 'align-center text-center': highLevel }"
@@ -79,6 +82,53 @@
       <v-icon v-if="icon" color="black lighten-2" x-large> {{ icon }} </v-icon>
 
       <slot name="short-name"></slot>
+    </div>
+    <div v-else class="d-flex align-center justify-space-between w-100">
+      <div class="flex-grow-1" :class="{ 'align-center': highLevel }">
+        <div class="subtitle-slot">
+          <span
+            class="text-body-2 black--text text--lighten-4"
+            :class="{
+              'no-click': !interactable,
+              'flex-grow-1 align-center': highLevel,
+            }"
+          >
+            {{ subtitle }}
+          </span>
+          <slot name="subtitle-extended"></slot>
+        </div>
+
+        <slot name="extra-item"></slot>
+
+        <span
+          v-if="!titleTooltip"
+          class="text-subtitle-1"
+          :class="[
+            interactable ? 'primary--text ' : 'black--text text--lighten-4 ',
+            highLevel ? 'highlevel-title-above' : '',
+          ]"
+        >
+          <span v-if="highLevel">
+            <slot name="title"></slot>
+          </span>
+          <span v-else>
+            {{ title }}
+          </span>
+        </span>
+        <tooltip v-else>
+          <template #label-content>
+            <span
+              class="text-h5"
+              :class="
+                interactable ? 'primary--text ' : 'black--text text--darken-1 '
+              "
+            >
+              {{ title }}
+            </span>
+          </template>
+          {{ titleTooltip }}
+        </tooltip>
+      </div>
     </div>
   </v-card>
 </template>
@@ -153,6 +203,11 @@ export default {
       required: false,
       default: false,
     },
+    titleAbove: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 }
 </script>
@@ -209,6 +264,9 @@ export default {
     line-height: 16px;
     color: #4f4f4f;
     color: var(--v-black-darken1) !important;
+  }
+  .highlevel-title-above {
+    line-height: 30px;
   }
 }
 </style>

@@ -177,6 +177,19 @@ class OrchestrationRouteTest(TestCase):
         for audience in audiences:
             self.audiences.append(create_audience(self.database, **audience))
 
+        self.lookalike_audience_doc = (
+            create_delivery_platform_lookalike_audience(
+                self.database,
+                self.destinations[0][db_c.ID],
+                self.audiences[0],
+                "Lookalike audience",
+                0.01,
+                "US",
+                self.user_name,
+                31,
+            )
+        )
+
         engagements = [
             {
                 db_c.ENGAGEMENT_NAME: "Test Engagement",
@@ -257,12 +270,24 @@ class OrchestrationRouteTest(TestCase):
             component_id=self.audiences[0][db_c.ID],
         )
 
+        # Set a lookalike audience as favorite
+        manage_user_favorites(
+            self.database,
+            okta_id=t_c.VALID_RESPONSE.get(api_c.OKTA_UID),
+            component_name=api_c.LOOKALIKE,
+            component_id=self.lookalike_audience_doc[db_c.ID],
+        )
+
         # setup the flask test client
         self.test_client = create_app().test_client()
 
     def test_get_audience_rules_success(self):
         """Test the get audience rules route success."""
 
+        mock.patch(
+            "huxunify.api.orchestration.read_stub_city_zip_data",
+            return_value=t_c.CITY_ZIP_STUB_DATA,
+        )
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/rules", headers=t_c.STANDARD_HEADERS
         )
@@ -785,46 +810,56 @@ class OrchestrationRouteTest(TestCase):
         self.assertTrue(audiences)
 
         audience_ids = [ObjectId(x[db_c.ID]) for x in self.audiences]
+        lookalike_audience_ids = [self.lookalike_audience_doc[db_c.ID]]
         return_ids = [ObjectId(x[db_c.OBJECT_ID]) for x in audiences]
 
         expected_audience_destinations = (
             get_all_engagement_audience_destinations(self.database)
         )
 
-        self.assertListEqual(audience_ids, return_ids)
+        self.assertListEqual(audience_ids + lookalike_audience_ids, return_ids)
         for audience in audiences:
-            self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
-            self.assertIn(db_c.AUDIENCE_FILTERS, audience)
-            self.assertFalse(audience[api_c.IS_LOOKALIKE])
-            self.assertTrue(audience[api_c.STATUS])
-            self.assertIn(
-                audience[api_c.STATUS],
-                [
-                    api_c.STATUS_NOT_DELIVERED,
+            if not audience[api_c.IS_LOOKALIKE]:
+                self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
+                self.assertIn(db_c.AUDIENCE_FILTERS, audience)
+                self.assertFalse(audience[api_c.IS_LOOKALIKE])
+                self.assertTrue(audience[api_c.STATUS])
+                self.assertIn(
+                    audience[api_c.STATUS],
+                    [
+                        api_c.STATUS_NOT_DELIVERED,
+                        api_c.STATUS_DELIVERING,
+                        api_c.STATUS_DELIVERED,
+                        api_c.STATUS_DELIVERY_PAUSED,
+                        api_c.STATUS_ERROR,
+                    ],
+                )
+
+                # validate that not delivered has no delivery time set.
+                if audience[api_c.STATUS] == api_c.STATUS_NOT_DELIVERED:
+                    self.assertIsNone(audience[api_c.AUDIENCE_LAST_DELIVERED])
+
+                # find the matched audience destinations, should be the same.
+                matched_audience = [
+                    x
+                    for x in expected_audience_destinations
+                    if x[db_c.ID] == ObjectId(audience[api_c.ID])
+                ]
+
+                # test that the unique count of delivery destinations
+                # is the same as the response.
+                self.assertEqual(
+                    len(audience[db_c.DESTINATIONS]),
+                    len(matched_audience[0][db_c.DESTINATIONS]),
+                )
+            else:
+                self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
+                self.assertTrue(audience[api_c.IS_LOOKALIKE])
+                self.assertTrue(audience[api_c.STATUS])
+                self.assertEqual(
+                    audience[api_c.STATUS],
                     api_c.STATUS_DELIVERING,
-                    api_c.STATUS_DELIVERED,
-                    api_c.STATUS_DELIVERY_PAUSED,
-                    api_c.STATUS_ERROR,
-                ],
-            )
-
-            # validate that not delivered has no delivery time set.
-            if audience[api_c.STATUS] == api_c.STATUS_NOT_DELIVERED:
-                self.assertIsNone(audience[api_c.AUDIENCE_LAST_DELIVERED])
-
-            # find the matched audience destinations, should be the same.
-            matched_audience = [
-                x
-                for x in expected_audience_destinations
-                if x[db_c.ID] == ObjectId(audience[api_c.ID])
-            ]
-
-            # test that the unique count of delivery destinations
-            # is the same as the response.
-            self.assertEqual(
-                len(audience[db_c.DESTINATIONS]),
-                len(matched_audience[0][db_c.DESTINATIONS]),
-            )
+                )
 
     def test_update_audience(self):
         """Test update an audience."""
@@ -1355,7 +1390,49 @@ class OrchestrationRouteTest(TestCase):
         audiences = response.json
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(audiences)
-        self.assertEqual(1, len(audiences))
+        self.assertEqual(2, len(audiences))
         self.assertEqual(
             str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID]
+        )
+        self.assertEqual(
+            str(self.lookalike_audience_doc[db_c.ID]), audiences[1][api_c.ID]
+        )
+
+    def test_get_lookalike_audiences_with_valid_filters(self):
+        """Test get all audiences with valid filters."""
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}?{api_c.FAVORITES}=True&",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        audiences = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(audiences)
+        self.assertEqual(2, len(audiences))
+        self.assertEqual(
+            str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID]
+        )
+        self.assertEqual(
+            str(self.lookalike_audience_doc[db_c.ID]), audiences[1][api_c.ID]
+        )
+
+    def test_get_worked_by_audiences_with_valid_filters(self):
+        """Test get all audiences with valid filters."""
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}?{api_c.WORKED_BY}=True",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        audiences = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(audiences)
+        self.assertEqual(3, len(audiences))
+        self.assertEqual(
+            str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID]
+        )
+        self.assertEqual(audiences[0][db_c.CREATED_BY], self.user_name)
+        self.assertEqual(
+            str(self.lookalike_audience_doc[db_c.ID]), audiences[2][api_c.ID]
         )

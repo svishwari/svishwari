@@ -47,8 +47,15 @@ export default {
   owner: () => `${faker.name.firstName()} ${faker.name.lastName()}`,
   past_version_count: 0,
   prediction_window: 60,
-  status: "Pending",
-  type: "unsubscribe",
+  status: () =>
+    faker.random.arrayElement([
+      "Active",
+      "Requested",
+      "Pending",
+      "Inactive",
+      "Informational",
+    ]),
+  type: () => faker.random.arrayElement(["purchase", "unsubscribe"]),
   version_history: () => mockVersionHistory(5),
   model_feature: (index) => mockModelFeature(index + 1),
 }

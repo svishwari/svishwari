@@ -83,7 +83,7 @@ export default {
       this.width = currentWidth
 
       this.width = this.width - this.margin.left - this.margin.right
-      this.height = 520
+      this.height = 515
 
       let svg = d3Select
         .select(this.$refs.huxChart)
@@ -129,7 +129,7 @@ export default {
         .attr("stroke-opacity", "0.3")
         .selectAll("text")
         .attr("fill", "#4f4f4f")
-        .style("font-size", "12px")
+        .style("font-size", "14px")
 
       svg
         .append("g")
@@ -140,7 +140,7 @@ export default {
         })
         .selectAll("text")
         .attr("fill", "#4f4f4f")
-        .style("font-size", "12px")
+        .style("font-size", "14px")
         .style("text-anchor", "end")
         .on("mouseover", (d) => featureLabelHover(d.srcElement))
         .on("mouseout", () => this.tooltipDisplay(false))
@@ -167,20 +167,6 @@ export default {
             .attr("stroke", "#d0d0ce")
             .attr("stroke-opacity", "0.3")
         )
-
-      svg
-        .append("text")
-        .attr(
-          "transform",
-          "translate(" +
-            this.width / 2 +
-            " ," +
-            (this.height + this.margin.top + 30) +
-            ")"
-        )
-        .style("text-anchor", "middle")
-        .attr("fill", "#4f4f4f")
-        .text("Score")
 
       svg
         .selectAll("myRect")

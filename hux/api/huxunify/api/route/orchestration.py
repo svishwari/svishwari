@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines
 """Paths for Orchestration API"""
 import asyncio
+import pathlib
 from http import HTTPStatus
 from typing import Tuple, Union
 from datetime import datetime, timedelta
@@ -24,9 +25,11 @@ from huxunifylib.database import (
     orchestration_management,
     engagement_management,
     engagement_audience_management as eam,
+    collection_management as cm,
 )
 import huxunifylib.database.constants as db_c
 
+from huxunify.api import stubbed_data
 from huxunify.api.exceptions import integration_api_exceptions as iae
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
@@ -70,6 +73,7 @@ from huxunify.api.route.utils import (
     Validation as validation,
     is_component_favorite,
     get_user_favorites,
+    read_stub_city_zip_data,
 )
 
 # setup the orchestration blueprint
@@ -244,16 +248,20 @@ class AudienceView(SwaggerView):
             Tuple[list, int]: list of audience, HTTP status code.
         """
 
+        database = get_db_client()
         # read the optional request args and set the required filter_dict to
         # query the DB.
         filter_dict = {}
         favorite_audiences = None
+        favorite_lookalike_audiences = get_user_favorites(
+            database, user_name, api_c.LOOKALIKE
+        )
 
         if request.args.get(api_c.FAVORITES) and validation.validate_bool(
             request.args.get(api_c.FAVORITES)
         ):
             favorite_audiences = get_user_favorites(
-                get_db_client(), user_name, api_c.AUDIENCES
+                database, user_name, api_c.AUDIENCES
             )
 
         if request.args.get(api_c.WORKED_BY) and validation.validate_bool(
@@ -266,8 +274,6 @@ class AudienceView(SwaggerView):
         # validation is successful
         if attribute_list:
             filter_dict[api_c.ATTRIBUTE] = attribute_list
-
-        database = get_db_client()
 
         # get all audiences and deliveries
         audiences = orchestration_management.get_all_audiences_and_deliveries(
@@ -316,7 +322,7 @@ class AudienceView(SwaggerView):
         # Check if favourite audiences is not set
         if favorite_audiences is None:
             favorite_audiences = get_user_favorites(
-                get_db_client(), user_name, api_c.AUDIENCES
+                database, user_name, api_c.AUDIENCES
             )
 
         # process each audience object
@@ -361,8 +367,34 @@ class AudienceView(SwaggerView):
         # as lookalike audiences can not be lookalikeable
         if not lookalikeable:
             # get all lookalikes and append to the audience list
-            lookalikes = destination_management.get_all_delivery_platform_lookalike_audiences(
-                database
+            query_filter = {db_c.DELETED: False}
+            if request.args.get(api_c.FAVORITES) and validation.validate_bool(
+                request.args.get(api_c.FAVORITES)
+            ):
+                query_filter[db_c.ID] = {"$in": favorite_lookalike_audiences}
+
+            if request.args.get(api_c.WORKED_BY) and validation.validate_bool(
+                request.args.get(api_c.WORKED_BY)
+            ):
+                query_filter.update(
+                    {
+                        "$or": [
+                            {db_c.CREATED_BY: user_name},
+                            {db_c.UPDATED_BY: user_name},
+                        ]
+                    }
+                )
+
+            lookalikes = cm.get_documents(
+                database,
+                db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+                query_filter,
+                {db_c.DELETED: 0},
+            )
+            lookalikes = (
+                []
+                if lookalikes is None
+                else lookalikes.get(db_c.DOCUMENTS, [])
             )
 
             # get the facebook delivery platform for lookalikes
@@ -385,6 +417,9 @@ class AudienceView(SwaggerView):
                 ]
                 lookalike[db_c.DESTINATIONS] = (
                     [facebook_destination] if facebook_destination else []
+                )
+                lookalike[api_c.FAVORITE] = bool(
+                    lookalike[db_c.ID] in favorite_lookalike_audiences
                 )
 
             # combine the two lists and serve.
@@ -1066,6 +1101,11 @@ class AudienceRules(SwaggerView):
                 "not_equals": "Does not equal",
             }
         }
+        stub_city_zip_file = (
+            pathlib.Path(stubbed_data.__file__).parent / "cityzip_data.csv"
+        )
+
+        stub_city_zip_data = read_stub_city_zip_data(stub_city_zip_file)
 
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically
@@ -1169,30 +1209,51 @@ class AudienceRules(SwaggerView):
                         "min": 18,
                         "max": 79,
                     },
-                    "email": {"name": "Email", "type": "text"},
+                    "email": {
+                        "name": "Email",
+                        "type": "list",
+                        "options": [{"fake.com": "fake.com"}],
+                    },
                     "gender": {
                         "name": "Gender",
-                        "type": "text",  # text for 5.0, list for future
-                        "options": ["female", "male", "other"],
+                        "type": "list",  # text for 5.0, list for future
+                        "options": {
+                            "female": "Female",
+                            "male": "Male",
+                            "other": "Other",
+                        },
                     },
                     "location": {
                         "name": "Location",
                         "country": {
                             "name": "Country",
-                            "type": "text",  # text for 5.0, list for future
-                            "options": ["US"],
+                            "type": "list",  # text for 5.0, list for future
+                            "options": [{"US": "USA"}],
                         },
                         "state": {
                             "name": "State",
-                            "type": "text",  # text for 5.0, list for future
-                            "options": list(api_c.STATE_NAMES.keys()),
+                            "type": "list",  # text for 5.0, list for future
+                            "options": [
+                                {key: value}
+                                for key, value in api_c.STATE_NAMES.items()
+                            ],
                         },
                         "city": {
                             "name": "City",
-                            "type": "text",  # text for 5.0, list for future
-                            "options": [],
+                            "type": "list",  # text for 5.0, list for future
+                            "options": [
+                                {x[1]: f"{x[1]}, {x[2]} USA"}
+                                for x in stub_city_zip_data
+                            ],
                         },
-                        "zip_code": {"name": "Zip", "type": "text"},
+                        "zip_code": {
+                            "name": "Zip",
+                            "type": "list",
+                            "options": [
+                                {x[0]: f"{x[0]}, {x[1]} {x[2]}"}
+                                for x in stub_city_zip_data
+                            ],
+                        },
                     },
                 },
             }

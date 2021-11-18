@@ -10,7 +10,7 @@
           :description="dataSource.category"
           :disabled="dataSource.status !== 'Active'"
           :action-menu="dataSource.status !== 'Active'"
-          :interactable="true"
+          :interactable="dataSource.status == 'Active' ? true : false"
           :coming-soon="false"
           :icon-color="true"
           :logo-option="true"
@@ -42,20 +42,19 @@
             />
           </template>
           <template slot="action-menu-options">
-            <v-list class="list-wrapper pa-0">
-              <v-list-item-group>
-                <v-list-item
-                  :data-e2e="`data-source-list-${dataSource.status}-remove`"
-                  @click="openModal(dataSource)"
-                >
-                  <v-list-item-title> Remove </v-list-item-title>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
+            <div
+              class="action-remove pl-4 pt-1"
+              :data-e2e="`data-source-list-${dataSource.status}-remove`"
+              @click="openModal(dataSource)"
+            >
+              <span class="d-flex align-center"> Remove </span>
+            </div>
           </template>
 
           <template slot="default">
-            <div>{{ dataSource.feed_count ? dataSource.feed_count : "-" }}</div>
+            <div class="text-h4 black--text">
+              {{ dataSource.feed_count ? dataSource.feed_count : "-" }}
+            </div>
             <p
               class="text-body-2 black--text text--lighten-4"
               data-e2e="model-owner"
@@ -169,28 +168,5 @@ export default {
       }
     }
   }
-  .data-source-list-active {
-    @extend .cursor-pointer;
-    ::v-deep .card-horizontal-title {
-      color: var(--v-primary-base) !important;
-    }
-  }
-  .data-source-list-pending {
-    @extend .cursor-default;
-  }
-}
-::v-deep.descriptive-card {
-  &.non-interactable {
-    cursor: default;
-    &:hover {
-      @extend .box-shadow-5;
-    }
-  }
-  .description {
-    color: var(--v-black-lighten4) !important;
-  }
-}
-::v-deep.descriptive-card.in-active {
-  box-shadow: none !important;
 }
 </style>

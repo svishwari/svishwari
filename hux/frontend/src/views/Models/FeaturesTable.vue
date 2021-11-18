@@ -9,7 +9,7 @@
       <td
         v-for="col in columns"
         :key="col.value"
-        class="black--text text--darken-4 text-h6"
+        class="black--text text-body-1"
       >
         <template v-if="col.value === 'name'">
           <tooltip>
@@ -118,7 +118,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .hux-data-table {
-  @extend .box-shadow-5;
   ::v-deep table {
     .v-data-table-header {
       tr {
@@ -141,6 +140,8 @@ export default {
       width: 28ch;
       white-space: nowrap;
     }
+    border-radius: 12px 12px 0px 0px;
+    overflow: hidden;
   }
 }
 </style>

@@ -6,7 +6,7 @@
         :key="header.value"
         :class="{ 'liftchart-bucket': header.value === 'bucket' }"
       >
-        <div class="black--text text--darken-4 text-h6">
+        <div class="black--text text-body-1">
           {{ item[header.value].toLocaleString() }}
         </div>
       </td>
@@ -84,7 +84,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .hux-data-table {
-  @extend .box-shadow-5;
   ::v-deep table {
     .v-data-table-header {
       tr {
@@ -104,6 +103,8 @@ export default {
         }
       }
     }
+    border-radius: 12px 12px 0px 0px;
+    overflow: hidden;
   }
 }
 </style>

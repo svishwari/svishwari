@@ -30,7 +30,6 @@ class DatabaseClient:
                 connecting to MongoDB (optional).
             ssl_flag (Optional(bool)): SSL flag for database
                 connecting to MongoDB (optional).
-
         """
 
         self._host = host
@@ -115,4 +114,5 @@ class DatabaseClient:
             mongo_args["ssl_ca_certs"] = self._ssl_cert_path
         elif self._use_ssl_flag:
             mongo_args["ssl"] = True
+            mongo_args["retrywrites"] = False
         return pymongo.MongoClient(**mongo_args)

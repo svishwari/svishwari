@@ -88,6 +88,11 @@ CDP_IDENTITY_DATA_FEEDS_FEED_ID_ENDPOINT = "/identity/datafeeds/{feed_id}"
 CDP_IDENTITY_ID_COUNT_BY_DAY_ENDPOINT = "/identity/id-count-by-day"
 
 AUDIENCE_STATE_FILTER = {"field": "state", "type": "equals", "value": "HI"}
+CITY_ZIP_STUB_DATA = [
+    "33332,Fort Lauderdale,FL",
+    "60305,River Forest,IL",
+    "30417,Claxton,GA",
+]
 
 SOURCE_NAME = "source_name"
 SOURCE_SIZE = "source_size"
