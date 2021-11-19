@@ -153,7 +153,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.generic_campaigns,
         )[c.ID]
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_delivery_platform_facebook(self):
         """Test set_delivery_platform for facebook."""
 
@@ -168,7 +167,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(doc[c.ID] is not None)
         self.assertFalse(c.DELETED in doc)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_duplicate_delivery_platform_facebook(self):
         """Test set_delivery_platform for facebook."""
 
@@ -208,7 +206,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertFalse(c.DELETED in doc)
         self.assertIsNotNone(doc[c.CONFIGURATION])
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_delivery_platform_facebook_with_user(self):
         """Test set_delivery_platform for facebook with user."""
 
@@ -224,7 +221,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIsNotNone(doc[c.ID])
         self.assertFalse(c.DELETED in doc)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_deleted_delivery_platform(self):
         """Test get_deleted_delivery_platform."""
 
@@ -260,7 +256,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
         self.assertIsNone(doc)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platform(self):
         """Test get_delivery_platform."""
 
@@ -288,7 +283,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
         self.assertEqual(doc[c.DELIVERY_PLATFORM_STATUS], c.STATUS_PENDING)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platforms_by_id(self):
         """Test get_delivery_platforms list"""
 
@@ -308,7 +302,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
         self.assertFalse([d for d in docs if c.DELETED in d])
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platform_with_user(self):
         """Test get_delivery_platform."""
 
@@ -332,7 +325,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_SFMC
         )
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platform_sfmc(self):
         """Test get_delivery_platform for sfmc."""
 
@@ -359,7 +351,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(doc[c.DELIVERY_PLATFORM_STATUS], c.STATUS_PENDING)
         self.assertFalse(c.DELETED in doc)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_all_delivery_platforms(self):
         """Test get_all_delivery_platforms."""
 
@@ -370,7 +361,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(len(platforms), 3)
         self.assertFalse([p for p in platforms if c.DELETED in p])
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_update_doc_delivery_platform(self):
         """Test update doc delivery platform."""
 
@@ -389,7 +379,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         # ensure enabled is True
         self.assertTrue(doc.get(c.ENABLED))
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_connection_status(self):
         """Test connection status functions."""
 
@@ -410,7 +399,6 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertEqual(connection_status, c.STATUS_SUCCEEDED)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_authentication_details(self):
         """Test set/get auth details functions."""
 
@@ -434,7 +422,6 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertEqual(auth_details, new_auth_details)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_delivery_platform_name(self):
         """Test set/get delivery platform name functions."""
 
@@ -452,7 +439,6 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertEqual(name, new_name)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_delivery_platform_type(self):
         """Test set/get delivery platform type functions."""
 
@@ -474,7 +460,6 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertEqual(platform_type, new_platform_type)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_update_delivery_platform(self):
         """Test delivery platform update functions."""
 
@@ -527,7 +512,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(doc[c.DELIVERY_PLATFORM_AUTH], new_auth_details)
         self.assertTrue(doc[c.ADDED])
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_update_sfmc_performance_data_extension(self) -> None:
         """For testing update of Performance Data Extension only for SFMC"""
 
@@ -572,7 +556,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             campaign_data_extension,
         )
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_delivery_job(self):
         """Test set_delivery_job."""
 
@@ -595,7 +578,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.ID in doc)
         self.assertIsNotNone(doc[c.ID])
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_job(self):
         """Test get_delivery_job."""
 
@@ -615,7 +597,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             delivery_job[c.JOB_STATUS], c.AUDIENCE_STATUS_DELIVERING
         )
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_delivery_job_status(self):
         """Test delivery job status functions."""
 
@@ -638,7 +619,6 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertEqual(status, c.AUDIENCE_STATUS_DELIVERED)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_delivery_job_audience_size(self):
         """Test delivery job audience size functions."""
 
@@ -662,7 +642,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(audience_size is not None)
         self.assertEqual(audience_size, 1000)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_all_delivery_jobs_filters(self):
         """Test test_get_all_delivery_jobs."""
 
@@ -685,7 +664,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
         self.assertEqual(delivery_job[c.STATUS], c.AUDIENCE_STATUS_DELIVERING)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_all_delivery_jobs_sort(self):
         """Test test_get_all_delivery_job."""
 
@@ -705,7 +683,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             max([x[c.CREATE_TIME] for x in delivery_jobs]),
         )
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_delivery_job_lookalike_audiences(self):
         """Test delivery job lookalike audiences functions."""
 
@@ -723,7 +700,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             doc[c.DELIVERY_PLATFORM_LOOKALIKE_AUDS], lookalike_audiences
         )
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_lookalike_audiences(self):
         """Test get lookalike audiences functions."""
 
@@ -756,7 +732,6 @@ class TestDeliveryPlatform(unittest.TestCase):
                 audience[c.LOOKALIKE_AUD_COUNTRY],
             )
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_audience_recent_delivery_job(self):
         """Test get_audience_recent_delivery_job."""
 
@@ -790,7 +765,6 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertEqual(len(all_delivery_jobs), 2)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_ingestion_job_audience_delivery_jobs(self):
         """Test get_ingestion_job_audience_delivery_jobs."""
 
@@ -801,7 +775,6 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertTrue(all_deliveries is not None)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_create_delivery_platform_lookalike_audience(self):
         """Test to create data platform lookalike audience."""
 
@@ -894,7 +867,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             2,
         )
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_all_delivery_platform_lookalike_audiences(self):
         """Test get_all_delivery_platform_lookalike_audiences ."""
 
@@ -915,7 +887,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(len(docs), 2)
         self.assertFalse([d for d in docs if c.DELETED in d])
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_update_lookalike_audience(self):
         """Test update_lookalike_audience."""
 
@@ -971,7 +942,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.LOOKALIKE_AUD_SIZE_PERCENTAGE in doc)
         self.assertEqual(doc[c.LOOKALIKE_AUD_SIZE_PERCENTAGE], 0.05)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_favorite_delivery_platform(self):
         """Test favorite_delivery_platform."""
 
@@ -984,7 +954,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.FAVORITE in doc)
         self.assertTrue(doc[c.FAVORITE])
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_unfavorite_delivery_platform(self):
         """Test unfavorite_delivery_platform."""
 
@@ -996,7 +965,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.FAVORITE in doc)
         self.assertTrue(not doc[c.FAVORITE])
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_favorite_lookalike_audience(self):
         """Test favorite_lookalike_audience."""
 
@@ -1009,7 +977,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.FAVORITE in doc)
         self.assertTrue(doc[c.FAVORITE])
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_unfavorite_lookalike_audience(self):
         """Test unfavorite_lookalike_audience."""
 
@@ -1022,7 +989,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.FAVORITE in doc)
         self.assertTrue(not doc[c.FAVORITE])
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_get_performance_metrics(self):
         """Performance metrics are set and retrieved."""
 
@@ -1065,7 +1031,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         # Status is to be set to non-transferred automatically
         self.assertEqual(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK], False)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_performance_metrics_by_engagement(self):
         """Performance metrics are set and retrieved."""
 
@@ -1121,7 +1086,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(metrics_list is not None)
         self.assertEqual(len(metrics_list), 0)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_get_performance_metrics_status(self):
         """Performance metrics status is set properly."""
 
@@ -1152,7 +1116,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
         self.assertTrue(metrics_list[0][c.STATUS_TRANSFERRED_FOR_FEEDBACK])
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_metrics_pending_transfer_feedback(self):
         """Performance metrics pending transfer for feedback are retrieved."""
 
@@ -1195,7 +1158,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(len(metrics_list) == 1)
         self.assertEqual(metrics_list[0][c.ID], metrics_doc_1[c.ID])
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platforms_count(self):
         """Test to retrieve count of delivery platforms documents."""
 
@@ -1214,7 +1176,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         count = dpm.get_delivery_platforms_count(database=self.database)
         self.assertEqual(count, 2)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_lookalike_audiences_count(self):
         """Test to to retrieve count of lookalike audiences documents."""
 
@@ -1272,7 +1233,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         count = dpm.get_lookalike_audiences_count(database=self.database)
         self.assertEqual(count, 2)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_delivery_job_for_destination(self):
         """Test set_delivery_job with engagement id."""
 
@@ -1303,7 +1263,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIn(c.ENGAGEMENT_ID, doc)
         self.assertEqual(doc[c.ENGAGEMENT_ID], engagement_id)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_delivery_job_for_destination_with_config(self):
         """Test set_delivery_job with the config"""
 
@@ -1342,7 +1301,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIn(c.DELIVERY_PLATFORM_CONFIG, doc)
         self.assertDictEqual(doc[c.DELIVERY_PLATFORM_CONFIG], delivery_config)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_multiple_delivery_jobs_for_destination(self):
         """Test set_delivery_job for multiple destinations."""
 
@@ -1378,7 +1336,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.assertIn(c.ENGAGEMENT_ID, doc)
             self.assertEqual(doc[c.ENGAGEMENT_ID], engagement_id)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_job_with_engagement(self):
         """Test get_delivery_job has engagement id."""
 
@@ -1424,7 +1381,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(engagement_id, delivery_job[c.ENGAGEMENT_ID])
         self.assertFalse(c.DELETED in delivery_job)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_jobs_with_engagement(self):
         """Test get_delivery_jobs has engagement id."""
 
@@ -1479,7 +1435,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.assertIn(c.ENGAGEMENT_ID, delivery_job)
             self.assertEqual(engagement_id, delivery_job[c.ENGAGEMENT_ID])
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_get_campaign_activity(self):
         """Campaign Activity docs are set and retrieved."""
 
@@ -1552,7 +1507,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             len(updated_doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]), 1
         )
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_job_engagement_detail(self):
         """Delivery job is set with engagement/audience id and retrieved."""
 
@@ -1600,7 +1554,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             delivery_jobs[0][c.DELIVERY_PLATFORM_ID],
         )
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_delete_delivery_job_generic_campaigns(self):
         """Generic campaigns are set and deleted."""
 
@@ -1633,7 +1586,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIsNotNone(doc)
         self.assertFalse(doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS])
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_get_campaign_activities(self):
         """Campaign Activity batch docs are set and retrieved."""
 
@@ -1685,7 +1637,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(doc2[c.EVENT_DETAILS]["event_type"], "sent")
         self.assertEqual(doc2[c.EVENT_DETAILS]["subscriber_key"], "1001")
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_all_feedback_campaign_activities(self):
         """Campaign Activity docs are set and feedback false documents are retrieved."""
 
@@ -1749,7 +1700,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertFalse(doc1[c.STATUS_TRANSFERRED_FOR_FEEDBACK])
         self.assertFalse(doc2[c.STATUS_TRANSFERRED_FOR_FEEDBACK])
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_get_campaign_activity_status(self):
         """Campaign Activity Feedback status is set properly."""
 
@@ -1782,7 +1732,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             campaign_activities_list[0][c.STATUS_TRANSFERRED_FOR_FEEDBACK]
         )
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_audience_customers(self):
         """Audience customers are set properly."""
 
@@ -1803,7 +1752,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIsNotNone(doc)
         self.assertEqual(doc[c.AUDIENCE_CUSTOMER_LIST], customer_list)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_all_audience_customers(self):
         """All audience customers are fetched properly."""
 
@@ -1857,7 +1805,6 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIsNotNone(all_docs)
         self.assertEqual(len(all_docs), 2)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_get_performance_metrics_bulk(self):
         """Bulk Performance Metrics docs are set and most
         recent metric is retrieved."""
@@ -1958,7 +1905,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             datetime.datetime(2021, 6, 26, 0, 0),
         )
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_most_recent_campaign_activity_by_delivery_job(self):
         """Campaign Activity batch docs are set and
         latest campaign activity event is retrieved."""
