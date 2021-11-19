@@ -1178,7 +1178,6 @@ class DestinationDeleteView(SwaggerView):
     responses = {
         HTTPStatus.NO_CONTENT.value: {
             "description": "Destination deleted.",
-            "schema": DestinationDataExtGetSchema,
         },
     }
 
