@@ -255,8 +255,14 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         data = response.json
         self.assertTrue(data[api_c.OVERVIEW])
-        self.assertTrue(data[api_c.OVERVIEW][api_c.FIRST_NAME])
-        self.assertTrue(data[api_c.OVERVIEW][api_c.LAST_NAME])
+        self.assertEqual(
+            data[api_c.OVERVIEW][api_c.FIRST_NAME],
+            expected_response[api_c.BODY][api_c.FIRST_NAME],
+        )
+        self.assertEqual(
+            data[api_c.OVERVIEW][api_c.LAST_NAME],
+            expected_response[api_c.BODY][api_c.LAST_NAME],
+        )
         self.assertTrue(data[api_c.INSIGHTS])
         self.assertEqual(
             data[api_c.INSIGHTS][api_c.EMAIL],

@@ -499,13 +499,6 @@ class CustomerProfileSearch(SwaggerView):
             request.args.get(api_c.REDACT_FIELD, "True")
         )
         Validation.validate_hux_id(hux_id)
-        # okta_id = introspect_token(token_response[0]).get(
-        #     api_c.OKTA_USER_ID, None
-        # )
-        # if not okta_id:
-        #     return {"message": "Access Denied"}, HTTPStatus.UNAUTHORIZED
-
-        # user_doc = get_user_doc(get_db_client(), user_name)
 
         if user[api_c.USER_PII_ACCESS] and not redact:
             redacted_data = get_customer_profile(token_response[0], hux_id)
