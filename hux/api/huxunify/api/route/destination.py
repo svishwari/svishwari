@@ -1154,3 +1154,97 @@ class DestinationsRequestView(SwaggerView):
             DestinationGetSchema().dump(destination),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    dest_bp,
+    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>",
+    "DestinationDeleteView",
+)
+class DestinationDeleteView(SwaggerView):
+    """Destination Delete class."""
+
+    parameters = [
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        },
+    ]
+
+    responses = {
+        HTTPStatus.NO_CONTENT.value: {
+            "description": "Destination deleted.",
+            "schema": DestinationDataExtGetSchema,
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
+    @api_error_handler()
+    @validate_destination()
+    @get_user_name()
+    def delete(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
+        """Deletes a destination.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            destination_id (str): Destination ID.
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Destination doc, HTTP status code.
+        """
+        database = get_db_client()
+
+        destination = destination_management.get_delivery_platform(
+            database, ObjectId(destination_id)
+        )
+
+        if not destination:
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f"{user_name} requested delete for {destination_id} that does not exist."
+                ),
+                api_c.DESTINATION,
+                user_name,
+            )
+            return {}, HTTPStatus.NO_CONTENT
+
+        deleted_flag = destination_management.delete_delivery_platform(
+            database, ObjectId(destination_id)
+        )
+
+        if deleted_flag:
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f"{user_name} deleted"
+                    f' "{destination[db_c.NAME]}" destination.'
+                ),
+                api_c.DESTINATION,
+                user_name,
+            )
+        else:
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f"{user_name} failed to delete"
+                    f' "{destination[db_c.NAME]}" destination.'
+                ),
+                api_c.DESTINATION,
+                user_name,
+            )
+
+        return {}, HTTPStatus.NO_CONTENT

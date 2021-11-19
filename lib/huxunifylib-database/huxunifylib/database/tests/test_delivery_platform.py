@@ -75,7 +75,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
 
         self.ingestion_job_doc = dm.set_ingestion_job(
-            self.database, ObjectId("5dff99c10345af022f219bbf")
+            self.database, ObjectId()
         )
 
         self.source_audience_doc = am.create_audience(
@@ -2005,3 +2005,26 @@ class TestDeliveryPlatform(unittest.TestCase):
             recent_campaign_activity_doc[c.EVENT_DETAILS][c.EVENT_DATE],
             datetime.datetime(2021, 6, 28, 0, 0),
         )
+
+    def test_delete_delivery_platform(self):
+        """Test delete delivery platform"""
+
+        self.assertTrue(
+            dpm.delete_delivery_platform(
+                self.database, ObjectId(self.delivery_platform_doc[c.ID])
+            )
+        )
+        self.assertIsNone(
+            dpm.get_delivery_platform(
+                self.database, ObjectId(self.delivery_platform_doc[c.ID])
+            )
+        )
+
+    def test_delete_delivery_platform_id_not_found(self):
+        """Test delete delivery platform that does not exist"""
+
+        unknown_id = ObjectId()
+        self.assertTrue(
+            dpm.delete_delivery_platform(self.database, unknown_id)
+        )
+        self.assertIsNone(dpm.get_delivery_platform(self.database, unknown_id))

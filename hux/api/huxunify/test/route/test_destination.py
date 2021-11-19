@@ -920,3 +920,29 @@ class TestDestinationRoutes(TestCase):
             self.database, self.destinations[0][db_c.ID]
         )
         self.assertTrue(destination[db_c.ENABLED])
+
+    def test_delete_destination(self):
+        """Test delete destination"""
+
+        # get destination ID
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+
+    def test_delete_destination_(self):
+        """Test delete destination"""
+
+        # get destination ID
+        destination_id = ObjectId()
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)

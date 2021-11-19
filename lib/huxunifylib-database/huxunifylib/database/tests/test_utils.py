@@ -495,7 +495,7 @@ class TestUtils(unittest.TestCase):
         # Create a delivery job
         delivery_job_doc = dpm.set_delivery_job(
             database=self.database,
-            audience_id=ObjectId("5dff99c10345af022f219bbf"),
+            audience_id=ObjectId(),
             delivery_platform_id=delivery_platform_id,
             delivery_platform_generic_campaigns=self.generic_campaigns,
         )
@@ -575,7 +575,7 @@ class TestUtils(unittest.TestCase):
         # Create a delivery job
         delivery_job_doc = dpm.set_delivery_job(
             database=self.database,
-            audience_id=ObjectId("5dff99c10345af022f219bbf"),
+            audience_id=ObjectId(),
             delivery_platform_id=delivery_platform_id,
             delivery_platform_generic_campaigns=self.generic_campaigns,
         )
