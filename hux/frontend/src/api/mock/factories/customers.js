@@ -133,11 +133,7 @@ export const customerProfile = {
     cookie: idrBreakdown("cookie", 0.1),
   },
 
-  pii_access: () =>
-  faker.random.arrayElement([
-    true,
-    false,
-  ]),
+  pii_access: () => faker.random.arrayElement([true, false]),
 }
 
 /**

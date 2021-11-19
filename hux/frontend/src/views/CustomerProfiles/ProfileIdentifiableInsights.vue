@@ -1,8 +1,12 @@
 <template>
   <v-card class="rounded-lg card-info-wrapper box-shadow-5">
-    <v-card-title class="py-5 pl-6" :class="pii_access?'d-flex justify-space-between':' '" data-e2e="customer-insights">
+    <v-card-title
+      class="py-5 pl-6"
+      :class="piiaccess ? 'd-flex justify-space-between' : ' '"
+      data-e2e="customer-insights"
+    >
       <h3 class="text-h3">Customer insights</h3>
-      <tooltip v-if="!pii_access" position-top>
+      <tooltip v-if="!piiaccess" position-top>
         <icon type="ds_lock_special" :size="17" color="black" class="ml-2" />
         <template #tooltip>
           You do not have access to see individual information.<br />
@@ -26,13 +30,13 @@
         @click="togglePIIData()"
       >
         <icon
-          :type="PIIDataFlag?'visible_data':'hidden_data'"
+          :type="PIIDataFlag ? 'visible_data' : 'hidden_data'"
           color="primary"
           :size="24"
-          :class="PIIDataFlag?'hidden-data-margin':'mr-1'"
+          :class="PIIDataFlag ? 'hidden-data-margin' : 'mr-1'"
         />
-        <span :class="PIIDataFlag?'mr-1':''">
-        {{showHidePIIButton}}
+        <span :class="PIIDataFlag ? 'mr-1' : ''">
+          {{ showHidePIIButton }}
         </span>
       </v-btn>
     </v-card-title>
@@ -44,11 +48,11 @@
               <td class="text-body-1 black--text text--lighten-4 pl-6">
                 Email
               </td>
-              <td class="text-body-1" :class="PIIDataFlag?'':'blur-text'">
+              <td class="text-body-1" :class="PIIDataFlag ? '' : 'blur-text'">
                 {{ insights["email"] | Empty }}
               </td>
               <td class="text-body-1 black--text text--lighten-4">Address</td>
-              <td class="text-body-1" :class="PIIDataFlag?'':'blur-text'">
+              <td class="text-body-1" :class="PIIDataFlag ? '' : 'blur-text'">
                 {{ insights["address"] | Empty }}
               </td>
             </tr>
@@ -56,21 +60,21 @@
               <td class="text-body-1 black--text text--lighten-4 pl-6">
                 Phone
               </td>
-              <td class="text-body-1" :class="PIIDataFlag?'':'blur-text'">
+              <td class="text-body-1" :class="PIIDataFlag ? '' : 'blur-text'">
                 {{ insights["phone"] | Empty }}
               </td>
               <td class="text-body-1 black--text text--lighten-4">City</td>
-              <td class="text-body-1" :class="PIIDataFlag?'':'blur-text'">
+              <td class="text-body-1" :class="PIIDataFlag ? '' : 'blur-text'">
                 {{ insights["city"] | Empty }}
               </td>
             </tr>
             <tr>
               <td class="text-body-1 black--text text--lighten-4 pl-6">Age</td>
-              <td class="text-body-1" :class="PIIDataFlag?'':'blur-text'">
+              <td class="text-body-1" :class="PIIDataFlag ? '' : 'blur-text'">
                 {{ insights["age"] | Empty }}
               </td>
               <td class="text-body-1 black--text text--lighten-4">State</td>
-              <td class="text-body-1" :class="PIIDataFlag?'':'blur-text'">
+              <td class="text-body-1" :class="PIIDataFlag ? '' : 'blur-text'">
                 {{ insights["state"] | Empty }}
               </td>
             </tr>
@@ -79,13 +83,13 @@
                 Gender
               </td>
               <td class="text-body-1">
-                <span :class="PIIDataFlag?'':'blur-text'">
+                <span :class="PIIDataFlag ? '' : 'blur-text'">
                   {{ insights["gender"] | Empty }}
                 </span>
               </td>
               <td class="text-body-1 black--text text--lighten-4">Zip</td>
               <td class="text-body-1">
-                <span :class="PIIDataFlag?'':'blur-text'">
+                <span :class="PIIDataFlag ? '' : 'blur-text'">
                   {{ insights["zip"] | Empty }}
                 </span>
               </td>
@@ -109,11 +113,11 @@ export default {
       required: true,
       default: () => {},
     },
-    pii_access: {
+    piiaccess: {
       type: Boolean,
       required: false,
       default: false,
-    }
+    },
   },
   data() {
     return {
@@ -123,13 +127,13 @@ export default {
   computed: {
     showHidePIIButton() {
       return this.PIIDataFlag ? "Hide PII" : "Show PII"
-    }
+    },
   },
   methods: {
     togglePIIData() {
       this.PIIDataFlag = !this.PIIDataFlag
-    }
-  }
+    },
+  },
 }
 </script>
 
