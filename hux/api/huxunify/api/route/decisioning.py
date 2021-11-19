@@ -19,6 +19,7 @@ from huxunifylib.database import (
     notification_management,
 )
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.db_exceptions import DuplicateDocument
 
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
@@ -193,7 +194,7 @@ class SetModelStatus(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
+    # @api_error_handler()
     @get_user_name()
     def post(self, user_name: str) -> Tuple[dict, int]:
         """Request a model.
@@ -209,17 +210,22 @@ class SetModelStatus(SwaggerView):
             Tuple[dict, int]: Model Requested, HTTP status code.
         """
 
-        body = ModelRequestPOSTSchema().load(request.get_json())
+        body = ModelRequestPOSTSchema().load(request.get_json(), unknown=True)
         database = get_db_client()
 
         # set type of configuration as model
         body[api_c.TYPE] = api_c.MODELS_TAG
-        collection_management.create_document(
-            database=database,
-            collection=db_c.CONFIGURATIONS_COLLECTION,
-            new_doc=body,
-            username=user_name,
-        )
+
+        try:
+            collection_management.create_document(
+                database=database,
+                collection=db_c.CONFIGURATIONS_COLLECTION,
+                new_doc=body,
+                username=user_name,
+            )
+        except DuplicateDocument:
+            logger.info("Model already exists %s.", body.get(db_c.NAME))
+            return {api_c.MESSAGE: api_c.DUPLICATE_NAME}, HTTPStatus.CONFLICT
 
         notification_management.create_notification(
             database,
