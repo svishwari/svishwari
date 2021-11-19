@@ -2,7 +2,6 @@
 
 from flask_marshmallow import Schema
 from marshmallow.fields import Str, Int, Float, Nested, Dict
-from marshmallow.validate import OneOf
 
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 from huxunify.api import constants as api_c
