@@ -238,4 +238,17 @@ export default [
     update_time: "2021-11-02T10:49:52.389Z",
     is_added: false,
   },
+  {
+    category: "Advertising",
+    updated_by: "test user",
+    status: "Error",
+    is_ad_platform: true,
+    is_enabled: true,
+    type: "google_dv360",
+    id: "60b9601b6021710aa126df31",
+    name: "Google DV360",
+    create_time: "2021-06-03T23:04:59.119Z",
+    update_time: "2021-10-26T08:07:54.290Z",
+    is_added: false,
+  },
 ]
