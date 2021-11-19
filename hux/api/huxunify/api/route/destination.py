@@ -1185,7 +1185,6 @@ class DestinationDeleteView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @api_error_handler()
-    @validate_destination()
     @get_user_name()
     def delete(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
         """Deletes a destination.

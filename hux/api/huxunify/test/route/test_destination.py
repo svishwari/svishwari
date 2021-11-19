@@ -934,11 +934,12 @@ class TestDestinationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
 
-    def test_delete_destination_(self):
-        """Test delete destination"""
+    def test_delete_destination_not_found_destination(self):
+        """Test delete destination where destination does not exist"""
 
         # get destination ID
         destination_id = ObjectId()
+        print(destination_id)
 
         response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
