@@ -107,12 +107,6 @@ class ModelRequestPOSTSchema(Schema):
     id = Str(required=True)
     name = Str(required=True)
     status = Str(
-        validate=[
-            OneOf(
-                choices=[
-                    api_c.REQUESTED,
-                ]
-            )
-        ],
+        validate=lambda x: x.lower() in [api_c.REQUESTED.lower()],
         required=True,
     )
