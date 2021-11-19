@@ -132,6 +132,12 @@ export const customerProfile = {
     phone: idrBreakdown("phone", 0.1),
     cookie: idrBreakdown("cookie", 0.1),
   },
+
+  pii_access: () =>
+  faker.random.arrayElement([
+    true,
+    false,
+  ]),
 }
 
 /**
