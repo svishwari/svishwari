@@ -144,6 +144,7 @@ steps:
       branch:
         only:
           - main
+          - develop
           - /^release-[\d].*/i
           - /^app.*/i
 
@@ -164,5 +165,6 @@ steps:
       branch:
         only:
           - main
+          - develop
           - /^release-[\d].*/i
           - /^app.*/i
