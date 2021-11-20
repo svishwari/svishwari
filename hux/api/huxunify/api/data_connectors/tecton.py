@@ -529,8 +529,6 @@ def get_model_features(
         if not features:
             break
 
-        # if no features at the start, s
-
         for feature in features:
             # get score.
             score = 0
