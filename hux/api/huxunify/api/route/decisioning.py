@@ -599,35 +599,36 @@ class ModelFeaturesView(SwaggerView):
         if model_id == "3":
             features = api_c.PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB
         else:
-            # only use the latest version if model version is None.
-            if model_version is None:
-                # get latest version first
-                model_version = tecton.get_model_version_history(model_id)
-                # check if there is a model version we can grab.
-                # if so take the first one (latest).
-                model_version = (
-                    model_version[0].get(api_c.CURRENT_VERSION)
-                    if model_version
-                    else ""
-                )
-
-            # check cache first
-            database = get_db_client()
-            features = get_cache_entry(
-                database, f"features.{model_id}.{model_version}"
+            # get model versions
+            model_versions = (
+                [{api_c.CURRENT_VERSION: model_version}]
+                if model_version
+                else tecton.get_model_version_history(model_id)
             )
+            database = get_db_client()
 
-            # if no cache, grab from Tecton and cache after.
-            if not features:
-                features = tecton.get_model_features(model_id, model_version)
+            # loop versions until the latest version is found
+            for version in model_versions:
+                current_version = version.get(api_c.CURRENT_VERSION)
+
+                # check cache first
+                features = get_cache_entry(
+                    database, f"features.{model_id}.{current_version}"
+                )
+                if features:
+                    break
+
+                # if no cache, grab from Tecton and cache after.
+                features = tecton.get_model_features(model_id, current_version)
 
                 # create cache entry in db only if features fetched from Tecton is not empty
                 if features:
                     create_cache_entry(
                         database,
-                        f"features.{model_id}.{model_version}",
+                        f"features.{model_id}.{current_version}",
                         features,
                     )
+                    break
 
         return (
             jsonify(FeatureSchema(many=True).dump(features)),
