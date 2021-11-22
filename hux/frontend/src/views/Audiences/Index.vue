@@ -582,6 +582,11 @@ export default {
           }
           background: var(--v-primary-lighten2) !important;
           box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+          td.fixed-column {
+            z-index: 2 !important;
+            background: var(--v-primary-lighten2) !important;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+          }
         }
         td.fixed-column {
           z-index: 1 !important;

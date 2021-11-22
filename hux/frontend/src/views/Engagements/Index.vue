@@ -1139,6 +1139,19 @@ export default {
       }
       tr {
         &:hover {
+          td:nth-child(1) {
+            z-index: 1 !important;
+            background: var(--v-primary-lighten2) !important;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+            .menu-cell-wrapper .action-icon {
+              .fav-action {
+                display: block;
+              }
+              .more-action {
+                display: block;
+              }
+            }
+          }
           background: var(--v-primary-lighten2) !important;
           box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
           .menu-cell-wrapper {
