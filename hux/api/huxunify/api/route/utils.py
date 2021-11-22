@@ -268,9 +268,7 @@ def group_gender_spending(gender_spending: list) -> dict:
     return {
         api_c.GENDER_WOMEN: [
             {
-                api_c.DATE: date_parser(
-                    x[api_c.MONTH], x[api_c.YEAR]
-                ),
+                api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
                 api_c.LTV: round(x[api_c.AVG_SPENT_WOMEN], 4)
                 if x[api_c.AVG_SPENT_WOMEN]
                 else 0,
@@ -279,9 +277,7 @@ def group_gender_spending(gender_spending: list) -> dict:
         ],
         api_c.GENDER_MEN: [
             {
-                api_c.DATE: date_parser(
-                    x[api_c.MONTH], x[api_c.YEAR]
-                ),
+                api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
                 api_c.LTV: round(x[api_c.AVG_SPENT_MEN], 4)
                 if x[api_c.AVG_SPENT_MEN]
                 else 0,
@@ -290,9 +286,7 @@ def group_gender_spending(gender_spending: list) -> dict:
         ],
         api_c.GENDER_OTHER: [
             {
-                api_c.DATE: date_parser(
-                    x[api_c.MONTH], x[api_c.YEAR]
-                ),
+                api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
                 api_c.LTV: round(x[api_c.AVG_SPENT_OTHER], 4)
                 if x[api_c.AVG_SPENT_OTHER]
                 else 0,
@@ -561,7 +555,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
             okta_id=user_info[api_c.OKTA_ID_SUB],
             email_address=user_info[api_c.EMAIL],
             display_name=user_info[api_c.NAME],
-            role=user_info.get(api_c.ROLE, api_c.VIEWER_LEVEL)
+            role=user_info.get(api_c.ROLE, db_c.USER_ROLE_VIEWER),
         )
 
         # return NOT_FOUND if user is still none
@@ -569,9 +563,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
             logger.info(
                 "User not found in DB even after trying to create one."
             )
-            return {
-                api_c.MESSAGE: api_c.USER_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
     return user
 

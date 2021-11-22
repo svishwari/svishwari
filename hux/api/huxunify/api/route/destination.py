@@ -210,7 +210,9 @@ class DestinationsView(SwaggerView):
 
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, user: dict) -> Tuple[list, int]:  # pylint: disable=no-self-use
+    def get(
+        self, user: dict
+    ) -> Tuple[list, int]:  # pylint: disable=no-self-use
         """Retrieves all destinations.
 
         ---
@@ -345,9 +347,7 @@ class DestinationAuthenticationPostView(SwaggerView):
     )
     @validate_destination()
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def put(
-        self, destination_id: ObjectId, user: dict
-    ) -> Tuple[dict, int]:
+    def put(self, destination_id: ObjectId, user: dict) -> Tuple[dict, int]:
         """Sets a destination's authentication details.
 
         ---
