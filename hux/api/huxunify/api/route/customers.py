@@ -4,8 +4,6 @@ from http import HTTPStatus
 from typing import Tuple, List
 from datetime import datetime
 
-from faker import Faker
-
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 from huxunifylib.database.cache_management import (
@@ -76,8 +74,6 @@ from huxunify.api.route.utils import (
 customers_bp = Blueprint(
     api_c.CUSTOMERS_ENDPOINT, import_name=__name__, url_prefix="/cdp"
 )
-
-faker = Faker()
 
 
 @customers_bp.before_request
@@ -488,17 +484,15 @@ class CustomerProfileSearch(SwaggerView):
             api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
         )
 
-        idr_data = api_c.CUSTOMER_IDR_TEST_DATA
-        # TODO : Fetch IDR data from CDP once it is ready
-        # api_c.IDENTITY_RESOLUTION: redacted_data[api_c.IDENTITY_RESOLUTION]
-
         return (
             CustomerProfileSchema().dump(
                 {
                     api_c.OVERVIEW: redacted_data,
                     api_c.INSIGHTS: redacted_data,
                     api_c.CONTACT_PREFERENCES: redacted_data,
-                    api_c.IDENTITY_RESOLUTION: add_chart_legend(idr_data),
+                    api_c.IDENTITY_RESOLUTION: add_chart_legend(
+                        redacted_data.get(api_c.IDENTITY_RESOLUTION, {})
+                    ),
                 }
             ),
             HTTPStatus.OK.value,
