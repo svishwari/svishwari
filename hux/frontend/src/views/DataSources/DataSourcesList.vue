@@ -42,12 +42,12 @@
             />
           </template>
           <template slot="action-menu-options">
-            <div
-              class="action-remove pl-4 pt-1"
-              :data-e2e="`data-source-list-${dataSource.status}-remove`"
-              @click="openModal(dataSource)"
-            >
-              <span class="d-flex align-center"> Remove </span>
+            <div class="px-4 py-2 white d-flex flex-column text-h5" 
+            :data-e2e="`data-source-list-${dataSource.status}-remove`"
+            @click="openModal(dataSource)">
+              <span class="d-flex align-center">
+                Remove
+              </span>
             </div>
           </template>
 
