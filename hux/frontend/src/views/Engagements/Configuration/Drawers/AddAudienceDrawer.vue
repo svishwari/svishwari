@@ -34,7 +34,6 @@
             v-for="(item, i) in overviewListItems"
             :key="i"
             class="list-item ma-0 mr-3"
-            :class="{ 'd-none': i > overviewListItems.length - 3 && !expanded }"
             :title="item.title"
           >
             <template #subtitle-extended>

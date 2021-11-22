@@ -1,11 +1,12 @@
 # pylint: disable=too-many-lines
 """Purpose of this file is to house all the engagement API endpoint tests."""
 import json
+import random
+import string
 from datetime import datetime, timedelta
 from unittest import TestCase, mock
 from http import HTTPStatus
 import requests_mock
-from faker import Faker
 from flask_marshmallow import Schema
 import mongomock
 from bson import ObjectId
@@ -659,7 +660,6 @@ class TestEngagementRoutes(TestCase):
             "US",
         )
 
-        self.faker = Faker()
         self.addCleanup(mock.patch.stopall)
 
     def test_get_campaign_mappings_no_delivery_jobs(self):
@@ -1263,6 +1263,13 @@ class TestEngagementRoutes(TestCase):
 
         engagement_delivery_schedule = {api_c.SCHEDULE: schedule}
 
+        # Set the seed value for random generator to be dynamic so that random
+        # choices generates truly random unique values when hypothesis calls
+        # this test as part of the same execution scope for multiple values
+        # it is sampled.
+        random.seed(datetime.now())
+        engagement_name = "".join(random.choices(string.ascii_uppercase, k=10))
+
         engagement = {
             db_c.AUDIENCES: [
                 {
@@ -1273,7 +1280,7 @@ class TestEngagementRoutes(TestCase):
                 }
             ],
             db_c.ENGAGEMENT_DESCRIPTION: "Test Engagement Description",
-            db_c.ENGAGEMENT_NAME: self.faker.first_name(),
+            db_c.ENGAGEMENT_NAME: engagement_name,
             db_c.ENGAGEMENT_DELIVERY_SCHEDULE: engagement_delivery_schedule,
         }
 
@@ -1451,7 +1458,7 @@ class TestEngagementRoutes(TestCase):
                 }
             ],
             db_c.ENGAGEMENT_DESCRIPTION: "Test Engagement Description",
-            db_c.ENGAGEMENT_NAME: self.faker.first_name(),
+            db_c.ENGAGEMENT_NAME: "Test Engagement Name",
             db_c.ENGAGEMENT_DELIVERY_SCHEDULE: engagement_delivery_schedule,
         }
 

@@ -13,6 +13,7 @@
         <v-col cols="6" class="pb-0">
           <profile-identifiable-insights
             :insights="customerProfile['insights']"
+            :piiaccess="customerProfile['pii_access']"
           />
         </v-col>
         <v-col class="pb-0 customCol">
