@@ -19,6 +19,7 @@ from huxunify.api.schema.customers import (
     CustomersInsightsStatesSchema,
     CustomersInsightsCountriesSchema,
     CustomerRevenueInsightsSchema,
+    CustomerProfileContactPreferencesSchema,
 )
 from huxunify.api.schema.customers import (
     CustomerGeoVisualSchema,
@@ -241,6 +242,10 @@ class TestCustomersOverview(TestCase):
                         api_c.CO_OCCURRENCES: [],
                     },
                 },
+                "preference_email": True,
+                "preference_push": True,
+                "preference_sms": True,
+                "preference_in_app": False,
             },
             "message": "ok",
         }
@@ -272,6 +277,13 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(data[api_c.INSIGHTS][api_c.AGE], api_c.REDACTED)
         self.assertTrue(
             data[api_c.IDENTITY_RESOLUTION][api_c.NAME][api_c.CO_OCCURRENCES]
+        )
+        self.assertTrue(data[api_c.CONTACT_PREFERENCES])
+        self.assertEqual(
+            CustomerProfileContactPreferencesSchema().dump(
+                expected_response[api_c.BODY]
+            ),
+            data[api_c.CONTACT_PREFERENCES],
         )
 
     def test_post_customer_overview_by_attributes(self) -> None:
