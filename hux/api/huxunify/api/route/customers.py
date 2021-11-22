@@ -4,8 +4,6 @@ from http import HTTPStatus
 from typing import Tuple, List
 from datetime import datetime
 
-from faker import Faker
-
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 from huxunifylib.database.cache_management import (
@@ -76,8 +74,6 @@ from huxunify.api.route.utils import (
 customers_bp = Blueprint(
     api_c.CUSTOMERS_ENDPOINT, import_name=__name__, url_prefix="/cdp"
 )
-
-faker = Faker()
 
 
 @customers_bp.before_request
