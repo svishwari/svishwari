@@ -41,6 +41,7 @@ VALID_USER_RESPONSE = {
     api_c.OKTA_ID_SUB: "8548bfh8d",
     api_c.EMAIL: "davesmith@fake.com",
     api_c.NAME: "dave smith",
+    api_c.ROLE: "admin",
 }
 # response missing some fields
 INVALID_USER_RESPONSE = {
