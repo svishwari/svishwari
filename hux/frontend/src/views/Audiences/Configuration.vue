@@ -132,6 +132,7 @@
             </form-step>
 
             <form-step
+              v-if="!isEdit"
               :step="3"
               label="Select destination(s)"
               optional="- Optional"
