@@ -10,9 +10,9 @@ from dateutil import parser
 
 from marshmallow import Schema, ValidationError
 
+import huxunifylib.database.constants as db_c
 from huxunify.api.config import get_config
 import huxunify.api.constants as api_c
-import huxunifylib.database.constants as db_c
 
 BASE_ENDPOINT = "/api/v1"
 TEST_AUTH_TOKEN = "Bearer 12345678"
