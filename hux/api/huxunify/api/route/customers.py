@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use, too-many-lines
+# pylint: disable=no-self-use, too-many-lines, C0302
 """Paths for customer API"""
 from http import HTTPStatus
 from typing import Tuple, List
@@ -503,9 +503,6 @@ class CustomerProfileSearch(SwaggerView):
                 get_customer_profile(token_response[0], hux_id),
                 api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
             )
-        idr_data = api_c.CUSTOMER_IDR_TEST_DATA
-        # TODO : Fetch IDR data from CDP once it is ready
-        # api_c.IDENTITY_RESOLUTION: redacted_data[api_c.IDENTITY_RESOLUTION]
 
         return (
             CustomerProfileSchema().dump(
@@ -513,7 +510,9 @@ class CustomerProfileSearch(SwaggerView):
                     api_c.OVERVIEW: redacted_data,
                     api_c.INSIGHTS: redacted_data,
                     api_c.CONTACT_PREFERENCES: redacted_data,
-                    api_c.IDENTITY_RESOLUTION: add_chart_legend(idr_data),
+                    api_c.IDENTITY_RESOLUTION: add_chart_legend(
+                        redacted_data.get(api_c.IDENTITY_RESOLUTION, {})
+                    ),
                     api_c.USER_PII_ACCESS: user[api_c.USER_PII_ACCESS],
                 }
             ),

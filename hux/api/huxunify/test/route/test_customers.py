@@ -175,90 +175,15 @@ class TestCustomersOverview(TestCase):
     def test_get_customer_by_id(self):
         """Test get customer by ID."""
 
-        customer_id = "HUX123456789012345"
-
-        expected_response = {
-            "code": 200,
-            "body": {
-                api_c.HUX_ID: customer_id,
-                api_c.FIRST_NAME: "Bertie",
-                api_c.LAST_NAME: "Fox",
-                api_c.EMAIL: "fake@fake.com",
-                api_c.GENDER: "test_gender",
-                api_c.CITY: "test_city",
-                api_c.ADDRESS: "test_address",
-                api_c.AGE: "test_age",
-                api_c.IDENTITY_RESOLUTION: {
-                    api_c.NAME: {
-                        api_c.PERCENTAGE: 0.26,
-                        api_c.COUNT: 23,
-                        api_c.DATA_SOURCE: [
-                            {
-                                api_c.ID: "585t749997acad4bac4373b",
-                                api_c.NAME: "Netsuite",
-                                api_c.TYPE: "Net-suite",
-                                api_c.PERCENTAGE: 0.49,
-                                api_c.COUNT: 15,
-                            },
-                            {
-                                api_c.ID: "685t749997acad4bac4373b",
-                                api_c.NAME: "Aqfer",
-                                api_c.TYPE: "Aqfer",
-                                api_c.PERCENTAGE: 0.51,
-                                api_c.COUNT: 5,
-                            },
-                        ],
-                        api_c.CO_OCCURRENCES: [
-                            {
-                                api_c.IDENTIFIER: "address",
-                                api_c.COUNT: 10,
-                                api_c.PERCENTAGE: 0.5,
-                            },
-                            {
-                                api_c.IDENTIFIER: "email",
-                                api_c.COUNT: 10,
-                                api_c.PERCENTAGE: 0.5,
-                            },
-                        ],
-                    },
-                    api_c.ADDRESS: {
-                        api_c.PERCENTAGE: 0.2,
-                        api_c.COUNT: 12,
-                        api_c.DATA_SOURCE: [],
-                        api_c.CO_OCCURRENCES: [],
-                    },
-                    "email": {
-                        api_c.PERCENTAGE: 0.34,
-                        api_c.COUNT: 2,
-                        api_c.DATA_SOURCE: [],
-                        api_c.CO_OCCURRENCES: [],
-                    },
-                    "phone": {
-                        api_c.PERCENTAGE: 0.14,
-                        api_c.COUNT: 7,
-                        api_c.DATA_SOURCE: [],
-                        api_c.CO_OCCURRENCES: [],
-                    },
-                    "cookie": {
-                        api_c.PERCENTAGE: 0.1,
-                        api_c.COUNT: 5,
-                        api_c.DATA_SOURCE: [],
-                        api_c.CO_OCCURRENCES: [],
-                    },
-                },
-            },
-            "message": "ok",
-        }
-
         self.request_mocker.stop()
         self.request_mocker.get(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{customer_id}",
-            json=expected_response,
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{t_c.SAMPLE_CUSTOMER_ID}",
+            json=t_c.CUSTOMER_PROFILE_RESPONSE,
         )
         self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{self.customers}/{customer_id}",
+            f"{self.customers}/{t_c.SAMPLE_CUSTOMER_ID}",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -282,32 +207,15 @@ class TestCustomersOverview(TestCase):
     def test_get_customer_by_id_pii_access(self):
         """Test get customer by ID with PII Access"""
 
-        customer_id = "HUX123456789012345"
-
-        expected_response = {
-            "code": 200,
-            "body": {
-                api_c.HUX_ID: customer_id,
-                api_c.FIRST_NAME: "Bertie",
-                api_c.LAST_NAME: "Fox",
-                api_c.EMAIL: "fake@fake.com",
-                api_c.GENDER: "test_gender",
-                api_c.CITY: "test_city",
-                api_c.ADDRESS: "test_address",
-                api_c.AGE: "test_age",
-            },
-            "message": "ok",
-        }
-
         self.request_mocker.stop()
         self.request_mocker.get(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{customer_id}",
-            json=expected_response,
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{t_c.SAMPLE_CUSTOMER_ID}",
+            json=t_c.CUSTOMER_PROFILE_RESPONSE,
         )
         self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{self.customers}/{customer_id}?{api_c.REDACT_FIELD}=False",
+            f"{self.customers}/{t_c.SAMPLE_CUSTOMER_ID}?{api_c.REDACT_FIELD}=False",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -318,32 +226,32 @@ class TestCustomersOverview(TestCase):
         self.assertTrue(data[api_c.OVERVIEW])
         self.assertEqual(
             data[api_c.OVERVIEW][api_c.FIRST_NAME],
-            expected_response[api_c.BODY][api_c.FIRST_NAME],
+            t_c.CUSTOMER_PROFILE_RESPONSE[api_c.BODY][api_c.FIRST_NAME],
         )
         self.assertEqual(
             data[api_c.OVERVIEW][api_c.LAST_NAME],
-            expected_response[api_c.BODY][api_c.LAST_NAME],
+            t_c.CUSTOMER_PROFILE_RESPONSE[api_c.BODY][api_c.LAST_NAME],
         )
         self.assertTrue(data[api_c.INSIGHTS])
         self.assertEqual(
             data[api_c.INSIGHTS][api_c.EMAIL],
-            expected_response[api_c.BODY][api_c.EMAIL],
+            t_c.CUSTOMER_PROFILE_RESPONSE[api_c.BODY][api_c.EMAIL],
         )
         self.assertEqual(
             data[api_c.INSIGHTS][api_c.GENDER],
-            expected_response[api_c.BODY][api_c.GENDER],
+            t_c.CUSTOMER_PROFILE_RESPONSE[api_c.BODY][api_c.GENDER],
         )
         self.assertEqual(
             data[api_c.INSIGHTS][api_c.CITY],
-            expected_response[api_c.BODY][api_c.CITY],
+            t_c.CUSTOMER_PROFILE_RESPONSE[api_c.BODY][api_c.CITY],
         )
         self.assertEqual(
             data[api_c.INSIGHTS][api_c.ADDRESS],
-            expected_response[api_c.BODY][api_c.ADDRESS],
+            t_c.CUSTOMER_PROFILE_RESPONSE[api_c.BODY][api_c.ADDRESS],
         )
         self.assertEqual(
             data[api_c.INSIGHTS][api_c.AGE],
-            expected_response[api_c.BODY][api_c.AGE],
+            t_c.CUSTOMER_PROFILE_RESPONSE[api_c.BODY][api_c.AGE],
         )
 
     def test_post_customer_overview_by_attributes(self) -> None:
