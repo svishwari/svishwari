@@ -179,15 +179,32 @@ class CdpDataSourcesTest(TestCase):
                 CdpDataSourceSchema(), response.json, is_multiple=True
             )
         )
+        # types of data sources added to mock Unified MongoDB
+        unified_data_source_types = [x[api_c.TYPE] for x in self.data_sources]
+
         for data_source in response.json:
             self.assertIn(db_c.CATEGORY, data_source)
             self.assertIn(db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT, data_source)
-            if data_source in self.data_sources:
+            if data_source[api_c.TYPE] in unified_data_source_types:
                 self.assertTrue(data_source[api_c.IS_ADDED])
                 self.assertIn(api_c.ID, data_source)
             else:
                 self.assertFalse(data_source[api_c.IS_ADDED])
                 self.assertNotIn(api_c.ID, data_source)
+
+            # find data source from connections data source to validate feed count
+            connection_data_source = [
+                x
+                for x in t_c.DATASOURCES_RESPONSE[api_c.BODY]
+                if x[api_c.NAME] == data_source[api_c.TYPE]
+            ][0]
+            if connection_data_source:
+                self.assertEqual(
+                    connection_data_source[
+                        db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT
+                    ],
+                    data_source[db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT],
+                )
 
     def test_delete_data_sources_by_type_success(self):
         """]Test delete data sources by type from DB."""
