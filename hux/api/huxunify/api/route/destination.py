@@ -1,6 +1,7 @@
 # pylint: disable=no-self-use,too-many-lines
 """Paths for destinations API"""
 import datetime
+import json
 from http import HTTPStatus
 from typing import Tuple
 
@@ -1136,7 +1137,7 @@ class DestinationsRequestView(SwaggerView):
             JiraConnection().create_jira_issue(
                 api_c.TASK,
                 f"Requested Destination '{destination_request[api_c.NAME]}'.",
-                destination_request,
+                json.dumps(destination_request),
             )
 
         create_notification(

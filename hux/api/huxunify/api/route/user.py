@@ -1,10 +1,9 @@
 # pylint: disable=no-self-use
-"""Paths for the User API"""
+"""Paths for the User API."""
 import datetime
 import random
 from http import HTTPStatus
 from typing import Tuple
-from faker import Faker
 
 from bson import ObjectId
 from connexion.exceptions import ProblemException
@@ -346,7 +345,9 @@ class UserView(SwaggerView):
 
         # generate random phone number and user access level
         for user in users:
-            user[api_c.USER_PHONE_NUMBER] = Faker().phone_number()
+            user[api_c.USER_PHONE_NUMBER] = random.choice(
+                ["720-025-8322", "232-823-6049", "582-313-7191"]
+            )
             user[api_c.USER_ACCESS_LEVEL] = random.choice(
                 ["Edit", "View-only", "Admin"]
             )
