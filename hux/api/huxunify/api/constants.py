@@ -1002,6 +1002,8 @@ GEOGRAPHICAL = "geo"
 CUSTOMERS_API_HEADER_KEY = "x-api-key"
 CUSTOMERS_DEFAULT_BATCH_SIZE = 1000
 CUSTOMER_COUNT = "customer_count"
+OPT_IN = "Opt-In"
+OPT_OUT = "Opt-Out"
 
 MAX_WORKERS_THREAD_POOL = os.cpu_count() * 1 + 1
 

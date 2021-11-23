@@ -109,7 +109,7 @@ class CustomerProfileContactPreferencesSchema(Schema):
             dict : Returns a contact preference object
         """
         for key, val in data.items():
-            data[key] = "Opt-In" if val else "Opt-Out"
+            data[key] = api_c.OPT_IN if val else api_c.OPT_OUT
 
         return data
 
