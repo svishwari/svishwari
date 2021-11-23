@@ -15,8 +15,6 @@
       <hux-data-table
         v-if="!loading"
         :columns="columnDefs"
-        :sort-column="sortColumn"
-        :sort-desc="sortDesc"
         :data-items="versionHistory"
       >
         <template #row-item="{ item }">
@@ -143,8 +141,6 @@ export default {
     return {
       loading: true,
       localDrawer: this.value,
-      sortColumn: "version",
-      sortDesc: true,
       columnDefs: [
         {
           text: "Version",
