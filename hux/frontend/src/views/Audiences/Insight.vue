@@ -100,7 +100,7 @@
             Original size
             <tooltip position-top>
               <template #label-content>
-                <icon type="info" :size="12" />
+                <icon type="info" :size="8" class="mb-1" />
               </template>
               <template #hover-content>
                 Size of original audience that was used to create this

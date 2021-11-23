@@ -32,7 +32,9 @@ const state = {
 }
 
 const getters = {
-  list: (state) => Object.values(state.audiences),
+  list: function (state) {
+    return Object.values(state.audiences)
+  },
 
   audience: (state) => (id) => {
     return state.audiences[id]
@@ -58,6 +60,7 @@ const getters = {
 
 const mutations = {
   SET_ALL(state, items) {
+    state.audiences = []
     let getAudience = items.sort(function (a, b) {
       return a.name === b.name ? 0 : a.name < b.name ? -1 : 1
     })
@@ -108,9 +111,24 @@ const mutations = {
 }
 
 const actions = {
-  async getAll({ commit }) {
+  async getAll(
+    { commit },
+    {
+      lookalikeable = false,
+      deliveries = 2,
+      favorites = false,
+      worked_by = false,
+      attribute = [],
+    }
+  ) {
     try {
-      const response = await api.audiences.all()
+      const response = await api.audiences.getAudiences({
+        lookalikeable: lookalikeable,
+        deliveries: deliveries,
+        favorites: favorites,
+        worked_by: worked_by,
+        attribute: attribute,
+      })
       commit("SET_ALL", response.data)
     } catch (error) {
       handleError(error)

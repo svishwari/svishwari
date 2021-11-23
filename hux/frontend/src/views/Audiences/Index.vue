@@ -47,11 +47,7 @@
         </router-link>
       </template>
     </page-header>
-    <audience-filter
-      v-model="isFilterToggled"
-      :users="getNotificationUsers"
-      @onSectionAction="applyFilter"
-    />
+    <audience-filter v-model="isFilterToggled" @onSectionAction="applyFilter" />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div v-if="!loading" class="white">
       <hux-data-table
@@ -98,7 +94,7 @@
                 @actionFavorite="handleActionFavorite(item, 'audiences')"
               />
             </div>
-            <div v-if="header.value == 'status'" class="text-h5">
+            <div v-if="header.value == 'status'">
               <status
                 :status="item[header.value]"
                 :show-label="true"
@@ -111,7 +107,7 @@
             </div>
             <div
               v-if="header.value == 'filters' && item[header.value]"
-              class="filter_col pt-2 pb-1"
+              class="filter_col"
             >
               <span
                 v-for="(filter, filterIndex) in filterTags[item.name]"
@@ -351,8 +347,8 @@ import Status from "../../components/common/Status.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import Logo from "../../components/common/Logo.vue"
 import ConfirmModal from "@/components/common/ConfirmModal"
-import { capitalize } from "lodash"
 import AudienceFilter from "./Configuration/Drawers/AudienceFilter"
+import { formatText } from "@/utils.js"
 
 export default {
   name: "Audiences",
@@ -482,7 +478,7 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      await this.getAllAudiences()
+      await this.getAllAudiences({})
     } finally {
       this.loading = false
     }
@@ -591,12 +587,18 @@ export default {
       this.showLookAlikeDrawer = true
     },
 
-    formatText(text) {
-      return capitalize(text.replaceAll("_", " "))
-    },
     toggleFilterDrawer() {
       this.isFilterToggled = !this.isFilterToggled
     },
+    async applyFilter(params) {
+      await this.getAllAudiences({
+        favorites: params.selectedFavourite,
+        worked_by: params.selectedAudienceWorkedWith,
+        attribute: params.selectedAttributes,
+      })
+      this.isFilterToggled = false
+    },
+    formatText: formatText,
   },
 }
 </script>
@@ -651,7 +653,7 @@ export default {
     table {
       tr {
         td {
-          font-size: 14px;
+          font-size: 16px;
           height: 60px;
         }
       }
@@ -680,5 +682,7 @@ export default {
 .filter_col {
   height: 59px !important;
   overflow: auto;
+  display: table-cell;
+  vertical-align: middle;
 }
 </style>
