@@ -577,7 +577,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
 
 # pylint: disable=unspecified-encoding
 def read_csv_shap_data(file_path: str, features: list = None) -> dict:
-    """Read in CSV data into a dict
+    """Read in Shap Models Data CSV into a dict
 
     Args:
         file_path (str): relative file path of the csv file
@@ -609,3 +609,19 @@ def read_csv_shap_data(file_path: str, features: list = None) -> dict:
                 data[feature].append(row[index[feature]])
 
     return data
+
+
+# pylint: disable=unspecified-encoding
+def read_stub_city_zip_data(file_path: str) -> list:
+    """Read in City & Zip Data CSV into a dict
+
+    Args:
+        file_path(str): relative file path of the csv file
+
+    Returns:
+        list: City & Zip data list
+    """
+    with open(file_path, "r") as csv_file:
+        data = list(csv.reader(csv_file))
+
+    return data[1:]

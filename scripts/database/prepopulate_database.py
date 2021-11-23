@@ -636,6 +636,15 @@ delivery_platforms_constants = [
         c.IS_AD_PLATFORM: True,
     },
     {
+        c.DELIVERY_PLATFORM_NAME: "Google DV360",
+        c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_GOOGLE_DV360,
+        c.CATEGORY: c.ADVERTISING,
+        c.STATUS: c.PENDING,
+        c.ENABLED: False,
+        c.ADDED: False,
+        c.IS_AD_PLATFORM: True,
+    },
+    {
         c.DELIVERY_PLATFORM_NAME: "Fullstory",
         c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_FULLSTORY,
         c.CATEGORY: c.ANALYTICS,
