@@ -153,4 +153,9 @@ export default {
 ::v-deep .v-toolbar__title {
   padding-left: 10px !important;
 }
+
+::v-deep .v-footer {
+  box-shadow: none !important;
+  border-top: 1px solid #d0d0ce !important;
+}
 </style>
