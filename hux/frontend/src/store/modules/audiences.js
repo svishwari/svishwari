@@ -32,9 +32,7 @@ const state = {
 }
 
 const getters = {
-  list: function (state) {
-    return Object.values(state.audiences)
-  },
+  list: (state) => Object.values(state.audiences),
 
   audience: (state) => (id) => {
     return state.audiences[id]
