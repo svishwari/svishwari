@@ -233,13 +233,18 @@
             <huxButton
               variant="primary"
               is-tile
-              width="94"
               height="44"
               :is-disabled="!isAudienceFormValid"
               data-e2e="create-audience"
               @click="createAudience()"
             >
-              {{ !isEdit ? "Create" : "Update" }}
+              {{
+                !isEdit
+                  ? selectedDestinations.length > 0
+                    ? "Create &amp; deliver"
+                    : "Create"
+                  : "Update"
+              }}
             </huxButton>
           </template>
         </hux-footer>
