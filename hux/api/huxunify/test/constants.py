@@ -946,21 +946,25 @@ DATASOURCES_RESPONSE = {
             api_c.LABEL: "Data source 1",
             api_c.NAME: "test_data_source_1",
             api_c.STATUS: "Active",
+            db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 13,
         },
         {
             api_c.LABEL: "Data source 2",
             api_c.NAME: "test_data_source_2",
             api_c.STATUS: "Active",
+            db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 23,
         },
         {
             api_c.LABEL: "Data source 3",
             api_c.NAME: "test_data_source_3",
             api_c.STATUS: "Pending",
+            db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 31,
         },
         {
             api_c.LABEL: "Data source 4",
             api_c.NAME: "test_data_source_4",
             api_c.STATUS: "Pending",
+            db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 18,
         },
     ],
 }
