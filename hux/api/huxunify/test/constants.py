@@ -12,6 +12,7 @@ from marshmallow import Schema, ValidationError
 
 from huxunify.api.config import get_config
 import huxunify.api.constants as api_c
+import huxunifylib.database.constants as db_c
 
 BASE_ENDPOINT = "/api/v1"
 TEST_AUTH_TOKEN = "Bearer 12345678"
