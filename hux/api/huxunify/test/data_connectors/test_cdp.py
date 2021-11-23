@@ -35,6 +35,7 @@ from huxunify.api.data_connectors.cdp import (
 )
 from huxunify.app import create_app
 
+
 # pylint: disable=too-many-public-methods
 class CDPTest(TestCase):
     """Test CDP API endpoint methods."""
@@ -61,6 +62,11 @@ class CDPTest(TestCase):
         mock.patch(
             "huxunify.api.route.customers.get_db_client",
             return_value=self.database,
+        ).start()
+
+        mock.patch(
+            "huxunify.api.route.decorators.get_user_from_db",
+            return_value=t_c.VALID_DB_USER_RESPONSE,
         ).start()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)

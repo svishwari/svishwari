@@ -85,6 +85,7 @@ DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
 DATE_RANGE = "date_range"
 HUX_ID = "hux_id"
+REDACT_FIELD = "redact"
 LIMIT = "limit"
 CREATE_TIME = "create_time"
 CONTACT_EMAIL = "contact_email"
