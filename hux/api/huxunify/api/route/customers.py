@@ -496,7 +496,7 @@ class CustomerProfileSearch(SwaggerView):
         )
         Validation.validate_hux_id(hux_id)
 
-        if user[api_c.USER_PII_ACCESS] is True and not redact:
+        if user.get(api_c.USER_PII_ACCESS) is True and not redact:
             redacted_data = get_customer_profile(token_response[0], hux_id)
         else:
             redacted_data = redact_fields(
