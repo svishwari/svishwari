@@ -88,6 +88,64 @@ class CDPTest(TestCase):
                 api_c.CITY: "test_city",
                 api_c.ADDRESS: "test_address",
                 api_c.AGE: "test_age",
+                api_c.IDENTITY_RESOLUTION: {
+                    api_c.NAME: {
+                        api_c.PERCENTAGE: 0.26,
+                        api_c.COUNT: 23,
+                        api_c.DATA_SOURCE: [
+                            {
+                                api_c.ID: "585t749997acad4bac4373b",
+                                api_c.NAME: "Netsuite",
+                                api_c.TYPE: "Net-suite",
+                                api_c.PERCENTAGE: 0.49,
+                                api_c.COUNT: 15,
+                            },
+                            {
+                                api_c.ID: "685t749997acad4bac4373b",
+                                api_c.NAME: "Aqfer",
+                                api_c.TYPE: "Aqfer",
+                                api_c.PERCENTAGE: 0.51,
+                                api_c.COUNT: 5,
+                            },
+                        ],
+                        api_c.CO_OCCURRENCES: [
+                            {
+                                api_c.IDENTIFIER: "address",
+                                api_c.COUNT: 10,
+                                api_c.PERCENTAGE: 0.5,
+                            },
+                            {
+                                api_c.IDENTIFIER: "email",
+                                api_c.COUNT: 10,
+                                api_c.PERCENTAGE: 0.5,
+                            },
+                        ],
+                    },
+                    api_c.ADDRESS: {
+                        api_c.PERCENTAGE: 0.2,
+                        api_c.COUNT: 12,
+                        api_c.DATA_SOURCE: [],
+                        api_c.CO_OCCURRENCES: [],
+                    },
+                    "email": {
+                        api_c.PERCENTAGE: 0.34,
+                        api_c.COUNT: 2,
+                        api_c.DATA_SOURCE: [],
+                        api_c.CO_OCCURRENCES: [],
+                    },
+                    "phone": {
+                        api_c.PERCENTAGE: 0.14,
+                        api_c.COUNT: 7,
+                        api_c.DATA_SOURCE: [],
+                        api_c.CO_OCCURRENCES: [],
+                    },
+                    "cookie": {
+                        api_c.PERCENTAGE: 0.1,
+                        api_c.COUNT: 5,
+                        api_c.DATA_SOURCE: [],
+                        api_c.CO_OCCURRENCES: [],
+                    },
+                },
             },
             "message": "ok",
         }

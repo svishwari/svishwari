@@ -46,7 +46,7 @@ const multipleSectionFiltersAudience = {
         },
         {
           field: "gender",
-          type: "contains",
+          type: "equals",
           value: "female",
         },
       ],
@@ -66,7 +66,7 @@ const multipleSectionFiltersAudience = {
         },
         {
           field: "gender",
-          type: "contains",
+          type: "equals",
           value: "male",
         },
       ],
@@ -75,19 +75,19 @@ const multipleSectionFiltersAudience = {
       section_aggregator: "ALL",
       section_filters: [
         {
-          field: "predicted_lifetime_value",
+          field: "ltv_predicted",
           type: "range",
-          value: [3500, 6000],
+          value: [250, 460],
         },
         {
-          field: "city",
-          type: "contains",
-          value: "New York",
+          field: "City",
+          type: "equals",
+          value: "River Forest",
         },
         {
-          field: "zipcode",
-          type: "contains",
-          value: "26H12219",
+          field: "Zip",
+          type: "equals",
+          value: "19129",
         },
       ],
     },

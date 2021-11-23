@@ -52,7 +52,7 @@ export default {
         x: 0,
         y: 0,
       },
-      margin: { top: 5, right: 50, bottom: 75, left: 150 },
+      margin: { top: 5, right: 50, bottom: 75, left: 180 },
     }
   },
 

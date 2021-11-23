@@ -52,7 +52,7 @@ class JiraConnection:
         return dict(id=project.id, name=project.name, key=project.key)
 
     def create_jira_issue(
-        self, issue_type: dict, summary: str, description: str
+        self, issue_type: str, summary: str, description: str
     ):
         """Create a new issue in JIRA
 
