@@ -182,12 +182,12 @@
                 </div>
 
                 <span
-                  v-if="item[header.value] && item[header.value].length > 3"
-                  class="ml-1"
+                  v-if="item[header.value] && item[header.value].length > 2"
+                  class="ml-1 text-body-1 black--text"
                 >
                   <tooltip>
                     <template #label-content>
-                      + {{ item[header.value].length - 3 }}
+                      +{{ item[header.value].length - 2 }}
                     </template>
                     <template #hover-content>
                       <div class="d-flex flex-column">
@@ -406,7 +406,7 @@ export default {
         {
           text: "Attributes",
           value: "filters",
-          width: "400px",
+          width: "411px",
         },
         {
           text: "Destinations",
@@ -563,18 +563,18 @@ export default {
     },
     getOverallDestinations(audienceDestinations) {
       let destinations = [...audienceDestinations]
-      if (destinations.length > 3) {
+      if (destinations.length > 2) {
         return destinations
-          .slice(0, 3)
+          .slice(0, 2)
           .sort((a, b) => a.name.localeCompare(b.name))
       }
       return destinations.sort((a, b) => a.name.localeCompare(b.name))
     },
     getExtraDestinations(audienceDestinations) {
       let destinations = [...audienceDestinations]
-      if (destinations.length > 3) {
+      if (destinations.length > 2) {
         return destinations
-          .slice(3)
+          .slice(2)
           .sort((a, b) => a.name.localeCompare(b.name))
       }
       return destinations.sort((a, b) => a.name.localeCompare(b.name))

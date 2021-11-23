@@ -22,7 +22,7 @@
     </template>
 
     <template #default>
-      <hux-filter-panels>
+      <hux-filter-panels :expanded="filterLength > 0 ? [0] : []">
         <v-checkbox
           v-model="selectedFavourite"
           multiple
