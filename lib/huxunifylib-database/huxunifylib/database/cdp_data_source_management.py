@@ -5,14 +5,14 @@ from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.db_exceptions as de
 from huxunifylib.database.engagement_management import validate_object_id_list
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def create_data_source(
@@ -22,7 +22,7 @@ def create_data_source(
     added: bool = False,
     enabled: bool = False,
     source_type: str = None,
-    status: str = c.CDP_DATA_SOURCE_STATUS_ACTIVE,
+    status: str = db_c.CDP_DATA_SOURCE_STATUS_ACTIVE,
 ) -> Union[dict, None]:
     """A function that creates a new data source.
 
@@ -39,27 +39,27 @@ def create_data_source(
         Union[dict, None]: MongoDB document for a data source or None.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.CDP_DATA_SOURCES_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.CDP_DATA_SOURCES_COLLECTION
     ]
 
     # TODO - feed count to be updated per CDM in future tickets.
     doc = {
-        c.CDP_DATA_SOURCE_FIELD_NAME: name,
-        c.CDP_DATA_SOURCE_FIELD_CATEGORY: category,
-        c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
-        c.CDP_DATA_SOURCE_FIELD_STATUS: status,
-        c.ADDED: added,
-        c.ENABLED: enabled,
+        db_c.CDP_DATA_SOURCE_FIELD_NAME: name,
+        db_c.CDP_DATA_SOURCE_FIELD_CATEGORY: category,
+        db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
+        db_c.CDP_DATA_SOURCE_FIELD_STATUS: status,
+        db_c.ADDED: added,
+        db_c.ENABLED: enabled,
     }
 
     if source_type:
-        doc[c.DATA_SOURCE_TYPE] = source_type
+        doc[db_c.DATA_SOURCE_TYPE] = source_type
 
     try:
         data_source_id = collection.insert_one(doc).inserted_id
         if data_source_id is not None:
-            return collection.find_one({c.ID: data_source_id})
+            return collection.find_one({db_c.ID: data_source_id})
         logging.error("Failed to create a new data source!")
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -68,7 +68,7 @@ def create_data_source(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def bulk_write_data_sources(
@@ -83,22 +83,22 @@ def bulk_write_data_sources(
     Returns:
         Union[list, None]: List of MongoDB documents for data sources or None.
     """
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.CDP_DATA_SOURCES_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.CDP_DATA_SOURCES_COLLECTION
     ]
 
-    _ = [data_source.update({c.ADDED: True}) for data_source in data_sources]
+    _ = [data_source.update({db_c.ADDED: True}) for data_source in data_sources]
 
     try:
         data_source_ids = collection.insert_many(data_sources).inserted_ids
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return list(collection.find({c.ID: {"$in": data_source_ids}}))
+    return list(collection.find({db_c.ID: {"$in": data_source_ids}}))
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_data_sources(database: DatabaseClient) -> Union[list, None]:
@@ -111,8 +111,8 @@ def get_all_data_sources(database: DatabaseClient) -> Union[list, None]:
         Union[list, None]: List of all data sources or None.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.CDP_DATA_SOURCES_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.CDP_DATA_SOURCES_COLLECTION
     ]
 
     try:
@@ -124,7 +124,7 @@ def get_all_data_sources(database: DatabaseClient) -> Union[list, None]:
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_data_source(
@@ -148,15 +148,15 @@ def get_data_source(
             the mongo operation.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.CDP_DATA_SOURCES_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.CDP_DATA_SOURCES_COLLECTION
     ]
     query = {}
 
     if data_source_id:
-        query.update({c.ID: data_source_id})
+        query.update({db_c.ID: data_source_id})
     elif data_source_type:
-        query.update({c.TYPE: data_source_type})
+        query.update({db_c.TYPE: data_source_type})
     else:
         raise de.InsufficientDataException("data source")
 
@@ -169,7 +169,7 @@ def get_data_source(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_data_source(
@@ -185,12 +185,12 @@ def delete_data_source(
         bool: a flag indicating successful deletion.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.CDP_DATA_SOURCES_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.CDP_DATA_SOURCES_COLLECTION
     ]
 
     try:
-        return collection.delete_one({c.ID: data_source_id}).deleted_count > 0
+        return collection.delete_one({db_c.ID: data_source_id}).deleted_count > 0
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -198,7 +198,7 @@ def delete_data_source(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def bulk_delete_data_sources(
@@ -212,14 +212,14 @@ def bulk_delete_data_sources(
     Returns:
         bool: a flag indicating successful deletion.
     """
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.CDP_DATA_SOURCES_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.CDP_DATA_SOURCES_COLLECTION
     ]
 
     try:
         return (
             collection.delete_many(
-                {c.TYPE: {"$in": data_source_types}}
+                {db_c.TYPE: {"$in": data_source_types}}
             ).deleted_count
             > 0
         )
@@ -230,7 +230,7 @@ def bulk_delete_data_sources(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_data_sources(
@@ -256,13 +256,13 @@ def update_data_sources(
     # remove duplicates if any.
     data_source_ids = list(set(data_source_ids))
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.CDP_DATA_SOURCES_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.CDP_DATA_SOURCES_COLLECTION
     ]
 
     try:
         result = collection.update_many(
-            {c.ID: {"$in": data_source_ids}}, {"$set": update_dict}
+            {db_c.ID: {"$in": data_source_ids}}, {"$set": update_dict}
         )
         return len(data_source_ids) == result.matched_count
     except pymongo.errors.OperationFailure as exc:
