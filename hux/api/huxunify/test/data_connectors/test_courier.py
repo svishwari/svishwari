@@ -8,7 +8,7 @@ import requests_mock
 import boto3
 from botocore.stub import Stubber
 
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
@@ -59,7 +59,7 @@ class CourierTest(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
-        self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
+        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
         # Set delivery platform
         self.auth_details_facebook = {
@@ -72,7 +72,7 @@ class CourierTest(TestCase):
         # create the list of destinations
         destinations = []
         for destination in [
-            (c.DELIVERY_PLATFORM_FACEBOOK, self.auth_details_facebook)
+            (db_c.DELIVERY_PLATFORM_FACEBOOK, self.auth_details_facebook)
         ]:
             # TODO - remove when we remove delivery-platform types
             destination_doc = set_delivery_platform(
@@ -87,15 +87,16 @@ class CourierTest(TestCase):
 
             # set status
             destination_doc = set_connection_status(
-                self.database, destination_doc[c.ID], c.STATUS_SUCCEEDED
+                self.database, destination_doc[db_c.ID], db_c.STATUS_SUCCEEDED
             )
             self.assertEqual(
-                c.STATUS_SUCCEEDED, destination_doc[c.DELIVERY_PLATFORM_STATUS]
+                db_c.STATUS_SUCCEEDED,
+                destination_doc[db_c.DELIVERY_PLATFORM_STATUS],
             )
 
             destinations.append(destination_doc)
 
-        destination_ids = [d[c.ID] for d in destinations]
+        destination_ids = [d[db_c.ID] for d in destinations]
 
         # create first audience
         self.audience_one = create_audience(
@@ -111,34 +112,34 @@ class CourierTest(TestCase):
 
         # define a sample engagement, with prepopulated engagements
         engagement_doc = {
-            c.AUDIENCE_NAME: "Chihuly Garden and Glass",
-            c.NOTIFICATION_FIELD_DESCRIPTION: "Former fun forest amusement park.",
-            c.AUDIENCES: [
+            db_c.AUDIENCE_NAME: "Chihuly Garden and Glass",
+            db_c.NOTIFICATION_FIELD_DESCRIPTION: "Former fun forest amusement park.",
+            db_c.AUDIENCES: [
                 {
-                    c.OBJECT_ID: self.audience_one[c.ID],
-                    c.DESTINATIONS: [
-                        {c.OBJECT_ID: x}
-                        for x in self.audience_one[c.DESTINATIONS]
+                    db_c.OBJECT_ID: self.audience_one[db_c.ID],
+                    db_c.DESTINATIONS: [
+                        {db_c.OBJECT_ID: x}
+                        for x in self.audience_one[db_c.DESTINATIONS]
                     ],
                 },
                 {
-                    c.OBJECT_ID: self.audience_two[c.ID],
-                    c.DESTINATIONS: [
-                        {c.OBJECT_ID: x}
-                        for x in self.audience_two[c.DESTINATIONS]
+                    db_c.OBJECT_ID: self.audience_two[db_c.ID],
+                    db_c.DESTINATIONS: [
+                        {db_c.OBJECT_ID: x}
+                        for x in self.audience_two[db_c.DESTINATIONS]
                     ],
                 },
             ],
-            c.CREATED_BY: ObjectId(),
+            db_c.CREATED_BY: ObjectId(),
         }
 
         # insert engagement doc in the collection
         engagement_id = set_engagement(
             self.database,
-            engagement_doc[c.AUDIENCE_NAME],
-            engagement_doc[c.NOTIFICATION_FIELD_DESCRIPTION],
-            engagement_doc[c.AUDIENCES],
-            engagement_doc[c.CREATED_BY],
+            engagement_doc[db_c.AUDIENCE_NAME],
+            engagement_doc[db_c.NOTIFICATION_FIELD_DESCRIPTION],
+            engagement_doc[db_c.AUDIENCES],
+            engagement_doc[db_c.CREATED_BY],
         )
 
         self.assertIsInstance(engagement_id, ObjectId)
@@ -152,8 +153,8 @@ class CourierTest(TestCase):
         sample_auth = "sample_auth"
         destination = {
             api_c.DESTINATION_ID: ObjectId(),
-            api_c.DESTINATION_NAME: c.DELIVERY_PLATFORM_FACEBOOK,
-            api_c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_FACEBOOK,
+            api_c.DESTINATION_NAME: db_c.DELIVERY_PLATFORM_FACEBOOK,
+            api_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_FACEBOOK,
             api_c.AUTHENTICATION_DETAILS: {
                 api_c.FACEBOOK_ACCESS_TOKEN: sample_auth,
                 api_c.FACEBOOK_APP_SECRET: sample_auth,
@@ -203,8 +204,8 @@ class CourierTest(TestCase):
         sample_auth = "sample_auth"
         destination = {
             api_c.DESTINATION_ID: ObjectId(),
-            api_c.DESTINATION_NAME: c.DELIVERY_PLATFORM_SFMC,
-            api_c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_SFMC,
+            api_c.DESTINATION_NAME: db_c.DELIVERY_PLATFORM_SFMC,
+            api_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SFMC,
             api_c.AUTHENTICATION_DETAILS: {
                 api_c.SFMC_CLIENT_ID: sample_auth,
                 api_c.SFMC_AUTH_BASE_URI: sample_auth,
@@ -257,7 +258,7 @@ class CourierTest(TestCase):
         """Test get audience/destination pairs valid destination."""
 
         delivery_route = get_audience_destination_pairs(
-            self.engagement[c.AUDIENCES]
+            self.engagement[db_c.AUDIENCES]
         )
 
         self.assertTrue(delivery_route)
@@ -267,7 +268,7 @@ class CourierTest(TestCase):
         """Test get audience/destination pairs invalid destination."""
 
         # take the first engagement audience and set an invalid audience destination
-        invalid_engagement = self.engagement[c.AUDIENCES]
+        invalid_engagement = self.engagement[db_c.AUDIENCES]
         invalid_engagement[0][api_c.DESTINATIONS] = "invalid_data"
 
         # now test getting the delivery route, which should yield one destination pair.
@@ -304,18 +305,18 @@ class CourierTest(TestCase):
         """Test get delivery route with specific audience."""
 
         engagement = self.engagement.copy()
-        engagement[c.AUDIENCES] = [engagement[c.AUDIENCES][0]]
+        engagement[db_c.AUDIENCES] = [engagement[db_c.AUDIENCES][0]]
 
         delivery_route = get_audience_destination_pairs(
-            engagement[c.AUDIENCES]
+            engagement[db_c.AUDIENCES]
         )
 
         self.assertTrue(delivery_route)
 
         expected_route = [
             [
-                self.audience_one[c.ID],
-                {c.OBJECT_ID: self.audience_one[c.DESTINATIONS][0]},
+                self.audience_one[db_c.ID],
+                {db_c.OBJECT_ID: self.audience_one[db_c.DESTINATIONS][0]},
             ]
         ]
 
@@ -325,7 +326,7 @@ class CourierTest(TestCase):
         """Test destination batch init."""
 
         delivery_route = get_audience_destination_pairs(
-            self.engagement[c.AUDIENCES]
+            self.engagement[db_c.AUDIENCES]
         )
         self.assertTrue(delivery_route)
 
@@ -343,7 +344,7 @@ class CourierTest(TestCase):
                 return_value="demo_store_value",
             ):
                 batch_destination = get_destination_config(
-                    self.database, self.engagement[c.ID], *pair
+                    self.database, self.engagement[db_c.ID], *pair
                 )
             self.assertIsNotNone(batch_destination.aws_envs)
             self.assertIsNotNone(batch_destination.aws_secrets)
@@ -355,14 +356,14 @@ class CourierTest(TestCase):
                 self.database, batch_destination.audience_delivery_job_id
             )
             self.assertEqual(
-                audience_delivery_status, c.AUDIENCE_STATUS_DELIVERING
+                audience_delivery_status, db_c.AUDIENCE_STATUS_DELIVERING
             )
 
     def test_destination_register_job(self):
         """Test destination batch register job."""
 
         delivery_route = get_audience_destination_pairs(
-            self.engagement[c.AUDIENCES]
+            self.engagement[db_c.AUDIENCES]
         )
         self.assertTrue(delivery_route)
 
@@ -374,7 +375,7 @@ class CourierTest(TestCase):
                 return_value="demo_store_value",
             ):
                 batch_destination = get_destination_config(
-                    self.database, self.engagement[c.ID], *pair
+                    self.database, self.engagement[db_c.ID], *pair
                 )
             batch_destination.aws_envs[
                 AudienceRouterConfig.BATCH_SIZE.name
@@ -394,14 +395,14 @@ class CourierTest(TestCase):
                 batch_destination.register(self.engagement)
 
             self.assertEqual(
-                batch_destination.result, c.AUDIENCE_STATUS_DELIVERING
+                batch_destination.result, db_c.AUDIENCE_STATUS_DELIVERING
             )
 
     def test_destination_submit_job(self):
         """Test destination batch submit job."""
 
         delivery_route = get_audience_destination_pairs(
-            self.engagement[c.AUDIENCES]
+            self.engagement[db_c.AUDIENCES]
         )
         self.assertTrue(delivery_route)
 
@@ -413,7 +414,7 @@ class CourierTest(TestCase):
                 return_value="demo_store_value",
             ):
                 batch_destination = get_destination_config(
-                    self.database, self.engagement[c.ID], *pair
+                    self.database, self.engagement[db_c.ID], *pair
                 )
 
             # Register job
@@ -427,7 +428,7 @@ class CourierTest(TestCase):
             ):
                 batch_destination.register(self.engagement)
             self.assertEqual(
-                batch_destination.result, c.AUDIENCE_STATUS_DELIVERING
+                batch_destination.result, db_c.AUDIENCE_STATUS_DELIVERING
             )
 
             with mock.patch.object(
@@ -475,16 +476,16 @@ class CourierTest(TestCase):
         """Test function get_auth_from_parameter_store."""
 
         # use audience once
-        for destination_id in self.audience_one[c.DESTINATIONS]:
+        for destination_id in self.audience_one[db_c.DESTINATIONS]:
             # get destination
             destination = get_delivery_platform(self.database, destination_id)
 
             # setup mocks for each secret
             simulated_secret = (
-                f"simulated_secret_{destination[c.DELIVERY_PLATFORM_TYPE]}"
+                f"simulated_secret_{destination[db_c.DELIVERY_PLATFORM_TYPE]}"
             )
             for _ in api_c.DESTINATION_SECRETS[
-                destination[c.DELIVERY_PLATFORM_TYPE]
+                destination[db_c.DELIVERY_PLATFORM_TYPE]
             ]:
                 mock.patch.object(
                     parameter_store,
@@ -494,13 +495,13 @@ class CourierTest(TestCase):
 
             # run the function
             auth = get_auth_from_parameter_store(
-                destination[c.DELIVERY_PLATFORM_AUTH],
-                destination[c.DELIVERY_PLATFORM_TYPE],
+                destination[db_c.DELIVERY_PLATFORM_AUTH],
+                destination[db_c.DELIVERY_PLATFORM_TYPE],
             )
 
             # test that the secrets were set to the simulated secret
             for secret in api_c.DESTINATION_SECRETS[
-                destination[c.DELIVERY_PLATFORM_TYPE]
+                destination[db_c.DELIVERY_PLATFORM_TYPE]
             ][api_c.AWS_SSM_NAME]:
                 self.assertEqual(auth[secret.upper()], simulated_secret)
 
@@ -513,13 +514,13 @@ class CourierTest(TestCase):
         """
 
         # use audience once
-        for destination_id in self.audience_one[c.DESTINATIONS]:
+        for destination_id in self.audience_one[db_c.DESTINATIONS]:
 
             # get destination
             destination = get_delivery_platform(self.database, destination_id)
 
             # create the rule name
-            cw_name = f"{self.engagement[c.ID]}-{destination[c.DELIVERY_PLATFORM_TYPE]}"
+            cw_name = f"{self.engagement[db_c.ID]}-{destination[db_c.DELIVERY_PLATFORM_TYPE]}"
 
             # put params
             put_rule_params = {
@@ -565,12 +566,12 @@ class CourierTest(TestCase):
         """
 
         # use audience once
-        for destination_id in self.audience_one[c.DESTINATIONS]:
+        for destination_id in self.audience_one[db_c.DESTINATIONS]:
             # get destination
             destination = get_delivery_platform(self.database, destination_id)
 
             # create the rule name
-            cw_name = f"{self.engagement[c.ID]}-{destination[c.DELIVERY_PLATFORM_TYPE]}"
+            cw_name = f"{self.engagement[db_c.ID]}-{destination[db_c.DELIVERY_PLATFORM_TYPE]}"
 
             # put params
             put_rule_params = {
@@ -617,13 +618,11 @@ class CourierTest(TestCase):
 
         # get destination
         destination = get_delivery_platform(
-            self.database, self.audience_one[c.DESTINATIONS][0]
+            self.database, self.audience_one[db_c.DESTINATIONS][0]
         )
 
         # create the rule name
-        cw_name = (
-            f"{self.engagement[c.ID]}-{destination[c.DELIVERY_PLATFORM_TYPE]}"
-        )
+        cw_name = f"{self.engagement[db_c.ID]}-{destination[db_c.DELIVERY_PLATFORM_TYPE]}"
 
         batch_params = {
             "JobDefinition": "sample_job_def",
@@ -688,13 +687,11 @@ class CourierTest(TestCase):
 
         # get destination
         destination = get_delivery_platform(
-            self.database, self.audience_one[c.DESTINATIONS][0]
+            self.database, self.audience_one[db_c.DESTINATIONS][0]
         )
 
         # create the rule name
-        cw_name = (
-            f"{self.engagement[c.ID]}-{destination[c.DELIVERY_PLATFORM_TYPE]}"
-        )
+        cw_name = f"{self.engagement[db_c.ID]}-{destination[db_c.DELIVERY_PLATFORM_TYPE]}"
 
         batch_params = {
             "JobDefinition": "sample_job_def",

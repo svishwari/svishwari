@@ -123,6 +123,7 @@ class CustomerProfileSchema(Schema):
         CustomerProfileContactPreferencesSchema, required=True
     )
     identity_resolution = Nested(IdentityResolution, required=True)
+    pii_access = Boolean(required=True, default=False)
 
 
 class CustomerStateSchema(Schema):

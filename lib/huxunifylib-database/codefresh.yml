@@ -28,14 +28,6 @@ steps:
         title: 'tests'
         environment:
           - TOXENV=py37
-      safety:
-        title: 'safety'
-        environment:
-          - TOXENV=safety
-      bandit:
-        title: 'bandit'
-        environment:
-          - TOXENV=bandit
     fail_fast: false
 
   coverageStyleCheck:
@@ -51,10 +43,6 @@ steps:
         title: 'checkCoverage'
         environment:
           - TOXENV=checkCoverage
-      style:
-        title: 'style'
-        environment:
-          - TOXENV=style
     fail_fast: false
 
   publish:
