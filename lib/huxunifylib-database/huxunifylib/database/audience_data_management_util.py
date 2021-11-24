@@ -331,7 +331,9 @@ def update_audience_doc(
         dict: updated document.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.AUDIENCES_COLLECTION
+    ]
 
     try:
         return collection.find_one_and_update(

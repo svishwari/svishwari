@@ -253,7 +253,9 @@ def get_audience(
             continue
 
         filter_type = item[db_c.AUDIENCE_FILTER_TYPE]
-        filter_field = f"{db_c.INGESTED_DATA}.{item[db_c.AUDIENCE_FILTER_FIELD]}"
+        filter_field = (
+            f"{db_c.INGESTED_DATA}.{item[db_c.AUDIENCE_FILTER_FIELD]}"
+        )
 
         filter_value = item[db_c.AUDIENCE_FILTER_VALUE]
 
@@ -860,7 +862,8 @@ def get_all_recent_audiences(
             doc = None
             try:
                 doc = collection.find_one(
-                    {db_c.ID: audience_id, db_c.DELETED: False}, {db_c.DELETED: 0}
+                    {db_c.ID: audience_id, db_c.DELETED: False},
+                    {db_c.DELETED: 0},
                 )
             except pymongo.errors.OperationFailure as exc:
                 logging.error(exc)
@@ -893,7 +896,9 @@ def get_all_audiences(
 
     # Get audience configurations and add to list
     try:
-        audiences = list(collection.find({db_c.DELETED: False}, {db_c.DELETED: 0}))
+        audiences = list(
+            collection.find({db_c.DELETED: False}, {db_c.DELETED: 0})
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -1012,6 +1017,8 @@ def update_audience_status_for_delivery(
 
     # set the last delivered time if status is successful
     if status == db_c.AUDIENCE_STATUS_DELIVERED:
-        update_dict[db_c.AUDIENCE_LAST_DELIVERED] = update_dict[db_c.UPDATE_TIME]
+        update_dict[db_c.AUDIENCE_LAST_DELIVERED] = update_dict[
+            db_c.UPDATE_TIME
+        ]
 
     return update_audience_doc(database, audience_id, update_dict)

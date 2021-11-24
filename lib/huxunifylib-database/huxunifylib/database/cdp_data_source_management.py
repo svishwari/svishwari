@@ -87,7 +87,9 @@ def bulk_write_data_sources(
         db_c.CDP_DATA_SOURCES_COLLECTION
     ]
 
-    _ = [data_source.update({db_c.ADDED: True}) for data_source in data_sources]
+    _ = [
+        data_source.update({db_c.ADDED: True}) for data_source in data_sources
+    ]
 
     try:
         data_source_ids = collection.insert_many(data_sources).inserted_ids
@@ -190,7 +192,9 @@ def delete_data_source(
     ]
 
     try:
-        return collection.delete_one({db_c.ID: data_source_id}).deleted_count > 0
+        return (
+            collection.delete_one({db_c.ID: data_source_id}).deleted_count > 0
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
