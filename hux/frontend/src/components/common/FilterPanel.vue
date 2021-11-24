@@ -1,12 +1,18 @@
 <template>
   <v-expansion-panel class="hux-filter-panel">
     <v-expansion-panel-header class="header">
-      <h4 class="text-body-1 primary--text text--lighten-6">
+      <h4
+        :class="
+          count == 0
+            ? 'text-body-1 black--text'
+            : 'text-body-1 primary--text text--lighten-6'
+        "
+      >
         <slot name="title">{{ title }}</slot>
         <span v-if="count" class="ml-1">({{ count }})</span>
       </h4>
       <template #actions>
-        <v-icon color="blue"> $expand </v-icon>
+        <v-icon :color="count == 0 ? 'black' : 'blue'"> $expand </v-icon>
       </template>
     </v-expansion-panel-header>
 

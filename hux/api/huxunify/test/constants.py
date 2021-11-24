@@ -10,6 +10,7 @@ from dateutil import parser
 
 from marshmallow import Schema, ValidationError
 
+import huxunifylib.database.constants as db_c
 from huxunify.api.config import get_config
 import huxunify.api.constants as api_c
 
@@ -42,6 +43,16 @@ VALID_USER_RESPONSE = {
     api_c.EMAIL: "davesmith@fake.com",
     api_c.NAME: "dave smith",
     api_c.ROLE: "admin",
+    api_c.USER_PII_ACCESS: True,
+}
+OKTA_ID = "okta_id"
+ROLE = "role"
+VALID_DB_USER_RESPONSE = {
+    OKTA_ID: "8548bfh8d",
+    api_c.EMAIL: "davesmith@fake.com",
+    api_c.DISPLAY_NAME: "dave smith",
+    api_c.USER_PII_ACCESS: True,
+    ROLE: "admin",
 }
 # response missing some fields
 INVALID_USER_RESPONSE = {
@@ -164,6 +175,80 @@ CUSTOMER_EVENT_RESPONSE = {
             "date": "2021-01-02T00:00:00.000Z",
         },
     ],
+    "message": "ok",
+}
+
+SAMPLE_CUSTOMER_ID = "HUX123456789012345"
+CUSTOMER_PROFILE_RESPONSE = {
+    "code": 200,
+    "body": {
+        api_c.HUX_ID: "HUX123456789012345",
+        api_c.FIRST_NAME: "Bertie",
+        api_c.LAST_NAME: "Fox",
+        api_c.EMAIL: "fake@fake.com",
+        api_c.GENDER: "test_gender",
+        api_c.CITY: "test_city",
+        api_c.ADDRESS: "test_address",
+        api_c.AGE: "test_age",
+        api_c.IDENTITY_RESOLUTION: {
+            api_c.NAME: {
+                api_c.PERCENTAGE: 0.26,
+                api_c.COUNT: 23,
+                api_c.DATA_SOURCE: [
+                    {
+                        api_c.ID: "585t749997acad4bac4373b",
+                        api_c.NAME: "Netsuite",
+                        api_c.TYPE: "Net-suite",
+                        api_c.PERCENTAGE: 0.49,
+                        api_c.COUNT: 15,
+                    },
+                    {
+                        api_c.ID: "685t749997acad4bac4373b",
+                        api_c.NAME: "Aqfer",
+                        api_c.TYPE: "Aqfer",
+                        api_c.PERCENTAGE: 0.51,
+                        api_c.COUNT: 5,
+                    },
+                ],
+                api_c.CO_OCCURRENCES: [
+                    {
+                        api_c.IDENTIFIER: "address",
+                        api_c.COUNT: 10,
+                        api_c.PERCENTAGE: 0.5,
+                    },
+                    {
+                        api_c.IDENTIFIER: "email",
+                        api_c.COUNT: 10,
+                        api_c.PERCENTAGE: 0.5,
+                    },
+                ],
+            },
+            api_c.ADDRESS: {
+                api_c.PERCENTAGE: 0.2,
+                api_c.COUNT: 12,
+                api_c.DATA_SOURCE: [],
+                api_c.CO_OCCURRENCES: [],
+            },
+            "email": {
+                api_c.PERCENTAGE: 0.34,
+                api_c.COUNT: 2,
+                api_c.DATA_SOURCE: [],
+                api_c.CO_OCCURRENCES: [],
+            },
+            "phone": {
+                api_c.PERCENTAGE: 0.14,
+                api_c.COUNT: 7,
+                api_c.DATA_SOURCE: [],
+                api_c.CO_OCCURRENCES: [],
+            },
+            "cookie": {
+                api_c.PERCENTAGE: 0.1,
+                api_c.COUNT: 5,
+                api_c.DATA_SOURCE: [],
+                api_c.CO_OCCURRENCES: [],
+            },
+        },
+    },
     "message": "ok",
 }
 
@@ -862,25 +947,28 @@ DATASOURCES_RESPONSE = {
             api_c.LABEL: "Data source 1",
             api_c.NAME: "test_data_source_1",
             api_c.STATUS: "Active",
+            db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 13,
         },
         {
             api_c.LABEL: "Data source 2",
             api_c.NAME: "test_data_source_2",
             api_c.STATUS: "Active",
+            db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 23,
         },
         {
             api_c.LABEL: "Data source 3",
             api_c.NAME: "test_data_source_3",
             api_c.STATUS: "Pending",
+            db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 31,
         },
         {
             api_c.LABEL: "Data source 4",
             api_c.NAME: "test_data_source_4",
             api_c.STATUS: "Pending",
+            db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 18,
         },
     ],
 }
-
 
 DATASOURCE_DATA_FEEDS_RESPONSE = {
     "code": 200,

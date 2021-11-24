@@ -41,8 +41,8 @@
                 v-if="column.hoverTooltip"
                 :key="column.id"
                 type="info"
-                :size="12"
-                class="ml-1"
+                :size="8"
+                class="ml-1 mb-1"
                 color="primary"
                 variant="base"
               />

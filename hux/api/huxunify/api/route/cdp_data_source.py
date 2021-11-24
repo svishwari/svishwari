@@ -110,7 +110,7 @@ class DataSourceSearch(SwaggerView):
         )
 
         data_sources = get_all_data_sources(get_db_client())
-
+        connections_data_sources = []
         if not only_added:
             token_response = get_token_from_request(request)
             connections_data_sources = CdpConnectionsDataSourceSchema().load(
@@ -127,16 +127,21 @@ class DataSourceSearch(SwaggerView):
                 ]
             )
 
-        _ = [
-            data_source.update(
-                {
-                    db_c.CATEGORY: api_c.CDP_DATA_SOURCE_CATEGORY_MAP.get(
-                        data_source[api_c.TYPE], db_c.CATEGORY_UNKNOWN
-                    )
-                }
+        for data_source in data_sources:
+            data_source[
+                db_c.CATEGORY
+            ] = api_c.CDP_DATA_SOURCE_CATEGORY_MAP.get(
+                data_source[api_c.TYPE], db_c.CATEGORY_UNKNOWN
             )
-            for data_source in data_sources
-        ]
+            for connection_ds in connections_data_sources:
+                if connection_ds.get(api_c.TYPE) == data_source.get(
+                    api_c.TYPE
+                ):
+                    data_source[
+                        db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT
+                    ] = connection_ds.get(
+                        db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT
+                    )
 
         return (
             jsonify(CdpDataSourceSchema().dump(data_sources, many=True)),

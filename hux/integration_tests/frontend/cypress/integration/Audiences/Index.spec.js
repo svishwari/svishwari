@@ -19,6 +19,7 @@ describe("Orchestration > Audiences", () => {
       "Audience name",
       "Status",
       "Size",
+      "Attributes",
       "Destinations",
       "Last delivered",
       "Last updated",

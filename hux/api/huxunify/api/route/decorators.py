@@ -287,6 +287,7 @@ def requires_access_levels(access_levels: list) -> object:
                 }, HTTPStatus.UNAUTHORIZED
 
             user[api_c.USER_NAME] = user.get(db_c.USER_DISPLAY_NAME, None)
+            user[api_c.USER_PII_ACCESS] = user.get(db_c.USER_PII_ACCESS, False)
 
             # return found user
             kwargs[api_c.USER] = user
