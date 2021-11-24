@@ -156,6 +156,6 @@ export default {
 
 ::v-deep .v-footer {
   box-shadow: none !important;
-  border-top: 1px solid #d0d0ce !important;
+  border-top: 1px solid var(--v-black-lighten3) !important;
 }
 </style>

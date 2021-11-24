@@ -14,7 +14,7 @@
           <span class="dot mr-1"></span>{{ title }}
         </div>
         <div class="body-2 my-1 margin-sides-dec">{{ tooltipValue }}</div>
-        <div class="body-2 mt-1 margin-sides-dec" style="color: #4f4f4f">
+        <div class="body-2 mt-1 margin-sides-dec grey-color">
           {{ tooltipValueDate | Date("MMM DD, YYYY") | Empty }}
         </div>
       </template>
@@ -405,5 +405,8 @@ export default {
 .margin-sides-dec {
   margin-left: -5px;
   margin-right: -5px;
+}
+.grey-color {
+  color: var(--v-black-lighten4);
 }
 </style>
