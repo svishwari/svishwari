@@ -126,10 +126,10 @@
               <tooltip>
                 <template #label-content>
                   <span
-                    v-if="filterTags[item.name].length > 4"
+                    v-if="filterTags[item.name].size > 4"
                     class="text-subtitle-2 primary--text"
                   >
-                    +{{ filterTags[item.name].length - 4 }}
+                    +{{ filterTags[item.name].size - 4 }}
                   </span>
                 </template>
                 <template #hover-content>
@@ -464,10 +464,10 @@ export default {
       let audienceValue = JSON.parse(JSON.stringify(this.rowData))
       audienceValue.forEach((audience) => {
         if (audience.filters) {
-          filterTagsObj[audience.name] = []
+          filterTagsObj[audience.name] = new Set()
           audience.filters.forEach((item) => {
             item.section_filters.forEach((obj) => {
-              filterTagsObj[audience.name].push(obj.field)
+              filterTagsObj[audience.name].add(obj.field)
             })
           })
         }
