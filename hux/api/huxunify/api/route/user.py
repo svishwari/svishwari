@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use,disable=unused-argument
 """Paths for the User API."""
 import datetime
 import random
@@ -23,7 +23,7 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
-    get_user_name,
+    requires_access_levels,
 )
 from huxunify.api.route.utils import (
     get_db_client,
@@ -77,12 +77,16 @@ class UserProfile(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    def get(self) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
         """Retrieves a user profile.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: dict of user, HTTP status code.
@@ -184,7 +188,10 @@ class AddUserFavorite(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    def post(self, component_name: str, component_id: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def post(
+        self, component_name: str, component_id: str, user: dict
+    ) -> Tuple[dict, int]:
         """Creates a user favorite.
 
         ---
@@ -194,6 +201,7 @@ class AddUserFavorite(SwaggerView):
         Args:
             component_name (str): Component name.
             component_id (str): Component ID.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Configuration dict, HTTP status code.
@@ -265,8 +273,9 @@ class DeleteUserFavorite(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def delete(
-        self, component_name: str, component_id: str
+        self, component_name: str, component_id: str, user: dict
     ) -> Tuple[dict, int]:
         """Deletes a user favorite.
 
@@ -277,6 +286,7 @@ class DeleteUserFavorite(SwaggerView):
         Args:
             component_name (str): Component name.
             component_id (str): Component ID.
+            user(dict): User object.
 
         Returns:
             Tuple[dict, int]: Configuration dict, HTTP status code.
@@ -329,12 +339,18 @@ class UserView(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def get(
+        self, user: dict
+    ) -> Tuple[list, int]:  # pylint: disable=no-self-use
         """Retrieves all users.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user(dict): User object.
 
         Returns:
             Tuple[list, int]: list of users, HTTP status code.
@@ -397,8 +413,8 @@ class UserPatchView(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    @get_user_name()
-    def patch(self, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def patch(self, user: dict) -> Tuple[dict, int]:
         """Updates a user.
 
         ---
@@ -406,7 +422,7 @@ class UserPatchView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: User doc, HTTP status code.
@@ -426,7 +442,8 @@ class UserPatchView(SwaggerView):
             del body[api_c.ID]
         else:
             user = get_all_users(
-                database, {db_constants.USER_DISPLAY_NAME: user_name}
+                database,
+                {db_constants.USER_DISPLAY_NAME: user[api_c.USER_NAME]},
             )
 
         if not user:
@@ -440,7 +457,7 @@ class UserPatchView(SwaggerView):
             update_doc={
                 **body,
                 **{
-                    db_constants.UPDATED_BY: user_name,
+                    db_constants.UPDATED_BY: user[api_c.USER_NAME],
                     db_constants.UPDATE_TIME: datetime.datetime.utcnow(),
                 },
             },
@@ -486,8 +503,8 @@ class CreateTicket(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    @get_user_name()
-    def post(self, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def post(self, user: dict) -> Tuple[dict, int]:
         """Create a ticket in JIRA
 
         ---
@@ -495,7 +512,7 @@ class CreateTicket(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: dict of message, HTTP status code.
@@ -509,9 +526,9 @@ class CreateTicket(SwaggerView):
         create_notification(
             database=get_db_client(),
             notification_type=db_constants.NOTIFICATION_TYPE_INFORMATIONAL,
-            description=f"{user_name} created a new issue {new_issue.get(api_c.KEY)} in JIRA.",
+            description=f"{user[api_c.USER_NAME]} created a new issue {new_issue.get(api_c.KEY)} in JIRA.",
             category=api_c.TICKET_TYPE_BUG,
-            username=user_name,
+            username=user[api_c.USER_NAME],
         )
         return (
             TicketGetSchema().dump(new_issue),

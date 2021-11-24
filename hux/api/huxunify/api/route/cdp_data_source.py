@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use,disable=unused-argument
 """Paths for the CDP data sources API"""
 from http import HTTPStatus
 from typing import Tuple
@@ -32,6 +32,7 @@ from huxunify.api.route.decorators import (
     secured,
     api_error_handler,
     get_user_name,
+    requires_access_levels,
 )
 from huxunify.api.route.utils import (
     get_db_client,
@@ -90,12 +91,16 @@ class DataSourceSearch(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @api_error_handler()
-    def get(self) -> Tuple[list, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves all CDP data sources.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User object.
 
         Returns:
             Tuple[list, int]: list of CDP data sources, HTTP status code.
@@ -178,7 +183,8 @@ class IndividualDataSourceSearch(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @api_error_handler()
-    def get(self, data_source_id: str):
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, data_source_id: str, user: dict):
         """Retrieves a CDP data source.
 
         ---
@@ -187,6 +193,7 @@ class IndividualDataSourceSearch(SwaggerView):
 
         Args:
             data_source_id (str): id of CDP data source.
+            user (dict): User object
 
         Returns:
             Tuple[dict, int]: dict of data source, HTTP status code.
@@ -262,8 +269,8 @@ class CreateCdpDataSources(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @api_error_handler()
-    @get_user_name()
-    def post(self, user_name: str) -> Tuple[list, int]:
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def post(self, user: dict) -> Tuple[list, int]:
         """Creates new CDP data sources.
 
         ---
@@ -271,7 +278,7 @@ class CreateCdpDataSources(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[list, int]: List of CDP Data sources created, HTTP status code.
@@ -299,7 +306,7 @@ class CreateCdpDataSources(SwaggerView):
             create_notification(
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
-                f"{user_name} created the following CDP Data Sources: "
+                f"{user[api_c.USER_NAME]} created the following CDP Data Sources: "
                 f"{'. '.join([data_source[api_c.NAME] for data_source in new_data_sources])}",
                 api_c.CDP_DATA_SOURCES_TAG,
             )
@@ -361,8 +368,8 @@ class DeleteCdpDataSources(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @api_error_handler()
-    @get_user_name()
-    def delete(self, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels([api_c.ADMIN_LEVEL])
+    def delete(self, user: dict) -> Tuple[dict, int]:
         """Deletes CDP data sources.
 
         ---
@@ -370,7 +377,7 @@ class DeleteCdpDataSources(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[str, int]: Message, HTTP status code.
@@ -391,7 +398,7 @@ class DeleteCdpDataSources(SwaggerView):
                 create_notification(
                     database,
                     db_c.NOTIFICATION_TYPE_SUCCESS,
-                    f"{user_name} deleted the following CDP Data Sources: "
+                    f"{user[api_c.USER_NAME]} deleted the following CDP Data Sources: "
                     f"{data_source_types}",
                     api_c.CDP_DATA_SOURCES_TAG,
                 )
@@ -459,12 +466,16 @@ class BatchUpdateDataSources(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @api_error_handler()
-    def patch(self) -> Tuple[dict, int]:
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def patch(self, user: dict) -> Tuple[dict, int]:
         """Updates a list of data sources.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Data source updated, HTTP status code.
@@ -602,7 +613,8 @@ class GetDataSourceDatafeeds(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @api_error_handler()
-    def get(self, datasource_type: str) -> Tuple[str, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, datasource_type: str, user: dict) -> Tuple[str, int]:
         """Retrieve data feeds for data source.
 
         ---
@@ -611,6 +623,7 @@ class GetDataSourceDatafeeds(SwaggerView):
 
         Args:
             datasource_type (str): Data source type.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Connections data feeds get object,
