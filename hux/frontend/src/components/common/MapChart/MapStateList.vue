@@ -158,8 +158,7 @@ export default {
   min-height: 20px;
 
   ::v-deep .hux-data-table {
-    margin-top: -3px;
-    ::v-deep table {
+    table {
       .v-data-table-header {
         th:nth-child(1) {
           position: sticky;
@@ -167,6 +166,22 @@ export default {
           z-index: 9;
           overflow-y: visible;
           overflow-x: visible;
+        }
+      }
+      tbody {
+        height: calc(100% - 40px);
+        overflow: auto;
+        width: 100%;
+        position: absolute;
+        display: inline-block;
+        tr {
+          display: table;
+          width: 100%;
+          td {
+            &:last-child {
+              padding-left: 19px;
+            }
+          }
         }
       }
     }
@@ -177,6 +192,9 @@ export default {
         }
         th {
           background: var(--v-primary-lighten1);
+          &:last-child {
+            border-top-right-radius: 12px;
+          }
         }
       }
     }

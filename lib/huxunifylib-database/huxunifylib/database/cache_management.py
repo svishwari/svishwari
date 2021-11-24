@@ -5,12 +5,12 @@ from typing import Union
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def create_cache_entry(
@@ -28,18 +28,18 @@ def create_cache_entry(
         expire_after_seconds (int): Time for the document to expire in seconds.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.CACHE_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.CACHE_COLLECTION]
 
     try:
         collection.ensure_index(
-            c.CREATE_TIME, expireAfterSeconds=expire_after_seconds
+            db_c.CREATE_TIME, expireAfterSeconds=expire_after_seconds
         )
         collection.update_one(
-            {c.CONSTANT_KEY: cache_key},
+            {db_c.CONSTANT_KEY: cache_key},
             {
                 "$set": {
-                    c.CONSTANT_VALUE: cache_value,
-                    c.CREATE_TIME: datetime.datetime.utcnow(),
+                    db_c.CONSTANT_VALUE: cache_value,
+                    db_c.CREATE_TIME: datetime.datetime.utcnow(),
                 }
             },
             upsert=True,
@@ -49,7 +49,7 @@ def create_cache_entry(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_cache_entry(
@@ -65,11 +65,11 @@ def get_cache_entry(
         Union[dict, None]: MongoDB document for a cache entry.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.CACHE_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.CACHE_COLLECTION]
 
     try:
-        result = collection.find_one({c.CONSTANT_KEY: cache_key})
-        return result[c.CONSTANT_VALUE] if result else {}
+        result = collection.find_one({db_c.CONSTANT_KEY: cache_key})
+        return result[db_c.CONSTANT_VALUE] if result else {}
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

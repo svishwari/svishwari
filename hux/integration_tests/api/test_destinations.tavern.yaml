@@ -548,3 +548,38 @@ stages:
       status_code: 400
       headers:
         content-type: application/json
+
+---
+test_name: Test destinations request destination already exists
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test destinations/request already exists
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations/request"
+      method: POST
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        name: "Facebook"
+        contact_email: "user@example.com"
+        client_request: true
+        client_account: true
+        use_case: "test case"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 409
+      headers:
+        content-type: application/json
+      json:
+        message: !re_search "already present"

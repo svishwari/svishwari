@@ -5,7 +5,7 @@ from http import HTTPStatus
 from bson import ObjectId
 from pymongo import MongoClient
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database import constants as db_const
+from huxunifylib.database import constants as db_c
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_job,
     get_delivery_platform,
@@ -54,17 +54,17 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
     """
 
     # skip if no authentication details provided.
-    if db_const.DELIVERY_PLATFORM_AUTH not in destination:
+    if db_c.DELIVERY_PLATFORM_AUTH not in destination:
         raise KeyError(
-            f"No authentication details for {destination[db_const.DELIVERY_PLATFORM_NAME]}"
+            f"No authentication details for {destination[db_c.DELIVERY_PLATFORM_NAME]}"
         )
 
     # get auth
-    auth = destination[db_const.DELIVERY_PLATFORM_AUTH]
+    auth = destination[db_c.DELIVERY_PLATFORM_AUTH]
 
     if (
-        destination[db_const.DELIVERY_PLATFORM_TYPE]
-        == db_const.DELIVERY_PLATFORM_FACEBOOK
+        destination[db_c.DELIVERY_PLATFORM_TYPE]
+        == db_c.DELIVERY_PLATFORM_FACEBOOK
     ):
         env_dict = {
             FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
@@ -84,8 +84,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         }
 
     elif (
-        destination[db_const.DELIVERY_PLATFORM_TYPE]
-        == db_const.DELIVERY_PLATFORM_SFMC
+        destination[db_c.DELIVERY_PLATFORM_TYPE] == db_c.DELIVERY_PLATFORM_SFMC
     ):
         env_dict = {
             SFMCCredentials.SFMC_CLIENT_ID.name: auth[api_c.SFMC_CLIENT_ID],
@@ -102,9 +101,9 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
                 api_c.SFMC_CLIENT_SECRET
             ]
         }
-    elif destination[db_const.DELIVERY_PLATFORM_TYPE] in [
-        db_const.DELIVERY_PLATFORM_SENDGRID,
-        db_const.DELIVERY_PLATFORM_TWILIO,
+    elif destination[db_c.DELIVERY_PLATFORM_TYPE] in [
+        db_c.DELIVERY_PLATFORM_SENDGRID,
+        db_c.DELIVERY_PLATFORM_TWILIO,
     ]:
         env_dict = {}
         secret_dict = {
@@ -114,8 +113,8 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         }
 
     elif (
-        destination[db_const.DELIVERY_PLATFORM_TYPE]
-        == db_const.DELIVERY_PLATFORM_QUALTRICS
+        destination[db_c.DELIVERY_PLATFORM_TYPE]
+        == db_c.DELIVERY_PLATFORM_QUALTRICS
     ):
         env_dict = {
             QualtricsCredentials.QUALTRICS_DATA_CENTER.name: auth[
@@ -136,8 +135,8 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         }
 
     elif (
-        destination[db_const.DELIVERY_PLATFORM_TYPE]
-        == db_const.DELIVERY_PLATFORM_GOOGLE
+        destination[db_c.DELIVERY_PLATFORM_TYPE]
+        == db_c.DELIVERY_PLATFORM_GOOGLE
     ):
         env_dict = {
             GoogleCredentials.GOOGLE_CLIENT_CUSTOMER_ID.name: auth[
@@ -161,7 +160,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         }
     else:
         raise KeyError(
-            f"No configuration for destination type: {destination[db_const.DELIVERY_PLATFORM_TYPE]}"
+            f"No configuration for destination type: {destination[db_c.DELIVERY_PLATFORM_TYPE]}"
         )
 
     return env_dict, secret_dict
@@ -276,15 +275,15 @@ class DestinationBatchJob:
             set_delivery_job_status(
                 self.database,
                 self.audience_delivery_job_id,
-                db_const.AUDIENCE_STATUS_ERROR,
+                db_c.AUDIENCE_STATUS_ERROR,
             )
-            self.result = db_const.AUDIENCE_STATUS_ERROR
+            self.result = db_c.AUDIENCE_STATUS_ERROR
             return
         logger.info(
             "Successfully Registered AWS Batch job for %s.",
             self.audience_delivery_job_id,
         )
-        self.result = db_const.AUDIENCE_STATUS_DELIVERING
+        self.result = db_c.AUDIENCE_STATUS_DELIVERING
 
         # check if engagement has a delivery flight schedule set
         if not (
@@ -292,12 +291,12 @@ class DestinationBatchJob:
         ):
             logger.warning(
                 "Delivery schedule is not set for %s.",
-                engagement_doc[db_const.ID],
+                engagement_doc[db_c.ID],
             )
             return
 
         # create the rule name
-        cw_name = f"{engagement_doc[db_const.ID]}-{self.destination_type}"
+        cw_name = f"{engagement_doc[db_c.ID]}-{self.destination_type}"
 
         # TODO hookup converted cron job expression HUS-794
         if not set_cloud_watch_rule(
@@ -307,7 +306,7 @@ class DestinationBatchJob:
         ):
             logger.error(
                 "Error creating cloud watch rule for engagement with ID %s.",
-                engagement_doc[db_const.ID],
+                engagement_doc[db_c.ID],
             )
             return
 
@@ -362,7 +361,7 @@ class DestinationBatchJob:
                 "Failed to Submit AWS Batch job for %s.",
                 self.audience_delivery_job_id,
             )
-            status = db_const.AUDIENCE_STATUS_ERROR
+            status = db_c.AUDIENCE_STATUS_ERROR
 
         set_delivery_job_status(
             self.database,
@@ -405,16 +404,16 @@ def get_destination_config(
 
     delivery_platform = get_delivery_platform(
         database,
-        destination[db_const.OBJECT_ID],
+        destination[db_c.OBJECT_ID],
     )
 
     # validate destination status first.
     if (
-        delivery_platform.get(db_const.DELIVERY_PLATFORM_STATUS)
-        != db_const.STATUS_SUCCEEDED
+        delivery_platform.get(db_c.DELIVERY_PLATFORM_STATUS)
+        != db_c.STATUS_SUCCEEDED
     ):
         logger.error(
-            "%s authentication failed.", delivery_platform.get(db_const.NAME)
+            "%s authentication failed.", delivery_platform.get(db_c.NAME)
         )
         raise FailedDestinationDependencyError(
             delivery_platform[api_c.NAME], HTTPStatus.FAILED_DEPENDENCY
@@ -423,10 +422,10 @@ def get_destination_config(
     audience_delivery_job = set_delivery_job(
         database,
         audience_id,
-        destination[db_const.OBJECT_ID],
+        destination[db_c.OBJECT_ID],
         [],
         engagement_id,
-        destination.get(db_const.DELIVERY_PLATFORM_CONFIG),
+        destination.get(db_c.DELIVERY_PLATFORM_CONFIG),
     )
 
     # get the configuration values
@@ -446,8 +445,8 @@ def get_destination_config(
             database,
             engagement_id,
             audience_id,
-            destination[db_const.OBJECT_ID],
-            audience_delivery_job[db_const.ID],
+            destination[db_c.OBJECT_ID],
+            audience_delivery_job[db_c.ID],
         )
     except TypeError as exc:
         # mongomock does not support array_filters
@@ -458,7 +457,7 @@ def get_destination_config(
     # Setup AWS Batch env dict
     env_dict = {
         AudienceRouterConfig.DELIVERY_JOB_ID.name: str(
-            audience_delivery_job[db_const.ID]
+            audience_delivery_job[db_c.ID]
         ),
         AudienceRouterConfig.BATCH_SIZE.name: str(audience_router_batch_size),
         MongoDBCredentials.MONGO_DB_HOST.name: config.MONGO_DB_HOST,
@@ -479,10 +478,10 @@ def get_destination_config(
 
     return DestinationBatchJob(
         database,
-        audience_delivery_job[db_const.ID],
+        audience_delivery_job[db_c.ID],
         secret_dict,
         env_dict,
-        delivery_platform[db_const.DELIVERY_PLATFORM_TYPE],
+        delivery_platform[db_c.DELIVERY_PLATFORM_TYPE],
     )
 
 
@@ -504,13 +503,13 @@ def get_audience_destination_pairs(audiences: list) -> list:
         raise TypeError("Empty list provided.")
 
     # validate to ensure list of dicts has destinations
-    if any(x for x in audiences if db_const.DESTINATIONS not in x):
+    if any(x for x in audiences if db_c.DESTINATIONS not in x):
         raise TypeError("must be a list of destinations.")
 
     return [
-        [aud[db_const.OBJECT_ID], dest]
+        [aud[db_c.OBJECT_ID], dest]
         for aud in audiences
-        for dest in aud[db_const.DESTINATIONS]
+        for dest in aud[db_c.DESTINATIONS]
         if isinstance(dest, dict)
     ]
 

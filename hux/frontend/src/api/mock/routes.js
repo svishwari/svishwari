@@ -627,8 +627,8 @@ export const defineRoutes = (server) => {
       })
     }
     if (requestData.destinations) {
-      requestData.destinations = requestData.destinations.map((id) => {
-        return schema.destinations.find(id)
+      requestData.destinations = requestData.destinations.map((des) => {
+        return schema.destinations.find(des.id)
       })
     }
 

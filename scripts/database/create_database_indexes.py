@@ -114,7 +114,7 @@ def add_unique_compound_index(database: MongoClient) -> None:
         c.INGESTED_DATA_COLLECTION
     ]
 
-    field_str = "%s.%s" % (c.INGESTED_DATA, c.S_TYPE_CUSTOMER_ID)
+    field_str = f"{c.INGESTED_DATA}.{c.S_TYPE_CUSTOMER_ID}"
     collection.create_index(
         [(field_str, ASCENDING), (c.JOB_ID, ASCENDING)],
         unique=True,
