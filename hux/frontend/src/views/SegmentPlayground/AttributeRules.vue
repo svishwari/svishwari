@@ -85,12 +85,13 @@
                     required
                     @blur="triggerSizing(condition)"
                   />
+
                   <hux-autocomplete
                     v-if="
                       condition.operator && condition.attribute.type === 'list'
                     "
                     v-model="condition.text"
-                    :options="condition.options"
+                    :options="listOptions(condition)"
                     @change="triggerSizing(condition)"
                   />
                   <div
@@ -149,12 +150,11 @@
         </v-col>
         <div class="add-wrap">
           <div class="pa-0 pt-2 flex-fill">
-            <div
-              class="add-section pa-5 cursor-pointer text-body-1 primary--text"
-              @click="addNewCondition(rule.id)"
-            >
-              <icon type="plus" color="primary" :size="11" class="mr-2" />
-              New attribute
+            <div class="add-section pa-5 text-body-1 primary--text">
+              <span class="cursor-pointer" @click="addNewCondition(rule.id)">
+                <icon type="plus" color="primary" :size="11" class="mr-2" />
+                New attribute
+              </span>
             </div>
           </div>
           <div class="pr-0 pt-2 pl-2 flex-right">
@@ -371,9 +371,15 @@ export default {
         })
       } else return []
     },
+    listOptions(condition) {
+      return condition.attribute.options
+    },
     operatorOptions(condition) {
       // Filter out only two options (equals and does_not_equals) for attribute type 'gender'
-      if (condition.attribute.type === "list") {
+      if (
+        condition.attribute.type === "list" ||
+        condition.attribute.key === "gender"
+      ) {
         return Object.keys(this.ruleAttributes.text_operators)
           .map((key) => {
             if (key.includes("equal")) {

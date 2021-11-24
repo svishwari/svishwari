@@ -5,6 +5,7 @@
 
 import http from "@/api/httpClient"
 import resources from "@/api/resources"
+var qs = require("qs")
 
 const client = {}
 /* #region Generic endpoints */
@@ -40,6 +41,11 @@ client["users"].contactUs = (data) => {
 
 //#region Customers
 // Custom one-off resource endpoints
+
+client["customers"].getRedact = (id, redactFlag) => {
+  return http.get(`/customers/${id}?redact=${redactFlag}`)
+}
+
 client["customers"].overview = () => {
   return http.get("/customers/overview")
 }
@@ -257,6 +263,15 @@ client["idr"].matchingTrends = (params) => {
 //#region audiences endpoints
 client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
+}
+
+client["audiences"].getAudiences = (data) => {
+  return http.get("/audiences", {
+    params: data,
+    paramsSerializer: (params) => {
+      return qs.stringify(params)
+    },
+  })
 }
 
 client["audiences"].downloadAudience = (audienceId, fileType) => {

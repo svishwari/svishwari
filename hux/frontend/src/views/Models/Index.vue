@@ -107,7 +107,10 @@
             </v-row>
           </template>
           <template slot="action-menu-options">
-            <div class="action-remove pl-4 pt-1" @click="removeModel(model)">
+            <div
+              class="px-4 py-2 white d-flex flex-column text-h5"
+              @click="removeModel(model)"
+            >
               <span class="d-flex align-center"> Remove </span>
             </div>
           </template>

@@ -132,9 +132,10 @@
                   <template #label-content>
                     <icon
                       type="info"
-                      :size="12"
+                      :size="8"
                       color="primary"
                       variant="base"
+                      class="mb-1"
                     />
                   </template>
                   <template #hover-content>
@@ -199,7 +200,7 @@
                       <template #label-content>
                         <icon
                           type="info"
-                          :size="12"
+                          :size="8"
                           class="mb-1 ml-1"
                           color="primary"
                           variant="base"
@@ -229,7 +230,7 @@
             </v-row>
             <v-row class="mt-2 mb-4">
               <v-col md="12">
-                <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+                <v-card class="mt-3 rounded-lg box-shadow-5" height="395">
                   <v-row>
                     <v-col md="7">
                       <v-progress-linear
@@ -264,7 +265,7 @@
                           v-if="!loadingGeoOverview"
                           :map-data="customersGeoOverview"
                           :configuration-data="configurationData"
-                          :height="386"
+                          :height="395"
                         />
                       </div>
                     </v-col>
@@ -603,9 +604,8 @@ export default {
   ::v-deep .metric-card-wrapper .v-icon::before {
     font-size: 30px;
   }
-
   .combined-list {
-    max-height: 386px;
+    max-height: 395px;
   }
 
   .customer-slide-group {
