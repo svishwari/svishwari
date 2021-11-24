@@ -16,6 +16,10 @@ from tenacity import retry, wait_fixed, retry_if_exception_type
 import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.collection_management import (
+    create_document,
+    get_documents,
+)
 from huxunifylib.database.utils import name_exists, get_collection_count
 import huxunifylib.database.audience_management as am
 
@@ -2571,3 +2575,76 @@ def update_delivery_platform_doc(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def set_job_in_pending_within_timeout_collection(
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+) -> Union[dict, None]:
+    """Creates a document, ttl index in the pending_within_timeout_collection.
+
+    Args:
+        database (DatabaseClient): database client.
+        delivery_job_id (ObjectId): ID of delivery job.
+
+    Returns:
+        dict: updated document.
+    """
+    # Create a ttl index.
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.PENDING_WITHIN_TIMEOUT_COLLECTION
+    ]
+    collection.create_index(
+        [(c.CREATE_TIME, pymongo.ASCENDING)],
+        expireAfterSeconds=c.DELIVERY_JOB_TIMEOUT,
+    )
+
+    return create_document(
+        database,
+        c.PENDING_WITHIN_TIMEOUT_COLLECTION,
+        {c.DELIVERY_JOB_ID: delivery_job_id},
+    )
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def update_pending_delivery_jobs(database: DatabaseClient):
+    """Updates status of a delivery job for jobs with status as pending.
+    Args:
+        database (DatabaseClient): database client.
+    Returns:
+        list: updated delivery job ids.
+    """
+    # Get delivery jobs which have status to be delivering.
+    delivery_jobs = get_documents(
+        database,
+        c.DELIVERY_JOBS_COLLECTION,
+        {c.STATUS: c.AUDIENCE_STATUS_DELIVERING},
+    )
+    logging.info(
+        "Updating %s delivery jobs.", str(delivery_jobs.get(c.TOTAL_RECORDS))
+    )
+
+    delivery_jobs_updated = []
+    for delivery_job in delivery_jobs.get(c.DOCUMENTS, []):
+        if delivery_job.get(c.STATUS) == c.AUDIENCE_STATUS_DELIVERING:
+            # For jobs not in pending_within_timeout set status to error.
+            if not get_documents(
+                database,
+                c.PENDING_WITHIN_TIMEOUT_COLLECTION,
+                {c.DELIVERY_JOB_ID: delivery_job.get(c.ID)},
+                sort_order=[(c.CREATE_TIME, pymongo.DESCENDING)],
+            ).get(c.DOCUMENTS):
+                set_delivery_job_status(
+                    database,
+                    delivery_job.get(c.ID),
+                    c.AUDIENCE_STATUS_ERROR,
+                )
+                delivery_jobs_updated.append(delivery_job.get(c.ID))
+    return delivery_jobs_updated
