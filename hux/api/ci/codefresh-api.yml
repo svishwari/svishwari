@@ -98,14 +98,6 @@ steps:
     commands:
       - tox -e ${TOXENV} -- --skip-model-generate
     scale:
-      safety:
-        title: 'safety'
-        environment:
-          - TOXENV=safety
-      bandit:
-        title: 'bandit'
-        environment:
-          - TOXENV=bandit
       checkCoverage:
         title: 'checkCoverage'
         environment:
@@ -121,10 +113,6 @@ steps:
     commands:
       - tox -e ${TOXENV} -- --skip-model-generate
     scale:
-      style:
-        title: 'style'
-        environment:
-          - TOXENV=style
       py37:
         title: 'py37'
         environment:
@@ -144,6 +132,7 @@ steps:
       branch:
         only:
           - main
+          - develop
           - /^release-[\d].*/i
           - /^app.*/i
 
@@ -164,5 +153,6 @@ steps:
       branch:
         only:
           - main
+          - develop
           - /^release-[\d].*/i
           - /^app.*/i

@@ -16,6 +16,7 @@
           :size="22"
           class="cursor-pointer"
           color="black-darken4"
+          @click.native="toggleFilterDrawer()"
         />
       </template>
     </page-header>
@@ -46,6 +47,11 @@
         </router-link>
       </template>
     </page-header>
+    <audience-filter
+      v-model="isFilterToggled"
+      :users="getNotificationUsers"
+      @onSectionAction="applyFilter"
+    />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div v-if="!loading" class="white">
       <hux-data-table
@@ -104,6 +110,52 @@
             <div v-if="header.value == 'size'">
               <size :value="item[header.value]" />
             </div>
+            <div
+              v-if="header.value == 'filters' && item[header.value]"
+              class="filter_col pt-2 pb-1"
+            >
+              <span
+                v-for="(filter, filterIndex) in filterTags[item.name]"
+                :key="filterIndex"
+              >
+                <v-chip
+                  v-if="filterIndex < 4"
+                  small
+                  class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                  text-color="primary"
+                  color="var(--v-primary-lighten3)"
+                >
+                  {{ formatText(filter) }}
+                </v-chip>
+              </span>
+              <tooltip>
+                <template #label-content>
+                  <span
+                    v-if="filterTags[item.name].length > 4"
+                    class="text-subtitle-2 primary--text"
+                  >
+                    +{{ filterTags[item.name].length - 4 }}
+                  </span>
+                </template>
+                <template #hover-content>
+                  <span
+                    v-for="(filter, filterIndex) in filterTags[item.name]"
+                    :key="filterIndex"
+                  >
+                    <v-chip
+                      v-if="filterIndex >= 4"
+                      small
+                      class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                      text-color="primary"
+                      color="var(--v-primary-lighten3)"
+                    >
+                      {{ formatText(filter) }}
+                    </v-chip>
+                    <br v-if="filterIndex >= 4" />
+                  </span>
+                </template>
+              </tooltip>
+            </div>
             <div v-if="header.value == 'destinations'">
               <div
                 v-if="item[header.value] && item[header.value].length > 0"
@@ -131,12 +183,12 @@
                 </div>
 
                 <span
-                  v-if="item[header.value] && item[header.value].length > 3"
-                  class="ml-1"
+                  v-if="item[header.value] && item[header.value].length > 2"
+                  class="ml-1 text-body-1 black--text"
                 >
                   <tooltip>
                     <template #label-content>
-                      + {{ item[header.value].length - 3 }}
+                      +{{ item[header.value].length - 2 }}
                     </template>
                     <template #hover-content>
                       <div class="d-flex flex-column">
@@ -300,6 +352,8 @@ import Status from "../../components/common/Status.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import Logo from "../../components/common/Logo.vue"
 import ConfirmModal from "@/components/common/ConfirmModal"
+import { capitalize } from "lodash"
+import AudienceFilter from "./Configuration/Drawers/AudienceFilter"
 
 export default {
   name: "Audiences",
@@ -319,6 +373,7 @@ export default {
     Tooltip,
     Logo,
     ConfirmModal,
+    AudienceFilter,
   },
   data() {
     return {
@@ -345,10 +400,14 @@ export default {
         {
           text: "Size",
           value: "size",
-          width: "179px",
+          width: "112px",
           hoverTooltip:
             "Current number of customers who fit the selected attributes.",
-          tooltipWidth: 231,
+        },
+        {
+          text: "Attributes",
+          value: "filters",
+          width: "411px",
         },
         {
           text: "Destinations",
@@ -386,6 +445,7 @@ export default {
       showLookAlikeDrawer: false,
       confirmModal: false,
       confirmSubtitle: "",
+      isFilterToggled: false,
     }
   },
   computed: {
@@ -403,6 +463,21 @@ export default {
     isDataExists() {
       if (this.rowData) return this.rowData.length > 0
       return false
+    },
+    filterTags() {
+      let filterTagsObj = {}
+      let audienceValue = JSON.parse(JSON.stringify(this.rowData))
+      audienceValue.forEach((audience) => {
+        if (audience.filters) {
+          filterTagsObj[audience.name] = []
+          audience.filters.forEach((item) => {
+            item.section_filters.forEach((obj) => {
+              filterTagsObj[audience.name].push(obj.field)
+            })
+          })
+        }
+      })
+      return filterTagsObj
     },
   },
   async mounted() {
@@ -489,18 +564,18 @@ export default {
     },
     getOverallDestinations(audienceDestinations) {
       let destinations = [...audienceDestinations]
-      if (destinations.length > 3) {
+      if (destinations.length > 2) {
         return destinations
-          .slice(0, 3)
+          .slice(0, 2)
           .sort((a, b) => a.name.localeCompare(b.name))
       }
       return destinations.sort((a, b) => a.name.localeCompare(b.name))
     },
     getExtraDestinations(audienceDestinations) {
       let destinations = [...audienceDestinations]
-      if (destinations.length > 3) {
+      if (destinations.length > 2) {
         return destinations
-          .slice(3)
+          .slice(2)
           .sort((a, b) => a.name.localeCompare(b.name))
       }
       return destinations.sort((a, b) => a.name.localeCompare(b.name))
@@ -515,6 +590,13 @@ export default {
     openLookAlikeDrawer(audience) {
       this.selectedAudience = audience
       this.showLookAlikeDrawer = true
+    },
+
+    formatText(text) {
+      return capitalize(text.replaceAll("_", " "))
+    },
+    toggleFilterDrawer() {
+      this.isFilterToggled = !this.isFilterToggled
     },
   },
 }
@@ -604,7 +686,7 @@ export default {
     table {
       tr {
         td {
-          font-size: 16px;
+          font-size: 14px;
         }
       }
       tbody {
@@ -622,8 +704,15 @@ export default {
   .icon-border {
     cursor: default !important;
   }
+  .v-chip.v-size--small {
+    height: 20px;
+  }
 }
 .radio-div {
   margin-top: -11px !important;
+}
+.filter_col {
+  height: 59px !important;
+  overflow: auto;
 }
 </style>

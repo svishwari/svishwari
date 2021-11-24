@@ -52,7 +52,7 @@ JIRA_SERVER = "JIRA_SERVER"
 JIRA_API_KEY = "JIRA_API_KEY"
 ISSUE_TYPE = "issue_type"
 KEY = "key"
-TASK = "task"
+TASK = "Task"
 TICKET_TYPE_BUG = "Bug"
 
 # general defines
@@ -85,6 +85,7 @@ DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
 DATE_RANGE = "date_range"
 HUX_ID = "hux_id"
+REDACT_FIELD = "redact"
 LIMIT = "limit"
 CREATE_TIME = "create_time"
 CONTACT_EMAIL = "contact_email"
@@ -140,6 +141,9 @@ COUNTRY = "country"
 CONTACT_PREFERENCES = "contact_preferences"
 IDENTITY_RESOLUTION = "identity_resolution"
 POPULATION_PERCENTAGE = "population_percentage"
+PERCENTAGE = "percentage"
+CO_OCCURRENCES = "cooccurrences"
+IDENTIFIER = "identifier"
 INCOME = "income"
 COUNT = "count"
 AVG_SPENT_WOMEN = "avg_spent_women"
@@ -1166,373 +1170,156 @@ RECORDS_PROCESSED_PERCENTAGE = "records_processed_percentage"
 
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
 
-CUSTOMER_IDR_TEST_DATA = {
-    "name": {
-        "data_sources": [
-            {
-                "id": "1",
-                "name": "Bluecore",
-                "type": "bluecore",
-                "percentage": 0.45,
-            },
-            {
-                "id": "2",
-                "name": "Netsuite",
-                "type": "netsuite",
-                "percentage": 0.55,
-            },
-        ],
-        "cooccurrences": [
-            {"identifier": "name", "count": 0, "percentage": 0},
-            {
-                "identifier": "address",
-                "count": 5,
-                "percentage": 0.05332667241927426,
-            },
-            {
-                "identifier": "email",
-                "count": 8,
-                "percentage": 0.08098460420545892,
-            },
-            {
-                "identifier": "phone",
-                "count": 2,
-                "percentage": 0.024424360779326946,
-            },
-            {
-                "identifier": "cookie",
-                "count": 0,
-                "percentage": 0.10876969889640765,
-            },
-        ],
-        "percentage": 0.2,
-        "count": 22,
-    },
-    "address": {
-        "data_sources": [
-            {
-                "id": "1",
-                "name": "Bluecore",
-                "type": "bluecore",
-                "percentage": 0.3,
-            },
-            {
-                "id": "2",
-                "name": "Netsuite",
-                "type": "netsuite",
-                "percentage": 0.7,
-            },
-        ],
-        "cooccurrences": [
-            {
-                "identifier": "name",
-                "count": 7,
-                "percentage": 0.06470775239565829,
-            },
-            {"identifier": "address", "count": 0, "percentage": 0},
-            {
-                "identifier": "email",
-                "count": 8,
-                "percentage": 0.07485353558290567,
-            },
-            {
-                "identifier": "phone",
-                "count": 5,
-                "percentage": 0.04560606748717017,
-            },
-            {
-                "identifier": "cookie",
-                "count": 1,
-                "percentage": 0.04725010218447704,
-            },
-        ],
-        "percentage": 0.4,
-        "count": 19,
-    },
-    "email": {
-        "data_sources": [
-            {
-                "id": "1",
-                "name": "Bluecore",
-                "type": "bluecore",
-                "percentage": 0.77,
-            },
-            {
-                "id": "2",
-                "name": "Netsuite",
-                "type": "netsuite",
-                "percentage": 0.23,
-            },
-        ],
-        "cooccurrences": [
-            {
-                "identifier": "name",
-                "count": 9,
-                "percentage": 0.00828375493891639,
-            },
-            {
-                "identifier": "address",
-                "count": 6,
-                "percentage": 0.056778236977156095,
-            },
-            {"identifier": "email", "count": 0, "percentage": 0},
-            {
-                "identifier": "phone",
-                "count": 7,
-                "percentage": 0.08311004132794404,
-            },
-            {
-                "identifier": "cookie",
-                "count": 1,
-                "percentage": 0.03635042463327127,
-            },
-        ],
-        "percentage": 0.2,
-        "count": 22,
-    },
-    "phone": {
-        "data_sources": [
-            {
-                "id": "1",
-                "name": "Bluecore",
-                "type": "bluecore",
-                "percentage": 0.59,
-            },
-            {
-                "id": "2",
-                "name": "Netsuite",
-                "type": "netsuite",
-                "percentage": 0.41,
-            },
-        ],
-        "cooccurrences": [
-            {
-                "identifier": "name",
-                "count": 4,
-                "percentage": 0.038430446432626365,
-            },
-            {
-                "identifier": "address",
-                "count": 2,
-                "percentage": 0.019110767973114128,
-            },
-            {
-                "identifier": "email",
-                "count": 5,
-                "percentage": 0.05176438530360143,
-            },
-            {"identifier": "phone", "count": 0, "percentage": 0},
-            {
-                "identifier": "cookie",
-                "count": 0,
-                "percentage": 0.017475816340433263,
-            },
-        ],
-        "percentage": 0.1,
-        "count": 11,
-    },
-    "cookie": {
-        "data_sources": [
-            {
-                "id": "1",
-                "name": "Bluecore",
-                "type": "bluecore",
-                "percentage": 0.8,
-            },
-            {
-                "id": "2",
-                "name": "Netsuite",
-                "type": "netsuite",
-                "percentage": 0.2,
-            },
-        ],
-        "cooccurrences": [
-            {
-                "identifier": "name",
-                "count": 0,
-                "percentage": 0.10876969889640765,
-            },
-            {
-                "identifier": "address",
-                "count": 0,
-                "percentage": 0.012025977564830374,
-            },
-            {
-                "identifier": "email",
-                "count": 4,
-                "percentage": 0.014124165493437486,
-            },
-            {
-                "identifier": "phone",
-                "count": 0,
-                "percentage": 0.05385349016758254,
-            },
-            {"identifier": "cookie", "count": 0, "percentage": 0},
-        ],
-        "percentage": 0.1,
-        "count": 11,
-    },
-}
-
 MODELS_STUB = [
     {
         CATEGORY: "Email",
-        TYPE: "propensity",
+        TYPE: "Classification",
         NAME: "Propensity to Purchase",
-        DESCRIPTION: "Propensity to Purchase.",
+        DESCRIPTION: "Propensity for a customer to click"
+        " on a link in an email and make a purchase.",
         ID: "f76a5e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Email",
-        TYPE: "propensity",
+        TYPE: "Classification",
         NAME: "Propensity to Unsubscribe",
-        DESCRIPTION: "Propensity to Unsubscribe.",
+        DESCRIPTION: "Propensity for a customer to unsubscribe"
+        " from an email marketing list.",
         ID: "a54d7e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Email",
-        TYPE: "propensity",
+        TYPE: "Classification",
         NAME: "Propensity to Open",
-        DESCRIPTION: "Propensity to open",
+        DESCRIPTION: " Propensity for a customer to open an email.",
         ID: "5df65e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Email",
-        TYPE: "propensity",
+        TYPE: "Classification",
         NAME: "Propensity to Click",
-        DESCRIPTION: "Propensity to click.",
+        DESCRIPTION: "Propensity for a customer to click "
+        "on a link in an email.",
         ID: "aa789e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Email",
-        TYPE: "propensity",
-        NAME: "Email content optimization",
-        DESCRIPTION: "Email content optimization.",
+        TYPE: "Unknown",
+        NAME: "Email Content Optimization",
+        DESCRIPTION: "Alter email content to optimize "
+        "email campaign performance.",
         ID: "99e45e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Sales forecasting",
-        TYPE: "prediction",
-        NAME: "Customer lifetime value",
-        DESCRIPTION: "Customer lifetime value.",
+        TYPE: "Regression",
+        NAME: "Customer Lifetime Value",
+        DESCRIPTION: "Predicting the lifetime value of a "
+        "customer over a defined time range.",
         ID: "cc768e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Sales forecasting",
-        TYPE: "prediction",
-        NAME: "Predicted sales per customer",
-        DESCRIPTION: "Predicted sales per customer.",
+        TYPE: "Regression",
+        NAME: "Predicted Sales Per Customer",
+        DESCRIPTION: "Predicting sales for a customer over a "
+        "defined time range.",
         ID: "bba67e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Sales forecasting",
-        TYPE: "prediction",
-        NAME: "Predicted sales per store",
-        DESCRIPTION: "Predicted sales per store.",
+        TYPE: "Regression",
+        NAME: "Predicted Sales Per Store",
+        DESCRIPTION: "Predicting sales for a store over a "
+        "defined time range.",
         ID: "a45b7e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
-        CATEGORY: "Hux TrustID",
-        TYPE: "propensity",
-        NAME: "Capability propensity",
-        DESCRIPTION: "Capability propensity.",
+        CATEGORY: "Trust",
+        TYPE: "Classification",
+        NAME: "Capability Propensity",
+        DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral capability score.",
         ID: "bc123e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
-        CATEGORY: "Hux TrustID",
-        TYPE: "propensity",
-        NAME: "Capability trust propensity",
-        DESCRIPTION: "Capability trust propensity.",
+        CATEGORY: "Trust",
+        TYPE: "Classification",
+        NAME: "Trust Propensity",
+        DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral trust score.",
         ID: "a15d8e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
-        CATEGORY: "Hux TrustID",
-        TYPE: "propensity",
-        NAME: "Humanity propensity",
-        DESCRIPTION: "Humanity propensity.",
+        CATEGORY: "Trust",
+        TYPE: "Classification",
+        NAME: "Humanity Propensity",
+        DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral humanity score.",
         ID: "bd732e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
-        CATEGORY: "Hux TrustID",
-        TYPE: "propensity",
-        NAME: "Hux TrustID propensity",
-        DESCRIPTION: "Hux TrustID propensity.",
-        ID: "cce14e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Hux TrustID",
-        TYPE: "propensity",
-        NAME: "NBA learning algorithm",
-        DESCRIPTION: "NBA learning algorithm.",
-        ID: "98acee0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Hux TrustID",
-        TYPE: "propensity",
-        NAME: "Reliability propensity",
-        DESCRIPTION: "Reliability propensity.",
+        CATEGORY: "Trust",
+        TYPE: "Classification",
+        NAME: "Reliability Propensity",
+        DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral reliability score.",
         ID: "99d12e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
-        CATEGORY: "Hux TrustID",
-        TYPE: "propensity",
-        NAME: "Transparency propensity",
-        DESCRIPTION: "Transparency propensity.",
+        CATEGORY: "Trust",
+        TYPE: "Classification",
+        NAME: "Transparency Propensity",
+        DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral transparency score.",
         ID: "bed54e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Retention",
-        TYPE: "propensity",
+        TYPE: "Classification",
         NAME: "Churn",
-        DESCRIPTION: "Churn.",
+        DESCRIPTION: "Propensity for a customer to leave a service "
+        "over a defined time range.",
         ID: "11d54e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Web",
-        TYPE: "propensity",
-        NAME: "Propensity to purchase product category",
-        DESCRIPTION: "Propensity to purchase product category.",
+        TYPE: "Classification",
+        NAME: "Propensity to Purchase Product Category",
+        DESCRIPTION: "Propensity for a customer to make a web purchase"
+        " in a particular product category.",
         ID: "88ee4e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Web",
-        TYPE: "propensity",
-        NAME: "Propensity to visit product category",
-        DESCRIPTION: "Propensity to visit product category.",
+        TYPE: "Classification",
+        NAME: "Propensity to Visit Product Category",
+        DESCRIPTION: "Propensity for a customer to make a web visit"
+        " in a particular product category.",
         ID: "aab41e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Web",
-        TYPE: "propensity",
-        NAME: "Propensity to visit website",
-        DESCRIPTION: "Propensity to visit website.",
+        TYPE: "Classification",
+        NAME: "Propensity to Visit Website",
+        DESCRIPTION: "Propensity for a customer to visit a website.",
         ID: "99a78e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Uncategorized",
-        TYPE: "propensity",
-        NAME: "Segmentation",
-        DESCRIPTION: "Segmentation.",
-        ID: "abe41e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
 ]

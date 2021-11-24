@@ -2,7 +2,6 @@
 
 from flask_marshmallow import Schema
 from marshmallow.fields import Str, Int, Float, Nested, Dict
-from marshmallow.validate import OneOf
 
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 from huxunify.api import constants as api_c
@@ -107,12 +106,6 @@ class ModelRequestPOSTSchema(Schema):
     id = Str(required=True)
     name = Str(required=True)
     status = Str(
-        validate=[
-            OneOf(
-                choices=[
-                    api_c.REQUESTED,
-                ]
-            )
-        ],
+        validate=lambda x: x.lower() in [api_c.REQUESTED.lower()],
         required=True,
     )
