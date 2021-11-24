@@ -70,8 +70,17 @@
 
         <template v-if="hasData && !nested" #body="{ nestedHeaders, items }">
           <tbody>
-            <tr v-for="item in items" :key="item.id" :style="{height: rowHeight }">
-              <slot name="row-item" :item="item" :headers="nestedHeaders" :rowHeight="rowHeight"/>
+            <tr
+              v-for="item in items"
+              :key="item.id"
+              :style="{ height: rowHeight }"
+            >
+              <slot
+                name="row-item"
+                :item="item"
+                :headers="nestedHeaders"
+                :rowHeight="rowHeight"
+              />
             </tr>
           </tbody>
         </template>
@@ -160,7 +169,7 @@ export default {
     rowHeight: {
       type: String,
       required: false,
-    }
+    },
   },
   data() {
     return {
