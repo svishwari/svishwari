@@ -192,6 +192,9 @@ export default {
         }
         th {
           background: var(--v-primary-lighten1);
+          &:last-child {
+            border-top-right-radius: 12px;
+          }
         }
       }
     }

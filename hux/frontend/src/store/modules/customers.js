@@ -138,6 +138,19 @@ const actions = {
     }
   },
 
+  async getRedact({ commit }, params) {
+    try {
+      const response = await api.customers.getRedact(
+        params.id,
+        params.redactFlag
+      )
+      commit("SET_ONE", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async getOverview({ commit }) {
     try {
       const response = await api.customers.overview()
