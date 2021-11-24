@@ -58,8 +58,9 @@
       sort-desc="false"
       nested
       data-e2e="engagement-table"
+      row-height="60px"
     >
-      <template #item-row="{ item, expandFunc, isExpanded }">
+      <template #item-row="{ item, expandFunc, isExpanded, rowHeight }">
         <tr :class="{ 'expanded-row': isExpanded }">
           <td
             v-for="header in columnDefs"
@@ -71,7 +72,7 @@
               'expanded-row': isExpanded,
               'pl-3': header.value == 'audiences',
             }"
-            :style="{ width: header.width }"
+            :style="{ width: header.width, height: rowHeight }"
           >
             <div v-if="header.value == 'name'" class="w-80">
               <menu-cell
@@ -267,8 +268,9 @@
             view-height="auto"
             nested
             data-e2e="audience-table"
+            row-height="60px"
           >
-            <template #item-row="{ item, expandFunc, isExpanded }">
+            <template #item-row="{ item, expandFunc, isExpanded, rowHeight }">
               <tr :class="{ 'expanded-row': isExpanded }">
                 <td :style="{ width: expandedHeaders[0].width }"></td>
                 <td
@@ -277,7 +279,7 @@
                   :class="{
                     'child-row pl-1': header.value == 'name',
                   }"
-                  :style="{ width: header.width }"
+                  :style="{ width: header.width, height: rowHeight }"
                 >
                   <div v-if="header.value == 'name'">
                     <menu-cell
@@ -451,12 +453,13 @@
                   :data-items="getDestinations(parentItem)"
                   :show-header="false"
                   view-height="auto"
+                  row-height="60px"
                 >
-                  <template #row-item="{ item }">
+                  <template #row-item="{ item, rowHeight }">
                     <td
                       v-for="header in columnDefs"
                       :key="header.value"
-                      :style="{ width: header.width }"
+                      :style="{ width: header.width, height: rowHeight }"
                     >
                       <div v-if="header.value == 'status'" class="text-h5">
                         <div>

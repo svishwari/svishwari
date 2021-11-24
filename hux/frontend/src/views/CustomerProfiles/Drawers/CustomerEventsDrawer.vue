@@ -15,16 +15,18 @@
       <hux-data-table
         :columns="tableColumns"
         :data-items="events"
+        row-height="60px"
         class="notifications-table"
         sort-column="date"
         sort-desc
       >
-        <template #row-item="{ item }">
+        <template #row-item="{ item, rowHeight }">
           <td
             v-for="header in tableColumns"
             :key="header.value"
             class="text-body-1 py-2 mw-100 text-truncate"
             data-e2e="customerEventRow"
+            :style="{ height: rowHeight }"
           >
             <template
               v-if="header.value == 'event_type'"
@@ -130,7 +132,6 @@ export default {
     tbody {
       tr {
         td {
-          height: 40px !important;
           &:first-child {
             padding: 3px 10px 0px 25px !important;
           }

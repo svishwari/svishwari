@@ -14,12 +14,13 @@
         :columns="columns"
         :data-items="idrItems"
         :show-header="false"
+        row-height="40px"
       >
-        <template #row-item="{ item }">
+        <template #row-item="{ item, rowHeight }">
           <td
             v-for="(col, index) in columns"
             :key="index"
-            :style="{ width: col.width }"
+            :style="{ width: col.width, height: rowHeight }"
             class="text body-1"
           >
             <template v-if="col.value === 'result'">
@@ -222,7 +223,6 @@ export default {
     tbody {
       tr {
         td {
-          height: 40px !important;
           &:first-child {
             padding: 9px 10px 9px 25px !important;
           }

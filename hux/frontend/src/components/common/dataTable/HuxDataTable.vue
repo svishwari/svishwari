@@ -64,13 +64,14 @@
             :item="item"
             :expandFunc="expand"
             :isExpanded="isExpanded"
+            :rowHeight="rowHeight"
           ></slot>
         </template>
 
         <template v-if="hasData && !nested" #body="{ nestedHeaders, items }">
           <tbody>
-            <tr v-for="item in items" :key="item.id">
-              <slot name="row-item" :item="item" :headers="nestedHeaders" />
+            <tr v-for="item in items" :key="item.id" :style="{height: rowHeight }">
+              <slot name="row-item" :item="item" :headers="nestedHeaders" :rowHeight="rowHeight"/>
             </tr>
           </tbody>
         </template>
@@ -156,6 +157,10 @@ export default {
       required: false,
       default: "Nothing to show here yet.",
     },
+    rowHeight: {
+      type: String,
+      required: false,
+    }
   },
   data() {
     return {
