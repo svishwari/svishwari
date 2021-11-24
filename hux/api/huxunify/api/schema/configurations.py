@@ -3,7 +3,7 @@
 from flask_marshmallow import Schema
 from marshmallow.fields import Str, Boolean
 
-from huxunifylib.database import constants as c
+from huxunifylib.database import constants as db_c
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
@@ -18,7 +18,7 @@ class ConfigurationsSchema(Schema):
     status = Str()
     enabled = Boolean()
     roadmap = Boolean()
-    create_time = DateTimeWithZ(attribute=c.CREATE_TIME, allow_none=True)
-    created_by = Str(attribute=c.CREATED_BY, allow_none=True)
-    update_time = DateTimeWithZ(attribute=c.UPDATE_TIME, allow_none=True)
-    updated_by = Str(attribute=c.UPDATED_BY, allow_none=True)
+    create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
+    created_by = Str(attribute=db_c.CREATED_BY, allow_none=True)
+    update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
+    updated_by = Str(attribute=db_c.UPDATED_BY, allow_none=True)

@@ -144,7 +144,7 @@
                   Select destination(s)
                   <tooltip>
                     <template #label-content>
-                      <v-icon color="primary" :size="12" class="ml-1 mb-2 mr-1">
+                      <v-icon color="primary" :size="8" class="ml-1 mb-3 mr-1">
                         mdi-information-outline
                       </v-icon>
                     </template>

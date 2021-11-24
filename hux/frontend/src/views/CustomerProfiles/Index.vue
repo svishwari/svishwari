@@ -132,9 +132,10 @@
                   <template #label-content>
                     <icon
                       type="info"
-                      :size="12"
+                      :size="8"
                       color="primary"
                       variant="base"
+                      class="mb-1"
                     />
                   </template>
                   <template #hover-content>
@@ -199,7 +200,7 @@
                       <template #label-content>
                         <icon
                           type="info"
-                          :size="12"
+                          :size="8"
                           class="mb-1 ml-1"
                           color="primary"
                           variant="base"

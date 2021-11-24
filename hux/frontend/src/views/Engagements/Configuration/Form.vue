@@ -33,7 +33,7 @@
 
             <tooltip>
               <template #label-content>
-                <v-icon color="primary" :size="12" class="ml-1">
+                <v-icon color="primary" :size="8" class="ml-1 mb-1">
                   mdi-information-outline
                 </v-icon>
               </template>

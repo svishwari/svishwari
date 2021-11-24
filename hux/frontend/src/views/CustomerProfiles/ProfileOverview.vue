@@ -63,8 +63,8 @@
                 <icon
                   v-if="data.hoverTooltip"
                   type="info"
-                  :size="12"
-                  class="mb-1"
+                  :size="8"
+                  class="mb-2"
                   color="primary"
                   variant="base"
                 />

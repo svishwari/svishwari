@@ -1,5 +1,5 @@
 """Purpose of this file is to house all data sources tests."""
-
+import copy
 import json
 from http import HTTPStatus
 from unittest import TestCase, mock
@@ -77,7 +77,13 @@ class CdpDataSourcesTest(TestCase):
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
-        data_sources = t_c.DATASOURCES_RESPONSE[api_c.BODY][:2]
+        # Deep copy data source response object
+        data_sources = copy.deepcopy(t_c.DATASOURCES_RESPONSE[api_c.BODY])[:2]
+        _ = [
+            data_source.update({db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1})
+            for data_source in data_sources
+        ]
+
         # create data sources first
         self.data_sources = CdpDataSourceSchema().dump(
             bulk_write_data_sources(
@@ -125,15 +131,32 @@ class CdpDataSourcesTest(TestCase):
                 CdpDataSourceSchema(), response.json, is_multiple=True
             )
         )
+        # types of data sources added to mock Unified MongoDB
+        unified_data_source_types = [x[api_c.TYPE] for x in self.data_sources]
+
         for data_source in response.json:
             self.assertIn(db_c.CATEGORY, data_source)
             self.assertIn(db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT, data_source)
-            if data_source in self.data_sources:
+            if data_source[api_c.TYPE] in unified_data_source_types:
                 self.assertTrue(data_source[api_c.IS_ADDED])
                 self.assertIn(api_c.ID, data_source)
             else:
                 self.assertFalse(data_source[api_c.IS_ADDED])
                 self.assertNotIn(api_c.ID, data_source)
+
+            # find data source from connections data source to validate feed count
+            connection_data_source = [
+                x
+                for x in t_c.DATASOURCES_RESPONSE[api_c.BODY]
+                if x[api_c.NAME] == data_source[api_c.TYPE]
+            ][0]
+            if connection_data_source:
+                self.assertEqual(
+                    connection_data_source[
+                        db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT
+                    ],
+                    data_source[db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT],
+                )
 
     def test_get_all_data_sources_no_args(self):
         """Test get all data source with no args."""
@@ -156,15 +179,32 @@ class CdpDataSourcesTest(TestCase):
                 CdpDataSourceSchema(), response.json, is_multiple=True
             )
         )
+        # types of data sources added to mock Unified MongoDB
+        unified_data_source_types = [x[api_c.TYPE] for x in self.data_sources]
+
         for data_source in response.json:
             self.assertIn(db_c.CATEGORY, data_source)
             self.assertIn(db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT, data_source)
-            if data_source in self.data_sources:
+            if data_source[api_c.TYPE] in unified_data_source_types:
                 self.assertTrue(data_source[api_c.IS_ADDED])
                 self.assertIn(api_c.ID, data_source)
             else:
                 self.assertFalse(data_source[api_c.IS_ADDED])
                 self.assertNotIn(api_c.ID, data_source)
+
+            # find data source from connections data source to validate feed count
+            connection_data_source = [
+                x
+                for x in t_c.DATASOURCES_RESPONSE[api_c.BODY]
+                if x[api_c.NAME] == data_source[api_c.TYPE]
+            ][0]
+            if connection_data_source:
+                self.assertEqual(
+                    connection_data_source[
+                        db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT
+                    ],
+                    data_source[db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT],
+                )
 
     def test_delete_data_sources_by_type_success(self):
         """]Test delete data sources by type from DB."""
