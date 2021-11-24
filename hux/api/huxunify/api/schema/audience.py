@@ -1,7 +1,7 @@
 """Purpose of this file is to house the audience schema"""
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Integer
+from marshmallow.fields import Str, Integer, Nested
 from marshmallow.fields import List, Dict
 from marshmallow.validate import Length, OneOf
 
@@ -160,3 +160,35 @@ class AudienceDeliveryInsightsSchema(Schema):
 
 
 audience_delivery_insights_schema = AudienceDeliveryInsightsSchema()
+
+
+class AudienceRulesSchema(Schema):
+    """Schema for Audience Rules"""
+
+    name = Str()
+    type = Str()
+    options = List(Dict(keys=Str(), values=Str()))
+
+
+class AudienceRulesCountrySchema(Schema):
+    """Schema for Audience Rules of Country"""
+
+    country = Nested(AudienceRulesSchema())
+
+
+class AudienceRulesStateSchema(Schema):
+    """Schema for Audience Rules of State"""
+
+    state = Nested(AudienceRulesSchema())
+
+
+class AudienceRulesEmailSchema(Schema):
+    """Schema for Audience Rules of Email Domains"""
+
+    email = Nested(AudienceRulesSchema())
+
+
+class AudienceRulesCitySchema(Schema):
+    """Schema for Audience Rules of City"""
+
+    city = Nested(AudienceRulesSchema())
