@@ -454,10 +454,14 @@ class ModelOverview(SwaggerView):
 
             # generate the output
             overview_data = {
-                api_c.MODEL_ID: version[api_c.ID],
-                api_c.MODEL_TYPE: version[api_c.TYPE],
-                api_c.MODEL_NAME: version[api_c.NAME],
-                api_c.DESCRIPTION: version[api_c.DESCRIPTION],
+                api_c.MODEL_ID: version.get(api_c.ID),
+                api_c.MODEL_TYPE: version.get(
+                    api_c.TYPE, db_c.CATEGORY_UNKNOWN
+                ),
+                api_c.MODEL_NAME: version.get(
+                    api_c.NAME, db_c.CATEGORY_UNKNOWN
+                ),
+                api_c.DESCRIPTION: version.get(api_c.DESCRIPTION, ""),
                 api_c.MODEL_SHAP_DATA: shap_data,
                 api_c.PERFORMANCE_METRIC: performance_metrics,
             }
