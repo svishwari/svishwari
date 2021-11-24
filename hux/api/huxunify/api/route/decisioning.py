@@ -459,11 +459,7 @@ class ModelOverview(SwaggerView):
                 api_c.MODEL_NAME: version[api_c.NAME],
                 api_c.DESCRIPTION: version[api_c.DESCRIPTION],
                 api_c.MODEL_SHAP_DATA: shap_data,
-                api_c.PERFORMANCE_METRIC: tecton.get_model_performance_metrics(
-                    model_id,
-                    version[api_c.TYPE],
-                    current_version,
-                ),
+                api_c.PERFORMANCE_METRIC: performance_metrics,
             }
 
         # dump schema and return to client.
