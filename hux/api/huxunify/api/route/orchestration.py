@@ -1,7 +1,6 @@
 # pylint: disable=too-many-lines
 """Paths for Orchestration API"""
 import asyncio
-import pathlib
 from http import HTTPStatus
 from typing import Tuple, Union
 from datetime import datetime, timedelta
@@ -29,7 +28,6 @@ from huxunifylib.database import (
 )
 import huxunifylib.database.constants as db_c
 
-from huxunify.api import stubbed_data
 from huxunify.api.exceptions import integration_api_exceptions as iae
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
@@ -73,7 +71,6 @@ from huxunify.api.route.utils import (
     Validation as validation,
     is_component_favorite,
     get_user_favorites,
-    read_stub_city_zip_data,
 )
 
 # setup the orchestration blueprint
@@ -1101,11 +1098,6 @@ class AudienceRules(SwaggerView):
                 "not_equals": "Does not equal",
             }
         }
-        stub_city_zip_file = (
-            pathlib.Path(stubbed_data.__file__).parent / "cityzip_data.csv"
-        )
-
-        stub_city_zip_data = read_stub_city_zip_data(stub_city_zip_file)
 
         # TODO HUS-356. Stubbed, this will come from CDM
         # Min/ max values will come from cdm, we will build this dynamically
@@ -1227,12 +1219,12 @@ class AudienceRules(SwaggerView):
                         "name": "Location",
                         "country": {
                             "name": "Country",
-                            "type": "list",  # text for 5.0, list for future
+                            "type": "list",
                             "options": [{"US": "USA"}],
                         },
                         "state": {
                             "name": "State",
-                            "type": "list",  # text for 5.0, list for future
+                            "type": "list",
                             "options": [
                                 {key: value}
                                 for key, value in api_c.STATE_NAMES.items()
@@ -1240,19 +1232,13 @@ class AudienceRules(SwaggerView):
                         },
                         "city": {
                             "name": "City",
-                            "type": "list",  # text for 5.0, list for future
-                            "options": [
-                                {x[1]: f"{x[1]}, {x[2]} USA"}
-                                for x in stub_city_zip_data
-                            ],
+                            "type": "list",
+                            "options": [],
                         },
                         "zip_code": {
                             "name": "Zip",
                             "type": "list",
-                            "options": [
-                                {x[0]: f"{x[0]}, {x[1]} {x[2]}"}
-                                for x in stub_city_zip_data
-                            ],
+                            "options": [],
                         },
                     },
                 },

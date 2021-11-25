@@ -23,6 +23,7 @@ from huxunifylib.database.transform.transform_dataframe import (
     transform_fields_amazon_file,
 )
 
+
 import huxunify.api.constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.aws import upload_file
@@ -30,7 +31,6 @@ from huxunify.api.data_connectors.cdp import (
     get_city_ltvs,
     get_demographic_by_state,
     get_demographic_by_country,
-    get_email_insights,
 )
 from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunify.api.route.decorators import (
@@ -40,13 +40,7 @@ from huxunify.api.route.decorators import (
     api_error_handler,
     validate_engagement_and_audience,
 )
-from huxunify.api.schema.audience import (
-    AudienceRulesSchema,
-    AudienceRulesCountrySchema,
-    AudienceRulesStateSchema,
-    AudienceRulesEmailSchema,
-    AudienceRulesCitySchema,
-)
+
 from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
@@ -64,6 +58,8 @@ from huxunify.api.route.utils import (
 )
 
 # setup the audiences blueprint
+from huxunify.api.stubbed_data import stub_city_zip_data
+
 audience_bp = Blueprint(api_c.AUDIENCE_ENDPOINT, import_name=__name__)
 
 
@@ -602,191 +598,37 @@ class AudienceInsightsCountries(SwaggerView):
 
 @add_view_to_blueprint(
     audience_bp,
-    f"/{api_c.AUDIENCE_ENDPOINT}/rules/{api_c.COUNTRIES}",
-    "AudienceRulesCountries",
-)
-class AudienceRulesCountries(SwaggerView):
-    """Audience Rules Constants for countries."""
-
-    responses = {
-        HTTPStatus.OK.value: {
-            "schema": {
-                "type": "array",
-                "items": AudienceRulesCountrySchema,
-            },
-            "description": "Audience Rules by countries.",
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get Audience Rules."
-        },
-    }
-    responses.update(AUTH401_RESPONSE)
-    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
-    tags = [api_c.ORCHESTRATION_TAG]
-
-    # pylint: disable=no-self-use
-    @validate_engagement_and_audience()
-    @api_error_handler()
-    def get(self) -> Tuple[dict, int]:
-        """Retrieves country-level audience constants.
-
-        ---
-        security:
-            - Bearer: ["Authorization"]
-
-        Args:
-
-
-        Returns:
-            Tuple[dict, int]: rules constants for country
-        """
-
-        data = {
-            api_c.COUNTRY: {
-                api_c.NAME: "Country",
-                api_c.TYPE: "list",  # text for 5.0, list for future
-                api_c.OPTIONS: [{"US": "USA"}],
-            }
-        }
-
-        return AudienceRulesCountrySchema().dump(data), HTTPStatus.OK
-
-
-@add_view_to_blueprint(
-    audience_bp,
-    f"/{api_c.AUDIENCE_ENDPOINT}/rules/{api_c.STATES}",
-    "AudienceRulesStates",
-)
-class AudienceRulesStates(SwaggerView):
-    """Audience Rules Constants for countries."""
-
-    responses = {
-        HTTPStatus.OK.value: {
-            "schema": {
-                "type": "array",
-                "items": AudienceRulesStateSchema,
-            },
-            "description": "Audience Rules by countries.",
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get Audience Rules."
-        },
-    }
-    responses.update(AUTH401_RESPONSE)
-    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
-    tags = [api_c.ORCHESTRATION_TAG]
-
-    # pylint: disable=no-self-use
-    @validate_engagement_and_audience()
-    @api_error_handler()
-    def get(self) -> Tuple[dict, int]:
-        """Retrieves state-level audience constants.
-
-        ---
-        security:
-            - Bearer: ["Authorization"]
-
-        Args:
-
-
-        Returns:
-            Tuple[dict, int]: rules constants for country
-        """
-        token_response = get_token_from_request(request)
-        data = {
-            api_c.STATE: {
-                api_c.NAME: "State",
-                api_c.TYPE: "list",  # text for 5.0, list for future
-                api_c.OPTIONS: [
-                    {x[api_c.STATE]: x[api_c.NAME]}
-                    for x in get_demographic_by_state(
-                        token_response[0],
-                        filters=api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER[
-                            api_c.AUDIENCE_FILTERS
-                        ],
-                    )
-                ],
-            }
-        }
-
-        return AudienceRulesStateSchema().dump(data), HTTPStatus.OK
-
-
-@add_view_to_blueprint(
-    audience_bp,
-    f"/{api_c.AUDIENCE_ENDPOINT}/rules/{api_c.EMAIL_DOMAINS}",
-    "AudienceRulesEmailDomains",
-)
-class AudienceRulesEmailDomains(SwaggerView):
-    """Audience Rules Constants for Email Domains."""
-
-    responses = {
-        HTTPStatus.OK.value: {
-            "schema": {
-                "type": "array",
-                "items": AudienceRulesEmailSchema,
-            },
-            "description": "Audience Rules by email domains.",
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get Audience Rules."
-        },
-    }
-    responses.update(AUTH401_RESPONSE)
-    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
-    tags = [api_c.ORCHESTRATION_TAG]
-
-    # pylint: disable=no-self-use
-    @validate_engagement_and_audience()
-    @api_error_handler()
-    def get(self) -> Tuple[dict, int]:
-        """Retrieves email-domains insights.
-
-        ---
-        security:
-            - Bearer: ["Authorization"]
-
-        Args:
-
-
-        Returns:
-            Tuple[dict, int]: rules constants for email
-        """
-        token_response = get_token_from_request(request)
-        data = {
-            api_c.EMAIL: {
-                api_c.NAME: "Email",
-                api_c.TYPE: "list",  # text for 5.0, list for future
-                api_c.OPTIONS: [
-                    {x[api_c.DOMAIN]: x[api_c.DOMAIN]}
-                    for x in get_email_insights(
-                        token_response[0],
-                        filters=api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER[
-                            api_c.AUDIENCE_FILTERS
-                        ],
-                    )
-                ],
-            }
-        }
-
-        return AudienceRulesEmailSchema().dump(data), HTTPStatus.OK
-
-
-@add_view_to_blueprint(
-    audience_bp,
-    f"/{api_c.AUDIENCE_ENDPOINT}/rules/{api_c.CITIES}",
+    f"/{api_c.AUDIENCE_ENDPOINT}/rules/<field_type>/<key>",
     "AudienceRulesCities",
 )
-class AudienceRulesCities(SwaggerView):
-    """Audience Rules Constants for Cities"""
+class AudienceRulesLocation(SwaggerView):
+    """Audience Rules Constants for Cities & Zip"""
 
+    parameters = [
+        {
+            "name": "type",
+            "description": "Search Type",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "cities",
+        },
+        {
+            "name": "key",
+            "description": "Search Key",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "new",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "schema": {
                 "type": "array",
-                "items": AudienceRulesCitySchema,
+                "items": "Location Constant Lists",
             },
-            "description": "Audience Rules by Cities",
+            "description": "Audience Constants List",
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to get Audience Rules."
@@ -797,36 +639,45 @@ class AudienceRulesCities(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
-    @validate_engagement_and_audience()
     @api_error_handler()
-    def get(self) -> Tuple[dict, int]:
-        """Retrieves cities constants.
+    def get(self, field_type: str, key: str) -> Tuple[dict, int]:
+        """Retrieves Location Rules constants.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
         Args:
+            field_type(str): Search Type
+            key(str): Search Key
 
 
         Returns:
-            Tuple[dict, int]: rules constants for email
+            Tuple[list, int]: rules constants for email
         """
-        token_response = get_token_from_request(request)
-        data = {
-            api_c.EMAIL: {
-                api_c.NAME: "Email",
-                api_c.TYPE: "list",  # text for 5.0, list for future
-                api_c.OPTIONS: [
-                    {x[api_c.DOMAIN]: x[api_c.DOMAIN]}
-                    for x in get_email_insights(
-                        token_response[0],
-                        filters=api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER[
-                            api_c.AUDIENCE_FILTERS
-                        ],
-                    )
-                ],
-            }
-        }
+        if field_type == api_c.CITIES:
+            data = jsonify(
+                [
+                    {x[1]: f"{x[1]}, {x[2]} USA"}
+                    for x in [
+                        x
+                        for x in stub_city_zip_data.city_zip_data
+                        if key.lower() in x[1].lower()
+                    ]
+                ]
+            )
+        elif field_type == api_c.ZIP:
+            data = jsonify(
+                [
+                    {x[0]: f"{x[0]}, {x[1]} {x[2]}"}
+                    for x in [
+                        x
+                        for x in stub_city_zip_data.city_zip_data
+                        if key.lower() in x[0].lower()
+                    ]
+                ]
+            )
+        else:
+            return {"message": "Incorrect Combination"}, HTTPStatus.NOT_FOUND
 
-        return AudienceRulesEmailSchema().dump(data), HTTPStatus.OK
+        return data, HTTPStatus.OK
