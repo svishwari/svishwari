@@ -428,7 +428,7 @@
             v-if="!loadingDemographics"
             :map-data="mapChartData"
             :configuration-data="configurationData"
-            :headerConfig="mapStateHeaderList"
+            :header-config="mapStateHeaderList"
           />
         </v-card>
       </v-col>
@@ -741,7 +741,7 @@ export default {
         body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
         actionType: "remove-audience",
       },
-      mapStateHeaderList: ['name','avg_spend','population_percentage'],
+      mapStateHeaderList: ["name", "avg_spend", "population_percentage"],
     }
   },
   computed: {

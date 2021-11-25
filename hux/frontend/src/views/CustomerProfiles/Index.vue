@@ -265,7 +265,7 @@
                           v-if="!loadingGeoOverview"
                           :map-data="customersGeoOverview"
                           :configuration-data="configurationData"
-                          :headerConfig="mapStateHeaderList"
+                          :header-config="mapStateHeaderList"
                           :height="395"
                         />
                       </div>
@@ -449,7 +449,7 @@ export default {
         batchNumber: 1,
         isLazyLoad: false,
       },
-      mapStateHeaderList: ['name','avg_spend','population_percentage'],
+      mapStateHeaderList: ["name", "avg_spend", "population_percentage"],
     }
   },
   computed: {

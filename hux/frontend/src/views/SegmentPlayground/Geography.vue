@@ -39,7 +39,7 @@
           v-if="!loadingGeoOverview"
           :map-data="data.geo"
           :configuration-data="configurationData"
-          :headerConfig="headerConfig"
+          :header-config="headerConfig"
           :height="330"
         />
       </div>
@@ -73,7 +73,7 @@ export default {
       toggle_view: 0,
       showMapView: true,
       configurationData: configurationData,
-      headerConfig: ['name','population_percentage'],
+      headerConfig: ["name", "population_percentage"],
     }
   },
 }
@@ -113,15 +113,15 @@ export default {
   }
 
   ::v-deep .hux-data-table {
-      table {
+    table {
       tbody {
         tr {
           display: table;
           width: 100%;
           td {
-          &:first-child {
-            color: var(--v-black-lighten4);
-          }
+            &:first-child {
+              color: var(--v-black-lighten4);
+            }
             &:last-child {
               color: var(--v-black-base);
             }
