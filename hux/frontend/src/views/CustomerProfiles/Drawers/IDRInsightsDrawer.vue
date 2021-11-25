@@ -15,12 +15,13 @@
         :data-items="idrItems"
         :show-header="false"
         row-height="40px"
+        class="small-table"
       >
-        <template #row-item="{ item, rowHeight }">
+        <template #row-item="{ item }">
           <td
             v-for="(col, index) in columns"
             :key="index"
-            :style="{ width: col.width, height: rowHeight }"
+            :style="{ width: col.width }"
             class="text body-1"
           >
             <template v-if="col.value === 'result'">

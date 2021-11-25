@@ -3,6 +3,7 @@
 
 // Variables
 $data-table-regular-header-height: 32px !default;
+$data-table-regular-row-height: 60px !default;
 $data-table-mobile-row-header-font-weight: 400 !default;
 $data-table-row-header-font-weight: 400 !default;
 
@@ -33,4 +34,28 @@ $data-table-heading: map-get($headings, "body-2") !default;
       }
     }
   }
+}
+
+.small-table {
+    ::v-deep .v-data-table__wrapper {
+      tbody {
+        tr {
+          td {
+            height: 40px !important
+          }
+        }
+      }
+    }
+}
+
+.big-table {
+    ::v-deep .v-data-table__wrapper {
+      tbody {
+        tr {
+          td {
+            height: 60px !important
+          }
+        }
+      }
+    }
 }

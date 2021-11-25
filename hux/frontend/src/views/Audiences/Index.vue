@@ -62,9 +62,9 @@
         sort-column="update_time"
         sort-desc="false"
         data-e2e="audience-table"
-        row-height="60px"
+        class="big-table"
       >
-        <template #row-item="{ item, rowHeight }">
+        <template #row-item="{ item }">
           <td
             v-for="header in columnDefs"
             :key="header.value"
@@ -73,7 +73,7 @@
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
             }"
-            :style="{ minWidth: header.width, left: 0, height: rowHeight }"
+            :style="{ minWidth: header.width, left: 0 }"
           >
             <div
               v-if="header.value == 'name'"

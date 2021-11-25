@@ -64,7 +64,6 @@
             :item="item"
             :expandFunc="expand"
             :isExpanded="isExpanded"
-            :rowHeight="rowHeight"
           ></slot>
         </template>
 
@@ -73,13 +72,11 @@
             <tr
               v-for="item in items"
               :key="item.id"
-              :style="{ height: rowHeight }"
             >
               <slot
                 name="row-item"
                 :item="item"
                 :headers="nestedHeaders"
-                :rowHeight="rowHeight"
               />
             </tr>
           </tbody>
@@ -165,10 +162,6 @@ export default {
       type: String,
       required: false,
       default: "Nothing to show here yet.",
-    },
-    rowHeight: {
-      type: String,
-      required: false,
     },
   },
   data() {

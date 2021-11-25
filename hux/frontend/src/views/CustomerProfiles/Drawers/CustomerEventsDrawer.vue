@@ -16,17 +16,16 @@
         :columns="tableColumns"
         :data-items="events"
         row-height="60px"
-        class="notifications-table"
+        class="notifications-table small-table"
         sort-column="date"
         sort-desc
       >
-        <template #row-item="{ item, rowHeight }">
+        <template #row-item="{ item }">
           <td
             v-for="header in tableColumns"
             :key="header.value"
             class="text-body-1 py-2 mw-100 text-truncate"
             data-e2e="customerEventRow"
-            :style="{ height: rowHeight }"
           >
             <template
               v-if="header.value == 'event_type'"
