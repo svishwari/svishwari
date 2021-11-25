@@ -545,7 +545,8 @@ class BatchUpdateDataSources(SwaggerView):
 
                 logger.info(
                     "Successfully %s data sources with data source(s) %s.",
-                    update_action, updated_data_source_names,
+                    update_action,
+                    updated_data_source_names,
                 )
 
                 create_notification(
