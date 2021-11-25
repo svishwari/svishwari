@@ -11,6 +11,8 @@ describe("Orchestration > Engagement > Create Engagement", () => {
 
   it("should be able to configure a new engagement", () => {
     cy.visit(route.addEngagement)
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000)
     // should fill new engagement name and description
     // add new engagement name
     cy.get(selector.engagement.enagagementName)
@@ -59,7 +61,7 @@ describe("Orchestration > Engagement > Create Engagement", () => {
   })
 
   // This test case is written to delete an engagement created above
-  it("should be able to delete a newly added engagement", () => {
+  it.skip("should be able to delete a newly added engagement", () => {
     cy.visit(route.engagements)
 
     //eslint-disable-next-line cypress/no-unnecessary-waiting
