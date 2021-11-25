@@ -1129,7 +1129,7 @@ export default {
             await this.deliverAudienceDestination({
               id: event.parent.id,
               audienceId: this.audienceId,
-              destinationId: event.data.id,
+              destinationId: event.data.delivery_platform_id,
             })
             this.dataPendingMesssage(event, "destination")
             break
