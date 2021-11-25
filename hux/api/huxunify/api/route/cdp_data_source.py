@@ -458,13 +458,17 @@ class BatchUpdateDataSources(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
+    @get_user_name()
     @api_error_handler()
-    def patch(self) -> Tuple[dict, int]:
+    def patch(self, user_name: str) -> Tuple[dict, int]:
         """Updates a list of data sources.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user_name (str): User name
 
         Returns:
             Tuple[dict, int]: Data source updated, HTTP status code.
@@ -514,6 +518,15 @@ class BatchUpdateDataSources(SwaggerView):
                 HTTPStatus.BAD_REQUEST.value,
             )
 
+        if data[api_c.IS_ADDED]:
+            update_action = (
+                api_c.ACTION_REQUESTED
+                if data[api_c.STATUS] == api_c.STATUS_PENDING
+                else api_c.ACTION_ACTIVATED
+            )
+        else:
+            update_action = api_c.ACTION_REMOVED
+
         # rename key from is_added to added for DB.
         data[db_c.ADDED] = data.pop(api_c.IS_ADDED)
 
@@ -525,19 +538,25 @@ class BatchUpdateDataSources(SwaggerView):
                     get_data_source(database, data_source_id)
                     for data_source_id in data_source_ids
                 ]
+
+                updated_data_source_names = ", ".join(
+                    [x[api_c.NAME] for x in updated_data_sources]
+                )
+
                 logger.info(
-                    "Successfully updated data sources with data source IDs %s.",
-                    ",".join([str(x) for x in data_source_ids]),
+                    "Successfully %s data sources with data source(s) %s.",
+                    update_action, updated_data_source_names,
                 )
 
                 create_notification(
                     database,
                     db_c.NOTIFICATION_TYPE_SUCCESS,
                     (
-                        "Successfully updated data sources with data source IDs %s.",
-                        ",".join([str(x) for x in data_source_ids]),
+                        f"Destination(s) {updated_data_source_names} "
+                        f"{update_action} by {user_name}"
                     ),
                     api_c.CDP_DATA_SOURCES_TAG,
+                    user_name,
                 )
                 return (
                     jsonify(
