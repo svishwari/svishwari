@@ -1,8 +1,8 @@
 <template>
   <v-card class="rounded-lg card-info-wrapper box-shadow-5">
     <v-card-title
-      class="py-5 pl-6"
-      :class="piiaccess ? 'd-flex justify-space-between' : ' '"
+      class="pl-6"
+      :class="piiaccess ? 'py-3 d-flex justify-space-between' : 'py-5'"
       data-e2e="customer-insights"
     >
       <h3 class="text-h3">Customer insights</h3>
