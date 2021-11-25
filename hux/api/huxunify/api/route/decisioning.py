@@ -1,6 +1,5 @@
 """Purpose of this script is for housing the
 decision routes for the API"""
-import copy
 import pathlib
 from random import uniform, randint
 from datetime import datetime, timedelta
@@ -128,8 +127,7 @@ class ModelsView(SwaggerView):
             if api_c.CATEGORY not in model:
                 model[api_c.CATEGORY] = api_c.UNCATEGORIZED
 
-        # Use deepcopy to assign stub value as is
-        all_models.extend(copy.deepcopy(api_c.MODELS_STUB))
+        all_models.extend([{**x} for x in api_c.MODELS_STUB])
 
         config_models = collection_management.get_documents(
             get_db_client(),
