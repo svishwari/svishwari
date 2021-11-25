@@ -11,12 +11,12 @@ import huxunifylib.database.data_management as dm
 import huxunifylib.database.audience_management as am
 import huxunifylib.database.delivery_platform_management as dpm
 
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_docs_bulk(
@@ -39,18 +39,18 @@ def get_docs_bulk(
         list: A list of documents.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[collection_name]
     ret_list = None
 
-    proj_dict = {c.DELETED: 0}
+    proj_dict = {db_c.DELETED: 0}
 
     if ids_only:
-        proj_dict[c.ID] = 1
+        proj_dict[db_c.ID] = 1
 
     try:
         cursor = collection.find(
-            {field_name: {"$in": mongo_ids}, c.DELETED: False},
+            {field_name: {"$in": mongo_ids}, db_c.DELETED: False},
             projection=proj_dict,
         )
     except pymongo.errors.OperationFailure as exc:
@@ -63,7 +63,7 @@ def get_docs_bulk(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_lookalike_audience(
@@ -83,15 +83,15 @@ def delete_lookalike_audience(
         bool: A flag indicating successful deletion.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.LOOKALIKE_AUDIENCE_COLLECTION]
 
     try:
         if soft_delete:
-            update_doc = {c.DELETED: True}
+            update_doc = {db_c.DELETED: True}
 
             if collection.find_one_and_update(
-                {c.ID: lookalike_audience_id},
+                {db_c.ID: lookalike_audience_id},
                 {"$set": update_doc},
                 upsert=False,
                 return_document=pymongo.ReturnDocument.AFTER,
@@ -100,7 +100,7 @@ def delete_lookalike_audience(
         else:
             return (
                 collection.delete_one(
-                    {c.ID: lookalike_audience_id}
+                    {db_c.ID: lookalike_audience_id}
                 ).deleted_count
                 > 0
             )
@@ -128,7 +128,7 @@ def delete_data_source_ingestion_jobs(
         database, data_source_id
     )
     for doc in ingestion_jobs:
-        if not delete_ingestion_job(database, doc[c.ID]):
+        if not delete_ingestion_job(database, doc[db_c.ID]):
             return False
     return True
 
@@ -151,7 +151,7 @@ def delete_data_source(
         if dm.update_data_source_param(
             database,
             data_source_id,
-            c.ENABLED,
+            db_c.ENABLED,
             False,
         ):
             return True
@@ -199,7 +199,7 @@ def delete_delivery_job_lookalike_audiences(
     doc = dpm.get_delivery_job(database, delivery_job_id)
 
     if doc:
-        lookalike_ids = doc.get(c.DELIVERY_PLATFORM_LOOKALIKE_AUDS, [])
+        lookalike_ids = doc.get(db_c.DELIVERY_PLATFORM_LOOKALIKE_AUDS, [])
 
         for lookalike_id in lookalike_ids:
             if not delete_lookalike_audience(database, lookalike_id):
@@ -225,7 +225,7 @@ def delete_delivery_platform_delivery_jobs(
     )
 
     for delivery_job in delivery_jobs:
-        if not delete_delivery_job(database, delivery_job[c.ID]):
+        if not delete_delivery_job(database, delivery_job[db_c.ID]):
             return False
     return True
 
@@ -245,13 +245,13 @@ def delete_audience_delivery_jobs(
 
     delivery_jobs = dpm.get_delivery_jobs(database, audience_id)
     return all(
-        delete_delivery_job(database, delivery_job[c.ID])
+        delete_delivery_job(database, delivery_job[db_c.ID])
         for delivery_job in delivery_jobs
     )
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_delivery_job(
@@ -270,21 +270,21 @@ def delete_delivery_job(
         bool: A flag indicating successful deletion.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.DELIVERY_JOBS_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.DELIVERY_JOBS_COLLECTION]
 
     if delete_delivery_job_lookalike_audiences(
         database,
         delivery_job_id,
     ):
-        update_doc = {c.DELETED: True}
+        update_doc = {db_c.DELETED: True}
 
         try:
             if hard_delete:
-                collection.delete_one({c.ID: delivery_job_id})
+                collection.delete_one({db_c.ID: delivery_job_id})
                 return True
             if collection.find_one_and_update(
-                {c.ID: delivery_job_id},
+                {db_c.ID: delivery_job_id},
                 {"$set": update_doc},
                 upsert=False,
                 return_document=pymongo.ReturnDocument.AFTER,
@@ -297,7 +297,7 @@ def delete_delivery_job(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_performance_metrics_by_delivery_job_id(
@@ -315,12 +315,12 @@ def delete_performance_metrics_by_delivery_job_id(
         bool: A flag indicating successful deletion.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    perf_metrics_collection = am_db[c.PERFORMANCE_METRICS_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    perf_metrics_collection = am_db[db_c.PERFORMANCE_METRICS_COLLECTION]
 
     try:
         perf_metrics_collection.delete_one(
-            {c.DELIVERY_JOB_ID: delivery_job_id}
+            {db_c.DELIVERY_JOB_ID: delivery_job_id}
         )
         return True
     except pymongo.errors.OperationFailure as exc:
@@ -330,7 +330,7 @@ def delete_performance_metrics_by_delivery_job_id(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_campaign_activity_by_delivery_job_id(
@@ -348,12 +348,12 @@ def delete_campaign_activity_by_delivery_job_id(
         bool: A flag indicating successful deletion.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    campaign_activity_collection = am_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    campaign_activity_collection = am_db[db_c.CAMPAIGN_ACTIVITY_COLLECTION]
 
     try:
         campaign_activity_collection.delete_one(
-            {c.DELIVERY_JOB_ID: delivery_job_id}
+            {db_c.DELIVERY_JOB_ID: delivery_job_id}
         )
         return True
     except pymongo.errors.OperationFailure as exc:
@@ -363,7 +363,7 @@ def delete_campaign_activity_by_delivery_job_id(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_delivery_platform(
@@ -380,18 +380,18 @@ def delete_delivery_platform(
         bool: A flag indicating successful deletion.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERY_PLATFORM_COLLECTION]
 
     if delete_delivery_platform_delivery_jobs(
         database,
         delivery_platform_id,
     ):
-        update_doc = {c.DELETED: True}
+        update_doc = {db_c.DELETED: True}
 
         try:
             if collection.find_one_and_update(
-                {c.ID: delivery_platform_id},
+                {db_c.ID: delivery_platform_id},
                 {"$set": update_doc},
                 upsert=False,
                 return_document=pymongo.ReturnDocument.AFTER,
@@ -404,7 +404,7 @@ def delete_delivery_platform(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_audience(
@@ -421,15 +421,15 @@ def delete_audience(
         bool: A flag indicating successful deletion.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.AUDIENCES_COLLECTION]
 
     if delete_audience_delivery_jobs(database, audience_id):
-        update_dict = {c.DELETED: True}
+        update_dict = {db_c.DELETED: True}
 
         try:
             if collection.find_one_and_update(
-                {c.ID: audience_id},
+                {db_c.ID: audience_id},
                 {"$set": update_dict},
                 upsert=False,
                 return_document=pymongo.ReturnDocument.AFTER,
@@ -442,7 +442,7 @@ def delete_audience(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_ingestion_job(
@@ -459,15 +459,15 @@ def delete_ingestion_job(
         bool: A flag indicating successful deletion.
     """
 
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.INGESTION_JOBS_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.INGESTION_JOBS_COLLECTION]
 
     if delete_ingestion_job_audiences(database, ingestion_job_id):
-        update_doc = {c.DELETED: True}
+        update_doc = {db_c.DELETED: True}
 
         try:
             if collection.find_one_and_update(
-                {c.ID: ingestion_job_id},
+                {db_c.ID: ingestion_job_id},
                 {"$set": update_doc},
                 upsert=False,
                 return_document=pymongo.ReturnDocument.AFTER,
@@ -480,7 +480,7 @@ def delete_ingestion_job(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_bulk(
@@ -499,14 +499,14 @@ def delete_bulk(
         bool: A flag indicating successful deletion.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[collection_name]
 
-    update_doc = {c.DELETED: True}
+    update_doc = {db_c.DELETED: True}
 
     try:
         if collection.update_many(
-            {c.ID: {"$in": mongo_ids}},
+            {db_c.ID: {"$in": mongo_ids}},
             {"$set": update_doc},
             upsert=False,
         ):
@@ -532,7 +532,7 @@ def delete_lookalike_audiences_bulk(
     """
 
     return delete_bulk(
-        database, lookalike_audience_ids, c.LOOKALIKE_AUDIENCE_COLLECTION
+        database, lookalike_audience_ids, db_c.LOOKALIKE_AUDIENCE_COLLECTION
     )
 
 
@@ -554,26 +554,26 @@ def delete_audiences_bulk(
     delivery_jobs = get_docs_bulk(
         database,
         audience_ids,
-        c.DELIVERY_JOBS_COLLECTION,
-        c.AUDIENCE_ID,
+        db_c.DELIVERY_JOBS_COLLECTION,
+        db_c.AUDIENCE_ID,
         False,
     )
 
-    delivery_job_ids = [doc[c.ID] for doc in delivery_jobs]
+    delivery_job_ids = [doc[db_c.ID] for doc in delivery_jobs]
 
-    if delete_bulk(database, delivery_job_ids, c.DELIVERY_JOBS_COLLECTION):
+    if delete_bulk(database, delivery_job_ids, db_c.DELIVERY_JOBS_COLLECTION):
         # Delete dependent lookalike audiences
         all_lookalike_ids = []
         for delivery_doc in delivery_jobs:
             lookalike_ids = delivery_doc.get(
-                c.DELIVERY_PLATFORM_LOOKALIKE_AUDS
+                db_c.DELIVERY_PLATFORM_LOOKALIKE_AUDS
             )
             if lookalike_ids is not None:
                 all_lookalike_ids += lookalike_ids
 
         if delete_lookalike_audiences_bulk(database, all_lookalike_ids):
             # Delete audiences
-            if delete_bulk(database, audience_ids, c.AUDIENCES_COLLECTION):
+            if delete_bulk(database, audience_ids, db_c.AUDIENCES_COLLECTION):
                 return True
     return False
 
@@ -596,19 +596,19 @@ def delete_delivery_platforms_bulk(
     delivery_jobs = get_docs_bulk(
         database,
         delivery_platform_ids,
-        c.DELIVERY_JOBS_COLLECTION,
-        c.DELIVERY_PLATFORM_ID,
+        db_c.DELIVERY_JOBS_COLLECTION,
+        db_c.DELIVERY_PLATFORM_ID,
         False,
     )
 
-    delivery_job_ids = [doc[c.ID] for doc in delivery_jobs]
+    delivery_job_ids = [doc[db_c.ID] for doc in delivery_jobs]
 
-    if delete_bulk(database, delivery_job_ids, c.DELIVERY_JOBS_COLLECTION):
+    if delete_bulk(database, delivery_job_ids, db_c.DELIVERY_JOBS_COLLECTION):
         # Delete dependent lookalike audiences
         all_lookalike_ids = []
         for delivery_doc in delivery_jobs:
             lookalike_ids = delivery_doc.get(
-                c.DELIVERY_PLATFORM_LOOKALIKE_AUDS
+                db_c.DELIVERY_PLATFORM_LOOKALIKE_AUDS
             )
             if lookalike_ids:
                 all_lookalike_ids += lookalike_ids
@@ -616,7 +616,7 @@ def delete_delivery_platforms_bulk(
         if delete_lookalike_audiences_bulk(database, all_lookalike_ids):
             # Delete delivery platforms
             if delete_bulk(
-                database, delivery_platform_ids, c.DELIVERY_PLATFORM_COLLECTION
+                database, delivery_platform_ids, db_c.DELIVERY_PLATFORM_COLLECTION
             ):
                 return True
     return False
@@ -639,15 +639,15 @@ def delete_data_sources_bulk(
     ingestion_jobs = get_docs_bulk(
         database,
         data_source_ids,
-        c.INGESTION_JOBS_COLLECTION,
-        c.DATA_SOURCE_ID,
+        db_c.INGESTION_JOBS_COLLECTION,
+        db_c.DATA_SOURCE_ID,
         True,
     )
 
-    ingestion_job_ids = [doc[c.ID] for doc in ingestion_jobs]
+    ingestion_job_ids = [doc[db_c.ID] for doc in ingestion_jobs]
 
-    if delete_bulk(database, ingestion_job_ids, c.INGESTION_JOBS_COLLECTION):
-        if delete_bulk(database, data_source_ids, c.DATA_SOURCES_COLLECTION):
+    if delete_bulk(database, ingestion_job_ids, db_c.INGESTION_JOBS_COLLECTION):
+        if delete_bulk(database, data_source_ids, db_c.DATA_SOURCES_COLLECTION):
             return True
 
     return False

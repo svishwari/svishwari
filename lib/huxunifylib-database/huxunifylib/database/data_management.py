@@ -10,7 +10,7 @@ import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.db_exceptions as de
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.utils import name_exists
 from huxunifylib.database.audience_data_management_util import (
@@ -21,7 +21,7 @@ from huxunifylib.database.audience_data_management_util import (
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_constant(
@@ -41,19 +41,19 @@ def set_constant(
     """
 
     constant_doc = None
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.CONSTANTS_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.CONSTANTS_COLLECTION]
 
-    doc = {c.CONSTANT_NAME: constant_name, c.CONSTANT_VALUE: constant_value}
+    doc = {db_c.CONSTANT_NAME: constant_name, db_c.CONSTANT_VALUE: constant_value}
 
     try:
         constant_doc = collection.find_one_and_update(
-            {c.CONSTANT_NAME: constant_name},
+            {db_c.CONSTANT_NAME: constant_name},
             {"$set": doc},
             upsert=True,
             return_document=pymongo.ReturnDocument.AFTER,
         )
-        collection.create_index([(c.CONSTANT_NAME, pymongo.ASCENDING)])
+        collection.create_index([(db_c.CONSTANT_NAME, pymongo.ASCENDING)])
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -61,7 +61,7 @@ def set_constant(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_constant(
@@ -78,11 +78,11 @@ def get_constant(
     """
 
     doc = None
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.CONSTANTS_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.CONSTANTS_COLLECTION]
 
     try:
-        doc = collection.find_one({c.CONSTANT_NAME: constant_name})
+        doc = collection.find_one({db_c.CONSTANT_NAME: constant_name})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -90,7 +90,7 @@ def get_constant(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_data_source(
@@ -123,8 +123,8 @@ def set_data_source(
 
     data_source_doc = None
     data_source_id = None
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.DATA_SOURCES_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.DATA_SOURCES_COLLECTION]
 
     # Validate fields
     if fields:
@@ -134,25 +134,25 @@ def set_data_source(
     curr_time = datetime.datetime.utcnow()
 
     doc = {
-        c.DATA_SOURCE_NAME: data_source_name,
-        c.DATA_SOURCE_TYPE: data_source_type,
-        c.DATA_SOURCE_FORMAT: data_source_format,
-        c.DATA_SOURCE_LOCATION_TYPE: location_type,
-        c.DATA_SOURCE_LOCATION_DETAILS: location_details,
-        c.DATA_SOURCE_FIELDS: fields,
-        c.DATA_SOURCE_NON_BREAKDOWN_FIELDS: [],
-        c.ENABLED: True,
-        c.CREATE_TIME: curr_time,
-        c.UPDATE_TIME: curr_time,
-        c.FAVORITE: False,
-        c.DELETED: False,
+        db_c.DATA_SOURCE_NAME: data_source_name,
+        db_c.DATA_SOURCE_TYPE: data_source_type,
+        db_c.DATA_SOURCE_FORMAT: data_source_format,
+        db_c.DATA_SOURCE_LOCATION_TYPE: location_type,
+        db_c.DATA_SOURCE_LOCATION_DETAILS: location_details,
+        db_c.DATA_SOURCE_FIELDS: fields,
+        db_c.DATA_SOURCE_NON_BREAKDOWN_FIELDS: [],
+        db_c.ENABLED: True,
+        db_c.CREATE_TIME: curr_time,
+        db_c.UPDATE_TIME: curr_time,
+        db_c.FAVORITE: False,
+        db_c.DELETED: False,
     }
 
     exists_flag = name_exists(
         database,
-        c.DATA_MANAGEMENT_DATABASE,
-        c.DATA_SOURCES_COLLECTION,
-        c.DATA_SOURCE_NAME,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.DATA_SOURCES_COLLECTION,
+        db_c.DATA_SOURCE_NAME,
         data_source_name,
     )
 
@@ -163,7 +163,7 @@ def set_data_source(
         data_source_id = collection.insert_one(doc).inserted_id
         if data_source_id is not None:
             data_source_doc = collection.find_one(
-                {c.ID: data_source_id, c.DELETED: False}, {c.DELETED: 0}
+                {db_c.ID: data_source_id, db_c.DELETED: False}, {db_c.DELETED: 0}
             )
         else:
             logging.error("Failed to create a new data source!")
@@ -174,7 +174,7 @@ def set_data_source(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_data_source(
@@ -191,12 +191,12 @@ def get_data_source(
     """
 
     doc = None
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.DATA_SOURCES_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.DATA_SOURCES_COLLECTION]
 
     try:
         doc = collection.find_one(
-            {c.ID: data_source_id, c.DELETED: False}, {c.DELETED: 0}
+            {db_c.ID: data_source_id, db_c.DELETED: False}, {db_c.DELETED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -205,7 +205,7 @@ def get_data_source(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_data_sources(database: DatabaseClient) -> list:
@@ -218,11 +218,11 @@ def get_all_data_sources(database: DatabaseClient) -> list:
         list: List of all data source configurations.
     """
 
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.DATA_SOURCES_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.DATA_SOURCES_COLLECTION]
 
     try:
-        docs = list(collection.find({c.DELETED: False}, {c.DELETED: 0}))
+        docs = list(collection.find({db_c.DELETED: False}, {db_c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -247,14 +247,14 @@ def get_data_source_non_breakdown_fields(
     cur_doc = get_data_source(database, data_source_id)
 
     non_breakdown_fields = []
-    if cur_doc is not None and c.DATA_SOURCE_NON_BREAKDOWN_FIELDS in cur_doc:
-        non_breakdown_fields = cur_doc[c.DATA_SOURCE_NON_BREAKDOWN_FIELDS]
+    if cur_doc is not None and db_c.DATA_SOURCE_NON_BREAKDOWN_FIELDS in cur_doc:
+        non_breakdown_fields = cur_doc[db_c.DATA_SOURCE_NON_BREAKDOWN_FIELDS]
 
     return non_breakdown_fields
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_data_source_param(
@@ -280,15 +280,15 @@ def update_data_source_param(
     """
 
     doc = None
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.DATA_SOURCES_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.DATA_SOURCES_COLLECTION]
 
     allowed_fields = [
-        c.DATA_SOURCE_RECENT_JOB_ID,
-        c.DATA_SOURCE_NON_BREAKDOWN_FIELDS,
-        c.RECENT_INGESTION_JOB_STATUS,
-        c.FAVORITE,
-        c.ENABLED,
+        db_c.DATA_SOURCE_RECENT_JOB_ID,
+        db_c.DATA_SOURCE_NON_BREAKDOWN_FIELDS,
+        db_c.RECENT_INGESTION_JOB_STATUS,
+        db_c.FAVORITE,
+        db_c.ENABLED,
     ]
 
     # Do not update if data source is associated to an ingestion job
@@ -299,12 +299,12 @@ def update_data_source_param(
 
     update_doc = {
         param_name: param_value,
-        c.UPDATE_TIME: datetime.datetime.utcnow(),
+        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: data_source_id, c.DELETED: False},
+            {db_c.ID: data_source_id, db_c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
@@ -338,22 +338,22 @@ def update_data_source_name(
     # Make sure the name will be unique
     exists_flag = name_exists(
         database,
-        c.DATA_MANAGEMENT_DATABASE,
-        c.DATA_SOURCES_COLLECTION,
-        c.DATA_SOURCE_NAME,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.DATA_SOURCES_COLLECTION,
+        db_c.DATA_SOURCE_NAME,
         name,
     )
 
     if exists_flag:
         cur_doc = get_data_source(database, data_source_id)
 
-        if cur_doc[c.DATA_SOURCE_NAME] != name:
+        if cur_doc[db_c.DATA_SOURCE_NAME] != name:
             raise de.DuplicateName(name)
 
     return update_data_source_param(
         database,
         data_source_id,
-        c.DATA_SOURCE_NAME,
+        db_c.DATA_SOURCE_NAME,
         name,
     )
 
@@ -377,7 +377,7 @@ def update_data_source_format(
     return update_data_source_param(
         database,
         data_source_id,
-        c.DATA_SOURCE_FORMAT,
+        db_c.DATA_SOURCE_FORMAT,
         data_source_format,
     )
 
@@ -401,7 +401,7 @@ def update_data_source_location_type(
     return update_data_source_param(
         database,
         data_source_id,
-        c.DATA_SOURCE_LOCATION_TYPE,
+        db_c.DATA_SOURCE_LOCATION_TYPE,
         location_type,
     )
 
@@ -425,7 +425,7 @@ def update_data_source_location_details(
     return update_data_source_param(
         database,
         data_source_id,
-        c.DATA_SOURCE_LOCATION_DETAILS,
+        db_c.DATA_SOURCE_LOCATION_DETAILS,
         location_details,
     )
 
@@ -453,7 +453,7 @@ def update_data_source_fields(
     return update_data_source_param(
         database,
         data_source_id,
-        c.DATA_SOURCE_FIELDS,
+        db_c.DATA_SOURCE_FIELDS,
         fields,
     )
 
@@ -478,7 +478,7 @@ def update_data_source_recent_ingestion_job_id(
     return update_data_source_param(
         database,
         data_source_id,
-        c.DATA_SOURCE_RECENT_JOB_ID,
+        db_c.DATA_SOURCE_RECENT_JOB_ID,
         recent_ingestion_job_id,
     )
 
@@ -504,13 +504,13 @@ def update_data_source_recent_ingestion_job_status(
     return update_data_source_param(
         database,
         data_source_id,
-        c.RECENT_INGESTION_JOB_STATUS,
+        db_c.RECENT_INGESTION_JOB_STATUS,
         recent_ingestion_job_status,
     )
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_data_source_non_breakdown_fields(
@@ -532,13 +532,13 @@ def update_data_source_non_breakdown_fields(
     return update_data_source_param(
         database,
         data_source_id,
-        c.DATA_SOURCE_NON_BREAKDOWN_FIELDS,
+        db_c.DATA_SOURCE_NON_BREAKDOWN_FIELDS,
         non_breakdown_fields,
     )
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_data_source(
@@ -573,8 +573,8 @@ def update_data_source(
     """
 
     doc = None
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.DATA_SOURCES_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.DATA_SOURCES_COLLECTION]
 
     # Validate fields
     if fields:
@@ -583,13 +583,13 @@ def update_data_source(
     # Make sure the name will be unique
     if name_exists(
         database,
-        c.DATA_MANAGEMENT_DATABASE,
-        c.DATA_SOURCES_COLLECTION,
-        c.DATA_SOURCE_NAME,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.DATA_SOURCES_COLLECTION,
+        db_c.DATA_SOURCE_NAME,
         name,
     ):
         cur_doc = get_data_source(database, data_source_id)
-        if cur_doc[c.DATA_SOURCE_NAME] != name:
+        if cur_doc[db_c.DATA_SOURCE_NAME] != name:
             raise de.DuplicateName(name)
 
     # Do not update if data source is associated to an ingestion job
@@ -597,12 +597,12 @@ def update_data_source(
         raise de.DataSourceLocked(data_source_id)
 
     update_doc = {
-        c.DATA_SOURCE_NAME: name,
-        c.DATA_SOURCE_FORMAT: data_source_format,
-        c.DATA_SOURCE_LOCATION_TYPE: location_type,
-        c.DATA_SOURCE_LOCATION_DETAILS: location_details,
-        c.DATA_SOURCE_FIELDS: fields,
-        c.UPDATE_TIME: datetime.datetime.utcnow(),
+        db_c.DATA_SOURCE_NAME: name,
+        db_c.DATA_SOURCE_FORMAT: data_source_format,
+        db_c.DATA_SOURCE_LOCATION_TYPE: location_type,
+        db_c.DATA_SOURCE_LOCATION_DETAILS: location_details,
+        db_c.DATA_SOURCE_FIELDS: fields,
+        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
     for item in list(update_doc):
@@ -612,7 +612,7 @@ def update_data_source(
     try:
         if update_doc:
             doc = collection.find_one_and_update(
-                {c.ID: data_source_id, c.DELETED: False},
+                {db_c.ID: data_source_id, db_c.DELETED: False},
                 {"$set": update_doc},
                 upsert=False,
                 return_document=pymongo.ReturnDocument.AFTER,
@@ -626,7 +626,7 @@ def update_data_source(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_ingestion_job(
@@ -644,26 +644,26 @@ def set_ingestion_job(
 
     ingestion_job_doc = None
     ingestion_job_id = None
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.INGESTION_JOBS_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.INGESTION_JOBS_COLLECTION]
 
     curr_time = datetime.datetime.utcnow()
 
     doc = {
-        c.DATA_SOURCE_ID: data_source_id,
-        c.CREATE_TIME: curr_time,
-        c.UPDATE_TIME: curr_time,
-        c.JOB_STATUS: c.STATUS_PENDING,
-        c.STATUS_MESSAGE: "",
-        c.DELETED: False,
+        db_c.DATA_SOURCE_ID: data_source_id,
+        db_c.CREATE_TIME: curr_time,
+        db_c.UPDATE_TIME: curr_time,
+        db_c.JOB_STATUS: db_c.STATUS_PENDING,
+        db_c.STATUS_MESSAGE: "",
+        db_c.DELETED: False,
     }
 
     try:
         ingestion_job_id = collection.insert_one(doc).inserted_id
-        collection.create_index([(c.DATA_SOURCE_ID, pymongo.ASCENDING)])
+        collection.create_index([(db_c.DATA_SOURCE_ID, pymongo.ASCENDING)])
         if ingestion_job_id is not None:
             ingestion_job_doc = collection.find_one(
-                {c.ID: ingestion_job_id, c.DELETED: False}, {c.DELETED: 0}
+                {db_c.ID: ingestion_job_id, db_c.DELETED: False}, {db_c.DELETED: 0}
             )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -679,14 +679,14 @@ def set_ingestion_job(
         update_data_source_recent_ingestion_job_status(
             database=database,
             data_source_id=data_source_id,
-            recent_ingestion_job_status=ingestion_job_doc[c.JOB_STATUS],
+            recent_ingestion_job_status=ingestion_job_doc[db_c.JOB_STATUS],
         )
 
     return ingestion_job_doc
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_ingestion_job(
@@ -702,12 +702,12 @@ def get_ingestion_job(
         dict: Ingestion job configuration.
     """
 
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.INGESTION_JOBS_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.INGESTION_JOBS_COLLECTION]
 
     try:
         doc = collection.find_one(
-            {c.ID: ingestion_job_id, c.DELETED: False}, {c.DELETED: 0}
+            {db_c.ID: ingestion_job_id, db_c.DELETED: False}, {db_c.DELETED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -716,7 +716,7 @@ def get_ingestion_job(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_data_source_ingestion_jobs(
@@ -732,14 +732,14 @@ def get_data_source_ingestion_jobs(
         list: List of corresponding ingestion job configurations.
     """
 
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.INGESTION_JOBS_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.INGESTION_JOBS_COLLECTION]
 
     try:
         docs = list(
             collection.find(
-                {c.DATA_SOURCE_ID: data_source_id, c.DELETED: False},
-                {c.DELETED: 0},
+                {db_c.DATA_SOURCE_ID: data_source_id, db_c.DELETED: False},
+                {db_c.DELETED: 0},
             )
         )
     except pymongo.errors.OperationFailure as exc:
@@ -749,7 +749,7 @@ def get_data_source_ingestion_jobs(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def is_data_source_mutable(
@@ -765,17 +765,17 @@ def is_data_source_mutable(
         bool: A flag indicating that the data source is mutable.
     """
 
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.INGESTION_JOBS_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.INGESTION_JOBS_COLLECTION]
     count = 0
     mutable = True
 
     try:
         count = collection.count_documents(
             {
-                c.DATA_SOURCE_ID: data_source_id,
-                c.ENABLED: True,
-                c.JOB_STATUS: {"$ne": c.STATUS_FAILED},
+                db_c.DATA_SOURCE_ID: data_source_id,
+                db_c.ENABLED: True,
+                db_c.JOB_STATUS: {"$ne": db_c.STATUS_FAILED},
             },
         )
     except pymongo.errors.OperationFailure as exc:
@@ -788,7 +788,7 @@ def is_data_source_mutable(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_ingestion_job_status_no_default_audience(
@@ -813,27 +813,27 @@ def set_ingestion_job_status_no_default_audience(
     """
 
     doc = None
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.INGESTION_JOBS_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.INGESTION_JOBS_COLLECTION]
     curr_time = datetime.datetime.utcnow()
 
     # Update ingestion job
     update_dict = {}
-    update_dict[c.UPDATE_TIME] = curr_time
+    update_dict[db_c.UPDATE_TIME] = curr_time
 
-    if job_status == c.AUDIENCE_STATUS_DELIVERING:
-        update_dict[c.JOB_START_TIME] = curr_time
-    elif job_status in (c.STATUS_SUCCEEDED, c.STATUS_FAILED):
-        update_dict[c.JOB_END_TIME] = curr_time
+    if job_status == db_c.AUDIENCE_STATUS_DELIVERING:
+        update_dict[db_c.JOB_START_TIME] = curr_time
+    elif job_status in (db_c.STATUS_SUCCEEDED, db_c.STATUS_FAILED):
+        update_dict[db_c.JOB_END_TIME] = curr_time
 
-    update_dict[c.JOB_STATUS] = job_status
+    update_dict[db_c.JOB_STATUS] = job_status
 
-    update_dict[c.STATUS_MESSAGE] = status_msg
+    update_dict[db_c.STATUS_MESSAGE] = status_msg
 
     data_source_id = get_ingestion_job(
         database,
         ingestion_job_id,
-    )[c.DATA_SOURCE_ID]
+    )[db_c.DATA_SOURCE_ID]
 
     recent_ingestion_job_id = get_data_source_recent_ingestion_job_id(
         database, data_source_id
@@ -848,7 +848,7 @@ def set_ingestion_job_status_no_default_audience(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: ingestion_job_id, c.DELETED: False},
+            {db_c.ID: ingestion_job_id, db_c.DELETED: False},
             {"$set": update_dict},
             upsert=False,
             new=True,
@@ -875,7 +875,7 @@ def get_ingestion_job_status(
 
     doc = get_ingestion_job(database, ingestion_job_id)
 
-    return (doc.get(c.JOB_STATUS), doc.get(c.STATUS_MESSAGE))
+    return (doc.get(db_c.JOB_STATUS), doc.get(db_c.STATUS_MESSAGE))
 
 
 def get_ingestion_job_data_source_fields(
@@ -898,23 +898,23 @@ def get_ingestion_job_data_source_fields(
 
     job_doc = get_ingestion_job(database, ingestion_job_id)
 
-    if job_doc is not None and c.DATA_SOURCE_ID in job_doc:
-        data_source_id = job_doc[c.DATA_SOURCE_ID]
+    if job_doc is not None and db_c.DATA_SOURCE_ID in job_doc:
+        data_source_id = job_doc[db_c.DATA_SOURCE_ID]
 
     if data_source_id is not None:
         data_source_doc = get_data_source(database, data_source_id)
 
-    if data_source_doc is not None and c.DATA_SOURCE_FIELDS in data_source_doc:
-        fields_list = data_source_doc[c.DATA_SOURCE_FIELDS]
+    if data_source_doc is not None and db_c.DATA_SOURCE_FIELDS in data_source_doc:
+        fields_list = data_source_doc[db_c.DATA_SOURCE_FIELDS]
 
     for field_doc in fields_list:
         if (
-            c.FIELD_SPECIAL_TYPE in field_doc
-            and field_doc[c.FIELD_SPECIAL_TYPE] is not None
+            db_c.FIELD_SPECIAL_TYPE in field_doc
+            and field_doc[db_c.FIELD_SPECIAL_TYPE] is not None
         ):
-            data_source_fields.append(field_doc[c.FIELD_SPECIAL_TYPE])
-        elif c.FIELD_HEADER in field_doc:
-            data_source_fields.append(field_doc[c.FIELD_HEADER])
+            data_source_fields.append(field_doc[db_c.FIELD_SPECIAL_TYPE])
+        elif db_c.FIELD_HEADER in field_doc:
+            data_source_fields.append(field_doc[db_c.FIELD_HEADER])
 
     return data_source_fields
 
@@ -939,24 +939,24 @@ def get_ingestion_job_custom_fields(
 
     job_doc = get_ingestion_job(database, ingestion_job_id)
 
-    if job_doc is not None and c.DATA_SOURCE_ID in job_doc:
-        data_source_id = job_doc[c.DATA_SOURCE_ID]
+    if job_doc is not None and db_c.DATA_SOURCE_ID in job_doc:
+        data_source_id = job_doc[db_c.DATA_SOURCE_ID]
 
     if data_source_id is not None:
         data_source_doc = get_data_source(database, data_source_id)
 
-    if data_source_doc is not None and c.DATA_SOURCE_FIELDS in data_source_doc:
-        fields_list = data_source_doc[c.DATA_SOURCE_FIELDS]
+    if data_source_doc is not None and db_c.DATA_SOURCE_FIELDS in data_source_doc:
+        fields_list = data_source_doc[db_c.DATA_SOURCE_FIELDS]
 
     for field_doc in fields_list:
-        if field_doc.get(c.FIELD_SPECIAL_TYPE) is None:
-            custom_fields.append(field_doc[c.FIELD_HEADER])
+        if field_doc.get(db_c.FIELD_SPECIAL_TYPE) is None:
+            custom_fields.append(field_doc[db_c.FIELD_HEADER])
 
     return custom_fields
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def append_ingested_data(
@@ -977,15 +977,15 @@ def append_ingested_data(
 
     ingested_data = clean_dataframe_types(ingested_data)
 
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.INGESTED_DATA_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.INGESTED_DATA_COLLECTION]
 
     # Add internal customer IDs
-    if c.S_TYPE_CUSTOMER_ID not in ingested_data.columns:
-        ingested_data[c.S_TYPE_CUSTOMER_ID] = None
+    if db_c.S_TYPE_CUSTOMER_ID not in ingested_data.columns:
+        ingested_data[db_c.S_TYPE_CUSTOMER_ID] = None
 
-    ingested_data[c.S_TYPE_CUSTOMER_ID] = ingested_data[
-        c.S_TYPE_CUSTOMER_ID
+    ingested_data[db_c.S_TYPE_CUSTOMER_ID] = ingested_data[
+        db_c.S_TYPE_CUSTOMER_ID
     ].apply(lambda x: ObjectId() if x is None else x)
 
     # Add docs to the batch
@@ -993,8 +993,8 @@ def append_ingested_data(
     for _, row_item in ingested_data.iterrows():
         batch_docs.append(
             {
-                c.JOB_ID: ingestion_job_id,
-                c.INGESTED_DATA: dict(row_item),
+                db_c.JOB_ID: ingestion_job_id,
+                db_c.INGESTED_DATA: dict(row_item),
             }
         )
 
@@ -1002,17 +1002,17 @@ def append_ingested_data(
     try:
         # Create a unique compound index on ingestion_job_id and nested field
         # ingested_data.customer_id
-        field_str = f"{c.INGESTED_DATA}.{c.S_TYPE_CUSTOMER_ID}"
+        field_str = f"{db_c.INGESTED_DATA}.{db_c.S_TYPE_CUSTOMER_ID}"
         collection.create_index(
-            [(field_str, pymongo.ASCENDING), (c.JOB_ID, pymongo.ASCENDING)],
+            [(field_str, pymongo.ASCENDING), (db_c.JOB_ID, pymongo.ASCENDING)],
             unique=True,
         )
         collection.insert_many(batch_docs, ordered=False)
-        collection.create_index([(c.JOB_ID, pymongo.ASCENDING)])
+        collection.create_index([(db_c.JOB_ID, pymongo.ASCENDING)])
         return True
     except pymongo.errors.BulkWriteError as exc:
         for err in exc.details["writeErrors"]:
-            if err["code"] == c.DUPLICATE_ERR_CODE:
+            if err["code"] == db_c.DUPLICATE_ERR_CODE:
                 logging.warning(
                     "Ignoring %s due to duplicate unique field!",
                     str(err["op"]),
@@ -1029,7 +1029,7 @@ def append_ingested_data(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_ingested_data_stats(
@@ -1046,12 +1046,12 @@ def get_ingested_data_stats(
         dict: Stored data statistics.
     """
 
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.INGESTED_DATA_STATS_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.INGESTED_DATA_STATS_COLLECTION]
 
     try:
         doc = collection.find_one(
-            {c.JOB_ID: ingestion_job_id, c.DELETED: False}, {c.DELETED: 0}
+            {db_c.JOB_ID: ingestion_job_id, db_c.DELETED: False}, {db_c.DELETED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -1060,7 +1060,7 @@ def get_ingested_data_stats(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def append_ingested_data_stats(
@@ -1082,15 +1082,15 @@ def append_ingested_data_stats(
         dict: Stats MongoDB doc.
     """
 
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.INGESTED_DATA_STATS_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.INGESTED_DATA_STATS_COLLECTION]
 
     # Get the existing doc (if applicable)
     old_stats_doc = get_ingested_data_stats(database, ingestion_job_id)
 
     # Initialize update dict
     update_dict = {
-        c.JOB_ID: ingestion_job_id,
+        db_c.JOB_ID: ingestion_job_id,
     }
 
     # Get ingestion job data source fields
@@ -1117,12 +1117,12 @@ def append_ingested_data_stats(
     # Update the doc. If no doc exists, a new doc will be created.
     try:
         doc = collection.find_one_and_update(
-            {c.JOB_ID: ingestion_job_id, c.DELETED: False},
+            {db_c.JOB_ID: ingestion_job_id, db_c.DELETED: False},
             {"$set": update_dict},
             upsert=True,
             return_document=pymongo.ReturnDocument.AFTER,
         )
-        collection.create_index([(c.JOB_ID, pymongo.ASCENDING)])
+        collection.create_index([(db_c.JOB_ID, pymongo.ASCENDING)])
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -1130,7 +1130,7 @@ def append_ingested_data_stats(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_data_source_ids(
@@ -1145,14 +1145,14 @@ def get_all_data_source_ids(
         Union[list, None]: A list of all data source ids or None.
     """
 
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.DATA_SOURCES_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.DATA_SOURCES_COLLECTION]
     all_data_source_ids = None
 
     # Read all data source ids
     try:
-        cursor = collection.find({c.ENABLED: True}, {c.ID: True})
-        all_data_source_ids = [doc[c.ID] for doc in cursor]
+        cursor = collection.find({db_c.ENABLED: True}, {db_c.ID: True})
+        all_data_source_ids = [doc[db_c.ID] for doc in cursor]
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -1177,8 +1177,8 @@ def get_data_source_recent_ingestion_job_id(
 
     doc = get_data_source(database, data_source_id)
 
-    if c.DATA_SOURCE_RECENT_JOB_ID in doc:
-        job_id = doc[c.DATA_SOURCE_RECENT_JOB_ID]
+    if db_c.DATA_SOURCE_RECENT_JOB_ID in doc:
+        job_id = doc[db_c.DATA_SOURCE_RECENT_JOB_ID]
 
     return job_id
 
@@ -1200,7 +1200,7 @@ def favorite_data_source(
     return update_data_source_param(
         database,
         data_source_id,
-        c.FAVORITE,
+        db_c.FAVORITE,
         True,
     )
 
@@ -1222,13 +1222,13 @@ def unfavorite_data_source(
     return update_data_source_param(
         database,
         data_source_id,
-        c.FAVORITE,
+        db_c.FAVORITE,
         False,
     )
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_data_sources_count(database: DatabaseClient) -> int:
@@ -1241,14 +1241,14 @@ def get_data_sources_count(database: DatabaseClient) -> int:
         int: Count of data sources documents.
     """
 
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.DATA_SOURCES_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.DATA_SOURCES_COLLECTION]
     count = 0
 
     try:
         count = collection.count_documents(
             {
-                c.ENABLED: True,
+                db_c.ENABLED: True,
             }
         )
     except pymongo.errors.OperationFailure as exc:

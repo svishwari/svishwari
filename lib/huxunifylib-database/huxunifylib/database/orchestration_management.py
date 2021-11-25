@@ -11,13 +11,13 @@ import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.db_exceptions as de
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.user_management import USER_LOOKUP_PIPELINE
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def create_audience(
@@ -48,12 +48,12 @@ def create_audience(
             already.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.AUDIENCES_COLLECTION]
 
     # Make sure the name will be unique
     try:
-        if collection.find_one({c.AUDIENCE_NAME: name}):
+        if collection.find_one({db_c.AUDIENCE_NAME: name}):
             raise de.DuplicateName(name)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -62,23 +62,23 @@ def create_audience(
     curr_time = datetime.datetime.utcnow()
 
     audience_doc = {
-        c.AUDIENCE_NAME: name,
-        c.AUDIENCE_FILTERS: audience_filters,
-        c.DESTINATIONS: destination_ids if destination_ids else [],
-        c.CREATE_TIME: curr_time,
-        c.UPDATE_TIME: curr_time,
-        c.CREATED_BY: user_name,
-        c.UPDATED_BY: user_name,
-        c.FAVORITE: False,
-        c.DELETED: False,
-        c.SIZE: size,
+        db_c.AUDIENCE_NAME: name,
+        db_c.AUDIENCE_FILTERS: audience_filters,
+        db_c.DESTINATIONS: destination_ids if destination_ids else [],
+        db_c.CREATE_TIME: curr_time,
+        db_c.UPDATE_TIME: curr_time,
+        db_c.CREATED_BY: user_name,
+        db_c.UPDATED_BY: user_name,
+        db_c.FAVORITE: False,
+        db_c.DELETED: False,
+        db_c.SIZE: size,
     }
 
     try:
         audience_id = collection.insert_one(audience_doc).inserted_id
         if audience_id is not None:
             return collection.find_one(
-                {c.ID: audience_id, c.DELETED: False}, {c.DELETED: 0}
+                {db_c.ID: audience_id, db_c.DELETED: False}, {db_c.DELETED: 0}
             )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -87,7 +87,7 @@ def create_audience(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_audience_by_filter(
@@ -106,7 +106,7 @@ def get_audience_by_filter(
         projection (dict): Dict that specifies which fields to return or
             not return.
         sort_list (list): List of tuples to sort by.
-            Example: [(c.CREATE_TIME, pymongo.DESCENDING)]
+            Example: [(db_c.CREATE_TIME, pymongo.DESCENDING)]
         limit (int): limit for number of audiences returned.
 
     Returns:
@@ -116,19 +116,19 @@ def get_audience_by_filter(
         InvalidValueException: If passed in limit value is invalid.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
 
     # if deleted is not included in the filters, add it.
     if filter_dict:
-        filter_dict[c.DELETED] = False
+        filter_dict[db_c.DELETED] = False
     else:
-        filter_dict = {c.DELETED: False}
+        filter_dict = {db_c.DELETED: False}
 
     # exclude the deleted field from returning
     if projection:
-        projection[c.DELETED] = 0
+        projection[db_c.DELETED] = 0
     else:
-        projection = {c.DELETED: 0}
+        projection = {db_c.DELETED: 0}
 
     if not isinstance(limit, int) and limit is not None:
         raise de.InvalidValueException(limit)
@@ -147,7 +147,7 @@ def get_audience_by_filter(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_audience(
@@ -171,8 +171,8 @@ def get_audience(
     """
 
     doc = None
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.AUDIENCES_COLLECTION]
 
     # Read the audience document which contains filtering rules
     try:
@@ -180,8 +180,8 @@ def get_audience(
             docs = list(
                 collection.aggregate(
                     [
-                        {"$match": {c.ID: audience_id, c.DELETED: False}},
-                        {c.DELETED: 0},
+                        {"$match": {db_c.ID: audience_id, db_c.DELETED: False}},
+                        {db_c.DELETED: 0},
                     ]
                     + USER_LOOKUP_PIPELINE
                 )
@@ -189,7 +189,7 @@ def get_audience(
             return docs[0] if docs else None
 
         return collection.find_one(
-            {c.ID: audience_id, c.DELETED: False}, {c.DELETED: 0}
+            {db_c.ID: audience_id, db_c.DELETED: False}, {db_c.DELETED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -201,7 +201,7 @@ def get_audience(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_audiences(
@@ -222,26 +222,26 @@ def get_all_audiences(
     Returns:
         Union[list, None]: A list of all audiences.
     """
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.AUDIENCES_COLLECTION]
 
     if not filters:
-        find_filters = {c.DELETED: False}
+        find_filters = {db_c.DELETED: False}
     else:
         find_filters = {}
-        if filters.get(c.WORKED_BY):
+        if filters.get(db_c.WORKED_BY):
             find_filters["$or"] = [
-                {c.CREATED_BY: filters.get(c.WORKED_BY)},
-                {c.UPDATED_BY: filters.get(c.WORKED_BY)},
+                {db_c.CREATED_BY: filters.get(db_c.WORKED_BY)},
+                {db_c.UPDATED_BY: filters.get(db_c.WORKED_BY)},
             ]
-        if filters.get(c.ATTRIBUTE):
+        if filters.get(db_c.ATTRIBUTE):
             find_filters["$and"] = [
-                {c.ATTRIBUTE_FILTER_FIELD: attribute}
-                for attribute in filters.get(c.ATTRIBUTE)
+                {db_c.ATTRIBUTE_FILTER_FIELD: attribute}
+                for attribute in filters.get(db_c.ATTRIBUTE)
             ]
 
     if audience_ids is not None:
-        find_filters[c.ID] = {"$in": audience_ids}
+        find_filters[db_c.ID] = {"$in": audience_ids}
 
     # Get audience configurations and add to list
     try:
@@ -249,12 +249,12 @@ def get_all_audiences(
             # lookup to users
             return list(
                 collection.aggregate(
-                    [{"$match": {c.DELETED: False}}, {c.DELETED: 0}]
+                    [{"$match": {db_c.DELETED: False}}, {db_c.DELETED: 0}]
                     + USER_LOOKUP_PIPELINE
                 )
             )
 
-        return list(collection.find(find_filters, {c.DELETED: 0}))
+        return list(collection.find(find_filters, {db_c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -262,7 +262,7 @@ def get_all_audiences(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_audience(
@@ -294,22 +294,22 @@ def update_audience(
         DuplicateName: Error if an audience with the same name exists already.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.AUDIENCES_COLLECTION]
 
     try:
         audience_doc = collection.find_one(
-            {c.ID: audience_id, c.DELETED: False}, {c.DELETED: 0}
+            {db_c.ID: audience_id, db_c.DELETED: False}, {db_c.DELETED: 0}
         )
         if not audience_doc:
             raise de.InvalidID()
         if name is not None:
             duplicate_name_doc = collection.find_one(
-                {c.AUDIENCE_NAME: name, c.DELETED: False}, {c.DELETED: 0}
+                {db_c.AUDIENCE_NAME: name, db_c.DELETED: False}, {db_c.DELETED: 0}
             )
             if (
                 duplicate_name_doc is not None
-                and duplicate_name_doc[c.ID] != audience_id
+                and duplicate_name_doc[db_c.ID] != audience_id
             ):
                 raise de.DuplicateName(name)
     except pymongo.errors.OperationFailure as exc:
@@ -320,18 +320,18 @@ def update_audience(
 
     updated_audience_doc = audience_doc
     if name is not None:
-        updated_audience_doc[c.AUDIENCE_NAME] = name
+        updated_audience_doc[db_c.AUDIENCE_NAME] = name
     if audience_filters is not None:
-        updated_audience_doc[c.AUDIENCE_FILTERS] = audience_filters
+        updated_audience_doc[db_c.AUDIENCE_FILTERS] = audience_filters
     if destination_ids is not None:
-        updated_audience_doc[c.DESTINATIONS] = destination_ids
+        updated_audience_doc[db_c.DESTINATIONS] = destination_ids
     if user_name:
-        updated_audience_doc[c.UPDATED_BY] = user_name
-    updated_audience_doc[c.UPDATE_TIME] = curr_time
+        updated_audience_doc[db_c.UPDATED_BY] = user_name
+    updated_audience_doc[db_c.UPDATE_TIME] = curr_time
 
     try:
         return collection.find_one_and_update(
-            {c.ID: audience_id},
+            {db_c.ID: audience_id},
             {"$set": updated_audience_doc},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
@@ -343,7 +343,7 @@ def update_audience(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_audience(
@@ -360,10 +360,10 @@ def delete_audience(
         bool: A flag to indicate successful deletion.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
 
     try:
-        return collection.delete_one({c.ID: audience_id}).deleted_count > 0
+        return collection.delete_one({db_c.ID: audience_id}).deleted_count > 0
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -371,7 +371,7 @@ def delete_audience(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_audience_insights(
@@ -389,8 +389,8 @@ def get_audience_insights(
             an audience.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.ENGAGEMENTS_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.ENGAGEMENTS_COLLECTION]
 
     # use the audience pipeline to aggregate and join all the insight data
     try:
@@ -479,7 +479,7 @@ def get_audience_insights(
                             "deliveries.status": {
                                 "$ifNull": [
                                     "$deliveries.status",
-                                    c.AUDIENCE_STATUS_NOT_DELIVERED,
+                                    db_c.AUDIENCE_STATUS_NOT_DELIVERED,
                                 ]
                             },
                             "deliveries.id": "$destinations.id",
@@ -526,7 +526,7 @@ def get_audience_insights(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_audiences_and_deliveries(
@@ -547,8 +547,8 @@ def get_all_audiences_and_deliveries(
             an audience.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.AUDIENCES_COLLECTION]
     pipeline = [
         {
             "$lookup": {
@@ -600,32 +600,32 @@ def get_all_audiences_and_deliveries(
     if audience_ids is not None:
         pipeline.insert(
             stage_count_in_pipeline,
-            {"$match": {c.ID: {"$in": audience_ids}}},
+            {"$match": {db_c.ID: {"$in": audience_ids}}},
         )
     stage_count_in_pipeline += 1
 
     if filters:
-        if filters.get(c.WORKED_BY):
+        if filters.get(db_c.WORKED_BY):
             pipeline.insert(
                 stage_count_in_pipeline,
                 {
                     "$match": {
                         "$or": [
-                            {c.CREATED_BY: filters.get(c.WORKED_BY)},
-                            {c.UPDATED_BY: filters.get(c.WORKED_BY)},
+                            {db_c.CREATED_BY: filters.get(db_c.WORKED_BY)},
+                            {db_c.UPDATED_BY: filters.get(db_c.WORKED_BY)},
                         ]
                     }
                 },
             )
             stage_count_in_pipeline += 1
-        if filters.get(c.ATTRIBUTE):
+        if filters.get(db_c.ATTRIBUTE):
             pipeline.insert(
                 stage_count_in_pipeline,
                 {
                     "$match": {
                         "$and": [
-                            {c.ATTRIBUTE_FILTER_FIELD: attribute}
-                            for attribute in filters.get(c.ATTRIBUTE)
+                            {db_c.ATTRIBUTE_FILTER_FIELD: attribute}
+                            for attribute in filters.get(db_c.ATTRIBUTE)
                         ]
                     }
                 },

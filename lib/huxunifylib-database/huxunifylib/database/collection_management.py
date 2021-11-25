@@ -7,13 +7,13 @@ import pymongo
 from bson import ObjectId
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.db_exceptions as de
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def create_document(
@@ -39,24 +39,24 @@ def create_document(
         DuplicateDocument: Error if the document is duplicate
     """
 
-    if collection not in c.ALLOWED_COLLECTIONS:
+    if collection not in db_c.ALLOWED_COLLECTIONS:
         raise de.InvalidValueException("Collection not supported")
 
     # get collection
-    coll = database[c.DATA_MANAGEMENT_DATABASE][collection]
+    coll = database[db_c.DATA_MANAGEMENT_DATABASE][collection]
 
     # validate allowed fields, any invalid returns, raise error
     key_check = [
         key
         for key in new_doc.keys()
-        if key not in c.ALLOWED_FIELDS[collection]
+        if key not in db_c.ALLOWED_FIELDS[collection]
     ]
     if any(key_check):
         raise de.InvalidValueException(",".join(key_check))
 
     key_check = [
         key
-        for key in c.REQUIRED_FIELDS[collection]
+        for key in db_c.REQUIRED_FIELDS[collection]
         if key not in new_doc.keys()
     ]
     if any(key_check):
@@ -64,7 +64,7 @@ def create_document(
 
     # Make sure the data is unique
     doc_check = {}
-    for key in c.REQUIRED_FIELDS[collection]:
+    for key in db_c.REQUIRED_FIELDS[collection]:
         doc_check[key] = new_doc[key]
 
     try:
@@ -73,14 +73,14 @@ def create_document(
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    new_doc[c.CREATE_TIME] = datetime.utcnow()
-    new_doc[c.CREATED_BY] = username
-    new_doc[c.DELETED] = False
+    new_doc[db_c.CREATE_TIME] = datetime.utcnow()
+    new_doc[db_c.CREATED_BY] = username
+    new_doc[db_c.DELETED] = False
 
     try:
         document_id = coll.insert_one(new_doc).inserted_id
         if document_id is not None:
-            return coll.find_one({c.ID: document_id})
+            return coll.find_one({db_c.ID: document_id})
         logging.error(
             "Failed to create a document in collection : %s", collection
         )
@@ -91,7 +91,7 @@ def create_document(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_document(
@@ -118,30 +118,30 @@ def update_document(
             is not valid.
     """
 
-    if collection not in c.ALLOWED_COLLECTIONS:
+    if collection not in db_c.ALLOWED_COLLECTIONS:
         raise de.InvalidValueException("Collection not supported")
 
     # validate input id
     if not document_id or not update_doc or not isinstance(update_doc, dict):
         return None
 
-    coll = database[c.DATA_MANAGEMENT_DATABASE][collection]
+    coll = database[db_c.DATA_MANAGEMENT_DATABASE][collection]
 
     # validate allowed fields, any invalid returns, raise error
     key_check = [
         key
         for key in update_doc.keys()
-        if key not in c.ALLOWED_FIELDS[collection]
+        if key not in db_c.ALLOWED_FIELDS[collection]
     ]
     if any(key_check):
         raise de.InvalidValueException(",".join(key_check))
 
-    update_doc[c.UPDATE_TIME] = datetime.utcnow()
-    update_doc[c.UPDATED_BY] = username
+    update_doc[db_c.UPDATE_TIME] = datetime.utcnow()
+    update_doc[db_c.UPDATED_BY] = username
 
     try:
         return coll.find_one_and_update(
-            {c.ID: document_id},
+            {db_c.ID: document_id},
             {"$set": update_doc},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
@@ -175,15 +175,15 @@ def get_document(
             is not valid.
     """
 
-    if collection not in c.ALLOWED_COLLECTIONS:
+    if collection not in db_c.ALLOWED_COLLECTIONS:
         raise de.InvalidValueException("Collection not supported")
 
     # get collection
-    coll = database[c.DATA_MANAGEMENT_DATABASE][collection]
+    coll = database[db_c.DATA_MANAGEMENT_DATABASE][collection]
 
-    query = {c.ID: document_id}
+    query = {db_c.ID: document_id}
     if not include_deleted:
-        query[c.DELETED] = False
+        query[db_c.DELETED] = False
 
     try:
         return coll.find_one(query)
@@ -194,7 +194,7 @@ def get_document(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_documents(
@@ -226,21 +226,21 @@ def get_documents(
             is not valid.
     """
 
-    if collection not in c.ALLOWED_COLLECTIONS:
+    if collection not in db_c.ALLOWED_COLLECTIONS:
         raise de.InvalidValueException("Collection not supported")
 
     # get collection
-    coll = database[c.DATA_MANAGEMENT_DATABASE][collection]
+    coll = database[db_c.DATA_MANAGEMENT_DATABASE][collection]
 
     skips = batch_size * (batch_number - 1)
 
     query_filter = query_filter if query_filter else {}
-    if c.DELETED not in query_filter:
-        query_filter[c.DELETED] = False
+    if db_c.DELETED not in query_filter:
+        query_filter[db_c.DELETED] = False
 
     projection = projection if projection else {}
-    if c.DELETED not in projection:
-        projection[c.DELETED] = 0
+    if db_c.DELETED not in projection:
+        projection[db_c.DELETED] = 0
 
     try:
         return dict(
@@ -263,7 +263,7 @@ def get_documents(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_document(
@@ -290,28 +290,28 @@ def delete_document(
             is not valid.
     """
 
-    if collection not in c.ALLOWED_COLLECTIONS:
+    if collection not in db_c.ALLOWED_COLLECTIONS:
         raise de.InvalidValueException("Collection not supported")
 
-    coll = database[c.DATA_MANAGEMENT_DATABASE][collection]
+    coll = database[db_c.DATA_MANAGEMENT_DATABASE][collection]
 
     try:
         if hard_delete:
-            coll.delete_one({c.ID: document_id})
+            coll.delete_one({db_c.ID: document_id})
             return True
         doc = coll.find_one_and_update(
-            {c.ID: document_id},
+            {db_c.ID: document_id},
             {
                 "$set": {
-                    c.DELETED: True,
-                    c.UPDATED_BY: username,
-                    c.UPDATE_TIME: datetime.utcnow(),
+                    db_c.DELETED: True,
+                    db_c.UPDATED_BY: username,
+                    db_c.UPDATE_TIME: datetime.utcnow(),
                 }
             },
             upsert=False,
             new=True,
         )
-        return doc[c.DELETED]
+        return doc[db_c.DELETED]
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
