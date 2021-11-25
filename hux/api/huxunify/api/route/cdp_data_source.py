@@ -553,7 +553,7 @@ class BatchUpdateDataSources(SwaggerView):
                     database,
                     db_c.NOTIFICATION_TYPE_SUCCESS,
                     (
-                        f"Destination(s) {updated_data_source_names} "
+                        f"Data source(s) {updated_data_source_names} "
                         f"{update_action} by {user_name}"
                     ),
                     api_c.CDP_DATA_SOURCES_TAG,
