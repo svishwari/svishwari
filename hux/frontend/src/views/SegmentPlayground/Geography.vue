@@ -34,6 +34,15 @@
           :configuration-data="configurationData"
         />
       </div>
+      <div v-if="!showMapView && data.geo" class="pt-2">
+        <map-state-list
+          v-if="!loadingGeoOverview"
+          :map-data="data.geo"
+          :configuration-data="configurationData"
+          :headerConfig="headerConfig"
+          :height="330"
+        />
+      </div>
     </v-card-text>
   </v-card>
 </template>
@@ -42,10 +51,11 @@
 import Icon from "../../components/common/Icon.vue"
 import MapChart from "../../components/common/MapChart/MapChart.vue"
 import MapSlider from "../../components/common/MapChart/mapSlider.vue"
+import MapStateList from "@/components/common/MapChart/MapStateList"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 export default {
   name: "Geography",
-  components: { Icon, MapChart, MapSlider },
+  components: { Icon, MapChart, MapSlider, MapStateList },
   props: {
     data: {
       type: Object,
@@ -63,6 +73,7 @@ export default {
       toggle_view: 0,
       showMapView: true,
       configurationData: configurationData,
+      headerConfig: ['name','population_percentage'],
     }
   },
 }
@@ -80,6 +91,58 @@ export default {
     &.v-item--active {
       svg {
         fill: var(--v-primary-lighten6) !important;
+      }
+    }
+  }
+}
+
+.map-card-wrapper {
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px var(--v-white-base);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--v-black-lighten3);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--v-black-lighten3);
+  }
+
+  ::v-deep .hux-data-table {
+      table {
+      tbody {
+        tr {
+          display: table;
+          width: 100%;
+          td {
+          &:first-child {
+            color: var(--v-black-lighten4);
+          }
+            &:last-child {
+              color: var(--v-black-base);
+            }
+          }
+        }
+      }
+    }
+    .v-data-table {
+      .v-data-table-header {
+        tr {
+          height: 40px !important;
+        }
+        th {
+          background: var(--v-primary-lighten2);
+          &:first-child {
+            border-top-left-radius: 12px;
+          }
+          &:last-child {
+            border-top-right-radius: 12px;
+          }
+        }
       }
     }
   }
