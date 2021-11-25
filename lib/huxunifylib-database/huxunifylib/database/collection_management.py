@@ -311,7 +311,8 @@ def delete_document(
             upsert=False,
             new=True,
         )
-        return doc[c.DELETED]
+        if doc:
+            return doc[c.DELETED]
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

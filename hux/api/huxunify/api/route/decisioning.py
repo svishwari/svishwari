@@ -305,7 +305,7 @@ class RemoveRequestedModel(SwaggerView):
 
         model_id = request.args.get(api_c.MODEL_ID)
 
-        collection_management.delete_document(
+        deletion_status = collection_management.delete_document(
             database=database,
             collection=db_c.CONFIGURATIONS_COLLECTION,
             query_filter={db_c.OBJECT_ID: model_id},
@@ -313,16 +313,19 @@ class RemoveRequestedModel(SwaggerView):
             username=user_name,
         )
 
-        notification_management.create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            f'Requested model "{model_id}" removed by {user_name}.',
-            api_c.MODELS_TAG,
-        )
+        if deletion_status:
+            notification_management.create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                f'Requested model "{model_id}" removed by {user_name}.',
+                api_c.MODELS_TAG,
+            )
 
-        logger.info("Successfully removed model %s.", model_id)
+            logger.info("Successfully removed model %s.", model_id)
 
-        return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.OK
+            return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.OK
+
+        return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.NOT_FOUND
 
 
 @add_view_to_blueprint(
