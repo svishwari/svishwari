@@ -46,6 +46,7 @@ NOTIFICATIONS_COLLECTION = "notifications"
 CONFIGURATIONS_COLLECTION = "configurations"
 CACHE_COLLECTION = "cache"
 AUDIENCE_AUDIT_COLLECTION = "audit_logs"
+
 CONSTANT_NAME = "constant"
 CONSTANT_KEY = "key"
 CONSTANT_VALUE = "value"
@@ -486,7 +487,7 @@ REQUIRED_FIELDS = {
     CONFIGURATIONS_COLLECTION: [
         CONFIGURATION_FIELD_NAME,
         CONFIGURATION_FIELD_TYPE,
-    ],
+    ]
 }
 # Allowed Fields per collection
 ALLOWED_FIELDS = {
@@ -499,7 +500,7 @@ ALLOWED_FIELDS = {
         CONFIGURATION_FIELD_STATUS,
         CONFIGURATION_FIELD_ENABLED,
         CONFIGURATION_FIELD_ROADMAP,
-    ],
+    ]
 }
 
 # Allowed collections
