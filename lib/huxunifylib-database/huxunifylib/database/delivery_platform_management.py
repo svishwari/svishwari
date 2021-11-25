@@ -2581,70 +2581,27 @@ def update_delivery_platform_doc(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def set_job_in_pending_within_timeout_collection(
-    database: DatabaseClient,
-    delivery_job_id: ObjectId,
-) -> Union[dict, None]:
-    """Creates a document, ttl index in the pending_within_timeout_collection.
-
-    Args:
-        database (DatabaseClient): database client.
-        delivery_job_id (ObjectId): ID of delivery job.
-
-    Returns:
-        dict: updated document.
-    """
-    # Create a ttl index.
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.PENDING_WITHIN_TIMEOUT_COLLECTION
-    ]
-    collection.create_index(
-        [(c.CREATE_TIME, pymongo.ASCENDING)],
-        expireAfterSeconds=c.DELIVERY_JOB_TIMEOUT,
-    )
-
-    return create_document(
-        database,
-        c.PENDING_WITHIN_TIMEOUT_COLLECTION,
-        {c.DELIVERY_JOB_ID: delivery_job_id},
-    )
-
-
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
-def update_pending_delivery_jobs(database: DatabaseClient):
+def update_pending_delivery_jobs(database: DatabaseClient) -> int:
     """Updates status of a delivery job for jobs with status as pending.
     Args:
         database (DatabaseClient): database client.
     Returns:
-        list: updated delivery job ids.
+        int: Count of updated delivery jobs.
     """
-    # Get delivery jobs which have status to be delivering.
-    delivery_jobs = get_documents(
-        database,
-        c.DELIVERY_JOBS_COLLECTION,
-        {c.STATUS: c.AUDIENCE_STATUS_DELIVERING},
-    )
-    logging.info(
-        "Updating %s delivery jobs.", str(delivery_jobs.get(c.TOTAL_RECORDS))
-    )
-
-    delivery_jobs_updated = []
-    for delivery_job in delivery_jobs.get(c.DOCUMENTS, []):
-        if delivery_job.get(c.STATUS) == c.AUDIENCE_STATUS_DELIVERING:
-            # For jobs not in pending_within_timeout set status to error.
-            if not get_documents(
-                database,
-                c.PENDING_WITHIN_TIMEOUT_COLLECTION,
-                {c.DELIVERY_JOB_ID: delivery_job.get(c.ID)},
-                sort_order=[(c.CREATE_TIME, pymongo.DESCENDING)],
-            ).get(c.DOCUMENTS):
-                set_delivery_job_status(
-                    database,
-                    delivery_job.get(c.ID),
-                    c.AUDIENCE_STATUS_ERROR,
-                )
-                delivery_jobs_updated.append(delivery_job.get(c.ID))
-    return delivery_jobs_updated
+    delivering_expire_time = datetime.datetime.utcnow() - \
+                             datetime.timedelta(minutes=c.DELIVERY_JOB_TIMEOUT)
+    try:
+        updated_doc = database[c.DATA_MANAGEMENT_DATABASE][
+                c.DELIVERY_JOBS_COLLECTION
+            ].update_many(
+            {
+                c.STATUS: c.AUDIENCE_STATUS_DELIVERING,
+                c.CREATE_TIME: {"$lt": delivering_expire_time}
+            },
+            {"$set": {c.STATUS: c.AUDIENCE_STATUS_ERROR}},
+        )
+        logging.info("Updated %d delivery job status.",
+                     updated_doc.modified_count)
+        return updated_doc.modified_count
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)

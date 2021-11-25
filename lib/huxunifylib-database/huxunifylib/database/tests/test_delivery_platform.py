@@ -2007,27 +2007,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
 
     @mongomock.patch(servers=(("localhost", 27017),))
-    def test_set_job_in_pending_within_timeout_collection(self):
-        """Test set delivery job in pending_within_timeout collection."""
-        delivery_job_id = self._set_delivery_job()
-        doc_for_delivery_job = (
-            dpm.set_job_in_pending_within_timeout_collection(
-                self.database, delivery_job_id
-            )
-        )
-        self.assertEqual(
-            doc_for_delivery_job.get(c.DELIVERY_JOB_ID), delivery_job_id
-        )
-
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_update_pending_delivery_jobs(self):
         """Test update delivery jobs status."""
-
-        delivery_jobs = dpm.get_delivery_jobs(self.database)
-        # Insert a delivery job in pending_within_timeout collection.
-        dpm.set_job_in_pending_within_timeout_collection(
-            self.database, delivery_jobs[0][c.ID]
-        )
-
         updated_delivery_jobs = dpm.update_pending_delivery_jobs(self.database)
-        self.assertNotIn(delivery_jobs[0][c.ID], updated_delivery_jobs)
+        self.assertEqual(updated_delivery_jobs, 0)
