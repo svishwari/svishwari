@@ -269,7 +269,7 @@ def get_documents(
 def delete_document(
     database: DatabaseClient,
     collection: str,
-    document_id: ObjectId,
+    query_filter: dict,
     hard_delete: bool = True,
     username: str = "unknown",
 ) -> bool:
@@ -278,7 +278,7 @@ def delete_document(
     Args:
         database (DatabaseClient): A database client.
         collection (str): Collection name.
-        document_id (ObjectId): Object Id of the document.
+        query_filter (dict): MongoDB query filter.
         hard_delete (bool): hard deletes an document if True.
         username (str): Username.
 
@@ -297,10 +297,10 @@ def delete_document(
 
     try:
         if hard_delete:
-            coll.delete_one({c.ID: document_id})
+            coll.delete_one(query_filter)
             return True
         doc = coll.find_one_and_update(
-            {c.ID: document_id},
+            query_filter,
             {
                 "$set": {
                     c.DELETED: True,
