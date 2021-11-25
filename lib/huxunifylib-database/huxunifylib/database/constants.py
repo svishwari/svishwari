@@ -46,8 +46,6 @@ NOTIFICATIONS_COLLECTION = "notifications"
 CONFIGURATIONS_COLLECTION = "configurations"
 CACHE_COLLECTION = "cache"
 AUDIENCE_AUDIT_COLLECTION = "audit_logs"
-PENDING_WITHIN_TIMEOUT_COLLECTION = "pending_within_timeout"
-
 CONSTANT_NAME = "constant"
 CONSTANT_KEY = "key"
 CONSTANT_VALUE = "value"

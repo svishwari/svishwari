@@ -2588,20 +2588,22 @@ def update_pending_delivery_jobs(database: DatabaseClient) -> int:
     Returns:
         int: Count of updated delivery jobs.
     """
-    delivering_expire_time = datetime.datetime.utcnow() - \
-                             datetime.timedelta(minutes=c.DELIVERY_JOB_TIMEOUT)
+    delivering_expire_time = datetime.datetime.utcnow() - datetime.timedelta(
+        minutes=c.DELIVERY_JOB_TIMEOUT
+    )
     try:
         updated_doc = database[c.DATA_MANAGEMENT_DATABASE][
-                c.DELIVERY_JOBS_COLLECTION
-            ].update_many(
+            c.DELIVERY_JOBS_COLLECTION
+        ].update_many(
             {
                 c.STATUS: c.AUDIENCE_STATUS_DELIVERING,
-                c.CREATE_TIME: {"$lt": delivering_expire_time}
+                c.CREATE_TIME: {"$lt": delivering_expire_time},
             },
             {"$set": {c.STATUS: c.AUDIENCE_STATUS_ERROR}},
         )
-        logging.info("Updated %d delivery job status.",
-                     updated_doc.modified_count)
+        logging.info(
+            "Updated %d delivery job status.", updated_doc.modified_count
+        )
         return updated_doc.modified_count
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
