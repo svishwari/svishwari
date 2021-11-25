@@ -423,15 +423,23 @@ class ModelOverview(SwaggerView):
 
         # TODO Remove once Propensity to Purchase model data is being served
         #  from tecton.
-        shap_data = {}
         if model_id == "3":
             overview_data = api_c.PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB
         else:
-            # get model information
-            model_versions = tecton.get_model_version_history(model_id)
+            version = None
+            for version in tecton.get_model_version_history(model_id):
+                current_version = version.get(api_c.CURRENT_VERSION)
 
-            # if model versions not found, return not found.
-            if not model_versions:
+                # try to get model performance
+                performance_metrics = tecton.get_model_performance_metrics(
+                    model_id,
+                    version[api_c.TYPE],
+                    current_version,
+                )
+                if performance_metrics:
+                    break
+            else:
+                # if model versions not found, return not found.
                 return {}, HTTPStatus.NOT_FOUND
 
             stub_shap_data = (
@@ -444,21 +452,18 @@ class ModelOverview(SwaggerView):
                 else api_c.MODEL_TWO_SHAP_DATA,
             )
 
-            # take the latest model version that have features available.
-            latest_model = model_versions[0]
-
             # generate the output
             overview_data = {
-                api_c.MODEL_ID: latest_model[api_c.ID],
-                api_c.MODEL_TYPE: latest_model[api_c.TYPE],
-                api_c.MODEL_NAME: latest_model[api_c.NAME],
-                api_c.DESCRIPTION: latest_model[api_c.DESCRIPTION],
-                api_c.MODEL_SHAP_DATA: shap_data,
-                api_c.PERFORMANCE_METRIC: tecton.get_model_performance_metrics(
-                    model_id,
-                    latest_model[api_c.TYPE],
-                    latest_model[api_c.CURRENT_VERSION],
+                api_c.MODEL_ID: version.get(api_c.ID),
+                api_c.MODEL_TYPE: version.get(
+                    api_c.TYPE, db_c.CATEGORY_UNKNOWN
                 ),
+                api_c.MODEL_NAME: version.get(
+                    api_c.NAME, db_c.CATEGORY_UNKNOWN
+                ),
+                api_c.DESCRIPTION: version.get(api_c.DESCRIPTION, ""),
+                api_c.MODEL_SHAP_DATA: shap_data,
+                api_c.PERFORMANCE_METRIC: performance_metrics,
             }
 
         # dump schema and return to client.
@@ -599,35 +604,36 @@ class ModelFeaturesView(SwaggerView):
         if model_id == "3":
             features = api_c.PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB
         else:
-            # only use the latest version if model version is None.
-            if model_version is None:
-                # get latest version first
-                model_version = tecton.get_model_version_history(model_id)
-                # check if there is a model version we can grab.
-                # if so take the first one (latest).
-                model_version = (
-                    model_version[0].get(api_c.CURRENT_VERSION)
-                    if model_version
-                    else ""
-                )
-
-            # check cache first
-            database = get_db_client()
-            features = get_cache_entry(
-                database, f"features.{model_id}.{model_version}"
+            # get model versions
+            model_versions = (
+                [{api_c.CURRENT_VERSION: model_version}]
+                if model_version
+                else tecton.get_model_version_history(model_id)
             )
+            database = get_db_client()
 
-            # if no cache, grab from Tecton and cache after.
-            if not features:
-                features = tecton.get_model_features(model_id, model_version)
+            # loop versions until the latest version is found
+            for version in model_versions:
+                current_version = version.get(api_c.CURRENT_VERSION)
+
+                # check cache first
+                features = get_cache_entry(
+                    database, f"features.{model_id}.{current_version}"
+                )
+                if features:
+                    break
+
+                # if no cache, grab from Tecton and cache after.
+                features = tecton.get_model_features(model_id, current_version)
 
                 # create cache entry in db only if features fetched from Tecton is not empty
                 if features:
                     create_cache_entry(
                         database,
-                        f"features.{model_id}.{model_version}",
+                        f"features.{model_id}.{current_version}",
                         features,
                     )
+                    break
 
         return (
             jsonify(FeatureSchema(many=True).dump(features)),
@@ -697,31 +703,32 @@ class ModelImportanceFeaturesView(SwaggerView):
                 HTTP status code.
         """
 
-        # only use the latest version if model version is None.
-        if model_version is None:
-            # get latest version first
-            model_version = tecton.get_model_version_history(model_id)
-
-            # check if there is a model version we can grab,
-            # if so take the last one (latest).
-            model_version = (
-                model_version[0].get(api_c.CURRENT_VERSION)
-                if model_version
-                else ""
-            )
-
-        # check cache first
-        database = get_db_client()
-        features = get_cache_entry(
-            database, f"features.{model_id}.{model_version}"
+        model_versions = (
+            [{api_c.CURRENT_VERSION: model_version}]
+            if model_version
+            else tecton.get_model_version_history(model_id)
         )
 
-        # if no cache, grab from Tecton and cache after.
-        if not features:
-            features = tecton.get_model_features(model_id, model_version)
-            create_cache_entry(
-                database, f"features.{model_id}.{model_version}", features
+        database = get_db_client()
+        for version in model_versions:
+            current_version = version.get(api_c.CURRENT_VERSION)
+
+            # check cache first
+            features = get_cache_entry(
+                database, f"features.{model_id}.{current_version}"
             )
+            if features:
+                break
+
+            # if no cache, grab from Tecton and cache after.
+            features = tecton.get_model_features(model_id, current_version)
+            if features:
+                create_cache_entry(
+                    database,
+                    f"features.{model_id}.{current_version}",
+                    features,
+                )
+                break
 
         # sort the top features before serving them out
         features.sort(key=lambda x: x[api_c.SCORE], reverse=True)
