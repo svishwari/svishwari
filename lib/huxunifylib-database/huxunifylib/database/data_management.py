@@ -44,7 +44,10 @@ def set_constant(
     dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = dm_db[db_c.CONSTANTS_COLLECTION]
 
-    doc = {db_c.CONSTANT_NAME: constant_name, db_c.CONSTANT_VALUE: constant_value}
+    doc = {
+        db_c.CONSTANT_NAME: constant_name,
+        db_c.CONSTANT_VALUE: constant_value,
+    }
 
     try:
         constant_doc = collection.find_one_and_update(
@@ -163,7 +166,8 @@ def set_data_source(
         data_source_id = collection.insert_one(doc).inserted_id
         if data_source_id is not None:
             data_source_doc = collection.find_one(
-                {db_c.ID: data_source_id, db_c.DELETED: False}, {db_c.DELETED: 0}
+                {db_c.ID: data_source_id, db_c.DELETED: False},
+                {db_c.DELETED: 0},
             )
         else:
             logging.error("Failed to create a new data source!")
@@ -247,7 +251,10 @@ def get_data_source_non_breakdown_fields(
     cur_doc = get_data_source(database, data_source_id)
 
     non_breakdown_fields = []
-    if cur_doc is not None and db_c.DATA_SOURCE_NON_BREAKDOWN_FIELDS in cur_doc:
+    if (
+        cur_doc is not None
+        and db_c.DATA_SOURCE_NON_BREAKDOWN_FIELDS in cur_doc
+    ):
         non_breakdown_fields = cur_doc[db_c.DATA_SOURCE_NON_BREAKDOWN_FIELDS]
 
     return non_breakdown_fields
@@ -663,7 +670,8 @@ def set_ingestion_job(
         collection.create_index([(db_c.DATA_SOURCE_ID, pymongo.ASCENDING)])
         if ingestion_job_id is not None:
             ingestion_job_doc = collection.find_one(
-                {db_c.ID: ingestion_job_id, db_c.DELETED: False}, {db_c.DELETED: 0}
+                {db_c.ID: ingestion_job_id, db_c.DELETED: False},
+                {db_c.DELETED: 0},
             )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -904,7 +912,10 @@ def get_ingestion_job_data_source_fields(
     if data_source_id is not None:
         data_source_doc = get_data_source(database, data_source_id)
 
-    if data_source_doc is not None and db_c.DATA_SOURCE_FIELDS in data_source_doc:
+    if (
+        data_source_doc is not None
+        and db_c.DATA_SOURCE_FIELDS in data_source_doc
+    ):
         fields_list = data_source_doc[db_c.DATA_SOURCE_FIELDS]
 
     for field_doc in fields_list:
@@ -945,7 +956,10 @@ def get_ingestion_job_custom_fields(
     if data_source_id is not None:
         data_source_doc = get_data_source(database, data_source_id)
 
-    if data_source_doc is not None and db_c.DATA_SOURCE_FIELDS in data_source_doc:
+    if (
+        data_source_doc is not None
+        and db_c.DATA_SOURCE_FIELDS in data_source_doc
+    ):
         fields_list = data_source_doc[db_c.DATA_SOURCE_FIELDS]
 
     for field_doc in fields_list:
@@ -1051,7 +1065,8 @@ def get_ingested_data_stats(
 
     try:
         doc = collection.find_one(
-            {db_c.JOB_ID: ingestion_job_id, db_c.DELETED: False}, {db_c.DELETED: 0}
+            {db_c.JOB_ID: ingestion_job_id, db_c.DELETED: False},
+            {db_c.DELETED: 0},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

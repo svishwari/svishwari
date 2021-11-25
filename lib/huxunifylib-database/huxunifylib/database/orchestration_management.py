@@ -116,7 +116,9 @@ def get_audience_by_filter(
         InvalidValueException: If passed in limit value is invalid.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.AUDIENCES_COLLECTION
+    ]
 
     # if deleted is not included in the filters, add it.
     if filter_dict:
@@ -180,7 +182,12 @@ def get_audience(
             docs = list(
                 collection.aggregate(
                     [
-                        {"$match": {db_c.ID: audience_id, db_c.DELETED: False}},
+                        {
+                            "$match": {
+                                db_c.ID: audience_id,
+                                db_c.DELETED: False,
+                            }
+                        },
                         {db_c.DELETED: 0},
                     ]
                     + USER_LOOKUP_PIPELINE
@@ -305,7 +312,8 @@ def update_audience(
             raise de.InvalidID()
         if name is not None:
             duplicate_name_doc = collection.find_one(
-                {db_c.AUDIENCE_NAME: name, db_c.DELETED: False}, {db_c.DELETED: 0}
+                {db_c.AUDIENCE_NAME: name, db_c.DELETED: False},
+                {db_c.DELETED: 0},
             )
             if (
                 duplicate_name_doc is not None
@@ -360,7 +368,9 @@ def delete_audience(
         bool: A flag to indicate successful deletion.
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.AUDIENCES_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.AUDIENCES_COLLECTION
+    ]
 
     try:
         return collection.delete_one({db_c.ID: audience_id}).deleted_count > 0

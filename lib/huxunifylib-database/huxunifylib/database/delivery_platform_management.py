@@ -186,7 +186,8 @@ def get_delivery_platform(
 
     try:
         return collection.find_one(
-            {db_c.ID: delivery_platform_id, db_c.DELETED: False}, {db_c.DELETED: 0}
+            {db_c.ID: delivery_platform_id, db_c.DELETED: False},
+            {db_c.DELETED: 0},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -822,7 +823,8 @@ def get_delivery_platform_lookalike_audience(
 
     try:
         ret_doc = collection.find_one(
-            {db_c.ID: lookalike_audience_id, db_c.DELETED: False}, {db_c.DELETED: 0}
+            {db_c.ID: lookalike_audience_id, db_c.DELETED: False},
+            {db_c.DELETED: 0},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -1146,7 +1148,8 @@ def set_delivery_job(
 
         if delivery_job_id is not None:
             return collection.find_one(
-                {db_c.ID: delivery_job_id, db_c.DELETED: False}, {db_c.DELETED: 0}
+                {db_c.ID: delivery_job_id, db_c.DELETED: False},
+                {db_c.DELETED: 0},
             )
 
     except pymongo.errors.OperationFailure as exc:
@@ -1894,7 +1897,10 @@ def get_delivery_platform_delivery_jobs(
 
     try:
         cursor = collection.find(
-            {db_c.DELIVERY_PLATFORM_ID: delivery_platform_id, db_c.DELETED: False},
+            {
+                db_c.DELIVERY_PLATFORM_ID: delivery_platform_id,
+                db_c.DELETED: False,
+            },
             {db_c.DELETED: 0},
         )
     except pymongo.errors.OperationFailure as exc:
@@ -1915,7 +1921,9 @@ def get_delivery_platforms_count(database: DatabaseClient) -> int:
     """
 
     return get_collection_count(
-        database, db_c.DATA_MANAGEMENT_DATABASE, db_c.DELIVERY_PLATFORM_COLLECTION
+        database,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.DELIVERY_PLATFORM_COLLECTION,
     )
 
 
@@ -1930,7 +1938,9 @@ def get_lookalike_audiences_count(database: DatabaseClient) -> int:
     """
 
     return get_collection_count(
-        database, db_c.DATA_MANAGEMENT_DATABASE, db_c.LOOKALIKE_AUDIENCE_COLLECTION
+        database,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.LOOKALIKE_AUDIENCE_COLLECTION,
     )
 
 
@@ -2078,7 +2088,9 @@ def _get_performance_metrics(
     metric_queries = [{db_c.DELIVERY_JOB_ID: delivery_job_id}]
 
     if min_start_time:
-        metric_queries.append({db_c.METRICS_START_TIME: {"$gte": min_start_time}})
+        metric_queries.append(
+            {db_c.METRICS_START_TIME: {"$gte": min_start_time}}
+        )
 
     if max_end_time:
         metric_queries.append({db_c.METRICS_END_TIME: {"$lte": max_end_time}})
@@ -2103,7 +2115,8 @@ def _get_performance_metrics(
 
 
 get_performance_metrics = partial(
-    _get_performance_metrics, collection_name=db_c.PERFORMANCE_METRICS_COLLECTION
+    _get_performance_metrics,
+    collection_name=db_c.PERFORMANCE_METRICS_COLLECTION,
 )
 
 get_campaign_activity = partial(

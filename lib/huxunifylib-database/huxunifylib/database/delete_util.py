@@ -616,7 +616,9 @@ def delete_delivery_platforms_bulk(
         if delete_lookalike_audiences_bulk(database, all_lookalike_ids):
             # Delete delivery platforms
             if delete_bulk(
-                database, delivery_platform_ids, db_c.DELIVERY_PLATFORM_COLLECTION
+                database,
+                delivery_platform_ids,
+                db_c.DELIVERY_PLATFORM_COLLECTION,
             ):
                 return True
     return False
@@ -646,8 +648,12 @@ def delete_data_sources_bulk(
 
     ingestion_job_ids = [doc[db_c.ID] for doc in ingestion_jobs]
 
-    if delete_bulk(database, ingestion_job_ids, db_c.INGESTION_JOBS_COLLECTION):
-        if delete_bulk(database, data_source_ids, db_c.DATA_SOURCES_COLLECTION):
+    if delete_bulk(
+        database, ingestion_job_ids, db_c.INGESTION_JOBS_COLLECTION
+    ):
+        if delete_bulk(
+            database, data_source_ids, db_c.DATA_SOURCES_COLLECTION
+        ):
             return True
 
     return False

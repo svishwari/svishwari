@@ -52,7 +52,9 @@ def create_notification(
         db_c.NOTIFICATIONS_COLLECTION
     ]
 
-    collection.create_index([(db_c.TS, pymongo.ASCENDING)], expireAfterSeconds=0)
+    collection.create_index(
+        [(db_c.TS, pymongo.ASCENDING)], expireAfterSeconds=0
+    )
 
     # get current time
     current_time = datetime.utcnow()
@@ -140,7 +142,11 @@ def get_notifications_batch(
         query.update({db_c.TYPE: {"$in": notification_types}})
     if notification_categories:
         query.update(
-            {db_c.NOTIFICATION_FIELD_CATEGORY: {"$in": notification_categories}}
+            {
+                db_c.NOTIFICATION_FIELD_CATEGORY: {
+                    "$in": notification_categories
+                }
+            }
         )
     if users:
         query.update({db_c.NOTIFICATION_FIELD_USERNAME: {"$in": users}})
@@ -163,7 +169,12 @@ def get_notifications_batch(
             total_records=collection.count_documents(query),
             notifications=list(
                 collection.find(query)
-                .sort([(db_c.NOTIFICATION_FIELD_CREATED, -1), (db_c.ID, sort_order)])
+                .sort(
+                    [
+                        (db_c.NOTIFICATION_FIELD_CREATED, -1),
+                        (db_c.ID, sort_order),
+                    ]
+                )
                 .skip(skips)
                 .limit(batch_size)
             ),
@@ -279,7 +290,9 @@ def get_notification(
     ]
 
     try:
-        return collection.find_one({db_c.ID: notification_id, db_c.DELETED: False})
+        return collection.find_one(
+            {db_c.ID: notification_id, db_c.DELETED: False}
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
