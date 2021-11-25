@@ -10,7 +10,6 @@ from huxunifylib.database.delivery_platform_management import (
     set_delivery_job,
     get_delivery_platform,
     set_delivery_job_status,
-    set_job_in_pending_within_timeout_collection,
 )
 from huxunifylib.database.engagement_management import (
     add_delivery_job,
@@ -368,14 +367,6 @@ class DestinationBatchJob:
             self.audience_delivery_job_id,
             status,
         )
-
-        # Add delivery job id to pending_within_timeout, if status is not
-        # delivering.
-        if status == api_c.STATUS_DELIVERING:
-            set_job_in_pending_within_timeout_collection(
-                self.database, self.audience_delivery_job_id
-            )
-
         self.result = status
 
 
