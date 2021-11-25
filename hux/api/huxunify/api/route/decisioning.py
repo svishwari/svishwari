@@ -801,7 +801,6 @@ class ModelLiftView(SwaggerView):
                     api_c.ACTUAL_RATE: uniform(0.01, 0.3),
                     api_c.PROFILE_COUNT: randint(1000, 100000),
                     api_c.ACTUAL_LIFT: uniform(1, 5),
-                    api_c.PREDICTED_LIFT: round(uniform(1000, 5000), 4),
                 }
                 for i in range(1, 11)
             ]
