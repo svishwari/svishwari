@@ -16,10 +16,6 @@ from tenacity import retry, wait_fixed, retry_if_exception_type
 import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.collection_management import (
-    create_document,
-    get_documents,
-)
 from huxunifylib.database.utils import name_exists, get_collection_count
 import huxunifylib.database.audience_management as am
 
@@ -2604,6 +2600,6 @@ def update_pending_delivery_jobs(database: DatabaseClient) -> int:
         logging.info(
             "Updated %d delivery job status.", updated_doc.modified_count
         )
-        return updated_doc.modified_count
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
+    return updated_doc.modified_count
