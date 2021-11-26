@@ -32,6 +32,7 @@ from huxunify.api.route.decorators import (
     secured,
     api_error_handler,
     get_user_name,
+    requires_access_levels,
 )
 from huxunify.api.route.utils import (
     get_db_client,
@@ -458,9 +459,9 @@ class BatchUpdateDataSources(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
-    @get_user_name()
+    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL, api_c.VIEWER_LEVEL])
     @api_error_handler()
-    def patch(self, user_name: str) -> Tuple[dict, int]:
+    def patch(self, user: str) -> Tuple[dict, int]:
         """Updates a list of data sources.
 
         ---
@@ -468,7 +469,7 @@ class BatchUpdateDataSources(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): User name
+            user (str): User doc
 
         Returns:
             Tuple[dict, int]: Data source updated, HTTP status code.
@@ -554,10 +555,10 @@ class BatchUpdateDataSources(SwaggerView):
                     db_c.NOTIFICATION_TYPE_SUCCESS,
                     (
                         f"Data source(s) {updated_data_source_names} "
-                        f"{update_action} by {user_name}"
+                        f"{update_action} by {user[api_c.DISPLAY_NAME]}"
                     ),
                     api_c.CDP_DATA_SOURCES_TAG,
-                    user_name,
+                    user[api_c.DISPLAY_NAME],
                 )
                 return (
                     jsonify(
