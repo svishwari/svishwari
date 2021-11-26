@@ -471,7 +471,7 @@ class BatchUpdateDataSources(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user (str): User doc
+            user (dict): User doc
 
         Returns:
             Tuple[dict, int]: Data source updated, HTTP status code.
