@@ -172,7 +172,7 @@ class ConfigurationCollectionManagementTest(TestCase):
             dmg.delete_document(
                 database=self.database,
                 collection=db_c.CONFIGURATIONS_COLLECTION,
-                document_id=new_doc[db_c.ID],
+                query_filter={db_c.ID: new_doc[db_c.ID]},
                 hard_delete=False,
             )
         )
@@ -211,7 +211,7 @@ class ConfigurationCollectionManagementTest(TestCase):
             dmg.delete_document(
                 database=self.database,
                 collection=db_c.CONFIGURATIONS_COLLECTION,
-                document_id=configuration[db_c.ID],
+                query_filter={db_c.ID: configuration[db_c.ID]},
             )
         )
 
