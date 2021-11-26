@@ -463,7 +463,7 @@ class BatchUpdateDataSources(SwaggerView):
         [api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL, api_c.VIEWER_LEVEL]
     )
     @api_error_handler()
-    def patch(self, user: str) -> Tuple[dict, int]:
+    def patch(self, user: dict) -> Tuple[dict, int]:
         """Updates a list of data sources.
 
         ---
