@@ -312,7 +312,7 @@ def delete_document(
             new=True,
         )
         if doc:
-            return doc[c.DELETED]
+            return doc[db_c.DELETED]
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
