@@ -883,6 +883,7 @@ class AudiencePostView(SwaggerView):
                 f"added by {user[api_c.USER_NAME]}."
             ),
             api_c.ORCHESTRATION_TAG,
+            user[api_c.USER_NAME],
         )
 
         # attach the audience to each of the engagements
@@ -908,6 +909,7 @@ class AudiencePostView(SwaggerView):
                     f"by {user[api_c.USER_NAME]}."
                 ),
                 api_c.ORCHESTRATION_TAG,
+                user[api_c.USER_NAME],
             )
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.CREATED
@@ -1034,6 +1036,7 @@ class AudiencePutView(SwaggerView):
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
             f'Audience "{audience_doc[db_c.NAME]}" updated by {user[api_c.USER_NAME]}.',
             api_c.ORCHESTRATION_TAG,
+            user[api_c.USER_NAME],
         )
 
         # check if any engagements to add, otherwise return.
@@ -1458,6 +1461,7 @@ class SetLookalikeAudience(SwaggerView):
                 f'"{lookalike_audience[db_c.NAME]}" added by {user[api_c.USER_NAME]}.'
             ),
             api_c.ORCHESTRATION_TAG,
+            user[api_c.USER_NAME],
         )
         return (
             LookalikeAudienceGetSchema().dump(lookalike_audience),
@@ -1568,6 +1572,7 @@ class DeleteAudienceView(SwaggerView):
             db_c.NOTIFICATION_TYPE_SUCCESS,
             f'Audience "{audience_id}" successfully deleted by {user[api_c.USER_NAME]}.',
             api_c.ORCHESTRATION_TAG,
+            user[api_c.USER_NAME],
         )
 
         return {api_c.MESSAGE: {}}, HTTPStatus.NO_CONTENT

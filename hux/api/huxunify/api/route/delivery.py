@@ -976,7 +976,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
             audience_id,
             destination_id,
             delivery_schedule,
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         create_notification(

@@ -308,6 +308,7 @@ class CreateCdpDataSources(SwaggerView):
                 f"{user[api_c.USER_NAME]} created the following CDP Data Sources: "
                 f"{'. '.join([data_source[api_c.NAME] for data_source in new_data_sources])}",
                 api_c.CDP_DATA_SOURCES_TAG,
+                user[api_c.USER_NAME],
             )
         else:
             logger.info(
@@ -325,6 +326,7 @@ class CreateCdpDataSources(SwaggerView):
                 f"Failed to create the following CDP Data Sources: "
                 f"{'. '.join([data_source[api_c.NAME] for data_source in new_data_sources])}",
                 api_c.CDP_DATA_SOURCES_TAG,
+                user[api_c.USER_NAME],
             )
 
         return (
@@ -400,6 +402,7 @@ class DeleteCdpDataSources(SwaggerView):
                     f"{user[api_c.USER_NAME]} deleted the following CDP Data Sources: "
                     f"{data_source_types}",
                     api_c.CDP_DATA_SOURCES_TAG,
+                    user[api_c.USER_NAME],
                 )
                 return {
                     "message": api_c.DELETE_DATASOURCES_SUCCESS.format(
@@ -416,6 +419,7 @@ class DeleteCdpDataSources(SwaggerView):
                 f"Failed to delete the following CDP Data Sources: "
                 f"{data_source_types}",
                 api_c.CDP_DATA_SOURCES_TAG,
+                user[api_c.USER_NAME],
             )
             return {
                 "message": api_c.CANNOT_DELETE_DATASOURCES.format(
@@ -548,6 +552,7 @@ class BatchUpdateDataSources(SwaggerView):
                         ",".join([str(x) for x in data_source_ids]),
                     ),
                     api_c.CDP_DATA_SOURCES_TAG,
+                    user[api_c.USER_NAME],
                 )
                 return (
                     jsonify(
