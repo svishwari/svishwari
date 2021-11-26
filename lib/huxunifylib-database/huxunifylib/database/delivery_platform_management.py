@@ -2571,3 +2571,35 @@ def update_delivery_platform_doc(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def update_pending_delivery_jobs(database: DatabaseClient) -> int:
+    """Updates status of a delivery job for jobs with status as pending.
+    Args:
+        database (DatabaseClient): database client.
+    Returns:
+        int: Count of updated delivery jobs.
+    """
+    delivering_expire_time = datetime.datetime.utcnow() - datetime.timedelta(
+        minutes=c.DELIVERY_JOB_TIMEOUT
+    )
+    try:
+        updated_doc = database[c.DATA_MANAGEMENT_DATABASE][
+            c.DELIVERY_JOBS_COLLECTION
+        ].update_many(
+            {
+                c.STATUS: c.AUDIENCE_STATUS_DELIVERING,
+                c.CREATE_TIME: {"$lt": delivering_expire_time},
+            },
+            {"$set": {c.STATUS: c.AUDIENCE_STATUS_ERROR}},
+        )
+        logging.info(
+            "Updated %d delivery job status.", updated_doc.modified_count
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+    return updated_doc.modified_count

@@ -4,6 +4,7 @@
 
 import dayjs from "dayjs"
 import store from "@/store/index.js"
+import { capitalize } from "lodash"
 
 /**
  * Forms the title for the page.
@@ -332,4 +333,14 @@ export function sortByName(data, key) {
       return textA < textB ? -1 : textA > textB ? 1 : 0
     })
   })
+}
+
+/**
+ * Returns the string in Sentence Case
+ *
+ * @param {string} text - string to be formatted
+ * @returns {string} formatted string
+ */
+export function formatText(text) {
+  return capitalize(text.replaceAll("_", " "))
 }

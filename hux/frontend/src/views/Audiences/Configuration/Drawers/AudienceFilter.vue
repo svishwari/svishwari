@@ -15,30 +15,26 @@
         :color="filterLength > 0 ? 'primary base' : 'black lighten3'"
         :disabled="!filterLength > 0"
         class="text-button float-right clear-btn"
-        @click="clearFilter()"
+        @click="clear()"
       >
         Clear
       </v-btn>
     </template>
 
     <template #default>
-      <hux-filter-panels :expanded="filterLength > 0 ? [0] : []">
+      <hux-filter-panels :expanded="selectedAttributes.length > 0 ? [0] : []">
         <v-checkbox
           v-model="selectedFavourite"
-          multiple
           color="#00a3e0"
           class="text--base-1 px-5 withoutExpansion"
           label="My favorites only"
-          value="My favorites only"
           :style="{ 'border-bottom': '1px solid #E2EAEC' }"
         ></v-checkbox>
         <v-checkbox
           v-model="selectedAudienceWorkedWith"
-          multiple
           color="#00a3e0"
           class="text--base-1 px-5 withoutExpansion"
           label="Audiences I’ve worked on"
-          value="Audiences I’ve worked on"
         ></v-checkbox>
         <hux-filter-panel title="Attributes" :count="selectedAttributes.length">
           <div class="text-body-1 black--text text--lighten-4 pb-2">MODELS</div>
@@ -49,7 +45,7 @@
               multiple
               color="#00a3e0"
               class="text--base-1"
-              :label="data.title"
+              :label="formatText(data.title)"
               :value="data.title"
             ></v-checkbox>
           </div>
@@ -64,7 +60,7 @@
               multiple
               color="#00a3e0"
               class="text--base-1"
-              :label="data.title"
+              :label="formatText(data.title)"
               :value="data.title"
             ></v-checkbox>
           </div>
@@ -95,6 +91,8 @@
 import Drawer from "@/components/common/Drawer"
 import HuxFilterPanels from "@/components/common/FilterPanels"
 import HuxFilterPanel from "@/components/common/FilterPanel"
+import { formatText } from "@/utils.js"
+
 export default {
   name: "AlertFilterDrawer",
   components: {
@@ -115,68 +113,69 @@ export default {
       attributes: [
         {
           id: 1,
-          title: "Propensity unsubscribe",
+          title: "propensity_unsubscribe",
           category: "models",
         },
         {
           id: 2,
-          title: "Predicted lifetime value",
+          title: "predicted_lifetime_value",
           category: "models",
         },
         {
           id: 3,
-          title: "Propensity to purchase",
+          title: "propensity_to_purchase",
           category: "models",
         },
         {
           id: 4,
-          title: "Age",
+          title: "age",
           category: "general",
         },
         {
           id: 5,
-          title: "Email",
+          title: "email",
           category: "general",
         },
         {
           id: 6,
-          title: "Gender",
+          title: "gender",
           category: "general",
         },
         {
           id: 7,
-          title: "Country",
+          title: "country",
           category: "general",
         },
         {
           id: 8,
-          title: "State",
+          title: "state",
           category: "general",
         },
         {
           id: 9,
-          title: "City",
+          title: "city",
           category: "general",
         },
         {
           id: 10,
-          title: "Zipcode",
+          title: "zipcode",
           category: "general",
         },
       ],
       selectedAttributes: [],
-      selectedFavourite: [],
-      selectedAudienceWorkedWith: [],
+      selectedFavourite: false,
+      selectedAudienceWorkedWith: false,
     }
   },
 
   computed: {
     filterLength() {
-      return (
-        this.selectedAttributes.length +
-        this.selectedFavourite.length +
-        this.selectedAudienceWorkedWith.length
-      )
+      let count = 0
+      count = this.selectedAttributes.length
+      if (this.selectedFavourite) count++
+      if (this.selectedAudienceWorkedWith) count++
+
+      return count
     },
   },
   watch: {
@@ -198,8 +197,12 @@ export default {
     },
     clearFilter() {
       this.selectedAttributes = []
-      this.selectedFavourite = []
-      this.selectedAudienceWorkedWith = []
+      this.selectedFavourite = false
+      this.selectedAudienceWorkedWith = false
+    },
+    clear() {
+      this.clearFilter()
+      this.apply()
     },
     apply() {
       this.$emit("onSectionAction", {
@@ -212,6 +215,7 @@ export default {
       this.clearFilter()
       this.localDrawer = false
     },
+    formatText: formatText,
   },
 }
 </script>

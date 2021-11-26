@@ -15,8 +15,8 @@
                 {{ pref.title }}
               </td>
               <td class="text-body-1 black--text">
-                <template v-if="pref.value === true">True</template>
-                <template v-if="pref.value === false">False</template>
+                <template v-if="pref.value === true">opt-in</template>
+                <template v-if="pref.value === false">opt-out</template>
               </td>
             </tr>
           </tbody>
