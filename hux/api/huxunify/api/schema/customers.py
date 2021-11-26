@@ -423,7 +423,7 @@ class CustomersInsightsCitiesSchema(Schema):
     size = Integer(
         attribute=api_c.CUSTOMER_COUNT, required=True, default=0, example=1234
     )
-    revenue = Float(
+    avg_spend = Float(
         attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.231
     )
 
@@ -434,7 +434,7 @@ class CustomersInsightsStatesSchema(Schema):
     country = Str(required=True, example="US")
     state = Str(attribute=api_c.NAME, required=True, example="New York")
     size = Integer(required=True, default=0, example=1234)
-    revenue = Float(
+    avg_spend = Float(
         attribute=api_c.LTV, required=True, default=0.0, example=123.2345
     )
 
@@ -444,6 +444,6 @@ class CustomersInsightsCountriesSchema(Schema):
 
     country = Str(attribute=api_c.NAME, required=True, example="US")
     size = Integer(required=True, default=0, example=1234)
-    revenue = Float(
+    avg_spend = Float(
         attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.2345
     )
