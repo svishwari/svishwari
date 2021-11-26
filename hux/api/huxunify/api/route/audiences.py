@@ -23,7 +23,6 @@ from huxunifylib.database.transform.transform_dataframe import (
     transform_fields_amazon_file,
 )
 
-
 import huxunify.api.constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.aws import upload_file
@@ -606,15 +605,15 @@ class AudienceRulesLocation(SwaggerView):
 
     parameters = [
         {
-            "name": "type",
-            "description": "Search Type",
+            "name": api_c.FIELD_TYPE,
+            "description": "Field Type",
             "type": "string",
             "in": "path",
             "required": True,
             "example": "cities",
         },
         {
-            "name": "key",
+            "name": api_c.KEY,
             "description": "Search Key",
             "type": "string",
             "in": "path",
@@ -628,7 +627,7 @@ class AudienceRulesLocation(SwaggerView):
                 "type": "array",
                 "items": "Location Constant Lists",
             },
-            "description": "Audience Constants List",
+            "description": "Location Constants List",
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to get Audience Rules."
@@ -648,13 +647,15 @@ class AudienceRulesLocation(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            field_type(str): Search Type
-            key(str): Search Key
+            field_type (str): Field Type
+            key (str): Search Key
 
 
         Returns:
             Tuple[list, int]: rules constants for email
         """
+
+        # TODO Remove stub once CDM API is integrated
         if field_type == api_c.CITIES:
             data = jsonify(
                 [

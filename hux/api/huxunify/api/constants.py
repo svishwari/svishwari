@@ -92,7 +92,8 @@ CONTACT_EMAIL = "contact_email"
 CLIENT_REQUEST = "client_request"
 CLIENT_ACCOUNT = "client_account"
 USE_CASE = "use_case"
-OPTIONS = "options"
+FIELD_TYPE = "field_type"
+
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -708,8 +709,6 @@ EMAIL_METRICS = [
     "unsubscribe",
     "unsubscribe_rate",
 ]
-EMAIL_DOMAINS = "email-domains"
-DOMAIN = "domain"
 SUMMARY = "summary"
 DELIVERED = "delivered"
 UNSUBSCRIBE = "unsubscribe"
