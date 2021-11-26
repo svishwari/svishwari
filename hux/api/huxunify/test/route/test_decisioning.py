@@ -169,7 +169,7 @@ class DecisioningTests(TestCase):
         # Request model to delete later
         status_request = {
             api_c.STATUS: api_c.REQUESTED,
-            api_c.ID: 1,
+            api_c.ID: "1",
             api_c.NAME: "Test Requested Model",
             api_c.TYPE: "test",
         }
@@ -185,7 +185,7 @@ class DecisioningTests(TestCase):
         # API call to delete the requested model
         response = self.test_client.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
-            query_string={api_c.MODEL_ID: str(doc[db_c.ID])},
+            query_string={api_c.MODEL_ID: doc[api_c.ID]},
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -218,7 +218,7 @@ class DecisioningTests(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
 
     def test_remove_model_failure_no_params(self):
         """Test removing requested models from Unified DB."""
