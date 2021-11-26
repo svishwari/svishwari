@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Tuple, List
 
-from bson import ObjectId
 from flask import Blueprint, jsonify, request
 from flasgger import SwaggerView
 from huxunifylib.util.general.logging import logger
@@ -101,7 +100,10 @@ class ModelsView(SwaggerView):
                 HTTP status code.
         """
 
-        status = request.args.getlist(api_c.STATUS)
+        # convert all statuses to lower case
+        status = [
+            status.lower() for status in request.args.getlist(api_c.STATUS)
+        ]
         all_models = tecton.get_models()
 
         purchase_model = {
@@ -125,7 +127,7 @@ class ModelsView(SwaggerView):
             if api_c.CATEGORY not in model:
                 model[api_c.CATEGORY] = api_c.UNCATEGORIZED
 
-        all_models.extend(api_c.MODELS_STUB)
+        all_models.extend([{**x} for x in api_c.MODELS_STUB])
 
         config_models = collection_management.get_documents(
             get_db_client(),
@@ -146,8 +148,11 @@ class ModelsView(SwaggerView):
                     model[api_c.STATUS] = matched_model[api_c.STATUS]
 
         if status:
+            # match status is lower case
             all_models = [
-                model for model in all_models if model[api_c.STATUS] in status
+                model
+                for model in all_models
+                if model[api_c.STATUS].lower() in status
             ]
 
         all_models.sort(key=lambda x: x[api_c.NAME])
@@ -296,26 +301,29 @@ class RemoveRequestedModel(SwaggerView):
                 api_c.MESSAGE: api_c.EMPTY_OBJECT_ERROR_MESSAGE
             }, HTTPStatus.BAD_REQUEST
 
-        model_id = ObjectId(request.args.get(api_c.MODEL_ID))
+        model_id = request.args.get(api_c.MODEL_ID)
 
-        collection_management.delete_document(
+        deletion_status = collection_management.delete_document(
             database=database,
             collection=db_c.CONFIGURATIONS_COLLECTION,
-            document_id=model_id,
+            query_filter={db_c.OBJECT_ID: model_id},
             hard_delete=False,
             username=user_name,
         )
 
-        notification_management.create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            f'Requested model "{model_id}" removed by {user_name}.',
-            api_c.MODELS_TAG,
-        )
+        if deletion_status:
+            notification_management.create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                f'Requested model "{model_id}" removed by {user_name}.',
+                api_c.MODELS_TAG,
+            )
 
-        logger.info("Successfully removed model %s.", model_id)
+            logger.info("Successfully removed model %s.", model_id)
 
-        return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.OK
+            return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.OK
+
+        return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.NOT_FOUND
 
 
 @add_view_to_blueprint(
@@ -793,7 +801,6 @@ class ModelLiftView(SwaggerView):
                     api_c.ACTUAL_RATE: uniform(0.01, 0.3),
                     api_c.PROFILE_COUNT: randint(1000, 100000),
                     api_c.ACTUAL_LIFT: uniform(1, 5),
-                    api_c.PREDICTED_LIFT: round(uniform(1000, 5000), 4),
                 }
                 for i in range(1, 11)
             ]
