@@ -248,6 +248,10 @@ CUSTOMER_PROFILE_RESPONSE = {
                 api_c.CO_OCCURRENCES: [],
             },
         },
+        api_c.PREFERENCE_EMAIL: True,
+        api_c.PREFERENCE_PUSH: True,
+        api_c.PREFERENCE_SMS: True,
+        api_c.PREFERENCE_IN_APP: False,
     },
     "message": "ok",
 }

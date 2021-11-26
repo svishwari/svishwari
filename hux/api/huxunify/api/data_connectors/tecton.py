@@ -523,6 +523,12 @@ def get_model_features(
             for x in response.json()[api_c.RESULTS]
             if x["joinKeys"][0] == model_version
         ]
+
+        # check if any features available for the first bucket,
+        # if not it means there are none for that version.
+        if not features:
+            break
+
         for feature in features:
             # get score.
             score = 0
