@@ -459,7 +459,9 @@ class BatchUpdateDataSources(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
-    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL, api_c.VIEWER_LEVEL])
+    @requires_access_levels(
+        [api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL, api_c.VIEWER_LEVEL]
+    )
     @api_error_handler()
     def patch(self, user: str) -> Tuple[dict, int]:
         """Updates a list of data sources.
