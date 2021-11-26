@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use, too-many-lines, C0302
+# pylint: disable=no-self-use,too-many-lines,C0302,unused-argument
 """Paths for customer API"""
 from http import HTTPStatus
 from typing import Tuple, List
@@ -109,12 +109,16 @@ class CustomerOverview(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
         """Retrieves a customer data overview.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User object
 
         Returns:
             Tuple[dict, int]: dict of Customer data overview, HTTP status code.
@@ -197,12 +201,16 @@ class CustomerPostOverview(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def post(self) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def post(self, user: dict) -> Tuple[dict, int]:
         """Retrieves the overview of customer data with the requested filters applied.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User doc
 
         Returns:
             Tuple[dict, int]: dict of Customer data overview, HTTP status code.
@@ -278,12 +286,16 @@ class IDROverview(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
         """Retrieves a customer data dashboard overview.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User doc
 
         Returns:
             Tuple[dict, int]: dict of Customer data overview, HTTP status code.
@@ -394,12 +406,16 @@ class CustomersListview(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
         """Retrieves a list of customers.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User doc
 
         Returns:
             Tuple[dict, int]: dict of Customers, HTTP status code.
@@ -473,9 +489,7 @@ class CustomerProfileSearch(SwaggerView):
     # pylint: disable=no-self-use
     # pylint: disable=unused-argument
     @api_error_handler()
-    @requires_access_levels(
-        [api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL, api_c.VIEWER_LEVEL]
-    )
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, hux_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves a customer profile.
 
@@ -561,12 +575,16 @@ class IDRDataFeeds(SwaggerView):
 
     # pylint: disable=no-self-use,unused-argument
     @api_error_handler()
-    def get(self) -> Tuple[List[dict], int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[List[dict], int]:
         """Retrieves a IDR data feeds.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User doc
 
         Returns:
             Tuple[List[dict], int]: list of IDR data feeds object dicts,
@@ -627,7 +645,8 @@ class IDRDataFeedDetails(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, datafeed_id: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, datafeed_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves a IDR data feed waterfall report.
 
         ---
@@ -636,6 +655,7 @@ class IDRDataFeedDetails(SwaggerView):
 
         Args:
             datafeed_id (str): Data feed ID.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: dict of IDR data feed waterfall,
@@ -681,12 +701,16 @@ class CustomerGeoVisualView(SwaggerView):
             ZeroDivisionError: {"message": api_c.ZERO_AUDIENCE_SIZE}
         }
     )
-    def get(self) -> Tuple[list, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves a Customer profiles geographical insights.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User doc
 
         Returns:
             Tuple[list, int]: list of Customer insights on geo overview,
@@ -748,12 +772,16 @@ class CustomerDemoVisualView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
         """Retrieves a Demographical customer insights.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User doc
 
         Returns:
             Tuple[dict, int]: dict of Customer insights on demo overview,
@@ -834,12 +862,16 @@ class IDRMatchingTrends(SwaggerView):
 
     # pylint: disable=no-self-use,unused-argument
     @api_error_handler()
-    def get(self) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
         """Retrieves IDR Matching trends YTD data.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User doc
 
         Returns:
             Tuple[dict, int]: dict of IDR Matching trends YTD,
@@ -912,7 +944,8 @@ class CustomerEvents(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def post(self, hux_id: str) -> Tuple[dict, int]:
+    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
+    def post(self, hux_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves events for a given HUX ID.
 
         ---
@@ -921,6 +954,7 @@ class CustomerEvents(SwaggerView):
 
         Args:
             hux_id (str): ID of the customer
+            user (dict): User object
 
         Returns:
             Tuple[dict, int]: dict of Customer events grouped by day,
@@ -969,12 +1003,16 @@ class TotalCustomersGraphView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self) -> Tuple[list, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves total customer insights.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User doc
 
         Returns:
             Tuple[list, int]: list of total customers & new customers added,
@@ -1032,12 +1070,16 @@ class CustomersRevenueInsightsGraphView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self) -> Tuple[list, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves customer revenue insights.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User doc
 
         Returns:
             Tuple[list, int]: list of revenue details by date,
@@ -1090,12 +1132,16 @@ class CustomersInsightsCountries(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self) -> Tuple[list, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves country-level geographic customer insights.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User doc
 
         Returns:
             Tuple[list, int]: list of spend and size data by country,
@@ -1142,12 +1188,16 @@ class CustomersInsightsStates(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self) -> Tuple[list, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves state-level geographic customer insights.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User doc
 
         Returns:
             Tuple[list, int]: list of spend and size data by state,
@@ -1214,12 +1264,16 @@ class CustomersInsightsCities(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self) -> Tuple[list, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves customer lifetime values.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User doc
 
         Returns:
             Tuple[list, int]: list of spend and size by city, HTTP status code.

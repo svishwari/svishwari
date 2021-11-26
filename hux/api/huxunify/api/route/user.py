@@ -360,11 +360,11 @@ class UserView(SwaggerView):
         users = get_all_users(get_db_client())
 
         # generate random phone number and user access level
-        for user in users:
-            user[api_c.USER_PHONE_NUMBER] = random.choice(
+        for userinfo in users:
+            userinfo[api_c.USER_PHONE_NUMBER] = random.choice(
                 ["720-025-8322", "232-823-6049", "582-313-7191"]
             )
-            user[api_c.USER_ACCESS_LEVEL] = random.choice(
+            userinfo[api_c.USER_ACCESS_LEVEL] = random.choice(
                 ["Edit", "View-only", "Admin"]
             )
 
@@ -526,7 +526,8 @@ class CreateTicket(SwaggerView):
         create_notification(
             database=get_db_client(),
             notification_type=db_constants.NOTIFICATION_TYPE_INFORMATIONAL,
-            description=f"{user[api_c.USER_NAME]} created a new issue {new_issue.get(api_c.KEY)} in JIRA.",
+            description=f"{user[api_c.USER_NAME]} created a new issue"
+                        f" {new_issue.get(api_c.KEY)} in JIRA.",
             category=api_c.TICKET_TYPE_BUG,
             username=user[api_c.USER_NAME],
         )

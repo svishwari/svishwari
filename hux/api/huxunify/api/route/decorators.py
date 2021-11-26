@@ -1,5 +1,5 @@
 """File for decorators used in the API routes"""
-# pylint: disable=too-many-statements
+# pylint: disable=too-many-statements,disable=unused-argument
 import warnings
 import getpass
 from functools import wraps

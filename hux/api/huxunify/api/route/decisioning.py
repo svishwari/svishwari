@@ -1,3 +1,4 @@
+# pylint: disable=unused-argument
 """Purpose of this script is for housing the
 decision routes for the API"""
 import pathlib
@@ -25,7 +26,6 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
-    get_user_name,
     requires_access_levels,
 )
 from huxunify.api.route.utils import (

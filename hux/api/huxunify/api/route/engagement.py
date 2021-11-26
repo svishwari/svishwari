@@ -1439,7 +1439,7 @@ class AudienceCampaignsGetView(SwaggerView):
 
     # pylint: disable=no-self-use
     # pylint: disable=too-many-return-statements
-    # pylint: disable=too-many-branches
+    # pylint: disable=too-many-branches,too-many-locals
     @api_error_handler()
     @validate_engagement_and_audience()
     @validate_destination()
