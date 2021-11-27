@@ -797,7 +797,6 @@ class ModelLiftView(SwaggerView):
                     api_c.BUCKET: 10 * i,
                     api_c.PROFILE_SIZE_PERCENT: 0,
                     api_c.ACTUAL_VALUE: randint(1000, 5000),
-                    api_c.PREDICTED_LIFT: uniform(1, 5),
                     api_c.ACTUAL_RATE: uniform(0.01, 0.3),
                     api_c.PROFILE_COUNT: randint(1000, 100000),
                     api_c.ACTUAL_LIFT: uniform(1, 5),
