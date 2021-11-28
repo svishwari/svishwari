@@ -236,7 +236,6 @@ export default {
     table-layout: fixed;
     .fixed-column {
       position: absolute;
-      display: flex;
       align-items: center;
       background: var(--v-white-base) !important;
       left: 0px;
