@@ -10,9 +10,11 @@
       :tooltip-style="toolTipStyle"
     >
       <template #content>
-        <div class="text-body-2"><span class="dot mr-1"></span>{{ title }}</div>
-        <div class="text-body-2">{{ tooltipValue }}</div>
-        <div class="text-body-2 text--lighten-4">
+        <div class="body-2 mb-1 margin-sides-dec">
+          <span class="dot mr-1"></span>{{ title }}
+        </div>
+        <div class="body-2 my-1 margin-sides-dec">{{ tooltipValue }}</div>
+        <div class="body-2 mt-1 margin-sides-dec grey-color">
           {{ tooltipValueDate | Date("MMM DD, YYYY") | Empty }}
         </div>
       </template>
@@ -198,6 +200,7 @@ export default {
         xAxis = svg
           .append("g")
           .attr("transform", `translate(0,${height - this.margin.bottom})`)
+          .classed("xAxis", true)
           .style("font-size", 14)
           .call(
             d3Axis
@@ -211,6 +214,7 @@ export default {
         xAxis = svg
           .append("g")
           .attr("transform", `translate(0,${height - this.margin.bottom})`)
+          .classed("xAxis", true)
           .style("font-size", 14)
           .call(
             d3Axis
@@ -224,6 +228,7 @@ export default {
         xAxis = svg
           .append("g")
           .attr("transform", `translate(0,${height - this.margin.bottom})`)
+          .classed("xAxis", true)
           .style("font-size", 14)
           .call(
             d3Axis
@@ -291,6 +296,8 @@ export default {
       // Changes the color of the axis lines
       svg.selectAll(".domain").attr("fill", this.tickColor)
 
+      svg.select(".xAxis").selectAll("line").style("stroke", "transparent")
+
       let bisectDate = d3Array.bisector(function (d) {
         return d.xAxisValue
       }).left
@@ -330,7 +337,7 @@ export default {
             ? height - this.margin.bottom - this.margin.top
             : 0
         )
-        .style("stroke", this.tickColor)
+        .style("stroke", "transparent")
         .style("fill", "transparent")
         .on("mouseover", () => {
           this.showTooltip = false
@@ -394,5 +401,12 @@ export default {
   background-color: var(--v-primary-darken2);
   border-radius: 50%;
   display: inline-block;
+}
+.margin-sides-dec {
+  margin-left: -5px;
+  margin-right: -5px;
+}
+.grey-color {
+  color: var(--v-black-lighten4);
 }
 </style>

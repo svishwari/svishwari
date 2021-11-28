@@ -2005,3 +2005,9 @@ class TestDeliveryPlatform(unittest.TestCase):
             recent_campaign_activity_doc[c.EVENT_DETAILS][c.EVENT_DATE],
             datetime.datetime(2021, 6, 28, 0, 0),
         )
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_update_pending_delivery_jobs(self):
+        """Test update delivery jobs status."""
+        updated_delivery_jobs = dpm.update_pending_delivery_jobs(self.database)
+        self.assertEqual(updated_delivery_jobs, 0)

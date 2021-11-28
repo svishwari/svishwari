@@ -267,7 +267,7 @@ export default {
     async fetchAudiences() {
       try {
         this.loading = true
-        await this.getAudiences()
+        await this.getAudiences({})
         this.loading = false
       } finally {
         this.loading = false

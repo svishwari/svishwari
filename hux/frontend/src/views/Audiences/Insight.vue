@@ -428,6 +428,7 @@
             v-if="!loadingDemographics"
             :map-data="mapChartData"
             :configuration-data="configurationData"
+            :header-config="mapStateHeaderList"
           />
         </v-card>
       </v-col>
@@ -740,6 +741,7 @@ export default {
         body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
         actionType: "remove-audience",
       },
+      mapStateHeaderList: ["name", "avg_spend", "population_percentage"],
     }
   },
   computed: {
@@ -1129,7 +1131,7 @@ export default {
             await this.deliverAudienceDestination({
               id: event.parent.id,
               audienceId: this.audienceId,
-              destinationId: event.data.id,
+              destinationId: event.data.delivery_platform_id,
             })
             this.dataPendingMesssage(event, "destination")
             break

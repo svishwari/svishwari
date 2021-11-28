@@ -9,13 +9,13 @@ from bson import ObjectId
 from dateutil.relativedelta import relativedelta
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.db_exceptions import InvalidNotificationType
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def create_notification(
@@ -44,26 +44,28 @@ def create_notification(
     """
 
     # validate type
-    if notification_type.lower() not in c.NOTIFICATION_TYPES:
+    if notification_type.lower() not in db_c.NOTIFICATION_TYPES:
         raise InvalidNotificationType(notification_type)
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.NOTIFICATIONS_COLLECTION
     ]
 
-    collection.create_index([(c.TS, pymongo.ASCENDING)], expireAfterSeconds=0)
+    collection.create_index(
+        [(db_c.TS, pymongo.ASCENDING)], expireAfterSeconds=0
+    )
 
     # get current time
     current_time = datetime.utcnow()
     expire_time = current_time + relativedelta(months=3)
 
     # 3 months for critical, 1 month for informational
-    if notification_type == c.NOTIFICATION_TYPE_INFORMATIONAL:
+    if notification_type == db_c.NOTIFICATION_TYPE_INFORMATIONAL:
         expire_time = current_time + relativedelta(months=1)
-    elif notification_type == c.NOTIFICATION_TYPE_SUCCESS:
+    elif notification_type == db_c.NOTIFICATION_TYPE_SUCCESS:
         expire_time = current_time + relativedelta(months=6)
-    elif notification_type == c.NOTIFICATION_TYPE_CRITICAL:
+    elif notification_type == db_c.NOTIFICATION_TYPE_CRITICAL:
         expire_time = current_time + relativedelta(months=6)
 
     warnings.warn(
@@ -73,21 +75,21 @@ def create_notification(
     )
 
     doc = {
-        c.EXPIRE_AT: expire_time,
-        c.NOTIFICATION_FIELD_TYPE: notification_type,
-        c.NOTIFICATION_FIELD_DESCRIPTION: description,
-        c.NOTIFICATION_FIELD_CREATED: current_time,
-        c.DELETED: False,
-        c.NOTIFICATION_FIELD_USERNAME: username,
+        db_c.EXPIRE_AT: expire_time,
+        db_c.NOTIFICATION_FIELD_TYPE: notification_type,
+        db_c.NOTIFICATION_FIELD_DESCRIPTION: description,
+        db_c.NOTIFICATION_FIELD_CREATED: current_time,
+        db_c.DELETED: False,
+        db_c.NOTIFICATION_FIELD_USERNAME: username,
     }
 
     if category:
-        doc[c.NOTIFICATION_FIELD_CATEGORY] = category
+        doc[db_c.NOTIFICATION_FIELD_CATEGORY] = category
 
     try:
         notification_id = collection.insert_one(doc).inserted_id
         if notification_id is not None:
-            return collection.find_one({c.ID: notification_id})
+            return collection.find_one({db_c.ID: notification_id})
         logging.error("Failed to create a notification")
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -96,7 +98,7 @@ def create_notification(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_notifications_batch(
@@ -130,27 +132,31 @@ def get_notifications_batch(
     """
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.NOTIFICATIONS_COLLECTION
     ]
 
     skips = batch_size * (batch_number - 1)
-    query = dict({c.DELETED: False})  # type: Dict[str,Any]
+    query = dict({db_c.DELETED: False})  # type: Dict[str,Any]
     if notification_types:
-        query.update({c.TYPE: {"$in": notification_types}})
+        query.update({db_c.TYPE: {"$in": notification_types}})
     if notification_categories:
         query.update(
-            {c.NOTIFICATION_FIELD_CATEGORY: {"$in": notification_categories}}
+            {
+                db_c.NOTIFICATION_FIELD_CATEGORY: {
+                    "$in": notification_categories
+                }
+            }
         )
     if users:
-        query.update({c.NOTIFICATION_FIELD_USERNAME: {"$in": users}})
+        query.update({db_c.NOTIFICATION_FIELD_USERNAME: {"$in": users}})
     if start_date and end_date:
         if start_date == end_date:
             end_date = end_date + timedelta(days=1) - relativedelta(seconds=1)
 
         query.update(
             {
-                c.NOTIFICATION_FIELD_CREATED: {
+                db_c.NOTIFICATION_FIELD_CREATED: {
                     "$gte": start_date,
                     "$lte": end_date,
                 }
@@ -163,7 +169,12 @@ def get_notifications_batch(
             total_records=collection.count_documents(query),
             notifications=list(
                 collection.find(query)
-                .sort([(c.NOTIFICATION_FIELD_CREATED, -1), (c.ID, sort_order)])
+                .sort(
+                    [
+                        (db_c.NOTIFICATION_FIELD_CREATED, -1),
+                        (db_c.ID, sort_order),
+                    ]
+                )
                 .skip(skips)
                 .limit(batch_size)
             ),
@@ -175,7 +186,7 @@ def get_notifications_batch(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_notifications(
@@ -196,11 +207,11 @@ def get_notifications(
     """
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.NOTIFICATIONS_COLLECTION
     ]
 
-    query_filter[c.DELETED] = False
+    query_filter[db_c.DELETED] = False
 
     try:
         return dict(
@@ -220,7 +231,7 @@ def get_notifications(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_notification(
@@ -239,21 +250,21 @@ def delete_notification(
         bool: Flag indicating successful operation.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.NOTIFICATIONS_COLLECTION
     ]
 
     try:
         if hard_delete:
-            collection.delete_one({c.ID: notification_id})
+            collection.delete_one({db_c.ID: notification_id})
             return True
         doc = collection.find_one_and_update(
-            {c.ID: notification_id},
-            {"$set": {c.DELETED: True}},
+            {db_c.ID: notification_id},
+            {"$set": {db_c.DELETED: True}},
             upsert=False,
             new=True,
         )
-        return doc[c.DELETED]
+        return doc[db_c.DELETED]
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -274,12 +285,14 @@ def get_notification(
 
     """
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.NOTIFICATIONS_COLLECTION
     ]
 
     try:
-        return collection.find_one({c.ID: notification_id, c.DELETED: False})
+        return collection.find_one(
+            {db_c.ID: notification_id, db_c.DELETED: False}
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

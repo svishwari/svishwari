@@ -1,8 +1,8 @@
 <template>
   <v-card class="rounded-lg card-info-wrapper box-shadow-5">
     <v-card-title
-      class="py-5 pl-6"
-      :class="piiaccess ? 'd-flex justify-space-between' : ' '"
+      class="pl-6"
+      :class="piiaccess ? 'py-3 d-flex justify-space-between' : 'py-5'"
       data-e2e="customer-insights"
     >
       <h3 class="text-h3">Customer insights</h3>
@@ -30,12 +30,12 @@
         @click="togglePIIData()"
       >
         <icon
-          :type="PIIDataFlag ? 'visible_data' : 'hidden_data'"
+          :type="showPii ? 'visible_data' : 'hidden_data'"
           color="primary"
           :size="24"
-          :class="PIIDataFlag ? 'hidden-data-margin' : 'mr-1'"
+          :class="showPii ? 'hidden-data-margin' : 'mr-1'"
         />
-        <span :class="PIIDataFlag ? 'mr-1' : ''">
+        <span :class="showPii ? 'mr-1' : ''">
           {{ showHidePIIButton }}
         </span>
       </v-btn>
@@ -48,11 +48,11 @@
               <td class="text-body-1 black--text text--lighten-4 pl-6">
                 Email
               </td>
-              <td class="text-body-1" :class="PIIDataFlag ? '' : 'blur-text'">
+              <td class="text-body-1" :class="showPii ? '' : 'blur-text'">
                 {{ insights["email"] | Empty }}
               </td>
               <td class="text-body-1 black--text text--lighten-4">Address</td>
-              <td class="text-body-1" :class="PIIDataFlag ? '' : 'blur-text'">
+              <td class="text-body-1" :class="showPii ? '' : 'blur-text'">
                 {{ insights["address"] | Empty }}
               </td>
             </tr>
@@ -60,21 +60,21 @@
               <td class="text-body-1 black--text text--lighten-4 pl-6">
                 Phone
               </td>
-              <td class="text-body-1" :class="PIIDataFlag ? '' : 'blur-text'">
+              <td class="text-body-1" :class="showPii ? '' : 'blur-text'">
                 {{ insights["phone"] | Empty }}
               </td>
               <td class="text-body-1 black--text text--lighten-4">City</td>
-              <td class="text-body-1" :class="PIIDataFlag ? '' : 'blur-text'">
+              <td class="text-body-1" :class="showPii ? '' : 'blur-text'">
                 {{ insights["city"] | Empty }}
               </td>
             </tr>
             <tr>
               <td class="text-body-1 black--text text--lighten-4 pl-6">Age</td>
-              <td class="text-body-1" :class="PIIDataFlag ? '' : 'blur-text'">
+              <td class="text-body-1" :class="showPii ? '' : 'blur-text'">
                 {{ insights["age"] | Empty }}
               </td>
               <td class="text-body-1 black--text text--lighten-4">State</td>
-              <td class="text-body-1" :class="PIIDataFlag ? '' : 'blur-text'">
+              <td class="text-body-1" :class="showPii ? '' : 'blur-text'">
                 {{ insights["state"] | Empty }}
               </td>
             </tr>
@@ -83,13 +83,13 @@
                 Gender
               </td>
               <td class="text-body-1">
-                <span :class="PIIDataFlag ? '' : 'blur-text'">
+                <span :class="showPii ? '' : 'blur-text'">
                   {{ insights["gender"] | Empty }}
                 </span>
               </td>
               <td class="text-body-1 black--text text--lighten-4">Zip</td>
               <td class="text-body-1">
-                <span :class="PIIDataFlag ? '' : 'blur-text'">
+                <span :class="showPii ? '' : 'blur-text'">
                   {{ insights["zip"] | Empty }}
                 </span>
               </td>
@@ -118,20 +118,20 @@ export default {
       required: false,
       default: false,
     },
-  },
-  data() {
-    return {
-      PIIDataFlag: false,
-    }
+    showPii: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   computed: {
     showHidePIIButton() {
-      return this.PIIDataFlag ? "Hide PII" : "Show PII"
+      return this.showPii ? "Hide PII" : "Show PII"
     },
   },
   methods: {
     togglePIIData() {
-      this.PIIDataFlag = !this.PIIDataFlag
+      this.$emit("togglePII", this.showPii)
     },
   },
 }

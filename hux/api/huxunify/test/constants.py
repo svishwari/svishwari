@@ -247,6 +247,10 @@ CUSTOMER_PROFILE_RESPONSE = {
                 api_c.CO_OCCURRENCES: [],
             },
         },
+        api_c.PREFERENCE_EMAIL: True,
+        api_c.PREFERENCE_PUSH: True,
+        api_c.PREFERENCE_SMS: True,
+        api_c.PREFERENCE_IN_APP: False,
     },
     "message": "ok",
 }
@@ -1152,6 +1156,7 @@ BATCH_NUMBER_BAD_PARAM = "12a"
 BATCH_SIZE_BAD_PARAM = "100@"
 
 REVENUE = "revenue"
+AVG_SPEND = "avg_spend"
 
 
 def validate_schema(
