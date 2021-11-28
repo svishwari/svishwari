@@ -55,7 +55,15 @@ export default {
       "Inactive",
       "Informational",
     ]),
-  type: () => faker.random.arrayElement(["purchase", "unsubscribe"]),
+  type: () =>
+    faker.random.arrayElement([
+      "purchase",
+      "prediction",
+      "ltv",
+      "churn",
+      "propensity",
+      "unsubscribe",
+    ]),
   version_history: () => mockVersionHistory(5),
   model_feature: (index) => mockModelFeature(index + 1),
 }
