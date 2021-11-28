@@ -1,7 +1,7 @@
 <template>
   <page max-width="100%">
     <div slot="header">
-      <page-header header-height="110" class="mt-n2">
+      <page-header header-height="110">
         <template slot="left">
           <div>
             <breadcrumb :items="breadcrumbs" />

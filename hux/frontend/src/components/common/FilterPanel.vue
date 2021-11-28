@@ -52,7 +52,11 @@ $headerHeight: 40px;
     height: $headerHeight;
     padding: 0 $padding;
     border-top: 1px solid var(--v-black-lighten2);
-    border-bottom: 1px solid var(--v-black-lighten2);
+  }
+  &:last-child {
+    .header {
+      border-bottom: 1px solid var(--v-black-lighten2);
+    }
   }
 
   .content {

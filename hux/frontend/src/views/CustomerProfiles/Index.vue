@@ -402,11 +402,6 @@ export default {
           href: "/customers",
           icon: "customer-profiles",
         },
-        {
-          text: "",
-          disabled: true,
-          href: this.$route.path,
-        },
       ],
       loading: true,
       updatedTime: [],
