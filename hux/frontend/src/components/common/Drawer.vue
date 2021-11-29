@@ -181,6 +181,8 @@ $drawer-data-table-padding: 9px 25px;
 }
 .drawer-footer {
   height: $drawer-footer-height;
+  box-shadow: none !important;
+  border-top: 1px solid var(--v-black-lighten3) !important;
 }
 .drawer-content {
   height: calc(100% - #{$drawer-header-height + $drawer-footer-height});

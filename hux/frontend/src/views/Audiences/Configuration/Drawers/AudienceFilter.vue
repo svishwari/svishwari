@@ -68,7 +68,12 @@
       </hux-filter-panels>
     </template>
     <template #footer-left>
-      <v-btn tile color="white" class="text-button ml-auto" @click="cancel()">
+      <v-btn
+        tile
+        color="white"
+        class="text-button ml-1 primary-text"
+        @click="cancel()"
+      >
         Cancel
       </v-btn>
     </template>
@@ -76,8 +81,8 @@
       <v-btn
         tile
         color="primary"
-        class="text-button ml-auto"
-        width="134"
+        class="text-button ml-4"
+        width="110"
         :disabled="!filterLength > 0"
         @click="apply()"
       >
@@ -94,7 +99,7 @@ import HuxFilterPanel from "@/components/common/FilterPanel"
 import { formatText } from "@/utils.js"
 
 export default {
-  name: "AlertFilterDrawer",
+  name: "AudienceFilterDrawer",
   components: {
     Drawer,
     HuxFilterPanels,
@@ -238,11 +243,20 @@ export default {
   color: var(--v-black-base);
 }
 .clear-btn {
-  padding-left: 7rem !important;
+  padding-left: 7.9rem !important;
+  padding-top: 10px;
+  padding-right: 0px !important;
 }
 .withoutExpansion {
   height: 34px;
   align-items: center;
   margin-top: 6px !important;
+}
+::v-deep.theme--light .v-label {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0;
+  color: var(--v-black-base);
 }
 </style>

@@ -31,6 +31,7 @@
       :type="inputType"
       :placeholder="placeholder"
       :background-color="backgroundColor"
+      color="var(--v-black-lighten4)"
       single-line
       outlined
       v-bind="$attrs"

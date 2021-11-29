@@ -7,8 +7,8 @@
             <breadcrumb :items="breadcrumbs" />
           </div>
           <div class="text-subtitle-1 font-weight-regular mt-1">
-            Insights into the consumer data that is collected from both online,
-            offline, and 3rd party channels.
+            Gain visibility into the customer data that is collected from
+            online, offline, and 3rd party channels.
           </div>
         </template>
       </page-header>
@@ -16,7 +16,7 @@
       <page-header v-if="isConnectionStarted" header-height="71">
         <template #left>
           <v-btn disabled icon color="black">
-            <v-icon medium>mdi-magnify</v-icon>
+            <icon type="search" :size="20" color="black" variant="lighten3" />
           </v-btn>
         </template>
 
@@ -81,6 +81,7 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
 import HuxEmpty from "@/components/common/screens/Empty"
 import DataSourceConfiguration from "@/views/DataSources/Configuration"
+import Icon from "@/components/common/Icon"
 
 export default {
   name: "DataSources",
@@ -93,6 +94,7 @@ export default {
     huxButton,
     DataSourceConfiguration,
     HuxEmpty,
+    Icon,
   },
 
   data() {

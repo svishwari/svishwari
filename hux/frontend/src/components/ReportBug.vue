@@ -22,8 +22,8 @@
         @change="setBugSubject($event)"
       />
       <text-field
-        label-text="Bug Summary"
-        placeholder="Enter short descritption of event"
+        label-text="Bug summary"
+        placeholder="Enter a short description"
         class="px-13 bug-summary"
         height="206"
         required

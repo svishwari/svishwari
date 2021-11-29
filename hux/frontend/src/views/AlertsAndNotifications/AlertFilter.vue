@@ -74,7 +74,7 @@
       <v-btn
         tile
         color="white"
-        class="text-button ml-auto"
+        class="text-button ml-1 primary-text"
         @click="localDrawer = false"
       >
         Cancel
@@ -84,8 +84,8 @@
       <v-btn
         tile
         color="primary"
-        class="text-button ml-auto"
-        width="134"
+        class="text-button ml-4"
+        width="110"
         disabled
         @click="apply()"
       >
@@ -285,6 +285,15 @@ export default {
   color: var(--v-black-base);
 }
 .clear-btn {
-  padding-left: 7rem !important;
+  padding-left: 7.9rem !important;
+  padding-top: 10px;
+  padding-right: 0px !important;
+}
+::v-deep.theme--light .v-label {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0;
+  color: var(--v-black-base);
 }
 </style>

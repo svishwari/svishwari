@@ -63,7 +63,7 @@
               <v-slide-item v-for="(metric, index) in overview" :key="index">
                 <metric-card
                   :title="metric.title"
-                  :min-width="170"
+                  :min-width="175"
                   class="idr-metric-card"
                   data-e2e="overviewList"
                 >
@@ -89,7 +89,7 @@
                   <template #subtitle-extended>
                     <tooltip>
                       <template #label-content>
-                        <span class="font-weight-semi-bold">
+                        <span class="text-subtitle-1">
                           <template v-if="metric.format === 'numeric'">
                             {{ metric.value | Numeric(true, true) | Empty }}
                           </template>
@@ -135,7 +135,7 @@
 
                 <v-card-title class="chart-style pb-8 pl-5 pt-5">
                   <div class="mt-2">
-                    <span class="black--text text--darken-4 text-h3">
+                    <span class="black--text text-h3">
                       ID Resolution matching trends
                     </span>
                     <span
@@ -144,7 +144,7 @@
                         responseTimeFrame.start_date &&
                         responseTimeFrame.end_date
                       "
-                      class="black--text text--darken-4 text-body-1"
+                      class="black--text text--lighten-4 text-body-1"
                     >
                       (
                       {{
@@ -212,8 +212,13 @@
             @clear="resetFilters"
             @apply="refreshData"
           >
-            <hux-filter-panels>
-              <hux-filter-panel title="Time" :count="numFiltersSelected">
+            <hux-filter-panels :expanded="[0]">
+              <hux-filter-panel
+                title="Time"
+                :count="numFiltersSelected"
+                :disabled="true"
+                :hide-actions="true"
+              >
                 <hux-select-date
                   v-model="filterStartDate"
                   label-month="Start month"
@@ -432,18 +437,6 @@ $headerOffsetX: 220px + 32px;
 $headerOffsetY: 70px;
 
 .idr-wrapper {
-  padding-top: $offset;
-
-  // TODO: update app layout to include page headers
-  .page-header {
-    position: fixed;
-    top: $headerOffsetY;
-    left: 0;
-    right: 0;
-    padding-left: $headerOffsetX !important;
-    z-index: 3;
-  }
-
   ::v-deep .container {
     padding: 0 !important;
   }

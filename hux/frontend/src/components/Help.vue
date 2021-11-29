@@ -16,11 +16,6 @@
             Help
           </v-list-item-title>
         </v-list-item>
-        <v-list-item class="v-list-item--link" data-e2e="about_hux">
-          <a href="#" class="text-body-1 black--text text-decoration-none">
-            About Hux
-          </a>
-        </v-list-item>
         <v-list-item
           class="v-list-item--link"
           data-e2e="contactus"
@@ -30,7 +25,7 @@
             href="javascript:void(0)"
             class="text-body-1 black--text view-all text-decoration-none"
           >
-            Contact Us
+            Contact us
           </a>
         </v-list-item>
       </v-list>

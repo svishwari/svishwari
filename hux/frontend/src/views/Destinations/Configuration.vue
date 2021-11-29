@@ -13,15 +13,28 @@
 
     <div class="d-flex align-center mb-3">
       <template v-if="!(selectedDestination || selectedDestinationNotListed)">
-        <hux-icon type="plus" :size="16" color="primary" class="mr-4" />
-        <hux-icon type="destination" :size="32" color="primary" class="mr-2" />
+        <hux-icon
+          type="plus"
+          :size="16"
+          color="primary"
+          class="mr-4"
+          @click.native="toggleDrawer()"
+        />
+        <hux-icon
+          type="destination"
+          :size="32"
+          color="primary"
+          class="mr-2 box-shadow-25"
+          :style="{ 'border-radius': '50%' }"
+          @click.native="toggleDrawer()"
+        />
         <v-btn
           text
           min-width="7rem"
           height="2rem"
           class="primary--text text-body-1"
           data-e2e="drawerToggle"
-          @click="toggleDrawer()"
+          @click.native="toggleDrawer()"
         >
           Destination
         </v-btn>
@@ -58,6 +71,7 @@
             :key="key"
             cols="6"
             data-e2e="destinationConfigDetails"
+            class="py-0"
           >
             <text-field
               v-model="authenticationDetails[key]"
@@ -169,7 +183,7 @@
       </v-row>
 
       <v-row>
-        <v-col cols="8">
+        <v-col cols="8" class="py-0">
           <label class="text-h5 mb-0">
             Did the Client request to have this destination available?
           </label>
@@ -309,7 +323,10 @@
             )"
             :key="`active-${index}`"
           >
-            <label class="d-block text--body-2 mb-2 mt-6">{{ category }}</label>
+            <label
+              class="d-block text-body-2 black--text text--lighten-4 mb-2 mt-6"
+              >{{ category }}</label
+            >
 
             <card-horizontal
               v-for="destination in value"

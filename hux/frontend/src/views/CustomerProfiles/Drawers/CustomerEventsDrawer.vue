@@ -5,7 +5,7 @@
     </template>
     <template #footer-left>
       <div class="d-flex align-baseline">
-        <div class="body-2 pl-4">{{ events.length }} results</div>
+        <div class="body-2">{{ events.length }} results</div>
       </div>
     </template>
 

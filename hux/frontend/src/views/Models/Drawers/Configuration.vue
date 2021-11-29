@@ -6,7 +6,7 @@
       </template>
       <template #footer-left>
         <div class="d-flex align-baseline">
-          <div class="body-2 pl-4">{{ models.length }} results</div>
+          <div class="body-2">{{ models.length }} results</div>
         </div>
       </template>
       <template #default>
@@ -136,8 +136,17 @@ export default {
           return obj
         }, {})
 
-      sortByName(result, "name")
-      return result
+      let orderedResult = Object.keys(result)
+        .sort(function (a, b) {
+          return a.toLowerCase().localeCompare(b.toLowerCase())
+        })
+        .reduce(function (Obj, key) {
+          Obj[key] = result[key]
+          return Obj
+        }, {})
+
+      sortByName(orderedResult, "name")
+      return orderedResult
     },
 
     modelsGroupedSorted() {
@@ -156,8 +165,17 @@ export default {
           return obj
         }, {})
 
-      sortByName(result, "name")
-      return result
+      let orderedResult = Object.keys(result)
+        .sort(function (a, b) {
+          return a.toLowerCase().localeCompare(b.toLowerCase())
+        })
+        .reduce(function (Obj, key) {
+          Obj[key] = result[key]
+          return Obj
+        }, {})
+
+      sortByName(orderedResult, "name")
+      return orderedResult
     },
   },
   watch: {

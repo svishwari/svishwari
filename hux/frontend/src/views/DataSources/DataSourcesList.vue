@@ -98,6 +98,7 @@ import ConfirmModal from "@/components/common/ConfirmModal"
 import Status from "@/components/common/Status"
 import EmptyStateData from "@/components/common/EmptyStateData"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
+import sortBy from "lodash/sortBy"
 
 export default {
   name: "DataSourcesList",
@@ -123,7 +124,10 @@ export default {
     }),
 
     addedDataSources() {
-      return this.dataSources.filter((dataSource) => dataSource.is_added)
+      return sortBy(
+        this.dataSources.filter((dataSource) => dataSource.is_added),
+        ["status", "name"]
+      )
     },
 
     hasAddedDatasources() {
