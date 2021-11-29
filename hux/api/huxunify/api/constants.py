@@ -139,6 +139,8 @@ MAX_LTV_PREDICTED = "max_ltv_predicted"
 MIN_LTV_ACTUAL = "min_ltv_actual"
 MAX_LTV_ACTUAL = "max_ltv_actual"
 AVG_LTV = "avg_ltv"
+MIN_LTV = "min_ltv"
+MAX_LTV = "max_ltv"
 COUNTRY = "country"
 CONTACT_PREFERENCES = "contact_preferences"
 IDENTITY_RESOLUTION = "identity_resolution"
@@ -797,6 +799,9 @@ CDP_DATA_SOURCE_CATEGORY_MAP = {
 }
 
 CDP_DATA_SOURCE_CATEGORIES = list(set(CDP_DATA_SOURCE_CATEGORY_MAP.values()))
+ACTION_ACTIVATED = "activated"
+ACTION_REQUESTED = "requested"
+ACTION_REMOVED = "removed"
 
 # Authentication API fields
 AUTHORIZATION = "Authorization"
