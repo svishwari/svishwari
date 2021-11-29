@@ -91,7 +91,7 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      await this.getAudiences()
+      await this.getAudiences({})
       await this.getDestinations()
       if (this.$route.name === "EngagementUpdate") {
         await this.loadEngagement(this.$route.params.id)

@@ -58,6 +58,7 @@ const getters = {
 
 const mutations = {
   SET_ALL(state, items) {
+    state.audiences = []
     let getAudience = items.sort(function (a, b) {
       return a.name === b.name ? 0 : a.name < b.name ? -1 : 1
     })
@@ -105,12 +106,34 @@ const mutations = {
   REMOVE_AUDIENCE(state, id) {
     Vue.delete(state.audiences, id)
   },
+
+  SET_AUDIENCE_LOOKALIKE(state, data) {
+    if (!state.audiences[data.id].lookalike_audiences) {
+      state.audiences[data.id].lookalike_audiences = []
+    }
+    state.audiences[data.id].lookalike_audiences.push(data.lookalike)
+  },
 }
 
 const actions = {
-  async getAll({ commit }) {
+  async getAll(
+    { commit },
+    {
+      lookalikeable = false,
+      deliveries = 2,
+      favorites = false,
+      worked_by = false,
+      attribute = [],
+    }
+  ) {
     try {
-      const response = await api.audiences.all()
+      const response = await api.audiences.getAudiences({
+        lookalikeable: lookalikeable,
+        deliveries: deliveries,
+        favorites: favorites,
+        worked_by: worked_by,
+        attribute: attribute,
+      })
       commit("SET_ALL", response.data)
     } catch (error) {
       handleError(error)
@@ -257,6 +280,10 @@ const actions = {
     try {
       const response = await api.lookalike.create(payload)
       commit("SET_ONE", response.data)
+      commit("SET_AUDIENCE_LOOKALIKE", {
+        id: payload.audience_id,
+        lookalike: response.data,
+      })
       return response.data
     } catch (error) {
       handleError(error)

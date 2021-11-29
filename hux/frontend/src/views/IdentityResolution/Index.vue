@@ -16,8 +16,8 @@
             />
           </div>
           <div class="text-subtitle-1 font-weight-regular">
-            Insights into the ingestion of all your customers’ data across your
-            data sources that build a cohesive view of each individual customer.
+            Monitor the ingestion and integration of all relevant data sources
+            as we create a single, persistent identifier of each customer.
           </div>
         </template>
         <template #right>
@@ -63,7 +63,7 @@
               <v-slide-item v-for="(metric, index) in overview" :key="index">
                 <metric-card
                   :title="metric.title"
-                  :min-width="170"
+                  :min-width="175"
                   class="idr-metric-card"
                   data-e2e="overviewList"
                 >
@@ -72,9 +72,10 @@
                       <template #label-content>
                         <icon
                           type="info"
-                          :size="12"
+                          :size="8"
                           color="primary"
                           variant="base"
+                          class="mb-1"
                         />
                       </template>
                       <template #hover-content>

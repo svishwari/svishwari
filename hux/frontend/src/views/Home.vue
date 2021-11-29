@@ -12,7 +12,7 @@
             your customer experiences.
             <a
               class="text-decoration-none"
-              href="https://consulting.deloitteresources.com/offerings/customer-marketing/advertising-marketing-commerce/Pages/hux_marketing.aspx"
+              href="https://resources.deloitte.com/sites/consulting/offerings/customer-marketing/advertising-marketing-commerce/Pages/Hux-by-Deloitte-Digital.aspx"
               target="_blank"
             >
               Learn More &gt;

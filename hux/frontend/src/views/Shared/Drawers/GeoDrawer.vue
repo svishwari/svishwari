@@ -11,9 +11,10 @@
                 <icon
                   v-if="title.toolTipText"
                   type="info"
-                  :size="12"
+                  :size="8"
                   color="primary"
                   variant="base"
+                  class="mb-1"
                 />
               </template>
               <template #hover-content>
@@ -79,7 +80,7 @@ import Drawer from "@/components/common/Drawer.vue"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Observer from "@/components/common/Observer.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
-import { arrayHasFieldWithMultipleValues } from "../../../utils"
+import { arrayHasFieldWithMultipleValues } from "@/utils"
 import Icon from "@/components/common/Icon.vue"
 
 export default {

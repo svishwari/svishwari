@@ -1,10 +1,8 @@
-# pylint: disable=no-self-use, too-many-lines
+# pylint: disable=no-self-use, too-many-lines, C0302
 """Paths for customer API"""
 from http import HTTPStatus
 from typing import Tuple, List
 from datetime import datetime
-
-from faker import Faker
 
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
@@ -31,8 +29,11 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
+    requires_access_levels,
 )
-from huxunify.api.data_connectors.okta import get_token_from_request
+from huxunify.api.data_connectors.okta import (
+    get_token_from_request,
+)
 from huxunify.api.data_connectors.cdp import (
     get_customer_profiles,
     get_customer_profile,
@@ -76,8 +77,6 @@ from huxunify.api.route.utils import (
 customers_bp = Blueprint(
     api_c.CUSTOMERS_ENDPOINT, import_name=__name__, url_prefix="/cdp"
 )
-
-faker = Faker()
 
 
 @customers_bp.before_request
@@ -448,7 +447,15 @@ class CustomerProfileSearch(SwaggerView):
             "in": "path",
             "required": True,
             "example": "HUX123456789012345",
-        }
+        },
+        {
+            "name": api_c.REDACT_FIELD,
+            "description": "Redact Field",
+            "type": "boolean",
+            "in": "query",
+            "required": False,
+            "example": "True",
+        },
     ]
     responses = {
         HTTPStatus.OK.value: {
@@ -466,7 +473,10 @@ class CustomerProfileSearch(SwaggerView):
     # pylint: disable=no-self-use
     # pylint: disable=unused-argument
     @api_error_handler()
-    def get(self, hux_id: str) -> Tuple[dict, int]:
+    @requires_access_levels(
+        [api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL, api_c.VIEWER_LEVEL]
+    )
+    def get(self, hux_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves a customer profile.
 
         ---
@@ -474,23 +484,25 @@ class CustomerProfileSearch(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
+            user (dict): User doc
             hux_id (str): ID of the customer.
 
         Returns:
             Tuple[dict, int]: dict of customer profile, HTTP status code.
         """
         token_response = get_token_from_request(request)
-
+        redact = Validation.validate_bool(
+            request.args.get(api_c.REDACT_FIELD, "True")
+        )
         Validation.validate_hux_id(hux_id)
 
-        redacted_data = redact_fields(
-            get_customer_profile(token_response[0], hux_id),
-            api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
-        )
-
-        idr_data = api_c.CUSTOMER_IDR_TEST_DATA
-        # TODO : Fetch IDR data from CDP once it is ready
-        # api_c.IDENTITY_RESOLUTION: redacted_data[api_c.IDENTITY_RESOLUTION]
+        if user.get(api_c.USER_PII_ACCESS) is True and not redact:
+            redacted_data = get_customer_profile(token_response[0], hux_id)
+        else:
+            redacted_data = redact_fields(
+                get_customer_profile(token_response[0], hux_id),
+                api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
+            )
 
         return (
             CustomerProfileSchema().dump(
@@ -498,7 +510,10 @@ class CustomerProfileSearch(SwaggerView):
                     api_c.OVERVIEW: redacted_data,
                     api_c.INSIGHTS: redacted_data,
                     api_c.CONTACT_PREFERENCES: redacted_data,
-                    api_c.IDENTITY_RESOLUTION: add_chart_legend(idr_data),
+                    api_c.IDENTITY_RESOLUTION: add_chart_legend(
+                        redacted_data.get(api_c.IDENTITY_RESOLUTION, {})
+                    ),
+                    api_c.USER_PII_ACCESS: user[api_c.USER_PII_ACCESS],
                 }
             ),
             HTTPStatus.OK.value,

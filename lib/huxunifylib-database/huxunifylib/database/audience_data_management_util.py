@@ -9,13 +9,13 @@ import pymongo
 import pandas as pd
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.db_exceptions import DuplicateDataSourceFieldType
 from huxunifylib.database.client import DatabaseClient
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def audience_name_exists(
@@ -33,11 +33,11 @@ def audience_name_exists(
             job.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.AUDIENCES_COLLECTION]
 
     try:
-        doc = collection.find_one({c.AUDIENCE_NAME: name})
+        doc = collection.find_one({db_c.AUDIENCE_NAME: name})
         if doc:
             return True
     except pymongo.errors.OperationFailure as exc:
@@ -71,24 +71,24 @@ def add_stats_to_update_dict(
 
     # Remove no-insights fields from col_list
     no_insight_fields = [
-        c.S_TYPE_CITY_HASHED,
-        c.S_TYPE_COUNTRY_CODE_HASHED,
-        c.S_TYPE_GENDER_HASHED,
-        c.S_TYPE_PHONE_NUMBER_HASHED,
-        c.S_TYPE_POSTAL_CODE_HASHED,
-        c.S_TYPE_STATE_OR_PROVINCE_HASHED,
-        c.S_TYPE_GOOGLE_PHONE_NUMBER,
+        db_c.S_TYPE_CITY_HASHED,
+        db_c.S_TYPE_COUNTRY_CODE_HASHED,
+        db_c.S_TYPE_GENDER_HASHED,
+        db_c.S_TYPE_PHONE_NUMBER_HASHED,
+        db_c.S_TYPE_POSTAL_CODE_HASHED,
+        db_c.S_TYPE_STATE_OR_PROVINCE_HASHED,
+        db_c.S_TYPE_GOOGLE_PHONE_NUMBER,
     ]
 
     col_list = list(set(col_list) - set(no_insight_fields))
 
     # Get breakdown fields
     breakdown_fields = [
-        c.S_TYPE_AGE,
-        c.S_TYPE_CITY,
-        c.S_TYPE_STATE_OR_PROVINCE,
-        c.S_TYPE_COUNTRY_CODE,
-        c.S_TYPE_GENDER,
+        db_c.S_TYPE_AGE,
+        db_c.S_TYPE_CITY,
+        db_c.S_TYPE_STATE_OR_PROVINCE,
+        db_c.S_TYPE_COUNTRY_CODE,
+        db_c.S_TYPE_GENDER,
     ]
 
     if custom_breakdown_fields is not None:
@@ -100,9 +100,9 @@ def add_stats_to_update_dict(
         new_count_inv = 1.0 / new_count
 
     # Casting age from integers to string as MongoDB only accepts strings
-    if c.S_TYPE_AGE in col_list:
-        new_data[c.S_TYPE_AGE] = (
-            new_data[c.S_TYPE_AGE][new_data[c.S_TYPE_AGE].notnull()]
+    if db_c.S_TYPE_AGE in col_list:
+        new_data[db_c.S_TYPE_AGE] = (
+            new_data[db_c.S_TYPE_AGE][new_data[db_c.S_TYPE_AGE].notnull()]
             .astype(int)
             .astype(str)
         )
@@ -110,19 +110,19 @@ def add_stats_to_update_dict(
     # Check the sanity of the existing doc if applicable
     # If there is no existing doc intialize a dict properly
     if old_stats_doc is not None:
-        if c.DATA_COUNT not in old_stats_doc:
+        if db_c.DATA_COUNT not in old_stats_doc:
             logging.warning(
                 "The field <%s> was not found in the existing "
                 "document! "
                 "Ignoring the existing document!",
-                c.DATA_COUNT,
+                db_c.DATA_COUNT,
             )
-            old_stats_doc = {c.DATA_COUNT: 0}
+            old_stats_doc = {db_c.DATA_COUNT: 0}
     else:
-        old_stats_doc = {c.DATA_COUNT: 0}
+        old_stats_doc = {db_c.DATA_COUNT: 0}
 
     # Get the count of the existing doc
-    old_count = int(old_stats_doc[c.DATA_COUNT])
+    old_count = int(old_stats_doc[db_c.DATA_COUNT])
 
     # Get the total count and its inverse
     tot_count = old_count + new_count
@@ -132,7 +132,7 @@ def add_stats_to_update_dict(
         tot_count_inv = 1.0 / tot_count_inv
 
     # Set count
-    update_dict[c.DATA_COUNT] = tot_count
+    update_dict[db_c.DATA_COUNT] = tot_count
 
     # Loop through all the fields in the ingested data
     for item in col_list:
@@ -151,9 +151,9 @@ def add_stats_to_update_dict(
             # Get the coverage ratio from the existig doc
             if (
                 item in old_stats_doc
-                and c.STATS_COVERAGE in old_stats_doc[item]
+                and db_c.STATS_COVERAGE in old_stats_doc[item]
             ):
-                old_cov_ratio = old_stats_doc[item][c.STATS_COVERAGE]
+                old_cov_ratio = old_stats_doc[item][db_c.STATS_COVERAGE]
             else:
                 old_cov_ratio = 0.0
 
@@ -163,7 +163,7 @@ def add_stats_to_update_dict(
             )
 
             update_dict[item] = {
-                c.STATS_COVERAGE: cov_ratio,
+                db_c.STATS_COVERAGE: cov_ratio,
             }
 
         else:
@@ -177,18 +177,18 @@ def add_stats_to_update_dict(
             # Calculate the coverage from the existing doc
             if (
                 item in old_stats_doc
-                and c.STATS_COVERAGE in old_stats_doc[item]
+                and db_c.STATS_COVERAGE in old_stats_doc[item]
             ):
-                old_cov_ratio = old_stats_doc[item][c.STATS_COVERAGE]
+                old_cov_ratio = old_stats_doc[item][db_c.STATS_COVERAGE]
             else:
                 old_cov_ratio = 0.0
 
             # Calculate the breakdown from the existing doc
             if (
                 item in old_stats_doc
-                and c.STATS_BREAKDOWN in old_stats_doc[item]
+                and db_c.STATS_BREAKDOWN in old_stats_doc[item]
             ):
-                old_break_dict = old_stats_doc[item][c.STATS_BREAKDOWN]
+                old_break_dict = old_stats_doc[item][db_c.STATS_BREAKDOWN]
             else:
                 old_break_dict = defaultdict(float)
 
@@ -219,8 +219,8 @@ def add_stats_to_update_dict(
                 )
 
             update_dict[item] = {
-                c.STATS_COVERAGE: cov_ratio,
-                c.STATS_BREAKDOWN: break_dict,
+                db_c.STATS_COVERAGE: cov_ratio,
+                db_c.STATS_BREAKDOWN: break_dict,
             }
 
     return update_dict
@@ -244,49 +244,49 @@ def validate_data_source_fields(fields: list) -> None:
 
     for field_item in fields:
         if (
-            c.FIELD_SPECIAL_TYPE in field_item
-            or c.FIELD_CUSTOM_TYPE in field_item
+            db_c.FIELD_SPECIAL_TYPE in field_item
+            or db_c.FIELD_CUSTOM_TYPE in field_item
         ):
             if (
-                field_item[c.FIELD_SPECIAL_TYPE]
+                field_item[db_c.FIELD_SPECIAL_TYPE]
                 not in types_dict["special_type_dict"].keys()
-                and field_item[c.FIELD_SPECIAL_TYPE]
+                and field_item[db_c.FIELD_SPECIAL_TYPE]
             ):
                 types_dict["special_type_dict"][
-                    field_item[c.FIELD_SPECIAL_TYPE]
+                    field_item[db_c.FIELD_SPECIAL_TYPE]
                 ] = True
 
             elif (
-                field_item[c.FIELD_SPECIAL_TYPE]
+                field_item[db_c.FIELD_SPECIAL_TYPE]
                 not in types_dict["special_type_dict"].keys()
-                and not field_item[c.FIELD_SPECIAL_TYPE]
+                and not field_item[db_c.FIELD_SPECIAL_TYPE]
             ):
-                if field_item[c.FIELD_CUSTOM_TYPE]:
+                if field_item[db_c.FIELD_CUSTOM_TYPE]:
                     if (
-                        field_item[c.FIELD_FIELD_MAPPING]
-                        or field_item[c.FIELD_FIELD_MAPPING_DEFAULT]
+                        field_item[db_c.FIELD_FIELD_MAPPING]
+                        or field_item[db_c.FIELD_FIELD_MAPPING_DEFAULT]
                     ) not in types_dict["field_mapping_dict"].keys() and (
-                        field_item[c.FIELD_FIELD_MAPPING]
-                        or field_item[c.FIELD_FIELD_MAPPING_DEFAULT]
+                        field_item[db_c.FIELD_FIELD_MAPPING]
+                        or field_item[db_c.FIELD_FIELD_MAPPING_DEFAULT]
                     ):
                         types_dict["field_mapping_dict"][
-                            field_item[c.FIELD_FIELD_MAPPING]
-                            or field_item[c.FIELD_FIELD_MAPPING_DEFAULT]
+                            field_item[db_c.FIELD_FIELD_MAPPING]
+                            or field_item[db_c.FIELD_FIELD_MAPPING_DEFAULT]
                         ] = True
                     elif (
-                        field_item[c.FIELD_FIELD_MAPPING]
-                        or field_item[c.FIELD_FIELD_MAPPING_DEFAULT]
+                        field_item[db_c.FIELD_FIELD_MAPPING]
+                        or field_item[db_c.FIELD_FIELD_MAPPING_DEFAULT]
                     ) not in types_dict["field_mapping_dict"].keys() and not (
-                        field_item[c.FIELD_FIELD_MAPPING]
-                        or field_item[c.FIELD_FIELD_MAPPING_DEFAULT]
+                        field_item[db_c.FIELD_FIELD_MAPPING]
+                        or field_item[db_c.FIELD_FIELD_MAPPING_DEFAULT]
                     ):
                         pass
                     else:
                         raise DuplicateDataSourceFieldType(
-                            c.FIELD_FIELD_MAPPING
+                            db_c.FIELD_FIELD_MAPPING
                         )
             else:
-                raise DuplicateDataSourceFieldType(c.FIELD_SPECIAL_TYPE)
+                raise DuplicateDataSourceFieldType(db_c.FIELD_SPECIAL_TYPE)
 
 
 def clean_dataframe_types(dataframe: pd.DataFrame) -> pd.DataFrame:
@@ -312,7 +312,7 @@ def clean_dataframe_types(dataframe: pd.DataFrame) -> pd.DataFrame:
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_audience_doc(
@@ -331,11 +331,13 @@ def update_audience_doc(
         dict: updated document.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.AUDIENCES_COLLECTION
+    ]
 
     try:
         return collection.find_one_and_update(
-            {c.ID: audience_id, c.DELETED: False},
+            {db_c.ID: audience_id, db_c.DELETED: False},
             {"$set": update_dict},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,

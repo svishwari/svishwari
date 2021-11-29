@@ -1,0 +1,32 @@
+name: Safety Checks
+on: [pull_request]
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install Safety
+        run: pip install safety
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            api:
+              - 'hux/api/huxunify/**'
+            dblib:
+              - 'lib/huxunifylib-database/huxunifylib/**'
+            scripts:
+              - 'scripts/database/**'
+      - if: steps.changes.outputs.api == 'true'
+        working-directory: hux/api
+        run: safety check
+      - if: always() && steps.changes.outputs.dblib == 'true'
+        working-directory: lib/huxunifylib-database
+        run: safety check
+      - if: always() && steps.changes.outputs.scripts == 'true'
+        working-directory: scripts
+        run: safety check

@@ -1,10 +1,9 @@
 # pylint: disable=no-self-use
-"""Paths for the User API"""
+"""Paths for the User API."""
 import datetime
 import random
 from http import HTTPStatus
 from typing import Tuple
-from faker import Faker
 
 from bson import ObjectId
 from connexion.exceptions import ProblemException
@@ -346,7 +345,9 @@ class UserView(SwaggerView):
 
         # generate random phone number and user access level
         for user in users:
-            user[api_c.USER_PHONE_NUMBER] = Faker().phone_number()
+            user[api_c.USER_PHONE_NUMBER] = random.choice(
+                ["720-025-8322", "232-823-6049", "582-313-7191"]
+            )
             user[api_c.USER_ACCESS_LEVEL] = random.choice(
                 ["Edit", "View-only", "Admin"]
             )
@@ -503,12 +504,19 @@ class CreateTicket(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
         issue_details = TicketSchema().load(request.get_json())
-        new_issue = JiraConnection().create_jira_issue(**issue_details)
+        new_issue = JiraConnection().create_jira_issue(
+            issue_type=issue_details[api_c.ISSUE_TYPE],
+            summary=f"HUS: CONTACT-FORM: {issue_details[api_c.SUMMARY]}",
+            description=(
+                f"{issue_details[api_c.DESCRIPTION]}\n\n"
+                f"Reported By: {user_name}\nEnvironment: {request.url_root}"
+            ),
+        )
 
         create_notification(
             database=get_db_client(),
             notification_type=db_constants.NOTIFICATION_TYPE_INFORMATIONAL,
-            description=f"{user_name} created a new issue {new_issue.get(api_c.KEY)} in JIRA",
+            description=f"{user_name} created a new issue {new_issue.get(api_c.KEY)} in JIRA.",
             category=api_c.TICKET_TYPE_BUG,
             username=user_name,
         )

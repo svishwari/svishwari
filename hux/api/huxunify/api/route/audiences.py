@@ -39,6 +39,7 @@ from huxunify.api.route.decorators import (
     api_error_handler,
     validate_engagement_and_audience,
 )
+
 from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
@@ -56,6 +57,8 @@ from huxunify.api.route.utils import (
 )
 
 # setup the audiences blueprint
+from huxunify.api.stubbed_data import stub_city_zip_data
+
 audience_bp = Blueprint(api_c.AUDIENCE_ENDPOINT, import_name=__name__)
 
 
@@ -309,7 +312,7 @@ class AudienceDownload(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            f"{user_name} downloaded the audience, {audience[db_c.NAME]}"
+            f'{user_name} downloaded the audience, "{audience[db_c.NAME]}"'
             f" with format {download_type}.",
             api_c.ORCHESTRATION_TAG,
             user_name,
@@ -590,3 +593,92 @@ class AudienceInsightsCountries(SwaggerView):
             ),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    audience_bp,
+    f"/{api_c.AUDIENCE_ENDPOINT}/rules/<field_type>/<key>",
+    "AudienceRulesCities",
+)
+class AudienceRulesLocation(SwaggerView):
+    """Audience Rules Constants for Cities & Zip"""
+
+    parameters = [
+        {
+            "name": api_c.FIELD_TYPE,
+            "description": "Field Type",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "cities",
+        },
+        {
+            "name": api_c.KEY,
+            "description": "Search Key",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "new",
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "array",
+                "items": "Location Constant Lists",
+            },
+            "description": "Location Constants List",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Audience Rules."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(self, field_type: str, key: str) -> Tuple[dict, int]:
+        """Retrieves Location Rules constants.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            field_type (str): Field Type
+            key (str): Search Key
+
+
+        Returns:
+            Tuple[list, int]: rules constants for email
+        """
+
+        # TODO Remove stub once CDM API is integrated
+        if field_type == api_c.CITIES:
+            data = jsonify(
+                [
+                    {x[1]: f"{x[1]}, {x[2]} USA"}
+                    for x in [
+                        x
+                        for x in stub_city_zip_data.city_zip_data
+                        if key.lower() in x[1].lower()
+                    ]
+                ]
+            )
+        elif field_type == api_c.ZIP:
+            data = jsonify(
+                [
+                    {x[0]: f"{x[0]}, {x[1]} {x[2]}"}
+                    for x in [
+                        x
+                        for x in stub_city_zip_data.city_zip_data
+                        if key.lower() in x[0].lower()
+                    ]
+                ]
+            )
+        else:
+            return {"message": "Incorrect Combination"}, HTTPStatus.NOT_FOUND
+
+        return data, HTTPStatus.OK

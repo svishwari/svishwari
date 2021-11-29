@@ -34,13 +34,13 @@ stages:
         content-type: application/json
 
 ---
-test_name: Test customer overview
+test_name: Test GET customer overview
 
 includes:
   - !include common.yaml
 
 stages:
-  - name: test customers/overview
+  - name: test GET customers/overview
 
     # Define the request to be made...
     request:
@@ -68,6 +68,154 @@ stages:
         "total_known_ids": !anyint
         "min_age": !anyint
         "avg_age" : !anyint
+        "min_ltv_predicted": !anyfloat
+        "max_ltv_predicted": !anyfloat
+        "match_rate": !anyfloat
+        "total_individual_ids": !anyint
+        "total_unknown_ids": !anyint
+        "gender_men": !anyfloat
+        "gender_women": !anyfloat
+        "total_cities": !anyint
+        "total_household_ids": !anyint
+      headers:
+        content-type: application/json
+
+---
+test_name: Test POST customer overview
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test POST customers/overview upper case
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers/overview"
+      method: POST
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        filters:
+          - section_aggregator: "ALL"
+            section_filters:
+              - field: "country"
+                type: "equals"
+                value: "US"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "gender_other": !anyfloat
+        "total_customers": !anyint
+        "max_age": !anyint
+        "total_countries": !anyint
+        "max_ltv_actual": !anyfloat
+        "total_unique_ids": !anyint
+        "min_ltv_actual": !anyfloat
+        "total_records": !anyint
+        "updated": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "total_us_states": !anyint
+        "total_known_ids": !anyint
+        "min_age": !anyint
+        "avg_age" : !anyint
+        "min_ltv_predicted": !anyfloat
+        "max_ltv_predicted": !anyfloat
+        "match_rate": !anyfloat
+        "total_individual_ids": !anyint
+        "total_unknown_ids": !anyint
+        "gender_men": !anyfloat
+        "gender_women": !anyfloat
+        "total_cities": !anyint
+        "total_household_ids": !anyint
+      headers:
+        content-type: application/json
+
+  - name: test POST customers/overview lower case
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers/overview"
+      method: POST
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        filters:
+          - section_aggregator: "ALL"
+            section_filters:
+              - field: "country"
+                type: "equals"
+                value: "us"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "gender_other": !anyfloat
+        "total_customers": !anyint
+        "max_age": !anyint
+        "total_countries": !anyint
+        "max_ltv_actual": !anyfloat
+        "total_unique_ids": !anyint
+        "min_ltv_actual": !anyfloat
+        "total_records": !anyint
+        "updated": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "total_us_states": !anyint
+        "total_known_ids": !anyint
+        "min_age": !anyint
+        "avg_age": !anyint
+        "min_ltv_predicted": !anyfloat
+        "max_ltv_predicted": !anyfloat
+        "match_rate": !anyfloat
+        "total_individual_ids": !anyint
+        "total_unknown_ids": !anyint
+        "gender_men": !anyfloat
+        "gender_women": !anyfloat
+        "total_cities": !anyint
+        "total_household_ids": !anyint
+      headers:
+        content-type: application/json
+
+  - name: test POST customers/overview random case
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers/overview"
+      method: POST
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        filters:
+          - section_aggregator: "ALL"
+            section_filters:
+              - field: "country"
+                type: "equals"
+                value: "uS"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "gender_other": !anyfloat
+        "total_customers": !anyint
+        "max_age": !anyint
+        "total_countries": !anyint
+        "max_ltv_actual": !anyfloat
+        "total_unique_ids": !anyint
+        "min_ltv_actual": !anyfloat
+        "total_records": !anyint
+        "updated": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "total_us_states": !anyint
+        "total_known_ids": !anyint
+        "min_age": !anyint
+        "avg_age": !anyint
         "min_ltv_predicted": !anyfloat
         "max_ltv_predicted": !anyfloat
         "match_rate": !anyfloat
@@ -220,11 +368,11 @@ stages:
       status_code: 200
       json:
         "total_customers": !anyint
-        "customers": !anylist
+        "customers":
         - "hux_id": !anystr
-        - "first_name": !anystr
-        - "last_name": !anystr
-        - "match_confidence": !anyfloat
+          "first_name": !anystr
+          "last_name": !anystr
+          "match_confidence": !anyfloat
       save:
         json:
           first_customer: customers[0]
@@ -466,11 +614,11 @@ stages:
       status_code: 200
       json:
         "total_customers": !anyint
-        "customers": !anylist
+        "customers":
         - "hux_id": !anystr
-        - "first_name": !anystr
-        - "last_name": !anystr
-        - "match_confidence": !anyfloat
+          "first_name": !anystr
+          "last_name": !anystr
+          "match_confidence": !anyfloat
       save:
         json:
           first_customer: customers[0]

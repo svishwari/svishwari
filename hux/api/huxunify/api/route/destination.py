@@ -1107,10 +1107,10 @@ class DestinationsRequestView(SwaggerView):
                 db_c.STATUS_FAILED,
                 db_c.STATUS_SUCCEEDED,
             ]:
-                # return already requested, return 200, with message.
+                # return already requested, return 409, with message.
                 return {
-                    "message": "Destination already present."
-                }, HTTPStatus.OK
+                    api_c.MESSAGE: "Destination already present."
+                }, HTTPStatus.CONFLICT
             # otherwise set the status to requested
             destination = destination_management.update_delivery_platform_doc(
                 database,
@@ -1132,11 +1132,18 @@ class DestinationsRequestView(SwaggerView):
                 added=True,
             )
 
+            destination_request.update(
+                {"Requested By": user_name, "Environment": request.url_root}
+            )
+
             # create JIRA ticket for the request.
             JiraConnection().create_jira_issue(
                 api_c.TASK,
                 f"Requested Destination '{destination_request[api_c.NAME]}'.",
-                destination_request,
+                "\n".join(
+                    f"{key.title()}: {value}"
+                    for key, value in destination_request.items()
+                ),
             )
 
         create_notification(
