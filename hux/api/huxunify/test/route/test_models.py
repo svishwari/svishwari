@@ -58,6 +58,9 @@ class TestModelRoutes(TestCase):
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
         self.request_mocker.start()
 
         self.app = create_app().test_client()
@@ -70,6 +73,18 @@ class TestModelRoutes(TestCase):
         self.database = DatabaseClient(
             "localhost", 27017, None, None
         ).connect()
+
+        # mock get_db_client() in decorators
+        mock.patch(
+            "huxunify.api.route.decorators.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get db client from utils
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
 
         self.addCleanup(mock.patch.stopall)
 
