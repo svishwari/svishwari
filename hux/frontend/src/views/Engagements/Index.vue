@@ -72,7 +72,6 @@
               'expanded-row': isExpanded,
               'pl-3': header.value == 'audiences',
             }"
-            class="text-body-1 black--text"
             :style="{ width: header.width }"
           >
             <div v-if="header.value == 'name'" class="w-80">
@@ -85,6 +84,7 @@
                 :data-e2e="setEngagementSelector(item)"
                 has-favorite
                 :is-favorite="isUserFavorite(item, 'engagements')"
+                class="text-body-1"
                 @actionFavorite="handleActionFavorite(item, 'engagements')"
               >
                 <template #expand-icon>
@@ -153,7 +153,7 @@
               </span>
               <span v-else-if="item[header.value].length == 0">—</span>
             </div>
-            <div v-if="header.value == 'status'" class="text-h5">
+            <div v-if="header.value == 'status'">
               <status
                 :status="item[header.value]"
                 :show-label="true"
@@ -283,6 +283,7 @@
                       :label-class="{
                         'no-expand': item.destinations.length == 0,
                       }"
+                      class="text-body-1"
                     >
                       <template #expand-icon>
                         <v-icon
@@ -296,7 +297,7 @@
                       </template>
                     </menu-cell>
                   </div>
-                  <div v-if="header.value == 'status'" class="text-h5">
+                  <div v-if="header.value == 'status'">
                     <div>
                       <status
                         :status="item[header.value]"
@@ -440,7 +441,7 @@
                       :key="header.value"
                       :style="{ width: header.width }"
                     >
-                      <div v-if="header.value == 'status'" class="text-h5">
+                      <div v-if="header.value == 'status'">
                         <div>
                           <status
                             :status="item[header.value]"
@@ -1121,7 +1122,7 @@ export default {
         }
         height: 64px;
         td {
-          font-size: 14px !important;
+          font-size: 16px !important;
           line-height: 22px;
           color: var(--v-black-darken4);
         }

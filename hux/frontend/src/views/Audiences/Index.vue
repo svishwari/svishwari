@@ -70,7 +70,6 @@
               'primary--text': header.fixed,
             }"
             :style="{ minWidth: header.width, left: 0 }"
-            class="text-body-1 black--text"
           >
             <div
               v-if="header.value == 'name'"
@@ -93,6 +92,7 @@
                 data-e2e="audiencename"
                 has-favorite
                 :is-favorite="isUserFavorite(item, 'audiences')"
+                class="text-body-1"
                 @actionFavorite="handleActionFavorite(item, 'audiences')"
               />
             </div>
