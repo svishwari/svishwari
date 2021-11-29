@@ -14,6 +14,8 @@
           <profile-identifiable-insights
             :insights="customerProfile['insights']"
             :piiaccess="customerProfile['pii_access']"
+            :show-pii="showPIIData"
+            @togglePII="getCustomerTogglePII"
           />
         </v-col>
         <v-col class="pb-0 customCol">
@@ -143,6 +145,7 @@ export default {
       loading: false,
       loadingCustomerEvents: true,
       customerEventsDrawer: false,
+      showPIIData: false,
     }
   },
   computed: {
@@ -188,6 +191,7 @@ export default {
   methods: {
     ...mapActions({
       getCustomer: "customers/get",
+      getCustomerRedact: "customers/getRedact",
       getEvents: "customers/getCustomerEvents",
     }),
     async getCustomerEvent() {
@@ -197,6 +201,14 @@ export default {
       } finally {
         this.loadingCustomerEvents = false
       }
+    },
+    async getCustomerTogglePII(redactFlag) {
+      let params = {
+        id: this.id,
+        redactFlag: redactFlag,
+      }
+      await this.getCustomerRedact(params)
+      this.showPIIData = !this.showPIIData
     },
     toggleCustomerEventsDrawer() {
       this.customerEventsDrawer = !this.customerEventsDrawer

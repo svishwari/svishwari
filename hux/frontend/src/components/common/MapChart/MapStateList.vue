@@ -83,6 +83,10 @@ export default {
       type: Number,
       required: false,
     },
+    headerConfig: {
+      type: Array,
+      required: false,
+    },
   },
   data() {
     return {
@@ -129,6 +133,10 @@ export default {
       this.stateListData.forEach((element) => {
         element.avg_spend = (element.min_ltv + element.max_ltv) / 2
       })
+
+      this.columnDefs = this.columnDefs.filter((column) =>
+        this.headerConfig.includes(column.value)
+      )
     },
     applyFilter(value, filter) {
       switch (filter) {
@@ -192,6 +200,9 @@ export default {
         }
         th {
           background: var(--v-primary-lighten1);
+          &:last-child {
+            border-top-right-radius: 12px;
+          }
         }
       }
     }

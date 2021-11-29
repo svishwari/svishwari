@@ -1,6 +1,7 @@
 # pylint: disable=no-self-use
 """Schemas for the Customers API"""
 from flask_marshmallow import Schema
+from marshmallow import post_dump
 from marshmallow.fields import (
     Str,
     Float,
@@ -94,6 +95,23 @@ class CustomerProfileContactPreferencesSchema(Schema):
     preference_push = Boolean(required=True)
     preference_sms = Boolean(required=True)
     preference_in_app = Boolean(required=True)
+
+    @post_dump
+    # pylint: disable=unused-argument
+    # pylint: disable=no-self-use
+    def map_boolean_to_string(self, data: dict, many: bool = False) -> dict:
+        """Map boolean value to String equivalent
+        Args:
+            data (dict): Customer Profile Contact Preference object
+            many (bool): If multiple objects
+
+        Returns:
+            dict : Returns a contact preference object
+        """
+        for key, val in data.items():
+            data[key] = api_c.OPT_IN if val else api_c.OPT_OUT
+
+        return data
 
 
 class CustomerProfileSchema(Schema):
@@ -405,7 +423,7 @@ class CustomersInsightsCitiesSchema(Schema):
     size = Integer(
         attribute=api_c.CUSTOMER_COUNT, required=True, default=0, example=1234
     )
-    revenue = Float(
+    avg_spend = Float(
         attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.231
     )
 
@@ -416,7 +434,7 @@ class CustomersInsightsStatesSchema(Schema):
     country = Str(required=True, example="US")
     state = Str(attribute=api_c.NAME, required=True, example="New York")
     size = Integer(required=True, default=0, example=1234)
-    revenue = Float(
+    avg_spend = Float(
         attribute=api_c.LTV, required=True, default=0.0, example=123.2345
     )
 
@@ -426,6 +444,6 @@ class CustomersInsightsCountriesSchema(Schema):
 
     country = Str(attribute=api_c.NAME, required=True, example="US")
     size = Integer(required=True, default=0, example=1234)
-    revenue = Float(
+    avg_spend = Float(
         attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.2345
     )

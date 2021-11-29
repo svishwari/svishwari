@@ -16,8 +16,8 @@
             />
           </div>
           <div class="text-subtitle-1 font-weight-regular">
-            Insights into the ingestion of all your customers’ data across your
-            data sources that build a cohesive view of each individual customer.
+            Monitor the ingestion and integration of all relevant data sources
+            as we create a single, persistent identifier of each customer.
           </div>
         </template>
         <template #right>

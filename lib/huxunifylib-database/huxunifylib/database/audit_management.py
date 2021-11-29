@@ -7,12 +7,12 @@ import pymongo
 from bson import ObjectId
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
-from huxunifylib.database import constants as c
+from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def create_audience_audit(
@@ -35,21 +35,21 @@ def create_audience_audit(
         Union[dict,None]: Audit doc or None, if errors.
     """
 
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = dm_db[c.AUDIENCE_AUDIT_COLLECTION]
+    dm_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = dm_db[db_c.AUDIENCE_AUDIT_COLLECTION]
 
     doc = {
-        c.USER_NAME: user_name if user_name else "",
-        c.AUDIENCE_ID: audience_id,
-        c.DOWNLOAD_TIME: datetime.datetime.utcnow(),
-        c.DOWNLOAD_TYPE: download_type,
-        c.FILE_NAME: file_name,
+        db_c.USER_NAME: user_name if user_name else "",
+        db_c.AUDIENCE_ID: audience_id,
+        db_c.DOWNLOAD_TIME: datetime.datetime.utcnow(),
+        db_c.DOWNLOAD_TYPE: download_type,
+        db_c.FILE_NAME: file_name,
     }
 
     try:
         audit_id = collection.insert_one(doc).inserted_id
         if audit_id is not None:
-            ret_doc = collection.find_one({c.ID: audit_id})
+            ret_doc = collection.find_one({db_c.ID: audit_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
         return None

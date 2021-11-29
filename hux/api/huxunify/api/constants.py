@@ -92,6 +92,8 @@ CONTACT_EMAIL = "contact_email"
 CLIENT_REQUEST = "client_request"
 CLIENT_ACCOUNT = "client_account"
 USE_CASE = "use_case"
+FIELD_TYPE = "field_type"
+
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -1003,6 +1005,12 @@ GEOGRAPHICAL = "geo"
 CUSTOMERS_API_HEADER_KEY = "x-api-key"
 CUSTOMERS_DEFAULT_BATCH_SIZE = 1000
 CUSTOMER_COUNT = "customer_count"
+OPT_IN = "Opt-In"
+OPT_OUT = "Opt-Out"
+PREFERENCE_EMAIL = "preference_email"
+PREFERENCE_PUSH = "preference_push"
+PREFERENCE_SMS = "preference_sms"
+PREFERENCE_IN_APP = "preference_in_app"
 
 MAX_WORKERS_THREAD_POOL = os.cpu_count() * 1 + 1
 

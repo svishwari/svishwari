@@ -9,7 +9,7 @@ import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.db_exceptions as de
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.utils import name_exists
 
@@ -17,18 +17,18 @@ USER_LOOKUP_PIPELINE = [
     # lookup the created by user to the user collection
     {
         "$lookup": {
-            "from": c.USER_COLLECTION,
-            "localField": c.CREATED_BY,
-            "foreignField": c.ID,
+            "from": db_c.USER_COLLECTION,
+            "localField": db_c.CREATED_BY,
+            "foreignField": db_c.ID,
             "as": "created_user",
         }
     },
     # lookup the updated by user to the user collection
     {
         "$lookup": {
-            "from": c.USER_COLLECTION,
-            "localField": c.UPDATED_BY,
-            "foreignField": c.ID,
+            "from": db_c.USER_COLLECTION,
+            "localField": db_c.UPDATED_BY,
+            "foreignField": db_c.ID,
             "as": "updated_user",
         }
     },
@@ -53,14 +53,14 @@ USER_LOOKUP_PIPELINE = [
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_user(
     database: DatabaseClient,
     okta_id: str,
     email_address: str,
-    role: str = c.USER_ROLE_VIEWER,
+    role: str = db_c.USER_ROLE_VIEWER,
     organization: str = "",
     subscriptions: list = None,
     display_name: str = "",
@@ -94,44 +94,44 @@ def set_user(
     if (
         not isinstance(okta_id, str)
         or not isinstance(email_address, str)
-        or not re.search(c.EMAIL_REGEX, email_address)
+        or not re.search(db_c.EMAIL_REGEX, email_address)
         or not okta_id
     ):
         return None
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
 
     # Get current time
     curr_time = datetime.datetime.utcnow()
 
     doc = {
-        c.OKTA_ID: okta_id,
-        c.USER_ROLE: role,
-        c.USER_ORGANIZATION: organization,
-        c.USER_SUBSCRIPTION: [] if subscriptions is None else subscriptions,
-        c.S_TYPE_EMAIL: email_address,
-        c.USER_DISPLAY_NAME: display_name,
-        c.UPDATE_TIME: curr_time,
-        c.CREATE_TIME: curr_time,
-        c.USER_PROFILE_PHOTO: profile_photo,
-        c.USER_LOGIN_COUNT: 0,
-        c.USER_FAVORITES: {
-            c.AUDIENCES: [],
-            c.DESTINATIONS: [],
-            c.CAMPAIGNS: [],
-            c.ENGAGEMENTS: [],
+        db_c.OKTA_ID: okta_id,
+        db_c.USER_ROLE: role,
+        db_c.USER_ORGANIZATION: organization,
+        db_c.USER_SUBSCRIPTION: [] if subscriptions is None else subscriptions,
+        db_c.S_TYPE_EMAIL: email_address,
+        db_c.USER_DISPLAY_NAME: display_name,
+        db_c.UPDATE_TIME: curr_time,
+        db_c.CREATE_TIME: curr_time,
+        db_c.USER_PROFILE_PHOTO: profile_photo,
+        db_c.USER_LOGIN_COUNT: 0,
+        db_c.USER_FAVORITES: {
+            db_c.AUDIENCES: [],
+            db_c.DESTINATIONS: [],
+            db_c.CAMPAIGNS: [],
+            db_c.ENGAGEMENTS: [],
         },
-        c.USER_DASHBOARD_CONFIGURATION: {},
-        c.USER_PII_ACCESS: pii_access,
+        db_c.USER_DASHBOARD_CONFIGURATION: {},
+        db_c.USER_PII_ACCESS: pii_access,
     }
 
     # validate okta
     if name_exists(
         database,
-        c.DATA_MANAGEMENT_DATABASE,
-        c.USER_COLLECTION,
-        c.OKTA_ID,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.USER_COLLECTION,
+        db_c.OKTA_ID,
         okta_id,
     ):
         raise de.DuplicateName(okta_id)
@@ -139,7 +139,7 @@ def set_user(
     try:
         user_id = collection.insert_one(doc).inserted_id
         if user_id is not None:
-            return collection.find_one({c.ID: user_id})
+            return collection.find_one({db_c.ID: user_id})
         logging.error("Failed to create a new user!")
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -148,7 +148,7 @@ def set_user(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_user(database: DatabaseClient, okta_id: str) -> Union[dict, None]:
@@ -162,10 +162,10 @@ def get_user(database: DatabaseClient, okta_id: str) -> Union[dict, None]:
         Union[dict, None]: MongoDB document for a user.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
 
     try:
-        return collection.find_one({c.OKTA_ID: okta_id})
+        return collection.find_one({db_c.OKTA_ID: okta_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -173,7 +173,7 @@ def get_user(database: DatabaseClient, okta_id: str) -> Union[dict, None]:
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_users(database: DatabaseClient, filter_dict: dict = None) -> list:
@@ -187,7 +187,7 @@ def get_all_users(database: DatabaseClient, filter_dict: dict = None) -> list:
         list: List of all user documents.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
 
     try:
         return list(collection.find(filter_dict if filter_dict else {}))
@@ -198,7 +198,7 @@ def get_all_users(database: DatabaseClient, filter_dict: dict = None) -> list:
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_user(
@@ -215,10 +215,10 @@ def delete_user(
         bool: A flag indicating successful deletion.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
 
     try:
-        return collection.delete_one({c.OKTA_ID: okta_id}).deleted_count > 0
+        return collection.delete_one({db_c.OKTA_ID: okta_id}).deleted_count > 0
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -226,7 +226,7 @@ def delete_user(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_user(
@@ -251,21 +251,21 @@ def update_user(
     if not okta_id or not update_doc or not isinstance(update_doc, dict):
         return None
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
 
     allowed_fields = [
-        c.USER_ROLE,
-        c.USER_ORGANIZATION,
-        c.USER_SUBSCRIPTION,
-        c.S_TYPE_EMAIL,
-        c.USER_DISPLAY_NAME,
-        c.USER_PROFILE_PHOTO,
-        c.USER_FAVORITES,
-        c.USER_DASHBOARD_CONFIGURATION,
-        c.USER_LOGIN_COUNT,
-        c.UPDATE_TIME,
-        c.UPDATED_BY,
-        c.USER_PII_ACCESS,
+        db_c.USER_ROLE,
+        db_c.USER_ORGANIZATION,
+        db_c.USER_SUBSCRIPTION,
+        db_c.S_TYPE_EMAIL,
+        db_c.USER_DISPLAY_NAME,
+        db_c.USER_PROFILE_PHOTO,
+        db_c.USER_FAVORITES,
+        db_c.USER_DASHBOARD_CONFIGURATION,
+        db_c.USER_LOGIN_COUNT,
+        db_c.UPDATE_TIME,
+        db_c.UPDATED_BY,
+        db_c.USER_PII_ACCESS,
     ]
 
     # validate allowed fields, any invalid returns, raise error
@@ -274,11 +274,11 @@ def update_user(
         raise de.DuplicateFieldType(",".join(key_check))
 
     # set the update time
-    update_doc[c.UPDATE_TIME] = datetime.datetime.utcnow()
+    update_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
 
     try:
         return collection.find_one_and_update(
-            {c.OKTA_ID: okta_id},
+            {db_c.OKTA_ID: okta_id},
             {"$set": update_doc},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
@@ -290,7 +290,7 @@ def update_user(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def manage_user_favorites(
@@ -325,44 +325,44 @@ def manage_user_favorites(
     if (
         not okta_id
         or not isinstance(component_id, ObjectId)
-        or component_name not in c.FAVORITE_COMPONENTS
+        or component_name not in db_c.FAVORITE_COMPONENTS
     ):
         return None
 
     component_collection = {
-        c.ENGAGEMENTS: c.ENGAGEMENTS_COLLECTION,
-        c.AUDIENCES: c.AUDIENCES_COLLECTION,
-        c.LOOKALIKE: c.LOOKALIKE_AUDIENCE_COLLECTION,
+        db_c.ENGAGEMENTS: db_c.ENGAGEMENTS_COLLECTION,
+        db_c.AUDIENCES: db_c.AUDIENCES_COLLECTION,
+        db_c.LOOKALIKE: db_c.LOOKALIKE_AUDIENCE_COLLECTION,
     }
 
     # TODO - validate input component ID if it exists
     #      - fill out when we have campaigns, destinations
     try:
-        if not delete_flag and not database[c.DATA_MANAGEMENT_DATABASE][
+        if not delete_flag and not database[db_c.DATA_MANAGEMENT_DATABASE][
             component_collection[component_name]
-        ].find_one({c.ID: component_id}):
+        ].find_one({db_c.ID: component_id}):
             raise de.InvalidID(component_id)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
     # grab the collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
 
     event = "$pull" if delete_flag else "$push"
     element_query = "$eq" if delete_flag else "$ne"
 
     # grab the favorite field
-    config_field = f"{c.USER_FAVORITES}.{component_name}"
+    config_field = f"{db_c.USER_FAVORITES}.{component_name}"
 
     try:
         return collection.find_one_and_update(
             {
-                c.OKTA_ID: okta_id,
+                db_c.OKTA_ID: okta_id,
                 config_field: {element_query: component_id},
             },
             {
                 "$set": {
-                    c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 },
                 event: {config_field: component_id},
             },
@@ -376,7 +376,7 @@ def manage_user_favorites(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def manage_user_dashboard_config(
@@ -404,13 +404,13 @@ def manage_user_dashboard_config(
         return None
 
     # grab the collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.USER_COLLECTION]
 
     # grab the configuration field
-    config_field = f"{c.USER_DASHBOARD_CONFIGURATION}.{config_key}"
+    config_field = f"{db_c.USER_DASHBOARD_CONFIGURATION}.{config_key}"
 
     # set mongo query based on delete flag
-    update_dict = {"$set": {c.UPDATE_TIME: datetime.datetime.utcnow()}}
+    update_dict = {"$set": {db_c.UPDATE_TIME: datetime.datetime.utcnow()}}
     if delete_flag:
         update_dict["$unset"] = {config_field: config_value}
     else:
@@ -418,7 +418,7 @@ def manage_user_dashboard_config(
 
     try:
         return collection.find_one_and_update(
-            {c.OKTA_ID: okta_id},
+            {db_c.OKTA_ID: okta_id},
             update_dict,
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,

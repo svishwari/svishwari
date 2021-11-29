@@ -265,6 +265,7 @@
                           v-if="!loadingGeoOverview"
                           :map-data="customersGeoOverview"
                           :configuration-data="configurationData"
+                          :header-config="mapStateHeaderList"
                           :height="395"
                         />
                       </div>
@@ -402,11 +403,6 @@ export default {
           href: "/customers",
           icon: "customer-profiles",
         },
-        {
-          text: "",
-          disabled: true,
-          href: this.$route.path,
-        },
       ],
       loading: true,
       updatedTime: [],
@@ -448,6 +444,7 @@ export default {
         batchNumber: 1,
         isLazyLoad: false,
       },
+      mapStateHeaderList: ["name", "avg_spend", "population_percentage"],
     }
   },
   computed: {

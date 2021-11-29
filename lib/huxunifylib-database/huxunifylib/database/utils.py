@@ -5,12 +5,12 @@ import pymongo
 import pandas as pd
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def name_exists(
@@ -76,7 +76,7 @@ def detect_non_breakdown_fields(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_collection_count(
@@ -98,7 +98,7 @@ def get_collection_count(
     try:
         return collection.count_documents(
             {
-                c.DELETED: False,
+                db_c.DELETED: False,
             }
         )
     except pymongo.errors.OperationFailure as exc:

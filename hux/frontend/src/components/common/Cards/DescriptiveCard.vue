@@ -71,7 +71,7 @@
         </div>
       </template>
       <template #hover-content>
-        <span class="black--text text--lighten-4">{{ title }}</span>
+        <span class="black--text text-body-2">{{ title }}</span>
       </template>
     </tooltip>
 
@@ -93,7 +93,7 @@
         </div>
       </template>
       <template #hover-content>
-        <span class="black--text text--lighten-4">{{ description }}</span>
+        <span class="black--text text-body-2">{{ description }}</span>
       </template>
     </tooltip>
 

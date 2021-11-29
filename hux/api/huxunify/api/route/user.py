@@ -504,7 +504,14 @@ class CreateTicket(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
         issue_details = TicketSchema().load(request.get_json())
-        new_issue = JiraConnection().create_jira_issue(**issue_details)
+        new_issue = JiraConnection().create_jira_issue(
+            issue_type=issue_details[api_c.ISSUE_TYPE],
+            summary=f"HUS: CONTACT-FORM: {issue_details[api_c.SUMMARY]}",
+            description=(
+                f"{issue_details[api_c.DESCRIPTION]}\n\n"
+                f"Reported By: {user_name}\nEnvironment: {request.url_root}"
+            ),
+        )
 
         create_notification(
             database=get_db_client(),

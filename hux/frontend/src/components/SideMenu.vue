@@ -46,7 +46,7 @@
       >
         <v-list-item-icon
           v-if="item.icon"
-          class="mr-0"
+          class="ma-2"
           :class="{ 'home-menu-icon': !isMini }"
         >
           <tooltip
