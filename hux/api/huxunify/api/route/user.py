@@ -436,24 +436,24 @@ class UserPatchView(SwaggerView):
         database = get_db_client()
 
         if api_c.ID in body:
-            user = get_all_users(
+            userinfo = get_all_users(
                 database, {db_constants.ID: ObjectId(body.get(api_c.ID))}
             )
             del body[api_c.ID]
         else:
-            user = get_all_users(
+            userinfo = get_all_users(
                 database,
                 {db_constants.USER_DISPLAY_NAME: user[api_c.USER_NAME]},
             )
 
-        if not user:
+        if not userinfo:
             return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         # TODO Access Control Based on Roles
 
         updated_user = update_user(
             database,
-            okta_id=user[0][db_constants.OKTA_ID],
+            okta_id=userinfo[0][db_constants.OKTA_ID],
             update_doc={
                 **body,
                 **{

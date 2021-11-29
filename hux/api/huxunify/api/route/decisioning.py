@@ -593,6 +593,7 @@ class ModelFeaturesView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
 
+    # pylint: disable=no-self-use
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
