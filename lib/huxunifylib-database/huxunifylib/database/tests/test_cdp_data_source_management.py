@@ -6,7 +6,7 @@ from bson import ObjectId
 from hypothesis import given, strategies as st
 
 import huxunifylib.database.cdp_data_source_management as dsmgmt
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 
 from huxunifylib.database.client import DatabaseClient
 
@@ -24,22 +24,22 @@ class TestCdpDataSourceManagement(unittest.TestCase):
             "localhost", 27017, None, None
         ).connect()
 
-        self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
+        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
         self.sample_data_source = {
-            c.CDP_DATA_SOURCE_FIELD_NAME: "Amazon",
-            c.CDP_DATA_SOURCE_FIELD_CATEGORY: "Web Events",
-            c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
-            c.CDP_DATA_SOURCE_FIELD_STATUS: c.CDP_DATA_SOURCE_STATUS_ACTIVE,
-            c.DATA_SOURCE_TYPE: "Marketing",
+            db_c.CDP_DATA_SOURCE_FIELD_NAME: "Amazon",
+            db_c.CDP_DATA_SOURCE_FIELD_CATEGORY: "Web Events",
+            db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
+            db_c.CDP_DATA_SOURCE_FIELD_STATUS: db_c.CDP_DATA_SOURCE_STATUS_ACTIVE,
+            db_c.DATA_SOURCE_TYPE: "Marketing",
         }
 
         # set a sample data source
         self.data_source_doc = dsmgmt.create_data_source(
             database=self.database,
-            name=self.sample_data_source[c.CDP_DATA_SOURCE_FIELD_NAME],
-            category=self.sample_data_source[c.CDP_DATA_SOURCE_FIELD_CATEGORY],
-            source_type=self.sample_data_source[c.DATA_SOURCE_TYPE],
+            name=self.sample_data_source[db_c.CDP_DATA_SOURCE_FIELD_NAME],
+            category=self.sample_data_source[db_c.CDP_DATA_SOURCE_FIELD_CATEGORY],
+            source_type=self.sample_data_source[db_c.DATA_SOURCE_TYPE],
         )
 
     def test_create_data_source(self) -> None:
@@ -62,21 +62,21 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         """Test get data source based on id"""
 
         data_source_doc = dsmgmt.get_data_source(
-            self.database, self.data_source_doc[c.ID]
+            self.database, self.data_source_doc[db_c.ID]
         )
 
         self.assertTrue(data_source_doc is not None)
         self.assertEqual(
-            data_source_doc[c.CDP_DATA_SOURCE_FIELD_NAME],
-            self.data_source_doc[c.CDP_DATA_SOURCE_FIELD_NAME],
+            data_source_doc[db_c.CDP_DATA_SOURCE_FIELD_NAME],
+            self.data_source_doc[db_c.CDP_DATA_SOURCE_FIELD_NAME],
         )
         data_source_doc = dsmgmt.get_data_source(
-            self.database, data_source_type=self.data_source_doc[c.TYPE]
+            self.database, data_source_type=self.data_source_doc[db_c.TYPE]
         )
         self.assertIsNotNone(data_source_doc)
         self.assertEqual(
-            data_source_doc[c.CDP_DATA_SOURCE_FIELD_NAME],
-            self.data_source_doc[c.CDP_DATA_SOURCE_FIELD_NAME],
+            data_source_doc[db_c.CDP_DATA_SOURCE_FIELD_NAME],
+            self.data_source_doc[db_c.CDP_DATA_SOURCE_FIELD_NAME],
         )
 
     def test_delete_data_source(self) -> None:
@@ -87,16 +87,16 @@ class TestCdpDataSourceManagement(unittest.TestCase):
             self.database, "Facebook", "Web Events"
         )
 
-        self.assertTrue(c.ID in data_source_doc)
+        self.assertTrue(db_c.ID in data_source_doc)
 
         # remove the data source
         success_flag = dsmgmt.delete_data_source(
-            self.database, data_source_doc[c.ID]
+            self.database, data_source_doc[db_c.ID]
         )
         self.assertTrue(success_flag)
 
         data_source_doc = dsmgmt.get_data_source(
-            self.database, data_source_doc[c.ID]
+            self.database, data_source_doc[db_c.ID]
         )
         self.assertIsNone(data_source_doc)
 
@@ -117,21 +117,21 @@ class TestCdpDataSourceManagement(unittest.TestCase):
             self.database, data_source_name, description
         )
         self.assertTrue(data_source)
-        self.assertFalse(data_source[c.ADDED])
-        self.assertFalse(data_source[c.ENABLED])
+        self.assertFalse(data_source[db_c.ADDED])
+        self.assertFalse(data_source[db_c.ENABLED])
 
         # update data sources
         update_body = {"added": True, "enabled": True}
         self.assertTrue(
             dsmgmt.update_data_sources(
-                self.database, [data_source[c.ID]], update_body
+                self.database, [data_source[db_c.ID]], update_body
             )
         )
 
         # test values
-        data_source = dsmgmt.get_data_source(self.database, data_source[c.ID])
-        self.assertTrue(data_source[c.ADDED])
-        self.assertTrue(data_source[c.ENABLED])
+        data_source = dsmgmt.get_data_source(self.database, data_source[db_c.ID])
+        self.assertTrue(data_source[db_c.ADDED])
+        self.assertTrue(data_source[db_c.ENABLED])
 
     @given(description=st.text(), data_source_name=st.text())
     def test_update_data_sources(
@@ -152,9 +152,9 @@ class TestCdpDataSourceManagement(unittest.TestCase):
                 self.database, f"{data_source_name}{dsx}", description
             )
             self.assertTrue(data_source)
-            self.assertFalse(data_source[c.ADDED])
-            self.assertFalse(data_source[c.ENABLED])
-            data_source_ids.append(data_source[c.ID])
+            self.assertFalse(data_source[db_c.ADDED])
+            self.assertFalse(data_source[db_c.ENABLED])
+            data_source_ids.append(data_source[db_c.ID])
 
         # update data sources
         update_body = {"added": True, "enabled": True}
@@ -167,8 +167,8 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         # test values
         for data_source_id in data_source_ids:
             data_source = dsmgmt.get_data_source(self.database, data_source_id)
-            self.assertTrue(data_source[c.ADDED])
-            self.assertTrue(data_source[c.ENABLED])
+            self.assertTrue(data_source[db_c.ADDED])
+            self.assertTrue(data_source[db_c.ENABLED])
 
     @given(st.lists(st.one_of(st.text(), st.floats(), st.none())))
     def test_update_data_source_bad_id(self, text: list) -> None:
@@ -181,7 +181,7 @@ class TestCdpDataSourceManagement(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             dsmgmt.update_data_sources(
-                self.database, [text], {c.ENABLED: True}
+                self.database, [text], {db_c.ENABLED: True}
             )
 
     @given(
@@ -205,18 +205,18 @@ class TestCdpDataSourceManagement(unittest.TestCase):
             self.database, "HypoDictTest", "Web Events"
         )
         self.assertTrue(data_source)
-        self.assertFalse(data_source[c.ADDED])
-        self.assertFalse(data_source[c.ENABLED])
+        self.assertFalse(data_source[db_c.ADDED])
+        self.assertFalse(data_source[db_c.ENABLED])
 
         dsmgmt.update_data_sources(
-            self.database, [data_source[c.ID]], update_body
+            self.database, [data_source[db_c.ID]], update_body
         )
 
     def test_update_data_source_empty_list(self) -> None:
         """Test update data sources with an empty list."""
 
         with self.assertRaises(AttributeError):
-            dsmgmt.update_data_sources(self.database, [], {c.ENABLED: True})
+            dsmgmt.update_data_sources(self.database, [], {db_c.ENABLED: True})
 
     def test_update_data_source_empty_update_dict(self) -> None:
         """Test update data sources with an empty update dict."""
@@ -230,14 +230,14 @@ class TestCdpDataSourceManagement(unittest.TestCase):
 
         data_sources = [
             {
-                c.NAME: "Data source 1",
-                c.TYPE: "dataSource1",
-                c.STATUS: "Active",
+                db_c.NAME: "Data source 1",
+                db_c.TYPE: "dataSource1",
+                db_c.STATUS: "Active",
             },
             {
-                c.NAME: "Data source 2",
-                c.TYPE: "dataSource2",
-                c.STATUS: "Pending",
+                db_c.NAME: "Data source 2",
+                db_c.TYPE: "dataSource2",
+                db_c.STATUS: "Pending",
             },
         ]
 
@@ -249,25 +249,25 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         self.assertCountEqual(created_data_sources, data_sources)
 
         for data_source in created_data_sources:
-            self.assertIn(c.NAME, data_source)
-            self.assertIn(c.TYPE, data_source)
-            self.assertIn(c.STATUS, data_source)
-            self.assertIn(c.ADDED, data_source)
-            self.assertTrue(c.ADDED)
+            self.assertIn(db_c.NAME, data_source)
+            self.assertIn(db_c.TYPE, data_source)
+            self.assertIn(db_c.STATUS, data_source)
+            self.assertIn(db_c.ADDED, data_source)
+            self.assertTrue(db_c.ADDED)
 
     def test_bulk_delete_data_sources(self) -> None:
         """Test bulk delete data sources"""
         # create data source first
         data_sources = [
             {
-                c.NAME: "Data source 1",
-                c.TYPE: "dataSource1",
-                c.STATUS: "Active",
+                db_c.NAME: "Data source 1",
+                db_c.TYPE: "dataSource1",
+                db_c.STATUS: "Active",
             },
             {
-                c.NAME: "Data source 2",
-                c.TYPE: "dataSource2",
-                c.STATUS: "Pending",
+                db_c.NAME: "Data source 2",
+                db_c.TYPE: "dataSource2",
+                db_c.STATUS: "Pending",
             },
         ]
 
@@ -278,6 +278,6 @@ class TestCdpDataSourceManagement(unittest.TestCase):
 
         self.assertTrue(
             dsmgmt.bulk_delete_data_sources(
-                self.database, [x[c.TYPE] for x in created_data_sources]
+                self.database, [x[db_c.TYPE] for x in created_data_sources]
             )
         )

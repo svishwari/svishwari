@@ -7,7 +7,7 @@ from bson import ObjectId
 
 import huxunifylib.database.engagement_management as em
 import huxunifylib.database.engagement_audience_management as eam
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 
 
@@ -20,7 +20,7 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
             "localhost", 27017, None, None
         ).connect()
 
-        self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
+        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
     def test_set_destination_cron_expression(self):
         """Test setting the destination cron expression.
@@ -34,7 +34,7 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         audience_id = ObjectId()
         destination_id = ObjectId()
         engagement_id = (
-            self.database[c.DATA_MANAGEMENT_DATABASE][c.ENGAGEMENTS_COLLECTION]
+            self.database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
             .insert_one(
                 {
                     "name": "arkells",
@@ -65,8 +65,8 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
 
         # test to ensure the field is not set
         self.assertNotIn(
-            c.ENGAGEMENT_DELIVERY_SCHEDULE,
-            engagement[c.AUDIENCES][0][c.DESTINATIONS][0],
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE,
+            engagement[db_c.AUDIENCES][0][db_c.DESTINATIONS][0],
         )
 
         # set the cron expression
@@ -85,13 +85,13 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
 
         # test to ensure it was set
         self.assertIn(
-            c.ENGAGEMENT_DELIVERY_SCHEDULE,
-            engagement[c.AUDIENCES][0][c.DESTINATIONS][0],
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE,
+            engagement[db_c.AUDIENCES][0][db_c.DESTINATIONS][0],
         )
         self.assertEqual(
             cron_expression,
-            engagement[c.AUDIENCES][0][c.DESTINATIONS][0][
-                c.ENGAGEMENT_DELIVERY_SCHEDULE
+            engagement[db_c.AUDIENCES][0][db_c.DESTINATIONS][0][
+                db_c.ENGAGEMENT_DELIVERY_SCHEDULE
             ],
         )
 
@@ -107,7 +107,7 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         audience_id = ObjectId()
         destination_id = ObjectId()
         engagement_id = (
-            self.database[c.DATA_MANAGEMENT_DATABASE][c.ENGAGEMENTS_COLLECTION]
+            self.database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
             .insert_one(
                 {
                     "name": "arkells 2",
@@ -150,8 +150,8 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         # test to ensure it was set
         self.assertEqual(
             cron_expression,
-            engagement[c.AUDIENCES][0][c.DESTINATIONS][0][
-                c.ENGAGEMENT_DELIVERY_SCHEDULE
+            engagement[db_c.AUDIENCES][0][db_c.DESTINATIONS][0][
+                db_c.ENGAGEMENT_DELIVERY_SCHEDULE
             ],
         )
 
@@ -171,6 +171,6 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
 
         # test to ensure it was removed
         self.assertNotIn(
-            c.ENGAGEMENT_DELIVERY_SCHEDULE,
-            engagement[c.AUDIENCES][0][c.DESTINATIONS][0],
+            db_c.ENGAGEMENT_DELIVERY_SCHEDULE,
+            engagement[db_c.AUDIENCES][0][db_c.DESTINATIONS][0],
         )

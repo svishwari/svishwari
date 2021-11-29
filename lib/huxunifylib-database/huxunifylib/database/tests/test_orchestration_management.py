@@ -8,7 +8,7 @@ from bson import ObjectId
 import huxunifylib.database.orchestration_management as am
 import huxunifylib.database.delivery_platform_management as dpm
 from huxunifylib.database.user_management import set_user
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.db_exceptions as de
 
@@ -22,42 +22,42 @@ class TestAudienceManagement(unittest.TestCase):
         self.database = DatabaseClient(
             "localhost", 27017, None, None
         ).connect()
-        self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
+        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
         # write a user to the database
         self.user_name = "joey galloway"
         self.audience_filters = [
             {
-                "section_aggregator": c.AUDIENCE_FILTER_AGGREGATOR_ALL,
+                "section_aggregator": db_c.AUDIENCE_FILTER_AGGREGATOR_ALL,
                 "section_filters": [
                     {
-                        "field": c.S_TYPE_AGE,
-                        "type": c.AUDIENCE_FILTER_MAX,
+                        "field": db_c.S_TYPE_AGE,
+                        "type": db_c.AUDIENCE_FILTER_MAX,
                         "value": 60,
                     },
                     {
-                        "field": c.S_TYPE_COUNTRY_CODE,
-                        "type": c.AUDIENCE_FILTER_INCLUDE,
+                        "field": db_c.S_TYPE_COUNTRY_CODE,
+                        "type": db_c.AUDIENCE_FILTER_INCLUDE,
                         "value": "UK",
                     },
                     {
-                        "field": c.S_TYPE_CITY,
-                        "type": c.AUDIENCE_FILTER_EXCLUDE,
+                        "field": db_c.S_TYPE_CITY,
+                        "type": db_c.AUDIENCE_FILTER_EXCLUDE,
                         "value": ["London"],
                     },
                 ],
             },
             {
-                c.AUDIENCE_FILTERS_SECTION_AGGREGATOR: c.AUDIENCE_FILTER_AGGREGATOR_ANY,
-                c.AUDIENCE_FILTERS_SECTION: [
+                db_c.AUDIENCE_FILTERS_SECTION_AGGREGATOR: db_c.AUDIENCE_FILTER_AGGREGATOR_ANY,
+                db_c.AUDIENCE_FILTERS_SECTION: [
                     {
-                        "field": c.S_TYPE_AGE,
-                        "type": c.AUDIENCE_FILTER_MAX,
+                        "field": db_c.S_TYPE_AGE,
+                        "type": db_c.AUDIENCE_FILTER_MAX,
                         "value": 50,
                     },
                     {
-                        "field": c.S_TYPE_COUNTRY_CODE,
-                        "type": c.AUDIENCE_FILTER_INCLUDE,
+                        "field": db_c.S_TYPE_COUNTRY_CODE,
+                        "type": db_c.AUDIENCE_FILTER_INCLUDE,
                         "value": "US",
                     },
                 ],
@@ -67,12 +67,12 @@ class TestAudienceManagement(unittest.TestCase):
         self.audience_doc = None
 
         self.sample_user = {
-            c.OKTA_ID: "00ub0oNGTSWTBKOLGLNR",
-            c.S_TYPE_EMAIL: "user1@deloitte.com",
-            c.USER_ORGANIZATION: "deloitte",
-            c.USER_DISPLAY_NAME: "User1",
-            c.USER_ROLE: c.USER_ROLE_ADMIN,
-            c.USER_PROFILE_PHOTO: "https://s3/unififed/3.png",
+            db_c.OKTA_ID: "00ub0oNGTSWTBKOLGLNR",
+            db_c.S_TYPE_EMAIL: "user1@deloitte.com",
+            db_c.USER_ORGANIZATION: "deloitte",
+            db_c.USER_DISPLAY_NAME: "User1",
+            db_c.USER_ROLE: db_c.USER_ROLE_ADMIN,
+            db_c.USER_PROFILE_PHOTO: "https://s3/unififed/3.png",
         }
 
         set_user(self.database, **self.sample_user)
@@ -105,12 +105,12 @@ class TestAudienceManagement(unittest.TestCase):
         """Audience is set."""
 
         audiences = self._setup_audience()
-        audience_doc = am.get_audience(self.database, audiences[0][c.ID])
+        audience_doc = am.get_audience(self.database, audiences[0][db_c.ID])
 
         self.assertIsNotNone(audience_doc)
-        self.assertIn(c.ID, audience_doc)
-        self.assertIn(c.SIZE, audience_doc)
-        self.assertEqual(audience_doc[c.SIZE], 1450)
+        self.assertIn(db_c.ID, audience_doc)
+        self.assertIn(db_c.SIZE, audience_doc)
+        self.assertEqual(audience_doc[db_c.SIZE], 1450)
 
     def test_get_audience_filter_variant(self):
         """Test get audiences. The filter variant of the function"""
@@ -118,10 +118,10 @@ class TestAudienceManagement(unittest.TestCase):
         audiences = self._setup_audience()
 
         audience = am.get_audience_by_filter(
-            self.database, filter_dict={c.ID: audiences[1][c.ID]}, limit=1
+            self.database, filter_dict={db_c.ID: audiences[1][db_c.ID]}, limit=1
         )
 
-        self.assertEqual("Audience2", audience[0][c.NAME])
+        self.assertEqual("Audience2", audience[0][db_c.NAME])
 
     def test_get_audience_filter_variant_order_by_name(self):
         """Test get audiences. The filter variant of the function.
@@ -133,8 +133,8 @@ class TestAudienceManagement(unittest.TestCase):
             self.database, sort_list=[("name", pymongo.DESCENDING)]
         )
 
-        self.assertEqual("Audience2", audience[0][c.NAME])
-        self.assertEqual("Audience1", audience[1][c.NAME])
+        self.assertEqual("Audience2", audience[0][db_c.NAME])
+        self.assertEqual("Audience1", audience[1][db_c.NAME])
 
     def test_get_audience_filter_variant_filter_for_name(self):
         """Test get audiences. The filter variant of the function.
@@ -146,47 +146,47 @@ class TestAudienceManagement(unittest.TestCase):
             self.database, {}, {}, [("name", pymongo.DESCENDING)]
         )
 
-        self.assertEqual("Audience2", audience[0][c.NAME])
+        self.assertEqual("Audience2", audience[0][db_c.NAME])
 
     def test_get_audience(self):
         """Test get audience."""
 
         set_audience = self._setup_audience()
-        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
+        audience_doc = am.get_audience(self.database, set_audience[0][db_c.ID])
 
         self.assertIsNotNone(audience_doc)
-        self.assertTrue(c.ID in audience_doc)
-        self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS])
-        self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS][0])
+        self.assertTrue(db_c.ID in audience_doc)
+        self.assertIsNotNone(audience_doc[db_c.AUDIENCE_FILTERS])
+        self.assertIsNotNone(audience_doc[db_c.AUDIENCE_FILTERS][0])
         self.assertEqual(
-            audience_doc[c.AUDIENCE_FILTERS][0][
-                c.AUDIENCE_FILTERS_SECTION_AGGREGATOR
+            audience_doc[db_c.AUDIENCE_FILTERS][0][
+                db_c.AUDIENCE_FILTERS_SECTION_AGGREGATOR
             ],
-            c.AUDIENCE_FILTER_AGGREGATOR_ALL,
+            db_c.AUDIENCE_FILTER_AGGREGATOR_ALL,
         )
         self.assertEqual(
-            audience_doc[c.AUDIENCE_FILTERS][1][
-                c.AUDIENCE_FILTERS_SECTION_AGGREGATOR
+            audience_doc[db_c.AUDIENCE_FILTERS][1][
+                db_c.AUDIENCE_FILTERS_SECTION_AGGREGATOR
             ],
-            c.AUDIENCE_FILTER_AGGREGATOR_ANY,
+            db_c.AUDIENCE_FILTER_AGGREGATOR_ANY,
         )
 
     def test_get_audience_with_user(self):
         """Test get audience with user."""
 
         set_audience = self._setup_audience()
-        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
+        audience_doc = am.get_audience(self.database, set_audience[0][db_c.ID])
 
         self.assertIsNotNone(audience_doc)
-        self.assertIn(c.ID, audience_doc)
-        self.assertTrue(audience_doc[c.AUDIENCE_FILTERS])
-        self.assertEqual(audience_doc[c.CREATED_BY], self.user_name)
+        self.assertIn(db_c.ID, audience_doc)
+        self.assertTrue(audience_doc[db_c.AUDIENCE_FILTERS])
+        self.assertEqual(audience_doc[db_c.CREATED_BY], self.user_name)
 
     def test_update_audience_name(self):
         """Test update audience name."""
 
         set_audience = self._setup_audience()
-        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
+        audience_doc = am.get_audience(self.database, set_audience[0][db_c.ID])
 
         self.assertIsNotNone(audience_doc)
 
@@ -194,37 +194,37 @@ class TestAudienceManagement(unittest.TestCase):
         new_name = "New name"
         doc = am.update_audience(
             self.database,
-            audience_doc[c.ID],
+            audience_doc[db_c.ID],
             new_name,
         )
 
         self.assertTrue(doc is not None)
-        self.assertTrue(c.AUDIENCE_NAME in doc)
-        self.assertEqual(doc[c.AUDIENCE_NAME], new_name)
+        self.assertTrue(db_c.AUDIENCE_NAME in doc)
+        self.assertEqual(doc[db_c.AUDIENCE_NAME], new_name)
 
     def test_update_audience_name_unchanged(self):
         """Test update audience and check name remains unchanged"""
 
         set_audience = self._setup_audience()
-        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
+        audience_doc = am.get_audience(self.database, set_audience[0][db_c.ID])
 
         self.assertIsNotNone(audience_doc)
 
         doc = am.update_audience(
             self.database,
-            audience_doc[c.ID],
+            audience_doc[db_c.ID],
             destination_ids=self.destination_ids,
             user_name=self.user_name,
         )
         self.assertTrue(doc is not None)
-        self.assertTrue(c.AUDIENCE_NAME in doc)
-        self.assertEqual(doc[c.AUDIENCE_NAME], audience_doc[c.AUDIENCE_NAME])
+        self.assertTrue(db_c.AUDIENCE_NAME in doc)
+        self.assertEqual(doc[db_c.AUDIENCE_NAME], audience_doc[db_c.AUDIENCE_NAME])
 
     def test_duplicate_audience_name(self):
         """Test duplicate audience name."""
 
         set_audience = self._setup_audience()
-        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
+        audience_doc = am.get_audience(self.database, set_audience[0][db_c.ID])
 
         self.assertIsNotNone(audience_doc)
 
@@ -239,27 +239,27 @@ class TestAudienceManagement(unittest.TestCase):
         """Test update audience filters."""
 
         set_audience = self._setup_audience()
-        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
+        audience_doc = am.get_audience(self.database, set_audience[0][db_c.ID])
 
         self.assertIsNotNone(audience_doc)
-        self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS])
-        self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS][0])
+        self.assertIsNotNone(audience_doc[db_c.AUDIENCE_FILTERS])
+        self.assertIsNotNone(audience_doc[db_c.AUDIENCE_FILTERS][0])
         self.assertEqual(
-            audience_doc[c.AUDIENCE_FILTERS][0][
-                c.AUDIENCE_FILTERS_SECTION_AGGREGATOR
+            audience_doc[db_c.AUDIENCE_FILTERS][0][
+                db_c.AUDIENCE_FILTERS_SECTION_AGGREGATOR
             ],
-            c.AUDIENCE_FILTER_AGGREGATOR_ALL,
+            db_c.AUDIENCE_FILTER_AGGREGATOR_ALL,
         )
-        self.assertEqual(len(audience_doc[c.AUDIENCE_FILTERS]), 2)
+        self.assertEqual(len(audience_doc[db_c.AUDIENCE_FILTERS]), 2)
 
         # Update audience filters
         new_filters = [
             {
-                c.AUDIENCE_FILTERS_SECTION_AGGREGATOR: c.AUDIENCE_FILTER_AGGREGATOR_ANY,
-                c.AUDIENCE_FILTERS_SECTION: [
+                db_c.AUDIENCE_FILTERS_SECTION_AGGREGATOR: db_c.AUDIENCE_FILTER_AGGREGATOR_ANY,
+                db_c.AUDIENCE_FILTERS_SECTION: [
                     {
-                        "field": c.S_TYPE_AGE,
-                        "type": c.AUDIENCE_FILTER_MAX,
+                        "field": db_c.S_TYPE_AGE,
+                        "type": db_c.AUDIENCE_FILTER_MAX,
                         "value": 60,
                     },
                 ],
@@ -267,20 +267,20 @@ class TestAudienceManagement(unittest.TestCase):
         ]
         doc = am.update_audience(
             self.database,
-            audience_doc[c.ID],
-            audience_doc[c.AUDIENCE_NAME],
+            audience_doc[db_c.ID],
+            audience_doc[db_c.AUDIENCE_NAME],
             new_filters,
             user_name=self.user_name,
         )
 
         self.assertTrue(doc is not None)
-        self.assertTrue(c.AUDIENCE_FILTERS in doc)
-        self.assertIsNotNone(doc[c.AUDIENCE_FILTERS][0])
+        self.assertTrue(db_c.AUDIENCE_FILTERS in doc)
+        self.assertIsNotNone(doc[db_c.AUDIENCE_FILTERS][0])
         self.assertEqual(
-            doc[c.AUDIENCE_FILTERS][0][c.AUDIENCE_FILTERS_SECTION_AGGREGATOR],
-            c.AUDIENCE_FILTER_AGGREGATOR_ANY,
+            doc[db_c.AUDIENCE_FILTERS][0][db_c.AUDIENCE_FILTERS_SECTION_AGGREGATOR],
+            db_c.AUDIENCE_FILTER_AGGREGATOR_ANY,
         )
-        self.assertEqual(len(doc[c.AUDIENCE_FILTERS]), 1)
+        self.assertEqual(len(doc[db_c.AUDIENCE_FILTERS]), 1)
 
     def test_add_audience_with_destination(self):
         """Test add audience with destinations."""
@@ -292,13 +292,13 @@ class TestAudienceManagement(unittest.TestCase):
             self.destination_ids,
             self.user_name,
         )
-        doc = am.get_audience(self.database, set_audience[c.ID])
+        doc = am.get_audience(self.database, set_audience[db_c.ID])
 
         self.assertTrue(doc is not None)
-        self.assertTrue(c.AUDIENCE_FILTERS in doc)
-        self.assertTrue(c.DESTINATIONS in doc)
-        self.assertEqual(doc[c.DESTINATIONS][0], "destination_id1")
-        self.assertEqual(doc[c.DESTINATIONS][1], "destination_id2")
+        self.assertTrue(db_c.AUDIENCE_FILTERS in doc)
+        self.assertTrue(db_c.DESTINATIONS in doc)
+        self.assertEqual(doc[db_c.DESTINATIONS][0], "destination_id1")
+        self.assertEqual(doc[db_c.DESTINATIONS][1], "destination_id2")
 
     def test_update_audience_destination(self):
         """Test update audience destinations."""
@@ -310,28 +310,28 @@ class TestAudienceManagement(unittest.TestCase):
             self.destination_ids,
             self.user_name,
         )
-        doc = am.get_audience(self.database, set_audience[c.ID])
+        doc = am.get_audience(self.database, set_audience[db_c.ID])
 
         self.assertTrue(doc is not None)
-        self.assertTrue(c.AUDIENCE_FILTERS in doc)
-        self.assertTrue(c.DESTINATIONS in doc)
-        self.assertEqual(doc[c.DESTINATIONS][0], "destination_id1")
-        self.assertEqual(doc[c.DESTINATIONS][1], "destination_id2")
+        self.assertTrue(db_c.AUDIENCE_FILTERS in doc)
+        self.assertTrue(db_c.DESTINATIONS in doc)
+        self.assertEqual(doc[db_c.DESTINATIONS][0], "destination_id1")
+        self.assertEqual(doc[db_c.DESTINATIONS][1], "destination_id2")
 
         new_destination_ids = ["destination_id1", "destination_id3"]
         am.update_audience(
             self.database,
-            set_audience[c.ID],
+            set_audience[db_c.ID],
             "My Audience",
             self.audience_filters,
             new_destination_ids,
         )
-        updated_doc = am.get_audience(self.database, set_audience[c.ID])
+        updated_doc = am.get_audience(self.database, set_audience[db_c.ID])
 
         self.assertTrue(updated_doc is not None)
-        self.assertTrue(c.DESTINATIONS in updated_doc)
-        self.assertEqual(updated_doc[c.DESTINATIONS][0], "destination_id1")
-        self.assertEqual(updated_doc[c.DESTINATIONS][1], "destination_id3")
+        self.assertTrue(db_c.DESTINATIONS in updated_doc)
+        self.assertEqual(updated_doc[db_c.DESTINATIONS][0], "destination_id1")
+        self.assertEqual(updated_doc[db_c.DESTINATIONS][1], "destination_id3")
 
     def test_get_all_audiences(self):
         """Test get_all_audiences."""
@@ -360,8 +360,8 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertIsNotNone(audiences)
         self.assertEqual(len(audiences), 4)
-        self.assertEqual(audiences[0][c.AUDIENCE_NAME], "Audience1")
-        self.assertEqual(audiences[1][c.AUDIENCE_NAME], "Audience2")
+        self.assertEqual(audiences[0][db_c.AUDIENCE_NAME], "Audience1")
+        self.assertEqual(audiences[1][db_c.AUDIENCE_NAME], "Audience2")
 
     def test_get_all_audiences_filter(self):
         """Test get_all_audiences with filters."""
@@ -377,33 +377,33 @@ class TestAudienceManagement(unittest.TestCase):
             self.database,
             "User1 Audience",
             [],
-            user_name=self.sample_user.get(c.USER_DISPLAY_NAME),
+            user_name=self.sample_user.get(db_c.USER_DISPLAY_NAME),
             size=1500,
         )
 
         # Attribute filters.
-        filters = {c.ATTRIBUTE: [c.AGE, c.S_TYPE_CITY]}
+        filters = {db_c.ATTRIBUTE: [db_c.AGE, db_c.S_TYPE_CITY]}
         filtered_audiences = am.get_all_audiences(
             self.database, filters=filters
         )
         self.assertEqual(len(filtered_audiences), 1)
 
         # Worked by filter.
-        filters = {c.WORKED_BY: self.sample_user.get(c.USER_DISPLAY_NAME)}
+        filters = {db_c.WORKED_BY: self.sample_user.get(db_c.USER_DISPLAY_NAME)}
         filtered_audiences = am.get_all_audiences(
             self.database, filters=filters
         )
         self.assertEqual(
-            filtered_audiences[0][c.CREATED_BY],
-            self.sample_user.get(c.USER_DISPLAY_NAME),
+            filtered_audiences[0][db_c.CREATED_BY],
+            self.sample_user.get(db_c.USER_DISPLAY_NAME),
         )
 
         # List of audience_ids
-        filters = {c.ATTRIBUTE: [c.AGE, c.S_TYPE_CITY]}
+        filters = {db_c.ATTRIBUTE: [db_c.AGE, db_c.S_TYPE_CITY]}
         filtered_audiences = am.get_all_audiences(
-            self.database, filters=filters, audience_ids=[audience_1.get(c.ID)]
+            self.database, filters=filters, audience_ids=[audience_1.get(db_c.ID)]
         )
-        self.assertEqual(filtered_audiences[0][c.ID], audience_1.get(c.ID))
+        self.assertEqual(filtered_audiences[0][db_c.ID], audience_1.get(db_c.ID))
 
     def test_get_all_audiences_with_users(self):
         """Test get_all_audiences with users."""
@@ -432,7 +432,7 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertIsNotNone(audiences)
         self.assertTrue(
-            all(x[c.CREATED_BY] == self.user_name for x in audiences)
+            all(x[db_c.CREATED_BY] == self.user_name for x in audiences)
         )
 
     def test_get_all_audiences_with_deliveries(self):
@@ -441,8 +441,8 @@ class TestAudienceManagement(unittest.TestCase):
         # Set delivery platform
         delivery_platform_doc = dpm.set_delivery_platform(
             self.database,
-            c.DELIVERY_PLATFORM_FACEBOOK,
-            c.DELIVERY_PLATFORM_FACEBOOK.lower(),
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.DELIVERY_PLATFORM_FACEBOOK.lower(),
             {
                 "facebook_access_token": "path1",
                 "facebook_app_secret": "path2",
@@ -453,7 +453,7 @@ class TestAudienceManagement(unittest.TestCase):
 
         # set connection status
         dpm.set_connection_status(
-            self.database, delivery_platform_doc[c.ID], c.STATUS_SUCCEEDED
+            self.database, delivery_platform_doc[db_c.ID], db_c.STATUS_SUCCEEDED
         )
 
         audiences = []
@@ -468,8 +468,8 @@ class TestAudienceManagement(unittest.TestCase):
             # create delivery job
             dpm.set_delivery_job(
                 self.database,
-                audience_doc[c.ID],
-                delivery_platform_doc[c.ID],
+                audience_doc[db_c.ID],
+                delivery_platform_doc[db_c.ID],
                 [],
             )
 
@@ -483,25 +483,25 @@ class TestAudienceManagement(unittest.TestCase):
 
         for audience in audiences:
             # test each audience
-            self.assertIn(c.DELIVERIES, audience)
-            self.assertIn(c.AUDIENCE_LAST_DELIVERED, audience)
-            self.assertIn(c.ID, audience)
+            self.assertIn(db_c.DELIVERIES, audience)
+            self.assertIn(db_c.AUDIENCE_LAST_DELIVERED, audience)
+            self.assertIn(db_c.ID, audience)
 
             # test there are deliveries
-            self.assertTrue(audience[c.DELIVERIES])
+            self.assertTrue(audience[db_c.DELIVERIES])
 
-            for delivery in audience[c.DELIVERIES]:
+            for delivery in audience[db_c.DELIVERIES]:
                 self.assertEqual(
-                    delivery[c.DELIVERY_PLATFORM_TYPE],
-                    c.DELIVERY_PLATFORM_FACEBOOK,
+                    delivery[db_c.DELIVERY_PLATFORM_TYPE],
+                    db_c.DELIVERY_PLATFORM_FACEBOOK,
                 )
                 self.assertEqual(
-                    delivery[c.METRICS_DELIVERY_PLATFORM_NAME],
-                    delivery_platform_doc[c.DELIVERY_PLATFORM_TYPE],
+                    delivery[db_c.METRICS_DELIVERY_PLATFORM_NAME],
+                    delivery_platform_doc[db_c.DELIVERY_PLATFORM_TYPE],
                 )
-                self.assertIn(c.UPDATE_TIME, delivery)
+                self.assertIn(db_c.UPDATE_TIME, delivery)
                 self.assertEqual(
-                    delivery[c.STATUS], c.AUDIENCE_STATUS_DELIVERING
+                    delivery[db_c.STATUS], db_c.AUDIENCE_STATUS_DELIVERING
                 )
 
     def test_get_all_audiences_with_deliveries_filters(self):
@@ -510,8 +510,8 @@ class TestAudienceManagement(unittest.TestCase):
         # Set delivery platform
         delivery_platform_doc = dpm.set_delivery_platform(
             self.database,
-            c.DELIVERY_PLATFORM_FACEBOOK,
-            c.DELIVERY_PLATFORM_FACEBOOK.lower(),
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.DELIVERY_PLATFORM_FACEBOOK.lower(),
             {
                 "facebook_access_token": "path1",
                 "facebook_app_secret": "path2",
@@ -522,7 +522,7 @@ class TestAudienceManagement(unittest.TestCase):
 
         # set connection status
         dpm.set_connection_status(
-            self.database, delivery_platform_doc[c.ID], c.STATUS_SUCCEEDED
+            self.database, delivery_platform_doc[db_c.ID], db_c.STATUS_SUCCEEDED
         )
 
         audiences = []
@@ -531,14 +531,14 @@ class TestAudienceManagement(unittest.TestCase):
                 self.database,
                 f"My Audience-{i}",
                 self.audience_filters,
-                user_name=self.sample_user.get(c.USER_DISPLAY_NAME),
+                user_name=self.sample_user.get(db_c.USER_DISPLAY_NAME),
                 size=i * 1000,
             )
             # create delivery job
             dpm.set_delivery_job(
                 self.database,
-                audience_doc[c.ID],
-                delivery_platform_doc[c.ID],
+                audience_doc[db_c.ID],
+                delivery_platform_doc[db_c.ID],
                 [],
             )
 
@@ -547,16 +547,16 @@ class TestAudienceManagement(unittest.TestCase):
 
         # Worked by filters.
         filters = {
-            c.WORKED_BY: self.sample_user.get(c.USER_DISPLAY_NAME),
+            db_c.WORKED_BY: self.sample_user.get(db_c.USER_DISPLAY_NAME),
         }
         audiences_filtered = am.get_all_audiences_and_deliveries(
             self.database, filters=filters
         )
-        self.assertEqual(audiences_filtered[0][c.ID], audiences[0][c.ID])
+        self.assertEqual(audiences_filtered[0][db_c.ID], audiences[0][db_c.ID])
 
         # Attribute filters.
         filters = {
-            c.ATTRIBUTE: [c.AGE, c.S_TYPE_CITY],
+            db_c.ATTRIBUTE: [db_c.AGE, db_c.S_TYPE_CITY],
         }
         audiences_filtered = am.get_all_audiences_and_deliveries(
             self.database, filters=filters
@@ -566,7 +566,7 @@ class TestAudienceManagement(unittest.TestCase):
         # List of audience IDs
         audiences_filtered = am.get_all_audiences_and_deliveries(
             self.database,
-            audience_ids=[audiences[0].get(c.ID), audiences[1].get(c.ID)],
+            audience_ids=[audiences[0].get(db_c.ID), audiences[1].get(db_c.ID)],
         )
         self.assertEqual(len(audiences_filtered), 2)
 
@@ -577,7 +577,7 @@ class TestAudienceManagement(unittest.TestCase):
         all_audiences = am.get_all_audiences(self.database)
 
         self.assertTrue(
-            am.delete_audience(self.database, ObjectId(all_audiences[0][c.ID]))
+            am.delete_audience(self.database, ObjectId(all_audiences[0][db_c.ID]))
         )
 
         audiences = am.get_all_audiences(self.database)
