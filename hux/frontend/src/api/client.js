@@ -319,7 +319,6 @@ client["notifications"].getNotifications = (data) => {
   let newURLFormat
   let URLString
   for (const property in data) {
-    console.log(`${property}: ${data[property]}`)
     let formURL = property + "=" + data[property]
     URLData.push(formURL)
   }
