@@ -171,6 +171,16 @@ const routes = [
     },
   },
   {
+    path: "/audiences/:id/insight2",
+    name: "AudienceInsight2",
+    component: () => import("@/views/Audiences/Dashboard/Insight2.vue"),
+    meta: {
+      layout: "app",
+      title: "Audience Insight",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/engagements",
     name: "Engagements",
     component: () => import("@/views/Engagements/Index"),
