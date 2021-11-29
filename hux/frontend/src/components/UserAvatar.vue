@@ -34,8 +34,6 @@
           class="black--text font-weight-bold d-flex flex-column"
         >
           <span>{{ firstName }} {{ lastName }}</span>
-          <!-- TODO replace this with actual user role -->
-          <span class="user-role mt-1">HUX Data Specialist</span>
         </v-list-item-title>
       </v-list-item>
       <v-list-item class="mb-1" data-e2e="change_password">
@@ -51,17 +49,6 @@
           </a>
         </v-list-item-title>
       </v-list-item>
-      <v-list-item class="mb-1" data-e2e="change_password">
-        <v-list-item-title class="text-body-1 black--text">
-          Change Password
-        </v-list-item-title>
-      </v-list-item>
-      <v-list-item class="mb-1" data-e2e="change_username">
-        <v-list-item-title class="text-body-1 black--text">
-          Change Username
-        </v-list-item-title>
-      </v-list-item>
-      <v-divider />
       <v-list-item data-e2e="logout" class="mt-2" @click="initiateLogout()">
         <v-list-item-title class="text-body-1 black--text">
           Logout
