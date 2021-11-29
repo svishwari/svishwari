@@ -21,8 +21,9 @@
     </page-header>
     <page-header class="top-bar" :header-height="71">
       <template #left>
-        <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
-        <v-icon medium color="black lighten-3" class="pl-6">mdi-magnify</v-icon>
+        <v-btn disabled icon color="black">
+          <icon type="search" :size="20" color="black" variant="lighten3" />
+        </v-btn>
       </template>
 
       <template #right>
@@ -84,6 +85,7 @@
                 :data-e2e="setEngagementSelector(item)"
                 has-favorite
                 :is-favorite="isUserFavorite(item, 'engagements')"
+                class="text-body-1"
                 @actionFavorite="handleActionFavorite(item, 'engagements')"
               >
                 <template #expand-icon>
@@ -292,6 +294,7 @@
                       :label-class="{
                         'no-expand': item.destinations.length == 0,
                       }"
+                      class="text-body-1"
                     >
                       <template #expand-icon>
                         <span
@@ -315,7 +318,7 @@
                       </template>
                     </menu-cell>
                   </div>
-                  <div v-if="header.value == 'status'" class="text-h5">
+                  <div v-if="header.value == 'status'">
                     <div>
                       <status
                         :status="item[header.value]"
@@ -460,7 +463,7 @@
                       :key="header.value"
                       :style="{ width: header.width }"
                     >
-                      <div v-if="header.value == 'status'" class="text-h5">
+                      <div v-if="header.value == 'status'">
                         <div>
                           <status
                             :status="item[header.value]"

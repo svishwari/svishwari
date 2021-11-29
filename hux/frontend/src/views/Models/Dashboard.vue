@@ -10,8 +10,8 @@
             <template #activator>
               <span data-e2e="model-dashboard-options">
                 <icon
-                  type="dots-vertical"
-                  :size="18"
+                  type="main_screen"
+                  :size="40"
                   class="cursor-pointer mr-7"
                   color="black-darken4"
                   @click.native="modalOptions = !modalOptions"

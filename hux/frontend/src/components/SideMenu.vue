@@ -9,11 +9,9 @@
     class="side-nav-bar"
   >
     <template #prepend>
-      <img
-        src="@/assets/images/logo.png"
-        alt="Hux"
-        width="55"
-        height="55"
+      <logo
+        type="logo"
+        :size="isMini ? 40 : 56"
         class="d-flex ma-6"
         data-e2e="click-outside"
       />
@@ -48,8 +46,8 @@
       >
         <v-list-item-icon
           v-if="item.icon"
-          class="mr-0"
-          :class="{ 'home-menu-icon': !isMini }"
+          class="ma-2"
+          :class="{ 'home-menu-icon': !isMini, 'ml-0': !isMini }"
         >
           <tooltip
             v-if="item.title"
@@ -119,7 +117,7 @@
           pb-2
         "
       >
-        Hux by Deloitte Digital Release 6.0
+        Hux by Deloitte Digital
       </div>
     </template>
   </v-navigation-drawer>

@@ -35,7 +35,7 @@
         class="pl-7 pt-1 pr-5"
       >
         <div v-for="data in notificationContent" :key="data.id" class="mt-5">
-          <div class="text-body-1 black--text font-weight-semi-bold">
+          <div class="text-body-1 black--text">
             {{ data.title }}
           </div>
           <div class="text-body-1 black--text text--lighten-4 mt-1">

@@ -31,6 +31,7 @@
       :type="inputType"
       :placeholder="placeholder"
       :background-color="backgroundColor"
+      color="var(--v-black-lighten4)"
       single-line
       outlined
       v-bind="$attrs"
@@ -155,7 +156,7 @@ export default {
     .v-text-field__slot {
       input {
         &::placeholder {
-          color: var(--v-black-darken1) !important;
+          color: var(--v-black-lighten4) !important;
         }
       }
     }

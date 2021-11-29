@@ -69,8 +69,8 @@ export default {
       let colorCodes = [colors.darkBlue, colors.chart2, colors.chart3]
       let ids = [
         { label: "Unique Hux IDs", xValue: 0 },
-        { label: "Anonymous IDs", xValue: 122 },
-        { label: "Known IDs", xValue: 245 },
+        { label: "Anonymous IDs", xValue: 162 },
+        { label: "Known IDs", xValue: 325 },
       ]
       let color = d3Scale
         .scaleOrdinal()
@@ -118,7 +118,7 @@ export default {
         .call(d3Axis.axisLeft(yScale).tickSize(10).ticks(4).tickFormat(""))
         .attr("stroke-width", "1")
         .attr("stroke-opacity", "1")
-        .style("font-size", "12px")
+        .style("font-size", "14px")
       svg
         .append("g")
         .classed("xAxis", true)
@@ -131,7 +131,7 @@ export default {
             .tickPadding(15)
             .tickFormat(d3TimeFormat.timeFormat("%-m/%-d/%y"))
         )
-        .style("font-size", "12px")
+        .style("font-size", "14px")
       svg
         .append("g")
         .classed("yAxis", true)
@@ -146,7 +146,7 @@ export default {
         )
         .attr("stroke-width", "1")
         .attr("stroke-opacity", "1")
-        .style("font-size", "12px")
+        .style("font-size", "14px")
       d3Select.selectAll(".domain").style("stroke", "#E2EAEC")
       d3Select.selectAll(".tick line").style("stroke", "#E2EAEC")
       d3Select
@@ -294,9 +294,7 @@ export default {
         .attr("x", 22)
         .attr("y", 7)
         .attr("dy", ".55em")
-        .attr("class", "neroBlack--text")
-        .style("fill", "#4f4f4f")
-        .style("font-size", 12)
+        .attr("class", "text-body-1 black--text")
         .style("text-anchor", "start")
         .text(function (d) {
           return d.label

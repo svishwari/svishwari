@@ -47,18 +47,8 @@
             data-e2e="profile"
             height="32px"
           >
-            My Hux Profile
+            My hux profile
           </a>
-        </v-list-item-title>
-      </v-list-item>
-      <v-list-item class="mb-1" data-e2e="change_password">
-        <v-list-item-title class="text-body-1 black--text">
-          Change Password
-        </v-list-item-title>
-      </v-list-item>
-      <v-list-item class="mb-1" data-e2e="change_username">
-        <v-list-item-title class="text-body-1 black--text">
-          Change Username
         </v-list-item-title>
       </v-list-item>
       <v-divider />
