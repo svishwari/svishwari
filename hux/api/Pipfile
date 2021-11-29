@@ -36,6 +36,7 @@ prometheus-client = "*"
 prometheus-flask-exporter = "*"
 pyperclip = "*"
 jira = "*"
+flask-apscheduler = "*"
 
 [dev-packages]
 pytest = {version="*", index="pypi"}
