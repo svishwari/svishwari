@@ -797,6 +797,9 @@ CDP_DATA_SOURCE_CATEGORY_MAP = {
 }
 
 CDP_DATA_SOURCE_CATEGORIES = list(set(CDP_DATA_SOURCE_CATEGORY_MAP.values()))
+ACTION_ACTIVATED = "activated"
+ACTION_REQUESTED = "requested"
+ACTION_REMOVED = "removed"
 
 # Authentication API fields
 AUTHORIZATION = "Authorization"
