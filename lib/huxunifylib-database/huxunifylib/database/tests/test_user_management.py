@@ -151,7 +151,8 @@ class TestUserManagement(unittest.TestCase):
 
         self.assertIsNotNone(user_doc)
         self.assertEqual(
-            user_doc[db_c.USER_DISPLAY_NAME], self.user_doc[db_c.USER_DISPLAY_NAME]
+            user_doc[db_c.USER_DISPLAY_NAME],
+            self.user_doc[db_c.USER_DISPLAY_NAME],
         )
 
     def test_get_users(self) -> None:
@@ -204,7 +205,9 @@ class TestUserManagement(unittest.TestCase):
         update_doc = {db_c.OKTA_ID: "jd63bsfd884bdsff7348"}
 
         with self.assertRaises(DuplicateFieldType):
-            um.update_user(self.database, self.user_doc[db_c.OKTA_ID], update_doc)
+            um.update_user(
+                self.database, self.user_doc[db_c.OKTA_ID], update_doc
+            )
 
     def test_delete_user(self) -> None:
         """Test delete_user routine."""
@@ -294,7 +297,10 @@ class TestUserManagement(unittest.TestCase):
             # add favorite component x2
             for _ in range(2):
                 um.manage_user_favorites(
-                    self.database, user_doc[db_c.OKTA_ID], component, component_id
+                    self.database,
+                    user_doc[db_c.OKTA_ID],
+                    component,
+                    component_id,
                 )
 
             # get user doc
@@ -310,7 +316,8 @@ class TestUserManagement(unittest.TestCase):
 
             # test to ensure the ID we added exists, only once!
             self.assertEqual(
-                update_doc[db_c.USER_FAVORITES][component].count(component_id), 1
+                update_doc[db_c.USER_FAVORITES][component].count(component_id),
+                1,
             )
 
     def test_set_dashboard_config(self) -> None:
@@ -329,7 +336,9 @@ class TestUserManagement(unittest.TestCase):
         )
 
         # test pinned value key exists
-        self.assertIn(pinned_key, updated_doc[db_c.USER_DASHBOARD_CONFIGURATION])
+        self.assertIn(
+            pinned_key, updated_doc[db_c.USER_DASHBOARD_CONFIGURATION]
+        )
 
         # test pinned value is set correctly
         self.assertEqual(

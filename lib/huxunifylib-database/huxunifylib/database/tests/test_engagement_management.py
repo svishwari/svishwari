@@ -669,7 +669,9 @@ class TestEngagementManagement(unittest.TestCase):
 
             # validate the delivery job was set correctly
             self.assertEqual(
-                doc[db_c.AUDIENCES][0][db_c.DESTINATIONS][0][db_c.DELIVERY_JOB_ID],
+                doc[db_c.AUDIENCES][0][db_c.DESTINATIONS][0][
+                    db_c.DELIVERY_JOB_ID
+                ],
                 audience_delivery_job[db_c.ID],
             )
 
@@ -832,7 +834,8 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIn(db_c.UPDATE_TIME, engagement)
         self.assertIn(db_c.AUDIENCES, engagement)
         self.assertEqual(
-            engagement[db_c.SIZE], audience[db_c.SIZE] + self.audience[db_c.SIZE]
+            engagement[db_c.SIZE],
+            audience[db_c.SIZE] + self.audience[db_c.SIZE],
         )
 
         for audience in engagement[db_c.AUDIENCES]:
@@ -930,7 +933,8 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIn(db_c.UPDATE_TIME, engagement)
         self.assertIn(db_c.AUDIENCES, engagement)
         self.assertEqual(
-            engagement[db_c.SIZE], audience[db_c.SIZE] + self.audience[db_c.SIZE]
+            engagement[db_c.SIZE],
+            audience[db_c.SIZE] + self.audience[db_c.SIZE],
         )
 
         for audience in engagement[db_c.AUDIENCES]:
@@ -1002,7 +1006,9 @@ class TestEngagementManagement(unittest.TestCase):
 
         audience_one_dict = {
             db_c.OBJECT_ID: audience_one[db_c.ID],
-            db_c.DESTINATIONS: [{db_c.OBJECT_ID: self.destinations[0][db_c.ID]}],
+            db_c.DESTINATIONS: [
+                {db_c.OBJECT_ID: self.destinations[0][db_c.ID]}
+            ],
         }
         audience_two_dict = {
             db_c.OBJECT_ID: audience_two[db_c.ID],
@@ -1184,7 +1190,9 @@ class TestEngagementManagement(unittest.TestCase):
         for destination in audience_destination[db_c.DESTINATIONS]:
             # find the matching destination and ensure it is identical.
             matched_destinations = [
-                x for x in self.destinations if x[db_c.ID] == destination[db_c.ID]
+                x
+                for x in self.destinations
+                if x[db_c.ID] == destination[db_c.ID]
             ]
             self.assertTrue(matched_destinations)
             self.assertEqual(destination, matched_destinations[0])
@@ -1214,8 +1222,14 @@ class TestEngagementManagement(unittest.TestCase):
                 "ENG0",
                 "Engagement 0",
                 [
-                    {db_c.OBJECT_ID: audiences[0][db_c.ID], db_c.DESTINATIONS: []},
-                    {db_c.OBJECT_ID: audiences[1][db_c.ID], db_c.DESTINATIONS: []},
+                    {
+                        db_c.OBJECT_ID: audiences[0][db_c.ID],
+                        db_c.DESTINATIONS: [],
+                    },
+                    {
+                        db_c.OBJECT_ID: audiences[1][db_c.ID],
+                        db_c.DESTINATIONS: [],
+                    },
                 ],
                 self.user_name,
             )
@@ -1227,8 +1241,14 @@ class TestEngagementManagement(unittest.TestCase):
                 "ENG1",
                 "Engagement 1",
                 [
-                    {db_c.OBJECT_ID: audiences[2][db_c.ID], db_c.DESTINATIONS: []},
-                    {db_c.OBJECT_ID: audiences[3][db_c.ID], db_c.DESTINATIONS: []},
+                    {
+                        db_c.OBJECT_ID: audiences[2][db_c.ID],
+                        db_c.DESTINATIONS: [],
+                    },
+                    {
+                        db_c.OBJECT_ID: audiences[3][db_c.ID],
+                        db_c.DESTINATIONS: [],
+                    },
                 ],
                 self.user_name,
             )
@@ -1240,10 +1260,22 @@ class TestEngagementManagement(unittest.TestCase):
                 "ENG2",
                 "Engagement 2",
                 [
-                    {db_c.OBJECT_ID: audiences[0][db_c.ID], db_c.DESTINATIONS: []},
-                    {db_c.OBJECT_ID: audiences[1][db_c.ID], db_c.DESTINATIONS: []},
-                    {db_c.OBJECT_ID: audiences[2][db_c.ID], db_c.DESTINATIONS: []},
-                    {db_c.OBJECT_ID: audiences[3][db_c.ID], db_c.DESTINATIONS: []},
+                    {
+                        db_c.OBJECT_ID: audiences[0][db_c.ID],
+                        db_c.DESTINATIONS: [],
+                    },
+                    {
+                        db_c.OBJECT_ID: audiences[1][db_c.ID],
+                        db_c.DESTINATIONS: [],
+                    },
+                    {
+                        db_c.OBJECT_ID: audiences[2][db_c.ID],
+                        db_c.DESTINATIONS: [],
+                    },
+                    {
+                        db_c.OBJECT_ID: audiences[3][db_c.ID],
+                        db_c.DESTINATIONS: [],
+                    },
                 ],
                 self.user_name,
             )

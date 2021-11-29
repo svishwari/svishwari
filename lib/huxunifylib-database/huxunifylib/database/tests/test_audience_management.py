@@ -305,29 +305,41 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertTrue(insights is not None)
         self.assertTrue(db_c.AUDIENCE_ID in insights)
-        self.assertEqual(insights[db_c.AUDIENCE_ID], self.audience_doc[db_c.ID])
+        self.assertEqual(
+            insights[db_c.AUDIENCE_ID], self.audience_doc[db_c.ID]
+        )
         self.assertTrue(db_c.S_TYPE_CITY in insights)
         self.assertTrue(db_c.S_TYPE_COUNTRY_CODE in insights)
         self.assertTrue(db_c.S_TYPE_STATE_OR_PROVINCE in insights)
         self.assertTrue(db_c.S_TYPE_GENDER in insights)
         self.assertTrue(db_c.S_TYPE_AGE in insights)
         self.assertTrue(db_c.STATS_COVERAGE in insights[db_c.S_TYPE_CITY])
-        self.assertTrue(db_c.STATS_COVERAGE in insights[db_c.S_TYPE_COUNTRY_CODE])
+        self.assertTrue(
+            db_c.STATS_COVERAGE in insights[db_c.S_TYPE_COUNTRY_CODE]
+        )
         self.assertTrue(
             db_c.STATS_COVERAGE in insights[db_c.S_TYPE_STATE_OR_PROVINCE]
         )
         self.assertTrue(db_c.STATS_COVERAGE in insights[db_c.S_TYPE_GENDER])
         self.assertTrue(db_c.STATS_COVERAGE in insights[db_c.S_TYPE_AGE])
         self.assertTrue(db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_CITY])
-        self.assertTrue(db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_COUNTRY_CODE])
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_COUNTRY_CODE]
+        )
         self.assertTrue(
             db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_STATE_OR_PROVINCE]
         )
         self.assertTrue(db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_GENDER])
         self.assertTrue(db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_AGE])
-        self.assertTrue(db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_FIRST_NAME])
-        self.assertTrue(db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_LAST_NAME])
-        self.assertTrue(db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_EMAIL])
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_FIRST_NAME]
+        )
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_LAST_NAME]
+        )
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_EMAIL]
+        )
 
         self.assertEqual(insights[db_c.DATA_COUNT], 2)
         self.assertEqual(
@@ -382,7 +394,9 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertTrue(insights is not None)
         self.assertTrue(db_c.AUDIENCE_ID in insights)
-        self.assertEqual(insights[db_c.AUDIENCE_ID], self.audience_doc[db_c.ID])
+        self.assertEqual(
+            insights[db_c.AUDIENCE_ID], self.audience_doc[db_c.ID]
+        )
         self.assertTrue(db_c.S_TYPE_CITY in insights)
         self.assertTrue(db_c.S_TYPE_COUNTRY_CODE in insights)
         self.assertTrue(db_c.S_TYPE_STATE_OR_PROVINCE in insights)
@@ -391,14 +405,18 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue("custom_field" in insights)
         self.assertTrue("custom_field_extra" in insights)
         self.assertTrue(db_c.STATS_COVERAGE in insights[db_c.S_TYPE_CITY])
-        self.assertTrue(db_c.STATS_COVERAGE in insights[db_c.S_TYPE_COUNTRY_CODE])
+        self.assertTrue(
+            db_c.STATS_COVERAGE in insights[db_c.S_TYPE_COUNTRY_CODE]
+        )
         self.assertTrue(
             db_c.STATS_COVERAGE in insights[db_c.S_TYPE_STATE_OR_PROVINCE]
         )
         self.assertTrue(db_c.STATS_COVERAGE in insights[db_c.S_TYPE_GENDER])
         self.assertTrue(db_c.STATS_COVERAGE in insights[db_c.S_TYPE_AGE])
         self.assertTrue(db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_CITY])
-        self.assertTrue(db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_COUNTRY_CODE])
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_COUNTRY_CODE]
+        )
         self.assertTrue(
             db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_STATE_OR_PROVINCE]
         )
@@ -406,9 +424,15 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_AGE])
         self.assertTrue(db_c.STATS_BREAKDOWN in insights["custom_field"])
         self.assertTrue(db_c.STATS_BREAKDOWN in insights["custom_field_extra"])
-        self.assertTrue(db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_FIRST_NAME])
-        self.assertTrue(db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_LAST_NAME])
-        self.assertTrue(db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_EMAIL])
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_FIRST_NAME]
+        )
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_LAST_NAME]
+        )
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_EMAIL]
+        )
 
         self.assertEqual(insights[db_c.DATA_COUNT], 5)
         self.assertEqual(
@@ -650,4 +674,6 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertIsNotNone(doc)
         self.assertIn(db_c.AUDIENCE_STATUS, doc)
-        self.assertEqual(doc[db_c.AUDIENCE_STATUS], db_c.AUDIENCE_STATUS_DELIVERING)
+        self.assertEqual(
+            doc[db_c.AUDIENCE_STATUS], db_c.AUDIENCE_STATUS_DELIVERING
+        )

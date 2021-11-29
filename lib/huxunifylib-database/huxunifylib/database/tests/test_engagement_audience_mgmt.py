@@ -34,7 +34,9 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         audience_id = ObjectId()
         destination_id = ObjectId()
         engagement_id = (
-            self.database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
+            self.database[db_c.DATA_MANAGEMENT_DATABASE][
+                db_c.ENGAGEMENTS_COLLECTION
+            ]
             .insert_one(
                 {
                     "name": "arkells",
@@ -107,7 +109,9 @@ class TestEngagementAudienceMgmt(unittest.TestCase):
         audience_id = ObjectId()
         destination_id = ObjectId()
         engagement_id = (
-            self.database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
+            self.database[db_c.DATA_MANAGEMENT_DATABASE][
+                db_c.ENGAGEMENTS_COLLECTION
+            ]
             .insert_one(
                 {
                     "name": "arkells 2",

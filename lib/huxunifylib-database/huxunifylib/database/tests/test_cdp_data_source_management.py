@@ -38,7 +38,9 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         self.data_source_doc = dsmgmt.create_data_source(
             database=self.database,
             name=self.sample_data_source[db_c.CDP_DATA_SOURCE_FIELD_NAME],
-            category=self.sample_data_source[db_c.CDP_DATA_SOURCE_FIELD_CATEGORY],
+            category=self.sample_data_source[
+                db_c.CDP_DATA_SOURCE_FIELD_CATEGORY
+            ],
             source_type=self.sample_data_source[db_c.DATA_SOURCE_TYPE],
         )
 
@@ -129,7 +131,9 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         )
 
         # test values
-        data_source = dsmgmt.get_data_source(self.database, data_source[db_c.ID])
+        data_source = dsmgmt.get_data_source(
+            self.database, data_source[db_c.ID]
+        )
         self.assertTrue(data_source[db_c.ADDED])
         self.assertTrue(data_source[db_c.ENABLED])
 
