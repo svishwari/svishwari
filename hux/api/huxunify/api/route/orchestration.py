@@ -255,7 +255,7 @@ class AudienceView(SwaggerView):
         filter_dict = {}
         favorite_audiences = None
         favorite_lookalike_audiences = get_user_favorites(
-            database, user_name, api_c.LOOKALIKE
+            database, user[api_c.USER_NAME], api_c.LOOKALIKE
         )
 
         if request.args.get(api_c.FAVORITES) and validation.validate_bool(

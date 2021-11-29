@@ -1150,7 +1150,10 @@ class DestinationsRequestView(SwaggerView):
             )
 
             destination_request.update(
-                {"Requested By": user_name, "Environment": request.url_root}
+                {
+                    "Requested By": user[api_c.USER_NAME],
+                    "Environment": request.url_root,
+                }
             )
 
             # create JIRA ticket for the request.

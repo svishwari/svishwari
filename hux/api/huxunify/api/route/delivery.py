@@ -31,7 +31,8 @@ from huxunify.api.route.decorators import (
     secured,
     api_error_handler,
     validate_delivery_params,
-    validate_destination, requires_access_levels,
+    validate_destination,
+    requires_access_levels,
 )
 from huxunify.api.route.utils import get_db_client, get_config
 from huxunify.api.schema.orchestration import (
@@ -369,9 +370,7 @@ class EngagementDeliverView(SwaggerView):
     @api_error_handler()
     @validate_delivery_params
     @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
-    def post(
-        self, engagement_id: ObjectId, user: dict
-    ) -> Tuple[dict, int]:
+    def post(self, engagement_id: ObjectId, user: dict) -> Tuple[dict, int]:
         """Delivers all audiences for an engagement.
 
         ---

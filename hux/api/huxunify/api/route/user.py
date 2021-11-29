@@ -526,7 +526,7 @@ class CreateTicket(SwaggerView):
             summary=f"HUS: CONTACT-FORM: {issue_details[api_c.SUMMARY]}",
             description=(
                 f"{issue_details[api_c.DESCRIPTION]}\n\n"
-                f"Reported By: {user_name}\nEnvironment: {request.url_root}"
+                f"Reported By: {user[api_c.USER_NAME]}\nEnvironment: {request.url_root}"
             ),
         )
 
@@ -534,7 +534,7 @@ class CreateTicket(SwaggerView):
             database=get_db_client(),
             notification_type=db_constants.NOTIFICATION_TYPE_INFORMATIONAL,
             description=f"{user[api_c.USER_NAME]} created a new issue"
-                        f" {new_issue.get(api_c.KEY)} in JIRA.",
+            f" {new_issue.get(api_c.KEY)} in JIRA.",
             category=api_c.TICKET_TYPE_BUG,
             username=user[api_c.USER_NAME],
         )
