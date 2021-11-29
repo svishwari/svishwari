@@ -1231,7 +1231,7 @@ class DestinationDeleteView(SwaggerView):
         deleted_flag = delete_document(
             database,
             db_c.DELIVERY_PLATFORM_COLLECTION,
-            ObjectId(destination_id),
+            {db_c.ID: ObjectId(destination_id)},
             True,
             user_name,
         )
