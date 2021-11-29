@@ -15,7 +15,8 @@
       <hux-data-table
         :columns="tableColumns"
         :data-items="events"
-        class="notifications-table"
+        row-height="60px"
+        class="notifications-table small-table"
         sort-column="date"
         sort-desc
       >

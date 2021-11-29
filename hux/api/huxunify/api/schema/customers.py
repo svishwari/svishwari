@@ -275,7 +275,11 @@ class CustomerGeoVisualSchema(Schema):
     gender_women = Float(required=True, example=0.50)
     gender_men = Float(required=True, example=0.49)
     gender_other = Float(required=True, example=0.01)
-    ltv = Float(required=True, example=3848.50)
+    avg_spend = Float(required=True, example=3848.50, attribute=api_c.AVG_LTV)
+    min_spend = Float(required=True, example=3848.50, attribute=api_c.MIN_LTV)
+    max_spend = Float(required=True, example=3848.50, attribute=api_c.MAX_LTV)
+    min_age = Integer(required=True, example=18)
+    max_age = Integer(required=True, example=45)
 
 
 class GenderMetrics(Schema):
@@ -423,7 +427,7 @@ class CustomersInsightsCitiesSchema(Schema):
     size = Integer(
         attribute=api_c.CUSTOMER_COUNT, required=True, default=0, example=1234
     )
-    revenue = Float(
+    avg_spend = Float(
         attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.231
     )
 
@@ -434,7 +438,7 @@ class CustomersInsightsStatesSchema(Schema):
     country = Str(required=True, example="US")
     state = Str(attribute=api_c.NAME, required=True, example="New York")
     size = Integer(required=True, default=0, example=1234)
-    revenue = Float(
+    avg_spend = Float(
         attribute=api_c.LTV, required=True, default=0.0, example=123.2345
     )
 
@@ -444,6 +448,6 @@ class CustomersInsightsCountriesSchema(Schema):
 
     country = Str(attribute=api_c.NAME, required=True, example="US")
     size = Integer(required=True, default=0, example=1234)
-    revenue = Float(
+    avg_spend = Float(
         attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.2345
     )

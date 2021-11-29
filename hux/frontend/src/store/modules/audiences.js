@@ -106,6 +106,13 @@ const mutations = {
   REMOVE_AUDIENCE(state, id) {
     Vue.delete(state.audiences, id)
   },
+
+  SET_AUDIENCE_LOOKALIKE(state, data) {
+    if (!state.audiences[data.id].lookalike_audiences) {
+      state.audiences[data.id].lookalike_audiences = []
+    }
+    state.audiences[data.id].lookalike_audiences.push(data.lookalike)
+  },
 }
 
 const actions = {
@@ -273,6 +280,10 @@ const actions = {
     try {
       const response = await api.lookalike.create(payload)
       commit("SET_ONE", response.data)
+      commit("SET_AUDIENCE_LOOKALIKE", {
+        id: payload.audience_id,
+        lookalike: response.data,
+      })
       return response.data
     } catch (error) {
       handleError(error)

@@ -129,7 +129,7 @@
       >
         <div class="d-flex justify-space-between">
           <div class="mr-3">
-            <hux-icon type="bulb" :size="32" color="yellow" />
+            <icon type="Bulb" :size="32" color="yellow" />
           </div>
           <p class="text-body-1 ma-0">
             The destination you have selected is currently not available to
@@ -398,6 +398,7 @@ import TextField from "@/components/common/TextField"
 import SFMC from "./Configuration/SFMC.vue"
 
 import sortBy from "lodash/sortBy"
+import Icon from "../../components/common/Icon.vue"
 
 export default {
   name: "ConfigureDestination",
@@ -413,6 +414,7 @@ export default {
     SFMC,
     ConfirmModal,
     HuxIcon,
+    Icon,
   },
   data() {
     return {
