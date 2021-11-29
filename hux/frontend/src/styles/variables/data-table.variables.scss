@@ -35,3 +35,27 @@ $data-table-heading: map-get($headings, "body-2") !default;
     }
   }
 }
+
+.small-table {
+  ::v-deep .v-data-table__wrapper {
+    tbody {
+      tr {
+        td {
+          height: 40px !important;
+        }
+      }
+    }
+  }
+}
+
+.big-table {
+  ::v-deep .v-data-table__wrapper {
+    tbody {
+      tr {
+        td {
+          height: 60px !important;
+        }
+      }
+    }
+  }
+}

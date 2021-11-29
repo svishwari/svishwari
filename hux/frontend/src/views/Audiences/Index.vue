@@ -58,6 +58,7 @@
         sort-column="update_time"
         sort-desc="false"
         data-e2e="audience-table"
+        class="big-table"
       >
         <template #row-item="{ item }">
           <td
@@ -687,8 +688,7 @@ export default {
     table {
       tr {
         td {
-          font-size: 16px;
-          height: 60px;
+          font-size: 14px;
         }
       }
       tbody {

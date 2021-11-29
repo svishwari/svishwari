@@ -58,6 +58,7 @@
       sort-desc="false"
       nested
       data-e2e="engagement-table"
+      class="big-table"
     >
       <template #item-row="{ item, expandFunc, isExpanded }">
         <tr :class="{ 'expanded-row': isExpanded }">
@@ -263,7 +264,7 @@
             :columns="expandedHeaders"
             :data-items="parentItem.audiences"
             :show-header="false"
-            class="expanded-table"
+            class="expanded-table big-table"
             view-height="auto"
             nested
             data-e2e="audience-table"
@@ -451,6 +452,7 @@
                   :data-items="getDestinations(parentItem)"
                   :show-header="false"
                   view-height="auto"
+                  class="big-table"
                 >
                   <template #row-item="{ item }">
                     <td

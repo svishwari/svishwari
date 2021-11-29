@@ -15,7 +15,8 @@
       <hux-data-table
         :columns="tableColumns"
         :data-items="events"
-        class="notifications-table"
+        row-height="60px"
+        class="notifications-table small-table"
         sort-column="date"
         sort-desc
       >
@@ -130,7 +131,6 @@ export default {
     tbody {
       tr {
         td {
-          height: 40px !important;
           &:first-child {
             padding: 3px 10px 0px 25px !important;
           }
