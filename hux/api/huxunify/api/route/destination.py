@@ -14,7 +14,10 @@ from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
-from huxunifylib.database.collection_management import get_documents
+from huxunifylib.database.collection_management import (
+    get_documents,
+    delete_document,
+)
 import huxunifylib.database.constants as db_c
 from huxunifylib.util.general.const import (
     FacebookCredentials,
@@ -1218,31 +1221,23 @@ class DestinationDeleteView(SwaggerView):
             )
             return {}, HTTPStatus.NO_CONTENT
 
-        deleted_flag = destination_management.delete_delivery_platform(
-            database, ObjectId(destination_id)
+        deleted_flag = delete_document(
+            database,
+            db_c.DELIVERY_PLATFORM_COLLECTION,
+            ObjectId(destination_id),
+            True,
+            user_name,
         )
 
-        if deleted_flag:
-            create_notification(
-                database,
-                db_c.NOTIFICATION_TYPE_SUCCESS,
-                (
-                    f"{user_name} deleted"
-                    f' "{destination[db_c.NAME]}" destination.'
-                ),
-                api_c.DESTINATION,
-                user_name,
-            )
-        else:
-            create_notification(
-                database,
-                db_c.NOTIFICATION_TYPE_SUCCESS,
-                (
-                    f"{user_name} failed to delete"
-                    f' "{destination[db_c.NAME]}" destination.'
-                ),
-                api_c.DESTINATION,
-                user_name,
-            )
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f"{user_name} {'deleted' if deleted_flag else 'failed to delete'}"
+                f' "{destination[db_c.NAME]}" destination.'
+            ),
+            api_c.DESTINATION,
+            user_name,
+        )
 
         return {}, HTTPStatus.NO_CONTENT

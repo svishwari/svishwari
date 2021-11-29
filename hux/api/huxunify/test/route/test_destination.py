@@ -931,19 +931,26 @@ class TestDestinationRoutes(TestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
             headers=t_c.STANDARD_HEADERS,
         )
+        destination = destination_management.get_delivery_platform(
+            self.database, destination_id
+        )
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        self.assertIsNone(destination)
 
-    def test_delete_destination_not_found_destination(self):
+    def test_delete_destination_where_destination_does_not_exist(self):
         """Test delete destination where destination does not exist"""
 
         # get destination ID
         destination_id = ObjectId()
-        print(destination_id)
 
         response = self.app.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
             headers=t_c.STANDARD_HEADERS,
         )
+        destination = destination_management.get_delivery_platform(
+            self.database, destination_id
+        )
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        self.assertIsNone(destination)

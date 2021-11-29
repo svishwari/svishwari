@@ -2571,34 +2571,3 @@ def update_delivery_platform_doc(
         logging.error(exc)
 
     return None
-
-
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
-def delete_delivery_platform(
-    database: DatabaseClient,
-    delivery_platform_id: ObjectId,
-) -> bool:
-    """Delete MongoDb document.
-
-    Args:
-        database (DatabaseClient): database client.
-        delivery_platform_id (ObjectId): MongoDB delivery platform ID.
-
-    Returns:
-        dict: updated document.
-    """
-
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.DELIVERY_PLATFORM_COLLECTION
-    ]
-
-    try:
-        collection.delete_one({c.ID: delivery_platform_id})
-        return True
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-
-    return False
