@@ -2,9 +2,10 @@
   <drawer
     v-model="localDrawer"
     :content-padding="'pa-0'"
-    :content-header-padding="'px-3'"
+    :content-header-padding="'px-1'"
     :expanded-width="300"
     :width="300"
+    headerHeight="40"
   >
     <template #header-left>
       <span class="text-h2 black--text"> Filter ({{ filterLength }}) </span>
@@ -13,7 +14,7 @@
       <v-btn
         plain
         :color="filterLength > 0 ? 'primary base' : 'black lighten3'"
-        :disabled="!filterLength > 0"
+        :disabled="filterLength === 1 && selectedTimeType === 'Last week'"
         class="text-button float-right clear-btn"
         @click="clearFilter()"
       >
@@ -23,7 +24,7 @@
 
     <template #default>
       <hux-filter-panels>
-        <hux-filter-panel title="Alert type" :count="selctedAlertType.length">
+        <hux-filter-panel title="Alert type" :count="selctedAlertType.length" :onlyBlue="true">
           <v-checkbox
             v-for="data in alertType"
             :key="data.id"
@@ -35,7 +36,7 @@
             :value="data.title"
           ></v-checkbox>
         </hux-filter-panel>
-        <hux-filter-panel title="Category" :count="selctedCategory.length">
+        <hux-filter-panel title="Category" :count="selctedCategory.length" :onlyBlue="true">
           <v-checkbox
             v-for="data in category"
             :key="data.id"
@@ -46,7 +47,7 @@
             :value="data.title"
           ></v-checkbox>
         </hux-filter-panel>
-        <hux-filter-panel title="Time" :count="1">
+        <hux-filter-panel title="Time" :count="1" :onlyBlue="true">
           <v-radio-group v-model="selectedTimeType">
             <v-radio
               v-for="data in time"
@@ -57,7 +58,7 @@
             ></v-radio>
           </v-radio-group>
         </hux-filter-panel>
-        <hux-filter-panel title="User" :count="selctedUsers.length">
+        <hux-filter-panel title="User" :count="selctedUsers.length" :onlyBlue="true">
           <v-checkbox
             v-for="data in users"
             :key="data.id"
@@ -86,7 +87,6 @@
         color="primary"
         class="text-button ml-auto"
         width="134"
-        disabled
         @click="apply()"
       >
         Apply filter
@@ -141,7 +141,7 @@ export default {
       category: [
         {
           id: 1,
-          title: "Data sources",
+          title: "DataSources",
         },
         {
           id: 2,
@@ -259,6 +259,7 @@ export default {
           this.getTime(7)
           break
       }
+
       this.$emit("onSectionAction", {
         getTime: this.$options.filters.Date(getTime, "YYYY-MM-DD"),
         selctedAlertType: this.selctedAlertType,
@@ -285,6 +286,9 @@ export default {
   color: var(--v-black-base);
 }
 .clear-btn {
-  padding-left: 7rem !important;
+  padding-left: 8rem !important;
+}
+::v-deep .drawer-header > .v-toolbar__content {
+  height: 40px !important;
 }
 </style>

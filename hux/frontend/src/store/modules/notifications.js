@@ -52,8 +52,7 @@ const actions = {
         commit("RESET_ALL")
       }
       const response = await api.notifications.getNotifications(
-        batchDetails.batchSize,
-        batchDetails.batchNumber
+        batchDetails
       )
       // Replacing the special characters like (", ', <, >) with "
       response.data.notifications.forEach((notification) => {

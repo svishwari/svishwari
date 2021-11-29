@@ -192,8 +192,7 @@ client["engagements"].deliveries = (resourceId, query) => {
 
 client["engagements"].fetchAudiencePerformance = (resourceId, data) => {
   return http.get(
-    `/engagements/${resourceId}/audience-performance/${
-      data === "ads" ? "display-ads" : "email"
+    `/engagements/${resourceId}/audience-performance/${data === "ads" ? "display-ads" : "email"
     }`
   )
 }
@@ -313,9 +312,21 @@ client["audiences"].remove = (resourceId) => {
 //#endregion
 
 //#region Notifications
-client["notifications"].getNotifications = (batchSize, batchNumber) => {
+client["notifications"].getNotifications = (data) => {
+  delete data.isLazyLoad
+  let URLData = []
+  let newURLFormat
+  let URLString
+  for (const property in data) {
+    console.log(`${property}: ${data[property]}`)
+    let formURL = property + "=" + data[property]
+    URLData.push(formURL)
+  }
+  let arrJoin = URLData.join('@')
+  URLString = arrJoin.toString()
+  newURLFormat = URLString.replace(/@/g, "&")
   return http.get(
-    `/notifications?batch_size=${batchSize}&batch_number=${batchNumber}`
+    `/notifications?${newURLFormat}`
   )
 }
 
