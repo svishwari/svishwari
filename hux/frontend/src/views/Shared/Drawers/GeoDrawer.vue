@@ -341,6 +341,13 @@ export default {
 .hux-data-table {
   ::v-deep table {
     table-layout: auto !important;
+    tbody {
+      tr {
+        td {
+          height: 40px !important;
+        }
+      }
+    }
   }
 }
 </style>

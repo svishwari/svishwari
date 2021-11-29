@@ -14,6 +14,8 @@
         :columns="columns"
         :data-items="idrItems"
         :show-header="false"
+        row-height="40px"
+        class="small-table"
       >
         <template #row-item="{ item }">
           <td
