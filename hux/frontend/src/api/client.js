@@ -192,7 +192,8 @@ client["engagements"].deliveries = (resourceId, query) => {
 
 client["engagements"].fetchAudiencePerformance = (resourceId, data) => {
   return http.get(
-    `/engagements/${resourceId}/audience-performance/${data === "ads" ? "display-ads" : "email"
+    `/engagements/${resourceId}/audience-performance/${
+      data === "ads" ? "display-ads" : "email"
     }`
   )
 }
@@ -322,12 +323,10 @@ client["notifications"].getNotifications = (data) => {
     let formURL = property + "=" + data[property]
     URLData.push(formURL)
   }
-  let arrJoin = URLData.join('@')
+  let arrJoin = URLData.join("@")
   URLString = arrJoin.toString()
   newURLFormat = URLString.replace(/@/g, "&")
-  return http.get(
-    `/notifications?${newURLFormat}`
-  )
+  return http.get(`/notifications?${newURLFormat}`)
 }
 
 client["notifications"].find = (notification_id) => {

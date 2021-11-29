@@ -117,7 +117,7 @@ export default {
       type: String,
       required: false,
       default: "70",
-    }
+    },
   },
 
   data() {

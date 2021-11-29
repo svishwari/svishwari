@@ -5,7 +5,7 @@
     :content-header-padding="'px-1'"
     :expanded-width="300"
     :width="300"
-    headerHeight="40"
+    header-height="40"
   >
     <template #header-left>
       <span class="text-h2 black--text"> Filter ({{ filterLength }}) </span>
@@ -24,7 +24,11 @@
 
     <template #default>
       <hux-filter-panels>
-        <hux-filter-panel title="Alert type" :count="selctedAlertType.length" :onlyBlue="true">
+        <hux-filter-panel
+          title="Alert type"
+          :count="selctedAlertType.length"
+          :only-blue="true"
+        >
           <v-checkbox
             v-for="data in alertType"
             :key="data.id"
@@ -36,7 +40,11 @@
             :value="data.title"
           ></v-checkbox>
         </hux-filter-panel>
-        <hux-filter-panel title="Category" :count="selctedCategory.length" :onlyBlue="true">
+        <hux-filter-panel
+          title="Category"
+          :count="selctedCategory.length"
+          :only-blue="true"
+        >
           <v-checkbox
             v-for="data in category"
             :key="data.id"
@@ -47,7 +55,7 @@
             :value="data.title"
           ></v-checkbox>
         </hux-filter-panel>
-        <hux-filter-panel title="Time" :count="1" :onlyBlue="true">
+        <hux-filter-panel title="Time" :count="1" :only-blue="true">
           <v-radio-group v-model="selectedTimeType">
             <v-radio
               v-for="data in time"
@@ -58,7 +66,11 @@
             ></v-radio>
           </v-radio-group>
         </hux-filter-panel>
-        <hux-filter-panel title="User" :count="selctedUsers.length" :onlyBlue="true">
+        <hux-filter-panel
+          title="User"
+          :count="selctedUsers.length"
+          :only-blue="true"
+        >
           <v-checkbox
             v-for="data in users"
             :key="data.id"

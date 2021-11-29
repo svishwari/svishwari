@@ -12,7 +12,7 @@
         <span v-if="count" class="ml-1">({{ count }})</span>
       </h4>
       <template #actions>
-          <v-icon :color="count == 0 ? 'black' : 'blue'"> $expand </v-icon>
+        <v-icon :color="count == 0 ? 'black' : 'blue'"> $expand </v-icon>
       </template>
     </v-expansion-panel-header>
 

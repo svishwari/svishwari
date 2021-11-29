@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex align-center">
     <span class="text-body-2 black--text text--lighten-4 mr-2">
-     {{ getFormattedTime }}
+      {{ getFormattedTime }}
       <tooltip>
         <template #label-content>
           <span>
@@ -71,7 +71,7 @@ export default {
       appLoadTime: new Date(),
     }
   },
-   computed: {
+  computed: {
     getFormattedTime() {
       let formate = this.$options.filters.Date(this.appLoadTime, "calendar")
       let newFormate = formate.replace(" at", ",")
