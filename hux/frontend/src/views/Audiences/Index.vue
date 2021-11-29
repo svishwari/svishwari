@@ -481,7 +481,7 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      await this.getAllAudiences()
+      await this.getAllAudiences({})
     } finally {
       this.loading = false
     }

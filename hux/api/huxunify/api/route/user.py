@@ -11,7 +11,7 @@ from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
-from huxunifylib.database import constants as db_constants
+from huxunifylib.database import constants as db_c
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.user_management import (
     manage_user_favorites,
@@ -123,8 +123,8 @@ class UserProfile(SwaggerView):
                 get_db_client(),
                 okta_id=okta_id,
                 update_doc={
-                    db_constants.USER_LOGIN_COUNT: (
-                        user_response.get(db_constants.USER_LOGIN_COUNT, 0) + 1
+                    db_c.USER_LOGIN_COUNT: (
+                        user_response.get(db_c.USER_LOGIN_COUNT, 0) + 1
                     )
                 },
             )
@@ -156,7 +156,7 @@ class AddUserFavorite(SwaggerView):
 
     parameters = [
         {
-            "name": db_constants.COMPONENT_ID,
+            "name": db_c.COMPONENT_ID,
             "in": "path",
             "type": "string",
             "description": "Component ID.",
@@ -164,7 +164,7 @@ class AddUserFavorite(SwaggerView):
             "required": True,
         },
         {
-            "name": db_constants.COMPONENT_NAME,
+            "name": db_c.COMPONENT_NAME,
             "in": "path",
             "type": "string",
             "description": "Component name.",
@@ -203,7 +203,7 @@ class AddUserFavorite(SwaggerView):
             api_c.OKTA_USER_ID
         )
 
-        if component_name not in db_constants.FAVORITE_COMPONENTS:
+        if component_name not in db_c.FAVORITE_COMPONENTS:
             logger.error(
                 "Component name %s not in favorite components.", component_name
             )
@@ -237,7 +237,7 @@ class DeleteUserFavorite(SwaggerView):
 
     parameters = [
         {
-            "name": db_constants.COMPONENT_ID,
+            "name": db_c.COMPONENT_ID,
             "in": "path",
             "type": "string",
             "description": "Component ID.",
@@ -245,7 +245,7 @@ class DeleteUserFavorite(SwaggerView):
             "required": True,
         },
         {
-            "name": db_constants.COMPONENT_NAME,
+            "name": db_c.COMPONENT_NAME,
             "in": "path",
             "type": "string",
             "description": "Component name.",
@@ -286,7 +286,7 @@ class DeleteUserFavorite(SwaggerView):
             api_c.OKTA_USER_ID
         )
 
-        if component_name not in db_constants.FAVORITE_COMPONENTS:
+        if component_name not in db_c.FAVORITE_COMPONENTS:
             logger.error(
                 "Component name %s not in favorite components.", component_name
             )
@@ -374,8 +374,8 @@ class UserPatchView(SwaggerView):
             "type": "object",
             "description": "Input user body.",
             "example": {
-                db_constants.USER_ROLE: "viewer",
-                db_constants.USER_DISPLAY_NAME: "new_display_name",
+                db_c.USER_ROLE: "viewer",
+                db_c.USER_DISPLAY_NAME: "new_display_name",
             },
         },
     ]
@@ -421,13 +421,11 @@ class UserPatchView(SwaggerView):
 
         if api_c.ID in body:
             user = get_all_users(
-                database, {db_constants.ID: ObjectId(body.get(api_c.ID))}
+                database, {db_c.ID: ObjectId(body.get(api_c.ID))}
             )
             del body[api_c.ID]
         else:
-            user = get_all_users(
-                database, {db_constants.USER_DISPLAY_NAME: user_name}
-            )
+            user = get_all_users(database, {db_c.USER_DISPLAY_NAME: user_name})
 
         if not user:
             return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
@@ -436,12 +434,12 @@ class UserPatchView(SwaggerView):
 
         updated_user = update_user(
             database,
-            okta_id=user[0][db_constants.OKTA_ID],
+            okta_id=user[0][db_c.OKTA_ID],
             update_doc={
                 **body,
                 **{
-                    db_constants.UPDATED_BY: user_name,
-                    db_constants.UPDATE_TIME: datetime.datetime.utcnow(),
+                    db_c.UPDATED_BY: user_name,
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 },
             },
         )
@@ -515,7 +513,7 @@ class CreateTicket(SwaggerView):
 
         create_notification(
             database=get_db_client(),
-            notification_type=db_constants.NOTIFICATION_TYPE_INFORMATIONAL,
+            notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
             description=f"{user_name} created a new issue {new_issue.get(api_c.KEY)} in JIRA.",
             category=api_c.TICKET_TYPE_BUG,
             username=user_name,

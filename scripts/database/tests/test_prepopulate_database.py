@@ -1,7 +1,7 @@
 """Test Module for Prepopulate Database Script"""
 from unittest import TestCase, mock
 import mongomock
-from huxunifylib.database import constants as c
+from huxunifylib.database import constants as db_c
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
@@ -30,27 +30,27 @@ class TestPrepopulateDatabase(TestCase):
 
         pd.drop_collections(self.database)
         collection_names = self.database[
-            c.DATA_MANAGEMENT_DATABASE
+            db_c.DATA_MANAGEMENT_DATABASE
         ].list_collection_names()
-        self.assertNotIn(c.DELIVERY_PLATFORM_COLLECTION, collection_names)
+        self.assertNotIn(db_c.DELIVERY_PLATFORM_COLLECTION, collection_names)
 
     def test_insert_data_sources(self):
         """Unit Test for set Indexes."""
 
         data_sources = [
             {
-                c.DATA_SOURCE_NAME: "Bluecore",
-                c.DATA_SOURCE_TYPE: "bluecore",
-                c.STATUS: c.ACTIVE,
-                c.ENABLED: True,
-                c.ADDED: True,
+                db_c.DATA_SOURCE_NAME: "Bluecore",
+                db_c.DATA_SOURCE_TYPE: "bluecore",
+                db_c.STATUS: db_c.ACTIVE,
+                db_c.ENABLED: True,
+                db_c.ADDED: True,
             },
             {
-                c.DATA_SOURCE_NAME: "NetSuite",
-                c.DATA_SOURCE_TYPE: "netsuite",
-                c.STATUS: c.PENDING,
-                c.ENABLED: True,
-                c.ADDED: False,
+                db_c.DATA_SOURCE_NAME: "NetSuite",
+                db_c.DATA_SOURCE_TYPE: "netsuite",
+                db_c.STATUS: db_c.PENDING,
+                db_c.ENABLED: True,
+                db_c.ADDED: False,
             },
         ]
 
@@ -65,18 +65,18 @@ class TestPrepopulateDatabase(TestCase):
 
         delivery_platforms = [
             {
-                c.DELIVERY_PLATFORM_NAME: "Salesforce Marketing Cloud",
-                c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_SFMC,
-                c.STATUS: c.ACTIVE,
-                c.ENABLED: True,
-                c.ADDED: False,
+                db_c.DELIVERY_PLATFORM_NAME: "Salesforce Marketing Cloud",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SFMC,
+                db_c.STATUS: db_c.ACTIVE,
+                db_c.ENABLED: True,
+                db_c.ADDED: False,
             },
             {
-                c.DELIVERY_PLATFORM_NAME: "Facebook",
-                c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_FACEBOOK,
-                c.STATUS: c.ACTIVE,
-                c.ENABLED: True,
-                c.ADDED: False,
+                db_c.DELIVERY_PLATFORM_NAME: "Facebook",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_FACEBOOK,
+                db_c.STATUS: db_c.ACTIVE,
+                db_c.ENABLED: True,
+                db_c.ADDED: False,
             },
         ]
 
