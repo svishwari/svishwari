@@ -831,7 +831,11 @@ def get_geographic_customers_data(customer_count_by_state: list) -> list:
             api_c.GENDER_OTHER: round(x[api_c.GENDER_OTHER] / x[api_c.SIZE], 4)
             if x[api_c.SIZE] != 0
             else 0,
-            api_c.LTV: round(x.get(api_c.AVG_LTV, 0), 4),
+            api_c.AVG_LTV: round(x.get(api_c.AVG_LTV, 0), 4),
+            api_c.MIN_LTV: round(x.get(api_c.MIN_LTV, 0), 4),
+            api_c.MAX_LTV: round(x.get(api_c.MAX_LTV, 0), 4),
+            api_c.MIN_AGE: x.get(api_c.MIN_AGE, 0),
+            api_c.MAX_AGE: x.get(api_c.MAX_AGE, 0),
         }
         for x in customer_count_by_state
     ]
