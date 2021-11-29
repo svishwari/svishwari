@@ -150,6 +150,46 @@ class TestDestinationRoutes(TestCase):
         "huxunify.api.route.destination.JiraConnection.create_jira_issue"
     )
     @mock.patch("huxunify.api.route.destination.JiraConnection.__init__")
+    def test_request_existing_destination(
+        self, jira_class_init, jira_create_issue_mock
+    ):
+        """Test request existing destination.
+
+        Args:
+            jira_class_init (MagicMock): Mock creating jira class.
+            jira_create_issue_mock (MagicMock): Mock creating jira issue.
+        """
+
+        new_destination_request = {
+            api_c.NAME: "test_destinaion_1",
+            api_c.CONTACT_EMAIL: "test_email@gmail.com",
+            api_c.CLIENT_REQUEST: True,
+            api_c.CLIENT_ACCOUNT: True,
+            api_c.USE_CASE: "Testing",
+        }
+
+        jira_class_init.return_value = None
+        jira_create_issue_mock.return_value = {db_c.CONSTANT_KEY: ""}
+        # Request new destination.
+        self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/request",
+            headers=t_c.STANDARD_HEADERS,
+            json=new_destination_request,
+        )
+
+        # Re-request destination.
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/request",
+            headers=t_c.STANDARD_HEADERS,
+            json=new_destination_request,
+        )
+
+        self.assertEqual(HTTPStatus.CONFLICT, response.status_code)
+
+    @mock.patch(
+        "huxunify.api.route.destination.JiraConnection.create_jira_issue"
+    )
+    @mock.patch("huxunify.api.route.destination.JiraConnection.__init__")
     def test_request_new_destination(
         self, jira_class_init, jira_create_issue_mock
     ):

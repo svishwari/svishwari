@@ -19,6 +19,7 @@ from huxunify.api.schema.customers import (
     CustomersInsightsStatesSchema,
     CustomersInsightsCountriesSchema,
     CustomerRevenueInsightsSchema,
+    CustomerProfileContactPreferencesSchema,
 )
 from huxunify.api.schema.customers import (
     CustomerGeoVisualSchema,
@@ -60,6 +61,11 @@ class TestCustomersOverview(TestCase):
         mock.patch(
             "huxunify.api.route.customers.get_db_client",
             return_value=self.database,
+        ).start()
+
+        mock.patch(
+            "huxunify.api.route.decorators.get_user_from_db",
+            return_value=t_c.VALID_DB_USER_RESPONSE,
         ).start()
 
         # setup the flask test client
@@ -170,32 +176,15 @@ class TestCustomersOverview(TestCase):
     def test_get_customer_by_id(self):
         """Test get customer by ID."""
 
-        customer_id = "HUX123456789012345"
-
-        expected_response = {
-            "code": 200,
-            "body": {
-                api_c.HUX_ID: customer_id,
-                api_c.FIRST_NAME: "Bertie",
-                api_c.LAST_NAME: "Fox",
-                api_c.EMAIL: "fake@fake.com",
-                api_c.GENDER: "test_gender",
-                api_c.CITY: "test_city",
-                api_c.ADDRESS: "test_address",
-                api_c.AGE: "test_age",
-            },
-            "message": "ok",
-        }
-
         self.request_mocker.stop()
         self.request_mocker.get(
-            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{customer_id}",
-            json=expected_response,
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{t_c.SAMPLE_CUSTOMER_ID}",
+            json=t_c.CUSTOMER_PROFILE_RESPONSE,
         )
         self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{self.customers}/{customer_id}",
+            f"{self.customers}/{t_c.SAMPLE_CUSTOMER_ID}",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -212,6 +201,66 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(data[api_c.INSIGHTS][api_c.CITY], api_c.REDACTED)
         self.assertEqual(data[api_c.INSIGHTS][api_c.ADDRESS], api_c.REDACTED)
         self.assertEqual(data[api_c.INSIGHTS][api_c.AGE], api_c.REDACTED)
+        self.assertTrue(
+            data[api_c.IDENTITY_RESOLUTION][api_c.NAME][api_c.CO_OCCURRENCES]
+        )
+        self.assertTrue(data[api_c.CONTACT_PREFERENCES])
+        self.assertEqual(
+            CustomerProfileContactPreferencesSchema().dump(
+                t_c.CUSTOMER_PROFILE_RESPONSE[api_c.BODY]
+            ),
+            data[api_c.CONTACT_PREFERENCES],
+        )
+
+    def test_get_customer_by_id_pii_access(self):
+        """Test get customer by ID with PII Access"""
+
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{t_c.SAMPLE_CUSTOMER_ID}",
+            json=t_c.CUSTOMER_PROFILE_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{self.customers}/{t_c.SAMPLE_CUSTOMER_ID}?{api_c.REDACT_FIELD}=False",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        data = response.json
+        self.assertTrue(data[api_c.OVERVIEW])
+        self.assertEqual(
+            data[api_c.OVERVIEW][api_c.FIRST_NAME],
+            t_c.CUSTOMER_PROFILE_RESPONSE[api_c.BODY][api_c.FIRST_NAME],
+        )
+        self.assertEqual(
+            data[api_c.OVERVIEW][api_c.LAST_NAME],
+            t_c.CUSTOMER_PROFILE_RESPONSE[api_c.BODY][api_c.LAST_NAME],
+        )
+        self.assertTrue(data[api_c.INSIGHTS])
+        self.assertEqual(
+            data[api_c.INSIGHTS][api_c.EMAIL],
+            t_c.CUSTOMER_PROFILE_RESPONSE[api_c.BODY][api_c.EMAIL],
+        )
+        self.assertEqual(
+            data[api_c.INSIGHTS][api_c.GENDER],
+            t_c.CUSTOMER_PROFILE_RESPONSE[api_c.BODY][api_c.GENDER],
+        )
+        self.assertEqual(
+            data[api_c.INSIGHTS][api_c.CITY],
+            t_c.CUSTOMER_PROFILE_RESPONSE[api_c.BODY][api_c.CITY],
+        )
+        self.assertEqual(
+            data[api_c.INSIGHTS][api_c.ADDRESS],
+            t_c.CUSTOMER_PROFILE_RESPONSE[api_c.BODY][api_c.ADDRESS],
+        )
+        self.assertEqual(
+            data[api_c.INSIGHTS][api_c.AGE],
+            t_c.CUSTOMER_PROFILE_RESPONSE[api_c.BODY][api_c.AGE],
+        )
 
     def test_post_customer_overview_by_attributes(self) -> None:
         """Test get customer over by attributes."""

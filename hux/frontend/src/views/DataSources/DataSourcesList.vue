@@ -42,16 +42,13 @@
             />
           </template>
           <template slot="action-menu-options">
-            <v-list class="list-wrapper pa-0">
-              <v-list-item-group>
-                <v-list-item
-                  :data-e2e="`data-source-list-${dataSource.status}-remove`"
-                  @click="openModal(dataSource)"
-                >
-                  <v-list-item-title> Remove </v-list-item-title>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
+            <div
+              class="px-4 py-2 white d-flex flex-column text-h5"
+              :data-e2e="`data-source-list-${dataSource.status}-remove`"
+              @click="openModal(dataSource)"
+            >
+              <span class="d-flex align-center"> Remove </span>
+            </div>
           </template>
 
           <template slot="default">

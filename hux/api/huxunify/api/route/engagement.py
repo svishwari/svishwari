@@ -3,6 +3,7 @@
 from pathlib import Path
 import zipfile
 from http import HTTPStatus
+from threading import Thread
 from typing import Tuple
 from itertools import groupby
 from operator import itemgetter
@@ -34,6 +35,7 @@ from huxunifylib.database import (
 from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     get_delivery_platform_lookalike_audience,
+    update_pending_delivery_jobs,
 )
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
@@ -154,6 +156,15 @@ class EngagementSearch(SwaggerView):
         ):
             query_filter[api_c.WORKED_BY] = user_name
 
+        # Update delivery status.
+        logger.info("Updating delivery jobs")
+        Thread(
+            target=update_pending_delivery_jobs,
+            args=[
+                database,
+            ],
+        ).start()
+
         # get the engagement summary
         engagements = get_engagements_summary(
             database=database,
@@ -230,6 +241,16 @@ class IndividualEngagementSearch(SwaggerView):
 
         # get the engagement summary
         database = get_db_client()
+
+        # Update delivery status.
+        logger.info("Updating delivery jobs")
+        Thread(
+            target=update_pending_delivery_jobs,
+            args=[
+                database,
+            ],
+        ).start()
+
         engagements = get_engagements_summary(database, [engagement_id])
 
         if not engagements:
@@ -967,7 +988,7 @@ class AddDestinationEngagedAudience(SwaggerView):
             (
                 f'Destination "{destination_to_attach[db_c.NAME]}" added to '
                 f'audience "{audience[db_c.NAME]}" from engagement '
-                f'"{engagement[db_c.NAME]}" by {user_name}'
+                f'"{engagement[db_c.NAME]}" by {user_name}.'
             ),
             api_c.ENGAGEMENT_TAG,
             user_name,
@@ -1115,7 +1136,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             (
                 f'Destination "{destination_to_remove[db_c.NAME]}" removed from audience '
                 f'"{audience[db_c.NAME]}" from engagement '
-                f'"{engagement[db_c.NAME]}" by {user_name}'
+                f'"{engagement[db_c.NAME]}" by {user_name}.'
             ),
             api_c.ENGAGEMENT_TAG,
             user_name,
@@ -1211,11 +1232,13 @@ class UpdateCampaignsForAudience(SwaggerView):
     @api_error_handler()
     @validate_engagement_and_audience()
     @validate_destination()
+    @get_user_name()
     def put(
         self,
         engagement_id: ObjectId,
         audience_id: ObjectId,
         destination_id: ObjectId,
+        user_name: str,
     ) -> Tuple[dict, int]:
         """Updates campaigns for an engagement audience.
 
@@ -1227,6 +1250,7 @@ class UpdateCampaignsForAudience(SwaggerView):
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
             destination_id (ObjectId): Destination ID.
+            user_name (str): user_name extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -1365,6 +1389,18 @@ class UpdateCampaignsForAudience(SwaggerView):
             "Successfully attached campaigns to engagement %s audience %s.",
             engagement_id,
             audience_id,
+        )
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                "Successfully attached campaigns to engagement %s audience %s.",
+                engagement_id,
+                audience_id,
+            ),
+            api_c.ENGAGEMENT_TAG,
+            user_name,
         )
 
         # toggle routers since the engagement was updated.

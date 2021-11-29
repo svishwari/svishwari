@@ -25,6 +25,13 @@ from huxunify.app import create_app
 from huxunify.test import constants as t_c
 
 
+# Allow 30 secs per hypothesis example (deadline is specified in milliseconds)
+settings.register_profile(
+    "hypothesis_setting_profile",
+    deadline=30 * 1000,
+)
+
+
 class DecisioningTests(TestCase):
     """Tests for decisioning."""
 
@@ -139,13 +146,30 @@ class DecisioningTests(TestCase):
         ).start()
         get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
+    def test_success_request_model_duplicate(self):
+        """Test requesting a model."""
+
+        status_request = {
+            api_c.STATUS: api_c.REQUESTED,
+            api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
+            api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
+        }
+
+        for status_code in [HTTPStatus.CREATED, HTTPStatus.CONFLICT]:
+            response = self.test_client.post(
+                f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
+                data=json.dumps(status_request),
+                headers=t_c.STANDARD_HEADERS,
+            )
+            self.assertEqual(status_code, response.status_code)
+
     def test_remove_model_success(self):
         """Test removing requested models from Unified DB."""
 
         # Request model to delete later
         status_request = {
             api_c.STATUS: api_c.REQUESTED,
-            api_c.ID: 1,
+            api_c.ID: "1",
             api_c.NAME: "Test Requested Model",
             api_c.TYPE: "test",
         }
@@ -161,7 +185,7 @@ class DecisioningTests(TestCase):
         # API call to delete the requested model
         response = self.test_client.delete(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
-            query_string={api_c.MODEL_ID: str(doc[db_c.ID])},
+            query_string={api_c.MODEL_ID: doc[api_c.ID]},
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -194,7 +218,7 @@ class DecisioningTests(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
 
     def test_remove_model_failure_no_params(self):
         """Test removing requested models from Unified DB."""
@@ -236,7 +260,7 @@ class DecisioningTests(TestCase):
         self.assertTrue(ModelVersionSchema(many=True).dump(response))
 
     @given(model_id=st.integers(min_value=100, max_value=1000))
-    @settings(deadline=600)
+    @settings(settings.load_profile("hypothesis_setting_profile"))
     def test_failure_get_model_version_history(self, model_id: int):
         """Test get model version history failed.
 
@@ -263,7 +287,7 @@ class DecisioningTests(TestCase):
             self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
-    @settings(deadline=600)
+    @settings(settings.load_profile("hypothesis_setting_profile"))
     def test_get_model_features_success(self, model_id: int) -> None:
         """Test get model features success.
 
@@ -298,7 +322,7 @@ class DecisioningTests(TestCase):
         )
 
     @given(model_id=st.integers(min_value=1, max_value=2))
-    @settings(deadline=600)
+    @settings(settings.load_profile("hypothesis_setting_profile"))
     def test_get_model_features_negative_score(self, model_id: int) -> None:
         """Test get model features negative score in response.
 
@@ -336,7 +360,7 @@ class DecisioningTests(TestCase):
         )
 
     @given(model_id=st.sampled_from(list(t_c.SUPPORTED_MODELS.keys())))
-    @settings(deadline=600)
+    @settings(settings.load_profile("hypothesis_setting_profile"))
     def test_get_model_feature_importance_success(self, model_id: str) -> None:
         """Test get model feature importance success.
 
@@ -371,7 +395,7 @@ class DecisioningTests(TestCase):
         )
 
     @given(model_id=st.integers(min_value=1, max_value=2))
-    @settings(deadline=600)
+    @settings(settings.load_profile("hypothesis_setting_profile"))
     def test_get_model_feature_importance_negative_score(
         self, model_id: int
     ) -> None:

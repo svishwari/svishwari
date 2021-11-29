@@ -22,7 +22,7 @@
                 v-for="model in item"
                 :key="model.id"
                 :title="model.name"
-                :icon="`model-${model.type}`"
+                :icon="`model-${getModelType(model)}`"
                 :is-added="['Active', 'Requested'].includes(model.status)"
                 :is-available="model.is_enabled"
                 :is-already-added="['Active'].includes(model.status)"
@@ -48,7 +48,7 @@
               v-for="model in item"
               :key="model.id"
               :title="model.name"
-              :icon="`model-${model.type || 'unsubscribe'}`"
+              :icon="`model-${getModelType(model)}`"
               :is-added="
                 ['Active', 'Requested'].includes(model.status) ||
                 selectedModelIds.includes(model.id)
@@ -103,6 +103,14 @@ export default {
           text: "Select a model to request",
           icon: "models",
         },
+      ],
+      modelTypes: [
+        "purchase",
+        "prediction",
+        "ltv",
+        "churn",
+        "propensity",
+        "unsubscribe",
       ],
     }
   },
@@ -177,7 +185,6 @@ export default {
     }),
     async onModelClick(model) {
       const payload = {
-        type: model.type,
         name: model.name,
         id: model.id,
         status: "Requested",
@@ -191,6 +198,13 @@ export default {
     closeAddModel: function () {
       this.localDrawer = false
       this.selectedModelIds = []
+    },
+    getModelType(model) {
+      return this.modelTypes.includes(
+        model.type ? model.type.toLowerCase() : ""
+      )
+        ? model.type
+        : "unsubscribe"
     },
   },
 }

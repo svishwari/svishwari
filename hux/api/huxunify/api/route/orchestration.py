@@ -2,6 +2,7 @@
 """Paths for Orchestration API"""
 import asyncio
 from http import HTTPStatus
+from threading import Thread
 from typing import Tuple, Union
 from datetime import datetime, timedelta
 import aiohttp
@@ -18,6 +19,9 @@ from huxunifylib.connectors import (
 )
 
 from huxunifylib.database.delete_util import delete_lookalike_audience
+from huxunifylib.database.delivery_platform_management import (
+    update_pending_delivery_jobs,
+)
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -272,6 +276,15 @@ class AudienceView(SwaggerView):
         if attribute_list:
             filter_dict[api_c.ATTRIBUTE] = attribute_list
 
+        # Update delivery status.
+        logger.info("Updating delivery jobs")
+        Thread(
+            target=update_pending_delivery_jobs,
+            args=[
+                database,
+            ],
+        ).start()
+
         # get all audiences and deliveries
         audiences = orchestration_management.get_all_audiences_and_deliveries(
             database=database,
@@ -491,6 +504,15 @@ class AudienceGetView(SwaggerView):
         user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
 
         database = get_db_client()
+
+        # Update delivery status.
+        logger.info("Updating delivery jobs")
+        Thread(
+            target=update_pending_delivery_jobs,
+            args=[
+                database,
+            ],
+        ).start()
 
         # get the audience
         audience_id = ObjectId(audience_id)
@@ -1201,30 +1223,45 @@ class AudienceRules(SwaggerView):
                         "min": 18,
                         "max": 79,
                     },
-                    "email": {"name": "Email", "type": "text"},
+                    "email": {
+                        "name": "Email",
+                        "type": "list",
+                        "options": [{"fake.com": "fake.com"}],
+                    },
                     "gender": {
                         "name": "Gender",
-                        "type": "text",  # text for 5.0, list for future
-                        "options": ["female", "male", "other"],
+                        "type": "list",  # text for 5.0, list for future
+                        "options": {
+                            "female": "Female",
+                            "male": "Male",
+                            "other": "Other",
+                        },
                     },
                     "location": {
                         "name": "Location",
                         "country": {
                             "name": "Country",
-                            "type": "text",  # text for 5.0, list for future
-                            "options": ["US"],
+                            "type": "list",
+                            "options": [{"US": "USA"}],
                         },
                         "state": {
                             "name": "State",
-                            "type": "text",  # text for 5.0, list for future
-                            "options": list(api_c.STATE_NAMES.keys()),
+                            "type": "list",
+                            "options": [
+                                {key: value}
+                                for key, value in api_c.STATE_NAMES.items()
+                            ],
                         },
                         "city": {
                             "name": "City",
-                            "type": "text",  # text for 5.0, list for future
+                            "type": "list",
                             "options": [],
                         },
-                        "zip_code": {"name": "Zip", "type": "text"},
+                        "zip_code": {
+                            "name": "Zip",
+                            "type": "list",
+                            "options": [],
+                        },
                     },
                 },
             }
@@ -1409,6 +1446,17 @@ class SetLookalikeAudience(SwaggerView):
         logger.info(
             "Successfully created delivery platform lookalike audience."
         )
+
+        # add notification
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f"New lookalike audience named "
+                f'"{lookalike_audience[db_c.NAME]}" added by {user_name}.'
+            ),
+            api_c.ORCHESTRATION_TAG,
+        )
         return (
             LookalikeAudienceGetSchema().dump(lookalike_audience),
             HTTPStatus.ACCEPTED,
@@ -1516,7 +1564,7 @@ class DeleteAudienceView(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
-            f"Audience {audience_id} successfully deleted by {user_name}.",
+            f'Audience "{audience_id}" successfully deleted by {user_name}.',
             api_c.ORCHESTRATION_TAG,
         )
 

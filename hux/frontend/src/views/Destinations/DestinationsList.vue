@@ -28,15 +28,13 @@
           />
         </template>
         <template slot="action-menu-options">
-          <v-list class="list-wrapper pa-0">
-            <v-list-item-group>
-              <v-list-item @click="openModal(destination)">
-                <v-list-item-title data-e2e="destination-list-remove">
-                  Remove
-                </v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
+          <div
+            class="px-4 py-2 white d-flex flex-column text-h5"
+            data-e2e="destination-list-remove"
+            @click="openModal(destination)"
+          >
+            <span class="d-flex align-center"> Remove </span>
+          </div>
         </template>
       </descriptive-card>
     </template>

@@ -41,8 +41,8 @@
                 v-if="column.hoverTooltip"
                 :key="column.id"
                 type="info"
-                :size="12"
-                class="ml-1"
+                :size="8"
+                class="ml-1 mb-1"
                 color="primary"
                 variant="base"
               />
@@ -236,7 +236,6 @@ export default {
     table-layout: fixed;
     .fixed-column {
       position: absolute;
-      display: flex;
       align-items: center;
       background: var(--v-white-base) !important;
       left: 0px;
