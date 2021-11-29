@@ -46,7 +46,7 @@
       "is_Combined_Metric": true
     },
     {
-      "key": ["min_ltv", "max_ltv"],
+      "key": ["min_spend", "max_spend"],
       "label": "Avg. spend",
       "format": "currency",
       "is_Combined_Metric": true
