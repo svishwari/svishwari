@@ -121,7 +121,6 @@ export default {
       return this.configurationData.default_metric.key
     },
     customMetric() {
-      console.log(this.configurationData.custom_metric.key)
       return this.configurationData.custom_metric.key
     },
   },
