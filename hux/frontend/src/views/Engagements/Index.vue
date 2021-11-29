@@ -21,8 +21,9 @@
     </page-header>
     <page-header class="top-bar" :header-height="71">
       <template #left>
-        <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
-        <v-icon medium color="black lighten-3" class="pl-6">mdi-magnify</v-icon>
+        <v-btn disabled icon color="black">
+          <icon type="search" :size="20" color="black" variant="lighten3" />
+        </v-btn>
       </template>
 
       <template #right>
@@ -71,6 +72,7 @@
               'expanded-row': isExpanded,
               'pl-3': header.value == 'audiences',
             }"
+            class="text-body-1 black--text"
             :style="{ width: header.width }"
           >
             <div v-if="header.value == 'name'" class="w-80">

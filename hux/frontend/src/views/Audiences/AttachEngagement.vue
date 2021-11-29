@@ -314,6 +314,7 @@
           :is-tile="true"
           height="40"
           width="146"
+          class="btn-border box-shadow-none"
           @click.native="goToStep1()"
         >
           <span class="primary--text">Cancel &amp; back</span>

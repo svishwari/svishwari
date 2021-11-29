@@ -15,7 +15,7 @@
             variant="white"
             size="large"
             :is-tile="true"
-            class="mr-2"
+            class="mr-2 btn-border box-shadow-none"
             @click="closeAddDataSource"
           >
             <span class="primary--text">Cancel</span>

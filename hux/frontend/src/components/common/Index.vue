@@ -196,7 +196,7 @@
     >
       Success!
     </huxButton>
-    <huxButton variant="white" is-tile class="ma-2">
+    <huxButton variant="white" is-tile class="ma-2 btn-border box-shadow-none">
       Cancel &amp; Return
     </huxButton>
     <huxButton variant="white" is-tile is-disabled class="ma-2">

@@ -230,7 +230,7 @@ export default {
 }
 
 .truncate {
-  width: 281px;
+  max-width: 281px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

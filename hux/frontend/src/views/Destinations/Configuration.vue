@@ -143,7 +143,7 @@
       >
         <div class="d-flex justify-space-between">
           <div class="mr-3">
-            <icon type="Bulb" :size="32" color="yellow" />
+            <icon type="bulb" :size="32" color="yellow" />
           </div>
           <p class="text-body-1 ma-0">
             The destination you have selected is currently not available to
@@ -269,6 +269,7 @@
           size="large"
           :is-tile="true"
           data-e2e="cancel-destination-request"
+          class="btn-border box-shadow-none"
           @click="cancel()"
         >
           <span class="primary--text">Cancel</span>

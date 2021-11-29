@@ -15,7 +15,7 @@
     <div>
       <text-field
         label-text="Subject"
-        placeholder="Enter Subject"
+        placeholder="Enter subject"
         class="px-13"
         height="40"
         required

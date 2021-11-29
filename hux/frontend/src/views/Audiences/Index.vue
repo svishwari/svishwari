@@ -70,6 +70,7 @@
               'primary--text': header.fixed,
             }"
             :style="{ minWidth: header.width, left: 0 }"
+            class="text-body-1 black--text"
           >
             <div
               v-if="header.value == 'name'"

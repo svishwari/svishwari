@@ -33,7 +33,7 @@
               height="40"
               is-tile
               :style="{ float: 'left' }"
-              class="mr-2"
+              class="mr-2 btn-border box-shadow-none"
               @click="onCancel()"
             >
               <span class="primary--text">{{ cancelBtnText }}</span>

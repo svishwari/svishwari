@@ -24,7 +24,7 @@
       </v-breadcrumbs-item>
     </template>
     <template #divider>
-      <icon type="side-arrow" :size="14" color="primary" class="mx-5" />
+      <icon type="side-arrow" :size="14" color="primary" class="mx-5 mt-1" />
     </template>
   </v-breadcrumbs>
 </template>

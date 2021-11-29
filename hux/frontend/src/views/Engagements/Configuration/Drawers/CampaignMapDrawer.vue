@@ -88,7 +88,12 @@
       </div>
     </template>
     <template #footer-left>
-      <v-btn tile color="white" @click="closeDrawer">
+      <v-btn
+        tile
+        color="white"
+        class="btn-border box-shadow-none"
+        @click="closeDrawer"
+      >
         <span class="primary--text">Cancel</span>
       </v-btn>
       <v-btn tile color="primary" :disabled="!canMapNow" @click="mapSelections">

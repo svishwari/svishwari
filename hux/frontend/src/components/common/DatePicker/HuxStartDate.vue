@@ -52,7 +52,7 @@
           <huxButton
             variant="white"
             is-tile
-            class="btn-cancel ml-4"
+            class="btn-cancel ml-4 btn-border box-shadow-none"
             @click="menu = false"
           >
             Cancel

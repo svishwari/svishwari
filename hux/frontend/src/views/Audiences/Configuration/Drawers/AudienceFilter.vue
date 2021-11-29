@@ -71,7 +71,7 @@
       <v-btn
         tile
         color="white"
-        class="text-button ml-1 primary-text"
+        class="text-button ml-1 primary-text btn-border box-shadow-none"
         @click="cancel()"
       >
         Cancel
