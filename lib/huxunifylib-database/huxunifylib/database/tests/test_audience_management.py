@@ -7,7 +7,7 @@ import mongomock
 import pandas as pd
 import huxunifylib.database.audience_management as am
 import huxunifylib.database.data_management as dm
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database import delete_util
 from huxunifylib.database.client import DatabaseClient
 
@@ -22,7 +22,7 @@ class TestAudienceManagement(unittest.TestCase):
         self.database = DatabaseClient(
             "localhost", 27017, None, None
         ).connect()
-        self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
+        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
         self.data_source_params = [
             "My data source",
@@ -35,71 +35,71 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.ingested_data_frame = pd.DataFrame(
             {
-                c.S_TYPE_FIRST_NAME: [
+                db_c.S_TYPE_FIRST_NAME: [
                     "first_name_10",
                     "first_name_20",
                     "first_name_30",
                     "first_name_40",
                 ],
-                c.S_TYPE_LAST_NAME: [
+                db_c.S_TYPE_LAST_NAME: [
                     "last_name_10",
                     "last_name_20",
                     "last_name_30",
                     "last_name_40",
                 ],
-                c.S_TYPE_EMAIL: [
+                db_c.S_TYPE_EMAIL: [
                     "email_10",
                     "email_20",
                     "email_30",
                     "email_40",
                 ],
-                c.S_TYPE_CITY: [
+                db_c.S_TYPE_CITY: [
                     "New York",
                     "London",
                     "San Francisco",
                     "Chicago",
                 ],
-                c.S_TYPE_COUNTRY_CODE: ["US", "UK", "US", "US"],
-                c.S_TYPE_STATE_OR_PROVINCE: ["NY", None, "CA", "IL"],
-                c.S_TYPE_GENDER: ["m", "f", None, "m"],
-                c.S_TYPE_AGE: [33, 28, 64, 59],
+                db_c.S_TYPE_COUNTRY_CODE: ["US", "UK", "US", "US"],
+                db_c.S_TYPE_STATE_OR_PROVINCE: ["NY", None, "CA", "IL"],
+                db_c.S_TYPE_GENDER: ["m", "f", None, "m"],
+                db_c.S_TYPE_AGE: [33, 28, 64, 59],
                 "custom_field": ["val_10", "val_20", "val_30", "val_40"],
             }
         )
 
         self.new_data_frame = pd.DataFrame(
             {
-                c.S_TYPE_FIRST_NAME: [
+                db_c.S_TYPE_FIRST_NAME: [
                     "first_name_50",
                     "first_name_60",
                 ],
-                c.S_TYPE_LAST_NAME: [
+                db_c.S_TYPE_LAST_NAME: [
                     "last_name_50",
                     "last_name_60",
                 ],
-                c.S_TYPE_EMAIL: [
+                db_c.S_TYPE_EMAIL: [
                     "email_50",
                     "email_60",
                 ],
-                c.S_TYPE_AGE: [43, 48],
+                db_c.S_TYPE_AGE: [43, 48],
                 "new_custom_field": ["new_val_50", "new_val_60"],
             }
         )
 
         self.audience_filters = [
             {
-                "field": c.S_TYPE_AGE,
-                "type": c.AUDIENCE_FILTER_MAX,
+                "field": db_c.S_TYPE_AGE,
+                "type": db_c.AUDIENCE_FILTER_MAX,
                 "value": 60,
             },
             {
-                "field": c.S_TYPE_COUNTRY_CODE,
-                "type": c.AUDIENCE_FILTER_INCLUDE,
+                "field": db_c.S_TYPE_COUNTRY_CODE,
+                "type": db_c.AUDIENCE_FILTER_INCLUDE,
                 "value": "US",
             },
             {
-                "field": c.S_TYPE_CITY,
-                "type": c.AUDIENCE_FILTER_EXCLUDE,
+                "field": db_c.S_TYPE_CITY,
+                "type": db_c.AUDIENCE_FILTER_EXCLUDE,
                 "value": ["London"],
             },
         ]
@@ -118,7 +118,7 @@ class TestAudienceManagement(unittest.TestCase):
             self.database, *self.data_source_params
         )
         ingestion_job_doc = dm.set_ingestion_job(
-            self.database, data_source_doc[c.ID]
+            self.database, data_source_doc[db_c.ID]
         )
         return ingestion_job_doc
 
@@ -131,7 +131,7 @@ class TestAudienceManagement(unittest.TestCase):
 
         """
         ingestion_job_doc = self._setup_ingestion_job()
-        ingestion_job_id = ingestion_job_doc[c.ID]
+        ingestion_job_id = ingestion_job_doc[db_c.ID]
 
         dm.append_ingested_data(
             self.database, ingestion_job_id, self.ingested_data_frame
@@ -150,7 +150,7 @@ class TestAudienceManagement(unittest.TestCase):
     def _setup_ingestion_succeeded_and_audience(self) -> None:
 
         ingestion_job_doc = self._setup_ingestion_job()
-        ingestion_job_id = ingestion_job_doc[c.ID]
+        ingestion_job_id = ingestion_job_doc[db_c.ID]
 
         dm.append_ingested_data(
             self.database, ingestion_job_id, self.ingested_data_frame
@@ -159,7 +159,7 @@ class TestAudienceManagement(unittest.TestCase):
             self.database, ingestion_job_id, self.new_data_frame
         )
         self.ingestion_job_doc = am.set_ingestion_job_status(
-            self.database, ingestion_job_id, c.STATUS_SUCCEEDED
+            self.database, ingestion_job_id, db_c.STATUS_SUCCEEDED
         )
         self.audience_doc = am.create_audience(
             self.database,
@@ -174,15 +174,15 @@ class TestAudienceManagement(unittest.TestCase):
         ingestion_job_doc = self._setup_ingestion_job()
 
         self.assertTrue(ingestion_job_doc is not None)
-        self.assertTrue(c.ID in ingestion_job_doc)
+        self.assertTrue(db_c.ID in ingestion_job_doc)
 
-        ingestion_job_id = ingestion_job_doc[c.ID]
+        ingestion_job_id = ingestion_job_doc[db_c.ID]
         doc = am.set_ingestion_job_status(
-            self.database, ingestion_job_id, c.STATUS_SUCCEEDED
+            self.database, ingestion_job_id, db_c.STATUS_SUCCEEDED
         )
         self.assertTrue(doc is not None)
-        self.assertTrue(c.JOB_STATUS in doc)
-        self.assertTrue(c.JOB_END_TIME in doc)
+        self.assertTrue(db_c.JOB_STATUS in doc)
+        self.assertTrue(db_c.JOB_END_TIME in doc)
 
         success_flag = dm.append_ingested_data(
             self.database, ingestion_job_id, self.ingested_data_frame
@@ -200,14 +200,14 @@ class TestAudienceManagement(unittest.TestCase):
         audience_doc, _ = self._setup_audience()
 
         self.assertTrue(audience_doc is not None)
-        self.assertTrue(c.ID in audience_doc)
-        self.assertFalse(c.DELETED in audience_doc)
+        self.assertTrue(db_c.ID in audience_doc)
+        self.assertFalse(db_c.DELETED in audience_doc)
 
     def test_audience_count(self):
         """Created audiences are counted properly."""
 
         _, ingestion_job_doc = self._setup_audience()
-        ingestion_job_id = ingestion_job_doc[c.ID]
+        ingestion_job_id = ingestion_job_doc[db_c.ID]
 
         doc = am.create_audience(
             self.database,
@@ -229,34 +229,34 @@ class TestAudienceManagement(unittest.TestCase):
 
         audience_data_1, next_start_id = am.get_audience(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
             None,
             1,
         )
 
         self.assertEqual(audience_data_1.shape[0], 1)
-        self.assertTrue(c.S_TYPE_CUSTOMER_ID in audience_data_1.columns)
+        self.assertTrue(db_c.S_TYPE_CUSTOMER_ID in audience_data_1.columns)
 
         audience_data_2, next_start_id = am.get_audience(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
             next_start_id,
             1,
         )
 
         self.assertEqual(audience_data_2.shape[0], 1)
-        self.assertTrue(c.S_TYPE_CUSTOMER_ID in audience_data_1.columns)
+        self.assertTrue(db_c.S_TYPE_CUSTOMER_ID in audience_data_1.columns)
 
         audience_data = pd.concat([audience_data_1, audience_data_2])
 
         self.assertTrue(audience_data is not None)
 
         self.assertEqual(audience_data.shape[0], 2)
-        self.assertEqual(set(audience_data[c.S_TYPE_COUNTRY_CODE]), {"US"})
+        self.assertEqual(set(audience_data[db_c.S_TYPE_COUNTRY_CODE]), {"US"})
         self.assertEqual(
-            set(audience_data[c.S_TYPE_CITY]), {"New York", "Chicago"}
+            set(audience_data[db_c.S_TYPE_CITY]), {"New York", "Chicago"}
         )
-        self.assertEqual(set(audience_data[c.S_TYPE_AGE]), {33, 59})
+        self.assertEqual(set(audience_data[db_c.S_TYPE_AGE]), {33, 59})
 
     def test_get_audience_batches(self):
         """Test get audiences in batches."""
@@ -264,14 +264,14 @@ class TestAudienceManagement(unittest.TestCase):
         self._setup_ingestion_succeeded_and_audience()
 
         fetch = am.get_audience_batches(
-            self.database, self.audience_doc[c.ID], 1
+            self.database, self.audience_doc[db_c.ID], 1
         )
 
         for audience_batch in fetch:
             self.assertEqual(audience_batch.shape[0], 1)
 
         fetch = am.get_audience_batches(
-            self.database, self.audience_doc[c.ID], 2
+            self.database, self.audience_doc[db_c.ID], 2
         )
 
         for audience_batch in fetch:
@@ -284,7 +284,7 @@ class TestAudienceManagement(unittest.TestCase):
 
         # count of audiences documents after soft deletion
         success_flag = delete_util.delete_audience(
-            self.database, self.audience_doc[c.ID]
+            self.database, self.audience_doc[db_c.ID]
         )
         self.assertTrue(success_flag)
 
@@ -296,68 +296,80 @@ class TestAudienceManagement(unittest.TestCase):
 
         audience_data, _ = am.get_audience(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
         )
 
         insights = am.append_audience_insights(
-            self.database, self.audience_doc[c.ID], audience_data
+            self.database, self.audience_doc[db_c.ID], audience_data
         )
 
         self.assertTrue(insights is not None)
-        self.assertTrue(c.AUDIENCE_ID in insights)
-        self.assertEqual(insights[c.AUDIENCE_ID], self.audience_doc[c.ID])
-        self.assertTrue(c.S_TYPE_CITY in insights)
-        self.assertTrue(c.S_TYPE_COUNTRY_CODE in insights)
-        self.assertTrue(c.S_TYPE_STATE_OR_PROVINCE in insights)
-        self.assertTrue(c.S_TYPE_GENDER in insights)
-        self.assertTrue(c.S_TYPE_AGE in insights)
-        self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_CITY])
-        self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_COUNTRY_CODE])
-        self.assertTrue(
-            c.STATS_COVERAGE in insights[c.S_TYPE_STATE_OR_PROVINCE]
-        )
-        self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_GENDER])
-        self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_AGE])
-        self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_CITY])
-        self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_COUNTRY_CODE])
-        self.assertTrue(
-            c.STATS_BREAKDOWN in insights[c.S_TYPE_STATE_OR_PROVINCE]
-        )
-        self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_GENDER])
-        self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_AGE])
-        self.assertTrue(c.STATS_BREAKDOWN not in insights[c.S_TYPE_FIRST_NAME])
-        self.assertTrue(c.STATS_BREAKDOWN not in insights[c.S_TYPE_LAST_NAME])
-        self.assertTrue(c.STATS_BREAKDOWN not in insights[c.S_TYPE_EMAIL])
-
-        self.assertEqual(insights[c.DATA_COUNT], 2)
+        self.assertTrue(db_c.AUDIENCE_ID in insights)
         self.assertEqual(
-            insights[c.S_TYPE_CITY],
+            insights[db_c.AUDIENCE_ID], self.audience_doc[db_c.ID]
+        )
+        self.assertTrue(db_c.S_TYPE_CITY in insights)
+        self.assertTrue(db_c.S_TYPE_COUNTRY_CODE in insights)
+        self.assertTrue(db_c.S_TYPE_STATE_OR_PROVINCE in insights)
+        self.assertTrue(db_c.S_TYPE_GENDER in insights)
+        self.assertTrue(db_c.S_TYPE_AGE in insights)
+        self.assertTrue(db_c.STATS_COVERAGE in insights[db_c.S_TYPE_CITY])
+        self.assertTrue(
+            db_c.STATS_COVERAGE in insights[db_c.S_TYPE_COUNTRY_CODE]
+        )
+        self.assertTrue(
+            db_c.STATS_COVERAGE in insights[db_c.S_TYPE_STATE_OR_PROVINCE]
+        )
+        self.assertTrue(db_c.STATS_COVERAGE in insights[db_c.S_TYPE_GENDER])
+        self.assertTrue(db_c.STATS_COVERAGE in insights[db_c.S_TYPE_AGE])
+        self.assertTrue(db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_CITY])
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_COUNTRY_CODE]
+        )
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_STATE_OR_PROVINCE]
+        )
+        self.assertTrue(db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_GENDER])
+        self.assertTrue(db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_AGE])
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_FIRST_NAME]
+        )
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_LAST_NAME]
+        )
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_EMAIL]
+        )
+
+        self.assertEqual(insights[db_c.DATA_COUNT], 2)
+        self.assertEqual(
+            insights[db_c.S_TYPE_CITY],
             {"coverage": 1.0, "breakdown": {"New York": 0.5, "Chicago": 0.5}},
         )
         self.assertEqual(
-            insights[c.S_TYPE_GENDER],
+            insights[db_c.S_TYPE_GENDER],
             {"coverage": 1.0, "breakdown": {"m": 1.0}},
         )
 
         # Append more data to insights
         new_audience_data = pd.DataFrame(
             {
-                c.S_TYPE_FIRST_NAME: [
+                db_c.S_TYPE_FIRST_NAME: [
                     "first_name_4",
                     "first_name_5",
                     "first_name_6",
                 ],
-                c.S_TYPE_LAST_NAME: [
+                db_c.S_TYPE_LAST_NAME: [
                     "last_name_4",
                     "last_name_5",
                     "last_name_6",
                 ],
-                c.S_TYPE_EMAIL: ["email_4", "email_5", "email_6"],
-                c.S_TYPE_CITY: ["New York", "Chicago", "San Francisco"],
-                c.S_TYPE_COUNTRY_CODE: ["US", "US", "US"],
-                c.S_TYPE_STATE_OR_PROVINCE: ["NY", "IL", "CA"],
-                c.S_TYPE_GENDER: ["m", "f", "f"],
-                c.S_TYPE_AGE: [59, 50, 35],
+                db_c.S_TYPE_EMAIL: ["email_4", "email_5", "email_6"],
+                db_c.S_TYPE_CITY: ["New York", "Chicago", "San Francisco"],
+                db_c.S_TYPE_COUNTRY_CODE: ["US", "US", "US"],
+                db_c.S_TYPE_STATE_OR_PROVINCE: ["NY", "IL", "CA"],
+                db_c.S_TYPE_GENDER: ["m", "f", "f"],
+                db_c.S_TYPE_AGE: [59, 50, 35],
                 "custom_field": [
                     "val_4",
                     "val_5",
@@ -373,7 +385,7 @@ class TestAudienceManagement(unittest.TestCase):
 
         insights = am.append_audience_insights(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
             new_audience_data,
             ["custom_field", "custom_field_extra"],
         )
@@ -381,38 +393,50 @@ class TestAudienceManagement(unittest.TestCase):
         assert insights is not None
 
         self.assertTrue(insights is not None)
-        self.assertTrue(c.AUDIENCE_ID in insights)
-        self.assertEqual(insights[c.AUDIENCE_ID], self.audience_doc[c.ID])
-        self.assertTrue(c.S_TYPE_CITY in insights)
-        self.assertTrue(c.S_TYPE_COUNTRY_CODE in insights)
-        self.assertTrue(c.S_TYPE_STATE_OR_PROVINCE in insights)
-        self.assertTrue(c.S_TYPE_GENDER in insights)
-        self.assertTrue(c.S_TYPE_AGE in insights)
+        self.assertTrue(db_c.AUDIENCE_ID in insights)
+        self.assertEqual(
+            insights[db_c.AUDIENCE_ID], self.audience_doc[db_c.ID]
+        )
+        self.assertTrue(db_c.S_TYPE_CITY in insights)
+        self.assertTrue(db_c.S_TYPE_COUNTRY_CODE in insights)
+        self.assertTrue(db_c.S_TYPE_STATE_OR_PROVINCE in insights)
+        self.assertTrue(db_c.S_TYPE_GENDER in insights)
+        self.assertTrue(db_c.S_TYPE_AGE in insights)
         self.assertTrue("custom_field" in insights)
         self.assertTrue("custom_field_extra" in insights)
-        self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_CITY])
-        self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_COUNTRY_CODE])
+        self.assertTrue(db_c.STATS_COVERAGE in insights[db_c.S_TYPE_CITY])
         self.assertTrue(
-            c.STATS_COVERAGE in insights[c.S_TYPE_STATE_OR_PROVINCE]
+            db_c.STATS_COVERAGE in insights[db_c.S_TYPE_COUNTRY_CODE]
         )
-        self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_GENDER])
-        self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_AGE])
-        self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_CITY])
-        self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_COUNTRY_CODE])
         self.assertTrue(
-            c.STATS_BREAKDOWN in insights[c.S_TYPE_STATE_OR_PROVINCE]
+            db_c.STATS_COVERAGE in insights[db_c.S_TYPE_STATE_OR_PROVINCE]
         )
-        self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_GENDER])
-        self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_AGE])
-        self.assertTrue(c.STATS_BREAKDOWN in insights["custom_field"])
-        self.assertTrue(c.STATS_BREAKDOWN in insights["custom_field_extra"])
-        self.assertTrue(c.STATS_BREAKDOWN not in insights[c.S_TYPE_FIRST_NAME])
-        self.assertTrue(c.STATS_BREAKDOWN not in insights[c.S_TYPE_LAST_NAME])
-        self.assertTrue(c.STATS_BREAKDOWN not in insights[c.S_TYPE_EMAIL])
+        self.assertTrue(db_c.STATS_COVERAGE in insights[db_c.S_TYPE_GENDER])
+        self.assertTrue(db_c.STATS_COVERAGE in insights[db_c.S_TYPE_AGE])
+        self.assertTrue(db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_CITY])
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_COUNTRY_CODE]
+        )
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_STATE_OR_PROVINCE]
+        )
+        self.assertTrue(db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_GENDER])
+        self.assertTrue(db_c.STATS_BREAKDOWN in insights[db_c.S_TYPE_AGE])
+        self.assertTrue(db_c.STATS_BREAKDOWN in insights["custom_field"])
+        self.assertTrue(db_c.STATS_BREAKDOWN in insights["custom_field_extra"])
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_FIRST_NAME]
+        )
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_LAST_NAME]
+        )
+        self.assertTrue(
+            db_c.STATS_BREAKDOWN not in insights[db_c.S_TYPE_EMAIL]
+        )
 
-        self.assertEqual(insights[c.DATA_COUNT], 5)
+        self.assertEqual(insights[db_c.DATA_COUNT], 5)
         self.assertEqual(
-            insights[c.S_TYPE_CITY],
+            insights[db_c.S_TYPE_CITY],
             {
                 "coverage": 1.0,
                 "breakdown": {
@@ -426,7 +450,7 @@ class TestAudienceManagement(unittest.TestCase):
         # Get insights
         stored_insights = am.get_audience_insights(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
         )
 
         self.assertTrue(stored_insights is not None)
@@ -440,11 +464,11 @@ class TestAudienceManagement(unittest.TestCase):
         # Get audience configuration
         doc = am.get_audience_config(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
         )
 
         self.assertTrue(doc is not None)
-        self.assertFalse(c.DELETED in doc)
+        self.assertFalse(db_c.DELETED in doc)
 
     def test_get_audience_name(self):
         """Test get audience name."""
@@ -454,7 +478,7 @@ class TestAudienceManagement(unittest.TestCase):
         # Get audience name
         audience_name = am.get_audience_name(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
         )
 
         self.assertTrue(audience_name is not None)
@@ -469,13 +493,13 @@ class TestAudienceManagement(unittest.TestCase):
         new_name = "New name"
         doc = am.update_audience_name(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
             new_name,
         )
 
         self.assertTrue(doc is not None)
-        self.assertTrue(c.AUDIENCE_NAME in doc)
-        self.assertEqual(doc[c.AUDIENCE_NAME], new_name)
+        self.assertTrue(db_c.AUDIENCE_NAME in doc)
+        self.assertEqual(doc[db_c.AUDIENCE_NAME], new_name)
 
     def test_update_audience_filters(self):
         """Test update audience filters."""
@@ -486,13 +510,13 @@ class TestAudienceManagement(unittest.TestCase):
         new_filters = []
         doc = am.update_audience_filters(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
             new_filters,
         )
 
         self.assertTrue(doc is not None)
-        self.assertTrue(c.AUDIENCE_FILTERS in doc)
-        self.assertEqual(doc[c.AUDIENCE_FILTERS], new_filters)
+        self.assertTrue(db_c.AUDIENCE_FILTERS in doc)
+        self.assertEqual(doc[db_c.AUDIENCE_FILTERS], new_filters)
 
     def test_get_ingestion_job_audience_ids(self):
         """Test get_ingestion_job_audience_ids."""
@@ -502,7 +526,7 @@ class TestAudienceManagement(unittest.TestCase):
         # Get all audience IDs given an ingestion job
         audience_ids = am.get_ingestion_job_audience_ids(
             self.database,
-            self.ingestion_job_doc[c.ID],
+            self.ingestion_job_doc[db_c.ID],
         )
 
         self.assertTrue(audience_ids is not None)
@@ -515,12 +539,12 @@ class TestAudienceManagement(unittest.TestCase):
         # Create insights
         audience_data, _ = am.get_audience(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
         )
 
         insights = am.append_audience_insights(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
             audience_data,
         )
 
@@ -529,13 +553,13 @@ class TestAudienceManagement(unittest.TestCase):
         # Get all insights given an ingestion job
         all_insights = am.get_ingestion_job_audience_insights(
             self.database,
-            self.ingestion_job_doc[c.ID],
+            self.ingestion_job_doc[db_c.ID],
         )
 
         self.assertTrue(all_insights is not None)
         self.assertEqual(len(all_insights), 1)
         self.assertEqual(
-            all_insights[0][c.AUDIENCE_ID], self.audience_doc[c.ID]
+            all_insights[0][db_c.AUDIENCE_ID], self.audience_doc[db_c.ID]
         )
 
     def test_delete_audience_insights(self):
@@ -546,12 +570,12 @@ class TestAudienceManagement(unittest.TestCase):
         # Create insights
         audience_data, _ = am.get_audience(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
         )
 
         insights = am.append_audience_insights(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
             audience_data,
         )
 
@@ -560,7 +584,7 @@ class TestAudienceManagement(unittest.TestCase):
         # Delete insights
         success_flag = am.delete_audience_insights(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
         )
         self.assertTrue(success_flag)
 
@@ -572,11 +596,11 @@ class TestAudienceManagement(unittest.TestCase):
         # Create insights
         audience_data, _ = am.get_audience(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
         )
 
         insights = am.append_audience_insights(
-            self.database, self.audience_doc[c.ID], audience_data
+            self.database, self.audience_doc[db_c.ID], audience_data
         )
 
         self.assertTrue(insights is not None)
@@ -584,7 +608,7 @@ class TestAudienceManagement(unittest.TestCase):
         # Refresh an audience's insights
         doc = am.refresh_audience_insights(
             self.database,
-            self.audience_doc[c.ID],
+            self.audience_doc[db_c.ID],
         )
         self.assertTrue(doc is not None)
 
@@ -598,7 +622,7 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertIsNotNone(audiences)
         self.assertEqual(len(audiences), 1)
-        self.assertFalse([a for a in audiences if c.DELETED in a])
+        self.assertFalse([a for a in audiences if db_c.DELETED in a])
 
     def test_get_all_audiences(self):
         """Test get_all_audiences."""
@@ -610,7 +634,7 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertIsNotNone(audiences)
         self.assertEqual(len(audiences), 1)
-        self.assertFalse([a for a in audiences if c.DELETED in a])
+        self.assertFalse([a for a in audiences if db_c.DELETED in a])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_favorite_audience(self):
@@ -618,11 +642,11 @@ class TestAudienceManagement(unittest.TestCase):
 
         self._setup_ingestion_succeeded_and_audience()
 
-        doc = am.favorite_audience(self.database, self.audience_doc[c.ID])
+        doc = am.favorite_audience(self.database, self.audience_doc[db_c.ID])
 
         self.assertTrue(doc is not None)
-        self.assertTrue(c.FAVORITE in doc)
-        self.assertTrue(doc[c.FAVORITE])
+        self.assertTrue(db_c.FAVORITE in doc)
+        self.assertTrue(doc[db_c.FAVORITE])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_unfavorite_audience(self):
@@ -630,11 +654,11 @@ class TestAudienceManagement(unittest.TestCase):
 
         self._setup_ingestion_succeeded_and_audience()
 
-        doc = am.unfavorite_audience(self.database, self.audience_doc[c.ID])
+        doc = am.unfavorite_audience(self.database, self.audience_doc[db_c.ID])
 
         self.assertTrue(doc is not None)
-        self.assertTrue(c.FAVORITE in doc)
-        self.assertTrue(not doc[c.FAVORITE])
+        self.assertTrue(db_c.FAVORITE in doc)
+        self.assertTrue(not doc[db_c.FAVORITE])
 
     def test_update_audience_status(self):
         """Test update audience status."""
@@ -644,10 +668,12 @@ class TestAudienceManagement(unittest.TestCase):
         # Update audience name
         doc = am.update_audience_status_for_delivery(
             self.database,
-            self.audience_doc[c.ID],
-            c.AUDIENCE_STATUS_DELIVERING,
+            self.audience_doc[db_c.ID],
+            db_c.AUDIENCE_STATUS_DELIVERING,
         )
 
         self.assertIsNotNone(doc)
-        self.assertIn(c.AUDIENCE_STATUS, doc)
-        self.assertEqual(doc[c.AUDIENCE_STATUS], c.AUDIENCE_STATUS_DELIVERING)
+        self.assertIn(db_c.AUDIENCE_STATUS, doc)
+        self.assertEqual(
+            doc[db_c.AUDIENCE_STATUS], db_c.AUDIENCE_STATUS_DELIVERING
+        )
