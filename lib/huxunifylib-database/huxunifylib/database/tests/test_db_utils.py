@@ -1,7 +1,7 @@
 """DB Utils tests."""
 from unittest import TestCase
 
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.db_exceptions import DuplicateDataSourceFieldType
 from huxunifylib.database.audience_data_management_util import (
     validate_data_source_fields,
@@ -16,14 +16,14 @@ class TestDBUtils(TestCase):
         fields = [
             {
                 "header": "ph",
-                "special_type": c.S_TYPE_PHONE_NUMBER,
+                "special_type": db_c.S_TYPE_PHONE_NUMBER,
                 "custom_type": None,
                 "field_mapping": None,
                 "field_mapping_default": None,
             },
             {
                 "header": "phone_number",
-                "special_type": c.S_TYPE_PHONE_NUMBER,
+                "special_type": db_c.S_TYPE_PHONE_NUMBER,
                 "custom_type": None,
                 "field_mapping": None,
                 "field_mapping_default": None,
@@ -31,15 +31,15 @@ class TestDBUtils(TestCase):
             {
                 "header": "order",
                 "special_type": None,
-                "custom_type": c.CUSTOM_TYPE_INT,
-                "field_mapping": c.FIELD_MAP_ORDER_QUANTITY_12M,
+                "custom_type": db_c.CUSTOM_TYPE_INT,
+                "field_mapping": db_c.FIELD_MAP_ORDER_QUANTITY_12M,
                 "field_mapping_default": None,
             },
             {
                 "header": "past_order",
                 "special_type": None,
-                "custom_type": c.CUSTOM_TYPE_INT,
-                "field_mapping": c.FIELD_MAP_ORDER_QUANTITY_13M_24M,
+                "custom_type": db_c.CUSTOM_TYPE_INT,
+                "field_mapping": db_c.FIELD_MAP_ORDER_QUANTITY_13M_24M,
                 "field_mapping_default": None,
             },
         ]
@@ -51,14 +51,14 @@ class TestDBUtils(TestCase):
         fields = [
             {
                 "header": "first_name",
-                "special_type": c.S_TYPE_FIRST_NAME,
+                "special_type": db_c.S_TYPE_FIRST_NAME,
                 "custom_type": None,
                 "field_mapping": None,
                 "field_mapping_default": None,
             },
             {
                 "header": "phone_number",
-                "special_type": c.S_TYPE_PHONE_NUMBER,
+                "special_type": db_c.S_TYPE_PHONE_NUMBER,
                 "custom_type": None,
                 "field_mapping": None,
                 "field_mapping_default": None,
@@ -66,21 +66,21 @@ class TestDBUtils(TestCase):
             {
                 "header": "order",
                 "special_type": None,
-                "custom_type": c.CUSTOM_TYPE_INT,
-                "field_mapping": c.FIELD_MAP_ORDER_QUANTITY_12M,
+                "custom_type": db_c.CUSTOM_TYPE_INT,
+                "field_mapping": db_c.FIELD_MAP_ORDER_QUANTITY_12M,
                 "field_mapping_default": None,
             },
             {
                 "header": "past_order",
                 "special_type": None,
-                "custom_type": c.CUSTOM_TYPE_INT,
-                "field_mapping": c.FIELD_MAP_ORDER_QUANTITY_13M_24M,
+                "custom_type": db_c.CUSTOM_TYPE_INT,
+                "field_mapping": db_c.FIELD_MAP_ORDER_QUANTITY_13M_24M,
                 "field_mapping_default": None,
             },
             {
                 "header": "Number .Of Children",
                 "special_type": None,
-                "custom_type": c.CUSTOM_TYPE_INT,
+                "custom_type": db_c.CUSTOM_TYPE_INT,
                 "field_mapping": None,
                 "field_mapping_default": "number_of_children",
             },
@@ -95,14 +95,14 @@ class TestDBUtils(TestCase):
         fields = [
             {
                 "header": "ph",
-                "special_type": c.S_TYPE_PHONE_NUMBER,
+                "special_type": db_c.S_TYPE_PHONE_NUMBER,
                 "custom_type": None,
                 "field_mapping": None,
                 "field_mapping_default": None,
             },
             {
                 "header": "fn",
-                "special_type": c.S_TYPE_FIRST_NAME,
+                "special_type": db_c.S_TYPE_FIRST_NAME,
                 "custom_type": None,
                 "field_mapping": None,
                 "field_mapping_default": None,
@@ -110,14 +110,14 @@ class TestDBUtils(TestCase):
             {
                 "header": "order",
                 "special_type": None,
-                "custom_type": c.CUSTOM_TYPE_INT,
+                "custom_type": db_c.CUSTOM_TYPE_INT,
                 "field_mapping": None,
                 "field_mapping_default": "order",
             },
             {
                 "header": "past_order",
                 "special_type": None,
-                "custom_type": c.CUSTOM_TYPE_INT,
+                "custom_type": db_c.CUSTOM_TYPE_INT,
                 "field_mapping": None,
                 "field_mapping_default": "past_order",
             },
@@ -132,14 +132,14 @@ class TestDBUtils(TestCase):
         fields = [
             {
                 "header": "ph",
-                "special_type": c.S_TYPE_PHONE_NUMBER,
+                "special_type": db_c.S_TYPE_PHONE_NUMBER,
                 "custom_type": None,
                 "field_mapping": None,
                 "field_mapping_default": None,
             },
             {
                 "header": "fn",
-                "special_type": c.S_TYPE_FIRST_NAME,
+                "special_type": db_c.S_TYPE_FIRST_NAME,
                 "custom_type": None,
                 "field_mapping": None,
                 "field_mapping_default": None,
@@ -147,14 +147,14 @@ class TestDBUtils(TestCase):
             {
                 "header": "order",
                 "special_type": None,
-                "custom_type": c.CUSTOM_TYPE_INT,
+                "custom_type": db_c.CUSTOM_TYPE_INT,
                 "field_mapping": None,
                 "field_mapping_default": "order",
             },
             {
                 "header": "past_order",
                 "special_type": None,
-                "custom_type": c.CUSTOM_TYPE_FLOAT,
+                "custom_type": db_c.CUSTOM_TYPE_FLOAT,
                 "field_mapping": None,
                 "field_mapping_default": "past_order",
             },
@@ -169,14 +169,14 @@ class TestDBUtils(TestCase):
         fields = [
             {
                 "header": "ph",
-                "special_type": c.S_TYPE_PHONE_NUMBER,
+                "special_type": db_c.S_TYPE_PHONE_NUMBER,
                 "custom_type": None,
                 "field_mapping": None,
                 "field_mapping_default": None,
             },
             {
                 "header": "fn",
-                "special_type": c.S_TYPE_FIRST_NAME,
+                "special_type": db_c.S_TYPE_FIRST_NAME,
                 "custom_type": None,
                 "field_mapping": None,
                 "field_mapping_default": None,
@@ -184,15 +184,15 @@ class TestDBUtils(TestCase):
             {
                 "header": "order",
                 "special_type": None,
-                "custom_type": c.CUSTOM_TYPE_INT,
-                "field_mapping": c.FIELD_MAP_ORDER_QUANTITY_12M,
+                "custom_type": db_c.CUSTOM_TYPE_INT,
+                "field_mapping": db_c.FIELD_MAP_ORDER_QUANTITY_12M,
                 "field_mapping_default": None,
             },
             {
                 "header": "past_order",
                 "special_type": None,
-                "custom_type": c.CUSTOM_TYPE_INT,
-                "field_mapping": c.FIELD_MAP_ORDER_QUANTITY_12M,
+                "custom_type": db_c.CUSTOM_TYPE_INT,
+                "field_mapping": db_c.FIELD_MAP_ORDER_QUANTITY_12M,
                 "field_mapping_default": None,
             },
         ]
@@ -207,14 +207,14 @@ class TestDBUtils(TestCase):
         fields = [
             {
                 "header": "ph",
-                "special_type": c.S_TYPE_PHONE_NUMBER,
+                "special_type": db_c.S_TYPE_PHONE_NUMBER,
                 "custom_type": None,
                 "field_mapping": None,
                 "field_mapping_default": None,
             },
             {
                 "header": "fn",
-                "special_type": c.S_TYPE_FIRST_NAME,
+                "special_type": db_c.S_TYPE_FIRST_NAME,
                 "custom_type": None,
                 "field_mapping": None,
                 "field_mapping_default": None,
@@ -222,15 +222,15 @@ class TestDBUtils(TestCase):
             {
                 "header": "order",
                 "special_type": None,
-                "custom_type": c.CUSTOM_TYPE_INT,
-                "field_mapping": c.FIELD_MAP_ORDER_QUANTITY_12M,
+                "custom_type": db_c.CUSTOM_TYPE_INT,
+                "field_mapping": db_c.FIELD_MAP_ORDER_QUANTITY_12M,
                 "field_mapping_default": None,
             },
             {
                 "header": "past_order",
                 "special_type": None,
-                "custom_type": c.CUSTOM_TYPE_INT,
-                "field_mapping": c.FIELD_MAP_ORDER_QUANTITY_13M_24M,
+                "custom_type": db_c.CUSTOM_TYPE_INT,
+                "field_mapping": db_c.FIELD_MAP_ORDER_QUANTITY_13M_24M,
                 "field_mapping_default": None,
             },
         ]
@@ -244,14 +244,14 @@ class TestDBUtils(TestCase):
         fields = [
             {
                 "header": "ph",
-                "special_type": c.S_TYPE_PHONE_NUMBER,
+                "special_type": db_c.S_TYPE_PHONE_NUMBER,
                 "custom_type": None,
                 "field_mapping": None,
                 "field_mapping_default": None,
             },
             {
                 "header": "fn",
-                "special_type": c.S_TYPE_FIRST_NAME,
+                "special_type": db_c.S_TYPE_FIRST_NAME,
                 "custom_type": None,
                 "field_mapping": None,
                 "field_mapping_default": None,
@@ -259,14 +259,14 @@ class TestDBUtils(TestCase):
             {
                 "header": "order",
                 "special_type": None,
-                "custom_type": c.CUSTOM_TYPE_INT,
-                "field_mapping": c.FIELD_MAP_ORDER_QUANTITY_12M,
+                "custom_type": db_c.CUSTOM_TYPE_INT,
+                "field_mapping": db_c.FIELD_MAP_ORDER_QUANTITY_12M,
                 "field_mapping_default": None,
             },
             {
                 "header": "past_order",
                 "special_type": None,
-                "custom_type": c.CUSTOM_TYPE_FLOAT,
+                "custom_type": db_c.CUSTOM_TYPE_FLOAT,
                 "field_mapping": None,
                 "field_mapping_default": "past_order",
             },

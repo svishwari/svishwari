@@ -8,7 +8,7 @@ import huxunifylib.database.user_management as um
 import huxunifylib.database.orchestration_management as am
 import huxunifylib.database.engagement_management as em
 import huxunifylib.database.delivery_platform_management as dpm
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.db_exceptions import (
@@ -31,29 +31,29 @@ class TestUserManagement(unittest.TestCase):
             "localhost", 27017, None, None
         ).connect()
 
-        self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
+        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
         # user to be created
         self.sample_user = {
-            c.OKTA_ID: "00ub0oNGTSWTBKOLGLNR",
-            c.S_TYPE_EMAIL: "joe@deloitte.com",
-            c.USER_ORGANIZATION: "deloitte",
-            c.USER_DISPLAY_NAME: "joe smith",
-            c.USER_ROLE: c.USER_ROLE_ADMIN,
-            c.USER_PROFILE_PHOTO: "https://s3/unififed/3.png",
-            c.USER_SUBSCRIPTION: [],
+            db_c.OKTA_ID: "00ub0oNGTSWTBKOLGLNR",
+            db_c.S_TYPE_EMAIL: "joe@deloitte.com",
+            db_c.USER_ORGANIZATION: "deloitte",
+            db_c.USER_DISPLAY_NAME: "joe smith",
+            db_c.USER_ROLE: db_c.USER_ROLE_ADMIN,
+            db_c.USER_PROFILE_PHOTO: "https://s3/unififed/3.png",
+            db_c.USER_SUBSCRIPTION: [],
         }
 
         # set a user document
         self.user_doc = um.set_user(
             database=self.database,
-            okta_id=self.sample_user[c.OKTA_ID],
-            email_address=self.sample_user[c.S_TYPE_EMAIL],
-            role=self.sample_user[c.USER_ROLE],
-            organization=self.sample_user[c.USER_ORGANIZATION],
-            subscriptions=self.sample_user[c.USER_SUBSCRIPTION],
-            display_name=self.sample_user[c.USER_DISPLAY_NAME],
-            profile_photo=self.sample_user[c.USER_PROFILE_PHOTO],
+            okta_id=self.sample_user[db_c.OKTA_ID],
+            email_address=self.sample_user[db_c.S_TYPE_EMAIL],
+            role=self.sample_user[db_c.USER_ROLE],
+            organization=self.sample_user[db_c.USER_ORGANIZATION],
+            subscriptions=self.sample_user[db_c.USER_SUBSCRIPTION],
+            display_name=self.sample_user[db_c.USER_DISPLAY_NAME],
+            profile_photo=self.sample_user[db_c.USER_PROFILE_PHOTO],
         )
 
         self.auth_details_facebook = {
@@ -65,7 +65,7 @@ class TestUserManagement(unittest.TestCase):
 
         self.delivery_platform_doc = dpm.set_delivery_platform(
             self.database,
-            c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
             "My delivery platform for Facebook",
             self.auth_details_facebook,
         )
@@ -74,7 +74,7 @@ class TestUserManagement(unittest.TestCase):
         self.lookalike_audience_doc = (
             dpm.create_delivery_platform_lookalike_audience(
                 self.database,
-                self.delivery_platform_doc[c.ID],
+                self.delivery_platform_doc[db_c.ID],
                 self.audience,
                 "Lookalike audience",
                 0.01,
@@ -85,7 +85,7 @@ class TestUserManagement(unittest.TestCase):
         )
 
         # setting id to set engagement
-        self.audience[c.OBJECT_ID] = self.audience[c.ID]
+        self.audience[db_c.OBJECT_ID] = self.audience[db_c.ID]
 
         self.engagement_id = em.set_engagement(
             self.database,
@@ -95,9 +95,9 @@ class TestUserManagement(unittest.TestCase):
             "user1",
         )
         self.component_ids = {
-            c.ENGAGEMENTS: self.engagement_id,
-            c.AUDIENCES: self.audience[c.OBJECT_ID],
-            c.LOOKALIKE: self.lookalike_audience_doc[c.ID],
+            db_c.ENGAGEMENTS: self.engagement_id,
+            db_c.AUDIENCES: self.audience[db_c.OBJECT_ID],
+            db_c.LOOKALIKE: self.lookalike_audience_doc[db_c.ID],
         }
 
     def test_set_user(self) -> None:
@@ -108,11 +108,11 @@ class TestUserManagement(unittest.TestCase):
             database=self.database,
             okta_id="hf7hr43f7hfr7h7",
             email_address="dave@deloitte.com",
-            role=self.sample_user[c.USER_ROLE],
-            organization=self.sample_user[c.USER_ORGANIZATION],
-            subscriptions=self.sample_user[c.USER_SUBSCRIPTION],
-            display_name=self.sample_user[c.USER_DISPLAY_NAME],
-            profile_photo=self.sample_user[c.USER_PROFILE_PHOTO],
+            role=self.sample_user[db_c.USER_ROLE],
+            organization=self.sample_user[db_c.USER_ORGANIZATION],
+            subscriptions=self.sample_user[db_c.USER_SUBSCRIPTION],
+            display_name=self.sample_user[db_c.USER_DISPLAY_NAME],
+            profile_photo=self.sample_user[db_c.USER_PROFILE_PHOTO],
         )
 
         self.assertIsNotNone(user_doc)
@@ -125,11 +125,11 @@ class TestUserManagement(unittest.TestCase):
             database=self.database,
             okta_id="hf7hr43f7hfr7h7",
             email_address="dave@deloitte.com",
-            role=self.sample_user[c.USER_ROLE],
-            organization=self.sample_user[c.USER_ORGANIZATION],
-            subscriptions=self.sample_user[c.USER_SUBSCRIPTION],
-            display_name=self.sample_user[c.USER_DISPLAY_NAME],
-            profile_photo=self.sample_user[c.USER_PROFILE_PHOTO],
+            role=self.sample_user[db_c.USER_ROLE],
+            organization=self.sample_user[db_c.USER_ORGANIZATION],
+            subscriptions=self.sample_user[db_c.USER_SUBSCRIPTION],
+            display_name=self.sample_user[db_c.USER_DISPLAY_NAME],
+            profile_photo=self.sample_user[db_c.USER_PROFILE_PHOTO],
         )
 
         with self.assertRaises(DuplicateName):
@@ -137,21 +137,22 @@ class TestUserManagement(unittest.TestCase):
                 database=self.database,
                 okta_id="hf7hr43f7hfr7h7",
                 email_address="joesmith@deloitte.com",
-                role=self.sample_user[c.USER_ROLE],
-                organization=self.sample_user[c.USER_ORGANIZATION],
-                subscriptions=self.sample_user[c.USER_SUBSCRIPTION],
-                display_name=self.sample_user[c.USER_DISPLAY_NAME],
-                profile_photo=self.sample_user[c.USER_PROFILE_PHOTO],
+                role=self.sample_user[db_c.USER_ROLE],
+                organization=self.sample_user[db_c.USER_ORGANIZATION],
+                subscriptions=self.sample_user[db_c.USER_SUBSCRIPTION],
+                display_name=self.sample_user[db_c.USER_DISPLAY_NAME],
+                profile_photo=self.sample_user[db_c.USER_PROFILE_PHOTO],
             )
 
     def test_get_user(self) -> None:
         """Test get_user routine."""
 
-        user_doc = um.get_user(self.database, self.user_doc[c.OKTA_ID])
+        user_doc = um.get_user(self.database, self.user_doc[db_c.OKTA_ID])
 
         self.assertIsNotNone(user_doc)
         self.assertEqual(
-            user_doc[c.USER_DISPLAY_NAME], self.user_doc[c.USER_DISPLAY_NAME]
+            user_doc[db_c.USER_DISPLAY_NAME],
+            self.user_doc[db_c.USER_DISPLAY_NAME],
         )
 
     def test_get_users(self) -> None:
@@ -167,15 +168,15 @@ class TestUserManagement(unittest.TestCase):
         # pylint: disable=too-many-function-args
         user_docs = um.get_all_users(
             self.database,
-            {c.USER_DISPLAY_NAME: self.user_doc[c.USER_DISPLAY_NAME]},
+            {db_c.USER_DISPLAY_NAME: self.user_doc[db_c.USER_DISPLAY_NAME]},
         )
 
         self.assertTrue(user_docs)
         # check length of one
         self.assertEqual(1, len(user_docs))
         self.assertEqual(
-            self.user_doc[c.USER_DISPLAY_NAME],
-            user_docs[0][c.USER_DISPLAY_NAME],
+            self.user_doc[db_c.USER_DISPLAY_NAME],
+            user_docs[0][db_c.USER_DISPLAY_NAME],
         )
 
     @given(login_count=st.integers(min_value=0, max_value=9))
@@ -188,23 +189,25 @@ class TestUserManagement(unittest.TestCase):
         """
 
         # set update_doc dict to update the user_doc
-        update_doc = {c.USER_LOGIN_COUNT: login_count + 1}
+        update_doc = {db_c.USER_LOGIN_COUNT: login_count + 1}
         user_doc = um.update_user(
-            self.database, self.user_doc[c.OKTA_ID], update_doc
+            self.database, self.user_doc[db_c.OKTA_ID], update_doc
         )
 
         self.assertIsNotNone(user_doc)
-        self.assertIn(c.USER_LOGIN_COUNT, user_doc)
-        self.assertEqual(login_count + 1, user_doc[c.USER_LOGIN_COUNT])
+        self.assertIn(db_c.USER_LOGIN_COUNT, user_doc)
+        self.assertEqual(login_count + 1, user_doc[db_c.USER_LOGIN_COUNT])
 
     def test_update_user_failure_disallowed_field(self) -> None:
         """Test update_user routine failure with disallowed field."""
 
         # set update_doc dict to update the user_doc
-        update_doc = {c.OKTA_ID: "jd63bsfd884bdsff7348"}
+        update_doc = {db_c.OKTA_ID: "jd63bsfd884bdsff7348"}
 
         with self.assertRaises(DuplicateFieldType):
-            um.update_user(self.database, self.user_doc[c.OKTA_ID], update_doc)
+            um.update_user(
+                self.database, self.user_doc[db_c.OKTA_ID], update_doc
+            )
 
     def test_delete_user(self) -> None:
         """Test delete_user routine."""
@@ -214,110 +217,114 @@ class TestUserManagement(unittest.TestCase):
             database=self.database,
             okta_id="hgf7hf8hdfgh7",
             email_address="russellw@deloitte.com",
-            role=self.sample_user[c.USER_ROLE],
-            organization=self.sample_user[c.USER_ORGANIZATION],
-            subscriptions=self.sample_user[c.USER_SUBSCRIPTION],
-            display_name=self.sample_user[c.USER_DISPLAY_NAME],
-            profile_photo=self.sample_user[c.USER_PROFILE_PHOTO],
+            role=self.sample_user[db_c.USER_ROLE],
+            organization=self.sample_user[db_c.USER_ORGANIZATION],
+            subscriptions=self.sample_user[db_c.USER_SUBSCRIPTION],
+            display_name=self.sample_user[db_c.USER_DISPLAY_NAME],
+            profile_photo=self.sample_user[db_c.USER_PROFILE_PHOTO],
         )
         # validate user was created
-        self.assertTrue(c.ID in user_doc)
+        self.assertTrue(db_c.ID in user_doc)
 
         # remove the user
-        success_flag = um.delete_user(self.database, user_doc[c.OKTA_ID])
+        success_flag = um.delete_user(self.database, user_doc[db_c.OKTA_ID])
         self.assertTrue(success_flag)
 
         # ensure user does not exist anymore
-        user_doc = um.get_user(self.database, user_doc[c.OKTA_ID])
+        user_doc = um.get_user(self.database, user_doc[db_c.OKTA_ID])
         self.assertIsNone(user_doc)
 
     def test_add_favorite(self) -> None:
         """Test function for adding manage_user_favorites routine."""
 
         # first get user before we modify
-        user_doc = um.get_user(self.database, self.user_doc[c.OKTA_ID])
+        user_doc = um.get_user(self.database, self.user_doc[db_c.OKTA_ID])
 
         # test each component
-        for component in c.FAVORITE_COMPONENTS:
+        for component in db_c.FAVORITE_COMPONENTS:
             component_id = self.component_ids[component]
 
             # add favorite component
             update_doc = um.manage_user_favorites(
-                self.database, user_doc[c.OKTA_ID], component, component_id
+                self.database, user_doc[db_c.OKTA_ID], component, component_id
             )
 
             # test non empty list first
-            self.assertTrue(update_doc[c.USER_FAVORITES][component])
+            self.assertTrue(update_doc[db_c.USER_FAVORITES][component])
 
             # test to ensure the ID we added exists
             self.assertTrue(
-                component_id in update_doc[c.USER_FAVORITES][component]
+                component_id in update_doc[db_c.USER_FAVORITES][component]
             )
 
     def test_delete_favorite(self) -> None:
         """Test function for deleting via manage_user_favorites routine"""
 
         # first get user before we modify
-        user_doc = um.get_user(self.database, self.user_doc[c.OKTA_ID])
+        user_doc = um.get_user(self.database, self.user_doc[db_c.OKTA_ID])
 
         # test all the components
-        for component in c.FAVORITE_COMPONENTS:
+        for component in db_c.FAVORITE_COMPONENTS:
             component_id = self.component_ids[component]
 
             # add favorite component
             um.manage_user_favorites(
-                self.database, user_doc[c.OKTA_ID], component, component_id
+                self.database, user_doc[db_c.OKTA_ID], component, component_id
             )
 
             # now remove the favorite
             removed_doc = um.manage_user_favorites(
                 self.database,
-                user_doc[c.OKTA_ID],
+                user_doc[db_c.OKTA_ID],
                 component,
                 component_id,
                 delete_flag=True,
             )
 
             # test empty list first
-            self.assertFalse(removed_doc[c.USER_FAVORITES][component])
+            self.assertFalse(removed_doc[db_c.USER_FAVORITES][component])
 
     def test_duplicate_add_favorite(self) -> None:
         """Test function for duplicate adding manage_user_favorites routine."""
 
         # first get user before we modify
-        user_doc = um.get_user(self.database, self.user_doc[c.OKTA_ID])
+        user_doc = um.get_user(self.database, self.user_doc[db_c.OKTA_ID])
 
         # test all the components
-        for component in c.FAVORITE_COMPONENTS:
+        for component in db_c.FAVORITE_COMPONENTS:
             component_id = self.component_ids[component]
 
             # add favorite component x2
             for _ in range(2):
                 um.manage_user_favorites(
-                    self.database, user_doc[c.OKTA_ID], component, component_id
+                    self.database,
+                    user_doc[db_c.OKTA_ID],
+                    component,
+                    component_id,
                 )
 
             # get user doc
-            update_doc = um.get_user(self.database, user_doc[c.OKTA_ID])
+            update_doc = um.get_user(self.database, user_doc[db_c.OKTA_ID])
 
             # test non empty list first
-            self.assertTrue(update_doc[c.USER_FAVORITES][component])
+            self.assertTrue(update_doc[db_c.USER_FAVORITES][component])
 
             # test to ensure the ID we added exists
             self.assertTrue(
-                component_id in update_doc[c.USER_FAVORITES][component]
+                component_id in update_doc[db_c.USER_FAVORITES][component]
             )
 
             # test to ensure the ID we added exists, only once!
             self.assertEqual(
-                update_doc[c.USER_FAVORITES][component].count(component_id), 1
+                update_doc[db_c.USER_FAVORITES][component].count(component_id),
+                1,
             )
 
     def test_set_dashboard_config(self) -> None:
         """Test function for manage_user_dashboard_config routine."""
 
         # first get user before we modify
-        user_doc = um.get_user(self.database, self.user_doc[c.OKTA_ID])
+        user_doc = um.get_user(self.database, self.user_doc[db_c.OKTA_ID])
 
         # simulate a dashboard config
         pinned_key = "pin_key_perf_insights"
@@ -325,15 +332,17 @@ class TestUserManagement(unittest.TestCase):
 
         # set the config setting for a user
         updated_doc = um.manage_user_dashboard_config(
-            self.database, user_doc[c.OKTA_ID], pinned_key, pinned_value
+            self.database, user_doc[db_c.OKTA_ID], pinned_key, pinned_value
         )
 
         # test pinned value key exists
-        self.assertIn(pinned_key, updated_doc[c.USER_DASHBOARD_CONFIGURATION])
+        self.assertIn(
+            pinned_key, updated_doc[db_c.USER_DASHBOARD_CONFIGURATION]
+        )
 
         # test pinned value is set correctly
         self.assertEqual(
-            updated_doc[c.USER_DASHBOARD_CONFIGURATION][pinned_key],
+            updated_doc[db_c.USER_DASHBOARD_CONFIGURATION][pinned_key],
             pinned_value,
         )
 
@@ -341,7 +350,7 @@ class TestUserManagement(unittest.TestCase):
         """Test delete_flag for manage_user_dashboard_config routine."""
 
         # first get user before we modify
-        user_doc = um.get_user(self.database, self.user_doc[c.OKTA_ID])
+        user_doc = um.get_user(self.database, self.user_doc[db_c.OKTA_ID])
 
         # simulate a dashboard config
         pinned_key = "pin_customer_insights"
@@ -349,22 +358,22 @@ class TestUserManagement(unittest.TestCase):
 
         # set the config setting for a user first
         user_doc = um.manage_user_dashboard_config(
-            self.database, user_doc[c.OKTA_ID], pinned_key, pinned_value
+            self.database, user_doc[db_c.OKTA_ID], pinned_key, pinned_value
         )
 
         # test pinned value key exists
-        self.assertIn(pinned_key, user_doc[c.USER_DASHBOARD_CONFIGURATION])
+        self.assertIn(pinned_key, user_doc[db_c.USER_DASHBOARD_CONFIGURATION])
 
         # test pinned value is set correctly
         self.assertEqual(
-            user_doc[c.USER_DASHBOARD_CONFIGURATION][pinned_key],
+            user_doc[db_c.USER_DASHBOARD_CONFIGURATION][pinned_key],
             pinned_value,
         )
 
         # delete the config setting for a user
         updated_doc = um.manage_user_dashboard_config(
             self.database,
-            user_doc[c.OKTA_ID],
+            user_doc[db_c.OKTA_ID],
             pinned_key,
             None,
             delete_flag=True,
@@ -372,5 +381,5 @@ class TestUserManagement(unittest.TestCase):
 
         # test pinned value key does not exist
         self.assertNotIn(
-            pinned_key, updated_doc[c.USER_DASHBOARD_CONFIGURATION]
+            pinned_key, updated_doc[db_c.USER_DASHBOARD_CONFIGURATION]
         )

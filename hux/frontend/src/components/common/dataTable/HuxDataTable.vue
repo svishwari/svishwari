@@ -14,7 +14,6 @@
         fixed-header
         hide-default-footer
         must-sort
-        single-select
         :disable-sort="disableSort"
       >
         <!-- table headers -->
@@ -35,7 +34,12 @@
             <!-- TODO: find a better solution and remove v-html -->
             <span :key="column.value" v-html="column.text" />
           </template>
-          <tooltip v-if="column.hoverTooltip" :key="column.id" position-top>
+          <tooltip
+            v-if="column.hoverTooltip"
+            :key="column.id"
+            :max-width="column.tooltipWidth"
+            position-top
+          >
             <template #label-content>
               <icon
                 v-if="column.hoverTooltip"

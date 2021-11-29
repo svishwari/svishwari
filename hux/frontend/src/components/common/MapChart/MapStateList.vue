@@ -130,9 +130,6 @@ export default {
   methods: {
     processStateListData() {
       this.stateListData = JSON.parse(JSON.stringify(this.mapData))
-      this.stateListData.forEach((element) => {
-        element.avg_spend = (element.min_ltv + element.max_ltv) / 2
-      })
 
       this.columnDefs = this.columnDefs.filter((column) =>
         this.headerConfig.includes(column.value)

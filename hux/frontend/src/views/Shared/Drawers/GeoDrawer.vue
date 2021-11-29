@@ -52,7 +52,7 @@
                 {{ item[col.value] | Numeric(true) }}
               </template>
             </tooltip>
-            <tooltip v-if="col.value === 'revenue'">
+            <tooltip v-if="col.value === 'avg_spend'">
               {{ item[col.value] | Currency }}
               <template #tooltip>
                 {{ item[col.value] | Currency }}
@@ -135,8 +135,8 @@ export default {
           text: "Size",
         },
         {
-          value: "revenue",
-          text: "Revenue",
+          value: "avg_spend",
+          text: "Avg. spend",
         },
       ],
       sortColumn: "state",
@@ -343,6 +343,13 @@ export default {
 .hux-data-table {
   ::v-deep table {
     table-layout: auto !important;
+    tbody {
+      tr {
+        td {
+          height: 40px !important;
+        }
+      }
+    }
   }
 }
 </style>
