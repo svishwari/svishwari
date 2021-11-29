@@ -439,7 +439,7 @@ class CustomersInsightsStatesSchema(Schema):
     state = Str(attribute=api_c.NAME, required=True, example="New York")
     size = Integer(required=True, default=0, example=1234)
     avg_spend = Float(
-        attribute=api_c.LTV, required=True, default=0.0, example=123.2345
+        attribute=api_c.AVG_LTV, required=True, default=0.0, example=123.2345
     )
 
 
