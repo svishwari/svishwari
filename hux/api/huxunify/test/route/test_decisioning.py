@@ -45,9 +45,6 @@ class DecisioningTests(TestCase):
         self.request_mocker.get(
             t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
         )
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
         self.request_mocker.start()
 
         # setup the flask test client

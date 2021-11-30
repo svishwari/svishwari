@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use,unused-argument
+# pylint: disable=no-self-use
 """Paths for Notifications API"""
 import json
 from http import HTTPStatus

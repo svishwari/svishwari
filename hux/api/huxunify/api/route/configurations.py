@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use,unused-argument
+# pylint: disable=no-self-use
 """Paths for Configurations API"""
 from http import HTTPStatus
 from typing import Tuple, List

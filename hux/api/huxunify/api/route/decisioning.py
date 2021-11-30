@@ -592,6 +592,9 @@ class ModelFeaturesView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    responses.update(EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE)
+
+    tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
     @api_error_handler()
@@ -660,11 +663,6 @@ class ModelFeaturesView(SwaggerView):
             jsonify(FeatureSchema(many=True).dump(features)),
             HTTPStatus.OK.value,
         )
-
-    responses.update(EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE)
-
-    tags = [api_c.MODELS_TAG]
-    # pylint: disable=no-self-use
 
 
 @add_view_to_blueprint(
