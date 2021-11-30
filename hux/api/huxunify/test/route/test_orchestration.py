@@ -55,9 +55,7 @@ class OrchestrationRouteTest(TestCase):
         # mock request for introspect call
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
-        )
+        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         self.request_mocker.start()
 
         self.app = create_app().test_client()
@@ -67,9 +65,7 @@ class OrchestrationRouteTest(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.database = DatabaseClient("localhost", 27017, None, None).connect()
 
         # mock get_db_client() for the orchestration.
         mock.patch(
@@ -177,17 +173,15 @@ class OrchestrationRouteTest(TestCase):
         for audience in audiences:
             self.audiences.append(create_audience(self.database, **audience))
 
-        self.lookalike_audience_doc = (
-            create_delivery_platform_lookalike_audience(
-                self.database,
-                self.destinations[0][db_c.ID],
-                self.audiences[0],
-                "Lookalike audience",
-                0.01,
-                "US",
-                self.user_name,
-                31,
-            )
+        self.lookalike_audience_doc = create_delivery_platform_lookalike_audience(
+            self.database,
+            self.destinations[0][db_c.ID],
+            self.audiences[0],
+            "Lookalike audience",
+            0.01,
+            "US",
+            self.user_name,
+            31,
         )
 
         engagements = [
@@ -227,9 +221,7 @@ class OrchestrationRouteTest(TestCase):
 
         self.engagement_ids = []
         for engagement in engagements:
-            self.engagement_ids.append(
-                str(set_engagement(self.database, **engagement))
-            )
+            self.engagement_ids.append(str(set_engagement(self.database, **engagement)))
 
         self.delivery_jobs = [
             set_delivery_job(
@@ -402,8 +394,7 @@ class OrchestrationRouteTest(TestCase):
                 }
             ],
             api_c.DESTINATIONS: [
-                {api_c.DATA_EXTENSION_ID: str(d[db_c.ID])}
-                for d in self.destinations
+                {api_c.DATA_EXTENSION_ID: str(d[db_c.ID])} for d in self.destinations
             ],
         }
 
@@ -440,9 +431,7 @@ class OrchestrationRouteTest(TestCase):
             ],
         }
         # simulating userinfo endpoint to give invalid user response
-        self.request_mocker.get(
-            t_c.USER_INFO_CALL, json=t_c.INVALID_USER_RESPONSE
-        )
+        self.request_mocker.get(t_c.USER_INFO_CALL, json=t_c.INVALID_USER_RESPONSE)
 
         response = self.test_client.post(
             self.audience_api_endpoint,
@@ -557,15 +546,11 @@ class OrchestrationRouteTest(TestCase):
 
         expected_audience = {
             db_c.OBJECT_ID: audience_doc[db_c.ID],
-            db_c.DESTINATIONS: [
-                {api_c.ID: d[db_c.ID]} for d in self.destinations
-            ],
+            db_c.DESTINATIONS: [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         }
 
         # validate the audience is attached to the engagement
-        engagements = get_engagements_by_audience(
-            self.database, audience_doc[db_c.ID]
-        )
+        engagements = get_engagements_by_audience(self.database, audience_doc[db_c.ID])
         for engagement in engagements:
             # get the attached audience and nested destinations
             engagement_audiences = [
@@ -629,9 +614,7 @@ class OrchestrationRouteTest(TestCase):
         )
         audience = response.json
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(
-            ObjectId(audience[db_c.OBJECT_ID]), self.audiences[0][db_c.ID]
-        )
+        self.assertEqual(ObjectId(audience[db_c.OBJECT_ID]), self.audiences[0][db_c.ID])
         self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
         self.assertEqual(audience[api_c.LOOKALIKEABLE], api_c.STATUS_INACTIVE)
         self.assertFalse(audience[api_c.IS_LOOKALIKE])
@@ -680,21 +663,13 @@ class OrchestrationRouteTest(TestCase):
         audience = response.json
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(audience)
-        self.assertEqual(
-            str(lookalike_audience[db_c.ID]), audience[db_c.OBJECT_ID]
-        )
+        self.assertEqual(str(lookalike_audience[db_c.ID]), audience[db_c.OBJECT_ID])
         self.assertEqual(lookalike_audience[api_c.NAME], audience[api_c.NAME])
         self.assertEqual(self.user_name, audience[db_c.CREATED_BY])
         self.assertTrue(audience[api_c.IS_LOOKALIKE])
-        self.assertEqual(
-            str(self.audiences[0][db_c.ID]), audience[t_c.SOURCE_ID]
-        )
-        self.assertEqual(
-            self.audiences[0][api_c.NAME], audience[t_c.SOURCE_NAME]
-        )
-        self.assertEqual(
-            self.audiences[0][api_c.SIZE], audience[t_c.SOURCE_SIZE]
-        )
+        self.assertEqual(str(self.audiences[0][db_c.ID]), audience[t_c.SOURCE_ID])
+        self.assertEqual(self.audiences[0][api_c.NAME], audience[t_c.SOURCE_NAME])
+        self.assertEqual(self.audiences[0][api_c.SIZE], audience[t_c.SOURCE_SIZE])
         self.assertListEqual(
             self.audiences[0][api_c.AUDIENCE_FILTERS],
             audience[api_c.AUDIENCE_FILTERS],
@@ -736,9 +711,7 @@ class OrchestrationRouteTest(TestCase):
         )
 
         # delete the source audience from mock database
-        deleted_audience = delete_audience(
-            self.database, source_audience[db_c.ID]
-        )
+        deleted_audience = delete_audience(self.database, source_audience[db_c.ID])
         self.assertTrue(deleted_audience)
 
         self.request_mocker.stop()
@@ -756,21 +729,13 @@ class OrchestrationRouteTest(TestCase):
         audience = response.json
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(audience)
-        self.assertEqual(
-            str(lookalike_audience[db_c.ID]), audience[db_c.OBJECT_ID]
-        )
+        self.assertEqual(str(lookalike_audience[db_c.ID]), audience[db_c.OBJECT_ID])
         self.assertEqual(lookalike_audience[api_c.NAME], audience[api_c.NAME])
         self.assertEqual(self.user_name, audience[db_c.CREATED_BY])
         self.assertTrue(audience[api_c.IS_LOOKALIKE])
-        self.assertEqual(
-            str(source_audience[db_c.ID]), audience[t_c.SOURCE_ID]
-        )
-        self.assertEqual(
-            source_audience[api_c.NAME], audience[t_c.SOURCE_NAME]
-        )
-        self.assertEqual(
-            source_audience[api_c.SIZE], audience[t_c.SOURCE_SIZE]
-        )
+        self.assertEqual(str(source_audience[db_c.ID]), audience[t_c.SOURCE_ID])
+        self.assertEqual(source_audience[api_c.NAME], audience[t_c.SOURCE_NAME])
+        self.assertEqual(source_audience[api_c.SIZE], audience[t_c.SOURCE_SIZE])
         self.assertListEqual(
             source_audience[api_c.AUDIENCE_FILTERS],
             audience[api_c.AUDIENCE_FILTERS],
@@ -813,8 +778,8 @@ class OrchestrationRouteTest(TestCase):
         lookalike_audience_ids = [self.lookalike_audience_doc[db_c.ID]]
         return_ids = [ObjectId(x[db_c.OBJECT_ID]) for x in audiences]
 
-        expected_audience_destinations = (
-            get_all_engagement_audience_destinations(self.database)
+        expected_audience_destinations = get_all_engagement_audience_destinations(
+            self.database
         )
 
         self.assertListEqual(audience_ids + lookalike_audience_ids, return_ids)
@@ -956,9 +921,7 @@ class OrchestrationRouteTest(TestCase):
             },
         )
 
-        new_engagement = get_engagement(
-            self.database, ObjectId(self.engagement_ids[0])
-        )
+        new_engagement = get_engagement(self.database, ObjectId(self.engagement_ids[0]))
 
         self.assertEqual(HTTPStatus.ACCEPTED, response.status_code)
         self.assertEqual(lookalike_audience_name, response.json[api_c.NAME])
@@ -987,9 +950,7 @@ class OrchestrationRouteTest(TestCase):
 
         lookalike_audience = response.json
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(
-            lookalike_audience[api_c.ID], str(lookalike_audience_id)
-        )
+        self.assertEqual(lookalike_audience[api_c.ID], str(lookalike_audience_id))
         self.assertEqual(lookalike_audience[api_c.SIZE], 3329)
         self.assertEqual(
             lookalike_audience[t_c.SOURCE_SIZE], self.audiences[0][db_c.SIZE]
@@ -1094,9 +1055,7 @@ class OrchestrationRouteTest(TestCase):
         audience = response.json
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(
-            ObjectId(audience[db_c.OBJECT_ID]), self.audiences[0][db_c.ID]
-        )
+        self.assertEqual(ObjectId(audience[db_c.OBJECT_ID]), self.audiences[0][db_c.ID])
         self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
 
         # Validate that the match_rate in deliveries contained within
@@ -1165,8 +1124,8 @@ class OrchestrationRouteTest(TestCase):
                     self.database,
                     f"audience{i}",
                     [],
-                    [],
                     self.user_name,
+                    [],
                     100 + i,
                 )
             )
@@ -1241,9 +1200,7 @@ class OrchestrationRouteTest(TestCase):
 
         self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
         # validate audience is deleted in db
-        self.assertIsNone(
-            get_audience(self.database, self.audiences[0][db_c.ID])
-        )
+        self.assertIsNone(get_audience(self.database, self.audiences[0][db_c.ID]))
 
         for engagement in engagements:
             new_eng = get_engagement(self.database, engagement)
@@ -1303,12 +1260,8 @@ class OrchestrationRouteTest(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(
-            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
-        )
-        self.assertEqual(
-            {api_c.MESSAGE: api_c.OPERATION_FAILED}, response.json
-        )
+        self.assertEqual(HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code)
+        self.assertEqual({api_c.MESSAGE: api_c.OPERATION_FAILED}, response.json)
 
     def test_delete_audience_with_invalid_id(self) -> None:
         """Test delete audience API with invalid ID."""
@@ -1391,9 +1344,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(audiences)
         self.assertEqual(2, len(audiences))
-        self.assertEqual(
-            str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID]
-        )
+        self.assertEqual(str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID])
         self.assertEqual(
             str(self.lookalike_audience_doc[db_c.ID]), audiences[1][api_c.ID]
         )
@@ -1410,9 +1361,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(audiences)
         self.assertEqual(2, len(audiences))
-        self.assertEqual(
-            str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID]
-        )
+        self.assertEqual(str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID])
         self.assertEqual(
             str(self.lookalike_audience_doc[db_c.ID]), audiences[1][api_c.ID]
         )
@@ -1429,9 +1378,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(audiences)
         self.assertEqual(3, len(audiences))
-        self.assertEqual(
-            str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID]
-        )
+        self.assertEqual(str(self.audiences[0][db_c.ID]), audiences[0][api_c.ID])
         self.assertEqual(audiences[0][db_c.CREATED_BY], self.user_name)
         self.assertEqual(
             str(self.lookalike_audience_doc[db_c.ID]), audiences[2][api_c.ID]
