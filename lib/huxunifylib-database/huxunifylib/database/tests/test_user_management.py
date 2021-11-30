@@ -27,7 +27,9 @@ class TestUserManagement(unittest.TestCase):
         mongo_patch.start()
 
         # Connect
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
@@ -74,15 +76,17 @@ class TestUserManagement(unittest.TestCase):
             [],
             self.sample_user.get(db_c.USER_DISPLAY_NAME),
         )
-        self.lookalike_audience_doc = dpm.create_delivery_platform_lookalike_audience(
-            self.database,
-            self.delivery_platform_doc[db_c.ID],
-            self.audience,
-            "Lookalike audience",
-            0.01,
-            "US",
-            "Kam Chancellor",
-            31,
+        self.lookalike_audience_doc = (
+            dpm.create_delivery_platform_lookalike_audience(
+                self.database,
+                self.delivery_platform_doc[db_c.ID],
+                self.audience,
+                "Lookalike audience",
+                0.01,
+                "US",
+                "Kam Chancellor",
+                31,
+            )
         )
 
         # setting id to set engagement
@@ -206,7 +210,9 @@ class TestUserManagement(unittest.TestCase):
         update_doc = {db_c.OKTA_ID: "jd63bsfd884bdsff7348"}
 
         with self.assertRaises(DuplicateFieldType):
-            um.update_user(self.database, self.user_doc[db_c.OKTA_ID], update_doc)
+            um.update_user(
+                self.database, self.user_doc[db_c.OKTA_ID], update_doc
+            )
 
     def test_delete_user(self) -> None:
         """Test delete_user routine."""
@@ -252,7 +258,9 @@ class TestUserManagement(unittest.TestCase):
             self.assertTrue(update_doc[db_c.USER_FAVORITES][component])
 
             # test to ensure the ID we added exists
-            self.assertTrue(component_id in update_doc[db_c.USER_FAVORITES][component])
+            self.assertTrue(
+                component_id in update_doc[db_c.USER_FAVORITES][component]
+            )
 
     def test_delete_favorite(self) -> None:
         """Test function for deleting via manage_user_favorites routine"""
@@ -307,7 +315,9 @@ class TestUserManagement(unittest.TestCase):
             self.assertTrue(update_doc[db_c.USER_FAVORITES][component])
 
             # test to ensure the ID we added exists
-            self.assertTrue(component_id in update_doc[db_c.USER_FAVORITES][component])
+            self.assertTrue(
+                component_id in update_doc[db_c.USER_FAVORITES][component]
+            )
 
             # test to ensure the ID we added exists, only once!
             self.assertEqual(
@@ -331,7 +341,9 @@ class TestUserManagement(unittest.TestCase):
         )
 
         # test pinned value key exists
-        self.assertIn(pinned_key, updated_doc[db_c.USER_DASHBOARD_CONFIGURATION])
+        self.assertIn(
+            pinned_key, updated_doc[db_c.USER_DASHBOARD_CONFIGURATION]
+        )
 
         # test pinned value is set correctly
         self.assertEqual(
@@ -373,4 +385,6 @@ class TestUserManagement(unittest.TestCase):
         )
 
         # test pinned value key does not exist
-        self.assertNotIn(pinned_key, updated_doc[db_c.USER_DASHBOARD_CONFIGURATION])
+        self.assertNotIn(
+            pinned_key, updated_doc[db_c.USER_DASHBOARD_CONFIGURATION]
+        )

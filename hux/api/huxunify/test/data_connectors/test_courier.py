@@ -55,7 +55,9 @@ class CourierTest(TestCase):
         """Setup method for unit tests."""
 
         # setup the mock DB client
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
@@ -166,14 +168,18 @@ class CourierTest(TestCase):
             "get_store_value",
             return_value="sample_auth",
         ):
-            env_dict, secret_dict = map_destination_credentials_to_dict(destination)
+            env_dict, secret_dict = map_destination_credentials_to_dict(
+                destination
+            )
 
         # ensure mapping.
         auth = destination[api_c.AUTHENTICATION_DETAILS]
         self.assertDictEqual(
             env_dict,
             {
-                FacebookCredentials.FACEBOOK_APP_ID.name: auth[api_c.FACEBOOK_APP_ID],
+                FacebookCredentials.FACEBOOK_APP_ID.name: auth[
+                    api_c.FACEBOOK_APP_ID
+                ],
                 FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
                     api_c.FACEBOOK_AD_ACCOUNT_ID
                 ],
@@ -215,29 +221,45 @@ class CourierTest(TestCase):
             "get_store_value",
             return_value="sample_auth",
         ):
-            env_dict, secret_dict = map_destination_credentials_to_dict(destination)
+            env_dict, secret_dict = map_destination_credentials_to_dict(
+                destination
+            )
 
         # ensure mapping.
         auth = destination[api_c.AUTHENTICATION_DETAILS]
         self.assertDictEqual(
             env_dict,
             {
-                SFMCCredentials.SFMC_CLIENT_ID.name: auth[api_c.SFMC_CLIENT_ID],
-                SFMCCredentials.SFMC_AUTH_URL.name: auth[api_c.SFMC_AUTH_BASE_URI],
-                SFMCCredentials.SFMC_ACCOUNT_ID.name: auth[api_c.SFMC_ACCOUNT_ID],
-                SFMCCredentials.SFMC_SOAP_ENDPOINT.name: auth[api_c.SFMC_SOAP_BASE_URI],
+                SFMCCredentials.SFMC_CLIENT_ID.name: auth[
+                    api_c.SFMC_CLIENT_ID
+                ],
+                SFMCCredentials.SFMC_AUTH_URL.name: auth[
+                    api_c.SFMC_AUTH_BASE_URI
+                ],
+                SFMCCredentials.SFMC_ACCOUNT_ID.name: auth[
+                    api_c.SFMC_ACCOUNT_ID
+                ],
+                SFMCCredentials.SFMC_SOAP_ENDPOINT.name: auth[
+                    api_c.SFMC_SOAP_BASE_URI
+                ],
                 SFMCCredentials.SFMC_URL.name: auth[api_c.SFMC_REST_BASE_URI],
             },
         )
         self.assertDictEqual(
             secret_dict,
-            {SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[api_c.SFMC_CLIENT_SECRET]},
+            {
+                SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[
+                    api_c.SFMC_CLIENT_SECRET
+                ]
+            },
         )
 
     def test_get_pairs(self):
         """Test get audience/destination pairs valid destination."""
 
-        delivery_route = get_audience_destination_pairs(self.engagement[db_c.AUDIENCES])
+        delivery_route = get_audience_destination_pairs(
+            self.engagement[db_c.AUDIENCES]
+        )
 
         self.assertTrue(delivery_route)
         self.assertEqual(len(delivery_route), 2)
@@ -285,7 +307,9 @@ class CourierTest(TestCase):
         engagement = self.engagement.copy()
         engagement[db_c.AUDIENCES] = [engagement[db_c.AUDIENCES][0]]
 
-        delivery_route = get_audience_destination_pairs(engagement[db_c.AUDIENCES])
+        delivery_route = get_audience_destination_pairs(
+            engagement[db_c.AUDIENCES]
+        )
 
         self.assertTrue(delivery_route)
 
@@ -301,7 +325,9 @@ class CourierTest(TestCase):
     def test_destination_batch_init(self):
         """Test destination batch init."""
 
-        delivery_route = get_audience_destination_pairs(self.engagement[db_c.AUDIENCES])
+        delivery_route = get_audience_destination_pairs(
+            self.engagement[db_c.AUDIENCES]
+        )
         self.assertTrue(delivery_route)
 
         request_mocker = requests_mock.Mocker()
@@ -329,12 +355,16 @@ class CourierTest(TestCase):
             audience_delivery_status = get_delivery_job_status(
                 self.database, batch_destination.audience_delivery_job_id
             )
-            self.assertEqual(audience_delivery_status, db_c.AUDIENCE_STATUS_DELIVERING)
+            self.assertEqual(
+                audience_delivery_status, db_c.AUDIENCE_STATUS_DELIVERING
+            )
 
     def test_destination_register_job(self):
         """Test destination batch register job."""
 
-        delivery_route = get_audience_destination_pairs(self.engagement[db_c.AUDIENCES])
+        delivery_route = get_audience_destination_pairs(
+            self.engagement[db_c.AUDIENCES]
+        )
         self.assertTrue(delivery_route)
 
         # walk the delivery route
@@ -347,12 +377,16 @@ class CourierTest(TestCase):
                 batch_destination = get_destination_config(
                     self.database, self.engagement[db_c.ID], *pair
                 )
-            batch_destination.aws_envs[AudienceRouterConfig.BATCH_SIZE.name] = 1000
+            batch_destination.aws_envs[
+                AudienceRouterConfig.BATCH_SIZE.name
+            ] = 1000
             batch_destination.aws_envs[api_c.AUDIENCE_ROUTER_STUB_TEST] = 1
             self.assertIsNotNone(batch_destination)
 
             # Register job
-            return_value = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
+            return_value = {
+                "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}
+            }
             with mock.patch.object(
                 AWSBatchConnector,
                 "register_job",
@@ -360,12 +394,16 @@ class CourierTest(TestCase):
             ):
                 batch_destination.register(self.engagement)
 
-            self.assertEqual(batch_destination.result, db_c.AUDIENCE_STATUS_DELIVERING)
+            self.assertEqual(
+                batch_destination.result, db_c.AUDIENCE_STATUS_DELIVERING
+            )
 
     def test_destination_submit_job(self):
         """Test destination batch submit job."""
 
-        delivery_route = get_audience_destination_pairs(self.engagement[db_c.AUDIENCES])
+        delivery_route = get_audience_destination_pairs(
+            self.engagement[db_c.AUDIENCES]
+        )
         self.assertTrue(delivery_route)
 
         # walk the delivery route
@@ -380,14 +418,18 @@ class CourierTest(TestCase):
                 )
 
             # Register job
-            return_value = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
+            return_value = {
+                "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}
+            }
             with mock.patch.object(
                 AWSBatchConnector,
                 "register_job",
                 return_value=return_value,
             ):
                 batch_destination.register(self.engagement)
-            self.assertEqual(batch_destination.result, db_c.AUDIENCE_STATUS_DELIVERING)
+            self.assertEqual(
+                batch_destination.result, db_c.AUDIENCE_STATUS_DELIVERING
+            )
 
             with mock.patch.object(
                 AWSBatchConnector, "submit_job", return_value=return_value
@@ -478,9 +520,7 @@ class CourierTest(TestCase):
             destination = get_delivery_platform(self.database, destination_id)
 
             # create the rule name
-            cw_name = (
-                f"{self.engagement[db_c.ID]}-{destination[db_c.DELIVERY_PLATFORM_TYPE]}"
-            )
+            cw_name = f"{self.engagement[db_c.ID]}-{destination[db_c.DELIVERY_PLATFORM_TYPE]}"
 
             # put params
             put_rule_params = {
@@ -497,20 +537,28 @@ class CourierTest(TestCase):
             }
 
             # simulate the event return rule
-            client = boto3.client(api_c.AWS_EVENTS_NAME, get_config().AWS_REGION)
+            client = boto3.client(
+                api_c.AWS_EVENTS_NAME, get_config().AWS_REGION
+            )
             stub_client = Stubber(client)
-            stub_client.add_response("put_rule", put_rule_response, put_rule_params)
+            stub_client.add_response(
+                "put_rule", put_rule_response, put_rule_params
+            )
             stub_client.activate()
 
             mock_boto_client.return_value = client
 
-            result = set_cloud_watch_rule(cw_name, "cron(15 0 * * ? *)", "fake_arn")
+            result = set_cloud_watch_rule(
+                cw_name, "cron(15 0 * * ? *)", "fake_arn"
+            )
 
             # test mocked client result
             self.assertEqual(result, put_rule_response["RuleArn"])
 
     @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
-    def test_create_cloud_watch_rule_fail(self, mock_boto_client: mock.MagicMock):
+    def test_create_cloud_watch_rule_fail(
+        self, mock_boto_client: mock.MagicMock
+    ):
         """Test function create_cloud_watch_rule failure.
 
         Args:
@@ -523,9 +571,7 @@ class CourierTest(TestCase):
             destination = get_delivery_platform(self.database, destination_id)
 
             # create the rule name
-            cw_name = (
-                f"{self.engagement[db_c.ID]}-{destination[db_c.DELIVERY_PLATFORM_TYPE]}"
-            )
+            cw_name = f"{self.engagement[db_c.ID]}-{destination[db_c.DELIVERY_PLATFORM_TYPE]}"
 
             # put params
             put_rule_params = {
@@ -538,18 +584,26 @@ class CourierTest(TestCase):
 
             put_rule_response = {
                 "RuleArn": "test-result-rulearn",
-                "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.BAD_REQUEST.value},
+                "ResponseMetadata": {
+                    "HTTPStatusCode": HTTPStatus.BAD_REQUEST.value
+                },
             }
 
             # simulate the event return rule
-            client = boto3.client(api_c.AWS_EVENTS_NAME, get_config().AWS_REGION)
+            client = boto3.client(
+                api_c.AWS_EVENTS_NAME, get_config().AWS_REGION
+            )
             stub_client = Stubber(client)
-            stub_client.add_response("put_rule", put_rule_response, put_rule_params)
+            stub_client.add_response(
+                "put_rule", put_rule_response, put_rule_params
+            )
             stub_client.activate()
 
             mock_boto_client.return_value = client
 
-            result = set_cloud_watch_rule(cw_name, "cron(15 0 * * ? *)", "fake_arn")
+            result = set_cloud_watch_rule(
+                cw_name, "cron(15 0 * * ? *)", "fake_arn"
+            )
 
             # test mocked client result
             self.assertIsNone(result)
@@ -568,9 +622,7 @@ class CourierTest(TestCase):
         )
 
         # create the rule name
-        cw_name = (
-            f"{self.engagement[db_c.ID]}-{destination[db_c.DELIVERY_PLATFORM_TYPE]}"
-        )
+        cw_name = f"{self.engagement[db_c.ID]}-{destination[db_c.DELIVERY_PLATFORM_TYPE]}"
 
         batch_params = {
             "JobDefinition": "sample_job_def",
@@ -639,9 +691,7 @@ class CourierTest(TestCase):
         )
 
         # create the rule name
-        cw_name = (
-            f"{self.engagement[db_c.ID]}-{destination[db_c.DELIVERY_PLATFORM_TYPE]}"
-        )
+        cw_name = f"{self.engagement[db_c.ID]}-{destination[db_c.DELIVERY_PLATFORM_TYPE]}"
 
         batch_params = {
             "JobDefinition": "sample_job_def",
@@ -672,7 +722,9 @@ class CourierTest(TestCase):
                     "ErrorMessage": "",
                 },
             ],
-            "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.BAD_REQUEST.value},
+            "ResponseMetadata": {
+                "HTTPStatusCode": HTTPStatus.BAD_REQUEST.value
+            },
         }
 
         # simulate the event return rule
@@ -720,11 +772,15 @@ class CourierTest(TestCase):
         mock_boto_client.return_value = client
 
         self.assertTrue(
-            toggle_cloud_watch_rule(rule_params["Name"], CloudWatchState.ENABLE)
+            toggle_cloud_watch_rule(
+                rule_params["Name"], CloudWatchState.ENABLE
+            )
         )
 
     @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
-    def test_toggle_cloud_watch_rule_disable(self, mock_boto_client: mock.MagicMock):
+    def test_toggle_cloud_watch_rule_disable(
+        self, mock_boto_client: mock.MagicMock
+    ):
         """Test function toggle_cloud_watch_rule disabled.
 
         Args:
@@ -747,11 +803,15 @@ class CourierTest(TestCase):
         mock_boto_client.return_value = client
 
         self.assertTrue(
-            toggle_cloud_watch_rule(rule_params["Name"], CloudWatchState.DISABLE)
+            toggle_cloud_watch_rule(
+                rule_params["Name"], CloudWatchState.DISABLE
+            )
         )
 
     @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
-    def test_toggle_event_driven_routers(self, mock_boto_client: mock.MagicMock):
+    def test_toggle_event_driven_routers(
+        self, mock_boto_client: mock.MagicMock
+    ):
         """Test function toggle_event_driven_routers.
 
         Args:
