@@ -111,7 +111,7 @@ def create_app() -> Flask:
         id="process_deliveries",
         func=run_scheduled_deliveries,
         trigger="cron",
-        minute="15",
+        minute="*/15",
     )
 
     return flask_app
