@@ -87,9 +87,7 @@ describe("Orchestration > Audience > Create Audience", () => {
       if ($el.text().includes(`E2E test audience ${randomAudienceName}`)) {
         // Make the vertical dots visible
         cy.wrap($el)
-          .find("span.action-icon")
-          .invoke("attr", "style", "display: block")
-          .find("button")
+          .find(".mdi-dots-vertical")
           .invoke("attr", "aria-expanded", "true")
           .click({ force: true })
 
