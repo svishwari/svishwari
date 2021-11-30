@@ -1,75 +1,96 @@
 <template>
-    <div class="rounded-sm lookalikes-overview box-shadow-none">
-        <div class="header d-flex px-3 py-3">
-                <span class="float-left"> Lookalikes </span>
-                <v-spacer> </v-spacer>
-                <span class="float-right"> 
-                    <hux-icon type="plus" :size="12" color="primary" class="mr-4 mb-2" />
-                    <hux-icon type="destination" :size="24" color="primary" class="mr-2" /> 
-                </span>
-        </div>
-        <div class="lookialike-destination mx-6 my-6">
-            <v-card class="rounded-sm status-card mr-2 box-shadow-none">
-                <v-card-title class="d-flex pa-2">
-                    <logo type="facebook" :size="22"></logo>
-                    <span class="mx-2 float-left"> Facebook </span>
-                </v-card-title>
-                <v-list dense class="" :height="52">
-                    <v-list-item>
-                        Destination
-                    </v-list-item>
-                </v-list>
-            </v-card>
-        </div> 
-        <div class="lookialike-destination mx-6 my-6">
-            <v-card class="rounded-sm status-card mr-2 box-shadow-none">
-                <v-card-title class="d-flex pa-2">
-                    <logo type="facebook" :size="22"></logo>
-                    <span class="mx-2"> Facebook </span>
-                </v-card-title>
-                <v-list dense class="" :height="52">
-                    <v-list-item>
-                        Destination
-                    </v-list-item>
-                </v-list>
-            </v-card>
-        </div>   
+  <div>
+    <div class="rounded-sm lookalikes-overview box-shadow-none" v-if="false">
+      <div class="header d-flex mx-6 px-3 py-3">
+        <span class="float-left text-h3 black-base pt-5"> Lookalikes </span>
+        <v-spacer> </v-spacer>
+        <span class="float-right pt-5">
+          <hux-icon type="plus" :size="12" color="primary" class="mr-4 mb-2" />
+          <hux-icon type="lookalike" :size="24" class="mr-2" />
+        </span>
+      </div>
+      <div class="lookialike-destination mx-6 my-6">
+        <v-card class="rounded-sm status-card mr-2 box-shadow-none">
+          <v-card-title class="d-flex pa-2">
+            <logo type="facebook" :size="22"></logo>
+            <span class="mx-2 float-left"> Facebook </span>
+          </v-card-title>
+          <v-list dense class="" :height="52">
+            <v-list-item>
+              <icon type="lookalike" :size="20" class="mr-2" />
+              <span>Facebook LAL - Sum...</span>
+              <v-spacer> </v-spacer>
+              <span>12.6 K </span>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </div>
+      <div class="lookialike-destination mx-6 my-6">
+        <v-card class="rounded-sm status-card mr-2 box-shadow-none">
+          <v-card-title class="d-flex pa-2">
+            <logo type="facebook" :size="22"></logo>
+            <span class="mx-2"> Facebook </span>
+          </v-card-title>
+          <v-list dense class="" :height="52">
+            <v-list-item>
+              <icon type="lookalike" :size="20" class="mr-2" />
+              <span>Facebook LAL - Sum...</span>
+              <v-spacer> </v-spacer>
+              <span>12.6 K </span>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </div>
     </div>
+    <div class="no-match-rate" v-if="true">
+      <metric-card
+        class=""
+        title="Lookalikes"
+        :height="156"
+        :interactable="false"
+      >
+        <template #subtitle-extended>
+          <div class="black--text mt-4">
+            No lookalike audiences have been created. Once this audience has
+            been delivered to an advertising destination, you can click the
+            button above to configure a lookalike audience in that destination.
+          </div>
+        </template>
+      </metric-card>
+    </div>
+  </div>
 </template>
 
 <script>
 import HuxIcon from "@/components/common/Icon.vue"
 import Logo from "@/components/common/Logo.vue"
+import Icon from "@/components/common/Icon.vue"
+import MetricCard from "@/components/common/MetricCard"
 
 export default {
   name: "Lookalikes",
-  components: { HuxIcon, Logo },
-  props: {
-    
-  },
+  components: { HuxIcon, Logo, Icon, MetricCard },
+  props: {},
   data() {
-    return {
-      
-    }
+    return {}
   },
-  computed: {
-  },
+  computed: {},
 }
 </script>
 
 <style lang="scss" scoped>
 .lookalikes-overview {
-    .header {
-        height: 40px;
+  .header {
+    height: 40px;
+  }
+  .lookialike-destination {
+    .rounded-sm {
+      border: 1px solid #e2eaec;
+      border-radius: 12px !important;
+      .v-card__title {
+        background: #f9fafb;
+      }
     }
-    .lookialike-destination {
-        .rounded-sm {
-            border: 1px solid #E2EAEC;
-            border-radius: 12px !important;
-            .v-card__title {
-                background: #F9FAFB;
-            }
-        }
-    }
+  }
 }
 </style>

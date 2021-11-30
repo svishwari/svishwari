@@ -1,200 +1,226 @@
 <template>
   <div class="audience-insight-wrap">
-    <page-header class="background-border" :header-height-changes="'py-3'">
-      <template #left>
-        <breadcrumb :items="breadcrumbItems" />
-      </template>
-      <template #right>
-        <div class="d-flex align-center">
-          <icon
-            type="refresh-2"
-            :size="18"
-            class="cursor-pointer mr-7"
-            color="black-darken4"
-            @click.native="
-              $router.push({
-                name: 'AudienceUpdate',
-                params: { id: audienceId },
-              })
-            "
-          />
-          <icon
-            type="pencil"
-            :size="18"
-            class="cursor-pointer mr-7"
-            color="black-darken4"
-            @click.native="
-              $router.push({
-                name: 'AudienceUpdate',
-                params: { id: audienceId },
-              })
-            "
-          />
-          <icon
-            type="dots-vertical"
-            :size="18"
-            class="cursor-pointer mr-7"
-            color="black-darken4"
-          />
-        </div>
-      </template>
-    </page-header>
+    <dashboard-header 
+      :breadcrumbItems="breadcrumbItems"
+      @onRefresh="refresh()"
+    />
     <v-progress-linear :active="loading" :indeterminate="loading" />
+    <div class="px-8 py-8">
+      <v-card class="rounded pa-5 box-shadow-5">
+          <v-card-title class="d-flex justify-space-between pa-0">
+              <h5 class="text-h5 mb-2">Audience overview</h5>
+              <div class="d-flex align-center">
+                  <v-btn
+                  v-if="audience && !audience.is_lookalike"
+                  text
+                  color="primary"
+                  class="body-2 ml-n3"
+                  data-e2e="delivery-history"
+                  @click="openDeliveryHistoryDrawer()"
+                  >
+                  <icon type="history" color="primary" :size="14" class="mr-1" />
+                  Delivery history
+                  </v-btn>
+              </div>
+          </v-card-title>
 
-    <div class="px-15 py-15">
-        <v-card class="rounded pa-5 box-shadow-5">
-            <v-card-title class="d-flex justify-space-between pa-0">
-                <h5 class="text-h5 mb-2">Audience overview</h5>
-                <div class="d-flex align-center">
-                    <v-btn
-                    v-if="audience && !audience.is_lookalike"
-                    text
-                    color="primary"
-                    class="body-2 ml-n3"
-                    data-e2e="delivery-history"
-                    @click="openDeliveryHistoryDrawer()"
-                    >
-                    <icon type="history" color="primary" :size="14" class="mr-1" />
-                    Delivery history
-                    </v-btn>
-                </div>
-            </v-card-title>
-
-            <div
-            v-if="audience && audience.is_lookalike"
-            class="row overview-list lookalike-aud mb-0 ml-0 mr-1 mt-4"
-            >
-            <metric-card :height="60" :title="''" class="lookalikeMessageCard">
-                <template #subtitle-extended>
-                <span
-                    >This is a lookalike audience. Go to the original
-                    audience,&nbsp;</span
-                >
-                <router-link
-                    :to="{
-                    name: 'AudienceInsight',
-                    params: { id: audience.source_id },
-                    }"
-                    class="text-decoration-none colorLink"
-                    append
-                    >{{ audience.source_name }}
-                </router-link>
-                <span>,&nbsp;to see insights.</span></template
-                >
-            </metric-card>
-            </div>
-            <div
-            v-if="audience && !audience.is_lookalike"
-            class="row overview-list mb-0 ml-0 mt-1"
-            >
-            <metric-card
-                v-for="(item, i) in Object.values(audienceOverview)"
-                :key="i"
-                class="mr-3"
-                :grow="i === 0 ? 2 : 1"
-                :title="item.title"
-                :icon="item.icon"
-                :height="80"
-                :interactable="item.action ? true : false"
-                data-e2e="audience-overview"
-                @click="item.action ? onClick(item.action) : ''"
-            >
-                <template #subtitle-extended>
-                <tooltip>
-                    <template #label-content>
-                    <span class="font-weight-semi-bold">
-                        {{ getFormattedValue(item) | Empty }}
-                    </span>
-                    </template>
-                    <template #hover-content>
-                    <span v-if="percentageColumns.includes(item.title)">{{
-                        item.subtitle | Percentage | Empty
-                    }}</span>
-                    <span v-else>{{ item.subtitle | Numeric | Empty }}</span>
-                    </template>
-                </tooltip>
-                </template>
-            </metric-card>
-            </div>
-        </v-card>
-
-
-        <v-tabs v-model="tabOption" class="tabs-group mt-8">
-          <v-tabs-slider color="primary"></v-tabs-slider>
-          <div class="d-flex">
-            <v-tab
-              key="delivery"
-              class="pa-2 mr-3 text-h3"
-              color
-              data-e2e="delivery-tab"
-              @click="loadCustomersList = false"
-            >
-              Delivery
-            </v-tab>
-            <v-tab
-              key="insights"
-              class="text-h3"
-              data-e2e="insights-tab"
-              @click="loadCustomersList = true"
-            >
-              Insights
-            </v-tab>
+          <div
+          v-if="audience && audience.is_lookalike"
+          class="row overview-list lookalike-aud mb-0 ml-0 mr-1 mt-4"
+          >
+          <metric-card :height="60" :title="''" class="lookalikeMessageCard">
+              <template #subtitle-extended>
+              <span
+                  >This is a lookalike audience. Go to the original
+                  audience,&nbsp;</span
+              >
+              <router-link
+                  :to="{
+                  name: 'AudienceInsight',
+                  params: { id: audience.source_id },
+                  }"
+                  class="text-decoration-none colorLink"
+                  append
+                  >{{ audience.source_name }}
+              </router-link>
+              <span>,&nbsp;to see insights.</span></template
+              >
+          </metric-card>
           </div>
-        </v-tabs>
-        <v-tabs-items v-model="tabOption" class="tabs-item mt-2">
-          <v-tab-item class="delivery-tab" key="delivery">
+          <div
+          v-if="audience && !audience.is_lookalike"
+          class="row overview-list mb-0 ml-0 mt-1"
+          >
+          <metric-card
+              v-for="(item, i) in Object.values(audienceOverview)"
+              :key="i"
+              class="mr-3"
+              :grow="i === 0 ? 2 : 1"
+              :title="item.title"
+              :icon="item.icon"
+              :height="80"
+              :interactable="item.action ? true : false"
+              max-width="170"
+              data-e2e="audience-overview"
+          >
+              <template #subtitle-extended>
+              <tooltip>
+                  <template #label-content>
+                  <span class="font-weight-semi-bold">
+                      {{ getFormattedValue(item) | Empty }}
+                  </span>
+                  </template>
+                  <template #hover-content>
+                  <span v-if="percentageColumns.includes(item.title)">{{
+                      item.subtitle | Percentage | Empty
+                  }}</span>
+                  <span v-else>{{ item.subtitle | Numeric | Empty }}</span>
+                  </template>
+              </tooltip>
+              </template>
+          </metric-card>
 
-            <v-row class="">
-              <v-col :cols="deliveryCols" class="">
-                <delivery
-                    :sections="audienceData && audienceData.engagements"
-                    section-type="engagement"
-                    deliveries-key="deliveries"
-                    @onOverviewSectionAction="triggerOverviewAction($event)"
-                    @onOverviewDestinationAction="
-                        triggerOverviewDestinationAction($event)
-                    "
-                >
-                    <template #title-left>
-                        <div class="d-flex align-center">
-                        <span class="text-h5">Engagement delivery details</span>
-                        </div>
-                    </template>
-                </delivery>
-              </v-col>
-              <v-col :cols="advertisingCols" class="">
-                <v-card class="rounded-lg card-style digital-adv" flat height="100%">
-                  <div class="collapsible-bar" @click="toggleAd()">
-                    <icon
-                      type="expand-arrow"
-                      :size="14"
-                      color="primary"
-                      class="collapse-icon mx-2"
-                    />
+          <metric-card
+              class="mr-3"
+              title="Gender"
+              :height="80"
+              max-width="220"
+              :interactable="false"
+          >
+              <template #subtitle-extended>
+                <div class="men mr-1 font-weight-semi-bold">
+                  M: 100%
+                </div>
+                <div class="women mx-1">
+                  W: 0%
+                </div>
+                <div class="other mx-1">
+                  O: 0%
+                </div>
+              </template>
+          </metric-card>
+
+          <metric-card
+              class="mr-3"
+              title="Attributes"
+              :height="80"
+              :interactable="false"
+          >
+              <template #subtitle-extended>
+                <div class="">
+                  <v-chip 
+                    small
+                    class="mr-1 my-1 font-weight-semi-bold v-chip--active"
+                    text-color="primary"
+                    color="primary-lighten3">
+                    Gender: Men
+                  </v-chip>
+                  <v-chip 
+                    small
+                    class="mr-1 my-1 font-weight-semi-bold v-chip--active"
+                    text-color="primary"
+                    color="primary-lighten3">
+                    State: Texas
+                  </v-chip>
+                  <v-chip 
+                    small
+                    class="mr-1 my-1 font-weight-semi-bold v-chip--active"
+                    text-color="primary"
+                    color="primary-lighten3">
+                    Lifetime value: .1-.5
+                  </v-chip>
+                </div>
+              </template>
+          </metric-card>
+
+          </div>
+      </v-card>
+      <v-tabs v-model="tabOption" class="tabs-group mt-8">
+        <v-tabs-slider color="primary"></v-tabs-slider>
+        <div class="d-flex">
+          <v-tab
+            key="delivery"
+            class="pa-2 mr-3 text-h3"
+            color
+            data-e2e="delivery-tab"
+            @click="loadCustomersList = false"
+          >
+            Delivery
+          </v-tab>
+          <v-tab
+            key="insights"
+            class="text-h3"
+            data-e2e="insights-tab"
+            @click="loadCustomersList = true"
+          >
+            Insights
+          </v-tab>
+        </div>
+      </v-tabs>
+      <v-tabs-items v-model="tabOption" class="tabs-item mt-2">
+        <v-tab-item class="delivery-tab" key="delivery">
+
+          <v-row class="">
+            <v-col :cols="deliveryCols" class="">
+              <delivery
+                  :sections="audienceData && audienceData.engagements"
+                  section-type="engagement"
+                  deliveries-key="deliveries"
+                  @onOverviewSectionAction="triggerOverviewAction($event)"
+                  @onOverviewDestinationAction="
+                      triggerOverviewDestinationAction($event)
+                  "
+                  @onAddDestination="addDestination($event)"
+              >
+                  <template #title-left>
+                      <div class="d-flex align-center">
+                      <span class="text-h5">Engagement delivery details</span>
+                      </div>
+                  </template>
+              </delivery>
+              <standalone-delivery />
+            </v-col>
+            <v-col :cols="advertisingCols" class="">
+              <div class="collapsible-bar" @click="toggleAd()">
+                  <icon
+                    type="expand-arrow"
+                    :size="14"
+                    color="primary"
+                    class="collapse-icon mx-2"
+                  />
+                </div>
+              <v-card class="digital-adv ml-6 mt-4" flat height="100%" v-if="showAdvertising">
+                
+                <v-card-title class="ml-6" v-if="showAdvertising" >
+                  Digital advertising
+                </v-card-title>
+                <v-card-text class="" v-if="showAdvertising">
+                  <div class="match-rates mx-6 my-1">
+                    <Matchrate />
                   </div>
-                  <v-card-title class="ml-6" v-if="showAdvertising" >
-                    Digital advertising
-                  </v-card-title>
-                  <v-card-text class="" v-if="showAdvertising">
-                    <div class="match-rates mx-6 my-1">
-                      Match rate
-                    </div>
-                    <div class="lookalikes mx-6 my-4">
-                      <Lookalikes />
-                    </div>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
+                  <div class="lookalikes mx-6 my-4">
+                    <Lookalikes />
+                  </div>
+                </v-card-text>
+              </v-card>
+              <v-card class="rounded-lg card-style mt-4 empty-adv" flat height="100%" v-if="false">
+                <error
+                  class="background-empty"
+                  icon-type="error-on-screens"
+                  :icon-size="50"
+                  title="Lookalike table is currently unavailable"
+                  subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+                > 
+                </error>
+              </v-card>
+            </v-col>
+          </v-row>
 
-          </v-tab-item>
-          <v-tab-item class="insights-tab" key="insights">
-            Insights UI
-          </v-tab-item>
-        </v-tabs-items>
-
-
-
+        </v-tab-item>
+        <v-tab-item class="insights-tab" key="insights">
+          Insights UI
+        </v-tab-item>
+      </v-tabs-items>
     </div>
 
     <confirm-modal
@@ -259,37 +285,12 @@
       @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
     />
 
-    <geo-drawer
-      geo-level="cities"
-      :audience-id="audienceId"
-      :results="audienceInsights.total_cities"
-      :toggle="geoDrawer.cities"
-      @onToggle="(isToggled) => (geoDrawer.cities = isToggled)"
-    />
-
-    <geo-drawer
-      geo-level="countries"
-      :audience-id="audienceId"
-      :results="audienceInsights.total_countries"
-      :toggle="geoDrawer.countries"
-      @onToggle="(isToggled) => (geoDrawer.countries = isToggled)"
-    />
-
-    <geo-drawer
-      geo-level="states"
-      :audience-id="audienceId"
-      :results="audienceInsights.total_us_states"
-      :toggle="geoDrawer.states"
-      @onToggle="(isToggled) => (geoDrawer.states = isToggled)"
-    />
   </div>
 </template>
 
 <script>
 // helpers
-import { generateColor, saveFile } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
-import filter from "lodash/filter"
 
 // common components
 import Avatar from "@/components/common/Avatar.vue"
@@ -317,9 +318,12 @@ import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/Se
 import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
 import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
-import GeoDrawer from "@/views/Shared/Drawers/GeoDrawer.vue"
 import Delivery from "@/views/Audiences/Dashboard/Delivery.vue"
 import Lookalikes  from "@/views/Audiences/Dashboard/Lookalikes.vue"
+import DashboardHeader from "@/views/Audiences/Dashboard/Header.vue"
+import StandaloneDelivery from "@/views/Audiences/Dashboard/StandaloneDelivery.vue"
+import Matchrate from "@/views/Audiences/Dashboard/Matchrate.vue"
+import Error from "@/components/common/screens/Error"
 
 export default {
   name: "AudienceInsight",
@@ -331,13 +335,10 @@ export default {
     DeliveryHistoryDrawer,
     DeliveryOverview,
     DestinationDataExtensionDrawer,
-    DoughnutChart,
     EditDeliverySchedule,
     Icon,
-    IncomeChart,
     LookAlikeAudience,
     LookAlikeCard,
-    MapChart,
     mapSlider,
     MapStateList,
     MetricCard,
@@ -346,9 +347,12 @@ export default {
     Size,
     Tooltip,
     GenderSpendChart,
-    GeoDrawer,
     Delivery,
     Lookalikes,
+    DashboardHeader,
+    StandaloneDelivery,
+    Matchrate,
+    Error,
   },
   data() {
     return {
@@ -476,17 +480,6 @@ export default {
           icon: "targetsize",
         },
         age: { title: "Age range", subtitle: "", icon: "birth" },
-        // gender_women: {
-        //   title: "Women",
-        //   subtitle: "",
-        //   icon: "mdi-gender-female",
-        // },
-        // gender_men: { title: "Men", subtitle: "", icon: "mdi-gender-male" },
-        // gender_other: {
-        //   title: "Other",
-        //   subtitle: "",
-        //   icon: "mdi-gender-male-female",
-        // },
       }
 
       const insights = this.audienceInsights
@@ -503,40 +496,6 @@ export default {
       })
     },
 
-    genderChartData() {
-      if (
-        this.demographicsData.gender &&
-        (this.demographicsData.gender.gender_men ||
-          this.demographicsData.gender.gender_women ||
-          this.demographicsData.gender.gender_other)
-      ) {
-        return [
-          {
-            label: "Men",
-            population_percentage:
-              this.demographicsData.gender.gender_men.population_percentage,
-            size: this.demographicsData.gender.gender_men.size,
-          },
-          {
-            label: "Women",
-            population_percentage:
-              this.demographicsData.gender.gender_women.population_percentage,
-            size: this.demographicsData.gender.gender_women.size,
-          },
-          {
-            label: "Other",
-            population_percentage:
-              this.demographicsData.gender.gender_other.population_percentage,
-            size: this.demographicsData.gender.gender_other.size,
-          },
-        ]
-      } else {
-        return []
-      }
-    },
-    mapChartData() {
-      return this.demographicsData.demo
-    },
     showLookalike() {
       return !this.is_lookalike &&
         this.isLookalikable &&
@@ -573,71 +532,12 @@ export default {
       }
       return items
     },
-    /**
-     * This computed property is converting the audience filters conditions
-     * into groups of fiters and having custom keys which are needed
-     * on the UI transformation.
-     *
-     * @returns {Array} filters
-     */
-    appliedFilters() {
-      try {
-        let _filters = {}
-        const attributeOptions = this.attributeOptions()
-        if (this.audience && this.audience.filters) {
-          this.audience.filters.forEach((section) => {
-            section.section_filters.forEach((sectionFilter) => {
-              const model = this.modelInitial.filter(
-                (model) =>
-                  typeof sectionFilter.field === "string" &&
-                  sectionFilter.field.includes(model.value)
-              )
-              // TODO for the nestd filter check
-              let ruleFilterObject = filter(attributeOptions, {
-                key: sectionFilter.field.toLowerCase(),
-              })
-              const filterObj = {
-                name: ruleFilterObject[0]["name"],
-                key: sectionFilter.field,
-              }
-
-              filterObj.name = filterObj.name.replace(/_/gi, " ")
-              if (model.length > 0) {
-                filterObj["hover"] = "Between " + sectionFilter.value.join("-")
-                if (!_filters[model[0].icon]) _filters[model[0].icon] = {}
-                if (_filters[model[0].icon][sectionFilter.field])
-                  _filters[model[0].icon][sectionFilter.field]["hover"] +=
-                    "<br/> " + filterObj.hover
-                else _filters[model[0].icon][sectionFilter.field] = filterObj
-              } else {
-                if (!_filters["general"]) _filters["general"] = {}
-                filterObj["hover"] =
-                  sectionFilter.type === "range"
-                    ? "Include " + sectionFilter.value.join("-")
-                    : sectionFilter.value
-                if (_filters["general"][sectionFilter.field])
-                  _filters["general"][sectionFilter.field]["hover"] +=
-                    "<br/> " + filterObj.hover
-                else _filters["general"][sectionFilter.field] = filterObj
-              }
-            })
-          })
-        }
-        return _filters
-      } catch (error) {
-        return []
-      }
-    },
   },
   async mounted() {
     this.engagementId = 1
     await this.loadEngagement(1)
     this.sizeHandler()
     await this.loadAudienceInsights()
-    this.fetchDemographics()
-    if (this.$refs.genderChart) {
-      new ResizeObserver(this.sizeHandler).observe(this.$refs.genderChart)
-    }
   },
 
   methods: {
@@ -657,76 +557,36 @@ export default {
       getEngagementById: "engagements/get",
     }),
 
+    async refresh(){
+      this.engagementId = 1
+      await this.loadEngagement(1)
+      this.sizeHandler()
+      await this.loadAudienceInsights()
+    },
+    addDestination(event){
+      this.closeAllDrawers()
+      this.engagementId = event.id
+      this.selectedDestinations = []
+      this.selectedEngagements.push(event)
+      this.selectedDestinations.push(
+        ...event.deliveries.map((dest) => ({ id: dest.id }))
+      )
+      this.showSelectDestinationsDrawer = true
+    },
+    getAgeString(min_age, max_age) {
+      if (min_age && max_age && min_age === max_age) {
+        return min_age
+      } else if (min_age && max_age) {
+        return `${min_age}-${max_age}`
+      } else {
+        return "-"
+      }
+    },
     async loadEngagement(engagementId) {
       await this.getEngagementById(engagementId)
       this.engagementList = JSON.parse(
         JSON.stringify(this.getEngagementObject(this.engagementId))
       )
-    },
-
-    
-    attributeOptions() {
-      const options = []
-      Object.values(this.ruleAttributes.rule_attributes).forEach((attr) => {
-        Object.keys(attr).forEach((optionKey) => {
-          if (
-            Object.values(attr[optionKey])
-              .map((o) => typeof o === "object" && !Array.isArray(o))
-              .includes(Boolean(true))
-          ) {
-            Object.keys(attr[optionKey]).forEach((att) => {
-              if (typeof attr[optionKey][att] === "object") {
-                options.push({
-                  key: att,
-                  name: attr[optionKey][att]["name"],
-                })
-              }
-            })
-          } else {
-            options.push({
-              key: optionKey,
-              name: attr[optionKey]["name"],
-            })
-          }
-        })
-      })
-      return options
-    },
-    async fetchDemographics() {
-      this.loadingDemographics = true
-      try {
-        await this.getDemographics(this.$route.params.id)
-      } finally {
-        this.loadingDemographics = false
-      }
-    },
-    async initiateFileDownload(option) {
-      const audienceName = this.audience.name
-      this.setAlert({
-        type: "pending",
-        message: `Download for the '${audienceName}' with '${option.title}', has started in background, stay tuned.`,
-      })
-      const fileBlob = await this.downloadAudienceData({
-        id: this.audienceId,
-        type: option.type,
-      })
-      saveFile(fileBlob)
-    },
-    getFormattedTime(time) {
-      return this.$options.filters.Date(time, "relative") + " by"
-    },
-    getColorCode(name) {
-      return generateColor(name, 30, 60) + " !important"
-    },
-
-    async refreshEntity() {
-      this.loading = true
-      this.$root.$emit("refresh-notifications")
-      try {
-        await this.loadAudienceInsights()
-      } finally {
-        this.loading = false
-      }
     },
     async onConfirmAction() {
       this.showConfirmModal = false
@@ -746,16 +606,6 @@ export default {
       await this.loadAudienceInsights()
     },
 
-    getAgeString(min_age, max_age) {
-      if (min_age && max_age && min_age === max_age) {
-        return min_age
-      } else if (min_age && max_age) {
-        return `${min_age}-${max_age}`
-      } else {
-        return "-"
-      }
-    },
-
     /**
      * Formatting the values to the desired format using predefined application filters.
      *
@@ -765,46 +615,20 @@ export default {
      */
     getFormattedValue(item) {
       switch (item.title) {
-        case "Target size":
-        case "Countries":
-        case "US States":
-        case "Cities":
+        case "Size":
           return this.$options.filters.Numeric(
             item.subtitle,
             false,
             false,
             true
           )
-        case "Women":
-        case "Men":
-        case "Other":
-          return this.$options.filters.Percentage(item.subtitle)
         default:
           return item.subtitle
       }
     },
     async triggerOverviewAction(event) {
+      debugger
       switch (event.target.title.toLowerCase()) {
-        case "add a destination": {
-          this.closeAllDrawers()
-          this.engagementId = event.data.id
-          this.selectedDestinations = []
-          this.selectedEngagements.push(event.data)
-          this.selectedDestinations.push(
-            ...event.data.deliveries.map((dest) => ({ id: dest.id }))
-          )
-          this.showSelectDestinationsDrawer = true
-          break
-        }
-        case "deliver all":
-          await this.deliverAudience({
-            id: event.data.id,
-            audienceId: this.audienceId,
-          })
-          this.dataPendingMesssage(event, "engagement")
-          break
-        case "view delivery history":
-          break
         case "remove engagement": {
           this.confirmDialog.actionType = "remove-engagement"
           this.confirmDialog.title = "You are about to remove"
@@ -974,6 +798,7 @@ export default {
       } else {
         const payload = { audience_ids: [] }
         payload.audience_ids.push(this.audienceId)
+        console.log(payload)
         await this.detachAudience({
           engagementId: event.data.id,
           data: payload,
@@ -1018,23 +843,10 @@ export default {
     toggleGeoDrawer(geoLevel = "states") {
       this.geoDrawer[geoLevel] = !this.geoDrawer[geoLevel]
     },
-    onClick(action) {
-      switch (action) {
-        case "toggleCitiesDrawer":
-          this.toggleGeoDrawer("cities")
-          break
-        case "toggleCountriesDrawer":
-          this.toggleGeoDrawer("countries")
-          break
-        case "toggleStatesDrawer":
-          this.toggleGeoDrawer("states")
-          break
-      }
-    },
     toggleAd(){
       if(this.showAdvertising){
         this.deliveryCols = 11
-        this.advertisingCols = 1
+        this.advertisingCols = 0
         this.showAdvertising = false
       }else {
         this.deliveryCols = 7
@@ -1110,13 +922,22 @@ export default {
     .delivery-tab {
       .digital-adv {
         .match-rates {
-          height: 194px;
-          background-color: #F9FAFB !important;
+          // height: 194px;
+          // background-color: #F9FAFB !important;
         }
         .lookalikes {
-          height: 330px;
-          background-color: #F9FAFB !important;
+          // height: 330px;
+          // background-color: #F9FAFB !important;
           border-radius: 12px !important;
+        }
+      }
+      .empty-adv {
+        padding-top: 73px;
+        padding-left: 16px;
+        padding-right: 16px;
+        .background-empty {
+          background-image: url("../../../assets/images/lookalike_unavailable.png") !important;
+          background-size: cover !important;
         }
       }
     }
@@ -1171,10 +992,11 @@ export default {
 
 
 .collapsible-bar {
+  margin-top: 16px;
   width: 24px;
-  background-color: #F9FAFB;
+  background-color: var(--v-primary-lighten2) !important;
   height: 100%;
-  border-top-right-radius: 0;
+  border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
   cursor: pointer;
   float: left;

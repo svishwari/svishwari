@@ -1,5 +1,5 @@
 <template>
-  <v-card class="rounded-lg card-style delivery-overview" flat >
+  <v-card class="rounded-lg card-style delivery-overview mt-4" flat >
     <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-3">
       <slot name="title-left"></slot>
       <slot name="title-right"></slot>
@@ -11,10 +11,10 @@
     />
     <v-card-text v-else class="pl-6 pr-6 pb-4 pt-0">
       <div
-        v-if="sections.length == 0"
-        class="empty-state pa-5 black--text text--darken-1"
+        v-if="sections.length > 0"
+        class="empty-state py-4 black--text text--darken-1"
       >
-        <slot name="empty-sections"></slot>
+        This audience is not part of an engagement. Add it to an engagement below.
       </div>
       <div v-else class="pl-0 pt-0 pr-0 overflow-auto pb-3">
         <delivery-details
@@ -29,29 +29,29 @@
           data-e2e="status-list"
           @onSectionAction="$emit('onOverviewSectionAction', $event)"
           @onDestinationAction="$emit('onOverviewDestinationAction', $event)"
+          @onAddDestination="$emit('onAddDestination', $event)"
           class="mb-2"
         >
           <template #empty-destinations>
             <slot name="empty-deliveries" :sectionId="item.id" />
           </template>
         </delivery-details>
-
-        <v-list dense class="add-engagement ma-0 pa-0" :height="22">
-          <v-list-item>
-            <hux-icon type="plus" :size="16" color="primary" class="mr-4" />
-            <v-btn
-              text
-              min-width="7rem"
-              height="2rem"
-              class="primary--text text-body-1"
-              data-e2e="drawerToggle"
-              @click="addEngagement()"
-            >
-              An engagement
-            </v-btn>
-          </v-list-item>
-        </v-list>
       </div>
+      <v-list dense class="add-engagement ma-0 pa-0" :height="22">
+        <v-list-item>
+          <hux-icon type="plus" :size="16" color="primary" class="mr-4" />
+          <v-btn
+            text
+            min-width="7rem"
+            height="2rem"
+            class="primary--text text-body-1"
+            data-e2e="drawerToggle"
+            @click="addEngagement()"
+          >
+            An engagement
+          </v-btn>
+        </v-list-item>
+      </v-list>
     </v-card-text>
   </v-card>
 </template>

@@ -2,6 +2,7 @@
   <v-card class="rounded-sm status-card mr-2 box-shadow-none">
     <v-card-title class="d-flex justify-space-between">
       <span class="d-flex">
+        <status status="Active" :icon-size="19" collapsed class="float-left" />
         <router-link
           :to="{
             name: routeName,
@@ -30,10 +31,10 @@
         </router-link>
       </span>
       <v-spacer> </v-spacer>
-      <span class="d-flex mr-4">
+      <div class="d-flex mr-4" @click="deliverAll(section)">
         <icon class="deliver-icon mr-2" type="deliver" :size="24" />
         Deliver all
-      </span>
+      </div>
       <v-menu class="menu-wrapper" bottom offset-y>
         <template #activator="{ on, attrs }">
           <v-icon v-bind="attrs" class="top-action" v-on="on">
@@ -72,6 +73,7 @@
                 data-e2e="map-state-list"
                 >
                     <div v-if="header.value == 'name'" class="text-body-1">
+                      <logo :type="item.delivery_platform_type" :size="22" class="mb-n1"></logo>
                       {{item.name}}
                       <v-menu class="menu-wrapper" bottom offset-y>
                         <template #activator="{ on, attrs }">
@@ -118,17 +120,15 @@
             </template>
         </hux-data-table>
         
-        <v-list v-if="section.deliveries" dense class="" :height="52">
-          <v-list-item>
+        <v-list v-if="section.deliveries" dense class="add-list" :height="52">
+          <v-list-item @click="$emit('onAddDestination', section)">
             <hux-icon type="plus" :size="16" color="primary" class="mr-4" />
             <hux-icon type="destination" :size="24" color="primary" class="mr-2" />
             <v-btn
               text
               min-width="7rem"
               height="2rem"
-              class="primary--text text-body-1"
-              data-e2e="drawerToggle"
-              @click="addDestination()"
+              class="primary--text text-body-1" 
             >
               Destination
             </v-btn>
@@ -273,6 +273,9 @@ export default {
         ? this.destinationMenuOptions
         : []
     },
+    audienceId() {
+      return this.$route.params.id
+    },
   },
 
   watch: {
@@ -290,7 +293,15 @@ export default {
       deliverAudience: "engagements/deliverAudience",
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
     }),
-
+    async deliverAll(engagement){
+      await this.deliverAudience({
+        id: engagement.id,
+        audienceId: this.audienceId,
+      })
+      this.dataPendingMesssage(event, "engagement")
+    },
+    addDestination(){
+    },
     getSize(value) {
       return getApproxSize(value)
     },
@@ -298,7 +309,7 @@ export default {
       if (this.sectionType === "engagement") {
         this.engagementMenuOptions.forEach((element) => {
           switch (element.title.toLowerCase()) {
-            case "Remove engagement":
+            case "remove engagement":
               element["active"] = true
               break
             default:
@@ -354,6 +365,14 @@ export default {
         { id: 6, title: "Remove destination", active: true },
       ]
     },
+    dataPendingMesssage(event, value) {
+      const engagementName = event.name
+      const audienceName = this.audience.name
+      this.setAlert({
+        type: "pending",
+        message: `Your engagement '${engagementName}', has started delivering as part of the audience '${audienceName}'.`,
+      })
+    },
   },
 }
 </script>
@@ -388,6 +407,10 @@ export default {
     .top-action {
       color: var(--v-black-darken4);
     }
+  }
+  .add-list {
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
   }
 }
 </style>
