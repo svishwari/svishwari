@@ -94,7 +94,6 @@ CLIENT_ACCOUNT = "client_account"
 USE_CASE = "use_case"
 FIELD_TYPE = "field_type"
 
-
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
 QUERY_PARAMETER_SORT_ORDER = "sort_order"
@@ -242,6 +241,9 @@ STATE_NAMES = {
     "WY": "Wyoming",
     "PR": "Puerto Rico",
 }
+STATE_LABEL = "state_label"
+COUNTRIES_LIST = {"US": "United States"}
+COUNTRY_LABEL = "country_label"
 DEMOGRAPHIC = "demo"
 DATE = "date"
 RECORDED = "recorded"
