@@ -46,8 +46,8 @@
       >
         <v-list-item-icon
           v-if="item.icon"
-          class="ma-2"
-          :class="{ 'home-menu-icon': !isMini, 'ml-0': !isMini }"
+          class="ma-0"
+          :class="{ 'home-menu-icon ml-0': !isMini, ' mini-home-icon': isMini }"
         >
           <tooltip
             v-if="item.title"
@@ -259,6 +259,12 @@ export default {
     svg {
       top: 32.89%;
     }
+  }
+}
+.mini-home-icon {
+  svg {
+    top: 8px;
+    position: absolute;
   }
 }
 .nav-footer {
