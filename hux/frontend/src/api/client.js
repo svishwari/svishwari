@@ -313,10 +313,19 @@ client["audiences"].remove = (resourceId) => {
 //#endregion
 
 //#region Notifications
-client["notifications"].getNotifications = (batchSize, batchNumber) => {
-  return http.get(
-    `/notifications?batch_size=${batchSize}&batch_number=${batchNumber}`
-  )
+client["notifications"].getNotifications = (data) => {
+  delete data.isLazyLoad
+  let URLData = []
+  let newURLFormat
+  let URLString
+  for (const property in data) {
+    let formURL = property + "=" + data[property]
+    URLData.push(formURL)
+  }
+  let arrJoin = URLData.join("@")
+  URLString = arrJoin.toString()
+  newURLFormat = URLString.replace(/@/g, "&")
+  return http.get(`/notifications?${newURLFormat}`)
 }
 
 client["notifications"].find = (notification_id) => {

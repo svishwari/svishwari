@@ -12,7 +12,7 @@
     <v-toolbar
       width="100%"
       class="drawer-header no-shadow border-bottom"
-      height="70"
+      :height="headerHeight"
     >
       <v-toolbar-title :class="contentHeaderPadding">
         <slot name="header-left"></slot>
@@ -112,6 +112,11 @@ export default {
     contentHeaderPadding: {
       type: String,
       required: false,
+    },
+    headerHeight: {
+      type: String,
+      required: false,
+      default: "70",
     },
   },
 

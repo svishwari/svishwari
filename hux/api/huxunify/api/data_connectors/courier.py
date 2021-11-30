@@ -29,8 +29,6 @@ from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config, Config
 from huxunify.api.data_connectors.aws import (
-    set_cloud_watch_rule,
-    put_rule_targets_aws_batch,
     CloudWatchState,
 )
 from huxunify.api.exceptions.integration_api_exceptions import (
@@ -223,7 +221,6 @@ class DestinationBatchJob:
 
     def register(
         self,
-        engagement_doc: dict,
         job_head_name: str = "audiencerouter",
         aws_batch_mem_limit: int = 2048,
         aws_batch_connector: AWSBatchConnector = None,
@@ -231,7 +228,6 @@ class DestinationBatchJob:
         """Register a destination job
 
         Args:
-            engagement_doc (dict): Engagement document.
             job_head_name (str): The aws batch job head name.
             aws_batch_mem_limit (int): AWS Batch RAM limit.
             aws_batch_connector (AWSBatchConnector): AWS batch connector.
@@ -283,47 +279,6 @@ class DestinationBatchJob:
             self.audience_delivery_job_id,
         )
         self.result = db_c.AUDIENCE_STATUS_DELIVERING
-
-        # check if engagement has a delivery flight schedule set
-        if not (
-            engagement_doc and engagement_doc.get(api_c.DELIVERY_SCHEDULE)
-        ):
-            logger.warning(
-                "Delivery schedule is not set for %s.",
-                engagement_doc[db_c.ID],
-            )
-            return
-
-        # create the rule name
-        cw_name = f"{engagement_doc[db_c.ID]}-{self.destination_type}"
-
-        # TODO hookup converted cron job expression HUS-794
-        if not set_cloud_watch_rule(
-            cw_name,
-            "cron(15 0 * * ? *)",
-            config.AUDIENCE_ROUTER_JOB_ROLE_ARN,
-        ):
-            logger.error(
-                "Error creating cloud watch rule for engagement with ID %s.",
-                engagement_doc[db_c.ID],
-            )
-            return
-
-        # setup the batch params for the registered job.
-        batch_params = {
-            "JobDefinition": response_batch_register["jobDefinitionArn"],
-            "JobName": response_batch_register["jobDefinitionName"],
-        }
-
-        put_rule_targets_aws_batch(
-            cw_name,
-            batch_params,
-            self.audience_delivery_job_id,
-            config.AUDIENCE_ROUTER_EXECUTION_ROLE_ARN,
-            config.AUDIENCE_ROUTER_JOB_QUEUE,
-        )
-
-        self.scheduled = True
 
     def submit(self) -> None:
         """Submit a destination job

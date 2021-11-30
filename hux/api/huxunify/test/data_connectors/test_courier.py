@@ -396,7 +396,7 @@ class CourierTest(TestCase):
                 "register_job",
                 return_value=return_value,
             ):
-                batch_destination.register(self.engagement)
+                batch_destination.register()
 
             self.assertEqual(
                 batch_destination.result, db_c.AUDIENCE_STATUS_DELIVERING
@@ -430,7 +430,7 @@ class CourierTest(TestCase):
                 "register_job",
                 return_value=return_value,
             ):
-                batch_destination.register(self.engagement)
+                batch_destination.register()
             self.assertEqual(
                 batch_destination.result, db_c.AUDIENCE_STATUS_DELIVERING
             )

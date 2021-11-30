@@ -303,6 +303,7 @@ class EmailSummary(Schema):
     open = fields.Integer()
     open_rate = fields.Float()
     clicks = fields.Integer()
+    conversions = fields.Integer()
     click_through_rate = fields.Float()
     click_to_open_rate = fields.Float()
     unique_clicks = fields.Integer()
