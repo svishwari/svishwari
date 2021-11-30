@@ -1231,11 +1231,17 @@ class AudienceRules(SwaggerView):
                     "gender": {
                         "name": "Gender",
                         "type": "list",  # text for 5.0, list for future
-                        "options": {
-                            "female": "Female",
-                            "male": "Male",
-                            "other": "Other",
-                        },
+                        "options": [
+                            {
+                                "female": "Female",
+                            },
+                            {
+                                "male": "Male",
+                            },
+                            {
+                                "other": "Other",
+                            },
+                        ],
                     },
                     "location": {
                         "name": "Location",
