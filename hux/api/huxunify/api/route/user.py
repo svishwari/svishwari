@@ -453,7 +453,7 @@ class UserPatchView(SwaggerView):
 
         updated_user = update_user(
             database,
-            okta_id=user[0][db_c.OKTA_ID],
+            okta_id=userinfo[0][db_c.OKTA_ID],
             update_doc={
                 **body,
                 **{
