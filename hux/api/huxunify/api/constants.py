@@ -242,6 +242,9 @@ STATE_NAMES = {
     "WY": "Wyoming",
     "PR": "Puerto Rico",
 }
+STATE_LABEL = "state_label"
+COUNTRIES_LIST = {"US": "United States"}
+COUNTRY_LABEL = "country_label"
 DEMOGRAPHIC = "demo"
 DATE = "date"
 RECORDED = "recorded"
