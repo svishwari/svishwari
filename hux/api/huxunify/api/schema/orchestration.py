@@ -293,7 +293,6 @@ def is_audience_lookalikeable(audience: dict) -> str:
         ):
             status = api_c.STATUS_INACTIVE
 
-            # TODO - HUS-815
             # add 30 min wait time before making it lookalikable
             if (
                 delivery.get(db_c.STATUS)
