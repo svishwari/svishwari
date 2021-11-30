@@ -62,7 +62,7 @@
               <template #subtitle-extended>
                 <tooltip>
                   <template #label-content>
-                    <span class="font-weight-semi-bold">
+                    <span class="text-subtitle-1">
                       <span v-if="item.value == 'percentage'">
                         {{
                           item.subtitle
@@ -265,6 +265,7 @@
                           v-if="!loadingGeoOverview"
                           :map-data="customersGeoOverview"
                           :configuration-data="configurationData"
+                          :header-config="mapStateHeaderList"
                           :height="395"
                         />
                       </div>
@@ -359,7 +360,7 @@ export default {
           subtitle: "",
           icon: "customer-no",
           toolTipText:
-            "Total no. of unique hux ids generated to represent a customer.",
+            "Total number of unique Hux IDs generated to represent a customer.",
           value: "",
         },
         {
@@ -402,11 +403,6 @@ export default {
           href: "/customers",
           icon: "customer-profiles",
         },
-        {
-          text: "",
-          disabled: true,
-          href: this.$route.path,
-        },
       ],
       loading: true,
       updatedTime: [],
@@ -448,6 +444,7 @@ export default {
         batchNumber: 1,
         isLazyLoad: false,
       },
+      mapStateHeaderList: ["name", "avg_spend", "population_percentage"],
     }
   },
   computed: {

@@ -1,6 +1,6 @@
 <template>
   <v-row class="menu-cell-wrapper">
-    <v-col class="d-flex pr-0">
+    <v-col class="d-flex pr-0 align-center" style="height: 100%">
       <slot name="expand-icon"></slot>
       <router-link :to="routePath" class="text-decoration-none" append>
         <tooltip>
@@ -15,27 +15,31 @@
         </tooltip>
       </router-link>
       <v-spacer></v-spacer>
-      <div class="d-flex align-center">
-        <v-btn
-          v-if="hasFavorite"
-          icon
-          height="22"
-          width="22"
-          plain
-          class="align-center"
-          :class="{ 'action-icon': !isFavorite, 'mr-3 fixed-icon': isFavorite }"
-          @click="$emit('actionFavorite')"
-        >
-          <icon v-if="isFavorite" type="fav_filled" :size="18" color="" />
-          <icon v-else type="fav_blank" :size="18" color="" />
-        </v-btn>
-        <span class="action-icon font-weight-light float-right">
+      <div class="d-flex">
+        <span class="action-icon font-weight-light menu-activator">
+          <v-btn
+            v-if="hasFavorite"
+            icon
+            height="22"
+            width="22"
+            plain
+            class="align-center fav-action"
+            :class="{
+              'action mr-8': !isFavorite,
+              'd-block mr-8': isFavorite,
+            }"
+            @click="$emit('actionFavorite')"
+          >
+            <icon v-if="isFavorite" type="fav_filled" :size="18" color="" />
+            <icon v-else type="fav_blank" :size="18" color="" />
+          </v-btn>
           <v-menu v-model="openMenu" class="menu-wrapper" bottom offset-y>
             <template #activator="{ on, attrs }">
               <v-icon
                 v-bind="attrs"
                 class="mr-2 more-action"
                 color="primary"
+                :class="{ 'd-inline-block': openMenu }"
                 v-on="on"
                 @click="takeActions($event)"
               >
@@ -194,12 +198,36 @@ export default Vue.extend({
     width: 28ch;
     white-space: nowrap;
   }
+  .menu-activator {
+    .more-action {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+
+      &[aria-expanded="true"] {
+        &::after {
+          transition: opacity 0.2s cubic-bezier(0.4, 0, 0.6, 1);
+          opacity: 0.12;
+          border-radius: inherit;
+          height: 80%;
+          width: 24px;
+          margin-top: 6px;
+        }
+      }
+      &:focus {
+        &::after {
+          border-radius: inherit;
+          height: 80%;
+          width: 24px;
+          margin-top: 6px;
+        }
+      }
+    }
+  }
   :hover {
     .action-icon {
       display: block;
-    }
-    .fixed-icon {
-      margin-right: 0px !important;
     }
   }
 }

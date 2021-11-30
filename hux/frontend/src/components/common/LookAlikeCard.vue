@@ -119,14 +119,12 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      lookalikesData: this.value,
-    }
-  },
   computed: {
     isActive() {
       return this.status == "Active" ? true : false
+    },
+    lookalikesData() {
+      return this.value
     },
   },
   methods: {

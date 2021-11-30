@@ -73,7 +73,7 @@ class CustomerSchemaTest(TestCase):
         customers_insight_country = {
             api_c.COUNTRY: "US",
             api_c.SIZE: 1234,
-            t_c.REVENUE: 123.2345,
+            t_c.AVG_SPEND: 123.2345,
         }
 
         self.assertFalse(
@@ -89,7 +89,7 @@ class CustomerSchemaTest(TestCase):
             api_c.STATE: "New York",
             api_c.COUNTRY: "US",
             api_c.SIZE: 1234,
-            t_c.REVENUE: 123.2345,
+            t_c.AVG_SPEND: 123.2345,
         }
 
         self.assertFalse(
@@ -104,7 +104,7 @@ class CustomerSchemaTest(TestCase):
             api_c.STATE: "NY",
             api_c.COUNTRY: "US",
             api_c.SIZE: 1234,
-            t_c.REVENUE: 123.2345,
+            t_c.AVG_SPEND: 123.2345,
         }
 
         self.assertFalse(

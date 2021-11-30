@@ -45,10 +45,11 @@
             data-e2e="profile"
             height="32px"
           >
-            My Hux Profile
+            My hux profile
           </a>
         </v-list-item-title>
       </v-list-item>
+      <v-divider />
       <v-list-item data-e2e="logout" class="mt-2" @click="initiateLogout()">
         <v-list-item-title class="text-body-1 black--text">
           Logout

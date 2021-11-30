@@ -221,6 +221,7 @@
               width="94"
               height="40"
               data-e2e="cancel-audience"
+              class="btn-border box-shadow-none"
               @click.native="
                 flagForModal = true
                 $router.go(-1)

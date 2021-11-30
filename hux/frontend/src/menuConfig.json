@@ -85,10 +85,10 @@
             "name": "SegmentPlayground"
           },
           "size": 14,
-          "display": false
+          "display": true
         }
       ],
-      "display": false
+      "display": true
     },
     {
       "label": "Orchestration",

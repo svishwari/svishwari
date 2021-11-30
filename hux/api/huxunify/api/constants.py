@@ -92,6 +92,8 @@ CONTACT_EMAIL = "contact_email"
 CLIENT_REQUEST = "client_request"
 CLIENT_ACCOUNT = "client_account"
 USE_CASE = "use_case"
+FIELD_TYPE = "field_type"
+
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -137,6 +139,8 @@ MAX_LTV_PREDICTED = "max_ltv_predicted"
 MIN_LTV_ACTUAL = "min_ltv_actual"
 MAX_LTV_ACTUAL = "max_ltv_actual"
 AVG_LTV = "avg_ltv"
+MIN_LTV = "min_ltv"
+MAX_LTV = "max_ltv"
 COUNTRY = "country"
 CONTACT_PREFERENCES = "contact_preferences"
 IDENTITY_RESOLUTION = "identity_resolution"
@@ -795,6 +799,9 @@ CDP_DATA_SOURCE_CATEGORY_MAP = {
 }
 
 CDP_DATA_SOURCE_CATEGORIES = list(set(CDP_DATA_SOURCE_CATEGORY_MAP.values()))
+ACTION_ACTIVATED = "activated"
+ACTION_REQUESTED = "requested"
+ACTION_REMOVED = "removed"
 
 # Authentication API fields
 AUTHORIZATION = "Authorization"

@@ -1,6 +1,10 @@
 <template>
   <v-expansion-panel class="hux-filter-panel">
-    <v-expansion-panel-header class="header">
+    <v-expansion-panel-header
+      class="header"
+      :disabled="disabled"
+      :hide-actions="hideActions"
+    >
       <h4
         :class="
           count == 0
@@ -26,20 +30,23 @@
 
 <script>
 import { defineComponent } from "@vue/composition-api"
-
 export default defineComponent({
   props: {
     title: {
       type: String,
       required: true,
     },
-
     count: {
       type: Number,
       required: false,
       default: 0,
     },
-    onlyBlue: {
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    hideActions: {
       type: Boolean,
       required: false,
       default: false,
@@ -49,17 +56,19 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-$padding: 20px;
+$padding: 30px;
 $headerHeight: 40px;
-
 .hux-filter-panel {
   .header {
     height: $headerHeight;
     padding: 0 $padding;
     border-top: 1px solid var(--v-black-lighten2);
-    border-bottom: 1px solid var(--v-black-lighten2);
   }
-
+  &:last-child {
+    .header {
+      border-bottom: 1px solid var(--v-black-lighten2);
+    }
+  }
   .content {
     ::v-deep .v-expansion-panel-content__wrap {
       padding: $padding;

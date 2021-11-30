@@ -49,7 +49,7 @@
           :coming-soon="false"
           width="280"
           height="255"
-          :icon="`model-${model.type || 'unsubscribe'}`"
+          :icon="`model-${getModelType(model)}`"
           :title="model.name"
           :logo-option="true"
           :description="model.description"
@@ -214,6 +214,16 @@ export default {
       drawer: false,
       confirmModal: false,
       selectedModal: null,
+      modelTypes: [
+        "purchase",
+        "prediction",
+        "ltv",
+        "churn",
+        "propensity",
+        "unsubscribe",
+        "regression",
+        "classification",
+      ],
     }
   },
 
@@ -226,9 +236,18 @@ export default {
       return this.models.length ? Object.entries(this.models[0]).length : false
     },
     addedModels() {
-      return this.models.filter((model) =>
-        ["Active", "Requested"].includes(model.status)
-      )
+      const actives = this.models
+        .filter((model) => ["Active"].includes(model.status))
+        .sort((a, b) => {
+          return a.name < b.name
+        })
+      const others = this.models
+        .filter((model) => ["Requested"].includes(model.status))
+        .sort((a, b) => {
+          return a.name < b.name
+        })
+
+      return [...actives, ...others]
     },
   },
 
@@ -255,6 +274,14 @@ export default {
           params: { id: model.id },
         })
       }
+    },
+
+    getModelType(model) {
+      return this.modelTypes.includes(
+        model.type ? model.type.toLowerCase() : ""
+      )
+        ? model.type.toLowerCase()
+        : "unknown"
     },
     toggleDrawer() {
       this.drawer = !this.drawer

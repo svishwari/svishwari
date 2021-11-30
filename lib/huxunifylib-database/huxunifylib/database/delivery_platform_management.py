@@ -14,14 +14,14 @@ from pymongo.cursor import Cursor
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.db_exceptions as de
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.utils import name_exists, get_collection_count
 import huxunifylib.database.audience_management as am
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 # pylint: disable=R0914
@@ -30,14 +30,14 @@ def set_delivery_platform(
     delivery_platform_type: str,
     name: str,
     authentication_details: dict = None,
-    status: str = c.STATUS_PENDING,
+    status: str = db_c.STATUS_PENDING,
     enabled: bool = False,
     added: bool = False,
     deleted: bool = False,
     user_name: str = None,
     configuration: dict = None,
     is_ad_platform: bool = False,
-    category: str = c.CATEGORY_UNKNOWN,
+    category: str = db_c.CATEGORY_UNKNOWN,
 ) -> Union[dict, None]:
     """A function to create a delivery platform.
 
@@ -68,15 +68,15 @@ def set_delivery_platform(
         UnknownDeliveryPlatformType: If delivery platform type is unknown.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERY_PLATFORM_COLLECTION]
 
     # Make sure the name will be unique
     exists_flag = name_exists(
         database,
-        c.DATA_MANAGEMENT_DATABASE,
-        c.DELIVERY_PLATFORM_COLLECTION,
-        c.DELIVERY_PLATFORM_NAME,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.DELIVERY_PLATFORM_COLLECTION,
+        db_c.DELIVERY_PLATFORM_NAME,
         name,
     )
 
@@ -87,39 +87,39 @@ def set_delivery_platform(
     curr_time = datetime.datetime.utcnow()
 
     doc = {
-        c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
-        c.DELIVERY_PLATFORM_NAME: name,
-        c.DELIVERY_PLATFORM_STATUS: status,
-        c.ENABLED: enabled,
-        c.ADDED: added,
-        c.DELETED: deleted,
-        c.CREATE_TIME: curr_time,
-        c.UPDATE_TIME: curr_time,
-        c.FAVORITE: False,
-        c.IS_AD_PLATFORM: is_ad_platform,
-        c.CATEGORY: category,
+        db_c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
+        db_c.DELIVERY_PLATFORM_NAME: name,
+        db_c.DELIVERY_PLATFORM_STATUS: status,
+        db_c.ENABLED: enabled,
+        db_c.ADDED: added,
+        db_c.DELETED: deleted,
+        db_c.CREATE_TIME: curr_time,
+        db_c.UPDATE_TIME: curr_time,
+        db_c.FAVORITE: False,
+        db_c.IS_AD_PLATFORM: is_ad_platform,
+        db_c.CATEGORY: category,
     }
     if authentication_details is not None:
-        doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
+        doc[db_c.DELIVERY_PLATFORM_AUTH] = authentication_details
 
     if configuration is not None:
-        doc[c.CONFIGURATION] = configuration
+        doc[db_c.CONFIGURATION] = configuration
 
     # Add user name only if it is available
     if user_name:
-        doc[c.CREATED_BY] = user_name
-        doc[c.UPDATED_BY] = user_name
+        doc[db_c.CREATED_BY] = user_name
+        doc[db_c.UPDATED_BY] = user_name
 
     try:
         delivery_platform_id = collection.insert_one(doc).inserted_id
         if delivery_platform_id is not None:
             return collection.find_one(
                 {
-                    c.ID: delivery_platform_id,
-                    c.ENABLED: enabled,
-                    c.DELETED: False,
+                    db_c.ID: delivery_platform_id,
+                    db_c.ENABLED: enabled,
+                    db_c.DELETED: False,
                 },
-                {c.DELETED: 0},
+                {db_c.DELETED: 0},
             )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -128,7 +128,7 @@ def set_delivery_platform(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_platforms_by_id(
@@ -146,14 +146,14 @@ def get_delivery_platforms_by_id(
         Union[list, None]: Delivery platform configuration.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERY_PLATFORM_COLLECTION]
 
     try:
         return list(
             collection.find(
-                {c.ID: {"$in": delivery_platform_ids}, c.DELETED: False},
-                {c.DELETED: 0},
+                {db_c.ID: {"$in": delivery_platform_ids}, db_c.DELETED: False},
+                {db_c.DELETED: 0},
             )
         )
     except pymongo.errors.OperationFailure as exc:
@@ -163,7 +163,7 @@ def get_delivery_platforms_by_id(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_platform(
@@ -181,12 +181,13 @@ def get_delivery_platform(
         Union[dict, None]: Delivery platform configuration.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERY_PLATFORM_COLLECTION]
 
     try:
         return collection.find_one(
-            {c.ID: delivery_platform_id, c.DELETED: False}, {c.DELETED: 0}
+            {db_c.ID: delivery_platform_id, db_c.DELETED: False},
+            {db_c.DELETED: 0},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -195,7 +196,7 @@ def get_delivery_platform(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_platform_by_type(
@@ -212,15 +213,15 @@ def get_delivery_platform_by_type(
         Union[dict, None]: Delivery platform configuration.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERY_PLATFORM_COLLECTION]
     try:
         return collection.find_one(
             {
-                c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
-                c.DELETED: False,
+                db_c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
+                db_c.DELETED: False,
             },
-            {c.DELETED: 0},
+            {db_c.DELETED: 0},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -229,7 +230,7 @@ def get_delivery_platform_by_type(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_delivery_platforms(
@@ -245,11 +246,11 @@ def get_all_delivery_platforms(
     """
 
     doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERY_PLATFORM_COLLECTION]
 
     try:
-        doc = list(collection.find({c.DELETED: False}, {c.DELETED: 0}))
+        doc = list(collection.find({db_c.DELETED: False}, {db_c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -257,7 +258,7 @@ def get_all_delivery_platforms(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_connection_status(
@@ -279,18 +280,18 @@ def set_connection_status(
     """
 
     doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERY_PLATFORM_COLLECTION]
 
     update_doc = {}
-    update_doc[c.DELIVERY_PLATFORM_STATUS] = connection_status
-    update_doc[c.UPDATE_TIME] = datetime.datetime.utcnow()
+    update_doc[db_c.DELIVERY_PLATFORM_STATUS] = connection_status
+    update_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.DELETED: False},
+            {db_c.ID: delivery_platform_id, db_c.DELETED: False},
             {"$set": update_doc},
-            {c.DELETED: 0},
+            {db_c.DELETED: 0},
             upsert=False,
             new=True,
         )
@@ -319,14 +320,14 @@ def get_connection_status(
 
     doc = get_delivery_platform(database, delivery_platform_id)
 
-    if c.DELIVERY_PLATFORM_STATUS in doc:
-        connection_status = doc[c.DELIVERY_PLATFORM_STATUS]
+    if db_c.DELIVERY_PLATFORM_STATUS in doc:
+        connection_status = doc[db_c.DELIVERY_PLATFORM_STATUS]
 
     return connection_status
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_authentication_details(
@@ -347,18 +348,18 @@ def set_authentication_details(
     """
 
     doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERY_PLATFORM_COLLECTION]
 
     update_doc = {}
-    update_doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
-    update_doc[c.UPDATE_TIME] = datetime.datetime.utcnow()
+    update_doc[db_c.DELIVERY_PLATFORM_AUTH] = authentication_details
+    update_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.DELETED: False},
+            {db_c.ID: delivery_platform_id, db_c.DELETED: False},
             {"$set": update_doc},
-            {c.DELETED: 0},
+            {db_c.DELETED: 0},
             upsert=False,
             new=True,
         )
@@ -386,14 +387,14 @@ def get_authentication_details(
 
     doc = get_delivery_platform(database, delivery_platform_id)
 
-    if c.DELIVERY_PLATFORM_AUTH in doc:
-        auth_dict = doc[c.DELIVERY_PLATFORM_AUTH]
+    if db_c.DELIVERY_PLATFORM_AUTH in doc:
+        auth_dict = doc[db_c.DELIVERY_PLATFORM_AUTH]
 
     return auth_dict
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_name(
@@ -417,15 +418,15 @@ def set_name(
     """
 
     doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERY_PLATFORM_COLLECTION]
 
     # Make sure the name will be unique
     exists_flag = name_exists(
         database,
-        c.DATA_MANAGEMENT_DATABASE,
-        c.DELIVERY_PLATFORM_COLLECTION,
-        c.DELIVERY_PLATFORM_NAME,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.DELIVERY_PLATFORM_COLLECTION,
+        db_c.DELIVERY_PLATFORM_NAME,
         name,
     )
 
@@ -434,19 +435,19 @@ def set_name(
             database,
             delivery_platform_id,
         )
-        if cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
+        if cur_doc[db_c.DELIVERY_PLATFORM_NAME] != name:
             raise de.DuplicateName(name)
 
     update_doc = {
-        c.DELIVERY_PLATFORM_NAME: name,
-        c.UPDATE_TIME: datetime.datetime.utcnow(),
+        db_c.DELIVERY_PLATFORM_NAME: name,
+        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.DELETED: False},
+            {db_c.ID: delivery_platform_id, db_c.DELETED: False},
             {"$set": update_doc},
-            {c.DELETED: 0},
+            {db_c.DELETED: 0},
             upsert=False,
             new=True,
         )
@@ -474,14 +475,14 @@ def get_name(
 
     doc = get_delivery_platform(database, delivery_platform_id)
 
-    if c.DELIVERY_PLATFORM_NAME in doc:
-        name = doc[c.DELIVERY_PLATFORM_NAME]
+    if db_c.DELIVERY_PLATFORM_NAME in doc:
+        name = doc[db_c.DELIVERY_PLATFORM_NAME]
 
     return name
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_platform_type(
@@ -504,24 +505,24 @@ def set_platform_type(
     """
 
     if delivery_platform_type.upper() not in [
-        x.upper() for x in c.SUPPORTED_DELIVERY_PLATFORMS
+        x.upper() for x in db_c.SUPPORTED_DELIVERY_PLATFORMS
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
     doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERY_PLATFORM_COLLECTION]
 
     update_doc = {
-        c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
-        c.UPDATE_TIME: datetime.datetime.utcnow(),
+        db_c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
+        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.DELETED: False},
+            {db_c.ID: delivery_platform_id, db_c.DELETED: False},
             {"$set": update_doc},
-            {c.DELETED: 0},
+            {db_c.DELETED: 0},
             upsert=False,
             new=True,
         )
@@ -549,14 +550,14 @@ def get_platform_type(
 
     doc = get_delivery_platform(database, delivery_platform_id)
 
-    if c.DELIVERY_PLATFORM_TYPE in doc:
-        delivery_platform_type = doc[c.DELIVERY_PLATFORM_TYPE]
+    if db_c.DELIVERY_PLATFORM_TYPE in doc:
+        delivery_platform_type = doc[db_c.DELIVERY_PLATFORM_TYPE]
 
     return delivery_platform_type
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 # pylint: disable=too-many-locals,too-many-branches
@@ -606,62 +607,62 @@ def update_delivery_platform(
     """
 
     if delivery_platform_type.upper() not in [
-        x.upper() for x in c.SUPPORTED_DELIVERY_PLATFORMS
+        x.upper() for x in db_c.SUPPORTED_DELIVERY_PLATFORMS
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
     doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERY_PLATFORM_COLLECTION]
 
     # Make sure the name will be unique
     exists_flag = name_exists(
         database,
-        c.DATA_MANAGEMENT_DATABASE,
-        c.DELIVERY_PLATFORM_COLLECTION,
-        c.DELIVERY_PLATFORM_NAME,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.DELIVERY_PLATFORM_COLLECTION,
+        db_c.DELIVERY_PLATFORM_NAME,
         name,
     )
     cur_doc = None
     if exists_flag:
         cur_doc = get_delivery_platform(database, delivery_platform_id)
-        if cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
+        if cur_doc[db_c.DELIVERY_PLATFORM_NAME] != name:
             raise de.DuplicateName(name)
 
     update_doc = {
-        c.DELIVERY_PLATFORM_NAME: name,
-        c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
-        c.DELIVERY_PLATFORM_AUTH: authentication_details,
-        c.UPDATE_TIME: datetime.datetime.utcnow(),
+        db_c.DELIVERY_PLATFORM_NAME: name,
+        db_c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
+        db_c.DELIVERY_PLATFORM_AUTH: authentication_details,
+        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
     if (
         cur_doc is not None
-        and cur_doc[c.DELIVERY_PLATFORM_TYPE] == c.DELIVERY_PLATFORM_SFMC
+        and cur_doc[db_c.DELIVERY_PLATFORM_TYPE] == db_c.DELIVERY_PLATFORM_SFMC
     ):
-        update_doc[c.CONFIGURATION] = {
-            c.PERFORMANCE_METRICS_DATA_EXTENSION: performance_de,
-            c.CAMPAIGN_ACTIVITY_DATA_EXTENSION: campaign_de,
+        update_doc[db_c.CONFIGURATION] = {
+            db_c.PERFORMANCE_METRICS_DATA_EXTENSION: performance_de,
+            db_c.CAMPAIGN_ACTIVITY_DATA_EXTENSION: campaign_de,
         }
 
     if added is not None:
-        update_doc[c.ADDED] = added
+        update_doc[db_c.ADDED] = added
 
     if status is not None:
-        update_doc[c.DELIVERY_PLATFORM_STATUS] = status
+        update_doc[db_c.DELIVERY_PLATFORM_STATUS] = status
 
     if enabled is not None:
-        update_doc[c.ENABLED] = enabled
+        update_doc[db_c.ENABLED] = enabled
 
     if deleted is not None:
-        update_doc[c.DELETED] = deleted
+        update_doc[db_c.DELETED] = deleted
 
     # Add user name only if it is available
     if user_name:
-        update_doc[c.UPDATED_BY] = user_name
+        update_doc[db_c.UPDATED_BY] = user_name
 
     if is_ad_platform:
-        update_doc[c.IS_AD_PLATFORM] = is_ad_platform
+        update_doc[db_c.IS_AD_PLATFORM] = is_ad_platform
 
     for item in list(update_doc):
         if update_doc[item] is None:
@@ -670,9 +671,9 @@ def update_delivery_platform(
     try:
         if update_doc:
             doc = collection.find_one_and_update(
-                {c.ID: delivery_platform_id, c.DELETED: False},
+                {db_c.ID: delivery_platform_id, db_c.DELETED: False},
                 {"$set": update_doc},
-                {c.DELETED: 0},
+                {db_c.DELETED: 0},
                 upsert=False,
                 new=True,
             )
@@ -687,7 +688,7 @@ def update_delivery_platform(
 
 # pylint: disable=too-many-locals
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def create_delivery_platform_lookalike_audience(
@@ -699,7 +700,7 @@ def create_delivery_platform_lookalike_audience(
     country: str = None,
     user_name: str = "",
     audience_size: int = 0,
-    status: str = c.AUDIENCE_STATUS_DELIVERING,
+    status: str = db_c.AUDIENCE_STATUS_DELIVERING,
 ) -> Union[dict, None]:
     """A function to create a delivery platform lookalike audience.
 
@@ -726,15 +727,15 @@ def create_delivery_platform_lookalike_audience(
     """
 
     ret_doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.LOOKALIKE_AUDIENCE_COLLECTION]
 
     # Validate delivery platform id
     if get_delivery_platform(database, delivery_platform_id) is None:
         raise de.InvalidID(delivery_platform_id)
 
     # set the source_audience_id from source_audience
-    source_audience_id = source_audience[c.ID]
+    source_audience_id = source_audience[db_c.ID]
 
     # Validate source audience id
     if am.get_audience_config(database, source_audience_id) is None:
@@ -743,9 +744,9 @@ def create_delivery_platform_lookalike_audience(
     # Make sure the name will be unique
     if name_exists(
         database,
-        c.DATA_MANAGEMENT_DATABASE,
-        c.LOOKALIKE_AUDIENCE_COLLECTION,
-        c.LOOKALIKE_AUD_NAME,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+        db_c.LOOKALIKE_AUD_NAME,
         name,
     ):
         raise de.DuplicateName(name)
@@ -754,23 +755,23 @@ def create_delivery_platform_lookalike_audience(
     curr_time = datetime.datetime.utcnow()
 
     doc = {
-        c.DELIVERY_PLATFORM_ID: delivery_platform_id,
-        c.LOOKALIKE_SOURCE_AUD_ID: source_audience_id,
-        c.LOOKALIKE_AUD_NAME: name,
-        c.LOOKALIKE_SOURCE_AUD_NAME: source_audience.get(c.NAME, ""),
-        c.LOOKALIKE_SOURCE_AUD_SIZE: source_audience.get(c.SIZE, 0),
-        c.LOOKALIKE_SOURCE_AUD_FILTERS: source_audience.get(
-            c.AUDIENCE_FILTERS, []
+        db_c.DELIVERY_PLATFORM_ID: delivery_platform_id,
+        db_c.LOOKALIKE_SOURCE_AUD_ID: source_audience_id,
+        db_c.LOOKALIKE_AUD_NAME: name,
+        db_c.LOOKALIKE_SOURCE_AUD_NAME: source_audience.get(db_c.NAME, ""),
+        db_c.LOOKALIKE_SOURCE_AUD_SIZE: source_audience.get(db_c.SIZE, 0),
+        db_c.LOOKALIKE_SOURCE_AUD_FILTERS: source_audience.get(
+            db_c.AUDIENCE_FILTERS, []
         ),
-        c.LOOKALIKE_AUD_COUNTRY: country,
-        c.LOOKALIKE_AUD_SIZE_PERCENTAGE: audience_size_percentage,
-        c.DELETED: False,
-        c.CREATE_TIME: curr_time,
-        c.UPDATE_TIME: curr_time,
-        c.SIZE: audience_size,
-        c.CREATED_BY: user_name,
-        c.UPDATED_BY: user_name,
-        c.STATUS: status,
+        db_c.LOOKALIKE_AUD_COUNTRY: country,
+        db_c.LOOKALIKE_AUD_SIZE_PERCENTAGE: audience_size_percentage,
+        db_c.DELETED: False,
+        db_c.CREATE_TIME: curr_time,
+        db_c.UPDATE_TIME: curr_time,
+        db_c.SIZE: audience_size,
+        db_c.CREATED_BY: user_name,
+        db_c.UPDATED_BY: user_name,
+        db_c.STATUS: status,
     }
 
     try:
@@ -782,15 +783,15 @@ def create_delivery_platform_lookalike_audience(
 
         if recent_delivery_job:
             lookalike_auds = recent_delivery_job.get(
-                c.DELIVERY_PLATFORM_LOOKALIKE_AUDS, []
+                db_c.DELIVERY_PLATFORM_LOOKALIKE_AUDS, []
             )
             lookalike_auds.append(inserted_id)
             set_delivery_job_lookalike_audiences(
-                database, recent_delivery_job[c.ID], lookalike_auds
+                database, recent_delivery_job[db_c.ID], lookalike_auds
             )
 
         ret_doc = collection.find_one(
-            {c.ID: inserted_id, c.DELETED: False}, {c.DELETED: 0}
+            {db_c.ID: inserted_id, db_c.DELETED: False}, {db_c.DELETED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -799,7 +800,7 @@ def create_delivery_platform_lookalike_audience(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_platform_lookalike_audience(
@@ -817,12 +818,13 @@ def get_delivery_platform_lookalike_audience(
     """
 
     ret_doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.LOOKALIKE_AUDIENCE_COLLECTION]
 
     try:
         ret_doc = collection.find_one(
-            {c.ID: lookalike_audience_id, c.DELETED: False}, {c.DELETED: 0}
+            {db_c.ID: lookalike_audience_id, db_c.DELETED: False},
+            {db_c.DELETED: 0},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -831,7 +833,7 @@ def get_delivery_platform_lookalike_audience(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_delivery_platform_lookalike_audiences(
@@ -852,21 +854,21 @@ def get_all_delivery_platform_lookalike_audiences(
         Union[list, None]: List of all lookalike audience configurations.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.LOOKALIKE_AUDIENCE_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.LOOKALIKE_AUDIENCE_COLLECTION
     ]
 
     # if deleted is not included in the filters, add it.
     if filter_dict:
-        filter_dict[c.DELETED] = False
+        filter_dict[db_c.DELETED] = False
     else:
-        filter_dict = {c.DELETED: False}
+        filter_dict = {db_c.DELETED: False}
 
     # exclude the deleted field from returning
     if projection:
-        projection[c.DELETED] = 0
+        projection[db_c.DELETED] = 0
     else:
-        projection = {c.DELETED: 0}
+        projection = {db_c.DELETED: 0}
 
     try:
         return list(collection.find(filter_dict, projection))
@@ -877,7 +879,7 @@ def get_all_delivery_platform_lookalike_audiences(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_lookalike_audience_name(
@@ -901,15 +903,15 @@ def update_lookalike_audience_name(
     """
 
     ret_doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.LOOKALIKE_AUDIENCE_COLLECTION]
 
     # Make sure the name will be unique
     exists_flag = name_exists(
         database,
-        c.DATA_MANAGEMENT_DATABASE,
-        c.LOOKALIKE_AUDIENCE_COLLECTION,
-        c.LOOKALIKE_AUD_NAME,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+        db_c.LOOKALIKE_AUD_NAME,
         name,
     )
 
@@ -918,17 +920,17 @@ def update_lookalike_audience_name(
             database,
             lookalike_audience_id,
         )
-        if cur_doc[c.LOOKALIKE_AUD_NAME] != name:
+        if cur_doc[db_c.LOOKALIKE_AUD_NAME] != name:
             raise de.DuplicateName(name)
 
     update_doc = {
-        c.LOOKALIKE_AUD_NAME: name,
-        c.UPDATE_TIME: datetime.datetime.utcnow(),
+        db_c.LOOKALIKE_AUD_NAME: name,
+        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
     try:
         ret_doc = collection.find_one_and_update(
-            {c.ID: lookalike_audience_id, c.DELETED: False},
+            {db_c.ID: lookalike_audience_id, db_c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -940,7 +942,7 @@ def update_lookalike_audience_name(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_lookalike_audience_size_percentage(
@@ -961,17 +963,17 @@ def update_lookalike_audience_size_percentage(
     """
 
     ret_doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.LOOKALIKE_AUDIENCE_COLLECTION]
 
     update_doc = {
-        c.LOOKALIKE_AUD_SIZE_PERCENTAGE: audience_size_percentage,
-        c.UPDATE_TIME: datetime.datetime.utcnow(),
+        db_c.LOOKALIKE_AUD_SIZE_PERCENTAGE: audience_size_percentage,
+        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
     try:
         ret_doc = collection.find_one_and_update(
-            {c.ID: lookalike_audience_id, c.DELETED: False},
+            {db_c.ID: lookalike_audience_id, db_c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -983,7 +985,7 @@ def update_lookalike_audience_size_percentage(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_lookalike_audience(
@@ -1018,15 +1020,15 @@ def update_lookalike_audience(
     """
 
     ret_doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.LOOKALIKE_AUDIENCE_COLLECTION]
 
     # Make sure the name will be unique
     exists_flag = name_exists(
         database,
-        c.DATA_MANAGEMENT_DATABASE,
-        c.LOOKALIKE_AUDIENCE_COLLECTION,
-        c.LOOKALIKE_AUD_NAME,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.LOOKALIKE_AUDIENCE_COLLECTION,
+        db_c.LOOKALIKE_AUD_NAME,
         name,
     )
 
@@ -1035,19 +1037,19 @@ def update_lookalike_audience(
             database,
             lookalike_audience_id,
         )
-        if cur_doc[c.LOOKALIKE_AUD_NAME] != name:
+        if cur_doc[db_c.LOOKALIKE_AUD_NAME] != name:
             raise de.DuplicateName(name)
 
     update_doc = {
-        c.LOOKALIKE_AUD_NAME: name,
-        c.LOOKALIKE_AUD_COUNTRY: country,
-        c.LOOKALIKE_AUD_SIZE_PERCENTAGE: audience_size_percentage,
-        c.UPDATE_TIME: datetime.datetime.utcnow(),
-        c.UPDATED_BY: user_name,
+        db_c.LOOKALIKE_AUD_NAME: name,
+        db_c.LOOKALIKE_AUD_COUNTRY: country,
+        db_c.LOOKALIKE_AUD_SIZE_PERCENTAGE: audience_size_percentage,
+        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+        db_c.UPDATED_BY: user_name,
     }
 
     if audience_size:
-        update_doc[c.SIZE] = audience_size
+        update_doc[db_c.SIZE] = audience_size
 
     for item in list(update_doc):
         if update_doc[item] is None:
@@ -1056,7 +1058,7 @@ def update_lookalike_audience(
     try:
         if update_doc:
             ret_doc = collection.find_one_and_update(
-                {c.ID: lookalike_audience_id, c.DELETED: False},
+                {db_c.ID: lookalike_audience_id, db_c.DELETED: False},
                 {"$set": update_doc},
                 upsert=False,
                 new=True,
@@ -1070,7 +1072,7 @@ def update_lookalike_audience(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_delivery_job(
@@ -1109,44 +1111,45 @@ def set_delivery_job(
 
     dp_status = get_connection_status(database, delivery_platform_id)
 
-    if dp_status != c.STATUS_SUCCEEDED:
+    if dp_status != db_c.STATUS_SUCCEEDED:
         raise de.NoDeliveryPlatformConnection(delivery_platform_id)
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.DELIVERY_JOBS_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.DELIVERY_JOBS_COLLECTION]
 
     curr_time = datetime.datetime.utcnow()
 
     doc = {
-        c.AUDIENCE_ID: audience_id,
-        c.CREATE_TIME: curr_time,
-        c.UPDATE_TIME: curr_time,
-        c.JOB_STATUS: c.AUDIENCE_STATUS_DELIVERING,
-        c.DELIVERY_PLATFORM_ID: delivery_platform_id,
-        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (
+        db_c.AUDIENCE_ID: audience_id,
+        db_c.CREATE_TIME: curr_time,
+        db_c.UPDATE_TIME: curr_time,
+        db_c.JOB_STATUS: db_c.AUDIENCE_STATUS_DELIVERING,
+        db_c.DELIVERY_PLATFORM_ID: delivery_platform_id,
+        db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (
             delivery_platform_generic_campaigns
         ),
-        c.DELETED: False,
-        c.DELIVERY_PLATFORM_AUD_SIZE: 0,
+        db_c.DELETED: False,
+        db_c.DELIVERY_PLATFORM_AUD_SIZE: 0,
     }
     if engagement_id is not None:
-        doc[c.ENGAGEMENT_ID] = engagement_id
+        doc[db_c.ENGAGEMENT_ID] = engagement_id
 
     if delivery_platform_config is not None:
-        doc[c.DELIVERY_PLATFORM_CONFIG] = delivery_platform_config
+        doc[db_c.DELIVERY_PLATFORM_CONFIG] = delivery_platform_config
 
     try:
         delivery_job_id = collection.insert_one(doc).inserted_id
         collection.create_index(
             [
-                (c.AUDIENCE_ID, pymongo.ASCENDING),
-                (c.DELIVERY_PLATFORM_ID, pymongo.ASCENDING),
+                (db_c.AUDIENCE_ID, pymongo.ASCENDING),
+                (db_c.DELIVERY_PLATFORM_ID, pymongo.ASCENDING),
             ]
         )
 
         if delivery_job_id is not None:
             return collection.find_one(
-                {c.ID: delivery_job_id, c.DELETED: False}, {c.DELETED: 0}
+                {db_c.ID: delivery_job_id, db_c.DELETED: False},
+                {db_c.DELETED: 0},
             )
 
     except pymongo.errors.OperationFailure as exc:
@@ -1156,7 +1159,7 @@ def set_delivery_job(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_job(
@@ -1175,16 +1178,16 @@ def get_delivery_job(
         Union[dict, None]: Delivery job configuration.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.DELIVERY_JOBS_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.DELIVERY_JOBS_COLLECTION]
 
     try:
         # set mongo_filter based on engagement id
-        mongo_filter = {c.ID: delivery_job_id, c.DELETED: False}
+        mongo_filter = {db_c.ID: delivery_job_id, db_c.DELETED: False}
         if engagement_id is not None:
-            mongo_filter[c.ENGAGEMENT_ID] = engagement_id
+            mongo_filter[db_c.ENGAGEMENT_ID] = engagement_id
 
-        return collection.find_one(mongo_filter, {c.DELETED: 0})
+        return collection.find_one(mongo_filter, {db_c.DELETED: 0})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -1192,7 +1195,7 @@ def get_delivery_job(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_jobs_using_metadata(
@@ -1229,27 +1232,27 @@ def get_delivery_jobs_using_metadata(
     ):
         raise de.InvalidID()
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.DELIVERY_JOBS_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.DELIVERY_JOBS_COLLECTION]
 
     try:
 
-        mongo_filter = {c.DELETED: False}
+        mongo_filter = {db_c.DELETED: False}
         if audience_id:
-            mongo_filter[c.AUDIENCE_ID] = audience_id
+            mongo_filter[db_c.AUDIENCE_ID] = audience_id
         if engagement_id:
-            mongo_filter[c.ENGAGEMENT_ID] = engagement_id
+            mongo_filter[db_c.ENGAGEMENT_ID] = engagement_id
         if delivery_platform_id:
-            mongo_filter[c.DELIVERY_PLATFORM_ID] = delivery_platform_id
+            mongo_filter[db_c.DELIVERY_PLATFORM_ID] = delivery_platform_id
         if delivery_platform_ids:
-            mongo_filter[c.DELIVERY_PLATFORM_ID] = {
+            mongo_filter[db_c.DELIVERY_PLATFORM_ID] = {
                 "$in": delivery_platform_ids
             }
         if engagement_ids:
-            mongo_filter[c.ENGAGEMENT_ID] = {"$in": engagement_ids}
+            mongo_filter[db_c.ENGAGEMENT_ID] = {"$in": engagement_ids}
         if audience_ids:
-            mongo_filter[c.AUDIENCE_ID] = {"$in": audience_ids}
-        return list(collection.find(mongo_filter, {c.DELETED: 0}))
+            mongo_filter[db_c.AUDIENCE_ID] = {"$in": audience_ids}
+        return list(collection.find(mongo_filter, {db_c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -1257,7 +1260,7 @@ def get_delivery_jobs_using_metadata(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_delivery_job_status(
@@ -1276,22 +1279,22 @@ def set_delivery_job_status(
     """
 
     doc = None
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.DELIVERY_JOBS_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.DELIVERY_JOBS_COLLECTION]
     curr_time = datetime.datetime.utcnow()
 
     update_doc = {}
-    update_doc[c.JOB_STATUS] = job_status
-    update_doc[c.UPDATE_TIME] = curr_time
+    update_doc[db_c.JOB_STATUS] = job_status
+    update_doc[db_c.UPDATE_TIME] = curr_time
 
-    if job_status in (c.AUDIENCE_STATUS_DELIVERED, c.STATUS_FAILED):
-        update_doc[c.JOB_END_TIME] = curr_time
-    elif job_status == c.AUDIENCE_STATUS_DELIVERING:
-        update_doc[c.JOB_START_TIME] = curr_time
+    if job_status in (db_c.AUDIENCE_STATUS_DELIVERED, db_c.STATUS_FAILED):
+        update_doc[db_c.JOB_END_TIME] = curr_time
+    elif job_status == db_c.AUDIENCE_STATUS_DELIVERING:
+        update_doc[db_c.JOB_START_TIME] = curr_time
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_job_id, c.DELETED: False},
+            {db_c.ID: delivery_job_id, db_c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -1321,14 +1324,14 @@ def get_delivery_job_status(
 
     doc = get_delivery_job(database, delivery_job_id)
 
-    if c.JOB_STATUS in doc:
-        job_status = doc[c.JOB_STATUS]
+    if db_c.JOB_STATUS in doc:
+        job_status = doc[db_c.JOB_STATUS]
 
     return job_status
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_delivery_job_audience_size(
@@ -1348,18 +1351,18 @@ def set_delivery_job_audience_size(
     """
 
     doc = None
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.DELIVERY_JOBS_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.DELIVERY_JOBS_COLLECTION]
 
     # Set update dict
     update_dict = {
-        c.DELIVERY_PLATFORM_AUD_SIZE: audience_size,
+        db_c.DELIVERY_PLATFORM_AUD_SIZE: audience_size,
     }
 
     # Update the doc.
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_job_id, c.DELETED: False},
+            {db_c.ID: delivery_job_id, db_c.DELETED: False},
             {"$set": update_dict},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
@@ -1371,7 +1374,7 @@ def set_delivery_job_audience_size(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_delivery_job_lookalike_audiences(
@@ -1391,18 +1394,18 @@ def set_delivery_job_lookalike_audiences(
     """
 
     doc = None
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.DELIVERY_JOBS_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.DELIVERY_JOBS_COLLECTION]
 
     # Set update dict
     update_dict = {
-        c.DELIVERY_PLATFORM_LOOKALIKE_AUDS: lookalike_audiences,
+        db_c.DELIVERY_PLATFORM_LOOKALIKE_AUDS: lookalike_audiences,
     }
 
     # Update the doc.
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_job_id, c.DELETED: False},
+            {db_c.ID: delivery_job_id, db_c.DELETED: False},
             {"$set": update_dict},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
@@ -1433,14 +1436,14 @@ def get_delivery_job_audience_size(
         delivery_job_id,
     )
 
-    if c.DELIVERY_PLATFORM_AUD_SIZE in doc:
-        audience_size = doc[c.DELIVERY_PLATFORM_AUD_SIZE]
+    if db_c.DELIVERY_PLATFORM_AUD_SIZE in doc:
+        audience_size = doc[db_c.DELIVERY_PLATFORM_AUD_SIZE]
 
     return audience_size
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_jobs(
@@ -1464,19 +1467,19 @@ def get_delivery_jobs(
         OperationFailure: If an exception occurs during mongo operation.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.DELIVERY_JOBS_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.DELIVERY_JOBS_COLLECTION]
 
     try:
-        mongo_filter = {c.DELETED: False}
+        mongo_filter = {db_c.DELETED: False}
         if audience_id:
-            mongo_filter[c.AUDIENCE_ID] = audience_id
+            mongo_filter[db_c.AUDIENCE_ID] = audience_id
         if engagement_id:
-            mongo_filter[c.ENGAGEMENT_ID] = engagement_id
+            mongo_filter[db_c.ENGAGEMENT_ID] = engagement_id
 
         cursor = collection.find(
             mongo_filter,
-            {c.ENABLED: False} if audience_id else {c.ID: True},
+            {db_c.ENABLED: False} if audience_id else {db_c.ID: True},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -1486,7 +1489,7 @@ def get_delivery_jobs(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_delivery_jobs(
@@ -1509,26 +1512,26 @@ def get_all_delivery_jobs(
         Union[list, None]: List of n delivery jobs.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.DELIVERY_JOBS_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.DELIVERY_JOBS_COLLECTION
     ]
 
     # if deleted is not included in the filters, add it.
     if filter_dict:
-        filter_dict[c.DELETED] = False
+        filter_dict[db_c.DELETED] = False
     else:
-        filter_dict = {c.DELETED: False}
+        filter_dict = {db_c.DELETED: False}
 
     # exclude the deleted field from returning
     if projection:
-        projection[c.DELETED] = 0
+        projection[db_c.DELETED] = 0
     else:
-        projection = {c.DELETED: 0}
+        projection = {db_c.DELETED: 0}
 
     # if sort list is none, set to default, otherwise set to the passed in list.
     # note, if an empty list is passed in, no sorting will happen.
     sort_list = (
-        [(c.CREATE_TIME, pymongo.DESCENDING)]
+        [(db_c.CREATE_TIME, pymongo.DESCENDING)]
         if sort_list is None
         else sort_list
     )
@@ -1547,7 +1550,7 @@ def get_all_delivery_jobs(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_audience_recent_delivery_job(
@@ -1569,19 +1572,19 @@ def get_audience_recent_delivery_job(
     """
 
     recent_delivery_job = None
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.DELIVERY_JOBS_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.DELIVERY_JOBS_COLLECTION]
 
     # retrieve the delivery jobs associated with the audience
     # and delivery platform
     try:
         cursor = collection.find(
             {
-                c.AUDIENCE_ID: audience_id,
-                c.DELIVERY_PLATFORM_ID: delivery_platform_id,
-                c.DELETED: False,
+                db_c.AUDIENCE_ID: audience_id,
+                db_c.DELIVERY_PLATFORM_ID: delivery_platform_id,
+                db_c.DELETED: False,
             },
-            {c.DELETED: 0},
+            {db_c.DELETED: 0},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -1593,7 +1596,7 @@ def get_audience_recent_delivery_job(
     if len(delivery_jobs) > 0:
         # sort the list by the delivery job ID and return the
         # most recent ID
-        delivery_jobs.sort(key=itemgetter(c.ID), reverse=True)
+        delivery_jobs.sort(key=itemgetter(db_c.ID), reverse=True)
         recent_delivery_job = delivery_jobs[0]
 
     return recent_delivery_job
@@ -1634,7 +1637,7 @@ def get_ingestion_job_audience_delivery_jobs(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def create_delivery_job_generic_campaigns(
@@ -1660,15 +1663,15 @@ def create_delivery_job_generic_campaigns(
     if get_delivery_job(database, delivery_job_id) is None:
         raise de.InvalidID(delivery_job_id)
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_JOBS_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERY_JOBS_COLLECTION]
 
     try:
         return collection.find_one_and_update(
-            {c.ID: delivery_job_id, c.DELETED: False},
+            {db_c.ID: delivery_job_id, db_c.DELETED: False},
             {
                 "$set": {
-                    c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaign
+                    db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaign
                 }
             },
             upsert=False,
@@ -1681,7 +1684,7 @@ def create_delivery_job_generic_campaigns(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_delivery_job_generic_campaigns(
@@ -1698,13 +1701,13 @@ def delete_delivery_job_generic_campaigns(
          int: count of deleted records.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_JOBS_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERY_JOBS_COLLECTION]
 
     try:
         return collection.update_many(
-            {c.ID: {"$in": delivery_job_ids}, c.DELETED: False},
-            {"$set": {c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: []}},
+            {db_c.ID: {"$in": delivery_job_ids}, db_c.DELETED: False},
+            {"$set": {db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: []}},
             upsert=False,
         ).modified_count
     except pymongo.errors.OperationFailure as exc:
@@ -1714,7 +1717,7 @@ def delete_delivery_job_generic_campaigns(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def favorite_delivery_platform(
@@ -1732,17 +1735,17 @@ def favorite_delivery_platform(
     """
 
     doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERY_PLATFORM_COLLECTION]
 
     update_doc = {
-        c.FAVORITE: True,
-        c.UPDATE_TIME: datetime.datetime.utcnow(),
+        db_c.FAVORITE: True,
+        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.DELETED: False},
+            {db_c.ID: delivery_platform_id, db_c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -1754,7 +1757,7 @@ def favorite_delivery_platform(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def unfavorite_delivery_platform(
@@ -1772,17 +1775,17 @@ def unfavorite_delivery_platform(
     """
 
     doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.DELIVERY_PLATFORM_COLLECTION]
 
     update_doc = {
-        c.FAVORITE: False,
-        c.UPDATE_TIME: datetime.datetime.utcnow(),
+        db_c.FAVORITE: False,
+        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.DELETED: False},
+            {db_c.ID: delivery_platform_id, db_c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -1794,7 +1797,7 @@ def unfavorite_delivery_platform(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def favorite_lookalike_audience(
@@ -1812,17 +1815,17 @@ def favorite_lookalike_audience(
     """
 
     ret_doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.LOOKALIKE_AUDIENCE_COLLECTION]
 
     update_doc = {
-        c.FAVORITE: True,
-        c.UPDATE_TIME: datetime.datetime.utcnow(),
+        db_c.FAVORITE: True,
+        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
     try:
         ret_doc = collection.find_one_and_update(
-            {c.ID: lookalike_audience_id, c.DELETED: False},
+            {db_c.ID: lookalike_audience_id, db_c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -1834,7 +1837,7 @@ def favorite_lookalike_audience(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def unfavorite_lookalike_audience(
@@ -1852,17 +1855,17 @@ def unfavorite_lookalike_audience(
     """
 
     ret_doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.LOOKALIKE_AUDIENCE_COLLECTION]
 
     update_doc = {
-        c.FAVORITE: False,
-        c.UPDATE_TIME: datetime.datetime.utcnow(),
+        db_c.FAVORITE: False,
+        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
     try:
         ret_doc = collection.find_one_and_update(
-            {c.ID: lookalike_audience_id, c.DELETED: False},
+            {db_c.ID: lookalike_audience_id, db_c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -1889,13 +1892,16 @@ def get_delivery_platform_delivery_jobs(
         OperationFailure: If an exception occurs during mongo operation.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.DELIVERY_JOBS_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.DELIVERY_JOBS_COLLECTION]
 
     try:
         cursor = collection.find(
-            {c.DELIVERY_PLATFORM_ID: delivery_platform_id, c.DELETED: False},
-            {c.DELETED: 0},
+            {
+                db_c.DELIVERY_PLATFORM_ID: delivery_platform_id,
+                db_c.DELETED: False,
+            },
+            {db_c.DELETED: 0},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -1915,7 +1921,9 @@ def get_delivery_platforms_count(database: DatabaseClient) -> int:
     """
 
     return get_collection_count(
-        database, c.DATA_MANAGEMENT_DATABASE, c.DELIVERY_PLATFORM_COLLECTION
+        database,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.DELIVERY_PLATFORM_COLLECTION,
     )
 
 
@@ -1930,12 +1938,14 @@ def get_lookalike_audiences_count(database: DatabaseClient) -> int:
     """
 
     return get_collection_count(
-        database, c.DATA_MANAGEMENT_DATABASE, c.LOOKALIKE_AUDIENCE_COLLECTION
+        database,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.LOOKALIKE_AUDIENCE_COLLECTION,
     )
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def _set_performance_metrics(
@@ -1975,7 +1985,7 @@ def _set_performance_metrics(
         OperationFailure: If an exception occurs during mongo operation.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[collection_name]
 
     # Check validity of delivery job ID
@@ -1983,31 +1993,31 @@ def _set_performance_metrics(
         raise de.InvalidID(delivery_job_id)
 
     doc = {
-        c.METRICS_DELIVERY_PLATFORM_ID: delivery_platform_id,
-        c.METRICS_DELIVERY_PLATFORM_TYPE: delivery_platform_type,
-        c.DELIVERY_JOB_ID: delivery_job_id,
-        c.CREATE_TIME: datetime.datetime.utcnow(),
-        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaigns,
+        db_c.METRICS_DELIVERY_PLATFORM_ID: delivery_platform_id,
+        db_c.METRICS_DELIVERY_PLATFORM_TYPE: delivery_platform_type,
+        db_c.DELIVERY_JOB_ID: delivery_job_id,
+        db_c.CREATE_TIME: datetime.datetime.utcnow(),
+        db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaigns,
         # By default not transferred for feedback to CDM or reporting yet
-        c.STATUS_TRANSFERRED_FOR_FEEDBACK: False,
-        c.STATUS_TRANSFERRED_FOR_REPORT: False,
+        db_c.STATUS_TRANSFERRED_FOR_FEEDBACK: False,
+        db_c.STATUS_TRANSFERRED_FOR_REPORT: False,
     }
 
     doc.update(
         {
-            c.METRICS_START_TIME: start_time,
-            c.METRICS_END_TIME: end_time,
-            c.PERFORMANCE_METRICS: metrics_dict,
+            db_c.METRICS_START_TIME: start_time,
+            db_c.METRICS_END_TIME: end_time,
+            db_c.PERFORMANCE_METRICS: metrics_dict,
         }
-        if collection_name == c.PERFORMANCE_METRICS_COLLECTION
-        else {c.EVENT_DETAILS: event_details}
+        if collection_name == db_c.PERFORMANCE_METRICS_COLLECTION
+        else {db_c.EVENT_DETAILS: event_details}
     )
 
     try:
         metrics_id = collection.insert_one(doc).inserted_id
-        collection.create_index([(c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
+        collection.create_index([(db_c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
         if metrics_id:
-            return collection.find_one({c.ID: metrics_id})
+            return collection.find_one({db_c.ID: metrics_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
         raise
@@ -2017,13 +2027,13 @@ def _set_performance_metrics(
 
 set_performance_metrics = partial(
     _set_performance_metrics,
-    collection_name=c.PERFORMANCE_METRICS_COLLECTION,
+    collection_name=db_c.PERFORMANCE_METRICS_COLLECTION,
     event_details=None,
 )
 
 set_campaign_activity = partial(
     _set_performance_metrics,
-    collection_name=c.CAMPAIGN_ACTIVITY_COLLECTION,
+    collection_name=db_c.CAMPAIGN_ACTIVITY_COLLECTION,
     metrics_dict=None,
     start_time=None,
     end_time=None,
@@ -2031,7 +2041,7 @@ set_campaign_activity = partial(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def _get_performance_metrics(
@@ -2068,29 +2078,31 @@ def _get_performance_metrics(
         OperationFailure: If an exception occurs during mongo operation.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[collection_name]
 
     # Check validity of delivery job ID
     if not get_delivery_job(database, delivery_job_id):
         raise de.InvalidID(delivery_job_id)
 
-    metric_queries = [{c.DELIVERY_JOB_ID: delivery_job_id}]
+    metric_queries = [{db_c.DELIVERY_JOB_ID: delivery_job_id}]
 
     if min_start_time:
-        metric_queries.append({c.METRICS_START_TIME: {"$gte": min_start_time}})
+        metric_queries.append(
+            {db_c.METRICS_START_TIME: {"$gte": min_start_time}}
+        )
 
     if max_end_time:
-        metric_queries.append({c.METRICS_END_TIME: {"$lte": max_end_time}})
+        metric_queries.append({db_c.METRICS_END_TIME: {"$lte": max_end_time}})
 
     if pending_transfer_for_feedback:
         metric_queries.append(
-            {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
+            {db_c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
         )
 
     if pending_transfer_for_report:
         metric_queries.append(
-            {c.STATUS_TRANSFERRED_FOR_REPORT: {"$eq": False}}
+            {db_c.STATUS_TRANSFERRED_FOR_REPORT: {"$eq": False}}
         )
 
     try:
@@ -2103,19 +2115,20 @@ def _get_performance_metrics(
 
 
 get_performance_metrics = partial(
-    _get_performance_metrics, collection_name=c.PERFORMANCE_METRICS_COLLECTION
+    _get_performance_metrics,
+    collection_name=db_c.PERFORMANCE_METRICS_COLLECTION,
 )
 
 get_campaign_activity = partial(
     _get_performance_metrics,
-    collection_name=c.CAMPAIGN_ACTIVITY_COLLECTION,
+    collection_name=db_c.CAMPAIGN_ACTIVITY_COLLECTION,
     min_start_time=None,
     max_end_time=None,
 )
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_performance_metrics_by_engagement_details(
@@ -2138,23 +2151,23 @@ def get_performance_metrics_by_engagement_details(
             relevant db collection.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
 
     # Get delivery jobs using engagement id
-    collection = platform_db[c.DELIVERY_JOBS_COLLECTION]
+    collection = platform_db[db_c.DELIVERY_JOBS_COLLECTION]
 
     try:
         delivery_jobs = collection.find(
             {
-                c.ENGAGEMENT_ID: engagement_id,
-                c.DELIVERY_PLATFORM_ID: {"$in": destination_ids},
+                db_c.ENGAGEMENT_ID: engagement_id,
+                db_c.DELIVERY_PLATFORM_ID: {"$in": destination_ids},
             }
         )
         # Get performance metrics for all delivery jobs
-        collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
-        delivery_job_ids = [x[c.ID] for x in delivery_jobs]
+        collection = platform_db[db_c.PERFORMANCE_METRICS_COLLECTION]
+        delivery_job_ids = [x[db_c.ID] for x in delivery_jobs]
         return list(
-            collection.find({c.DELIVERY_JOB_ID: {"$in": delivery_job_ids}})
+            collection.find({db_c.DELIVERY_JOB_ID: {"$in": delivery_job_ids}})
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -2163,7 +2176,7 @@ def get_performance_metrics_by_engagement_details(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def _set_performance_metrics_status(
@@ -2185,22 +2198,22 @@ def _set_performance_metrics_status(
         Union[dict, None]: performance metrics document.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[collection_name]
 
     # TODO Below is also designed to accommodate
     # "transferred for reporting" status in the future
     update_doc = {}
-    if performance_metrics_status == c.STATUS_TRANSFERRED_FOR_FEEDBACK:
-        update_doc.update({c.STATUS_TRANSFERRED_FOR_FEEDBACK: True})
+    if performance_metrics_status == db_c.STATUS_TRANSFERRED_FOR_FEEDBACK:
+        update_doc.update({db_c.STATUS_TRANSFERRED_FOR_FEEDBACK: True})
 
-    if performance_metrics_status == c.STATUS_TRANSFERRED_FOR_REPORT:
-        update_doc.update({c.STATUS_TRANSFERRED_FOR_REPORT: True})
+    if performance_metrics_status == db_c.STATUS_TRANSFERRED_FOR_REPORT:
+        update_doc.update({db_c.STATUS_TRANSFERRED_FOR_REPORT: True})
 
     if update_doc:
         try:
             doc = collection.find_one_and_update(
-                {c.ID: performance_metrics_id},
+                {db_c.ID: performance_metrics_id},
                 {"$set": update_doc},
                 upsert=False,
                 new=True,
@@ -2214,26 +2227,26 @@ def _set_performance_metrics_status(
 
 set_metrics_transferred_for_feedback = partial(
     _set_performance_metrics_status,
-    collection_name=c.PERFORMANCE_METRICS_COLLECTION,
-    performance_metrics_status=c.STATUS_TRANSFERRED_FOR_FEEDBACK,
+    collection_name=db_c.PERFORMANCE_METRICS_COLLECTION,
+    performance_metrics_status=db_c.STATUS_TRANSFERRED_FOR_FEEDBACK,
 )
 
 set_metrics_transferred_for_report = partial(
     _set_performance_metrics_status,
-    collection_name=c.PERFORMANCE_METRICS_COLLECTION,
-    performance_metrics_status=c.STATUS_TRANSFERRED_FOR_REPORT,
+    collection_name=db_c.PERFORMANCE_METRICS_COLLECTION,
+    performance_metrics_status=db_c.STATUS_TRANSFERRED_FOR_REPORT,
 )
 
 set_campaign_activity_transferred_for_feedback = partial(
     _set_performance_metrics_status,
-    collection_name=c.CAMPAIGN_ACTIVITY_COLLECTION,
-    performance_metrics_status=c.STATUS_TRANSFERRED_FOR_FEEDBACK,
+    collection_name=db_c.CAMPAIGN_ACTIVITY_COLLECTION,
+    performance_metrics_status=db_c.STATUS_TRANSFERRED_FOR_FEEDBACK,
 )
 
 set_campaign_activity_transferred_for_report = partial(
     _set_performance_metrics_status,
-    collection_name=c.CAMPAIGN_ACTIVITY_COLLECTION,
-    performance_metrics_status=c.STATUS_TRANSFERRED_FOR_REPORT,
+    collection_name=db_c.CAMPAIGN_ACTIVITY_COLLECTION,
+    performance_metrics_status=db_c.STATUS_TRANSFERRED_FOR_REPORT,
 )
 
 
@@ -2266,7 +2279,7 @@ def _get_all_performance_metrics(
         OperationFailure: If an exception occurs during mongo operation.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[collection_name]
 
     if pending_transfer_for_feedback and pending_transfer_for_report:
@@ -2280,13 +2293,13 @@ def _get_all_performance_metrics(
         if pending_transfer_for_feedback:
             return list(
                 collection.find(
-                    {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
+                    {db_c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
                 )
             )
         if pending_transfer_for_report:
             return list(
                 collection.find(
-                    {c.STATUS_TRANSFERRED_FOR_REPORT: {"$eq": False}}
+                    {db_c.STATUS_TRANSFERRED_FOR_REPORT: {"$eq": False}}
                 )
             )
         return list(collection.find())
@@ -2297,17 +2310,17 @@ def _get_all_performance_metrics(
 
 get_all_performance_metrics = partial(
     _get_all_performance_metrics,
-    collection_name=c.PERFORMANCE_METRICS_COLLECTION,
+    collection_name=db_c.PERFORMANCE_METRICS_COLLECTION,
 )
 
 get_all_campaign_activities = partial(
     _get_all_performance_metrics,
-    collection_name=c.CAMPAIGN_ACTIVITY_COLLECTION,
+    collection_name=db_c.CAMPAIGN_ACTIVITY_COLLECTION,
 )
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def set_audience_customers(
@@ -2328,21 +2341,21 @@ def set_audience_customers(
     """
 
     ret_doc = None
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCE_CUSTOMERS_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.AUDIENCE_CUSTOMERS_COLLECTION]
 
     audience_customers_doc = {
-        c.DELIVERY_JOB_ID: delivery_job_id,
-        c.AUDIENCE_CUSTOMER_LIST: customer_list,
+        db_c.DELIVERY_JOB_ID: delivery_job_id,
+        db_c.AUDIENCE_CUSTOMER_LIST: customer_list,
     }
 
     try:
         audience_customers_doc_id = collection.insert_one(
             audience_customers_doc
         ).inserted_id
-        collection.create_index([(c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
+        collection.create_index([(db_c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
         if audience_customers_doc_id is not None:
-            ret_doc = collection.find_one({c.ID: audience_customers_doc_id})
+            ret_doc = collection.find_one({db_c.ID: audience_customers_doc_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -2350,7 +2363,7 @@ def set_audience_customers(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_audience_customers(
@@ -2368,12 +2381,12 @@ def get_all_audience_customers(
     """
 
     audience_customers_docs = None
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCE_CUSTOMERS_COLLECTION]
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.AUDIENCE_CUSTOMERS_COLLECTION]
 
     try:
         audience_customers_docs = collection.find(
-            {c.DELIVERY_JOB_ID: delivery_job_id}
+            {db_c.DELIVERY_JOB_ID: delivery_job_id}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -2382,7 +2395,7 @@ def get_all_audience_customers(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def _set_performance_metrics_bulk(
@@ -2404,7 +2417,7 @@ def _set_performance_metrics_bulk(
         dict: dict containing insert_status & list of inserted ids.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[collection_name]
 
     insert_result = {"insert_status": False}
@@ -2416,12 +2429,12 @@ def _set_performance_metrics_bulk(
             insert_result["insert_status"] = True
             insert_result["inserted_ids"] = result.inserted_ids
 
-        collection.create_index([(c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
+        collection.create_index([(db_c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
 
         return insert_result
     except pymongo.errors.BulkWriteError as exc:
         for err in exc.details["writeErrors"]:
-            if err["code"] == c.DUPLICATE_ERR_CODE:
+            if err["code"] == db_c.DUPLICATE_ERR_CODE:
                 logging.warning(
                     "Ignoring %s due to duplicate unique field!",
                     str(err["op"]),
@@ -2437,17 +2450,17 @@ def _set_performance_metrics_bulk(
 
 set_performance_metrics_bulk = partial(
     _set_performance_metrics_bulk,
-    collection_name=c.PERFORMANCE_METRICS_COLLECTION,
+    collection_name=db_c.PERFORMANCE_METRICS_COLLECTION,
 )
 
 set_campaign_activities = partial(
     _set_performance_metrics_bulk,
-    collection_name=c.CAMPAIGN_ACTIVITY_COLLECTION,
+    collection_name=db_c.CAMPAIGN_ACTIVITY_COLLECTION,
 )
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_most_recent_performance_metric_by_delivery_job(
@@ -2469,8 +2482,8 @@ def get_most_recent_performance_metric_by_delivery_job(
             the relevant db collection.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.PERFORMANCE_METRICS_COLLECTION]
 
     # Check validity of delivery job ID
     doc = get_delivery_job(database, delivery_job_id)
@@ -2479,8 +2492,8 @@ def get_most_recent_performance_metric_by_delivery_job(
 
     try:
         cursor = list(
-            collection.find({c.DELIVERY_JOB_ID: delivery_job_id})
-            .sort([(c.JOB_END_TIME, -1)])
+            collection.find({db_c.DELIVERY_JOB_ID: delivery_job_id})
+            .sort([(db_c.JOB_END_TIME, -1)])
             .limit(1)
         )
         if len(cursor) > 0:
@@ -2493,7 +2506,7 @@ def get_most_recent_performance_metric_by_delivery_job(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_most_recent_campaign_activity_by_delivery_job(
@@ -2515,8 +2528,8 @@ def get_most_recent_campaign_activity_by_delivery_job(
             the relevant db collection.
     """
 
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
+    platform_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[db_c.CAMPAIGN_ACTIVITY_COLLECTION]
 
     # Check validity of delivery job ID
     doc = get_delivery_job(database, delivery_job_id)
@@ -2525,8 +2538,8 @@ def get_most_recent_campaign_activity_by_delivery_job(
 
     try:
         cursor = list(
-            collection.find({c.DELIVERY_JOB_ID: delivery_job_id})
-            .sort([(f"{c.EVENT_DETAILS}.{c.EVENT_DATE}", -1)])
+            collection.find({db_c.DELIVERY_JOB_ID: delivery_job_id})
+            .sort([(f"{db_c.EVENT_DETAILS}.{db_c.EVENT_DATE}", -1)])
             .limit(1)
         )
         if len(cursor) > 0:
@@ -2539,7 +2552,7 @@ def get_most_recent_campaign_activity_by_delivery_job(
 
 
 @retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_delivery_platform_doc(
@@ -2559,10 +2572,10 @@ def update_delivery_platform_doc(
     """
 
     try:
-        return database[c.DATA_MANAGEMENT_DATABASE][
-            c.DELIVERY_PLATFORM_COLLECTION
+        return database[db_c.DATA_MANAGEMENT_DATABASE][
+            db_c.DELIVERY_PLATFORM_COLLECTION
         ].find_one_and_update(
-            {c.ID: delivery_platform_id},
+            {db_c.ID: delivery_platform_id},
             {"$set": update_dict},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
@@ -2571,3 +2584,35 @@ def update_delivery_platform_doc(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def update_pending_delivery_jobs(database: DatabaseClient) -> int:
+    """Updates status of a delivery job for jobs with status as pending.
+    Args:
+        database (DatabaseClient): database client.
+    Returns:
+        int: Count of updated delivery jobs.
+    """
+    delivering_expire_time = datetime.datetime.utcnow() - datetime.timedelta(
+        minutes=db_c.DELIVERY_JOB_TIMEOUT
+    )
+    try:
+        updated_doc = database[db_c.DATA_MANAGEMENT_DATABASE][
+            db_c.DELIVERY_JOBS_COLLECTION
+        ].update_many(
+            {
+                db_c.STATUS: db_c.AUDIENCE_STATUS_DELIVERING,
+                db_c.CREATE_TIME: {"$lt": delivering_expire_time},
+            },
+            {"$set": {db_c.STATUS: db_c.AUDIENCE_STATUS_ERROR}},
+        )
+        logging.info(
+            "Updated %d delivery job status.", updated_doc.modified_count
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+    return updated_doc.modified_count

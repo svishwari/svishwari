@@ -16,7 +16,9 @@
     </page-header>
     <page-header class="top-bar mb-3" :header-height="71">
       <template #left>
-        <v-icon medium color="black lighten-3">mdi-magnify</v-icon>
+        <v-btn disabled icon color="black">
+          <icon type="search" :size="20" color="black" variant="lighten3" />
+        </v-btn>
       </template>
 
       <template #right>
@@ -63,7 +65,7 @@
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
             }"
-            class="col-overflow"
+            class="col-overflow text-body-1"
             :style="{ width: header.width, left: 0 }"
           >
             <div v-if="header.value == 'id'">
@@ -226,7 +228,7 @@ export default {
           width: "180px",
         },
         {
-          text: "Brief Description",
+          text: "Brief description",
           value: "description",
           width: "auto",
         },
@@ -258,7 +260,12 @@ export default {
       return sortedNotificaitonList.sort((a, b) => a.id - b.id)
     },
     getNotificationUsers() {
-      return this.getUsers
+      let sortedUsers = this.getUsers
+      return sortedUsers.sort(function (a, b) {
+        var textA = a["display_name"].toUpperCase()
+        var textB = b["display_name"].toUpperCase()
+        return textA < textB ? -1 : textA > textB ? 1 : 0
+      })
     },
   },
 

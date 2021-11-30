@@ -1,75 +1,67 @@
 <template>
   <drawer v-model="localToggle" content-padding="pa-0">
     <template #header-left>
-      <h3 v-if="dataFeed" class="text-h3">
-        {{ dataFeed.datafeed_name }} – {{ dataFeed.last_run | Date }}
-      </h3>
+      <h2 v-if="dataFeed" class="text-h2 truncate">
+        {{ dataFeed.datafeed_name }}
+      </h2>
+      <h2 v-if="dataFeed" class="text-h2">
+        – {{ dataFeed.last_run | Date((format = "M/D/YYYY h:mm a")) }}
+      </h2>
     </template>
 
     <template #default>
       <v-progress-linear :active="loading" :indeterminate="loading" />
 
-      <v-expansion-panels
-        v-if="!loading"
-        flat
-        tile
-        multiple
-        accordion
-        :value="[0, 1]"
-      >
-        <v-expansion-panel
-          v-for="(reportKey, i) in Object.keys(reports)"
-          :key="i"
-        >
-          <v-expansion-panel-header
-            class="panel-header"
-            :data-e2e="reportNames[reportKey]"
+      <v-tabs v-model="tabOption" class="mt-2">
+        <v-tabs-slider color="primary"></v-tabs-slider>
+        <div class="d-flex">
+          <v-tab
+            v-for="(reportKey, i) in Object.keys(reports)"
+            :key="i"
+            class="pa-2 mr-3 text-h3 black--text text--lighten-4"
+            data-e2e="last-run-tab"
           >
-            <template #actions>
-              <v-icon color="blue"> $expand </v-icon>
-            </template>
-            <h5 class="text-h5 blue--text">
-              {{ reportNames[reportKey] }}
-            </h5>
-          </v-expansion-panel-header>
-
-          <v-expansion-panel-content class="panel-content">
-            <hux-data-table :columns="columns" :data-items="reports[reportKey]">
-              <template #row-item="{ item }">
-                <td
-                  v-for="(col, index) in columns"
-                  :key="index"
-                  :style="{ width: col.width }"
-                  class="text-body-2"
-                >
-                  <template v-if="col.value === 'result'">
-                    <template v-if="resultAsPercentage.includes(item.metric)">
-                      {{
-                        item[col.value]
-                          | Numeric(false, false, false, (percentage = true))
-                      }}
-                    </template>
-                    <template v-else-if="resultAsDate.includes(item.metric)">
-                      {{ item[col.value] | Date }}
-                    </template>
-                    <template
-                      v-else-if="item.metric === 'Process time in seconds'"
-                    >
-                      {{ item[col.value] }} second(s)
-                    </template>
-                    <template v-else>
-                      {{ item[col.value] }}
-                    </template>
+            {{ reportNames[reportKey] }}
+          </v-tab>
+        </div>
+      </v-tabs>
+      <v-tabs-items v-model="tabOption" class="mt-2">
+        <v-tab-item v-for="(reportKey, i) in Object.keys(reports)" :key="i">
+          <hux-data-table :columns="columns" :data-items="reports[reportKey]">
+            <template #row-item="{ item }">
+              <td
+                v-for="(col, index) in columns"
+                :key="index"
+                :style="{ width: col.width }"
+                class="text-body-1"
+              >
+                <template v-if="col.value === 'result'">
+                  <template v-if="resultAsPercentage.includes(item.metric)">
+                    {{
+                      item[col.value]
+                        | Numeric(false, false, false, (percentage = true))
+                    }}
+                  </template>
+                  <template v-else-if="resultAsDate.includes(item.metric)">
+                    {{ item[col.value] | Date }}
+                  </template>
+                  <template
+                    v-else-if="item.metric === 'Process time in seconds'"
+                  >
+                    {{ item[col.value] }} second(s)
                   </template>
                   <template v-else>
                     {{ item[col.value] }}
                   </template>
-                </td>
-              </template>
-            </hux-data-table>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
+                </template>
+                <template v-else>
+                  {{ item[col.value] }}
+                </template>
+              </td>
+            </template>
+          </hux-data-table>
+        </v-tab-item>
+      </v-tabs-items>
     </template>
   </drawer>
 </template>
@@ -121,6 +113,7 @@ export default {
       },
       resultAsDate: ["Date & time", "Time stamp"],
       resultAsPercentage: ["Merge rate", "Match rate"],
+      tabOption: 0,
     }
   },
 
@@ -230,5 +223,23 @@ export default {
       }
     }
   }
+}
+
+::v-deep .v-tabs .v-tabs-bar .v-tabs-bar__content .v-tab {
+  color: var(--v-black-lighten4) !important;
+}
+
+.truncate {
+  max-width: 281px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+::v-deep .v-toolbar__title {
+  display: inline-flex !important;
+}
+
+::v-deep .v-toolbar__content {
+  padding: 16px 62px 20px 20px;
 }
 </style>

@@ -5,19 +5,26 @@
         <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <div class="d-flex align-center">
-          <icon
-            type="pencil"
-            :size="18"
-            class="cursor-pointer mr-7"
-            color="black-darken4"
-            @click.native="
-              $router.push({
-                name: 'AudienceUpdate',
-                params: { id: audienceId },
-              })
-            "
-          />
+        <div v-if="audience" class="d-flex align-center">
+          <tooltip>
+            <template #label-content>
+              <icon
+                type="pencil"
+                :size="18"
+                class="cursor-pointer mr-7"
+                color="black-darken4"
+                @click.native="editAudience"
+              />
+            </template>
+            <template #hover-content>
+              <span v-if="audience">
+                <span v-if="audience.is_lookalike">
+                  Edit LAL audience name
+                </span>
+                <span v-else> Click to edit this audience </span>
+              </span>
+            </template>
+          </tooltip>
           <icon
             type="dots-vertical"
             :size="18"
@@ -428,6 +435,7 @@
             v-if="!loadingDemographics"
             :map-data="mapChartData"
             :configuration-data="configurationData"
+            :header-config="mapStateHeaderList"
           />
         </v-card>
       </v-col>
@@ -585,6 +593,32 @@
       :toggle="geoDrawer.states"
       @onToggle="(isToggled) => (geoDrawer.states = isToggled)"
     />
+
+    <confirm-modal
+      v-model="editConfirmModal"
+      right-btn-text="Save"
+      left-btn-text="Cancel"
+      :is-disabled="newAudienceName === ''"
+      @onCancel="editConfirmModal = false"
+      @onConfirm="updateLookalike()"
+    >
+      <template #body>
+        <div class="mx-4">
+          <icon type="audiences" color="black" :size="38" />
+          <div class="text-h2 mb-4">Edit lookalike audience name</div>
+          <div class="text-body-1 mb-7">
+            <div>The updated name will be reflected in Hux only;</div>
+            <div>in the lookalike destination.</div>
+          </div>
+          <text-field
+            v-model="newAudienceName"
+            placeholder="Type new name for [Facebook lookalike - Seed audience]"
+            height="40"
+            required
+          />
+        </div>
+      </template>
+    </confirm-modal>
   </div>
 </template>
 
@@ -610,6 +644,7 @@ import MetricCard from "@/components/common/MetricCard.vue"
 import PageHeader from "@/components/PageHeader.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
+import TextField from "@/components/common/TextField"
 
 // views
 import AttachEngagement from "@/views/Audiences/AttachEngagement.vue"
@@ -635,6 +670,7 @@ export default {
     DoughnutChart,
     EditDeliverySchedule,
     Icon,
+    TextField,
     IncomeChart,
     LookAlikeAudience,
     LookAlikeCard,
@@ -652,6 +688,8 @@ export default {
   data() {
     return {
       showLookAlikeDrawer: false,
+      editConfirmModal: false,
+      newAudienceName: "",
       lookalikeCreated: false,
       audienceHistory: [],
       relatedEngagements: [],
@@ -740,6 +778,7 @@ export default {
         body: "You will not be deleting this audience; this audience will not be attached to this specific engagement anymore.",
         actionType: "remove-audience",
       },
+      mapStateHeaderList: ["name", "avg_spend", "population_percentage"],
     }
   },
   computed: {
@@ -959,6 +998,7 @@ export default {
       downloadAudienceData: "audiences/fetchAudienceData",
       setAlert: "alerts/setAlert",
       getAudiencesRules: "audiences/fetchConstants",
+      updateAudience: "audiences/update",
     }),
     attributeOptions() {
       const options = []
@@ -986,6 +1026,29 @@ export default {
         })
       })
       return options
+    },
+    editAudience() {
+      if (this.audience.is_lookalike) {
+        this.editConfirmModal = true
+      } else {
+        this.$router.push({
+          name: "AudienceUpdate",
+          params: { id: this.audienceId },
+        })
+      }
+    },
+    async updateLookalike() {
+      let payload = {
+        name: this.newAudienceName,
+      }
+      try {
+        await this.updateAudience({
+          id: this.audienceId,
+          payload: payload,
+        })
+      } finally {
+        this.editConfirmModal = false
+      }
     },
     async fetchDemographics() {
       this.loadingDemographics = true
@@ -1129,7 +1192,7 @@ export default {
             await this.deliverAudienceDestination({
               id: event.parent.id,
               audienceId: this.audienceId,
-              destinationId: event.data.id,
+              destinationId: event.data.delivery_platform_id,
             })
             this.dataPendingMesssage(event, "destination")
             break

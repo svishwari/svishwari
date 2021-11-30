@@ -1156,6 +1156,7 @@ BATCH_NUMBER_BAD_PARAM = "12a"
 BATCH_SIZE_BAD_PARAM = "100@"
 
 REVENUE = "revenue"
+AVG_SPEND = "avg_spend"
 
 
 def validate_schema(

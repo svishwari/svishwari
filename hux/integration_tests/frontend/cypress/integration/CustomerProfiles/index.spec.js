@@ -25,7 +25,7 @@ describe("Data management > Customer Profiles", () => {
     })
 
     // Verifying the table columns names of the Country Drawer
-    const tableHeadersCountry = ["Country", "Size", "Revenue"]
+    const tableHeadersCountry = ["Country", "Size", "Avg. spend"]
 
     cy.get(selector.customerProfile.customeroverview).eq(1).click()
 
@@ -52,9 +52,9 @@ describe("Data management > Customer Profiles", () => {
       "State",
       "Country",
       "Size",
-      "Revenue",
+      "Avg. spend",
     ]
-    const tableHeadersState = ["State", "Size", "Revenue"]
+    const tableHeadersState = ["State", "Size", "Avg. spend"]
 
     cy.get(selector.customerProfile.customeroverview).eq(2).click()
 
@@ -86,9 +86,9 @@ describe("Data management > Customer Profiles", () => {
       "State",
       "Country",
       "Size",
-      "Revenue",
+      "Avg. spend",
     ]
-    const tableHeadersCities = ["City", "State", "Size", "Revenue"]
+    const tableHeadersCities = ["City", "State", "Size", "Avg. spend"]
 
     cy.get(selector.customerProfile.customeroverview).eq(3).click()
 

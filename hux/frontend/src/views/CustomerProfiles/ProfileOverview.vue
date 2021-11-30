@@ -8,13 +8,20 @@
         height="75"
       >
         <v-card-text class="py-3 px-4 d-flex flex-column">
-          <span class="d-flex align-baseline mb-1">
+          <span class="d-flex align-baseline">
             <span class="text-body-2 black--text text--lighten-4 mr-2">
               First
             </span>
             <tooltip>
               <template #label-content>
-                <span class="text-subtitle-1 text-ellipsis black--text">
+                <span
+                  class="
+                    text-subtitle-1 text-ellipsis
+                    black--text
+                    d-block
+                    max-char
+                  "
+                >
                   {{ profile["first_name"] }}
                 </span>
               </template>
@@ -64,7 +71,7 @@
                   v-if="data.hoverTooltip"
                   type="info"
                   :size="8"
-                  class="mb-2"
+                  class="mb-1"
                   color="primary"
                   variant="base"
                 />

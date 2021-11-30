@@ -5,7 +5,7 @@ from typing import Dict
 import pandas as pd
 from pandas._testing import assert_frame_equal
 
-import huxunifylib.database.constants as dc
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.transform import transform_dataframe as td
 from huxunifylib.database.db_exceptions import HuxAdvException
 
@@ -40,14 +40,14 @@ class TestUploadFieldsGoogle(unittest.TestCase):
         Both First Name and First Name Initial are specified.
         """
         special_types_data = {
-            dc.S_TYPE_COUNTRY_CODE_HASHED: ["US", "UK"],
-            dc.S_TYPE_MOBILE_DEVICE_ID: ["123-456", "987-654"],
-            dc.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
-            dc.S_TYPE_FIRST_NAME_HASHED: ["first_name1", "first_name2"],
-            dc.S_TYPE_FIRST_NAME_INITIAL_HASHED: ["initial_1", "initial_2"],
-            dc.S_TYPE_LAST_NAME_HASHED: ["last_name1", "last_name2"],
-            dc.S_TYPE_PHONE_NUMBER_HASHED: ["+11234567890", "+441234567890"],
-            dc.S_TYPE_POSTAL_CODE_HASHED: ["12345", "67890"],
+            db_c.S_TYPE_COUNTRY_CODE_HASHED: ["US", "UK"],
+            db_c.S_TYPE_MOBILE_DEVICE_ID: ["123-456", "987-654"],
+            db_c.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
+            db_c.S_TYPE_FIRST_NAME_HASHED: ["first_name1", "first_name2"],
+            db_c.S_TYPE_FIRST_NAME_INITIAL_HASHED: ["initial_1", "initial_2"],
+            db_c.S_TYPE_LAST_NAME_HASHED: ["last_name1", "last_name2"],
+            db_c.S_TYPE_PHONE_NUMBER_HASHED: ["+11234567890", "+441234567890"],
+            db_c.S_TYPE_POSTAL_CODE_HASHED: ["12345", "67890"],
         }
 
         expected_data = {
@@ -66,14 +66,14 @@ class TestUploadFieldsGoogle(unittest.TestCase):
         non-match special type specified.
         """
         special_types_data = {
-            dc.S_TYPE_COUNTRY_CODE_HASHED: ["US", "UK"],
-            dc.S_TYPE_MOBILE_DEVICE_ID: ["123-456", "987-654"],
-            dc.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
-            dc.S_TYPE_FIRST_NAME_HASHED: ["first_name1", "first_name2"],
-            dc.S_TYPE_FIRST_NAME_INITIAL_HASHED: ["initial_1", "initial_2"],
-            dc.S_TYPE_LAST_NAME_HASHED: ["last_name1", "last_name2"],
-            dc.S_TYPE_PHONE_NUMBER_HASHED: ["+11234567890", "+441234567890"],
-            dc.S_TYPE_POSTAL_CODE_HASHED: ["12345", "67890"],
+            db_c.S_TYPE_COUNTRY_CODE_HASHED: ["US", "UK"],
+            db_c.S_TYPE_MOBILE_DEVICE_ID: ["123-456", "987-654"],
+            db_c.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
+            db_c.S_TYPE_FIRST_NAME_HASHED: ["first_name1", "first_name2"],
+            db_c.S_TYPE_FIRST_NAME_INITIAL_HASHED: ["initial_1", "initial_2"],
+            db_c.S_TYPE_LAST_NAME_HASHED: ["last_name1", "last_name2"],
+            db_c.S_TYPE_PHONE_NUMBER_HASHED: ["+11234567890", "+441234567890"],
+            db_c.S_TYPE_POSTAL_CODE_HASHED: ["12345", "67890"],
             "extra_field": ["abc", "def"],
         }
 
@@ -94,13 +94,13 @@ class TestUploadFieldsGoogle(unittest.TestCase):
         First Name is specified, First Name Initial is omitted.
         """
         special_types_data = {
-            dc.S_TYPE_COUNTRY_CODE_HASHED: ["US", "UK"],
-            dc.S_TYPE_MOBILE_DEVICE_ID: ["123-456", "987-654"],
-            dc.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
-            dc.S_TYPE_FIRST_NAME_HASHED: ["first_name1", "first_name2"],
-            dc.S_TYPE_LAST_NAME_HASHED: ["last_name1", "last_name2"],
-            dc.S_TYPE_PHONE_NUMBER_HASHED: ["+11234567890", "+441234567890"],
-            dc.S_TYPE_POSTAL_CODE_HASHED: ["12345", "67890"],
+            db_c.S_TYPE_COUNTRY_CODE_HASHED: ["US", "UK"],
+            db_c.S_TYPE_MOBILE_DEVICE_ID: ["123-456", "987-654"],
+            db_c.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
+            db_c.S_TYPE_FIRST_NAME_HASHED: ["first_name1", "first_name2"],
+            db_c.S_TYPE_LAST_NAME_HASHED: ["last_name1", "last_name2"],
+            db_c.S_TYPE_PHONE_NUMBER_HASHED: ["+11234567890", "+441234567890"],
+            db_c.S_TYPE_POSTAL_CODE_HASHED: ["12345", "67890"],
         }
 
         expected_data = {
@@ -120,13 +120,13 @@ class TestUploadFieldsGoogle(unittest.TestCase):
         First Name is omitted, First Name Initial is specified.
         """
         special_types_data = {
-            dc.S_TYPE_COUNTRY_CODE_HASHED: ["US", "UK"],
-            dc.S_TYPE_MOBILE_DEVICE_ID: ["123-456", "987-654"],
-            dc.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
-            dc.S_TYPE_FIRST_NAME_INITIAL_HASHED: ["initial_1", "initial_2"],
-            dc.S_TYPE_LAST_NAME_HASHED: ["last_name1", "last_name2"],
-            dc.S_TYPE_PHONE_NUMBER_HASHED: ["+11234567890", "+441234567890"],
-            dc.S_TYPE_POSTAL_CODE_HASHED: ["12345", "67890"],
+            db_c.S_TYPE_COUNTRY_CODE_HASHED: ["US", "UK"],
+            db_c.S_TYPE_MOBILE_DEVICE_ID: ["123-456", "987-654"],
+            db_c.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
+            db_c.S_TYPE_FIRST_NAME_INITIAL_HASHED: ["initial_1", "initial_2"],
+            db_c.S_TYPE_LAST_NAME_HASHED: ["last_name1", "last_name2"],
+            db_c.S_TYPE_PHONE_NUMBER_HASHED: ["+11234567890", "+441234567890"],
+            db_c.S_TYPE_POSTAL_CODE_HASHED: ["12345", "67890"],
         }
 
         expected_data = {
@@ -145,7 +145,7 @@ class TestUploadFieldsGoogle(unittest.TestCase):
         only Email is specified.
         """
         special_types_data = {
-            dc.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
+            db_c.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
         }
 
         expected_data = {"Email": ["email1", "email2"]}
@@ -157,8 +157,8 @@ class TestUploadFieldsGoogle(unittest.TestCase):
         Email and Mobile ID specified.
         """
         special_types_data = {
-            dc.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
-            dc.S_TYPE_MOBILE_DEVICE_ID: ["123-456", "987-654"],
+            db_c.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
+            db_c.S_TYPE_MOBILE_DEVICE_ID: ["123-456", "987-654"],
         }
 
         expected_data = {"Email": ["email1", "email2"]}
@@ -170,10 +170,10 @@ class TestUploadFieldsGoogle(unittest.TestCase):
         Email and partial address match specified.
         """
         special_types_data = {
-            dc.S_TYPE_COUNTRY_CODE_HASHED: ["US", "UK"],
-            dc.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
-            dc.S_TYPE_LAST_NAME_HASHED: ["last_name1", "last_name2"],
-            dc.S_TYPE_POSTAL_CODE_HASHED: ["12345", "67890"],
+            db_c.S_TYPE_COUNTRY_CODE_HASHED: ["US", "UK"],
+            db_c.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
+            db_c.S_TYPE_LAST_NAME_HASHED: ["last_name1", "last_name2"],
+            db_c.S_TYPE_POSTAL_CODE_HASHED: ["12345", "67890"],
         }
 
         expected_data = {
@@ -190,8 +190,8 @@ class TestUploadFieldsGoogle(unittest.TestCase):
         Email and Phone is specified.
         """
         special_types_data = {
-            dc.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
-            dc.S_TYPE_PHONE_NUMBER_HASHED: ["+11234567890", "+441234567890"],
+            db_c.S_TYPE_EMAIL_HASHED: ["email1", "email2"],
+            db_c.S_TYPE_PHONE_NUMBER_HASHED: ["+11234567890", "+441234567890"],
         }
 
         expected_data = {
@@ -206,10 +206,10 @@ class TestUploadFieldsGoogle(unittest.TestCase):
         Only full address match is satisfied.
         """
         special_types_data = {
-            dc.S_TYPE_COUNTRY_CODE_HASHED: ["US", "UK"],
-            dc.S_TYPE_FIRST_NAME_INITIAL_HASHED: ["initial_1", "initial_2"],
-            dc.S_TYPE_LAST_NAME_HASHED: ["last_name1", "last_name2"],
-            dc.S_TYPE_POSTAL_CODE_HASHED: ["12345", "67890"],
+            db_c.S_TYPE_COUNTRY_CODE_HASHED: ["US", "UK"],
+            db_c.S_TYPE_FIRST_NAME_INITIAL_HASHED: ["initial_1", "initial_2"],
+            db_c.S_TYPE_LAST_NAME_HASHED: ["last_name1", "last_name2"],
+            db_c.S_TYPE_POSTAL_CODE_HASHED: ["12345", "67890"],
         }
 
         expected_data = {
@@ -226,7 +226,7 @@ class TestUploadFieldsGoogle(unittest.TestCase):
         only Mobile ID specified.
         """
         special_types_data = {
-            dc.S_TYPE_MOBILE_DEVICE_ID: ["123-456", "987-654"],
+            db_c.S_TYPE_MOBILE_DEVICE_ID: ["123-456", "987-654"],
         }
 
         expected_data = {"Mobile Device ID": ["123-456", "987-654"]}
@@ -238,7 +238,7 @@ class TestUploadFieldsGoogle(unittest.TestCase):
         only Mobile ID specified with non matching field.
         """
         special_types_data = {
-            dc.S_TYPE_MOBILE_DEVICE_ID: ["123-456", "987-654"],
+            db_c.S_TYPE_MOBILE_DEVICE_ID: ["123-456", "987-654"],
             "extra_field": ["abc", "def"],
         }
 
@@ -251,9 +251,9 @@ class TestUploadFieldsGoogle(unittest.TestCase):
         for file upload is detected.
         """
         special_types_data = {
-            dc.S_TYPE_FIRST_NAME_INITIAL_HASHED: ["initial_1", "initial_2"],
-            dc.S_TYPE_LAST_NAME_HASHED: ["last_name1", "last_name2"],
-            dc.S_TYPE_POSTAL_CODE_HASHED: ["12345", "67890"],
+            db_c.S_TYPE_FIRST_NAME_INITIAL_HASHED: ["initial_1", "initial_2"],
+            db_c.S_TYPE_LAST_NAME_HASHED: ["last_name1", "last_name2"],
+            db_c.S_TYPE_POSTAL_CODE_HASHED: ["12345", "67890"],
         }
 
         special_types_df = pd.DataFrame(special_types_data)
