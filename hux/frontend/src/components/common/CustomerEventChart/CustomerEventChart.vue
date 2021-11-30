@@ -108,7 +108,7 @@ export default {
     sizeHandler() {
       if (this.$refs.customerEventChart) {
         this.chartDimensions.width = this.$refs.customerEventChart.clientWidth
-        this.chartDimensions.height = 350
+        this.chartDimensions.height = 320
       }
     },
     eventCount(eventName) {

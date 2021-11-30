@@ -146,4 +146,9 @@ export default {
 .hidden-data-margin {
   margin-right: 6px;
 }
+::v-deep table {
+  tr:hover {
+    background-color: transparent !important;
+  }
+}
 </style>

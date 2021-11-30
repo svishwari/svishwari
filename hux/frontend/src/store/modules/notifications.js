@@ -51,10 +51,7 @@ const actions = {
       if (!batchDetails.isLazyLoad) {
         commit("RESET_ALL")
       }
-      const response = await api.notifications.getNotifications(
-        batchDetails.batchSize,
-        batchDetails.batchNumber
-      )
+      const response = await api.notifications.getNotifications(batchDetails)
       // Replacing the special characters like (", ', <, >) with "
       response.data.notifications.forEach((notification) => {
         notification.description = notification.description.replace(

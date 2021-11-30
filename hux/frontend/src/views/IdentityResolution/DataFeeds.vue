@@ -2,7 +2,7 @@
   <v-card flat class="card-style">
     <v-progress-linear :active="isLoading" :indeterminate="isLoading" />
     <v-card-title class="pa-6">
-      <h5 class="text-h5 black--text text--darken-4">Data feeds</h5>
+      <span class="text-h3 black--text">Data feeds</span>
     </v-card-title>
     <v-card-text class="px-6">
       <hux-data-table
@@ -17,7 +17,7 @@
           <td
             v-for="col in columns"
             :key="col.value"
-            class="black--text text--darken-4 text-h6"
+            class="black--text text--darken-4 text-body-1"
           >
             <tooltip v-if="col.value === 'datafeed_name'">
               <span

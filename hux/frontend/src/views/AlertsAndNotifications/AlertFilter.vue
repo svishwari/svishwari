@@ -2,9 +2,10 @@
   <drawer
     v-model="localDrawer"
     :content-padding="'pa-0'"
-    :content-header-padding="'px-3'"
+    :content-header-padding="'px-1'"
     :expanded-width="300"
     :width="300"
+    header-height="40"
   >
     <template #header-left>
       <span class="text-h2 black--text"> Filter ({{ filterLength }}) </span>
@@ -13,7 +14,7 @@
       <v-btn
         plain
         :color="filterLength > 0 ? 'primary base' : 'black lighten3'"
-        :disabled="!filterLength > 0"
+        :disabled="filterLength === 1 && selectedTimeType === 'Last week'"
         class="text-button float-right clear-btn"
         @click="clearFilter()"
       >
@@ -74,7 +75,7 @@
       <v-btn
         tile
         color="white"
-        class="text-button ml-auto"
+        class="text-button ml-1 primary-text btn-border box-shadow-none"
         @click="localDrawer = false"
       >
         Cancel
@@ -84,8 +85,8 @@
       <v-btn
         tile
         color="primary"
-        class="text-button ml-auto"
-        width="134"
+        class="text-button ml-4"
+        width="110"
         disabled
         @click="apply()"
       >
@@ -141,7 +142,7 @@ export default {
       category: [
         {
           id: 1,
-          title: "Data sources",
+          title: "DataSources",
         },
         {
           id: 2,
@@ -259,6 +260,7 @@ export default {
           this.getTime(7)
           break
       }
+
       this.$emit("onSectionAction", {
         getTime: this.$options.filters.Date(getTime, "YYYY-MM-DD"),
         selctedAlertType: this.selctedAlertType,
@@ -285,6 +287,18 @@ export default {
   color: var(--v-black-base);
 }
 .clear-btn {
-  padding-left: 7rem !important;
+  padding-left: 7.9rem !important;
+  padding-top: 10px;
+  padding-right: 0px !important;
+}
+::v-deep.theme--light .v-label {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0;
+  color: var(--v-black-base);
+}
+::v-deep .drawer-header > .v-toolbar__content {
+  height: 40px !important;
 }
 </style>

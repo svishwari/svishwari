@@ -267,6 +267,10 @@ export default {
     ::v-deep .v-data-table__expanded__content {
       padding: 0px;
     }
+
+    tr:hover {
+      background-color: transparent !important;
+    }
   }
 
   ::v-deep .v-data-table__empty-wrapper {

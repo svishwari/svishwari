@@ -274,6 +274,7 @@
           tile
           color="white"
           height="40"
+          class="btn-border box-shadow-none"
           @click.native="
             dontShowModal = true
             $router.go(-1)

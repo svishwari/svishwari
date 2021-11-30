@@ -42,7 +42,9 @@
           <td v-for="(col, index) in columns" :key="index" class="text-body-1">
             <tooltip v-if="['city', 'country', 'state'].includes(col.value)">
               {{ item[col.value] }}
-              <template #tooltip> {{ item[col.value] }} </template>
+              <template #tooltip>
+                {{ item[col.value] }}
+              </template>
             </tooltip>
             <tooltip v-if="col.value === 'size'">
               {{ item[col.value] | Numeric(false, true) }}

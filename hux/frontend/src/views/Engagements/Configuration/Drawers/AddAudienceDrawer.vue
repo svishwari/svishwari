@@ -63,7 +63,12 @@
     </template>
 
     <template #footer-left>
-      <v-btn tile color="white" @click="onCancelAndBack()">
+      <v-btn
+        tile
+        color="white"
+        class="btn-border box-shadow-none"
+        @click="onCancelAndBack()"
+      >
         <span class="primary--text">Cancel &amp; back</span>
       </v-btn>
       <v-btn

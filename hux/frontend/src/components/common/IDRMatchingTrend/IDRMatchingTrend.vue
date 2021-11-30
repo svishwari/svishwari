@@ -20,7 +20,7 @@
           <div class="value-section">
             <div>
               <span class="append-circle color-primary-base" />
-              <span class="font-size-tooltip">
+              <span class="text-body-2 black--text">
                 Unique Hux IDs
                 <br />
                 {{
@@ -32,7 +32,7 @@
             </div>
             <div>
               <span class="append-circle color-primary-lighten9" />
-              <span class="font-size-tooltip">
+              <span class="text-body-2 black--text">
                 Known IDs
                 <br />
                 {{
@@ -42,7 +42,7 @@
             </div>
             <div>
               <span class="append-circle color-primary-darken2" />
-              <span class="font-size-tooltip">
+              <span class="text-body-2 black--text">
                 Anonymous IDs
                 <br />
                 {{
@@ -50,6 +50,11 @@
                     | Numeric(false, false, true)
                     | Empty
                 }}
+              </span>
+            </div>
+            <div>
+              <span class="text-body-2 black--text text--lighten-4">
+                {{ currentData.date }}
               </span>
             </div>
           </div>
@@ -104,6 +109,10 @@ export default {
       this.show = arg[0]
       if (this.show) {
         this.currentData = arg[1]
+        this.currentData["date"] = this.$options.filters.Date(
+          this.currentData["date"],
+          "MMM DD, YYYY"
+        )
       }
     },
     getCordinates(args) {

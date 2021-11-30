@@ -6,7 +6,7 @@
       </template>
       <template #footer-left>
         <div class="d-flex align-baseline">
-          <div class="body-2 pl-4">{{ dataSources.length }} results</div>
+          <div class="body-2">{{ dataSources.length }} results</div>
         </div>
       </template>
       <template #footer-right>
@@ -15,7 +15,7 @@
             variant="white"
             size="large"
             :is-tile="true"
-            class="mr-2"
+            class="mr-2 btn-border box-shadow-none"
             @click="closeAddDataSource"
           >
             <span class="primary--text">Cancel</span>
@@ -58,7 +58,11 @@
             :key="key"
             class="ma-3 mt-5"
           >
-            <div class="body-2">{{ key }}</div>
+            <div
+              class="d-block text-body-2 black--text text--lighten-4 mb-2 mt-6"
+            >
+              {{ key }}
+            </div>
             <card-horizontal
               v-for="dataSource in item"
               :key="dataSource.id"

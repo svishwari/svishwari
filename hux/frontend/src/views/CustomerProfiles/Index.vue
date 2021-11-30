@@ -62,7 +62,7 @@
               <template #subtitle-extended>
                 <tooltip>
                   <template #label-content>
-                    <span class="font-weight-semi-bold">
+                    <span class="text-subtitle-1">
                       <span v-if="item.value == 'percentage'">
                         {{
                           item.subtitle
@@ -360,7 +360,7 @@ export default {
           subtitle: "",
           icon: "customer-no",
           toolTipText:
-            "Total no. of unique hux ids generated to represent a customer.",
+            "Total number of unique Hux IDs generated to represent a customer.",
           value: "",
         },
         {
@@ -402,11 +402,6 @@ export default {
           disabled: true,
           href: "/customers",
           icon: "customer-profiles",
-        },
-        {
-          text: "",
-          disabled: true,
-          href: this.$route.path,
         },
       ],
       loading: true,
