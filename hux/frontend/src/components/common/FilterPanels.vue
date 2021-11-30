@@ -21,7 +21,7 @@ export default defineComponent({
     expanded: {
       type: Array,
       required: false,
-      default: () => [0],
+      default: () => [],
     },
   },
 

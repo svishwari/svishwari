@@ -33,7 +33,7 @@
       <v-row class="mt-0">
         <v-col md="12" class="pt-0 pr-1">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="370">
-            <v-card-title class="pa-6 d-flex justify-space-between">
+            <v-card-title class="py-5 pl-6 d-flex justify-space-between">
               <h3 class="text-h3 black--text text--darken-4">
                 Customer events
                 <span class="text-body-1 black--text text--lighten-4">
@@ -62,7 +62,7 @@
                   :size="18"
                   class="mr-1"
                 />
-                Event Details
+                Event details
               </v-btn>
             </v-card-title>
             <v-progress-linear

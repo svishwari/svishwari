@@ -10,7 +10,7 @@ exports[`Tests Confirm Modal Confirm modal displays icon content 1`] = `
       <!---->
     </div>
     <div class="confirm-modal-footer">
-      <huxbutton-stub variant="white" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="ml-2 mr-2"><span class="primary--text">Nevermind!</span></huxbutton-stub>
+      <huxbutton-stub variant="white" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="ml-2 mr-2" class="btn-border box-shadow-none"><span class="primary--text">Nevermind!</span></huxbutton-stub>
       <huxbutton-stub variant="primary" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="ml-2 mr-2">
         Add
       </huxbutton-stub>
@@ -40,7 +40,7 @@ exports[`Tests Confirm Modal Confirm modal displays props content 1`] = `
       </div>
     </div>
     <div class="confirm-modal-footer">
-      <huxbutton-stub variant="white" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="ml-2 mr-2"><span class="primary--text">Nevermind!</span></huxbutton-stub>
+      <huxbutton-stub variant="white" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="ml-2 mr-2" class="btn-border box-shadow-none"><span class="primary--text">Nevermind!</span></huxbutton-stub>
       <huxbutton-stub variant="primary" istile="true" size="large" height="40" boxshadow="true" iconcolor="primary" iconvariant="base" iconsize="14" iconclass="ml-2 mr-2">
         Button prop
       </huxbutton-stub>

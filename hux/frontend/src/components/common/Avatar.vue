@@ -2,7 +2,7 @@
   <tooltip>
     <template #label-content>
       <span
-        class="blue-grey d-flex align-center justify-center text-subtitle-1"
+        class="blue-grey d-flex align-center justify-center text-body-1"
         :style="{ 'border-color': getColorCode(localName) }"
       >
         {{ localName | shortName }}

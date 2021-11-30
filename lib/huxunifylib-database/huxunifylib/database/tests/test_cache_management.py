@@ -11,7 +11,7 @@ from huxunifylib.database.cache_management import (
     get_cache_entry,
 )
 from huxunifylib.database.client import DatabaseClient
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 
 
 class TestCacheManagement(unittest.TestCase):
@@ -24,7 +24,7 @@ class TestCacheManagement(unittest.TestCase):
             "localhost", 27017, None, None
         ).connect()
 
-        self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
+        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     @given(cache_key=st.text(min_size=1), cache_value=st.text(min_size=1))

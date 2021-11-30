@@ -157,3 +157,8 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+::v-deep.theme--light.v-btn.v-btn--disabled .v-icon {
+  color: var(--v-black-lighten3) !important;
+}
+</style>

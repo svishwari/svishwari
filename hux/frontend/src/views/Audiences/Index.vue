@@ -22,8 +22,9 @@
     </page-header>
     <page-header class="top-bar" :header-height="71">
       <template slot="left">
-        <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
-        <v-icon medium color="black lighten-3" class="pl-6">mdi-magnify</v-icon>
+        <v-btn disabled icon color="black">
+          <icon type="search" :size="20" color="black" variant="lighten3" />
+        </v-btn>
       </template>
 
       <template slot="right">
@@ -58,6 +59,7 @@
         sort-column="update_time"
         sort-desc="false"
         data-e2e="audience-table"
+        class="big-table"
       >
         <template #row-item="{ item }">
           <td
@@ -91,6 +93,7 @@
                 data-e2e="audiencename"
                 has-favorite
                 :is-favorite="isUserFavorite(item, 'audiences')"
+                class="text-body-1"
                 @actionFavorite="handleActionFavorite(item, 'audiences')"
               />
             </div>
@@ -99,7 +102,7 @@
                 :status="item[header.value]"
                 :show-label="true"
                 class="d-flex"
-                :icon-size="17"
+                :icon-size="18"
               />
             </div>
             <div v-if="header.value == 'size'">
@@ -390,7 +393,7 @@ export default {
         {
           text: "Status",
           value: "status",
-          width: "160px",
+          width: "200px",
         },
         {
           text: "Size",
@@ -412,27 +415,27 @@ export default {
         {
           text: "Last delivered",
           value: "last_delivered",
-          width: "162",
+          width: "170",
         },
         {
           text: "Last updated",
           value: "update_time",
-          width: "154",
+          width: "180",
         },
         {
           text: "Last updated by",
           value: "updated_by",
-          width: "148",
+          width: "181",
         },
         {
           text: "Created",
           value: "create_time",
-          width: "154",
+          width: "182",
         },
         {
           text: "Created by",
           value: "created_by",
-          width: "148",
+          width: "182",
         },
       ],
       loading: false,
@@ -605,7 +608,12 @@ export default {
 <style lang="scss" scoped>
 .audiences-wrap {
   ::v-deep .menu-cell-wrapper .action-icon {
-    display: none;
+    .fav-action {
+      display: none;
+    }
+    .more-action {
+      display: none;
+    }
   }
   .top-bar {
     margin-top: 1px;
@@ -631,7 +639,7 @@ export default {
         th:nth-child(1) {
           position: sticky;
           left: 0;
-          z-index: 9;
+          z-index: 3;
           border-right: thin solid rgba(0, 0, 0, 0.12);
           overflow-y: visible;
           overflow-x: visible;
@@ -643,9 +651,38 @@ export default {
           position: sticky;
           top: 0;
           left: 0;
-          z-index: 8;
-          background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
+        }
+        &:hover {
+          td:nth-child(1) {
+            z-index: 1 !important;
+            background: var(--v-primary-lighten2) !important;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+            .menu-cell-wrapper .action-icon {
+              .fav-action {
+                display: block;
+              }
+              .more-action {
+                display: block;
+              }
+            }
+          }
+          background: var(--v-primary-lighten2) !important;
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+          td.fixed-column {
+            z-index: 2 !important;
+            background: var(--v-primary-lighten2) !important;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+          }
+        }
+        td.fixed-column {
+          z-index: 1 !important;
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+          &:hover {
+            z-index: 2 !important;
+            background: var(--v-primary-lighten2) !important;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+          }
         }
       }
     }
@@ -653,8 +690,7 @@ export default {
     table {
       tr {
         td {
-          font-size: 16px;
-          height: 60px;
+          font-size: 14px;
         }
       }
       tbody {

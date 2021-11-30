@@ -4,7 +4,9 @@
       {{ value | Date("relative") | Empty }}
     </template>
     <template slot="hover-content">
-      {{ value | Date | Empty }}
+      <span class="text-body-2 black--text">
+        {{ value | Date | Empty }}
+      </span>
     </template>
   </tooltip>
 </template>
