@@ -24,11 +24,7 @@
 
     <template #default>
       <hux-filter-panels>
-        <hux-filter-panel
-          title="Alert type"
-          :count="selctedAlertType.length"
-          :only-blue="true"
-        >
+        <hux-filter-panel title="Alert type" :count="selctedAlertType.length">
           <v-checkbox
             v-for="data in alertType"
             :key="data.id"
@@ -40,11 +36,7 @@
             :value="data.title"
           ></v-checkbox>
         </hux-filter-panel>
-        <hux-filter-panel
-          title="Category"
-          :count="selctedCategory.length"
-          :only-blue="true"
-        >
+        <hux-filter-panel title="Category" :count="selctedCategory.length">
           <v-checkbox
             v-for="data in category"
             :key="data.id"
@@ -55,7 +47,7 @@
             :value="data.title"
           ></v-checkbox>
         </hux-filter-panel>
-        <hux-filter-panel title="Time" :count="1" :only-blue="true">
+        <hux-filter-panel title="Time" :count="1">
           <v-radio-group v-model="selectedTimeType">
             <v-radio
               v-for="data in time"
@@ -66,11 +58,7 @@
             ></v-radio>
           </v-radio-group>
         </hux-filter-panel>
-        <hux-filter-panel
-          title="User"
-          :count="selctedUsers.length"
-          :only-blue="true"
-        >
+        <hux-filter-panel title="User" :count="selctedUsers.length">
           <v-checkbox
             v-for="data in users"
             :key="data.id"

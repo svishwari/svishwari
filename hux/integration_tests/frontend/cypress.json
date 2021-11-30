@@ -3,6 +3,5 @@
   "video": false,
   "viewportWidth": 1440,
   "viewportHeight": 900,
-  "experimentalSessionSupport": true,
-  "baseUrl":"http://localhost:8080"
+  "experimentalSessionSupport": true
 }
