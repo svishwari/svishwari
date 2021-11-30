@@ -130,7 +130,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
         ).start()
 
         self.audience_id = create_audience(
-            self.database, "Test Audience", [], "test_user"
+            self.database, "Test Audience", [], t_c.TEST_USER_NAME
         )[db_c.ID]
         self.delivery_platform = set_delivery_platform(
             self.database,
@@ -154,7 +154,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
             "Test engagement",
             None,
             self.audiences,
-            "test_user",
+            t_c.TEST_USER_NAME,
             None,
             False,
         )
@@ -309,7 +309,7 @@ class TestEngagementMetricsEmail(TestCase):
         ).start()
 
         self.audience_id = create_audience(
-            self.database, "Test Audience", [], "test_user"
+            self.database, "Test Audience", [], t_c.TEST_USER_NAME
         )[db_c.ID]
 
         self.delivery_platform_sfmc = set_delivery_platform(
@@ -334,7 +334,7 @@ class TestEngagementMetricsEmail(TestCase):
             "Test engagement sfmc",
             None,
             self.audiences,
-            "test_user",
+            t_c.TEST_USER_NAME,
             None,
             False,
         )
