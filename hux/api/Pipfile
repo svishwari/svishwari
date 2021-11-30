@@ -21,7 +21,7 @@ apispec-webframeworks= {version="0.5.2", index="pypi"}
 boto3= {version="1.17.5", index="pypi"}
 pre-commit= {version="2.11.1", index="pypi"}
 bson= {version="4.2.0", index="pypi"}
-pymongo= {version="3.12.0", index="pypi"}
+pymongo = "==3.12.0"
 mongomock= {version="3.22.1", index="pypi"}
 python-decouple= {version="3.4", index="pypi"}
 requests= {version="2.25.1", index="pypi"}
