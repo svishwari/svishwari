@@ -159,7 +159,7 @@ export default {
       lookalikeAudience: {
         name: null,
         value: 5,
-        audience: null,
+        audience: this.selectedAudience,
         engagements: [],
       },
       isFormValid: false,
@@ -215,12 +215,6 @@ export default {
     selectedAudience(value) {
       this.lookalikeAudience.audience = value
     },
-    async prefetchLookalikeDependencies() {
-      this.loading = true
-      await this.getAllEngagements()
-      await this.getAllAudiences()
-      this.loading = false
-    },
   },
   methods: {
     ...mapActions({
@@ -246,7 +240,6 @@ export default {
 
     reset() {
       this.lookalikeAudience.value = 5
-      this.selectAudience = null
       this.lookalikeAudience.engagements = []
       this.$refs.lookalikeForm.$children[0].$children[0].reset()
     },

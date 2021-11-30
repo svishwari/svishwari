@@ -111,6 +111,8 @@ export default {
         "churn",
         "propensity",
         "unsubscribe",
+        "regression",
+        "classification",
       ],
     }
   },
@@ -221,8 +223,8 @@ export default {
       return this.modelTypes.includes(
         model.type ? model.type.toLowerCase() : ""
       )
-        ? model.type
-        : "unsubscribe"
+        ? model.type.toLowerCase()
+        : "unknown"
     },
   },
 }
