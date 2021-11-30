@@ -100,13 +100,21 @@ class CourierTest(TestCase):
 
         # create first audience
         self.audience_one = create_audience(
-            self.database, "audience one", [], t_c.TEST_USER_NAME, destination_ids
+            self.database,
+            "audience one",
+            [],
+            t_c.TEST_USER_NAME,
+            destination_ids,
         )
         self.assertIsNotNone(self.audience_one)
 
         # create second audience
         self.audience_two = create_audience(
-            self.database, "audience two", [], t_c.TEST_USER_NAME, destination_ids
+            self.database,
+            "audience two",
+            [],
+            t_c.TEST_USER_NAME,
+            destination_ids,
         )
         self.assertIsNotNone(self.audience_two)
 
