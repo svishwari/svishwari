@@ -1,6 +1,7 @@
 """Purpose of this module is to park schedule modules for delivery schedule"""
 import asyncio
 from datetime import datetime
+from pymongo import MongoClient
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.engagement_management import get_engagements
@@ -11,7 +12,6 @@ from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import get_next_schedule
-from huxunify.api.route.utils import get_db_client
 from huxunify.api.data_connectors.courier import (
     get_destination_config,
     get_audience_destination_pairs,
@@ -150,11 +150,15 @@ async def delivery_destination(
     )
 
 
-def run_scheduled_deliveries() -> None:
-    """function to run all scheduled deliveries per CRON Expressions."""
+def run_scheduled_deliveries(database: MongoClient) -> None:
+    """function to run all scheduled deliveries per CRON Expressions.
+
+    Args:
+        database (MongoClient): The mongo database client.
+
+    """
 
     # get database
-    database = get_db_client()
     current_time = datetime.utcnow()
 
     # set the event loop
