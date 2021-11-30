@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use,too-many-lines,C0302,unused-argument
+# pylint: disable=no-self-use,too-many-lines,unused-argument
 """Paths for customer API"""
 from http import HTTPStatus
 from typing import Tuple, List
@@ -944,7 +944,7 @@ class CustomerEvents(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @requires_access_levels([api_c.ADMIN_LEVEL, api_c.EDITOR_LEVEL])
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(self, hux_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves events for a given HUX ID.
 

@@ -180,7 +180,7 @@ class AudienceDownload(SwaggerView):
 
     # pylint: disable=no-self-use, too-many-locals
     @api_error_handler()
-    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self, audience_id: str, download_type: str, user: dict
     ) -> Tuple[Response, int]:

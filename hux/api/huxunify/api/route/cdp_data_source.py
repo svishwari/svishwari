@@ -268,7 +268,7 @@ class CreateCdpDataSources(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @api_error_handler()
-    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(self, user: dict) -> Tuple[list, int]:
         """Creates new CDP data sources.
 
