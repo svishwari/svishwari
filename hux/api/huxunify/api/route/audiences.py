@@ -656,7 +656,7 @@ class AudienceRulesLocation(SwaggerView):
         """
 
         # TODO Remove stub once CDM API is integrated
-        if field_type == api_c.CITIES:
+        if field_type == api_c.CITY:
             data = jsonify(
                 [
                     {x[1]: f"{x[1]}, {x[2]} USA"}
@@ -667,7 +667,7 @@ class AudienceRulesLocation(SwaggerView):
                     ]
                 ]
             )
-        elif field_type == api_c.ZIP:
+        elif field_type == api_c.ZIP_CODE:
             data = jsonify(
                 [
                     {x[0]: f"{x[0]}, {x[1]} {x[2]}"}
