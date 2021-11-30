@@ -20,9 +20,6 @@ RUN pip install pip --upgrade
 # install pipenv
 RUN pip install pipenv --upgrade
 
-# workaround for setuptools because of fuelSDK suds-jurko.
-RUN pip install setuptools==56.1.0
-
 # lock current deps to make it easier/faster for docker to build
 RUN pipenv install --system --deploy
 
