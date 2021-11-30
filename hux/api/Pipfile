@@ -31,12 +31,12 @@ huxunifylib-database = {path="../../lib/huxunifylib-database", editable=true}
 huxunifylib-util = {version="*", index="jfrog"}
 huxunifylib-connectors = {version="*", index="jfrog"}
 croniter = {version="*", index="pypi"}
+flask-apscheduler = {version="*", index="pypi"}
 connexion = "==2.7.0"
 prometheus-client = "*"
 prometheus-flask-exporter = "*"
 pyperclip = "*"
 jira = "*"
-flask-apscheduler = "*"
 
 [dev-packages]
 pytest = {version="*", index="pypi"}
