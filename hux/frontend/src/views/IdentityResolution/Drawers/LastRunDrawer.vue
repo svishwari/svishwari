@@ -19,7 +19,7 @@
             v-for="(reportKey, i) in Object.keys(reports)"
             :key="i"
             class="pa-2 mr-3 text-h3 black--text text--lighten-4"
-            data-e2e="last-run-tab"
+            :data-e2e="getDataE2E(reportKey)"
           >
             {{ reportNames[reportKey] }}
           </v-tab>
@@ -150,7 +150,9 @@ export default {
     ...mapActions({
       getDataFeedReport: "identity/getDataFeedReport",
     }),
-
+    getDataE2E(key) {
+      return `tab-${key}`
+    },
     async fetchDataFeedReport() {
       this.loading = true
       try {
