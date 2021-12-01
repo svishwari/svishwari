@@ -181,7 +181,12 @@
               <standalone-delivery />
             </v-col>
             <v-col :cols="advertisingCols" class="">
-              <div class="collapsible-bar" @click="toggleAd()">
+              <div class="collapsible-bar" 
+                   :class="{
+                      'open': showAdvertising,
+                      'close': !showAdvertising,
+                    }"
+                    @click="toggleAd()">
                   <span class="bar-text"> Digital advertising </span>
                   <icon
                     type="expand-arrow"
@@ -922,7 +927,7 @@ export default {
   .tabs-item {
     .delivery-tab {
       .digital-adv {
-        height: 453px !important;
+        height: 368px !important;
         .match-rates {
           
         }
@@ -995,18 +1000,25 @@ export default {
   margin-top: 16px;
   width: 24px;
   background-color: var(--v-primary-base) !important;
-  height: 453px;
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
+  height: 368px;
+  
   cursor: pointer;
   float: left;
   position: relative;
   display: flex;
+  &.open {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+  }
+  &.close {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
   .bar-text {
     writing-mode: vertical-rl;
     transform:scale(-1);
     color: var(--v-white-base) !important;;
-    margin-bottom: 310px;
+    margin-bottom: 230px;
   }
   .collapse-icon{
     margin: 0;
