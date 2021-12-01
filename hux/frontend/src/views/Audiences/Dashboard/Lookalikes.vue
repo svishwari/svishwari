@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="rounded-sm lookalikes-overview box-shadow-none" v-if="false">
+  <div class="lookalike-wrapper">
+    <div class="rounded-sm lookalikes box-shadow-none" v-if="false">
       <div class="header d-flex mx-6 px-3 py-3">
         <span class="float-left text-h3 black-base pt-5"> Lookalikes </span>
         <v-spacer> </v-spacer>
@@ -42,15 +42,16 @@
         </v-card>
       </div>
     </div>
-    <div class="no-match-rate" v-if="true">
+    <div class="no-lookalike" v-if="true">
       <metric-card
         class=""
         title="Lookalikes"
         :height="156"
         :interactable="false"
+        titleClass="text-h3"
       >
         <template #subtitle-extended>
-          <div class="black--text mt-4">
+          <div class="black--text text--lighten-4 mt-4 text-body-2">
             No lookalike audiences have been created. Once this audience has
             been delivered to an advertising destination, you can click the
             button above to configure a lookalike audience in that destination.
@@ -79,18 +80,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.lookalikes-overview {
-  .header {
-    height: 40px;
-  }
-  .lookialike-destination {
-    .rounded-sm {
-      border: 1px solid #e2eaec;
-      border-radius: 12px !important;
-      .v-card__title {
-        background: #f9fafb;
+.lookalike-wrapper {
+  .lookalikes {
+    .header {
+      height: 40px;
+    }
+    .lookialike-destination {
+      .rounded-sm {
+        border: 1px solid #e2eaec;
+        border-radius: 12px !important;
+        .v-card__title {
+          background: #f9fafb;
+        }
       }
     }
+  }
+  .no-lookalike {
+    background: #f9fafb;
   }
 }
 </style>

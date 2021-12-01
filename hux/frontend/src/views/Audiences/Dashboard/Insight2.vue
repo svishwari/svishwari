@@ -174,7 +174,7 @@
               >
                   <template #title-left>
                       <div class="d-flex align-center">
-                      <span class="text-h5">Engagement delivery details</span>
+                      <span class="text-h3">Engagement delivery details</span>
                       </div>
                   </template>
               </delivery>
@@ -185,13 +185,13 @@
                   <icon
                     type="expand-arrow"
                     :size="14"
-                    color="primary"
+                    color="white"
                     class="collapse-icon mx-2"
                   />
                 </div>
               <v-card class="digital-adv ml-6 mt-4" flat height="100%" v-if="showAdvertising">
                 
-                <v-card-title class="ml-6" v-if="showAdvertising" >
+                <v-card-title class="ml-6 text-h3" v-if="showAdvertising" >
                   Digital advertising
                 </v-card-title>
                 <v-card-text class="" v-if="showAdvertising">
@@ -994,7 +994,7 @@ export default {
 .collapsible-bar {
   margin-top: 16px;
   width: 24px;
-  background-color: var(--v-primary-lighten2) !important;
+  background-color: var(--v-primary-base) !important;
   height: 100%;
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;

@@ -30,7 +30,7 @@
           <span v-if="highLevel">
             <slot name="title"></slot>
           </span>
-          <span v-else>
+          <span v-else :class="titleClass">
             {{ title }}
           </span>
         </span>
@@ -73,7 +73,7 @@
                 highLevel,
             }"
           >
-            {{ subtitle }}
+           {{ subtitle }}
           </span>
           <slot name="subtitle-extended"></slot>
         </div>
@@ -208,6 +208,10 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    titleClass: {
+      type: [String],
+      required: false,
     },
   },
 }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="match-rate-wrapper">
     <div class="match-rate mx-6" v-if="false">
       <div class="text-h3 black-base pt-5">Match rates</div>
 
@@ -35,14 +35,15 @@
         title="Match rates"
         :height="115"
         :interactable="false"
+        titleClass="text-h3"
       >
         <template #subtitle-extended>
-          <div class="black--text mt-4">
-            Add an advertising destination and deliver this audience in order to view associated match rates.
+          <div class="black--text text--lighten-4 mt-4 text-body-2">
+            Add an advertising destination and deliver this audience in order to
+            view associated match rates.
           </div>
         </template>
       </metric-card>
-
     </div>
   </div>
 </template>
@@ -83,20 +84,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.match-rate {
-  background-color: #F9FAFB !important;
-  .matchrate-header {
+.match-rate-wrapper {
+  .match-rate {
     background-color: #f9fafb !important;
-    border: none !important;
+    .matchrate-header {
+      background-color: #f9fafb !important;
+      border: none !important;
+    }
+    .matchrate-list {
+      background-color: #ffffff !important;
+      border: 1px solid #e2eaec;
+      box-sizing: border-box;
+      border-radius: 4px;
+      display: flex;
+      margin: 4px;
+      height: 45px;
+    }
   }
-  .matchrate-list {
-    background-color: #ffffff !important;
-    border: 1px solid #e2eaec;
-    box-sizing: border-box;
-    border-radius: 4px;
-    display: flex;
-    margin: 4px;
-    height: 45px;
+  .no-match-rate {
+    background: #f9fafb;
   }
 }
 </style>

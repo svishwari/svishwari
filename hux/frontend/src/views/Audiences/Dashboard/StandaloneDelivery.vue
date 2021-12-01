@@ -2,7 +2,7 @@
   <v-card class="rounded-lg card-style standalone-delivery mt-4" flat>
     <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-3">
       <div class="d-flex align-center">
-        <span class="text-h5">Standalone deliveries</span>
+        <span class="text-h3">Standalone deliveries</span>
       </div>
       <v-spacer> </v-spacer>
       <div class="d-flex mr-4" @click="deliverAll()">
@@ -13,7 +13,7 @@
     <v-card-text class="pl-6 pr-6 pb-4 pt-0">
       <div
         v-if="deliveries.length > 0"
-        class="empty-state py-4 black--text text--darken-1"
+        class="empty-state py-4 black--text text--lighten-4 text-body-1"
       >
         This audience has no standalone deliveries. Add a destination below.
         <v-list dense class="add-list" :height="52">
