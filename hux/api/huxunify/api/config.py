@@ -27,6 +27,7 @@ class Config:
     DISABLE_DELIVERIES = config(
         api_c.DISABLE_DELIVERIES, default=False, cast=bool
     )
+    MOCK_TECTON = config(api_c.MOCK_TECTON, default=True, cast=bool)
 
     # MONGO CONFIG
     MONGO_DB_HOST = config(api_c.MONGO_DB_HOST, default="localhost")

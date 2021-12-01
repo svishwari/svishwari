@@ -32,6 +32,7 @@ CDP_SERVICE = "CDP_SERVICE"
 CDP_CONNECTION_SERVICE = "CDP_CONNECTION_SERVICE"
 TECTON_API_KEY = "TECTON_API_KEY"
 TECTON_API = "TECTON_API"
+MOCK_TECTON = "MOCK_TECTON"
 AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST = "AUDIENCE-ROUTER-JOB-ROLE-ARN"
 AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST = "AUDIENCE-ROUTER-EXECUTION-ROLE-ARN"
 AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
@@ -959,22 +960,7 @@ PRECISION = "precision"
 PERFORMANCE_METRIC = "performance_metric"
 FEATURE_IMPORTANCE = "feature-importance"
 SCORE = "score"
-FEATURE_MODEL_HISTORY = "ui_metadata_model_history_service"
-FEATURE_TOP_SERVICE = "ui_metadata_model_top_features_service"
-FEATURE_LIFT_MODEL_SERVICE = "ui_metadata_model_lift_service"
-FEATURE_DRIFT_REGRESSION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_regression_service"
-)
-FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE = (
-    "ui_metadata_model_metrics_classification_service"
-)
 
-MODEL_LIST_PAYLOAD = {
-    "params": {
-        "feature_service_name": "ui_metadata_models_service",
-        "join_key_map": {"model_metadata_client": "HUS"},
-    }
-}
 FEATURES = "features"
 JOIN_KEYS = "joinKeys"
 RESULTS = "results"
