@@ -18,7 +18,6 @@
         :data-items="versionHistory"
         sort-column="trained_date"
         sort-desc="true"
-        class="highlight-first-row"
       >
         <template #row-item="{ item }">
           <td
@@ -233,8 +232,8 @@ export default {
     }
 
     tr:nth-child(1) {
-      background: #f9fafb;
-      box-shadow: 4px 4px 10px #d0d0ce;
+      background: var(--v-primary-lighten1);
+      box-shadow: 4px 4px 10px var(--v-black-lighten3);
     }
 
     td:first-child {
@@ -255,11 +254,6 @@ export default {
     display: inline-block;
     width: 23ch;
     white-space: nowrap;
-  }
-
-  ::v-deep .highlight-first-row > table > tbody > tr:nth-of-type(1) {
-    background: #f9fafb;
-    box-shadow: 4px 4px 10px #d0d0ce;
   }
 }
 </style>
