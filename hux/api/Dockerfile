@@ -1,5 +1,6 @@
 # 1. Build dependencies image -----------------
-FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS python-dependencies
+#FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS python-dependencies
+FROM python:3.7-slim-buster AS python-dependencies
 
 ARG ARTIFACTORY_PYTHON_READ
 
@@ -26,10 +27,11 @@ WORKDIR /app/hux-unified/api
 
 # 2. Build the API -----------------
 
-FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
+#FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
+FROM python:3.7-slim-buster AS hux-unified
 
 # Copy app over to image
-COPY --from=python-dependencies /app /app
+COPY --from=python-dependencies / /
 WORKDIR /app/hux-unified/api
 
 # append huxunify path to python path.
