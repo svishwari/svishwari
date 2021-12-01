@@ -539,6 +539,13 @@ class AudienceGetView(SwaggerView):
             ]
             # TODO: HUS-837 change once we can generate real lookalikes from FB.
             lookalike[api_c.MATCH_RATE] = 0
+            # check and set if source/seed audience this lookalike audience is
+            # created from exists in DB
+            lookalike[api_c.LOOKALIKE_SOURCE_EXISTS] = bool(
+                orchestration_management.get_audience(
+                    database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
+                )
+            )
 
             # set audience to lookalike
             audience = lookalike

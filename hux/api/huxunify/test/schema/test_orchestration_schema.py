@@ -1,5 +1,6 @@
 # pylint: disable=no-self-use
 """Purpose of this file is to test the orchestration schemas."""
+import random
 from unittest import TestCase
 from datetime import datetime
 
@@ -76,6 +77,7 @@ class OrchestrationSchemaTest(TestCase):
             t_c.SOURCE_ID: "5f5f7262997acad4bac4385b",
             t_c.SOURCE_NAME: "Audience 1",
             t_c.SOURCE_SIZE: 2000,
+            api_c.LOOKALIKE_SOURCE_EXISTS: random.choice([True, False]),
             api_c.LOOKALIKEABLE: api_c.DISABLED,
             db_c.UPDATED_BY: "User",
             db_c.UPDATE_TIME: datetime.strftime(
