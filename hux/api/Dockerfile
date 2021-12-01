@@ -1,8 +1,8 @@
 # 1. Build the API
 
-FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
+FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS python-dependencies
 
-# variables used for consuming orchestration pkgs from jfrog
+# variables used for consuming packages from jfrog
 ARG ARTIFACTORY_PYTHON_READ
 
 # set the work dir on the docker image
