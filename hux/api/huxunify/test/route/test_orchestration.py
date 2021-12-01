@@ -204,10 +204,7 @@ class OrchestrationRouteTest(TestCase):
                     },
                     {
                         db_c.OBJECT_ID: self.audiences[1][db_c.ID],
-                        api_c.DESTINATIONS: [
-                            {db_c.OBJECT_ID: dest[db_c.ID]}
-                            for dest in self.destinations
-                        ],
+                        api_c.DESTINATIONS: [],
                     },
                 ],
                 api_c.USER_NAME: self.user_name,
@@ -840,18 +837,37 @@ class OrchestrationRouteTest(TestCase):
                     self.assertIsNone(audience[api_c.AUDIENCE_LAST_DELIVERED])
 
                 # find the matched audience destinations, should be the same.
-                matched_audience = [
+                matched_audience_destinations = [
                     x
                     for x in expected_audience_destinations
                     if x[db_c.ID] == ObjectId(audience[api_c.ID])
                 ]
 
-                # test that the unique count of delivery destinations
-                # is the same as the response.
+                # test that the unique count of delivery destinations is the
+                # same as the response
                 self.assertEqual(
                     len(audience[db_c.DESTINATIONS]),
-                    len(matched_audience[0][db_c.DESTINATIONS]),
+                    len(matched_audience_destinations[0][db_c.DESTINATIONS])
+                    if matched_audience_destinations
+                    else 0,
                 )
+
+                # check the lookalikeable field in audience based on
+                # destinations present in the audience since it will be set to
+                # disabled for sure if the audience has no destinations added
+                # to it
+                self.assertIn(
+                    audience[api_c.LOOKALIKEABLE],
+                    [
+                        api_c.STATUS_INACTIVE,
+                        api_c.STATUS_ACTIVE,
+                    ]
+                    if audience[db_c.DESTINATIONS]
+                    else [
+                        api_c.STATUS_DISABLED,
+                    ],
+                )
+
             else:
                 self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
                 self.assertTrue(audience[api_c.IS_LOOKALIKE])
