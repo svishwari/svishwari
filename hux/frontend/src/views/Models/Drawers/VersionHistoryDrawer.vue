@@ -2,7 +2,7 @@
   <drawer
     v-model="localDrawer"
     :content-padding="'pa-0'"
-    :content-header-padding="'px-6'"
+    :content-header-padding="'px-4'"
   >
     <template #header-left>
       <div class="d-flex align-center">
@@ -151,7 +151,7 @@ export default {
         {
           text: "Version",
           value: "version",
-          width: "165px",
+          width: "180px",
         },
         {
           text: "Description",
@@ -213,9 +213,13 @@ export default {
       th {
         background: var(--v-primary-lighten2) !important;
         color: var(--v-black-base) !important;
+        padding-left: 0px !important;
       }
       th:nth-child(1) {
         padding-left: 24px;
+      }
+      th:first-child {
+        padding-left: 33px !important;
       }
     }
     tr {
@@ -223,8 +227,19 @@ export default {
         height: 40px !important;
         padding-top: 4px !important;
         padding-bottom: 4px !important;
+        padding-left: 0px !important;
       }
     }
+
+    tr:nth-child(1) {
+      background: var(--v-primary-lighten1);
+      box-shadow: 4px 4px 10px var(--v-black-lighten3);
+    }
+
+    td:first-child {
+      padding-left: 25px !important;
+    }
+
     .cell {
       display: inline-block;
       max-width: 100%;

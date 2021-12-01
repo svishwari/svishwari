@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use, C0302
+# pylint: disable=no-self-use,C0302,unused-argument
 """Paths for engagement API"""
 from pathlib import Path
 import zipfile
@@ -67,8 +67,8 @@ from huxunify.api.route.decorators import (
     secured,
     api_error_handler,
     validate_destination,
-    get_user_name,
     validate_engagement_and_audience,
+    requires_access_levels,
 )
 from huxunify.api.route.utils import (
     get_db_client,
@@ -126,8 +126,8 @@ class EngagementSearch(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
-    @get_user_name()
-    def get(self, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
         """Retrieves all engagements.
 
         ---
@@ -135,7 +135,7 @@ class EngagementSearch(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: dict of engagements, HTTP status code.
@@ -144,7 +144,7 @@ class EngagementSearch(SwaggerView):
         database = get_db_client()
         # get user favorite engagements
         favorite_engagements = get_user_favorites(
-            database, user_name, db_c.ENGAGEMENTS
+            database, user[api_c.USER_NAME], db_c.ENGAGEMENTS
         )
 
         # read the optional request args and set the required query_filter to
@@ -154,7 +154,7 @@ class EngagementSearch(SwaggerView):
         if request.args.get(api_c.MY_ENGAGEMENTS) and validation.validate_bool(
             request.args.get(api_c.MY_ENGAGEMENTS)
         ):
-            query_filter[api_c.WORKED_BY] = user_name
+            query_filter[api_c.WORKED_BY] = user[api_c.USER_NAME]
 
         # Update delivery status.
         logger.info("Updating delivery jobs")
@@ -222,9 +222,9 @@ class IndividualEngagementSearch(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
-    @get_user_name()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     @validate_engagement_and_audience()
-    def get(self, engagement_id: ObjectId, user_name: str) -> Tuple[dict, int]:
+    def get(self, engagement_id: ObjectId, user: dict) -> Tuple[dict, int]:
         """Retrieves an engagement.
 
         ---
@@ -233,7 +233,7 @@ class IndividualEngagementSearch(SwaggerView):
 
         Args:
             engagement_id (ObjectId): ID of the engagement.
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: dict of the engagement, HTTP status code.
@@ -278,7 +278,7 @@ class IndividualEngagementSearch(SwaggerView):
 
         # get user id
         favorite_engagements = get_user_favorites(
-            database, user_name, db_c.ENGAGEMENTS
+            database, user[api_c.USER_NAME], db_c.ENGAGEMENTS
         )
 
         engagement[api_c.FAVORITE] = (
@@ -341,8 +341,8 @@ class SetEngagement(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
-    @get_user_name()
-    def post(self, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def post(self, user: dict) -> Tuple[dict, int]:
         """Creates a new engagement.
 
         ---
@@ -350,7 +350,7 @@ class SetEngagement(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Engagement created, HTTP status code.
@@ -378,7 +378,7 @@ class SetEngagement(SwaggerView):
             description=body.get(db_c.ENGAGEMENT_DESCRIPTION),
             audiences=body.get(db_c.AUDIENCES),
             delivery_schedule=body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE),
-            user_name=user_name,
+            user_name=user[api_c.USER_NAME],
         )
         engagement = get_engagement(database, engagement_id=engagement_id)
         logger.info(
@@ -390,10 +390,10 @@ class SetEngagement(SwaggerView):
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
                 f'New engagement named "{engagement[db_c.NAME]}" '
-                f"created by {user_name}."
+                f"created by {user[api_c.USER_NAME]}."
             ),
             api_c.ENGAGEMENT_TAG,
-            user_name,
+            user[api_c.USER_NAME],
         )
         return (
             EngagementGetSchema().dump(engagement),
@@ -461,9 +461,9 @@ class UpdateEngagement(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
-    @get_user_name()
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     @validate_engagement_and_audience()
-    def put(self, engagement_id: ObjectId, user_name: str) -> Tuple[dict, int]:
+    def put(self, engagement_id: ObjectId, user: dict) -> Tuple[dict, int]:
         """Updates an engagement.
 
         ---
@@ -472,7 +472,7 @@ class UpdateEngagement(SwaggerView):
 
         Args:
             engagement_id (ObjectId): Engagement ID.
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Engagement updated, HTTP status code.
@@ -498,7 +498,7 @@ class UpdateEngagement(SwaggerView):
         engagement = update_engagement(
             database=database,
             engagement_id=ObjectId(engagement_id),
-            user_name=user_name,
+            user_name=user[api_c.USER_NAME],
             name=body.get(db_c.ENGAGEMENT_NAME),
             description=body.get(db_c.ENGAGEMENT_DESCRIPTION),
             audiences=body.get(db_c.AUDIENCES),
@@ -517,9 +517,9 @@ class UpdateEngagement(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            f'Engagement "{engagement[db_c.NAME]}" updated by {user_name}.',
+            f'Engagement "{engagement[db_c.NAME]}" updated by {user[api_c.USER_NAME]}.',
             api_c.ENGAGEMENT_TAG,
-            user_name,
+            user[api_c.USER_NAME],
         )
         return (
             EngagementGetSchema().dump(engagement),
@@ -559,12 +559,10 @@ class DeleteEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @get_user_name()
+    @requires_access_levels([api_c.ADMIN_LEVEL])
     @api_error_handler()
     @validate_engagement_and_audience()
-    def delete(
-        self, engagement_id: ObjectId, user_name: str
-    ) -> Tuple[dict, int]:
+    def delete(self, engagement_id: ObjectId, user: dict) -> Tuple[dict, int]:
         """Deletes an engagement.
 
         ---
@@ -573,7 +571,7 @@ class DeleteEngagement(SwaggerView):
 
         Args:
             engagement_id (ObjectId): Engagement ID.
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: message, HTTP status code.
@@ -589,10 +587,10 @@ class DeleteEngagement(SwaggerView):
                 db_c.NOTIFICATION_TYPE_INFORMATIONAL,
                 (
                     f'Engagement "{engagement[db_c.NAME]}" '
-                    f"deleted by {user_name}."
+                    f"deleted by {user[api_c.USER_NAME]}."
                 ),
                 api_c.ENGAGEMENT_TAG,
-                user_name,
+                user[api_c.USER_NAME],
             )
             logger.info("Successfully deleted engagement %s.", engagement_id)
 
@@ -661,11 +659,9 @@ class AddAudienceEngagement(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
-    @get_user_name()
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     @validate_engagement_and_audience()
-    def post(
-        self, engagement_id: ObjectId, user_name: str
-    ) -> Tuple[dict, int]:
+    def post(self, engagement_id: ObjectId, user: dict) -> Tuple[dict, int]:
         """Adds audience to engagement.
 
         ---
@@ -674,7 +670,7 @@ class AddAudienceEngagement(SwaggerView):
 
         Args:
             engagement_id (ObjectId): Engagement ID.
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Audience Engagement added, HTTP status code.
@@ -712,7 +708,7 @@ class AddAudienceEngagement(SwaggerView):
         append_audiences_to_engagement(
             database,
             ObjectId(engagement_id),
-            user_name,
+            user[api_c.USER_NAME],
             body[api_c.AUDIENCES],
         )
 
@@ -728,10 +724,10 @@ class AddAudienceEngagement(SwaggerView):
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 (
                     f'Audience "{audience_name}" added to engagement '
-                    f'"{engagement[db_c.NAME]}" by {user_name}.'
+                    f'"{engagement[db_c.NAME]}" by {user[api_c.USER_NAME]}.'
                 ),
                 api_c.ENGAGEMENT_TAG,
-                user_name,
+                user[api_c.USER_NAME],
             )
 
         # toggle routers since the engagement was updated.
@@ -785,11 +781,9 @@ class DeleteAudienceEngagement(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
-    @get_user_name()
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     @validate_engagement_and_audience()
-    def delete(
-        self, engagement_id: ObjectId, user_name: str
-    ) -> Tuple[dict, int]:
+    def delete(self, engagement_id: ObjectId, user: dict) -> Tuple[dict, int]:
         """Deletes audience from engagement.
 
         ---
@@ -798,7 +792,7 @@ class DeleteAudienceEngagement(SwaggerView):
 
         Args:
             engagement_id (ObjectId): Engagement ID.
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Audience deleted from engagement,
@@ -831,7 +825,7 @@ class DeleteAudienceEngagement(SwaggerView):
         remove_audiences_from_engagement(
             database,
             ObjectId(engagement_id),
-            user_name,
+            user[api_c.USER_NAME],
             audience_ids,
         )
         logger.info(
@@ -846,10 +840,10 @@ class DeleteAudienceEngagement(SwaggerView):
                 db_c.NOTIFICATION_TYPE_INFORMATIONAL,
                 (
                     f'Audience "{audience_name}" removed from engagement '
-                    f'"{engagement[db_c.NAME]}" by {user_name}.'
+                    f'"{engagement[db_c.NAME]}" by {user[api_c.USER_NAME]}.'
                 ),
                 api_c.ENGAGEMENT_TAG,
-                user_name,
+                user[api_c.USER_NAME],
             )
 
         # toggle routers since the engagement was updated.
@@ -912,9 +906,9 @@ class AddDestinationEngagedAudience(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
-    @get_user_name()
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def post(
-        self, engagement_id: str, audience_id: str, user_name: str
+        self, engagement_id: str, audience_id: str, user: dict
     ) -> Tuple[dict, int]:
         """Adds a destination to an engagement audience.
 
@@ -925,7 +919,7 @@ class AddDestinationEngagedAudience(SwaggerView):
         Args:
             engagement_id (str): Engagement ID.
             audience_id (str): Audience ID.
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Destination Audience Engagement added,
@@ -972,7 +966,7 @@ class AddDestinationEngagedAudience(SwaggerView):
             ObjectId(engagement_id),
             ObjectId(audience_id),
             destination,
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         logger.info(
@@ -988,10 +982,10 @@ class AddDestinationEngagedAudience(SwaggerView):
             (
                 f'Destination "{destination_to_attach[db_c.NAME]}" added to '
                 f'audience "{audience[db_c.NAME]}" from engagement '
-                f'"{engagement[db_c.NAME]}" by {user_name}.'
+                f'"{engagement[db_c.NAME]}" by {user[api_c.USER_NAME]}.'
             ),
             api_c.ENGAGEMENT_TAG,
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         # toggle routers since the engagement was updated.
@@ -1056,9 +1050,9 @@ class RemoveDestinationEngagedAudience(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
-    @get_user_name()
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def delete(
-        self, engagement_id: str, audience_id: str, user_name: str
+        self, engagement_id: str, audience_id: str, user: dict
     ) -> Tuple[dict, int]:
         """Removes a destination from an engagement audience.
 
@@ -1069,7 +1063,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
         Args:
             engagement_id (str): Engagement ID.
             audience_id (str): Audience ID.
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object    .
 
         Returns:
             Tuple[dict, int]: Destination Audience Engagement added,
@@ -1119,7 +1113,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             ObjectId(engagement_id),
             ObjectId(audience_id),
             destination_id,
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         logger.info(
@@ -1127,7 +1121,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             destination_to_remove[db_c.NAME],
             audience[db_c.NAME],
             engagement[db_c.NAME],
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         create_notification(
@@ -1136,10 +1130,10 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             (
                 f'Destination "{destination_to_remove[db_c.NAME]}" removed from audience '
                 f'"{audience[db_c.NAME]}" from engagement '
-                f'"{engagement[db_c.NAME]}" by {user_name}.'
+                f'"{engagement[db_c.NAME]}" by {user[api_c.USER_NAME]}.'
             ),
             api_c.ENGAGEMENT_TAG,
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         # toggle routers since the engagement was updated.
@@ -1232,13 +1226,13 @@ class UpdateCampaignsForAudience(SwaggerView):
     @api_error_handler()
     @validate_engagement_and_audience()
     @validate_destination()
-    @get_user_name()
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
     def put(
         self,
         engagement_id: ObjectId,
         audience_id: ObjectId,
         destination_id: ObjectId,
-        user_name: str,
+        user: dict,
     ) -> Tuple[dict, int]:
         """Updates campaigns for an engagement audience.
 
@@ -1250,7 +1244,7 @@ class UpdateCampaignsForAudience(SwaggerView):
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
             destination_id (ObjectId): Destination ID.
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -1400,7 +1394,7 @@ class UpdateCampaignsForAudience(SwaggerView):
                 audience_id,
             ),
             api_c.ENGAGEMENT_TAG,
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         # toggle routers since the engagement was updated.
@@ -1466,15 +1460,17 @@ class AudienceCampaignsGetView(SwaggerView):
 
     # pylint: disable=no-self-use
     # pylint: disable=too-many-return-statements
-    # pylint: disable=too-many-branches
+    # pylint: disable=too-many-branches,too-many-locals
     @api_error_handler()
     @validate_engagement_and_audience()
     @validate_destination()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self,
         engagement_id: ObjectId,
         audience_id: ObjectId,
         destination_id: ObjectId,
+        user: dict,
     ) -> Tuple[dict, int]:
         """Get the campaign mappings from mongo.
 
@@ -1486,6 +1482,7 @@ class AudienceCampaignsGetView(SwaggerView):
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
             destination_id (ObjectId): Destination ID.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -1628,11 +1625,13 @@ class AudienceCampaignMappingsGetView(SwaggerView):
     @api_error_handler()
     @validate_engagement_and_audience()
     @validate_destination()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self,
         engagement_id: ObjectId,
         audience_id: ObjectId,
         destination_id: ObjectId,
+        user: dict,
     ) -> Tuple[dict, int]:
         """Get the list of possible campaign mappings to attach to audience.
 
@@ -1644,6 +1643,7 @@ class AudienceCampaignMappingsGetView(SwaggerView):
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
             destination_id (ObjectId): Destination ID.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -1794,7 +1794,8 @@ class EngagementMetricsDisplayAds(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
-    def get(self, engagement_id: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, engagement_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves display ad performance metrics.
 
         ---
@@ -1803,6 +1804,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
 
         Args:
             engagement_id (str): ID of an engagement.
+            user (dict): User object
 
         Returns:
             Tuple[dict, int]: Response of Display Ads Performance Metrics,
@@ -1810,6 +1812,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
         """
 
         # setup the database
+        database = get_db_client()
         database = get_db_client()
 
         engagement = get_engagement(database, ObjectId(engagement_id))
@@ -1858,7 +1861,8 @@ class EngagementMetricsEmail(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
-    def get(self, engagement_id: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, engagement_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves email performance metrics.
 
         ---
@@ -1867,6 +1871,7 @@ class EngagementMetricsEmail(SwaggerView):
 
         Args:
             engagement_id (str): ID of an engagement.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Response of Email Performance Metrics,
@@ -1917,7 +1922,8 @@ class EngagementPerformanceDownload(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
-    def get(self, engagement_id: str) -> Tuple[Response, int]:
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def get(self, engagement_id: str, user: dict) -> Tuple[Response, int]:
         """Retrieves email performance metrics.
 
         ---
@@ -1926,6 +1932,7 @@ class EngagementPerformanceDownload(SwaggerView):
 
         Args:
             engagement_id (str): ID of an engagement.
+            user (dict): User object.
 
         Returns:
             Tuple[Response, int]: Response of Performance Metrics

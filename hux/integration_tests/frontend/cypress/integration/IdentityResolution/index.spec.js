@@ -36,7 +36,7 @@ describe("Data management > Identity resolution", () => {
 
     // toggle pinning panel open/closed
     cy.get(selector.idr.pinning).click()
-    cy.get(selector.idr.pinning).click()
+    cy.get(selector.idr.stitched).click()
 
     // toggle stitched panel open/closed
     cy.get(selector.idr.stitched).click()

@@ -143,7 +143,7 @@
       >
         <div class="d-flex justify-space-between">
           <div class="mr-3">
-            <icon type="bulb" :size="32" color="yellow" />
+            <icon type="Bulb" :size="32" color="yellow" />
           </div>
           <p class="text-body-1 ma-0">
             The destination you have selected is currently not available to

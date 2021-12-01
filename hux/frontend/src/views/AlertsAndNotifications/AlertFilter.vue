@@ -2,9 +2,10 @@
   <drawer
     v-model="localDrawer"
     :content-padding="'pa-0'"
-    :content-header-padding="'px-3'"
+    :content-header-padding="'px-1'"
     :expanded-width="300"
     :width="300"
+    header-height="40"
   >
     <template #header-left>
       <span class="text-h2 black--text"> Filter ({{ filterLength }}) </span>
@@ -13,7 +14,7 @@
       <v-btn
         plain
         :color="filterLength > 0 ? 'primary base' : 'black lighten3'"
-        :disabled="!filterLength > 0"
+        :disabled="filterLength === 1 && selectedTimeType === 'Last week'"
         class="text-button float-right clear-btn"
         @click="clearFilter()"
       >
@@ -86,7 +87,6 @@
         color="primary"
         class="text-button ml-4"
         width="110"
-        disabled
         @click="apply()"
       >
         Apply filter
@@ -141,7 +141,7 @@ export default {
       category: [
         {
           id: 1,
-          title: "Data sources",
+          title: "DataSources",
         },
         {
           id: 2,
@@ -259,6 +259,7 @@ export default {
           this.getTime(7)
           break
       }
+
       this.$emit("onSectionAction", {
         getTime: this.$options.filters.Date(getTime, "YYYY-MM-DD"),
         selctedAlertType: this.selctedAlertType,
@@ -295,5 +296,8 @@ export default {
   line-height: 22px;
   letter-spacing: 0;
   color: var(--v-black-base);
+}
+::v-deep .drawer-header > .v-toolbar__content {
+  height: 40px !important;
 }
 </style>

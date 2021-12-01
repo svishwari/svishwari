@@ -250,7 +250,7 @@ class TestUserRoutes(TestCase):
 
         t_c.validate_schema(UserSchema(), response.json, True)
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(1, len(response.json))
+        self.assertEqual(2, len(response.json))
         self.assertIsNotNone(response.json[0][api_c.DISPLAY_NAME])
         self.assertIsNotNone(response.json[0][api_c.EMAIL])
         self.assertIsNotNone(response.json[0][api_c.USER_PHONE_NUMBER])

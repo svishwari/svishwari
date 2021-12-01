@@ -42,6 +42,7 @@ VALID_USER_RESPONSE = {
     api_c.OKTA_ID_SUB: "8548bfh8d",
     api_c.EMAIL: "davesmith@fake.com",
     api_c.NAME: "dave smith",
+    api_c.ROLE: "admin",
     api_c.USER_PII_ACCESS: True,
 }
 OKTA_ID = "okta_id"
@@ -442,30 +443,35 @@ MOCKED_CITY_LTVS_RESPONSE = {
             "city": "Santa Anna",
             "state": "TX",
             "country": "US",
+            "customer_count": 123,
             "avg_ltv": 668.03003,
         },
         {
             "city": "Solon Springs",
             "state": "WI",
             "country": "US",
+            "customer_count": 123,
             "avg_ltv": 648.8791640000001,
         },
         {
             "city": "Gays Mills",
             "state": "WI",
             "country": "US",
+            "customer_count": 123,
             "avg_ltv": 587.3708300000001,
         },
         {
             "city": "Hodgen",
             "state": "OK",
             "country": "US",
+            "customer_count": 123,
             "avg_ltv": 573.278802,
         },
         {
             "city": "Noonan",
             "state": "ND",
             "country": "US",
+            "customer_count": 123,
             "avg_ltv": 554.679386,
         },
     ],

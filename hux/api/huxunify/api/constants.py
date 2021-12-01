@@ -63,6 +63,7 @@ OWNER = "owner"
 STATUS = "status"
 BODY = "body"
 TYPE = "type"
+ROLE = "role"
 DESCRIPTION = "description"
 FIRST_NAME = "first_name"
 LAST_NAME = "last_name"
@@ -75,6 +76,7 @@ ADDRESS = "address"
 CITY = "city"
 STATE = "state"
 ZIP = "zip"
+ZIP_CODE = "zip_code"
 COOKIE = "cookie"
 PROP = "prop"
 ICON = "icon"
@@ -93,7 +95,6 @@ CLIENT_REQUEST = "client_request"
 CLIENT_ACCOUNT = "client_account"
 USE_CASE = "use_case"
 FIELD_TYPE = "field_type"
-
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -242,6 +243,9 @@ STATE_NAMES = {
     "WY": "Wyoming",
     "PR": "Puerto Rico",
 }
+STATE_LABEL = "state_label"
+COUNTRIES_LIST = {"US": "United States"}
+COUNTRY_LABEL = "country_label"
 DEMOGRAPHIC = "demo"
 DATE = "date"
 RECORDED = "recorded"
@@ -704,7 +708,8 @@ EMAIL_METRICS = [
     "delivered_rate",
     "open",
     "open_rate",
-    "click",
+    "clicks",
+    "conversions",
     "click_to_open_rate",
     "unique_clicks",
     "unique_opens",
@@ -822,6 +827,7 @@ AccessLevel = namedtuple(
 ADMIN_LEVEL = AccessLevel(db_c.USER_ROLE_ADMIN)
 EDITOR_LEVEL = AccessLevel(db_c.USER_ROLE_EDITOR)
 VIEWER_LEVEL = AccessLevel(db_c.USER_ROLE_VIEWER)
+USER_ROLE_ALL = [ADMIN_LEVEL, EDITOR_LEVEL, VIEWER_LEVEL]
 
 # Orchestration API fields
 ORCHESTRATION_ENDPOINT = "/orchestration"
@@ -851,6 +857,7 @@ LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 LOOKALIKEABLE = "lookalikeable"
 IS_LOOKALIKE = "is_lookalike"
 LOOKALIKE = "lookalike"
+LOOKALIKE_SOURCE_EXISTS = "source_exists"
 WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
 

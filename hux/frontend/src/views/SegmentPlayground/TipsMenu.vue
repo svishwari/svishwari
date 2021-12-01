@@ -139,7 +139,7 @@ export default {
   position: absolute;
 }
 ::v-deep .v-expansion-panel-header {
-  padding: 10px 16px !important;
+  padding: 12px 16px !important;
   border-top-left-radius: 0px !important;
   border-top-right-radius: 0px !important;
 }
@@ -166,5 +166,8 @@ export default {
 }
 ::v-deep .v-expansion-panel--active > .v-expansion-panel-header {
   border-top: 1px solid var(--v-black-lighten2) !important;
+}
+::v-deep .v-expansion-panel {
+  height: 45px !important;
 }
 </style>

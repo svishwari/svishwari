@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use, C0302
+# pylint: disable=no-self-use,too-many-lines,unused-argument
 """Paths for delivery API"""
 from http import HTTPStatus
 from typing import Tuple
@@ -30,9 +30,9 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
-    get_user_name,
     validate_delivery_params,
     validate_destination,
+    requires_access_levels,
 )
 from huxunify.api.route.utils import get_db_client, get_config
 from huxunify.api.schema.orchestration import (
@@ -128,13 +128,13 @@ class EngagementDeliverDestinationView(SwaggerView):
     @api_error_handler()
     @validate_destination()
     @validate_delivery_params
-    @get_user_name()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(
         self,
         engagement_id: ObjectId,
         audience_id: ObjectId,
         destination_id: ObjectId,
-        user_name: str,
+        user: dict,
     ) -> Tuple[dict, int]:
         """Delivers one destination for an engagement audience.
 
@@ -146,7 +146,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
             destination_id (ObjectId): Destination ID.
-            user_name (str): User name.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -191,7 +191,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             batch_destination = get_destination_config(
                 database, engagement_id, *pair
             )
-            batch_destination.register(engagement)
+            batch_destination.register()
             batch_destination.submit()
             delivery_job_ids.append(
                 str(batch_destination.audience_delivery_job_id)
@@ -211,7 +211,7 @@ class EngagementDeliverDestinationView(SwaggerView):
                 f'"{target_destination[db_c.NAME]}".'
             ),
             category=api_c.DELIVERY_TAG,
-            username=user_name,
+            username=user[api_c.USER_NAME],
         )
         return {
             "message": f"Successfully created delivery job(s) "
@@ -267,9 +267,9 @@ class EngagementDeliverAudienceView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
-    @get_user_name()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(
-        self, engagement_id: ObjectId, audience_id: ObjectId, user_name: str
+        self, engagement_id: ObjectId, audience_id: ObjectId, user: dict
     ) -> Tuple[dict, int]:
         """Delivers one audience for an engagement.
 
@@ -280,7 +280,7 @@ class EngagementDeliverAudienceView(SwaggerView):
         Args:
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
-            user_name (str): User name.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -302,7 +302,7 @@ class EngagementDeliverAudienceView(SwaggerView):
             batch_destination = get_destination_config(
                 database, engagement_id, *pair
             )
-            batch_destination.register(engagement)
+            batch_destination.register()
             batch_destination.submit()
             delivery_job_ids.append(
                 str(batch_destination.audience_delivery_job_id)
@@ -321,7 +321,7 @@ class EngagementDeliverAudienceView(SwaggerView):
                 f'"{engagement[db_c.NAME]}" across platforms.'
             ),
             category=api_c.DELIVERY_TAG,
-            username=user_name,
+            username=user[api_c.USER_NAME],
         )
         return {
             "message": f"Successfully created delivery job(s) "
@@ -369,10 +369,8 @@ class EngagementDeliverView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     @validate_delivery_params
-    @get_user_name()
-    def post(
-        self, engagement_id: ObjectId, user_name: str
-    ) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def post(self, engagement_id: ObjectId, user: dict) -> Tuple[dict, int]:
         """Delivers all audiences for an engagement.
 
         ---
@@ -381,7 +379,7 @@ class EngagementDeliverView(SwaggerView):
 
         Args:
             engagement_id (ObjectId): Engagement ID.
-            user_name (str): User name.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -399,7 +397,7 @@ class EngagementDeliverView(SwaggerView):
             batch_destination = get_destination_config(
                 database, engagement_id, *pair
             )
-            batch_destination.register(engagement)
+            batch_destination.register()
             batch_destination.submit()
             delivery_job_ids.append(
                 str(batch_destination.audience_delivery_job_id)
@@ -413,7 +411,7 @@ class EngagementDeliverView(SwaggerView):
                 f'from engagement "{engagement[db_c.NAME]}".'
             ),
             category=api_c.DELIVERY_TAG,
-            username=user_name,
+            username=user[api_c.USER_NAME],
         )
         logger.info(
             "Successfully created delivery jobs %s.",
@@ -461,8 +459,8 @@ class AudienceDeliverView(SwaggerView):
 
     @api_error_handler()
     @validate_delivery_params
-    @get_user_name()
-    def post(self, audience_id: ObjectId, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def post(self, audience_id: ObjectId, user: dict) -> Tuple[dict, int]:
         """Delivers an audience for all of the engagements it is part of.
 
         ---
@@ -471,7 +469,7 @@ class AudienceDeliverView(SwaggerView):
 
         Args:
             audience_id (ObjectId): Audience ID.
-            user_name (str): User name.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure, .
@@ -494,7 +492,7 @@ class AudienceDeliverView(SwaggerView):
                 batch_destination = get_destination_config(
                     database, engagement[db_c.ID], *pair
                 )
-                batch_destination.register(engagement)
+                batch_destination.register()
                 batch_destination.submit()
                 delivery_job_ids.append(
                     str(batch_destination.audience_delivery_job_id)
@@ -512,7 +510,7 @@ class AudienceDeliverView(SwaggerView):
                 f'"{audience[db_c.NAME]}".'
             ),
             category=api_c.DELIVERY_TAG,
-            username=user_name,
+            username=user[api_c.USER_NAME],
         )
         return {
             "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
@@ -581,7 +579,8 @@ class EngagementDeliverHistoryView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, engagement_id: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, engagement_id: str, user: dict) -> Tuple[dict, int]:
         """Delivery history of all audiences for an engagement.
 
         ---
@@ -590,6 +589,7 @@ class EngagementDeliverHistoryView(SwaggerView):
 
         Args:
             engagement_id (str): Engagement ID.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Delivery history, HTTP status code.
@@ -749,7 +749,8 @@ class AudienceDeliverHistoryView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, audience_id: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, audience_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves delivery history of an audience.
 
         ---
@@ -758,6 +759,7 @@ class AudienceDeliverHistoryView(SwaggerView):
 
         Args:
             audience_id (str): Audience ID.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Delivery history, HTTP status code.
@@ -913,13 +915,13 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
     @api_error_handler()
     @validate_destination()
     @validate_delivery_params
-    @get_user_name()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(
         self,
         engagement_id: ObjectId,
         audience_id: ObjectId,
         destination_id: ObjectId,
-        user_name: str,
+        user: dict,
     ) -> Tuple[dict, int]:
         """Sets the delivery schedule for one destination of an engagement audience.
 
@@ -931,7 +933,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
             destination_id (ObjectId): Destination ID.
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -973,7 +975,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
             audience_id,
             destination_id,
             delivery_schedule,
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         create_notification(
@@ -986,7 +988,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
                 f' in engagement "{engagement_id}".'
             ),
             api_c.DELIVERY_TAG,
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         # TODO schedule the actual JOB, in another PR for HUS-1148
@@ -999,13 +1001,13 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
     @api_error_handler()
     @validate_destination()
     @validate_delivery_params
-    @get_user_name()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def delete(
         self,
         engagement_id: ObjectId,
         audience_id: ObjectId,
         destination_id: ObjectId,
-        user_name: str,
+        user: dict,
     ) -> Tuple[dict, int]:
         """Sets the delivery schedule for one destination of an engagement audience.
 
@@ -1017,7 +1019,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
             engagement_id (ObjectId): Engagement ID.
             audience_id (ObjectId): Audience ID.
             destination_id (ObjectId): Destination ID.
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -1054,7 +1056,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
             audience_id,
             destination_id,
             None,
-            user_name,
+            user[api_c.USER_NAME],
             unset=True,
         )
         # TODO remove the scheduled JOB from AWS, in another PR for HUS-1148
@@ -1069,7 +1071,7 @@ class EngagementDeliveryScheduleDestinationView(SwaggerView):
                 f' in engagement "{engagement_id}".'
             ),
             api_c.DELIVERY_TAG,
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         return {

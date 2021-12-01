@@ -79,7 +79,7 @@ export default {
   props: {
     icon: {
       type: String,
-      required: true,
+      required: false,
     },
 
     iconColor: {
