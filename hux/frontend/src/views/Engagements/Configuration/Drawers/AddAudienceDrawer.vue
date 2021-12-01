@@ -34,7 +34,6 @@
             v-for="(item, i) in overviewListItems"
             :key="i"
             class="list-item ma-0 mr-3"
-            :class="{ 'd-none': i > overviewListItems.length - 3 && !expanded }"
             :title="item.title"
           >
             <template #subtitle-extended>
@@ -64,7 +63,12 @@
     </template>
 
     <template #footer-left>
-      <v-btn tile color="white" @click="onCancelAndBack()">
+      <v-btn
+        tile
+        color="white"
+        class="btn-border box-shadow-none"
+        @click="onCancelAndBack()"
+      >
         <span class="primary--text">Cancel &amp; back</span>
       </v-btn>
       <v-btn

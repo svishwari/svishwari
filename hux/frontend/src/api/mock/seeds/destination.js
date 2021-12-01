@@ -10,7 +10,7 @@ export default [
     name: "Google Ads",
     create_time: "2021-06-03T23:04:59.119Z",
     update_time: "2021-10-26T08:07:54.290Z",
-    is_added: true,
+    is_added: false,
   },
   {
     category: "Marketing",

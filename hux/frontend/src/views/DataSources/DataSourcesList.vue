@@ -43,7 +43,7 @@
           </template>
           <template slot="action-menu-options">
             <div
-              class="action-remove pl-4 pt-1"
+              class="px-4 py-2 white d-flex flex-column text-h5"
               :data-e2e="`data-source-list-${dataSource.status}-remove`"
               @click="openModal(dataSource)"
             >
@@ -53,7 +53,11 @@
 
           <template slot="default">
             <div class="text-h4 black--text">
-              {{ dataSource.feed_count ? dataSource.feed_count : "-" }}
+              {{
+                dataSource.feed_count && dataSource.status == "Active"
+                  ? dataSource.feed_count
+                  : "-"
+              }}
             </div>
             <p
               class="text-body-2 black--text text--lighten-4"
@@ -98,6 +102,7 @@ import ConfirmModal from "@/components/common/ConfirmModal"
 import Status from "@/components/common/Status"
 import EmptyStateData from "@/components/common/EmptyStateData"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
+import sortBy from "lodash/sortBy"
 
 export default {
   name: "DataSourcesList",
@@ -123,7 +128,10 @@ export default {
     }),
 
     addedDataSources() {
-      return this.dataSources.filter((dataSource) => dataSource.is_added)
+      return sortBy(
+        this.dataSources.filter((dataSource) => dataSource.is_added),
+        ["status", "name"]
+      )
     },
 
     hasAddedDatasources() {

@@ -21,8 +21,9 @@
     </page-header>
     <page-header class="top-bar" :header-height="71">
       <template #left>
-        <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
-        <v-icon medium color="black lighten-3" class="pl-6">mdi-magnify</v-icon>
+        <v-btn disabled icon color="black">
+          <icon type="search" :size="20" color="black" variant="lighten3" />
+        </v-btn>
       </template>
 
       <template #right>
@@ -58,6 +59,7 @@
       sort-desc="false"
       nested
       data-e2e="engagement-table"
+      class="big-table"
     >
       <template #item-row="{ item, expandFunc, isExpanded }">
         <tr :class="{ 'expanded-row': isExpanded }">
@@ -83,17 +85,28 @@
                 :data-e2e="setEngagementSelector(item)"
                 has-favorite
                 :is-favorite="isUserFavorite(item, 'engagements')"
+                class="text-body-1"
                 @actionFavorite="handleActionFavorite(item, 'engagements')"
               >
                 <template #expand-icon>
-                  <v-icon
+                  <span
                     v-if="item.audiences.length > 0"
-                    :class="{ 'normal-icon': isExpanded }"
                     data-e2e="expand-engagement"
                     @click="expandFunc(!isExpanded)"
                   >
-                    mdi-chevron-right
-                  </v-icon>
+                    <icon
+                      type="expand-arrow"
+                      :size="14"
+                      color="primary"
+                      class="
+                        cursor-pointer
+                        mdi-chevron-right
+                        mx-2
+                        d-inline-block
+                      "
+                      :class="{ 'normal-icon': isExpanded }"
+                    />
+                  </span>
                 </template>
               </menu-cell>
             </div>
@@ -151,7 +164,7 @@
               </span>
               <span v-else-if="item[header.value].length == 0">—</span>
             </div>
-            <div v-if="header.value == 'status'" class="text-h5">
+            <div v-if="header.value == 'status'">
               <status
                 :status="item[header.value]"
                 :show-label="true"
@@ -253,7 +266,7 @@
             :columns="expandedHeaders"
             :data-items="parentItem.audiences"
             :show-header="false"
-            class="expanded-table"
+            class="expanded-table big-table"
             view-height="auto"
             nested
             data-e2e="audience-table"
@@ -281,20 +294,31 @@
                       :label-class="{
                         'no-expand': item.destinations.length == 0,
                       }"
+                      class="text-body-1"
                     >
                       <template #expand-icon>
-                        <v-icon
+                        <span
                           v-if="item.destinations.length > 0"
-                          :class="{ 'normal-icon': isExpanded }"
                           data-e2e="expand-audience"
                           @click="expandFunc(!isExpanded)"
                         >
-                          mdi-chevron-right
-                        </v-icon>
+                          <icon
+                            type="expand-arrow"
+                            :size="14"
+                            color="primary"
+                            class="
+                              cursor-pointer
+                              mdi-chevron-right
+                              mx-2
+                              d-inline-block
+                            "
+                            :class="{ 'normal-icon': isExpanded }"
+                          />
+                        </span>
                       </template>
                     </menu-cell>
                   </div>
-                  <div v-if="header.value == 'status'" class="text-h5">
+                  <div v-if="header.value == 'status'">
                     <div>
                       <status
                         :status="item[header.value]"
@@ -431,6 +455,7 @@
                   :data-items="getDestinations(parentItem)"
                   :show-header="false"
                   view-height="auto"
+                  class="big-table"
                 >
                   <template #row-item="{ item }">
                     <td
@@ -438,7 +463,7 @@
                       :key="header.value"
                       :style="{ width: header.width }"
                     >
-                      <div v-if="header.value == 'status'" class="text-h5">
+                      <div v-if="header.value == 'status'">
                         <div>
                           <status
                             :status="item[header.value]"
@@ -1038,7 +1063,12 @@ export default {
   background: var(--v-white-base);
   ::v-deep .menu-cell-wrapper {
     .action-icon {
-      display: none;
+      .fav-action {
+        display: none;
+      }
+      .more-action {
+        display: none;
+      }
     }
     .mdi-chevron-right,
     .mdi-dots-vertical {
@@ -1088,7 +1118,6 @@ export default {
     }
     ::v-deep table {
       tr {
-        height: 64px;
         &:hover {
           background: var(--v-primary-lighten2) !important;
         }
@@ -1097,7 +1126,7 @@ export default {
           color: var(--v-black-darken4);
         }
         td:nth-child(1) {
-          font-size: 14px !important;
+          font-size: 16px !important;
         }
       }
       .expanded-row {
@@ -1106,7 +1135,7 @@ export default {
       .v-data-table-header {
         th:nth-child(1) {
           left: 0;
-          z-index: 9;
+          z-index: 3;
           border-right: thin solid rgba(0, 0, 0, 0.12);
           overflow-y: visible;
           overflow-x: visible;
@@ -1115,11 +1144,34 @@ export default {
       }
       tr {
         &:hover {
+          td:nth-child(1) {
+            z-index: 1 !important;
+            background: var(--v-primary-lighten2) !important;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+            .menu-cell-wrapper .action-icon {
+              .fav-action {
+                display: block;
+              }
+              .more-action {
+                display: block;
+              }
+            }
+          }
           background: var(--v-primary-lighten2) !important;
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+          .menu-cell-wrapper {
+            .action-icon {
+              .fav-action {
+                display: block;
+              }
+              .more-action {
+                display: block;
+              }
+            }
+          }
         }
-        height: 64px;
         td {
-          font-size: 14px !important;
+          font-size: 16px !important;
           line-height: 22px;
           color: var(--v-black-darken4);
         }
@@ -1127,8 +1179,8 @@ export default {
           position: sticky;
           top: 0;
           left: 0;
-          background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
+          background-color: white;
           .menu-cell-wrapper > div {
             a.text-decoration-none {
               .ellipsis {

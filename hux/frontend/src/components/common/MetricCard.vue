@@ -50,8 +50,8 @@
             <template #label-content>
               <icon
                 type="info"
-                :size="12"
-                class="ml-1 mb-1"
+                :size="8"
+                class="ml-1 mb-2"
                 color="primary"
                 variant="base"
               />
@@ -73,7 +73,7 @@
                 highLevel,
             }"
           >
-           {{ subtitle }}
+            {{ subtitle }}
           </span>
           <slot name="subtitle-extended"></slot>
         </div>

@@ -15,7 +15,7 @@ import logging
 from typing import List
 
 from pymongo import ASCENDING, MongoClient
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from database.share import get_mongo_client
 
 
@@ -27,54 +27,57 @@ logging.basicConfig(level=logging.INFO)
 # collection name, and list of field/order pairs to be indexed)
 index_constants = [
     (
-        c.DATA_MANAGEMENT_DATABASE,
-        c.CONSTANTS_COLLECTION,
-        [(c.CONSTANT_NAME, ASCENDING)],
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.CONSTANTS_COLLECTION,
+        [(db_c.CONSTANT_NAME, ASCENDING)],
     ),
     (
-        c.DATA_MANAGEMENT_DATABASE,
-        c.INGESTION_JOBS_COLLECTION,
-        [(c.DATA_SOURCE_ID, ASCENDING)],
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.INGESTION_JOBS_COLLECTION,
+        [(db_c.DATA_SOURCE_ID, ASCENDING)],
     ),
     (
-        c.DATA_MANAGEMENT_DATABASE,
-        c.INGESTED_DATA_COLLECTION,
-        [(c.JOB_ID, ASCENDING)],
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.INGESTED_DATA_COLLECTION,
+        [(db_c.JOB_ID, ASCENDING)],
     ),
     (
-        c.DATA_MANAGEMENT_DATABASE,
-        c.INGESTED_DATA_STATS_COLLECTION,
-        [(c.JOB_ID, ASCENDING)],
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.INGESTED_DATA_STATS_COLLECTION,
+        [(db_c.JOB_ID, ASCENDING)],
     ),
     (
-        c.DATA_MANAGEMENT_DATABASE,
-        c.AUDIENCES_COLLECTION,
-        [(c.JOB_ID, ASCENDING)],
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.AUDIENCES_COLLECTION,
+        [(db_c.JOB_ID, ASCENDING)],
     ),
     (
-        c.DATA_MANAGEMENT_DATABASE,
-        c.AUDIENCE_INSIGHTS_COLLECTION,
-        [(c.AUDIENCE_ID, ASCENDING)],
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.AUDIENCE_INSIGHTS_COLLECTION,
+        [(db_c.AUDIENCE_ID, ASCENDING)],
     ),
     (
-        c.DATA_MANAGEMENT_DATABASE,
-        c.DELIVERY_JOBS_COLLECTION,
-        [(c.AUDIENCE_ID, ASCENDING), (c.DELIVERY_PLATFORM_ID, ASCENDING)],
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.DELIVERY_JOBS_COLLECTION,
+        [
+            (db_c.AUDIENCE_ID, ASCENDING),
+            (db_c.DELIVERY_PLATFORM_ID, ASCENDING),
+        ],
     ),
     (
-        c.DATA_MANAGEMENT_DATABASE,
-        c.PERFORMANCE_METRICS_COLLECTION,
-        [(c.DELIVERY_JOB_ID, ASCENDING)],
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.PERFORMANCE_METRICS_COLLECTION,
+        [(db_c.DELIVERY_JOB_ID, ASCENDING)],
     ),
     (
-        c.DATA_MANAGEMENT_DATABASE,
-        c.USER_COLLECTION,
-        [(c.OKTA_ID, ASCENDING)],
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.USER_COLLECTION,
+        [(db_c.OKTA_ID, ASCENDING)],
     ),
     (
-        c.DATA_MANAGEMENT_DATABASE,
-        c.CAMPAIGN_ACTIVITY_COLLECTION,
-        [(c.DELIVERY_JOB_ID, ASCENDING)],
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.CAMPAIGN_ACTIVITY_COLLECTION,
+        [(db_c.DELIVERY_JOB_ID, ASCENDING)],
     ),
 ]
 
@@ -110,20 +113,20 @@ def add_unique_compound_index(database: MongoClient) -> None:
         database (MongoClient): MongoDB Client.
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.INGESTED_DATA_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.INGESTED_DATA_COLLECTION
     ]
 
-    field_str = "%s.%s" % (c.INGESTED_DATA, c.S_TYPE_CUSTOMER_ID)
+    field_str = f"{db_c.INGESTED_DATA}.{db_c.S_TYPE_CUSTOMER_ID}"
     collection.create_index(
-        [(field_str, ASCENDING), (c.JOB_ID, ASCENDING)],
+        [(field_str, ASCENDING), (db_c.JOB_ID, ASCENDING)],
         unique=True,
     )
 
     logging.info(
         "Creating a unique compound index <(%s, %s)> in collection <%s>...",
         field_str,
-        c.JOB_ID,
+        db_c.JOB_ID,
         collection.full_name,
     )
 
@@ -135,7 +138,7 @@ if __name__ == "__main__":
     db_client = get_mongo_client()
 
     # Get database
-    DM_DB = db_client[c.DATA_MANAGEMENT_DATABASE]
+    DM_DB = db_client[db_c.DATA_MANAGEMENT_DATABASE]
 
     set_indexes(db_client, index_constants)
     add_unique_compound_index(db_client)

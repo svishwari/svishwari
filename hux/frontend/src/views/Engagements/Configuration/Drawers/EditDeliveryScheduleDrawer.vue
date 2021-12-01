@@ -39,7 +39,13 @@
     </template>
 
     <template #footer-left>
-      <hux-button variant="white" is-tile height="40" @click="reset()">
+      <hux-button
+        variant="white"
+        is-tile
+        height="40"
+        class="btn-border box-shadow-none"
+        @click="reset()"
+      >
         Cancel
       </hux-button>
     </template>

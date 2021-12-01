@@ -1,5 +1,5 @@
 """File for decorators used in the API routes"""
-# pylint: disable=too-many-statements
+# pylint: disable=too-many-statements,disable=unused-argument
 import warnings
 import getpass
 from functools import wraps
@@ -56,7 +56,7 @@ def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
         self (func): a flask/blueprint object, must have 'add_url_rule'
         rule (str): an input rule
         endpoint (str): the name of the endpoint
-        options (Any): options to be added to URL rule
+        **options (Any): options to be added to URL rule
 
     Returns:
         Response (object): decorator
@@ -252,7 +252,7 @@ def requires_access_levels(access_levels: list) -> object:
             if get_config().TEST_AUTH_OVERRIDE:
                 # return a default user name
                 kwargs[api_c.USER] = {
-                    api_c.NAME: getpass.getuser(),
+                    api_c.USER_NAME: getpass.getuser(),
                     api_c.USER_ACCESS_LEVEL: db_c.USER_ROLE_ADMIN,
                     api_c.USER_PII_ACCESS: True,
                 }
@@ -285,6 +285,9 @@ def requires_access_levels(access_levels: list) -> object:
                 return {
                     api_c.MESSAGE: api_c.INVALID_AUTH
                 }, HTTPStatus.UNAUTHORIZED
+
+            user[api_c.USER_NAME] = user.get(db_c.USER_DISPLAY_NAME, None)
+            user[api_c.USER_PII_ACCESS] = user.get(db_c.USER_PII_ACCESS, False)
 
             # return found user
             kwargs[api_c.USER] = user

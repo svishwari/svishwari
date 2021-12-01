@@ -5,6 +5,7 @@
 
 import http from "@/api/httpClient"
 import resources from "@/api/resources"
+var qs = require("qs")
 
 const client = {}
 /* #region Generic endpoints */
@@ -40,6 +41,11 @@ client["users"].contactUs = (data) => {
 
 //#region Customers
 // Custom one-off resource endpoints
+
+client["customers"].getRedact = (id, redactFlag) => {
+  return http.get(`/customers/${id}?redact=${redactFlag}`)
+}
+
 client["customers"].overview = () => {
   return http.get("/customers/overview")
 }
@@ -259,6 +265,15 @@ client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
 }
 
+client["audiences"].getAudiences = (data) => {
+  return http.get("/audiences", {
+    params: data,
+    paramsSerializer: (params) => {
+      return qs.stringify(params)
+    },
+  })
+}
+
 client["audiences"].downloadAudience = (audienceId, fileType) => {
   return http.get(`/audiences/${audienceId}/${fileType}`, {
     timeout: 0,
@@ -298,10 +313,19 @@ client["audiences"].remove = (resourceId) => {
 //#endregion
 
 //#region Notifications
-client["notifications"].getNotifications = (batchSize, batchNumber) => {
-  return http.get(
-    `/notifications?batch_size=${batchSize}&batch_number=${batchNumber}`
-  )
+client["notifications"].getNotifications = (data) => {
+  delete data.isLazyLoad
+  let URLData = []
+  let newURLFormat
+  let URLString
+  for (const property in data) {
+    let formURL = property + "=" + data[property]
+    URLData.push(formURL)
+  }
+  let arrJoin = URLData.join("@")
+  URLString = arrJoin.toString()
+  newURLFormat = URLString.replace(/@/g, "&")
+  return http.get(`/notifications?${newURLFormat}`)
 }
 
 client["notifications"].find = (notification_id) => {

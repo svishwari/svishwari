@@ -93,7 +93,7 @@
           variant="white"
           size="large"
           :is-tile="true"
-          class="mr-2"
+          class="mr-2 btn-border box-shadow-none"
           @click="closeDrawer"
         >
           <span class="primary--text">Cancel</span>
@@ -267,7 +267,7 @@ export default {
     async fetchAudiences() {
       try {
         this.loading = true
-        await this.getAudiences()
+        await this.getAudiences({})
         this.loading = false
       } finally {
         this.loading = false

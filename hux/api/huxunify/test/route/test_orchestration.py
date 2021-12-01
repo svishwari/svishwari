@@ -204,10 +204,7 @@ class OrchestrationRouteTest(TestCase):
                     },
                     {
                         db_c.OBJECT_ID: self.audiences[1][db_c.ID],
-                        api_c.DESTINATIONS: [
-                            {db_c.OBJECT_ID: dest[db_c.ID]}
-                            for dest in self.destinations
-                        ],
+                        api_c.DESTINATIONS: [],
                     },
                 ],
                 api_c.USER_NAME: self.user_name,
@@ -284,6 +281,10 @@ class OrchestrationRouteTest(TestCase):
     def test_get_audience_rules_success(self):
         """Test the get audience rules route success."""
 
+        mock.patch(
+            "huxunify.api.orchestration.read_stub_city_zip_data",
+            return_value=t_c.CITY_ZIP_STUB_DATA,
+        )
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/rules", headers=t_c.STANDARD_HEADERS
         )
@@ -648,18 +649,8 @@ class OrchestrationRouteTest(TestCase):
                 self.assertIn(db_c.DELIVERY_PLATFORM_ID, delivery)
 
     def test_get_lookalike_audience(self):
-        """Test get audience for a lookalike audience."""
-
-        # create a lookalike audience
-        lookalike_audience = create_delivery_platform_lookalike_audience(
-            self.database,
-            self.destinations[0][db_c.ID],
-            self.audiences[0],
-            "My lookalike audience 1",
-            0.01,
-            "US",
-            self.user_name,
-        )
+        """Test get audience for a lookalike audience for which the source
+        audience exists in DB."""
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -669,7 +660,8 @@ class OrchestrationRouteTest(TestCase):
         self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{self.audience_api_endpoint}/{lookalike_audience[db_c.ID]}",
+            f"{self.audience_api_endpoint}/"
+            f"{self.lookalike_audience_doc[db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -677,11 +669,14 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(audience)
         self.assertEqual(
-            str(lookalike_audience[db_c.ID]), audience[db_c.OBJECT_ID]
+            str(self.lookalike_audience_doc[db_c.ID]), audience[db_c.OBJECT_ID]
         )
-        self.assertEqual(lookalike_audience[api_c.NAME], audience[api_c.NAME])
+        self.assertEqual(
+            self.lookalike_audience_doc[api_c.NAME], audience[api_c.NAME]
+        )
         self.assertEqual(self.user_name, audience[db_c.CREATED_BY])
         self.assertTrue(audience[api_c.IS_LOOKALIKE])
+        self.assertTrue(audience[api_c.LOOKALIKE_SOURCE_EXISTS])
         self.assertEqual(
             str(self.audiences[0][db_c.ID]), audience[t_c.SOURCE_ID]
         )
@@ -698,7 +693,7 @@ class OrchestrationRouteTest(TestCase):
 
     def test_get_lookalike_audience_source_audience_does_not_exist(self):
         """Test get audience for a lookalike audience where the source
-        audience does not exist."""
+        audience does not exist in DB."""
 
         audience_doc = {
             db_c.AUDIENCE_NAME: "Test Source Audience 1",
@@ -729,6 +724,7 @@ class OrchestrationRouteTest(TestCase):
             0.01,
             "US",
             self.user_name,
+            50,
         )
 
         # delete the source audience from mock database
@@ -758,6 +754,7 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(lookalike_audience[api_c.NAME], audience[api_c.NAME])
         self.assertEqual(self.user_name, audience[db_c.CREATED_BY])
         self.assertTrue(audience[api_c.IS_LOOKALIKE])
+        self.assertFalse(audience[api_c.LOOKALIKE_SOURCE_EXISTS])
         self.assertEqual(
             str(source_audience[db_c.ID]), audience[t_c.SOURCE_ID]
         )
@@ -836,18 +833,37 @@ class OrchestrationRouteTest(TestCase):
                     self.assertIsNone(audience[api_c.AUDIENCE_LAST_DELIVERED])
 
                 # find the matched audience destinations, should be the same.
-                matched_audience = [
+                matched_audience_destinations = [
                     x
                     for x in expected_audience_destinations
                     if x[db_c.ID] == ObjectId(audience[api_c.ID])
                 ]
 
-                # test that the unique count of delivery destinations
-                # is the same as the response.
+                # test that the unique count of delivery destinations is the
+                # same as the response
                 self.assertEqual(
                     len(audience[db_c.DESTINATIONS]),
-                    len(matched_audience[0][db_c.DESTINATIONS]),
+                    len(matched_audience_destinations[0][db_c.DESTINATIONS])
+                    if matched_audience_destinations
+                    else 0,
                 )
+
+                # check the lookalikeable field in audience based on
+                # destinations present in the audience since it will be set to
+                # disabled for sure if the audience has no destinations added
+                # to it
+                self.assertIn(
+                    audience[api_c.LOOKALIKEABLE],
+                    [
+                        api_c.STATUS_INACTIVE,
+                        api_c.STATUS_ACTIVE,
+                    ]
+                    if audience[db_c.DESTINATIONS]
+                    else [
+                        api_c.STATUS_DISABLED,
+                    ],
+                )
+
             else:
                 self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
                 self.assertTrue(audience[api_c.IS_LOOKALIKE])

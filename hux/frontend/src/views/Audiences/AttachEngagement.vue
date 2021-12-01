@@ -152,7 +152,12 @@
                   </span>
                   <v-menu max-width="240" open-on-hover offset-y>
                     <template #activator="{ on }">
-                      <v-icon color="primary" :size="12" class="ml-1" v-on="on">
+                      <v-icon
+                        color="primary"
+                        :size="8"
+                        class="ml-1 mb-1"
+                        v-on="on"
+                      >
                         mdi-information-outline
                       </v-icon>
                     </template>
@@ -309,6 +314,7 @@
           :is-tile="true"
           height="40"
           width="146"
+          class="btn-border box-shadow-none"
           @click.native="goToStep1()"
         >
           <span class="primary--text">Cancel &amp; back</span>

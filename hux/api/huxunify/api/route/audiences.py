@@ -1,3 +1,4 @@
+# pylint: disable=unused-argument
 """Paths for Orchestration API"""
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
@@ -35,10 +36,11 @@ from huxunify.api.data_connectors.okta import get_token_from_request
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
-    get_user_name,
     api_error_handler,
     validate_engagement_and_audience,
+    requires_access_levels,
 )
+
 from huxunify.api.schema.customers import (
     CustomersInsightsCitiesSchema,
     CustomersInsightsStatesSchema,
@@ -56,6 +58,8 @@ from huxunify.api.route.utils import (
 )
 
 # setup the audiences blueprint
+from huxunify.api.stubbed_data import stub_city_zip_data
+
 audience_bp = Blueprint(api_c.AUDIENCE_ENDPOINT, import_name=__name__)
 
 
@@ -176,9 +180,9 @@ class AudienceDownload(SwaggerView):
 
     # pylint: disable=no-self-use, too-many-locals
     @api_error_handler()
-    @get_user_name()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
-        self, audience_id: str, download_type: str, user_name: str
+        self, audience_id: str, download_type: str, user: dict
     ) -> Tuple[Response, int]:
         """Downloads an audience.
 
@@ -189,7 +193,7 @@ class AudienceDownload(SwaggerView):
         Args:
             audience_id (str): Audience ID.
             download_type (str): Download type.
-            user_name (str): User name.
+            user (dict): User object.
 
         Returns:
             Tuple[Response, int]: File Object Response, HTTP status code.
@@ -288,7 +292,7 @@ class AudienceDownload(SwaggerView):
             file_name=audience_file_name,
             bucket=config.S3_DATASET_BUCKET,
             object_name=audience_file_name,
-            user_name=user_name,
+            user_name=user[api_c.USER_NAME],
             file_type=api_c.AUDIENCE,
         ):
             create_audience_audit(
@@ -296,7 +300,7 @@ class AudienceDownload(SwaggerView):
                 audience_id=audience_id,
                 download_type=download_type,
                 file_name=audience_file_name,
-                user_name=user_name,
+                user_name=user[api_c.USER_NAME],
             )
             logger.info(
                 "Created an audit log for %s audience file creation",
@@ -309,10 +313,10 @@ class AudienceDownload(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            f'{user_name} downloaded the audience, "{audience[db_c.NAME]}"'
+            f'{user[api_c.USER_NAME]} downloaded the audience, "{audience[db_c.NAME]}"'
             f" with format {download_type}.",
             api_c.ORCHESTRATION_TAG,
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         return (
@@ -364,7 +368,8 @@ class AudienceInsightsStates(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, audience_id: str) -> Tuple[list, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, audience_id: str, user: dict) -> Tuple[list, int]:
         """Retrieves state-level geographic customer insights for the audience.
 
         ---
@@ -373,6 +378,7 @@ class AudienceInsightsStates(SwaggerView):
 
         Args:
             audience_id (str): Audience ID.
+            user (dict): user object.
 
         Returns:
             Tuple[list, int]: list of spend and size data by state,
@@ -457,7 +463,8 @@ class AudienceInsightsCities(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, audience_id: str) -> Tuple[list, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, audience_id: str, user: dict) -> Tuple[list, int]:
         """Retrieves city-level geographic customer insights for the audience.
 
         ---
@@ -466,6 +473,7 @@ class AudienceInsightsCities(SwaggerView):
 
         Args:
             audience_id (str): Audience ID.
+            user (dict): user object.
 
         Returns:
             Tuple[list, int]: list of spend and size by city, HTTP status code.
@@ -552,7 +560,8 @@ class AudienceInsightsCountries(SwaggerView):
     # pylint: disable=no-self-use
     @validate_engagement_and_audience()
     @api_error_handler()
-    def get(self, audience_id: ObjectId) -> Tuple[list, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, audience_id: ObjectId, user: dict) -> Tuple[list, int]:
         """Retrieves country-level geographic customer insights for the audience.
 
         ---
@@ -561,6 +570,7 @@ class AudienceInsightsCountries(SwaggerView):
 
         Args:
             audience_id (ObjectId): Audience ID.
+            user (dict): user object.
 
         Returns:
             Tuple[list, int]: list of spend and size data by country,
@@ -590,3 +600,92 @@ class AudienceInsightsCountries(SwaggerView):
             ),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    audience_bp,
+    f"/{api_c.AUDIENCE_ENDPOINT}/rules/<field_type>/<key>",
+    "AudienceRulesCities",
+)
+class AudienceRulesLocation(SwaggerView):
+    """Audience Rules Constants for Cities & Zip"""
+
+    parameters = [
+        {
+            "name": api_c.FIELD_TYPE,
+            "description": "Field Type",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "cities",
+        },
+        {
+            "name": api_c.KEY,
+            "description": "Search Key",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "new",
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "array",
+                "items": "Location Constant Lists",
+            },
+            "description": "Location Constants List",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Audience Rules."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(self, field_type: str, key: str) -> Tuple[dict, int]:
+        """Retrieves Location Rules constants.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            field_type (str): Field Type
+            key (str): Search Key
+
+
+        Returns:
+            Tuple[list, int]: rules constants for email
+        """
+
+        # TODO Remove stub once CDM API is integrated
+        if field_type == api_c.CITY:
+            data = jsonify(
+                [
+                    {x[1]: f"{x[1]}, {x[2]} USA"}
+                    for x in [
+                        x
+                        for x in stub_city_zip_data.city_zip_data
+                        if key.lower() in x[1].lower()
+                    ]
+                ]
+            )
+        elif field_type == api_c.ZIP_CODE:
+            data = jsonify(
+                [
+                    {x[0]: f"{x[0]}, {x[1]} {x[2]}"}
+                    for x in [
+                        x
+                        for x in stub_city_zip_data.city_zip_data
+                        if key.lower() in x[0].lower()
+                    ]
+                ]
+            )
+        else:
+            return {"message": "Incorrect Combination"}, HTTPStatus.NOT_FOUND
+
+        return data, HTTPStatus.OK

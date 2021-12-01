@@ -1,5 +1,5 @@
 <template>
-  <v-card class="rounded-lg card-style delivery-overview mt-4" flat >
+  <v-card class="rounded-lg card-style delivery-overview mt-4" flat>
     <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-3">
       <slot name="title-left"></slot>
       <slot name="title-right"></slot>
@@ -14,7 +14,8 @@
         v-if="sections.length > 0"
         class="empty-state py-4 black--text text--lighten-4 text-body-1"
       >
-        This audience is not part of an engagement. Add it to an engagement below.
+        This audience is not part of an engagement. Add it to an engagement
+        below.
       </div>
       <div v-else class="pl-0 pt-0 pr-0 overflow-auto pb-3">
         <delivery-details
@@ -27,10 +28,10 @@
           :section-type="sectionType"
           :destination-menu-items="destinationActions"
           data-e2e="status-list"
+          class="mb-2"
           @onSectionAction="$emit('onOverviewSectionAction', $event)"
           @onDestinationAction="$emit('onOverviewDestinationAction', $event)"
           @onAddDestination="$emit('onAddDestination', $event)"
-          class="mb-2"
         >
           <template #empty-destinations>
             <slot name="empty-deliveries" :sectionId="item.id" />
@@ -57,13 +58,12 @@
 </template>
 
 <script>
-import StatusList from "@/components/common/StatusList.vue"
 import DeliveryDetails from "@/components/common/DeliveryDetails.vue"
 import HuxIcon from "@/components/common/Icon.vue"
 
 export default {
   name: "Delivery",
-  components: { StatusList, DeliveryDetails, HuxIcon },
+  components: { DeliveryDetails, HuxIcon },
   props: {
     sections: {
       type: Array,
@@ -143,8 +143,8 @@ export default {
     height: 60px !important;
     display: inline-table;
     width: 100%;
-    background: #F9FAFB;
-    border: 1px solid #E2EAEC;
+    background: #f9fafb;
+    border: 1px solid #e2eaec;
     border-radius: 5px;
   }
 }

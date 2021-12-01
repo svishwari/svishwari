@@ -11,9 +11,10 @@
                 <icon
                   v-if="title.toolTipText"
                   type="info"
-                  :size="12"
+                  :size="8"
                   color="primary"
                   variant="base"
+                  class="mb-1"
                 />
               </template>
               <template #hover-content>
@@ -41,7 +42,9 @@
           <td v-for="(col, index) in columns" :key="index" class="text-body-1">
             <tooltip v-if="['city', 'country', 'state'].includes(col.value)">
               {{ item[col.value] }}
-              <template #tooltip> {{ item[col.value] }} </template>
+              <template #tooltip>
+                {{ item[col.value] }}
+              </template>
             </tooltip>
             <tooltip v-if="col.value === 'size'">
               {{ item[col.value] | Numeric(false, true) }}
@@ -49,7 +52,7 @@
                 {{ item[col.value] | Numeric(true) }}
               </template>
             </tooltip>
-            <tooltip v-if="col.value === 'revenue'">
+            <tooltip v-if="col.value === 'avg_spend'">
               {{ item[col.value] | Currency }}
               <template #tooltip>
                 {{ item[col.value] | Currency }}
@@ -79,7 +82,7 @@ import Drawer from "@/components/common/Drawer.vue"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Observer from "@/components/common/Observer.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
-import { arrayHasFieldWithMultipleValues } from "../../../utils"
+import { arrayHasFieldWithMultipleValues } from "@/utils"
 import Icon from "@/components/common/Icon.vue"
 
 export default {
@@ -132,8 +135,8 @@ export default {
           text: "Size",
         },
         {
-          value: "revenue",
-          text: "Revenue",
+          value: "avg_spend",
+          text: "Avg. spend",
         },
       ],
       sortColumn: "state",
@@ -340,6 +343,13 @@ export default {
 .hux-data-table {
   ::v-deep table {
     table-layout: auto !important;
+    tbody {
+      tr {
+        td {
+          height: 40px !important;
+        }
+      }
+    }
   }
 }
 </style>

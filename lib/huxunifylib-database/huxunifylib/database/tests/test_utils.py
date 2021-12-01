@@ -5,7 +5,7 @@ import unittest
 import mongomock
 from bson import ObjectId
 
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 import huxunifylib.database.data_management as dm
 import huxunifylib.database.audience_management as am
 import huxunifylib.database.delivery_platform_management as dpm
@@ -26,7 +26,7 @@ class TestUtils(unittest.TestCase):
             "localhost", 27017, None, None
         ).connect()
 
-        self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
+        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
 
         self.generic_campaigns = [
             {"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}
@@ -40,7 +40,7 @@ class TestUtils(unittest.TestCase):
         self.data_source_doc_1 = dm.set_data_source(
             database=self.database,
             data_source_name="My Data Source 1",
-            data_source_type=c.DATA_SOURCE_TYPE_FIRST_PARTY,
+            data_source_type=db_c.DATA_SOURCE_TYPE_FIRST_PARTY,
             data_source_format="CSV",
             location_type="S3",
             location_details={
@@ -48,12 +48,12 @@ class TestUtils(unittest.TestCase):
                 "key": "my.s3.key",
             },
             fields=[
-                {"header": "fn", "special_type": c.S_TYPE_FIRST_NAME},
-                {"header": "ln", "special_type": c.S_TYPE_LAST_NAME},
-                {"header": "gender", "special_type": c.S_TYPE_GENDER},
+                {"header": "fn", "special_type": db_c.S_TYPE_FIRST_NAME},
+                {"header": "ln", "special_type": db_c.S_TYPE_LAST_NAME},
+                {"header": "gender", "special_type": db_c.S_TYPE_GENDER},
                 {
                     "header": "customer_id",
-                    "special_type": c.S_TYPE_CUSTOMER_ID,
+                    "special_type": db_c.S_TYPE_CUSTOMER_ID,
                 },
             ],
         )
@@ -61,7 +61,7 @@ class TestUtils(unittest.TestCase):
         self.data_source_doc_2 = dm.set_data_source(
             database=self.database,
             data_source_name="My Data Source 2",
-            data_source_type=c.DATA_SOURCE_TYPE_FIRST_PARTY,
+            data_source_type=db_c.DATA_SOURCE_TYPE_FIRST_PARTY,
             data_source_format="TSV",
             location_type="S3",
             location_details={
@@ -69,20 +69,20 @@ class TestUtils(unittest.TestCase):
                 "key": "my.s3.key",
             },
             fields=[
-                {"header": "fn", "special_type": c.S_TYPE_FIRST_NAME},
-                {"header": "ln", "special_type": c.S_TYPE_LAST_NAME},
+                {"header": "fn", "special_type": db_c.S_TYPE_FIRST_NAME},
+                {"header": "ln", "special_type": db_c.S_TYPE_LAST_NAME},
             ],
         )
 
         # Create ingestion jobs
         self.ingestion_job_doc_1 = dm.set_ingestion_job(
             self.database,
-            self.data_source_doc_1[c.ID],
+            self.data_source_doc_1[db_c.ID],
         )
 
         self.ingestion_job_doc_2 = dm.set_ingestion_job(
             self.database,
-            self.data_source_doc_1[c.ID],
+            self.data_source_doc_1[db_c.ID],
         )
 
         # Create audiences
@@ -90,20 +90,20 @@ class TestUtils(unittest.TestCase):
             self.database,
             "My Audience 1",
             [],
-            self.ingestion_job_doc_1[c.ID],
+            self.ingestion_job_doc_1[db_c.ID],
         )
 
         self.audience_doc_2 = am.create_audience(
             self.database,
             "My Audience 2",
             [],
-            self.ingestion_job_doc_2[c.ID],
+            self.ingestion_job_doc_2[db_c.ID],
         )
 
         # Set delivery platforms
         self.delivery_platform_doc_1 = dpm.set_delivery_platform(
             self.database,
-            c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
             "My delivery platform 1",
             {
                 "facebook_access_token": "path1",
@@ -115,7 +115,7 @@ class TestUtils(unittest.TestCase):
 
         self.delivery_platform_doc_2 = dpm.set_delivery_platform(
             self.database,
-            c.DELIVERY_PLATFORM_GOOGLE,
+            db_c.DELIVERY_PLATFORM_GOOGLE,
             "My delivery platform 2",
             {
                 "google_access_token": "path1",
@@ -128,7 +128,7 @@ class TestUtils(unittest.TestCase):
         # Create a lookalike audiences
         self.lookalike_doc_1 = dpm.create_delivery_platform_lookalike_audience(
             self.database,
-            self.delivery_platform_doc_1[c.ID],
+            self.delivery_platform_doc_1[db_c.ID],
             self.audience_doc_1,
             "My lookalike audience 1",
             0.01,
@@ -137,7 +137,7 @@ class TestUtils(unittest.TestCase):
 
         self.lookalike_doc_2 = dpm.create_delivery_platform_lookalike_audience(
             self.database,
-            self.delivery_platform_doc_2[c.ID],
+            self.delivery_platform_doc_2[db_c.ID],
             self.audience_doc_2,
             "My lookalike audience 2",
             0.01,
@@ -170,21 +170,21 @@ class TestUtils(unittest.TestCase):
 
         # data source to be created
         sample_data_source = {
-            c.DATA_SOURCE_NAME: "My Data Source",
-            c.DATA_SOURCE_TYPE: 1,
-            c.DATA_SOURCE_FORMAT: "CSV",
-            c.DATA_SOURCE_LOCATION_TYPE: "S3",
-            c.DATA_SOURCE_LOCATION_DETAILS: {
+            db_c.DATA_SOURCE_NAME: "My Data Source",
+            db_c.DATA_SOURCE_TYPE: 1,
+            db_c.DATA_SOURCE_FORMAT: "CSV",
+            db_c.DATA_SOURCE_LOCATION_TYPE: "S3",
+            db_c.DATA_SOURCE_LOCATION_DETAILS: {
                 "bucket": "my.s3.bucket",
                 "key": "my.s3.key",
             },
-            c.DATA_SOURCE_FIELDS: [
-                {"header": "fn", "special_type": c.S_TYPE_FIRST_NAME},
-                {"header": "ln", "special_type": c.S_TYPE_LAST_NAME},
-                {"header": "gender", "special_type": c.S_TYPE_GENDER},
+            db_c.DATA_SOURCE_FIELDS: [
+                {"header": "fn", "special_type": db_c.S_TYPE_FIRST_NAME},
+                {"header": "ln", "special_type": db_c.S_TYPE_LAST_NAME},
+                {"header": "gender", "special_type": db_c.S_TYPE_GENDER},
             ],
-            c.DATA_SOURCE_NON_BREAKDOWN_FIELDS: [],
-            c.ENABLED: True,
+            db_c.DATA_SOURCE_NON_BREAKDOWN_FIELDS: [],
+            db_c.ENABLED: True,
         }
 
         # Set a data source
@@ -199,17 +199,17 @@ class TestUtils(unittest.TestCase):
         )
 
         self.assertTrue(data_source_doc is not None)
-        self.assertTrue(c.ID in data_source_doc)
+        self.assertTrue(db_c.ID in data_source_doc)
 
-        data_source_id = data_source_doc[c.ID]
+        data_source_id = data_source_doc[db_c.ID]
 
         # Set an ingestion job
         ingestion_job_doc = dm.set_ingestion_job(database, data_source_id)
 
         self.assertTrue(ingestion_job_doc is not None)
-        self.assertTrue(c.ID in ingestion_job_doc)
+        self.assertTrue(db_c.ID in ingestion_job_doc)
 
-        ingestion_job_id = ingestion_job_doc[c.ID]
+        ingestion_job_id = ingestion_job_doc[db_c.ID]
 
         # Create an audience
         audience_doc = am.create_audience(
@@ -220,9 +220,9 @@ class TestUtils(unittest.TestCase):
         )
 
         self.assertTrue(audience_doc is not None)
-        self.assertTrue(c.ID in audience_doc)
+        self.assertTrue(db_c.ID in audience_doc)
 
-        audience_id = audience_doc[c.ID]
+        audience_id = audience_doc[db_c.ID]
 
         # Set delivery platform
         auth_details = {
@@ -234,21 +234,21 @@ class TestUtils(unittest.TestCase):
 
         delivery_platform_doc = dpm.set_delivery_platform(
             database,
-            c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
             "My delivery platform",
             auth_details,
         )
 
-        delivery_platform_id = delivery_platform_doc[c.ID]
+        delivery_platform_id = delivery_platform_doc[db_c.ID]
 
         self.assertTrue(delivery_platform_id is not None)
 
         doc = dpm.set_connection_status(
-            database, delivery_platform_id, c.STATUS_SUCCEEDED
+            database, delivery_platform_id, db_c.STATUS_SUCCEEDED
         )
 
         self.assertTrue(doc is not None)
-        self.assertTrue(c.DELIVERY_PLATFORM_STATUS in doc)
+        self.assertTrue(db_c.DELIVERY_PLATFORM_STATUS in doc)
 
         # Create a delivery job
         delivery_doc = dpm.set_delivery_job(
@@ -259,9 +259,9 @@ class TestUtils(unittest.TestCase):
         )
 
         self.assertTrue(delivery_doc is not None)
-        self.assertTrue(c.ID in delivery_doc)
+        self.assertTrue(db_c.ID in delivery_doc)
 
-        delivery_id = delivery_doc[c.ID]
+        delivery_id = delivery_doc[db_c.ID]
 
         # Create a lookalike audience
         doc = dpm.create_delivery_platform_lookalike_audience(
@@ -274,13 +274,13 @@ class TestUtils(unittest.TestCase):
         )
 
         self.assertTrue(doc is not None)
-        self.assertTrue(c.DELIVERY_PLATFORM_ID in doc)
-        self.assertTrue(c.LOOKALIKE_SOURCE_AUD_ID in doc)
-        self.assertTrue(c.LOOKALIKE_AUD_NAME in doc)
-        self.assertTrue(c.LOOKALIKE_AUD_SIZE_PERCENTAGE in doc)
-        self.assertTrue(c.LOOKALIKE_AUD_COUNTRY in doc)
+        self.assertTrue(db_c.DELIVERY_PLATFORM_ID in doc)
+        self.assertTrue(db_c.LOOKALIKE_SOURCE_AUD_ID in doc)
+        self.assertTrue(db_c.LOOKALIKE_AUD_NAME in doc)
+        self.assertTrue(db_c.LOOKALIKE_AUD_SIZE_PERCENTAGE in doc)
+        self.assertTrue(db_c.LOOKALIKE_AUD_COUNTRY in doc)
 
-        lookalike_audience_id = doc[c.ID]
+        lookalike_audience_id = doc[db_c.ID]
 
         # Set delivery job lookalike audiences
         lookalike_audiences = [lookalike_audience_id]
@@ -291,9 +291,9 @@ class TestUtils(unittest.TestCase):
         )
 
         self.assertTrue(doc is not None)
-        self.assertTrue(c.DELIVERY_PLATFORM_LOOKALIKE_AUDS in doc)
+        self.assertTrue(db_c.DELIVERY_PLATFORM_LOOKALIKE_AUDS in doc)
         self.assertEqual(
-            doc[c.DELIVERY_PLATFORM_LOOKALIKE_AUDS], lookalike_audiences
+            doc[db_c.DELIVERY_PLATFORM_LOOKALIKE_AUDS], lookalike_audiences
         )
 
         # Create another delivery job with no lookalike audiences
@@ -305,9 +305,9 @@ class TestUtils(unittest.TestCase):
         )
 
         self.assertTrue(delivery_doc is not None)
-        self.assertTrue(c.ID in delivery_doc)
+        self.assertTrue(db_c.ID in delivery_doc)
 
-        delivery_id_2 = delivery_doc[c.ID]
+        delivery_id_2 = delivery_doc[db_c.ID]
 
         # Test soft delete functions
         success_flag = delete_util.delete_audience(database, audience_id)
@@ -384,19 +384,19 @@ class TestUtils(unittest.TestCase):
 
         success_flag = delete_util.delete_lookalike_audiences_bulk(
             self.database,
-            [self.lookalike_doc_1[c.ID], self.lookalike_doc_2[c.ID]],
+            [self.lookalike_doc_1[db_c.ID], self.lookalike_doc_2[db_c.ID]],
         )
         self.assertTrue(success_flag)
 
         doc = dpm.get_delivery_platform_lookalike_audience(
             self.database,
-            self.lookalike_doc_1[c.ID],
+            self.lookalike_doc_1[db_c.ID],
         )
         self.assertTrue(doc is None)
 
         doc = dpm.get_delivery_platform_lookalike_audience(
             self.database,
-            self.lookalike_doc_2[c.ID],
+            self.lookalike_doc_2[db_c.ID],
         )
         self.assertTrue(doc is None)
 
@@ -406,19 +406,19 @@ class TestUtils(unittest.TestCase):
 
         success_flag = delete_util.delete_audiences_bulk(
             self.database,
-            [self.audience_doc_1[c.ID], self.audience_doc_2[c.ID]],
+            [self.audience_doc_1[db_c.ID], self.audience_doc_2[db_c.ID]],
         )
         self.assertTrue(success_flag)
 
         doc = am.get_audience_config(
             self.database,
-            self.audience_doc_1[c.ID],
+            self.audience_doc_1[db_c.ID],
         )
         self.assertTrue(doc is None)
 
         doc = am.get_audience_config(
             self.database,
-            self.audience_doc_2[c.ID],
+            self.audience_doc_2[db_c.ID],
         )
         self.assertTrue(doc is None)
 
@@ -429,21 +429,21 @@ class TestUtils(unittest.TestCase):
         success_flag = delete_util.delete_delivery_platforms_bulk(
             self.database,
             [
-                self.delivery_platform_doc_1[c.ID],
-                self.delivery_platform_doc_2[c.ID],
+                self.delivery_platform_doc_1[db_c.ID],
+                self.delivery_platform_doc_2[db_c.ID],
             ],
         )
         self.assertTrue(success_flag)
 
         doc = dpm.get_delivery_platform(
             self.database,
-            self.delivery_platform_doc_1[c.ID],
+            self.delivery_platform_doc_1[db_c.ID],
         )
         self.assertTrue(doc is None)
 
         doc = dpm.get_delivery_platform(
             self.database,
-            self.delivery_platform_doc_2[c.ID],
+            self.delivery_platform_doc_2[db_c.ID],
         )
         self.assertTrue(doc is None)
 
@@ -453,19 +453,19 @@ class TestUtils(unittest.TestCase):
 
         success_flag = delete_util.delete_data_sources_bulk(
             self.database,
-            [self.data_source_doc_1[c.ID], self.data_source_doc_2[c.ID]],
+            [self.data_source_doc_1[db_c.ID], self.data_source_doc_2[db_c.ID]],
         )
         self.assertTrue(success_flag)
 
         doc = dm.get_data_source(
             self.database,
-            self.data_source_doc_1[c.ID],
+            self.data_source_doc_1[db_c.ID],
         )
         self.assertTrue(doc is None)
 
         doc = dm.get_data_source(
             self.database,
-            self.data_source_doc_2[c.ID],
+            self.data_source_doc_2[db_c.ID],
         )
         self.assertTrue(doc is None)
 
@@ -482,20 +482,20 @@ class TestUtils(unittest.TestCase):
 
         delivery_platform_doc = dpm.set_delivery_platform(
             self.database,
-            c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
             "My delivery platform",
             auth_details,
         )
-        delivery_platform_id = delivery_platform_doc[c.ID]
+        delivery_platform_id = delivery_platform_doc[db_c.ID]
         self.assertIsNotNone(delivery_platform_id)
         dpm.set_connection_status(
-            self.database, delivery_platform_id, c.STATUS_SUCCEEDED
+            self.database, delivery_platform_id, db_c.STATUS_SUCCEEDED
         )
 
         # Create a delivery job
         delivery_job_doc = dpm.set_delivery_job(
             database=self.database,
-            audience_id=ObjectId("5dff99c10345af022f219bbf"),
+            audience_id=ObjectId(),
             delivery_platform_id=delivery_platform_id,
             delivery_platform_generic_campaigns=self.generic_campaigns,
         )
@@ -504,8 +504,8 @@ class TestUtils(unittest.TestCase):
         dpm.set_performance_metrics(
             database=self.database,
             delivery_platform_id=delivery_platform_id,
-            delivery_job_id=delivery_job_doc[c.ID],
-            delivery_platform_type=c.DELIVERY_PLATFORM_FACEBOOK,
+            delivery_job_id=delivery_job_doc[db_c.ID],
+            delivery_platform_type=db_c.DELIVERY_PLATFORM_FACEBOOK,
             generic_campaigns=self.generic_campaigns[0]["campaign_id"],
             metrics_dict={
                 "impressions": 12,
@@ -520,14 +520,14 @@ class TestUtils(unittest.TestCase):
 
         success_flag = delete_util.delete_delivery_job(
             database=self.database,
-            delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+            delivery_job_id=ObjectId(delivery_job_doc[db_c.ID]),
             hard_delete=True,
         )
         self.assertTrue(success_flag)
         try:
             check_doc = dpm.get_delivery_job(
                 database=self.database,
-                delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+                delivery_job_id=ObjectId(delivery_job_doc[db_c.ID]),
             )
         except db_exceptions.InvalidID:
             check_doc = None
@@ -536,14 +536,14 @@ class TestUtils(unittest.TestCase):
         success_flag = (
             delete_util.delete_performance_metrics_by_delivery_job_id(
                 database=self.database,
-                delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+                delivery_job_id=ObjectId(delivery_job_doc[db_c.ID]),
             )
         )
         self.assertTrue(success_flag)
         try:
             check_doc = dpm.get_performance_metrics(
                 database=self.database,
-                delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+                delivery_job_id=ObjectId(delivery_job_doc[db_c.ID]),
             )
         except db_exceptions.InvalidID:
             check_doc = None
@@ -562,20 +562,20 @@ class TestUtils(unittest.TestCase):
 
         delivery_platform_doc = dpm.set_delivery_platform(
             self.database,
-            c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
             "My delivery platform",
             auth_details,
         )
-        delivery_platform_id = delivery_platform_doc[c.ID]
+        delivery_platform_id = delivery_platform_doc[db_c.ID]
         self.assertIsNotNone(delivery_platform_id)
         dpm.set_connection_status(
-            self.database, delivery_platform_id, c.STATUS_SUCCEEDED
+            self.database, delivery_platform_id, db_c.STATUS_SUCCEEDED
         )
 
         # Create a delivery job
         delivery_job_doc = dpm.set_delivery_job(
             database=self.database,
-            audience_id=ObjectId("5dff99c10345af022f219bbf"),
+            audience_id=ObjectId(),
             delivery_platform_id=delivery_platform_id,
             delivery_platform_generic_campaigns=self.generic_campaigns,
         )
@@ -588,22 +588,22 @@ class TestUtils(unittest.TestCase):
         dpm.set_campaign_activity(
             database=self.database,
             delivery_platform_id=ObjectId(),
-            delivery_platform_type=c.DELIVERY_PLATFORM_FACEBOOK,
-            delivery_job_id=delivery_job_doc[c.ID],
+            delivery_platform_type=db_c.DELIVERY_PLATFORM_FACEBOOK,
+            delivery_job_id=delivery_job_doc[db_c.ID],
             event_details=event_details,
             generic_campaigns=self.individual_generic_campaigns[0],
         )
 
         success_flag = delete_util.delete_delivery_job(
             database=self.database,
-            delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+            delivery_job_id=ObjectId(delivery_job_doc[db_c.ID]),
             hard_delete=True,
         )
         self.assertTrue(success_flag)
         try:
             check_doc = dpm.get_delivery_job(
                 database=self.database,
-                delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+                delivery_job_id=ObjectId(delivery_job_doc[db_c.ID]),
             )
         except db_exceptions.InvalidID:
             check_doc = None
@@ -611,13 +611,13 @@ class TestUtils(unittest.TestCase):
 
         success_flag = delete_util.delete_campaign_activity_by_delivery_job_id(
             database=self.database,
-            delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+            delivery_job_id=ObjectId(delivery_job_doc[db_c.ID]),
         )
         self.assertTrue(success_flag)
         try:
             check_doc = dpm.get_campaign_activity(
                 database=self.database,
-                delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+                delivery_job_id=ObjectId(delivery_job_doc[db_c.ID]),
             )
         except db_exceptions.InvalidID:
             check_doc = None

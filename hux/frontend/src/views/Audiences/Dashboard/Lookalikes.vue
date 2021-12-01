@@ -1,6 +1,6 @@
 <template>
   <div class="lookalike-wrapper">
-    <div class="rounded-sm lookalikes box-shadow-none" v-if="false">
+    <div v-if="false" class="rounded-sm lookalikes box-shadow-none">
       <div class="header d-flex mx-6 px-3 py-3">
         <span class="float-left text-h3 black-base pt-5"> Lookalikes </span>
         <v-spacer> </v-spacer>
@@ -42,13 +42,13 @@
         </v-card>
       </div>
     </div>
-    <div class="no-lookalike" v-if="true">
+    <div v-if="true" class="no-lookalike">
       <metric-card
         class=""
         title="Lookalikes"
         :height="156"
         :interactable="false"
-        titleClass="text-h3"
+        title-class="text-h3"
       >
         <template #subtitle-extended>
           <div class="black--text text--lighten-4 mt-4 text-body-2">

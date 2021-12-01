@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use,disable=unused-argument
 """Paths for the User API."""
 import datetime
 import random
@@ -11,7 +11,7 @@ from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 
 from huxunifylib.util.general.logging import logger
-from huxunifylib.database import constants as db_constants
+from huxunifylib.database import constants as db_c
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.user_management import (
     manage_user_favorites,
@@ -23,7 +23,7 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
-    get_user_name,
+    requires_access_levels,
 )
 from huxunify.api.route.utils import (
     get_db_client,
@@ -77,12 +77,16 @@ class UserProfile(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    def get(self) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
         """Retrieves a user profile.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: dict of user, HTTP status code.
@@ -123,8 +127,8 @@ class UserProfile(SwaggerView):
                 get_db_client(),
                 okta_id=okta_id,
                 update_doc={
-                    db_constants.USER_LOGIN_COUNT: (
-                        user_response.get(db_constants.USER_LOGIN_COUNT, 0) + 1
+                    db_c.USER_LOGIN_COUNT: (
+                        user_response.get(db_c.USER_LOGIN_COUNT, 0) + 1
                     )
                 },
             )
@@ -156,7 +160,7 @@ class AddUserFavorite(SwaggerView):
 
     parameters = [
         {
-            "name": db_constants.COMPONENT_ID,
+            "name": db_c.COMPONENT_ID,
             "in": "path",
             "type": "string",
             "description": "Component ID.",
@@ -164,7 +168,7 @@ class AddUserFavorite(SwaggerView):
             "required": True,
         },
         {
-            "name": db_constants.COMPONENT_NAME,
+            "name": db_c.COMPONENT_NAME,
             "in": "path",
             "type": "string",
             "description": "Component name.",
@@ -184,7 +188,10 @@ class AddUserFavorite(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    def post(self, component_name: str, component_id: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def post(
+        self, component_name: str, component_id: str, user: dict
+    ) -> Tuple[dict, int]:
         """Creates a user favorite.
 
         ---
@@ -194,6 +201,7 @@ class AddUserFavorite(SwaggerView):
         Args:
             component_name (str): Component name.
             component_id (str): Component ID.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Configuration dict, HTTP status code.
@@ -203,7 +211,7 @@ class AddUserFavorite(SwaggerView):
             api_c.OKTA_USER_ID
         )
 
-        if component_name not in db_constants.FAVORITE_COMPONENTS:
+        if component_name not in db_c.FAVORITE_COMPONENTS:
             logger.error(
                 "Component name %s not in favorite components.", component_name
             )
@@ -237,7 +245,7 @@ class DeleteUserFavorite(SwaggerView):
 
     parameters = [
         {
-            "name": db_constants.COMPONENT_ID,
+            "name": db_c.COMPONENT_ID,
             "in": "path",
             "type": "string",
             "description": "Component ID.",
@@ -245,7 +253,7 @@ class DeleteUserFavorite(SwaggerView):
             "required": True,
         },
         {
-            "name": db_constants.COMPONENT_NAME,
+            "name": db_c.COMPONENT_NAME,
             "in": "path",
             "type": "string",
             "description": "Component name.",
@@ -265,8 +273,9 @@ class DeleteUserFavorite(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def delete(
-        self, component_name: str, component_id: str
+        self, component_name: str, component_id: str, user: dict
     ) -> Tuple[dict, int]:
         """Deletes a user favorite.
 
@@ -277,6 +286,7 @@ class DeleteUserFavorite(SwaggerView):
         Args:
             component_name (str): Component name.
             component_id (str): Component ID.
+            user(dict): User object.
 
         Returns:
             Tuple[dict, int]: Configuration dict, HTTP status code.
@@ -286,7 +296,7 @@ class DeleteUserFavorite(SwaggerView):
             api_c.OKTA_USER_ID
         )
 
-        if component_name not in db_constants.FAVORITE_COMPONENTS:
+        if component_name not in db_c.FAVORITE_COMPONENTS:
             logger.error(
                 "Component name %s not in favorite components.", component_name
             )
@@ -329,12 +339,18 @@ class UserView(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def get(
+        self, user: dict
+    ) -> Tuple[list, int]:  # pylint: disable=no-self-use
         """Retrieves all users.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user(dict): User object.
 
         Returns:
             Tuple[list, int]: list of users, HTTP status code.
@@ -344,11 +360,11 @@ class UserView(SwaggerView):
         users = get_all_users(get_db_client())
 
         # generate random phone number and user access level
-        for user in users:
-            user[api_c.USER_PHONE_NUMBER] = random.choice(
+        for userinfo in users:
+            userinfo[api_c.USER_PHONE_NUMBER] = random.choice(
                 ["720-025-8322", "232-823-6049", "582-313-7191"]
             )
-            user[api_c.USER_ACCESS_LEVEL] = random.choice(
+            userinfo[api_c.USER_ACCESS_LEVEL] = random.choice(
                 ["Edit", "View-only", "Admin"]
             )
 
@@ -374,8 +390,8 @@ class UserPatchView(SwaggerView):
             "type": "object",
             "description": "Input user body.",
             "example": {
-                db_constants.USER_ROLE: "viewer",
-                db_constants.USER_DISPLAY_NAME: "new_display_name",
+                db_c.USER_ROLE: "viewer",
+                db_c.USER_DISPLAY_NAME: "new_display_name",
             },
         },
     ]
@@ -397,8 +413,8 @@ class UserPatchView(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    @get_user_name()
-    def patch(self, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def patch(self, user: dict) -> Tuple[dict, int]:
         """Updates a user.
 
         ---
@@ -406,7 +422,7 @@ class UserPatchView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: User doc, HTTP status code.
@@ -420,28 +436,29 @@ class UserPatchView(SwaggerView):
         database = get_db_client()
 
         if api_c.ID in body:
-            user = get_all_users(
-                database, {db_constants.ID: ObjectId(body.get(api_c.ID))}
+            userinfo = get_all_users(
+                database, {db_c.ID: ObjectId(body.get(api_c.ID))}
             )
             del body[api_c.ID]
         else:
-            user = get_all_users(
-                database, {db_constants.USER_DISPLAY_NAME: user_name}
+            userinfo = get_all_users(
+                database,
+                {db_c.USER_DISPLAY_NAME: user[api_c.USER_NAME]},
             )
 
-        if not user:
+        if not userinfo:
             return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         # TODO Access Control Based on Roles
 
         updated_user = update_user(
             database,
-            okta_id=user[0][db_constants.OKTA_ID],
+            okta_id=userinfo[0][db_c.OKTA_ID],
             update_doc={
                 **body,
                 **{
-                    db_constants.UPDATED_BY: user_name,
-                    db_constants.UPDATE_TIME: datetime.datetime.utcnow(),
+                    db_c.UPDATED_BY: user[api_c.USER_NAME],
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 },
             },
         )
@@ -486,8 +503,8 @@ class CreateTicket(SwaggerView):
     tags = [api_c.USER_TAG]
 
     @api_error_handler()
-    @get_user_name()
-    def post(self, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def post(self, user: dict) -> Tuple[dict, int]:
         """Create a ticket in JIRA
 
         ---
@@ -495,7 +512,7 @@ class CreateTicket(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: dict of message, HTTP status code.
@@ -504,14 +521,22 @@ class CreateTicket(SwaggerView):
             ProblemException: Any exception raised during endpoint execution.
         """
         issue_details = TicketSchema().load(request.get_json())
-        new_issue = JiraConnection().create_jira_issue(**issue_details)
+        new_issue = JiraConnection().create_jira_issue(
+            issue_type=issue_details[api_c.ISSUE_TYPE],
+            summary=f"HUS: CONTACT-FORM: {issue_details[api_c.SUMMARY]}",
+            description=(
+                f"{issue_details[api_c.DESCRIPTION]}\n\n"
+                f"Reported By: {user[api_c.USER_NAME]}\nEnvironment: {request.url_root}"
+            ),
+        )
 
         create_notification(
             database=get_db_client(),
-            notification_type=db_constants.NOTIFICATION_TYPE_INFORMATIONAL,
-            description=f"{user_name} created a new issue {new_issue.get(api_c.KEY)} in JIRA.",
+            notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            description=f"{user[api_c.USER_NAME]} created a new issue"
+            f"{new_issue.get(api_c.KEY)} in JIRA.",
             category=api_c.TICKET_TYPE_BUG,
-            username=user_name,
+            username=user[api_c.USER_NAME],
         )
         return (
             TicketGetSchema().dump(new_issue),

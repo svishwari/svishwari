@@ -83,6 +83,10 @@ export default {
       type: Number,
       required: false,
     },
+    headerConfig: {
+      type: Array,
+      required: false,
+    },
   },
   data() {
     return {
@@ -126,9 +130,10 @@ export default {
   methods: {
     processStateListData() {
       this.stateListData = JSON.parse(JSON.stringify(this.mapData))
-      this.stateListData.forEach((element) => {
-        element.avg_spend = (element.min_ltv + element.max_ltv) / 2
-      })
+
+      this.columnDefs = this.columnDefs.filter((column) =>
+        this.headerConfig.includes(column.value)
+      )
     },
     applyFilter(value, filter) {
       switch (filter) {
@@ -158,8 +163,7 @@ export default {
   min-height: 20px;
 
   ::v-deep .hux-data-table {
-    margin-top: -3px;
-    ::v-deep table {
+    table {
       .v-data-table-header {
         th:nth-child(1) {
           position: sticky;
@@ -167,6 +171,22 @@ export default {
           z-index: 9;
           overflow-y: visible;
           overflow-x: visible;
+        }
+      }
+      tbody {
+        height: calc(100% - 40px);
+        overflow: auto;
+        width: 100%;
+        position: absolute;
+        display: inline-block;
+        tr {
+          display: table;
+          width: 100%;
+          td {
+            &:last-child {
+              padding-left: 19px;
+            }
+          }
         }
       }
     }
@@ -177,6 +197,9 @@ export default {
         }
         th {
           background: var(--v-primary-lighten1);
+          &:last-child {
+            border-top-right-radius: 12px;
+          }
         }
       }
     }

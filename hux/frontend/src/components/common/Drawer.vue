@@ -12,7 +12,7 @@
     <v-toolbar
       width="100%"
       class="drawer-header no-shadow border-bottom"
-      height="70"
+      :height="headerHeight"
     >
       <v-toolbar-title :class="contentHeaderPadding">
         <slot name="header-left"></slot>
@@ -113,6 +113,11 @@ export default {
       type: String,
       required: false,
     },
+    headerHeight: {
+      type: String,
+      required: false,
+      default: "70",
+    },
   },
 
   data() {
@@ -181,6 +186,8 @@ $drawer-data-table-padding: 9px 25px;
 }
 .drawer-footer {
   height: $drawer-footer-height;
+  box-shadow: none !important;
+  border-top: 1px solid var(--v-black-lighten3) !important;
 }
 .drawer-content {
   height: calc(100% - #{$drawer-header-height + $drawer-footer-height});

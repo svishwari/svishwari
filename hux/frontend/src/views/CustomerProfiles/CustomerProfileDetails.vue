@@ -13,6 +13,9 @@
         <v-col cols="6" class="pb-0">
           <profile-identifiable-insights
             :insights="customerProfile['insights']"
+            :piiaccess="customerProfile['pii_access']"
+            :show-pii="showPIIData"
+            @togglePII="getCustomerTogglePII"
           />
         </v-col>
         <v-col class="pb-0 customCol">
@@ -30,7 +33,7 @@
       <v-row class="mt-0">
         <v-col md="12" class="pt-0 pr-1">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="370">
-            <v-card-title class="pa-6 d-flex justify-space-between">
+            <v-card-title class="py-5 pl-6 d-flex justify-space-between">
               <h3 class="text-h3 black--text text--darken-4">
                 Customer events
                 <span class="text-body-1 black--text text--lighten-4">
@@ -59,7 +62,7 @@
                   :size="18"
                   class="mr-1"
                 />
-                Event Details
+                Event details
               </v-btn>
             </v-card-title>
             <v-progress-linear
@@ -142,6 +145,7 @@ export default {
       loading: false,
       loadingCustomerEvents: true,
       customerEventsDrawer: false,
+      showPIIData: false,
     }
   },
   computed: {
@@ -187,6 +191,7 @@ export default {
   methods: {
     ...mapActions({
       getCustomer: "customers/get",
+      getCustomerRedact: "customers/getRedact",
       getEvents: "customers/getCustomerEvents",
     }),
     async getCustomerEvent() {
@@ -196,6 +201,14 @@ export default {
       } finally {
         this.loadingCustomerEvents = false
       }
+    },
+    async getCustomerTogglePII(redactFlag) {
+      let params = {
+        id: this.id,
+        redactFlag: redactFlag,
+      }
+      await this.getCustomerRedact(params)
+      this.showPIIData = !this.showPIIData
     },
     toggleCustomerEventsDrawer() {
       this.customerEventsDrawer = !this.customerEventsDrawer

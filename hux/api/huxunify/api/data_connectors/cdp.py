@@ -649,7 +649,12 @@ def get_demographic_by_country(
             else None
         )
         customer_insights_by_country.append(
-            {"name": country, "avg_ltv": avg_ltv, "size": total_customer_count}
+            {
+                "name": country,
+                "avg_ltv": avg_ltv,
+                "size": total_customer_count,
+                "country_label": api_c.COUNTRIES_LIST.get(country, " "),
+            }
         )
     # log execution time summary
     total_ticks = time.perf_counter() - timer
@@ -763,7 +768,33 @@ def get_city_ltvs(
 
     logger.info("Successfully retrieved city-level demographic insights.")
 
-    return [clean_cdm_fields(data) for data in response.json()[api_c.BODY]]
+    return get_customer_insights_by_cities(
+        [clean_cdm_fields(data) for data in response.json()[api_c.BODY]]
+    )
+
+
+def get_customer_insights_by_cities(customer_insights_by_cities: list) -> list:
+    """Get customer insights by cities
+
+    Args:
+        customer_insights_by_cities (list): List of customer insights
+
+    Returns:
+        list: Formatted List of customer insights
+
+    """
+    return [
+        {
+            api_c.CITY: x[api_c.CITY],
+            api_c.STATE: x[api_c.STATE],
+            api_c.STATE_LABEL: api_c.STATE_NAMES.get(x[api_c.STATE]),
+            api_c.COUNTRY: x[api_c.COUNTRY],
+            api_c.COUNTRY_LABEL: api_c.COUNTRIES_LIST.get(x[api_c.COUNTRY]),
+            api_c.AVG_LTV: x[api_c.AVG_LTV],
+            api_c.CUSTOMER_COUNT: x[api_c.CUSTOMER_COUNT],
+        }
+        for x in customer_insights_by_cities
+    ]
 
 
 def clean_cdm_gender_fields(response_body: dict) -> dict:
@@ -812,6 +843,8 @@ def get_geographic_customers_data(customer_count_by_state: list) -> list:
     return [
         {
             api_c.COUNTRY: x[api_c.COUNTRY],
+            api_c.COUNTRY_LABEL: api_c.COUNTRIES_LIST.get(x[api_c.COUNTRY]),
+            api_c.STATE: x[api_c.STATE],
             api_c.NAME: api_c.STATE_NAMES.get(x[api_c.STATE], x[api_c.STATE]),
             api_c.POPULATION_PERCENTAGE: round(
                 x[api_c.SIZE]
@@ -830,7 +863,11 @@ def get_geographic_customers_data(customer_count_by_state: list) -> list:
             api_c.GENDER_OTHER: round(x[api_c.GENDER_OTHER] / x[api_c.SIZE], 4)
             if x[api_c.SIZE] != 0
             else 0,
-            api_c.LTV: round(x.get(api_c.AVG_LTV, 0), 4),
+            api_c.AVG_LTV: round(x.get(api_c.AVG_LTV, 0), 4),
+            api_c.MIN_LTV: round(x.get(api_c.MIN_LTV, 0), 4),
+            api_c.MAX_LTV: round(x.get(api_c.MAX_LTV, 0), 4),
+            api_c.MIN_AGE: x.get(api_c.MIN_AGE, 0),
+            api_c.MAX_AGE: x.get(api_c.MAX_AGE, 0),
         }
         for x in customer_count_by_state
     ]

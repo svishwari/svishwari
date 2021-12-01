@@ -9,11 +9,17 @@ describe("Decisioning > models", () => {
 
   it("should be able to view a model's dashboard", () => {
     cy.location("pathname").should("eq", route.models)
-
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
     cy.get(selector.models.item).its("length").should("gt", 0)
 
-    cy.get(selector.models.activeStatus).eq(0).click()
+    cy.get(selector.models.activeStatus)
+      .eq(0)
+      .parentsUntil(selector.models.item)
+      .click()
 
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000)
     // should be able to view model overview
     cy.get(selector.models.performancemetric)
       .its("length")

@@ -5,7 +5,7 @@
     </template>
     <template #footer-left>
       <div class="d-flex align-baseline">
-        <div class="body-2 pl-4">{{ events.length }} results</div>
+        <div class="body-2">{{ events.length }} results</div>
       </div>
     </template>
 
@@ -15,7 +15,8 @@
       <hux-data-table
         :columns="tableColumns"
         :data-items="events"
-        class="notifications-table"
+        row-height="60px"
+        class="notifications-table small-table"
         sort-column="date"
         sort-desc
       >
@@ -152,5 +153,10 @@ export default {
 
 ::v-deep .v-toolbar__title {
   padding-left: 10px !important;
+}
+
+::v-deep .v-footer {
+  box-shadow: none !important;
+  border-top: 1px solid var(--v-black-lighten3) !important;
 }
 </style>

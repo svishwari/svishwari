@@ -19,19 +19,25 @@
         <v-list dense class="add-list" :height="52">
           <v-list-item class="px-0" @click="$emit('onAddDestination', section)">
             <hux-icon type="plus" :size="16" color="primary" class="mr-4" />
-            <hux-icon type="destination" :size="24" color="primary" class="mr-2" />
+            <hux-icon
+              type="destination"
+              :size="24"
+              color="primary"
+              class="mr-2"
+            />
             <v-btn
               text
               min-width="7rem"
               height="2rem"
-              class="primary--text text-body-1" 
+              class="primary--text text-body-1"
             >
               Destination
             </v-btn>
           </v-list-item>
         </v-list>
       </div>
-      <hux-data-table v-else
+      <hux-data-table
+        v-else
         class="delivery-table"
         :columns="columnDefs"
         :sort-desc="true"

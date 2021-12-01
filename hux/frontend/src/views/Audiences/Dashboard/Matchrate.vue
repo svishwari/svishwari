@@ -1,6 +1,6 @@
 <template>
   <div class="match-rate-wrapper">
-    <div class="match-rate mx-6" v-if="false">
+    <div v-if="false" class="match-rate mx-6">
       <div class="text-h3 black-base pt-5">Match rates</div>
 
       <v-row class="matchrate-header mt-4">
@@ -29,13 +29,13 @@
         </v-col>
       </v-row>
     </div>
-    <div class="no-match-rate" v-if="true">
+    <div v-if="true" class="no-match-rate">
       <metric-card
         class=""
         title="Match rates"
         :height="115"
         :interactable="false"
-        titleClass="text-h3"
+        title-class="text-h3"
       >
         <template #subtitle-extended>
           <div class="black--text text--lighten-4 mt-4 text-body-2">

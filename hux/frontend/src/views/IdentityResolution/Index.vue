@@ -16,8 +16,8 @@
             />
           </div>
           <div class="text-subtitle-1 font-weight-regular">
-            Insights into the ingestion of all your customers’ data across your
-            data sources that build a cohesive view of each individual customer.
+            Monitor the ingestion and integration of all relevant data sources
+            as we create a single, persistent identifier of each customer.
           </div>
         </template>
         <template #right>
@@ -63,7 +63,7 @@
               <v-slide-item v-for="(metric, index) in overview" :key="index">
                 <metric-card
                   :title="metric.title"
-                  :min-width="170"
+                  :min-width="175"
                   class="idr-metric-card"
                   data-e2e="overviewList"
                 >
@@ -72,9 +72,10 @@
                       <template #label-content>
                         <icon
                           type="info"
-                          :size="12"
+                          :size="8"
                           color="primary"
                           variant="base"
+                          class="mb-1"
                         />
                       </template>
                       <template #hover-content>
@@ -88,7 +89,7 @@
                   <template #subtitle-extended>
                     <tooltip>
                       <template #label-content>
-                        <span class="font-weight-semi-bold">
+                        <span class="text-subtitle-1">
                           <template v-if="metric.format === 'numeric'">
                             {{ metric.value | Numeric(true, true) | Empty }}
                           </template>
@@ -132,65 +133,78 @@
                   :indeterminate="loadingMatchingTrends"
                 />
 
-                <v-card-title class="chart-style pb-8 pl-5 pt-5">
-                  <div class="mt-2">
-                    <span class="black--text text--darken-4 text-h3">
-                      ID Resolution matching trends
-                    </span>
-                    <span
-                      v-if="
-                        responseTimeFrame &&
-                        responseTimeFrame.start_date &&
-                        responseTimeFrame.end_date
-                      "
-                      class="black--text text--darken-4 text-body-1"
-                    >
-                      (
-                      {{
-                        this.$options.filters.Date(
-                          responseTimeFrame["start_date"],
-                          "MMMM YYYY"
-                        )
-                      }}
-                      -
-                      {{
-                        this.$options.filters.Date(
-                          responseTimeFrame["end_date"],
-                          "MMMM YYYY"
-                        )
-                      }}
-                      )
-                    </span>
-                  </div>
-                </v-card-title>
-
                 <template v-if="!loadingMatchingTrends">
-                  <i-d-r-matching-trend
-                    v-if="hasMatchingTrendsData"
-                    :map-data="matchingTrends"
-                  />
-                  <div
-                    v-if="!hasMatchingTrendsData"
-                    class="overflow-hidden px-10"
-                  >
-                    <svg-as-component
-                      src="assets/images/MultiLineChartEmpty"
-                      class="d-flex"
-                    />
-                    <p class="text-caption d-flex align-center my-5">
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 12 12"
-                        fill="none"
-                        class="mr-2"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <circle cx="6" cy="6" r="6" fill="#d0d0ce" />
-                      </svg>
-                      no data available
-                    </p>
-                  </div>
+                  <span v-if="hasMatchingTrendsData">
+                    <v-card-title class="chart-style pb-8 pl-5 pt-5">
+                      <div class="mt-2">
+                        <span class="black--text text-h3">
+                          ID Resolution matching trends
+                        </span>
+                        <span
+                          v-if="
+                            responseTimeFrame &&
+                            responseTimeFrame.start_date &&
+                            responseTimeFrame.end_date
+                          "
+                          class="black--text text--lighten-4 text-body-1"
+                        >
+                          (
+                          {{
+                            this.$options.filters.Date(
+                              responseTimeFrame["start_date"],
+                              "MMMM YYYY"
+                            )
+                          }}
+                          -
+                          {{
+                            this.$options.filters.Date(
+                              responseTimeFrame["end_date"],
+                              "MMMM YYYY"
+                            )
+                          }}
+                          )
+                        </span>
+                      </div>
+                    </v-card-title>
+
+                    <i-d-r-matching-trend :map-data="matchingTrends" />
+                  </span>
+
+                  <v-row v-else class="matching-trend-chart-frame py-14">
+                    <empty-page
+                      v-if="!matchingTrendsErrorState"
+                      type="model-features-empty"
+                      :size="50"
+                    >
+                      <template #title>
+                        <div class="title-no-notification">No data to show</div>
+                      </template>
+                      <template #subtitle>
+                        <div class="des-no-notification">
+                          IDR matching trend chart will appear here once data
+                          feeds are ingested.
+                        </div>
+                      </template>
+                    </empty-page>
+                    <empty-page
+                      v-else
+                      class="title-no-notification"
+                      type="error-on-screens"
+                      :size="50"
+                    >
+                      <template #title>
+                        <div class="title-no-notification">
+                          IDR matching trends is currently unavailable
+                        </div>
+                      </template>
+                      <template #subtitle>
+                        <div class="des-no-notification">
+                          Our team is working hard to fix it. Please be patient
+                          and try again soon!
+                        </div>
+                      </template>
+                    </empty-page>
+                  </v-row>
                 </template>
               </v-card>
             </v-col>
@@ -199,6 +213,7 @@
           <data-feeds
             :data="dataFeeds"
             :is-loading="loadingDataFeeds"
+            :is-error-state="dataFeedsErrorState"
             class="mt-3 mx-2"
             data-e2e="datafeedtable"
           />
@@ -211,8 +226,13 @@
             @clear="resetFilters"
             @apply="refreshData"
           >
-            <hux-filter-panels>
-              <hux-filter-panel title="Time" :count="numFiltersSelected">
+            <hux-filter-panels :expanded="[0]">
+              <hux-filter-panel
+                title="Time"
+                :count="numFiltersSelected"
+                :disabled="true"
+                :hide-actions="true"
+              >
                 <hux-select-date
                   v-model="filterStartDate"
                   label-month="Start month"
@@ -262,7 +282,7 @@ import MetricCard from "@/components/common/MetricCard"
 import Tooltip from "@/components/common/Tooltip.vue"
 import DataFeeds from "./DataFeeds.vue"
 import IDRMatchingTrend from "@/components/common/IDRMatchingTrend/IDRMatchingTrend"
-import svgAsComponent from "@/components/common/SVG.vue"
+import EmptyPage from "@/components/common/EmptyPage"
 
 export default {
   name: "IdentityResolution",
@@ -280,7 +300,7 @@ export default {
     Tooltip,
     DataFeeds,
     IDRMatchingTrend,
-    svgAsComponent,
+    EmptyPage,
   },
 
   data() {
@@ -291,6 +311,8 @@ export default {
       isFilterToggled: false,
       filterStartDate: null,
       filterEndDate: null,
+      matchingTrendsErrorState: false,
+      dataFeedsErrorState: false,
     }
   },
 
@@ -400,6 +422,8 @@ export default {
       this.loadingMatchingTrends = true
       try {
         await this.getMatchingTrends(this.selectedDateRange)
+      } catch (error) {
+        this.matchingTrendsErrorState = true
       } finally {
         this.loadingMatchingTrends = false
       }
@@ -409,6 +433,8 @@ export default {
       this.loadingDataFeeds = true
       try {
         await this.getDataFeeds(this.selectedDateRange)
+      } catch (error) {
+        this.dataFeedsErrorState = true
       } finally {
         this.loadingDataFeeds = false
       }
@@ -431,18 +457,6 @@ $headerOffsetX: 220px + 32px;
 $headerOffsetY: 70px;
 
 .idr-wrapper {
-  padding-top: $offset;
-
-  // TODO: update app layout to include page headers
-  .page-header {
-    position: fixed;
-    top: $headerOffsetY;
-    left: 0;
-    right: 0;
-    padding-left: $headerOffsetX !important;
-    z-index: 3;
-  }
-
   ::v-deep .container {
     padding: 0 !important;
   }
@@ -461,6 +475,11 @@ $headerOffsetY: 70px;
 
   .idr-metric-card {
     margin: 4px !important;
+  }
+
+  .matching-trend-chart-frame {
+    background-image: url("../../assets/images/no-matching-trend-chart-frame.png");
+    background-position: center;
   }
 }
 </style>

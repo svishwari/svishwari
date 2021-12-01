@@ -15,8 +15,7 @@
                 {{ pref.title }}
               </td>
               <td class="text-body-1 black--text">
-                <template v-if="pref.value === true">True</template>
-                <template v-if="pref.value === false">False</template>
+                {{ pref.value }}
               </td>
             </tr>
           </tbody>
@@ -70,3 +69,13 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+::v-deep table {
+  tr:hover {
+    background-color: transparent !important;
+  }
+  td {
+    height: 40px !important;
+  }
+}
+</style>

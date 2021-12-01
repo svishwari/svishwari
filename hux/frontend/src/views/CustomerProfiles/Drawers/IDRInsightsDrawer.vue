@@ -14,6 +14,8 @@
         :columns="columns"
         :data-items="idrItems"
         :show-header="false"
+        row-height="40px"
+        class="small-table"
       >
         <template #row-item="{ item }">
           <td
@@ -59,7 +61,13 @@
               {{ item[col.value] }}
               <tooltip v-if="item.toolTipText" position-top>
                 <template #label-content>
-                  <icon type="info" :size="12" color="primary" variant="base" />
+                  <icon
+                    type="info"
+                    :size="8"
+                    color="primary"
+                    variant="base"
+                    class="mb-1"
+                  />
                 </template>
                 <template #hover-content>
                   {{ item.toolTipText }}

@@ -6,7 +6,7 @@
       </template>
       <template #footer-left>
         <div class="d-flex align-baseline">
-          <div class="body-2 pl-4">{{ models.length }} results</div>
+          <div class="body-2">{{ models.length }} results</div>
         </div>
       </template>
       <template #default>
@@ -22,7 +22,7 @@
                 v-for="model in item"
                 :key="model.id"
                 :title="model.name"
-                :icon="`model-${model.type}`"
+                :icon="`model-${getModelType(model)}`"
                 :is-added="['Active', 'Requested'].includes(model.status)"
                 :is-available="model.is_enabled"
                 :is-already-added="['Active'].includes(model.status)"
@@ -48,7 +48,7 @@
               v-for="model in item"
               :key="model.id"
               :title="model.name"
-              :icon="`model-${model.type || 'unsubscribe'}`"
+              :icon="`model-${getModelType(model)}`"
               :is-added="
                 ['Active', 'Requested'].includes(model.status) ||
                 selectedModelIds.includes(model.id)
@@ -104,6 +104,16 @@ export default {
           icon: "models",
         },
       ],
+      modelTypes: [
+        "purchase",
+        "prediction",
+        "ltv",
+        "churn",
+        "propensity",
+        "unsubscribe",
+        "regression",
+        "classification",
+      ],
     }
   },
 
@@ -136,8 +146,17 @@ export default {
           return obj
         }, {})
 
-      sortByName(result, "name")
-      return result
+      let orderedResult = Object.keys(result)
+        .sort(function (a, b) {
+          return a.toLowerCase().localeCompare(b.toLowerCase())
+        })
+        .reduce(function (Obj, key) {
+          Obj[key] = result[key]
+          return Obj
+        }, {})
+
+      sortByName(orderedResult, "name")
+      return orderedResult
     },
 
     modelsGroupedSorted() {
@@ -156,8 +175,17 @@ export default {
           return obj
         }, {})
 
-      sortByName(result, "name")
-      return result
+      let orderedResult = Object.keys(result)
+        .sort(function (a, b) {
+          return a.toLowerCase().localeCompare(b.toLowerCase())
+        })
+        .reduce(function (Obj, key) {
+          Obj[key] = result[key]
+          return Obj
+        }, {})
+
+      sortByName(orderedResult, "name")
+      return orderedResult
     },
   },
   watch: {
@@ -190,6 +218,13 @@ export default {
     closeAddModel: function () {
       this.localDrawer = false
       this.selectedModelIds = []
+    },
+    getModelType(model) {
+      return this.modelTypes.includes(
+        model.type ? model.type.toLowerCase() : ""
+      )
+        ? model.type.toLowerCase()
+        : "unknown"
     },
   },
 }

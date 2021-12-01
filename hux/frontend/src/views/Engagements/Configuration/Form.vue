@@ -33,7 +33,7 @@
 
             <tooltip>
               <template #label-content>
-                <v-icon color="primary" :size="12" class="ml-1">
+                <v-icon color="primary" :size="8" class="ml-1 mb-1">
                   mdi-information-outline
                 </v-icon>
               </template>
@@ -274,6 +274,7 @@
           tile
           color="white"
           height="40"
+          class="btn-border box-shadow-none"
           @click.native="
             dontShowModal = true
             $router.go(-1)

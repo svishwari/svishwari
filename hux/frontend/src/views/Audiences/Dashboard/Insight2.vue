@@ -1,139 +1,135 @@
 <template>
   <div class="audience-insight-wrap">
-    <dashboard-header 
-      :breadcrumbItems="breadcrumbItems"
+    <dashboard-header
+      :breadcrumb-items="breadcrumbItems"
       @onRefresh="refresh()"
     />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div class="px-8 py-8">
       <v-card class="rounded pa-5 box-shadow-5">
-          <v-card-title class="d-flex justify-space-between pa-0">
-              <h5 class="text-h5 mb-2">Audience overview</h5>
-              <div class="d-flex align-center">
-                  <v-btn
-                  v-if="audience && !audience.is_lookalike"
-                  text
-                  color="primary"
-                  class="body-2 ml-n3"
-                  data-e2e="delivery-history"
-                  @click="openDeliveryHistoryDrawer()"
-                  >
-                  <icon type="history" color="primary" :size="14" class="mr-1" />
-                  Delivery history
-                  </v-btn>
-              </div>
-          </v-card-title>
+        <v-card-title class="d-flex justify-space-between pa-0">
+          <h5 class="text-h5 mb-2">Audience overview</h5>
+          <div class="d-flex align-center">
+            <v-btn
+              v-if="audience && !audience.is_lookalike"
+              text
+              color="primary"
+              class="body-2 ml-n3"
+              data-e2e="delivery-history"
+              @click="openDeliveryHistoryDrawer()"
+            >
+              <icon type="history" color="primary" :size="14" class="mr-1" />
+              Delivery history
+            </v-btn>
+          </div>
+        </v-card-title>
 
-          <div
+        <div
           v-if="audience && audience.is_lookalike"
           class="row overview-list lookalike-aud mb-0 ml-0 mr-1 mt-4"
-          >
+        >
           <metric-card :height="60" :title="''" class="lookalikeMessageCard">
-              <template #subtitle-extended>
+            <template #subtitle-extended>
               <span
-                  >This is a lookalike audience. Go to the original
-                  audience,&nbsp;</span
+                >This is a lookalike audience. Go to the original
+                audience,&nbsp;</span
               >
               <router-link
-                  :to="{
+                :to="{
                   name: 'AudienceInsight',
                   params: { id: audience.source_id },
-                  }"
-                  class="text-decoration-none colorLink"
-                  append
-                  >{{ audience.source_name }}
+                }"
+                class="text-decoration-none colorLink"
+                append
+                >{{ audience.source_name }}
               </router-link>
               <span>,&nbsp;to see insights.</span></template
-              >
+            >
           </metric-card>
-          </div>
-          <div
+        </div>
+        <div
           v-if="audience && !audience.is_lookalike"
           class="row overview-list mb-0 ml-0 mt-1"
-          >
+        >
           <metric-card
-              v-for="(item, i) in Object.values(audienceOverview)"
-              :key="i"
-              class="mr-3"
-              :grow="i === 0 ? 2 : 1"
-              :title="item.title"
-              :icon="item.icon"
-              :height="80"
-              :interactable="item.action ? true : false"
-              max-width="170"
-              data-e2e="audience-overview"
+            v-for="(item, i) in Object.values(audienceOverview)"
+            :key="i"
+            class="mr-3"
+            :grow="i === 0 ? 2 : 1"
+            :title="item.title"
+            :icon="item.icon"
+            :height="80"
+            :interactable="item.action ? true : false"
+            max-width="170"
+            data-e2e="audience-overview"
           >
-              <template #subtitle-extended>
+            <template #subtitle-extended>
               <tooltip>
-                  <template #label-content>
+                <template #label-content>
                   <span class="font-weight-semi-bold">
-                      {{ getFormattedValue(item) | Empty }}
+                    {{ getFormattedValue(item) | Empty }}
                   </span>
-                  </template>
-                  <template #hover-content>
+                </template>
+                <template #hover-content>
                   <span v-if="percentageColumns.includes(item.title)">{{
-                      item.subtitle | Percentage | Empty
+                    item.subtitle | Percentage | Empty
                   }}</span>
                   <span v-else>{{ item.subtitle | Numeric | Empty }}</span>
-                  </template>
+                </template>
               </tooltip>
-              </template>
+            </template>
           </metric-card>
 
           <metric-card
-              class="mr-3"
-              title="Gender"
-              :height="80"
-              max-width="220"
-              :interactable="false"
+            class="mr-3"
+            title="Gender"
+            :height="80"
+            max-width="220"
+            :interactable="false"
           >
-              <template #subtitle-extended>
-                <div class="men mr-1 font-weight-semi-bold">
-                  M: 100%
-                </div>
-                <div class="women mx-1">
-                  W: 0%
-                </div>
-                <div class="other mx-1">
-                  O: 0%
-                </div>
-              </template>
+            <template #subtitle-extended>
+              <div class="men mr-1 font-weight-semi-bold">M: 100%</div>
+              <div class="women mx-1">W: 0%</div>
+              <div class="other mx-1">O: 0%</div>
+            </template>
           </metric-card>
 
           <metric-card
-              class="mr-3"
-              title="Attributes"
-              :height="80"
-              :interactable="false"
+            class="mr-3"
+            title="Attributes"
+            :height="80"
+            :interactable="false"
           >
-              <template #subtitle-extended>
-                <div class="">
-                  <v-chip 
-                    small
-                    class="mr-1 my-1 font-weight-semi-bold v-chip--active"
-                    text-color="primary"
-                    color="primary-lighten3">
-                    Gender: Men
-                  </v-chip>
-                  <v-chip 
-                    small
-                    class="mr-1 my-1 font-weight-semi-bold v-chip--active"
-                    text-color="primary"
-                    color="primary-lighten3">
-                    State: Texas
-                  </v-chip>
-                  <v-chip 
-                    small
-                    class="mr-1 my-1 font-weight-semi-bold v-chip--active"
-                    text-color="primary"
-                    color="primary-lighten3">
-                    Lifetime value: .1-.5
-                  </v-chip>
-                </div>
-              </template>
+            <template #subtitle-extended>
+              <div class="">
+                <v-chip
+                  small
+                  class="mr-1 my-1 font-weight-semi-bold v-chip--active"
+                  text-color="primary"
+                  color="primary-lighten3"
+                >
+                  Gender: Men
+                </v-chip>
+                <v-chip
+                  small
+                  class="mr-1 my-1 font-weight-semi-bold v-chip--active"
+                  text-color="primary"
+                  color="primary-lighten3"
+                >
+                  State: Texas
+                </v-chip>
+                <v-chip
+                  small
+                  class="mr-1 my-1 font-weight-semi-bold v-chip--active"
+                  text-color="primary"
+                  color="primary-lighten3"
+                >
+                  Lifetime value: .1-.5
+                </v-chip>
+              </div>
+            </template>
           </metric-card>
-
-          </div>
+        </div>
       </v-card>
       <v-tabs v-model="tabOption" class="tabs-group mt-8">
         <v-tabs-slider color="primary"></v-tabs-slider>
@@ -158,72 +154,81 @@
         </div>
       </v-tabs>
       <v-tabs-items v-model="tabOption" class="tabs-item mt-2">
-        <v-tab-item class="delivery-tab" key="delivery">
-
+        <v-tab-item key="delivery" class="delivery-tab">
           <v-row class="">
             <v-col :cols="deliveryCols" class="">
               <delivery
-                  :sections="audienceData && audienceData.engagements"
-                  section-type="engagement"
-                  deliveries-key="deliveries"
-                  @onOverviewSectionAction="triggerOverviewAction($event)"
-                  @onOverviewDestinationAction="
-                      triggerOverviewDestinationAction($event)
-                  "
-                  @onAddDestination="addDestination($event)"
+                :sections="audienceData && audienceData.engagements"
+                section-type="engagement"
+                deliveries-key="deliveries"
+                @onOverviewSectionAction="triggerOverviewAction($event)"
+                @onOverviewDestinationAction="
+                  triggerOverviewDestinationAction($event)
+                "
+                @onAddDestination="addDestination($event)"
               >
-                  <template #title-left>
-                      <div class="d-flex align-center">
-                      <span class="text-h3">Engagement delivery details</span>
-                      </div>
-                  </template>
+                <template #title-left>
+                  <div class="d-flex align-center">
+                    <span class="text-h3">Engagement delivery details</span>
+                  </div>
+                </template>
               </delivery>
               <standalone-delivery />
             </v-col>
             <v-col :cols="advertisingCols" class="">
-              <div class="collapsible-bar" 
-                   :class="{
-                      'open': showAdvertising,
-                      'close': !showAdvertising,
-                    }"
-                    @click="toggleAd()">
-                  <span class="bar-text"> Digital advertising </span>
-                  <icon
-                    type="expand-arrow"
-                    :size="14"
-                    color="white"
-                    class="collapse-icon mx-2"
-                  />
-                </div>
-              <v-card class="digital-adv ml-6 mt-4" flat height="100%" v-if="showAdvertising">
-                
-                <v-card-title class="ml-6 text-h3" v-if="showAdvertising" >
+              <div
+                class="collapsible-bar"
+                :class="{
+                  open: showAdvertising,
+                  close: !showAdvertising,
+                }"
+                @click="toggleAd()"
+              >
+                <span class="bar-text"> Digital advertising </span>
+                <icon
+                  type="expand-arrow"
+                  :size="14"
+                  color="white"
+                  class="collapse-icon mx-2"
+                />
+              </div>
+              <v-card
+                v-if="showAdvertising"
+                class="digital-adv ml-6 mt-4"
+                flat
+                height="100%"
+              >
+                <v-card-title v-if="showAdvertising" class="ml-6 text-h3">
                   Digital advertising
                 </v-card-title>
-                <v-card-text class="" v-if="showAdvertising">
+                <v-card-text v-if="showAdvertising" class="">
                   <div class="match-rates mx-6 my-1">
-                    <Matchrate />
+                    <matchrate />
                   </div>
                   <div class="lookalikes mx-6 my-4">
-                    <Lookalikes />
+                    <lookalikes />
                   </div>
                 </v-card-text>
               </v-card>
-              <v-card class="rounded-lg card-style mt-4 empty-adv" flat height="100%" v-if="false">
+              <v-card
+                v-if="false"
+                class="rounded-lg card-style mt-4 empty-adv"
+                flat
+                height="100%"
+              >
                 <error
                   class="background-empty"
                   icon-type="error-on-screens"
                   :icon-size="50"
                   title="Lookalike table is currently unavailable"
                   subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
-                > 
+                >
                 </error>
               </v-card>
             </v-col>
           </v-row>
-
         </v-tab-item>
-        <v-tab-item class="insights-tab" key="insights">
+        <v-tab-item key="insights" class="insights-tab">
           Insights UI
         </v-tab-item>
       </v-tabs-items>
@@ -290,7 +295,6 @@
       data-e2e="delivery-history-drawer"
       @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
     />
-
   </div>
 </template>
 
@@ -299,20 +303,9 @@
 import { mapGetters, mapActions } from "vuex"
 
 // common components
-import Avatar from "@/components/common/Avatar.vue"
-import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
-import DeliveryOverview from "@/components/DeliveryOverview.vue"
-import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
 import Icon from "@/components/common/Icon.vue"
-import IncomeChart from "@/components/common/incomeChart/IncomeChart.vue"
-import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
-import MapChart from "@/components/common/MapChart/MapChart"
-import mapSlider from "@/components/common/MapChart/mapSlider"
-import MapStateList from "@/components/common/MapChart/MapStateList"
 import MetricCard from "@/components/common/MetricCard.vue"
-import PageHeader from "@/components/PageHeader.vue"
-import Size from "@/components/common/huxTable/Size.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 
 // views
@@ -322,10 +315,9 @@ import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Draw
 import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations.vue"
 import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
-import GenderSpendChart from "@/components/common/GenderSpendChart/GenderSpendChart"
 import configurationData from "@/components/common/MapChart/MapConfiguration.json"
 import Delivery from "@/views/Audiences/Dashboard/Delivery.vue"
-import Lookalikes  from "@/views/Audiences/Dashboard/Lookalikes.vue"
+import Lookalikes from "@/views/Audiences/Dashboard/Lookalikes.vue"
 import DashboardHeader from "@/views/Audiences/Dashboard/Header.vue"
 import StandaloneDelivery from "@/views/Audiences/Dashboard/StandaloneDelivery.vue"
 import Matchrate from "@/views/Audiences/Dashboard/Matchrate.vue"
@@ -335,24 +327,15 @@ export default {
   name: "AudienceInsight",
   components: {
     AttachEngagement,
-    Avatar,
-    Breadcrumb,
     ConfirmModal,
     DeliveryHistoryDrawer,
-    DeliveryOverview,
     DestinationDataExtensionDrawer,
     EditDeliverySchedule,
     Icon,
     LookAlikeAudience,
-    LookAlikeCard,
-    mapSlider,
-    MapStateList,
     MetricCard,
-    PageHeader,
     SelectDestinationsDrawer,
-    Size,
     Tooltip,
-    GenderSpendChart,
     Delivery,
     Lookalikes,
     DashboardHeader,
@@ -366,7 +349,6 @@ export default {
       showAdvertising: true,
       deliveryCols: 7,
       advertisingCols: 5,
-
 
       tabOption: 0,
       showLookAlikeDrawer: false,
@@ -563,13 +545,13 @@ export default {
       getEngagementById: "engagements/get",
     }),
 
-    async refresh(){
+    async refresh() {
       this.engagementId = 1
       await this.loadEngagement(1)
       this.sizeHandler()
       await this.loadAudienceInsights()
     },
-    addDestination(event){
+    addDestination(event) {
       this.closeAllDrawers()
       this.engagementId = event.id
       this.selectedDestinations = []
@@ -849,17 +831,17 @@ export default {
     toggleGeoDrawer(geoLevel = "states") {
       this.geoDrawer[geoLevel] = !this.geoDrawer[geoLevel]
     },
-    toggleAd(){
-      if(this.showAdvertising){
+    toggleAd() {
+      if (this.showAdvertising) {
         this.deliveryCols = 11
         this.advertisingCols = 0
         this.showAdvertising = false
-      }else {
+      } else {
         this.deliveryCols = 7
         this.advertisingCols = 5
         this.showAdvertising = true
       }
-    }
+    },
   },
 }
 </script>
@@ -922,17 +904,14 @@ export default {
   }
 
   .tabs-group {
-
   }
   .tabs-item {
     .delivery-tab {
       .digital-adv {
         height: 368px !important;
         .match-rates {
-          
         }
         .lookalikes {
-          
           border-radius: 12px !important;
         }
       }
@@ -947,7 +926,6 @@ export default {
       }
     }
     .insights-tab {
-      
     }
   }
 }
@@ -995,13 +973,12 @@ export default {
   color: var(--v-primary-base) !important;
 }
 
-
 .collapsible-bar {
   margin-top: 16px;
   width: 24px;
   background-color: var(--v-primary-base) !important;
   height: 368px;
-  
+
   cursor: pointer;
   float: left;
   position: relative;
@@ -1016,12 +993,12 @@ export default {
   }
   .bar-text {
     writing-mode: vertical-rl;
-    transform:scale(-1);
+    transform: scale(-1);
     color: var(--v-white-base) !important;
     position: absolute;
-    top: 6%
+    top: 6%;
   }
-  .collapse-icon{
+  .collapse-icon {
     margin: 0;
     position: absolute;
     top: 50%;

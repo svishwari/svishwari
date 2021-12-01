@@ -1,7 +1,7 @@
 """Database client tests."""
 from unittest import TestCase, mock
 import mongomock
-from huxunifylib.database import constants as c
+from huxunifylib.database import constants as db_c
 from pymongo import ASCENDING
 import database.create_database_indexes as cdi
 
@@ -25,19 +25,19 @@ class TestCreateDBIndexes(TestCase):
 
         index_list = [
             (
-                c.DATA_MANAGEMENT_DATABASE,
-                c.CONSTANTS_COLLECTION,
-                [(c.CONSTANT_NAME, ASCENDING)],
+                db_c.DATA_MANAGEMENT_DATABASE,
+                db_c.CONSTANTS_COLLECTION,
+                [(db_c.CONSTANT_NAME, ASCENDING)],
             ),
             (
-                c.DATA_MANAGEMENT_DATABASE,
-                c.INGESTION_JOBS_COLLECTION,
-                [(c.DATA_SOURCE_ID, ASCENDING)],
+                db_c.DATA_MANAGEMENT_DATABASE,
+                db_c.INGESTION_JOBS_COLLECTION,
+                [(db_c.DATA_SOURCE_ID, ASCENDING)],
             ),
         ]
         cdi.set_indexes(self.database, index_list)
-        const_collection = self.database[c.DATA_MANAGEMENT_DATABASE][
-            c.CONSTANTS_COLLECTION
+        const_collection = self.database[db_c.DATA_MANAGEMENT_DATABASE][
+            db_c.CONSTANTS_COLLECTION
         ]
         self.assertTrue(const_collection.index_information())
 
@@ -45,8 +45,8 @@ class TestCreateDBIndexes(TestCase):
         """Unit Test for set Indexes."""
 
         cdi.add_unique_compound_index(self.database)
-        ing_collection = self.database[c.DATA_MANAGEMENT_DATABASE][
-            c.INGESTED_DATA_COLLECTION
+        ing_collection = self.database[db_c.DATA_MANAGEMENT_DATABASE][
+            db_c.INGESTED_DATA_COLLECTION
         ]
 
         self.assertTrue(list(ing_collection.list_indexes()))

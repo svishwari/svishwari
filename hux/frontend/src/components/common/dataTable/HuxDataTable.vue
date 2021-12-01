@@ -14,7 +14,6 @@
         fixed-header
         hide-default-footer
         must-sort
-        single-select
         :disable-sort="disableSort"
       >
         <!-- table headers -->
@@ -35,14 +34,19 @@
             <!-- TODO: find a better solution and remove v-html -->
             <span :key="column.value" v-html="column.text" />
           </template>
-          <tooltip v-if="column.hoverTooltip" :key="column.id" position-top>
+          <tooltip
+            v-if="column.hoverTooltip"
+            :key="column.id"
+            :max-width="column.tooltipWidth"
+            position-top
+          >
             <template #label-content>
               <icon
                 v-if="column.hoverTooltip"
                 :key="column.id"
                 type="info"
-                :size="12"
-                class="ml-1"
+                :size="8"
+                class="ml-1 mb-1"
                 color="primary"
                 variant="base"
               />
@@ -237,7 +241,6 @@ export default {
     table-layout: fixed;
     .fixed-column {
       position: absolute;
-      display: flex;
       align-items: center;
       background: var(--v-white-base) !important;
       left: 0px;
@@ -264,6 +267,10 @@ export default {
     }
     ::v-deep .v-data-table__expanded__content {
       padding: 0px;
+    }
+
+    tr:hover {
+      background-color: transparent !important;
     }
   }
 

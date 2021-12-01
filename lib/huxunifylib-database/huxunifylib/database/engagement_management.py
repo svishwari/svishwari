@@ -1082,3 +1082,39 @@ def remove_audience_from_all_engagements(
         logging.error(exc)
 
     return False
+
+
+def remove_destination_from_all_engagements(
+    database: DatabaseClient, destination_id: ObjectId, user_name: str
+) -> None:
+    """Remove a destination from all engagement-audience objects.
+
+    Args:
+        database (DatabaseClient): A database client.
+        destination_id (ObjectId): MongoDB ID of the destination.
+        user_name (str): Name of the user removing the destination from the
+            audience.
+
+    """
+    # get engagements
+    for engagement in get_engagements(database):
+
+        # process audiences
+        for audience in engagement.get(db_c.AUDIENCES):
+
+            # process each destination
+            remove_destination = False
+            for destination in audience.get(db_c.DESTINATIONS):
+                if destination.get(db_c.OBJECT_ID) == destination_id:
+                    remove_destination = True
+                    break
+
+            if remove_destination:
+                # audience contains destinations for removal
+                remove_destination_from_engagement_audience(
+                    database,
+                    engagement[db_c.ID],
+                    audience[db_c.OBJECT_ID],
+                    destination_id,
+                    user_name,
+                )

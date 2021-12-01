@@ -16,7 +16,9 @@
     </page-header>
     <page-header class="top-bar mb-3" :header-height="71">
       <template #left>
-        <v-icon medium color="black lighten-3">mdi-magnify</v-icon>
+        <v-btn disabled icon color="black">
+          <icon type="search" :size="20" color="black" variant="lighten3" />
+        </v-btn>
       </template>
 
       <template #right>
@@ -63,7 +65,7 @@
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
             }"
-            class="col-overflow"
+            class="col-overflow text-body-1"
             :style="{ width: header.width, left: 0 }"
           >
             <div v-if="header.value == 'id'">
@@ -226,7 +228,7 @@ export default {
           width: "180px",
         },
         {
-          text: "Brief Description",
+          text: "Brief description",
           value: "description",
           width: "auto",
         },
@@ -258,7 +260,12 @@ export default {
       return sortedNotificaitonList.sort((a, b) => a.id - b.id)
     },
     getNotificationUsers() {
-      return this.getUsers
+      let sortedUsers = this.getUsers
+      return sortedUsers.sort(function (a, b) {
+        var textA = a["display_name"].toUpperCase()
+        var textB = b["display_name"].toUpperCase()
+        return textA < textB ? -1 : textA > textB ? 1 : 0
+      })
     },
   },
 
@@ -292,7 +299,7 @@ export default {
       this.alertDrawer = !this.alertDrawer
     },
     intersected() {
-      if (this.batchDetails.batchNumber <= this.lastBatch) {
+      if (this.batchDetails.batch_number <= this.lastBatch) {
         this.batchDetails.isLazyLoad = true
         this.fetchNotificationsByBatch()
       } else {
@@ -301,14 +308,14 @@ export default {
     },
     async fetchNotificationsByBatch() {
       await this.getAllNotifications(this.batchDetails)
-      this.batchDetails.batchNumber++
+      this.batchDetails.batch_number++
     },
     async getUserData() {
       await this.getUsersNoti()
     },
     calculateLastBatch() {
       this.lastBatch = Math.ceil(
-        this.totalNotifications / this.batchDetails.batchSize
+        this.totalNotifications / this.batchDetails.batch_size
       )
     },
     toggleFilterDrawer() {
@@ -329,12 +336,77 @@ export default {
       }
     },
     setDefaultData() {
-      this.batchDetails.batchSize = 25
-      this.batchDetails.batchNumber = 1
+      let today_date = new Date()
+      let getStartDate = new Date(
+        today_date.getFullYear(),
+        today_date.getMonth(),
+        today_date.getDate() - 7
+      )
+      let getEndDate = new Date(
+        today_date.getFullYear(),
+        today_date.getMonth(),
+        today_date.getDate()
+      )
+      this.batchDetails.start_date = this.$options.filters.Date(
+        getStartDate,
+        "YYYY-MM-DD"
+      )
+      this.batchDetails.end_date = this.$options.filters.Date(
+        getEndDate,
+        "YYYY-MM-DD"
+      )
+      this.batchDetails.batch_size = 25
+      this.batchDetails.batch_number = 1
       this.batchDetails.isLazyLoad = false
     },
-    alertfunction() {
-      //TODO: Apply Filter API Integration
+    async alertfunction(data) {
+      this.isFilterToggled = false
+      try {
+        let today_date = new Date()
+        let getEndDate = new Date(
+          today_date.getFullYear(),
+          today_date.getMonth(),
+          today_date.getDate()
+        )
+        this.batchDetails.batch_size = 25
+        this.batchDetails.batch_number = 1
+        if (data.selctedAlertType.length !== 0) {
+          this.batchDetails.notification_types =
+            data.selctedAlertType.toString()
+        } else {
+          delete this.batchDetails.notification_types
+        }
+        if (data.selctedCategory.length !== 0) {
+          this.batchDetails.category = data.selctedCategory.toString()
+        } else {
+          delete this.batchDetails.category
+        }
+        if (data.selctedUsers.length !== 0) {
+          this.batchDetails.users = data.selctedUsers.toString()
+        } else {
+          delete this.batchDetails.users
+        }
+
+        if (data.getTime === null || "") {
+          this.batchDetails.start_date = ""
+          this.batchDetails.end_date = ""
+        } else {
+          this.batchDetails.start_date = data.getTime
+          this.batchDetails.end_date = this.$options.filters.Date(
+            getEndDate,
+            "YYYY-MM-DD"
+          )
+        }
+        await this.fetchNotificationsByBatch()
+        this.batchDetails.isLazyLoad = false
+      } finally {
+        this.isFilterToggled = false
+        this.loading = false
+        this.enableLazyLoad = true
+        if (this.notifications.length === 0) {
+          this.enableLazyLoad = false
+        }
+      }
     },
   },
 }

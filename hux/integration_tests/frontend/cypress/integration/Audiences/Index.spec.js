@@ -19,6 +19,7 @@ describe("Orchestration > Audiences", () => {
       "Audience name",
       "Status",
       "Size",
+      "Attributes",
       "Destinations",
       "Last delivered",
       "Last updated",
@@ -52,6 +53,11 @@ describe("Orchestration > Audiences", () => {
       .eq(0)
       .find("button")
       .eq(0)
-      .should("have.class", "mr-3 fixed-icon")
+      .should("have.class", "d-block")
+    cy.get(selector.audience.audiencenameclick)
+      .eq(0)
+      .find("button")
+      .eq(0)
+      .click({ force: true })
   })
 })

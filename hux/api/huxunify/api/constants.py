@@ -52,7 +52,7 @@ JIRA_SERVER = "JIRA_SERVER"
 JIRA_API_KEY = "JIRA_API_KEY"
 ISSUE_TYPE = "issue_type"
 KEY = "key"
-TASK = "task"
+TASK = "Task"
 TICKET_TYPE_BUG = "Bug"
 
 # general defines
@@ -63,6 +63,7 @@ OWNER = "owner"
 STATUS = "status"
 BODY = "body"
 TYPE = "type"
+ROLE = "role"
 DESCRIPTION = "description"
 FIRST_NAME = "first_name"
 LAST_NAME = "last_name"
@@ -75,6 +76,7 @@ ADDRESS = "address"
 CITY = "city"
 STATE = "state"
 ZIP = "zip"
+ZIP_CODE = "zip_code"
 COOKIE = "cookie"
 PROP = "prop"
 ICON = "icon"
@@ -85,12 +87,14 @@ DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
 DATE_RANGE = "date_range"
 HUX_ID = "hux_id"
+REDACT_FIELD = "redact"
 LIMIT = "limit"
 CREATE_TIME = "create_time"
 CONTACT_EMAIL = "contact_email"
 CLIENT_REQUEST = "client_request"
 CLIENT_ACCOUNT = "client_account"
 USE_CASE = "use_case"
+FIELD_TYPE = "field_type"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -136,6 +140,8 @@ MAX_LTV_PREDICTED = "max_ltv_predicted"
 MIN_LTV_ACTUAL = "min_ltv_actual"
 MAX_LTV_ACTUAL = "max_ltv_actual"
 AVG_LTV = "avg_ltv"
+MIN_LTV = "min_ltv"
+MAX_LTV = "max_ltv"
 COUNTRY = "country"
 CONTACT_PREFERENCES = "contact_preferences"
 IDENTITY_RESOLUTION = "identity_resolution"
@@ -237,6 +243,9 @@ STATE_NAMES = {
     "WY": "Wyoming",
     "PR": "Puerto Rico",
 }
+STATE_LABEL = "state_label"
+COUNTRIES_LIST = {"US": "United States"}
+COUNTRY_LABEL = "country_label"
 DEMOGRAPHIC = "demo"
 DATE = "date"
 RECORDED = "recorded"
@@ -699,7 +708,8 @@ EMAIL_METRICS = [
     "delivered_rate",
     "open",
     "open_rate",
-    "click",
+    "clicks",
+    "conversions",
     "click_to_open_rate",
     "unique_clicks",
     "unique_opens",
@@ -794,6 +804,9 @@ CDP_DATA_SOURCE_CATEGORY_MAP = {
 }
 
 CDP_DATA_SOURCE_CATEGORIES = list(set(CDP_DATA_SOURCE_CATEGORY_MAP.values()))
+ACTION_ACTIVATED = "activated"
+ACTION_REQUESTED = "requested"
+ACTION_REMOVED = "removed"
 
 # Authentication API fields
 AUTHORIZATION = "Authorization"
@@ -814,6 +827,7 @@ AccessLevel = namedtuple(
 ADMIN_LEVEL = AccessLevel(db_c.USER_ROLE_ADMIN)
 EDITOR_LEVEL = AccessLevel(db_c.USER_ROLE_EDITOR)
 VIEWER_LEVEL = AccessLevel(db_c.USER_ROLE_VIEWER)
+USER_ROLE_ALL = [ADMIN_LEVEL, EDITOR_LEVEL, VIEWER_LEVEL]
 
 # Orchestration API fields
 ORCHESTRATION_ENDPOINT = "/orchestration"
@@ -843,6 +857,7 @@ LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 LOOKALIKEABLE = "lookalikeable"
 IS_LOOKALIKE = "is_lookalike"
 LOOKALIKE = "lookalike"
+LOOKALIKE_SOURCE_EXISTS = "source_exists"
 WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
 
@@ -1002,6 +1017,12 @@ GEOGRAPHICAL = "geo"
 CUSTOMERS_API_HEADER_KEY = "x-api-key"
 CUSTOMERS_DEFAULT_BATCH_SIZE = 1000
 CUSTOMER_COUNT = "customer_count"
+OPT_IN = "Opt-In"
+OPT_OUT = "Opt-Out"
+PREFERENCE_EMAIL = "preference_email"
+PREFERENCE_PUSH = "preference_push"
+PREFERENCE_SMS = "preference_sms"
+PREFERENCE_IN_APP = "preference_in_app"
 
 MAX_WORKERS_THREAD_POOL = os.cpu_count() * 1 + 1
 
@@ -1172,162 +1193,153 @@ DEFAULT_DATE_FORMAT = "%Y-%m-%d"
 MODELS_STUB = [
     {
         CATEGORY: "Email",
-        TYPE: "propensity",
+        TYPE: "Classification",
         NAME: "Propensity to Purchase",
-        DESCRIPTION: "Propensity to Purchase.",
+        DESCRIPTION: "Propensity for a customer to click"
+        " on a link in an email and make a purchase.",
         ID: "f76a5e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Email",
-        TYPE: "propensity",
+        TYPE: "Classification",
         NAME: "Propensity to Unsubscribe",
-        DESCRIPTION: "Propensity to Unsubscribe.",
+        DESCRIPTION: "Propensity for a customer to unsubscribe"
+        " from an email marketing list.",
         ID: "a54d7e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Email",
-        TYPE: "propensity",
+        TYPE: "Classification",
         NAME: "Propensity to Open",
-        DESCRIPTION: "Propensity to open",
+        DESCRIPTION: " Propensity for a customer to open an email.",
         ID: "5df65e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Email",
-        TYPE: "propensity",
+        TYPE: "Classification",
         NAME: "Propensity to Click",
-        DESCRIPTION: "Propensity to click.",
+        DESCRIPTION: "Propensity for a customer to click "
+        "on a link in an email.",
         ID: "aa789e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Email",
-        TYPE: "propensity",
-        NAME: "Email content optimization",
-        DESCRIPTION: "Email content optimization.",
+        TYPE: "Unknown",
+        NAME: "Email Content Optimization",
+        DESCRIPTION: "Alter email content to optimize "
+        "email campaign performance.",
         ID: "99e45e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Sales forecasting",
-        TYPE: "prediction",
-        NAME: "Customer lifetime value",
-        DESCRIPTION: "Customer lifetime value.",
+        TYPE: "Regression",
+        NAME: "Customer Lifetime Value",
+        DESCRIPTION: "Predicting the lifetime value of a "
+        "customer over a defined time range.",
         ID: "cc768e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Sales forecasting",
-        TYPE: "prediction",
-        NAME: "Predicted sales per customer",
-        DESCRIPTION: "Predicted sales per customer.",
+        TYPE: "Regression",
+        NAME: "Predicted Sales Per Customer",
+        DESCRIPTION: "Predicting sales for a customer over a "
+        "defined time range.",
         ID: "bba67e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Sales forecasting",
-        TYPE: "prediction",
-        NAME: "Predicted sales per store",
-        DESCRIPTION: "Predicted sales per store.",
+        TYPE: "Regression",
+        NAME: "Predicted Sales Per Store",
+        DESCRIPTION: "Predicting sales for a store over a "
+        "defined time range.",
         ID: "a45b7e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
-        CATEGORY: "Hux TrustID",
-        TYPE: "propensity",
-        NAME: "Capability propensity",
-        DESCRIPTION: "Capability propensity.",
+        CATEGORY: "Trust",
+        TYPE: "Classification",
+        NAME: "Capability Propensity",
+        DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral capability score.",
         ID: "bc123e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
-        CATEGORY: "Hux TrustID",
-        TYPE: "propensity",
-        NAME: "Capability trust propensity",
-        DESCRIPTION: "Capability trust propensity.",
+        CATEGORY: "Trust",
+        TYPE: "Classification",
+        NAME: "Trust Propensity",
+        DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral trust score.",
         ID: "a15d8e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
-        CATEGORY: "Hux TrustID",
-        TYPE: "propensity",
-        NAME: "Humanity propensity",
-        DESCRIPTION: "Humanity propensity.",
+        CATEGORY: "Trust",
+        TYPE: "Classification",
+        NAME: "Humanity Propensity",
+        DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral humanity score.",
         ID: "bd732e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
-        CATEGORY: "Hux TrustID",
-        TYPE: "propensity",
-        NAME: "Hux TrustID propensity",
-        DESCRIPTION: "Hux TrustID propensity.",
-        ID: "cce14e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Hux TrustID",
-        TYPE: "propensity",
-        NAME: "NBA learning algorithm",
-        DESCRIPTION: "NBA learning algorithm.",
-        ID: "98acee0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Hux TrustID",
-        TYPE: "propensity",
-        NAME: "Reliability propensity",
-        DESCRIPTION: "Reliability propensity.",
+        CATEGORY: "Trust",
+        TYPE: "Classification",
+        NAME: "Reliability Propensity",
+        DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral reliability score.",
         ID: "99d12e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
-        CATEGORY: "Hux TrustID",
-        TYPE: "propensity",
-        NAME: "Transparency propensity",
-        DESCRIPTION: "Transparency propensity.",
+        CATEGORY: "Trust",
+        TYPE: "Classification",
+        NAME: "Transparency Propensity",
+        DESCRIPTION: "Propensity for a customer to have positive,"
+        " negative, or neutral transparency score.",
         ID: "bed54e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Retention",
-        TYPE: "propensity",
+        TYPE: "Classification",
         NAME: "Churn",
-        DESCRIPTION: "Churn.",
+        DESCRIPTION: "Propensity for a customer to leave a service "
+        "over a defined time range.",
         ID: "11d54e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Web",
-        TYPE: "propensity",
-        NAME: "Propensity to purchase product category",
-        DESCRIPTION: "Propensity to purchase product category.",
+        TYPE: "Classification",
+        NAME: "Propensity to Purchase Product Category",
+        DESCRIPTION: "Propensity for a customer to make a web purchase"
+        " in a particular product category.",
         ID: "88ee4e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Web",
-        TYPE: "propensity",
-        NAME: "Propensity to visit product category",
-        DESCRIPTION: "Propensity to visit product category.",
+        TYPE: "Classification",
+        NAME: "Propensity to Visit Product Category",
+        DESCRIPTION: "Propensity for a customer to make a web visit"
+        " in a particular product category.",
         ID: "aab41e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
     {
         CATEGORY: "Web",
-        TYPE: "propensity",
-        NAME: "Propensity to visit website",
-        DESCRIPTION: "Propensity to visit website.",
+        TYPE: "Classification",
+        NAME: "Propensity to Visit Website",
+        DESCRIPTION: "Propensity for a customer to visit a website.",
         ID: "99a78e0bd7edaad4c36bec4a3682f02d36441fe1",
-        STATUS: STATUS_PENDING,
-    },
-    {
-        CATEGORY: "Uncategorized",
-        TYPE: "propensity",
-        NAME: "Segmentation",
-        DESCRIPTION: "Segmentation.",
-        ID: "abe41e0bd7edaad4c36bec4a3682f02d36441fe1",
         STATUS: STATUS_PENDING,
     },
 ]

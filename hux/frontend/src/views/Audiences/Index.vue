@@ -16,13 +16,15 @@
           :size="22"
           class="cursor-pointer"
           color="black-darken4"
+          @click.native="toggleFilterDrawer()"
         />
       </template>
     </page-header>
     <page-header class="top-bar" :header-height="71">
       <template slot="left">
-        <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
-        <v-icon medium color="black lighten-3" class="pl-6">mdi-magnify</v-icon>
+        <v-btn disabled icon color="black">
+          <icon type="search" :size="20" color="black" variant="lighten3" />
+        </v-btn>
       </template>
 
       <template slot="right">
@@ -46,6 +48,7 @@
         </router-link>
       </template>
     </page-header>
+    <audience-filter v-model="isFilterToggled" @onSectionAction="applyFilter" />
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div v-if="!loading" class="white">
       <hux-data-table
@@ -56,6 +59,7 @@
         sort-column="update_time"
         sort-desc="false"
         data-e2e="audience-table"
+        class="big-table"
       >
         <template #row-item="{ item }">
           <td
@@ -89,19 +93,66 @@
                 data-e2e="audiencename"
                 has-favorite
                 :is-favorite="isUserFavorite(item, 'audiences')"
+                class="text-body-1"
                 @actionFavorite="handleActionFavorite(item, 'audiences')"
               />
             </div>
-            <div v-if="header.value == 'status'" class="text-h5">
+            <div v-if="header.value == 'status'">
               <status
                 :status="item[header.value]"
                 :show-label="true"
                 class="d-flex"
-                :icon-size="17"
+                :icon-size="18"
               />
             </div>
             <div v-if="header.value == 'size'">
               <size :value="item[header.value]" />
+            </div>
+            <div
+              v-if="header.value == 'filters' && item[header.value]"
+              class="filter_col"
+            >
+              <span
+                v-for="(filter, filterIndex) in filterTags[item.name]"
+                :key="filterIndex"
+              >
+                <v-chip
+                  v-if="filterIndex < 4"
+                  small
+                  class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                  text-color="primary"
+                  color="var(--v-primary-lighten3)"
+                >
+                  {{ formatText(filter) }}
+                </v-chip>
+              </span>
+              <tooltip>
+                <template #label-content>
+                  <span
+                    v-if="filterTags[item.name].size > 4"
+                    class="text-subtitle-2 primary--text"
+                  >
+                    +{{ filterTags[item.name].size - 4 }}
+                  </span>
+                </template>
+                <template #hover-content>
+                  <span
+                    v-for="(filter, filterIndex) in filterTags[item.name]"
+                    :key="filterIndex"
+                  >
+                    <v-chip
+                      v-if="filterIndex >= 4"
+                      small
+                      class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                      text-color="primary"
+                      color="var(--v-primary-lighten3)"
+                    >
+                      {{ formatText(filter) }}
+                    </v-chip>
+                    <br v-if="filterIndex >= 4" />
+                  </span>
+                </template>
+              </tooltip>
             </div>
             <div v-if="header.value == 'destinations'">
               <div
@@ -130,12 +181,12 @@
                 </div>
 
                 <span
-                  v-if="item[header.value] && item[header.value].length > 3"
-                  class="ml-1"
+                  v-if="item[header.value] && item[header.value].length > 2"
+                  class="ml-1 text-body-1 black--text"
                 >
                   <tooltip>
                     <template #label-content>
-                      + {{ item[header.value].length - 3 }}
+                      +{{ item[header.value].length - 2 }}
                     </template>
                     <template #hover-content>
                       <div class="d-flex flex-column">
@@ -299,6 +350,8 @@ import Status from "../../components/common/Status.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import Logo from "../../components/common/Logo.vue"
 import ConfirmModal from "@/components/common/ConfirmModal"
+import AudienceFilter from "./Configuration/Drawers/AudienceFilter"
+import { formatText } from "@/utils.js"
 
 export default {
   name: "Audiences",
@@ -318,6 +371,7 @@ export default {
     Tooltip,
     Logo,
     ConfirmModal,
+    AudienceFilter,
   },
   data() {
     return {
@@ -339,12 +393,19 @@ export default {
         {
           text: "Status",
           value: "status",
-          width: "160px",
+          width: "200px",
         },
         {
           text: "Size",
           value: "size",
           width: "112px",
+          hoverTooltip:
+            "Current number of customers who fit the selected attributes.",
+        },
+        {
+          text: "Attributes",
+          value: "filters",
+          width: "411px",
         },
         {
           text: "Destinations",
@@ -354,27 +415,27 @@ export default {
         {
           text: "Last delivered",
           value: "last_delivered",
-          width: "162",
+          width: "170",
         },
         {
           text: "Last updated",
           value: "update_time",
-          width: "154",
+          width: "180",
         },
         {
           text: "Last updated by",
           value: "updated_by",
-          width: "148",
+          width: "181",
         },
         {
           text: "Created",
           value: "create_time",
-          width: "154",
+          width: "182",
         },
         {
           text: "Created by",
           value: "created_by",
-          width: "148",
+          width: "182",
         },
       ],
       loading: false,
@@ -382,6 +443,7 @@ export default {
       showLookAlikeDrawer: false,
       confirmModal: false,
       confirmSubtitle: "",
+      isFilterToggled: false,
     }
   },
   computed: {
@@ -400,11 +462,26 @@ export default {
       if (this.rowData) return this.rowData.length > 0
       return false
     },
+    filterTags() {
+      let filterTagsObj = {}
+      let audienceValue = JSON.parse(JSON.stringify(this.rowData))
+      audienceValue.forEach((audience) => {
+        if (audience.filters) {
+          filterTagsObj[audience.name] = new Set()
+          audience.filters.forEach((item) => {
+            item.section_filters.forEach((obj) => {
+              filterTagsObj[audience.name].add(obj.field)
+            })
+          })
+        }
+      })
+      return filterTagsObj
+    },
   },
   async mounted() {
     this.loading = true
     try {
-      await this.getAllAudiences()
+      await this.getAllAudiences({})
     } finally {
       this.loading = false
     }
@@ -485,18 +562,18 @@ export default {
     },
     getOverallDestinations(audienceDestinations) {
       let destinations = [...audienceDestinations]
-      if (destinations.length > 3) {
+      if (destinations.length > 2) {
         return destinations
-          .slice(0, 3)
+          .slice(0, 2)
           .sort((a, b) => a.name.localeCompare(b.name))
       }
       return destinations.sort((a, b) => a.name.localeCompare(b.name))
     },
     getExtraDestinations(audienceDestinations) {
       let destinations = [...audienceDestinations]
-      if (destinations.length > 3) {
+      if (destinations.length > 2) {
         return destinations
-          .slice(3)
+          .slice(2)
           .sort((a, b) => a.name.localeCompare(b.name))
       }
       return destinations.sort((a, b) => a.name.localeCompare(b.name))
@@ -512,13 +589,31 @@ export default {
       this.selectedAudience = audience
       this.showLookAlikeDrawer = true
     },
+
+    toggleFilterDrawer() {
+      this.isFilterToggled = !this.isFilterToggled
+    },
+    async applyFilter(params) {
+      await this.getAllAudiences({
+        favorites: params.selectedFavourite,
+        worked_by: params.selectedAudienceWorkedWith,
+        attribute: params.selectedAttributes,
+      })
+      this.isFilterToggled = false
+    },
+    formatText: formatText,
   },
 }
 </script>
 <style lang="scss" scoped>
 .audiences-wrap {
   ::v-deep .menu-cell-wrapper .action-icon {
-    display: none;
+    .fav-action {
+      display: none;
+    }
+    .more-action {
+      display: none;
+    }
   }
   .top-bar {
     margin-top: 1px;
@@ -544,7 +639,7 @@ export default {
         th:nth-child(1) {
           position: sticky;
           left: 0;
-          z-index: 9;
+          z-index: 3;
           border-right: thin solid rgba(0, 0, 0, 0.12);
           overflow-y: visible;
           overflow-x: visible;
@@ -556,9 +651,38 @@ export default {
           position: sticky;
           top: 0;
           left: 0;
-          z-index: 8;
-          background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
+        }
+        &:hover {
+          td:nth-child(1) {
+            z-index: 1 !important;
+            background: var(--v-primary-lighten2) !important;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+            .menu-cell-wrapper .action-icon {
+              .fav-action {
+                display: block;
+              }
+              .more-action {
+                display: block;
+              }
+            }
+          }
+          background: var(--v-primary-lighten2) !important;
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+          td.fixed-column {
+            z-index: 2 !important;
+            background: var(--v-primary-lighten2) !important;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+          }
+        }
+        td.fixed-column {
+          z-index: 1 !important;
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+          &:hover {
+            z-index: 2 !important;
+            background: var(--v-primary-lighten2) !important;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
+          }
         }
       }
     }
@@ -567,7 +691,6 @@ export default {
       tr {
         td {
           font-size: 14px;
-          height: 63px;
         }
       }
       tbody {
@@ -585,8 +708,17 @@ export default {
   .icon-border {
     cursor: default !important;
   }
+  .v-chip.v-size--small {
+    height: 20px;
+  }
 }
 .radio-div {
   margin-top: -11px !important;
+}
+.filter_col {
+  height: 59px !important;
+  overflow: auto;
+  display: table-cell;
+  vertical-align: middle;
 }
 </style>

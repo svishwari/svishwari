@@ -57,83 +57,88 @@
         </v-list>
       </v-menu>
     </v-card-title>
-    
+
     <v-list v-if="section.deliveries.length > 0" dense class="pa-0">
-        <hux-data-table
-            :columns="columnDefs"
-            :sort-desc="true"
-            :data-items="section.deliveries"
-            >
-            <template #row-item="{ item }">
-                <td
-                v-for="header in columnDefs"
-                :key="header.value"
-                class="text-body-2"
-                :style="{ width: header.width }"
-                data-e2e="map-state-list"
-                >
-                    <div v-if="header.value == 'name'" class="text-body-1">
-                      <logo :type="item.delivery_platform_type" :size="22" class="mb-n1"></logo>
-                      {{item.name}}
-                      <v-menu class="menu-wrapper" bottom offset-y>
-                        <template #activator="{ on, attrs }">
-                          <v-icon v-bind="attrs" class="top-action" v-on="on">
-                            mdi-dots-vertical
-                          </v-icon>
-                        </template>
-                        <v-list class="menu-list-wrapper">
-                          <v-list-item-group v-model="selection" active-class="">
-                            <v-list-item>
-                              <v-list-item-title>
-                                Deliver now
-                              </v-list-item-title>
-                            </v-list-item>
-                            <v-list-item>
-                              <v-list-item-title>
-                                Open destination
-                              </v-list-item-title>
-                            </v-list-item>
-                            <v-list-item>
-                              <v-list-item-title>
-                                Remove destination
-                              </v-list-item-title>
-                            </v-list-item>                            
-                          </v-list-item-group>
-                        </v-list>
-                      </v-menu>
-                    </div>
-                    <div v-if="header.value == 'status'" class="text-body-1">
-                        <status
-                          :status="item['status']"
-                          :show-label="true"
-                          class="d-flex"
-                          :icon-size="17"
-                        />
-                    </div>
-                    <div v-if="header.value == 'size'" class="text-body-1">
-                        <size :value="item['size']" />
-                    </div>
-                    <div v-if="header.value == 'next_delivery'" class="text-body-1">
-                        <time-stamp :value="item['next_delivery']" />
-                    </div>
-                </td>
-            </template>
-        </hux-data-table>
-        
-        <v-list v-if="section.deliveries" dense class="add-list" :height="52">
-          <v-list-item @click="$emit('onAddDestination', section)">
-            <hux-icon type="plus" :size="16" color="primary" class="mr-4" />
-            <hux-icon type="destination" :size="24" color="primary" class="mr-2" />
-            <v-btn
-              text
-              min-width="7rem"
-              height="2rem"
-              class="primary--text text-body-1" 
-            >
-              Destination
-            </v-btn>
-          </v-list-item>
-        </v-list>
+      <hux-data-table
+        :columns="columnDefs"
+        :sort-desc="true"
+        :data-items="section.deliveries"
+      >
+        <template #row-item="{ item }">
+          <td
+            v-for="header in columnDefs"
+            :key="header.value"
+            class="text-body-2"
+            :style="{ width: header.width }"
+            data-e2e="map-state-list"
+          >
+            <div v-if="header.value == 'name'" class="text-body-1">
+              <logo
+                :type="item.delivery_platform_type"
+                :size="22"
+                class="mb-n1"
+              ></logo>
+              {{ item.name }}
+              <v-menu class="menu-wrapper" bottom offset-y>
+                <template #activator="{ on, attrs }">
+                  <v-icon v-bind="attrs" class="top-action" v-on="on">
+                    mdi-dots-vertical
+                  </v-icon>
+                </template>
+                <v-list class="menu-list-wrapper">
+                  <v-list-item-group v-model="selection" active-class="">
+                    <v-list-item>
+                      <v-list-item-title> Deliver now </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-title> Open destination </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-title>
+                        Remove destination
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list-item-group>
+                </v-list>
+              </v-menu>
+            </div>
+            <div v-if="header.value == 'status'" class="text-body-1">
+              <status
+                :status="item['status']"
+                :show-label="true"
+                class="d-flex"
+                :icon-size="17"
+              />
+            </div>
+            <div v-if="header.value == 'size'" class="text-body-1">
+              <size :value="item['size']" />
+            </div>
+            <div v-if="header.value == 'next_delivery'" class="text-body-1">
+              <time-stamp :value="item['next_delivery']" />
+            </div>
+          </td>
+        </template>
+      </hux-data-table>
+
+      <v-list v-if="section.deliveries" dense class="add-list" :height="52">
+        <v-list-item @click="$emit('onAddDestination', section)">
+          <hux-icon type="plus" :size="16" color="primary" class="mr-4" />
+          <hux-icon
+            type="destination"
+            :size="24"
+            color="primary"
+            class="mr-2"
+          />
+          <v-btn
+            text
+            min-width="7rem"
+            height="2rem"
+            class="primary--text text-body-1"
+          >
+            Destination
+          </v-btn>
+        </v-list-item>
+      </v-list>
     </v-list>
   </v-card>
 </template>
@@ -149,7 +154,6 @@ import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import HuxIcon from "@/components/common/Icon.vue"
-import MenuCell from "@/components/common/huxTable/MenuCell.vue"
 
 export default {
   name: "DeliveryDetails",
@@ -162,7 +166,6 @@ export default {
     TimeStamp,
     Size,
     HuxIcon,
-    MenuCell,
   },
 
   props: {
@@ -243,7 +246,8 @@ export default {
           text: "Target size",
           value: "size",
           width: "15%",
-          hoverTooltip: "Average order value for all customers (known and anyonymous) for all time.",
+          hoverTooltip:
+            "Average order value for all customers (known and anyonymous) for all time.",
         },
         {
           text: "Last delivery",
@@ -293,15 +297,14 @@ export default {
       deliverAudience: "engagements/deliverAudience",
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
     }),
-    async deliverAll(engagement){
+    async deliverAll(engagement) {
       await this.deliverAudience({
         id: engagement.id,
         audienceId: this.audienceId,
       })
-      this.dataPendingMesssage(event, "engagement")
+      this.dataPendingMesssage(event)
     },
-    addDestination(){
-    },
+    addDestination() {},
     getSize(value) {
       return getApproxSize(value)
     },
@@ -365,7 +368,7 @@ export default {
         { id: 6, title: "Remove destination", active: true },
       ]
     },
-    dataPendingMesssage(event, value) {
+    dataPendingMesssage(event) {
       const engagementName = event.name
       const audienceName = this.audience.name
       this.setAlert({

@@ -13,7 +13,9 @@
     <v-list class="alert-menu-main">
       <v-list-item>
         <v-list-item-title class="font-weight-semi-bold text-h6 black--text">
-          <span v-if="mostRecentNotifications.length > 0">Unread alerts </span>
+          <span v-if="mostRecentNotifications.length > 0"
+            >Most recent alerts
+          </span>
           <span v-else>No unread alerts </span>
         </v-list-item-title>
       </v-list-item>
@@ -87,8 +89,8 @@ export default {
   data() {
     return {
       batchDetails: {
-        batchSize: 5,
-        batchNumber: 1,
+        batch_size: 5,
+        batch_number: 1,
         isLazyLoad: false,
       },
     }
@@ -100,7 +102,7 @@ export default {
     mostRecentNotifications() {
       return orderBy(this.notifications, "created", "desc").slice(
         0,
-        this.batchDetails.batchSize
+        this.batchDetails.batch_size
       )
     },
   },

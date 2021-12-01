@@ -11,6 +11,8 @@ describe("Orchestration > Engagement > Create Engagement", () => {
 
   it("should be able to configure a new engagement", () => {
     cy.visit(route.addEngagement)
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000)
     // should fill new engagement name and description
     // add new engagement name
     cy.get(selector.engagement.enagagementName)
@@ -69,9 +71,7 @@ describe("Orchestration > Engagement > Create Engagement", () => {
       if ($el.text().includes(`Test Engagement ${engagementName}`)) {
         // Make the vertical dots visible
         cy.wrap($el)
-          .find("span.action-icon")
-          .invoke("attr", "style", "display: block")
-          .find("button")
+          .find(".mdi-dots-vertical")
           .invoke("attr", "aria-expanded", "true")
           .click({ force: true })
 
