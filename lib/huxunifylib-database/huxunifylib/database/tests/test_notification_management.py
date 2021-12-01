@@ -174,8 +174,8 @@ class NotificationManagementTest(TestCase):
             notification_types=[],
             notification_categories=[],
             users=[],
-            start_date=datetime.combine(datetime.today(), datetime.min.time()),
-            end_date=datetime.combine(datetime.today(), datetime.min.time()),
+            start_date=datetime.combine(datetime.utcnow().date(), datetime.min.time()),
+            end_date=datetime.combine(datetime.utcnow().date(), datetime.min.time()),
         )
 
         self.assertCountEqual(
@@ -186,7 +186,7 @@ class NotificationManagementTest(TestCase):
         )
         for notification in notifications["notifications"]:
             self.assertEqual(
-                datetime.today().date(),
+                datetime.utcnow().date(),
                 notification.get(db_c.NOTIFICATION_FIELD_CREATED).date(),
             )
 
