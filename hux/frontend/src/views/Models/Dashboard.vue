@@ -601,7 +601,7 @@ export default {
         items.push({
           text: this.model.model_name,
           disabled: true,
-          icon: `model-${this.model.model_type}`,
+          logo: `model-${this.model.model_type}`,
         })
       }
       return items

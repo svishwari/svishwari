@@ -343,6 +343,7 @@ class AudienceView(SwaggerView):
                 for x in audience_destinations
                 if x[db_c.ID] == audience[db_c.ID]
             ]
+
             # set the unique destinations
             audience[db_c.DESTINATIONS] = (
                 matched_destinations[0].get(db_c.DESTINATIONS, [])
@@ -350,15 +351,39 @@ class AudienceView(SwaggerView):
                 else []
             )
 
+            # remove any empty ones, and only preserve that are delivered or
+            # succeeded and if the delivery_platform_id is for a destination
+            # that is part of audience destinations
+            audience[api_c.DELIVERIES] = (
+                [
+                    aud_delivery
+                    for aud_delivery in audience[api_c.DELIVERIES]
+                    if aud_delivery
+                    and (
+                        aud_delivery.get(db_c.STATUS)
+                        in [
+                            db_c.AUDIENCE_STATUS_DELIVERED,
+                            db_c.STATUS_SUCCEEDED,
+                        ]
+                    )
+                    and (
+                        aud_delivery[db_c.DELIVERY_PLATFORM_ID]
+                        == aud_destination[db_c.ID]
+                        for aud_destination in audience[db_c.DESTINATIONS]
+                    )
+                ]
+                if audience[db_c.DESTINATIONS]
+                else []
+            )
+
+            # set the lookalikeable field in audience before limiting the
+            # number of deliveries in it based on delivery_limit
+            audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
+
             # take the last X number of deliveries
-            # remove any empty ones, and only show the delivered/succeeded
-            audience[api_c.DELIVERIES] = [
-                x
-                for x in audience[api_c.DELIVERIES]
-                if x
-                and x.get(db_c.STATUS)
-                in [db_c.AUDIENCE_STATUS_DELIVERED, db_c.STATUS_SUCCEEDED]
-            ][:delivery_limit]
+            audience[api_c.DELIVERIES] = audience[api_c.DELIVERIES][
+                :delivery_limit
+            ]
 
             # set the weighted status for the audience based on deliveries
             audience[api_c.STATUS] = weight_delivery_status(audience)
@@ -368,7 +393,6 @@ class AudienceView(SwaggerView):
             if audience[api_c.STATUS] == api_c.STATUS_NOT_DELIVERED:
                 audience[api_c.AUDIENCE_LAST_DELIVERED] = None
 
-            audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
             audience[api_c.FAVORITE] = bool(
                 audience[db_c.ID] in favorite_audiences
             )
@@ -539,6 +563,13 @@ class AudienceGetView(SwaggerView):
             ]
             # TODO: HUS-837 change once we can generate real lookalikes from FB.
             lookalike[api_c.MATCH_RATE] = 0
+            # check and set if source/seed audience this lookalike audience is
+            # created from exists in DB
+            lookalike[api_c.LOOKALIKE_SOURCE_EXISTS] = bool(
+                orchestration_management.get_audience(
+                    database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
+                )
+            )
 
             # set audience to lookalike
             audience = lookalike

@@ -139,7 +139,7 @@ export default {
   position: absolute;
 }
 ::v-deep .v-expansion-panel-header {
-  padding: 10px 16px !important;
+  padding: 12px 16px !important;
   border-top-left-radius: 0px !important;
   border-top-right-radius: 0px !important;
 }

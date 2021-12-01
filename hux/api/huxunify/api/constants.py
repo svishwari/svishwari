@@ -858,6 +858,7 @@ LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 LOOKALIKEABLE = "lookalikeable"
 IS_LOOKALIKE = "is_lookalike"
 LOOKALIKE = "lookalike"
+LOOKALIKE_SOURCE_EXISTS = "source_exists"
 WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
 

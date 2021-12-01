@@ -74,5 +74,8 @@ export default {
   tr:hover {
     background-color: transparent !important;
   }
+  td {
+    height: 40px !important;
+  }
 }
 </style>
