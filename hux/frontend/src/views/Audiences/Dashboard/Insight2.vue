@@ -1017,8 +1017,9 @@ export default {
   .bar-text {
     writing-mode: vertical-rl;
     transform:scale(-1);
-    color: var(--v-white-base) !important;;
-    margin-bottom: 230px;
+    color: var(--v-white-base) !important;
+    position: absolute;
+    top: 6%
   }
   .collapse-icon{
     margin: 0;
