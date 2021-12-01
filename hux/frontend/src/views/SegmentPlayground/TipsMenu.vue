@@ -167,4 +167,7 @@ export default {
 ::v-deep .v-expansion-panel--active > .v-expansion-panel-header {
   border-top: 1px solid var(--v-black-lighten2) !important;
 }
+::v-deep .v-expansion-panel {
+  height: 45px !important;
+}
 </style>
