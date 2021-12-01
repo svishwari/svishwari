@@ -252,7 +252,7 @@ def requires_access_levels(access_levels: list) -> object:
             if get_config().TEST_AUTH_OVERRIDE:
                 # return a default user name
                 kwargs[api_c.USER] = {
-                    api_c.NAME: getpass.getuser(),
+                    api_c.USER_NAME: getpass.getuser(),
                     api_c.USER_ACCESS_LEVEL: db_c.USER_ROLE_ADMIN,
                     api_c.USER_PII_ACCESS: True,
                 }
