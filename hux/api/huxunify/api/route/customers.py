@@ -915,6 +915,15 @@ class CustomerEvents(SwaggerView):
             "example": "HUX123456789012345",
         },
         {
+            "name": api_c.INTERVAL,
+            "description": "Interval Unit.",
+            "type": "string",
+            "in": "query",
+            "required": True,
+            "example": "day",
+            "default": "day",
+        },
+        {
             "name": "body",
             "description": "Customer Events Filters",
             "type": "object",
@@ -943,7 +952,7 @@ class CustomerEvents(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
+    # @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(self, hux_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves events for a given HUX ID.
@@ -963,15 +972,25 @@ class CustomerEvents(SwaggerView):
         token_response = get_token_from_request(request)
 
         Validation.validate_hux_id(hux_id)
+        interval = request.args.get(api_c.INTERVAL).lower()
 
-        start_date, end_date = get_start_end_dates(request, 6)
+        # start_date, end_date = get_start_end_dates(request, 6)
+        start_date = request.json.get(api_c.START_DATE)
+        end_date = min(
+            request.json.get(api_c.END_DATE),
+            datetime.strftime(datetime.utcnow(), api_c.DEFAULT_DATE_FORMAT),
+        )
         Validation.validate_date_range(start_date, end_date)
 
         return (
             jsonify(
                 CustomerEventsSchema().dump(
                     get_customer_events_data(
-                        token_response[0], hux_id, start_date, end_date
+                        token_response[0],
+                        hux_id,
+                        start_date,
+                        end_date,
+                        interval,
                     ),
                     many=True,
                 )
