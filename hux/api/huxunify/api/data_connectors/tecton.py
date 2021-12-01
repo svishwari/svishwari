@@ -77,9 +77,8 @@ class Tecton:
         subclass_map = {
             subclass.is_mock: subclass for subclass in cls.__subclasses__()
         }
-        return super(Tecton, subclass_map[is_mock]).__new__(
-            subclass_map[is_mock]
-        )
+        subclass = subclass_map[is_mock] if is_mock in subclass_map else Tecton
+        return super(Tecton, subclass).__new__(subclass)
 
     def __init__(self, config: Config = get_config()) -> None:
         """initialize the Tecton class

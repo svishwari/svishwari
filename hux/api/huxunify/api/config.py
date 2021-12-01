@@ -146,6 +146,7 @@ class PyTestConfig(Config):
         api_c.PASSWORD: Config.MONGO_DB_PASSWORD,
         api_c.SSL_CERT_PATH: Config.MONGO_SSL_CERT,
     }
+    MOCK_TECTON = False
 
     # OKTA CONFIGURATION
     OKTA_CLIENT_ID = "test-client-id"

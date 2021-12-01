@@ -10,7 +10,7 @@ from hypothesis import given, strategies as st
 
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
-from huxunify.api.data_connectors import tecton
+from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.exceptions.integration_api_exceptions import (
     FailedAPIDependencyError,
     EmptyAPIResponseError,
@@ -64,6 +64,7 @@ class TectonTest(TestCase):
         """Setup tests."""
 
         self.config = get_config()
+        self.tecton = Tecton()
 
     @requests_mock.Mocker()
     def test_list_models(self, request_mocker: Mocker):
@@ -75,12 +76,12 @@ class TectonTest(TestCase):
 
         # setup the request mock post
         request_mocker.post(
-            self.config.TECTON_FEATURE_SERVICE,
+            self.tecton.service,
             text=json.dumps(MOCK_MODEL_RESPONSE, default=json_util.default),
-            headers=self.config.TECTON_API_HEADERS,
+            headers=self.tecton.headers,
         )
 
-        models = tecton.get_models()
+        models = self.tecton.get_models()
 
         # test that it was actually called and only once
         self.assertEqual(request_mocker.call_count, 1)
@@ -88,7 +89,13 @@ class TectonTest(TestCase):
 
         # test correct payload sent
         self.assertDictEqual(
-            request_mocker.last_request.json(), api_c.MODEL_LIST_PAYLOAD
+            request_mocker.last_request.json(),
+            {
+                "params": {
+                    "feature_service_name": self.tecton.feature_service.FEATURE_MODELS,
+                    "join_key_map": {"model_metadata_client": "HUS"},
+                }
+            },
         )
 
         self.assertEqual(models[0][api_c.LATEST_VERSION], "0.2.4")
@@ -104,22 +111,33 @@ class TectonTest(TestCase):
 
         # setup the request mock post
         request_mocker.post(
-            self.config.TECTON_FEATURE_SERVICE,
+            self.tecton.service,
             text=json.dumps(
                 t_c.MOCKED_MODEL_PERFORMANCE_LTV, default=json_util.default
             ),
-            headers=self.config.TECTON_API_HEADERS,
+            headers=self.tecton.headers,
         )
 
-        model = tecton.get_model_performance_metrics(2, api_c.LTV, "21.7.30")
+        model = self.tecton.get_model_performance_metrics(
+            2, api_c.LTV, "21.7.30"
+        )
 
         # test that it was actually called and only once
         self.assertEqual(request_mocker.call_count, 1)
         self.assertTrue(request_mocker.called)
 
         # test correct payload sent
+        drift = (
+            self.tecton.feature_service.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE
+        )
         self.assertDictEqual(
-            request_mocker.last_request.json(), t_c.MOCKED_MODEL_LTV_PAYLOAD
+            request_mocker.last_request.json(),
+            {
+                "params": {
+                    "feature_service_name": drift,
+                    "join_key_map": {"model_id": "2"},
+                }
+            },
         )
         self.assertDictEqual(
             model,
@@ -145,15 +163,15 @@ class TectonTest(TestCase):
 
         # setup the request mock post
         request_mocker.post(
-            self.config.TECTON_FEATURE_SERVICE,
+            self.tecton.service,
             text=json.dumps(
                 t_c.MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE,
                 default=json_util.default,
             ),
-            headers=self.config.TECTON_API_HEADERS,
+            headers=self.tecton.headers,
         )
 
-        model = tecton.get_model_performance_metrics(
+        model = self.tecton.get_model_performance_metrics(
             1, api_c.UNSUBSCRIBE, "21.7.31"
         )
 
@@ -162,9 +180,17 @@ class TectonTest(TestCase):
         self.assertTrue(request_mocker.called)
 
         # test correct payload sent
+        drift = (
+            self.tecton.feature_service.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE
+        )
         self.assertDictEqual(
             request_mocker.last_request.json(),
-            t_c.MOCKED_MODEL_UNSUBSCRIBE_PAYLOAD,
+            {
+                "params": {
+                    "feature_service_name": drift,
+                    "join_key_map": {"model_id": "1"},
+                }
+            },
         )
         self.assertDictEqual(
             model,
@@ -190,16 +216,16 @@ class TectonTest(TestCase):
 
         # setup the request mock post
         request_mocker.post(
-            self.config.TECTON_FEATURE_SERVICE,
+            self.tecton.service,
             text=json.dumps(
                 {},
                 default=json_util.default,
             ),
-            headers=self.config.TECTON_API_HEADERS,
+            headers=self.tecton.headers,
         )
 
         self.assertFalse(
-            tecton.get_model_performance_metrics(
+            self.tecton.get_model_performance_metrics(
                 1, api_c.UNSUBSCRIBE, "21.7.31"
             )
         )
@@ -214,15 +240,15 @@ class TectonTest(TestCase):
 
         # setup the request mock post
         request_mocker.post(
-            self.config.TECTON_FEATURE_SERVICE,
+            self.tecton.service,
             text=json.dumps(
                 t_c.MOCKED_MODEL_VERSION_HISTORY,
                 default=json_util.default,
             ),
-            headers=self.config.TECTON_API_HEADERS,
+            headers=self.tecton.headers,
         )
 
-        models = tecton.get_model_version_history(1)
+        models = self.tecton.get_model_version_history(1)
 
         # test that it was actually called and only once
         self.assertEqual(request_mocker.call_count, 1)
@@ -259,15 +285,15 @@ class TectonTest(TestCase):
 
         # setup the request mock post
         request_mocker.post(
-            self.config.TECTON_FEATURE_SERVICE,
+            self.tecton.service,
             text=json.dumps(
                 t_c.MOCKED_MODEL_PROPENSITY_FEATURES,
                 default=json_util.default,
             ),
-            headers=self.config.TECTON_API_HEADERS,
+            headers=self.tecton.headers,
         )
 
-        model_features = tecton.get_model_features(1, "21.7.30")
+        model_features = self.tecton.get_model_features(1, "21.7.30")
 
         self.assertTrue(model_features)
 
@@ -283,15 +309,15 @@ class TectonTest(TestCase):
 
         # setup the request mock post
         request_mocker.post(
-            self.config.TECTON_FEATURE_SERVICE,
+            self.tecton.service,
             text=json.dumps(
                 t_c.MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE,
                 default=json_util.default,
             ),
-            headers=self.config.TECTON_API_HEADERS,
+            headers=self.tecton.headers,
         )
 
-        model_features = tecton.get_model_features(1, "21.7.30")
+        model_features = self.tecton.get_model_features(1, "21.7.30")
 
         self.assertTrue(model_features)
         self.assertTrue(
@@ -303,11 +329,11 @@ class TectonTest(TestCase):
 
         # TODO- find async post mocker
         mock.patch(
-            "huxunify.api.data_connectors.tecton.get_model_lift_async",
+            "huxunify.api.data_connectors.tecton.Tecton.get_model_lift_async",
             return_value=t_c.MOCKED_MODEL_LIFT_CHART,
         ).start()
 
-        lift_data = tecton.get_model_lift_async(1)
+        lift_data = self.tecton.get_model_lift_async(1)
 
         self.assertTrue(lift_data)
 
@@ -337,27 +363,27 @@ class TectonTest(TestCase):
 
         # setup the request mock post for version history
         request_mocker.post(
-            self.config.TECTON_FEATURE_SERVICE,
+            self.tecton.service,
             text=json.dumps(
                 t_c.MOCKED_MODEL_VERSION_HISTORY,
                 default=json_util.default,
             ),
-            headers=self.config.TECTON_API_HEADERS,
+            headers=self.tecton.headers,
         )
 
-        models = tecton.get_model_version_history(2)
+        models = self.tecton.get_model_version_history(2)
 
         # setup the request mock post
         request_mocker.post(
-            self.config.TECTON_FEATURE_SERVICE,
+            self.tecton.service,
             text=json.dumps(
                 t_c.MOCKED_MODEL_DRIFT,
                 default=json_util.default,
             ),
-            headers=self.config.TECTON_API_HEADERS,
+            headers=self.tecton.headers,
         )
 
-        drift_data = tecton.get_model_drift(2, api_c.LTV, models)
+        drift_data = self.tecton.get_model_drift(2, api_c.LTV, models)
 
         # test that it was actually called and only once
         self.assertEqual(request_mocker.call_count, 2)
@@ -385,13 +411,13 @@ class TectonTest(TestCase):
         """
 
         request_mocker.post(
-            self.config.TECTON_FEATURE_SERVICE,
+            self.tecton.service,
             text=json.dumps({}),
-            headers=self.config.TECTON_API_HEADERS,
+            headers=self.tecton.headers,
         )
 
         with self.assertRaises(FailedAPIDependencyError):
-            tecton.get_models()
+            self.tecton.get_models()
 
     @requests_mock.Mocker()
     @given(model_id=st.integers(min_value=100, max_value=1000))
@@ -406,13 +432,13 @@ class TectonTest(TestCase):
         """
 
         request_mocker.post(
-            self.config.TECTON_FEATURE_SERVICE,
+            self.tecton.service,
             text=json.dumps({}),
-            headers=self.config.TECTON_API_HEADERS,
+            headers=self.tecton.headers,
         )
 
         with self.assertRaises(EmptyAPIResponseError):
-            tecton.get_model_version_history(model_id=model_id)
+            self.tecton.get_model_version_history(model_id=model_id)
 
     @requests_mock.Mocker()
     @given(
@@ -431,13 +457,13 @@ class TectonTest(TestCase):
         """
 
         request_mocker.post(
-            self.config.TECTON_FEATURE_SERVICE,
+            self.tecton.service,
             text=json.dumps({}),
-            headers=self.config.TECTON_API_HEADERS,
+            headers=self.tecton.headers,
         )
 
         with self.assertRaises(EmptyAPIResponseError):
-            tecton.get_model_drift(
+            self.tecton.get_model_drift(
                 model_id=model_id, model_type=model_type, models=[]
             )
 
@@ -458,8 +484,10 @@ class TectonTest(TestCase):
         """
 
         request_mocker.post(
-            self.config.TECTON_FEATURE_SERVICE,
+            self.tecton.service,
             text=json.dumps({}),
-            headers=self.config.TECTON_API_HEADERS,
+            headers=self.tecton.headers,
         )
-        self.assertFalse(tecton.get_model_features(model_id, model_version))
+        self.assertFalse(
+            self.tecton.get_model_features(model_id, model_version)
+        )
