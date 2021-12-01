@@ -1047,6 +1047,7 @@ class DestinationPatchView(SwaggerView):
         )
 
         if not updated_destination.get(db_c.ADDED):
+            # TODO: HUS-1749 - remove destinations from standalone audiences.
             # remove from any engagement audiences
             Thread(
                 target=remove_destination_from_all_engagements,
