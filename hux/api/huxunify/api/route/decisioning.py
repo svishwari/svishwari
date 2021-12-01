@@ -1,3 +1,4 @@
+# pylint: disable=unused-argument
 """Purpose of this script is for housing the
 decision routes for the API"""
 import pathlib
@@ -24,7 +25,7 @@ from huxunify.api.route.decorators import (
     add_view_to_blueprint,
     secured,
     api_error_handler,
-    get_user_name,
+    requires_access_levels,
 )
 from huxunify.api.route.utils import (
     get_db_client,
@@ -88,12 +89,16 @@ class ModelsView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self) -> Tuple[List[dict], int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[List[dict], int]:
         """Retrieves all models.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): User object.
 
         Returns:
             Tuple[List[dict], int]: list containing dict of models,
@@ -200,8 +205,8 @@ class SetModelStatus(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @get_user_name()
-    def post(self, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def post(self, user: dict) -> Tuple[dict, int]:
         """Request a model.
 
         ---
@@ -209,7 +214,7 @@ class SetModelStatus(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Model Requested, HTTP status code.
@@ -226,7 +231,7 @@ class SetModelStatus(SwaggerView):
                 database=database,
                 collection=db_c.CONFIGURATIONS_COLLECTION,
                 new_doc=body,
-                username=user_name,
+                username=user[api_c.USER_NAME],
             )
         except DuplicateDocument:
             logger.info("Model already exists %s.", body.get(db_c.NAME))
@@ -235,8 +240,10 @@ class SetModelStatus(SwaggerView):
         notification_management.create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
-            f'Model requested "{body[db_c.NAME]}" ' f"by {user_name}.",
+            f'Model requested "{body[db_c.NAME]}" '
+            f"by {user[api_c.USER_NAME]}.",
             api_c.MODELS_TAG,
+            user[api_c.USER_NAME],
         )
 
         logger.info("Successfully requested model %s.", body.get(db_c.NAME))
@@ -279,8 +286,8 @@ class RemoveRequestedModel(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @get_user_name()
-    def delete(self, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def delete(self, user: dict) -> Tuple[dict, int]:
         """Remove a requested model.
 
         ---
@@ -288,7 +295,7 @@ class RemoveRequestedModel(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Model Removed, HTTP status code.
@@ -308,19 +315,18 @@ class RemoveRequestedModel(SwaggerView):
             collection=db_c.CONFIGURATIONS_COLLECTION,
             query_filter={db_c.OBJECT_ID: model_id},
             hard_delete=False,
-            username=user_name,
+            username=user[api_c.USER_NAME],
         )
 
         if deletion_status:
             notification_management.create_notification(
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
-                f'Requested model "{model_id}" removed by {user_name}.',
+                f'Requested model "{model_id}" removed by {user[api_c.USER_NAME]}.',
                 api_c.MODELS_TAG,
+                user[api_c.USER_NAME],
             )
-
             logger.info("Successfully removed model %s.", model_id)
-
             return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.OK
 
         return {api_c.MESSAGE: api_c.OPERATION_FAILED}, HTTPStatus.NOT_FOUND
@@ -348,7 +354,8 @@ class ModelVersionView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, model_id: str) -> Tuple[List[dict], int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, model_id: str, user: dict) -> Tuple[List[dict], int]:
         """Retrieves model version history.
 
         ---
@@ -357,6 +364,7 @@ class ModelVersionView(SwaggerView):
 
         Args:
             model_id (str): Model ID.
+            user (dict): User object
 
         Returns:
             Tuple[List[dict], int]: List containing dict of model versions,
@@ -415,7 +423,8 @@ class ModelOverview(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, model_id: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, model_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves model overview.
 
         ---
@@ -424,6 +433,7 @@ class ModelOverview(SwaggerView):
 
         Args:
             model_id (str): Model ID.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: dict of model features, HTTP status code.
@@ -506,7 +516,8 @@ class ModelDriftView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    def get(self, model_id: str) -> Tuple[List[dict], int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, model_id: str, user: dict) -> Tuple[List[dict], int]:
         """Retrieves model drift details.
 
         ---
@@ -515,6 +526,7 @@ class ModelDriftView(SwaggerView):
 
         Args:
             model_id (str): Model ID.
+            user (dict): User object.
 
         Returns:
             Tuple[List[dict], int]: List containing dict of model drift,
@@ -581,12 +593,15 @@ class ModelFeaturesView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     responses.update(FAILED_DEPENDENCY_424_RESPONSE)
     responses.update(EMPTY_RESPONSE_DEPENDENCY_404_RESPONSE)
+
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
     @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self,
+        user: dict,
         model_id: str,
         model_version: str = None,
     ) -> Tuple[List[dict], int]:
@@ -597,6 +612,7 @@ class ModelFeaturesView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
+            user (dict): User object.
             model_id (str): Model ID.
             model_version (str): Model Version.
 
@@ -689,8 +705,10 @@ class ModelImportanceFeaturesView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self,
+        user: dict,
         model_id: str,
         model_version: str = None,
         limit: int = 20,
@@ -702,6 +720,7 @@ class ModelImportanceFeaturesView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
+            user (dict): User object.
             model_id (str): Model ID.
             model_version (str): Model Version.
             limit (int): Limit of features to return, default is 20.
@@ -770,9 +789,11 @@ class ModelLiftView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self,
         model_id: str,
+        user: dict,
     ) -> Tuple[List[dict], int]:
         """Retrieves model lift data.
 
@@ -782,6 +803,7 @@ class ModelLiftView(SwaggerView):
 
         Args:
             model_id (str): Model ID
+            user (dict): User object.
 
         Returns:
             Tuple[List[dict], int]: List containing a dict of model lift data,

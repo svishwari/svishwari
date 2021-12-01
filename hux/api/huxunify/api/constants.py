@@ -63,6 +63,7 @@ OWNER = "owner"
 STATUS = "status"
 BODY = "body"
 TYPE = "type"
+ROLE = "role"
 DESCRIPTION = "description"
 FIRST_NAME = "first_name"
 LAST_NAME = "last_name"
@@ -828,6 +829,7 @@ AccessLevel = namedtuple(
 ADMIN_LEVEL = AccessLevel(db_c.USER_ROLE_ADMIN)
 EDITOR_LEVEL = AccessLevel(db_c.USER_ROLE_EDITOR)
 VIEWER_LEVEL = AccessLevel(db_c.USER_ROLE_VIEWER)
+USER_ROLE_ALL = [ADMIN_LEVEL, EDITOR_LEVEL, VIEWER_LEVEL]
 
 # Orchestration API fields
 ORCHESTRATION_ENDPOINT = "/orchestration"

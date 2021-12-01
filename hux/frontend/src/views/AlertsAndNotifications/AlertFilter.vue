@@ -87,7 +87,6 @@
         color="primary"
         class="text-button ml-4"
         width="110"
-        disabled
         @click="apply()"
       >
         Apply filter
