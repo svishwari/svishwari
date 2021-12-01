@@ -464,7 +464,7 @@ class AudienceInsightsTest(TestCase):
             f"{api_c.USER}/ri",
             headers=t_c.STANDARD_HEADERS,
         )
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(404, response.status_code)
 
     def test_audience_histogram_rules_age(self) -> None:
         """Test get audience location rules histogram for age field."""
