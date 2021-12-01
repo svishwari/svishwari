@@ -71,7 +71,7 @@ class Tecton:
             config (Config): configuration object.
 
         Returns:
-            metric (dict): Grouped performance metrics.
+            Tecton: subclass of Tecton.
         """
         is_mock = config.MOCK_TECTON
         subclass_map = {
