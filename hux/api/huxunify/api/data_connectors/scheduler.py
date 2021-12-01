@@ -94,7 +94,7 @@ async def delivery_destination(
                 f'"{destination_id}" because the audience does not exist.'
             ),
             api_c.DELIVERY_TAG,
-            api_c.SCHEDULER_USER,
+            engagement[db_c.UPDATED_BY],
         )
         return
 
@@ -111,7 +111,7 @@ async def delivery_destination(
                 f'"{destination_id}" because the destination does not exist.'
             ),
             api_c.DELIVERY_TAG,
-            api_c.SCHEDULER_USER,
+            engagement[db_c.UPDATED_BY],
         )
         return
 
@@ -146,7 +146,7 @@ async def delivery_destination(
             f'"{destination[db_c.NAME]}".'
         ),
         api_c.DELIVERY_TAG,
-        api_c.SCHEDULER_USER,
+        engagement[db_c.UPDATED_BY],
     )
 
 
@@ -173,7 +173,9 @@ def run_scheduled_deliveries(database: MongoClient) -> None:
 
             # process each destination
             for destination in audience.get(api_c.DESTINATIONS):
-                if not destination.get(api_c.DELIVERY_SCHEDULE):
+                if isinstance(destination, dict) or not destination.get(
+                    api_c.DELIVERY_SCHEDULE
+                ):
                     continue
 
                 # check if the schedule falls within the cron time frame.

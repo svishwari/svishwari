@@ -905,6 +905,10 @@ class CourierTest(TestCase):
         # validate notification created
         notifications = get_notifications(
             self.database,
-            {db_c.NOTIFICATION_FIELD_USERNAME: api_c.SCHEDULER_USER},
+            {
+                db_c.NOTIFICATION_FIELD_USERNAME: engagement_doc[
+                    db_c.UPDATED_BY
+                ]
+            },
         )
         self.assertEqual(1, notifications["total_records"])
