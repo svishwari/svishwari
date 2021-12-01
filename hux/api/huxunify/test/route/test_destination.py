@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 """Purpose of this file is to house all the destination api tests."""
 from datetime import datetime
 from unittest import TestCase, mock
@@ -14,6 +15,11 @@ from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
     collection_management,
+)
+from huxunifylib.database.audience_management import create_audience
+from huxunifylib.database.engagement_management import (
+    set_engagement,
+    get_engagement,
 )
 import huxunify.test.constants as t_c
 from huxunify.api.data_connectors.aws import parameter_store
@@ -960,3 +966,107 @@ class TestDestinationRoutes(TestCase):
             self.database, self.destinations[0][db_c.ID]
         )
         self.assertTrue(destination[db_c.ENABLED])
+
+    def test_patch_destination_removed(self):
+        """Test patch destination added = False."""
+
+        # get destination ID
+        destination_id = self.destinations[0][db_c.ID]
+
+        # create audience
+        audiences = [
+            {
+                api_c.ID: create_audience(self.database, "Test Audience", [])[
+                    db_c.ID
+                ],
+                api_c.DESTINATIONS: [
+                    {
+                        api_c.ID: destination_id,
+                    },
+                ],
+            }
+        ]
+
+        # test engagement to ensure the destination exists
+        engagement = get_engagement(
+            self.database,
+            set_engagement(
+                self.database,
+                "Test engagement",
+                None,
+                audiences,
+                None,
+                None,
+                False,
+            ),
+        )
+
+        # test to ensure the destination is assigned to the engagement.
+        self.assertTrue(
+            [
+                a
+                for x in engagement.get(db_c.AUDIENCES)
+                for a in x.get(db_c.DESTINATIONS)
+                if a.get(db_c.OBJECT_ID) == destination_id
+            ]
+        )
+
+        # patch destination
+        self.assertTrue(
+            HTTPStatus.OK,
+            self.app.patch(
+                f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+                json={db_c.ADDED: False},
+                headers=t_c.STANDARD_HEADERS,
+            ).status_code,
+        )
+
+        # validate the destination was removed from any engagements.
+        # test engagement to ensure the destination exists
+        updated_engagement = get_engagement(
+            self.database, engagement.get(db_c.ID)
+        )
+
+        # test to ensure the destination is removed from the engagement.
+        self.assertFalse(
+            [
+                a
+                for x in updated_engagement.get(db_c.AUDIENCES)
+                for a in x.get(db_c.DESTINATIONS)
+                if a.get(db_c.OBJECT_ID) == destination_id
+            ]
+        )
+
+    def test_delete_destination(self):
+        """Test delete destination"""
+
+        # get destination ID
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        destination = destination_management.get_delivery_platform(
+            self.database, destination_id
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        self.assertIsNone(destination)
+
+    def test_delete_destination_where_destination_does_not_exist(self):
+        """Test delete destination where destination does not exist"""
+
+        # get destination ID
+        destination_id = ObjectId()
+
+        response = self.app.delete(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        destination = destination_management.get_delivery_platform(
+            self.database, destination_id
+        )
+
+        self.assertEqual(HTTPStatus.NO_CONTENT, response.status_code)
+        self.assertIsNone(destination)
