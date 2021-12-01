@@ -159,15 +159,15 @@ class TestNotificationRoutes(TestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}",
             query_string={
                 api_c.START_DATE: datetime.strftime(
-                        datetime.utcnow() - relativedelta(days=2),
-                        api_c.DEFAULT_DATE_FORMAT,
+                    datetime.utcnow() - relativedelta(days=2),
+                    api_c.DEFAULT_DATE_FORMAT,
                 ),
                 api_c.END_DATE: datetime.strftime(
-                        datetime.utcnow(),
-                        api_c.DEFAULT_DATE_FORMAT,
-                    ),
+                    datetime.utcnow(),
+                    api_c.DEFAULT_DATE_FORMAT,
+                ),
                 db_c.NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE: 10,
-                db_c.NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER: 1
+                db_c.NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER: 1,
             },
             headers=t_c.STANDARD_HEADERS,
         )

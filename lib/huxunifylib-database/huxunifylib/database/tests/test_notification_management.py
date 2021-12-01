@@ -174,8 +174,12 @@ class NotificationManagementTest(TestCase):
             notification_types=[],
             notification_categories=[],
             users=[],
-            start_date=datetime.combine(datetime.utcnow().date(), datetime.min.time()),
-            end_date=datetime.combine(datetime.utcnow().date(), datetime.min.time()),
+            start_date=datetime.combine(
+                datetime.utcnow().date(), datetime.min.time()
+            ),
+            end_date=datetime.combine(
+                datetime.utcnow().date(), datetime.min.time()
+            ),
         )
 
         self.assertCountEqual(
