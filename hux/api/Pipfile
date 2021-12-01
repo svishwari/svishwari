@@ -9,7 +9,7 @@ verify_ssl = true
 name = "jfrog"
 
 [packages]
-setuptools= {version="==56.1.0", index="pypi"}
+setuptools= {version="56.1.0", index="pypi"}
 flasgger= {version="0.9.5", index="pypi"}
 Flask= {version="1.1.2", index="pypi"}
 flask-marshmallow= {version="0.14.0", index="pypi"}
@@ -22,7 +22,7 @@ apispec-webframeworks= {version="0.5.2", index="pypi"}
 boto3= {version="1.17.5", index="pypi"}
 pre-commit= {version="2.11.1", index="pypi"}
 bson= {version="4.2.0", index="pypi"}
-pymongo = {version="==3.11.3", index="pypi"}
+pymongo = {version="3.11.3", index="pypi"}
 mongomock= {version="3.22.1", index="pypi"}
 python-decouple= {version="3.4", index="pypi"}
 requests= {version="2.25.1", index="pypi"}
