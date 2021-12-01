@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use,too-many-lines
+# pylint: disable=no-self-use,too-many-lines,unused-argument
 """Paths for destinations API"""
 import datetime
 from http import HTTPStatus
@@ -59,7 +59,7 @@ from huxunify.api.route.decorators import (
     secured,
     api_error_handler,
     validate_destination,
-    get_user_name,
+    requires_access_levels,
 )
 from huxunify.api.route.utils import (
     get_db_client,
@@ -156,7 +156,8 @@ class DestinationGetView(SwaggerView):
 
     @api_error_handler()
     @validate_destination()
-    def get(self, destination_id: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, destination_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves a destination.
 
         ---
@@ -165,6 +166,7 @@ class DestinationGetView(SwaggerView):
 
         Args:
             destination_id (str): Destination ID.
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: Destination dict, HTTP status code.
@@ -207,12 +209,18 @@ class DestinationsView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @api_error_handler()
-    def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(
+        self, user: dict
+    ) -> Tuple[list, int]:  # pylint: disable=no-self-use
         """Retrieves all destinations.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
 
         Returns:
             Tuple[list, int]: list of destinations, HTTP status code.
@@ -338,10 +346,8 @@ class DestinationAuthenticationPostView(SwaggerView):
         }
     )
     @validate_destination()
-    @get_user_name()
-    def put(
-        self, destination_id: ObjectId, user_name: str
-    ) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def put(self, destination_id: ObjectId, user: dict) -> Tuple[dict, int]:
         """Sets a destination's authentication details.
 
         ---
@@ -350,7 +356,7 @@ class DestinationAuthenticationPostView(SwaggerView):
 
         Args:
             destination_id (ObjectId): Destination ID.
-            user_name (str): user_name extracted from Okta.
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: Destination doc, HTTP status code.
@@ -443,7 +449,7 @@ class DestinationAuthenticationPostView(SwaggerView):
                     added=is_added,
                     performance_de=performance_de,
                     campaign_de=campaign_de,
-                    user_name=user_name,
+                    user_name=user[api_c.USER_NAME],
                     status=db_c.STATUS_SUCCEEDED,
                 )
             ),
@@ -472,12 +478,16 @@ class DestinationsConstants(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @api_error_handler()
-    def get(self) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, user: dict) -> Tuple[dict, int]:
         """Retrieves all destination constants.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: dict of destination constants, HTTP status code.
@@ -531,12 +541,16 @@ class DestinationValidatePostView(SwaggerView):
     @api_error_handler(
         custom_message={"message": api_c.DESTINATION_AUTHENTICATION_FAILED}
     )
-    def post(self) -> Tuple[dict, int]:
+    @requires_access_levels([api_c.EDITOR_LEVEL, api_c.ADMIN_LEVEL])
+    def post(self, user: dict) -> Tuple[dict, int]:
         """Validates the credentials for a destination.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: Message indicating connection success/failure,
@@ -711,7 +725,8 @@ class DestinationDataExtView(SwaggerView):
 
     @api_error_handler()
     @validate_destination()
-    def get(self, destination_id: str) -> Tuple[list, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def get(self, destination_id: str, user: dict) -> Tuple[list, int]:
         """Retrieves destination data extensions.
 
         ---
@@ -720,6 +735,8 @@ class DestinationDataExtView(SwaggerView):
 
         Args:
             destination_id (str): Destination ID.
+            user (dict): user object.
+
 
         Returns:
             Tuple[list, int]: List of data extensions, HTTP status code.
@@ -829,9 +846,9 @@ class DestinationDataExtPostView(SwaggerView):
 
     # pylint: disable=too-many-return-statements
     @api_error_handler()
-    @get_user_name()
     @validate_destination()
-    def post(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def post(self, destination_id: str, user: dict) -> Tuple[dict, int]:
         """Creates a destination data extension.
 
         ---
@@ -840,7 +857,7 @@ class DestinationDataExtPostView(SwaggerView):
 
         Args:
             destination_id (str): Destination ID.
-            user_name (str): User name.
+            user (dict): User object.
 
         Returns:
             Tuple[dict, int]: Data Extension ID, HTTP status code.
@@ -893,10 +910,10 @@ class DestinationDataExtPostView(SwaggerView):
                         f"New data extension named"
                         f'"{body.get(api_c.DATA_EXTENSION)}" created in '
                         f'destination "{destination[db_c.NAME]}" '
-                        f"by {get_user_name()}."
+                        f"by {user[api_c.USER_NAME]}."
                     ),
                     api_c.DESTINATIONS_TAG,
-                    user_name,
+                    user[api_c.USER_NAME],
                 )
             except AudienceAlreadyExists:
                 # TODO - this is a work around until ORCH-288 is done
@@ -961,8 +978,8 @@ class DestinationPatchView(SwaggerView):
     # pylint: disable=too-many-return-statements
     @api_error_handler()
     @validate_destination()
-    @get_user_name()
-    def patch(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def patch(self, destination_id: str, user: dict) -> Tuple[dict, int]:
         """Updates a destination.
 
         ---
@@ -971,7 +988,7 @@ class DestinationPatchView(SwaggerView):
 
         Args:
             destination_id (str): Destination ID.
-            user_name (str): user_name extracted from Okta.
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: Destination doc, HTTP status code.
@@ -1004,7 +1021,7 @@ class DestinationPatchView(SwaggerView):
                 {
                     **patch_dict,
                     **{
-                        db_c.UPDATED_BY: user_name,
+                        db_c.UPDATED_BY: user[api_c.USER_NAME],
                         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                     },
                 },
@@ -1015,11 +1032,11 @@ class DestinationPatchView(SwaggerView):
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
-                f"{user_name} successfully updated"
+                f"{user[api_c.USER_NAME]} successfully updated"
                 f' "{updated_destination[db_c.NAME]}" destination.'
             ),
             api_c.DESTINATION,
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         # update the document
@@ -1061,8 +1078,8 @@ class DestinationsRequestView(SwaggerView):
 
     # pylint: disable=too-many-return-statements
     @api_error_handler()
-    @get_user_name()
-    def post(self, user_name: str) -> Tuple[list, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def post(self, user: dict) -> Tuple[list, int]:
         """Requests an unsupported destination.
 
         ---
@@ -1070,7 +1087,7 @@ class DestinationsRequestView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_name (str): user_name extracted from Okta.
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: Destination doc, HTTP status code.
@@ -1126,14 +1143,17 @@ class DestinationsRequestView(SwaggerView):
                 database=database,
                 delivery_platform_type=api_c.GENERIC_DESTINATION,
                 name=destination_request[api_c.NAME],
-                user_name=user_name,
+                user_name=user[api_c.USER_NAME],
                 status=db_c.STATUS_REQUESTED,
                 enabled=False,
                 added=True,
             )
 
             destination_request.update(
-                {"Requested By": user_name, "Environment": request.url_root}
+                {
+                    "Requested By": user[api_c.USER_NAME],
+                    "Environment": request.url_root,
+                }
             )
 
             # create JIRA ticket for the request.
@@ -1150,11 +1170,11 @@ class DestinationsRequestView(SwaggerView):
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
-                f"{user_name} successfully requested"
+                f"{user[api_c.USER_NAME]} successfully requested"
                 f' "{destination[db_c.NAME]}" destination.'
             ),
             api_c.DESTINATION,
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         return (

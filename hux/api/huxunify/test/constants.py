@@ -42,6 +42,7 @@ VALID_USER_RESPONSE = {
     api_c.OKTA_ID_SUB: "8548bfh8d",
     api_c.EMAIL: "davesmith@fake.com",
     api_c.NAME: "dave smith",
+    api_c.ROLE: "admin",
     api_c.USER_PII_ACCESS: True,
 }
 OKTA_ID = "okta_id"

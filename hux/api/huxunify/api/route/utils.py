@@ -30,7 +30,7 @@ from huxunifylib.database.user_management import (
 from huxunifylib.database.client import DatabaseClient
 
 from huxunify.api.config import get_config
-from huxunify.api import constants
+from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.tecton import check_tecton_connection
 from huxunify.api.data_connectors.aws import (
     check_aws_ssm,
@@ -95,12 +95,12 @@ def check_mongo_connection() -> Tuple[bool, str]:
     try:
         # test finding documents
         get_all_data_sources(get_db_client())
-        record_health_status_metric(constants.MONGO_CONNECTION_HEALTH, True)
+        record_health_status_metric(api_c.MONGO_CONNECTION_HEALTH, True)
         return True, "Mongo available."
     # pylint: disable=broad-except
     # pylint: disable=unused-variable
     except Exception as exception:
-        record_health_status_metric(constants.MONGO_CONNECTION_HEALTH, False)
+        record_health_status_metric(api_c.MONGO_CONNECTION_HEALTH, False)
         return False, "Mongo not available."
 
 
@@ -143,8 +143,8 @@ def group_perf_metric(perf_metrics: list, metric_type: str) -> dict:
 
     metric = {}
 
-    if metric_type == constants.DISPLAY_ADS:
-        for name in constants.DISPLAY_ADS_METRICS:
+    if metric_type == api_c.DISPLAY_ADS:
+        for name in api_c.DISPLAY_ADS_METRICS:
             metric[name] = sum(
                 [
                     item[name]
@@ -154,8 +154,8 @@ def group_perf_metric(perf_metrics: list, metric_type: str) -> dict:
                     and not isinstance(item[name], str)
                 ]
             )
-    elif metric_type == constants.EMAIL:
-        for name in constants.EMAIL_METRICS:
+    elif metric_type == api_c.EMAIL:
+        for name in api_c.EMAIL_METRICS:
             metric[name] = sum(
                 [
                     item[name]
@@ -214,8 +214,8 @@ def update_metrics(
 
     delivery_jobs = [x[db_c.ID] for x in jobs]
     metric = {
-        constants.ID: str(target_id),
-        constants.NAME: name,
+        api_c.ID: str(target_id),
+        api_c.NAME: name,
     }
     metric.update(
         group_perf_metric(
@@ -241,14 +241,14 @@ def add_chart_legend(data: dict) -> dict:
     """
 
     for val in [
-        constants.NAME,
-        constants.EMAIL,
-        constants.PHONE,
-        constants.ADDRESS,
-        constants.COOKIE,
+        api_c.NAME,
+        api_c.EMAIL,
+        api_c.PHONE,
+        api_c.ADDRESS,
+        api_c.COOKIE,
     ]:
-        data[val][constants.PROP] = val.title()
-        data[val][constants.ICON] = val
+        data[val][api_c.PROP] = val.title()
+        data[val][api_c.ICON] = val
     return data
 
 
@@ -266,35 +266,29 @@ def group_gender_spending(gender_spending: list) -> dict:
         f"1-{str(x)}-{str(y)}", "%d-%m-%Y"
     )
     return {
-        constants.GENDER_WOMEN: [
+        api_c.GENDER_WOMEN: [
             {
-                constants.DATE: date_parser(
-                    x[constants.MONTH], x[constants.YEAR]
-                ),
-                constants.LTV: round(x[constants.AVG_SPENT_WOMEN], 4)
-                if x[constants.AVG_SPENT_WOMEN]
+                api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
+                api_c.LTV: round(x[api_c.AVG_SPENT_WOMEN], 4)
+                if x[api_c.AVG_SPENT_WOMEN]
                 else 0,
             }
             for x in gender_spending
         ],
-        constants.GENDER_MEN: [
+        api_c.GENDER_MEN: [
             {
-                constants.DATE: date_parser(
-                    x[constants.MONTH], x[constants.YEAR]
-                ),
-                constants.LTV: round(x[constants.AVG_SPENT_MEN], 4)
-                if x[constants.AVG_SPENT_MEN]
+                api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
+                api_c.LTV: round(x[api_c.AVG_SPENT_MEN], 4)
+                if x[api_c.AVG_SPENT_MEN]
                 else 0,
             }
             for x in gender_spending
         ],
-        constants.GENDER_OTHER: [
+        api_c.GENDER_OTHER: [
             {
-                constants.DATE: date_parser(
-                    x[constants.MONTH], x[constants.YEAR]
-                ),
-                constants.LTV: round(x[constants.AVG_SPENT_OTHER], 4)
-                if x[constants.AVG_SPENT_OTHER]
+                api_c.DATE: date_parser(x[api_c.MONTH], x[api_c.YEAR]),
+                api_c.LTV: round(x[api_c.AVG_SPENT_OTHER], 4)
+                if x[api_c.AVG_SPENT_OTHER]
                 else 0,
             }
             for x in gender_spending
@@ -371,7 +365,7 @@ class Validation:
 
     @staticmethod
     def validate_date(
-        date_string: str, date_format: str = constants.DEFAULT_DATE_FORMAT
+        date_string: str, date_format: str = api_c.DEFAULT_DATE_FORMAT
     ) -> datetime:
         """Validates is a single date is valid
 
@@ -398,7 +392,7 @@ class Validation:
     def validate_date_range(
         start_date: str,
         end_date: str,
-        date_format: str = constants.DEFAULT_DATE_FORMAT,
+        date_format: str = api_c.DEFAULT_DATE_FORMAT,
     ) -> None:
         """Validates that a date range is valid
 
@@ -450,7 +444,7 @@ def is_component_favorite(
         bool: If component is favorite or not.
     """
     user_favorites = get_user(get_db_client(), okta_user_id).get(
-        constants.FAVORITES
+        api_c.FAVORITES
     )
 
     if (component_name in db_c.FAVORITE_COMPONENTS) and (
@@ -473,19 +467,19 @@ def get_start_end_dates(request: dict, delta: int) -> (str, str):
     """
 
     start_date = (
-        request.args.get(constants.START_DATE)
-        if request and request.args.get(constants.START_DATE)
+        request.args.get(api_c.START_DATE)
+        if request and request.args.get(api_c.START_DATE)
         else datetime.strftime(
             datetime.utcnow().date() - relativedelta(months=delta),
-            constants.DEFAULT_DATE_FORMAT,
+            api_c.DEFAULT_DATE_FORMAT,
         )
     )
     end_date = (
-        request.args.get(constants.END_DATE)
-        if request and request.args.get(constants.END_DATE)
+        request.args.get(api_c.END_DATE)
+        if request and request.args.get(api_c.END_DATE)
         else datetime.strftime(
             datetime.utcnow().date(),
-            constants.DEFAULT_DATE_FORMAT,
+            api_c.DEFAULT_DATE_FORMAT,
         )
     )
     return start_date, end_date
@@ -509,7 +503,7 @@ def get_user_favorites(
         return []
 
     # take the first one,
-    return user[0].get(constants.FAVORITES, {}).get(component_name, [])
+    return user[0].get(api_c.FAVORITES, {}).get(component_name, [])
 
 
 def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
@@ -527,9 +521,9 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
 
     # set of keys required from user_info
     required_keys = {
-        constants.OKTA_ID_SUB,
-        constants.EMAIL,
-        constants.NAME,
+        api_c.OKTA_ID_SUB,
+        api_c.EMAIL,
+        api_c.NAME,
     }
 
     # get the user information
@@ -541,7 +535,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
     if not required_keys.issubset(user_info.keys()):
         logger.info("Failure. Required keys not present in user_info dict.")
         return {
-            "message": constants.AUTH401_ERROR_MESSAGE
+            "message": api_c.AUTH401_ERROR_MESSAGE
         }, HTTPStatus.UNAUTHORIZED
 
     logger.info(
@@ -550,7 +544,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
 
     # check if the user is in the database
     database = get_db_client()
-    user = get_user(database, user_info[constants.OKTA_ID_SUB])
+    user = get_user(database, user_info[api_c.OKTA_ID_SUB])
 
     if user is None:
         # since a valid okta_id is extracted from the okta issuer, use the user
@@ -558,9 +552,10 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
         # the okta_id is found in DB
         user = set_user(
             database=database,
-            okta_id=user_info[constants.OKTA_ID_SUB],
-            email_address=user_info[constants.EMAIL],
-            display_name=user_info[constants.NAME],
+            okta_id=user_info[api_c.OKTA_ID_SUB],
+            email_address=user_info[api_c.EMAIL],
+            display_name=user_info[api_c.NAME],
+            role=user_info.get(api_c.ROLE, db_c.USER_ROLE_VIEWER),
         )
 
         # return NOT_FOUND if user is still none
@@ -568,9 +563,7 @@ def get_user_from_db(access_token: str) -> Union[dict, Tuple[dict, int]]:
             logger.info(
                 "User not found in DB even after trying to create one."
             )
-            return {
-                constants.MESSAGE: constants.USER_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+            return {api_c.MESSAGE: api_c.USER_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
     return user
 
