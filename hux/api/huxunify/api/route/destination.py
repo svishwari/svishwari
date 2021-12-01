@@ -14,7 +14,10 @@ from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
-from huxunifylib.database.collection_management import get_documents
+from huxunifylib.database.collection_management import (
+    get_documents,
+    delete_document,
+)
 import huxunifylib.database.constants as db_c
 from huxunifylib.util.general.const import (
     FacebookCredentials,
@@ -1181,3 +1184,87 @@ class DestinationsRequestView(SwaggerView):
             DestinationGetSchema().dump(destination),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    dest_bp,
+    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>",
+    "DestinationDeleteView",
+)
+class DestinationDeleteView(SwaggerView):
+    """Destination Delete class."""
+
+    parameters = [
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        },
+    ]
+
+    responses = {
+        HTTPStatus.NO_CONTENT.value: {
+            "description": "Destination deleted.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
+    @api_error_handler()
+    @get_user_name()
+    def delete(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
+        """Deletes a destination.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            destination_id (str): Destination ID.
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Destination doc, HTTP status code.
+        """
+        database = get_db_client()
+
+        destination = destination_management.get_delivery_platform(
+            database, ObjectId(destination_id)
+        )
+
+        if not destination:
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f"{user_name} requested delete for {destination_id} that does not exist."
+                ),
+                api_c.DESTINATION,
+                user_name,
+            )
+            return {}, HTTPStatus.NO_CONTENT
+
+        deleted_flag = delete_document(
+            database,
+            db_c.DELIVERY_PLATFORM_COLLECTION,
+            {db_c.ID: ObjectId(destination_id)},
+            True,
+            user_name,
+        )
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f"{user_name} {'deleted' if deleted_flag else 'failed to delete'}"
+                f' "{destination[db_c.NAME]}" destination.'
+            ),
+            api_c.DESTINATION,
+            user_name,
+        )
+
+        return {}, HTTPStatus.NO_CONTENT
