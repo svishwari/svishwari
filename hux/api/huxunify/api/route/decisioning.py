@@ -88,7 +88,7 @@ class ModelsView(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, user: dict) -> Tuple[List[dict], int]:
         """Retrieves all models.
@@ -204,7 +204,7 @@ class SetModelStatus(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(self, user: dict) -> Tuple[dict, int]:
         """Request a model.
@@ -285,7 +285,7 @@ class RemoveRequestedModel(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def delete(self, user: dict) -> Tuple[dict, int]:
         """Remove a requested model.
@@ -353,7 +353,7 @@ class ModelVersionView(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, model_id: str, user: dict) -> Tuple[List[dict], int]:
         """Retrieves model version history.
@@ -422,7 +422,7 @@ class ModelOverview(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, model_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves model overview.
@@ -516,7 +516,7 @@ class ModelDriftView(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, model_id: str, user: dict) -> Tuple[List[dict], int]:
         """Retrieves model drift details.
@@ -600,7 +600,7 @@ class ModelFeaturesView(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self,
@@ -709,7 +709,7 @@ class ModelImportanceFeaturesView(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self,
@@ -795,7 +795,7 @@ class ModelLiftView(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self,
