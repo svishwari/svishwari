@@ -907,7 +907,7 @@ class CourierTest(TestCase):
             self.database,
             {
                 db_c.NOTIFICATION_FIELD_USERNAME: engagement_doc[
-                    db_c.UPDATED_BY
+                    db_c.CREATED_BY
                 ]
             },
         )

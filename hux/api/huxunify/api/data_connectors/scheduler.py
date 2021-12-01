@@ -173,7 +173,7 @@ def run_scheduled_deliveries(database: MongoClient) -> None:
 
             # process each destination
             for destination in audience.get(api_c.DESTINATIONS):
-                if isinstance(destination, dict) or not destination.get(
+                if not isinstance(destination, dict) or not destination.get(
                     api_c.DELIVERY_SCHEDULE
                 ):
                     continue
