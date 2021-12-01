@@ -12,7 +12,7 @@
     </v-card-title>
     <v-card-text class="pl-6 pr-6 pb-4 pt-0">
       <div
-        v-if="deliveries.length > 0"
+        v-if="deliveries.length == 0"
         class="empty-state py-4 black--text text--lighten-4 text-body-1"
       >
         This audience has no standalone deliveries. Add a destination below.
@@ -112,7 +112,7 @@ export default {
         {
           text: "Destination",
           value: "name",
-          width: "25%",
+          width: "35%",
         },
         {
           text: "Status",
@@ -122,7 +122,7 @@ export default {
         {
           text: "Target size",
           value: "size",
-          width: "25%",
+          width: "15%",
           hoverTooltip:
             "Average order value for all customers (known and anyonymous) for all time.",
         },

@@ -182,6 +182,7 @@
             </v-col>
             <v-col :cols="advertisingCols" class="">
               <div class="collapsible-bar" @click="toggleAd()">
+                  <span class="bar-text"> Digital advertising </span>
                   <icon
                     type="expand-arrow"
                     :size="14"
@@ -921,13 +922,12 @@ export default {
   .tabs-item {
     .delivery-tab {
       .digital-adv {
+        height: 453px !important;
         .match-rates {
-          // height: 194px;
-          // background-color: #F9FAFB !important;
+          
         }
         .lookalikes {
-          // height: 330px;
-          // background-color: #F9FAFB !important;
+          
           border-radius: 12px !important;
         }
       }
@@ -995,12 +995,19 @@ export default {
   margin-top: 16px;
   width: 24px;
   background-color: var(--v-primary-base) !important;
-  height: 100%;
+  height: 453px;
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
   cursor: pointer;
   float: left;
   position: relative;
+  display: flex;
+  .bar-text {
+    writing-mode: vertical-rl;
+    transform:scale(-1);
+    color: var(--v-white-base) !important;;
+    margin-bottom: 310px;
+  }
   .collapse-icon{
     margin: 0;
     position: absolute;

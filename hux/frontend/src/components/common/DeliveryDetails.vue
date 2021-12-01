@@ -232,7 +232,7 @@ export default {
         {
           text: "Destination",
           value: "name",
-          width: "25%",
+          width: "35%",
         },
         {
           text: "Status",
@@ -242,7 +242,7 @@ export default {
         {
           text: "Target size",
           value: "size",
-          width: "25%",
+          width: "15%",
           hoverTooltip: "Average order value for all customers (known and anyonymous) for all time.",
         },
         {
