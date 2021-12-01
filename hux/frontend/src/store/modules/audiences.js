@@ -1,6 +1,7 @@
 import Vue from "vue"
 import api from "@/api/client"
 import { handleError } from "@/utils"
+import rules from "../../api/mock/factories/rules.json"
 
 const namespaced = true
 
@@ -294,6 +295,41 @@ const actions = {
   async fetchConstants({ commit }) {
     try {
       const response = await api.audiences.getRules()
+      if (response.data.rule_attributes.general.email.options.length === 0) {
+        response.data.rule_attributes.general.email.options =
+          rules.rule_attributes.general.email.options
+      }
+      if (response.data.rule_attributes.general.gender.options.length === 0) {
+        response.data.rule_attributes.general.gender.options =
+          rules.rule_attributes.general.gender.options
+      }
+      if (
+        response.data.rule_attributes.general.location.zip_code.options
+          .length === 0
+      ) {
+        response.data.rule_attributes.general.location.zip_code.options =
+          rules.rule_attributes.general.location.zip_code.options
+      }
+      if (
+        response.data.rule_attributes.general.location.city.options.length === 0
+      ) {
+        response.data.rule_attributes.general.location.city.options =
+          rules.rule_attributes.general.location.city.options
+      }
+      if (
+        response.data.rule_attributes.general.location.country.options
+          .length === 0
+      ) {
+        response.data.rule_attributes.general.location.country.options =
+          rules.rule_attributes.general.location.country.options
+      }
+      if (
+        response.data.rule_attributes.general.location.state.options.length ===
+        0
+      ) {
+        response.data.rule_attributes.general.location.state.options =
+          rules.rule_attributes.general.location.state.options
+      }
       commit("SET_CONSTANTS", response.data)
       return response.data
     } catch (error) {
