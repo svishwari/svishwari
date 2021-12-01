@@ -83,7 +83,6 @@
         color="primary"
         class="text-button ml-4"
         width="110"
-        :disabled="!filterLength > 0"
         @click="apply()"
       >
         Apply filter
