@@ -115,7 +115,7 @@ def create_app() -> Flask:
             id="process_deliveries",
             func=run_scheduled_deliveries,
             trigger="cron",
-            minute="*/15",
+            minute=api_c.AUTOMATED_DELIVERY_MINUTE_CRON,
             args=[get_db_client()],
         )
 
