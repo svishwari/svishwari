@@ -111,6 +111,7 @@ class Tecton:
             record_health_status_metric(api_c.TECTON_CONNECTION_HEALTH, False)
             return False, getattr(exception, "message", repr(exception))
 
+    @staticmethod
     def map_model_response(self, response: dict) -> List[dict]:
         """Map model response to a usable dict.
         Args:
