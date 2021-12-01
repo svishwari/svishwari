@@ -146,6 +146,7 @@ class AudienceGetSchema(Schema):
     source_id = fields.String(attribute=db_c.LOOKALIKE_SOURCE_AUD_ID)
     source_name = fields.String(attribute=db_c.LOOKALIKE_SOURCE_AUD_NAME)
     source_size = fields.Int(attribute=db_c.LOOKALIKE_SOURCE_AUD_SIZE)
+    source_exists = fields.Boolean()
     match_rate = fields.Float(default=0)
     favorite = fields.Boolean(default=False)
 
