@@ -682,3 +682,80 @@ class AudienceRulesLocation(SwaggerView):
             return {"message": "Incorrect Combination"}, HTTPStatus.NOT_FOUND
 
         return data, HTTPStatus.OK
+
+
+@add_view_to_blueprint(
+    audience_bp,
+    f"/{api_c.AUDIENCE_ENDPOINT}/rules/<field_type>/histogram",
+    "AudienceRulesHistogram",
+)
+class AudienceRulesHistogram(SwaggerView):
+    """Audience Rules Histogram"""
+
+    parameters = [
+        {
+            "name": api_c.FIELD_TYPE,
+            "description": "Field Type",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "age",
+        },
+        {
+            "name": api_c.MODEL_NAME,
+            "description": "Name of model to be fetched",
+            "in": "query",
+            "type": "string",
+            "required": False,
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Get audience rules " "histogram dictionary"
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Audience Rules."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    responses.update(FAILED_DEPENDENCY_424_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(self, field_type: str) -> Tuple[dict, int]:
+        """Retrieves Histogram data for rules.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            field_type (str): Field Type
+
+        Returns:
+            Tuple[list, int]: rules constants
+        """
+
+        # TODO Remove stub once CDM API is integrated
+        if field_type not in api_c.AUDIENCE_RULES_HISTOGRAM_DATA.keys():
+            return {
+                "message": f"Data not found for {field_type}"
+            }, HTTPStatus.NOT_FOUND
+
+        if field_type == api_c.MODEL:
+            model_name = request.args.get(api_c.MODEL_NAME, "")
+            if model_name in list(
+                api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.MODEL]
+            ):
+                return (
+                    api_c.AUDIENCE_RULES_HISTOGRAM_DATA[api_c.MODEL][
+                        model_name
+                    ],
+                    HTTPStatus.OK,
+                )
+            return {
+                "message": f"Data not found for {model_name}"
+            }, HTTPStatus.NOT_FOUND
+
+        return api_c.AUDIENCE_RULES_HISTOGRAM_DATA[field_type], HTTPStatus.OK
