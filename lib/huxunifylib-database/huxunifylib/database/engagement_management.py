@@ -1084,14 +1084,10 @@ def remove_audience_from_all_engagements(
     return False
 
 
-@retry(
-    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
 def remove_destination_from_all_engagements(
     database: DatabaseClient, destination_id: ObjectId, user_name: str
 ) -> None:
-    """Remove an audience from all engagement objects
+    """Remove a destination from all engagement-audience objects.
 
     Args:
         database (DatabaseClient): A database client.
