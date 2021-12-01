@@ -343,6 +343,7 @@ class AudienceView(SwaggerView):
                 for x in audience_destinations
                 if x[db_c.ID] == audience[db_c.ID]
             ]
+
             # set the unique destinations
             audience[db_c.DESTINATIONS] = (
                 matched_destinations[0].get(db_c.DESTINATIONS, [])
@@ -350,7 +351,7 @@ class AudienceView(SwaggerView):
                 else []
             )
 
-            # remove any empty ones, and only preserver that are delivered or
+            # remove any empty ones, and only preserve that are delivered or
             # succeeded and if the delivery_platform_id is for a destination
             # that is part of audience destinations
             audience[api_c.DELIVERIES] = (
@@ -366,8 +367,8 @@ class AudienceView(SwaggerView):
                         ]
                     )
                     and (
-                        str(aud_delivery[db_c.DELIVERY_PLATFORM_ID])
-                        == str(aud_destination[db_c.ID])
+                        aud_delivery[db_c.DELIVERY_PLATFORM_ID]
+                        == aud_destination[db_c.ID]
                         for aud_destination in audience[db_c.DESTINATIONS]
                     )
                 ]
