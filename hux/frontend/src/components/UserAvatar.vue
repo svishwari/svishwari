@@ -47,7 +47,7 @@
             data-e2e="profile"
             height="32px"
           >
-            My hux profile
+            My Hux profile
           </a>
         </v-list-item-title>
       </v-list-item>
