@@ -1,6 +1,7 @@
 # pylint: disable=no-self-use,too-many-lines,unused-argument
 """Paths for destinations API"""
 import datetime
+from threading import Thread
 from http import HTTPStatus
 from typing import Tuple
 
@@ -13,6 +14,9 @@ from huxunifylib.util.general.logging import logger
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
+)
+from huxunifylib.database.engagement_management import (
+    remove_destination_from_all_engagements,
 )
 from huxunifylib.database.collection_management import (
     get_documents,
@@ -1042,6 +1046,17 @@ class DestinationPatchView(SwaggerView):
             user[api_c.USER_NAME],
         )
 
+        if not updated_destination.get(db_c.ADDED):
+            # remove from any engagement audiences
+            Thread(
+                target=remove_destination_from_all_engagements,
+                args=[
+                    database,
+                    destination_id,
+                    user[api_c.USER_NAME],
+                ],
+            ).start()
+
         # update the document
         return (
             DestinationGetSchema().dump(updated_destination),
@@ -1215,8 +1230,8 @@ class DestinationDeleteView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @api_error_handler()
-    @get_user_name()
-    def delete(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def delete(self, destination_id: str, user: dict) -> Tuple[dict, int]:
         """Deletes a destination.
 
         ---
@@ -1225,7 +1240,7 @@ class DestinationDeleteView(SwaggerView):
 
         Args:
             destination_id (str): Destination ID.
-            user_name (str): user_name extracted from Okta.
+            user (dict): user object.
 
         Returns:
             Tuple[dict, int]: Destination doc, HTTP status code.
@@ -1241,10 +1256,11 @@ class DestinationDeleteView(SwaggerView):
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 (
-                    f"{user_name} requested delete for {destination_id} that does not exist."
+                    f"{user[api_c.USER_NAME]} requested delete for "
+                    f"{destination_id} that does not exist."
                 ),
                 api_c.DESTINATION,
-                user_name,
+                user[api_c.USER_NAME],
             )
             return {}, HTTPStatus.NO_CONTENT
 
@@ -1253,18 +1269,18 @@ class DestinationDeleteView(SwaggerView):
             db_c.DELIVERY_PLATFORM_COLLECTION,
             {db_c.ID: ObjectId(destination_id)},
             True,
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
-                f"{user_name} {'deleted' if deleted_flag else 'failed to delete'}"
+                f"{user[api_c.USER_NAME]} {'deleted' if deleted_flag else 'failed to delete'}"
                 f' "{destination[db_c.NAME]}" destination.'
             ),
             api_c.DESTINATION,
-            user_name,
+            user[api_c.USER_NAME],
         )
 
         return {}, HTTPStatus.NO_CONTENT
