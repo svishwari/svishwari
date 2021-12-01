@@ -6,7 +6,7 @@ import time
 from math import log10
 import asyncio
 from json import dumps
-from typing import List, Tuple
+from typing import List, Tuple, TypeVar
 
 from dateutil import parser
 import aiohttp
@@ -62,23 +62,36 @@ class TectonMockService(TectonService):
 class Tecton:
     """Tecton parent class"""
 
-    def __new__(cls, config: Config = get_config()):
-        """override the new class to handle subclass mapping"""
+    def __new__(
+        cls, config: Config = get_config()
+    ) -> TypeVar("T", bound="Tecton"):
+        """override the new class to handle subclass mapping.
+
+        Args:
+            config (Config): configuration object.
+
+        Returns:
+            metric (dict): Grouped performance metrics.
+        """
         is_mock = config.MOCK_TECTON
         subclass_map = {
             subclass.is_mock: subclass for subclass in cls.__subclasses__()
         }
-        subclass = subclass_map[is_mock]
-        instance = super(Tecton, subclass).__new__(subclass)
-        return instance
+        return super(Tecton, subclass_map[is_mock]).__new__(
+            subclass_map[is_mock]
+        )
 
-    def __init__(self, config: Config = get_config()):
+    def __init__(self, config: Config = get_config()) -> None:
+        """initialize the Tecton class
+
+        Args:
+            config (Config) : configuration object.
+
+        """
         # set the feature service
         self.service: str = config.TECTON_FEATURE_SERVICE
         self.headers: str = config.TECTON_API_HEADERS
-        self.feature_service: TectonService = (
-            TectonMockService if self.is_mock else TectonService
-        )
+        self.feature_service: TectonService = TectonService
 
     def check_tecton_connection(self) -> Tuple[bool, str]:
         """Validate the tecton connection in the health check.
@@ -112,7 +125,7 @@ class Tecton:
             return False, getattr(exception, "message", repr(exception))
 
     @staticmethod
-    def map_model_response(self, response: dict) -> List[dict]:
+    def map_model_response(response: dict) -> List[dict]:
         """Map model response to a usable dict.
         Args:
             response (dict): Input Tecton API response.
@@ -146,8 +159,9 @@ class Tecton:
 
         return models
 
+    @staticmethod
     def map_model_version_history_response(
-        self, response: dict, model_id: str
+        response: dict, model_id: str
     ) -> List[dict]:
         """Map model version history response to a usable dict.
 
@@ -236,8 +250,8 @@ class Tecton:
             model_id,
         )
 
+    @staticmethod
     def map_model_performance_response(
-        self,
         response: dict,
         model_id: str,
         model_type: str,
@@ -546,97 +560,6 @@ class Tecton:
 
         return result_features
 
-    def map_model_version_history_response(
-        self, response: dict, model_id: str
-    ) -> List[dict]:
-        """Map model version history response to a usable dict.
-
-        Args:
-            response (dict): Input Tecton API response.
-            model_id (str): Model ID.
-
-        Returns:
-            List[dict]: A cleaned model version dict.
-        """
-
-        models = []
-
-        for meta_data in response.json()[api_c.RESULTS]:
-            # get model metadata from tecton
-            feature = meta_data[api_c.FEATURES]
-            model = {
-                api_c.ID: model_id,
-                api_c.LAST_TRAINED: parser.parse(feature[0]),
-                api_c.DESCRIPTION: feature[1],
-                api_c.FULCRUM_DATE: parser.parse(feature[2]),
-                api_c.LOOKBACK_WINDOW: 7,
-                api_c.NAME: feature[5],
-                api_c.TYPE: str(feature[6]).lower(),
-                api_c.OWNER: feature[7],
-                api_c.STATUS: feature[9],
-                api_c.CURRENT_VERSION: meta_data[api_c.JOIN_KEYS][0],
-                api_c.PREDICTION_WINDOW: int(feature[3]),
-            }
-            models.append(model)
-
-        # sort the models based on the last trained date.
-        models.sort(key=lambda x: x[api_c.LAST_TRAINED], reverse=True)
-
-        return models
-
-    def map_model_performance_response(
-        self,
-        response: dict,
-        model_id: str,
-        model_type: str,
-        model_version: str,
-        metric_default_value: float = -1,
-    ) -> dict:
-        """Map model performance response to a usable dict.
-
-        Args:
-            response (dict): Input Tecton API response.
-            model_id (str): Model ID.
-            model_type (str): Model type.
-            model_version (str): Model version.
-            metric_default_value: Default values for model metric.
-
-        Returns:
-            dict: A cleaned model performance dict.
-        """
-
-        if response.status_code != 200 or api_c.RESULTS not in response.json():
-            return {}
-
-        for meta_data in response.json()[api_c.RESULTS]:
-            # get model metadata from tecton
-            feature = meta_data[api_c.FEATURES]
-
-            # get version based on model type and skip if not the provided version.
-            if feature[4] != model_version:
-                continue
-
-            # grab the metrics based on model type and return.
-            return {
-                api_c.ID: model_id,
-                api_c.RMSE: float(feature[0])
-                if model_type in api_c.REGRESSION_MODELS
-                else metric_default_value,
-                api_c.AUC: float(feature[0])
-                if model_type in api_c.CLASSIFICATION_MODELS
-                else metric_default_value,
-                api_c.PRECISION: float(feature[5])
-                if model_type in api_c.CLASSIFICATION_MODELS
-                else metric_default_value,
-                api_c.RECALL: float(feature[6])
-                if model_type in api_c.CLASSIFICATION_MODELS
-                else metric_default_value,
-                api_c.CURRENT_VERSION: model_version,
-            }
-
-        # nothing found, return an empty dict.
-        return {}
-
     def get_models(self) -> List[dict]:
         """Get models from Tecton.
 
@@ -675,164 +598,6 @@ class Tecton:
             )
 
         return self.map_model_response(response)
-
-    # pylint: disable=unused-argument
-    def get_model_drift(
-        self, model_id: str, model_type: str, models: list
-    ) -> List[ModelDriftSchema]:
-        """Get model drift based on model_id and model_type.
-
-        Args:
-            model_id (str): Model id.
-            model_type (str): model type.
-            models (list): list of model versions.
-
-        Returns:
-            List[DriftSchema] List of model drift.
-
-        Raises:
-            FailedAPIDependencyError: Integrated dependent API failure error.
-            EmptyAPIResponseError: Response from integrated API call is empty.
-        """
-
-        if model_type in api_c.CLASSIFICATION_MODELS:
-            service_name = (
-                self.feature_service.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE
-            )
-        else:
-            service_name = (
-                self.feature_service.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE
-            )
-
-        # payload
-        payload = {
-            "params": {
-                "feature_service_name": service_name,
-                "join_key_map": {api_c.MODEL_ID: f"{model_id}"},
-            }
-        }
-
-        # start timer
-        timer = time.perf_counter()
-
-        response = requests.post(
-            self.service,
-            dumps(payload),
-            headers=self.headers,
-        )
-
-        # log execution time summary
-        total_ticks = time.perf_counter() - timer
-        logger.info(
-            "Executed drift chart data request to the Tecton API in %0.4f seconds.",
-            total_ticks,
-        )
-
-        if api_c.RESULTS not in response.json():
-            logger.error(
-                "Unable to retrieve model drift, %s %s.",
-                response.status_code,
-                response.text,
-            )
-            if response.status_code == 200:
-                raise iae.EmptyAPIResponseError(
-                    f"{self.service} returned empty object",
-                    response.status_code,
-                )
-            raise iae.FailedAPIDependencyError(
-                f"{self.service} : in_function={self.get_model_drift.__name__}",
-                response.status_code,
-            )
-
-        result_drift = []
-        for result in response.json().get(api_c.RESULTS, []):
-            if not result:
-                continue
-
-            # look up run date from model version
-            run_dates = [
-                m[api_c.LAST_TRAINED]
-                for m in models
-                if m[api_c.CURRENT_VERSION] == result[api_c.FEATURES][4]
-            ]
-
-            result_drift.append(
-                {
-                    # check if model version matched, otherwise parse the created date.
-                    api_c.RUN_DATE: run_dates[0]
-                    if run_dates
-                    else parser.parse(result[api_c.FEATURES][1]),
-                    api_c.DRIFT: result[api_c.FEATURES][0],
-                }
-            )
-
-        # sort the results by time
-        if result_drift:
-            result_drift.sort(key=lambda x: x[api_c.RUN_DATE])
-
-        return result_drift
-
-    def get_model_lift_async(self, model_id: str) -> List[ModelLiftSchema]:
-        """Get model lift based on id.
-
-        Args:
-            model_id (str): model id.
-
-        Returns:
-             List[ModelLiftSchema]: List of model lift.
-        """
-
-        # set the event loop
-        asyncio.set_event_loop(asyncio.SelectorEventLoop())
-
-        # start timer
-        timer = time.perf_counter()
-
-        # send all responses at once and wait until they are all done.
-        responses = asyncio.get_event_loop().run_until_complete(
-            asyncio.gather(
-                *(
-                    self.get_async_lift_bucket(model_id, bucket)
-                    for bucket in range(10, 101, 10)
-                )
-            )
-        )
-
-        # log execution time summary
-        total_ticks = time.perf_counter() - timer
-        logger.info(
-            "Executed 10 requests to the Tecton API in %0.4f seconds. ~%0.4f requests per second.",
-            total_ticks,
-            total_ticks / 10,
-        )
-
-        result_lift = []
-        # iterate each response.
-        for response in responses:
-            # validate response code
-            if not response[0]:
-                continue
-
-            # process lift data
-            latest_lift_data = response[0][api_c.RESULTS][-1][api_c.FEATURES]
-
-            result_lift.append(
-                {
-                    api_c.BUCKET: response[1],
-                    api_c.ACTUAL_VALUE: latest_lift_data[0],
-                    api_c.ACTUAL_LIFT: latest_lift_data[2],
-                    api_c.PREDICTED_LIFT: latest_lift_data[3],
-                    api_c.PREDICTED_VALUE: latest_lift_data[8],
-                    api_c.PROFILE_COUNT: int(latest_lift_data[9]),
-                    api_c.ACTUAL_RATE: latest_lift_data[10],
-                    api_c.PREDICTED_RATE: latest_lift_data[11],
-                    api_c.PROFILE_SIZE_PERCENT: latest_lift_data[13] * 100
-                    if latest_lift_data[13]
-                    else 0,
-                }
-            )
-
-        return result_lift
 
     async def get_async_lift_bucket(
         self, model_id: str, bucket: int
@@ -935,6 +700,7 @@ class TectonMockConnector(Tecton):
 
     def __init__(self, config: Config = get_config()):
         super().__init__(config)
+        self.feature_service: TectonMockService = TectonMockService
 
     def map_model_response(self, response: dict) -> List[dict]:
         """Map model response to a usable dict.
