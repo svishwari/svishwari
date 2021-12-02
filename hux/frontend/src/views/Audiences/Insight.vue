@@ -25,12 +25,6 @@
               </span>
             </template>
           </tooltip>
-          <icon
-            type="dots-vertical"
-            :size="18"
-            class="cursor-pointer mr-7"
-            color="black-darken4"
-          />
         </div>
       </template>
       <!-- Keeping this in TODO until more updates -->
@@ -287,6 +281,7 @@
                     primary--text
                     text-decoration-none
                     body-2
+                    mr-9
                   "
                   data-e2e="add-engagement"
                   @click="openAttachEngagementDrawer()"
