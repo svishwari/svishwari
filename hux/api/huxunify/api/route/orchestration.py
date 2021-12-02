@@ -1595,8 +1595,8 @@ class PutLookalikeAudience(SwaggerView):
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
-                f"Lookalike audience \"{update_doc[db_c.NAME]}\" "
-                f'edited by {user[api_c.USER_NAME]}.'
+                f'Lookalike audience "{update_doc[db_c.NAME]}" '
+                f"edited by {user[api_c.USER_NAME]}."
             ),
             api_c.ORCHESTRATION_TAG,
             user[api_c.USER_NAME],
