@@ -2,8 +2,11 @@ FROM whitesourcesoftware/ua-base:v2
 
 RUN apt-get -y update && apt-get update
 
-RUN apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev libffi-dev \
-    curl libbz2-dev git jq nodejs npm
+RUN apt install -y build-essential zlib1g-dev libncurses5-dev \
+    libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev \
+    libffi-dev curl libbz2-dev git jq nodejs 
+
+RUN apt install -y npm
 
 ADD https://raw.githubusercontent.com/whitesource/wss-codefresh-integration/master/wss-runner.sh /wss-scan/
 

@@ -16,7 +16,7 @@ steps:
     stage: docker
     title: "Build whitesource scan image"
     type: build
-    image_name: 'whitesource-python'
+    image_name: 'whitesource-npm'
     working_directory: "${{CF_REPO_NAME}}/hux/frontend/ci/whitesource"
     dockerfile: Dockerfile.whitesource
     tag: '1.0'
@@ -30,8 +30,9 @@ steps:
       - echo "Set branch in wss-agent.config..."
       - echo productVersion=$CF_PULL_REQUEST_TARGET >> $CF_VOLUME_PATH/$CF_REPO_NAME/hux/frontend/$CONFIG_FILE
       - echo projectVersion=$CF_PULL_REQUEST_TARGET >> $CF_VOLUME_PATH/$CF_REPO_NAME/hux/frontend/$CONFIG_FILE
-      - echo "Configure Python environment for Whitesource scan..."
+      - echo "Configure NPM environment for Whitesource scan..."
       - cd ${{CF_REPO_NAME}}/hux/frontend/
+      - npm install --global yarn
       - yarn ci
       - yarn global add @vue/cli
       - yarn build
