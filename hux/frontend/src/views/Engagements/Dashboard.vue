@@ -28,7 +28,6 @@
               </span>
             </template>
           </tooltip>
-
         </div>
       </template>
     </page-header>
@@ -66,7 +65,13 @@
             <div class="d-flex align-center">
               <v-btn
                 text
-                class="d-flex align-center primary--text text-decoration-none mr-9"
+                class="
+                  d-flex
+                  align-center
+                  primary--text
+                  text-decoration-none
+                  mr-9
+                "
                 @click="triggerSelectAudience()"
               >
                 <icon
