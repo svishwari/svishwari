@@ -35,7 +35,6 @@ steps:
       - npm install --global yarn
       - yarn ci
       - yarn global add @vue/cli
-      - yarn build
       - cp /wss-scan/wss-runner.sh ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/hux/frontend/wss-runner.sh # Copy the file because the script refrences current directory.
       - ./wss-runner.sh $API_KEY $INSTALL_COMMANDS $CONFIG_FILE $PROJECT_DIRECTORY
     environment:
@@ -43,4 +42,3 @@ steps:
       - CONFIG_FILE=ci/whitesource/wss-agent.config
       - PROJECT_DIRECTORY=.
       - API_KEY=${{API_KEY}}
-
