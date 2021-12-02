@@ -185,6 +185,7 @@ DAY_OF_MONTH_NAME_LIST = [
     "Saturday",
 ]
 DAY_OF_MONTH_LIST = [str(x) for x in range(1, 32)] + DAY_OF_MONTH_NAME_LIST
+AUTOMATED_DELIVERY_MINUTE_CRON = "*/15"
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
