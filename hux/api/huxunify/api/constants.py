@@ -1036,13 +1036,13 @@ NOTIFICATIONS_ENDPOINT = "/notifications"
 NOTIFICATION_STREAM_TIME_SECONDS = 60
 
 NOTIFICATION_CATEGORIES = [
-    "engagements",
-    "delivery",
-    "orchestration",
-    "destinations",
-    "datasources",
-    "customers",
-    "models",
+    ENGAGEMENT_TAG,
+    DELIVERY_TAG,
+    ORCHESTRATION_TAG,
+    DESTINATIONS_TAG,
+    CDP_DATA_SOURCES_TAG,
+    CUSTOMERS_TAG,
+    MODELS_TAG,
 ]
 # AWS BATCH
 BATCH_SIZE = "batch_size"
