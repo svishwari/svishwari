@@ -40,9 +40,12 @@
       >
         <template #row-item="{ item }">
           <td v-for="(col, index) in columns" :key="index" class="text-body-1">
-            <tooltip v-if="['city', 'country', 'state'].includes(col.value)">
+            <tooltip v-if="['city', 'state', 'country'].includes(col.value)">
               {{ item[col.value] }}
-              <template #tooltip>
+              <template v-if="item[col.label]" #tooltip>
+                {{ item[col.label] }}
+              </template>
+              <template v-else #tooltip>
                 {{ item[col.value] }}
               </template>
             </tooltip>
@@ -225,6 +228,7 @@ export default {
               {
                 value: "state",
                 text: "State",
+                label: "state_label",
                 hoverTooltip:
                   "US states or regions equivalent to US state-level , eg. counties, districts, departments, divisions, parishes, provinces etc.",
               },
@@ -234,6 +238,7 @@ export default {
               this.columns.splice(2, 0, {
                 value: "country",
                 text: "Country",
+                label: "country_label",
               })
             }
             this.sortColumn = "city"
@@ -243,6 +248,7 @@ export default {
               {
                 value: "country",
                 text: "Country",
+                label: "country_label",
               },
               ...this.defaultColumns,
             ]
@@ -260,6 +266,7 @@ export default {
               this.columns.splice(1, 0, {
                 value: "country",
                 text: "Country",
+                label: "country_label",
               })
             }
             this.sortColumn = "state"

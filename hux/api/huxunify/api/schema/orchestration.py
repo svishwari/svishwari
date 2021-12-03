@@ -146,6 +146,7 @@ class AudienceGetSchema(Schema):
     source_id = fields.String(attribute=db_c.LOOKALIKE_SOURCE_AUD_ID)
     source_name = fields.String(attribute=db_c.LOOKALIKE_SOURCE_AUD_NAME)
     source_size = fields.Int(attribute=db_c.LOOKALIKE_SOURCE_AUD_SIZE)
+    source_exists = fields.Boolean()
     match_rate = fields.Float(default=0)
     favorite = fields.Boolean(default=False)
 
@@ -293,7 +294,6 @@ def is_audience_lookalikeable(audience: dict) -> str:
         ):
             status = api_c.STATUS_INACTIVE
 
-            # TODO - HUS-815
             # add 30 min wait time before making it lookalikable
             if (
                 delivery.get(db_c.STATUS)

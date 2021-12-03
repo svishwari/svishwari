@@ -185,6 +185,7 @@ DAY_OF_MONTH_NAME_LIST = [
     "Saturday",
 ]
 DAY_OF_MONTH_LIST = [str(x) for x in range(1, 32)] + DAY_OF_MONTH_NAME_LIST
+AUTOMATED_DELIVERY_MINUTE_CRON = "*/15"
 SCHEDULE = "schedule"
 SCHEDULE_CRON = "schedule_cron"
 NEXT_DELIVERY = "next_delivery"
@@ -857,6 +858,7 @@ LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 LOOKALIKEABLE = "lookalikeable"
 IS_LOOKALIKE = "is_lookalike"
 LOOKALIKE = "lookalike"
+LOOKALIKE_SOURCE_EXISTS = "source_exists"
 WORKED_BY = "worked_by"
 ATTRIBUTE = "attribute"
 
@@ -1035,13 +1037,13 @@ NOTIFICATIONS_ENDPOINT = "/notifications"
 NOTIFICATION_STREAM_TIME_SECONDS = 60
 
 NOTIFICATION_CATEGORIES = [
-    "engagements",
-    "delivery",
-    "orchestration",
-    "destinations",
-    "datasources",
-    "customers",
-    "models",
+    ENGAGEMENT_TAG,
+    DELIVERY_TAG,
+    ORCHESTRATION_TAG,
+    DESTINATIONS_TAG,
+    CDP_DATA_SOURCES_TAG,
+    CUSTOMERS_TAG,
+    MODELS_TAG,
 ]
 # AWS BATCH
 BATCH_SIZE = "batch_size"

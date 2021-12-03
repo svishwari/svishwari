@@ -82,32 +82,26 @@ class NotificationsSearch(SwaggerView):
         {
             "name": api_c.QUERY_PARAMETER_NOTIFICATION_TYPES,
             "in": "query",
-            "type": "array",
-            "items": {"type": "string"},
+            "type": "string",
             "description": "Type of Notification",
-            "example": "10",
+            "example": "Success,Informational",
             "required": False,
-            "default": [],
         },
         {
             "name": api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY,
             "in": "query",
-            "type": "array",
-            "items": {"type": "string"},
+            "type": "string",
             "description": "Type of Notification Category",
-            "example": "10",
+            "example": "Delivery,Engagements",
             "required": False,
-            "default": [],
         },
         {
             "name": api_c.QUERY_PARAMETER_USERS,
             "in": "query",
-            "type": "array",
-            "items": {"type": "string"},
+            "type": "string",
             "description": "Users Filter",
-            "example": "10",
+            "example": "Unified-Dev Test-User",
             "required": False,
-            "default": [],
         },
         {
             "name": api_c.START_DATE,
@@ -164,14 +158,16 @@ class NotificationsSearch(SwaggerView):
                 str(api_c.DEFAULT_BATCH_NUMBER),
             )
         )
+
         notification_types = request.args.get(
             api_c.QUERY_PARAMETER_NOTIFICATION_TYPES, []
         )
         notification_types = (
-            list(map(lambda x: x.lower(), notification_types.split(",")))
+            [x.lower() for x in notification_types.split(",")]
             if notification_types
             else []
         )
+
         if notification_types and not set(notification_types).issubset(
             set(db_c.NOTIFICATION_TYPES)
         ):
@@ -184,10 +180,11 @@ class NotificationsSearch(SwaggerView):
             api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY, []
         )
         notification_categories = (
-            list(map(lambda x: x.lower(), notification_categories.split(",")))
-            if notification_types
+            [x.lower() for x in notification_categories.split(",")]
+            if notification_categories
             else []
         )
+
         if notification_categories and not set(
             notification_categories
         ).issubset(set(api_c.NOTIFICATION_CATEGORIES)):
@@ -195,9 +192,11 @@ class NotificationsSearch(SwaggerView):
             return {
                 "message": "Invalid or incomplete arguments received"
             }, HTTPStatus.BAD_REQUEST
+
         users = request.args.get(api_c.QUERY_PARAMETER_USERS, [])
         if users:
             users = users.split(",")
+
         start_date = request.args.get(api_c.START_DATE, "")
         end_date = request.args.get(api_c.END_DATE, "")
         if start_date and end_date:

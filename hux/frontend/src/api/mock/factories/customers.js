@@ -173,9 +173,11 @@ export const customersOverview = {
 export const geoCity = {
   city: () => faker.address.city(),
   state: () => faker.address.stateAbbr(),
+  state_label: () => faker.address.state(),
   size: () => faker.datatype.number(1000),
   spending: () => faker.datatype.number(10000),
   country: () => faker.random.arrayElement(["US", "CA"]),
+  country_label: () => faker.random.arrayElement(["United States", "Canada"]),
 }
 
 /**
@@ -185,6 +187,7 @@ export const geoCountry = {
   country: () => faker.random.arrayElement(["US", "CA"]),
   size: () => faker.datatype.number(100000),
   spending: () => faker.datatype.number(1000000),
+  country_label: () => faker.random.arrayElement(["United States", "Canada"]),
 }
 
 /**
@@ -195,4 +198,5 @@ export const geoState = {
   size: () => faker.datatype.number(10000),
   spending: () => faker.datatype.number(100000),
   country: () => faker.random.arrayElement(["US", "CA"]),
+  country_label: () => faker.random.arrayElement(["United States", "Canada"]),
 }

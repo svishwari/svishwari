@@ -5,5 +5,6 @@ const dataExtensionsMock = {
   data_extension_id() {
     return faker.datatype.uuid()
   },
+  create_time: faker.date.past(),
 }
 export default dataExtensionsMock
