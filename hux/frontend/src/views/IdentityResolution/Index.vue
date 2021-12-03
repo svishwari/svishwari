@@ -462,9 +462,6 @@ $headerOffsetY: 70px;
   }
 
   .idr-slide-group {
-    ::v-deep .v-slide-group__wrapper {
-      overflow: auto !important;
-    }
     ::v-deep .theme--light.v-icon {
       color: var(--v-primary-base) !important;
     }
