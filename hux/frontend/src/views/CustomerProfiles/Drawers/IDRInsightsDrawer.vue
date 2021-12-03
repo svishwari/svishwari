@@ -133,7 +133,8 @@ export default {
           metric: "Total no. of records",
           metricType: "",
           result: "",
-          toolTipText: "Total number of input records across all data feeds.",
+          toolTipText:
+            "All unique offline and online IDs that we receive as input across all data feeds.",
         },
         {
           metric: "Match rate",
@@ -147,7 +148,7 @@ export default {
           metricType: "",
           result: "",
           toolTipText:
-            "IDs related to online visitors that have not logged in, typically identified by a browser cookie or device ID.",
+            "A digital ID related to online visitors that have not yet been recognized and hence not assigned an individual ID",
         },
         {
           metric: "Known IDs",
