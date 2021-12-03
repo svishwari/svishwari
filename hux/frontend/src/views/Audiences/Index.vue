@@ -112,50 +112,50 @@
               v-if="header.value == 'filters' && item[header.value]"
               class="filter_col"
             >
-            <span v-if="item[header.value] === 'null' ">—</span>
-            <span v-else>
-              <span
-                v-for="(filter, filterIndex) in filterTags[item.name]"
-                :key="filterIndex"
-              >
-                <v-chip
-                  v-if="filterIndex < 4"
-                  small
-                  class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
-                  text-color="primary"
-                  color="var(--v-primary-lighten3)"
+              <span v-if="item[header.value] === 'null'">—</span>
+              <span v-else>
+                <span
+                  v-for="(filter, filterIndex) in filterTags[item.name]"
+                  :key="filterIndex"
                 >
-                  {{ formatText(filter) }}
-                </v-chip>
-              </span>
-              <tooltip>
-                <template #label-content>
-                  <span
-                    v-if="filterTags[item.name].size > 4"
-                    class="text-subtitle-2 primary--text"
+                  <v-chip
+                    v-if="filterIndex < 4"
+                    small
+                    class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                    text-color="primary"
+                    color="var(--v-primary-lighten3)"
                   >
-                    +{{ filterTags[item.name].size - 4 }}
-                  </span>
-                </template>
-                <template #hover-content>
-                  <span
-                    v-for="(filter, filterIndex) in filterTags[item.name]"
-                    :key="filterIndex"
-                  >
-                    <v-chip
-                      v-if="filterIndex >= 4"
-                      small
-                      class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
-                      text-color="primary"
-                      color="var(--v-primary-lighten3)"
+                    {{ formatText(filter) }}
+                  </v-chip>
+                </span>
+                <tooltip>
+                  <template #label-content>
+                    <span
+                      v-if="filterTags[item.name].size > 4"
+                      class="text-subtitle-2 primary--text"
                     >
-                      {{ formatText(filter) }}
-                    </v-chip>
-                    <br v-if="filterIndex >= 4" />
-                  </span>
-                </template>
-              </tooltip>
-            </span> 
+                      +{{ filterTags[item.name].size - 4 }}
+                    </span>
+                  </template>
+                  <template #hover-content>
+                    <span
+                      v-for="(filter, filterIndex) in filterTags[item.name]"
+                      :key="filterIndex"
+                    >
+                      <v-chip
+                        v-if="filterIndex >= 4"
+                        small
+                        class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
+                        text-color="primary"
+                        color="var(--v-primary-lighten3)"
+                      >
+                        {{ formatText(filter) }}
+                      </v-chip>
+                      <br v-if="filterIndex >= 4" />
+                    </span>
+                  </template>
+                </tooltip>
+              </span>
             </div>
             <div v-if="header.value == 'destinations'">
               <div
@@ -457,8 +457,8 @@ export default {
     audienceList() {
       let audienceValue = JSON.parse(JSON.stringify(this.rowData))
       audienceValue.forEach((audience) => {
-        if (!('filters' in audience)) {
-          audience['filters'] = 'null'
+        if (!("filters" in audience)) {
+          audience["filters"] = "null"
         }
       })
       audienceValue.forEach((audience) => {
