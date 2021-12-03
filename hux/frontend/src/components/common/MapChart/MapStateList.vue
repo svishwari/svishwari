@@ -168,7 +168,7 @@ export default {
         th:nth-child(1) {
           position: sticky;
           left: 0;
-          z-index: 9;
+          z-index: 7;
           overflow-y: visible;
           overflow-x: visible;
         }
