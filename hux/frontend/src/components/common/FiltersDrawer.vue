@@ -36,16 +36,16 @@
 
         <div class="footer mt-auto">
           <slot name="footer">
-            <v-btn
+            <hux-button
               tile
-              color="white"
+              variant="white"
               class="text-button ml-auto primary--text mr-3"
               width="91"
               @click="$emit('close')"
             >
               Close
-            </v-btn>
-            <v-btn
+            </hux-button>
+            <hux-button
               tile
               color="primary"
               class="text-button ml-auto"
@@ -53,7 +53,7 @@
               @click="$emit('apply')"
             >
               Apply filter
-            </v-btn>
+            </hux-button>
           </slot>
         </div>
       </div>
@@ -63,8 +63,13 @@
 
 <script>
 import { defineComponent } from "@vue/composition-api"
+import huxButton from "@/components/common/huxButton"
 
 export default defineComponent({
+  components: {
+    huxButton,
+  },
+
   props: {
     isToggled: {
       type: Boolean,

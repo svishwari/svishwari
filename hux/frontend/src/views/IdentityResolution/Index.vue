@@ -479,10 +479,5 @@ $headerOffsetY: 70px;
     background-image: url("../../assets/images/no-matching-trend-chart-frame.png");
     background-position: center;
   }
-
-  .middle {
-    display: flex !important;
-    align-items: center !important;
-  }
 }
 </style>
