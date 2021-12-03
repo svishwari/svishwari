@@ -179,7 +179,7 @@ class TestNotificationRoutes(TestCase):
         )
 
     def test_get_notifications_custom_params(self):
-        """Test get notifications failure."""
+        """Test get notifications with filters."""
 
         expected_notification_types = ",".join(db_c.NOTIFICATION_TYPES[:-1])
         expected_notification_categories = ",".join(
