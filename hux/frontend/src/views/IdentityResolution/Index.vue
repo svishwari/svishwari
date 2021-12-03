@@ -125,7 +125,11 @@
             <v-col md="12">
               <v-card
                 class="mt-2 rounded-lg box-shadow-5 overflow-hidden"
-                :class="!hasMatchingTrendsData ? 'middle' : ''"
+                :class="
+                  !hasMatchingTrendsData && !loadingMatchingTrends
+                    ? 'middle'
+                    : ''
+                "
                 min-height="400"
               >
                 <v-progress-linear
