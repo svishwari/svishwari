@@ -178,6 +178,56 @@ class TestNotificationRoutes(TestCase):
             self.notifications, response.json[api_c.NOTIFICATIONS_TAG]
         )
 
+    def test_get_notifications_custom_params(self):
+        """Test get notifications with filters."""
+
+        expected_notification_types = ",".join(db_c.NOTIFICATION_TYPES[:-1])
+        expected_notification_categories = ",".join(
+            api_c.NOTIFICATION_CATEGORIES[:-1]
+        )
+        expected_notifications = [
+            x
+            for x in self.notifications
+            if x[api_c.NOTIFICATION_TYPE].lower()
+            in expected_notification_types
+            and x[db_c.CATEGORY].lower() in expected_notification_categories
+        ]
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}",
+            query_string={
+                api_c.START_DATE: datetime.strftime(
+                    datetime.utcnow() - relativedelta(days=2),
+                    api_c.DEFAULT_DATE_FORMAT,
+                ),
+                api_c.END_DATE: datetime.strftime(
+                    datetime.utcnow(),
+                    api_c.DEFAULT_DATE_FORMAT,
+                ),
+                db_c.NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE: 10,
+                db_c.NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER: 1,
+                api_c.QUERY_PARAMETER_NOTIFICATION_TYPES: expected_notification_types,
+                api_c.QUERY_PARAMETER_NOTIFICATION_CATEGORY: expected_notification_categories,
+            },
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(
+            len(expected_notifications), response.json[api_c.TOTAL]
+        )
+        self.assertCountEqual(
+            expected_notifications, response.json[api_c.NOTIFICATIONS_TAG]
+        )
+        for notification in response.json[api_c.NOTIFICATIONS_TAG]:
+            self.assertIn(
+                notification[api_c.NOTIFICATION_TYPE].lower(),
+                expected_notification_types,
+            )
+            self.assertIn(
+                notification[db_c.CATEGORY].lower(),
+                expected_notification_categories,
+            )
+
     def test_get_notifications_bad_params(self):
         """Test get notifications by setting batch size, batch number to
         incorrect values."""
