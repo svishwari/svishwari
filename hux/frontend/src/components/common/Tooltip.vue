@@ -1,5 +1,6 @@
 <template>
   <v-menu
+    :top="positionTop"
     offset-y
     open-on-hover
     :content-class="contentClass"
