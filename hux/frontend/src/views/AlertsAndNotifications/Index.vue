@@ -40,122 +40,135 @@
         </huxButton>
       </template>
     </page-header>
-    <alert-filter-drawer
-      v-model="isFilterToggled"
-      :users="getNotificationUsers"
-      @onSectionAction="alertfunction"
-    />
-    <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row
-      v-if="notificationData.length > 0 && !loading"
-      class="pb-7 pl-3 white"
+    <div
+      class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
     >
-      <hux-data-table
-        :columns="columnDefs"
-        :data-items="notificationData"
-        sort-column="created"
-        sort-desc
-      >
-        <template #row-item="{ item }">
-          <td
-            v-for="header in columnDefs"
-            :key="header.value"
-            :class="{
-              'fixed-column': header.fixed,
-              'v-data-table__divider': header.fixed,
-              'primary--text': header.fixed,
-            }"
-            class="col-overflow text-body-1"
-            :style="{ width: header.width, left: 0 }"
-          >
-            <div v-if="header.value == 'id'">
-              <a @click="toggleDrawer(item[header.value])"
-                >{{ item[header.value] }}
-              </a>
-            </div>
-
-            <div v-if="header.value == 'category'">
-              {{ item[header.value] }}
-            </div>
-
-            <div v-if="header.value == 'notification_type'" class="d-flex">
-              <icon
-                :type="
-                  item['notification_type'] === 'Success'
-                    ? 'success_new'
-                    : item['notification_type']
-                "
-                :size="18"
-                :color="getIconColor(item['notification_type'])"
-                :variant="getVariantColor(item['notification_type'])"
-                class="d-block mr-1"
-              />
-              {{ item["notification_type"] }}
-            </div>
-
-            <tooltip v-if="header.value == 'description'" position-top>
-              <template #label-content>
-                <span>{{ item[header.value] }}</span>
-              </template>
-              <template #hover-content>
-                <div class="text--body-1 pb-2">Description</div>
-                {{ item[header.value] }}
-              </template>
-            </tooltip>
-
-            <div v-if="header.value == 'created'">
-              <time-stamp :value="item['created']" />
-            </div>
-          </td>
-        </template>
-      </hux-data-table>
-    </v-row>
-    <v-row
-      v-if="notificationData.length == 0 && !loading"
-      class="background-empty"
-    >
-      <empty-page type="no-alerts" :size="50">
-        <template #title>
-          <div class="title-no-notification">No alerts yet</div></template
+      <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
+        <v-progress-linear :active="loading" :indeterminate="loading" />
+        <v-row
+          v-if="notificationData.length > 0 && !loading"
+          class="pb-7 pl-3 white"
         >
-        <template #subtitle>
-          <div class="des-no-notification">
-            Currently there are no alerts available.<br />
-            Check back later or change your filters.
-          </div>
-        </template>
-        <template #button>
-          <huxButton
-            button-text="Clear filters"
-            variant="primary base"
-            size="large"
-            class="ma-2 font-weight-regular text-button"
-            is-tile
-            :height="'40'"
+          <hux-data-table
+            :columns="columnDefs"
+            :data-items="notificationData"
+            sort-column="created"
+            sort-desc
           >
-            Clear filters
-          </huxButton>
-        </template>
-      </empty-page>
-    </v-row>
-    <v-row
-      v-if="
-        notificationData.length > 0 && notificationData.length <= 0 && !loading
-      "
-      class="d-flex justify-center align-center"
-    >
-      <error
-        icon-type="error-on-screens"
-        :icon-size="50"
-        title="Alerts &amp; notifications is currently unavailable"
-        subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
-      >
-      </error>
-    </v-row>
-    <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
-    <v-divider v-if="enableLazyLoad" class="hr-devider"></v-divider>
-    <v-progress-linear v-if="enableLazyLoad" active indeterminate />
-    <observer v-if="notifications.length" @intersect="intersected"></observer>
+            <template #row-item="{ item }">
+              <td
+                v-for="header in columnDefs"
+                :key="header.value"
+                :class="{
+                  'fixed-column': header.fixed,
+                  'v-data-table__divider': header.fixed,
+                  'primary--text': header.fixed,
+                }"
+                class="col-overflow text-body-1"
+                :style="{ width: header.width, left: 0 }"
+              >
+                <div v-if="header.value == 'id'">
+                  <a @click="toggleDrawer(item[header.value])"
+                    >{{ item[header.value] }}
+                  </a>
+                </div>
+
+                <div v-if="header.value == 'category'">
+                  {{ item[header.value] }}
+                </div>
+
+                <div v-if="header.value == 'notification_type'" class="d-flex">
+                  <icon
+                    :type="
+                      item['notification_type'] === 'Success'
+                        ? 'success_new'
+                        : item['notification_type']
+                    "
+                    :size="18"
+                    :color="getIconColor(item['notification_type'])"
+                    :variant="getVariantColor(item['notification_type'])"
+                    class="d-block mr-1"
+                  />
+                  {{ item["notification_type"] }}
+                </div>
+
+                <tooltip v-if="header.value == 'description'" position-top>
+                  <template #label-content>
+                    <span>{{ item[header.value] }}</span>
+                  </template>
+                  <template #hover-content>
+                    <div class="text--body-1 pb-2">Description</div>
+                    {{ item[header.value] }}
+                  </template>
+                </tooltip>
+
+                <div v-if="header.value == 'created'">
+                  <time-stamp :value="item['created']" />
+                </div>
+              </td>
+            </template>
+          </hux-data-table>
+        </v-row>
+        <v-row
+          v-if="notificationData.length == 0 && !loading"
+          class="background-empty"
+        >
+          <empty-page type="no-alerts" :size="50">
+            <template #title>
+              <div class="title-no-notification">No alerts yet</div></template
+            >
+            <template #subtitle>
+              <div class="des-no-notification">
+                Currently there are no alerts available.<br />
+                Check back later or change your filters.
+              </div>
+            </template>
+            <template #button>
+              <huxButton
+                button-text="Clear filters"
+                variant="primary base"
+                size="large"
+                class="ma-2 font-weight-regular text-button"
+                is-tile
+                :height="'40'"
+              >
+                Clear filters
+              </huxButton>
+            </template>
+          </empty-page>
+        </v-row>
+        <v-row
+          v-if="
+            notificationData.length > 0 &&
+            notificationData.length <= 0 &&
+            !loading
+          "
+          class="d-flex justify-center align-center"
+        >
+          <error
+            icon-type="error-on-screens"
+            :icon-size="50"
+            title="Alerts &amp; notifications is currently unavailable"
+            subtitle="Our team is working hard to fix it. Please be patient and try again soon!"
+          >
+          </error>
+        </v-row>
+        <alert-drawer v-model="alertDrawer" :notification-id="notificationId" />
+        <v-divider v-if="enableLazyLoad" class="hr-divider"></v-divider>
+        <v-progress-linear v-if="enableLazyLoad" active indeterminate />
+        <observer
+          v-if="notifications.length"
+          @intersect="intersected"
+        ></observer>
+      </div>
+      <div class="ml-auto mt-n3">
+        <alert-filter-drawer
+          v-model="isFilterToggled"
+          :users="getNotificationUsers"
+          @onSectionAction="alertfunction"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -500,7 +513,7 @@ export default {
 .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td {
   padding-left: 32px !important;
 }
-.hr-devider {
+.hr-divider {
   margin-top: -27px !important;
 }
 .background-empty {
