@@ -591,10 +591,7 @@ class Tecton:
                 response.status_code,
                 response.text,
             )
-            raise iae.FailedAPIDependencyError(
-                f"{self.service} : in_function={self.get_models.__name__}",
-                response.status_code,
-            )
+            return []
 
         return self.map_model_response(response)
 

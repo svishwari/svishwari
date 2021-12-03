@@ -162,7 +162,7 @@ class CustomerOverviewSchema(Schema):
     max_ltv_predicted = Float(required=True, default=0.0)
     min_ltv_actual = Float(required=True, default=0.0)
     max_ltv_actual = Float(required=True, default=0.0)
-    geo = List(Nested(CustomerStateSchema))
+    geo = List(Nested(CustomerStateSchema), default=[])
 
 
 class IDROverviewSchema(Schema):

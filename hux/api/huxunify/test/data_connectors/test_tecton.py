@@ -12,7 +12,6 @@ from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.exceptions.integration_api_exceptions import (
-    FailedAPIDependencyError,
     EmptyAPIResponseError,
 )
 from huxunify.test import constants as t_c
@@ -416,8 +415,7 @@ class TectonTest(TestCase):
             headers=self.tecton.headers,
         )
 
-        with self.assertRaises(FailedAPIDependencyError):
-            self.tecton.get_models()
+        self.assertFalse(self.tecton.get_models())
 
     @requests_mock.Mocker()
     @given(model_id=st.integers(min_value=100, max_value=1000))
