@@ -202,7 +202,7 @@ class DecisioningTests(TestCase):
         updated_doc = get_document(
             database=self.database,
             collection=db_c.CONFIGURATIONS_COLLECTION,
-            document_id=doc[db_c.ID],
+            query_filter={db_c.ID: doc[db_c.ID]},
             include_deleted=True,
         )
 
