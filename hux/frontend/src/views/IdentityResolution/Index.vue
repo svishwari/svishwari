@@ -125,6 +125,11 @@
             <v-col md="12">
               <v-card
                 class="mt-2 rounded-lg box-shadow-5 overflow-hidden"
+                :class="
+                  !hasMatchingTrendsData && !loadingMatchingTrends
+                    ? 'middle'
+                    : ''
+                "
                 min-height="400"
               >
                 <v-progress-linear
@@ -135,7 +140,7 @@
 
                 <template v-if="!loadingMatchingTrends">
                   <span v-if="hasMatchingTrendsData">
-                    <v-card-title class="chart-style pb-8 pl-5 pt-5">
+                    <v-card-title class="chart-style pb-8 pl-6 pt-5">
                       <div class="mt-2">
                         <span class="black--text text-h3">
                           ID Resolution matching trends

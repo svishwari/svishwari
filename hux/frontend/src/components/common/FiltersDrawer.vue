@@ -7,7 +7,7 @@
       color="white"
       class="hux-filters-drawer"
     >
-      <div class="wrapper">
+      <div class="wrapper" :style="minHeight">
         <div class="header">
           <slot name="header">
             <h2 class="text-h2">
@@ -28,7 +28,7 @@
           </slot>
         </div>
 
-        <div class="content">
+        <div class="content" :style="maxHeight">
           <slot name="default">
             <!-- `FilterPanels` live here -->
           </slot>
@@ -36,15 +36,24 @@
 
         <div class="footer mt-auto">
           <slot name="footer">
-            <v-btn
+            <hux-button
+              tile
+              variant="white"
+              class="text-button ml-auto primary--text mr-3"
+              width="91"
+              @click="$emit('close')"
+            >
+              Close
+            </hux-button>
+            <hux-button
               tile
               color="primary"
               class="text-button ml-auto"
-              width="134"
+              width="157"
               @click="$emit('apply')"
             >
               Apply filter
-            </v-btn>
+            </hux-button>
           </slot>
         </div>
       </div>
@@ -54,8 +63,13 @@
 
 <script>
 import { defineComponent } from "@vue/composition-api"
+import huxButton from "@/components/common/huxButton"
 
 export default defineComponent({
+  components: {
+    huxButton,
+  },
+
   props: {
     isToggled: {
       type: Boolean,
@@ -68,6 +82,27 @@ export default defineComponent({
       required: false,
       default: 0,
     },
+
+    offsetVal: {
+      type: String,
+      required: false,
+      default: "180px",
+    },
+
+    contentHeight: {
+      type: String,
+      required: false,
+      default: "252px",
+    },
+  },
+
+  computed: {
+    minHeight() {
+      return "min-height: " + `calc(100vh - ${this.offsetVal})`
+    },
+    maxHeight() {
+      return "max-height: " + this.contentHeight
+    },
   },
 })
 </script>
@@ -75,7 +110,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 $footerHeight: 80px;
 $headerHeight: 40px;
-$offset: 180px;
 $padding: 20px;
 $width: 300px;
 
@@ -89,7 +123,6 @@ $width: 300px;
     flex-direction: column;
     position: fixed;
     width: $width;
-    min-height: calc(100vh - #{$offset});
   }
 
   .header,
@@ -109,6 +142,7 @@ $width: 300px;
   .content {
     flex-direction: column;
     padding: 0;
+    overflow-y: auto;
   }
 
   .footer {

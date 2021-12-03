@@ -65,7 +65,7 @@
           mb-10
         "
       >
-        <v-row>
+        <v-row class="pt-4 pl-3">
           <v-col
             v-for="key in Object.keys(destinationFields)"
             :key="key"
@@ -143,7 +143,7 @@
       >
         <div class="d-flex justify-space-between">
           <div class="mr-3">
-            <icon type="Bulb" :size="32" color="yellow" />
+            <icon type="bulb" :size="36" color="yellow" />
           </div>
           <p class="text-body-1 ma-0">
             The destination you have selected is currently not available to
@@ -343,7 +343,7 @@
             />
           </div>
 
-          <v-divider class="black--border border--lighten-2 my-8" />
+          <v-divider class="black--border border--lighten-2 mt-7 mb-2" />
 
           <div
             v-for="(value, category, index) in groupByCategory(
@@ -368,7 +368,7 @@
             />
           </div>
 
-          <v-divider class="black--border border--lighten-2 my-8" />
+          <v-divider class="black--border border--lighten-2 mt-7 mb-2" />
 
           <div>
             <label class="d-block text--body-2 mb-2 mt-6"> Other </label>

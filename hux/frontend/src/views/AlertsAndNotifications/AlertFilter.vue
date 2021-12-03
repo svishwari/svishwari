@@ -1,108 +1,71 @@
 <template>
-  <drawer
-    v-model="localDrawer"
-    :content-padding="'pa-0'"
-    :content-header-padding="'px-1'"
-    :expanded-width="300"
-    :width="300"
-    header-height="40"
+  <hux-filters-drawer
+    :is-toggled="localDrawer"
+    :count="filterLength"
+    offset-val="214px"
+    content-height="560px"
+    @clear="clear"
+    @apply="apply"
+    @close="close"
   >
-    <template #header-left>
-      <span class="text-h2 black--text"> Filter ({{ filterLength }}) </span>
-    </template>
-    <template #header-right>
-      <v-btn
-        plain
-        :color="filterLength > 0 ? 'primary base' : 'black lighten3'"
-        :disabled="filterLength === 1 && selectedTimeType === 'Last week'"
-        class="text-button float-right clear-btn"
-        @click="clearFilter()"
-      >
-        Clear
-      </v-btn>
-    </template>
-
-    <template #default>
-      <hux-filter-panels>
-        <hux-filter-panel title="Alert type" :count="selctedAlertType.length">
-          <v-checkbox
-            v-for="data in alertType"
+    <hux-filter-panels>
+      <hux-filter-panel title="Alert type" :count="selctedAlertType.length">
+        <v-checkbox
+          v-for="data in alertType"
+          :key="data.id"
+          v-model="selctedAlertType"
+          multiple
+          color="#00a3e0"
+          class="text--base-1"
+          :label="data.title"
+          :value="data.title"
+        ></v-checkbox>
+      </hux-filter-panel>
+      <hux-filter-panel title="Category" :count="selctedCategory.length">
+        <v-checkbox
+          v-for="data in category"
+          :key="data.id"
+          v-model="selctedCategory"
+          multiple
+          color="#00a3e0"
+          :label="data.title"
+          :value="data.title"
+        ></v-checkbox>
+      </hux-filter-panel>
+      <hux-filter-panel title="Time" :count="1">
+        <v-radio-group v-model="selectedTimeType">
+          <v-radio
+            v-for="data in time"
             :key="data.id"
-            v-model="selctedAlertType"
-            multiple
-            color="#00a3e0"
-            class="text--base-1"
             :label="data.title"
-            :value="data.title"
-          ></v-checkbox>
-        </hux-filter-panel>
-        <hux-filter-panel title="Category" :count="selctedCategory.length">
-          <v-checkbox
-            v-for="data in category"
-            :key="data.id"
-            v-model="selctedCategory"
-            multiple
             color="#00a3e0"
-            :label="data.title"
             :value="data.title"
-          ></v-checkbox>
-        </hux-filter-panel>
-        <hux-filter-panel title="Time" :count="1">
-          <v-radio-group v-model="selectedTimeType">
-            <v-radio
-              v-for="data in time"
-              :key="data.id"
-              :label="data.title"
-              color="#00a3e0"
-              :value="data.title"
-            ></v-radio>
-          </v-radio-group>
-        </hux-filter-panel>
-        <hux-filter-panel title="User" :count="selctedUsers.length">
-          <v-checkbox
-            v-for="data in users"
-            :key="data.id"
-            v-model="selctedUsers"
-            multiple
-            color="#00a3e0"
-            :label="data.display_name"
-            :value="data.display_name"
-          ></v-checkbox>
-        </hux-filter-panel>
-      </hux-filter-panels>
-    </template>
-    <template #footer-left>
-      <v-btn
-        tile
-        color="white"
-        class="text-button ml-1 primary-text btn-border box-shadow-none"
-        @click="localDrawer = false"
-      >
-        Cancel
-      </v-btn>
-    </template>
-    <template #footer-right>
-      <v-btn
-        tile
-        color="primary"
-        class="text-button ml-4"
-        width="110"
-        @click="apply()"
-      >
-        Apply filter
-      </v-btn>
-    </template>
-  </drawer>
+          ></v-radio>
+        </v-radio-group>
+      </hux-filter-panel>
+      <hux-filter-panel title="User" :count="selctedUsers.length">
+        <v-checkbox
+          v-for="data in users"
+          :key="data.id"
+          v-model="selctedUsers"
+          multiple
+          color="#00a3e0"
+          :label="data.display_name"
+          :value="data.display_name"
+        ></v-checkbox>
+      </hux-filter-panel>
+    </hux-filter-panels>
+  </hux-filters-drawer>
 </template>
 
 <script>
-import Drawer from "@/components/common/Drawer"
+import HuxFiltersDrawer from "@/components/common/FiltersDrawer"
 import HuxFilterPanels from "@/components/common/FilterPanels"
 import HuxFilterPanel from "@/components/common/FilterPanel"
 export default {
   name: "AlertFilterDrawer",
   components: {
-    Drawer,
+    HuxFiltersDrawer,
     HuxFilterPanels,
     HuxFilterPanel,
   },
@@ -266,6 +229,9 @@ export default {
         selctedCategory: this.selctedCategory,
         selctedUsers: this.selctedUsers,
       })
+    },
+    close() {
+      this.localDrawer = false
     },
   },
 }
