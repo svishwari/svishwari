@@ -28,7 +28,6 @@ steps:
     image: "${{DockerBuild}}"
     commands:
       - echo "Set branch in wss-agent.config..."
-      - echo productVersion=$CF_PULL_REQUEST_TARGET >> $CF_VOLUME_PATH/$CF_REPO_NAME/hux/frontend/$CONFIG_FILE
       - echo projectVersion=$CF_PULL_REQUEST_TARGET >> $CF_VOLUME_PATH/$CF_REPO_NAME/hux/frontend/$CONFIG_FILE
       - echo "Configure NPM environment for Whitesource scan..."
       - cd ${{CF_REPO_NAME}}/hux/frontend/

@@ -16,5 +16,5 @@
 ### codefresh-ws-scan.yaml
 - Codefresh pipeline that will run the scan on commit to a mainline branch. 
 - There is the variable CF_BRANCH that will be set as `develop` or `main` based on the pipeline trigger which will be set run on on Push Commits to either of those branches. 
-- Since we are trying to make the pipeline runs dynamic to the merged branch name, the Whitesource scanner config settings `projectVersion` and `productVersion` are set with each pipeline run and not maintained in separate files.
+- Since we are trying to make the pipeline runs dynamic to the merged branch name, the Whitesource scanner config setting `productVersion` is set with each pipeline run and not maintained in separate files.
 - One variable that is not in the pipeline YAML but is required is `API_KEY`, which allows the scan results to be sent to the Deloitte hosted Whitesource UI. The variable is set as a Shared Configuration in the Codefresh UI.
