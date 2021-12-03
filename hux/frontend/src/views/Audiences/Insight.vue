@@ -25,12 +25,6 @@
               </span>
             </template>
           </tooltip>
-          <icon
-            type="dots-vertical"
-            :size="18"
-            class="cursor-pointer mr-7"
-            color="black-darken4"
-          />
         </div>
       </template>
       <!-- Keeping this in TODO until more updates -->
@@ -169,6 +163,7 @@
           <span class="mr-2 pt-2">
             <span class="original-audience-text">
               <router-link
+                v-if="audience.source_exists"
                 :to="{
                   name: 'AudienceInsight',
                   params: { id: audience.source_id },
@@ -177,6 +172,7 @@
                 append
                 >{{ audience.source_name }}
               </router-link>
+              <div v-else class="black--text">{{ audience.source_name }}</div>
             </span>
           </span>
         </template>
@@ -287,6 +283,7 @@
                     primary--text
                     text-decoration-none
                     body-2
+                    mr-9
                   "
                   data-e2e="add-engagement"
                   @click="openAttachEngagementDrawer()"
@@ -907,6 +904,7 @@ export default {
             disabled: true,
             href: this.$route.path,
             icon: "lookalike",
+            iconColor: "white",
             size: 12,
           })
         } else {

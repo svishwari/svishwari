@@ -118,7 +118,10 @@ export const defineRoutes = (server) => {
       // update data extension, assign the new `id` to its `data_extension_id`
       let updatedResponse = schema.dataExtensions
         .find(response.attrs.id)
-        .update({ data_extension_id: response.attrs.id })
+        .update({
+          data_extension_id: response.attrs.id,
+          create_time: new Date(),
+        })
       return updatedResponse.attrs
     }
   )

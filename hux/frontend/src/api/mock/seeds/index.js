@@ -24,7 +24,7 @@ export default function (server) {
   server.createList("engagement", 5)
   server.createList("audiencePerformance", 10)
   server.createList("customer", 5000)
-  server.createList("dataExtension", 5)
+  server.createList("dataExtension", 25)
   server.createList("campaignOption", 1)
   server.createList("notification", 1000)
   server.createList("idrDataFeed", 10)

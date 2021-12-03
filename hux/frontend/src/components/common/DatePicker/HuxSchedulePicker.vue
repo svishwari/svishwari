@@ -317,19 +317,19 @@ export default {
   }
 
   ::v-deep .every-select {
-    width: 74px;
+    width: 75px;
   }
 
   ::v-deep .hour-select {
-    width: 74px;
+    width: 75px;
   }
 
   ::v-deep .minute-select {
-    width: 74px;
+    width: 75px;
   }
 
   ::v-deep .period-select {
-    width: 78px;
+    width: 81px;
   }
 }
 

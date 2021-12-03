@@ -339,7 +339,7 @@ class IDROverview(SwaggerView):
             )
         else:
             idr_overview = idr_overviews.get(api_c.OVERVIEW)
-            trend_data = idr_overview.get(api_c.MATCHING_TRENDS)
+            trend_data = idr_overviews.get(api_c.MATCHING_TRENDS)
 
         return (
             IDROverviewWithDateRangeSchema().dump(

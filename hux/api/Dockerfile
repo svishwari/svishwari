@@ -1,8 +1,8 @@
 # 1. Build the API
 
-FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
+FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS python-dependencies
 
-# variables used for consuming orchestration pkgs from jfrog
+# variables used for consuming packages from jfrog
 ARG ARTIFACTORY_PYTHON_READ
 
 # set the work dir on the docker image
@@ -24,6 +24,14 @@ RUN pip install pipenv --upgrade
 RUN pipenv install --system --deploy
 
 # set the working directory again
+WORKDIR /app/hux-unified/api
+
+# 2. Build the API -----------------
+
+FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
+
+# Copy app over to image
+COPY --from=python-dependencies / /
 WORKDIR /app/hux-unified/api
 
 # append huxunify path to python path.
