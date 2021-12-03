@@ -735,4 +735,9 @@ export const defineRoutes = (server) => {
 
     return schema.audiences.create(attrs)
   })
+
+  server.put("/lookalike-audiences/:id", (schema, request) => {
+    let requestData = JSON.parse(request.requestBody)
+    return schema.audiences.find(request.params.id).update(requestData)
+  })
 }

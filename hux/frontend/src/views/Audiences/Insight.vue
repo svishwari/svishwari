@@ -996,7 +996,7 @@ export default {
       downloadAudienceData: "audiences/fetchAudienceData",
       setAlert: "alerts/setAlert",
       getAudiencesRules: "audiences/fetchConstants",
-      updateAudience: "audiences/update",
+      updateLookalikeAudience: "audiences/updateLookalike",
     }),
     attributeOptions() {
       const options = []
@@ -1040,7 +1040,7 @@ export default {
         name: this.newAudienceName,
       }
       try {
-        await this.updateAudience({
+        this.audienceData = await this.updateLookalikeAudience({
           id: this.audienceId,
           payload: payload,
         })
