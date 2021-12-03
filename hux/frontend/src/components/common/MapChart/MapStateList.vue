@@ -6,6 +6,7 @@
       :sort-column="customMetric"
       :sort-desc="true"
       :data-items="stateListData"
+      class="small-table"
     >
       <template #row-item="{ item }">
         <td
