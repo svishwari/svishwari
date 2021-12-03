@@ -112,6 +112,8 @@
               v-if="header.value == 'filters' && item[header.value]"
               class="filter_col"
             >
+            <span v-if="item[header.value] === 'null' ">—</span>
+            <span v-else>
               <span
                 v-for="(filter, filterIndex) in filterTags[item.name]"
                 :key="filterIndex"
@@ -153,6 +155,7 @@
                   </span>
                 </template>
               </tooltip>
+            </span> 
             </div>
             <div v-if="header.value == 'destinations'">
               <div
@@ -453,6 +456,11 @@ export default {
     }),
     audienceList() {
       let audienceValue = JSON.parse(JSON.stringify(this.rowData))
+      audienceValue.forEach((audience) => {
+        if (!('filters' in audience)) {
+          audience['filters'] = 'null'
+        }
+      })
       audienceValue.forEach((audience) => {
         audience.destinations.sort((a, b) => a.name.localeCompare(b.name))
       })
