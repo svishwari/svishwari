@@ -163,6 +163,7 @@
           <span class="mr-2 pt-2">
             <span class="original-audience-text">
               <router-link
+                v-if="audience.source_exists"
                 :to="{
                   name: 'AudienceInsight',
                   params: { id: audience.source_id },
@@ -171,6 +172,7 @@
                 append
                 >{{ audience.source_name }}
               </router-link>
+              <div v-else class="black--text">{{ audience.source_name }}</div>
             </span>
           </span>
         </template>
