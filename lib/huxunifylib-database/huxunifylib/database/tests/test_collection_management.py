@@ -224,7 +224,7 @@ class ConfigurationCollectionManagementTest(TestCase):
 
 
 class ModelsCollectionManagementTest(TestCase):
-    """Test model collection management."""
+    """Test models collection management."""
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
