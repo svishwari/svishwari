@@ -15,7 +15,8 @@
           type="filter"
           :size="22"
           class="cursor-pointer"
-          color="black-darken4"
+          color="black"
+          variant="lighten3"
         />
       </template>
     </page-header>
