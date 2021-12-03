@@ -12,19 +12,22 @@
       </template>
       <template #right>
         <div class="d-flex align-center">
-          <icon
-            type="pencil"
-            :size="18"
-            class="cursor-pointer mr-7"
-            color="black-darken4"
-            @click.native="editEngagement()"
-          />
-          <icon
-            type="dots-vertical"
-            :size="18"
-            class="cursor-pointer mr-7"
-            color="black-darken4"
-          />
+          <tooltip>
+            <template #label-content>
+              <icon
+                type="pencil"
+                :size="18"
+                class="cursor-pointer mr-7"
+                color="black-darken4"
+                @click.native="editEngagement()"
+              />
+            </template>
+            <template #hover-content>
+              <span>
+                <span> Click to edit this engagement </span>
+              </span>
+            </template>
+          </tooltip>
         </div>
       </template>
     </page-header>
@@ -62,7 +65,13 @@
             <div class="d-flex align-center">
               <v-btn
                 text
-                class="d-flex align-center primary--text text-decoration-none"
+                class="
+                  d-flex
+                  align-center
+                  primary--text
+                  text-decoration-none
+                  mr-9
+                "
                 @click="triggerSelectAudience()"
               >
                 <icon
@@ -201,6 +210,7 @@ import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/Edit
 import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
 import EngagementOverviewSummary from "./Overview.vue"
 import EngagementPerformanceMetrics from "./PerformanceMetrics.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
   name: "EngagementDashboard",
@@ -220,6 +230,7 @@ export default {
     ConfirmModal,
     EditDeliverySchedule,
     LookAlikeAudience,
+    Tooltip,
   },
   data() {
     return {
