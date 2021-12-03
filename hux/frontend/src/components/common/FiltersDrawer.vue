@@ -137,7 +137,6 @@ $width: 300px;
   .content {
     flex-direction: column;
     padding: 0;
-    max-height: 560px;
     overflow-y: auto;
   }
 
