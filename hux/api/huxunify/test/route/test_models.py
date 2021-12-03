@@ -149,7 +149,7 @@ class TestModelRoutes(TestCase):
 
         # mock get version history.
         mock.patch(
-            "huxunify.api.route.decisioning.tecton.get_model_version_history",
+            "huxunify.api.route.decisioning.Tecton.get_model_version_history",
             return_value=t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE,
         ).start()
 
