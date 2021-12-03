@@ -907,6 +907,7 @@ export default {
             disabled: true,
             href: this.$route.path,
             icon: "lookalike",
+            iconColor: "white",
             size: 12,
           })
         } else {
