@@ -210,10 +210,7 @@ def get_models() -> List[dict]:
             response.status_code,
             response.text,
         )
-        raise iae.FailedAPIDependencyError(
-            f"{config.TECTON_FEATURE_SERVICE} : in_function={get_models.__name__}",
-            response.status_code,
-        )
+        return []
 
     return map_model_response(response)
 
