@@ -201,7 +201,7 @@ class CustomerPostOverview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
+    # @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(self, user: dict) -> Tuple[dict, int]:
         """Retrieves the overview of customer data with the requested filters applied.
@@ -232,7 +232,7 @@ class CustomerPostOverview(SwaggerView):
         token_response = get_token_from_request(request)
         customers = get_customers_overview(
             token_response[0],
-            convert_unique_city_filter(request.json[api_c.AUDIENCE_FILTERS]),
+            convert_unique_city_filter(request.json),
         )
 
         customers[api_c.GEOGRAPHICAL] = get_demographic_by_state(
