@@ -72,9 +72,6 @@
 .letter-spacing-sm {
   letter-spacing: 0.5px;
 }
-.btn-border {
-  border: solid 1px var(--v-black-lighten1) !important;
-}
 
 .processing-button {
   background-size: 300%;
@@ -192,4 +189,8 @@
 .middle {
   display: flex !important;
   align-items: center !important;
+}
+
+.btn-border {
+  border: solid 1px var(--v-black-lighten1) !important;
 }

@@ -270,7 +270,8 @@
 
     <hux-footer>
       <template #left>
-        <v-btn
+        <hux-button
+          size="large"
           tile
           color="white"
           height="40"
@@ -281,11 +282,11 @@
           "
         >
           <span class="primary--text">Cancel</span>
-        </v-btn>
+        </hux-button>
       </template>
 
       <template #right>
-        <v-btn
+        <hux-button
           v-if="isEditable"
           tile
           color="primary"
@@ -294,9 +295,9 @@
           @click="restoreEngagement()"
         >
           Update
-        </v-btn>
+        </hux-button>
 
-        <v-btn
+        <hux-button
           v-else-if="hasDestinations && isManualDelivery"
           tile
           color="primary"
@@ -306,9 +307,9 @@
           @click="deliverNewEngagement()"
         >
           Create &amp; deliver
-        </v-btn>
+        </hux-button>
 
-        <v-btn
+        <hux-button
           v-else
           tile
           color="primary"
@@ -317,7 +318,7 @@
           @click="addNewEngagement()"
         >
           Create
-        </v-btn>
+        </hux-button>
       </template>
     </hux-footer>
 
@@ -363,6 +364,7 @@ import DataCards from "@/components/common/DataCards.vue"
 import FormStep from "@/components/common/FormStep.vue"
 import FormSteps from "@/components/common/FormSteps.vue"
 import HuxFooter from "@/components/common/HuxFooter.vue"
+import huxButton from "@/components/common/huxButton"
 import Logo from "@/components/common/Logo.vue"
 import TextField from "@/components/common/TextField.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
@@ -395,6 +397,7 @@ export default {
     HuxEndDate,
     Icon,
     HuxSchedulePicker,
+    huxButton,
   },
 
   props: {

@@ -37,9 +37,17 @@
         <div class="footer mt-auto">
           <slot name="footer">
             <hux-button
-              tile
+              size="large"
               variant="white"
-              class="text-button ml-auto primary--text mr-3"
+              tile
+              class="
+                text-button
+                ml-auto
+                primary--text
+                mr-3
+                btn-border
+                box-shadow-none
+              "
               width="91"
               @click="$emit('close')"
             >

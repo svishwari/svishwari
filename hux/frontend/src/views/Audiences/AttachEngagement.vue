@@ -310,6 +310,7 @@
       </div>
       <div v-if="viewStep == 2" class="d-flex align-baseline">
         <huxButton
+          size="large"
           variant="white"
           :is-tile="true"
           height="40"

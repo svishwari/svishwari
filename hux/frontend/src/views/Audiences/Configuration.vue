@@ -216,6 +216,7 @@
         <hux-footer max-width="inherit">
           <template #left>
             <huxButton
+              size="large"
               variant="white"
               is-tile
               width="94"
