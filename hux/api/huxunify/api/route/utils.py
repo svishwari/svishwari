@@ -653,6 +653,6 @@ def convert_unique_city_filter(request_json: dict) -> dict:
                         }
                     )
         return request_json
-    except:
+    except KeyError:
         logger.info("Incorrect Audience Filter Object")
         return request_json
