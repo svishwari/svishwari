@@ -1,7 +1,6 @@
 version: "1.0"
 stages:
   - "clone"
-  - "docker"
   - "scan"
 
 steps:
@@ -12,20 +11,11 @@ steps:
     repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
     revision: "${{CF_BRANCH}}"
 
-  DockerBuild:
-    stage: docker
-    title: "Build whitesource scan image"
-    type: build
-    image_name: 'whitesource-npm'
-    working_directory: "${{CF_REPO_NAME}}/hux/frontend/ci/whitesource"
-    dockerfile: Dockerfile.whitesource
-    tag: '1.0'
-
   WhitesourceScan:
     stage: scan
     title: "Run whiteSource scan"
     type: freestyle
-    image: "${{DockerBuild}}"
+    image: ciruntime.repo.mgnt.in/whitesource-node:16.13.1
     commands:
       - echo "Set branch in wss-agent.config..."
       - echo projectVersion=$CF_PULL_REQUEST_TARGET >> $CF_VOLUME_PATH/$CF_REPO_NAME/hux/frontend/$CONFIG_FILE
@@ -41,3 +31,4 @@ steps:
       - CONFIG_FILE=ci/whitesource/wss-agent.config
       - PROJECT_DIRECTORY=.
       - API_KEY=${{API_KEY}}
+
