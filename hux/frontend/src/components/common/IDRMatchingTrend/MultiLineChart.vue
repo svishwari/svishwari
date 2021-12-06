@@ -264,7 +264,7 @@ export default {
         .append("svg")
         .attr("id", "mainSvg")
         .attr("class", "svgBox")
-        .attr("width", 400)
+        .attr("width", 500)
         .style("margin-left", "20px")
         .style("margin-right", "20px")
         .style("margin-top", "10px")
