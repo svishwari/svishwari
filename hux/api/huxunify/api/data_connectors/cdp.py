@@ -365,7 +365,7 @@ async def get_async_customers(
 
 
 def fill_empty_customer_events(
-    start_date: datetime, end_date: datetime, diff_aggregator: dict
+    start_date: datetime, end_date: datetime, time_diff: dict
 ) -> list:
     """Fill empty events for dates between start_date and end_date.
 
@@ -374,14 +374,14 @@ def fill_empty_customer_events(
             be filled.
         end_date (datetime): End date between which dates, events need to
             be filled.
-        diff_aggregator (dict): Time difference on which data needs to be added
+        time_diff (dict): Time difference on which data needs to be added
 
     Returns:
         list: Customer events with zero.
     """
 
     missing_data = []
-    skip = {k: 1 for k in diff_aggregator.keys()}
+    skip = {k: 1 for k in time_diff.keys()}
     curr_date = start_date + relativedelta(**skip)
 
     while curr_date.date() < end_date.date():
