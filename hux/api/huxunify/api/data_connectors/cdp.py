@@ -432,7 +432,7 @@ def fill_customer_events_missing_dates(
         prev_date = start_date - relativedelta(
             days=(start_date.isoweekday() - 1)
         )
-        time_diff = {"weeks": 7}
+        time_diff = {"weeks": 1}
     elif interval == "month":
         prev_date = start_date - relativedelta(days=(start_date.day - 1))
         time_diff = {"months": 1}
@@ -519,7 +519,7 @@ def get_customer_events_data(
         json={
             api_c.START_DATE: start_date_str,
             api_c.END_DATE: end_date_str,
-            # api_c.INTERVAL: interval,
+            api_c.INTERVAL: interval,
         },
     )
 
