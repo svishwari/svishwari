@@ -10,7 +10,12 @@
           attributes that you want to explore.
         </div>
       </template>
-      <template #right> <tips-menu /> </template>
+      <template #right>
+        <tips-menu
+          :panel-list-items="panelListItems"
+          header="Segment Playground user guide"
+        />
+      </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <page
@@ -89,6 +94,41 @@ export default {
       attributeRules: [],
       overviewLoading: false,
       overviewLoadingStamp: new Date(),
+      panelListItems: [
+        {
+          id: 1,
+          title: "What is Segment Playground?",
+          text: "<b>Segment Playground </b>allows you to explore and segment your full customer list and enables you to see real time insights.",
+          textPart: "",
+        },
+        {
+          id: 2,
+          title: "What is segmenting?",
+          text: "<b>Segmenting</b> is the process of filtering your full customer list based on model scores or specific characteristics.",
+          textPart: "",
+        },
+        {
+          id: 3,
+          title: "How do I use Segment Playground?",
+          text: "First click <b>+ Attribute,</b> then select what characteristic you would like to segment your customer list. As you add attributes, the insights on the right hand will update accordingly.",
+          textPart:
+            "If you want to save this segment as an audience, click on <b >Save this segment as an audience.</b> By doing so you will not only save this segment as an audience, but you will also have the ability to deliver this audience to a 3rd party platform when you are ready OR add it to an engagement.",
+        },
+        {
+          id: 4,
+          title: "+ Attribute vs + Sections",
+          text: "Adding an attibute will add another line rule under an <b>All</b> vs <b>Any</b> section rule.",
+          textPart:
+            "Adding another section enables you to create a new <b>All</b> vs <b>Any</b> section rule in addition to your previous section(s) where you can add new attributes.",
+        },
+        {
+          id: 5,
+          title: "“All” vs “Any”",
+          text: "<b>All</b> means that a customer must match every attribute within the section in order to be included in the segment.",
+          textPart:
+            "<b>Any</b> means that a customer must match at least 1 of the attributes within the section in order to be included in the segment.",
+        },
+      ],
     }
   },
   computed: {

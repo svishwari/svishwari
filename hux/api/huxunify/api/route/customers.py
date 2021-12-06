@@ -234,10 +234,6 @@ class CustomerPostOverview(SwaggerView):
         customers[api_c.GEOGRAPHICAL] = get_demographic_by_state(
             token_response[0], request.json[api_c.AUDIENCE_FILTERS]
         )
-        customers = {
-            overview_key: customers.get(overview_key) or 0
-            for overview_key in customers
-        }
 
         return (
             CustomerOverviewSchema().dump(customers),
@@ -339,7 +335,7 @@ class IDROverview(SwaggerView):
             )
         else:
             idr_overview = idr_overviews.get(api_c.OVERVIEW)
-            trend_data = idr_overview.get(api_c.MATCHING_TRENDS)
+            trend_data = idr_overviews.get(api_c.MATCHING_TRENDS)
 
         return (
             IDROverviewWithDateRangeSchema().dump(

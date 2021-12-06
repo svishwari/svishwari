@@ -27,17 +27,6 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
       cy.get(selector.audience.audiencehistory).its("length").should("be.gt", 0)
     })
 
-    // should be able to validate engagements and delivery
-    cy.get(selector.audience.engagementdelivery)
-      .its("length")
-      .as("overviewListCount")
-
-    cy.get("@overviewListCount").then(() => {
-      cy.get(selector.audience.engagementdelivery)
-        .its("length")
-        .should("be.gt", 0)
-    })
-
     // should be able to validate Audiences Overview
     cy.get(selector.audience.overview).its("length").as("overviewListCount")
 
@@ -91,18 +80,5 @@ describe("Orchestration > Audiences > Audience dashboard", () => {
     cy.get(".arc")
       .last()
       .trigger("mouseover", { force: true, eventConstructor: "MouseEvent" })
-
-    // should be able to open and validate delivery history
-    cy.get(selector.audience.deliveryhistory).click()
-
-    cy.get(selector.audience.deliveryhistorydrawer)
-      .its("length")
-      .as("deliveryhistory")
-
-    cy.get("@deliveryhistory").then(() => {
-      cy.get(selector.audience.deliveryhistorydrawer)
-        .its("length")
-        .should("be.gt", 0)
-    })
   })
 })

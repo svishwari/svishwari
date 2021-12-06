@@ -163,6 +163,37 @@ class NotificationManagementTest(TestCase):
             len(self.notifications), notifications["total_records"]
         )
 
+    def test_get_notifications_same_day_batch(self):
+        """Test get all notifications via batch for a single day."""
+
+        notifications = nmg.get_notifications_batch(
+            database=self.database,
+            batch_size=10,
+            sort_order=pymongo.DESCENDING,
+            batch_number=1,
+            notification_types=[],
+            notification_categories=[],
+            users=[],
+            start_date=datetime.combine(
+                datetime.utcnow().date(), datetime.min.time()
+            ),
+            end_date=datetime.combine(
+                datetime.utcnow().date(), datetime.min.time()
+            ),
+        )
+
+        self.assertCountEqual(
+            self.notifications, notifications[db_c.NOTIFICATIONS_COLLECTION]
+        )
+        self.assertEqual(
+            len(self.notifications), notifications["total_records"]
+        )
+        for notification in notifications["notifications"]:
+            self.assertEqual(
+                datetime.utcnow().date(),
+                notification.get(db_c.NOTIFICATION_FIELD_CREATED).date(),
+            )
+
     def test_get_notifications(self):
         """Test get all notifications with a filter."""
 

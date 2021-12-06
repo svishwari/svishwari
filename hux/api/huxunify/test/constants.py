@@ -530,13 +530,6 @@ MOCKED_MODEL_PERFORMANCE_LTV = {
     ]
 }
 
-MOCKED_MODEL_LTV_PAYLOAD = {
-    "params": {
-        "feature_service_name": api_c.FEATURE_DRIFT_REGRESSION_MODEL_SERVICE,
-        "join_key_map": {"model_id": "2"},
-    }
-}
-
 MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
     "results": [
         {
@@ -588,13 +581,6 @@ MOCKED_MODEL_PERFORMANCE_UNSUBSCRIBE = {
             "joinKeys": ["21.7.31"],
         },
     ]
-}
-
-MOCKED_MODEL_UNSUBSCRIBE_PAYLOAD = {
-    "params": {
-        "feature_service_name": api_c.FEATURE_DRIFT_CLASSIFICATION_MODEL_SERVICE,
-        "join_key_map": {"model_id": "1"},
-    }
 }
 
 MOCKED_MODEL_LIFT_CHART = [

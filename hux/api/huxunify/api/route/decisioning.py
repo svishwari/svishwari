@@ -40,7 +40,7 @@ from huxunify.api.schema.model import (
     FeatureSchema,
     ModelRequestPOSTSchema,
 )
-from huxunify.api.data_connectors import tecton
+from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
     FAILED_DEPENDENCY_424_RESPONSE,
@@ -109,7 +109,7 @@ class ModelsView(SwaggerView):
         status = [
             status.lower() for status in request.args.getlist(api_c.STATUS)
         ]
-        all_models = tecton.get_models()
+        all_models = Tecton().get_models()
 
         purchase_model = {
             api_c.TYPE: "purchase",
@@ -392,7 +392,7 @@ class ModelVersionView(SwaggerView):
             ]
 
         else:
-            version_history = tecton.get_model_version_history(model_id)
+            version_history = Tecton().get_model_version_history(model_id)
 
         return (
             jsonify(ModelVersionSchema(many=True).dump(version_history)),
@@ -445,6 +445,7 @@ class ModelOverview(SwaggerView):
             overview_data = api_c.PROPENSITY_TO_PURCHASE_MODEL_OVERVIEW_STUB
         else:
             version = None
+            tecton = Tecton()
             for version in tecton.get_model_version_history(model_id):
                 current_version = version.get(api_c.CURRENT_VERSION)
 
@@ -544,6 +545,8 @@ class ModelDriftView(SwaggerView):
                 for i in range(4)
             ]
         else:
+            tecton = Tecton()
+
             # get model information
             model_versions = tecton.get_model_version_history(model_id)
 
@@ -628,6 +631,8 @@ class ModelFeaturesView(SwaggerView):
         if model_id == "3":
             features = api_c.PROPENSITY_TO_PURCHASE_FEATURES_RESPONSE_STUB
         else:
+            tecton = Tecton()
+
             # get model versions
             model_versions = (
                 [{api_c.CURRENT_VERSION: model_version}]
@@ -730,6 +735,8 @@ class ModelImportanceFeaturesView(SwaggerView):
                 HTTP status code.
         """
 
+        tecton = Tecton()
+
         model_versions = (
             [{api_c.CURRENT_VERSION: model_version}]
             if model_version
@@ -826,7 +833,7 @@ class ModelLiftView(SwaggerView):
                 for i in range(1, 11)
             ]
         else:
-            lift_data = tecton.get_model_lift_async(model_id)
+            lift_data = Tecton().get_model_lift_async(model_id)
         lift_data.sort(key=lambda x: x[api_c.BUCKET])
 
         return (

@@ -267,6 +267,17 @@ const actions = {
     }
   },
 
+  async updateLookalike({ commit }, { id, payload }) {
+    try {
+      const response = await api.lookalike.update(id, payload)
+      commit("SET_ONE", response.data)
+      return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async remove({ commit }, audience) {
     try {
       await api.audiences.remove(audience.id)

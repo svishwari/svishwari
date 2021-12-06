@@ -146,6 +146,7 @@ class AudienceGetSchema(Schema):
     source_id = fields.String(attribute=db_c.LOOKALIKE_SOURCE_AUD_ID)
     source_name = fields.String(attribute=db_c.LOOKALIKE_SOURCE_AUD_NAME)
     source_size = fields.Int(attribute=db_c.LOOKALIKE_SOURCE_AUD_SIZE)
+    source_exists = fields.Boolean()
     match_rate = fields.Float(default=0)
     favorite = fields.Boolean(default=False)
 
@@ -253,6 +254,12 @@ class LookalikeAudiencePostSchema(Schema):
     name = fields.String(required=True)
     audience_size_percentage = fields.Float(required=True)
     engagement_ids = fields.List(fields.String(), required=True)
+
+
+class LookalikeAudiencePutSchema(Schema):
+    """Schema for editing lookalike audience"""
+
+    name = fields.String(required=False)
 
 
 def is_audience_lookalikeable(audience: dict) -> str:

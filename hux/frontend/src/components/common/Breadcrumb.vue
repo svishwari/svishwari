@@ -8,7 +8,11 @@
         class="font-weight-light"
       >
         <div v-if="item.icon" class="d-flex pr-2">
-          <icon :type="item.icon" :size="32" color="black-darken4" />
+          <icon
+            :type="item.icon"
+            :size="32"
+            :color="item.iconColor ? item.iconColor : 'black-darken4'"
+          />
         </div>
         <div v-if="item.logo" class="d-flex pr-2">
           <logo :type="item.logo" :size="32" />

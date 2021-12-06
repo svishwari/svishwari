@@ -96,7 +96,7 @@ const multipleSectionFiltersAudience = {
   size: 3022188,
 }
 
-const lookalikeAbleAudience = {
+const lookalikeAbleAudience1 = {
   updated_by: "Rahul Goel",
   created_by: "Rahul Goel",
   is_lookalike: true,
@@ -112,6 +112,7 @@ const lookalikeAbleAudience = {
     gender_other: 0.25219,
   },
   destinations: [],
+  source_exists: true,
   filters: [
     {
       section_aggregator: "ALL",
@@ -132,8 +133,46 @@ const lookalikeAbleAudience = {
   update_time: "2021-06-24T18:44:00.381000",
 }
 
+const lookalikeAbleAudience2 = {
+  updated_by: "Mohit Bansal",
+  created_by: "Mohit Bansal",
+  is_lookalike: true,
+  audience_insights: {
+    total_customers: 121321321,
+    total_countries: 2,
+    total_us_states: 28,
+    total_cities: 246,
+    min_age: 34,
+    max_age: 100,
+    gender_women: 0.4651031,
+    gender_men: 0.481924,
+    gender_other: 0.25219,
+  },
+  destinations: [],
+  source_exists: false,
+  filters: [
+    {
+      section_aggregator: "ALL",
+      section_filters: [
+        {
+          field: "propensity_to_unsubscribe",
+          type: "range",
+          value: [0.7, 1],
+        },
+      ],
+    },
+  ],
+  name: "Customers likely to subscribe",
+  last_delivered: "2019-04-28T06:39:31.659551",
+  create_time: "2021-06-24T18:44:00.381000",
+  size: 3022188,
+  id: "60d4d270d364622dd6cc9b7",
+  update_time: "2021-06-24T18:44:00.381000",
+}
+
 export default [
   defaultAudience,
   multipleSectionFiltersAudience,
-  lookalikeAbleAudience,
+  lookalikeAbleAudience1,
+  lookalikeAbleAudience2,
 ]
