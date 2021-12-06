@@ -23,13 +23,12 @@
 <script>
 import { mapGetters } from "vuex"
 
-import HuxEmpty from "@/components/common/screens/Empty"
 import ModuleSolutions from "../Configuration/ModuleSolutions/ModuleSolutions.vue"
 import TeamMembers from "../Configuration/TeamMembers/TeamMembers.vue"
 
 export default {
   name: "ConfigTabs",
-  components: { HuxEmpty, ModuleSolutions, TeamMembers },
+  components: { ModuleSolutions, TeamMembers },
   data() {
     return {
       tabOption: 0,

@@ -3,7 +3,7 @@
     <v-row>
       <v-col>
         <v-card class="rounded-lg box-shadow-5" :height="280">
-          <v-row class="py-14">
+          <v-row class="team-members-table-frame py-14">
             <empty-page type="user" :size="50">
               <template #title>
                 <div class="title-no-notification">No team members</div>
@@ -35,4 +35,11 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.team-members-wrapper {
+  .team-members-table-frame {
+    background-image: url("../../../assets/images/no-lift-chart-frame.png");
+    background-position: center;
+  }
+}
+</style>

@@ -11,7 +11,7 @@
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
-    <div class="config-content" v-if="!loading">
+    <div v-if="!loading" class="config-content">
       <v-row v-if="isConfigActivated" class="">
         <v-col>
           <!-- UI to show when configuration is activated -->
