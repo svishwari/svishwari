@@ -4,7 +4,6 @@ from datetime import datetime
 from typing import Union
 
 import pymongo
-from bson import ObjectId
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.constants as db_c
@@ -155,7 +154,7 @@ def update_document(
 def get_document(
     database: DatabaseClient,
     collection: str,
-    document_id: ObjectId,
+    query_filter: dict,
     include_deleted: bool = False,
 ) -> Union[dict, None]:
     """Get document by ID
@@ -163,7 +162,7 @@ def get_document(
     Args:
         database (DatabaseClient): MongoDB Database Client
         collection (str): Collection name.
-        document_id (ObjectId): MongoDB Object Id
+        query_filter (dict): Query to filter documents on.
         include_deleted (bool): Flag to specify whether to fetch deleted docs,
             defaults to False
 
@@ -181,7 +180,7 @@ def get_document(
     # get collection
     coll = database[db_c.DATA_MANAGEMENT_DATABASE][collection]
 
-    query = {db_c.ID: document_id}
+    query = query_filter if query_filter else {}
     if not include_deleted:
         query[db_c.DELETED] = False
 
