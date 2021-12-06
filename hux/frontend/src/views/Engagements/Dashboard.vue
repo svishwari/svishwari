@@ -584,6 +584,7 @@ export default {
             destinationId: event.data.id,
           })
           this.dataPendingMesssage(event, "destination")
+          this.refreshEntity()
           break
         case "edit delivery schedule":
           this.confirmDialog.icon = "edit"
