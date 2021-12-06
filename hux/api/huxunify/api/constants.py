@@ -278,6 +278,7 @@ DISABLED = "disabled"
 SIZE = "size"
 IS_ADDED = "is_added"
 DAY = "day"
+WEEK = "week"
 REQUESTED = "requested"
 
 STATUS_NOT_DELIVERED = "Not Delivered"
