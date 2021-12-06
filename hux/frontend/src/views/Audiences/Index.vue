@@ -516,7 +516,9 @@ export default {
 
     isUserFavorite(entity, type) {
       return (
-        this.userFavorites[type] && this.userFavorites[type].includes(entity.id)
+        this.userFavorites &&
+        this.userFavorites[type] &&
+        this.userFavorites[type].includes(entity.id)
       )
     },
     handleActionFavorite(item, type) {

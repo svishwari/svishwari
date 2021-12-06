@@ -1,7 +1,7 @@
 <template>
   <v-card
     class="page-header--wrap d-flex justify-space-between align-center"
-    :class="[headerPadding, headerHeightChanges]"
+    :class="[headerPadding, headerHeightChanges, { sticky: isSticky }]"
     flat
     tile
     :color="bgColor"
@@ -74,6 +74,12 @@ export default {
       required: false,
       default: "py-5",
     },
+
+    isSticky: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 }
 </script>
@@ -81,5 +87,10 @@ export default {
 <style lang="scss" scoped>
 .page-header--wrap {
   border-bottom: 1px solid var(--v-black-lighten3) !important;
+}
+.sticky {
+  position: fixed;
+  width: 100%;
+  z-index: 8;
 }
 </style>

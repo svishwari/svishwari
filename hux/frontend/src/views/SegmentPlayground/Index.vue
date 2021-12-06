@@ -1,11 +1,11 @@
 <template>
   <div>
-    <page-header header-height="110" class="mt-n2" help-icon>
+    <page-header header-height="70" help-icon>
       <template slot="left">
         <div>
-          <breadcrumb :items="breadcrumbs" />
+          <breadcrumb :items="breadcrumbItems" />
         </div>
-        <div class="text-subtitle-1 font-weight-regular mt-1">
+        <div v-if="!isEdit" class="text-subtitle-1 font-weight-regular mt-1">
           Get immediate insights by segmenting your customer list based on
           attributes that you want to explore.
         </div>
@@ -23,15 +23,41 @@
       padding="0 24px"
       class="white segmentation playground-wrap"
     >
-      <v-row class="ma-0">
+      <v-row class="ma-0 segment-wrap">
         <v-col class="col-8 pl-0 pr-6 py-6 attributes">
+          <div class="edit-wrap">
+            <div class="text-body-1">
+              You are currently editing
+              <span class="text-body-2">{{ audience.originalName }}</span
+              >. Please update and/or add any attributes.
+            </div>
+            <text-field
+              v-model="audience.name"
+              placeholder-text="What is the name for this audience ?"
+              height="40"
+              label-text="Audience name"
+              background-color="white"
+              required
+              class="
+                mt-1
+                text-caption
+                black--text
+                text--darken-4
+                pt-2
+                input-placeholder
+              "
+              data-e2e="audience-name"
+              help-text="This audience will appear in the delivered destinations as the provided Audience name. In Facebook it will appear as the provided Audience name with the timestamp of delivery."
+              icon="mdi-information-outline"
+            />
+          </div>
           <attribute-rules
             ref="filters"
-            :rules="attributeRules"
+            :rules="audience.attributeRules"
             @loadingOverAllSize="(data) => updateLoad(data)"
           />
         </v-col>
-        <v-col class="col-4 overviews px-6 py-6">
+        <v-col class="col-4 overviews pl-6 pr-0 py-6">
           <overview
             :data="overview"
             :loading="overviewLoading"
@@ -47,8 +73,20 @@
         data-e2e="footer"
         max-width="100%"
       >
+        <template #left>
+          <hux-button
+            v-if="isEdit"
+            size="large"
+            variant="white"
+            height="40"
+            is-tile
+            class="btn-border box-shadow-none"
+          >
+            Cancel &#38; return
+          </hux-button>
+        </template>
         <template #right>
-          <hux-button size="large" is-tile variant="primary base">
+          <hux-button size="large" height="40" is-tile variant="primary base">
             Save this segment as an audience
           </hux-button>
         </template>
@@ -59,9 +97,10 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-import Breadcrumb from "../../components/common/Breadcrumb.vue"
-import HuxButton from "../../components/common/huxButton.vue"
-import HuxFooter from "../../components/common/HuxFooter.vue"
+import Breadcrumb from "../../components/common/Breadcrumb"
+import HuxButton from "../../components/common/huxButton"
+import HuxFooter from "../../components/common/HuxFooter"
+import TextField from "@/components/common/TextField"
 import Page from "../../components/Page.vue"
 import PageHeader from "../../components/PageHeader.vue"
 import AttributeRules from "./AttributeRules.vue"
@@ -81,6 +120,7 @@ export default {
     Overview,
     Geography,
     TipsMenu,
+    TextField,
   },
   data() {
     return {
@@ -90,8 +130,19 @@ export default {
           icon: "playground",
         },
       ],
+      editBreadcrumbs: [
+        {
+          text: "Audiences",
+          disabled: false,
+          href: this.$router.resolve({ name: "Audiences" }).href,
+          icon: "audiences",
+        },
+      ],
+      audience: {
+        attributeRules: [],
+      },
+      isEdit: false,
       loading: false,
-      attributeRules: [],
       overviewLoading: false,
       overviewLoadingStamp: new Date(),
       panelListItems: [
@@ -134,23 +185,112 @@ export default {
   computed: {
     ...mapGetters({
       overview: "customers/overview",
+      getAudience: "audiences/audience",
     }),
+    breadcrumbItems() {
+      const items = !this.isEdit ? this.breadcrumbs : this.editBreadcrumbs
+      if (this.audience && this.audience.name) {
+        if (items.length === 1) {
+          items.push({
+            text: this.audience.name,
+            disabled: false,
+          })
+        } else {
+          items[1].text = this.audience.name
+        }
+      }
+      return items
+    },
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.flagForModal == false) {
+      this.showConfirmModal = true
+      this.navigateTo = to
+    } else {
+      next()
+    }
   },
   async mounted() {
+    this.loading = true
     this.loadingOverview = true
     try {
-      await this.getOverview()
+      if (this.$route.name === "AudienceUpdate") {
+        this.isEdit = true
+        await this.getOverview()
+        this.audienceId = this.$route.params.id
+        await this.getAudienceById(this.audienceId)
+        const data = this.getAudience(this.audienceId)
+        this.mapAudienceData(data)
+      } else {
+        await this.getOverview()
+      }
     } finally {
       this.loadingOverview = false
+      this.loading = false
     }
   },
   methods: {
     ...mapActions({
       getOverview: "customers/getOverview",
+      updateAudience: "audiences/update",
+      getAudienceById: "audiences/getAudienceById",
     }),
     updateLoad(data) {
       this.overviewLoading = data
       if (!data) this.overviewLoadingStamp = new Date()
+    },
+    getAttributeOption(attribute_key, options) {
+      for (let opt of options) {
+        if (opt.menu && opt.menu.length > 0) {
+          return opt.menu.filter((menuOpt) => menuOpt.key === attribute_key)[0]
+        } else if (opt.key === attribute_key) {
+          return opt
+        }
+      }
+    },
+    mapAudienceData(data) {
+      const _audienceObject = JSON.parse(JSON.stringify(data))
+      _audienceObject.originalName = _audienceObject.name
+      // Mapping the filters of audience.
+      const attributeOptions = this.$refs.filters.attributeOptions()
+      _audienceObject.attributeRules = _audienceObject.filters.map(
+        (filter) => ({
+          id: "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+            /[xy]/g,
+            function (c) {
+              var r = (Math.random() * 16) | 0,
+                v = c == "x" ? r : (r & 0x3) | 0x8
+              return v.toString(16)
+            }
+          ),
+          operand: filter.section_aggregator === "ALL",
+          conditions: filter.section_filters.map((cond) => ({
+            id: Math.floor(Math.random() * 1024).toString(16),
+            attribute: cond.field,
+            operator: cond.type === "range" ? "" : cond.type,
+            text: cond.type !== "range" ? cond.value : "",
+            range: cond.type === "range" ? cond.value : [],
+          })),
+        })
+      )
+      _audienceObject.attributeRules.forEach((section) => {
+        section.conditions.forEach((cond) => {
+          cond.attribute = this.getAttributeOption(
+            cond.attribute,
+            attributeOptions
+          )
+          let _operators = this.$refs.filters.operatorOptions(cond)
+          cond.operator =
+            cond.operator !== "range"
+              ? _operators.filter((opt) => opt.key === cond.operator)[0]
+              : cond.operator
+          this.$refs.filters.triggerSizing(cond, false)
+        })
+      })
+      this.$set(this, "audience", _audienceObject)
+      this.$nextTick(function () {
+        this.$refs.filters.getOverallSize()
+      })
     },
   },
 }
@@ -158,15 +298,17 @@ export default {
 
 <style lang="scss" scoped>
 .playground-wrap {
-  .attributes {
-    flex: 0 0 66.639344262295082%;
-    width: 66.639344262295082%;
-  }
-  .overviews {
-    flex: 0 0 33.360655737704918%;
-    width: 33.360655737704918%;
-    @extend .border-start;
-    border-color: var(--v-black-lighten3);
+  .segment-wrap {
+    .attributes {
+      flex: 0 0 66.63934426%;
+      width: 66.63934426%;
+    }
+    .overviews {
+      flex: 0 0 33.360655737704918%;
+      width: 33.360655737704918%;
+      @extend .border-start;
+      border-color: var(--v-black-lighten3);
+    }
   }
 }
 </style>
