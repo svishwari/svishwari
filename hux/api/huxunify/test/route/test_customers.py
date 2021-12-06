@@ -714,7 +714,9 @@ class TestCustomersOverview(TestCase):
         self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
     @given(interval=st.sampled_from(["", api_c.DAY, api_c.WEEK, api_c.MONTH]))
-    def test_get_customer_events_dependency_failure(self, interval: str) -> None:
+    def test_get_customer_events_dependency_failure(
+        self, interval: str
+    ) -> None:
         """Test get customer events 424 dependency failure.
 
         Args:
