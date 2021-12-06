@@ -745,7 +745,7 @@ class AudienceRulesHistogram(SwaggerView):
         """
 
         # TODO Remove stub once CDM API is integrated
-        if field_type not in api_c.AUDIENCE_RULES_HISTOGRAM_DATA.keys():
+        if field_type not in api_c.AUDIENCE_RULES_HISTOGRAM_DATA:
             return {
                 "message": f"Data not found for {field_type}"
             }, HTTPStatus.NOT_FOUND
