@@ -1,5 +1,5 @@
 <template>
-  <page max-width="100%"  class="config-wrapper">
+  <page max-width="100%" class="config-wrapper">
     <div slot="header">
       <page-header header-height="110">
         <template slot="left">
@@ -12,13 +12,14 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
     <div class="config-content" v-if="!loading">
-      <v-row v-if="false" class="ma-0 pa-2">
+      <v-row v-if="isConfigActivated" class="">
         <v-col>
           <!-- UI to show when configuration is activated -->
+          <config-tabs />
         </v-col>
       </v-row>
       <hux-empty
-        v-if="isConfigActivated"
+        v-else
         class="config-activating"
         icon-type="settings"
         :icon-size="50"
@@ -37,10 +38,11 @@ import PageHeader from "@/components/PageHeader"
 import Page from "@/components/Page"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import HuxEmpty from "@/components/common/screens/Empty"
+import ConfigTabs from "./tabs"
 
 export default {
   name: "Configuration",
-  components: { PageHeader, Page, Breadcrumb, HuxEmpty },
+  components: { PageHeader, Page, Breadcrumb, HuxEmpty, ConfigTabs },
   data() {
     return {
       breadcrumbItems: [
@@ -54,7 +56,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({ }),
+    ...mapGetters({}),
 
     isConfigActivated() {
       return true
@@ -65,9 +67,12 @@ export default {
 
 <style lang="scss" scoped>
 .config-wrapper {
+  ::v-deep .container {
+    padding-top: 0px;
+  }
   .config-content {
     .config-activating {
-     ::v-deep .text-center {
+      ::v-deep .text-center {
         width: 470px !important;
         .text-body-2 {
           line-height: 22px !important;
