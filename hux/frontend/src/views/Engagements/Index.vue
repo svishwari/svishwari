@@ -7,7 +7,7 @@
         </div>
         <div class="text-subtitle-1 font-weight-regular">
           Start making meaningful connections with current and future customers
-          by targeting your created (or new) audiences.
+          by targeting intelligent audiences while staying organized.
         </div>
       </template>
       <template #right>
@@ -15,7 +15,8 @@
           type="filter"
           :size="22"
           class="cursor-pointer"
-          color="black-darken4"
+          color="black"
+          variant="lighten3"
         />
       </template>
     </page-header>

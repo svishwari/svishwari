@@ -23,6 +23,7 @@ from huxunify.api.schema.model import (
 )
 from huxunify.app import create_app
 from huxunify.test import constants as t_c
+from huxunify.api.data_connectors.tecton import Tecton
 
 
 # Allow 30 secs per hypothesis example (deadline is specified in milliseconds)
@@ -39,6 +40,16 @@ class DecisioningTests(TestCase):
         """Setup tests."""
 
         self.config = get_config(api_c.TEST_MODE)
+        self.tecton = Tecton()
+
+        # define relative paths used for mocking calls.
+        self.models_rel_path = (
+            "huxunify.api.data_connectors.tecton.Tecton.get_models"
+        )
+        self.versions_rel_path = (
+            "huxunify.api.data_connectors."
+            "tecton.Tecton.get_model_version_history"
+        )
 
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
@@ -81,9 +92,7 @@ class DecisioningTests(TestCase):
     def test_success_get_models(self):
         """Test get models from Tecton."""
 
-        get_models_mock = mock.patch(
-            "huxunify.api.data_connectors.tecton.get_models"
-        ).start()
+        get_models_mock = mock.patch(self.models_rel_path).start()
         get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
         response = self.test_client.get(
@@ -104,9 +113,7 @@ class DecisioningTests(TestCase):
     def test_success_get_models_with_status(self):
         """Test get models from Tecton with status."""
 
-        get_models_mock = mock.patch(
-            "huxunify.api.data_connectors.tecton.get_models"
-        ).start()
+        get_models_mock = mock.patch(self.models_rel_path).start()
         get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
         response = self.test_client.get(
@@ -141,9 +148,7 @@ class DecisioningTests(TestCase):
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
-        get_models_mock = mock.patch(
-            "huxunify.api.data_connectors.tecton.get_models"
-        ).start()
+        get_models_mock = mock.patch(self.models_rel_path).start()
         get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
 
     def test_success_request_model_duplicate(self):
@@ -295,9 +300,7 @@ class DecisioningTests(TestCase):
             model_id (int): Model ID.
         """
 
-        get_model_version_mock = mock.patch(
-            "huxunify.api.data_connectors.tecton.get_model_version_history"
-        ).start()
+        get_model_version_mock = mock.patch(self.versions_rel_path).start()
         get_model_version_mock.return_value = (
             t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
         )
@@ -305,7 +308,7 @@ class DecisioningTests(TestCase):
         # mock the features response
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
+            self.tecton.service,
             json=t_c.MOCKED_MODEL_PROPENSITY_FEATURES,
         )
         self.request_mocker.start()
@@ -330,9 +333,7 @@ class DecisioningTests(TestCase):
             model_id (int): Model ID.
         """
 
-        get_model_version_mock = mock.patch(
-            "huxunify.api.data_connectors.tecton.get_model_version_history"
-        ).start()
+        get_model_version_mock = mock.patch(self.versions_rel_path).start()
         get_model_version_mock.return_value = (
             t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
         )
@@ -340,7 +341,7 @@ class DecisioningTests(TestCase):
         # mock the features response
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
+            self.tecton.service,
             json=t_c.MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE,
         )
         self.request_mocker.start()
@@ -368,9 +369,7 @@ class DecisioningTests(TestCase):
             model_id (str): Model ID.
         """
 
-        get_model_version_mock = mock.patch(
-            "huxunify.api.data_connectors.tecton.get_model_version_history"
-        ).start()
+        get_model_version_mock = mock.patch(self.versions_rel_path).start()
         get_model_version_mock.return_value = (
             t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
         )
@@ -378,7 +377,7 @@ class DecisioningTests(TestCase):
         # mock the features response
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
+            self.tecton.service,
             json=t_c.MOCKED_MODEL_PROPENSITY_FEATURES,
         )
         self.request_mocker.start()
@@ -405,9 +404,7 @@ class DecisioningTests(TestCase):
             model_id (int): Model ID.
         """
 
-        get_model_version_mock = mock.patch(
-            "huxunify.api.data_connectors.tecton.get_model_version_history"
-        ).start()
+        get_model_version_mock = mock.patch(self.versions_rel_path).start()
         get_model_version_mock.return_value = (
             t_c.MOCKED_MODEL_VERSION_HISTORY_RESPONSE
         )
@@ -415,7 +412,7 @@ class DecisioningTests(TestCase):
         # mock the features response
         self.request_mocker.stop()
         self.request_mocker.post(
-            f"{t_c.TEST_CONFIG.TECTON_FEATURE_SERVICE}",
+            self.tecton.service,
             json=t_c.MOCKED_MODEL_PROPENSITY_FEATURES_NEGATIVE_SCORE,
         )
         self.request_mocker.start()
