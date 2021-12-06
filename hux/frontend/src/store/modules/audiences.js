@@ -114,6 +114,10 @@ const mutations = {
     }
     state.audiences[data.id].lookalike_audiences.push(data.lookalike)
   },
+
+  UPDATE_LOOKALIKE(state, data) {
+    Vue.set(state.audiences[data.id], "name", data.name)
+  },
 }
 
 const actions = {
@@ -267,11 +271,14 @@ const actions = {
     }
   },
 
-  async updateLookalike({ commit }, { id, payload }) {
+  async updateLookalike({ commit, state }, { id, payload }) {
     try {
       const response = await api.lookalike.update(id, payload)
-      commit("SET_ONE", response.data)
-      return response.data
+      commit("UPDATE_LOOKALIKE", {
+        id: id,
+        name: response.data.name,
+      })
+      return state.audiences[id]
     } catch (error) {
       handleError(error)
       throw error
