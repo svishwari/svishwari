@@ -14,46 +14,51 @@
         />
       </template>
     </page-header>
-    <page-header class="top-bar mb-3" :header-height="71">
-      <template #left>
-        <v-btn disabled icon color="black">
-          <icon type="search" :size="20" color="black" variant="lighten3" />
-        </v-btn>
-      </template>
-
-      <template #right>
-        <huxButton
-          variant="primary base"
-          icon="keyboard-return"
-          is-custom-icon
-          class="ma-2 text-button no-shadow mr-0"
-          size="large"
-          is-tile
-          :height="'40'"
-          :icon-size="18"
-          icon-color="white"
-          icon-variant="base"
-          data-e2e="notification-return"
-          @click="goBack()"
-        >
-          Return to previous page
-        </huxButton>
-      </template>
-    </page-header>
     <div
       class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
     >
       <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
-        <v-progress-linear :active="loading" :indeterminate="loading" />
+        <page-header class="top-bar mb-3 tab-min-width" :header-height="71">
+          <template #left>
+            <v-btn disabled icon color="black">
+              <icon type="search" :size="20" color="black" variant="lighten3" />
+            </v-btn>
+          </template>
+
+          <template #right>
+            <huxButton
+              variant="primary base"
+              icon="keyboard-return"
+              is-custom-icon
+              class="ma-2 text-button no-shadow mr-0"
+              size="large"
+              is-tile
+              :height="'40'"
+              :icon-size="18"
+              icon-color="white"
+              icon-variant="base"
+              data-e2e="notification-return"
+              @click="goBack()"
+            >
+              Return to previous page
+            </huxButton>
+          </template>
+        </page-header>
+        <v-progress-linear
+          :active="loading"
+          :indeterminate="loading"
+          class="tab-min-width"
+        />
         <v-row
           v-if="notificationData.length > 0 && !loading"
-          class="pb-7 pl-3 white"
+          class="pb-7 pl-3 white tab-min-width"
         >
           <hux-data-table
             :columns="columnDefs"
             :data-items="notificationData"
             sort-column="created"
             sort-desc
+            class="big-table"
           >
             <template #row-item="{ item }">
               <td
@@ -161,7 +166,7 @@
           @intersect="intersected"
         ></observer>
       </div>
-      <div class="ml-auto mt-n3">
+      <div class="ml-auto">
         <alert-filter-drawer
           v-model="isFilterToggled"
           :users="getNotificationUsers"

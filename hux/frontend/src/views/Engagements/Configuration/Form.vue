@@ -273,7 +273,7 @@
         <hux-button
           size="large"
           tile
-          color="white"
+          variant="white"
           height="40"
           class="btn-border box-shadow-none"
           @click.native="

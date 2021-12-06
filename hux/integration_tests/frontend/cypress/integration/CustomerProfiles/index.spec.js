@@ -30,7 +30,7 @@ describe("Data management > Customer Profiles", () => {
     cy.get(selector.customerProfile.customeroverview).eq(1).click()
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000)
+    cy.wait(5000)
 
     cy.get(selector.customerProfile.list.geoDrawerTableCountry)
       .find(selector.customerProfile.list.geoDrawerTableHeaders)

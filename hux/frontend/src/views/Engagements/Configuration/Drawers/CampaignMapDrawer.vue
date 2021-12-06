@@ -91,7 +91,7 @@
       <hux-button
         size="large"
         tile
-        color="white"
+        variant="white"
         class="btn-border box-shadow-none"
         @click="closeDrawer"
       >

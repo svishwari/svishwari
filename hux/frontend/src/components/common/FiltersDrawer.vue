@@ -39,7 +39,7 @@
             <hux-button
               size="large"
               variant="white"
-              tile
+              is-tile
               class="
                 text-button
                 ml-auto
@@ -54,7 +54,7 @@
               Close
             </hux-button>
             <hux-button
-              tile
+              is-tile
               color="primary"
               class="text-button ml-auto"
               width="157"
@@ -109,7 +109,9 @@ export default defineComponent({
       return "min-height: " + `calc(100vh - ${this.offsetVal})`
     },
     maxHeight() {
-      return "max-height: " + this.contentHeight
+      return (
+        "max-height: " + this.contentHeight + "; height: " + this.contentHeight
+      )
     },
   },
 })
