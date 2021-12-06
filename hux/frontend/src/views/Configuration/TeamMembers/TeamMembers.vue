@@ -1,15 +1,24 @@
 <template>
   <div class="team-members-wrapper">
-    <empty-page type="lift-table-empty" >
-      <template #title>
-        <div class="title-no-notification">No data to show</div>
-      </template>
-      <template #subtitle>
-        <div class="des-no-notification">
-          Latest alerts table will appear here once you start getting alerts.
-        </div>
-      </template>
-    </empty-page>
+    <v-row>
+      <v-col>
+        <v-card class="rounded-lg box-shadow-5" :height="280">
+          <v-row class="py-14">
+            <empty-page type="user" :size="50">
+              <template #title>
+                <div class="title-no-notification">No team members</div>
+              </template>
+              <template #subtitle>
+                <div class="des-no-notification">
+                  The list of team mebers will appear here once the invitation
+                  has been accepted. Please check back later.
+                </div>
+              </template>
+            </empty-page>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -26,7 +35,4 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.team-members-wrapper {
-}
-</style>
+<style lang="scss" scoped></style>
