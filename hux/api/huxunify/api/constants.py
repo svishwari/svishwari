@@ -1121,6 +1121,8 @@ TECTON_CONNECTION_HEALTH = "tecton_connection_health"
 OKTA_CONNECTION_HEALTH = "okta_connection_health"
 AWS_SSM_CONNECTION_HEALTH = "aws_ssm_connection_health"
 AWS_BATCH_CONNECTION_HEALTH = "aws_batch_connection_health"
+AWS_S3_CONNECTION_HEALTH = "aws_s3_connection_health"
+AWS_EVENTS_CONNECTION_HEALTH = "aws_events_connection_health"
 CDM_API_CONNECTION_HEALTH = "cdm_api_connection_health"
 CDM_CONNECTION_SERVICE_CONNECTION_HEALTH = (
     "cdm_connection_service_connection_health"

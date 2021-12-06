@@ -27,8 +27,14 @@ def check_okta_connection() -> Tuple[bool, str]:
             f"/oauth2/v1/keys?client_id="
             f"{config.OKTA_CLIENT_ID}"
         )
-        record_health_status_metric(api_c.OKTA_CONNECTION_HEALTH, True)
-        return response.status_code, "OKTA available."
+
+        record_health_status_metric(
+            api_c.OKTA_CONNECTION_HEALTH, response.status_code == 200
+        )
+        if response.status_code == 200:
+            return True, "OKTA available."
+        else:
+            return False, f"OKTA not available. Received: {response.status_code}"
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message

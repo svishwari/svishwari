@@ -98,8 +98,7 @@ def check_mongo_connection() -> Tuple[bool, str]:
         record_health_status_metric(api_c.MONGO_CONNECTION_HEALTH, True)
         return True, "Mongo available."
     # pylint: disable=broad-except
-    # pylint: disable=unused-variable
-    except Exception as exception:
+    except Exception:
         record_health_status_metric(api_c.MONGO_CONNECTION_HEALTH, False)
         return False, "Mongo not available."
 
