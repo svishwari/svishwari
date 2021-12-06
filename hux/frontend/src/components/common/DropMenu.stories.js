@@ -2,6 +2,18 @@ import TipsMenu from "../../views/SegmentPlayground/TipsMenu"
 export default {
   component: TipsMenu,
   title: "Components/TipsMenu",
+
+  args: {
+    header: "My custom header",
+    panelListItems: [
+      {
+        id: 1,
+        title: "Collapisble title",
+        text: "Collapsible text",
+      },
+    ],
+  },
+
   parameters: {
     design: {
       type: "figma",
@@ -18,7 +30,7 @@ const Template = (args, { argTypes }) => ({
   },
   template: `
     <div class="ml-5 mt-n10">
-        <tips-menu />
+        <tips-menu v-bind="$props" v-on="$props"/>
     </div>
         `,
 })
