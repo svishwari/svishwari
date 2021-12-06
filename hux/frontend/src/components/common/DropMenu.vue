@@ -4,8 +4,9 @@
       v-model="menu"
       :close-on-content-click="false"
       :close-on-click="closeOnClick"
-      :min-width="200"
-      :max-width="365"
+      :content-class="contentClass"
+      :min-width="minWidth"
+      :max-width="maxWidth"
       offset-y
     >
       <template #activator="{ on }">
@@ -40,6 +41,10 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    contentClass: {
+      type: String,
+      required: false,
     },
   },
   data() {

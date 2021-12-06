@@ -2,7 +2,7 @@
   <v-card flat class="card-style">
     <v-progress-linear :active="isLoading" :indeterminate="isLoading" />
     <template v-if="!isLoading">
-      <v-card-title v-if="data.length > 0" class="pa-6">
+      <v-card-title v-if="data.length > 0" class="py-5 px-6">
         <span class="text-h3 black--text">Data feeds</span>
       </v-card-title>
       <v-card-text v-if="data.length > 0" class="px-6">

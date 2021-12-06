@@ -1448,3 +1448,20 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(
             str(self.lookalike_audience_doc[db_c.ID]), audiences[2][api_c.ID]
         )
+
+    def test_edit_lookalike_audience(self):
+        """Test edit lookalike audience"""
+
+        lookalike_audience_id = str(self.lookalike_audience_doc[db_c.ID])
+        new_name = "Lookalike Audience New Name"
+
+        response = self.test_client.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}/{lookalike_audience_id}",
+            headers=t_c.STANDARD_HEADERS,
+            json={
+                api_c.NAME: new_name,
+            },
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(new_name, response.json[db_c.NAME])

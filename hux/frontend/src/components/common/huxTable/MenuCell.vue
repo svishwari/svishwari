@@ -5,7 +5,7 @@
       <router-link :to="routePath" class="text-decoration-none" append>
         <tooltip>
           <template slot="label-content">
-            <span class="primary--text ellipsis" :class="labelClass">
+            <span class="primary--text ellipsis menu-value" :class="labelClass">
               {{ value }}
             </span>
           </template>
@@ -193,7 +193,7 @@ export default Vue.extend({
   .ellipsis {
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 28ch;
+    max-width: 22ch;
     display: inline-block;
     width: 28ch;
     white-space: nowrap;
