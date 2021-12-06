@@ -713,8 +713,13 @@ class TestCustomersOverview(TestCase):
 
         self.assertEqual(HTTPStatus.FAILED_DEPENDENCY, response.status_code)
 
-    def test_get_customer_events_dependency_failure(self) -> None:
-        """Test get customer events 424 dependency failure."""
+    @given(interval=st.sampled_from(["", api_c.DAY, api_c.WEEK, api_c.MONTH]))
+    def test_get_customer_events_dependency_failure(self, interval: str) -> None:
+        """Test get customer events 424 dependency failure.
+
+        Args:
+            interval (str): Interval to aggregate events data on
+        """
 
         hux_id = "HUX123456789012345"
 
@@ -722,6 +727,8 @@ class TestCustomersOverview(TestCase):
             "start_date": "2021-01-01",
             "end_date": "2021-01-02",
         }
+
+        interval = interval if interval else api_c.DAY
 
         self.request_mocker.stop()
         self.request_mocker.post(
@@ -732,6 +739,7 @@ class TestCustomersOverview(TestCase):
 
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{hux_id}/events",
+            query_string={api_c.INTERVAL: interval},
             data=json.dumps(filter_attributes),
             headers=t_c.STANDARD_HEADERS,
         )

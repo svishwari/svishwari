@@ -948,7 +948,7 @@ class CustomerEvents(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(self, hux_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves events for a given HUX ID.
