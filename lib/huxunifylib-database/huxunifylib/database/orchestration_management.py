@@ -354,6 +354,76 @@ def update_audience(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def update_lookalike_audience(
+    database: DatabaseClient,
+    audience_id: ObjectId,
+    name: str = None,
+    user_name: str = None,
+) -> Union[dict, None]:
+    """A function to update an audience.
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        name (str): New audience name.
+        user_name (str): Name of the user creating/updating the audience.
+
+    Returns:
+        Union[dict, None]: Updated audience configuration dict.
+
+    Raises:
+        InvalidID: If the passed in audience_id did not fetch a doc from the
+            relevant db collection.
+        DuplicateName: Error if an audience with the same name exists already.
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.LOOKALIKE_AUDIENCE_COLLECTION
+    ]
+
+    try:
+        audience_doc = collection.find_one(
+            {db_c.ID: audience_id, db_c.DELETED: False}, {db_c.DELETED: 0}
+        )
+        if not audience_doc:
+            raise de.InvalidID()
+        if name is not None:
+            duplicate_name_doc = collection.find_one(
+                {db_c.AUDIENCE_NAME: name, db_c.DELETED: False},
+                {db_c.DELETED: 0},
+            )
+            if (
+                duplicate_name_doc is not None
+                and duplicate_name_doc[db_c.ID] != audience_id
+            ):
+                raise de.DuplicateName(name)
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    updated_audience_doc = audience_doc
+    if name is not None:
+        updated_audience_doc[db_c.AUDIENCE_NAME] = name
+    if user_name:
+        updated_audience_doc[db_c.UPDATED_BY] = user_name
+    updated_audience_doc[db_c.UPDATE_TIME] = datetime.datetime.utcnow()
+
+    try:
+        return collection.find_one_and_update(
+            {db_c.ID: audience_id},
+            {"$set": updated_audience_doc},
+            upsert=False,
+            return_document=pymongo.ReturnDocument.AFTER,
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def delete_audience(
     database: DatabaseClient,
     audience_id: ObjectId,

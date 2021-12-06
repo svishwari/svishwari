@@ -996,7 +996,7 @@ export default {
       downloadAudienceData: "audiences/fetchAudienceData",
       setAlert: "alerts/setAlert",
       getAudiencesRules: "audiences/fetchConstants",
-      updateAudience: "audiences/update",
+      updateLookalikeAudience: "audiences/updateLookalike",
     }),
     attributeOptions() {
       const options = []
@@ -1040,7 +1040,7 @@ export default {
         name: this.newAudienceName,
       }
       try {
-        await this.updateAudience({
+        this.audienceData = await this.updateLookalikeAudience({
           id: this.audienceId,
           payload: payload,
         })
@@ -1158,6 +1158,7 @@ export default {
             audienceId: this.audienceId,
           })
           this.dataPendingMesssage(event, "engagement")
+          this.refreshEntity()
           break
         case "view delivery history":
           break
@@ -1193,6 +1194,7 @@ export default {
               destinationId: event.data.delivery_platform_id,
             })
             this.dataPendingMesssage(event, "destination")
+            this.refreshEntity()
             break
           case "edit delivery schedule":
             this.confirmDialog.actionType = "edit-schedule"

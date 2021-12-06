@@ -41,6 +41,7 @@ from huxunify.api.schema.orchestration import (
     LookalikeAudiencePostSchema,
     LookalikeAudienceGetSchema,
     is_audience_lookalikeable,
+    LookalikeAudiencePutSchema,
 )
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
@@ -1510,6 +1511,100 @@ class SetLookalikeAudience(SwaggerView):
         return (
             LookalikeAudienceGetSchema().dump(lookalike_audience),
             HTTPStatus.ACCEPTED,
+        )
+
+
+@add_view_to_blueprint(
+    orchestration_bp,
+    f"{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}/<audience_id>",
+    "EditLookalikeAudience",
+)
+class PutLookalikeAudience(SwaggerView):
+    """Set Lookalike Audience Class."""
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Lookalike Audience Parameters.",
+            "example": {
+                api_c.NAME: "New Lookalike Audience Name",
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.ACCEPTED.value: {
+            "schema": LookalikeAudienceGetSchema,
+            "description": "Successfully edited lookalike audience.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to edit the lookalike audience"
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use, unsubscriptable-object
+    @api_error_handler()
+    @requires_access_levels(api_c.USER_ROLE_ALL)
+    def put(self, audience_id: str, user: dict) -> Tuple[dict, int]:
+        """Edits lookalike audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (str): ID of the audience to be deleted.
+            user (dict): user object.
+
+        Returns:
+            Tuple[dict, int]: lookalike audience configuration,
+                HTTP status code.
+
+        Raises:
+            FailedDestinationDependencyError: Destination Dependency
+                error.
+        """
+
+        body = LookalikeAudiencePutSchema().load(
+            request.get_json(), partial=True
+        )
+
+        database = get_db_client()
+
+        update_doc = orchestration_management.update_lookalike_audience(
+            database,
+            ObjectId(audience_id),
+            body[api_c.NAME],
+            user[api_c.USER_NAME],
+        )
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f'Lookalike audience "{update_doc[db_c.NAME]}" '
+                f"edited by {user[api_c.USER_NAME]}."
+            ),
+            api_c.ORCHESTRATION_TAG,
+            user[api_c.USER_NAME],
+        )
+
+        return (
+            LookalikeAudienceGetSchema().dump(update_doc),
+            HTTPStatus.OK,
         )
 
 
