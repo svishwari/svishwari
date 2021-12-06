@@ -4,7 +4,7 @@
       <v-tabs-slider color="primary"></v-tabs-slider>
       <div class="d-flex">
         <v-tab key="modules" class="pa-2 mr-3 text-h3" color>
-          Modules & Solutions
+          Modules &amp; Solutions
         </v-tab>
         <v-tab key="team" class="text-h3"> Team members </v-tab>
       </div>

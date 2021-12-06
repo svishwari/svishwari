@@ -5,7 +5,7 @@
       icon-type="settings"
       :icon-size="50"
       title="No modules to show"
-      subtitle="Modules & solutions are being activated. Please check back in 2 hours. Thank you!"
+      subtitle="Modules &amp; solutions are being activated. Please check back in 2 hours. Thank you!"
     >
     </hux-empty>
   </div>
