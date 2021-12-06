@@ -16,7 +16,7 @@
       "link": {
         "name": "Configuration"
       },
-      "display": false
+      "display": true
     },
     {
       "label": "Data Management",
