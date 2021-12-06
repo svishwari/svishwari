@@ -666,7 +666,6 @@ export default {
       tr {
         td:nth-child(1) {
           position: sticky;
-          top: 0;
           left: 0;
           border-right: thin solid rgba(0, 0, 0, 0.12);
         }
