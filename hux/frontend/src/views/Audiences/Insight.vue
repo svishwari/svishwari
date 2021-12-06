@@ -1158,6 +1158,7 @@ export default {
             audienceId: this.audienceId,
           })
           this.dataPendingMesssage(event, "engagement")
+          this.refreshEntity()
           break
         case "view delivery history":
           break
@@ -1193,6 +1194,7 @@ export default {
               destinationId: event.data.delivery_platform_id,
             })
             this.dataPendingMesssage(event, "destination")
+            this.refreshEntity()
             break
           case "edit delivery schedule":
             this.confirmDialog.actionType = "edit-schedule"
