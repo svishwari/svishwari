@@ -686,7 +686,9 @@ class AudienceRulesLocation(SwaggerView):
                 ]
             )
         else:
-            return {"message": "Incorrect Combination"}, HTTPStatus.NOT_FOUND
+            return {
+                "message": f"Field type received {field_type}"
+            }, HTTPStatus.NOT_FOUND
 
         return data, HTTPStatus.OK
 
