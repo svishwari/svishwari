@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="map-card-wrapper mt-3 rounded-lg card-shadow pa-5"
+    class="map-card-wrapper mt-3 rounded-lg card-shadow pa-6"
     height="400"
   >
     <v-card-title class="d-flex justify-space-between pa-0">
@@ -144,6 +144,12 @@ export default {
           }
         }
       }
+    }
+  }
+  ::v-deep .v-input__prepend-outer {
+    margin-right: 4px;
+    .slider-value-display {
+      width: 37px !important;
     }
   }
 }
