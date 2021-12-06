@@ -184,10 +184,11 @@
       <div class="d-flex align-baseline">
         <hux-button
           variant="white"
+          size="large"
           is-tile
           width="80"
           height="40"
-          class="ma-2 drawer-back"
+          class="ma-2 drawer-back btn-border box-shadow-none"
           @click="onBack()"
         >
           Back

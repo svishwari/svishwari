@@ -20,39 +20,43 @@
         />
       </template>
     </page-header>
-    <page-header class="top-bar" :header-height="71">
-      <template slot="left">
-        <v-btn disabled icon color="black">
-          <icon type="search" :size="20" color="black" variant="lighten3" />
-        </v-btn>
-      </template>
-
-      <template slot="right">
-        <router-link
-          :to="{ name: 'AudienceConfiguration' }"
-          class="text-decoration-none"
-          append
-        >
-          <huxButton
-            variant="primary base"
-            icon-color="white"
-            icon-variant="base"
-            icon="plus"
-            size="large"
-            is-custom-icon
-            is-tile
-            class="ma-2 font-weight-regular no-shadow mr-0"
-          >
-            Audience
-          </huxButton>
-        </router-link>
-      </template>
-    </page-header>
-    <v-progress-linear :active="loading" :indeterminate="loading" />
     <div
       class="d-flex flex-nowrap align-stretch flex-grow-1 flex-shrink-0 mw-100"
     >
       <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
+        <page-header class="top-bar tab-min-width" :header-height="71">
+          <template slot="left">
+            <v-btn disabled icon color="black">
+              <icon type="search" :size="20" color="black" variant="lighten3" />
+            </v-btn>
+          </template>
+
+          <template slot="right">
+            <router-link
+              :to="{ name: 'AudienceConfiguration' }"
+              class="text-decoration-none"
+              append
+            >
+              <huxButton
+                variant="primary base"
+                icon-color="white"
+                icon-variant="base"
+                icon="plus"
+                size="large"
+                is-custom-icon
+                is-tile
+                class="ma-2 font-weight-regular no-shadow mr-0"
+              >
+                Audience
+              </huxButton>
+            </router-link>
+          </template>
+        </page-header>
+        <v-progress-linear
+          :active="loading"
+          :indeterminate="loading"
+          class="tab-min-width"
+        />
         <div v-if="!loading" class="white">
           <hux-data-table
             v-if="isDataExists"
