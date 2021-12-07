@@ -20,7 +20,7 @@
               min-width="50"
               height="24"
               class="primary--text"
-              :disabled="!Boolean(count)"
+              :disabled="!Boolean(count) || disableClear"
               @click="$emit('clear')"
             >
               Clear
@@ -102,6 +102,11 @@ export default defineComponent({
       required: false,
       default: "252px",
     },
+    disableClear: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 
   computed: {
@@ -118,7 +123,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-$footerHeight: 80px;
+$footerHeight: 72px;
 $headerHeight: 40px;
 $padding: 20px;
 $width: 300px;

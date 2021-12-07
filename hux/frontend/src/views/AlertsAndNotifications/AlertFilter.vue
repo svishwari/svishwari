@@ -3,7 +3,10 @@
     :is-toggled="localDrawer"
     :count="filterLength"
     offset-val="214px"
-    content-height="633px"
+    content-height="610px"
+    :disable-clear="
+      filterLength === 1 && selectedTimeType === 'Last week' ? true : false
+    "
     @clear="clear"
     @apply="apply"
     @close="close"
@@ -104,7 +107,7 @@ export default {
       category: [
         {
           id: 1,
-          title: "DataSources",
+          title: "Data Sources",
         },
         {
           id: 2,
@@ -128,7 +131,7 @@ export default {
         },
         {
           id: 7,
-          title: "Models",
+          title: "Model",
         },
       ],
       time: [
@@ -200,6 +203,9 @@ export default {
       this.selectedTimeType = "Last week"
       this.selctedUsers = []
     },
+    clear() {
+      this.clearFilter()
+    },
     apply() {
       let getTime
       switch (this.selectedTimeType) {
@@ -265,5 +271,8 @@ export default {
 }
 ::v-deep .drawer-header > .v-toolbar__content {
   height: 40px !important;
+}
+::v-deep .v-expansion-panel-content__wrap {
+  padding: 14px 24px 14px 24px !important;
 }
 </style>
