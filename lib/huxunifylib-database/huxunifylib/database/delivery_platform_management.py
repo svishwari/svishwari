@@ -100,7 +100,7 @@ def set_delivery_platform(
         db_c.FAVORITE: False,
         db_c.IS_AD_PLATFORM: is_ad_platform,
         db_c.CATEGORY: category,
-        db_c.LINK: link
+        db_c.LINK: link,
     }
     if authentication_details is not None:
         doc[db_c.DELIVERY_PLATFORM_AUTH] = authentication_details
