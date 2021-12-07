@@ -140,6 +140,8 @@ class CustomerSchemaTest(TestCase):
             api_c.MAX_LTV_PREDICTED: 0.45,
             api_c.MIN_LTV_ACTUAL: 0.36,
             api_c.MAX_LTV_ACTUAL: 0.42,
+            api_c.TOTAL_ADDRESS_IDS: 1245,
+            api_c.TOTAL_ANONYMOUS_IDS: 0,
         }
 
         self.assertFalse(CustomerOverviewSchema().validate(customer))

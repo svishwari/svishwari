@@ -66,6 +66,8 @@ stages:
         "updated": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
         "total_us_states": !anyint
         "total_known_ids": !anyint
+        "total_anonymous_ids":!anyint
+        "total_address_ids":!anyint
         "min_age": !anyint
         "avg_age" : !anyint
         "min_ltv_predicted": !anyfloat
@@ -342,6 +344,8 @@ stages:
           "match_rate": !anyfloat
           "total_unique_ids": !anyint
           "total_individual_ids": !anyint
+          "total_address_ids":!anyint
+          "total_anonymous_ids":!anyint
       headers:
         content-type: application/json
 
