@@ -17,6 +17,7 @@
           class="cursor-pointer"
           color="black"
           variant="lighten3"
+          @click.native="isFilterToggled = !isFilterToggled"
         />
       </template>
     </page-header>
@@ -579,6 +580,13 @@
       @onCreate="onCreated()"
     />
 
+    <div class="ml-auto">
+      <audience-filter
+        v-model="isFilterToggled"
+        @onSectionAction="applyFilter"
+      />
+    </div>
+
     <confirm-modal
       v-model="showAudienceRemoveConfirmation"
       icon="modal-remove"
@@ -682,6 +690,7 @@ export default {
   },
   data() {
     return {
+      isFilterToggled: false,
       confirmModal: false,
       confirmSubtitle: "",
       selectedEngagement: null,
@@ -850,6 +859,15 @@ export default {
       clearFavorite: "users/clearFavorite",
       deleteEngagement: "engagements/remove",
     }),
+
+    async applyFilter(params) {
+      await this.getAllAudiences({
+        favorites: params.selectedFavourite,
+        worked_by: params.selectedAudienceWorkedWith,
+        attribute: params.selectedAttributes,
+      })
+      this.isFilterToggled = false
+    },
 
     openModal(engagement) {
       this.selectedEngagement = engagement
