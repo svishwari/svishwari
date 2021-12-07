@@ -427,9 +427,11 @@ class AudienceInsightsTest(TestCase):
         """
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
-            f"{api_c.CITIES}/{city_substring}",
+            f"{api_c.CITY}/{city_substring}",
             headers=t_c.STANDARD_HEADERS,
         )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
         substring_found = []
         for city in response.json:
             substring_found.append(
@@ -446,9 +448,10 @@ class AudienceInsightsTest(TestCase):
         """
         response = self.test_client.get(
             f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
-            f"{api_c.ZIP}/{zip_substring}",
+            f"{api_c.ZIP_CODE}/{zip_substring}",
             headers=t_c.STANDARD_HEADERS,
         )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
         substring_found = []
         for zip_code in response.json:
