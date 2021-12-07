@@ -602,11 +602,3 @@ def download_file(
         return False
     logging.info("Downloaded %s file from %s", file_name, bucket)
     return True
-
-
-# if __name__ == "__main__":
-#     return check_aws_connection(
-#         client_method="get_parameter",
-#         client=api_c.AWS_SSM_NAME,
-#         extra_params={"Name": "unifieddb_host_alias"},
-#     )
