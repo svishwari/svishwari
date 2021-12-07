@@ -6,7 +6,7 @@ import asyncio
 import random
 from collections import defaultdict
 from typing import Tuple, Optional, List
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import requests
 import aiohttp
@@ -365,7 +365,7 @@ async def get_async_customers(
 
 
 def fill_empty_customer_events(
-    start_date: datetime, end_date: datetime
+    start_date: datetime, end_date: datetime, time_diff: dict
 ) -> list:
     """Fill empty events for dates between start_date and end_date.
 
@@ -374,31 +374,42 @@ def fill_empty_customer_events(
             be filled.
         end_date (datetime): End date between which dates, events need to
             be filled.
+        time_diff (dict): Time difference on which data needs to be added
 
     Returns:
         list: Customer events with zero.
     """
 
-    return [
-        {
-            api_c.DATE: start_date + timedelta(days=i),
-            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 0,
-            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
-                api_c.ABANDONED_CART_EVENT: 0,
-                api_c.CUSTOMER_LOGIN_EVENT: 0,
-                api_c.VIEWED_CART_EVENT: 0,
-                api_c.VIEWED_CHECKOUT_EVENT: 0,
-                api_c.VIEWED_SALE_ITEM_EVENT: 0,
-                api_c.ITEM_PURCHASED_EVENT: 0,
-                api_c.TRAIT_COMPUTED_EVENT: 0,
-            },
-        }
-        for i in range(1, (end_date - start_date).days)
-    ]
+    missing_data = []
+    skip = {k: 1 for k in time_diff.keys()}
+    curr_date = start_date + relativedelta(**skip)
+
+    while curr_date.date() < end_date.date():
+        missing_data.append(
+            {
+                api_c.DATE: curr_date,
+                api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 0,
+                api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
+                    api_c.ABANDONED_CART_EVENT: 0,
+                    api_c.CUSTOMER_LOGIN_EVENT: 0,
+                    api_c.VIEWED_CART_EVENT: 0,
+                    api_c.VIEWED_CHECKOUT_EVENT: 0,
+                    api_c.VIEWED_SALE_ITEM_EVENT: 0,
+                    api_c.ITEM_PURCHASED_EVENT: 0,
+                    api_c.TRAIT_COMPUTED_EVENT: 0,
+                },
+            }
+        )
+        curr_date += relativedelta(**skip)
+
+    return missing_data
 
 
 def fill_customer_events_missing_dates(
-    customer_events: list, start_date: datetime, end_date: datetime
+    customer_events: list,
+    start_date: datetime,
+    end_date: datetime,
+    interval: str = "day",
 ) -> list:
     """Get events for a customer grouped by date.
 
@@ -406,41 +417,66 @@ def fill_customer_events_missing_dates(
         customer_events (list): Customer events in CDM API body.
         start_date (datetime): Start date in filter.
         end_date (datetime): End date in filter.
+        interval (str): Interval which the event data will be aggregated,
+            default to "day"
 
     Returns:
         list: Customer events including zeros for missing dates.
     """
 
+    # if interval == "day":
     prev_date = start_date
+    time_diff = {"days": 1}
+
+    if interval == "week":
+        prev_date = start_date - relativedelta(
+            days=(start_date.isoweekday() - 1)
+        )
+        time_diff = {"weeks": 1}
+    elif interval == "month":
+        prev_date = start_date - relativedelta(days=(start_date.day - 1))
+        time_diff = {"months": 1}
+
     customer_events_dates_filled = []
     # fill empty events so that no date(day) is missing
     for idx, customer_event in enumerate(customer_events):
         curr_date = parse(customer_event.get(api_c.DATE))
         # fill for 1 day previous
         if idx == 0:
-            if curr_date > prev_date and (curr_date - prev_date).days >= 1:
+            if (
+                curr_date.date() > prev_date.date()
+            ):  # curr_date > prev_date and (curr_date - prev_date).days >= 1:
                 customer_events_dates_filled = (
                     customer_events_dates_filled
                     + fill_empty_customer_events(
-                        prev_date - timedelta(1),
-                        prev_date + timedelta(1),
+                        prev_date - relativedelta(**time_diff),
+                        prev_date + relativedelta(**time_diff),
+                        time_diff,
                     )
                 )
 
         customer_event[api_c.DATE] = curr_date
         customer_events_dates_filled.append(customer_event)
 
-        if curr_date > prev_date and (curr_date - prev_date).days > 1:
+        if (
+            curr_date.date() > prev_date.date()
+        ):  # and (curr_date - prev_date).days > 1:
+            data_to_fill = fill_empty_customer_events(
+                prev_date, curr_date, time_diff
+            )
             customer_events_dates_filled = (
-                customer_events_dates_filled
-                + fill_empty_customer_events(prev_date, curr_date)
+                customer_events_dates_filled + data_to_fill
             )
         prev_date = curr_date
 
-    if end_date > prev_date and (end_date - prev_date).days >= 1:
+    if (
+        end_date.date() > prev_date.date()
+    ):  # and (end_date - prev_date).days >= 1:
         customer_events_dates_filled = (
             customer_events_dates_filled
-            + fill_empty_customer_events(prev_date, end_date + timedelta(1))
+            + fill_empty_customer_events(
+                prev_date, end_date + relativedelta(**time_diff), time_diff
+            )
         )
 
     customer_events_dates_filled.sort(
@@ -450,7 +486,11 @@ def fill_customer_events_missing_dates(
 
 
 def get_customer_events_data(
-    token: str, hux_id: str, start_date_str: str, end_date_str: str
+    token: str,
+    hux_id: str,
+    start_date_str: str,
+    end_date_str: str,
+    interval: str,
 ) -> list:
     """Get events for a customer grouped by date.
 
@@ -459,6 +499,7 @@ def get_customer_events_data(
         hux_id (str): hux id for a customer.
         start_date_str (str): Start date string for sql query.
         end_date_str (str): End date string for sql query.
+        interval (str): Interval i.e. day/week/month
 
     Returns:
         list: Customer events with respective counts.
@@ -475,7 +516,11 @@ def get_customer_events_data(
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
-        json={api_c.START_DATE: start_date_str, api_c.END_DATE: end_date_str},
+        json={
+            api_c.START_DATE: start_date_str,
+            api_c.END_DATE: end_date_str,
+            api_c.INTERVAL: interval,
+        },
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
@@ -499,6 +544,7 @@ def get_customer_events_data(
         customer_events,
         parse(start_date_str + "T00:00:00Z"),
         parse(end_date_str + "T00:00:00Z"),
+        interval,
     )
 
 
