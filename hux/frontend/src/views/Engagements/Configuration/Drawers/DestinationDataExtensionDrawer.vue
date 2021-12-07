@@ -7,8 +7,10 @@
     <template #header-left>
       <div class="d-flex align-baseline">
         <h3 class="text-h3 pr-2 d-flex align-center">
-          <logo type="sfmc" />
-          <div class="pl-2 font-weight-light">Salesforce Marketing Cloud</div>
+          <logo type="sfmc" :size="32" />
+          <div class="pl-2 font-weight-light text-h2">
+            Salesforce Marketing Cloud
+          </div>
         </h3>
       </div>
     </template>
@@ -102,7 +104,7 @@
 
           <div v-else class="mt-6 data-extension">
             <div class="existing-banner-notice">
-              <icon type="bulb" color="yellow" />
+              <icon type="bulb" color="yellow" :size="46" />
               <div class="black--text text-body-1 ml-1">
                 Modifying this data extension may impact any independent journey
                 in Salesforce.
@@ -191,7 +193,7 @@
           class="ma-2 drawer-back btn-border box-shadow-none"
           @click="onBack()"
         >
-          Back
+          <span class="primary--text">Back</span>
         </hux-button>
       </div>
     </template>
@@ -432,6 +434,9 @@ export default {
           width: 100%;
           &::placeholder {
             color: var(--v-black-lighten4);
+            font-size: 16px;
+            line-height: 22px;
+            font-weight: normal;
           }
         }
       }
@@ -441,6 +446,9 @@ export default {
         .v-text-field__slot {
           label {
             color: var(--v-black-darken1) !important;
+            font-size: 16px;
+            line-height: 22px;
+            font-weight: normal;
           }
         }
       }

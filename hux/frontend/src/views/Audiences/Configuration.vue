@@ -788,6 +788,9 @@ export default {
         .v-text-field__slot {
           label {
             color: var(--v-black-darken1) !important;
+            font-size: 16px;
+            line-height: 22px;
+            font-weight: normal;
           }
         }
       }
