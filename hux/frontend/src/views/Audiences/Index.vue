@@ -6,7 +6,8 @@
           <breadcrumb :items="breadcrumbItems" />
         </div>
         <div class="text-subtitle-1 font-weight-regular">
-          Segment your customers into audiences based on your customer data and model scores.
+          Segment your customers into audiences based on your customer data and
+          model scores.
         </div>
       </template>
       <template #right>
