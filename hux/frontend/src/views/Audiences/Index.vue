@@ -6,8 +6,7 @@
           <breadcrumb :items="breadcrumbItems" />
         </div>
         <div class="text-subtitle-1 font-weight-regular">
-          Here are a list of audiences that you have saved and created from
-          segmenting your customer list in the Segment Playground.
+          Segment your customers into audiences based on your customer data and model scores.
         </div>
       </template>
       <template #right>
@@ -191,12 +190,12 @@
                     </div>
 
                     <span
-                      v-if="item[header.value] && item[header.value].length > 2"
+                      v-if="item[header.value] && item[header.value].length > 3"
                       class="ml-1 text-body-1 black--text"
                     >
                       <tooltip>
                         <template #label-content>
-                          +{{ item[header.value].length - 2 }}
+                          +{{ item[header.value].length - 3 }}
                         </template>
                         <template #hover-content>
                           <div class="d-flex flex-column">
@@ -424,7 +423,7 @@ export default {
         {
           text: "Attributes",
           value: "filters",
-          width: "411px",
+          width: "300px",
         },
         {
           text: "Destinations",
