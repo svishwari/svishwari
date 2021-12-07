@@ -586,18 +586,18 @@ export default {
     },
     getOverallDestinations(audienceDestinations) {
       let destinations = [...audienceDestinations]
-      if (destinations.length > 2) {
+      if (destinations.length > 3) {
         return destinations
-          .slice(0, 2)
+          .slice(0, 3)
           .sort((a, b) => a.name.localeCompare(b.name))
       }
       return destinations.sort((a, b) => a.name.localeCompare(b.name))
     },
     getExtraDestinations(audienceDestinations) {
       let destinations = [...audienceDestinations]
-      if (destinations.length > 2) {
+      if (destinations.length > 3) {
         return destinations
-          .slice(2)
+          .slice(3)
           .sort((a, b) => a.name.localeCompare(b.name))
       }
       return destinations.sort((a, b) => a.name.localeCompare(b.name))
