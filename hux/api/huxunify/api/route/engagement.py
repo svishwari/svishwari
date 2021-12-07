@@ -36,6 +36,7 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     get_delivery_platform_lookalike_audience,
     update_pending_delivery_jobs,
+    get_delivery_platforms_by_id,
 )
 from huxunify.api.data_connectors.aws import (
     get_auth_from_parameter_store,
@@ -355,7 +356,7 @@ class SetEngagement(SwaggerView):
         Returns:
             Tuple[dict, int]: Engagement created, HTTP status code.
         """
-
+        data_added = False
         body = EngagementPostSchema().load(
             request.get_json(), partial=("delivery_schedule",)
         )
@@ -372,6 +373,19 @@ class SetEngagement(SwaggerView):
                 ] = cron_schedule
 
         database = get_db_client()
+
+        for audience in body.get(db_c.AUDIENCES, []):
+            if audience.get(api_c.DESTINATIONS):
+                data_added = bool(
+                    get_delivery_platforms_by_id(
+                        database,
+                        [
+                            destination[api_c.ID]
+                            for destination in audience.get(api_c.DESTINATIONS)
+                        ],
+                    )
+                )
+
         engagement_id = set_engagement(
             database=database,
             name=body.get(db_c.ENGAGEMENT_NAME),
@@ -379,6 +393,7 @@ class SetEngagement(SwaggerView):
             audiences=body.get(db_c.AUDIENCES),
             delivery_schedule=body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE),
             user_name=user[api_c.USER_NAME],
+            data_added=data_added,
         )
         engagement = get_engagement(database, engagement_id=engagement_id)
         logger.info(
@@ -481,6 +496,8 @@ class UpdateEngagement(SwaggerView):
         body = EngagementPutSchema(unknown=api_c.EXCLUDE).load(
             request.get_json()
         )
+        data_added = False
+        # validate audiences exist
 
         # Check if delivery schedule exists, if exists generate cron string.
         if body.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE, None):
@@ -495,6 +512,18 @@ class UpdateEngagement(SwaggerView):
 
         database = get_db_client()
 
+        for audience in body[api_c.AUDIENCES]:
+            if audience.get(api_c.DESTINATIONS):
+                data_added = bool(
+                    get_delivery_platforms_by_id(
+                        database,
+                        [
+                            destination[api_c.ID]
+                            for destination in audience.get(api_c.DESTINATIONS)
+                        ],
+                    )
+                )
+
         engagement = update_engagement(
             database=database,
             engagement_id=ObjectId(engagement_id),
@@ -506,6 +535,7 @@ class UpdateEngagement(SwaggerView):
             if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
             else {},
             status=body.get(db_c.STATUS),
+            data_added=data_added,
         )
         logger.info(
             "Successfully updated engagement with ID %s.", engagement_id
@@ -683,12 +713,23 @@ class AddAudienceEngagement(SwaggerView):
         body = AudienceEngagementSchema().load(
             request.get_json(), partial=True
         )
-
+        # Set to true if a destination is added in an audience.
+        data_added = False
         # validate audiences exist
         audience_names = []
-
         for audience in body[api_c.AUDIENCES]:
             audience_to_attach = get_audience(database, audience[api_c.ID])
+            if audience.get(api_c.DESTINATIONS):
+                data_added = bool(
+                    get_delivery_platforms_by_id(
+                        database,
+                        [
+                            destination[api_c.ID]
+                            for destination in audience.get(api_c.DESTINATIONS)
+                        ],
+                    )
+                )
+
             if not audience_to_attach:
                 # check if lookalike
                 audience_to_attach = get_delivery_platform_lookalike_audience(
@@ -710,6 +751,7 @@ class AddAudienceEngagement(SwaggerView):
             ObjectId(engagement_id),
             user[api_c.USER_NAME],
             body[api_c.AUDIENCES],
+            data_added,
         )
 
         logger.info(

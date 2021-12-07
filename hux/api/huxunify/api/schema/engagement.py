@@ -531,6 +531,8 @@ class EngagementGetSchema(Schema):
     create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME)
     created_by = fields.String(attribute=db_c.CREATED_BY)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
+    data_added = DateTimeWithZ(attribute=db_c.DATA_ADDED, allow_none=True)
+
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
     favorite = fields.Boolean(required=False, default=False)
 

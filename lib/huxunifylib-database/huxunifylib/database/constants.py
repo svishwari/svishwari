@@ -512,3 +512,5 @@ ALLOWED_COLLECTIONS = [
 
 # 30 minutes.
 DELIVERY_JOB_TIMEOUT = 30
+
+DATA_ADDED = "data_added"
