@@ -2,7 +2,7 @@
   <v-row class="menu-cell-wrapper">
     <v-col class="d-flex pr-0">
       <slot name="expand-icon"></slot>
-      <router-link :to="routePath" class="text-decoration-none" append>
+      <router-link :to="routePath" class="text-decoration-none menu-link" append>
         <tooltip>
           <template slot="label-content">
             <span class="primary--text ellipsis" :class="labelClass">
@@ -202,7 +202,7 @@ export default Vue.extend({
       margin-right: 0px !important;
     }
   }
-  .text-decoration-none {
+  .menu-link {
     position: absolute;
     margin-left: 24px;
     margin-top: 1px;
