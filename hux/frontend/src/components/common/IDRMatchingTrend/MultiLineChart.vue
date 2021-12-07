@@ -70,7 +70,7 @@ export default {
       let ids = [
         { label: "Unique Hux IDs", xValue: 0 },
         { label: "Anonymous IDs", xValue: 162 },
-        { label: "Known IDs", xValue: 325 },
+        { label: "Individual IDs", xValue: 325 },
       ]
       let color = d3Scale
         .scaleOrdinal()
