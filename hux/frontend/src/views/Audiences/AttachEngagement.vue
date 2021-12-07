@@ -24,30 +24,34 @@
         <v-stepper-items>
           <v-stepper-content step="1">
             <div v-if="!areEngagementAlreadyCreated">
-              <empty-page>
-                <template #icon>mdi-alert-circle-outline</template>
-                <template #title>Oops! There’s nothing here yet</template>
-                <template #subtitle>
-                  No engagements have been created yet. Let’s create one by
-                  clicking the new engagement button below.
-                </template>
-                <template #button>
-                  <huxButton
-                    variant="primary base"
-                    icon-color="white"
-                    icon-variant="base"
-                    icon="plus"
-                    size="small"
-                    is-custom-icon
-                    class="ma-2 caption"
-                    is-tile
-                    data-e2e="first-engagement-create"
-                    @click="goToStep2()"
-                  >
-                    New engagement
-                  </huxButton>
-                </template>
-              </empty-page>
+              <v-row class="no-engagement-frame py-14 mx-7">
+                <empty-page type="no-engagement-found" :size="50">
+                  <template #title>
+                    <div class="h2">No engagements</div>
+                  </template>
+                  <template #subtitle>
+                    <div class="body-2">
+                      Engagements will appear here once you start creating them.
+                    </div>
+                  </template>
+                  <template #button>
+                    <huxButton
+                      variant="primary base"
+                      icon-color="white"
+                      icon-variant="base"
+                      icon="plus"
+                      size="small"
+                      is-custom-icon
+                      class="ma-2 caption"
+                      is-tile
+                      data-e2e="first-engagement-create"
+                      @click="goToStep2()"
+                    >
+                      Create an engagement
+                    </huxButton>
+                  </template>
+                </empty-page>
+              </v-row>
             </div>
             <div v-else class="ma-1">
               <h6 class="mb-6 text-h6 black--text text--darken-4">
@@ -631,5 +635,10 @@ export default {
       color: var(--v-black-lighten3) !important;
     }
   }
+}
+.no-engagement-frame {
+  background-image: url("../../assets/images/no-alert-frame.png");
+  background-position: center;
+  background-size: 100%;
 }
 </style>
