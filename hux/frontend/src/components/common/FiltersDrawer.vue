@@ -7,7 +7,7 @@
       color="white"
       class="hux-filters-drawer"
     >
-      <div class="wrapper" :style="minHeight">
+      <div class="wrapper">
         <div class="header">
           <slot name="header">
             <h2 class="text-h2">
@@ -28,13 +28,13 @@
           </slot>
         </div>
 
-        <div class="content" :style="maxHeight">
+        <div class="content" :style="top">
           <slot name="default">
             <!-- `FilterPanels` live here -->
           </slot>
         </div>
 
-        <div class="footer mt-auto">
+        <div class="footer mt-auto white">
           <slot name="footer">
             <hux-button
               size="large"
@@ -91,48 +91,38 @@ export default defineComponent({
       default: 0,
     },
 
-    offsetVal: {
-      type: String,
-      required: false,
-      default: "180px",
-    },
-
-    contentHeight: {
-      type: String,
-      required: false,
-      default: "252px",
-    },
     disableClear: {
       type: Boolean,
       required: false,
       default: false,
     },
+    topcontent: {
+      type: String,
+      required: false,
+      default: "182px",
+    },
   },
 
   computed: {
-    minHeight() {
-      return "min-height: " + `calc(100vh - ${this.offsetVal})`
-    },
-    maxHeight() {
-      return (
-        "max-height: " + this.contentHeight + "; height: " + this.contentHeight
-      )
+    top() {
+      return "top: " + this.topcontent
     },
   },
 })
 </script>
 
 <style lang="scss" scoped>
-$footerHeight: 72px;
+$footerHeight: 80px;
 $headerHeight: 40px;
 $padding: 20px;
 $width: 300px;
-
 .hux-filters-drawer {
   border-left: 1px solid var(--v-black-lighten3) !important;
   width: $width;
   height: 100%;
-
+  z-index: 8;
+  position: absolute;
+  right: 0;
   .wrapper {
     display: flex;
     flex-direction: column;
@@ -158,11 +148,16 @@ $width: 300px;
     flex-direction: column;
     padding: 0;
     overflow-y: auto;
+    max-height: 100%;
+    height: 100%;
+    position: fixed;
   }
 
   .footer {
     height: $footerHeight;
-    border-top: 1px solid var(--v-black-lighten3);
+    border-top: 1px solid var(--v-black-lighten3) !important;
+    position: fixed;
+    bottom: 0;
   }
 }
 </style>

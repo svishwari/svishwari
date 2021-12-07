@@ -52,11 +52,7 @@
             </router-link>
           </template>
         </page-header>
-        <v-progress-linear
-          :active="loading"
-          :indeterminate="loading"
-          class="tab-min-width"
-        />
+        <v-progress-linear :active="loading" :indeterminate="loading" />
         <div v-if="!loading" class="white">
           <hux-data-table
             v-if="isDataExists"
