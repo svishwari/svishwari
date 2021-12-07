@@ -3,7 +3,10 @@
     <v-row>
       <v-col>
         <v-card class="rounded-lg box-shadow-5" :height="280">
-          <v-row class="team-members-table-frame py-14">
+          <v-row v-if="isDataExist">
+            {{ JSON.stringify(getTeamMembers) }}
+          </v-row>
+          <v-row v-else class="team-members-table-frame py-14">
             <empty-page type="user" :size="50">
               <template #title>
                 <div class="title-no-notification">No team members</div>
@@ -24,6 +27,7 @@
 
 <script>
 import EmptyPage from "@/components/common/EmptyPage"
+import { mapGetters } from "vuex"
 
 export default {
   name: "TeamMembers",
@@ -31,7 +35,18 @@ export default {
   data() {
     return {}
   },
-  computed: {},
+  computed: {
+    ...mapGetters({
+      getTeamMembers: "users/getUsers",
+    }),
+    isDataExist() {
+      return this.getTeamMembers.length > 0
+    },
+  },
+  async mounted() {
+    await this.$store.dispatch("users/getUsers")
+  },
+  methods: {},
 }
 </script>
 
