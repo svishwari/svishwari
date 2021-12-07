@@ -154,7 +154,7 @@
         </div>
       </v-alert>
 
-      <v-row>
+      <v-row style="height: 80px">
         <v-col cols="8">
           <text-field
             v-model="requestDetails['contact_email']"
@@ -168,7 +168,7 @@
         </v-col>
       </v-row>
 
-      <v-row v-if="selectedDestinationNotListed">
+      <v-row v-if="selectedDestinationNotListed" style="height: 80px">
         <v-col cols="8">
           <text-field
             v-model="requestDetails['name']"
@@ -182,8 +182,8 @@
         </v-col>
       </v-row>
 
-      <v-row>
-        <v-col cols="8" class="py-0">
+      <v-row style="height: 96px">
+        <v-col cols="8">
           <label class="text-h5 mb-0">
             Did the Client request to have this destination available?
           </label>
@@ -207,7 +207,7 @@
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row style="height: 102px">
         <v-col cols="8">
           <label class="text-h5 mb-0">
             Does the Client have an account for this destination?
@@ -233,7 +233,7 @@
       </v-row>
 
       <v-row>
-        <v-col cols="12">
+        <v-col cols="12" style="height: 200px">
           <div
             class="
               primary
@@ -374,12 +374,8 @@
               @click="onRequestDestination(destination.id)"
             />
           </div>
-
-          <v-divider class="black--border border--lighten-2 mt-7 mb-2" />
-
           <div>
             <label class="d-block text--body-2 mb-2 mt-6"> Other </label>
-
             <card-horizontal
               title="Request a destination not on the list"
               :is-added="false"

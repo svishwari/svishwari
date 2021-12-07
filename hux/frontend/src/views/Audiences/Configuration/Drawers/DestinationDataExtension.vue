@@ -102,7 +102,7 @@
 
           <div v-else class="mt-6 data-extension">
             <div class="existing-banner-notice">
-              <icon type="Bulb" color="yellow" />
+              <icon type="bulb" color="yellow" />
               <div class="black--text text-body-1 ml-1">
                 Modifying this data extension may impact any independent journey
                 in Salesforce.
