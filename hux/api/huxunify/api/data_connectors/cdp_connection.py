@@ -39,11 +39,10 @@ def check_cdp_connections_api_connection() -> Tuple[int, str]:
         )
         if response.status_code == 200:
             return True, "CDP connections available."
-        else:
-            return (
-                False,
-                f"CDP connections not available. Received {response.status_code}",
-            )
+        return (
+            False,
+            f"CDP connections not available. Received {response.status_code}",
+        )
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
