@@ -202,6 +202,11 @@ export default Vue.extend({
       margin-right: 0px !important;
     }
   }
+  .text-decoration-none {
+    position: absolute;
+    margin-left: 24px;
+    margin-top: 1px;
+  }
 }
 .sub-menu-class {
   display: flex;
