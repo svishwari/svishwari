@@ -154,7 +154,7 @@
         </div>
       </v-alert>
 
-      <v-row style="height: 80px">
+      <v-row class="firstRow">
         <v-col cols="8">
           <text-field
             v-model="requestDetails['contact_email']"
@@ -168,7 +168,7 @@
         </v-col>
       </v-row>
 
-      <v-row v-if="selectedDestinationNotListed" style="height: 80px">
+      <v-row v-if="selectedDestinationNotListed" class="firstRow">
         <v-col cols="8">
           <text-field
             v-model="requestDetails['name']"
@@ -182,7 +182,7 @@
         </v-col>
       </v-row>
 
-      <v-row style="height: 96px">
+      <v-row class="thirdRow">
         <v-col cols="8">
           <label class="text-h5 mb-0">
             Did the Client request to have this destination available?
@@ -207,7 +207,7 @@
         </v-col>
       </v-row>
 
-      <v-row style="height: 102px">
+      <v-row class="fourthRow">
         <v-col cols="8">
           <label class="text-h5 mb-0">
             Does the Client have an account for this destination?
@@ -233,7 +233,7 @@
       </v-row>
 
       <v-row>
-        <v-col cols="12" style="height: 200px">
+        <v-col cols="12" class="textAreaDiv">
           <div
             class="
               primary
@@ -681,4 +681,17 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.firstRow {
+  height: 80px;
+}
+.thirdRow {
+  height: 96px;
+}
+.fourthRow {
+  height: 102px;
+}
+.textAreaDiv {
+  height: 200px;
+}
+</style>
