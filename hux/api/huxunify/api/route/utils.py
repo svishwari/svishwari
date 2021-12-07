@@ -636,7 +636,7 @@ def convert_unique_city_filter(request_json: dict) -> dict:
                     item[api_c.AUDIENCE_FILTER_FIELD]
                     == api_c.AUDIENCE_FILTER_CITY
                 ):
-                    city_value, state_value, country_value = item.get(
+                    city_value, state_value, _ = item.get(
                         api_c.AUDIENCE_FILTER_VALUE
                     ).split("|")
                     item[api_c.AUDIENCE_FILTER_VALUE] = city_value
