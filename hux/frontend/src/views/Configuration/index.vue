@@ -59,7 +59,15 @@ import TipsMenu from "@/views/SegmentPlayground/TipsMenu.vue"
 
 export default {
   name: "Configuration",
-  components: { Breadcrumb, ConfigTabs, Error, HuxEmpty, PageHeader, Page, TipsMenu },
+  components: {
+    Breadcrumb,
+    ConfigTabs,
+    Error,
+    HuxEmpty,
+    PageHeader,
+    Page,
+    TipsMenu,
+  },
   data() {
     return {
       loading: false,
