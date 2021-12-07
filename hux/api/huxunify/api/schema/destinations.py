@@ -193,8 +193,9 @@ class DestinationGetSchema(Schema):
     configuration = fields.Nested(
         DestinationDataExtConfigSchema, required=False, allow_none=True
     )
-    is_added = fields.Bool(attribute="added")
-    is_enabled = fields.Bool(attribute="enabled")
+    is_added = fields.Bool(attribute=db_c.ADDED)
+    is_enabled = fields.Bool(attribute=db_c.ENABLED)
+    link = fields.String(attribute=db_c.LINK, allow_none=True)
     is_ad_platform = fields.Bool(attribute=db_c.IS_AD_PLATFORM)
     create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
     created_by = fields.String(attribute=db_c.CREATED_BY, allow_none=True)
@@ -229,9 +230,10 @@ class DestinationPatchSchema(Schema):
             )
         ],
     )
-    added = fields.Bool(attribute="added")
-    enabled = fields.Bool(attribute="enabled")
+    added = fields.Bool(attribute=db_c.ADDED)
+    enabled = fields.Bool(attribute=db_c.ENABLED)
     ad_platform = fields.Bool(attribute=db_c.IS_AD_PLATFORM)
+    link = fields.String(attribute=db_c.LINK)
 
 
 class DestinationRequestSchema(Schema):

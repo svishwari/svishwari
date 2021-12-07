@@ -23,6 +23,7 @@ DOCUMENTS = "documents"
 AGE = "age"
 MIN = "min"
 MAX = "max"
+LINK = "link"
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
