@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="white"
-    :class="!loading && hasDataFeeds == 0 ? 'background-base' : ' '"
-  >
+  <div :class="!loading && hasDataFeeds == 0 ? 'blackdarken-4' : 'white'">
     <page-header v-if="selectedDataSource">
       <template #left>
         <breadcrumb :items="breadcrumbItems" />
@@ -282,9 +279,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.background-base {
-  background: var(--v-black-darken4) !important;
-}
 .datasource-datafeeds-table {
   margin-top: 1px;
   ::v-deep .hux-data-table {

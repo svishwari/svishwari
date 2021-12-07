@@ -39,7 +39,6 @@
                       variant="primary base"
                       icon-color="white"
                       icon-variant="base"
-                      icon="plus"
                       size="small"
                       is-custom-icon
                       class="ma-2 caption"
