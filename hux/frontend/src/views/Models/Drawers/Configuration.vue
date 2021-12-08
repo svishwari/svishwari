@@ -240,11 +240,11 @@ export default {
       console.log(this.models)
       console.log(this.selectedModelIds)
 
-      this.models.filter((m) => { 
-        if(this.selectedModelIds.includes(m.id)){
+      this.models.filter((m) => {
+        if (this.selectedModelIds.includes(m.id)) {
           this.selectedModelObjects.push(m)
         }
-      });
+      })
       console.log(this.selectedModelObjects)
       this.requestModel(this.selectedModelObjects)
       // this.closeAddDataSource()

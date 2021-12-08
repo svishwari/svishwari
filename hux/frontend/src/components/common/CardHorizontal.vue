@@ -35,7 +35,9 @@
         <span
           :class="[
             isAdded ? 'white--text' : 'black--text text--lighten4',
-            isAlreadyAdded || isModelRequested ? 'black--text text--lighten-3' : '',
+            isAlreadyAdded || isModelRequested
+              ? 'black--text text--lighten-3'
+              : '',
           ]"
         >
           <span v-if="requestedButton" class="text-button">
