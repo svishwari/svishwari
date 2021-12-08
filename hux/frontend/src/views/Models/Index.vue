@@ -172,7 +172,7 @@
       </template>
     </confirm-modal>
 
-    <model-configuration v-model="drawer" @refresh="refreshScreen()" />
+    <model-configuration v-model="drawer" @refresh="reloadWithCloseDrawer()" />
   </div>
 </template>
 
