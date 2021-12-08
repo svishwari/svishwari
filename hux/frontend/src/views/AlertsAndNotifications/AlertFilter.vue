@@ -130,7 +130,7 @@ export default {
         },
         {
           id: 7,
-          title: "Model",
+          title: "Models",
         },
       ],
       time: [
