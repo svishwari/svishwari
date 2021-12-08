@@ -422,16 +422,14 @@ class AudienceView(SwaggerView):
                 )
 
             if attribute_list:
-                query_filter[api_c.ATTRIBUTE] = {
-                    "$and": [
-                        {
-                            db_c.ATTRIBUTE_FILTER_FIELD: {
-                                "$regex": re.compile(rf"^{attribute}$(?i)")
-                            }
+                query_filter["$and"] = [
+                    {
+                        db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
+                            "$regex": re.compile(rf"^{attribute}$(?i)")
                         }
-                        for attribute in attribute_list
-                    ]
-                }
+                    }
+                    for attribute in attribute_list
+                ]
 
             lookalikes = cm.get_documents(
                 database,
