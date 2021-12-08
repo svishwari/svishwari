@@ -96,10 +96,6 @@ export default {
         },
         {
           id: 3,
-          title: "Feedback",
-        },
-        {
-          id: 4,
           title: "Informational",
         },
       ],
