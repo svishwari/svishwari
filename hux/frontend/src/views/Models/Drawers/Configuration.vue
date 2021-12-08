@@ -122,6 +122,7 @@ export default {
     return {
       localDrawer: this.value,
       selectedModelIds: [],
+      selectedModelObjects: [],
       breadcrumbs: [
         {
           text: "Select a model to request",
@@ -156,7 +157,7 @@ export default {
 
     enabledModels() {
       const oldresult = this.models.reduce(function (modelObject, model) {
-        if (["Active"].includes(model.status)) {
+        if (["Active", "Requested"].includes(model.status)) {
           modelObject[model.type] = modelObject[model.type] || []
           modelObject[model.type].push(model)
         }
@@ -185,7 +186,7 @@ export default {
 
     modelsGroupedSorted() {
       const oldresult = this.models.reduce(function (modelObject, model) {
-        if (!["Active"].includes(model.status)) {
+        if (!["Active", "Requested"].includes(model.status)) {
           modelObject[model.type] = modelObject[model.type] || []
           modelObject[model.type].push(model)
         }
@@ -235,7 +236,19 @@ export default {
         this.selectedModelIds.push(model.id)
       }
     },
-    requestModels: function () {},
+    requestModels: function () {
+      console.log(this.models)
+      console.log(this.selectedModelIds)
+
+      this.models.filter((m) => { 
+        if(this.selectedModelIds.includes(m.id)){
+          this.selectedModelObjects.push(m)
+        }
+      });
+      console.log(this.selectedModelObjects)
+      this.requestModel(this.selectedModelObjects)
+      // this.closeAddDataSource()
+    },
     closeAddModel: function () {
       this.localDrawer = false
       this.selectedModelIds = []

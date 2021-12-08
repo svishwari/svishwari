@@ -27,7 +27,7 @@
         :icon-size="12"
         :icon="isAdded ? 'mdi-check' : null"
         size="large"
-        :is-disabled="isAlreadyAdded"
+        :is-disabled="isAlreadyAdded || isModelRequested"
         :box-shadow="false"
         icon-position="left"
         class="ma-2"
@@ -35,7 +35,7 @@
         <span
           :class="[
             isAdded ? 'white--text' : 'black--text text--lighten4',
-            isAlreadyAdded ? 'black--text text--lighten-3' : '',
+            isAlreadyAdded || isModelRequested ? 'black--text text--lighten-3' : '',
           ]"
         >
           <span v-if="requestedButton" class="text-button">
