@@ -240,12 +240,14 @@ class SetModelStatus(SwaggerView):
             model[db_c.CONFIGURATION_FIELD_SOURCE] = api_c.MODELS_TAG
 
             try:
-                configurations.append(collection_management.create_document(
-                    database=database,
-                    collection=db_c.CONFIGURATIONS_COLLECTION,
-                    new_doc=model,
-                    username=user[api_c.USER_NAME],
-                ))
+                configurations.append(
+                    collection_management.create_document(
+                        database=database,
+                        collection=db_c.CONFIGURATIONS_COLLECTION,
+                        new_doc=model,
+                        username=user[api_c.USER_NAME],
+                    )
+                )
                 notification_management.create_notification(
                     database,
                     db_c.NOTIFICATION_TYPE_SUCCESS,
@@ -259,7 +261,9 @@ class SetModelStatus(SwaggerView):
                 )
             except DuplicateDocument:
                 logger.info("Model already exists: %s.", model.get(db_c.NAME))
-                return {api_c.MESSAGE: api_c.DUPLICATE_NAME}, HTTPStatus.CONFLICT
+                return {
+                    api_c.MESSAGE: api_c.DUPLICATE_NAME
+                }, HTTPStatus.CONFLICT
 
         return (
             jsonify(ConfigurationsSchema(many=True).dump(configurations)),

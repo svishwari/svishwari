@@ -163,12 +163,14 @@ class DecisioningTests(TestCase):
     def test_success_request_model_duplicate(self):
         """Test requesting a model."""
 
-        status_request = [{
-            api_c.STATUS: api_c.REQUESTED,
-            api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
-            api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
-            api_c.TYPE: t_c.MOCKED_MODEL_RESPONSE[0][api_c.TYPE],
-        }]
+        status_request = [
+            {
+                api_c.STATUS: api_c.REQUESTED,
+                api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
+                api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
+                api_c.TYPE: t_c.MOCKED_MODEL_RESPONSE[0][api_c.TYPE],
+            }
+        ]
 
         for status_code in [HTTPStatus.OK, HTTPStatus.CONFLICT]:
             response = self.test_client.post(
@@ -181,12 +183,14 @@ class DecisioningTests(TestCase):
     def test_success_request_model_duplicate_name(self):
         """Test requesting a model."""
 
-        status_request = [{
-            api_c.STATUS: api_c.REQUESTED,
-            api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
-            api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
-            api_c.TYPE: t_c.MOCKED_MODEL_RESPONSE[0][api_c.TYPE],
-        }]
+        status_request = [
+            {
+                api_c.STATUS: api_c.REQUESTED,
+                api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
+                api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
+                api_c.TYPE: t_c.MOCKED_MODEL_RESPONSE[0][api_c.TYPE],
+            }
+        ]
 
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
