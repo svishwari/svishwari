@@ -216,6 +216,7 @@
         <hux-footer max-width="inherit">
           <template #left>
             <huxButton
+              size="large"
               variant="white"
               is-tile
               width="94"
@@ -787,6 +788,9 @@ export default {
         .v-text-field__slot {
           label {
             color: var(--v-black-darken1) !important;
+            font-size: 16px;
+            line-height: 22px;
+            font-weight: normal;
           }
         }
       }

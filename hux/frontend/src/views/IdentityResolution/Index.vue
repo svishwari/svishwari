@@ -230,6 +230,7 @@
             :count="totalFiltersSelected"
             @clear="resetFilters"
             @apply="refreshData"
+            @close="isFilterToggled = !isFilterToggled"
           >
             <hux-filter-panels :expanded="[0]">
               <hux-filter-panel

@@ -70,7 +70,7 @@ export default {
       let ids = [
         { label: "Unique Hux IDs", xValue: 0 },
         { label: "Anonymous IDs", xValue: 162 },
-        { label: "Known IDs", xValue: 325 },
+        { label: "Individual IDs", xValue: 325 },
       ]
       let color = d3Scale
         .scaleOrdinal()
@@ -264,7 +264,7 @@ export default {
         .append("svg")
         .attr("id", "mainSvg")
         .attr("class", "svgBox")
-        .attr("width", 400)
+        .attr("width", 500)
         .style("margin-left", "20px")
         .style("margin-right", "20px")
         .style("margin-top", "10px")

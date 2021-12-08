@@ -6,9 +6,24 @@
       :height="75"
     >
       <template #subtitle-extended>
-        <div class="mb-2" data-e2e="delivery-schedule-metric">
-          {{ deliverySchedule }}
-        </div>
+        <tooltip :max-width="280">
+          <template #label-content>
+            {{ data.delivery_schedule | DeliverySchedule }}
+          </template>
+          <template #hover-content>
+            <hux-delivery-text
+              :schedule="
+                data.delivery_schedule ? data.delivery_schedule.schedule : {}
+              "
+              :start-date="
+                data.delivery_schedule ? data.delivery_schedule.start_date : ''
+              "
+              :end-date="
+                data.delivery_schedule ? data.delivery_schedule.end_date : ''
+              "
+            />
+          </template>
+        </tooltip>
       </template>
     </metric-card>
     <metric-card
@@ -82,7 +97,8 @@
 <script>
 import MetricCard from "@/components/common/MetricCard"
 import Avatar from "@/components/common/Avatar"
-import Tooltip from "../../components/common/Tooltip.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+import HuxDeliveryText from "@/components/common/DatePicker/HuxDeliveryText.vue"
 
 export default {
   name: "EngagementOverviewSummary",
@@ -90,6 +106,7 @@ export default {
     MetricCard,
     Avatar,
     Tooltip,
+    HuxDeliveryText,
   },
   props: {
     data: {

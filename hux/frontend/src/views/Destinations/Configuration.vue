@@ -265,14 +265,21 @@
     <hux-footer slot="footer" max-width="850px" data-e2e="footer">
       <template #left>
         <hux-button
-          variant="white"
           size="large"
-          :is-tile="true"
+          variant="white"
+          is-tile
+          class="
+            text-button
+            ml-auto
+            primary--text
+            mr-3
+            btn-border
+            box-shadow-none
+          "
           data-e2e="cancel-destination-request"
-          class="btn-border box-shadow-none"
           @click="cancel()"
         >
-          <span class="primary--text">Cancel</span>
+          Cancel
         </hux-button>
       </template>
       <template #right>

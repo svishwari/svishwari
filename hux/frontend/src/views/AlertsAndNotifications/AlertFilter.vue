@@ -3,7 +3,7 @@
     :is-toggled="localDrawer"
     :count="filterLength"
     offset-val="214px"
-    content-height="560px"
+    content-height="633px"
     @clear="clear"
     @apply="apply"
     @close="close"

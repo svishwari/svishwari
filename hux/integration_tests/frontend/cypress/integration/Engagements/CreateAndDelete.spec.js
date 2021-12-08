@@ -49,12 +49,12 @@ describe("Orchestration > Engagement > Create Engagement", () => {
           .type(`Test Engagement ${engagementName}`)
         // Close the data extension drawer
         cy.get(selector.engagement.exitDataExtensionDrawer).click()
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1000)
-        // Close the add destination drawer
-        cy.get(selector.engagement.exitDrawer).click()
       }
     })
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
+    // Close the add destination drawer
+    cy.get(selector.engagement.exitDrawer).click()
 
     // create engagement
     cy.get(selector.engagement.createEngagement).click()

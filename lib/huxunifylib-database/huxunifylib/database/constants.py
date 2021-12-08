@@ -46,6 +46,7 @@ NOTIFICATIONS_COLLECTION = "notifications"
 CONFIGURATIONS_COLLECTION = "configurations"
 CACHE_COLLECTION = "cache"
 AUDIENCE_AUDIT_COLLECTION = "audit_logs"
+MODELS_COLLECTION = "models"
 
 CONSTANT_NAME = "constant"
 CONSTANT_KEY = "key"
@@ -458,6 +459,12 @@ ENGAGEMENT_DELIVERY_SCHEDULE = "delivery_schedule"
 PAGINATION_ASCENDING = "ascending"
 PAGINATION_DESCENDING = "descending"
 
+# model constants
+MODEL_DESCRIPTION = "description"
+MODEL_USERNAME = "username"
+MODEL_ID = "model_id"
+
+
 # Custom type definitions
 CUSTOM_TYPE_BOOL = "boolean"
 CUSTOM_TYPE_CAT = "categorical"
@@ -487,7 +494,17 @@ REQUIRED_FIELDS = {
     CONFIGURATIONS_COLLECTION: [
         CONFIGURATION_FIELD_NAME,
         CONFIGURATION_FIELD_TYPE,
-    ]
+    ],
+    MODELS_COLLECTION: [
+        NAME,
+        TYPE,
+        CATEGORY,
+        MODEL_ID,
+        STATUS,
+        MODEL_DESCRIPTION,
+        ADDED,
+        ENABLED,
+    ],
 }
 # Allowed Fields per collection
 ALLOWED_FIELDS = {
@@ -500,7 +517,18 @@ ALLOWED_FIELDS = {
         CONFIGURATION_FIELD_STATUS,
         CONFIGURATION_FIELD_ENABLED,
         CONFIGURATION_FIELD_ROADMAP,
-    ]
+    ],
+    MODELS_COLLECTION: [
+        NAME,
+        TYPE,
+        CATEGORY,
+        STATUS,
+        MODEL_DESCRIPTION,
+        MODEL_ID,
+        MODEL_USERNAME,
+        ADDED,
+        ENABLED,
+    ],
 }
 
 # Allowed collections
@@ -508,6 +536,7 @@ ALLOWED_COLLECTIONS = [
     CONFIGURATIONS_COLLECTION,
     DELIVERY_PLATFORM_COLLECTION,
     LOOKALIKE_AUDIENCE_COLLECTION,
+    MODELS_COLLECTION,
 ]
 
 # 30 minutes.

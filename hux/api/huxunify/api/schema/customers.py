@@ -141,6 +141,8 @@ class CustomerOverviewSchema(Schema):
     match_rate = Float(required=True, default=0.0)
     total_unique_ids = Integer(required=True, default=0)
     total_unknown_ids = Integer(required=True, default=0)
+    total_anonymous_ids = Integer(required=True, default=0)
+    total_address_ids = Integer(required=True, default=0)
     total_known_ids = Integer(required=True, default=0)
     total_individual_ids = Integer(required=True, default=0)
     total_household_ids = Integer(required=True, default=0)
@@ -176,6 +178,8 @@ class IDROverviewSchema(Schema):
     total_individual_ids = Integer(required=True)
     total_household_ids = Integer(required=True)
     total_customers = Integer(required=True)
+    total_address_ids = Integer(required=True)
+    total_anonymous_ids = Integer(required=True)
 
 
 class CustomersSchema(Schema):
