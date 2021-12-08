@@ -40,6 +40,7 @@ from huxunify.api.schema.model import (
     FeatureSchema,
     ModelRequestPOSTSchema,
 )
+from huxunify.api.schema.configurations import ConfigurationsSchema
 from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
@@ -223,11 +224,11 @@ class SetModelStatus(SwaggerView):
         body = ModelRequestPOSTSchema().load(request.get_json(), unknown=True)
         database = get_db_client()
 
-        # set type of configuration as model
-        body[api_c.TYPE] = api_c.MODELS_TAG
+        # set source of configuration as model
+        body[db_c.CONFIGURATION_FIELD_SOURCE] = api_c.MODELS_TAG
 
         try:
-            collection_management.create_document(
+            configuration = collection_management.create_document(
                 database=database,
                 collection=db_c.CONFIGURATIONS_COLLECTION,
                 new_doc=body,
@@ -248,7 +249,10 @@ class SetModelStatus(SwaggerView):
 
         logger.info("Successfully requested model %s.", body.get(db_c.NAME))
 
-        return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.CREATED
+        return (
+            jsonify(ConfigurationsSchema().dump(configuration)),
+            HTTPStatus.OK.value,
+        )
 
 
 @add_view_to_blueprint(

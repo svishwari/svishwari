@@ -105,6 +105,7 @@ class ModelRequestPOSTSchema(Schema):
 
     id = Str(required=True)
     name = Str(required=True)
+    type = Str(required=True)
     status = Str(
         validate=lambda x: x.lower() in [api_c.REQUESTED.lower()],
         required=True,
