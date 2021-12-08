@@ -1095,6 +1095,8 @@ def add_missing_revenue_data_by_day(
 
     start_date = datetime.strptime(start_date, api_c.DEFAULT_DATE_FORMAT)
     end_date = datetime.strptime(end_date, api_c.DEFAULT_DATE_FORMAT)
+    # Todo remove stub when data is returned from CDP.
+    sample_ltv = sample_revenue = 27
 
     for num_day in range(int((end_date - start_date).days) + 1):
         current_date = start_date + relativedelta(days=num_day)
@@ -1107,12 +1109,10 @@ def add_missing_revenue_data_by_day(
             revenue_data_by_day.append(
                 {
                     api_c.DATE: current_date,
-                    api_c.LTV: spending_by_day[0].get(api_c.LTV)
-                    if spending_by_day
-                    else revenue_data_by_day[-1][api_c.LTV],
-                    api_c.REVENUE: spending_by_day[0].get(api_c.REVENUE)
-                    if spending_by_day
-                    else revenue_data_by_day[-1][api_c.REVENUE],
+                    api_c.LTV: sample_ltv
+                    + (sample_ltv * random.uniform(-0.2, 0.3)),
+                    api_c.REVENUE: sample_revenue
+                    + (sample_revenue * random.uniform(-0.2, 0.3)),
                 }
             )
     return revenue_data_by_day
