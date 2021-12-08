@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines,unused-argument
 """Paths for Orchestration API"""
 import asyncio
+import re
 from http import HTTPStatus
 from threading import Thread
 from typing import Tuple, Union
@@ -235,7 +236,7 @@ class AudienceView(SwaggerView):
 
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    # pylint: disable=no-self-use,too-many-locals
+    # pylint: disable=no-self-use,too-many-locals,too-many-statements
     def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves all audiences.
 
@@ -419,6 +420,18 @@ class AudienceView(SwaggerView):
                         ]
                     }
                 )
+
+            if attribute_list:
+                query_filter[api_c.ATTRIBUTE] = {
+                    "$and": [
+                        {
+                            db_c.ATTRIBUTE_FILTER_FIELD: {
+                                "$regex": re.compile(rf"^{attribute}$(?i)")
+                            }
+                        }
+                        for attribute in attribute_list
+                    ]
+                }
 
             lookalikes = cm.get_documents(
                 database,
