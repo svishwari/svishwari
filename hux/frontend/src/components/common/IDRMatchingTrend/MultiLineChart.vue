@@ -74,11 +74,14 @@ export default {
         { label: "Individual IDs", xValue: 325 },
       ]
       let dataKeysMaxValue = {
-        unique_hux_ids: Math.max(this.data.map(d => d.unique_hux_ids)),
-        anonymous_ids: Math.max(this.data.map(d => d.anonymous_ids)),
-        known_ids: Math.max(this.data.map(d => d.known_ids))
+        unique_hux_ids: Math.max(this.data.map((d) => d.unique_hux_ids)),
+        anonymous_ids: Math.max(this.data.map((d) => d.anonymous_ids)),
+        known_ids: Math.max(this.data.map((d) => d.known_ids)),
       }
-      let maxKey = max(Object.keys(dataKeysMaxValue), o => dataKeysMaxValue[o])
+      let maxKey = max(
+        Object.keys(dataKeysMaxValue),
+        (o) => dataKeysMaxValue[o]
+      )
       let color = d3Scale
         .scaleOrdinal()
         .range([colors.darkBlue, colors.chart2, colors.chart3])
