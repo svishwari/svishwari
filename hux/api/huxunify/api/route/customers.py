@@ -920,9 +920,9 @@ class CustomerEvents(SwaggerView):
             "description": "Interval Unit.",
             "type": "string",
             "in": "query",
-            "required": True,
-            "example": "day",
-            "default": "day",
+            "required": False,
+            "example": "month",
+            "default": "month",
         },
         {
             "name": "body",
@@ -973,7 +973,7 @@ class CustomerEvents(SwaggerView):
         token_response = get_token_from_request(request)
 
         Validation.validate_hux_id(hux_id)
-        interval = request.args.get(api_c.INTERVAL).lower()
+        interval = request.args.get(api_c.INTERVAL, api_c.MONTH).lower()
 
         # start_date, end_date = get_start_end_dates(request, 6)
         start_date = request.json.get(api_c.START_DATE)
