@@ -3,7 +3,7 @@
     <template #header>
       <page-header>
         <template #left>
-          <breadcrumb :items="breadcrumbItems" />
+          <breadcrumb :items="breadcrumbItems" :add-box-shadow="true" />
         </template>
         <template #right>
           <v-menu v-model="modalOptions" close-on-click offset-y left>

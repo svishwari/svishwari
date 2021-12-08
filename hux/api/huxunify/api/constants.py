@@ -848,6 +848,8 @@ AUDIENCE_FILTERS = "filters"
 AUDIENCE_SECTION_AGGREGATOR = "section_aggregator"
 AUDIENCE_SECTION_FILTERS = "section_filters"
 AUDIENCE_INSIGHTS = "audience_insights"
+AUDIENCE_FILTERS_EQUALS = "equals"
+AUDIENCE_FILTER_CITY = "City"
 INSIGHTS = "insights"
 AUDIENCE_FILTER_FIELD = "field"
 AUDIENCE_FILTER_TYPE = "type"
@@ -891,6 +893,7 @@ CONTACT_US = "contact-us"
 # TODO: Remove relevant constants from here once integrated with Tecton API
 MODELS_TAG = "model"
 MODEL = "model"
+MODELS = "models"
 MODELS_ENDPOINT = "/models"
 MODELS_VERSION_HISTORY = "version-history"
 MODEL_NAME = "model_name"
@@ -1034,7 +1037,7 @@ NOTIFICATION_CATEGORIES = [
     DESTINATIONS_TAG,
     CDP_DATA_SOURCES_TAG,
     CUSTOMERS_TAG,
-    MODELS_TAG,
+    MODELS,
 ]
 # AWS BATCH
 BATCH_SIZE = "batch_size"

@@ -57,7 +57,6 @@ from huxunify.api.data_connectors.cdp import (
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
-    introspect_token,
 )
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
@@ -77,6 +76,7 @@ from huxunify.api.route.utils import (
     Validation as validation,
     is_component_favorite,
     get_user_favorites,
+    convert_unique_city_filter,
 )
 
 # setup the orchestration blueprint
@@ -539,7 +539,6 @@ class AudienceGetView(SwaggerView):
         """
 
         token_response = get_token_from_request(request)
-        user_id = introspect_token(token_response[0]).get(api_c.OKTA_USER_ID)
 
         database = get_db_client()
 
@@ -699,7 +698,7 @@ class AudienceGetView(SwaggerView):
         audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
         audience[api_c.FAVORITE] = is_component_favorite(
-            user_id, api_c.AUDIENCES, str(audience_id)
+            user[db_c.OKTA_ID], api_c.AUDIENCES, str(audience_id)
         )
 
         return (
@@ -919,18 +918,20 @@ class AudiencePostView(SwaggerView):
                         f"does not exist."
                     }
                 engagement_ids.append(engagement_id)
-
+        audience_filters = convert_unique_city_filter(
+            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
+        )
         # get live audience size
         customers = get_customers_overview(
             token_response[0],
-            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)},
+            audience_filters,
         )
 
         # create the audience
         audience_doc = orchestration_management.create_audience(
             database=database,
             name=body[api_c.AUDIENCE_NAME],
-            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+            audience_filters=audience_filters.get(api_c.AUDIENCE_FILTERS),
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],
             size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
@@ -1074,7 +1075,7 @@ class AudiencePutView(SwaggerView):
                 )
 
                 if not destination_management.get_delivery_platform(
-                    get_db_client(), destination[db_c.OBJECT_ID]
+                    database, destination[db_c.OBJECT_ID]
                 ):
                     logger.error(
                         "Could not find destination with id %s.",
@@ -1083,12 +1084,14 @@ class AudiencePutView(SwaggerView):
                     return {
                         "message": api_c.DESTINATION_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
-
+        audience_filters = convert_unique_city_filter(
+            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
+        )
         audience_doc = orchestration_management.update_audience(
             database=database,
             audience_id=ObjectId(audience_id),
             name=body.get(api_c.AUDIENCE_NAME),
-            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+            audience_filters=audience_filters.get(api_c.AUDIENCE_FILTERS),
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],
         )
@@ -1105,32 +1108,51 @@ class AudiencePutView(SwaggerView):
         if not body.get(api_c.ENGAGEMENT_IDS):
             return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
-        # remove the audience from existing engagements
-        engagement_deliveries = orchestration_management.get_audience_insights(
-            database,
-            audience_doc[db_c.ID],
-        )
+        # audience put engagement ids
+        put_engagement_ids = [
+            ObjectId(x) for x in body.get(api_c.ENGAGEMENT_IDS)
+        ]
 
-        # process each engagement that the audience is attached to.
-        for engagement in engagement_deliveries:
-            # remove the audience
-            engagement_management.remove_audiences_from_engagement(
-                database,
-                engagement[db_c.ID],
-                user[api_c.USER_NAME],
-                [audience_doc[db_c.ID]],
-            )
+        # loop each engagement
+        removed = []
+        for engagement in engagement_management.get_engagements(database):
+            # check if audience is in the engagement doc
+            audience_in_engagement = audience_doc[db_c.ID] in [
+                x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]
+            ]
 
-        # now attach each audience to the passed in engagements.
-        for engagement_id in body.get(api_c.ENGAGEMENT_IDS):
-            # the append function expects ID for audience _id.
-            audience_doc[db_c.OBJECT_ID] = audience_doc[db_c.ID]
-            engagement_management.append_audiences_to_engagement(
-                database,
-                ObjectId(engagement_id),
-                user[api_c.USER_NAME],
-                [audience_doc],
-            )
+            # evaluate engagement
+            if (
+                engagement[db_c.ID] in put_engagement_ids
+                and audience_in_engagement
+            ):
+                # audience is in engagement and engagement is in PUT ids.
+                # no update is needed for this scenario.
+                pass
+            elif engagement[db_c.ID] in put_engagement_ids:
+                # engagement is in the PUT ids, but the audience is not.
+                # append audience to the engagement.
+                engagement_management.append_audiences_to_engagement(
+                    database,
+                    engagement.get(db_c.ID),
+                    user[api_c.USER_NAME],
+                    [
+                        {
+                            db_c.OBJECT_ID: audience_doc[db_c.ID],
+                            db_c.DESTINATIONS: audience_doc[db_c.DESTINATIONS],
+                        }
+                    ],
+                )
+            elif audience_in_engagement:
+                # audience is in engagement, but the engagement is not in the PUT ids.
+                # remove the audience from engagement.
+                engagement_management.remove_audiences_from_engagement(
+                    database,
+                    engagement[db_c.ID],
+                    user[api_c.USER_NAME],
+                    [audience_doc[db_c.ID]],
+                )
+                removed.append(engagement[db_c.ID])
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 

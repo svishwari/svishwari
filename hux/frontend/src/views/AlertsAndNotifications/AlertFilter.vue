@@ -104,7 +104,7 @@ export default {
       category: [
         {
           id: 1,
-          title: "DataSources",
+          title: "Data Sources",
         },
         {
           id: 2,
