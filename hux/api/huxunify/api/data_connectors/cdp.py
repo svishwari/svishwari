@@ -1095,7 +1095,7 @@ def add_missing_revenue_data_by_day(
 
     start_date = datetime.strptime(start_date, api_c.DEFAULT_DATE_FORMAT)
     end_date = datetime.strptime(end_date, api_c.DEFAULT_DATE_FORMAT)
-    # Todo remove stub when data is returned from CDP.
+    # TODO remove stub when data is returned from CDP.
     sample_ltv = sample_revenue = 27
 
     for num_day in range(int((end_date - start_date).days) + 1):
