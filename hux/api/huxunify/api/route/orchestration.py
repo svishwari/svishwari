@@ -236,7 +236,8 @@ class AudienceView(SwaggerView):
 
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    # pylint: disable=no-self-use,too-many-locals,too-many-statements
+    # TODO: HUS-1791 - refactor.
+    # pylint: disable=no-self-use,too-many-locals,too-many-statements,too-many-branches
     def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves all audiences.
 
@@ -467,6 +468,11 @@ class AudienceView(SwaggerView):
                 lookalike[api_c.FAVORITE] = bool(
                     lookalike[db_c.ID] in favorite_lookalike_audiences
                 )
+                if db_c.LOOKALIKE_SOURCE_AUD_FILTERS in lookalike:
+                    # rename the key
+                    lookalike[db_c.AUDIENCE_FILTERS] = lookalike.pop(
+                        db_c.LOOKALIKE_SOURCE_AUD_FILTERS
+                    )
 
             # combine the two lists and serve.
             audiences += lookalikes
