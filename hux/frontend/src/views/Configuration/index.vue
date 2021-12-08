@@ -62,6 +62,9 @@ export default {
       return true
     },
   },
+  async mounted() {
+    await this.$store.dispatch("users/getUsers")
+  },
 }
 </script>
 

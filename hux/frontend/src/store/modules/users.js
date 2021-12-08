@@ -42,7 +42,7 @@ const mutations = {
   },
 
   setApplicationAllUsers(state, users) {
-    Vue.set(state, "users", { ...state.users, ...users })
+    Vue.set(state, "users", users)
   },
 }
 
@@ -65,7 +65,7 @@ const actions = {
 
   async getUsers({ commit }) {
     try {
-      const response = await api.users()
+      const response = await api.users.all()
       commit("setApplicationAllUsers", response.data)
     } catch (error) {
       handleError(error)
