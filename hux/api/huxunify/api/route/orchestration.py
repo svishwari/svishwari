@@ -1031,7 +1031,7 @@ class AudiencePutView(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
+    # @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def put(self, audience_id: str, user: dict) -> Tuple[dict, int]:
         """Updates an audience.
@@ -1094,47 +1094,51 @@ class AudiencePutView(SwaggerView):
         if not body.get(api_c.ENGAGEMENT_IDS):
             return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
-        # get all the engagements the audience belongs to.
-        engagements = engagement_management.get_engagements_by_audience(
-            database,
-            audience_doc[db_c.ID],
-        )
+        # audience put engagement ids
+        put_engagement_ids = [
+            ObjectId(x) for x in body.get(api_c.ENGAGEMENT_IDS)
+        ]
 
-        # process each engagement that the audience is attached to.
-        engagement_ids = [ObjectId(x) for x in body.get(api_c.ENGAGEMENT_IDS)]
+        # loop each engagement
+        removed = []
+        for engagement in engagement_management.get_engagements(database):
+            # check if audience is in the engagement doc
+            audience_in_engagement = audience_doc[db_c.ID] in [
+                x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]
+            ]
 
-        # process all relevant engagements
-        for engagement in engagements:
-            # limitation of DocumentDB remove existing nested audience.
-            # engagement is not in the put list, so remove audience from it.
-            engagement_management.remove_audiences_from_engagement(
-                database,
-                engagement[db_c.ID],
-                user[api_c.USER_NAME],
-                [audience_doc[db_c.ID]],
-            )
-
-            if engagement.get(db_c.ID) not in engagement_ids:
-                continue
-
-            # if no destinations set, remove.
-            if not audience_doc[db_c.DESTINATIONS]:
-                del audience_doc[db_c.DESTINATIONS]
-
-            engagement_audience = {**audience_doc}
-            for audience in engagement.get(db_c.AUDIENCES):
-                if audience_doc[db_c.ID] == audience.get(db_c.OBJECT_ID):
-                    # merged the audience documents and break
-                    engagement_audience = {**audience, **engagement_audience}
-                    break
-
-            # we now push it back with the updated audience
-            engagement_management.append_audiences_to_engagement(
-                database,
-                engagement.get(db_c.ID),
-                user[api_c.USER_NAME],
-                [engagement_audience],
-            )
+            # evaluate engagement
+            if (
+                engagement[db_c.ID] in put_engagement_ids
+                and audience_in_engagement
+            ):
+                # audience is in engagement and engagement is in PUT ids.
+                # no update is needed for this scenario.
+                pass
+            elif engagement[db_c.ID] in put_engagement_ids:
+                # engagement is in the PUT ids, but the audience is not.
+                # append audience to the engagement.
+                engagement_management.append_audiences_to_engagement(
+                    database,
+                    engagement.get(db_c.ID),
+                    user[api_c.USER_NAME],
+                    [
+                        {
+                            db_c.OBJECT_ID: audience_doc[db_c.ID],
+                            db_c.DESTINATIONS: audience_doc[db_c.DESTINATIONS],
+                        }
+                    ],
+                )
+            elif audience_in_engagement:
+                # audience is in engagement, but the engagement is not in the PUT ids.
+                # remove the audience from engagement.
+                engagement_management.remove_audiences_from_engagement(
+                    database,
+                    engagement[db_c.ID],
+                    user[api_c.USER_NAME],
+                    [audience_doc[db_c.ID]],
+                )
+                removed.append(engagement[db_c.ID])
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
