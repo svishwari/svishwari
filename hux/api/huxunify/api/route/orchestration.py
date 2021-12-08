@@ -862,7 +862,7 @@ class AudiencePostView(SwaggerView):
         """
 
         body = AudiencePostSchema().load(request.get_json(), partial=True)
-
+        data_added = False
         token_response = get_token_from_request(request)
 
         # validate destinations
@@ -887,6 +887,7 @@ class AudiencePostView(SwaggerView):
                     return {
                         "message": api_c.DESTINATION_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
+                data_added = True
 
         engagement_ids = []
         if api_c.AUDIENCE_ENGAGEMENTS in body:
@@ -923,6 +924,7 @@ class AudiencePostView(SwaggerView):
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],
             size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
+            data_added=data_added,
         )
 
         # add notification

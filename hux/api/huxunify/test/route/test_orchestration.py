@@ -341,6 +341,7 @@ class OrchestrationRouteTest(TestCase):
             audience_doc[db_c.DESTINATIONS],
             [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
+        self.assertIsNotNone(response.json.get(db_c.DATA_ADDED))
 
     def test_create_audience_empty_user_info(self):
         """Test create audience with destination given empty user info.
@@ -487,6 +488,7 @@ class OrchestrationRouteTest(TestCase):
             audience_post[api_c.AUDIENCE_NAME],
             response.json[api_c.AUDIENCE_NAME],
         )
+        self.assertIsNone(response.json.get(db_c.DATA_ADDED))
 
         # validate audience in db
         audience_doc = get_audience(

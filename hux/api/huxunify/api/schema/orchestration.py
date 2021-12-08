@@ -135,6 +135,8 @@ class AudienceGetSchema(Schema):
 
     create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
+    data_added = DateTimeWithZ(attribute=db_c.DATA_ADDED, allow_none=True)
+
     created_by = fields.String()
     updated_by = fields.String()
     deliveries = fields.Nested(AudienceDeliverySchema, many=True)
