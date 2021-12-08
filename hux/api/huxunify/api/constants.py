@@ -96,6 +96,7 @@ CLIENT_REQUEST = "client_request"
 CLIENT_ACCOUNT = "client_account"
 USE_CASE = "use_case"
 FIELD_TYPE = "field_type"
+INTERVAL = "interval"
 
 QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
@@ -115,6 +116,8 @@ TOTAL_UNKNOWN_IDS = "total_unknown_ids"
 TOTAL_KNOWN_IDS = "total_known_ids"
 TOTAL_INDIVIDUAL_IDS = "total_individual_ids"
 TOTAL_HOUSEHOLD_IDS = "total_household_ids"
+TOTAL_ADDRESS_IDS = "total_address_ids"
+TOTAL_ANONYMOUS_IDS = "total_anonymous_ids"
 UPDATED = "updated"
 TOTAL_CUSTOMERS = "total_customers"
 NEW_CUSTOMERS_ADDED = "new_customers_added"
@@ -277,6 +280,7 @@ DISABLED = "disabled"
 SIZE = "size"
 IS_ADDED = "is_added"
 DAY = "day"
+WEEK = "week"
 REQUESTED = "requested"
 
 STATUS_NOT_DELIVERED = "Not Delivered"
@@ -844,6 +848,8 @@ AUDIENCE_FILTERS = "filters"
 AUDIENCE_SECTION_AGGREGATOR = "section_aggregator"
 AUDIENCE_SECTION_FILTERS = "section_filters"
 AUDIENCE_INSIGHTS = "audience_insights"
+AUDIENCE_FILTERS_EQUALS = "equals"
+AUDIENCE_FILTER_CITY = "City"
 INSIGHTS = "insights"
 AUDIENCE_FILTER_FIELD = "field"
 AUDIENCE_FILTER_TYPE = "type"
@@ -887,6 +893,7 @@ CONTACT_US = "contact-us"
 # TODO: Remove relevant constants from here once integrated with Tecton API
 MODELS_TAG = "model"
 MODEL = "model"
+MODELS = "models"
 MODELS_ENDPOINT = "/models"
 MODELS_VERSION_HISTORY = "version-history"
 MODEL_NAME = "model_name"
@@ -1030,7 +1037,7 @@ NOTIFICATION_CATEGORIES = [
     DESTINATIONS_TAG,
     CDP_DATA_SOURCES_TAG,
     CUSTOMERS_TAG,
-    MODELS_TAG,
+    MODELS,
 ]
 # AWS BATCH
 BATCH_SIZE = "batch_size"

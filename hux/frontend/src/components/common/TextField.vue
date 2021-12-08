@@ -7,7 +7,7 @@
       </span>
       <tooltip v-if="helpText" position-top>
         <template #label-content>
-          <v-icon color="primary" size="small" class="ml-2 mb-2">
+          <v-icon color="primary" size="small" class="ml-1 mb-2">
             {{ icon }}
           </v-icon>
         </template>

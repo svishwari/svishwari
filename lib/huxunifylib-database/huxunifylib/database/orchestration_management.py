@@ -477,7 +477,12 @@ def get_audience_insights(
         return list(
             collection.aggregate(
                 [
-                    {"$match": {"audiences.id": audience_id}},
+                    {
+                        "$match": {
+                            "audiences.id": audience_id,
+                            db_c.DELETED: False,
+                        }
+                    },
                     {
                         "$unwind": {
                             "path": "$audiences",

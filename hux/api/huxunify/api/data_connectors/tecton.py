@@ -722,7 +722,7 @@ class TectonMockConnector(Tecton):
                 api_c.TYPE: str(feature[5]).lower(),
                 api_c.OWNER: feature[6],
                 api_c.STATUS: api_c.MODEL_STATUS_MAPPING.get(
-                    feature[8], api_c.STATUS_PENDING
+                    str(feature[8]).lower(), api_c.STATUS_PENDING
                 ),
                 api_c.LATEST_VERSION: feature[9],
                 api_c.PREDICTION_WINDOW: int(feature[3]),

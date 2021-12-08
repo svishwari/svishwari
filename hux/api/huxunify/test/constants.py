@@ -145,7 +145,7 @@ CUSTOMER_INSIGHT_RESPONSE = {
     "message": "ok",
 }
 
-CUSTOMER_EVENT_RESPONSE = {
+CUSTOMER_EVENT_BY_DAY_RESPONSE = {
     "code": 200,
     "body": [
         {
@@ -173,6 +173,72 @@ CUSTOMER_EVENT_RESPONSE = {
                 "viewed_sale_item": 0,
             },
             "date": "2021-01-02T00:00:00.000Z",
+        },
+    ],
+    "message": "ok",
+}
+
+CUSTOMER_EVENT_BY_WEEK_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_cart": 0,
+                "customer_login": 0,
+                "item_purchased": 0,
+                "trait_computed": 1,
+                "viewed_cart": 0,
+                "viewed_checkout": 0,
+                "viewed_sale_item": 0,
+            },
+            "date": "2021-12-28T00:00:00.000Z",
+        },
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_cart": 0,
+                "customer_login": 0,
+                "item_purchased": 0,
+                "trait_computed": 1,
+                "viewed_cart": 0,
+                "viewed_checkout": 0,
+                "viewed_sale_item": 0,
+            },
+            "date": "2021-01-18T00:00:00.000Z",
+        },
+    ],
+    "message": "ok",
+}
+
+CUSTOMER_EVENT_BY_MONTH_RESPONSE = {
+    "code": 200,
+    "body": [
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_cart": 0,
+                "customer_login": 0,
+                "item_purchased": 0,
+                "trait_computed": 1,
+                "viewed_cart": 0,
+                "viewed_checkout": 0,
+                "viewed_sale_item": 0,
+            },
+            "date": "2021-01-01T00:00:00.000Z",
+        },
+        {
+            "total_event_count": 1,
+            "event_type_counts": {
+                "abandoned_cart": 0,
+                "customer_login": 0,
+                "item_purchased": 0,
+                "trait_computed": 1,
+                "viewed_cart": 0,
+                "viewed_checkout": 0,
+                "viewed_sale_item": 0,
+            },
+            "date": "2021-03-01T00:00:00.000Z",
         },
     ],
     "message": "ok",
