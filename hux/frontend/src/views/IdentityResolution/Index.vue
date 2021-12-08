@@ -228,6 +228,7 @@
           <hux-filters-drawer
             :is-toggled="isFilterToggled"
             :count="totalFiltersSelected"
+            content-height="300px"
             @clear="resetFilters"
             @apply="refreshData"
             @close="isFilterToggled = !isFilterToggled"

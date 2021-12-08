@@ -28,7 +28,7 @@
           </slot>
         </div>
 
-        <div class="content" :style="top">
+        <div class="content" :style="height">
           <slot name="default">
             <!-- `FilterPanels` live here -->
           </slot>
@@ -96,16 +96,16 @@ export default defineComponent({
       required: false,
       default: false,
     },
-    topcontent: {
+    contentHeight: {
       type: String,
       required: false,
-      default: "182px",
+      default: "260px",
     },
   },
 
   computed: {
-    top() {
-      return "top: " + this.topcontent
+    height() {
+      return "height: calc(100vh - " + this.contentHeight
     },
   },
 })
@@ -116,17 +116,17 @@ $footerHeight: 80px;
 $headerHeight: 40px;
 $padding: 20px;
 $width: 300px;
+$zIndex: 4;
 .hux-filters-drawer {
   border-left: 1px solid var(--v-black-lighten3) !important;
   width: $width;
   height: 100%;
-  z-index: 8;
+  z-index: $zIndex;
   position: absolute;
   right: 0;
   .wrapper {
     display: flex;
     flex-direction: column;
-    position: fixed;
     width: $width;
   }
 
@@ -148,9 +148,6 @@ $width: 300px;
     flex-direction: column;
     padding: 0;
     overflow-y: auto;
-    max-height: 100%;
-    height: 100%;
-    position: fixed;
   }
 
   .footer {
@@ -158,6 +155,7 @@ $width: 300px;
     border-top: 1px solid var(--v-black-lighten3) !important;
     position: fixed;
     bottom: 0;
+    z-index: $zIndex;
   }
 }
 </style>

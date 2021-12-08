@@ -2,7 +2,7 @@
   <hux-filters-drawer
     :is-toggled="localDrawer"
     :count="filterLength"
-    topcontent="182px"
+    content-height="262px"
     :disable-clear="filterLength === 1 && selectedTimeType === 'Last week'"
     @clear="clear"
     @apply="apply"
