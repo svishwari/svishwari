@@ -286,8 +286,11 @@ export default {
     toggleDrawer() {
       this.drawer = !this.drawer
     },
-    async refreshScreen() {
+    async reloadWithCloseDrawer() {
       this.toggleDrawer()
+      this.refreshScreen()
+    },
+    async refreshScreen() {
       this.loading = true
       try {
         await this.getModels()
@@ -300,9 +303,10 @@ export default {
       this.selectedModal = modal
       this.confirmModal = true
     },
-    confirmRemoval() {
-      this.deleteModal(this.selectedModal)
+    async confirmRemoval() {
       this.confirmModal = false
+      await this.deleteModal(this.selectedModal)
+      this.refreshScreen()
     },
   },
 }
