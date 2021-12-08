@@ -509,7 +509,7 @@ class AudienceGetView(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(self, audience_id: str, user: dict) -> Tuple[dict, int]:
         """Retrieves an audience.
