@@ -1,7 +1,7 @@
 # pylint: disable=no-self-use,too-many-lines,unused-argument
 """Paths for customer API"""
 from http import HTTPStatus
-from typing import Tuple, List
+from typing import Tuple
 from datetime import datetime
 
 from flask import Blueprint, request, jsonify, Response
