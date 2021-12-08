@@ -237,7 +237,7 @@ class CustomerPostOverview(SwaggerView):
 
         customers[api_c.GEOGRAPHICAL] = get_demographic_by_state(
             token_response[0],
-            convert_unique_city_filter(request.json)[api_c.AUDIENCE_FILTERS],
+            request.json[api_c.AUDIENCE_FILTERS],
         )
 
         return (
