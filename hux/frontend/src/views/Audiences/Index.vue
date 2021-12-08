@@ -16,6 +16,7 @@
           :size="22"
           class="cursor-pointer"
           color="black-darken4"
+          data-e2e="audienceFilterToggle"
           @click.native="isFilterToggled = !isFilterToggled"
         />
       </template>
