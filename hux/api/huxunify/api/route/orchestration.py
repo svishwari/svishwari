@@ -1063,7 +1063,7 @@ class AudiencePutView(SwaggerView):
                 )
 
                 if not destination_management.get_delivery_platform(
-                    get_db_client(), destination[db_c.OBJECT_ID]
+                    database, destination[db_c.OBJECT_ID]
                 ):
                     logger.error(
                         "Could not find destination with id %s.",
@@ -1094,15 +1094,19 @@ class AudiencePutView(SwaggerView):
         if not body.get(api_c.ENGAGEMENT_IDS):
             return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
-        # remove the audience from existing engagements
-        engagement_deliveries = orchestration_management.get_audience_insights(
+        # get all the engagements the audience belongs to.
+        engagements = engagement_management.get_engagements_by_audience(
             database,
             audience_doc[db_c.ID],
         )
 
         # process each engagement that the audience is attached to.
-        for engagement in engagement_deliveries:
-            # remove the audience
+        engagement_ids = [ObjectId(x) for x in body.get(api_c.ENGAGEMENT_IDS)]
+
+        # process all relevant engagements
+        for engagement in engagements:
+            # limitation of DocumentDB remove existing nested audience.
+            # engagement is not in the put list, so remove audience from it.
             engagement_management.remove_audiences_from_engagement(
                 database,
                 engagement[db_c.ID],
@@ -1110,15 +1114,26 @@ class AudiencePutView(SwaggerView):
                 [audience_doc[db_c.ID]],
             )
 
-        # now attach each audience to the passed in engagements.
-        for engagement_id in body.get(api_c.ENGAGEMENT_IDS):
-            # the append function expects ID for audience _id.
-            audience_doc[db_c.OBJECT_ID] = audience_doc[db_c.ID]
+            if engagement.get(db_c.ID) not in engagement_ids:
+                continue
+
+            # if no destinations set, remove.
+            if not audience_doc[db_c.DESTINATIONS]:
+                del audience_doc[db_c.DESTINATIONS]
+
+            engagement_audience = {**audience_doc}
+            for audience in engagement.get(db_c.AUDIENCES):
+                if audience_doc[db_c.ID] == audience.get(db_c.OBJECT_ID):
+                    # merged the audience documents and break
+                    engagement_audience = {**audience, **engagement_audience}
+                    break
+
+            # we now push it back with the updated audience
             engagement_management.append_audiences_to_engagement(
                 database,
-                ObjectId(engagement_id),
+                engagement.get(db_c.ID),
                 user[api_c.USER_NAME],
-                [audience_doc],
+                [engagement_audience],
             )
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
