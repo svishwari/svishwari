@@ -234,7 +234,7 @@
 
   <div v-else-if="Statuses.Error.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
-      <v-icon color="error" class="mr-2" :size="iconSize" v-on="on">
+      <v-icon color="error" class="mr-2" :size="iconSize">
         mdi-checkbox-blank-circle
       </v-icon>
       <span v-if="showLabel">{{ status | TitleCase }} </span>

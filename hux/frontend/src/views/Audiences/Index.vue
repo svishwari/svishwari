@@ -16,6 +16,7 @@
           :size="22"
           class="cursor-pointer"
           color="black-darken4"
+          data-e2e="audienceFilterToggle"
           @click.native="isFilterToggled = !isFilterToggled"
         />
       </template>
@@ -52,11 +53,7 @@
             </router-link>
           </template>
         </page-header>
-        <v-progress-linear
-          :active="loading"
-          :indeterminate="loading"
-          class="tab-min-width"
-        />
+        <v-progress-linear :active="loading" :indeterminate="loading" />
         <div v-if="!loading" class="white">
           <hux-data-table
             v-if="isDataExists"
@@ -115,11 +112,16 @@
                 <div v-if="header.value == 'size'">
                   <size :value="item[header.value]" />
                 </div>
-                <div
-                  v-if="header.value == 'filters' && item[header.value]"
-                  class="filter_col"
-                >
-                  <span v-if="item[header.value] === 'null'">—</span>
+                <div v-if="header.value == 'filters'" class="filter_col">
+                  <span
+                    v-if="
+                      item[header.value] == 'null' ||
+                      !item[header.value] ||
+                      item[header.value].length == 0
+                    "
+                  >
+                    —
+                  </span>
                   <span v-else>
                     <span
                       v-for="(filter, filterIndex) in filterTags[item.name]"
@@ -424,7 +426,7 @@ export default {
         {
           text: "Attributes",
           value: "filters",
-          width: "300px",
+          width: "250px",
         },
         {
           text: "Destinations",

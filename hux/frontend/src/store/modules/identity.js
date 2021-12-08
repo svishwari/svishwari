@@ -21,7 +21,7 @@ const METRICS = {
       "Unique number of total IDs we can match (individual IDs + anonymous IDs) ",
     format: "numeric",
   },
-  total_unknown_ids: {
+  total_anonymous_ids: {
     title: "Anonymous IDs",
     description:
       "A digital ID related to online visitors that have not yet been recognized and hence not assigned an individual ID",

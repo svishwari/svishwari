@@ -349,6 +349,9 @@ LOOKALIKE_SOURCE_AUD_ID = "source_audience_id"
 LOOKALIKE_SOURCE_AUD_NAME = "source_audience_name"
 LOOKALIKE_SOURCE_AUD_SIZE = "source_audience_size"
 LOOKALIKE_SOURCE_AUD_FILTERS = "source_audience_filters"
+LOOKALIKE_ATTRIBUTE_FILTER_FIELD = (
+    f"{LOOKALIKE_SOURCE_AUD_FILTERS}.section_filters.field"
+)
 
 USER_ROLE = "role"
 USER_ID = "user_id"
