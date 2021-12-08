@@ -172,7 +172,7 @@
       </template>
     </confirm-modal>
 
-    <model-configuration v-model="drawer" />
+    <model-configuration v-model="drawer" @refresh="refreshScreen()" />
   </div>
 </template>
 
@@ -285,6 +285,16 @@ export default {
     },
     toggleDrawer() {
       this.drawer = !this.drawer
+    },
+    async refreshScreen() {
+      this.toggleDrawer()
+      this.loading = true
+      try {
+        await this.getModels()
+      } catch (error) {
+        this.showError = true
+      }
+      this.loading = false
     },
     removeModel(modal) {
       this.selectedModal = modal

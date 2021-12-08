@@ -237,17 +237,17 @@ export default {
       }
     },
     requestModels: function () {
-      console.log(this.models)
-      console.log(this.selectedModelIds)
-
-      this.models.filter((m) => {
-        if (this.selectedModelIds.includes(m.id)) {
-          this.selectedModelObjects.push(m)
-        }
+      const selectedModels = JSON.parse(
+        JSON.stringify(
+          this.models.filter((mod) => this.selectedModelIds.includes(mod.id))
+        )
+      )
+      selectedModels.forEach((mod) => {
+        delete mod.description
+        mod.status = "Requested"
       })
-      console.log(this.selectedModelObjects)
-      this.requestModel(this.selectedModelObjects)
-      // this.closeAddDataSource()
+      this.requestModel(selectedModels)
+      this.$emit("refresh")
     },
     closeAddModel: function () {
       this.localDrawer = false
