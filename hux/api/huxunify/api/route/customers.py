@@ -57,6 +57,7 @@ from huxunify.api.route.utils import (
     add_chart_legend,
     get_start_end_dates,
     get_db_client,
+    convert_unique_city_filter,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.utils import (
@@ -229,10 +230,14 @@ class CustomerPostOverview(SwaggerView):
 
         # TODO - cdm to return single field
         token_response = get_token_from_request(request)
-        customers = get_customers_overview(token_response[0], request.json)
+        customers = get_customers_overview(
+            token_response[0],
+            convert_unique_city_filter(request.json),
+        )
 
         customers[api_c.GEOGRAPHICAL] = get_demographic_by_state(
-            token_response[0], request.json[api_c.AUDIENCE_FILTERS]
+            token_response[0],
+            convert_unique_city_filter(request.json)[api_c.AUDIENCE_FILTERS],
         )
 
         return (
@@ -915,9 +920,9 @@ class CustomerEvents(SwaggerView):
             "description": "Interval Unit.",
             "type": "string",
             "in": "query",
-            "required": True,
-            "example": "day",
-            "default": "day",
+            "required": False,
+            "example": "month",
+            "default": "month",
         },
         {
             "name": "body",
@@ -968,7 +973,7 @@ class CustomerEvents(SwaggerView):
         token_response = get_token_from_request(request)
 
         Validation.validate_hux_id(hux_id)
-        interval = request.args.get(api_c.INTERVAL).lower()
+        interval = request.args.get(api_c.INTERVAL, api_c.MONTH).lower()
 
         # start_date, end_date = get_start_end_dates(request, 6)
         start_date = request.json.get(api_c.START_DATE)

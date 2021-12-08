@@ -618,3 +618,37 @@ def read_stub_city_zip_data(file_path: str) -> list:
         data = list(csv.reader(csv_file))
 
     return data[1:]
+
+
+def convert_unique_city_filter(request_json: dict) -> dict:
+    """To convert request json to have unique city
+
+    Args:
+        request_json (dict): Input audience filter json object
+
+    Returns:
+        dict: Converted audience filter.
+    """
+    try:
+        for filters in request_json[api_c.AUDIENCE_FILTERS]:
+            for item in filters[api_c.AUDIENCE_SECTION_FILTERS]:
+                if (
+                    item[api_c.AUDIENCE_FILTER_FIELD]
+                    == api_c.AUDIENCE_FILTER_CITY
+                ):
+                    city_value, state_value, _ = item.get(
+                        api_c.AUDIENCE_FILTER_VALUE
+                    ).split("|")
+                    item[api_c.AUDIENCE_FILTER_VALUE] = city_value
+
+                    filters[api_c.AUDIENCE_SECTION_FILTERS].append(
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: api_c.STATE,
+                            api_c.AUDIENCE_FILTER_TYPE: api_c.AUDIENCE_FILTERS_EQUALS,
+                            api_c.AUDIENCE_FILTER_VALUE: state_value,
+                        }
+                    )
+        return request_json
+    except KeyError:
+        logger.info("Incorrect Audience Filter Object")
+        return request_json

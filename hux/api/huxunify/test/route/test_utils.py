@@ -10,6 +10,7 @@ from huxunify.api.route.utils import (
     get_friendly_delivered_time,
     update_metrics,
     Validation,
+    convert_unique_city_filter,
 )
 
 from huxunify.api import constants as api_c
@@ -138,3 +139,39 @@ class TestRouteUtils(TestCase):
             Validation.validate_hux_id("HUX1234567890l2345")
 
         Validation.validate_hux_id("HUX123456789012345")
+
+    def test_convert_unique_city_filter(self):
+        """Tests the Conversion of Unique City"""
+        input_filter_json = {
+            "filters": [
+                {
+                    "section_aggregator": "ALL",
+                    "section_filters": [
+                        {"field": "country", "type": "equals", "value": "US"},
+                        {
+                            "field": "City",
+                            "type": "equals",
+                            "value": "Monroeville|AL|USA",
+                        },
+                    ],
+                }
+            ]
+        }
+        expected_filter_json = {
+            "filters": [
+                {
+                    "section_aggregator": "ALL",
+                    "section_filters": [
+                        {"field": "country", "type": "equals", "value": "US"},
+                        {
+                            "field": "City",
+                            "type": "equals",
+                            "value": "Monroeville",
+                        },
+                        {"field": "state", "type": "equals", "value": "AL"},
+                    ],
+                }
+            ]
+        }
+        converted_filter_json = convert_unique_city_filter(input_filter_json)
+        self.assertEqual(converted_filter_json, expected_filter_json)

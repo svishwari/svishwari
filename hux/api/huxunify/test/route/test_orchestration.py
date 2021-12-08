@@ -1383,6 +1383,21 @@ class OrchestrationRouteTest(TestCase):
         )
         self.request_mocker.start()
 
+        set_user(
+            self.database,
+            okta_id=t_c.VALID_USER_RESPONSE.get(api_c.OKTA_ID_SUB),
+            email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
+            display_name="doug smith",
+        )
+
+        # Set an audience as favorite
+        manage_user_favorites(
+            self.database,
+            okta_id=t_c.VALID_USER_RESPONSE.get(api_c.OKTA_ID_SUB),
+            component_name=api_c.AUDIENCES,
+            component_id=self.audiences[0][db_c.ID],
+        )
+
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,

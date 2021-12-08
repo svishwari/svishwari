@@ -6,8 +6,8 @@
           <breadcrumb :items="breadcrumbItems" />
         </div>
         <div class="text-subtitle-1 font-weight-regular">
-          Here are a list of audiences that you have saved and created from
-          segmenting your customer list in the Segment Playground.
+          Segment your customers into audiences based on your customer data and
+          model scores.
         </div>
       </template>
       <template #right>
@@ -187,12 +187,12 @@
                     </div>
 
                     <span
-                      v-if="item[header.value] && item[header.value].length > 2"
+                      v-if="item[header.value] && item[header.value].length > 3"
                       class="ml-1 text-body-1 black--text"
                     >
                       <tooltip>
                         <template #label-content>
-                          +{{ item[header.value].length - 2 }}
+                          +{{ item[header.value].length - 3 }}
                         </template>
                         <template #hover-content>
                           <div class="d-flex flex-column">
@@ -420,7 +420,7 @@ export default {
         {
           text: "Attributes",
           value: "filters",
-          width: "411px",
+          width: "300px",
         },
         {
           text: "Destinations",
@@ -582,18 +582,18 @@ export default {
     },
     getOverallDestinations(audienceDestinations) {
       let destinations = [...audienceDestinations]
-      if (destinations.length > 2) {
+      if (destinations.length > 3) {
         return destinations
-          .slice(0, 2)
+          .slice(0, 3)
           .sort((a, b) => a.name.localeCompare(b.name))
       }
       return destinations.sort((a, b) => a.name.localeCompare(b.name))
     },
     getExtraDestinations(audienceDestinations) {
       let destinations = [...audienceDestinations]
-      if (destinations.length > 2) {
+      if (destinations.length > 3) {
         return destinations
-          .slice(2)
+          .slice(3)
           .sort((a, b) => a.name.localeCompare(b.name))
       }
       return destinations.sort((a, b) => a.name.localeCompare(b.name))

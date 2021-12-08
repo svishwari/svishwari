@@ -2,7 +2,7 @@
   <hux-filters-drawer
     :is-toggled="localDrawer"
     :count="filterLength"
-     topcontent="220px"
+    topcontent="220px"
     @clear="clear"
     @apply="apply"
     @close="close"

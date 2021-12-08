@@ -177,13 +177,21 @@ class SetModelStatus(SwaggerView):
             "name": "body",
             "in": "body",
             "type": "object",
-            "description": "Model request body.",
-            "example": {
-                api_c.TYPE: "purchase",
-                api_c.NAME: "Propensity to Purchase",
-                api_c.ID: 3,
-                api_c.STATUS: api_c.REQUESTED,
-            },
+            "description": "Models request body.",
+            "example": [
+                {
+                    api_c.TYPE: "purchase",
+                    api_c.NAME: "Propensity to Purchase",
+                    api_c.ID: "9a44c346ba034ac8a699ae0ab3314003",
+                    api_c.STATUS: api_c.REQUESTED,
+                },
+                {
+                    api_c.TYPE: "unsubscribe",
+                    api_c.NAME: "Propensity to Unsubscribe",
+                    api_c.ID: "eb5f35e34c0047d3b9022ef330952dd1",
+                    api_c.STATUS: api_c.REQUESTED,
+                },
+            ],
         }
     ]
 
@@ -220,40 +228,41 @@ class SetModelStatus(SwaggerView):
             Tuple[dict, int]: Model Requested, HTTP status code.
         """
 
-        body = ModelRequestPOSTSchema().load(request.get_json(), unknown=True)
+        models = ModelRequestPOSTSchema().load(
+            request.get_json(), unknown=True, many=True
+        )
         database = get_db_client()
 
-        # set type of configuration as model
-        body[api_c.TYPE] = api_c.MODELS_TAG
+        for model in models:
+            # set type of configuration as model
+            model[api_c.TYPE] = api_c.MODELS_TAG
 
-        try:
-            collection_management.create_document(
-                database=database,
-                collection=db_c.CONFIGURATIONS_COLLECTION,
-                new_doc=body,
-                username=user[api_c.USER_NAME],
-            )
-        except DuplicateDocument:
-            logger.info("Model already exists %s.", body.get(db_c.NAME))
-            return {api_c.MESSAGE: api_c.DUPLICATE_NAME}, HTTPStatus.CONFLICT
+            try:
+                collection_management.create_document(
+                    database=database,
+                    collection=db_c.CONFIGURATIONS_COLLECTION,
+                    new_doc=model,
+                    username=user[api_c.USER_NAME],
+                )
+                notification_management.create_notification(
+                    database,
+                    db_c.NOTIFICATION_TYPE_SUCCESS,
+                    f'Model requested "{model[db_c.NAME]}" '
+                    f"by {user[api_c.USER_NAME]}.",
+                    api_c.MODELS_TAG,
+                    user[api_c.USER_NAME],
+                )
+                logger.info(
+                    "Successfully requested model %s.", model.get(db_c.NAME)
+                )
 
-        notification_management.create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            f'Model requested "{body[db_c.NAME]}" '
-            f"by {user[api_c.USER_NAME]}.",
-            api_c.MODELS_TAG,
-            user[api_c.USER_NAME],
-        )
-
-        logger.info("Successfully requested model %s.", body.get(db_c.NAME))
+            except DuplicateDocument:
+                logger.info("Model already exists: %s.", model.get(db_c.NAME))
 
         return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.CREATED
 
 
-@add_view_to_blueprint(
-    model_bp, f"{api_c.MODELS_ENDPOINT}", "RemoveRequestedModel"
-)
+@add_view_to_blueprint(model_bp, api_c.MODELS_ENDPOINT, "RemoveRequestedModel")
 class RemoveRequestedModel(SwaggerView):
     """Class to remove a requested model."""
 

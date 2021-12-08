@@ -666,7 +666,7 @@ class AudienceRulesLocation(SwaggerView):
         if field_type == api_c.CITY:
             data = jsonify(
                 [
-                    {x[1]: f"{x[1]}, {x[2]} USA"}
+                    {f"{x[1]}|{x[2]}|USA": f"{x[1]}, {x[2]} USA"}
                     for x in [
                         x
                         for x in stub_city_zip_data.city_zip_data
