@@ -7,7 +7,7 @@ from typing import Tuple
 
 from bson import ObjectId
 from flasgger import SwaggerView
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from marshmallow import ValidationError
 
 from huxunifylib.util.general.logging import logger
@@ -219,7 +219,7 @@ class DestinationsView(SwaggerView):
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def get(
         self, user: dict
-    ) -> Tuple[list, int]:  # pylint: disable=no-self-use
+    ) -> Tuple[Response, int]:  # pylint: disable=no-self-use
         """Retrieves all destinations.
 
         ---
@@ -230,7 +230,7 @@ class DestinationsView(SwaggerView):
             user (dict): user object.
 
         Returns:
-            Tuple[list, int]: list of destinations, HTTP status code.
+            Tuple[Response, int]: Response list of destinations, HTTP status code.
         """
         database = get_db_client()
         destinations = destination_management.get_all_delivery_platforms(
@@ -733,7 +733,7 @@ class DestinationDataExtView(SwaggerView):
     @api_error_handler()
     @validate_destination()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def get(self, destination_id: str, user: dict) -> Tuple[list, int]:
+    def get(self, destination_id: str, user: dict) -> Tuple[Response, int]:
         """Retrieves destination data extensions.
 
         ---
@@ -746,7 +746,7 @@ class DestinationDataExtView(SwaggerView):
 
 
         Returns:
-            Tuple[list, int]: List of data extensions, HTTP status code.
+            Tuple[Response, int]: Response list of data extensions, HTTP status code.
         """
 
         destination = destination_management.get_delivery_platform(
@@ -759,9 +759,10 @@ class DestinationDataExtView(SwaggerView):
                 "details missing.",
                 destination_id,
             )
-            return {
-                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
-            }, HTTPStatus.BAD_REQUEST
+            return (
+                jsonify({"message": api_c.DESTINATION_AUTHENTICATION_FAILED}),
+                HTTPStatus.BAD_REQUEST,
+            )
 
         if (
             destination[api_c.DELIVERY_PLATFORM_TYPE]
@@ -781,15 +782,19 @@ class DestinationDataExtView(SwaggerView):
                     destination_id,
                 )
             except AuthenticationFailed:
-                return {
-                    "message": api_c.DESTINATION_AUTHENTICATION_FAILED
-                }, HTTPStatus.FORBIDDEN
+                return (
+                    jsonify(
+                        {"message": api_c.DESTINATION_AUTHENTICATION_FAILED}
+                    ),
+                    HTTPStatus.FORBIDDEN,
+                )
 
         else:
             logger.error(api_c.DATA_EXTENSION_NOT_SUPPORTED)
-            return {
-                "message": api_c.DATA_EXTENSION_NOT_SUPPORTED
-            }, HTTPStatus.BAD_REQUEST
+            return (
+                jsonify({"message": api_c.DATA_EXTENSION_NOT_SUPPORTED}),
+                HTTPStatus.BAD_REQUEST,
+            )
 
         return (
             jsonify(
@@ -1098,7 +1103,7 @@ class DestinationsRequestView(SwaggerView):
     # pylint: disable=too-many-return-statements
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    def post(self, user: dict) -> Tuple[list, int]:
+    def post(self, user: dict) -> Tuple[dict, int]:
         """Requests an unsupported destination.
 
         ---
