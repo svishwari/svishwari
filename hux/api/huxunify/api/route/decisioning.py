@@ -249,7 +249,7 @@ class SetModelStatus(SwaggerView):
                     db_c.NOTIFICATION_TYPE_SUCCESS,
                     f'Model requested "{model[db_c.NAME]}" '
                     f"by {user[api_c.USER_NAME]}.",
-                    api_c.MODELS_TAG,
+                    api_c.MODELS,
                     user[api_c.USER_NAME],
                 )
                 logger.info(
@@ -332,7 +332,7 @@ class RemoveRequestedModel(SwaggerView):
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 f'Requested model "{model_id}" removed by {user[api_c.USER_NAME]}.',
-                api_c.MODELS_TAG,
+                api_c.MODELS,
                 user[api_c.USER_NAME],
             )
             logger.info("Successfully removed model %s.", model_id)
