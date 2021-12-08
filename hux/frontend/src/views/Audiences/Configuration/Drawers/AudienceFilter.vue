@@ -3,6 +3,7 @@
     :is-toggled="localDrawer"
     :count="filterLength"
     topcontent="220px"
+    data-e2e="audienceFilters"
     @clear="clear"
     @apply="apply"
     @close="close"
@@ -81,12 +82,12 @@ export default {
       attributes: [
         {
           id: 1,
-          title: "propensity_unsubscribe",
+          title: "propensity_to_unsubscribe",
           category: "models",
         },
         {
           id: 2,
-          title: "predicted_lifetime_value",
+          title: "ltv_predicted",
           category: "models",
         },
         {
@@ -126,7 +127,7 @@ export default {
         },
         {
           id: 10,
-          title: "zipcode",
+          title: "zip",
           category: "general",
         },
       ],
