@@ -76,6 +76,7 @@ from huxunify.api.route.utils import (
     Validation as validation,
     is_component_favorite,
     get_user_favorites,
+    convert_unique_city_filter,
 )
 
 # setup the orchestration blueprint
@@ -908,18 +909,20 @@ class AudiencePostView(SwaggerView):
                         f"does not exist."
                     }
                 engagement_ids.append(engagement_id)
-
+        audience_filters = convert_unique_city_filter(
+            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
+        )
         # get live audience size
         customers = get_customers_overview(
             token_response[0],
-            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)},
+            audience_filters,
         )
 
         # create the audience
         audience_doc = orchestration_management.create_audience(
             database=database,
             name=body[api_c.AUDIENCE_NAME],
-            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+            audience_filters=audience_filters.get(api_c.AUDIENCE_FILTERS),
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],
             size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
@@ -1072,12 +1075,14 @@ class AudiencePutView(SwaggerView):
                     return {
                         "message": api_c.DESTINATION_NOT_FOUND
                     }, HTTPStatus.NOT_FOUND
-
+        audience_filters = convert_unique_city_filter(
+            {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)}
+        )
         audience_doc = orchestration_management.update_audience(
             database=database,
             audience_id=ObjectId(audience_id),
             name=body.get(api_c.AUDIENCE_NAME),
-            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+            audience_filters=audience_filters.get(api_c.AUDIENCE_FILTERS),
             destination_ids=body.get(api_c.DESTINATIONS),
             user_name=user[api_c.USER_NAME],
         )
