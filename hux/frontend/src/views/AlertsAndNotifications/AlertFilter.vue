@@ -2,7 +2,7 @@
   <hux-filters-drawer
     :is-toggled="localDrawer"
     :count="filterLength"
-    :topcontent="'182px'"
+    topcontent="182px"
     :disable-clear="filterLength === 1 && selectedTimeType === 'Last week'"
     @clear="clear"
     @apply="apply"
@@ -16,7 +16,7 @@
             :key="data.id"
             v-model="selctedAlertType"
             multiple
-            color="#00a3e0"
+            color="primary lighten-6"
             class="text--base-1"
             :label="data.title"
             :value="data.title"
@@ -28,7 +28,7 @@
             :key="data.id"
             v-model="selctedCategory"
             multiple
-            color="#00a3e0"
+            color="primary lighten-6"
             :label="data.title"
             :value="data.title"
           ></v-checkbox>
@@ -39,7 +39,7 @@
               v-for="data in time"
               :key="data.id"
               :label="data.title"
-              color="#00a3e0"
+              color="primary lighten-6"
               :value="data.title"
             ></v-radio>
           </v-radio-group>
@@ -50,7 +50,7 @@
             :key="data.id"
             v-model="selctedUsers"
             multiple
-            color="#00a3e0"
+            color="primary lighten-6"
             :label="data.display_name"
             :value="data.display_name"
           ></v-checkbox>

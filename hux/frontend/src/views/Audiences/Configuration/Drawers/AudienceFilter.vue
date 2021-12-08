@@ -2,7 +2,7 @@
   <hux-filters-drawer
     :is-toggled="localDrawer"
     :count="filterLength"
-    :topcontent="'220px'"
+     topcontent="220px"
     @clear="clear"
     @apply="apply"
     @close="close"
@@ -11,14 +11,13 @@
       <hux-filter-panels :expanded="selectedAttributes.length > 0 ? [0] : []">
         <v-checkbox
           v-model="selectedFavourite"
-          color="#00a3e0"
-          class="text--base-1 px-5 withoutExpansion"
+          color="primary lighten-6"
+          class="text--base-1 px-5 withoutExpansion checkboxFavorite"
           label="My favorites only"
-          :style="{ 'border-bottom': '1px solid #E2EAEC' }"
         ></v-checkbox>
         <v-checkbox
           v-model="selectedAudienceWorkedWith"
-          color="#00a3e0"
+          color="primary lighten-6"
           class="text--base-1 px-5 withoutExpansion"
           label="Audiences I’ve worked on"
         ></v-checkbox>
@@ -29,7 +28,7 @@
               v-if="data.category == 'models'"
               v-model="selectedAttributes"
               multiple
-              color="#00a3e0"
+              color="primary lighten-6"
               class="text--base-1"
               :label="formatText(data.title)"
               :value="data.title"
@@ -44,7 +43,7 @@
               v-if="data.category == 'general'"
               v-model="selectedAttributes"
               multiple
-              color="#00a3e0"
+              color="primary lighten-6"
               class="text--base-1"
               :label="formatText(data.title)"
               :value="data.title"
@@ -222,6 +221,9 @@ export default {
   line-height: 22px;
   letter-spacing: 0;
   color: var(--v-black-base);
+}
+.checkboxFavorite {
+  border-bottom: 1px solid var(--v-black-lighten2);
 }
 .filter-body {
   ::v-deep .v-expansion-panel-content__wrap {
