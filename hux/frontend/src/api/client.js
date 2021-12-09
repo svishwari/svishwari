@@ -264,6 +264,10 @@ client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
 }
 
+client["audiences"].createAndDeliver = (data) => {
+  return http.post("/audiences?deliver=true", data)
+}
+
 client["audiences"].getAudiences = (data) => {
   let URLData = []
   let newURLFormat

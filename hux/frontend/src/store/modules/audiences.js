@@ -252,7 +252,13 @@ const actions = {
 
   async add({ commit }, audience) {
     try {
-      const response = await api.audiences.create(audience)
+      let response
+      if (audience.deliver) {
+        delete audience.deliver
+        response = await api.audiences.createAndDeliver(audience)
+      } else {
+        response = await api.audiences.create(audience)
+      }
       commit("SET_ONE", response.data)
       return response.data
     } catch (error) {

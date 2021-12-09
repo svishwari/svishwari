@@ -587,6 +587,9 @@ export default {
       }
       let response = {}
       if (!this.isEdit) {
+        if (this.selectedDestinations.length > 0) {
+          payload.deliver = true
+        }
         response = await this.saveAudience(payload)
       } else {
         payload["engagement_ids"] = payload.engagements
