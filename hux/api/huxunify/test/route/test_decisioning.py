@@ -6,10 +6,7 @@ from unittest import TestCase, mock
 import mongomock
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.collection_management import (
-    create_document,
-    get_document,
-)
+from huxunifylib.database.collection_management import create_document
 from hypothesis import given, settings, strategies as st
 
 import requests_mock
@@ -172,13 +169,12 @@ class DecisioningTests(TestCase):
             }
         ]
 
-        for status_code in [HTTPStatus.OK, HTTPStatus.CONFLICT]:
-            response = self.test_client.post(
-                f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
-                data=json.dumps(status_request),
-                headers=t_c.STANDARD_HEADERS,
-            )
-            self.assertEqual(status_code, response.status_code)
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
+            data=json.dumps(status_request),
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_success_request_model_duplicate_name(self):
         """Test requesting a model."""
@@ -239,15 +235,6 @@ class DecisioningTests(TestCase):
         self.assertEqual(
             {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, response.json
         )
-
-        updated_doc = get_document(
-            database=self.database,
-            collection=db_c.CONFIGURATIONS_COLLECTION,
-            query_filter={db_c.ID: doc[db_c.ID]},
-            include_deleted=True,
-        )
-
-        self.assertTrue(updated_doc[db_c.DELETED])
 
     @given(model_id=st.integers())
     def test_remove_model_failure_invalid_model_id(self, model_id: int):
