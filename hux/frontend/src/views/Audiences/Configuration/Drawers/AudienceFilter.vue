@@ -25,30 +25,30 @@
         ></v-checkbox>
         <hux-filter-panel title="Attributes" :count="selectedAttributes.length">
           <div class="text-body-1 black--text text--lighten-4 pb-2">MODELS</div>
-          <div v-for="data in attributes" :key="data.id">
+          <div v-for="data in filterOptions" :key="data.key">
             <v-checkbox
-              v-if="data.category == 'models'"
+              v-if="data.category == 'model_scores'"
               v-model="selectedAttributes"
               multiple
               color="primary lighten-6"
               class="text--base-1"
-              :label="formatText(data.title)"
-              :value="data.title"
+              :label="data.name"
+              :value="data.key"
             ></v-checkbox>
           </div>
           <br />
           <div class="text-body-1 black--text text--lighten-4 pb-2">
             GENERAL
           </div>
-          <div v-for="data in attributes" :key="data.id">
+          <div v-for="data in filterOptions" :key="data.key">
             <v-checkbox
               v-if="data.category == 'general'"
               v-model="selectedAttributes"
               multiple
               color="primary lighten-6"
               class="text--base-1"
-              :label="formatText(data.title)"
-              :value="data.title"
+              :label="data.name"
+              :value="data.key"
             ></v-checkbox>
           </div>
         </hux-filter-panel>
@@ -81,62 +81,14 @@ export default {
       required: false,
       default: "auto",
     },
+    filterOptions: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
       localDrawer: this.value,
-      attributes: [
-        {
-          id: 1,
-          title: "propensity_to_unsubscribe",
-          category: "models",
-        },
-        {
-          id: 2,
-          title: "ltv_predicted",
-          category: "models",
-        },
-        {
-          id: 3,
-          title: "propensity_to_purchase",
-          category: "models",
-        },
-        {
-          id: 4,
-          title: "age",
-          category: "general",
-        },
-        {
-          id: 5,
-          title: "email",
-          category: "general",
-        },
-        {
-          id: 6,
-          title: "gender",
-          category: "general",
-        },
-        {
-          id: 7,
-          title: "country",
-          category: "general",
-        },
-        {
-          id: 8,
-          title: "state",
-          category: "general",
-        },
-        {
-          id: 9,
-          title: "city",
-          category: "general",
-        },
-        {
-          id: 10,
-          title: "zip",
-          category: "general",
-        },
-      ],
       selectedAttributes: [],
       selectedFavourite: false,
       selectedAudienceWorkedWith: false,

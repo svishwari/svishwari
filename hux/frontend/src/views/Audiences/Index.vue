@@ -316,6 +316,7 @@
         <audience-filter
           v-model="isFilterToggled"
           view-height="calc(100vh - 180px)"
+          :filter-options="attributeOptions()"
           @onSectionAction="applyFilter"
         />
       </div>
@@ -500,7 +501,7 @@ export default {
           audience.filters.forEach((item) => {
             item.section_filters.forEach((obj) => {
               let nameObj = this.attributeOptions().find(
-                (item) => item.key == obj.field
+                (item) => item.key == obj.field.toLowerCase()
               )
               if (nameObj) {
                 filterTagsObj[audience.name].add(nameObj.name)
@@ -532,25 +533,27 @@ export default {
 
     attributeOptions() {
       const options = []
-      Object.values(this.ruleAttributes.rule_attributes).forEach((attr) => {
-        Object.keys(attr).forEach((optionKey) => {
+      Object.entries(this.ruleAttributes.rule_attributes).forEach((attr) => {
+        Object.keys(attr[1]).forEach((optionKey) => {
           if (
-            Object.values(attr[optionKey])
+            Object.values(attr[1][optionKey])
               .map((o) => typeof o === "object" && !Array.isArray(o))
               .includes(Boolean(true))
           ) {
-            Object.keys(attr[optionKey]).forEach((att) => {
-              if (typeof attr[optionKey][att] === "object") {
+            Object.keys(attr[1][optionKey]).forEach((att) => {
+              if (typeof attr[1][optionKey][att] === "object") {
                 options.push({
                   key: att,
-                  name: attr[optionKey][att]["name"],
+                  name: attr[1][optionKey][att]["name"],
+                  category: attr[0],
                 })
               }
             })
           } else {
             options.push({
               key: optionKey,
-              name: attr[optionKey]["name"],
+              name: attr[1][optionKey]["name"],
+              category: attr[0],
             })
           }
         })
