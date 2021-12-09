@@ -391,12 +391,12 @@ def fill_empty_customer_events(
                 api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 0,
                 api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
                     api_c.VIEWED_CHECKOUT_EVENT: 0,
-                    api_c.ABANDONED_CART_EVENT: 0,
-                    api_c.TRAIT: 0,
-                    api_c.SALE: 0,
-                    api_c.VIEW_CONTENT: 0,
-                    api_c.PRODUCT_SEARCH: 0,
-                    api_c.PURCHASE: 0,
+                    api_c.ABANDONED_CARTS: 0,
+                    api_c.TRAITS_ANALYZED: 0,
+                    api_c.SALES_MADE: 0,
+                    api_c.CONTENT_VIEWED: 0,
+                    api_c.PRODUCTS_SEARCHED: 0,
+                    api_c.PURCHASES_MADE: 0,
                 },
             }
         )
