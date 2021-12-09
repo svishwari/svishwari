@@ -155,7 +155,6 @@ export default {
       let height = this.chartDimensions.height
 
       let xAxisMinMaxValue = d3Array.extent(this.value, (d) => d.xAxisValue)
-      let yAxisMinMaxValue = d3Array.extent(this.value, (d) => d.yAxisValue)
 
       // generates an svg and appends to the dom
       let svg = d3Select
