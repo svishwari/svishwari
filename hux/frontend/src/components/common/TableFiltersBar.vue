@@ -4,8 +4,10 @@
       <div class="d-flex justify-space-between pb-2">
         <v-checkbox
           color="#00a3e0"
-          class="text--base-1 px-5 withoutExpansion mt-0 pt-0 pl-0"
+          v-model="showMatchRate"
+          class="text-h5 px-5 withoutExpansion mt-0 pt-0 pl-0"
           label="Show match rate"
+          @click="handleCheckboxValueChange()"
         ></v-checkbox>
         <div class="reset-filter" @click="resetAll()">Clear</div>
       </div>
@@ -92,6 +94,12 @@ export default {
     },
   },
 
+  data() {
+    return {
+      showMatchRate: true,
+    }
+  },
+
   methods: {
     removeValue(filterIndex, valueIndex) {
       this.filters[filterIndex].value.splice(valueIndex, 1)
@@ -110,6 +118,10 @@ export default {
         this.filters[filterIndex].onSelect(this.filters[filterIndex].value)
       }
     },
+
+    handleCheckboxValueChange() {
+       this.$emit("onCheckboxChange", this.showMatchRate)
+    }
   },
 }
 </script>
@@ -123,6 +135,12 @@ export default {
     @extend .cursor-pointer;
     color: var(--v-primary-base);
     min-width: fit-content;
+  }
+
+  ::v-deep .v-input__control {
+    .v-label {
+      color: var(--v-black-base);
+    }
   }
 }
 </style>
