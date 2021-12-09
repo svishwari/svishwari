@@ -15,6 +15,7 @@ class Favorites(Schema):
 
     campaigns = List(Str(), default=[])
     audiences = List(Str(), default=[])
+    lookalikes = List(Str(), default=[], attribute=api_c.LOOKALIKE)
     destinations = List(Str(), default=[])
     engagements = List(Str(), default=[])
 
