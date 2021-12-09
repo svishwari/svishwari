@@ -818,7 +818,7 @@ class AudiencePostView(SwaggerView):
         {
             "name": api_c.DELIVER,
             "description": "Create and Deliver",
-            "in": "path",
+            "in": "query",
             "type": "boolean",
             "required": "false",
             "default": "false",
