@@ -631,6 +631,7 @@ INVALID_AUTH = "You are not authorized to visit this page."
 INVALID_BATCH_PARAMS = "Invalid Batch Number or Batch Size"
 
 AUDIENCE_NOT_FOUND = "Audience not found."
+SOURCE_AUDIENCE_NOT_FOUND = "Source Audience not found."
 DESTINATION_NOT_FOUND = "Destination not found."
 NOTIFICATION_NOT_FOUND = "Notification not found."
 ENGAGEMENT_NOT_FOUND = "Engagement not found."

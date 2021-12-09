@@ -789,12 +789,16 @@ class AudienceInsightsGetView(SwaggerView):
                 database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
             )
 
-        audience_insights = asyncio.run(
-            get_audience_insights_async(
-                token_response[0],
-                audience[api_c.AUDIENCE_FILTERS],
+        audience_insights = {}
+
+        # check if the source audience exists.
+        if audience:
+            audience_insights = asyncio.run(
+                get_audience_insights_async(
+                    token_response[0],
+                    audience[api_c.AUDIENCE_FILTERS],
+                )
             )
-        )
 
         return (
             AudienceInsightsGetSchema(unknown=INCLUDE).dump(audience_insights),
