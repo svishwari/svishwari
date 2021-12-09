@@ -59,7 +59,7 @@
             v-if="isDataExists"
             :columns="columnDefs"
             :data-items="audienceList"
-            view-height="calc(100vh - 210px)"
+            view-height="calc(100vh - 253px)"
             sort-column="update_time"
             sort-desc="false"
             data-e2e="audience-table"
@@ -309,6 +309,7 @@
       <div class="ml-auto">
         <audience-filter
           v-model="isFilterToggled"
+          view-height="calc(100vh - 180px)"
           @onSectionAction="applyFilter"
         />
       </div>
