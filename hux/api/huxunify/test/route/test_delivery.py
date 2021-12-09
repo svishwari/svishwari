@@ -671,7 +671,8 @@ class TestDeliveryRoutes(TestCase):
         )
 
     def test_delete_delivery_schedule(self):
-        """Test setting a delivery schedule for an engaged audience destination"""
+        """Test setting a delivery schedule for an engaged audience
+        destination."""
 
         self.request_mocker.stop()
         self.request_mocker.get(
@@ -707,3 +708,31 @@ class TestDeliveryRoutes(TestCase):
                 for d in x[db_c.DESTINATIONS]
             )
         )
+
+    def test_deliver_audience_without_an_engagement_to_a_destination(self):
+        """Test delivery of audience without an engagement to a destination."""
+
+        # mock AWS batch connector register job function
+        mock.patch.object(
+            AWSBatchConnector, "register_job", return_value=t_c.BATCH_RESPONSE
+        ).start()
+
+        # mock AWS batch connector submit job function
+        mock.patch.object(
+            AWSBatchConnector, "submit_job", return_value=t_c.BATCH_RESPONSE
+        ).start()
+
+        audience_id = self.audiences[0][db_c.ID]
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
+            f"{api_c.DELIVER}",
+            json={
+                api_c.DESTINATIONS: [
+                    {db_c.OBJECT_ID: str(self.destinations[0][db_c.ID])}
+                ]
+            },
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)

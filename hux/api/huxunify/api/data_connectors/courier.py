@@ -15,6 +15,8 @@ from huxunifylib.database.engagement_management import (
     add_delivery_job,
     check_active_engagement_deliveries,
 )
+from huxunifylib.database.notification_management import create_notification
+from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.connectors import AWSBatchConnector
 from huxunifylib.util.general.const import (
     MongoDBCredentials,
@@ -325,20 +327,21 @@ class DestinationBatchJob:
         self.result = status
 
 
+# pylint: disable=too-many-locals
 def get_destination_config(
     database: MongoClient,
-    engagement_id: ObjectId,
     audience_id: ObjectId,
     destination: dict,
+    engagement_id: ObjectId = None,
     audience_router_batch_size: int = 5000,
 ) -> DestinationBatchJob:
     """Get the configuration for the aws batch config of a destination.
 
     Args:
         database (MongoClient): The mongo database client.
-        engagement_id (ObjectId): The ID of the engagement.
         audience_id (ObjectId): The ID of the audience.
         destination (dict): Destination object.
+        engagement_id (ObjectId): The ID of the engagement.
         audience_router_batch_size (int): Audience router AWS batch size.
 
     Returns:
@@ -348,9 +351,15 @@ def get_destination_config(
         FailedDestinationDependencyError: Failed to connect to a destination.
     """
 
+    destination_id = (
+        destination[db_c.OBJECT_ID]
+        if db_c.OBJECT_ID in destination
+        else destination[db_c.ID]
+    )
+
     delivery_platform = get_delivery_platform(
         database,
-        destination[db_c.OBJECT_ID],
+        destination_id,
     )
 
     # validate destination status first.
@@ -368,7 +377,7 @@ def get_destination_config(
     audience_delivery_job = set_delivery_job(
         database,
         audience_id,
-        destination[db_c.OBJECT_ID],
+        destination_id,
         [],
         engagement_id,
         destination.get(db_c.DELIVERY_PLATFORM_CONFIG),
@@ -387,13 +396,14 @@ def get_destination_config(
 
     # update the engagement latest delivery job
     try:
-        add_delivery_job(
-            database,
-            engagement_id,
-            audience_id,
-            destination[db_c.OBJECT_ID],
-            audience_delivery_job[db_c.ID],
-        )
+        if engagement_id:
+            add_delivery_job(
+                database,
+                engagement_id,
+                audience_id,
+                destination_id,
+                audience_delivery_job[db_c.ID],
+            )
     except TypeError as exc:
         # mongomock does not support array_filters
         # but pymongo 3.6, MongoDB, and DocumentDB do.
@@ -494,6 +504,81 @@ def toggle_event_driven_routers(
     # TODO - hookup after ORCH-401 deploys the FLDR and CPDR to a cloud watch event.
     # # toggle the routers
     # _ = [toggle_cloud_watch_rule(x, state) for x in routers]
+
+
+async def deliver_audience_to_destination(
+    database: MongoClient,
+    audience_id: ObjectId,
+    destination_id: ObjectId,
+    user_name: str,
+):
+    """Async function that couriers delivery jobs.
+
+    Args:
+        database (MongoClient): The mongo database client.
+        audience_id (ObjectId): Audience ID.
+        destination_id (ObjectId): Destination ID.
+        user_name (str): Username.
+    """
+
+    # get audience object for delivering
+    audience = get_audience(database, audience_id)
+    if not audience:
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_CRITICAL,
+            (
+                f'Failed to deliver audience ID "{audience_id}" '
+                f"because the audience does not exist."
+            ),
+            api_c.DELIVERY_TAG,
+            user_name,
+        )
+        return
+
+    # get destination object for delivering
+    destination = get_delivery_platform(database, destination_id)
+    if not destination:
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_CRITICAL,
+            (
+                f'Failed to delivered audience ID "{audience_id}" '
+                f'to destination ID "{destination_id}"'
+                f"because the destination does not exist."
+            ),
+            api_c.DELIVERY_TAG,
+            user_name,
+        )
+        return
+
+    delivery_job_ids = []
+
+    batch_destination = get_destination_config(
+        database=database,
+        audience_id=audience_id,
+        destination=destination,
+    )
+    batch_destination.register()
+    batch_destination.submit()
+    delivery_job_ids.append(str(batch_destination.audience_delivery_job_id))
+
+    logger.info(
+        "Successfully created delivery jobs %s.",
+        ",".join(delivery_job_ids),
+    )
+
+    # create notification
+    create_notification(
+        database,
+        db_c.NOTIFICATION_TYPE_SUCCESS,
+        (
+            f'Successfully delivered audience "{audience[db_c.NAME]}" '
+            f'to destination {destination[db_c.NAME]}".'
+        ),
+        api_c.DELIVERY_TAG,
+        user_name,
+    )
 
 
 if __name__ == "__main__":
