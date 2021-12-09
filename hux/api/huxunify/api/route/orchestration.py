@@ -58,6 +58,10 @@ from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
 )
+from huxunify.api.data_connectors.courier import (
+    get_destination_config,
+    get_audience_destination_pairs,
+)
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
     FAILED_DEPENDENCY_424_RESPONSE,
@@ -816,6 +820,14 @@ class AudiencePostView(SwaggerView):
 
     parameters = [
         {
+            "name": api_c.DELIVER,
+            "description": "Create and Deliver",
+            "in": "query",
+            "type": "boolean",
+            "required": "false",
+            "default": "false",
+        },
+        {
             "name": "body",
             "in": "body",
             "type": "object",
@@ -984,6 +996,28 @@ class AudiencePostView(SwaggerView):
                 api_c.ORCHESTRATION_TAG,
                 user[api_c.USER_NAME],
             )
+
+        # deliver audience
+        if request.args.get(api_c.DELIVER):
+            # TODO: make this OOP between routes.
+
+            # get engagements
+            engagements = engagement_management.get_engagements_by_audience(
+                database, audience_doc[db_c.ID]
+            )
+
+            # submit jobs for the audience/destination pairs
+            for engagement in engagements:
+                for pair in get_audience_destination_pairs(
+                    engagement[api_c.AUDIENCES]
+                ):
+                    if pair[0] != audience_doc[db_c.ID]:
+                        continue
+                    batch_destination = get_destination_config(
+                        database, engagement[db_c.ID], *pair
+                    )
+                    batch_destination.register()
+                    batch_destination.submit()
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.CREATED
 
