@@ -6,28 +6,25 @@
           <breadcrumb :items="breadcrumbItems" :add-box-shadow="true" />
         </template>
         <template #right>
-          <v-menu v-model="modalOptions" close-on-click offset-y left>
-            <template #activator>
+          <tooltip>
+            <template #label-content>
               <span data-e2e="model-dashboard-options">
                 <icon
                   type="main_screen"
                   :size="40"
                   class="cursor-pointer mr-7"
                   color="black-darken4"
-                  @click.native="modalOptions = !modalOptions"
+                  data-e2e="version-history-button"
+                  @click.native="viewVersionHistory()"
                 />
               </span>
             </template>
-            <template #default>
-              <div
-                class="px-4 py-2 white caption cursor-pointer"
-                data-e2e="version-history-button"
-                @click="viewVersionHistory()"
-              >
+            <template #hover-content>
+              <div class="px-4 py-2 white caption cursor-pointer">
                 Version history
               </div>
             </template>
-          </v-menu>
+          </tooltip>
         </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -79,7 +76,7 @@
                 :min-width="122"
                 :height="80"
                 :title="metric"
-                subtitle="2"
+                subtitle="RMSE"
                 :high-level="true"
                 :interactable="false"
                 :title-above="true"
@@ -107,6 +104,7 @@
                 :title-above="true"
               >
                 <template #title>
+                  {{ key }} {{ metric }}
                   <tooltip>
                     <template #label-content>
                       {{ metric | Numeric }}
