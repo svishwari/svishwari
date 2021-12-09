@@ -93,6 +93,7 @@
                     v-model="condition.text"
                     :options="listOptions(condition)"
                     @change="triggerSizing(condition)"
+                    :search="autoSearch"
                   />
                   <div
                     v-if="condition.attribute && !isTextORSelect(condition)"
@@ -322,6 +323,9 @@ export default {
         ? condition.attribute.type === "text" ||
             condition.attribute.type === "list"
         : false
+    },
+    autoSearch(val){
+      console.log("value",val)
     },
     /**
      * This attributeOptions is transforming the API attributeRules into the Options Array

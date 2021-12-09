@@ -7,6 +7,7 @@
     append-icon="mdi-chevron-down"
     solo
     :height="40"
+    :search-input.sync="search"
   ></v-autocomplete>
 </template>
 
@@ -25,7 +26,30 @@ export default defineComponent({
       required: true,
       default: () => [],
     },
+    search: {
+      type: Function,
+      required: false,
+      default: () => [],
+    },
   },
+  data() {
+    return {
+      search: null,
+    }
+  },
+  watch: {
+    search: {
+      handler: function (val, oldVal) {
+        console.log("value", val)
+      },
+      deep: true,
+    },
+  },
+  // methods: {
+  //   inputchange() {
+  //     console.log("heloooooooooooooooo", this.value)
+  //   },
+  // },
   emits: ["input", "change"],
   setup(props, { emit }) {
     const localValue = computed({
