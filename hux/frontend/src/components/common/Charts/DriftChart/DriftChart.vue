@@ -155,7 +155,6 @@ export default {
       let height = this.chartDimensions.height
 
       let xAxisMinMaxValue = d3Array.extent(this.value, (d) => d.xAxisValue)
-      let yAxisMinMaxValue = d3Array.extent(this.value, (d) => d.yAxisValue)
 
       // generates an svg and appends to the dom
       let svg = d3Select
@@ -174,7 +173,7 @@ export default {
       // function to generate coordinates for y-axis
       let yCoordinateFunction = d3Scale
         .scaleLinear()
-        .domain(yAxisMinMaxValue)
+        .domain([0, 1])
         .range([height - this.margin.bottom, this.margin.top])
         .nice(this.yAxisMaxTicks)
 

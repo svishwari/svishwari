@@ -1089,7 +1089,16 @@ VIEWED_CHECKOUT_EVENT = "viewed_checkout"
 VIEWED_SALE_ITEM_EVENT = "viewed_sale_item"
 TRAIT_COMPUTED_EVENT = "trait_computed"
 ITEM_PURCHASED_EVENT = "item_purchased"
-
+TRAIT = "trait"
+SALE = "sale"
+VIEW_CONTENT = "view_content"
+PRODUCT_SEARCH = "product_search"
+ABANDONED_CARTS = "abandoned_carts"
+TRAITS_ANALYZED = "traits_analysed"
+SALES_MADE = "sales_made"
+CONTENT_VIEWED = "content_viewed"
+PRODUCTS_SEARCHED = "products_searched"
+PURCHASES_MADE = "purchases_made"
 # FILTERING
 REDACTED = "++REDACTED++"
 CUSTOMER_PROFILE_REDACTED_FIELDS = [
