@@ -290,10 +290,18 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
   document.title = pageTitle(to.meta.title)
 
+  // TODO: need to perform RCA for the actual problem
+  // THIS IS A TEMPORARY FIX
   let app = document.getElementById("app")
-  while (app.childNodes.length > 1) {
-    app.removeChild(app.childNodes[app.childNodes.length - 1])
-  }
+  let menuNodes = []
+  app.childNodes.forEach((each) => {
+    if (each.getAttribute("class").includes("v-menu__content")) {
+      menuNodes.push(each)
+    }
+  })
+  menuNodes.forEach((each) => {
+    app.removeChild(each)
+  })
 
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
