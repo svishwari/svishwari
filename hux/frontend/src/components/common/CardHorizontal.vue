@@ -13,7 +13,7 @@
   >
     <div v-if="icon || title" class="d-flex align-center">
       <logo :type="icon" />
-      <div class="pl-2 body-1">
+      <div class="pl-2 black--text body-1">
         {{ title }}
       </div>
     </div>
@@ -40,7 +40,13 @@
               : '',
           ]"
         >
-          <span v-if="requestedButton" class="text-button">
+          <span
+            v-if="requestedButton"
+            class="text-button"
+            :class="[
+              isModelRequested || isAdded ? '' : 'black--text text--lighten-4',
+            ]"
+          >
             {{ isModelRequested || isAdded ? "Requested" : "Request" }}
           </span>
           <span v-else class="text-button"
