@@ -98,6 +98,7 @@
                     has-favorite
                     :is-favorite="isUserFavorite(item, 'audiences')"
                     class="text-body-1"
+                    :show-star="!item.is_lookalike"
                     @actionFavorite="handleActionFavorite(item, 'audiences')"
                   />
                 </div>
@@ -427,7 +428,7 @@ export default {
         {
           text: "Attributes",
           value: "filters",
-          width: "250px",
+          width: "362px",
         },
         {
           text: "Destinations",
@@ -472,6 +473,7 @@ export default {
     ...mapGetters({
       rowData: "audiences/list",
       userFavorites: "users/favorites",
+      ruleAttributes: "audiences/audiencesRules",
     }),
     audienceList() {
       let audienceValue = JSON.parse(JSON.stringify(this.rowData))
@@ -497,7 +499,12 @@ export default {
           filterTagsObj[audience.name] = new Set()
           audience.filters.forEach((item) => {
             item.section_filters.forEach((obj) => {
-              filterTagsObj[audience.name].add(obj.field)
+              let nameObj = this.attributeOptions().find(
+                (item) => item.key == obj.field
+              )
+              if (nameObj) {
+                filterTagsObj[audience.name].add(nameObj.name)
+              }
             })
           })
         }
@@ -509,6 +516,7 @@ export default {
     this.loading = true
     try {
       await this.getAllAudiences({})
+      await this.getAudiencesRules()
     } finally {
       this.loading = false
     }
@@ -519,7 +527,36 @@ export default {
       markFavorite: "users/markFavorite",
       clearFavorite: "users/clearFavorite",
       deleteAudience: "audiences/remove",
+      getAudiencesRules: "audiences/fetchConstants",
     }),
+
+    attributeOptions() {
+      const options = []
+      Object.values(this.ruleAttributes.rule_attributes).forEach((attr) => {
+        Object.keys(attr).forEach((optionKey) => {
+          if (
+            Object.values(attr[optionKey])
+              .map((o) => typeof o === "object" && !Array.isArray(o))
+              .includes(Boolean(true))
+          ) {
+            Object.keys(attr[optionKey]).forEach((att) => {
+              if (typeof attr[optionKey][att] === "object") {
+                options.push({
+                  key: att,
+                  name: attr[optionKey][att]["name"],
+                })
+              }
+            })
+          } else {
+            options.push({
+              key: optionKey,
+              name: attr[optionKey]["name"],
+            })
+          }
+        })
+      })
+      return options
+    },
 
     isUserFavorite(entity, type) {
       return (
@@ -550,7 +587,7 @@ export default {
       let actionItems = [
         {
           title: isFavorite ? "Unfavorite" : "Favorite",
-          isDisabled: false,
+          isDisabled: audience.is_lookalike,
           onClick: () => {
             this.handleActionFavorite(audience, "audiences")
           },

@@ -22,7 +22,7 @@
       <div class="d-flex">
         <span class="action-icon font-weight-light menu-activator">
           <v-btn
-            v-if="hasFavorite"
+            v-if="hasFavorite && showStar"
             icon
             height="22"
             width="22"
@@ -155,6 +155,11 @@ export default Vue.extend({
       type: Boolean,
       required: false,
       default: false,
+    },
+    showStar: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
 
