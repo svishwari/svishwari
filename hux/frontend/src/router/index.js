@@ -290,6 +290,11 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
   document.title = pageTitle(to.meta.title)
 
+  let app = document.getElementById("app")
+  while (app.childNodes.length > 1) {
+    app.removeChild(app.childNodes[app.childNodes.length - 1])
+  }
+
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
   // TODO: HUS-1253
