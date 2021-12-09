@@ -295,12 +295,12 @@ router.beforeEach(async (to, from, next) => {
   let app = document.getElementById("app")
   let menuNodes = []
   app.childNodes.forEach((each) => {
-    if (each.getAttribute("class").includes("v-menu__content")) {
+    if (each.getAttribute("class").includes("menuable__content__active")) {
       menuNodes.push(each)
     }
   })
   menuNodes.forEach((each) => {
-    app.removeChild(each)
+    each.style.display = "none"
   })
 
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
