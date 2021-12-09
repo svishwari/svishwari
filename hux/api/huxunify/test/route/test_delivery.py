@@ -434,24 +434,6 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
-    def test_deliver_audience_for_all_engagements_valid_audience_id(self):
-        """Test delivery of audience for all engagements with valid
-        audience ID."""
-
-        audience_id = self.audiences[0][db_c.ID]
-
-        response = self.app.post(
-            f"{t_c.BASE_ENDPOINT}/{api_c.AUDIENCES}/{audience_id}/{api_c.DELIVER}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        valid_response = {
-            "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
-        }
-
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(valid_response, response.json)
-
     def test_deliver_audience_for_all_engagements_invalid_audience_id(self):
         """Test delivery of audience for all engagements with invalid
         audience ID."""
@@ -736,3 +718,10 @@ class TestDeliveryRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertEqual(
+            {
+                api_c.MESSAGE: f"Successfully created delivery job(s) for "
+                f"audience ID {audience_id}"
+            },
+            response.json,
+        )

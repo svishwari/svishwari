@@ -479,7 +479,7 @@ class AudienceDeliverView(SwaggerView):
     @validate_delivery_params
     @requires_access_levels(api_c.USER_ROLE_ALL)
     def post(self, audience_id: ObjectId, user: dict) -> Tuple[dict, int]:
-        """Delivers an audience for all the engagements it is part of.
+        """Delivers an audience to a list of destination(s).
 
         ---
         security:
