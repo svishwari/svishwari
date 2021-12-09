@@ -350,7 +350,8 @@ def manage_user_favorites(
                     database, db_c.LOOKALIKE_AUDIENCE_COLLECTION, id_filter
                 ):
                     component_name = db_c.LOOKALIKE
-                raise de.InvalidID(component_id)
+                else:
+                    raise de.InvalidID(component_id)
         else:
             if not delete_flag and not get_document(
                 database, component_collection[component_name], id_filter
