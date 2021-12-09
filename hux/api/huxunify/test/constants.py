@@ -361,7 +361,7 @@ MOCKED_MODEL_RESPONSE = [
         api_c.LOOKBACK_WINDOW: 365,
         api_c.PREDICTION_WINDOW: 365,
         api_c.FULCRUM_DATE: parser.isoparse("2021-06-22T11:33:19.658Z"),
-        api_c.TYPE: "test",
+        api_c.TYPE: "other",
     },
 ]
 
