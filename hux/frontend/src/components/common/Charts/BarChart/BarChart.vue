@@ -93,7 +93,10 @@ export default {
         })
       })
 
-      let maxEvents = d3Array.max(this.customerEventData, (d) => d.total_event_count) 
+      let maxEvents = d3Array.max(
+        this.customerEventData,
+        (d) => d.total_event_count
+      )
       let maxYticks = maxEvents < 5 ? maxEvents : 5
 
       let xScale = d3Scale
@@ -156,7 +159,12 @@ export default {
         .append("g")
         .classed("yAxis-main", true)
         .attr("transform", "translate(0, 0)")
-        .call(d3Axis.axisLeft(yScale).ticks(maxYticks).tickFormat(applyNumericFilter))
+        .call(
+          d3Axis
+            .axisLeft(yScale)
+            .ticks(maxYticks)
+            .tickFormat(applyNumericFilter)
+        )
         .attr("stroke-width", "1")
         .attr("stroke-opacity", "1")
         .style("font-size", "14px")
@@ -165,7 +173,9 @@ export default {
         .append("g")
         .classed("yAxis-alternate", true)
         .attr("transform", "translate(0, 0)")
-        .call(d3Axis.axisLeft(yScale).tickSize(-w).ticks(maxYticks).tickFormat(""))
+        .call(
+          d3Axis.axisLeft(yScale).tickSize(-w).ticks(maxYticks).tickFormat("")
+        )
         .attr("stroke-width", "0.5")
         .attr("stroke-opacity", "1")
         .style("font-size", "12px")
