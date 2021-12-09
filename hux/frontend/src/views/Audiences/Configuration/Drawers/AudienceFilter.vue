@@ -2,7 +2,8 @@
   <hux-filters-drawer
     :is-toggled="localDrawer"
     :count="filterLength"
-    topcontent="220px"
+    content-height="300px"
+    :style="{ height: viewHeight }"
     data-e2e="audienceFilters"
     @clear="clear"
     @apply="apply"
@@ -74,6 +75,11 @@ export default {
       type: Boolean,
       required: true,
       default: false,
+    },
+    viewHeight: {
+      type: String,
+      required: false,
+      default: "auto",
     },
   },
   data() {
