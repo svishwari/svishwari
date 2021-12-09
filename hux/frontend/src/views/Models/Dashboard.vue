@@ -104,7 +104,6 @@
                 :title-above="true"
               >
                 <template #title>
-                  {{ key }} {{ metric }}
                   <tooltip>
                     <template #label-content>
                       {{ metric | Numeric }}
