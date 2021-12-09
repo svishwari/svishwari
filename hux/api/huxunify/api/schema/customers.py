@@ -377,13 +377,13 @@ class CustomerEventCountSchema(Schema):
 
         ordered = True
 
-    abandoned_cart = Integer(required=True, example=1)
-    viewed_cart = Integer(required=True, example=1)
-    customer_login = Integer(required=True, example=1)
     viewed_checkout = Integer(required=True, example=1)
-    viewed_sale_item = Integer(required=True, example=1)
-    item_purchased = Integer(required=True, example=1)
-    trait_computed = Integer(required=True, example=1)
+    abandoned_cart = Integer(required=True, example=1)
+    trait = Integer(required=True, example=1)
+    sale = Integer(required=True, example=1)
+    view_content = Integer(required=True, example=1)
+    product_search = Integer(required=True, example=1)
+    purchase = Integer(required=True, example=1)
 
 
 class CustomerEventsSchema(Schema):

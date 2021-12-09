@@ -390,13 +390,13 @@ def fill_empty_customer_events(
                 api_c.DATE: curr_date,
                 api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 0,
                 api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
-                    api_c.ABANDONED_CART_EVENT: 0,
-                    api_c.CUSTOMER_LOGIN_EVENT: 0,
-                    api_c.VIEWED_CART_EVENT: 0,
                     api_c.VIEWED_CHECKOUT_EVENT: 0,
-                    api_c.VIEWED_SALE_ITEM_EVENT: 0,
-                    api_c.ITEM_PURCHASED_EVENT: 0,
-                    api_c.TRAIT_COMPUTED_EVENT: 0,
+                    api_c.ABANDONED_CART_EVENT: 0,
+                    api_c.TRAIT: 0,
+                    api_c.SALE: 0,
+                    api_c.VIEW_CONTENT: 0,
+                    api_c.PRODUCT_SEARCH: 0,
+                    api_c.PURCHASE: 0,
                 },
             }
         )
