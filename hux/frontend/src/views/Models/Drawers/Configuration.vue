@@ -39,7 +39,7 @@
               :key="key"
               class="ma-3 mt-5"
             >
-              <div class="body-2">{{ key }}</div>
+              <div class="body-2 text-body-2 black--text text--lighten-4">{{ key }}</div>
               <card-horizontal
                 v-for="model in item"
                 :key="model.id"
@@ -67,7 +67,7 @@
             :key="key"
             class="ma-3 mt-5"
           >
-            <div class="body-2">{{ key }}</div>
+            <div class="body-2 text-body-2 black--text text--lighten-4">{{ key }}</div>
             <card-horizontal
               v-for="model in item"
               :key="model.id"
@@ -126,7 +126,8 @@ export default {
       breadcrumbs: [
         {
           text: "Select a model to request",
-          icon: "models",
+          icon: "models-request",
+          iconColor: "white"
         },
       ],
       modelTypes: [
@@ -264,4 +265,23 @@ export default {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+// this is a temporary fix, this figma design need to be synced with other drawer design.
+.add-data-source--wrap {
+  .drawer-content.contentPadding {
+    .card-horizontal-disabled {
+      @extend .box-shadow-5;
+      background: var(--v-white-base) !important;
+      border: none !important;
+    }
+    svg {
+      border: 1px solid var(--v-black-lighten2);
+      border-radius: 50%;
+      box-sizing: border-box;
+      padding: 4px;
+      width: 26px !important;
+      height: 26px !important;
+    }
+  }
+}
+</style>
