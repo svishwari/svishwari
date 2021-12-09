@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines,unused-argument
 """Paths for Orchestration API"""
 import asyncio
+import re
 from http import HTTPStatus
 from threading import Thread
 from typing import Tuple, Union
@@ -56,6 +57,10 @@ from huxunify.api.data_connectors.cdp import (
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 from huxunify.api.data_connectors.okta import (
     get_token_from_request,
+)
+from huxunify.api.data_connectors.courier import (
+    get_destination_config,
+    get_audience_destination_pairs,
 )
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
@@ -235,7 +240,8 @@ class AudienceView(SwaggerView):
 
     @api_error_handler()
     @requires_access_levels(api_c.USER_ROLE_ALL)
-    # pylint: disable=no-self-use,too-many-locals
+    # TODO: HUS-1791 - refactor.
+    # pylint: disable=no-self-use,too-many-locals,too-many-statements,too-many-branches
     def get(self, user: dict) -> Tuple[list, int]:
         """Retrieves all audiences.
 
@@ -420,6 +426,16 @@ class AudienceView(SwaggerView):
                     }
                 )
 
+            if attribute_list:
+                query_filter["$and"] = [
+                    {
+                        db_c.LOOKALIKE_ATTRIBUTE_FILTER_FIELD: {
+                            "$regex": re.compile(rf"^{attribute}$(?i)")
+                        }
+                    }
+                    for attribute in attribute_list
+                ]
+
             lookalikes = cm.get_documents(
                 database,
                 db_c.LOOKALIKE_AUDIENCE_COLLECTION,
@@ -456,6 +472,11 @@ class AudienceView(SwaggerView):
                 lookalike[api_c.FAVORITE] = bool(
                     lookalike[db_c.ID] in favorite_lookalike_audiences
                 )
+                if db_c.LOOKALIKE_SOURCE_AUD_FILTERS in lookalike:
+                    # rename the key
+                    lookalike[db_c.AUDIENCE_FILTERS] = lookalike.pop(
+                        db_c.LOOKALIKE_SOURCE_AUD_FILTERS
+                    )
 
             # combine the two lists and serve.
             audiences += lookalikes
@@ -772,12 +793,16 @@ class AudienceInsightsGetView(SwaggerView):
                 database, lookalike[db_c.LOOKALIKE_SOURCE_AUD_ID]
             )
 
-        audience_insights = asyncio.run(
-            get_audience_insights_async(
-                token_response[0],
-                audience[api_c.AUDIENCE_FILTERS],
+        audience_insights = {}
+
+        # check if the source audience exists.
+        if audience:
+            audience_insights = asyncio.run(
+                get_audience_insights_async(
+                    token_response[0],
+                    audience[api_c.AUDIENCE_FILTERS],
+                )
             )
-        )
 
         return (
             AudienceInsightsGetSchema(unknown=INCLUDE).dump(audience_insights),
@@ -794,6 +819,14 @@ class AudiencePostView(SwaggerView):
     """Audience Post view class."""
 
     parameters = [
+        {
+            "name": api_c.DELIVER,
+            "description": "Create and Deliver",
+            "in": "query",
+            "type": "boolean",
+            "required": "false",
+            "default": "false",
+        },
         {
             "name": "body",
             "in": "body",
@@ -963,6 +996,28 @@ class AudiencePostView(SwaggerView):
                 api_c.ORCHESTRATION_TAG,
                 user[api_c.USER_NAME],
             )
+
+        # deliver audience
+        if request.args.get(api_c.DELIVER):
+            # TODO: make this OOP between routes.
+
+            # get engagements
+            engagements = engagement_management.get_engagements_by_audience(
+                database, audience_doc[db_c.ID]
+            )
+
+            # submit jobs for the audience/destination pairs
+            for engagement in engagements:
+                for pair in get_audience_destination_pairs(
+                    engagement[api_c.AUDIENCES]
+                ):
+                    if pair[0] != audience_doc[db_c.ID]:
+                        continue
+                    batch_destination = get_destination_config(
+                        database, engagement[db_c.ID], *pair
+                    )
+                    batch_destination.register()
+                    batch_destination.submit()
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.CREATED
 

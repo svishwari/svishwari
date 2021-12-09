@@ -9,6 +9,28 @@
           <div class="body-2">{{ models.length }} results</div>
         </div>
       </template>
+      <template #footer-right>
+        <div v-if="isModelsSelected" class="d-flex align-baseline">
+          <hux-button
+            variant="white"
+            size="large"
+            :is-tile="true"
+            class="mr-2"
+            @click="closeAddModel"
+          >
+            <span class="primary--text">Cancel</span>
+          </hux-button>
+          <hux-button
+            variant="primary"
+            size="large"
+            :is-tile="true"
+            :is-disabled="!isModelsSelected"
+            @click="requestModels"
+          >
+            {{ modelsBtnText }}
+          </hux-button>
+        </div>
+      </template>
       <template #default>
         <div class="ma-3">
           <div class="ma-3 mb-7">
@@ -25,10 +47,12 @@
                 :icon="`model-${getModelType(model)}`"
                 :is-added="['Active', 'Requested'].includes(model.status)"
                 :is-available="model.is_enabled"
-                :is-already-added="['Active'].includes(model.status)"
+                :is-already-added="
+                  ['Active', 'Requested'].includes(model.status)
+                "
                 class="my-3 body-1"
                 data-e2e="modelAddList"
-                :requested-button="model.status == 'Requested'"
+                :requested-button="model.status != 'Active'"
                 :is-model-requested="model.status == 'Requested'"
               />
             </div>
@@ -56,10 +80,7 @@
               :is-available="model.is_enabled"
               :is-already-added="['Active'].includes(model.status)"
               class="my-3 body-1"
-              :requested-button="
-                model.status == 'Requested' ||
-                selectedModelIds.includes(model.id)
-              "
+              requested-button
               :is-model-requested="model.status == 'Requested'"
               data-e2e="dataSourcesRequestList"
               @click="onModelClick(model)"
@@ -77,6 +98,8 @@ import CardHorizontal from "@/components/common/CardHorizontal"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import { mapGetters, mapActions } from "vuex"
 import { sortByName } from "../../../utils"
+import HuxButton from "../../../components/common/huxButton.vue"
+
 export default {
   name: "ModelConfiguration",
 
@@ -84,6 +107,7 @@ export default {
     Drawer,
     CardHorizontal,
     Breadcrumb,
+    HuxButton,
   },
 
   props: {
@@ -98,6 +122,7 @@ export default {
     return {
       localDrawer: this.value,
       selectedModelIds: [],
+      selectedModelObjects: [],
       breadcrumbs: [
         {
           text: "Select a model to request",
@@ -132,7 +157,7 @@ export default {
 
     enabledModels() {
       const oldresult = this.models.reduce(function (modelObject, model) {
-        if (["Active"].includes(model.status)) {
+        if (["Active", "Requested"].includes(model.status)) {
           modelObject[model.type] = modelObject[model.type] || []
           modelObject[model.type].push(model)
         }
@@ -161,7 +186,7 @@ export default {
 
     modelsGroupedSorted() {
       const oldresult = this.models.reduce(function (modelObject, model) {
-        if (!["Active"].includes(model.status)) {
+        if (!["Active", "Requested"].includes(model.status)) {
           modelObject[model.type] = modelObject[model.type] || []
           modelObject[model.type].push(model)
         }
@@ -204,16 +229,25 @@ export default {
       requestModel: "models/add",
     }),
     async onModelClick(model) {
-      const payload = {
-        name: model.name,
-        id: model.id,
-        status: "Requested",
+      if (this.selectedModelIds.includes(model.id)) {
+        const deselectedId = this.selectedModelIds.indexOf(model.id)
+        this.selectedModelIds.splice(deselectedId, 1)
+      } else {
+        this.selectedModelIds.push(model.id)
       }
-      try {
-        await this.requestModel(payload)
-      } catch (error) {
-        console.error(error)
-      }
+    },
+    requestModels: function () {
+      const selectedModels = JSON.parse(
+        JSON.stringify(
+          this.models.filter((mod) => this.selectedModelIds.includes(mod.id))
+        )
+      )
+      selectedModels.forEach((mod) => {
+        delete mod.description
+        mod.status = "Requested"
+      })
+      this.requestModel(selectedModels)
+      this.$emit("refresh")
     },
     closeAddModel: function () {
       this.localDrawer = false

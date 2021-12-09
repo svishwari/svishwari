@@ -374,7 +374,7 @@ client["models"].modelFeatures = (id) => {
 }
 
 client["models"].remove = (model) => {
-  return http.delete(`/models/${model.id}`)
+  return http.delete(`/models?model_id=${model.id}`)
 }
 
 //#region Data sources

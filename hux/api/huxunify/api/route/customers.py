@@ -921,8 +921,8 @@ class CustomerEvents(SwaggerView):
             "type": "string",
             "in": "query",
             "required": False,
-            "example": "month",
-            "default": "month",
+            "example": "day",
+            "default": "day",
         },
         {
             "name": "body",
@@ -973,14 +973,18 @@ class CustomerEvents(SwaggerView):
         token_response = get_token_from_request(request)
 
         Validation.validate_hux_id(hux_id)
-        interval = request.args.get(api_c.INTERVAL, api_c.MONTH).lower()
+        interval = request.args.get(api_c.INTERVAL, api_c.DAY).lower()
 
-        # start_date, end_date = get_start_end_dates(request, 6)
-        start_date = request.json.get(api_c.START_DATE)
-        end_date = min(
-            request.json.get(api_c.END_DATE),
-            datetime.strftime(datetime.utcnow(), api_c.DEFAULT_DATE_FORMAT),
-        )
+        if request.json:
+            start_date = request.json.get(api_c.START_DATE)
+            end_date = min(
+                request.json.get(api_c.END_DATE),
+                datetime.strftime(
+                    datetime.utcnow(), api_c.DEFAULT_DATE_FORMAT
+                ),
+            )
+        else:
+            start_date, end_date = get_start_end_dates(request, 6)
         Validation.validate_date_range(start_date, end_date)
 
         return (

@@ -96,10 +96,6 @@ export default {
         },
         {
           id: 3,
-          title: "Feedback",
-        },
-        {
-          id: 4,
           title: "Informational",
         },
       ],
@@ -130,7 +126,7 @@ export default {
         },
         {
           id: 7,
-          title: "Model",
+          title: "Models",
         },
       ],
       time: [
