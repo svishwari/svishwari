@@ -1,0 +1,103 @@
+version: '1.0'
+
+stages:
+  - prepare
+  - set_env
+  - current_version
+  - git_release
+  - update_values
+  - copy_artifact
+  - commit
+
+steps:
+
+  Prepare_Build_Details:
+    stage: prepare
+    title: Prepare Build Details
+    type: parallel
+    steps:
+      Get_Trigger_Name:
+        stage: prepare
+        title: get trigger name using id from spec yaml
+        type: deloittehux/get-trigger-name
+      Clone_Application_Repo:
+        stage: prepare
+        title: Cloning ${{CF_REPO_NAME}} repository...
+        type: git-clone
+        repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+        revision: '${{CF_BRANCH}}'
+      Clone_Deployment_Repo:
+        stage: prepare
+        title: Cloning hux-unified-deploy repository...
+        type: git-clone
+        repo: '${{CF_REPO_OWNER}}/hux-unified-deploy'
+        revision: main 
+
+  Set_Env_Vars:
+    stage: set_env
+    title: Set environment variables
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    working_directory: "${{CF_REPO_NAME}}"
+    commands:
+      - cat ./hux/api/cd/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
+
+  Get_Version_From_Git:
+    stage: current_version
+    title: Get current version from git
+    image: 'huxhub.repo.mgnt.in/yq'
+    working_directory: 'hux-unified-deploy/${{APP_NAME}}/k8s/charts/'
+    commands:
+      - cf_export LOWER_REVISION=$(yq r ${{LOWER_VALUES_FILE}} 'image.tag')
+      - cf_export UPPER_REVISION=$(yq r ${{LOWER_VALUES_FILE}} 'image.tag')
+      - cf_export COMMIT_MESSAGE="Promote to stg1"
+      - cf_export COMMIT_AUTHOR="codefresh"
+
+  Git_Release:
+   stage: git_release
+   title: "Check if Git Release"
+   type: freestyle
+   image: huxhub.repo.mgnt.in/alpine
+   commands:
+     - cf_export UPPER_REVISION='${{CF_RELEASE_TAG}}'
+     - cf_export COMMIT_MESSAGE="Promote to rc1"
+     - cf_export COMMIT_AUTHOR="codefresh"
+   when:
+     condition:
+       all:
+        whenVarExists: 'includes("${{CF_RELEASE_TAG}}", "{{CF_RELEASE_TAG}}" ) == false'
+        CheckVersionTagValue: 'match(lower("${{CF_RELEASE_TAG}}"), "^app-v.*", true)'
+
+  Change_Manifest:
+    stage: update_values
+    title: Update image tag
+    image: 'huxhub.repo.mgnt.in/yq'
+    working_directory: 'hux-unified-deploy/${{APP_NAME}}/k8s/charts/'
+    commands:
+      - yq w -i ${{UPPER_VALUES_FILE}} image.tag ${{UPPER_REVISION}}
+
+  Artifact_Copy:
+    stage: copy_artifact
+    title: Copy Artifactory artifact to higher environment
+    type: deloittehux/jfrog-artifact-copy
+    arguments:
+      APP_NAME: '${{APP_NAME}}'
+      LOWER_REVISION: '${{LOWER_REVISION}}'
+      UPPER_REVISION: '${{UPPER_REVISION}}'
+      UPPER_REPO: '${{UPPER_REPO}}'
+      LOWER_REPO: '${{LOWER_REPO}}'
+
+  Commit_And_Push:
+    stage: commit
+    title: Commit manifest
+    type: git-commit
+    arguments:
+      repo: DeloitteHux/hux-unified-deploy
+      git: DeloitteHux_github
+      working_directory: '${{CF_VOLUME_PATH}}/hux-unified-deploy'
+      commit_message: '${{COMMIT_MESSAGE}}'
+      git_user_name: '${{COMMIT_AUTHOR}}'
+      allow_empty: true
+      add:
+        - '${{CF_VOLUME_PATH}}/hux-unified-deploy/${{APP_NAME}}/k8s/charts/${{UPPER_VALUES_FILE}}'
+
