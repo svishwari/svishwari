@@ -674,7 +674,6 @@ export default {
         await this.getFeatures(this.$route.params.id)
       } catch (error) {
         this.modelFeaturesErrorState = true
-        console.log("error found")
       }
       this.featuresLoading = false
     },
