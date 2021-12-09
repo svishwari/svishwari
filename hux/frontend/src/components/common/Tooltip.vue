@@ -3,7 +3,6 @@
     :top="positionTop"
     offset-y
     open-on-hover
-    attach
     :content-class="contentClass"
     :max-width="maxWidth"
     :min-width="minWidth"
