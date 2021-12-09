@@ -40,12 +40,13 @@
               : '',
           ]"
         >
-          <span v-if="requestedButton" class="text-button"
-          :class="[
-            isModelRequested || isAdded
-              ? ''
-              : 'black--text text--lighten-4',
-          ]">
+          <span
+            v-if="requestedButton"
+            class="text-button"
+            :class="[
+              isModelRequested || isAdded ? '' : 'black--text text--lighten-4',
+            ]"
+          >
             {{ isModelRequested || isAdded ? "Requested" : "Request" }}
           </span>
           <span v-else class="text-button"

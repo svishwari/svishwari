@@ -33,13 +33,15 @@
       </template>
       <template #default>
         <div class="ma-3">
-          <div class="ma-3 mb-7">
+          <div class="mb-7">
             <div
               v-for="(item, key) in enabledModels"
               :key="key"
               class="ma-3 mt-5"
             >
-              <div class="body-2 text-body-2 black--text text--lighten-4">{{ key }}</div>
+              <div class="body-2 text-body-2 black--text text--lighten-4">
+                {{ key }}
+              </div>
               <card-horizontal
                 v-for="model in item"
                 :key="model.id"
@@ -67,7 +69,9 @@
             :key="key"
             class="ma-3 mt-5"
           >
-            <div class="body-2 text-body-2 black--text text--lighten-4">{{ key }}</div>
+            <div class="body-2 text-body-2 black--text text--lighten-4">
+              {{ key }}
+            </div>
             <card-horizontal
               v-for="model in item"
               :key="model.id"
@@ -127,7 +131,7 @@ export default {
         {
           text: "Select a model to request",
           icon: "models-request",
-          iconColor: "white"
+          iconColor: "white",
         },
       ],
       modelTypes: [
