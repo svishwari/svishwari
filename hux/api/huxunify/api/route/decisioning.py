@@ -19,7 +19,6 @@ from huxunifylib.database import (
     notification_management,
 )
 from huxunifylib.database import constants as db_c
-from huxunifylib.database.db_exceptions import DuplicateDocument
 
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
@@ -237,33 +236,51 @@ class SetModelStatus(SwaggerView):
         configurations = []
         for model in models:
             # set source of configuration as model
-            model[db_c.CONFIGURATION_FIELD_SOURCE] = api_c.MODELS_TAG
+            model[db_c.TYPE] = api_c.MODELS_TAG
 
-            try:
+            # check if document exists
+            model_document = collection_management.get_document(
+                database,
+                db_c.CONFIGURATIONS_COLLECTION,
+                {db_c.OBJECT_ID: model.get(db_c.OBJECT_ID)},
+            )
+
+            if model_document:
+                # TODO: TEMPORARILY update document.
+                logger.warning(
+                    "Requested model already exists %s.", model.get(db_c.NAME)
+                )
+                # update the document
                 configurations.append(
-                    collection_management.create_document(
-                        database=database,
-                        collection=db_c.CONFIGURATIONS_COLLECTION,
-                        new_doc=model,
-                        username=user[api_c.USER_NAME],
+                    collection_management.update_document(
+                        database,
+                        db_c.CONFIGURATIONS_COLLECTION,
+                        model_document[db_c.ID],
+                        model,
+                        user[api_c.USER_NAME],
                     )
                 )
-                notification_management.create_notification(
-                    database,
-                    db_c.NOTIFICATION_TYPE_SUCCESS,
-                    f'Model requested "{model[db_c.NAME]}" '
-                    f"by {user[api_c.USER_NAME]}.",
-                    api_c.MODELS,
-                    user[api_c.USER_NAME],
+                continue
+
+            configurations.append(
+                collection_management.create_document(
+                    database=database,
+                    collection=db_c.CONFIGURATIONS_COLLECTION,
+                    new_doc=model,
+                    username=user[api_c.USER_NAME],
                 )
-                logger.info(
-                    "Successfully requested model %s.", model.get(db_c.NAME)
-                )
-            except DuplicateDocument:
-                logger.info("Model already exists: %s.", model.get(db_c.NAME))
-                return {
-                    api_c.MESSAGE: api_c.DUPLICATE_NAME
-                }, HTTPStatus.CONFLICT
+            )
+            notification_management.create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                f'Model requested "{model[db_c.NAME]}" '
+                f"by {user[api_c.USER_NAME]}.",
+                api_c.MODELS,
+                user[api_c.USER_NAME],
+            )
+            logger.info(
+                "Successfully requested model %s.", model.get(db_c.NAME)
+            )
 
         return (
             jsonify(ConfigurationsSchema(many=True).dump(configurations)),
@@ -332,7 +349,7 @@ class RemoveRequestedModel(SwaggerView):
             database=database,
             collection=db_c.CONFIGURATIONS_COLLECTION,
             query_filter={db_c.OBJECT_ID: model_id},
-            hard_delete=False,
+            hard_delete=True,
             username=user[api_c.USER_NAME],
         )
 
