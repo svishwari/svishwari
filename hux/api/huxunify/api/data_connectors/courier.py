@@ -332,7 +332,7 @@ def get_destination_config(
     database: MongoClient,
     audience_id: ObjectId,
     destination: dict,
-    engagement_id: ObjectId = None,
+    engagement_id: ObjectId,
     audience_router_batch_size: int = 5000,
 ) -> DestinationBatchJob:
     """Get the configuration for the aws batch config of a destination.
@@ -396,14 +396,13 @@ def get_destination_config(
 
     # update the engagement latest delivery job
     try:
-        if engagement_id:
-            add_delivery_job(
-                database,
-                engagement_id,
-                audience_id,
-                destination_id,
-                audience_delivery_job[db_c.ID],
-            )
+        add_delivery_job(
+            database,
+            engagement_id,
+            audience_id,
+            destination_id,
+            audience_delivery_job[db_c.ID],
+        )
     except TypeError as exc:
         # mongomock does not support array_filters
         # but pymongo 3.6, MongoDB, and DocumentDB do.
@@ -558,6 +557,7 @@ async def deliver_audience_to_destination(
         database=database,
         audience_id=audience_id,
         destination=destination,
+        engagement_id=ObjectId("0" * 24),
     )
     batch_destination.register()
     batch_destination.submit()
