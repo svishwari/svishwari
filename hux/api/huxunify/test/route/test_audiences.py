@@ -1,11 +1,13 @@
 """Purpose of this file is to house audience related tests."""
 import csv
+import string
 from datetime import datetime
 from http import HTTPStatus
 from unittest import TestCase, mock
 
 import mongomock
 import requests_mock
+from hypothesis import given, strategies as st
 
 from huxunifylib.connectors.connector_cdp import ConnectorCDP
 from huxunifylib.database import constants as db_c
@@ -411,3 +413,93 @@ class AudienceInsightsTest(TestCase):
                 True,
             )
         )
+
+    @given(
+        city_substring=st.text(
+            alphabet=string.ascii_letters, min_size=3, max_size=5
+        )
+    )
+    def test_audience_location_rules_cities(self, city_substring: str) -> None:
+        """Test get audience location rules cities.
+        Args:
+            city_substring (str): Substring for which cities need to be
+            matched.
+        """
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
+            f"{api_c.CITY}/{city_substring}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        substring_found = []
+        for city in response.json:
+            substring_found.append(
+                city_substring.lower() in list(city.keys())[0].lower()
+            )
+        self.assertNotIn(False, substring_found)
+
+    @given(zip_substring=st.integers(100, 9999))
+    def test_audience_location_rules_zip(self, zip_substring: int) -> None:
+        """Test get audience location rules zip.
+        Args:
+           zip_substring (int): Substring for which zip codes need to be
+           matched.
+        """
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
+            f"{api_c.ZIP_CODE}/{zip_substring}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        substring_found = []
+        for zip_code in response.json:
+            substring_found.append(
+                str(zip_substring) in list(zip_code.keys())[0].lower()
+            )
+        self.assertNotIn(False, substring_found)
+
+    def test_audience_location_rules_unknown_field(self) -> None:
+        """Test get audience location rules with unknown field."""
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
+            f"{api_c.USER}/ri",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(404, response.status_code)
+
+    def test_audience_histogram_rules_age(self) -> None:
+        """Test get audience location rules histogram for age field."""
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
+            f"{api_c.AGE}/histogram",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json.get(api_c.VALUES))
+
+    def test_audience_histogram_rules_model(self) -> None:
+        """Test get audience rules histogram for model field."""
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
+            f"{api_c.MODEL}/histogram?{api_c.MODEL_NAME}=propensity_to_unsubscribe",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json.get(api_c.VALUES))
+
+    def test_audience_histogram_rules_model_unknown_name(self) -> None:
+        """Test get audience rules histogram for model field unknown name."""
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
+            f"{api_c.MODEL}/histogram?{api_c.MODEL_NAME}=propensity_to_leave",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_audience_histogram_rules_unknown(self) -> None:
+        """Test get audience rules histogram for field unknown name."""
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/rules/"
+            f"{api_c.USER}/histogram",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(response.status_code, 404)

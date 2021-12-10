@@ -6,9 +6,29 @@
       :height="75"
     >
       <template #subtitle-extended>
-        <div class="mb-2" data-e2e="delivery-schedule-metric">
-          {{ deliverySchedule }}
-        </div>
+        <tooltip :max-width="280">
+          <template #label-content>
+            {{ data.delivery_schedule | DeliverySchedule }}
+          </template>
+          <template #hover-content>
+            <span v-if="!data.delivery_schedule">
+              This engagement was delivered manually on
+              {{ lastDelivered | Date("MMM D, YYYY [at] h:mm A") | Empty }}
+            </span>
+            <hux-delivery-text
+              v-else
+              :schedule="
+                data.delivery_schedule ? data.delivery_schedule.schedule : {}
+              "
+              :start-date="
+                data.delivery_schedule ? data.delivery_schedule.start_date : ''
+              "
+              :end-date="
+                data.delivery_schedule ? data.delivery_schedule.end_date : ''
+              "
+            />
+          </template>
+        </tooltip>
       </template>
     </metric-card>
     <metric-card
@@ -82,7 +102,8 @@
 <script>
 import MetricCard from "@/components/common/MetricCard"
 import Avatar from "@/components/common/Avatar"
-import Tooltip from "../../components/common/Tooltip.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+import HuxDeliveryText from "@/components/common/DatePicker/HuxDeliveryText.vue"
 
 export default {
   name: "EngagementOverviewSummary",
@@ -90,6 +111,7 @@ export default {
     MetricCard,
     Avatar,
     Tooltip,
+    HuxDeliveryText,
   },
   props: {
     data: {
@@ -181,6 +203,24 @@ export default {
         }
       }
       return "Manual"
+    },
+    lastDelivered() {
+      if (this.data.delivery_schedule !== null) {
+        return ""
+      } else {
+        let audiences = JSON.parse(JSON.stringify(this.data.audiences))
+        let last_delivered = ""
+        audiences.map((audience) => {
+          audience.destinations.map((destination) => {
+            if (destination.latest_delivery?.update_time) {
+              if (destination.latest_delivery.update_time > last_delivered) {
+                last_delivered = destination.latest_delivery.update_time
+              }
+            }
+          })
+        })
+        return last_delivered ? last_delivered : "-"
+      }
     },
   },
   methods: {

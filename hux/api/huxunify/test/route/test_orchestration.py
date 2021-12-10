@@ -1383,6 +1383,21 @@ class OrchestrationRouteTest(TestCase):
         )
         self.request_mocker.start()
 
+        set_user(
+            self.database,
+            okta_id=t_c.VALID_USER_RESPONSE.get(api_c.OKTA_ID_SUB),
+            email_address=t_c.VALID_USER_RESPONSE.get(api_c.EMAIL),
+            display_name="doug smith",
+        )
+
+        # Set an audience as favorite
+        manage_user_favorites(
+            self.database,
+            okta_id=t_c.VALID_USER_RESPONSE.get(api_c.OKTA_ID_SUB),
+            component_name=api_c.AUDIENCES,
+            component_id=self.audiences[0][db_c.ID],
+        )
+
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
@@ -1448,3 +1463,20 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(
             str(self.lookalike_audience_doc[db_c.ID]), audiences[2][api_c.ID]
         )
+
+    def test_edit_lookalike_audience(self):
+        """Test edit lookalike audience"""
+
+        lookalike_audience_id = str(self.lookalike_audience_doc[db_c.ID])
+        new_name = "Lookalike Audience New Name"
+
+        response = self.test_client.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}/{lookalike_audience_id}",
+            headers=t_c.STANDARD_HEADERS,
+            json={
+                api_c.NAME: new_name,
+            },
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(new_name, response.json[db_c.NAME])
