@@ -112,7 +112,8 @@ class ModelsView(SwaggerView):
         all_models = Tecton().get_models()
 
         purchase_model = {
-            api_c.TYPE: "purchase",
+            api_c.TYPE: "Classification",
+            api_c.CATEGORY: "Email",
             api_c.FULCRUM_DATE: datetime(2021, 6, 26),
             api_c.PAST_VERSION_COUNT: 0,
             api_c.LAST_TRAINED: datetime(2021, 6, 26),
