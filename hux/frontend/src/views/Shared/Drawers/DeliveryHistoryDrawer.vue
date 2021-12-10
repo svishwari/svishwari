@@ -64,10 +64,10 @@
                   primary--text
                 "
               >
-                {{ item[col.value].name }}
+                {{ item[col.value].name | Empty }}
               </router-link>
               <template #tooltip>
-                {{ item[col.value].name }}
+                {{ item[col.value].name | Empty }}
               </template>
             </tooltip>
             <tooltip v-if="col.value === 'destination' && item[col.value]">
@@ -366,6 +366,7 @@ export default {
 
           let uniqueEngagements = uniqBy(allEngagements, "id")
           let uniqueDestinations = uniqBy(allDestinations, "id")
+
           this.filters = [
             {
               name: "Engagement name",

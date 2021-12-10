@@ -1,7 +1,7 @@
 <template>
   <v-expand-transition>
     <div class="hux-table-filter-bar-container pl-6">
-      <div class="d-flex justify-space-between pb-2">
+      <div class="d-flex justify-space-between">
         <v-checkbox
           color="#00a3e0"
           v-model="showMatchRate"
@@ -12,17 +12,6 @@
         <div class="reset-filter" @click="resetAll()">Clear</div>
       </div>
       <div class="d-flex flex-wrap mb-2">
-        <hux-table-filter
-          v-for="(filter, i) in filters"
-          :key="i"
-          v-model="filter.value"
-          :name="`${filter.name}${
-            filter.value.length > 0 ? ` (${filter.value.length})` : ''
-          }`"
-          :on-select="filter.onSelect"
-          :items="filter.data"
-          @onValueChange="handleFilterValueChange(i)"
-        />
         <hux-drop-down-search
           v-for="(filter, i) in filters"
           :key="i"
@@ -37,11 +26,14 @@
           @onToggle="handleFilterValueChange(i)"
         >
           <template #activator>
-            <div class="dropdown-select-activator">
+            <div class="mr-2">
               <v-select
                 dense
                 readonly
-                placeholder="Select engagement(s)"
+                :placeholder="`${filter.name}${
+                  filter.value.length > 0 ? ` (${filter.value.length})` : ''
+                }`"
+                class="dropdown-select-placeholder"
                 outlined
                 background-color="white"
                 append-icon="mdi-chevron-down"
@@ -68,7 +60,6 @@
             </v-chip>
           </span>
         </div>
-        <!-- <div class="reset-filter" @click="resetAll()">Reset all</div> -->
       </div>
     </div>
   </v-expand-transition>
@@ -120,15 +111,14 @@ export default {
     },
 
     handleCheckboxValueChange() {
-       this.$emit("onCheckboxChange", this.showMatchRate)
-    }
+      this.$emit("onCheckboxChange", this.showMatchRate)
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
 .hux-table-filter-bar-container {
-  // background: var(--v-primary-lighten2);
   padding: 8px 11px;
   border-bottom: 1px solid var(--v-black-lighten3);
   .reset-filter {
@@ -140,6 +130,21 @@ export default {
   ::v-deep .v-input__control {
     .v-label {
       color: var(--v-black-base);
+    }
+    .v-messages {
+      display: none;
+    }
+  }
+  .dropdown-select-placeholder {
+    ::v-deep .v-input__control {
+      .v-input__slot {
+        input::placeholder {
+          color: var(--v-black-base);
+        }
+      }
+      .v-text-field__details {
+        display: none;
+      }
     }
   }
 }
