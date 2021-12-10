@@ -275,15 +275,15 @@ export default {
 
     showHideMatchRate(matchRateFlag) {
       this.showMatchRate = matchRateFlag
-       if(!matchRateFlag){
-         this.columns =  this.columns.filter(data => data.value != "match_rate")
-       } else {
+      if (!matchRateFlag) {
+        this.columns = this.columns.filter((data) => data.value != "match_rate")
+      } else {
         this.columns.splice(3, 0, {
           value: "match_rate",
           text: "Match Rate",
           width: "20%",
         })
-       }
+      }
     },
 
     async fetchHistory() {

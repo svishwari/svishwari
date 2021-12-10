@@ -3,8 +3,8 @@
     <div class="hux-table-filter-bar-container pl-6">
       <div class="d-flex justify-space-between">
         <v-checkbox
-          color="#00a3e0"
           v-model="showMatchRate"
+          color="#00a3e0"
           class="text-h5 px-5 withoutExpansion mt-0 pt-0 pl-0"
           label="Show match rate"
           @click="handleCheckboxValueChange()"
@@ -66,14 +66,12 @@
 </template>
 
 <script>
-import HuxTableFilter from "@/components/common/TableFilter.vue"
 import HuxDropDownSearch from "@/components/common/HuxDropDownSearch"
 
 export default {
   name: "HuxTableFiltersBar",
 
   components: {
-    HuxTableFilter,
     HuxDropDownSearch,
   },
 
