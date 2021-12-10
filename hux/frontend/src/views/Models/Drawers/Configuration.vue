@@ -40,7 +40,7 @@
               class="ma-3 mt-5"
             >
               <div class="body-2 text-body-2 black--text text--lighten-4">
-                {{ key }}
+                {{ key | TitleCase }}
               </div>
               <card-horizontal
                 v-for="model in item"
@@ -163,8 +163,8 @@ export default {
     enabledModels() {
       const oldresult = this.models.reduce(function (modelObject, model) {
         if (["Active", "Requested"].includes(model.status)) {
-          modelObject[model.type] = modelObject[model.type] || []
-          modelObject[model.type].push(model)
+          modelObject[model.category] = modelObject[model.category] || []
+          modelObject[model.category].push(model)
         }
         return modelObject
       }, Object.create(null))
@@ -192,8 +192,8 @@ export default {
     modelsGroupedSorted() {
       const oldresult = this.models.reduce(function (modelObject, model) {
         if (!["Active", "Requested"].includes(model.status)) {
-          modelObject[model.type] = modelObject[model.type] || []
-          modelObject[model.type].push(model)
+          modelObject[model.category] = modelObject[model.category] || []
+          modelObject[model.category].push(model)
         }
         return modelObject
       }, Object.create(null))
