@@ -12,8 +12,8 @@
       <template #footer-right>
         <div v-if="isDataSourcesSelected" class="d-flex align-baseline">
           <huxButton
-            variant="white"
             size="large"
+            variant="white"
             :is-tile="true"
             class="mr-2 btn-border box-shadow-none"
             @click="closeAddDataSource"

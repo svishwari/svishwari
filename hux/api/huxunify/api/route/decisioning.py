@@ -19,7 +19,6 @@ from huxunifylib.database import (
     notification_management,
 )
 from huxunifylib.database import constants as db_c
-from huxunifylib.database.db_exceptions import DuplicateDocument
 
 from huxunify.api.route.decorators import (
     add_view_to_blueprint,
@@ -40,6 +39,7 @@ from huxunify.api.schema.model import (
     FeatureSchema,
     ModelRequestPOSTSchema,
 )
+from huxunify.api.schema.configurations import ConfigurationsSchema
 from huxunify.api.data_connectors.tecton import Tecton
 from huxunify.api.schema.utils import (
     AUTH401_RESPONSE,
@@ -112,7 +112,8 @@ class ModelsView(SwaggerView):
         all_models = Tecton().get_models()
 
         purchase_model = {
-            api_c.TYPE: "purchase",
+            api_c.TYPE: "Classification",
+            api_c.CATEGORY: "Email",
             api_c.FULCRUM_DATE: datetime(2021, 6, 26),
             api_c.PAST_VERSION_COUNT: 0,
             api_c.LAST_TRAINED: datetime(2021, 6, 26),
@@ -177,13 +178,21 @@ class SetModelStatus(SwaggerView):
             "name": "body",
             "in": "body",
             "type": "object",
-            "description": "Model request body.",
-            "example": {
-                api_c.TYPE: "purchase",
-                api_c.NAME: "Propensity to Purchase",
-                api_c.ID: 3,
-                api_c.STATUS: api_c.REQUESTED,
-            },
+            "description": "Models request body.",
+            "example": [
+                {
+                    api_c.TYPE: "purchase",
+                    api_c.NAME: "Propensity to Purchase",
+                    api_c.ID: "9a44c346ba034ac8a699ae0ab3314003",
+                    api_c.STATUS: api_c.REQUESTED,
+                },
+                {
+                    api_c.TYPE: "unsubscribe",
+                    api_c.NAME: "Propensity to Unsubscribe",
+                    api_c.ID: "eb5f35e34c0047d3b9022ef330952dd1",
+                    api_c.STATUS: api_c.REQUESTED,
+                },
+            ],
         }
     ]
 
@@ -220,40 +229,67 @@ class SetModelStatus(SwaggerView):
             Tuple[dict, int]: Model Requested, HTTP status code.
         """
 
-        body = ModelRequestPOSTSchema().load(request.get_json(), unknown=True)
+        models = ModelRequestPOSTSchema().load(
+            request.get_json(), unknown=True, many=True
+        )
         database = get_db_client()
 
-        # set type of configuration as model
-        body[api_c.TYPE] = api_c.MODELS_TAG
+        configurations = []
+        for model in models:
+            # set source of configuration as model
+            model[db_c.TYPE] = api_c.MODELS_TAG
 
-        try:
-            collection_management.create_document(
-                database=database,
-                collection=db_c.CONFIGURATIONS_COLLECTION,
-                new_doc=body,
-                username=user[api_c.USER_NAME],
+            # check if document exists
+            model_document = collection_management.get_document(
+                database,
+                db_c.CONFIGURATIONS_COLLECTION,
+                {db_c.OBJECT_ID: model.get(db_c.OBJECT_ID)},
             )
-        except DuplicateDocument:
-            logger.info("Model already exists %s.", body.get(db_c.NAME))
-            return {api_c.MESSAGE: api_c.DUPLICATE_NAME}, HTTPStatus.CONFLICT
 
-        notification_management.create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            f'Model requested "{body[db_c.NAME]}" '
-            f"by {user[api_c.USER_NAME]}.",
-            api_c.MODELS_TAG,
-            user[api_c.USER_NAME],
+            if model_document:
+                # TODO: TEMPORARILY update document.
+                logger.warning(
+                    "Requested model already exists %s.", model.get(db_c.NAME)
+                )
+                # update the document
+                configurations.append(
+                    collection_management.update_document(
+                        database,
+                        db_c.CONFIGURATIONS_COLLECTION,
+                        model_document[db_c.ID],
+                        model,
+                        user[api_c.USER_NAME],
+                    )
+                )
+                continue
+
+            configurations.append(
+                collection_management.create_document(
+                    database=database,
+                    collection=db_c.CONFIGURATIONS_COLLECTION,
+                    new_doc=model,
+                    username=user[api_c.USER_NAME],
+                )
+            )
+            notification_management.create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                f'Model requested "{model[db_c.NAME]}" '
+                f"by {user[api_c.USER_NAME]}.",
+                api_c.MODELS,
+                user[api_c.USER_NAME],
+            )
+            logger.info(
+                "Successfully requested model %s.", model.get(db_c.NAME)
+            )
+
+        return (
+            jsonify(ConfigurationsSchema(many=True).dump(configurations)),
+            HTTPStatus.OK.value,
         )
 
-        logger.info("Successfully requested model %s.", body.get(db_c.NAME))
 
-        return {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, HTTPStatus.CREATED
-
-
-@add_view_to_blueprint(
-    model_bp, f"{api_c.MODELS_ENDPOINT}", "RemoveRequestedModel"
-)
+@add_view_to_blueprint(model_bp, api_c.MODELS_ENDPOINT, "RemoveRequestedModel")
 class RemoveRequestedModel(SwaggerView):
     """Class to remove a requested model."""
 
@@ -310,11 +346,18 @@ class RemoveRequestedModel(SwaggerView):
 
         model_id = request.args.get(api_c.MODEL_ID)
 
+        # get the model
+        model = collection_management.get_document(
+            database,
+            db_c.CONFIGURATIONS_COLLECTION,
+            {db_c.OBJECT_ID: model_id},
+        )
+
         deletion_status = collection_management.delete_document(
             database=database,
             collection=db_c.CONFIGURATIONS_COLLECTION,
             query_filter={db_c.OBJECT_ID: model_id},
-            hard_delete=False,
+            hard_delete=True,
             username=user[api_c.USER_NAME],
         )
 
@@ -322,8 +365,8 @@ class RemoveRequestedModel(SwaggerView):
             notification_management.create_notification(
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
-                f'Requested model "{model_id}" removed by {user[api_c.USER_NAME]}.',
-                api_c.MODELS_TAG,
+                f'Requested model "{model[db_c.NAME]}" removed by {user[api_c.USER_NAME]}.',
+                api_c.MODELS,
                 user[api_c.USER_NAME],
             )
             logger.info("Successfully removed model %s.", model_id)

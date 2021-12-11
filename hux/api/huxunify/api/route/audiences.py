@@ -666,7 +666,7 @@ class AudienceRulesLocation(SwaggerView):
         if field_type == api_c.CITY:
             data = jsonify(
                 [
-                    {x[1]: f"{x[1]}, {x[2]} USA"}
+                    {f"{x[1]}|{x[2]}|USA": f"{x[1]}, {x[2]} USA"}
                     for x in [
                         x
                         for x in stub_city_zip_data.city_zip_data
@@ -745,7 +745,7 @@ class AudienceRulesHistogram(SwaggerView):
         """
 
         # TODO Remove stub once CDM API is integrated
-        if field_type not in api_c.AUDIENCE_RULES_HISTOGRAM_DATA.keys():
+        if field_type not in api_c.AUDIENCE_RULES_HISTOGRAM_DATA:
             return {
                 "message": f"Data not found for {field_type}"
             }, HTTPStatus.NOT_FOUND

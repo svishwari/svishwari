@@ -40,6 +40,7 @@
 
     <template #footer-left>
       <hux-button
+        size="large"
         variant="white"
         is-tile
         height="40"
