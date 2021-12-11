@@ -2,10 +2,7 @@
   <div class="team-members-wrapper">
     <v-row>
       <v-col>
-        <v-card
-          class="rounded-lg box-shadow-5"
-          :height="isDataExist ? 641 : 280"
-        >
+        <v-card class="rounded-lg box-shadow-5">
           <div v-if="isDataExist" class="pa-5">
             <div class="pb-4 black--text text-h3">Team Members</div>
             <hux-data-table
@@ -18,23 +15,39 @@
                   v-for="col in columnDefs"
                   :key="col.value"
                   class="black--text text-body-1"
+                  :class="col.value === '' ? 'text-center' : 'text-left'"
                   :style="{ width: col.width }"
                 >
                   <template v-if="col.value === ''">
-                    <avatar :name="item['display_name']" />
+                    <avatar :name="item['display_name']" class="text-center" />
                   </template>
 
                   <template v-else-if="col.value === 'display_name'">
-                    <tooltip>
-                      <template slot="label-content">
-                        <span class="ellipsis mt-1">
-                          {{ item[col.value] }}
-                        </span>
-                      </template>
-                      <template slot="hover-content">
-                        {{ item[col.value] }}
-                      </template>
-                    </tooltip>
+                    <span class="ellipsis mt-1 d-inline">
+                      {{ item[col.value] }}
+                    </span>
+                    <v-chip
+                      v-if="item['email'] == getCurrentUserEmail"
+                      small
+                      class="mr-2 my-2 text-subtitle-2 you-tag pl-2"
+                      text-color="white"
+                      color="yellow"
+                    >
+                      You
+                    </v-chip>
+                  </template>
+
+                  <template v-else-if="col.value === 'pii_access'">
+                    <hux-switch
+                      v-model="item[col.value]"
+                      :is-disabled="
+                        item['email'] == getCurrentUserEmail ||
+                        getRole != 'admin'
+                      "
+                      false-color="var(--v-black-lighten4)"
+                      :width="item[col.value] ? '57px' : '60px'"
+                      :switch-labels="switchLabel"
+                    />
                   </template>
 
                   <template v-else>
@@ -66,13 +79,13 @@
 <script>
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Avatar from "@/components/common/Avatar.vue"
-import Tooltip from "@/components/common/Tooltip.vue"
 import EmptyPage from "@/components/common/EmptyPage"
+import HuxSwitch from "@/components/common/Switch.vue"
 import { mapGetters } from "vuex"
 
 export default {
   name: "TeamMembers",
-  components: { EmptyPage, HuxDataTable, Avatar, Tooltip },
+  components: { EmptyPage, HuxDataTable, Avatar, HuxSwitch },
   data() {
     return {
       columnDefs: [
@@ -95,11 +108,32 @@ export default {
           text: "Access Level",
           value: "access_level",
           width: "163px",
+          hoverTooltip:
+            "Admin access <br /><br />\
+            Ability to select who has access to view PII data and have removal/add functionality across Hux.<br /><br />\
+            Edit access <br /><br />\
+            Have removal/add functionality across Hux.<br /><br />\
+            View-only access <br /><br />\
+            Unable to edit a client’s team, or remove and add any solutions across Hux.",
+          tooltipWidth: "200px",
         },
         {
           text: "PII Access",
           value: "pii_access",
           width: "97px",
+          hoverTooltip:
+            "Sensitive and PII data are only accessible to individuals tha been granted permission by an Admin.",
+          tooltipWidth: "300px",
+        },
+      ],
+      switchLabel: [
+        {
+          condition: true,
+          label: "ON",
+        },
+        {
+          condition: false,
+          label: "OFF",
         },
       ],
     }
@@ -107,6 +141,8 @@ export default {
   computed: {
     ...mapGetters({
       getTeamMembers: "users/getUsers",
+      getCurrentUserEmail: "users/getEmailAddress",
+      getRole: "users/getCurrentUserRole",
     }),
     isDataExist() {
       return this.getTeamMembers.length > 0
@@ -149,5 +185,9 @@ export default {
     border-radius: 12px 12px 0px 0px;
     overflow: hidden;
   }
+}
+.you-tag {
+  height: 20px;
+  width: 39px;
 }
 </style>

@@ -126,6 +126,8 @@ const getters = {
   getEmailAddress: (state) => state.userProfile.email,
 
   getUsers: (state) => state.users,
+
+  getCurrentUserRole: (state) => state.userProfile.role,
 }
 export default {
   namespaced,
