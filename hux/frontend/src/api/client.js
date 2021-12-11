@@ -264,6 +264,10 @@ client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
 }
 
+client["audiences"].createAndDeliver = (data) => {
+  return http.post("/audiences?deliver=true", data)
+}
+
 client["audiences"].getAudiences = (data) => {
   let URLData = []
   let newURLFormat
@@ -374,7 +378,7 @@ client["models"].modelFeatures = (id) => {
 }
 
 client["models"].remove = (model) => {
-  return http.delete(`/models/${model.id}`)
+  return http.delete(`/models?model_id=${model.id}`)
 }
 
 //#region Data sources

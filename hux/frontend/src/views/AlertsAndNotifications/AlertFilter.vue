@@ -2,7 +2,7 @@
   <hux-filters-drawer
     :is-toggled="localDrawer"
     :count="filterLength"
-    topcontent="182px"
+    content-height="262px"
     :disable-clear="filterLength === 1 && selectedTimeType === 'Last week'"
     @clear="clear"
     @apply="apply"
@@ -96,10 +96,6 @@ export default {
         },
         {
           id: 3,
-          title: "Feedback",
-        },
-        {
-          id: 4,
           title: "Informational",
         },
       ],
@@ -130,7 +126,7 @@ export default {
         },
         {
           id: 7,
-          title: "Model",
+          title: "Models",
         },
       ],
       time: [

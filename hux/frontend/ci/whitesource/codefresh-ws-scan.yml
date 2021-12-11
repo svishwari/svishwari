@@ -1,0 +1,34 @@
+version: "1.0"
+stages:
+  - "clone"
+  - "scan"
+
+steps:
+  GitClone:
+    stage: clone
+    title: "Cloning repository"
+    type: git-clone
+    repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
+    revision: "${{CF_BRANCH}}"
+
+  WhitesourceScan:
+    stage: scan
+    title: "Run whiteSource scan"
+    type: freestyle
+    image: ciruntime.repo.mgnt.in/whitesource-node:16.13.1
+    commands:
+      - echo "Set branch in wss-agent.config..."
+      - echo projectVersion=$CF_PULL_REQUEST_TARGET >> $CF_VOLUME_PATH/$CF_REPO_NAME/hux/frontend/$CONFIG_FILE
+      - echo "Configure NPM environment for Whitesource scan..."
+      - cd ${{CF_REPO_NAME}}/hux/frontend/
+      - npm install --global yarn
+      - yarn ci
+      - yarn global add @vue/cli
+      - cp /wss-scan/wss-runner.sh ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/hux/frontend/wss-runner.sh # Copy the file because the script refrences current directory.
+      - ./wss-runner.sh $API_KEY $INSTALL_COMMANDS $CONFIG_FILE $PROJECT_DIRECTORY
+    environment:
+      - INSTALL_COMMANDS=ci/whitesource/wss-install-commands.sh
+      - CONFIG_FILE=ci/whitesource/wss-agent.config
+      - PROJECT_DIRECTORY=.
+      - API_KEY=${{API_KEY}}
+

@@ -103,7 +103,6 @@ const actions = {
         )
       }
     } catch (error) {
-      console.log(error)
       handleError(error)
       throw error
     }

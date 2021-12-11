@@ -296,8 +296,7 @@ def delete_document(
 
     try:
         if hard_delete:
-            coll.delete_one(query_filter)
-            return True
+            return coll.delete_one(query_filter).deleted_count > 0
         doc = coll.find_one_and_update(
             query_filter,
             {

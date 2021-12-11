@@ -298,6 +298,15 @@ export default {
       }
     }
   },
+
+  async beforeDestroy() {
+    delete this.batchDetails.notification_types
+    delete this.batchDetails.category
+    delete this.batchDetails.users
+    this.setDefaultData()
+    await this.fetchNotificationsByBatch()
+    this.calculateLastBatch()
+  },
   methods: {
     ...mapActions({
       getAllNotifications: "notifications/getAll",
