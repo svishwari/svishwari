@@ -1,6 +1,6 @@
 <template>
   <div>
-    <page-header header-height="70" help-icon>
+    <page-header :header-height="isEdit ? '70' : '110'" help-icon>
       <template slot="left">
         <div>
           <breadcrumb :items="breadcrumbItems" />
@@ -14,7 +14,34 @@
         <tips-menu
           :panel-list-items="panelListItems"
           header="Segment Playground user guide"
+          :right-position="!isEdit ? '0rem' : '5rem'"
         />
+        <v-menu
+          v-if="isEdit"
+          v-model="openMenu"
+          class="menu-wrapper"
+          bottom
+          offset-y
+        >
+          <template #activator="{ on, attrs }">
+            <v-icon
+              v-bind="attrs"
+              class="mr-2 more-action"
+              color="primary"
+              :class="{ 'd-inline-block': openMenu }"
+              v-on="on"
+            >
+              mdi-dots-vertical
+            </v-icon>
+          </template>
+          <v-list class="list-wrapper">
+            <v-list-item-group>
+              <v-list-item key="delete-action" @click="initiateDelete()">
+                Delete audience
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-menu>
       </template>
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -25,7 +52,7 @@
     >
       <v-row class="ma-0 segment-wrap">
         <v-col class="col-8 pl-0 pr-6 py-6 attributes">
-          <div class="edit-wrap">
+          <div v-if="isEdit" class="edit-wrap">
             <div class="text-body-1">
               You are currently editing
               <span class="text-body-2">{{ audience.originalName }}</span
@@ -86,12 +113,71 @@
           </hux-button>
         </template>
         <template #right>
-          <hux-button size="large" height="40" is-tile variant="primary base">
-            Save this segment as an audience
+          <hux-button
+            size="large"
+            height="40"
+            is-tile
+            variant="primary base"
+            @click="handleAction()"
+          >
+            {{ buttonText }}
           </hux-button>
         </template>
       </hux-footer>
     </page>
+    <confirm-modal
+      v-model="confirmModal"
+      :icon="confirmData.icon"
+      :icon-color="confirmData.iconColor"
+      :icon-size="confirmData.iconSize"
+      :type="confirmData.type"
+      :title="confirmData.title"
+      :sub-title="confirmData.subTitle"
+      :right-btn-text="confirmData.rightButtonText"
+      :left-btn-text="confirmData.leftButtonText"
+      data-e2e="audience-confirmation"
+      @onCancel="confirmModal = !confirmModal"
+      @onConfirm="confirmRemoval()"
+    >
+      <template #body>
+        <div
+          v-if="isEdit"
+          class="
+            black--text
+            text--darken-4 text-subtitle-1
+            pt-6
+            font-weight-regular
+          "
+        >
+          Are you sure you want to delete this audience&#63;
+        </div>
+        <div
+          v-if="isEdit"
+          class="black--text text--darken-4 text-subtitle-1 font-weight-regular"
+        >
+          By deleting this audience you will not be able to recover it and it
+          may impact any associated engagements.
+        </div>
+        <div v-if="!isEdit" class="d-flex align-center justify-center px-7">
+          <text-field
+            v-model="audience.name"
+            placeholder-text="Audience name"
+            height="40"
+            background-color="white"
+            required
+            class="
+              mt-5
+              text-caption
+              black--text
+              text--darken-4
+              input-placeholder
+              w-100
+            "
+            data-e2e="audience-name"
+          />
+        </div>
+      </template>
+    </confirm-modal>
   </div>
 </template>
 
@@ -107,6 +193,7 @@ import AttributeRules from "./AttributeRules.vue"
 import TipsMenu from "./TipsMenu.vue"
 import Geography from "./Geography.vue"
 import Overview from "./Overview.vue"
+import ConfirmModal from "../../components/common/ConfirmModal.vue"
 
 export default {
   name: "SegmentPlayground",
@@ -121,6 +208,7 @@ export default {
     Geography,
     TipsMenu,
     TextField,
+    ConfirmModal,
   },
   data() {
     return {
@@ -130,6 +218,7 @@ export default {
           icon: "playground",
         },
       ],
+      openMenu: false,
       editBreadcrumbs: [
         {
           text: "Audiences",
@@ -180,6 +269,17 @@ export default {
             "<b>Any</b> means that a customer must match at least 1 of the attributes within the section in order to be included in the segment.",
         },
       ],
+      confirmData: {
+        icon: "audience_icon",
+        type: "primary",
+        iconColor: "black",
+        iconSize: "35",
+        title: "",
+        subTitle: "Save this segment as a new audience",
+        rightButtonText: "Save",
+        leftButtonText: "Cancel",
+      },
+      confirmModal: false,
     }
   },
   computed: {
@@ -189,7 +289,7 @@ export default {
     }),
     breadcrumbItems() {
       const items = !this.isEdit ? this.breadcrumbs : this.editBreadcrumbs
-      if (this.audience && this.audience.name) {
+      if (this.isEdit && this.audience && this.audience.name) {
         if (items.length === 1) {
           items.push({
             text: this.audience.name,
@@ -200,6 +300,11 @@ export default {
         }
       }
       return items
+    },
+    buttonText() {
+      return this.isEdit
+        ? "Apply changes & save"
+        : "Save this segment as an audience"
     },
   },
   beforeRouteLeave(to, from, next) {
@@ -232,12 +337,102 @@ export default {
   methods: {
     ...mapActions({
       getOverview: "customers/getOverview",
+      saveAudience: "audiences/add",
       updateAudience: "audiences/update",
       getAudienceById: "audiences/getAudienceById",
+      deleteAudience: "audiences/remove",
     }),
     updateLoad(data) {
       this.overviewLoading = data
       if (!data) this.overviewLoadingStamp = new Date()
+    },
+    async handleAction() {
+      if (this.isEdit) {
+        await this.updateAudience({
+          id: this.audience.id,
+          payload: this.preparePayload(),
+        })
+        this.$router.go(-1)
+      } else {
+        this.confirmModal = true
+      }
+    },
+    preparePayload() {
+      const filtersArray = []
+      for (
+        let ruleIndex = 0;
+        ruleIndex < this.audience.attributeRules.length;
+        ruleIndex++
+      ) {
+        var filter = {
+          section_aggregator: this.audience.attributeRules[ruleIndex].operand
+            ? "ALL"
+            : "ANY",
+          section_filters: [],
+        }
+        for (
+          let conditionIndex = 0;
+          conditionIndex <
+          this.audience.attributeRules[ruleIndex].conditions.length;
+          conditionIndex++
+        ) {
+          filter.section_filters.push({
+            field:
+              this.audience.attributeRules[ruleIndex].conditions[conditionIndex]
+                .attribute.key,
+            type: this.audience.attributeRules[ruleIndex].conditions[
+              conditionIndex
+            ].operator
+              ? this.audience.attributeRules[ruleIndex].conditions[
+                  conditionIndex
+                ].operator.key
+              : "range",
+            value: this.audience.attributeRules[ruleIndex].conditions[
+              conditionIndex
+            ].operator
+              ? this.audience.attributeRules[ruleIndex].conditions[
+                  conditionIndex
+                ].text
+              : this.audience.attributeRules[ruleIndex].conditions[
+                  conditionIndex
+                ].range,
+          })
+        }
+        filtersArray.push(filter)
+      }
+      return {
+        filters: filtersArray,
+        name: this.audience.name,
+      }
+    },
+    initiateDelete() {
+      this.confirmSubtitle = this.audience.originalName
+      this.confirmData = {
+        icon: "sad-face",
+        type: "error",
+        iconSize: 42,
+        title: "You are about to delete",
+        subTitle: this.audience.originalName,
+        rightButtonText: "Yes, delete it",
+        leftButtonText: "Nevermind!",
+      }
+      this.confirmModal = true
+    },
+    async confirmRemoval() {
+      if (this.isEdit) {
+        await this.deleteAudience({ id: this.audience.id })
+        this.confirmModal = false
+        this.$router.push({
+          name: "Audiences",
+        })
+      } else {
+        let response = await this.saveAudience(this.preparePayload())
+        this.confirmModal = false
+        this.$router.push({
+          name: "AudienceInsight",
+          params: { id: response.id },
+        })
+      }
     },
     getAttributeOption(attribute_key, options) {
       for (let opt of options) {

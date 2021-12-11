@@ -1,5 +1,5 @@
 <template>
-  <span class="d-flex cursor-pointer mr-4 icon-bulb">
+  <span class="cursor-pointer mr-4 icon-bulb" :style="{ right: rightPosition }">
     <drop-menu
       :min-midth="300"
       :max-width="353"
@@ -78,6 +78,10 @@ export default {
       required: false,
       default: "",
     },
+    rightPosition: {
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
@@ -89,7 +93,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 .icon-bulb {
-  margin-top: 8rem;
+  position: absolute;
+  bottom: -2.5rem;
+  right: 0;
+  z-index: 2;
 }
 .drop-menu-div {
   z-index: 1;
