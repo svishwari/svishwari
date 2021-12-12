@@ -7,7 +7,7 @@
         </div>
         <div class="text-subtitle-1 font-weight-regular">
           Start making meaningful connections with current and future customers
-          by targeting intelligent audiences while staying organized.
+          by targeting your created (or new) audiences.
         </div>
       </template>
       <template #right>
@@ -26,9 +26,10 @@
       <div class="flex-grow-1 flex-shrink-1 overflow-hidden mw-100">
         <page-header class="top-bar" :header-height="71">
           <template #left>
-            <v-btn disabled icon color="black">
-              <icon type="search" :size="20" color="black" variant="lighten3" />
-            </v-btn>
+            <v-icon medium color="black lighten-3">mdi-filter-variant</v-icon>
+            <v-icon medium color="black lighten-3" class="pl-6"
+              >mdi-magnify</v-icon
+            >
           </template>
 
           <template #right>
@@ -64,7 +65,6 @@
           sort-desc="false"
           nested
           data-e2e="engagement-table"
-          class="big-table"
         >
           <template #item-row="{ item, expandFunc, isExpanded }">
             <tr :class="{ 'expanded-row': isExpanded }">
@@ -90,28 +90,17 @@
                     :data-e2e="setEngagementSelector(item)"
                     has-favorite
                     :is-favorite="isUserFavorite(item, 'engagements')"
-                    class="text-body-1"
                     @actionFavorite="handleActionFavorite(item, 'engagements')"
                   >
                     <template #expand-icon>
-                      <span
+                      <v-icon
                         v-if="item.audiences.length > 0"
+                        :class="{ 'normal-icon': isExpanded }"
                         data-e2e="expand-engagement"
                         @click="expandFunc(!isExpanded)"
                       >
-                        <icon
-                          type="expand-arrow"
-                          :size="14"
-                          color="primary"
-                          class="
-                            cursor-pointer
-                            mdi-chevron-right
-                            mx-2
-                            d-inline-block
-                          "
-                          :class="{ 'normal-icon': isExpanded }"
-                        />
-                      </span>
+                        mdi-chevron-right
+                      </v-icon>
                     </template>
                   </menu-cell>
                 </div>
@@ -169,7 +158,7 @@
                   </span>
                   <span v-else-if="item[header.value].length == 0">—</span>
                 </div>
-                <div v-if="header.value == 'status'">
+                <div v-if="header.value == 'status'" class="text-h5">
                   <status
                     :status="item[header.value]"
                     :show-label="true"
@@ -276,7 +265,7 @@
                 :columns="expandedHeaders"
                 :data-items="parentItem.audiences"
                 :show-header="false"
-                class="expanded-table big-table"
+                class="expanded-table"
                 view-height="auto"
                 nested
                 data-e2e="audience-table"
@@ -304,31 +293,20 @@
                           :label-class="{
                             'no-expand': item.destinations.length == 0,
                           }"
-                          class="text-body-1"
                         >
                           <template #expand-icon>
-                            <span
+                            <v-icon
                               v-if="item.destinations.length > 0"
+                              :class="{ 'normal-icon': isExpanded }"
                               data-e2e="expand-audience"
                               @click="expandFunc(!isExpanded)"
                             >
-                              <icon
-                                type="expand-arrow"
-                                :size="14"
-                                color="primary"
-                                class="
-                                  cursor-pointer
-                                  mdi-chevron-right
-                                  mx-2
-                                  d-inline-block
-                                "
-                                :class="{ 'normal-icon': isExpanded }"
-                              />
-                            </span>
+                              mdi-chevron-right
+                            </v-icon>
                           </template>
                         </menu-cell>
                       </div>
-                      <div v-if="header.value == 'status'">
+                      <div v-if="header.value == 'status'" class="text-h5">
                         <div>
                           <status
                             :status="item[header.value]"
@@ -473,7 +451,6 @@
                       :data-items="getDestinations(parentItem)"
                       :show-header="false"
                       view-height="auto"
-                      class="big-table"
                     >
                       <template #row-item="{ item }">
                         <td
@@ -481,7 +458,7 @@
                           :key="header.value"
                           :style="{ width: header.width }"
                         >
-                          <div v-if="header.value == 'status'">
+                          <div v-if="header.value == 'status'" class="text-h5">
                             <div>
                               <status
                                 :status="item[header.value]"
@@ -598,7 +575,6 @@
           @onCreate="onCreated()"
         />
       </div>
-
       <div class="ml-auto">
         <engagement-filter
           v-model="isFilterToggled"
@@ -691,6 +667,7 @@ import Tooltip from "../../components/common/Tooltip.vue"
 import ConfirmModal from "../../components/common/ConfirmModal.vue"
 import HuxDeliveryText from "../../components/common/DatePicker/HuxDeliveryText.vue"
 import EngagementFilter from "./Configuration/Drawers/EngagementFilter.vue"
+
 export default {
   name: "Engagements",
   components: {
@@ -1105,12 +1082,7 @@ export default {
   background: var(--v-white-base);
   ::v-deep .menu-cell-wrapper {
     .action-icon {
-      .fav-action {
-        display: none;
-      }
-      .more-action {
-        display: none;
-      }
+      display: none;
     }
     .mdi-chevron-right,
     .mdi-dots-vertical {
@@ -1136,6 +1108,7 @@ export default {
     white-space: nowrap;
   }
   .mdi-chevron-right {
+    margin-top: -4px;
     transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
     &.normal-icon {
       transform: rotate(90deg);
@@ -1159,6 +1132,7 @@ export default {
     }
     ::v-deep table {
       tr {
+        height: 64px;
         &:hover {
           background: var(--v-primary-lighten2) !important;
         }
@@ -1167,7 +1141,7 @@ export default {
           color: var(--v-black-darken4);
         }
         td:nth-child(1) {
-          font-size: 16px !important;
+          font-size: 14px !important;
         }
       }
       .expanded-row {
@@ -1176,7 +1150,7 @@ export default {
       .v-data-table-header {
         th:nth-child(1) {
           left: 0;
-          z-index: 3;
+          z-index: 9;
           border-right: thin solid rgba(0, 0, 0, 0.12);
           overflow-y: visible;
           overflow-x: visible;
@@ -1185,42 +1159,20 @@ export default {
       }
       tr {
         &:hover {
-          td:nth-child(1) {
-            z-index: 1 !important;
-            background: var(--v-primary-lighten2) !important;
-            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
-            .menu-cell-wrapper .action-icon {
-              .fav-action {
-                display: block;
-              }
-              .more-action {
-                display: block;
-              }
-            }
-          }
           background: var(--v-primary-lighten2) !important;
-          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
-          .menu-cell-wrapper {
-            .action-icon {
-              .fav-action {
-                display: block;
-              }
-              .more-action {
-                display: block;
-              }
-            }
-          }
         }
+        height: 64px;
         td {
-          font-size: 16px !important;
+          font-size: 14px !important;
           line-height: 22px;
           color: var(--v-black-darken4);
         }
         td:nth-child(1) {
           position: sticky;
+          top: 0;
           left: 0;
+          background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
-          background-color: white;
           .menu-cell-wrapper > div {
             a.text-decoration-none {
               .ellipsis {
