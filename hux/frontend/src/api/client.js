@@ -264,6 +264,10 @@ client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
 }
 
+client["audiences"].getrulesByFields  = (params) => {
+  return http.get(`/audiences/rules/${params.fieldType}/${params.key}`)
+}
+
 client["audiences"].createAndDeliver = (data) => {
   return http.post("/audiences?deliver=true", data)
 }

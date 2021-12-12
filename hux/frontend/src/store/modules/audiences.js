@@ -362,6 +362,11 @@ const actions = {
     }
   },
 
+  async rulesByFields({ commit }, params) {
+    const response = await api.audiences.getrulesByFields(params)
+    commit("SET_CONSTANTS", response.data)
+    return response.data
+  },
   async fetchFilterSize({ commit }, filter) {
     try {
       const response = await api.customers.getOverview(filter)

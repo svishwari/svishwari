@@ -93,7 +93,7 @@
                     v-model="condition.text"
                     :options="listOptions(condition)"
                     @change="triggerSizing(condition)"
-                    :search="autoSearch"
+                    @search-update="autoSearchFunc"
                   />
                   <div
                     v-if="condition.attribute && !isTextORSelect(condition)"
@@ -269,6 +269,8 @@ export default {
         width: 0,
         height: 0,
       },
+      selectedValue: null,
+      params: {},
     }
   },
   computed: {
@@ -302,6 +304,7 @@ export default {
     ...mapActions({
       getRealtimeSize: "audiences/fetchFilterSize",
       getAudiencesRules: "audiences/fetchConstants",
+      getAudiencesRulesByFields: "audiences/rulesByFields",
     }),
     sliderLabel(attribute, value) {
       if (attribute.key === "ltv_predicted") {
@@ -323,9 +326,6 @@ export default {
         ? condition.attribute.type === "text" ||
             condition.attribute.type === "list"
         : false
-    },
-    autoSearch(val){
-      console.log("value",val)
     },
     /**
      * This attributeOptions is transforming the API attributeRules into the Options Array
@@ -376,7 +376,8 @@ export default {
       } else return []
     },
     listOptions(condition) {
-      return condition.attribute.options
+      return this.selectedValue === "Zip" || this.selectedValue === "City" ? [] : condition.attribute.options
+      
     },
     operatorOptions(condition) {
       // Filter out only two options (equals and does_not_equals) for attribute type 'gender'
@@ -438,7 +439,6 @@ export default {
         condition.awaitingSize = false
       }
     },
-
     async triggerSizingForRule(rule) {
       for (let i = 0; i < rule.conditions.length; i++) {
         let triggerOverallSize = rule.conditions.length - 1 === i ? true : false
@@ -499,6 +499,7 @@ export default {
     onSelect(type, condition, item) {
       condition[type] = item
       if (type === "attribute") {
+        this.selectedValue = item.key
         condition.operator = ""
         condition.text = ""
         condition.type = condition.attribute.type
@@ -547,6 +548,20 @@ export default {
       newSection.id = Math.floor(Math.random() * 1024).toString(16)
       this.rules.push(newSection)
       this.addNewCondition(newSection.id)
+    },
+    async autoSearchFunc(value) {
+      if (this.selectedValue === "Zip" || this.selectedValue === "City") {
+        // this.selectedValue = "zip_code"
+        this.params.fieldType = this.selectedValue.toLowerCase()
+        this.params.key = value
+        console.log("valyue", this.params.key)
+
+        if (value.length > 2) {
+          debugger
+          let data = await this.getAudiencesRulesByFields(this.params)
+          console.log("data", data)
+        }
+      }
     },
   },
 }
