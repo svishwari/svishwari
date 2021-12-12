@@ -122,6 +122,16 @@ client["destinations"].createDataExtension = (resourceId, data) => {
 //#endregion
 
 //#region Engagement custom endpoints
+client["engagements"].allFiltered = (data) => {
+  let URLData = []
+  for (const property in data) {
+    let formURL = property + "=" + data[property]
+    URLData.push(formURL)
+  }
+  let newURLFormat = URLData.join("@").toString().replace(/@/g, "&")
+  return http.get(`/engagements?${newURLFormat}`)
+}
+
 client["engagements"].deliver = (resourceId, data) => {
   return http.post(`/engagements/${resourceId}/deliver`, data)
 }

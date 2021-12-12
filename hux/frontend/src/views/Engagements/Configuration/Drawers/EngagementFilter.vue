@@ -2,8 +2,8 @@
   <hux-filters-drawer
     :is-toggled="localDrawer"
     :count="filterLength"
-    offset-val="252px"
-    content-height="522px"
+    content-height="300px"
+    :style="{ height: viewHeight }"
     @clear="clear"
     @apply="apply"
     @close="close"
@@ -11,14 +11,13 @@
     <hux-filter-panels :expanded="[]">
       <v-checkbox
         v-model="selectedFavourite"
-        color="#00a3e0"
-        class="text--base-1 px-5 withoutExpansion"
+        color="primary lighten-6"
+        class="text--base-1 px-5 withoutExpansion checkboxFavorite"
         label="My favorites only"
-        :style="{ 'border-bottom': '1px solid #E2EAEC' }"
       ></v-checkbox>
       <v-checkbox
-        v-model="selectedEngagementWorkedWith"
-        color="#00a3e0"
+        v-model="selectedEngagementsWorkedWith"
+        color="primary lighten-6"
         class="text--base-1 px-5 withoutExpansion"
         label="Engagements I’ve worked on"
       ></v-checkbox>
@@ -42,12 +41,17 @@ export default {
       required: true,
       default: false,
     },
+    viewHeight: {
+      type: String,
+      required: false,
+      default: "auto",
+    },
   },
   data() {
     return {
       localDrawer: this.value,
       selectedFavourite: false,
-      selectedEngagementWorkedWith: false,
+      selectedEngagementsWorkedWith: false,
     }
   },
 
@@ -55,7 +59,7 @@ export default {
     filterLength() {
       let count = 0
       if (this.selectedFavourite) count++
-      if (this.selectedEngagementWorkedWith) count++
+      if (this.selectedEngagementsWorkedWith) count++
       return count
     },
   },
@@ -67,7 +71,7 @@ export default {
   methods: {
     clearFilter() {
       this.selectedFavourite = false
-      this.selectedEngagementWorkedWith = false
+      this.selectedEngagementsWorkedWith = false
     },
     clear() {
       this.clearFilter()
@@ -76,7 +80,7 @@ export default {
     apply() {
       this.$emit("onSectionAction", {
         selectedFavourite: this.selectedFavourite,
-        selectedEngagementWorkedWith: this.selectedEngagementWorkedWith,
+        selectedEngagementsWorkedWith: this.selectedEngagementsWorkedWith,
       })
     },
     cancel() {
@@ -89,7 +93,7 @@ export default {
   },
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
 ::v-deep.v-input--selection-controls {
   margin-top: 0px !important;
   padding-top: 0px !important;
@@ -123,5 +127,13 @@ export default {
   line-height: 22px;
   letter-spacing: 0;
   color: var(--v-black-base);
+}
+.checkboxFavorite {
+  border-bottom: 1px solid var(--v-black-lighten2);
+}
+.filter-body {
+  ::v-deep .v-expansion-panel-content__wrap {
+    padding: 14px 24px 14px 24px !important;
+  }
 }
 </style>
