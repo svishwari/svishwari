@@ -63,22 +63,23 @@
     </template>
 
     <template #footer-left>
-      <v-btn
+      <hux-button
+        size="large"
         tile
-        color="white"
+        variant="white"
         class="btn-border box-shadow-none"
         @click="onCancelAndBack()"
       >
         <span class="primary--text">Cancel &amp; back</span>
-      </v-btn>
-      <v-btn
+      </hux-button>
+      <hux-button
         :disabled="!newAudienceValidity"
         tile
         color="primary"
         @click="add()"
       >
         Create &amp; add
-      </v-btn>
+      </hux-button>
     </template>
   </drawer>
 </template>
@@ -90,6 +91,7 @@ import TextField from "@/components/common/TextField"
 import MetricCard from "@/components/common/MetricCard"
 import AttributeRules from "@/views/SegmentPlayground/AttributeRules.vue"
 import Tooltip from "@/components/common/Tooltip"
+import huxButton from "@/components/common/huxButton"
 
 export default {
   name: "AddAudienceDrawer",
@@ -100,6 +102,7 @@ export default {
     Tooltip,
     MetricCard,
     AttributeRules,
+    huxButton,
   },
 
   props: {

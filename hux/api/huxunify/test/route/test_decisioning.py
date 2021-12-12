@@ -6,10 +6,7 @@ from unittest import TestCase, mock
 import mongomock
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.collection_management import (
-    create_document,
-    get_document,
-)
+from huxunifylib.database.collection_management import create_document
 from hypothesis import given, settings, strategies as st
 
 import requests_mock
@@ -134,11 +131,20 @@ class DecisioningTests(TestCase):
     def test_success_request_model(self):
         """Test requesting a model."""
 
-        status_request = {
-            api_c.STATUS: api_c.REQUESTED,
-            api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
-            api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
-        }
+        status_request = [
+            {
+                api_c.STATUS: api_c.REQUESTED,
+                api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
+                api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
+                api_c.TYPE: t_c.MOCKED_MODEL_RESPONSE[0][api_c.TYPE],
+            },
+            {
+                api_c.STATUS: api_c.REQUESTED,
+                api_c.ID: t_c.MOCKED_MODEL_RESPONSE[1][api_c.ID],
+                api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[1][api_c.NAME],
+                api_c.TYPE: t_c.MOCKED_MODEL_RESPONSE[1][api_c.TYPE],
+            },
+        ]
 
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
@@ -146,7 +152,7 @@ class DecisioningTests(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
         get_models_mock = mock.patch(self.models_rel_path).start()
         get_models_mock.return_value = t_c.MOCKED_MODEL_RESPONSE
@@ -154,19 +160,50 @@ class DecisioningTests(TestCase):
     def test_success_request_model_duplicate(self):
         """Test requesting a model."""
 
-        status_request = {
-            api_c.STATUS: api_c.REQUESTED,
-            api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
-            api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
-        }
+        status_request = [
+            {
+                api_c.STATUS: api_c.REQUESTED,
+                api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
+                api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
+                api_c.TYPE: t_c.MOCKED_MODEL_RESPONSE[0][api_c.TYPE],
+            }
+        ]
 
-        for status_code in [HTTPStatus.CREATED, HTTPStatus.CONFLICT]:
-            response = self.test_client.post(
-                f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
-                data=json.dumps(status_request),
-                headers=t_c.STANDARD_HEADERS,
-            )
-            self.assertEqual(status_code, response.status_code)
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
+            data=json.dumps(status_request),
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_success_request_model_duplicate_name(self):
+        """Test requesting a model."""
+
+        status_request = [
+            {
+                api_c.STATUS: api_c.REQUESTED,
+                api_c.ID: t_c.MOCKED_MODEL_RESPONSE[0][api_c.ID],
+                api_c.NAME: t_c.MOCKED_MODEL_RESPONSE[0][api_c.NAME],
+                api_c.TYPE: t_c.MOCKED_MODEL_RESPONSE[0][api_c.TYPE],
+            }
+        ]
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
+            data=json.dumps(status_request),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        status_request[0][api_c.TYPE] = "other"
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
+            data=json.dumps(status_request),
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_remove_model_success(self):
         """Test removing requested models from Unified DB."""
@@ -198,15 +235,6 @@ class DecisioningTests(TestCase):
         self.assertEqual(
             {api_c.MESSAGE: api_c.OPERATION_SUCCESS}, response.json
         )
-
-        updated_doc = get_document(
-            database=self.database,
-            collection=db_c.CONFIGURATIONS_COLLECTION,
-            query_filter={db_c.ID: doc[db_c.ID]},
-            include_deleted=True,
-        )
-
-        self.assertTrue(updated_doc[db_c.DELETED])
 
     @given(model_id=st.integers())
     def test_remove_model_failure_invalid_model_id(self, model_id: int):

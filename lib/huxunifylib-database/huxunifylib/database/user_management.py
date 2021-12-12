@@ -12,6 +12,7 @@ import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.utils import name_exists
+from huxunifylib.database.collection_management import get_document
 
 USER_LOOKUP_PIPELINE = [
     # lookup the created by user to the user collection
@@ -335,13 +336,27 @@ def manage_user_favorites(
         db_c.LOOKALIKE: db_c.LOOKALIKE_AUDIENCE_COLLECTION,
     }
 
-    # TODO - validate input component ID if it exists
-    #      - fill out when we have campaigns, destinations
+    id_filter = {db_c.ID: component_id}
+
     try:
-        if not delete_flag and not database[db_c.DATA_MANAGEMENT_DATABASE][
-            component_collection[component_name]
-        ].find_one({db_c.ID: component_id}):
-            raise de.InvalidID(component_id)
+        if component_name == db_c.AUDIENCES:
+            # check audience first
+            audience_found = get_document(
+                database, db_c.AUDIENCES_COLLECTION, id_filter
+            )
+            if not audience_found:
+                # try lookalike
+                if get_document(
+                    database, db_c.LOOKALIKE_AUDIENCE_COLLECTION, id_filter
+                ):
+                    component_name = db_c.LOOKALIKE
+                else:
+                    raise de.InvalidID(component_id)
+        else:
+            if not delete_flag and not get_document(
+                database, component_collection[component_name], id_filter
+            ):
+                raise de.InvalidID(component_id)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

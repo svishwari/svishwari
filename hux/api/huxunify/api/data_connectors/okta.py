@@ -84,7 +84,7 @@ def get_user_info(access_token: str) -> dict:
 
     try:
         return requests.get(
-            url=f"{get_config().OKTA_ISSUER}" f"/oauth2/v1/userinfo",
+            url=f"{get_config().OKTA_ISSUER}/oauth2/v1/userinfo",
             headers={
                 "Authorization": f"Bearer {access_token}",
             },

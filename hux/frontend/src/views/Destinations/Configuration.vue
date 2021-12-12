@@ -154,7 +154,7 @@
         </div>
       </v-alert>
 
-      <v-row>
+      <v-row class="firstRow">
         <v-col cols="8">
           <text-field
             v-model="requestDetails['contact_email']"
@@ -168,7 +168,7 @@
         </v-col>
       </v-row>
 
-      <v-row v-if="selectedDestinationNotListed">
+      <v-row v-if="selectedDestinationNotListed" class="firstRow">
         <v-col cols="8">
           <text-field
             v-model="requestDetails['name']"
@@ -182,8 +182,8 @@
         </v-col>
       </v-row>
 
-      <v-row>
-        <v-col cols="8" class="py-0">
+      <v-row class="thirdRow">
+        <v-col cols="8">
           <label class="text-h5 mb-0">
             Did the Client request to have this destination available?
           </label>
@@ -207,7 +207,7 @@
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row class="fourthRow">
         <v-col cols="8">
           <label class="text-h5 mb-0">
             Does the Client have an account for this destination?
@@ -233,7 +233,7 @@
       </v-row>
 
       <v-row>
-        <v-col cols="12">
+        <v-col cols="12" class="textAreaDiv">
           <div
             class="
               primary
@@ -265,14 +265,21 @@
     <hux-footer slot="footer" max-width="850px" data-e2e="footer">
       <template #left>
         <hux-button
-          variant="white"
           size="large"
-          :is-tile="true"
+          variant="white"
+          is-tile
+          class="
+            text-button
+            ml-auto
+            primary--text
+            mr-3
+            btn-border
+            box-shadow-none
+          "
           data-e2e="cancel-destination-request"
-          class="btn-border box-shadow-none"
           @click="cancel()"
         >
-          <span class="primary--text">Cancel</span>
+          Cancel
         </hux-button>
       </template>
       <template #right>
@@ -367,12 +374,8 @@
               @click="onRequestDestination(destination.id)"
             />
           </div>
-
-          <v-divider class="black--border border--lighten-2 mt-7 mb-2" />
-
           <div>
             <label class="d-block text--body-2 mb-2 mt-6"> Other </label>
-
             <card-horizontal
               title="Request a destination not on the list"
               :is-added="false"
@@ -678,4 +681,17 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.firstRow {
+  height: 80px;
+}
+.thirdRow {
+  height: 96px;
+}
+.fourthRow {
+  height: 102px;
+}
+.textAreaDiv {
+  height: 200px;
+}
+</style>

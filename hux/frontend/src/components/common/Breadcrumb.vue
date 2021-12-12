@@ -15,7 +15,11 @@
           />
         </div>
         <div v-if="item.logo" class="d-flex pr-2">
-          <logo :type="item.logo" :size="32" />
+          <logo
+            :type="item.logo"
+            :size="32"
+            :class="addBoxShadow ? 'logo-box-shadow br-50' : ''"
+          />
         </div>
         <span
           :class="{
@@ -46,6 +50,11 @@ export default {
       type: Array,
       required: true,
       default: () => [],
+    },
+    addBoxShadow: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 }
