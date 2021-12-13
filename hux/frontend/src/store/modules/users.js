@@ -12,6 +12,7 @@ const state = {
     token: null,
     idToken: null,
     bugsReported: [],
+    pii_access: false,
   },
 }
 
@@ -108,6 +109,8 @@ const getters = {
   },
 
   getEmailAddress: (state) => state.userProfile.email,
+
+  getPiiAccess: (state) => state.userProfile.pii_access,
 }
 export default {
   namespaced,
