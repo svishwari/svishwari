@@ -434,10 +434,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-::v-deep .page-header--wrap {
-  padding-left: 24px !important;
-}
-::v-deep .v-toolbar__content {
+::v-deep .page-header--wrap,
+.v-toolbar__content {
   padding-left: 24px !important;
 }
 .hux-data-table {

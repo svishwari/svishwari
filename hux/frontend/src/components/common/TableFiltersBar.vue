@@ -4,7 +4,7 @@
       <div class="d-flex justify-space-between">
         <v-checkbox
           v-model="showMatchRate"
-          color="#00a3e0"
+          color="primary lighten-6"
           class="text-h5 px-5 withoutExpansion mt-0 pt-0 pl-0"
           label="Show match rate"
           @click="handleCheckboxValueChange()"
@@ -52,7 +52,7 @@
               small
               class="mr-1 ml-0 mt-0 mb-1 text-subtitle-2"
               text-color="primary"
-              color="var(--v-primary-lighten3)"
+              color="primary lighten-3"
               close-icon="mdi-close"
               @click:close="removeValue(filterIndex, valueIndex)"
             >
